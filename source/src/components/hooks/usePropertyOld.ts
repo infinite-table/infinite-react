@@ -11,6 +11,7 @@ import { Setter } from '../types/Setter';
 import isControlled from '../utils/isControlled';
 import isControlledValue from '../utils/isControlledValue';
 import { useLatest } from './useLatest';
+
 import usePrevious from './usePrevious';
 
 const DEFAULT_CONFIG = {
