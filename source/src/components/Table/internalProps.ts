@@ -1,5 +1,3 @@
-import { TableInternalProps } from './types';
-
-export const internalProps: TableInternalProps = {
+export const internalProps = {
   rootClassName: 'ITable',
 };
