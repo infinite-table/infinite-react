@@ -217,8 +217,8 @@ export const useColumnPointerEvents = <T>({
   );
 
   return {
-    onPointerUp: column.computedDraggable ? onPointerUp : null,
-    onPointerDown: column.computedDraggable ? onPointerDown : null,
+    onPointerUp: column.computedDraggable ? onPointerUp : () => {},
+    onPointerDown: column.computedDraggable ? onPointerDown : () => {},
     dragging,
     proxyOffset,
     draggingDiff: draggingDiff ?? { top: 0, left: 0 },
