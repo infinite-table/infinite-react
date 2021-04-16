@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "exclude": ["node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "isolatedModules": true,
+    "baseUrl": "./",
+    "paths": {
+      "react": ["../../node_modules/react"],
+      "react-dom": ["../../node_modules/react-dom/profiling"],
+      "@src/*": ["../src/*"],
+      "@examples/*": ["./src/*"],
+      
+      "@components/*": ["../src/components/*"],
+    }
+  }
+}

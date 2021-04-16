@@ -1,0 +1,138 @@
+import * as React from 'react';
+import { HTMLProps, useRef, useEffect, useState } from 'react';
+
+import type { VirtualListProps } from './types';
+
+import { join } from '../../utils/join';
+import { SpacePlaceholder } from './SpacePlaceholder';
+import { VirtualScrollContainer } from '../VirtualScrollContainer';
+import { useRerender } from '../hooks/useRerender';
+
+import { ICSS } from '../../style/utilities';
+
+import { dbg } from '../../utils/debug';
+import { RawList } from '../RawList';
+import type { ScrollPosition } from '../types/ScrollPosition';
+
+const UPDATE_SCROLL = (node: HTMLElement, scrollPosition: ScrollPosition) => {
+  node.style.transform = `translate3d(${-scrollPosition.scrollLeft}px, ${-scrollPosition.scrollTop}px, 0px)`;
+};
+
+const CLASSES = join(
+  ICSS.height['0'],
+  ICSS.width['0'],
+  ICSS.willChange.transform,
+);
+
+const debug = dbg('VirtuaList');
+
+const rootClassName = 'IList';
+const defaultClasses = [ICSS.position.relative, ICSS.transform.translate3D000];
+
+export const VirtualList = (
+  props: VirtualListProps & HTMLProps<HTMLDivElement>,
+) => {
+  const {
+    scrollable,
+    outerChildren,
+    itemCrossAxisSize,
+    brain: virtualBrain,
+
+    mainAxisSize,
+
+    sizeRef,
+
+    count,
+    mainAxis,
+    itemMainAxisSize,
+    renderItem,
+    repaintId,
+    onContainerScroll,
+    children,
+    ...restDOMProps
+  } = props;
+
+  const domRef = useRef<HTMLDivElement>(null);
+
+  const [, rerender] = useRerender();
+  const [totalSize, setTotalSize] = useState(0);
+
+  const renderCountRef = useRef<number>(0);
+
+  useEffect(() => {
+    const removeOnRenderCount = virtualBrain.onRenderCountChange(
+      (renderCount) => {
+        renderCountRef.current = renderCount;
+        if (process.env.NODE_ENV === 'development') {
+          debug.extend(mainAxis)(`Render count change ${renderCount}`);
+        }
+        rerender();
+      },
+    );
+
+    setTotalSize(virtualBrain.getTotalSize());
+
+    const removeOnTotalSizeChange = virtualBrain.onTotalSizeChange(
+      (totalSize) => {
+        requestAnimationFrame(() => {
+          setTotalSize(totalSize);
+        });
+      },
+    );
+
+    return () => {
+      removeOnRenderCount();
+      removeOnTotalSizeChange();
+    };
+  }, [virtualBrain]);
+
+  useEffect(() => {
+    const onScroll = (scrollPosition: ScrollPosition) => {
+      UPDATE_SCROLL(domRef.current!, scrollPosition);
+    };
+
+    const removeOnScroll = virtualBrain.onScroll(onScroll);
+
+    return removeOnScroll;
+  }, [virtualBrain]);
+
+  const width = mainAxis === 'horizontal' ? totalSize : itemCrossAxisSize ?? 0;
+  const height = mainAxis === 'vertical' ? totalSize : itemCrossAxisSize ?? 0;
+
+  const domProps = {
+    ...restDOMProps,
+    className: join(
+      props.className,
+      rootClassName,
+      `${rootClassName}--${mainAxis}`,
+      ...defaultClasses,
+    ),
+  };
+  if (process.env.NODE_ENV === 'development') {
+    (domProps as any)['data-cmp-name'] = `VirtualList`;
+  }
+
+  return (
+    <>
+      <div {...domProps}>
+        <VirtualScrollContainer
+          scrollable={scrollable}
+          onContainerScroll={onContainerScroll}
+        >
+          <div ref={domRef} className={CLASSES}>
+            <RawList
+              brain={virtualBrain}
+              renderItem={renderItem}
+              repaintId={repaintId}
+              debug={{ mainAxis }}
+            />
+          </div>
+          {children}
+          <SpacePlaceholder count={count} width={width} height={height} />
+        </VirtualScrollContainer>
+
+        {outerChildren}
+      </div>
+    </>
+  );
+};

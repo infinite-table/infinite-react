@@ -1,0 +1,14 @@
+@import '~normalize.css/normalize.css';
+
+body {
+  font-size: 16px;
+}
+#__next,
+.__next {
+  height: 100vh;
+  width: 100vw;
+  // background: black;
+  overflow: hidden;
+  display: flex;
+  flex-flow: column;
+}

@@ -1,0 +1,5 @@
+name: "Check release commit"
+description: "Check if the commit will release"
+runs:
+  using: "node12"
+  main: "out/index.js"

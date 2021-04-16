@@ -1,0 +1,18 @@
+import '@components/Table/index.scss';
+import '../index.scss';
+
+globalThis.__DEV__ = true;
+function MyApp({ Component, pageProps }) {
+  if (!process.browser) {
+    return null;
+  }
+  return (
+    <React.StrictMode>
+      <div className="__next">
+        <Component {...pageProps} />
+      </div>
+    </React.StrictMode>
+  );
+}
+
+export default MyApp;

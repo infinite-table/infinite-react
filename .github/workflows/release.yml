@@ -1,0 +1,78 @@
+name: RELEASE
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: "./.github/actions/will-release-check"
+        env:
+          PRIVATE_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
+
+      - name: Echo whoami
+        run: npm whoami --registry=https://registry.infinite-table.com
+
+      - name: Echo publish cmd
+        run: echo $WILL_RELEASE_CMD
+
+      - name: Set git config
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "SHIP IT"
+
+      - name: Install
+        run: npm i && npm install --prefix source && npm install --prefix source/examples
+
+      - name: Linting
+        run: npm run lint
+        working-directory: source
+
+      - name: Bump version
+        working-directory: source
+        run: npm run bump:${WILL_RELEASE_VERSION}
+
+      - name: Building
+        run: npm run build
+        working-directory: source
+
+      - name: copy .npmrc
+        run: cp .npmrc source
+
+      - name: Run test suite
+        run: npm test
+
+      - name: Ship it
+        uses: "./.github/actions/execute-cmd"
+        with:
+          cmd_to_execute: $WILL_RELEASE_CMD
+
+      - run: git diff
+      - run: cat package.json
+        working-directory: source
+
+      - name: Push changes
+        uses: "./.github/actions/git-push-action"
+        with:
+          branch: master
+          github_token: ${{ secrets.AB_DEPLOY_GITHUB_TOKEN }}
+
+      - name: Send version to slack
+        uses: "./.github/actions/send-version-to-slack"
+        with:
+          slack_webhook_notify: ${{ secrets.SLACK_WEBHOOK_NOTIFY }}

@@ -1,0 +1,28 @@
+{
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  
+  "search.exclude": {
+    "source/.rts2_cache_cjs": true,
+    "source/.rts2_cache_esm": true,
+    "source/examples/dist": true,
+    "source/examples/out": true,
+    "source/examples/.next": true,
+    "source/dist": true
+  },
+  "files.exclude": {
+    "source/examples/.next": true,
+    "source/examples/out": true,
+    "source/examples/node_modules": true,
+    "source/.rts2_cache_cjs": true,
+    "source/.rts2_cache_esm": true,
+    "source/.rts2_cache_umd": true
+  },
+  "files.watcherExclude": {
+    "source/dist": true,
+    "source/examples/.next": true,
+    "source/examples/out": true
+  },
+  "editor.tabSize": 2,
+  "prettier.prettierPath": "node_modules/prettier"
+}

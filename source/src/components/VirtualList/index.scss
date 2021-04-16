@@ -1,0 +1,20 @@
+// @import '~@use-infinite-table/icss/index.css';
+@import '../../style/utilities.scss';
+@import '../../style/mixins.scss';
+@import '../VirtualScrollContainer/index.scss';
+
+.IList {
+  @include box-sizing_border-box;
+
+  // clip: rect(0, auto, auto, 0);
+
+  &--vertical {
+    display: inline-block;
+  }
+}
+
+.IListItemRoot {
+  & > :first-child {
+    height: inherit;
+  }
+}

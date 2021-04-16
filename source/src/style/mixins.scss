@@ -1,0 +1,10 @@
+@mixin box-sizing_border-box {
+  &,
+  &:before,
+  &:after,
+  & *,
+  & *:before,
+  & *:after {
+    box-sizing: border-box;
+  }
+}

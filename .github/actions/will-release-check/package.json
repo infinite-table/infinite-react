@@ -1,0 +1,17 @@
+{
+  "name": "will-release",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Will release check",
+  "main": "index.js",
+  "scripts": {
+    "package": "ncc build index.js -o out"
+  },
+  "dependencies": {
+    "@actions/core": "^1.1.1",
+    "@actions/github": "^2.0.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.20.5"
+  }
+}

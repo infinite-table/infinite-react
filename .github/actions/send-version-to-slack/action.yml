@@ -1,0 +1,15 @@
+name: 'Notify slack'
+description: 'Notify slack when new version is released'
+branding:
+  icon: upload-cloud
+  color: green
+inputs:
+  slack_webhook_notify:
+    description: 'slack webhook url'
+    required: true
+  version:
+    description: the version to notify about. optional
+
+runs:
+  using: 'node12'
+  main: "out/index.js"

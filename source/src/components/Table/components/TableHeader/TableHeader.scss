@@ -1,0 +1,21 @@
+.ITableHeader {
+  background: var(--ITableHeader__background);
+  color: var(--ITableHeader__color);
+}
+.ITableHeaderCell {
+  &--dragging {
+    z-index: 100;
+    opacity: 0.8;
+    background: var(--ITableHeaderCell--dragging__background);
+  }
+  &--pinned-start {
+    z-index: 10;
+  }
+  &Proxy {
+    background: var(--ITableHeader__background);
+    opacity: 0.9;
+    padding: var(--ITableCell__padding);
+    padding-left: 20px;
+    z-index: 200;
+  }
+}

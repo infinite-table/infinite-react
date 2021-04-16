@@ -1,0 +1,101 @@
+{
+  "name": "@use-infinite-table/table",
+  "version": "0.1.10",
+  "private": true,
+  "publishConfig": {
+    "registry": "https://registry.infinite-table.com"
+  },
+  "main": "dist/index.js",
+  "module": "dist/table.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "css-compile": "sass ./src/components/Table/index.scss:./dist/index.css",
+    "start-css": "sass ./src/components/Table/index.scss:./dist/index.css --watch",
+    "start": "tsdx watch --tsconfig tsconfig.dev.json",
+    "tsc": "NODE_OPTIONS=\"--trace-warnings\" tsdx build",
+    "build": "NODE_OPTIONS=\"--trace-warnings\" tsdx build && npm run css-compile && node ./build/buildPackageJson.js",
+    "test": "npm run --prefix=examples test && npm run css-compile",
+    "dev-css": "yarn run start-css",
+    "dev": "npm run --prefix=examples dev",
+    "tscw": "tsc --watch",
+    "typedoc": "typedoc",
+    "lint": "tsdx lint src",
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,scss,css,md}'",
+    "/": "//",
+    "/--- should not run locally ----": "//",
+    "/--- as this is run via github actions CI ----": "//",
+    "registry-publish": "npm publish dist",
+    "registry-publish-canary": "npm publish --tag canary dist",
+    "//": "//",
+    "release:canary-nobump": "npm run registry-publish-canary",
+    "release:nobump": "npm run registry-publish",
+    "///": "//",
+    "bump:canary": "npm version prerelease --preid=canary",
+    "bump:major:canary": "npm version premajor --preid=canary",
+    "bump:minor:canary": "npm version preminor --preid=canary",
+    "bump:patch:canary": "npm version prepatch --preid=canary",
+    "////": "//",
+    "bump:patch": "npm version patch",
+    "bump:minor": "npm version minor",
+    "bump:major": "npm version major"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.(js|jsx|ts|tsx)": [
+      "echo ok",
+      "git add"
+    ],
+    "src/**/*.(js|jsx|ts|tsx|json|scss|css|md)": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "printWidth": 80,
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "devDependencies": {
+    "@babel/runtime-corejs2": "^7.6.3",
+    "@types/jest": "^24.0.19",
+    "@types/node": "^12.12.6",
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "@typescript-eslint/eslint-plugin": "4.0.0",
+    "@typescript-eslint/parser": "4.0.0",
+    "camelcase": "^6.0.0",
+    "csstype": "^2.6.10",
+    "eslint": "7.7.0",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
+    "node-sass": "^4.13.1",
+    "parcel": "^1.12.3",
+    "prettier": "^2.2.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "sass": "^1.26.2",
+    "ts-node": "^8.8.2",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.1.0",
+    "typedoc": "^0.20.19",
+    "typescript": "4.1.5"
+  },
+  "dependencies": {
+    "@use-infinite-table/icss": "^0.1.0",
+    "binary-search": "^1.3.6",
+    "debug": "^4.3.1",
+    "resize-observer-polyfill": "^1.5.1"
+  }
+}

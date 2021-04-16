@@ -1,0 +1,14 @@
+.ITableRow {
+  color: var(--ITableRow__color);
+  will-change: transform;
+  // contain: size layout;
+
+  &--hover {
+    --ITableRow__background: var(--ITableRow--hover__background);
+    --ITableRow--odd__background: var(--ITableRow--hover__background);
+  }
+}
+
+.ITable--scrolling .ITableRow {
+  pointer-events: none;
+}

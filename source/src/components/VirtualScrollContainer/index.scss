@@ -1,0 +1,14 @@
+@import '../../style/mixins.scss';
+.AT-VirtualScrollContainer {
+  @include box-sizing_border-box;
+  backface-visibility: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  & > :first-child {
+    position: -webkit-sticky;
+    position: sticky;
+    // position: fixed;
+    top: 0;
+    left: 0;
+  }
+}

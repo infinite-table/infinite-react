@@ -1,0 +1,59 @@
+.ITableCell {
+  // contain: size layout;
+  padding: var(--ITableCell__padding);
+  white-space: nowrap;
+  will-change: transform;
+  position: absolute;
+
+  &--shifting {
+    transition: left 300ms;
+  }
+  &--dragging {
+    transition: none;
+  }
+}
+
+.ITableHeaderCell {
+  background: var(--ITableHeaderCell__background);
+  padding: var(--ITableHeaderCell__padding);
+
+  // padding: var(--ITableHeaderCell__padding);
+  // contain: layout;
+}
+.ITableHeaderCell,
+.ITableColumnCell {
+  &--first {
+    border-top-left-radius: var(--ITableCell__border-radius);
+    border-bottom-left-radius: var(--ITableCell__border-radius);
+  }
+  &--last {
+    border-top-right-radius: var(--ITableCell__border-radius);
+    border-bottom-right-radius: var(--ITableCell__border-radius);
+  }
+}
+.ITableHeaderCell,
+.ITableColumnCell {
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  &--pinned-start.ITableCell--last-in-category {
+    border-right: var(--ITableCell__border);
+  }
+  &--pinned-end.ITableCell--first-in-category {
+    border-left: var(--ITableCell__border);
+  }
+}
+.ITableRow--even {
+  .ITableColumnCell {
+    background: var(--ITableRow__background);
+  }
+}
+.ITableRow--odd {
+  .ITableColumnCell {
+    background: var(--ITableRow--odd__background);
+  }
+}
+.ITableCell_content {
+  // white-space: nowrap;
+  // overflow: hidden;
+  // text-overflow: ellipsis;
+}

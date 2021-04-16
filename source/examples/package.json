@@ -1,0 +1,42 @@
+{
+  "name": "examples",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "DEBUG=InfiniteTable:* next dev",
+    "build": "next build && next export",
+    "start": "next start",
+    "test": "rimraf .next && npm run build && npm run run-test",
+    "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run test:browser\"",
+    "start-server": "http-server -p 3000 out",
+    "test:browser": "jest --config=jest-browser.config.js --runInBand",
+    "test:watch": "DEBUG=InfiniteTable:* jest --config=jest-browser.config.js --watch --runInBand",
+    "//---- run test:watch with pattern example": "npm run test:watch -- --testPathPattern=x/y/z",
+    "test:debug:watch": "TIMEOUT=60000 DEBUG_ENV=true ndb jest --config=jest-browser.config.js --watch --runInBand"
+  },
+  "dependencies": {
+    "next": "10.0.7",
+    "puppeteer": "^8.0.0",
+    "sass": "^1.26.3",
+    "sinon": "^10.0.0",
+    "typescript": "4.1.5"
+  },
+  "devDependencies": {
+    "@types/expect-puppeteer": "^4.4.0",
+    "@types/jest": "^26.0.20",
+    "@types/jest-environment-puppeteer": "^4.3.1",
+    "@types/puppeteer": "^2.0.0",
+    "babel-plugin-dev-expression": "^0.2.2",
+    "concurrently": "^5.1.0",
+    "expect-puppeteer": "^4.4.0",
+    "http-server": "^0.12.1",
+    "jest": "^26.6.3",
+    "jest-environment-puppeteer": "^4.4.0",
+    "jest-image-snapshot": "^2.12.0",
+    "ndb": "^1.1.5",
+    "normalize.css": "^8.0.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "26.4.4",
+    "tslib": "^2.1.0"
+  }
+}
