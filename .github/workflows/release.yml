@@ -25,7 +25,7 @@ jobs:
         env:
           PRIVATE_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
 
-      - name: Echo whoami
+      - name: Echo whoami on github registry
         run: npm whoami --registry=https://npm.pkg.github.com
 
       - name: Echo publish cmd
