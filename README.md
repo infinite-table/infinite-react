@@ -2,6 +2,18 @@
 
 > InfiniteTable - the most productive React Table
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Overview](#overview)
+  - [Development process](#development-process)
+    - [Running the docs](#running-the-docs)
+  - [HTML Element classNames](#html-element-classnames)
+  - [CSS variables](#css-variables)
+    - [CSS top-level variables](#css-top-level-variables)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Overview
 
 Our approach with the `InfiniteTable` is to go documentation first. From our developer experience we know that most software products lack a good documentation. So we want to be different and start with the documentation first since our purpose is to have an outstanding documentation that developers can actually use.
@@ -18,38 +30,6 @@ $ npm run dev
 
 ```sh
 $ npm run docs
-```
-
-## HTML & CSS conventions
-
-We offer a set of utility css classes. They all respect the following rules
-
-- they only contain one rule
-- they start with `at__` - the prefix
-- after the prefix comes the name of the css property they contain
-- then comes `=`
-- then comes the value for the css property
-
-### Examples
-
-```jsx
-// JSX code
-
-//flex-flow: row
-<div className="at__flex-flow=row" />
-
-//overflow: auto
-<div className="at__overflow=auto" />
-
-//left: 0
-<div className="at__left=0" />
-
-//width: 100%
-<div className="at__width=100%" />
-
-//transform: translate3d(0, 0, 0)
-<div className="at__transform=translate3d-0-0-0" />
-
 ```
 
 ### HTML Element classNames
