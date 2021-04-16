@@ -13,6 +13,7 @@ export default describe('Column order controlled will never change', () => {
   });
 
   it('should change column order', async () => {
+    await page.waitForTimeout(50);
     let colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['id', 'model', 'price']);

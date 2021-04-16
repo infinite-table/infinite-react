@@ -11,7 +11,7 @@ export default describe('Table', () => {
   });
 
   it('controlled sortInfo should work properly', async () => {
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(50);
 
     const { headerCell, bodyCells } = await getColumnCells('CompanyName');
 
