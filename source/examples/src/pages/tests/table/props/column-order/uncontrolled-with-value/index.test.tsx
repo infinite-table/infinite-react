@@ -13,6 +13,7 @@ export default describe('Column order uncontrolled', () => {
   });
 
   it('should display specified cols correctly', async () => {
+    await page.waitForTimeout(20);
     let colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['id', 'model', 'price', 'year']);
@@ -24,6 +25,7 @@ export default describe('Column order uncontrolled', () => {
       ]);
     });
 
+    await page.waitForTimeout(20);
     colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['make', 'model']);
@@ -35,6 +37,7 @@ export default describe('Column order uncontrolled', () => {
       ]);
     });
 
+    await page.waitForTimeout(20);
     colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['id', 'rating']);

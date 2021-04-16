@@ -13,6 +13,7 @@ export default describe('Column visibility uncontrolled without any default valu
   });
 
   it('should display all cols', async () => {
+    await page.waitForTimeout(20);
     const colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(Array.from(columns.keys()));

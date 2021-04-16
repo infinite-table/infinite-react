@@ -12,12 +12,14 @@ export default describe('Column order uncontrolled without any default value', (
   });
 
   it('should display all cols', async () => {
+    await page.waitForTimeout(50);
     const colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['id', 'make', 'model', 'price', 'year', 'rating']);
   });
 
   it('should remove column when a new key is removed from the columns map', async () => {
+    await page.waitForTimeout(50);
     let colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['id', 'make', 'model', 'price', 'year', 'rating']);

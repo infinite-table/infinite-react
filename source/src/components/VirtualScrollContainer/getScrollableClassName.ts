@@ -1,4 +1,4 @@
-import { ICSS } from '@use-infinite-table/icss/runtime';
+import { ICSS } from '../../style/utilities';
 import { join } from '../../utils/join';
 
 export type Scrollable =

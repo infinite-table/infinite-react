@@ -78,7 +78,7 @@ export class VirtualBrain extends Logger {
   public setAvailableSize = (size: Size) => {
     this.availableSize = size;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       this.debug(
         'New available size %d',
         size[this.options.mainAxis === 'vertical' ? 'height' : 'width'],
@@ -135,7 +135,7 @@ export class VirtualBrain extends Logger {
       return;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       this.debug('set renderCount to %d', renderCount);
     }
     this.renderCount = renderCount;
@@ -228,7 +228,7 @@ export class VirtualBrain extends Logger {
       renderStartIndex !== renderRange.renderStartIndex
     ) {
       this.renderRange = renderRange;
-      if (process.env.NODE_ENV === 'development') {
+      if (__DEV__) {
         this.debug(
           'Set renderRange to %d-%d',
           renderRange.renderStartIndex,
@@ -325,7 +325,7 @@ export class VirtualBrain extends Logger {
       return;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       if (itemSizeChange && countChange) {
         this.debug(
           `Reset brain: reason itemSize changed and count changed (old ${count}, new ${newCount})`,

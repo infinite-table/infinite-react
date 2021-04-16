@@ -28,7 +28,7 @@ export class Logger {
   constructor(channelName: string) {
     this.debug = emptyLogFn;
     this.error = emptyLogFn;
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       this.debug = dbg(channelName);
       this.error = err(channelName);
     }

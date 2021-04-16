@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { CSSProperties, Ref, RefObject, useRef } from 'react';
 
-import { ICSS } from '@use-infinite-table/icss/runtime';
 import { useOnScroll } from '../hooks/useOnScroll';
 
 import { getScrollableClassName, Scrollable } from './getScrollableClassName';
 import { Renderable } from '../types/Renderable';
+import { ICSS } from '../../style/utilities';
 
 export type { Scrollable };
 

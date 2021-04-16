@@ -10,6 +10,7 @@ export default describe('RawList', () => {
   });
 
   it('should correctly render virtualized header', async () => {
+    await page.waitForTimeout(20);
     let cols = await getHeaderColumnIds();
 
     expect(cols).toEqual(['Id', 'FirstName', 'LastName', 'Age']);

@@ -68,7 +68,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedUnpinnedOffset,
     computedPinnedEndOffset,
   } = useMemo(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       debug('Computing columns');
     }
     return getComputedVisibleColumns({

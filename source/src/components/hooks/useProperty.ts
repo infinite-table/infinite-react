@@ -37,7 +37,7 @@ function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
   const getProps = useLatest(props);
 
   // eslint-disable-next-line
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     const prevName = usePrevious(propName);
     if (prevName !== propName) {
       throw `useProperty hook: Cannot change managed property! Changed from "${prevName}" to "${propName}".`;

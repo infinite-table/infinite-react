@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["globals.d.ts"],
+  "files": ["./src/index.tsx"],
+  "exclude": ["node_modules","./examples"],
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "rootDir": "./src"
+  }
+  
+}

@@ -63,7 +63,7 @@ export const VirtualList = (
     const removeOnRenderCount = virtualBrain.onRenderCountChange(
       (renderCount) => {
         renderCountRef.current = renderCount;
-        if (process.env.NODE_ENV === 'development') {
+        if (__DEV__) {
           debug.extend(mainAxis)(`Render count change ${renderCount}`);
         }
         rerender();
@@ -108,7 +108,7 @@ export const VirtualList = (
       ...defaultClasses,
     ),
   };
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     (domProps as any)['data-cmp-name'] = `VirtualList`;
   }
 

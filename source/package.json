@@ -5,9 +5,9 @@
   "publishConfig": {
     "registry": "https://https://npm.pkg.github.com"
   },
-  "main": "dist/index.js",
-  "module": "dist/table.esm.js",
-  "typings": "dist/index.d.ts",
+  "main": "index.js",
+  "module": "index.esm.js",
+  "typings": "index.d.ts",
   "files": [
     "dist"
   ],
@@ -15,8 +15,13 @@
     "css-compile": "sass ./src/components/Table/index.scss:./dist/index.css",
     "start-css": "sass ./src/components/Table/index.scss:./dist/index.css --watch",
     "start": "tsdx watch --tsconfig tsconfig.dev.json",
-    "tsc": "NODE_OPTIONS=\"--trace-warnings\" tsdx build",
-    "build": "NODE_OPTIONS=\"--trace-warnings\" tsdx build && npm run css-compile && node ./build/buildPackageJson.js",
+    "tsc": "tsc --project tsconfig.build.json --outDir dist",
+    "build": "rimraf dist && npm run newbuild && npm run css-compile && node ./build/buildPackageJson.js",
+    "newbuild": "npm run tsc && npm run esbuild && npm run copy-out",
+    "esbuild": "npm run esbuild-esm && npm run esbuild-cjs",
+    "esbuild-esm": "node run-build.js esm",
+    "esbuild-cjs": "node run-build.js cjs",
+    "copy-out": "rimraf react-test/src/out && cp -R out react-test/src",
     "test": "npm run --prefix=examples test && npm run css-compile",
     "dev-css": "yarn run start-css",
     "dev": "npm run --prefix=examples dev",
@@ -77,6 +82,7 @@
     "@typescript-eslint/parser": "4.0.0",
     "camelcase": "^6.0.0",
     "csstype": "^2.6.10",
+    "esbuild": "^0.11.11",
     "eslint": "7.7.0",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
@@ -93,7 +99,6 @@
     "typescript": "4.1.5"
   },
   "dependencies": {
-    "@use-infinite-table/icss": "^0.1.0",
     "binary-search": "^1.3.6",
     "debug": "^4.3.1",
     "resize-observer-polyfill": "^1.5.1"

@@ -13,6 +13,8 @@ export default describe('RawList-Horizontal', () => {
   });
 
   it('should correctly render on scroll', async () => {
+    await page.waitForTimeout(20);
+
     let result = await mapElements((el) => el.textContent);
     expect(result).toEqual(arr(12));
 

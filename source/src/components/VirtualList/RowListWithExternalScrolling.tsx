@@ -68,7 +68,7 @@ export const RowListWithExternalScrolling = (
       const node = domRef.current;
 
       if (node) {
-        if (process.env.NODE_ENV === 'development') {
+        if (__DEV__) {
           const { renderStartIndex, renderEndIndex } = brain.getRenderRange();
           (node.dataset as any).renderStartIndex = renderStartIndex;
           (node.dataset as any).renderEndIndex = renderEndIndex;
@@ -100,7 +100,7 @@ export const RowListWithExternalScrolling = (
       ...defaultClasses,
     ),
   };
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     (domProps as any)['data-cmp-name'] = 'RowListWithExternalScrolling';
   }
 

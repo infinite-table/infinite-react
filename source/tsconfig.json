@@ -1,5 +1,5 @@
 {
-  "include": ["src", "types","examples","globals.d.ts"],
+  "include": ["src","examples","globals.d.ts"],
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
@@ -15,6 +15,7 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUnusedLocals": true,

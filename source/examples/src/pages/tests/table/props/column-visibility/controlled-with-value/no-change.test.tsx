@@ -16,6 +16,7 @@ export default describe('Column visibility controlled will never change', () => 
   });
 
   it('should not change column visibility', async () => {
+    await page.waitForTimeout(20);
     let colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(cols);

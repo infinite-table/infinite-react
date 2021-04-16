@@ -84,7 +84,7 @@ export class ReactVirtualRenderer extends Logger {
     const { mappedItems } = this;
     const { renderStartIndex, renderEndIndex } = range;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       this.debug(
         `Render range ${renderStartIndex}-${renderEndIndex}. Force ${force}`,
       );
@@ -107,7 +107,7 @@ export class ReactVirtualRenderer extends Logger {
         }
 
         delete this.items[elementIndex];
-        if (process.env.NODE_ENV === 'development') {
+        if (__DEV__) {
           this.debug(`Discard element ${elementIndex}`);
         }
       });
@@ -139,7 +139,7 @@ export class ReactVirtualRenderer extends Logger {
 
       const elementIndex = elementsOutsideItemRange.pop();
       if (elementIndex == null) {
-        if (process.env.NODE_ENV === 'development') {
+        if (__DEV__) {
           this.error(`Cannot find element to render item ${i}`);
         }
         continue;
@@ -184,7 +184,7 @@ export class ReactVirtualRenderer extends Logger {
       />
     );
 
-    // if (process.env.NODE_ENV === 'development') {
+    // if (__DEV__) {
     //   this.debug(`Mount element ${elementIndex}`);
     // }
     this.items[elementIndex] = item;
@@ -213,7 +213,7 @@ export class ReactVirtualRenderer extends Logger {
     }
     this.mappedItems.renderItemAtElement(itemIndex, elementIndex, renderedNode);
 
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       this.debug(`Render item ${itemIndex} at element ${elementIndex}`);
     }
     itemUpdater(renderedNode);
@@ -230,7 +230,7 @@ export class ReactVirtualRenderer extends Logger {
     const options = this.brain.getOptions();
 
     if (itemIndex == null) {
-      if (process.env.NODE_ENV === 'development') {
+      if (__DEV__) {
         this.error(`Cannot find item for element ${elementIndex}`);
       }
       return;
@@ -243,7 +243,7 @@ export class ReactVirtualRenderer extends Logger {
     }
 
     if (itemElement) {
-      if (process.env.NODE_ENV === 'development') {
+      if (__DEV__) {
         (itemElement.dataset as any).elementIndex = elementIndex;
         (itemElement.dataset as any).itemIndex = itemIndex;
       }

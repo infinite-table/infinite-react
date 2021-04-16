@@ -219,7 +219,7 @@ const TableFactory = <T extends unknown>(_cfg: TableFactoryConfig = {}) => {
       bodyDOMRef,
       portalDOMRef,
     };
-    (globalThis as any).contextValue = contextValue;
+    // (globalThis as any).contextValue = contextValue;
 
     return (
       <React.StrictMode>

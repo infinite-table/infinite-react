@@ -70,11 +70,11 @@ function TableRowFn<T>(
   if (renderCellRef.current !== renderCell) {
     renderCellRef.current = renderCell;
   }
-  (renderCell as any)._colscount = columns.length;
+  // (renderCell as any)._colscount = columns.length;
 
-  (globalThis as any).renderCell = renderCell;
+  // (globalThis as any).renderCell = renderCell;
 
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     (domProps as any)['data-cmp-name'] = 'ITableRow';
   }
 

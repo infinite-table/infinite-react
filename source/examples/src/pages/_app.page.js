@@ -1,7 +1,6 @@
 import '@components/Table/index.scss';
 import '../index.scss';
 
-globalThis.__DEV__ = true;
 function MyApp({ Component, pageProps }) {
   if (!process.browser) {
     return null;

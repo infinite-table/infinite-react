@@ -10,12 +10,12 @@ const parentFolder = path.resolve(__dirname, '../');
 const withParentFolder = (nextConfig = {}) => {
   return Object.assign({}, nextConfig, {
     webpack(config, options) {
-      config.module.rules.forEach(rule => {
+      config.module.rules.forEach((rule) => {
         const ruleContainsTs =
           rule.test && rule.test.test && rule.test.test('index.tsx');
 
         if (ruleContainsTs && Array.isArray(rule.include)) {
-          rule.include = rule.include.map(include => {
+          rule.include = rule.include.map((include) => {
             if (include === examplesFolder) {
               return parentFolder;
             }
@@ -35,6 +35,12 @@ const withParentFolder = (nextConfig = {}) => {
       config.resolve.alias['@components'] = path.resolve('../src/components');
       config.resolve.alias['@src'] = path.resolve('../src');
       config.resolve.alias['@examples'] = path.resolve('./src');
+
+      config.plugins.forEach((plugin) => {
+        if (plugin.definitions) {
+          plugin.definitions['__DEV__'] = true;
+        }
+      });
       return config;
     },
   });

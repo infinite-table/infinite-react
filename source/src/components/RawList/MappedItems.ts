@@ -88,7 +88,7 @@ export class MappedItems extends Logger {
     elementIndex: number,
     renderNode?: Renderable,
   ) {
-    if (process.env.NODE_ENV === 'development') {
+    if (__DEV__) {
       this.debug(`Render item ${itemIndex} at element ${elementIndex}`);
     }
     const currentItemIndex: null | number = this.elementIndexToItemIndex[

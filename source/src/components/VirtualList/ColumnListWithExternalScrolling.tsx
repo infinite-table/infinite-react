@@ -62,7 +62,7 @@ export const ColumnListWithExternalScrolling = (
     ),
   };
 
-  if (process.env.NODE_ENV === 'development') {
+  if (__DEV__) {
     (domProps as any)['data-cmp-name'] = 'ColumnListWithExternalScrolling';
   }
 
