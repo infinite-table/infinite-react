@@ -1,6 +1,6 @@
 const format = process.argv[2];
 if (!format || !(format in { esm: true, cjs: true })) {
-  throw 'invalid format supplied';
+  throw 'Invalid format supplied';
 }
 require('esbuild')
   .build({
