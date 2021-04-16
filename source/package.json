@@ -17,11 +17,11 @@
     "start": "tsdx watch --tsconfig tsconfig.dev.json",
     "tsc": "tsc --project tsconfig.build.json --outDir dist",
     "build": "rimraf dist && npm run newbuild && npm run css-compile && node ./build/buildPackageJson.js",
-    "newbuild": "npm run tsc && npm run esbuild && npm run copy-out",
+    "newbuild": "npm run tsc && npm run esbuild",
     "esbuild": "npm run esbuild-esm && npm run esbuild-cjs",
     "esbuild-esm": "node run-build.js esm",
     "esbuild-cjs": "node run-build.js cjs",
-    "copy-out": "rimraf react-test/src/out && cp -R out react-test/src",
+    
     "test": "npm run --prefix=examples test && npm run css-compile",
     "dev-css": "yarn run start-css",
     "dev": "npm run --prefix=examples dev",
