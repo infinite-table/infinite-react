@@ -26,7 +26,7 @@ jobs:
           PRIVATE_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
 
       - name: Echo whoami
-        run: npm whoami --registry=https://registry.infinite-table.com
+        run: npm whoami --registry=https://npm.pkg.github.com
 
       - name: Echo publish cmd
         run: echo $WILL_RELEASE_CMD
