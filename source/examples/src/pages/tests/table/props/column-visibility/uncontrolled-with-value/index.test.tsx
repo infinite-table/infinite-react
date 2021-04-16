@@ -16,6 +16,7 @@ export default describe('Column visibility uncontrolled', () => {
   });
 
   it('should display specified cols correctly', async () => {
+    await page.waitForTimeout(20);
     let colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['model', 'price']);
@@ -34,6 +35,7 @@ export default describe('Column visibility uncontrolled', () => {
   });
 
   it('should display all cols correctly when clearing the visibility map', async () => {
+    await page.waitForTimeout(20);
     let colIds = await getHeaderColumnIds();
 
     expect(colIds).toEqual(['model', 'price']);

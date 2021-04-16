@@ -27,7 +27,7 @@ const renderItem: RenderItem = ({ itemIndex, domRef }) => {
 const App = () => {
   return (
     <div>
-      <RawList brain={brain} renderItem={renderItem}></RawList>;
+      <RawList brain={brain} renderItem={renderItem}></RawList>
     </div>
   );
 };

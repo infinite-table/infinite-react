@@ -13,6 +13,7 @@ export default describe('Table', () => {
   });
 
   it('uncontrolled sortInfo should work fine', async () => {
+    await page.waitForTimeout(50);
     const { headerCell, bodyCells } = await getColumnCells('OrderId');
 
     let values = await Promise.all(

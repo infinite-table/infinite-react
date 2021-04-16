@@ -55,6 +55,7 @@ export default describe('RowListWithExternalScrolling', () => {
   });
 
   it('should correctly render when scrolled to the end', async () => {
+    await page.waitForTimeout(20);
     await withBrain((brain) => {
       const COUNT_5 = 5;
       const ITEM_SIZE = 100;
@@ -66,7 +67,7 @@ export default describe('RowListWithExternalScrolling', () => {
       });
     });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(20);
     let elements = await mapElements((el) => el.textContent);
     expect(elements).toEqual(['row 0', 'row 1', 'row 2', 'row 3']);
 
@@ -77,7 +78,7 @@ export default describe('RowListWithExternalScrolling', () => {
       });
     });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(20);
     elements = await mapElements((el) => el.textContent);
     expect(elements).toEqual(['row 1', 'row 2', 'row 3', 'row 4']);
 
@@ -88,6 +89,7 @@ export default describe('RowListWithExternalScrolling', () => {
       });
     });
 
+    await page.waitForTimeout(20);
     elements = await mapElements((el) => el.textContent);
     expect(elements).toEqual(['row 1', 'row 2', 'row 3', 'row 4']);
   });
