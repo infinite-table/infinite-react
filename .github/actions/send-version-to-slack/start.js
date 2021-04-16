@@ -25,7 +25,7 @@ async function run() {
                 text: {
                   type: "mrkdwn",
                   text: `InfiniteTable version *${
-                    version || 512
+                    version || "uknown"
                   }* is out 🎉🎉🎉`,
                 },
               },

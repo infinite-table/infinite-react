@@ -74,5 +74,5 @@ node_modules
 
 .next
 
-.npmrc
+/.npmrc
 /source/examples/out

@@ -31,8 +31,8 @@ async function run() {
           type && isCanary ? `${type}:canary` : type ? type : "canary";
         const releasecmd = isCanary ? "canary-nobump" : "nobump";
 
-        const contents = `@use-infinite-table:registry=https://registry.infinite-table.com
-//registry.infinite-table.com/:_authToken=${PRIVATE_REGISTRY_TOKEN}
+        const contents = `
+//npm.pkg.github.com/:_authToken=${PRIVATE_REGISTRY_TOKEN}
 package-lock=false`;
 
         fs.writeFile(

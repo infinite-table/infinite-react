@@ -1,9 +1,9 @@
 {
-  "name": "@use-infinite-table/table",
-  "version": "0.1.10",
+  "name": "@use-infinite-table/react-table",
+  "version": "0.0.1",
   "private": true,
   "publishConfig": {
-    "registry": "https://registry.infinite-table.com"
+    "registry": "https://https://npm.pkg.github.com"
   },
   "main": "dist/index.js",
   "module": "dist/table.esm.js",

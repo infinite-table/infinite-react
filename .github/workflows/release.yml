@@ -43,6 +43,9 @@ jobs:
         run: npm run lint
         working-directory: source
 
+      - name: Update TOC in README.md
+        run: npm run doctoc
+
       - name: Bump version
         working-directory: source
         run: npm run bump:${WILL_RELEASE_VERSION}
@@ -70,7 +73,7 @@ jobs:
         uses: "./.github/actions/git-push-action"
         with:
           branch: master
-          github_token: ${{ secrets.AB_DEPLOY_GITHUB_TOKEN }}
+          github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
 
       - name: Send version to slack
         uses: "./.github/actions/send-version-to-slack"

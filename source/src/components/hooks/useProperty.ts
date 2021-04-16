@@ -1,3 +1,4 @@
+/*eslint-disable */
 import { useState, useEffect, useCallback } from 'react';
 import { toUpperFirst } from '../../utils/toUpperFirst';
 import { AllPropertiesOrNone } from '../Table/types/Utility';
@@ -35,6 +36,7 @@ function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
   const getConfig = useLatest(config);
   const getProps = useLatest(props);
 
+  // eslint-disable-next-line
   if (process.env.NODE_ENV === 'development') {
     const prevName = usePrevious(propName);
     if (prevName !== propName) {

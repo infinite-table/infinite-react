@@ -86,143 +86,139 @@ export const useColumnPointerEvents = <T>({
     'auto',
   );
 
-  const onPointerDown = column.computedDraggable
-    ? useCallback(
-        (e) => {
-          const target = domRef.current!;
+  const onPointerDown = useCallback(
+    (e) => {
+      const target = domRef.current!;
 
-          cursorRef.current = target.style.cursor;
+      cursorRef.current = target.style.cursor;
 
-          didDragRef.current = false;
-          initialClientPos.current = {
-            clientX: e.clientX,
-            clientY: e.clientY,
-          };
+      didDragRef.current = false;
+      initialClientPos.current = {
+        clientX: e.clientX,
+        clientY: e.clientY,
+      };
 
-          const onPointerMove = (e: PointerEvent) => {
-            if (!didDragRef.current) {
-              didDragRef.current = true;
-              breakpointsRef.current = getBreakPoints(columns);
+      const onPointerMove = (e: PointerEvent) => {
+        if (!didDragRef.current) {
+          didDragRef.current = true;
+          breakpointsRef.current = getBreakPoints(columns);
 
-              setDraggingDiff({ top: 0, left: 0 });
-              const rect = (target as HTMLElement).getBoundingClientRect();
-              setProxyOffset({
-                left: e.clientX - rect.x - 10,
-                top: e.clientY - rect.y - 10,
-              });
-              target.style.cursor = 'grabbing';
-            }
+          setDraggingDiff({ top: 0, left: 0 });
+          const rect = (target as HTMLElement).getBoundingClientRect();
+          setProxyOffset({
+            left: e.clientX - rect.x - 10,
+            top: e.clientY - rect.y - 10,
+          });
+          target.style.cursor = 'grabbing';
+        }
 
-            const diffX = e.clientX - initialClientPos.current!.clientX;
-            const diffY = e.clientY - initialClientPos.current!.clientY;
+        const diffX = e.clientX - initialClientPos.current!.clientX;
+        const diffY = e.clientY - initialClientPos.current!.clientY;
 
-            const dir = diffX < 0 ? -1 : 1;
+        const dir = diffX < 0 ? -1 : 1;
 
-            const columnPinned = column.computedPinned;
-            let currentPos =
-              dir === -1
-                ? column.computedAbsoluteOffset + diffX
-                : column.computedAbsoluteOffset + column.computedWidth + diffX;
+        const columnPinned = column.computedPinned;
+        let currentPos =
+          dir === -1
+            ? column.computedAbsoluteOffset + diffX
+            : column.computedAbsoluteOffset + column.computedWidth + diffX;
 
-            const breakpoints = breakpointsRef.current;
+        const breakpoints = breakpointsRef.current;
 
-            let index = binarySearch<ColumnBreakpoint, number>(
-              breakpoints,
-              currentPos,
-              ({ breakpoint }, value) => {
-                return breakpoint < value ? -1 : breakpoint > value ? 1 : 0;
-              },
-            );
+        let index = binarySearch<ColumnBreakpoint, number>(
+          breakpoints,
+          currentPos,
+          ({ breakpoint }, value) => {
+            return breakpoint < value ? -1 : breakpoint > value ? 1 : 0;
+          },
+        );
 
-            if (index < 0) {
-              index = ~index;
-            }
+        if (index < 0) {
+          index = ~index;
+        }
 
-            if (index !== currentDropIndexRef.current) {
-              currentDropIndexRef.current = index;
-              const shifts = columnsArray.map(() => 0);
+        if (index !== currentDropIndexRef.current) {
+          currentDropIndexRef.current = index;
+          const shifts = columnsArray.map(() => 0);
 
-              let total = 0;
+          let total = 0;
 
-              if (dir === -1) {
-                for (let i = index; i < columnIndex; i++) {
-                  let shiftBy = columnWidth;
-                  if (
-                    columnPinned === 'end' &&
-                    columnsArray[i].computedPinned === false &&
-                    columnsArray[i].computedLastInCategory &&
-                    computedRemainingSpace > 0
-                  ) {
-                    shiftBy += computedRemainingSpace;
-                  }
-                  shifts[i] = shiftBy;
-                  total -= shiftBy;
-                }
-              } else {
-                for (let i = columnIndex + 1; i < index; i++) {
-                  shifts[i] = -columnWidth;
-                  total += columnWidth;
-                }
+          if (dir === -1) {
+            for (let i = index; i < columnIndex; i++) {
+              let shiftBy = columnWidth;
+              if (
+                columnPinned === 'end' &&
+                columnsArray[i].computedPinned === false &&
+                columnsArray[i].computedLastInCategory &&
+                computedRemainingSpace > 0
+              ) {
+                shiftBy += computedRemainingSpace;
               }
-              if (index !== columnIndex) {
-                shifts[columnIndex] = total;
-              }
-
-              actions.setColumnShifts(shifts);
-              actions.setDraggingColumnId(column.id);
+              shifts[i] = shiftBy;
+              total -= shiftBy;
             }
-            setDraggingDiff({ left: diffX, top: diffY });
-          };
-          pointerMoveRef.current = onPointerMove;
-          target.addEventListener('pointermove', onPointerMove);
-
-          target.setPointerCapture(e.pointerId);
-        },
-        [columns, column, columnIndex, columnsArray, computedRemainingSpace],
-      )
-    : undefined;
-
-  const onPointerUp = column.computedDraggable
-    ? useCallback(
-        (e) => {
-          const target = domRef.current!;
-
-          target.style.cursor = cursorRef.current!;
-          target.releasePointerCapture(e.pointerId);
-          target.removeEventListener('pointermove', pointerMoveRef.current!);
-
-          setDraggingDiff(null);
-          actions.setColumnShifts(null);
-          actions.setDraggingColumnId(null);
-
-          if (!didDragRef.current && column.computedSortable) {
-            column.toggleSort();
+          } else {
+            for (let i = columnIndex + 1; i < index; i++) {
+              shifts[i] = -columnWidth;
+              total += columnWidth;
+            }
+          }
+          if (index !== columnIndex) {
+            shifts[columnIndex] = total;
           }
 
-          const dropIndex = currentDropIndexRef.current;
-          if (dropIndex != null && dropIndex !== columnIndex) {
-            const newOrder = moveXatY(
-              computedColumnOrder,
-              columnIndex,
-              dropIndex > columnIndex ? dropIndex - 1 : dropIndex,
-            );
+          actions.setColumnShifts(shifts);
+          actions.setDraggingColumnId(column.id);
+        }
+        setDraggingDiff({ left: diffX, top: diffY });
+      };
+      pointerMoveRef.current = onPointerMove;
+      target.addEventListener('pointermove', onPointerMove);
 
-            actions.setColumnOrder(newOrder);
-          }
+      target.setPointerCapture(e.pointerId);
+    },
+    [columns, column, columnIndex, columnsArray, computedRemainingSpace],
+  );
 
-          breakpointsRef.current = [];
-          pointerMoveRef.current = null;
-          didDragRef.current = false;
-          initialClientPos.current = null;
-          currentDropIndexRef.current = null;
-        },
-        [column, columnIndex, actions, computedColumnOrder],
-      )
-    : undefined;
+  const onPointerUp = useCallback(
+    (e) => {
+      const target = domRef.current!;
+
+      target.style.cursor = cursorRef.current!;
+      target.releasePointerCapture(e.pointerId);
+      target.removeEventListener('pointermove', pointerMoveRef.current!);
+
+      setDraggingDiff(null);
+      actions.setColumnShifts(null);
+      actions.setDraggingColumnId(null);
+
+      if (!didDragRef.current && column.computedSortable) {
+        column.toggleSort();
+      }
+
+      const dropIndex = currentDropIndexRef.current;
+      if (dropIndex != null && dropIndex !== columnIndex) {
+        const newOrder = moveXatY(
+          computedColumnOrder,
+          columnIndex,
+          dropIndex > columnIndex ? dropIndex - 1 : dropIndex,
+        );
+
+        actions.setColumnOrder(newOrder);
+      }
+
+      breakpointsRef.current = [];
+      pointerMoveRef.current = null;
+      didDragRef.current = false;
+      initialClientPos.current = null;
+      currentDropIndexRef.current = null;
+    },
+    [column, columnIndex, actions, computedColumnOrder],
+  );
 
   return {
-    onPointerUp,
-    onPointerDown,
+    onPointerUp: column.computedDraggable ? onPointerUp : null,
+    onPointerDown: column.computedDraggable ? onPointerDown : null,
     dragging,
     proxyOffset,
     draggingDiff: draggingDiff ?? { top: 0, left: 0 },
