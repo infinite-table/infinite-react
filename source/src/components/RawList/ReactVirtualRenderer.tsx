@@ -116,10 +116,11 @@ export class ReactVirtualRenderer extends Logger {
       this.items.length = renderCount;
     }
 
-    const elementsOutsideItemRange = this.mappedItems.getElementsOutsideItemRange(
-      renderStartIndex,
-      renderEndIndex,
-    );
+    const elementsOutsideItemRange =
+      this.mappedItems.getElementsOutsideItemRange(
+        renderStartIndex,
+        renderEndIndex,
+      );
 
     // start from the last rendered, and render additional elements, until we have renderCount
     // this loop might not even execute the body once if all the elements are present
@@ -223,9 +224,8 @@ export class ReactVirtualRenderer extends Logger {
 
   private updateElementPosition = (elementIndex: number) => {
     const itemElement = this.itemDOMElements[elementIndex];
-    const itemIndex = this.mappedItems.getItemRenderedAtElementIndex(
-      elementIndex,
-    );
+    const itemIndex =
+      this.mappedItems.getItemRenderedAtElementIndex(elementIndex);
 
     const options = this.brain.getOptions();
 
