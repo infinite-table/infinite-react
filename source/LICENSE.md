@@ -41,7 +41,7 @@ In these Terms, where the context so admits, the following words and expressions
 |**Quotation Renewal Term**|has the meaning set out in clause 14.1|
 |**Production Environment**|means a computer, server, collection of servers, data centre, cloud instance, container or similar where the Licensee's services and/or store are made available to the Licensee's customers|
 |**Services**|means the services (including the supply of Licensed Materials and Support Services), set out in the relevant Quotation, to be provided by the Licensor under such Quotation|
-|**Site**| means [GITHUB Location]; [npm name]; or any UMD bundle with an "infinite-table" prefix|
+|**Site**| means @infinite-table/infinite-react package on the public npm registry; or any UMD bundle with an "infinite-table" prefix|
 |**Software**| means the Infinite Table software made available by the Licensor|
 |**Source Code**| means the human-readable form of computer software, together with all documentation and comments relating thereto sufficient for a reasonably skilled computer programmer to understand, use, support and modify such computer software;|
 |**Special Usage Licence**| means a Developer Licence provided at no-cost on the terms set out in clause 4.2|
