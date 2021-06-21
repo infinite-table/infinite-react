@@ -99,7 +99,7 @@ The purchase of Extra Usage will entitle the Licensee to the provision of extend
 In the event of any conflict or inconsistency between the terms of these Terms and the terms of any Quotation, the terms of the relevant Quotation shall prevail only to the extent of any such conflict or inconsistency.
 
 ### 2.7
-Requests for Licence Quotations and Additional Quotations must be made by email to admin@infinite-table.com 3.
+Requests for Licence Quotations and Additional Quotations must be made by email to admin@infinite-table.com
 
 ## 3. Provision of Licensed Materials and Support Services
 
@@ -472,11 +472,11 @@ These Terms sets out all of the terms that have been agreed between the parties 
 
 These Terms are governed by English law. The parties submit to the exclusive jurisdiction of the English courts in relation to any dispute or difference between the parties arising out of or in connection with these Terms, its interpretation or subject-matter, but the Licensor is also entitled to apply to any court worldwide for injunctive or other remedies in order to protect or enforce its Intellectual Property Rights and/or Confidential Information.
 
-## Support Schedule
+# Support Schedule
 
-### 1.  Scope of Support Services
+## 1.  Scope of Support Services
 
-#### 1.1
+### 1.1
 
 The Licensor shall provide the following Support Services for the Software in accordance with these Terms:
 
@@ -484,11 +484,11 @@ The Licensor shall provide the following Support Services for the Software in ac
 
 (b) a software updating service as described in paragraph 3.
 
-#### 1.2
+### 1.2
 
 The Support Services will be provided in English.
 
-#### 1.3
+### 1.3
 
 Notwithstanding anything else in these Terms, the Licensor shall not be obliged to provide Support Services:
 
@@ -498,22 +498,22 @@ Notwithstanding anything else in these Terms, the Licensor shall not be obliged 
 
 (c) on any public holiday day in the UK; and
 
-### 2. Corrective maintenance
+## 2. Corrective maintenance
 
 (a) Upon receipt of a Support Request, the Licensor shall use its reasonable endeavours to commence corrective maintenance or otherwise resolve the Support Request by the end of the following Business Day.
 
 (b) Notwithstanding anything else in the Support Schedule, the Licensor shall only be required to resolve Support Requests: **(i)** which relate to the current release of the Software and previous releases that were released less than 12 months before the date of a Support Request; and **(ii)** if a New Version is not available which would otherwise resolve the Support Request, in which case the relevant Licensee Developer(s) may acquire such New Version.
 
-### 3. Software updating service
+## 3. Software updating service
 
-#### 3.1
+### 3.1
 
 The Licensor shall promptly make available to the Licensee Developers, as part of the Support Services, all Updates issued generally by the Licensor to its customers or to users of the Software.
 
-#### 3.2
+### 3.2
 
 The Licensee Developers shall have the right, in their sole discretion, to acquire any Update and, at any time, to download, or require the Licensor to make available such Update for download in the then-existing Software or, if appropriate, to substitute any New Version for the then-existing version. Updates will, upon installation (or, in the case of substitution of a New Version, upon substitution) be deemed part of the Software, governed by and to be maintained in accordance with these Terms.
 
-#### 3.3
+### 3.3
 
 The Licensor shall promptly notify the Licensee Developers of all revisions, additions or updates to all Documentation which may be necessary as a result of the provision of any Update to enable proper use to be made of the Software by the Licensee Developers.
