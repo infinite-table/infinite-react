@@ -83,18 +83,13 @@ export function TableHeaderCell<T>(props: TableHeaderCellProps<T>) {
   }, [domRef.current, props.onResize]);
 
   let style = { ...defaultStyle };
-  const {
-    onPointerDown,
-    onPointerUp,
-    dragging,
-    draggingDiff,
-    proxyOffset,
-  } = useColumnPointerEvents({
-    computedRemainingSpace,
-    columnId: column.id,
-    domRef,
-    columns,
-  });
+  const { onPointerDown, onPointerUp, dragging, draggingDiff, proxyOffset } =
+    useColumnPointerEvents({
+      computedRemainingSpace,
+      columnId: column.id,
+      domRef,
+      columns,
+    });
 
   let offset: number = virtualized ? 0 : column.computedPinningOffset;
 

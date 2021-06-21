@@ -15,7 +15,7 @@
     "test:debug:watch": "TIMEOUT=60000 DEBUG_ENV=true ndb jest --config=jest-browser.config.js --watch --runInBand"
   },
   "dependencies": {
-    "next": "10.0.7",
+    "next": "11.0.0",
     "puppeteer": "^8.0.0",
     "sass": "^1.26.3",
     "sinon": "^10.0.0",

@@ -1,0 +1,27 @@
+{
+  "name": "www-infinite-table",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && next export",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@mdx-js/loader": "^1.6.22",
+    "@next/mdx": "^10.2.3",
+    "@vanilla-extract/css": "^0.5.1",
+    "modern-normalize": "^1.0.0",
+    "next": "11.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "@types/react": "^17.0.3",
+    "@vanilla-extract/babel-plugin": "^0.4.2",
+    "@vanilla-extract/webpack-plugin": "0.3.1",
+    "typescript": "^4.2.3",
+    "webpack": "^5.0.0-rc.6"
+  }
+}

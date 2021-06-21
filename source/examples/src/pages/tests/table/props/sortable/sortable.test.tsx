@@ -41,7 +41,7 @@ export default describe('Table', () => {
   });
 
   it('sortable=false - sorting column with sortable=true should work', async () => {
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(50);
 
     const { headerCell, bodyCells } = await getColumnCells('id');
 

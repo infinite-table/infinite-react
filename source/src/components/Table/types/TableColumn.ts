@@ -5,7 +5,7 @@ import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import { TableEnhancedData } from '.';
 
 export interface TableColumnRenderParams<DATA_TYPE> {
-  // TODO type this to be the type of DATA_TYPE[column.field]
+  // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | ReactNode | void;
   data: DATA_TYPE | null;
   enhancedData: TableEnhancedData<DATA_TYPE>;
