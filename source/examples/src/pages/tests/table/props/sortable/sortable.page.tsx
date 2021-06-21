@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { TableFactory } from '@components/Table';
-import DataSource from '@src/components/DataSource';
+import { InfiniteTableFactory } from '@components/InfiniteTable';
+import { DataSource } from '@src/components/DataSource';
 
 interface Person {
   Id: number;
@@ -9,7 +9,7 @@ interface Person {
   Age: number;
 }
 
-const Table = TableFactory<Person>();
+const Table = InfiniteTableFactory<Person>();
 
 const data = [
   {

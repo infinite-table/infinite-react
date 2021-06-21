@@ -1,7 +1,7 @@
-import type { TableColumn } from '@src/components/Table';
+import type { InfiniteTableColumn } from '@src/components/Table';
 import type { Car } from './rowData';
 
-export const columns = new Map<string, TableColumn<Car>>([
+export const columns = new Map<string, InfiniteTableColumn<Car>>([
   ['id', { field: 'id' }],
   [
     'make',

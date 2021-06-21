@@ -1,4 +1,4 @@
-import '@components/Table/index.scss';
+import '@components/InfiniteTable/index.scss';
 import '../index.scss';
 
 function MyApp({ Component, pageProps }) {

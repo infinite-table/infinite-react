@@ -1,0 +1,31 @@
+@import './variables.scss';
+
+.ITable {
+  font-family: var(--ITable__font-family);
+  color: var(--ITable__color);
+  background: var(--ITable__background);
+  min-height: var(--ITable__min-height);
+  display: flex;
+  flex-flow: column;
+
+  @include box-sizing_border-box;
+
+  &--shifting {
+    user-select: none;
+  }
+}
+
+.ITable-Portal {
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ITableBody {
+  flex: 1;
+}
+
+@import '../components/InfiniteTableCell.scss';
+@import '../components/InfiniteTableRow/InfiniteTableRow.scss';
+@import '../components/InfiniteTableHeader/InfiniteTableHeader.scss';

@@ -1,7 +1,10 @@
 import * as React from 'react';
 
-import { TableColumn, TableFactory } from '@components/Table';
-import DataSource from '@src/components/DataSource';
+import {
+  InfiniteTableColumn,
+  InfiniteTableFactory,
+} from '@components/InfiniteTable';
+import { DataSource } from '@src/components/DataSource';
 
 interface Person {
   Id: number;
@@ -11,7 +14,7 @@ interface Person {
   Age: number;
 }
 
-const Table = TableFactory<Person>();
+const Table = InfiniteTableFactory<Person>();
 
 const data = [
   {
@@ -37,7 +40,7 @@ const data = [
   },
 ];
 
-const columns = new Map<string, TableColumn<Person>>([
+const columns = new Map<string, InfiniteTableColumn<Person>>([
   [
     'Id',
     {

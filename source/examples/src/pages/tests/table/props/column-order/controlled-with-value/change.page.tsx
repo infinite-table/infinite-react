@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {
-  TableFactory,
-  TableImperativeApi,
-  TablePropColumnOrder,
+  InfiniteTableFactory,
+  InfiniteTableImperativeApi,
+  InfiniteTablePropColumnOrder,
 } from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
@@ -11,19 +11,18 @@ import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 import { useState } from 'react';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnOrder = ['id', 'model', 'price'];
 
 (globalThis as any).calls = [];
-const onColumnOrderChange = (columnOrder: TablePropColumnOrder) => {
+const onColumnOrderChange = (columnOrder: InfiniteTablePropColumnOrder) => {
   (globalThis as any).calls.push(columnOrder);
 };
 
 const App = () => {
-  const [columnOrder, setColumnOrder] = useState<TablePropColumnOrder>(
-    defaultColumnOrder,
-  );
+  const [columnOrder, setColumnOrder] =
+    useState<InfiniteTablePropColumnOrder>(defaultColumnOrder);
   return (
     <React.StrictMode>
       <DataSource<Car>
@@ -45,7 +44,7 @@ const App = () => {
             setColumnOrder(columnOrder);
             onColumnOrderChange(columnOrder);
           }}
-          onReady={(api: TableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableImperativeApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

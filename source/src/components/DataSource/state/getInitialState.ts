@@ -1,11 +1,11 @@
-import { TableEnhancedData } from '../../Table';
+import { InfiniteTableEnhancedData } from '../../InfiniteTable';
 import { normalizeSortInfo } from '../props/useSortInfoProp';
 import { DataSourceProps, DataSourceSortInfo, DataSourceState } from '../types';
 
 function getInitialState<T>(
   initialProps: DataSourceProps<T>,
 ): DataSourceState<T> {
-  const dataArray: TableEnhancedData<T>[] = [];
+  const dataArray: InfiniteTableEnhancedData<T>[] = [];
   const originalDataArray: T[] = [];
   const sortInfo: DataSourceSortInfo<T> = normalizeSortInfo(
     initialProps.defaultSortInfo,

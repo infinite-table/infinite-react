@@ -1,4 +1,4 @@
-import { TableImperativeApi } from '@src/components/Table';
+import { InfiniteTableImperativeApi } from '@src/components/Table';
 import {
   getHeaderColumnIds,
   getHeaderColumnCells,
@@ -41,9 +41,9 @@ export default describe('Column visibility uncontrolled', () => {
     expect(colIds).toEqual(['model', 'price']);
 
     await page.evaluate(() => {
-      ((window as any).api as TableImperativeApi<any>).setColumnVisibility(
-        new Map(),
-      );
+      (
+        (window as any).api as InfiniteTableImperativeApi<any>
+      ).setColumnVisibility(new Map());
     });
 
     await page.waitForTimeout(20);

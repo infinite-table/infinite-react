@@ -1,7 +1,7 @@
 import { ReactNode, Dispatch } from 'react';
 import { Setter } from '../types/Setter';
 import { MultisortInfo } from '../../utils/multisort';
-import { TableEnhancedData } from '../Table';
+import { InfiniteTableEnhancedData } from '../InfiniteTable';
 
 export type DataSourceEnhancedData<T> = {
   data: T | null;
@@ -67,7 +67,7 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   loading: boolean;
   sortInfo: DataSourceSingleSortInfo<T>[];
   originalDataArray: T[];
-  dataArray: TableEnhancedData<T>[];
+  dataArray: InfiniteTableEnhancedData<T>[];
   groupBy: DataSourceGroupBy<T>;
 }
 

@@ -90,5 +90,5 @@ DataSource.defaultProps = {
 };
 
 export { useDataSource, DataSource };
-export default DataSource;
+
 export * from './types';

@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { DataSource, TableFactory, TablePropColumnOrder } from '@src/index';
+import {
+  DataSource,
+  InfiniteTableFactory,
+  InfiniteTablePropColumnOrder,
+} from '@src/index';
 
 import { rowData, Car } from './rowData';
 import { columns } from './columns';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnOrder = ['id', 'make', 'year', 'price'];
 
 const App = () => {
-  const [columnOrder, setColumnOrder] = useState<TablePropColumnOrder>(
-    defaultColumnOrder,
-  );
+  const [columnOrder, setColumnOrder] =
+    useState<InfiniteTablePropColumnOrder>(defaultColumnOrder);
   return (
     <React.StrictMode>
       <div>

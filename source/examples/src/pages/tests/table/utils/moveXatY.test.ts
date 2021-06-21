@@ -1,4 +1,4 @@
-import { moveXatY } from '@src/components/Table/utils/moveXatY';
+import { moveXatY } from '@src/components/InfiniteTable/utils/moveXatY';
 export default describe('moveXatY', () => {
   it('should behave correctly case 1', () => {
     const arr = [1, 2, 3, 4];

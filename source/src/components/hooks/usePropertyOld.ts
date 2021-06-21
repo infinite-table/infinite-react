@@ -6,7 +6,7 @@ import {
   useCallback,
 } from 'react';
 import { toUpperFirst } from '../../utils/toUpperFirst';
-import { AllPropertiesOrNone } from '../Table/types/Utility';
+import { AllPropertiesOrNone } from '../InfiniteTable/types/Utility';
 import { Setter } from '../types/Setter';
 import isControlled from '../utils/isControlled';
 import isControlledValue from '../utils/isControlledValue';
@@ -33,7 +33,7 @@ function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
     controlledToState?: boolean;
   } = {
     normalize: (v?: NORMALIZED | T_PROPS[V]): NORMALIZED => {
-      return (v as any) as NORMALIZED;
+      return v as any as NORMALIZED;
     },
     controlledToState: DEFAULT_CONFIG.controlledToState,
   },
@@ -47,7 +47,7 @@ function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
     const fn =
       getConfig().normalize ??
       ((v?: NORMALIZED | T_PROPS[V]): NORMALIZED => {
-        return (v as any) as NORMALIZED;
+        return v as any as NORMALIZED;
       });
 
     return fn(v);

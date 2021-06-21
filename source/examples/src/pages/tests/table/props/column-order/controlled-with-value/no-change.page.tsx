@@ -1,21 +1,21 @@
 import * as React from 'react';
 
 import {
-  TableFactory,
-  TableImperativeApi,
-  TablePropColumnOrder,
+  InfiniteTableFactory,
+  InfiniteTableImperativeApi,
+  InfiniteTablePropColumnOrder,
 } from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnOrder = ['id', 'model', 'price'];
 
 (globalThis as any).calls = [];
-const onColumnOrderChange = (columnOrder: TablePropColumnOrder) => {
+const onColumnOrderChange = (columnOrder: InfiniteTablePropColumnOrder) => {
   (globalThis as any).calls.push(columnOrder);
 };
 
@@ -38,7 +38,7 @@ const App = () => {
           }}
           columnOrder={defaultColumnOrder}
           onColumnOrderChange={onColumnOrderChange}
-          onReady={(api: TableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableImperativeApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

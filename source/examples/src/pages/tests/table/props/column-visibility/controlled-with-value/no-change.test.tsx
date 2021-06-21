@@ -1,4 +1,4 @@
-import { TableImperativeApi } from '@src/components/Table';
+import { InfiniteTableImperativeApi } from '@src/components/Table';
 import { getHeaderColumnIds } from '../../../../../../utils';
 import { columns } from '../columns';
 
@@ -22,7 +22,9 @@ export default describe('Column visibility controlled will never change', () => 
     expect(colIds).toEqual(cols);
 
     await page.evaluate(() => {
-      ((window as any).api as TableImperativeApi<any>).setColumnVisibility(
+      (
+        (window as any).api as InfiniteTableImperativeApi<any>
+      ).setColumnVisibility(
         new Map([
           ['make', false],
           ['model', false],
@@ -35,7 +37,9 @@ export default describe('Column visibility controlled will never change', () => 
     expect(colIds).toEqual(cols);
 
     await page.evaluate(() => {
-      ((window as any).api as TableImperativeApi<any>).setColumnVisibility(
+      (
+        (window as any).api as InfiniteTableImperativeApi<any>
+      ).setColumnVisibility(
         new Map([
           ['year', false],
           ['id', false],

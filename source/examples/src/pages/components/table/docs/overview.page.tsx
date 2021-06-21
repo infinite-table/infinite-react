@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { DataSource, TableFactory, TableColumn } from '@src/index';
+import {
+  DataSource,
+  InfiniteTableFactory,
+  InfiniteTableColumn,
+} from '@src/index';
 
 type Employee = {
   id: number;
@@ -8,7 +12,7 @@ type Employee = {
 };
 
 // we're ready to define columns
-const columns = new Map<string, TableColumn<Employee>>();
+const columns = new Map<string, InfiniteTableColumn<Employee>>();
 
 // the key in the columns map will be used as the column id
 columns.set('first', { field: 'firstName' });
@@ -21,7 +25,7 @@ const data: Employee[] = [
   { id: 2, firstName: 'Mary', lastName: 'Richardson' },
 ];
 
-const Table = TableFactory<Employee>();
+const Table = InfiniteTableFactory<Employee>();
 
 const domProps = {
   style: { height: '50vh', border: '1px solid gray' },

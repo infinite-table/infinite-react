@@ -1,16 +1,19 @@
 import * as React from 'react';
 
-import { TableFactory, TableImperativeApi } from '@src/components/Table';
+import {
+  InfiniteTableFactory,
+  InfiniteTableImperativeApi,
+} from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 
-import { TablePropColumnVisibility } from '@src/components/Table';
+import { InfiniteTablePropColumnVisibility } from '@src/components/Table';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
-const defaultColumnVisibility: TablePropColumnVisibility = new Map([
+const defaultColumnVisibility: InfiniteTablePropColumnVisibility = new Map([
   ['make', false],
   ['year', false],
   ['id', false],
@@ -19,7 +22,7 @@ const defaultColumnVisibility: TablePropColumnVisibility = new Map([
 (globalThis as any).calls = [];
 
 const onColumnVisibilityChange = (
-  columnVisibility: TablePropColumnVisibility,
+  columnVisibility: InfiniteTablePropColumnVisibility,
 ) => {
   (globalThis as any).calls.push(Array.from(columnVisibility));
 };
@@ -29,10 +32,9 @@ const App = () => {
     <React.StrictMode>
       <button
         onClick={() => {
-          ((globalThis as any)
-            .api as TableImperativeApi<any>).setColumnVisibility(
-            new Map([['id', false]]),
-          );
+          (
+            (globalThis as any).api as InfiniteTableImperativeApi<any>
+          ).setColumnVisibility(new Map([['id', false]]));
         }}
       >
         only hide id
@@ -53,7 +55,7 @@ const App = () => {
           }}
           defaultColumnVisibility={defaultColumnVisibility}
           onColumnVisibilityChange={onColumnVisibilityChange}
-          onReady={(api: TableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableImperativeApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={100}

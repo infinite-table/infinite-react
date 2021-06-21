@@ -1,7 +1,10 @@
 import * as React from 'react';
 
-import { TableColumn, TableFactory } from '@components/Table';
-import DataSource from '@src/components/DataSource';
+import {
+  InfiniteTableColumn,
+  InfiniteTableFactory,
+} from '@components/InfiniteTable';
+import { DataSource } from '@src/components/DataSource';
 
 interface FakeData {
   id: number;
@@ -57,7 +60,7 @@ const initialData: FakeData[] = [
   },
 ];
 
-const Table = TableFactory<FakeData>();
+const Table = InfiniteTableFactory<FakeData>();
 export default () => {
   const [rowHeight] = React.useState(50);
   const [data, setData] = React.useState(initialData);
@@ -125,7 +128,7 @@ export default () => {
                     return renderRow(data);
                   },
                 },
-              ].map((c) => [c.field, c as TableColumn<FakeData>]),
+              ].map((c) => [c.field, c as InfiniteTableColumn<FakeData>]),
             )
           }
         />

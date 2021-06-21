@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { TableFactory } from '@components/Table';
-import DataSource, { DataSourceSortInfo } from '@src/components/DataSource';
+import { InfiniteTableFactory } from '@components/InfiniteTable';
+import { DataSource, DataSourceSortInfo } from '@src/components/DataSource';
 
 interface Order {
   OrderId: number;
@@ -12,7 +12,7 @@ interface Order {
   ShipVia: string;
 }
 
-const Table = TableFactory<Order>();
+const Table = InfiniteTableFactory<Order>();
 
 const orders = [
   {

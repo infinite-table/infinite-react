@@ -1,12 +1,16 @@
 import * as React from 'react';
 
-import { DataSource, TableFactory, TableColumn } from '@src/index';
+import {
+  DataSource,
+  InfiniteTableFactory,
+  InfiniteTableColumn,
+} from '@src/index';
 
 import { rowData, Car } from './rowData';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
-const columns = new Map<string, TableColumn<Car>>([
+const columns = new Map<string, InfiniteTableColumn<Car>>([
   ['id', { field: 'id' }],
   [
     'make',

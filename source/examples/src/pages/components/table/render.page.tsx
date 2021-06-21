@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { TableFactory } from '@src/components/Table';
+import { InfiniteTableFactory } from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
-import { TableColumn } from '@src/components/Table/types/TableColumn';
+import { InfiniteTableColumn } from '@src/components/Table/types/TableColumn';
 
 interface RenderTest {
   col0: string;
@@ -76,12 +76,12 @@ const columns = new Map(
         field: key,
         id: key,
         header: ({ column }) => `${key} ${column.computedVisibleIndex}`,
-      } as TableColumn<RenderTest>,
+      } as InfiniteTableColumn<RenderTest>,
     ];
   }),
 );
 
-const Table = TableFactory<RenderTest>();
+const Table = InfiniteTableFactory<RenderTest>();
 
 export default () => {
   return (

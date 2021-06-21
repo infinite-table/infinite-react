@@ -1,7 +1,10 @@
 import * as React from 'react';
 
-import { TableColumn, TableFactory } from '@components/Table';
-import DataSource from '@src/components/DataSource';
+import {
+  InfiniteTableColumn,
+  InfiniteTableFactory,
+} from '@components/InfiniteTable';
+import { DataSource } from '@src/components/DataSource';
 
 interface Person {
   Id: number;
@@ -11,7 +14,7 @@ interface Person {
   Age: number;
 }
 
-const Table = TableFactory<Person>();
+const Table = InfiniteTableFactory<Person>();
 
 const data = [
   {
@@ -50,7 +53,7 @@ export default () => {
             name="default-width"
             value={columnDefaultWidth}
             onChange={(e) =>
-              setColumnDefaultWidth(((e.target.value as any) as number) * 1)
+              setColumnDefaultWidth((e.target.value as any as number) * 1)
             }
           />
         </p>
@@ -60,9 +63,7 @@ export default () => {
             type="number"
             name="min-width"
             value={minWidth}
-            onChange={(e) =>
-              setMinWidth(((e.target.value as any) as number) * 1)
-            }
+            onChange={(e) => setMinWidth((e.target.value as any as number) * 1)}
           />
         </p>
         <p>
@@ -72,7 +73,7 @@ export default () => {
             name="address-flex"
             value={addressFlex}
             onChange={(e) =>
-              setAddressFlex(((e.target.value as any) as number) * 1)
+              setAddressFlex((e.target.value as any as number) * 1)
             }
           />
         </p>
@@ -118,7 +119,7 @@ export default () => {
                   flex: addressFlex,
                 },
                 { field: 'Age', type: 'number' },
-              ].map((c) => [c.field, c as TableColumn<Person>]),
+              ].map((c) => [c.field, c as InfiniteTableColumn<Person>]),
             )
           }
         />

@@ -1,4 +1,4 @@
-import { TableEnhancedData } from '../../components/Table';
+import { InfiniteTableEnhancedData } from '../../components/InfiniteTable';
 import { DeepMap } from '../DeepMap';
 
 const GROUP_TO_KEY = (value: any) => value;
@@ -70,34 +70,36 @@ export function flatten<DataType>(
 
 export function enhancedFlatten<DataType>(
   groupResult: DataGroupResult<DataType>,
-): TableEnhancedData<DataType>[] {
+): InfiniteTableEnhancedData<DataType>[] {
   const { groupParams, deepMap } = groupResult;
   const groupByLength = groupParams.groupBy.length;
 
-  const result: TableEnhancedData<DataType>[] = [];
+  const result: InfiniteTableEnhancedData<DataType>[] = [];
 
-  deepMap.topDownKeys().reduce((acc: TableEnhancedData<DataType>[], key) => {
-    const items = deepMap.get(key)!;
+  deepMap
+    .topDownKeys()
+    .reduce((acc: InfiniteTableEnhancedData<DataType>[], key) => {
+      const items = deepMap.get(key)!;
 
-    acc.push({
-      data: null,
-      groupCount: items.length,
-      groupData: items,
-      groupKeys: key,
-      value: key[key.length - 1],
-      isGroupRow: true,
-      groupNesting: key.length,
-    });
-    if (key.length === groupByLength) {
-      acc.push(
-        ...items.map((item) => {
-          return { data: item, isGroupRow: false };
-        }),
-      );
-    }
+      acc.push({
+        data: null,
+        groupCount: items.length,
+        groupData: items,
+        groupKeys: key,
+        value: key[key.length - 1],
+        isGroupRow: true,
+        groupNesting: key.length,
+      });
+      if (key.length === groupByLength) {
+        acc.push(
+          ...items.map((item) => {
+            return { data: item, isGroupRow: false };
+          }),
+        );
+      }
 
-    return acc;
-  }, result);
+      return acc;
+    }, result);
 
   return result;
 }

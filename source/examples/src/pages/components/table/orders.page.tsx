@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { TableFactory } from '@src/components/Table';
+import { InfiniteTableFactory } from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
 import orders from '../../../datasets/orders.json';
 import {
-  TableColumn,
-  TableComputedColumn,
+  InfiniteTableColumn,
+  InfiniteTableComputedColumn,
 } from '@src/components/Table/types/TableColumn';
 import { useRef } from 'react';
 // import { DataSourceSortInfo } from '@src/components/DataSource/types';
@@ -28,9 +28,9 @@ orders.forEach((order, i) => {
 // orders.length = 2;
 console.log(orders.length);
 
-const Table = TableFactory<Order>();
+const Table = InfiniteTableFactory<Order>();
 
-function header<T>({ column }: { column: TableComputedColumn<T> }) {
+function header<T>({ column }: { column: InfiniteTableComputedColumn<T> }) {
   // console.log('render ', column.computedVisibleIndex);
   return `${column.id} ${column.computedVisibleIndex}`;
 }
@@ -135,7 +135,7 @@ const OrdersPage = () => {
           column,
           rowIndex,
         }: {
-          column: TableComputedColumn<Order>;
+          column: InfiniteTableComputedColumn<Order>;
           rowIndex: number;
         }) => {
           // console.log(
@@ -146,7 +146,7 @@ const OrdersPage = () => {
           // );
           return `${rowIndex}-${column.computedVisibleIndex}`;
         };
-        return c as TableColumn<Order>;
+        return c as InfiniteTableColumn<Order>;
       })
       .map((col) => {
         return [(col as any).id ?? col.field, col];

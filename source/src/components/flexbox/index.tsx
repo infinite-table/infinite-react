@@ -1,4 +1,4 @@
-import { RequireAtLeastOne } from '../Table/types/Utility';
+import { RequireAtLeastOne } from '../InfiniteTable/types/Utility';
 
 type FlexItem = {
   size?: number;

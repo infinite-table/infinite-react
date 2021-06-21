@@ -12,7 +12,7 @@ import { DataSourceActionType } from '../types';
 
 import { multisort } from '../../../utils/multisort';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
-import { TableEnhancedData } from '../../Table';
+import { InfiniteTableEnhancedData } from '../../InfiniteTable';
 
 let reducerFn: any;
 
@@ -109,7 +109,7 @@ function getReducer<T>(
       haveDepsChanged(initialState, state, ['originalDataArray', 'groupBy']);
 
     let dataArray = state.originalDataArray;
-    let enhancedDataArray: TableEnhancedData<T>[] = [];
+    let enhancedDataArray: InfiniteTableEnhancedData<T>[] = [];
 
     const sortInfo = state.sortInfo;
 

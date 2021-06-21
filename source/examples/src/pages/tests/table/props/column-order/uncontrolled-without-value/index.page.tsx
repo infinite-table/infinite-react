@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { TableFactory } from '@src/components/Table';
+import { InfiniteTableFactory } from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
 const App = () => {
   return (

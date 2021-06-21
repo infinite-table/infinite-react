@@ -2,18 +2,18 @@ import * as React from 'react';
 
 import {
   DataSource,
-  TableFactory,
-  TableColumn,
-  TablePropColumnOrder,
-  TablePropColumnPinning,
+  InfiniteTableFactory,
+  InfiniteTableColumn,
+  InfiniteTablePropColumnOrder,
+  InfiniteTablePropColumnPinning,
 } from '@src/index';
 
 import { rowData, Car } from './rowData';
 import { useState } from 'react';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
-const columns = new Map<string, TableColumn<Car>>([
+const columns = new Map<string, InfiniteTableColumn<Car>>([
   [
     'id',
     {
@@ -39,7 +39,7 @@ const columns = new Map<string, TableColumn<Car>>([
       // render: ({ value }) => <input value={value as string} />,
       // draggable: false,
       // name: 'NOT DRAGGABLE This is a long name for the model',
-    } as TableColumn<Car>,
+    } as InfiniteTableColumn<Car>,
   ],
   ['price', { field: 'price', name: 'Price' }],
   [
@@ -65,7 +65,7 @@ const columns = new Map<string, TableColumn<Car>>([
 
 const defaultColumnOrder = ['id', 'make', 'model', 'year', 'price'];
 
-const columnPinning: TablePropColumnPinning = new Map([
+const columnPinning: InfiniteTablePropColumnPinning = new Map([
   ['id', 'start'],
   ['make', 'end'],
   ['price', 'end'],
@@ -75,9 +75,8 @@ const App = () => {
   const [cols, setColumns] = React.useState(columns);
   (globalThis as any).setColumns = setColumns;
 
-  const [columnOrder, setColumnOrder] = useState<TablePropColumnOrder>(
-    defaultColumnOrder,
-  );
+  const [columnOrder, setColumnOrder] =
+    useState<InfiniteTablePropColumnOrder>(defaultColumnOrder);
   const rowProps = ({
     rowIndex,
     data,

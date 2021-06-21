@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import {
-  TableFactory,
-  TableColumn,
-  TablePropColumnPinning,
-} from '@src/components/Table/index';
-import DataSource from '@src/components/DataSource';
+  InfiniteTableFactory,
+  InfiniteTableColumn,
+  InfiniteTablePropColumnPinning,
+} from '@src/components/InfiniteTable/index';
+import { DataSource } from '@src/components/DataSource';
 
 interface DataItem {
   id: string;
@@ -15,13 +15,13 @@ interface DataItem {
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 const getColumns = (count: number) => {
-  const columns = new Map<string, TableColumn<DataItem>>();
+  const columns = new Map<string, InfiniteTableColumn<DataItem>>();
   let i = 0;
   while (columns.size < count) {
     const time = Math.floor(i / alphabet.length);
     const index = i % alphabet.length;
     const colName = alphabet[index] + (time + 1);
-    const column: TableColumn<DataItem> = {
+    const column: InfiniteTableColumn<DataItem> = {
       field: colName,
       render: ((i: number, { rowIndex, column }: any) => {
         // console.log('render', { rowIndex, columnName: column.id });
@@ -38,7 +38,7 @@ const getColumns = (count: number) => {
   return columns;
 };
 
-const Table = TableFactory<DataItem>();
+const Table = InfiniteTableFactory<DataItem>();
 
 const App = () => {
   const [columnCount, setColumnCount] = React.useState(100);
@@ -48,22 +48,23 @@ const App = () => {
     return getColumns(columnCount);
   }, [columnCount]);
 
-  const defaultColumnPinning: TablePropColumnPinning = React.useMemo(() => {
-    const ids = Array.from(columns.keys());
+  const defaultColumnPinning: InfiniteTablePropColumnPinning =
+    React.useMemo(() => {
+      const ids = Array.from(columns.keys());
 
-    return new Map([
-      [ids[0], 'start'],
-      [ids[1], 'start'],
-      [ids[2], 'end'],
-      [ids[3], 'end'],
-    ]);
-  }, [columns]);
+      return new Map([
+        [ids[0], 'start'],
+        [ids[1], 'start'],
+        [ids[2], 'end'],
+        [ids[3], 'end'],
+      ]);
+    }, [columns]);
 
   const [dataSourceCount, setDataSourceCount] = React.useState(100);
   const dataSource = React.useMemo(() => {
     return [...Array(dataSourceCount)].map((_x, rowIndex) => {
       const result = Array.from(columns.values()).reduce(
-        (acc: DataItem, col: TableColumn<DataItem>) => {
+        (acc: DataItem, col: InfiniteTableColumn<DataItem>) => {
           acc[col.field!] = `${col.field as string}-${rowIndex}`;
           return acc;
         },

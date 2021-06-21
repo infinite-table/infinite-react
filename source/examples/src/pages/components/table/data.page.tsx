@@ -1,6 +1,9 @@
 import * as React from 'react';
 
-import { TableColumn, TableFactory } from '@src/components/Table';
+import {
+  InfiniteTableColumn,
+  InfiniteTableFactory,
+} from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
 import orders from '../../../datasets/orders.json';
@@ -21,9 +24,9 @@ orders.forEach((order, i) => {
   order.OrderId = i;
 });
 
-const Table = TableFactory<Order>();
+const Table = InfiniteTableFactory<Order>();
 
-const columns = new Map<string, TableColumn<Order>>([
+const columns = new Map<string, InfiniteTableColumn<Order>>([
   [
     'OrderId',
     {

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {
-  TableFactory,
-  TableImperativeApi,
-  TablePropColumnVisibility,
+  InfiniteTableFactory,
+  InfiniteTableImperativeApi,
+  InfiniteTablePropColumnVisibility,
 } from '@src/components/Table';
 import DataSource from '@src/components/DataSource';
 
@@ -11,25 +11,23 @@ import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 import { useState } from 'react';
 
-const Table = TableFactory<Car>();
+const Table = InfiniteTableFactory<Car>();
 
-const defaultColumnVisibility: TablePropColumnVisibility = new Map([
+const defaultColumnVisibility: InfiniteTablePropColumnVisibility = new Map([
   ['make', false],
   ['year', false],
 ]);
 
 (globalThis as any).calls = [];
 const onColumnVisibilityChange = (
-  columnVisibility: TablePropColumnVisibility,
+  columnVisibility: InfiniteTablePropColumnVisibility,
 ) => {
   (globalThis as any).calls.push(Array.from(columnVisibility.entries()));
 };
 
 const App = () => {
-  const [
-    columnVisibility,
-    setColumnVisibility,
-  ] = useState<TablePropColumnVisibility>(defaultColumnVisibility);
+  const [columnVisibility, setColumnVisibility] =
+    useState<InfiniteTablePropColumnVisibility>(defaultColumnVisibility);
   return (
     <React.StrictMode>
       <DataSource<Car>
@@ -51,7 +49,7 @@ const App = () => {
             setColumnVisibility(columnVisibility);
             onColumnVisibilityChange(columnVisibility);
           }}
-          onReady={(api: TableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableImperativeApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

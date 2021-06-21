@@ -1,4 +1,4 @@
-import { TableImperativeApi } from '@src/components/Table';
+import { InfiniteTableImperativeApi } from '@src/components/Table';
 import { getHeaderColumnIds } from '../../../../../../utils';
 
 export default describe('Column order uncontrolled', () => {
@@ -19,7 +19,7 @@ export default describe('Column order uncontrolled', () => {
     expect(colIds).toEqual(['id', 'model', 'price', 'year']);
 
     await page.evaluate(() => {
-      ((window as any).api as TableImperativeApi<any>).setColumnOrder([
+      ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder([
         'make',
         'model',
       ]);
@@ -31,7 +31,7 @@ export default describe('Column order uncontrolled', () => {
     expect(colIds).toEqual(['make', 'model']);
 
     await page.evaluate(() => {
-      ((window as any).api as TableImperativeApi<any>).setColumnOrder([
+      ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder([
         'id',
         'rating',
       ]);
