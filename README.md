@@ -17,21 +17,19 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Documentation](#documentation)
-  - [Visit API docs](#visit-api-docs)
-  - [Development process](#development-process)
-    - [Running the docs](#running-the-docs)
+- [Development process](#development-process)
+  - [Running the docs](#running-the-docs)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Documentation
+## [Documentation](https://infinite-table.com/docs)
 
 Our approach with the `InfiniteTable` is to go documentation first. From our developer experience we know that most software products lack a good documentation. So we want to be different and start with the documentation first since our purpose is to have an outstanding documentation that developers can actually use.
 
+**[Visit API docs](https://infinite-table.com/docs)**
 
-### [Visit API docs](https://infinite-table.com/docs)
-
-### Development process
+## Development process
 
 You can start the examples by running:
 
@@ -39,7 +37,7 @@ You can start the examples by running:
 $ npm run dev
 ```
 
-#### Running the docs
+### Running the docs
 
 ```sh
 $ npm run docs
