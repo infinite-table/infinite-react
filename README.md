@@ -29,7 +29,7 @@
 Our approach with the `InfiniteTable` is to go documentation first. From our developer experience we know that most software products lack a good documentation. So we want to be different and start with the documentation first since our purpose is to have an outstanding documentation that developers can actually use.
 
 
-### [Visit API docs](infinite-table.com/docs)
+### [Visit API docs](https://infinite-table.com/docs)
 
 ### Development process
 
