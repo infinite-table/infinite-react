@@ -1,22 +1,35 @@
-# InfiniteTable
 
-> InfiniteTable - the most productive React Table
+<div align="center">
+
+<h1>
+<b>Infinite Table</b>
+</h1>
+<h3> huge datasets are no longer a problem</h3>
+  <a href="https://infinite-table.com">
+    <img width="150px" height="170px" alt="InfiniteTable Logo" src="https://infinite-table.com/logo-infinite.svg">
+  </a>
+
+</div>
+
+## Table Of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Overview](#overview)
+- [Documentation](#documentation)
+  - [Visit API docs](#visit-api-docs)
   - [Development process](#development-process)
     - [Running the docs](#running-the-docs)
-  - [HTML Element classNames](#html-element-classnames)
-  - [CSS variables](#css-variables)
-    - [CSS top-level variables](#css-top-level-variables)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Overview
+## Documentation
 
 Our approach with the `InfiniteTable` is to go documentation first. From our developer experience we know that most software products lack a good documentation. So we want to be different and start with the documentation first since our purpose is to have an outstanding documentation that developers can actually use.
+
+
+### [Visit API docs](infinite-table.com/docs)
 
 ### Development process
 
@@ -31,7 +44,7 @@ $ npm run dev
 ```sh
 $ npm run docs
 ```
-
+<!-- 
 ### HTML Element classNames
 
 - The table has the `ITable` className, and all HTML elements are prefixed with that.
@@ -70,4 +83,9 @@ Those are prefixed with `at-`. Examples:
 
 The ones meant primarily for a CSS property name will end with `__<property-name>`, like this:
 
-- `--it__border-radius`
+- `--it__border-radius` -->
+
+
+## License 
+
+[Commercial License](./source/LICENSE.md)
