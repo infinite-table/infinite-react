@@ -86,4 +86,4 @@ The ones meant primarily for a CSS property name will end with `__<property-name
 
 ## License 
 
-[Commercial License](./source/LICENSE.md)
+[Commercial License](https://github.com/infinite-table/react-table/blob/master/source/LICENSE.md)

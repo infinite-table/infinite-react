@@ -13,9 +13,9 @@ const toDelete = [
   'scripts',
   'private',
 ];
-toDelete.forEach(key => delete packageJSON[key]);
+toDelete.forEach((key) => delete packageJSON[key]);
 
-['main', 'module', 'typings'].forEach(key => {
+['main', 'module', 'typings'].forEach((key) => {
   let value = packageJSON[key];
 
   value = value.split('/');
@@ -23,13 +23,13 @@ toDelete.forEach(key => delete packageJSON[key]);
     value = value.splice(1).join('/');
   }
 
-  packageJSON[key] = value;
+  packageJSON[key] = value.join('/');
 });
 
 const content = JSON.stringify(packageJSON, null, 2);
 
 const path = resolve(__dirname, '../dist', 'package.json');
-fs.writeFile(path, content, 'utf8', err => {
+fs.writeFile(path, content, 'utf8', (err) => {
   if (err) {
     console.error(err);
     throw err;
