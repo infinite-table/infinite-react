@@ -9,7 +9,7 @@ import { ICSS } from '../../style/utilities';
 
 export type { Scrollable };
 
-const rootClassName = 'AT-VirtualScrollContainer';
+const rootClassName = 'IT-VirtualScrollContainer';
 const defaultClasName = [
   ICSS.position.fixed,
   ICSS.height['100%'],

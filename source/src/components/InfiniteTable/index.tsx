@@ -21,7 +21,7 @@ import type {
 import { join } from '../../utils/join';
 
 import { internalProps } from './internalProps';
-import { defaultProps } from './defaultProps';
+import { getDefaultProps } from './getDefaultProps';
 
 import { getInfiniteTableContext } from './InfiniteTableContext';
 
@@ -228,7 +228,7 @@ const InfiniteTableFactory = <T extends unknown>(
     );
   };
 
-  InfiniteTableContextProvider.defaultProps = defaultProps;
+  InfiniteTableContextProvider.defaultProps = getDefaultProps<T>();
 
   return InfiniteTableContextProvider;
 };

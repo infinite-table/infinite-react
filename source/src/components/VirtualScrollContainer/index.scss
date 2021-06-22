@@ -1,5 +1,5 @@
 @import '../../style/mixins.scss';
-.AT-VirtualScrollContainer {
+.IT-VirtualScrollContainer {
   @include box-sizing_border-box;
   backface-visibility: hidden;
   -webkit-overflow-scrolling: touch;
