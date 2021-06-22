@@ -1,4 +1,4 @@
-import { InfiniteTableImperativeApi } from '@src/components/Table';
+import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable';
 import { getHeaderColumnIds } from '../../../../../../utils';
 
 export default describe('Column visibility controlled will never change', () => {

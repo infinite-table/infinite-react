@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@src/components/Table';
-import DataSource from '@src/components/DataSource';
+import { InfiniteTableFactory } from '@src/components/InfiniteTable';
+import { DataSource } from '@src/components/DataSource';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';

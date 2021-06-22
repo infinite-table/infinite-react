@@ -45,6 +45,7 @@ import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { useListRendering } from './hooks/useListRendering';
 import { Size } from '../types/Size';
 import { ICSS } from '../../style/utilities';
+import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -137,6 +138,8 @@ const InfiniteTableFactory = <T extends unknown>(
             {pinnedStartScrollbarPlaceholder}
             {pinnedEndScrollbarPlaceholder}
           </InfiniteTableBody>
+
+          <InfiniteTableLicenseFooter />
 
           <div
             ref={portalDOMRef as RefObject<HTMLDivElement>}

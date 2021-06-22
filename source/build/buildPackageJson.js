@@ -26,6 +26,7 @@ toDelete.forEach((key) => delete packageJSON[key]);
   packageJSON[key] = value.join('/');
 });
 
+packageJSON.publishedAt = Date.now();
 const content = JSON.stringify(packageJSON, null, 2);
 
 const path = resolve(__dirname, '../dist', 'package.json');

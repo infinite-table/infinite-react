@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import DataSource, { useDataSource } from '@components/DataSource';
+import { DataSource, useDataSource } from '@components/DataSource';
 
 interface Person {
   name: string;

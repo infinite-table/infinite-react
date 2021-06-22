@@ -69,4 +69,6 @@ export type InfiniteTableProps<T> = {
         rowIndex: number;
         data: T | null;
       }) => HTMLProps<HTMLDivElement>);
+
+  licenseKey?: string;
 };

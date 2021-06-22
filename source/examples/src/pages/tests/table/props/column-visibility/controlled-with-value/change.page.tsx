@@ -4,8 +4,8 @@ import {
   InfiniteTableFactory,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnVisibility,
-} from '@src/components/Table';
-import DataSource from '@src/components/DataSource';
+} from '@src/components/InfiniteTable';
+import { DataSource } from '@src/components/DataSource';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';

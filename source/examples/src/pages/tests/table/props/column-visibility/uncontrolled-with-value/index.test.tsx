@@ -1,4 +1,4 @@
-import { InfiniteTableImperativeApi } from '@src/components/Table';
+import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable';
 import {
   getHeaderColumnIds,
   getHeaderColumnCells,

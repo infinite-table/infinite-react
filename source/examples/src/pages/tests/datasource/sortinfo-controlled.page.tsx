@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import DataSource, {
+import {
+  DataSource,
   DataSourceSortInfo,
   useDataSource,
 } from '@components/DataSource';
