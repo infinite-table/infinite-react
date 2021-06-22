@@ -1,4 +1,4 @@
-These terms and conditions ("Terms") are contracted between Infinite Table Ltd. (registered number XXXX) ("Licensor") and the entity whose details are provided in the Licence Quotation ("Licensee").
+These terms and conditions ("Terms") are contracted between Infinite Table Ltd. ("Licensor") and the entity whose details are provided in the Licence Quotation ("Licensee").
 This is effective as of the date of acceptance of these Terms ("Effective Date").
 
 # TERMS AND CONDITIONS
@@ -104,7 +104,7 @@ Requests for Licence Quotations and Additional Quotations must be made by email 
 ## 3. Provision of Licensed Materials and Support Services
 
 ### 3.1
-The Licensor shall make the Licensed Materials available in Source Code form at [GITHUB Location] on the first Quotation Effective Date by provision of an activation key and any login details required to access the Licensed Materials), subject to payment of the Fees.
+The Licensor shall make the Licensed Materials available in Source Code form at https://github.com/infinite-table/infinite-react on the first Quotation Effective Date by provision of an activation key and any login details required to access the Licensed Materials, subject to payment of the Fees.
 
 ### 3.2
 Subject to clauses 3.3 and 3.4 below, the Licensor grants to the Licensee a worldwide, perpetual, non-exclusive, non-transferable, non-sublicensable, royalty-free licence (in the form of an Application Developer Licence), commencing on the relevant Quotation Effective Date, to permit Licensee Developers to use the Licensed Materials (including taking all the actions permitted by clause 3.4 below) in accordance with these Terms, subject to the limit on the number of permitted Licensee Developers set out in the relevant Quotation. Members within the group of Licensee Developers can be replaced with alternative members as long as the number of concurrent Licensee Developers at any time does not exceed the limit set out in the relevant Quotation. For the purposes of this limit, each developer modifying JavaScript code as part of the creation of an Application's user interface or Modification of a user interface shall constitute a separate Licensee Developer. For example, if the Licensee has five developers working with JavaScript code on an Application, but only two developers directly working with the Software, all five developers will be counted as Licensee Developers.
@@ -148,7 +148,7 @@ Subject to clause 3.5, the Licensor will provide the Support Services to the Lic
 Notwithstanding anything else in these Terms, a Trial Licence may be granted, at the Licensors discretion, so that:
 (a) clauses 3.1, 3.2, 3.3, 3.4 and 3.8 shall not apply (unless and until a Licence Quote is entered into between the parties), and the Licensor instead hereby grants the Licensee a revocable, non-exclusive, perpetual, non-transferable and non-sublicensable licence to install, load, launch, access, run, execute, operate, and archive the Licensed Materials (as made available on the Effective Date) solely for the Licensee's internal evaluation and review purposes to determine whether to enter into a paid licence of the Software and not for any other purpose
 
-(b) the Licensee shall be able to access the Licensed Materials in Source Code form at [GITHUB Location] on the Effective Date;
+(b) the Licensee shall be able to access the Licensed Materials in Source Code form at https://github.com/infinite-table/infinite-react on the Effective Date;
 
 (c) Clauses 13 and 14 shall not apply and these Terms shall commence on the Effective Date and shall continue:
   (i) for a period of 60 days, consisting of a trial period of 30 days and a further period of 30 days during which the parties can agree to enter into a Licence Quotation, provided that the entering into of a Licence Quotation shall cause clauses 13 and 14 to apply; or
