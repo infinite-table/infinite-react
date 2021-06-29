@@ -96,7 +96,7 @@ To execute the tests you have to run:
 $ npm run test
 ```
 
-Test pages are found in [tests folder](./source/examples/src/pages/tests) - it is a nextjs app where every file ending with `.page.tsx` is a page/route, while it's sibling file with the same name, but ending in `.test.tsx` is the actual test code. The test code is visiting the sibling page/route, to load the page and executes assertions against the test page.
+Test pages are found in [tests folder](./source/examples/src/pages/tests) - which is part of a nextjs app where every file ending with `.page.tsx` is a page/route, while it's sibling file with the same name, but ending in `.test.tsx` is the actual test code. The test code is visiting the sibling page/route, to load the page and executes assertions against the test page.
 
 The test command command above does 3 things:
  
@@ -106,7 +106,7 @@ The test command command above does 3 things:
 
 ### Testing in development
 
-If you want to run the tests in dev mode, to get feedback sooner, you need to run the following:
+If you want to run the tests in dev mode, to get feedback sooner, you need to run the following (in the [source/examples folder](./source/examples)):
 
  * `npm run dev` - to run the nextjs app in development, on port `3000`
  * `npm run test:watch` to run jest on changed files - optionally add a test path pattern like `npm run test:watch -- --testPathPattern=x/y/z`
