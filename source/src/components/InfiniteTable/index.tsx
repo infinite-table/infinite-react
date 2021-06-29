@@ -46,6 +46,7 @@ import { useListRendering } from './hooks/useListRendering';
 import { Size } from '../types/Size';
 import { ICSS } from '../../style/utilities';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
+import { useLicense } from './hooks/useLicense/useLicense';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -105,6 +106,10 @@ const InfiniteTableFactory = <T extends unknown>(
         getProps,
       });
 
+      const licenseValid = useLicense(
+        props.licenseKey || (globalThis as any).InfiniteTableLicenseKey || '',
+      );
+
       return (
         <div ref={domRef} {...domProps} className={className}>
           {header ? (
@@ -139,7 +144,7 @@ const InfiniteTableFactory = <T extends unknown>(
             {pinnedEndScrollbarPlaceholder}
           </InfiniteTableBody>
 
-          <InfiniteTableLicenseFooter />
+          {licenseValid ? null : <InfiniteTableLicenseFooter />}
 
           <div
             ref={portalDOMRef as RefObject<HTMLDivElement>}

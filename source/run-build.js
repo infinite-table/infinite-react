@@ -12,6 +12,8 @@ require('esbuild')
     bundle: true,
     define: {
       __DEV__: 'false',
+      __VERSION__: '"' + require('./package.json').version + '"',
+      __VERSION_TIMESTAMP__: require('./package.json').publishedAt,
     },
     watch: watch
       ? {

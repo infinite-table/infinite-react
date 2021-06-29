@@ -1,6 +1,8 @@
 import '@components/InfiniteTable/index.scss';
 import '../index.scss';
 
+globalThis.InfiniteTableLicenseKey = process.env.NEXT_PUBLIC_LICENSE_KEY;
+
 function MyApp({ Component, pageProps }) {
   if (!process.browser) {
     return null;

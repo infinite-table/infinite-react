@@ -39,6 +39,10 @@ const withParentFolder = (nextConfig = {}) => {
       config.plugins.forEach((plugin) => {
         if (plugin.definitions) {
           plugin.definitions['__DEV__'] = true;
+          plugin.definitions['__VERSION__'] =
+            require('../package.json').version;
+          plugin.definitions['__VERSION_TIMESTAMP__'] =
+            require('../package.json').publishedAt;
         }
       });
       return config;

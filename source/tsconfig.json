@@ -23,6 +23,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "jsx": "react",
     "esModuleInterop": true,
   },
