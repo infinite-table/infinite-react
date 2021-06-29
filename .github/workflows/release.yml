@@ -75,7 +75,7 @@ jobs:
           branch: master
           github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
 
-      - name: Send version to slack
-        uses: "./.github/actions/send-version-to-slack"
-        with:
-          slack_webhook_notify: ${{ secrets.SLACK_WEBHOOK_NOTIFY }}
+      # - name: Send version to slack
+      #   uses: "./.github/actions/send-version-to-slack"
+      #   with:
+      #     slack_webhook_notify: ${{ secrets.SLACK_WEBHOOK_NOTIFY }}

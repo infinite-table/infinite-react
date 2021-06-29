@@ -25,39 +25,21 @@ async function run() {
       }
 
       if (type || isCanary) {
-        const PRIVATE_REGISTRY_TOKEN = process.env.PRIVATE_REGISTRY_TOKEN;
-
         const versionbump =
           type && isCanary ? `${type}:canary` : type ? type : "canary";
         const releasecmd = isCanary ? "canary-nobump" : "nobump";
 
-        const contents = `
-//npm.pkg.github.com/:_authToken=${PRIVATE_REGISTRY_TOKEN}
-package-lock=false`;
-
-        fs.writeFile(
-          ".npmrc",
-
-          contents,
-          (error) => {
-            if (error) {
-              core.setFailed(error.message);
-            } else {
-              core.exportVariable(
-                "WILL_RELEASE_CMD",
-                `npm run release:${releasecmd}`
-              );
-              core.exportVariable("WILL_RELEASE_VERSION", versionbump);
-              core.exportVariable("WILL_RELEASE", "true");
-
-              core.info(
-                "set env var WILL_RELEASE_CMD = " +
-                  `npm run release:${releasecmd}`
-              );
-              core.info("DONE writing .npmrc");
-            }
-          }
+        core.exportVariable(
+          "WILL_RELEASE_CMD",
+          `npm run release:${releasecmd}`
         );
+        core.exportVariable("WILL_RELEASE_VERSION", versionbump);
+        core.exportVariable("WILL_RELEASE", "true");
+
+        core.info(
+          "set env var WILL_RELEASE_CMD = " + `npm run release:${releasecmd}`
+        );
+
         return;
       }
     }
