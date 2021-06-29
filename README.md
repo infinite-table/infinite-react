@@ -84,6 +84,18 @@ The ones meant primarily for a CSS property name will end with `__<property-name
 - `--it__border-radius` -->
 
 
+
+## Testing
+
+Infinite Table is built with extensive end-to-end testing via headless chrome (more exactly, puppeteer).
+To execute the tests you have to run:
+
+```sh
+$ npm run test
+```
+
+Test pages are found in [tests folder](./source/examples/src/pages/tests) - it is a nextjs app where every file ending with `.page.tsx` is a page/route, while it's sibling file with the same name, but ending in `.test.tsx` is the actual test code. The test code is visiting the sibling page/route, to load the page and executes assertions against the test page.
+
 ## License 
 
 [Commercial License](https://github.com/infinite-table/react-table/blob/master/source/LICENSE.md)
