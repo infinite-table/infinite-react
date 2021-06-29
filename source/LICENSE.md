@@ -1,6 +1,100 @@
 These terms and conditions ("Terms") are contracted between Infinite Table Ltd. ("Licensor") and the entity whose details are provided in the Licence Quotation ("Licensee").
 This is effective as of the date of acceptance of these Terms ("Effective Date").
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [TERMS AND CONDITIONS](#terms-and-conditions)
+  - [1.  Definitions and interpretation](#1--definitions-and-interpretation)
+    - [1.1 Definitions](#11-definitions)
+    - [1.2 Interpretation](#12-interpretation)
+  - [2.  Basis of terms](#2--basis-of-terms)
+    - [2.1](#21)
+    - [2.2](#22)
+    - [2.3](#23)
+    - [2.4](#24)
+    - [2.5](#25)
+    - [2.6](#26)
+    - [2.7](#27)
+  - [3. Provision of Licensed Materials and Support Services](#3-provision-of-licensed-materials-and-support-services)
+    - [3.1](#31)
+    - [3.2](#32)
+    - [3.3](#33)
+    - [3.4](#34)
+    - [3.5](#35)
+    - [3.6](#36)
+    - [3.7](#37)
+    - [3.8](#38)
+  - [4. Trial and Special Usage Licence](#4-trial-and-special-usage-licence)
+    - [4.1](#41)
+    - [4.2](#42)
+    - [4.3](#43)
+    - [4.4](#44)
+  - [5. Charges, invoicing and payment](#5-charges-invoicing-and-payment)
+    - [5.1](#51)
+    - [5.2](#52)
+    - [5.3](#53)
+  - [6.  Warranties](#6--warranties)
+    - [6.1](#61)
+    - [6.2](#62)
+    - [6.3](#63)
+    - [6.4](#64)
+  - [7.  Insurance](#7--insurance)
+    - [7.1](#71)
+  - [8.  Intellectual Property Rights](#8--intellectual-property-rights)
+    - [8.1](#81)
+    - [8.2](#82)
+    - [8.3](#83)
+  - [9. Indemnities](#9-indemnities)
+    - [9.1](#91)
+    - [9.2](#92)
+  - [10. Exclusions and limitations](#10-exclusions-and-limitations)
+    - [10.1](#101)
+    - [10.2](#102)
+    - [10.3](#103)
+  - [11. Confidentiality](#11-confidentiality)
+    - [11.1](#111)
+    - [11.2](#112)
+  - [12. Data protection](#12-data-protection)
+    - [12.1](#121)
+    - [12.2](#122)
+  - [13. Commencement and duration of Terms](#13-commencement-and-duration-of-terms)
+    - [13.1](#131)
+  - [14. Commencement and duration of Quotations](#14-commencement-and-duration-of-quotations)
+    - [14.1](#141)
+    - [14.2](#142)
+  - [15. Termination](#15-termination)
+    - [15.1](#151)
+  - [16. Consequences of termination](#16-consequences-of-termination)
+    - [16.1](#161)
+    - [16.2](#162)
+  - [17. Force majeure](#17-force-majeure)
+  - [18. General](#18-general)
+    - [18.1](#181)
+    - [18.2](#182)
+    - [18.3](#183)
+    - [18.4](#184)
+    - [18.5](#185)
+    - [18.6](#186)
+    - [18.7](#187)
+    - [18.8](#188)
+    - [18.9](#189)
+    - [18.10](#1810)
+    - [18.11](#1811)
+    - [18.12](#1812)
+- [Support Schedule](#support-schedule)
+  - [1.  Scope of Support Services](#1--scope-of-support-services)
+    - [1.1](#11)
+    - [1.2](#12)
+    - [1.3](#13)
+  - [2. Corrective maintenance](#2-corrective-maintenance)
+  - [3. Software updating service](#3-software-updating-service)
+    - [3.1](#31-1)
+    - [3.2](#32-1)
+    - [3.3](#33-1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # TERMS AND CONDITIONS
 
 ## 1.  Definitions and interpretation
@@ -397,7 +491,7 @@ Termination of these Terms and/or any Quotation for any reason will not affect:
 ## 17. Force majeure
 
 Neither party will be liable to the other for any failure or delay in performing its obligations under these Terms which arises because of any circumstances which it cannot reasonably be expected to control (including any fire, flood, earthquake, elements of nature or acts of God, acts of war (whether or not war is declared), terrorism, riots, civil disorders, rebellions or revolutions, strikes, lock outs or other form of industrial action, provided that nothing shall affect the Licensee's obligation to make any payments due under these Terms. 18.
-## General
+## 18. General
 
 ### 18.1
 
