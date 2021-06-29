@@ -20,6 +20,7 @@
 - [Development process](#development-process)
   - [Running the docs](#running-the-docs)
 - [Testing](#testing)
+  - [Testing in development](#testing-in-development)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -102,6 +103,13 @@ The test command command above does 3 things:
  * compiles the nextjs app found in the [examples folder](./source/examples) - runs `next build && next export`, which creates an `out` folder with the resulting examples/tests app
  * starts a webserver that serves the generated `out` folder on [localhost:3000](http://localhost:3000)
  * runs jest+puppeteer against the app served at [localhost:3000](http://localhost:3000)
+
+### Testing in development
+
+If you want to run the tests in dev mode, to get feedback sooner, you need to run the following:
+
+ * `npm run dev` - to run the nextjs app in development, on port `3000`
+ * `npm run test:watch` to run jest on changed files - optionally add a test path pattern like `npm run test:watch -- --testPathPattern=x/y/z`
 
 ## License 
 
