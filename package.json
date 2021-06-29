@@ -21,8 +21,7 @@
     "url": "https://github.com/infinite-table/react-table/issues"
   },
   "homepage": "https://github.com/infinite-table/react-table#readme",
-  "dependencies": {
-    "@use-infinite-table/icss": "^0.1.0"
-  },
-  "devDependencies": {}
+  "devDependencies": {
+    "doctoc": "^2.0.0"
+  }
 }
