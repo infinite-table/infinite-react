@@ -7,8 +7,6 @@ import {
   useCallback,
 } from 'react';
 
-import ResizeObserverPoly from 'resize-observer-polyfill';
-
 import { Size, OnResizeFn } from '../types/Size';
 
 interface ResizeObserverProps {
@@ -32,7 +30,7 @@ export const setupResizeObserver = (
   node: HTMLElement,
   callback: OnResizeFn,
 ): (() => void) => {
-  const RO = (window as any).ResizeObserver || ResizeObserverPoly;
+  const RO = (window as any).ResizeObserver;
 
   const observer = new RO((entries: any[]) => {
     const entry = entries[0];
