@@ -19,6 +19,7 @@
 - [Documentation](#documentation)
 - [Development process](#development-process)
   - [Running the docs](#running-the-docs)
+- [Testing](#testing)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
