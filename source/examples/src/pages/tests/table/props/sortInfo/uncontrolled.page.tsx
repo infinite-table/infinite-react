@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@components/InfiniteTable';
-import { DataSource, DataSourceSortInfo } from '@src/components/DataSource';
+import { InfiniteTableFactory } from '@infinite-table/infinite-react';
+import { DataSource, DataSourceSortInfo } from '@infinite-table/infinite-react';
 
 interface Order {
   OrderId: number;

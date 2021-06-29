@@ -1,13 +1,15 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@src/components/Table';
-import DataSource from '@src/components/DataSource';
+import {
+  InfiniteTableFactory,
+  DataSource,
+} from '@infinite-table/infinite-react';
 
 import orders from '../../../datasets/orders.json';
 import {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
-} from '@src/components/Table/types/TableColumn';
+} from '@infinite-table/infinite-react';
 import { useRef } from 'react';
 // import { DataSourceSortInfo } from '@src/components/DataSource/types';
 // import { useState } from 'react';

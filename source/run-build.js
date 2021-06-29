@@ -11,9 +11,11 @@ require('esbuild')
     entryPoints: ['src/index.tsx'],
     bundle: true,
     define: {
-      __DEV__: 'false',
-      __VERSION__: '"' + require('./package.json').version + '"',
-      __VERSION_TIMESTAMP__: require('./package.json').publishedAt,
+      __DEV__: JSON.stringify(false),
+      __VERSION__: JSON.stringify(require('./package.json').version),
+      __VERSION_TIMESTAMP__: JSON.stringify(
+        require('./package.json').publishedAt,
+      ),
     },
     watch: watch
       ? {

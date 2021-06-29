@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "DEBUG=InfiniteTable:* next dev",
-    "build": "next build &&next export",
+    "build": "next build && next export",
     "start": "next start",
     "test": "rimraf .next && npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run test:browser\"",
@@ -15,11 +15,11 @@
     "test:debug:watch": "TIMEOUT=60000 DEBUG_ENV=true ndb jest --config=jest-browser.config.js --watch --runInBand"
   },
   "dependencies": {
-    "next": "11.0.0",
+    "next": "11.0.1",
     "puppeteer": "^8.0.0",
     "sass": "^1.26.3",
     "sinon": "^10.0.0",
-    "typescript": "4.1.5"
+    "typescript": "4.3.4"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^4.4.0",

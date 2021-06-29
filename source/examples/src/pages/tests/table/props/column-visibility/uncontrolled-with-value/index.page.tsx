@@ -3,13 +3,13 @@ import * as React from 'react';
 import {
   InfiniteTableFactory,
   InfiniteTableImperativeApi,
-} from '@src/components/InfiniteTable';
-import { DataSource } from '@src/components/DataSource';
+} from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 
-import { InfiniteTablePropColumnVisibility } from '@src/components/InfiniteTable';
+import { InfiniteTablePropColumnVisibility } from '@infinite-table/infinite-react';
 
 const Table = InfiniteTableFactory<Car>();
 

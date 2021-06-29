@@ -1,4 +1,4 @@
-import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable';
+import { InfiniteTableImperativeApi } from '@infinite-table/infinite-react';
 import { getHeaderColumnIds } from '../../../../../../utils';
 
 export default describe('Column order uncontrolled', () => {

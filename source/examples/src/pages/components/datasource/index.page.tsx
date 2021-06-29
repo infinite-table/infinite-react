@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import DataSource, { useDataSource } from '@src/components/DataSource';
+import { DataSource, useDataSource } from '@infinite-table/infinite-react';
 
 interface Person {
   name: string;
@@ -23,7 +23,7 @@ const Cmp = () => {
     </div>
   );
 };
-const personsPromise: Promise<Person[]> = new Promise(resolve => {
+const personsPromise: Promise<Person[]> = new Promise((resolve) => {
   setTimeout(() => {
     resolve(persons);
   }, 2000);

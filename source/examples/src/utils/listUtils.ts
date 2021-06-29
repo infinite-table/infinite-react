@@ -5,7 +5,7 @@ import { ElementHandle } from 'puppeteer';
 export const withBrain = async (fn: (brain: VirtualBrain) => void) => {
   const handle = await page.evaluateHandle(() => {
     return (window as any).brain;
-  }, fn);
+  }, fn as any);
 
   return await (await page.evaluateHandle(fn, handle)).jsonValue();
 };
@@ -35,7 +35,7 @@ export const sortElements = async (elements: ElementHandle[]) => {
   return result;
 };
 
-export const getElements = async (root?: ElementHandle | string) => {
+export const getElements = async (root?: ElementHandle | string | null) => {
   if (typeof root === 'string') {
     root = await page.$(root);
   }

@@ -4,8 +4,8 @@ import {
   InfiniteTableFactory,
   InfiniteTableColumn,
   InfiniteTablePropColumnPinning,
-} from '@src/components/InfiniteTable/index';
-import { DataSource } from '@src/components/DataSource';
+} from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
 interface DataItem {
   id: string;

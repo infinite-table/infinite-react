@@ -1,4 +1,5 @@
 import { adjustColumnOrderForPinning } from '@src/components/InfiniteTable/utils/adjustColumnOrderForPinning';
+
 export default describe('adjustColumnOrderForPinning', () => {
   it('should behave correctly case 1', () => {
     const order = ['ps1', 'u1', 'pe1', 'pe2', 'u2', 'ps2'];

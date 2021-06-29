@@ -1,5 +1,6 @@
 // next.config.js
 const path = require('path');
+const webpack = require('webpack');
 const examplesFolder = path.resolve(__dirname);
 const parentFolder = path.resolve(__dirname, '../');
 
@@ -32,19 +33,21 @@ const withParentFolder = (nextConfig = {}) => {
       config.resolve.alias['react-dom'] = path.resolve(
         '../node_modules/react-dom',
       );
-      config.resolve.alias['@components'] = path.resolve('../src/components');
+      config.resolve.alias['@infinite-table/infinite-react'] =
+        path.resolve('../src/');
       config.resolve.alias['@src'] = path.resolve('../src');
       config.resolve.alias['@examples'] = path.resolve('./src');
 
-      config.plugins.forEach((plugin) => {
-        if (plugin.definitions) {
-          plugin.definitions['__DEV__'] = true;
-          plugin.definitions['__VERSION__'] =
-            require('../package.json').version;
-          plugin.definitions['__VERSION_TIMESTAMP__'] =
-            require('../package.json').publishedAt;
-        }
+      const definePlugin = new webpack.DefinePlugin({
+        __DEV__: JSON.stringify(true),
+        __VERSION__: JSON.stringify(require('../package.json').version),
+        __VERSION_TIMESTAMP__: JSON.stringify(
+          require('../package.json').publishedAt || 0,
+        ),
       });
+
+      config.plugins.push(definePlugin);
+
       return config;
     },
   });
@@ -52,4 +55,7 @@ const withParentFolder = (nextConfig = {}) => {
 module.exports = {
   ...withParentFolder(),
   pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };

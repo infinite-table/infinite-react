@@ -4,7 +4,7 @@ import {
   DataSource,
   InfiniteTableFactory,
   InfiniteTableColumn,
-} from '@src/index';
+} from '@infinite-table/infinite-react';
 
 import { rowData, Car } from './rowData';
 

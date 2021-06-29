@@ -3,12 +3,12 @@ import * as React from 'react';
 import {
   InfiniteTableFactory,
   InfiniteTableImperativeApi,
-} from '@src/components/InfiniteTable';
-import { DataSource } from '@src/components/DataSource';
+} from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from './rowData';
 import { columns } from './columns';
-import { InfiniteTablePropColumnOrder } from '@src/components/InfiniteTable/types';
+import { InfiniteTablePropColumnOrder } from '@infinite-table/infinite-react';
 import { useState } from 'react';
 
 const Table = InfiniteTableFactory<Car>();

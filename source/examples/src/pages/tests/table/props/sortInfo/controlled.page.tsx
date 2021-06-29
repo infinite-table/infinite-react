@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@components/InfiniteTable';
-import { DataSource } from '@src/components/DataSource';
+import { InfiniteTableFactory } from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
-import { DataSourceSortInfo } from '@src/components/DataSource/types';
+import { DataSourceSortInfo } from '@infinite-table/infinite-react';
 import { useState } from 'react';
 
 interface Order {

@@ -3,8 +3,8 @@ import * as React from 'react';
 import {
   InfiniteTableColumn,
   InfiniteTableFactory,
-} from '@components/InfiniteTable';
-import { DataSource } from '@src/components/DataSource';
+} from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
 interface Person {
   Id: number;

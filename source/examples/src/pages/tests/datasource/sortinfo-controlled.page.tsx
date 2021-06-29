@@ -4,7 +4,7 @@ import {
   DataSource,
   DataSourceSortInfo,
   useDataSource,
-} from '@components/DataSource';
+} from '@infinite-table/infinite-react';
 
 import { Person, persons } from './sortPersons';
 const Cmp = () => {

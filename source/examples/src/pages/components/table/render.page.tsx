@@ -1,9 +1,11 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@src/components/Table';
-import DataSource from '@src/components/DataSource';
+import {
+  DataSource,
+  InfiniteTableFactory,
+} from '@infinite-table/infinite-react';
 
-import { InfiniteTableColumn } from '@src/components/Table/types/TableColumn';
+import { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
 interface RenderTest {
   col0: string;

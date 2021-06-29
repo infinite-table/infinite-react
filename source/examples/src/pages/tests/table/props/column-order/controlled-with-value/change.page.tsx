@@ -4,8 +4,8 @@ import {
   InfiniteTableFactory,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
-} from '@src/components/InfiniteTable';
-import { DataSource } from '@src/components/DataSource';
+} from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';

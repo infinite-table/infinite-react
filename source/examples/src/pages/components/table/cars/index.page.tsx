@@ -6,7 +6,7 @@ import {
   InfiniteTableColumn,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
-} from '@src/index';
+} from '@infinite-table/infinite-react';
 
 import { rowData, Car } from './rowData';
 import { useState } from 'react';

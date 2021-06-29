@@ -1,6 +1,6 @@
 {
   "name": "infinite-table",
-  "version": "0.0.1",
+  "version": "x.y.z",
   "private": true,
   "description": "The most productive React Table",
   "main": "index.js",

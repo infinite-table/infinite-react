@@ -1,7 +1,7 @@
 import {
   DataSourceSingleSortInfo,
   DataSourceSortInfo,
-} from '@src/components/DataSource/types';
+} from '@infinite-table/infinite-react';
 import { useProperty } from '@src/components/hooks/useProperty';
 import { useState } from 'react';
 

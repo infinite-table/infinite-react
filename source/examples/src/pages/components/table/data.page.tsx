@@ -3,8 +3,8 @@ import * as React from 'react';
 import {
   InfiniteTableColumn,
   InfiniteTableFactory,
-} from '@src/components/Table';
-import DataSource from '@src/components/DataSource';
+  DataSource,
+} from '@infinite-table/infinite-react';
 
 import orders from '../../../datasets/orders.json';
 import { useRef } from 'react';

@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","../globals.d.ts"],
   "compilerOptions": {
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,6 +13,8 @@
     "paths": {
       "react": ["../../node_modules/react"],
       "react-dom": ["../../node_modules/react-dom/profiling"],
+      "@infinite-table/infinite-react/*": ["../src/*"],
+      "@infinite-table/infinite-react": ["../src/index"],
       "@src/*": ["../src/*"],
       "@examples/*": ["./src/*"],
       
