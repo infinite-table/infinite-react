@@ -97,6 +97,12 @@ $ npm run test
 
 Test pages are found in [tests folder](./source/examples/src/pages/tests) - it is a nextjs app where every file ending with `.page.tsx` is a page/route, while it's sibling file with the same name, but ending in `.test.tsx` is the actual test code. The test code is visiting the sibling page/route, to load the page and executes assertions against the test page.
 
+The test command command above does 3 things:
+ 
+ * compiles the nextjs app found in the [examples folder](./source/examples) - runs `next build && next export`, which creates an `out` folder with the resulting examples/tests app
+ * starts a webserver that serves the generated `out` folder on [localhost:3000](http://localhost:3000)
+ * runs jest+puppeteer against the app served at [localhost:3000](http://localhost:3000)
+
 ## License 
 
 [Commercial License](https://github.com/infinite-table/react-table/blob/master/source/LICENSE.md)
