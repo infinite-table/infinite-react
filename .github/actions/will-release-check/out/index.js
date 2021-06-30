@@ -574,15 +574,14 @@ async function run() {
       }
 
       if (type || isCanary) {
-        const PRIVATE_REGISTRY_TOKEN = process.env.PRIVATE_REGISTRY_TOKEN;
-
         const versionbump =
           type && isCanary ? `${type}:canary` : type ? type : "canary";
         const releasecmd = isCanary ? "canary-nobump" : "nobump";
 
         const contents = `
-//npm.pkg.github.com/:_authToken=${PRIVATE_REGISTRY_TOKEN}
-package-lock=false`;
+//registry.npmjs.org/:_authToken=8529e65f-e349-478e-81f4-fe94af2d592e
+package-lock=false
+`;
 
         fs.writeFile(
           ".npmrc",
