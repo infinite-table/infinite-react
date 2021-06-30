@@ -5,9 +5,6 @@
   "main": "index.js",
   "module": "index.esm.js",
   "typings": "index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "css-compile": "sass ./src/components/InfiniteTable/index.scss:./dist/index.css",
     "css-watch": "sass ./src/components/InfiniteTable/index.scss:./dist/index.css --watch",
@@ -29,8 +26,8 @@
     "/": "//",
     "/--- should not run locally ----": "//",
     "/--- as this is run via github actions CI ----": "//",
-    "registry-publish": "npm publish dist --dry-run",
-    "registry-publish-canary": "npm publish --tag canary dist --dry-run",
+    "registry-publish": "npm publish dist",
+    "registry-publish-canary": "npm publish --tag canary dist",
     "//": "// only used in the release.yml workflow",
     "release:canary-nobump": "npm run registry-publish-canary",
     "release:nobump": "npm run registry-publish",
