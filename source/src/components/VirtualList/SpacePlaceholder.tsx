@@ -14,7 +14,6 @@ function SpacePlaceholderFn(props: SpacePlaceholderProps) {
     width,
     zIndex: -1,
     opacity: 0,
-    // position: 'absolute',
     pointerEvents: 'none',
   };
 

@@ -27,7 +27,7 @@ orders.forEach((order, i) => {
   order.OrderId = i;
 });
 
-// orders.length = 2;
+orders.length = 2;
 console.log(orders.length);
 
 const Table = InfiniteTableFactory<Order>();
@@ -69,67 +69,67 @@ const OrdersPage = () => {
       },
       {
         field: 'CompanyName',
-        // flex: 1,
+        flex: 1,
         id: 'companyname',
       },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic1',
-        align: 'center',
-      },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic2',
-        align: 'center',
-      },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic3',
-        align: 'center',
-      },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic4',
-        align: 'center',
-      },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic5',
-        align: 'center',
-      },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic6',
-        align: 'center',
-      },
-      {
-        field: 'ItemCount',
-        type: 'number',
-        id: 'ic7',
-        align: 'center',
-      },
-      { field: 'OrderCost', type: 'number' },
-      { id: 'oc1', field: 'OrderCost', type: 'number' },
-      { id: 'oc2', field: 'OrderCost', type: 'number' },
-      { id: 'oc3', field: 'OrderCost', type: 'number' },
-      { id: 'oc4', field: 'OrderCost', type: 'number' },
-      { id: 'oc5', field: 'OrderCost', type: 'number' },
-      { id: 'oc6', field: 'OrderCost', type: 'number' },
-      { id: 'oc7', field: 'OrderCost', type: 'number' },
-      { id: 'oc8', field: 'OrderCost', type: 'number' },
-      { id: 'oc9', field: 'OrderCost', type: 'number' },
-      { id: 'oc10', field: 'OrderCost', type: 'number' },
-      { id: 'oc11', field: 'OrderCost', type: 'number' },
-      { id: 'oc12', field: 'OrderCost', type: 'number' },
-      { id: 'oc13', field: 'OrderCost', type: 'number' },
-      { field: 'ShipCountry', header: () => 'country' },
-      { field: 'ShipVia', header: () => 'via' },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic1',
+      //   align: 'center',
+      // },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic2',
+      //   align: 'center',
+      // },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic3',
+      //   align: 'center',
+      // },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic4',
+      //   align: 'center',
+      // },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic5',
+      //   align: 'center',
+      // },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic6',
+      //   align: 'center',
+      // },
+      // {
+      //   field: 'ItemCount',
+      //   type: 'number',
+      //   id: 'ic7',
+      //   align: 'center',
+      // },
+      // { field: 'OrderCost', type: 'number' },
+      // { id: 'oc1', field: 'OrderCost', type: 'number' },
+      // { id: 'oc2', field: 'OrderCost', type: 'number' },
+      // { id: 'oc3', field: 'OrderCost', type: 'number' },
+      // { id: 'oc4', field: 'OrderCost', type: 'number' },
+      // { id: 'oc5', field: 'OrderCost', type: 'number' },
+      // { id: 'oc6', field: 'OrderCost', type: 'number' },
+      // { id: 'oc7', field: 'OrderCost', type: 'number' },
+      // { id: 'oc8', field: 'OrderCost', type: 'number' },
+      // { id: 'oc9', field: 'OrderCost', type: 'number' },
+      // { id: 'oc10', field: 'OrderCost', type: 'number' },
+      // { id: 'oc11', field: 'OrderCost', type: 'number' },
+      // { id: 'oc12', field: 'OrderCost', type: 'number' },
+      // { id: 'oc13', field: 'OrderCost', type: 'number' },
+      // { field: 'ShipCountry', header: () => 'country' },
+      // { field: 'ShipVia', header: () => 'via' },
     ]
       .map((c) => {
         c.header = header;

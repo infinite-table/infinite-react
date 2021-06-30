@@ -137,8 +137,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
   const computedUnpinnedColumns: InfiniteTableComputedColumn<T>[] = [];
 
   const computedVisibleColumns: InfiniteTableComputedColumn<T>[] = [];
-  const computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>> =
-    new Map();
+  const computedVisibleColumnsMap: Map<
+    string,
+    InfiniteTableComputedColumn<T>
+  > = new Map();
 
   let computedUnpinnedColumnsWidth = 0;
   let computedPinnedStartColumnsWidth = 0;
