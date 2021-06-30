@@ -41,24 +41,21 @@ export const Cards = () => {
         gridGap: "1.5rem",
       }}
     >
-      <Card title="📃 Documentation" href="https://nextjs.org/docs">
+      <Card title="📃 Documentation" href=".">
         Find in-depth information about <b>REACT INFINITE TABLE</b>.
       </Card>
 
-      <Card title="🔎 Examples" href="https://nextjs.org/learn">
+      <Card title="🔎 Examples" href=".">
         Discover practical examples to help you get started
       </Card>
 
-      <Card
-        title="📢 Blog"
-        href="https://github.com/vercel/next.js/tree/master/examples"
-      >
+      <Card title="📢 Blog" href=".">
         Read our articles to help you get the most of the infinite table
       </Card>
 
       <Card
         title="🧪 Automated tests"
-        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+        href="https://github.com/infinite-table/infinite-react#testing"
       >
         Thoroughly tested with real browsers and e2e tests
       </Card>
