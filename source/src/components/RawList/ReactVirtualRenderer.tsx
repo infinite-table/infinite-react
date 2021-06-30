@@ -63,7 +63,7 @@ export class ReactVirtualRenderer extends Logger {
       onRender,
       channel,
     }: {
-      onRender: (items: Renderable[]) => void;
+      onRender?: ReactVirtualRenderer['onRender'];
       channel?: string;
     },
   ) {
@@ -71,7 +71,9 @@ export class ReactVirtualRenderer extends Logger {
       `ReactVirtualRenderer:${brain.getOptions().mainAxis}` + (channel ?? ''),
     );
 
-    this.onRender = onRender;
+    if (onRender) {
+      this.onRender = onRender;
+    }
 
     this.brain = brain;
     this.mappedItems = new MappedItems(brain.getOptions().mainAxis);
@@ -79,7 +81,15 @@ export class ReactVirtualRenderer extends Logger {
 
   renderRange = (
     range: RenderRange,
-    { renderItem, force }: { renderItem: RenderItem; force: boolean },
+    {
+      renderItem,
+      force,
+      onRender,
+    }: {
+      renderItem: RenderItem;
+      force: boolean;
+      onRender?: (items: Renderable[]) => void;
+    },
   ): Renderable[] => {
     const { mappedItems } = this;
     const { renderStartIndex, renderEndIndex } = range;
@@ -160,7 +170,13 @@ export class ReactVirtualRenderer extends Logger {
     //   // we have more items than last time
     //   // so we need to show new items
     result = [...this.items];
-    this.onRender(result);
+
+    if (this.onRender) {
+      this.onRender(result);
+    }
+    if (onRender) {
+      onRender(result);
+    }
     //   this.prevLength = result.length;
     // }
 

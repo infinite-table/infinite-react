@@ -9,14 +9,13 @@ import { useLatest } from '../hooks/useLatest';
 function RawListFn(props: RawListProps) {
   const { renderItem, brain, debugChannel } = props;
 
-  const { updater, renderer } = useMemo(() => {
-    const updater = buildUpdater();
+  const { onRenderUpdater, renderer } = useMemo(() => {
+    const onRenderUpdater = buildUpdater();
     const renderer = new ReactVirtualRenderer(brain, {
-      onRender: updater,
       channel: debugChannel,
     });
 
-    return { updater, renderer };
+    return { onRenderUpdater, renderer };
   }, []);
 
   const getRenderItem = useLatest(renderItem);
@@ -27,27 +26,29 @@ function RawListFn(props: RawListProps) {
     renderer.renderRange(renderRange, {
       renderItem,
       force: true,
+      onRender: onRenderUpdater,
     });
-  }, [renderItem]);
+  }, [renderItem, onRenderUpdater]);
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {
       renderer.renderRange(renderRange, {
         force: false,
         renderItem: getRenderItem(),
+        onRender: onRenderUpdater,
       });
     });
     return remove;
-  }, [brain]);
+  }, [brain, onRenderUpdater]);
 
   useEffect(() => {
     return () => {
       renderer.destroy();
-      updater.destroy();
+      onRenderUpdater.destroy();
     };
-  }, [renderer]);
+  }, [renderer, onRenderUpdater]);
 
-  return <AvoidReactDiff updater={updater} />;
+  return <AvoidReactDiff updater={onRenderUpdater} />;
 }
 
 export const RawList: React.FC<RawListProps> = React.memo(RawListFn);
