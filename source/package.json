@@ -1,6 +1,6 @@
 {
   "name": "@infinite-table/infinite-react",
-  "version": "0.0.1-canary.0",
+  "version": "0.0.0",
   "main": "index.js",
   "module": "index.esm.js",
   "typings": "index.d.ts",
@@ -25,8 +25,8 @@
     "/": "//",
     "/--- should not run locally ----": "//",
     "/--- as this is run via github actions CI ----": "//",
-    "registry-publish": "npm publish dist",
-    "registry-publish-canary": "npm publish --tag canary dist",
+    "registry-publish": "npm publish --access public dist",
+    "registry-publish-canary": "npm publish --access public --tag canary dist",
     "//": "// only used in the release.yml workflow",
     "release:canary-nobump": "npm run registry-publish-canary",
     "release:nobump": "npm run registry-publish",
