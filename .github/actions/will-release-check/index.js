@@ -29,17 +29,34 @@ async function run() {
           type && isCanary ? `${type}:canary` : type ? type : "canary";
         const releasecmd = isCanary ? "canary-nobump" : "nobump";
 
-        core.exportVariable(
-          "WILL_RELEASE_CMD",
-          `npm run release:${releasecmd}`
-        );
-        core.exportVariable("WILL_RELEASE_VERSION", versionbump);
-        core.exportVariable("WILL_RELEASE", "true");
+        const contents = `
+//registry.npmjs.org/:_authToken=8529e65f-e349-478e-81f4-fe94af2d592e
+package-lock=false
+`;
 
-        core.info(
-          "set env var WILL_RELEASE_CMD = " + `npm run release:${releasecmd}`
-        );
+        fs.writeFile(
+          ".npmrc",
 
+          contents,
+          (error) => {
+            if (error) {
+              core.setFailed(error.message);
+            } else {
+              core.exportVariable(
+                "WILL_RELEASE_CMD",
+                `npm run release:${releasecmd}`
+              );
+              core.exportVariable("WILL_RELEASE_VERSION", versionbump);
+              core.exportVariable("WILL_RELEASE", "true");
+
+              core.info(
+                "set env var WILL_RELEASE_CMD = " +
+                  `npm run release:${releasecmd}`
+              );
+              core.info("DONE writing .npmrc");
+            }
+          }
+        );
         return;
       }
     }

@@ -43,7 +43,7 @@ jobs:
       #   run: npm run lint
       #   working-directory: source
 
-      - name: Update TOC in README.md
+      - name: Update TOC in markdown files
         run: npm run doctoc
 
       - name: Bump version
@@ -55,7 +55,7 @@ jobs:
         working-directory: source
 
       - name: copy .npmrc
-        run: cp .npmrc source
+        run: cp .npmrc source && cp .npmrc source/dist
 
       - name: Run test suite
         run: npm test
