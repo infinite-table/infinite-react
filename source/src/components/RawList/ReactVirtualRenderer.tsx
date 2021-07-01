@@ -46,6 +46,8 @@ const ITEM_POSITION_WITH_TRANSFORM = true;
 
 export class ReactVirtualRenderer extends Logger {
   private mappedItems: MappedItems;
+  // needed for hot reload and react hooks executing twice in dev
+  private destroyed: boolean = false;
 
   private itemDOMElements: Record<number, HTMLElement | null> = {};
   private itemDOMRefs: Record<number, RefCallback<HTMLElement>> = {};
@@ -91,6 +93,10 @@ export class ReactVirtualRenderer extends Logger {
       onRender?: (items: Renderable[]) => void;
     },
   ): Renderable[] => {
+    // needed for hot reload and react hooks executing twice in dev
+    if (this.destroyed) {
+      return [];
+    }
     const { mappedItems } = this;
     const { renderStartIndex, renderEndIndex } = range;
 
@@ -214,6 +220,10 @@ export class ReactVirtualRenderer extends Logger {
     elementIndex = this.mappedItems.getElementIndexForItem(itemIndex) as number,
     renderItem: RenderItem,
   ) {
+    // needed for hot reload and react hooks executing twice in dev
+    if (this.destroyed) {
+      return;
+    }
     const renderedNode = renderItem({
       itemIndex,
       itemSize: this.brain.getItemSize(itemIndex),
@@ -280,6 +290,7 @@ export class ReactVirtualRenderer extends Logger {
   };
 
   destroy = () => {
+    this.destroyed = true;
     this.mappedItems.destroy();
     this.itemDOMElements = [];
     this.itemDOMRefs = [];

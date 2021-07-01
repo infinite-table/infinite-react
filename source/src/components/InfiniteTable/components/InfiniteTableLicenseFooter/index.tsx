@@ -13,6 +13,8 @@ const defaultStyle: React.CSSProperties = {
   visibility: 'visible',
   display: 'block',
   fontSize: '0.85rem',
+  background: 'white',
+  color: 'black',
 };
 
 const anchorStyle: React.CSSProperties = {
@@ -20,7 +22,8 @@ const anchorStyle: React.CSSProperties = {
   visibility: 'visible',
   display: 'inline-block',
   pointerEvents: 'all',
-  color: '#133048',
+  color: 'black',
+  textDecoration: 'underline',
 };
 
 const enforceStyle = (node: HTMLElement | null, style: React.CSSProperties) => {

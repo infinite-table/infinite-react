@@ -28,6 +28,7 @@
   --ITable__background: #101419;
   --ITableHeader__color: #c3c3c3;
   --ITableHeaderCell__background: black;
+  --ITableHeader__background: var(--ITableHeaderCell__background);
 
   --ITableRow--hover__background: #3b4754;
   --ITableRow__background: var(--ITable__background, transparent);

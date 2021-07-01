@@ -18,6 +18,7 @@ export default describe('Column order uncontrolled', () => {
 
     expect(colIds).toEqual(['id', 'model', 'price', 'year']);
 
+    await page.waitForTimeout(30);
     await page.evaluate(() => {
       ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder([
         'make',

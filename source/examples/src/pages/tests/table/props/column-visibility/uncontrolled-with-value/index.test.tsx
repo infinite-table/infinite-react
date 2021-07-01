@@ -40,6 +40,7 @@ export default describe('Column visibility uncontrolled', () => {
 
     expect(colIds).toEqual(['model', 'price']);
 
+    await page.waitForTimeout(30);
     await page.evaluate(() => {
       (
         (window as any).api as InfiniteTableImperativeApi<any>
