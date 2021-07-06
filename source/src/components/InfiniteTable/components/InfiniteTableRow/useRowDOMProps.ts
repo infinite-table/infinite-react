@@ -7,7 +7,7 @@ import {
   InfiniteTableRowClassName__hover,
 } from './InfiniteTableRowClassName';
 
-import type { InfiniteTableProps } from '../../types';
+import type { InfiniteTableOwnProps } from '../../types';
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
@@ -18,7 +18,7 @@ export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
 
 export function useRowDOMProps<T>(
   props: InfiniteTableRowProps<T>,
-  tableProps: InfiniteTableProps<T>,
+  tableProps: InfiniteTableOwnProps<T>,
   tableDOMRef: MutableRefObject<HTMLDivElement | null>,
 ): {
   domProps: TableRowHTMLAttributes;

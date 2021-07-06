@@ -13,9 +13,9 @@ import type {
   InfiniteTableFactoryConfig,
   InfiniteTableContextValue,
   InfiniteTableProps,
+  InfiniteTableOwnProps,
   InfiniteTableState,
   InfiniteTableAction,
-  InfiniteTableInternalProps,
 } from './types';
 
 import { join } from '../../utils/join';
@@ -27,7 +27,10 @@ import { getInfiniteTableContext } from './InfiniteTableContext';
 
 import { reducer } from './state/reducer';
 import { getInitialState } from './state/initialState';
-import { getReducerActions } from './state/getReducerActions';
+import {
+  getReducerActions,
+  InfiniteTableInternalActions,
+} from './state/getReducerActions';
 
 import { useResizeObserver } from '../ResizeObserver';
 import { useInfiniteTable } from './hooks/useInfiniteTable';
@@ -47,6 +50,8 @@ import { Size } from '../types/Size';
 import { ICSS } from '../../style/utilities';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
 import { useLicense } from './hooks/useLicense/useLicense';
+import { CSSVariableWatcher } from '../CSSVariableWatcher';
+import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -59,18 +64,21 @@ const InfiniteTableFactory = <T extends unknown>(
   _cfg: InfiniteTableFactoryConfig = {},
 ) => {
   const Table = React.forwardRef(
-    (
-      props: InfiniteTableProps<T> & InfiniteTableInternalProps<T>,
-      domRef: Ref<HTMLDivElement>,
-    ) => {
+    (props: InfiniteTableOwnProps<T>, domRef: Ref<HTMLDivElement>) => {
       const { domProps, header, onHeaderResize } = props;
 
       const {
         computed: { dataArray },
       } = useDataSourceContextValue<T>();
 
-      const { computed, actions, state, bodyDOMRef, portalDOMRef } =
-        useInfiniteTable<T>();
+      const {
+        computed,
+        actions,
+        internalActions,
+        state,
+        bodyDOMRef,
+        portalDOMRef,
+      } = useInfiniteTable<T>();
 
       const getProps = useLatest(props);
       const getActions = useLatest(actions);
@@ -150,6 +158,12 @@ const InfiniteTableFactory = <T extends unknown>(
             ref={portalDOMRef as RefObject<HTMLDivElement>}
             className="ITable-Portal"
           />
+          {props.rowHeightFromCSS ? (
+            <CSSVariableWatcher
+              varName="--it-row-height"
+              onChange={internalActions.onRowHeightChange}
+            />
+          ) : null}
         </div>
       );
     },
@@ -206,31 +220,55 @@ const InfiniteTableFactory = <T extends unknown>(
       headerHeightRef.current = headerHeight;
     }, []);
 
+    const onRowHeightChange = useMemo(() => {
+      return buildSubscriptionCallback<number>();
+    }, []);
+
+    const internalActions: InfiniteTableInternalActions<T> = {
+      onRowHeightChange,
+    };
+
     const computed = useComputed<T>(
       props,
       state,
       useDataSourceContextValue<T>(),
       actions,
+      internalActions,
     );
 
     const portalDOMRef = React.useRef<HTMLDivElement | null>(null);
 
+    const ownProps = {
+      ...props,
+      ref: domRef,
+      onHeaderResize,
+      rowHeight: computed.rowHeight,
+      rowHeightFromCSS: props.rowHeight === null,
+    };
+
     const contextValue: InfiniteTableContextValue<T> = {
       state,
       dispatch,
+      ownProps,
       actions,
       props,
       computed,
+      internalActions,
       domRef,
       bodyDOMRef,
       portalDOMRef,
     };
-    // (globalThis as any).contextValue = contextValue;
+
+    React.useEffect(() => {
+      return () => {
+        onRowHeightChange.destroy();
+      };
+    }, []);
 
     return (
       <React.StrictMode>
         <TableContext.Provider value={contextValue}>
-          <Table {...props} ref={domRef} onHeaderResize={onHeaderResize} />
+          <Table {...ownProps} />
         </TableContext.Provider>
       </React.StrictMode>
     );

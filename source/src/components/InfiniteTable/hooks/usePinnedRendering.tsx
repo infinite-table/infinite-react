@@ -12,13 +12,13 @@ import { HorizontalScrollbarPlaceholder } from '../components/ScrollbarPlacehold
 import {
   InfiniteTableComputedColumn,
   InfiniteTableEnhancedData,
-  InfiniteTableProps,
+  InfiniteTableOwnProps,
 } from '../types';
 import type { Size } from '../../types/Size';
 import type { RenderRow } from '../../VirtualList/types';
 
 type UsePinnedParams<T> = {
-  getProps: () => InfiniteTableProps<T>;
+  getProps: () => InfiniteTableOwnProps<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
   bodySize: Size;
 
@@ -33,7 +33,7 @@ type UsePinnedParams<T> = {
 };
 
 type RenderPinedRowParams<T> = {
-  getProps: () => InfiniteTableProps<T>;
+  getProps: () => InfiniteTableOwnProps<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
   columnsWidth: number;
   columns: InfiniteTableComputedColumn<T>[];
@@ -73,6 +73,7 @@ export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
   const {
     getProps,
     getData,
+    rowHeight,
     bodySize,
     computedPinnedEndColumns,
     computedPinnedEndColumnsWidth,
@@ -91,20 +92,21 @@ export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
     columnsWidth: computedPinnedEndColumnsWidth,
   });
 
-  const pinnedEndList = computedPinnedEndColumns.length ? (
-    <RowListWithExternalScrolling
-      repaintId={`${repaintId}-pin-end-`}
-      brain={verticalVirtualBrain}
-      renderRow={renderRowPinnedEnd}
-      style={{
-        position: 'absolute',
-        height: bodySize.height,
-        width: computedPinnedEndColumnsWidth,
-        right: 0,
-      }}
-      updateScroll={UPDATE_SCROLL}
-    />
-  ) : null;
+  const pinnedEndList =
+    computedPinnedEndColumns.length && rowHeight !== 0 ? (
+      <RowListWithExternalScrolling
+        repaintId={`${repaintId}-pin-end-${rowHeight}`}
+        brain={verticalVirtualBrain}
+        renderRow={renderRowPinnedEnd}
+        style={{
+          position: 'absolute',
+          height: bodySize.height,
+          width: computedPinnedEndColumnsWidth,
+          right: 0,
+        }}
+        updateScroll={UPDATE_SCROLL}
+      />
+    ) : null;
 
   const pinnedEndScrollbarPlaceholder =
     pinnedEndList && hasHorizontalScrollbar ? (
@@ -127,6 +129,7 @@ export function usePinnedStartRendering<T>(params: UsePinnedParams<T>) {
   const {
     getProps,
     getData,
+    rowHeight,
     computedPinnedStartColumns,
     computedPinnedStartColumnsWidth,
     verticalVirtualBrain,
@@ -140,14 +143,15 @@ export function usePinnedStartRendering<T>(params: UsePinnedParams<T>) {
     columnsWidth: computedPinnedStartColumnsWidth,
   });
 
-  const pinnedStartList = computedPinnedStartColumns.length ? (
-    <RowListWithExternalScrolling
-      repaintId={`${repaintId}-pin-start-`}
-      brain={verticalVirtualBrain}
-      renderRow={renderRowPinnedStart}
-      updateScroll={UPDATE_SCROLL}
-    ></RowListWithExternalScrolling>
-  ) : null;
+  const pinnedStartList =
+    computedPinnedStartColumns.length && rowHeight !== 0 ? (
+      <RowListWithExternalScrolling
+        repaintId={`${repaintId}-pin-start-${rowHeight}`}
+        brain={verticalVirtualBrain}
+        renderRow={renderRowPinnedStart}
+        updateScroll={UPDATE_SCROLL}
+      ></RowListWithExternalScrolling>
+    ) : null;
 
   const pinnedStartScrollbarPlaceholder =
     pinnedStartList && hasHorizontalScrollbar ? (

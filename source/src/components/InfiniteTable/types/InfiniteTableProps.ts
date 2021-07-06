@@ -28,8 +28,7 @@ export type InfiniteTablePropVirtualizeColumns<T> =
   | ((columns: InfiniteTableComputedColumn<T>[]) => boolean);
 
 export type InfiniteTableInternalProps<T> = {
-  onHeaderResize: (height: number) => void;
-  bodyDOMRef?: RefObject<HTMLDivElement | null>;
+  rowHeight: number;
   ___t?: T;
 };
 export type InfiniteTableProps<T> = {
@@ -45,7 +44,7 @@ export type InfiniteTableProps<T> = {
   // columnVisibilityAssumeVisible?: boolean;
 
   primaryKey: string;
-  rowHeight: number;
+  rowHeight: number | null;
   domProps?: HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
   sortable?: boolean;
@@ -71,4 +70,11 @@ export type InfiniteTableProps<T> = {
       }) => HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
+};
+
+export type InfiniteTableOwnProps<T> = InfiniteTableProps<T> & {
+  rowHeight: number;
+  rowHeightFromCSS: boolean;
+  onHeaderResize: (height: number) => void;
+  bodyDOMRef?: RefObject<HTMLDivElement | null>;
 };

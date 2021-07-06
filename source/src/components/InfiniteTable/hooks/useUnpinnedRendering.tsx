@@ -11,7 +11,7 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableEnhancedData,
 } from '../types';
-import type { InfiniteTableProps } from '../types/InfiniteTableProps';
+import type { InfiniteTableOwnProps } from '../types/InfiniteTableProps';
 import type { InfiniteTableRowProps } from '../components/InfiniteTableRow/InfiniteTableRowTypes';
 
 import { InfiniteTableRow } from '../components/InfiniteTableRow';
@@ -21,6 +21,7 @@ type UnpinnedRenderingParams<T> = {
   columnShifts: number[] | null;
   bodySize: Size;
   getData: () => InfiniteTableEnhancedData<T>[];
+  rowHeight: number;
 
   repaintId: string | number;
   applyScrollHorizontal: ({ scrollLeft }: { scrollLeft: number }) => void;
@@ -33,13 +34,14 @@ type UnpinnedRenderingParams<T> = {
   computedPinnedStartColumnsWidth: number;
   computedPinnedEndColumnsWidth: number;
 
-  getProps: () => InfiniteTableProps<T>;
+  getProps: () => InfiniteTableOwnProps<T>;
 };
 export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
   const {
     columnShifts,
     bodySize,
     getData,
+    rowHeight,
 
     repaintId,
 
@@ -55,7 +57,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
     getProps,
   } = params;
 
-  const { virtualizeColumns, rowHeight } = getProps();
+  const { virtualizeColumns } = getProps();
 
   const shouldVirtualizeColumns =
     typeof virtualizeColumns === 'function'
@@ -118,7 +120,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
     </div>
   ) : null;
 
-  return (
+  return rowHeight != 0 ? (
     <VirtualRowList
       repaintId={`${repaintId}-unpinned-`}
       brain={verticalVirtualBrain}
@@ -141,5 +143,5 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
       rowWidth={computedUnpinnedColumnsWidth}
       outerChildren={fakeScrollbar}
     ></VirtualRowList>
-  );
+  ) : null;
 }

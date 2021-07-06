@@ -7,14 +7,14 @@ import { useLatest } from '../../hooks/useLatest';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 
 import { useUnpinnedRendering } from './useUnpinnedRendering';
-import { TableActions } from '../state/getReducerActions';
+import { InfiniteTableActions } from '../state/getReducerActions';
 
 import type {
   InfiniteTableComputedValues,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
-  InfiniteTableProps,
+  InfiniteTableOwnProps,
 } from '../types';
 import type { Size } from '../../types/Size';
 
@@ -32,8 +32,8 @@ type ListRenderingParam<T> = {
 
   bodySize: Size;
   columnShifts: number[] | null;
-  getProps: () => InfiniteTableProps<T>;
-  getActions: () => TableActions<T>;
+  getProps: () => InfiniteTableOwnProps<T>;
+  getActions: () => InfiniteTableActions<T>;
 };
 
 export function useListRendering<T>(param: ListRenderingParam<T>) {

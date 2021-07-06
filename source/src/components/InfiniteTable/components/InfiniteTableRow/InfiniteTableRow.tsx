@@ -35,7 +35,7 @@ function InfiniteTableRowFn<T>(
 
   const {
     computed,
-    props: tableProps,
+    ownProps: tableProps,
     domRef: tableDOMRef,
   } = tableContextValue;
 

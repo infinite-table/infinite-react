@@ -8,8 +8,12 @@ import { DataSourceContextValue } from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
 // TODO continue here replace this with current impl - makes some tests crash
 import useProperty from '../../hooks/usePropertyOld';
-import { TableActions } from '../state/getReducerActions';
+import {
+  InfiniteTableActions,
+  InfiniteTableInternalActions,
+} from '../state/getReducerActions';
 import { sortAscending } from '../../../utils/sortAscending';
+import { useState } from 'react';
 
 // const sum = (a: number, b: number) => a + b;
 
@@ -17,13 +21,24 @@ export function useComputed<T>(
   props: InfiniteTableProps<T>,
   state: InfiniteTableState<T>,
   dataSourceContextValue: DataSourceContextValue<T>,
-  actions: TableActions<T>,
+  actions: InfiniteTableActions<T>,
+  internalActions: InfiniteTableInternalActions<T>,
 ): InfiniteTableComputedValues<T> {
   const { bodySize } = state;
 
   const [columnOrder, setColumnOrder] = useProperty('columnOrder', props, {
     fromState: () => state.columnOrder,
     setState: (columnOrder) => actions.setColumnOrder(columnOrder),
+  });
+
+  const [rowHeight, setRowHeight] = useState<number>(props.rowHeight ?? 0);
+
+  useState(() => {
+    internalActions.onRowHeightChange.onChange((rowHeight) => {
+      if (rowHeight) {
+        setRowHeight(rowHeight);
+      }
+    });
   });
 
   const [columnVisibility, setColumnVisibility] = useProperty(
@@ -142,6 +157,7 @@ export function useComputed<T>(
 
   return {
     ...props,
+    rowHeight,
     setColumnOrder,
     setColumnVisibility,
     setColumnPinning,

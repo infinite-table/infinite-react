@@ -1,7 +1,8 @@
 import * as React from 'react';
 import type { RefCallback } from 'react';
 import type { Renderable } from '../types/Renderable';
-import type { RenderItem, UpdaterChangeFn, UpdaterFn } from './types';
+import type { RenderItem } from './types';
+import type { SubscriptionCallback } from '../types/SubscriptionCallback';
 import type { RenderRange } from '../VirtualBrain';
 
 import { Logger } from '../../utils/debug';
@@ -10,37 +11,7 @@ import { VirtualBrain } from '../VirtualBrain';
 
 import { MappedItems } from './MappedItems';
 import { AvoidReactDiff } from './AvoidReactDiff';
-
-export const buildUpdater = (): UpdaterFn => {
-  let result: Renderable = null;
-  let fns: UpdaterChangeFn[] = [];
-
-  const updater = (items: Renderable) => {
-    result = items;
-
-    // change happens here
-    for (let i = 0, len = fns.length; i < len; i++) {
-      fns[i](items);
-    }
-  };
-
-  updater.get = () => result;
-
-  // this attaches a new listener to changes
-  updater.onChange = (fn: UpdaterChangeFn) => {
-    fns.push(fn);
-    return () => {
-      fns = fns.filter((f) => f !== fn);
-    };
-  };
-
-  updater.destroy = () => {
-    updater(null);
-    fns.length = 0;
-  };
-
-  return updater;
-};
+import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
@@ -51,7 +22,7 @@ export class ReactVirtualRenderer extends Logger {
 
   private itemDOMElements: Record<number, HTMLElement | null> = {};
   private itemDOMRefs: Record<number, RefCallback<HTMLElement>> = {};
-  private updaters: Record<number, UpdaterFn> = {};
+  private updaters: Record<number, SubscriptionCallback<Renderable>> = {};
 
   private onRender: (items: Renderable[]) => void = () => null;
   private brain: VirtualBrain;
@@ -197,7 +168,7 @@ export class ReactVirtualRenderer extends Logger {
       }
     };
     this.itemDOMRefs[elementIndex] = domRef;
-    this.updaters[elementIndex] = buildUpdater();
+    this.updaters[elementIndex] = buildSubscriptionCallback<Renderable>();
 
     const item = (
       <AvoidReactDiff

@@ -10,7 +10,10 @@ function MyApp({ Component, pageProps }) {
   }
   return (
     <React.StrictMode>
-      <div className="__next it--theme-dark">
+      <div
+        className="__next it--theme-dark"
+        style={{ '--it-row-height': '44px' }}
+      >
         <Component {...pageProps} />
       </div>
     </React.StrictMode>

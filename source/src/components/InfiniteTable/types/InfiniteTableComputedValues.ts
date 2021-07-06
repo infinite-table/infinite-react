@@ -29,4 +29,5 @@ export interface InfiniteTableComputedValues<T> extends InfiniteTableProps<T> {
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
+  rowHeight: number;
 }

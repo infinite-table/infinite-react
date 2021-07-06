@@ -8,8 +8,13 @@ import type {
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
+import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 
-export interface TableActions<T> {
+export interface InfiniteTableInternalActions<T> {
+  onRowHeightChange: SubscriptionCallback<number>;
+  x?: T;
+}
+export interface InfiniteTableActions<T> {
   // setViewportSize: Setter<Size>;
   setBodySize: Setter<Size>;
   setScrollPosition: Setter<ScrollPosition>;
@@ -23,7 +28,7 @@ export interface TableActions<T> {
 
 export const getReducerActions = <T>(
   dispatch: React.Dispatch<InfiniteTableAction>,
-): TableActions<T> => {
+): InfiniteTableActions<T> => {
   // const setViewportSize: Setter<Size> = (size) => {
   //   dispatch({
   //     type: TableActionType.SET_VIEWPORT_SIZE,

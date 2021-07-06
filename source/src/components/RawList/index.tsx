@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useMemo, useEffect } from 'react';
 
-import { buildUpdater, ReactVirtualRenderer } from './ReactVirtualRenderer';
+import { ReactVirtualRenderer } from './ReactVirtualRenderer';
+import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import { AvoidReactDiff } from './AvoidReactDiff';
 import { RawListProps } from './types';
 import { useLatest } from '../hooks/useLatest';
+import { Renderable } from '../types/Renderable';
 
 function RawListFn(props: RawListProps) {
   const { renderItem, brain, debugChannel } = props;
 
   const { onRenderUpdater, renderer } = useMemo(() => {
-    const onRenderUpdater = buildUpdater();
+    const onRenderUpdater = buildSubscriptionCallback<Renderable>();
     const renderer = new ReactVirtualRenderer(brain, {
       channel: debugChannel,
     });

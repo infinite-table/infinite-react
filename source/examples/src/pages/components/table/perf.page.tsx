@@ -260,7 +260,7 @@ const App = () => {
             }}
             defaultColumnPinning={defaultColumnPinning}
             key={rowHeight}
-            rowHeight={rowHeight}
+            rowHeight={null}
             columnDefaultWidth={150}
             columnMinWidth={40}
             columns={columns}

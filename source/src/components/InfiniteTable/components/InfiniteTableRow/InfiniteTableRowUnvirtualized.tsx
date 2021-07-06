@@ -15,7 +15,7 @@ function TableRowUnvirtualizedFn<T>(
   const { rowHeight, rowWidth, enhancedData, rowIndex, columns } = props;
 
   const tableContextValue = useInfiniteTable<T>();
-  const { props: tableProps, domRef: tableDOMRef } = tableContextValue;
+  const { ownProps: tableProps, domRef: tableDOMRef } = tableContextValue;
   const { domProps } = useRowDOMProps(props, tableProps, tableDOMRef);
 
   const style = {

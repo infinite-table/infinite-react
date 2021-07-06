@@ -1,13 +1,11 @@
 import React, { useLayoutEffect, useState } from 'react';
-// import { useRerender } from '../hooks/useRerender';
-// import { useRerender } from '../hooks/useRerender';
 
 import { Renderable } from '../types/Renderable';
-import { UpdaterFn } from './types';
+import { SubscriptionCallback } from '../types/SubscriptionCallback';
 
 export type AvoidReactDiffProps = {
   name?: string;
-  updater: UpdaterFn;
+  updater: SubscriptionCallback<Renderable>;
 };
 
 function AvoidReactDiffFn(props: AvoidReactDiffProps) {

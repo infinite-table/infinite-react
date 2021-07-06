@@ -10,7 +10,7 @@ import type { InfiniteTableActionType } from './InfiniteTableActionType';
 
 import type {
   InfiniteTableProps,
-  InfiniteTableInternalProps,
+  InfiniteTableOwnProps,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
@@ -42,7 +42,7 @@ export type {
   InfiniteTableReducer,
   InfiniteTableScopedReducer as TableScopedReducer,
   InfiniteTableProps,
+  InfiniteTableOwnProps,
   InfiniteTableImperativeApi,
-  InfiniteTableInternalProps,
   InfiniteTableActionType,
 };
