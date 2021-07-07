@@ -33,7 +33,6 @@ export const useCSSVariableWatch = (
 
       if (height && height !== lastValueRef.current) {
         lastValueRef.current = height;
-        debugger;
         params.onChange(height);
       }
     },

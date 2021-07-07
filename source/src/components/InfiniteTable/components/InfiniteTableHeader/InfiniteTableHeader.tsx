@@ -37,7 +37,7 @@ function InfiniteTableHeaderFn<T>(
       const column = columns[columnIndex];
 
       if (!column) {
-        debugger;
+        // debugger;
       }
       return (
         <InfiniteTableHeaderCell<T>
