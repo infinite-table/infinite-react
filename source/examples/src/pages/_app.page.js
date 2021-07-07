@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }) {
     <React.StrictMode>
       <div
         className="__next it--theme-dark"
-        style={{ '--it-row-height': '44px' }}
+        style={{ '--it-row-height': '3rem' }}
       >
         <Component {...pageProps} />
       </div>

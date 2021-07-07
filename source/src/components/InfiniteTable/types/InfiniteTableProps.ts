@@ -44,7 +44,7 @@ export type InfiniteTableProps<T> = {
   // columnVisibilityAssumeVisible?: boolean;
 
   primaryKey: string;
-  rowHeight: number | null;
+  rowHeight: number | string;
   domProps?: HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
   sortable?: boolean;
@@ -74,7 +74,7 @@ export type InfiniteTableProps<T> = {
 
 export type InfiniteTableOwnProps<T> = InfiniteTableProps<T> & {
   rowHeight: number;
-  rowHeightFromCSS: boolean;
+  rowHeightCSSVar: string;
   onHeaderResize: (height: number) => void;
   bodyDOMRef?: RefObject<HTMLDivElement | null>;
 };

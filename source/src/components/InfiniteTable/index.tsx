@@ -50,7 +50,7 @@ import { Size } from '../types/Size';
 import { ICSS } from '../../style/utilities';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
 import { useLicense } from './hooks/useLicense/useLicense';
-import { CSSVariableWatcher } from '../CSSVariableWatcher';
+import { CSSVariableWatch } from '../CSSVariableWatch';
 import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
@@ -158,9 +158,9 @@ const InfiniteTableFactory = <T extends unknown>(
             ref={portalDOMRef as RefObject<HTMLDivElement>}
             className="ITable-Portal"
           />
-          {props.rowHeightFromCSS ? (
-            <CSSVariableWatcher
-              varName="--it-row-height"
+          {props.rowHeightCSSVar ? (
+            <CSSVariableWatch
+              varName={props.rowHeightCSSVar}
               onChange={internalActions.onRowHeightChange}
             />
           ) : null}
@@ -243,7 +243,8 @@ const InfiniteTableFactory = <T extends unknown>(
       ref: domRef,
       onHeaderResize,
       rowHeight: computed.rowHeight,
-      rowHeightFromCSS: props.rowHeight === null,
+      rowHeightCSSVar:
+        typeof props.rowHeight === 'string' ? props.rowHeight : '',
     };
 
     const contextValue: InfiniteTableContextValue<T> = {

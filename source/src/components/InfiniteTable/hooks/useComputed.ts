@@ -31,7 +31,9 @@ export function useComputed<T>(
     setState: (columnOrder) => actions.setColumnOrder(columnOrder),
   });
 
-  const [rowHeight, setRowHeight] = useState<number>(props.rowHeight ?? 0);
+  const [rowHeight, setRowHeight] = useState<number>(
+    typeof props.rowHeight === 'number' ? props.rowHeight : 0,
+  );
 
   useState(() => {
     internalActions.onRowHeightChange.onChange((rowHeight) => {

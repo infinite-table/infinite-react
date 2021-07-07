@@ -41,7 +41,8 @@ export class ReactVirtualRenderer extends Logger {
     },
   ) {
     super(
-      `ReactVirtualRenderer:${brain.getOptions().mainAxis}` + (channel ?? ''),
+      `ReactVirtualRenderer:${brain.getOptions().mainAxis}` +
+        (channel ? `:${channel}` : ''),
     );
 
     if (onRender) {
