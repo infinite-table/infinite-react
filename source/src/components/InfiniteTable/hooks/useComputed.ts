@@ -15,8 +15,6 @@ import {
 import { sortAscending } from '../../../utils/sortAscending';
 import { useState } from 'react';
 
-// const sum = (a: number, b: number) => a + b;
-
 export function useComputed<T>(
   props: InfiniteTableProps<T>,
   state: InfiniteTableState<T>,
