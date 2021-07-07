@@ -29,8 +29,6 @@ export const useCSSVariableWatch = (
   const lastValueRef = useRef<number>(0);
   const onResize = React.useCallback(
     ({ height }) => {
-      console.log({ height });
-
       if (height && height !== lastValueRef.current) {
         lastValueRef.current = height;
         params.onChange(height);
