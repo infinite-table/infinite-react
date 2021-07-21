@@ -16,7 +16,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      "@www/*": ["./src/*"],
+    }
   },
   "include": [
     "next-env.d.ts",

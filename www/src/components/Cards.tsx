@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ReactNode } from "react";
+
 import {
   colorWhite,
   backgroundColorBlue700,
@@ -11,8 +12,9 @@ import {
   maxWidth,
   marginY,
   shadow,
-} from "../../styles/theme.css";
-import { card, grid } from "./index.css";
+} from "../styles/main.css";
+import { card, grid } from "./main.css";
+
 const Card = ({
   href,
   title,

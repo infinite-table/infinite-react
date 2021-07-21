@@ -5,15 +5,12 @@ import * as React from "react";
 import {
   backgroundColorBrand,
   backgroundColorBrandDark,
-  backgroundColorWhite,
   borderRadius,
   colorWhite,
   fontSize,
-  marginBottom,
   marginTop,
   padding,
   paddingX,
-  paddingY,
   fontWeight,
   zIndex,
   maxWidth,
@@ -23,12 +20,14 @@ import {
   flex1,
   position,
   shadow,
-} from "../../styles/theme.css";
-import { container, title, width100 } from "./index.css";
+} from "@www/styles/main.css";
 
-import { Cards } from "./Cards";
-import { GetAccessForm } from "./GetAccessForm";
-import { Footer } from "./Footer";
+import { container } from "@www/components/main.css";
+
+import { Cards } from "@www/components/Cards";
+import { GetAccessForm } from "@www/components/GetAccessForm";
+import { Footer } from "@www/components/Footer";
+import { Header } from "@www/components/Header";
 
 const ReactLogo = (
   <img
@@ -39,43 +38,6 @@ const ReactLogo = (
     className={display.inlineBlock}
   ></img>
 );
-
-const Header = (props: { title: string }) => {
-  return (
-    <div
-      className={[
-        position.relative,
-        backgroundColorWhite,
-        shadow.md,
-        marginBottom[10],
-        paddingY[16],
-        width100,
-        centeredFlexColumn,
-      ].join(" ")}
-    >
-      <div className={`${position.relative}`}>
-        <img
-          width={150}
-          height={70}
-          src="/logo-infinite.svg"
-          className={zIndex[10]}
-        />
-      </div>
-
-      <h1
-        className={[
-          title,
-          marginTop[8],
-          marginBottom[0],
-          fontSize["4xl"],
-          fontWeight.inherit,
-        ].join(" ")}
-      >
-        {props.title}
-      </h1>
-    </div>
-  );
-};
 
 export function IndexPage() {
   return (

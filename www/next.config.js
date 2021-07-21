@@ -1,45 +1,70 @@
+const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { VanillaExtractPlugin } = require("@vanilla-extract/webpack-plugin");
 const {
   getGlobalCssLoader,
 } = require("next/dist/build/webpack/config/blocks/css/loaders");
-
 const withMDX = require("@next/mdx")({
   extension: /\.mdx$/,
 });
+
+const postCssPlugins = [
+  // Below PostCSS references Next.js default configuration
+  // https://nextjs.org/docs/advanced-features/customizing-postcss-config#customizing-plugins
+  "postcss-flexbugs-fixes",
+  [
+    "postcss-preset-env",
+    {
+      autoprefixer: {
+        flexbox: "no-2009",
+      },
+      stage: 3,
+      features: {
+        "custom-properties": false,
+      },
+    },
+  ],
+];
+
 module.exports = withMDX({
-  future: {
-    webpack5: true,
-  },
   pageExtensions: ["page.tsx", "page.mdx"],
 
-  webpack(config, options) {
-    let { dev, isServer } = options;
-
-    // dev = true;
-
+  reactStrictMode: true,
+  webpack(config, { dev, isServer }) {
     config.module.rules.push({
       test: /\.css$/i,
       sideEffects: true,
       use: dev
         ? getGlobalCssLoader(
             {
-              assetPrefix: options.config.assetPrefix,
-              future: {
-                webpack5: true,
-              },
               isClient: !isServer,
-              isServer,
               isDevelopment: dev,
             },
-            [],
-            []
+            postCssPlugins
           )
-        : [MiniCssExtractPlugin.loader, "css-loader"],
+        : [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: "css-loader",
+              options: {
+                url: false,
+              },
+            },
+            {
+              loader: "postcss-loader",
+              options: {
+                postcssOptions: {
+                  plugins: postCssPlugins,
+                },
+              },
+            },
+          ],
     });
 
     const plugins = [];
+
+    plugins.push(new VanillaExtractPlugin());
 
     if (!dev) {
       plugins.push(
@@ -50,21 +75,10 @@ module.exports = withMDX({
         })
       );
     }
-    plugins.push(new VanillaExtractPlugin({}));
+
     config.plugins.push(...plugins);
 
-    // config.module.rules.push({
-    //   test: /\.css$/,
-    //   use: [MiniCssExtractPlugin.loader, "css-loader"],
-    // });
-    // config.plugins.push(
-    //   new VanillaExtractPlugin(),
-    //   new MiniCssExtractPlugin({
-    //     // without these Next.js will look for the generated stylesheets from the wrong place
-    //     filename: "static/chunks/[chunkhash].css",
-    //     chunkFilename: "static/chunks/[chunkhash].css",
-    //   })
-    // );
+    config.resolve.alias["@www"] = path.resolve("./src");
 
     return config;
   },

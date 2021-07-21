@@ -4,7 +4,7 @@ import {
   centeredFlexColumn,
   centeredFlexRow,
   vars,
-} from "../../styles/theme.css";
+} from "@www/styles/main.css";
 
 export const width100 = style({
   width: "100%",

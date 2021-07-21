@@ -1,7 +1,3 @@
-export const BRAND_COLOR_DEFAULT = "#0b6fcb";
-
-export const BRAND_COLOR_DARK = "#133048";
-
 import {
   composeStyles,
   createTheme,
@@ -9,6 +5,9 @@ import {
   style,
   styleVariants,
 } from "@vanilla-extract/css";
+
+export const BRAND_COLOR_DEFAULT = "#0b6fcb";
+export const BRAND_COLOR_DARK = "#133048";
 
 const colorVariables = {
   brand: BRAND_COLOR_DEFAULT,
@@ -161,6 +160,7 @@ export const zIndex = styleVariants(zIndexScale, (value) => {
     zIndex: value as CSSProperties["zIndex"],
   };
 });
+
 export const [light, vars] = createTheme(
   {
     color: colorVariables,

@@ -5,8 +5,8 @@ import {
   backgroundColorWhite,
   colorBrandDark,
   shadow,
-} from "../../styles/theme.css";
-import { footer, width100 } from "./index.css";
+} from "../styles/main.css";
+import { footer, width100 } from "./main.css";
 
 export const Footer = (props) => {
   return (

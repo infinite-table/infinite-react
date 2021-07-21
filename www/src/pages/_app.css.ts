@@ -1,7 +1,7 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "../styles/theme.css";
+import { vars } from "../styles/main.css";
 
-export const className = style({
+export const appClassName = style({
   minHeight: "100vh",
   display: "flex",
   flexDirection: "column",

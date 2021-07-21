@@ -13,8 +13,9 @@ import {
   shadow,
   backgroundColorBrandDark,
   paddingX,
-} from "../../styles/theme.css";
-import { width100, email, submitButton } from "./index.css";
+} from "@www/styles/main.css";
+
+import { width100, email, submitButton } from "./main.css";
 
 export const GetAccessForm = () => {
   return (
