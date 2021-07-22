@@ -3,8 +3,9 @@ import { composeStyles, globalStyle, style } from "@vanilla-extract/css";
 import {
   centeredFlexColumn,
   centeredFlexRow,
+  maxWidth,
   vars,
-} from "@www/styles/main.css";
+} from "@www/styles/utils.css";
 
 export const width100 = style({
   width: "100%",
@@ -13,7 +14,7 @@ export const footer = composeStyles(
   centeredFlexRow,
   width100,
   style({
-    height: 100,
+    minHeight: 100,
   })
 );
 
@@ -27,11 +28,15 @@ globalStyle(`${footer} a`, {
   alignItems: "center",
 });
 
+export const minHeightFull = style({
+  minHeight: "100vh",
+});
+
+export const fullWidthContainer = composeStyles(centeredFlexColumn, width100);
 export const container = composeStyles(
-  centeredFlexColumn,
-  width100,
+  maxWidth["7xl"],
   style({
-    minHeight: "100vh",
+    width: "100%",
   })
 );
 

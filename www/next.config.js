@@ -27,7 +27,7 @@ const postCssPlugins = [
   ],
 ];
 
-module.exports = withMDX({
+const nextConfig = withMDX({
   pageExtensions: ["page.tsx", "page.mdx"],
 
   reactStrictMode: true,
@@ -65,6 +65,7 @@ module.exports = withMDX({
     const plugins = [];
 
     plugins.push(new VanillaExtractPlugin());
+    // plugins.push("babel-plugin-preval");
 
     if (!dev) {
       plugins.push(
@@ -83,3 +84,6 @@ module.exports = withMDX({
     return config;
   },
 });
+const createNextPluginPreval = require("next-plugin-preval/config");
+const withNextPluginPreval = createNextPluginPreval();
+module.exports = withNextPluginPreval(nextConfig);

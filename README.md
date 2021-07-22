@@ -16,6 +16,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [Installation](#installation)
 - [Documentation](#documentation)
 - [Development process](#development-process)
   - [Running the docs](#running-the-docs)
@@ -24,6 +25,12 @@
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Installation
+
+```bash
+npm install @infinite-table/infinite-react --save
+```
 
 ## [Documentation](https://infinite-table.com/docs)
 
@@ -35,14 +42,14 @@ Our approach with the `InfiniteTable` is to go documentation first. From our dev
 
 You can start the examples by running:
 
-```sh
-$ npm run dev
+```bash
+npm run dev
 ```
 
 ### Running the docs
 
-```sh
-$ npm run docs
+```bash
+npm run docs
 ```
 <!-- 
 ### HTML Element classNames
@@ -92,7 +99,7 @@ The ones meant primarily for a CSS property name will end with `__<property-name
 Infinite Table is built with extensive end-to-end testing via headless chrome (more exactly, puppeteer).
 To execute the tests you have to run:
 
-```sh
+```bash
 $ npm run test
 ```
 

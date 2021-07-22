@@ -1,9 +1,9 @@
 import { style } from "@vanilla-extract/css";
-import { vars } from "../styles/main.css";
+import { vars } from "../styles/utils.css";
 
 export const appClassName = style({
-  minHeight: "100vh",
   display: "flex",
+  flex: 1,
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",

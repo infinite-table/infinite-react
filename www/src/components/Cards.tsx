@@ -12,8 +12,8 @@ import {
   maxWidth,
   marginY,
   shadow,
-} from "../styles/main.css";
-import { card, grid } from "./main.css";
+} from "../styles/utils.css";
+import { card, grid } from "./components.css";
 
 const Card = ({
   href,

@@ -1,3 +1,5 @@
+const path = require("path");
+
 export async function getStaticProps(context) {
   // console.log(context);
   return {
@@ -10,27 +12,19 @@ export async function getStaticProps(context) {
 // this is here just to limit the versions available
 // and because nextjs needs it for server side generation
 
-// TODO retrieve this list from somewhere real
 export async function getStaticPaths() {
-  return {
-    paths: [
-      {
-        params: {
-          v: "v1",
-        },
-      },
-      {
-        params: {
-          v: "v2",
-        },
-      },
+  const { getVersionFolderNames } = require("@www/getVersionFolderNames");
+  const versions = getVersionFolderNames("./pages/docs");
 
-      {
+  console.log("versions", versions);
+  return {
+    paths: versions.map((v) => {
+      return {
         params: {
-          v: "v3",
+          v,
         },
-      },
-    ],
+      };
+    }),
     fallback: false,
   };
 }

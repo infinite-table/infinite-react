@@ -20,9 +20,12 @@ import {
   flex1,
   position,
   shadow,
-} from "@www/styles/main.css";
+} from "@www/styles/utils.css";
 
-import { container } from "@www/components/main.css";
+import {
+  fullWidthContainer,
+  minHeightFull,
+} from "@www/components/components.css";
 
 import { Cards } from "@www/components/Cards";
 import { GetAccessForm } from "@www/components/GetAccessForm";
@@ -41,7 +44,9 @@ const ReactLogo = (
 
 export function IndexPage() {
   return (
-    <div className={`${container} ${backgroundColorBrand}`}>
+    <div
+      className={`${fullWidthContainer} ${minHeightFull} ${backgroundColorBrand}`}
+    >
       <Head>
         <title>Infinite Table for React</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg"></link>

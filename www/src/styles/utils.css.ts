@@ -18,6 +18,7 @@ const colorVariables = {
 };
 
 export const spaceScale = {
+  auto: "auto",
   0: "0px",
   "0.5": "0.125rem",
   1: "0.25rem",
@@ -129,6 +130,19 @@ export const justifyContent = styleVariants(
     };
   }
 );
+
+export const alignSelf = styleVariants(
+  {
+    flexStart: "flex-start",
+    flexEnd: "flex-end",
+    stretch: "stretch",
+  },
+  (value) => {
+    return {
+      alignSelf: value as CSSProperties["alignSelf"],
+    };
+  }
+);
 export const textAlign = styleVariants(
   {
     center: "center",
@@ -181,6 +195,12 @@ export const [light, vars] = createTheme(
 export const padding = styleVariants(spaceScale, (space) => {
   return {
     padding: space,
+  };
+});
+
+export const paddingLeft = styleVariants(spaceScale, (space) => {
+  return {
+    paddingLeft: space,
   };
 });
 
@@ -239,6 +259,11 @@ export const marginTop = styleVariants(spaceScale, (space) => {
     marginTop: space,
   };
 });
+export const top = styleVariants(spaceScale, (space) => {
+  return {
+    top: space,
+  };
+});
 export const backgroundColorBrand = style({
   background: vars.color.brand,
 });
@@ -289,6 +314,7 @@ export const position = styleVariants(
     relative: "relative",
     absolute: "absolute",
     static: "static",
+    sticky: "sticky",
   },
   (value) => {
     return {

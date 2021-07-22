@@ -11,9 +11,9 @@ import {
   centeredFlexColumn,
   position,
   shadow,
-} from "../styles/main.css";
+} from "../styles/utils.css";
 
-import { title, width100 } from "./main.css";
+import { title, width100 } from "./components.css";
 
 export const Header = (props: { title: string }) => {
   return (

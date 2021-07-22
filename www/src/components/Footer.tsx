@@ -5,13 +5,14 @@ import {
   backgroundColorWhite,
   colorBrandDark,
   shadow,
-} from "../styles/main.css";
-import { footer, width100 } from "./main.css";
+  alignSelf,
+} from "../styles/utils.css";
+import { footer, width100 } from "./components.css";
 
 export const Footer = (props) => {
   return (
     <footer
-      className={`${footer} ${width100} ${display.flex} ${centeredFlexColumn} ${shadow.lg} ${backgroundColorWhite} ${colorBrandDark}`}
+      className={`${footer} ${alignSelf.flexEnd} ${width100} ${display.flex} ${centeredFlexColumn} ${shadow.lg} ${backgroundColorWhite} ${colorBrandDark}`}
     >
       Copyright © {new Date().getFullYear()} Infinite Table
       {props.children}
