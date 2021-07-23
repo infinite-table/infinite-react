@@ -1,44 +1,22 @@
 {
-  "v1": {
+  "latest": {
+    "date": "2021-07-30",
     "menu": [
       {
         "path": "getting-started",
         "label": "Getting started"
-      },
-      {
-        "path": "columns",
-        "label": "Columns"
       }
     ],
-    "slug": "v1",
-    "date": "2021-07-30"
+    "alias": "latest"
   },
-  "v2": {
-    "slug": "v2",
-    "date": "2021-07-30",
+  "v1": {
+    "date": "2021-06-20",
     "menu": [
       {
         "path": "getting-started",
         "label": "Getting started"
-      },
-      {
-        "path": "columns",
-        "label": "Columns"
       }
-    ]
-  },
-  "v3": {
-    "slug": "v3",
-    "date": "2021-07-30",
-    "menu": [
-      {
-        "path": "getting-started",
-        "label": "Getting started"
-      },
-      {
-        "path": "columns",
-        "label": "Columns"
-      }
-    ]
+    ],
+    "alias": "v1"
   }
 }

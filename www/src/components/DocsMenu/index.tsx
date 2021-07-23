@@ -14,13 +14,14 @@ export type DocsMenuItem = {
 type DocsMenuProps = {
   items?: DocsMenuItem[];
   children?: React.ReactNode;
+  currentVersion: string;
 };
 export const DocsMenu = (props: DocsMenuProps) => {
   const { children, items } = props;
 
   const renderItem = (item: DocsMenuItem) => {
     return (
-      <Link key={item.path} href={`/docs/latest${item.path}`}>
+      <Link key={item.path} href={`/docs/${props.currentVersion}/${item.path}`}>
         <a className={linkClassName}>{item.label}</a>
       </Link>
     );

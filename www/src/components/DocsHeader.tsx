@@ -18,10 +18,14 @@ import {
   padding,
 } from "../styles/utils.css";
 import { container, width100 } from "./components.css";
+import { DocsMenuItem } from "./DocsMenu";
 
 export type DocsHeaderProps = {
   version: string;
-  date: string;
+  versionInfo: {
+    date: string;
+    alias: string;
+  };
 };
 export const DocsHeader = (props: DocsHeaderProps) => {
   return (
@@ -46,7 +50,7 @@ export const DocsHeader = (props: DocsHeaderProps) => {
                 opacity: 0.6,
               }}
             >
-              / {props.version} / {props.date}
+              / {props.versionInfo.alias} / {props.versionInfo.date}
             </div>
           </div>
         </div>

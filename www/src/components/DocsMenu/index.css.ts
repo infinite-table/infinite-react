@@ -22,7 +22,7 @@ export const docsMenuClassName = composeStyles(
 );
 
 export const linkClassName = style({
-  color: vars.color.blue700,
+  color: vars.color.brand,
   textDecoration: "none",
   ":hover": {
     textDecoration: "underline",

@@ -4,7 +4,7 @@ import { DocsLayout } from "@www/layouts/DocsLayout";
 import { MainLayout } from "@www/layouts/MainLayout";
 
 import "@www/styles/globals.css";
-import { DocsContext, DocsContextType } from "./docs/DocsContext";
+import { DocsContext, DocsContextType } from "../src/components/DocsContext";
 
 function MyApp({ Component, pageProps }) {
   const content = <Component {...pageProps} />;
@@ -31,11 +31,13 @@ export default MyApp;
 const versions = require("./docs/versions.json");
 
 MyApp.getInitialProps = async (ctx) => {
-  let currentVersion = ctx.router.query.v;
+  // let currentVersion = ctx.router.query.v;
 
-  if (!currentVersion) {
-    currentVersion = ctx.router.pathname.split("/").filter((x) => x.trim())[1];
-  }
+  // if (!currentVersion) {
+  let currentVersion = ctx.router.pathname
+    .split("/")
+    .filter((x) => x.trim())[1];
+  // }
 
   const defaultProps = await App.getInitialProps(ctx);
 

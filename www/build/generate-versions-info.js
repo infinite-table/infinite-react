@@ -34,7 +34,7 @@ const versions = fs
   })
   .filter((dirent) => dirent.isDirectory())
   .map((dirent) => dirent.name)
-  .filter((x) => x.startsWith("v"));
+  .filter((x) => x.startsWith("v") || x === "latest");
 
 function normalizeInfo(info, version) {
   if (!info.date) {
@@ -55,7 +55,7 @@ function normalizeInfo(info, version) {
   return {
     ...info,
     date,
-    slug: info.slug || version,
+    alias: info.alias || version,
   };
 }
 

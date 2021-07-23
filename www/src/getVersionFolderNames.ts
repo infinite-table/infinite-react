@@ -7,5 +7,7 @@ const getDirectories = (source) => {
 };
 
 export function getVersionFolderNames(source: string) {
-  return getDirectories(source).filter((name) => name.startsWith("v"));
+  return getDirectories(source).filter(
+    (name) => name.startsWith("v") || name === "latest"
+  );
 }

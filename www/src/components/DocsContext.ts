@@ -4,17 +4,17 @@ import * as React from "react";
 export type DocsContextType = {
   currentVersion: string;
   versionInfo: {
-    slug: string;
     menu: DocsMenuItem[];
     date: string;
+    alias: string;
   };
 };
 export const DocsContext = React.createContext<DocsContextType>({
   currentVersion: "",
   versionInfo: {
-    slug: "",
     menu: [],
     date: "",
+    alias: "",
   },
 });
 
