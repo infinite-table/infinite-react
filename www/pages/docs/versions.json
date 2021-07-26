@@ -8,15 +8,5 @@
       }
     ],
     "alias": "latest"
-  },
-  "v1": {
-    "date": "2021-06-20",
-    "menu": [
-      {
-        "path": "getting-started",
-        "label": "Getting started"
-      }
-    ],
-    "alias": "v1"
   }
 }

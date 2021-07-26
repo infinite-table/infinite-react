@@ -1,14 +1,19 @@
 import * as React from "react";
 import Link from "next/link";
+import dashify from "dashify";
 import { useDocsContext } from "../DocsContext";
-import { docsHeadingClassName, docsHeadingFontSize } from "./index.css";
+import {
+  docsHeadingClassName,
+  docsHeadingFontSize,
+  docsHeadingLinkClassName,
+} from "./index.css";
 
 export type DocsHeadingProps = {
   children: string;
 };
 
 export const DocsHeading = (props: DocsHeadingProps & { Tag: any }) => {
-  let { Tag, ...rest } = props;
+  let { Tag, children } = props;
 
   const size = {
     h1: docsHeadingFontSize.h1,
@@ -17,11 +22,16 @@ export const DocsHeading = (props: DocsHeadingProps & { Tag: any }) => {
     h4: docsHeadingFontSize.h4,
   }[Tag];
 
+  const id = dashify(children);
+
   return (
-    <Tag
-      {...rest}
-      className={`${docsHeadingFontSize[size]} ${docsHeadingClassName}`}
-    ></Tag>
+    <Link href={`#${id}`}>
+      <a className={docsHeadingLinkClassName}>
+        <Tag id={id} className={`${size} ${docsHeadingClassName}`}>
+          {children}
+        </Tag>
+      </a>
+    </Link>
   );
 };
 

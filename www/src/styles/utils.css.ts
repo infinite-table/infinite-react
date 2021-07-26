@@ -15,6 +15,7 @@ const colorVariables = {
   blue: "blue",
   blue700: "#1c4fd8",
   white: "white",
+  gray: "#eaeaea",
 };
 
 export const spaceScale = {
@@ -75,6 +76,7 @@ export const fontSizeScale = {
   inherit: "inherit",
   lg: "1.125rem",
   xl: "1.25rem",
+  "1xl": "1.25rem",
   "2xl": "1.5rem",
   "3xl": "1.875rem",
   "4xl": "2.25rem",

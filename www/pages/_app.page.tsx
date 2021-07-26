@@ -9,7 +9,6 @@ import { DocsContext, DocsContextType } from "../src/components/DocsContext";
 function MyApp({ Component, pageProps }) {
   const content = <Component {...pageProps} />;
 
-  console.log("pageProps are", pageProps);
   const router = useRouter();
   const { pathname } = router;
 
@@ -19,6 +18,7 @@ function MyApp({ Component, pageProps }) {
     return <MainLayout>{content}</MainLayout>;
   }
 
+  console.log("pageProps are", pageProps);
   return (
     <DocsContext.Provider value={pageProps as DocsContextType}>
       <DocsLayout>{content}</DocsLayout>

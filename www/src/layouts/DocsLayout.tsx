@@ -23,6 +23,10 @@ import {
   DocsHeadingType3,
   DocsHeadingType4,
 } from "@www/components/DocsHeading";
+import { DocsCodeBlock } from "@www/components/DocsCodeBlock";
+import { DocsContent } from "@www/components/DocsContent";
+import { useEffect } from "react";
+import ClipboardJS from "clipboard";
 
 const COMPONENTS = {
   a: DocsLink,
@@ -30,6 +34,7 @@ const COMPONENTS = {
   h2: DocsHeadingType2,
   h3: DocsHeadingType3,
   h4: DocsHeadingType4,
+  inlineCode: DocsCodeBlock,
 };
 
 export function DocsLayout({ children }) {
@@ -41,6 +46,14 @@ export function DocsLayout({ children }) {
 
   const parts = pathname.split("/");
   const title = humanize(parts.pop());
+
+  useEffect(() => {
+    new ClipboardJS("[data-clipboard-text]", {
+      // text: function (trigger) {
+      //   return trigger.getAttribute('data');
+      // },
+    });
+  }, []);
 
   return (
     <MDXProvider components={COMPONENTS}>
@@ -60,11 +73,7 @@ export function DocsLayout({ children }) {
               items={versionInfo.menu}
               currentVersion={currentVersion}
             />
-            <div
-              className={`${display.flex} ${flexDirection.column} ${flex1} ${paddingY["16"]}`}
-            >
-              {children}
-            </div>
+            <DocsContent>{children}</DocsContent>
           </div>
         </div>
       </MainLayout>
