@@ -68,7 +68,7 @@ export const GetAccessForm = () => {
           }}
           className={` ${padding[3]} ${borderRadius.md} ${colorBrandDark} ${email}`}
         />
-        <input hidden name="contact" />
+        <input hidden name="contact" value={email} />
       </div>
 
       <button
