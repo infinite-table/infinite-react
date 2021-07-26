@@ -43,11 +43,11 @@ export const Cards = () => {
         gridGap: "1.5rem",
       }}
     >
-      <Card title="📃 Documentation" href=".">
+      <Card title="📃 Documentation" href="/docs/latest/getting-started">
         Find in-depth information about <b>REACT INFINITE TABLE</b>.
       </Card>
 
-      <Card title="🔎 Examples" href=".">
+      <Card title="🔎 Examples" href="/docs/latest/getting-started">
         Discover practical examples to help you get started
       </Card>
 
