@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run update-versions && next dev",
-    "build": "cd ../source && npm i && npm run build && cd ../www && npm run update-versions && next build && next export",
+    "build": "npm run update-versions && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "update-versions": "node build/generate-versions-info.js"
   },
