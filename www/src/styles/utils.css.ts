@@ -205,6 +205,11 @@ export const paddingLeft = styleVariants(spaceScale, (space) => {
     paddingLeft: space,
   };
 });
+export const paddingRight = styleVariants(spaceScale, (space) => {
+  return {
+    paddingRight: space,
+  };
+});
 
 export const paddingY = styleVariants(spaceScale, (space) => {
   return {

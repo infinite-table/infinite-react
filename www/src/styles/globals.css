@@ -19,10 +19,13 @@ html {
   line-height: 1.5;
 }
 
+html {
+  display: flex;
+}
 html,
 body,
 #__next {
-  height: 100%;
+  min-height: 100%;
 }
 
 #__next {

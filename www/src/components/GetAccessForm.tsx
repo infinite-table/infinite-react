@@ -14,6 +14,7 @@ import {
   backgroundColorBrandDark,
   paddingX,
   fontSize,
+  marginY,
 } from "@www/styles/utils.css";
 
 import { width100, email, submitButton } from "./components.css";
@@ -73,18 +74,17 @@ export const GetAccessForm = () => {
         <input hidden name="form-name" value={"contact"} />
       </div>
 
+      <div
+        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize["xl"]}`}
+      >
+        {thankyou}
+      </div>
       <button
         type="submit"
         className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} ${backgroundColorBrandDark} ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
       >
         Get Access
       </button>
-
-      <div
-        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginBottom[6]} ${fontSize["xl"]}`}
-      >
-        {thankyou}
-      </div>
     </form>
   );
 };

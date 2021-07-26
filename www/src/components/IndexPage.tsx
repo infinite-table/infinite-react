@@ -20,6 +20,8 @@ import {
   flex1,
   position,
   shadow,
+  paddingLeft,
+  paddingRight,
 } from "@www/styles/utils.css";
 
 import {
@@ -54,7 +56,7 @@ export function IndexPage() {
 
       <Header title="Infinite Table" />
       <main
-        className={`${centeredFlexColumn} ${flex1} ${paddingX[0]} ${position.relative} `}
+        className={`${centeredFlexColumn} ${flex1} ${paddingX[6]} ${position.relative}`}
       >
         <div
           className={[
@@ -70,7 +72,7 @@ export function IndexPage() {
           ].join(" ")}
           style={{ top: "-3.5rem" }}
         >
-          COMING SOON for REACT {ReactLogo}
+          ALPHA VERSION AVAILABLE for REACT {ReactLogo}
         </div>
 
         <div
