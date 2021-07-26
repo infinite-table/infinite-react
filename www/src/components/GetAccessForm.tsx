@@ -35,7 +35,7 @@ export const GetAccessForm = () => {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: encode({
-        "form-name": event.target.getAttribute("name"),
+        "form-name": "contact",
         email,
       }),
     })
@@ -50,6 +50,7 @@ export const GetAccessForm = () => {
     <form
       name="contact"
       data-netlify="true"
+      data-netlify-honeypot="bot-field"
       className={`${margin[6]} ${width100} ${display.flex} ${flexDirection.column}`}
       onSubmit={handleSubmit}
     >
@@ -61,6 +62,7 @@ export const GetAccessForm = () => {
           style={{ width: "60%" }}
           value={email}
           type="email"
+          name="email"
           required
           onChange={(e) => {
             setThankyou("");
@@ -68,10 +70,11 @@ export const GetAccessForm = () => {
           }}
           className={` ${padding[3]} ${borderRadius.md} ${colorBrandDark} ${email}`}
         />
-        <input hidden name="contact" value={email} />
+        <input hidden name="form-name" value={"contact"} />
       </div>
 
       <button
+        type="submit"
         className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} ${backgroundColorBrandDark} ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
       >
         Get Access
