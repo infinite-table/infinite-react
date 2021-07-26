@@ -19,6 +19,7 @@
     "jsx": "preserve",
     "paths": {
       "@www/*": ["./src/*"],
+      "@infinite-table/infinite-react": ["../source/dist/index.esm.js"],
     }
   },
   "include": [

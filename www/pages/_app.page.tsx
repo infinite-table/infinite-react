@@ -6,6 +6,9 @@ import { MainLayout } from "@www/layouts/MainLayout";
 import "@www/styles/globals.css";
 import { DocsContext, DocsContextType } from "../src/components/DocsContext";
 
+globalThis.InfiniteTableLicenseKey =
+  "StartDate=2021-06-29|EndDate=2030-01-01|Owner=Adaptable|Type=distribution|TS=1624971462479|C=137829811,1004007071,2756196225,1839832928,3994409405,636616862";
+
 function MyApp({ Component, pageProps }) {
   const content = <Component {...pageProps} />;
 

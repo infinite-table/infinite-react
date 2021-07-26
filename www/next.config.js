@@ -80,6 +80,13 @@ const nextConfig = withMDX({
     config.plugins.push(...plugins);
 
     config.resolve.alias["@www"] = path.resolve("./src");
+    config.resolve.alias["@infinite-table/infinite-react"] = path.resolve(
+      "../source/dist/index.esm.js"
+    );
+    config.resolve.alias.react = path.resolve("./node_modules/react");
+    config.resolve.alias["react-dom"] = path.resolve(
+      "./node_modules/react-dom"
+    );
 
     return config;
   },

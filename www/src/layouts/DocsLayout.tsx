@@ -20,6 +20,7 @@ import { DocsCodeBlock } from "@www/components/DocsCodeBlock";
 import { DocsContent } from "@www/components/DocsContent";
 import { useEffect } from "react";
 import ClipboardJS from "clipboard";
+import { CodeEditor } from "@www/components/CodeEditor";
 
 const COMPONENTS = {
   a: DocsLink,
@@ -28,6 +29,8 @@ const COMPONENTS = {
   h3: DocsHeadingType3,
   h4: DocsHeadingType4,
   inlineCode: DocsCodeBlock,
+  pre: DocsCodeBlock,
+  code: CodeEditor,
 };
 
 export function DocsLayout({ children }) {
@@ -41,7 +44,9 @@ export function DocsLayout({ children }) {
   const title = humanize(parts.pop());
 
   useEffect(() => {
-    new ClipboardJS("[data-clipboard-text]");
+    if (globalThis.document) {
+      new ClipboardJS("[data-clipboard-text]");
+    }
   }, []);
 
   return (

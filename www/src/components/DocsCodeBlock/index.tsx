@@ -1,11 +1,12 @@
 import * as React from "react";
+import { CodeEditor } from "../CodeEditor";
 import { docsCodeBlockClassName, clipboardIconClassName } from "./index.css";
 
 export type DocsCodeBlockProps = {
   children: string;
 };
 
-const clipboard = (
+export const clipboardButton = (
   <svg
     className={clipboardIconClassName}
     height="16px"
@@ -19,14 +20,18 @@ const clipboard = (
 export const DocsCodeBlock = (props: DocsCodeBlockProps) => {
   let { children } = props;
 
+  if (typeof children !== "string") {
+    //@ts-ignore
+    const p: any = React.Children.only(children)?.props ?? {};
+    return <CodeEditor className="" {...p} />;
+  }
+
   return (
-    <pre
-      className={docsCodeBlockClassName}
-      data-clipboard-text={children}
-      title="Click to copy to clipboard"
-    >
-      <code>{children}</code>
-      {clipboard}
+    <pre className={docsCodeBlockClassName}>
+      <code data-clipboard-text={children} title="Click to copy to clipboard">
+        {children}
+      </code>
+      {clipboardButton}
     </pre>
   );
 };

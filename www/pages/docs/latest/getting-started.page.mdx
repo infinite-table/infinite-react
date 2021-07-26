@@ -4,6 +4,68 @@
 
 Install it by doing `npm i @infinite-table/infinite-react`
 
+## Meet the code
+
+```jsx height=500 live title=Getting-started-example
+const data = [
+  {
+    Id: 1,
+    FirstName: "Bob",
+    Age: 3,
+  },
+  {
+    Id: 2,
+    FirstName: "Alice",
+    Age: 50,
+  },
+  {
+    Id: 3,
+    FirstName: "Bill",
+    Age: 5,
+  },
+];
+
+const Table = InfiniteTableFactory();
+
+// we define a map with columns
+
+const columns = new Map([
+  [
+    "id",
+    {
+      // specifies which field from the data source
+      // should be rendered in this column
+      field: "Id",
+      type: "number",
+      sortable: true,
+    },
+  ],
+  [
+    "firstName",
+    {
+      field: "FirstName",
+    },
+  ],
+  ["age", { field: "Age", type: "number" }],
+]);
+
+render(
+  <DataSource data={data}>
+    <Table
+      domProps={{
+        style: {
+          height: 200,
+        },
+      }}
+      columnDefaultWidth={100}
+      sortable={false}
+      virtualizeColumns={false}
+      columns={columns}
+    />
+  </DataSource>
+);
+```
+
 ## Licensing
 
 You can use `@infinite-table/infinite-react` in 2 ways:
