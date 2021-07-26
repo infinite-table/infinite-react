@@ -5,14 +5,7 @@ import humanize from "humanize-string";
 import { Footer } from "@www/components/Footer";
 import { MainLayout } from "./MainLayout";
 import { DocsMenu } from "@www/components/DocsMenu";
-import {
-  centeredFlexColumn,
-  centeredFlexRow,
-  display,
-  flex1,
-  flexDirection,
-  paddingY,
-} from "@www/styles/utils.css";
+import { display, flex1, flexDirection, shadow } from "@www/styles/utils.css";
 import { container, width100 } from "@www/components/components.css";
 import { DocsHeader } from "@www/components/DocsHeader";
 import { DocsLink } from "@www/components/DocsLink";
@@ -48,11 +41,7 @@ export function DocsLayout({ children }) {
   const title = humanize(parts.pop());
 
   useEffect(() => {
-    new ClipboardJS("[data-clipboard-text]", {
-      // text: function (trigger) {
-      //   return trigger.getAttribute('data');
-      // },
-    });
+    new ClipboardJS("[data-clipboard-text]");
   }, []);
 
   return (
@@ -60,7 +49,7 @@ export function DocsLayout({ children }) {
       <Head>
         <title>{title} :: Infinite Table for React</title>
       </Head>
-      <MainLayout>
+      <MainLayout className={`${shadow.lg}`}>
         <DocsHeader version={currentVersion} versionInfo={versionInfo} />
         <div
           style={{ flex: 1, overflow: "auto", justifyContent: "center" }}

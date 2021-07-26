@@ -3,19 +3,15 @@ import {
   display,
   backgroundColorWhite,
   shadow,
-  backgroundColorBrand,
-  colorWhite,
   paddingY,
   paddingX,
   centeredFlexRow,
   fontSize,
-  colorBrand,
   colorBrandDark,
   position,
   top,
   zIndex,
   margin,
-  padding,
 } from "../styles/utils.css";
 import { container, width100 } from "./components.css";
 import { DocsMenuItem } from "./DocsMenu";

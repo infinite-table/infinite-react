@@ -15,6 +15,7 @@ import {
   paddingX,
   fontSize,
   marginY,
+  textAlign,
 } from "@www/styles/utils.css";
 
 import { width100, email, submitButton } from "./components.css";
@@ -75,7 +76,7 @@ export const GetAccessForm = () => {
       </div>
 
       <div
-        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize["xl"]}`}
+        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize["xl"]} ${textAlign.center}`}
       >
         {thankyou}
       </div>

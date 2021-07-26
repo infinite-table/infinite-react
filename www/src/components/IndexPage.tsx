@@ -22,6 +22,7 @@ import {
   shadow,
   paddingLeft,
   paddingRight,
+  paddingY,
 } from "@www/styles/utils.css";
 
 import {
@@ -80,7 +81,7 @@ export function IndexPage() {
             padding[5],
             marginTop[20],
             maxWidth["7xl"],
-            paddingX[20],
+            paddingX[15],
             textAlign.center,
             colorWhite,
           ].join(" ")}

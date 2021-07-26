@@ -17,7 +17,7 @@ type DocsMenuProps = {
   currentVersion: string;
 };
 export const DocsMenu = (props: DocsMenuProps) => {
-  const { children, items } = props;
+  const { items } = props;
 
   const renderItem = (item: DocsMenuItem) => {
     return (

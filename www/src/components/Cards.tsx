@@ -41,6 +41,7 @@ export const Cards = () => {
       className={`${display.flex} ${grid} ${centeredFlexProps} ${flexWrap.wrap} ${maxWidth["5xl"]} ${marginY[16]} `}
       style={{
         gridGap: "1.5rem",
+        alignItems: "stretch",
       }}
     >
       <Card title="📃 Documentation" href="/docs/latest/getting-started">

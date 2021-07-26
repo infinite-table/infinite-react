@@ -4,6 +4,7 @@ import {
   centeredFlexColumn,
   centeredFlexRow,
   maxWidth,
+  paddingX,
   vars,
 } from "@www/styles/utils.css";
 
@@ -35,6 +36,7 @@ export const minHeightFull = style({
 export const fullWidthContainer = composeStyles(centeredFlexColumn, width100);
 export const container = composeStyles(
   maxWidth["7xl"],
+  paddingX["3"],
   style({
     width: "100%",
   })
@@ -79,7 +81,7 @@ globalStyle(`${title} a:active`, {
 export const grid = style({
   "@media": {
     "screen and (max-width: 600px)": {
-      width: "100%",
+      width: "90%",
       flexDirection: "column",
     },
   },
@@ -107,6 +109,9 @@ export const card = style({
   },
 });
 
+globalStyle(`${card} a`, {
+  textDecoration: "none",
+});
 globalStyle(`${card}`, {
   transition:
     "color 0.35s ease, border-color 0.35s ease,background-color 0.35s ease",
