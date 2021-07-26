@@ -1,10 +1,11 @@
-import { globalStyle, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 import { spaceScale, vars } from "@www/styles/utils.css";
 
 export const docsCodeBlockClassName = style({
   background: vars.color.gray,
   display: "inline-block",
   padding: `${spaceScale["0.5"]} ${spaceScale[2]}`,
+  fontFamily: "RobotoMono",
   marginTop: 1,
   borderRadius: "5px",
   position: "relative",

@@ -28,14 +28,14 @@ export const Header = (props: { title: string }) => {
         centeredFlexColumn,
       ].join(" ")}
     >
-      <div className={`${position.relative}`}>
+      <a className={`${position.relative}`} href="/">
         <img
           width={150}
           height={70}
           src="/logo-infinite.svg"
           className={zIndex[10]}
         />
-      </div>
+      </a>
 
       <h1
         className={[

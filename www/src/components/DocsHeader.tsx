@@ -34,9 +34,9 @@ export const DocsHeader = (props: DocsHeaderProps) => {
         className={`${width100} ${shadow.lg} ${colorBrandDark}  ${backgroundColorWhite} ${position.sticky} ${top["0"]} ${zIndex[10]} `}
       >
         <div className={`${container} ${display.flex} ${margin.auto}`}>
-          <div className={` ${paddingY[6]} `}>
+          <a className={` ${paddingY[6]} `} href="/">
             <img width={85} height={40} src="/logo-infinite.svg" />
-          </div>
+          </a>
           <div className={`${centeredFlexRow} ${position.relative}`}>
             <div className={`${fontSize["2xl"]} ${paddingX["6"]} `}>
               Infinite Table Documentation

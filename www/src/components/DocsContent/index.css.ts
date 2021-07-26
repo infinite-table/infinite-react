@@ -4,6 +4,7 @@ import { display, flex1, flexDirection, paddingY } from "@www/styles/utils.css";
 export const docsContentClassName = composeStyles(
   style({
     lineHeight: "1.75",
+    fontFamily: "Roboto",
   }),
   display.flex,
   flexDirection.column,

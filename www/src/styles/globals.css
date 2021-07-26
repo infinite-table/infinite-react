@@ -4,6 +4,10 @@
   font-family: "RobotoMono";
   src: url("/Roboto_Mono/static/RobotoMono-Regular.ttf");
 }
+@font-face {
+  font-family: "Roboto";
+  src: url("/Roboto/Roboto-Regular.ttf");
+}
 html body {
   font-family: "RobotoMono", sans-serif;
 }
