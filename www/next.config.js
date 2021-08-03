@@ -87,6 +87,15 @@ const nextConfig = withMDX({
     config.resolve.alias["react-dom"] = path.resolve(
       "./node_modules/react-dom"
     );
+    // needed for bundling the ts-compiler for browser usage
+    config.resolve.alias["os"] = path.resolve("./build/shims/os-shim.js");
+    config.resolve.alias["fs"] = path.resolve("./node_modules/node-browserfs");
+    config.resolve.alias["perf_hooks"] = path.resolve(
+      "./build/shims/perf_hooks.js"
+    );
+    config.resolve.alias["path"] = path.resolve(
+      "./node_modules/path-browserify"
+    );
 
     return config;
   },

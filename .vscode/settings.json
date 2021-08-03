@@ -7,7 +7,8 @@
     "source/examples/dist": true,
     "source/examples/out": true,
     "source/examples/.next": true,
-    "source/dist": true
+    "source/dist": true,
+    "www/src/ts-compiler-bundle-large.js": true
   },
   "files.exclude": {
     "source/examples/.next": true,
@@ -20,7 +21,8 @@
   "files.watcherExclude": {
     "source/dist": true,
     "source/examples/.next": true,
-    "source/examples/out": true
+    "source/examples/out": true,
+    "www/src/ts-compiler-bundle-large.js": true
   },
   "editor.tabSize": 2,
   "prettier.prettierPath": "node_modules/prettier"

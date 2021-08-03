@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["dist"],
+  "include": ["dist/index.d.ts"],
+  "compilerOptions": {
+    "lib": [],
+    "module":"System",
+    "allowJs": false,
+    "checkJs": false,
+    "resolveJsonModule": false
+  }
+  
+}

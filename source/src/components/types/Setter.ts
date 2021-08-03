@@ -1,3 +1,2 @@
-import { Dispatch, SetStateAction } from 'react';
-
-export interface Setter<T> extends Dispatch<SetStateAction<T>> {}
+import * as React from 'react';
+export interface Setter<T> extends React.Dispatch<React.SetStateAction<T>> {}

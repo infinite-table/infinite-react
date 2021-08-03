@@ -1,2 +1,3 @@
-import { ReactNode } from 'react';
-export type Renderable = ReactNode;
+import * as React from 'react';
+
+export type Renderable = React.ReactNode;

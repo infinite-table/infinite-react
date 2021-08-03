@@ -18,7 +18,7 @@ interface ResizeObserverProps {
   notifyOnMount?: boolean;
 
   /**
-   * If set to true, it will be attached using `useLayoutEffect`. If false, will be attached using `useEffect`
+   * If set to true, it will be attached using useLayoutEffect. If false, will be attached using useEffect
    * @default false
    */
   earlyAttach?: boolean;

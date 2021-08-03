@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type { Renderable } from '../../types/Renderable';
 import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
@@ -6,7 +5,7 @@ import { InfiniteTableEnhancedData } from '.';
 
 export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
-  value: string | number | ReactNode | void;
+  value: string | number | Renderable | void;
   data: DATA_TYPE | null;
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
   rowIndex: number;
@@ -26,7 +25,7 @@ export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({
   column,
   data,
   enhancedData,
-}: InfiniteTableColumnRenderParams<DATA_TYPE>) => ReactNode | null;
+}: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
   columnSortInfo,

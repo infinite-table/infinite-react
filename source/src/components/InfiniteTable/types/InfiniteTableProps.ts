@@ -1,4 +1,4 @@
-import type { HTMLProps, RefObject } from 'react';
+import * as React from 'react';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
@@ -45,7 +45,7 @@ export type InfiniteTableProps<T> = {
 
   primaryKey: string;
   rowHeight: number | string;
-  domProps?: HTMLProps<HTMLDivElement>;
+  domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
   sortable?: boolean;
   draggableColumns?: boolean;
@@ -63,11 +63,11 @@ export type InfiniteTableProps<T> = {
   onReady?: (api: InfiniteTableImperativeApi<T>) => void;
 
   rowProps?:
-    | HTMLProps<HTMLDivElement>
+    | React.HTMLProps<HTMLDivElement>
     | ((rowArgs: {
         rowIndex: number;
         data: T | null;
-      }) => HTMLProps<HTMLDivElement>);
+      }) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
 };
@@ -76,5 +76,5 @@ export type InfiniteTableOwnProps<T> = InfiniteTableProps<T> & {
   rowHeight: number;
   rowHeightCSSVar: string;
   onHeaderResize: (height: number) => void;
-  bodyDOMRef?: RefObject<HTMLDivElement | null>;
+  bodyDOMRef?: React.RefObject<HTMLDivElement | null>;
 };

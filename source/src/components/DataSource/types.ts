@@ -1,4 +1,4 @@
-import { ReactNode, Dispatch } from 'react';
+import * as React from 'react';
 import { Setter } from '../types/Setter';
 import { MultisortInfo } from '../../utils/multisort';
 import { InfiniteTableEnhancedData } from '../InfiniteTable';
@@ -42,8 +42,8 @@ export type DataSourceData<T> =
 
 export interface DataSourceProps<T> {
   children:
-    | ReactNode
-    | ((contextData: DataSourceComputedValues<T>) => ReactNode);
+    | React.ReactNode
+    | ((contextData: DataSourceComputedValues<T>) => React.ReactNode);
   primaryKey: keyof T;
   fields?: (keyof T)[];
 
@@ -90,7 +90,7 @@ export interface DataSourceContextValue<T> {
   props: DataSourceProps<T>;
   state: DataSourceState<T>;
   actions: DataSourceActions<T>;
-  dispatch: Dispatch<DataSourceAction<any>>;
+  dispatch: React.Dispatch<DataSourceAction<any>>;
 }
 
 export interface DataSourceActions<T> {

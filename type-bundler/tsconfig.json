@@ -1,0 +1,36 @@
+{
+  "include": ["test.tsx"],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "ES2015",
+    "lib": ["dom", "es5"],
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "strict": true,
+    "allowJs": false,
+    "checkJs": false,
+    "emitDeclarationOnly": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "paths": {
+      
+    }
+  },
+  "exclude": ["dist"]
+}

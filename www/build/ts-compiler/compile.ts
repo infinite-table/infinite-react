@@ -1,0 +1,318 @@
+import * as ts from "typescript";
+
+import { dts as dts_es5 } from "./lib-es5";
+import { dts as dts_es2015 } from "./lib-es2015-core";
+import { dts as dts_es2015_collection } from "./lib-es2015-collection";
+import { dts as infiniteTableDTS } from "./lib-extra";
+import { dts as reactDTS } from "./dts-deps/react/react";
+import { dts as globalDTS } from "./dts-deps/react/global";
+import { dts as csstypeDTS } from "./dts-deps/react/deps/csstype";
+import { dts as propTypesDTS } from "./dts-deps/react/deps/prop-types";
+import { getDependencies } from "./getRequireStatements";
+
+const libDTS = `${dts_es5}
+${dts_es2015}
+${dts_es2015_collection}
+
+interface Console {
+  memory: any;
+  assert(condition?: boolean, ...data: any[]): void;
+  clear(): void;
+  count(label?: string): void;
+  countReset(label?: string): void;
+  debug(...data: any[]): void;
+  dir(item?: any, options?: any): void;
+  dirxml(...data: any[]): void; 
+  error(...data: any[]): void;
+  exception(message?: string, ...optionalParams: any[]): void;
+  group(...data: any[]): void;
+  groupCollapsed(...data: any[]): void;
+  groupEnd(): void;
+  info(...data: any[]): void;
+  log(...data: any[]): void;
+  table(tabularData?: any, properties?: string[]): void;
+  time(label?: string): void;
+  timeEnd(label?: string): void;
+  timeLog(label?: string, ...data: any[]): void;
+  timeStamp(label?: string): void;
+  trace(...data: any[]): void;
+  warn(...data: any[]): void;
+}
+
+declare var console: Console;
+declare var render: (x: any) => any;
+`;
+
+const RESOLVER_MAP = new Map<
+  string,
+  {
+    file: string;
+    code: string;
+  }
+>([
+  [
+    "@infinite-table/infinite-react",
+    {
+      file: "@infinite-table/infinite-react/index.ts",
+      code: infiniteTableDTS,
+    },
+  ],
+  [
+    "react",
+    {
+      file: "node_modules/@types/react/index.d.ts",
+      code: reactDTS,
+    },
+  ],
+  [
+    "csstype",
+    {
+      file: "node_modules/csstype/index.d.ts",
+      code: csstypeDTS,
+    },
+  ],
+  [
+    "prop-types",
+    {
+      file: "node_modules/@types/prop-types/index.d.ts",
+      code: propTypesDTS,
+    },
+  ],
+  [
+    "es2015",
+    {
+      file: "es2015.ts",
+      code: libDTS,
+    },
+  ],
+]);
+
+const RESOLVED_FILE_PATHS = new Map(
+  Array.from(RESOLVER_MAP.keys()).map((key) => {
+    const value = RESOLVER_MAP.get(key)!;
+
+    return [value.file, value.code];
+  })
+);
+RESOLVED_FILE_PATHS.set("node_modules/@types/react/global.d.ts", globalDTS);
+
+const INIT_COMPILER_OPTIONS: ts.CompilerOptions = {
+  target: ts.ScriptTarget.ESNext,
+  jsx: ts.JsxEmit.React,
+
+  module: ts.ModuleKind.CommonJS,
+  isolatedModules: false,
+  esModuleInterop: false,
+  // alwaysStrict: true,
+  moduleResolution: ts.ModuleResolutionKind.NodeJs,
+  // allowSyntheticDefaultImports: true,
+  // allowUmdGlobalAccess: true,
+  // allowUnreachableCode: true,
+  // alwaysStrict: false,
+  // disableSolutionSearching: true,
+  // disableReferencedProjectLoad: true,
+  // useDefineForClassFields: false,
+  rootDir: ".",
+  baseUrl: ".",
+  lib: ["es2015"],
+};
+type CompileError = { message: string; location: string };
+
+const getMessageChainsErrors = (
+  next: ts.DiagnosticMessageChain[],
+  location: string,
+  errors: CompileError[] = []
+) => {
+  for (let current of next) {
+    errors.push({
+      message: current.messageText,
+      location,
+    });
+    if (current.next) {
+      getMessageChainsErrors(current.next, location, errors);
+    }
+  }
+
+  return errors;
+};
+
+const getErrors = (diagnostics: readonly ts.Diagnostic[]) => {
+  let errors: CompileError[] = [];
+  for (const diagnostic of diagnostics) {
+    let message = diagnostic.messageText;
+    const file = diagnostic.file!;
+
+    const lineAndChar = file
+      ? file.getLineAndCharacterOfPosition(diagnostic.start!)
+      : { line: 1, character: 1 };
+
+    const line = lineAndChar.line + 1;
+    const character = lineAndChar.character + 1;
+
+    const location = `line ${line}, char ${character}, ${file?.fileName}`;
+
+    errors.push({
+      message: typeof message === "string" ? message : message.messageText,
+      location,
+    });
+
+    if (typeof message !== "string" && message.next) {
+      getMessageChainsErrors(message.next, location, errors);
+    }
+  }
+
+  return errors;
+};
+
+function resolveModuleNames(
+  moduleNames: string[],
+  containingFile: string,
+  _reusedNames: string[] | undefined,
+  _redirectedReference: ts.ResolvedProjectReference | undefined,
+  options: ts.CompilerOptions
+): ts.ResolvedModule[] {
+  const resolvedModules: ts.ResolvedModule[] = [];
+  for (const moduleName of moduleNames) {
+    const foundSourceCode = RESOLVER_MAP.get(moduleName);
+
+    let result = ts.resolveModuleName(moduleName, containingFile, options, {
+      fileExists: () => true,
+      readFile: () => {
+        return foundSourceCode?.code;
+      },
+    });
+    if (result.resolvedModule && foundSourceCode) {
+      result.resolvedModule.resolvedFileName = foundSourceCode!.file;
+      result.resolvedModule.isExternalLibraryImport = true;
+
+      resolvedModules.push(result.resolvedModule);
+    } else {
+      throw `Module ${moduleName} cannot be resolved`;
+    }
+  }
+  return resolvedModules;
+}
+
+export type CompileFileResult = {
+  errors: { message: string; location: string }[];
+  dependencies?: { path: string }[];
+  result: string;
+};
+export const compileFile = (data: {
+  code: string;
+  path: string;
+  compilerOptions?: Partial<ts.CompilerOptions>;
+  getPreEmitDiagnostics: boolean;
+}): CompileFileResult => {
+  let {
+    code,
+    path = "example.tsx",
+    compilerOptions,
+    getPreEmitDiagnostics,
+  } = data;
+
+  compilerOptions = {
+    ...compilerOptions,
+    ...INIT_COMPILER_OPTIONS,
+  };
+
+  const sourceFile = ts.createSourceFile(path, code, ts.ScriptTarget.Latest);
+  const libDTSFile = ts.createSourceFile(
+    "lib.d.ts",
+    libDTS,
+    ts.ScriptTarget.Latest
+  );
+
+  const writeMap = new Map<string, string>();
+  try {
+    const customCompilerHost: ts.CompilerHost = {
+      getSourceFile: (name: string, languageVersion: any) => {
+        if (name === sourceFile.fileName) {
+          return sourceFile;
+        }
+        if (name === "lib.d.ts") {
+          return libDTSFile;
+        }
+
+        if (RESOLVED_FILE_PATHS.get(name)) {
+          return ts.createSourceFile(
+            name,
+            RESOLVED_FILE_PATHS.get(name)!,
+            ts.ScriptTarget.Latest
+          );
+        }
+
+        throw `Cannot resolve ${name}`;
+      },
+      writeFile: (_filename: string, data: string) => {
+        writeMap.set(_filename, data);
+      },
+      resolveModuleNames,
+      getDefaultLibFileName: () => "es2015.ts",
+      useCaseSensitiveFileNames: () => false,
+      getCanonicalFileName: (filename: string) => filename,
+      getCurrentDirectory: () => "",
+      getNewLine: () => "\n",
+      getDirectories: () => [],
+      fileExists: () => true,
+      readFile: () => "",
+    };
+
+    const program = ts.createProgram(
+      [sourceFile.fileName],
+      compilerOptions,
+      customCompilerHost
+    );
+
+    const diagnostics = getPreEmitDiagnostics
+      ? ts.getPreEmitDiagnostics(program)
+      : null;
+    const errors = diagnostics ? getErrors(diagnostics) : [];
+    const dependencies = getDependencies(sourceFile);
+
+    program.emit();
+
+    return {
+      result: writeMap.get(path.replace(".tsx", ".js")) || "",
+      dependencies,
+      errors,
+    };
+  } catch (ex) {
+    throw ex;
+  }
+};
+
+export const compileProgram = (source: string) => {
+  let result: CompileFileResult;
+
+  try {
+    result = compileFile({
+      code: source,
+      path: "example.tsx",
+      getPreEmitDiagnostics: true,
+    });
+
+    console.log(result);
+
+    const deps = result.dependencies || [];
+
+    deps.forEach((dep) => {
+      if (
+        !dep.path.startsWith("@infinite-table/infinite-react") &&
+        dep.path !== "react"
+      ) {
+        result.errors.push({
+          message: `Imports are only supported from "@infinite-table/infinite-react" or "react". Any other imports are not supported.`,
+          location: "",
+        });
+      }
+    });
+  } catch (ex) {
+    result = {
+      errors: [{ message: `${ex}`, location: "" }],
+      result: "",
+    };
+  }
+
+  return result;
+};

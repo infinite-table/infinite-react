@@ -6,6 +6,7 @@
   "compilerOptions": {
     "noEmit": false,
     "emitDeclarationOnly": true,
+    "isolatedModules": false,
     "rootDir": "./src"
   }
   

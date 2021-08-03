@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   InfiniteTableOwnProps,
   InfiniteTableProps,
@@ -9,7 +10,6 @@ import {
   InfiniteTableActions,
   InfiniteTableInternalActions,
 } from '../state/getReducerActions';
-import { Dispatch, MutableRefObject, RefObject } from 'react';
 
 export interface InfiniteTableContextValue<T> {
   props: InfiniteTableProps<T>;
@@ -18,8 +18,8 @@ export interface InfiniteTableContextValue<T> {
   computed: InfiniteTableComputedValues<T>;
   actions: InfiniteTableActions<T>;
   internalActions: InfiniteTableInternalActions<T>;
-  dispatch: Dispatch<InfiniteTableAction>;
-  domRef: MutableRefObject<HTMLDivElement | null>;
-  bodyDOMRef: RefObject<HTMLDivElement | null>;
-  portalDOMRef: RefObject<HTMLDivElement | null>;
+  dispatch: React.Dispatch<InfiniteTableAction>;
+  domRef: React.MutableRefObject<HTMLDivElement | null>;
+  bodyDOMRef: React.RefObject<HTMLDivElement | null>;
+  portalDOMRef: React.RefObject<HTMLDivElement | null>;
 }

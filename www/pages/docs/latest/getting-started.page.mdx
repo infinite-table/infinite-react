@@ -6,7 +6,20 @@ Install it by doing `npm i @infinite-table/infinite-react`
 
 ## Meet the code
 
-```jsx height=500 live title=Getting-started-example
+```tsx height=500 live title=Getting-started-example
+import * as React from "react";
+import {
+  InfiniteTableFactory,
+  DataSource,
+} from "@infinite-table/infinite-react";
+
+type Person = {
+  Id: number;
+  FirstName: string;
+  Age: number;
+};
+const Table = InfiniteTableFactory<Person>();
+
 const data = [
   {
     Id: 1,
@@ -24,11 +37,6 @@ const data = [
     Age: 5,
   },
 ];
-
-const Table = InfiniteTableFactory();
-
-// we define a map with columns
-
 const columns = new Map([
   [
     "id",

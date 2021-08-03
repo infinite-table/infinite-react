@@ -2,18 +2,24 @@ import * as React from "react";
 
 import { mdx } from "@mdx-js/react";
 import Highlight, { defaultProps, Language } from "prism-react-renderer";
-import vsDark from "prism-react-renderer/themes/vsDark";
+// import vsDark from "prism-react-renderer/themes/vsDark";
 import vsLight from "prism-react-renderer/themes/vsLight";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
 
-import {
-  InfiniteTableFactory,
-  DataSource,
-} from "@infinite-table/infinite-react";
+import * as InfiniteTable from "@infinite-table/infinite-react";
 import { clipboardButton } from "../DocsCodeBlock";
-import { borderRadius, vars } from "@www/styles/utils.css";
+import {
+  borderRadius,
+  display,
+  flexDirection,
+  padding,
+  vars,
+} from "@www/styles/utils.css";
 import humanizeString from "humanize-string";
 import { docsCodeBlockClassName } from "../DocsCodeBlock/index.css";
+import { CSSProperties, useState } from "react";
+import { languageClassName, selectedClassName } from "./index.css";
+import { compile } from "./compile";
 
 export type CodeEditorProps = {
   children: string;
@@ -27,18 +33,126 @@ export type CodeEditorProps = {
 type ValidLanguage = "jsx" | "javascript" | "typescript" | "tsx";
 
 const languageMap = {
-  ts: "typescript",
-  js: "javascript",
+  ts: "typescript" as "typescript",
+  tsx: "typescript" as "typescript",
+  typescript: "typescript" as "typescript",
+  js: "javascript" as "javascript",
+  javascript: "javascript" as "javascript",
+  jsx: "javascript" as "javascript",
 };
 
-const imports = `import { InfiniteTableFactory } from '@infinite-table/infinite-react'
-import '@infinite-table/infinite-react/index.css'
+type CodeEditorHeaderProps = {
+  title?: string;
+  clipboardCode?: string;
+  ts: boolean;
+  onLanguageChange: (ts: boolean) => void;
+};
+export const CodeEditorHeader = (props: CodeEditorHeaderProps) => {
+  const domProps: React.HTMLProps<HTMLDivElement> = {};
 
-`;
+  if (props.clipboardCode) {
+    (domProps as any)["data-clipboard-text"] = props.clipboardCode;
+    domProps.title = "Click to copy to clipboard";
+  }
+
+  const iconSize = 20;
+  const languageStyle: CSSProperties = {
+    borderRadius: "50%",
+    overflow: "hidden",
+    cursor: "pointer",
+  };
+
+  return (
+    <div
+      {...domProps}
+      className={docsCodeBlockClassName}
+      style={{
+        display: "block",
+        background: vars.color.gray,
+        cursor: "pointer",
+        position: "relative",
+        borderRadius: borderRadius["2xl"],
+        // padding: vars.space[3],
+        marginBottom: 10,
+      }}
+    >
+      <div
+        className={`${flexDirection.row} ${display.inlineFlex} ${padding["2"]}`}
+      >
+        <div
+          className={`${
+            !props.ts ? selectedClassName : ""
+          } ${languageClassName}`}
+          style={{ ...languageStyle, backgroundColor: "#ffc000" }}
+          title="Switch to JavaScript"
+          onClick={() => {
+            if (props.ts) {
+              props.onLanguageChange(false);
+            }
+          }}
+        >
+          <img src={"/jslogo.svg"} width={iconSize} height={iconSize} />
+        </div>
+        <div
+          className={`${
+            props.ts ? selectedClassName : ""
+          } ${languageClassName}`}
+          style={{ ...languageStyle, backgroundColor: "#0288d1" }}
+          title="Switch to TypeScript"
+          onClick={() => {
+            if (!props.ts) {
+              props.onLanguageChange(true);
+            }
+          }}
+        >
+          <img src={"/ts-logo.svg"} width={iconSize} height={iconSize} />
+        </div>
+      </div>
+      {props.title ? humanizeString(props.title) : null}
+      {clipboardButton}
+    </div>
+  );
+};
+
+type CodePreviewProps = {
+  transpiledCode: string;
+};
+const CodePreview = (props: CodePreviewProps) => {
+  const renderFn = React.useMemo(() => {
+    const fn = new Function(
+      "require",
+      "render",
+      "exports",
+      props.transpiledCode
+    );
+
+    return fn;
+  }, [props.transpiledCode]);
+
+  const [content, setContent] = useState<React.ReactNode>(null);
+
+  React.useEffect(() => {
+    const render = (el: React.ReactNode) => {
+      setContent(el);
+    };
+    const require = (what: string) => {
+      if (what === "@infinite-table/infinite-react") {
+        return InfiniteTable;
+      }
+      if (what === "react") {
+        return React;
+      }
+    };
+    const exports = {};
+    renderFn(require, render, exports);
+  }, [renderFn]);
+
+  return <>{content}</>;
+};
+
 export const CodeEditor = (props: CodeEditorProps) => {
-  const [renderIndex, rerender] = React.useState((x) => x + 1);
-
-  let { children, className, render, title, live, height } = props;
+  let { children, className, title, live, height } = props;
+  className = className ?? "language-tsx";
 
   //@ts-ignore
   if (height && height == height * 1) {
@@ -49,29 +163,27 @@ export const CodeEditor = (props: CodeEditorProps) => {
 
   language = languageMap[language] || language;
 
+  const [theLanguage, setTheLanguage] = useState(language);
+
+  const IS_TS = theLanguage === "typescript";
+
   let code = children.trim();
 
   const header = (
-    <div
-      data-clipboard-text={code}
-      className={docsCodeBlockClassName}
-      title="Click to copy to clipboard"
-      style={{
-        display: "block",
-        background: vars.color.gray,
-        cursor: "pointer",
-        position: "relative",
-        borderRadius: borderRadius["2xl"],
-        padding: vars.space[3],
-        marginBottom: 10,
+    <CodeEditorHeader
+      ts={IS_TS}
+      onLanguageChange={(ts) => {
+        setTheLanguage(ts ? "typescript" : "javascript");
       }}
-    >
-      {title ? humanizeString(title) : null}
-      {clipboardButton}
-    </div>
+      title={title}
+      clipboardCode={code}
+    />
   );
+
+  const compilationResult = compile(code);
+
   if (live) {
-    const codeOnly = code.replace(imports, "");
+    const transformCode = (code: string) => compile(code).result as string;
 
     return (
       <div
@@ -81,15 +193,9 @@ export const CodeEditor = (props: CodeEditorProps) => {
         }}
       >
         {header}
-
-        <LiveProvider
-          key={renderIndex}
-          code={codeOnly}
-          noInline
-          transformCode={(code) => code.replace(imports, "")}
-          scope={{ mdx, InfiniteTableFactory, DataSource }}
-        >
-          <LivePreview />
+        <CodePreview transpiledCode={compilationResult.result} />
+        {/*}
+        <LiveProvider code={code} noInline scope={{ mdx }}>
           <div
             style={{
               height,
@@ -97,33 +203,19 @@ export const CodeEditor = (props: CodeEditorProps) => {
               fontSize: vars.font.sizes.medium,
             }}
           >
-            <LiveEditor
-              language={language}
-              theme={vsLight}
-              code={imports + code}
-            />
+            <LiveEditor language={language} theme={vsLight} />
           </div>
           <LiveError />
-        </LiveProvider>
+          </LiveProvider>*/}
       </div>
     );
   }
 
-  // if (render) {
-  //   return (
-  //     <div style={{ marginTop: "40px", background: "red" }}>
-  //       <LiveProvider code={children}>
-  //         <LivePreview />
-  //       </LiveProvider>
-  //     </div>
-  //   );
-  // }
-
   return (
     <Highlight
       {...defaultProps}
-      code={imports + code}
-      language={language}
+      code={code}
+      language={theLanguage}
       theme={vsLight}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -131,7 +223,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
           {header}
           <pre
             className={""}
-            data-clipboard-text={imports + code}
+            data-clipboard-text={code}
             title="Click to copy to clipboard"
             style={{ ...style, height, overflow: "auto", padding: "20px" }}
           >
