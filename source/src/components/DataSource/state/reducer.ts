@@ -106,7 +106,11 @@ function getReducer<T>(
     const groupBy = state.groupBy;
     const shouldGroup =
       groupBy &&
-      haveDepsChanged(initialState, state, ['originalDataArray', 'groupBy']);
+      haveDepsChanged(initialState, state, [
+        'originalDataArray',
+        'groupBy',
+        'sortInfo',
+      ]);
 
     let dataArray = state.originalDataArray;
     let enhancedDataArray: InfiniteTableEnhancedData<T>[] = [];
@@ -117,15 +121,17 @@ function getReducer<T>(
       dataArray = multisort(sortInfo, [...dataArray]);
     }
 
+    state.groupDeepMap = undefined;
+
     if (shouldGroup && groupBy.length) {
-      enhancedDataArray = enhancedFlatten(
-        group(
-          {
-            groupBy,
-          },
-          dataArray,
-        ),
+      const groupResult = group(
+        {
+          groupBy,
+        },
+        dataArray,
       );
+      enhancedDataArray = enhancedFlatten(groupResult);
+      state.groupDeepMap = groupResult.deepMap;
     } else {
       enhancedDataArray = dataArray.map((data) => ({ data }));
     }

@@ -9,8 +9,6 @@ type Pair<KeyType, ValueType> = {
 const SORT_ASC_REVISION = (p1: Pair<any, any>, p2: Pair<any, any>) =>
   sortAscending(p1.revision!, p2.revision!);
 
-// const EMPTY_KEY = Symbol();
-
 export class DeepMap<KeyType, ValueType> {
   private map = new Map<KeyType, Pair<KeyType, ValueType>>();
   private length = 0;
@@ -31,8 +29,8 @@ export class DeepMap<KeyType, ValueType> {
         const pair = currentMap.has(key) ? currentMap.get(key)! : {};
 
         pair.revision = this.revision++;
-
         pair.value = value;
+
         currentMap.set(key, pair);
         this.length++;
       } else {
@@ -194,53 +192,15 @@ export class DeepMap<KeyType, ValueType> {
       fn(pair, keys);
     }
     if (map) {
-      Array.from(map.keys()).forEach((k) => this.visitKey(k, map, keys, fn));
+      map.forEach((_, k) => {
+        this.visitKey(k, map, keys, fn);
+      });
     }
   }
 
   visit = (fn: (pair: Pair<KeyType, ValueType>, keys: KeyType[]) => void) => {
-    Array.from(this.map.keys()).forEach((k) =>
-      this.visitKey(k, this.map, [], fn),
-    );
+    this.map.forEach((_, k) => this.visitKey(k, this.map, [], fn));
   };
-
-  private sortedIterator<ReturnType>(
-    fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => ReturnType,
-  ) {
-    const result: (Pair<KeyType, ValueType> & { keys: KeyType[] })[] = [];
-
-    this.visit((pair, keys) => {
-      result.push({ ...pair, keys });
-    });
-
-    result.sort(SORT_ASC_REVISION);
-
-    function* makeIterator() {
-      for (let i = 0, len = result.length; i < len; i++) {
-        yield fn(result[i]);
-      }
-    }
-
-    return makeIterator();
-  }
-
-  // private iterator<ReturnType>(
-  //   fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => ReturnType,
-  // ) {
-  //   const result: (Pair<KeyType, ValueType> & { keys: KeyType[] })[] = [];
-
-  //   this.visit((pair, keys) => {
-  //     result.push({ ...pair, keys });
-  //   });
-
-  //   function* makeIterator() {
-  //     for (let i = 0, len = result.length; i < len; i++) {
-  //       yield fn(result[i]);
-  //     }
-  //   }
-
-  //   return makeIterator();
-  // }
 
   private getArray<ReturnType>(
     fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => ReturnType,
@@ -283,4 +243,42 @@ export class DeepMap<KeyType, ValueType> {
   topDownValues() {
     return this.getArray<ValueType>((pair) => pair.value!);
   }
+
+  private sortedIterator<ReturnType>(
+    fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => ReturnType,
+  ) {
+    const result: (Pair<KeyType, ValueType> & { keys: KeyType[] })[] = [];
+
+    this.visit((pair, keys) => {
+      result.push({ ...pair, keys });
+    });
+
+    result.sort(SORT_ASC_REVISION);
+
+    function* makeIterator() {
+      for (let i = 0, len = result.length; i < len; i++) {
+        yield fn(result[i]);
+      }
+    }
+
+    return makeIterator();
+  }
+
+  // private iterator<ReturnType>(
+  //   fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => ReturnType,
+  // ) {
+  //   const result: (Pair<KeyType, ValueType> & { keys: KeyType[] })[] = [];
+
+  //   this.visit((pair, keys) => {
+  //     result.push({ ...pair, keys });
+  //   });
+
+  //   function* makeIterator() {
+  //     for (let i = 0, len = result.length; i < len; i++) {
+  //       yield fn(result[i]);
+  //     }
+  //   }
+
+  //   return makeIterator();
+  // }
 }

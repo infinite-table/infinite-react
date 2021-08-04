@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { GroupByReducer } from '../../../utils/groupAndPivot';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
@@ -14,6 +15,14 @@ export type InfiniteTablePropColumnVisibility = Map<string, false>;
 export type InfiniteTablePropColumnPinning = Map<
   string,
   true | 'start' | 'end'
+>;
+
+export type InfiniteTableColumnAggregator<T, AggregationResultType> =
+  GroupByReducer<T, AggregationResultType>;
+
+export type InfiniteTablePropColumnAggregations<T> = Map<
+  string,
+  GroupByReducer<T, any>
 >;
 
 export type InfiniteTableImperativeApi<T> = {
@@ -38,6 +47,9 @@ export type InfiniteTableProps<T> = {
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
   columnPinning?: InfiniteTablePropColumnPinning;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
+
+  columnAggregations?: InfiniteTablePropColumnAggregations<T>;
+
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;

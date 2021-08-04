@@ -4,85 +4,76 @@ import {
   DataSource,
   InfiniteTableFactory,
   InfiniteTableColumn,
-  InfiniteTablePropColumnOrder,
-  InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 
-import { rowData, Car } from './rowData';
-import { useState } from 'react';
+import { CarSale } from '@examples/datasets/CarSale';
+//@ts-ignore
+import carsales from '@examples/datasets/carsales';
+import { InfiniteTableColumnAggregator } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableProps';
 
-const Table = InfiniteTableFactory<Car>();
+const Table = InfiniteTableFactory<CarSale>();
 
-const columns = new Map<string, InfiniteTableColumn<Car>>([
+const columns = new Map<string, InfiniteTableColumn<CarSale>>([
   [
     'id',
     {
       field: 'id',
+      type: 'number',
+      header: 'Identifier',
       render: ({ value, enhancedData }) => {
-        return enhancedData.isGroupRow
-          ? JSON.stringify(enhancedData.groupKeys)
-          : `${value}`;
-      },
-    },
-  ],
-  [
-    'make',
-    {
-      field: 'make',
-      // render: ({ value }) => <input value={value as string} />,
-    },
-  ],
-  [
-    'model',
-    {
-      field: 'model',
-      // render: ({ value }) => <input value={value as string} />,
-      // draggable: false,
-      // name: 'NOT DRAGGABLE This is a long name for the model',
-    } as InfiniteTableColumn<Car>,
-  ],
-  ['price', { field: 'price', name: 'Price' }],
-  [
-    'year',
-    {
-      field: 'year',
-      // flex: 1,
-      header: ({ column }) => {
-        const dir = column.computedSortInfo?.dir;
         return (
-          <>
-            Year{' '}
-            {dir === 1 ? ' - ascending' : dir === -1 ? ' - descending' : ''}
-          </>
+          <div
+            style={{
+              paddingLeft:
+                ((enhancedData.groupNesting || 0) +
+                  (enhancedData.isGroupRow ? 0 : 1)) *
+                30,
+            }}
+          >
+            {enhancedData.groupKeys ? enhancedData.value : value ?? null}
+          </div>
         );
       },
     },
   ],
-  ['rating', { field: 'rating' }],
+  ['make', { field: 'make' }],
+  ['model', { field: 'model' }],
+  ['cat', { field: 'category' }],
+  ['count', { field: 'sales', type: 'number' }],
+  [
+    'year',
+    {
+      field: 'year',
+      type: 'number',
+      render: ({ value, enhancedData }) => {
+        return enhancedData.isGroupRow ? null : `Year: ${value}`;
+      },
+    },
+  ],
 ]);
 
-(globalThis as any).columns = columns;
+// const columnPinning: InfiniteTablePropColumnPinning = new Map([
+//   ['id', 'start'],
+//   ['make', 'end'],
+//   ['cat', 'end'],
+// ]);
 
-const defaultColumnOrder = ['id', 'make', 'model', 'year', 'price'];
+const sumAggregation: InfiniteTableColumnAggregator<CarSale, number> = {
+  initialValue: 0,
+  reducer: (a, b) => a + b,
+};
+const columnAggregations = new Map([['sales', sumAggregation]]);
 
-const columnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['id', 'start'],
-  ['make', 'end'],
-  ['price', 'end'],
-]);
-
-const App = () => {
+function App() {
   const [cols, setColumns] = React.useState(columns);
   (globalThis as any).setColumns = setColumns;
 
-  const [columnOrder, setColumnOrder] =
-    useState<InfiniteTablePropColumnOrder>(defaultColumnOrder);
   const rowProps = ({
     rowIndex,
     data,
   }: {
     rowIndex: number;
-    data: Car | null;
+    data: CarSale | null;
   }) => {
     return {
       onClick() {
@@ -92,18 +83,10 @@ const App = () => {
   };
   return (
     <React.StrictMode>
-      <button
-        onClick={() => {
-          setColumnOrder(['id', 'make']);
-        }}
-      >
-        set cols: id, make
-      </button>
-      <DataSource<Car>
+      <DataSource<CarSale>
         primaryKey="id"
+        data={carsales}
         defaultGroupBy={['make', 'year']}
-        data={rowData}
-        fields={['id', 'make', 'model', 'price']}
       >
         <Table
           domProps={{
@@ -115,21 +98,15 @@ const App = () => {
               position: 'relative',
             },
           }}
-          columnPinning={columnPinning}
-          columnOrder={columnOrder}
+          columnAggregations={columnAggregations}
           columnDefaultWidth={250}
           columnMinWidth={150}
           columns={cols}
           rowProps={rowProps}
-          onColumnOrderChange={(columnOrder) => {
-            console.log(columnOrder, 'is the new col order');
-
-            setColumnOrder(columnOrder);
-          }}
         />
       </DataSource>
     </React.StrictMode>
   );
-};
+}
 
 export default App;

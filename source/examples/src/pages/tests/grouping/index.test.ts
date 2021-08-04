@@ -1,4 +1,4 @@
-import { group, flatten } from '@src/utils/groupAndPivot';
+import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
 type Person = {
   id: number;
   country: string;
@@ -41,7 +41,7 @@ const espania = {
   name: 'espania',
 };
 
-export default describe('List', () => {
+export default describe('Grouping', () => {
   it('should group on single field', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
 
@@ -157,6 +157,138 @@ export default describe('List', () => {
       // department: devops
       //---
       espania, //  50, es
+    ]);
+  });
+
+  it('should enhancedFlatten correctly', () => {
+    const arr = [john, marrie, bob, espania, bill];
+    const result = enhancedFlatten(
+      group(
+        {
+          groupBy: ['country', 'age'],
+        },
+        arr,
+      ),
+    );
+
+    // john,
+    // bill, //uk, 20
+    // //----
+    // bob, //uk, 25
+    // //----
+    // marrie, // fr 20
+
+    // //---
+    // espania, // es, 50
+
+    expect(result).toEqual([
+      {
+        data: null,
+        groupCount: 3,
+        groupData: [john, bob, bill],
+        groupKeys: ['uk'],
+        groupBy: ['country'],
+        groupNesting: 1,
+        isGroupRow: true,
+        value: 'uk',
+      },
+      {
+        data: null,
+        groupCount: 2,
+        groupData: [john, bill],
+        groupBy: ['country', 'age'],
+        groupKeys: ['uk', 20],
+        groupNesting: 2,
+        isGroupRow: true,
+        value: 20,
+      },
+      {
+        data: john,
+        isGroupRow: false,
+        groupNesting: 2,
+        groupBy: ['country', 'age'],
+        parentGroupKeys: ['uk', 20],
+      },
+      {
+        data: bill,
+        isGroupRow: false,
+        groupNesting: 2,
+        groupBy: ['country', 'age'],
+        parentGroupKeys: ['uk', 20],
+      },
+
+      {
+        data: null,
+        groupCount: 1,
+        groupData: [bob],
+        groupKeys: ['uk', 25],
+        groupBy: ['country', 'age'],
+        groupNesting: 2,
+        isGroupRow: true,
+        value: 25,
+      },
+      {
+        data: bob,
+        isGroupRow: false,
+        groupBy: ['country', 'age'],
+        groupNesting: 2,
+        parentGroupKeys: ['uk', 25],
+      },
+      {
+        data: null,
+        groupCount: 1,
+        groupData: [marrie],
+        groupKeys: ['fr'],
+        groupBy: ['country'],
+        groupNesting: 1,
+        isGroupRow: true,
+        value: 'fr',
+      },
+      {
+        data: null,
+        groupCount: 1,
+        groupData: [marrie],
+        groupBy: ['country', 'age'],
+        groupKeys: ['fr', 20],
+        groupNesting: 2,
+        isGroupRow: true,
+        value: 20,
+      },
+      {
+        data: marrie,
+        isGroupRow: false,
+        groupNesting: 2,
+        groupBy: ['country', 'age'],
+        parentGroupKeys: ['fr', 20],
+      },
+
+      {
+        data: null,
+        groupCount: 1,
+        groupData: [espania],
+        groupKeys: ['es'],
+        groupBy: ['country'],
+        groupNesting: 1,
+        isGroupRow: true,
+        value: 'es',
+      },
+      {
+        data: null,
+        groupCount: 1,
+        groupData: [espania],
+        groupKeys: ['es', 50],
+        groupBy: ['country', 'age'],
+        groupNesting: 2,
+        isGroupRow: true,
+        value: 50,
+      },
+      {
+        data: espania,
+        isGroupRow: false,
+        groupNesting: 2,
+        groupBy: ['country', 'age'],
+        parentGroupKeys: ['es', 50],
+      },
     ]);
   });
 });

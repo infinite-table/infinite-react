@@ -2,7 +2,8 @@ import * as React from 'react';
 import '@components/InfiniteTable/index.scss';
 import '../index.scss';
 
-// globalThis.InfiniteTableLicenseKey = process.env.NEXT_PUBLIC_LICENSE_KEY;
+globalThis.InfiniteTableLicenseKey =
+  process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
 function MyApp({ Component, pageProps }) {
   if (!process.browser) {
@@ -11,7 +12,8 @@ function MyApp({ Component, pageProps }) {
   return (
     <React.StrictMode>
       <div
-        className="__next it--theme-dark"
+        // className="__next it--theme-dark"
+        className="__next "
         style={{ '--it-row-height': '3rem' }}
       >
         <Component {...pageProps} />

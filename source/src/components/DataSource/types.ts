@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Setter } from '../types/Setter';
 import { MultisortInfo } from '../../utils/multisort';
 import { InfiniteTableEnhancedData } from '../InfiniteTable';
+import { DeepMap } from '../../utils/DeepMap';
+import { GroupKeyType } from '../../utils/groupAndPivot';
 
 export type DataSourceEnhancedData<T> = {
   data: T | null;
@@ -65,6 +67,7 @@ export interface DataSourceProps<T> {
 
 export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   loading: boolean;
+  groupDeepMap?: DeepMap<GroupKeyType, T[]>;
   sortInfo: DataSourceSingleSortInfo<T>[];
   originalDataArray: T[];
   dataArray: InfiniteTableEnhancedData<T>[];
