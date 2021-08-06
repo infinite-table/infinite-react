@@ -33,16 +33,9 @@ function InfiniteTableRowFn<T>(
     return () => {};
   }, []);
 
-  const {
-    computed,
-    ownProps: tableProps,
-    domRef: tableDOMRef,
-  } = tableContextValue;
+  const { ownProps: tableProps, domRef: tableDOMRef } = tableContextValue;
 
   const { domProps } = useRowDOMProps(props, tableProps, tableDOMRef);
-
-  const computedRef = useRef<InfiniteTableComputedValues<T>>(computed);
-  computedRef.current = computed;
 
   const style = {
     width: rowWidth,

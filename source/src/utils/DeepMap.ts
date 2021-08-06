@@ -1,3 +1,5 @@
+import { once } from '../components/hooks/useOnce';
+import { VoidFn } from '../components/types/VoidFn';
 import { sortAscending } from './sortAscending';
 
 type Pair<KeyType, ValueType> = {
@@ -8,6 +10,12 @@ type Pair<KeyType, ValueType> = {
 
 const SORT_ASC_REVISION = (p1: Pair<any, any>, p2: Pair<any, any>) =>
   sortAscending(p1.revision!, p2.revision!);
+
+export type DeepMapVisitFn<KeyType, ValueType> = (
+  pair: Pair<KeyType, ValueType>,
+  keys: KeyType[],
+  next: VoidFn,
+) => void;
 
 export class DeepMap<KeyType, ValueType> {
   private map = new Map<KeyType, Pair<KeyType, ValueType>>();
@@ -178,7 +186,7 @@ export class DeepMap<KeyType, ValueType> {
     key: KeyType,
     currentMap: Map<KeyType, Pair<KeyType, ValueType>>,
     parentKeys: KeyType[],
-    fn: (pair: Pair<KeyType, ValueType>, keys: KeyType[]) => void,
+    fn: DeepMapVisitFn<KeyType, ValueType>,
   ) {
     const pair = currentMap.get(key);
 
@@ -188,18 +196,57 @@ export class DeepMap<KeyType, ValueType> {
     const { map } = pair;
 
     const keys = [...parentKeys, key];
+
+    const next = once(() => {
+      if (map) {
+        map.forEach((_, k) => {
+          this.visitKey(k, map, keys, fn);
+        });
+      }
+    });
+
     if (pair.hasOwnProperty('value')) {
-      fn(pair, keys);
+      fn(pair, keys, next);
     }
-    if (map) {
-      map.forEach((_, k) => {
-        this.visitKey(k, map, keys, fn);
-      });
-    }
+
+    // if it was called by fn, it won't be called again, as it's once-d
+    next();
   }
 
-  visit = (fn: (pair: Pair<KeyType, ValueType>, keys: KeyType[]) => void) => {
+  visit = (fn: DeepMapVisitFn<KeyType, ValueType>) => {
     this.map.forEach((_, k) => this.visitKey(k, this.map, [], fn));
+  };
+
+  visitDepthFirst = (
+    fn: (value: ValueType, keys: KeyType[], next?: VoidFn) => void,
+  ) => {
+    this.visitWithNext([], fn);
+  };
+
+  private visitWithNext = (
+    parentKeys: KeyType[],
+    fn: (value: ValueType, keys: KeyType[], next?: VoidFn) => void,
+    currentMap: Map<KeyType, Pair<KeyType, ValueType>> = this.map,
+  ) => {
+    if (!currentMap) {
+      return;
+    }
+    currentMap.forEach((_, key) => {
+      const pair = currentMap.get(key);
+
+      if (!pair) {
+        return;
+      }
+      const { map } = pair;
+
+      const keys = [...parentKeys, key];
+
+      const next = map ? () => this.visitWithNext(keys, fn, map) : undefined;
+
+      if (pair.hasOwnProperty('value')) {
+        fn(pair.value!, keys, next);
+      }
+    });
   };
 
   private getArray<ReturnType>(

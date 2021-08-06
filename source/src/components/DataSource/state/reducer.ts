@@ -11,7 +11,11 @@ import type {
 import { DataSourceActionType } from '../types';
 
 import { multisort } from '../../../utils/multisort';
-import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
+import {
+  AggregationReducer,
+  enhancedFlatten,
+  group,
+} from '../../../utils/groupAndPivot';
 import { InfiniteTableEnhancedData } from '../../InfiniteTable';
 
 let reducerFn: any;
@@ -50,6 +54,13 @@ function setGroupBy<T>(
   return { ...state, groupBy: action.payload ?? [] };
 }
 
+function setAggregationReducers<T>(
+  state: DataSourceState<T>,
+  action: DataSourceAction<AggregationReducer<T, any>[]>,
+) {
+  return { ...state, aggregationReducers: action.payload ?? [] };
+}
+
 const reducers: {
   [key: string]: <T>(
     state: DataSourceState<T>,
@@ -61,6 +72,7 @@ const reducers: {
   [DataSourceActionType.SET_GROUP_BY]: setGroupBy,
   [DataSourceActionType.SET_SORT_INFO]: setSortInfo,
   [DataSourceActionType.SET_LOADING]: setLoading,
+  [DataSourceActionType.SET_AGGREGATION_REDUCERS]: setAggregationReducers,
 };
 
 const haveDepsChanged = <StateType>(
@@ -80,6 +92,10 @@ const haveDepsChanged = <StateType>(
   }, false);
 };
 
+function toEnhancedData<T>(data: T): InfiniteTableEnhancedData<T> {
+  return { data };
+}
+
 function getReducer<T>(
   getProps: () => DataSourceProps<T>,
 ): DataSourceReducer<T> {
@@ -98,42 +114,64 @@ function getReducer<T>(
       state = fn(state, action, getProps());
     }
 
-    const shouldSort = haveDepsChanged(initialState, state, [
+    console.log(state.aggregationReducers, 'RED');
+
+    const sortInfo = state.sortInfo;
+    const shouldSort = sortInfo.length;
+    const sortDepsChanged = haveDepsChanged(initialState, state, [
       'originalDataArray',
       'sortInfo',
     ]);
+    const shouldSortAgain =
+      shouldSort && (sortDepsChanged || !state.postSortDataArray);
 
     const groupBy = state.groupBy;
-    const shouldGroup =
-      groupBy &&
-      haveDepsChanged(initialState, state, [
-        'originalDataArray',
-        'groupBy',
-        'sortInfo',
-      ]);
+    const shouldGroup = groupBy.length;
+    const groupsDepsChanged = haveDepsChanged(initialState, state, [
+      'originalDataArray',
+      'groupBy',
+      'aggregationReducers',
+      'sortInfo',
+    ]);
+
+    const shouldGroupAgain =
+      shouldGroup && (groupsDepsChanged || !state.postGroupDataArray);
 
     let dataArray = state.originalDataArray;
+
     let enhancedDataArray: InfiniteTableEnhancedData<T>[] = [];
 
-    const sortInfo = state.sortInfo;
+    if (shouldSort) {
+      dataArray = shouldSortAgain
+        ? multisort(sortInfo, [...dataArray])
+        : state.postSortDataArray!;
 
-    if (shouldSort && sortInfo.length) {
-      dataArray = multisort(sortInfo, [...dataArray]);
+      state.postSortDataArray = dataArray;
     }
 
     state.groupDeepMap = undefined;
 
-    if (shouldGroup && groupBy.length) {
-      const groupResult = group(
-        {
-          groupBy,
-        },
-        dataArray,
-      );
-      enhancedDataArray = enhancedFlatten(groupResult);
-      state.groupDeepMap = groupResult.deepMap;
+    if (shouldGroup) {
+      if (shouldGroupAgain) {
+        const groupResult = group(
+          {
+            groupBy,
+          },
+          dataArray,
+        );
+        const flattenResult = enhancedFlatten(groupResult, {
+          reducers: state.aggregationReducers,
+        });
+        enhancedDataArray = flattenResult.data;
+        state.groupDeepMap = groupResult.deepMap;
+      } else {
+        enhancedDataArray = state.postGroupDataArray!;
+      }
+
+      state.postGroupDataArray = enhancedDataArray;
     } else {
-      enhancedDataArray = dataArray.map((data) => ({ data }));
+      state.groupDeepMap = undefined;
+      enhancedDataArray = dataArray.map(toEnhancedData);
     }
 
     state.dataArray = enhancedDataArray;

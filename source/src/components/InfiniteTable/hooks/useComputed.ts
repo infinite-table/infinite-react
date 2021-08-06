@@ -14,6 +14,7 @@ import {
 } from '../state/getReducerActions';
 import { sortAscending } from '../../../utils/sortAscending';
 import { useState } from 'react';
+import { useColumnAggregations } from './useColumnAggregations';
 
 export function useComputed<T>(
   props: InfiniteTableProps<T>,
@@ -58,6 +59,7 @@ export function useComputed<T>(
       setState: (columnPinning) => actions.setColumnPinning(columnPinning),
     },
   );
+  const [columnAggregations] = useColumnAggregations<T>();
 
   // const getProps = useLatest(props);
 
@@ -161,6 +163,7 @@ export function useComputed<T>(
     setColumnOrder,
     setColumnVisibility,
     setColumnPinning,
+    // setColumnAggregations,
     showZebraRows: !!props.showZebraRows,
     computedVisibleColumns,
     computedColumnOrder,
@@ -174,6 +177,8 @@ export function useComputed<T>(
     computedPinnedEndColumnsWidth,
     computedUnpinnedColumnsWidth,
     computedUnpinnedOffset,
+
+    computedColumnAggregations: columnAggregations,
     computedPinnedEndOffset,
     unpinnedColumnRenderCount,
     columnRenderStartIndex,

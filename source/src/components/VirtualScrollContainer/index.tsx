@@ -32,7 +32,10 @@ export interface VirtualScrollContainerProps {
 }
 
 export const VirtualScrollContainer = React.forwardRef(
-  (props: VirtualScrollContainerProps, ref?: Ref<HTMLDivElement>) => {
+  function VirtualScrollContainer(
+    props: VirtualScrollContainerProps,
+    ref?: Ref<HTMLDivElement>,
+  ) {
     const {
       children,
       scrollable = true,

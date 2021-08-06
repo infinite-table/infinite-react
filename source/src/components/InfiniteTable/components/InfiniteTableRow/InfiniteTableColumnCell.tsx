@@ -17,6 +17,7 @@ import { ICSS } from '../../../../style/utilities';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableColumnCellProps } from './InfiniteTableCellTypes';
 import { useCellClassName } from '../../hooks/useCellClassName';
+import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 
 const { rootClassName } = internalProps;
 const baseCls = `${rootClassName}ColumnCell`;
@@ -45,12 +46,15 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const { data } = enhancedData;
   const value = isColumnWithField(column) ? data?.[column.field] : null;
 
+  const { computed: computedDataSource } = useDataSourceContextValue<T>();
+
   let renderValue: Renderable = isColumnWithRender(column)
     ? column.render({
         value,
         rowIndex,
         column,
         enhancedData,
+        groupBy: computedDataSource.groupBy,
         data,
       })
     : value;

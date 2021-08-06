@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-function once<ReturnType>(fn: () => ReturnType): () => ReturnType {
+export function once<ReturnType>(fn: () => ReturnType): () => ReturnType {
   let called = false;
   let result: ReturnType | null = null;
 

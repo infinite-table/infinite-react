@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GroupByReducer } from '../../../utils/groupAndPivot';
+import { AggregationReducer } from '../../../utils/groupAndPivot';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
@@ -17,18 +17,25 @@ export type InfiniteTablePropColumnPinning = Map<
   true | 'start' | 'end'
 >;
 
-export type InfiniteTableColumnAggregator<T, AggregationResultType> =
-  GroupByReducer<T, AggregationResultType>;
+export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
+  AggregationReducer<T, AggregationResultType>,
+  'getter'
+> & {
+  getter?: AggregationReducer<T, AggregationResultType>['getter'];
+};
 
 export type InfiniteTablePropColumnAggregations<T> = Map<
   string,
-  GroupByReducer<T, any>
+  InfiniteTableColumnAggregator<T, any>
 >;
 
 export type InfiniteTableImperativeApi<T> = {
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
+  ) => void;
+  setColumnAggregations: (
+    columnAggregations: InfiniteTablePropColumnAggregations<T>,
   ) => void;
   x?: T;
 };
@@ -48,6 +55,7 @@ export type InfiniteTableProps<T> = {
   columnPinning?: InfiniteTablePropColumnPinning;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
 
+  defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
   columnAggregations?: InfiniteTablePropColumnAggregations<T>;
 
   onColumnVisibilityChange?: (

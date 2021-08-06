@@ -16,8 +16,11 @@ function getInitialState<T>(
     dataArray,
     originalDataArray,
     sortInfo,
+    // postSortDataArray,
+    // postGroupDataArray,
 
     groupBy: initialProps.defaultGroupBy ?? [],
+    aggregationReducers: undefined,
   };
 }
 

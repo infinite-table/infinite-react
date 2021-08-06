@@ -4,6 +4,7 @@ import type { Setter } from '../../types/Setter';
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type { Size } from '../../types/Size';
 import type {
+  InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
@@ -21,6 +22,7 @@ export interface InfiniteTableActions<T> {
   setColumnOrder: Setter<InfiniteTablePropColumnOrder>;
   setColumnVisibility: Setter<InfiniteTablePropColumnVisibility>;
   setColumnPinning: Setter<InfiniteTablePropColumnPinning>;
+  setColumnAggregations: Setter<InfiniteTablePropColumnAggregations<T>>;
   setColumnShifts: Setter<number[] | null>;
   setDraggingColumnId: Setter<string | null>;
   x?: T;
@@ -88,6 +90,14 @@ export const getReducerActions = <T>(
     });
   };
 
+  const setColumnAggregations: Setter<InfiniteTablePropColumnAggregations<T>> =
+    (columnAggregations) => {
+      dispatch({
+        type: InfiniteTableActionType.SET_COLUMN_AGGREGATIONS,
+        payload: columnAggregations,
+      });
+    };
+
   return {
     // setViewportSize,
     setBodySize,
@@ -96,6 +106,7 @@ export const getReducerActions = <T>(
     setColumnVisibility,
     setColumnShifts,
     setColumnPinning,
+    setColumnAggregations,
     setDraggingColumnId,
   };
 };

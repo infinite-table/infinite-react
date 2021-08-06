@@ -40,7 +40,10 @@ const enforceStyle = (node: HTMLElement | null, style: React.CSSProperties) => {
 };
 
 export const InfiniteTableLicenseFooter = React.forwardRef(
-  (props: React.HTMLAttributes<HTMLDivElement>, ref: Ref<HTMLDivElement>) => {
+  function InfiniteTableLicenseFooter(
+    props: React.HTMLAttributes<HTMLDivElement>,
+    ref: Ref<HTMLDivElement>,
+  ) {
     const { rootClassName } = useInternalProps();
 
     const domRef = React.useRef<HTMLDivElement | null>(null);

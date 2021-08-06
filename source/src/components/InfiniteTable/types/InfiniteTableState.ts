@@ -1,5 +1,6 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
+  InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
@@ -15,6 +16,7 @@ export interface InfiniteTableState<T> {
   columnOrder: InfiniteTablePropColumnOrder;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnPinning: InfiniteTablePropColumnPinning;
+  columnAggregations: InfiniteTablePropColumnAggregations<T>;
 
   x?: T;
 }

@@ -42,12 +42,15 @@
     border-left: var(--ITableCell__border);
   }
 }
-.ITableRow--even {
+.ITableRow--group-row {
+  background: var(--ITableRow-group-row__background);
+}
+.ITableRow--normal-row.ITableRow--even {
   .ITableColumnCell {
     background: var(--ITableRow__background);
   }
 }
-.ITableRow--odd {
+.ITableRow--normal-row.ITableRow--odd {
   .ITableColumnCell {
     background: var(--ITableRow--odd__background);
   }

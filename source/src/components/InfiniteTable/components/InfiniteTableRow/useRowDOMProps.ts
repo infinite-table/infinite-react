@@ -25,7 +25,12 @@ export function useRowDOMProps<T>(
   domRef: MutableRefObject<HTMLElement | null>;
 } {
   const domProps = props.domProps;
-  const { showZebraRows = false, rowIndex, domRef: domRefFromProps } = props;
+  const {
+    showZebraRows = false,
+    rowIndex,
+    domRef: domRefFromProps,
+    enhancedData,
+  } = props;
 
   const domRef = useRef<HTMLElement | null>(null);
   const rowDOMRef = useCallback((node) => {
@@ -39,14 +44,20 @@ export function useRowDOMProps<T>(
     rowProps = rowProps({ rowIndex, data: props.enhancedData.data });
   }
 
-  const odd = rowIndex % 2 === 1;
+  const odd =
+    (enhancedData.indexInGroup != null ? enhancedData.indexInGroup : rowIndex) %
+      2 ===
+    1;
 
   const className = join(
     ICSS.position.absolute,
     ICSS.top[0],
     ICSS.left[0],
     InfiniteTableRowClassName,
-    showZebraRows
+    `${InfiniteTableRowClassName}--${
+      enhancedData.isGroupRow ? 'group' : 'normal'
+    }-row`,
+    showZebraRows && !enhancedData.isGroupRow
       ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'}`
       : null,
     domProps?.className,

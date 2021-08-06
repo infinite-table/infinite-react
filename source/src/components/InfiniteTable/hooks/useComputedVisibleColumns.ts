@@ -29,6 +29,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   setSortInfo,
   columnOrder,
   columnPinning,
+  // columnAggregations,
   columnVisibility,
   columnVisibilityAssumeVisible,
 }: {
@@ -43,6 +44,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   sortInfo: DataSourceSingleSortInfo<T>[];
   setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
 
+  // columnAggregations: InfiniteTablePropColumnAggregations<T>;
   columnPinning: InfiniteTablePropColumnPinning;
   columnOrder: InfiniteTablePropColumnOrder;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -52,6 +54,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
   const visibilityRenderId =
     useColumnVisibilityRerenderOnKeyChange(columnVisibility);
   const pinningRenderId = useColumnPinningRerenderOnKeyChange(columnPinning);
+  // const columnAggregationsRenderId =
+  //   useColumnAggregationsRerenderOnKeyChange(columnAggregations);
 
   const {
     computedRemainingSpace,
@@ -111,6 +115,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnsRenderId,
     visibilityRenderId,
     pinningRenderId,
+    // columnAggregationsRenderId,
   ]);
 
   return {

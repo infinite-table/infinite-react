@@ -20,6 +20,7 @@ function getInitialState<T>(
     columnOrder: props.defaultColumnOrder ?? true,
     columnVisibility: props.defaultColumnVisibility ?? new Map(),
     columnPinning: props.defaultColumnPinning ?? new Map(),
+    columnAggregations: props.defaultColumnAggregations ?? new Map(),
     columnShifts: null,
   } as InfiniteTableState<T>;
 }

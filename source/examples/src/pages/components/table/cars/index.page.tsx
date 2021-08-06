@@ -15,11 +15,12 @@ const Table = InfiniteTableFactory<CarSale>();
 
 const columns = new Map<string, InfiniteTableColumn<CarSale>>([
   [
-    'id',
+    'Group column',
     {
-      field: 'id',
       type: 'number',
-      header: 'Identifier',
+      header: 'Group',
+      sortable: false,
+
       render: ({ value, enhancedData }) => {
         return (
           <div
@@ -36,10 +37,37 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
       },
     },
   ],
+
   ['make', { field: 'make' }],
   ['model', { field: 'model' }],
-  ['cat', { field: 'category' }],
-  ['count', { field: 'sales', type: 'number' }],
+  [
+    'cat',
+    {
+      field: 'category',
+      render: ({ value, enhancedData }) => (
+        <>{enhancedData.isGroupRow ? 'hello' : value}</>
+      ),
+    },
+  ],
+  [
+    'count',
+    {
+      field: 'sales',
+      type: 'number',
+      render: ({ value, enhancedData }) => {
+        if (enhancedData.isGroupRow) {
+          console.log(enhancedData);
+          return (
+            <>
+              Total sales <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}
+              <b>{enhancedData.reducerResults![0]}</b>
+            </>
+          );
+        }
+        return <>{value}</>;
+      },
+    },
+  ],
   [
     'year',
     {
@@ -62,7 +90,13 @@ const sumAggregation: InfiniteTableColumnAggregator<CarSale, number> = {
   initialValue: 0,
   reducer: (a, b) => a + b,
 };
-const columnAggregations = new Map([['sales', sumAggregation]]);
+const columnAggregations = new Map([
+  ['count', sumAggregation],
+  // ['model', sumAggregation],
+]);
+const columnOrder = ['Group column', 'model', 'cat', 'count', 'year'];
+
+(globalThis as any).columnAggregations = columnAggregations;
 
 function App() {
   const [cols, setColumns] = React.useState(columns);
@@ -86,7 +120,7 @@ function App() {
       <DataSource<CarSale>
         primaryKey="id"
         data={carsales}
-        defaultGroupBy={['make', 'year']}
+        groupBy={['make', 'year']}
       >
         <Table
           domProps={{
@@ -101,8 +135,12 @@ function App() {
           columnAggregations={columnAggregations}
           columnDefaultWidth={250}
           columnMinWidth={150}
+          columnOrder={columnOrder}
           columns={cols}
           rowProps={rowProps}
+          onReady={(api) => {
+            (window as any).api = api;
+          }}
         />
       </DataSource>
     </React.StrictMode>

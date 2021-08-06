@@ -160,7 +160,7 @@ export default describe('Grouping', () => {
     ]);
   });
 
-  it('should enhancedFlatten correctly', () => {
+  it.only('should enhancedFlatten correctly', () => {
     const arr = [john, marrie, bob, espania, bill];
     const result = enhancedFlatten(
       group(
@@ -169,6 +169,21 @@ export default describe('Grouping', () => {
         },
         arr,
       ),
+      {
+        reducers: [
+          {
+            initialValue: 0,
+            getter: (person: Person) => person.age,
+            reducer: (a, b) => {
+              // console.log('add', b)
+              return a + b;
+            },
+            done: (value: number) => {
+              return value * 100;
+            },
+          },
+        ],
+      },
     );
 
     // john,
@@ -181,17 +196,23 @@ export default describe('Grouping', () => {
     // //---
     // espania, // es, 50
 
-    expect(result).toEqual([
+    expect(result.reducerResults).toEqual([
+      arr.reduce((acc, p) => acc + p.age, 0) * 100,
+    ]);
+    expect(result.data).toEqual([
       {
         data: null,
         groupCount: 3,
+        // 20, 25, 20
         groupData: [john, bob, bill],
         groupKeys: ['uk'],
         groupBy: ['country'],
         groupNesting: 1,
         isGroupRow: true,
         value: 'uk',
+        reducerResults: [(20 + 25 + 20) * 100],
       },
+
       {
         data: null,
         groupCount: 2,
@@ -201,7 +222,9 @@ export default describe('Grouping', () => {
         groupNesting: 2,
         isGroupRow: true,
         value: 20,
+        reducerResults: [(20 + 20) * 100],
       },
+
       {
         data: john,
         isGroupRow: false,
@@ -209,6 +232,7 @@ export default describe('Grouping', () => {
         groupBy: ['country', 'age'],
         parentGroupKeys: ['uk', 20],
       },
+
       {
         data: bill,
         isGroupRow: false,
@@ -225,8 +249,10 @@ export default describe('Grouping', () => {
         groupBy: ['country', 'age'],
         groupNesting: 2,
         isGroupRow: true,
+        reducerResults: [25 * 100],
         value: 25,
       },
+
       {
         data: bob,
         isGroupRow: false,
@@ -243,7 +269,9 @@ export default describe('Grouping', () => {
         groupNesting: 1,
         isGroupRow: true,
         value: 'fr',
+        reducerResults: [20 * 100],
       },
+
       {
         data: null,
         groupCount: 1,
@@ -251,9 +279,11 @@ export default describe('Grouping', () => {
         groupBy: ['country', 'age'],
         groupKeys: ['fr', 20],
         groupNesting: 2,
+        reducerResults: [20 * 100],
         isGroupRow: true,
         value: 20,
       },
+
       {
         data: marrie,
         isGroupRow: false,
@@ -270,6 +300,7 @@ export default describe('Grouping', () => {
         groupBy: ['country'],
         groupNesting: 1,
         isGroupRow: true,
+        reducerResults: [50 * 100],
         value: 'es',
       },
       {
@@ -280,6 +311,7 @@ export default describe('Grouping', () => {
         groupBy: ['country', 'age'],
         groupNesting: 2,
         isGroupRow: true,
+        reducerResults: [50 * 100],
         value: 50,
       },
       {

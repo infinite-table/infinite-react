@@ -8,6 +8,7 @@ import type {
 import { DataSourceActionType } from '../types';
 
 import { Setter } from '../../types/Setter';
+import { AggregationReducer } from '../../../utils/groupAndPivot';
 
 export function getReducerActions<T>(
   dispatch: React.Dispatch<DataSourceAction<any>>,
@@ -39,6 +40,20 @@ export function getReducerActions<T>(
       payload: dataSourceInfo,
     });
   };
+  const setAggregationReducers: Setter<AggregationReducer<T, any>[]> = (
+    aggregationReducers,
+  ) => {
+    dispatch({
+      type: DataSourceActionType.SET_AGGREGATION_REDUCERS,
+      payload: aggregationReducers,
+    });
+  };
 
-  return { setLoading, setDataSourceInfo, setSortInfo, setGroupBy };
+  return {
+    setLoading,
+    setDataSourceInfo,
+    setSortInfo,
+    setGroupBy,
+    setAggregationReducers,
+  };
 }

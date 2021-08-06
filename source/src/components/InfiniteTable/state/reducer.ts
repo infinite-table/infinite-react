@@ -9,6 +9,7 @@ import type { ScrollPosition } from '../../types/ScrollPosition';
 
 import { InfiniteTableActionType } from '../types/InfiniteTableActionType';
 import type {
+  InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
@@ -49,6 +50,12 @@ function setColumnPinning(
   _state: InfiniteTablePropColumnPinning,
   action: InfiniteTableAction,
 ): InfiniteTablePropColumnPinning {
+  return action.payload;
+}
+function setColumnAggregations<T>(
+  _state: InfiniteTablePropColumnAggregations<T>,
+  action: InfiniteTableAction,
+): InfiniteTablePropColumnAggregations<T> {
   return action.payload;
 }
 
@@ -159,6 +166,17 @@ const reducersForActions = {
       set: (columnPinning) => ({ columnPinning }),
     },
     setColumnPinning,
+  ),
+
+  [InfiniteTableActionType.SET_COLUMN_AGGREGATIONS]: scope<
+    any,
+    InfiniteTablePropColumnAggregations<any>
+  >(
+    {
+      get: (state) => state.columnAggregations,
+      set: (columnAggregations) => ({ columnAggregations }),
+    },
+    setColumnAggregations,
   ),
   [InfiniteTableActionType.SET_COLUMN_SHIFTS]: scope<any, number[] | null>(
     {

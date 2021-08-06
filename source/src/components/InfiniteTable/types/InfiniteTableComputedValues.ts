@@ -1,6 +1,7 @@
 import { InfiniteTablePropColumnPinning } from '.';
 import type { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 import type {
+  InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnVisibility,
@@ -15,6 +16,7 @@ export interface InfiniteTableComputedValues<T> extends InfiniteTableProps<T> {
   computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   computedColumnVisibility: InfiniteTablePropColumnVisibility;
   computedColumnOrder: InfiniteTablePropColumnOrderNormalized;
+  computedColumnAggregations: InfiniteTablePropColumnAggregations<T>;
   computedPinnedStartColumnsWidth: number;
   computedPinnedEndColumnsWidth: number;
   computedUnpinnedColumnsWidth: number;
@@ -29,5 +31,9 @@ export interface InfiniteTableComputedValues<T> extends InfiniteTableProps<T> {
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
+
+  // setColumnAggregations: (
+  //   columnAggregations: InfiniteTablePropColumnAggregations<T>,
+  // ) => void;
   rowHeight: number;
 }

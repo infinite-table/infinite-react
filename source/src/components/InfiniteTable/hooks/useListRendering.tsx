@@ -25,6 +25,7 @@ import {
 } from './usePinnedRendering';
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
+import { InfiniteTablePropColumnAggregations } from '../types/InfiniteTableProps';
 
 type ListRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -102,6 +103,9 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
         setColumnVisibility: (
           columnVisibility: InfiniteTablePropColumnVisibility,
         ) => getActions().setColumnVisibility(columnVisibility),
+        setColumnAggregations: (
+          columnAggregations: InfiniteTablePropColumnAggregations<T>,
+        ) => getActions().setColumnAggregations(columnAggregations),
       };
 
       props.onReady(imperativeApi);

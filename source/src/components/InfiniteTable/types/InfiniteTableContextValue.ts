@@ -10,16 +10,23 @@ import {
   InfiniteTableActions,
   InfiniteTableInternalActions,
 } from '../state/getReducerActions';
+import { LazyLatest } from '../../hooks/useLazyLatest';
 
-export interface InfiniteTableContextValue<T> {
+export interface InternalInfiniteTableContextValue<T> {
   props: InfiniteTableProps<T>;
-  ownProps: InfiniteTableOwnProps<T>;
   state: InfiniteTableState<T>;
-  computed: InfiniteTableComputedValues<T>;
   actions: InfiniteTableActions<T>;
   internalActions: InfiniteTableInternalActions<T>;
   dispatch: React.Dispatch<InfiniteTableAction>;
   domRef: React.MutableRefObject<HTMLDivElement | null>;
   bodyDOMRef: React.RefObject<HTMLDivElement | null>;
   portalDOMRef: React.RefObject<HTMLDivElement | null>;
+  headerHeightRef: React.MutableRefObject<number>;
+  getComputed: LazyLatest<InfiniteTableComputedValues<T>>;
+}
+
+export interface InfiniteTableContextValue<T>
+  extends InternalInfiniteTableContextValue<T> {
+  computed: InfiniteTableComputedValues<T>;
+  ownProps: InfiniteTableOwnProps<T>;
 }

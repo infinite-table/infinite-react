@@ -3,11 +3,8 @@ import { Setter } from '../types/Setter';
 import { MultisortInfo } from '../../utils/multisort';
 import { InfiniteTableEnhancedData } from '../InfiniteTable';
 import { DeepMap } from '../../utils/DeepMap';
-import { GroupKeyType } from '../../utils/groupAndPivot';
+import { AggregationReducer, GroupKeyType } from '../../utils/groupAndPivot';
 
-export type DataSourceEnhancedData<T> = {
-  data: T | null;
-};
 export interface DataSourceDataInfo<T> {
   // dataArray: EnhancedData<T>[];
   originalDataArray: T[];
@@ -70,8 +67,11 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   groupDeepMap?: DeepMap<GroupKeyType, T[]>;
   sortInfo: DataSourceSingleSortInfo<T>[];
   originalDataArray: T[];
+  postSortDataArray?: T[];
+  postGroupDataArray?: InfiniteTableEnhancedData<T>[];
   dataArray: InfiniteTableEnhancedData<T>[];
   groupBy: DataSourceGroupBy<T>;
+  aggregationReducers?: AggregationReducer<T, any>[];
 }
 
 // export interface DataSourceComputedState<T> extends DataSourceState<T> {
@@ -81,7 +81,7 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
 
 export interface DataSourceComputedValues<T> extends DataSourceState<T> {
   loading: boolean; // mentioned here, for completness, since it's already inherited
-  dataArray: DataSourceEnhancedData<T>[]; // mentioned here, for completeness, since it's already inherited
+  dataArray: InfiniteTableEnhancedData<T>[]; // mentioned here, for completeness, since it's already inherited
   originalDataArray: T[]; // mentioned here, for completeness, since it's already inherited
   primaryKey: keyof T;
   // fields: (keyof T)[];
@@ -101,6 +101,7 @@ export interface DataSourceActions<T> {
   setDataSourceInfo: Setter<DataSourceDataInfo<T>>;
   setSortInfo: Setter<DataSourceSortInfo<T>>;
   setGroupBy: Setter<DataSourceGroupBy<T>>;
+  setAggregationReducers: Setter<AggregationReducer<T, any>[]>;
 }
 
 export enum DataSourceActionType {
@@ -110,6 +111,7 @@ export enum DataSourceActionType {
   // SET_DATA,
   SET_DATA_SOURCE_INFO = 'SET_DATA_SOURCE_INFO',
   SET_SORT_INFO = 'SET_SORT_INFO',
+  SET_AGGREGATION_REDUCERS = 'SET_AGGREGATION_REDUCERS',
 }
 
 export interface DataSourceAction<T> {

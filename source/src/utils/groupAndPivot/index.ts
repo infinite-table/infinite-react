@@ -1,6 +1,6 @@
 import { DeepMap } from '../DeepMap';
 
-export type GroupByReducer<T, AggregationResultType> = {
+export type AggregationReducer<T, AggregationResultType> = {
   initialValue: AggregationResultType;
   getter: (data: T) => any;
   reducer: (
@@ -23,9 +23,10 @@ export interface InfiniteTableEnhancedData<T> {
   groupData?: T[];
   value?: any;
   isGroupRow?: boolean;
-  groupNesting: number;
+  groupNesting?: number;
   groupKeys?: any[];
   parentGroupKeys?: any[];
+  indexInGroup?: number;
   groupCount?: number;
   groupBy?: (keyof T)[];
   reducerResults?: any[];
@@ -53,6 +54,7 @@ type GroupParams<DataType> = {
 type DataGroupResult<DataType> = {
   deepMap: DeepMap<GroupKeyType, DataType[]>;
   groupParams: GroupParams<DataType>;
+  initialData: DataType[];
 };
 
 export function group<DataType>(
@@ -85,7 +87,7 @@ export function group<DataType>(
     currentKeys.length = 0;
   }
 
-  return { deepMap, groupParams };
+  return { deepMap, groupParams, initialData: data };
 }
 
 export function flatten<DataType>(
@@ -108,15 +110,77 @@ export function flatten<DataType>(
   return result;
 }
 
+type GetEnhancedGroupDataOptions<DataType> = {
+  groupKeys: any[];
+  groupBy: (keyof DataType)[];
+  groupItems: DataType[];
+  reducers?: AggregationReducer<DataType, any>[];
+};
+
+function getEnhancedGroupData<DataType>(
+  options: GetEnhancedGroupDataOptions<DataType>,
+) {
+  const { groupItems, groupBy, groupKeys, reducers } = options;
+  const groupNesting = groupKeys.length;
+
+  const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> = {
+    data: null,
+    groupCount: groupItems.length,
+    groupData: groupItems,
+    groupKeys,
+    value: groupKeys[groupKeys.length - 1],
+    groupBy: groupBy.slice(0, groupNesting) as (keyof DataType)[],
+    isGroupRow: true,
+    groupNesting,
+    reducerResults:
+      reducers && reducers.length > 0
+        ? reducers.map((reducer) => reducer.initialValue)
+        : undefined,
+  };
+
+  return enhancedGroupData;
+}
+
+function completeGroupReducers<DataType>(
+  enhancedGroupData?: InfiniteTableEnhancedGroupData<DataType>,
+  reducers?: AggregationReducer<DataType, any>[],
+) {
+  if (!enhancedGroupData) {
+    return;
+  }
+  if (reducers && reducers.length) {
+    completeReducers(
+      reducers,
+      enhancedGroupData.reducerResults!,
+      enhancedGroupData.groupData,
+    );
+  }
+}
+
+function completeReducers<DataType>(
+  reducers: AggregationReducer<DataType, any>[],
+  reducerResults: any[],
+  items: DataType[],
+) {
+  if (reducers && reducers.length) {
+    reducers?.forEach((reducer: AggregationReducer<DataType, any>, index) => {
+      if (reducer.done) {
+        reducerResults[index] = reducer.done!(reducerResults[index], items);
+      }
+    });
+  }
+
+  return reducerResults;
+}
+
 export function enhancedFlatten<DataType>(
   groupResult: DataGroupResult<DataType>,
   options?: {
-    reducers?: GroupByReducer<DataType, any>[];
+    reducers?: AggregationReducer<DataType, any>[];
   },
-): InfiniteTableEnhancedData<DataType>[] {
+): { data: InfiniteTableEnhancedData<DataType>[]; reducerResults?: any[] } {
   const { groupParams, deepMap } = groupResult;
   const { groupBy } = groupParams;
-  const groupByLength = groupBy.length;
 
   const result: InfiniteTableEnhancedData<DataType>[] = [];
 
@@ -124,77 +188,78 @@ export function enhancedFlatten<DataType>(
 
   const parents: InfiniteTableEnhancedGroupData<DataType>[] = [];
 
-  deepMap
-    .topDownKeys()
-    .reduce((acc: InfiniteTableEnhancedData<DataType>[], key) => {
-      const items = deepMap.get(key)!;
-      const groupKeys = key;
+  const globalReducerResults =
+    reducers && reducers.length > 0
+      ? reducers.map((reducer) => reducer.initialValue)
+      : undefined;
 
-      // console.log(key);
+  const visitGroup = (
+    items: DataType[],
+    groupKeys: any[],
+    next?: VoidFunction,
+  ) => {
+    const groupNesting = groupKeys.length;
 
-      const groupNesting = key.length;
-      const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> = {
-        data: null,
-        groupCount: items.length,
-        groupData: items,
+    const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> =
+      getEnhancedGroupData({
+        groupBy,
+        groupItems: items,
         groupKeys,
-        value: groupKeys[groupKeys.length - 1],
-        groupBy: groupBy.slice(0, groupNesting) as (keyof DataType)[],
-        isGroupRow: true,
-        groupNesting,
-        reducerResults:
-          reducers && reducers.length > 0
-            ? reducers.map((reducer) => reducer.initialValue)
-            : undefined,
-      };
+        reducers,
+      });
 
-      // enhancedFlattenGroup(enhancedGroupData, items)
-      acc.push(enhancedGroupData);
-      parents.push(enhancedGroupData);
+    result.push(enhancedGroupData);
+    parents.push(enhancedGroupData);
 
-      if (groupKeys.length === groupByLength) {
-        // console.log(items.length);
-        acc.push(
-          ...items.map((item) => {
-            if (reducers && reducers.length) {
-              reducers?.forEach((reducer, index) => {
-                parents.forEach((parent) => {
-                  const reducerResults = parent.reducerResults!;
-                  reducerResults[index] = reducer.reducer(
-                    reducerResults[index],
-                    reducer.getter(item),
-                    item,
-                  );
-                });
+    if (!next) {
+      result.push(
+        ...items.map((item, index) => {
+          if (reducers && reducers.length) {
+            reducers?.forEach((reducer, index) => {
+              const val = reducer.getter(item);
+              parents.forEach((parent) => {
+                const reducerResults = parent.reducerResults!;
+
+                reducerResults[index] = reducer.reducer(
+                  reducerResults[index],
+                  val,
+                  item,
+                );
               });
-            }
-            return {
-              data: item,
-              isGroupRow: false,
-              parentGroupKeys: groupKeys,
-              groupBy,
-              groupNesting,
-            };
-          }),
-        );
 
-        if (reducers && reducers.length) {
-          reducers?.forEach((reducer: GroupByReducer<DataType, any>, index) => {
-            if (reducer.done) {
-              // parents.forEach((parent) => {
-              const reducerResults = enhancedGroupData.reducerResults!;
-              reducerResults[index] = reducer.done!(
-                reducerResults[index],
-                items,
+              globalReducerResults![index] = reducer.reducer(
+                globalReducerResults![index],
+                val,
+                item,
               );
-              // });
-            }
-          });
-        }
-      }
+            });
+          }
 
-      return acc;
-    }, result);
+          return {
+            data: item,
+            isGroupRow: false,
+            parentGroupKeys: groupKeys,
+            indexInGroup: index,
+            groupBy,
+            groupNesting,
+          };
+        }),
+      );
+    } else {
+      next();
+    }
+    parents.pop();
+    completeGroupReducers(enhancedGroupData, reducers);
+  };
 
-  return result;
+  deepMap.visitDepthFirst(visitGroup);
+
+  if (globalReducerResults && globalReducerResults.length) {
+    completeReducers(reducers!, globalReducerResults, groupResult.initialData);
+  }
+
+  return {
+    data: result,
+    reducerResults: globalReducerResults,
+  };
 }
