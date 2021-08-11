@@ -13,6 +13,7 @@ import { columns } from './columns';
 const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnOrder = ['id', 'make', 'year', 'price'];
+// rowData.length = 1;
 
 const App = () => {
   const [columnOrder, setColumnOrder] =
