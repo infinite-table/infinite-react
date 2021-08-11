@@ -12,7 +12,6 @@ export const LoadingCmp = (props: LoadingCmpProps) => {
   });
 
   const [loading, setLoading] = useProperty('loading', props, {
-    controlledToState: true,
     fromState: () => state.loading,
     normalize: (loading?: boolean) => !!loading,
     setState: (loading: boolean | undefined) =>

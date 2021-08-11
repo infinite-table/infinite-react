@@ -160,7 +160,7 @@ export default describe('Grouping', () => {
     ]);
   });
 
-  it.only('should enhancedFlatten correctly', () => {
+  it('should enhancedFlatten correctly', () => {
     const arr = [john, marrie, bob, espania, bill];
     const result = enhancedFlatten(
       group(
@@ -229,6 +229,7 @@ export default describe('Grouping', () => {
         data: john,
         isGroupRow: false,
         groupNesting: 2,
+        indexInGroup: 0,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['uk', 20],
       },
@@ -237,6 +238,7 @@ export default describe('Grouping', () => {
         data: bill,
         isGroupRow: false,
         groupNesting: 2,
+        indexInGroup: 1,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['uk', 20],
       },
@@ -257,6 +259,7 @@ export default describe('Grouping', () => {
         data: bob,
         isGroupRow: false,
         groupBy: ['country', 'age'],
+        indexInGroup: 0,
         groupNesting: 2,
         parentGroupKeys: ['uk', 25],
       },
@@ -276,6 +279,7 @@ export default describe('Grouping', () => {
         data: null,
         groupCount: 1,
         groupData: [marrie],
+
         groupBy: ['country', 'age'],
         groupKeys: ['fr', 20],
         groupNesting: 2,
@@ -287,6 +291,7 @@ export default describe('Grouping', () => {
       {
         data: marrie,
         isGroupRow: false,
+        indexInGroup: 0,
         groupNesting: 2,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['fr', 20],
@@ -317,6 +322,7 @@ export default describe('Grouping', () => {
       {
         data: espania,
         isGroupRow: false,
+        indexInGroup: 0,
         groupNesting: 2,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['es', 50],

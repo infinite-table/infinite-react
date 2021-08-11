@@ -35,11 +35,7 @@ const SortablePage = () => {
         Table is configured with <b>sortable=false</b> on this page, but the{' '}
         <b>Id</b> column specifically configured as <b>sortable=true</b>
       </p>
-      <DataSource<Person>
-        data={data}
-        primaryKey="Id"
-        fields={['Id', 'FirstName', 'Age']}
-      >
+      <DataSource<Person> data={data} primaryKey="Id">
         <Table
           domProps={{
             style: {

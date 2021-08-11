@@ -8,11 +8,10 @@ export type CounterCmpProps = {
 };
 export const CounterCmp = (props: CounterCmpProps) => {
   const [state, setState] = useState({
-    count: props.defaultCount ?? 0,
+    count: props.defaultCount ?? props.count ?? 0,
   });
 
   const [count, setCount] = useProperty('count', props, {
-    controlledToState: true,
     fromState: () => state.count,
     setState: (count: number) => setState({ count }),
   });

@@ -31,7 +31,6 @@ export const SortInfoCmp = (props: SortInfoCmpProps) => {
   ]);
 
   const [sortInfo, setSortInfo] = useProperty('sortInfo', props, {
-    controlledToState: true,
     normalize: normalizeSortInfo,
     fromState: () => state,
     setState: (sortInfo: DataSourceSingleSortInfo<Person>[]) =>
@@ -43,7 +42,6 @@ export const SortInfoCmp = (props: SortInfoCmpProps) => {
       <button
         id="inner"
         onClick={() => {
-          debugger;
           setSortInfo({
             dir: -sortInfo[0].dir as 1 | -1,
             field: sortInfo[0].field,
