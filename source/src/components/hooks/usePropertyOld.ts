@@ -12,7 +12,7 @@ import isControlled from '../utils/isControlled';
 import isControlledValue from '../utils/isControlledValue';
 import { useLatest } from './useLatest';
 
-import usePrevious from './usePrevious';
+import { usePrevious } from './usePrevious';
 
 const DEFAULT_CONFIG = {
   controlledToState: true,

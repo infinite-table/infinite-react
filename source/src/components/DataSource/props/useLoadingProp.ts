@@ -22,7 +22,6 @@ function useLoadingProp<T>({
   const reducerActions = useReducerActions<T>(dispatch);
 
   const [loading, setLoading] = useProperty('loading', props, {
-    controlledToState: true,
     fromState: () => state.loading,
     normalize: (loading?: boolean) => !!loading,
     setState: (loading: boolean | undefined) =>

@@ -7,7 +7,6 @@ export const adjustColumnOrderForPinning = (
   columnPinning: InfiniteTablePropColumnPinning,
 ) => {
   if (columnPinning.size > 0) {
-    // console.log('before', [...columnOrder]);
     // make sure pinned columns are coming first
     columnOrder.sort((colId1: string, colId2: string) => {
       let p1 = columnPinning.get(colId1);

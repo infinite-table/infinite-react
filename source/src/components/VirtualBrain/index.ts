@@ -94,9 +94,8 @@ export class VirtualBrain extends Logger {
 
   private updateRenderCount() {
     const { itemSize, mainAxis, count } = this.options;
-    const size = this.availableSize[
-      mainAxis === 'vertical' ? 'height' : 'width'
-    ];
+    const size =
+      this.availableSize[mainAxis === 'vertical' ? 'height' : 'width'];
 
     if (!size) {
       this.setRenderCount(0);
@@ -163,9 +162,10 @@ export class VirtualBrain extends Logger {
 
     const oldScrollPosOnMainAxis = this.scrollPositionOnMainAxis;
 
-    this.scrollPositionOnMainAxis = this.scrollPosition[
-      this.options.mainAxis === 'vertical' ? 'scrollTop' : 'scrollLeft'
-    ];
+    this.scrollPositionOnMainAxis =
+      this.scrollPosition[
+        this.options.mainAxis === 'vertical' ? 'scrollTop' : 'scrollLeft'
+      ];
 
     if (this.scrollPositionOnMainAxis !== oldScrollPosOnMainAxis) {
       this.updateRenderRange();
@@ -312,8 +312,20 @@ export class VirtualBrain extends Logger {
     const itemSizeChange = itemSize !== newItemSize;
 
     if (!countChange && !itemSizeChange) {
+      // this.debug(
+      //   `Range (count=${count}, itemSize=${
+      //     typeof itemSize === 'number' ? itemSize : 'fn'
+      //   }) has not changed, so skip update`,
+      // );
+
       return;
     }
+
+    // this.debug(
+    //   `Range changed (count=${newCount}, itemSize=${
+    //     typeof newItemSize === 'number' ? newItemSize : 'fn'
+    //   }), so update`,
+    // );
 
     this.options.count = newCount;
     this.options.itemSize = newItemSize;

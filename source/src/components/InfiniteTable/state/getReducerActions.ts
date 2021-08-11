@@ -31,12 +31,6 @@ export interface InfiniteTableActions<T> {
 export const getReducerActions = <T>(
   dispatch: React.Dispatch<InfiniteTableAction>,
 ): InfiniteTableActions<T> => {
-  // const setViewportSize: Setter<Size> = (size) => {
-  //   dispatch({
-  //     type: TableActionType.SET_VIEWPORT_SIZE,
-  //     payload: size,
-  //   });
-  // };
   const setBodySize: Setter<Size> = (size) => {
     dispatch({
       type: InfiniteTableActionType.SET_BODY_SIZE,

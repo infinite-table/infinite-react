@@ -7,7 +7,11 @@ import {
 import { DataSourceContextValue } from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
 // TODO continue here replace this with current impl - makes some tests crash
-import useProperty from '../../hooks/usePropertyOld';
+// TODO yes, really continue here
+// npm run test:watch -- --testPathPattern=column-order/uncontrolled-with-value
+
+// import useProperty from '../../hooks/usePropertyOld';
+import { useProperty } from '../../hooks/useProperty';
 import {
   InfiniteTableActions,
   InfiniteTableInternalActions,
@@ -25,10 +29,13 @@ export function useComputed<T>(
 ): InfiniteTableComputedValues<T> {
   const { bodySize } = state;
 
+  // const [columnOrder, setColumnOrder] = useStateProperty('columnOrder', props);
   const [columnOrder, setColumnOrder] = useProperty('columnOrder', props, {
     fromState: () => state.columnOrder,
     setState: (columnOrder) => actions.setColumnOrder(columnOrder),
   });
+
+  // (globalThis as any).setColumnOrder = setColumnOrder;
 
   const [rowHeight, setRowHeight] = useState<number>(
     typeof props.rowHeight === 'number' ? props.rowHeight : 0,
@@ -77,6 +84,7 @@ export function useComputed<T>(
   // }, [props.columnVisibilityAssumeVisible]);
 
   const {
+    columns,
     computedColumnOrder,
     computedVisibleColumns,
     computedVisibleColumnsMap,
@@ -158,7 +166,7 @@ export function useComputed<T>(
   }
 
   return {
-    ...props,
+    columns,
     rowHeight,
     setColumnOrder,
     setColumnVisibility,

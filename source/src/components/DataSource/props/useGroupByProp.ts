@@ -22,7 +22,6 @@ function useGroupByProp<T>({
   const reducerActions = useReducerActions<T>(dispatch);
 
   const [groupBy, setGroupBy] = useProperty('groupBy', props, {
-    controlledToState: true,
     fromState: () => state.groupBy,
     setState: (groupBy) => reducerActions.setGroupBy(groupBy),
   });

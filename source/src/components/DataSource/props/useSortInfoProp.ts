@@ -29,7 +29,6 @@ function useSortInfoProp<T>({
   const reducerActions = useReducerActions<T>(dispatch);
 
   const [sortInfo, setSortInfo] = useProperty('sortInfo', props, {
-    controlledToState: true,
     normalize: normalizeSortInfo,
     fromState: () => state.sortInfo,
     setState: (sortInfo) => reducerActions.setSortInfo(sortInfo),

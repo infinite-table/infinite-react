@@ -47,8 +47,10 @@ export type InfiniteTableInternalProps<T> = {
   rowHeight: number;
   ___t?: T;
 };
+
+export type InfiniteTablePropColumns<T> = Map<string, InfiniteTableColumn<T>>;
 export type InfiniteTableProps<T> = {
-  columns: Map<string, InfiniteTableColumn<T>>;
+  columns: InfiniteTablePropColumns<T>;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;

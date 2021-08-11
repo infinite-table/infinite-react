@@ -8,7 +8,8 @@ import type {
   InfiniteTableProps,
 } from './InfiniteTableProps';
 
-export interface InfiniteTableComputedValues<T> extends InfiniteTableProps<T> {
+export interface InfiniteTableComputedValues<T> {
+  columns: InfiniteTableProps<T>['columns'];
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];

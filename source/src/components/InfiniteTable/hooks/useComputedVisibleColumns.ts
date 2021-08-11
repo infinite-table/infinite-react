@@ -119,6 +119,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   ]);
 
   return {
+    columns,
     computedRemainingSpace,
     computedUnpinnedOffset,
     computedPinnedEndOffset,

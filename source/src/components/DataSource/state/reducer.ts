@@ -114,8 +114,6 @@ function getReducer<T>(
       state = fn(state, action, getProps());
     }
 
-    console.log(state.aggregationReducers, 'RED');
-
     const sortInfo = state.sortInfo;
     const shouldSort = sortInfo.length;
     const sortDepsChanged = haveDepsChanged(initialState, state, [

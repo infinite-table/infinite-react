@@ -26,6 +26,7 @@ import {
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
 import { InfiniteTablePropColumnAggregations } from '../types/InfiniteTableProps';
+import { usePrevious } from '../../hooks/usePrevious';
 
 type ListRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -35,11 +36,26 @@ type ListRenderingParam<T> = {
   columnShifts: number[] | null;
   getProps: () => InfiniteTableOwnProps<T>;
   getActions: () => InfiniteTableActions<T>;
+  getComputed: () => InfiniteTableComputedValues<T> | undefined;
+};
+
+const shallowEqual = <T extends object | null>(a: T, b: T) => {
+  if (!!a != !!b) {
+    return false;
+  }
+  for (var k in a)
+    if (a.hasOwnProperty(k) && a[k] !== b[k]) {
+      return false;
+    }
+
+  return true;
 };
 
 export function useListRendering<T>(param: ListRenderingParam<T>) {
   const { computed, domRef, bodySize, columnShifts, getActions, getProps } =
     param;
+
+  const prevComputed = usePrevious(computed, null);
 
   const {
     computedPinnedStartColumns,
@@ -58,7 +74,15 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
   const getData = useLatest(dataArray);
   const { rowHeight } = getProps();
   const repaintIdRef = useRef<number>(0);
-  const repaintId = repaintIdRef.current++;
+
+  // IT's very important to only increment the repaint id when computed changes
+  //
+  // THUS, the computed will generally not contain any properties directly from props
+  // but things in computed should generally come from `useProperty` hook
+  if (!shallowEqual(prevComputed, computed)) {
+    repaintIdRef.current++;
+  }
+  const repaintId = repaintIdRef.current;
 
   const { horizontalVirtualBrain, verticalVirtualBrain } = useYourBrain({
     computedUnpinnedColumns: computed.computedUnpinnedColumns,
