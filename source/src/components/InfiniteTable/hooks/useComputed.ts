@@ -4,7 +4,10 @@ import {
   InfiniteTableComputedValues,
 } from '../types';
 
-import { DataSourceContextValue } from '../../DataSource/types';
+import {
+  DataSourceContextValue,
+  DataSourceSingleSortInfo,
+} from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
 // TODO continue here replace this with current impl - makes some tests crash
 // TODO yes, really continue here
@@ -17,7 +20,7 @@ import {
   InfiniteTableInternalActions,
 } from '../state/getReducerActions';
 import { sortAscending } from '../../../utils/sortAscending';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useColumnAggregations } from './useColumnAggregations';
 
 export function useComputed<T>(
@@ -32,7 +35,7 @@ export function useComputed<T>(
   // const [columnOrder, setColumnOrder] = useStateProperty('columnOrder', props);
   const [columnOrder, setColumnOrder] = useProperty('columnOrder', props, {
     fromState: () => state.columnOrder,
-    setState: (columnOrder) => actions.setColumnOrder(columnOrder),
+    setState: actions.setColumnOrder,
   });
 
   // (globalThis as any).setColumnOrder = setColumnOrder;
@@ -83,6 +86,11 @@ export function useComputed<T>(
   //   }
   // }, [props.columnVisibilityAssumeVisible]);
 
+  const setSortInfo = useCallback(
+    (sortInfo: DataSourceSingleSortInfo<T>[]) =>
+      (dataSourceContextValue.componentActions.sortInfo = sortInfo),
+    [],
+  );
   const {
     columns,
     computedColumnOrder,
@@ -106,8 +114,8 @@ export function useComputed<T>(
 
     sortable: props.sortable,
     draggableColumns: props.draggableColumns,
-    sortInfo: dataSourceContextValue.computed.sortInfo,
-    setSortInfo: dataSourceContextValue.actions.setSortInfo,
+    sortInfo: dataSourceContextValue.componentState.sortInfo,
+    setSortInfo,
 
     columnOrder,
 

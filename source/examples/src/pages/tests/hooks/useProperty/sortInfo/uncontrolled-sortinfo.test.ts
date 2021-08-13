@@ -35,12 +35,12 @@ export default describe('hooks.useProperty - uncontrolled sortInfo', () => {
 
     calls = await getCalls();
     expect(calls.length).toEqual(1);
-    expect(calls[0].args).toEqual([[{ dir: -1, field: 'name' }]]);
+    expect(calls[0].args).toEqual([[{ dir: -1, field: 'age' }]]);
 
     await page.click('#inner');
 
     calls = await getCalls();
     expect(calls.length).toEqual(2);
-    expect(calls[1].args).toEqual([[{ dir: 1, field: 'name' }]]);
+    expect(calls[1].args).toEqual([[{ dir: 1, field: 'age' }]]);
   });
 });

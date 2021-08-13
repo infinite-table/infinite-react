@@ -39,17 +39,7 @@ type ListRenderingParam<T> = {
   getComputed: () => InfiniteTableComputedValues<T> | undefined;
 };
 
-const shallowEqual = <T extends object | null>(a: T, b: T) => {
-  if (!!a != !!b) {
-    return false;
-  }
-  for (var k in a)
-    if (a.hasOwnProperty(k) && a[k] !== b[k]) {
-      return false;
-    }
-
-  return true;
-};
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 
 export function useListRendering<T>(param: ListRenderingParam<T>) {
   const { computed, domRef, bodySize, columnShifts, getActions, getProps } =
@@ -66,10 +56,9 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
     computedUnpinnedColumnsWidth,
   } = computed;
 
-  const {
-    computed: { dataArray },
-    state: dataSourceState,
-  } = useDataSourceContextValue<T>();
+  const { componentState: dataSourceState } = useDataSourceContextValue<T>();
+
+  const { dataArray } = dataSourceState;
 
   const getData = useLatest(dataArray);
   const { rowHeight } = getProps();
@@ -79,7 +68,7 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
   //
   // THUS, the computed will generally not contain any properties directly from props
   // but things in computed should generally come from `useProperty` hook
-  if (!shallowEqual(prevComputed, computed)) {
+  if (!shallowEqualObjects(prevComputed, computed)) {
     repaintIdRef.current++;
   }
   const repaintId = repaintIdRef.current;

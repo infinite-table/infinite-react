@@ -1,6 +1,6 @@
 import type { Renderable } from '../../types/Renderable';
 import type {
-  DataSourceComputedValues,
+  DataSourceComponentState,
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
@@ -13,7 +13,7 @@ export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
   rowIndex: number;
   column: InfiniteTableComputedColumn<DATA_TYPE>;
-  groupBy: DataSourceComputedValues<DATA_TYPE>['groupBy'];
+  groupBy: DataSourceComponentState<DATA_TYPE>['groupBy'];
 }
 
 export interface InfiniteTableColumnHeaderRenderParams<T> {

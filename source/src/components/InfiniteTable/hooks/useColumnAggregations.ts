@@ -43,7 +43,7 @@ export function useColumnAggregations<T>(): [
 
         reducers.push(newAggregator);
       });
-      getDataSourceActions().setAggregationReducers(reducers);
+      dataSourceActions.aggregationReducers = reducers;
     }
 
     const set = columnAggregations.set.bind(columnAggregations);

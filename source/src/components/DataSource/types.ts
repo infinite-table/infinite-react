@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Setter } from '../types/Setter';
 import { MultisortInfo } from '../../utils/multisort';
-import { InfiniteTableEnhancedData } from '../InfiniteTable';
 import { DeepMap } from '../../utils/DeepMap';
 import { AggregationReducer, GroupKeyType } from '../../utils/groupAndPivot';
 
+import { InfiniteTableEnhancedData } from '../InfiniteTable';
+import { ComponentStateActions } from '../hooks/useComponentState';
+
 export interface DataSourceDataInfo<T> {
-  // dataArray: EnhancedData<T>[];
   originalDataArray: T[];
 }
 
@@ -42,7 +42,7 @@ export type DataSourceData<T> =
 export interface DataSourceProps<T> {
   children:
     | React.ReactNode
-    | ((contextData: DataSourceComputedValues<T>) => React.ReactNode);
+    | ((contextData: DataSourceComponentState<T>) => React.ReactNode);
   primaryKey: keyof T;
   fields?: (keyof T)[];
 
@@ -63,55 +63,37 @@ export interface DataSourceProps<T> {
 }
 
 export interface DataSourceState<T> extends DataSourceDataInfo<T> {
+  data: DataSourceData<T>;
   loading: boolean;
-  groupDeepMap?: DeepMap<GroupKeyType, T[]>;
   sortInfo: DataSourceSingleSortInfo<T>[];
-  originalDataArray: T[];
-  postSortDataArray?: T[];
-  postGroupDataArray?: InfiniteTableEnhancedData<T>[];
   dataArray: InfiniteTableEnhancedData<T>[];
   groupBy: DataSourceGroupBy<T>;
   aggregationReducers?: AggregationReducer<T, any>[];
 }
 
-// export interface DataSourceComputedState<T> extends DataSourceState<T> {
-//   setLoading: (loading: boolean) => void;
-//   dispatch: Dispatch<DataSourceAction>;
-// }
-
-export interface DataSourceComputedValues<T> extends DataSourceState<T> {
-  loading: boolean; // mentioned here, for completness, since it's already inherited
-  dataArray: InfiniteTableEnhancedData<T>[]; // mentioned here, for completeness, since it's already inherited
-  originalDataArray: T[]; // mentioned here, for completeness, since it's already inherited
+export interface DataSourceReadOnlyState<T> {
   primaryKey: keyof T;
-  // fields: (keyof T)[];
-  sortInfo: DataSourceSingleSortInfo<T>[];
+  groupDeepMap?: DeepMap<GroupKeyType, T[]>;
+
+  postSortDataArray?: T[];
+  postGroupDataArray?: InfiniteTableEnhancedData<T>[];
 }
+
+export interface DataSourceComponentState<T>
+  extends DataSourceState<T>,
+    DataSourceReadOnlyState<T> {}
+
+export type DataSourceComponentActions<T> = ComponentStateActions<
+  DataSourceState<T>
+>;
 
 export interface DataSourceContextValue<T> {
-  computed: DataSourceComputedValues<T>;
-  props: DataSourceProps<T>;
-  state: DataSourceState<T>;
-  actions: DataSourceActions<T>;
-  dispatch: React.Dispatch<DataSourceAction<any>>;
-}
-
-export interface DataSourceActions<T> {
-  setLoading: Setter<boolean>;
-  setDataSourceInfo: Setter<DataSourceDataInfo<T>>;
-  setSortInfo: Setter<DataSourceSortInfo<T>>;
-  setGroupBy: Setter<DataSourceGroupBy<T>>;
-  setAggregationReducers: Setter<AggregationReducer<T, any>[]>;
+  componentState: DataSourceComponentState<T>;
+  componentActions: DataSourceComponentActions<T>;
 }
 
 export enum DataSourceActionType {
   INIT = 'INIT',
-  SET_LOADING = 'SET_LOADING',
-  SET_GROUP_BY = 'SET_GROUP_BY',
-  // SET_DATA,
-  SET_DATA_SOURCE_INFO = 'SET_DATA_SOURCE_INFO',
-  SET_SORT_INFO = 'SET_SORT_INFO',
-  SET_AGGREGATION_REDUCERS = 'SET_AGGREGATION_REDUCERS',
 }
 
 export interface DataSourceAction<T> {

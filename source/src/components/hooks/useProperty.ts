@@ -1,38 +1,37 @@
 /*eslint-disable */
-import { useState, useEffect, useCallback } from 'react';
-import { toUpperFirst } from '../../utils/toUpperFirst';
-import { AllPropertiesOrNone } from '../InfiniteTable/types/Utility';
-import { Setter } from '../types/Setter';
-import isControlled from '../utils/isControlled';
-import isControlledValue from '../utils/isControlledValue';
-import { useLatest } from './useLatest';
-import usePrevious from './usePrevious';
+import { useEffect, useCallback, useRef } from 'react';
 
-const DEFAULT_CONFIG = {
-  controlledToState: true,
-  defaultValue: undefined,
+import { toUpperFirst } from '../../utils/toUpperFirst';
+// import { AllPropertiesOrNone } from '../InfiniteTable/types/Utility';
+import { Setter } from '../types/Setter';
+import { isControlled } from '../utils/isControlled';
+import { isControlledValue } from '../utils/isControlledValue';
+import { useLatest } from './useLatest';
+import { usePrevious } from './usePrevious';
+
+export const notifyChange = (props: any, propName: string, newValue: any) => {
+  const upperPropName = toUpperFirst(propName);
+  const callbackPropName = `on${upperPropName}Change` as string;
+  const callbackProp = props[callbackPropName] as Function;
+
+  if (typeof callbackProp === 'function') {
+    callbackProp(newValue);
+  }
 };
 
 function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
   propName: V,
   props: T_PROPS,
-  config: AllPropertiesOrNone<{
-    fromState?: (defaultValue?: NORMALIZED) => NORMALIZED;
-    setState?: (v: NORMALIZED) => void;
-  }> & {
+  config: {
+    fromState: (defaultValue?: NORMALIZED) => NORMALIZED;
+    setState: (v: NORMALIZED) => void;
+  } & {
     defaultValue?: T_PROPS[V];
 
     normalize?: (v?: NORMALIZED | T_PROPS[V]) => NORMALIZED;
     onControlledChange?: (n: NORMALIZED, v: NORMALIZED | T_PROPS[V]) => void;
-    controlledToState?: boolean;
-  } = {
-    normalize: (v?: NORMALIZED | T_PROPS[V]): NORMALIZED => {
-      return v as any as NORMALIZED;
-    },
-    controlledToState: DEFAULT_CONFIG.controlledToState,
   },
 ): [NORMALIZED, Setter<NORMALIZED | T_PROPS[V]>] {
-  config = config ?? DEFAULT_CONFIG;
   const getConfig = useLatest(config);
   const getProps = useLatest(props);
 
@@ -54,62 +53,17 @@ function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
     return fn(v);
   };
 
-  const controlledToState =
-    config.controlledToState ?? DEFAULT_CONFIG.controlledToState;
-
-  const upperPropName = toUpperFirst(propName as string);
-  const defaultPropName = `default${upperPropName}` as V;
-
-  const defaultValue =
-    props[defaultPropName] !== undefined
-      ? props[defaultPropName]
-      : config.defaultValue;
-
-  let [stateValue, setStateValue] = useState<NORMALIZED>(() => {
-    let val = getNormalized(defaultValue);
-    const config = getConfig();
-
-    if (config && config.fromState) {
-      val = config.fromState(val);
-    }
-
-    return val;
-  });
-
-  if (config && config.fromState) {
-    stateValue = config.fromState();
-  }
-
+  const stateValue = config.fromState();
   const propValue = props[propName];
-
   const controlled: boolean = isControlled(propName, props);
-  const storeInState = !controlled || controlledToState;
 
   const value: NORMALIZED = !controlled ? stateValue : getNormalized(propValue);
+
   const getValue = useLatest(value);
 
-  const setState = useCallback(
-    (
-      value: NORMALIZED | T_PROPS[V],
-      beforeSetState?: (
-        normalizedValue: NORMALIZED,
-        value: NORMALIZED | T_PROPS[V],
-      ) => void,
-    ) => {
-      const config = getConfig();
-      const normalizedValue: NORMALIZED = getNormalized(value);
-
-      if (beforeSetState) {
-        beforeSetState(normalizedValue, value);
-      }
-      if (config && config.setState) {
-        config.setState(normalizedValue);
-      } else {
-        setStateValue(normalizedValue);
-      }
-    },
-    [setStateValue],
-  );
+  const notify = (newValue: any) => {
+    notifyChange(getProps(), propName as string, newValue);
+  };
 
   const setValue = useCallback(
     (
@@ -118,38 +72,94 @@ function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(
         | ((prevVal: NORMALIZED | T_PROPS[V]) => NORMALIZED | T_PROPS[V]),
     ): void => {
       const latestValue: NORMALIZED = getValue();
+      const config = getConfig();
 
       let newValue: T_PROPS[V] | NORMALIZED =
         val instanceof Function ? val(latestValue) : val;
 
       newValue = getNormalized(newValue);
 
-      if (!isControlled(propName, getProps())) {
-        if (storeInState) {
-          setState(newValue);
-        }
-      }
-
-      const callbackPropName = `on${upperPropName}Change` as string;
-      const callbackProp = (getProps() as any)[callbackPropName] as Function;
-
-      if (typeof callbackProp === 'function') {
-        callbackProp(newValue);
+      if (isControlled(propName, getProps())) {
+        // internalCacheRef.current = newValue; // this line is to avoid another notification later when state changes
+        // config.setState(newValue);
+        // CASE 2
+        notify(newValue);
+      } else {
+        // CASE 3
+        skipNotifyRef.current = newValue; // this line is to avoid another notification later when state changes
+        config.setState(newValue);
+        notify(newValue);
       }
     },
-    [setState, storeInState],
+    [],
   );
 
+  /***
+CONTROLLED:
+   1 - controlled change = config.setState + SKIP notify!!!
+   2 - controlled prop + setValue = DO notify + step 1
+   3 - controlled prop is same + internal state change (from config.fromState) = DO notify
+
+UNCONTROLLED:
+  - uncontrolled is same + config.fromState() value changes = DO notify
+  - uncontrolled + setValue = config.setState  + DO NOTIFY
+
+SUMMARY:
+   CASE 1 - controlled change = config.setState + SKIP notify
+   CASE 2 - controlled prop + setValue = DO notify  + step 1
+   CASE 3 - uncontrolled prop + setValue = config.setState + DO notify = config.setState + step 4
+   CASE 4 - controlled/uncontrolled prop is same + config.fromState changes = DO NOTIFY
+
+ALSO, there is another case we need to be aware of, but maybe we don't have to handle it here:
+
+controlled prop that doesn't update, but we call actions.setColumnOrder([...]), which should theoretically modify the internal state
+but actually it shouldn't, as it should be aware that it's a controlled prop, so should just notify
+*/
+
+  const initialRenderRef = useRef(true);
+  const skipNotifyRef = useRef<NORMALIZED>();
+
   useEffect(() => {
-    const config = getConfig();
-    const propValue = getProps()[propName];
+    // CASE 1
+    // const initialRender = initialRenderRef.current;
+    // if (initialRender) {
+    //   return;
+    // }
 
-    if (isControlledValue(propValue) && config?.controlledToState) {
-      setState(propValue, config.onControlledChange);
+    const props = getProps();
+    const propValue = props[propName];
+    const isControlled = isControlledValue(propValue);
+    if (isControlled) {
+      const normalizedValue = getNormalized(propValue);
+      skipNotifyRef.current = normalizedValue;
+      getConfig().setState(normalizedValue);
     }
-  }, [propValue, setState]);
+  }, [propValue]);
 
-  return [value, setValue];
+  useEffect(() => {
+    const initialRender = initialRenderRef.current;
+    if (initialRender) {
+      return;
+    }
+    if (stateValue === skipNotifyRef.current) {
+      // we had a change triggered by controlled change so we skip notify
+      // part of CASE 1
+      skipNotifyRef.current = undefined;
+      return;
+    }
+    skipNotifyRef.current = undefined;
+    // CASE 4
+    notify(stateValue);
+  }, [stateValue]);
+
+  useEffect(() => {
+    initialRenderRef.current = false;
+  }, []);
+
+  /**
+   * WE NEED TO ALWAYS RETURN the value from STATE!!!
+   */
+  return [stateValue, setValue];
 }
 
 export { useProperty };

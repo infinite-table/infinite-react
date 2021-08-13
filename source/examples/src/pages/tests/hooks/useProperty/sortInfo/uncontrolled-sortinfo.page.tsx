@@ -35,7 +35,10 @@ const SortInfoTest = () => {
       </button>
       <SortInfoCmp
         defaultSortInfo={sortInfo}
-        onSortInfoChange={onSortInfoChange}
+        onSortInfoChange={(sortInfo) => {
+          onSortInfoChange(sortInfo);
+          console.log('on sort info called with', sortInfo);
+        }}
       ></SortInfoCmp>
     </div>
   );

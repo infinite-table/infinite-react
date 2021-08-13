@@ -77,7 +77,7 @@ const InfiniteTableFactory = <T extends unknown>(
     const { domProps, header, onHeaderResize } = props;
 
     const {
-      computed: { dataArray },
+      componentState: { dataArray },
     } = useDataSourceContextValue<T>();
 
     const {
@@ -87,6 +87,7 @@ const InfiniteTableFactory = <T extends unknown>(
       state,
       bodyDOMRef,
       portalDOMRef,
+      getComputed,
     } = useInfiniteTable<T>();
 
     const getProps = useLatest(props);
@@ -115,6 +116,7 @@ const InfiniteTableFactory = <T extends unknown>(
 
       reservedContentHeight,
     } = useListRendering({
+      getComputed,
       domRef,
       columnShifts,
       bodySize,
@@ -184,14 +186,8 @@ const InfiniteTableFactory = <T extends unknown>(
     >(reducer, props, getInitialState);
 
     const InternalTableContext = getInternalInfiniteTableContext<T>();
-    const reducerActions = useMemo(
-      () => getReducerActions<T>(dispatch),
-      [dispatch],
-    );
+    const actions = useMemo(() => getReducerActions<T>(dispatch), [dispatch]);
 
-    const actions = {
-      ...reducerActions,
-    };
     const domRef = React.useRef<HTMLDivElement | null>(null);
     const bodyDOMRef = React.useRef<HTMLDivElement | null>(null);
     const portalDOMRef = React.useRef<HTMLDivElement | null>(null);
@@ -202,9 +198,12 @@ const InfiniteTableFactory = <T extends unknown>(
       return buildSubscriptionCallback<number>();
     }, []);
 
-    const internalActions: InfiniteTableInternalActions<T> = {
-      onRowHeightChange,
-    };
+    const internalActions: InfiniteTableInternalActions<T> = useMemo(
+      () => ({
+        onRowHeightChange,
+      }),
+      [],
+    );
 
     const getProps = useLatest(props);
 
@@ -301,7 +300,6 @@ const InfiniteTableFactory = <T extends unknown>(
     const contextValue: InfiniteTableContextValue<T> = {
       state,
       dispatch,
-      ownProps,
       actions,
       props,
       computed,
@@ -316,11 +314,9 @@ const InfiniteTableFactory = <T extends unknown>(
     const TableContext = getInfiniteTableContext<T>();
 
     return (
-      <React.StrictMode>
-        <TableContext.Provider value={contextValue}>
-          <Table {...ownProps} />
-        </TableContext.Provider>
-      </React.StrictMode>
+      <TableContext.Provider value={contextValue}>
+        <Table {...ownProps} />
+      </TableContext.Provider>
     );
   }
 

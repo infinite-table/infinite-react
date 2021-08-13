@@ -35,12 +35,12 @@ export default describe('hooks.useProperty - controlled boolean', () => {
 
     calls = await getCalls();
     expect(calls.length).toEqual(1);
-    expect(calls[0].args).toEqual([true]);
+    expect(calls[0].args).toEqual([false]);
 
     await page.click('#inner');
 
     calls = await getCalls();
     expect(calls.length).toEqual(2);
-    expect(calls[1].args).toEqual([false]);
+    expect(calls[1].args).toEqual([true]);
   });
 });

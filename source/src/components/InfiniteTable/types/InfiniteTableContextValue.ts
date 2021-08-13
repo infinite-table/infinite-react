@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  InfiniteTableOwnProps,
+  // InfiniteTableOwnProps,
   InfiniteTableProps,
 } from './InfiniteTableProps';
 import { InfiniteTableState } from './InfiniteTableState';
@@ -28,5 +28,5 @@ export interface InternalInfiniteTableContextValue<T> {
 export interface InfiniteTableContextValue<T>
   extends InternalInfiniteTableContextValue<T> {
   computed: InfiniteTableComputedValues<T>;
-  ownProps: InfiniteTableOwnProps<T>;
+  // ownProps: InfiniteTableOwnProps<T>;
 }

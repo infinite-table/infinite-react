@@ -1,3 +1,4 @@
+import { isControlled } from '../../utils/isControlled';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
 
 function getInitialState<T>(
@@ -17,10 +18,18 @@ function getInitialState<T>(
       scrollLeft: 0,
     },
     draggingColumnId: null,
-    columnOrder: props.defaultColumnOrder ?? true,
-    columnVisibility: props.defaultColumnVisibility ?? new Map(),
-    columnPinning: props.defaultColumnPinning ?? new Map(),
-    columnAggregations: props.defaultColumnAggregations ?? new Map(),
+    columnOrder: isControlled('columnOrder', props)
+      ? props.columnOrder
+      : props.defaultColumnOrder ?? true,
+    columnVisibility: isControlled('columnVisibility', props)
+      ? props.columnVisibility
+      : props.defaultColumnVisibility ?? new Map(),
+    columnPinning: isControlled('columnPinning', props)
+      ? props.columnPinning
+      : props.defaultColumnPinning ?? new Map(),
+    columnAggregations: isControlled('columnAggregations', props)
+      ? props.columnAggregations
+      : props.defaultColumnAggregations ?? new Map(),
     columnShifts: null,
   } as InfiniteTableState<T>;
 }
