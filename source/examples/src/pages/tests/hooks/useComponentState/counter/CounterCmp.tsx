@@ -3,7 +3,7 @@ import {
   useComponentState,
 } from '@src/components/hooks/useComponentState';
 
-import { useRef } from 'react';
+import { Ref, useRef } from 'react';
 import * as React from 'react';
 
 type CounterProps<T> = {
@@ -15,12 +15,13 @@ type CounterProps<T> = {
 
 type CounterState<T> = {
   value: number;
-
+  ref: Ref<number>;
   t: T;
 };
 
 function getInitialState<T>(props: CounterProps<T>): CounterState<T> {
   return {
+    ref: React.createRef(),
     value: props.value ?? props.defaultValue ?? 0,
     t: props.t,
   };
@@ -92,11 +93,14 @@ const CounterComponentStateRoot = getComponentStateRoot({
   },
 });
 
+(globalThis as any).refs = [];
 const TheActualCounter = React.memo(function TheActualCounter<T>() {
   const renderCountRef = useRef(0);
   const { componentState: state, componentActions: actions } =
     useComponentState<CounterState<T>, { derivedValue: number }>();
 
+  console.log(state.ref);
+  (globalThis as any).refs.push(state.ref);
   renderCountRef.current++;
 
   console.log(`Actual component rendered ${renderCountRef.current} times`);

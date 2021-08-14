@@ -10,7 +10,6 @@ import {
 } from 'react';
 
 import type {
-  InfiniteTableFactoryConfig,
   InfiniteTableContextValue,
   InfiniteTableProps,
   InfiniteTableOwnProps,
@@ -30,7 +29,7 @@ import {
 } from './InfiniteTableContext';
 
 import { reducer } from './state/reducer';
-import { getInitialState } from './state/initialState';
+import { getInitialState, deriveReadOnlyState } from './state/getInitialState';
 import {
   getReducerActions,
   InfiniteTableInternalActions,
@@ -59,6 +58,11 @@ import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import { InternalInfiniteTableContextValue } from './types/InfiniteTableContextValue';
 import { useInternalInfiniteTable } from './hooks/useInternalInfiniteTable';
 import { useLazyLatest } from '../hooks/useLazyLatest';
+import {
+  getComponentStateRoot,
+  useComponentState,
+} from '../hooks/useComponentState';
+import { InfiniteTableReadOnlyState } from './types/InfiniteTableState';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -67,33 +71,36 @@ const ONLY_VERTICAL_SCROLLBAR = {
   vertical: true,
 };
 
-const InfiniteTableFactory = <T extends unknown>(
-  _cfg: InfiniteTableFactoryConfig = {},
-) => {
-  const Table = React.forwardRef(function InfiniteTable(
-    props: InfiniteTableOwnProps<T>,
-    domRef: Ref<HTMLDivElement>,
-  ) {
-    const { domProps, header, onHeaderResize } = props;
+const InfiniteTableRoot = getComponentStateRoot({
+  //@ts-ignore
+  getInitialState,
+  // @ts-ignore
+  deriveReadOnlyState,
+});
 
+// const InfiniteTableFactory = <T extends unknown>(
+//   _cfg: InfiniteTableFactoryConfig = {},
+// ) => {
+export const InfiniteTableComponent = React.memo(
+  function InfiniteTableComponent<T>() {
+    const { componentState } = useInfiniteTable<T>();
     const {
       componentState: { dataArray },
     } = useDataSourceContextValue<T>();
 
     const {
-      computed,
-      actions,
-      internalActions,
-      state,
+      domRef,
       bodyDOMRef,
       portalDOMRef,
-      getComputed,
-    } = useInfiniteTable<T>();
+      domProps,
+      licenseKey,
+      headerHeightRef,
+      header,
+      onRowHeightChange,
+      rowHeightCSSVar,
+    } = componentState;
 
-    const getProps = useLatest(props);
-    const getActions = useLatest(actions);
-
-    const { columnShifts, bodySize } = state;
+    const { columnShifts, bodySize } = componentState;
 
     const className = join(
       InfiniteTableClassName,
@@ -117,7 +124,7 @@ const InfiniteTableFactory = <T extends unknown>(
       reservedContentHeight,
     } = useListRendering({
       getComputed,
-      domRef,
+      domRef: componentState.domRef,
       columnShifts,
       bodySize,
       computed,
@@ -125,9 +132,11 @@ const InfiniteTableFactory = <T extends unknown>(
       getProps,
     });
 
-    const licenseValid = useLicense(
-      props.licenseKey || (globalThis as any).InfiniteTableLicenseKey || '',
-    );
+    const licenseValid = useLicense(licenseKey);
+
+    const onHeaderResize = useCallback((headerHeight: number) => {
+      headerHeightRef.current = headerHeight;
+    }, []);
 
     return (
       <div ref={domRef} {...domProps} className={className}>
@@ -169,162 +178,79 @@ const InfiniteTableFactory = <T extends unknown>(
           ref={portalDOMRef as RefObject<HTMLDivElement>}
           className="ITable-Portal"
         />
-        {props.rowHeightCSSVar ? (
+        {rowHeightCSSVar ? (
           <CSSVariableWatch
-            varName={props.rowHeightCSSVar}
-            onChange={internalActions.onRowHeightChange}
+            varName={rowHeightCSSVar}
+            onChange={onRowHeightChange}
           />
         ) : null}
       </div>
     );
-  });
+  },
+);
+function InfiniteTableContextProvider<T>() {
+  const { componentActions, componentState } = useComponentState<
+    InfiniteTableState<T>,
+    InfiniteTableReadOnlyState<T>
+  >();
 
-  function InfiniteTableWrap(props: InfiniteTableProps<T>) {
-    const [state, dispatch] = useReducer<
-      React.Reducer<InfiniteTableState<T>, InfiniteTableAction>,
-      InfiniteTableProps<T>
-    >(reducer, props, getInitialState);
+  const contextValue: InfiniteTableContextValue<T> = {
+    componentActions,
+    componentState,
+  };
 
-    const InternalTableContext = getInternalInfiniteTableContext<T>();
-    const actions = useMemo(() => getReducerActions<T>(dispatch), [dispatch]);
+  const { bodyDOMRef, bodySizeRef, headerHeightRef } = componentState;
 
-    const domRef = React.useRef<HTMLDivElement | null>(null);
-    const bodyDOMRef = React.useRef<HTMLDivElement | null>(null);
-    const portalDOMRef = React.useRef<HTMLDivElement | null>(null);
-    const bodySizeRef = useRef<Size | null>(null);
-    const headerHeightRef = useRef<number>(0);
+  const getState = useLatest(componentState);
 
-    const onRowHeightChange = useMemo(() => {
-      return buildSubscriptionCallback<number>();
-    }, []);
-
-    const internalActions: InfiniteTableInternalActions<T> = useMemo(
-      () => ({
-        onRowHeightChange,
-      }),
-      [],
-    );
-
-    const getProps = useLatest(props);
-
-    useResizeObserver(
-      bodyDOMRef,
-      (size) => {
-        const bodySize = {
-          // TODO this can be improved
-          width: size.width, //- reservedScrollSpace,
-          height: size.height,
-        };
-        bodySize.width = bodyDOMRef.current?.scrollWidth ?? bodySize.width;
-
-        bodySizeRef.current = bodySize;
-        const props = getProps();
-        if (!props.header) {
-          actions.setBodySize(bodySize);
-          return;
-        }
-        if (headerHeightRef.current) {
-          actions.setBodySize(bodySize);
-        } else {
-          actions.setBodySize({ ...bodySize, height: 0 });
-        }
-      },
-      { earlyAttach: true },
-    );
-
-    const internalContextValue: InternalInfiniteTableContextValue<T> = {
-      state,
-      dispatch,
-      actions,
-      props,
-      internalActions,
-      domRef,
-      bodyDOMRef,
-      portalDOMRef,
-      headerHeightRef,
-      getComputed: useLazyLatest<InfiniteTableComputedValues<T>>(),
-    };
-
-    React.useEffect(() => {
-      return () => {
-        onRowHeightChange.destroy();
+  useResizeObserver(
+    bodyDOMRef,
+    (size) => {
+      const bodySize = {
+        // TODO this can be improved
+        width: size.width, //- reservedScrollSpace,
+        height: size.height,
       };
-    }, []);
+      bodySize.width = bodyDOMRef.current?.scrollWidth ?? bodySize.width;
 
-    return (
-      <React.StrictMode>
-        <InternalTableContext.Provider value={internalContextValue}>
-          <InfiniteTableContextProvider />
-        </InternalTableContext.Provider>
-      </React.StrictMode>
-    );
-  }
+      bodySizeRef.current = bodySize;
+      const state = getState();
+      if (!state.header) {
+        componentActions.bodySize = bodySize;
+        return;
+      }
+      if (headerHeightRef.current) {
+        componentActions.bodySize = bodySize;
+      } else {
+        componentActions.bodySize = { ...bodySize, height: 0 };
+      }
+    },
+    { earlyAttach: true },
+  );
 
-  function InfiniteTableContextProvider() {
-    const {
-      props,
-      state,
-      actions,
-      internalActions,
-      dispatch,
-      domRef,
-      bodyDOMRef,
-      portalDOMRef,
-      headerHeightRef,
-      getComputed,
-    } = useInternalInfiniteTable<T>();
-
-    const onHeaderResize = useCallback((headerHeight: number) => {
-      headerHeightRef.current = headerHeight;
-    }, []);
-
-    const computed = useComputed<T>(
-      props,
-      state,
-      useDataSourceContextValue<T>(),
-      actions,
-      internalActions,
-    );
-
-    getComputed.current = computed;
-
-    const ownProps = {
-      ...props,
-      ref: domRef,
-      onHeaderResize,
-      rowHeight: computed.rowHeight,
-      rowHeightCSSVar:
-        typeof props.rowHeight === 'string' ? props.rowHeight : '',
+  React.useEffect(() => {
+    return () => {
+      componentState.onRowHeightChange.destroy();
     };
+  }, []);
 
-    const contextValue: InfiniteTableContextValue<T> = {
-      state,
-      dispatch,
-      actions,
-      props,
-      computed,
-      internalActions,
-      domRef,
-      bodyDOMRef,
-      portalDOMRef,
-      headerHeightRef,
-      getComputed,
-    };
+  const TableContext = getInfiniteTableContext<T>();
 
-    const TableContext = getInfiniteTableContext<T>();
+  return (
+    <TableContext.Provider value={contextValue}>
+      <InfiniteTableComponent />
+    </TableContext.Provider>
+  );
+}
 
-    return (
-      <TableContext.Provider value={contextValue}>
-        <Table {...ownProps} />
-      </TableContext.Provider>
-    );
-  }
-
-  InfiniteTableWrap.defaultProps = getDefaultProps<T>();
-
-  return InfiniteTableWrap;
-};
-
-export { InfiniteTableFactory };
+export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
+  return (
+    <React.StrictMode>
+      <InfiniteTableRoot {...props}>
+        <InfiniteTableContextProvider />
+      </InfiniteTableRoot>
+    </React.StrictMode>
+  );
+}
 
 export * from './types';
