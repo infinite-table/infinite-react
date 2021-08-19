@@ -3,20 +3,25 @@ import { setupResizeObserver } from '../../../ResizeObserver';
 import { OnResizeFn } from '../../../types/Size';
 import { VoidFn } from '../../../types/VoidFn';
 
+const DEFAULT_getTargetElement = (
+  domRef: MutableRefObject<HTMLDivElement | null>,
+) => {
+  return domRef.current?.firstChild as HTMLElement;
+};
+
 export const useHeaderOnResize = (
   domRef: MutableRefObject<HTMLDivElement | null>,
   onResize?: OnResizeFn,
+  getTargetElement?: (
+    domRef: MutableRefObject<HTMLDivElement | null>,
+  ) => HTMLElement,
 ) => {
   useLayoutEffect(() => {
     if (!onResize) {
       return;
     }
     const setup = (callback: (cleanup: VoidFn) => void) => {
-      const getTargetElement = () => {
-        return domRef.current?.firstChild as HTMLElement;
-      };
-
-      const target = getTargetElement();
+      const target = (getTargetElement || DEFAULT_getTargetElement)(domRef);
 
       if (!target) {
         requestAnimationFrame(() => {

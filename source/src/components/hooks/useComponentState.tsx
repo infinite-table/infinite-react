@@ -17,6 +17,7 @@ export function getComponentStateContext<T>(): React.Context<T> {
 }
 
 type ComponentStateContext<T_STATE, T_ACTIONS> = {
+  getComponentState: () => T_STATE;
   componentState: T_STATE;
   componentActions: T_ACTIONS;
 };
@@ -67,7 +68,17 @@ type ComponentStateRootConfig<
   getInitialState: (props: T_PROPS) => T_STATE;
   reducer?: React.Reducer<T_STATE, any>;
   getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
-  deriveReadOnlyState?: (props: T_PROPS, state: T_STATE) => T_READONLY_STATE;
+  deriveReadOnlyState?: (
+    props: T_PROPS,
+    state: T_STATE,
+    updated: Partial<T_STATE> | null,
+  ) => T_READONLY_STATE;
+
+  onControlledPropertyChange?: (
+    name: string,
+    newValue: any,
+    oldValue: any,
+  ) => void | ((value: any, oldValue: any) => any);
 };
 
 export function getComponentStateRoot<
@@ -97,7 +108,11 @@ export function getComponentStateRoot<
       let initialState = config.getInitialState(props);
 
       if (config.deriveReadOnlyState) {
-        const readOnlyState = config.deriveReadOnlyState(props, initialState);
+        const readOnlyState = config.deriveReadOnlyState(
+          props,
+          initialState,
+          null,
+        );
         return {
           state: {
             ...initialState,
@@ -118,14 +133,29 @@ export function getComponentStateRoot<
     const getProps = useLatest(props);
 
     const theReducer = (state: T_STATE, action: any) => {
+      let newState: Partial<T_STATE> | null = null;
       if (action.propertyName) {
+        newState = {
+          [action.propertyName as keyof T_STATE]: action.payload,
+        } as Partial<T_STATE>;
+      }
+
+      if (action.newControlledProps) {
+        newState = action.payload;
+      }
+      if (newState !== null) {
         state = {
           ...state,
-          [action.propertyName as keyof T_STATE]: action.payload,
+          ...newState,
         };
       }
+
       if (config.deriveReadOnlyState) {
-        const derivedState = config.deriveReadOnlyState(getProps(), state);
+        const derivedState = config.deriveReadOnlyState(
+          getProps(),
+          state,
+          newState,
+        );
         state = {
           ...state,
           ...derivedState,
@@ -159,31 +189,56 @@ export function getComponentStateRoot<
     const Context =
       getComponentStateContext<ComponentStateContext<T_STATE, ACTIONS_TYPE>>();
 
+    const getComponentState = useLatest(state);
+
     const contextValue = useMemo(
-      () => ({ componentState: state, componentActions: actions }),
-      [state, actions],
+      () => ({
+        componentState: state,
+        componentActions: actions,
+        getComponentState,
+      }),
+      [state, actions, getComponentState],
     );
 
     const prevProps = usePrevious(props);
 
     useEffect(() => {
       const currentProps = props;
-      for (var k in initialState)
-        if (
-          initialState.hasOwnProperty(k) &&
-          isControlled(k as string as keyof T_PROPS, props)
-        ) {
-          const oldValue = prevProps[k as string as keyof T_PROPS];
-          const newValue = currentProps[k as string as keyof T_PROPS];
+      const updatedStateFromProps: Partial<T_PROPS> = {};
+      let updatedCount = 0;
+      for (var k in wholeState) {
+        const key = k as string as keyof T_PROPS;
+        if (wholeState.hasOwnProperty(k) && isControlled(key, props)) {
+          const oldValue = prevProps[key];
+          let newValue = currentProps[key];
 
           if (oldValue !== newValue) {
-            dispatch({
-              propertyName: k,
-              payload: newValue,
-            });
+            if (config.onControlledPropertyChange) {
+              const modifier = config.onControlledPropertyChange(
+                k,
+                newValue,
+                oldValue,
+              );
+
+              if (typeof modifier === 'function') {
+                newValue = modifier(newValue, oldValue);
+              }
+            }
+            updatedStateFromProps[key] = newValue;
+            updatedCount++;
           }
         }
+      }
+
+      if (updatedCount > 0) {
+        dispatch({
+          newControlledProps: true,
+          payload: updatedStateFromProps,
+        });
+      }
     });
+
+    console.log('render');
 
     return (
       <Context.Provider value={contextValue}>{props.children}</Context.Provider>

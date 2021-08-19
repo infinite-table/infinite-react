@@ -77,6 +77,7 @@ export function reducer<T>(
       const flattenResult = enhancedFlatten(groupResult, {
         reducers: state.aggregationReducers,
       });
+      // console.log({ flattenResult });
       enhancedDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
     } else {
@@ -88,6 +89,7 @@ export function reducer<T>(
     state.groupDeepMap = undefined;
     enhancedDataArray = dataArray.map(toEnhancedData);
   }
+  // console.log('!!!', state);
 
   state.dataArray = enhancedDataArray;
 

@@ -27,13 +27,14 @@ function InfiniteTableRowFn<T>(
   } = props;
   const tableContextValue = useInfiniteTable<T>();
 
-  useEffect(() => {
-    return () => {};
-  }, []);
+  const { componentState } = tableContextValue;
+  const { domRef: tableDOMRef } = componentState;
 
-  const { props: tableProps, domRef: tableDOMRef } = tableContextValue;
-
-  const { domProps } = useRowDOMProps(props, tableProps, tableDOMRef);
+  const { domProps } = useRowDOMProps(
+    props,
+    componentState.rowProps,
+    tableDOMRef,
+  );
 
   const style = {
     width: rowWidth,

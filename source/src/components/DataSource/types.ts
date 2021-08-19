@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { MultisortInfo } from '../../utils/multisort';
 import { DeepMap } from '../../utils/DeepMap';
-import { AggregationReducer, GroupKeyType } from '../../utils/groupAndPivot';
+import {
+  AggregationReducer,
+  GroupBy,
+  GroupKeyType,
+} from '../../utils/groupAndPivot';
 
 import { InfiniteTableEnhancedData } from '../InfiniteTable';
 import { ComponentStateActions } from '../hooks/useComponentState';
@@ -14,7 +18,7 @@ export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
   field?: keyof T;
   id?: string;
 };
-export type DataSourceGroupBy<T> = (keyof T)[];
+export type DataSourceGroupBy<T> = GroupBy<T>;
 
 export type DataSourceSortInfo<T> =
   | null
@@ -53,9 +57,9 @@ export interface DataSourceProps<T> {
   defaultLoading?: boolean;
   onLoadingChange?: (loading: boolean) => void;
 
-  groupBy?: DataSourceGroupBy<T>;
-  defaultGroupBy?: DataSourceGroupBy<T>;
-  onGroupByChange?: (groupBy: DataSourceGroupBy<T>) => void;
+  groupBy?: DataSourceGroupBy<T>[];
+  defaultGroupBy?: DataSourceGroupBy<T>[];
+  onGroupByChange?: (groupBy: DataSourceGroupBy<T>[]) => void;
 
   sortInfo?: DataSourceSortInfo<T>;
   defaultSortInfo?: DataSourceSortInfo<T>;
@@ -67,7 +71,7 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   loading: boolean;
   sortInfo: DataSourceSingleSortInfo<T>[];
   dataArray: InfiniteTableEnhancedData<T>[];
-  groupBy: DataSourceGroupBy<T>;
+  groupBy: DataSourceGroupBy<T>[];
   aggregationReducers?: AggregationReducer<T, any>[];
 }
 

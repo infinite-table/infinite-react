@@ -3,14 +3,12 @@ import { useState } from 'react';
 
 import {
   DataSource,
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTablePropColumnOrder,
 } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from './rowData';
 import { columns } from './columns';
-
-const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnOrder = ['id', 'make', 'year', 'price'];
 // rowData.length = 1;
@@ -34,7 +32,7 @@ const App = () => {
         </button>
       </div>
       <DataSource<Car> primaryKey="id" data={rowData}>
-        <Table
+        <InfiniteTable<Car>
           domProps={{
             style: {
               margin: '5px',

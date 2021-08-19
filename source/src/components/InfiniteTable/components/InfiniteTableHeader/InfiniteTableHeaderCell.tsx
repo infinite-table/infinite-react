@@ -33,7 +33,12 @@ export function InfiniteTableHeaderCell<T>(
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
   const columns: Map<string, InfiniteTableComputedColumn<T>> = props.columns;
-  const { onResize, virtualized = true } = props;
+  const {
+    onResize,
+    virtualized = true,
+    cssPosition,
+    offset: offsetFromProps,
+  } = props;
 
   const sortInfo = column.computedSortInfo;
 
@@ -71,7 +76,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const {
     computed: { computedRemainingSpace },
-    portalDOMRef,
+    componentState: { portalDOMRef },
   } = useInfiniteTable<T>();
 
   useEffect(() => {
@@ -87,7 +92,10 @@ export function InfiniteTableHeaderCell<T>(
     };
   }, [domRef.current, props.onResize]);
 
-  let style = { ...defaultStyle };
+  let style: React.CSSProperties = {
+    ...defaultStyle,
+    position: cssPosition ?? 'absolute',
+  };
   const { onPointerDown, onPointerUp, dragging, draggingDiff, proxyOffset } =
     useColumnPointerEvents({
       computedRemainingSpace,
@@ -96,7 +104,8 @@ export function InfiniteTableHeaderCell<T>(
       columns,
     });
 
-  let offset: number = virtualized ? 0 : column.computedPinningOffset;
+  let offset: number =
+    offsetFromProps ?? (virtualized ? 0 : column.computedPinningOffset);
 
   let draggingProxy = null;
 

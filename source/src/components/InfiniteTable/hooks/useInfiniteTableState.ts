@@ -5,7 +5,7 @@ import { getInfiniteTableContext } from '../InfiniteTableContext';
 
 export const useInfiniteTableState = <T>(): InfiniteTableState<T> => {
   const TableContext = getInfiniteTableContext<T>();
-  const { state } = useContext(TableContext);
+  const { componentState } = useContext(TableContext);
 
-  return state;
+  return componentState;
 };

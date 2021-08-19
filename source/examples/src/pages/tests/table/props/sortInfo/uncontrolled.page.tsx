@@ -1,7 +1,10 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@infinite-table/infinite-react';
-import { DataSource, DataSourceSortInfo } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+  DataSourceSortInfo,
+} from '@infinite-table/infinite-react';
 
 interface Order {
   OrderId: number;
@@ -11,8 +14,6 @@ interface Order {
   ShipCountry: string;
   ShipVia: string;
 }
-
-const Table = InfiniteTableFactory<Order>();
 
 const orders = [
   {
@@ -69,7 +70,7 @@ export default () => {
           'ShipVia',
         ]}
       >
-        <Table
+        <InfiniteTable<Order>
           domProps={{
             style: {
               margin: '5px',

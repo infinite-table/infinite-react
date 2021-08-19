@@ -86,6 +86,7 @@ export type InfiniteTableColumn<T> = {
 
   align?: InfiniteTableColumnAlign;
   verticalAlign?: InfiniteTableColumnVerticalAlign;
+  columnGroup?: string;
 
   header?: InfiniteTableColumnHeader<T>;
   name?: Renderable;

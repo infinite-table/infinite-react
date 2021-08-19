@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
 } from '@infinite-table/infinite-react';
@@ -10,8 +10,6 @@ import { DataSource } from '@infinite-table/infinite-react';
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 import { useState } from 'react';
-
-const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnOrder = ['id', 'model', 'price'];
 
@@ -30,7 +28,7 @@ const App = () => {
         data={rowData}
         fields={['id', 'make', 'model', 'price']}
       >
-        <Table
+        <InfiniteTable<Car>
           domProps={{
             style: {
               margin: '5px',

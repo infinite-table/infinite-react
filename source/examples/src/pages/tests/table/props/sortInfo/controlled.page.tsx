@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import { DataSourceSortInfo } from '@infinite-table/infinite-react';
 import { useState } from 'react';
@@ -14,8 +13,6 @@ interface Order {
   ShipCountry: string;
   ShipVia: string;
 }
-
-const Table = InfiniteTableFactory<Order>();
 
 const orders = [
   {
@@ -51,7 +48,7 @@ const orders = [
     ShipCountry: 'France',
   },
 ];
-export default () => {
+export default function ControlledPageTest() {
   const [sortInfo, setSortInfo] = useState<DataSourceSortInfo<Order>>({
     dir: 1,
     field: 'CompanyName',
@@ -90,7 +87,7 @@ export default () => {
             }
           }}
         >
-          <Table
+          <InfiniteTable<Order>
             domProps={{
               style: {
                 margin: '5px',
@@ -127,4 +124,4 @@ export default () => {
       </div>
     </React.StrictMode>
   );
-};
+}

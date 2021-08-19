@@ -1,15 +1,12 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 interface Person {
   Id: number;
   FirstName: string;
   Age: number;
 }
-
-const Table = InfiniteTableFactory<Person>();
 
 const data = [
   {
@@ -28,7 +25,7 @@ const data = [
     Age: 5,
   },
 ];
-const SortablePage = () => {
+export default function SortablePage() {
   return (
     <React.StrictMode>
       <p>
@@ -36,7 +33,7 @@ const SortablePage = () => {
         <b>Id</b> column specifically configured as <b>sortable=true</b>
       </p>
       <DataSource<Person> data={data} primaryKey="Id">
-        <Table
+        <InfiniteTable<Person>
           domProps={{
             style: {
               margin: '5px',
@@ -71,6 +68,4 @@ const SortablePage = () => {
       </DataSource>
     </React.StrictMode>
   );
-};
-
-export default SortablePage;
+}

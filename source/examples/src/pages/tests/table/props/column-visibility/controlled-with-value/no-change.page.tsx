@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnVisibility,
 } from '@infinite-table/infinite-react';
@@ -9,8 +9,6 @@ import { DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
-
-const Table = InfiniteTableFactory<Car>();
 
 const defaultColumnVisibility: InfiniteTablePropColumnVisibility = new Map([
   ['year', false],
@@ -31,7 +29,7 @@ const App = () => {
         data={rowData}
         fields={['id', 'make', 'model', 'price']}
       >
-        <Table
+        <InfiniteTable<Car>
           domProps={{
             style: {
               margin: '5px',

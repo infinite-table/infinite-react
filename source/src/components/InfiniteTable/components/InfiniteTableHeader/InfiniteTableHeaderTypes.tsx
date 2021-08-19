@@ -1,7 +1,9 @@
-import { InfiniteTableComputedColumn } from '../..';
+import { InfiniteTableColumnGroup, InfiniteTableComputedColumn } from '../..';
+import { Renderable } from '../../../types/Renderable';
 import type { OnResizeFn } from '../../../types/Size';
 
 import { VirtualBrain } from '../../../VirtualBrain';
+import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 export type InfiniteTableHeaderProps<T> = {
   repaintId?: string | number;
@@ -9,6 +11,12 @@ export type InfiniteTableHeaderProps<T> = {
   columns: InfiniteTableComputedColumn<T>[];
   totalWidth: number;
   onResize?: OnResizeFn;
+};
+
+export type InfiniteTableHeaderGroupProps<T> = {
+  columns: InfiniteTableComputedColumn<T>[];
+  columnGroup: InfiniteTableComputedColumnGroup;
+  children: Renderable;
 };
 
 export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<

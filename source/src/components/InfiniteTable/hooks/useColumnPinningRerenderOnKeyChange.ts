@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { InfiniteTablePropColumnPinning } from '../types';
 import { useRerender } from '../../hooks/useRerender';
+import { interceptMap } from '../../hooks/useInterceptedMap';
 
 export const useColumnPinningRerenderOnKeyChange = (
   columnPinning: InfiniteTablePropColumnPinning,
@@ -8,30 +9,11 @@ export const useColumnPinningRerenderOnKeyChange = (
   const [renderId, rerender] = useRerender();
 
   useEffect(() => {
-    const set = columnPinning.set.bind(columnPinning);
-    const deleteKey = columnPinning.delete.bind(columnPinning);
-    const clear = columnPinning.clear.bind(columnPinning);
-
-    columnPinning.set = (key: any, pinned: true | 'start' | 'end') => {
-      const result = set(key, pinned);
-      rerender();
-      return result;
-    };
-    columnPinning.delete = (key: any) => {
-      const removed = deleteKey(key);
-      rerender();
-      return removed;
-    };
-    columnPinning.clear = () => {
-      clear();
-      rerender();
-    };
-
-    return () => {
-      columnPinning.set = set;
-      columnPinning.delete = deleteKey;
-      columnPinning.clear = clear;
-    };
+    return interceptMap(columnPinning, {
+      set: rerender,
+      clear: rerender,
+      delete: rerender,
+    });
   }, [columnPinning]);
 
   return renderId;

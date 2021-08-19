@@ -33,6 +33,20 @@ export const getColumnCells = async (columnName: string) => {
   };
 };
 
+export const getCellText = async ({
+  columnId,
+  rowIndex,
+}: {
+  columnId: string;
+  rowIndex: number;
+}) => {
+  const cell = await page.$(
+    `[data-row-index="${rowIndex}"] [data-column-id="${columnId}"]`,
+  );
+
+  return await cell!.evaluate((node) => node.innerText);
+};
+
 export const getHeaderColumnIds = async () => {
   let cells = await getHeaderColumnCells();
 

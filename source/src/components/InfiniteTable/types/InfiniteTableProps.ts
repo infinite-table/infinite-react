@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { AggregationReducer } from '../../../utils/groupAndPivot';
+import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableColumn,
+  InfiniteTableColumnHeaderRenderFunction,
   InfiniteTableComputedColumn,
 } from './InfiniteTableColumn';
 
@@ -49,6 +51,29 @@ export type InfiniteTableInternalProps<T> = {
 };
 
 export type InfiniteTablePropColumns<T> = Map<string, InfiniteTableColumn<T>>;
+
+export type InfiniteTablePropColumnGroups = Map<
+  string,
+  InfiniteTableColumnGroup
+>;
+export type InfiniteTableColumnGroupHeaderRenderParams = {
+  columnGroup: InfiniteTableComputedColumnGroup;
+};
+export type InfiniteTableColumnGroupHeaderRenderFunction = (
+  params: InfiniteTableColumnGroupHeaderRenderParams,
+) => Renderable;
+
+export type InfiniteTableColumnGroup = {
+  columnGroup?: string;
+  header?: Renderable | InfiniteTableColumnGroupHeaderRenderFunction;
+};
+export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
+  id: string;
+  groupOffset: number;
+  computedWidth: number;
+  depth: number;
+};
+
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;
 
@@ -60,12 +85,14 @@ export type InfiniteTableProps<T> = {
   defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
   columnAggregations?: InfiniteTablePropColumnAggregations<T>;
 
+  columnGroups?: InfiniteTablePropColumnGroups;
+  defaultColumnGroups?: InfiniteTablePropColumnGroups;
+
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
   // columnVisibilityAssumeVisible?: boolean;
 
-  primaryKey: string;
   rowHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;

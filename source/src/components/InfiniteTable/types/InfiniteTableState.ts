@@ -1,6 +1,8 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
+  InfiniteTableColumnGroup,
   InfiniteTablePropColumnAggregations,
+  InfiniteTablePropColumnGroups,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
@@ -21,7 +23,7 @@ export interface InfiniteTableState<T> {
 
   onRowHeightChange: SubscriptionCallback<number>;
 
-  rowHeight: number | string;
+  rowHeight: number;
 
   columnShifts: null | number[];
   draggingColumnId: null | string;
@@ -32,22 +34,39 @@ export interface InfiniteTableState<T> {
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnPinning: InfiniteTablePropColumnPinning;
   columnAggregations: InfiniteTablePropColumnAggregations<T>;
+  columnGroups: InfiniteTablePropColumnGroups;
+  columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
+  columns: InfiniteTableProps<T>['columns'];
 
   x?: T;
 }
+
+export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
+  depth: number;
+};
+export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 
 export interface InfiniteTableComponentState<T>
   extends InfiniteTableState<T>,
     InfiniteTableReadOnlyState<T> {}
 
 export interface InfiniteTableReadOnlyState<T> {
-  primaryKey: InfiniteTableProps<T>['primaryKey'];
+  onReady: InfiniteTableProps<T>['onReady'];
+  rowProps: InfiniteTableProps<T>['rowProps'];
+
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];
   header: InfiniteTableProps<T>['header'];
   columnMinWidth: InfiniteTableProps<T>['columnMinWidth'];
+  columnMaxWidth: InfiniteTableProps<T>['columnMaxWidth'];
+  columnDefaultWidth: InfiniteTableProps<T>['columnDefaultWidth'];
+  sortable: InfiniteTableProps<T>['sortable'];
   virtualizeColumns: InfiniteTableProps<T>['virtualizeColumns'];
+  virtualizeHeader: boolean;
   licenseKey: string;
   domProps: InfiniteTableProps<T>['domProps'];
+  draggableColumns: boolean;
+  columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
+
   rowHeightCSSVar: string;
 }
 

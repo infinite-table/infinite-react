@@ -1,41 +1,26 @@
 import { useEffect } from 'react';
+
 import { AggregationReducer } from '../../../utils/groupAndPivot';
 import useDataSourceActions from '../../DataSource/publicHooks/useDataSourceActions';
-import { useLatest } from '../../hooks/useLatest';
-import useProperty from '../../hooks/usePropertyOld'; //TODO change this
-import { Setter } from '../../types/Setter';
-import {
-  InfiniteTableColumnAggregator,
-  InfiniteTablePropColumnAggregations,
-} from '../types/InfiniteTableProps';
+import { useComponentState } from '../../hooks/useComponentState';
+import { interceptMap } from '../../hooks/useInterceptedMap';
+import { InfiniteTableComponentState } from '../types/InfiniteTableState';
 
-import { useInternalInfiniteTable } from './useInternalInfiniteTable';
-
-export function useColumnAggregations<T>(): [
-  InfiniteTablePropColumnAggregations<T>,
-  Setter<InfiniteTablePropColumnAggregations<T> | undefined>,
-] {
-  const { props, state, actions, getComputed } = useInternalInfiniteTable<T>();
-
-  const [columnAggregations, setColumnAggregations] = useProperty(
-    'columnAggregations',
-    props,
-    {
-      defaultValue: new Map<string, InfiniteTableColumnAggregator<T, any>>([]),
-      fromState: () => state.columnAggregations,
-      setState: (columnAggregations) =>
-        actions.setColumnAggregations(columnAggregations),
-    },
-  );
+export function useColumnAggregations<T>() {
+  const {
+    componentState: { columnAggregations },
+    getComponentState,
+  } = useComponentState<InfiniteTableComponentState<T>>();
 
   const dataSourceActions = useDataSourceActions<T>();
-  const getDataSourceActions = useLatest(dataSourceActions);
 
   useEffect(() => {
     function updateDataSourceAggregations() {
       const reducers: AggregationReducer<T, any>[] = [];
+
+      const componentState = getComponentState();
       columnAggregations.forEach((aggregator, key) => {
-        const colField = getComputed()!.columns.get(key)?.field;
+        const colField = componentState.columns.get(key)?.field;
         const newAggregator = {
           getter: (data: T) => (colField ? data[colField] : data),
           ...aggregator,
@@ -46,36 +31,12 @@ export function useColumnAggregations<T>(): [
       dataSourceActions.aggregationReducers = reducers;
     }
 
-    const set = columnAggregations.set.bind(columnAggregations);
-    const deleteKey = columnAggregations.delete.bind(columnAggregations);
-    const clear = columnAggregations.clear.bind(columnAggregations);
-
-    columnAggregations.set = (
-      key: any,
-      aggregator: InfiniteTableColumnAggregator<T, any>,
-    ) => {
-      const result = set(key, aggregator);
-      updateDataSourceAggregations();
-      return result;
-    };
-    columnAggregations.delete = (key: any) => {
-      const removed = deleteKey(key);
-      updateDataSourceAggregations();
-      return removed;
-    };
-    columnAggregations.clear = () => {
-      clear();
-      updateDataSourceAggregations();
-    };
-
     updateDataSourceAggregations();
 
-    return () => {
-      columnAggregations.set = set;
-      columnAggregations.delete = deleteKey;
-      columnAggregations.clear = clear;
-    };
+    return interceptMap(columnAggregations, {
+      clear: updateDataSourceAggregations,
+      delete: updateDataSourceAggregations,
+      set: updateDataSourceAggregations,
+    });
   }, [columnAggregations]);
-
-  return [columnAggregations, setColumnAggregations];
 }

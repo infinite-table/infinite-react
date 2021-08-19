@@ -1,6 +1,10 @@
 .ITableHeader {
   background: var(--ITableHeader__background);
   color: var(--ITableHeader__color);
+  &--unvirtualized {
+    position: relative;
+    align-items: stretch;
+  }
 }
 .ITableHeaderCell {
   &--dragging {
@@ -17,5 +21,18 @@
     padding: var(--ITableCell__padding);
     padding-left: 20px;
     z-index: 200;
+  }
+  border-right: var(--ITableCell__border);
+}
+
+.ITableHeaderGroup {
+  &__content {
+    padding: var(--ITableCell__padding);
+    // text-align: center;
+    border-bottom: var(--ITableCell__border);
+    border-right: var(--ITableCell__border);
+  }
+  &__children {
+    flex: 1;
   }
 }

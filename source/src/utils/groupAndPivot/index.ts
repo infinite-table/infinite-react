@@ -46,8 +46,13 @@ export interface InfiniteTableEnhancedGroupData<T>
 
 export type GroupKeyType = any; //string | number | symbol | null | undefined;
 
+export type GroupBy<DataType> = {
+  field: keyof DataType;
+  groupToKey?: (value: any, data: DataType) => GroupKeyType;
+};
+
 type GroupParams<DataType> = {
-  groupBy: (keyof DataType)[];
+  groupBy: GroupBy<DataType>[];
   groupToKey?: (value: any, item: DataType) => GroupKeyType;
 };
 
@@ -61,7 +66,7 @@ export function group<DataType>(
   groupParams: GroupParams<DataType>,
   data: DataType[],
 ): DataGroupResult<DataType> {
-  const { groupBy, groupToKey = GROUP_TO_KEY } = groupParams;
+  const { groupBy, groupToKey: defaultGroupToKey = GROUP_TO_KEY } = groupParams;
 
   const groupByLength = groupBy.length;
 
@@ -73,8 +78,11 @@ export function group<DataType>(
     let item = data[i];
 
     for (let groupByIndex = 0; groupByIndex < groupByLength; groupByIndex++) {
-      const groupByProperty = groupBy[groupByIndex];
-      const key = groupToKey(item[groupByProperty], item);
+      const { field: groupByProperty, groupToKey } = groupBy[groupByIndex];
+      const key = (groupToKey || defaultGroupToKey)(
+        item[groupByProperty],
+        item,
+      );
 
       currentKeys.push(key);
 
