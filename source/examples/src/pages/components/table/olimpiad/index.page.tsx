@@ -82,7 +82,7 @@ function App() {
       <DataSource<OlimpicWinner>
         primaryKey="id"
         data={data as OlimpicWinner[]}
-        groupBy={[{ field: 'country' }, { field: 'year' }]}
+        groupRowsBy={[{ field: 'country' }, { field: 'year' }]}
       >
         <InfiniteTable
           domProps={{

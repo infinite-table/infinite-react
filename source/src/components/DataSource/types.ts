@@ -57,9 +57,9 @@ export interface DataSourceProps<T> {
   defaultLoading?: boolean;
   onLoadingChange?: (loading: boolean) => void;
 
-  groupBy?: DataSourceGroupBy<T>[];
-  defaultGroupBy?: DataSourceGroupBy<T>[];
-  onGroupByChange?: (groupBy: DataSourceGroupBy<T>[]) => void;
+  groupRowsBy?: DataSourceGroupBy<T>[];
+  defaultGroupRowsBy?: DataSourceGroupBy<T>[];
+  onGroupRowsByChange?: (groupBy: DataSourceGroupBy<T>[]) => void;
 
   sortInfo?: DataSourceSortInfo<T>;
   defaultSortInfo?: DataSourceSortInfo<T>;
@@ -71,7 +71,7 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   loading: boolean;
   sortInfo: DataSourceSingleSortInfo<T>[];
   dataArray: InfiniteTableEnhancedData<T>[];
-  groupBy: DataSourceGroupBy<T>[];
+  groupRowsBy: DataSourceGroupBy<T>[];
   aggregationReducers?: AggregationReducer<T, any>[];
 }
 

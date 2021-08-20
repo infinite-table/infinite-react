@@ -1,4 +1,4 @@
-import { InfiniteTableColumnGroup, InfiniteTableComputedColumn } from '../..';
+import { InfiniteTableComputedColumn } from '../..';
 import { Renderable } from '../../../types/Renderable';
 import type { OnResizeFn } from '../../../types/Size';
 

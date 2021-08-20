@@ -40,11 +40,11 @@ export function reducer<T>(
   const shouldSortAgain =
     shouldSort && (sortDepsChanged || !state.postSortDataArray);
 
-  const groupBy = state.groupBy;
+  const groupBy = state.groupRowsBy;
   const shouldGroup = groupBy.length;
   const groupsDepsChanged = haveDepsChanged(initialState, state, [
     'originalDataArray',
-    'groupBy',
+    'groupRowsBy',
     'aggregationReducers',
     'sortInfo',
   ]);
@@ -89,9 +89,10 @@ export function reducer<T>(
     state.groupDeepMap = undefined;
     enhancedDataArray = dataArray.map(toEnhancedData);
   }
-  // console.log('!!!', state);
 
   state.dataArray = enhancedDataArray;
+
+  (globalThis as any).state = state;
 
   return state;
 }

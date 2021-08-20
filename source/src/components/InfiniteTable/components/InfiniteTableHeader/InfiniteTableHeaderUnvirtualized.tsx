@@ -10,7 +10,7 @@ import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 import { internalProps } from '../../internalProps';
 import { InfiniteTableHeaderUnvirtualizedProps } from './InfiniteTableHeaderTypes';
-import { buildColumnHeaderGroups } from './buildColumnHeaderGroups';
+import { renderColumnHeaderGroups } from './renderColumnHeaderGroups';
 
 const { rootClassName } = internalProps;
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -29,13 +29,25 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   const domRef = React.useRef<HTMLDivElement | null>(null);
   const hasColumnGroups = columnGroups.size > 0;
 
-  let children = hasColumnGroups
-    ? buildColumnHeaderGroups<T>({
-        columnGroups,
-        columnGroupsDepthsMap,
-        columns,
-        allVisibleColumns: columnsMap,
-      })
+  const columnHeaderGroups = React.useMemo(() => {
+    return hasColumnGroups
+      ? renderColumnHeaderGroups<T>({
+          columnGroups,
+          columnGroupsDepthsMap,
+          columns,
+          allVisibleColumns: columnsMap,
+        })
+      : null;
+  }, [
+    columnGroupsDepthsMap,
+    columnGroups,
+    columns,
+    columnsMap,
+    hasColumnGroups,
+  ]);
+
+  const children = hasColumnGroups
+    ? columnHeaderGroups
     : columns.map((c) => {
         return (
           <InfiniteTableHeaderCell<T>

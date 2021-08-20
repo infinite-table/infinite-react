@@ -47,7 +47,7 @@ export default describe('Grouping', () => {
 
     const result = group(
       {
-        groupBy: ['country'],
+        groupBy: [{ field: 'country' }],
       },
       arr,
     );
@@ -64,7 +64,7 @@ export default describe('Grouping', () => {
     const result = Array.from(
       group(
         {
-          groupBy: ['country', 'age'],
+          groupBy: [{ field: 'country' }, { field: 'age' }],
         },
         arr,
       ).deepMap.entries(),
@@ -88,7 +88,7 @@ export default describe('Grouping', () => {
     const result = flatten(
       group(
         {
-          groupBy: ['country', 'age'],
+          groupBy: [{ field: 'country' }, { field: 'age' }],
         },
         arr,
       ),
@@ -112,7 +112,11 @@ export default describe('Grouping', () => {
     const result = flatten(
       group(
         {
-          groupBy: ['department', 'country', 'age'],
+          groupBy: [
+            { field: 'department' },
+            { field: 'country' },
+            { field: 'age' },
+          ],
         },
         arr,
       ),
@@ -139,7 +143,11 @@ export default describe('Grouping', () => {
     const result = flatten(
       group(
         {
-          groupBy: ['department', 'age', 'country'],
+          groupBy: [
+            { field: 'department' },
+            { field: 'age' },
+            { field: 'country' },
+          ],
         },
         arr,
       ),
@@ -165,7 +173,7 @@ export default describe('Grouping', () => {
     const result = enhancedFlatten(
       group(
         {
-          groupBy: ['country', 'age'],
+          groupBy: [{ field: 'country' }, { field: 'age' }],
         },
         arr,
       ),

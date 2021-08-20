@@ -3,7 +3,6 @@ import { AggregationReducer } from '../../../utils/groupAndPivot';
 import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableColumn,
-  InfiniteTableColumnHeaderRenderFunction,
   InfiniteTableComputedColumn,
 } from './InfiniteTableColumn';
 

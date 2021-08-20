@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { InfiniteTableColumnCell } from './InfiniteTableColumnCell';

@@ -2,7 +2,7 @@ import { DataSourceProps, DataSourceReadOnlyState, DataSourceState } from '..';
 
 export function deriveReadOnlyState<T extends any>(
   props: DataSourceProps<T>,
-  state: DataSourceState<T>,
+  _state: DataSourceState<T>,
 ): DataSourceReadOnlyState<T> {
   return {
     primaryKey: props.primaryKey,

@@ -1,13 +1,11 @@
 import * as React from 'react';
 
 import { join } from '../../../../utils/join';
-
 import { ICSS } from '../../../../style/utilities';
 
-import { internalProps } from '../../internalProps';
 import { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
+import { rootClassName } from '../../internalProps';
 
-const { rootClassName } = internalProps;
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
 export function InfiniteTableHeaderGroup<T>(

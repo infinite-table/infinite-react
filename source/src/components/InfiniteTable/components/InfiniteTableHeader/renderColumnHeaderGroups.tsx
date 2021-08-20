@@ -16,7 +16,7 @@ type BuildColumnHeaderGroupsConfig<T> = {
   allVisibleColumns: Map<string, InfiniteTableComputedColumn<T>>;
 };
 
-export function buildColumnHeaderGroups<T>(
+export function renderColumnHeaderGroups<T>(
   config: BuildColumnHeaderGroupsConfig<T>,
 ): JSX.Element[] {
   const { columns, columnGroups, allVisibleColumns, columnGroupsDepthsMap } =
@@ -31,7 +31,6 @@ export function buildColumnHeaderGroups<T>(
     columnGroups,
     columnGroupsDepthsMap,
   );
-  console.log(items);
 
   function toJSX(items: ColGroupTreeItem<T>[]): JSX.Element[] {
     return items.map((colGroupItem) => {

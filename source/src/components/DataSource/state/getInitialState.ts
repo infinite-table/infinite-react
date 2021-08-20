@@ -23,9 +23,9 @@ export function getInitialState<T>(
     // postSortDataArray,
     // postGroupDataArray,
 
-    groupBy: isControlled('groupBy', initialProps)
-      ? initialProps.groupBy ?? []
-      : initialProps.defaultGroupBy ?? [],
+    groupRowsBy: isControlled('groupRowsBy', initialProps)
+      ? initialProps.groupRowsBy ?? []
+      : initialProps.defaultGroupRowsBy ?? [],
     aggregationReducers: undefined,
   };
 }

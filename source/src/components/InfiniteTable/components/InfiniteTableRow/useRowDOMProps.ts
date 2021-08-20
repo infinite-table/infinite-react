@@ -7,7 +7,6 @@ import {
   InfiniteTableRowClassName__hover,
 } from './InfiniteTableRowClassName';
 
-import type { InfiniteTableProps } from '../../types';
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
 

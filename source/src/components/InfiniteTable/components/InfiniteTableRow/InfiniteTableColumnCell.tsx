@@ -54,7 +54,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         rowIndex,
         column,
         enhancedData,
-        groupBy: computedDataSource.groupBy,
+        groupRowsBy: computedDataSource.groupRowsBy,
         data,
       })
     : value;

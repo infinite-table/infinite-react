@@ -4,7 +4,7 @@ import type {
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
-import { InfiniteTableEnhancedData } from '.';
+import type { InfiniteTableEnhancedData } from '.';
 
 export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
@@ -13,7 +13,7 @@ export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
   rowIndex: number;
   column: InfiniteTableComputedColumn<DATA_TYPE>;
-  groupBy: DataSourceComponentState<DATA_TYPE>['groupBy'];
+  groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
 }
 
 export interface InfiniteTableColumnHeaderRenderParams<T> {
@@ -29,7 +29,7 @@ export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({
   column,
   data,
   enhancedData,
-  groupBy,
+  groupRowsBy: groupBy,
 }: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
