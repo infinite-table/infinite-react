@@ -216,6 +216,18 @@ function InfiniteTableContextProvider<T>() {
 
   const TableContext = getInfiniteTableContext<T>();
 
+  // const { componentState: dataSourceState } = useDataSourceContextValue<T>();
+
+  // React.useEffect(() => {
+  //   if (dataSourceState.pivotColumns) {
+  //     componentActions.columns = dataSourceState.pivotColumns;
+  //     componentActions.columnOrder = [...dataSourceState.pivotColumns.keys()];
+  //   }
+  //   if (dataSourceState.pivotColumnGroups) {
+  //     componentActions.columnGroups = dataSourceState.pivotColumnGroups;
+  //   }
+  // }, [dataSourceState.pivotColumns, dataSourceState.pivotColumnGroups]);
+
   return (
     <TableContext.Provider value={contextValue}>
       <InfiniteTableComponent />

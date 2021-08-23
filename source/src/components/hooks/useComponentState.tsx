@@ -238,8 +238,6 @@ export function getComponentStateRoot<
       }
     });
 
-    console.log('render');
-
     return (
       <Context.Provider value={contextValue}>{props.children}</Context.Provider>
     );

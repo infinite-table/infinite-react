@@ -55,7 +55,6 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
       type: 'number',
       render: ({ value, enhancedData }) => {
         if (enhancedData.isGroupRow) {
-          console.log(enhancedData);
           return (
             <>
               Total sales <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}

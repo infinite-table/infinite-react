@@ -64,6 +64,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   if (totalWidth != null) {
     style.width = totalWidth;
   }
+  // style.transform = `translateX(-${scrollLeft ?? 0}px)`;
 
   return (
     <div
@@ -76,6 +77,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
         `${TableHeaderClassName}--unvirtualized`,
         domProps.className,
       )}
+      style={style}
     >
       {children}
     </div>

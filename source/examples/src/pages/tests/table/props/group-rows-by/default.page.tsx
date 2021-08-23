@@ -6,7 +6,7 @@ import {
   DataSource,
 } from '@infinite-table/infinite-react';
 import { data, Person } from './people';
-import { InfiniteTablePropColumnAggregations } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableProps';
+import { InfiniteTablePropColumnAggregations } from '@src/components/InfiniteTable/types/InfiniteTableProps';
 
 const columns = new Map<string, InfiniteTableColumn<Person>>([
   [
@@ -91,6 +91,7 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Person> = new Map(
       'salary',
       {
         initialValue: 0,
+        getter: (data) => data.salary,
         reducer: (acc, sum) => acc + sum,
         done: (sum, arr) => (arr.length ? sum / arr.length : 0),
       },
@@ -104,20 +105,32 @@ export default function GroupByExample() {
         data={data}
         primaryKey="id"
         groupRowsBy={[{ field: 'department' }, { field: 'team' }]}
+        pivotBy={[
+          {
+            field: 'country',
+          },
+          { field: 'age' },
+          { field: 'salary' },
+        ]}
       >
-        <InfiniteTable<Person>
-          domProps={{
-            style: {
-              margin: '5px',
-              height: '80vh',
-              border: '1px solid gray',
-              position: 'relative',
-            },
-          }}
-          columnAggregations={columnAggregations}
-          columnDefaultWidth={150}
-          columns={columns}
-        />
+        {({ pivotColumns, pivotColumnGroups }) => {
+          return (
+            <InfiniteTable<Person>
+              domProps={{
+                style: {
+                  margin: '5px',
+                  height: '80vh',
+                  border: '1px solid gray',
+                  position: 'relative',
+                },
+              }}
+              columnAggregations={columnAggregations}
+              columnDefaultWidth={150}
+              columns={pivotColumns ?? columns}
+              columnGroups={pivotColumnGroups}
+            />
+          );
+        }}
       </DataSource>
     </React.StrictMode>
   );

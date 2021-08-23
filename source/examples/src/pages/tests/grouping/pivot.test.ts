@@ -1,4 +1,5 @@
-import { group, DataGroupResult } from '@src/utils/groupAndPivot';
+import { group, AggregationReducer } from '@src/utils/groupAndPivot';
+import { getFilteredBy, getReducerValue, groupToItems } from './helpers';
 
 type Person = {
   id: number;
@@ -139,14 +140,12 @@ export const data: Person[] = [
   },
 ];
 
-function groupToItems(result: DataGroupResult<Person, any>) {
-  return Array.from(
-    Array.from(result.deepMap.topDownEntries()).reduce((map, [keys, value]) => {
-      map.set(keys, value.items);
-      return map;
-    }, new Map<string[], Person[]>()),
-  );
-}
+const avgReducer: AggregationReducer<Person, any> = {
+  initialValue: 0,
+  getter: (data) => data.salary,
+  reducer: (acc, sum) => acc + sum,
+  done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+};
 
 export default describe('Pivot', () => {
   it('should group on single field', async () => {
@@ -158,12 +157,16 @@ export default describe('Pivot', () => {
     );
 
     const res = groupToItems(result);
+
+    const byCountry = getFilteredBy(data, ['country']);
+
+    expect(res.length).toEqual(5);
     expect(res).toEqual([
-      [['UK'], data.filter((p) => p.country === 'UK')],
-      [['France'], data.filter((p) => p.country === 'France')],
-      [['Italy'], data.filter((p) => p.country === 'Italy')],
-      [['Spain'], data.filter((p) => p.country === 'Spain')],
-      [['USA'], data.filter((p) => p.country === 'USA')],
+      [['UK'], byCountry('UK')],
+      [['France'], byCountry('France')],
+      [['Italy'], byCountry('Italy')],
+      [['Spain'], byCountry('Spain')],
+      [['USA'], byCountry('USA')],
     ]);
   });
   it('should group on two fields', async () => {
@@ -175,41 +178,26 @@ export default describe('Pivot', () => {
     );
     const res = groupToItems(result);
 
-    expect(res).toEqual([
-      [['UK'], data.filter((p) => p.country === 'UK')],
-      [['UK', 20], data.filter((p) => p.country === 'UK' && p.age === 20)],
-      [['UK', 25], data.filter((p) => p.country === 'UK' && p.age === 25)],
-      [['France'], data.filter((p) => p.country === 'France')],
-      [
-        ['France', 20],
-        data.filter((p) => p.country === 'France' && p.age === 20),
-      ],
-      [['Italy'], data.filter((p) => p.country === 'Italy')],
-      [
-        ['Italy', 20],
-        data.filter((p) => p.country === 'Italy' && p.age === 20),
-      ],
-      [
-        ['Italy', 25],
-        data.filter((p) => p.country === 'Italy' && p.age === 25),
-      ],
-      [
-        ['Italy', 21],
-        data.filter((p) => p.country === 'Italy' && p.age === 21),
-      ],
-      [['Spain'], data.filter((p) => p.country === 'Spain')],
-      [
-        ['Spain', 20],
-        data.filter((p) => p.country === 'Spain' && p.age === 20),
-      ],
-      [
-        ['Spain', 44],
-        data.filter((p) => p.country === 'Spain' && p.age === 44),
-      ],
-      [['USA'], data.filter((p) => p.country === 'USA')],
-      [['USA', 44], data.filter((p) => p.country === 'USA' && p.age === 44)],
-      [['USA', 50], data.filter((p) => p.country === 'USA' && p.age === 50)],
-    ]);
+    const byCountryAndAge = getFilteredBy(data, ['country', 'age']);
+
+    const expected = [
+      [['UK'], byCountryAndAge('UK')],
+      [['UK', 20], byCountryAndAge('UK', 20)],
+      [['UK', 25], byCountryAndAge('UK', 25)],
+      [['France'], byCountryAndAge('France')],
+      [['France', 20], byCountryAndAge('France', 20)],
+      [['Italy'], byCountryAndAge('Italy')],
+      [['Italy', 20], byCountryAndAge('Italy', 20)],
+      [['Italy', 25], byCountryAndAge('Italy', 25)],
+      [['Italy', 21], byCountryAndAge('Italy', 21)],
+      [['Spain'], byCountryAndAge('Spain')],
+      [['Spain', 20], byCountryAndAge('Spain', 20)],
+      [['Spain', 44], byCountryAndAge('Spain', 44)],
+      [['USA'], byCountryAndAge('USA')],
+      [['USA', 44], byCountryAndAge('USA', 44)],
+      [['USA', 50], byCountryAndAge('USA', 50)],
+    ];
+    expect(res).toEqual(expected);
   });
 
   it('should have pivot info', () => {
@@ -217,46 +205,58 @@ export default describe('Pivot', () => {
       {
         groupBy: [{ field: 'department' }, { field: 'team' }],
         pivot: [{ field: 'country' }, { field: 'age' }],
-        reducers: [
-          {
-            initialValue: 0,
-            getter: (data) => data.salary,
-            reducer: (acc, sum) => acc + sum,
-            done: (sum, arr) => (arr.length ? sum / arr.length : 0),
-          },
-        ],
+        reducers: [avgReducer],
       },
       data,
     );
 
-    const itbackend = result.deepMap.get(['devops', 'infrastructure']);
+    const devopsInfrastructure = result.deepMap.get([
+      'devops',
+      'infrastructure',
+    ]);
 
-    const res = itbackend?.pivotDeepMap?.get(['Italy', 20]);
+    const byDepartmentTeamCountry = getFilteredBy(data, [
+      'department',
+      'team',
+      'country',
+    ]);
+    const byDepartmentTeamCountryAge = getFilteredBy(data, [
+      'department',
+      'team',
+      'country',
+      'age',
+    ]);
+
+    const res = devopsInfrastructure?.pivotDeepMap?.get(['Italy', 20]);
     expect(res?.items).toEqual(
-      data.filter((p) => {
-        return (
-          p.department === 'devops' &&
-          p.team === 'infrastructure' &&
-          p.country === 'Italy' &&
-          p.age === 20
-        );
-      }),
+      byDepartmentTeamCountryAge('devops', 'infrastructure', 'Italy', 20),
     );
 
-    expect(res?.reducerResults).toEqual([70000]); //todo make this dynamic
+    expect(res?.reducerResults).toEqual([
+      getReducerValue(res?.items!, avgReducer),
+    ]);
+    // see pivot.png in current folder for devops/infrastructure/Italy/20
+    expect(res?.reducerResults).toEqual([70_000]);
 
-    const resItaly = itbackend?.pivotDeepMap?.get(['Italy']);
+    // see pivot.png in current folder for devops/infrastructure/Italy/25
+    // which is an empty position
+    expect(devopsInfrastructure?.pivotDeepMap?.get(['Italy', 25])).toEqual(
+      undefined,
+    );
+
+    const resItaly = devopsInfrastructure?.pivotDeepMap?.get(['Italy']);
 
     expect(resItaly?.items).toEqual(
-      data.filter((p) => {
-        return (
-          p.department === 'devops' &&
-          p.team === 'infrastructure' &&
-          p.country === 'Italy'
-        );
-      }),
+      byDepartmentTeamCountry('devops', 'infrastructure', 'Italy'),
     );
 
-    expect(resItaly?.reducerResults).toEqual([65000]); //todo make this dynamic
+    expect(resItaly?.reducerResults).toEqual([
+      getReducerValue(resItaly?.items!, avgReducer),
+    ]);
+    expect(resItaly?.reducerResults).toEqual([65_000]); //see pivot.png in current folder
+
+    // now look for a value with no agg
+
+    // const resNoAgg = itbackend?.pivotDeepMap?.get(['Italy', 25]);
   });
 });

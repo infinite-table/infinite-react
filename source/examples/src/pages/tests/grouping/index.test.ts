@@ -1,4 +1,6 @@
 import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
+import { groupToItems } from './helpers';
+
 type Person = {
   id: number;
   country: string;
@@ -52,7 +54,7 @@ export default describe('Grouping', () => {
       arr,
     );
 
-    expect(Array.from(result.deepMap.entries())).toEqual([
+    expect(groupToItems(result)).toEqual([
       [['uk'], [john, bill, bob]],
       [['fr'], [marrie]],
       [['es'], [espania]],
@@ -61,13 +63,13 @@ export default describe('Grouping', () => {
   it('should group on two fields', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
 
-    const result = Array.from(
+    const result = groupToItems(
       group(
         {
           groupBy: [{ field: 'country' }, { field: 'age' }],
         },
         arr,
-      ).deepMap.entries(),
+      ),
     );
 
     expect(result).toEqual([
@@ -170,20 +172,14 @@ export default describe('Grouping', () => {
 
   it('should enhancedFlatten correctly', () => {
     const arr = [john, marrie, bob, espania, bill];
-    const result = enhancedFlatten(
-      group(
-        {
-          groupBy: [{ field: 'country' }, { field: 'age' }],
-        },
-        arr,
-      ),
+    const groupResult = group(
       {
+        groupBy: [{ field: 'country' }, { field: 'age' }],
         reducers: [
           {
             initialValue: 0,
             getter: (person: Person) => person.age,
             reducer: (a, b) => {
-              // console.log('add', b)
               return a + b;
             },
             done: (value: number) => {
@@ -192,6 +188,7 @@ export default describe('Grouping', () => {
           },
         ],
       },
+      arr,
     );
 
     // john,
@@ -204,9 +201,11 @@ export default describe('Grouping', () => {
     // //---
     // espania, // es, 50
 
-    expect(result.reducerResults).toEqual([
+    expect(groupResult.reducerResults).toEqual([
       arr.reduce((acc, p) => acc + p.age, 0) * 100,
     ]);
+    const result = enhancedFlatten(groupResult);
+
     expect(result.data).toEqual([
       {
         data: null,

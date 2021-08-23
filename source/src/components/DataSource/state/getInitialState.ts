@@ -23,9 +23,15 @@ export function getInitialState<T>(
     // postSortDataArray,
     // postGroupDataArray,
 
+    pivotColumns: undefined,
+    pivotColumnGroups: undefined,
     groupRowsBy: isControlled('groupRowsBy', initialProps)
       ? initialProps.groupRowsBy ?? []
       : initialProps.defaultGroupRowsBy ?? [],
+    pivotBy: isControlled('pivotBy', initialProps)
+      ? initialProps.pivotBy ?? []
+      : initialProps.defaultPivotBy,
+
     aggregationReducers: undefined,
   };
 }

@@ -3,11 +3,17 @@ import { MultisortInfo } from '../../utils/multisort';
 import { DeepMap } from '../../utils/DeepMap';
 import {
   AggregationReducer,
+  DeepMapGroupValueType,
   GroupBy,
   GroupKeyType,
+  PivotBy,
 } from '../../utils/groupAndPivot';
 
-import { InfiniteTableEnhancedData } from '../InfiniteTable';
+import {
+  InfiniteTableColumn,
+  InfiniteTableColumnGroup,
+  InfiniteTableEnhancedData,
+} from '../InfiniteTable';
 import { ComponentStateActions } from '../hooks/useComponentState';
 
 export interface DataSourceDataInfo<T> {
@@ -18,7 +24,8 @@ export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
   field?: keyof T;
   id?: string;
 };
-export type DataSourceGroupBy<T> = GroupBy<T>;
+export type DataSourceGroupBy<T> = GroupBy<T, any>;
+export type DataSourcePivotBy<T> = PivotBy<T, any>;
 
 export type DataSourceSortInfo<T> =
   | null
@@ -57,6 +64,10 @@ export interface DataSourceProps<T> {
   defaultLoading?: boolean;
   onLoadingChange?: (loading: boolean) => void;
 
+  pivotBy?: DataSourcePivotBy<T>[];
+  defaultPivotBy?: DataSourcePivotBy<T>[];
+  onPivotByChange?: (pivotBy: DataSourcePivotBy<T>[]) => void;
+
   groupRowsBy?: DataSourceGroupBy<T>[];
   defaultGroupRowsBy?: DataSourceGroupBy<T>[];
   onGroupRowsByChange?: (groupBy: DataSourceGroupBy<T>[]) => void;
@@ -72,12 +83,15 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   sortInfo: DataSourceSingleSortInfo<T>[];
   dataArray: InfiniteTableEnhancedData<T>[];
   groupRowsBy: DataSourceGroupBy<T>[];
+  pivotBy?: DataSourcePivotBy<T>[];
+  pivotColumns?: Map<string, InfiniteTableColumn<T>>;
+  pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
   aggregationReducers?: AggregationReducer<T, any>[];
 }
 
 export interface DataSourceReadOnlyState<T> {
   primaryKey: keyof T;
-  groupDeepMap?: DeepMap<GroupKeyType, T[]>;
+  groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
 
   postSortDataArray?: T[];
   postGroupDataArray?: InfiniteTableEnhancedData<T>[];

@@ -1,7 +1,11 @@
 import type { DataSourceState, DataSourceReadOnlyState } from '../types';
 
 import { multisort } from '../../../utils/multisort';
-import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
+import {
+  enhancedFlatten,
+  group,
+  getPivotColumnsAndColumnGroups,
+} from '../../../utils/groupAndPivot';
 import { InfiniteTableEnhancedData } from '../../InfiniteTable';
 
 const haveDepsChanged = <StateType>(
@@ -41,10 +45,13 @@ export function reducer<T>(
     shouldSort && (sortDepsChanged || !state.postSortDataArray);
 
   const groupBy = state.groupRowsBy;
-  const shouldGroup = groupBy.length;
+  const pivotBy = state.pivotBy;
+
+  const shouldGroup = groupBy.length || pivotBy.length;
   const groupsDepsChanged = haveDepsChanged(initialState, state, [
     'originalDataArray',
     'groupRowsBy',
+    'pivotBy',
     'aggregationReducers',
     'sortInfo',
   ]);
@@ -71,15 +78,24 @@ export function reducer<T>(
       const groupResult = group(
         {
           groupBy,
+          pivot: pivotBy,
+          reducers: state.aggregationReducers,
         },
         dataArray,
       );
-      const flattenResult = enhancedFlatten(groupResult, {
-        reducers: state.aggregationReducers,
-      });
-      // console.log({ flattenResult });
+      const flattenResult = enhancedFlatten(groupResult);
+
       enhancedDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
+      const pivotGroupsAndCols = pivotBy
+        ? getPivotColumnsAndColumnGroups<T>(
+            groupResult.topLevelPivotColumns!,
+            pivotBy.length,
+          )
+        : undefined;
+
+      state.pivotColumns = pivotGroupsAndCols?.columns;
+      state.pivotColumnGroups = pivotGroupsAndCols?.columnGroups;
     } else {
       enhancedDataArray = state.postGroupDataArray!;
     }
@@ -87,6 +103,7 @@ export function reducer<T>(
     state.postGroupDataArray = enhancedDataArray;
   } else {
     state.groupDeepMap = undefined;
+    state.pivotColumns = undefined;
     enhancedDataArray = dataArray.map(toEnhancedData);
   }
 
