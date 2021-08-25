@@ -13,8 +13,8 @@ require("esbuild")
     entryPoints: ["./build/ts-compiler/compile.ts"],
     tsconfig: "./build/ts-compiler/tscompilerconfig.json",
     bundle: true,
-    // minify: true,
-    // minifyWhitespace: true,
+    minify: true,
+    minifyWhitespace: true,
     define: {
       "process.env.TS_ETW_MODULE_PATH": null,
     },
