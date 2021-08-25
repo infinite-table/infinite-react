@@ -14,7 +14,9 @@ export const selectedClassName = style({
   opacity: 1,
 });
 
-export const editorClassName = style({});
+export const editorClassName = style({
+  marginTop: spaceScale[1],
+});
 
 // we force all events have same font family
 // and font size, since <pre> elements used for formatting

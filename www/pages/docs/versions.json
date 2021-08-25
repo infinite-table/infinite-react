@@ -5,6 +5,10 @@
       {
         "path": "getting-started",
         "label": "Getting started"
+      },
+      {
+        "path": "column-groups",
+        "label": "Column groups"
       }
     ],
     "alias": "latest"

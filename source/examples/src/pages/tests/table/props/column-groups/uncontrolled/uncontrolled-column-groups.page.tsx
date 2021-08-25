@@ -18,7 +18,7 @@ const getColumnGroups = () => {
 };
 
 const columnGroups = getColumnGroups();
-const collapsedColumnGroups = new Map<string[], true>();
+const collapsedColumnGroups = new Map<string[], string>();
 (globalThis as any).columnGroups = columnGroups;
 (globalThis as any).collapsedColumnGroups = collapsedColumnGroups;
 

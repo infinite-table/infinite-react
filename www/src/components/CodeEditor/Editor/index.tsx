@@ -40,12 +40,14 @@ const highlight = (code: string, title?: string, height?: string | number) => {
 export function Editor(props: EditorProps) {
   return (
     <>
-      <CodeEditorHeader
-        ts={true}
-        hasError={props.hasError}
-        title={props.title}
-        clipboardCode={props.code}
-      />
+      {props.title ? (
+        <CodeEditorHeader
+          ts={true}
+          hasError={props.hasError}
+          title={props.title}
+          clipboardCode={props.code}
+        />
+      ) : null}
       <div
         className={editorClassName}
         style={{

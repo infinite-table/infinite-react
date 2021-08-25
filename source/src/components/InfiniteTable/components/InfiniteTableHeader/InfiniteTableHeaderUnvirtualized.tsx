@@ -18,7 +18,7 @@ const { rootClassName } = internalProps;
 export const TableHeaderClassName = `${rootClassName}Header`;
 
 const UPDATE_SCROLL = (node: HTMLElement, scrollPosition: ScrollPosition) => {
-  node.style.transform = `translate3d(${-scrollPosition.scrollLeft}px, ${-scrollPosition.scrollTop}px, 0px)`;
+  node.style.transform = `translate3d(${-scrollPosition.scrollLeft}px, 0px, 0px)`;
 };
 
 function InfiniteTableHeaderUnvirtualizedFn<T>(

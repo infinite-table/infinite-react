@@ -19,17 +19,6 @@ export type CodeEditorProps = {
   title?: string;
 };
 
-type ValidLanguage = "jsx" | "javascript" | "typescript" | "tsx";
-
-const languageMap = {
-  ts: "typescript" as "typescript",
-  tsx: "typescript" as "typescript",
-  typescript: "typescript" as "typescript",
-  js: "javascript" as "javascript",
-  javascript: "javascript" as "javascript",
-  jsx: "javascript" as "javascript",
-};
-
 type CodePreviewProps = {
   transpiledCode: string;
 };
@@ -97,7 +86,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
   }
 
   const [fileName] = useState(() => {
-    return dashify(title) + ".tsx";
+    return title ? dashify(title) + ".tsx" : "";
   });
 
   let [code, setCode] = useState(() => children.trim());
@@ -129,7 +118,18 @@ export const CodeEditor = (props: CodeEditorProps) => {
   };
 
   const [preview, setPreview] = useState<JSX.Element | null>(() => {
-    return getPreview(code).preview;
+    const { preview: thePreview, errors } = getPreview(code);
+
+    if (errors.length && typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        setErrors(errors);
+      });
+    }
+
+    // if (!thePreview) {
+    //   console.error
+    // }
+    return thePreview;
   });
 
   const onCodeChange = useMemo(() => {
