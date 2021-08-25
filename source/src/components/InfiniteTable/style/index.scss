@@ -1,6 +1,7 @@
 @import './variables.scss';
 
 .ITable {
+  position: relative; //TODO needed? for now, needed for portal, since portal is absolute
   font-family: var(--ITable__font-family);
   color: var(--ITable__color);
   background: var(--ITable__background);
