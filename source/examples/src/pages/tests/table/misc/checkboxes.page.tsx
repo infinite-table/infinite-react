@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   InfiniteTableColumn,
-  InfiniteTableFactory,
+  InfiniteTable,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
@@ -60,7 +60,6 @@ const initialData: FakeData[] = [
   },
 ];
 
-const Table = InfiniteTableFactory<FakeData>();
 export default () => {
   const [rowHeight] = React.useState(50);
   const [data, setData] = React.useState(initialData);
@@ -99,7 +98,7 @@ export default () => {
         primaryKey="id"
         fields={['id', 'text', 'checked']}
       >
-        <Table
+        <InfiniteTable<FakeData>
           domProps={{
             style: {
               margin: '5px',

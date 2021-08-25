@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   DataSource,
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
@@ -10,8 +10,6 @@ import { CarSale } from '@examples/datasets/CarSale';
 //@ts-ignore
 import carsales from '@examples/datasets/carsales';
 import { InfiniteTableColumnAggregator } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableProps';
-
-const Table = InfiniteTableFactory<CarSale>();
 
 const columns = new Map<string, InfiniteTableColumn<CarSale>>([
   [
@@ -40,6 +38,7 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
 
   ['make', { field: 'make' }],
   ['model', { field: 'model' }],
+  ['color', { field: 'color' }],
   [
     'cat',
     {
@@ -56,7 +55,6 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
       type: 'number',
       render: ({ value, enhancedData }) => {
         if (enhancedData.isGroupRow) {
-          console.log(enhancedData);
           return (
             <>
               Total sales <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}
@@ -94,13 +92,16 @@ const columnAggregations = new Map([
   ['count', sumAggregation],
   // ['model', sumAggregation],
 ]);
-const columnOrder = ['Group column', 'model', 'cat', 'count', 'year'];
+const columnOrder = ['Group column', 'model', 'cat', 'color', 'count', 'year'];
 
 (globalThis as any).columnAggregations = columnAggregations;
 
 function App() {
   const [cols, setColumns] = React.useState(columns);
   (globalThis as any).setColumns = setColumns;
+
+  const [columnDefaultWidth, setColumnDefaultWidth] = React.useState(400);
+  const [columnMinWidth, setColumnMinWidth] = React.useState(200);
 
   const rowProps = ({
     rowIndex,
@@ -117,12 +118,20 @@ function App() {
   };
   return (
     <React.StrictMode>
+      <button
+        onClick={() => {
+          setColumnDefaultWidth(columnDefaultWidth - 100);
+          setColumnMinWidth(columnDefaultWidth - 40);
+        }}
+      >
+        change
+      </button>
       <DataSource<CarSale>
         primaryKey="id"
         data={carsales}
-        groupBy={['make', 'year']}
+        groupRowsBy={[{ field: 'make' }, { field: 'year' }]}
       >
-        <Table
+        <InfiniteTable
           domProps={{
             style: {
               margin: '5px',
@@ -133,8 +142,8 @@ function App() {
             },
           }}
           columnAggregations={columnAggregations}
-          columnDefaultWidth={250}
-          columnMinWidth={150}
+          columnDefaultWidth={columnDefaultWidth}
+          columnMinWidth={columnMinWidth}
           columnOrder={columnOrder}
           columns={cols}
           rowProps={rowProps}

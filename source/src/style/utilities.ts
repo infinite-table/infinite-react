@@ -41,6 +41,7 @@ export const ICSS = {
   },
   alignItems: {
     center: rule('align-items', 'center'),
+    stretch: rule('align-items', 'stretch'),
   },
   justifyContent: {
     center: rule('justify-content', 'center'),
@@ -99,6 +100,7 @@ export const ICSS = {
   },
   flexFlow: {
     row: rule('flex-flow', 'row'),
+    column: rule('flex-flow', 'column'),
   },
   whiteSpace: {
     nowrap: rule('white-space', 'nowrap'),

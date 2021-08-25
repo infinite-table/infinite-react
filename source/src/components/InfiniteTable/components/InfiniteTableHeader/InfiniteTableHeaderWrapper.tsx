@@ -70,9 +70,35 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     computedUnpinnedColumnsWidth,
   } = tableContextValue.computed;
 
+  const {
+    componentState: { virtualizeHeader },
+  } = tableContextValue;
+
   const hasPinnedStart = computedPinnedStartColumns.length > 0;
   const hasPinnedEnd = computedPinnedEndColumns.length > 0;
   const height = Math.max(...sizes);
+
+  const header = virtualizeHeader ? (
+    <InfiniteTableHeader
+      columns={computedUnpinnedColumns}
+      repaintId={virtualizeHeader ? repaintId : undefined}
+      brain={brain}
+      onResize={onResizeUnpinned}
+      style={{
+        position: 'absolute',
+        left: computedPinnedStartColumnsWidth,
+        width: computedUnpinnedColumnsWidth,
+      }}
+      totalWidth={computedUnpinnedColumnsWidth}
+    />
+  ) : (
+    <InfiniteTableHeaderUnvirtualized
+      brain={brain}
+      scrollable
+      columns={computedUnpinnedColumns}
+      totalWidth={computedUnpinnedColumnsWidth}
+    />
+  );
 
   return (
     <div
@@ -84,7 +110,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       )}
       style={{
         background: 'var(--ITableHeader__background)',
-        height,
+        height: virtualizeHeader ? height : undefined,
       }}
     >
       {hasPinnedStart ? (
@@ -99,18 +125,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
           totalWidth={computedPinnedStartColumnsWidth}
         />
       ) : null}
-      <InfiniteTableHeader
-        columns={computedUnpinnedColumns}
-        repaintId={repaintId}
-        brain={brain}
-        onResize={onResizeUnpinned}
-        style={{
-          position: 'absolute',
-          left: computedPinnedStartColumnsWidth,
-          width: computedUnpinnedColumnsWidth,
-        }}
-        totalWidth={computedUnpinnedColumnsWidth}
-      />
+      {header}
       {hasPinnedEnd ? (
         <InfiniteTableHeaderUnvirtualized
           onResize={onResizePinnedEnd}

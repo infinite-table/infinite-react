@@ -10,15 +10,13 @@ function MyApp({ Component, pageProps }) {
     return null;
   }
   return (
-    <React.StrictMode>
-      <div
-        // className="__next it--theme-dark"
-        className="__next "
-        style={{ '--it-row-height': '3rem' }}
-      >
-        <Component {...pageProps} />
-      </div>
-    </React.StrictMode>
+    <div
+      // className="__next it--theme-dark"
+      className="__next "
+      style={{ '--it-row-height': '3rem' }}
+    >
+      <Component {...pageProps} />
+    </div>
   );
 }
 

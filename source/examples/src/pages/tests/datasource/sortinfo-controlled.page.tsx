@@ -49,6 +49,7 @@ export default () => {
           sortInfo={sortInfo}
           onSortInfoChange={(sortInfo) => {
             (globalThis as any).calls++;
+            console.log(sortInfo);
             if (enabled) {
               setSortInfo(sortInfo);
             }

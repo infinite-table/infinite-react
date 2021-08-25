@@ -28,7 +28,7 @@ export default describe('Column order controlled will never change', () => {
     await page.waitForTimeout(20);
     colIds = await getHeaderColumnIds();
 
-    expect(colIds).toEqual(['make', 'model']);
+    expect(['make', 'model']).toEqual(colIds);
 
     await page.evaluate(() => {
       ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder([
@@ -42,6 +42,7 @@ export default describe('Column order controlled will never change', () => {
 
     expect(colIds).toEqual(['id', 'rating']);
 
+    // expect onColumnOrderChange to have been called correctly
     expect(await page.evaluate(() => (window as any).calls)).toEqual([
       ['make', 'model'],
       ['id', 'rating'],

@@ -67,7 +67,7 @@ export const useColumnPointerEvents = <T>({
 
   const dragging = draggingDiff != null;
 
-  const { actions, computed } = useInfiniteTable();
+  const { componentActions, computed } = useInfiniteTable();
 
   const { computedColumnOrder } = computed;
 
@@ -166,8 +166,8 @@ export const useColumnPointerEvents = <T>({
             shifts[columnIndex] = total;
           }
 
-          actions.setColumnShifts(shifts);
-          actions.setDraggingColumnId(column.id);
+          componentActions.columnShifts = shifts;
+          componentActions.draggingColumnId = column.id;
         }
         setDraggingDiff({ left: diffX, top: diffY });
       };
@@ -188,8 +188,8 @@ export const useColumnPointerEvents = <T>({
       target.removeEventListener('pointermove', pointerMoveRef.current!);
 
       setDraggingDiff(null);
-      actions.setColumnShifts(null);
-      actions.setDraggingColumnId(null);
+      componentActions.columnShifts = null;
+      componentActions.draggingColumnId = null;
 
       if (!didDragRef.current && column.computedSortable) {
         column.toggleSort();
@@ -203,7 +203,7 @@ export const useColumnPointerEvents = <T>({
           dropIndex > columnIndex ? dropIndex - 1 : dropIndex,
         );
 
-        actions.setColumnOrder(newOrder);
+        componentActions.columnOrder = newOrder;
       }
 
       breakpointsRef.current = [];
@@ -212,7 +212,7 @@ export const useColumnPointerEvents = <T>({
       initialClientPos.current = null;
       currentDropIndexRef.current = null;
     },
-    [column, columnIndex, actions, computedColumnOrder],
+    [column, columnIndex, componentActions, computedColumnOrder],
   );
 
   return {

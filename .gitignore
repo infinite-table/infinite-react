@@ -80,3 +80,5 @@ node_modules
 /www/out
 react-test
 
+
+/www/src/ts-compiler-bundle-large.js

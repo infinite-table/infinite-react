@@ -12,13 +12,13 @@ import { HorizontalScrollbarPlaceholder } from '../components/ScrollbarPlacehold
 import {
   InfiniteTableComputedColumn,
   InfiniteTableEnhancedData,
-  InfiniteTableOwnProps,
 } from '../types';
 import type { Size } from '../../types/Size';
 import type { RenderRow } from '../../VirtualList/types';
+import { InfiniteTableComponentState } from '../types/InfiniteTableState';
 
 type UsePinnedParams<T> = {
-  getProps: () => InfiniteTableOwnProps<T>;
+  getState: () => InfiniteTableComponentState<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
   bodySize: Size;
 
@@ -33,7 +33,7 @@ type UsePinnedParams<T> = {
 };
 
 type RenderPinedRowParams<T> = {
-  getProps: () => InfiniteTableOwnProps<T>;
+  getState: () => InfiniteTableComponentState<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
   columnsWidth: number;
   columns: InfiniteTableComputedColumn<T>[];
@@ -44,13 +44,13 @@ const UPDATE_SCROLL = (node: HTMLElement, scrollPosition: ScrollPosition) => {
 };
 
 function useRenderPinnedRow<T>(params: RenderPinedRowParams<T>) {
-  const { getData, getProps, columnsWidth, columns } = params;
+  const { getData, getState, columnsWidth, columns } = params;
   const renderPinnedRow: RenderRow = useCallback(
     (rowInfo) => {
       const dataArray = getData();
       const enhancedData = dataArray[rowInfo.rowIndex];
 
-      const { showZebraRows } = getProps();
+      const { showZebraRows } = getState();
 
       const rowProps: InfiniteTableRowProps<T> = {
         enhancedData,
@@ -71,7 +71,7 @@ function useRenderPinnedRow<T>(params: RenderPinedRowParams<T>) {
 }
 export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
   const {
-    getProps,
+    getState,
     getData,
     rowHeight,
     bodySize,
@@ -87,7 +87,7 @@ export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
 
   const renderRowPinnedEnd: RenderRow = useRenderPinnedRow({
     getData,
-    getProps,
+    getState,
     columns: computedPinnedEndColumns,
     columnsWidth: computedPinnedEndColumnsWidth,
   });
@@ -127,8 +127,8 @@ export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
 
 export function usePinnedStartRendering<T>(params: UsePinnedParams<T>) {
   const {
-    getProps,
     getData,
+    getState,
     rowHeight,
     computedPinnedStartColumns,
     computedPinnedStartColumnsWidth,
@@ -138,7 +138,7 @@ export function usePinnedStartRendering<T>(params: UsePinnedParams<T>) {
   } = params;
   const renderRowPinnedStart: RenderRow = useRenderPinnedRow({
     getData,
-    getProps,
+    getState,
     columns: computedPinnedStartColumns,
     columnsWidth: computedPinnedStartColumnsWidth,
   });

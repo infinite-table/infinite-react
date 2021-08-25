@@ -1,9 +1,6 @@
 import { useLayoutEffect } from 'react';
-import {
-  DataSourceDataInfo,
-  DataSourceData,
-  DataSourceContextValue,
-} from '../types';
+import { useComponentState } from '../../hooks/useComponentState';
+import { DataSourceDataInfo, DataSourceData, DataSourceState } from '../types';
 
 import { loadDataAsync } from './loadDataAsync';
 
@@ -11,9 +8,11 @@ function buildDataSourceInfo<T>(data: T[]): DataSourceDataInfo<T> {
   return { originalDataArray: data };
 }
 
-function useLoadData<T>(contextValue: DataSourceContextValue<T>) {
-  const { data } = contextValue.props;
-  const { actions } = contextValue;
+export function useLoadData<T>() {
+  const {
+    componentActions: actions,
+    componentState: { data },
+  } = useComponentState<DataSourceState<T>>();
 
   const loadData = (data: DataSourceData<T>) => {
     let dataSourceInfo: DataSourceDataInfo<T> = {
@@ -24,12 +23,12 @@ function useLoadData<T>(contextValue: DataSourceContextValue<T>) {
     }
     if (Array.isArray(data)) {
       dataSourceInfo = buildDataSourceInfo(data);
-      actions.setDataSourceInfo(dataSourceInfo);
+      actions.originalDataArray = dataSourceInfo.originalDataArray;
     } else {
-      actions.setLoading(true);
+      actions.loading = true;
       loadDataAsync(data).then((dataSourceInfo: DataSourceDataInfo<T>) => {
-        actions.setDataSourceInfo(dataSourceInfo);
-        actions.setLoading(false);
+        actions.originalDataArray = dataSourceInfo.originalDataArray;
+        actions.loading = false;
       });
     }
   };
@@ -38,5 +37,3 @@ function useLoadData<T>(contextValue: DataSourceContextValue<T>) {
     loadData(data);
   }, [data]);
 }
-
-export default useLoadData;

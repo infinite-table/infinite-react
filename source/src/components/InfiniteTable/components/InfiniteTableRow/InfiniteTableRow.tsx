@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { InfiniteTableColumnCell } from './InfiniteTableColumnCell';
@@ -8,7 +8,6 @@ import { useRowDOMProps } from './useRowDOMProps';
 
 import { InfiniteTableRowClassName } from './InfiniteTableRowClassName';
 
-import type { InfiniteTableComputedValues } from '../../types';
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { RawList } from '../../../RawList';
 import { RenderItem } from '../../../RawList/types';
@@ -22,20 +21,20 @@ function InfiniteTableRowFn<T>(
 
     enhancedData,
     rowIndex,
-    repaintId,
     //TODO continue here receive columnWidth from props
     brain,
     columns,
   } = props;
   const tableContextValue = useInfiniteTable<T>();
 
-  useEffect(() => {
-    return () => {};
-  }, []);
+  const { componentState } = tableContextValue;
+  const { domRef: tableDOMRef } = componentState;
 
-  const { ownProps: tableProps, domRef: tableDOMRef } = tableContextValue;
-
-  const { domProps } = useRowDOMProps(props, tableProps, tableDOMRef);
+  const { domProps } = useRowDOMProps(
+    props,
+    componentState.rowProps,
+    tableDOMRef,
+  );
 
   const style = {
     width: rowWidth,
@@ -47,6 +46,9 @@ function InfiniteTableRowFn<T>(
     ({ domRef, itemIndex }) => {
       const column = columns[itemIndex];
 
+      if (!column) {
+        // return null;
+      }
       return (
         <InfiniteTableColumnCell<T>
           enhancedData={enhancedData}
@@ -57,14 +59,14 @@ function InfiniteTableRowFn<T>(
         />
       );
     },
-    [columns, rowIndex, repaintId],
+    [columns, rowIndex], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
   );
 
   if (renderCellRef.current !== renderCell) {
     renderCellRef.current = renderCell;
   }
   // (renderCell as any)._colscount = columns.length;
-
+  // (renderCell as any)._repaintId = repaintId;
   // (globalThis as any).renderCell = renderCell;
 
   if (__DEV__) {

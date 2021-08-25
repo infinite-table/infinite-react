@@ -2,13 +2,11 @@ import * as React from 'react';
 
 import {
   DataSource,
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from './rowData';
-
-const Table = InfiniteTableFactory<Car>();
 
 const columns = new Map<string, InfiniteTableColumn<Car>>([
   ['id', { field: 'id' }],
@@ -27,12 +25,11 @@ const columns = new Map<string, InfiniteTableColumn<Car>>([
 const App = () => {
   return (
     <React.StrictMode>
-      <DataSource<Car>
-        primaryKey="id"
-        data={rowData}
-        fields={['id', 'make', 'model', 'price']}
-      >
-        <Table columns={columns} />
+      <DataSource<Car> primaryKey="id" data={rowData}>
+        <InfiniteTable
+          columns={columns}
+          domProps={{ style: { height: '50vh' } }}
+        />
       </DataSource>
     </React.StrictMode>
   );

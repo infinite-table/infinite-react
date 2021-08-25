@@ -1,81 +1,50 @@
-import {
-  InfiniteTableProps,
-  InfiniteTableState,
-  InfiniteTableComputedValues,
-} from '../types';
+import { InfiniteTableState, InfiniteTableComputedValues } from '../types';
 
-import { DataSourceContextValue } from '../../DataSource/types';
+import { DataSourceSingleSortInfo } from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
-// TODO continue here replace this with current impl - makes some tests crash
-import useProperty from '../../hooks/usePropertyOld';
-import {
-  InfiniteTableActions,
-  InfiniteTableInternalActions,
-} from '../state/getReducerActions';
+
 import { sortAscending } from '../../../utils/sortAscending';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useColumnAggregations } from './useColumnAggregations';
+import { useComponentState } from '../../hooks/useComponentState';
+import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useColumnGroups } from './useColumnGroups';
 
-export function useComputed<T>(
-  props: InfiniteTableProps<T>,
-  state: InfiniteTableState<T>,
-  dataSourceContextValue: DataSourceContextValue<T>,
-  actions: InfiniteTableActions<T>,
-  internalActions: InfiniteTableInternalActions<T>,
-): InfiniteTableComputedValues<T> {
-  const { bodySize } = state;
+export function useComputed<T>(): InfiniteTableComputedValues<T> {
+  const { componentActions, componentState } = useComponentState<
+    InfiniteTableState<T>,
+    InfiniteTableReadOnlyState<T>
+  >();
 
-  const [columnOrder, setColumnOrder] = useProperty('columnOrder', props, {
-    fromState: () => state.columnOrder,
-    setState: (columnOrder) => actions.setColumnOrder(columnOrder),
-  });
+  const {
+    componentActions: dataSourceActions,
+    componentState: dataSourceState,
+  } = useDataSourceContextValue<T>();
 
-  const [rowHeight, setRowHeight] = useState<number>(
-    typeof props.rowHeight === 'number' ? props.rowHeight : 0,
-  );
+  const { columnOrder, columnVisibility, columnPinning, bodySize } =
+    componentState;
 
   useState(() => {
-    internalActions.onRowHeightChange.onChange((rowHeight) => {
+    componentState.onRowHeightChange.onChange((rowHeight) => {
       if (rowHeight) {
-        setRowHeight(rowHeight);
+        componentActions.rowHeight = rowHeight;
       }
     });
   });
 
-  const [columnVisibility, setColumnVisibility] = useProperty(
-    'columnVisibility',
-    props,
-    {
-      fromState: () => state.columnVisibility,
-      setState: (columnVisibility) =>
-        actions.setColumnVisibility(columnVisibility),
+  useColumnAggregations<T>();
+
+  const { multiSort } = dataSourceState;
+
+  useColumnGroups<T>();
+
+  const setSortInfo = useCallback(
+    (sortInfo: DataSourceSingleSortInfo<T>[]) => {
+      dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0];
     },
+    [multiSort],
   );
-  const [columnPinning, setColumnPinning] = useProperty(
-    'columnPinning',
-    props,
-    {
-      fromState: () => state.columnPinning,
-      setState: (columnPinning) => actions.setColumnPinning(columnPinning),
-    },
-  );
-  const [columnAggregations] = useColumnAggregations<T>();
-
-  // const getProps = useLatest(props);
-
-  // useEffect(() => {
-  //   const props = getProps();
-
-  //   if (
-  //     !props.columnVisibilityAssumeVisible &&
-  //     !isControlled('columnVisibility', props)
-  //   ) {
-  //     console.error(
-  //       `"columnVisibilityAssumeVisible"=false should not be used with uncontrolled "columnVisibility" as it is not supported`,
-  //     );
-  //   }
-  // }, [props.columnVisibilityAssumeVisible]);
-
   const {
     computedColumnOrder,
     computedVisibleColumns,
@@ -90,16 +59,17 @@ export function useComputed<T>(
     computedPinnedEndOffset,
     computedRemainingSpace,
   } = useComputedVisibleColumns({
-    columns: props.columns,
-    columnMinWidth: props.columnMinWidth,
-    columnMaxWidth: props.columnMaxWidth,
-    columnDefaultWidth: props.columnDefaultWidth,
+    columns: componentState.columns,
+    columnMinWidth: componentState.columnMinWidth,
+    columnMaxWidth: componentState.columnMaxWidth,
+    columnDefaultWidth: componentState.columnDefaultWidth,
     bodySize,
 
-    sortable: props.sortable,
-    draggableColumns: props.draggableColumns,
-    sortInfo: dataSourceContextValue.computed.sortInfo,
-    setSortInfo: dataSourceContextValue.actions.setSortInfo,
+    sortable: componentState.sortable,
+    draggableColumns: componentState.draggableColumns,
+    sortInfo: dataSourceState.sortInfo,
+    multiSort,
+    setSortInfo,
 
     columnOrder,
 
@@ -146,7 +116,7 @@ export function useComputed<T>(
 
   let columnRenderStartIndex = 0;
 
-  const scrollLeft = state.scrollPosition.scrollLeft;
+  const scrollLeft = componentState.scrollPosition.scrollLeft;
 
   colWidthSum = 0;
   while (colWidthSum < scrollLeft) {
@@ -158,13 +128,6 @@ export function useComputed<T>(
   }
 
   return {
-    ...props,
-    rowHeight,
-    setColumnOrder,
-    setColumnVisibility,
-    setColumnPinning,
-    // setColumnAggregations,
-    showZebraRows: !!props.showZebraRows,
     computedVisibleColumns,
     computedColumnOrder,
     computedRemainingSpace,
@@ -177,8 +140,6 @@ export function useComputed<T>(
     computedPinnedEndColumnsWidth,
     computedUnpinnedColumnsWidth,
     computedUnpinnedOffset,
-
-    computedColumnAggregations: columnAggregations,
     computedPinnedEndOffset,
     unpinnedColumnRenderCount,
     columnRenderStartIndex,

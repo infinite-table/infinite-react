@@ -1,34 +1,48 @@
-import { useProperty } from '@src/components/hooks/useProperty';
-import { useState } from 'react';
+import {
+  getComponentStateRoot,
+  useComponentState,
+} from '@src/components/hooks/useComponentState';
 
 export type LoadingCmpProps = {
   loading?: boolean | undefined;
   defaultLoading?: boolean | undefined;
   onLoadingChange?: (loading: boolean) => void;
 };
-export const LoadingCmp = (props: LoadingCmpProps) => {
-  const [state, setState] = useState({
-    loading: false,
-  });
 
-  const [loading, setLoading] = useProperty('loading', props, {
-    controlledToState: true,
-    fromState: () => state.loading,
-    normalize: (loading?: boolean) => !!loading,
-    setState: (loading: boolean | undefined) =>
-      setState({ loading: !!loading }),
-  });
+type LoadingCmpState = {
+  loading: boolean;
+};
+export const LoadingBaseCmp = () => {
+  const { componentState: state, componentActions: actions } =
+    useComponentState<LoadingCmpState>();
+
   return (
     <div>
-      value={`${loading}`}
+      value={`${state.loading}`}
       <button
         id="inner"
         onClick={() => {
-          setLoading(!loading);
+          actions.loading = !state.loading;
         }}
       >
         toggle
       </button>
     </div>
+  );
+};
+
+const LoadingRoot = getComponentStateRoot({
+  getInitialState: (props: LoadingCmpProps) => {
+    return {
+      loading: props.loading ?? props.defaultLoading ?? false,
+    };
+  },
+});
+
+export const LoadingCmp = (props: LoadingCmpProps) => {
+  return (
+    <LoadingRoot {...props}>
+      <LoadingBaseCmp />
+    </LoadingRoot>
   );
 };

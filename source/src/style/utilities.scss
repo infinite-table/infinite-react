@@ -41,6 +41,9 @@
 .it__align-items\=center {
   align-items: center;
 }
+.it__align-items\=stretch {
+  align-items: stretch;
+}
 .it__justify-content\=flex-start {
   justify-content: flex-start;
 }
@@ -133,6 +136,9 @@
 
 .it__flex-flow\=row {
   flex-flow: row;
+}
+.it__flex-flow\=column {
+  flex-flow: column;
 }
 
 .it__white-space\=nowrap {

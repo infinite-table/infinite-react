@@ -46,7 +46,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const { data } = enhancedData;
   const value = isColumnWithField(column) ? data?.[column.field] : null;
 
-  const { computed: computedDataSource } = useDataSourceContextValue<T>();
+  const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
   let renderValue: Renderable = isColumnWithRender(column)
     ? column.render({
@@ -54,7 +54,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         rowIndex,
         column,
         enhancedData,
-        groupBy: computedDataSource.groupBy,
+        groupRowsBy: computedDataSource.groupRowsBy,
         data,
       })
     : value;

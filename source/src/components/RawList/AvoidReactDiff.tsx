@@ -1,4 +1,5 @@
-import React, { useLayoutEffect, useState } from 'react';
+import * as React from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { Renderable } from '../types/Renderable';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';

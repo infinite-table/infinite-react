@@ -8,11 +8,11 @@ import {
 import { toUpperFirst } from '../../utils/toUpperFirst';
 import { AllPropertiesOrNone } from '../InfiniteTable/types/Utility';
 import { Setter } from '../types/Setter';
-import isControlled from '../utils/isControlled';
-import isControlledValue from '../utils/isControlledValue';
+import { isControlled } from '../utils/isControlled';
+import { isControlledValue } from '../utils/isControlledValue';
 import { useLatest } from './useLatest';
 
-import usePrevious from './usePrevious';
+import { usePrevious } from './usePrevious';
 
 const DEFAULT_CONFIG = {
   controlledToState: true,

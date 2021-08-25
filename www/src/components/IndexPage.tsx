@@ -81,7 +81,7 @@ export function IndexPage() {
             padding[5],
             marginTop[20],
             maxWidth["7xl"],
-            paddingX[15],
+            paddingX[14],
             textAlign.center,
             colorWhite,
           ].join(" ")}

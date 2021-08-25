@@ -5,4 +5,5 @@ export type CarSale = {
   model: string;
   year: number;
   sales: number;
+  color: string;
 };

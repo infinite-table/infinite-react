@@ -7,14 +7,12 @@ import { useLatest } from '../../hooks/useLatest';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 
 import { useUnpinnedRendering } from './useUnpinnedRendering';
-import { InfiniteTableActions } from '../state/getReducerActions';
 
 import type {
   InfiniteTableComputedValues,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
-  InfiniteTableOwnProps,
 } from '../types';
 import type { Size } from '../../types/Size';
 
@@ -26,6 +24,7 @@ import {
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
 import { InfiniteTablePropColumnAggregations } from '../types/InfiniteTableProps';
+import { usePrevious } from '../../hooks/usePrevious';
 
 type ListRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -33,13 +32,37 @@ type ListRenderingParam<T> = {
 
   bodySize: Size;
   columnShifts: number[] | null;
-  getProps: () => InfiniteTableOwnProps<T>;
-  getActions: () => InfiniteTableActions<T>;
+  getComputed: () => InfiniteTableComputedValues<T> | undefined;
 };
 
-export function useListRendering<T>(param: ListRenderingParam<T>) {
-  const { computed, domRef, bodySize, columnShifts, getActions, getProps } =
-    param;
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
+import { useInfiniteTable } from './useInfiniteTable';
+import type { VirtualBrain } from '../../VirtualBrain';
+
+type ListRenderingResult = {
+  scrollbars: { vertical: boolean; horizontal: boolean };
+
+  horizontalVirtualBrain: VirtualBrain;
+  verticalVirtualBrain: VirtualBrain;
+  applyScrollHorizontal: ({ scrollLeft }: { scrollLeft: number }) => void;
+  applyScrollVertical: ({ scrollTop }: { scrollTop: number }) => void;
+  pinnedStartList: JSX.Element | null;
+  pinnedEndList: JSX.Element | null;
+  pinnedStartScrollbarPlaceholder: JSX.Element | null;
+  pinnedEndScrollbarPlaceholder: JSX.Element | null;
+  centerList: JSX.Element | null;
+  repaintId: number;
+  reservedContentHeight: number;
+};
+
+export function useListRendering<T>(
+  param: ListRenderingParam<T>,
+): ListRenderingResult {
+  const { computed, domRef, bodySize, columnShifts } = param;
+
+  const { componentActions, componentState, getState } = useInfiniteTable<T>();
+
+  const prevComputed = usePrevious(computed, null);
 
   const {
     computedPinnedStartColumns,
@@ -50,15 +73,22 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
     computedUnpinnedColumnsWidth,
   } = computed;
 
-  const {
-    computed: { dataArray },
-    state: dataSourceState,
-  } = useDataSourceContextValue<T>();
+  const { componentState: dataSourceState } = useDataSourceContextValue<T>();
+
+  const { dataArray } = dataSourceState;
 
   const getData = useLatest(dataArray);
-  const { rowHeight } = getProps();
+  const { rowHeight } = componentState;
   const repaintIdRef = useRef<number>(0);
-  const repaintId = repaintIdRef.current++;
+
+  // IT's very important to only increment the repaint id when computed changes
+  //
+  // THUS, the computed will generally not contain any properties directly from props
+  // but things in computed should generally come from `useProperty` hook
+  if (!shallowEqualObjects(prevComputed, computed)) {
+    repaintIdRef.current++;
+  }
+  const repaintId = repaintIdRef.current;
 
   const { horizontalVirtualBrain, verticalVirtualBrain } = useYourBrain({
     computedUnpinnedColumns: computed.computedUnpinnedColumns,
@@ -94,21 +124,24 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
       return;
     }
 
-    const props = getProps();
+    const { onReady } = getState();
 
-    if (props.onReady) {
+    if (onReady) {
       const imperativeApi: InfiniteTableImperativeApi<T> = {
-        setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) =>
-          getActions().setColumnOrder(columnOrder),
+        setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => {
+          componentActions.columnOrder = columnOrder;
+        },
         setColumnVisibility: (
           columnVisibility: InfiniteTablePropColumnVisibility,
-        ) => getActions().setColumnVisibility(columnVisibility),
+        ) => {
+          componentActions.columnVisibility = columnVisibility;
+        },
         setColumnAggregations: (
           columnAggregations: InfiniteTablePropColumnAggregations<T>,
-        ) => getActions().setColumnAggregations(columnAggregations),
+        ) => (componentActions.columnAggregations = columnAggregations),
       };
 
-      props.onReady(imperativeApi);
+      onReady(imperativeApi);
     }
   }, [!!bodySize.height]);
 
@@ -126,7 +159,7 @@ export function useListRendering<T>(param: ListRenderingParam<T>) {
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
     getData,
-    getProps,
+    getState,
     repaintId,
     rowHeight,
     verticalVirtualBrain,

@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import { InfiniteTableComputedColumn } from '../..';
 
 import { Renderable } from '../../../types/Renderable';
@@ -11,9 +12,12 @@ export interface InfiniteTableCellProps<T> {
   children: Renderable;
   virtualized?: boolean;
   skipColumnShifting?: boolean;
-  outerChildren?: Renderable;
+  beforeChildren?: Renderable;
+  afterChildren?: Renderable;
+
   offset?: number;
   offsetProperty?: 'left' | 'right';
+  cssPosition?: CSSProperties['position'];
   domRef?: React.RefCallback<HTMLElement>;
 }
 

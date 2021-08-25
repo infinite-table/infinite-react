@@ -1,32 +1,13 @@
-import * as React from 'react';
 import {
-  InfiniteTableOwnProps,
-  InfiniteTableProps,
-} from './InfiniteTableProps';
-import { InfiniteTableState } from './InfiniteTableState';
+  InfiniteTableComponentActions,
+  InfiniteTableComponentState,
+} from './InfiniteTableState';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
-import { InfiniteTableAction } from './InfiniteTableAction';
-import {
-  InfiniteTableActions,
-  InfiniteTableInternalActions,
-} from '../state/getReducerActions';
-import { LazyLatest } from '../../hooks/useLazyLatest';
 
-export interface InternalInfiniteTableContextValue<T> {
-  props: InfiniteTableProps<T>;
-  state: InfiniteTableState<T>;
-  actions: InfiniteTableActions<T>;
-  internalActions: InfiniteTableInternalActions<T>;
-  dispatch: React.Dispatch<InfiniteTableAction>;
-  domRef: React.MutableRefObject<HTMLDivElement | null>;
-  bodyDOMRef: React.RefObject<HTMLDivElement | null>;
-  portalDOMRef: React.RefObject<HTMLDivElement | null>;
-  headerHeightRef: React.MutableRefObject<number>;
-  getComputed: LazyLatest<InfiniteTableComputedValues<T>>;
-}
-
-export interface InfiniteTableContextValue<T>
-  extends InternalInfiniteTableContextValue<T> {
+export interface InfiniteTableContextValue<T> {
+  componentState: InfiniteTableComponentState<T>;
+  componentActions: InfiniteTableComponentActions<T>;
   computed: InfiniteTableComputedValues<T>;
-  ownProps: InfiniteTableOwnProps<T>;
+  getComputed: () => InfiniteTableComputedValues<T>;
+  getState: () => InfiniteTableComponentState<T>;
 }

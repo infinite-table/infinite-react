@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   InfiniteTableColumn,
-  InfiniteTableFactory,
+  InfiniteTable,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
@@ -13,8 +13,6 @@ interface Person {
   Address: string;
   Age: number;
 }
-
-const Table = InfiniteTableFactory<Person>();
 
 const data = [
   {
@@ -83,7 +81,7 @@ export default () => {
         primaryKey="Id"
         fields={['Id', 'FirstName', 'Age', 'Address', 'LastName']}
       >
-        <Table
+        <InfiniteTable<Person>
           domProps={{
             style: {
               margin: '5px',

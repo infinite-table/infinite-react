@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import {
   InfiniteTableColumn,
-  InfiniteTableFactory,
+  InfiniteTable,
+  DataSource,
 } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
 
 interface Person {
   Id: number;
@@ -13,8 +13,6 @@ interface Person {
   Address: string;
   Age: number;
 }
-
-const Table = InfiniteTableFactory<Person>();
 
 const data = [
   {
@@ -74,6 +72,7 @@ export default () => {
   const [header, setHeader] = React.useState(true);
   const toggle = () => setHeader((header) => !header);
 
+  console.log('props header:', header);
   return (
     <React.StrictMode>
       <button onClick={toggle}>toggle</button>
@@ -82,7 +81,7 @@ export default () => {
         primaryKey="Id"
         fields={['Id', 'FirstName', 'Age', 'Address', 'LastName']}
       >
-        <Table
+        <InfiniteTable<Person>
           domProps={{
             style: {
               margin: '5px',

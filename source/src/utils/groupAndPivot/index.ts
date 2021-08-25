@@ -1,3 +1,9 @@
+import { InfiniteTableColumn } from '../..';
+import {
+  InfiniteTableColumnGroup,
+  InfiniteTablePropColumnGroups,
+  InfiniteTablePropColumns,
+} from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
 
 export type AggregationReducer<T, AggregationResultType> = {
@@ -14,7 +20,7 @@ export type AggregationReducer<T, AggregationResultType> = {
   ) => AggregationResultType;
 };
 
-function GROUP_TO_KEY<T>(value: T): T | string {
+function DEFAULT_TO_KEY<T>(value: T): T {
   return value;
 }
 
@@ -29,6 +35,7 @@ export interface InfiniteTableEnhancedData<T> {
   indexInGroup?: number;
   groupCount?: number;
   groupBy?: (keyof T)[];
+  pivotValuesMap?: PivotValuesDeepMap<T, any>;
   reducerResults?: any[];
 }
 
@@ -42,56 +49,251 @@ export interface InfiniteTableEnhancedGroupData<T>
   groupKeys?: any[];
   groupCount: number;
   groupBy: (keyof T)[];
+  pivotValuesMap?: PivotValuesDeepMap<T, any>;
 }
 
-export type GroupKeyType = any; //string | number | symbol | null | undefined;
+export type GroupKeyType<T extends any = any> = T; //string | number | symbol | null | undefined;
 
-type GroupParams<DataType> = {
-  groupBy: (keyof DataType)[];
-  groupToKey?: (value: any, item: DataType) => GroupKeyType;
+type PivotReducerResults<T = any> = T[];
+
+type PivotGroupValueType<DataType, KeyType> = {
+  reducerResults: PivotReducerResults<KeyType>;
+  items: DataType[];
 };
 
-type DataGroupResult<DataType> = {
-  deepMap: DeepMap<GroupKeyType, DataType[]>;
-  groupParams: GroupParams<DataType>;
+export type PivotValuesDeepMap<DataType, KeyType> = DeepMap<
+  GroupKeyType<KeyType>,
+  PivotGroupValueType<DataType, KeyType>
+>;
+
+export type DeepMapGroupValueType<DataType, KeyType> = {
+  items: DataType[];
+  reducerResults: any[];
+  pivotDeepMap?: DeepMap<
+    GroupKeyType<KeyType>,
+    PivotGroupValueType<DataType, KeyType>
+  >;
+};
+
+export type GroupBy<DataType, KeyType> = {
+  field: keyof DataType;
+  toKey?: (value: any, data: DataType) => GroupKeyType<KeyType>;
+};
+
+export type PivotBy<DataType, KeyType> = GroupBy<DataType, KeyType>;
+
+type GroupParams<DataType, KeyType> = {
+  groupBy: GroupBy<DataType, KeyType>[];
+  defaultToKey?: (value: any, item: DataType) => GroupKeyType<KeyType>;
+  pivot?: PivotBy<DataType, KeyType>[];
+  reducers?: AggregationReducer<DataType, any>[];
+};
+
+export type DataGroupResult<DataType, KeyType extends any> = {
+  deepMap: DeepMap<
+    GroupKeyType<KeyType>,
+    DeepMapGroupValueType<DataType, KeyType>
+  >;
+  groupParams: GroupParams<DataType, KeyType>;
   initialData: DataType[];
+  reducerResults?: any[];
+  topLevelPivotColumns?: DeepMap<GroupKeyType<KeyType>, boolean>;
+  pivot?: PivotBy<DataType, KeyType>[];
 };
 
-export function group<DataType>(
-  groupParams: GroupParams<DataType>,
+function initReducers<DataType>(
+  reducers?: AggregationReducer<DataType, any>[],
+): any[] {
+  if (!reducers || !reducers.length) {
+    return [];
+  }
+
+  return reducers.map((reducer) => reducer.initialValue);
+}
+
+/**
+ *
+ * This fn mutates the reducerResults array!!!
+ *
+ * @param data data item
+ * @param reducers an array of reducers
+ * @param reducerResults the results on which to operate
+ *
+ */
+function computeReducersFor<DataType>(
+  data: DataType,
+  reducers: AggregationReducer<DataType, any>[],
+  reducerResults: any[],
+) {
+  if (!reducers || !reducers.length) {
+    return;
+  }
+
+  reducers.forEach((reducer, index) => {
+    const currentValue = reducerResults[index];
+
+    reducerResults[index] = reducer.reducer(
+      currentValue,
+      reducer.getter(data),
+      data,
+    );
+  });
+}
+
+export function group<DataType, KeyType = any>(
+  groupParams: GroupParams<DataType, KeyType>,
   data: DataType[],
-): DataGroupResult<DataType> {
-  const { groupBy, groupToKey = GROUP_TO_KEY } = groupParams;
+): DataGroupResult<DataType, KeyType> {
+  const {
+    groupBy,
+    defaultToKey = DEFAULT_TO_KEY,
+    pivot,
+    reducers,
+  } = groupParams;
 
   const groupByLength = groupBy.length;
 
-  const deepMap = new DeepMap<GroupKeyType, DataType[]>();
+  const topLevelPivotColumns = pivot
+    ? new DeepMap<GroupKeyType<KeyType>, boolean>()
+    : undefined;
 
-  let currentKeys: GroupKeyType[] = [];
+  const deepMap = new DeepMap<
+    GroupKeyType<KeyType>,
+    DeepMapGroupValueType<DataType, KeyType>
+  >();
+
+  let currentGroupKeys: GroupKeyType<KeyType>[] = [];
+  let currentPivotKeys: GroupKeyType<KeyType>[] = [];
+
+  const initialReducerValue = initReducers<DataType>(reducers);
+
+  const globalReducerResults = [...initialReducerValue];
 
   for (let i = 0, len = data.length; i < len; i++) {
     let item = data[i];
 
     for (let groupByIndex = 0; groupByIndex < groupByLength; groupByIndex++) {
-      const groupByProperty = groupBy[groupByIndex];
-      const key = groupToKey(item[groupByProperty], item);
+      const { field: groupByProperty, toKey: groupToKey } =
+        groupBy[groupByIndex];
+      const key: GroupKeyType<KeyType> = (groupToKey || defaultToKey)(
+        item[groupByProperty],
+        item,
+      );
 
-      currentKeys.push(key);
+      currentGroupKeys.push(key);
 
-      if (!deepMap.has(currentKeys)) {
-        deepMap.set(currentKeys, []);
+      if (!deepMap.has(currentGroupKeys)) {
+        const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
+          items: [],
+          reducerResults: [...initialReducerValue],
+        };
+        if (pivot) {
+          deepMapGroupValue.pivotDeepMap = new DeepMap<
+            GroupKeyType<KeyType>,
+            PivotGroupValueType<DataType, KeyType>
+          >();
+        }
+        deepMap.set(currentGroupKeys, deepMapGroupValue);
       }
-      deepMap.get(currentKeys)!.push(item);
+
+      const {
+        items: currentGroupItems,
+        reducerResults,
+        pivotDeepMap,
+      } = deepMap.get(currentGroupKeys)!;
+
+      currentGroupItems.push(item);
+
+      if (reducers) {
+        computeReducersFor<DataType>(item, reducers, reducerResults);
+      }
+      if (pivot) {
+        for (
+          let pivotIndex = 0, pivotLength = pivot.length;
+          pivotIndex < pivotLength;
+          pivotIndex++
+        ) {
+          const { field: pivotField, toKey: pivotToKey } = pivot[pivotIndex];
+          const pivotKey: GroupKeyType<KeyType> = (pivotToKey || defaultToKey)(
+            item[pivotField],
+            item,
+          );
+
+          currentPivotKeys.push(pivotKey);
+          if (!pivotDeepMap!.has(currentPivotKeys)) {
+            topLevelPivotColumns!.set(currentPivotKeys, true);
+            pivotDeepMap?.set(currentPivotKeys, {
+              reducerResults: [...initialReducerValue],
+              items: [],
+            });
+          }
+          const {
+            reducerResults: pivotReducerResults,
+            items: pivotGroupItems,
+          } = pivotDeepMap!.get(currentPivotKeys)!;
+
+          pivotGroupItems.push(item);
+          if (reducers) {
+            computeReducersFor<DataType>(item, reducers, pivotReducerResults);
+          }
+        }
+        currentPivotKeys.length = 0;
+      }
     }
 
-    currentKeys.length = 0;
+    if (reducers) {
+      computeReducersFor<DataType>(item, reducers, globalReducerResults);
+    }
+
+    currentGroupKeys.length = 0;
   }
 
-  return { deepMap, groupParams, initialData: data };
+  if (reducers) {
+    deepMap.visitDepthFirst((deepMapValue, _keys: KeyType[], next) => {
+      completeReducers(
+        reducers,
+        deepMapValue.reducerResults,
+        deepMapValue.items,
+      );
+
+      if (pivot) {
+        // do we need this check
+        deepMapValue.pivotDeepMap!.visitDepthFirst(
+          (
+            { items, reducerResults: pivotReducerResults },
+            _keys: KeyType[],
+            next,
+          ) => {
+            completeReducers(reducers, pivotReducerResults, items);
+            next?.();
+          },
+        );
+      }
+      next?.();
+    });
+  }
+
+  if (reducers) {
+    completeReducers(reducers, globalReducerResults, data);
+  }
+
+  const result: DataGroupResult<DataType, KeyType> = {
+    deepMap,
+    groupParams,
+    initialData: data,
+
+    reducerResults: globalReducerResults,
+  };
+  if (pivot) {
+    result.topLevelPivotColumns = topLevelPivotColumns;
+    result.pivot = pivot;
+  }
+
+  return result;
 }
 
-export function flatten<DataType>(
-  groupResult: DataGroupResult<DataType>,
+export function flatten<DataType, KeyType extends any>(
+  groupResult: DataGroupResult<DataType, KeyType>,
 ): DataType[] {
   const { groupParams, deepMap } = groupResult;
   const groupByLength = groupParams.groupBy.length;
@@ -100,7 +302,7 @@ export function flatten<DataType>(
 
   deepMap.topDownKeys().reduce((acc: DataType[], key) => {
     if (key.length === groupByLength) {
-      const items = deepMap.get(key)!;
+      const items = deepMap.get(key)!.items;
       acc.push(...items);
     }
 
@@ -113,15 +315,15 @@ export function flatten<DataType>(
 type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
-  groupItems: DataType[];
-  reducers?: AggregationReducer<DataType, any>[];
 };
 
 function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
+  deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupItems, groupBy, groupKeys, reducers } = options;
+  const { groupBy, groupKeys } = options;
   const groupNesting = groupKeys.length;
+  const { items: groupItems, reducerResults, pivotDeepMap } = deepMapValue;
 
   const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> = {
     data: null,
@@ -131,30 +333,12 @@ function getEnhancedGroupData<DataType>(
     value: groupKeys[groupKeys.length - 1],
     groupBy: groupBy.slice(0, groupNesting) as (keyof DataType)[],
     isGroupRow: true,
+    pivotValuesMap: pivotDeepMap,
     groupNesting,
-    reducerResults:
-      reducers && reducers.length > 0
-        ? reducers.map((reducer) => reducer.initialValue)
-        : undefined,
+    reducerResults,
   };
 
   return enhancedGroupData;
-}
-
-function completeGroupReducers<DataType>(
-  enhancedGroupData?: InfiniteTableEnhancedGroupData<DataType>,
-  reducers?: AggregationReducer<DataType, any>[],
-) {
-  if (!enhancedGroupData) {
-    return;
-  }
-  if (reducers && reducers.length) {
-    completeReducers(
-      reducers,
-      enhancedGroupData.reducerResults!,
-      enhancedGroupData.groupData,
-    );
-  }
 }
 
 function completeReducers<DataType>(
@@ -173,93 +357,134 @@ function completeReducers<DataType>(
   return reducerResults;
 }
 
-export function enhancedFlatten<DataType>(
-  groupResult: DataGroupResult<DataType>,
-  options?: {
-    reducers?: AggregationReducer<DataType, any>[];
-  },
-): { data: InfiniteTableEnhancedData<DataType>[]; reducerResults?: any[] } {
-  const { groupParams, deepMap } = groupResult;
+export function enhancedFlatten<DataType, KeyType = any>(
+  groupResult: DataGroupResult<DataType, KeyType>,
+): { data: InfiniteTableEnhancedData<DataType>[] } {
+  const { groupParams, deepMap, pivot } = groupResult;
   const { groupBy } = groupParams;
+
+  const groupByStrings = groupBy.map((g) => g.field);
 
   const result: InfiniteTableEnhancedData<DataType>[] = [];
 
-  const reducers = options?.reducers;
-
   const parents: InfiniteTableEnhancedGroupData<DataType>[] = [];
 
-  const globalReducerResults =
-    reducers && reducers.length > 0
-      ? reducers.map((reducer) => reducer.initialValue)
-      : undefined;
+  deepMap.visitDepthFirst(
+    (deepMapValue, groupKeys: any[], next?: VoidFunction) => {
+      const items = deepMapValue.items;
 
-  const visitGroup = (
-    items: DataType[],
-    groupKeys: any[],
-    next?: VoidFunction,
-  ) => {
-    const groupNesting = groupKeys.length;
+      const groupNesting = groupKeys.length;
 
-    const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> =
-      getEnhancedGroupData({
-        groupBy,
-        groupItems: items,
-        groupKeys,
-        reducers,
-      });
+      const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> =
+        getEnhancedGroupData(
+          {
+            groupBy: groupByStrings,
+            groupKeys,
+          },
+          deepMapValue,
+        );
 
-    result.push(enhancedGroupData);
-    parents.push(enhancedGroupData);
+      result.push(enhancedGroupData);
+      parents.push(enhancedGroupData);
 
-    if (!next) {
-      result.push(
-        ...items.map((item, index) => {
-          if (reducers && reducers.length) {
-            reducers?.forEach((reducer, index) => {
-              const val = reducer.getter(item);
-              parents.forEach((parent) => {
-                const reducerResults = parent.reducerResults!;
-
-                reducerResults[index] = reducer.reducer(
-                  reducerResults[index],
-                  val,
-                  item,
-                );
-              });
-
-              globalReducerResults![index] = reducer.reducer(
-                globalReducerResults![index],
-                val,
-                item,
-              );
-            });
-          }
-
-          return {
-            data: item,
-            isGroupRow: false,
-            parentGroupKeys: groupKeys,
-            indexInGroup: index,
-            groupBy,
-            groupNesting,
-          };
-        }),
-      );
-    } else {
-      next();
-    }
-    parents.pop();
-    completeGroupReducers(enhancedGroupData, reducers);
-  };
-
-  deepMap.visitDepthFirst(visitGroup);
-
-  if (globalReducerResults && globalReducerResults.length) {
-    completeReducers(reducers!, globalReducerResults, groupResult.initialData);
-  }
+      if (!next) {
+        if (!pivot) {
+          result.push(
+            ...items.map((item, index) => {
+              return {
+                data: item,
+                isGroupRow: false,
+                parentGroupKeys: groupKeys,
+                indexInGroup: index,
+                groupBy: groupByStrings,
+                groupNesting,
+              };
+            }),
+          );
+        }
+      } else {
+        next();
+      }
+      parents.pop();
+    },
+  );
 
   return {
     data: result,
-    reducerResults: globalReducerResults,
   };
+}
+
+export type ComputedColumnsAndGroups<DataType> = {
+  columns: InfiniteTablePropColumns<DataType>;
+  columnGroups: InfiniteTablePropColumnGroups;
+};
+
+export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
+  deepMap: DeepMap<KeyType, boolean>,
+  pivotLength: number,
+): ComputedColumnsAndGroups<DataType> {
+  const columns: InfiniteTablePropColumns<DataType> = new Map<
+    string,
+    InfiniteTableColumn<DataType>
+  >([
+    [
+      'labels',
+      {
+        header: 'Row labels',
+        render: ({ enhancedData }) => {
+          return enhancedData.groupKeys?.join(' >> ');
+        },
+      },
+    ],
+  ]);
+  const columnGroups: InfiniteTablePropColumnGroups = new Map<
+    string,
+    InfiniteTableColumnGroup
+  >();
+
+  deepMap.topDownKeys().forEach((keys: KeyType[]) => {
+    keys = [...keys];
+
+    if (keys.length === pivotLength) {
+      const parentKeys = keys.slice(0, -1);
+      let columnGroupId = parentKeys.join('/');
+      columns.set(`${keys.join('/')}`, {
+        columnGroup: parentKeys.length ? `${columnGroupId}` : undefined,
+        header: keys[keys.length - 1],
+        render: ({ enhancedData }) => {
+          const value =
+            enhancedData.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
+
+          return value;
+        },
+      });
+    } else {
+      const colGroupId = keys.join('/');
+      const parentKeys = keys.slice(0, -1);
+
+      columnGroups.set(colGroupId, {
+        columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
+        header: keys.join(' >> '),
+      });
+    }
+  });
+
+  if (columns.size === 1) {
+    columns.set('single', {
+      header: 'Reduced',
+      render: ({ enhancedData }) => {
+        return `${enhancedData.reducerResults?.[0]}`;
+        // return deepMap.get(enhancedData.groupKeys!);
+      },
+    });
+  }
+
+  const result = {
+    columns,
+    columnGroups,
+  };
+
+  console.log(result);
+
+  return result;
 }

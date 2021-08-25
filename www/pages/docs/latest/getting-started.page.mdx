@@ -6,11 +6,12 @@ Install it by doing `npm i @infinite-table/infinite-react`
 
 ## Meet the code
 
-```tsx height=500 live title=Getting-started-example
+```tsx height=450 live title=Getting-started-example
 import * as React from "react";
 import {
-  InfiniteTableFactory,
+  InfiniteTable,
   DataSource,
+  InfiniteTableColumn,
 } from "@infinite-table/infinite-react";
 
 type Person = {
@@ -18,9 +19,8 @@ type Person = {
   FirstName: string;
   Age: number;
 };
-const Table = InfiniteTableFactory<Person>();
 
-const data = [
+const data: Person[] = [
   {
     Id: 1,
     FirstName: "Bob",
@@ -37,7 +37,8 @@ const data = [
     Age: 5,
   },
 ];
-const columns = new Map([
+
+const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
   [
     "id",
     {
@@ -46,6 +47,7 @@ const columns = new Map([
       field: "Id",
       type: "number",
       sortable: true,
+      width: 100,
     },
   ],
   [
@@ -57,21 +59,27 @@ const columns = new Map([
   ["age", { field: "Age", type: "number" }],
 ]);
 
-render(
-  <DataSource data={data}>
-    <Table
-      domProps={{
-        style: {
-          height: 200,
-        },
-      }}
-      columnDefaultWidth={100}
-      sortable={false}
-      virtualizeColumns={false}
-      columns={columns}
-    />
-  </DataSource>
-);
+const domProps = {
+  style: {
+    height: 300,
+  },
+};
+
+function App() {
+  return (
+    <DataSource<Person> data={data} primaryKey="Id">
+      <InfiniteTable<Person>
+        domProps={domProps}
+        columnDefaultWidth={200}
+        sortable={false}
+        virtualizeColumns={false}
+        columns={columns}
+      />
+    </DataSource>
+  );
+}
+
+render(<App />);
 ```
 
 ## Licensing

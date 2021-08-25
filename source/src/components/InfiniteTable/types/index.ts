@@ -1,11 +1,5 @@
-import type { InfiniteTableFactoryConfig } from './InfiniteTableFactoryConfig';
-
 import type { InfiniteTableState } from './InfiniteTableState';
-import type {
-  InfiniteTableAction,
-  InfiniteTableReducer,
-  InfiniteTableScopedReducer,
-} from './InfiniteTableAction';
+import type { InfiniteTableAction } from './InfiniteTableAction';
 import type { InfiniteTableActionType } from './InfiniteTableActionType';
 
 import type {
@@ -15,6 +9,8 @@ import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
+  InfiniteTableColumnAggregator,
+  InfiniteTableColumnGroup,
 } from './InfiniteTableProps';
 
 import type {
@@ -27,20 +23,19 @@ import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
 import type { InfiniteTableEnhancedData } from '../../../utils/groupAndPivot';
 
 export type {
+  InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
   InfiniteTableEnhancedData,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
+  InfiniteTableColumnGroup,
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParams,
   InfiniteTableContextValue,
-  InfiniteTableFactoryConfig,
   InfiniteTableState,
   InfiniteTableAction,
-  InfiniteTableReducer,
-  InfiniteTableScopedReducer as TableScopedReducer,
   InfiniteTableProps,
   InfiniteTableOwnProps,
   InfiniteTableImperativeApi,

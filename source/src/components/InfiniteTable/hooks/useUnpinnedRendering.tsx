@@ -11,11 +11,11 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableEnhancedData,
 } from '../types';
-import type { InfiniteTableOwnProps } from '../types/InfiniteTableProps';
 import type { InfiniteTableRowProps } from '../components/InfiniteTableRow/InfiniteTableRowTypes';
 
 import { InfiniteTableRow } from '../components/InfiniteTableRow';
 import { TableRowUnvirtualized } from '../components/InfiniteTableRow/InfiniteTableRowUnvirtualized';
+import { InfiniteTableComponentState } from '../types/InfiniteTableState';
 
 type UnpinnedRenderingParams<T> = {
   columnShifts: number[] | null;
@@ -34,7 +34,7 @@ type UnpinnedRenderingParams<T> = {
   computedPinnedStartColumnsWidth: number;
   computedPinnedEndColumnsWidth: number;
 
-  getProps: () => InfiniteTableOwnProps<T>;
+  getState: () => InfiniteTableComponentState<T>;
 };
 export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
   const {
@@ -54,10 +54,10 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
 
     computedUnpinnedColumns,
 
-    getProps,
+    getState,
   } = params;
 
-  const { virtualizeColumns } = getProps();
+  const { virtualizeColumns } = getState();
 
   const shouldVirtualizeColumns =
     typeof virtualizeColumns === 'function'
@@ -69,7 +69,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
       const dataArray = getData();
       const enhancedData = dataArray[rowInfo.rowIndex];
 
-      const { showZebraRows } = getProps();
+      const { showZebraRows } = getState();
 
       const rowProps: InfiniteTableRowProps<T> = {
         enhancedData,

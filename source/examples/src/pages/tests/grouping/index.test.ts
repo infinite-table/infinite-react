@@ -1,4 +1,6 @@
 import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
+import { groupToItems } from './helpers';
+
 type Person = {
   id: number;
   country: string;
@@ -47,12 +49,12 @@ export default describe('Grouping', () => {
 
     const result = group(
       {
-        groupBy: ['country'],
+        groupBy: [{ field: 'country' }],
       },
       arr,
     );
 
-    expect(Array.from(result.deepMap.entries())).toEqual([
+    expect(groupToItems(result)).toEqual([
       [['uk'], [john, bill, bob]],
       [['fr'], [marrie]],
       [['es'], [espania]],
@@ -61,13 +63,13 @@ export default describe('Grouping', () => {
   it('should group on two fields', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
 
-    const result = Array.from(
+    const result = groupToItems(
       group(
         {
-          groupBy: ['country', 'age'],
+          groupBy: [{ field: 'country' }, { field: 'age' }],
         },
         arr,
-      ).deepMap.entries(),
+      ),
     );
 
     expect(result).toEqual([
@@ -88,7 +90,7 @@ export default describe('Grouping', () => {
     const result = flatten(
       group(
         {
-          groupBy: ['country', 'age'],
+          groupBy: [{ field: 'country' }, { field: 'age' }],
         },
         arr,
       ),
@@ -112,7 +114,11 @@ export default describe('Grouping', () => {
     const result = flatten(
       group(
         {
-          groupBy: ['department', 'country', 'age'],
+          groupBy: [
+            { field: 'department' },
+            { field: 'country' },
+            { field: 'age' },
+          ],
         },
         arr,
       ),
@@ -139,7 +145,11 @@ export default describe('Grouping', () => {
     const result = flatten(
       group(
         {
-          groupBy: ['department', 'age', 'country'],
+          groupBy: [
+            { field: 'department' },
+            { field: 'age' },
+            { field: 'country' },
+          ],
         },
         arr,
       ),
@@ -160,22 +170,16 @@ export default describe('Grouping', () => {
     ]);
   });
 
-  it.only('should enhancedFlatten correctly', () => {
+  it('should enhancedFlatten correctly', () => {
     const arr = [john, marrie, bob, espania, bill];
-    const result = enhancedFlatten(
-      group(
-        {
-          groupBy: ['country', 'age'],
-        },
-        arr,
-      ),
+    const groupResult = group(
       {
+        groupBy: [{ field: 'country' }, { field: 'age' }],
         reducers: [
           {
             initialValue: 0,
             getter: (person: Person) => person.age,
             reducer: (a, b) => {
-              // console.log('add', b)
               return a + b;
             },
             done: (value: number) => {
@@ -184,6 +188,7 @@ export default describe('Grouping', () => {
           },
         ],
       },
+      arr,
     );
 
     // john,
@@ -196,9 +201,11 @@ export default describe('Grouping', () => {
     // //---
     // espania, // es, 50
 
-    expect(result.reducerResults).toEqual([
+    expect(groupResult.reducerResults).toEqual([
       arr.reduce((acc, p) => acc + p.age, 0) * 100,
     ]);
+    const result = enhancedFlatten(groupResult);
+
     expect(result.data).toEqual([
       {
         data: null,
@@ -229,6 +236,7 @@ export default describe('Grouping', () => {
         data: john,
         isGroupRow: false,
         groupNesting: 2,
+        indexInGroup: 0,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['uk', 20],
       },
@@ -237,6 +245,7 @@ export default describe('Grouping', () => {
         data: bill,
         isGroupRow: false,
         groupNesting: 2,
+        indexInGroup: 1,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['uk', 20],
       },
@@ -257,6 +266,7 @@ export default describe('Grouping', () => {
         data: bob,
         isGroupRow: false,
         groupBy: ['country', 'age'],
+        indexInGroup: 0,
         groupNesting: 2,
         parentGroupKeys: ['uk', 25],
       },
@@ -276,6 +286,7 @@ export default describe('Grouping', () => {
         data: null,
         groupCount: 1,
         groupData: [marrie],
+
         groupBy: ['country', 'age'],
         groupKeys: ['fr', 20],
         groupNesting: 2,
@@ -287,6 +298,7 @@ export default describe('Grouping', () => {
       {
         data: marrie,
         isGroupRow: false,
+        indexInGroup: 0,
         groupNesting: 2,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['fr', 20],
@@ -317,6 +329,7 @@ export default describe('Grouping', () => {
       {
         data: espania,
         isGroupRow: false,
+        indexInGroup: 0,
         groupNesting: 2,
         groupBy: ['country', 'age'],
         parentGroupKeys: ['es', 50],

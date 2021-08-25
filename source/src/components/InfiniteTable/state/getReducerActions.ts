@@ -17,13 +17,13 @@ export interface InfiniteTableInternalActions<T> {
 }
 export interface InfiniteTableActions<T> {
   // setViewportSize: Setter<Size>;
-  setBodySize: Setter<Size>;
-  setScrollPosition: Setter<ScrollPosition>;
-  setColumnOrder: Setter<InfiniteTablePropColumnOrder>;
-  setColumnVisibility: Setter<InfiniteTablePropColumnVisibility>;
-  setColumnPinning: Setter<InfiniteTablePropColumnPinning>;
-  setColumnAggregations: Setter<InfiniteTablePropColumnAggregations<T>>;
-  setColumnShifts: Setter<number[] | null>;
+  // setBodySize: Setter<Size>;
+  // setScrollPosition: Setter<ScrollPosition>;
+  // setColumnOrder: Setter<InfiniteTablePropColumnOrder>;
+  // setColumnVisibility: Setter<InfiniteTablePropColumnVisibility>;
+  // setColumnPinning: Setter<InfiniteTablePropColumnPinning>;
+  // setColumnAggregations: Setter<InfiniteTablePropColumnAggregations<T>>;
+  // setColumnShifts: Setter<number[] | null>;
   setDraggingColumnId: Setter<string | null>;
   x?: T;
 }
@@ -31,49 +31,43 @@ export interface InfiniteTableActions<T> {
 export const getReducerActions = <T>(
   dispatch: React.Dispatch<InfiniteTableAction>,
 ): InfiniteTableActions<T> => {
-  // const setViewportSize: Setter<Size> = (size) => {
+  // const setBodySize: Setter<Size> = (size) => {
   //   dispatch({
-  //     type: TableActionType.SET_VIEWPORT_SIZE,
+  //     type: InfiniteTableActionType.SET_BODY_SIZE,
   //     payload: size,
   //   });
   // };
-  const setBodySize: Setter<Size> = (size) => {
-    dispatch({
-      type: InfiniteTableActionType.SET_BODY_SIZE,
-      payload: size,
-    });
-  };
 
-  const setScrollPosition: Setter<ScrollPosition> = (scrollPosition) => {
-    dispatch({
-      type: InfiniteTableActionType.SET_SCROLL_POSITION,
-      payload: scrollPosition,
-    });
-  };
+  // const setScrollPosition: Setter<ScrollPosition> = (scrollPosition) => {
+  //   dispatch({
+  //     type: InfiniteTableActionType.SET_SCROLL_POSITION,
+  //     payload: scrollPosition,
+  //   });
+  // };
 
-  const setColumnOrder: Setter<InfiniteTablePropColumnOrder> = (
-    columnOrder,
-  ) => {
-    dispatch({
-      type: InfiniteTableActionType.SET_COLUMN_ORDER,
-      payload: columnOrder,
-    });
-  };
-  const setColumnVisibility: Setter<InfiniteTablePropColumnVisibility> = (
-    columnVisibility,
-  ) => {
-    dispatch({
-      type: InfiniteTableActionType.SET_COLUMN_VISIBILITY,
-      payload: columnVisibility,
-    });
-  };
+  // const setColumnOrder: Setter<InfiniteTablePropColumnOrder> = (
+  //   columnOrder,
+  // ) => {
+  //   dispatch({
+  //     type: InfiniteTableActionType.SET_COLUMN_ORDER,
+  //     payload: columnOrder,
+  //   });
+  // };
+  // const setColumnVisibility: Setter<InfiniteTablePropColumnVisibility> = (
+  //   columnVisibility,
+  // ) => {
+  //   dispatch({
+  //     type: InfiniteTableActionType.SET_COLUMN_VISIBILITY,
+  //     payload: columnVisibility,
+  //   });
+  // };
 
-  const setColumnShifts: Setter<number[] | null> = (columnShifts) => {
-    dispatch({
-      type: InfiniteTableActionType.SET_COLUMN_SHIFTS,
-      payload: columnShifts,
-    });
-  };
+  // const setColumnShifts: Setter<number[] | null> = (columnShifts) => {
+  //   dispatch({
+  //     type: InfiniteTableActionType.SET_COLUMN_SHIFTS,
+  //     payload: columnShifts,
+  //   });
+  // };
   const setDraggingColumnId: Setter<string | null> = (dragColumnId) => {
     dispatch({
       type: InfiniteTableActionType.SET_DRAGGING_COLUMN_ID,
@@ -81,32 +75,32 @@ export const getReducerActions = <T>(
     });
   };
 
-  const setColumnPinning: Setter<InfiniteTablePropColumnPinning> = (
-    columnPinning,
-  ) => {
-    dispatch({
-      type: InfiniteTableActionType.SET_COLUMN_PINNING,
-      payload: columnPinning,
-    });
-  };
+  // const setColumnPinning: Setter<InfiniteTablePropColumnPinning> = (
+  //   columnPinning,
+  // ) => {
+  //   dispatch({
+  //     type: InfiniteTableActionType.SET_COLUMN_PINNING,
+  //     payload: columnPinning,
+  //   });
+  // };
 
-  const setColumnAggregations: Setter<InfiniteTablePropColumnAggregations<T>> =
-    (columnAggregations) => {
-      dispatch({
-        type: InfiniteTableActionType.SET_COLUMN_AGGREGATIONS,
-        payload: columnAggregations,
-      });
-    };
+  // const setColumnAggregations: Setter<InfiniteTablePropColumnAggregations<T>> =
+  //   (columnAggregations) => {
+  //     dispatch({
+  //       type: InfiniteTableActionType.SET_COLUMN_AGGREGATIONS,
+  //       payload: columnAggregations,
+  //     });
+  //   };
 
   return {
-    // setViewportSize,
-    setBodySize,
-    setScrollPosition,
-    setColumnOrder,
-    setColumnVisibility,
-    setColumnShifts,
-    setColumnPinning,
-    setColumnAggregations,
+    // // setViewportSize,
+    // setBodySize,
+    // setScrollPosition,
+    // setColumnOrder,
+    // setColumnVisibility,
+    // setColumnShifts,
+    // setColumnPinning,
+    // setColumnAggregations,
     setDraggingColumnId,
   };
 };

@@ -1,12 +1,12 @@
 import * as React from "react";
 import Link from "next/link";
-import dashify from "dashify";
-import { useDocsContext } from "../DocsContext";
+
 import {
   docsHeadingClassName,
   docsHeadingFontSize,
   docsHeadingLinkClassName,
 } from "./index.css";
+const dashify = require("dashify");
 
 export type DocsHeadingProps = {
   children: string;
@@ -15,10 +15,14 @@ export type DocsHeadingProps = {
 export const DocsHeading = (props: DocsHeadingProps & { Tag: any }) => {
   let { Tag, children } = props;
 
+  //@ts-ignore
   const size = {
     h1: docsHeadingFontSize.h1,
+
     h2: docsHeadingFontSize.h2,
+
     h3: docsHeadingFontSize.h3,
+
     h4: docsHeadingFontSize.h4,
   }[Tag];
 

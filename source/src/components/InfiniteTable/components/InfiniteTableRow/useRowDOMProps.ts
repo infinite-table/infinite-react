@@ -7,8 +7,8 @@ import {
   InfiniteTableRowClassName__hover,
 } from './InfiniteTableRowClassName';
 
-import type { InfiniteTableOwnProps } from '../../types';
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
+import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -18,7 +18,7 @@ export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
 
 export function useRowDOMProps<T>(
   props: InfiniteTableRowProps<T>,
-  tableProps: InfiniteTableOwnProps<T>,
+  rowProps: InfiniteTableComponentState<T>['rowProps'],
   tableDOMRef: MutableRefObject<HTMLDivElement | null>,
 ): {
   domProps: TableRowHTMLAttributes;
@@ -37,8 +37,6 @@ export function useRowDOMProps<T>(
     domRefFromProps(node);
     domRef.current = node;
   }, []);
-
-  let rowProps = tableProps.rowProps;
 
   if (typeof rowProps === 'function') {
     rowProps = rowProps({ rowIndex, data: props.enhancedData.data });

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { InfiniteTablePropColumnVisibility } from '../types';
 import { useRerender } from '../../hooks/useRerender';
+import { interceptMap } from '../../hooks/useInterceptedMap';
 
 export const useColumnVisibilityRerenderOnKeyChange = (
   columnVisibility: InfiniteTablePropColumnVisibility,
@@ -8,30 +9,21 @@ export const useColumnVisibilityRerenderOnKeyChange = (
   const [renderId, rerender] = useRerender();
 
   useEffect(() => {
-    const set = columnVisibility.set.bind(columnVisibility);
-    const deleteKey = columnVisibility.delete.bind(columnVisibility);
-    const clear = columnVisibility.clear.bind(columnVisibility);
-
-    columnVisibility.set = (key: any, visible: false) => {
-      const result = set(key, visible);
-      rerender();
-      return result;
+    let rafId: number = 0;
+    const update = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        rerender();
+      });
     };
-    columnVisibility.delete = (key: any) => {
-      const removed = deleteKey(key);
-      rerender();
-      return removed;
-    };
-    columnVisibility.clear = () => {
-      clear();
-      rerender();
-    };
-
-    return () => {
-      columnVisibility.set = set;
-      columnVisibility.delete = deleteKey;
-      columnVisibility.clear = clear;
-    };
+    return interceptMap(columnVisibility, {
+      set: update,
+      clear: update,
+      delete: update,
+    });
   }, [columnVisibility]);
 
   return renderId;

@@ -1,10 +1,12 @@
 import type { Renderable } from '../../types/Renderable';
 import type {
-  DataSourceComputedValues,
+  DataSourceComponentState,
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
-import { InfiniteTableEnhancedData } from '.';
+import type { InfiniteTableEnhancedData } from '.';
+
+export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
@@ -13,7 +15,7 @@ export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
   rowIndex: number;
   column: InfiniteTableComputedColumn<DATA_TYPE>;
-  groupBy: DataSourceComputedValues<DATA_TYPE>['groupBy'];
+  groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
 }
 
 export interface InfiniteTableColumnHeaderRenderParams<T> {
@@ -29,7 +31,7 @@ export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({
   column,
   data,
   enhancedData,
-  groupBy,
+  groupRowsBy: groupBy,
 }: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
@@ -86,6 +88,7 @@ export type InfiniteTableColumn<T> = {
 
   align?: InfiniteTableColumnAlign;
   verticalAlign?: InfiniteTableColumnVerticalAlign;
+  columnGroup?: string;
 
   header?: InfiniteTableColumnHeader<T>;
   name?: Renderable;
@@ -104,7 +107,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedSorted: boolean;
   computedSortedAsc: boolean;
   computedSortedDesc: boolean;
+  computedSortIndex: number;
   computedVisibleIndex: number;
+  computedMultiSort: boolean;
 
   computedPinned: InfiniteTableColumnPinned;
   computedDraggable: boolean;

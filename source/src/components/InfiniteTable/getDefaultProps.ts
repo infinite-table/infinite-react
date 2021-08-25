@@ -6,7 +6,6 @@ import { InfiniteTableProps } from './types';
  */
 export function getDefaultProps<T>(): Partial<InfiniteTableProps<T>> {
   return {
-    primaryKey: 'id',
     rowHeight: 40,
 
     showZebraRows: true,

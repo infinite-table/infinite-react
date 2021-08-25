@@ -33,7 +33,7 @@ const COMPONENTS = {
   code: CodeEditor,
 };
 
-export function DocsLayout({ children }) {
+export function DocsLayout({ children }: { children: JSX.Element }) {
   const router = useRouter();
 
   const { currentVersion, versionInfo } = useDocsContext();
@@ -41,7 +41,7 @@ export function DocsLayout({ children }) {
   const { pathname } = router;
 
   const parts = pathname.split("/");
-  const title = humanize(parts.pop());
+  const title = humanize(parts.pop() ?? "");
 
   useEffect(() => {
     if (globalThis.document) {

@@ -1,12 +1,9 @@
 import * as React from 'react';
 
-import { InfiniteTableFactory } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
-
-const Table = InfiniteTableFactory<Car>();
 
 const App = () => {
   return (
@@ -25,7 +22,7 @@ const App = () => {
           data={rowData}
           fields={['id', 'make', 'model', 'price']}
         >
-          <Table
+          <InfiniteTable<Car>
             domProps={{
               style: {
                 margin: '5px',

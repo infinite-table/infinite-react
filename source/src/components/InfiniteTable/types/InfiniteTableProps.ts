@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { AggregationReducer } from '../../../utils/groupAndPivot';
+import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
@@ -47,8 +48,42 @@ export type InfiniteTableInternalProps<T> = {
   rowHeight: number;
   ___t?: T;
 };
+
+export type InfiniteTablePropColumns<T> = Map<string, InfiniteTableColumn<T>>;
+
+export type InfiniteTablePropColumnGroups = Map<
+  string,
+  InfiniteTableColumnGroup
+>;
+
+/**
+ * the keys is an array of strings: first string in the array is the column group id, next strings are the ids of all columns in the group
+ * the value is the id of the column to leave as visible
+ */
+export type InfiniteTablePropCollapsedColumnGroups = Map<string[], string>;
+
+export type InfiniteTableColumnGroupHeaderRenderParams = {
+  columnGroup: InfiniteTableComputedColumnGroup;
+};
+export type InfiniteTableColumnGroupHeaderRenderFunction = (
+  params: InfiniteTableColumnGroupHeaderRenderParams,
+) => Renderable;
+
+export type InfiniteTableColumnGroup = {
+  columnGroup?: string;
+  header?: Renderable | InfiniteTableColumnGroupHeaderRenderFunction;
+};
+export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
+  id: string;
+  groupOffset: number;
+  computedWidth: number;
+  uniqueGroupId: string[];
+  columns: string[];
+  depth: number;
+};
+
 export type InfiniteTableProps<T> = {
-  columns: Map<string, InfiniteTableColumn<T>>;
+  columns: InfiniteTablePropColumns<T>;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
@@ -58,12 +93,17 @@ export type InfiniteTableProps<T> = {
   defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
   columnAggregations?: InfiniteTablePropColumnAggregations<T>;
 
+  columnGroups?: InfiniteTablePropColumnGroups;
+  defaultColumnGroups?: InfiniteTablePropColumnGroups;
+
+  defaultCollapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
+  collapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
+
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
   // columnVisibilityAssumeVisible?: boolean;
 
-  primaryKey: string;
   rowHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
