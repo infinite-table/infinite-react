@@ -42,8 +42,6 @@ export function renderColumnHeaderGroups<T>(
             column={col}
             columns={allVisibleColumns}
             virtualized={false}
-            offset={0}
-            cssPosition={'relative'}
           />
         );
       }
@@ -57,12 +55,14 @@ export function renderColumnHeaderGroups<T>(
       });
       return (
         <InfiniteTableHeaderGroup<T>
-          key={`${colGroupItem.id}-${colIds.join(',')}`}
+          key={`${colGroupItem.uniqueGroupId.join('/')}`}
           columns={columns}
           columnGroup={{
             ...colGroupItem.ref,
             id: colGroupItem.id,
+            uniqueGroupId: colGroupItem.uniqueGroupId,
             depth: colGroupItem.depth,
+            columns: colIds,
             computedWidth: colGroupItem.computedWidth,
             groupOffset: colGroupItem.groupOffset,
           }}

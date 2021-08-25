@@ -1,5 +1,7 @@
-import { compileProgram as compile } from "../../ts-compiler-bundle-large";
+const { compileProgram } = require("../../ts-compiler-bundle-large");
 
+const compile = compileProgram;
 export { compile };
 
-// globalThis.compile = compileProgram;
+//@ts-ignore
+globalThis.compile = compileProgram;

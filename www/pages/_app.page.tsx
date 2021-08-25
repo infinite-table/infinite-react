@@ -9,6 +9,7 @@ import { DocsContext, DocsContextType } from "../src/components/DocsContext";
 (globalThis as any).InfiniteTableLicenseKey =
   "StartDate=2021-06-29|EndDate=2030-01-01|Owner=Adaptable|Type=distribution|TS=1624971462479|C=137829811,1004007071,2756196225,1839832928,3994409405,636616862";
 
+//@ts-ignore
 function MyApp({ Component, pageProps }) {
   const content = <Component {...pageProps} />;
 
@@ -33,12 +34,14 @@ export default MyApp;
 
 const versions = require("./docs/versions.json");
 
+//@ts-ignore
 MyApp.getInitialProps = async (ctx) => {
   // let currentVersion = ctx.router.query.v;
 
   // if (!currentVersion) {
   let currentVersion = ctx.router.pathname
     .split("/")
+    //@ts-ignore
     .filter((x) => x.trim())[1];
   // }
 

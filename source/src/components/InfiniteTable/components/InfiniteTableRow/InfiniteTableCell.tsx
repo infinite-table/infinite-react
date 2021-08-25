@@ -24,7 +24,8 @@ function InfiniteTableCellFn<T>(
     column,
     domRef,
     children,
-    outerChildren,
+    afterChildren,
+    beforeChildren,
     offset,
     ...domProps
   } = props;
@@ -77,6 +78,7 @@ function InfiniteTableCellFn<T>(
         shifting ? `${InfiniteTableCellClassName}--shifting` : '',
       )}
     >
+      {beforeChildren}
       {cssEllipsis ? (
         <div className={`${rootClassName}Cell_content ${cssEllipsisClassName}`}>
           {children}
@@ -84,7 +86,7 @@ function InfiniteTableCellFn<T>(
       ) : (
         children
       )}
-      {outerChildren}
+      {afterChildren}
     </div>
   );
 }

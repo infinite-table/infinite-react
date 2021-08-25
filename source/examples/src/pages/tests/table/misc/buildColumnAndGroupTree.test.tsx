@@ -531,12 +531,14 @@ export default describe('buildColumnAndGroupTree', () => {
       depth: 0,
       groupOffset: 0,
       computedWidth: 180,
+      uniqueGroupId: ['address', 'streetNo', 'city', 'streetName'],
       children: [
         {
           type: 'group',
           id: 'street',
           depth: 1,
           groupOffset: 0,
+          uniqueGroupId: ['street', 'streetNo'],
           computedWidth: 50,
           children: [
             {
@@ -550,6 +552,7 @@ export default describe('buildColumnAndGroupTree', () => {
         {
           type: 'group',
           id: 'location',
+          uniqueGroupId: ['location', 'city'],
           depth: 1,
           groupOffset: 50,
           children: [
@@ -566,6 +569,7 @@ export default describe('buildColumnAndGroupTree', () => {
           id: 'street',
           depth: 1,
           groupOffset: 150,
+          uniqueGroupId: ['street', 'streetName'],
           children: [
             {
               type: 'column',
@@ -660,6 +664,7 @@ export default describe('buildColumnAndGroupTree', () => {
       id: 'a',
       depth: 1,
       computedWidth: 60,
+      uniqueGroupId: ['a', 'd', 'e', 'f'],
       children: [
         {
           type: 'group',

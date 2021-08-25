@@ -6,7 +6,7 @@ const { compileProgram } = require("../src/ts-compiler-bundle-large");
 const code = `
 import * as React from 'react'
 import {
-  InfiniteTableFactory,
+  InfiniteTable,
   DataSource,
 } from "@infinite-table/infinite-react";
 
@@ -32,7 +32,13 @@ const data: Person[] = [
     Age: 5,
   },
 ];
-const Table = InfiniteTableFactory<Person>()
+
+
+export default function App() {
+  return <DataSource<Person> primaryKey="Id" data={[{FirstName:4}]}>
+  </DataSource>
+}
+
 `;
 
 const result = compileProgram(code);

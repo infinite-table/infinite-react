@@ -14,7 +14,6 @@ import {
   margin,
 } from "../styles/utils.css";
 import { container, width100 } from "./components.css";
-import { DocsMenuItem } from "./DocsMenu";
 
 export type DocsHeaderProps = {
   version: string;

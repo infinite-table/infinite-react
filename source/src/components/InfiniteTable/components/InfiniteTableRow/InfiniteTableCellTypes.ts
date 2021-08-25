@@ -12,7 +12,9 @@ export interface InfiniteTableCellProps<T> {
   children: Renderable;
   virtualized?: boolean;
   skipColumnShifting?: boolean;
-  outerChildren?: Renderable;
+  beforeChildren?: Renderable;
+  afterChildren?: Renderable;
+
   offset?: number;
   offsetProperty?: 'left' | 'right';
   cssPosition?: CSSProperties['position'];

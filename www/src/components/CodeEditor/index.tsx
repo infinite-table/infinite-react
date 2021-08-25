@@ -1,25 +1,14 @@
 import * as React from "react";
 
-import { mdx } from "@mdx-js/react";
-import Highlight, { defaultProps, Language } from "prism-react-renderer";
-// import vsDark from "prism-react-renderer/themes/vsDark";
-import vsLight from "prism-react-renderer/themes/vsLight";
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
-
 import * as InfiniteTable from "@infinite-table/infinite-react";
-import { clipboardButton } from "../DocsCodeBlock";
-import {
-  borderRadius,
-  display,
-  flexDirection,
-  padding,
-  vars,
-} from "@www/styles/utils.css";
-import humanizeString from "humanize-string";
-import { docsCodeBlockClassName } from "../DocsCodeBlock/index.css";
-import { CSSProperties, useState } from "react";
-import { languageClassName, selectedClassName } from "./index.css";
+
+import { useMemo, useRef, useState } from "react";
+import { errorClassName } from "./index.css";
 import { compile } from "./compile";
+import { Editor } from "./Editor";
+
+const debounce = require("debounce");
+const dashify = require("dashify");
 
 export type CodeEditorProps = {
   children: string;
@@ -39,79 +28,6 @@ const languageMap = {
   js: "javascript" as "javascript",
   javascript: "javascript" as "javascript",
   jsx: "javascript" as "javascript",
-};
-
-type CodeEditorHeaderProps = {
-  title?: string;
-  clipboardCode?: string;
-  ts: boolean;
-  onLanguageChange: (ts: boolean) => void;
-};
-export const CodeEditorHeader = (props: CodeEditorHeaderProps) => {
-  const domProps: React.HTMLProps<HTMLDivElement> = {};
-
-  if (props.clipboardCode) {
-    (domProps as any)["data-clipboard-text"] = props.clipboardCode;
-    domProps.title = "Click to copy to clipboard";
-  }
-
-  const iconSize = 20;
-  const languageStyle: CSSProperties = {
-    borderRadius: "50%",
-    overflow: "hidden",
-    cursor: "pointer",
-  };
-
-  return (
-    <div
-      {...domProps}
-      className={docsCodeBlockClassName}
-      style={{
-        display: "block",
-        background: vars.color.gray,
-        cursor: "pointer",
-        position: "relative",
-        borderRadius: borderRadius["2xl"],
-        // padding: vars.space[3],
-        marginBottom: 10,
-      }}
-    >
-      <div
-        className={`${flexDirection.row} ${display.inlineFlex} ${padding["2"]}`}
-      >
-        <div
-          className={`${
-            !props.ts ? selectedClassName : ""
-          } ${languageClassName}`}
-          style={{ ...languageStyle, backgroundColor: "#ffc000" }}
-          title="Switch to JavaScript"
-          onClick={() => {
-            if (props.ts) {
-              props.onLanguageChange(false);
-            }
-          }}
-        >
-          <img src={"/jslogo.svg"} width={iconSize} height={iconSize} />
-        </div>
-        <div
-          className={`${
-            props.ts ? selectedClassName : ""
-          } ${languageClassName}`}
-          style={{ ...languageStyle, backgroundColor: "#0288d1" }}
-          title="Switch to TypeScript"
-          onClick={() => {
-            if (!props.ts) {
-              props.onLanguageChange(true);
-            }
-          }}
-        >
-          <img src={"/ts-logo.svg"} width={iconSize} height={iconSize} />
-        </div>
-      </div>
-      {props.title ? humanizeString(props.title) : null}
-      {clipboardButton}
-    </div>
-  );
 };
 
 type CodePreviewProps = {
@@ -150,94 +66,106 @@ const CodePreview = (props: CodePreviewProps) => {
   return <>{content}</>;
 };
 
+type CodeError = {
+  message: string;
+  location: string;
+};
+function Errors({ errors }: { errors: CodeError[] }) {
+  return (
+    <div>
+      {errors.map((err) => {
+        return (
+          <div
+            className={errorClassName}
+            key={`${err.message}-${err.location}`}
+          >
+            <div>{err.location}</div>
+            <div>{err.message}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export const CodeEditor = (props: CodeEditorProps) => {
-  let { children, className, title, live, height } = props;
-  className = className ?? "language-tsx";
+  let { children, title, live, height } = props;
 
   //@ts-ignore
   if (height && height == height * 1) {
     height = `${height}px`;
   }
 
-  let language = className.replace(/language-/, "") as ValidLanguage;
+  const [fileName] = useState(() => {
+    return dashify(title) + ".tsx";
+  });
 
-  language = languageMap[language] || language;
+  let [code, setCode] = useState(() => children.trim());
 
-  const [theLanguage, setTheLanguage] = useState(language);
+  const [errors, setErrors] = useState<CodeError[]>([]);
 
-  const IS_TS = theLanguage === "typescript";
+  const previewRef = useRef<JSX.Element>(null);
+  const compiledCode = useRef("");
 
-  let code = children.trim();
+  const getPreview = (code: string) => {
+    const { result, errors } = compile(code, fileName);
 
-  const header = (
-    <CodeEditorHeader
-      ts={IS_TS}
-      onLanguageChange={(ts) => {
-        setTheLanguage(ts ? "typescript" : "javascript");
-      }}
+    let preview = previewRef.current;
+    let updated: boolean = false;
+
+    if (!errors.length) {
+      if (result !== compiledCode.current) {
+        preview = <CodePreview transpiledCode={result} />;
+        updated = true;
+        compiledCode.current = result;
+      }
+    }
+    return {
+      updated,
+      preview,
+      result,
+      errors,
+    };
+  };
+
+  const [preview, setPreview] = useState<JSX.Element | null>(() => {
+    return getPreview(code).preview;
+  });
+
+  const onCodeChange = useMemo(() => {
+    const transpile = debounce((code: string) => {
+      const { updated, preview, errors } = getPreview(code);
+
+      if (updated) {
+        setPreview(preview);
+      }
+      setErrors(errors);
+    }, 500);
+
+    return (code: string) => {
+      setCode(code);
+      transpile(code);
+    };
+  }, []);
+
+  const editor = (
+    <Editor
+      onCodeChange={onCodeChange}
+      hasError={!!errors.length}
+      code={code}
       title={title}
-      clipboardCode={code}
+      height={height}
     />
   );
-
-  const compilationResult = compile(code);
-
   if (live) {
-    const transformCode = (code: string) => compile(code).result as string;
-
     return (
-      <div
-        style={{
-          position: "relative",
-          background: vars.color.white,
-        }}
-      >
-        {header}
-        <CodePreview transpiledCode={compilationResult.result} />
-        {/*}
-        <LiveProvider code={code} noInline scope={{ mdx }}>
-          <div
-            style={{
-              height,
-              overflow: "auto",
-              fontSize: vars.font.sizes.medium,
-            }}
-          >
-            <LiveEditor language={language} theme={vsLight} />
-          </div>
-          <LiveError />
-          </LiveProvider>*/}
-      </div>
+      <>
+        {preview}
+        {editor}
+        <Errors errors={errors} />
+      </>
     );
   }
 
-  return (
-    <Highlight
-      {...defaultProps}
-      code={code}
-      language={theLanguage}
-      theme={vsLight}
-    >
-      {({ className, style, tokens, getLineProps, getTokenProps }) => (
-        <>
-          {header}
-          <pre
-            className={""}
-            data-clipboard-text={code}
-            title="Click to copy to clipboard"
-            style={{ ...style, height, overflow: "auto", padding: "20px" }}
-          >
-            {clipboardButton}
-            {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line, key: i })}>
-                {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token, key })}></span>
-                ))}
-              </div>
-            ))}
-          </pre>
-        </>
-      )}
-    </Highlight>
-  );
+  return editor;
 };

@@ -29,7 +29,6 @@ export type DataSourcePivotBy<T> = PivotBy<T, any>;
 
 export type DataSourceSortInfo<T> =
   | null
-  | undefined
   | DataSourceSingleSortInfo<T>
   | DataSourceSingleSortInfo<T>[];
 
@@ -80,7 +79,7 @@ export interface DataSourceProps<T> {
 export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   data: DataSourceData<T>;
   loading: boolean;
-  sortInfo: DataSourceSingleSortInfo<T>[];
+  sortInfo?: DataSourceSortInfo<T>;
   dataArray: InfiniteTableEnhancedData<T>[];
   groupRowsBy: DataSourceGroupBy<T>[];
   pivotBy?: DataSourcePivotBy<T>[];
@@ -90,6 +89,8 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
 }
 
 export interface DataSourceReadOnlyState<T> {
+  multiSort: boolean;
+  sortInfo: DataSourceSingleSortInfo<T>[];
   primaryKey: keyof T;
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
 
@@ -98,7 +99,7 @@ export interface DataSourceReadOnlyState<T> {
 }
 
 export interface DataSourceComponentState<T>
-  extends DataSourceState<T>,
+  extends Omit<DataSourceState<T>, 'sortInfo'>,
     DataSourceReadOnlyState<T> {}
 
 export type DataSourceComponentActions<T> = ComponentStateActions<

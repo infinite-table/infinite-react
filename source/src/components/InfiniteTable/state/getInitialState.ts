@@ -16,6 +16,11 @@ export function getInitialState<T>(
       ? props.columnGroups
       : props.defaultColumnGroups) ?? new Map();
 
+  const collapsedColumnGroups =
+    (isControlled('collapsedColumnGroups', props)
+      ? props.collapsedColumnGroups
+      : props.defaultCollapsedColumnGroups) ?? new Map();
+
   return {
     rowHeight: typeof props.rowHeight === 'number' ? props.rowHeight : 0,
     domRef: createRef(),
@@ -41,7 +46,9 @@ export function getInitialState<T>(
         ? props.columnOrder
         : props.defaultColumnOrder) ?? true,
     columnGroups,
+    collapsedColumnGroups,
     columnGroupsDepthsMap: computeColumnGroupsDepths(columnGroups),
+
     columnVisibility:
       (isControlled('columnVisibility', props)
         ? props.columnVisibility

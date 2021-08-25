@@ -6,31 +6,28 @@ import {
 import { Ref, useRef } from 'react';
 import * as React from 'react';
 
-type CounterProps<T> = {
+type CounterProps<_T> = {
   value?: number;
   defaultValue?: number;
   onValueChange?: (v: number) => void;
-  t: T;
 };
 
-type CounterState<T> = {
+type CounterState<_T> = {
   value: number;
   ref: Ref<number>;
-  t: T;
 };
 
 function getInitialState<T>(props: CounterProps<T>): CounterState<T> {
   return {
     ref: React.createRef(),
     value: props.value ?? props.defaultValue ?? 0,
-    t: props.t,
   };
 }
 
-function reducer<T>(
-  state: CounterState<T>,
+function reducer<_T>(
+  state: CounterState<_T>,
   action: CounterAction,
-): CounterState<T> {
+): CounterState<_T> {
   if (action.type === CounterActionType.DEC) {
     return { ...state, value: state.value - 1 };
   }

@@ -11,15 +11,22 @@ import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableHeaderUnvirtualizedProps } from './InfiniteTableHeaderTypes';
 import { renderColumnHeaderGroups } from './renderColumnHeaderGroups';
+import { useEffect } from 'react';
+import { ScrollPosition } from '../../../types/ScrollPosition';
 
 const { rootClassName } = internalProps;
 export const TableHeaderClassName = `${rootClassName}Header`;
+
+const UPDATE_SCROLL = (node: HTMLElement, scrollPosition: ScrollPosition) => {
+  node.style.transform = `translate3d(${-scrollPosition.scrollLeft}px, ${-scrollPosition.scrollTop}px, 0px)`;
+};
 
 function InfiniteTableHeaderUnvirtualizedFn<T>(
   props: InfiniteTableHeaderUnvirtualizedProps<T> &
     React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { columns, totalWidth, onResize, ...domProps } = props;
+  const { columns, scrollable, brain, totalWidth, onResize, ...domProps } =
+    props;
 
   const {
     componentState: { columnGroups, columnGroupsDepthsMap },
@@ -64,8 +71,20 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   if (totalWidth != null) {
     style.width = totalWidth;
   }
-  // style.transform = `translateX(-${scrollLeft ?? 0}px)`;
 
+  useEffect(() => {
+    if (!brain || !scrollable) {
+      return;
+    }
+
+    const onScroll = (scrollPosition: ScrollPosition) => {
+      UPDATE_SCROLL(domRef.current!, scrollPosition);
+    };
+
+    const removeOnScroll = brain!.onScroll(onScroll);
+
+    return removeOnScroll;
+  }, [brain]);
   return (
     <div
       {...domProps}

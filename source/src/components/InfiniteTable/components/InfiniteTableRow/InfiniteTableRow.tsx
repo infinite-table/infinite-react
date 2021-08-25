@@ -46,6 +46,9 @@ function InfiniteTableRowFn<T>(
     ({ domRef, itemIndex }) => {
       const column = columns[itemIndex];
 
+      if (!column) {
+        // return null;
+      }
       return (
         <InfiniteTableColumnCell<T>
           enhancedData={enhancedData}

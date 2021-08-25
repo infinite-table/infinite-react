@@ -22,4 +22,7 @@ export type InfiniteTableHeaderGroupProps<T> = {
 export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<
   InfiniteTableHeaderProps<T>,
   'repaintId' | 'brain'
->;
+> & {
+  brain?: VirtualBrain;
+  scrollable?: boolean;
+};

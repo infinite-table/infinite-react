@@ -55,6 +55,13 @@ export type InfiniteTablePropColumnGroups = Map<
   string,
   InfiniteTableColumnGroup
 >;
+
+/**
+ * the keys is an array of strings: first string in the array is the column group id, next strings are the ids of all columns in the group
+ * the value is the id of the column to leave as visible
+ */
+export type InfiniteTablePropCollapsedColumnGroups = Map<string[], string>;
+
 export type InfiniteTableColumnGroupHeaderRenderParams = {
   columnGroup: InfiniteTableComputedColumnGroup;
 };
@@ -70,6 +77,8 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   id: string;
   groupOffset: number;
   computedWidth: number;
+  uniqueGroupId: string[];
+  columns: string[];
   depth: number;
 };
 
@@ -86,6 +95,9 @@ export type InfiniteTableProps<T> = {
 
   columnGroups?: InfiniteTablePropColumnGroups;
   defaultColumnGroups?: InfiniteTablePropColumnGroups;
+
+  defaultCollapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
+  collapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
 
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,

@@ -35,7 +35,7 @@ export function reducer<T>(
   const initialState = state;
 
   const sortInfo = state.sortInfo;
-  const shouldSort = sortInfo.length;
+  const shouldSort = sortInfo?.length;
 
   const sortDepsChanged = haveDepsChanged(initialState, state, [
     'originalDataArray',
@@ -47,7 +47,7 @@ export function reducer<T>(
   const groupBy = state.groupRowsBy;
   const pivotBy = state.pivotBy;
 
-  const shouldGroup = groupBy.length || pivotBy.length;
+  const shouldGroup = groupBy.length || pivotBy;
   const groupsDepsChanged = haveDepsChanged(initialState, state, [
     'originalDataArray',
     'groupRowsBy',
@@ -65,7 +65,7 @@ export function reducer<T>(
 
   if (shouldSort) {
     dataArray = shouldSortAgain
-      ? multisort(sortInfo, [...dataArray])
+      ? multisort(sortInfo!, [...dataArray])
       : state.postSortDataArray!;
 
     state.postSortDataArray = dataArray;

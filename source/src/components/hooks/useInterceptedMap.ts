@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 type InterceptedMapFns<K, V> = {
   set?: (k: K, v: V) => void;
+  beforeClear?: (map: Map<K, V>) => void;
   clear?: () => void;
   delete?: (k: K) => void;
 };
@@ -34,10 +35,15 @@ export function interceptMap<K, V>(
       return removed;
     };
   }
-  if (fns.clear) {
+  if (fns.clear || fns.beforeClear) {
     map.clear = () => {
+      if (fns.beforeClear) {
+        fns.beforeClear(map);
+      }
       const result = clear.call(map);
-      fns.clear!();
+      if (fns.clear) {
+        fns.clear();
+      }
       return result;
     };
   }

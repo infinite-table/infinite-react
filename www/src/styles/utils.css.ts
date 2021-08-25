@@ -16,6 +16,7 @@ const colorVariables = {
   blue700: "#1c4fd8",
   white: "white",
   gray: "#eaeaea",
+  errBackground: "#ffdcd5",
 };
 
 export const spaceScale = {

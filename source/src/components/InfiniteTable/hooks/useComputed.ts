@@ -34,12 +34,16 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   });
 
   useColumnAggregations<T>();
+
+  const { multiSort } = dataSourceState;
+
   useColumnGroups<T>();
 
   const setSortInfo = useCallback(
-    (sortInfo: DataSourceSingleSortInfo<T>[]) =>
-      (dataSourceActions.sortInfo = sortInfo),
-    [],
+    (sortInfo: DataSourceSingleSortInfo<T>[]) => {
+      dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0];
+    },
+    [multiSort],
   );
   const {
     computedColumnOrder,
@@ -64,6 +68,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     sortable: componentState.sortable,
     draggableColumns: componentState.draggableColumns,
     sortInfo: dataSourceState.sortInfo,
+    multiSort,
     setSortInfo,
 
     columnOrder,

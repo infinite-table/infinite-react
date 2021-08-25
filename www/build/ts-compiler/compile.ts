@@ -3,6 +3,9 @@ import * as ts from "typescript";
 import { dts as dts_es5 } from "./lib-es5";
 import { dts as dts_es2015 } from "./lib-es2015-core";
 import { dts as dts_es2015_collection } from "./lib-es2015-collection";
+import { dts as dts_es2015_symbol } from "./lib-es2015-symbol";
+import { dts as dts_es2015_generator } from "./lib-es2015-generator";
+import { dts as dts_es2015_iterable } from "./lib-es2015-iterable";
 import { dts as infiniteTableDTS } from "./lib-extra";
 import { dts as reactDTS } from "./dts-deps/react/react";
 import { dts as globalDTS } from "./dts-deps/react/global";
@@ -13,7 +16,11 @@ import { getDependencies } from "./getRequireStatements";
 const libDTS = `${dts_es5}
 ${dts_es2015}
 ${dts_es2015_collection}
+${dts_es2015_symbol}
+${dts_es2015_iterable}
+${dts_es2015_generator}
 
+interface Window {}
 interface Console {
   memory: any;
   assert(condition?: boolean, ...data: any[]): void;
@@ -171,9 +178,16 @@ function resolveModuleNames(
   _redirectedReference: ts.ResolvedProjectReference | undefined,
   options: ts.CompilerOptions
 ): ts.ResolvedModule[] {
+  const defaultFound = Array.from(RESOLVER_MAP.values()).find(
+    (entry) => entry.file === containingFile
+  );
+
   const resolvedModules: ts.ResolvedModule[] = [];
   for (const moduleName of moduleNames) {
-    const foundSourceCode = RESOLVER_MAP.get(moduleName);
+    let foundSourceCode = RESOLVER_MAP.get(moduleName);
+    if (!foundSourceCode) {
+      foundSourceCode = defaultFound;
+    }
 
     let result = ts.resolveModuleName(moduleName, containingFile, options, {
       fileExists: () => true,
@@ -282,17 +296,15 @@ export const compileFile = (data: {
   }
 };
 
-export const compileProgram = (source: string) => {
+export const compileProgram = (source: string, fileName: string) => {
   let result: CompileFileResult;
 
   try {
     result = compileFile({
       code: source,
-      path: "example.tsx",
+      path: fileName ?? "example.tsx",
       getPreEmitDiagnostics: true,
     });
-
-    console.log(result);
 
     const deps = result.dependencies || [];
 

@@ -37,8 +37,27 @@ type ListRenderingParam<T> = {
 
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
+import type { VirtualBrain } from '../../VirtualBrain';
 
-export function useListRendering<T>(param: ListRenderingParam<T>) {
+type ListRenderingResult = {
+  scrollbars: { vertical: boolean; horizontal: boolean };
+
+  horizontalVirtualBrain: VirtualBrain;
+  verticalVirtualBrain: VirtualBrain;
+  applyScrollHorizontal: ({ scrollLeft }: { scrollLeft: number }) => void;
+  applyScrollVertical: ({ scrollTop }: { scrollTop: number }) => void;
+  pinnedStartList: JSX.Element | null;
+  pinnedEndList: JSX.Element | null;
+  pinnedStartScrollbarPlaceholder: JSX.Element | null;
+  pinnedEndScrollbarPlaceholder: JSX.Element | null;
+  centerList: JSX.Element | null;
+  repaintId: number;
+  reservedContentHeight: number;
+};
+
+export function useListRendering<T>(
+  param: ListRenderingParam<T>,
+): ListRenderingResult {
   const { computed, domRef, bodySize, columnShifts } = param;
 
   const { componentActions, componentState, getState } = useInfiniteTable<T>();

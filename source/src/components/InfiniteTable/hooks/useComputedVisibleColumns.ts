@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 import type { InfiniteTableColumn } from '../types';
-import {
+import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
@@ -10,12 +10,53 @@ import {
 import type { Size } from '../../types/Size';
 
 import { getComputedVisibleColumns } from '../utils/getComputedVisibleColumns';
+import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
 import { useColumnPinningRerenderOnKeyChange } from './useColumnPinningRerenderOnKeyChange';
 import { useColumnRerenderOnKeyChange } from './useColumnRerenderOnKeyChange';
 import { useColumnVisibilityRerenderOnKeyChange } from './useColumnVisibilityRerenderOnKeyChange';
 import { dbg } from '../../../utils/debug';
 
 const debug = dbg('useColumns');
+
+type UseComputedVisibleColumnsParam<T> = {
+  columns: Map<string, InfiniteTableColumn<T>>;
+
+  bodySize: Size;
+  columnMinWidth?: number;
+  columnMaxWidth?: number;
+  columnDefaultWidth?: number;
+  sortable?: boolean;
+  draggableColumns?: boolean;
+  multiSort: boolean;
+  sortInfo?: DataSourceSingleSortInfo<T>[];
+  setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
+
+  // columnAggregations: InfiniteTablePropColumnAggregations<T>;
+  columnPinning: InfiniteTablePropColumnPinning;
+  columnOrder: InfiniteTablePropColumnOrder;
+  columnVisibility: InfiniteTablePropColumnVisibility;
+  columnVisibilityAssumeVisible?: boolean;
+};
+
+type UseComputedVisibleColumnsResult<T> = {
+  columns: UseComputedVisibleColumnsParam<T>['columns'];
+  computedRemainingSpace: GetComputedVisibleColumnsResult<T>['computedRemainingSpace'];
+  computedUnpinnedOffset: GetComputedVisibleColumnsResult<T>['computedUnpinnedOffset'];
+  computedPinnedEndOffset: GetComputedVisibleColumnsResult<T>['computedPinnedEndOffset'];
+
+  computedPinnedStartColumnsWidth: GetComputedVisibleColumnsResult<T>['computedPinnedStartColumnsWidth'];
+  computedPinnedEndColumnsWidth: GetComputedVisibleColumnsResult<T>['computedPinnedEndColumnsWidth'];
+  computedUnpinnedColumnsWidth: GetComputedVisibleColumnsResult<T>['computedUnpinnedColumnsWidth'];
+
+  computedPinnedStartColumns: GetComputedVisibleColumnsResult<T>['computedPinnedStartColumns'];
+  computedPinnedEndColumns: GetComputedVisibleColumnsResult<T>['computedPinnedEndColumns'];
+  computedUnpinnedColumns: GetComputedVisibleColumnsResult<T>['computedUnpinnedColumns'];
+
+  computedVisibleColumns: GetComputedVisibleColumnsResult<T>['computedVisibleColumns'];
+  computedVisibleColumnsMap: GetComputedVisibleColumnsResult<T>['computedVisibleColumnsMap'];
+
+  computedColumnOrder: GetComputedVisibleColumnsResult<T>['computedColumnOrder'];
+};
 
 export const useComputedVisibleColumns = <T extends unknown>({
   columns,
@@ -26,30 +67,14 @@ export const useComputedVisibleColumns = <T extends unknown>({
   sortable,
   draggableColumns,
   sortInfo,
+  multiSort,
   setSortInfo,
   columnOrder,
   columnPinning,
   // columnAggregations,
   columnVisibility,
   columnVisibilityAssumeVisible,
-}: {
-  columns: Map<string, InfiniteTableColumn<T>>;
-
-  bodySize: Size;
-  columnMinWidth?: number;
-  columnMaxWidth?: number;
-  columnDefaultWidth?: number;
-  sortable?: boolean;
-  draggableColumns?: boolean;
-  sortInfo: DataSourceSingleSortInfo<T>[];
-  setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
-
-  // columnAggregations: InfiniteTablePropColumnAggregations<T>;
-  columnPinning: InfiniteTablePropColumnPinning;
-  columnOrder: InfiniteTablePropColumnOrder;
-  columnVisibility: InfiniteTablePropColumnVisibility;
-  columnVisibilityAssumeVisible?: boolean;
-}) => {
+}: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
   const columnsRenderId = useColumnRerenderOnKeyChange(columns);
   const visibilityRenderId =
     useColumnVisibilityRerenderOnKeyChange(columnVisibility);
@@ -85,6 +110,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
       sortable,
       sortInfo,
       setSortInfo,
+      multiSort,
 
       draggableColumns,
       columnOrder,
@@ -105,6 +131,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     sortable,
     sortInfo,
     setSortInfo,
+    multiSort,
 
     columnOrder,
     columnVisibility,
@@ -118,7 +145,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     // columnAggregationsRenderId,
   ]);
 
-  return {
+  const result: UseComputedVisibleColumnsResult<T> = {
     columns,
     computedRemainingSpace,
     computedUnpinnedOffset,
@@ -133,4 +160,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedVisibleColumnsMap,
     computedColumnOrder,
   };
+
+  return result;
 };

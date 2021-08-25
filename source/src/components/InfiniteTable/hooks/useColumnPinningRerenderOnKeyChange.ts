@@ -9,10 +9,20 @@ export const useColumnPinningRerenderOnKeyChange = (
   const [renderId, rerender] = useRerender();
 
   useEffect(() => {
+    let rafId: number = 0;
+    const update = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        rerender();
+      });
+    };
     return interceptMap(columnPinning, {
-      set: rerender,
-      clear: rerender,
-      delete: rerender,
+      set: update,
+      clear: update,
+      delete: update,
     });
   }, [columnPinning]);
 

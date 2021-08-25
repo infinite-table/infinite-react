@@ -9,8 +9,6 @@ import {
 import { InfiniteTableComputedColumn } from '../../types/InfiniteTableColumn';
 import { ICSS } from '../../../../style/utilities';
 import { internalProps } from '../../internalProps';
-import { ArrowDown } from '../icons/ArrowDown';
-import { ArrowUp } from '../icons/ArrowUp';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { InfiniteTableHeaderCellProps } from '../InfiniteTableRow/InfiniteTableCellTypes';
@@ -18,6 +16,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { createPortal } from 'react-dom';
+import { SortIcon } from '../icons/SortIcon';
 
 const defaultStyle: React.CSSProperties = {
   position: 'absolute' as 'absolute',
@@ -33,12 +32,13 @@ export function InfiniteTableHeaderCell<T>(
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
   const columns: Map<string, InfiniteTableComputedColumn<T>> = props.columns;
-  const {
-    onResize,
-    virtualized = true,
-    cssPosition,
-    offset: offsetFromProps,
-  } = props;
+  const { onResize, virtualized = true } = props;
+  let { cssPosition, offset: offsetFromProps } = props;
+
+  if (virtualized === false) {
+    cssPosition = cssPosition ?? 'relative';
+    offsetFromProps = offsetFromProps ?? 0;
+  }
 
   const sortInfo = column.computedSortInfo;
 
@@ -51,19 +51,17 @@ export function InfiniteTableHeaderCell<T>(
   }
   header = header ?? column.name;
 
-  const sortTool = column.computedSorted ? (
-    column.computedSortedAsc ? (
-      <ArrowUp />
-    ) : (
-      <ArrowDown />
-    )
-  ) : null;
-
-  // const onClick = useCallback(() => {
-  // if (column.computedSortable) {
-  // column.toggleSort();
-  // }
-  // }, [column, sortInfo]);
+  const sortTool = (
+    <SortIcon
+      index={
+        column.computedMultiSort ? column.computedSortIndex + 1 : undefined
+      }
+      className={`${baseCls}__sort-icon`}
+      direction={
+        column.computedSorted ? (column.computedSortedAsc ? 1 : -1) : 0
+      }
+    />
+  );
 
   const domRef = useRef<HTMLElement | null>(null);
   const ref = useCallback(
@@ -154,7 +152,7 @@ export function InfiniteTableHeaderCell<T>(
             : '',
         )}
         cssEllipsis={column.headerCssEllipsis ?? column.cssEllipsis ?? true}
-        outerChildren={sortTool}
+        afterChildren={sortTool}
       >
         {header}
       </InfiniteTableCell>

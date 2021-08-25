@@ -93,6 +93,8 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     />
   ) : (
     <InfiniteTableHeaderUnvirtualized
+      brain={brain}
+      scrollable
       columns={computedUnpinnedColumns}
       totalWidth={computedUnpinnedColumnsWidth}
     />

@@ -20,7 +20,7 @@ import {
 
 import { width100, email, submitButton } from "./components.css";
 
-function encode(data) {
+function encode(data: any) {
   return Object.keys(data)
     .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
     .join("&");
@@ -31,7 +31,7 @@ export const GetAccessForm = () => {
 
   const [thankyou, setThankyou] = React.useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     fetch("/", {
       method: "POST",

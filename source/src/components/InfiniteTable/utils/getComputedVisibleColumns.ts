@@ -7,14 +7,17 @@ import type { Size } from '../../types/Size';
 import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 
 import { computeFlex } from '../../flexbox';
-import {
+import type {
   InfiniteTablePropColumnOrder,
+  InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 
-export type SortInfoMap<T> = { [key: string]: DataSourceSingleSortInfo<T> };
+export type SortInfoMap<T> = {
+  [key: string]: { sortInfo: DataSourceSingleSortInfo<T>; index: number };
+};
 
 const isColumnVisible = (
   columnVisibility: InfiniteTablePropColumnVisibility,
@@ -44,6 +47,49 @@ const getComputedPinned = (
   return computedPinned;
 };
 
+export type GetComputedVisibleColumnsResult<T> = {
+  computedRemainingSpace: number;
+  computedPinnedStartColumnsWidth: number;
+  computedPinnedEndColumnsWidth: number;
+  computedUnpinnedColumnsWidth: number;
+
+  columnMinWidth?: number;
+  columnMaxWidth?: number;
+  columnDefaultWidth?: number;
+
+  computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
+  computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
+  computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
+
+  computedColumnOrder: InfiniteTablePropColumnOrderNormalized;
+
+  computedUnpinnedOffset: number;
+  computedPinnedEndOffset: number;
+
+  computedVisibleColumns: InfiniteTableComputedColumn<T>[];
+  computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+};
+
+type GetComputedVisibleColumnsParam<T> = {
+  columns: Map<string, InfiniteTableColumn<T>>;
+
+  bodySize: Size;
+  columnMinWidth?: number;
+  columnMaxWidth?: number;
+  columnDefaultWidth?: number;
+
+  sortable?: boolean;
+  multiSort: boolean;
+  sortInfo?: DataSourceSingleSortInfo<T>[];
+  setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
+
+  draggableColumns?: boolean;
+  columnOrder: InfiniteTablePropColumnOrder;
+  columnPinning: InfiniteTablePropColumnPinning;
+  columnVisibility: InfiniteTablePropColumnVisibility;
+  columnVisibilityAssumeVisible: boolean;
+};
+
 export const getComputedVisibleColumns = <T extends unknown>({
   columns,
 
@@ -54,29 +100,14 @@ export const getComputedVisibleColumns = <T extends unknown>({
   sortable,
   sortInfo,
   setSortInfo,
+  multiSort,
+
   draggableColumns,
   columnOrder,
   columnPinning,
   columnVisibility,
   columnVisibilityAssumeVisible,
-}: {
-  columns: Map<string, InfiniteTableColumn<T>>;
-
-  bodySize: Size;
-  columnMinWidth?: number;
-  columnMaxWidth?: number;
-  columnDefaultWidth?: number;
-
-  sortable?: boolean;
-  sortInfo: DataSourceSingleSortInfo<T>[];
-  setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
-
-  draggableColumns?: boolean;
-  columnOrder: InfiniteTablePropColumnOrder;
-  columnPinning: InfiniteTablePropColumnPinning;
-  columnVisibility: InfiniteTablePropColumnVisibility;
-  columnVisibilityAssumeVisible: boolean;
-}) => {
+}: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
   let computedOffset = 0;
 
   const normalizedColumnOrder = adjustColumnOrderForPinning(
@@ -99,13 +130,16 @@ export const getComputedVisibleColumns = <T extends unknown>({
     },
   );
 
-  const sortedMap = sortInfo.reduce(
-    (acc: SortInfoMap<T>, info: DataSourceSingleSortInfo<T>) => {
+  const sortedMap = (sortInfo ?? []).reduce(
+    (acc: SortInfoMap<T>, info: DataSourceSingleSortInfo<T>, index) => {
       if (info.id) {
-        acc[info.id] = info;
+        acc[info.id] = { sortInfo: info, index };
       }
       if (info.field) {
-        acc[info.field as unknown as keyof SortInfoMap<T>] = info;
+        acc[info.field as unknown as keyof SortInfoMap<T>] = {
+          sortInfo: info,
+          index,
+        };
       }
       return acc;
     },
@@ -176,40 +210,63 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const id = visibleColumnOrder[i];
     const nextColumnId = visibleColumnOrder[i + 1];
 
-    const computedSortInfo = sortedMap[id as string] ?? null;
+    const sortingInfo = sortedMap[id as string]
+      ? sortedMap[id as string]
+      : null;
+
+    const computedSortInfo = sortingInfo?.sortInfo ?? null;
     const computedSorted = !!computedSortInfo;
-    const computedSortedAsc = computedSorted && computedSortInfo.dir === 1;
+    const computedSortedAsc = computedSorted && computedSortInfo!.dir === 1;
     const computedSortedDesc = computedSorted && !computedSortedAsc;
+    const computedSortIndex = sortingInfo?.index ?? -1;
 
     const computedWidth = computedSizes[i];
 
     const toggleSort = () => {
       let currentSortInfo = computedSortInfo;
-      let newColumnSortInfo: DataSourceSingleSortInfo<T>[];
+      let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
 
       if (!currentSortInfo) {
-        newColumnSortInfo = [
-          {
-            dir: 1,
-            id,
-            field: c.field,
-            type: c.type,
-          } as DataSourceSingleSortInfo<T>,
-        ];
+        newColumnSortInfo = {
+          dir: 1,
+          id,
+          field: c.field,
+          type: c.type,
+        } as DataSourceSingleSortInfo<T>;
       } else {
         if (computedSortedDesc) {
-          newColumnSortInfo = [];
+          newColumnSortInfo = null;
         } else {
-          newColumnSortInfo = [
-            {
-              ...computedSortInfo,
-              dir: -1,
-            },
-          ];
+          newColumnSortInfo = {
+            ...computedSortInfo,
+            dir: -1,
+          };
         }
       }
 
-      setSortInfo(newColumnSortInfo);
+      let finalSortInfo = sortInfo ? [...sortInfo] : [];
+      if (multiSort) {
+        if (computedSortIndex === -1) {
+          // it should be added to the end
+          if (newColumnSortInfo) {
+            finalSortInfo.push(newColumnSortInfo);
+          }
+        } else {
+          // it's an existing sort - so should be updated
+          finalSortInfo = finalSortInfo
+            .map((info, index) => {
+              if (index === computedSortIndex) {
+                return newColumnSortInfo;
+              }
+              return info;
+            })
+            .filter((x) => x != null) as DataSourceSingleSortInfo<T>[];
+        }
+      } else {
+        finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];
+      }
+
+      setSortInfo(finalSortInfo);
     };
 
     // const pinned = columnPinning.get(id);
@@ -243,6 +300,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedOffset,
       computedSortable: c.sortable ?? sortable ?? true,
       computedSortInfo,
+      computedSortIndex,
+      computedMultiSort: multiSort,
       computedSorted,
       computedSortedAsc,
       computedSortedDesc,
@@ -279,7 +338,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     prevPinned = computedPinned;
   });
 
-  return {
+  const result: GetComputedVisibleColumnsResult<T> = {
     computedRemainingSpace:
       bodySize.width -
       (totalPinnedStartWidth + totalPinnedEndWidth + totalUnpinnedWidth),
@@ -296,4 +355,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
     computedVisibleColumns,
     computedVisibleColumnsMap,
   };
+
+  return result;
 };

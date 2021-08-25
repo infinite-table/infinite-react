@@ -15,7 +15,7 @@ module.exports = {
       libraries: {
         allowedTypesLibraries: [],
         importedLibraries: ['node', 'typescript'],
-        inlinedLibraries: ['react', 'prop-types', 'csstype'],
+        inlinedLibraries: [],
       },
       output: {
         noBanner: true,

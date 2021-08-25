@@ -174,6 +174,8 @@ function InfiniteTableContextProvider<T>() {
   const getComputed = useLatest(computed);
   const getState = useLatest(componentState);
 
+  (globalThis as any).getState = getState;
+
   const contextValue: InfiniteTableContextValue<T> = {
     componentActions,
     componentState,

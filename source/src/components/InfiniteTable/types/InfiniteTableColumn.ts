@@ -6,6 +6,8 @@ import type {
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableEnhancedData } from '.';
 
+export type { DiscriminatedUnion, RequireAtLeastOne };
+
 export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable | void;
@@ -105,7 +107,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedSorted: boolean;
   computedSortedAsc: boolean;
   computedSortedDesc: boolean;
+  computedSortIndex: number;
   computedVisibleIndex: number;
+  computedMultiSort: boolean;
 
   computedPinned: InfiniteTableColumnPinned;
   computedDraggable: boolean;

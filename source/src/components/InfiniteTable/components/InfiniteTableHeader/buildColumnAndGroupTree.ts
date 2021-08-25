@@ -19,6 +19,8 @@ export type ColGroupTreeGroupItem<T> = ColGroupTreeBaseItem & {
   type: 'group';
   ref: InfiniteTableColumnGroup;
 
+  uniqueGroupId: string[];
+
   children: ColGroupTreeItem<T>[];
   columnItems: ColGroupTreeColumnItem<T>[];
 };
@@ -123,6 +125,7 @@ export function buildColumnAndGroupTree<T>(
             columnItems: [],
             children: [],
             groupOffset: 0,
+            uniqueGroupId: [groupId],
             computedWidth: 0,
             depth: columnGroupsDepthsMap.get(groupId) ?? 0,
           };
@@ -131,6 +134,8 @@ export function buildColumnAndGroupTree<T>(
         }
 
         colGroupItem.columnItems.push(colItem);
+        colGroupItem.uniqueGroupId.push(colItem.id);
+
         if (
           prevGroupItem &&
           !parentGroupsOfPreviousColumn.has(prevGroupItem.id)

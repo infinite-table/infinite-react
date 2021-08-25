@@ -18,7 +18,9 @@ const getColumnGroups = () => {
 };
 
 const columnGroups = getColumnGroups();
+const collapsedColumnGroups = new Map<string[], true>();
 (globalThis as any).columnGroups = columnGroups;
+(globalThis as any).collapsedColumnGroups = collapsedColumnGroups;
 
 const App = () => {
   return (
@@ -34,6 +36,7 @@ const App = () => {
             },
           }}
           columnGroups={columnGroups}
+          defaultCollapsedColumnGroups={collapsedColumnGroups}
           columnDefaultWidth={140}
           columnMinWidth={50}
           columns={columns}

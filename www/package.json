@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "npm run update-versions && next dev",
-    "build": "npm run update-versions && next build && next export",
+    "build": "npm run update-versions && npm run generate-lib-dts && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "test-compile": "node ./build/test-compiler.js",
-    "esbuild-cjs": "node build/ts-compiler/run-build.js cjs",
-    "wesbuild-cjs": "node build/ts-compiler/run-build.js cjs --watch",
+    "source-build": "npm run --prefix=../source build",
+    "generate-lib-dts": "node build/ts-compiler/copy-lib-tsc",
+    "esbuild-cjs": "npm run generate-lib-dts && node build/ts-compiler/run-build.js cjs",
+    "wesbuild-cjs": "npm run generate-lib-dts && node build/ts-compiler/run-build.js cjs --watch",
     "update-versions": "node build/generate-versions-info.js"
   },
   "dependencies": {
@@ -17,6 +19,7 @@
     "@vanilla-extract/css": "1.1.0",
     "clipboard": "^2.0.8",
     "dashify": "^2.0.0",
+    "debounce": "^1.2.1",
     "globby": "^11.0.4",
     "humanize-string": "^2.1.0",
     "modern-normalize": "^1.1.0",
@@ -24,10 +27,12 @@
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-live": "^2.2.3"
+    "react-live": "^2.2.3",
+    "react-simple-code-editor": "^0.11.0"
   },
   "devDependencies": {
     "@mdx-js/react": "^1.6.22",
+    "@types/mdx-js__react": "^1.5.4",
     "@types/node": "^14.14.37",
     "@types/react": "^17.0.3",
     "@vanilla-extract/babel-plugin": "1.0.0",

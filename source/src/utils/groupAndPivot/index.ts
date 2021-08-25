@@ -3,7 +3,6 @@ import {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumns,
-  InfiniteTableProps,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
 
