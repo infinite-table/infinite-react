@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run update-versions && next dev",
-    "build": "npm run update-versions && npm run generate-lib-dts && next build && next export",
+    "build": "npm run update-versions && npm run generate-lib-dts && npm run esbuild-cjs && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "test-compile": "node ./build/test-compiler.js",
     "source-build": "npm run --prefix=../source build",
