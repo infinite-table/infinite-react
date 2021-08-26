@@ -9,6 +9,14 @@ import {
 export const BRAND_COLOR_DEFAULT = "#0b6fcb";
 export const BRAND_COLOR_DARK = "#133048";
 
+export const screenSizes = {
+  "screen-sm": "640px",
+  "screen-md": "768px",
+  "screen-lg": "1024px",
+  "screen-xl": "1280px",
+  "screen-2xl": "1536px",
+};
+
 const colorVariables = {
   brand: BRAND_COLOR_DEFAULT,
   brandDark: BRAND_COLOR_DARK,
@@ -106,15 +114,12 @@ export const maxWidth = styleVariants(
     "5xl": "64rem",
     "6xl": "72rem",
     "7xl": "80rem",
+    "8xl": "95rem",
     full: "100%",
     min: "min-content",
     max: "max-content",
     prose: "65ch",
-    "screen-sm": "640px",
-    "screen-md": "768px",
-    "screen-lg": "1024px",
-    "screen-xl": "1280px",
-    "screen-2xl": "1536px",
+    ...screenSizes,
   },
   (value) => {
     return {

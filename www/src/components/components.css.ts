@@ -35,10 +35,10 @@ export const minHeightFull = style({
 
 export const fullWidthContainer = composeStyles(centeredFlexColumn, width100);
 export const container = composeStyles(
-  maxWidth["7xl"],
   paddingX["3"],
   style({
     width: "100%",
+    maxWidth: "90vw",
   })
 );
 

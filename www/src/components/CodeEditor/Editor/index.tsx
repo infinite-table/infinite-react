@@ -4,21 +4,19 @@ import SimpleCodeEditor from "react-simple-code-editor";
 
 import Highlight, { defaultProps } from "prism-react-renderer";
 import vsLight from "prism-react-renderer/themes/vsLight";
-import { CodeEditorHeader } from "../CodeEditorHeader";
-import { clipboardButton } from "@www/components/DocsCodeBlock";
-import { spaceScale } from "@www/styles/utils.css";
-import { editorClassName } from "../index.css";
-import { useEffect } from "react";
+
+import { editorClassName, editorFullScreen } from "../index.css";
 
 type EditorProps = {
   code: string;
-  hasError: boolean;
+
+  fullScreen: boolean;
   onCodeChange: (code: string) => void;
-  title?: string;
+
   height?: string | number;
 };
 
-const highlight = (code: string, title?: string, height?: string | number) => {
+const highlight = (code: string) => {
   return (
     <Highlight {...defaultProps} code={code} language={"tsx"} theme={vsLight}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -39,28 +37,23 @@ const highlight = (code: string, title?: string, height?: string | number) => {
 };
 export function Editor(props: EditorProps) {
   return (
-    <>
-      {props.title ? (
-        <CodeEditorHeader
-          ts={true}
-          hasError={props.hasError}
-          title={props.title}
-          clipboardCode={props.code}
-        />
-      ) : null}
-      <div
-        className={editorClassName}
-        style={{
-          height: props.height,
-          overflow: "auto",
-        }}
-      >
-        <SimpleCodeEditor
-          value={props.code}
-          onValueChange={props.onCodeChange}
-          highlight={(code) => highlight(code, props.title, props.height)}
-        />
-      </div>
-    </>
+    <div
+      className={`${editorClassName} ${
+        props.fullScreen ? editorFullScreen : ""
+      }`}
+      style={{
+        overflow: "hidden",
+
+        minHeight: props.height,
+        height: props.height,
+      }}
+    >
+      <SimpleCodeEditor
+        value={props.code}
+        style={{ height: "100%", overflow: "auto" }}
+        onValueChange={props.onCodeChange}
+        highlight={(code) => highlight(code)}
+      />
+    </div>
   );
 }

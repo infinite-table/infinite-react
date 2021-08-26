@@ -5,6 +5,7 @@ export const docsContentClassName = composeStyles(
   style({
     lineHeight: "1.75",
     fontFamily: "Roboto",
+    overflow: "hidden",
   }),
   display.flex,
   flexDirection.column,

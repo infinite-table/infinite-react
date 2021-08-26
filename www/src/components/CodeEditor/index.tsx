@@ -3,9 +3,15 @@ import * as React from "react";
 import * as InfiniteTable from "@infinite-table/infinite-react";
 
 import { useMemo, useRef, useState } from "react";
-import { errorClassName } from "./index.css";
+import {
+  editorWrapperClassName,
+  editorWrapperFullScreen,
+  errorClassName,
+} from "./index.css";
 import { compile } from "./compile";
 import { Editor } from "./Editor";
+import { CodeEditorHeader } from "./CodeEditorHeader";
+import { vars } from "@www/styles/utils.css";
 
 const debounce = require("debounce");
 const dashify = require("dashify");
@@ -134,12 +140,14 @@ export const CodeEditor = (props: CodeEditorProps) => {
 
   const onCodeChange = useMemo(() => {
     const transpile = debounce((code: string) => {
-      const { updated, preview, errors } = getPreview(code);
+      requestAnimationFrame(() => {
+        const { updated, preview, errors } = getPreview(code);
 
-      if (updated) {
-        setPreview(preview);
-      }
-      setErrors(errors);
+        if (updated) {
+          setPreview(preview);
+        }
+        setErrors(errors);
+      });
     }, 500);
 
     return (code: string) => {
@@ -147,25 +155,62 @@ export const CodeEditor = (props: CodeEditorProps) => {
       transpile(code);
     };
   }, []);
+  const [fullScreen, setFullScreen] = useState(false);
 
+  if (fullScreen) {
+    height = "100%";
+  }
   const editor = (
     <Editor
+      fullScreen={fullScreen}
       onCodeChange={onCodeChange}
-      hasError={!!errors.length}
       code={code}
-      title={title}
       height={height}
     />
   );
+
+  const toggleFullScreen = () => setFullScreen(!fullScreen);
+
+  const style: React.CSSProperties = fullScreen
+    ? {
+        position: "fixed",
+        top: 88, // height of the header TODO improve this
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: vars.color.white,
+      }
+    : {};
+
   if (live) {
     return (
-      <>
-        {preview}
-        {editor}
+      <div style={style}>
+        {title ? (
+          <CodeEditorHeader
+            toggleFullScreen={toggleFullScreen}
+            fullScreen={fullScreen}
+            ts={true}
+            hasError={!!errors.length}
+            title={props.title}
+            clipboardCode={code}
+          />
+        ) : null}
+        <div
+          className={`${editorWrapperClassName} ${
+            fullScreen ? editorWrapperFullScreen : ""
+          }`}
+          style={{ height: fullScreen ? "100%" : "" }}
+        >
+          <div style={{ minWidth: "50%", minHeight: height, height }}>
+            {preview}
+          </div>
+          {editor}
+        </div>
         <Errors errors={errors} />
-      </>
+      </div>
     );
   }
 
-  return editor;
+  return <div style={style}>{editor}</div>;
 };

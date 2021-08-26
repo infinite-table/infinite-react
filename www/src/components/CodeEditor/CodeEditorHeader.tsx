@@ -16,6 +16,8 @@ type CodeEditorHeaderProps = {
   clipboardCode?: string;
   ts: boolean;
   hasError: boolean;
+  fullScreen: boolean;
+  toggleFullScreen: () => void;
   // onLanguageChange: (ts: boolean) => void;
 };
 
@@ -42,6 +44,8 @@ export const CodeEditorHeader = (props: CodeEditorHeaderProps) => {
         background: props.hasError ? vars.color.errBackground : vars.color.gray,
         cursor: "pointer",
         position: "relative",
+        width: "100%",
+        marginBottom: 10,
         borderRadius: borderRadius["2xl"],
       }}
     >
@@ -79,7 +83,22 @@ export const CodeEditorHeader = (props: CodeEditorHeaderProps) => {
         </div>
       </div>
       {props.title ? humanizeString(props.title) : null}
-      {clipboardButton}
+      <div style={{ flex: 1 }} />
+      <div style={{ position: "relative", top: -8 }}>{clipboardButton}</div>
+      <svg
+        onClick={props.toggleFullScreen}
+        enable-background="new 0 0 24 24"
+        height={16}
+        viewBox="0 0 24 24"
+        width={16}
+        fill="currentColor"
+      >
+        {props.fullScreen ? (
+          <path d="M22,3.41l-5.29,5.29L20,12h-8V4l3.29,3.29L20.59,2L22,3.41z M3.41,22l5.29-5.29L12,20v-8H4l3.29,3.29L2,20.59L3.41,22z" />
+        ) : (
+          <polygon points="21,11 21,3 13,3 16.29,6.29 6.29,16.29 3,13 3,21 11,21 7.71,17.71 17.71,7.71" />
+        )}
+      </svg>
     </div>
   );
 };

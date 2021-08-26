@@ -1,5 +1,10 @@
 import { globalStyle, style } from "@vanilla-extract/css";
-import { borderRadius, spaceScale, vars } from "@www/styles/utils.css";
+import {
+  borderRadius,
+  screenSizes,
+  spaceScale,
+  vars,
+} from "@www/styles/utils.css";
 
 export const languageClassName = style({
   marginRight: vars.space[1],
@@ -14,11 +19,23 @@ export const selectedClassName = style({
   opacity: 1,
 });
 
+const editorSeparatorStyle = {
+  paddingLeft: 10,
+  borderLeft: `1px solid ${vars.color.gray}`,
+  marginLeft: 10,
+  flex: 1,
+};
 export const editorClassName = style({
   marginTop: spaceScale[1],
+  "@media": {
+    [`screen and (min-width: ${screenSizes["screen-xl"]})`]:
+      editorSeparatorStyle,
+  },
 });
 
-// we force all events have same font family
+export const editorFullScreen = style(editorSeparatorStyle);
+
+// we force all elements have same font family
 // and font size, since <pre> elements used for formatting
 // have a different inherited style, and the overlayed textarea
 // is not perfectly aligned if it has other sizes
@@ -39,4 +56,22 @@ export const errorClassName = style({
   background: vars.color.errBackground,
   padding: spaceScale[2],
   borderRadius: borderRadius["sm"],
+});
+
+export const editorWrapperClassName = style({
+  display: "flex",
+  flexDirection: "column",
+  "@media": {
+    [`screen and (min-width: ${screenSizes["screen-xl"]})`]: {
+      flexDirection: "row",
+    },
+  },
+});
+
+export const editorWrapperFullScreen = style({
+  flexDirection: "row",
+});
+
+globalStyle(`${editorClassName} .ITable`, {
+  height: "100%",
 });
