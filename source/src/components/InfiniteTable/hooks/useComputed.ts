@@ -41,7 +41,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   const setSortInfo = useCallback(
     (sortInfo: DataSourceSingleSortInfo<T>[]) => {
-      dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0];
+      dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
     },
     [multiSort],
   );

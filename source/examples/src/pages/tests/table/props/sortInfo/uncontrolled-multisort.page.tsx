@@ -5,7 +5,9 @@ import {
   DataSource,
   DataSourceSortInfo,
 } from '@infinite-table/infinite-react';
-import { Order, orders } from './orders-dataset';
+
+import { getOrders, Order } from './getOrders';
+const orders = getOrders();
 
 const sinon = require('sinon');
 

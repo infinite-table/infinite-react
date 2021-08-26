@@ -4,6 +4,7 @@ import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import { DataSourceSortInfo } from '@infinite-table/infinite-react';
 import { useState } from 'react';
+import { getOrders } from './getOrders';
 
 interface Order {
   OrderId: number;
@@ -13,41 +14,7 @@ interface Order {
   ShipCountry: string;
   ShipVia: string;
 }
-
-const orders = [
-  {
-    OrderId: 1,
-    CompanyName: 'Ltd company',
-    ItemCount: 10,
-    OrderCost: 950.5,
-    ShipVia: 'Federal Shipping',
-    ShipCountry: 'Canada',
-  },
-  {
-    OrderId: 20,
-    CompanyName: 'Abc',
-    ItemCount: 13,
-    OrderCost: 717.21,
-    ShipVia: 'United Package',
-    ShipCountry: 'Germany',
-  },
-  {
-    OrderId: 2,
-    CompanyName: 'Another one',
-    ItemCount: 13,
-    OrderCost: 1009.71,
-    ShipVia: 'Speedy Express',
-    ShipCountry: 'Finland',
-  },
-  {
-    OrderId: 3,
-    CompanyName: 'Because',
-    ItemCount: 14,
-    OrderCost: 760.76,
-    ShipVia: 'United Package',
-    ShipCountry: 'France',
-  },
-];
+const orders = getOrders();
 export default function ControlledPageTest() {
   const [sortInfo, setSortInfo] = useState<DataSourceSortInfo<Order>>({
     dir: 1,
@@ -71,14 +38,6 @@ export default function ControlledPageTest() {
         <DataSource<Order>
           data={orders}
           primaryKey="OrderId"
-          fields={[
-            'OrderId',
-            'CompanyName',
-            'ItemCount',
-            'OrderCost',
-            'ShipCountry',
-            'ShipVia',
-          ]}
           sortInfo={sortInfo}
           onSortInfoChange={(sortInfo) => {
             console.log(sortInfo);

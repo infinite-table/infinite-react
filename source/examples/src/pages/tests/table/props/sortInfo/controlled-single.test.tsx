@@ -1,5 +1,8 @@
 import { ElementHandle } from 'puppeteer';
 import { getColumnCells } from '../../../../../utils';
+import { getOrders, multisort } from './getOrders';
+
+const orders = getOrders();
 
 export default describe('Table', () => {
   beforeAll(async () => {
@@ -25,7 +28,12 @@ export default describe('Table', () => {
       ),
     );
 
-    expect(values).toEqual(['Abc', 'Another one', 'Because', 'Ltd company']);
+    const expected = multisort(
+      [{ field: 'CompanyName', dir: 1 }],
+      [...orders],
+    ).map((o) => o.CompanyName + '');
+
+    expect(values).toEqual(expected);
 
     // click the column header
     await headerCell.click();
@@ -42,7 +50,7 @@ export default describe('Table', () => {
 
     // expect them to be the same, since we have controlled prop
     // and no onSortInfoChange yet
-    expect(values).toEqual(['Abc', 'Another one', 'Because', 'Ltd company']);
+    expect(values).toEqual(expected);
 
     // now click the button to enable onSortInfoChange
     await (await page.$('button'))?.click();
@@ -51,7 +59,6 @@ export default describe('Table', () => {
 
     await page.waitForTimeout(20);
 
-    return;
     values = await Promise.all(
       // the first one is the header
       bodyCells.map(
@@ -60,7 +67,7 @@ export default describe('Table', () => {
       ),
     );
 
-    expect(values).toEqual(['Ltd company', 'Because', 'Another one', 'Abc']);
+    expect(values).toEqual([...expected].reverse());
 
     const { headerCell: orderIdHeaderCell, bodyCells: orderIdBodyCells } =
       await getColumnCells('OrderId');
@@ -69,6 +76,10 @@ export default describe('Table', () => {
     await orderIdHeaderCell.click();
     await page.waitForTimeout(20);
 
+    const ascById = multisort(
+      [{ dir: 1, field: 'OrderId', type: 'number' }],
+      [...orders],
+    ).map((o) => o.OrderId + '');
     expect(
       await Promise.all(
         // the first one is the header
@@ -77,7 +88,7 @@ export default describe('Table', () => {
             await cell.evaluate((node) => node.textContent),
         ),
       ),
-    ).toEqual(['1', '2', '3', '20']);
+    ).toEqual(ascById);
 
     // click again to sort desc
     await orderIdHeaderCell.click();
@@ -91,7 +102,7 @@ export default describe('Table', () => {
             await cell.evaluate((node) => node.textContent),
         ),
       ),
-    ).toEqual(['20', '3', '2', '1']);
+    ).toEqual([...ascById].reverse());
 
     // click again to unsort
     await orderIdHeaderCell.click();
@@ -105,6 +116,6 @@ export default describe('Table', () => {
             await cell.evaluate((node) => node.textContent),
         ),
       ),
-    ).toEqual(['1', '20', '2', '3']);
+    ).toEqual([...orders].map((o) => o.OrderId + ''));
   });
 });
