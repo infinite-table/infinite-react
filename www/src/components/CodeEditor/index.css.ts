@@ -26,7 +26,6 @@ const editorSeparatorStyle = {
   flex: 1,
 };
 export const editorClassName = style({
-  marginTop: spaceScale[1],
   "@media": {
     [`screen and (min-width: ${screenSizes["screen-xl"]})`]:
       editorSeparatorStyle,
@@ -70,6 +69,11 @@ export const editorWrapperClassName = style({
 
 export const editorWrapperFullScreen = style({
   flexDirection: "row",
+  top: 55,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  position: "absolute",
 });
 
 globalStyle(`${editorClassName} .ITable`, {

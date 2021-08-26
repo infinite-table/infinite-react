@@ -42,7 +42,7 @@ export function Editor(props: EditorProps) {
         props.fullScreen ? editorFullScreen : ""
       }`}
       style={{
-        overflow: "hidden",
+        overflow: "auto",
 
         minHeight: props.height,
         height: props.height,
@@ -50,7 +50,7 @@ export function Editor(props: EditorProps) {
     >
       <SimpleCodeEditor
         value={props.code}
-        style={{ height: "100%", overflow: "auto" }}
+        style={{ width: "min-content" }}
         onValueChange={props.onCodeChange}
         highlight={(code) => highlight(code)}
       />

@@ -132,9 +132,6 @@ export const CodeEditor = (props: CodeEditorProps) => {
       });
     }
 
-    // if (!thePreview) {
-    //   console.error
-    // }
     return thePreview;
   });
 
@@ -148,7 +145,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
         }
         setErrors(errors);
       });
-    }, 500);
+    }, 1500);
 
     return (code: string) => {
       setCode(code);
@@ -160,6 +157,11 @@ export const CodeEditor = (props: CodeEditorProps) => {
   if (fullScreen) {
     height = "100%";
   }
+
+  React.useEffect(() => {
+    document.documentElement.style.overflow = fullScreen ? "hidden" : "auto";
+  }, [fullScreen]);
+
   const editor = (
     <Editor
       fullScreen={fullScreen}
@@ -174,7 +176,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
   const style: React.CSSProperties = fullScreen
     ? {
         position: "fixed",
-        top: 88, // height of the header TODO improve this
+        top: 0, // height of the header TODO improve this
         bottom: 0,
         left: 0,
         right: 0,
@@ -200,7 +202,6 @@ export const CodeEditor = (props: CodeEditorProps) => {
           className={`${editorWrapperClassName} ${
             fullScreen ? editorWrapperFullScreen : ""
           }`}
-          style={{ height: fullScreen ? "100%" : "" }}
         >
           <div style={{ minWidth: "50%", minHeight: height, height }}>
             {preview}
