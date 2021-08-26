@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run update-versions && next dev",
+    "dev": "npm run update-versions && next dev -p 3001",
     "build": "npm run update-versions && npm run generate-lib-dts && npm run esbuild-cjs && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "test-compile": "node ./build/test-compiler.js",

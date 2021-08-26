@@ -25,6 +25,7 @@ const editorSeparatorStyle = {
   marginLeft: 10,
   flex: 1,
 };
+
 export const editorClassName = style({
   "@media": {
     [`screen and (min-width: ${screenSizes["screen-xl"]})`]:
@@ -76,6 +77,6 @@ export const editorWrapperFullScreen = style({
   position: "absolute",
 });
 
-globalStyle(`${editorClassName} .ITable`, {
+globalStyle(`${editorWrapperClassName} .ITable`, {
   height: "100%",
 });

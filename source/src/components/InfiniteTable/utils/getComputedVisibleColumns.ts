@@ -212,6 +212,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     const sortingInfo = sortedMap[id as string]
       ? sortedMap[id as string]
+      : c.field
+      ? sortedMap[c.field as string] ?? null
       : null;
 
     const computedSortInfo = sortingInfo?.sortInfo ?? null;
@@ -242,6 +244,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
             dir: -1,
           };
         }
+      }
+
+      if (c.field && newColumnSortInfo && !newColumnSortInfo.field) {
+        newColumnSortInfo.field = c.field;
       }
 
       let finalSortInfo = sortInfo ? [...sortInfo] : [];

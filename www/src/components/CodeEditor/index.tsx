@@ -9,9 +9,9 @@ import {
   errorClassName,
 } from "./index.css";
 import { compile } from "./compile";
-import { Editor } from "./Editor";
+import { Editor, highlight } from "./Editor";
 import { CodeEditorHeader } from "./CodeEditorHeader";
-import { vars } from "@www/styles/utils.css";
+import { spaceScale, vars } from "@www/styles/utils.css";
 
 const debounce = require("debounce");
 const dashify = require("dashify");
@@ -84,7 +84,7 @@ function Errors({ errors }: { errors: CodeError[] }) {
 }
 
 export const CodeEditor = (props: CodeEditorProps) => {
-  let { children, title, live, height } = props;
+  let { children, title = "example", live, height } = props;
 
   //@ts-ignore
   if (height && height == height * 1) {
@@ -162,15 +162,6 @@ export const CodeEditor = (props: CodeEditorProps) => {
     document.documentElement.style.overflow = fullScreen ? "hidden" : "auto";
   }, [fullScreen]);
 
-  const editor = (
-    <Editor
-      fullScreen={fullScreen}
-      onCodeChange={onCodeChange}
-      code={code}
-      height={height}
-    />
-  );
-
   const toggleFullScreen = () => setFullScreen(!fullScreen);
 
   const style: React.CSSProperties = fullScreen
@@ -183,21 +174,34 @@ export const CodeEditor = (props: CodeEditorProps) => {
         zIndex: 100,
         background: vars.color.white,
       }
-    : {};
+    : {
+        marginBottom: spaceScale[3],
+      };
 
+  const header = title ? (
+    <CodeEditorHeader
+      toggleFullScreen={toggleFullScreen}
+      fullScreen={fullScreen && !!live}
+      live={!!live}
+      ts={true}
+      hasError={live ? !!errors.length : false}
+      title={props.title}
+      clipboardCode={code}
+    />
+  ) : null;
   if (live) {
+    const editor = (
+      <Editor
+        fullScreen={fullScreen}
+        onCodeChange={onCodeChange}
+        code={code}
+        height={height}
+      />
+    );
+
     return (
       <div style={style}>
-        {title ? (
-          <CodeEditorHeader
-            toggleFullScreen={toggleFullScreen}
-            fullScreen={fullScreen}
-            ts={true}
-            hasError={!!errors.length}
-            title={props.title}
-            clipboardCode={code}
-          />
-        ) : null}
+        {header}
         <div
           className={`${editorWrapperClassName} ${
             fullScreen ? editorWrapperFullScreen : ""
@@ -213,5 +217,10 @@ export const CodeEditor = (props: CodeEditorProps) => {
     );
   }
 
-  return <div style={style}>{editor}</div>;
+  return (
+    <div style={style}>
+      {header}
+      {highlight(code)}
+    </div>
+  );
 };

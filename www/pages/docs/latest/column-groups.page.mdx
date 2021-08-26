@@ -144,7 +144,6 @@ function App() {
   return (
     <DataSource<Person> data={rowData} primaryKey="id">
       <InfiniteTable<Person>
-        domProps={domProps}
         columnGroups={columnGroups}
         columnDefaultWidth={130}
         columnMinWidth={50}

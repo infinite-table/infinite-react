@@ -28,8 +28,7 @@ const data: Person[] = [
   },
   {
     Id: 2,
-    FirstName:
-      "Alice",
+    FirstName: "Alice",
     Age: 50,
   },
   {
@@ -80,6 +79,15 @@ function App() {
 
 render(<App />);
 ```
+
+## Using the components
+
+In the code snippet above, you notice we're using 2 components:
+
+- `DataSource` - this needs to be a parent (or ancestor, at any level) of the `InfiniteTable` component - it controls which `data` the table below is rendering
+- `InfiniteTable` - the actual virtualized table component - needs to be inside a `DataSource`
+
+Both componets are named exports of the `@infinite-table/infinite-react` package.
 
 ## Licensing
 

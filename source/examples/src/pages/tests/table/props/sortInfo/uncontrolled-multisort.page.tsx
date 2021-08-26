@@ -13,6 +13,15 @@ const onSortInfoChange = sinon.spy(
   (_sortInfo: DataSourceSortInfo<Order>) => {},
 );
 
+const defaultSortInfo: DataSourceSortInfo<Order> = [
+  {
+    dir: 1,
+    field: 'ItemCount',
+  },
+  { dir: 1, field: 'CompanyName' },
+];
+
+(globalThis as any).defaultSortInfo = defaultSortInfo;
 (globalThis as any).onSortInfoChange = onSortInfoChange;
 
 export default () => {
@@ -22,7 +31,7 @@ export default () => {
         data={orders}
         onSortInfoChange={onSortInfoChange}
         primaryKey="OrderId"
-        defaultSortInfo={[]}
+        defaultSortInfo={defaultSortInfo}
       >
         <InfiniteTable<Order>
           domProps={{
@@ -38,22 +47,22 @@ export default () => {
           columns={
             new Map([
               [
-                'OrderId',
+                'orderId',
                 {
                   field: 'OrderId',
                   type: 'number',
                 },
               ],
               [
-                'CompanyName',
+                'companyName',
                 {
                   field: 'CompanyName',
                 },
               ],
-              ['ItemCount', { field: 'ItemCount', type: 'number' }],
-              ['OrderCost', { field: 'OrderCost', type: 'number' }],
-              ['ShipCountry', { field: 'ShipCountry' }],
-              ['ShipVia', { field: 'ShipVia' }],
+              ['itemCount', { field: 'ItemCount', type: 'number' }],
+              ['orderCost', { field: 'OrderCost', type: 'number' }],
+              ['shipCountry', { field: 'ShipCountry' }],
+              ['shipVia', { field: 'ShipVia' }],
             ])
           }
         />

@@ -1,8 +1,9 @@
+import { DataSourceSingleSortInfo } from '@infinite-table/infinite-react';
 import { ElementHandle } from 'puppeteer';
 import { getColumnCells, getGlobalFnCalls } from '../../../../../utils';
-import { orders } from './orders-dataset';
+import { getOrders, mapToString, multisort, Order } from './getOrders';
+const orders = getOrders();
 
-const getSortInfoCallsCount = () => (window as any).sortInfos.length;
 const getCalls = getGlobalFnCalls('onSortInfoChange');
 
 export default describe('Table', () => {
@@ -18,17 +19,24 @@ export default describe('Table', () => {
 
   it('uncontrolled sortInfo should work fine', async () => {
     await page.waitForTimeout(50);
-    const { headerCell, bodyCells } = await getColumnCells('ItemCount');
+    const { headerCell, bodyCells } = await getColumnCells('itemCount');
 
     let values = await Promise.all(
-      // the first one is the header
       bodyCells.map(
         async (cell: ElementHandle) =>
           await cell.evaluate((node) => node.textContent),
       ),
     );
 
-    expect(values).toEqual(orders.map((x) => `${x.ItemCount}`));
+    const defaultSortInfo: DataSourceSingleSortInfo<Order>[] =
+      await page.evaluate(() => (window as any).defaultSortInfo);
+
+    const expected = mapToString(
+      multisort(defaultSortInfo, [...orders]),
+      'ItemCount',
+    );
+
+    expect(values).toEqual(expected);
 
     // click the column header
     await headerCell.click();
@@ -43,19 +51,26 @@ export default describe('Table', () => {
       ),
     );
 
-    const sortedOrders = [...orders].sort((x, y) => x.ItemCount - y.ItemCount);
-    expect(values).toEqual(sortedOrders.map((x) => `${x.ItemCount}`));
+    defaultSortInfo[0].dir = -1;
+    expect(values).toEqual(
+      mapToString(multisort(defaultSortInfo, [...orders]), 'ItemCount'),
+    );
 
     // expect the onSortInfo callback to have been called once
     let calls = await getCalls();
     expect(calls.length).toEqual(1);
-    // and args to have been an array (containing one object, the sortinfo for ItemCount column)
-    expect(calls[0].args[0][0]).toMatchObject({
-      dir: 1,
-      id: 'ItemCount',
-    });
+    // and args to have been an array (containing two objects, the first one is desc sort info on ItemCount column)
+    expect(calls[0].args[0]).toEqual([
+      {
+        dir: -1,
+        field: 'ItemCount',
+      },
+      {
+        dir: 1,
+        field: 'CompanyName',
+      },
+    ]);
 
-    return;
     // click the column header again
     await headerCell.click();
 
@@ -64,10 +79,13 @@ export default describe('Table', () => {
     calls = await getCalls();
     expect(calls.length).toEqual(2);
 
-    expect(calls[1].args[0]).toMatchObject({
-      dir: -1,
-      id: 'OrderId',
-    });
+    // and the only sort left is by CompanyName
+    expect(calls[1].args[0]).toEqual([
+      {
+        dir: 1,
+        field: 'CompanyName',
+      },
+    ]);
 
     // refetch values
     values = await Promise.all(
@@ -77,6 +95,19 @@ export default describe('Table', () => {
       ),
     );
 
-    expect(values).toEqual(['20', '3', '2', '1']);
+    expect(values).toEqual(
+      mapToString(
+        multisort(
+          [
+            {
+              dir: 1,
+              field: 'CompanyName',
+            },
+          ],
+          [...orders],
+        ),
+        'ItemCount',
+      ),
+    );
   });
 });

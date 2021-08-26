@@ -1,8 +1,11 @@
 import { ElementHandle } from 'puppeteer';
+import { multisort } from '@src/utils/multisort';
 import { getColumnCells, getGlobalFnCalls } from '../../../../../utils';
+import { getOrders, mapToString, Order } from './getOrders';
 
-const getSortInfoCallsCount = () => (window as any).sortInfos.length;
 const getCalls = getGlobalFnCalls('onSortInfoChange');
+
+const orders = getOrders();
 
 export default describe('Table', () => {
   beforeAll(async () => {
@@ -27,7 +30,7 @@ export default describe('Table', () => {
       ),
     );
 
-    expect(values).toEqual(['1', '20', '2', '3']);
+    expect(values).toEqual(mapToString(orders, 'OrderId'));
 
     // click the column header
     await headerCell.click();
@@ -42,7 +45,15 @@ export default describe('Table', () => {
       ),
     );
 
-    expect(values).toEqual(['1', '2', '3', '20']);
+    const expected = mapToString(
+      multisort<Order>(
+        [{ dir: 1, field: 'OrderId', type: 'number' }],
+        [...orders],
+      ),
+      'OrderId',
+    );
+
+    expect(values).toEqual(expected);
 
     // expect the onSortInfo callback to have been called once
     let calls = await getCalls();
@@ -73,6 +84,20 @@ export default describe('Table', () => {
       ),
     );
 
-    expect(values).toEqual(['20', '3', '2', '1']);
+    expect(values).toEqual(
+      mapToString(
+        multisort<Order>(
+          [
+            {
+              field: 'OrderId',
+              dir: -1,
+              type: 'number',
+            },
+          ],
+          orders,
+        ),
+        'OrderId',
+      ),
+    );
   });
 });

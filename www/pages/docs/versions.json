@@ -7,6 +7,10 @@
         "label": "Getting started"
       },
       {
+        "path": "sorting",
+        "label": "Sorting"
+      },
+      {
         "path": "column-groups",
         "label": "Column groups"
       }

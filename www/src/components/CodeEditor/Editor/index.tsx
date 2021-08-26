@@ -16,7 +16,7 @@ type EditorProps = {
   height?: string | number;
 };
 
-const highlight = (code: string) => {
+export const highlight = (code: string) => {
   return (
     <Highlight {...defaultProps} code={code} language={"tsx"} theme={vsLight}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
