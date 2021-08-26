@@ -70,7 +70,7 @@ export const editorWrapperClassName = style({
 
 export const editorWrapperFullScreen = style({
   flexDirection: "row",
-  top: 55,
+  top: 74, //TODO update this
   bottom: 0,
   left: 0,
   right: 0,
