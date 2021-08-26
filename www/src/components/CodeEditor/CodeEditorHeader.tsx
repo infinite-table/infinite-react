@@ -25,7 +25,7 @@ export const CodeEditorHeader = (props: CodeEditorHeaderProps) => {
   const domProps: React.HTMLProps<HTMLDivElement> = {};
 
   if (props.clipboardCode) {
-    // (domProps as any)["data-clipboard-text"] = props.clipboardCode;
+    (domProps as any)["data-clipboard-text"] = props.clipboardCode;
     domProps.title = "Click to copy to clipboard";
   }
 
