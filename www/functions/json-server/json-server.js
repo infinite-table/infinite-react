@@ -9,9 +9,7 @@ var jsonServer = require("json-server");
 
 app.use(
   "/api",
-  jsonServer.router(
-    path.resolve(__dirname, "../../dataserver/data/employees.json")
-  )
+  jsonServer.router(path.resolve(__dirname, "./data/employees.json"))
 );
 
 const router = express.Router();
