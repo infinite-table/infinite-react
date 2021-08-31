@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run update-versions && next dev -p 3001",
+    "dev": "npm run update-versions && npm run source-build && npm run esbuild-cjs && next dev -p 3001",
     "build": "npm run update-versions && npm run generate-lib-dts && npm run esbuild-cjs && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "test-compile": "node ./build/test-compiler.js",
@@ -11,24 +11,30 @@
     "generate-lib-dts": "node build/ts-compiler/copy-lib-tsc",
     "esbuild-cjs": "npm run generate-lib-dts && node build/ts-compiler/run-build.js cjs",
     "wesbuild-cjs": "npm run generate-lib-dts && node build/ts-compiler/run-build.js cjs --watch",
-    "update-versions": "node build/generate-versions-info.js"
+    "update-versions": "node build/generate-versions-info.js",
+    "//": "http://localhost:3002/api/employees?_start=0&_limit=10",
+    "serve-data": "node serve-data.js"
   },
   "dependencies": {
     "@mdx-js/loader": "^1.6.22",
     "@next/mdx": "^10.2.3",
     "@vanilla-extract/css": "1.1.0",
+    "body-parser": "^1.19.0",
     "clipboard": "^2.0.8",
     "dashify": "^2.0.0",
     "debounce": "^1.2.1",
+    "express": "^4.17.1",
     "globby": "^11.0.4",
     "humanize-string": "^2.1.0",
+    "json-server": "^0.16.3",
     "modern-normalize": "^1.1.0",
     "next": "11.0.1",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-live": "^2.2.3",
-    "react-simple-code-editor": "^0.11.0"
+    "react-simple-code-editor": "^0.11.0",
+    "serverless-http": "^2.7.0"
   },
   "devDependencies": {
     "@mdx-js/react": "^1.6.22",

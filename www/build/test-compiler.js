@@ -10,12 +10,28 @@ import {
   DataSource,
 } from "@infinite-table/infinite-react";
 
-type Person = {
+
+import {Person, data} from './data'
+
+
+export default function App() {
+  return <DataSource<Person> primaryKey="Id" data={data}>
+  </DataSource>
+}
+
+`;
+
+const deps = new Map();
+deps.set(
+  "./data",
+  `
+
+export type Person = {
   Id: number;
   FirstName: string;
   Age: number;
 };
-const data: Person[] = [
+export const data: Person[] = [
   {
     Id: 1,
     FirstName: "Bob",
@@ -31,20 +47,13 @@ const data: Person[] = [
     FirstName: "Bill",
     Age: 5,
   },
-];
+];`
+);
+const result = compileProgram(code, "", deps);
 
-
-export default function App() {
-  return <DataSource<Person> primaryKey="Id" data={[{FirstName:4}]}>
-  </DataSource>
-}
-
-`;
-
-const result = compileProgram(code);
-
-console.log();
+// console.log();
 console.log(result);
-if (result.errors.length) {
-  throw "Has errors " + result.errors.length;
+if (result.errors && result.errors.length) {
+  // console.log(result.e)
+  // throw "Has errors " + result.errors.length;
 }

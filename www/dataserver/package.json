@@ -1,0 +1,36 @@
+{
+  "name": "dataserver",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "ts-node generate.ts",
+    "build": "node ./config/run-build.js cjs",
+    "watch": "npm run build && node ./config/run-build.js cjs --watch",
+    
+    "//":"http://localhost:3002/employees?_start=20&_end=25&_sort=id&_order=asc",
+    "serve": "json-server --watch ./data/employees.json --port 3002",
+    "gen-employees": "node bin/cli.js -c 10000 -o ./data/employees.json -n employees"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/node": "^16.7.2",
+    "@types/yargs": "^17.0.2",
+    "commander": "^8.1.0",
+    "esbuild": "^0.12.23",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "@types/faker": "^5.5.8",
+    "@types/json-server": "^0.14.4",
+    "all-countries-and-cities-json": "^1.0.0",
+    "faker": "^5.5.3",
+    "json-server": "^0.16.3",
+    "yargs": "^17.1.1"
+  }
+}

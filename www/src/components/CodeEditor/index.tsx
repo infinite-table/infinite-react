@@ -167,7 +167,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
   const style: React.CSSProperties = fullScreen
     ? {
         position: "fixed",
-        top: 0, // height of the header TODO improve this
+        top: 0,
         bottom: 0,
         left: 0,
         right: 0,

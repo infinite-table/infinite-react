@@ -110,6 +110,7 @@ const INIT_COMPILER_OPTIONS: ts.CompilerOptions = {
   module: ts.ModuleKind.CommonJS,
   isolatedModules: false,
   esModuleInterop: false,
+  // noEmit: false,
   // alwaysStrict: true,
   moduleResolution: ts.ModuleResolutionKind.NodeJs,
   // allowSyntheticDefaultImports: true,
@@ -172,6 +173,7 @@ const getErrors = (diagnostics: readonly ts.Diagnostic[]) => {
 };
 
 function resolveModuleNames(
+  extraDependencies: Map<string, string>,
   moduleNames: string[],
   containingFile: string,
   _reusedNames: string[] | undefined,
@@ -185,7 +187,13 @@ function resolveModuleNames(
   const resolvedModules: ts.ResolvedModule[] = [];
   for (const moduleName of moduleNames) {
     let foundSourceCode = RESOLVER_MAP.get(moduleName);
-    if (!foundSourceCode) {
+    if (!foundSourceCode && extraDependencies.has(moduleName)) {
+      foundSourceCode = {
+        file: containingFile,
+        code: extraDependencies.get(containingFile)!,
+      };
+    }
+    if (!foundSourceCode && defaultFound) {
       foundSourceCode = defaultFound;
     }
 
@@ -217,13 +225,32 @@ export const compileFile = (data: {
   path: string;
   compilerOptions?: Partial<ts.CompilerOptions>;
   getPreEmitDiagnostics: boolean;
+  extraDependencies?: Map<string, string>;
 }): CompileFileResult => {
   let {
     code,
     path = "example.tsx",
     compilerOptions,
     getPreEmitDiagnostics,
+    extraDependencies = new Map<string, string>(),
   } = data;
+
+  if (extraDependencies) {
+    extraDependencies.forEach((value, key) => {
+      const { result: code, errors } = compileFile({
+        code: value,
+        path: key.replace("./", "") + ".ts",
+        getPreEmitDiagnostics: false,
+        compilerOptions: {
+          // noEmit: false,
+          emitDeclarationOnly: true,
+        },
+      });
+
+      // console.log(code);
+      // process.exit();
+    });
+  }
 
   compilerOptions = {
     ...compilerOptions,
@@ -259,9 +286,12 @@ export const compileFile = (data: {
         throw `Cannot resolve ${name}`;
       },
       writeFile: (_filename: string, data: string) => {
+        // console.log("writing", _filename);
         writeMap.set(_filename, data);
       },
-      resolveModuleNames,
+      resolveModuleNames: (...args) => {
+        return resolveModuleNames(extraDependencies, ...args);
+      },
       getDefaultLibFileName: () => "es2015.ts",
       useCaseSensitiveFileNames: () => false,
       getCanonicalFileName: (filename: string) => filename,
@@ -274,10 +304,12 @@ export const compileFile = (data: {
 
     const program = ts.createProgram(
       [sourceFile.fileName],
+      // [sourceFile.fileName],
       compilerOptions,
       customCompilerHost
     );
 
+    // console.log(writeMap);
     const diagnostics = getPreEmitDiagnostics
       ? ts.getPreEmitDiagnostics(program)
       : null;
@@ -286,8 +318,18 @@ export const compileFile = (data: {
 
     program.emit();
 
+    let expectedOutFileName = path.replace(".tsx", ".js");
+    expectedOutFileName = expectedOutFileName.replace(".ts", ".js");
+    if (expectedOutFileName.startsWith("./")) {
+      expectedOutFileName = expectedOutFileName.slice(2);
+    }
+
+    const result = writeMap.get(expectedOutFileName) || "";
+    // console.log({ expectedOutFileName, result });
+    // console.log(writeMap.entries());
+    // console.log(result);
     return {
-      result: writeMap.get(path.replace(".tsx", ".js")) || "",
+      result,
       dependencies,
       errors,
     };
@@ -296,23 +338,32 @@ export const compileFile = (data: {
   }
 };
 
-export const compileProgram = (source: string, fileName: string) => {
+export const compileProgram = (
+  source: string,
+  fileName: string,
+  extraDependencies?: Map<string, string>
+) => {
   let result: CompileFileResult;
 
   try {
     result = compileFile({
       code: source,
-      path: fileName ?? "example.tsx",
+      path: fileName || "example.tsx",
       getPreEmitDiagnostics: true,
+      extraDependencies,
     });
 
     const deps = result.dependencies || [];
 
     deps.forEach((dep) => {
-      if (
-        !dep.path.startsWith("@infinite-table/infinite-react") &&
-        dep.path !== "react"
-      ) {
+      let knownDep =
+        dep.path.startsWith("@infinite-table/infinite-react") ||
+        dep.path === "react";
+      if (!knownDep && extraDependencies) {
+        knownDep = extraDependencies.has(dep.path);
+      }
+
+      if (!knownDep) {
         result.errors.push({
           message: `Imports are only supported from "@infinite-table/infinite-react" or "react". Any other imports are not supported.`,
           location: "",
