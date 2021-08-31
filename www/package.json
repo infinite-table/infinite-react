@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run update-versions && npm run source-build && npm run esbuild-cjs && next dev -p 3001",
-    "build": "npm --prefix dataserver install && npm --prefix dataserver copy-data-to-functions && npm run update-versions && npm run generate-lib-dts && npm run esbuild-cjs && next build && next export",
+    "build": "npm --prefix dataserver install && npm run --prefix dataserver copy-data-to-functions && npm run update-versions && npm run generate-lib-dts && npm run esbuild-cjs && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "test-compile": "node ./build/test-compiler.js",
     "source-build": "npm run --prefix=../source build",
