@@ -11,7 +11,8 @@
     "build-website": "npm --prefix source install && npm run --prefix source build && npm  --prefix www install && npm run --prefix www build",
     "release:canary-nobump": "npm run --prefix source release:canary-nobump",
     "release:nobump": "npm run --prefix source release:nobump",
-    "doctoc": "doctoc README.md && doctoc source/LICENSE.md"
+    "doctoc": "doctoc README.md && doctoc source/LICENSE.md",
+    "serve:functions": "netlify functions:serve"
   },
   "repository": {
     "type": "git",
