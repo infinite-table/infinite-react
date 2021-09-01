@@ -483,7 +483,5 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
     columnGroups,
   };
 
-  console.log(result);
-
   return result;
 }
