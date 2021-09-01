@@ -8,11 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "ts-node generate.ts",
     "build": "node ./config/run-build.js cjs",
-    "watch": "npm run build && node ./config/run-build.js cjs --watch",
-    "//": "http://localhost:3002/employees?_start=20&_end=25&_sort=id&_order=asc",
-    "serve": "json-server --watch ./data/employees.json --port 3002",
-    "gen-employees": "node bin/cli.js -c 10000 -o ./data/employees.json -n employees",
-    "copy-data-to-functions": "cp -R ./data ../functions/json-server/"
+    "watch": "npm run build && node ./config/run-build.js cjs --watch",    
+    "gen-employees": "node bin/cli.js -c 10000 -o ./data/employees.json -n employees"
   },
   "author": "",
   "license": "ISC",

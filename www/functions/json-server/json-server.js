@@ -2,9 +2,9 @@ var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 
-// functions/json-server/data/employees.json
+// dataserver/data/employees.json
 var require_employees = __commonJS({
-  "functions/json-server/data/employees.json"(exports2, module2) {
+  "dataserver/data/employees.json"(exports2, module2) {
     module2.exports = {
       employees: [
         {
@@ -130013,21 +130013,13 @@ var require_employees = __commonJS({
 });
 
 // functions/json-server/fn.js
-"use strict";
 var express = require("express");
 var serverless = require("serverless-http");
-var app = express();
-var path = require("path");
 var bodyParser = require("body-parser");
 var jsonServer = require("json-server");
 var db = require_employees();
-app.use("/api", jsonServer.router(db));
-var router = express.Router();
-router.get("/", (req, res) => {
-  res.writeHead(200, { "Content-Type": "text/html" });
-  res.write("<h1>Hello from Express.js!</h1>");
-  res.end();
-});
+var router = jsonServer.router(db);
+var app = express();
 app.use(bodyParser.json());
 app.use("/.netlify/functions/json-server", router);
 module.exports = app;
