@@ -84596,12 +84596,17 @@ var countriesMapByName = new Map();
 var countries = Object.keys(countries_default).map((k) => {
   let cities = countries_default[k];
   const citiesSize = getRandomFrom([4, 8, 10, 6]);
-  cities = [...Array(citiesSize)].map(() => {
-    return getRandomFrom(cities);
+  const citiesWithAddress = [...Array(citiesSize)].map(() => {
+    const streetNameSize = getRandomFrom([2, 8, 4, 6]);
+    const streetNames = [...Array(streetNameSize)].map(() => import_faker.default.address.streetName());
+    return {
+      city: getRandomFrom(cities),
+      streetNames
+    };
   });
   return {
     name: k,
-    cities,
+    cities: citiesWithAddress,
     code: countriesWithCodesMap.get(k)
   };
 }).filter((c) => {
@@ -84704,16 +84709,23 @@ function getDepartmentAndTeam() {
 var generate = (size) => {
   const lastNames = [...Array(Math.floor(size / 5))].map(() => import_faker.default.name.lastName());
   return [...Array(size)].map((_, _index) => {
-    var _a;
+    var _a, _b;
     const country = getRandomFrom(availableCountries);
-    return __spreadValues(__spreadProps(__spreadValues(__spreadProps(__spreadValues({
+    const city = countriesMapByName.get(country.country) ? getRandomFrom(((_a = countriesMapByName.get(country.country)) == null ? void 0 : _a.cities) || []) : null;
+    const streetName = (_b = getRandomFrom((city == null ? void 0 : city.streetNames) || [])) != null ? _b : import_faker.default.address.streetName;
+    const result = __spreadValues(__spreadProps(__spreadValues(__spreadProps(__spreadValues({
       id: _index
     }, getRandomFrom(availableCompanies)), {
       firstName: import_faker.default.name.firstName(),
       lastName: getRandomFrom(lastNames)
     }), country), {
-      city: countriesMapByName.get(country.country) ? getRandomFrom(((_a = countriesMapByName.get(country.country)) == null ? void 0 : _a.cities) || []) || "" : ""
+      city: city == null ? void 0 : city.city,
+      streetName,
+      streetPrefix: import_faker.default.address.streetSuffix(),
+      streetNo: import_faker.default.datatype.number(1e3)
     }), getDepartmentAndTeam());
+    result.email = import_faker.default.internet.email(result.firstName, result.lastName);
+    return result;
   });
 };
 function write(obj, file) {

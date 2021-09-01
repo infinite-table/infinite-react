@@ -22,6 +22,7 @@
     "source/dist": true,
     "source/examples/.next": true,
     "source/examples/out": true,
+    "www/dataserver/data": true,
     "www/src/ts-compiler-bundle-large.js": true
   },
   "editor.tabSize": 2,

@@ -13,11 +13,12 @@ const countriesWithCodesMap = countriesWithCodes.reduce((acc, c) => {
 
 type Country = {
   name: string;
-  cities: string[];
+  cities: { city: string; streetNames: string[] }[];
   code: string;
 };
 
 const countriesMapByName = new Map<string, Country>();
+
 const countries: Country[] = Object.keys(listOfCountries)
   .map((k) => {
     let cities = (listOfCountries as any)[k] as string[];
@@ -25,12 +26,20 @@ const countries: Country[] = Object.keys(listOfCountries)
     // make the cities list shorter, so they repeat
     const citiesSize: number = getRandomFrom([4, 8, 10, 6]);
 
-    cities = [...Array(citiesSize)].map(() => {
-      return getRandomFrom(cities);
+    const citiesWithAddress = [...Array(citiesSize)].map(() => {
+      const streetNameSize = getRandomFrom([2, 8, 4, 6]);
+      const streetNames = [...Array(streetNameSize)].map(() =>
+        faker.address.streetName()
+      );
+
+      return {
+        city: getRandomFrom(cities),
+        streetNames,
+      };
     });
     return {
       name: k,
-      cities,
+      cities: citiesWithAddress,
       code: countriesWithCodesMap.get(k)!,
     };
   })
@@ -155,20 +164,28 @@ export const generate = (size: number) => {
   return [...Array(size)].map((_, _index) => {
     const country = getRandomFrom(availableCountries);
 
-    return {
+    const city = countriesMapByName.get(country.country)
+      ? getRandomFrom(countriesMapByName.get(country.country)?.cities || [])
+      : null;
+    const streetName =
+      getRandomFrom(city?.streetNames || []) ?? faker.address.streetName;
+    const result: any = {
       id: _index,
       ...getRandomFrom(availableCompanies),
       firstName: faker.name.firstName(),
       lastName: getRandomFrom(lastNames),
       ...country,
-      city: countriesMapByName.get(country.country)
-        ? getRandomFrom(
-            countriesMapByName.get(country.country)?.cities || []
-          ) || ""
-        : "",
+      city: city?.city,
+      streetName,
+      streetPrefix: faker.address.streetSuffix(),
+      streetNo: faker.datatype.number(1000),
 
       ...getDepartmentAndTeam(),
     };
+
+    result.email = faker.internet.email(result.firstName, result.lastName);
+
+    return result;
   });
 };
 
