@@ -1,3 +1,5 @@
+const cors = require("cors");
+
 const express = require("express");
 const serverless = require("serverless-http");
 
@@ -18,6 +20,10 @@ const router = jsonServer.router({
 });
 
 const app = express();
+
+if (!process.env.NETLIFY_BUILD) {
+  app.use(cors());
+}
 app.use(bodyParser.json());
 app.use("/.netlify/functions/json-server", router); // path must route to lambda
 

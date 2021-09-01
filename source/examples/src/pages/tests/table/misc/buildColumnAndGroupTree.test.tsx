@@ -18,6 +18,8 @@ function getComputedColumn<T>(config: {
     computedDraggable: true,
     computedFirst: false,
     computedFirstInCategory: false,
+    computedSortIndex: -1,
+    computedMultiSort: false,
     computedLast: false,
     computedLastInCategory: false,
     computedOffset: 0,

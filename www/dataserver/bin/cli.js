@@ -84622,6 +84622,7 @@ function getRandomFrom(array) {
   return array[getRandomInt(0, array.length - 1)];
 }
 var companySizes = [10, 100, 1e3, 1e4];
+var ages = [18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58];
 var availableCompanies = [...Array(20)].map(() => {
   const companySize = getRandomFrom(companySizes);
   const prevSize = companySizes[companySizes.indexOf(companySize) - 1] || 0;
@@ -84722,7 +84723,8 @@ var generate = (size) => {
       city: city == null ? void 0 : city.city,
       streetName,
       streetPrefix: import_faker.default.address.streetSuffix(),
-      streetNo: import_faker.default.datatype.number(1e3)
+      streetNo: import_faker.default.datatype.number(1e3),
+      age: getRandomFrom(ages)
     }), getDepartmentAndTeam());
     result.email = import_faker.default.internet.email(result.firstName, result.lastName);
     return result;

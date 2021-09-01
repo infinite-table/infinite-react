@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useReducer, createContext, useMemo, useEffect, useState } from 'react';
+import { dbg } from '../../utils/debug';
 
 import { isControlled } from '../utils/isControlled';
 import { useLatest } from './useLatest';
 import { usePrevious } from './usePrevious';
 import { notifyChange } from './useProperty';
+
+const debug = dbg('rerender');
 
 let ComponentContext: any;
 
@@ -231,6 +234,10 @@ export function getComponentStateRoot<
       }
 
       if (updatedCount > 0) {
+        debug(
+          'Triggered by new values for the following props',
+          updatedStateFromProps,
+        );
         dispatch({
           newControlledProps: true,
           payload: updatedStateFromProps,

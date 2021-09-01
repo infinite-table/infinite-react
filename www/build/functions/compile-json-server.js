@@ -16,6 +16,7 @@ require("esbuild")
       "express",
       "serverless-http",
       "path",
+      "cors",
       "body-parser",
       "json-server",
     ],

@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate": "ts-node generate.ts",
     "build": "node ./config/run-build.js cjs",
-    "watch": "npm run build && node ./config/run-build.js cjs --watch",    
+    "watch": "npm run build && node ./config/run-build.js cjs --watch",
     "gen-employees": "node bin/cli.js -c 10000 -o ./data/employees.json -n employees",
     "gen-employees100k": "node bin/cli.js -c 100000 -o ./data/employees100k.json -n employees",
     "gen": "npm run gen-employees && npm run gen-employees100k"
@@ -28,6 +28,7 @@
     "@types/faker": "^5.5.8",
     "@types/json-server": "^0.14.4",
     "all-countries-and-cities-json": "^1.0.0",
+    "cors": "^2.8.5",
     "faker": "^5.5.3",
     "json-server": "^0.16.3",
     "yargs": "^17.1.1"

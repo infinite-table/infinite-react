@@ -65,6 +65,7 @@ function getRandomFrom<T>(array: T[]) {
 }
 
 const companySizes = [10, 100, 1000, 10_000];
+const ages = [18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58];
 
 const availableCompanies = [...Array(20)].map(() => {
   const companySize = getRandomFrom(companySizes);
@@ -179,6 +180,7 @@ export const generate = (size: number) => {
       streetName,
       streetPrefix: faker.address.streetSuffix(),
       streetNo: faker.datatype.number(1000),
+      age: getRandomFrom(ages),
 
       ...getDepartmentAndTeam(),
     };

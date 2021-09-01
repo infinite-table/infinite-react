@@ -77,7 +77,6 @@ export class VirtualBrain extends Logger {
 
   public setAvailableSize = (size: Size) => {
     this.availableSize = size;
-
     if (__DEV__) {
       this.debug(
         'New available size %d',
@@ -92,7 +91,7 @@ export class VirtualBrain extends Logger {
     return this.options;
   }
 
-  private updateRenderCount() {
+  private updateRenderCount(renderCount?: number) {
     const { itemSize, mainAxis, count } = this.options;
     const size =
       this.availableSize[mainAxis === 'vertical' ? 'height' : 'width'];
@@ -102,6 +101,20 @@ export class VirtualBrain extends Logger {
       return;
     }
 
+    this.setRenderCount(
+      renderCount ?? this.computeRenderCount({ itemSize, count, size }),
+    );
+  }
+
+  private computeRenderCount = ({
+    itemSize,
+    count,
+    size,
+  }: {
+    itemSize: MainAxisSize;
+    count: number;
+    size: number;
+  }) => {
     let renderCount = 0;
     if (typeof itemSize === 'function') {
       const sizes = [];
@@ -125,8 +138,8 @@ export class VirtualBrain extends Logger {
 
     renderCount = Math.min(count, renderCount);
 
-    this.setRenderCount(renderCount);
-  }
+    return renderCount;
+  };
 
   private setRenderCount = (renderCount: number) => {
     if (renderCount === this.renderCount) {
@@ -333,8 +346,12 @@ export class VirtualBrain extends Logger {
     //TODO this can be optimized even further
     //  since when just count changes, even if it's smaller, the cache should be kept
     if (!itemSizeChange && countChange && newCount > count) {
-      // no need to continue, since just the count grew
-      return;
+      const currentRenderCount = this.getRenderCount();
+
+      // no need to continue, since just the count grew - with the exception when the render count was zero before
+      if (currentRenderCount > 0) {
+        return;
+      }
     }
 
     if (__DEV__) {
