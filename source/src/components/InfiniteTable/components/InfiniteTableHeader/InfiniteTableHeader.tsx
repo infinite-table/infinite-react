@@ -18,8 +18,6 @@ import { RawList } from '../../../RawList';
 import type { RenderItem } from '../../../RawList/types';
 import { ScrollPosition } from '../../../types/ScrollPosition';
 
-import { useHeaderOnResize } from './useHeaderOnResize';
-
 const { rootClassName } = internalProps;
 
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -27,8 +25,11 @@ export const TableHeaderClassName = `${rootClassName}Header`;
 function InfiniteTableHeaderFn<T>(
   props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { repaintId, brain, columns, style, className, onResize } = props;
-  const { computed } = useInfiniteTable<T>();
+  const { repaintId, brain, columns, style, className } = props;
+  const {
+    computed,
+    componentState: { headerHeight },
+  } = useInfiniteTable<T>();
 
   const { computedVisibleColumnsMap } = computed;
 
@@ -43,11 +44,12 @@ function InfiniteTableHeaderFn<T>(
         <InfiniteTableHeaderCell<T>
           domRef={domRef}
           column={column}
+          headerHeight={headerHeight}
           columns={computedVisibleColumnsMap}
         />
       );
     },
-    [computedVisibleColumnsMap, columns, repaintId],
+    [computedVisibleColumnsMap, columns, repaintId, headerHeight],
   );
 
   useEffect(() => {
@@ -61,8 +63,6 @@ function InfiniteTableHeaderFn<T>(
   }, [brain]);
 
   const domRef = useRef<HTMLDivElement | null>(null);
-
-  useHeaderOnResize(domRef, onResize);
 
   const domProps: React.HTMLProps<HTMLDivElement> = {
     ref: domRef,

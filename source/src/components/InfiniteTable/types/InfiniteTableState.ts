@@ -20,11 +20,12 @@ export interface InfiniteTableState<T> {
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
 
   bodySizeRef: MutableRefObject<Size | null>;
-  headerHeightRef: MutableRefObject<number>;
 
   onRowHeightChange: SubscriptionCallback<number>;
+  onHeaderHeightChange: SubscriptionCallback<number>;
 
   rowHeight: number;
+  headerHeight: number;
 
   columnShifts: null | number[];
   draggingColumnId: null | string;
@@ -38,7 +39,9 @@ export interface InfiniteTableState<T> {
   columnGroups: InfiniteTablePropColumnGroups;
   collapsedColumnGroups: InfiniteTablePropCollapsedColumnGroups;
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
+  columnGroupsMaxDepth: number;
   columns: InfiniteTableProps<T>['columns'];
+  generatedColumns: InfiniteTableProps<T>['columns'];
 
   x?: T;
 }
@@ -68,8 +71,10 @@ export interface InfiniteTableReadOnlyState<T> {
   domProps: InfiniteTableProps<T>['domProps'];
   draggableColumns: boolean;
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
+  columnGroupsMaxDepth: number;
 
   rowHeightCSSVar: string;
+  headerHeightCSSVar: string;
 }
 
 export type InfiniteTableComponentActions<T> = ComponentStateActions<

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { err } from '../utils/debug';
+import { dbg, err } from '../utils/debug';
 
 import { useResizeObserver } from './ResizeObserver';
 
 const error = err('CSSVariableWatch');
+const debug = dbg('CSSVariableWatch');
 
 type CSSVariableWatcherProps = {
   varName: string;
@@ -43,6 +44,8 @@ export const useCSSVariableWatch = (
 
     if (value) {
       lastValueRef.current = value;
+
+      debug(`Variable ${params.varName} found and equals ${value}.`);
       params.onChange(value);
     } else {
       error(
@@ -61,7 +64,11 @@ export const CSSVariableWatch = (props: CSSVariableWatcherProps) => {
   });
 
   return (
-    <div data-name="css-variable-watcher" style={WRAPPER_STYLE}>
+    <div
+      data-name="css-variable-watcher"
+      data-var={props.varName}
+      style={WRAPPER_STYLE}
+    >
       <div
         ref={domRef}
         style={{

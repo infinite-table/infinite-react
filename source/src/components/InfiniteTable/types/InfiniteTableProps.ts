@@ -82,8 +82,12 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   depth: number;
 };
 
+export type InfiniteTablePropGroupColumn = boolean;
+
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;
+
+  groupColumn?: InfiniteTablePropGroupColumn;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
@@ -105,6 +109,7 @@ export type InfiniteTableProps<T> = {
   // columnVisibilityAssumeVisible?: boolean;
 
   rowHeight: number | string;
+  headerHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
   sortable?: boolean;
@@ -130,11 +135,4 @@ export type InfiniteTableProps<T> = {
       }) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
-};
-
-export type InfiniteTableOwnProps<T> = InfiniteTableProps<T> & {
-  rowHeight: number;
-  rowHeightCSSVar: string;
-  onHeaderResize: (height: number) => void;
-  bodyDOMRef?: React.RefObject<HTMLDivElement | null>;
 };

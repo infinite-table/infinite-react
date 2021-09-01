@@ -12,15 +12,23 @@ import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 type BuildColumnHeaderGroupsConfig<T> = {
   columnGroups: InfiniteTableComponentState<T>['columnGroups'];
   columnGroupsDepthsMap: InfiniteTableComponentState<T>['columnGroupsDepthsMap'];
+  columnGroupsMaxDepth: number;
   columns: InfiniteTableComputedColumn<T>[];
+  headerHeight: number;
   allVisibleColumns: Map<string, InfiniteTableComputedColumn<T>>;
 };
 
 export function renderColumnHeaderGroups<T>(
   config: BuildColumnHeaderGroupsConfig<T>,
 ): JSX.Element[] {
-  const { columns, columnGroups, allVisibleColumns, columnGroupsDepthsMap } =
-    config;
+  const {
+    columns,
+    headerHeight,
+    columnGroups,
+    allVisibleColumns,
+    columnGroupsDepthsMap,
+    columnGroupsMaxDepth,
+  } = config;
 
   if (!columns.length) {
     return [];
@@ -39,6 +47,9 @@ export function renderColumnHeaderGroups<T>(
         return (
           <InfiniteTableHeaderCell<T>
             key={col.id}
+            headerHeight={
+              (columnGroupsMaxDepth - colGroupItem.depth + 2) * headerHeight
+            }
             column={col}
             columns={allVisibleColumns}
             virtualized={false}
@@ -57,6 +68,10 @@ export function renderColumnHeaderGroups<T>(
         <InfiniteTableHeaderGroup<T>
           key={`${colGroupItem.uniqueGroupId.join('/')}`}
           columns={columns}
+          height={
+            (columnGroupsMaxDepth - colGroupItem.depth + 2) * headerHeight
+          }
+          headerHeight={headerHeight}
           columnGroup={{
             ...colGroupItem.ref,
             id: colGroupItem.id,

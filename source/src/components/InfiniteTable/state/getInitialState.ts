@@ -1,4 +1,4 @@
-import { createRef, MutableRefObject } from 'react';
+import { createRef } from 'react';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { isControlled } from '../../utils/isControlled';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
@@ -8,9 +8,6 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 export function getInitialState<T>(
   props: InfiniteTableProps<T>,
 ): InfiniteTableState<T> {
-  const headerHeightRef = createRef() as MutableRefObject<number>;
-  headerHeightRef.current = 0;
-
   const columnGroups =
     (isControlled('columnGroups', props)
       ? props.columnGroups
@@ -21,15 +18,21 @@ export function getInitialState<T>(
       ? props.collapsedColumnGroups
       : props.defaultCollapsedColumnGroups) ?? new Map();
 
+  const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
+
+  const generatedColumns: InfiniteTableProps<T>['columns'] = new Map();
+
   return {
     rowHeight: typeof props.rowHeight === 'number' ? props.rowHeight : 0,
+    headerHeight:
+      typeof props.headerHeight === 'number' ? props.headerHeight : 0,
     domRef: createRef(),
     bodyDOMRef: createRef(),
     portalDOMRef: createRef(),
     bodySizeRef: createRef(),
-    headerHeightRef,
 
     onRowHeightChange: buildSubscriptionCallback<number>(),
+    onHeaderHeightChange: buildSubscriptionCallback<number>(),
 
     bodySize: {
       width: 0,
@@ -41,13 +44,16 @@ export function getInitialState<T>(
     },
     draggingColumnId: null,
     columns: props.columns,
+    generatedColumns,
+
     columnOrder:
       (isControlled('columnOrder', props)
         ? props.columnOrder
         : props.defaultColumnOrder) ?? true,
     columnGroups,
     collapsedColumnGroups,
-    columnGroupsDepthsMap: computeColumnGroupsDepths(columnGroups),
+    columnGroupsDepthsMap,
+    columnGroupsMaxDepth: Math.max(...columnGroupsDepthsMap.values(), 0),
 
     columnVisibility:
       (isControlled('columnVisibility', props)
@@ -94,9 +100,12 @@ export function deriveReadOnlyState<T>(
     draggableColumns: props.draggableColumns ?? true,
     sortable: props.sortable ?? true,
     columnGroupsDepthsMap,
+    columnGroupsMaxDepth: Math.max(...columnGroupsDepthsMap.values(), 0),
 
     licenseKey:
       props.licenseKey || (globalThis as any).InfiniteTableLicenseKey || '',
     rowHeightCSSVar: typeof props.rowHeight === 'string' ? props.rowHeight : '',
+    headerHeightCSSVar:
+      typeof props.headerHeight === 'string' ? props.headerHeight : '',
   };
 }

@@ -70,10 +70,12 @@ export const InfiniteTableComponent = React.memo(
       portalDOMRef,
       domProps,
       licenseKey,
-      headerHeightRef,
+
       header,
       onRowHeightChange,
+      onHeaderHeightChange,
       rowHeightCSSVar,
+      headerHeightCSSVar,
     } = componentState;
 
     const { columnShifts, bodySize } = componentState;
@@ -108,10 +110,6 @@ export const InfiniteTableComponent = React.memo(
 
     const licenseValid = useLicense(licenseKey);
 
-    const onHeaderResize = useCallback((headerHeight: number) => {
-      headerHeightRef.current = headerHeight;
-    }, []);
-
     return (
       <div ref={domRef} {...domProps} className={className}>
         {header ? (
@@ -119,7 +117,6 @@ export const InfiniteTableComponent = React.memo(
             brain={horizontalVirtualBrain}
             repaintId={repaintId}
             scrollbars={scrollbars}
-            onResize={onHeaderResize}
           />
         ) : null}
 
@@ -158,6 +155,12 @@ export const InfiniteTableComponent = React.memo(
             onChange={onRowHeightChange}
           />
         ) : null}
+        {headerHeightCSSVar ? (
+          <CSSVariableWatch
+            varName={headerHeightCSSVar}
+            onChange={onHeaderHeightChange}
+          />
+        ) : null}
       </div>
     );
   },
@@ -168,7 +171,7 @@ function InfiniteTableContextProvider<T>() {
     InfiniteTableReadOnlyState<T>
   >();
 
-  const { bodyDOMRef, bodySizeRef, headerHeightRef } = componentState;
+  const { bodyDOMRef, bodySizeRef } = componentState;
 
   const computed = useComputed<T>();
   const getComputed = useLatest(computed);
@@ -201,11 +204,8 @@ function InfiniteTableContextProvider<T>() {
         componentActions.bodySize = bodySize;
         return;
       }
-      if (headerHeightRef.current) {
-        componentActions.bodySize = bodySize;
-      } else {
-        componentActions.bodySize = { ...bodySize, height: 0 };
-      }
+
+      componentActions.bodySize = bodySize;
     },
     { earlyAttach: true },
   );
@@ -213,6 +213,7 @@ function InfiniteTableContextProvider<T>() {
   React.useEffect(() => {
     return () => {
       componentState.onRowHeightChange.destroy();
+      componentState.onHeaderHeightChange.destroy();
     };
   }, []);
 
@@ -248,6 +249,7 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
 }
 InfiniteTable.defaultProps = {
   rowHeight: 40,
+  headerHeight: '--ITableHeader__height',
 };
 
 export * from './types';

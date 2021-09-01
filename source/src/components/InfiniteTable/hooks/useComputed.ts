@@ -10,12 +10,11 @@ import { useComponentState } from '../../hooks/useComponentState';
 import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
+import { useGroupRowsBy } from './useGroupRowsBy';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
-  const { componentActions, componentState } = useComponentState<
-    InfiniteTableState<T>,
-    InfiniteTableReadOnlyState<T>
-  >();
+  const { componentActions, componentState, updateStateProperty } =
+    useComponentState<InfiniteTableState<T>, InfiniteTableReadOnlyState<T>>();
 
   const {
     componentActions: dataSourceActions,
@@ -31,6 +30,11 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
         componentActions.rowHeight = rowHeight;
       }
     });
+    componentState.onHeaderHeightChange.onChange((headerHeight) => {
+      if (headerHeight) {
+        updateStateProperty('headerHeight', headerHeight);
+      }
+    });
   });
 
   useColumnAggregations<T>();
@@ -38,6 +42,8 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { multiSort } = dataSourceState;
 
   useColumnGroups<T>();
+
+  useGroupRowsBy<T>();
 
   const setSortInfo = useCallback(
     (sortInfo: DataSourceSingleSortInfo<T>[]) => {

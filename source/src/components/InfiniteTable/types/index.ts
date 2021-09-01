@@ -4,7 +4,6 @@ import type { InfiniteTableActionType } from './InfiniteTableActionType';
 
 import type {
   InfiniteTableProps,
-  InfiniteTableOwnProps,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
@@ -37,7 +36,6 @@ export type {
   InfiniteTableState,
   InfiniteTableAction,
   InfiniteTableProps,
-  InfiniteTableOwnProps,
   InfiniteTableImperativeApi,
   InfiniteTableActionType,
 };

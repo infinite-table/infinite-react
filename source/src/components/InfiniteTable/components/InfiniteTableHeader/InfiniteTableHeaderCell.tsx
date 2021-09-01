@@ -32,7 +32,7 @@ export function InfiniteTableHeaderCell<T>(
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
   const columns: Map<string, InfiniteTableComputedColumn<T>> = props.columns;
-  const { onResize, virtualized = true } = props;
+  const { onResize, virtualized = true, headerHeight } = props;
   let { cssPosition, offset: offsetFromProps } = props;
 
   if (virtualized === false) {
@@ -93,7 +93,9 @@ export function InfiniteTableHeaderCell<T>(
   let style: React.CSSProperties = {
     ...defaultStyle,
     position: cssPosition ?? 'absolute',
+    height: headerHeight,
   };
+
   const { onPointerDown, onPointerUp, dragging, draggingDiff, proxyOffset } =
     useColumnPointerEvents({
       computedRemainingSpace,
@@ -113,6 +115,8 @@ export function InfiniteTableHeaderCell<T>(
         className={`${baseCls}Proxy`}
         style={{
           position: 'absolute',
+          height: headerHeight,
+          width: column.computedWidth,
           left:
             column.computedAbsoluteOffset +
             draggingDiff.left +

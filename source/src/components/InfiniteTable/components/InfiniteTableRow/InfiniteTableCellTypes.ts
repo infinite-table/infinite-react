@@ -31,5 +31,6 @@ export interface InfiniteTableColumnCellProps<T>
 export interface InfiniteTableHeaderCellProps<T>
   extends Omit<InfiniteTableCellProps<T>, 'children'> {
   columns: Map<string, InfiniteTableComputedColumn<T>>;
+  headerHeight: number;
   onResize?: OnResizeFn;
 }

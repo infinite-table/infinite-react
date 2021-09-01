@@ -5,6 +5,7 @@ import { interceptMap } from '../../hooks/useInterceptedMap';
 
 import { computeColumnGroupsDepths } from '../state/computeColumnGroupsDepths';
 import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { rafFn } from '../utils/rafFn';
 
 export function useColumnGroups<T>() {
   const {
@@ -19,16 +20,7 @@ export function useColumnGroups<T>() {
         computeColumnGroupsDepths(columnGroups);
     };
 
-    let rafId: number = 0;
-    const update = () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        recompute();
-      });
-    };
+    const update = rafFn(recompute);
 
     return interceptMap(columnGroups, {
       clear: update,
@@ -37,6 +29,7 @@ export function useColumnGroups<T>() {
     });
   }, [columnGroups]);
 
+  // TODO we need to enhance this when we implement the UI for collapsing column groups
   useEffect(() => {
     // when collapsedColumnGroups change
     //we basically update the columnVisibility map

@@ -1,6 +1,5 @@
 import { InfiniteTableComputedColumn } from '../..';
 import { Renderable } from '../../../types/Renderable';
-import type { OnResizeFn } from '../../../types/Size';
 
 import { VirtualBrain } from '../../../VirtualBrain';
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
@@ -10,13 +9,14 @@ export type InfiniteTableHeaderProps<T> = {
   brain: VirtualBrain;
   columns: InfiniteTableComputedColumn<T>[];
   totalWidth: number;
-  onResize?: OnResizeFn;
 };
 
 export type InfiniteTableHeaderGroupProps<T> = {
   columns: InfiniteTableComputedColumn<T>[];
   columnGroup: InfiniteTableComputedColumnGroup;
   children: Renderable;
+  height: number;
+  headerHeight: number;
 };
 
 export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<

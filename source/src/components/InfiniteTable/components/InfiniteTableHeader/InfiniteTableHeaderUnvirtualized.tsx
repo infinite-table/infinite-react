@@ -25,11 +25,15 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   props: InfiniteTableHeaderUnvirtualizedProps<T> &
     React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { columns, scrollable, brain, totalWidth, onResize, ...domProps } =
-    props;
+  const { columns, scrollable, brain, totalWidth, ...domProps } = props;
 
   const {
-    componentState: { columnGroups, columnGroupsDepthsMap },
+    componentState: {
+      columnGroups,
+      columnGroupsDepthsMap,
+      columnGroupsMaxDepth,
+      headerHeight,
+    },
     computed: { computedVisibleColumnsMap: columnsMap },
   } = useInfiniteTable<T>();
 
@@ -41,7 +45,9 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
       ? renderColumnHeaderGroups<T>({
           columnGroups,
           columnGroupsDepthsMap,
+          columnGroupsMaxDepth,
           columns,
+          headerHeight,
           allVisibleColumns: columnsMap,
         })
       : null;
@@ -51,6 +57,8 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
     columns,
     columnsMap,
     hasColumnGroups,
+    headerHeight,
+    columnGroupsMaxDepth,
   ]);
 
   const children = hasColumnGroups
@@ -59,6 +67,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
         return (
           <InfiniteTableHeaderCell<T>
             key={c.id}
+            headerHeight={headerHeight}
             column={c}
             columns={columnsMap}
             virtualized={false}

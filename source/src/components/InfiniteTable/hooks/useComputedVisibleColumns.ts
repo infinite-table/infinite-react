@@ -11,12 +11,7 @@ import type { Size } from '../../types/Size';
 
 import { getComputedVisibleColumns } from '../utils/getComputedVisibleColumns';
 import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
-import { useColumnPinningRerenderOnKeyChange } from './useColumnPinningRerenderOnKeyChange';
-import { useColumnRerenderOnKeyChange } from './useColumnRerenderOnKeyChange';
-import { useColumnVisibilityRerenderOnKeyChange } from './useColumnVisibilityRerenderOnKeyChange';
-import { dbg } from '../../../utils/debug';
-
-const debug = dbg('useColumns');
+import { useRerenderOnKeyChange } from './useRerenderOnKeyChange';
 
 type UseComputedVisibleColumnsParam<T> = {
   columns: Map<string, InfiniteTableColumn<T>>;
@@ -75,10 +70,9 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnVisibility,
   columnVisibilityAssumeVisible,
 }: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
-  const columnsRenderId = useColumnRerenderOnKeyChange(columns);
-  const visibilityRenderId =
-    useColumnVisibilityRerenderOnKeyChange(columnVisibility);
-  const pinningRenderId = useColumnPinningRerenderOnKeyChange(columnPinning);
+  const columnsRenderId = useRerenderOnKeyChange(columns);
+  const visibilityRenderId = useRerenderOnKeyChange(columnVisibility);
+  const pinningRenderId = useRerenderOnKeyChange(columnPinning);
   // const columnAggregationsRenderId =
   //   useColumnAggregationsRerenderOnKeyChange(columnAggregations);
 

@@ -25,42 +25,6 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
 
   const [sizes, setSizes] = useState<[number, number, number]>([0, 0, 0]);
 
-  const onResizePinnedStart = useCallback((size: Size) => {
-    setSizes((sizes) => {
-      sizes = [...sizes];
-      sizes[0] = size.height;
-
-      if (lastResizeHeightRef.current !== sizes[0]) {
-        lastResizeHeightRef.current = sizes[0];
-        onResize?.(sizes[0]);
-      }
-      return sizes;
-    });
-  }, []);
-
-  const onResizeUnpinned = useCallback((size: Size) => {
-    setSizes((sizes) => {
-      sizes = [...sizes];
-      sizes[1] = size.height;
-      if (lastResizeHeightRef.current !== sizes[1]) {
-        lastResizeHeightRef.current = sizes[1];
-        onResize?.(sizes[1]);
-      }
-      return sizes;
-    });
-  }, []);
-  const onResizePinnedEnd = useCallback((size: Size) => {
-    setSizes((sizes) => {
-      sizes = [...sizes];
-      sizes[2] = size.height;
-      if (lastResizeHeightRef.current !== sizes[2]) {
-        lastResizeHeightRef.current = sizes[2];
-        onResize?.(sizes[2]);
-      }
-      return sizes;
-    });
-  }, []);
-
   const {
     computedUnpinnedColumns,
     computedPinnedStartColumns,
@@ -71,23 +35,25 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   } = tableContextValue.computed;
 
   const {
-    componentState: { virtualizeHeader },
+    componentState: { virtualizeHeader, headerHeight, columnGroupsMaxDepth },
   } = tableContextValue;
 
   const hasPinnedStart = computedPinnedStartColumns.length > 0;
   const hasPinnedEnd = computedPinnedEndColumns.length > 0;
-  const height = Math.max(...sizes);
+  const height = columnGroupsMaxDepth
+    ? columnGroupsMaxDepth * headerHeight
+    : headerHeight;
 
   const header = virtualizeHeader ? (
     <InfiniteTableHeader
       columns={computedUnpinnedColumns}
       repaintId={virtualizeHeader ? repaintId : undefined}
       brain={brain}
-      onResize={onResizeUnpinned}
       style={{
         position: 'absolute',
         left: computedPinnedStartColumnsWidth,
         width: computedUnpinnedColumnsWidth,
+        height: columnGroupsMaxDepth || headerHeight,
       }}
       totalWidth={computedUnpinnedColumnsWidth}
     />
@@ -120,7 +86,6 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
             position: 'absolute',
             width: computedPinnedStartColumnsWidth,
           }}
-          onResize={onResizePinnedStart}
           columns={computedPinnedStartColumns}
           totalWidth={computedPinnedStartColumnsWidth}
         />
@@ -128,7 +93,6 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       {header}
       {hasPinnedEnd ? (
         <InfiniteTableHeaderUnvirtualized
-          onResize={onResizePinnedEnd}
           style={{
             right: scrollbars.vertical ? getScrollbarWidth() : 0,
             position: 'absolute',

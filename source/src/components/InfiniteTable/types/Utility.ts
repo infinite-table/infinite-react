@@ -1,3 +1,6 @@
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
 export type RequireOnlyOneProperty<T, Keys extends keyof T> = Pick<
   T,
   Exclude<keyof T, Keys>

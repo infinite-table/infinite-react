@@ -474,7 +474,6 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
       header: 'Reduced',
       render: ({ enhancedData }) => {
         return `${enhancedData.reducerResults?.[0]}`;
-        // return deepMap.get(enhancedData.groupKeys!);
       },
     });
   }

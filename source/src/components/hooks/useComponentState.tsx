@@ -23,6 +23,10 @@ type ComponentStateContext<T_STATE, T_ACTIONS> = {
   getComponentState: () => T_STATE;
   componentState: T_STATE;
   componentActions: T_ACTIONS;
+  updateStateProperty: <T extends keyof T_STATE>(
+    propertyName: T,
+    propertyValue: T_STATE[T],
+  ) => void;
 };
 
 type ComponentStateGeneratedActions<T_STATE> = {
@@ -44,6 +48,7 @@ function getReducerActions<T_STATE, T_PROPS>(
 
     const setter = (value: T_STATE[typeof key]) => {
       const props = getProps();
+
       notifyChange(props, stateKey, value);
       if (isControlled(stateKey as keyof T_PROPS, props)) {
         return;
@@ -146,6 +151,7 @@ export function getComponentStateRoot<
       if (action.newControlledProps) {
         newState = action.payload;
       }
+
       if (newState !== null) {
         state = {
           ...state,
@@ -199,6 +205,15 @@ export function getComponentStateRoot<
         componentState: state,
         componentActions: actions,
         getComponentState,
+        updateStateProperty: <T extends keyof T_STATE>(
+          propertyName: T,
+          propertyValue: T_STATE[T],
+        ) => {
+          dispatch({
+            propertyName,
+            payload: propertyValue,
+          });
+        },
       }),
       [state, actions, getComponentState],
     );
