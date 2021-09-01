@@ -4,7 +4,6 @@ require("esbuild")
   .build({
     entryPoints: ["functions/json-server/fn.js"],
     bundle: true,
-
     watch: watch
       ? {
           onRebuild(error, result) {
@@ -13,7 +12,6 @@ require("esbuild")
           },
         }
       : null,
-    // external: ['react', 'react-dom'],
     external: [
       "express",
       "serverless-http",
@@ -23,7 +21,6 @@ require("esbuild")
     ],
     format: "cjs",
     target: "es2016",
-
     platform: "node",
     outfile: `functions/json-server/json-server.js`,
   })
