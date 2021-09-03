@@ -59,7 +59,7 @@ function InfiniteTableRowFn<T>(
         />
       );
     },
-    [columns, rowIndex], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
+    [columns, rowIndex, enhancedData], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
   );
 
   if (renderCellRef.current !== renderCell) {

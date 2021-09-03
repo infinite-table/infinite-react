@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { AggregationReducer } from '../../../utils/groupAndPivot';
+import { DataSourceGroupRowsBy } from '../../DataSource';
 import { Renderable } from '../../types/Renderable';
 import type {
+  InfiniteTableBaseColumn,
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
+  InfiniteTableGeneratedColumn,
 } from './InfiniteTableColumn';
 
 // export type TablePropColumnOrderItem = string | { id: string; visible: boolean };
@@ -50,6 +53,10 @@ export type InfiniteTableInternalProps<T> = {
 };
 
 export type InfiniteTablePropColumns<T> = Map<string, InfiniteTableColumn<T>>;
+export type InfiniteTableGeneratedColumns<T> = Map<
+  string,
+  InfiniteTableGeneratedColumn<T>
+>;
 
 export type InfiniteTablePropColumnGroups = Map<
   string,
@@ -82,12 +89,24 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   depth: number;
 };
 
-export type InfiniteTablePropGroupColumn = boolean;
+export type GroupColumnGetterOptions<T> = {
+  groupIndex: number;
+  groupCount: number;
+  groupBy: DataSourceGroupRowsBy<T>;
+  groupRowsBy: DataSourceGroupRowsBy<T>[];
+};
+export type InfiniteTablePropGroupColumn<T> =
+  | boolean
+  | InfiniteTableBaseColumn<T>
+  | ((
+      options: GroupColumnGetterOptions<T>,
+      toggleGroupRow: (groupKeys: any[]) => void,
+    ) => InfiniteTableBaseColumn<T>);
 
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;
 
-  groupColumn?: InfiniteTablePropGroupColumn;
+  groupColumn?: InfiniteTablePropGroupColumn<T>;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;

@@ -1,0 +1,137 @@
+## Row groups
+
+Specify row groups via the controlled `groupRowsBy` (or uncontrolled `defaultGroupRowsBy`) prop on the `DataSource`.
+
+```tsx
+const groupRowsBy = [{ field: "country" }, { field: "city" }];
+```
+
+## Row groups in action
+
+```tsx height=450 live title=Row-groups
+import * as React from "react";
+import {
+  InfiniteTable,
+  DataSource,
+  InfiniteTableColumn,
+  DataSourceGroupRowsBy,
+} from "@infinite-table/infinite-react";
+
+type Employee = {
+  id: number;
+  companyName: string;
+  companySize: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  countryCode: string;
+  city: string;
+  streetName: string;
+  streetNo: string;
+  department: string;
+  team: string;
+  salary: number;
+  age: number;
+  email: string;
+};
+
+const columns = new Map<string, InfiniteTableColumn<Employee>>([
+  [
+    "firstName",
+    {
+      field: "firstName",
+      header: "First Name",
+    },
+  ],
+  [
+    "country",
+    {
+      field: "country",
+      header: "Country",
+      columnGroup: "location",
+    },
+  ],
+
+  [
+    "city",
+    {
+      field: "city",
+      header: "City",
+      columnGroup: "address",
+    },
+  ],
+  [
+    "age",
+    {
+      field: "age",
+      type: "number",
+      header: "Age",
+    },
+  ],
+  [
+    "department",
+    {
+      field: "department",
+      header: "Department",
+    },
+  ],
+  [
+    "team",
+    {
+      width: 200,
+      field: "team",
+      header: "Team",
+    },
+  ],
+  ["company", { field: "companyName", header: "Company" }],
+  ["companySize", { field: "companySize", header: "Company Size" }],
+]);
+
+declare var fetch: any;
+declare var env: { BASE_URL: string };
+
+console.log(env.BASE_URL, "!!!!");
+const dataSource = () => {
+  return fetch(env.BASE_URL + "/employees100")
+    .then((r) => r.json())
+    .then((data: Employee[]) => {
+      return data;
+    });
+};
+
+const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
+  { field: "country" },
+  { field: "city" },
+];
+function App() {
+  return (
+    <DataSource<Employee>
+      data={dataSource}
+      primaryKey="id"
+      defaultGroupRowsBy={defaultGroupRowsBy}
+    >
+      <InfiniteTable<Employee>
+        columnDefaultWidth={130}
+        groupColumn={{ sortable: false }}
+        columnMinWidth={50}
+        columns={columns}
+      />
+    </DataSource>
+  );
+}
+
+render(<App />);
+```
+
+## Licensing
+
+You can use `@infinite-table/infinite-react` in 2 ways:
+
+- without a license, but it will include a `Powered by infinite-table.com` link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible.
+- with a license - requests for licence quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the `Powered by infinite-table.com` footer go away.
+
+### About the docs
+
+Click any `code block` to copy its contents to the clipboard.
+
+The documentation is versioned, and we will publish a new version of the documentation when there are any significant changes in the corresponding `@infinite-table/infinite-react` version.

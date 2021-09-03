@@ -1,4 +1,4 @@
-export const rafFn = (fn: VoidFunction) => {
+export const rafFn = (fn: () => void) => {
   let rafId: number = 0;
 
   return () => {

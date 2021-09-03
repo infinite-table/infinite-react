@@ -14,14 +14,16 @@ import { useDataSource } from './publicHooks/useDataSource';
 
 import { useLoadData } from './privateHooks/useLoadData';
 
-import { getInitialState } from './state/getInitialState';
-import { reducer } from './state/reducer';
-import { deriveReadOnlyState } from './state/deriveReadOnlyState';
+import { deriveReadOnlyState, getInitialState } from './state/getInitialState';
+import { concludeReducer } from './state/reducer';
 
 import {
   getComponentStateRoot,
   useComponentState,
 } from '../hooks/useComponentState';
+
+import { GroupRowsState } from './GroupRowsState';
+import { useLatest } from '../hooks/useLatest';
 
 type DataSourceChildren<T> =
   | React.ReactNode
@@ -44,7 +46,7 @@ const DataSourceRoot = getComponentStateRoot({
   //@ts-ignore
   getInitialState: getInitialState,
   //@ts-ignore
-  reducer,
+  concludeReducer,
   //@ts-ignore
   deriveReadOnlyState,
 });
@@ -56,9 +58,12 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
     DataSourceState<T>,
     DataSourceReadOnlyState<T>
   >();
+
+  const getState = useLatest(componentState);
   const contextValue: DataSourceContextValue<T> = {
     componentState,
     componentActions,
+    getState,
   };
 
   useLoadData();
@@ -78,6 +83,6 @@ function DataSource<T>(props: DataSourceProps<T>) {
   );
 }
 
-export { useDataSource, DataSource };
+export { useDataSource, DataSource, GroupRowsState };
 
 export * from './types';

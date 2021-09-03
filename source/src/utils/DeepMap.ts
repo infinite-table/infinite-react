@@ -22,6 +22,16 @@ export class DeepMap<KeyType, ValueType> {
   private length = 0;
   private revision = 0;
 
+  constructor(initial?: [KeyType[], ValueType][]) {
+    if (initial) {
+      initial.forEach((entry) => {
+        const [keys, value] = entry;
+
+        this.set(keys, value);
+      });
+    }
+  }
+
   set(keys: KeyType[] & { length: Omit<number, 0> }, value: ValueType) {
     let currentMap = this.map;
     if (!keys.length) {
@@ -83,6 +93,24 @@ export class DeepMap<KeyType, ValueType> {
     return this.length;
   }
 
+  clear() {
+    const clearMap = (map: Map<KeyType, Pair<KeyType, ValueType>>) => {
+      map.forEach((value, _key) => {
+        const { map } = value;
+        if (map) {
+          clearMap(map);
+        }
+      });
+
+      map.clear();
+    };
+
+    clearMap(this.map);
+
+    this.length = 0;
+    this.revision = 0;
+  }
+
   delete(keys: KeyType[]): boolean {
     keys = [...keys];
     let currentMap = this.map;
@@ -140,7 +168,7 @@ export class DeepMap<KeyType, ValueType> {
       let key = keys.pop();
       if (key && map?.size === 0) {
         let parentMap = maps[maps.length - 1];
-        let pair = parentMap.get(key);
+        let pair = parentMap?.get(key);
         if (pair) {
           // pair.map === map ; which can be deleted
           delete pair.map;

@@ -28,6 +28,15 @@ const marrie = {
 };
 
 export default describe('DeepMap', () => {
+  it('constructor should work correctly', () => {
+    const map = new DeepMap<Person, number>([
+      [[john, bill], 2],
+      [[john], 3],
+    ]);
+
+    expect(map.get([john, bill])).toEqual(2);
+    expect(map.get([john])).toEqual(3);
+  });
   it('set/get work correctly with objects as keys', async () => {
     const map = new DeepMap<Person, number>();
 
@@ -35,7 +44,7 @@ export default describe('DeepMap', () => {
     map.set([john], 10);
     map.set([bill], 100);
 
-    map.set([(null as unknown) as Person], -1);
+    map.set([null as unknown as Person], -1);
     map.set([marrie, john, bill], 1000);
     map.set([john, bill, marrie], 2);
 
@@ -43,7 +52,7 @@ export default describe('DeepMap', () => {
     expect(map.get([john])).toEqual(10);
     expect(map.get([bill])).toEqual(100);
 
-    expect(map.get([(null as unknown) as Person])).toEqual(-1);
+    expect(map.get([null as unknown as Person])).toEqual(-1);
     expect(map.get([marrie, john, bill])).toEqual(1000);
     expect(map.get([john, bill, marrie])).toEqual(2);
   });

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useCallback, useRef, useState } from 'react';
+
 import { ICSS } from '../../../../style/utilities';
 import { join } from '../../../../utils/join';
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { VirtualBrain } from '../../../VirtualBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { Size } from '../../../types/Size';
+
 import { VerticalScrollbarPlaceholder } from '../ScrollbarPlaceholder';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
 import { InfiniteTableHeaderUnvirtualized } from './InfiniteTableHeaderUnvirtualized';
@@ -14,16 +14,11 @@ export type TableHeaderWrapperProps = {
   brain: VirtualBrain;
   scrollbars: { vertical: boolean; horizontal: boolean };
   repaintId?: number | string;
-  onResize?: (height: number) => void;
 };
 export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
-  const { brain, scrollbars, repaintId, onResize } = props;
+  const { brain, scrollbars, repaintId } = props;
 
   const tableContextValue = useInfiniteTable<T>();
-
-  const lastResizeHeightRef = useRef<number>(0);
-
-  const [sizes, setSizes] = useState<[number, number, number]>([0, 0, 0]);
 
   const {
     computedUnpinnedColumns,

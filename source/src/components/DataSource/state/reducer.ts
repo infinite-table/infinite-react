@@ -9,35 +9,34 @@ import {
 import { InfiniteTableEnhancedData } from '../../InfiniteTable';
 
 const haveDepsChanged = <StateType>(
-  initialState: StateType,
-  finalState: StateType,
+  updated: Partial<StateType> | null,
+
   deps: (keyof StateType)[],
 ) => {
-  const initialValues = deps.map((k) => (initialState as any)[k]);
-
-  const finalValues = deps.map((k) => (finalState as any)[k]);
-
-  return finalValues.reduce((acc, _, index) => {
-    const oldValue = initialValues[index];
-    const newValue = finalValues[index];
-
-    return acc || oldValue !== newValue;
-  }, false);
+  if (!updated) {
+    return false;
+  }
+  for (var i = 0, len = deps.length; i < len; i++) {
+    if (updated.hasOwnProperty(deps[i])) {
+      return true;
+    }
+  }
+  return false;
 };
 
 function toEnhancedData<T>(data: T): InfiniteTableEnhancedData<T> {
-  return { data };
+  return { data, collapsed: true };
 }
 
-export function reducer<T>(
+export function concludeReducer<T>(
+  _previousState: DataSourceState<T> & DataSourceReadOnlyState<T>,
   state: DataSourceState<T> & DataSourceReadOnlyState<T>,
+  updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null,
 ) {
-  const initialState = state;
-
   const sortInfo = state.sortInfo;
   const shouldSort = sortInfo?.length;
 
-  const sortDepsChanged = haveDepsChanged(initialState, state, [
+  const sortDepsChanged = haveDepsChanged(updated, [
     'originalDataArray',
     'sortInfo',
   ]);
@@ -48,9 +47,10 @@ export function reducer<T>(
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length || pivotBy;
-  const groupsDepsChanged = haveDepsChanged(initialState, state, [
+  const groupsDepsChanged = haveDepsChanged(updated, [
     'originalDataArray',
     'groupRowsBy',
+    'groupRowsState',
     'pivotBy',
     'aggregationReducers',
     'sortInfo',
@@ -83,7 +83,7 @@ export function reducer<T>(
         },
         dataArray,
       );
-      const flattenResult = enhancedFlatten(groupResult);
+      const flattenResult = enhancedFlatten(groupResult, state.groupRowsState);
 
       enhancedDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
@@ -107,6 +107,9 @@ export function reducer<T>(
     enhancedDataArray = dataArray.map(toEnhancedData);
   }
 
+  if (enhancedDataArray !== state.dataArray) {
+    state.timestamp = Date.now();
+  }
   state.dataArray = enhancedDataArray;
 
   (globalThis as any).state = state;

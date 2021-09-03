@@ -2,6 +2,7 @@ import { createRef } from 'react';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { isControlled } from '../../utils/isControlled';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
+import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
 import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
@@ -20,7 +21,7 @@ export function getInitialState<T>(
 
   const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
 
-  const generatedColumns: InfiniteTableProps<T>['columns'] = new Map();
+  const generatedColumns: InfiniteTableGeneratedColumns<T> = new Map();
 
   return {
     rowHeight: typeof props.rowHeight === 'number' ? props.rowHeight : 0,
@@ -87,6 +88,7 @@ export function deriveReadOnlyState<T>(
     ? computeColumnGroupsDepths(updated.columnGroups)
     : state.columnGroupsDepthsMap;
   return {
+    groupColumn: props.groupColumn,
     onReady: props.onReady,
     domProps: props.domProps,
     showZebraRows: props.showZebraRows ?? true,

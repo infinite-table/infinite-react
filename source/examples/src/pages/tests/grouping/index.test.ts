@@ -1,3 +1,4 @@
+import { GroupRowsState } from '@src/components/DataSource/GroupRowsState';
 import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
 import { groupToItems } from './helpers';
 
@@ -168,6 +169,60 @@ export default describe('Grouping', () => {
       //---
       espania, //  50, es
     ]);
+  });
+
+  it.only('should enhancedFlatten with collapsed rows', () => {
+    const arr = [
+      john /*uk*/,
+      marrie /*fr */,
+      bob /*uk*/,
+      espania /*es*/,
+      bill /*uk*/,
+    ];
+    const groupResult = group(
+      {
+        groupBy: [{ field: 'country' }],
+      },
+      arr,
+    );
+
+    const result = enhancedFlatten(
+      groupResult,
+      new GroupRowsState({
+        expandedRows: true,
+        collapsedRows: [['uk']],
+      }),
+    );
+
+    expect(result.data[0]).toMatchObject({
+      data: null,
+      groupCount: 3,
+      collapsed: true,
+      groupData: [john, bob, bill],
+      groupKeys: ['uk'],
+      groupBy: ['country'],
+      groupNesting: 1,
+      isGroupRow: true,
+      value: 'uk',
+      reducerResults: [],
+      pivotValuesMap: undefined,
+    });
+    expect(result.data[1]).toMatchObject({
+      data: null,
+      groupCount: 1,
+      collapsed: false,
+      groupData: [marrie],
+      groupKeys: ['fr'],
+      groupBy: ['country'],
+      groupNesting: 1,
+      isGroupRow: true,
+      value: 'fr',
+      reducerResults: [],
+      pivotValuesMap: undefined,
+    });
+    expect(result.data[2]).toMatchObject({
+      data: marrie,
+    });
   });
 
   it('should enhancedFlatten correctly', () => {

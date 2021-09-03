@@ -80,6 +80,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
         rowWidth: computedUnpinnedColumnsWidth,
         ...rowInfo,
       };
+      // console.log('repaint row', rowProps);
 
       if (shouldVirtualizeColumns) {
         rowProps.brain = horizontalVirtualBrain;

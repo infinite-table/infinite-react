@@ -7,6 +7,46 @@ declare module "components/types/ScrollPosition" {
     export type OnScrollFn = (scrollPosition: ScrollPosition) => void;
     export type SetScrollPosition = OnScrollFn;
 }
+declare module "utils/multisort/sortTypes" {
+    const sortTypes: {
+        [key: string]: (first: any, second: any) => number;
+    };
+    export default sortTypes;
+}
+declare module "utils/multisort/index" {
+    export type SortDir = 1 | -1;
+    export type MultisortInfo<T> = {
+        /**
+         * The sorting direction
+         */
+        dir: SortDir;
+        /**
+         * a property whose value to use for sorting on the array items
+         */
+        field?: keyof T;
+        /**
+         * for now 'string' and 'number' are known types, meaning they have
+         * sort functions already implemented
+         */
+        type?: string;
+        fn?: (a: any, b: any) => number;
+    };
+    export interface MultisortFn<T> {
+        (sortInfo: MultisortInfo<T>[], array: T[]): T[];
+        knownTypes: {
+            [key: string]: (first: T, second: T) => number;
+        };
+    }
+    export const multisort: {
+        <T>(sortInfo: MultisortInfo<T>[], array: T[], get?: ((item: any) => T) | undefined): T[];
+        knownTypes: {
+            [key: string]: (first: any, second: any) => number;
+        };
+    };
+    const getSortFunctions: <T>(sortInfo: MultisortInfo<T>[]) => (((first: T, second: T) => number) | undefined)[];
+    const getMultisortFunction: <T>(sortInfo: MultisortInfo<T>[], get?: ((item: any) => T) | undefined) => (first: T, second: T) => number;
+    export { getMultisortFunction, getSortFunctions };
+}
 declare module "components/hooks/useOnce" {
     export function once<ReturnType>(fn: () => ReturnType): () => ReturnType;
     export function useOnce<ReturnType>(fn: () => ReturnType): ReturnType;
@@ -29,11 +69,13 @@ declare module "utils/DeepMap" {
         private map;
         private length;
         private revision;
+        constructor(initial?: [KeyType[], ValueType][]);
         set(keys: KeyType[] & {
             length: Omit<number, 0>;
         }, value: ValueType): this;
         get(keys: KeyType[]): ValueType | undefined;
         get size(): number;
+        clear(): void;
         delete(keys: KeyType[]): boolean;
         has(keys: KeyType[]): boolean;
         private visitKey;
@@ -50,7 +92,237 @@ declare module "utils/DeepMap" {
         private sortedIterator;
     }
 }
+declare module "utils/debug" {
+    export interface LogFn {
+        (...args: any[]): LogFn;
+        extend: (channelName: string) => LogFn;
+    }
+    export const dbg: (channelName: string) => LogFn;
+    export const err: (channelName: string) => LogFn;
+    export class Logger {
+        debug: LogFn;
+        error: LogFn;
+        constructor(channelName: string);
+    }
+}
+declare module "components/utils/isControlledValue" {
+    export function isControlledValue(value: any): boolean;
+}
+declare module "components/utils/isControlled" {
+    export function isControlled<V extends keyof T, T>(propName: V, props: T): boolean;
+}
+declare module "components/hooks/useLatest" {
+    export const useLatest: <T>(value: T) => () => T;
+}
+declare module "components/hooks/usePrevious" {
+    export const usePrevious: <T>(value: T, initialValue?: T | undefined) => T;
+}
+declare module "utils/toUpperFirst" {
+    export const toUpperFirst: (s: string) => string;
+    export default toUpperFirst;
+}
+declare module "components/types/Setter" {
+    import * as React from 'react';
+    export interface Setter<T> extends React.Dispatch<React.SetStateAction<T>> {
+    }
+}
+declare module "components/hooks/useProperty" {
+    import { Setter } from "components/types/Setter";
+    export const notifyChange: (props: any, propName: string, newValue: any) => void;
+    function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(propName: V, props: T_PROPS, config: {
+        fromState: (defaultValue?: NORMALIZED) => NORMALIZED;
+        setState: (v: NORMALIZED) => void;
+    } & {
+        defaultValue?: T_PROPS[V];
+        normalize?: (v?: NORMALIZED | T_PROPS[V]) => NORMALIZED;
+        onControlledChange?: (n: NORMALIZED, v: NORMALIZED | T_PROPS[V]) => void;
+    }): [NORMALIZED, Setter<NORMALIZED | T_PROPS[V]>];
+    export { useProperty };
+}
+declare module "components/hooks/useComponentState" {
+    import * as React from 'react';
+    export function getComponentStateContext<T>(): React.Context<T>;
+    type ComponentStateContext<T_STATE, T_ACTIONS> = {
+        getComponentState: () => T_STATE;
+        componentState: T_STATE;
+        componentActions: T_ACTIONS;
+        updateStateProperty: <T extends keyof T_STATE>(propertyName: T, propertyValue: T_STATE[T]) => void;
+    };
+    type ComponentStateGeneratedActions<T_STATE> = {
+        [k in keyof T_STATE]: T_STATE[k] | React.SetStateAction<T_STATE[k]>;
+    };
+    export type ComponentStateActions<T_STATE, T_ACTIONS = {}> = ComponentStateGeneratedActions<T_STATE> & T_ACTIONS;
+    type ComponentStateRootConfig<T_PROPS, T_STATE, T_READONLY_STATE = {}, T_ACTIONS = {}> = {
+        getInitialState: (props: T_PROPS) => T_STATE;
+        concludeReducer?: (previousState: T_STATE, currentState: T_STATE, updated: Partial<T_STATE> | null) => T_STATE;
+        getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
+        deriveReadOnlyState?: (props: T_PROPS, state: T_STATE, updated: Partial<T_STATE> | null) => T_READONLY_STATE;
+        onControlledPropertyChange?: (name: string, newValue: any, oldValue: any) => void | ((value: any, oldValue: any) => any);
+    };
+    export function getComponentStateRoot<T_PROPS, T_STATE extends object, T_READONLY_STATE extends object = {}, T_ACTIONS = {}>(config: ComponentStateRootConfig<T_PROPS, T_STATE, T_READONLY_STATE, T_ACTIONS>): React.NamedExoticComponent<T_PROPS & {
+        children: React.ReactNode;
+    }>;
+    export function useComponentState<T_STATE, T_READONLY_STATE = {}, T_ACTIONS = {}>(): ComponentStateContext<T_STATE & T_READONLY_STATE, ComponentStateActions<T_STATE, T_ACTIONS>>;
+}
+declare module "components/DataSource/types" {
+    import * as React from 'react';
+    import { MultisortInfo } from "utils/multisort/index";
+    import { DeepMap } from "utils/DeepMap";
+    import { AggregationReducer, DeepMapGroupValueType, GroupBy, GroupKeyType, PivotBy } from "utils/groupAndPivot/index";
+    import { InfiniteTableColumn, InfiniteTableColumnGroup, InfiniteTableEnhancedData } from "components/InfiniteTable/index";
+    import { ComponentStateActions } from "components/hooks/useComponentState";
+    import { GroupRowsState } from "components/DataSource/GroupRowsState";
+    export interface DataSourceDataInfo<T> {
+        originalDataArray: T[];
+    }
+    export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
+        field?: keyof T;
+        id?: string;
+    };
+    export type DataSourceGroupRowsBy<T> = GroupBy<T, any>;
+    export type DataSourcePivotBy<T> = PivotBy<T, any>;
+    export type DataSourceSortInfo<T> = null | DataSourceSingleSortInfo<T> | DataSourceSingleSortInfo<T>[];
+    export type DataSourceData<T> = T[] | Promise<T[] | {
+        data: T[];
+    }> | (() => T[] | Promise<T[] | {
+        data: T[];
+    }>);
+    export type DataSourceGroupRowsList<KeyType> = true | KeyType[][];
+    export type DataSourceExpandedAndCollapsedGroupRows<KeyType> = {
+        expandedRows: DataSourceGroupRowsList<KeyType>;
+        collapsedRows: DataSourceGroupRowsList<KeyType>;
+    };
+    export interface DataSourceProps<T> {
+        children: React.ReactNode | ((contextData: DataSourceComponentState<T>) => React.ReactNode);
+        primaryKey: keyof T;
+        fields?: (keyof T)[];
+        data: DataSourceData<T>;
+        loading?: boolean;
+        defaultLoading?: boolean;
+        onLoadingChange?: (loading: boolean) => void;
+        pivotBy?: DataSourcePivotBy<T>[];
+        defaultPivotBy?: DataSourcePivotBy<T>[];
+        onPivotByChange?: (pivotBy: DataSourcePivotBy<T>[]) => void;
+        groupRowsBy?: DataSourceGroupRowsBy<T>[];
+        defaultGroupRowsBy?: DataSourceGroupRowsBy<T>[];
+        onGroupRowsByChange?: (groupBy: DataSourceGroupRowsBy<T>[]) => void;
+        groupRowsState?: GroupRowsState;
+        defaultGroupRowsState?: GroupRowsState;
+        onGroupRowsStateChange?: (groupRowsState: GroupRowsState) => void;
+        sortInfo?: DataSourceSortInfo<T>;
+        defaultSortInfo?: DataSourceSortInfo<T>;
+        onSortInfoChange?: (sortInfo: DataSourceSortInfo<T>) => void;
+    }
+    export interface DataSourceState<T> extends DataSourceDataInfo<T> {
+        data: DataSourceData<T>;
+        loading: boolean;
+        sortInfo?: DataSourceSortInfo<T>;
+        dataArray: InfiniteTableEnhancedData<T>[];
+        groupRowsBy: DataSourceGroupRowsBy<T>[];
+        pivotBy?: DataSourcePivotBy<T>[];
+        pivotColumns?: Map<string, InfiniteTableColumn<T>>;
+        pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
+        aggregationReducers?: AggregationReducer<T, any>[];
+        groupRowsState: GroupRowsState;
+        timestamp: number;
+    }
+    export interface DataSourceReadOnlyState<T> {
+        multiSort: boolean;
+        sortInfo: DataSourceSingleSortInfo<T>[];
+        primaryKey: keyof T;
+        groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
+        postSortDataArray?: T[];
+        postGroupDataArray?: InfiniteTableEnhancedData<T>[];
+    }
+    export interface DataSourceComponentState<T> extends Omit<DataSourceState<T>, 'sortInfo'>, DataSourceReadOnlyState<T> {
+    }
+    export type DataSourceComponentActions<T> = ComponentStateActions<DataSourceState<T>>;
+    export interface DataSourceContextValue<T> {
+        getState: () => DataSourceComponentState<T>;
+        componentState: DataSourceComponentState<T>;
+        componentActions: DataSourceComponentActions<T>;
+    }
+    export enum DataSourceActionType {
+        INIT = "INIT"
+    }
+    export interface DataSourceAction<T> {
+        type: DataSourceActionType;
+        payload: T;
+    }
+    export interface DataSourceReducer<T> {
+        (state: DataSourceState<T>, action: DataSourceAction<any>): DataSourceState<T>;
+    }
+}
+declare module "components/DataSource/DataSourceContext" {
+    import * as React from 'react';
+    import { DataSourceContextValue } from "components/DataSource/types";
+    export function getDataSourceContext<T>(): React.Context<DataSourceContextValue<T>>;
+}
+declare module "components/DataSource/publicHooks/useDataSource" {
+    import { DataSourceComponentState, DataSourceContextValue } from "components/DataSource/types";
+    export function useDataSource<T>(): DataSourceComponentState<T>;
+    export function useDataSourceContextValue<T>(): DataSourceContextValue<T>;
+}
+declare module "components/DataSource/privateHooks/buildDataSourceDataInfo" {
+    import { DataSourceDataInfo } from "components/DataSource/types";
+    export function buildDataSourceDataInfo<T>(dataParam: T[] | {
+        data: T[];
+    }): DataSourceDataInfo<T>;
+}
+declare module "components/DataSource/privateHooks/loadDataAsync" {
+    import { DataSourceData, DataSourceDataInfo } from "components/DataSource/types";
+    export function loadDataAsync<T>(data: DataSourceData<T>): Promise<DataSourceDataInfo<T>>;
+}
+declare module "components/DataSource/privateHooks/useLoadData" {
+    export function useLoadData<T>(): void;
+}
+declare module "components/DataSource/state/normalizeSortInfo" {
+    import { DataSourceSingleSortInfo, DataSourceSortInfo } from "components/DataSource/types";
+    export const normalizeSortInfo: <T>(sortInfo?: DataSourceSortInfo<T> | undefined) => DataSourceSingleSortInfo<T>[];
+}
+declare module "components/DataSource/state/getInitialState" {
+    import { DataSourceProps, DataSourceReadOnlyState, DataSourceState } from "components/DataSource/types";
+    export function getInitialState<T>(initialProps: DataSourceProps<T>): DataSourceState<T>;
+    export function deriveReadOnlyState<T extends any>(props: DataSourceProps<T>, state: DataSourceState<T>, _updated: Partial<DataSourceState<T>> | null): DataSourceReadOnlyState<T>;
+}
+declare module "components/DataSource/state/reducer" {
+    import type { DataSourceState, DataSourceReadOnlyState } from "components/DataSource/types";
+    export function concludeReducer<T>(_previousState: DataSourceState<T> & DataSourceReadOnlyState<T>, state: DataSourceState<T> & DataSourceReadOnlyState<T>, updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null): DataSourceState<T> & DataSourceReadOnlyState<T>;
+}
+declare module "components/DataSource/index" {
+    import { DataSourceProps } from "components/DataSource/types";
+    import { useDataSource } from "components/DataSource/publicHooks/useDataSource";
+    import { GroupRowsState } from "components/DataSource/GroupRowsState";
+    function DataSource<T>(props: DataSourceProps<T>): JSX.Element;
+    export { useDataSource, DataSource, GroupRowsState };
+    export * from "components/DataSource/types";
+}
+declare module "components/DataSource/GroupRowsState" {
+    import { DataSourceExpandedAndCollapsedGroupRows } from "components/DataSource/index";
+    export class GroupRowsState<KeyType extends any = any> {
+        private expandedMap?;
+        private collapsedMap?;
+        private collapsedAll;
+        private expandedAll;
+        private initialState;
+        constructor(state: DataSourceExpandedAndCollapsedGroupRows<KeyType> | GroupRowsState<KeyType>);
+        getState(): DataSourceExpandedAndCollapsedGroupRows<KeyType>;
+        destroy(): void;
+        private update;
+        areAllCollapsed(): boolean;
+        areAllExpanded(): boolean;
+        collapseAll(): void;
+        expandAll(): void;
+        isGroupRowExpanded(keys: KeyType[]): boolean | undefined;
+        isGroupRowCollapsed(keys: KeyType[]): boolean;
+        setGroupRowExpanded(keys: KeyType[], shouldExpand: boolean): void;
+        collapseGroupRow(keys: KeyType[]): void;
+        expandGroupRow(keys: KeyType[]): void;
+        toggleGroupRow(keys: KeyType[]): void;
+    }
+}
 declare module "utils/groupAndPivot/index" {
+    import { GroupRowsState } from "components/DataSource/GroupRowsState";
     import { InfiniteTablePropColumnGroups, InfiniteTablePropColumns } from "components/InfiniteTable/types/InfiniteTableProps";
     import { DeepMap } from "utils/DeepMap";
     export type AggregationReducer<T, AggregationResultType> = {
@@ -64,6 +336,7 @@ declare module "utils/groupAndPivot/index" {
         groupData?: T[];
         value?: any;
         isGroupRow?: boolean;
+        collapsed: boolean;
         groupNesting?: number;
         groupKeys?: any[];
         parentGroupKeys?: any[];
@@ -117,7 +390,7 @@ declare module "utils/groupAndPivot/index" {
     };
     export function group<DataType, KeyType = any>(groupParams: GroupParams<DataType, KeyType>, data: DataType[]): DataGroupResult<DataType, KeyType>;
     export function flatten<DataType, KeyType extends any>(groupResult: DataGroupResult<DataType, KeyType>): DataType[];
-    export function enhancedFlatten<DataType, KeyType = any>(groupResult: DataGroupResult<DataType, KeyType>): {
+    export function enhancedFlatten<DataType, KeyType = any>(groupResult: DataGroupResult<DataType, KeyType>, groupRowsState?: GroupRowsState): {
         data: InfiniteTableEnhancedData<DataType>[];
     };
     export type ComputedColumnsAndGroups<DataType> = {
@@ -130,182 +403,8 @@ declare module "components/types/Renderable" {
     import * as React from 'react';
     export type Renderable = React.ReactNode | string | number | null;
 }
-declare module "utils/multisort/sortTypes" {
-    const sortTypes: {
-        [key: string]: (first: any, second: any) => number;
-    };
-    export default sortTypes;
-}
-declare module "utils/multisort/index" {
-    export type SortDir = 1 | -1;
-    export type MultisortInfo<T> = {
-        /**
-         * The sorting direction
-         */
-        dir: SortDir;
-        /**
-         * a property whose value to use for sorting on the array items
-         */
-        field?: keyof T;
-        /**
-         * for now 'string' and 'number' are known types, meaning they have
-         * sort functions already implemented
-         */
-        type?: string;
-        fn?: (a: any, b: any) => number;
-    };
-    export interface MultisortFn<T> {
-        (sortInfo: MultisortInfo<T>[], array: T[]): T[];
-        knownTypes: {
-            [key: string]: (first: T, second: T) => number;
-        };
-    }
-    export const multisort: {
-        <T>(sortInfo: MultisortInfo<T>[], array: T[], get?: ((item: any) => T) | undefined): T[];
-        knownTypes: {
-            [key: string]: (first: any, second: any) => number;
-        };
-    };
-    const getSortFunctions: <T>(sortInfo: MultisortInfo<T>[]) => (((first: T, second: T) => number) | undefined)[];
-    const getMultisortFunction: <T>(sortInfo: MultisortInfo<T>[], get?: ((item: any) => T) | undefined) => (first: T, second: T) => number;
-    export { getMultisortFunction, getSortFunctions };
-}
-declare module "components/utils/isControlledValue" {
-    export function isControlledValue(value: any): boolean;
-}
-declare module "components/utils/isControlled" {
-    export function isControlled<V extends keyof T, T>(propName: V, props: T): boolean;
-}
-declare module "components/hooks/useLatest" {
-    export const useLatest: <T>(value: T) => () => T;
-}
-declare module "components/hooks/usePrevious" {
-    export const usePrevious: <T>(value: T, initialValue?: T | undefined) => T;
-}
-declare module "utils/toUpperFirst" {
-    export const toUpperFirst: (s: string) => string;
-    export default toUpperFirst;
-}
-declare module "components/types/Setter" {
-    import * as React from 'react';
-    export interface Setter<T> extends React.Dispatch<React.SetStateAction<T>> {
-    }
-}
-declare module "components/hooks/useProperty" {
-    import { Setter } from "components/types/Setter";
-    export const notifyChange: (props: any, propName: string, newValue: any) => void;
-    function useProperty<V extends keyof T_PROPS, T_PROPS, NORMALIZED>(propName: V, props: T_PROPS, config: {
-        fromState: (defaultValue?: NORMALIZED) => NORMALIZED;
-        setState: (v: NORMALIZED) => void;
-    } & {
-        defaultValue?: T_PROPS[V];
-        normalize?: (v?: NORMALIZED | T_PROPS[V]) => NORMALIZED;
-        onControlledChange?: (n: NORMALIZED, v: NORMALIZED | T_PROPS[V]) => void;
-    }): [NORMALIZED, Setter<NORMALIZED | T_PROPS[V]>];
-    export { useProperty };
-}
-declare module "components/hooks/useComponentState" {
-    import * as React from 'react';
-    export function getComponentStateContext<T>(): React.Context<T>;
-    type ComponentStateContext<T_STATE, T_ACTIONS> = {
-        getComponentState: () => T_STATE;
-        componentState: T_STATE;
-        componentActions: T_ACTIONS;
-    };
-    type ComponentStateGeneratedActions<T_STATE> = {
-        [k in keyof T_STATE]: T_STATE[k] | React.SetStateAction<T_STATE[k]>;
-    };
-    export type ComponentStateActions<T_STATE, T_ACTIONS = {}> = ComponentStateGeneratedActions<T_STATE> & T_ACTIONS;
-    type ComponentStateRootConfig<T_PROPS, T_STATE, T_READONLY_STATE = {}, T_ACTIONS = {}> = {
-        getInitialState: (props: T_PROPS) => T_STATE;
-        reducer?: React.Reducer<T_STATE, any>;
-        getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
-        deriveReadOnlyState?: (props: T_PROPS, state: T_STATE, updated: Partial<T_STATE> | null) => T_READONLY_STATE;
-        onControlledPropertyChange?: (name: string, newValue: any, oldValue: any) => void | ((value: any, oldValue: any) => any);
-    };
-    export function getComponentStateRoot<T_PROPS, T_STATE extends object, T_READONLY_STATE extends object = {}, T_ACTIONS = {}>(config: ComponentStateRootConfig<T_PROPS, T_STATE, T_READONLY_STATE, T_ACTIONS>): React.NamedExoticComponent<T_PROPS & {
-        children: React.ReactNode;
-    }>;
-    export function useComponentState<T_STATE, T_READONLY_STATE = {}, T_ACTIONS = {}>(): ComponentStateContext<T_STATE & T_READONLY_STATE, ComponentStateActions<T_STATE, T_ACTIONS>>;
-}
-declare module "components/DataSource/types" {
-    import * as React from 'react';
-    import { MultisortInfo } from "utils/multisort/index";
-    import { DeepMap } from "utils/DeepMap";
-    import { AggregationReducer, DeepMapGroupValueType, GroupBy, GroupKeyType, PivotBy } from "utils/groupAndPivot/index";
-    import { InfiniteTableColumn, InfiniteTableColumnGroup, InfiniteTableEnhancedData } from "components/InfiniteTable/index";
-    import { ComponentStateActions } from "components/hooks/useComponentState";
-    export interface DataSourceDataInfo<T> {
-        originalDataArray: T[];
-    }
-    export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
-        field?: keyof T;
-        id?: string;
-    };
-    export type DataSourceGroupBy<T> = GroupBy<T, any>;
-    export type DataSourcePivotBy<T> = PivotBy<T, any>;
-    export type DataSourceSortInfo<T> = null | DataSourceSingleSortInfo<T> | DataSourceSingleSortInfo<T>[];
-    export type DataSourceData<T> = T[] | Promise<T[] | {
-        data: T[];
-    }> | (() => T[] | Promise<T[] | {
-        data: T[];
-    }>);
-    export interface DataSourceProps<T> {
-        children: React.ReactNode | ((contextData: DataSourceComponentState<T>) => React.ReactNode);
-        primaryKey: keyof T;
-        fields?: (keyof T)[];
-        data: DataSourceData<T>;
-        loading?: boolean;
-        defaultLoading?: boolean;
-        onLoadingChange?: (loading: boolean) => void;
-        pivotBy?: DataSourcePivotBy<T>[];
-        defaultPivotBy?: DataSourcePivotBy<T>[];
-        onPivotByChange?: (pivotBy: DataSourcePivotBy<T>[]) => void;
-        groupRowsBy?: DataSourceGroupBy<T>[];
-        defaultGroupRowsBy?: DataSourceGroupBy<T>[];
-        onGroupRowsByChange?: (groupBy: DataSourceGroupBy<T>[]) => void;
-        sortInfo?: DataSourceSortInfo<T>;
-        defaultSortInfo?: DataSourceSortInfo<T>;
-        onSortInfoChange?: (sortInfo: DataSourceSortInfo<T>) => void;
-    }
-    export interface DataSourceState<T> extends DataSourceDataInfo<T> {
-        data: DataSourceData<T>;
-        loading: boolean;
-        sortInfo?: DataSourceSortInfo<T>;
-        dataArray: InfiniteTableEnhancedData<T>[];
-        groupRowsBy: DataSourceGroupBy<T>[];
-        pivotBy?: DataSourcePivotBy<T>[];
-        pivotColumns?: Map<string, InfiniteTableColumn<T>>;
-        pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
-        aggregationReducers?: AggregationReducer<T, any>[];
-    }
-    export interface DataSourceReadOnlyState<T> {
-        multiSort: boolean;
-        sortInfo: DataSourceSingleSortInfo<T>[];
-        primaryKey: keyof T;
-        groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
-        postSortDataArray?: T[];
-        postGroupDataArray?: InfiniteTableEnhancedData<T>[];
-    }
-    export interface DataSourceComponentState<T> extends Omit<DataSourceState<T>, 'sortInfo'>, DataSourceReadOnlyState<T> {
-    }
-    export type DataSourceComponentActions<T> = ComponentStateActions<DataSourceState<T>>;
-    export interface DataSourceContextValue<T> {
-        componentState: DataSourceComponentState<T>;
-        componentActions: DataSourceComponentActions<T>;
-    }
-    export enum DataSourceActionType {
-        INIT = "INIT"
-    }
-    export interface DataSourceAction<T> {
-        type: DataSourceActionType;
-        payload: T;
-    }
-    export interface DataSourceReducer<T> {
-        (state: DataSourceState<T>, action: DataSourceAction<any>): DataSourceState<T>;
-    }
-}
 declare module "components/InfiniteTable/types/Utility" {
+    export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
     export type RequireOnlyOneProperty<T, Keys extends keyof T> = Pick<T, Exclude<keyof T, Keys>> & {
         [K in Keys]-?: Required<Pick<T, K>> & Partial<Record<Exclude<Keys, K>, undefined>>;
     }[Keys];
@@ -365,10 +464,9 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
         field?: keyof T;
         render?: InfiniteTableColumnRenderFunction<T>;
     }, 'render' | 'field'>;
-    export type InfiniteTableColumn<T> = {
+    export type InfiniteTableBaseColumn<T> = {
         maxWidth?: number;
         minWidth?: number;
-        type?: InfiniteTableColumnTypes;
         sortable?: boolean;
         draggable?: boolean;
         align?: InfiniteTableColumnAlign;
@@ -378,7 +476,12 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
         name?: Renderable;
         cssEllipsis?: boolean;
         headerCssEllipsis?: boolean;
-    } & InfiniteTableColumnWithRenderOrField<T> & InfiniteTableColumnWithSize;
+        type?: InfiniteTableColumnTypes;
+    };
+    export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> & InfiniteTableColumnWithRenderOrField<T> & InfiniteTableColumnWithSize;
+    export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
+        groupByField?: string;
+    };
     type InfiniteTableComputedColumnBase<T> = {
         computedWidth: number;
         computedOffset: number;
@@ -401,13 +504,14 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
         toggleSort: () => void;
         id: string;
     };
-    export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> & InfiniteTableComputedColumnBase<T>;
+    export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> & InfiniteTableComputedColumnBase<T> & InfiniteTableGeneratedColumn<T>;
 }
 declare module "components/InfiniteTable/types/InfiniteTableProps" {
     import * as React from 'react';
     import { AggregationReducer } from "utils/groupAndPivot/index";
+    import { DataSourceGroupRowsBy } from "components/DataSource/index";
     import { Renderable } from "components/types/Renderable";
-    import type { InfiniteTableColumn, InfiniteTableComputedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     export type InfiniteTablePropColumnOrderNormalized = string[];
     export type InfiniteTablePropColumnOrder = InfiniteTablePropColumnOrderNormalized | true;
     export type InfiniteTablePropColumnVisibility = Map<string, false>;
@@ -428,6 +532,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         ___t?: T;
     };
     export type InfiniteTablePropColumns<T> = Map<string, InfiniteTableColumn<T>>;
+    export type InfiniteTableGeneratedColumns<T> = Map<string, InfiniteTableGeneratedColumn<T>>;
     export type InfiniteTablePropColumnGroups = Map<string, InfiniteTableColumnGroup>;
     /**
      * the keys is an array of strings: first string in the array is the column group id, next strings are the ids of all columns in the group
@@ -450,8 +555,16 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         columns: string[];
         depth: number;
     };
+    export type GroupColumnGetterOptions<T> = {
+        groupIndex: number;
+        groupCount: number;
+        groupBy: DataSourceGroupRowsBy<T>;
+        groupRowsBy: DataSourceGroupRowsBy<T>[];
+    };
+    export type InfiniteTablePropGroupColumn<T> = boolean | InfiniteTableBaseColumn<T> | ((options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupKeys: any[]) => void) => InfiniteTableBaseColumn<T>);
     export type InfiniteTableProps<T> = {
         columns: InfiniteTablePropColumns<T>;
+        groupColumn?: InfiniteTablePropGroupColumn<T>;
         columnVisibility?: InfiniteTablePropColumnVisibility;
         defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
         columnPinning?: InfiniteTablePropColumnPinning;
@@ -464,6 +577,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         collapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
         onColumnVisibilityChange?: (columnVisibility: InfiniteTablePropColumnVisibility) => void;
         rowHeight: number | string;
+        headerHeight: number | string;
         domProps?: React.HTMLProps<HTMLDivElement>;
         showZebraRows?: boolean;
         sortable?: boolean;
@@ -483,12 +597,6 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
             data: T | null;
         }) => React.HTMLProps<HTMLDivElement>);
         licenseKey?: string;
-    };
-    export type InfiniteTableOwnProps<T> = InfiniteTableProps<T> & {
-        rowHeight: number;
-        rowHeightCSSVar: string;
-        onHeaderResize: (height: number) => void;
-        bodyDOMRef?: React.RefObject<HTMLDivElement | null>;
     };
 }
 declare module "components/types/Size" {
@@ -513,7 +621,7 @@ declare module "components/types/SubscriptionCallback" {
 }
 declare module "components/InfiniteTable/types/InfiniteTableState" {
     import type { ScrollPosition } from "components/types/ScrollPosition";
-    import type { InfiniteTableColumnGroup, InfiniteTablePropCollapsedColumnGroups, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableColumnGroup, InfiniteTableGeneratedColumns, InfiniteTablePropCollapsedColumnGroups, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
     import { Size } from "components/types/Size";
     import { ComponentStateActions } from "components/hooks/useComponentState";
     import { MutableRefObject } from 'react';
@@ -523,9 +631,10 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
         bodyDOMRef: MutableRefObject<HTMLDivElement | null>;
         portalDOMRef: MutableRefObject<HTMLDivElement | null>;
         bodySizeRef: MutableRefObject<Size | null>;
-        headerHeightRef: MutableRefObject<number>;
         onRowHeightChange: SubscriptionCallback<number>;
+        onHeaderHeightChange: SubscriptionCallback<number>;
         rowHeight: number;
+        headerHeight: number;
         columnShifts: null | number[];
         draggingColumnId: null | string;
         bodySize: Size;
@@ -537,7 +646,9 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
         columnGroups: InfiniteTablePropColumnGroups;
         collapsedColumnGroups: InfiniteTablePropCollapsedColumnGroups;
         columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
+        columnGroupsMaxDepth: number;
         columns: InfiniteTableProps<T>['columns'];
+        generatedColumns: InfiniteTableGeneratedColumns<T>;
         x?: T;
     }
     export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
@@ -549,6 +660,7 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
     export interface InfiniteTableReadOnlyState<T> {
         onReady: InfiniteTableProps<T>['onReady'];
         rowProps: InfiniteTableProps<T>['rowProps'];
+        groupColumn: InfiniteTableProps<T>['groupColumn'];
         showZebraRows: InfiniteTableProps<T>['showZebraRows'];
         header: InfiniteTableProps<T>['header'];
         columnMinWidth: InfiniteTableProps<T>['columnMinWidth'];
@@ -561,7 +673,9 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
         domProps: InfiniteTableProps<T>['domProps'];
         draggableColumns: boolean;
         columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
+        columnGroupsMaxDepth: number;
         rowHeightCSSVar: string;
+        headerHeightCSSVar: string;
     }
     export type InfiniteTableComponentActions<T> = ComponentStateActions<InfiniteTableState<T>>;
 }
@@ -621,12 +735,12 @@ declare module "components/InfiniteTable/types/index" {
     import type { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import type { InfiniteTableAction } from "components/InfiniteTable/types/InfiniteTableAction";
     import type { InfiniteTableActionType } from "components/InfiniteTable/types/InfiniteTableActionType";
-    import type { InfiniteTableProps, InfiniteTableOwnProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup } from "components/InfiniteTable/types/InfiniteTableProps";
     import type { InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { InfiniteTableComputedValues } from "components/InfiniteTable/types/InfiniteTableComputedValues";
     import type { InfiniteTableContextValue } from "components/InfiniteTable/types/InfiniteTableContextValue";
     import type { InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
-    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableOwnProps, InfiniteTableImperativeApi, InfiniteTableActionType, };
+    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, };
 }
 declare module "utils/join" {
     const join: (...args: (string | number | void | null)[]) => string;
@@ -733,7 +847,7 @@ declare module "components/InfiniteTable/utils/getComputedVisibleColumns" {
     import type { InfiniteTableColumn, InfiniteTableComputedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { Size } from "components/types/Size";
     import type { DataSourceSingleSortInfo } from "components/DataSource/types";
-    import type { InfiniteTablePropColumnOrder, InfiniteTablePropColumnOrderNormalized, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableGeneratedColumns, InfiniteTablePropColumnOrder, InfiniteTablePropColumnOrderNormalized, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
     export type SortInfoMap<T> = {
         [key: string]: {
             sortInfo: DataSourceSingleSortInfo<T>;
@@ -759,6 +873,7 @@ declare module "components/InfiniteTable/utils/getComputedVisibleColumns" {
     };
     type GetComputedVisibleColumnsParam<T> = {
         columns: Map<string, InfiniteTableColumn<T>>;
+        generatedColumns: InfiniteTableGeneratedColumns<T>;
         bodySize: Size;
         columnMinWidth?: number;
         columnMaxWidth?: number;
@@ -773,7 +888,7 @@ declare module "components/InfiniteTable/utils/getComputedVisibleColumns" {
         columnVisibility: InfiniteTablePropColumnVisibility;
         columnVisibilityAssumeVisible: boolean;
     };
-    export const getComputedVisibleColumns: <T extends unknown>({ columns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, sortInfo, setSortInfo, multiSort, draggableColumns, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: GetComputedVisibleColumnsParam<T>) => GetComputedVisibleColumnsResult<T>;
+    export const getComputedVisibleColumns: <T extends unknown>({ columns, generatedColumns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, sortInfo, setSortInfo, multiSort, draggableColumns, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: GetComputedVisibleColumnsParam<T>) => GetComputedVisibleColumnsResult<T>;
 }
 declare module "components/hooks/useRerender" {
     export const useRerender: () => [number, () => void];
@@ -794,39 +909,21 @@ declare module "components/hooks/useInterceptedMap" {
     export function interceptMap<K, V>(map: Map<K, V>, fns: InterceptedMapFns<K, V>): () => void;
     export function useInterceptedMap<K, V>(map: Map<K, V>, fns: InterceptedMapFns<K, V>): void;
 }
-declare module "components/InfiniteTable/hooks/useColumnPinningRerenderOnKeyChange" {
-    import type { InfiniteTablePropColumnPinning } from "components/InfiniteTable/types/index";
-    export const useColumnPinningRerenderOnKeyChange: (columnPinning: InfiniteTablePropColumnPinning) => number;
+declare module "components/InfiniteTable/utils/rafFn" {
+    export const rafFn: (fn: () => void) => () => void;
 }
-declare module "components/InfiniteTable/hooks/useColumnRerenderOnKeyChange" {
-    import type { InfiniteTableColumn } from "components/InfiniteTable/types/index";
-    export const useColumnRerenderOnKeyChange: <T extends unknown>(columns: Map<string, InfiniteTableColumn<T>>) => number;
-}
-declare module "components/InfiniteTable/hooks/useColumnVisibilityRerenderOnKeyChange" {
-    import type { InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/index";
-    export const useColumnVisibilityRerenderOnKeyChange: (columnVisibility: InfiniteTablePropColumnVisibility) => number;
-}
-declare module "utils/debug" {
-    export interface LogFn {
-        (...args: any[]): LogFn;
-        extend: (channelName: string) => LogFn;
-    }
-    export const dbg: (channelName: string) => LogFn;
-    export const err: (channelName: string) => LogFn;
-    export class Logger {
-        debug: LogFn;
-        error: LogFn;
-        constructor(channelName: string);
-    }
+declare module "components/InfiniteTable/hooks/useRerenderOnKeyChange" {
+    export const useRerenderOnKeyChange: <K extends unknown, V extends unknown>(map: Map<K, V>) => number;
 }
 declare module "components/InfiniteTable/hooks/useComputedVisibleColumns" {
     import type { DataSourceSingleSortInfo } from "components/DataSource/types";
     import type { InfiniteTableColumn } from "components/InfiniteTable/types/index";
-    import type { InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableGeneratedColumns, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
     import type { Size } from "components/types/Size";
     import type { GetComputedVisibleColumnsResult } from "components/InfiniteTable/utils/getComputedVisibleColumns";
     type UseComputedVisibleColumnsParam<T> = {
         columns: Map<string, InfiniteTableColumn<T>>;
+        generatedColumns: InfiniteTableGeneratedColumns<T>;
         bodySize: Size;
         columnMinWidth?: number;
         columnMaxWidth?: number;
@@ -856,12 +953,7 @@ declare module "components/InfiniteTable/hooks/useComputedVisibleColumns" {
         computedVisibleColumnsMap: GetComputedVisibleColumnsResult<T>['computedVisibleColumnsMap'];
         computedColumnOrder: GetComputedVisibleColumnsResult<T>['computedColumnOrder'];
     };
-    export const useComputedVisibleColumns: <T extends unknown>({ columns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, draggableColumns, sortInfo, multiSort, setSortInfo, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: UseComputedVisibleColumnsParam<T>) => UseComputedVisibleColumnsResult<T>;
-}
-declare module "components/DataSource/DataSourceContext" {
-    import * as React from 'react';
-    import { DataSourceContextValue } from "components/DataSource/types";
-    export function getDataSourceContext<T>(): React.Context<DataSourceContextValue<T>>;
+    export const useComputedVisibleColumns: <T extends unknown>({ columns, generatedColumns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, draggableColumns, sortInfo, multiSort, setSortInfo, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: UseComputedVisibleColumnsParam<T>) => UseComputedVisibleColumnsResult<T>;
 }
 declare module "components/DataSource/publicHooks/useDataSourceActions" {
     import { DataSourceComponentActions } from "components/DataSource/types";
@@ -870,25 +962,8 @@ declare module "components/DataSource/publicHooks/useDataSourceActions" {
 declare module "components/InfiniteTable/hooks/useColumnAggregations" {
     export function useColumnAggregations<T>(): void;
 }
-declare module "components/DataSource/publicHooks/useDataSource" {
-    import { DataSourceComponentState, DataSourceContextValue } from "components/DataSource/types";
-    export function useDataSource<T>(): DataSourceComponentState<T>;
-    export function useDataSourceContextValue<T>(): DataSourceContextValue<T>;
-}
 declare module "components/InfiniteTable/hooks/useColumnGroups" {
     export function useColumnGroups<T>(): void;
-}
-declare module "components/InfiniteTable/hooks/useComputed" {
-    import { InfiniteTableComputedValues } from "components/InfiniteTable/types/index";
-    export function useComputed<T>(): InfiniteTableComputedValues<T>;
-}
-declare module "components/InfiniteTable/hooks/useInternalProps" {
-    export const useInternalProps: () => {
-        rootClassName: string;
-    };
-    export const getInternalProps: () => {
-        rootClassName: string;
-    };
 }
 declare module "style/utilities" {
     export const ICSS: {
@@ -971,6 +1046,38 @@ declare module "style/utilities" {
         };
     };
 }
+declare module "components/InfiniteTable/components/icons/ExpanderIcon" {
+    import * as React from 'react';
+    type ExpanderIconProps = {
+        size?: number;
+        expanded?: boolean;
+        defaultExpanded?: boolean;
+        onChange?: (expanded: boolean) => void;
+        style?: React.CSSProperties;
+        className?: string;
+    };
+    export function ExpanderIcon(props: ExpanderIconProps): JSX.Element;
+}
+declare module "components/InfiniteTable/utils/getColumnForGroupBy" {
+    import { InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import { GroupColumnGetterOptions, InfiniteTablePropGroupColumn } from "components/InfiniteTable/types/InfiniteTableProps";
+    export function getColumnForGroupBy<T>(options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupRowKeys: any[]) => void, groupColumnFromProps?: InfiniteTablePropGroupColumn<T>): InfiniteTableGeneratedColumn<T>;
+}
+declare module "components/InfiniteTable/hooks/useGroupRowsBy" {
+    export function useGroupRowsBy<T>(): void;
+}
+declare module "components/InfiniteTable/hooks/useComputed" {
+    import { InfiniteTableComputedValues } from "components/InfiniteTable/types/index";
+    export function useComputed<T>(): InfiniteTableComputedValues<T>;
+}
+declare module "components/InfiniteTable/hooks/useInternalProps" {
+    export const useInternalProps: () => {
+        rootClassName: string;
+    };
+    export const getInternalProps: () => {
+        rootClassName: string;
+    };
+}
 declare module "components/InfiniteTable/components/InfiniteTableBody/InfiniteTableBody" {
     import * as React from 'react';
     export const InfiniteTableBody: React.ForwardRefExoticComponent<React.HTMLAttributes<HTMLDivElement> & React.RefAttributes<HTMLDivElement>>;
@@ -1023,6 +1130,7 @@ declare module "components/VirtualBrain/index" {
         setAvailableSize: (size: Size) => void;
         getOptions(): VirtualBrainOptions;
         private updateRenderCount;
+        private computeRenderCount;
         private setRenderCount;
         private updateRenderRange;
         getRenderStartIndex(): number;
@@ -1095,6 +1203,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     }
     export interface InfiniteTableHeaderCellProps<T> extends Omit<InfiniteTableCellProps<T>, 'children'> {
         columns: Map<string, InfiniteTableComputedColumn<T>>;
+        headerHeight: number;
         onResize?: OnResizeFn;
     }
 }
@@ -1154,7 +1263,6 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
 declare module "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderTypes" {
     import { InfiniteTableComputedColumn } from "components/InfiniteTable/index";
     import { Renderable } from "components/types/Renderable";
-    import type { OnResizeFn } from "components/types/Size";
     import { VirtualBrain } from "components/VirtualBrain/index";
     import { InfiniteTableComputedColumnGroup } from "components/InfiniteTable/types/InfiniteTableProps";
     export type InfiniteTableHeaderProps<T> = {
@@ -1162,12 +1270,13 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
         brain: VirtualBrain;
         columns: InfiniteTableComputedColumn<T>[];
         totalWidth: number;
-        onResize?: OnResizeFn;
     };
     export type InfiniteTableHeaderGroupProps<T> = {
         columns: InfiniteTableComputedColumn<T>[];
         columnGroup: InfiniteTableComputedColumnGroup;
         children: Renderable;
+        height: number;
+        headerHeight: number;
     };
     export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<InfiniteTableHeaderProps<T>, 'repaintId' | 'brain'> & {
         brain?: VirtualBrain;
@@ -1263,11 +1372,6 @@ declare module "components/RawList/index" {
     import { RawListProps } from "components/RawList/types";
     export const RawList: React.FC<RawListProps>;
 }
-declare module "components/InfiniteTable/components/InfiniteTableHeader/useHeaderOnResize" {
-    import { MutableRefObject } from 'react';
-    import { OnResizeFn } from "components/types/Size";
-    export const useHeaderOnResize: (domRef: MutableRefObject<HTMLDivElement | null>, onResize?: OnResizeFn | undefined, getTargetElement?: ((domRef: MutableRefObject<HTMLDivElement | null>) => HTMLElement) | undefined) => void;
-}
 declare module "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeader" {
     import * as React from 'react';
     import type { InfiniteTableHeaderProps } from "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderTypes";
@@ -1309,7 +1413,9 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/renderCo
     type BuildColumnHeaderGroupsConfig<T> = {
         columnGroups: InfiniteTableComponentState<T>['columnGroups'];
         columnGroupsDepthsMap: InfiniteTableComponentState<T>['columnGroupsDepthsMap'];
+        columnGroupsMaxDepth: number;
         columns: InfiniteTableComputedColumn<T>[];
+        headerHeight: number;
         allVisibleColumns: Map<string, InfiniteTableComputedColumn<T>>;
     };
     export function renderColumnHeaderGroups<T>(config: BuildColumnHeaderGroupsConfig<T>): JSX.Element[];
@@ -1330,7 +1436,6 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
             horizontal: boolean;
         };
         repaintId?: number | string;
-        onResize?: (height: number) => void;
     };
     export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps): JSX.Element;
 }
@@ -1720,45 +1825,10 @@ declare module "components/InfiniteTable/index" {
     export namespace InfiniteTable {
         var defaultProps: {
             rowHeight: number;
+            headerHeight: string;
         };
     }
     export * from "components/InfiniteTable/types/index";
-}
-declare module "components/DataSource/privateHooks/buildDataSourceDataInfo" {
-    import { DataSourceDataInfo } from "components/DataSource/types";
-    export function buildDataSourceDataInfo<T>(dataParam: T[] | {
-        data: T[];
-    }): DataSourceDataInfo<T>;
-}
-declare module "components/DataSource/privateHooks/loadDataAsync" {
-    import { DataSourceData, DataSourceDataInfo } from "components/DataSource/types";
-    export function loadDataAsync<T>(data: DataSourceData<T>): Promise<DataSourceDataInfo<T>>;
-}
-declare module "components/DataSource/privateHooks/useLoadData" {
-    export function useLoadData<T>(): void;
-}
-declare module "components/DataSource/state/normalizeSortInfo" {
-    import { DataSourceSingleSortInfo, DataSourceSortInfo } from "components/DataSource/types";
-    export const normalizeSortInfo: <T>(sortInfo?: DataSourceSortInfo<T> | undefined) => DataSourceSingleSortInfo<T>[];
-}
-declare module "components/DataSource/state/getInitialState" {
-    import { DataSourceProps, DataSourceState } from "components/DataSource/types";
-    export function getInitialState<T>(initialProps: DataSourceProps<T>): DataSourceState<T>;
-}
-declare module "components/DataSource/state/reducer" {
-    import type { DataSourceState, DataSourceReadOnlyState } from "components/DataSource/types";
-    export function reducer<T>(state: DataSourceState<T> & DataSourceReadOnlyState<T>): DataSourceState<T> & DataSourceReadOnlyState<T>;
-}
-declare module "components/DataSource/state/deriveReadOnlyState" {
-    import { DataSourceProps, DataSourceReadOnlyState, DataSourceState } from "components/DataSource/index";
-    export function deriveReadOnlyState<T extends any>(props: DataSourceProps<T>, state: DataSourceState<T>): DataSourceReadOnlyState<T>;
-}
-declare module "components/DataSource/index" {
-    import { DataSourceProps } from "components/DataSource/types";
-    import { useDataSource } from "components/DataSource/publicHooks/useDataSource";
-    function DataSource<T>(props: DataSourceProps<T>): JSX.Element;
-    export { useDataSource, DataSource };
-    export * from "components/DataSource/types";
 }
 declare module "@infinite-table/infinite-react" {
     export * from "components/InfiniteTable/index";

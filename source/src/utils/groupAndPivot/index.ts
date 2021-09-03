@@ -1,4 +1,5 @@
 import { InfiniteTableColumn } from '../..';
+import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroups,
@@ -29,6 +30,7 @@ export interface InfiniteTableEnhancedData<T> {
   groupData?: T[];
   value?: any;
   isGroupRow?: boolean;
+  collapsed: boolean;
   groupNesting?: number;
   groupKeys?: any[];
   parentGroupKeys?: any[];
@@ -46,6 +48,7 @@ export interface InfiniteTableEnhancedGroupData<T>
   value: any;
   isGroupRow: true;
   groupNesting: number;
+
   groupKeys?: any[];
   groupCount: number;
   groupBy: (keyof T)[];
@@ -315,13 +318,14 @@ export function flatten<DataType, KeyType extends any>(
 type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
+  collapsed: boolean;
 };
 
 function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
   deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupBy, groupKeys } = options;
+  const { groupBy, groupKeys, collapsed } = options;
   const groupNesting = groupKeys.length;
   const { items: groupItems, reducerResults, pivotDeepMap } = deepMapValue;
 
@@ -330,6 +334,7 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
+    collapsed,
     value: groupKeys[groupKeys.length - 1],
     groupBy: groupBy.slice(0, groupNesting) as (keyof DataType)[],
     isGroupRow: true,
@@ -359,6 +364,7 @@ function completeReducers<DataType>(
 
 export function enhancedFlatten<DataType, KeyType = any>(
   groupResult: DataGroupResult<DataType, KeyType>,
+  groupRowsState?: GroupRowsState,
 ): { data: InfiniteTableEnhancedData<DataType>[] } {
   const { groupParams, deepMap, pivot } = groupResult;
   const { groupBy } = groupParams;
@@ -370,16 +376,18 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const parents: InfiniteTableEnhancedGroupData<DataType>[] = [];
 
   deepMap.visitDepthFirst(
-    (deepMapValue, groupKeys: any[], next?: VoidFunction) => {
+    (deepMapValue, groupKeys: any[], next?: () => void) => {
       const items = deepMapValue.items;
 
       const groupNesting = groupKeys.length;
 
+      const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
       const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> =
         getEnhancedGroupData(
           {
             groupBy: groupByStrings,
             groupKeys,
+            collapsed,
           },
           deepMapValue,
         );
@@ -387,23 +395,26 @@ export function enhancedFlatten<DataType, KeyType = any>(
       result.push(enhancedGroupData);
       parents.push(enhancedGroupData);
 
-      if (!next) {
-        if (!pivot) {
-          result.push(
-            ...items.map((item, index) => {
-              return {
-                data: item,
-                isGroupRow: false,
-                parentGroupKeys: groupKeys,
-                indexInGroup: index,
-                groupBy: groupByStrings,
-                groupNesting,
-              };
-            }),
-          );
+      if (!collapsed) {
+        if (!next) {
+          if (!pivot) {
+            result.push(
+              ...items.map((item, index) => {
+                return {
+                  data: item,
+                  isGroupRow: false,
+                  collapsed: false,
+                  parentGroupKeys: groupKeys,
+                  indexInGroup: index,
+                  groupBy: groupByStrings,
+                  groupNesting,
+                };
+              }),
+            );
+          }
+        } else {
+          next();
         }
-      } else {
-        next();
       }
       parents.pop();
     },

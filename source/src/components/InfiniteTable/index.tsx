@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { RefObject, useCallback } from 'react';
+import { RefObject } from 'react';
 
 import type {
   InfiniteTableContextValue,

@@ -6,6 +6,8 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
+  GroupRowsState,
+  DataSourceGroupRowsBy,
 } from '@infinite-table/infinite-react';
 
 import {
@@ -40,30 +42,6 @@ const dataSource = () => {
 };
 
 const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'groupcol',
-    {
-      type: 'number',
-      header: 'Group',
-      width: 400,
-      render: ({ value, enhancedData }) => {
-        return (
-          <div
-            style={{
-              paddingLeft:
-                ((enhancedData.groupNesting || 0) +
-                  (enhancedData.isGroupRow ? 0 : 1)) *
-                30,
-            }}
-          >
-            {enhancedData.groupKeys
-              ? enhancedData.groupKeys.join(' >> ')
-              : value ?? null}
-          </div>
-        );
-      },
-    },
-  ],
   [
     'firstName',
     {
@@ -186,13 +164,27 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
       },
     ],
   ]);
+
+const collapsedGroupRows = new Map<any[], true>([[['Austria'], true]]);
+
+const groupRowsState = new GroupRowsState({
+  expandedRows: true,
+  collapsedRows: [],
+});
+
+const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
+  { field: 'country' },
+  { field: 'city' },
+];
 export default function GroupByExample() {
   return (
     <React.StrictMode>
       <DataSource<Employee>
         data={dataSource}
         primaryKey="id"
-        groupRowsBy={[{ field: 'country' }]}
+        groupRowsBy={groupRowsBy}
+        defaultGroupRowsState={groupRowsState}
+        // onGroupRowsStateChange={(state) => {}}
       >
         <InfiniteTable<Employee>
           domProps={{
@@ -203,8 +195,13 @@ export default function GroupByExample() {
               position: 'relative',
             },
           }}
-          groupColumn={true}
-          columnDefaultWidth={150}
+          groupColumn={({ groupBy }) => {
+            return {
+              width: 100,
+              header: `Group for ${groupBy.field}`,
+            };
+          }}
+          columnDefaultWidth={100}
           columns={columns}
           columnGroups={columnGroups}
           columnAggregations={columnAggregations}

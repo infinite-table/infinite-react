@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { join } from '../../../../utils/join';
 
 type SortIconProps = {
   direction: 1 | -1 | 0;
@@ -81,7 +82,10 @@ export function SortIcon(props: SortIconProps) {
   }
 
   return (
-    <div style={{ ...style, width: size }} className={className}>
+    <div
+      style={{ ...style, width: size }}
+      className={join(className, 'ITableIcon', 'ITableIcon-sort')}
+    >
       {showIndex ? (
         <div data-name="index" style={indexStyle}>
           {index}

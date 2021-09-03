@@ -1,19 +1,44 @@
-import { useEffect } from 'react';
-import { useDataSource } from '../../DataSource';
-import { InfiniteTablePropColumns } from '../types/InfiniteTableProps';
+import { useCallback, useEffect } from 'react';
+import { GroupRowsState } from '../../DataSource';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useComponentState } from '../../hooks/useComponentState';
+import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
+import { InfiniteTableComponentState } from '../types/InfiniteTableState';
 import { getColumnForGroupBy } from '../utils/getColumnForGroupBy';
 
 export function useGroupRowsBy<T>() {
-  const { groupRowsBy } = useDataSource();
+  const {
+    componentState: { groupRowsBy },
+    getState: getDataSourceState,
+    componentActions: dataSourceActions,
+  } = useDataSourceContextValue<T>();
+
+  const {
+    componentActions,
+    componentState: { groupColumn },
+  } = useComponentState<InfiniteTableComponentState<T>>();
+
+  const toggleGroupRow = useCallback((groupKeys: any[]) => {
+    const newState = new GroupRowsState(getDataSourceState().groupRowsState);
+    newState.toggleGroupRow(groupKeys);
+
+    dataSourceActions.groupRowsState = newState;
+  }, []);
 
   useEffect(() => {
-    const generatedColumns: InfiniteTablePropColumns<T> = new Map();
+    const generatedColumns: InfiniteTableGeneratedColumns<T> = new Map();
 
-    groupRowsBy.forEach((groupBy) => {
+    groupRowsBy.forEach((groupBy, index, arr) => {
       generatedColumns.set(
-        `--group-col-${groupBy.field}`,
-        getColumnForGroupBy<T>(groupBy),
+        `group-by-${groupBy.field}`,
+        getColumnForGroupBy<T>(
+          { groupBy, groupRowsBy, groupIndex: index, groupCount: arr.length },
+          toggleGroupRow,
+          groupColumn,
+        ),
       );
     });
-  }, [groupRowsBy]);
+
+    componentActions.generatedColumns = generatedColumns;
+  }, [groupRowsBy, groupColumn]);
 }

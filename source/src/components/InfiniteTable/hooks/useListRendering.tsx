@@ -79,13 +79,17 @@ export function useListRendering<T>(
 
   const getData = useLatest(dataArray);
   const { rowHeight } = componentState;
+  const prevDataSourceTimestamp = usePrevious(dataSourceState.timestamp);
   const repaintIdRef = useRef<number>(0);
 
   // IT's very important to only increment the repaint id when computed changes
   //
   // THUS, the computed will generally not contain any properties directly from props
   // but things in computed should generally come from `useProperty` hook
-  if (!shallowEqualObjects(prevComputed, computed)) {
+  if (
+    !shallowEqualObjects(prevComputed, computed) ||
+    prevDataSourceTimestamp !== dataSourceState.timestamp
+  ) {
     repaintIdRef.current++;
   }
   const repaintId = repaintIdRef.current;

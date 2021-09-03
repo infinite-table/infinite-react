@@ -78,10 +78,10 @@ export type InfiniteTableColumnWithRenderOrField<T> = RequireAtLeastOne<
   },
   'render' | 'field'
 >;
-export type InfiniteTableColumn<T> = {
+
+export type InfiniteTableBaseColumn<T> = {
   maxWidth?: number;
   minWidth?: number;
-  type?: InfiniteTableColumnTypes;
 
   sortable?: boolean;
   draggable?: boolean;
@@ -94,8 +94,15 @@ export type InfiniteTableColumn<T> = {
   name?: Renderable;
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
-} & InfiniteTableColumnWithRenderOrField<T> &
+  type?: InfiniteTableColumnTypes;
+};
+export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
+  InfiniteTableColumnWithRenderOrField<T> &
   InfiniteTableColumnWithSize;
+
+export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
+  groupByField?: string;
+};
 
 type InfiniteTableComputedColumnBase<T> = {
   computedWidth: number;
@@ -122,4 +129,5 @@ type InfiniteTableComputedColumnBase<T> = {
 };
 
 export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> &
-  InfiniteTableComputedColumnBase<T>;
+  InfiniteTableComputedColumnBase<T> &
+  InfiniteTableGeneratedColumn<T>;

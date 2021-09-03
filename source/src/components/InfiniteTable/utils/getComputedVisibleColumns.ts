@@ -8,6 +8,7 @@ import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 
 import { computeFlex } from '../../flexbox';
 import type {
+  InfiniteTableGeneratedColumns,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinning,
@@ -72,6 +73,7 @@ export type GetComputedVisibleColumnsResult<T> = {
 
 type GetComputedVisibleColumnsParam<T> = {
   columns: Map<string, InfiniteTableColumn<T>>;
+  generatedColumns: InfiniteTableGeneratedColumns<T>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -92,6 +94,7 @@ type GetComputedVisibleColumnsParam<T> = {
 
 export const getComputedVisibleColumns = <T extends unknown>({
   columns,
+  generatedColumns,
 
   bodySize,
   columnMinWidth,
@@ -111,7 +114,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
   let computedOffset = 0;
 
   const normalizedColumnOrder = adjustColumnOrderForPinning(
-    columnOrder === true ? Array.from(columns.keys()) : columnOrder,
+    columnOrder === true
+      ? Array.from(generatedColumns.keys()).concat(...columns.keys())
+      : columnOrder,
     columnPinning,
   );
 
@@ -121,9 +126,12 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
   const columnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder.map(
     (columnId) => {
-      const col = columns.get(columnId);
+      let col = columns.get(columnId);
       if (!col) {
-        throw `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`;
+        col = generatedColumns.get(columnId);
+        if (!col) {
+          throw `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`;
+        }
       }
 
       return col!;

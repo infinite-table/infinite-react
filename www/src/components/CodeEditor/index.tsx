@@ -32,8 +32,11 @@ const CodePreview = (props: CodePreviewProps) => {
   const renderFn = React.useMemo(() => {
     const fn = new Function(
       "require",
+
       "render",
+      "env",
       "exports",
+
       props.transpiledCode
     );
 
@@ -55,7 +58,10 @@ const CodePreview = (props: CodePreviewProps) => {
       }
     };
     const exports = {};
-    renderFn(require, render, exports);
+    const env = {
+      BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    };
+    renderFn(require, render, env, exports);
   }, [renderFn]);
 
   return <>{content}</>;

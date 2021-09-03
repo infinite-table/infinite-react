@@ -43,8 +43,13 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     domRef,
   } = props;
 
-  const { data } = enhancedData;
-  const value = isColumnWithField(column) ? data?.[column.field] : null;
+  const { data, isGroupRow, groupBy } = enhancedData;
+  const value =
+    isGroupRow && groupBy && groupBy[groupBy.length - 1] === column.groupByField
+      ? enhancedData.value
+      : isColumnWithField(column)
+      ? data?.[column.field]
+      : null;
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 

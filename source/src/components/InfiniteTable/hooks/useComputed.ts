@@ -66,6 +66,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedRemainingSpace,
   } = useComputedVisibleColumns({
     columns: componentState.columns,
+    generatedColumns: componentState.generatedColumns,
     columnMinWidth: componentState.columnMinWidth,
     columnMaxWidth: componentState.columnMaxWidth,
     columnDefaultWidth: componentState.columnDefaultWidth,

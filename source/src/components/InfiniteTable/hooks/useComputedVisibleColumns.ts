@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 import type { InfiniteTableColumn } from '../types';
 import type {
+  InfiniteTableGeneratedColumns,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
@@ -15,6 +16,7 @@ import { useRerenderOnKeyChange } from './useRerenderOnKeyChange';
 
 type UseComputedVisibleColumnsParam<T> = {
   columns: Map<string, InfiniteTableColumn<T>>;
+  generatedColumns: InfiniteTableGeneratedColumns<T>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -35,6 +37,7 @@ type UseComputedVisibleColumnsParam<T> = {
 
 type UseComputedVisibleColumnsResult<T> = {
   columns: UseComputedVisibleColumnsParam<T>['columns'];
+
   computedRemainingSpace: GetComputedVisibleColumnsResult<T>['computedRemainingSpace'];
   computedUnpinnedOffset: GetComputedVisibleColumnsResult<T>['computedUnpinnedOffset'];
   computedPinnedEndOffset: GetComputedVisibleColumnsResult<T>['computedPinnedEndOffset'];
@@ -55,6 +58,7 @@ type UseComputedVisibleColumnsResult<T> = {
 
 export const useComputedVisibleColumns = <T extends unknown>({
   columns,
+  generatedColumns,
   bodySize,
   columnMinWidth,
   columnMaxWidth,
@@ -92,6 +96,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   } = useMemo(() => {
     return getComputedVisibleColumns({
       columns,
+      generatedColumns,
 
       bodySize,
       columnMinWidth,
@@ -113,6 +118,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     });
   }, [
     columns,
+    generatedColumns,
 
     bodySize.width,
     columnMinWidth,

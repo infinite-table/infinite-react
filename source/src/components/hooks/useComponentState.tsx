@@ -74,7 +74,11 @@ type ComponentStateRootConfig<
   T_ACTIONS = {},
 > = {
   getInitialState: (props: T_PROPS) => T_STATE;
-  reducer?: React.Reducer<T_STATE, any>;
+  concludeReducer?: (
+    previousState: T_STATE,
+    currentState: T_STATE,
+    updated: Partial<T_STATE> | null,
+  ) => T_STATE;
   getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
   deriveReadOnlyState?: (
     props: T_PROPS,
@@ -141,6 +145,7 @@ export function getComponentStateRoot<
     const getProps = useLatest(props);
 
     const theReducer = (state: T_STATE, action: any) => {
+      const previousState = state;
       let newState: Partial<T_STATE> | null = null;
       if (action.propertyName) {
         newState = {
@@ -170,7 +175,9 @@ export function getComponentStateRoot<
           ...derivedState,
         };
       }
-      const result = config.reducer ? config.reducer(state, action) : state;
+      const result = config.concludeReducer
+        ? config.concludeReducer(previousState, state, newState)
+        : state;
 
       return result as T_STATE & T_READONLY_STATE;
     };

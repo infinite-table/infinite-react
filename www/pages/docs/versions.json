@@ -13,6 +13,10 @@
       {
         "path": "column-groups",
         "label": "Column groups"
+      },
+      {
+        "path": "row-groups",
+        "label": "Row groups"
       }
     ],
     "alias": "latest"

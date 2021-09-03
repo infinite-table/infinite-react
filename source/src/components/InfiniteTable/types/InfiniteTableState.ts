@@ -1,6 +1,7 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
+  InfiniteTableGeneratedColumns,
   InfiniteTablePropCollapsedColumnGroups,
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
@@ -41,7 +42,7 @@ export interface InfiniteTableState<T> {
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
   columns: InfiniteTableProps<T>['columns'];
-  generatedColumns: InfiniteTableProps<T>['columns'];
+  generatedColumns: InfiniteTableGeneratedColumns<T>;
 
   x?: T;
 }
@@ -58,6 +59,7 @@ export interface InfiniteTableComponentState<T>
 export interface InfiniteTableReadOnlyState<T> {
   onReady: InfiniteTableProps<T>['onReady'];
   rowProps: InfiniteTableProps<T>['rowProps'];
+  groupColumn: InfiniteTableProps<T>['groupColumn'];
 
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];
   header: InfiniteTableProps<T>['header'];

@@ -14,7 +14,7 @@ const initialScrollPosition = {
 const raf =
   typeof window !== 'undefined'
     ? requestAnimationFrame
-    : (fn: VoidFunction) => setTimeout(fn, 0);
+    : (fn: () => void) => setTimeout(fn, 0);
 
 export type VirtualBrainOptions = {
   mainAxis: MainAxisOptions;

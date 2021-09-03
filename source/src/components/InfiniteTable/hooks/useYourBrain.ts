@@ -57,6 +57,8 @@ export const useYourBrain = (param: UseYourBrainParam) => {
   );
   verticalVirtualBrain.update(dataArray.length, rowHeight);
 
+  (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
+
   useEffect(() => {
     verticalVirtualBrain.setAvailableSize({
       height: bodySize.height,
