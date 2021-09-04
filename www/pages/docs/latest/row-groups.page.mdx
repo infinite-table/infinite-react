@@ -8,7 +8,7 @@ const groupRowsBy = [{ field: "country" }, { field: "city" }];
 
 ## Row groups in action
 
-```tsx height=450 live title=Row-groups
+```tsx height=750 live title=Row-groups
 import * as React from "react";
 import {
   InfiniteTable,
@@ -100,14 +100,16 @@ const dataSource = () => {
 };
 
 const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
-  { field: "country" },
-  { field: "city" },
+  { field: "department" },
+  { field: "team" },
 ];
+const multiSort = [];
 function App() {
   return (
     <DataSource<Employee>
       data={dataSource}
       primaryKey="id"
+      defaultSortInfo={multiSort}
       defaultGroupRowsBy={defaultGroupRowsBy}
     >
       <InfiniteTable<Employee>
@@ -122,16 +124,3 @@ function App() {
 
 render(<App />);
 ```
-
-## Licensing
-
-You can use `@infinite-table/infinite-react` in 2 ways:
-
-- without a license, but it will include a `Powered by infinite-table.com` link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible.
-- with a license - requests for licence quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the `Powered by infinite-table.com` footer go away.
-
-### About the docs
-
-Click any `code block` to copy its contents to the clipboard.
-
-The documentation is versioned, and we will publish a new version of the documentation when there are any significant changes in the corresponding `@infinite-table/infinite-react` version.
