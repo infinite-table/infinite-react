@@ -101,7 +101,8 @@ const dataSource = () => {
 
 const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
   { field: "department" },
-  { field: "team" },
+  // you can specify a column config for this group.
+  { field: "team", column: { header: "What team?" } },
 ];
 const multiSort = [];
 function App() {
