@@ -64,7 +64,7 @@ type InfiniteTableColumnWithWidth = {
   defaultWidth?: number;
 };
 
-type InfiniteTableColumnWithSize = DiscriminatedUnion<
+export type InfiniteTableColumnWithSize = DiscriminatedUnion<
   InfiniteTableColumnWithFlex,
   InfiniteTableColumnWithWidth
 >;

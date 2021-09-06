@@ -38,6 +38,7 @@ export function ExpanderIcon(props: ExpanderIconProps) {
   }, [props.expanded]);
   return (
     <svg
+      data-name="expander-icon"
       xmlns="http://www.w3.org/2000/svg"
       height={`${size}px`}
       viewBox="0 0 24 24"

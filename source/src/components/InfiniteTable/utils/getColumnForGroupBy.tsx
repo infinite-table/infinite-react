@@ -49,12 +49,12 @@ export function getColumnForGroupBy<T>(
       generatedGroupColumn = {
         ...generatedGroupColumn,
         ...groupColumnFromProps(options, toggleGroupRow),
-      };
+      } as InfiniteTableGeneratedColumn<T>;
     } else if (groupColumnFromProps !== true) {
       generatedGroupColumn = {
         ...generatedGroupColumn,
         ...groupColumnFromProps,
-      };
+      } as InfiniteTableGeneratedColumn<T>;
     }
   }
 

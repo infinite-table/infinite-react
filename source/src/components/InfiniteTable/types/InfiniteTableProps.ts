@@ -5,6 +5,7 @@ import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableBaseColumn,
   InfiniteTableColumn,
+  InfiniteTableColumnWithSize,
   InfiniteTableComputedColumn,
   InfiniteTableGeneratedColumn,
 } from './InfiniteTableColumn';
@@ -97,11 +98,11 @@ export type GroupColumnGetterOptions<T> = {
 };
 export type InfiniteTablePropGroupColumn<T> =
   | boolean
-  | InfiniteTableBaseColumn<T>
+  | (InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize)
   | ((
       options: GroupColumnGetterOptions<T>,
       toggleGroupRow: (groupKeys: any[]) => void,
-    ) => InfiniteTableBaseColumn<T>);
+    ) => InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize);
 
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;

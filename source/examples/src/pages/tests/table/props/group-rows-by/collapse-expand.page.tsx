@@ -14,6 +14,7 @@ import {
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
 } from '@src/components/InfiniteTable/types/InfiniteTableProps';
+import { employees } from './employees10';
 
 type Employee = {
   id: number;
@@ -34,11 +35,12 @@ type Employee = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_DATAURL!)
-    .then((r) => r.json())
-    .then((data: Employee[]) => {
-      return data;
-    });
+  return Promise.resolve(employees);
+  // return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees10`)
+  // .then((r) => r.json())
+  // .then((data: Employee[]) => {
+  //   return data;
+  // });
 };
 
 const columns = new Map<string, InfiniteTableColumn<Employee>>([
@@ -47,20 +49,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
     {
       field: 'firstName',
       header: 'First Name',
-    },
-  ],
-  [
-    'lastName',
-    {
-      field: 'lastName',
-      header: 'Last Name',
-    },
-  ],
-  [
-    'email',
-    {
-      field: 'email',
-      header: 'Email',
     },
   ],
 
@@ -165,11 +153,9 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
     ],
   ]);
 
-const collapsedGroupRows = new Map<any[], true>([[['Austria'], true]]);
-
 const groupRowsState = new GroupRowsState({
-  expandedRows: true,
-  collapsedRows: [],
+  expandedRows: [['Cuba', 'Havana'], ['Cuba']],
+  collapsedRows: true,
 });
 
 const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
@@ -184,13 +170,15 @@ export default function GroupByExample() {
         primaryKey="id"
         groupRowsBy={groupRowsBy}
         defaultGroupRowsState={groupRowsState}
-        // onGroupRowsStateChange={(state) => {}}
+        onGroupRowsStateChange={(state) => {
+          console.log(state);
+        }}
       >
         <InfiniteTable<Employee>
           domProps={{
             style: {
               margin: '5px',
-              height: '80vh',
+              height: 900,
               border: '1px solid gray',
               position: 'relative',
             },
