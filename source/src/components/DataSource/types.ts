@@ -99,7 +99,10 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
   aggregationReducers?: AggregationReducer<T, any>[];
   groupRowsState: GroupRowsState;
-  timestamp: number;
+  sortedAt: number;
+  groupedAt: number;
+  updatedAt: number;
+  reducedAt: number;
 }
 
 export interface DataSourceReadOnlyState<T> {
@@ -108,7 +111,9 @@ export interface DataSourceReadOnlyState<T> {
   primaryKey: keyof T;
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
 
+  lastSortDataArray?: T[];
   postSortDataArray?: T[];
+  lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
   postGroupDataArray?: InfiniteTableEnhancedData<T>[];
 }
 

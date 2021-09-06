@@ -28,6 +28,8 @@ export function getInitialState<T>(
       collapsedRows: [],
     });
 
+  const now = Date.now();
+
   return {
     data: initialProps.data,
     loading: initialProps.loading ?? initialProps.defaultLoading ?? false,
@@ -37,7 +39,10 @@ export function getInitialState<T>(
     // postSortDataArray,
     // postGroupDataArray,
     groupRowsState,
-    timestamp: Date.now(),
+    updatedAt: now,
+    groupedAt: 0,
+    sortedAt: 0,
+    reducedAt: now,
 
     pivotColumns: undefined,
     pivotColumnGroups: undefined,

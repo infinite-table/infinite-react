@@ -5,7 +5,7 @@
 .ITableIcon-expander {
   cursor: pointer;
   user-select: none;
-  transition: transform 0.2s, fill 0.2s;
+  // transition: transform 0.2s, fill 0.2s;
 
   &--expanded {
     fill: var(--ITable-accent__color);

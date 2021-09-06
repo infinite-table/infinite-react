@@ -2,6 +2,7 @@ import { InfiniteTableColumn } from '../..';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   InfiniteTableColumnGroup,
+  InfiniteTableGroupColumnBase,
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumns,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
@@ -81,6 +82,7 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
 export type GroupBy<DataType, KeyType> = {
   field: keyof DataType;
   toKey?: (value: any, data: DataType) => GroupKeyType<KeyType>;
+  column?: InfiniteTableGroupColumnBase<DataType>;
 };
 
 export type PivotBy<DataType, KeyType> = GroupBy<DataType, KeyType>;

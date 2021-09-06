@@ -96,13 +96,19 @@ export type GroupColumnGetterOptions<T> = {
   groupBy: DataSourceGroupRowsBy<T>;
   groupRowsBy: DataSourceGroupRowsBy<T>[];
 };
-export type InfiniteTablePropGroupColumn<T> =
-  | boolean
-  | (InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize)
+
+export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
+  InfiniteTableColumnWithSize;
+export type InfiniteTableGroupColumnDef<T> =
+  | InfiniteTableGroupColumnBase<T>
   | ((
       options: GroupColumnGetterOptions<T>,
       toggleGroupRow: (groupKeys: any[]) => void,
-    ) => InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize);
+    ) => InfiniteTableGroupColumnBase<T>);
+
+export type InfiniteTablePropGroupColumn<T> =
+  | boolean
+  | InfiniteTableGroupColumnDef<T>;
 
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;

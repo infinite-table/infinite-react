@@ -29,7 +29,7 @@ function toEnhancedData<T>(data: T): InfiniteTableEnhancedData<T> {
 }
 
 export function concludeReducer<T>(
-  _previousState: DataSourceState<T> & DataSourceReadOnlyState<T>,
+  previousState: DataSourceState<T> & DataSourceReadOnlyState<T>,
   state: DataSourceState<T> & DataSourceReadOnlyState<T>,
   updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null,
 ) {
@@ -41,7 +41,7 @@ export function concludeReducer<T>(
     'sortInfo',
   ]);
   const shouldSortAgain =
-    shouldSort && (sortDepsChanged || !state.postSortDataArray);
+    shouldSort && (sortDepsChanged || !state.lastSortDataArray);
 
   const groupBy = state.groupRowsBy;
   const pivotBy = state.pivotBy;
@@ -57,19 +57,23 @@ export function concludeReducer<T>(
   ]);
 
   const shouldGroupAgain =
-    shouldGroup && (groupsDepsChanged || !state.postGroupDataArray);
+    shouldGroup && (groupsDepsChanged || !state.lastGroupDataArray);
+
+  const now = Date.now();
 
   let dataArray = state.originalDataArray;
 
-  let enhancedDataArray: InfiniteTableEnhancedData<T>[] = [];
+  let enhancedDataArray: InfiniteTableEnhancedData<T>[] = state.dataArray;
 
   if (shouldSort) {
     dataArray = shouldSortAgain
       ? multisort(sortInfo!, [...dataArray])
-      : state.postSortDataArray!;
+      : state.lastSortDataArray!;
 
-    state.postSortDataArray = dataArray;
+    state.lastSortDataArray = dataArray;
+    state.sortedAt = now;
   }
+  state.postSortDataArray = dataArray;
 
   state.groupDeepMap = undefined;
 
@@ -97,21 +101,30 @@ export function concludeReducer<T>(
       state.pivotColumns = pivotGroupsAndCols?.columns;
       state.pivotColumnGroups = pivotGroupsAndCols?.columnGroups;
     } else {
-      enhancedDataArray = state.postGroupDataArray!;
+      enhancedDataArray = state.lastGroupDataArray!;
     }
 
-    state.postGroupDataArray = enhancedDataArray;
+    state.lastGroupDataArray = enhancedDataArray;
+    state.groupedAt = now;
   } else {
     state.groupDeepMap = undefined;
     state.pivotColumns = undefined;
-    enhancedDataArray = dataArray.map(toEnhancedData);
+
+    const arrayDifferentAfterSortStep =
+      previousState.postSortDataArray != state.postSortDataArray;
+
+    if (arrayDifferentAfterSortStep) {
+      enhancedDataArray = dataArray.map(toEnhancedData);
+    }
   }
+
+  state.postGroupDataArray = enhancedDataArray;
 
   if (enhancedDataArray !== state.dataArray) {
-    state.timestamp = Date.now();
+    state.updatedAt = now;
   }
   state.dataArray = enhancedDataArray;
-
+  state.reducedAt = now;
   (globalThis as any).state = state;
 
   return state;

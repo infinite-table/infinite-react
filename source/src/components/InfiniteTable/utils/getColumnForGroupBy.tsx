@@ -42,6 +42,7 @@ export function getColumnForGroupBy<T>(
         </div>
       );
     },
+    ...groupBy.column,
   };
 
   if (groupColumnFromProps) {

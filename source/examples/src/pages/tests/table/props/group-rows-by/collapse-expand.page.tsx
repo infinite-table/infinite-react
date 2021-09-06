@@ -26,7 +26,7 @@ type Employee = {
   countryCode: string;
   city: string;
   streetName: string;
-  streetNo: string;
+  streetNo: number;
   department: string;
   team: string;
   salary: number;
@@ -159,8 +159,10 @@ const groupRowsState = new GroupRowsState({
 });
 
 const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
-  { field: 'country' },
-  { field: 'city' },
+  {
+    field: 'country',
+  },
+  { field: 'city', column: { width: 500, header: 'hey' } },
 ];
 export default function GroupByExample() {
   return (
@@ -185,7 +187,7 @@ export default function GroupByExample() {
           }}
           groupColumn={({ groupBy }) => {
             return {
-              width: 100,
+              // width: 300,
               header: `Group for ${groupBy.field}`,
             };
           }}
