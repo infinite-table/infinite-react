@@ -91,29 +91,30 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
 };
 
 export type GroupColumnGetterOptions<T> = {
-  groupIndex: number;
+  groupIndex?: number;
   groupCount: number;
-  groupBy: DataSourceGroupRowsBy<T>;
+  groupBy?: DataSourceGroupRowsBy<T>;
   groupRowsBy: DataSourceGroupRowsBy<T>[];
 };
 
+export type InfiniteTablePropGroupRenderStrategy =
+  | 'single-column'
+  | 'multi-column'
+  | 'row';
 export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithSize;
-export type InfiniteTableGroupColumnDef<T> =
+export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
   | ((
       options: GroupColumnGetterOptions<T>,
       toggleGroupRow: (groupKeys: any[]) => void,
     ) => InfiniteTableGroupColumnBase<T>);
 
-export type InfiniteTablePropGroupColumn<T> =
-  | boolean
-  | InfiniteTableGroupColumnDef<T>;
-
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;
 
   groupColumn?: InfiniteTablePropGroupColumn<T>;
+  groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;

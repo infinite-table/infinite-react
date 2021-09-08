@@ -2,7 +2,7 @@
 
 Specify row groups via the controlled `groupRowsBy` (or uncontrolled `defaultGroupRowsBy`) prop on the `DataSource`.
 
-```tsx
+```tsx title=defining-grouping
 const groupRowsBy = [{ field: "country" }, { field: "city" }];
 ```
 
@@ -10,10 +10,12 @@ const groupRowsBy = [{ field: "country" }, { field: "city" }];
 
 ```tsx height=750 live title=Row-groups
 import * as React from "react";
+import { useState } from "react";
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
+  InfiniteTablePropGroupRenderStrategy,
   DataSourceGroupRowsBy,
 } from "@infinite-table/infinite-react";
 
@@ -105,21 +107,43 @@ const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
   { field: "team", column: { header: "What team?" } },
 ];
 const multiSort = [];
+
+const groupColumnDefaults = { sortable: false, width: 200 };
 function App() {
+  const [groupRenderStrategy, setGroupRenderStrategy] =
+    useState<InfiniteTablePropGroupRenderStrategy>("multi-column");
+
   return (
-    <DataSource<Employee>
-      data={dataSource}
-      primaryKey="id"
-      defaultSortInfo={multiSort}
-      defaultGroupRowsBy={defaultGroupRowsBy}
-    >
-      <InfiniteTable<Employee>
-        columnDefaultWidth={130}
-        groupColumn={{ sortable: false }}
-        columnMinWidth={50}
-        columns={columns}
-      />
-    </DataSource>
+    <>
+      <div>
+        <p>Please select group render strategy:</p>
+        <select
+          value={groupRenderStrategy}
+          onChange={(e: any) => {
+            const { value } = e.target;
+            setGroupRenderStrategy(value);
+          }}
+        >
+          <option value="single-column">Single column</option>
+          <option value="multi-column">Multi column</option>
+        </select>
+      </div>
+
+      <DataSource<Employee>
+        data={dataSource}
+        primaryKey="id"
+        defaultSortInfo={multiSort}
+        defaultGroupRowsBy={defaultGroupRowsBy}
+      >
+        <InfiniteTable<Employee>
+          columnDefaultWidth={130}
+          groupRenderStrategy={groupRenderStrategy}
+          groupColumn={groupColumnDefaults}
+          columnMinWidth={50}
+          columns={columns}
+        />
+      </DataSource>
+    </>
   );
 }
 

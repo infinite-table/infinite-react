@@ -45,7 +45,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const { data, isGroupRow, groupBy } = enhancedData;
   const value =
-    isGroupRow && groupBy && groupBy[groupBy.length - 1] === column.groupByField
+    isGroupRow && groupBy && column.groupByField
       ? enhancedData.value
       : isColumnWithField(column)
       ? data?.[column.field]

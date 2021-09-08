@@ -24,8 +24,12 @@ const haveDepsChanged = <StateType>(
   return false;
 };
 
-function toEnhancedData<T>(data: T): InfiniteTableEnhancedData<T> {
-  return { data, collapsed: true };
+function toEnhancedData<T>(
+  data: T,
+  id: any,
+  index: number,
+): InfiniteTableEnhancedData<T> {
+  return { data, collapsed: true, id, indexInAll: index, indexInGroup: index };
 }
 
 export function concludeReducer<T>(
@@ -77,6 +81,10 @@ export function concludeReducer<T>(
 
   state.groupDeepMap = undefined;
 
+  const toPrimaryKey = (data: T) => {
+    return data[state.primaryKey];
+  };
+
   if (shouldGroup) {
     if (shouldGroupAgain) {
       const groupResult = group(
@@ -87,7 +95,11 @@ export function concludeReducer<T>(
         },
         dataArray,
       );
-      const flattenResult = enhancedFlatten(groupResult, state.groupRowsState);
+      const flattenResult = enhancedFlatten(
+        groupResult,
+        toPrimaryKey,
+        state.groupRowsState,
+      );
 
       enhancedDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
@@ -114,7 +126,9 @@ export function concludeReducer<T>(
       previousState.postSortDataArray != state.postSortDataArray;
 
     if (arrayDifferentAfterSortStep) {
-      enhancedDataArray = dataArray.map(toEnhancedData);
+      enhancedDataArray = dataArray.map((data, index) =>
+        toEnhancedData(data, toPrimaryKey(data), index),
+      );
     }
   }
 

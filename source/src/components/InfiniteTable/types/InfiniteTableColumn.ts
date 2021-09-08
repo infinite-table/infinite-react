@@ -101,7 +101,7 @@ export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithSize;
 
 export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
-  groupByField?: string;
+  groupByField?: string | string[];
 };
 
 type InfiniteTableComputedColumnBase<T> = {

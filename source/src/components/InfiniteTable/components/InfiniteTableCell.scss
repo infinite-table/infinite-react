@@ -43,14 +43,14 @@
   }
 }
 .ITableRow--group-row {
-  background: var(--ITableRow-group-row__background);
+  // background: var(--ITableRow-group-row__background);
 }
-.ITableRow--normal-row.ITableRow--even {
+.ITableRow--even {
   .ITableColumnCell {
     background: var(--ITableRow__background);
   }
 }
-.ITableRow--normal-row.ITableRow--odd {
+.ITableRow--odd {
   .ITableColumnCell {
     background: var(--ITableRow--odd__background);
   }

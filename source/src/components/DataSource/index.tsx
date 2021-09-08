@@ -36,7 +36,6 @@ function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
 
   if (typeof children === 'function') {
     children = children(computedValues);
-    console.log(children);
   }
 
   return <>{children}</>;

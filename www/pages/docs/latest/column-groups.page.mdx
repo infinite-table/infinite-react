@@ -4,7 +4,7 @@ Specify column groups via the controlled `columnGroups` (or uncontrolled `defaul
 
 The value is a `Map`, with keys being the group id and value being the group description.
 
-```tsx
+```tsx title=defining-column-groups
 const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
   ["contact info", { header: "Contact info" }],
   // `street` column group belongs to the `address` columnGroup
@@ -18,7 +18,7 @@ const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
 
 A column group can have a parent column group, specified by the `columnGroup` property. The same goes for a column - columns can have `columnGroup` as well.
 
-```tsx
+```tsx title=defining-columns-with-groups
 const columns = new Map<string, InfiniteTableColumn<Person>>([
   ["id", { field: "id" }],
 
@@ -155,16 +155,3 @@ function App() {
 
 render(<App />);
 ```
-
-## Licensing
-
-You can use `@infinite-table/infinite-react` in 2 ways:
-
-- without a license, but it will include a `Powered by infinite-table.com` link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible.
-- with a license - requests for licence quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the `Powered by infinite-table.com` footer go away.
-
-### About the docs
-
-Click any `code block` to copy its contents to the clipboard.
-
-The documentation is versioned, and we will publish a new version of the documentation when there are any significant changes in the corresponding `@infinite-table/infinite-react` version.

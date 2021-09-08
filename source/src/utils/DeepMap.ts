@@ -246,19 +246,31 @@ export class DeepMap<KeyType, ValueType> {
   };
 
   visitDepthFirst = (
-    fn: (value: ValueType, keys: KeyType[], next?: VoidFn) => void,
+    fn: (
+      value: ValueType,
+      keys: KeyType[],
+      indexInGroup: number,
+      next?: VoidFn,
+    ) => void,
   ) => {
     this.visitWithNext([], fn);
   };
 
   private visitWithNext = (
     parentKeys: KeyType[],
-    fn: (value: ValueType, keys: KeyType[], next?: VoidFn) => void,
+
+    fn: (
+      value: ValueType,
+      keys: KeyType[],
+      indexInGroup: number,
+      next?: VoidFn,
+    ) => void,
     currentMap: Map<KeyType, Pair<KeyType, ValueType>> = this.map,
   ) => {
     if (!currentMap) {
       return;
     }
+    let i = 0;
     currentMap.forEach((_, key) => {
       const pair = currentMap.get(key);
 
@@ -272,7 +284,10 @@ export class DeepMap<KeyType, ValueType> {
       const next = map ? () => this.visitWithNext(keys, fn, map) : undefined;
 
       if (pair.hasOwnProperty('value')) {
-        fn(pair.value!, keys, next);
+        fn(pair.value!, keys, i, next);
+        i++;
+      } else {
+        next?.();
       }
     });
   };

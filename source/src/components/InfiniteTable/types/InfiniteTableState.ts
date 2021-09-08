@@ -8,6 +8,7 @@ import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
+  InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from './InfiniteTableProps';
 import { Size } from '../../types/Size';
@@ -57,6 +58,7 @@ export interface InfiniteTableComponentState<T>
     InfiniteTableReadOnlyState<T> {}
 
 export interface InfiniteTableReadOnlyState<T> {
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   onReady: InfiniteTableProps<T>['onReady'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];

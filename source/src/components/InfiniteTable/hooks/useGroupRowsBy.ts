@@ -1,10 +1,44 @@
 import { useCallback, useEffect } from 'react';
-import { GroupRowsState } from '../../DataSource';
+import { DataSourceGroupRowsBy, GroupRowsState } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
-import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
+import {
+  InfiniteTableGeneratedColumns,
+  InfiniteTablePropGroupColumn,
+  InfiniteTablePropGroupRenderStrategy,
+} from '../types/InfiniteTableProps';
 import { InfiniteTableComponentState } from '../types/InfiniteTableState';
-import { getColumnForGroupBy } from '../utils/getColumnForGroupBy';
+import {
+  getColumnForGroupBy,
+  getSingleGroupColumn,
+} from '../utils/getColumnForGroupBy';
+
+type GetGroupColumnStrategyOptions<T> = {
+  groupRowsBy: DataSourceGroupRowsBy<T>[];
+  groupColumn?: InfiniteTablePropGroupColumn<T>;
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+};
+function getGroupRenderStrategy<T>(
+  options: GetGroupColumnStrategyOptions<T>,
+): InfiniteTablePropGroupRenderStrategy {
+  const { groupRowsBy, groupColumn, groupRenderStrategy } = options;
+
+  if (groupRenderStrategy) {
+    return groupRenderStrategy;
+  }
+
+  if (groupColumn != null && typeof groupColumn === 'object') {
+    return 'single-column';
+  }
+
+  const columnsInGroupRowsBy = groupRowsBy.filter((g) => g.column);
+
+  if (columnsInGroupRowsBy.length) {
+    return 'multi-column';
+  }
+
+  return 'multi-column';
+}
 
 export function useGroupRowsBy<T>() {
   const {
@@ -15,7 +49,7 @@ export function useGroupRowsBy<T>() {
 
   const {
     componentActions,
-    componentState: { groupColumn },
+    componentState: { groupColumn, groupRenderStrategy },
   } = useComponentState<InfiniteTableComponentState<T>>();
 
   const toggleGroupRow = useCallback((groupKeys: any[]) => {
@@ -28,17 +62,37 @@ export function useGroupRowsBy<T>() {
   useEffect(() => {
     const generatedColumns: InfiniteTableGeneratedColumns<T> = new Map();
 
-    groupRowsBy.forEach((groupBy, index, arr) => {
+    const strategy = getGroupRenderStrategy({
+      groupRowsBy,
+      groupColumn,
+      groupRenderStrategy,
+    });
+
+    if (groupRenderStrategy === 'multi-column') {
+      groupRowsBy.forEach((groupBy, index, arr) => {
+        generatedColumns.set(
+          `group-by-${groupBy.field}`,
+          getColumnForGroupBy<T>(
+            { groupBy, groupRowsBy, groupIndex: index, groupCount: arr.length },
+            toggleGroupRow,
+            groupColumn,
+          ),
+        );
+      });
+    } else if (strategy === 'single-column') {
       generatedColumns.set(
-        `group-by-${groupBy.field}`,
-        getColumnForGroupBy<T>(
-          { groupBy, groupRowsBy, groupIndex: index, groupCount: arr.length },
+        'group-by',
+        getSingleGroupColumn(
+          {
+            groupCount: groupRowsBy.length,
+            groupRowsBy,
+          },
           toggleGroupRow,
           groupColumn,
         ),
       );
-    });
+    }
 
     componentActions.generatedColumns = generatedColumns;
-  }, [groupRowsBy, groupColumn]);
+  }, [groupRowsBy, groupColumn, groupRenderStrategy]);
 }

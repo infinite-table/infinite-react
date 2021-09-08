@@ -27,6 +27,7 @@ function DEFAULT_TO_KEY<T>(value: T): T {
 }
 
 export interface InfiniteTableEnhancedData<T> {
+  id: any;
   data: T | null;
   groupData?: T[];
   value?: any;
@@ -35,7 +36,8 @@ export interface InfiniteTableEnhancedData<T> {
   groupNesting?: number;
   groupKeys?: any[];
   parentGroupKeys?: any[];
-  indexInGroup?: number;
+  indexInGroup: number;
+  indexInAll: number;
   groupCount?: number;
   groupBy?: (keyof T)[];
   pivotValuesMap?: PivotValuesDeepMap<T, any>;
@@ -49,7 +51,6 @@ export interface InfiniteTableEnhancedGroupData<T>
   value: any;
   isGroupRow: true;
   groupNesting: number;
-
   groupKeys?: any[];
   groupCount: number;
   groupBy: (keyof T)[];
@@ -254,28 +255,31 @@ export function group<DataType, KeyType = any>(
   }
 
   if (reducers) {
-    deepMap.visitDepthFirst((deepMapValue, _keys: KeyType[], next) => {
-      completeReducers(
-        reducers,
-        deepMapValue.reducerResults,
-        deepMapValue.items,
-      );
-
-      if (pivot) {
-        // do we need this check
-        deepMapValue.pivotDeepMap!.visitDepthFirst(
-          (
-            { items, reducerResults: pivotReducerResults },
-            _keys: KeyType[],
-            next,
-          ) => {
-            completeReducers(reducers, pivotReducerResults, items);
-            next?.();
-          },
+    deepMap.visitDepthFirst(
+      (deepMapValue, _keys: KeyType[], _indexInGroup, next) => {
+        completeReducers(
+          reducers,
+          deepMapValue.reducerResults,
+          deepMapValue.items,
         );
-      }
-      next?.();
-    });
+
+        if (pivot) {
+          // do we need this check
+          deepMapValue.pivotDeepMap!.visitDepthFirst(
+            (
+              { items, reducerResults: pivotReducerResults },
+              _keys: KeyType[],
+              _indexInGroup,
+              next,
+            ) => {
+              completeReducers(reducers, pivotReducerResults, items);
+              next?.();
+            },
+          );
+        }
+        next?.();
+      },
+    );
   }
 
   if (reducers) {
@@ -321,6 +325,8 @@ type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
   collapsed: boolean;
+  indexInGroup: number;
+  indexInAll: number;
 };
 
 function getEnhancedGroupData<DataType>(
@@ -336,7 +342,10 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
+    id: groupKeys,
     collapsed,
+    indexInGroup: options.indexInGroup,
+    indexInAll: options.indexInAll,
     value: groupKeys[groupKeys.length - 1],
     groupBy: groupBy.slice(0, groupNesting) as (keyof DataType)[],
     isGroupRow: true,
@@ -366,6 +375,7 @@ function completeReducers<DataType>(
 
 export function enhancedFlatten<DataType, KeyType = any>(
   groupResult: DataGroupResult<DataType, KeyType>,
+  toPrimaryKey: (data: DataType) => any,
   groupRowsState?: GroupRowsState,
 ): { data: InfiniteTableEnhancedData<DataType>[] } {
   const { groupParams, deepMap, pivot } = groupResult;
@@ -378,7 +388,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const parents: InfiniteTableEnhancedGroupData<DataType>[] = [];
 
   deepMap.visitDepthFirst(
-    (deepMapValue, groupKeys: any[], next?: () => void) => {
+    (deepMapValue, groupKeys: any[], indexInGroup, next?: () => void) => {
       const items = deepMapValue.items;
 
       const groupNesting = groupKeys.length;
@@ -388,6 +398,8 @@ export function enhancedFlatten<DataType, KeyType = any>(
         getEnhancedGroupData(
           {
             groupBy: groupByStrings,
+            indexInGroup,
+            indexInAll: result.length,
             groupKeys,
             collapsed,
           },
@@ -397,17 +409,21 @@ export function enhancedFlatten<DataType, KeyType = any>(
       result.push(enhancedGroupData);
       parents.push(enhancedGroupData);
 
+      // todo continue here indexInAll
       if (!collapsed) {
         if (!next) {
           if (!pivot) {
+            const startIndex = result.length;
             result.push(
               ...items.map((item, index) => {
                 return {
+                  id: toPrimaryKey(item),
                   data: item,
                   isGroupRow: false,
                   collapsed: false,
                   parentGroupKeys: groupKeys,
                   indexInGroup: index,
+                  indexInAll: startIndex + index,
                   groupBy: groupByStrings,
                   groupNesting,
                 };

@@ -203,6 +203,7 @@ export default describe('DeepMap', () => {
     map.set(['fr'], 3);
     map.set(['fr', 20], 4);
     map.set(['uk', 25], 5);
+    map.set(['usa', 50], 50);
 
     expect(Array.from(map.topDownKeys())).toEqual([
       ['uk'],
@@ -210,6 +211,35 @@ export default describe('DeepMap', () => {
       ['uk', 25],
       ['fr'],
       ['fr', 20],
+      ['usa', 50],
+    ]);
+  });
+
+  it('visit depth first, with index', () => {
+    const map = new DeepMap<string | number, number>();
+
+    map.set(['uk'], 1);
+    map.set(['uk', 20], 21);
+    map.set(['fr'], 3);
+    map.set(['fr', 20], 4);
+    map.set(['uk', 25], 5);
+    map.set(['fr', 35], 7);
+    map.set(['usa', 5], 81);
+
+    const result: any[] = [];
+
+    map.visitDepthFirst((value, keys, index, next?: () => void) => {
+      result.push([value, keys, index]);
+      next?.();
+    });
+    expect(result).toEqual([
+      [1, ['uk'], 0],
+      [21, ['uk', 20], 0],
+      [5, ['uk', 25], 1],
+      [3, ['fr'], 1],
+      [4, ['fr', 20], 0],
+      [7, ['fr', 35], 1],
+      [81, ['usa', 5], 0],
     ]);
   });
 });

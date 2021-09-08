@@ -13,6 +13,7 @@ import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
   'data-row-index': number;
+  'data-row-id': string;
   ref: RefCallback<HTMLElement | null>;
 };
 
@@ -43,7 +44,7 @@ export function useRowDOMProps<T>(
   }
 
   const odd =
-    (enhancedData.indexInGroup != null ? enhancedData.indexInGroup : rowIndex) %
+    (enhancedData.indexInAll != null ? enhancedData.indexInAll : rowIndex) %
       2 ===
     1;
 
@@ -55,7 +56,7 @@ export function useRowDOMProps<T>(
     `${InfiniteTableRowClassName}--${
       enhancedData.isGroupRow ? 'group' : 'normal'
     }-row`,
-    showZebraRows && !enhancedData.isGroupRow
+    showZebraRows
       ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'}`
       : null,
     domProps?.className,
@@ -116,6 +117,7 @@ export function useRowDOMProps<T>(
       ...domProps,
       'data-virtualize-columns': props.virtualizeColumns ? 'on' : 'off',
       'data-row-index': rowIndex,
+      'data-row-id': `${enhancedData.id}`,
       className,
       onMouseEnter,
       onMouseLeave,

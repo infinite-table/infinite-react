@@ -95,6 +95,7 @@ export function deriveReadOnlyState<T>(
     virtualizeColumns,
     virtualizeHeader,
     header,
+    groupRenderStrategy: props.groupRenderStrategy ?? 'multi-column',
     rowProps: props.rowProps,
     columnMinWidth: props.columnMinWidth ?? 30,
     columnMaxWidth: props.columnMaxWidth ?? 2000,

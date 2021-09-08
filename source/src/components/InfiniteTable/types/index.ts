@@ -10,6 +10,9 @@ import type {
   InfiniteTablePropColumnPinning,
   InfiniteTableColumnAggregator,
   InfiniteTableColumnGroup,
+  InfiniteTablePropGroupRenderStrategy,
+  InfiniteTablePropColumnAggregations,
+  InfiniteTablePropColumnGroups,
 } from './InfiniteTableProps';
 
 import type {
@@ -33,6 +36,9 @@ export type {
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParams,
   InfiniteTableContextValue,
+  InfiniteTablePropGroupRenderStrategy,
+  InfiniteTablePropColumnAggregations,
+  InfiniteTablePropColumnGroups,
   InfiniteTableState,
   InfiniteTableAction,
   InfiniteTableProps,

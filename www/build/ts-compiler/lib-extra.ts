@@ -80,7 +80,7 @@ declare module "utils/DeepMap" {
         has(keys: KeyType[]): boolean;
         private visitKey;
         visit: (fn: DeepMapVisitFn<KeyType, ValueType>) => void;
-        visitDepthFirst: (fn: (value: ValueType, keys: KeyType[], next?: VoidFn | undefined) => void) => void;
+        visitDepthFirst: (fn: (value: ValueType, keys: KeyType[], indexInGroup: number, next?: VoidFn | undefined) => void) => void;
         private visitWithNext;
         private getArray;
         values(): Generator<ValueType, void, unknown>;
@@ -224,14 +224,19 @@ declare module "components/DataSource/types" {
         pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
         aggregationReducers?: AggregationReducer<T, any>[];
         groupRowsState: GroupRowsState;
-        timestamp: number;
+        sortedAt: number;
+        groupedAt: number;
+        updatedAt: number;
+        reducedAt: number;
     }
     export interface DataSourceReadOnlyState<T> {
         multiSort: boolean;
         sortInfo: DataSourceSingleSortInfo<T>[];
         primaryKey: keyof T;
         groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
+        lastSortDataArray?: T[];
         postSortDataArray?: T[];
+        lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
         postGroupDataArray?: InfiniteTableEnhancedData<T>[];
     }
     export interface DataSourceComponentState<T> extends Omit<DataSourceState<T>, 'sortInfo'>, DataSourceReadOnlyState<T> {
@@ -287,7 +292,7 @@ declare module "components/DataSource/state/getInitialState" {
 }
 declare module "components/DataSource/state/reducer" {
     import type { DataSourceState, DataSourceReadOnlyState } from "components/DataSource/types";
-    export function concludeReducer<T>(_previousState: DataSourceState<T> & DataSourceReadOnlyState<T>, state: DataSourceState<T> & DataSourceReadOnlyState<T>, updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null): DataSourceState<T> & DataSourceReadOnlyState<T>;
+    export function concludeReducer<T>(previousState: DataSourceState<T> & DataSourceReadOnlyState<T>, state: DataSourceState<T> & DataSourceReadOnlyState<T>, updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null): DataSourceState<T> & DataSourceReadOnlyState<T>;
 }
 declare module "components/DataSource/index" {
     import { DataSourceProps } from "components/DataSource/types";
@@ -323,7 +328,7 @@ declare module "components/DataSource/GroupRowsState" {
 }
 declare module "utils/groupAndPivot/index" {
     import { GroupRowsState } from "components/DataSource/GroupRowsState";
-    import { InfiniteTablePropColumnGroups, InfiniteTablePropColumns } from "components/InfiniteTable/types/InfiniteTableProps";
+    import { InfiniteTableGroupColumnBase, InfiniteTablePropColumnGroups, InfiniteTablePropColumns } from "components/InfiniteTable/types/InfiniteTableProps";
     import { DeepMap } from "utils/DeepMap";
     export type AggregationReducer<T, AggregationResultType> = {
         initialValue: AggregationResultType;
@@ -332,6 +337,7 @@ declare module "utils/groupAndPivot/index" {
         done?: (accumulatedValue: AggregationResultType | any, array: T[]) => AggregationResultType;
     };
     export interface InfiniteTableEnhancedData<T> {
+        id: any;
         data: T | null;
         groupData?: T[];
         value?: any;
@@ -340,7 +346,8 @@ declare module "utils/groupAndPivot/index" {
         groupNesting?: number;
         groupKeys?: any[];
         parentGroupKeys?: any[];
-        indexInGroup?: number;
+        indexInGroup: number;
+        indexInAll: number;
         groupCount?: number;
         groupBy?: (keyof T)[];
         pivotValuesMap?: PivotValuesDeepMap<T, any>;
@@ -372,6 +379,7 @@ declare module "utils/groupAndPivot/index" {
     export type GroupBy<DataType, KeyType> = {
         field: keyof DataType;
         toKey?: (value: any, data: DataType) => GroupKeyType<KeyType>;
+        column?: InfiniteTableGroupColumnBase<DataType>;
     };
     export type PivotBy<DataType, KeyType> = GroupBy<DataType, KeyType>;
     type GroupParams<DataType, KeyType> = {
@@ -390,7 +398,7 @@ declare module "utils/groupAndPivot/index" {
     };
     export function group<DataType, KeyType = any>(groupParams: GroupParams<DataType, KeyType>, data: DataType[]): DataGroupResult<DataType, KeyType>;
     export function flatten<DataType, KeyType extends any>(groupResult: DataGroupResult<DataType, KeyType>): DataType[];
-    export function enhancedFlatten<DataType, KeyType = any>(groupResult: DataGroupResult<DataType, KeyType>, groupRowsState?: GroupRowsState): {
+    export function enhancedFlatten<DataType, KeyType = any>(groupResult: DataGroupResult<DataType, KeyType>, toPrimaryKey: (data: DataType) => any, groupRowsState?: GroupRowsState): {
         data: InfiniteTableEnhancedData<DataType>[];
     };
     export type ComputedColumnsAndGroups<DataType> = {
@@ -458,7 +466,7 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
         width?: number;
         defaultWidth?: number;
     };
-    type InfiniteTableColumnWithSize = DiscriminatedUnion<InfiniteTableColumnWithFlex, InfiniteTableColumnWithWidth>;
+    export type InfiniteTableColumnWithSize = DiscriminatedUnion<InfiniteTableColumnWithFlex, InfiniteTableColumnWithWidth>;
     export type InfiniteTableColumnTypes = 'string' | 'number' | 'date';
     export type InfiniteTableColumnWithRenderOrField<T> = RequireAtLeastOne<{
         field?: keyof T;
@@ -480,7 +488,7 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
     };
     export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> & InfiniteTableColumnWithRenderOrField<T> & InfiniteTableColumnWithSize;
     export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
-        groupByField?: string;
+        groupByField?: string | string[];
     };
     type InfiniteTableComputedColumnBase<T> = {
         computedWidth: number;
@@ -511,7 +519,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
     import { AggregationReducer } from "utils/groupAndPivot/index";
     import { DataSourceGroupRowsBy } from "components/DataSource/index";
     import { Renderable } from "components/types/Renderable";
-    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableColumnWithSize, InfiniteTableComputedColumn, InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     export type InfiniteTablePropColumnOrderNormalized = string[];
     export type InfiniteTablePropColumnOrder = InfiniteTablePropColumnOrderNormalized | true;
     export type InfiniteTablePropColumnVisibility = Map<string, false>;
@@ -556,15 +564,18 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         depth: number;
     };
     export type GroupColumnGetterOptions<T> = {
-        groupIndex: number;
+        groupIndex?: number;
         groupCount: number;
-        groupBy: DataSourceGroupRowsBy<T>;
+        groupBy?: DataSourceGroupRowsBy<T>;
         groupRowsBy: DataSourceGroupRowsBy<T>[];
     };
-    export type InfiniteTablePropGroupColumn<T> = boolean | InfiniteTableBaseColumn<T> | ((options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupKeys: any[]) => void) => InfiniteTableBaseColumn<T>);
+    export type InfiniteTablePropGroupRenderStrategy = 'single-column' | 'multi-column' | 'row';
+    export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize;
+    export type InfiniteTablePropGroupColumn<T> = InfiniteTableGroupColumnBase<T> | ((options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupKeys: any[]) => void) => InfiniteTableGroupColumnBase<T>);
     export type InfiniteTableProps<T> = {
         columns: InfiniteTablePropColumns<T>;
         groupColumn?: InfiniteTablePropGroupColumn<T>;
+        groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
         columnVisibility?: InfiniteTablePropColumnVisibility;
         defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
         columnPinning?: InfiniteTablePropColumnPinning;
@@ -621,7 +632,7 @@ declare module "components/types/SubscriptionCallback" {
 }
 declare module "components/InfiniteTable/types/InfiniteTableState" {
     import type { ScrollPosition } from "components/types/ScrollPosition";
-    import type { InfiniteTableColumnGroup, InfiniteTableGeneratedColumns, InfiniteTablePropCollapsedColumnGroups, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableColumnGroup, InfiniteTableGeneratedColumns, InfiniteTablePropCollapsedColumnGroups, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility, InfiniteTablePropGroupRenderStrategy, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
     import { Size } from "components/types/Size";
     import { ComponentStateActions } from "components/hooks/useComponentState";
     import { MutableRefObject } from 'react';
@@ -658,6 +669,7 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
     export interface InfiniteTableComponentState<T> extends InfiniteTableState<T>, InfiniteTableReadOnlyState<T> {
     }
     export interface InfiniteTableReadOnlyState<T> {
+        groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
         onReady: InfiniteTableProps<T>['onReady'];
         rowProps: InfiniteTableProps<T>['rowProps'];
         groupColumn: InfiniteTableProps<T>['groupColumn'];
@@ -735,12 +747,12 @@ declare module "components/InfiniteTable/types/index" {
     import type { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import type { InfiniteTableAction } from "components/InfiniteTable/types/InfiniteTableAction";
     import type { InfiniteTableActionType } from "components/InfiniteTable/types/InfiniteTableActionType";
-    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups } from "components/InfiniteTable/types/InfiniteTableProps";
     import type { InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { InfiniteTableComputedValues } from "components/InfiniteTable/types/InfiniteTableComputedValues";
     import type { InfiniteTableContextValue } from "components/InfiniteTable/types/InfiniteTableContextValue";
     import type { InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
-    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, };
+    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, };
 }
 declare module "utils/join" {
     const join: (...args: (string | number | void | null)[]) => string;
@@ -1046,6 +1058,9 @@ declare module "style/utilities" {
         };
     };
 }
+declare module "style/css" {
+    export const cssEllipsisClassName: string;
+}
 declare module "components/InfiniteTable/components/icons/ExpanderIcon" {
     import * as React from 'react';
     type ExpanderIconProps = {
@@ -1059,9 +1074,14 @@ declare module "components/InfiniteTable/components/icons/ExpanderIcon" {
     export function ExpanderIcon(props: ExpanderIconProps): JSX.Element;
 }
 declare module "components/InfiniteTable/utils/getColumnForGroupBy" {
+    import { DataSourceGroupRowsBy } from "components/DataSource/index";
     import { InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     import { GroupColumnGetterOptions, InfiniteTablePropGroupColumn } from "components/InfiniteTable/types/InfiniteTableProps";
-    export function getColumnForGroupBy<T>(options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupRowKeys: any[]) => void, groupColumnFromProps?: InfiniteTablePropGroupColumn<T>): InfiniteTableGeneratedColumn<T>;
+    export function getColumnForGroupBy<T>(options: GroupColumnGetterOptions<T> & {
+        groupIndex: number;
+        groupBy: DataSourceGroupRowsBy<T>;
+    }, toggleGroupRow: (groupRowKeys: any[]) => void, groupColumnFromProps?: InfiniteTablePropGroupColumn<T>): InfiniteTableGeneratedColumn<T>;
+    export function getSingleGroupColumn<T>(options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupRowKeys: any[]) => void, groupColumnFromProps?: InfiniteTablePropGroupColumn<T>): InfiniteTableGeneratedColumn<T>;
 }
 declare module "components/InfiniteTable/hooks/useGroupRowsBy" {
     export function useGroupRowsBy<T>(): void;
@@ -1169,9 +1189,6 @@ declare module "components/InfiniteTable/components/ScrollbarPlaceholder" {
         style: React.CSSProperties;
     }): JSX.Element | null;
     export const VerticalScrollbarPlaceholder: React.MemoExoticComponent<typeof VerticalScrollbarPlaceholderFn>;
-}
-declare module "style/css" {
-    export const cssEllipsisClassName: string;
 }
 declare module "components/InfiniteTable/hooks/useInfiniteTableState" {
     import { InfiniteTableState } from "components/InfiniteTable/types/index";
@@ -1576,6 +1593,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/useRowDOMPr
     export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
         'data-virtualize-columns': 'on' | 'off';
         'data-row-index': number;
+        'data-row-id': string;
         ref: RefCallback<HTMLElement | null>;
     };
     export function useRowDOMProps<T>(props: InfiniteTableRowProps<T>, rowProps: InfiniteTableComponentState<T>['rowProps'], tableDOMRef: MutableRefObject<HTMLDivElement | null>): {
