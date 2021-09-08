@@ -16,6 +16,7 @@ import {
 import type { Size } from '../../types/Size';
 import type { RenderRow } from '../../VirtualList/types';
 import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableToggleGroupRowFn } from '../types/InfiniteTableColumn';
 
 type UsePinnedParams<T> = {
   getState: () => InfiniteTableComponentState<T>;
@@ -28,6 +29,7 @@ type UsePinnedParams<T> = {
   verticalVirtualBrain: VirtualBrain;
   scrollbars: { vertical: boolean; horizontal: boolean };
   rowHeight: number;
+  toggleGroupRow: InfiniteTableToggleGroupRowFn;
   computedPinnedStartColumnsWidth: number;
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
 };
@@ -35,6 +37,7 @@ type UsePinnedParams<T> = {
 type RenderPinedRowParams<T> = {
   getState: () => InfiniteTableComponentState<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
+  toggleGroupRow: InfiniteTableToggleGroupRowFn;
   columnsWidth: number;
   columns: InfiniteTableComputedColumn<T>[];
 };
@@ -45,6 +48,7 @@ const UPDATE_SCROLL = (node: HTMLElement, scrollPosition: ScrollPosition) => {
 
 function useRenderPinnedRow<T>(params: RenderPinedRowParams<T>) {
   const { getData, getState, columnsWidth, columns } = params;
+
   const renderPinnedRow: RenderRow = useCallback(
     (rowInfo) => {
       const dataArray = getData();
@@ -55,6 +59,7 @@ function useRenderPinnedRow<T>(params: RenderPinedRowParams<T>) {
       const rowProps: InfiniteTableRowProps<T> = {
         enhancedData,
         showZebraRows,
+        toggleGroupRow: params.toggleGroupRow,
         virtualizeColumns: false,
         brain: null!,
         rowWidth: columnsWidth,
@@ -79,6 +84,7 @@ export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
     computedPinnedEndColumnsWidth,
     verticalVirtualBrain,
     repaintId,
+    toggleGroupRow,
     scrollbars: {
       vertical: hasVerticalScrollbar,
       horizontal: hasHorizontalScrollbar,
@@ -88,6 +94,7 @@ export function usePinnedEndRendering<T>(params: UsePinnedParams<T>) {
   const renderRowPinnedEnd: RenderRow = useRenderPinnedRow({
     getData,
     getState,
+    toggleGroupRow,
     columns: computedPinnedEndColumns,
     columnsWidth: computedPinnedEndColumnsWidth,
   });
@@ -133,12 +140,14 @@ export function usePinnedStartRendering<T>(params: UsePinnedParams<T>) {
     computedPinnedStartColumns,
     computedPinnedStartColumnsWidth,
     verticalVirtualBrain,
+    toggleGroupRow,
     repaintId,
     scrollbars: { horizontal: hasHorizontalScrollbar },
   } = params;
   const renderRowPinnedStart: RenderRow = useRenderPinnedRow({
     getData,
     getState,
+    toggleGroupRow,
     columns: computedPinnedStartColumns,
     columnsWidth: computedPinnedStartColumnsWidth,
   });

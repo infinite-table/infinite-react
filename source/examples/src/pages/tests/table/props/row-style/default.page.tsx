@@ -1,19 +1,15 @@
 import * as React from 'react';
 
-import fetch from 'isomorphic-fetch';
+import classNames from './row-style.module.css';
 
 import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
-  GroupRowsState,
-  DataSourceGroupRowsBy,
+  InfiniteTablePropRowStyle,
+  InfiniteTablePropColumnPinning,
+  InfiniteTablePropRowClassName,
 } from '@infinite-table/infinite-react';
-
-import {
-  InfiniteTablePropColumnAggregations,
-  InfiniteTablePropColumnGroups,
-} from '@src/components/InfiniteTable/types/InfiniteTableProps';
 import { employees } from './employees10';
 
 type Employee = {
@@ -35,12 +31,12 @@ type Employee = {
 };
 
 const dataSource = () => {
-  return Promise.resolve(employees);
-  // return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees10`)
-  // .then((r) => r.json())
-  // .then((data: Employee[]) => {
-  //   return data;
-  // });
+  // return Promise.resolve(employees);
+  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees`)
+    .then((r) => r.json())
+    .then((data: Employee[]) => {
+      return data;
+    });
 };
 
 const columns = new Map<string, InfiniteTableColumn<Employee>>([
@@ -134,67 +130,47 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
   ['companySize', { field: 'companySize', header: 'Company Size' }],
 ]);
 
-const columnGroups: InfiniteTablePropColumnGroups = new Map([
-  ['address', { columnGroup: 'location', header: 'Address' }],
-  ['street', { columnGroup: 'address', header: 'Street' }],
-  ['location', { header: 'Location' }],
-]);
-
-const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
-  new Map([
-    [
-      'salary',
-      {
-        initialValue: 0,
-        getter: (data) => data.salary,
-        reducer: (acc, sum) => acc + sum,
-        done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
-      },
-    ],
-  ]);
-
-const groupRowsState = new GroupRowsState({
-  expandedRows: [['Cuba', 'Havana'], ['Cuba']],
-  collapsedRows: true,
-});
-
-const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
-  {
-    field: 'country',
+const domProps: React.HTMLAttributes<HTMLDivElement> = {
+  style: {
+    margin: '5px',
+    height: '80vh',
+    border: '1px solid gray',
+    position: 'relative',
   },
-  { field: 'city', column: { width: 500, header: 'hey' } },
-];
-export default function GroupByExample() {
+};
+
+const rowStyle: InfiniteTablePropRowStyle<Employee> = ({ data }) => {
+  const salary = data?.salary ?? 0;
+
+  if (salary > 150000) {
+    return { background: 'tomato' };
+  }
+  return;
+};
+const rowClassName: InfiniteTablePropRowClassName<Employee> = ({ data }) => {
+  const salary = data?.salary ?? 0;
+
+  if (salary < 150000) {
+    return classNames.green;
+  }
+  return;
+};
+
+const columnPinning: InfiniteTablePropColumnPinning = new Map([
+  ['company', 'start'],
+  ['companySize', 'end'],
+]);
+export default function RowStyleDefault() {
   return (
     <React.StrictMode>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id"
-        groupRowsBy={groupRowsBy}
-        defaultGroupRowsState={groupRowsState}
-        onGroupRowsStateChange={(state) => {
-          console.log(state);
-        }}
-      >
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
-          domProps={{
-            style: {
-              margin: '5px',
-              height: 900,
-              border: '1px solid gray',
-              position: 'relative',
-            },
-          }}
-          groupColumn={({ groupBy }) => {
-            return {
-              // width: 300,
-              header: `Group ${groupBy?.field}`,
-            };
-          }}
-          columnDefaultWidth={100}
+          domProps={domProps}
+          columnPinning={columnPinning}
+          columnDefaultWidth={150}
           columns={columns}
-          columnGroups={columnGroups}
-          columnAggregations={columnAggregations}
+          rowStyle={rowStyle}
+          rowClassName={rowClassName}
         />
       </DataSource>
     </React.StrictMode>

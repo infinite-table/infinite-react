@@ -61,6 +61,8 @@ export interface InfiniteTableReadOnlyState<T> {
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   onReady: InfiniteTableProps<T>['onReady'];
   rowProps: InfiniteTableProps<T>['rowProps'];
+  rowStyle: InfiniteTableProps<T>['rowStyle'];
+  rowClassName: InfiniteTableProps<T>['rowClassName'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
 
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];

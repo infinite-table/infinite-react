@@ -4,6 +4,7 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableEnhancedData,
 } from '../../types';
+import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
 export interface InfiniteTableRowProps<T> {
   rowHeight: number;
@@ -12,6 +13,7 @@ export interface InfiniteTableRowProps<T> {
   brain: VirtualBrain;
   domRef: React.RefCallback<HTMLElement>;
   enhancedData: InfiniteTableEnhancedData<T>;
+  toggleGroupRow: InfiniteTableToggleGroupRowFn;
   repaintId?: number | string;
 
   virtualizeColumns: boolean;

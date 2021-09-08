@@ -1,12 +1,22 @@
-## Row groups
+## Styling rows
 
-Specify row groups via the controlled `groupRowsBy` (or uncontrolled `defaultGroupRowsBy`) prop on the `DataSource`.
+Rows can be styled by using the `rowStyle` and the `rowClassName` props.
 
-```tsx title=defining-grouping
-const groupRowsBy = [{ field: "country" }, { field: "city" }];
+- `rowStyle` can be a style `object` or a `function` that returns a style `object` or `undefined`
+- `rowClassName` can be a `string` (the name of a CSS class) or a `function` that returns a `string` or `undefined`
+
+```tsx title=defining-rowStyle
+const rowStyle: InfiniteTablePropRowStyle<Employee> = ({ data }) => {
+  // data could be undefined for group rows, so we are using the nullish coalescing operator
+  const salary = data?.salary ?? 0;
+
+  if (salary > 150_000) {
+    return { background: "tomato" };
+  }
+};
 ```
 
-## Row groups in action
+## Row styling example
 
 ```tsx height=750 live title=Row-groups
 import * as React from "react";
@@ -17,6 +27,7 @@ import {
   InfiniteTableColumn,
   InfiniteTablePropGroupRenderStrategy,
   DataSourceGroupRowsBy,
+  InfiniteTablePropRowStyle,
 } from "@infinite-table/infinite-react";
 
 type Employee = {
@@ -63,11 +74,11 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
     },
   ],
   [
-    "age",
+    "salary",
     {
-      field: "age",
+      field: "salary",
       type: "number",
-      header: "Age",
+      header: "Salary",
     },
   ],
   [
@@ -92,7 +103,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
 declare var fetch: any;
 declare var env: { BASE_URL: string };
 
-console.log(env.BASE_URL, "!!!!");
 const dataSource = () => {
   return fetch(env.BASE_URL + "/employees100")
     .then((r) => r.json())
@@ -101,52 +111,25 @@ const dataSource = () => {
     });
 };
 
-const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
-  { field: "department" },
-  // you can specify a column config for this group.
-  { field: "team", column: { header: "What team?" } },
-];
-const multiSort = [];
+const groupColumnDefaults = { sortable: false, width: 200 };
 
-const groupColumnDefaults = {
-  sortable: false,
-  width: 200,
-  // we can use a custom `renderValue` function on group columns, to render a custom value
-  renderValue: ({ value }) => <>{value} 📢</>,
+const rowStyle: InfiniteTablePropRowStyle<Employee> = ({ data }) => {
+  const salary = data?.salary ?? 0;
+
+  if (salary > 150_000) {
+    return { background: "tomato" };
+  }
 };
-function App() {
-  const [groupRenderStrategy, setGroupRenderStrategy] =
-    useState<InfiniteTablePropGroupRenderStrategy>("multi-column");
 
+function App() {
   return (
     <>
-      <div>
-        <b>Please select group render strategy:</b>
-
-        <select
-          value={groupRenderStrategy}
-          onChange={(e: any) => {
-            const { value } = e.target;
-            setGroupRenderStrategy(value);
-          }}
-        >
-          <option value="single-column">Single column</option>
-          <option value="multi-column">Multi column</option>
-        </select>
-      </div>
-
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id"
-        defaultSortInfo={multiSort}
-        defaultGroupRowsBy={defaultGroupRowsBy}
-      >
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           columnDefaultWidth={130}
-          groupRenderStrategy={groupRenderStrategy}
-          groupColumn={groupColumnDefaults}
           columnMinWidth={50}
           columns={columns}
+          rowStyle={rowStyle}
         />
       </DataSource>
     </>

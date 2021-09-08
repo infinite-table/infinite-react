@@ -20,6 +20,7 @@ function InfiniteTableRowFn<T>(
     rowHeight,
 
     enhancedData,
+    toggleGroupRow,
     rowIndex,
     //TODO continue here receive columnWidth from props
     brain,
@@ -33,12 +34,15 @@ function InfiniteTableRowFn<T>(
   const { domProps } = useRowDOMProps(
     props,
     componentState.rowProps,
+    componentState.rowStyle,
+    componentState.rowClassName,
     tableDOMRef,
   );
 
   const style = {
     width: rowWidth,
     height: rowHeight,
+    ...domProps.style,
   };
 
   const renderCellRef = useRef<any>(null);
@@ -53,6 +57,7 @@ function InfiniteTableRowFn<T>(
         <InfiniteTableColumnCell<T>
           enhancedData={enhancedData}
           virtualized
+          toggleGroupRow={toggleGroupRow}
           rowIndex={rowIndex}
           domRef={domRef}
           column={column}

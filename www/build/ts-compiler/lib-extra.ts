@@ -434,12 +434,15 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
     import type { DiscriminatedUnion, RequireAtLeastOne } from "components/InfiniteTable/types/Utility";
     import type { InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
     export type { DiscriminatedUnion, RequireAtLeastOne };
+    export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
     export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
         value: string | number | Renderable | void;
         data: DATA_TYPE | null;
         enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
         rowIndex: number;
         column: InfiniteTableComputedColumn<DATA_TYPE>;
+        toggleCurrentGroupRow: () => void;
+        toggleGroupRow: InfiniteTableToggleGroupRowFn;
         groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
     }
     export interface InfiniteTableColumnHeaderRenderParams<T> {
@@ -447,7 +450,7 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
         columnSortInfo: DataSourceSingleSortInfo<T> | null | undefined;
     }
     export type InfiniteTableColumnPinned = 'start' | 'end' | false;
-    export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({ value, rowIndex, column, data, enhancedData, groupRowsBy: groupBy, }: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
+    export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({ value, rowIndex, column, data, toggleGroupRow, toggleCurrentGroupRow, enhancedData, groupRowsBy: groupBy, }: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
     export type InfiniteTableColumnHeaderRenderFunction<T> = ({ columnSortInfo, column, }: InfiniteTableColumnHeaderRenderParams<T>) => Renderable;
     export type InfiniteTableColumnWithField<T> = {
         field: keyof T;
@@ -489,6 +492,7 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
     export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> & InfiniteTableColumnWithRenderOrField<T> & InfiniteTableColumnWithSize;
     export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
         groupByField?: string | string[];
+        renderValue?: InfiniteTableColumnRenderFunction<T>;
     };
     type InfiniteTableComputedColumnBase<T> = {
         computedWidth: number;
@@ -516,14 +520,24 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
 }
 declare module "components/InfiniteTable/types/InfiniteTableProps" {
     import * as React from 'react';
-    import { AggregationReducer } from "utils/groupAndPivot/index";
+    import { AggregationReducer, InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
     import { DataSourceGroupRowsBy } from "components/DataSource/index";
     import { Renderable } from "components/types/Renderable";
-    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableColumnWithSize, InfiniteTableComputedColumn, InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableColumnRenderFunction, InfiniteTableColumnWithSize, InfiniteTableComputedColumn, InfiniteTableGeneratedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     export type InfiniteTablePropColumnOrderNormalized = string[];
     export type InfiniteTablePropColumnOrder = InfiniteTablePropColumnOrderNormalized | true;
     export type InfiniteTablePropColumnVisibility = Map<string, false>;
     export type InfiniteTablePropColumnPinning = Map<string, true | 'start' | 'end'>;
+    export type InfiniteTableRowStyleFnRenderParams<T> = {
+        data: T | null;
+        enhancedData: InfiniteTableEnhancedData<T>;
+        rowIndex: number;
+        groupRowsBy?: (keyof T)[];
+    };
+    export type InfiniteTableRowStyleFn<T> = (params: InfiniteTableRowStyleFnRenderParams<T>) => undefined | React.CSSProperties;
+    export type InfiniteTableRowClassNameFn<T> = (params: InfiniteTableRowStyleFnRenderParams<T>) => string | undefined;
+    export type InfiniteTablePropRowStyle<T> = React.CSSProperties | InfiniteTableRowStyleFn<T>;
+    export type InfiniteTablePropRowClassName<T> = string | InfiniteTableRowClassNameFn<T>;
     export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<AggregationReducer<T, AggregationResultType>, 'getter'> & {
         getter?: AggregationReducer<T, AggregationResultType>['getter'];
     };
@@ -570,7 +584,9 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         groupRowsBy: DataSourceGroupRowsBy<T>[];
     };
     export type InfiniteTablePropGroupRenderStrategy = 'single-column' | 'multi-column' | 'row';
-    export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize;
+    export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize & {
+        renderValue?: InfiniteTableColumnRenderFunction<T>;
+    };
     export type InfiniteTablePropGroupColumn<T> = InfiniteTableGroupColumnBase<T> | ((options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupKeys: any[]) => void) => InfiniteTableGroupColumnBase<T>);
     export type InfiniteTableProps<T> = {
         columns: InfiniteTablePropColumns<T>;
@@ -588,6 +604,8 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         collapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
         onColumnVisibilityChange?: (columnVisibility: InfiniteTablePropColumnVisibility) => void;
         rowHeight: number | string;
+        rowStyle?: InfiniteTablePropRowStyle<T>;
+        rowClassName?: InfiniteTablePropRowClassName<T>;
         headerHeight: number | string;
         domProps?: React.HTMLProps<HTMLDivElement>;
         showZebraRows?: boolean;
@@ -603,10 +621,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         columnOrder?: InfiniteTablePropColumnOrder;
         onColumnOrderChange?: (columnOrder: InfiniteTablePropColumnOrder) => void;
         onReady?: (api: InfiniteTableImperativeApi<T>) => void;
-        rowProps?: React.HTMLProps<HTMLDivElement> | ((rowArgs: {
-            rowIndex: number;
-            data: T | null;
-        }) => React.HTMLProps<HTMLDivElement>);
+        rowProps?: React.HTMLProps<HTMLDivElement> | ((rowArgs: InfiniteTableRowStyleFnRenderParams<T>) => React.HTMLProps<HTMLDivElement>);
         licenseKey?: string;
     };
 }
@@ -672,6 +687,8 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
         groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
         onReady: InfiniteTableProps<T>['onReady'];
         rowProps: InfiniteTableProps<T>['rowProps'];
+        rowStyle: InfiniteTableProps<T>['rowStyle'];
+        rowClassName: InfiniteTableProps<T>['rowClassName'];
         groupColumn: InfiniteTableProps<T>['groupColumn'];
         showZebraRows: InfiniteTableProps<T>['showZebraRows'];
         header: InfiniteTableProps<T>['header'];
@@ -747,12 +764,12 @@ declare module "components/InfiniteTable/types/index" {
     import type { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import type { InfiniteTableAction } from "components/InfiniteTable/types/InfiniteTableAction";
     import type { InfiniteTableActionType } from "components/InfiniteTable/types/InfiniteTableActionType";
-    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropRowStyle, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, InfiniteTablePropRowClassName } from "components/InfiniteTable/types/InfiniteTableProps";
     import type { InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { InfiniteTableComputedValues } from "components/InfiniteTable/types/InfiniteTableComputedValues";
     import type { InfiniteTableContextValue } from "components/InfiniteTable/types/InfiniteTableContextValue";
     import type { InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
-    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, };
+    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, InfiniteTablePropRowStyle, InfiniteTablePropRowClassName, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, };
 }
 declare module "utils/join" {
     const join: (...args: (string | number | void | null)[]) => string;
@@ -1200,6 +1217,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     import { Renderable } from "components/types/Renderable";
     import { OnResizeFn } from "components/types/Size";
     import { InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
+    import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
     export interface InfiniteTableCellProps<T> {
         column: InfiniteTableComputedColumn<T>;
         cssEllipsis?: boolean;
@@ -1216,6 +1234,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     export interface InfiniteTableColumnCellProps<T> extends Omit<InfiniteTableCellProps<T>, 'children'> {
         virtualized: boolean;
         enhancedData: InfiniteTableEnhancedData<T>;
+        toggleGroupRow: InfiniteTableToggleGroupRowFn;
         rowIndex: number;
     }
     export interface InfiniteTableHeaderCellProps<T> extends Omit<InfiniteTableCellProps<T>, 'children'> {
@@ -1560,6 +1579,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     import type { VirtualBrain } from "components/VirtualBrain/index";
     import type { ScrollPosition } from "components/types/ScrollPosition";
     import type { InfiniteTableComputedColumn, InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
+    import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
     export interface InfiniteTableRowProps<T> {
         rowHeight: number;
         rowWidth: number;
@@ -1567,6 +1587,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
         brain: VirtualBrain;
         domRef: React.RefCallback<HTMLElement>;
         enhancedData: InfiniteTableEnhancedData<T>;
+        toggleGroupRow: InfiniteTableToggleGroupRowFn;
         repaintId?: number | string;
         virtualizeColumns: boolean;
         showZebraRows?: boolean;
@@ -1596,7 +1617,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/useRowDOMPr
         'data-row-id': string;
         ref: RefCallback<HTMLElement | null>;
     };
-    export function useRowDOMProps<T>(props: InfiniteTableRowProps<T>, rowProps: InfiniteTableComponentState<T>['rowProps'], tableDOMRef: MutableRefObject<HTMLDivElement | null>): {
+    export function useRowDOMProps<T>(props: InfiniteTableRowProps<T>, rowProps: InfiniteTableComponentState<T>['rowProps'], rowStyle: InfiniteTableComponentState<T>['rowStyle'], rowClassName: InfiniteTableComponentState<T>['rowClassName'], tableDOMRef: MutableRefObject<HTMLDivElement | null>): {
         domProps: TableRowHTMLAttributes;
         domRef: MutableRefObject<HTMLElement | null>;
     };
@@ -1625,11 +1646,13 @@ declare module "components/InfiniteTable/hooks/useUnpinnedRendering" {
     import type { Size } from "components/types/Size";
     import type { InfiniteTableComputedColumn, InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
     import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
     type UnpinnedRenderingParams<T> = {
         columnShifts: number[] | null;
         bodySize: Size;
         getData: () => InfiniteTableEnhancedData<T>[];
         rowHeight: number;
+        toggleGroupRow: InfiniteTableToggleGroupRowFn;
         repaintId: string | number;
         applyScrollHorizontal: ({ scrollLeft }: {
             scrollLeft: number;
@@ -1693,6 +1716,7 @@ declare module "components/InfiniteTable/hooks/usePinnedRendering" {
     import type { Size } from "components/types/Size";
     import type { RenderRow } from "components/VirtualList/types";
     import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
     type UsePinnedParams<T> = {
         getState: () => InfiniteTableComponentState<T>;
         getData: () => InfiniteTableEnhancedData<T>[];
@@ -1706,6 +1730,7 @@ declare module "components/InfiniteTable/hooks/usePinnedRendering" {
             horizontal: boolean;
         };
         rowHeight: number;
+        toggleGroupRow: InfiniteTableToggleGroupRowFn;
         computedPinnedStartColumnsWidth: number;
         computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
     };

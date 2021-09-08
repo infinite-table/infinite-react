@@ -4,6 +4,7 @@ import { InfiniteTableComputedColumn } from '../..';
 import { Renderable } from '../../../types/Renderable';
 import { OnResizeFn } from '../../../types/Size';
 import { InfiniteTableEnhancedData } from '../../types';
+import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
 export interface InfiniteTableCellProps<T> {
   column: InfiniteTableComputedColumn<T>;
@@ -25,6 +26,7 @@ export interface InfiniteTableColumnCellProps<T>
   extends Omit<InfiniteTableCellProps<T>, 'children'> {
   virtualized: boolean;
   enhancedData: InfiniteTableEnhancedData<T>;
+  toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndex: number;
 }
 

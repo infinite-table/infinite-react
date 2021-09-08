@@ -16,12 +16,14 @@ import type { InfiniteTableRowProps } from '../components/InfiniteTableRow/Infin
 import { InfiniteTableRow } from '../components/InfiniteTableRow';
 import { TableRowUnvirtualized } from '../components/InfiniteTableRow/InfiniteTableRowUnvirtualized';
 import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableToggleGroupRowFn } from '../types/InfiniteTableColumn';
 
 type UnpinnedRenderingParams<T> = {
   columnShifts: number[] | null;
   bodySize: Size;
   getData: () => InfiniteTableEnhancedData<T>[];
   rowHeight: number;
+  toggleGroupRow: InfiniteTableToggleGroupRowFn;
 
   repaintId: string | number;
   applyScrollHorizontal: ({ scrollLeft }: { scrollLeft: number }) => void;
@@ -42,6 +44,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
     bodySize,
     getData,
     rowHeight,
+    toggleGroupRow,
 
     repaintId,
 
@@ -74,6 +77,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
       const rowProps: InfiniteTableRowProps<T> = {
         enhancedData,
         showZebraRows,
+        toggleGroupRow,
         virtualizeColumns: shouldVirtualizeColumns,
         brain: null!,
         columns: computedUnpinnedColumns,

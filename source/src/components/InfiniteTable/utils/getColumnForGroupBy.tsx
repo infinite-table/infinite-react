@@ -26,13 +26,18 @@ export function getColumnForGroupBy<T>(
     header: `Group by ${groupBy.field}`,
     groupByField: groupBy.field as string,
     sortable: false,
-    render: ({ value, enhancedData }) => {
+    render: (renderOptions) => {
+      let { value, enhancedData, column } = renderOptions;
       if (!enhancedData.isGroupRow) {
         return null;
       }
 
       if (groupIndex + 1 !== enhancedData.groupNesting) {
         return null;
+      }
+
+      if (column.renderValue) {
+        value = column.renderValue(renderOptions);
       }
 
       return (
@@ -76,11 +81,15 @@ export function getSingleGroupColumn<T>(
     header: `Group`,
     groupByField: options.groupRowsBy.map((g) => g.field) as string[],
     sortable: false,
-    render: ({ value, enhancedData }) => {
+    render: (renderOptions) => {
+      let { value, enhancedData, column } = renderOptions;
       if (!enhancedData.isGroupRow) {
         return null;
       }
 
+      if (column.renderValue) {
+        value = column.renderValue(renderOptions);
+      }
       return (
         <div
           className={join(ICSS.display.flex, ICSS.alignItems.center)}

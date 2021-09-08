@@ -178,6 +178,9 @@ export default function GroupByExample() {
           groupColumn={{
             header: 'group col',
             width: 200,
+            renderValue: ({ value }) => {
+              return <>{value}!</>;
+            },
           }}
           groupRenderStrategy="single-column"
           columnDefaultWidth={100}

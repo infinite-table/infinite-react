@@ -8,6 +8,7 @@ import type { InfiniteTableEnhancedData } from '.';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
+export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
 export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable | void;
@@ -15,6 +16,8 @@ export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
   rowIndex: number;
   column: InfiniteTableComputedColumn<DATA_TYPE>;
+  toggleCurrentGroupRow: () => void;
+  toggleGroupRow: InfiniteTableToggleGroupRowFn;
   groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
 }
 
@@ -30,6 +33,8 @@ export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({
   rowIndex,
   column,
   data,
+  toggleGroupRow,
+  toggleCurrentGroupRow,
   enhancedData,
   groupRowsBy: groupBy,
 }: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
@@ -102,6 +107,7 @@ export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
 
 export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
   groupByField?: string | string[];
+  renderValue?: InfiniteTableColumnRenderFunction<T>;
 };
 
 type InfiniteTableComputedColumnBase<T> = {

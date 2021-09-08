@@ -1,10 +1,14 @@
 import * as React from 'react';
-import { AggregationReducer } from '../../../utils/groupAndPivot';
+import {
+  AggregationReducer,
+  InfiniteTableEnhancedData,
+} from '../../../utils/groupAndPivot';
 import { DataSourceGroupRowsBy } from '../../DataSource';
 import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableBaseColumn,
   InfiniteTableColumn,
+  InfiniteTableColumnRenderFunction,
   InfiniteTableColumnWithSize,
   InfiniteTableComputedColumn,
   InfiniteTableGeneratedColumn,
@@ -22,6 +26,24 @@ export type InfiniteTablePropColumnPinning = Map<
   true | 'start' | 'end'
 >;
 
+export type InfiniteTableRowStyleFnRenderParams<T> = {
+  data: T | null;
+  enhancedData: InfiniteTableEnhancedData<T>;
+  rowIndex: number;
+  groupRowsBy?: (keyof T)[];
+};
+export type InfiniteTableRowStyleFn<T> = (
+  params: InfiniteTableRowStyleFnRenderParams<T>,
+) => undefined | React.CSSProperties;
+export type InfiniteTableRowClassNameFn<T> = (
+  params: InfiniteTableRowStyleFnRenderParams<T>,
+) => string | undefined;
+export type InfiniteTablePropRowStyle<T> =
+  | React.CSSProperties
+  | InfiniteTableRowStyleFn<T>;
+export type InfiniteTablePropRowClassName<T> =
+  | string
+  | InfiniteTableRowClassNameFn<T>;
 export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
   AggregationReducer<T, AggregationResultType>,
   'getter'
@@ -102,7 +124,9 @@ export type InfiniteTablePropGroupRenderStrategy =
   | 'multi-column'
   | 'row';
 export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
-  InfiniteTableColumnWithSize;
+  InfiniteTableColumnWithSize & {
+    renderValue?: InfiniteTableColumnRenderFunction<T>;
+  };
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
   | ((
@@ -136,6 +160,8 @@ export type InfiniteTableProps<T> = {
   // columnVisibilityAssumeVisible?: boolean;
 
   rowHeight: number | string;
+  rowStyle?: InfiniteTablePropRowStyle<T>;
+  rowClassName?: InfiniteTablePropRowClassName<T>;
   headerHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
@@ -156,10 +182,9 @@ export type InfiniteTableProps<T> = {
 
   rowProps?:
     | React.HTMLProps<HTMLDivElement>
-    | ((rowArgs: {
-        rowIndex: number;
-        data: T | null;
-      }) => React.HTMLProps<HTMLDivElement>);
+    | ((
+        rowArgs: InfiniteTableRowStyleFnRenderParams<T>,
+      ) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
 };

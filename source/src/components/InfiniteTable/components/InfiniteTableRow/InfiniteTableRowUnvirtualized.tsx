@@ -12,7 +12,14 @@ function TableRowUnvirtualizedFn<T>(
     brain: VirtualBrain | null | undefined;
   },
 ) {
-  const { rowHeight, rowWidth, enhancedData, rowIndex, columns } = props;
+  const {
+    rowHeight,
+    rowWidth,
+    enhancedData,
+    rowIndex,
+    columns,
+    toggleGroupRow,
+  } = props;
 
   const tableContextValue = useInfiniteTable<T>();
 
@@ -21,12 +28,15 @@ function TableRowUnvirtualizedFn<T>(
   const { domProps } = useRowDOMProps(
     props,
     componentState.rowProps,
+    componentState.rowStyle,
+    componentState.rowClassName,
     tableDOMRef,
   );
 
   const style = {
     width: rowWidth,
     height: rowHeight,
+    ...domProps.style,
   };
 
   const children = columns.map((col) => {
@@ -34,6 +44,7 @@ function TableRowUnvirtualizedFn<T>(
       <InfiniteTableColumnCell<T>
         key={col.id}
         virtualized={false}
+        toggleGroupRow={toggleGroupRow}
         enhancedData={enhancedData}
         rowIndex={rowIndex}
         column={col}

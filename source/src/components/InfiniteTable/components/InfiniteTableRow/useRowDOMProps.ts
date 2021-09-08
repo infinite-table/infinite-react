@@ -1,4 +1,10 @@
-import { MutableRefObject, RefCallback, useCallback, useRef } from 'react';
+import {
+  CSSProperties,
+  MutableRefObject,
+  RefCallback,
+  useCallback,
+  useRef,
+} from 'react';
 
 import { ICSS } from '../../../../style/utilities';
 import { join } from '../../../../utils/join';
@@ -9,6 +15,7 @@ import {
 
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
+import { InfiniteTableRowStyleFnRenderParams } from '../../types/InfiniteTableProps';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -20,6 +27,8 @@ export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
 export function useRowDOMProps<T>(
   props: InfiniteTableRowProps<T>,
   rowProps: InfiniteTableComponentState<T>['rowProps'],
+  rowStyle: InfiniteTableComponentState<T>['rowStyle'],
+  rowClassName: InfiniteTableComponentState<T>['rowClassName'],
   tableDOMRef: MutableRefObject<HTMLDivElement | null>,
 ): {
   domProps: TableRowHTMLAttributes;
@@ -39,14 +48,35 @@ export function useRowDOMProps<T>(
     domRef.current = node;
   }, []);
 
+  const rowPropsAndStyleArgs: InfiniteTableRowStyleFnRenderParams<T> = {
+    data: enhancedData.data,
+    enhancedData,
+    rowIndex,
+    groupRowsBy: enhancedData.groupBy,
+  };
+
   if (typeof rowProps === 'function') {
-    rowProps = rowProps({ rowIndex, data: props.enhancedData.data });
+    rowProps = rowProps(rowPropsAndStyleArgs);
+  }
+
+  let style: CSSProperties | undefined = rowProps ? rowProps.style : undefined;
+
+  if (rowStyle) {
+    style =
+      typeof rowStyle === 'function'
+        ? { ...style, ...rowStyle(rowPropsAndStyleArgs) }
+        : { ...style, ...rowStyle };
   }
 
   const odd =
     (enhancedData.indexInAll != null ? enhancedData.indexInAll : rowIndex) %
       2 ===
     1;
+
+  let rowComputedClassName =
+    typeof rowClassName === 'function'
+      ? rowClassName(rowPropsAndStyleArgs)
+      : rowClassName;
 
   const className = join(
     ICSS.position.absolute,
@@ -61,6 +91,7 @@ export function useRowDOMProps<T>(
       : null,
     domProps?.className,
     rowProps?.className,
+    rowComputedClassName,
   );
 
   const initialMouseEnter = rowProps?.onMouseEnter;
@@ -115,6 +146,7 @@ export function useRowDOMProps<T>(
     domProps: {
       ...rowProps,
       ...domProps,
+      style,
       'data-virtualize-columns': props.virtualizeColumns ? 'on' : 'off',
       'data-row-index': rowIndex,
       'data-row-id': `${enhancedData.id}`,

@@ -38,6 +38,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     enhancedData,
     column,
     offsetProperty,
+    toggleGroupRow,
     virtualized,
     rowIndex,
     domRef,
@@ -59,6 +60,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         rowIndex,
         column,
         enhancedData,
+        toggleGroupRow,
+        toggleCurrentGroupRow: () => toggleGroupRow(enhancedData.groupKeys!),
         groupRowsBy: computedDataSource.groupRowsBy,
         data,
       })

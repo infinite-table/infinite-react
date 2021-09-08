@@ -12,3 +12,14 @@
 .ITable--scrolling .ITableRow {
   pointer-events: none;
 }
+
+.ITableRow--even {
+  // .ITableColumnCell {
+  background: var(--ITableRow__background);
+  // }
+}
+.ITableRow--odd {
+  // .ITableColumnCell {
+  background: var(--ITableRow--odd__background);
+  // }
+}

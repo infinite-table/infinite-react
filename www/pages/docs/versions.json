@@ -15,6 +15,10 @@
         "label": "Column groups"
       },
       {
+        "path": "styling-rows",
+        "label": "Styling rows"
+      },
+      {
         "path": "row-groups",
         "label": "Row groups"
       }

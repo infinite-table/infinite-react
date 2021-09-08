@@ -33,8 +33,8 @@
 }
 .ITableHeaderCell,
 .ITableColumnCell {
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
+  border-left: var(--ITableCell__border-width) solid transparent;
+  border-right: var(--ITableCell__border-width) solid transparent;
   &--pinned-start.ITableCell--last-in-category {
     border-right: var(--ITableCell__border);
   }
@@ -42,19 +42,31 @@
     border-left: var(--ITableCell__border);
   }
 }
-.ITableRow--group-row {
-  // background: var(--ITableRow-group-row__background);
-}
-.ITableRow--even {
-  .ITableColumnCell {
-    background: var(--ITableRow__background);
+.ITableRow--group-row.ITableRow--odd,
+.ITableRow--group-row.ITableRow--even {
+  .ITableCell::before {
+    content: '';
+    background: var(--ITable-accent__color);
+    position: absolute;
+    top: 0;
+    left: calc(0px - var(--ITableCell__border-width));
+    right: calc(0px - var(--ITableCell__border-width));
+    bottom: 0;
+    z-index: -1;
+    opacity: 0.05;
+    pointer-events: none;
   }
 }
-.ITableRow--odd {
-  .ITableColumnCell {
-    background: var(--ITableRow--odd__background);
-  }
-}
+// .ITableRow--even {
+//   .ITableColumnCell {
+//     background: var(--ITableRow__background);
+//   }
+// }
+// .ITableRow--odd {
+//   .ITableColumnCell {
+//     background: var(--ITableRow--odd__background);
+//   }
+// }
 .ITableCell_content {
   // white-space: nowrap;
   // overflow: hidden;

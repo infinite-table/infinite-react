@@ -13,6 +13,10 @@ import type {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
+  InfiniteTablePropRowStyle,
+  InfiniteTableRowStyleFn,
+  InfiniteTableRowClassNameFn,
+  InfiniteTablePropRowClassName,
 } from './InfiniteTableProps';
 
 import type {
@@ -44,4 +48,8 @@ export type {
   InfiniteTableProps,
   InfiniteTableImperativeApi,
   InfiniteTableActionType,
+  InfiniteTablePropRowStyle,
+  InfiniteTablePropRowClassName,
+  InfiniteTableRowStyleFn,
+  InfiniteTableRowClassNameFn,
 };
