@@ -121,8 +121,7 @@ export type GroupColumnGetterOptions<T> = {
 
 export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
-  | 'multi-column'
-  | 'row';
+  | 'multi-column';
 export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithSize & {
     renderValue?: InfiniteTableColumnRenderFunction<T>;
