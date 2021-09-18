@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   InfiniteTableColumn,
-  InfiniteTableFactory,
+  InfiniteTable,
   DataSource,
 } from '@infinite-table/infinite-react';
 
@@ -20,8 +20,6 @@ interface Order {
 orders.forEach((order, i) => {
   order.OrderId = i;
 });
-
-const Table = InfiniteTableFactory<Order>();
 
 export default () => {
   const [counter, setCounter] = React.useState(0);
@@ -49,7 +47,7 @@ export default () => {
           ]}
         >
           <div>
-            <Table
+            <InfiniteTable<Order>
               domProps={{
                 style: {
                   margin: '5px',

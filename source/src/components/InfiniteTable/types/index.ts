@@ -17,6 +17,7 @@ import type {
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
   InfiniteTablePropRowClassName,
+  InfiniteTablePropColumns,
 } from './InfiniteTableProps';
 
 import type {
@@ -31,6 +32,7 @@ import type { InfiniteTableEnhancedData } from '../../../utils/groupAndPivot';
 export type {
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
+  InfiniteTablePropColumns,
   InfiniteTableEnhancedData,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,

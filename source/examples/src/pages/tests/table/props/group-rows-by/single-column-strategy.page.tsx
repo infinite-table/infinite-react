@@ -1,14 +1,11 @@
 import * as React from 'react';
 
-import fetch from 'isomorphic-fetch';
-
 import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
-  GroupRowsState,
+  // GroupRowsState,
   DataSourceGroupRowsBy,
-  InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
 } from '@infinite-table/infinite-react';
@@ -147,10 +144,10 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
     ],
   ]);
 
-const groupRowsState = new GroupRowsState({
-  expandedRows: [['Cuba', 'Havana'], ['Cuba']],
-  collapsedRows: true,
-});
+// const groupRowsState = new GroupRowsState({
+//   expandedRows: [['Cuba', 'Havana'], ['Cuba']],
+//   collapsedRows: true,
+// });
 
 const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
   {

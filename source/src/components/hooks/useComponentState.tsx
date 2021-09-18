@@ -1,11 +1,22 @@
 import * as React from 'react';
 import { useReducer, createContext, useMemo, useEffect, useState } from 'react';
+
 import { dbg } from '../../utils/debug';
+import { toUpperFirst } from '../../utils/toUpperFirst';
 
 import { isControlled } from '../utils/isControlled';
 import { useLatest } from './useLatest';
 import { usePrevious } from './usePrevious';
-import { notifyChange } from './useProperty';
+
+export const notifyChange = (props: any, propName: string, newValue: any) => {
+  const upperPropName = toUpperFirst(propName);
+  const callbackPropName = `on${upperPropName}Change` as string;
+  const callbackProp = props[callbackPropName] as Function;
+
+  if (typeof callbackProp === 'function') {
+    callbackProp(newValue);
+  }
+};
 
 const debug = dbg('rerender');
 
@@ -72,19 +83,27 @@ type ComponentStateRootConfig<
   T_STATE,
   T_READONLY_STATE = {},
   T_ACTIONS = {},
+  T_PARENT_STATE = {},
 > = {
-  getInitialState: (props: T_PROPS) => T_STATE;
-  concludeReducer?: (
-    previousState: T_STATE,
-    currentState: T_STATE,
-    updated: Partial<T_STATE> | null,
-  ) => T_STATE;
+  getInitialState: (params: {
+    props: T_PROPS;
+    parentState: T_PARENT_STATE | null;
+  }) => T_STATE;
+  concludeReducer?: (params: {
+    previousState: T_STATE;
+    state: T_STATE;
+    updated: Partial<T_STATE> | null;
+    parentState: T_PARENT_STATE | null;
+  }) => T_STATE;
   getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
-  deriveReadOnlyState?: (
-    props: T_PROPS,
-    state: T_STATE,
-    updated: Partial<T_STATE> | null,
-  ) => T_READONLY_STATE;
+  deriveReadOnlyState?: (params: {
+    props: T_PROPS;
+    state: T_STATE;
+    updated: Partial<T_STATE> | null;
+    parentState: T_PARENT_STATE | null;
+  }) => T_READONLY_STATE;
+
+  getParentState?: () => T_PARENT_STATE;
 
   onControlledPropertyChange?: (
     name: string,
@@ -98,12 +117,14 @@ export function getComponentStateRoot<
   T_STATE extends object,
   T_READONLY_STATE extends object = {},
   T_ACTIONS = {},
+  T_PARENT_STATE = {},
 >(
   config: ComponentStateRootConfig<
     T_PROPS,
     T_STATE,
     T_READONLY_STATE,
-    T_ACTIONS
+    T_ACTIONS,
+    T_PARENT_STATE
   >,
 ) {
   /**
@@ -112,19 +133,25 @@ export function getComponentStateRoot<
   return React.memo(function ComponentStateRoot(
     props: T_PROPS & { children: React.ReactNode },
   ) {
+    const getParentState = config.getParentState;
+    const parentState = getParentState?.() ?? null;
     const [{ state: wholeState, initialState }] = useState<{
       state: T_STATE & T_READONLY_STATE;
       initialState: T_STATE;
       readOnlyState: T_READONLY_STATE;
     }>(() => {
-      let initialState = config.getInitialState(props);
+      let initialState = config.getInitialState({
+        props,
+        parentState,
+      });
 
       if (config.deriveReadOnlyState) {
-        const readOnlyState = config.deriveReadOnlyState(
+        const readOnlyState = config.deriveReadOnlyState({
           props,
-          initialState,
-          null,
-        );
+          state: initialState,
+          updated: null,
+          parentState,
+        });
         return {
           state: {
             ...initialState,
@@ -165,18 +192,24 @@ export function getComponentStateRoot<
       }
 
       if (config.deriveReadOnlyState) {
-        const derivedState = config.deriveReadOnlyState(
-          getProps(),
+        const derivedState = config.deriveReadOnlyState({
+          props: getProps(),
           state,
-          newState,
-        );
+          updated: newState,
+          parentState,
+        });
         state = {
           ...state,
           ...derivedState,
         };
       }
       const result = config.concludeReducer
-        ? config.concludeReducer(previousState, state, newState)
+        ? config.concludeReducer({
+            previousState,
+            state,
+            updated: newState,
+            parentState,
+          })
         : state;
 
       return result as T_STATE & T_READONLY_STATE;

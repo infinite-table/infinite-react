@@ -15,7 +15,7 @@ import {
 
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
-import { InfiniteTableRowStyleFnRenderParams } from '../../types/InfiniteTableProps';
+import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -48,7 +48,7 @@ export function useRowDOMProps<T>(
     domRef.current = node;
   }, []);
 
-  const rowPropsAndStyleArgs: InfiniteTableRowStyleFnRenderParams<T> = {
+  const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
     data: enhancedData.data,
     enhancedData,
     rowIndex,

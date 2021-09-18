@@ -1,11 +1,13 @@
-import { InfiniteTableColumn } from '../..';
+import { DataSourcePivotBy } from '../..';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
+import { InfiniteTablePivotColumn } from '../../components/InfiniteTable/types/InfiniteTableColumn';
 import {
   InfiniteTableColumnGroup,
   InfiniteTableGroupColumnBase,
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumns,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
+import { InfiniteTablePropPivotTotalColumnPosition } from '../../components/InfiniteTable/types/InfiniteTableState';
 import { DeepMap } from '../DeepMap';
 
 export type AggregationReducer<T, AggregationResultType> = {
@@ -444,43 +446,58 @@ export function enhancedFlatten<DataType, KeyType = any>(
 }
 
 export type ComputedColumnsAndGroups<DataType> = {
-  columns: InfiniteTablePropColumns<DataType>;
+  columns: InfiniteTablePropColumns<
+    DataType,
+    InfiniteTablePivotColumn<DataType>
+  >;
   columnGroups: InfiniteTablePropColumnGroups;
 };
 
 export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
   deepMap: DeepMap<KeyType, boolean>,
-  pivotLength: number,
+  pivotBy: DataSourcePivotBy<DataType>[],
+  pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition,
 ): ComputedColumnsAndGroups<DataType> {
-  const columns: InfiniteTablePropColumns<DataType> = new Map<
-    string,
-    InfiniteTableColumn<DataType>
-  >([
+  const pivotLength = pivotBy.length;
+  const columns: InfiniteTablePropColumns<
+    DataType,
+    InfiniteTablePivotColumn<DataType>
+  > = new Map<string, InfiniteTablePivotColumn<DataType>>([
     [
       'labels',
       {
         header: 'Row labels',
-        render: ({ enhancedData }) => {
+
+        valueGetter: ({ enhancedData }) => {
           return enhancedData.groupKeys?.join(' >> ');
         },
       },
     ],
   ]);
+
   const columnGroups: InfiniteTablePropColumnGroups = new Map<
     string,
     InfiniteTableColumnGroup
   >();
 
-  deepMap.topDownKeys().forEach((keys: KeyType[]) => {
+  deepMap.visitDepthFirst((_value, keys: KeyType[], _indexInGroup, next) => {
     keys = [...keys];
+
+    if (pivotTotalColumnPosition === 'end') {
+      next?.();
+    }
 
     if (keys.length === pivotLength) {
       const parentKeys = keys.slice(0, -1);
       let columnGroupId = parentKeys.join('/');
       columns.set(`${keys.join('/')}`, {
+        pivotBy,
+        pivotColumn: true,
+        pivotGroupKeys: keys,
+        sortable: false,
         columnGroup: parentKeys.length ? `${columnGroupId}` : undefined,
         header: keys[keys.length - 1],
-        render: ({ enhancedData }) => {
+        valueGetter: ({ enhancedData }) => {
           const value =
             enhancedData.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
 
@@ -495,14 +512,38 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
         columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
         header: keys.join(' >> '),
       });
+
+      if (pivotTotalColumnPosition !== false) {
+        columns.set(`${keys.join('/')}-total`, {
+          columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
+          header: `${keys.join('/')} total `,
+          pivotTotalColumn: true,
+          pivotGroupKeys: keys,
+          pivotBy,
+          sortable: false,
+          valueGetter: ({ enhancedData }) => {
+            const value =
+              enhancedData.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
+
+            return value;
+          },
+        });
+      }
+    }
+
+    if (
+      pivotTotalColumnPosition === 'start' ||
+      pivotTotalColumnPosition === false
+    ) {
+      next?.();
     }
   });
 
   if (columns.size === 1) {
     columns.set('single', {
       header: 'Reduced',
-      render: ({ enhancedData }) => {
-        return `${enhancedData.reducerResults?.[0]}`;
+      valueGetter: ({ enhancedData }) => {
+        return enhancedData.reducerResults?.[0];
       },
     });
   }

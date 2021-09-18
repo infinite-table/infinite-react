@@ -10,7 +10,7 @@ import {
   InfiniteTablePropColumnPinning,
   InfiniteTablePropRowClassName,
 } from '@infinite-table/infinite-react';
-import { employees } from './employees10';
+// import { employees } from './employees10';
 
 type Employee = {
   id: number;

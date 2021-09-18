@@ -4,9 +4,9 @@ import { InfiniteTableComputedColumn } from '../types';
 /**
  * Returns a function that can be used to retrieve the width of an unpinned column, by the column index
  */
-export const useColumnSizeFn = (
-  computedUnpinnedColumns: InfiniteTableComputedColumn<any>[],
-) => {
+export function useColumnSizeFn<T>(
+  computedUnpinnedColumns: InfiniteTableComputedColumn<T>[],
+) {
   const columnSize = useCallback(
     (index: number) => {
       const column = computedUnpinnedColumns[index];
@@ -23,4 +23,4 @@ export const useColumnSizeFn = (
   );
 
   return columnSize;
-};
+}

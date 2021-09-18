@@ -3,7 +3,9 @@ import type { InfiniteTableColumn } from '../../types';
 import type {
   InfiniteTableColumnWithRender,
   InfiniteTableColumnWithField,
+  InfiniteTableColumnStyleFnParams,
 } from '../../types/InfiniteTableColumn';
+
 import type { Renderable } from '../../../types/Renderable';
 
 import { join } from '../../../../utils/join';
@@ -45,27 +47,59 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   } = props;
 
   const { data, isGroupRow, groupBy } = enhancedData;
-  const value =
+  let value =
     isGroupRow && groupBy && column.groupByField
       ? enhancedData.value
       : isColumnWithField(column)
       ? data?.[column.field]
       : null;
 
+  if (column.valueGetter) {
+    value = column.valueGetter({ data, enhancedData });
+  }
+
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
+
+  const renderParam: InfiniteTableColumnStyleFnParams<T> = {
+    value,
+    column,
+    enhancedData,
+    data,
+  };
 
   let renderValue: Renderable = isColumnWithRender(column)
     ? column.render({
         value,
-        rowIndex,
         column,
         enhancedData,
+        data,
+        rowIndex,
         toggleGroupRow,
         toggleCurrentGroupRow: () => toggleGroupRow(enhancedData.groupKeys!),
         groupRowsBy: computedDataSource.groupRowsBy,
-        data,
       })
     : value;
+
+  const colClassName: undefined | string = column.className
+    ? typeof column.className === 'function'
+      ? column.className(renderParam)
+      : column.className
+    : undefined;
+
+  const colStyle: undefined | React.CSSProperties = column.style
+    ? typeof column.style === 'function'
+      ? column.style(renderParam)
+      : column.style
+    : undefined;
+
+  const style = colStyle
+    ? {
+        ...colStyle,
+        width: column.computedWidth,
+      }
+    : {
+        width: column.computedWidth,
+      };
 
   return (
     <InfiniteTableCell<T>
@@ -76,15 +110,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       data-column-index={column.computedVisibleIndex}
       column={column}
       offset={virtualized ? 0 : column.computedPinningOffset}
-      style={{
-        width: column.computedWidth,
-      }}
+      style={style}
       cssEllipsis={column.cssEllipsis ?? true}
       className={join(
         ICSS.position.absolute,
         ICSS.height['100%'],
         ICSS.top[0],
         useCellClassName(column, [baseCls, InfiniteTableCellClassName]),
+        colClassName,
       )}
     >
       {renderValue}

@@ -1,9 +1,6 @@
 import * as React from 'react';
 
-import {
-  DataSource,
-  InfiniteTableFactory,
-} from '@infinite-table/infinite-react';
+import { DataSource, InfiniteTable } from '@infinite-table/infinite-react';
 
 import { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
@@ -83,8 +80,6 @@ const columns = new Map(
   }),
 );
 
-const Table = InfiniteTableFactory<RenderTest>();
-
 export default () => {
   return (
     <React.StrictMode>
@@ -123,7 +118,7 @@ export default () => {
           ]}
         >
           <div>
-            <Table
+            <InfiniteTable<RenderTest>
               header={false}
               domProps={{
                 style: {

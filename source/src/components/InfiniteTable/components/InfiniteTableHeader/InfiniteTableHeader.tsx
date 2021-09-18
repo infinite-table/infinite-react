@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { ICSS } from '../../../../style/utilities';
 
 import { join } from '../../../../utils/join';
+import { dbg } from '../../../../utils/debug';
 
 import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 
@@ -18,6 +19,7 @@ import { RawList } from '../../../RawList';
 import type { RenderItem } from '../../../RawList/types';
 import { ScrollPosition } from '../../../types/ScrollPosition';
 
+const debug = dbg('Header');
 const { rootClassName } = internalProps;
 
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -38,7 +40,10 @@ function InfiniteTableHeaderFn<T>(
       const column = columns[columnIndex];
 
       if (!column) {
-        // debugger;
+        if (__DEV__) {
+          debug('Cannot find column to render at ', columnIndex);
+        }
+        return null;
       }
       return (
         <InfiniteTableHeaderCell<T>

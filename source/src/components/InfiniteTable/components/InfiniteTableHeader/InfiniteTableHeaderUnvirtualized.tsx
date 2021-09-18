@@ -29,7 +29,8 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
 
   const {
     componentState: {
-      columnGroups,
+      computedColumnGroups,
+
       columnGroupsDepthsMap,
       columnGroupsMaxDepth,
       headerHeight,
@@ -38,12 +39,12 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   } = useInfiniteTable<T>();
 
   const domRef = React.useRef<HTMLDivElement | null>(null);
-  const hasColumnGroups = columnGroups.size > 0;
+  const hasColumnGroups = computedColumnGroups.size > 0;
 
   const columnHeaderGroups = React.useMemo(() => {
     return hasColumnGroups
       ? renderColumnHeaderGroups<T>({
-          columnGroups,
+          columnGroups: computedColumnGroups,
           columnGroupsDepthsMap,
           columnGroupsMaxDepth,
           columns,
@@ -53,7 +54,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
       : null;
   }, [
     columnGroupsDepthsMap,
-    columnGroups,
+    computedColumnGroups,
     columns,
     columnsMap,
     hasColumnGroups,

@@ -3,6 +3,14 @@
   "exclude": ["node_modules"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","../globals.d.ts"],
   "compilerOptions": {
+    "strict": true,
+    "alwaysStrict": true,
+    
+    
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,

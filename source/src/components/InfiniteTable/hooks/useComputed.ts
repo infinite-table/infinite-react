@@ -10,7 +10,7 @@ import { useComponentState } from '../../hooks/useComponentState';
 import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
-import { useGroupRowsBy } from './useGroupRowsBy';
+import { useGeneratedGroupAndPivotColumns } from './useGeneratedGroupAndPivotColumns';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState, updateStateProperty } =
@@ -43,7 +43,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   useColumnGroups<T>();
 
-  useGroupRowsBy<T>();
+  useGeneratedGroupAndPivotColumns<T>();
 
   const setSortInfo = useCallback(
     (sortInfo: DataSourceSingleSortInfo<T>[]) => {
@@ -51,6 +51,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     },
     [multiSort],
   );
+
   const {
     computedColumnOrder,
     computedVisibleColumns,
@@ -65,7 +66,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedPinnedEndOffset,
     computedRemainingSpace,
   } = useComputedVisibleColumns({
-    columns: componentState.columns,
+    columns: componentState.computedPivotColumns || componentState.columns,
     generatedColumns: componentState.generatedColumns,
     columnMinWidth: componentState.columnMinWidth,
     columnMaxWidth: componentState.columnMaxWidth,

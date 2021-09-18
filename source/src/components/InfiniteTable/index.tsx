@@ -21,7 +21,10 @@ import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useComputed } from './hooks/useComputed';
 import { useLatest } from '../hooks/useLatest';
 
-import { useDataSourceContextValue } from '../DataSource/publicHooks/useDataSource';
+import {
+  useDataSource,
+  useDataSourceContextValue,
+} from '../DataSource/publicHooks/useDataSource';
 
 import { InfiniteTableBody } from './components/InfiniteTableBody';
 
@@ -52,6 +55,8 @@ const InfiniteTableRoot = getComponentStateRoot({
   getInitialState,
   // @ts-ignore
   deriveReadOnlyState,
+  //@ts-ignore
+  getParentState: () => useDataSource(),
 });
 
 // const InfiniteTableFactory = <T extends unknown>(
@@ -171,12 +176,17 @@ function InfiniteTableContextProvider<T>() {
     InfiniteTableReadOnlyState<T>
   >();
 
+  // const { pivotColumns } = dataSourceComponentState;
+
   const { bodyDOMRef, bodySizeRef } = componentState;
 
   const computed = useComputed<T>();
   const getComputed = useLatest(computed);
   const getState = useLatest(componentState);
 
+  // useEffect(() => {
+  //   // componentState.pivotColumns =
+  // }, [pivotColumns])
   (globalThis as any).getState = getState;
 
   const contextValue: InfiniteTableContextValue<T> = {
@@ -219,17 +229,9 @@ function InfiniteTableContextProvider<T>() {
 
   const TableContext = getInfiniteTableContext<T>();
 
-  // const { componentState: dataSourceState } = useDataSourceContextValue<T>();
+  // (globalThis as any).state =
 
-  // React.useEffect(() => {
-  //   if (dataSourceState.pivotColumns) {
-  //     componentActions.columns = dataSourceState.pivotColumns;
-  //     componentActions.columnOrder = [...dataSourceState.pivotColumns.keys()];
-  //   }
-  //   if (dataSourceState.pivotColumnGroups) {
-  //     componentActions.columnGroups = dataSourceState.pivotColumnGroups;
-  //   }
-  // }, [dataSourceState.pivotColumns, dataSourceState.pivotColumnGroups]);
+  // const { componentState: dataSourceState } = useDataSourceContextValue<T>();
 
   return (
     <TableContext.Provider value={contextValue}>

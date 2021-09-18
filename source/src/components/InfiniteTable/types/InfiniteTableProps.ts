@@ -3,7 +3,11 @@ import {
   AggregationReducer,
   InfiniteTableEnhancedData,
 } from '../../../utils/groupAndPivot';
-import { DataSourceGroupRowsBy } from '../../DataSource';
+import {
+  DataSourceGroupRowsBy,
+  DataSourcePropGroupRowsBy,
+  DataSourcePropPivotBy,
+} from '../../DataSource';
 import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableBaseColumn,
@@ -12,7 +16,9 @@ import type {
   InfiniteTableColumnWithSize,
   InfiniteTableComputedColumn,
   InfiniteTableGeneratedColumn,
+  InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
+import { InfiniteTablePropPivotTotalColumnPosition } from './InfiniteTableState';
 
 // export type TablePropColumnOrderItem = string | { id: string; visible: boolean };
 export type InfiniteTablePropColumnOrderNormalized = string[];
@@ -26,17 +32,17 @@ export type InfiniteTablePropColumnPinning = Map<
   true | 'start' | 'end'
 >;
 
-export type InfiniteTableRowStyleFnRenderParams<T> = {
+export type InfiniteTableRowStyleFnParams<T> = {
   data: T | null;
   enhancedData: InfiniteTableEnhancedData<T>;
   rowIndex: number;
   groupRowsBy?: (keyof T)[];
 };
 export type InfiniteTableRowStyleFn<T> = (
-  params: InfiniteTableRowStyleFnRenderParams<T>,
+  params: InfiniteTableRowStyleFnParams<T>,
 ) => undefined | React.CSSProperties;
 export type InfiniteTableRowClassNameFn<T> = (
-  params: InfiniteTableRowStyleFnRenderParams<T>,
+  params: InfiniteTableRowStyleFnParams<T>,
 ) => string | undefined;
 export type InfiniteTablePropRowStyle<T> =
   | React.CSSProperties
@@ -75,7 +81,10 @@ export type InfiniteTableInternalProps<T> = {
   ___t?: T;
 };
 
-export type InfiniteTablePropColumns<T> = Map<string, InfiniteTableColumn<T>>;
+export type InfiniteTablePropColumns<
+  T,
+  ColumnType = InfiniteTableColumn<T>,
+> = Map<string, ColumnType>;
 export type InfiniteTableGeneratedColumns<T> = Map<
   string,
   InfiniteTableGeneratedColumn<T>
@@ -119,6 +128,12 @@ export type GroupColumnGetterOptions<T> = {
   groupRowsBy: DataSourceGroupRowsBy<T>[];
 };
 
+export type PivotColumnGetterOptions<T> = {
+  column: InfiniteTablePivotColumn<T>;
+  groupRowsBy: DataSourcePropGroupRowsBy<T>;
+  pivotBy: DataSourcePropPivotBy<T>;
+};
+
 export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
   | 'multi-column';
@@ -126,6 +141,7 @@ export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithSize & {
     renderValue?: InfiniteTableColumnRenderFunction<T>;
   };
+export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T>;
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
   | ((
@@ -133,10 +149,17 @@ export type InfiniteTablePropGroupColumn<T> =
       toggleGroupRow: (groupKeys: any[]) => void,
     ) => InfiniteTableGroupColumnBase<T>);
 
+export type InfiniteTablePropPivotColumn<T> =
+  | InfiniteTablePivotColumnBase<T>
+  | ((options: PivotColumnGetterOptions<T>) => InfiniteTablePivotColumnBase<T>);
+
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;
+  pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
 
-  groupColumn?: InfiniteTablePropGroupColumn<T>;
+  pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
+  pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
+  groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
@@ -147,6 +170,7 @@ export type InfiniteTableProps<T> = {
   defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
   columnAggregations?: InfiniteTablePropColumnAggregations<T>;
 
+  pivotColumnGroups?: InfiniteTablePropColumnGroups;
   columnGroups?: InfiniteTablePropColumnGroups;
   defaultColumnGroups?: InfiniteTablePropColumnGroups;
 
@@ -182,7 +206,7 @@ export type InfiniteTableProps<T> = {
   rowProps?:
     | React.HTMLProps<HTMLDivElement>
     | ((
-        rowArgs: InfiniteTableRowStyleFnRenderParams<T>,
+        rowArgs: InfiniteTableRowStyleFnParams<T>,
       ) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;

@@ -1,21 +1,26 @@
 import type { Renderable } from '../../types/Renderable';
 import type {
   DataSourceComponentState,
+  DataSourcePivotBy,
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableEnhancedData } from '.';
+import { CSSProperties } from 'react';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
-export interface InfiniteTableColumnRenderParams<DATA_TYPE> {
+export interface InfiniteTableColumnRenderParams<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
-  value: string | number | Renderable | void;
+  value: string | number | Renderable;
   data: DATA_TYPE | null;
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
   rowIndex: number;
-  column: InfiniteTableComputedColumn<DATA_TYPE>;
+  column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
@@ -28,7 +33,10 @@ export interface InfiniteTableColumnHeaderRenderParams<T> {
 
 export type InfiniteTableColumnPinned = 'start' | 'end' | false;
 
-export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({
+export type InfiniteTableColumnRenderFunction<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = ({
   value,
   rowIndex,
   column,
@@ -37,7 +45,7 @@ export type InfiniteTableColumnRenderFunction<DATA_TYPE> = ({
   toggleCurrentGroupRow,
   enhancedData,
   groupRowsBy: groupBy,
-}: InfiniteTableColumnRenderParams<DATA_TYPE>) => Renderable | null;
+}: InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
   columnSortInfo,
@@ -76,13 +84,45 @@ export type InfiniteTableColumnWithSize = DiscriminatedUnion<
 
 export type InfiniteTableColumnTypes = 'string' | 'number' | 'date';
 
-export type InfiniteTableColumnWithRenderOrField<T> = RequireAtLeastOne<
-  {
-    field?: keyof T;
-    render?: InfiniteTableColumnRenderFunction<T>;
-  },
-  'render' | 'field'
->;
+export type InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> =
+  RequireAtLeastOne<
+    {
+      field?: keyof T;
+      render?: InfiniteTableColumnRenderFunction<T>;
+      valueGetter?: InfiniteTableColumnValueGetter<T>;
+    },
+    'render' | 'field' | 'valueGetter'
+  >;
+
+export type InfiniteTableColumnStyleFnParams<T> = {
+  data: T | null;
+  value: Renderable;
+  enhancedData: InfiniteTableEnhancedData<T>;
+  column: InfiniteTableColumn<T>;
+};
+export type InfiniteTableColumnStyleFn<T> = (
+  params: InfiniteTableColumnStyleFnParams<T>,
+) => undefined | React.CSSProperties;
+
+export type InfiniteTableColumnClassNameFn<T> = (
+  params: InfiniteTableColumnStyleFnParams<T>,
+) => undefined | string;
+
+export type InfiniteTableColumnStyle<T> =
+  | CSSProperties
+  | InfiniteTableColumnStyleFn<T>;
+export type InfiniteTableColumnClassName<T> =
+  | string
+  | InfiniteTableColumnClassNameFn<T>;
+
+export type InfiniteTableColumnValueGetterParams<T> = {
+  data: T | null;
+  enhancedData: InfiniteTableEnhancedData<T>;
+};
+export type InfiniteTableColumnValueGetter<
+  T,
+  VALUE_GETTER_TYPE = Renderable,
+> = (params: InfiniteTableColumnValueGetterParams<T>) => VALUE_GETTER_TYPE;
 
 export type InfiniteTableBaseColumn<T> = {
   maxWidth?: number;
@@ -100,13 +140,29 @@ export type InfiniteTableBaseColumn<T> = {
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
   type?: InfiniteTableColumnTypes;
+
+  style?: InfiniteTableColumnStyle<T>;
+  className?: InfiniteTableColumnClassName<T>;
+
+  valueGetter?: InfiniteTableColumnValueGetter<T>;
+
+  // value
 };
 export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
-  InfiniteTableColumnWithRenderOrField<T> &
+  InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> &
   InfiniteTableColumnWithSize;
 
 export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
   groupByField?: string | string[];
+  renderValue?: InfiniteTableColumnRenderFunction<T>;
+};
+
+export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {
+  pivotBy?: DataSourcePivotBy<T>[];
+  pivotColumn?: true;
+  pivotTotalColumn?: true;
+  pivotGroupKeys?: any[];
+  // groupByField?: string | string[];
   renderValue?: InfiniteTableColumnRenderFunction<T>;
 };
 
@@ -136,4 +192,5 @@ type InfiniteTableComputedColumnBase<T> = {
 
 export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> &
   InfiniteTableComputedColumnBase<T> &
+  InfiniteTablePivotColumn<T> &
   InfiniteTableGeneratedColumn<T>;

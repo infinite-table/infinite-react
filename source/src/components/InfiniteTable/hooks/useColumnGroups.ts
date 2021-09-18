@@ -9,7 +9,10 @@ import { rafFn } from '../utils/rafFn';
 
 export function useColumnGroups<T>() {
   const {
-    componentState: { columnGroups, collapsedColumnGroups },
+    componentState: {
+      computedColumnGroups: computedColumnGroups,
+      collapsedColumnGroups,
+    },
     componentActions,
     getComponentState,
   } = useComponentState<InfiniteTableComponentState<T>>();
@@ -17,17 +20,17 @@ export function useColumnGroups<T>() {
   useEffect(() => {
     const recompute = () => {
       componentActions.columnGroupsDepthsMap =
-        computeColumnGroupsDepths(columnGroups);
+        computeColumnGroupsDepths(computedColumnGroups);
     };
 
     const update = rafFn(recompute);
 
-    return interceptMap(columnGroups, {
+    return interceptMap(computedColumnGroups, {
       clear: update,
       delete: update,
       set: update,
     });
-  }, [columnGroups]);
+  }, [computedColumnGroups]);
 
   // TODO we need to enhance this when we implement the UI for collapsing column groups
   useEffect(() => {

@@ -254,9 +254,5 @@ export default describe('Pivot', () => {
       getReducerValue(resItaly?.items!, avgReducer),
     ]);
     expect(resItaly?.reducerResults).toEqual([65_000]); //see pivot.png in current folder
-
-    // now look for a value with no agg
-
-    // const resNoAgg = itbackend?.pivotDeepMap?.get(['Italy', 25]);
   });
 });

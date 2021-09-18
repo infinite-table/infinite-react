@@ -16,6 +16,7 @@ import {
 } from '../InfiniteTable';
 import { ComponentStateActions } from '../hooks/useComponentState';
 import { GroupRowsState } from './GroupRowsState';
+import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/types/InfiniteTableState';
 
 export interface DataSourceDataInfo<T> {
   originalDataArray: T[];
@@ -57,6 +58,9 @@ export type DataSourceExpandedAndCollapsedGroupRows<KeyType> = {
   collapsedRows: DataSourceGroupRowsList<KeyType>;
 };
 
+export type DataSourcePropGroupRowsBy<T> = DataSourceGroupRowsBy<T>[];
+export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
+
 export interface DataSourceProps<T> {
   children:
     | React.ReactNode
@@ -71,13 +75,13 @@ export interface DataSourceProps<T> {
   defaultLoading?: boolean;
   onLoadingChange?: (loading: boolean) => void;
 
-  pivotBy?: DataSourcePivotBy<T>[];
-  defaultPivotBy?: DataSourcePivotBy<T>[];
-  onPivotByChange?: (pivotBy: DataSourcePivotBy<T>[]) => void;
+  pivotBy?: DataSourcePropPivotBy<T>;
+  defaultPivotBy?: DataSourcePropPivotBy<T>;
+  onPivotByChange?: (pivotBy: DataSourcePropPivotBy<T>) => void;
 
-  groupRowsBy?: DataSourceGroupRowsBy<T>[];
-  defaultGroupRowsBy?: DataSourceGroupRowsBy<T>[];
-  onGroupRowsByChange?: (groupBy: DataSourceGroupRowsBy<T>[]) => void;
+  groupRowsBy?: DataSourcePropGroupRowsBy<T>;
+  defaultGroupRowsBy?: DataSourcePropGroupRowsBy<T>;
+  onGroupRowsByChange?: (groupBy: DataSourcePropGroupRowsBy<T>) => void;
 
   groupRowsState?: GroupRowsState;
   defaultGroupRowsState?: GroupRowsState;
@@ -93,8 +97,8 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   loading: boolean;
   sortInfo?: DataSourceSortInfo<T>;
   dataArray: InfiniteTableEnhancedData<T>[];
-  groupRowsBy: DataSourceGroupRowsBy<T>[];
-  pivotBy?: DataSourcePivotBy<T>[];
+  groupRowsBy: DataSourcePropGroupRowsBy<T>;
+  pivotBy?: DataSourcePropPivotBy<T>;
   pivotColumns?: Map<string, InfiniteTableColumn<T>>;
   pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
   aggregationReducers?: AggregationReducer<T, any>[];
@@ -103,6 +107,7 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   groupedAt: number;
   updatedAt: number;
   reducedAt: number;
+  pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
 }
 
 export interface DataSourceReadOnlyState<T> {

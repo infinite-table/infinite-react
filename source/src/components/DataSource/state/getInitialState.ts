@@ -9,9 +9,10 @@ import {
 } from '../types';
 import { GroupRowsState } from '../GroupRowsState';
 
-export function getInitialState<T>(
-  initialProps: DataSourceProps<T>,
-): DataSourceState<T> {
+export function getInitialState<T>(params: {
+  props: DataSourceProps<T>;
+}): DataSourceState<T> {
+  const { props: initialProps } = params;
   const dataArray: InfiniteTableEnhancedData<T>[] = [];
   const originalDataArray: T[] = [];
   const sortInfo: DataSourceSortInfo<T> = normalizeSortInfo(
@@ -54,14 +55,17 @@ export function getInitialState<T>(
       : initialProps.defaultPivotBy,
 
     aggregationReducers: undefined,
+    pivotTotalColumnPosition: 'end',
   };
 }
 
-export function deriveReadOnlyState<T extends any>(
-  props: DataSourceProps<T>,
-  state: DataSourceState<T>,
-  _updated: Partial<DataSourceState<T>> | null,
-): DataSourceReadOnlyState<T> {
+export function deriveReadOnlyState<T extends any>(params: {
+  props: DataSourceProps<T>;
+  state: DataSourceState<T>;
+  updated: Partial<DataSourceState<T>> | null;
+}): DataSourceReadOnlyState<T> {
+  const { props, state } = params;
+
   const sortInfo = isControlled('sortInfo', props)
     ? props.sortInfo
     : props.defaultSortInfo ?? null;

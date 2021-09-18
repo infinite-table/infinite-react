@@ -43,7 +43,7 @@ function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
 
 const DataSourceRoot = getComponentStateRoot({
   //@ts-ignore
-  getInitialState: getInitialState,
+  getInitialState,
   //@ts-ignore
   concludeReducer,
   //@ts-ignore

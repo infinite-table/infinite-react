@@ -6,17 +6,13 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
-  GroupRowsState,
   DataSourceGroupRowsBy,
 } from '@infinite-table/infinite-react';
 
 import {
-  InfiniteTablePropColumnAggregations,
-  InfiniteTablePropColumnGroups,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropRowStyle,
 } from '@src/components/InfiniteTable/types/InfiniteTableProps';
-import { employees } from './employees10';
 import { useState } from 'react';
 
 type Employee = {
@@ -66,7 +62,7 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
     {
       name: 'Full name',
       width: 300,
-      render: ({ data, enhancedData }) => {
+      render: ({ data }) => {
         return (
           <>
             {data?.firstName} - {data?.lastName}
@@ -113,9 +109,12 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   const age = data?.age ?? 0;
 
   if (enhancedData.isGroupRow) {
-    return {
+    const result = {
       background: (enhancedData.groupNesting ?? 0) > 2 ? 'green' : 'yellow',
+      testxxx: true,
     };
+
+    return result;
   }
 
   return age > 30
@@ -149,6 +148,7 @@ export default function GroupByExample() {
           domProps={domProps}
           columns={columns}
           columnDefaultWidth={200}
+          rowStyle={rowStyle}
           groupColumn={{
             renderValue: ({ value }) => {
               return value ? <b>{value}📢</b> : null;

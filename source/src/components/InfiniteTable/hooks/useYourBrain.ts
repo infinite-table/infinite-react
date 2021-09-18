@@ -8,15 +8,15 @@ import { VirtualBrain } from '../../VirtualBrain';
 import { InfiniteTableComputedColumn } from '../types';
 import { useColumnSizeFn } from './useColumnSizeFn';
 
-type UseYourBrainParam = {
-  computedUnpinnedColumns: InfiniteTableComputedColumn<any>[];
+type UseYourBrainParam<T = any> = {
+  computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedStartColumnsWidth: number;
   computedPinnedEndColumnsWidth: number;
   dataArray: any[];
   rowHeight: number;
   bodySize: Size;
 };
-export const useYourBrain = (param: UseYourBrainParam) => {
+export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
   const {
     dataArray,
     computedUnpinnedColumns,
@@ -25,7 +25,7 @@ export const useYourBrain = (param: UseYourBrainParam) => {
     rowHeight,
     bodySize,
   } = param;
-  const columnSize = useColumnSizeFn(computedUnpinnedColumns);
+  const columnSize = useColumnSizeFn<T>(computedUnpinnedColumns);
 
   const horizontalVirtualBrain = useOnce<VirtualBrain>(() => {
     const brain = new VirtualBrain({
@@ -83,4 +83,4 @@ export const useYourBrain = (param: UseYourBrainParam) => {
   ]);
 
   return { horizontalVirtualBrain, verticalVirtualBrain };
-};
+}

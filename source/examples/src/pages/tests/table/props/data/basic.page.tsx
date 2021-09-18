@@ -14,6 +14,7 @@ const carsales: CarSale[] = [
     model: 'RDX 2WD',
     year: 2010,
     sales: 15,
+    color: 'red',
     id: 0,
   },
   {
@@ -22,6 +23,7 @@ const carsales: CarSale[] = [
     model: 'RDX 4WD',
     year: 2007,
     sales: 1,
+    color: 'red',
     id: 1,
   },
   {
@@ -30,6 +32,7 @@ const carsales: CarSale[] = [
     model: 'RDX 4WD',
     year: 2008,
     sales: 2,
+    color: 'magenta',
     id: 2,
   },
   {
@@ -38,6 +41,7 @@ const carsales: CarSale[] = [
     model: 'RDX 4WD',
     year: 2009,
     sales: 136,
+    color: 'blue',
     id: 3,
   },
   {
@@ -45,6 +49,7 @@ const carsales: CarSale[] = [
     make: 'Acura',
     model: 'RDX 4WD',
     year: 2010,
+    color: 'blue',
     sales: 30,
     id: 4,
   },
@@ -54,6 +59,7 @@ const carsales: CarSale[] = [
     model: 'TSX',
     year: 2009,
     sales: 14,
+    color: 'yellow',
     id: 5,
   },
   {
@@ -62,6 +68,7 @@ const carsales: CarSale[] = [
     model: 'TSX',
     year: 2010,
     sales: 14,
+    color: 'red',
     id: 6,
   },
   {
@@ -70,6 +77,7 @@ const carsales: CarSale[] = [
     model: 'A3',
     year: 2009,
     sales: 2,
+    color: 'magenta',
     id: 7,
   },
 ];

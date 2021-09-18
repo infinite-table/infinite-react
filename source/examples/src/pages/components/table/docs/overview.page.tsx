@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
   DataSource,
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
@@ -25,8 +25,6 @@ const data: Employee[] = [
   { id: 2, firstName: 'Mary', lastName: 'Richardson' },
 ];
 
-const Table = InfiniteTableFactory<Employee>();
-
 const domProps = {
   style: { height: '50vh', border: '1px solid gray' },
 };
@@ -34,7 +32,11 @@ const domProps = {
 const App = () => {
   return (
     <DataSource<Employee> primaryKey="id" data={data}>
-      <Table domProps={domProps} columns={columns} columnMinWidth={100} />
+      <InfiniteTable<Employee>
+        domProps={domProps}
+        columns={columns}
+        columnMinWidth={100}
+      />
     </DataSource>
   );
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {
-  InfiniteTableFactory,
+  InfiniteTable,
   InfiniteTableColumn,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
@@ -37,8 +37,6 @@ const getColumns = (count: number) => {
   }
   return columns;
 };
-
-const Table = InfiniteTableFactory<DataItem>();
 
 const App = () => {
   const [columnCount, setColumnCount] = React.useState(100);
@@ -248,7 +246,7 @@ const App = () => {
             ...Array.from(columns.values()).map((c) => c.field as string),
           ]}
         >
-          <Table
+          <InfiniteTable<DataItem>
             virtualizeColumns={true}
             domProps={{
               style: {

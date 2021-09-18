@@ -1,9 +1,6 @@
 import * as React from 'react';
 
-import {
-  InfiniteTableFactory,
-  DataSource,
-} from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import orders from '../../../datasets/orders.json';
 import {
@@ -29,8 +26,6 @@ orders.forEach((order, i) => {
 
 orders.length = 2;
 console.log(orders.length);
-
-const Table = InfiniteTableFactory<Order>();
 
 function header<T>({ column }: { column: InfiniteTableComputedColumn<T> }) {
   // console.log('render ', column.computedVisibleIndex);
@@ -183,7 +178,7 @@ const OrdersPage = () => {
           <div>
             {' '}
             counter = {counter}
-            <Table
+            <InfiniteTable<Order>
               domProps={{
                 style: {
                   margin: '5px',

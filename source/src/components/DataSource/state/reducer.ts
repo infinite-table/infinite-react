@@ -32,11 +32,12 @@ function toEnhancedData<T>(
   return { data, collapsed: true, id, indexInAll: index, indexInGroup: index };
 }
 
-export function concludeReducer<T>(
-  previousState: DataSourceState<T> & DataSourceReadOnlyState<T>,
-  state: DataSourceState<T> & DataSourceReadOnlyState<T>,
-  updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null,
-) {
+export function concludeReducer<T>(params: {
+  previousState: DataSourceState<T> & DataSourceReadOnlyState<T>;
+  state: DataSourceState<T> & DataSourceReadOnlyState<T>;
+  updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null;
+}) {
+  const { state, previousState, updated } = params;
   const sortInfo = state.sortInfo;
   const shouldSort = sortInfo?.length;
 
@@ -57,6 +58,7 @@ export function concludeReducer<T>(
     'groupRowsState',
     'pivotBy',
     'aggregationReducers',
+    'pivotTotalColumnPosition',
     'sortInfo',
   ]);
 
@@ -103,10 +105,12 @@ export function concludeReducer<T>(
 
       enhancedDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
+
       const pivotGroupsAndCols = pivotBy
         ? getPivotColumnsAndColumnGroups<T>(
             groupResult.topLevelPivotColumns!,
-            pivotBy.length,
+            pivotBy,
+            state.pivotTotalColumnPosition ?? 'end',
           )
         : undefined;
 

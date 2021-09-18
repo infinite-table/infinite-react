@@ -24,20 +24,6 @@ function getInitialState<T>(props: CounterProps<T>): CounterState<T> {
   };
 }
 
-function reducer<_T>(
-  state: CounterState<_T>,
-  action: CounterAction,
-): CounterState<_T> {
-  if (action.type === CounterActionType.DEC) {
-    return { ...state, value: state.value - 1 };
-  }
-  if (action.type === CounterActionType.INC) {
-    return { ...state, value: state.value + 1 };
-  }
-
-  return state;
-}
-
 enum CounterActionType {
   INC,
   DEC,
@@ -81,7 +67,7 @@ const CounterComponentStateRoot = getComponentStateRoot({
   // getReducerActions,
   //@ts-ignore
   deriveReadOnlyState: <T extends any>(
-    props: CounterProps<T>,
+    _props: CounterProps<T>,
     state: CounterState<T>,
   ) => {
     return {

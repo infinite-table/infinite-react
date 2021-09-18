@@ -43,6 +43,10 @@ export interface InfiniteTableState<T> {
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
   columns: InfiniteTableProps<T>['columns'];
+  pivotColumns: InfiniteTableProps<T>['pivotColumns'];
+  computedPivotColumns: InfiniteTableProps<T>['pivotColumns'];
+  pivotColumnGroups?: InfiniteTablePropColumnGroups;
+  computedColumnGroups: InfiniteTablePropColumnGroups;
   generatedColumns: InfiniteTableGeneratedColumns<T>;
 
   x?: T;
@@ -57,13 +61,17 @@ export interface InfiniteTableComponentState<T>
   extends InfiniteTableState<T>,
     InfiniteTableReadOnlyState<T> {}
 
+export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
 export interface InfiniteTableReadOnlyState<T> {
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+  pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
   onReady: InfiniteTableProps<T>['onReady'];
+  // columns: InfiniteTableProps<T>['columns'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
+  computedPivotColumns: InfiniteTableProps<T>['pivotColumns'];
 
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];
   header: InfiniteTableProps<T>['header'];
@@ -78,6 +86,7 @@ export interface InfiniteTableReadOnlyState<T> {
   draggableColumns: boolean;
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
+  computedColumnGroups: InfiniteTablePropColumnGroups;
 
   rowHeightCSSVar: string;
   headerHeightCSSVar: string;
