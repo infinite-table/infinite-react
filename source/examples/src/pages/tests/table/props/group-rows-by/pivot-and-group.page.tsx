@@ -9,7 +9,6 @@ import {
   InfiniteTablePropColumnAggregations,
   DataSourcePropPivotBy,
 } from '@infinite-table/infinite-react';
-import { useState } from 'react';
 
 const domProps = {
   style: { height: '80vh' },
@@ -204,6 +203,11 @@ export default function GroupByExample() {
               domProps={domProps}
               columns={columns}
               pivotTotalColumnPosition={'end'}
+              pivotRowLabelsColumn={{
+                renderValue: ({ value }) => {
+                  return <b>{value}...</b>;
+                },
+              }}
               pivotColumn={{
                 header: ({ column }) => {
                   if (!column.pivotTotalColumn && !column.pivotColumn) {

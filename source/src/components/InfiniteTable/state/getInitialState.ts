@@ -6,7 +6,6 @@ import { InfiniteTableProps, InfiniteTableState } from '../types';
 import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
 import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
-import { getComputedPivotColumns } from './getComputedPivotColumns';
 
 export function getInitialState<T>(params: {
   props: InfiniteTableProps<T>;
@@ -31,8 +30,6 @@ export function getInitialState<T>(params: {
 
   const generatedColumns: InfiniteTableGeneratedColumns<T> = new Map();
   const pivotColumns = props.pivotColumns;
-
-  const pivotTotalColumnPosition = props.pivotTotalColumnPosition ?? 'end';
 
   return {
     rowHeight: typeof props.rowHeight === 'number' ? props.rowHeight : 0,
@@ -82,12 +79,7 @@ export function getInitialState<T>(params: {
         ? props.columnAggregations
         : props.defaultColumnAggregations) ?? new Map(),
     columnShifts: null,
-    computedPivotColumns: getComputedPivotColumns(pivotColumns, {
-      pivotColumn: props.pivotColumn,
-      pivotBy: dataSourceState.pivotBy!,
-      pivotTotalColumnPosition,
-      groupRowsBy: dataSourceState.groupRowsBy,
-    }),
+    computedPivotColumns: undefined,
   };
 }
 
@@ -112,17 +104,8 @@ export function deriveReadOnlyState<T>(params: {
       : state.columnGroupsDepthsMap;
 
   const pivotTotalColumnPosition = props.pivotTotalColumnPosition ?? 'end';
-  const computedPivotColumns = updated?.pivotColumns
-    ? getComputedPivotColumns(updated?.pivotColumns, {
-        pivotColumn: props.pivotColumn,
-        groupRowsBy: dataSourceState.groupRowsBy,
-        pivotBy: dataSourceState.pivotBy!,
-        pivotTotalColumnPosition,
-      })
-    : state.computedPivotColumns;
 
   return {
-    computedPivotColumns,
     groupColumn: props.groupColumn,
     onReady: props.onReady,
     domProps: props.domProps,
@@ -139,6 +122,8 @@ export function deriveReadOnlyState<T>(params: {
     columnMaxWidth: props.columnMaxWidth ?? 2000,
     columnDefaultWidth: props.columnDefaultWidth ?? 300,
     draggableColumns: props.draggableColumns ?? true,
+    pivotColumn: props.pivotColumn,
+    pivotRowLabelsColumn: props.pivotRowLabelsColumn,
     sortable: props.sortable ?? true,
     columnGroupsDepthsMap,
     columnGroupsMaxDepth: Math.max(...columnGroupsDepthsMap.values(), 0),

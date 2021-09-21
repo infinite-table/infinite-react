@@ -71,7 +71,8 @@ export interface InfiniteTableReadOnlyState<T> {
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
-  computedPivotColumns: InfiniteTableProps<T>['pivotColumns'];
+  pivotColumn: InfiniteTableProps<T>['pivotColumn'];
+  pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
 
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];
   header: InfiniteTableProps<T>['header'];

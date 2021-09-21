@@ -5,7 +5,7 @@ import { join } from '../../../utils/join';
 import { DataSourceGroupRowsBy } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 
-import { InfiniteTableGeneratedColumn } from '../types/InfiniteTableColumn';
+import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
   GroupColumnGetterOptions,
   InfiniteTablePropGroupColumn,
@@ -19,10 +19,10 @@ export function getColumnForGroupBy<T>(
   },
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
-): InfiniteTableGeneratedColumn<T> {
+): InfiniteTableGeneratedGroupColumn<T> {
   const { groupBy, groupIndex } = options;
 
-  let generatedGroupColumn: InfiniteTableGeneratedColumn<T> = {
+  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group by ${groupBy.field}`,
     groupByField: groupBy.field as string,
     sortable: false,
@@ -60,12 +60,12 @@ export function getColumnForGroupBy<T>(
       generatedGroupColumn = {
         ...generatedGroupColumn,
         ...groupColumnFromProps(options, toggleGroupRow),
-      } as InfiniteTableGeneratedColumn<T>;
+      } as InfiniteTableGeneratedGroupColumn<T>;
     } else {
       generatedGroupColumn = {
         ...generatedGroupColumn,
         ...groupColumnFromProps,
-      } as InfiniteTableGeneratedColumn<T>;
+      } as InfiniteTableGeneratedGroupColumn<T>;
     }
   }
 
@@ -77,7 +77,7 @@ export function getSingleGroupColumn<T>(
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
 ) {
-  let generatedGroupColumn: InfiniteTableGeneratedColumn<T> = {
+  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group`,
     groupByField: options.groupRowsBy.map((g) => g.field) as string[],
     sortable: false,
@@ -116,12 +116,12 @@ export function getSingleGroupColumn<T>(
       generatedGroupColumn = {
         ...generatedGroupColumn,
         ...groupColumnFromProps(options, toggleGroupRow),
-      } as InfiniteTableGeneratedColumn<T>;
+      } as InfiniteTableGeneratedGroupColumn<T>;
     } else {
       generatedGroupColumn = {
         ...generatedGroupColumn,
         ...groupColumnFromProps,
-      } as InfiniteTableGeneratedColumn<T>;
+      } as InfiniteTableGeneratedGroupColumn<T>;
     }
   }
 

@@ -467,9 +467,11 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
       'labels',
       {
         header: 'Row labels',
-
-        valueGetter: ({ enhancedData }) => {
-          return enhancedData.groupKeys?.join(' >> ');
+        valueGetter: (params) => {
+          const { enhancedData } = params;
+          return enhancedData.groupKeys
+            ? enhancedData.groupKeys[enhancedData.groupKeys?.length - 1]
+            : null;
         },
       },
     ],

@@ -152,7 +152,7 @@ export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> &
   InfiniteTableColumnWithSize;
 
-export type InfiniteTableGeneratedColumn<T> = InfiniteTableColumn<T> & {
+export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
   groupByField?: string | string[];
   renderValue?: InfiniteTableColumnRenderFunction<T>;
 };
@@ -193,4 +193,4 @@ type InfiniteTableComputedColumnBase<T> = {
 export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> &
   InfiniteTableComputedColumnBase<T> &
   InfiniteTablePivotColumn<T> &
-  InfiniteTableGeneratedColumn<T>;
+  InfiniteTableGeneratedGroupColumn<T>;

@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { DataSourceGroupRowsBy, GroupRowsState } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
+import { getComputedPivotColumnsFromDataSourcePivotColumns } from '../state/getComputedPivotColumnsFromDataSourcePivotColumns';
 import {
   InfiniteTableGeneratedColumns,
   InfiniteTablePropGroupColumn,
@@ -43,7 +44,7 @@ function getGroupRenderStrategy<T>(
 
 export function useGeneratedGroupAndPivotColumns<T>() {
   const {
-    componentState: { groupRowsBy },
+    componentState: { groupRowsBy, pivotBy },
     getState: getDataSourceState,
     componentActions: dataSourceActions,
   } = useDataSourceContextValue<T>();
@@ -54,6 +55,8 @@ export function useGeneratedGroupAndPivotColumns<T>() {
     componentState: {
       groupColumn,
       groupRenderStrategy,
+      pivotColumn,
+      pivotRowLabelsColumn,
       pivotColumns,
       pivotTotalColumnPosition,
     },
@@ -90,6 +93,21 @@ export function useGeneratedGroupAndPivotColumns<T>() {
   useEffect(() => {
     dataSourceActions.pivotTotalColumnPosition = pivotTotalColumnPosition;
   }, [pivotTotalColumnPosition]);
+
+  useEffect(() => {
+    const computedPivotColumns =
+      getComputedPivotColumnsFromDataSourcePivotColumns(pivotColumns, {
+        pivotColumn,
+        pivotRowLabelsColumn,
+        pivotTotalColumnPosition,
+        pivotBy: pivotBy!,
+
+        groupRowsBy,
+        toggleGroupRow,
+      });
+
+    componentActions.computedPivotColumns = computedPivotColumns;
+  }, [pivotColumns, pivotColumn, pivotRowLabelsColumn]);
 }
 
 export function getGeneratedGroupColumns<T>(params: {

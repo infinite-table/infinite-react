@@ -15,7 +15,7 @@ import type {
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnWithSize,
   InfiniteTableComputedColumn,
-  InfiniteTableGeneratedColumn,
+  InfiniteTableGeneratedGroupColumn,
   InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
 import { InfiniteTablePropPivotTotalColumnPosition } from './InfiniteTableState';
@@ -87,7 +87,7 @@ export type InfiniteTablePropColumns<
 > = Map<string, ColumnType>;
 export type InfiniteTableGeneratedColumns<T> = Map<
   string,
-  InfiniteTableGeneratedColumn<T>
+  InfiniteTableGeneratedGroupColumn<T>
 >;
 
 export type InfiniteTablePropColumnGroups = Map<
@@ -141,7 +141,10 @@ export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithSize & {
     renderValue?: InfiniteTableColumnRenderFunction<T>;
   };
-export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T>;
+export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> &
+  InfiniteTableColumnWithSize & {
+    renderValue?: InfiniteTableColumnRenderFunction<T>;
+  };
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
   | ((
@@ -153,11 +156,15 @@ export type InfiniteTablePropPivotColumn<T> =
   | InfiniteTablePivotColumnBase<T>
   | ((options: PivotColumnGetterOptions<T>) => InfiniteTablePivotColumnBase<T>);
 
+export type InfiniteTablePropPivotRowLabelsColumn<T> =
+  InfiniteTablePropPivotColumn<T>;
+
 export type InfiniteTableProps<T> = {
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
 
   pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
+  pivotRowLabelsColumn?: Partial<InfiniteTablePropPivotRowLabelsColumn<T>>;
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
   groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
