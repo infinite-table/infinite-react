@@ -45,6 +45,7 @@ export function getInitialState<T>(params: {
 
     bodySize: {
       width: 0,
+
       height: 0,
     },
     scrollPosition: {
