@@ -9,7 +9,7 @@ type Cmp1State = {
   lastName: string;
 };
 const Cmp1Root = getComponentStateRoot({
-  getInitialState: (props: Cmp1Props) => {
+  getInitialState: ({ props }: { props: Cmp1Props }) => {
     return {
       name: props.name ?? 'one',
       lastName: 'still one',
@@ -45,7 +45,7 @@ type Cmp2State = {
   secondLastName: string;
 };
 const Cmp2Root = getComponentStateRoot({
-  getInitialState: (props: Cmp2Props) => {
+  getInitialState: ({ props }: { props: Cmp2Props }) => {
     return {
       secondName: props.secondName ?? 'second',
       secondLastName: 'still  second',

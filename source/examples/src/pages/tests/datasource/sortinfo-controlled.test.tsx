@@ -18,9 +18,17 @@ export default describe('DataSource', () => {
     expect(result).toEqual([
       {
         data: persons[0],
+        collapsed: true,
+        id: persons[0].id,
+        indexInAll: 0,
+        indexInGroup: 0,
       },
       {
         data: persons[1],
+        collapsed: true,
+        id: persons[1].id,
+        indexInAll: 1,
+        indexInGroup: 1,
       },
     ]);
     await page.waitForTimeout(50);
@@ -38,9 +46,17 @@ export default describe('DataSource', () => {
     expect(result).toEqual([
       {
         data: persons[1],
+        id: persons[1].id,
+        collapsed: true,
+        indexInAll: 0,
+        indexInGroup: 0,
       },
       {
+        collapsed: true,
         data: persons[0],
+        indexInAll: 1,
+        indexInGroup: 1,
+        id: persons[0].id,
       },
     ]);
 

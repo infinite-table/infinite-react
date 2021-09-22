@@ -29,14 +29,18 @@ export default describe('Column groups should render correctly', () => {
       'region',
     ]);
 
-    secondAddressGroup = await page.evaluate(() => {
+    await page.evaluate(() => {
       // update the groups via columnGroups.set method
 
       (window as any).columnGroups.set('contact info', {
         columnGroup: 'address',
         header: 'Contact info',
       });
+    });
 
+    await page.waitForTimeout(20);
+
+    secondAddressGroup = await page.evaluate(() => {
       return (
         document.querySelectorAll('[data-group-id="address"]')[1] as HTMLElement
       ).innerText.split('\n');

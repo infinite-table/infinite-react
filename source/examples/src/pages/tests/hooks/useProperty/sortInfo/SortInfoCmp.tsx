@@ -29,7 +29,7 @@ function normalizeSortInfo(
 }
 
 const SortInfoRoot = getComponentStateRoot({
-  getInitialState: (props: SortInfoCmpProps): SortInfoState => {
+  getInitialState: ({ props }: { props: SortInfoCmpProps }): SortInfoState => {
     const sortInfo = normalizeSortInfo(
       props.sortInfo ??
         props.defaultSortInfo ?? [

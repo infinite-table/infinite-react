@@ -11,7 +11,7 @@ import {
 } from '@infinite-table/infinite-react';
 
 const domProps = {
-  style: { height: '80vh' },
+  style: { height: '80vh', border: '1px solid gray' },
 };
 
 type Person = {

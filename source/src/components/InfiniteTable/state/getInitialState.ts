@@ -11,7 +11,7 @@ export function getInitialState<T>(params: {
   props: InfiniteTableProps<T>;
   parentState: DataSourceState<T>;
 }): InfiniteTableState<T> {
-  const { props, parentState: dataSourceState } = params;
+  const { props } = params;
 
   const columnGroups =
     (isControlled('columnGroups', props)
@@ -89,7 +89,7 @@ export function deriveReadOnlyState<T>(params: {
   updated: Partial<InfiniteTableState<T>> | null;
   parentState: DataSourceState<T>;
 }): InfiniteTableReadOnlyState<T> {
-  const { props, state, updated, parentState: dataSourceState } = params;
+  const { props, state, updated } = params;
   const virtualizeColumns = props.virtualizeColumns ?? true;
   const header = props.header ?? true;
   const computedColumnGroups = state.pivotColumnGroups || state.columnGroups;

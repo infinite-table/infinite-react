@@ -25,6 +25,8 @@ export default describe('Column order uncontrolled without any default value', (
     expect(colIds).toEqual(['id', 'make', 'model', 'price', 'year', 'rating']);
 
     await page.click('button'); // hide id and make columns
+
+    await page.waitForTimeout(10);
     colIds = await getHeaderColumnIds();
 
     // expect(colIds).toEqual(['id', 'make', 'model', 'price', 'year', 'rating']);

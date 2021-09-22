@@ -183,7 +183,11 @@ export default function GroupByExample() {
               position: 'relative',
             },
           }}
-          groupColumn={({ groupBy }) => {
+          groupColumn={({
+            groupBy,
+          }: {
+            groupBy: DataSourceGroupRowsBy<Employee>;
+          }) => {
             return {
               // width: 300,
               header: `Group ${groupBy?.field}`,

@@ -17,7 +17,11 @@ type CounterState<_T> = {
   ref: Ref<number>;
 };
 
-function getInitialState<T>(props: CounterProps<T>): CounterState<T> {
+function getInitialState<T>({
+  props,
+}: {
+  props: CounterProps<T>;
+}): CounterState<T> {
   return {
     ref: React.createRef(),
     value: props.value ?? props.defaultValue ?? 0,
@@ -66,10 +70,11 @@ const CounterComponentStateRoot = getComponentStateRoot({
   // reducer,
   // getReducerActions,
   //@ts-ignore
-  deriveReadOnlyState: <T extends any>(
-    _props: CounterProps<T>,
-    state: CounterState<T>,
-  ) => {
+  deriveReadOnlyState: <T extends any>({
+    state,
+  }: {
+    state: CounterState<T>;
+  }) => {
     return {
       derivedValue: state.value * 10,
     };
