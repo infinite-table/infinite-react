@@ -31,6 +31,7 @@ export default describe('DataSource', () => {
         indexInGroup: 1,
       },
     ]);
+
     await page.waitForTimeout(50);
 
     await page.evaluate(() => {
