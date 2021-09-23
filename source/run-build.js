@@ -1,4 +1,6 @@
 // TODO use a command line helper for this
+const fs = require('fs');
+const package = require('./package.json');
 const format = process.argv[2];
 const watch = process.argv[3] === '--watch';
 
@@ -30,5 +32,15 @@ require('esbuild')
     bundle: true,
     platform: 'browser',
     outfile: `dist/index${format === 'esm' ? '.esm' : ''}.js`,
+  })
+  .then(() => {
+    let contents = fs.readFileSync('./dist/index.d.ts', 'utf8');
+
+    contents = contents.replace(
+      'declare module "index"',
+      `declare module "${package.name}"`,
+    );
+
+    fs.writeFileSync('./dist/index.d.ts', contents, 'utf8');
   })
   .catch(() => process.exit(1));
