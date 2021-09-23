@@ -26,7 +26,7 @@ export default describe('Column order uncontrolled without any defaultValue', ()
 
     await page.click('button'); // hide id and make columns
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(50);
     colIds = await getHeaderColumnIds();
 
     // expect(colIds).toEqual(['id', 'make', 'model', 'price', 'year', 'rating']);
