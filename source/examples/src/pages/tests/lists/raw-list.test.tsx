@@ -61,7 +61,7 @@ export default describe('RawList', () => {
 
     expect(range).toEqual({ renderStartIndex: 1, renderEndIndex: 4 });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(50);
     const result = await mapElements((el) => el.textContent);
     expect(result).toEqual(['#1', '#2', '#3', '#4']);
   });
@@ -80,7 +80,7 @@ export default describe('RawList', () => {
     });
     expect(range).toEqual({ renderStartIndex: -1, renderEndIndex: -1 });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(50);
     const result = await mapElements((el) => el.textContent);
 
     expect(result).toEqual([]);
@@ -100,7 +100,7 @@ export default describe('RawList', () => {
     });
     expect(range).toEqual({ renderStartIndex: -1, renderEndIndex: -1 });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(50);
     const result = await mapElements((el) => el.textContent);
 
     expect(result).toEqual([]);
