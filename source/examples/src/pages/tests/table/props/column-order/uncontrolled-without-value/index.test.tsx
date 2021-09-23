@@ -1,6 +1,6 @@
 import { getHeaderColumnIds } from '../../../../../../utils';
 
-export default describe('Column order uncontrolled without any default value', () => {
+export default describe('Column order uncontrolled without any defaultValue', () => {
   beforeAll(async () => {
     await page.goto(
       `${process.env.BASEURL}/table/props/column-order/uncontrolled-without-value`,
