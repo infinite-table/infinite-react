@@ -1,5 +1,7 @@
 {
   "name": "@infinite-table/infinite-react",
+  "description": "Infinite Table for React",
+  
   "version": "0.0.1-canary.9",
   "main": "index.js",
   "module": "index.esm.js",
