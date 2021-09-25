@@ -10,5 +10,6 @@ dts = dts.replace(
   /declare module \"index\"/g,
   'declare module "@infinite-table/infinite-react"'
 );
+dts = dts.replace(/from \"index\"/g, 'from "@infinite-table/infinite-react"');
 const content = "export const dts = `" + dts + "`";
 fs.writeFileSync(path.resolve(__dirname, "lib-extra.ts"), content, "utf-8");

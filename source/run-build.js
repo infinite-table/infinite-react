@@ -34,13 +34,14 @@ require('esbuild')
     outfile: `dist/index${format === 'esm' ? '.esm' : ''}.js`,
   })
   .then(() => {
-    let contents = fs.readFileSync('./dist/index.d.ts', 'utf8');
+    let dts = fs.readFileSync('./dist/index.d.ts', 'utf8');
 
-    contents = contents.replace(
-      'declare module "index"',
+    dts = dts.replace(
+      /declare module \"index\"/g,
       `declare module "${package.name}"`,
     );
+    dts = dts.replace(/from \"index\"/g, `from "${package.name}"`);
 
-    fs.writeFileSync('./dist/index.d.ts', contents, 'utf8');
+    fs.writeFileSync('./dist/index.d.ts', dts, 'utf8');
   })
   .catch(() => process.exit(1));
