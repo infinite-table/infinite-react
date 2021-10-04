@@ -79,7 +79,7 @@ export function useListRendering<T>(
   const { dataArray } = dataSourceState;
 
   const getData = useLatest(dataArray);
-  const { rowHeight } = componentState;
+  const { rowHeightComputed: rowHeight } = componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);
 

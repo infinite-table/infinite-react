@@ -26,7 +26,7 @@ export interface InfiniteTableState<T> {
   onRowHeightChange: SubscriptionCallback<number>;
   onHeaderHeightChange: SubscriptionCallback<number>;
 
-  rowHeight: number;
+  rowHeightComputed: number;
   headerHeight: number;
 
   columnShifts: null | number[];

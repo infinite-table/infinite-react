@@ -27,7 +27,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   useState(() => {
     componentState.onRowHeightChange.onChange((rowHeight) => {
       if (rowHeight) {
-        componentActions.rowHeight = rowHeight;
+        componentActions.rowHeightComputed = rowHeight;
       }
     });
     componentState.onHeaderHeightChange.onChange((headerHeight) => {

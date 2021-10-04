@@ -32,7 +32,8 @@ export function getInitialState<T>(params: {
   const pivotColumns = props.pivotColumns;
 
   return {
-    rowHeight: typeof props.rowHeight === 'number' ? props.rowHeight : 0,
+    rowHeightComputed:
+      typeof props.rowHeight === 'number' ? props.rowHeight : 0,
     headerHeight:
       typeof props.headerHeight === 'number' ? props.headerHeight : 0,
     domRef: createRef(),
