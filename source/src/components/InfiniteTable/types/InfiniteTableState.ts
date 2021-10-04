@@ -11,6 +11,7 @@ import type {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from './InfiniteTableProps';
+
 import { Size } from '../../types/Size';
 import { ComponentStateActions } from '../../hooks/useComponentState';
 import { MutableRefObject } from 'react';
