@@ -125,6 +125,10 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
     </div>
   ) : null;
 
+  //TODO in the future, we can use something more lightweight instead of the VirtualRowList
+  // as the root of the InfiniteTable already renders a VirtualScrollContainer
+  // and the VirtualRowList contains another VirtualScrollContainer
+  // so I think we could optimize this 🤔 or remove the root VirtualScrollContainer there 🤷‍♂️
   return rowHeight != 0 ? (
     <VirtualRowList
       repaintId={`${repaintId}-unpinned-`}
