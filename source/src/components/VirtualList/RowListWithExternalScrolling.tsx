@@ -18,7 +18,7 @@ const defaultClasses = [
   ICSS.transform.translate3D000,
 ];
 
-type RowListWithExternalScrollingListProps = {
+export type RowListWithExternalScrollingListProps = {
   brain: VirtualBrain;
   renderRow: RenderRow;
 
@@ -72,8 +72,8 @@ export const RowListWithExternalScrolling = (
           const { renderStartIndex, renderEndIndex } = brain.getRenderRange();
           (node.dataset as any).renderStartIndex = renderStartIndex;
           (node.dataset as any).renderEndIndex = renderEndIndex;
-          (node.dataset as any).scrollLeft = scrollPosition.scrollLeft;
-          (node.dataset as any).scrollTop = scrollPosition.scrollTop;
+          // (node.dataset as any).scrollLeft = scrollPosition.scrollLeft;
+          // (node.dataset as any).scrollTop = scrollPosition.scrollTop;
         }
 
         if (updateScroll) {

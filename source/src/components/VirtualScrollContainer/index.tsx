@@ -5,18 +5,10 @@ import { useOnScroll } from '../hooks/useOnScroll';
 
 import { getScrollableClassName, Scrollable } from './getScrollableClassName';
 import { Renderable } from '../types/Renderable';
-import { ICSS } from '../../style/utilities';
 
 export type { Scrollable };
 
 const rootClassName = 'IT-VirtualScrollContainer';
-const defaultClasName = [
-  ICSS.position.fixed,
-  ICSS.height['100%'],
-  ICSS.width['100%'],
-  ICSS.left[0],
-  ICSS.top[0],
-].join(' ');
 
 export interface VirtualScrollContainerProps {
   className?: string;
@@ -55,7 +47,6 @@ export const VirtualScrollContainer = React.forwardRef(
         className={[
           className,
           rootClassName,
-          defaultClasName,
           getScrollableClassName(scrollable),
         ].join(' ')}
       >

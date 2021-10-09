@@ -10,8 +10,8 @@ import { useColumnSizeFn } from './useColumnSizeFn';
 
 type UseYourBrainParam<T = any> = {
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
-  computedPinnedStartColumnsWidth: number;
-  computedPinnedEndColumnsWidth: number;
+  computedPinnedStartWidth: number;
+  computedPinnedEndWidth: number;
   dataArray: any[];
   rowHeight: number;
   bodySize: Size;
@@ -20,8 +20,8 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
   const {
     dataArray,
     computedUnpinnedColumns,
-    computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
     rowHeight,
     bodySize,
   } = param;
@@ -70,17 +70,11 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     horizontalVirtualBrain.setAvailableSize({
       height: 0,
       width: Math.max(
-        bodySize.width -
-          computedPinnedStartColumnsWidth -
-          computedPinnedEndColumnsWidth,
+        bodySize.width - computedPinnedStartWidth - computedPinnedEndWidth,
         0,
       ),
     });
-  }, [
-    bodySize.width,
-    computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth,
-  ]);
+  }, [bodySize.width, computedPinnedStartWidth, computedPinnedEndWidth]);
 
   return { horizontalVirtualBrain, verticalVirtualBrain };
 }

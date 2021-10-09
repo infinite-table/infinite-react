@@ -65,12 +65,16 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedUnpinnedOffset,
     computedPinnedEndOffset,
     computedRemainingSpace,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
   } = useComputedVisibleColumns({
     columns: componentState.computedPivotColumns || componentState.columns,
     generatedColumns: componentState.generatedColumns,
     columnMinWidth: componentState.columnMinWidth,
     columnMaxWidth: componentState.columnMaxWidth,
     columnDefaultWidth: componentState.columnDefaultWidth,
+    pinnedStartMaxWidth: componentState.pinnedStartMaxWidth,
+    pinnedEndMaxWidth: componentState.pinnedEndMaxWidth,
     bodySize,
 
     sortable: componentState.sortable,
@@ -135,7 +139,18 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnRenderStartIndex--;
   }
 
+  const computedPinnedStartOverflow = computedPinnedStartWidth
+    ? computedPinnedStartColumnsWidth > computedPinnedStartWidth
+    : false;
+  const computedPinnedEndOverflow = computedPinnedEndWidth
+    ? computedPinnedEndColumnsWidth > computedPinnedEndWidth
+    : false;
+
   return {
+    computedPinnedStartOverflow,
+    computedPinnedEndOverflow,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
     computedVisibleColumns,
     computedColumnOrder,
     computedRemainingSpace,

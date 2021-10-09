@@ -2,6 +2,7 @@ import { createRef } from 'react';
 import { DataSourceState } from '../../DataSource';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { isControlled } from '../../utils/isControlled';
+import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
 import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
 import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
@@ -64,6 +65,10 @@ export function getInitialState<T>(params: {
         ? props.columnOrder
         : props.defaultColumnOrder) ?? true,
     computedColumnGroups,
+    // TODO build a clearState function so we can destroy those when component is unmounted
+    // so we don't have memory leaks
+    pinnedStartScrollListener: new ScrollListener(),
+    pinnedEndScrollListener: new ScrollListener(),
     columnGroups,
     collapsedColumnGroups,
     columnGroupsDepthsMap,
@@ -118,6 +123,8 @@ export function deriveReadOnlyState<T>(params: {
     rowStyle: props.rowStyle,
     rowProps: props.rowProps,
     rowClassName: props.rowClassName,
+    pinnedStartMaxWidth: props.pinnedStartMaxWidth,
+    pinnedEndMaxWidth: props.pinnedEndMaxWidth,
     groupRenderStrategy: props.groupRenderStrategy ?? 'multi-column',
     pivotTotalColumnPosition,
     columnMinWidth: props.columnMinWidth ?? 30,

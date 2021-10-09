@@ -16,6 +16,7 @@ import { Size } from '../../types/Size';
 import { ComponentStateActions } from '../../hooks/useComponentState';
 import { MutableRefObject } from 'react';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
+import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
 export interface InfiniteTableState<T> {
   domRef: MutableRefObject<HTMLDivElement | null>;
@@ -49,6 +50,8 @@ export interface InfiniteTableState<T> {
   pivotColumnGroups?: InfiniteTablePropColumnGroups;
   computedColumnGroups: InfiniteTablePropColumnGroups;
   generatedColumns: InfiniteTableGeneratedColumns<T>;
+  pinnedStartScrollListener: ScrollListener;
+  pinnedEndScrollListener: ScrollListener;
 
   x?: T;
 }
@@ -75,8 +78,11 @@ export interface InfiniteTableReadOnlyState<T> {
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
   pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
 
+  pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
+  pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];
   header: InfiniteTableProps<T>['header'];
+
   columnMinWidth: InfiniteTableProps<T>['columnMinWidth'];
   columnMaxWidth: InfiniteTableProps<T>['columnMaxWidth'];
   columnDefaultWidth: InfiniteTableProps<T>['columnDefaultWidth'];

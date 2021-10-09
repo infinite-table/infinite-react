@@ -33,8 +33,8 @@ type UnpinnedRenderingParams<T> = {
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
   computedUnpinnedColumnsWidth: number;
-  computedPinnedStartColumnsWidth: number;
-  computedPinnedEndColumnsWidth: number;
+  computedPinnedStartWidth: number;
+  computedPinnedEndWidth: number;
 
   getState: () => InfiniteTableComponentState<T>;
 };
@@ -52,8 +52,8 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
     verticalVirtualBrain,
     horizontalVirtualBrain,
     computedUnpinnedColumnsWidth,
-    computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
 
     computedUnpinnedColumns,
 
@@ -139,8 +139,8 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
         height: bodySize.height,
         top: 0,
         position: 'absolute',
-        left: computedPinnedStartColumnsWidth,
-        right: computedPinnedEndColumnsWidth,
+        left: computedPinnedStartWidth,
+        right: computedPinnedEndWidth,
       }}
       count={getData().length}
       rowHeight={rowHeight}

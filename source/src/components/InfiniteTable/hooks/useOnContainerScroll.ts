@@ -30,10 +30,10 @@ export const useOnContainerScroll = ({
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
       }
-      timeoutIdRef.current = (setTimeout(() => {
+      timeoutIdRef.current = setTimeout(() => {
         setScrolling(false);
         timeoutIdRef.current = 0;
-      }, DELAY) as any) as number;
+      }, DELAY) as any as number;
     }
     if (prevScrolling !== scrolling) {
       const classList = domRef.current?.classList;

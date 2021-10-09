@@ -4,9 +4,10 @@ import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 function HorizontalScrollbarPlaceholderFn(props: {
   style: React.CSSProperties;
 }) {
-  const height = getScrollbarWidth();
+  const scrollbarWidth = getScrollbarWidth();
 
-  if (!height) {
+  // we're on a system with no visible scrollbar, so no need to render anything
+  if (!scrollbarWidth) {
     return null;
   }
   return (
@@ -16,7 +17,7 @@ function HorizontalScrollbarPlaceholderFn(props: {
         position: 'absolute',
         overflow: 'visible',
         overflowX: 'scroll',
-        height,
+        // height: scrollbarWidth,// not needed, as browser makes the element have the needed width
         bottom: 0,
         ...props.style,
       }}
@@ -29,9 +30,10 @@ export const HorizontalScrollbarPlaceholder = React.memo(
 );
 
 function VerticalScrollbarPlaceholderFn(props: { style: React.CSSProperties }) {
-  const width = getScrollbarWidth();
+  const scrollbarWidth = getScrollbarWidth();
 
-  if (!width) {
+  // we're on a system with no visible scrollbar, so no need to render anything
+  if (!scrollbarWidth) {
     return null;
   }
   return (
@@ -41,8 +43,8 @@ function VerticalScrollbarPlaceholderFn(props: { style: React.CSSProperties }) {
         position: 'absolute',
         overflow: 'visible',
         overflowY: 'scroll',
-        width,
         bottom: 0,
+        // width: scrollbarWidth, // not needed, as browser makes the element have the needed width
         ...props.style,
       }}
     ></div>

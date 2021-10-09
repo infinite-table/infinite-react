@@ -172,6 +172,8 @@ export type InfiniteTableProps<T> = {
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
   columnPinning?: InfiniteTablePropColumnPinning;
+  pinnedStartMaxWidth?: number;
+  pinnedEndMaxWidth?: number;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
 
   defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;

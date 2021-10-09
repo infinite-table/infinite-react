@@ -85,12 +85,6 @@ export const InfiniteTableComponent = React.memo(
 
     const { columnShifts, bodySize } = componentState;
 
-    const className = join(
-      InfiniteTableClassName,
-      columnShifts ? `${InfiniteTableClassName}--shifting` : '',
-      domProps?.className,
-    );
-
     const {
       pinnedStartList,
       pinnedEndList,
@@ -114,6 +108,20 @@ export const InfiniteTableComponent = React.memo(
     });
 
     const licenseValid = useLicense(licenseKey);
+
+    const className = join(
+      InfiniteTableClassName,
+      columnShifts ? `${InfiniteTableClassName}--shifting` : '',
+      domProps?.className,
+      pinnedStartList ? `${InfiniteTableClassName}--has-pinned-start` : null,
+      pinnedEndList ? `${InfiniteTableClassName}--has-pinned-end` : null,
+      computed.computedPinnedStartOverflow
+        ? `${InfiniteTableClassName}--has-pinned-start-overflow`
+        : null,
+      computed.computedPinnedEndOverflow
+        ? `${InfiniteTableClassName}--has-pinned-end-overflow`
+        : null,
+    );
 
     return (
       <div ref={domRef} {...domProps} className={className}>
@@ -187,7 +195,11 @@ function InfiniteTableContextProvider<T>() {
   // useEffect(() => {
   //   // componentState.pivotColumns =
   // }, [pivotColumns])
-  (globalThis as any).getState = getState;
+
+  if (__DEV__) {
+    (globalThis as any).getState = getState;
+    (globalThis as any).getComputed = getComputed;
+  }
 
   const contextValue: InfiniteTableContextValue<T> = {
     componentActions,

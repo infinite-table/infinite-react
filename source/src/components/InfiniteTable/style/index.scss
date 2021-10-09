@@ -27,8 +27,197 @@
   flex: 1;
 }
 
-@import '../components/InfiniteTableLicenseFooter/InfiniteTableLicenseFooter.scss';
-@import '../components/InfiniteTableCell.scss';
-@import '../components/icons/index.scss';
-@import '../components/InfiniteTableRow/InfiniteTableRow.scss';
-@import '../components/InfiniteTableHeader/InfiniteTableHeader.scss';
+.ITablePinnedRowsContainer--pinned-start {
+  border-right: var(--ITableCell__border);
+
+  .ITableColumnCell--last-in-category,
+  .ITableColumnCell--first-in-category {
+    --ITableCell__border: none;
+  }
+}
+.ITablePinnedRowsContainer--pinned-end {
+  border-left: var(--ITableCell__border);
+
+  .ITableColumnCell--last-in-category,
+  .ITableColumnCell--first-in-category {
+    --ITableCell__border: none;
+  }
+}
+
+.ITableFooter {
+  padding: var(--it-space-2);
+}
+
+.ITableCell {
+  // contain: size layout;
+  padding: var(--ITableCell__padding);
+  white-space: nowrap;
+  will-change: transform;
+  position: absolute;
+
+  &--shifting {
+    transition: left 300ms;
+  }
+  &--dragging {
+    transition: none;
+  }
+}
+
+.ITableHeaderCell {
+  background: var(--ITableHeaderCell__background);
+  padding: var(--ITableHeaderCell__padding);
+
+  // padding: var(--ITableHeaderCell__padding);
+  // contain: layout;
+}
+.ITableHeaderCell,
+.ITableColumnCell {
+  &--first {
+    border-top-left-radius: var(--ITableCell__border-radius);
+    border-bottom-left-radius: var(--ITableCell__border-radius);
+  }
+  &--last {
+    border-top-right-radius: var(--ITableCell__border-radius);
+    border-bottom-right-radius: var(--ITableCell__border-radius);
+  }
+}
+.ITableHeaderCell,
+.ITableColumnCell {
+  border-left: var(--ITableCell__border-width) solid transparent;
+  border-right: var(--ITableCell__border-width) solid transparent;
+
+  &--pinned-start.ITableCell--last-in-category {
+    border-right: var(--ITableCell__border);
+  }
+  &--pinned-end.ITableCell--first-in-category {
+    border-left: var(--ITableCell__border);
+  }
+}
+.ITable--has-pinned-end-overflow {
+  .ITableHeaderCell--unpinned.ITableCell--last-in-category {
+    --ITableCell__border: none;
+  }
+}
+
+.ITableHeader {
+  background: var(--ITableHeader__background);
+  color: var(--ITableHeader__color);
+  &--unvirtualized {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &--overflow {
+    z-index: 10;
+  }
+
+  &--overflow {
+    .ITableHeaderCell--pinned-start.ITableHeaderCell--last-in-category {
+      border-right: var(--ITableCell__border-invisible);
+    }
+    .ITableHeaderCell--pinned-end.ITableHeaderCell--first-in-category {
+      border-left: var(--ITableCell__border-invisible);
+    }
+
+    &.ITableHeader--pinned-start {
+      border-right: var(--ITableCell__border);
+    }
+    &.ITableHeader--pinned-end {
+      border-left: var(--ITableCell__border);
+    }
+  }
+}
+.ITableHeaderCell {
+  &--dragging {
+    z-index: 100;
+    opacity: 0.8;
+    background: var(--ITableHeaderCell--dragging__background);
+  }
+  &--pinned-start {
+    z-index: 10;
+  }
+  &Proxy {
+    background: var(--ITableHeader__background);
+    opacity: 0.9;
+    padding: var(--ITableCell__padding);
+    padding-left: 20px;
+    z-index: 200;
+  }
+  border-right: var(--ITableCell__border);
+}
+.ITableRow--group-row.ITableRow--odd,
+.ITableRow--group-row.ITableRow--even {
+  .ITableCell::before {
+    content: '';
+    background: var(--ITable-accent__color);
+    position: absolute;
+    top: 0;
+    left: calc(0px - var(--ITableCell__border-width));
+    right: calc(0px - var(--ITableCell__border-width));
+    bottom: 0;
+    z-index: -1;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+}
+
+.ITableIcon {
+  fill: currentColor;
+  flex: none;
+}
+.ITableIcon-expander {
+  cursor: pointer;
+  user-select: none;
+  // transition: transform 0.2s, fill 0.2s;
+
+  &--expanded {
+    fill: var(--ITable-accent__color);
+  }
+}
+
+.ITableRow {
+  color: var(--ITableRow__color);
+  will-change: transform;
+  // contain: size layout;
+
+  &--hover {
+    --ITableRow__background: var(--ITableRow--hover__background);
+    --ITableRow--odd__background: var(--ITableRow--hover__background);
+  }
+}
+
+.ITable--scrolling .ITableRow {
+  pointer-events: none;
+}
+
+.ITableRow--even {
+  background: var(--ITableRow__background);
+}
+.ITableRow--odd {
+  background: var(--ITableRow--odd__background);
+}
+
+.ITableHeaderCell__sort-icon {
+  margin-left: 10px;
+  position: relative;
+
+  [data-name='index'] {
+    line-height: 0;
+    font-size: 10px;
+
+    border-radius: 50%;
+    padding: 1px;
+  }
+}
+
+.ITableHeaderGroup {
+  &__header {
+    padding: var(--ITableCell__padding);
+    // text-align: center;
+    border-bottom: var(--ITableCell__border);
+    border-right: var(--ITableCell__border);
+  }
+  &__children {
+    flex: 1;
+  }
+}

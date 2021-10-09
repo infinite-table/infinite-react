@@ -5,15 +5,12 @@
 .IList {
   @include box-sizing_border-box;
 
-  // clip: rect(0, auto, auto, 0);
+  position: relative;
 
   &--vertical {
     display: inline-block;
   }
-}
-
-.IListItemRoot {
-  & > :first-child {
-    height: inherit;
+  &--allow-horizontal-scroll {
+    overflow-x: auto;
   }
 }

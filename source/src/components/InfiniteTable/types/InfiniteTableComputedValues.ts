@@ -5,6 +5,8 @@ import type {
 } from './InfiniteTableProps';
 
 export interface InfiniteTableComputedValues<T> {
+  computedPinnedStartOverflow: boolean;
+  computedPinnedEndOverflow: boolean;
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
@@ -13,7 +15,9 @@ export interface InfiniteTableComputedValues<T> {
   computedColumnVisibility: InfiniteTablePropColumnVisibility;
   computedColumnOrder: InfiniteTablePropColumnOrderNormalized;
   computedPinnedStartColumnsWidth: number;
+  computedPinnedStartWidth: number;
   computedPinnedEndColumnsWidth: number;
+  computedPinnedEndWidth: number;
   computedUnpinnedColumnsWidth: number;
   computedUnpinnedOffset: number;
   computedPinnedEndOffset: number;

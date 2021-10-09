@@ -4,10 +4,17 @@
   backface-visibility: hidden;
   -webkit-overflow-scrolling: touch;
 
+  /** MANDATORY BLOCK - START **/
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  /** MANDATORY BLOCK - END **/
+
   & > :first-child {
     position: -webkit-sticky;
     position: sticky;
-    // position: fixed;
     top: 0;
     left: 0;
   }

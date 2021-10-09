@@ -27,7 +27,6 @@ const CLASSES = join(
 const debug = dbg('VirtuaList');
 
 const rootClassName = 'IList';
-const defaultClasses = [ICSS.position.relative, ICSS.transform.translate3D000];
 
 export const VirtualList = (
   props: VirtualListProps & HTMLProps<HTMLDivElement>,
@@ -105,7 +104,8 @@ export const VirtualList = (
       props.className,
       rootClassName,
       `${rootClassName}--${mainAxis}`,
-      ...defaultClasses,
+      // THIS IS MANDATORY, in order to make position: fixed children relative to this container
+      ICSS.transform.translate3D000,
     ),
   };
   if (__DEV__) {
@@ -119,7 +119,11 @@ export const VirtualList = (
           scrollable={scrollable}
           onContainerScroll={onContainerScroll}
         >
-          <div ref={domRef} className={CLASSES}>
+          <div
+            ref={domRef}
+            className={CLASSES}
+            data-name="scroll-transform-target"
+          >
             <RawList
               brain={virtualBrain}
               renderItem={renderItem}

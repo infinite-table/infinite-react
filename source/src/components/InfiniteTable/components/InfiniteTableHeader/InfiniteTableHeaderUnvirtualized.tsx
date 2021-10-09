@@ -25,7 +25,16 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   props: InfiniteTableHeaderUnvirtualizedProps<T> &
     React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { columns, scrollable, brain, totalWidth, ...domProps } = props;
+  const {
+    columns,
+    scrollable,
+    classNameModifiers,
+    brain,
+    scrollListener,
+    totalWidth,
+    availableWidth,
+    ...domProps
+  } = props;
 
   const {
     componentState: {
@@ -79,11 +88,13 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   const style = { ...domProps?.style };
 
   if (totalWidth != null) {
-    style.width = totalWidth;
+    style.width = availableWidth;
   }
 
   useEffect(() => {
-    if (!brain || !scrollable) {
+    const scroller = brain || scrollListener;
+
+    if (!scroller || !scrollable) {
       return;
     }
 
@@ -91,24 +102,31 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
       UPDATE_SCROLL(domRef.current!, scrollPosition);
     };
 
-    const removeOnScroll = brain!.onScroll(onScroll);
+    const removeOnScroll = scroller!.onScroll(onScroll);
 
     return removeOnScroll;
-  }, [brain]);
+  }, [brain, scrollListener]);
+
   return (
     <div
       {...domProps}
-      ref={domRef}
       className={join(
-        ICSS.flexFlow.row,
-        ICSS.display.flex,
         TableHeaderClassName,
         `${TableHeaderClassName}--unvirtualized`,
         domProps.className,
+        ...(classNameModifiers || [])!
+          .filter(Boolean)
+          .map((modifier) => `${TableHeaderClassName}--${modifier}`),
       )}
       style={style}
     >
-      {children}
+      <div
+        style={{ width: totalWidth }}
+        className={join(ICSS.flexFlow.row, ICSS.display.flex)}
+        ref={domRef}
+      >
+        {children}
+      </div>
     </div>
   );
 }

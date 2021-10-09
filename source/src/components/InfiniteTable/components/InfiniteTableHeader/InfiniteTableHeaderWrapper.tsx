@@ -25,12 +25,22 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     computedPinnedStartColumns,
     computedPinnedEndColumns,
     computedPinnedStartColumnsWidth,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
     computedPinnedEndColumnsWidth,
     computedUnpinnedColumnsWidth,
+    computedPinnedStartOverflow,
+    computedPinnedEndOverflow,
   } = tableContextValue.computed;
 
   const {
-    componentState: { virtualizeHeader, headerHeight, columnGroupsMaxDepth },
+    componentState: {
+      virtualizeHeader,
+      headerHeight,
+      columnGroupsMaxDepth,
+      pinnedStartScrollListener,
+      pinnedEndScrollListener,
+    },
   } = tableContextValue;
 
   const hasPinnedStart = computedPinnedStartColumns.length > 0;
@@ -46,10 +56,11 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       brain={brain}
       style={{
         position: 'absolute',
-        left: computedPinnedStartColumnsWidth,
+        left: computedPinnedStartWidth,
         width: computedUnpinnedColumnsWidth,
         height: columnGroupsMaxDepth || headerHeight,
       }}
+      availableWidth={computedUnpinnedColumnsWidth}
       totalWidth={computedUnpinnedColumnsWidth}
     />
   ) : (
@@ -57,6 +68,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       brain={brain}
       scrollable
       columns={computedUnpinnedColumns}
+      availableWidth={computedUnpinnedColumnsWidth}
       totalWidth={computedUnpinnedColumnsWidth}
     />
   );
@@ -79,10 +91,20 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
           style={{
             left: 0,
             position: 'absolute',
-            width: computedPinnedStartColumnsWidth,
+            width: computedPinnedStartWidth,
           }}
-          columns={computedPinnedStartColumns}
+          availableWidth={computedPinnedStartWidth}
           totalWidth={computedPinnedStartColumnsWidth}
+          columns={computedPinnedStartColumns}
+          scrollable={computedPinnedStartOverflow}
+          classNameModifiers={[
+            'pinned',
+            'pinned-start',
+            computedPinnedStartOverflow ? 'overflow' : '',
+          ]}
+          scrollListener={
+            computedPinnedStartOverflow ? pinnedStartScrollListener : undefined
+          }
         />
       ) : null}
       {header}
@@ -91,10 +113,20 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
           style={{
             right: scrollbars.vertical ? getScrollbarWidth() : 0,
             position: 'absolute',
-            width: computedPinnedEndColumnsWidth,
+            width: computedPinnedEndWidth,
           }}
           columns={computedPinnedEndColumns}
+          availableWidth={computedPinnedEndWidth}
           totalWidth={computedPinnedEndColumnsWidth}
+          scrollable={computedPinnedEndOverflow}
+          classNameModifiers={[
+            'pinned',
+            'pinned-end',
+            computedPinnedEndOverflow ? 'overflow' : '',
+          ]}
+          scrollListener={
+            computedPinnedEndOverflow ? pinnedEndScrollListener : undefined
+          }
         />
       ) : null}
       {scrollbars.vertical ? (

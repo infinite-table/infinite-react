@@ -21,6 +21,10 @@ type UseComputedVisibleColumnsParam<T> = {
   bodySize: Size;
   columnMinWidth?: number;
   columnMaxWidth?: number;
+
+  pinnedEndMaxWidth?: number;
+  pinnedStartMaxWidth?: number;
+
   columnDefaultWidth?: number;
   sortable?: boolean;
   draggableColumns?: boolean;
@@ -52,6 +56,8 @@ type UseComputedVisibleColumnsResult<T> = {
 
   computedVisibleColumns: GetComputedVisibleColumnsResult<T>['computedVisibleColumns'];
   computedVisibleColumnsMap: GetComputedVisibleColumnsResult<T>['computedVisibleColumnsMap'];
+  computedPinnedEndWidth: GetComputedVisibleColumnsResult<T>['computedPinnedEndWidth'];
+  computedPinnedStartWidth: GetComputedVisibleColumnsResult<T>['computedPinnedStartWidth'];
 
   computedColumnOrder: GetComputedVisibleColumnsResult<T>['computedColumnOrder'];
 };
@@ -70,6 +76,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
   setSortInfo,
   columnOrder,
   columnPinning,
+  pinnedEndMaxWidth,
+  pinnedStartMaxWidth,
   // columnAggregations,
   columnVisibility,
   columnVisibilityAssumeVisible,
@@ -93,6 +101,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedUnpinnedColumnsWidth,
     computedUnpinnedOffset,
     computedPinnedEndOffset,
+    computedPinnedEndWidth,
+    computedPinnedStartWidth,
   } = useMemo(() => {
     return getComputedVisibleColumns({
       columns,
@@ -107,6 +117,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
       sortInfo,
       setSortInfo,
       multiSort,
+      pinnedEndMaxWidth,
+      pinnedStartMaxWidth,
 
       draggableColumns,
       columnOrder,
@@ -134,6 +146,9 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnVisibility,
     columnVisibilityAssumeVisible,
 
+    pinnedEndMaxWidth,
+    pinnedStartMaxWidth,
+
     columnPinning,
 
     columnsRenderId,
@@ -144,6 +159,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
   const result: UseComputedVisibleColumnsResult<T> = {
     columns,
+    computedPinnedEndWidth,
+    computedPinnedStartWidth,
     computedRemainingSpace,
     computedUnpinnedOffset,
     computedPinnedEndOffset,

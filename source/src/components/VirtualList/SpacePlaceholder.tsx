@@ -3,7 +3,7 @@ import * as React from 'react';
 interface SpacePlaceholderProps {
   width: number;
   height: number;
-  count: number;
+  count?: number;
 }
 
 function SpacePlaceholderFn(props: SpacePlaceholderProps) {

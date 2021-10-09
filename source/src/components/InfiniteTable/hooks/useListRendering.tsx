@@ -70,8 +70,12 @@ export function useListRendering<T>(
     computedPinnedEndColumns,
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
     computedUnpinnedColumns,
     computedUnpinnedColumnsWidth,
+    computedPinnedStartOverflow,
+    computedPinnedEndOverflow,
   } = computed;
 
   const { componentState: dataSourceState } = useDataSourceContextValue<T>();
@@ -79,7 +83,13 @@ export function useListRendering<T>(
   const { dataArray } = dataSourceState;
 
   const getData = useLatest(dataArray);
-  const { rowHeightComputed: rowHeight } = componentState;
+  const {
+    rowHeightComputed: rowHeight,
+    pinnedStartMaxWidth,
+    pinnedEndMaxWidth,
+    pinnedStartScrollListener,
+    pinnedEndScrollListener,
+  } = componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);
 
@@ -92,9 +102,9 @@ export function useListRendering<T>(
   const repaintId = repaintIdRef.current;
 
   const { horizontalVirtualBrain, verticalVirtualBrain } = useYourBrain({
+    computedPinnedStartWidth: computed.computedPinnedStartWidth,
+    computedPinnedEndWidth: computed.computedPinnedEndWidth,
     computedUnpinnedColumns: computed.computedUnpinnedColumns,
-    computedPinnedStartColumnsWidth: computed.computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth: computed.computedPinnedEndColumnsWidth,
     rowHeight,
     dataArray,
     bodySize,
@@ -167,14 +177,22 @@ export function useListRendering<T>(
     scrollbars,
     computedPinnedStartColumns,
     computedPinnedEndColumns,
+    computedPinnedStartWidth,
+    computedPinnedEndWidth,
+    computedPinnedStartOverflow,
+    computedPinnedEndOverflow,
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
     getData,
     getState,
     toggleGroupRow,
+    pinnedStartMaxWidth,
+    pinnedEndMaxWidth,
     repaintId,
     rowHeight,
     verticalVirtualBrain,
+    pinnedStartScrollListener,
+    pinnedEndScrollListener,
   };
 
   const centerRenderingParams = {

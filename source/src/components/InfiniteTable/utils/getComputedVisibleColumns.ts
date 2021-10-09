@@ -51,7 +51,9 @@ const getComputedPinned = (
 export type GetComputedVisibleColumnsResult<T> = {
   computedRemainingSpace: number;
   computedPinnedStartColumnsWidth: number;
+  computedPinnedStartWidth: number;
   computedPinnedEndColumnsWidth: number;
+  computedPinnedEndWidth: number;
   computedUnpinnedColumnsWidth: number;
 
   columnMinWidth?: number;
@@ -78,6 +80,8 @@ type GetComputedVisibleColumnsParam<T> = {
   bodySize: Size;
   columnMinWidth?: number;
   columnMaxWidth?: number;
+  pinnedStartMaxWidth?: number;
+  pinnedEndMaxWidth?: number;
   columnDefaultWidth?: number;
 
   sortable?: boolean;
@@ -100,6 +104,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnMinWidth,
   columnMaxWidth,
   columnDefaultWidth,
+  pinnedStartMaxWidth,
+  pinnedEndMaxWidth,
   sortable,
   sortInfo,
   setSortInfo,
@@ -352,6 +358,15 @@ export const getComputedVisibleColumns = <T extends unknown>({
     prevPinned = computedPinned;
   });
 
+  const computedPinnedStartWidth =
+    pinnedStartMaxWidth != null
+      ? Math.min(pinnedStartMaxWidth, computedPinnedStartColumnsWidth)
+      : computedPinnedStartColumnsWidth;
+  const computedPinnedEndWidth =
+    pinnedEndMaxWidth != null
+      ? Math.min(pinnedEndMaxWidth, computedPinnedEndColumnsWidth)
+      : computedPinnedEndColumnsWidth;
+
   const result: GetComputedVisibleColumnsResult<T> = {
     computedRemainingSpace:
       bodySize.width -
@@ -368,6 +383,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
     computedUnpinnedColumns,
     computedVisibleColumns,
     computedVisibleColumnsMap,
+    computedPinnedEndWidth,
+    computedPinnedStartWidth,
   };
 
   return result;
