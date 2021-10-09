@@ -1,4 +1,4 @@
-import type { CSSProperties, MutableRefObject, RefCallback } from 'react';
+import type { MutableRefObject, RefCallback } from 'react';
 
 import type { Renderable } from '../types/Renderable';
 
