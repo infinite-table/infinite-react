@@ -78,7 +78,8 @@ export function useListRendering<T>(
     computedPinnedEndOverflow,
   } = computed;
 
-  const { componentState: dataSourceState } = useDataSourceContextValue<T>();
+  const { componentState: dataSourceState, getState: getDataSourceState } =
+    useDataSourceContextValue<T>();
 
   const { dataArray } = dataSourceState;
 
@@ -150,6 +151,8 @@ export function useListRendering<T>(
         setColumnAggregations: (
           columnAggregations: InfiniteTablePropColumnAggregations<T>,
         ) => (componentActions.columnAggregations = columnAggregations),
+        getState,
+        getDataSourceState,
       };
 
       onReady(imperativeApi);
@@ -162,7 +165,7 @@ export function useListRendering<T>(
     domRef: domRef as MutableRefObject<HTMLDivElement | null>,
   });
 
-  const { getState: getDataSourceState, componentActions: dataSourceActions } =
+  const { componentActions: dataSourceActions } =
     useDataSourceContextValue<T>();
 
   const toggleGroupRow = useCallback((groupKeys: any[]) => {

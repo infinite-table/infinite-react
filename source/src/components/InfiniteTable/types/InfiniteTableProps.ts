@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { InfiniteTableState } from '.';
 import {
   AggregationReducer,
   InfiniteTableEnhancedData,
@@ -7,6 +8,7 @@ import {
   DataSourceGroupRowsBy,
   DataSourcePropGroupRowsBy,
   DataSourcePropPivotBy,
+  DataSourceState,
 } from '../../DataSource';
 import { Renderable } from '../../types/Renderable';
 import type {
@@ -71,6 +73,8 @@ export type InfiniteTableImperativeApi<T> = {
     columnAggregations: InfiniteTablePropColumnAggregations<T>,
   ) => void;
   x?: T;
+  getState: () => InfiniteTableState<T>;
+  getDataSourceState: () => DataSourceState<T>;
 };
 export type InfiniteTablePropVirtualizeColumns<T> =
   | boolean

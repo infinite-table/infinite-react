@@ -28,6 +28,7 @@ const anchorStyle: React.CSSProperties = {
 
 const enforceStyle = (node: HTMLElement | null, style: React.CSSProperties) => {
   if (!node) {
+    // TODO protect against Footer node removal
     return;
   }
   for (const [propertyName, propertyValue] of Object.entries(style)) {
