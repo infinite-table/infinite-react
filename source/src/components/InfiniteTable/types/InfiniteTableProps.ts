@@ -52,6 +52,7 @@ export type InfiniteTablePropRowStyle<T> =
 export type InfiniteTablePropRowClassName<T> =
   | string
   | InfiniteTableRowClassNameFn<T>;
+
 export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
   AggregationReducer<T, AggregationResultType>,
   'getter'
