@@ -38,7 +38,7 @@ export default describe('Column groups should render correctly', () => {
       });
     });
 
-    await page.waitForTimeout(20);
+    await page.waitForTimeout(30);
 
     secondAddressGroup = await page.evaluate(() => {
       return (
