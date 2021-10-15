@@ -8,3 +8,5 @@ export {
   useComponentState,
   getComponentStateRoot,
 } from './components/hooks/useComponentState';
+
+export { interceptMap } from './components/hooks/useInterceptedMap';

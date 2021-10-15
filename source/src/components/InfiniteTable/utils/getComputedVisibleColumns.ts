@@ -20,6 +20,10 @@ export type SortInfoMap<T> = {
   [key: string]: { sortInfo: DataSourceSingleSortInfo<T>; index: number };
 };
 
+export const IS_GROUP_COLUMN_ID = (columnId: string) => {
+  return columnId.startsWith('group-by');
+};
+
 const isColumnVisible = (
   columnVisibility: InfiniteTablePropColumnVisibility,
   _columnVisibilityAssumeVisible: boolean,
@@ -130,19 +134,20 @@ export const getComputedVisibleColumns = <T extends unknown>({
     isColumnVisible.bind(null, columnVisibility, columnVisibilityAssumeVisible),
   );
 
-  const columnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder.map(
-    (columnId) => {
+  const columnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder
+    .map((columnId) => {
       let col = columns.get(columnId);
       if (!col) {
         col = generatedColumns.get(columnId);
-        if (!col) {
+        //TODO find a better solution for group columns
+        if (!col && !IS_GROUP_COLUMN_ID(columnId)) {
           throw `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`;
         }
       }
 
       return col!;
-    },
-  );
+    })
+    .filter(Boolean);
 
   const sortedMap = (sortInfo ?? []).reduce(
     (acc: SortInfoMap<T>, info: DataSourceSingleSortInfo<T>, index) => {

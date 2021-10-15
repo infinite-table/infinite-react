@@ -91,37 +91,38 @@ const domProps = {
 };
 
 const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
-  {
-    field: 'department',
-  },
+  // {
+  //   field: 'department',
+  // },
   {
     field: 'team',
   },
-  {
-    field: 'country',
-  },
+  // {
+  //   field: 'country',
+  // },
 ];
 
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   data,
   enhancedData,
 }) => {
-  const age = data?.age ?? 0;
+  // const age = data?.age ?? 0;
 
-  if (enhancedData.isGroupRow) {
-    const result = {
-      background: (enhancedData.groupNesting ?? 0) > 2 ? 'green' : 'yellow',
-      testxxx: true,
-    };
+  // if (enhancedData.isGroupRow) {
+  //   const result = {
+  //     background: (enhancedData.groupNesting ?? 0) > 2 ? 'green' : 'yellow',
+  //     testxxx: true,
+  //   };
 
-    return result;
-  }
+  //   return result;
+  // }
 
-  return age > 30
-    ? {
-        background: 'tomato',
-      }
-    : {};
+  // return age > 30
+  //   ? {
+  //       background: 'tomato',
+  //     }
+  //   : {};
+  return {};
 };
 export default function GroupByExample() {
   const [strategy, setStrategy] =
@@ -147,6 +148,7 @@ export default function GroupByExample() {
         <InfiniteTable<Employee>
           domProps={domProps}
           columns={columns}
+          columnOrder={['identifier', 'name', 'group-by-team', 'deparment']}
           columnDefaultWidth={200}
           rowStyle={rowStyle}
           groupColumn={{
