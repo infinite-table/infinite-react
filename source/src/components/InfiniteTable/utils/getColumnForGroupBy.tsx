@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { InfiniteTableColumnRenderParam } from '..';
 import { cssEllipsisClassName } from '../../../style/css';
 import { ICSS } from '../../../style/utilities';
 import { join } from '../../../utils/join';
@@ -9,25 +10,58 @@ import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn'
 import {
   GroupColumnGetterOptions,
   InfiniteTablePropGroupColumn,
+  InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
 
-export function getColumnForGroupBy<T>(
-  options: GroupColumnGetterOptions<T> & {
-    groupIndex: number;
+export function getGroupColumnRender<T>({
+  groupIndex,
+  groupRenderStrategy,
+  toggleGroupRow,
+}: {
+  toggleGroupRow: (groupRowKeys: any[]) => void;
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+  groupIndex: number;
+}) {
+  return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
+    let { value, enhancedData, column } = renderOptions;
 
-    groupBy: DataSourceGroupRowsBy<T>;
-  },
-  toggleGroupRow: (groupRowKeys: any[]) => void,
-  groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
-): InfiniteTableGeneratedGroupColumn<T> {
-  const { groupBy, groupIndex } = options;
+    if (column.renderValue) {
+      value = column.renderValue(renderOptions);
+    }
 
-  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
-    header: `Group by ${groupBy.field}`,
-    groupByField: groupBy.field as string,
-    sortable: false,
-    render: (renderOptions) => {
-      let { value, enhancedData, column } = renderOptions;
+    let collapsed = false;
+    let groupKeys = enhancedData.groupKeys!;
+
+    if (groupRenderStrategy !== 'inline') {
+      collapsed = enhancedData.collapsed;
+    } else {
+      const field = column.field;
+      let current = enhancedData;
+      let parents = enhancedData.parents;
+
+      let len = parents!.length - 1;
+      if (!current) {
+        return null;
+      }
+      while (
+        current &&
+        current.groupBy![current.groupBy!.length - 1] != (field as string)
+      ) {
+        current = parents![len];
+        len--;
+        if (!current) {
+          return null;
+        }
+      }
+      groupKeys = current.groupKeys!;
+      collapsed = current.collapsed;
+    }
+
+    if (groupRenderStrategy === 'inline') {
+      if (!enhancedData.isGroupRow && enhancedData.groupCount === 1) {
+        return value;
+      }
+    } else {
       if (!enhancedData.isGroupRow) {
         return null;
       }
@@ -35,23 +69,42 @@ export function getColumnForGroupBy<T>(
       if (groupIndex + 1 !== enhancedData.groupNesting) {
         return null;
       }
+    }
 
-      if (column.renderValue) {
-        value = column.renderValue(renderOptions);
-      }
+    return (
+      <div className={join(ICSS.display.flex, ICSS.alignItems.center)}>
+        <ExpanderIcon
+          expanded={!collapsed}
+          onChange={() => {
+            toggleGroupRow(groupKeys!);
+          }}
+        />
+        <div className={cssEllipsisClassName}>{value ?? null}</div>
+      </div>
+    );
+  };
+}
+export function getColumnForGroupBy<T>(
+  options: GroupColumnGetterOptions<T> & {
+    groupIndex: number;
 
-      return (
-        <div className={join(ICSS.display.flex, ICSS.alignItems.center)}>
-          <ExpanderIcon
-            expanded={!enhancedData.collapsed}
-            onChange={() => {
-              toggleGroupRow(enhancedData.groupKeys!);
-            }}
-          />
-          <div className={cssEllipsisClassName}>{value ?? null}</div>
-        </div>
-      );
-    },
+    groupBy: DataSourceGroupRowsBy<T>;
+    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+  },
+  toggleGroupRow: (groupRowKeys: any[]) => void,
+  groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
+): InfiniteTableGeneratedGroupColumn<T> {
+  const { groupBy, groupIndex, groupRenderStrategy } = options;
+
+  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
+    header: `Group by ${groupBy.field}`,
+    groupByField: groupBy.field as string,
+    sortable: false,
+    render: getGroupColumnRender({
+      groupIndex,
+      toggleGroupRow,
+      groupRenderStrategy,
+    }),
     ...groupBy.column,
   };
 

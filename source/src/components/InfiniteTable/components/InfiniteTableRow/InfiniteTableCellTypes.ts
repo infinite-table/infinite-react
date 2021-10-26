@@ -26,8 +26,10 @@ export interface InfiniteTableColumnCellProps<T>
   extends Omit<InfiniteTableCellProps<T>, 'children'> {
   virtualized: boolean;
   enhancedData: InfiniteTableEnhancedData<T>;
+  getData: () => InfiniteTableEnhancedData<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndex: number;
+  rowHeight: number;
 }
 
 export interface InfiniteTableHeaderCellProps<T>

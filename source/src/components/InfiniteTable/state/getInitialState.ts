@@ -56,6 +56,7 @@ export function getInitialState<T>(params: {
     },
     draggingColumnId: null,
     columns: props.columns,
+    computedColumns: props.columns,
     pivotColumns,
     pivotColumnGroups,
     generatedColumns,
@@ -90,6 +91,9 @@ export function getInitialState<T>(params: {
   };
 }
 
+// TODO implement something like mapPropsToState, since it's not very clear that the properties from
+// state that have the same name in props are re-synced into state when the controlled props change
+
 export function deriveReadOnlyState<T>(params: {
   props: InfiniteTableProps<T>;
   state: InfiniteTableState<T>;
@@ -117,6 +121,7 @@ export function deriveReadOnlyState<T>(params: {
     onReady: props.onReady,
     domProps: props.domProps,
     showZebraRows: props.showZebraRows ?? true,
+    showHoverRows: props.showHoverRows ?? true,
     virtualizeColumns,
     virtualizeHeader,
     header,

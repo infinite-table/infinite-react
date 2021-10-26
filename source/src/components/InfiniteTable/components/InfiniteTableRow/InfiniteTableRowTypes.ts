@@ -13,11 +13,13 @@ export interface InfiniteTableRowProps<T> {
   brain: VirtualBrain;
   domRef: React.RefCallback<HTMLElement>;
   enhancedData: InfiniteTableEnhancedData<T>;
+  getData: () => InfiniteTableEnhancedData<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   repaintId?: number | string;
 
   virtualizeColumns: boolean;
   showZebraRows?: boolean;
+  showHoverRows?: boolean;
 
   columns: InfiniteTableComputedColumn<T>[];
 

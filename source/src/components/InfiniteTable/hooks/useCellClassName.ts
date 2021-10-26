@@ -9,6 +9,9 @@ export function useCellClassName<T>(
     result.push(...baseClasses.map((c) => `${c}--first`));
   }
 
+  if (column.groupByField) {
+    result.push(...baseClasses.map((c) => `${c}--group-column`));
+  }
   if (column.computedLast) {
     result.push(...baseClasses.map((c) => `${c}--last`));
   }

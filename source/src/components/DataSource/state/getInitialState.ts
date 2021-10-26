@@ -56,6 +56,7 @@ export function getInitialState<T>(params: {
 
     aggregationReducers: undefined,
     pivotTotalColumnPosition: 'end',
+    generateGroupRows: true,
   };
 }
 

@@ -97,11 +97,12 @@ export function concludeReducer<T>(params: {
         },
         dataArray,
       );
-      const flattenResult = enhancedFlatten(
+      const flattenResult = enhancedFlatten({
         groupResult,
         toPrimaryKey,
-        state.groupRowsState,
-      );
+        groupRowsState: state.groupRowsState,
+        generateGroupRows: state.generateGroupRows,
+      });
 
       enhancedDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;

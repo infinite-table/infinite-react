@@ -1,8 +1,11 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { InfiniteTableColumn } from '..';
+import { interceptMap } from '../../..';
 import { DataSourceGroupRowsBy, GroupRowsState } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
 import { getComputedPivotColumnsFromDataSourcePivotColumns } from '../state/getComputedPivotColumnsFromDataSourcePivotColumns';
+import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
   InfiniteTableGeneratedColumns,
   InfiniteTablePropGroupColumn,
@@ -12,6 +15,7 @@ import {
 import { InfiniteTableComponentState } from '../types/InfiniteTableState';
 import {
   getColumnForGroupBy,
+  getGroupColumnRender,
   getSingleGroupColumn,
 } from '../utils/getColumnForGroupBy';
 
@@ -42,7 +46,14 @@ function getGroupRenderStrategy<T>(
   return 'multi-column';
 }
 
-export function useGeneratedGroupAndPivotColumns<T>() {
+type GroupRowsByMap<T> = Map<
+  keyof T,
+  { groupBy: DataSourceGroupRowsBy<T>; groupIndex: number }
+>;
+
+type ToggleGrouRowFn = (groupKeys: any[]) => void;
+
+export function useGroupAndPivotColumns<T>() {
   const {
     componentState: { groupRowsBy, pivotBy },
     getState: getDataSourceState,
@@ -53,6 +64,7 @@ export function useGeneratedGroupAndPivotColumns<T>() {
     getComponentState,
     componentActions,
     componentState: {
+      columns,
       groupColumn,
       groupRenderStrategy,
       pivotColumn,
@@ -62,12 +74,118 @@ export function useGeneratedGroupAndPivotColumns<T>() {
     },
   } = useComponentState<InfiniteTableComponentState<T>>();
 
-  const toggleGroupRow = useCallback((groupKeys: any[]) => {
+  const toggleGroupRow = useCallback<ToggleGrouRowFn>((groupKeys: any[]) => {
     const newState = new GroupRowsState(getDataSourceState().groupRowsState);
     newState.toggleGroupRow(groupKeys);
 
     dataSourceActions.groupRowsState = newState;
   }, []);
+
+  const groupRowsByMap = useMemo(() => {
+    return groupRowsBy.reduce((acc, groupBy, index) => {
+      acc.set(groupBy.field, {
+        groupBy,
+        groupIndex: index,
+      });
+      return acc;
+    }, new Map() as GroupRowsByMap<T>);
+  }, [groupRowsBy]);
+
+  useEffect(() => {
+    dataSourceActions.generateGroupRows = groupRenderStrategy !== 'inline';
+  }, [groupRenderStrategy]);
+
+  function updateComputedColumns(
+    columns: Map<string, InfiniteTableColumn<T>>,
+    groupRowsByMap: GroupRowsByMap<T>,
+    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
+    toggleGroupRow: ToggleGrouRowFn,
+  ) {
+    const computedColumns = new Map<string, InfiniteTableColumn<T>>();
+
+    columns.forEach((column, id) => {
+      let base: Partial<InfiniteTableGeneratedGroupColumn<T>> = {};
+      const groupByForColumn = groupRowsByMap.get(column.field!);
+      if (groupByForColumn && groupRenderStrategy === 'inline') {
+        const { groupIndex } = groupByForColumn;
+        const field = groupByForColumn.groupBy.field;
+        base = {
+          groupByField: field as string,
+          field: field,
+          valueGetter: ({ enhancedData }) => {
+            // const parents = enhancedData.parents;
+            // console.log(parents);
+            return enhancedData.groupKeys?.[groupIndex];
+          },
+          rowspan: ({ enhancedData, dataArray }) => {
+            const prevEnhancedData = dataArray[enhancedData.indexInAll - 1] || {
+              indexInParentGroups: [],
+            };
+            const prevIndexes = prevEnhancedData.indexInParentGroups! || [];
+            const currentIndexes = enhancedData.indexInParentGroups! || [];
+
+            let computeSpan = false;
+            for (let i = 0; i <= groupIndex; i++) {
+              const prev = prevIndexes[i];
+              const current = currentIndexes[i];
+
+              if (current !== prev) {
+                computeSpan = true;
+                break;
+              }
+            }
+
+            if (!computeSpan) {
+              //} || enhancedData.collapsed) {
+              return 1;
+            }
+            const parentGroup = enhancedData.parents![groupIndex];
+
+            const rowspan = parentGroup
+              ? parentGroup.groupCount -
+                (parentGroup.collapsedChildrenCount || 0) +
+                (parentGroup.collapsedGroupsCount || 0)
+              : 1;
+
+            if (column.field === 'department') {
+              console.log({ rowspan, parentGroup });
+            }
+
+            return rowspan;
+          },
+          render: getGroupColumnRender({
+            groupIndex,
+            groupRenderStrategy,
+            toggleGroupRow,
+          }),
+        };
+      }
+      const clone = { ...base, ...column } as InfiniteTableColumn<T>;
+
+      computedColumns.set(id, clone);
+    });
+
+    return computedColumns;
+  }
+
+  useEffect(() => {
+    const update = () => {
+      componentActions.computedColumns = updateComputedColumns(
+        columns,
+        groupRowsByMap,
+        groupRenderStrategy,
+        toggleGroupRow,
+      );
+    };
+
+    update();
+
+    return interceptMap(columns, {
+      set: update,
+      delete: update,
+      clear: update,
+    });
+  }, [columns, groupRowsByMap, groupRenderStrategy, toggleGroupRow]);
 
   useEffect(() => {
     const currentState = getComponentState();
@@ -142,7 +260,13 @@ export function getGeneratedGroupColumns<T>(params: {
       generatedColumns.set(
         `group-by-${groupBy.field}`,
         getColumnForGroupBy<T>(
-          { groupBy, groupRowsBy, groupIndex: index, groupCount: arr.length },
+          {
+            groupBy,
+            groupRowsBy,
+            groupIndex: index,
+            groupCount: arr.length,
+            groupRenderStrategy,
+          },
           toggleGroupRow,
           groupColumn,
         ),
@@ -160,6 +284,8 @@ export function getGeneratedGroupColumns<T>(params: {
         groupColumn,
       ),
     );
+  } else if (strategy === 'inline') {
+    // do nothing, as no generated columns
   }
 
   return generatedColumns;

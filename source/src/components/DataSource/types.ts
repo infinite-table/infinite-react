@@ -108,6 +108,7 @@ export interface DataSourceState<T> extends DataSourceDataInfo<T> {
   updatedAt: number;
   reducedAt: number;
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
+  generateGroupRows: boolean;
 }
 
 export interface DataSourceReadOnlyState<T> {

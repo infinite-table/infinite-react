@@ -29,6 +29,7 @@ export function useRowDOMProps<T>(
   rowProps: InfiniteTableComponentState<T>['rowProps'],
   rowStyle: InfiniteTableComponentState<T>['rowStyle'],
   rowClassName: InfiniteTableComponentState<T>['rowClassName'],
+  groupRenderStrategy: InfiniteTableComponentState<T>['groupRenderStrategy'],
   tableDOMRef: MutableRefObject<HTMLDivElement | null>,
 ): {
   domProps: TableRowHTMLAttributes;
@@ -37,6 +38,7 @@ export function useRowDOMProps<T>(
   const domProps = props.domProps;
   const {
     showZebraRows = false,
+    showHoverRows = false,
     rowIndex,
     domRef: domRefFromProps,
     enhancedData,
@@ -61,11 +63,20 @@ export function useRowDOMProps<T>(
 
   let style: CSSProperties | undefined = rowProps ? rowProps.style : undefined;
 
+  const inlineGroupRoot =
+    groupRenderStrategy === 'inline' && enhancedData.indexInGroup === 0;
+
   if (rowStyle) {
     style =
       typeof rowStyle === 'function'
         ? { ...style, ...rowStyle(rowPropsAndStyleArgs) }
         : { ...style, ...rowStyle };
+  }
+
+  if (inlineGroupRoot) {
+    style = style || {};
+    //TODO remove this harcoded value - should be datasource size - ...
+    style.zIndex = 2_000_000 - enhancedData.indexInAll;
   }
 
   const odd =
@@ -86,9 +97,11 @@ export function useRowDOMProps<T>(
     `${InfiniteTableRowClassName}--${
       enhancedData.isGroupRow ? 'group' : 'normal'
     }-row`,
+    inlineGroupRoot ? `${InfiniteTableRowClassName}--inline-group-row` : '',
     showZebraRows
       ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'}`
       : null,
+    showHoverRows ? `${InfiniteTableRowClassName}--show-hover` : null,
     domProps?.className,
     rowProps?.className,
     rowComputedClassName,
@@ -105,7 +118,7 @@ export function useRowDOMProps<T>(
 
       const parentNode = tableDOMRef.current;
 
-      if (!parentNode) {
+      if (!parentNode || !showHoverRows) {
         return;
       }
 
@@ -116,7 +129,7 @@ export function useRowDOMProps<T>(
         row.classList.add(InfiniteTableRowClassName__hover),
       );
     },
-    [initialMouseEnter],
+    [initialMouseEnter, showHoverRows],
   );
 
   const onMouseLeave = useCallback(
@@ -127,7 +140,7 @@ export function useRowDOMProps<T>(
 
       const parentNode = tableDOMRef.current;
 
-      if (!parentNode) {
+      if (!parentNode || !showHoverRows) {
         return;
       }
 
@@ -138,7 +151,7 @@ export function useRowDOMProps<T>(
         row.classList.remove(InfiniteTableRowClassName__hover),
       );
     },
-    [initialMouseLeave],
+    [initialMouseLeave, showHoverRows],
   );
 
   return {

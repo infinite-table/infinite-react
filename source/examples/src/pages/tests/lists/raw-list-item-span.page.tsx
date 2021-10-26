@@ -9,7 +9,12 @@ const brain = new VirtualBrain({
 });
 
 (globalThis as any).brain = brain;
+
 brain.setAvailableSize({ height: 100, width: 0 });
+
+const itemSpan = ({ itemIndex }: { itemIndex: number }) => {
+  return itemIndex % 5 === 0 ? 2 : 1;
+};
 
 const renderItem: RenderItem = ({ itemIndex, domRef }) => {
   return (
@@ -28,7 +33,11 @@ const renderItem: RenderItem = ({ itemIndex, domRef }) => {
 const App = () => {
   return (
     <div>
-      <RawList brain={brain} renderItem={renderItem}></RawList>
+      <RawList
+        brain={brain}
+        renderItem={renderItem}
+        itemSpan={itemSpan}
+      ></RawList>
     </div>
   );
 };

@@ -35,9 +35,12 @@ export interface InfiniteTableEnhancedData<T> {
   value?: any;
   isGroupRow?: boolean;
   collapsed: boolean;
+  collapsedChildrenCount?: number;
+  collapsedGroupsCount?: number;
   groupNesting?: number;
   groupKeys?: any[];
-  parentGroupKeys?: any[];
+  parents?: InfiniteTableEnhancedGroupData<T>[];
+  indexInParentGroups?: number[];
   indexInGroup: number;
   indexInAll: number;
   groupCount?: number;
@@ -52,6 +55,8 @@ export interface InfiniteTableEnhancedGroupData<T>
   groupData: T[];
   value: any;
   isGroupRow: true;
+  collapsedChildrenCount: number;
+  collapsedGroupsCount: number;
   groupNesting: number;
   groupKeys?: any[];
   groupCount: number;
@@ -327,6 +332,8 @@ type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
   collapsed: boolean;
+  parents: InfiniteTableEnhancedGroupData<DataType>[];
+  indexInParentGroups: number[];
   indexInGroup: number;
   indexInAll: number;
 };
@@ -335,7 +342,7 @@ function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
   deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupBy, groupKeys, collapsed } = options;
+  const { groupBy, groupKeys, collapsed, parents } = options;
   const groupNesting = groupKeys.length;
   const { items: groupItems, reducerResults, pivotDeepMap } = deepMapValue;
 
@@ -346,6 +353,10 @@ function getEnhancedGroupData<DataType>(
     groupKeys,
     id: groupKeys,
     collapsed,
+    parents,
+    collapsedChildrenCount: 0,
+    collapsedGroupsCount: 0,
+    indexInParentGroups: options.indexInParentGroups,
     indexInGroup: options.indexInGroup,
     indexInAll: options.indexInAll,
     value: groupKeys[groupKeys.length - 1],
@@ -375,11 +386,17 @@ function completeReducers<DataType>(
   return reducerResults;
 }
 
+export type EnhancedFlattenParam<DataType, KeyType = any> = {
+  groupResult: DataGroupResult<DataType, KeyType>;
+  toPrimaryKey: (data: DataType) => any;
+  groupRowsState?: GroupRowsState;
+  generateGroupRows: boolean;
+};
 export function enhancedFlatten<DataType, KeyType = any>(
-  groupResult: DataGroupResult<DataType, KeyType>,
-  toPrimaryKey: (data: DataType) => any,
-  groupRowsState?: GroupRowsState,
+  param: EnhancedFlattenParam<DataType, KeyType>,
 ): { data: InfiniteTableEnhancedData<DataType>[] } {
+  const { groupResult, toPrimaryKey, groupRowsState, generateGroupRows } =
+    param;
   const { groupParams, deepMap, pivot } = groupResult;
   const { groupBy } = groupParams;
 
@@ -388,6 +405,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const result: InfiniteTableEnhancedData<DataType>[] = [];
 
   const parents: InfiniteTableEnhancedGroupData<DataType>[] = [];
+  const indexInParentGroups: number[] = [];
 
   deepMap.visitDepthFirst(
     (deepMapValue, groupKeys: any[], indexInGroup, next?: () => void) => {
@@ -396,11 +414,14 @@ export function enhancedFlatten<DataType, KeyType = any>(
       const groupNesting = groupKeys.length;
 
       const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
+
       const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> =
         getEnhancedGroupData(
           {
             groupBy: groupByStrings,
+            parents: Array.from(parents),
             indexInGroup,
+            indexInParentGroups: Array.from(indexInParentGroups),
             indexInAll: result.length,
             groupKeys,
             collapsed,
@@ -408,14 +429,26 @@ export function enhancedFlatten<DataType, KeyType = any>(
           deepMapValue,
         );
 
-      result.push(enhancedGroupData);
+      const include = generateGroupRows || collapsed;
+      if (include) {
+        result.push(enhancedGroupData);
+      }
+
+      if (collapsed) {
+        parents.forEach((parent) => {
+          parent.collapsedChildrenCount += enhancedGroupData.groupCount;
+          parent.collapsedGroupsCount += 1;
+        });
+      }
+
+      indexInParentGroups.push(indexInGroup);
       parents.push(enhancedGroupData);
 
-      // todo continue here indexInAll
       if (!collapsed) {
         if (!next) {
           if (!pivot) {
             const startIndex = result.length;
+
             result.push(
               ...items.map((item, index) => {
                 return {
@@ -423,11 +456,15 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   data: item,
                   isGroupRow: false,
                   collapsed: false,
-                  parentGroupKeys: groupKeys,
+                  groupKeys,
+
+                  parents: Array.from(parents),
+                  indexInParentGroups: [...indexInParentGroups, index],
                   indexInGroup: index,
                   indexInAll: startIndex + index,
                   groupBy: groupByStrings,
                   groupNesting,
+                  groupCount: enhancedGroupData.groupCount,
                 };
               }),
             );
@@ -437,6 +474,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
         }
       }
       parents.pop();
+      indexInParentGroups.pop();
     },
   );
 

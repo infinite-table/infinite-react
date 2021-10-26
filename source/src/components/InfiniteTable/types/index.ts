@@ -23,7 +23,7 @@ import type {
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
-  InfiniteTableColumnRenderParams,
+  InfiniteTableColumnRenderParam,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -40,7 +40,7 @@ export type {
   InfiniteTableColumnGroup,
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
-  InfiniteTableColumnRenderParams,
+  InfiniteTableColumnRenderParam,
   InfiniteTableContextValue,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropColumnAggregations,

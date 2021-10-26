@@ -37,7 +37,7 @@ type ListRenderingParam<T> = {
 
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
-import type { VirtualBrain } from '../../VirtualBrain';
+import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 import { GroupRowsState } from '../../DataSource';
 
 type ListRenderingResult = {
@@ -76,6 +76,7 @@ export function useListRendering<T>(
     computedUnpinnedColumnsWidth,
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,
+    computedVisibleColumns,
   } = computed;
 
   const { componentState: dataSourceState, getState: getDataSourceState } =
@@ -102,6 +103,39 @@ export function useListRendering<T>(
   }
   const repaintId = repaintIdRef.current;
 
+  const rowSpan = useMemo<VirtualBrainOptions['itemSpan']>(() => {
+    const colsWithRowspan = computedVisibleColumns.filter(
+      (col) => typeof col.rowspan === 'function',
+    );
+
+    return colsWithRowspan.length
+      ? ({ itemIndex }) => {
+          let maxSpan = 1;
+          const dataArray = getData();
+          const enhancedData = dataArray[itemIndex];
+          const data = enhancedData.data;
+
+          colsWithRowspan.forEach((column) => {
+            if (!column.rowspan) {
+              return;
+            }
+            const span = column.rowspan({
+              column,
+              data,
+              dataArray,
+              enhancedData,
+              rowIndex: itemIndex,
+            });
+
+            if (span > maxSpan) {
+              maxSpan = span;
+            }
+          });
+          return maxSpan;
+        }
+      : undefined;
+  }, [computedVisibleColumns]);
+
   const { horizontalVirtualBrain, verticalVirtualBrain } = useYourBrain({
     computedPinnedStartWidth: computed.computedPinnedStartWidth,
     computedPinnedEndWidth: computed.computedPinnedEndWidth,
@@ -109,6 +143,7 @@ export function useListRendering<T>(
     rowHeight,
     dataArray,
     bodySize,
+    rowSpan,
   });
 
   const hasHorizontalScrollbar =

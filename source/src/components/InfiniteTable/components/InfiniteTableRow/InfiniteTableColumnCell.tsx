@@ -4,6 +4,7 @@ import type {
   InfiniteTableColumnWithRender,
   InfiniteTableColumnWithField,
   InfiniteTableColumnStyleFnParams,
+  InfiniteTableColumnRenderParam,
 } from '../../types/InfiniteTableColumn';
 
 import type { Renderable } from '../../../types/Renderable';
@@ -38,13 +39,19 @@ function isColumnWithRender<T>(
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     enhancedData,
+    getData,
     column,
     offsetProperty,
     toggleGroupRow,
     virtualized,
     rowIndex,
+    rowHeight,
     domRef,
   } = props;
+
+  if (!column) {
+    return null;
+  }
 
   const { data, isGroupRow, groupBy } = enhancedData;
   let value =
@@ -67,18 +74,22 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     data,
   };
 
-  let renderValue: Renderable = isColumnWithRender(column)
-    ? column.render({
-        value,
-        column,
-        enhancedData,
-        data,
-        rowIndex,
-        toggleGroupRow,
-        toggleCurrentGroupRow: () => toggleGroupRow(enhancedData.groupKeys!),
-        groupRowsBy: computedDataSource.groupRowsBy,
-      })
-    : value;
+  let renderValue: Renderable = value;
+
+  if (isColumnWithRender(column)) {
+    const renderParam: InfiniteTableColumnRenderParam<T> = {
+      value,
+      column,
+      enhancedData,
+      data,
+      rowIndex,
+      toggleGroupRow,
+      toggleCurrentGroupRow: () => toggleGroupRow(enhancedData.groupKeys!),
+      groupRowsBy: computedDataSource.groupRowsBy,
+    };
+
+    renderValue = column.render(renderParam);
+  }
 
   const colClassName: undefined | string = column.className
     ? typeof column.className === 'function'
@@ -100,6 +111,20 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     : {
         width: column.computedWidth,
       };
+
+  if (typeof column.rowspan === 'function') {
+    const rowspan = column.rowspan({
+      dataArray: getData(),
+      column,
+      enhancedData,
+      rowIndex,
+      data: enhancedData.data,
+    });
+
+    if (rowspan > 1) {
+      style.height = rowspan * rowHeight;
+    }
+  }
 
   return (
     <InfiniteTableCell<T>

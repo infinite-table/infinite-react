@@ -18,7 +18,7 @@ function InfiniteTableRowFn<T>(
   const {
     rowWidth,
     rowHeight,
-
+    getData,
     enhancedData,
     toggleGroupRow,
     rowIndex,
@@ -36,6 +36,8 @@ function InfiniteTableRowFn<T>(
     componentState.rowProps,
     componentState.rowStyle,
     componentState.rowClassName,
+    componentState.groupRenderStrategy,
+
     tableDOMRef,
   );
 
@@ -55,8 +57,10 @@ function InfiniteTableRowFn<T>(
       }
       return (
         <InfiniteTableColumnCell<T>
+          getData={getData}
           enhancedData={enhancedData}
           virtualized
+          rowHeight={rowHeight}
           toggleGroupRow={toggleGroupRow}
           rowIndex={rowIndex}
           domRef={domRef}
@@ -64,7 +68,7 @@ function InfiniteTableRowFn<T>(
         />
       );
     },
-    [columns, rowIndex, enhancedData], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
+    [columns, rowIndex, enhancedData, rowHeight, getData], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
   );
 
   if (renderCellRef.current !== renderCell) {

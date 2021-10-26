@@ -65,6 +65,10 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
     getState,
   };
 
+  if (__DEV__) {
+    (globalThis as any).getDataSourceState = getState;
+  }
+
   useLoadData();
 
   return (

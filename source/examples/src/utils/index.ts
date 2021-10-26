@@ -80,3 +80,24 @@ export const getHeaderColumnIds = async () => {
 
   return result;
 };
+
+const COL_GROUP_SELECTOR = '[data-group-id]';
+export async function getColumnGroupNodes() {
+  return await page.$$(COL_GROUP_SELECTOR);
+}
+
+export async function getColumnGroupNodeForGroup(groupId: string) {
+  return await page.$$eval(
+    COL_GROUP_SELECTOR,
+    (nodes, groupId) =>
+      [...nodes].filter(
+        (node) => (node as HTMLElement).dataset.groupId === groupId,
+      ),
+    groupId,
+  );
+}
+export async function getColumnGroupsIds() {
+  return await page.$$eval(COL_GROUP_SELECTOR, (nodes) =>
+    [...nodes].map((node) => (node as HTMLElement).dataset.groupId),
+  );
+}

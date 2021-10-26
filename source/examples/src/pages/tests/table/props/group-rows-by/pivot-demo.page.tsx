@@ -104,23 +104,23 @@ export default function GroupByExample() {
               columnDefaultWidth={200}
               pivotTotalColumnPosition="start"
               groupRenderStrategy="single-column"
-              pivotRowLabelsColumn={{
-                style: {
-                  color: 'red',
-                },
-                renderValue: ({ value }) => <b>{value}!</b>,
-              }}
-              pivotColumn={{
-                width: 300,
-                style: ({ value }: { value: number }) => {
-                  return value > 150_000 ? { color: 'magenta' } : {};
-                },
-              }}
-              groupColumn={{
-                renderValue: ({ value }) => {
-                  return <b>{value}!</b>;
-                },
-              }}
+              // pivotRowLabelsColumn={{
+              //   style: {
+              //     color: 'red',
+              //   },
+              //   renderValue: ({ value }) => <b>{value}!</b>,
+              // }}
+              // pivotColumn={{
+              //   width: 300,
+              //   style: ({ value }: { value: number }) => {
+              //     return value > 150_000 ? { color: 'magenta' } : {};
+              //   },
+              // }}
+              // groupColumn={{
+              //   renderValue: ({ value }) => {
+              //     return <b>{value}!</b>;
+              //   },
+              // }}
               columnAggregations={columnAggregations}
             ></InfiniteTable>
           );

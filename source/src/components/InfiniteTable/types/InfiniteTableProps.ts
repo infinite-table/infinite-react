@@ -141,7 +141,8 @@ export type PivotColumnGetterOptions<T> = {
 
 export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
-  | 'multi-column';
+  | 'multi-column'
+  | 'inline';
 export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithSize & {
     renderValue?: InfiniteTableColumnRenderFunction<T>;
@@ -202,6 +203,7 @@ export type InfiniteTableProps<T> = {
   headerHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
+  showHoverRows?: boolean;
   sortable?: boolean;
   draggableColumns?: boolean;
   header?: boolean;

@@ -307,4 +307,44 @@ export default describe('VirtualBrain', () => {
       renderEndIndex: -1,
     });
   });
+
+  it('should work correctly with itemSpan', () => {
+    /**
+     * Row index    |  Visible
+     * 0            |  0
+     * 1            |  1
+     * 2            |  2
+     * 3            |  3
+     * 4            |  3
+     * 5            |  3
+     * 6            |  6
+     * 7            |  7
+     * 8            |  7
+     * 9            |  9
+     */
+    const brain = new VirtualBrain({
+      count: 10,
+      mainAxis: 'vertical',
+      itemSize: 10,
+      itemSpan: ({ itemIndex }) => {
+        if (itemIndex === 3) {
+          return 3;
+        }
+        if (itemIndex === 7) {
+          return 2;
+        }
+        return 1;
+      },
+    });
+
+    brain.setScrollPosition({ scrollLeft: 0, scrollTop: 45 });
+    brain.setAvailableSize({ height: 30, width: 0 });
+
+    const range = brain.getRenderRange();
+
+    expect(range).toEqual({
+      renderStartIndex: 3, // it would be 4 if row with index 3 wouldn't have the rowspan
+      renderEndIndex: 7,
+    });
+  });
 });

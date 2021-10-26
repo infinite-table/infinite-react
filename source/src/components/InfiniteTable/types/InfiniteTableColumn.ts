@@ -11,7 +11,7 @@ import { CSSProperties } from 'react';
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
-export interface InfiniteTableColumnRenderParams<
+export interface InfiniteTableColumnRenderParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > {
@@ -26,6 +26,16 @@ export interface InfiniteTableColumnRenderParams<
   groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
 }
 
+export type InfiniteTableColumnRowspanFnParams<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = {
+  data: DATA_TYPE | null;
+  enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
+  dataArray: InfiniteTableEnhancedData<DATA_TYPE>[];
+  rowIndex: number;
+  column: COL_TYPE;
+};
 export interface InfiniteTableColumnHeaderRenderParams<T> {
   column: InfiniteTableComputedColumn<T>;
   columnSortInfo: DataSourceSingleSortInfo<T> | null | undefined;
@@ -45,7 +55,7 @@ export type InfiniteTableColumnRenderFunction<
   toggleCurrentGroupRow,
   enhancedData,
   groupRowsBy: groupBy,
-}: InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE>) => Renderable | null;
+}: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
   columnSortInfo,
@@ -124,6 +134,10 @@ export type InfiniteTableColumnValueGetter<
   VALUE_GETTER_TYPE = Renderable,
 > = (params: InfiniteTableColumnValueGetterParams<T>) => VALUE_GETTER_TYPE;
 
+export type InfiniteTableColumnRowspanFn<T> = (
+  params: InfiniteTableColumnRowspanFnParams<T>,
+) => number;
+
 export type InfiniteTableBaseColumn<T> = {
   maxWidth?: number;
   minWidth?: number;
@@ -143,6 +157,8 @@ export type InfiniteTableBaseColumn<T> = {
 
   style?: InfiniteTableColumnStyle<T>;
   className?: InfiniteTableColumnClassName<T>;
+
+  rowspan?: InfiniteTableColumnRowspanFn<T>;
 
   valueGetter?: InfiniteTableColumnValueGetter<T>;
 

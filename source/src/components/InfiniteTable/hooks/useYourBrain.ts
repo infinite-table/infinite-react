@@ -4,7 +4,7 @@
 import { useEffect } from 'react';
 import { useOnce } from '../../hooks/useOnce';
 import { Size } from '../../types/Size';
-import { VirtualBrain } from '../../VirtualBrain';
+import { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 import { InfiniteTableComputedColumn } from '../types';
 import { useColumnSizeFn } from './useColumnSizeFn';
 
@@ -15,6 +15,7 @@ type UseYourBrainParam<T = any> = {
   dataArray: any[];
   rowHeight: number;
   bodySize: Size;
+  rowSpan?: VirtualBrainOptions['itemSpan'];
 };
 export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
   const {
@@ -24,6 +25,7 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     computedPinnedEndWidth,
     rowHeight,
     bodySize,
+    rowSpan,
   } = param;
   const columnSize = useColumnSizeFn<T>(computedUnpinnedColumns);
 
@@ -44,6 +46,7 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
       count: dataArray.length,
       itemSize: rowHeight,
       mainAxis: 'vertical',
+      itemSpan: rowSpan,
     });
 
     return brain;
@@ -55,7 +58,7 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     // as it only uses computed.columns
     columnSize,
   );
-  verticalVirtualBrain.update(dataArray.length, rowHeight);
+  verticalVirtualBrain.update(dataArray.length, rowHeight, rowSpan);
 
   (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
 

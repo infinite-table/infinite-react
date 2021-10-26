@@ -15,6 +15,7 @@ function TableRowUnvirtualizedFn<T>(
   const {
     rowHeight,
     rowWidth,
+    getData,
     enhancedData,
     rowIndex,
     columns,
@@ -30,6 +31,7 @@ function TableRowUnvirtualizedFn<T>(
     componentState.rowProps,
     componentState.rowStyle,
     componentState.rowClassName,
+    componentState.groupRenderStrategy,
     tableDOMRef,
   );
 
@@ -44,6 +46,8 @@ function TableRowUnvirtualizedFn<T>(
       <InfiniteTableColumnCell<T>
         key={col.id}
         virtualized={false}
+        rowHeight={rowHeight}
+        getData={getData}
         toggleGroupRow={toggleGroupRow}
         enhancedData={enhancedData}
         rowIndex={rowIndex}

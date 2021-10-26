@@ -44,6 +44,7 @@ export interface InfiniteTableState<T> {
   collapsedColumnGroups: InfiniteTablePropCollapsedColumnGroups;
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
+  computedColumns: InfiniteTableProps<T>['columns'];
   columns: InfiniteTableProps<T>['columns'];
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   computedPivotColumns: InfiniteTableProps<T>['pivotColumns'];
@@ -52,8 +53,6 @@ export interface InfiniteTableState<T> {
   generatedColumns: InfiniteTableGeneratedColumns<T>;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
-
-  x?: T;
 }
 
 export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
@@ -81,6 +80,7 @@ export interface InfiniteTableReadOnlyState<T> {
   pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
   showZebraRows: InfiniteTableProps<T>['showZebraRows'];
+  showHoverRows: InfiniteTableProps<T>['showHoverRows'];
   header: InfiniteTableProps<T>['header'];
 
   columnMinWidth: InfiniteTableProps<T>['columnMinWidth'];

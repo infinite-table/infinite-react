@@ -72,11 +72,13 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
       const dataArray = getData();
       const enhancedData = dataArray[rowInfo.rowIndex];
 
-      const { showZebraRows } = getState();
+      const { showZebraRows, showHoverRows } = getState();
 
       const rowProps: InfiniteTableRowProps<T> = {
         enhancedData,
         showZebraRows,
+        showHoverRows,
+        getData,
         toggleGroupRow,
         virtualizeColumns: shouldVirtualizeColumns,
         brain: null!,

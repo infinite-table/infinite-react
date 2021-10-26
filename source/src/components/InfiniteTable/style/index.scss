@@ -145,6 +145,10 @@
   }
   border-right: var(--ITableCell__border);
 }
+.ITableRow--inline-group-row,
+.ITableRow--group-row {
+  z-index: 100;
+}
 .ITableRow--group-row.ITableRow--odd,
 .ITableRow--group-row.ITableRow--even {
   .ITableCell::before {
@@ -180,6 +184,8 @@
   will-change: transform;
   // contain: size layout;
 
+  --ITableColumnCell__background: var(--ITableRow__background);
+
   &--hover {
     --ITableRow__background: var(--ITableRow--hover__background);
     --ITableRow--odd__background: var(--ITableRow--hover__background);
@@ -191,10 +197,15 @@
 }
 
 .ITableRow--even {
-  background: var(--ITableRow__background);
+  // background: var(--ITableRow__background);
 }
 .ITableRow--odd {
-  background: var(--ITableRow--odd__background);
+  --ITableColumnCell__background: var(--ITableRow--odd__background);
+  // background: var(--ITableRow--odd__background);
+}
+
+.ITableColumnCell {
+  background: var(--ITableColumnCell__background);
 }
 
 .ITableHeaderCell__sort-icon {

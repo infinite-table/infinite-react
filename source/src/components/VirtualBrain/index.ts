@@ -20,9 +20,13 @@ export type VirtualBrainOptions = {
   mainAxis: MainAxisOptions;
   itemSize: MainAxisSize;
 
+  itemSpan?: ({ itemIndex }: { itemIndex: number }) => number;
+
   count: number;
   name?: string;
 };
+
+const ItemIndexBag = Object.seal({ itemIndex: 0 });
 
 export type MainAxisSize = number | ((itemIndex: number) => number);
 type BrainCache = number[];
@@ -43,6 +47,8 @@ export class VirtualBrain extends Logger {
   private scrollPosition: ScrollPosition = initialScrollPosition;
   private scrollPositionOnMainAxis: number = 0;
 
+  private itemSpanParent!: BrainCache;
+  private itemSpanValue!: BrainCache;
   private itemSizeCache!: BrainCache;
   private itemOffsetCache!: BrainCache;
   private options!: VirtualBrainOptions;
@@ -255,7 +261,7 @@ export class VirtualBrain extends Logger {
 
   private computeRenderRange(): RenderRange {
     const count = this.getOptions().count;
-    const renderCount = this.getRenderCount();
+    let renderCount = this.getRenderCount();
 
     if (renderCount === 0) {
       return {
@@ -270,6 +276,14 @@ export class VirtualBrain extends Logger {
     if (renderEndIndex >= count) {
       renderEndIndex = count - 1;
       renderStartIndex = renderEndIndex - renderCount + 1;
+    }
+
+    if (this.options.itemSpan) {
+      this.computeItemSpanUpTo(renderStartIndex);
+
+      while (this.itemSpanParent[renderStartIndex] != renderStartIndex) {
+        renderStartIndex--;
+      }
     }
 
     return {
@@ -318,13 +332,15 @@ export class VirtualBrain extends Logger {
   public update = (
     newCount: VirtualBrainOptions['count'],
     newItemSize: VirtualBrainOptions['itemSize'],
+    newItemSpan?: VirtualBrainOptions['itemSpan'],
   ) => {
-    const { itemSize, count } = this.options;
+    const { itemSize, count, itemSpan } = this.options;
 
     const countChange = count !== newCount;
     const itemSizeChange = itemSize !== newItemSize;
+    const itemSpanChange = itemSpan !== newItemSpan;
 
-    if (!countChange && !itemSizeChange) {
+    if (!countChange && !itemSizeChange && !itemSpanChange) {
       // this.debug(
       //   `Range (count=${count}, itemSize=${
       //     typeof itemSize === 'number' ? itemSize : 'fn'
@@ -342,6 +358,7 @@ export class VirtualBrain extends Logger {
 
     this.options.count = newCount;
     this.options.itemSize = newItemSize;
+    this.options.itemSpan = newItemSpan;
 
     const size =
       this.availableSize[
@@ -356,7 +373,7 @@ export class VirtualBrain extends Logger {
 
     //TODO this can be optimized even further
     //  since when just count changes, even if it's smaller, the cache should be kept
-    if (!itemSizeChange && countChange && newCount > count) {
+    if (!itemSizeChange && !itemSpanChange && countChange && newCount > count) {
       const currentRenderCount = this.getRenderCount();
 
       // no need to continue, since just the count grew - with the exception when the render count was zero before
@@ -392,10 +409,56 @@ export class VirtualBrain extends Logger {
   };
 
   private reset = () => {
+    this.itemSpanParent = [];
+    this.itemSpanValue = [];
     this.itemSizeCache = [];
     this.itemOffsetCache = [0];
     this.renderCount = -1;
     this.totalSize = 0;
+  };
+
+  private computeItemSpanUpTo = (itemIndex: number) => {
+    const { count, itemSpan } = this.options;
+
+    if (!itemSpan) {
+      return;
+    }
+
+    const cache = this.itemSpanParent;
+    const spanResultArr = this.itemSpanValue;
+
+    if (cache[itemIndex] === undefined) {
+      let i = cache.length;
+      let lastIndex = Math.min(itemIndex, count - 1);
+
+      for (; i <= lastIndex; i++) {
+        if (cache[i] === undefined) {
+          ItemIndexBag.itemIndex = i;
+          let spanValue = itemSpan(ItemIndexBag);
+
+          if (__DEV__ && spanValue < 1) {
+            this.debug(
+              'itemSpan cannot be less than 1 - got %d for index %d',
+              spanValue,
+              i,
+            );
+          }
+          // this is it's own span parent
+          cache[i] = i;
+          spanResultArr[i] = spanValue;
+
+          let spannedItemIndex: number = i;
+          while (spanValue > 1) {
+            spannedItemIndex += 1;
+            cache[spannedItemIndex] = i;
+            spanResultArr[spannedItemIndex] = 0;
+
+            spanValue -= 1;
+          }
+        }
+      }
+      // spanParent = this.getItemSizeCacheFor(itemIndex);
+    }
   };
 
   private computeCacheFor = (itemIndex: number) => {
@@ -424,6 +487,43 @@ export class VirtualBrain extends Logger {
     return this.itemSizeCache[itemIndex];
   }
 
+  getItemSpan = (itemIndex: number) => {
+    if (!this.options.itemSpan) {
+      return 1;
+    }
+    if (this.itemSpanValue[itemIndex] === undefined) {
+      this.computeItemSpanUpTo(itemIndex);
+    }
+    return this.itemSpanValue[itemIndex] || 1;
+  };
+
+  getItemSpanParent = (itemIndex: number) => {
+    if (!this.options.itemSpan) {
+      return itemIndex;
+    }
+    if (this.itemSpanParent[itemIndex] === undefined) {
+      this.computeItemSpanUpTo(itemIndex);
+    }
+    return this.itemSpanParent[itemIndex];
+  };
+
+  getItemSizeWithSpan = (itemIndex: number, itemSpan: number) => {
+    let itemSize = this.getItemSize(itemIndex);
+
+    while (itemSpan > 1) {
+      itemIndex += 1;
+      itemSpan -= 1;
+      itemSize += this.getItemSize(itemIndex);
+    }
+
+    return itemSize;
+  };
+
+  /**
+   * For now, this doesn't take into account the itemspan, and it's okay not to
+   * @param itemIndex
+   * @returns the size of the specified item
+   */
   getItemSize = (itemIndex: number): number => {
     const { itemSize, count } = this.options;
 

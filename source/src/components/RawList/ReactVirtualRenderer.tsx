@@ -196,9 +196,21 @@ export class ReactVirtualRenderer extends Logger {
     if (this.destroyed) {
       return;
     }
+    const itemSize = this.brain.getItemSize(itemIndex);
+    const itemSpan = this.brain.getItemSpan(itemIndex);
+    const itemSizeWithSpan =
+      itemSpan === 1
+        ? itemSize
+        : this.brain.getItemSizeWithSpan(itemIndex, itemSpan);
+
+    const spanParent = this.brain.getItemSpanParent(itemIndex);
     const renderedNode = renderItem({
+      spanParent,
       itemIndex,
-      itemSize: this.brain.getItemSize(itemIndex),
+      itemSize,
+      itemSizeWithSpan,
+      itemSpan,
+      covered: spanParent != itemIndex,
       domRef: this.itemDOMRefs[elementIndex],
     });
 

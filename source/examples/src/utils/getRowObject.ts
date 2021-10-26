@@ -12,4 +12,3 @@ export const getRowObject = async (rowIndex: number) => {
 
   return result;
 };
-export default getRowObject;

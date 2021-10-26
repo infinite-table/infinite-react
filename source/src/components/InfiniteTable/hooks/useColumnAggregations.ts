@@ -20,7 +20,7 @@ export function useColumnAggregations<T>() {
 
       const componentState = getComponentState();
       columnAggregations.forEach((aggregator, key) => {
-        const colField = componentState.columns.get(key)?.field;
+        const colField = componentState.computedColumns.get(key)?.field;
         const newAggregator = {
           getter: (data: T) => (colField ? data[colField] : data),
           ...aggregator,
