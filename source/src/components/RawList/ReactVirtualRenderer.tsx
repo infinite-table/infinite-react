@@ -191,10 +191,21 @@ export class ReactVirtualRenderer extends Logger {
     itemIndex: number,
     elementIndex = this.mappedItems.getElementIndexForItem(itemIndex) as number,
     renderItem: RenderItem,
+    swapSpanned?: boolean,
   ) {
     // needed for hot reload and react hooks executing twice in dev
     if (this.destroyed) {
       return;
+    }
+    const spanParent = this.brain.getItemSpanParent(itemIndex);
+    let covered = false;
+    if (spanParent !== itemIndex) {
+      // if (swapSpanned) {
+      //   debugger;
+      //   itemIndex = spanParent;
+      // } else {
+      covered = true;
+      // }
     }
     const itemSize = this.brain.getItemSize(itemIndex);
     const itemSpan = this.brain.getItemSpan(itemIndex);
@@ -203,14 +214,13 @@ export class ReactVirtualRenderer extends Logger {
         ? itemSize
         : this.brain.getItemSizeWithSpan(itemIndex, itemSpan);
 
-    const spanParent = this.brain.getItemSpanParent(itemIndex);
     const renderedNode = renderItem({
       spanParent,
       itemIndex,
       itemSize,
       itemSizeWithSpan,
       itemSpan,
-      covered: spanParent != itemIndex,
+      covered,
       domRef: this.itemDOMRefs[elementIndex],
     });
 

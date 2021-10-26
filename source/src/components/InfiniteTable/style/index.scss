@@ -197,15 +197,14 @@
 }
 
 .ITableRow--even {
-  // background: var(--ITableRow__background);
+  background: var(--ITableRow__background);
 }
 .ITableRow--odd {
-  --ITableColumnCell__background: var(--ITableRow--odd__background);
-  // background: var(--ITableRow--odd__background);
+  background: var(--ITableRow--odd__background);
 }
 
 .ITableColumnCell {
-  background: var(--ITableColumnCell__background);
+  background: inherit;
 }
 
 .ITableHeaderCell__sort-icon {

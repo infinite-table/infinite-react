@@ -138,6 +138,7 @@ export default function GroupByExample() {
       >
         <option value="single-column">Single column</option>
         <option value="multi-column">Multi column</option>
+        <option value="inline">Inline</option>
       </select>
       <DataSource<Employee>
         primaryKey="id"

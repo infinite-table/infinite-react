@@ -53,6 +53,7 @@ export function concludeReducer<T>(params: {
 
   const shouldGroup = groupBy.length || pivotBy;
   const groupsDepsChanged = haveDepsChanged(updated, [
+    'generateGroupRows',
     'originalDataArray',
     'groupRowsBy',
     'groupRowsState',

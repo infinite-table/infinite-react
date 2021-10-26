@@ -278,6 +278,9 @@ export class VirtualBrain extends Logger {
       renderStartIndex = renderEndIndex - renderCount + 1;
     }
 
+    //TODO we can avoid doing this expand here
+    // if the renderStartIndex row is spanned over, we only need to render the span parent instead
+    // of the current row - so big wins
     if (this.options.itemSpan) {
       this.computeItemSpanUpTo(renderStartIndex);
 
