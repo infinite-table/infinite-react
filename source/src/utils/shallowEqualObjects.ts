@@ -22,7 +22,7 @@ export function shallowEqualObjects<T extends object | null>(
     var key = aKeys[i];
 
     if (
-      objA[key] !== objB[key] ||
+      (objA as any)[key] !== (objB as any)[key] ||
       !Object.prototype.hasOwnProperty.call(objB, key)
     ) {
       return false;

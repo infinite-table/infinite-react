@@ -10,6 +10,7 @@ import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 function TableRowUnvirtualizedFn<T>(
   props: InfiniteTableRowProps<T> & {
     brain: VirtualBrain | null | undefined;
+    verticalBrain: VirtualBrain;
   },
 ) {
   const {
@@ -42,12 +43,16 @@ function TableRowUnvirtualizedFn<T>(
   };
 
   const children = columns.map((col) => {
+    // const parentIndex = verticalBrain.getItemSpanParent(rowIndex);
+    const hidden = false; //parentIndex < rowIndex;
     return (
       <InfiniteTableColumnCell<T>
         key={col.id}
         virtualized={false}
         rowHeight={rowHeight}
         getData={getData}
+        hidden={hidden}
+        groupRenderStrategy={componentState.groupRenderStrategy}
         toggleGroupRow={toggleGroupRow}
         enhancedData={enhancedData}
         rowIndex={rowIndex}

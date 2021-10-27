@@ -10,7 +10,7 @@ import { ICSS } from '../../../../style/utilities';
 import { join } from '../../../../utils/join';
 import {
   InfiniteTableRowClassName,
-  InfiniteTableRowClassName__hover,
+  InfiniteTableElement__hover,
 } from './InfiniteTableRowClassName';
 
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
@@ -23,7 +23,7 @@ export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-row-index': number;
   'data-row-id': string;
   ref: RefCallback<HTMLElement | null>;
-};
+} & any;
 
 export function useRowDOMProps<T>(
   props: InfiniteTableRowProps<T>,
@@ -111,11 +111,14 @@ export function useRowDOMProps<T>(
   const initialMouseEnter = rowProps?.onMouseEnter;
   const initialMouseLeave = rowProps?.onMouseLeave;
 
+  // const parentIndex = brain.getItemSpanParent(rowIndex);
+  // const covered = parentIndex !== rowIndex;
+
   const onMouseEnter = useCallback(
     (event) => {
       initialMouseEnter?.(event);
 
-      const rowIndex = event.currentTarget?.dataset.rowIndex;
+      const rowIndex = event.currentTarget?.dataset.rowIndex * 1;
 
       const parentNode = tableDOMRef.current;
 
@@ -123,12 +126,19 @@ export function useRowDOMProps<T>(
         return;
       }
 
-      const rows = parentNode.querySelectorAll(
+      const hoverSelector = [
         `.${InfiniteTableRowClassName}[data-hover-index="${rowIndex}"]`,
-      );
-      rows.forEach((row) =>
-        row.classList.add(InfiniteTableRowClassName__hover),
-      );
+      ];
+      // if (covered) {
+      //   debugger;
+      //   hoverSelector.push(
+      //     `.${InfiniteTableRowClassName} [data-hover-${parentIndex}]`,
+      //   );
+      // }
+
+      const rows = parentNode.querySelectorAll(hoverSelector.join(','));
+      console.log(rows);
+      rows.forEach((row) => row.classList.add(InfiniteTableElement__hover));
     },
     [initialMouseEnter, showHoverRows],
   );
@@ -145,12 +155,11 @@ export function useRowDOMProps<T>(
         return;
       }
 
-      const rows = parentNode.querySelectorAll(
+      const hoverSelector = [
         `.${InfiniteTableRowClassName}[data-hover-index="${rowIndex}"]`,
-      );
-      rows.forEach((row) =>
-        row.classList.remove(InfiniteTableRowClassName__hover),
-      );
+      ];
+      const rows = parentNode.querySelectorAll(hoverSelector.join(','));
+      rows.forEach((row) => row.classList.remove(InfiniteTableElement__hover));
     },
     [initialMouseLeave, showHoverRows],
   );
@@ -163,6 +172,8 @@ export function useRowDOMProps<T>(
       style,
       'data-virtualize-columns': props.virtualizeColumns ? 'on' : 'off',
       'data-row-index': rowIndex,
+
+      // 'data-hover-index': covered ? null : rowIndex,
       'data-hover-index': rowIndex,
       'data-row-id': `${enhancedData.id}`,
       className,

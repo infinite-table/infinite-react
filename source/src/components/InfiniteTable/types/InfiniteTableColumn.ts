@@ -19,6 +19,7 @@ export interface InfiniteTableColumnRenderParam<
   value: string | number | Renderable;
   data: DATA_TYPE | null;
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
+  groupRowEnhancedData: InfiniteTableEnhancedData<DATA_TYPE> | null;
   rowIndex: number;
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
@@ -32,6 +33,7 @@ export type InfiniteTableColumnRowspanFnParams<
 > = {
   data: DATA_TYPE | null;
   enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
+  groupRowEnhancedData: InfiniteTableEnhancedData<DATA_TYPE> | null;
   dataArray: InfiniteTableEnhancedData<DATA_TYPE>[];
   rowIndex: number;
   column: COL_TYPE;
@@ -128,6 +130,7 @@ export type InfiniteTableColumnClassName<T> =
 export type InfiniteTableColumnValueGetterParams<T> = {
   data: T | null;
   enhancedData: InfiniteTableEnhancedData<T>;
+  groupRowEnhancedData: InfiniteTableEnhancedData<T> | null;
 };
 export type InfiniteTableColumnValueGetter<
   T,

@@ -3,7 +3,10 @@ import { InfiniteTableComputedColumn } from '../..';
 
 import { Renderable } from '../../../types/Renderable';
 import { OnResizeFn } from '../../../types/Size';
-import { InfiniteTableEnhancedData } from '../../types';
+import {
+  InfiniteTableEnhancedData,
+  InfiniteTablePropGroupRenderStrategy,
+} from '../../types';
 import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
 export interface InfiniteTableCellProps<T> {
@@ -25,7 +28,9 @@ export interface InfiniteTableCellProps<T> {
 export interface InfiniteTableColumnCellProps<T>
   extends Omit<InfiniteTableCellProps<T>, 'children'> {
   virtualized: boolean;
+  hidden: boolean;
   enhancedData: InfiniteTableEnhancedData<T>;
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   getData: () => InfiniteTableEnhancedData<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndex: number;

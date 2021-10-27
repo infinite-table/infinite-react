@@ -55,6 +55,7 @@ type RenderPinnedRowParams<T> = {
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   columnsWidth: number;
   columns: InfiniteTableComputedColumn<T>[];
+  verticalBrain: VirtualBrain;
 };
 
 const UPDATE_SCROLL = (
@@ -183,7 +184,7 @@ function PinnedRowsContainer(props: PinnedRowsContainerProps) {
 }
 
 function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
-  const { getData, getState, columnsWidth, columns } = params;
+  const { getData, getState, columnsWidth, columns, verticalBrain } = params;
 
   const renderPinnedRow: RenderRow = useCallback(
     (rowInfo) => {
@@ -199,6 +200,7 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
         showHoverRows,
         toggleGroupRow: params.toggleGroupRow,
         virtualizeColumns: false,
+        verticalBrain,
         brain: null!,
         rowWidth: columnsWidth,
         columns: columns,
@@ -207,7 +209,7 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
 
       return <TableRowUnvirtualized<T> {...rowProps} />;
     },
-    [columnsWidth, columns],
+    [columnsWidth, columns, verticalBrain],
   );
 
   return renderPinnedRow;
@@ -265,6 +267,7 @@ export function usePinnedRenderingForSide<T>(
     getData,
     getState,
     toggleGroupRow,
+    verticalBrain: verticalVirtualBrain,
     columns,
     columnsWidth,
   });

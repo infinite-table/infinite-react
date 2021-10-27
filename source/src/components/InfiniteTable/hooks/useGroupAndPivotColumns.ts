@@ -138,7 +138,6 @@ export function useGroupAndPivotColumns<T>() {
             }
 
             if (!computeSpan) {
-              //} || enhancedData.collapsed) {
               return 1;
             }
             const parentGroup = enhancedData.parents![groupIndex];
@@ -148,10 +147,6 @@ export function useGroupAndPivotColumns<T>() {
                 (parentGroup.collapsedChildrenCount || 0) +
                 (parentGroup.collapsedGroupsCount || 0)
               : 1;
-
-            if (column.field === 'department') {
-              console.log({ rowspan, parentGroup });
-            }
 
             return rowspan;
           },

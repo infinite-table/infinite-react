@@ -24,51 +24,39 @@ export function getGroupColumnRender<T>({
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
     let { value, enhancedData, column } = renderOptions;
-
     if (column.renderValue) {
       value = column.renderValue(renderOptions);
     }
 
-    let collapsed = false;
-    let groupKeys = enhancedData.groupKeys!;
+    // // for groupRenderStrategy !== 'inline', we work on group rows
+    let groupRowEnhancedData =
+      groupRenderStrategy !== 'inline'
+        ? enhancedData
+        : // while for inline, we need to still work on group rows, but the current row is a data item
+          // so we go find the group row via the parents of enhanced data
+          enhancedData.parents?.[groupIndex] || enhancedData;
 
-    if (groupRenderStrategy !== 'inline') {
-      collapsed = enhancedData.collapsed;
-    } else {
-      const field = column.field;
-
-      // we can skip enhancedData, and go directly to parents
-      let current = enhancedData;
-      let parents = enhancedData.parents;
-
-      let len = parents!.length - 1;
-      if (!current) {
-        return null;
-      }
-      while (
-        current &&
-        current.groupBy![current.groupBy!.length - 1] != (field as string)
-      ) {
-        current = parents![len];
-        len--;
-        if (!current) {
-          return null;
-        }
-      }
-      groupKeys = current.groupKeys!;
-      collapsed = current.collapsed;
+    if (!groupRowEnhancedData) {
+      return null;
     }
 
+    let collapsed = groupRowEnhancedData!.collapsed;
+    let groupKeys = groupRowEnhancedData!.groupKeys!;
+
     if (groupRenderStrategy === 'inline') {
-      if (!enhancedData.isGroupRow && enhancedData.groupCount === 1) {
-        return value;
+      if (groupRowEnhancedData.groupCount === 1) {
+        return value + '';
+      }
+
+      if (groupRowEnhancedData.groupNesting === groupIndex && collapsed) {
+        return null;
       }
     } else {
-      if (!enhancedData.isGroupRow) {
+      if (!groupRowEnhancedData.isGroupRow) {
         return null;
       }
 
-      if (groupIndex + 1 !== enhancedData.groupNesting) {
+      if (groupIndex + 1 !== groupRowEnhancedData.groupNesting) {
         return null;
       }
     }

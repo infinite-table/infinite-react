@@ -24,6 +24,7 @@ function InfiniteTableRowFn<T>(
     rowIndex,
     //TODO continue here receive columnWidth from props
     brain,
+    verticalBrain,
     columns,
   } = props;
   const tableContextValue = useInfiniteTable<T>();
@@ -31,12 +32,14 @@ function InfiniteTableRowFn<T>(
   const { componentState } = tableContextValue;
   const { domRef: tableDOMRef } = componentState;
 
+  const { groupRenderStrategy } = componentState;
+
   const { domProps } = useRowDOMProps(
     props,
     componentState.rowProps,
     componentState.rowStyle,
     componentState.rowClassName,
-    componentState.groupRenderStrategy,
+    groupRenderStrategy,
 
     tableDOMRef,
   );
@@ -55,11 +58,15 @@ function InfiniteTableRowFn<T>(
       if (!column) {
         // return null;
       }
+      // const parentIndex = verticalBrain.getItemSpanParent(rowIndex);
+      const hidden = false; //parentIndex < rowIndex;
       return (
         <InfiniteTableColumnCell<T>
           getData={getData}
           enhancedData={enhancedData}
+          groupRenderStrategy={groupRenderStrategy}
           virtualized
+          hidden={hidden}
           rowHeight={rowHeight}
           toggleGroupRow={toggleGroupRow}
           rowIndex={rowIndex}
@@ -68,7 +75,15 @@ function InfiniteTableRowFn<T>(
         />
       );
     },
-    [columns, rowIndex, enhancedData, rowHeight, getData], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
+    [
+      columns,
+      rowIndex,
+      enhancedData,
+      rowHeight,
+      groupRenderStrategy,
+      getData,
+      verticalBrain,
+    ], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
   );
 
   if (renderCellRef.current !== renderCell) {

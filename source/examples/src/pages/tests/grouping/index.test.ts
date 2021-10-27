@@ -44,7 +44,7 @@ const espania = {
   name: 'espania',
 };
 
-export default describe('Grouping', () => {
+export default xdescribe('Grouping', () => {
   it('should group on single field', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
 
@@ -186,14 +186,15 @@ export default describe('Grouping', () => {
       arr,
     );
 
-    const result = enhancedFlatten(
+    const result = enhancedFlatten({
       groupResult,
-      (data) => data.id,
-      new GroupRowsState({
+      toPrimaryKey: (data) => data.id,
+      groupRowsState: new GroupRowsState({
         expandedRows: true,
         collapsedRows: [['uk']],
       }),
-    );
+      generateGroupRows: true,
+    });
 
     expect(result.data[0]).toMatchObject({
       data: null,
@@ -260,7 +261,11 @@ export default describe('Grouping', () => {
     expect(groupResult.reducerResults).toEqual([
       arr.reduce((acc, p) => acc + p.age, 0) * 100,
     ]);
-    const result = enhancedFlatten(groupResult, (data) => data.id);
+    const result = enhancedFlatten({
+      groupResult,
+      toPrimaryKey: (data) => data.id,
+      generateGroupRows: true,
+    });
 
     expect(result.data).toEqual([
       {

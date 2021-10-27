@@ -191,7 +191,7 @@ export class ReactVirtualRenderer extends Logger {
     itemIndex: number,
     elementIndex = this.mappedItems.getElementIndexForItem(itemIndex) as number,
     renderItem: RenderItem,
-    swapSpanned?: boolean,
+    // swapSpanned?: boolean,
   ) {
     // needed for hot reload and react hooks executing twice in dev
     if (this.destroyed) {

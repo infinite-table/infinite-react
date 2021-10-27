@@ -186,9 +186,10 @@
 
   --ITableColumnCell__background: var(--ITableRow__background);
 
-  &--hover {
-    --ITableRow__background: var(--ITableRow--hover__background);
-    --ITableRow--odd__background: var(--ITableRow--hover__background);
+  &.ITableElement--hover {
+    --background--hover: var(--ITableRow--hover__background);
+    // --ITableRow__background: var(--ITableRow--hover__background);
+    // --ITableRow--odd__background: var(--ITableRow--hover__background);
   }
 }
 
@@ -205,6 +206,10 @@
 
 .ITableColumnCell {
   background: inherit;
+}
+
+.ITableElement--hover {
+  background: var(--background--hover);
 }
 
 .ITableHeaderCell__sort-icon {

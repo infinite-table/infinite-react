@@ -82,6 +82,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
         toggleGroupRow,
         virtualizeColumns: shouldVirtualizeColumns,
         brain: null!,
+        verticalBrain: verticalVirtualBrain,
         columns: computedUnpinnedColumns,
         rowWidth: computedUnpinnedColumnsWidth,
         ...rowInfo,
@@ -107,6 +108,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
 
       shouldVirtualizeColumns,
       horizontalVirtualBrain,
+      verticalVirtualBrain,
     ],
   );
 

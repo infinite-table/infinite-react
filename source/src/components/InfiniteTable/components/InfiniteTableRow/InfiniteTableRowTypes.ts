@@ -11,6 +11,7 @@ export interface InfiniteTableRowProps<T> {
   rowWidth: number;
   rowIndex: number;
   brain: VirtualBrain;
+  verticalBrain: VirtualBrain;
   domRef: React.RefCallback<HTMLElement>;
   enhancedData: InfiniteTableEnhancedData<T>;
   getData: () => InfiniteTableEnhancedData<T>[];

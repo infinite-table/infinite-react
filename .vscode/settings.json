@@ -1,6 +1,7 @@
 {
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.tsdk": "./source/node_modules/typescript/lib",
   "search.exclude": {
     "source/.rts2_cache_cjs": true,
     "source/.rts2_cache_esm": true,

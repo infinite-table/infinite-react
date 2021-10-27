@@ -123,6 +123,7 @@ export function useListRendering<T>(
               column,
               data,
               dataArray,
+              groupRowEnhancedData: null,
               enhancedData,
               rowIndex: itemIndex,
             });
