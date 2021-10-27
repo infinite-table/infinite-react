@@ -31,6 +31,8 @@ export interface InfiniteTableState<T> {
   rowHeightComputed: number;
   headerHeight: number;
 
+  hideEmptyGroupColumns: boolean;
+
   columnShifts: null | number[];
   draggingColumnId: null | string;
   // viewportSize: Size;

@@ -60,6 +60,7 @@ export function getInitialState<T>(params: {
     pivotColumns,
     pivotColumnGroups,
     generatedColumns,
+    hideEmptyGroupColumns: props.hideEmptyGroupColumns ?? false,
 
     columnOrder:
       (isControlled('columnOrder', props)

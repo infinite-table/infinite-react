@@ -36,6 +36,8 @@ export function getGroupColumnRender<T>({
       collapsed = enhancedData.collapsed;
     } else {
       const field = column.field;
+
+      // we can skip enhancedData, and go directly to parents
       let current = enhancedData;
       let parents = enhancedData.parents;
 

@@ -174,6 +174,7 @@ export type InfiniteTableProps<T> = {
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
   groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
+  hideEmptyGroupColumns?: boolean;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;

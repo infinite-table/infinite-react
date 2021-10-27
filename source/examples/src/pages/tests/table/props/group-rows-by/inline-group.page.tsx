@@ -24,6 +24,7 @@ const groupRowsBy: DataSourceGroupRowsBy<Person>[] = [
   {
     field: 'team',
   },
+  // { field: 'country' },
 ];
 
 const sumReducer: InfiniteTableColumnAggregator<Person, any> = {
@@ -36,8 +37,41 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Person> = new Map(
   [['salary', sumReducer]],
 );
 
-const columns: InfiniteTablePropColumns<Person> = new Map([
-  ['department', { field: 'department' }],
+const columns: InfiniteTablePropColumns<Person> = new Map<
+  string,
+  InfiniteTableColumn<Person>
+>([
+  [
+    'department',
+    {
+      // TODO add renderValue for each column, for easy override
+      field: 'department',
+      // renderValue
+      // valueGetter: ({ enhancedData, data }) => {
+      //   const field = 'department';
+      //   let current = enhancedData;
+      //   let parents = enhancedData.parents;
+
+      //   let len = parents!.length - 1;
+      //   while (
+      //     current &&
+      //     current.groupBy![current.groupBy!.length - 1] != (field as string)
+      //   ) {
+      //     current = parents![len];
+      //     len--;
+      //     if (!current) {
+      //       break;
+      //     }
+      //   }
+
+      //   return (
+      //     <>
+      //       {data?.department} ({current?.groupCount})
+      //     </>
+      //   );
+      // },
+    },
+  ],
   // [
   //   'department1',
   //   {
@@ -100,6 +134,7 @@ export default function GroupByExample() {
           pivotTotalColumnPosition={'start'}
           columnDefaultWidth={200}
           groupColumn={groupColumn}
+          hideEmptyGroupColumns
           groupRenderStrategy={'inline'}
           // groupRenderStrategy={'multi-column'}
           columnAggregations={columnAggregations}

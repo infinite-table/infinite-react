@@ -19,6 +19,7 @@ import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
+  'data-hover-index': number;
   'data-row-index': number;
   'data-row-id': string;
   ref: RefCallback<HTMLElement | null>;
@@ -123,7 +124,7 @@ export function useRowDOMProps<T>(
       }
 
       const rows = parentNode.querySelectorAll(
-        `.${InfiniteTableRowClassName}[data-row-index="${rowIndex}"]`,
+        `.${InfiniteTableRowClassName}[data-hover-index="${rowIndex}"]`,
       );
       rows.forEach((row) =>
         row.classList.add(InfiniteTableRowClassName__hover),
@@ -145,7 +146,7 @@ export function useRowDOMProps<T>(
       }
 
       const rows = parentNode.querySelectorAll(
-        `.${InfiniteTableRowClassName}[data-row-index="${rowIndex}"]`,
+        `.${InfiniteTableRowClassName}[data-hover-index="${rowIndex}"]`,
       );
       rows.forEach((row) =>
         row.classList.remove(InfiniteTableRowClassName__hover),
@@ -162,6 +163,7 @@ export function useRowDOMProps<T>(
       style,
       'data-virtualize-columns': props.virtualizeColumns ? 'on' : 'off',
       'data-row-index': rowIndex,
+      'data-hover-index': rowIndex,
       'data-row-id': `${enhancedData.id}`,
       className,
       onMouseEnter,

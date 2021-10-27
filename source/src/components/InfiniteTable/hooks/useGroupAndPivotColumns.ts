@@ -55,7 +55,7 @@ type ToggleGrouRowFn = (groupKeys: any[]) => void;
 
 export function useGroupAndPivotColumns<T>() {
   const {
-    componentState: { groupRowsBy, pivotBy },
+    componentState: { groupRowsBy, pivotBy, groupRowsState },
     getState: getDataSourceState,
     componentActions: dataSourceActions,
   } = useDataSourceContextValue<T>();
@@ -65,6 +65,8 @@ export function useGroupAndPivotColumns<T>() {
     componentActions,
     componentState: {
       columns,
+      generatedColumns,
+      hideEmptyGroupColumns,
       groupColumn,
       groupRenderStrategy,
       pivotColumn,
@@ -207,6 +209,70 @@ export function useGroupAndPivotColumns<T>() {
       toggleGroupRow,
     });
   }, [groupRowsBy, groupColumn, groupRenderStrategy, pivotColumns]);
+
+  useEffect(() => {
+    if (groupRenderStrategy === 'single-column') {
+      return;
+    }
+
+    const groupsLength = groupRowsBy.length;
+
+    let expandedGroupsLevel = 0;
+    const { dataArray } = getDataSourceState();
+    const len = dataArray.length;
+
+    for (let i = 0; i < len; i++) {
+      const data = dataArray[i];
+
+      expandedGroupsLevel = Math.max(
+        expandedGroupsLevel,
+        data.groupNesting! - 1,
+      );
+      if (expandedGroupsLevel === groupsLength - 1) {
+        break;
+      }
+    }
+
+    const currentState = getComponentState();
+    // todo merge this into just 1 source
+    const { computedColumns, pivotColumns, generatedColumns } = currentState;
+    const columnVisibility = new Map(currentState.columnVisibility);
+    const cols =
+      pivotColumns ||
+      (groupRenderStrategy === 'multi-column'
+        ? generatedColumns
+        : computedColumns);
+
+    groupRowsBy.forEach(({ field }, index) => {
+      const colId =
+        groupRenderStrategy === 'multi-column'
+          ? `group-by-${field}`
+          : (field as string);
+
+      const col = cols.get(colId);
+
+      if (!col) {
+        return;
+      }
+      const shouldBeHidden = index > expandedGroupsLevel;
+      if (shouldBeHidden && hideEmptyGroupColumns) {
+        columnVisibility.set(colId, false);
+      } else {
+        columnVisibility.delete(colId);
+      }
+    });
+
+    componentActions.columnVisibility = columnVisibility;
+  }, [
+    getDataSourceState,
+    groupRenderStrategy,
+    generatedColumns,
+
+    groupRowsBy,
+    groupRowsByMap,
+    hideEmptyGroupColumns ? groupRowsState : null,
+    hideEmptyGroupColumns,
+  ]);
 
   useEffect(() => {
     dataSourceActions.pivotTotalColumnPosition = pivotTotalColumnPosition;
