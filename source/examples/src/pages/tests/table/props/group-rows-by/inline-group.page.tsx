@@ -23,6 +23,7 @@ const domProps = {
   },
 };
 
+const formatter = new Intl.NumberFormat();
 const groupRowsBy: DataSourceGroupRowsBy<Person>[] = [
   {
     field: 'department',
@@ -45,54 +46,6 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Person> = new Map(
   [['salary', sumReducer]],
 );
 
-// TODO add renderValue for each column, for easy override
-const columns: InfiniteTablePropColumns<Person> = new Map<
-  string,
-  InfiniteTableColumn<Person>
->([
-  [
-    'department',
-    {
-      field: 'department',
-      valueGetter: ({ enhancedData }) => {
-        const { groupBy, parents } = enhancedData;
-
-        const groupData =
-          parents?.[groupBy?.indexOf('department') ?? -1] || enhancedData;
-
-        return (
-          <>
-            {groupData?.value} ({groupData?.groupCount}), total{' '}
-            {groupData?.reducerResults?.[0]}
-          </>
-        );
-      },
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-      valueGetter: ({ enhancedData }) => {
-        const { groupBy, parents } = enhancedData;
-        const groupData =
-          parents?.[groupBy?.indexOf('team') ?? -1] || enhancedData;
-
-        return (
-          <>
-            {groupData?.value} ({groupData?.groupCount}), total{' '}
-            {groupData?.reducerResults?.[0]}
-          </>
-        );
-      },
-    },
-  ],
-  ['id', { field: 'id' }],
-  ['name', { field: 'name' }],
-  ['country', { field: 'country' }],
-  ['salary', { field: 'salary' }],
-]);
-
 // const pivotBy: DataSourcePropPivotBy<Person> = [
 //   {
 //     field: 'country',
@@ -108,7 +61,7 @@ const groupColumn = {
 };
 
 const groupRowsState = new GroupRowsState({
-  collapsedRows: [['it']],
+  collapsedRows: [['it', 'components']],
 
   expandedRows: true,
 });
@@ -124,14 +77,87 @@ export default function GroupByExample() {
     useState<InfiniteTablePropGroupRenderStrategy>('inline');
 
   const [hideEmptyGroupColumns, setHide] = useState(true);
+
+  // TODO add renderValue for each column, for easy override
+  const columns = React.useMemo(() => {
+    const columns: InfiniteTablePropColumns<Person> = new Map<
+      string,
+      InfiniteTableColumn<Person>
+    >([
+      [
+        'department',
+        {
+          field: 'department',
+          valueGetter:
+            groupRenderStrategy === 'inline'
+              ? ({ enhancedData }) => {
+                  const { groupBy, parents } = enhancedData;
+
+                  const groupData =
+                    parents?.[groupBy?.indexOf('department') ?? -1] ||
+                    enhancedData;
+
+                  return (
+                    <>
+                      {groupData?.value} ({groupData?.groupCount}), total ${' '}
+                      {formatter.format(groupData?.reducerResults?.[0])}
+                    </>
+                  );
+                }
+              : undefined,
+        },
+      ],
+      [
+        'team',
+        {
+          field: 'team',
+          valueGetter:
+            groupRenderStrategy === 'inline'
+              ? ({ enhancedData }) => {
+                  const { groupBy, parents } = enhancedData;
+                  const groupData =
+                    parents?.[groupBy?.indexOf('team') ?? -1] || enhancedData;
+
+                  return (
+                    <>
+                      {groupData?.value} ({groupData?.groupCount}), total $
+                      {formatter.format(groupData?.reducerResults?.[0])}
+                    </>
+                  );
+                }
+              : undefined,
+        },
+      ],
+      ['id', { field: 'id', width: 70 }],
+      ['name', { field: 'name', width: 100 }],
+      ['country', { field: 'country', width: 120 }],
+      [
+        'salary',
+        {
+          field: 'salary',
+          width: 200,
+          render: ({ value }) =>
+            value ? `$ ${formatter.format(value as any as number)}` : null,
+        },
+      ],
+    ]);
+    return columns;
+  }, [groupRenderStrategy]);
+
   return (
     <div style={{ fontSize: 16 }}>
       <p style={{ padding: 10 }}>
         Choose group render strategy:
-        <div style={{ display: 'flex', flexFlow: 'column' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexFlow: 'column',
+            alignItems: 'flex-start',
+          }}
+        >
           {groupOptions.map((option) => {
             return (
-              <label key={option} style={{ padding: 5 }}>
+              <label key={option} style={{ padding: 5, cursor: 'pointer' }}>
                 <input
                   onChange={(event) => {
                     const groupRenderStrategy = event.target
@@ -176,8 +202,7 @@ export default function GroupByExample() {
         <InfiniteTable<Person>
           domProps={domProps}
           columns={columns}
-          pivotTotalColumnPosition={'start'}
-          columnDefaultWidth={250}
+          columnDefaultWidth={280}
           groupColumn={groupColumn}
           hideEmptyGroupColumns={hideEmptyGroupColumns}
           groupRenderStrategy={groupRenderStrategy}

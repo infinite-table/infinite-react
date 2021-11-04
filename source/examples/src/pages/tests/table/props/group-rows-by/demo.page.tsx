@@ -127,9 +127,17 @@ export default function GroupByExample() {
   const [strategy, setStrategy] =
     useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
 
+  const groupColumn = React.useMemo(() => {
+    return {
+      renderValue: ({ value }) => {
+        return value ? <b>{value}📢</b> : null;
+      },
+    };
+  }, []);
   return (
     <>
       <select
+        title="strategy"
         value={strategy}
         onChange={(e: any) => {
           const { value } = e.target;
@@ -149,12 +157,7 @@ export default function GroupByExample() {
           domProps={domProps}
           columns={columns}
           columnDefaultWidth={200}
-          rowStyle={rowStyle}
-          groupColumn={{
-            renderValue: ({ value }) => {
-              return value ? <b>{value}📢</b> : null;
-            },
-          }}
+          groupColumn={groupColumn}
           groupRenderStrategy={strategy}
         ></InfiniteTable>
       </DataSource>

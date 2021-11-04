@@ -129,15 +129,8 @@ export function useRowDOMProps<T>(
       const hoverSelector = [
         `.${InfiniteTableRowClassName}[data-hover-index="${rowIndex}"]`,
       ];
-      // if (covered) {
-      //   debugger;
-      //   hoverSelector.push(
-      //     `.${InfiniteTableRowClassName} [data-hover-${parentIndex}]`,
-      //   );
-      // }
 
       const rows = parentNode.querySelectorAll(hoverSelector.join(','));
-      console.log(rows);
       rows.forEach((row) => row.classList.add(InfiniteTableElement__hover));
     },
     [initialMouseEnter, showHoverRows],

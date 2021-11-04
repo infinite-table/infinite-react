@@ -87,6 +87,7 @@ export default function GroupByExample() {
         primaryKey="id"
         data={dataSource}
         groupRowsBy={groupRowsBy}
+        pivotBy={[{ field: 'city' }]}
         defaultGroupRowsState={groupRowsState}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
