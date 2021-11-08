@@ -7,14 +7,20 @@ import { sortAscending } from '../../../utils/sortAscending';
 import { useCallback, useState } from 'react';
 import { useColumnAggregations } from './useColumnAggregations';
 import { useComponentState } from '../../hooks/useComponentState';
-import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
+import {
+  InfiniteTableDerivedState,
+  InfiniteTableSetupState,
+} from '../types/InfiniteTableState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
 import { useGroupAndPivotColumns } from './useGroupAndPivotColumns';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
-  const { componentActions, componentState, updateStateProperty } =
-    useComponentState<InfiniteTableState<T>, InfiniteTableReadOnlyState<T>>();
+  const { componentActions, componentState } = useComponentState<
+    InfiniteTableState<T>,
+    InfiniteTableDerivedState<T>,
+    InfiniteTableSetupState
+  >();
 
   const {
     componentActions: dataSourceActions,
@@ -25,14 +31,16 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     componentState;
 
   useState(() => {
-    componentState.onRowHeightChange.onChange((rowHeight) => {
+    componentState.onRowHeightCSSVarChange.onChange((rowHeight) => {
+      debugger;
       if (rowHeight) {
         componentActions.rowHeightComputed = rowHeight;
       }
     });
-    componentState.onHeaderHeightChange.onChange((headerHeight) => {
+    componentState.onHeaderHeightCSSVarChange.onChange((headerHeight) => {
+      console.log({ headerHeight });
       if (headerHeight) {
-        updateStateProperty('headerHeight', headerHeight);
+        componentActions.headerHeightComputed = headerHeight;
       }
     });
   });

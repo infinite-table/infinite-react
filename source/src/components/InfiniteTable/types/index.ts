@@ -1,4 +1,4 @@
-import type { InfiniteTableState } from './InfiniteTableState';
+import type { InfiniteTableDynamicState } from './InfiniteTableState';
 import type { InfiniteTableAction } from './InfiniteTableAction';
 import type { InfiniteTableActionType } from './InfiniteTableActionType';
 
@@ -45,7 +45,7 @@ export type {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
-  InfiniteTableState,
+  InfiniteTableDynamicState as InfiniteTableState,
   InfiniteTableAction,
   InfiniteTableProps,
   InfiniteTableImperativeApi,

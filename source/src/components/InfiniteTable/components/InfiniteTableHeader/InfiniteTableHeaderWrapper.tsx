@@ -36,7 +36,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   const {
     componentState: {
       virtualizeHeader,
-      headerHeight,
+      headerHeightComputed: headerHeight,
       columnGroupsMaxDepth,
       pinnedStartScrollListener,
       pinnedEndScrollListener,

@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
-    "next": "11.0.1",
+    "next": "^11.0.1",
     "puppeteer": "^8.0.0",
     "sass": "^1.26.3",
     "sinon": "^10.0.0",

@@ -22,7 +22,7 @@ function InfiniteTableRowFn<T>(
     enhancedData,
     toggleGroupRow,
     rowIndex,
-    //TODO continue here receive columnWidth from props
+    //TODO continue here?? receive columnWidth from props
     brain,
     verticalBrain,
     columns,

@@ -3,15 +3,33 @@ import { DataSourceState } from '../../DataSource';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { isControlled } from '../../utils/isControlled';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
-import { InfiniteTableProps, InfiniteTableState } from '../types';
+import {
+  InfiniteTableProps,
+  InfiniteTableState as InfiniteTableDynamicState,
+} from '../types';
 import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
-import { InfiniteTableReadOnlyState } from '../types/InfiniteTableState';
+import {
+  InfiniteTableSetupState,
+  InfiniteTableDerivedState,
+} from '../types/InfiniteTableState';
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
+export function setupState(): InfiniteTableSetupState {
+  return {
+    domRef: createRef(),
+    bodyDOMRef: createRef(),
+    portalDOMRef: createRef(),
+
+    onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
+    onHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
+  };
+}
+
+// export function initialiseState
 export function getInitialState<T>(params: {
   props: InfiniteTableProps<T>;
   parentState: DataSourceState<T>;
-}): InfiniteTableState<T> {
+}): InfiniteTableDynamicState<T> {
   const { props } = params;
 
   const columnGroups =
@@ -35,16 +53,9 @@ export function getInitialState<T>(params: {
   return {
     rowHeightComputed:
       typeof props.rowHeight === 'number' ? props.rowHeight : 0,
-    headerHeight:
+
+    headerHeightComputed:
       typeof props.headerHeight === 'number' ? props.headerHeight : 0,
-    domRef: createRef(),
-    bodyDOMRef: createRef(),
-    portalDOMRef: createRef(),
-    bodySizeRef: createRef(),
-
-    onRowHeightChange: buildSubscriptionCallback<number>(),
-    onHeaderHeightChange: buildSubscriptionCallback<number>(),
-
     bodySize: {
       width: 0,
 
@@ -95,13 +106,33 @@ export function getInitialState<T>(params: {
 // TODO implement something like mapPropsToState, since it's not very clear that the properties from
 // state that have the same name in props are re-synced into state when the controlled props change
 
-export function deriveReadOnlyState<T>(params: {
+type X = {
+  onReady: () => void;
+  showZebraRows: boolean;
+};
+
+type ForwardPropsFn<X> = () => {
+  [k in keyof X]: 1 | ((value: X[k]) => X[k]);
+};
+
+const forwardProps: ForwardPropsFn<{
+  onReady: number;
+  showZebraRows: boolean;
+}> = () => {
+  return {
+    onReady: 1,
+    showZebraRows: (value) => value ?? true,
+  };
+};
+
+export function mapPropsToState<T>(params: {
   props: InfiniteTableProps<T>;
-  state: InfiniteTableState<T>;
-  updated: Partial<InfiniteTableState<T>> | null;
+  state: InfiniteTableDynamicState<T>;
+  updatedProps: Partial<InfiniteTableProps<T>> | null;
+  updatedState: Partial<InfiniteTableDynamicState<T>> | null;
   parentState: DataSourceState<T>;
-}): InfiniteTableReadOnlyState<T> {
-  const { props, state, updated } = params;
+}): InfiniteTableDerivedState<T> {
+  const { props, state, updatedProps } = params;
   const virtualizeColumns = props.virtualizeColumns ?? true;
   const header = props.header ?? true;
   const computedColumnGroups = state.pivotColumnGroups || state.columnGroups;
@@ -111,13 +142,15 @@ export function deriveReadOnlyState<T>(params: {
     (!computedColumnGroups || computedColumnGroups?.size === 0);
 
   const columnGroupsDepthsMap =
-    updated?.columnGroups || updated?.pivotColumnGroups
+    updatedProps?.columnGroups || updatedProps?.pivotColumnGroups
       ? computeColumnGroupsDepths(computedColumnGroups)
       : state.columnGroupsDepthsMap;
 
   const pivotTotalColumnPosition = props.pivotTotalColumnPosition ?? 'end';
 
   return {
+    //todo continue from here
+
     groupColumn: props.groupColumn,
     onReady: props.onReady,
     domProps: props.domProps,
@@ -148,6 +181,20 @@ export function deriveReadOnlyState<T>(params: {
       props.licenseKey || (globalThis as any).InfiniteTableLicenseKey || '',
     rowHeightCSSVar: typeof props.rowHeight === 'string' ? props.rowHeight : '',
     headerHeightCSSVar:
-      typeof props.headerHeight === 'string' ? props.headerHeight : '',
+      typeof props.headerHeight === 'string'
+        ? props.headerHeight || '--ITableHeader__height'
+        : '',
+    // headerHeightComputed:
+    //   typeof props.headerHeight === 'number'
+    //     ? props.headerHeight
+    //     : state.headerHeightComputed,
+    rowHeightComputed:
+      typeof props.rowHeight === 'number'
+        ? props.rowHeight
+        : state.rowHeightComputed,
+    // headerHeight:
+    //   typeof props.headerHeight === 'number'
+    //     ? props.headerHeight
+    //     : state.headerHeightComputed,
   };
 }

@@ -18,19 +18,14 @@ import { MutableRefObject } from 'react';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
-export interface InfiniteTableState<T> {
+export interface InfiniteTableSetupState {
   domRef: MutableRefObject<HTMLDivElement | null>;
   bodyDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
-
-  bodySizeRef: MutableRefObject<Size | null>;
-
-  onRowHeightChange: SubscriptionCallback<number>;
-  onHeaderHeightChange: SubscriptionCallback<number>;
-
-  rowHeightComputed: number;
-  headerHeight: number;
-
+  onRowHeightCSSVarChange: SubscriptionCallback<number>;
+  onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
+}
+export interface InfiniteTableDynamicState<T> {
   hideEmptyGroupColumns: boolean;
 
   columnShifts: null | number[];
@@ -55,6 +50,8 @@ export interface InfiniteTableState<T> {
   generatedColumns: InfiniteTableGeneratedColumns<T>;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
+  rowHeightComputed: number;
+  headerHeightComputed: number;
 }
 
 export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
@@ -63,11 +60,14 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
 export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 
 export interface InfiniteTableComponentState<T>
-  extends InfiniteTableState<T>,
-    InfiniteTableReadOnlyState<T> {}
+  extends InfiniteTableDynamicState<T>,
+    InfiniteTableDerivedState<T>,
+    InfiniteTableSetupState {}
 
 export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
-export interface InfiniteTableReadOnlyState<T> {
+export interface InfiniteTableDerivedState<T> {
+  // rowHeightComputed: number;
+  // headerHeightComputed: number;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
   onReady: InfiniteTableProps<T>['onReady'];
@@ -103,5 +103,5 @@ export interface InfiniteTableReadOnlyState<T> {
 }
 
 export type InfiniteTableComponentActions<T> = ComponentStateActions<
-  InfiniteTableState<T>
+  InfiniteTableDynamicState<T>
 >;

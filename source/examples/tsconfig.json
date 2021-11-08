@@ -1,12 +1,17 @@
 {
   "extends": "../tsconfig.json",
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","../globals.d.ts"],
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../globals.d.ts"
+  ],
   "compilerOptions": {
     "strict": true,
     "alwaysStrict": true,
-    
-    
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitThis": true,
@@ -19,13 +24,28 @@
     "isolatedModules": true,
     "baseUrl": "./",
     "paths": {
-      "react": ["../../node_modules/react"],
-      "react-dom": ["../../node_modules/react-dom/profiling"],
-      "@infinite-table/infinite-react/*": ["../src/*"],
-      "@infinite-table/infinite-react": ["../src/index"],
-      "@src/*": ["../src/*"],
-      "@examples/*": ["./src/*"],
-      "@components/*": ["../src/components/*"],
-    }
+      "react": [
+        "../../node_modules/react"
+      ],
+      "react-dom": [
+        "../../node_modules/react-dom/profiling"
+      ],
+      "@infinite-table/infinite-react/*": [
+        "../src/*"
+      ],
+      "@infinite-table/infinite-react": [
+        "../src/index"
+      ],
+      "@src/*": [
+        "../src/*"
+      ],
+      "@examples/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "../src/components/*"
+      ]
+    },
+    "incremental": true
   }
 }

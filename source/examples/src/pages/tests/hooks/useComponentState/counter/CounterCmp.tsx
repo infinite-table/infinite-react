@@ -66,15 +66,11 @@ export const getReducerActions = (
 
 const CounterComponentStateRoot = getComponentStateRoot({
   //@ts-ignore
-  getInitialState,
+  getInitialState: getInitialState,
   // reducer,
   // getReducerActions,
   //@ts-ignore
-  deriveReadOnlyState: <T extends any>({
-    state,
-  }: {
-    state: CounterState<T>;
-  }) => {
+  mapPropsToState: <T extends any>({ state }: { state: CounterState<T> }) => {
     return {
       derivedValue: state.value * 10,
     };

@@ -14,7 +14,11 @@ import { internalProps } from './internalProps';
 
 import { getInfiniteTableContext } from './InfiniteTableContext';
 
-import { getInitialState, deriveReadOnlyState } from './state/getInitialState';
+import {
+  getInitialState,
+  mapPropsToState,
+  setupState,
+} from './state/getInitialState';
 
 import { useResizeObserver } from '../ResizeObserver';
 import { useInfiniteTable } from './hooks/useInfiniteTable';
@@ -41,7 +45,10 @@ import {
   getComponentStateRoot,
   useComponentState,
 } from '../hooks/useComponentState';
-import { InfiniteTableReadOnlyState } from './types/InfiniteTableState';
+import {
+  InfiniteTableSetupState,
+  InfiniteTableDerivedState,
+} from './types/InfiniteTableState';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -51,10 +58,11 @@ const ONLY_VERTICAL_SCROLLBAR = {
 };
 
 const InfiniteTableRoot = getComponentStateRoot({
+  setupState,
   //@ts-ignore
   getInitialState,
   // @ts-ignore
-  deriveReadOnlyState,
+  mapPropsToState,
   //@ts-ignore
   getParentState: () => useDataSource(),
 });
@@ -77,8 +85,8 @@ export const InfiniteTableComponent = React.memo(
       licenseKey,
 
       header,
-      onRowHeightChange,
-      onHeaderHeightChange,
+      onRowHeightCSSVarChange,
+      onHeaderHeightCSSVarChange,
       rowHeightCSSVar,
       headerHeightCSSVar,
     } = componentState;
@@ -165,13 +173,13 @@ export const InfiniteTableComponent = React.memo(
         {rowHeightCSSVar ? (
           <CSSVariableWatch
             varName={rowHeightCSSVar}
-            onChange={onRowHeightChange}
+            onChange={onRowHeightCSSVarChange}
           />
         ) : null}
         {headerHeightCSSVar ? (
           <CSSVariableWatch
             varName={headerHeightCSSVar}
-            onChange={onHeaderHeightChange}
+            onChange={onHeaderHeightCSSVarChange}
           />
         ) : null}
       </div>
@@ -181,12 +189,13 @@ export const InfiniteTableComponent = React.memo(
 function InfiniteTableContextProvider<T>() {
   const { componentActions, componentState } = useComponentState<
     InfiniteTableState<T>,
-    InfiniteTableReadOnlyState<T>
+    InfiniteTableDerivedState<T>,
+    InfiniteTableSetupState
   >();
 
   // const { pivotColumns } = dataSourceComponentState;
 
-  const { bodyDOMRef, bodySizeRef } = componentState;
+  const { bodyDOMRef } = componentState;
 
   const computed = useComputed<T>();
   const getComputed = useLatest(computed);
@@ -219,9 +228,8 @@ function InfiniteTableContextProvider<T>() {
       };
       bodySize.width = bodyDOMRef.current?.scrollWidth ?? bodySize.width;
 
-      bodySizeRef.current = bodySize;
-
       const state = getState();
+
       if (!state.virtualizeHeader) {
         componentActions.bodySize = bodySize;
         return;
@@ -234,8 +242,8 @@ function InfiniteTableContextProvider<T>() {
 
   React.useEffect(() => {
     return () => {
-      componentState.onRowHeightChange.destroy();
-      componentState.onHeaderHeightChange.destroy();
+      componentState.onRowHeightCSSVarChange.destroy();
+      componentState.onHeaderHeightCSSVarChange.destroy();
     };
   }, []);
 

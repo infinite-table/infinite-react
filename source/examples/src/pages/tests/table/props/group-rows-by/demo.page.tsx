@@ -7,12 +7,9 @@ import {
   InfiniteTable,
   DataSource,
   DataSourceGroupRowsBy,
+  InfiniteTablePropGroupRenderStrategy,
 } from '@infinite-table/infinite-react';
 
-import {
-  InfiniteTablePropGroupRenderStrategy,
-  InfiniteTablePropRowStyle,
-} from '@src/components/InfiniteTable/types/InfiniteTableProps';
 import { useState } from 'react';
 
 type Employee = {
@@ -102,34 +99,13 @@ const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
   },
 ];
 
-const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
-  data,
-  enhancedData,
-}) => {
-  const age = data?.age ?? 0;
-
-  if (enhancedData.isGroupRow) {
-    const result = {
-      background: (enhancedData.groupNesting ?? 0) > 2 ? 'green' : 'yellow',
-      testxxx: true,
-    };
-
-    return result;
-  }
-
-  return age > 30
-    ? {
-        background: 'tomato',
-      }
-    : {};
-};
 export default function GroupByExample() {
   const [strategy, setStrategy] =
     useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
 
   const groupColumn = React.useMemo(() => {
     return {
-      renderValue: ({ value }) => {
+      renderValue: ({ value }: { value: any }) => {
         return value ? <b>{value}📢</b> : null;
       },
     };

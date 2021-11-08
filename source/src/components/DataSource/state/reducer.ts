@@ -9,15 +9,16 @@ import {
 import { InfiniteTableEnhancedData } from '../../InfiniteTable';
 
 const haveDepsChanged = <StateType>(
-  updated: Partial<StateType> | null,
-
+  state1: StateType,
+  state2: StateType,
   deps: (keyof StateType)[],
 ) => {
-  if (!updated) {
-    return false;
-  }
-  for (var i = 0, len = deps.length; i < len; i++) {
-    if (updated.hasOwnProperty(deps[i])) {
+  for (let i = 0, len = deps.length; i < len; i++) {
+    const k = deps[i];
+    const oldValue = (state1 as any)[k];
+    const newValue = (state2 as any)[k];
+
+    if (oldValue !== newValue) {
       return true;
     }
   }
@@ -37,11 +38,11 @@ export function concludeReducer<T>(params: {
   state: DataSourceState<T> & DataSourceReadOnlyState<T>;
   updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null;
 }) {
-  const { state, previousState, updated } = params;
+  const { state, previousState } = params;
   const sortInfo = state.sortInfo;
   const shouldSort = sortInfo?.length;
 
-  const sortDepsChanged = haveDepsChanged(updated, [
+  const sortDepsChanged = haveDepsChanged(previousState, state, [
     'originalDataArray',
     'sortInfo',
   ]);
@@ -52,7 +53,7 @@ export function concludeReducer<T>(params: {
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length || pivotBy;
-  const groupsDepsChanged = haveDepsChanged(updated, [
+  const groupsDepsChanged = haveDepsChanged(previousState, state, [
     'generateGroupRows',
     'originalDataArray',
     'groupRowsBy',

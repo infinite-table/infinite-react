@@ -14,7 +14,7 @@ import { useDataSource } from './publicHooks/useDataSource';
 
 import { useLoadData } from './privateHooks/useLoadData';
 
-import { deriveReadOnlyState, getInitialState } from './state/getInitialState';
+import { mapPropsToState, getInitialState } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 
 import {
@@ -47,7 +47,7 @@ const DataSourceRoot = getComponentStateRoot({
   //@ts-ignore
   concludeReducer,
   //@ts-ignore
-  deriveReadOnlyState,
+  mapPropsToState,
 });
 
 function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {

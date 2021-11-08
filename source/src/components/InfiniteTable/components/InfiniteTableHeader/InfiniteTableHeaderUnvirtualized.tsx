@@ -42,7 +42,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
 
       columnGroupsDepthsMap,
       columnGroupsMaxDepth,
-      headerHeight,
+      headerHeightComputed: headerHeight,
     },
     computed: { computedVisibleColumnsMap: columnsMap },
   } = useInfiniteTable<T>();

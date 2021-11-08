@@ -60,10 +60,9 @@ export function getInitialState<T>(params: {
   };
 }
 
-export function deriveReadOnlyState<T extends any>(params: {
+export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
   state: DataSourceState<T>;
-  updated: Partial<DataSourceState<T>> | null;
 }): DataSourceReadOnlyState<T> {
   const { props, state } = params;
 

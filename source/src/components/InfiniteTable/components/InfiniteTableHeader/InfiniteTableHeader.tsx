@@ -30,7 +30,7 @@ function InfiniteTableHeaderFn<T>(
   const { repaintId, brain, columns, style, className } = props;
   const {
     computed,
-    componentState: { headerHeight },
+    componentState: { headerHeightComputed: headerHeight },
   } = useInfiniteTable<T>();
 
   const { computedVisibleColumnsMap } = computed;
