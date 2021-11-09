@@ -1,8 +1,8 @@
 import type { Renderable } from '../../types/Renderable';
 import type {
-  DataSourceComponentState,
   DataSourcePivotBy,
   DataSourceSingleSortInfo,
+  DataSourceState,
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableEnhancedData } from '.';
@@ -24,7 +24,7 @@ export interface InfiniteTableColumnRenderParam<
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
-  groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
+  groupRowsBy: DataSourceState<DATA_TYPE>['groupRowsBy'];
 }
 
 export type InfiniteTableColumnRowspanFnParams<

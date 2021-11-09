@@ -1,17 +1,17 @@
-import { getFnCalls } from '../testUtils';
+import { getFnCalls } from '../../../testUtils/getFnCalls';
 
-const getCalls = getFnCalls('onSortInfoChange');
+const getCalls = getFnCalls('onLoadingChange');
 
-export default describe('hooks.useProperty - uncontrolled sortInfo', () => {
+export default describe('hooks.useProperty - controlled boolean', () => {
   beforeAll(async () => {
-    await page.goto(`${process.env.BASEURL}/hooks/useProperty/sortInfo/uncontrolled-sortinfo
+    await page.goto(`${process.env.BASEURL}/hooks/useComponentState/loader/controlled-loading
     `);
   });
   beforeEach(async () => {
     await page.reload();
   });
 
-  it('should work correctly for uncontrolled - outside changes should not change state or trigger onSortInfoChange', async () => {
+  it('should work correctly for controlled - outside changes should not trigger onLoadingChange', async () => {
     let calls = await getCalls();
 
     expect(calls.length).toEqual(0);
@@ -27,20 +27,21 @@ export default describe('hooks.useProperty - uncontrolled sortInfo', () => {
     expect(calls.length).toEqual(0);
   });
 
-  it('should work correctly for uncontrolled - inner changes should trigger onSortInfoChange', async () => {
+  it('should work correctly for controlled - inner changes should trigger onLoadingChange', async () => {
     let calls = await getCalls();
+
     expect(calls.length).toEqual(0);
 
     await page.click('#inner');
 
     calls = await getCalls();
     expect(calls.length).toEqual(1);
-    expect(calls[0].args).toEqual([[{ dir: -1, field: 'age' }]]);
+    expect(calls[0].args).toEqual([true]);
 
     await page.click('#inner');
 
     calls = await getCalls();
     expect(calls.length).toEqual(2);
-    expect(calls[1].args).toEqual([[{ dir: 1, field: 'age' }]]);
+    expect(calls[1].args).toEqual([false]);
   });
 });

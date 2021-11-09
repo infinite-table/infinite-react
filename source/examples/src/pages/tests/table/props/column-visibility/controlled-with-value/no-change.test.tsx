@@ -1,5 +1,5 @@
 import { InfiniteTableImperativeApi } from '@infinite-table/infinite-react';
-import { getHeaderColumnIds } from '../../../../../../utils';
+import { getHeaderColumnIds } from '../../../../testUtils';
 import { columns } from '../columns';
 
 const cols = Array.from(columns.keys()).filter((x) => x != 'year');

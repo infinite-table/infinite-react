@@ -1,6 +1,7 @@
 import { DataSourceSingleSortInfo } from '@infinite-table/infinite-react';
 import { ElementHandle } from 'puppeteer';
-import { getColumnCells, getGlobalFnCalls } from '../../../../../utils';
+import { getColumnCells, getGlobalFnCalls } from '../../../testUtils';
+import { getRowSelector } from '../../../testUtils/getRowElement';
 import { getOrders, mapToString, multisort, Order } from './getOrders';
 const orders = getOrders();
 
@@ -15,10 +16,10 @@ export default describe('Table', () => {
 
   beforeEach(async () => {
     await page.reload();
+    await page.waitForSelector(getRowSelector(0));
   });
 
   it('uncontrolled sortInfo should work fine', async () => {
-    await page.waitForTimeout(50);
     const { headerCell, bodyCells } = await getColumnCells('itemCount');
 
     let values = await Promise.all(

@@ -1,6 +1,6 @@
 import { CarSale } from '@examples/datasets/CarSale';
 
-import { getCellText } from '../../../../../utils';
+import { getCellText } from '../../../testUtils';
 
 export default describe('Table', () => {
   beforeAll(async () => {

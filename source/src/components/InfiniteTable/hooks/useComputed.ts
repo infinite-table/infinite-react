@@ -7,20 +7,13 @@ import { sortAscending } from '../../../utils/sortAscending';
 import { useCallback, useState } from 'react';
 import { useColumnAggregations } from './useColumnAggregations';
 import { useComponentState } from '../../hooks/useComponentState';
-import {
-  InfiniteTableDerivedState,
-  InfiniteTableSetupState,
-} from '../types/InfiniteTableState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
 import { useGroupAndPivotColumns } from './useGroupAndPivotColumns';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
-  const { componentActions, componentState } = useComponentState<
-    InfiniteTableState<T>,
-    InfiniteTableDerivedState<T>,
-    InfiniteTableSetupState
-  >();
+  const { componentActions, componentState } =
+    useComponentState<InfiniteTableState<T>>();
 
   const {
     componentActions: dataSourceActions,
@@ -32,15 +25,13 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   useState(() => {
     componentState.onRowHeightCSSVarChange.onChange((rowHeight) => {
-      debugger;
       if (rowHeight) {
-        componentActions.rowHeightComputed = rowHeight;
+        componentActions.rowHeight = rowHeight;
       }
     });
     componentState.onHeaderHeightCSSVarChange.onChange((headerHeight) => {
-      console.log({ headerHeight });
       if (headerHeight) {
-        componentActions.headerHeightComputed = headerHeight;
+        componentActions.headerHeight = headerHeight;
       }
     });
   });
@@ -53,12 +44,11 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   useGroupAndPivotColumns<T>();
 
-  const setSortInfo = useCallback(
-    (sortInfo: DataSourceSingleSortInfo<T>[]) => {
-      dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
-    },
-    [multiSort],
-  );
+  const setSortInfo = useCallback((sortInfo: DataSourceSingleSortInfo<T>[]) => {
+    //@ts-ignore
+    dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
+    // dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
+  }, []);
 
   const columns =
     componentState.computedPivotColumns || componentState.computedColumns;
@@ -90,7 +80,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
     sortable: componentState.sortable,
     draggableColumns: componentState.draggableColumns,
-    sortInfo: dataSourceState.sortInfo,
+    sortInfo: dataSourceState.sortInfo ?? undefined,
     multiSort,
     setSortInfo,
 

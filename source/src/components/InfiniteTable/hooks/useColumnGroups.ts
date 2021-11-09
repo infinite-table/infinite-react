@@ -4,7 +4,7 @@ import { useComponentState } from '../../hooks/useComponentState';
 import { interceptMap } from '../../hooks/useInterceptedMap';
 
 import { computeColumnGroupsDepths } from '../state/computeColumnGroupsDepths';
-import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableState } from '../types/InfiniteTableState';
 import { rafFn } from '../utils/rafFn';
 
 export function useColumnGroups<T>() {
@@ -15,7 +15,7 @@ export function useColumnGroups<T>() {
     },
     componentActions,
     getComponentState,
-  } = useComponentState<InfiniteTableComponentState<T>>();
+  } = useComponentState<InfiniteTableState<T>>();
 
   useEffect(() => {
     const recompute = () => {

@@ -1,4 +1,4 @@
-import { getHeaderColumnIds } from '../../../../../../utils';
+import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default describe('Column order uncontrolled without any defaultValue', () => {
   beforeAll(async () => {

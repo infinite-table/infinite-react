@@ -1,8 +1,8 @@
 import {
   InfiniteTableColumnGroup,
   InfiniteTableComputedColumn,
+  InfiniteTableState,
 } from '../../types';
-import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
 
 export type ColGroupTreeBaseItem = {
   id: string;
@@ -40,8 +40,8 @@ export type ColGroupTreeItem<T> =
 
 export function buildColumnAndGroupTree<T>(
   columns: InfiniteTableComputedColumn<T>[],
-  columnGroups: InfiniteTableComponentState<T>['columnGroups'],
-  columnGroupsDepthsMap: InfiniteTableComponentState<T>['columnGroupsDepthsMap'],
+  columnGroups: InfiniteTableState<T>['columnGroups'],
+  columnGroupsDepthsMap: InfiniteTableState<T>['columnGroupsDepthsMap'],
 ): ColGroupTreeItem<T>[] {
   /*
    * this is basically a tree with multiple top-level nodes

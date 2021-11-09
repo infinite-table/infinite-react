@@ -1,5 +1,6 @@
 import { ElementHandle } from 'puppeteer';
-import { getColumnCells } from '../../../../../utils';
+import { getColumnCells } from '../../../testUtils';
+import { getRowSelector } from '../../../testUtils/getRowElement';
 import { getOrders, multisort } from './getOrders';
 
 const orders = getOrders();
@@ -13,6 +14,7 @@ export default describe('Table', () => {
 
   beforeEach(async () => {
     await page.reload();
+    await page.waitForSelector(getRowSelector(0));
   });
 
   it('controlled sortInfo should work properly', async () => {

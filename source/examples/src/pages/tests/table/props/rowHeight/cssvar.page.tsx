@@ -116,38 +116,47 @@ const domProps = {
     position: 'relative',
   } as React.CSSProperties,
 };
+
+const sinon = require('sinon');
+
+const onRowHeightChange = sinon.spy((_rowHeight: number) => {});
+
+(globalThis as any).onRowHeightChange = onRowHeightChange;
 export default function DataTestPage() {
   const [rowHeight, setRowHeight] = React.useState(40);
   return (
     <React.StrictMode>
-      Current row height: {rowHeight}
-      <br />
-      Press buttons below to increment/decrement row height by 10
-      <div style={{ display: 'flex', flexFlow: 'row' }}>
-        <button
-          data-name="up"
-          onClick={() => {
-            setRowHeight((rowHeight) => rowHeight + 10);
-          }}
-        >
-          UP
-        </button>
-        <button
-          data-name="down"
-          onClick={() => {
-            setRowHeight((rowHeight) => rowHeight - 10);
-          }}
-        >
-          DOWN
-        </button>
+      <div style={{ '--rh': `${rowHeight}px` } as React.CSSProperties}>
+        Current row height (VIA CSS VAR --rh): {rowHeight}
+        <br />
+        Press buttons below to increment/decrement row height by 10
+        <div style={{ display: 'flex', flexFlow: 'row' }}>
+          <button
+            data-name="up"
+            onClick={() => {
+              setRowHeight((rowHeight) => rowHeight + 10);
+            }}
+          >
+            UP
+          </button>
+          <button
+            data-name="down"
+            onClick={() => {
+              setRowHeight((rowHeight) => rowHeight - 10);
+            }}
+          >
+            DOWN
+          </button>
+        </div>
+        <DataSource<CarSale> data={carsales} primaryKey="id">
+          <InfiniteTable<CarSale>
+            domProps={domProps}
+            rowHeight={'--rh'}
+            columns={columns}
+            onRowHeightChange={onRowHeightChange}
+          />
+        </DataSource>
       </div>
-      <DataSource<CarSale> data={carsales} primaryKey="id">
-        <InfiniteTable<CarSale>
-          domProps={domProps}
-          rowHeight={rowHeight}
-          columns={columns}
-        />
-      </DataSource>
     </React.StrictMode>
   );
 }

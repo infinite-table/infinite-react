@@ -17,6 +17,7 @@ import {
 import { ComponentStateActions } from '../hooks/useComponentState';
 import { GroupRowsState } from './GroupRowsState';
 import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/types/InfiniteTableState';
+import { NonUndefined } from '../types/NonUndefined';
 
 export interface DataSourceDataInfo<T> {
   originalDataArray: T[];
@@ -61,10 +62,39 @@ export type DataSourceExpandedAndCollapsedGroupRows<KeyType> = {
 export type DataSourcePropGroupRowsBy<T> = DataSourceGroupRowsBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
+export interface DataSourceMappedState<T> {
+  data: DataSourceProps<T>['data'];
+  primaryKey: DataSourceProps<T>['primaryKey'];
+  groupRowsBy: NonUndefined<DataSourceProps<T>['groupRowsBy']>;
+  groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
+  pivotBy: DataSourceProps<T>['pivotBy'];
+  loading: NonUndefined<DataSourceProps<T>['loading']>;
+  // sortInfo: DataSourceSortInfo<T> | null;
+  sortInfo: DataSourceSingleSortInfo<T>[] | null;
+}
+
+export interface DataSourceSetupState<T> {
+  originalDataArray: T[];
+  lastSortDataArray?: T[];
+  lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
+  dataArray: InfiniteTableEnhancedData<T>[];
+  groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
+  pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
+  updatedAt: number;
+  reducedAt: number;
+  groupedAt: number;
+  sortedAt: number;
+  generateGroupRows: boolean;
+  aggregationReducers?: AggregationReducer<T, any>[];
+  postSortDataArray?: T[];
+  postGroupDataArray?: InfiniteTableEnhancedData<T>[];
+  pivotColumns?: Map<string, InfiniteTableColumn<T>>;
+  pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
+}
 export interface DataSourceProps<T> {
   children:
     | React.ReactNode
-    | ((contextData: DataSourceComponentState<T>) => React.ReactNode);
+    | ((contextData: DataSourceState<T>) => React.ReactNode);
   primaryKey: keyof T;
   fields?: (keyof T)[];
 
@@ -92,48 +122,22 @@ export interface DataSourceProps<T> {
   onSortInfoChange?: (sortInfo: DataSourceSortInfo<T>) => void;
 }
 
-export interface DataSourceState<T> extends DataSourceDataInfo<T> {
-  data: DataSourceData<T>;
-  loading: boolean;
-  sortInfo?: DataSourceSortInfo<T>;
-  dataArray: InfiniteTableEnhancedData<T>[];
-  groupRowsBy: DataSourcePropGroupRowsBy<T>;
-  pivotBy?: DataSourcePropPivotBy<T>;
-  pivotColumns?: Map<string, InfiniteTableColumn<T>>;
-  pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
-  aggregationReducers?: AggregationReducer<T, any>[];
-  groupRowsState: GroupRowsState;
-  sortedAt: number;
-  groupedAt: number;
-  updatedAt: number;
-  reducedAt: number;
-  pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
-  generateGroupRows: boolean;
-}
+export interface DataSourceState<T>
+  extends DataSourceSetupState<T>,
+    DataSourceDerivedState<T>,
+    DataSourceMappedState<T> {}
 
-export interface DataSourceReadOnlyState<T> {
+export interface DataSourceDerivedState<_T> {
   multiSort: boolean;
-  sortInfo: DataSourceSingleSortInfo<T>[];
-  primaryKey: keyof T;
-  groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
-
-  lastSortDataArray?: T[];
-  postSortDataArray?: T[];
-  lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
-  postGroupDataArray?: InfiniteTableEnhancedData<T>[];
 }
-
-export interface DataSourceComponentState<T>
-  extends Omit<DataSourceState<T>, 'sortInfo'>,
-    DataSourceReadOnlyState<T> {}
 
 export type DataSourceComponentActions<T> = ComponentStateActions<
   DataSourceState<T>
 >;
 
 export interface DataSourceContextValue<T> {
-  getState: () => DataSourceComponentState<T>;
-  componentState: DataSourceComponentState<T>;
+  getState: () => DataSourceState<T>;
+  componentState: DataSourceState<T>;
   componentActions: DataSourceComponentActions<T>;
 }
 

@@ -58,6 +58,7 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     // as it only uses computed.columns
     columnSize,
   );
+
   verticalVirtualBrain.update(dataArray.length, rowHeight, rowSpan);
 
   (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;

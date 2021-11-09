@@ -1,4 +1,4 @@
-import { mapElements, withBrain } from '../../../utils/listUtils';
+import { mapElements, withBrain } from '../testUtils/listUtils';
 
 export default describe('RawList with item span', () => {
   beforeAll(async () => {

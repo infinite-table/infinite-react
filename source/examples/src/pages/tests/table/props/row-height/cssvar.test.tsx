@@ -1,4 +1,4 @@
-import { getRowElement } from '../../../../../utils/getRowElement';
+import { getRowElement } from '../../../testUtils/getRowElement';
 
 export default describe('RawList', () => {
   beforeAll(async () => {

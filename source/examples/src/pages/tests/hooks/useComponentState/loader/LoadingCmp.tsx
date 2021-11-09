@@ -32,9 +32,9 @@ export const LoadingBaseCmp = () => {
 };
 
 const LoadingRoot = getComponentStateRoot({
-  getInitialState: ({ props }: { props: LoadingCmpProps }) => {
+  forwardProps: () => {
     return {
-      loading: props.loading ?? props.defaultLoading ?? false,
+      loading: (loading) => loading ?? false,
     };
   },
 });

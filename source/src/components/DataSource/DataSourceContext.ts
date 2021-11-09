@@ -1,10 +1,7 @@
 import * as React from 'react';
+import { DataSourceState } from '.';
 
-import {
-  DataSourceComponentState,
-  DataSourceComponentActions,
-  DataSourceContextValue,
-} from './types';
+import { DataSourceComponentActions, DataSourceContextValue } from './types';
 
 let DSContext: any;
 
@@ -16,8 +13,8 @@ export function getDataSourceContext<T>(): React.Context<
   }
 
   return (DSContext = React.createContext<DataSourceContextValue<T>>({
-    getState: () => null as any as DataSourceComponentState<T>,
-    componentState: null as any as DataSourceComponentState<T>,
+    getState: () => null as any as DataSourceState<T>,
+    componentState: null as any as DataSourceState<T>,
     componentActions: null as any as DataSourceComponentActions<T>,
   }));
 }

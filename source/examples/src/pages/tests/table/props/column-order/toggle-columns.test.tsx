@@ -1,5 +1,5 @@
-import { getHeaderColumnIds } from '../../../../../utils';
-import { getRowObject } from '../../../../../utils/getRowObject';
+import { getHeaderColumnIds } from '../../../testUtils';
+import { getRowObject } from '../../../testUtils/getRowObject';
 
 import { rowData } from './rowData';
 

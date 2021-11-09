@@ -18,7 +18,7 @@ import {
 } from '../types';
 import type { Size } from '../../types/Size';
 import type { RenderRow } from '../../VirtualList/types';
-import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableState } from '../types/InfiniteTableState';
 import { InfiniteTableToggleGroupRowFn } from '../types/InfiniteTableColumn';
 import { join } from '../../../utils/join';
 import { VirtualScrollContainer } from '../../VirtualScrollContainer';
@@ -26,7 +26,7 @@ import { SpacePlaceholder } from '../../VirtualList/SpacePlaceholder';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
 type UsePinnedParams<T> = {
-  getState: () => InfiniteTableComponentState<T>;
+  getState: () => InfiniteTableState<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
   bodySize: Size;
   pinnedStartScrollListener: ScrollListener;
@@ -50,7 +50,7 @@ type UsePinnedParams<T> = {
 };
 
 type RenderPinnedRowParams<T> = {
-  getState: () => InfiniteTableComponentState<T>;
+  getState: () => InfiniteTableState<T>;
   getData: () => InfiniteTableEnhancedData<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   columnsWidth: number;

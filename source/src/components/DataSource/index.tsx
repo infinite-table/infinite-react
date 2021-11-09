@@ -3,9 +3,7 @@ import * as React from 'react';
 import {
   DataSourceProps,
   DataSourceContextValue,
-  DataSourceComponentState,
   DataSourceState,
-  DataSourceReadOnlyState,
 } from './types';
 
 import { getDataSourceContext } from './DataSourceContext';
@@ -14,7 +12,11 @@ import { useDataSource } from './publicHooks/useDataSource';
 
 import { useLoadData } from './privateHooks/useLoadData';
 
-import { mapPropsToState, getInitialState } from './state/getInitialState';
+import {
+  mapPropsToState,
+  forwardProps,
+  initSetupState,
+} from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 
 import {
@@ -27,7 +29,7 @@ import { useLatest } from '../hooks/useLatest';
 
 type DataSourceChildren<T> =
   | React.ReactNode
-  | ((values: DataSourceComponentState<T>) => React.ReactNode);
+  | ((values: DataSourceState<T>) => React.ReactNode);
 
 function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
   let { children } = props;
@@ -42,8 +44,8 @@ function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
 }
 
 const DataSourceRoot = getComponentStateRoot({
-  //@ts-ignore
-  getInitialState,
+  initSetupState,
+  forwardProps,
   //@ts-ignore
   concludeReducer,
   //@ts-ignore
@@ -53,10 +55,8 @@ const DataSourceRoot = getComponentStateRoot({
 function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
   const DataSourceContext = getDataSourceContext<T>();
 
-  const { componentState, componentActions } = useComponentState<
-    DataSourceState<T>,
-    DataSourceReadOnlyState<T>
-  >();
+  const { componentState, componentActions } =
+    useComponentState<DataSourceState<T>>();
 
   const getState = useLatest(componentState);
   const contextValue: DataSourceContextValue<T> = {

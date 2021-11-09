@@ -1,10 +1,10 @@
-import { getFnCalls } from '../testUtils';
+import { getFnCalls } from '../../../../testUtils/getFnCalls';
 
 const getCalls = getFnCalls('onSortInfoChange');
 
 export default describe('hooks.useProperty - controlled boolean nochange', () => {
   beforeAll(async () => {
-    await page.goto(`${process.env.BASEURL}/hooks/useProperty/sortInfo/controlled-sortinfo-nochange
+    await page.goto(`${process.env.BASEURL}/hooks/useComponentState/loader/sortInfo/controlled-sortinfo-nochange
     `);
   });
   beforeEach(async () => {

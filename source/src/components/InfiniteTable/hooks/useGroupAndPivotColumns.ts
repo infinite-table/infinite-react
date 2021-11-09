@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { InfiniteTableColumn } from '..';
+import { InfiniteTableColumn, InfiniteTableState } from '..';
 import { interceptMap } from '../../..';
 import { DataSourceGroupRowsBy, GroupRowsState } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
@@ -12,7 +12,7 @@ import {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from '../types/InfiniteTableProps';
-import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+
 import {
   getColumnForGroupBy,
   getGroupColumnRender,
@@ -74,7 +74,7 @@ export function useGroupAndPivotColumns<T>() {
       pivotColumns,
       pivotTotalColumnPosition,
     },
-  } = useComponentState<InfiniteTableComponentState<T>>();
+  } = useComponentState<InfiniteTableState<T>>();
 
   const toggleGroupRow = useCallback<ToggleGrouRowFn>((groupKeys: any[]) => {
     const newState = new GroupRowsState(getDataSourceState().groupRowsState);

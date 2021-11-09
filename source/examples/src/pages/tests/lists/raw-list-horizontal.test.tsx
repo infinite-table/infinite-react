@@ -1,4 +1,4 @@
-import { mapElements } from '../../../utils/listUtils';
+import { mapElements } from '../testUtils/listUtils';
 
 const arr = (size: number) => {
   return [...new Array(size)].map((_, i) => `#${i}`);

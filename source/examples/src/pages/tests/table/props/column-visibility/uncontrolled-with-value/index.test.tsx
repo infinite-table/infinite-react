@@ -2,7 +2,7 @@ import { InfiniteTableImperativeApi } from '@infinite-table/infinite-react';
 import {
   getHeaderColumnIds,
   getHeaderColumnCells,
-} from '../../../../../../utils';
+} from '../../../../testUtils';
 
 export default describe('Column visibility uncontrolled', () => {
   beforeAll(async () => {

@@ -93,38 +93,46 @@ type ComponentStateGeneratedActions<T_STATE> = {
   [k in keyof T_STATE]: T_STATE[k] | React.SetStateAction<T_STATE[k]>;
 };
 
-export type ComponentStateActions<
-  T_DYNAMIC_STATE,
-  T_READ_ONLY_STATE,
-  T_ACTIONS = {},
-> = ComponentStateGeneratedActions<T_DYNAMIC_STATE & T_READ_ONLY_STATE> &
-  T_ACTIONS;
+export type ComponentStateActions<T_STATE> =
+  ComponentStateGeneratedActions<T_STATE>;
 
-function getReducerActions<T_STATE, T_SETUP_STATE extends object, T_PROPS>(
+function getReducerActions<T_STATE, T_PROPS>(
   dispatch: React.Dispatch<any>,
   state: T_STATE,
-  initialSetupState: T_SETUP_STATE,
   getProps: () => T_PROPS,
+  propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE>,
+  allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
 ): ComponentStateGeneratedActions<T_STATE> {
   return Object.keys(state).reduce((actions, stateKey) => {
-    if (initialSetupState.hasOwnProperty(stateKey)) {
-      return actions;
-    }
     const key = stateKey as keyof T_STATE;
 
     const setter = (value: T_STATE[typeof key]) => {
       const props = getProps();
-      if (stateKey === 'headerHeight') {
-        debugger;
-      }
+
+      // it's important that we notify with the value that we receive
       notifyChange(props, stateKey, value);
 
-      if (isControlled(stateKey as keyof T_PROPS, props)) {
+      //@ts-ignore
+      const forwardFn = propsToForward[key];
+
+      if (typeof forwardFn === 'function') {
+        // and not with the modified value from the forwardFn
+        value = forwardFn(value);
+      }
+
+      const allowControlled =
+        !!allowedControlledPropOverrides?.[key as any as keyof T_PROPS];
+
+      if (isControlled(stateKey as keyof T_PROPS, props) && !allowControlled) {
         return;
       }
       dispatch({
-        statePropertyName: stateKey,
-        payload: value,
+        payload: {
+          updatedProps: null,
+          mappedState: {
+            [stateKey]: value,
+          },
+        },
       });
     };
 
@@ -136,33 +144,74 @@ function getReducerActions<T_STATE, T_SETUP_STATE extends object, T_PROPS>(
   }, {} as ComponentStateGeneratedActions<T_STATE>);
 }
 
+export type ForwardPropsToStateFnResult<TYPE_PROPS, TYPE_RESULT> = Partial<{
+  [propName in keyof TYPE_PROPS & keyof TYPE_RESULT]:
+    | 1
+    | ((value: TYPE_PROPS[propName]) => TYPE_RESULT[propName]);
+}>;
+
+function forwardProps<T_PROPS, T_RESULT>(
+  propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_RESULT>,
+  props: T_PROPS,
+): T_RESULT {
+  const mappedState = {} as T_RESULT;
+  for (let k in propsToForward)
+    if (propsToForward.hasOwnProperty(k)) {
+      const forwardFn = propsToForward[k as keyof typeof propsToForward];
+      let propValue = isControlled(k as keyof T_PROPS, props)
+        ? props[k as keyof T_PROPS]
+        : props[`default${toUpperFirst(k)}` as keyof T_PROPS];
+
+      if (typeof forwardFn === 'function') {
+        //@ts-ignore
+        propValue = forwardFn(propValue);
+      }
+      //@ts-ignore
+      mappedState[k as any as keyof T_RESULT] = propValue;
+    }
+
+  return mappedState;
+}
+
 type ComponentStateRootConfig<
   T_PROPS,
-  COMPONENT_DYNAMIC_STATE,
+  COMPONENT_MAPPED_STATE,
   COMPONENT_SETUP_STATE = {},
   COMPONENT_DERIVED_STATE = {},
   T_ACTIONS = {},
   T_PARENT_STATE = {},
 > = {
-  setupState?: () => COMPONENT_SETUP_STATE;
-  getInitialState: (params: {
-    props: T_PROPS;
-    parentState: T_PARENT_STATE | null;
-  }) => COMPONENT_DYNAMIC_STATE;
+  initSetupState?: () => COMPONENT_SETUP_STATE;
+
+  forwardProps?: () => ForwardPropsToStateFnResult<
+    T_PROPS,
+    COMPONENT_MAPPED_STATE
+  >;
+  allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
   mapPropsToState?: (params: {
     props: T_PROPS;
-    state: COMPONENT_DYNAMIC_STATE;
-    updatedProps: Partial<T_PROPS> | null;
-    updatedState: Partial<COMPONENT_DYNAMIC_STATE> | null;
+    state: COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      Partial<COMPONENT_DERIVED_STATE>;
+    oldState:
+      | null
+      | (COMPONENT_MAPPED_STATE &
+          COMPONENT_SETUP_STATE &
+          Partial<COMPONENT_DERIVED_STATE>);
     parentState: T_PARENT_STATE | null;
   }) => COMPONENT_DERIVED_STATE;
   concludeReducer?: (params: {
-    previousState: COMPONENT_DYNAMIC_STATE;
-    state: COMPONENT_DYNAMIC_STATE;
-    updatedState: Partial<COMPONENT_DYNAMIC_STATE> | null;
+    previousState: COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      COMPONENT_DERIVED_STATE;
+    state: COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      COMPONENT_DERIVED_STATE;
     updatedProps: Partial<T_PROPS> | null;
     parentState: T_PARENT_STATE | null;
-  }) => COMPONENT_DYNAMIC_STATE;
+  }) => COMPONENT_MAPPED_STATE &
+    COMPONENT_SETUP_STATE &
+    COMPONENT_DERIVED_STATE;
   getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
 
   getParentState?: () => T_PARENT_STATE;
@@ -176,7 +225,7 @@ type ComponentStateRootConfig<
 
 export function getComponentStateRoot<
   T_PROPS,
-  COMPONENT_DYNAMIC_STATE extends object,
+  COMPONENT_MAPPED_STATE extends object,
   COMPONENT_SETUP_STATE extends object = {},
   COMPONENT_DERIVED_STATE extends object = {},
   T_ACTIONS = {},
@@ -184,7 +233,7 @@ export function getComponentStateRoot<
 >(
   config: ComponentStateRootConfig<
     T_PROPS,
-    COMPONENT_DYNAMIC_STATE,
+    COMPONENT_MAPPED_STATE,
     COMPONENT_SETUP_STATE,
     COMPONENT_DERIVED_STATE,
     T_ACTIONS,
@@ -198,49 +247,32 @@ export function getComponentStateRoot<
     props: T_PROPS & { children: React.ReactNode },
   ) {
     const propsToStateSetRef = useRef<Set<string>>(new Set());
+    const propsToForward = useMemo<
+      ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>
+    >(() => (config.forwardProps ? config.forwardProps() : {}), []);
+
+    type COMPONENT_STATE = COMPONENT_MAPPED_STATE &
+      COMPONENT_DERIVED_STATE &
+      COMPONENT_SETUP_STATE;
+
     const getParentState = config.getParentState;
     const parentState = getParentState?.() ?? null;
-    const [
-      {
-        state: wholeState,
-        initialDynamicState: initialState,
-        initialSetupState,
-      },
-    ] = useState<{
-      state: COMPONENT_SETUP_STATE &
-        COMPONENT_DYNAMIC_STATE &
-        COMPONENT_DERIVED_STATE;
-      initialDynamicState: COMPONENT_DYNAMIC_STATE;
-      derivedState: COMPONENT_DERIVED_STATE;
-      initialSetupState: COMPONENT_SETUP_STATE;
-    }>(() => {
+    const [wholeState] = useState<COMPONENT_STATE>(() => {
       // STEP 1: call setupState
-      const initialSetupState = config.setupState
-        ? config.setupState()
+      const initialSetupState = config.initSetupState
+        ? config.initSetupState()
         : ({} as COMPONENT_SETUP_STATE);
 
-      // STEP 2: call getInitialState, but via a proxy
-      // so we can intercept all property reads from props
-      const { fn: getInitialState, propertyReads: propsToStateSet } = proxyFn(
-        config.getInitialState,
-        {
-          getProxyTargetFromArgs: (initialArg) => initialArg.props,
-          putProxyToArgs: (props: T_PROPS, initialArg) => {
-            return [{ ...initialArg, props }];
-          },
-        },
-      );
+      let mappedState = {} as COMPONENT_MAPPED_STATE;
 
-      // get the result
-      let initialDynamicState = getInitialState({
-        props,
-        parentState,
-      });
+      if (propsToForward) {
+        mappedState = forwardProps<T_PROPS, COMPONENT_MAPPED_STATE>(
+          propsToForward,
+          props,
+        );
+      }
 
-      // and set those property reads into the corresponding ref
-      // basically in this way we know what properties from props
-      // the state depends on
-      propsToStateSetRef.current = new Set(propsToStateSet);
+      const state = { ...initialSetupState, ...mappedState };
 
       if (config.mapPropsToState) {
         const { fn: mapPropsToState, propertyReads } = proxyFn(
@@ -252,139 +284,109 @@ export function getComponentStateRoot<
             },
           },
         );
+        propsToStateSetRef.current = new Set([
+          ...propsToStateSetRef.current,
+          ...propertyReads,
+        ]);
         const stateFromProps = mapPropsToState({
           props,
-          state: initialDynamicState,
-          updatedState: null,
-          updatedProps: null,
+          state,
+          oldState: null,
           parentState,
         });
-
-        propsToStateSetRef.current = new Set([
-          ...propsToStateSetRef.current,
-          ...propertyReads,
-        ]);
 
         return {
-          initialDynamicState,
-          initialSetupState,
-          derivedState: stateFromProps,
-          state: {
-            ...initialSetupState,
-            ...initialDynamicState,
-            ...stateFromProps,
-          },
-        };
-      }
-
-      return {
-        initialSetupState,
-        initialDynamicState,
-        // this is set by mapStateToProps, but at this point
-        // mapPropsToState is not defined, so derivedState is an empty object
-        derivedState: {} as COMPONENT_DERIVED_STATE,
-        state: {
-          ...initialSetupState,
-          ...initialDynamicState,
-        } as COMPONENT_DYNAMIC_STATE &
-          COMPONENT_DERIVED_STATE &
-          COMPONENT_SETUP_STATE,
-      };
-    });
-
-    const getProps = useLatest(props);
-
-    const theReducer = (state: COMPONENT_DYNAMIC_STATE, action: any) => {
-      const previousState = state;
-      let newState: Partial<COMPONENT_DYNAMIC_STATE> | null = null;
-      let newProps: Partial<T_PROPS> | null = null;
-      if (action.statePropertyName) {
-        newState = {
-          [action.statePropertyName as keyof COMPONENT_DYNAMIC_STATE]:
-            action.payload,
-        } as Partial<COMPONENT_DYNAMIC_STATE>;
-      }
-
-      if (action.newControlledProps) {
-        newProps = action.payload;
-      }
-
-      if (newState !== null) {
-        state = {
-          ...state,
-          ...newState,
-        };
-      }
-
-      if (config.mapPropsToState) {
-        const { fn: mapPropsToState, propertyReads } = proxyFn(
-          config.mapPropsToState,
-          {
-            getProxyTargetFromArgs: (initialArg) => initialArg.props,
-            putProxyToArgs: (props: T_PROPS, initialArg) => {
-              return [{ ...initialArg, props }];
-            },
-          },
-        );
-        propsToStateSetRef.current = new Set([
-          ...propsToStateSetRef.current,
-          ...propertyReads,
-        ]);
-        const stateFromProps = mapPropsToState({
-          props: getProps(),
-          state,
-          updatedProps: newProps,
-          updatedState: newState,
-          parentState,
-        });
-
-        state = {
           ...state,
           ...stateFromProps,
         };
       }
 
+      return state as COMPONENT_MAPPED_STATE &
+        COMPONENT_DERIVED_STATE &
+        COMPONENT_SETUP_STATE;
+    });
+
+    const getProps = useLatest(props);
+
+    const theReducer: React.Reducer<COMPONENT_STATE, any> = (
+      previousState: COMPONENT_STATE,
+      action: any,
+    ) => {
+      const mappedState: Partial<COMPONENT_MAPPED_STATE> | null =
+        action.payload.mappedState;
+      const updatedProps: Partial<T_PROPS> | null = action.payload.updatedProps;
+
+      const newState: COMPONENT_STATE = Object.assign({}, previousState);
+
+      if (mappedState) {
+        Object.assign(newState, mappedState);
+      }
+
+      if (config.mapPropsToState) {
+        const { fn: mapPropsToState, propertyReads } = proxyFn(
+          config.mapPropsToState,
+          {
+            getProxyTargetFromArgs: (initialArg) => initialArg.props,
+            putProxyToArgs: (props: T_PROPS, initialArg) => {
+              return [{ ...initialArg, props }];
+            },
+          },
+        );
+        propsToStateSetRef.current = new Set([
+          ...propsToStateSetRef.current,
+          ...propertyReads,
+        ]);
+
+        const stateFromProps = mapPropsToState({
+          props: getProps(),
+          state: newState,
+          oldState: previousState,
+          parentState,
+        });
+
+        Object.assign(newState, stateFromProps);
+      }
+
       const result = config.concludeReducer
         ? config.concludeReducer({
             previousState,
-            state,
-            updatedState: newState,
-            updatedProps: newProps,
+            state: newState,
+            updatedProps,
             parentState,
           })
-        : state;
+        : newState;
 
-      return result as COMPONENT_DYNAMIC_STATE & COMPONENT_DERIVED_STATE;
+      return result;
     };
 
-    const [state, dispatch] = useReducer<
-      React.Reducer<COMPONENT_DYNAMIC_STATE & COMPONENT_DERIVED_STATE, any>
-    >(theReducer, wholeState);
+    const [state, dispatch] = useReducer<React.Reducer<COMPONENT_STATE, any>>(
+      theReducer,
+      wholeState,
+    );
 
-    type ACTIONS_TYPE = ComponentStateActions<
-      COMPONENT_DYNAMIC_STATE,
-      COMPONENT_DERIVED_STATE,
-      T_ACTIONS
-    >;
+    type ACTIONS_TYPE = ComponentStateActions<COMPONENT_STATE>;
 
-    const userDefinedActions = useMemo(() => {
-      return config.getReducerActions?.(dispatch) ?? {};
-    }, [dispatch]) as T_ACTIONS;
+    const { allowedControlledPropOverrides } = config;
 
     const actions = useMemo(() => {
       const generatedActions = getReducerActions(
         dispatch,
         wholeState,
-        initialSetupState,
         getProps,
+        propsToForward,
+        allowedControlledPropOverrides,
       );
 
-      return Object.assign(generatedActions, userDefinedActions);
-    }, [dispatch, userDefinedActions]) as ACTIONS_TYPE;
+      return generatedActions;
+    }, [
+      dispatch,
+      propsToForward,
+      allowedControlledPropOverrides,
+    ]) as ACTIONS_TYPE;
 
     const Context =
       getComponentStateContext<
-        ComponentStateContext<COMPONENT_DYNAMIC_STATE, ACTIONS_TYPE>
+        ComponentStateContext<COMPONENT_STATE, ACTIONS_TYPE>
       >();
 
     const getComponentState = useLatest(state);
@@ -402,38 +404,69 @@ export function getComponentStateRoot<
 
     useEffect(() => {
       const currentProps = props;
+      const newMappedState: Partial<COMPONENT_MAPPED_STATE> = {};
+      let newMappedStateCount = 0;
+
       const updatedProps: Partial<T_PROPS> = {};
-      let updatedCount = 0;
-      const { current: propsToStateSet } = propsToStateSetRef;
+      let updatedPropsCount = 0;
+
       for (var k in props) {
         const key = k as string as keyof T_PROPS;
-        if (isControlled(key, props) && propsToStateSet.has(k)) {
-          const oldValue = prevProps[key];
-          const newValue = currentProps[key];
+        if (isControlled(key, props)) {
+          if (propsToForward.hasOwnProperty(k)) {
+            const oldValue = prevProps[key];
+            const newValue = currentProps[key];
 
-          if (oldValue !== newValue) {
-            // if (config.onControlledPropertyChange) {
-            //   const modifier = config.onControlledPropertyChange(
-            //     k,
-            //     newValue,
-            //     oldValue,
-            //   );
+            if (oldValue !== newValue) {
+              let valueToSet = newValue;
+              const forwardFn =
+                propsToForward[k as keyof typeof propsToForward];
+              if (typeof forwardFn === 'function') {
+                //@ts-ignore
+                valueToSet = forwardFn(newValue);
+              }
+              //@ts-ignore
+              if (state[key] !== valueToSet) {
+                // if (config.onControlledPropertyChange) {
+                //   const modifier = config.onControlledPropertyChange(
+                //     k,
+                //     newValue,
+                //     oldValue,
+                //   );
 
-            //   if (typeof modifier === 'function') {
-            //     newValue = modifier(newValue, oldValue);
-            //   }
-            // }
-            updatedProps[key] = newValue;
-            updatedCount++;
+                //   if (typeof modifier === 'function') {
+                //     newValue = modifier(newValue, oldValue);
+                //   }
+                // }
+
+                // if there is any updated state, we need to call dispatch
+                //@ts-ignore
+                newMappedState[key] = valueToSet;
+                newMappedStateCount++;
+              }
+            }
+
+            // or even if there is not, but props from propsToStateSet have changed
+          } else if (propsToStateSetRef.current.has(k)) {
+            updatedProps[key] = currentProps[key];
+            updatedPropsCount++;
           }
         }
       }
 
-      if (updatedCount > 0) {
-        debug('Triggered by new values for the following props', updatedProps);
+      if (updatedPropsCount > 0 || newMappedStateCount > 0) {
+        debug(
+          'Triggered by new values for the following props',
+          ...[
+            ...Object.keys(newMappedState ?? {}),
+            ...Object.keys(updatedProps ?? {}),
+          ],
+        );
         dispatch({
-          newControlledProps: true,
-          payload: updatedProps,
+          payload: {
+            mappedState: newMappedStateCount ? newMappedState : null,
+            updatedProps: updatedPropsCount ? updatedProps : null,
+          },
         });
       }
     });
@@ -444,23 +477,11 @@ export function getComponentStateRoot<
   });
 }
 
-export function useComponentState<
-  T_DYNAMIC_STATE,
-  T_DERIVED_STATE = {},
-  T_SETUP_STATE = {},
-  T_ACTIONS = {},
->() {
-  type ACTIONS_TYPE = ComponentStateActions<
-    T_DYNAMIC_STATE,
-    T_DERIVED_STATE,
-    T_ACTIONS
-  >;
+export function useComponentState<COMPONENT_STATE>() {
+  type ACTIONS_TYPE = ComponentStateActions<COMPONENT_STATE>;
   const Context =
     getComponentStateContext<
-      ComponentStateContext<
-        T_DYNAMIC_STATE & T_DERIVED_STATE & T_SETUP_STATE,
-        ACTIONS_TYPE
-      >
+      ComponentStateContext<COMPONENT_STATE, ACTIONS_TYPE>
     >();
   return React.useContext(Context);
 }

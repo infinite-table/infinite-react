@@ -4,13 +4,13 @@ import { AggregationReducer } from '../../../utils/groupAndPivot';
 import useDataSourceActions from '../../DataSource/publicHooks/useDataSourceActions';
 import { useComponentState } from '../../hooks/useComponentState';
 import { interceptMap } from '../../hooks/useInterceptedMap';
-import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableState } from '../types/InfiniteTableState';
 
 export function useColumnAggregations<T>() {
   const {
     componentState: { columnAggregations },
     getComponentState,
-  } = useComponentState<InfiniteTableComponentState<T>>();
+  } = useComponentState<InfiniteTableState<T>>();
 
   const dataSourceActions = useDataSourceActions<T>();
 

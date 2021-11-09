@@ -1,6 +1,6 @@
 import { ElementHandle } from 'puppeteer';
 import { multisort } from '@src/utils/multisort';
-import { getColumnCells, getGlobalFnCalls } from '../../../../../utils';
+import { getColumnCells, getGlobalFnCalls } from '../../../testUtils';
 import { getOrders, mapToString, Order } from './getOrders';
 
 const getCalls = getGlobalFnCalls('onSortInfoChange');

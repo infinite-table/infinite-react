@@ -86,7 +86,7 @@ export function useListRendering<T>(
 
   const getData = useLatest(dataArray);
   const {
-    rowHeightComputed: rowHeight,
+    rowHeight,
     pinnedStartMaxWidth,
     pinnedEndMaxWidth,
     pinnedStartScrollListener,

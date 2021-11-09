@@ -1,4 +1,4 @@
-import { getFnCalls } from '../../useProperty/testUtils';
+import { getFnCalls } from '../../../testUtils/getFnCalls';
 
 const getCalls = getFnCalls('onValueChange');
 

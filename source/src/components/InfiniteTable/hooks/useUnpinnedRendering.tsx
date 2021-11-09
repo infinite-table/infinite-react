@@ -15,7 +15,7 @@ import type { InfiniteTableRowProps } from '../components/InfiniteTableRow/Infin
 
 import { InfiniteTableRow } from '../components/InfiniteTableRow';
 import { TableRowUnvirtualized } from '../components/InfiniteTableRow/InfiniteTableRowUnvirtualized';
-import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableState } from '../types/InfiniteTableState';
 import { InfiniteTableToggleGroupRowFn } from '../types/InfiniteTableColumn';
 
 type UnpinnedRenderingParams<T> = {
@@ -36,7 +36,7 @@ type UnpinnedRenderingParams<T> = {
   computedPinnedStartWidth: number;
   computedPinnedEndWidth: number;
 
-  getState: () => InfiniteTableComponentState<T>;
+  getState: () => InfiniteTableState<T>;
 };
 export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
   const {

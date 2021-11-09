@@ -1,10 +1,11 @@
 import * as React from 'react';
 
-import { DataSourceComponentState, DataSourceContextValue } from '../types';
+import { DataSourceContextValue } from '../types';
 
 import { getDataSourceContext } from '../DataSourceContext';
+import { DataSourceState } from '..';
 
-export function useDataSource<T>(): DataSourceComponentState<T> {
+export function useDataSource<T>(): DataSourceState<T> {
   const DataSourceContext = getDataSourceContext<T>();
   const contextValue = React.useContext(DataSourceContext);
 

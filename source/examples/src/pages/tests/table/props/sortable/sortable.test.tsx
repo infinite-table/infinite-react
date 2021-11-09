@@ -1,5 +1,5 @@
 import { ElementHandle } from 'puppeteer';
-import { getColumnCells } from '../../../../../utils';
+import { getColumnCells } from '../../../testUtils';
 
 export default describe('Table', () => {
   beforeAll(async () => {

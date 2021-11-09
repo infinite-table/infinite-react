@@ -2,56 +2,35 @@ import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
   InfiniteTableGeneratedColumns,
-  InfiniteTablePropCollapsedColumnGroups,
-  InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
-  InfiniteTablePropColumnOrder,
-  InfiniteTablePropColumnPinning,
-  InfiniteTablePropColumnVisibility,
-  InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from './InfiniteTableProps';
 
 import { Size } from '../../types/Size';
-import { ComponentStateActions } from '../../hooks/useComponentState';
 import { MutableRefObject } from 'react';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import { NonUndefined } from '../../types/NonUndefined';
+import {
+  InfiniteTableColumn,
+  InfiniteTablePivotColumn,
+} from './InfiniteTableColumn';
+import { ComponentStateActions } from '../../hooks/useComponentState';
 
-export interface InfiniteTableSetupState {
+export interface InfiniteTableSetupState<T> {
   domRef: MutableRefObject<HTMLDivElement | null>;
   bodyDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
-}
-export interface InfiniteTableDynamicState<T> {
-  hideEmptyGroupColumns: boolean;
-
-  columnShifts: null | number[];
-  draggingColumnId: null | string;
-  // viewportSize: Size;
+  generatedColumns: InfiniteTableGeneratedColumns<T>;
   bodySize: Size;
   scrollPosition: ScrollPosition;
-  columnOrder: InfiniteTablePropColumnOrder;
-  columnVisibility: InfiniteTablePropColumnVisibility;
-  columnPinning: InfiniteTablePropColumnPinning;
-  columnAggregations: InfiniteTablePropColumnAggregations<T>;
-  columnGroups: InfiniteTablePropColumnGroups;
-  collapsedColumnGroups: InfiniteTablePropCollapsedColumnGroups;
-  columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
-  columnGroupsMaxDepth: number;
-  computedColumns: InfiniteTableProps<T>['columns'];
-  columns: InfiniteTableProps<T>['columns'];
-  pivotColumns: InfiniteTableProps<T>['pivotColumns'];
-  computedPivotColumns: InfiniteTableProps<T>['pivotColumns'];
-  pivotColumnGroups?: InfiniteTablePropColumnGroups;
-  computedColumnGroups: InfiniteTablePropColumnGroups;
-  generatedColumns: InfiniteTableGeneratedColumns<T>;
+  draggingColumnId: null | string;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
-  rowHeightComputed: number;
-  headerHeightComputed: number;
+  computedPivotColumns?: Map<string, InfiniteTablePivotColumn<T>>;
+  columnShifts: number[] | null;
 }
 
 export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
@@ -59,41 +38,59 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
 };
 export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 
-export interface InfiniteTableComponentState<T>
-  extends InfiniteTableDynamicState<T>,
-    InfiniteTableDerivedState<T>,
-    InfiniteTableSetupState {}
-
 export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
-export interface InfiniteTableDerivedState<T> {
-  // rowHeightComputed: number;
-  // headerHeightComputed: number;
-  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
-  pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
-  onReady: InfiniteTableProps<T>['onReady'];
-  // columns: InfiniteTableProps<T>['columns'];
-  rowProps: InfiniteTableProps<T>['rowProps'];
-  rowStyle: InfiniteTableProps<T>['rowStyle'];
-  rowClassName: InfiniteTableProps<T>['rowClassName'];
-  groupColumn: InfiniteTableProps<T>['groupColumn'];
-  pivotColumn: InfiniteTableProps<T>['pivotColumn'];
-  pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
 
+export interface InfiniteTableMappedState<T> {
+  groupColumn: InfiniteTableProps<T>['groupColumn'];
+
+  columns: InfiniteTableProps<T>['columns'];
+  pivotColumns: InfiniteTableProps<T>['pivotColumns'];
+  onReady: InfiniteTableProps<T>['onReady'];
+  domProps: InfiniteTableProps<T>['domProps'];
+  rowStyle: InfiniteTableProps<T>['rowStyle'];
+  rowProps: InfiniteTableProps<T>['rowProps'];
+  rowClassName: InfiniteTableProps<T>['rowClassName'];
   pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
-  showZebraRows: InfiniteTableProps<T>['showZebraRows'];
-  showHoverRows: InfiniteTableProps<T>['showHoverRows'];
-  header: InfiniteTableProps<T>['header'];
+  pivotColumn: InfiniteTableProps<T>['pivotColumn'];
+  pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
+  pivotColumnGroups: InfiniteTableProps<T>['pivotColumnGroups'];
 
-  columnMinWidth: InfiniteTableProps<T>['columnMinWidth'];
-  columnMaxWidth: InfiniteTableProps<T>['columnMaxWidth'];
-  columnDefaultWidth: InfiniteTableProps<T>['columnDefaultWidth'];
-  sortable: InfiniteTableProps<T>['sortable'];
-  virtualizeColumns: InfiniteTableProps<T>['virtualizeColumns'];
+  columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
+  columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
+  columnDefaultWidth: NonUndefined<InfiniteTableProps<T>['columnDefaultWidth']>;
+  draggableColumns: NonUndefined<InfiniteTableProps<T>['draggableColumns']>;
+  sortable: NonUndefined<InfiniteTableProps<T>['sortable']>;
+  hideEmptyGroupColumns: NonUndefined<
+    InfiniteTableProps<T>['hideEmptyGroupColumns']
+  >;
+  columnOrder: NonUndefined<InfiniteTableProps<T>['columnOrder']>;
+  showZebraRows: NonUndefined<InfiniteTableProps<T>['showZebraRows']>;
+  showHoverRows: NonUndefined<InfiniteTableProps<T>['showHoverRows']>;
+  header: NonUndefined<InfiniteTableProps<T>['header']>;
+  virtualizeColumns: NonUndefined<InfiniteTableProps<T>['virtualizeColumns']>;
+  rowHeight: number;
+  headerHeight: number;
+  licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
+  columnVisibility: NonUndefined<InfiniteTableProps<T>['columnVisibility']>;
+  columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
+  columnAggregations: NonUndefined<InfiniteTableProps<T>['columnAggregations']>;
+  columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
+  collapsedColumnGroups: NonUndefined<
+    InfiniteTableProps<T>['collapsedColumnGroups']
+  >;
+  pivotTotalColumnPosition: NonUndefined<
+    InfiniteTableProps<T>['pivotTotalColumnPosition']
+  >;
+  groupRenderStrategy: NonUndefined<
+    InfiniteTableProps<T>['groupRenderStrategy']
+  >;
+}
+
+export interface InfiniteTableDerivedState<T> {
   virtualizeHeader: boolean;
-  licenseKey: string;
-  domProps: InfiniteTableProps<T>['domProps'];
-  draggableColumns: boolean;
+  computedColumns: Map<string, InfiniteTableColumn<T>>;
+
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
   computedColumnGroups: InfiniteTablePropColumnGroups;
@@ -102,6 +99,10 @@ export interface InfiniteTableDerivedState<T> {
   headerHeightCSSVar: string;
 }
 
-export type InfiniteTableComponentActions<T> = ComponentStateActions<
-  InfiniteTableDynamicState<T>
+export type InfiniteTableActions<T> = ComponentStateActions<
+  InfiniteTableState<T>
 >;
+export interface InfiniteTableState<T>
+  extends InfiniteTableMappedState<T>,
+    InfiniteTableDerivedState<T>,
+    InfiniteTableSetupState<T> {}

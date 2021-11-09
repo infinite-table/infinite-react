@@ -14,7 +14,7 @@ import {
 } from './InfiniteTableRowClassName';
 
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
-import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
+import { InfiniteTableState } from '../../types/InfiniteTableState';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
@@ -27,10 +27,10 @@ export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
 
 export function useRowDOMProps<T>(
   props: InfiniteTableRowProps<T>,
-  rowProps: InfiniteTableComponentState<T>['rowProps'],
-  rowStyle: InfiniteTableComponentState<T>['rowStyle'],
-  rowClassName: InfiniteTableComponentState<T>['rowClassName'],
-  groupRenderStrategy: InfiniteTableComponentState<T>['groupRenderStrategy'],
+  rowProps: InfiniteTableState<T>['rowProps'],
+  rowStyle: InfiniteTableState<T>['rowStyle'],
+  rowClassName: InfiniteTableState<T>['rowClassName'],
+  groupRenderStrategy: InfiniteTableState<T>['groupRenderStrategy'],
   tableDOMRef: MutableRefObject<HTMLDivElement | null>,
 ): {
   domProps: TableRowHTMLAttributes;

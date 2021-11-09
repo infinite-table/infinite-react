@@ -1,5 +1,5 @@
 import { columns } from '../columns';
-import { getHeaderColumnIds } from '../../../../../../utils';
+import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default describe('Column visibility uncontrolled without any default value', () => {
   beforeAll(async () => {

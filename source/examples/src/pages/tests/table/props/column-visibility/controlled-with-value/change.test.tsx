@@ -1,5 +1,5 @@
 import { InfiniteTableImperativeApi } from '@infinite-table/infinite-react';
-import { getHeaderColumnIds } from '../../../../../../utils';
+import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default describe('Column visibility controlled will never change', () => {
   beforeAll(async () => {

@@ -1,5 +1,5 @@
 import { ElementHandle } from 'puppeteer';
-import { getColumnCells } from '../../../../../utils';
+import { getColumnCells } from '../../../testUtils';
 import { rowData } from './rowData';
 
 export default describe('Virtualization', () => {

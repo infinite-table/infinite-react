@@ -9,7 +9,7 @@ import {
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { InfiniteTableProps } from '../types';
 import { InfiniteTablePivotColumn } from '../types/InfiniteTableColumn';
-import { InfiniteTableComponentState } from '../types/InfiniteTableState';
+import { InfiniteTableState } from '../types/InfiniteTableState';
 
 export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
   pivotColumns: InfiniteTableProps<T>['pivotColumns'],
@@ -17,7 +17,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
     toggleGroupRow: (groupKeys: any[]) => void;
     pivotColumn: InfiniteTableProps<T>['pivotColumn'];
     pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
-    pivotTotalColumnPosition: InfiniteTableComponentState<T>['pivotTotalColumnPosition'];
+    pivotTotalColumnPosition: InfiniteTableState<T>['pivotTotalColumnPosition'];
     pivotBy: DataSourcePropPivotBy<T>;
     groupRowsBy: DataSourcePropGroupRowsBy<T>;
   },

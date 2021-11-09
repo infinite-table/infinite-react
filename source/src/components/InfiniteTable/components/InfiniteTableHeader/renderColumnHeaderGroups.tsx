@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InfiniteTableComputedColumn } from '../../types';
 
-import { InfiniteTableComponentState } from '../../types/InfiniteTableState';
+import { InfiniteTableState } from '../../types/InfiniteTableState';
 import {
   ColGroupTreeItem,
   buildColumnAndGroupTree,
@@ -10,8 +10,8 @@ import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 
 type BuildColumnHeaderGroupsConfig<T> = {
-  columnGroups: InfiniteTableComponentState<T>['columnGroups'];
-  columnGroupsDepthsMap: InfiniteTableComponentState<T>['columnGroupsDepthsMap'];
+  columnGroups: InfiniteTableState<T>['columnGroups'];
+  columnGroupsDepthsMap: InfiniteTableState<T>['columnGroupsDepthsMap'];
   columnGroupsMaxDepth: number;
   columns: InfiniteTableComputedColumn<T>[];
   headerHeight: number;

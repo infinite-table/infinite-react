@@ -1,81 +1,70 @@
 import { InfiniteTableEnhancedData } from '../../InfiniteTable';
-import { isControlled } from '../../utils/isControlled';
 import { normalizeSortInfo } from './normalizeSortInfo';
 import {
+  DataSourceMappedState,
   DataSourceProps,
-  DataSourceReadOnlyState,
-  DataSourceSortInfo,
+  DataSourceDerivedState,
+  DataSourceSetupState,
   DataSourceState,
 } from '../types';
 import { GroupRowsState } from '../GroupRowsState';
+import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 
-export function getInitialState<T>(params: {
-  props: DataSourceProps<T>;
-}): DataSourceState<T> {
-  const { props: initialProps } = params;
-  const dataArray: InfiniteTableEnhancedData<T>[] = [];
-  const originalDataArray: T[] = [];
-  const sortInfo: DataSourceSortInfo<T> = normalizeSortInfo(
-    isControlled('sortInfo', initialProps)
-      ? initialProps.sortInfo
-      : initialProps.defaultSortInfo,
-  );
-
-  const groupRowsState =
-    initialProps.groupRowsState ||
-    initialProps.defaultGroupRowsState ||
-    new GroupRowsState({
-      expandedRows: true,
-      collapsedRows: [],
-    });
-
+export function initSetupState<T>(): DataSourceSetupState<T> {
   const now = Date.now();
-
+  const originalDataArray: T[] = [];
+  const dataArray: InfiniteTableEnhancedData<T>[] = [];
   return {
-    data: initialProps.data,
-    loading: initialProps.loading ?? initialProps.defaultLoading ?? false,
-    dataArray,
+    pivotTotalColumnPosition: 'end',
     originalDataArray,
-    sortInfo,
-    // postSortDataArray,
-    // postGroupDataArray,
-    groupRowsState,
+
+    pivotColumns: undefined,
+    pivotColumnGroups: undefined,
+    dataArray,
+
     updatedAt: now,
     groupedAt: 0,
     sortedAt: 0,
     reducedAt: now,
-
-    pivotColumns: undefined,
-    pivotColumnGroups: undefined,
-    groupRowsBy: isControlled('groupRowsBy', initialProps)
-      ? initialProps.groupRowsBy ?? []
-      : initialProps.defaultGroupRowsBy ?? [],
-    pivotBy: isControlled('pivotBy', initialProps)
-      ? initialProps.pivotBy ?? []
-      : initialProps.defaultPivotBy,
-
-    aggregationReducers: undefined,
-    pivotTotalColumnPosition: 'end',
     generateGroupRows: true,
+    aggregationReducers: undefined,
+    groupDeepMap: undefined,
+    postSortDataArray: undefined,
+    postGroupDataArray: undefined,
+    lastSortDataArray: undefined,
+    lastGroupDataArray: undefined,
   };
 }
+export const forwardProps = <T>(): ForwardPropsToStateFnResult<
+  DataSourceProps<T>,
+  DataSourceMappedState<T>
+> => {
+  return {
+    data: 1,
+    pivotBy: 1,
+    primaryKey: 1,
+    loading: (loading) => loading ?? false,
+    sortInfo: (sortInfo) => normalizeSortInfo(sortInfo),
+    groupRowsBy: (groupRowsBy) => groupRowsBy ?? [],
+    groupRowsState: (groupRowsState) => {
+      return (
+        groupRowsState ||
+        new GroupRowsState({
+          expandedRows: true,
+          collapsedRows: [],
+        })
+      );
+    },
+  };
+};
 
 export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
   state: DataSourceState<T>;
-}): DataSourceReadOnlyState<T> {
-  const { props, state } = params;
-
-  const sortInfo = isControlled('sortInfo', props)
-    ? props.sortInfo
-    : props.defaultSortInfo ?? null;
+}): DataSourceDerivedState<T> {
+  const { props } = params;
 
   return {
-    multiSort: Array.isArray(sortInfo),
-    sortInfo: normalizeSortInfo(state.sortInfo),
-    primaryKey: props.primaryKey,
-    groupDeepMap: undefined,
-    postSortDataArray: undefined,
-    postGroupDataArray: undefined,
+    multiSort: Array.isArray(props.sortInfo ?? props.defaultSortInfo),
   };
 }

@@ -1,4 +1,4 @@
-import type { DataSourceState, DataSourceReadOnlyState } from '../types';
+import type { DataSourceState, DataSourceDerivedState } from '../types';
 
 import { multisort } from '../../../utils/multisort';
 import {
@@ -34,13 +34,12 @@ function toEnhancedData<T>(
 }
 
 export function concludeReducer<T>(params: {
-  previousState: DataSourceState<T> & DataSourceReadOnlyState<T>;
-  state: DataSourceState<T> & DataSourceReadOnlyState<T>;
-  updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null;
+  previousState: DataSourceState<T> & DataSourceDerivedState<T>;
+  state: DataSourceState<T> & DataSourceDerivedState<T>;
 }) {
   const { state, previousState } = params;
   const sortInfo = state.sortInfo;
-  const shouldSort = sortInfo?.length;
+  const shouldSort = !!sortInfo?.length;
 
   const sortDepsChanged = haveDepsChanged(previousState, state, [
     'originalDataArray',
@@ -144,6 +143,7 @@ export function concludeReducer<T>(params: {
   if (enhancedDataArray !== state.dataArray) {
     state.updatedAt = now;
   }
+
   state.dataArray = enhancedDataArray;
   state.reducedAt = now;
   (globalThis as any).state = state;

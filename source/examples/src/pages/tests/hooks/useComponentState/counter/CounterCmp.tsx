@@ -12,65 +12,37 @@ type CounterProps<_T> = {
   onValueChange?: (v: number) => void;
 };
 
-type CounterState<_T> = {
-  value: number;
+type CounterSetupState = {
   ref: Ref<number>;
 };
+type CounterMappedState = {
+  value: number;
+};
+type CounterDerivedState = {
+  derivedValue: number;
+};
+type CounterState = CounterSetupState &
+  CounterMappedState &
+  CounterDerivedState;
 
-function getInitialState<T>({
-  props,
-}: {
-  props: CounterProps<T>;
-}): CounterState<T> {
+function initSetupState(): CounterSetupState {
   return {
     ref: React.createRef(),
-    value: props.value ?? props.defaultValue ?? 0,
   };
 }
 
-enum CounterActionType {
-  INC,
-  DEC,
-  SET,
-}
-
-type CounterAction = {
-  type: CounterActionType;
-  payload?: number;
-};
-
-type CounterActions = {
-  increment: VoidFunction;
-  decrement: VoidFunction;
-};
-
-export const getReducerActions = (
-  dispatch: React.Dispatch<CounterAction>,
-): CounterActions => {
-  const increment = () => {
-    dispatch({
-      type: CounterActionType.INC,
-    });
-  };
-  const decrement = () => {
-    dispatch({
-      type: CounterActionType.DEC,
-    });
-  };
-
+function forwardProps() {
   return {
-    increment,
-    decrement,
+    value: (value: number) => value ?? 0,
   };
-};
+}
 
 const CounterComponentStateRoot = getComponentStateRoot({
+  initSetupState,
+  forwardProps,
+
   //@ts-ignore
-  getInitialState: getInitialState,
-  // reducer,
-  // getReducerActions,
-  //@ts-ignore
-  mapPropsToState: <T extends any>({ state }: { state: CounterState<T> }) => {
+  mapPropsToState: ({ state }: { state: CounterState }) => {
     return {
       derivedValue: state.value * 10,
     };
@@ -78,10 +50,10 @@ const CounterComponentStateRoot = getComponentStateRoot({
 });
 
 (globalThis as any).refs = [];
-const TheActualCounter = React.memo(function TheActualCounter<T>() {
+const TheActualCounter = React.memo(function TheActualCounter() {
   const renderCountRef = useRef(0);
   const { componentState: state, componentActions: actions } =
-    useComponentState<CounterState<T>, { derivedValue: number }>();
+    useComponentState<CounterState>();
 
   console.log(state.ref);
   (globalThis as any).refs.push(state.ref);

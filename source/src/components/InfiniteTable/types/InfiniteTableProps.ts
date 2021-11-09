@@ -165,7 +165,7 @@ export type InfiniteTablePropPivotColumn<T> =
 export type InfiniteTablePropPivotRowLabelsColumn<T> =
   InfiniteTablePropPivotColumn<T>;
 
-export type InfiniteTableProps<T> = {
+export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
 
@@ -217,6 +217,7 @@ export type InfiniteTableProps<T> = {
   defaultColumnOrder?: InfiniteTablePropColumnOrder;
   columnOrder?: InfiniteTablePropColumnOrder;
   onColumnOrderChange?: (columnOrder: InfiniteTablePropColumnOrder) => void;
+  onRowHeightChange?: (rowHeight: number) => void;
 
   onReady?: (api: InfiniteTableImperativeApi<T>) => void;
 
@@ -227,4 +228,4 @@ export type InfiniteTableProps<T> = {
       ) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
-};
+}

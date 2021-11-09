@@ -1,4 +1,4 @@
-import { getHeaderColumnIds } from '../../../../../utils';
+import { getHeaderColumnIds } from '../../../testUtils';
 
 export default describe('RawList', () => {
   beforeAll(async () => {
