@@ -45,6 +45,7 @@ import {
   getComponentStateRoot,
   useComponentState,
 } from '../hooks/useComponentState';
+import { useDOMProps } from './hooks/useDOMProps';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -83,7 +84,7 @@ export const InfiniteTableComponent = React.memo(
       domRef,
       bodyDOMRef,
       portalDOMRef,
-      domProps,
+
       licenseKey,
 
       header,
@@ -119,22 +120,10 @@ export const InfiniteTableComponent = React.memo(
 
     const licenseValid = useLicense(licenseKey);
 
-    const className = join(
-      InfiniteTableClassName,
-      columnShifts ? `${InfiniteTableClassName}--shifting` : '',
-      domProps?.className,
-      pinnedStartList ? `${InfiniteTableClassName}--has-pinned-start` : null,
-      pinnedEndList ? `${InfiniteTableClassName}--has-pinned-end` : null,
-      computed.computedPinnedStartOverflow
-        ? `${InfiniteTableClassName}--has-pinned-start-overflow`
-        : null,
-      computed.computedPinnedEndOverflow
-        ? `${InfiniteTableClassName}--has-pinned-end-overflow`
-        : null,
-    );
+    const domProps = useDOMProps<T>(componentState.domProps);
 
     return (
-      <div ref={domRef} {...domProps} className={className}>
+      <div ref={domRef} {...domProps}>
         {header ? (
           <TableHeaderWrapper
             brain={horizontalVirtualBrain}

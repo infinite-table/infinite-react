@@ -32,6 +32,8 @@ export interface InfiniteTableSetupState<T> {
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   columnsWhenGrouping?: InfiniteTableColumns<T>;
   bodySize: Size;
+  focused: boolean;
+  focusedWithin: boolean;
   scrollPosition: ScrollPosition;
   draggingColumnId: null | string;
   pinnedStartScrollListener: ScrollListener;
@@ -53,6 +55,16 @@ export interface InfiniteTableMappedState<T> {
   columns: InfiniteTableProps<T>['columns'];
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   onReady: InfiniteTableProps<T>['onReady'];
+
+  onSelfFocus: InfiniteTableProps<T>['onSelfFocus'];
+  onSelfBlur: InfiniteTableProps<T>['onSelfBlur'];
+  onFocusWithin: InfiniteTableProps<T>['onFocusWithin'];
+  onBlurWithin: InfiniteTableProps<T>['onBlurWithin'];
+
+  focusedClassName: InfiniteTableProps<T>['focusedClassName'];
+  focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
+  focusedStyle: InfiniteTableProps<T>['focusedStyle'];
+  focusedWithinStyle: InfiniteTableProps<T>['focusedWithinStyle'];
   domProps: InfiniteTableProps<T>['domProps'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
@@ -63,6 +75,7 @@ export interface InfiniteTableMappedState<T> {
   pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
   pivotColumnGroups: InfiniteTableProps<T>['pivotColumnGroups'];
 
+  activeIndex: NonUndefined<InfiniteTableProps<T>['activeIndex']>;
   columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
   columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
   columnDefaultWidth: NonUndefined<InfiniteTableProps<T>['columnDefaultWidth']>;

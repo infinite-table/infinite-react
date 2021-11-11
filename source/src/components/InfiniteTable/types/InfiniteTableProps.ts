@@ -205,11 +205,23 @@ export interface InfiniteTableProps<T> {
   sortable?: boolean;
   draggableColumns?: boolean;
   header?: boolean;
+  focusedClassName?: string;
+  focusedWithinClassName?: string;
+  focusedStyle?: React.CSSProperties;
+  focusedWithinStyle?: React.CSSProperties;
   columnDefaultWidth?: number;
   columnMinWidth?: number;
   columnMaxWidth?: number;
   virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;
   virtualizeRows?: boolean;
+
+  defaultActiveIndex?: number;
+  activeIndex?: number;
+
+  onSelfFocus?: (event: React.FocusEvent<HTMLDivElement>) => void;
+  onSelfBlur?: (event: React.FocusEvent<HTMLDivElement>) => void;
+  onFocusWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
+  onBlurWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
 
   defaultColumnOrder?: InfiniteTablePropColumnOrder;
   columnOrder?: InfiniteTablePropColumnOrder;

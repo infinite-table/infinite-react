@@ -136,8 +136,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
     .map((columnId) => {
       let col = columns.get(columnId);
       if (!col) {
-        //TODO find a better solution for group columns
-
         error(
           `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`,
         );

@@ -1,13 +1,13 @@
-export const rafFn = (fn: () => void) => {
+export const rafFn = (fn: (...args: any[]) => void) => {
   let rafId: number = 0;
 
-  return () => {
+  return (...args: any[]) => {
     if (rafId) {
       cancelAnimationFrame(rafId);
     }
     rafId = requestAnimationFrame(() => {
       rafId = 0;
-      fn();
+      fn(...args);
     });
   };
 };
