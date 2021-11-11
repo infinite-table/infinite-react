@@ -86,6 +86,8 @@ export function useDOMProps<T>(
       ? `${InfiniteTableClassName}--has-pinned-end`
       : null,
     focused ? `${InfiniteTableClassName}--focused` : null,
+    focusedWithin ? `${InfiniteTableClassName}--focused-within` : null,
+
     focused && componentState.focusedClassName
       ? componentState.focusedClassName
       : null,
