@@ -8,13 +8,15 @@ import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 
 import { computeFlex } from '../../flexbox';
 import type {
-  InfiniteTableGeneratedColumns,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
+import { err } from '../../../utils/debug';
+
+const error = err('getComputedVisibleColumns');
 
 export type SortInfoMap<T> = {
   [key: string]: { sortInfo: DataSourceSingleSortInfo<T>; index: number };
@@ -79,7 +81,6 @@ export type GetComputedVisibleColumnsResult<T> = {
 
 type GetComputedVisibleColumnsParam<T> = {
   columns: Map<string, InfiniteTableColumn<T>>;
-  generatedColumns: InfiniteTableGeneratedColumns<T>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -102,7 +103,6 @@ type GetComputedVisibleColumnsParam<T> = {
 
 export const getComputedVisibleColumns = <T extends unknown>({
   columns,
-  generatedColumns,
 
   bodySize,
   columnMinWidth,
@@ -124,9 +124,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   let computedOffset = 0;
 
   const normalizedColumnOrder = adjustColumnOrderForPinning(
-    columnOrder === true
-      ? Array.from(generatedColumns.keys()).concat(...columns.keys())
-      : columnOrder,
+    columnOrder === true ? [...columns.keys()] : columnOrder,
     columnPinning,
   );
 
@@ -138,11 +136,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
     .map((columnId) => {
       let col = columns.get(columnId);
       if (!col) {
-        col = generatedColumns.get(columnId);
         //TODO find a better solution for group columns
-        if (!col && !IS_GROUP_COLUMN_ID(columnId)) {
-          throw `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`;
-        }
+
+        error(
+          `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`,
+        );
       }
 
       return col!;

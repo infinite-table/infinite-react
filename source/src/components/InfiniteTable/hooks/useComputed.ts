@@ -9,7 +9,7 @@ import { useColumnAggregations } from './useColumnAggregations';
 import { useComponentState } from '../../hooks/useComponentState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
-import { useGroupAndPivotColumns } from './useGroupAndPivotColumns';
+import { useColumnsWhen } from './useColumnsWhen';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState } =
@@ -42,7 +42,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   useColumnGroups<T>();
 
-  useGroupAndPivotColumns<T>();
+  useColumnsWhen<T>();
 
   const setSortInfo = useCallback((sortInfo: DataSourceSingleSortInfo<T>[]) => {
     //@ts-ignore
@@ -50,8 +50,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     // dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
   }, []);
 
-  const columns =
-    componentState.computedPivotColumns || componentState.computedColumns;
+  const columns = componentState.computedColumns;
 
   const {
     computedColumnOrder,
@@ -70,7 +69,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedPinnedEndWidth,
   } = useComputedVisibleColumns({
     columns,
-    generatedColumns: componentState.generatedColumns,
     columnMinWidth: componentState.columnMinWidth,
     columnMaxWidth: componentState.columnMaxWidth,
     columnDefaultWidth: componentState.columnDefaultWidth,

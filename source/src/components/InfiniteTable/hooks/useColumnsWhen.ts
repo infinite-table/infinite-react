@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { InfiniteTableColumn, InfiniteTableState } from '..';
 import { interceptMap } from '../../..';
-import { DataSourceGroupRowsBy, GroupRowsState } from '../../DataSource';
+import { DataSourceGroupRowsBy, DataSourcePropPivotBy } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
 import { getComputedPivotColumnsFromDataSourcePivotColumns } from '../state/getComputedPivotColumnsFromDataSourcePivotColumns';
 import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
-  InfiniteTableGeneratedColumns,
-  InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from '../types/InfiniteTableProps';
+import { GroupRowsMap } from '../types/InfiniteTableState';
 
 import {
   getColumnForGroupBy,
@@ -19,87 +18,61 @@ import {
   getSingleGroupColumn,
 } from '../utils/getColumnForGroupBy';
 
-type GetGroupColumnStrategyOptions<T> = {
-  groupRowsBy: DataSourceGroupRowsBy<T>[];
-  groupColumn?: InfiniteTablePropGroupColumn<T>;
-  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
-};
-function getGroupRenderStrategy<T>(
-  options: GetGroupColumnStrategyOptions<T>,
-): InfiniteTablePropGroupRenderStrategy {
-  const { groupRowsBy, groupColumn, groupRenderStrategy } = options;
+import { ToggleGrouRowFn, useToggleGroupRow } from './useToggleGroupRow';
 
-  if (groupRenderStrategy) {
-    return groupRenderStrategy;
-  }
-
-  if (groupColumn != null && typeof groupColumn === 'object') {
-    return 'single-column';
-  }
-
-  const columnsInGroupRowsBy = groupRowsBy.filter((g) => g.column);
-
-  if (columnsInGroupRowsBy.length) {
-    return 'multi-column';
-  }
-
-  return 'multi-column';
-}
-
-type GroupRowsByMap<T> = Map<
-  keyof T,
-  { groupBy: DataSourceGroupRowsBy<T>; groupIndex: number }
->;
-
-type ToggleGrouRowFn = (groupKeys: any[]) => void;
-
-export function useGroupAndPivotColumns<T>() {
-  const {
-    componentState: { groupRowsBy, pivotBy, groupRowsState },
-    getState: getDataSourceState,
-    componentActions: dataSourceActions,
-  } = useDataSourceContextValue<T>();
-
-  const {
-    getComponentState,
-    componentActions,
-    componentState: {
-      columns,
-      generatedColumns,
-      hideEmptyGroupColumns,
-      groupColumn,
-      groupRenderStrategy,
-      pivotColumn,
-      pivotRowLabelsColumn,
-      pivotColumns,
-      pivotTotalColumnPosition,
-    },
-  } = useComponentState<InfiniteTableState<T>>();
-
-  const toggleGroupRow = useCallback<ToggleGrouRowFn>((groupKeys: any[]) => {
-    const newState = new GroupRowsState(getDataSourceState().groupRowsState);
-    newState.toggleGroupRow(groupKeys);
-
-    dataSourceActions.groupRowsState = newState;
-  }, []);
-
-  const groupRowsByMap = useMemo(() => {
+function useGroupRowsMap<T>(groupRowsBy: DataSourcePropPivotBy<T>) {
+  const groupRowsMap = useMemo(() => {
     return groupRowsBy.reduce((acc, groupBy, index) => {
       acc.set(groupBy.field, {
         groupBy,
         groupIndex: index,
       });
       return acc;
-    }, new Map() as GroupRowsByMap<T>);
+    }, new Map() as GroupRowsMap<T>);
   }, [groupRowsBy]);
+
+  return groupRowsMap;
+}
+
+export function useColumnsWhen<T>() {
+  const {
+    componentState: { groupRowsBy },
+    componentActions: dataSourceActions,
+  } = useDataSourceContextValue<T>();
+
+  const {
+    componentState: { groupRenderStrategy, pivotTotalColumnPosition },
+  } = useComponentState<InfiniteTableState<T>>();
+
+  const groupRowsMap = useGroupRowsMap(groupRowsBy);
 
   useEffect(() => {
     dataSourceActions.generateGroupRows = groupRenderStrategy !== 'inline';
   }, [groupRenderStrategy]);
 
-  function updateComputedColumns(
+  useEffect(() => {
+    dataSourceActions.pivotTotalColumnPosition = pivotTotalColumnPosition;
+  }, [pivotTotalColumnPosition]);
+
+  useColumnsWhenInlineGroupRenderStrategy<T>(groupRowsMap);
+  useColumnsWhenPivoting<T>();
+  useColumnsWhenGrouping<T>();
+  useHideEmptyGroupColumns<T>(groupRowsMap);
+}
+
+function useColumnsWhenInlineGroupRenderStrategy<T>(
+  groupRowsMap: GroupRowsMap<T>,
+) {
+  const toggleGroupRow = useToggleGroupRow();
+
+  const {
+    componentActions,
+    componentState: { columns, groupRenderStrategy },
+  } = useComponentState<InfiniteTableState<T>>();
+
+  function computeColumnsWhenInlineGroupRenderStrategy(
     columns: Map<string, InfiniteTableColumn<T>>,
-    groupRowsByMap: GroupRowsByMap<T>,
+    groupRowsMap: GroupRowsMap<T>,
     groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
     toggleGroupRow: ToggleGrouRowFn,
   ) {
@@ -107,7 +80,7 @@ export function useGroupAndPivotColumns<T>() {
 
     columns.forEach((column, id) => {
       let base: Partial<InfiniteTableGeneratedGroupColumn<T>> = {};
-      const groupByForColumn = groupRowsByMap.get(column.field!);
+      const groupByForColumn = groupRowsMap.get(column.field!);
       if (groupByForColumn && groupRenderStrategy === 'inline') {
         const { groupIndex } = groupByForColumn;
         const field = groupByForColumn.groupBy.field;
@@ -115,8 +88,6 @@ export function useGroupAndPivotColumns<T>() {
           groupByField: field as string,
           field: field,
           valueGetter: ({ enhancedData }) => {
-            // const parents = enhancedData.parents;
-            // console.log(parents);
             return enhancedData.groupKeys?.[groupIndex];
           },
           rowspan: ({ enhancedData, dataArray }) => {
@@ -162,17 +133,18 @@ export function useGroupAndPivotColumns<T>() {
       computedColumns.set(id, clone);
     });
 
-    return computedColumns;
+    return computedColumns.size === 0 ? undefined : computedColumns;
   }
 
   useEffect(() => {
     const update = () => {
-      componentActions.computedColumns = updateComputedColumns(
-        columns,
-        groupRowsByMap,
-        groupRenderStrategy,
-        toggleGroupRow,
-      );
+      componentActions.columnsWhenInlineGroupRenderStrategy =
+        computeColumnsWhenInlineGroupRenderStrategy(
+          columns,
+          groupRowsMap,
+          groupRenderStrategy,
+          toggleGroupRow,
+        );
     };
 
     update();
@@ -182,28 +154,95 @@ export function useGroupAndPivotColumns<T>() {
       delete: update,
       clear: update,
     });
-  }, [columns, groupRowsByMap, groupRenderStrategy, toggleGroupRow]);
+  }, [columns, groupRowsMap, groupRenderStrategy, toggleGroupRow]);
+}
+
+function useColumnsWhenPivoting<T>() {
+  const {
+    componentState: { groupRowsBy, pivotBy },
+  } = useDataSourceContextValue<T>();
+
+  const {
+    componentActions,
+    componentState: {
+      pivotColumns,
+      pivotColumn,
+      pivotRowLabelsColumn,
+      pivotTotalColumnPosition,
+    },
+  } = useComponentState<InfiniteTableState<T>>();
+
+  const toggleGroupRow = useToggleGroupRow();
 
   useEffect(() => {
-    const currentState = getComponentState();
+    const computedPivotColumns =
+      getComputedPivotColumnsFromDataSourcePivotColumns(pivotColumns, {
+        pivotColumn,
+        pivotRowLabelsColumn,
+        pivotTotalColumnPosition,
+        pivotBy: pivotBy!,
 
+        groupRowsBy,
+        toggleGroupRow,
+      });
+
+    componentActions.computedPivotColumns = computedPivotColumns;
+  }, [pivotColumns, pivotColumn, pivotRowLabelsColumn]);
+}
+
+function useColumnsWhenGrouping<T>() {
+  const {
+    componentState: { groupRowsBy },
+  } = useDataSourceContextValue<T>();
+
+  const {
+    componentActions,
+    componentState: { columns, groupColumn, groupRenderStrategy, pivotColumns },
+  } = useComponentState<InfiniteTableState<T>>();
+
+  const toggleGroupRow = useToggleGroupRow();
+
+  useEffect(() => {
     if (pivotColumns) {
-      if (currentState.generatedColumns.size) {
-        //reset generated columns
-        componentActions.generatedColumns = new Map();
-      }
-
       return;
     }
 
-    componentActions.generatedColumns = getGeneratedGroupColumns({
-      groupColumn,
-      groupRenderStrategy,
-      groupRowsBy,
-      pivotColumns,
-      toggleGroupRow,
+    const update = () => {
+      componentActions.columnsWhenGrouping = getColumnsWhenGrouping({
+        columns,
+        groupColumn,
+        groupRenderStrategy,
+        groupRowsBy,
+        pivotColumns,
+        toggleGroupRow,
+      });
+    };
+
+    update();
+
+    return interceptMap(columns, {
+      set: update,
+      delete: update,
+      clear: update,
     });
   }, [groupRowsBy, groupColumn, groupRenderStrategy, pivotColumns]);
+}
+
+function useHideEmptyGroupColumns<T>(groupRowsMap: GroupRowsMap<T>) {
+  const {
+    componentState: { groupRowsBy, groupRowsState },
+    getState: getDataSourceState,
+  } = useDataSourceContextValue<T>();
+
+  const {
+    getComponentState,
+    componentActions,
+    componentState: {
+      columnsWhenGrouping: generatedColumns,
+      hideEmptyGroupColumns,
+      groupRenderStrategy,
+    },
+  } = useComponentState<InfiniteTableState<T>>();
 
   useEffect(() => {
     if (groupRenderStrategy === 'single-column') {
@@ -229,14 +268,11 @@ export function useGroupAndPivotColumns<T>() {
     }
 
     const currentState = getComponentState();
-    // todo merge this into just 1 source
-    const { computedColumns, pivotColumns, generatedColumns } = currentState;
+
+    const { computedColumns } = currentState;
+
     const columnVisibility = new Map(currentState.columnVisibility);
-    const cols =
-      pivotColumns ||
-      (groupRenderStrategy === 'multi-column'
-        ? generatedColumns
-        : computedColumns);
+    const cols = computedColumns;
 
     groupRowsBy.forEach(({ field }, index) => {
       const colId =
@@ -264,61 +300,42 @@ export function useGroupAndPivotColumns<T>() {
     generatedColumns,
 
     groupRowsBy,
-    groupRowsByMap,
+    groupRowsMap,
     hideEmptyGroupColumns ? groupRowsState : null,
     hideEmptyGroupColumns,
   ]);
-
-  useEffect(() => {
-    dataSourceActions.pivotTotalColumnPosition = pivotTotalColumnPosition;
-  }, [pivotTotalColumnPosition]);
-
-  useEffect(() => {
-    const computedPivotColumns =
-      getComputedPivotColumnsFromDataSourcePivotColumns(pivotColumns, {
-        pivotColumn,
-        pivotRowLabelsColumn,
-        pivotTotalColumnPosition,
-        pivotBy: pivotBy!,
-
-        groupRowsBy,
-        toggleGroupRow,
-      });
-
-    componentActions.computedPivotColumns = computedPivotColumns;
-  }, [pivotColumns, pivotColumn, pivotRowLabelsColumn]);
 }
 
-export function getGeneratedGroupColumns<T>(params: {
+export function getColumnsWhenGrouping<T>(params: {
+  columns: Map<string, InfiniteTableColumn<T>>;
   groupRowsBy: DataSourceGroupRowsBy<T>[];
   toggleGroupRow: (groupKeys: any[]) => void;
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
-}): InfiniteTableGeneratedColumns<T> {
+}): Map<string, InfiniteTableColumn<T>> | undefined {
   const {
     pivotColumns,
     groupRowsBy,
     groupColumn,
     groupRenderStrategy,
     toggleGroupRow,
+    columns,
   } = params;
 
-  const generatedColumns: InfiniteTableGeneratedColumns<T> = new Map();
-
   if (pivotColumns) {
-    return generatedColumns;
+    return undefined;
   }
 
-  const strategy = getGroupRenderStrategy({
-    groupRowsBy,
-    groupColumn,
-    groupRenderStrategy,
-  });
+  if (groupRenderStrategy === 'inline') {
+    return undefined;
+  }
+
+  const computedColumns = new Map<string, InfiniteTableColumn<T>>();
 
   if (groupRenderStrategy === 'multi-column') {
     groupRowsBy.forEach((groupBy, index, arr) => {
-      generatedColumns.set(
+      computedColumns.set(
         `group-by-${groupBy.field}`,
         getColumnForGroupBy<T>(
           {
@@ -333,8 +350,8 @@ export function getGeneratedGroupColumns<T>(params: {
         ),
       );
     });
-  } else if (strategy === 'single-column') {
-    generatedColumns.set(
+  } else if (groupRenderStrategy === 'single-column') {
+    computedColumns.set(
       'group-by',
       getSingleGroupColumn(
         {
@@ -345,9 +362,10 @@ export function getGeneratedGroupColumns<T>(params: {
         groupColumn,
       ),
     );
-  } else if (strategy === 'inline') {
-    // do nothing, as no generated columns
   }
+  columns.forEach((col, colId) => {
+    computedColumns.set(colId, col);
+  });
 
-  return generatedColumns;
+  return computedColumns;
 }

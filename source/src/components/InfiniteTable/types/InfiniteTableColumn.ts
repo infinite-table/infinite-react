@@ -56,7 +56,7 @@ export type InfiniteTableColumnRenderFunction<
   toggleGroupRow,
   toggleCurrentGroupRow,
   enhancedData,
-  groupRowsBy: groupBy,
+  groupRowsBy,
 }: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
@@ -70,6 +70,9 @@ export type InfiniteTableColumnWithField<T> = {
 
 export type InfiniteTableColumnWithRender<T> = {
   render: InfiniteTableColumnRenderFunction<T>;
+};
+export type InfiniteTableColumnWithRenderValue<T> = {
+  renderValue: InfiniteTableColumnRenderFunction<T>;
 };
 
 export type InfiniteTableColumnAlign = 'start' | 'center' | 'end';
@@ -96,14 +99,18 @@ export type InfiniteTableColumnWithSize = DiscriminatedUnion<
 
 export type InfiniteTableColumnTypes = 'string' | 'number' | 'date';
 
-export type InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> =
+// field|valueGetter => THE_VALUE
+// |
+// \/
+export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
   RequireAtLeastOne<
     {
       field?: keyof T;
       render?: InfiniteTableColumnRenderFunction<T>;
+      renderValue?: InfiniteTableColumnRenderFunction<T>;
       valueGetter?: InfiniteTableColumnValueGetter<T>;
     },
-    'render' | 'field' | 'valueGetter'
+    'render' | 'renderValue' | 'field' | 'valueGetter'
   >;
 
 export type InfiniteTableColumnStyleFnParams<T> = {
@@ -168,12 +175,11 @@ export type InfiniteTableBaseColumn<T> = {
   // value
 };
 export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
-  InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> &
+  InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> &
   InfiniteTableColumnWithSize;
 
 export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
   groupByField?: string | string[];
-  renderValue?: InfiniteTableColumnRenderFunction<T>;
 };
 
 export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {

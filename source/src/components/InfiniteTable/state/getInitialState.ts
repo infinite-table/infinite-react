@@ -1,11 +1,15 @@
 import { createRef } from 'react';
-import { DataSourceState } from '../../DataSource';
+import { DataSourceGroupRowsBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
-import { InfiniteTableGeneratedColumns } from '../types/InfiniteTableProps';
+import {
+  InfiniteTableColumns,
+  InfiniteTablePropGroupColumn,
+  InfiniteTablePropGroupRenderStrategy,
+} from '../types/InfiniteTableProps';
 import {
   InfiniteTableSetupState,
   InfiniteTableDerivedState,
@@ -18,7 +22,7 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
  * be affected by props
  */
 export function initSetupState<T>(): InfiniteTableSetupState<T> {
-  const generatedColumns: InfiniteTableGeneratedColumns<T> = new Map();
+  const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
 
   return {
     columnShifts: null,
@@ -36,11 +40,12 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
       scrollTop: 0,
       scrollLeft: 0,
     },
-    generatedColumns,
+    columnsWhenGrouping: columnsGeneratedForGrouping,
     draggingColumnId: null,
     pinnedStartScrollListener: new ScrollListener(),
     pinnedEndScrollListener: new ScrollListener(),
     computedPivotColumns: undefined,
+    columnsWhenInlineGroupRenderStrategy: undefined,
   };
 }
 
@@ -74,8 +79,8 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 
     pivotTotalColumnPosition: (pivotTotalColumnPosition) =>
       pivotTotalColumnPosition ?? 'end',
-    groupRenderStrategy: (groupRenderStrategy) =>
-      groupRenderStrategy ?? 'multi-column',
+    // groupRenderStrategy: (groupRenderStrategy) =>
+    //   groupRenderStrategy ?? 'multi-column',
 
     licenseKey: (licenseKey) =>
       licenseKey || (globalThis as any).InfiniteTableLicenseKey || '',
@@ -100,13 +105,41 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
   };
 };
 
+type GetGroupColumnStrategyOptions<T> = {
+  groupRowsBy: DataSourceGroupRowsBy<T>[];
+  groupColumn?: InfiniteTablePropGroupColumn<T>;
+  groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
+};
+
+function getGroupRenderStrategy<T>(
+  options: GetGroupColumnStrategyOptions<T>,
+): InfiniteTablePropGroupRenderStrategy {
+  const { groupRowsBy, groupColumn, groupRenderStrategy } = options;
+
+  if (groupRenderStrategy) {
+    return groupRenderStrategy;
+  }
+
+  if (groupColumn != null && typeof groupColumn === 'object') {
+    return 'single-column';
+  }
+
+  const columnsInGroupRowsBy = groupRowsBy.filter((g) => g.column);
+
+  if (columnsInGroupRowsBy.length) {
+    return 'multi-column';
+  }
+
+  return 'multi-column';
+}
+
 export const mapPropsToState = <T>(params: {
   props: InfiniteTableProps<T>;
   state: InfiniteTableState<T>;
   oldState: InfiniteTableState<T> | null;
   parentState: DataSourceState<T>;
 }): InfiniteTableDerivedState<T> => {
-  const { props, state, oldState } = params;
+  const { props, state, oldState, parentState } = params;
   const { virtualizeColumns, header } = state;
 
   const computedColumnGroups = state.pivotColumnGroups || state.columnGroups;
@@ -122,8 +155,21 @@ export const mapPropsToState = <T>(params: {
       ? computeColumnGroupsDepths(computedColumnGroups)
       : state.columnGroupsDepthsMap;
 
+  const groupRowsBy = parentState?.groupRowsBy;
+  const groupRenderStrategy = getGroupRenderStrategy({
+    groupRenderStrategy: props.groupRenderStrategy,
+    groupRowsBy,
+    groupColumn: props.groupColumn,
+  });
+
   return {
-    computedColumns: state.computedPivotColumns || props.columns,
+    groupRenderStrategy,
+    groupRowsBy,
+    computedColumns:
+      state.computedPivotColumns ||
+      state.columnsWhenGrouping ||
+      state.columnsWhenInlineGroupRenderStrategy ||
+      props.columns,
     virtualizeHeader,
     columnGroupsDepthsMap,
     columnGroupsMaxDepth:

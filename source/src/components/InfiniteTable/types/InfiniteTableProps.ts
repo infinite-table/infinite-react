@@ -17,7 +17,6 @@ import type {
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnWithSize,
   InfiniteTableComputedColumn,
-  InfiniteTableGeneratedGroupColumn,
   InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
 import { InfiniteTablePropPivotTotalColumnPosition } from './InfiniteTableState';
@@ -90,10 +89,8 @@ export type InfiniteTablePropColumns<
   T,
   ColumnType = InfiniteTableColumn<T>,
 > = Map<string, ColumnType>;
-export type InfiniteTableGeneratedColumns<T> = Map<
-  string,
-  InfiniteTableGeneratedGroupColumn<T>
->;
+
+export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
 
 export type InfiniteTablePropColumnGroups = Map<
   string,

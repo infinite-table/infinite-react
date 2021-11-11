@@ -1,7 +1,7 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
-  InfiniteTableGeneratedColumns,
+  InfiniteTableColumns,
   InfiniteTablePropColumnGroups,
   InfiniteTableProps,
 } from './InfiniteTableProps';
@@ -16,14 +16,21 @@ import {
   InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
 import { ComponentStateActions } from '../../hooks/useComponentState';
+import { DataSourceGroupRowsBy, DataSourceProps } from '../../DataSource/types';
+
+export type GroupRowsMap<T> = Map<
+  keyof T,
+  { groupBy: DataSourceGroupRowsBy<T>; groupIndex: number }
+>;
 
 export interface InfiniteTableSetupState<T> {
+  columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
   bodyDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
-  generatedColumns: InfiniteTableGeneratedColumns<T>;
+  columnsWhenGrouping?: InfiniteTableColumns<T>;
   bodySize: Size;
   scrollPosition: ScrollPosition;
   draggingColumnId: null | string;
@@ -82,14 +89,16 @@ export interface InfiniteTableMappedState<T> {
   pivotTotalColumnPosition: NonUndefined<
     InfiniteTableProps<T>['pivotTotalColumnPosition']
   >;
-  groupRenderStrategy: NonUndefined<
-    InfiniteTableProps<T>['groupRenderStrategy']
-  >;
 }
 
 export interface InfiniteTableDerivedState<T> {
-  virtualizeHeader: boolean;
+  groupRowsBy: DataSourceProps<T>['groupRowsBy'];
   computedColumns: Map<string, InfiniteTableColumn<T>>;
+  virtualizeHeader: boolean;
+
+  groupRenderStrategy: NonUndefined<
+    InfiniteTableProps<T>['groupRenderStrategy']
+  >;
 
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;

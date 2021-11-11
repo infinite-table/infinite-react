@@ -28,51 +28,6 @@ export const notifyChange = (props: any, propName: string, newValue: any) => {
 
 const debug = dbg('rerender');
 
-/**
- * PLEASE READ THIS BEFORE PROCEEDING WITH ANY CHANGES:
- *
- * This is the architecture of the state management behind InfiniteTable (and related components):
- *
- * A component should only read from component state (called CS), not from props.
- * The CS is initialized when first rendering, by calling `getInitialState`.
- * Properties from CS are computed based on controlled props, initial values in uncontrolled props or defaults - or, when none of those is passed, defaults are used.
- *
- * CS can be changed via component actions (called CA) or via controlled props being updated. Uncontrolled props will not trigger CS changes.
- *
- * CS can also have a subset of properties - component state derived properties - which are
- * not modified via component actions internally, but are only updated in response to controlled props updates.
- * In addition, CS can also have a subset of properties which are only set at setup time (by the setupState call) = component setup state (CSS)
- * CSS should not depend on props and will generally contain refs, etc
- *
- * The component actions object has a setter for each property in CS that is not read-only and not part of component setup state.
- *
- * So, CS =
- *  + component setup state (CSS)
- *  + component dynamic state (which have corresponding component actions) (CDS)
- *  + component derived/readonly state (CRoS)
- *
- * CSS  - created by `setupState`
- * CDS  - created by `getInitialState`
- * CRoS - created by `mapPropsToState`
- *
- * setupState() => CSS
- * ===================
- *  - called on component mount, just once, with no params. is the first method to be called. it's optional
- *
- * getInitialState({props}) => CDS
- * ===============================
- *  - called on component mount, just once, with the props, and after setupState is called.
- *  - the returned state object will be used to generate the component actions object, so the shape of CDS will be the shape of component actions object
- *
- * mapPropsToState({ props, state, updatedState, updatedProps }) => CRoS
- * ==================================================
- *  - called after every render if a controlled prop (that has been used in getInitialState or a previous mapPropsToState call) has changed
- *  - also called on mount, with updated being null
- *  - when controlled props are changed, and they have been used to compute the CDS in getInitialState,
- *  they end up in the `updated` property of the single argument passed to this function
- *
- */
-
 let ComponentContext: any;
 
 export function getComponentStateContext<T>(): React.Context<T> {
@@ -98,18 +53,25 @@ export type ComponentStateActions<T_STATE> =
 
 function getReducerActions<T_STATE, T_PROPS>(
   dispatch: React.Dispatch<any>,
-  state: T_STATE,
+  getState: () => T_STATE,
   getProps: () => T_PROPS,
   propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE>,
   allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
 ): ComponentStateGeneratedActions<T_STATE> {
+  const state = getState();
   return Object.keys(state).reduce((actions, stateKey) => {
     const key = stateKey as keyof T_STATE;
 
     const setter = (value: T_STATE[typeof key]) => {
       const props = getProps();
-
+      const state = getState();
+      const currentValue = state[key];
+      if (currentValue === value) {
+        // early exit, as no change detected
+        return;
+      }
       // it's important that we notify with the value that we receive
+      //directly from the setter (see continuation below)
       notifyChange(props, stateKey, value);
 
       //@ts-ignore
@@ -255,8 +217,9 @@ export function getComponentStateRoot<
       COMPONENT_DERIVED_STATE &
       COMPONENT_SETUP_STATE;
 
-    const getParentState = config.getParentState;
-    const parentState = getParentState?.() ?? null;
+    const parentState = config.getParentState?.() ?? null;
+    const getParentState = useLatest(parentState);
+
     const [wholeState] = useState<COMPONENT_STATE>(() => {
       // STEP 1: call setupState
       const initialSetupState = config.initSetupState
@@ -312,6 +275,7 @@ export function getComponentStateRoot<
       previousState: COMPONENT_STATE,
       action: any,
     ) => {
+      const parentState = getParentState?.() ?? null;
       const mappedState: Partial<COMPONENT_MAPPED_STATE> | null =
         action.payload.mappedState;
       const updatedProps: Partial<T_PROPS> | null = action.payload.updatedProps;
@@ -364,6 +328,8 @@ export function getComponentStateRoot<
       wholeState,
     );
 
+    const getComponentState = useLatest(state);
+
     type ACTIONS_TYPE = ComponentStateActions<COMPONENT_STATE>;
 
     const { allowedControlledPropOverrides } = config;
@@ -371,7 +337,7 @@ export function getComponentStateRoot<
     const actions = useMemo(() => {
       const generatedActions = getReducerActions(
         dispatch,
-        wholeState,
+        getComponentState,
         getProps,
         propsToForward,
         allowedControlledPropOverrides,
@@ -388,8 +354,6 @@ export function getComponentStateRoot<
       getComponentStateContext<
         ComponentStateContext<COMPONENT_STATE, ACTIONS_TYPE>
       >();
-
-    const getComponentState = useLatest(state);
 
     const contextValue = useMemo(
       () => ({
@@ -412,38 +376,28 @@ export function getComponentStateRoot<
 
       for (var k in props) {
         const key = k as string as keyof T_PROPS;
+        const oldValue = prevProps[key];
+        const newValue = currentProps[key];
+
+        if (key === 'children') {
+          continue;
+        }
+        if (oldValue === newValue) {
+          continue;
+        }
         if (isControlled(key, props)) {
           if (propsToForward.hasOwnProperty(k)) {
-            const oldValue = prevProps[key];
-            const newValue = currentProps[key];
-
-            if (oldValue !== newValue) {
-              let valueToSet = newValue;
-              const forwardFn =
-                propsToForward[k as keyof typeof propsToForward];
-              if (typeof forwardFn === 'function') {
-                //@ts-ignore
-                valueToSet = forwardFn(newValue);
-              }
+            let valueToSet = newValue;
+            const forwardFn = propsToForward[k as keyof typeof propsToForward];
+            if (typeof forwardFn === 'function') {
               //@ts-ignore
-              if (state[key] !== valueToSet) {
-                // if (config.onControlledPropertyChange) {
-                //   const modifier = config.onControlledPropertyChange(
-                //     k,
-                //     newValue,
-                //     oldValue,
-                //   );
-
-                //   if (typeof modifier === 'function') {
-                //     newValue = modifier(newValue, oldValue);
-                //   }
-                // }
-
-                // if there is any updated state, we need to call dispatch
-                //@ts-ignore
-                newMappedState[key] = valueToSet;
-                newMappedStateCount++;
-              }
+              valueToSet = forwardFn(newValue);
+            }
+            //@ts-ignore
+            if (state[key] !== valueToSet) {
+              //@ts-ignore
+              newMappedState[key] = valueToSet;
+              newMappedStateCount++;
             }
 
             // or even if there is not, but props from propsToStateSet have changed

@@ -1,0 +1,83 @@
+import * as React from 'react';
+
+import {
+  InfiniteTable,
+  DataSource,
+  DataSourceGroupRowsBy,
+  InfiniteTablePropColumns,
+  InfiniteTableColumn,
+  GroupRowsState,
+} from '@infinite-table/infinite-react';
+import { Person, data } from './pivotData';
+
+const domProps = {
+  style: {
+    height: '60vh',
+    border: '1px solid gray',
+    width: 'calc(100% - 20px)',
+    marginLeft: 10,
+  },
+};
+
+const formatter = new Intl.NumberFormat();
+const groupRowsBy: DataSourceGroupRowsBy<Person>[] = [
+  {
+    field: 'department',
+  },
+  {
+    field: 'team',
+  },
+];
+
+const groupRowsState = new GroupRowsState({
+  collapsedRows: [],
+  expandedRows: true,
+});
+
+const columns: InfiniteTablePropColumns<Person> = new Map<
+  string,
+  InfiniteTableColumn<Person>
+>([
+  [
+    'department',
+    {
+      field: 'department',
+    },
+  ],
+  [
+    'team',
+    {
+      field: 'team',
+    },
+  ],
+  ['id', { field: 'id', width: 70 }],
+  ['name', { field: 'name', width: 100 }],
+  ['country', { field: 'country', width: 120 }],
+  [
+    'salary',
+    {
+      field: 'salary',
+      width: 200,
+      render: ({ value }) =>
+        value ? `$ ${formatter.format(value as any as number)}` : null,
+    },
+  ],
+]);
+
+export default function GroupByExample() {
+  return (
+    <DataSource<Person>
+      primaryKey="id"
+      data={data}
+      groupRowsBy={groupRowsBy}
+      defaultGroupRowsState={groupRowsState}
+    >
+      <InfiniteTable<Person>
+        domProps={domProps}
+        columns={columns}
+        columnDefaultWidth={280}
+        groupRenderStrategy={'inline'}
+      ></InfiniteTable>
+    </DataSource>
+  );
+}

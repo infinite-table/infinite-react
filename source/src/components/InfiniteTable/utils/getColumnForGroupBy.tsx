@@ -28,7 +28,7 @@ export function getGroupColumnRender<T>({
       value = column.renderValue(renderOptions);
     }
 
-    // // for groupRenderStrategy !== 'inline', we work on group rows
+    // for groupRenderStrategy !== 'inline', we work on group rows
     let groupRowEnhancedData =
       groupRenderStrategy !== 'inline'
         ? enhancedData
@@ -40,12 +40,12 @@ export function getGroupColumnRender<T>({
       return null;
     }
 
-    let collapsed = groupRowEnhancedData!.collapsed;
-    let groupKeys = groupRowEnhancedData!.groupKeys!;
+    const collapsed = groupRowEnhancedData!.collapsed;
+    const groupKeys = groupRowEnhancedData!.groupKeys!;
 
     if (groupRenderStrategy === 'inline') {
       if (groupRowEnhancedData.groupCount === 1) {
-        return value + '';
+        return value;
       }
 
       if (groupRowEnhancedData.groupNesting === groupIndex && collapsed) {

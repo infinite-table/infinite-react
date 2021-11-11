@@ -1,7 +1,6 @@
 import * as React from 'react';
 import type { InfiniteTableColumn } from '../../types';
 import type {
-  InfiniteTableColumnWithRender,
   InfiniteTableColumnWithField,
   InfiniteTableColumnStyleFnParams,
   InfiniteTableColumnRenderParam,
@@ -29,11 +28,6 @@ function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
 ): c is InfiniteTableColumnWithField<T> & InfiniteTableColumn<T> {
   return typeof (c as InfiniteTableColumnWithField<T>).field === 'string';
-}
-function isColumnWithRender<T>(
-  c: InfiniteTableColumn<T>,
-): c is InfiniteTableColumnWithRender<T> & InfiniteTableColumn<T> {
-  return (c as InfiniteTableColumnWithRender<T>).render instanceof Function;
 }
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
@@ -81,7 +75,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
-  const renderParam: InfiniteTableColumnStyleFnParams<T> = {
+  const stylingRenderParam: InfiniteTableColumnStyleFnParams<T> = {
     value,
     column,
     enhancedData,
@@ -90,7 +84,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   let renderValue: Renderable = value;
 
-  if (isColumnWithRender(column)) {
+  if (column.render || column.renderValue) {
     const renderParam: InfiniteTableColumnRenderParam<T> = {
       value,
       column,
@@ -103,18 +97,22 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       groupRowsBy: computedDataSource.groupRowsBy,
     };
 
-    renderValue = column.render(renderParam);
+    if (column.render) {
+      renderValue = column.render(renderParam);
+    } else if (column.renderValue) {
+      renderValue = column.renderValue(renderParam);
+    }
   }
 
   const colClassName: undefined | string = column.className
     ? typeof column.className === 'function'
-      ? column.className(renderParam)
+      ? column.className(stylingRenderParam)
       : column.className
     : undefined;
 
   const colStyle: undefined | React.CSSProperties = column.style
     ? typeof column.style === 'function'
-      ? column.style(renderParam)
+      ? column.style(stylingRenderParam)
       : column.style
     : undefined;
 
