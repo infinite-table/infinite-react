@@ -223,6 +223,10 @@ export interface InfiniteTableProps<T> {
   onFocusWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
   onBlurWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
 
+  onScrollToTop?: () => void;
+  onScrollToBottom?: () => void;
+  scrollToBottomOffset?: number;
+
   defaultColumnOrder?: InfiniteTablePropColumnOrder;
   columnOrder?: InfiniteTablePropColumnOrder;
   onColumnOrderChange?: (columnOrder: InfiniteTablePropColumnOrder) => void;

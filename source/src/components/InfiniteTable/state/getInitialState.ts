@@ -27,7 +27,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
   return {
     columnShifts: null,
     domRef: createRef(),
-    bodyDOMRef: createRef(),
+    scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
 
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
@@ -69,6 +69,10 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     onFocusWithin: 1,
     onSelfBlur: 1,
     onBlurWithin: 1,
+
+    onScrollToTop: 1,
+    onScrollToBottom: 1,
+    scrollToBottomOffset: 1,
 
     rowStyle: 1,
     rowProps: 1,

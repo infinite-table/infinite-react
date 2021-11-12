@@ -26,7 +26,7 @@ export type GroupRowsMap<T> = Map<
 export interface InfiniteTableSetupState<T> {
   columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
-  bodyDOMRef: MutableRefObject<HTMLDivElement | null>;
+  scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
@@ -60,6 +60,10 @@ export interface InfiniteTableMappedState<T> {
   onSelfBlur: InfiniteTableProps<T>['onSelfBlur'];
   onFocusWithin: InfiniteTableProps<T>['onFocusWithin'];
   onBlurWithin: InfiniteTableProps<T>['onBlurWithin'];
+
+  onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
+  onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];
+  scrollToBottomOffset: InfiniteTableProps<T>['scrollToBottomOffset'];
 
   focusedClassName: InfiniteTableProps<T>['focusedClassName'];
   focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];

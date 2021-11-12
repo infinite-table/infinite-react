@@ -40,6 +40,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
   DataSourceMappedState<T>
 > => {
   return {
+    remoteCount: 1,
     data: 1,
     pivotBy: 1,
     primaryKey: 1,

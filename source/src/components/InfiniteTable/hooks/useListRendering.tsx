@@ -91,6 +91,7 @@ export function useListRendering<T>(
     pinnedEndMaxWidth,
     pinnedStartScrollListener,
     pinnedEndScrollListener,
+    scrollerDOMRef,
   } = componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);
@@ -195,11 +196,12 @@ export function useListRendering<T>(
     }
   }, [!!bodySize.height]);
 
-  const { applyScrollHorizontal, applyScrollVertical } = useOnContainerScroll({
-    verticalVirtualBrain,
-    horizontalVirtualBrain,
-    domRef: domRef as MutableRefObject<HTMLDivElement | null>,
-  });
+  const { applyScrollHorizontal, applyScrollVertical } =
+    useOnContainerScroll<T>({
+      verticalVirtualBrain,
+      horizontalVirtualBrain,
+      reservedContentHeight,
+    });
 
   const { componentActions: dataSourceActions } =
     useDataSourceContextValue<T>();

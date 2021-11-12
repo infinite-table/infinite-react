@@ -63,13 +63,13 @@ export type DataSourcePropGroupRowsBy<T> = DataSourceGroupRowsBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
 export interface DataSourceMappedState<T> {
+  remoteCount: DataSourceProps<T>['remoteCount'];
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
   groupRowsBy: NonUndefined<DataSourceProps<T>['groupRowsBy']>;
   groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
-  // sortInfo: DataSourceSortInfo<T> | null;
   sortInfo: DataSourceSingleSortInfo<T>[] | null;
 }
 
@@ -98,6 +98,7 @@ export interface DataSourceProps<T> {
   primaryKey: keyof T;
   fields?: (keyof T)[];
 
+  remoteCount?: number;
   data: DataSourceData<T>;
 
   // other properties, each with controlled and uncontrolled  variant

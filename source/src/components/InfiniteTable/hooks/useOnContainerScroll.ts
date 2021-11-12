@@ -1,8 +1,9 @@
-import { MutableRefObject, useCallback, useRef } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
 
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import { VirtualBrain } from '../../VirtualBrain';
 import { internalProps } from '../internalProps';
+import { useInfiniteTable } from './useInfiniteTable';
 
 const DELAY = 200;
 
@@ -10,17 +11,37 @@ const TableClassName = internalProps.rootClassName;
 
 const TableClassName__Scrolling = `${TableClassName}--scrolling`;
 
-export const useOnContainerScroll = ({
+const SCROLL_BOTTOM_OFFSET = 0;
+
+export const useOnContainerScroll = <T>({
   verticalVirtualBrain,
   horizontalVirtualBrain,
-  domRef,
+  reservedContentHeight,
 }: {
   verticalVirtualBrain: VirtualBrain;
   horizontalVirtualBrain: VirtualBrain;
-  domRef: MutableRefObject<HTMLDivElement | null>;
+  reservedContentHeight: number;
 }) => {
+  const {
+    getState,
+    componentState: {
+      scrollerDOMRef,
+      domRef,
+      scrollToBottomOffset,
+      onScrollToBottom,
+      onScrollToTop,
+    },
+  } = useInfiniteTable<T>();
+
   const timeoutIdRef = useRef<number>(0);
   const scrollingRef = useRef<boolean>(false);
+
+  const scrollTopMaxRef = useRef<number>(0);
+
+  useEffect(() => {
+    const { current: node } = scrollerDOMRef;
+    scrollTopMaxRef.current = node!.scrollHeight - node!.clientHeight;
+  }, [reservedContentHeight]);
 
   const setScrolling = useCallback((scrolling: boolean) => {
     const prevScrolling = scrollingRef.current;
@@ -79,13 +100,22 @@ export const useOnContainerScroll = ({
     ({ scrollTop }: { scrollTop: number }) => {
       scrollPositionRef.current.scrollTop = scrollTop;
       onContainerScroll(scrollPositionRef.current);
+
+      if (scrollTop === 0) {
+        onScrollToTop?.();
+      }
+
+      const offset = scrollToBottomOffset ?? SCROLL_BOTTOM_OFFSET;
+      const isScrollBottom = scrollTop + offset >= scrollTopMaxRef.current;
+      if (isScrollBottom) {
+        onScrollToBottom?.();
+      }
     },
-    [onContainerScroll],
+    [onContainerScroll, scrollToBottomOffset, onScrollToBottom, onScrollToTop],
   );
 
   return {
     applyScrollHorizontal,
     applyScrollVertical,
-    scrollPositionRef,
   };
 };

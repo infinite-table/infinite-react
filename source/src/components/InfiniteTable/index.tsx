@@ -82,7 +82,7 @@ export const InfiniteTableComponent = React.memo(
 
     const {
       domRef,
-      bodyDOMRef,
+      scrollerDOMRef,
       portalDOMRef,
 
       licenseKey,
@@ -134,7 +134,7 @@ export const InfiniteTableComponent = React.memo(
 
         <InfiniteTableBody>
           <VirtualScrollContainer
-            ref={bodyDOMRef as RefObject<HTMLDivElement>}
+            ref={scrollerDOMRef as RefObject<HTMLDivElement>}
             onContainerScroll={applyScrollVertical}
             scrollable={ONLY_VERTICAL_SCROLLBAR}
           >
@@ -181,7 +181,7 @@ function InfiniteTableContextProvider<T>() {
   const { componentActions, componentState } =
     useComponentState<InfiniteTableState<T>>();
 
-  const { bodyDOMRef } = componentState;
+  const { scrollerDOMRef } = componentState;
 
   const computed = useComputed<T>();
   const getComputed = useLatest(computed);
@@ -201,14 +201,14 @@ function InfiniteTableContextProvider<T>() {
   };
 
   useResizeObserver(
-    bodyDOMRef,
+    scrollerDOMRef,
     (size) => {
       const bodySize = {
         // TODO this can be improved
         width: size.width, //- reservedScrollSpace,
         height: size.height,
       };
-      bodySize.width = bodyDOMRef.current?.scrollWidth ?? bodySize.width;
+      bodySize.width = scrollerDOMRef.current?.scrollWidth ?? bodySize.width;
       const state = getState();
 
       if (!state.virtualizeHeader) {
