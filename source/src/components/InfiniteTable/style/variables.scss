@@ -7,6 +7,9 @@
 
   --ITableHeader__color: #6f6f6f;
 
+  --ITableLoadMask__background: gray;
+  --ITableLoadMask__opacity: 0.3;
+
   --ITableHeaderCell__background: #ededed;
   --ITableHeader__background: var(--ITableHeaderCell__background);
   --ITableHeaderCell--dragging__background: #d4d3d3;

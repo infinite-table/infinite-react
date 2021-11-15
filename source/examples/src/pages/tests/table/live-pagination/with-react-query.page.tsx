@@ -6,7 +6,18 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+
+import {
+  QueryClient,
+  QueryClientProvider,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from 'react-query';
+import { resolve } from 'path';
+
+const queryClient = new QueryClient();
 
 export const columns = new Map<string, InfiniteTableColumn<Employee>>([
   ['id', { field: 'id' }],
@@ -43,8 +54,13 @@ type Employee = {
   email: string;
 };
 
-const dataSource = () => {
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees1k?_limit=100`)
+const dataSource = (page = 1) => {
+  const pageSize = 100;
+
+  return fetch(
+    `${process.env
+      .NEXT_PUBLIC_DATAURL!}/employees1k?_limit=${pageSize}&_page=${page}`,
+  )
     .then(async (r) => {
       const data = await r.json();
 
@@ -52,8 +68,23 @@ const dataSource = () => {
       return { data, total };
     })
     .then(({ data, total }: { data: Employee[]; total: number }) => {
-      return { data, total };
-    });
+      return { data, hasMore: total > pageSize * page, page };
+    })
+    .then(
+      (
+        response,
+      ): Promise<{
+        data: Employee[];
+        hasMore: boolean;
+        page: number;
+      }> => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(response);
+          }, 150);
+        });
+      },
+    );
 };
 
 const domProps = {
@@ -66,13 +97,40 @@ const domProps = {
   } as React.CSSProperties,
 };
 
-const App = () => {
+const Example = () => {
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery(['employees'], ({ pageParam: page }) => dataSource(page), {
+      keepPreviousData: true,
+
+      getPreviousPageParam: (firstPage) => firstPage.page - 1,
+      getNextPageParam: (lastPage) =>
+        lastPage.hasMore ? lastPage.page + 1 : undefined,
+
+      select: (data) => {
+        const result = {
+          pages: data.pages.flatMap((x) => x.data),
+          pageParams: data.pageParams,
+        };
+
+        console.log({ data, result });
+
+        return result;
+      },
+    });
+
   const onScrollToBottom = useCallback(() => {
-    console.log('done');
-  }, []);
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage]);
+
   return (
     <React.StrictMode>
-      <DataSource<Employee> primaryKey="id" data={dataSource}>
+      <DataSource<Employee>
+        primaryKey="id"
+        data={data?.pages || []}
+        loading={true}
+      >
         <InfiniteTable<Employee>
           domProps={domProps}
           columnDefaultWidth={440}
@@ -84,5 +142,13 @@ const App = () => {
     </React.StrictMode>
   );
 };
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+    </QueryClientProvider>
+  );
+}
 
 export default App;

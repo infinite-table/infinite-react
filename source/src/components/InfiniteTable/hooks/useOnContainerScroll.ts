@@ -23,13 +23,13 @@ export const useOnContainerScroll = <T>({
   reservedContentHeight: number;
 }) => {
   const {
-    getState,
     componentState: {
       scrollerDOMRef,
       domRef,
       scrollToBottomOffset,
       onScrollToBottom,
       onScrollToTop,
+      bodySize,
     },
   } = useInfiniteTable<T>();
 
@@ -41,7 +41,9 @@ export const useOnContainerScroll = <T>({
   useEffect(() => {
     const { current: node } = scrollerDOMRef;
     scrollTopMaxRef.current = node!.scrollHeight - node!.clientHeight;
-  }, [reservedContentHeight]);
+  }, [reservedContentHeight, bodySize.height]); //dont remove bodySize.height
+  // as it basically used as a proxy for resizing and node.scrollHeight
+  // is dependent on resizing
 
   const setScrolling = useCallback((scrolling: boolean) => {
     const prevScrolling = scrollingRef.current;
@@ -107,6 +109,7 @@ export const useOnContainerScroll = <T>({
 
       const offset = scrollToBottomOffset ?? SCROLL_BOTTOM_OFFSET;
       const isScrollBottom = scrollTop + offset >= scrollTopMaxRef.current;
+
       if (isScrollBottom) {
         onScrollToBottom?.();
       }

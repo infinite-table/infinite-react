@@ -46,6 +46,7 @@ import {
   useComponentState,
 } from '../hooks/useComponentState';
 import { useDOMProps } from './hooks/useDOMProps';
+import { LoadMask } from './components/LoadMask';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -77,7 +78,7 @@ export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
     const { componentState, getComputed, computed } = useInfiniteTable<T>();
     const {
-      componentState: { dataArray },
+      componentState: { dataArray, loading },
     } = useDataSourceContextValue<T>();
 
     const {
@@ -153,6 +154,8 @@ export const InfiniteTableComponent = React.memo(
 
           {pinnedStartScrollbarPlaceholder}
           {pinnedEndScrollbarPlaceholder}
+
+          <LoadMask visible={loading} />
         </InfiniteTableBody>
 
         {licenseValid ? null : <InfiniteTableLicenseFooter />}
