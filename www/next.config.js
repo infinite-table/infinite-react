@@ -1,10 +1,8 @@
 const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const { VanillaExtractPlugin } = require("@vanilla-extract/webpack-plugin");
-const {
-  getGlobalCssLoader,
-} = require("next/dist/build/webpack/config/blocks/css/loaders");
+const { createVanillaExtractPlugin } = require("@vanilla-extract/next-plugin");
+const withVanillaExtract = createVanillaExtractPlugin();
+
 const withMDX = require("@next/mdx")({
   extension: /\.mdx$/,
 });
@@ -31,54 +29,7 @@ const nextConfig = withMDX({
   pageExtensions: ["page.tsx", "page.mdx"],
 
   reactStrictMode: true,
-  webpack(config, { dev, isServer }) {
-    config.module.rules.push({
-      test: /\.css$/i,
-      sideEffects: true,
-      use: dev
-        ? getGlobalCssLoader(
-            {
-              isClient: !isServer,
-              isDevelopment: dev,
-            },
-            postCssPlugins
-          )
-        : [
-            MiniCssExtractPlugin.loader,
-            {
-              loader: "css-loader",
-              options: {
-                url: false,
-              },
-            },
-            {
-              loader: "postcss-loader",
-              options: {
-                postcssOptions: {
-                  plugins: postCssPlugins,
-                },
-              },
-            },
-          ],
-    });
-
-    const plugins = [];
-
-    plugins.push(new VanillaExtractPlugin());
-    // plugins.push("babel-plugin-preval");
-
-    if (!dev) {
-      plugins.push(
-        new MiniCssExtractPlugin({
-          filename: "static/css/[contenthash].css",
-          chunkFilename: "static/css/[contenthash].css",
-          ignoreOrder: true,
-        })
-      );
-    }
-
-    config.plugins.push(...plugins);
-
+  webpack(config) {
     config.resolve.alias["@www"] = path.resolve("./src");
     config.resolve.alias["@infinite-table/infinite-react"] = path.resolve(
       "../source/dist/index.esm.js"
@@ -102,4 +53,4 @@ const nextConfig = withMDX({
 });
 const createNextPluginPreval = require("next-plugin-preval/config");
 const withNextPluginPreval = createNextPluginPreval();
-module.exports = withNextPluginPreval(nextConfig);
+module.exports = withNextPluginPreval(withVanillaExtract(nextConfig));

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
-import { ICSS } from '../../../../style/utilities';
-
 import { join } from '../../../../utils/join';
 import { dbg } from '../../../../utils/debug';
 
@@ -18,6 +16,7 @@ import { RawList } from '../../../RawList';
 
 import type { RenderItem } from '../../../RawList/types';
 import { ScrollPosition } from '../../../types/ScrollPosition';
+import { flexFlowRow } from './style.css';
 
 const debug = dbg('Header');
 const { rootClassName } = internalProps;
@@ -72,8 +71,8 @@ function InfiniteTableHeaderFn<T>(
   const domProps: React.HTMLProps<HTMLDivElement> = {
     ref: domRef,
     className: join(
-      ICSS.flexFlow.row,
       TableHeaderClassName,
+      flexFlowRow,
       `${TableHeaderClassName}--virtualized`,
       className,
     ),

@@ -1,42 +1,28 @@
 import * as React from 'react';
+import {
+  LoadMaskCls,
+  LoadMaskOverlayCls,
+  LoadMaskTextCls,
+} from './LoadMask.css';
 import { internalProps } from '../internalProps';
+import { Renderable } from '../../types/Renderable';
 
 const { rootClassName } = internalProps;
-const baseCls = `${rootClassName}LoadMask`;
+const baseCls = `${rootClassName}-LoadMask`;
 
-type LoadMaskProps = {
+export type LoadMaskProps = {
   visible: boolean;
+  children: Renderable;
 };
 function LoadMaskFn(props: LoadMaskProps) {
-  const { visible, ...domProps } = props;
+  const { visible, children = 'Loading' } = props;
 
   return (
     <div
-      style={{
-        display: visible ? 'flex' : 'none',
-
-        flexFlow: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-      }}
+      className={`${LoadMaskCls[visible ? 'visible' : 'hidden']} ${baseCls}`}
     >
-      <div className={`${baseCls}-Overlay`}></div>
-      <div
-        style={{
-          background: 'rgba(255,255,255,0.6)',
-          position: 'relative',
-          borderRadius: 4,
-          opacity: 1,
-          padding: 20,
-        }}
-      >
-        Loading
-      </div>
+      <div className={`${LoadMaskOverlayCls} ${baseCls}-Overlay`}></div>
+      <div className={`${LoadMaskTextCls} ${baseCls}-Text`}>{children}</div>
     </div>
   );
 }

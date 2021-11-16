@@ -4,11 +4,13 @@ import { CSSProperties, Ref, RefObject, useRef } from 'react';
 import { useOnScroll } from '../hooks/useOnScroll';
 
 import { getScrollableClassName, Scrollable } from './getScrollableClassName';
-import { Renderable } from '../types/Renderable';
+import type { Renderable } from '../types/Renderable';
+import { VirtualScrollContainerCls } from './VirtualScrollContainer.css';
+import { join } from '../../utils/join';
 
 export type { Scrollable };
 
-const rootClassName = 'IT-VirtualScrollContainer';
+const rootClassName = 'Infinite-VirtualScrollContainer';
 
 export interface VirtualScrollContainerProps {
   className?: string;
@@ -44,11 +46,12 @@ export const VirtualScrollContainer = React.forwardRef(
       <div
         ref={domRef}
         style={style}
-        className={[
+        className={join(
           className,
           rootClassName,
+          VirtualScrollContainerCls,
           getScrollableClassName(scrollable),
-        ].join(' ')}
+        )}
       >
         {children}
       </div>

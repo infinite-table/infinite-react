@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, CSSProperties, useCallback, useRef } from 'react';
 
-import { ICSS } from '../../style/utilities';
 import { join } from '../../utils/join';
 import { VirtualBrain } from '../VirtualBrain';
 
@@ -10,12 +9,19 @@ import type { ScrollPosition } from '../types/ScrollPosition';
 import type { RenderItem, RenderItemParam } from '../RawList/types';
 import { RawList } from '../RawList';
 import { OnMountProps, useOnMount } from '../hooks/useOnMount';
+import { VirtualListCls, VirtualListClsOrientation } from './VirtualList.css';
+import {
+  position,
+  transformTranslateZero,
+  willChange,
+} from '../InfiniteTable/utilities.css';
+import { InfiniteListRootClassName } from './InfiniteListRootClassName';
 
-const rootClassName = 'IList';
+const rootClassName = InfiniteListRootClassName;
 const defaultClasses = [
-  ICSS.willChange.transform,
-  ICSS.position.relative,
-  ICSS.transform.translate3D000,
+  willChange.transform,
+  position.relative,
+  transformTranslateZero,
 ];
 
 export type RowListWithExternalScrollingListProps = {
@@ -97,6 +103,8 @@ export const RowListWithExternalScrolling = (
       className,
       rootClassName,
       `${rootClassName}--vertical`,
+      VirtualListCls,
+      VirtualListClsOrientation.vertical,
       ...defaultClasses,
     ),
   };

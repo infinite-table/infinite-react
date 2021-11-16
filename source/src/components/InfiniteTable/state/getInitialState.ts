@@ -57,6 +57,8 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 > => {
   return {
     columns: 1,
+    components: 1,
+    loadingText: 1,
     pivotColumns: 1,
     groupColumn: 1,
     onReady: 1,

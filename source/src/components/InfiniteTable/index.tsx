@@ -8,8 +8,6 @@ import type {
   InfiniteTableState,
 } from './types';
 
-import { join } from '../../utils/join';
-
 import { internalProps } from './internalProps';
 
 import { getInfiniteTableContext } from './InfiniteTableContext';
@@ -37,7 +35,6 @@ import { VirtualScrollContainer } from '../VirtualScrollContainer';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 
 import { useListRendering } from './hooks/useListRendering';
-import { ICSS } from '../../style/utilities';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
 import { useLicense } from './hooks/useLicense/useLicense';
 import { CSSVariableWatch } from '../CSSVariableWatch';
@@ -47,6 +44,7 @@ import {
 } from '../hooks/useComponentState';
 import { useDOMProps } from './hooks/useDOMProps';
 import { LoadMask } from './components/LoadMask';
+import { display } from './utilities.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -87,12 +85,14 @@ export const InfiniteTableComponent = React.memo(
       portalDOMRef,
 
       licenseKey,
+      loadingText,
 
       header,
       onRowHeightCSSVarChange,
       onHeaderHeightCSSVarChange,
       rowHeightCSSVar,
       headerHeightCSSVar,
+      components,
     } = componentState;
 
     const { columnShifts, bodySize } = componentState;
@@ -123,6 +123,7 @@ export const InfiniteTableComponent = React.memo(
 
     const domProps = useDOMProps<T>(componentState.domProps);
 
+    const LoadMaskCmp = components?.LoadMask ?? LoadMask;
     return (
       <div ref={domRef} {...domProps}>
         {header ? (
@@ -139,7 +140,7 @@ export const InfiniteTableComponent = React.memo(
             onContainerScroll={applyScrollVertical}
             scrollable={ONLY_VERTICAL_SCROLLBAR}
           >
-            <div className={ICSS.display.flex}>
+            <div className={display.flex}>
               {pinnedStartList}
               {centerList}
               {pinnedEndList}
@@ -155,7 +156,7 @@ export const InfiniteTableComponent = React.memo(
           {pinnedStartScrollbarPlaceholder}
           {pinnedEndScrollbarPlaceholder}
 
-          <LoadMask visible={loading} />
+          <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
         </InfiniteTableBody>
 
         {licenseValid ? null : <InfiniteTableLicenseFooter />}

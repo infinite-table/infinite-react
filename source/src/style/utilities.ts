@@ -3,17 +3,17 @@ const rule = (name: string, value: string) => `it__${name}=${value}`;
 export const ICSS = {
   variables: {
     space: [
-      '--it-space-0',
-      '--it-space-1',
-      '--it-space-2',
-      '--it-space-3',
-      '--it-space-4',
-      '--it-space-5',
-      '--it-space-6',
-      '--it-space-7',
-      '--it-space-8',
-      '--it-space-9',
-      '--it-space-10',
+      '--infinite-space-0',
+      '--infinite-space-1',
+      '--infinite-space-2',
+      '--infinite-space-3',
+      '--infinite-space-4',
+      '--infinite-space-5',
+      '--infinite-space-6',
+      '--infinite-space-7',
+      '--infinite-space-8',
+      '--infinite-space-9',
+      '--infinite-space-10',
     ] as [
       string,
       string,
@@ -27,7 +27,7 @@ export const ICSS = {
       string,
       string,
     ],
-    borderRadius: '--it__border-radius',
+    borderRadius: '--infinite-border-radius',
     fontSize: [
       '--it-font-size-0',
       '--it-font-size-1',

@@ -11,6 +11,7 @@ import {
   DataSourceState,
 } from '../../DataSource';
 import { Renderable } from '../../types/Renderable';
+import { LoadMaskProps } from '../components/LoadMask';
 import type {
   InfiniteTableBaseColumn,
   InfiniteTableColumn,
@@ -162,9 +163,15 @@ export type InfiniteTablePropPivotColumn<T> =
 export type InfiniteTablePropPivotRowLabelsColumn<T> =
   InfiniteTablePropPivotColumn<T>;
 
+export type InfiniteTablePropComponents = {
+  LoadMask?: React.FC<LoadMaskProps>;
+};
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
+
+  loadingText?: Renderable;
+  components?: InfiniteTablePropComponents;
 
   pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
   pivotRowLabelsColumn?: Partial<InfiniteTablePropPivotRowLabelsColumn<T>>;

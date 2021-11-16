@@ -1,6 +1,7 @@
 import { FocusEvent } from 'react';
 import { InfiniteTableClassName } from '..';
 import { join } from '../../../utils/join';
+import { InfiniteCls, InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 import { rafFn } from '../utils/rafFn';
 import { useInfiniteTable } from './useInfiniteTable';
 
@@ -77,7 +78,11 @@ export function useDOMProps<T>(
 
   const className = join(
     InfiniteTableClassName,
-    columnShifts ? `${InfiniteTableClassName}--shifting` : '',
+    InfiniteCls,
+    columnShifts
+      ? `${InfiniteClsShiftingColumns} ${InfiniteTableClassName}--shifting`
+      : '',
+
     domProps?.className,
     computedPinnedStartColumnsWidth
       ? `${InfiniteTableClassName}--has-pinned-start`

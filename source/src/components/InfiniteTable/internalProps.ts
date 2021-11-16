@@ -1,4 +1,4 @@
-export const rootClassName = 'ITable';
+export const rootClassName = 'Infinite';
 export const internalProps = {
   rootClassName,
 };

@@ -8,25 +8,22 @@ import { SpacePlaceholder } from './SpacePlaceholder';
 import { VirtualScrollContainer } from '../VirtualScrollContainer';
 import { useRerender } from '../hooks/useRerender';
 
-import { ICSS } from '../../style/utilities';
-
 import { dbg } from '../../utils/debug';
 import { RawList } from '../RawList';
 import type { ScrollPosition } from '../types/ScrollPosition';
+import {
+  scrollTransformTargetCls,
+  VirtualListCls,
+  VirtualListClsOrientation,
+} from './VirtualList.css';
 
 const UPDATE_SCROLL = (node: HTMLElement, scrollPosition: ScrollPosition) => {
   node.style.transform = `translate3d(${-scrollPosition.scrollLeft}px, ${-scrollPosition.scrollTop}px, 0px)`;
 };
 
-const CLASSES = join(
-  ICSS.height['0'],
-  ICSS.width['0'],
-  ICSS.willChange.transform,
-);
-
 const debug = dbg('VirtuaList');
 
-const rootClassName = 'IList';
+const rootClassName = 'InfiniteList';
 
 export const VirtualList = (
   props: VirtualListProps & HTMLProps<HTMLDivElement>,
@@ -102,10 +99,12 @@ export const VirtualList = (
     ...restDOMProps,
     className: join(
       props.className,
+
       rootClassName,
       `${rootClassName}--${mainAxis}`,
-      // THIS IS MANDATORY, in order to make position: fixed children relative to this container
-      ICSS.transform.translate3D000,
+
+      VirtualListCls,
+      VirtualListClsOrientation[mainAxis],
     ),
   };
   if (__DEV__) {
@@ -121,7 +120,7 @@ export const VirtualList = (
         >
           <div
             ref={domRef}
-            className={CLASSES}
+            className={scrollTransformTargetCls}
             data-name="scroll-transform-target"
           >
             <RawList

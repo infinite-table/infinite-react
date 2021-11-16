@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import type { MutableRefObject, Ref } from 'react';
+import type { Ref } from 'react';
 
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useLatest } from '../../hooks/useLatest';
@@ -59,7 +59,7 @@ type ListRenderingResult = {
 export function useListRendering<T>(
   param: ListRenderingParam<T>,
 ): ListRenderingResult {
-  const { computed, domRef, bodySize, columnShifts } = param;
+  const { computed, bodySize, columnShifts } = param;
 
   const { componentActions, componentState, getState } = useInfiniteTable<T>();
 
@@ -91,7 +91,6 @@ export function useListRendering<T>(
     pinnedEndMaxWidth,
     pinnedStartScrollListener,
     pinnedEndScrollListener,
-    scrollerDOMRef,
   } = componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);

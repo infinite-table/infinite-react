@@ -7,7 +7,6 @@ import {
   InfiniteTableCellClassName,
 } from '../InfiniteTableRow/InfiniteTableCell';
 import { InfiniteTableComputedColumn } from '../../types/InfiniteTableColumn';
-import { ICSS } from '../../../../style/utilities';
 import { internalProps } from '../../internalProps';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { setupResizeObserver } from '../../../ResizeObserver';
@@ -17,6 +16,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { createPortal } from 'react-dom';
 import { SortIcon } from '../icons/SortIcon';
+import { cursorPointer, userSelect, userSelectNone } from '../../utilities.css';
 
 const defaultStyle: React.CSSProperties = {
   position: 'absolute' as 'absolute',
@@ -146,8 +146,8 @@ export function InfiniteTableHeaderCell<T>(
         onPointerUp={onPointerUp}
         className={join(
           baseCls,
-          ICSS.userSelect.none,
-          column.computedSortable ? ICSS.cursor.pointer : '',
+          userSelect.none,
+          column.computedSortable ? cursorPointer : '',
 
           useCellClassName(column, [baseCls, InfiniteTableCellClassName]),
 

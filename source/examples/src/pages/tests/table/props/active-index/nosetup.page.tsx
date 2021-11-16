@@ -4,6 +4,7 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
+  InfiniteTablePropComponents,
 } from '@infinite-table/infinite-react';
 import { CarSale } from '@examples/datasets/CarSale';
 
@@ -98,6 +99,7 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
     'count',
     {
       field: 'sales',
+      align: 'end',
     },
   ],
   [
@@ -127,11 +129,11 @@ const focusedStyle: React.CSSProperties = {
 const focusedWithinStyle: React.CSSProperties = {
   border: '3px solid green',
 };
-
 export default function DataTestPage() {
   return (
     <React.StrictMode>
       <button>before</button>
+
       <DataSource<CarSale> data={carsales} primaryKey="id">
         <InfiniteTable<CarSale>
           domProps={domProps}

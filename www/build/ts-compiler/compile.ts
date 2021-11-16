@@ -268,10 +268,12 @@ export const compileFile = (data: {
   try {
     const customCompilerHost: ts.CompilerHost = {
       getSourceFile: (name: string, languageVersion: any) => {
+        console.log({ name }, "!!!");
+
         if (name === sourceFile.fileName) {
           return sourceFile;
         }
-        if (name === "lib.d.ts") {
+        if (name === "lib.d.ts" || !name) {
           return libDTSFile;
         }
 

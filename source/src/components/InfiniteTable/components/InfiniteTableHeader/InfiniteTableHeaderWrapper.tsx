@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { ICSS } from '../../../../style/utilities';
 import { join } from '../../../../utils/join';
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { VirtualBrain } from '../../../VirtualBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { overflow, position, display, flexFlow } from '../../utilities.css';
 
 import { VerticalScrollbarPlaceholder } from '../ScrollbarPlaceholder';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
@@ -76,10 +76,10 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   return (
     <div
       className={join(
-        ICSS.overflow.hidden,
-        ICSS.position.relative,
-        ICSS.display.flex,
-        ICSS.flexFlow.row,
+        overflow.hidden,
+        position.relative,
+        display.flex,
+        flexFlow.row,
       )}
       style={{
         background: 'var(--ITableHeader__background)',

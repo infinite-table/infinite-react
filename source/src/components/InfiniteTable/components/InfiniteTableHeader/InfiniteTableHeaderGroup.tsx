@@ -1,11 +1,15 @@
 import * as React from 'react';
 
 import { join } from '../../../../utils/join';
-import { ICSS } from '../../../../style/utilities';
 
 import { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
 import { rootClassName } from '../../internalProps';
-import { cssEllipsisClassName } from '../../../../style/css';
+import {
+  alignItems,
+  display,
+  flexFlow,
+  cssEllipsisClassName,
+} from '../../utilities.css';
 
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
@@ -30,8 +34,8 @@ export function InfiniteTableHeaderGroup<T>(
     <div
       data-group-id={columnGroup.id}
       className={join(
-        ICSS.flexFlow.column,
-        ICSS.display.flex,
+        flexFlow.column,
+        display.flex,
         TableHeaderGroupClassName,
         `${TableHeaderGroupClassName}--unvirtualized`,
       )}
@@ -40,9 +44,9 @@ export function InfiniteTableHeaderGroup<T>(
       <div
         className={join(
           `${TableHeaderGroupClassName}__header`,
-          ICSS.flexFlow.row,
-          ICSS.display.flex,
-          ICSS.alignItems.center,
+          flexFlow.row,
+          display.flex,
+          alignItems.center,
         )}
         style={{ height: headerHeight }}
       >
@@ -58,9 +62,9 @@ export function InfiniteTableHeaderGroup<T>(
       <div
         className={join(
           `${TableHeaderGroupClassName}__children`,
-          ICSS.display.flex,
-          ICSS.flexFlow.row,
-          ICSS.alignItems.stretch,
+          display.flex,
+          flexFlow.row,
+          alignItems.stretch,
         )}
       >
         {props.children}

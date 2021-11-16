@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { InfiniteTableColumnRenderParam } from '..';
-import { cssEllipsisClassName } from '../../../style/css';
-import { ICSS } from '../../../style/utilities';
+
 import { join } from '../../../utils/join';
 import { DataSourceGroupRowsBy } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
@@ -12,6 +11,7 @@ import {
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
+import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
 
 export function getGroupColumnRender<T>({
   groupIndex,
@@ -62,7 +62,7 @@ export function getGroupColumnRender<T>({
     }
 
     return (
-      <div className={join(ICSS.display.flex, ICSS.alignItems.center)}>
+      <div className={join(display.flex, alignItems.center)}>
         <ExpanderIcon
           expanded={!collapsed}
           onChange={() => {
@@ -135,7 +135,7 @@ export function getSingleGroupColumn<T>(
       }
       return (
         <div
-          className={join(ICSS.display.flex, ICSS.alignItems.center)}
+          className={join(display.flex, alignItems.center)}
           style={{
             paddingInlineStart: `calc(${
               enhancedData.groupNesting! - 1

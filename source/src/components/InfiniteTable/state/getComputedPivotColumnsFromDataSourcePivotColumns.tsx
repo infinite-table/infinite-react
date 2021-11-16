@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { cssEllipsisClassName } from '../../../style/css';
-import { ICSS } from '../../../style/utilities';
 import { join } from '../../../utils/join';
 import {
   DataSourcePropGroupRowsBy,
@@ -10,6 +8,7 @@ import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { InfiniteTableProps } from '../types';
 import { InfiniteTablePivotColumn } from '../types/InfiniteTableColumn';
 import { InfiniteTableState } from '../types/InfiniteTableState';
+import { display, alignItems, cssEllipsisClassName } from '../utilities.css';
 
 export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
   pivotColumns: InfiniteTableProps<T>['pivotColumns'],
@@ -96,7 +95,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
           (enhancedData.groupKeys?.length || 0) < groupRowsBy.length;
         return (
           <div
-            className={join(ICSS.display.flex, ICSS.alignItems.center)}
+            className={join(display.flex, alignItems.center)}
             style={{
               paddingInlineStart: `calc(${
                 enhancedData.groupNesting! - 1

@@ -1,33 +1,13 @@
 @import './variables.scss';
-// @import './variables.scss';
 
-.ITable {
-  position: relative; //TODO needed? for now, needed for portal, since portal is absolute
-  font-family: var(--ITable__font-family);
-  color: var(--ITable__color);
-  background: var(--ITable__background);
-  min-height: var(--ITable__min-height);
-  display: flex;
-  flex-flow: column;
-
-  @include box-sizing_border-box;
-
-  &--shifting {
-    user-select: none;
-  }
-
-  &--focused {
-  }
-}
-
-.ITable-Portal {
+.Infinite-Portal {
   z-index: 1000;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.ITableLoadMask {
+.Infinite-LoadMask {
   display: flex;
   flex-flow: row;
   align-items: center;
@@ -39,42 +19,37 @@
   bottom: 0;
 
   &-Overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background: var(--ITableLoadMask__background);
     opacity: var(--ITableLoadMask__opacity);
   }
 }
 
-.ITableBody {
+.InfiniteBody {
   flex: 1;
 }
 
-.ITablePinnedRowsContainer--pinned-start {
+.InfinitePinnedRowsContainer--pinned-start {
   border-right: var(--ITableCell__border);
 
-  .ITableColumnCell--last-in-category,
-  .ITableColumnCell--first-in-category {
+  .InfiniteColumnCell--last-in-category,
+  .InfiniteColumnCell--first-in-category {
     --ITableCell__border: none;
   }
 }
-.ITablePinnedRowsContainer--pinned-end {
+.InfinitePinnedRowsContainer--pinned-end {
   border-left: var(--ITableCell__border);
 
-  .ITableColumnCell--last-in-category,
-  .ITableColumnCell--first-in-category {
+  .InfiniteColumnCell--last-in-category,
+  .InfiniteColumnCell--first-in-category {
     --ITableCell__border: none;
   }
 }
 
-.ITableFooter {
-  padding: var(--it-space-2);
+.Infinite-Footer {
+  padding: var(--infinite-space-2);
 }
 
-.ITableCell {
+.InfiniteCell {
   // contain: size layout;
   padding: var(--ITableCell__padding);
   white-space: nowrap;
@@ -89,15 +64,15 @@
   }
 }
 
-.ITableHeaderCell {
+.InfiniteHeaderCell {
   background: var(--ITableHeaderCell__background);
   padding: var(--ITableHeaderCell__padding);
 
   // padding: var(--ITableHeaderCell__padding);
   // contain: layout;
 }
-.ITableHeaderCell,
-.ITableColumnCell {
+.InfiniteHeaderCell,
+.InfiniteColumnCell {
   &--first {
     border-top-left-radius: var(--ITableCell__border-radius);
     border-bottom-left-radius: var(--ITableCell__border-radius);
@@ -107,25 +82,25 @@
     border-bottom-right-radius: var(--ITableCell__border-radius);
   }
 }
-.ITableHeaderCell,
-.ITableColumnCell {
+.InfiniteHeaderCell,
+.InfiniteColumnCell {
   border-left: var(--ITableCell__border-width) solid transparent;
   border-right: var(--ITableCell__border-width) solid transparent;
 
-  &--pinned-start.ITableCell--last-in-category {
+  &--pinned-start.InfiniteCell--last-in-category {
     border-right: var(--ITableCell__border);
   }
-  &--pinned-end.ITableCell--first-in-category {
+  &--pinned-end.InfiniteCell--first-in-category {
     border-left: var(--ITableCell__border);
   }
 }
-.ITable--has-pinned-end-overflow {
-  .ITableHeaderCell--unpinned.ITableCell--last-in-category {
+.Infinite--has-pinned-end-overflow {
+  .InfiniteHeaderCell--unpinned.InfiniteCell--last-in-category {
     --ITableCell__border: none;
   }
 }
 
-.ITableHeader {
+.InfiniteHeader {
   background: var(--ITableHeader__background);
   color: var(--ITableHeader__color);
   &--unvirtualized {
@@ -138,22 +113,22 @@
   }
 
   &--overflow {
-    .ITableHeaderCell--pinned-start.ITableHeaderCell--last-in-category {
+    .InfiniteHeaderCell--pinned-start.InfiniteHeaderCell--last-in-category {
       border-right: var(--ITableCell__border-invisible);
     }
-    .ITableHeaderCell--pinned-end.ITableHeaderCell--first-in-category {
+    .InfiniteHeaderCell--pinned-end.InfiniteHeaderCell--first-in-category {
       border-left: var(--ITableCell__border-invisible);
     }
 
-    &.ITableHeader--pinned-start {
+    &.InfiniteHeader--pinned-start {
       border-right: var(--ITableCell__border);
     }
-    &.ITableHeader--pinned-end {
+    &.InfiniteHeader--pinned-end {
       border-left: var(--ITableCell__border);
     }
   }
 }
-.ITableHeaderCell {
+.InfiniteHeaderCell {
   &--dragging {
     z-index: 100;
     opacity: 0.8;
@@ -171,13 +146,13 @@
   }
   border-right: var(--ITableCell__border);
 }
-.ITableRow--inline-group-row,
-.ITableRow--group-row {
+.InfiniteRow--inline-group-row,
+.InfiniteRow--group-row {
   z-index: 100;
 }
-.ITableRow--group-row.ITableRow--odd,
-.ITableRow--group-row.ITableRow--even {
-  .ITableCell::before {
+.InfiniteRow--group-row.InfiniteRow--odd,
+.InfiniteRow--group-row.InfiniteRow--even {
+  .InfiniteCell::before {
     content: '';
     background: var(--ITable-accent__color);
     position: absolute;
@@ -191,11 +166,11 @@
   }
 }
 
-.ITableIcon {
+.InfiniteIcon {
   fill: currentColor;
   flex: none;
 }
-.ITableIcon-expander {
+.InfiniteIcon-expander {
   cursor: pointer;
   user-select: none;
   // transition: transform 0.2s, fill 0.2s;
@@ -205,37 +180,37 @@
   }
 }
 
-.ITableRow {
+.InfiniteRow {
   color: var(--ITableRow__color);
   will-change: transform;
 
   --ITableColumnCell__background: var(--ITableRow__background);
 
-  &.ITableElement--hover {
+  &.InfiniteElement--hover {
     --background--hover: var(--ITableRow--hover__background);
   }
 }
 
-.ITable--scrolling .ITableRow {
+.Infinite--scrolling .InfiniteRow {
   pointer-events: none;
 }
 
-.ITableRow--even {
+.InfiniteRow--even {
   background: var(--ITableRow__background);
 }
-.ITableRow--odd {
+.InfiniteRow--odd {
   background: var(--ITableRow--odd__background);
 }
 
-.ITableColumnCell {
+.InfiniteColumnCell {
   background: inherit;
 }
 
-.ITableElement--hover {
+.InfiniteElement--hover {
   background: var(--background--hover);
 }
 
-.ITableHeaderCell__sort-icon {
+.InfiniteHeaderCell__sort-icon {
   margin-left: 10px;
   position: relative;
 
@@ -248,7 +223,7 @@
   }
 }
 
-.ITableHeaderGroup {
+.InfiniteHeaderGroup {
   &__header {
     padding: var(--ITableCell__padding);
     // text-align: center;

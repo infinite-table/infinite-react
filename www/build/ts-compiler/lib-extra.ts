@@ -105,6 +105,15 @@ declare module "utils/debug" {
         constructor(channelName: string);
     }
 }
+declare module "utils/proxyFnCall" {
+    export function proxyFn<T_PARAM_TO_PROXY, T_FN_PARAMETERS, T_RESULT extends any>(fn: (...params: T_FN_PARAMETERS[]) => T_RESULT, config?: {
+        getProxyTargetFromArgs: (...params: T_FN_PARAMETERS[]) => T_PARAM_TO_PROXY;
+        putProxyToArgs: (proxy: T_PARAM_TO_PROXY, ...params: T_FN_PARAMETERS[]) => T_FN_PARAMETERS[];
+    }): {
+        fn: (...params: T_FN_PARAMETERS[]) => T_RESULT;
+        propertyReads: Set<string>;
+    };
+}
 declare module "utils/toUpperFirst" {
     export const toUpperFirst: (s: string) => string;
     export default toUpperFirst;
@@ -116,7 +125,7 @@ declare module "components/utils/isControlled" {
     export function isControlled<V extends keyof T, T>(propName: V, props: T): boolean;
 }
 declare module "components/hooks/useLatest" {
-    export const useLatest: <T>(value: T) => () => T;
+    export function useLatest<T>(value: T): () => T;
 }
 declare module "components/hooks/usePrevious" {
     export const usePrevious: <T>(value: T, initialValue?: T | undefined) => T;
@@ -129,37 +138,41 @@ declare module "components/hooks/useComponentState" {
         getComponentState: () => T_STATE;
         componentState: T_STATE;
         componentActions: T_ACTIONS;
-        updateStateProperty: <T extends keyof T_STATE>(propertyName: T, propertyValue: T_STATE[T]) => void;
     };
     type ComponentStateGeneratedActions<T_STATE> = {
         [k in keyof T_STATE]: T_STATE[k] | React.SetStateAction<T_STATE[k]>;
     };
-    export type ComponentStateActions<T_STATE, T_ACTIONS = {}> = ComponentStateGeneratedActions<T_STATE> & T_ACTIONS;
-    type ComponentStateRootConfig<T_PROPS, T_STATE, T_READONLY_STATE = {}, T_ACTIONS = {}, T_PARENT_STATE = {}> = {
-        getInitialState: (params: {
+    export type ComponentStateActions<T_STATE> = ComponentStateGeneratedActions<T_STATE>;
+    export type ForwardPropsToStateFnResult<TYPE_PROPS, TYPE_RESULT> = Partial<{
+        [propName in keyof TYPE_PROPS & keyof TYPE_RESULT]: 1 | ((value: TYPE_PROPS[propName]) => TYPE_RESULT[propName]);
+    }>;
+    type ComponentStateRootConfig<T_PROPS, COMPONENT_MAPPED_STATE, COMPONENT_SETUP_STATE = {}, COMPONENT_DERIVED_STATE = {}, T_ACTIONS = {}, T_PARENT_STATE = {}> = {
+        initSetupState?: () => COMPONENT_SETUP_STATE;
+        forwardProps?: () => ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>;
+        allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
+        mapPropsToState?: (params: {
             props: T_PROPS;
+            state: COMPONENT_MAPPED_STATE & COMPONENT_SETUP_STATE & Partial<COMPONENT_DERIVED_STATE>;
+            oldState: null | (COMPONENT_MAPPED_STATE & COMPONENT_SETUP_STATE & Partial<COMPONENT_DERIVED_STATE>);
             parentState: T_PARENT_STATE | null;
-        }) => T_STATE;
+        }) => COMPONENT_DERIVED_STATE;
         concludeReducer?: (params: {
-            previousState: T_STATE;
-            state: T_STATE;
-            updated: Partial<T_STATE> | null;
+            previousState: COMPONENT_MAPPED_STATE & COMPONENT_SETUP_STATE & COMPONENT_DERIVED_STATE;
+            state: COMPONENT_MAPPED_STATE & COMPONENT_SETUP_STATE & COMPONENT_DERIVED_STATE;
+            updatedProps: Partial<T_PROPS> | null;
             parentState: T_PARENT_STATE | null;
-        }) => T_STATE;
+        }) => COMPONENT_MAPPED_STATE & COMPONENT_SETUP_STATE & COMPONENT_DERIVED_STATE;
         getReducerActions?: (dispatch: React.Dispatch<any>) => T_ACTIONS;
-        deriveReadOnlyState?: (params: {
-            props: T_PROPS;
-            state: T_STATE;
-            updated: Partial<T_STATE> | null;
-            parentState: T_PARENT_STATE | null;
-        }) => T_READONLY_STATE;
         getParentState?: () => T_PARENT_STATE;
         onControlledPropertyChange?: (name: string, newValue: any, oldValue: any) => void | ((value: any, oldValue: any) => any);
     };
-    export function getComponentStateRoot<T_PROPS, T_STATE extends object, T_READONLY_STATE extends object = {}, T_ACTIONS = {}, T_PARENT_STATE = {}>(config: ComponentStateRootConfig<T_PROPS, T_STATE, T_READONLY_STATE, T_ACTIONS, T_PARENT_STATE>): React.NamedExoticComponent<T_PROPS & {
+    export function getComponentStateRoot<T_PROPS, COMPONENT_MAPPED_STATE extends object, COMPONENT_SETUP_STATE extends object = {}, COMPONENT_DERIVED_STATE extends object = {}, T_ACTIONS = {}, T_PARENT_STATE = {}>(config: ComponentStateRootConfig<T_PROPS, COMPONENT_MAPPED_STATE, COMPONENT_SETUP_STATE, COMPONENT_DERIVED_STATE, T_ACTIONS, T_PARENT_STATE>): React.NamedExoticComponent<T_PROPS & {
         children: React.ReactNode;
     }>;
-    export function useComponentState<T_STATE, T_READONLY_STATE = {}, T_ACTIONS = {}>(): ComponentStateContext<T_STATE & T_READONLY_STATE, ComponentStateActions<T_STATE, T_ACTIONS>>;
+    export function useComponentState<COMPONENT_STATE>(): ComponentStateContext<COMPONENT_STATE, ComponentStateGeneratedActions<COMPONENT_STATE>>;
+}
+declare module "components/types/NonUndefined" {
+    export type NonUndefined<T> = T extends undefined ? never : T;
 }
 declare module "components/DataSource/types" {
     import * as React from 'react';
@@ -170,6 +183,7 @@ declare module "components/DataSource/types" {
     import { ComponentStateActions } from "components/hooks/useComponentState";
     import { GroupRowsState } from "components/DataSource/GroupRowsState";
     import { InfiniteTablePropPivotTotalColumnPosition } from "components/InfiniteTable/types/InfiniteTableState";
+    import { NonUndefined } from "components/types/NonUndefined";
     export interface DataSourceDataInfo<T> {
         originalDataArray: T[];
     }
@@ -192,10 +206,39 @@ declare module "components/DataSource/types" {
     };
     export type DataSourcePropGroupRowsBy<T> = DataSourceGroupRowsBy<T>[];
     export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
+    export interface DataSourceMappedState<T> {
+        remoteCount: DataSourceProps<T>['remoteCount'];
+        data: DataSourceProps<T>['data'];
+        primaryKey: DataSourceProps<T>['primaryKey'];
+        groupRowsBy: NonUndefined<DataSourceProps<T>['groupRowsBy']>;
+        groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
+        pivotBy: DataSourceProps<T>['pivotBy'];
+        loading: NonUndefined<DataSourceProps<T>['loading']>;
+        sortInfo: DataSourceSingleSortInfo<T>[] | null;
+    }
+    export interface DataSourceSetupState<T> {
+        originalDataArray: T[];
+        lastSortDataArray?: T[];
+        lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
+        dataArray: InfiniteTableEnhancedData<T>[];
+        groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
+        pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
+        updatedAt: number;
+        reducedAt: number;
+        groupedAt: number;
+        sortedAt: number;
+        generateGroupRows: boolean;
+        aggregationReducers?: AggregationReducer<T, any>[];
+        postSortDataArray?: T[];
+        postGroupDataArray?: InfiniteTableEnhancedData<T>[];
+        pivotColumns?: Map<string, InfiniteTableColumn<T>>;
+        pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
+    }
     export interface DataSourceProps<T> {
-        children: React.ReactNode | ((contextData: DataSourceComponentState<T>) => React.ReactNode);
+        children: React.ReactNode | ((contextData: DataSourceState<T>) => React.ReactNode);
         primaryKey: keyof T;
         fields?: (keyof T)[];
+        remoteCount?: number;
         data: DataSourceData<T>;
         loading?: boolean;
         defaultLoading?: boolean;
@@ -213,39 +256,15 @@ declare module "components/DataSource/types" {
         defaultSortInfo?: DataSourceSortInfo<T>;
         onSortInfoChange?: (sortInfo: DataSourceSortInfo<T>) => void;
     }
-    export interface DataSourceState<T> extends DataSourceDataInfo<T> {
-        data: DataSourceData<T>;
-        loading: boolean;
-        sortInfo?: DataSourceSortInfo<T>;
-        dataArray: InfiniteTableEnhancedData<T>[];
-        groupRowsBy: DataSourcePropGroupRowsBy<T>;
-        pivotBy?: DataSourcePropPivotBy<T>;
-        pivotColumns?: Map<string, InfiniteTableColumn<T>>;
-        pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
-        aggregationReducers?: AggregationReducer<T, any>[];
-        groupRowsState: GroupRowsState;
-        sortedAt: number;
-        groupedAt: number;
-        updatedAt: number;
-        reducedAt: number;
-        pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
+    export interface DataSourceState<T> extends DataSourceSetupState<T>, DataSourceDerivedState<T>, DataSourceMappedState<T> {
     }
-    export interface DataSourceReadOnlyState<T> {
+    export interface DataSourceDerivedState<_T> {
         multiSort: boolean;
-        sortInfo: DataSourceSingleSortInfo<T>[];
-        primaryKey: keyof T;
-        groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
-        lastSortDataArray?: T[];
-        postSortDataArray?: T[];
-        lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
-        postGroupDataArray?: InfiniteTableEnhancedData<T>[];
-    }
-    export interface DataSourceComponentState<T> extends Omit<DataSourceState<T>, 'sortInfo'>, DataSourceReadOnlyState<T> {
     }
     export type DataSourceComponentActions<T> = ComponentStateActions<DataSourceState<T>>;
     export interface DataSourceContextValue<T> {
-        getState: () => DataSourceComponentState<T>;
-        componentState: DataSourceComponentState<T>;
+        getState: () => DataSourceState<T>;
+        componentState: DataSourceState<T>;
         componentActions: DataSourceComponentActions<T>;
     }
     export enum DataSourceActionType {
@@ -265,8 +284,9 @@ declare module "components/DataSource/DataSourceContext" {
     export function getDataSourceContext<T>(): React.Context<DataSourceContextValue<T>>;
 }
 declare module "components/DataSource/publicHooks/useDataSource" {
-    import { DataSourceComponentState, DataSourceContextValue } from "components/DataSource/types";
-    export function useDataSource<T>(): DataSourceComponentState<T>;
+    import { DataSourceContextValue } from "components/DataSource/types";
+    import { DataSourceState } from "components/DataSource/index";
+    export function useDataSource<T>(): DataSourceState<T>;
     export function useDataSourceContextValue<T>(): DataSourceContextValue<T>;
 }
 declare module "components/DataSource/privateHooks/buildDataSourceDataInfo" {
@@ -287,23 +307,31 @@ declare module "components/DataSource/state/normalizeSortInfo" {
     export const normalizeSortInfo: <T>(sortInfo?: DataSourceSortInfo<T> | undefined) => DataSourceSingleSortInfo<T>[];
 }
 declare module "components/DataSource/state/getInitialState" {
-    import { DataSourceProps, DataSourceReadOnlyState, DataSourceState } from "components/DataSource/types";
-    export function getInitialState<T>(params: {
-        props: DataSourceProps<T>;
-    }): DataSourceState<T>;
-    export function deriveReadOnlyState<T extends any>(params: {
+    import { DataSourceMappedState, DataSourceProps, DataSourceDerivedState, DataSourceSetupState, DataSourceState } from "components/DataSource/types";
+    import { GroupRowsState } from "components/DataSource/GroupRowsState";
+    import { ForwardPropsToStateFnResult } from "components/hooks/useComponentState";
+    export function initSetupState<T>(): DataSourceSetupState<T>;
+    export const forwardProps: <T>() => Partial<{
+        data: 1 | ((value: import("components/DataSource/types").DataSourceData<T>) => import("components/DataSource/types").DataSourceData<T>);
+        loading: 1 | ((value: boolean | undefined) => boolean);
+        remoteCount: 1 | ((value: number | undefined) => number | undefined);
+        primaryKey: 1 | ((value: keyof T) => keyof T);
+        groupRowsBy: 1 | ((value: import("components/DataSource/types").DataSourcePropGroupRowsBy<T> | undefined) => import("components/DataSource/types").DataSourcePropGroupRowsBy<T>);
+        groupRowsState: 1 | ((value: GroupRowsState<any> | undefined) => GroupRowsState<any>);
+        pivotBy: 1 | ((value: import("components/DataSource/types").DataSourcePropPivotBy<T> | undefined) => import("components/DataSource/types").DataSourcePropPivotBy<T> | undefined);
+        sortInfo: 1 | ((value: import("components/DataSource/types").DataSourceSortInfo<T> | undefined) => import("components/DataSource/types").DataSourceSingleSortInfo<T>[] | null);
+    }>;
+    export function mapPropsToState<T extends any>(params: {
         props: DataSourceProps<T>;
         state: DataSourceState<T>;
-        updated: Partial<DataSourceState<T>> | null;
-    }): DataSourceReadOnlyState<T>;
+    }): DataSourceDerivedState<T>;
 }
 declare module "components/DataSource/state/reducer" {
-    import type { DataSourceState, DataSourceReadOnlyState } from "components/DataSource/types";
+    import type { DataSourceState, DataSourceDerivedState } from "components/DataSource/types";
     export function concludeReducer<T>(params: {
-        previousState: DataSourceState<T> & DataSourceReadOnlyState<T>;
-        state: DataSourceState<T> & DataSourceReadOnlyState<T>;
-        updated: Partial<DataSourceState<T> & DataSourceReadOnlyState<T>> | null;
-    }): DataSourceState<T> & DataSourceReadOnlyState<T>;
+        previousState: DataSourceState<T> & DataSourceDerivedState<T>;
+        state: DataSourceState<T> & DataSourceDerivedState<T>;
+    }): DataSourceState<T> & DataSourceDerivedState<T>;
 }
 declare module "components/DataSource/index" {
     import { DataSourceProps } from "components/DataSource/types";
@@ -360,34 +388,46 @@ declare module "components/InfiniteTable/types/Utility" {
 }
 declare module "components/InfiniteTable/types/InfiniteTableColumn" {
     import type { Renderable } from "components/types/Renderable";
-    import type { DataSourceComponentState, DataSourcePivotBy, DataSourceSingleSortInfo } from "components/DataSource/types";
+    import type { DataSourcePivotBy, DataSourceSingleSortInfo, DataSourceState } from "components/DataSource/types";
     import type { DiscriminatedUnion, RequireAtLeastOne } from "components/InfiniteTable/types/Utility";
     import type { InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
     import { CSSProperties } from 'react';
     export type { DiscriminatedUnion, RequireAtLeastOne };
     export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
-    export interface InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>> {
+    export interface InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>> {
         value: string | number | Renderable;
         data: DATA_TYPE | null;
         enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
+        groupRowEnhancedData: InfiniteTableEnhancedData<DATA_TYPE> | null;
         rowIndex: number;
         column: COL_TYPE;
         toggleCurrentGroupRow: () => void;
         toggleGroupRow: InfiniteTableToggleGroupRowFn;
-        groupRowsBy: DataSourceComponentState<DATA_TYPE>['groupRowsBy'];
+        groupRowsBy: DataSourceState<DATA_TYPE>['groupRowsBy'];
     }
+    export type InfiniteTableColumnRowspanFnParams<DATA_TYPE, COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>> = {
+        data: DATA_TYPE | null;
+        enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
+        groupRowEnhancedData: InfiniteTableEnhancedData<DATA_TYPE> | null;
+        dataArray: InfiniteTableEnhancedData<DATA_TYPE>[];
+        rowIndex: number;
+        column: COL_TYPE;
+    };
     export interface InfiniteTableColumnHeaderRenderParams<T> {
         column: InfiniteTableComputedColumn<T>;
         columnSortInfo: DataSourceSingleSortInfo<T> | null | undefined;
     }
     export type InfiniteTableColumnPinned = 'start' | 'end' | false;
-    export type InfiniteTableColumnRenderFunction<DATA_TYPE, COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>> = ({ value, rowIndex, column, data, toggleGroupRow, toggleCurrentGroupRow, enhancedData, groupRowsBy: groupBy, }: InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE>) => Renderable | null;
+    export type InfiniteTableColumnRenderFunction<DATA_TYPE, COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>> = ({ value, rowIndex, column, data, toggleGroupRow, toggleCurrentGroupRow, enhancedData, groupRowsBy, }: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
     export type InfiniteTableColumnHeaderRenderFunction<T> = ({ columnSortInfo, column, }: InfiniteTableColumnHeaderRenderParams<T>) => Renderable;
     export type InfiniteTableColumnWithField<T> = {
         field: keyof T;
     };
     export type InfiniteTableColumnWithRender<T> = {
         render: InfiniteTableColumnRenderFunction<T>;
+    };
+    export type InfiniteTableColumnWithRenderValue<T> = {
+        renderValue: InfiniteTableColumnRenderFunction<T>;
     };
     export type InfiniteTableColumnAlign = 'start' | 'center' | 'end';
     export type InfiniteTableColumnVerticalAlign = 'start' | 'center' | 'end';
@@ -402,11 +442,12 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
     };
     export type InfiniteTableColumnWithSize = DiscriminatedUnion<InfiniteTableColumnWithFlex, InfiniteTableColumnWithWidth>;
     export type InfiniteTableColumnTypes = 'string' | 'number' | 'date';
-    export type InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> = RequireAtLeastOne<{
+    export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> = RequireAtLeastOne<{
         field?: keyof T;
         render?: InfiniteTableColumnRenderFunction<T>;
+        renderValue?: InfiniteTableColumnRenderFunction<T>;
         valueGetter?: InfiniteTableColumnValueGetter<T>;
-    }, 'render' | 'field' | 'valueGetter'>;
+    }, 'render' | 'renderValue' | 'field' | 'valueGetter'>;
     export type InfiniteTableColumnStyleFnParams<T> = {
         data: T | null;
         value: Renderable;
@@ -420,8 +461,10 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
     export type InfiniteTableColumnValueGetterParams<T> = {
         data: T | null;
         enhancedData: InfiniteTableEnhancedData<T>;
+        groupRowEnhancedData: InfiniteTableEnhancedData<T> | null;
     };
     export type InfiniteTableColumnValueGetter<T, VALUE_GETTER_TYPE = Renderable> = (params: InfiniteTableColumnValueGetterParams<T>) => VALUE_GETTER_TYPE;
+    export type InfiniteTableColumnRowspanFn<T> = (params: InfiniteTableColumnRowspanFnParams<T>) => number;
     export type InfiniteTableBaseColumn<T> = {
         maxWidth?: number;
         minWidth?: number;
@@ -437,12 +480,12 @@ declare module "components/InfiniteTable/types/InfiniteTableColumn" {
         type?: InfiniteTableColumnTypes;
         style?: InfiniteTableColumnStyle<T>;
         className?: InfiniteTableColumnClassName<T>;
+        rowspan?: InfiniteTableColumnRowspanFn<T>;
         valueGetter?: InfiniteTableColumnValueGetter<T>;
     };
-    export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> & InfiniteTableColumnWithRenderOrFieldOrValueGetter<T> & InfiniteTableColumnWithSize;
+    export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> & InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> & InfiniteTableColumnWithSize;
     export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
         groupByField?: string | string[];
-        renderValue?: InfiniteTableColumnRenderFunction<T>;
     };
     export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {
         pivotBy?: DataSourcePivotBy<T>[];
@@ -495,9 +538,12 @@ declare module "utils/groupAndPivot/index" {
         value?: any;
         isGroupRow?: boolean;
         collapsed: boolean;
+        collapsedChildrenCount?: number;
+        collapsedGroupsCount?: number;
         groupNesting?: number;
         groupKeys?: any[];
-        parentGroupKeys?: any[];
+        parents?: InfiniteTableEnhancedGroupData<T>[];
+        indexInParentGroups?: number[];
         indexInGroup: number;
         indexInAll: number;
         groupCount?: number;
@@ -510,6 +556,8 @@ declare module "utils/groupAndPivot/index" {
         groupData: T[];
         value: any;
         isGroupRow: true;
+        collapsedChildrenCount: number;
+        collapsedGroupsCount: number;
         groupNesting: number;
         groupKeys?: any[];
         groupCount: number;
@@ -550,7 +598,13 @@ declare module "utils/groupAndPivot/index" {
     };
     export function group<DataType, KeyType = any>(groupParams: GroupParams<DataType, KeyType>, data: DataType[]): DataGroupResult<DataType, KeyType>;
     export function flatten<DataType, KeyType extends any>(groupResult: DataGroupResult<DataType, KeyType>): DataType[];
-    export function enhancedFlatten<DataType, KeyType = any>(groupResult: DataGroupResult<DataType, KeyType>, toPrimaryKey: (data: DataType) => any, groupRowsState?: GroupRowsState): {
+    export type EnhancedFlattenParam<DataType, KeyType = any> = {
+        groupResult: DataGroupResult<DataType, KeyType>;
+        toPrimaryKey: (data: DataType) => any;
+        groupRowsState?: GroupRowsState;
+        generateGroupRows: boolean;
+    };
+    export function enhancedFlatten<DataType, KeyType = any>(param: EnhancedFlattenParam<DataType, KeyType>): {
         data: InfiniteTableEnhancedData<DataType>[];
     };
     export type ComputedColumnsAndGroups<DataType> = {
@@ -561,10 +615,11 @@ declare module "utils/groupAndPivot/index" {
 }
 declare module "components/InfiniteTable/types/InfiniteTableProps" {
     import * as React from 'react';
+    import { InfiniteTableState } from "components/InfiniteTable/types/index";
     import { AggregationReducer, InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
-    import { DataSourceGroupRowsBy, DataSourcePropGroupRowsBy, DataSourcePropPivotBy } from "components/DataSource/index";
+    import { DataSourceGroupRowsBy, DataSourcePropGroupRowsBy, DataSourcePropPivotBy, DataSourceState } from "components/DataSource/index";
     import { Renderable } from "components/types/Renderable";
-    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableColumnRenderFunction, InfiniteTableColumnWithSize, InfiniteTableComputedColumn, InfiniteTableGeneratedGroupColumn, InfiniteTablePivotColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableColumnRenderFunction, InfiniteTableColumnWithSize, InfiniteTableComputedColumn, InfiniteTablePivotColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     import { InfiniteTablePropPivotTotalColumnPosition } from "components/InfiniteTable/types/InfiniteTableState";
     export type InfiniteTablePropColumnOrderNormalized = string[];
     export type InfiniteTablePropColumnOrder = InfiniteTablePropColumnOrderNormalized | true;
@@ -589,6 +644,8 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         setColumnVisibility: (columnVisibility: InfiniteTablePropColumnVisibility) => void;
         setColumnAggregations: (columnAggregations: InfiniteTablePropColumnAggregations<T>) => void;
         x?: T;
+        getState: () => InfiniteTableState<T>;
+        getDataSourceState: () => DataSourceState<T>;
     };
     export type InfiniteTablePropVirtualizeColumns<T> = boolean | ((columns: InfiniteTableComputedColumn<T>[]) => boolean);
     export type InfiniteTableInternalProps<T> = {
@@ -596,7 +653,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         ___t?: T;
     };
     export type InfiniteTablePropColumns<T, ColumnType = InfiniteTableColumn<T>> = Map<string, ColumnType>;
-    export type InfiniteTableGeneratedColumns<T> = Map<string, InfiniteTableGeneratedGroupColumn<T>>;
+    export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
     export type InfiniteTablePropColumnGroups = Map<string, InfiniteTableColumnGroup>;
     /**
      * the keys is an array of strings: first string in the array is the column group id, next strings are the ids of all columns in the group
@@ -630,7 +687,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         groupRowsBy: DataSourcePropGroupRowsBy<T>;
         pivotBy: DataSourcePropPivotBy<T>;
     };
-    export type InfiniteTablePropGroupRenderStrategy = 'single-column' | 'multi-column';
+    export type InfiniteTablePropGroupRenderStrategy = 'single-column' | 'multi-column' | 'inline';
     export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & InfiniteTableColumnWithSize & {
         renderValue?: InfiniteTableColumnRenderFunction<T>;
     };
@@ -640,7 +697,7 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
     export type InfiniteTablePropGroupColumn<T> = InfiniteTableGroupColumnBase<T> | ((options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupKeys: any[]) => void) => InfiniteTableGroupColumnBase<T>);
     export type InfiniteTablePropPivotColumn<T> = InfiniteTablePivotColumnBase<T> | ((options: PivotColumnGetterOptions<T>) => InfiniteTablePivotColumnBase<T>);
     export type InfiniteTablePropPivotRowLabelsColumn<T> = InfiniteTablePropPivotColumn<T>;
-    export type InfiniteTableProps<T> = {
+    export interface InfiniteTableProps<T> {
         columns: InfiniteTablePropColumns<T>;
         pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
         pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
@@ -648,9 +705,12 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
         groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
         groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
+        hideEmptyGroupColumns?: boolean;
         columnVisibility?: InfiniteTablePropColumnVisibility;
         defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
         columnPinning?: InfiniteTablePropColumnPinning;
+        pinnedStartMaxWidth?: number;
+        pinnedEndMaxWidth?: number;
         defaultColumnPinning?: InfiniteTablePropColumnPinning;
         defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
         columnAggregations?: InfiniteTablePropColumnAggregations<T>;
@@ -666,21 +726,36 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
         headerHeight: number | string;
         domProps?: React.HTMLProps<HTMLDivElement>;
         showZebraRows?: boolean;
+        showHoverRows?: boolean;
         sortable?: boolean;
         draggableColumns?: boolean;
         header?: boolean;
+        focusedClassName?: string;
+        focusedWithinClassName?: string;
+        focusedStyle?: React.CSSProperties;
+        focusedWithinStyle?: React.CSSProperties;
         columnDefaultWidth?: number;
         columnMinWidth?: number;
         columnMaxWidth?: number;
         virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;
         virtualizeRows?: boolean;
+        defaultActiveIndex?: number;
+        activeIndex?: number;
+        onSelfFocus?: (event: React.FocusEvent<HTMLDivElement>) => void;
+        onSelfBlur?: (event: React.FocusEvent<HTMLDivElement>) => void;
+        onFocusWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
+        onBlurWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
+        onScrollToTop?: () => void;
+        onScrollToBottom?: () => void;
+        scrollToBottomOffset?: number;
         defaultColumnOrder?: InfiniteTablePropColumnOrder;
         columnOrder?: InfiniteTablePropColumnOrder;
         onColumnOrderChange?: (columnOrder: InfiniteTablePropColumnOrder) => void;
+        onRowHeightChange?: (rowHeight: number) => void;
         onReady?: (api: InfiniteTableImperativeApi<T>) => void;
         rowProps?: React.HTMLProps<HTMLDivElement> | ((rowArgs: InfiniteTableRowStyleFnParams<T>) => React.HTMLProps<HTMLDivElement>);
         licenseKey?: string;
-    };
+    }
 }
 declare module "components/types/Size" {
     export interface Size {
@@ -702,77 +777,117 @@ declare module "components/types/SubscriptionCallback" {
         onChange: (fn: SubscriptionCallbackOnChangeFn<T>) => VoidFn;
     }
 }
+declare module "components/VirtualBrain/ScrollListener" {
+    import { OnScrollFn, ScrollPosition } from "components/types/ScrollPosition";
+    export class ScrollListener {
+        private scrollPosition;
+        private onScrollFns;
+        getScrollPosition: () => ScrollPosition;
+        onScroll: (fn: OnScrollFn) => () => void;
+        setScrollPosition: (scrollPosition: ScrollPosition) => void;
+        private notifyScrollChange;
+        destroy: () => void;
+    }
+}
 declare module "components/InfiniteTable/types/InfiniteTableState" {
     import type { ScrollPosition } from "components/types/ScrollPosition";
-    import type { InfiniteTableColumnGroup, InfiniteTableGeneratedColumns, InfiniteTablePropCollapsedColumnGroups, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility, InfiniteTablePropGroupRenderStrategy, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableColumnGroup, InfiniteTableColumns, InfiniteTablePropColumnGroups, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
     import { Size } from "components/types/Size";
-    import { ComponentStateActions } from "components/hooks/useComponentState";
     import { MutableRefObject } from 'react';
     import { SubscriptionCallback } from "components/types/SubscriptionCallback";
-    export interface InfiniteTableState<T> {
+    import { ScrollListener } from "components/VirtualBrain/ScrollListener";
+    import { NonUndefined } from "components/types/NonUndefined";
+    import { InfiniteTableColumn, InfiniteTablePivotColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import { ComponentStateActions } from "components/hooks/useComponentState";
+    import { DataSourceGroupRowsBy, DataSourceProps } from "components/DataSource/types";
+    export type GroupRowsMap<T> = Map<keyof T, {
+        groupBy: DataSourceGroupRowsBy<T>;
+        groupIndex: number;
+    }>;
+    export interface InfiniteTableSetupState<T> {
+        columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
         domRef: MutableRefObject<HTMLDivElement | null>;
-        bodyDOMRef: MutableRefObject<HTMLDivElement | null>;
+        scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
         portalDOMRef: MutableRefObject<HTMLDivElement | null>;
-        bodySizeRef: MutableRefObject<Size | null>;
-        onRowHeightChange: SubscriptionCallback<number>;
-        onHeaderHeightChange: SubscriptionCallback<number>;
-        rowHeight: number;
-        headerHeight: number;
-        columnShifts: null | number[];
-        draggingColumnId: null | string;
+        onRowHeightCSSVarChange: SubscriptionCallback<number>;
+        onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
+        columnsWhenGrouping?: InfiniteTableColumns<T>;
         bodySize: Size;
+        focused: boolean;
+        focusedWithin: boolean;
         scrollPosition: ScrollPosition;
-        columnOrder: InfiniteTablePropColumnOrder;
-        columnVisibility: InfiniteTablePropColumnVisibility;
-        columnPinning: InfiniteTablePropColumnPinning;
-        columnAggregations: InfiniteTablePropColumnAggregations<T>;
-        columnGroups: InfiniteTablePropColumnGroups;
-        collapsedColumnGroups: InfiniteTablePropCollapsedColumnGroups;
-        columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
-        columnGroupsMaxDepth: number;
-        columns: InfiniteTableProps<T>['columns'];
-        pivotColumns: InfiniteTableProps<T>['pivotColumns'];
-        computedPivotColumns: InfiniteTableProps<T>['pivotColumns'];
-        pivotColumnGroups?: InfiniteTablePropColumnGroups;
-        computedColumnGroups: InfiniteTablePropColumnGroups;
-        generatedColumns: InfiniteTableGeneratedColumns<T>;
-        x?: T;
+        draggingColumnId: null | string;
+        pinnedStartScrollListener: ScrollListener;
+        pinnedEndScrollListener: ScrollListener;
+        computedPivotColumns?: Map<string, InfiniteTablePivotColumn<T>>;
+        columnShifts: number[] | null;
     }
     export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
         depth: number;
     };
     export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
-    export interface InfiniteTableComponentState<T> extends InfiniteTableState<T>, InfiniteTableReadOnlyState<T> {
-    }
     export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
-    export interface InfiniteTableReadOnlyState<T> {
-        groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
-        pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
-        onReady: InfiniteTableProps<T>['onReady'];
-        rowProps: InfiniteTableProps<T>['rowProps'];
-        rowStyle: InfiniteTableProps<T>['rowStyle'];
-        rowClassName: InfiniteTableProps<T>['rowClassName'];
+    export interface InfiniteTableMappedState<T> {
         groupColumn: InfiniteTableProps<T>['groupColumn'];
+        columns: InfiniteTableProps<T>['columns'];
+        pivotColumns: InfiniteTableProps<T>['pivotColumns'];
+        onReady: InfiniteTableProps<T>['onReady'];
+        onSelfFocus: InfiniteTableProps<T>['onSelfFocus'];
+        onSelfBlur: InfiniteTableProps<T>['onSelfBlur'];
+        onFocusWithin: InfiniteTableProps<T>['onFocusWithin'];
+        onBlurWithin: InfiniteTableProps<T>['onBlurWithin'];
+        onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
+        onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];
+        scrollToBottomOffset: InfiniteTableProps<T>['scrollToBottomOffset'];
+        focusedClassName: InfiniteTableProps<T>['focusedClassName'];
+        focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
+        focusedStyle: InfiniteTableProps<T>['focusedStyle'];
+        focusedWithinStyle: InfiniteTableProps<T>['focusedWithinStyle'];
+        domProps: InfiniteTableProps<T>['domProps'];
+        rowStyle: InfiniteTableProps<T>['rowStyle'];
+        rowProps: InfiniteTableProps<T>['rowProps'];
+        rowClassName: InfiniteTableProps<T>['rowClassName'];
+        pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
+        pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
         pivotColumn: InfiniteTableProps<T>['pivotColumn'];
         pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
-        showZebraRows: InfiniteTableProps<T>['showZebraRows'];
-        header: InfiniteTableProps<T>['header'];
-        columnMinWidth: InfiniteTableProps<T>['columnMinWidth'];
-        columnMaxWidth: InfiniteTableProps<T>['columnMaxWidth'];
-        columnDefaultWidth: InfiniteTableProps<T>['columnDefaultWidth'];
-        sortable: InfiniteTableProps<T>['sortable'];
-        virtualizeColumns: InfiniteTableProps<T>['virtualizeColumns'];
+        pivotColumnGroups: InfiniteTableProps<T>['pivotColumnGroups'];
+        activeIndex: NonUndefined<InfiniteTableProps<T>['activeIndex']>;
+        columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
+        columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
+        columnDefaultWidth: NonUndefined<InfiniteTableProps<T>['columnDefaultWidth']>;
+        draggableColumns: NonUndefined<InfiniteTableProps<T>['draggableColumns']>;
+        sortable: NonUndefined<InfiniteTableProps<T>['sortable']>;
+        hideEmptyGroupColumns: NonUndefined<InfiniteTableProps<T>['hideEmptyGroupColumns']>;
+        columnOrder: NonUndefined<InfiniteTableProps<T>['columnOrder']>;
+        showZebraRows: NonUndefined<InfiniteTableProps<T>['showZebraRows']>;
+        showHoverRows: NonUndefined<InfiniteTableProps<T>['showHoverRows']>;
+        header: NonUndefined<InfiniteTableProps<T>['header']>;
+        virtualizeColumns: NonUndefined<InfiniteTableProps<T>['virtualizeColumns']>;
+        rowHeight: number;
+        headerHeight: number;
+        licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
+        columnVisibility: NonUndefined<InfiniteTableProps<T>['columnVisibility']>;
+        columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
+        columnAggregations: NonUndefined<InfiniteTableProps<T>['columnAggregations']>;
+        columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
+        collapsedColumnGroups: NonUndefined<InfiniteTableProps<T>['collapsedColumnGroups']>;
+        pivotTotalColumnPosition: NonUndefined<InfiniteTableProps<T>['pivotTotalColumnPosition']>;
+    }
+    export interface InfiniteTableDerivedState<T> {
+        groupRowsBy: DataSourceProps<T>['groupRowsBy'];
+        computedColumns: Map<string, InfiniteTableColumn<T>>;
         virtualizeHeader: boolean;
-        licenseKey: string;
-        domProps: InfiniteTableProps<T>['domProps'];
-        draggableColumns: boolean;
+        groupRenderStrategy: NonUndefined<InfiniteTableProps<T>['groupRenderStrategy']>;
         columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
         columnGroupsMaxDepth: number;
         computedColumnGroups: InfiniteTablePropColumnGroups;
         rowHeightCSSVar: string;
         headerHeightCSSVar: string;
     }
-    export type InfiniteTableComponentActions<T> = ComponentStateActions<InfiniteTableState<T>>;
+    export type InfiniteTableActions<T> = ComponentStateActions<InfiniteTableState<T>>;
+    export interface InfiniteTableState<T> extends InfiniteTableMappedState<T>, InfiniteTableDerivedState<T>, InfiniteTableSetupState<T> {
+    }
 }
 declare module "components/InfiniteTable/types/InfiniteTableActionType" {
     export enum InfiniteTableActionType {
@@ -798,6 +913,8 @@ declare module "components/InfiniteTable/types/InfiniteTableComputedValues" {
     import type { InfiniteTableComputedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { InfiniteTablePropColumnOrderNormalized, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
     export interface InfiniteTableComputedValues<T> {
+        computedPinnedStartOverflow: boolean;
+        computedPinnedEndOverflow: boolean;
         computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
         computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
         computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
@@ -806,7 +923,9 @@ declare module "components/InfiniteTable/types/InfiniteTableComputedValues" {
         computedColumnVisibility: InfiniteTablePropColumnVisibility;
         computedColumnOrder: InfiniteTablePropColumnOrderNormalized;
         computedPinnedStartColumnsWidth: number;
+        computedPinnedStartWidth: number;
         computedPinnedEndColumnsWidth: number;
+        computedPinnedEndWidth: number;
         computedUnpinnedColumnsWidth: number;
         computedUnpinnedOffset: number;
         computedPinnedEndOffset: number;
@@ -816,14 +935,14 @@ declare module "components/InfiniteTable/types/InfiniteTableComputedValues" {
     }
 }
 declare module "components/InfiniteTable/types/InfiniteTableContextValue" {
-    import { InfiniteTableComponentActions, InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableActions, InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import { InfiniteTableComputedValues } from "components/InfiniteTable/types/InfiniteTableComputedValues";
     export interface InfiniteTableContextValue<T> {
-        componentState: InfiniteTableComponentState<T>;
-        componentActions: InfiniteTableComponentActions<T>;
+        componentState: InfiniteTableState<T>;
+        componentActions: InfiniteTableActions<T>;
         computed: InfiniteTableComputedValues<T>;
         getComputed: () => InfiniteTableComputedValues<T>;
-        getState: () => InfiniteTableComponentState<T>;
+        getState: () => InfiniteTableState<T>;
     }
 }
 declare module "components/InfiniteTable/types/index" {
@@ -831,15 +950,11 @@ declare module "components/InfiniteTable/types/index" {
     import type { InfiniteTableAction } from "components/InfiniteTable/types/InfiniteTableAction";
     import type { InfiniteTableActionType } from "components/InfiniteTable/types/InfiniteTableActionType";
     import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropRowStyle, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, InfiniteTablePropRowClassName, InfiniteTablePropColumns } from "components/InfiniteTable/types/InfiniteTableProps";
-    import type { InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import type { InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParam } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { InfiniteTableComputedValues } from "components/InfiniteTable/types/InfiniteTableComputedValues";
     import type { InfiniteTableContextValue } from "components/InfiniteTable/types/InfiniteTableContextValue";
     import type { InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
-    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTablePropColumns, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParams, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, InfiniteTablePropRowStyle, InfiniteTablePropRowClassName, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, };
-}
-declare module "utils/join" {
-    const join: (...args: (string | number | void | null)[]) => string;
-    export { join };
+    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTablePropColumns, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParam, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, InfiniteTablePropRowStyle, InfiniteTablePropRowClassName, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, };
 }
 declare module "components/InfiniteTable/internalProps" {
     export const rootClassName = "ITable";
@@ -862,18 +977,68 @@ declare module "components/InfiniteTable/state/computeColumnGroupsDepths" {
 }
 declare module "components/InfiniteTable/state/getInitialState" {
     import { DataSourceState } from "components/DataSource/index";
+    import { ForwardPropsToStateFnResult } from "components/hooks/useComponentState";
     import { InfiniteTableProps, InfiniteTableState } from "components/InfiniteTable/types/index";
-    import { InfiniteTableReadOnlyState } from "components/InfiniteTable/types/InfiniteTableState";
-    export function getInitialState<T>(params: {
-        props: InfiniteTableProps<T>;
-        parentState: DataSourceState<T>;
-    }): InfiniteTableState<T>;
-    export function deriveReadOnlyState<T>(params: {
+    import { InfiniteTablePropGroupColumn } from "components/InfiniteTable/types/InfiniteTableProps";
+    import { InfiniteTableSetupState, InfiniteTableDerivedState, InfiniteTableMappedState } from "components/InfiniteTable/types/InfiniteTableState";
+    /**
+     * The computed state is independent from props and cannot
+     * be affected by props
+     */
+    export function initSetupState<T>(): InfiniteTableSetupState<T>;
+    export const forwardProps: <T>() => Partial<{
+        columns: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumns<T, import("components/InfiniteTable/types").InfiniteTableColumn<T>>) => import("components/InfiniteTable/types").InfiniteTablePropColumns<T, import("components/InfiniteTable/types").InfiniteTableColumn<T>>);
+        header: 1 | ((value: boolean | undefined) => boolean);
+        pivotTotalColumnPosition: 1 | ((value: import("components/InfiniteTable/types/InfiniteTableState").InfiniteTablePropPivotTotalColumnPosition | undefined) => import("components/InfiniteTable/types/InfiniteTableState").InfiniteTablePropPivotTotalColumnPosition);
+        pivotColumns: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumns<T, import("components/InfiniteTable/types/InfiniteTableColumn").InfiniteTablePivotColumn<T>> | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumns<T, import("components/InfiniteTable/types/InfiniteTableColumn").InfiniteTablePivotColumn<T>> | undefined);
+        pivotColumnGroups: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnGroups | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnGroups | undefined);
+        sortable: 1 | ((value: boolean | undefined) => boolean);
+        pivotColumn: 1 | ((value: Partial<import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropPivotColumn<T>> | undefined) => Partial<import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropPivotColumn<T>> | undefined);
+        groupColumn: 1 | ((value: Partial<InfiniteTablePropGroupColumn<T>> | undefined) => Partial<InfiniteTablePropGroupColumn<T>> | undefined);
+        onReady: 1 | ((value: ((api: import("components/InfiniteTable/types").InfiniteTableImperativeApi<T>) => void) | undefined) => ((api: import("components/InfiniteTable/types").InfiniteTableImperativeApi<T>) => void) | undefined);
+        onSelfFocus: 1 | ((value: ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined) => ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined);
+        onSelfBlur: 1 | ((value: ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined) => ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined);
+        onFocusWithin: 1 | ((value: ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined) => ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined);
+        onBlurWithin: 1 | ((value: ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined) => ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined);
+        onScrollToTop: 1 | ((value: (() => void) | undefined) => (() => void) | undefined);
+        onScrollToBottom: 1 | ((value: (() => void) | undefined) => (() => void) | undefined);
+        scrollToBottomOffset: 1 | ((value: number | undefined) => number | undefined);
+        focusedClassName: 1 | ((value: string | undefined) => string | undefined);
+        focusedWithinClassName: 1 | ((value: string | undefined) => string | undefined);
+        focusedStyle: 1 | ((value: import("react").CSSProperties | undefined) => import("react").CSSProperties | undefined);
+        focusedWithinStyle: 1 | ((value: import("react").CSSProperties | undefined) => import("react").CSSProperties | undefined);
+        domProps: 1 | ((value: import("react").HTMLProps<HTMLDivElement> | undefined) => import("react").HTMLProps<HTMLDivElement> | undefined);
+        rowStyle: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropRowStyle<T> | undefined) => import("components/InfiniteTable/types").InfiniteTablePropRowStyle<T> | undefined);
+        rowProps: 1 | ((value: import("react").HTMLProps<HTMLDivElement> | ((rowArgs: import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTableRowStyleFnParams<T>) => import("react").HTMLProps<HTMLDivElement>) | undefined) => import("react").HTMLProps<HTMLDivElement> | ((rowArgs: import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTableRowStyleFnParams<T>) => import("react").HTMLProps<HTMLDivElement>) | undefined);
+        rowClassName: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropRowClassName<T> | undefined) => import("components/InfiniteTable/types").InfiniteTablePropRowClassName<T> | undefined);
+        pinnedStartMaxWidth: 1 | ((value: number | undefined) => number | undefined);
+        pinnedEndMaxWidth: 1 | ((value: number | undefined) => number | undefined);
+        pivotRowLabelsColumn: 1 | ((value: Partial<import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropPivotRowLabelsColumn<T>> | undefined) => Partial<import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropPivotRowLabelsColumn<T>> | undefined);
+        activeIndex: 1 | ((value: number | undefined) => number);
+        columnMinWidth: 1 | ((value: number | undefined) => number);
+        columnMaxWidth: 1 | ((value: number | undefined) => number);
+        columnDefaultWidth: 1 | ((value: number | undefined) => number);
+        draggableColumns: 1 | ((value: boolean | undefined) => boolean);
+        hideEmptyGroupColumns: 1 | ((value: boolean | undefined) => boolean);
+        columnOrder: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnOrder | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnOrder);
+        showZebraRows: 1 | ((value: boolean | undefined) => boolean);
+        showHoverRows: 1 | ((value: boolean | undefined) => boolean);
+        virtualizeColumns: 1 | ((value: import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropVirtualizeColumns<T> | undefined) => import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropVirtualizeColumns<T>);
+        licenseKey: 1 | ((value: string | undefined) => string);
+        columnVisibility: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnVisibility | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnVisibility);
+        columnPinning: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnPinning | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnPinning);
+        columnAggregations: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnAggregations<T> | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnAggregations<T>);
+        columnGroups: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnGroups | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnGroups);
+        collapsedColumnGroups: 1 | ((value: import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropCollapsedColumnGroups | undefined) => import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropCollapsedColumnGroups);
+        rowHeight: 1 | ((value: string | number) => number);
+        headerHeight: 1 | ((value: string | number) => number);
+    }>;
+    export const mapPropsToState: <T>(params: {
         props: InfiniteTableProps<T>;
         state: InfiniteTableState<T>;
-        updated: Partial<InfiniteTableState<T>> | null;
+        oldState: InfiniteTableState<T> | null;
         parentState: DataSourceState<T>;
-    }): InfiniteTableReadOnlyState<T>;
+    }) => InfiniteTableDerivedState<T>;
 }
 declare module "components/ResizeObserver/index" {
     import * as React from 'react';
@@ -951,17 +1116,20 @@ declare module "components/InfiniteTable/utils/getComputedVisibleColumns" {
     import type { InfiniteTableColumn, InfiniteTableComputedColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { Size } from "components/types/Size";
     import type { DataSourceSingleSortInfo } from "components/DataSource/types";
-    import type { InfiniteTableGeneratedColumns, InfiniteTablePropColumnOrder, InfiniteTablePropColumnOrderNormalized, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTablePropColumnOrder, InfiniteTablePropColumnOrderNormalized, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
     export type SortInfoMap<T> = {
         [key: string]: {
             sortInfo: DataSourceSingleSortInfo<T>;
             index: number;
         };
     };
+    export const IS_GROUP_COLUMN_ID: (columnId: string) => boolean;
     export type GetComputedVisibleColumnsResult<T> = {
         computedRemainingSpace: number;
         computedPinnedStartColumnsWidth: number;
+        computedPinnedStartWidth: number;
         computedPinnedEndColumnsWidth: number;
+        computedPinnedEndWidth: number;
         computedUnpinnedColumnsWidth: number;
         columnMinWidth?: number;
         columnMaxWidth?: number;
@@ -977,10 +1145,11 @@ declare module "components/InfiniteTable/utils/getComputedVisibleColumns" {
     };
     type GetComputedVisibleColumnsParam<T> = {
         columns: Map<string, InfiniteTableColumn<T>>;
-        generatedColumns: InfiniteTableGeneratedColumns<T>;
         bodySize: Size;
         columnMinWidth?: number;
         columnMaxWidth?: number;
+        pinnedStartMaxWidth?: number;
+        pinnedEndMaxWidth?: number;
         columnDefaultWidth?: number;
         sortable?: boolean;
         multiSort: boolean;
@@ -992,7 +1161,7 @@ declare module "components/InfiniteTable/utils/getComputedVisibleColumns" {
         columnVisibility: InfiniteTablePropColumnVisibility;
         columnVisibilityAssumeVisible: boolean;
     };
-    export const getComputedVisibleColumns: <T extends unknown>({ columns, generatedColumns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, sortInfo, setSortInfo, multiSort, draggableColumns, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: GetComputedVisibleColumnsParam<T>) => GetComputedVisibleColumnsResult<T>;
+    export const getComputedVisibleColumns: <T extends unknown>({ columns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, pinnedStartMaxWidth, pinnedEndMaxWidth, sortable, sortInfo, setSortInfo, multiSort, draggableColumns, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: GetComputedVisibleColumnsParam<T>) => GetComputedVisibleColumnsResult<T>;
 }
 declare module "components/hooks/useRerender" {
     export const useRerender: () => [number, () => void];
@@ -1014,7 +1183,7 @@ declare module "components/hooks/useInterceptedMap" {
     export function useInterceptedMap<K, V>(map: Map<K, V>, fns: InterceptedMapFns<K, V>): void;
 }
 declare module "components/InfiniteTable/utils/rafFn" {
-    export const rafFn: (fn: () => void) => () => void;
+    export const rafFn: (fn: (...args: any[]) => void) => (...args: any[]) => void;
 }
 declare module "components/InfiniteTable/hooks/useRerenderOnKeyChange" {
     export const useRerenderOnKeyChange: <K extends unknown, V extends unknown>(map: Map<K, V>) => number;
@@ -1022,15 +1191,16 @@ declare module "components/InfiniteTable/hooks/useRerenderOnKeyChange" {
 declare module "components/InfiniteTable/hooks/useComputedVisibleColumns" {
     import type { DataSourceSingleSortInfo } from "components/DataSource/types";
     import type { InfiniteTableColumn } from "components/InfiniteTable/types/index";
-    import type { InfiniteTableGeneratedColumns, InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTablePropColumnOrder, InfiniteTablePropColumnPinning, InfiniteTablePropColumnVisibility } from "components/InfiniteTable/types/InfiniteTableProps";
     import type { Size } from "components/types/Size";
     import type { GetComputedVisibleColumnsResult } from "components/InfiniteTable/utils/getComputedVisibleColumns";
     type UseComputedVisibleColumnsParam<T> = {
         columns: Map<string, InfiniteTableColumn<T>>;
-        generatedColumns: InfiniteTableGeneratedColumns<T>;
         bodySize: Size;
         columnMinWidth?: number;
         columnMaxWidth?: number;
+        pinnedEndMaxWidth?: number;
+        pinnedStartMaxWidth?: number;
         columnDefaultWidth?: number;
         sortable?: boolean;
         draggableColumns?: boolean;
@@ -1055,9 +1225,11 @@ declare module "components/InfiniteTable/hooks/useComputedVisibleColumns" {
         computedUnpinnedColumns: GetComputedVisibleColumnsResult<T>['computedUnpinnedColumns'];
         computedVisibleColumns: GetComputedVisibleColumnsResult<T>['computedVisibleColumns'];
         computedVisibleColumnsMap: GetComputedVisibleColumnsResult<T>['computedVisibleColumnsMap'];
+        computedPinnedEndWidth: GetComputedVisibleColumnsResult<T>['computedPinnedEndWidth'];
+        computedPinnedStartWidth: GetComputedVisibleColumnsResult<T>['computedPinnedStartWidth'];
         computedColumnOrder: GetComputedVisibleColumnsResult<T>['computedColumnOrder'];
     };
-    export const useComputedVisibleColumns: <T extends unknown>({ columns, generatedColumns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, draggableColumns, sortInfo, multiSort, setSortInfo, columnOrder, columnPinning, columnVisibility, columnVisibilityAssumeVisible, }: UseComputedVisibleColumnsParam<T>) => UseComputedVisibleColumnsResult<T>;
+    export const useComputedVisibleColumns: <T extends unknown>({ columns, bodySize, columnMinWidth, columnMaxWidth, columnDefaultWidth, sortable, draggableColumns, sortInfo, multiSort, setSortInfo, columnOrder, columnPinning, pinnedEndMaxWidth, pinnedStartMaxWidth, columnVisibility, columnVisibilityAssumeVisible, }: UseComputedVisibleColumnsParam<T>) => UseComputedVisibleColumnsResult<T>;
 }
 declare module "components/DataSource/publicHooks/useDataSourceActions" {
     import { DataSourceComponentActions } from "components/DataSource/types";
@@ -1153,6 +1325,10 @@ declare module "style/utilities" {
 declare module "style/css" {
     export const cssEllipsisClassName: string;
 }
+declare module "utils/join" {
+    const join: (...args: (string | number | void | null)[]) => string;
+    export { join };
+}
 declare module "components/InfiniteTable/components/icons/ExpanderIcon" {
     import * as React from 'react';
     type ExpanderIconProps = {
@@ -1168,37 +1344,50 @@ declare module "components/InfiniteTable/components/icons/ExpanderIcon" {
 declare module "components/InfiniteTable/state/getComputedPivotColumnsFromDataSourcePivotColumns" {
     import { DataSourcePropGroupRowsBy, DataSourcePropPivotBy } from "components/DataSource/index";
     import { InfiniteTableProps } from "components/InfiniteTable/types/index";
-    import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(pivotColumns: InfiniteTableProps<T>['pivotColumns'], params: {
         toggleGroupRow: (groupKeys: any[]) => void;
         pivotColumn: InfiniteTableProps<T>['pivotColumn'];
         pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
-        pivotTotalColumnPosition: InfiniteTableComponentState<T>['pivotTotalColumnPosition'];
+        pivotTotalColumnPosition: InfiniteTableState<T>['pivotTotalColumnPosition'];
         pivotBy: DataSourcePropPivotBy<T>;
         groupRowsBy: DataSourcePropGroupRowsBy<T>;
     }): InfiniteTableProps<T>['pivotColumns'];
 }
 declare module "components/InfiniteTable/utils/getColumnForGroupBy" {
+    import { InfiniteTableColumnRenderParam } from "components/InfiniteTable/index";
     import { DataSourceGroupRowsBy } from "components/DataSource/index";
     import { InfiniteTableGeneratedGroupColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
-    import { GroupColumnGetterOptions, InfiniteTablePropGroupColumn } from "components/InfiniteTable/types/InfiniteTableProps";
+    import { GroupColumnGetterOptions, InfiniteTablePropGroupColumn, InfiniteTablePropGroupRenderStrategy } from "components/InfiniteTable/types/InfiniteTableProps";
+    export function getGroupColumnRender<T>({ groupIndex, groupRenderStrategy, toggleGroupRow, }: {
+        toggleGroupRow: (groupRowKeys: any[]) => void;
+        groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+        groupIndex: number;
+    }): (renderOptions: InfiniteTableColumnRenderParam<T>) => import("components/types/Renderable").Renderable;
     export function getColumnForGroupBy<T>(options: GroupColumnGetterOptions<T> & {
         groupIndex: number;
         groupBy: DataSourceGroupRowsBy<T>;
+        groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
     }, toggleGroupRow: (groupRowKeys: any[]) => void, groupColumnFromProps?: InfiniteTablePropGroupColumn<T>): InfiniteTableGeneratedGroupColumn<T>;
     export function getSingleGroupColumn<T>(options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupRowKeys: any[]) => void, groupColumnFromProps?: InfiniteTablePropGroupColumn<T>): InfiniteTableGeneratedGroupColumn<T>;
 }
-declare module "components/InfiniteTable/hooks/useGeneratedGroupAndPivotColumns" {
+declare module "components/InfiniteTable/hooks/useToggleGroupRow" {
+    export type ToggleGrouRowFn = (groupKeys: any[]) => void;
+    export function useToggleGroupRow<T>(): ToggleGrouRowFn;
+}
+declare module "components/InfiniteTable/hooks/useColumnsWhen" {
+    import { InfiniteTableColumn } from "components/InfiniteTable/index";
     import { DataSourceGroupRowsBy } from "components/DataSource/index";
-    import { InfiniteTableGeneratedColumns, InfiniteTablePropGroupRenderStrategy, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
-    export function useGeneratedGroupAndPivotColumns<T>(): void;
-    export function getGeneratedGroupColumns<T>(params: {
+    import { InfiniteTablePropGroupRenderStrategy, InfiniteTableProps } from "components/InfiniteTable/types/InfiniteTableProps";
+    export function useColumnsWhen<T>(): void;
+    export function getColumnsWhenGrouping<T>(params: {
+        columns: Map<string, InfiniteTableColumn<T>>;
         groupRowsBy: DataSourceGroupRowsBy<T>[];
         toggleGroupRow: (groupKeys: any[]) => void;
         groupColumn: InfiniteTableProps<T>['groupColumn'];
         groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
         pivotColumns: InfiniteTableProps<T>['pivotColumns'];
-    }): InfiniteTableGeneratedColumns<T>;
+    }): Map<string, InfiniteTableColumn<T>> | undefined;
 }
 declare module "components/InfiniteTable/hooks/useComputed" {
     import { InfiniteTableComputedValues } from "components/InfiniteTable/types/index";
@@ -1233,6 +1422,9 @@ declare module "components/VirtualBrain/index" {
     export type VirtualBrainOptions = {
         mainAxis: MainAxisOptions;
         itemSize: MainAxisSize;
+        itemSpan?: ({ itemIndex }: {
+            itemIndex: number;
+        }) => number;
         count: number;
         name?: string;
     };
@@ -1248,6 +1440,8 @@ declare module "components/VirtualBrain/index" {
     export class VirtualBrain extends Logger {
         private scrollPosition;
         private scrollPositionOnMainAxis;
+        private itemSpanParent;
+        private itemSpanValue;
         private itemSizeCache;
         private itemOffsetCache;
         private options;
@@ -1282,10 +1476,19 @@ declare module "components/VirtualBrain/index" {
         onTotalSizeChange: (fn: OnSizeChangeFn) => () => void;
         onRenderCountChange: (fn: OnRenderCountChangeFn) => () => void;
         onRenderRangeChange: (fn: OnRenderRangeChangeFn) => () => void;
-        update: (newCount: VirtualBrainOptions['count'], newItemSize: VirtualBrainOptions['itemSize']) => void;
+        update: (newCount: VirtualBrainOptions['count'], newItemSize: VirtualBrainOptions['itemSize'], newItemSpan?: VirtualBrainOptions['itemSpan']) => void;
         private reset;
+        private computeItemSpanUpTo;
         private computeCacheFor;
         private getItemSizeCacheFor;
+        getItemSpan: (itemIndex: number) => number;
+        getItemSpanParent: (itemIndex: number) => number;
+        getItemSizeWithSpan: (itemIndex: number, itemSpan: number) => number;
+        /**
+         * For now, this doesn't take into account the itemspan, and it's okay not to
+         * @param itemIndex
+         * @returns the size of the specified item
+         */
         getItemSize: (itemIndex: number) => number;
         getTotalSize: () => number;
         getItemAt: (scrollPos: number) => number;
@@ -1313,7 +1516,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     import { InfiniteTableComputedColumn } from "components/InfiniteTable/index";
     import { Renderable } from "components/types/Renderable";
     import { OnResizeFn } from "components/types/Size";
-    import { InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
+    import { InfiniteTableEnhancedData, InfiniteTablePropGroupRenderStrategy } from "components/InfiniteTable/types/index";
     import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
     export interface InfiniteTableCellProps<T> {
         column: InfiniteTableComputedColumn<T>;
@@ -1330,9 +1533,13 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     }
     export interface InfiniteTableColumnCellProps<T> extends Omit<InfiniteTableCellProps<T>, 'children'> {
         virtualized: boolean;
+        hidden: boolean;
         enhancedData: InfiniteTableEnhancedData<T>;
+        groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+        getData: () => InfiniteTableEnhancedData<T>[];
         toggleGroupRow: InfiniteTableToggleGroupRowFn;
         rowIndex: number;
+        rowHeight: number;
     }
     export interface InfiniteTableHeaderCellProps<T> extends Omit<InfiniteTableCellProps<T>, 'children'> {
         columns: Map<string, InfiniteTableComputedColumn<T>>;
@@ -1397,12 +1604,14 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
     import { InfiniteTableComputedColumn } from "components/InfiniteTable/index";
     import { Renderable } from "components/types/Renderable";
     import { VirtualBrain } from "components/VirtualBrain/index";
+    import { ScrollListener } from "components/VirtualBrain/ScrollListener";
     import { InfiniteTableComputedColumnGroup } from "components/InfiniteTable/types/InfiniteTableProps";
     export type InfiniteTableHeaderProps<T> = {
         repaintId?: string | number;
         brain: VirtualBrain;
         columns: InfiniteTableComputedColumn<T>[];
         totalWidth: number;
+        availableWidth: number;
     };
     export type InfiniteTableHeaderGroupProps<T> = {
         columns: InfiniteTableComputedColumn<T>[];
@@ -1412,7 +1621,9 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
         headerHeight: number;
     };
     export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<InfiniteTableHeaderProps<T>, 'repaintId' | 'brain'> & {
+        classNameModifiers?: string[];
         brain?: VirtualBrain;
+        scrollListener?: ScrollListener;
         scrollable?: boolean;
     };
 }
@@ -1424,11 +1635,19 @@ declare module "components/RawList/types" {
         domRef: RefCallback<HTMLElement>;
         itemIndex: number;
         itemSize: number;
+        itemSizeWithSpan: number;
+        itemSpan: number;
+        spanParent: number;
+        covered: boolean;
     };
     export type RenderItem = (renderProps: RenderItemParam) => Renderable;
+    export type RawListItemSpan = (itemSpanProps: {
+        itemIndex: number;
+    }) => number;
     export type RawListProps = {
         debugChannel?: string;
         renderItem: RenderItem;
+        itemSpan?: RawListItemSpan;
         brain: VirtualBrain;
         repaintId?: string | number;
     };
@@ -1513,8 +1732,7 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
     export const InfiniteTableHeader: typeof InfiniteTableHeaderFn;
 }
 declare module "components/InfiniteTable/components/InfiniteTableHeader/buildColumnAndGroupTree" {
-    import { InfiniteTableColumnGroup, InfiniteTableComputedColumn } from "components/InfiniteTable/types/index";
-    import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableColumnGroup, InfiniteTableComputedColumn, InfiniteTableState } from "components/InfiniteTable/types/index";
     export type ColGroupTreeBaseItem = {
         id: string;
         groupOffset: number;
@@ -1533,7 +1751,7 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/buildCol
         columnItems: ColGroupTreeColumnItem<T>[];
     };
     export type ColGroupTreeItem<T> = ColGroupTreeColumnItem<T> | ColGroupTreeGroupItem<T>;
-    export function buildColumnAndGroupTree<T>(columns: InfiniteTableComputedColumn<T>[], columnGroups: InfiniteTableComponentState<T>['columnGroups'], columnGroupsDepthsMap: InfiniteTableComponentState<T>['columnGroupsDepthsMap']): ColGroupTreeItem<T>[];
+    export function buildColumnAndGroupTree<T>(columns: InfiniteTableComputedColumn<T>[], columnGroups: InfiniteTableState<T>['columnGroups'], columnGroupsDepthsMap: InfiniteTableState<T>['columnGroupsDepthsMap']): ColGroupTreeItem<T>[];
 }
 declare module "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderGroup" {
     import { InfiniteTableHeaderGroupProps } from "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderTypes";
@@ -1542,10 +1760,10 @@ declare module "components/InfiniteTable/components/InfiniteTableHeader/Infinite
 }
 declare module "components/InfiniteTable/components/InfiniteTableHeader/renderColumnHeaderGroups" {
     import { InfiniteTableComputedColumn } from "components/InfiniteTable/types/index";
-    import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     type BuildColumnHeaderGroupsConfig<T> = {
-        columnGroups: InfiniteTableComponentState<T>['columnGroups'];
-        columnGroupsDepthsMap: InfiniteTableComponentState<T>['columnGroupsDepthsMap'];
+        columnGroups: InfiniteTableState<T>['columnGroups'];
+        columnGroupsDepthsMap: InfiniteTableState<T>['columnGroupsDepthsMap'];
         columnGroupsMaxDepth: number;
         columns: InfiniteTableComputedColumn<T>[];
         headerHeight: number;
@@ -1611,7 +1829,7 @@ declare module "components/VirtualList/SpacePlaceholder" {
     interface SpacePlaceholderProps {
         width: number;
         height: number;
-        count: number;
+        count?: number;
     }
     function SpacePlaceholderFn(props: SpacePlaceholderProps): JSX.Element;
     export const SpacePlaceholder: React.MemoExoticComponent<typeof SpacePlaceholderFn>;
@@ -1682,12 +1900,15 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
         rowWidth: number;
         rowIndex: number;
         brain: VirtualBrain;
+        verticalBrain: VirtualBrain;
         domRef: React.RefCallback<HTMLElement>;
         enhancedData: InfiniteTableEnhancedData<T>;
+        getData: () => InfiniteTableEnhancedData<T>[];
         toggleGroupRow: InfiniteTableToggleGroupRowFn;
         repaintId?: number | string;
         virtualizeColumns: boolean;
         showZebraRows?: boolean;
+        showHoverRows?: boolean;
         columns: InfiniteTableComputedColumn<T>[];
         domProps?: React.HTMLAttributes<HTMLDivElement>;
     }
@@ -1697,24 +1918,25 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
 }
 declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnCell" {
     import { InfiniteTableColumnCellProps } from "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableCellTypes";
-    function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>): JSX.Element;
+    function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>): JSX.Element | null;
     export const InfiniteTableColumnCell: typeof InfiniteTableColumnCellFn;
 }
 declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableRowClassName" {
     export const InfiniteTableRowClassName: string;
-    export const InfiniteTableRowClassName__hover: string;
+    export const InfiniteTableElement__hover: string;
 }
 declare module "components/InfiniteTable/components/InfiniteTableRow/useRowDOMProps" {
     import { MutableRefObject, RefCallback } from 'react';
     import type { InfiniteTableRowProps } from "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableRowTypes";
-    import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
         'data-virtualize-columns': 'on' | 'off';
+        'data-hover-index': number;
         'data-row-index': number;
         'data-row-id': string;
         ref: RefCallback<HTMLElement | null>;
-    };
-    export function useRowDOMProps<T>(props: InfiniteTableRowProps<T>, rowProps: InfiniteTableComponentState<T>['rowProps'], rowStyle: InfiniteTableComponentState<T>['rowStyle'], rowClassName: InfiniteTableComponentState<T>['rowClassName'], tableDOMRef: MutableRefObject<HTMLDivElement | null>): {
+    } & any;
+    export function useRowDOMProps<T>(props: InfiniteTableRowProps<T>, rowProps: InfiniteTableState<T>['rowProps'], rowStyle: InfiniteTableState<T>['rowStyle'], rowClassName: InfiniteTableState<T>['rowClassName'], groupRenderStrategy: InfiniteTableState<T>['groupRenderStrategy'], tableDOMRef: MutableRefObject<HTMLDivElement | null>): {
         domProps: TableRowHTMLAttributes;
         domRef: MutableRefObject<HTMLElement | null>;
     };
@@ -1735,6 +1957,7 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
     import { VirtualBrain } from "components/VirtualBrain/index";
     function TableRowUnvirtualizedFn<T>(props: InfiniteTableRowProps<T> & {
         brain: VirtualBrain | null | undefined;
+        verticalBrain: VirtualBrain;
     }): JSX.Element;
     export const TableRowUnvirtualized: typeof TableRowUnvirtualizedFn;
 }
@@ -1742,7 +1965,7 @@ declare module "components/InfiniteTable/hooks/useUnpinnedRendering" {
     import type { VirtualBrain } from "components/VirtualBrain/index";
     import type { Size } from "components/types/Size";
     import type { InfiniteTableComputedColumn, InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
-    import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
     type UnpinnedRenderingParams<T> = {
         columnShifts: number[] | null;
@@ -1759,20 +1982,18 @@ declare module "components/InfiniteTable/hooks/useUnpinnedRendering" {
         computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
         computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
         computedUnpinnedColumnsWidth: number;
-        computedPinnedStartColumnsWidth: number;
-        computedPinnedEndColumnsWidth: number;
-        getState: () => InfiniteTableComponentState<T>;
+        computedPinnedStartWidth: number;
+        computedPinnedEndWidth: number;
+        getState: () => InfiniteTableState<T>;
     };
     export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>): JSX.Element | null;
 }
 declare module "components/InfiniteTable/hooks/useOnContainerScroll" {
-    import { MutableRefObject } from 'react';
-    import type { ScrollPosition } from "components/types/ScrollPosition";
     import { VirtualBrain } from "components/VirtualBrain/index";
-    export const useOnContainerScroll: ({ verticalVirtualBrain, horizontalVirtualBrain, domRef, }: {
+    export const useOnContainerScroll: <T>({ verticalVirtualBrain, horizontalVirtualBrain, reservedContentHeight, }: {
         verticalVirtualBrain: VirtualBrain;
         horizontalVirtualBrain: VirtualBrain;
-        domRef: MutableRefObject<HTMLDivElement | null>;
+        reservedContentHeight: number;
     }) => {
         applyScrollHorizontal: ({ scrollLeft }: {
             scrollLeft: number;
@@ -1780,7 +2001,6 @@ declare module "components/InfiniteTable/hooks/useOnContainerScroll" {
         applyScrollVertical: ({ scrollTop }: {
             scrollTop: number;
         }) => void;
-        scrollPositionRef: MutableRefObject<ScrollPosition>;
     };
 }
 declare module "components/hooks/useOnMount" {
@@ -1797,7 +2017,7 @@ declare module "components/VirtualList/RowListWithExternalScrolling" {
     import type { RenderRow } from "components/VirtualList/types";
     import type { ScrollPosition } from "components/types/ScrollPosition";
     import { OnMountProps } from "components/hooks/useOnMount";
-    type RowListWithExternalScrollingListProps = {
+    export type RowListWithExternalScrollingListProps = {
         brain: VirtualBrain;
         renderRow: RenderRow;
         repaintId?: number | string;
@@ -1812,13 +2032,20 @@ declare module "components/InfiniteTable/hooks/usePinnedRendering" {
     import { InfiniteTableComputedColumn, InfiniteTableEnhancedData } from "components/InfiniteTable/types/index";
     import type { Size } from "components/types/Size";
     import type { RenderRow } from "components/VirtualList/types";
-    import { InfiniteTableComponentState } from "components/InfiniteTable/types/InfiniteTableState";
+    import { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import { InfiniteTableToggleGroupRowFn } from "components/InfiniteTable/types/InfiniteTableColumn";
+    import { ScrollListener } from "components/VirtualBrain/ScrollListener";
     type UsePinnedParams<T> = {
-        getState: () => InfiniteTableComponentState<T>;
+        getState: () => InfiniteTableState<T>;
         getData: () => InfiniteTableEnhancedData<T>[];
         bodySize: Size;
+        pinnedStartScrollListener: ScrollListener;
+        pinnedEndScrollListener: ScrollListener;
         repaintId: string | number;
+        computedPinnedStartWidth: number;
+        computedPinnedEndWidth: number;
+        computedPinnedStartOverflow: boolean;
+        computedPinnedEndOverflow: boolean;
         computedPinnedEndColumnsWidth: number;
         computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
         verticalVirtualBrain: VirtualBrain;
@@ -1830,6 +2057,11 @@ declare module "components/InfiniteTable/hooks/usePinnedRendering" {
         toggleGroupRow: InfiniteTableToggleGroupRowFn;
         computedPinnedStartColumnsWidth: number;
         computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
+    };
+    export function usePinnedRenderingForSide<T>(side: 'start' | 'end', params: UsePinnedParams<T>): {
+        renderRowPinned: RenderRow;
+        pinnedList: JSX.Element | null;
+        pinnedScrollbarPlaceholder: JSX.Element | null;
     };
     export function usePinnedEndRendering<T>(params: UsePinnedParams<T>): {
         renderRowPinnedEnd: RenderRow;
@@ -1851,15 +2083,16 @@ declare module "components/InfiniteTable/hooks/useColumnSizeFn" {
 }
 declare module "components/InfiniteTable/hooks/useYourBrain" {
     import { Size } from "components/types/Size";
-    import { VirtualBrain } from "components/VirtualBrain/index";
+    import { VirtualBrain, VirtualBrainOptions } from "components/VirtualBrain/index";
     import { InfiniteTableComputedColumn } from "components/InfiniteTable/types/index";
     type UseYourBrainParam<T = any> = {
         computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
-        computedPinnedStartColumnsWidth: number;
-        computedPinnedEndColumnsWidth: number;
+        computedPinnedStartWidth: number;
+        computedPinnedEndWidth: number;
         dataArray: any[];
         rowHeight: number;
         bodySize: Size;
+        rowSpan?: VirtualBrainOptions['itemSpan'];
     };
     export function useYourBrain<T = any>(param: UseYourBrainParam<T>): {
         horizontalVirtualBrain: VirtualBrain;
@@ -1956,6 +2189,381 @@ declare module "components/CSSVariableWatch" {
     }) => void;
     export const CSSVariableWatch: (props: CSSVariableWatcherProps) => JSX.Element;
 }
+declare module "components/InfiniteTable/hooks/useDOMProps" {
+    import { FocusEvent } from 'react';
+    export function useDOMProps<T>(initialDOMProps?: React.HTMLProps<HTMLDivElement>): {
+        onFocus: (event: FocusEvent<HTMLDivElement>) => void;
+        onBlur: (event: FocusEvent<HTMLDivElement>) => void;
+        accept?: string | undefined;
+        acceptCharset?: string | undefined;
+        action?: string | undefined;
+        allowFullScreen?: boolean | undefined;
+        allowTransparency?: boolean | undefined;
+        alt?: string | undefined;
+        as?: string | undefined;
+        async?: boolean | undefined;
+        autoComplete?: string | undefined;
+        autoFocus?: boolean | undefined;
+        autoPlay?: boolean | undefined;
+        capture?: string | boolean | undefined;
+        cellPadding?: string | number | undefined;
+        cellSpacing?: string | number | undefined;
+        charSet?: string | undefined;
+        challenge?: string | undefined;
+        checked?: boolean | undefined;
+        cite?: string | undefined;
+        classID?: string | undefined;
+        cols?: number | undefined;
+        colSpan?: number | undefined;
+        content?: string | undefined;
+        controls?: boolean | undefined;
+        coords?: string | undefined;
+        crossOrigin?: string | undefined;
+        data?: string | undefined;
+        dateTime?: string | undefined;
+        default?: boolean | undefined;
+        defer?: boolean | undefined;
+        disabled?: boolean | undefined;
+        download?: any;
+        encType?: string | undefined;
+        form?: string | undefined;
+        formAction?: string | undefined;
+        formEncType?: string | undefined;
+        formMethod?: string | undefined;
+        formNoValidate?: boolean | undefined;
+        formTarget?: string | undefined;
+        frameBorder?: string | number | undefined;
+        headers?: string | undefined;
+        height?: string | number | undefined;
+        high?: number | undefined;
+        href?: string | undefined;
+        hrefLang?: string | undefined;
+        htmlFor?: string | undefined;
+        httpEquiv?: string | undefined;
+        integrity?: string | undefined;
+        keyParams?: string | undefined;
+        keyType?: string | undefined;
+        kind?: string | undefined;
+        label?: string | undefined;
+        list?: string | undefined;
+        loop?: boolean | undefined;
+        low?: number | undefined;
+        manifest?: string | undefined;
+        marginHeight?: number | undefined;
+        marginWidth?: number | undefined;
+        max?: string | number | undefined;
+        maxLength?: number | undefined;
+        media?: string | undefined;
+        mediaGroup?: string | undefined;
+        method?: string | undefined;
+        min?: string | number | undefined;
+        minLength?: number | undefined;
+        multiple?: boolean | undefined;
+        muted?: boolean | undefined;
+        name?: string | undefined;
+        nonce?: string | undefined;
+        noValidate?: boolean | undefined;
+        open?: boolean | undefined;
+        optimum?: number | undefined;
+        pattern?: string | undefined;
+        placeholder?: string | undefined;
+        playsInline?: boolean | undefined;
+        poster?: string | undefined;
+        preload?: string | undefined;
+        readOnly?: boolean | undefined;
+        rel?: string | undefined;
+        required?: boolean | undefined;
+        reversed?: boolean | undefined;
+        rows?: number | undefined;
+        rowSpan?: number | undefined;
+        sandbox?: string | undefined;
+        scope?: string | undefined;
+        scoped?: boolean | undefined;
+        scrolling?: string | undefined;
+        seamless?: boolean | undefined;
+        selected?: boolean | undefined;
+        shape?: string | undefined;
+        size?: number | undefined;
+        sizes?: string | undefined;
+        span?: number | undefined;
+        src?: string | undefined;
+        srcDoc?: string | undefined;
+        srcLang?: string | undefined;
+        srcSet?: string | undefined;
+        start?: number | undefined;
+        step?: string | number | undefined;
+        summary?: string | undefined;
+        target?: string | undefined;
+        type?: string | undefined;
+        useMap?: string | undefined;
+        value?: string | number | readonly string[] | undefined;
+        width?: string | number | undefined;
+        wmode?: string | undefined;
+        wrap?: string | undefined;
+        defaultChecked?: boolean | undefined;
+        defaultValue?: string | number | readonly string[] | undefined;
+        suppressContentEditableWarning?: boolean | undefined;
+        suppressHydrationWarning?: boolean | undefined;
+        accessKey?: string | undefined;
+        className?: string | undefined;
+        contentEditable?: "inherit" | (boolean | "false" | "true") | undefined;
+        contextMenu?: string | undefined;
+        dir?: string | undefined;
+        draggable?: (boolean | "false" | "true") | undefined;
+        hidden?: boolean | undefined;
+        id?: string | undefined;
+        lang?: string | undefined;
+        slot?: string | undefined;
+        spellCheck?: (boolean | "false" | "true") | undefined;
+        style?: import("react").CSSProperties | undefined;
+        tabIndex: number;
+        title?: string | undefined;
+        translate?: "yes" | "no" | undefined;
+        radioGroup?: string | undefined;
+        role?: import("react").AriaRole | undefined;
+        about?: string | undefined;
+        datatype?: string | undefined;
+        inlist?: any;
+        prefix?: string | undefined;
+        property?: string | undefined;
+        resource?: string | undefined;
+        typeof?: string | undefined;
+        vocab?: string | undefined;
+        autoCapitalize?: string | undefined;
+        autoCorrect?: string | undefined;
+        autoSave?: string | undefined;
+        color?: string | undefined;
+        itemProp?: string | undefined;
+        itemScope?: boolean | undefined;
+        itemType?: string | undefined;
+        itemID?: string | undefined;
+        itemRef?: string | undefined;
+        results?: number | undefined;
+        security?: string | undefined;
+        unselectable?: "on" | "off" | undefined;
+        inputMode?: "search" | "numeric" | "none" | "url" | "text" | "decimal" | "tel" | "email" | undefined;
+        is?: string | undefined;
+        'aria-activedescendant'?: string | undefined;
+        'aria-atomic'?: boolean | "false" | "true" | undefined;
+        'aria-autocomplete'?: "inline" | "both" | "none" | "list" | undefined;
+        'aria-busy'?: boolean | "false" | "true" | undefined;
+        'aria-checked'?: boolean | "mixed" | "false" | "true" | undefined;
+        'aria-colcount'?: number | undefined;
+        'aria-colindex'?: number | undefined;
+        'aria-colspan'?: number | undefined;
+        'aria-controls'?: string | undefined;
+        'aria-current'?: boolean | "location" | "time" | "false" | "page" | "true" | "step" | "date" | undefined;
+        'aria-describedby'?: string | undefined;
+        'aria-details'?: string | undefined;
+        'aria-disabled'?: boolean | "false" | "true" | undefined;
+        'aria-dropeffect'?: "link" | "none" | "copy" | "move" | "execute" | "popup" | undefined;
+        'aria-errormessage'?: string | undefined;
+        'aria-expanded'?: boolean | "false" | "true" | undefined;
+        'aria-flowto'?: string | undefined;
+        'aria-grabbed'?: boolean | "false" | "true" | undefined;
+        'aria-haspopup'?: boolean | "grid" | "dialog" | "menu" | "false" | "listbox" | "true" | "tree" | undefined;
+        'aria-hidden'?: boolean | "false" | "true" | undefined;
+        'aria-invalid'?: boolean | "false" | "true" | "grammar" | "spelling" | undefined;
+        'aria-keyshortcuts'?: string | undefined;
+        'aria-label'?: string | undefined;
+        'aria-labelledby'?: string | undefined;
+        'aria-level'?: number | undefined;
+        'aria-live'?: "off" | "assertive" | "polite" | undefined;
+        'aria-modal'?: boolean | "false" | "true" | undefined;
+        'aria-multiline'?: boolean | "false" | "true" | undefined;
+        'aria-multiselectable'?: boolean | "false" | "true" | undefined;
+        'aria-orientation'?: "horizontal" | "vertical" | undefined;
+        'aria-owns'?: string | undefined;
+        'aria-placeholder'?: string | undefined;
+        'aria-posinset'?: number | undefined;
+        'aria-pressed'?: boolean | "mixed" | "false" | "true" | undefined;
+        'aria-readonly'?: boolean | "false" | "true" | undefined;
+        'aria-relevant'?: "all" | "text" | "additions" | "additions removals" | "additions text" | "removals" | "removals additions" | "removals text" | "text additions" | "text removals" | undefined;
+        'aria-required'?: boolean | "false" | "true" | undefined;
+        'aria-roledescription'?: string | undefined;
+        'aria-rowcount'?: number | undefined;
+        'aria-rowindex'?: number | undefined;
+        'aria-rowspan'?: number | undefined;
+        'aria-selected'?: boolean | "false" | "true" | undefined;
+        'aria-setsize'?: number | undefined;
+        'aria-sort'?: "none" | "other" | "ascending" | "descending" | undefined;
+        'aria-valuemax'?: number | undefined;
+        'aria-valuemin'?: number | undefined;
+        'aria-valuenow'?: number | undefined;
+        'aria-valuetext'?: string | undefined;
+        children?: import("react").ReactNode;
+        dangerouslySetInnerHTML?: {
+            __html: string;
+        } | undefined;
+        onCopy?: import("react").ClipboardEventHandler<HTMLDivElement> | undefined;
+        onCopyCapture?: import("react").ClipboardEventHandler<HTMLDivElement> | undefined;
+        onCut?: import("react").ClipboardEventHandler<HTMLDivElement> | undefined;
+        onCutCapture?: import("react").ClipboardEventHandler<HTMLDivElement> | undefined;
+        onPaste?: import("react").ClipboardEventHandler<HTMLDivElement> | undefined;
+        onPasteCapture?: import("react").ClipboardEventHandler<HTMLDivElement> | undefined;
+        onCompositionEnd?: import("react").CompositionEventHandler<HTMLDivElement> | undefined;
+        onCompositionEndCapture?: import("react").CompositionEventHandler<HTMLDivElement> | undefined;
+        onCompositionStart?: import("react").CompositionEventHandler<HTMLDivElement> | undefined;
+        onCompositionStartCapture?: import("react").CompositionEventHandler<HTMLDivElement> | undefined;
+        onCompositionUpdate?: import("react").CompositionEventHandler<HTMLDivElement> | undefined;
+        onCompositionUpdateCapture?: import("react").CompositionEventHandler<HTMLDivElement> | undefined;
+        onFocusCapture?: import("react").FocusEventHandler<HTMLDivElement> | undefined;
+        onBlurCapture?: import("react").FocusEventHandler<HTMLDivElement> | undefined;
+        onChange?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onChangeCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onBeforeInput?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onBeforeInputCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onInput?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onInputCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onReset?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onResetCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onSubmit?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onSubmitCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onInvalid?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onInvalidCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+        onLoad?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onError?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onErrorCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onKeyDown?: import("react").KeyboardEventHandler<HTMLDivElement> | undefined;
+        onKeyDownCapture?: import("react").KeyboardEventHandler<HTMLDivElement> | undefined;
+        onKeyPress?: import("react").KeyboardEventHandler<HTMLDivElement> | undefined;
+        onKeyPressCapture?: import("react").KeyboardEventHandler<HTMLDivElement> | undefined;
+        onKeyUp?: import("react").KeyboardEventHandler<HTMLDivElement> | undefined;
+        onKeyUpCapture?: import("react").KeyboardEventHandler<HTMLDivElement> | undefined;
+        onAbort?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onAbortCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onCanPlay?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onCanPlayCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onCanPlayThrough?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onCanPlayThroughCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onDurationChange?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onDurationChangeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onEmptied?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onEmptiedCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onEncrypted?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onEncryptedCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onEnded?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onEndedCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadedData?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadedDataCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadedMetadata?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadedMetadataCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadStart?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onLoadStartCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onPause?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onPauseCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onPlay?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onPlayCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onPlaying?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onPlayingCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onProgress?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onProgressCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onRateChange?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onRateChangeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSeeked?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSeekedCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSeeking?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSeekingCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onStalled?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onStalledCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSuspend?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSuspendCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onTimeUpdate?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onTimeUpdateCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onVolumeChange?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onVolumeChangeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onWaiting?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onWaitingCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onAuxClick?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onAuxClickCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onClick?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onClickCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onContextMenu?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onContextMenuCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onDoubleClick?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onDoubleClickCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onDrag?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragEnd?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragEndCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragEnter?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragEnterCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragExit?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragExitCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragLeave?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragLeaveCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragOver?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragOverCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragStart?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDragStartCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDrop?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onDropCapture?: import("react").DragEventHandler<HTMLDivElement> | undefined;
+        onMouseDown?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseDownCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseEnter?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseLeave?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseMove?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseMoveCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseOut?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseOutCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseOver?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseOverCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseUp?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onMouseUpCapture?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+        onSelect?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onSelectCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
+        onTouchCancel?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchCancelCapture?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchEnd?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchEndCapture?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchMove?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchMoveCapture?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchStart?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onTouchStartCapture?: import("react").TouchEventHandler<HTMLDivElement> | undefined;
+        onPointerDown?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerDownCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerMove?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerMoveCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerUp?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerUpCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerCancel?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerCancelCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerEnter?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerEnterCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerLeave?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerLeaveCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerOver?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerOverCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerOut?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onPointerOutCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onGotPointerCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onGotPointerCaptureCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onLostPointerCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onLostPointerCaptureCapture?: import("react").PointerEventHandler<HTMLDivElement> | undefined;
+        onScroll?: import("react").UIEventHandler<HTMLDivElement> | undefined;
+        onScrollCapture?: import("react").UIEventHandler<HTMLDivElement> | undefined;
+        onWheel?: import("react").WheelEventHandler<HTMLDivElement> | undefined;
+        onWheelCapture?: import("react").WheelEventHandler<HTMLDivElement> | undefined;
+        onAnimationStart?: import("react").AnimationEventHandler<HTMLDivElement> | undefined;
+        onAnimationStartCapture?: import("react").AnimationEventHandler<HTMLDivElement> | undefined;
+        onAnimationEnd?: import("react").AnimationEventHandler<HTMLDivElement> | undefined;
+        onAnimationEndCapture?: import("react").AnimationEventHandler<HTMLDivElement> | undefined;
+        onAnimationIteration?: import("react").AnimationEventHandler<HTMLDivElement> | undefined;
+        onAnimationIterationCapture?: import("react").AnimationEventHandler<HTMLDivElement> | undefined;
+        onTransitionEnd?: import("react").TransitionEventHandler<HTMLDivElement> | undefined;
+        onTransitionEndCapture?: import("react").TransitionEventHandler<HTMLDivElement> | undefined;
+        ref?: import("react").LegacyRef<HTMLDivElement> | undefined;
+        key?: import("react").Key | null | undefined;
+    };
+}
+declare module "components/InfiniteTable/components/LoadMask" {
+    type LoadMaskProps = {
+        visible: boolean;
+    };
+    function LoadMaskFn(props: LoadMaskProps): JSX.Element;
+    export const LoadMask: typeof LoadMaskFn;
+}
 declare module "components/InfiniteTable/index" {
     import * as React from 'react';
     import type { InfiniteTableProps } from "components/InfiniteTable/types/index";
@@ -1974,5 +2582,7 @@ declare module "@infinite-table/infinite-react" {
     export * from "components/InfiniteTable/index";
     export * from "components/DataSource/index";
     export { group, flatten } from "utils/groupAndPivot/index";
+    export { useComponentState, getComponentStateRoot, } from "components/hooks/useComponentState";
+    export { interceptMap } from "components/hooks/useInterceptedMap";
 }
 `

@@ -3,11 +3,13 @@ import { Ref, useEffect } from 'react';
 
 import { useInternalProps } from '../../hooks/useInternalProps';
 import { join } from '../../../../utils/join';
-import { ICSS } from '../../../../style/utilities';
+
 import { decamelize } from '../../../utils/decamelize';
 
+import { position } from '../../utilities.css';
+
 const defaultStyle: React.CSSProperties = {
-  padding: 'var(--it-space-2)',
+  padding: 'var(--infinite-space-2)',
   textAlign: 'end',
   opacity: '1',
   visibility: 'visible',
@@ -85,8 +87,8 @@ export const InfiniteTableLicenseFooter = React.forwardRef(
         ref={domCallback}
         {...props}
         className={join(
-          `${rootClassName}Footer`,
-          ICSS.position.relative,
+          `${rootClassName}-Footer`,
+          position.relative,
           props.className,
         )}
         style={defaultStyle}

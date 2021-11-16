@@ -15,6 +15,7 @@
     "test:debug:watch": "TIMEOUT=60000 DEBUG_ENV=true ndb jest --config=jest-browser.config.js --watch --runInBand"
   },
   "dependencies": {
+    "@vanilla-extract/babel-plugin": "^1.1.2",
     "isomorphic-fetch": "^3.0.0",
     "next": "^11.0.1",
     "puppeteer": "^8.0.0",
@@ -30,6 +31,7 @@
     "@types/jest-environment-puppeteer": "^4.3.1",
     "@types/lodash": "^4.14.172",
     "@types/puppeteer": "^2.0.0",
+    "@vanilla-extract/next-plugin": "^1.0.1",
     "babel-plugin-dev-expression": "^0.2.2",
     "concurrently": "^5.1.0",
     "expect-puppeteer": "^4.4.0",

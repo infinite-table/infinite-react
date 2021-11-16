@@ -52,6 +52,8 @@ export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
 export interface InfiniteTableMappedState<T> {
   groupColumn: InfiniteTableProps<T>['groupColumn'];
 
+  loadingText: InfiniteTableProps<T>['loadingText'];
+  components: InfiniteTableProps<T>['components'];
   columns: InfiniteTableProps<T>['columns'];
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   onReady: InfiniteTableProps<T>['onReady'];

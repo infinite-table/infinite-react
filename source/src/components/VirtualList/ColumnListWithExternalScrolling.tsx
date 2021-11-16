@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { CSSProperties, useCallback } from 'react';
 
-import { ICSS } from '../../style/utilities';
 import { join } from '../../utils/join';
 import { VirtualBrain } from '../VirtualBrain';
 
@@ -10,9 +9,15 @@ import type { ScrollPosition } from '../types/ScrollPosition';
 
 import type { RenderItem, RenderItemParam } from '../RawList/types';
 import { RawList } from '../RawList';
+import { VirtualListCls, VirtualListClsOrientation } from './VirtualList.css';
+import {
+  position,
+  transformTranslateZero,
+} from '../InfiniteTable/utilities.css';
+import { InfiniteListRootClassName } from './InfiniteListRootClassName';
 
-const rootClassName = 'IList';
-const defaultClasses = [ICSS.position.relative, ICSS.transform.translate3D000];
+const rootClassName = InfiniteListRootClassName;
+const defaultClasses = [position.relative, transformTranslateZero];
 
 export type ColumnWidth = number | ((columnWidth: number) => number);
 type ColumnListExternalScrollingListProps = {
@@ -58,6 +63,8 @@ export const ColumnListWithExternalScrolling = (
       className,
       rootClassName,
       `${rootClassName}--horizontal`,
+      VirtualListCls,
+      VirtualListClsOrientation.horizontal,
       ...defaultClasses,
     ),
   };

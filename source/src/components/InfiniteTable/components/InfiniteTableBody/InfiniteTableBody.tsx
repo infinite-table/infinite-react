@@ -3,7 +3,8 @@ import { Ref } from 'react';
 
 import { useInternalProps } from '../../hooks/useInternalProps';
 import { join } from '../../../../utils/join';
-import { ICSS } from '../../../../style/utilities';
+
+import { position, transformTranslateZero } from '../../utilities.css';
 
 export const InfiniteTableBody = React.forwardRef(function InfiniteTableBody(
   props: React.HTMLAttributes<HTMLDivElement>,
@@ -16,8 +17,8 @@ export const InfiniteTableBody = React.forwardRef(function InfiniteTableBody(
       {...props}
       className={join(
         `${rootClassName}Body`,
-        ICSS.position.relative,
-        ICSS.transform.translate3D000,
+        position.relative,
+        transformTranslateZero,
         props.className,
       )}
     />

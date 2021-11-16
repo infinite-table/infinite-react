@@ -1,9 +1,11 @@
 :root {
   --ITable__font-family: inherit;
+  --infinite-font-family: inherit;
+  --infinite-color: #484848;
   --ITable__color: #484848;
   --ITable__background: white;
   --ITable__min-height: 100px;
-  --ITableCell__border-radius: var(--it-space-2);
+  --ITableCell__border-radius: var(--infinite-space-2);
 
   --ITableHeader__color: #6f6f6f;
 
@@ -18,8 +20,8 @@
   --ITableCell__border-width: 1px;
   --ITableCell__border: var(--ITableCell__border-width) solid #c6c6c6;
   --ITableCell__border-invisible: none;
-  --ITableCell__padding: var(--it-space-2) var(--it-space-3);
-  --ITableHeaderCell__padding: var(--it-space-3) var(--it-space-3);
+  --ITableCell__padding: var(--infinite-space-2) var(--infinite-space-3);
+  --ITableHeaderCell__padding: var(--infinite-space-3) var(--infinite-space-3);
 
   --ITableRow__color: inherit;
   --ITableRow__background: var(--ITable__background, transparent);
@@ -31,6 +33,7 @@
   --ITable--theme: light;
   --ITableHeader__height: 30px;
   --ITable-accent__color: #ff7043;
+  --infinite-accent-color: #ff7043;
 }
 
 .it--theme-dark {

@@ -1,5 +1,7 @@
 // TODO use a command line helper for this
 const fs = require('fs');
+const { vanillaExtractPlugin } = require('@vanilla-extract/esbuild-plugin');
+
 const package = require('./package.json');
 const format = process.argv[2];
 const watch = process.argv[3] === '--watch';
@@ -12,6 +14,7 @@ require('esbuild')
   .build({
     entryPoints: ['src/index.tsx'],
     bundle: true,
+    plugins: [vanillaExtractPlugin({})],
     define: {
       __DEV__: JSON.stringify(false),
       __VERSION__: JSON.stringify(require('./package.json').version),
@@ -34,14 +37,19 @@ require('esbuild')
     outfile: `dist/index${format === 'esm' ? '.esm' : ''}.js`,
   })
   .then(() => {
-    let dts = fs.readFileSync('./dist/index.d.ts', 'utf8');
+    try {
+      let dts = fs.readFileSync('./dist/index.d.ts', 'utf8');
 
-    dts = dts.replace(
-      /declare module \"index\"/g,
-      `declare module "${package.name}"`,
-    );
-    dts = dts.replace(/from \"index\"/g, `from "${package.name}"`);
+      dts = dts.replace(
+        /declare module \"index\"/g,
+        `declare module "${package.name}"`,
+      );
+      dts = dts.replace(/from \"index\"/g, `from "${package.name}"`);
 
-    fs.writeFileSync('./dist/index.d.ts', dts, 'utf8');
+      fs.writeFileSync('./dist/index.d.ts', dts, 'utf8');
+    } catch (ex) {
+      console.error('Cannot find or write dist/index.d.ts');
+      console.error(ex);
+    }
   })
   .catch(() => process.exit(1));

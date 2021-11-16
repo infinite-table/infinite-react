@@ -13,6 +13,7 @@ import { InfiniteTableHeaderUnvirtualizedProps } from './InfiniteTableHeaderType
 import { renderColumnHeaderGroups } from './renderColumnHeaderGroups';
 import { useEffect } from 'react';
 import { ScrollPosition } from '../../../types/ScrollPosition';
+import { display, flexFlow } from '../../utilities.css';
 
 const { rootClassName } = internalProps;
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -122,7 +123,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
     >
       <div
         style={{ width: totalWidth }}
-        className={join(ICSS.flexFlow.row, ICSS.display.flex)}
+        className={join(flexFlow.row, display.flex)}
         ref={domRef}
       >
         {children}

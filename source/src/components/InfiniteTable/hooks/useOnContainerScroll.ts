@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import { VirtualBrain } from '../../VirtualBrain';

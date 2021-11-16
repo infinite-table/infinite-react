@@ -18,6 +18,7 @@ import type {
   InfiniteTableRowClassNameFn,
   InfiniteTablePropRowClassName,
   InfiniteTablePropColumns,
+  InfiniteTablePropComponents,
 } from './InfiniteTableProps';
 
 import type {
@@ -35,6 +36,7 @@ export type {
   InfiniteTablePropColumns,
   InfiniteTableEnhancedData,
   InfiniteTablePropColumnOrder,
+  InfiniteTablePropComponents,
   InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
   InfiniteTableColumnGroup,

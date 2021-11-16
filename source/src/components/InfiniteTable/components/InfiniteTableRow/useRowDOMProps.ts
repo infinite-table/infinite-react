@@ -6,7 +6,6 @@ import {
   useRef,
 } from 'react';
 
-import { ICSS } from '../../../../style/utilities';
 import { join } from '../../../../utils/join';
 import {
   InfiniteTableRowClassName,
@@ -16,6 +15,7 @@ import {
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { InfiniteTableState } from '../../types/InfiniteTableState';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
+import { position, left, top } from '../../utilities.css';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -91,9 +91,9 @@ export function useRowDOMProps<T>(
       : rowClassName;
 
   const className = join(
-    ICSS.position.absolute,
-    ICSS.top[0],
-    ICSS.left[0],
+    position.absolute,
+    top[0],
+    left[0],
     InfiniteTableRowClassName,
     `${InfiniteTableRowClassName}--${
       enhancedData.isGroupRow ? 'group' : 'normal'

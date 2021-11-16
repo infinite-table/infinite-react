@@ -1,35 +1,29 @@
-import { ICSS } from '../../style/utilities';
 import { join } from '../../utils/join';
+import {
+  ScrollableCls,
+  ScrollableHorizontalCls,
+  ScrollableVerticalCls,
+} from './VirtualScrollContainer.css';
+
+type ScrollType = 'hidden' | 'visible' | 'auto';
 
 export type Scrollable =
   | boolean
-  | keyof typeof ICSS['overflow']
+  | ScrollType
   | {
-      vertical: boolean | keyof typeof ICSS['overflow'];
-      horizontal: boolean | keyof typeof ICSS['overflow'];
+      vertical: boolean | ScrollType;
+      horizontal: boolean | ScrollType;
     };
 
 export const getScrollableClassName = (scrollable: Scrollable) => {
   let scrollableClassName = '';
 
-  if (typeof scrollable === 'boolean') {
-    scrollableClassName = scrollable
-      ? ICSS.overflow.auto
-      : ICSS.overflow.hidden;
-  } else if (typeof scrollable === 'string') {
-    scrollableClassName = ICSS.overflow[scrollable];
+  if (typeof scrollable === 'boolean' || typeof scrollable === 'string') {
+    scrollableClassName = ScrollableCls[`${scrollable}`];
   } else {
     scrollableClassName = join(
-      typeof scrollable.horizontal === 'boolean'
-        ? scrollable.horizontal
-          ? ICSS.overflowX.auto
-          : ICSS.overflowX.hidden
-        : ICSS.overflowX[scrollable.horizontal],
-      typeof scrollable.vertical === 'boolean'
-        ? scrollable.vertical
-          ? ICSS.overflowY.auto
-          : ICSS.overflowY.hidden
-        : ICSS.overflowY[scrollable.vertical],
+      ScrollableHorizontalCls[`${scrollable.horizontal}`],
+      ScrollableVerticalCls[`${scrollable.vertical}`],
     );
   }
   return scrollableClassName;

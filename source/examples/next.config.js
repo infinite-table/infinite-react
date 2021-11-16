@@ -4,6 +4,9 @@ const webpack = require('webpack');
 const examplesFolder = path.resolve(__dirname);
 const parentFolder = path.resolve(__dirname, '../');
 
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+const withVanillaExtract = createVanillaExtractPlugin();
+
 /**
  * This is here to make nextjs compile the src folder, which is outside the examples folder
  */
@@ -52,10 +55,10 @@ const withParentFolder = (nextConfig = {}) => {
     },
   });
 };
-module.exports = {
+module.exports = withVanillaExtract({
   ...withParentFolder(),
   pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
   eslint: {
     ignoreDuringBuilds: true,
   },
-};
+});

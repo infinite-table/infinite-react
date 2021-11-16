@@ -1,13 +1,12 @@
 import * as React from 'react';
 
 import { join } from '../../../../utils/join';
-import { cssEllipsisClassName } from '../../../../style/css';
-
-import { ICSS } from '../../../../style/utilities';
 import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
 
 import { internalProps } from '../../internalProps';
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
+import { cellStyle, columnAlignCellStyle } from './style.css';
+import { cssEllipsisClassName, justifyContent } from '../../utilities.css';
 
 const { rootClassName } = internalProps;
 
@@ -63,17 +62,11 @@ function InfiniteTableCellFn<T>(
       style={style}
       data-name={`Cell`}
       className={join(
+        cellStyle,
         domProps.className,
 
-        ICSS.display.flex,
-        ICSS.flexFlow.row,
-        ICSS.alignItems.center,
-
-        ICSS.justifyContent[
-          (column.align === 'center'
-            ? column.align
-            : `flex-${column.align}`) as 'flex-start' | 'flex-end' | 'center'
-        ],
+        columnAlignCellStyle[column.align ?? 'start'],
+        justifyContent[column.align ?? 'start'],
         InfiniteTableCellClassName,
         shifting ? `${InfiniteTableCellClassName}--shifting` : '',
       )}

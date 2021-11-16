@@ -6,16 +6,13 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
-  useMutation,
-  useQueryClient,
 } from 'react-query';
-import { resolve } from 'path';
 
 const queryClient = new QueryClient();
 
@@ -112,8 +109,6 @@ const Example = () => {
           pageParams: data.pageParams,
         };
 
-        console.log({ data, result });
-
         return result;
       },
     });
@@ -129,7 +124,7 @@ const Example = () => {
       <DataSource<Employee>
         primaryKey="id"
         data={data?.pages || []}
-        loading={true}
+        loading={isFetchingNextPage}
       >
         <InfiniteTable<Employee>
           domProps={domProps}
