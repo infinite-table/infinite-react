@@ -16,7 +16,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { createPortal } from 'react-dom';
 import { SortIcon } from '../icons/SortIcon';
-import { cursorPointer, userSelect, userSelectNone } from '../../utilities.css';
+import { cursorPointer, userSelect } from '../../utilities.css';
 
 const defaultStyle: React.CSSProperties = {
   position: 'absolute' as 'absolute',

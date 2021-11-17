@@ -1,0 +1,25 @@
+{
+  "title": "Home",
+  "heading": true,
+  "path": "/docs",
+  "routes": [
+    {
+      "heading": true,
+      "path": "",
+      "routes": [
+        {
+          "title": "Overview",
+          "path": "/docs"
+        },
+        {
+          "title": "Community",
+          "path": "/docs/community",
+          "routes": [{
+            "title": "Acknowledgements",
+            "path": "/docs/community/acknowledgements"
+          }]
+        }
+      ]
+    }
+  ]
+}

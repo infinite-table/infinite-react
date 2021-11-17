@@ -19,15 +19,19 @@
     "jsx": "preserve",
     "paths": {
       "@www/*": ["./src/*"],
-      "@infinite-table/infinite-react": ["../source/dist/index.esm.js"],
+      "components/*": ["./src/components/*"],
+      "@infinite-table/infinite-react": ["../source/dist/index.d.ts"],
     },
-    "reactNamespace": "React"
+    "reactNamespace": "React",
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
     "app.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
   ],
   "exclude": [
     "node_modules"

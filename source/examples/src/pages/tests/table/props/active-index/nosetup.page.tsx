@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
-  InfiniteTablePropComponents,
 } from '@infinite-table/infinite-react';
 import { CarSale } from '@examples/datasets/CarSale';
 

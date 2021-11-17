@@ -4,8 +4,6 @@ import { join } from '../../../../utils/join';
 
 import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 
-import { ICSS } from '../../../../style/utilities';
-
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 import { internalProps } from '../../internalProps';

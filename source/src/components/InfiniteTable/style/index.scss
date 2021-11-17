@@ -7,23 +7,6 @@
   left: 0;
 }
 
-.Infinite-LoadMask {
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  &-Overlay {
-    background: var(--ITableLoadMask__background);
-    opacity: var(--ITableLoadMask__opacity);
-  }
-}
-
 .InfiniteBody {
   flex: 1;
 }

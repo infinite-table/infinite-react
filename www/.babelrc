@@ -1,6 +1,7 @@
 {
   "presets": ["next/babel"],
   "plugins": [
-    "@vanilla-extract/babel-plugin"
+    "@vanilla-extract/babel-plugin",
+    "babel-plugin-macros"
   ]
 }

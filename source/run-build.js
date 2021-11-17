@@ -10,11 +10,22 @@ if (!format || !(format in { esm: true, cjs: true })) {
   throw 'Invalid format supplied';
 }
 
+const postcss = require('postcss');
+const autoprefixer = require('autoprefixer');
+
+async function processCss(css) {
+  const result = await postcss([autoprefixer]).process(css, {
+    from: undefined /* suppress source map warning */,
+  });
+
+  return result.css;
+}
+
 require('esbuild')
   .build({
     entryPoints: ['src/index.tsx'],
     bundle: true,
-    plugins: [vanillaExtractPlugin({})],
+    plugins: [vanillaExtractPlugin({ processCss })],
     define: {
       __DEV__: JSON.stringify(false),
       __VERSION__: JSON.stringify(require('./package.json').version),

@@ -15,7 +15,6 @@ import {
   InfiniteTableCellClassName,
 } from './InfiniteTableCell';
 
-import { ICSS } from '../../../../style/utilities';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableColumnCellProps } from './InfiniteTableCellTypes';
 import { useCellClassName } from '../../hooks/useCellClassName';

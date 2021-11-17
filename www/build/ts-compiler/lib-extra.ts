@@ -613,12 +613,102 @@ declare module "utils/groupAndPivot/index" {
     };
     export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(deepMap: DeepMap<KeyType, boolean>, pivotBy: DataSourcePivotBy<DataType>[], pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition): ComputedColumnsAndGroups<DataType>;
 }
+declare module "components/InfiniteTable/theme.css" {
+    export const ThemeVars: import("@vanilla-extract/private").MapLeafNodes<{
+        color: {
+            accent: string;
+            color: string;
+        };
+        spacing: {
+            0: string;
+            1: string;
+            2: string;
+            3: string;
+            4: string;
+            5: string;
+            6: string;
+            7: string;
+            8: string;
+            9: string;
+            10: string;
+        };
+        fontSize: {
+            0: string;
+            1: string;
+            2: string;
+            3: string;
+            4: string;
+            5: string;
+            6: string;
+            7: string;
+        };
+        fontFamily: string;
+        minHeight: string;
+        borderRadius: string;
+        components: {
+            LoadMask: {
+                padding: string;
+                color: string;
+                textBackground: string;
+                overlayBackground: string;
+                overlayOpacity: string;
+                borderRadius: string;
+            };
+        };
+    }, import("@vanilla-extract/private").CSSVarFunction>;
+}
+declare module "components/InfiniteTable/utilities.css" {
+    export const boxSizingBorderBox: string;
+    export const absoluteCover: string;
+    export const displayFlex: string;
+    export const position: Record<"fixed" | "absolute" | "relative" | "sticky", string>;
+    export const transformTranslateZero: string;
+    export const cursorPointer: string;
+    export const userSelectNone: string;
+    export const display: Record<"block" | "flex" | "inlineBlock", string>;
+    export const userSelect: Record<"none", string>;
+    export const height: Record<"0" | "100%", string>;
+    export const width: Record<"0" | "100%", string>;
+    export const top: Record<"0" | "100%", string>;
+    export const left: Record<"0" | "100%", string>;
+    export const bottom: Record<"0" | "100%", string>;
+    export const right: Record<"0" | "100%", string>;
+    export const flexFlow: Record<"column" | "row", string>;
+    export const alignItems: Record<"center" | "stretch", string>;
+    export const justifyContent: Record<"center" | "end" | "start", string>;
+    export const overflow: Record<"auto" | "hidden" | "visible", string>;
+    export const willChange: Record<"transform", string>;
+    export const whiteSpace: Record<"nowrap", string>;
+    export const textOverflow: Record<"ellipsis", string>;
+    export const cssEllipsisClassName: string;
+}
+declare module "components/InfiniteTable/components/LoadMask.css" {
+    export const LoadMaskCls: Record<"hidden" | "visible", string>;
+    export const LoadMaskOverlayCls: string;
+    export const LoadMaskTextCls: string;
+}
+declare module "components/InfiniteTable/internalProps" {
+    export const rootClassName = "Infinite";
+    export const internalProps: {
+        rootClassName: string;
+    };
+}
+declare module "components/InfiniteTable/components/LoadMask" {
+    import { Renderable } from "components/types/Renderable";
+    export type LoadMaskProps = {
+        visible: boolean;
+        children: Renderable;
+    };
+    function LoadMaskFn(props: LoadMaskProps): JSX.Element;
+    export const LoadMask: typeof LoadMaskFn;
+}
 declare module "components/InfiniteTable/types/InfiniteTableProps" {
     import * as React from 'react';
     import { InfiniteTableState } from "components/InfiniteTable/types/index";
     import { AggregationReducer, InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
     import { DataSourceGroupRowsBy, DataSourcePropGroupRowsBy, DataSourcePropPivotBy, DataSourceState } from "components/DataSource/index";
     import { Renderable } from "components/types/Renderable";
+    import { LoadMaskProps } from "components/InfiniteTable/components/LoadMask";
     import type { InfiniteTableBaseColumn, InfiniteTableColumn, InfiniteTableColumnRenderFunction, InfiniteTableColumnWithSize, InfiniteTableComputedColumn, InfiniteTablePivotColumn } from "components/InfiniteTable/types/InfiniteTableColumn";
     import { InfiniteTablePropPivotTotalColumnPosition } from "components/InfiniteTable/types/InfiniteTableState";
     export type InfiniteTablePropColumnOrderNormalized = string[];
@@ -697,9 +787,14 @@ declare module "components/InfiniteTable/types/InfiniteTableProps" {
     export type InfiniteTablePropGroupColumn<T> = InfiniteTableGroupColumnBase<T> | ((options: GroupColumnGetterOptions<T>, toggleGroupRow: (groupKeys: any[]) => void) => InfiniteTableGroupColumnBase<T>);
     export type InfiniteTablePropPivotColumn<T> = InfiniteTablePivotColumnBase<T> | ((options: PivotColumnGetterOptions<T>) => InfiniteTablePivotColumnBase<T>);
     export type InfiniteTablePropPivotRowLabelsColumn<T> = InfiniteTablePropPivotColumn<T>;
+    export type InfiniteTablePropComponents = {
+        LoadMask?: React.FC<LoadMaskProps>;
+    };
     export interface InfiniteTableProps<T> {
         columns: InfiniteTablePropColumns<T>;
         pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
+        loadingText?: Renderable;
+        components?: InfiniteTablePropComponents;
         pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
         pivotRowLabelsColumn?: Partial<InfiniteTablePropPivotRowLabelsColumn<T>>;
         pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
@@ -829,6 +924,8 @@ declare module "components/InfiniteTable/types/InfiniteTableState" {
     export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
     export interface InfiniteTableMappedState<T> {
         groupColumn: InfiniteTableProps<T>['groupColumn'];
+        loadingText: InfiniteTableProps<T>['loadingText'];
+        components: InfiniteTableProps<T>['components'];
         columns: InfiniteTableProps<T>['columns'];
         pivotColumns: InfiniteTableProps<T>['pivotColumns'];
         onReady: InfiniteTableProps<T>['onReady'];
@@ -949,18 +1046,12 @@ declare module "components/InfiniteTable/types/index" {
     import type { InfiniteTableState } from "components/InfiniteTable/types/InfiniteTableState";
     import type { InfiniteTableAction } from "components/InfiniteTable/types/InfiniteTableAction";
     import type { InfiniteTableActionType } from "components/InfiniteTable/types/InfiniteTableActionType";
-    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropRowStyle, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, InfiniteTablePropRowClassName, InfiniteTablePropColumns } from "components/InfiniteTable/types/InfiniteTableProps";
+    import type { InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnAggregator, InfiniteTableColumnGroup, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTablePropRowStyle, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, InfiniteTablePropRowClassName, InfiniteTablePropColumns, InfiniteTablePropComponents } from "components/InfiniteTable/types/InfiniteTableProps";
     import type { InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParam } from "components/InfiniteTable/types/InfiniteTableColumn";
     import type { InfiniteTableComputedValues } from "components/InfiniteTable/types/InfiniteTableComputedValues";
     import type { InfiniteTableContextValue } from "components/InfiniteTable/types/InfiniteTableContextValue";
     import type { InfiniteTableEnhancedData } from "utils/groupAndPivot/index";
-    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTablePropColumns, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParam, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, InfiniteTablePropRowStyle, InfiniteTablePropRowClassName, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, };
-}
-declare module "components/InfiniteTable/internalProps" {
-    export const rootClassName = "ITable";
-    export const internalProps: {
-        rootClassName: string;
-    };
+    export type { InfiniteTableColumnAggregator, InfiniteTableComputedValues, InfiniteTablePropColumns, InfiniteTableEnhancedData, InfiniteTablePropColumnOrder, InfiniteTablePropComponents, InfiniteTablePropColumnVisibility, InfiniteTablePropColumnPinning, InfiniteTableColumnGroup, InfiniteTableColumn, InfiniteTableComputedColumn, InfiniteTableColumnRenderParam, InfiniteTableContextValue, InfiniteTablePropGroupRenderStrategy, InfiniteTablePropColumnAggregations, InfiniteTablePropColumnGroups, InfiniteTableState, InfiniteTableAction, InfiniteTableProps, InfiniteTableImperativeApi, InfiniteTableActionType, InfiniteTablePropRowStyle, InfiniteTablePropRowClassName, InfiniteTableRowStyleFn, InfiniteTableRowClassNameFn, };
 }
 declare module "components/InfiniteTable/InfiniteTableContext" {
     import { InfiniteTableContextValue } from "components/InfiniteTable/types/InfiniteTableContextValue";
@@ -994,7 +1085,9 @@ declare module "components/InfiniteTable/state/getInitialState" {
         pivotColumnGroups: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropColumnGroups | undefined) => import("components/InfiniteTable/types").InfiniteTablePropColumnGroups | undefined);
         sortable: 1 | ((value: boolean | undefined) => boolean);
         pivotColumn: 1 | ((value: Partial<import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropPivotColumn<T>> | undefined) => Partial<import("components/InfiniteTable/types/InfiniteTableProps").InfiniteTablePropPivotColumn<T>> | undefined);
+        components: 1 | ((value: import("components/InfiniteTable/types").InfiniteTablePropComponents | undefined) => import("components/InfiniteTable/types").InfiniteTablePropComponents | undefined);
         groupColumn: 1 | ((value: Partial<InfiniteTablePropGroupColumn<T>> | undefined) => Partial<InfiniteTablePropGroupColumn<T>> | undefined);
+        loadingText: 1 | ((value: import("components/types/Renderable").Renderable) => import("components/types/Renderable").Renderable);
         onReady: 1 | ((value: ((api: import("components/InfiniteTable/types").InfiniteTableImperativeApi<T>) => void) | undefined) => ((api: import("components/InfiniteTable/types").InfiniteTableImperativeApi<T>) => void) | undefined);
         onSelfFocus: 1 | ((value: ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined) => ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined);
         onSelfBlur: 1 | ((value: ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined) => ((event: import("react").FocusEvent<HTMLDivElement>) => void) | undefined);
@@ -1241,90 +1334,6 @@ declare module "components/InfiniteTable/hooks/useColumnAggregations" {
 declare module "components/InfiniteTable/hooks/useColumnGroups" {
     export function useColumnGroups<T>(): void;
 }
-declare module "style/utilities" {
-    export const ICSS: {
-        variables: {
-            space: [string, string, string, string, string, string, string, string, string, string, string];
-            borderRadius: string;
-            fontSize: [string, string, string, string, string, string, string, string];
-        };
-        alignItems: {
-            center: string;
-            stretch: string;
-        };
-        justifyContent: {
-            center: string;
-            'flex-start': string;
-            flexStart: string;
-            'flex-end': string;
-            flexEnd: string;
-        };
-        overflow: {
-            hidden: string;
-            visible: string;
-            auto: string;
-        };
-        overflowX: {
-            hidden: string;
-            visible: string;
-            auto: string;
-        };
-        overflowY: {
-            hidden: string;
-            visible: string;
-            auto: string;
-        };
-        cursor: {
-            pointer: string;
-        };
-        height: {
-            0: string;
-            '100%': string;
-        };
-        width: {
-            0: string;
-            '100%': string;
-        };
-        top: {
-            0: string;
-            '100%': string;
-        };
-        left: {
-            0: string;
-            '100%': string;
-        };
-        transform: {
-            translate3D000: string;
-        };
-        willChange: {
-            transform: string;
-        };
-        position: {
-            relative: string;
-            absolute: string;
-            fixed: string;
-        };
-        display: {
-            flex: string;
-        };
-        flexFlow: {
-            row: string;
-            column: string;
-        };
-        whiteSpace: {
-            nowrap: string;
-        };
-        textOverflow: {
-            ellipsis: string;
-        };
-        userSelect: {
-            none: string;
-        };
-    };
-}
-declare module "style/css" {
-    export const cssEllipsisClassName: string;
-}
 declare module "utils/join" {
     const join: (...args: (string | number | void | null)[]) => string;
     export { join };
@@ -1547,6 +1556,10 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
         onResize?: OnResizeFn;
     }
 }
+declare module "components/InfiniteTable/components/InfiniteTableRow/style.css" {
+    export const cellStyle: string;
+    export const columnAlignCellStyle: Record<"center" | "end" | "start", string>;
+}
 declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableCell" {
     import * as React from 'react';
     import { InfiniteTableCellProps } from "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableCellTypes";
@@ -1724,6 +1737,9 @@ declare module "components/RawList/index" {
     import { RawListProps } from "components/RawList/types";
     export const RawList: React.FC<RawListProps>;
 }
+declare module "components/InfiniteTable/components/InfiniteTableHeader/style.css" {
+    export const flexFlowRow: string;
+}
 declare module "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeader" {
     import * as React from 'react';
     import type { InfiniteTableHeaderProps } from "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderTypes";
@@ -1798,11 +1814,35 @@ declare module "components/hooks/useOnScroll" {
     }) => void;
     export const useOnScroll: (domRef: RefObject<HTMLElement>, onScroll: OnScroll | undefined) => void;
 }
+declare module "components/VirtualScrollContainer/VirtualScrollContainer.css" {
+    export const VirtualScrollContainerCls: string;
+    export const ScrollableCls: {
+        true: string;
+        false: string;
+        visible: string;
+        auto: string;
+        hidden: string;
+    };
+    export const ScrollableHorizontalCls: {
+        true: string;
+        false: string;
+        visible: string;
+        auto: string;
+        hidden: string;
+    };
+    export const ScrollableVerticalCls: {
+        true: string;
+        false: string;
+        visible: string;
+        auto: string;
+        hidden: string;
+    };
+}
 declare module "components/VirtualScrollContainer/getScrollableClassName" {
-    import { ICSS } from "style/utilities";
-    export type Scrollable = boolean | keyof typeof ICSS['overflow'] | {
-        vertical: boolean | keyof typeof ICSS['overflow'];
-        horizontal: boolean | keyof typeof ICSS['overflow'];
+    type ScrollType = 'hidden' | 'visible' | 'auto';
+    export type Scrollable = boolean | ScrollType | {
+        vertical: boolean | ScrollType;
+        horizontal: boolean | ScrollType;
     };
     export const getScrollableClassName: (scrollable: Scrollable) => string;
 }
@@ -1810,7 +1850,7 @@ declare module "components/VirtualScrollContainer/index" {
     import * as React from 'react';
     import { CSSProperties } from 'react';
     import { Scrollable } from "components/VirtualScrollContainer/getScrollableClassName";
-    import { Renderable } from "components/types/Renderable";
+    import type { Renderable } from "components/types/Renderable";
     export type { Scrollable };
     export interface VirtualScrollContainerProps {
         className?: string;
@@ -1879,6 +1919,11 @@ declare module "components/VirtualList/types" {
     };
     export type RenderRow = (renderProps: RenderRowParam) => Renderable;
     export type RenderColumn = (renderProps: RenderColumnParam) => Renderable;
+}
+declare module "components/VirtualList/VirtualList.css" {
+    export const VirtualListCls: string;
+    export const VirtualListClsOrientation: Record<"horizontal" | "vertical", string>;
+    export const scrollTransformTargetCls: string;
 }
 declare module "components/VirtualList/VirtualList" {
     import { HTMLProps } from 'react';
@@ -2010,6 +2055,9 @@ declare module "components/hooks/useOnMount" {
         onUnmount?: (node: HTMLElement) => void;
     };
     export function useOnMount(domRef: RefObject<HTMLElement>, props: OnMountProps): void;
+}
+declare module "components/VirtualList/InfiniteListRootClassName" {
+    export const InfiniteListRootClassName = "InfiniteList";
 }
 declare module "components/VirtualList/RowListWithExternalScrolling" {
     import { CSSProperties } from 'react';
@@ -2188,6 +2236,11 @@ declare module "components/CSSVariableWatch" {
         ref: React.MutableRefObject<HTMLElement | null>;
     }) => void;
     export const CSSVariableWatch: (props: CSSVariableWatcherProps) => JSX.Element;
+}
+declare module "components/InfiniteTable/InfiniteCls.css" {
+    export const InfiniteCls: string;
+    export const InfiniteClsShiftingColumns: string;
+    export const FooterCls: string;
 }
 declare module "components/InfiniteTable/hooks/useDOMProps" {
     import { FocusEvent } from 'react';
@@ -2556,13 +2609,6 @@ declare module "components/InfiniteTable/hooks/useDOMProps" {
         ref?: import("react").LegacyRef<HTMLDivElement> | undefined;
         key?: import("react").Key | null | undefined;
     };
-}
-declare module "components/InfiniteTable/components/LoadMask" {
-    type LoadMaskProps = {
-        visible: boolean;
-    };
-    function LoadMaskFn(props: LoadMaskProps): JSX.Element;
-    export const LoadMask: typeof LoadMaskFn;
 }
 declare module "components/InfiniteTable/index" {
     import * as React from 'react';
