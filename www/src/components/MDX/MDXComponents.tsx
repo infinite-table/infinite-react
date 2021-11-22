@@ -4,35 +4,36 @@
 
 import * as React from 'react';
 
-import {APIAnatomy, AnatomyStep} from './APIAnatomy';
+import { APIAnatomy, AnatomyStep } from './APIAnatomy';
 import CodeBlock from './CodeBlock';
-import {CodeDiagram} from './CodeDiagram';
+import { CodeDiagram } from './CodeDiagram';
+import { Prop, PropTable, PropLink } from './Prop';
 import ConsoleBlock from './ConsoleBlock';
 import Convention from './Convention';
 import ExpandableCallout from './ExpandableCallout';
 import ExpandableExample from './ExpandableExample';
-import {H1, H2, H3, H4} from './Heading';
+import { H1, H2, H3, H4 } from './Heading';
 import HomepageHero from './HomepageHero';
 import InlineCode from './InlineCode';
 import Intro from './Intro';
 import Link from './Link';
-import {PackageImport} from './PackageImport';
+import { PackageImport } from './PackageImport';
 import Recap from './Recap';
 import Sandpack from './Sandpack';
 import SimpleCallout from './SimpleCallout';
 import TerminalBlock from './TerminalBlock';
 import YouWillLearnCard from './YouWillLearnCard';
-import {Challenges, Hint, Solution} from './Challenges';
-import {IconNavArrow} from '../Icon/IconNavArrow';
+import { Challenges, Hint, Solution } from './Challenges';
+import { IconNavArrow } from '../Icon/IconNavArrow';
 import ButtonLink from '@www/components/ButtonLink';
 
 const P = (p: JSX.IntrinsicElements['p']) => (
   <p className="whitespace-pre-wrap my-4" {...p} />
 );
 
-const Strong = (strong: JSX.IntrinsicElements['strong']) => (
-  <strong className="font-bold" {...strong} />
-);
+const Strong = (
+  strong: JSX.IntrinsicElements['strong']
+) => <strong className="font-bold" {...strong} />;
 
 const OL = (p: JSX.IntrinsicElements['ol']) => (
   <ol className="ml-6 my-3 list-decimal" {...p} />
@@ -48,11 +49,23 @@ const Divider = () => (
   <hr className="my-6 block border-b border-border dark:border-border-dark" />
 );
 
-const Gotcha = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="gotcha">{children}</ExpandableCallout>
+const Gotcha = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <ExpandableCallout type="gotcha">
+    {children}
+  </ExpandableCallout>
 );
-const Note = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="note">{children}</ExpandableCallout>
+const Note = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <ExpandableCallout type="note">
+    {children}
+  </ExpandableCallout>
 );
 
 const Blockquote = ({
@@ -101,7 +114,10 @@ function LearnMore({
               href={path}
               type="primary">
               Read More
-              <IconNavArrow displayDirection="right" className="inline ml-1" />
+              <IconNavArrow
+                displayDirection="right"
+                className="inline ml-1"
+              />
             </ButtonLink>
           ) : null}
         </div>
@@ -111,7 +127,7 @@ function LearnMore({
   );
 }
 
-function Math({children}: {children: any}) {
+function Math({ children }: { children: any }) {
   return (
     <span
       style={{
@@ -123,7 +139,7 @@ function Math({children}: {children: any}) {
   );
 }
 
-function MathI({children}: {children: any}) {
+function MathI({ children }: { children: any }) {
   return (
     <span
       style={{
@@ -135,8 +151,12 @@ function MathI({children}: {children: any}) {
   );
 }
 
-function YouWillLearn({children}: {children: any}) {
-  return <SimpleCallout title="You will learn">{children}</SimpleCallout>;
+function YouWillLearn({ children }: { children: any }) {
+  return (
+    <SimpleCallout title="You will learn">
+      {children}
+    </SimpleCallout>
+  );
 }
 
 // TODO: typing.
@@ -156,7 +176,9 @@ function AuthorCredit({
       <cite>
         Illustrated by{' '}
         {authorLink ? (
-          <a className="text-link dark:text-link-dark" href={authorLink}>
+          <a
+            className="text-link dark:text-link-dark"
+            href={authorLink}>
             {author}
           </a>
         ) : (
@@ -185,14 +207,23 @@ function Illustration({
   return (
     <div className="my-16 mx-0 2xl:mx-auto max-w-4xl 2xl:max-w-6xl">
       <figure className="my-8 flex justify-center">
-        <img src={src} alt={alt} style={{maxHeight: 300}} />
+        <img
+          src={src}
+          alt={alt}
+          style={{ maxHeight: 300 }}
+        />
         {caption ? (
           <figcaption className="text-center leading-tight mt-4">
             {caption}
           </figcaption>
         ) : null}
       </figure>
-      {author ? <AuthorCredit author={author} authorLink={authorLink} /> : null}
+      {author ? (
+        <AuthorCredit
+          author={author}
+          authorLink={authorLink}
+        />
+      ) : null}
     </div>
   );
 }
@@ -216,7 +247,11 @@ function IllustrationBlock({
   const images = imageInfos.map((info, index) => (
     <figure key={index}>
       <div className="flex-1 flex p-0 xl:px-6 justify-center items-center my-4">
-        <img src={info.src} alt={info.alt} height={info.height} />
+        <img
+          src={info.src}
+          alt={info.alt}
+          height={info.height}
+        />
       </div>
       {info.caption ? (
         <figcaption className="text-secondary dark:text-secondary-dark text-center leading-tight mt-4">
@@ -239,9 +274,16 @@ function IllustrationBlock({
           ))}
         </ol>
       ) : (
-        <div className="mdx-illustration-block">{images}</div>
+        <div className="mdx-illustration-block">
+          {images}
+        </div>
       )}
-      {author ? <AuthorCredit author={author} authorLink={authorLink} /> : null}
+      {author ? (
+        <AuthorCredit
+          author={author}
+          authorLink={authorLink}
+        />
+      ) : null}
       <style jsx global>{`
         .mdx-illustration-block {
           display: flex;
@@ -282,7 +324,8 @@ function IllustrationBlock({
           transform: translateY(-50%);
           width: 60px;
           height: 49px;
-          background: center / contain no-repeat url('/images/g_arrow.png');
+          background: center / contain no-repeat
+            url('/images/g_arrow.png');
         }
         .mdx-illustration-block li:first-child:after {
           content: ' ';
@@ -303,7 +346,8 @@ function IllustrationBlock({
             top: 0;
             left: 50%;
             right: auto;
-            transform: translateX(-50%) translateY(-100%) rotate(90deg);
+            transform: translateX(-50%) translateY(-100%)
+              rotate(90deg);
           }
         }
       `}</style>
@@ -349,6 +393,9 @@ export const MDXComponents = {
   MathI,
   Note,
   PackageImport,
+  Prop,
+  PropLink,
+  PropTable,
   Recap,
   Recipes,
   Sandpack,

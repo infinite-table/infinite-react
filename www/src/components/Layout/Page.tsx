@@ -14,7 +14,6 @@ interface PageProps {
 }
 
 export function Page({ routeTree, children }: PageProps) {
-  console.log('page', JSON.parse(JSON.stringify({ routeTree })));
   return (
     <MenuProvider>
       <SidebarContext.Provider value={routeTree}>

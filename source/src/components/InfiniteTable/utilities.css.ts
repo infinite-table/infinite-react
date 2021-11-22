@@ -4,6 +4,7 @@ import {
   style,
   styleVariants,
 } from '@vanilla-extract/css';
+import { ThemeVars } from './theme.css';
 
 const borderBox: CSSProperties = {
   boxSizing: 'border-box',
@@ -35,12 +36,29 @@ export const position = styleVariants({
   fixed: { position: 'fixed' },
 });
 
+export const fill = styleVariants({
+  currentColor: { fill: 'currentColor' },
+  accentColor: { fill: ThemeVars.color.accent },
+});
+
 export const transformTranslateZero = style({
   transform: 'translate3d(0,0,0)',
 });
 
-export const cursorPointer = style({
-  cursor: 'pointer',
+export const cursor = styleVariants({
+  pointer: { cursor: 'pointer' },
+});
+
+export const flex = styleVariants({
+  1: { flex: 1 },
+  none: { flex: 'none' },
+});
+export const zIndex = styleVariants({
+  1: { zIndex: 1 },
+  10: { zIndex: 10 },
+  1000: { zIndex: 1000 },
+  10_000: { zIndex: 10_000 },
+  100_000: { zIndex: 100_000 },
 });
 
 export const userSelectNone = style({

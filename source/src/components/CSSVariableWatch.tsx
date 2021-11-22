@@ -72,7 +72,9 @@ export const CSSVariableWatch = (props: CSSVariableWatcherProps) => {
       <div
         ref={domRef}
         style={{
-          height: `var(${props.varName})`,
+          height: props.varName.startsWith('var(')
+            ? props.varName
+            : `var(${props.varName})`,
         }}
       ></div>
     </div>

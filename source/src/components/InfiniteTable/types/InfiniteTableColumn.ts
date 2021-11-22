@@ -5,7 +5,7 @@ import type {
   DataSourceState,
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
-import type { InfiniteTableEnhancedData } from '.';
+import type { InfiniteTableRowInfo } from '.';
 import { CSSProperties } from 'react';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
@@ -18,8 +18,8 @@ export interface InfiniteTableColumnRenderParam<
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
   data: DATA_TYPE | null;
-  enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
-  groupRowEnhancedData: InfiniteTableEnhancedData<DATA_TYPE> | null;
+  rowInfo: InfiniteTableRowInfo<DATA_TYPE>;
+  groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   rowIndex: number;
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
@@ -32,9 +32,9 @@ export type InfiniteTableColumnRowspanFnParams<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   data: DATA_TYPE | null;
-  enhancedData: InfiniteTableEnhancedData<DATA_TYPE>;
-  groupRowEnhancedData: InfiniteTableEnhancedData<DATA_TYPE> | null;
-  dataArray: InfiniteTableEnhancedData<DATA_TYPE>[];
+  rowInfo: InfiniteTableRowInfo<DATA_TYPE>;
+  groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
+  dataArray: InfiniteTableRowInfo<DATA_TYPE>[];
   rowIndex: number;
   column: COL_TYPE;
 };
@@ -55,7 +55,7 @@ export type InfiniteTableColumnRenderFunction<
   data,
   toggleGroupRow,
   toggleCurrentGroupRow,
-  enhancedData,
+  rowInfo,
   groupRowsBy,
 }: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
 
@@ -116,7 +116,7 @@ export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
 export type InfiniteTableColumnStyleFnParams<T> = {
   data: T | null;
   value: Renderable;
-  enhancedData: InfiniteTableEnhancedData<T>;
+  rowInfo: InfiniteTableRowInfo<T>;
   column: InfiniteTableColumn<T>;
 };
 export type InfiniteTableColumnStyleFn<T> = (
@@ -136,8 +136,8 @@ export type InfiniteTableColumnClassName<T> =
 
 export type InfiniteTableColumnValueGetterParams<T> = {
   data: T | null;
-  enhancedData: InfiniteTableEnhancedData<T>;
-  groupRowEnhancedData: InfiniteTableEnhancedData<T> | null;
+  rowInfo: InfiniteTableRowInfo<T>;
+  groupRowInfo: InfiniteTableRowInfo<T> | null;
 };
 export type InfiniteTableColumnValueGetter<
   T,

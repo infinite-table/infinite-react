@@ -1,5 +1,5 @@
-import * as React from "react";
-import { ReactNode } from "react";
+import * as React from 'react';
+import { ReactNode } from 'react';
 
 import {
   colorWhite,
@@ -12,8 +12,8 @@ import {
   maxWidth,
   marginY,
   shadow,
-} from "../styles/utils.css";
-import { card, grid } from "./components.css";
+} from '../styles/utils.css';
+import { card, grid } from './components.css';
 
 const Card = ({
   href,
@@ -28,8 +28,7 @@ const Card = ({
     <a
       href={href}
       className={`${card}
-      ${colorWhite} ${backgroundColorBlue700} ${shadow.md} ${borderRadius.default}`}
-    >
+      ${colorWhite} ${backgroundColorBlue700} ${shadow.md} ${borderRadius.default}`}>
       <h3>{title} &rarr;</h3>
       <p className={fontSize.lg}>{children}</p>
     </a>
@@ -38,28 +37,30 @@ const Card = ({
 export const Cards = () => {
   return (
     <div
-      className={`${display.flex} ${grid} ${centeredFlexProps} ${flexWrap.wrap} ${maxWidth["5xl"]} ${marginY[16]} `}
+      className={`${display.flex} ${grid} ${centeredFlexProps} ${flexWrap.wrap} ${maxWidth['5xl']} ${marginY[16]} `}
       style={{
-        gridGap: "1.5rem",
-        alignItems: "stretch",
-      }}
-    >
-      <Card title="📃 Documentation" href="/docs/latest/getting-started">
-        Find in-depth information about <b>REACT INFINITE TABLE</b>.
+        gridGap: '1.5rem',
+        alignItems: 'stretch',
+      }}>
+      <Card title="📃 Documentation" href="/docs">
+        Find in-depth information about{' '}
+        <b>REACT INFINITE TABLE</b>.
       </Card>
 
-      <Card title="🔎 Examples" href="/docs/latest/getting-started">
+      <Card
+        title="🔎 Examples"
+        href="/docs/latest/learn/getting-started">
         Discover practical examples to help you get started
       </Card>
 
-      <Card title="📢 Blog" href=".">
-        Read our articles to help you get the most of the infinite table
+      <Card title="📢 Blog" href="/docs">
+        Read our articles to help you get the most of the
+        infinite table - COMING SOON
       </Card>
 
       <Card
         title="🧪 Automated tests"
-        href="https://github.com/infinite-table/infinite-react#testing"
-      >
+        href="https://github.com/infinite-table/infinite-react#testing">
         Thoroughly tested with real browsers and e2e tests
       </Card>
     </div>

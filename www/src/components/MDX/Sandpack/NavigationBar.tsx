@@ -3,25 +3,34 @@
  */
 
 import * as React from 'react';
-import {FileTabs, useSandpack} from '@codesandbox/sandpack-react';
-import {OpenInCodeSandboxButton} from './OpenInCodeSandboxButton';
-import {ResetButton} from './ResetButton';
-import {DownloadButton} from './DownloadButton';
-import {FilesDropdown} from './FilesDropdown';
+import {
+  FileTabs,
+  useSandpack,
+} from '@codesandbox/sandpack-react';
+import { OpenInCodeSandboxButton } from './OpenInCodeSandboxButton';
+import { ResetButton } from './ResetButton';
+import { DownloadButton } from './DownloadButton';
+import { FilesDropdown } from './FilesDropdown';
+import { ReactNode } from 'react';
 
 export function NavigationBar({
   showDownload,
   onReset,
+  skipRound,
 }: {
+  skipRound?: boolean;
   showDownload: boolean;
   onReset: () => void;
 }) {
-  const {sandpack} = useSandpack();
-  const [dropdownActive, setDropdownActive] = React.useState(false);
-  const {openPaths} = sandpack;
+  const { sandpack } = useSandpack();
+  const [dropdownActive, setDropdownActive] =
+    React.useState(false);
+  const { openPaths } = sandpack;
 
   const resizeHandler = React.useCallback(() => {
-    const width = window.innerWidth || document.documentElement.clientWidth;
+    const width =
+      window.innerWidth ||
+      document.documentElement.clientWidth;
     if (!dropdownActive && width < 640) {
       setDropdownActive(true);
     }
@@ -42,7 +51,10 @@ export function NavigationBar({
   }, [openPaths.length, resizeHandler]);
 
   return (
-    <div className="bg-wash dark:bg-card-dark flex justify-between items-center relative z-10 border-b border-border dark:border-border-dark rounded-t-lg rounded-b-none">
+    <div
+      className={`bg-wash dark:bg-card-dark flex justify-between items-center relative z-10 border-b border-border dark:border-border-dark  rounded-b-none ${
+        skipRound ? '' : 'rounded-t-lg'
+      }`}>
       <div className="px-4 lg:px-6">
         {dropdownActive ? <FilesDropdown /> : <FileTabs />}
       </div>

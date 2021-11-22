@@ -85,28 +85,28 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
 
     if (isPivotRowLabelsColumn && !column.render) {
       column.render = (renderOptions) => {
-        let { value, enhancedData, column, groupRowsBy } = renderOptions;
+        let { value, rowInfo, column, groupRowsBy } = renderOptions;
 
         if (column.renderValue) {
           value = column.renderValue(renderOptions);
         }
 
         const showExpanderIcon =
-          (enhancedData.groupKeys?.length || 0) < groupRowsBy.length;
+          (rowInfo.groupKeys?.length || 0) < groupRowsBy.length;
         return (
           <div
             className={join(display.flex, alignItems.center)}
             style={{
               paddingInlineStart: `calc(${
-                enhancedData.groupNesting! - 1
+                rowInfo.groupNesting! - 1
               } * var(--ITableRow-group-column-nesting))`,
             }}
           >
             {showExpanderIcon ? (
               <ExpanderIcon
-                expanded={!enhancedData.collapsed}
+                expanded={!rowInfo.collapsed}
                 onChange={() => {
-                  toggleGroupRow(enhancedData.groupKeys!);
+                  toggleGroupRow(rowInfo.groupKeys!);
                 }}
               />
             ) : null}

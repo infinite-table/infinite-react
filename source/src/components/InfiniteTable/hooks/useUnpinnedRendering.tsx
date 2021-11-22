@@ -9,7 +9,7 @@ import { VirtualRowList } from '../../VirtualList/VirtualRowList';
 import type { Size } from '../../types/Size';
 import type {
   InfiniteTableComputedColumn,
-  InfiniteTableEnhancedData,
+  InfiniteTableRowInfo,
 } from '../types';
 import type { InfiniteTableRowProps } from '../components/InfiniteTableRow/InfiniteTableRowTypes';
 
@@ -21,7 +21,7 @@ import { InfiniteTableToggleGroupRowFn } from '../types/InfiniteTableColumn';
 type UnpinnedRenderingParams<T> = {
   columnShifts: number[] | null;
   bodySize: Size;
-  getData: () => InfiniteTableEnhancedData<T>[];
+  getData: () => InfiniteTableRowInfo<T>[];
   rowHeight: number;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
 
@@ -68,14 +68,14 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
       : virtualizeColumns ?? true;
 
   const renderRowUnpinned: RenderRow = useCallback(
-    (rowInfo) => {
+    (rowParams) => {
       const dataArray = getData();
-      const enhancedData = dataArray[rowInfo.rowIndex];
+      const rowInfo = dataArray[rowParams.rowIndex];
 
       const { showZebraRows, showHoverRows } = getState();
 
       const rowProps: InfiniteTableRowProps<T> = {
-        enhancedData,
+        rowInfo,
         showZebraRows,
         showHoverRows,
         getData,
@@ -85,7 +85,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
         verticalBrain: verticalVirtualBrain,
         columns: computedUnpinnedColumns,
         rowWidth: computedUnpinnedColumnsWidth,
-        ...rowInfo,
+        ...rowParams,
       };
 
       if (shouldVirtualizeColumns) {

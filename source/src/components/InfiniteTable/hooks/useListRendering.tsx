@@ -112,8 +112,8 @@ export function useListRendering<T>(
       ? ({ itemIndex }) => {
           let maxSpan = 1;
           const dataArray = getData();
-          const enhancedData = dataArray[itemIndex];
-          const data = enhancedData.data;
+          const rowInfo = dataArray[itemIndex];
+          const data = rowInfo.data;
 
           colsWithRowspan.forEach((column) => {
             if (!column.rowspan) {
@@ -123,8 +123,8 @@ export function useListRendering<T>(
               column,
               data,
               dataArray,
-              groupRowEnhancedData: null,
-              enhancedData,
+              groupRowInfo: null,
+              rowInfo,
               rowIndex: itemIndex,
             });
 

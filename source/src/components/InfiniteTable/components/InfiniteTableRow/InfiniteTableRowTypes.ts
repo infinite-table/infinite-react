@@ -2,7 +2,7 @@ import type { VirtualBrain } from '../../../VirtualBrain';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
 import type {
   InfiniteTableComputedColumn,
-  InfiniteTableEnhancedData,
+  InfiniteTableRowInfo,
 } from '../../types';
 import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
@@ -13,8 +13,8 @@ export interface InfiniteTableRowProps<T> {
   brain: VirtualBrain;
   verticalBrain: VirtualBrain;
   domRef: React.RefCallback<HTMLElement>;
-  enhancedData: InfiniteTableEnhancedData<T>;
-  getData: () => InfiniteTableEnhancedData<T>[];
+  rowInfo: InfiniteTableRowInfo<T>;
+  getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   repaintId?: number | string;
 

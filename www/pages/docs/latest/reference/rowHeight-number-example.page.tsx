@@ -11,7 +11,7 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person>
-        columnDefaultWidth={130}
+        rowHeight={50}
         columns={columns}
       />
     </DataSource>

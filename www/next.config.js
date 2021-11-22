@@ -1,13 +1,17 @@
 const path = require('path');
 
-const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+const {
+  createVanillaExtractPlugin,
+} = require('@vanilla-extract/next-plugin');
 const withVanillaExtract = createVanillaExtractPlugin();
 
 const withMDX = require('@next/mdx')({
   extension: /\.mdx$/,
 });
 
-const { remarkPlugins } = require('./plugins/markdownToHtml');
+const {
+  remarkPlugins,
+} = require('./plugins/markdownToHtml');
 
 const postCssPlugins = [
   // Below PostCSS references Next.js default configuration
@@ -28,6 +32,15 @@ const postCssPlugins = [
 ];
 
 const nextConfig = withMDX({
+  async redirects() {
+    return [
+      {
+        source: '/docs/learn/getting-started',
+        destination: '/docs/latest/learn/getting-started',
+        permanent: true,
+      },
+    ];
+  },
   pageExtensions: ['page.tsx', 'page.mdx', 'page.md'],
   rewrites() {
     return [
@@ -47,7 +60,9 @@ const nextConfig = withMDX({
   reactStrictMode: true,
   webpack(config, { dev, isServer, ...options }) {
     if (process.env.ANALYZE) {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      const {
+        BundleAnalyzerPlugin,
+      } = require('webpack-bundle-analyzer');
       config.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'static',
@@ -58,18 +73,24 @@ const nextConfig = withMDX({
       );
     }
     config.resolve.alias['@www'] = path.resolve('./src');
-    config.resolve.alias['@infinite-table/infinite-react'] = path.resolve(
-      '../source/dist/index.esm.js'
+    config.resolve.alias['@infinite-table/infinite-react'] =
+      path.resolve('../source/dist/index.esm.js');
+    config.resolve.alias[
+      '@infinite-table/infinite-react/index.css'
+    ] = path.resolve('../source/dist/index.css');
+    config.resolve.alias.react = path.resolve(
+      './node_modules/react'
     );
-    config.resolve.alias['@infinite-table/infinite-react/index.css'] =
-      path.resolve('../source/dist/index.css');
-    config.resolve.alias.react = path.resolve('./node_modules/react');
     config.resolve.alias['react-dom'] = path.resolve(
       './node_modules/react-dom'
     );
     // needed for bundling the ts-compiler for browser usage
-    config.resolve.alias['os'] = path.resolve('./build/shims/os-shim.js');
-    config.resolve.alias['fs'] = path.resolve('./node_modules/node-browserfs');
+    config.resolve.alias['os'] = path.resolve(
+      './build/shims/os-shim.js'
+    );
+    config.resolve.alias['fs'] = path.resolve(
+      './node_modules/node-browserfs'
+    );
     config.resolve.alias['perf_hooks'] = path.resolve(
       './build/shims/perf_hooks.js'
     );
@@ -98,4 +119,6 @@ const nextConfig = withMDX({
 });
 const createNextPluginPreval = require('next-plugin-preval/config');
 const withNextPluginPreval = createNextPluginPreval();
-module.exports = withNextPluginPreval(withVanillaExtract(nextConfig));
+module.exports = withNextPluginPreval(
+  withVanillaExtract(nextConfig)
+);

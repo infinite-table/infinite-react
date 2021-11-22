@@ -16,6 +16,7 @@ import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { InfiniteTableState } from '../../types/InfiniteTableState';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 import { position, left, top } from '../../utilities.css';
+import { RowCls, RowClsVariants } from './row.css';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -42,7 +43,7 @@ export function useRowDOMProps<T>(
     showHoverRows = false,
     rowIndex,
     domRef: domRefFromProps,
-    enhancedData,
+    rowInfo,
   } = props;
 
   const domRef = useRef<HTMLElement | null>(null);
@@ -52,10 +53,10 @@ export function useRowDOMProps<T>(
   }, []);
 
   const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
-    data: enhancedData.data,
-    enhancedData,
+    data: rowInfo.data,
+    rowInfo,
     rowIndex,
-    groupRowsBy: enhancedData.groupBy,
+    groupRowsBy: rowInfo.groupBy,
   };
 
   if (typeof rowProps === 'function') {
@@ -65,7 +66,7 @@ export function useRowDOMProps<T>(
   let style: CSSProperties | undefined = rowProps ? rowProps.style : undefined;
 
   const inlineGroupRoot =
-    groupRenderStrategy === 'inline' && enhancedData.indexInGroup === 0;
+    groupRenderStrategy === 'inline' && rowInfo.indexInGroup === 0;
 
   if (rowStyle) {
     style =
@@ -77,13 +78,11 @@ export function useRowDOMProps<T>(
   if (inlineGroupRoot) {
     style = style || {};
     //TODO remove this harcoded value - should be datasource size - ...
-    style.zIndex = 2_000_000 - enhancedData.indexInAll;
+    style.zIndex = 2_000_000 - rowInfo.indexInAll;
   }
 
   const odd =
-    (enhancedData.indexInAll != null ? enhancedData.indexInAll : rowIndex) %
-      2 ===
-    1;
+    (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
 
   let rowComputedClassName =
     typeof rowClassName === 'function'
@@ -95,12 +94,18 @@ export function useRowDOMProps<T>(
     top[0],
     left[0],
     InfiniteTableRowClassName,
+    RowCls,
     `${InfiniteTableRowClassName}--${
-      enhancedData.isGroupRow ? 'group' : 'normal'
+      rowInfo.isGroupRow ? 'group' : 'normal'
     }-row`,
-    inlineGroupRoot ? `${InfiniteTableRowClassName}--inline-group-row` : '',
+    rowInfo.isGroupRow ? RowClsVariants.groupRow : RowClsVariants.normal,
+    inlineGroupRoot
+      ? `${InfiniteTableRowClassName}--inline-group-row ${RowClsVariants.inlineGroupRow}`
+      : '',
     showZebraRows
-      ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'}`
+      ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'} ${
+          odd ? RowClsVariants.odd : RowClsVariants.even
+        }`
       : null,
     showHoverRows ? `${InfiniteTableRowClassName}--show-hover` : null,
     domProps?.className,
@@ -168,7 +173,7 @@ export function useRowDOMProps<T>(
 
       // 'data-hover-index': covered ? null : rowIndex,
       'data-hover-index': rowIndex,
-      'data-row-id': `${enhancedData.id}`,
+      'data-row-id': `${rowInfo.id}`,
       className,
       onMouseEnter,
       onMouseLeave,

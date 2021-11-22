@@ -6,11 +6,17 @@
     {
       "heading": true,
       "path": "",
+      
       "routes": [
         {
-          "title": "Props",
+
+          "title": "Infinite Table Props",
           "path": "/docs/latest/reference"
-          
+            
+        },
+        {
+          "title": "DataSource Props",
+          "path": "/docs/latest/reference/datasource-props"
         }
       ]
     }

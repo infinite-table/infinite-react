@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { join } from '../../../../utils/join';
 import { isControlled } from '../../../utils/isControlled';
+import { fill, flex, cursor } from '../../utilities.css';
 
 type ExpanderIconProps = {
   size?: number;
@@ -47,9 +48,13 @@ export function ExpanderIcon(props: ExpanderIconProps) {
       onClick={onClick}
       className={join(
         props.className,
-        'ITableIcon',
-        'ITableIcon-expander',
-        `ITableIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,
+        fill.currentColor,
+        flex.none,
+        cursor.pointer,
+        expanded ? fill.accentColor : '',
+        'InfiniteIcon',
+        'InfiniteIcon-expander',
+        `InfiniteIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,
       )}
     >
       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />

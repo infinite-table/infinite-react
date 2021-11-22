@@ -16,7 +16,11 @@ export interface MarkdownProps<Frontmatter> {
 }
 
 function MaxWidth({ children }: { children: any }) {
-  return <div className="max-w-4xl ml-0 2xl:mx-auto">{children}</div>;
+  return (
+    <div className="max-w-4xl ml-0 2xl:mx-auto">
+      {children}
+    </div>
+  );
 }
 
 export function MarkdownPage<
@@ -27,7 +31,8 @@ export function MarkdownPage<
 >({ children, meta }: MarkdownProps<T>) {
   const { route, nextRoute, prevRoute } = useRouteMeta();
   const title = meta.title || route?.title || '';
-  const description = meta.description || route?.description || '';
+  const description =
+    meta.description || route?.description || '';
 
   let anchors: Array<{
     url: string;
@@ -36,9 +41,14 @@ export function MarkdownPage<
   }> = React.Children.toArray(children)
     .filter((child: any) => {
       if (child.props?.mdxType) {
-        return ['h1', 'h2', 'h3', 'Challenges', 'Recipes', 'Recap'].includes(
-          child.props.mdxType
-        );
+        return [
+          'h1',
+          'h2',
+          'h3',
+          'Challenges',
+          'Recipes',
+          'Recap',
+        ].includes(child.props.mdxType);
       }
       return false;
     })
@@ -68,7 +78,10 @@ export function MarkdownPage<
         url: '#' + child.props.id,
         depth:
           (child.props?.mdxType &&
-            parseInt(child.props.mdxType.replace('h', ''), 0)) ??
+            parseInt(
+              child.props.mdxType.replace('h', ''),
+              0
+            )) ??
           0,
         text: child.props.children,
       };
@@ -82,10 +95,13 @@ export function MarkdownPage<
   }
 
   if (!route) {
-    console.error('This page was not added to one of the sidebar JSON files.');
+    console.error(
+      'This page was not added to one of the sidebar JSON files.'
+    );
   }
-  console.log({ route });
-  const isHomePage = route?.path === '/docs/latest';
+  const isHomePage =
+    route?.path === '/docs/latest' ||
+    route?.path === '/docs';
 
   // Auto-wrap everything except a few types into
   // <MaxWidth> wrappers. Keep reusing the same
@@ -104,7 +120,9 @@ export function MarkdownPage<
   let finalChildren: React.ReactNode[] = [];
   function flushWrapper(key: string | number) {
     if (wrapQueue.length > 0) {
-      finalChildren.push(<MaxWidth key={key}>{wrapQueue}</MaxWidth>);
+      finalChildren.push(
+        <MaxWidth key={key}>{wrapQueue}</MaxWidth>
+      );
       wrapQueue = [];
     }
   }
@@ -151,7 +169,9 @@ export function MarkdownPage<
         </div>
       </div>
       <div className="w-full lg:max-w-xs hidden 2xl:block">
-        {!isHomePage && anchors.length > 0 && <Toc headings={anchors} />}
+        {!isHomePage && anchors.length > 0 && (
+          <Toc headings={anchors} />
+        )}
       </div>
     </article>
   );

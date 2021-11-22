@@ -16,7 +16,14 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { createPortal } from 'react-dom';
 import { SortIcon } from '../icons/SortIcon';
-import { cursorPointer, userSelect } from '../../utilities.css';
+import { cursor, userSelect } from '../../utilities.css';
+import {
+  HeaderCellCls,
+  // HeaderCellCls,
+  HeaderCellProxy,
+  HeaderCellVariants,
+} from './header.css';
+import { CellCls, CellClsVariants } from '../cell.css';
 
 const defaultStyle: React.CSSProperties = {
   position: 'absolute' as 'absolute',
@@ -112,7 +119,7 @@ export function InfiniteTableHeaderCell<T>(
   if (dragging) {
     draggingProxy = (
       <div
-        className={`${baseCls}Proxy`}
+        className={`${baseCls}Proxy ${HeaderCellProxy}`}
         style={{
           position: 'absolute',
           height: headerHeight,
@@ -147,12 +154,14 @@ export function InfiniteTableHeaderCell<T>(
         className={join(
           baseCls,
           userSelect.none,
-          column.computedSortable ? cursorPointer : '',
+          column.computedSortable ? cursor.pointer : '',
 
-          useCellClassName(column, [baseCls, InfiniteTableCellClassName]),
+          useCellClassName(column, [baseCls, InfiniteTableCellClassName], []),
+          HeaderCellCls,
+          CellCls,
 
           dragging
-            ? `${InfiniteTableCellClassName}--dragging ${baseCls}--dragging`
+            ? `${InfiniteTableCellClassName}--dragging ${baseCls}--dragging ${CellClsVariants.dragging} ${HeaderCellVariants.dragging}`
             : '',
         )}
         cssEllipsis={column.headerCssEllipsis ?? column.cssEllipsis ?? true}

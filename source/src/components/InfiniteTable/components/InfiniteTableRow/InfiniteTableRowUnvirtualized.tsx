@@ -17,7 +17,7 @@ function TableRowUnvirtualizedFn<T>(
     rowHeight,
     rowWidth,
     getData,
-    enhancedData,
+    rowInfo,
     rowIndex,
     columns,
     toggleGroupRow,
@@ -54,7 +54,7 @@ function TableRowUnvirtualizedFn<T>(
         hidden={hidden}
         groupRenderStrategy={componentState.groupRenderStrategy}
         toggleGroupRow={toggleGroupRow}
-        enhancedData={enhancedData}
+        rowInfo={rowInfo}
         rowIndex={rowIndex}
         column={col}
       />

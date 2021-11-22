@@ -6,7 +6,7 @@ import {
   group,
   getPivotColumnsAndColumnGroups,
 } from '../../../utils/groupAndPivot';
-import { InfiniteTableEnhancedData } from '../../InfiniteTable';
+import { InfiniteTableRowInfo } from '../../InfiniteTable';
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
@@ -25,11 +25,11 @@ const haveDepsChanged = <StateType>(
   return false;
 };
 
-function toEnhancedData<T>(
+function toRowInfo<T>(
   data: T,
   id: any,
   index: number,
-): InfiniteTableEnhancedData<T> {
+): InfiniteTableRowInfo<T> {
   return { data, collapsed: true, id, indexInAll: index, indexInGroup: index };
 }
 
@@ -70,7 +70,7 @@ export function concludeReducer<T>(params: {
 
   let dataArray = state.originalDataArray;
 
-  let enhancedDataArray: InfiniteTableEnhancedData<T>[] = state.dataArray;
+  let rowInfoDataArray: InfiniteTableRowInfo<T>[] = state.dataArray;
 
   if (shouldSort) {
     dataArray = shouldSortAgain
@@ -105,7 +105,7 @@ export function concludeReducer<T>(params: {
         generateGroupRows: state.generateGroupRows,
       });
 
-      enhancedDataArray = flattenResult.data;
+      rowInfoDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
 
       const pivotGroupsAndCols = pivotBy
@@ -119,10 +119,10 @@ export function concludeReducer<T>(params: {
       state.pivotColumns = pivotGroupsAndCols?.columns;
       state.pivotColumnGroups = pivotGroupsAndCols?.columnGroups;
     } else {
-      enhancedDataArray = state.lastGroupDataArray!;
+      rowInfoDataArray = state.lastGroupDataArray!;
     }
 
-    state.lastGroupDataArray = enhancedDataArray;
+    state.lastGroupDataArray = rowInfoDataArray;
     state.groupedAt = now;
   } else {
     state.groupDeepMap = undefined;
@@ -132,19 +132,19 @@ export function concludeReducer<T>(params: {
       previousState.postSortDataArray != state.postSortDataArray;
 
     if (arrayDifferentAfterSortStep) {
-      enhancedDataArray = dataArray.map((data, index) =>
-        toEnhancedData(data, toPrimaryKey(data), index),
+      rowInfoDataArray = dataArray.map((data, index) =>
+        toRowInfo(data, toPrimaryKey(data), index),
       );
     }
   }
 
-  state.postGroupDataArray = enhancedDataArray;
+  state.postGroupDataArray = rowInfoDataArray;
 
-  if (enhancedDataArray !== state.dataArray) {
+  if (rowInfoDataArray !== state.dataArray) {
     state.updatedAt = now;
   }
 
-  state.dataArray = enhancedDataArray;
+  state.dataArray = rowInfoDataArray;
   state.reducedAt = now;
   (globalThis as any).state = state;
 

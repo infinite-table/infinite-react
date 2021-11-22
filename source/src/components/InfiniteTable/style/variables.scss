@@ -1,37 +1,37 @@
 :root {
-  --ITable__font-family: inherit;
-  --infinite-font-family: inherit;
-  --infinite-color: #484848;
-  --ITable__color: #484848;
-  --ITable__background: white;
-  --ITable__min-height: 100px;
-  --ITableCell__border-radius: var(--infinite-space-2);
+  // --ITable__font-family: inherit;
+  // --infinite-font-family: inherit;
+  // --infinite-color: #484848;
+  // --ITable__color: #484848;
+  // --ITable__background: white;
+  // --ITable__min-height: 100px;
+  // --ITableCell__border-radius: var(--infinite-space-2);
 
-  --ITableHeader__color: #6f6f6f;
+  // --ITableHeader__color: #6f6f6f;
 
-  --ITableLoadMask__background: gray;
-  --ITableLoadMask__opacity: 0.3;
+  // --ITableLoadMask__background: gray;
+  // --ITableLoadMask__opacity: 0.3;
 
-  --ITableHeaderCell__background: #ededed;
-  --ITableHeader__background: var(--ITableHeaderCell__background);
-  --ITableHeaderCell--dragging__background: #d4d3d3;
-  --ITableHeaderCell-icon-size: 16px;
+  // --ITableHeaderCell__background: #ededed;
+  // --ITableHeader__background: var(--ITableHeaderCell__background);
+  // --ITableHeaderCell--dragging__background: #d4d3d3;
+  // --ITableHeaderCell-icon-size: 16px;
 
-  --ITableCell__border-width: 1px;
-  --ITableCell__border: var(--ITableCell__border-width) solid #c6c6c6;
-  --ITableCell__border-invisible: none;
-  --ITableCell__padding: var(--infinite-space-2) var(--infinite-space-3);
-  --ITableHeaderCell__padding: var(--infinite-space-3) var(--infinite-space-3);
+  // --ITableCell__border-width: 1px;
+  // --ITableCell__border: var(--ITableCell__border-width) solid #c6c6c6;
+  // --ITableCell__border-invisible: none;
+  // --ITableCell__padding: var(--infinite-space-2) var(--infinite-space-3);
+  // --ITableHeaderCell__padding: var(--infinite-space-3) var(--infinite-space-3);
 
-  --ITableRow__color: inherit;
-  --ITableRow__background: var(--ITable__background, transparent);
-  --ITableRow--odd__background: #f6f6f6;
-  --ITableRow-group-row__background: #cbc5c5;
-  --ITableRow-group-column-nesting: 30px;
-  --ITableRow--hover__background: #dbdbdb;
+  // --ITableRow__color: inherit;
+  // --ITableRow__background: var(--ITable__background, transparent);
+  // --ITableRow--odd__background: #f6f6f6;
+  // --ITableRow-group-row__background: #cbc5c5;
+  // --ITableRow-group-column-nesting: 30px;
+  // --ITableRow--hover__background: #dbdbdb;
 
   --ITable--theme: light;
-  --ITableHeader__height: 30px;
+  // --ITableHeader__height: 30px;
   --ITable-accent__color: #ff7043;
   --infinite-accent-color: #ff7043;
 }

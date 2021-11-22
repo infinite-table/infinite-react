@@ -28,7 +28,7 @@ function DEFAULT_TO_KEY<T>(value: T): T {
   return value;
 }
 
-export interface InfiniteTableEnhancedData<T> {
+export interface InfiniteTableRowInfo<T> {
   id: any;
   data: T | null;
   groupData?: T[];
@@ -39,7 +39,7 @@ export interface InfiniteTableEnhancedData<T> {
   collapsedGroupsCount?: number;
   groupNesting?: number;
   groupKeys?: any[];
-  parents?: InfiniteTableEnhancedGroupData<T>[];
+  parents?: InfiniteTableEnhancedGroupInfo<T>[];
   indexInParentGroups?: number[];
   indexInGroup: number;
   indexInAll: number;
@@ -49,8 +49,8 @@ export interface InfiniteTableEnhancedData<T> {
   reducerResults?: any[];
 }
 
-export interface InfiniteTableEnhancedGroupData<T>
-  extends InfiniteTableEnhancedData<T> {
+export interface InfiniteTableEnhancedGroupInfo<T>
+  extends InfiniteTableRowInfo<T> {
   data: null;
   groupData: T[];
   value: any;
@@ -332,7 +332,7 @@ type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
   collapsed: boolean;
-  parents: InfiniteTableEnhancedGroupData<DataType>[];
+  parents: InfiniteTableEnhancedGroupInfo<DataType>[];
   indexInParentGroups: number[];
   indexInGroup: number;
   indexInAll: number;
@@ -346,7 +346,7 @@ function getEnhancedGroupData<DataType>(
   const groupNesting = groupKeys.length;
   const { items: groupItems, reducerResults, pivotDeepMap } = deepMapValue;
 
-  const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> = {
+  const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> = {
     data: null,
     groupCount: groupItems.length,
     groupData: groupItems,
@@ -394,7 +394,7 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
 };
 export function enhancedFlatten<DataType, KeyType = any>(
   param: EnhancedFlattenParam<DataType, KeyType>,
-): { data: InfiniteTableEnhancedData<DataType>[] } {
+): { data: InfiniteTableRowInfo<DataType>[] } {
   const { groupResult, toPrimaryKey, groupRowsState, generateGroupRows } =
     param;
   const { groupParams, deepMap, pivot } = groupResult;
@@ -402,9 +402,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
   const groupByStrings = groupBy.map((g) => g.field);
 
-  const result: InfiniteTableEnhancedData<DataType>[] = [];
+  const result: InfiniteTableRowInfo<DataType>[] = [];
 
-  const parents: InfiniteTableEnhancedGroupData<DataType>[] = [];
+  const parents: InfiniteTableEnhancedGroupInfo<DataType>[] = [];
   const indexInParentGroups: number[] = [];
 
   deepMap.visitDepthFirst(
@@ -415,7 +415,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
 
-      const enhancedGroupData: InfiniteTableEnhancedGroupData<DataType> =
+      const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> =
         getEnhancedGroupData(
           {
             groupBy: groupByStrings,
@@ -506,9 +506,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
       {
         header: 'Row labels',
         valueGetter: (params) => {
-          const { enhancedData } = params;
-          return enhancedData.groupKeys
-            ? enhancedData.groupKeys[enhancedData.groupKeys?.length - 1]
+          const { rowInfo } = params;
+          return rowInfo.groupKeys
+            ? rowInfo.groupKeys[rowInfo.groupKeys?.length - 1]
             : null;
         },
       },
@@ -537,9 +537,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
         sortable: false,
         columnGroup: parentKeys.length ? `${columnGroupId}` : undefined,
         header: keys[keys.length - 1],
-        valueGetter: ({ enhancedData }) => {
+        valueGetter: ({ rowInfo }) => {
           const value =
-            enhancedData.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
+            rowInfo.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
 
           return value;
         },
@@ -561,9 +561,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
           pivotGroupKeys: keys,
           pivotBy,
           sortable: false,
-          valueGetter: ({ enhancedData }) => {
+          valueGetter: ({ rowInfo }) => {
             const value =
-              enhancedData.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
+              rowInfo.pivotValuesMap?.get(keys)?.reducerResults[0] ?? null;
 
             return value;
           },
@@ -582,8 +582,8 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
   if (columns.size === 1) {
     columns.set('single', {
       header: 'Reduced',
-      valueGetter: ({ enhancedData }) => {
-        return enhancedData.reducerResults?.[0];
+      valueGetter: ({ rowInfo }) => {
+        return rowInfo.reducerResults?.[0];
       },
     });
   }

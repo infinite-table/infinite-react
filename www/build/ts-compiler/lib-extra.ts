@@ -615,6 +615,7 @@ declare module "utils/groupAndPivot/index" {
 }
 declare module "components/InfiniteTable/theme.css" {
     export const ThemeVars: import("@vanilla-extract/private").MapLeafNodes<{
+        theme: string;
         color: {
             accent: string;
             color: string;
@@ -645,6 +646,7 @@ declare module "components/InfiniteTable/theme.css" {
         fontFamily: string;
         minHeight: string;
         borderRadius: string;
+        background: string;
         components: {
             LoadMask: {
                 padding: string;
@@ -654,6 +656,34 @@ declare module "components/InfiniteTable/theme.css" {
                 overlayOpacity: string;
                 borderRadius: string;
             };
+            Header: {
+                background: string;
+                color: string;
+                height: string;
+            };
+            HeaderCell: {
+                draggingBackground: string;
+                background: string;
+                padding: string;
+                iconSize: string;
+            };
+            Cell: {
+                padding: string;
+                borderWidth: string;
+                border: string;
+                borderInvisible: string;
+                borderRadius: string;
+            };
+            Row: {
+                color: string;
+                background: string;
+                oddBackground: string;
+                hoverBackground: string;
+                groupRowBackground: string;
+            };
+            ColumnCell: {
+                background: string;
+            };
         };
     }, import("@vanilla-extract/private").CSSVarFunction>;
 }
@@ -662,8 +692,11 @@ declare module "components/InfiniteTable/utilities.css" {
     export const absoluteCover: string;
     export const displayFlex: string;
     export const position: Record<"fixed" | "absolute" | "relative" | "sticky", string>;
+    export const fill: Record<"accentColor" | "currentColor", string>;
     export const transformTranslateZero: string;
-    export const cursorPointer: string;
+    export const cursor: Record<"pointer", string>;
+    export const flex: Record<"none" | 1, string>;
+    export const zIndex: Record<1 | 10 | 1000 | 10000 | 100000, string>;
     export const userSelectNone: string;
     export const display: Record<"block" | "flex" | "inlineBlock", string>;
     export const userSelect: Record<"none", string>;
@@ -1560,10 +1593,21 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/style.css" 
     export const cellStyle: string;
     export const columnAlignCellStyle: Record<"center" | "end" | "start", string>;
 }
+declare module "components/InfiniteTable/components/InfiniteTableHeader/header.css" {
+    export const HeaderCellCls: string;
+    export const HeaderCellVariants: Record<"dragging" | "pinnedStart", string>;
+    export const HeaderCellProxy: string;
+    export const CellCls: string;
+    export const CellClsVariants: Record<"dragging" | "shifting", string>;
+    export const HeaderCls: string;
+    export const HeaderClsVariants: Record<"overflow" | "virtualized" | "unvirtualized", string>;
+}
 declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableCell" {
     import * as React from 'react';
     import { InfiniteTableCellProps } from "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableCellTypes";
+    import { CellCls } from "components/InfiniteTable/components/InfiniteTableHeader/header.css";
     export const InfiniteTableCellClassName: string;
+    export { CellCls };
     function InfiniteTableCellFn<T>(props: InfiniteTableCellProps<T> & React.HTMLAttributes<HTMLElement>): JSX.Element;
     export const InfiniteTableCell: typeof InfiniteTableCellFn;
 }
@@ -1736,9 +1780,6 @@ declare module "components/RawList/index" {
     import * as React from 'react';
     import { RawListProps } from "components/RawList/types";
     export const RawList: React.FC<RawListProps>;
-}
-declare module "components/InfiniteTable/components/InfiniteTableHeader/style.css" {
-    export const flexFlowRow: string;
 }
 declare module "components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeader" {
     import * as React from 'react';
@@ -1969,6 +2010,10 @@ declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTab
 declare module "components/InfiniteTable/components/InfiniteTableRow/InfiniteTableRowClassName" {
     export const InfiniteTableRowClassName: string;
     export const InfiniteTableElement__hover: string;
+}
+declare module "components/InfiniteTable/components/InfiniteTableRow/row.css" {
+    export const RowCls: string;
+    export const RowClsVariants: Record<"normal" | "even" | "odd" | "groupRow" | "inlineGroupRow", string>;
 }
 declare module "components/InfiniteTable/components/InfiniteTableRow/useRowDOMProps" {
     import { MutableRefObject, RefCallback } from 'react';
@@ -2619,7 +2664,7 @@ declare module "components/InfiniteTable/index" {
     export namespace InfiniteTable {
         var defaultProps: {
             rowHeight: number;
-            headerHeight: string;
+            headerHeight: import("@vanilla-extract/private").CSSVarFunction;
         };
     }
     export * from "components/InfiniteTable/types/index";

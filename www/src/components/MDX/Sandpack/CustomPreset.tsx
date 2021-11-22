@@ -18,15 +18,20 @@ import { NavigationBar } from './NavigationBar';
 import { Preview } from './Preview';
 import { CustomTheme } from './Themes';
 import { useEffect } from 'react';
+import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
 
 export function CustomPreset({
   isSingleFile,
+  title,
   onReset,
 }: {
+  title?: React.ReactNode;
   isSingleFile: boolean;
   onReset: () => void;
 }) {
-  const lineCountRef = React.useRef<{ [key: string]: number }>({});
+  const lineCountRef = React.useRef<{
+    [key: string]: number;
+  }>({});
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const { listen, sandpack } = useSandpack();
@@ -45,11 +50,14 @@ export function CustomPreset({
 
   const { activePath } = sandpack;
   if (!lineCountRef.current[activePath]) {
-    lineCountRef.current[activePath] = code.split('\n').length;
+    lineCountRef.current[activePath] =
+      code.split('\n').length;
   }
   const lineCount = lineCountRef.current[activePath];
   const isExpandable = lineCount > 16 || isExpanded;
-  const editorHeight = isExpandable ? lineCount * 24 + 24 : 'auto'; // shown lines * line height (24px)
+  const editorHeight = isExpandable
+    ? lineCount * 24 + 24
+    : 'auto'; // shown lines * line height (24px)
   const getHeight = () => {
     if (!isExpandable) {
       return editorHeight;
@@ -57,12 +65,28 @@ export function CustomPreset({
     return isExpanded ? editorHeight : 406;
   };
 
+  const titleBlock = title ? (
+    <div
+      className={
+        'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg'
+      }>
+      <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
+        <IconCodeBlock className="inline-flex mr-2 self-center" />{' '}
+        {title}
+      </div>
+    </div>
+  ) : null;
   return (
     <>
       <div
         className="shadow-lg dark:shadow-lg-dark rounded-lg"
         ref={containerRef}>
-        <NavigationBar showDownload={isSingleFile} onReset={onReset} />
+        {titleBlock}
+        <NavigationBar
+          skipRound={!!titleBlock}
+          showDownload={isSingleFile}
+          onReset={onReset}
+        />
         <SandpackThemeProvider theme={CustomTheme}>
           <div
             ref={sandpack.lazyAnchorRef}
@@ -98,7 +122,10 @@ export function CustomPreset({
                   flushSync(() => {
                     setIsExpanded(nextIsExpanded);
                   });
-                  if (!nextIsExpanded && containerRef.current !== null) {
+                  if (
+                    !nextIsExpanded &&
+                    containerRef.current !== null
+                  ) {
                     scrollIntoView(containerRef.current, {
                       scrollMode: 'if-needed',
                       block: 'nearest',
@@ -109,7 +136,9 @@ export function CustomPreset({
                 <span className="flex p-2 focus:outline-none text-primary dark:text-primary-dark">
                   <IconChevron
                     className="inline mr-1.5 text-xl"
-                    displayDirection={isExpanded ? 'up' : 'down'}
+                    displayDirection={
+                      isExpanded ? 'up' : 'down'
+                    }
                   />
                   {isExpanded ? 'Show less' : 'Show more'}
                 </span>

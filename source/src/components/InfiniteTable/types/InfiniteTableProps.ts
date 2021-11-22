@@ -2,7 +2,7 @@ import * as React from 'react';
 import { InfiniteTableState } from '.';
 import {
   AggregationReducer,
-  InfiniteTableEnhancedData,
+  InfiniteTableRowInfo,
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceGroupRowsBy,
@@ -36,7 +36,7 @@ export type InfiniteTablePropColumnPinning = Map<
 
 export type InfiniteTableRowStyleFnParams<T> = {
   data: T | null;
-  enhancedData: InfiniteTableEnhancedData<T>;
+  rowInfo: InfiniteTableRowInfo<T>;
   rowIndex: number;
   groupRowsBy?: (keyof T)[];
 };

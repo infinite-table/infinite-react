@@ -19,7 +19,7 @@ function InfiniteTableRowFn<T>(
     rowWidth,
     rowHeight,
     getData,
-    enhancedData,
+    rowInfo,
     toggleGroupRow,
     rowIndex,
     //TODO continue here?? receive columnWidth from props
@@ -63,7 +63,7 @@ function InfiniteTableRowFn<T>(
       return (
         <InfiniteTableColumnCell<T>
           getData={getData}
-          enhancedData={enhancedData}
+          rowInfo={rowInfo}
           groupRenderStrategy={groupRenderStrategy}
           virtualized
           hidden={hidden}
@@ -78,7 +78,7 @@ function InfiniteTableRowFn<T>(
     [
       columns,
       rowIndex,
-      enhancedData,
+      rowInfo,
       rowHeight,
       groupRenderStrategy,
       getData,

@@ -1,16 +1,5 @@
 @import './variables.scss';
 
-.Infinite-Portal {
-  z-index: 1000;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.InfiniteBody {
-  flex: 1;
-}
-
 .InfinitePinnedRowsContainer--pinned-start {
   border-right: var(--ITableCell__border);
 
@@ -32,44 +21,33 @@
   padding: var(--infinite-space-2);
 }
 
-.InfiniteCell {
-  // contain: size layout;
-  padding: var(--ITableCell__padding);
-  white-space: nowrap;
-  will-change: transform;
-  position: absolute;
+// .InfiniteCell {
+//   // contain: size layout;
+//   padding: var(--ITableCell__padding);
+//   white-space: nowrap;
+//   will-change: transform;
+//   position: absolute;
 
-  &--shifting {
-    transition: left 300ms;
-  }
-  &--dragging {
-    transition: none;
-  }
-}
-
-.InfiniteHeaderCell {
-  background: var(--ITableHeaderCell__background);
-  padding: var(--ITableHeaderCell__padding);
-
-  // padding: var(--ITableHeaderCell__padding);
-  // contain: layout;
-}
+//   &--shifting {
+//     transition: left 300ms;
+//   }
+//   &--dragging {
+//     transition: none;
+//   }
+// }
+// .InfiniteHeaderCell,
+// .InfiniteColumnCell {
+//   &--first {
+//     border-top-left-radius: var(--ITableCell__border-radius);
+//     border-bottom-left-radius: var(--ITableCell__border-radius);
+//   }
+//   &--last {
+//     border-top-right-radius: var(--ITableCell__border-radius);
+//     border-bottom-right-radius: var(--ITableCell__border-radius);
+//   }
+// }
 .InfiniteHeaderCell,
 .InfiniteColumnCell {
-  &--first {
-    border-top-left-radius: var(--ITableCell__border-radius);
-    border-bottom-left-radius: var(--ITableCell__border-radius);
-  }
-  &--last {
-    border-top-right-radius: var(--ITableCell__border-radius);
-    border-bottom-right-radius: var(--ITableCell__border-radius);
-  }
-}
-.InfiniteHeaderCell,
-.InfiniteColumnCell {
-  border-left: var(--ITableCell__border-width) solid transparent;
-  border-right: var(--ITableCell__border-width) solid transparent;
-
   &--pinned-start.InfiniteCell--last-in-category {
     border-right: var(--ITableCell__border);
   }
@@ -84,17 +62,6 @@
 }
 
 .InfiniteHeader {
-  background: var(--ITableHeader__background);
-  color: var(--ITableHeader__color);
-  &--unvirtualized {
-    position: relative;
-    overflow: hidden;
-  }
-
-  &--overflow {
-    z-index: 10;
-  }
-
   &--overflow {
     .InfiniteHeaderCell--pinned-start.InfiniteHeaderCell--last-in-category {
       border-right: var(--ITableCell__border-invisible);
@@ -120,19 +87,19 @@
   &--pinned-start {
     z-index: 10;
   }
-  &Proxy {
-    background: var(--ITableHeader__background);
-    opacity: 0.9;
-    padding: var(--ITableCell__padding);
-    padding-left: 20px;
-    z-index: 200;
-  }
-  border-right: var(--ITableCell__border);
+  // &Proxy {
+  //   background: var(--ITableHeader__background);
+  //   opacity: 0.9;
+  //   padding: var(--ITableCell__padding);
+  //   padding-left: 20px;
+  //   z-index: 200;
+  // }
+  // border-right: var(--ITableCell__border);
 }
-.InfiniteRow--inline-group-row,
-.InfiniteRow--group-row {
-  z-index: 100;
-}
+// .InfiniteRow--inline-group-row,
+// .InfiniteRow--group-row {
+//   z-index: 100;
+// }
 .InfiniteRow--group-row.InfiniteRow--odd,
 .InfiniteRow--group-row.InfiniteRow--even {
   .InfiniteCell::before {
@@ -149,25 +116,11 @@
   }
 }
 
-.InfiniteIcon {
-  fill: currentColor;
-  flex: none;
-}
-.InfiniteIcon-expander {
-  cursor: pointer;
-  user-select: none;
-  // transition: transform 0.2s, fill 0.2s;
-
-  &--expanded {
-    fill: var(--ITable-accent__color);
-  }
-}
-
 .InfiniteRow {
-  color: var(--ITableRow__color);
-  will-change: transform;
+  // color: var(--ITableRow__color);
+  // will-change: transform;
 
-  --ITableColumnCell__background: var(--ITableRow__background);
+  // --ITableColumnCell__background: var(--ITableRow__background);
 
   &.InfiniteElement--hover {
     --background--hover: var(--ITableRow--hover__background);
@@ -178,12 +131,12 @@
   pointer-events: none;
 }
 
-.InfiniteRow--even {
-  background: var(--ITableRow__background);
-}
-.InfiniteRow--odd {
-  background: var(--ITableRow--odd__background);
-}
+// .InfiniteRow--even {
+//   background: var(--ITableRow__background);
+// }
+// .InfiniteRow--odd {
+//   background: var(--ITableRow--odd__background);
+// }
 
 .InfiniteColumnCell {
   background: inherit;

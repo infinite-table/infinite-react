@@ -9,12 +9,20 @@ import { data, Person } from './data';
 
 export default function App() {
   return (
-    <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person>
-        columnDefaultWidth={130}
-        columns={columns}
-      />
-    </DataSource>
+    <>
+      <button autoFocus>
+        Button before - to help with focus navigation
+      </button>
+      <DataSource<Person> data={data} primaryKey="Id">
+        <InfiniteTable<Person>
+          rowHeight={50}
+          columns={columns}
+        />
+      </DataSource>
+      <button>
+        Button after - to help with focus navigation
+      </button>
+    </>
   );
 }
 

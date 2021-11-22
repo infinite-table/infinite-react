@@ -1,12 +1,13 @@
 export const siteConfig = {
-  editUrl: 'https://github.com/reactjs/reactjs.org/edit/beta/src/pages',
+  editUrl:
+    'https://github.com/infinite-table/infinite-react/edit/www/pages',
   copyright: `Copyright © ${new Date().getFullYear()} Infinite Table Ltd. All Rights Reserved.`,
-  repoUrl: 'https://github.com/facebook/react',
-  twitterUrl: 'https://twitter.com/reactjs',
+  repoUrl: 'https://github.com/infinite-table',
+  twitterUrl: 'https://twitter.com/inf-table',
   algolia: {
-    appId: '1FCF9AYYAT',
-    apiKey: '861ccfb8707150c0e776b88357286123',
-    indexName: 'beta-react',
+    appId: '',
+    apiKey: '',
+    indexName: 'infinite-table',
   },
   headerIdConfig: {
     className: `anchor`,

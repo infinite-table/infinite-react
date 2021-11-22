@@ -6,15 +6,31 @@ import {
 } from '@infinite-table/infinite-react';
 import '@infinite-table/infinite-react/index.css';
 import { data, Person } from './data';
+import { CSSProperties } from 'react';
 
 export default function App() {
   return (
-    <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person>
-        columnDefaultWidth={130}
-        columns={columns}
-      />
-    </DataSource>
+    <div
+      style={
+        {
+          position: 'relative',
+          '--row-height': '70px',
+        } as CSSProperties
+      }>
+      <DataSource<Person> data={data} primaryKey="Id">
+        <InfiniteTable<Person>
+          rowHeight={'--row-height'}
+          columns={columns}
+          domProps={{
+            style: {
+              position: 'absolute',
+              height: '100%',
+              width: '100%',
+            },
+          }}
+        />
+      </DataSource>
+    </div>
   );
 }
 

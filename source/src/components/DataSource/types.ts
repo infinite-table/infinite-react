@@ -12,7 +12,7 @@ import {
 import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
-  InfiniteTableEnhancedData,
+  InfiniteTableRowInfo,
 } from '../InfiniteTable';
 import { ComponentStateActions } from '../hooks/useComponentState';
 import { GroupRowsState } from './GroupRowsState';
@@ -76,8 +76,8 @@ export interface DataSourceMappedState<T> {
 export interface DataSourceSetupState<T> {
   originalDataArray: T[];
   lastSortDataArray?: T[];
-  lastGroupDataArray?: InfiniteTableEnhancedData<T>[];
-  dataArray: InfiniteTableEnhancedData<T>[];
+  lastGroupDataArray?: InfiniteTableRowInfo<T>[];
+  dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
   updatedAt: number;
@@ -87,7 +87,7 @@ export interface DataSourceSetupState<T> {
   generateGroupRows: boolean;
   aggregationReducers?: AggregationReducer<T, any>[];
   postSortDataArray?: T[];
-  postGroupDataArray?: InfiniteTableEnhancedData<T>[];
+  postGroupDataArray?: InfiniteTableRowInfo<T>[];
   pivotColumns?: Map<string, InfiniteTableColumn<T>>;
   pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
 }

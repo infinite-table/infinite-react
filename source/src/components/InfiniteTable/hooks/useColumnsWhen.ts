@@ -87,15 +87,15 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(
         base = {
           groupByField: field as string,
           field: field,
-          valueGetter: ({ enhancedData }) => {
-            return enhancedData.groupKeys?.[groupIndex];
+          valueGetter: ({ rowInfo }) => {
+            return rowInfo.groupKeys?.[groupIndex];
           },
-          rowspan: ({ enhancedData, dataArray }) => {
-            const prevEnhancedData = dataArray[enhancedData.indexInAll - 1] || {
+          rowspan: ({ rowInfo, dataArray }) => {
+            const prevRowInfo = dataArray[rowInfo.indexInAll - 1] || {
               indexInParentGroups: [],
             };
-            const prevIndexes = prevEnhancedData.indexInParentGroups! || [];
-            const currentIndexes = enhancedData.indexInParentGroups! || [];
+            const prevIndexes = prevRowInfo.indexInParentGroups! || [];
+            const currentIndexes = rowInfo.indexInParentGroups! || [];
 
             let computeSpan = false;
             for (let i = 0; i <= groupIndex; i++) {
@@ -111,7 +111,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(
             if (!computeSpan) {
               return 1;
             }
-            const parentGroup = enhancedData.parents![groupIndex];
+            const parentGroup = rowInfo.parents![groupIndex];
 
             const rowspan = parentGroup
               ? parentGroup.groupCount -

@@ -28,13 +28,13 @@ import type {
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
-import type { InfiniteTableEnhancedData } from '../../../utils/groupAndPivot';
+import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
 
 export type {
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
   InfiniteTablePropColumns,
-  InfiniteTableEnhancedData,
+  InfiniteTableRowInfo,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropComponents,
   InfiniteTablePropColumnVisibility,

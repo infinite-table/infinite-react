@@ -25,11 +25,11 @@ export const getGlobalFnCalls =
   };
 
 export const getHeaderCellByColumnId = async (columnId: string) => {
-  return await page.$(`.ITableHeader [data-column-id="${columnId}"]`);
+  return await page.$(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
 export const getHeaderColumnCells = async () => {
-  const cells = await page.$$(`.ITableHeader [data-name="Cell"]`);
+  const cells = await page.$$(`.InfiniteHeader [data-name="Cell"]`);
 
   const result = await sortElements(cells);
 

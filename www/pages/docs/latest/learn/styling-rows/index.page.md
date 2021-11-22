@@ -4,8 +4,8 @@ Styling rows
 
 Rows can be styled by using the `rowStyle` and the `rowClassName` props
 
-- `rowStyle` can be a style `object` or a `function` that returns a style `object` or `undefined`
-- `rowClassName` can be a `string` (the name of a CSS class) or a `function` that returns a `string` or `undefined`
+- <PropLink name="rowStyle">rowStyle</PropLink> can be a style `object` or a `function` that returns a style `object` or `undefined`
+- <PropLink name="rowClassName"/> can be a `string` (the name of a CSS class) or a `function` that returns a `string` or `undefined`
 
 ```tsx title=Defining-a-rowStyle-function
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({ data }) => {

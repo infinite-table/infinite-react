@@ -16,7 +16,8 @@ import { RawList } from '../../../RawList';
 
 import type { RenderItem } from '../../../RawList/types';
 import { ScrollPosition } from '../../../types/ScrollPosition';
-import { flexFlowRow } from './style.css';
+import { flexFlow } from '../../utilities.css';
+import { HeaderCls, HeaderClsVariants } from './header.css';
 
 const debug = dbg('Header');
 const { rootClassName } = internalProps;
@@ -72,7 +73,9 @@ function InfiniteTableHeaderFn<T>(
     ref: domRef,
     className: join(
       TableHeaderClassName,
-      flexFlowRow,
+      HeaderCls,
+      HeaderClsVariants.virtualized,
+      flexFlow.row,
       `${TableHeaderClassName}--virtualized`,
       className,
     ),

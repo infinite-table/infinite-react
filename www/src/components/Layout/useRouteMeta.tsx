@@ -61,15 +61,19 @@ export function useRouteMeta(rootRoute?: RouteItem) {
       breadcrumbs: [],
     };
   }
-  console.log({ cleanedPath, routeTree });
-  const breadcrumbs = getBreadcrumbs(cleanedPath, routeTree);
+  const breadcrumbs = getBreadcrumbs(
+    cleanedPath,
+    routeTree
+  );
   return {
     ...getRouteMeta(cleanedPath, routeTree),
-    breadcrumbs: breadcrumbs.length > 0 ? breadcrumbs : [routeTree],
+    breadcrumbs:
+      breadcrumbs.length > 0 ? breadcrumbs : [routeTree],
   };
 }
 
-export const SidebarContext = React.createContext<RouteItem>({ title: 'root' });
+export const SidebarContext =
+  React.createContext<RouteItem>({ title: 'root' });
 
 // Performs a depth-first search to find the current route and its previous/next route
 function getRouteMeta(

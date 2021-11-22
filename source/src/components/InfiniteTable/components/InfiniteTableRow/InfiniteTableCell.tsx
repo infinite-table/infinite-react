@@ -7,6 +7,7 @@ import { internalProps } from '../../internalProps';
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 import { cellStyle, columnAlignCellStyle } from './style.css';
 import { cssEllipsisClassName, justifyContent } from '../../utilities.css';
+import { CellCls, CellClsVariants } from '../cell.css';
 
 const { rootClassName } = internalProps;
 
@@ -68,7 +69,10 @@ function InfiniteTableCellFn<T>(
         columnAlignCellStyle[column.align ?? 'start'],
         justifyContent[column.align ?? 'start'],
         InfiniteTableCellClassName,
-        shifting ? `${InfiniteTableCellClassName}--shifting` : '',
+        CellCls,
+        shifting
+          ? `${InfiniteTableCellClassName}--shifting ${CellClsVariants.shifting}`
+          : '',
       )}
     >
       {beforeChildren}

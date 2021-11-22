@@ -23,40 +23,40 @@ export function getGroupColumnRender<T>({
   groupIndex: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    let { value, enhancedData, column } = renderOptions;
+    let { value, rowInfo, column } = renderOptions;
     if (column.renderValue) {
       value = column.renderValue(renderOptions);
     }
 
     // for groupRenderStrategy !== 'inline', we work on group rows
-    let groupRowEnhancedData =
+    let groupRowInfo =
       groupRenderStrategy !== 'inline'
-        ? enhancedData
+        ? rowInfo
         : // while for inline, we need to still work on group rows, but the current row is a data item
           // so we go find the group row via the parents of enhanced data
-          enhancedData.parents?.[groupIndex] || enhancedData;
+          rowInfo.parents?.[groupIndex] || rowInfo;
 
-    if (!groupRowEnhancedData) {
+    if (!groupRowInfo) {
       return null;
     }
 
-    const collapsed = groupRowEnhancedData!.collapsed;
-    const groupKeys = groupRowEnhancedData!.groupKeys!;
+    const collapsed = groupRowInfo!.collapsed;
+    const groupKeys = groupRowInfo!.groupKeys!;
 
     if (groupRenderStrategy === 'inline') {
-      if (groupRowEnhancedData.groupCount === 1) {
+      if (groupRowInfo.groupCount === 1) {
         return value;
       }
 
-      if (groupRowEnhancedData.groupNesting === groupIndex && collapsed) {
+      if (groupRowInfo.groupNesting === groupIndex && collapsed) {
         return null;
       }
     } else {
-      if (!groupRowEnhancedData.isGroupRow) {
+      if (!groupRowInfo.isGroupRow) {
         return null;
       }
 
-      if (groupIndex + 1 !== groupRowEnhancedData.groupNesting) {
+      if (groupIndex + 1 !== groupRowInfo.groupNesting) {
         return null;
       }
     }
@@ -125,8 +125,8 @@ export function getSingleGroupColumn<T>(
     groupByField: options.groupRowsBy.map((g) => g.field) as string[],
     sortable: false,
     render: (renderOptions) => {
-      let { value, enhancedData, column } = renderOptions;
-      if (!enhancedData.isGroupRow) {
+      let { value, rowInfo, column } = renderOptions;
+      if (!rowInfo.isGroupRow) {
         return null;
       }
 
@@ -138,14 +138,14 @@ export function getSingleGroupColumn<T>(
           className={join(display.flex, alignItems.center)}
           style={{
             paddingInlineStart: `calc(${
-              enhancedData.groupNesting! - 1
+              rowInfo.groupNesting! - 1
             } * var(--ITableRow-group-column-nesting))`,
           }}
         >
           <ExpanderIcon
-            expanded={!enhancedData.collapsed}
+            expanded={!rowInfo.collapsed}
             onChange={() => {
-              toggleGroupRow(enhancedData.groupKeys!);
+              toggleGroupRow(rowInfo.groupKeys!);
             }}
           />
           <div className={cssEllipsisClassName}>{value ?? null}</div>

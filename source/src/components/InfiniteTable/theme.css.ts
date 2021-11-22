@@ -2,6 +2,7 @@ import { createGlobalThemeContract, globalStyle } from '@vanilla-extract/css';
 
 export const ThemeVars = createGlobalThemeContract(
   {
+    theme: 'theme',
     color: {
       accent: 'accent-color',
       color: 'color',
@@ -32,6 +33,7 @@ export const ThemeVars = createGlobalThemeContract(
     fontFamily: 'font-family',
     minHeight: 'min-height',
     borderRadius: 'border-radius',
+    background: 'background',
 
     components: {
       LoadMask: {
@@ -41,6 +43,34 @@ export const ThemeVars = createGlobalThemeContract(
         overlayBackground: 'load-mask-overlay-background',
         overlayOpacity: 'load-mask-overlay-opacity',
         borderRadius: 'load-mask-border-radius',
+      },
+      Header: {
+        background: 'header-background',
+        color: 'header-color',
+        height: 'header-height',
+      },
+      HeaderCell: {
+        draggingBackground: 'header-cell-dragging-background',
+        background: 'header-cell-background',
+        padding: 'header-cell-padding',
+        iconSize: 'header-cell-icon-size',
+      },
+      Cell: {
+        padding: 'cell-padding',
+        borderWidth: 'cell-border-width',
+        border: 'cell-border',
+        borderInvisible: 'cell-border-invisible',
+        borderRadius: 'cell-border-radius',
+      },
+      Row: {
+        color: 'row-color',
+        background: 'row-background',
+        oddBackground: 'row-odd-background',
+        hoverBackground: 'row-hover-background',
+        groupRowBackground: 'group-row-background',
+      },
+      ColumnCell: {
+        background: 'column-cell-bg-dont-override',
       },
     },
   },
@@ -55,6 +85,38 @@ const LoadMaskVars = {
   [ThemeVars.components.LoadMask.color]: 'inherit',
   [ThemeVars.components.LoadMask.padding]: ThemeVars.spacing[5],
   [ThemeVars.components.LoadMask.borderRadius]: ThemeVars.borderRadius,
+};
+
+const HeaderCellVars = {
+  [ThemeVars.components.HeaderCell.background]: '#ededed',
+  [ThemeVars.components.HeaderCell
+    .padding]: `${ThemeVars.spacing['3']} ${ThemeVars.spacing['3']}`,
+  [ThemeVars.components.HeaderCell.draggingBackground]: '#d4d3d3',
+  [ThemeVars.components.HeaderCell.iconSize]: '16px',
+};
+const HeaderVars = {
+  [ThemeVars.components.Header.background]:
+    ThemeVars.components.HeaderCell.background,
+  [ThemeVars.components.Header.color]: '#6f6f6f',
+  [ThemeVars.components.Header.height]: '30px',
+};
+
+const CellVars = {
+  [ThemeVars.components.Cell.borderWidth]: '1px',
+  [ThemeVars.components.Cell
+    .padding]: `${ThemeVars.spacing[2]} ${ThemeVars.spacing[3]}`,
+  [ThemeVars.components.Cell
+    .border]: `${ThemeVars.components.Cell.borderWidth} solid #c6c6c6`,
+  [ThemeVars.components.Cell.borderInvisible]: 'none',
+  [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
+};
+
+const RowVars = {
+  [ThemeVars.components.Row.color]: 'inherit',
+  [ThemeVars.components.Row.background]: ThemeVars.background,
+  [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
+  [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',
+  [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
 };
 
 globalStyle(':root', {
@@ -80,7 +142,16 @@ globalStyle(':root', {
     [ThemeVars.fontSize[6]]: '1.5rem' /* 24px when 1rem=16px */,
     [ThemeVars.fontSize[7]]: '2.25rem' /* 36px when 1rem=16px */,
 
+    [ThemeVars.fontFamily]: 'inherit',
+    [ThemeVars.color.color]: '#484848',
+    [ThemeVars.color.accent]: '#ff7043',
     [ThemeVars.borderRadius]: ThemeVars.spacing[2],
+    [ThemeVars.background]: 'white',
+    [ThemeVars.minHeight]: '100px',
     ...LoadMaskVars,
+    ...HeaderCellVars,
+    ...HeaderVars,
+    ...CellVars,
+    ...RowVars,
   },
 });

@@ -8,7 +8,7 @@ import type {
   InfiniteTableState,
 } from './types';
 
-import { internalProps } from './internalProps';
+import { internalProps, rootClassName } from './internalProps';
 
 import { getInfiniteTableContext } from './InfiniteTableContext';
 
@@ -44,7 +44,9 @@ import {
 } from '../hooks/useComponentState';
 import { useDOMProps } from './hooks/useDOMProps';
 import { LoadMask } from './components/LoadMask';
-import { display } from './utilities.css';
+import { display, position, zIndex, top, left } from './utilities.css';
+import { join } from '../../utils/join';
+import { ThemeVars } from './theme.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -163,7 +165,13 @@ export const InfiniteTableComponent = React.memo(
 
         <div
           ref={portalDOMRef as RefObject<HTMLDivElement>}
-          className="ITable-Portal"
+          className={join(
+            `${rootClassName}Portal`,
+            zIndex[1000],
+            position.absolute,
+            top[0],
+            left[0],
+          )}
         />
         {rowHeightCSSVar ? (
           <CSSVariableWatch
@@ -252,7 +260,7 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
 }
 InfiniteTable.defaultProps = {
   rowHeight: 40,
-  headerHeight: '--ITableHeader__height',
+  headerHeight: ThemeVars.components.Header.height,
 };
 
 export * from './types';

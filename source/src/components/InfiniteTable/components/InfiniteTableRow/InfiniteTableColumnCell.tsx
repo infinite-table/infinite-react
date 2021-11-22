@@ -20,9 +20,10 @@ import { InfiniteTableColumnCellProps } from './InfiniteTableCellTypes';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 import { height, position, top } from '../../utilities.css';
+import { ColumnCellVariants } from '../cell.css';
 
 const { rootClassName } = internalProps;
-const baseCls = `${rootClassName}ColumnCell`;
+const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
 
 function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
@@ -32,7 +33,7 @@ function isColumnWithField<T>(
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
-    enhancedData,
+    rowInfo,
     getData,
     column,
     offsetProperty,
@@ -48,9 +49,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return null;
   }
 
-  const { data, isGroupRow, groupBy } = enhancedData;
+  const { data, isGroupRow, groupBy } = rowInfo;
 
-  const groupRowEnhancedData = null;
+  const groupRowInfo = null;
   //TODO compute this here, so it's not computed in everywhere in rowspan/render/valueGetter methods
   // let groupRowEnhancedData = !groupBy
   //   ? null
@@ -64,13 +65,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   // }
   let value =
     isGroupRow && groupBy && column.groupByField
-      ? enhancedData.value
+      ? rowInfo.value
       : isColumnWithField(column)
       ? data?.[column.field]
       : null;
 
   if (column.valueGetter) {
-    value = column.valueGetter({ data, enhancedData, groupRowEnhancedData });
+    value = column.valueGetter({
+      data,
+      rowInfo,
+      groupRowInfo,
+    });
   }
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
@@ -78,7 +83,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const stylingRenderParam: InfiniteTableColumnStyleFnParams<T> = {
     value,
     column,
-    enhancedData,
+    rowInfo: rowInfo,
     data,
   };
 
@@ -88,12 +93,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     const renderParam: InfiniteTableColumnRenderParam<T> = {
       value,
       column,
-      enhancedData,
-      groupRowEnhancedData,
+      rowInfo: rowInfo,
+      groupRowInfo: groupRowInfo,
       data,
       rowIndex,
       toggleGroupRow,
-      toggleCurrentGroupRow: () => toggleGroupRow(enhancedData.groupKeys!),
+      toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
       groupRowsBy: computedDataSource.groupRowsBy,
     };
 
@@ -135,10 +140,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     const rowspan = column.rowspan({
       dataArray: getData(),
       column,
-      enhancedData,
-      groupRowEnhancedData,
+      rowInfo: rowInfo,
+      groupRowInfo: groupRowInfo,
       rowIndex,
-      data: enhancedData.data,
+      data: rowInfo.data,
     });
 
     if (rowspan > 1) {
@@ -163,7 +168,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         position.absolute,
         height['100%'],
         top[0],
-        useCellClassName(column, [baseCls, InfiniteTableCellClassName]),
+        useCellClassName(
+          column,
+          [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
+          [ColumnCellVariants],
+        ),
         colClassName,
       )}
     >

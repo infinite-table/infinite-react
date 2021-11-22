@@ -12,10 +12,7 @@ import { VirtualBrain } from '../../VirtualBrain';
 import { InfiniteTableRowProps } from '../components/InfiniteTableRow/InfiniteTableRowTypes';
 import { TableRowUnvirtualized } from '../components/InfiniteTableRow/InfiniteTableRowUnvirtualized';
 import { HorizontalScrollbarPlaceholder } from '../components/ScrollbarPlaceholder';
-import {
-  InfiniteTableComputedColumn,
-  InfiniteTableEnhancedData,
-} from '../types';
+import { InfiniteTableComputedColumn, InfiniteTableRowInfo } from '../types';
 import type { Size } from '../../types/Size';
 import type { RenderRow } from '../../VirtualList/types';
 import { InfiniteTableState } from '../types/InfiniteTableState';
@@ -27,7 +24,7 @@ import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
 type UsePinnedParams<T> = {
   getState: () => InfiniteTableState<T>;
-  getData: () => InfiniteTableEnhancedData<T>[];
+  getData: () => InfiniteTableRowInfo<T>[];
   bodySize: Size;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
@@ -51,7 +48,7 @@ type UsePinnedParams<T> = {
 
 type RenderPinnedRowParams<T> = {
   getState: () => InfiniteTableState<T>;
-  getData: () => InfiniteTableEnhancedData<T>[];
+  getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   columnsWidth: number;
   columns: InfiniteTableComputedColumn<T>[];
@@ -187,14 +184,14 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
   const { getData, getState, columnsWidth, columns, verticalBrain } = params;
 
   const renderPinnedRow: RenderRow = useCallback(
-    (rowInfo) => {
+    (rowParams) => {
       const dataArray = getData();
-      const enhancedData = dataArray[rowInfo.rowIndex];
+      const rowInfo = dataArray[rowParams.rowIndex];
 
       const { showZebraRows, showHoverRows } = getState();
 
       const rowProps: InfiniteTableRowProps<T> = {
-        enhancedData,
+        rowInfo,
         getData,
         showZebraRows,
         showHoverRows,
@@ -204,7 +201,7 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
         brain: null!,
         rowWidth: columnsWidth,
         columns: columns,
-        ...rowInfo,
+        ...rowParams,
       };
 
       return <TableRowUnvirtualized<T> {...rowProps} />;

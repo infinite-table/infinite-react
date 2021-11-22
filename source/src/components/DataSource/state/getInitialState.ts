@@ -1,4 +1,4 @@
-import { InfiniteTableEnhancedData } from '../../InfiniteTable';
+import { InfiniteTableRowInfo } from '../../InfiniteTable';
 import { normalizeSortInfo } from './normalizeSortInfo';
 import {
   DataSourceMappedState,
@@ -13,7 +13,7 @@ import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 export function initSetupState<T>(): DataSourceSetupState<T> {
   const now = Date.now();
   const originalDataArray: T[] = [];
-  const dataArray: InfiniteTableEnhancedData<T>[] = [];
+  const dataArray: InfiniteTableRowInfo<T>[] = [];
   return {
     pivotTotalColumnPosition: 'end',
     originalDataArray,

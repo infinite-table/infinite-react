@@ -16,67 +16,30 @@ import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 
 type SandpackProps = {
   children: React.ReactChildren;
+  title?: React.ReactNode;
   autorun?: boolean;
   setup?: SandpackSetup;
 };
 
-const sandboxStyle = `
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
-}
-
-h1 {
-  margin-top: 0;
-  font-size: 22px;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 20px;
-}
-
-h3 {
-  margin-top: 0;
-  font-size: 18px;
-}
-
-h4 {
-  margin-top: 0;
-  font-size: 16px;
-}
-
-h5 {
-  margin-top: 0;
-  font-size: 14px;
-}
-
-h6 {
-  margin-top: 0;
-  font-size: 12px;
-}
-
-ul {
-  padding-left: 20px;
-}
-`.trim();
-
 function Sandpack(props: SandpackProps) {
   console.log('re-rendering');
 
-  let { children, setup, autorun = true } = props;
+  let { children, setup, autorun = true, title } = props;
   let [resetKey, setResetKey] = React.useState(0);
-  let codeSnippets = React.Children.toArray(children) as React.ReactElement[];
+  let codeSnippets = React.Children.toArray(
+    children
+  ) as React.ReactElement[];
 
-  const { sandpackTemplateFiles, validCustomFileNames } = useInfiniteTemplate();
+  const { sandpackTemplateFiles, validCustomFileNames } =
+    useInfiniteTemplate();
 
-  const getMetaTag = (tag: string, metaTags: string[]): string | undefined => {
-    const metaTag = metaTags?.find((metaTag) => metaTag.startsWith(`${tag}=`));
+  const getMetaTag = (
+    tag: string,
+    metaTags: string[]
+  ): string | undefined => {
+    const metaTag = metaTags?.find((metaTag) =>
+      metaTag.startsWith(`${tag}=`)
+    );
     if (!metaTag) {
       return;
     }
@@ -104,17 +67,25 @@ function Sandpack(props: SandpackProps) {
 
       let fileName = getMetaTag('file', nodeMetaTags);
       if (!fileName) {
-        throw new Error(`Code block is missing a filename: ${props.children}`);
+        throw new Error(
+          `Code block is missing a filename: ${props.children}`
+        );
       }
 
-      if (!validCustomFileNames.includes(fileName) && index === 0) {
+      if (
+        !validCustomFileNames.includes(fileName) &&
+        index === 0
+      ) {
         fileName = 'App.tsx';
         // throw new Error(`Code block has an unsupported filename: ${fileName}`);
       }
 
       const filePath = `/src/${fileName}`; // path in the folder structure
       const fileActive = index === 0; //!!getMetaTag('active', nodeMetaTags) || inline;
-      const fileHidden = !!getMetaTag('hidden', nodeMetaTags);
+      const fileHidden = !!getMetaTag(
+        'hidden',
+        nodeMetaTags
+      );
 
       if (result[filePath]) {
         throw new Error(
@@ -165,10 +136,11 @@ function Sandpack(props: SandpackProps) {
           entry: '/src/index.tsx',
           main: '/src/index.tsx',
         }}
-        autorun={true}
+        autorun={autorun}
         recompileMode={'delayed'}
         recompileDelay={500}>
         <CustomPreset
+          title={title}
           isSingleFile={false}
           onReset={() => {
             setResetKey((k) => k + 1);

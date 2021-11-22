@@ -50,7 +50,7 @@ const feedbackIcon = (
   </svg>
 );
 
-const darkIcon = (
+export const darkIcon = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="18"
@@ -71,7 +71,7 @@ const darkIcon = (
   </svg>
 );
 
-const lightIcon = (
+export const lightIcon = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
@@ -144,10 +144,10 @@ export default function Nav() {
           )}>
           {!isOpen ? <IconHamburger /> : <IconClose />}
         </button>
-        <NextLink href="/docs">
+        <NextLink href="/">
           <a className="inline-flex text-l font-normal items-center text-primary dark:text-primary-dark py-1 mr-0 sm:mr-10 whitespace-nowrap">
             <Logo className="text-sm mr-2 w-8 h-8 text-link dark:text-link-dark" />
-            Infinite Table Docs
+            Infinite Table
           </a>
         </NextLink>
         <div className="lg:w-full leading-loose hidden sm:flex flex-initial items-center h-auto pr-5 lg:pr-5 pt-0.5">
