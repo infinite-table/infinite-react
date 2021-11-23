@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run update-versions && npm run source-build && npm run next",
+    "dev": "npm run update-versions && npm run source-build && npm run generate-lib-dts && npm run next",
     "next": "next dev -p 3001",
-    "build": "npm --prefix dataserver install && npm run update-versions && next build && next export",
+    "build": "npm --prefix dataserver install && npm run update-versions && npm run generate-lib-dts && next build && next export",
     "serve-build": "http-server -p 3000 out",
     "source-build": "npm run --prefix=../source build",
+    "generate-lib-dts": "echo all-fine",
     "update-versions": "node build/generate-versions-info.js",
     "//": "http://localhost:3002/api/employees?_start=0&_limit=10",
     "serve-data": "node serve-data.js",
@@ -17,7 +18,7 @@
   "dependencies": {
     "@codesandbox/sandpack-react": "0.3.7",
     "@docsearch/css": "3.0.0-alpha.41",
-    "@docsearch/react": "3.0.0-alpha.41",
+    "@docsearch/react": "^3.0.0-alpha.41",
     "@headlessui/react": "^1.3.0",
     "@mdx-js/loader": "^1.6.22",
     "@mdx-js/mdx": "^1.6.16",

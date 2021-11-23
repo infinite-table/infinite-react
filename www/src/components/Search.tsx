@@ -56,6 +56,7 @@ export const Search: React.FC<SearchProps> = ({
 
       // @ts-ignore
       return Promise.all([
+        // @ts-ignore
         import('@docsearch/react/modal'),
       ]).then(([{ DocSearchModal: Modal }]) => {
         DocSearchModal = Modal;

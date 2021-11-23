@@ -1,4 +1,4 @@
-import App, { AppProps } from 'next/app';
+import { AppProps } from 'next/app';
 // import { useRouter } from 'next/router';
 // import { DocsLayout } from '@www/layouts/DocsLayout';
 // import { MainLayout } from '@www/layouts/MainLayout';
@@ -10,7 +10,7 @@ import './styles/index.css';
 import './styles/sandpack.css';
 import '@codesandbox/sandpack-react/dist/index.css';
 
-import '../../source/dist/index.css';
+// import '../../source/dist/index.css';
 
 import '@www/styles/globals.css';
 import * as React from 'react';

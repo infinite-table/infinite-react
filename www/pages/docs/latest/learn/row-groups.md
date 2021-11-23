@@ -1,23 +1,30 @@
+---
+title: Row groups
+---
+
 ## Row groups
 
 Specify row groups via the controlled `groupRowsBy` (or uncontrolled `defaultGroupRowsBy`) prop on the `DataSource`.
 
 ```tsx title=defining-grouping
-const groupRowsBy = [{ field: "country" }, { field: "city" }];
+const groupRowsBy = [
+  { field: 'country' },
+  { field: 'city' },
+];
 ```
 
 ## Row groups in action
 
 ```tsx height=750 live title=Row-groups
-import * as React from "react";
-import { useState } from "react";
+import * as React from 'react';
+import { useState } from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
   InfiniteTablePropGroupRenderStrategy,
   DataSourceGroupRowsBy,
-} from "@infinite-table/infinite-react";
+} from '@infinite-table/infinite-react';
 
 type Employee = {
   id: number;
@@ -37,75 +44,82 @@ type Employee = {
   email: string;
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
+const columns = new Map<
+  string,
+  InfiniteTableColumn<Employee>
+>([
   [
-    "firstName",
+    'firstName',
     {
-      field: "firstName",
-      header: "First Name",
+      field: 'firstName',
+      header: 'First Name',
     },
   ],
   [
-    "country",
+    'country',
     {
-      field: "country",
-      header: "Country",
-      columnGroup: "location",
+      field: 'country',
+      header: 'Country',
+      columnGroup: 'location',
     },
   ],
 
   [
-    "city",
+    'city',
     {
-      field: "city",
-      header: "City",
-      columnGroup: "address",
+      field: 'city',
+      header: 'City',
+      columnGroup: 'address',
     },
   ],
   [
-    "age",
+    'age',
     {
-      field: "age",
-      type: "number",
-      header: "Age",
+      field: 'age',
+      type: 'number',
+      header: 'Age',
     },
   ],
   [
-    "department",
+    'department',
     {
-      field: "department",
-      header: "Department",
+      field: 'department',
+      header: 'Department',
     },
   ],
   [
-    "team",
+    'team',
     {
       width: 200,
-      field: "team",
-      header: "Team",
+      field: 'team',
+      header: 'Team',
     },
   ],
-  ["company", { field: "companyName", header: "Company" }],
-  ["companySize", { field: "companySize", header: "Company Size" }],
+  ['company', { field: 'companyName', header: 'Company' }],
+  [
+    'companySize',
+    { field: 'companySize', header: 'Company Size' },
+  ],
 ]);
 
 declare var fetch: any;
 declare var env: { BASE_URL: string };
 
-console.log(env.BASE_URL, "!!!!");
+console.log(env.BASE_URL, '!!!!');
 const dataSource = () => {
-  return fetch(env.BASE_URL + "/employees100")
+  return fetch(env.BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => {
       return data;
     });
 };
 
-const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
-  { field: "department" },
-  // you can specify a column config for this group.
-  { field: "team", column: { header: "What team?" } },
-];
+const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] =
+  [
+    { field: 'department' },
+    // you can specify a column config for this group.
+    { field: 'team', column: { header: 'What team?' } },
+  ];
 const multiSort = [];
 
 const groupColumnDefaults = {
@@ -116,7 +130,9 @@ const groupColumnDefaults = {
 };
 function App() {
   const [groupRenderStrategy, setGroupRenderStrategy] =
-    useState<InfiniteTablePropGroupRenderStrategy>("multi-column");
+    useState<InfiniteTablePropGroupRenderStrategy>(
+      'multi-column'
+    );
 
   return (
     <>
@@ -128,9 +144,10 @@ function App() {
           onChange={(e: any) => {
             const { value } = e.target;
             setGroupRenderStrategy(value);
-          }}
-        >
-          <option value="single-column">Single column</option>
+          }}>
+          <option value="single-column">
+            Single column
+          </option>
           <option value="multi-column">Multi column</option>
         </select>
       </div>
@@ -139,8 +156,7 @@ function App() {
         data={dataSource}
         primaryKey="id"
         defaultSortInfo={multiSort}
-        defaultGroupRowsBy={defaultGroupRowsBy}
-      >
+        defaultGroupRowsBy={defaultGroupRowsBy}>
         <InfiniteTable<Employee>
           columnDefaultWidth={130}
           groupRenderStrategy={groupRenderStrategy}

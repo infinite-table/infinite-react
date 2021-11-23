@@ -4,7 +4,7 @@ import {
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
-import '@infinite-table/infinite-react/index.css';
+
 import { data, Person } from './data';
 
 export default function App() {

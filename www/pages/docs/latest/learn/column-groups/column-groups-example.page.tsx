@@ -5,29 +5,54 @@ import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
 } from '@infinite-table/infinite-react';
-import '@infinite-table/infinite-react/index.css';
+
 import { Person, data } from './column-groups-data';
 
-const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
-  ['contact info', { header: 'Contact info' }],
-  ['street', { header: 'street', columnGroup: 'address' }],
-  ['location', { header: 'location', columnGroup: 'address' }],
-  ['address', { header: 'Address' }],
-]);
+const columnGroups: Map<string, InfiniteTableColumnGroup> =
+  new Map([
+    ['contact info', { header: 'Contact info' }],
+    [
+      'street',
+      { header: 'street', columnGroup: 'address' },
+    ],
+    [
+      'location',
+      { header: 'location', columnGroup: 'address' },
+    ],
+    ['address', { header: 'Address' }],
+  ]);
 
-const columns = new Map<string, InfiniteTableColumn<Person>>([
+const columns = new Map<
+  string,
+  InfiniteTableColumn<Person>
+>([
   ['id', { field: 'id' }],
-  ['streetNo', { field: 'streetNo', columnGroup: 'street' }],
+  [
+    'streetNo',
+    { field: 'streetNo', columnGroup: 'street' },
+  ],
   ['city', { field: 'city', columnGroup: 'location' }],
 
-  ['streetName', { field: 'streetName', columnGroup: 'street' }],
+  [
+    'streetName',
+    { field: 'streetName', columnGroup: 'street' },
+  ],
   ['firstName', { field: 'firstName' }],
 
-  ['country', { field: 'country', columnGroup: 'location' }],
+  [
+    'country',
+    { field: 'country', columnGroup: 'location' },
+  ],
   ['region', { field: 'region', columnGroup: 'location' }],
 
-  ['email', { field: 'email', columnGroup: 'contact info' }],
-  ['phone', { field: 'phone', columnGroup: 'contact info' }],
+  [
+    'email',
+    { field: 'email', columnGroup: 'contact info' },
+  ],
+  [
+    'phone',
+    { field: 'phone', columnGroup: 'contact info' },
+  ],
 ]);
 
 export default function App() {

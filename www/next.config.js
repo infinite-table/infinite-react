@@ -13,24 +13,6 @@ const {
   remarkPlugins,
 } = require('./plugins/markdownToHtml');
 
-const postCssPlugins = [
-  // Below PostCSS references Next.js default configuration
-  // https://nextjs.org/docs/advanced-features/customizing-postcss-config#customizing-plugins
-  'postcss-flexbugs-fixes',
-  [
-    'postcss-preset-env',
-    {
-      autoprefixer: {
-        flexbox: 'no-2009',
-      },
-      stage: 3,
-      features: {
-        'custom-properties': false,
-      },
-    },
-  ],
-];
-
 const nextConfig = withMDX({
   async redirects() {
     return [
@@ -118,6 +100,7 @@ const nextConfig = withMDX({
   },
 });
 const createNextPluginPreval = require('next-plugin-preval/config');
+const { IgnorePlugin } = require('webpack');
 const withNextPluginPreval = createNextPluginPreval();
 module.exports = withNextPluginPreval(
   withVanillaExtract(nextConfig)
