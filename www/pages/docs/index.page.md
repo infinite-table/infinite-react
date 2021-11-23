@@ -1,6 +1,6 @@
 ---
 id: home
-layout: home
+layout: Home
 permalink: index.html
 ---
 

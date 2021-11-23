@@ -1,6 +1,6 @@
 ---
 title: Acknowledgements
-layout: home
+layout: Home
 ---
 
 ## React 

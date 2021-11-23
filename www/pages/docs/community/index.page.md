@@ -1,6 +1,6 @@
 ---
 title: Community
-layout: home
+layout: Home
 ---
 
 <Intro>
