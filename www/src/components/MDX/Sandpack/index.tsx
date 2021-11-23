@@ -116,7 +116,7 @@ function Sandpack(props: SandpackProps) {
   }
 
   const dependencies = {
-    '@infinite-table/infinite-react': '0.0.2-canary.2',
+    '@infinite-table/infinite-react': '0.0.2-canary.3',
   };
 
   return (
