@@ -161,7 +161,7 @@ export function Preview({
           }}>
           <iframe
             ref={iframeRef}
-            className="rounded-t-none bg-white shadow-md sm:rounded-lg w-full max-w-full"
+            className="rounded-t-none bg-wash dark:bg-wash-dark shadow-md sm:rounded-lg w-full max-w-full"
             title="Sandbox Preview"
             style={{
               height: '100%', // AFL changed this
