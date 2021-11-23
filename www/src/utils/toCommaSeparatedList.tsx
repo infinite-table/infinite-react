@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const addString = (
-  list: React.ReactNodeArray,
+  list: React.ReactNode[],
   string: string
 ) =>
   list.push(
