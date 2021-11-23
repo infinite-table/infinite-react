@@ -1,12 +1,8 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import Breadcrumbs from '@www/components/Breadcrumbs';
 import Tag from '@www/components/Tag';
-import {RouteTag} from './Layout/useRouteMeta';
-import {H1} from './MDX/Heading';
+import { RouteTag } from './Layout/useRouteMeta';
+import { H1 } from './MDX/Heading';
 
 interface PageHeadingProps {
   title: string;

@@ -1,15 +1,11 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
-import {Button} from '@www/components/Button';
-import {H2} from '@www/components/MDX/Heading';
-import {Navigation} from './Navigation';
-import {IconHint} from '../../Icon/IconHint';
-import {IconSolution} from '../../Icon/IconSolution';
-import {IconArrowSmall} from '../../Icon/IconArrowSmall';
+import { Button } from '@www/components/Button';
+import { H2 } from '@www/components/MDX/Heading';
+import { Navigation } from './Navigation';
+import { IconHint } from '../../Icon/IconHint';
+import { IconSolution } from '../../Icon/IconSolution';
+import { IconArrowSmall } from '../../Icon/IconArrowSmall';
 
 interface ChallengesProps {
   children: React.ReactElement[];
@@ -37,7 +33,7 @@ const parseChallengeContents = (
   let challenge: Partial<ChallengeContents> = {};
   let content: React.ReactElement[] = [];
   React.Children.forEach(children, (child) => {
-    const {props} = child;
+    const { props } = child;
     switch (props.mdxType) {
       case 'Solution': {
         challenge.solution = child;
@@ -66,15 +62,19 @@ const parseChallengeContents = (
   return contents;
 };
 
-export function Challenges({children, isRecipes}: ChallengesProps) {
+export function Challenges({
+  children,
+  isRecipes,
+}: ChallengesProps) {
   const challenges = parseChallengeContents(children);
-  const scrollAnchorRef = React.useRef<HTMLDivElement>(null);
+  const scrollAnchorRef =
+    React.useRef<HTMLDivElement>(null);
 
   const [showHint, setShowHint] = React.useState(false);
-  const [showSolution, setShowSolution] = React.useState(false);
-  const [activeChallenge, setActiveChallenge] = React.useState(
-    challenges[0].id
-  );
+  const [showSolution, setShowSolution] =
+    React.useState(false);
+  const [activeChallenge, setActiveChallenge] =
+    React.useState(challenges[0].id);
 
   const handleChallengeChange = (challengeId: string) => {
     setShowHint(false);
@@ -96,8 +96,10 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
     setShowSolution((solution) => !solution);
   };
 
-  const currentChallenge = challenges.find(({id}) => id === activeChallenge);
-  const nextChallenge = challenges.find(({order}) => {
+  const currentChallenge = challenges.find(
+    ({ id }) => id === activeChallenge
+  );
+  const nextChallenge = challenges.find(({ order }) => {
     if (!currentChallenge) {
       return false;
     }
@@ -110,14 +112,20 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
         className={cn(
           'border-gray-10 bg-card dark:bg-card-dark shadow-inner rounded-none -mx-5 sm:mx-auto sm:rounded-lg'
         )}>
-        <div ref={scrollAnchorRef} className="py-2 px-5 sm:px-8 pb-0 md:pb-0">
+        <div
+          ref={scrollAnchorRef}
+          className="py-2 px-5 sm:px-8 pb-0 md:pb-0">
           <H2
             id={isRecipes ? 'recipes' : 'challenges'}
             className={cn(
               'text-3xl mb-2 leading-10 relative',
-              isRecipes ? 'text-purple-50 dark:text-purple-30' : 'text-link'
+              isRecipes
+                ? 'text-purple-50 dark:text-purple-30'
+                : 'text-link'
             )}>
-            {isRecipes ? 'Try out some recipes' : 'Try out some challenges'}
+            {isRecipes
+              ? 'Try out some recipes'
+              : 'Try out some challenges'}
           </H2>
           {challenges.length > 1 && (
             <Navigation
@@ -132,9 +140,12 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
           <div key={activeChallenge}>
             <h3 className="text-xl text-primary dark:text-primary-dark mb-2">
               <div className="font-bold block md:inline">
-                {isRecipes ? 'Recipe' : 'Challenge'} {currentChallenge?.order}{' '}
-                of {challenges.length}
-                <span className="text-primary dark:text-primary-dark">: </span>
+                {isRecipes ? 'Recipe' : 'Challenge'}{' '}
+                {currentChallenge?.order} of{' '}
+                {challenges.length}
+                <span className="text-primary dark:text-primary-dark">
+                  :{' '}
+                </span>
               </div>
               {currentChallenge?.name}
             </h3>
@@ -143,7 +154,10 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
           <div className="flex justify-between items-center mt-4">
             {currentChallenge?.hint ? (
               <div>
-                <Button className="mr-2" onClick={toggleHint} active={showHint}>
+                <Button
+                  className="mr-2"
+                  onClick={toggleHint}
+                  active={showHint}>
                   <IconHint className="mr-1.5" />{' '}
                   {showHint ? 'Hide hint' : 'Show hint'}
                 </Button>
@@ -152,7 +166,9 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
                   onClick={toggleSolution}
                   active={showSolution}>
                   <IconSolution className="mr-1.5" />{' '}
-                  {showSolution ? 'Hide solution' : 'Show solution'}
+                  {showSolution
+                    ? 'Hide solution'
+                    : 'Show solution'}
                 </Button>
               </div>
             ) : (
@@ -162,7 +178,9 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
                   onClick={toggleSolution}
                   active={showSolution}>
                   <IconSolution className="mr-1.5" />{' '}
-                  {showSolution ? 'Hide solution' : 'Show solution'}
+                  {showSolution
+                    ? 'Hide solution'
+                    : 'Show solution'}
                 </Button>
               )
             )}
@@ -196,22 +214,27 @@ export function Challenges({children, isRecipes}: ChallengesProps) {
               </h3>
               {currentChallenge?.solution}
               <div className="flex justify-between items-center mt-4">
-                <Button onClick={() => setShowSolution(false)}>
+                <Button
+                  onClick={() => setShowSolution(false)}>
                   Close solution
                 </Button>
                 {nextChallenge && (
                   <Button
                     className={cn(
-                      isRecipes ? 'bg-purple-50' : 'bg-link dark:bg-link-dark'
+                      isRecipes
+                        ? 'bg-purple-50'
+                        : 'bg-link dark:bg-link-dark'
                     )}
                     onClick={() => {
                       setActiveChallenge(nextChallenge.id);
                       setShowSolution(false);
                       if (scrollAnchorRef.current) {
-                        scrollAnchorRef.current.scrollIntoView({
-                          block: 'start',
-                          behavior: 'smooth',
-                        });
+                        scrollAnchorRef.current.scrollIntoView(
+                          {
+                            block: 'start',
+                            behavior: 'smooth',
+                          }
+                        );
                       }
                     }}
                     active>

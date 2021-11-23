@@ -1,17 +1,17 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
-import {H3} from './Heading';
+import { H3 } from './Heading';
 
 interface SimpleCalloutProps {
   title: string;
   children: React.ReactNode;
   className?: string;
 }
-function SimpleCallout({title, children, className}: SimpleCalloutProps) {
+function SimpleCallout({
+  title,
+  children,
+  className,
+}: SimpleCalloutProps) {
   return (
     <div
       className={cn(

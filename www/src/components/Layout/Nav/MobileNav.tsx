@@ -1,17 +1,15 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
-import {RouteItem} from 'components/Layout/useRouteMeta';
-import {useRouter} from 'next/router';
-import {SidebarRouteTree} from '../Sidebar';
+import { RouteItem } from 'components/Layout/useRouteMeta';
+import { useRouter } from 'next/router';
+import { SidebarRouteTree } from '../Sidebar';
 import sidebarHome from '../../../sidebarHome.json';
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
 
-function inferSection(pathname: string): 'learn' | 'reference' | 'home' {
+function inferSection(
+  pathname: string
+): 'learn' | 'reference' | 'home' {
   if (pathname.startsWith('/learn')) {
     return 'learn';
   } else if (pathname.startsWith('/reference')) {
@@ -22,8 +20,10 @@ function inferSection(pathname: string): 'learn' | 'reference' | 'home' {
 }
 
 export function MobileNav() {
-  const {pathname} = useRouter();
-  const [section, setSection] = React.useState(() => inferSection(pathname));
+  const { pathname } = useRouter();
+  const [section, setSection] = React.useState(() =>
+    inferSection(pathname)
+  );
 
   let tree = null;
   switch (section) {
@@ -57,7 +57,10 @@ export function MobileNav() {
           API
         </TabButton>
       </div>
-      <SidebarRouteTree routeTree={tree as RouteItem} isMobile={true} />
+      <SidebarRouteTree
+        routeTree={tree as RouteItem}
+        isMobile={true}
+      />
     </>
   );
 }
@@ -68,13 +71,16 @@ function TabButton({
   isActive,
 }: {
   children: any;
-  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
   isActive: boolean;
 }) {
   const classes = cn(
     'inline-flex items-center w-full border-b-2 justify-center text-base leading-9 px-3 py-0.5 hover:text-link hover:gray-5',
     {
-      'text-link dark:text-link-dark dark:border-link-dark border-link font-bold': isActive,
+      'text-link dark:text-link-dark dark:border-link-dark border-link font-bold':
+        isActive,
       'border-transparent': !isActive,
     }
   );

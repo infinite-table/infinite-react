@@ -1,7 +1,3 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 /*!
  * Based on 'gatsby-remark-autolink-headers'
  * Original Author: Kyle Mathews <mathews.kyle@gmail.com>
@@ -32,12 +28,20 @@ module.exports = ({
     visit(tree, 'heading', (node) => {
       // Support custom-id syntax.
       const rawHeader = toString(node);
-      const match = /^.+(\s*\{#([a-z0-9\-_]+?)\}\s*)$/.exec(rawHeader);
-      const id = match ? match[2] : slugs.slug(rawHeader, maintainCase);
+      const match = /^.+(\s*\{#([a-z0-9\-_]+?)\}\s*)$/.exec(
+        rawHeader
+      );
+      const id = match
+        ? match[2]
+        : slugs.slug(rawHeader, maintainCase);
       if (match) {
         // Remove the custom ID part from the text node.
-        const lastNode = node.children[node.children.length - 1];
-        lastNode.value = lastNode.value.replace(match[1], '');
+        const lastNode =
+          node.children[node.children.length - 1];
+        lastNode.value = lastNode.value.replace(
+          match[1],
+          ''
+        );
       }
 
       const data = patch(node, 'data', {});

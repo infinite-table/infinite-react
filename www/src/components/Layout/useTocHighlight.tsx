@@ -1,15 +1,13 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
-import {siteConfig} from '@www/siteConfig';
+import { siteConfig } from '@www/siteConfig';
 
 const TOP_OFFSET = 75;
 
 export function getHeaderAnchors(): HTMLAnchorElement[] {
   return Array.prototype.filter.call(
-    document.getElementsByClassName(siteConfig.headerIdConfig.className),
+    document.getElementsByClassName(
+      siteConfig.headerIdConfig.className
+    ),
     function (testElement) {
       return (
         testElement.parentNode.nodeName === 'H1' ||
@@ -24,16 +22,21 @@ export function getHeaderAnchors(): HTMLAnchorElement[] {
  * Sets up Table of Contents highlighting.
  */
 export function useTocHighlight() {
-  const [currentIndex, setCurrentIndex] = React.useState<number>(0);
+  const [currentIndex, setCurrentIndex] =
+    React.useState<number>(0);
   const timeoutRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     function updateActiveLink() {
       const pageHeight = document.body.scrollHeight;
-      const scrollPosition = window.scrollY + window.innerHeight;
+      const scrollPosition =
+        window.scrollY + window.innerHeight;
       const headersAnchors = getHeaderAnchors();
 
-      if (scrollPosition >= 0 && pageHeight - scrollPosition <= TOP_OFFSET) {
+      if (
+        scrollPosition >= 0 &&
+        pageHeight - scrollPosition <= TOP_OFFSET
+      ) {
         // Scrolled to bottom of page.
         setCurrentIndex(headersAnchors.length - 1);
         return;
@@ -42,7 +45,8 @@ export function useTocHighlight() {
       let index = -1;
       while (index < headersAnchors.length - 1) {
         const headerAnchor = headersAnchors[index + 1];
-        const {top} = headerAnchor.getBoundingClientRect();
+        const { top } =
+          headerAnchor.getBoundingClientRect();
 
         if (top >= TOP_OFFSET) {
           break;
@@ -62,8 +66,14 @@ export function useTocHighlight() {
       }
     }
 
-    document.addEventListener('scroll', throttledUpdateActiveLink);
-    document.addEventListener('resize', throttledUpdateActiveLink);
+    document.addEventListener(
+      'scroll',
+      throttledUpdateActiveLink
+    );
+    document.addEventListener(
+      'resize',
+      throttledUpdateActiveLink
+    );
 
     updateActiveLink();
 
@@ -72,8 +82,14 @@ export function useTocHighlight() {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
-      document.removeEventListener('scroll', throttledUpdateActiveLink);
-      document.removeEventListener('resize', throttledUpdateActiveLink);
+      document.removeEventListener(
+        'scroll',
+        throttledUpdateActiveLink
+      );
+      document.removeEventListener(
+        'resize',
+        throttledUpdateActiveLink
+      );
     };
   }, []);
 

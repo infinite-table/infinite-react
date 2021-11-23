@@ -1,12 +1,8 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
-import {IconChevron} from '../../Icon/IconChevron';
-import {useSandpack} from '@codesandbox/sandpack-react';
-import {Listbox} from '@headlessui/react';
+import { IconChevron } from '../../Icon/IconChevron';
+import { useSandpack } from '@codesandbox/sandpack-react';
+import { Listbox } from '@headlessui/react';
 
 const getFileName = (filePath: string): string => {
   const lastIndexOfSlash = filePath.lastIndexOf('/');
@@ -14,20 +10,22 @@ const getFileName = (filePath: string): string => {
 };
 
 export function FilesDropdown() {
-  const {sandpack} = useSandpack();
-  const {openPaths, setActiveFile, activePath} = sandpack;
+  const { sandpack } = useSandpack();
+  const { openPaths, setActiveFile, activePath } = sandpack;
   return (
     <Listbox value={activePath} onChange={setActiveFile}>
       <Listbox.Button>
-        {({open}) => (
+        {({ open }) => (
           <span
             className={cn(
               'h-full py-2 px-1 mt-px -mb-px flex border-b-2 text-link dark:text-link-dark border-link dark:border-link-dark items-center text-md leading-tight truncate'
             )}
-            style={{maxWidth: '160px'}}>
+            style={{ maxWidth: '160px' }}>
             {getFileName(activePath)}
             <span className="ml-2">
-              <IconChevron displayDirection={open ? 'up' : 'down'} />
+              <IconChevron
+                displayDirection={open ? 'up' : 'down'}
+              />
             </span>
           </span>
         )}
@@ -39,7 +37,8 @@ export function FilesDropdown() {
             value={filePath}
             className={cn(
               'text-md mx-2 my-4 cursor-pointer',
-              filePath === activePath && 'text-link dark:text-link-dark'
+              filePath === activePath &&
+                'text-link dark:text-link-dark'
             )}>
             {getFileName(filePath)}
           </Listbox.Option>

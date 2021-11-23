@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 module.exports = {
   // Text colors
   primary: '#23272F', // gray-90

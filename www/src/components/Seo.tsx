@@ -1,10 +1,6 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import Head from 'next/head';
-import {withRouter, Router} from 'next/router';
+import { withRouter, Router } from 'next/router';
 
 export interface SeoProps {
   title: string;
@@ -21,7 +17,7 @@ export const Seo = withRouter(
     image = '/logo-og.png',
     router,
     children,
-  }: SeoProps & {router: Router}) => (
+  }: SeoProps & { router: Router }) => (
     <Head>
       {/* DEFAULT */}
 
@@ -32,20 +28,35 @@ export const Seo = withRouter(
 
       {title != null && <title key="title">{title}</title>}
       {description != null && (
-        <meta name="description" key="description" content={description} />
+        <meta
+          name="description"
+          key="description"
+          content={description}
+        />
       )}
       {/* <link rel="icon" type="image/x-icon" href={favicon} />
       <link rel="apple-touch-icon" href={favicon} />  @todo favicon */}
-      <meta property="fb:app_id" content="623268441017527" />
+      <meta
+        property="fb:app_id"
+        content="623268441017527"
+      />
       {/* OPEN GRAPH */}
-      <meta property="og:type" key="og:type" content="website" />
+      <meta
+        property="og:type"
+        key="og:type"
+        content="website"
+      />
       <meta
         property="og:url"
         key="og:url"
         content={`https://beta.reactjs.org${router.pathname}`}
       />
       {title != null && (
-        <meta property="og:title" content={title} key="og:title" />
+        <meta
+          property="og:title"
+          content={title}
+          key="og:title"
+        />
       )}
       {description != null && (
         <meta
@@ -67,10 +78,22 @@ export const Seo = withRouter(
         key="twitter:card"
         content="summary_large_image"
       />
-      <meta name="twitter:site" key="twitter:site" content="@reactjs" />
-      <meta name="twitter:creator" key="twitter:creator" content="@reactjs" />
+      <meta
+        name="twitter:site"
+        key="twitter:site"
+        content="@reactjs"
+      />
+      <meta
+        name="twitter:creator"
+        key="twitter:creator"
+        content="@reactjs"
+      />
       {title != null && (
-        <meta name="twitter:title" key="twitter:title" content={title} />
+        <meta
+          name="twitter:title"
+          key="twitter:title"
+          content={title}
+        />
       )}
       {description != null && (
         <meta

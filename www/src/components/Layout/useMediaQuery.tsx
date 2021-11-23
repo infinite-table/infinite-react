@@ -1,8 +1,4 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
-import {useState, useCallback, useEffect} from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 const useMediaQuery = (width: number) => {
   const [targetReached, setTargetReached] = useState(false);
@@ -16,7 +12,9 @@ const useMediaQuery = (width: number) => {
   }, []);
 
   useEffect(() => {
-    const media = window.matchMedia(`(max-width: ${width}px)`);
+    const media = window.matchMedia(
+      `(max-width: ${width}px)`
+    );
     media.addListener(updateTarget);
 
     // Check on mount (callback is not called until a change occurs)
@@ -34,4 +32,4 @@ const useIsMobile = () => {
   return useMediaQuery(640);
 };
 
-export {useMediaQuery, useIsMobile};
+export { useMediaQuery, useIsMobile };

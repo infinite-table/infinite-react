@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 module.exports = {
   plugins: {
     tailwindcss: {},
@@ -17,4 +13,4 @@ module.exports = {
       },
     },
   },
-}
+};

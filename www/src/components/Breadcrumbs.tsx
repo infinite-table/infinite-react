@@ -1,20 +1,18 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
-import {useRouteMeta} from '@www/components/Layout/useRouteMeta';
+import { useRouteMeta } from '@www/components/Layout/useRouteMeta';
 import Link from 'next/link';
 
 function Breadcrumbs() {
-  const {breadcrumbs} = useRouteMeta();
+  const { breadcrumbs } = useRouteMeta();
   if (!breadcrumbs) return null;
   return (
     <div className="flex">
       {breadcrumbs.map(
         (crumb, i) =>
           crumb.path && (
-            <div className="flex mb-3 mt-0.5 items-center" key={i}>
+            <div
+              className="flex mb-3 mt-0.5 items-center"
+              key={i}>
               <React.Fragment key={crumb.path}>
                 <Link href={crumb.path}>
                   <a className="text-link dark:text-link-dark text-sm tracking-wide font-bold uppercase mr-1 hover:underline">

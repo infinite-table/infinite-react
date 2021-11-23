@@ -1,9 +1,10 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
-import * as React from "react";
-import Document, {Html, Head, Main, NextScript} from "next/document";
+import * as React from 'react';
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+} from 'next/document';
 
 class MyDocument extends Document {
   render() {

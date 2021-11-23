@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import { DocsPageFooter } from '@www/components/DocsFooter';

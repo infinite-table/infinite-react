@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import {
@@ -12,7 +8,10 @@ import {
 import cn from 'classnames';
 
 import { Error } from './Error';
-import { computeViewportSize, generateRandomId } from './utils';
+import {
+  computeViewportSize,
+  generateRandomId,
+} from './utils';
 
 type CustomPreviewProps = {
   className?: string;
@@ -39,9 +38,8 @@ export function Preview({
 }: CustomPreviewProps) {
   const { sandpack, listen } = useSandpack();
   const [isReady, setIsReady] = React.useState(false);
-  const [iframeComputedHeight, setComputedAutoHeight] = React.useState<
-    number | null
-  >(null);
+  const [iframeComputedHeight, setComputedAutoHeight] =
+    React.useState<number | null>(null);
 
   let {
     error: rawError,
@@ -54,7 +52,8 @@ export function Preview({
 
   if (
     rawError &&
-    rawError.message === '_csbRefreshUtils.prelude is not a function'
+    rawError.message ===
+      '_csbRefreshUtils.prelude is not a function'
   ) {
     // Work around a noisy internal error.
     rawError = null;
@@ -63,7 +62,9 @@ export function Preview({
   const error = useDebounced(rawError);
 
   const clientId = React.useRef<string>(generateRandomId());
-  const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
+  const iframeRef = React.useRef<HTMLIFrameElement | null>(
+    null
+  );
 
   // SandpackPreview immediately registers the custom screens/components so the bundler does not render any of them
   // TODO: why are we doing this during render?
@@ -95,7 +96,10 @@ export function Preview({
     };
   }, []);
 
-  const viewportStyle = computeViewportSize('auto', 'portrait');
+  const viewportStyle = computeViewportSize(
+    'auto',
+    'portrait'
+  );
   const overrideStyle = error
     ? {
         // Don't collapse errors
@@ -160,14 +164,18 @@ export function Preview({
             title="Sandbox Preview"
             style={{
               height: '100%', // AFL changed this
-              position: hideContent ? 'absolute' : undefined,
+              position: hideContent
+                ? 'absolute'
+                : undefined,
               // We can't *actually* hide content because that would
               // break calculating the computed height in the iframe
               // (which we're using for autosizing). This is noticeable
               // if you make a compiler error and then fix it with code
               // that expands the content. You want to measure that.
               opacity: hideContent ? 0 : 1,
-              pointerEvents: hideContent ? 'none' : undefined,
+              pointerEvents: hideContent
+                ? 'none'
+                : undefined,
               zIndex: isExpanded ? 'initial' : -1,
             }}
           />

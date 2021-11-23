@@ -1,16 +1,12 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
-import {H3} from './Heading';
+import { H3 } from './Heading';
 
 interface ConventionProps {
   children: React.ReactNode;
   name: string;
 }
 
-function Convention({children, name}: ConventionProps) {
+function Convention({ children, name }: ConventionProps) {
   const id = name ? `${name}-conventions` : 'conventions';
   return (
     <section className="my-12">

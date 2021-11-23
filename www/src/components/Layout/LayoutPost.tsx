@@ -1,22 +1,18 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
-import {MDXProvider} from '@mdx-js/react';
-import recentPostsRouteTree from 'blogIndexRecent.json';
-import {DocsPageFooter} from 'components/DocsFooter';
-import {ExternalLink} from 'components/ExternalLink';
-import {MDXComponents} from 'components/MDX/MDXComponents';
-import {Seo} from 'components/Seo';
-import {Toc} from 'components/Layout/Toc';
+import { MDXProvider } from '@mdx-js/react';
+import recentPostsRouteTree from '@www/blogIndexRecent.json';
+import { DocsPageFooter } from '@www/components/DocsFooter';
+import { ExternalLink } from 'components/ExternalLink';
+import { MDXComponents } from 'components/MDX/MDXComponents';
+import { Seo } from 'components/Seo';
+import { Toc } from 'components/Layout/Toc';
 import format from 'date-fns/format';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import * as React from 'react';
-import {getAuthor} from 'utils/getAuthor';
-import toCommaSeparatedList from 'utils/toCommaSeparatedList';
-import {Page} from './Page';
-import {RouteItem, useRouteMeta} from './useRouteMeta';
-import {useTwitter} from './useTwitter';
+import { getAuthor } from '@www/utils/getAuthor';
+import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
+import { Page } from './Page';
+import { RouteItem, useRouteMeta } from './useRouteMeta';
+import { useTwitter } from './useTwitter';
 
 interface PageFrontmatter {
   id?: string;
@@ -44,23 +40,30 @@ function getDateFromPath(path: string) {
     .map((i) => parseInt(i, 10)); // convert to numbers
 
   return {
-    date: format(new Date(year, month, day), 'MMMM dd, yyyy'),
+    date: format(
+      new Date(year, month, day),
+      'MMMM dd, yyyy'
+    ),
     dateTime: [year, month, day].join('-'),
   };
 }
 
-function LayoutPost({meta, children}: LayoutPostProps) {
-  const {pathname} = useRouter();
-  const {date, dateTime} = getDateFromPath(pathname);
-  const {route, nextRoute, prevRoute} = useRouteMeta();
+function LayoutPost({ meta, children }: LayoutPostProps) {
+  const { pathname } = useRouter();
+  const { date, dateTime } = getDateFromPath(pathname);
+  const { route, nextRoute, prevRoute } = useRouteMeta();
   const anchors = React.Children.toArray(children)
     .filter(
       (child: any) =>
-        child.props?.mdxType && ['h2', 'h3'].includes(child.props.mdxType)
+        child.props?.mdxType &&
+        ['h2', 'h3'].includes(child.props.mdxType)
     )
     .map((child: any) => ({
       url: '#' + child.props.id,
-      depth: parseInt(child.props.mdxType.replace('h', ''), 0),
+      depth: parseInt(
+        child.props.mdxType.replace('h', ''),
+        0
+      ),
       text: child.props.children,
     }));
   useTwitter();
@@ -87,7 +90,9 @@ function LayoutPost({meta, children}: LayoutPostProps) {
             </span>
           </p>
 
-          <MDXProvider components={MDXComponents}>{children}</MDXProvider>
+          <MDXProvider components={MDXComponents}>
+            {children}
+          </MDXProvider>
           <DocsPageFooter
             route={route}
             nextRoute={nextRoute}
@@ -102,8 +107,13 @@ function LayoutPost({meta, children}: LayoutPostProps) {
   );
 }
 
-function AppShell(props: {children: React.ReactNode}) {
-  return <Page routeTree={recentPostsRouteTree as RouteItem} {...props} />;
+function AppShell(props: { children: React.ReactNode }) {
+  return (
+    <Page
+      routeTree={recentPostsRouteTree as RouteItem}
+      {...props}
+    />
+  );
 }
 
 export default function withLayoutPost(meta: any) {

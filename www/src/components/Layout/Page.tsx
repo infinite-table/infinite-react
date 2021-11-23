@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import { MenuProvider } from '@www/components/useMenu';
 import * as React from 'react';
 import { Nav } from './Nav';

@@ -13,7 +13,6 @@ import '@codesandbox/sandpack-react/dist/index.css';
 import '../../source/dist/index.css';
 
 import '@www/styles/globals.css';
-import { DocsContext, DocsContextType } from '../src/components/DocsContext';
 import * as React from 'react';
 
 (globalThis as any).InfiniteTableLicenseKey =
@@ -42,14 +41,21 @@ import * as React from 'react';
 
 // export default MyApp;
 
-const EmptyAppShell: React.FC = ({ children }) => <>{children}</>;
+const EmptyAppShell: React.FC = ({ children }) => (
+  <>{children}</>
+);
 
-export default function MyApp({ Component, pageProps }: AppProps) {
-  let AppShell = (Component as any).appShell || EmptyAppShell;
+export default function MyApp({
+  Component,
+  pageProps,
+}: AppProps) {
+  let AppShell =
+    (Component as any).appShell || EmptyAppShell;
   // In order to make sidebar scrolling between pages work as expected
   // we need to access the underlying MDX component.
   if ((Component as any).isMDXComponent) {
-    AppShell = (Component as any)({}).props.originalType.appShell;
+    AppShell = (Component as any)({}).props.originalType
+      .appShell;
   }
   React.useEffect(() => {
     // Monkey patch Google Tag Manager in development to just log to the console

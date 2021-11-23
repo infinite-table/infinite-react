@@ -1,16 +1,12 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 // @ts-ignore
-import {useDocSearchKeyboardEvents} from '@docsearch/react';
-import {IconSearch} from '@www/components/Icon/IconSearch';
+import { useDocSearchKeyboardEvents } from '@docsearch/react';
+import { IconSearch } from '@www/components/Icon/IconSearch';
 import Head from 'next/head';
 import Link from 'next/link';
 import Router from 'next/router';
 import * as React from 'react';
-import {createPortal} from 'react-dom';
-import {siteConfig} from '@www/siteConfig';
+import { createPortal } from 'react-dom';
+import { siteConfig } from '@www/siteConfig';
 
 export interface SearchProps {
   appId?: string;
@@ -20,7 +16,7 @@ export interface SearchProps {
   renderModal?: boolean;
 }
 
-function Hit({hit, children}: any) {
+function Hit({ hit, children }: any) {
   return (
     <Link href={hit.url.replace()}>
       <a>{children}</a>
@@ -28,11 +24,11 @@ function Hit({hit, children}: any) {
   );
 }
 
-function Kbd(props: {children?: React.ReactNode}) {
+function Kbd(props: { children?: React.ReactNode }) {
   return (
     <kbd
       className="border border-transparent mr-1 bg-wash dark:bg-wash-dark text-gray-30 align-middle p-0 inline-flex justify-center items-center  text-xs text-center rounded"
-      style={{width: '2.25em', height: '2.25em'}}
+      style={{ width: '2.25em', height: '2.25em' }}
       {...props}
     />
   );
@@ -59,11 +55,11 @@ export const Search: React.FC<SearchProps> = ({
       }
 
       // @ts-ignore
-      return Promise.all([import('@docsearch/react/modal')]).then(
-        ([{DocSearchModal: Modal}]) => {
-          DocSearchModal = Modal;
-        }
-      );
+      return Promise.all([
+        import('@docsearch/react/modal'),
+      ]).then(([{ DocSearchModal: Modal }]) => {
+        DocSearchModal = Modal;
+      });
     },
     []
   );
@@ -84,7 +80,11 @@ export const Search: React.FC<SearchProps> = ({
     [setIsShowing]
   );
 
-  useDocSearchKeyboardEvents({isOpen: isShowing, onOpen, onClose});
+  useDocSearchKeyboardEvents({
+    isOpen: isShowing,
+    onOpen,
+    onClose,
+  });
 
   return (
     <>
@@ -123,7 +123,7 @@ export const Search: React.FC<SearchProps> = ({
             searchParameters={searchParameters}
             onClose={onClose}
             navigator={{
-              navigate({itemUrl}: any) {
+              navigate({ itemUrl }: any) {
                 Router.push(itemUrl);
               },
             }}
@@ -132,7 +132,9 @@ export const Search: React.FC<SearchProps> = ({
                 const url = new URL(item.url);
                 return {
                   ...item,
-                  url: item.url.replace(url.origin, '').replace('#__next', ''),
+                  url: item.url
+                    .replace(url.origin, '')
+                    .replace('#__next', ''),
                 };
               });
             }}

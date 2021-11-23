@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
 import tailwindConfig from '../../../tailwind.config';
@@ -40,11 +36,15 @@ const colors = [
   },
 ];
 
-export function APIAnatomy({children}: APIAnatomyProps) {
-  const [activeStep, setActiveStep] = React.useState<number | null>(null);
+export function APIAnatomy({ children }: APIAnatomyProps) {
+  const [activeStep, setActiveStep] = React.useState<
+    number | null
+  >(null);
   const ref = React.useRef<HTMLDivElement>();
 
-  const {steps, code} = React.Children.toArray(children).reduce(
+  const { steps, code } = React.Children.toArray(
+    children
+  ).reduce(
     (acc: AnatomyContent, child) => {
       if (!React.isValidElement(child)) return acc;
       switch (child.props.mdxType) {
@@ -70,7 +70,7 @@ export function APIAnatomy({children}: APIAnatomyProps) {
       }
       return acc;
     },
-    {steps: [], code: null}
+    { steps: [], code: null }
   );
 
   return (

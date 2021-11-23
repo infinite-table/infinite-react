@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 const createFunctionWithTimeout = (
   callback: () => void,
   opt_timeout = 1000
@@ -57,7 +53,10 @@ export function trackCustomEvent({
   hitCallback,
   callbackTimeout = 1000,
 }: CustomEvent) {
-  if (typeof window !== `undefined` && (window as any).gtag) {
+  if (
+    typeof window !== `undefined` &&
+    (window as any).gtag
+  ) {
     const trackingEventOptions: any = {
       event_category: category,
       event_action: action,
@@ -67,10 +66,11 @@ export function trackCustomEvent({
     };
 
     if (hitCallback && typeof hitCallback === `function`) {
-      trackingEventOptions.event_callback = createFunctionWithTimeout(
-        hitCallback,
-        callbackTimeout
-      );
+      trackingEventOptions.event_callback =
+        createFunctionWithTimeout(
+          hitCallback,
+          callbackTimeout
+        );
     }
 
     (window as any).gtag(`event`, trackingEventOptions);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
 
@@ -9,7 +5,11 @@ export const IconArrowSmall = React.memo<
   JSX.IntrinsicElements['svg'] & {
     displayDirection: 'left' | 'right' | 'up' | 'down';
   }
->(function IconArrowSmall({displayDirection, className, ...rest}) {
+>(function IconArrowSmall({
+  displayDirection,
+  className,
+  ...rest
+}) {
   const classes = cn(className, {
     'transform rotate-180': displayDirection === 'left',
     'transform rotate-90': displayDirection === 'down',

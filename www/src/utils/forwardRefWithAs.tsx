@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 /**
  * Copied from Reach UI utils...
  *
@@ -30,7 +26,8 @@ export type AssignableRef<ValueType> =
 // P = additional props
 // T = type of component to render
 
-export type As<BaseProps = any> = React.ElementType<BaseProps>;
+export type As<BaseProps = any> =
+  React.ElementType<BaseProps>;
 
 export type PropsWithAs<
   ComponentType extends As,
@@ -46,7 +43,9 @@ export type PropsWithAs<
 export type PropsFromAs<
   ComponentType extends As,
   ComponentProps
-> = (PropsWithAs<ComponentType, ComponentProps> & {as: ComponentType}) &
+> = (PropsWithAs<ComponentType, ComponentProps> & {
+  as: ComponentType;
+}) &
   PropsWithAs<ComponentType, ComponentProps>;
 
 export type ComponentWithForwardedRef<
@@ -58,7 +57,10 @@ export type ComponentWithForwardedRef<
     React.ComponentPropsWithRef<ElementType>
 >;
 
-export interface ComponentWithAs<ComponentType extends As, ComponentProps> {
+export interface ComponentWithAs<
+  ComponentType extends As,
+  ComponentProps
+> {
   // These types are a bit of a hack, but cover us in cases where the `as` prop
   // is not a JSX string type. Makes the compiler happy so 🤷‍♂️
   <TT extends As>(
@@ -73,7 +75,9 @@ export interface ComponentWithAs<ComponentType extends As, ComponentProps> {
     PropsWithAs<ComponentType, ComponentProps>
   >;
   contextTypes?: React.ValidationMap<any>;
-  defaultProps?: Partial<PropsWithAs<ComponentType, ComponentProps>>;
+  defaultProps?: Partial<
+    PropsWithAs<ComponentType, ComponentProps>
+  >;
 }
 
 /**
@@ -90,16 +94,18 @@ export interface ComponentWithAs<ComponentType extends As, ComponentProps> {
  *
  * @param Comp
  */
-export function forwardRefWithAs<Props, ComponentType extends As>(
+export function forwardRefWithAs<
+  Props,
+  ComponentType extends As
+>(
   comp: (
     props: PropsFromAs<ComponentType, Props>,
     ref: React.RefObject<any>
   ) => React.ReactElement | null
 ) {
-  return (React.forwardRef(comp as any) as unknown) as ComponentWithAs<
-    ComponentType,
-    Props
-  >;
+  return React.forwardRef(
+    comp as any
+  ) as unknown as ComponentWithAs<ComponentType, Props>;
 }
 
 /*

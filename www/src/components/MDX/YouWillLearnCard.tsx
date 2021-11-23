@@ -1,10 +1,6 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import ButtonLink from '@www/components/ButtonLink';
-import {IconNavArrow} from '@www/components/Icon/IconNavArrow';
+import { IconNavArrow } from '@www/components/Icon/IconNavArrow';
 
 interface YouWillLearnCardProps {
   title: string;
@@ -12,7 +8,11 @@ interface YouWillLearnCardProps {
   children: React.ReactNode;
 }
 
-function YouWillLearnCard({title, path, children}: YouWillLearnCardProps) {
+function YouWillLearnCard({
+  title,
+  path,
+  children,
+}: YouWillLearnCardProps) {
   return (
     <div className="flex flex-col h-full bg-card dark:bg-card-dark shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8">
       <div>
@@ -29,7 +29,10 @@ function YouWillLearnCard({title, path, children}: YouWillLearnCardProps) {
           size="md"
           label={title}>
           Read More
-          <IconNavArrow displayDirection="right" className="inline ml-1" />
+          <IconNavArrow
+            displayDirection="right"
+            className="inline ml-1"
+          />
         </ButtonLink>
       </div>
     </div>

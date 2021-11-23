@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
 import { IconNote } from '../Icon/IconNote';
@@ -27,14 +23,18 @@ const variantMap = {
   gotcha: {
     title: 'Gotcha',
     Icon: IconGotcha,
-    containerClasses: 'bg-yellow-5 dark:bg-yellow-60 dark:bg-opacity-20',
+    containerClasses:
+      'bg-yellow-5 dark:bg-yellow-60 dark:bg-opacity-20',
     textColor: 'text-yellow-50 dark:text-yellow-40',
     overlayGradient:
       'linear-gradient(rgba(249, 247, 243, 0), rgba(249, 247, 243, 1)',
   },
 };
 
-function ExpandableCallout({ children, type }: ExpandableCalloutProps) {
+function ExpandableCallout({
+  children,
+  type,
+}: ExpandableCalloutProps) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const variant = variantMap[type];
 
@@ -44,9 +44,16 @@ function ExpandableCallout({ children, type }: ExpandableCalloutProps) {
         'pt-8 pb-4 px-5 sm:px-8 my-8 relative rounded-none shadow-inner -mx-5 sm:mx-auto sm:rounded-lg',
         variant.containerClasses
       )}>
-      <h3 className={cn('mb-2 text-2xl font-bold', variant.textColor)}>
+      <h3
+        className={cn(
+          'mb-2 text-2xl font-bold',
+          variant.textColor
+        )}>
         <variant.Icon
-          className={cn('inline mr-3 mb-1 text-lg', variant.textColor)}
+          className={cn(
+            'inline mr-3 mb-1 text-lg',
+            variant.textColor
+          )}
         />
         {variant.title}
       </h3>

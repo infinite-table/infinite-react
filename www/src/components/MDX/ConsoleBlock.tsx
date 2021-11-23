@@ -1,11 +1,7 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
-import {IconWarning} from '../Icon/IconWarning';
-import {IconError} from '../Icon/IconError';
+import { IconWarning } from '../Icon/IconWarning';
+import { IconError } from '../Icon/IconError';
 
 type LogLevel = 'info' | 'warning' | 'error';
 
@@ -25,11 +21,16 @@ const Box = ({
   className?: string;
   customStyles?: Record<string, string>;
 }) => (
-  <div className={className} style={{width, height, ...customStyles}}></div>
+  <div
+    className={className}
+    style={{ width, height, ...customStyles }}></div>
 );
 Box.displayName = 'Box';
 
-function ConsoleBlock({level = 'info', children}: ConsoleBlockProps) {
+function ConsoleBlock({
+  level = 'info',
+  children,
+}: ConsoleBlockProps) {
   let message: string | undefined;
   if (typeof children === 'string') {
     message = children;
@@ -44,7 +45,10 @@ function ConsoleBlock({level = 'info', children}: ConsoleBlockProps) {
     <div className="mb-4" translate="no">
       <div className="flex w-full rounded-t-lg bg-gray-200 dark:bg-gray-80">
         <div className="px-4 py-2 border-gray-300 dark:border-gray-90 border-r">
-          <Box className="bg-gray-300 dark:bg-gray-90" width="15px" />
+          <Box
+            className="bg-gray-300 dark:bg-gray-90"
+            width="15px"
+          />
         </div>
         <div className="flex text-sm px-4">
           <div className="border-b-2 border-gray-300 dark:border-gray-90">
@@ -61,14 +65,20 @@ function ConsoleBlock({level = 'info', children}: ConsoleBlockProps) {
         className={cn(
           'flex px-4 pt-4 pb-6 items-center content-center font-mono text-code rounded-b-md',
           {
-            'bg-red-30 text-red-40 bg-opacity-25': level === 'error',
-            'bg-yellow-5 text-yellow-50': level === 'warning',
+            'bg-red-30 text-red-40 bg-opacity-25':
+              level === 'error',
+            'bg-yellow-5 text-yellow-50':
+              level === 'warning',
             'bg-gray-5 text-secondary dark:text-secondary-dark':
               level === 'info',
           }
         )}>
-        {level === 'error' && <IconError className="self-start mt-1.5" />}
-        {level === 'warning' && <IconWarning className="self-start mt-1" />}
+        {level === 'error' && (
+          <IconError className="self-start mt-1.5" />
+        )}
+        {level === 'warning' && (
+          <IconWarning className="self-start mt-1" />
+        )}
         <div className="px-3">{message}</div>
       </div>
     </div>

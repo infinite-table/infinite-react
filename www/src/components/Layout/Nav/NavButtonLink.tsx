@@ -1,11 +1,7 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 import cn from 'classnames';
 import NextLink from 'next/link';
-import {ExternalLink} from 'components/ExternalLink';
+import { ExternalLink } from 'components/ExternalLink';
 
 interface NavButtonLinkProps {
   href: string;

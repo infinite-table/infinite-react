@@ -1,14 +1,10 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 
 export interface IntroProps {
   children?: React.ReactNode;
 }
 
-function Intro({children}: IntroProps) {
+function Intro({ children }: IntroProps) {
   return (
     <div className="text-xl text-primary dark:text-primary-dark leading-relaxed">
       {children}

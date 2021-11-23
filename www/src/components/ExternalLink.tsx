@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 import * as React from 'react';
 
 export function ExternalLink({
@@ -11,7 +7,11 @@ export function ExternalLink({
   ...props
 }: JSX.IntrinsicElements['a']) {
   return (
-    <a href={href} target={target ?? '_blank'} rel="noopener" {...props}>
+    <a
+      href={href}
+      target={target ?? '_blank'}
+      rel="noopener"
+      {...props}>
       {children}
     </a>
   );

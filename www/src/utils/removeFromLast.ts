@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 /**
  * Remove one string from another, from the end.
  * @param path A string

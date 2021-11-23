@@ -1,7 +1,3 @@
-/*
- * Copyright (c) Facebook, Inc. and its affiliates.
- */
-
 /**
  * Ported from gatsby-plugin-twitter
  * https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-plugin-twitter
@@ -40,7 +36,8 @@ export function useTwitter() {
       if (
         typeof (window as any).twttr !== 'undefined' &&
         (window as any).twttr.widgets &&
-        typeof (window as any).twttr.widgets.load === 'function'
+        typeof (window as any).twttr.widgets.load ===
+          'function'
       ) {
         (window as any).twttr.widgets.load();
       }
