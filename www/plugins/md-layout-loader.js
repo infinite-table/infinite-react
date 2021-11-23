@@ -1,7 +1,7 @@
 const fm = require('gray-matter');
 
 const toUpperFirst = (str) => {
-  return str[0] + str.slice(1);
+  return str[0].toUpperCase() + str.slice(1);
 };
 
 // Makes mdx in next.js suck less by injecting necessary exports so that
