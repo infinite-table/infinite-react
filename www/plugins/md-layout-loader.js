@@ -1,5 +1,9 @@
 const fm = require('gray-matter');
 
+const toUpperFirst = (str) => {
+  return str[0] + str.slice(1);
+};
+
 // Makes mdx in next.js suck less by injecting necessary exports so that
 // the docs are still readable on github.
 //
@@ -17,8 +21,11 @@ module.exports = async function (src) {
   const { content, data } = fm(src);
   console.log({ data });
   const layout = data.layout || 'Learn';
+
   const code =
-    `import withLayout from '@www/components/Layout/Layout${layout}';
+    `import withLayout from '@www/components/Layout/Layout${toUpperFirst(
+      layout
+    )}';
 
 export default withLayout(${JSON.stringify(data)})
 
