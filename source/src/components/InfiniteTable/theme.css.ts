@@ -124,42 +124,40 @@ const RowVars = {
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };
 
-globalStyle(':root', {
-  vars: {
-    [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
-    [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
-    [ThemeVars.spacing[2]]: '0.25rem' /* 4px when 1rem=16px */,
-    [ThemeVars.spacing[3]]: '0.5rem' /* 8px when 1rem=16px */,
-    [ThemeVars.spacing[4]]: '0.75rem' /* 12px when 1rem=16px */,
-    [ThemeVars.spacing[5]]: '1rem' /* 16px when 1rem=16px */,
-    [ThemeVars.spacing[6]]: '1.25rem' /* 20px when 1rem=16px */,
-    [ThemeVars.spacing[7]]: '1.5rem' /* 24px when 1rem=16px */,
-    [ThemeVars.spacing[8]]: '2.25rem' /* 36px when 1rem=16px */,
-    [ThemeVars.spacing[9]]: '3rem' /* 48px when 1rem=16px */,
-    [ThemeVars.spacing[10]]: '4rem' /* 64px when 1rem=16px */,
+const LightTheme = {
+  [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
+  [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
+  [ThemeVars.spacing[2]]: '0.25rem' /* 4px when 1rem=16px */,
+  [ThemeVars.spacing[3]]: '0.5rem' /* 8px when 1rem=16px */,
+  [ThemeVars.spacing[4]]: '0.75rem' /* 12px when 1rem=16px */,
+  [ThemeVars.spacing[5]]: '1rem' /* 16px when 1rem=16px */,
+  [ThemeVars.spacing[6]]: '1.25rem' /* 20px when 1rem=16px */,
+  [ThemeVars.spacing[7]]: '1.5rem' /* 24px when 1rem=16px */,
+  [ThemeVars.spacing[8]]: '2.25rem' /* 36px when 1rem=16px */,
+  [ThemeVars.spacing[9]]: '3rem' /* 48px when 1rem=16px */,
+  [ThemeVars.spacing[10]]: '4rem' /* 64px when 1rem=16px */,
 
-    [ThemeVars.fontSize[0]]: '0.5rem' /* 8px when 1rem=16px */,
-    [ThemeVars.fontSize[1]]: '0.625rem' /* 10px when 1rem=16px */,
-    [ThemeVars.fontSize[2]]: '0.75rem' /* 12px when 1rem=16px */,
-    [ThemeVars.fontSize[3]]: '0.875rem' /* 14px when 1rem=16px */,
-    [ThemeVars.fontSize[4]]: '1rem' /* 16px when 1rem=16px */,
-    [ThemeVars.fontSize[5]]: '1.25rem' /* 20px when 1rem=16px */,
-    [ThemeVars.fontSize[6]]: '1.5rem' /* 24px when 1rem=16px */,
-    [ThemeVars.fontSize[7]]: '2.25rem' /* 36px when 1rem=16px */,
+  [ThemeVars.fontSize[0]]: '0.5rem' /* 8px when 1rem=16px */,
+  [ThemeVars.fontSize[1]]: '0.625rem' /* 10px when 1rem=16px */,
+  [ThemeVars.fontSize[2]]: '0.75rem' /* 12px when 1rem=16px */,
+  [ThemeVars.fontSize[3]]: '0.875rem' /* 14px when 1rem=16px */,
+  [ThemeVars.fontSize[4]]: '1rem' /* 16px when 1rem=16px */,
+  [ThemeVars.fontSize[5]]: '1.25rem' /* 20px when 1rem=16px */,
+  [ThemeVars.fontSize[6]]: '1.5rem' /* 24px when 1rem=16px */,
+  [ThemeVars.fontSize[7]]: '2.25rem' /* 36px when 1rem=16px */,
 
-    [ThemeVars.fontFamily]: 'inherit',
-    [ThemeVars.color.color]: '#484848',
-    [ThemeVars.color.accent]: '#ff7043',
-    [ThemeVars.borderRadius]: ThemeVars.spacing[2],
-    [ThemeVars.background]: 'white',
-    [ThemeVars.minHeight]: '100px',
-    ...LoadMaskVars,
-    ...HeaderCellVars,
-    ...HeaderVars,
-    ...CellVars,
-    ...RowVars,
-  },
-});
+  [ThemeVars.fontFamily]: 'inherit',
+  [ThemeVars.color.color]: '#484848',
+  [ThemeVars.color.accent]: '#ff7043',
+  [ThemeVars.borderRadius]: ThemeVars.spacing[2],
+  [ThemeVars.background]: 'white',
+  [ThemeVars.minHeight]: '100px',
+  ...LoadMaskVars,
+  ...HeaderCellVars,
+  ...HeaderVars,
+  ...CellVars,
+  ...RowVars,
+};
 
 const DarkTheme = {
   [ThemeVars.background]: '#101419',
@@ -174,6 +172,21 @@ const DarkTheme = {
   [ThemeVars.components.Row.color]: '#c3c3c3',
 };
 
+globalStyle(':root', {
+  vars: LightTheme,
+  '@media': {
+    '(prefers-color-scheme: dark)': {
+      vars: DarkTheme,
+    },
+  },
+});
+
+globalStyle('.light', {
+  vars: LightTheme,
+});
+globalStyle('.infinite-light', {
+  vars: LightTheme,
+});
 globalStyle('.dark', {
   vars: DarkTheme,
 });

@@ -141,7 +141,7 @@ export default function Nav() {
           {!isOpen ? <IconHamburger /> : <IconClose />}
         </button>
         <NextLink href="/">
-          <a className="inline-flex text-l font-normal items-center text-primary dark:text-primary-dark py-1 mr-0 sm:mr-10 whitespace-nowrap">
+          <a className=" inline-flex text-l font-normal items-center text-primary dark:text-primary-dark py-1 pr-10 whitespace-nowrap">
             <Logo className="text-sm mr-2 w-8 h-8 text-link dark:text-link-dark" />
             Infinite Table
           </a>

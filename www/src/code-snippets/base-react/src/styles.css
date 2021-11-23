@@ -26,7 +26,6 @@ body,
   padding: 5px;
   overflow: hidden;
 }
-#root > .Infinite,
-#root > .ITable {
+.Infinite {
   flex: 1;
 }

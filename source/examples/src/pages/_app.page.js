@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <div
       // className="__next it--theme-dark"
-      className="__next dark"
+      className="__next"
       style={{ '--it-row-height': '3rem' }}
     >
       <Component {...pageProps} />

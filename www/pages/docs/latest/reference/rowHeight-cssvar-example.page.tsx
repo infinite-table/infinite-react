@@ -14,6 +14,8 @@ export default function App() {
       style={
         {
           position: 'relative',
+          flex: 1,
+          display: 'flex',
           '--row-height': '70px',
         } as CSSProperties
       }>
@@ -21,13 +23,6 @@ export default function App() {
         <InfiniteTable<Person>
           rowHeight={'--row-height'}
           columns={columns}
-          domProps={{
-            style: {
-              position: 'absolute',
-              height: '100%',
-              width: '100%',
-            },
-          }}
         />
       </DataSource>
     </div>

@@ -20,4 +20,19 @@ export const data: Person[] = [
     FirstName: 'Bill',
     Age: 5,
   },
+  {
+    Id: 4,
+    FirstName: 'Mark',
+    Age: 25,
+  },
+  {
+    Id: 5,
+    FirstName: 'John',
+    Age: 38,
+  },
+  {
+    Id: 6,
+    FirstName: 'Peter',
+    Age: 14,
+  },
 ];
