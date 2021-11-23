@@ -1,5 +1,4 @@
 const path = require('path');
-
 const {
   createVanillaExtractPlugin,
 } = require('@vanilla-extract/next-plugin');
