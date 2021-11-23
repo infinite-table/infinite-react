@@ -57,9 +57,9 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       header: 'Country',
       width: 300,
       columnGroup: 'location',
-      render: ({ value, enhancedData }) => {
-        console.log(enhancedData);
-        const { isGroupRow, groupKeys } = enhancedData;
+      render: ({ value, rowInfo }) => {
+        console.log(rowInfo);
+        const { isGroupRow, groupKeys } = rowInfo;
         if (isGroupRow) {
           return <>Group for {groupKeys?.join(',')}</>;
         }
@@ -116,12 +116,12 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       type: 'number',
       header: 'Salary',
       width: 500,
-      render: ({ value, enhancedData }) => {
-        if (enhancedData.isGroupRow) {
+      render: ({ value, rowInfo }) => {
+        if (rowInfo.isGroupRow) {
           return (
             <>
-              Avg salary <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}
-              <b>{enhancedData.reducerResults![0]}</b>
+              Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+              <b>{rowInfo.reducerResults![0]}</b>
             </>
           );
         }

@@ -18,12 +18,11 @@ import { createPortal } from 'react-dom';
 import { SortIcon } from '../icons/SortIcon';
 import { cursor, userSelect } from '../../utilities.css';
 import {
-  HeaderCellCls,
-  // HeaderCellCls,
+  CellCls,
+  HeaderCellRecipe,
   HeaderCellProxy,
-  HeaderCellVariants,
+  HeaderSortIconCls,
 } from './header.css';
-import { CellCls, CellClsVariants } from '../cell.css';
 
 const defaultStyle: React.CSSProperties = {
   position: 'absolute' as 'absolute',
@@ -63,7 +62,7 @@ export function InfiniteTableHeaderCell<T>(
       index={
         column.computedMultiSort ? column.computedSortIndex + 1 : undefined
       }
-      className={`${baseCls}__sort-icon`}
+      className={`${baseCls}__sort-icon ${HeaderSortIconCls}`}
       direction={
         column.computedSorted ? (column.computedSortedAsc ? 1 : -1) : 0
       }
@@ -156,13 +155,13 @@ export function InfiniteTableHeaderCell<T>(
           userSelect.none,
           column.computedSortable ? cursor.pointer : '',
 
-          useCellClassName(column, [baseCls, InfiniteTableCellClassName], []),
-          HeaderCellCls,
+          useCellClassName(
+            column,
+            [baseCls, InfiniteTableCellClassName],
+            HeaderCellRecipe,
+            { dragging },
+          ),
           CellCls,
-
-          dragging
-            ? `${InfiniteTableCellClassName}--dragging ${baseCls}--dragging ${CellClsVariants.dragging} ${HeaderCellVariants.dragging}`
-            : '',
         )}
         cssEllipsis={column.headerCssEllipsis ?? column.cssEllipsis ?? true}
         afterChildren={sortTool}

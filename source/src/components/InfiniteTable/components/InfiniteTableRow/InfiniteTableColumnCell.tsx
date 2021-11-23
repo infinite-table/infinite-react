@@ -19,8 +19,7 @@ import { internalProps } from '../../internalProps';
 import { InfiniteTableColumnCellProps } from './InfiniteTableCellTypes';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
-import { height, position, top } from '../../utilities.css';
-import { ColumnCellVariants } from '../cell.css';
+import { ColumnCellRecipe } from '../cell.css';
 
 const { rootClassName } = internalProps;
 const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
@@ -165,13 +164,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       style={style}
       cssEllipsis={column.cssEllipsis ?? true}
       className={join(
-        position.absolute,
-        height['100%'],
-        top[0],
         useCellClassName(
           column,
           [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
-          [ColumnCellVariants],
+          ColumnCellRecipe,
+          { dragging: false },
         ),
         colClassName,
       )}

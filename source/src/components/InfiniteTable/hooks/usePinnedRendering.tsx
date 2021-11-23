@@ -21,6 +21,10 @@ import { join } from '../../../utils/join';
 import { VirtualScrollContainer } from '../../VirtualScrollContainer';
 import { SpacePlaceholder } from '../../VirtualList/SpacePlaceholder';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import {
+  PinnedRowsClsVariants,
+  PinnedRowsContainerClsVariants,
+} from '../InfiniteCls.css';
 
 type UsePinnedParams<T> = {
   getState: () => InfiniteTableState<T>;
@@ -83,7 +87,7 @@ type PinnedRowsContainerProps = {
   repaintId: number | string;
 };
 
-const PinnedRowsContainerClassName = `ITablePinnedRows`;
+const PinnedRowsContainerClassName = `InfinitePinnedRows`;
 function PinnedRowsContainer(props: PinnedRowsContainerProps) {
   const {
     maxWidth,
@@ -138,8 +142,10 @@ function PinnedRowsContainer(props: PinnedRowsContainerProps) {
     updateScroll,
     className: join(
       `${PinnedRowsContainerClassName}`,
+      PinnedRowsClsVariants[pinning === 'start' ? 'pinnedStart' : 'pinnedEnd'],
       `${PinnedRowsContainerClassName}--pinned-${pinning}`,
       `${PinnedRowsContainerClassName}--overflow`,
+      PinnedRowsClsVariants.overflow,
     ),
   };
 
@@ -159,6 +165,9 @@ function PinnedRowsContainer(props: PinnedRowsContainerProps) {
         }}
         onContainerScroll={pinnedScrollListener?.setScrollPosition}
         className={join(
+          PinnedRowsContainerClsVariants({
+            pinned: pinning,
+          }),
           `${PinnedRowsContainerClassName}Container`,
           `${PinnedRowsContainerClassName}Container--pinned-${pinning}`,
         )}

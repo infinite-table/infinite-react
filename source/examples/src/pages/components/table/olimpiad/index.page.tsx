@@ -19,17 +19,16 @@ const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
       header: 'Group',
       sortable: false,
 
-      render: ({ value, enhancedData }) => {
+      render: ({ value, rowInfo }) => {
         return (
           <div
             style={{
               paddingLeft:
-                ((enhancedData.groupNesting || 0) +
-                  (enhancedData.isGroupRow ? 0 : 1)) *
+                ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
                 30,
             }}
           >
-            {enhancedData.groupKeys ? enhancedData.value : value ?? null}
+            {rowInfo.groupKeys ? rowInfo.value : value ?? null}
           </div>
         );
       },
@@ -42,13 +41,13 @@ const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
     'year',
     {
       field: 'year',
-      render: ({ value, enhancedData }) => {
-        if (enhancedData.isGroupRow) {
-          console.log(enhancedData);
+      render: ({ value, rowInfo }) => {
+        if (rowInfo.isGroupRow) {
+          console.log(rowInfo);
           return (
             <>
-              Total <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}
-              <b>{enhancedData.reducerResults![0]} gold medals</b>
+              Total <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+              <b>{rowInfo.reducerResults![0]} gold medals</b>
             </>
           );
         }

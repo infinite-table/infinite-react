@@ -5,9 +5,9 @@ import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
 
 import { internalProps } from '../../internalProps';
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
-import { cellStyle, columnAlignCellStyle } from './style.css';
+
 import { cssEllipsisClassName, justifyContent } from '../../utilities.css';
-import { CellCls, CellClsVariants } from '../cell.css';
+import { CellCls, CellClsVariants, columnAlignCellStyle } from '../cell.css';
 
 const { rootClassName } = internalProps;
 
@@ -63,7 +63,6 @@ function InfiniteTableCellFn<T>(
       style={style}
       data-name={`Cell`}
       className={join(
-        cellStyle,
         domProps.className,
 
         columnAlignCellStyle[column.align ?? 'start'],

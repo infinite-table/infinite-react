@@ -1,67 +1,49 @@
+import { HeaderCellVariantsType } from '../components/InfiniteTableHeader/header.css';
 import { InfiniteTableComputedColumn } from '../types';
 
-type CellClassNameWithVariants = {
-  first: string;
-  groupByField: string;
-  last: string;
-  firstInCategory: string;
-  lastInCategory: string;
-  pinnedStart: string;
-  pinnedEnd: string;
-  unpinned: string;
-};
 export function useCellClassName<T>(
   column: InfiniteTableComputedColumn<T>,
   baseClasses: string[],
-  variants: CellClassNameWithVariants[],
+  variants: (x: HeaderCellVariantsType) => string,
+  extraFlags: { dragging: boolean },
 ) {
   const result = [...baseClasses];
-  //TODO implement this with new approach
+  const variantObject: HeaderCellVariantsType = {
+    first: column.computedFirst,
+    last: column.computedLast,
+    groupByField: !!column.groupByField,
+    firstInCategory: column.computedFirstInCategory,
+    lastInCategory: column.computedLastInCategory,
+    pinned: column.computedPinned || false,
+    dragging: extraFlags.dragging,
+  };
+
+  const theVariant = variants(variantObject);
+
+  result.push(theVariant);
+
   if (column.computedFirst) {
-    result.push(
-      ...baseClasses.map((c) => `${c}--first`),
-      ...variants.map((v) => v.first),
-    );
+    result.push(...baseClasses.map((c) => `${c}--first`));
   }
 
   if (column.groupByField) {
-    result.push(
-      ...baseClasses.map((c) => `${c}--group-column`),
-      ...variants.map((v) => v.groupByField),
-    );
+    result.push(...baseClasses.map((c) => `${c}--group-column`));
   }
   if (column.computedLast) {
-    result.push(
-      ...baseClasses.map((c) => `${c}--last`),
-      ...variants.map((v) => v.last),
-    );
+    result.push(...baseClasses.map((c) => `${c}--last`));
   }
   if (column.computedFirstInCategory) {
-    result.push(
-      ...baseClasses.map((c) => `${c}--first-in-category`),
-      ...variants.map((v) => v.firstInCategory),
-    );
+    result.push(...baseClasses.map((c) => `${c}--first-in-category`));
   }
   if (column.computedLastInCategory) {
-    result.push(
-      ...baseClasses.map(
-        (c) => `${c}--last-in-category`,
-        ...variants.map((v) => v.lastInCategory),
-      ),
-    );
+    result.push(...baseClasses.map((c) => `${c}--last-in-category`));
   }
   if (column.computedPinned) {
     result.push(
       ...baseClasses.map((c) => `${c}--pinned-${column.computedPinned}`),
-      ...variants.map((v) =>
-        column.computedPinned === 'start' ? v.pinnedStart : v.pinnedEnd,
-      ),
     );
   } else {
-    result.push(
-      ...baseClasses.map((c) => `${c}--unpinned`),
-      ...variants.map((v) => v.unpinned),
-    );
+    result.push(...baseClasses.map((c) => `${c}--unpinned`));
   }
 
   return result.filter(Boolean).join(' ');

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import { VirtualBrain } from '../../VirtualBrain';
+import { InfiniteClsScrolling } from '../InfiniteCls.css';
 import { internalProps } from '../internalProps';
 import { useInfiniteTable } from './useInfiniteTable';
 
@@ -64,9 +65,9 @@ export const useOnContainerScroll = <T>({
         return;
       }
       if (scrolling) {
-        classList.add(TableClassName__Scrolling);
+        classList.add(InfiniteClsScrolling, TableClassName__Scrolling);
       } else {
-        classList.remove(TableClassName__Scrolling);
+        classList.remove(InfiniteClsScrolling, TableClassName__Scrolling);
       }
     }
   }, []);

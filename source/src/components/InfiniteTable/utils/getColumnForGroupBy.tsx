@@ -4,6 +4,7 @@ import { InfiniteTableColumnRenderParam } from '..';
 import { join } from '../../../utils/join';
 import { DataSourceGroupRowsBy } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
+import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
 import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
@@ -135,12 +136,7 @@ export function getSingleGroupColumn<T>(
       }
       return (
         <div
-          className={join(display.flex, alignItems.center)}
-          style={{
-            paddingInlineStart: `calc(${
-              rowInfo.groupNesting! - 1
-            } * var(--ITableRow-group-column-nesting))`,
-          }}
+          className={join(display.flex, alignItems.center, GroupRowExpanderCls)}
         >
           <ExpanderIcon
             expanded={!rowInfo.collapsed}

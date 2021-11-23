@@ -4,6 +4,7 @@ import {
   style,
   styleVariants,
 } from '@vanilla-extract/css';
+
 import { ThemeVars } from './theme.css';
 
 const borderBox: CSSProperties = {
@@ -17,18 +18,6 @@ globalStyle(`${boxSizingBorderBox} *`, borderBox);
 globalStyle(`${boxSizingBorderBox} *:before`, borderBox);
 globalStyle(`${boxSizingBorderBox} *:after`, borderBox);
 
-export const absoluteCover = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-});
-
-export const displayFlex = style({
-  display: 'flex',
-});
-
 export const position = styleVariants({
   relative: { position: 'relative' },
   absolute: { position: 'absolute' },
@@ -39,6 +28,10 @@ export const position = styleVariants({
 export const fill = styleVariants({
   currentColor: { fill: 'currentColor' },
   accentColor: { fill: ThemeVars.color.accent },
+});
+
+export const background = styleVariants({
+  inherit: { background: 'inherit' },
 });
 
 export const transformTranslateZero = style({
@@ -59,10 +52,6 @@ export const zIndex = styleVariants({
   1000: { zIndex: 1000 },
   10_000: { zIndex: 10_000 },
   100_000: { zIndex: 100_000 },
-});
-
-export const userSelectNone = style({
-  userSelect: 'none',
 });
 
 export const display = styleVariants({
@@ -136,4 +125,12 @@ export const cssEllipsisClassName = style([
   whiteSpace.nowrap,
   textOverflow.ellipsis,
   overflow.hidden,
+]);
+
+export const absoluteCover = style([
+  position.absolute,
+  top[0],
+  left[0],
+  right[0],
+  bottom[0],
 ]);

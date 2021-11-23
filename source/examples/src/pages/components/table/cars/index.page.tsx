@@ -19,17 +19,16 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
       header: 'Group',
       sortable: false,
 
-      render: ({ value, enhancedData }) => {
+      render: ({ value, rowInfo }) => {
         return (
           <div
             style={{
               paddingLeft:
-                ((enhancedData.groupNesting || 0) +
-                  (enhancedData.isGroupRow ? 0 : 1)) *
+                ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
                 30,
             }}
           >
-            {enhancedData.groupKeys ? enhancedData.value : value ?? null}
+            {rowInfo.groupKeys ? rowInfo.value : value ?? null}
           </div>
         );
       },
@@ -43,8 +42,8 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
     'cat',
     {
       field: 'category',
-      render: ({ value, enhancedData }) => (
-        <>{enhancedData.isGroupRow ? 'hello' : value}</>
+      render: ({ value, rowInfo }) => (
+        <>{rowInfo.isGroupRow ? 'hello' : value}</>
       ),
     },
   ],
@@ -53,12 +52,12 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
     {
       field: 'sales',
       type: 'number',
-      render: ({ value, enhancedData }) => {
-        if (enhancedData.isGroupRow) {
+      render: ({ value, rowInfo }) => {
+        if (rowInfo.isGroupRow) {
           return (
             <>
-              Total sales <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}
-              <b>{enhancedData.reducerResults![0]}</b>
+              Total sales <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+              <b>{rowInfo.reducerResults![0]}</b>
             </>
           );
         }
@@ -71,8 +70,8 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
     {
       field: 'year',
       type: 'number',
-      render: ({ value, enhancedData }) => {
-        return enhancedData.isGroupRow ? null : `Year: ${value}`;
+      render: ({ value, rowInfo }) => {
+        return rowInfo.isGroupRow ? null : `Year: ${value}`;
       },
     },
   ],

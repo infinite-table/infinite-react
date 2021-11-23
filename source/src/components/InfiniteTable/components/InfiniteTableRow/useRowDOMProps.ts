@@ -9,14 +9,15 @@ import {
 import { join } from '../../../../utils/join';
 import {
   InfiniteTableRowClassName,
-  InfiniteTableElement__hover,
+  InfiniteTableRowClassName__hover,
 } from './InfiniteTableRowClassName';
 
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
 import { InfiniteTableState } from '../../types/InfiniteTableState';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
-import { position, left, top } from '../../utilities.css';
-import { RowCls, RowClsVariants } from './row.css';
+import { RowClsRecipe, RowHoverCls } from './row.css';
+import { ThemeVars } from '../../theme.css';
+import { stripVar } from '../../../../utils/stripVar';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -90,22 +91,21 @@ export function useRowDOMProps<T>(
       : rowClassName;
 
   const className = join(
-    position.absolute,
-    top[0],
-    left[0],
     InfiniteTableRowClassName,
-    RowCls,
+
+    RowClsRecipe({
+      groupRow: rowInfo.isGroupRow,
+      inlineGroupRow: inlineGroupRoot,
+      zebra: showHoverRows ? (odd ? 'odd' : 'even') : false,
+      showHoverRows,
+    }),
     `${InfiniteTableRowClassName}--${
       rowInfo.isGroupRow ? 'group' : 'normal'
     }-row`,
-    rowInfo.isGroupRow ? RowClsVariants.groupRow : RowClsVariants.normal,
-    inlineGroupRoot
-      ? `${InfiniteTableRowClassName}--inline-group-row ${RowClsVariants.inlineGroupRow}`
-      : '',
+
+    inlineGroupRoot ? `${InfiniteTableRowClassName}--inline-group-row` : '',
     showZebraRows
-      ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'} ${
-          odd ? RowClsVariants.odd : RowClsVariants.even
-        }`
+      ? `${InfiniteTableRowClassName}--${odd ? 'odd' : 'even'}`
       : null,
     showHoverRows ? `${InfiniteTableRowClassName}--show-hover` : null,
     domProps?.className,
@@ -136,7 +136,10 @@ export function useRowDOMProps<T>(
       ];
 
       const rows = parentNode.querySelectorAll(hoverSelector.join(','));
-      rows.forEach((row) => row.classList.add(InfiniteTableElement__hover));
+
+      rows.forEach((row) =>
+        row.classList.add(InfiniteTableRowClassName__hover, RowHoverCls),
+      );
     },
     [initialMouseEnter, showHoverRows],
   );
@@ -157,11 +160,19 @@ export function useRowDOMProps<T>(
         `.${InfiniteTableRowClassName}[data-hover-index="${rowIndex}"]`,
       ];
       const rows = parentNode.querySelectorAll(hoverSelector.join(','));
-      rows.forEach((row) => row.classList.remove(InfiniteTableElement__hover));
+      rows.forEach((row) =>
+        row.classList.remove(InfiniteTableRowClassName__hover, RowHoverCls),
+      );
     },
     [initialMouseLeave, showHoverRows],
   );
 
+  if (rowInfo.isGroupRow && groupRenderStrategy === 'single-column') {
+    style = style || {};
+    //@ts-ignore
+    style[stripVar(ThemeVars.components.Row.groupNesting)] =
+      rowInfo.groupNesting! - 1;
+  }
   return {
     domRef,
     domProps: {

@@ -12,6 +12,7 @@ import { renderColumnHeaderGroups } from './renderColumnHeaderGroups';
 import { useEffect } from 'react';
 import { ScrollPosition } from '../../../types/ScrollPosition';
 import { display, flexFlow } from '../../utilities.css';
+import { HeaderClsRecipe } from './header.css';
 
 const { rootClassName } = internalProps;
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -27,9 +28,10 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
   const {
     columns,
     scrollable,
-    classNameModifiers,
+
     brain,
     scrollListener,
+    pinning,
     totalWidth,
     availableWidth,
     ...domProps
@@ -112,10 +114,16 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
       className={join(
         TableHeaderClassName,
         `${TableHeaderClassName}--unvirtualized`,
+        pinning
+          ? `${TableHeaderClassName}--pinned ${TableHeaderClassName}-${pinning}`
+          : '',
+        scrollable ? `${TableHeaderClassName}--overflow` : '',
         domProps.className,
-        ...(classNameModifiers || [])!
-          .filter(Boolean)
-          .map((modifier) => `${TableHeaderClassName}--${modifier}`),
+        HeaderClsRecipe({
+          pinned: pinning,
+          virtualized: false,
+          overflow: scrollable,
+        }),
       )}
       style={style}
     >

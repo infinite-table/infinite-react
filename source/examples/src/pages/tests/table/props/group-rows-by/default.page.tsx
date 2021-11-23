@@ -14,17 +14,16 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
     {
       type: 'number',
       header: 'Group',
-      render: ({ value, enhancedData }) => {
+      render: ({ value, rowInfo }) => {
         return (
           <div
             style={{
               paddingLeft:
-                ((enhancedData.groupNesting || 0) +
-                  (enhancedData.isGroupRow ? 0 : 1)) *
+                ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
                 30,
             }}
           >
-            {enhancedData.groupKeys ? enhancedData.value : value ?? null}
+            {rowInfo.groupKeys ? rowInfo.value : value ?? null}
           </div>
         );
       },
@@ -64,12 +63,12 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
       field: 'salary',
       type: 'number',
       width: 300,
-      render: ({ value, enhancedData }) => {
-        if (enhancedData.isGroupRow) {
+      render: ({ value, rowInfo }) => {
+        if (rowInfo.isGroupRow) {
           return (
             <>
-              Avg salary <b>{enhancedData.groupKeys?.join(', ')}</b>:{' '}
-              <b>{enhancedData.reducerResults![0]}</b>
+              Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+              <b>{rowInfo.reducerResults![0]}</b>
             </>
           );
         }

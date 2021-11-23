@@ -29,9 +29,13 @@ export default describe('Column visibility uncontrolled', () => {
 
     expect(colIds).toEqual(['make', 'model', 'price', 'year']);
 
-    expect(await page.evaluate(() => (window as any).calls)).toEqual([
-      [['id', false]],
-    ]);
+    expect(
+      await page.evaluate(() => {
+        const fnCalls = (window as any).calls;
+
+        return fnCalls[fnCalls.length - 1];
+      }),
+    ).toEqual([['id', false]]);
   });
 
   it('should display all cols correctly when clearing the visibility map', async () => {

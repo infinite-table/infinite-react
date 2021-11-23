@@ -74,7 +74,7 @@ const groupOptions: InfiniteTablePropGroupRenderStrategy[] = [
 
 export default function GroupByExample() {
   const [groupRenderStrategy, setGroupRenderStrategy] =
-    useState<InfiniteTablePropGroupRenderStrategy>('inline');
+    useState<InfiniteTablePropGroupRenderStrategy>('single-column');
 
   const [hideEmptyGroupColumns, setHide] = useState(true);
 
@@ -90,12 +90,11 @@ export default function GroupByExample() {
           field: 'department',
           valueGetter:
             groupRenderStrategy === 'inline'
-              ? ({ enhancedData }) => {
-                  const { groupBy, parents } = enhancedData;
+              ? ({ rowInfo }) => {
+                  const { groupBy, parents } = rowInfo;
 
                   const groupData =
-                    parents?.[groupBy?.indexOf('department') ?? -1] ||
-                    enhancedData;
+                    parents?.[groupBy?.indexOf('department') ?? -1] || rowInfo;
 
                   return (
                     <>
@@ -113,10 +112,10 @@ export default function GroupByExample() {
           field: 'team',
           valueGetter:
             groupRenderStrategy === 'inline'
-              ? ({ enhancedData }) => {
-                  const { groupBy, parents } = enhancedData;
+              ? ({ rowInfo }) => {
+                  const { groupBy, parents } = rowInfo;
                   const groupData =
-                    parents?.[groupBy?.indexOf('team') ?? -1] || enhancedData;
+                    parents?.[groupBy?.indexOf('team') ?? -1] || rowInfo;
 
                   return (
                     <>

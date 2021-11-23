@@ -1,7 +1,11 @@
 import { FocusEvent } from 'react';
 import { InfiniteTableClassName } from '..';
 import { join } from '../../../utils/join';
-import { InfiniteCls, InfiniteClsShiftingColumns } from '../InfiniteCls.css';
+import {
+  InfiniteCls,
+  InfiniteClsRecipe,
+  InfiniteClsShiftingColumns,
+} from '../InfiniteCls.css';
 import { rafFn } from '../utils/rafFn';
 import { useInfiniteTable } from './useInfiniteTable';
 
@@ -105,6 +109,15 @@ export function useDOMProps<T>(
     computed.computedPinnedEndOverflow
       ? `${InfiniteTableClassName}--has-pinned-end-overflow`
       : null,
+
+    InfiniteClsRecipe({
+      hasPinnedStart: !!computedPinnedStartColumnsWidth,
+      hasPinnedEnd: !!computedPinnedEndColumnsWidth,
+      hasPinnedStartOverflow: !!computed.computedPinnedStartOverflow,
+      hasPinnedEndOverflow: !!computed.computedPinnedEndOverflow,
+      focused,
+      focusedWithin,
+    }),
   );
 
   domProps.className = className;

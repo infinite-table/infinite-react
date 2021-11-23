@@ -271,6 +271,7 @@ function useHideEmptyGroupColumns<T>(groupRowsMap: GroupRowsMap<T>) {
 
     const { computedColumns } = currentState;
 
+    let updated = false;
     const columnVisibility = new Map(currentState.columnVisibility);
     const cols = computedColumns;
 
@@ -286,6 +287,7 @@ function useHideEmptyGroupColumns<T>(groupRowsMap: GroupRowsMap<T>) {
         return;
       }
       const shouldBeHidden = index > expandedGroupsLevel;
+      updated = true;
       if (shouldBeHidden && hideEmptyGroupColumns) {
         columnVisibility.set(colId, false);
       } else {
@@ -293,7 +295,9 @@ function useHideEmptyGroupColumns<T>(groupRowsMap: GroupRowsMap<T>) {
       }
     });
 
-    componentActions.columnVisibility = columnVisibility;
+    if (updated) {
+      componentActions.columnVisibility = columnVisibility;
+    }
   }, [
     getDataSourceState,
     groupRenderStrategy,

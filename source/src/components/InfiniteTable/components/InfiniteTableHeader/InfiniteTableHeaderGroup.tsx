@@ -4,12 +4,12 @@ import { join } from '../../../../utils/join';
 
 import { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
 import { rootClassName } from '../../internalProps';
+import { cssEllipsisClassName } from '../../utilities.css';
 import {
-  alignItems,
-  display,
-  flexFlow,
-  cssEllipsisClassName,
-} from '../../utilities.css';
+  HeaderGroupCls,
+  HeaderGroup_Children,
+  HeaderGroup_Header,
+} from './header.css';
 
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
@@ -34,8 +34,7 @@ export function InfiniteTableHeaderGroup<T>(
     <div
       data-group-id={columnGroup.id}
       className={join(
-        flexFlow.column,
-        display.flex,
+        HeaderGroupCls,
         TableHeaderGroupClassName,
         `${TableHeaderGroupClassName}--unvirtualized`,
       )}
@@ -44,9 +43,7 @@ export function InfiniteTableHeaderGroup<T>(
       <div
         className={join(
           `${TableHeaderGroupClassName}__header`,
-          flexFlow.row,
-          display.flex,
-          alignItems.center,
+          HeaderGroup_Header,
         )}
         style={{ height: headerHeight }}
       >
@@ -62,9 +59,7 @@ export function InfiniteTableHeaderGroup<T>(
       <div
         className={join(
           `${TableHeaderGroupClassName}__children`,
-          display.flex,
-          flexFlow.row,
-          alignItems.stretch,
+          HeaderGroup_Children,
         )}
       >
         {props.children}

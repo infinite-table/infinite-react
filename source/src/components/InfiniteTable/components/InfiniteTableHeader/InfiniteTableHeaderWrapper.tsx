@@ -1,12 +1,11 @@
 import * as React from 'react';
 
-import { join } from '../../../../utils/join';
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { VirtualBrain } from '../../../VirtualBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { overflow, position, display, flexFlow } from '../../utilities.css';
 
 import { VerticalScrollbarPlaceholder } from '../ScrollbarPlaceholder';
+import { HeaderWrapperCls } from './header.css';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
 import { InfiniteTableHeaderUnvirtualized } from './InfiniteTableHeaderUnvirtualized';
 
@@ -54,6 +53,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       columns={computedUnpinnedColumns}
       repaintId={virtualizeHeader ? repaintId : undefined}
       brain={brain}
+      pinning={false}
       style={{
         position: 'absolute',
         left: computedPinnedStartWidth,
@@ -67,6 +67,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     <InfiniteTableHeaderUnvirtualized
       brain={brain}
       scrollable
+      pinning={false}
       columns={computedUnpinnedColumns}
       availableWidth={computedUnpinnedColumnsWidth}
       totalWidth={computedUnpinnedColumnsWidth}
@@ -75,14 +76,8 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
 
   return (
     <div
-      className={join(
-        overflow.hidden,
-        position.relative,
-        display.flex,
-        flexFlow.row,
-      )}
+      className={HeaderWrapperCls}
       style={{
-        background: 'var(--ITableHeader__background)',
         height: virtualizeHeader ? height : undefined,
       }}
     >
@@ -97,11 +92,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
           totalWidth={computedPinnedStartColumnsWidth}
           columns={computedPinnedStartColumns}
           scrollable={computedPinnedStartOverflow}
-          classNameModifiers={[
-            'pinned',
-            'pinned-start',
-            computedPinnedStartOverflow ? 'overflow' : '',
-          ]}
+          pinning={'start'}
           scrollListener={
             computedPinnedStartOverflow ? pinnedStartScrollListener : undefined
           }
@@ -119,11 +110,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
           availableWidth={computedPinnedEndWidth}
           totalWidth={computedPinnedEndColumnsWidth}
           scrollable={computedPinnedEndOverflow}
-          classNameModifiers={[
-            'pinned',
-            'pinned-end',
-            computedPinnedEndOverflow ? 'overflow' : '',
-          ]}
+          pinning={'end'}
           scrollListener={
             computedPinnedEndOverflow ? pinnedEndScrollListener : undefined
           }

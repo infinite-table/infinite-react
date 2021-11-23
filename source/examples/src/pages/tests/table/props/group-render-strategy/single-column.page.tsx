@@ -6,7 +6,6 @@ import {
   DataSourceGroupRowsBy,
   InfiniteTablePropColumns,
   InfiniteTableColumn,
-  GroupRowsState,
 } from '@infinite-table/infinite-react';
 import { Person, data } from './pivotData';
 

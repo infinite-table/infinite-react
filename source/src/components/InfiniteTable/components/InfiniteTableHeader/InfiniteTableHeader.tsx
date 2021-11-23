@@ -16,8 +16,7 @@ import { RawList } from '../../../RawList';
 
 import type { RenderItem } from '../../../RawList/types';
 import { ScrollPosition } from '../../../types/ScrollPosition';
-import { flexFlow } from '../../utilities.css';
-import { HeaderCls, HeaderClsVariants } from './header.css';
+import { HeaderClsRecipe } from './header.css';
 
 const debug = dbg('Header');
 const { rootClassName } = internalProps;
@@ -27,7 +26,7 @@ export const TableHeaderClassName = `${rootClassName}Header`;
 function InfiniteTableHeaderFn<T>(
   props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { repaintId, brain, columns, style, className } = props;
+  const { repaintId, brain, columns, style, className, pinning } = props;
   const {
     computed,
     componentState: { headerHeight },
@@ -69,15 +68,20 @@ function InfiniteTableHeaderFn<T>(
 
   const domRef = useRef<HTMLDivElement | null>(null);
 
+  const headerCls = HeaderClsRecipe({
+    pinned: pinning,
+    overflow: false,
+    virtualized: true,
+  });
+
   const domProps: React.HTMLProps<HTMLDivElement> = {
     ref: domRef,
     className: join(
       TableHeaderClassName,
-      HeaderCls,
-      HeaderClsVariants.virtualized,
-      flexFlow.row,
+
       `${TableHeaderClassName}--virtualized`,
       className,
+      headerCls,
     ),
     style,
   };

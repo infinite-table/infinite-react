@@ -5,11 +5,11 @@ import { useInternalProps } from '../../hooks/useInternalProps';
 import { join } from '../../../../utils/join';
 
 import { decamelize } from '../../../utils/decamelize';
-
-import { position } from '../../utilities.css';
+import { ThemeVars } from '../../theme.css';
+import { FooterCls } from '../../InfiniteCls.css';
 
 const defaultStyle: React.CSSProperties = {
-  padding: 'var(--infinite-space-2)',
+  padding: ThemeVars.spacing[2],
   textAlign: 'end',
   opacity: '1',
   visibility: 'visible',
@@ -88,7 +88,8 @@ export const InfiniteTableLicenseFooter = React.forwardRef(
         {...props}
         className={join(
           `${rootClassName}-Footer`,
-          position.relative,
+          FooterCls,
+
           props.className,
         )}
         style={defaultStyle}

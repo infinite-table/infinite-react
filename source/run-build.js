@@ -25,7 +25,7 @@ require('esbuild')
   .build({
     entryPoints: ['src/index.tsx'],
     bundle: true,
-    plugins: [vanillaExtractPlugin({ processCss })],
+    plugins: [vanillaExtractPlugin({ processCss, identifiers: 'short' })],
     define: {
       __DEV__: JSON.stringify(false),
       __VERSION__: JSON.stringify(require('./package.json').version),

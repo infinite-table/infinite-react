@@ -24,7 +24,7 @@ export default describe('Table', () => {
 
     expect(count).toEqual(12);
 
-    const expanderIcon = await page.$('.ITableIcon-expander--expanded');
+    const expanderIcon = await page.$('.InfiniteIcon-expander--expanded');
 
     // collapse Cuba
     await expanderIcon!.click();

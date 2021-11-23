@@ -8,7 +8,7 @@
     "start": "next start",
     "test": "rimraf .next && npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run test:browser\"",
-    "start-server": "http-server -s -p 3000 out",
+    "start-server": "http-server -s -p 3001 out",
     "test:browser": "jest --config=jest-browser.config.js --runInBand",
     "test:watch": "DEBUG=InfiniteTable:* jest --config=jest-browser.config.js --watch --runInBand",
     "//---- run test:watch with pattern example": "npm run test:watch -- --testPathPattern=x/y/z",

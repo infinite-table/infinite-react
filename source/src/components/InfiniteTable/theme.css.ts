@@ -68,6 +68,9 @@ export const ThemeVars = createGlobalThemeContract(
         oddBackground: 'row-odd-background',
         hoverBackground: 'row-hover-background',
         groupRowBackground: 'group-row-background',
+        groupRowColumnNesting: 'group-row-column-nesting',
+        groupNesting: 'dont-override-group-row-nesting-length',
+        pointerEventsWhileScrolling: 'row-pointer-events-while-scrolling',
       },
       ColumnCell: {
         background: 'column-cell-bg-dont-override',
@@ -116,7 +119,9 @@ const RowVars = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
   [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',
+  [ThemeVars.components.Row.groupRowColumnNesting]: '30px',
   [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
+  [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };
 
 globalStyle(':root', {
@@ -154,4 +159,24 @@ globalStyle(':root', {
     ...CellVars,
     ...RowVars,
   },
+});
+
+const DarkTheme = {
+  [ThemeVars.background]: '#101419',
+  [ThemeVars.components.Cell.border]: '1px solid #2a323d',
+  [ThemeVars.components.Header.color]: '#c3c3c3',
+  [ThemeVars.components.HeaderCell.background]: '#1b2129',
+  [ThemeVars.components.Header.background]:
+    ThemeVars.components.HeaderCell.background,
+  [ThemeVars.components.Row.hoverBackground]: '#3b4754',
+  [ThemeVars.components.Row.background]: ThemeVars.background,
+  [ThemeVars.components.Row.oddBackground]: '#242a31',
+  [ThemeVars.components.Row.color]: '#c3c3c3',
+};
+
+globalStyle('.dark', {
+  vars: DarkTheme,
+});
+globalStyle('.infinite-dark', {
+  vars: DarkTheme,
 });
