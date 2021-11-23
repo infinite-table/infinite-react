@@ -75,6 +75,7 @@ export function Preview({
   React.useEffect(() => {
     const iframeElement = iframeRef.current!;
     registerBundler(iframeElement, clientId.current);
+    // (window as any).iframeElement = iframeElement;
 
     const unsub = listen((message: any) => {
       if (message.type === 'resize') {
