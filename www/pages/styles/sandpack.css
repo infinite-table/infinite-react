@@ -131,7 +131,7 @@ html.dark .sp-tabs .sp-tab-button[data-active='true'] {
   font-size: 13.6px !important;
   line-height: 24px !important;
   height: 100%;
-  overflow: scroll;
+  /* overflow: scroll; */
 }
 .text-xl .sp-pre-placeholder {
   font-size: 16px !important;
