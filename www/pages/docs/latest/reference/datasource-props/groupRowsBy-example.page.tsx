@@ -12,7 +12,6 @@ const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
     field: 'country',
     column: {
       width: 150,
-      header: 'Country group',
       renderValue: ({ value }) => <>Country: {value}</>,
     },
   },

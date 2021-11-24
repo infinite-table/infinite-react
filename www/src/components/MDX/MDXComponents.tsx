@@ -3,7 +3,12 @@ import * as React from 'react';
 import { APIAnatomy, AnatomyStep } from './APIAnatomy';
 import CodeBlock from './CodeBlock';
 import { CodeDiagram } from './CodeDiagram';
-import { Prop, PropTable, PropLink } from './Prop';
+import {
+  Prop,
+  PropTable,
+  PropLink,
+  DataSourcePropLink,
+} from './Prop';
 import ConsoleBlock from './ConsoleBlock';
 import Convention from './Convention';
 import ExpandableCallout from './ExpandableCallout';
@@ -393,6 +398,7 @@ export const MDXComponents = {
   PackageImport,
   Prop,
   PropLink,
+  DataSourcePropLink,
   PropTable,
   Recap,
   Recipes,

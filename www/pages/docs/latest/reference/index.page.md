@@ -15,6 +15,12 @@ For applying a className when the focus is within the component, see <PropLink n
 
 </Prop>
 
+<Prop name="columns">
+
+> Describes the columns available in the component - MORE DOCS COMING.
+
+</Prop>
+
 <Prop name="focusedClassName" type="string">
 
 > CSS class name to be applied to the component root element when it has focus.

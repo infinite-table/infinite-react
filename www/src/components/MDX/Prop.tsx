@@ -2,15 +2,10 @@ import * as React from 'react';
 import cn from 'classnames';
 import Link from './Link';
 import tailwindConfig from '../../../tailwind.config';
-import { H2, H3, H4 } from './Heading';
-import ExpandableExample from './ExpandableExample';
-import { IconDeepDive } from '../Icon/IconDeepDive';
+import { H4 } from './Heading';
 import { Button } from '../Button';
 import { IconChevron } from '../Icon/IconChevron';
 import { IconCodeBlock } from '../Icon/IconCodeBlock';
-import CodeBlock from './CodeBlock';
-import { Search } from '../Search';
-import { IconSearch } from '../Icon/IconSearch';
 import { IconClose } from '../Icon/IconClose';
 import { useRef } from 'react';
 import { InfiniteTableProps } from '@infinite-table/infinite-react';
@@ -71,6 +66,17 @@ export const PropLink = ({
   children?: React.ReactNode;
 }) => {
   const href = `/docs/latest/reference#${name}`;
+  return <Link href={href}>{children ?? name}</Link>;
+};
+
+export const DataSourcePropLink = ({
+  name,
+  children,
+}: {
+  name: keyof InfiniteTableProps<any>;
+  children?: React.ReactNode;
+}) => {
+  const href = `/docs/latest/reference/datasource-props#${name}`;
   return <Link href={href}>{children ?? name}</Link>;
 };
 
