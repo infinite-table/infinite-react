@@ -3,7 +3,7 @@ title: DataSource Props
 layout: API
 ---
 
-In the documentation below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
+In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
 
 <PropTable>
 

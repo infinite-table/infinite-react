@@ -3,6 +3,9 @@ title: Infinite Table Reference
 layout: API
 ---
 
+In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
+
+
 <PropTable>
 
 <Prop name="className" type="string">
@@ -15,9 +18,45 @@ For applying a className when the focus is within the component, see <PropLink n
 
 </Prop>
 
-<Prop name="columns">
+<Prop name="columns" type="Map<string, InfiniteTableColumn<DATA_TYPE>>">
 
-> Describes the columns available in the component - MORE DOCS COMING.
+> Describes the columns available in the component.
+
+The following properties are available:
+
+ * field
+ * render
+ * renderValue
+ * type
+ * header
+ * ...etc
+
+<Sandpack>
+
+```ts file=columns-example.page.tsx
+```
+```ts file=data.ts
+```
+
+</Sandpack>
+
+</Prop>
+<Prop name="columns.field" type="keyof DATA_TYPE">
+
+> Binds the column to the data field. It should be a keyof `DATA_TYPE`.
+
+It can be the same or different to the column id. This is not used for referencing the column in various other props - the column key (column id) is used for that.
+
+If no <PropLink name="columns.header" /> is specified, it will be used as the column header.
+
+<Sandpack>
+
+```ts file=columns-example.page.tsx
+```
+```ts file=data.ts
+```
+
+</Sandpack>
 
 </Prop>
 
