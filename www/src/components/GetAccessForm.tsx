@@ -81,7 +81,7 @@ export const GetAccessForm = () => {
             setThankyou('');
             setEmail(e.target.value);
           }}
-          className={` ${padding[3]} ${borderRadius.md} text-gray-80 dark:text-gray-30 dark:bg-gray-80 bg-secondary-button ${email} `}
+          className={` ${padding[3]} ${borderRadius.md} text-gray-80 dark:text-gray-30 dark:border-white dark:border dark:bg-gray-80 bg-secondary-button ${email} `}
         />
         <input hidden name="form-name" value={'contact'} />
       </div>

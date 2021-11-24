@@ -28,7 +28,7 @@ const Card = ({
     <a
       href={href}
       className={`${card}
-      ${colorWhite} ${backgroundColorBlue700} ${shadow.md} ${borderRadius.default}`}>
+      text-wash dark:text-wash hover:text-wash-dark hover:bg-wash dark:hover:bg-wash-dark bg-blue-700  ${shadow.md} ${borderRadius.default}`}>
       <h3>{title} &rarr;</h3>
       <p className={fontSize.lg}>{children}</p>
     </a>
