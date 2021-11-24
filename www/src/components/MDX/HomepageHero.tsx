@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Logo } from '@www/components/Logo';
 import YouWillLearnCard from '@www/components/MDX/YouWillLearnCard';
+import HeroCards from './HeroCards';
 
 function HomepageHero() {
   return (
@@ -16,24 +17,21 @@ function HomepageHero() {
           </div>
         </div>
       </div>
-      <section className="my-8 sm:my-10 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4">
-        <div className="flex flex-col justify-center">
-          <YouWillLearnCard
-            title="Learn Infinite Table"
-            path="/docs/latest/learn/getting-started">
-            <p>
-              Learn & unleash the power of Infinite Table
-            </p>
-          </YouWillLearnCard>
-        </div>
-        <div className="flex flex-col justify-center">
-          <YouWillLearnCard
-            title="API Reference"
-            path="/docs/latest/reference">
-            <p>Look up the component props</p>
-          </YouWillLearnCard>
-        </div>
-      </section>
+      <HeroCards
+        cards={[
+          {
+            title: 'Learn Infinite Table',
+            description:
+              'Learn & unleash the power of Infinite Table',
+            link: '/docs/latest/learn/getting-started',
+          },
+          {
+            title: 'API Reference',
+            description: 'Look up the component props',
+            link: '"/docs/latest/reference"',
+          },
+        ]}
+      />
     </>
   );
 }

@@ -12,6 +12,21 @@
           "path": "/docs/latest/learn/getting-started"
         },
         {
+          "title": "Grouping and Pivoting",
+          "path": "/docs/latest/learn/grouping-and-pivoting",
+          "routes": [
+            {
+              "title": "Grouping",
+              "path": "/docs/latest/learn/grouping-and-pivoting/grouping-rows"
+            },
+            {
+              "title": "Pivoting",
+              "path": "/docs/latest/learn/grouping-and-pivoting/pivoting"
+            }
+          ]
+          
+        },
+        {
           "title": "Styling Rows",
           "path": "/docs/latest/learn/styling-rows"
         },

@@ -10,6 +10,7 @@ import ExpandableCallout from './ExpandableCallout';
 import ExpandableExample from './ExpandableExample';
 import { H1, H2, H3, H4 } from './Heading';
 import HomepageHero from './HomepageHero';
+import HeroCards from './HeroCards';
 import InlineCode from './InlineCode';
 import Intro from './Intro';
 import Link from './Link';
@@ -381,6 +382,7 @@ export const MDXComponents = {
   }) => <ExpandableExample {...props} type="DeepDive" />,
   Gotcha,
   HomepageHero,
+  HeroCards,
   Illustration,
   IllustrationBlock,
   Intro,
