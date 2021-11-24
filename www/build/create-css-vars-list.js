@@ -115,7 +115,6 @@ const mdFilePath = path.resolve(
   __dirname,
   '../pages/docs/latest/learn/theming/css-variables.page.md'
 );
-
 const mdFile = fs.readFileSync(mdFilePath, 'utf8');
 
 const formattedVars = vars.map(({ name, description }) => {
