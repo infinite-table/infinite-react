@@ -13,15 +13,6 @@ const {
 } = require('./plugins/markdownToHtml');
 
 const nextConfig = withMDX({
-  async redirects() {
-    return [
-      {
-        source: '/docs/learn/getting-started',
-        destination: '/docs/latest/learn/getting-started',
-        permanent: true,
-      },
-    ];
-  },
   pageExtensions: ['page.tsx', 'page.mdx', 'page.md'],
   rewrites() {
     return [

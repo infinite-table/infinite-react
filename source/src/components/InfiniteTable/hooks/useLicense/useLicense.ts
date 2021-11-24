@@ -18,7 +18,7 @@ export const useLicense = (licenseKey: string) => {
       version: __VERSION__,
     });
 
-    if (!valid && isInsideSandbox) {
+    if (!licenseKey && !valid && isInsideSandbox) {
       return true;
     }
 

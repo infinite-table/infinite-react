@@ -11,7 +11,7 @@ permalink: index.html
 Infinite Table is a React component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
 * sorting
-* row grouping
+* [row grouping](/docs/latest/learn/grouping-and-pivoting/grouping-rows)
 * aggregation
 * pivoting
 * ... and 🚀 lots 🎊 more 🎉
