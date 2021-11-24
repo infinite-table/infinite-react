@@ -2,9 +2,14 @@ import { createGlobalThemeContract, globalStyle } from '@vanilla-extract/css';
 
 export const ThemeVars = createGlobalThemeContract(
   {
-    theme: 'theme',
     color: {
+      /**
+       * Brand-specific accent color. This probably needs override to match your app.
+       */
       accent: 'accent-color',
+      /**
+       * The text color inside the component
+       */
       color: 'color',
     },
     spacing: {
@@ -37,6 +42,9 @@ export const ThemeVars = createGlobalThemeContract(
 
     components: {
       LoadMask: {
+        /**
+         * The padding used for the content inside the LoadMask.
+         */
         padding: 'load-mask-padding',
         color: 'load-mask-color',
         textBackground: 'load-mask-text-background',
@@ -115,7 +123,7 @@ const CellVars = {
 };
 
 const RowVars = {
-  [ThemeVars.components.Row.color]: 'inherit',
+  [ThemeVars.components.Row.color]: 'currentColor',
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
   [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',

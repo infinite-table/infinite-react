@@ -131,17 +131,18 @@ const focusedWithinStyle: React.CSSProperties = {
 export default function DataTestPage() {
   return (
     <React.StrictMode>
-      <button>before</button>
-
-      <DataSource<CarSale> data={carsales} primaryKey="id">
-        <InfiniteTable<CarSale>
-          domProps={domProps}
-          focusedStyle={focusedStyle}
-          focusedWithinStyle={focusedWithinStyle}
-          columns={columns}
-          columnDefaultWidth={140}
-        />
-      </DataSource>
+      <button>before button</button>
+      <div className="light">
+        <DataSource<CarSale> data={carsales} primaryKey="id">
+          <InfiniteTable<CarSale>
+            domProps={domProps}
+            focusedStyle={focusedStyle}
+            focusedWithinStyle={focusedWithinStyle}
+            columns={columns}
+            columnDefaultWidth={140}
+          />
+        </DataSource>
+      </div>
       <button autoFocus>after</button>
     </React.StrictMode>
   );

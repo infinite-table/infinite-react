@@ -16,6 +16,16 @@
           "path": "/docs/latest/learn/styling-rows"
         },
         {
+          "title": "Theming",
+          "path": "/docs/latest/learn/theming",
+          "routes": [
+            {
+              "title": "CSS Variables",
+              "path": "/docs/latest/learn/theming/css-variables"
+            }
+          ]
+        },
+        {
           "title": "Column Groups",
           "path": "/docs/latest/learn/column-groups"
         }

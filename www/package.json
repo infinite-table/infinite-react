@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "npm run update-versions && npm run source-build && npm run generate-lib-dts && npm run next",
     "next": "next dev -p 3001",
-    "build": "npm --prefix dataserver install && npm run update-versions && npm run generate-lib-dts && next build && next export",
+    "build": "npm --prefix dataserver install && npm run update-versions && npm run generate-lib-dts && npm run update-css-vars-list && next build && next export",
+    "update-css-vars-list": "node build/create-css-vars-list.js",
     "serve-build": "http-server -p 3000 out",
     "source-build": "npm run --prefix=../source build",
     "generate-lib-dts": "echo all-fine",

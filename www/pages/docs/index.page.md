@@ -33,11 +33,16 @@ It's fully typed and offers you great developer experience to help you get up an
 
 ## 🎨 Themable
 
-It's fully themable, via CSS variables.
+`Infinite Table` is fully customizable, via CSS variables. It ships with both a **light** and a **dark** theme - you have to import the CSS file from the package.
 
+```ts
+import "@infinite-table/infinite-react/index.css"
+```
+
+This file includes both the light and the dark themes.
 
 <LearnMore path="/docs/latest/learn/theming#css-variables">
 
-Read how you can use **CSS variables** to to customize every aspect of Infinite Table.
+Read how to use thems and **CSS variables** to customize every aspect of Infinite Table.
 
 </LearnMore>

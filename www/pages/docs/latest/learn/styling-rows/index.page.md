@@ -1,5 +1,5 @@
 ---
-Styling rows
+title: Styling Rows
 ---
 
 Rows can be styled by using the `rowStyle` and the `rowClassName` props

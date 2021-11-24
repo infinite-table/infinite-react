@@ -22,7 +22,7 @@ function HomepageHero() {
             title="Learn Infinite Table"
             path="/docs/latest/learn/getting-started">
             <p>
-              Learn & unleash the power of Infinite Table...
+              Learn & unleash the power of Infinite Table
             </p>
           </YouWillLearnCard>
         </div>
