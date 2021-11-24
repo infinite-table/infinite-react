@@ -84,10 +84,13 @@ function traverseThemeVars(node, list = []) {
     if (prop.initializer.properties) {
       traverseThemeVars(prop.initializer, list);
     }
-    if (prop.initializer?.text) {
+    if (prop.initializer.text) {
       list.push({
         name: `--infinite-${prop.initializer.text}`,
-        description: prop.jsDoc?.[0]?.comment ?? '',
+        description:
+          prop.jsDoc && prop.jsDoc[0]
+            ? prop.jsDoc[0].comment
+            : '',
       });
     }
   });
