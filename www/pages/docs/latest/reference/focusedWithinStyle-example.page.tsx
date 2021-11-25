@@ -38,7 +38,7 @@ const columns: Map<
     'firstName',
     {
       field: 'FirstName',
-      render: ({ value }: { value: string }) => (
+      render: ({ value }: { value: any }) => (
         <input type="text" value={value} />
       ),
     },
