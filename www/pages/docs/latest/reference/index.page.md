@@ -298,11 +298,11 @@ The `rowStyle` prop can be either an object (typed as `React.CSSProperties`) or 
 
 <AnatomyStep title="data can be null">
 
-When Infinite Table will call `rowStyle`, the `data` property can be null - this is the case for grouped rows.
+When Infinite Table calls `rowStyle`, the `data` property can be null - this is the case for grouped rows.
 
 </AnatomyStep>
 
-<AnatomyStep title="rowInfo object contains additional details">
+<AnatomyStep title="rowInfo">
 
 The `rowInfo` object contains the following properties:
 * `id` - the id of the current row
@@ -315,7 +315,7 @@ The `rowInfo` object contains the following properties:
 
 </AnatomyStep>
 
-<AnatomyStep title="return a style object or undefined">
+<AnatomyStep title="return value">
 
 You can either return a valid style object, or undefined.
 
