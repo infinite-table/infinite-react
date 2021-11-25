@@ -10,6 +10,7 @@ import { IconClose } from '../Icon/IconClose';
 import { useRef } from 'react';
 import { InfiniteTableProps } from '@infinite-table/infinite-react';
 import { StyledInput } from '../StyledInput';
+import { MaxWidth } from '../Layout/MarkdownPage';
 const debounce = require('debounce');
 
 interface PropProps {
@@ -256,14 +257,16 @@ export function PropTable({
   ) as React.ReactNode;
   return (
     <div className="my-4">
-      <StyledInput
-        ref={inputRef}
-        className="bg-transparent flex-1 py-2 outline-none"
-        defaultValue={filterText}
-        //@ts-ignore
-        onChange={onChange}
-        //@ts-ignore
-        children={inputChildren}></StyledInput>
+      <MaxWidth>
+        <StyledInput
+          ref={inputRef}
+          className="bg-transparent flex-1 py-2 outline-none"
+          defaultValue={filterText}
+          //@ts-ignore
+          onChange={onChange}
+          //@ts-ignore
+          children={inputChildren}></StyledInput>
+      </MaxWidth>
       {contents}
       {/* {children} */}
     </div>

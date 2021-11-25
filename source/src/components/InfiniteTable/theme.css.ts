@@ -38,6 +38,11 @@ export const ThemeVars = createGlobalThemeContract(
     fontFamily: 'font-family',
     minHeight: 'min-height',
     borderRadius: 'border-radius',
+    /**
+     * The background color for the whole component.
+     *
+     * Overriden in the `dark` theme.
+     */
     background: 'background',
 
     components: {
@@ -53,12 +58,27 @@ export const ThemeVars = createGlobalThemeContract(
         borderRadius: 'load-mask-border-radius',
       },
       Header: {
+        /**
+         * Background color for the header. Defaults to [`--infinie-header-cell-background`](#header-cell-background).
+         *
+         * Overriden in the `dark` theme.
+         */
         background: 'header-background',
+        /**
+         * The text color inside the header.
+         *
+         * Overriden in the `dark` theme.
+         */
         color: 'header-color',
         height: 'header-height',
       },
       HeaderCell: {
         draggingBackground: 'header-cell-dragging-background',
+        /**
+         * Background for header cells.
+         *
+         * Overriden in the `dark` theme.
+         */
         background: 'header-cell-background',
         padding: 'header-cell-padding',
         iconSize: 'header-cell-icon-size',
@@ -66,14 +86,40 @@ export const ThemeVars = createGlobalThemeContract(
       Cell: {
         padding: 'cell-padding',
         borderWidth: 'cell-border-width',
+        /**
+         * Specifies the border for cells.
+         *
+         * Overriden in the `dark` theme - eg: `1px solid #2a323d`
+         */
         border: 'cell-border',
         borderInvisible: 'cell-border-invisible',
         borderRadius: 'cell-border-radius',
       },
       Row: {
+        /**
+         * Text color inside rows. Defaults to `currentColor`
+         *
+         * Overriden in `dark` theme.
+         */
         color: 'row-color',
+        /**
+         * Background color for rows. Defaults to [`--infinite-background`](#background).
+         *
+         * Overriden in `dark` theme.
+         */
         background: 'row-background',
+
+        /**
+         * Background color for odd rows. Even rows will use [`--infinite-row-background`](#row-background).
+         *
+         * Overriden in `dark` theme.
+         */
         oddBackground: 'row-odd-background',
+        /**
+         * Background color for rows, on hover.
+         *
+         * Overriden in the `dark` theme.
+         */
         hoverBackground: 'row-hover-background',
         groupRowBackground: 'group-row-background',
         groupRowColumnNesting: 'group-row-column-nesting',

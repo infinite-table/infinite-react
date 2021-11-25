@@ -8,7 +8,7 @@ Infinite Table ships with a CSS file that you need to import in your codebase to
 import "@infinite-table/infinite-react/index.css"
 ```
 
-The above CSS file includes both the **light** and the **dark** theme. By default, the light theme is applied - or, if you include the component in a container with the `light` CSS className.
+The above CSS file includes both the **`light`** and the **`dark`** theme. By default, the `light` theme is applied - or, if you include the component in a container with the `light` CSS className.
 
 ```tsx title=explicitly-apply-light-theme-via-container-className
 <div className="light">

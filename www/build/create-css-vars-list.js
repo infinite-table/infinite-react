@@ -120,8 +120,11 @@ const mdFile = fs.readFileSync(mdFilePath, 'utf8');
 const formattedVars = vars.map(({ name, description }) => {
   return `
 ### ${humanize(name.slice('--infinite'.length))}
+
+${description}
+
 \`\`\`css
-${description ? `/* ${description} */ \n ${name}` : name}
+${name}
 \`\`\``;
 });
 const newContents = mdFile.replace(

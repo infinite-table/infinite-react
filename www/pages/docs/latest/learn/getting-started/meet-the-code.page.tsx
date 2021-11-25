@@ -5,8 +5,6 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
-import { data, Person } from './data';
-
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
@@ -17,6 +15,12 @@ export default function App() {
     </DataSource>
   );
 }
+
+type Person = {
+  Id: number;
+  FirstName: string;
+  Age: number;
+};
 
 const columns: Map<
   string,
@@ -41,3 +45,21 @@ const columns: Map<
   ],
   ['age', { field: 'Age', type: 'number' }],
 ]);
+
+const data: Person[] = [
+  {
+    Id: 1,
+    FirstName: 'Bob',
+    Age: 3,
+  },
+  {
+    Id: 2,
+    FirstName: 'Alice',
+    Age: 50,
+  },
+  {
+    Id: 3,
+    FirstName: 'Bill',
+    Age: 5,
+  },
+];

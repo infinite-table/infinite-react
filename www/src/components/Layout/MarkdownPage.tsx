@@ -11,7 +11,7 @@ export interface MarkdownProps<Frontmatter> {
   children?: React.ReactNode;
 }
 
-function MaxWidth({ children }: { children: any }) {
+export function MaxWidth({ children }: { children: any }) {
   return (
     <div className="max-w-4xl ml-0 2xl:mx-auto">
       {children}
@@ -107,6 +107,7 @@ export function MarkdownPage<
     'Sandpack',
     'APIAnatomy',
     'FullWidth',
+    'PropTable',
     'Illustration',
     'IllustrationBlock',
     'Challenges',

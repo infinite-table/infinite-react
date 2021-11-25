@@ -22,17 +22,14 @@ npm i @infinite-table/infinite-react
 ```ts file=meet-the-code.page.tsx
 ```
 
-```ts file=data.tsx
-```
-
 </Sandpack>
 
 ## Using the components
 
 In the code snippet above, you notice we're using 2 components:
 
-- `DataSource` - this needs to be a parent (or ancestor, at any level) of the `InfiniteTable` component - it controls which `data` the table below is rendering
-- `InfiniteTable` - the actual virtualized table component - needs to be inside a `DataSource`
+- `DataSource` - this needs to be a parent (or ancestor, at any level) of the `InfiniteTable` component - it controls which `data` the table is rendering
+- `InfiniteTable` - the actual virtualized table component - needs to be inside a `DataSource` (can be at any level of nesting).
 
 Both components are named exports of the `@infinite-table/infinite-react` package.
 
