@@ -6,7 +6,10 @@ import {
   InfiniteTableRowInfo,
 } from '@infinite-table/infinite-react';
 
-import { columns, Employee } from './columns';
+import {
+  columns,
+  Employee,
+} from './rowStyle-example-columns';
 
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   data,
@@ -24,6 +27,7 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   if (rowInfo.indexInAll % 10 === 0) {
     return { background: 'lightblue', color: 'black' };
   }
+  return;
 };
 
 export default function App() {

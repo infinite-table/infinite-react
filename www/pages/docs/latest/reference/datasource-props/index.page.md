@@ -19,7 +19,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 Each item in the array can have the following properties:
  * field - `keyof DATA_TYPE`
- * column - config object for columns in the table - see <PropLink name="columns" />
+ * column - config object for the group <PropLink name="column">column</PropLink>.
 
 <Sandpack>
 

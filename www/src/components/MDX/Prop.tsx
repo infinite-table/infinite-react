@@ -11,6 +11,7 @@ import { useRef } from 'react';
 import { InfiniteTableProps } from '@infinite-table/infinite-react';
 import { StyledInput } from '../StyledInput';
 import { MaxWidth } from '../Layout/MarkdownPage';
+import InlineCode from './InlineCode';
 const debounce = require('debounce');
 
 interface PropProps {
@@ -67,7 +68,13 @@ export const PropLink = ({
   children?: React.ReactNode;
 }) => {
   const href = `/docs/latest/reference#${name}`;
-  return <Link href={href}>{children ?? name}</Link>;
+  return (
+    <Link href={href}>
+      {children ?? (
+        <InlineCode isLink={false}>{name}</InlineCode>
+      )}
+    </Link>
+  );
 };
 
 export const DataSourcePropLink = ({
@@ -78,20 +85,32 @@ export const DataSourcePropLink = ({
   children?: React.ReactNode;
 }) => {
   const href = `/docs/latest/reference/datasource-props#${name}`;
-  return <Link href={href}>{children ?? name}</Link>;
+  return (
+    <Link href={href}>
+      {children ?? (
+        <InlineCode isLink={false}>{name}</InlineCode>
+      )}
+    </Link>
+  );
 };
 
 const PropInlineCode = ({
   children,
   className,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) => {
   return (
     <div
+      title={
+        typeof children === 'string' ? children : undefined
+      }
+      style={style}
       className={cn(
-        'rounded-lg inline-block bg-gray-90 px-2 my-4 text-primary-dark dark:text-primary-dark font-mono text-code whitespace-pre',
+        'rounded-lg inline-block bg-gray-90 px-2 text-primary-dark dark:text-primary-dark font-mono text-code whitespace-pre max-w-full overflow-hidden overflow-ellipsis',
         className
       )}>
       {children}
@@ -135,15 +154,27 @@ export function Prop({
       )}>
       <div className="p-8 flex flex-row">
         <div className="flex-1">
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row w-full items-center flex-wrap">
             <H4 as="h2" id={name}>
               <IconCodeBlock className="inline mr-2 dark:text-purple-30 text-purple-40" />
               {name}
             </H4>
             {defaultValue !== undefined ? (
-              <PropInlineCode className="ml-6">
+              <PropInlineCode className="sm:ml-4">
                 Default: {defaultValue}
               </PropInlineCode>
+            ) : null}
+
+            {type ? (
+              <>
+                <div className="flex flex-row justify-end flex-auto">
+                  <PropInlineCode
+                    className="ml-3 "
+                    style={{ maxWidth: '90%' }}>
+                    {type}
+                  </PropInlineCode>
+                </div>
+              </>
             ) : null}
           </div>
 
@@ -171,11 +202,6 @@ export function Prop({
               </span>
               {isExpanded ? 'Hide Details' : 'Show Details'}
             </Button>
-          ) : null}
-        </div>
-        <div>
-          {type ? (
-            <PropInlineCode>{type}</PropInlineCode>
           ) : null}
         </div>
       </div>

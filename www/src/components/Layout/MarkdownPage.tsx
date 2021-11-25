@@ -30,6 +30,7 @@ export function MarkdownPage<
   const description =
     meta.description || route?.description || '';
 
+  const propsAnchors = [];
   let anchors: Array<{
     url: string;
     text: React.ReactNode;
@@ -44,11 +45,12 @@ export function MarkdownPage<
           'Challenges',
           'Recipes',
           'Recap',
+          'PropTable',
         ].includes(child.props.mdxType);
       }
       return false;
     })
-    .map((child: any) => {
+    .flatMap((child: any) => {
       if (child.props.mdxType === 'Challenges') {
         return {
           url: '#challenges',
@@ -70,6 +72,19 @@ export function MarkdownPage<
           text: 'Recap',
         };
       }
+      if (child.props.mdxType === 'PropTable') {
+        return React.Children.toArray(child.props.children)
+          .filter(
+            (child: any) => child.props.mdxType === 'Prop'
+          )
+          .map((child: any) => {
+            return {
+              url: '#' + child.props.name,
+              depth: 0,
+              text: child.props.name,
+            };
+          });
+      }
       return {
         url: '#' + child.props.id,
         depth:
@@ -82,6 +97,7 @@ export function MarkdownPage<
         text: child.props.children,
       };
     });
+  console.log({ anchors });
   if (anchors.length > 0) {
     anchors.unshift({
       depth: 1,

@@ -7,22 +7,17 @@ import {
 
 import { data, Person } from './data';
 
+const focusedWithinStyle = {
+  outline: '3px solid tomato',
+};
 export default function App() {
   return (
-    <>
-      <button autoFocus>
-        Button before - to help with focus navigation
-      </button>
-      <DataSource<Person> data={data} primaryKey="Id">
-        <InfiniteTable<Person>
-          rowHeight={50}
-          columns={columns}
-        />
-      </DataSource>
-      <button>
-        Button after - to help with focus navigation
-      </button>
-    </>
+    <DataSource<Person> data={data} primaryKey="Id">
+      <InfiniteTable<Person>
+        focusedWithinStyle={focusedWithinStyle}
+        columns={columns}
+      />
+    </DataSource>
   );
 }
 
@@ -33,8 +28,6 @@ const columns: Map<
   [
     'id',
     {
-      // specifies which field from the data source
-      // should be rendered in this column
       field: 'Id',
       type: 'number',
       sortable: true,
@@ -45,6 +38,9 @@ const columns: Map<
     'firstName',
     {
       field: 'FirstName',
+      render: ({ value }: { value: string }) => (
+        <input type="text" value={value} />
+      ),
     },
   ],
   ['age', { field: 'Age', type: 'number' }],

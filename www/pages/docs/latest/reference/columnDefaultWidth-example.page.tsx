@@ -6,6 +6,7 @@ import {
 } from '@infinite-table/infinite-react';
 
 import { data, Person } from './data';
+
 const columns: Map<
   string,
   InfiniteTableColumn<Person>
@@ -16,7 +17,6 @@ const columns: Map<
       field: 'Id',
       type: 'number',
       sortable: true,
-      width: 80,
     },
   ],
   [
@@ -31,7 +31,10 @@ const columns: Map<
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person> columns={columns} />
+      <InfiniteTable<Person>
+        columns={columns}
+        columnDefaultWidth={120}
+      />
     </DataSource>
   );
 }

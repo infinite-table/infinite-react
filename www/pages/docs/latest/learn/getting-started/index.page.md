@@ -51,7 +51,7 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 
 </Sandpack>
 
-### About the docs
+## About the docs
 
 > We're grateful for the work done by the [team behind reactjs.org](https://github.com/reactjs/reactjs.org) and the new React documentation found at [beta.reactjs.org](https://beta.reactjs.org/) - we've built our documentation on their excellent work 🙏 and we're grateful for that.
 

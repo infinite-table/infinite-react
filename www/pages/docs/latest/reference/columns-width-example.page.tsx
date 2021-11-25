@@ -6,6 +6,7 @@ import {
 } from '@infinite-table/infinite-react';
 
 import { data, Person } from './data';
+
 const columns: Map<
   string,
   InfiniteTableColumn<Person>
@@ -23,9 +24,10 @@ const columns: Map<
     'firstName',
     {
       field: 'FirstName',
+      width: 120,
     },
   ],
-  ['age', { field: 'Age', type: 'number' }],
+  ['age', { field: 'Age', type: 'number', width: 100 }],
 ]);
 
 export default function App() {
