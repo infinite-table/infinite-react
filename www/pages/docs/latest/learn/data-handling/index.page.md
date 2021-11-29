@@ -83,7 +83,7 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Sandpack>
 
-### Live pagination and integrating with react-query
+### Live pagination
 
 For implementing live pagination, we show you how this can be done in combination with [react-query](https://react-query.tanstack.com/).
 
