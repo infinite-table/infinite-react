@@ -63,16 +63,21 @@ const colors = [
 export const PropLink = ({
   name,
   children,
+  code = true,
 }: {
   name: keyof InfiniteTableProps<any>;
   children?: React.ReactNode;
+  code?: boolean;
 }) => {
-  const href = `/docs/latest/reference#${name}`;
+  const href = `/docs/latest/reference#${name as string}`;
   return (
     <Link href={href}>
-      {children ?? (
-        <InlineCode isLink={false}>{name}</InlineCode>
-      )}
+      {children ??
+        (code ? (
+          <InlineCode isLink={false}>{name}</InlineCode>
+        ) : (
+          name
+        ))}
     </Link>
   );
 };

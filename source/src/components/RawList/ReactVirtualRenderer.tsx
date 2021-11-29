@@ -67,6 +67,7 @@ export class ReactVirtualRenderer extends Logger {
   ): Renderable[] => {
     // needed for hot reload and react hooks executing twice in dev
     if (this.destroyed) {
+      // console.warn('DESTROYED');
       return [];
     }
     const { mappedItems } = this;
@@ -284,6 +285,13 @@ export class ReactVirtualRenderer extends Logger {
   };
 
   destroy = () => {
+    // if (!process.browser) {
+    //   console.warn('DESTROY ON SERVER');
+    // }
+    //TODO remove this early return - here for DEV
+    if (__DEV__) {
+      return;
+    }
     this.destroyed = true;
     this.mappedItems.destroy();
     this.itemDOMElements = [];

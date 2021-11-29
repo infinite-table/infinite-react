@@ -124,10 +124,11 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   depth: number;
 };
 
-export type GroupColumnGetterOptions<T> = {
-  groupIndex?: number;
+export type InfiniteTableGroupColumnGetterOptions<T> = {
+  groupIndexForColumn?: number;
+  groupByForColumn?: DataSourceGroupRowsBy<T>;
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupCount: number;
-  groupBy?: DataSourceGroupRowsBy<T>;
   groupRowsBy: DataSourceGroupRowsBy<T>[];
 };
 
@@ -151,11 +152,12 @@ export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> &
   };
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
-  | ((
-      options: GroupColumnGetterOptions<T>,
-      toggleGroupRow: (groupKeys: any[]) => void,
-    ) => InfiniteTableGroupColumnBase<T>);
+  | InfiniteTableGroupColumnFunction<T>;
 
+export type InfiniteTableGroupColumnFunction<T> = (
+  options: InfiniteTableGroupColumnGetterOptions<T>,
+  toggleGroupRow: (groupKeys: any[]) => void,
+) => InfiniteTableGroupColumnBase<T>;
 export type InfiniteTablePropPivotColumn<T> =
   | InfiniteTablePivotColumnBase<T>
   | ((options: PivotColumnGetterOptions<T>) => InfiniteTablePivotColumnBase<T>);

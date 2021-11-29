@@ -10,7 +10,7 @@ import { join } from '../../utils/join';
 
 export type { Scrollable };
 
-const rootClassName = 'Infinite-VirtualScrollContainer';
+const rootClassName = 'InfiniteVirtualScrollContainer';
 
 export interface VirtualScrollContainerProps {
   className?: string;

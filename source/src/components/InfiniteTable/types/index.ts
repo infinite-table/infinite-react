@@ -19,12 +19,15 @@ import type {
   InfiniteTablePropRowClassName,
   InfiniteTablePropColumns,
   InfiniteTablePropComponents,
+  InfiniteTableGroupColumnFunction,
+  InfiniteTableGroupColumnGetterOptions,
 } from './InfiniteTableProps';
 
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParam,
+  InfiniteTableColumnRenderValueParam,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -35,6 +38,7 @@ export type {
   InfiniteTableComputedValues,
   InfiniteTablePropColumns,
   InfiniteTableRowInfo,
+  InfiniteTableGroupColumnFunction,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropComponents,
   InfiniteTablePropColumnVisibility,
@@ -43,6 +47,7 @@ export type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParam,
+  InfiniteTableColumnRenderValueParam,
   InfiniteTableContextValue,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropColumnAggregations,
@@ -56,4 +61,5 @@ export type {
   InfiniteTablePropRowClassName,
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
+  InfiniteTableGroupColumnGetterOptions,
 };

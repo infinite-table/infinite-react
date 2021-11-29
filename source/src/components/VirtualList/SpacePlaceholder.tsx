@@ -20,8 +20,8 @@ function SpacePlaceholderFn(props: SpacePlaceholderProps) {
   return (
     <div
       data-count={count}
-      data-width={width}
-      data-height={height}
+      data-placeholder-width={__DEV__ ? width : undefined}
+      data-placeholder-height={__DEV__ ? height : undefined}
       data-name="SpacePlaceholder"
       style={style}
     />

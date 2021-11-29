@@ -215,6 +215,30 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 </Prop>
 
+<Prop name="groupColumn" type="InfiniteTableColumn|({options, toggleGroupRow}) => InfiniteTableColumn">
+
+> Allows you to define a custom configuration for one or multiple group columns.
+
+If this is an object and no explicit <PropLink name="groupRenderStrategy" /> is specified, the component is rendered as if you had <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>.
+
+If it's a function, it will be called with the following arguments:
+
+ * `options` - an object with the following properties:
+ * `options.groupCount` - the count of row groups
+ * `options.groupRowsBy` - the array of row groups, used by the `DataSource` to do the grouping
+ * `options.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
+ * `options.groupByForColumn` - the grouping object (one of the items in `options.groupRowsBy`) corresponding to the current column.
+ * `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupRowsBy` - corresponding to the current column.
+ * `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
+
+</Prop>
+
+<Prop name="groupRenderStrategy" type="'single-column'|'multi-column'|'inline'">
+
+> Determines how grouping is rendered - whether a single or multiple columns are generated. In case of inline, no group column is generated but the column corresponding to the group field is used.
+
+</Prop>
+
 <Prop name="onBlurWithin" type="(event)=> void">
 
 > Function that is called when a focused element is blurred within the component.

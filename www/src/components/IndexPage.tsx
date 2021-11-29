@@ -75,7 +75,8 @@ export function IndexPage() {
               zIndex['0'],
             ].join(' ')}
             style={{ top: '-1.5rem' }}>
-            ALPHA VERSION AVAILABLE for REACT {ReactLogo}
+            EARLY ADOPTER version available for REACT{' '}
+            {ReactLogo}
           </div>
 
           <div

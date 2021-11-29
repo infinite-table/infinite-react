@@ -69,6 +69,7 @@ const InfiniteTableRoot = getComponentStateRoot({
   } as Record<keyof InfiniteTableProps<any>, true>,
   // @ts-ignore
   getParentState: () => useDataSource(),
+  debugName: 'InfiniteTable',
 });
 
 // const InfiniteTableFactory = <T extends unknown>(

@@ -30,8 +30,11 @@
   #__next {
     height: 100%;
   }
+  .Infinite {
+    flex: 1;
+  }
   #__next {
-    --infinite-min-height: 100%;
+    /* --infinite-min-height: 100%; */
   }
 
   /* Start purging... */

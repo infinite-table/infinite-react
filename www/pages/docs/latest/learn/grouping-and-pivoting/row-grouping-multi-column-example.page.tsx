@@ -4,17 +4,18 @@ import {
   DataSource,
   DataSourcePropGroupRowsBy,
 } from '@infinite-table/infinite-react';
-
 import { columns, Employee } from './columns';
 
 const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
   {
-    field: 'country',
+    field: 'age',
     column: {
-      width: 150,
-      header: 'Country group',
-      renderValue: ({ value }) => <>Country: {value}</>,
+      renderValue: ({ value }: { value: any }) =>
+        `Age: ${value}`,
     },
+  },
+  {
+    field: 'companyName',
   },
 ];
 
@@ -24,14 +25,17 @@ export default function App() {
       data={dataSource}
       primaryKey="id"
       groupRowsBy={groupRowsBy}>
-      <InfiniteTable<Employee> columns={columns} />
+      <InfiniteTable<Employee>
+        columns={columns}
+        columnDefaultWidth={150}
+      />
     </DataSource>
   );
 }
 
 const dataSource = () => {
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees1k'
+    process.env.NEXT_PUBLIC_BASE_URL + '/employees10k'
   )
     .then((r) => r.json())
     .then((data: Employee[]) => data);

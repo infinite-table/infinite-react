@@ -27,6 +27,11 @@ export interface InfiniteTableColumnRenderParam<
   groupRowsBy: DataSourceState<DATA_TYPE>['groupRowsBy'];
 }
 
+export type InfiniteTableColumnRenderValueParam<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>;
+
 export type InfiniteTableColumnRowspanFnParams<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
@@ -58,6 +63,11 @@ export type InfiniteTableColumnRenderFunction<
   rowInfo,
   groupRowsBy,
 }: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
+
+export type InfiniteTableColumnRenderValueFunction<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = InfiniteTableColumnRenderFunction<DATA_TYPE, COL_TYPE>;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
   columnSortInfo,
@@ -188,7 +198,7 @@ export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {
   pivotTotalColumn?: true;
   pivotGroupKeys?: any[];
   // groupByField?: string | string[];
-  renderValue?: InfiniteTableColumnRenderFunction<T>;
+  renderValue?: InfiniteTableColumnRenderValueFunction<T>;
 };
 
 type InfiniteTableComputedColumnBase<T> = {

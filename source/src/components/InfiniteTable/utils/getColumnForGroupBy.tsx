@@ -8,20 +8,20 @@ import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
 import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
-  GroupColumnGetterOptions,
+  InfiniteTableGroupColumnGetterOptions,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
 import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
 
 export function getGroupColumnRender<T>({
-  groupIndex,
+  groupIndexForColumn,
   groupRenderStrategy,
   toggleGroupRow,
 }: {
   toggleGroupRow: (groupRowKeys: any[]) => void;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
-  groupIndex: number;
+  groupIndexForColumn: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
     let { value, rowInfo, column } = renderOptions;
@@ -35,7 +35,7 @@ export function getGroupColumnRender<T>({
         ? rowInfo
         : // while for inline, we need to still work on group rows, but the current row is a data item
           // so we go find the group row via the parents of enhanced data
-          rowInfo.parents?.[groupIndex] || rowInfo;
+          rowInfo.parents?.[groupIndexForColumn] || rowInfo;
 
     if (!groupRowInfo) {
       return null;
@@ -49,7 +49,7 @@ export function getGroupColumnRender<T>({
         return value;
       }
 
-      if (groupRowInfo.groupNesting === groupIndex && collapsed) {
+      if (groupRowInfo.groupNesting === groupIndexForColumn && collapsed) {
         return null;
       }
     } else {
@@ -57,7 +57,7 @@ export function getGroupColumnRender<T>({
         return null;
       }
 
-      if (groupIndex + 1 !== groupRowInfo.groupNesting) {
+      if (groupIndexForColumn + 1 !== groupRowInfo.groupNesting) {
         return null;
       }
     }
@@ -76,27 +76,29 @@ export function getGroupColumnRender<T>({
   };
 }
 export function getColumnForGroupBy<T>(
-  options: GroupColumnGetterOptions<T> & {
-    groupIndex: number;
-
-    groupBy: DataSourceGroupRowsBy<T>;
-    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+  options: InfiniteTableGroupColumnGetterOptions<T> & {
+    groupIndexForColumn: number;
+    groupByForColumn: DataSourceGroupRowsBy<T>;
   },
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
 ): InfiniteTableGeneratedGroupColumn<T> {
-  const { groupBy, groupIndex, groupRenderStrategy } = options;
+  const {
+    groupByForColumn: groupByForColumn,
+    groupIndexForColumn: groupIndexForColumn,
+    groupRenderStrategy,
+  } = options;
 
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
-    header: `Group by ${groupBy.field}`,
-    groupByField: groupBy.field as string,
+    header: `Group by ${groupByForColumn.field}`,
+    groupByField: groupByForColumn.field as string,
     sortable: false,
     render: getGroupColumnRender({
-      groupIndex,
+      groupIndexForColumn,
       toggleGroupRow,
       groupRenderStrategy,
     }),
-    ...groupBy.column,
+    ...groupByForColumn.column,
   };
 
   if (groupColumnFromProps) {
@@ -117,7 +119,7 @@ export function getColumnForGroupBy<T>(
 }
 
 export function getSingleGroupColumn<T>(
-  options: GroupColumnGetterOptions<T>,
+  options: InfiniteTableGroupColumnGetterOptions<T>,
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
 ) {

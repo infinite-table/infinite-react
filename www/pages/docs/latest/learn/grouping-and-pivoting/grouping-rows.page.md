@@ -66,3 +66,70 @@ const groupRowsBy = [
   }
 ]
 ```
+
+## Grouping strategies
+
+When you want to group by multiple fields, `InfiniteTable` offers multiple grouping strategies:
+ * multi column mode - the default.
+ * single column mode
+ * inline mode
+
+You can specify the rendering strategy by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column` or `inline`.
+
+
+### Multiple groups columns
+
+When grouping by multiple fields, by default the component will render a group column for each group field
+
+```tsx
+const groupRowsBy = [
+  {
+    field: 'age',
+    column: {
+      width: 100,      
+      renderValue: ({ value }) => <>Age: {value}</>,
+    }
+  },
+  {
+    field: 'companyName'
+  },
+  {
+    field: 'country'
+  }
+]
+```
+
+Let's see an example of how the component would render the table with the multi-column strategy.
+
+<Sandpack title="Multi-column group render strategy">
+
+```ts file=row-grouping-multi-column-example.page.tsx
+```
+```ts file=columns.ts
+```
+
+</Sandpack>
+
+
+### Single group column
+
+You can group by multiple fields, yet only render a single group column. To choose this rendering strategy, specify <PropLink name="groupRenderStrategy" /> property to be `single-column`.
+
+In this case, you can't override the group column for each group field, as there's only one group column being generated. However, you can specify a <PropLink name="groupColumn" /> property to customize the generated column.
+ 
+<Sandpack title="Single-column group render strategy">
+
+```ts file=row-grouping-single-column-example.page.tsx
+```
+```ts file=columns.ts
+```
+
+</Sandpack>
+
+<Note>
+
+If <PropLink name="groupColumn" /> is specified to an object and no <PropLink name="groupRenderStrategy" /> is passed, the render strategy will be `single-column`.
+
+<PropLink name="groupColumn" /> can also be a function, which allows you to individually customize each group column - in case the `multi-column` strategy is used.
+
+</Note>

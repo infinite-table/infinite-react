@@ -41,9 +41,15 @@ import * as React from 'react';
 
 // export default MyApp;
 
-const EmptyAppShell: React.FC = ({ children }) => (
-  <>{children}</>
-);
+const EmptyAppShell: React.FC = ({ children }) => {
+  if (process.env.NODE_ENV === 'development') {
+    if (!process.browser) {
+      console.log('SERVER< DEV');
+      return null;
+    }
+  }
+  return <>{children}</>;
+};
 
 export default function MyApp({
   Component,

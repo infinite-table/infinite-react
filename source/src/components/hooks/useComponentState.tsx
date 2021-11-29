@@ -143,6 +143,7 @@ type ComponentStateRootConfig<
   T_ACTIONS = {},
   T_PARENT_STATE = {},
 > = {
+  debugName?: string;
   initSetupState?: () => COMPONENT_SETUP_STATE;
 
   forwardProps?: () => ForwardPropsToStateFnResult<
@@ -247,10 +248,6 @@ export function getComponentStateRoot<
             },
           },
         );
-        propsToStateSetRef.current = new Set([
-          ...propsToStateSetRef.current,
-          ...propertyReads,
-        ]);
         const stateFromProps = mapPropsToState({
           props,
           state,
@@ -258,6 +255,10 @@ export function getComponentStateRoot<
           parentState,
         });
 
+        propsToStateSetRef.current = new Set([
+          ...propsToStateSetRef.current,
+          ...propertyReads,
+        ]);
         return {
           ...state,
           ...stateFromProps,
@@ -296,10 +297,6 @@ export function getComponentStateRoot<
             },
           },
         );
-        propsToStateSetRef.current = new Set([
-          ...propsToStateSetRef.current,
-          ...propertyReads,
-        ]);
 
         const stateFromProps = mapPropsToState({
           props: getProps(),
@@ -307,6 +304,11 @@ export function getComponentStateRoot<
           oldState: previousState,
           parentState,
         });
+
+        propsToStateSetRef.current = new Set([
+          ...propsToStateSetRef.current,
+          ...propertyReads,
+        ]);
 
         Object.assign(newState, stateFromProps);
       }

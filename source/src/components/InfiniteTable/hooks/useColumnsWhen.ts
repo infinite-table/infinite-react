@@ -122,7 +122,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(
             return rowspan;
           },
           render: getGroupColumnRender({
-            groupIndex,
+            groupIndexForColumn: groupIndex,
             groupRenderStrategy,
             toggleGroupRow,
           }),
@@ -208,7 +208,7 @@ function useColumnsWhenGrouping<T>() {
     }
 
     const update = () => {
-      componentActions.columnsWhenGrouping = getColumnsWhenGrouping({
+      const columnsWhenGrouping = getColumnsWhenGrouping({
         columns,
         groupColumn,
         groupRenderStrategy,
@@ -216,6 +216,8 @@ function useColumnsWhenGrouping<T>() {
         pivotColumns,
         toggleGroupRow,
       });
+
+      componentActions.columnsWhenGrouping = columnsWhenGrouping;
     };
 
     update();
@@ -338,14 +340,14 @@ export function getColumnsWhenGrouping<T>(params: {
   const computedColumns = new Map<string, InfiniteTableColumn<T>>();
 
   if (groupRenderStrategy === 'multi-column') {
-    groupRowsBy.forEach((groupBy, index, arr) => {
+    groupRowsBy.forEach((groupByForColumn, groupIndexForColumn, arr) => {
       computedColumns.set(
-        `group-by-${groupBy.field}`,
+        `group-by-${groupByForColumn.field}`,
         getColumnForGroupBy<T>(
           {
-            groupBy,
+            groupByForColumn,
             groupRowsBy,
-            groupIndex: index,
+            groupIndexForColumn,
             groupCount: arr.length,
             groupRenderStrategy,
           },
@@ -361,6 +363,7 @@ export function getColumnsWhenGrouping<T>(params: {
         {
           groupCount: groupRowsBy.length,
           groupRowsBy,
+          groupRenderStrategy,
         },
         toggleGroupRow,
         groupColumn,
