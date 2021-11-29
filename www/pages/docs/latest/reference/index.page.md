@@ -8,6 +8,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
+
 <Prop name="domProps" type="React.HTMLProps<HTMLDivElement>">
 
 > DOM properties to be applied to the component root element.
@@ -237,6 +238,28 @@ If it's a function, it will be called with the following arguments:
 
 > Determines how grouping is rendered - whether a single or multiple columns are generated. In case of inline, no group column is generated but the column corresponding to the group field is used.
 
+<Sandpack>
+
+```ts file=groupRenderStrategy-example.page.tsx
+```
+``` ts file=employee-columns.ts
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="loadingText" type="ReactNode" defaultValue="'Loading'">
+
+> The text inside the load mask - displayed when <DataSourcePropLink name="loading">loading=true</DataSourcePropLink>.
+
+
+<Sandpack title="Customized loading text">
+
+```ts file=loadingText-example.page.tsx
+```
+</Sandpack>
+
 </Prop>
 
 <Prop name="onBlurWithin" type="(event)=> void">
@@ -272,6 +295,21 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 ```
 ```ts file=data.ts
 ```
+</Sandpack>
+</Prop>
+
+
+<Prop name="onScrollToBottom" type="()=>void">
+
+> Triggered when the user has scrolled to the bottom of the component
+
+As an example usage, we're demoing live pagination, done in combination with the [react-query](https://react-query.tanstack.com/) library.
+
+<Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
+
+```ts file=../learn/data-handling/live-pagination-example.page.tsx
+```
+
 </Sandpack>
 
 

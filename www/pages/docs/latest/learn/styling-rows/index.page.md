@@ -39,9 +39,9 @@ The <PropLink name="rowClassName" /> function prop has the same signature as the
 
 <Sandpack>
 
-```ts file=row-styling-example.page.tsx
+```ts file=../../reference/rowStyle-example.page.tsx
 ```
-```ts file=columns.ts
+```ts file=../../reference/rowStyle-example-columns.ts as=rowStyle-example-columns.ts
 ```
 
 </Sandpack>

@@ -13,72 +13,76 @@ export interface SeoProps {
 export const Seo = withRouter(
   ({
     title,
-    description = 'A JavaScript library for building user interfaces',
-    image = '/logo-og.png',
+    description = 'UI component for data virtualization',
     router,
     children,
-  }: SeoProps & { router: Router }) => (
-    <Head>
-      {/* DEFAULT */}
+  }: SeoProps & { router: Router }) => {
+    title += ' | Infinite Table for React';
+    return (
+      <Head>
+        {/* DEFAULT */}
 
-      <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
-      />
-
-      {title != null && <title key="title">{title}</title>}
-      {description != null && (
         <meta
-          name="description"
-          key="description"
-          content={description}
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
         />
-      )}
-      {/* <link rel="icon" type="image/x-icon" href={favicon} />
+
+        {title != null && (
+          <title key="title">{title}</title>
+        )}
+        {description != null && (
+          <meta
+            name="description"
+            key="description"
+            content={description}
+          />
+        )}
+        {/* <link rel="icon" type="image/x-icon" href={favicon} />
       <link rel="apple-touch-icon" href={favicon} />  @todo favicon */}
-      <meta
-        property="fb:app_id"
-        content="623268441017527"
-      />
-      {/* OPEN GRAPH */}
-      <meta
-        property="og:type"
-        key="og:type"
-        content="website"
-      />
-      <meta
-        property="og:url"
-        key="og:url"
-        content={`https://beta.reactjs.org${router.pathname}`}
-      />
-      {title != null && (
-        <meta
-          property="og:title"
-          content={title}
-          key="og:title"
-        />
-      )}
-      {description != null && (
-        <meta
-          property="og:description"
-          key="og:description"
-          content={description}
-        />
-      )}
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="/favicon.svg"></link>
 
+        {/* OPEN GRAPH */}
+        <meta
+          property="og:type"
+          key="og:type"
+          content="website"
+        />
+        <meta
+          property="og:url"
+          key="og:url"
+          content={`https://infinite-table.com/${router.pathname}`}
+        />
+        {title != null && (
+          <meta
+            property="og:title"
+            content={title}
+            key="og:title"
+          />
+        )}
+        {description != null && (
+          <meta
+            property="og:description"
+            key="og:description"
+            content={description}
+          />
+        )}
+        {/* 
       <meta
         property="og:image"
         key="og:image"
         content={`https://beta.reactjs.org${image}`}
-      />
+      /> */}
 
-      {/* TWITTER */}
-      <meta
+        {/* TWITTER */}
+        {/* <meta
         name="twitter:card"
         key="twitter:card"
         content="summary_large_image"
-      />
-      <meta
+      /> */}
+        {/* <meta
         name="twitter:site"
         key="twitter:site"
         content="@reactjs"
@@ -87,29 +91,30 @@ export const Seo = withRouter(
         name="twitter:creator"
         key="twitter:creator"
         content="@reactjs"
-      />
-      {title != null && (
-        <meta
-          name="twitter:title"
-          key="twitter:title"
-          content={title}
-        />
-      )}
-      {description != null && (
-        <meta
-          name="twitter:description"
-          key="twitter:description"
-          content={description}
-        />
-      )}
+      /> */}
+        {title != null && (
+          <meta
+            name="twitter:title"
+            key="twitter:title"
+            content={title}
+          />
+        )}
+        {description != null && (
+          <meta
+            name="twitter:description"
+            key="twitter:description"
+            content={description}
+          />
+        )}
 
-      <meta
+        {/* <meta
         name="twitter:image"
         key="twitter:image"
         content={`https://beta.reactjs.org${image}`}
-      />
+      /> */}
 
-      {children}
-    </Head>
-  )
+        {children}
+      </Head>
+    );
+  }
 );

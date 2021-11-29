@@ -27,7 +27,6 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   if (rowInfo.indexInAll % 10 === 0) {
     return { background: 'lightblue', color: 'black' };
   }
-  return;
 };
 
 export default function App() {
@@ -46,8 +45,5 @@ const dataSource = () => {
     process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
   )
     .then((r) => r.json())
-    .then((data: Employee[]) => {
-      console.log(data);
-      return data;
-    });
+    .then((data: Employee[]) => data);
 };

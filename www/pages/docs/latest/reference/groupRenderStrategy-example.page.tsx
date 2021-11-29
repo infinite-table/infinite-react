@@ -52,16 +52,21 @@ export default function App() {
       style={{
         display: 'flex',
         flex: 1,
+
+        color: 'var(--infinite-row-color)',
         flexFlow: 'column',
+        background: 'var(--infinite-background)',
       }}>
-      <p>Please select the group render strategy</p>
+      <p style={{ padding: 10 }}>
+        Please select the group render strategy
+      </p>
       <div style={{ padding: 10 }}>
         <select
           style={{
             margin: '10px 0',
             display: 'inline-block',
             background: 'var(--infinite-background)',
-            color: 'var(--infinite-cell-color)',
+            color: 'currentColor',
             padding: 'var(--infinite-space-3)',
           }}
           value={groupRenderStrategy}
@@ -96,7 +101,8 @@ export default function App() {
 
 const dataSource = () => {
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees1k'
+    'https://infinite-table.com/.netlify/functions/json-server' +
+      '/employees1k'
   )
     .then((r) => r.json())
     .then((data: Employee[]) => data);

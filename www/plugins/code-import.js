@@ -7,6 +7,7 @@ const path = require('path');
 const visit = require('unist-util-visit');
 
 const META_TAG_FILE = 'file';
+const META_TAG_AS = 'as';
 
 const FILE_PATH_PREFIX = '../src/code-snippets';
 
@@ -35,16 +36,26 @@ function codeImport(options = {}) {
       const fileMeta = nodeMetaTags.find((meta) =>
         meta.startsWith(`${META_TAG_FILE}=`)
       );
+      const asMeta = nodeMetaTags.find((meta) =>
+        meta.startsWith(`${META_TAG_AS}=`)
+      );
 
       if (!fileMeta) {
         continue;
       }
 
       const [, fileName] = fileMeta.split(/=(.*)/);
+      const [, asFileName] = asMeta
+        ? asMeta.split(/=(.*)/)
+        : [];
 
       const fileLocation = file.history[0];
 
-      const fileAbsolutePath = path.resolve(fileLocation, '../.', fileName);
+      const fileAbsolutePath = path.resolve(
+        fileLocation,
+        '../.',
+        fileName
+      );
 
       if (!fs.existsSync(fileAbsolutePath)) {
         throw Error(
@@ -52,13 +63,19 @@ function codeImport(options = {}) {
         );
       }
 
-      let fileContent = fs.readFileSync(fileAbsolutePath, 'utf8').trim();
+      let fileContent = fs
+        .readFileSync(fileAbsolutePath, 'utf8')
+        .trim();
 
       if (fileContent) {
         fileContent = fileContent.replace(
           /process.env\.NEXT_PUBLIC_BASE_URL/g,
           `'${process.env.NEXT_PUBLIC_BASE_URL}'`
         );
+      }
+      if (asFileName) {
+        // if another name specifed in "as", override the meta with this one
+        node.meta = `file=${asFileName}`;
       }
       node.value = fileContent;
     }

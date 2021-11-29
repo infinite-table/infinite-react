@@ -3,23 +3,26 @@ import {
   SandpackProvider,
   SandpackSetup,
   SandpackFile,
-  useSandpack,
 } from '@codesandbox/sandpack-react';
 
 import { CustomPreset } from './CustomPreset';
 import { useInfiniteTemplate } from '../../useInfiniteTemplate';
 import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 
+const DEPS_VERSIONS: Record<string, string> = {
+  '@infinite-table/infinite-react': '0.0.3',
+  'react-query': '3.33.7',
+};
+
 type SandpackProps = {
   children: React.ReactChildren;
+  deps?: string;
   title?: React.ReactNode;
   autorun?: boolean;
   setup?: SandpackSetup;
 };
 
 function Sandpack(props: SandpackProps) {
-  console.log('re-rendering');
-
   let { children, setup, autorun = true, title } = props;
   let [resetKey, setResetKey] = React.useState(0);
   let codeSnippets = React.Children.toArray(
@@ -115,9 +118,22 @@ function Sandpack(props: SandpackProps) {
       });
   }
 
-  const dependencies = {
-    '@infinite-table/infinite-react': '0.0.3',
+  const dependencies: Record<string, string> = {
+    '@infinite-table/infinite-react':
+      DEPS_VERSIONS['@infinite-table/infinite-react'],
   };
+
+  if (props.deps) {
+    const deps: string[] = props.deps.split(',');
+
+    deps.forEach((dep) => {
+      if (!DEPS_VERSIONS[dep]) {
+        console.warn(`Unknown dependency: ${dep}`);
+        return;
+      }
+      dependencies[dep] = DEPS_VERSIONS[dep];
+    });
+  }
 
   return (
     <div className="my-8" translate="no">
