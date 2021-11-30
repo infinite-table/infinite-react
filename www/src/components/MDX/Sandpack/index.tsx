@@ -65,6 +65,7 @@ function Sandpack(props: SandpackProps) {
       const nodeMetaTags = metastring?.split(/\s+/);
 
       let fileName = getMetaTag('file', nodeMetaTags);
+
       if (!fileName) {
         throw new Error(
           `Code block is missing a filename: ${props.children}`

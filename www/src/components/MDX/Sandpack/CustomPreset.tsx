@@ -13,7 +13,7 @@ import { IconChevron } from '@www/components/Icon/IconChevron';
 import { NavigationBar } from './NavigationBar';
 import { Preview } from './Preview';
 import { CustomTheme } from './Themes';
-import { useEffect } from 'react';
+import { CSSProperties } from 'react';
 import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
 
 export function CustomPreset({
@@ -42,7 +42,7 @@ export function CustomPreset({
   // }, []);
 
   const { code } = useActiveCode();
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  let [isExpanded, setIsExpanded] = React.useState(false);
 
   const { activePath } = sandpack;
   if (!lineCountRef.current[activePath]) {
@@ -50,16 +50,10 @@ export function CustomPreset({
       code.split('\n').length;
   }
   const lineCount = lineCountRef.current[activePath];
-  const isExpandable = lineCount > 16 || isExpanded;
-  const editorHeight = isExpandable
+  let isExpandable = lineCount > 16 || isExpanded;
+  let editorHeight = isExpandable
     ? lineCount * 24 + 24
     : 'auto'; // shown lines * line height (24px)
-  const getHeight = () => {
-    if (!isExpandable) {
-      return editorHeight;
-    }
-    return isExpanded ? editorHeight : 406;
-  };
 
   const titleBlock = title ? (
     <div
@@ -72,16 +66,49 @@ export function CustomPreset({
       </div>
     </div>
   ) : null;
+
+  const [fullScreen, setFullScreen] = React.useState(false);
+
+  if (fullScreen) {
+    editorHeight = 'auto';
+    isExpandable = false;
+    isExpanded = true;
+  }
+
+  const getHeight = () => {
+    if (fullScreen) {
+      const diff = 40 + (titleBlock ? 34 : 0); // 40 is navbar height
+      return `calc(100vh - ${diff}px)`;
+    }
+    if (!isExpandable) {
+      return editorHeight;
+    }
+    return isExpanded ? editorHeight : 406;
+  };
+
   return (
     <>
       <div
         className="shadow-lg dark:shadow-lg-dark rounded-lg"
-        ref={containerRef}>
+        ref={containerRef}
+        style={
+          fullScreen
+            ? ({
+                position: 'fixed',
+                left: 0,
+                right: 0,
+                bottom: 0,
+                top: 0,
+                zIndex: 1000,
+              } as CSSProperties)
+            : undefined
+        }>
         {titleBlock}
         <NavigationBar
           skipRound={!!titleBlock}
           showDownload={isSingleFile}
           onReset={onReset}
+          onFullScreenToggle={setFullScreen}
         />
         <SandpackThemeProvider theme={CustomTheme}>
           <div
@@ -91,11 +118,16 @@ export function CustomPreset({
               // Prevent it from collapsing below the initial (non-loaded) height.
               // There has to be some better way to do this...
               minHeight: 216,
+              height: fullScreen ? '100vh' : '',
             }}>
             <SandpackCodeEditor
               customStyle={{
                 height: getHeight(),
-                maxHeight: isExpanded ? '' : 406,
+                maxHeight: isExpanded
+                  ? fullScreen
+                    ? getHeight()
+                    : ''
+                  : 406, //40px is navbar height
               }}
               showLineNumbers
               showInlineErrors
@@ -103,6 +135,7 @@ export function CustomPreset({
             />
             <Preview
               isExpanded={isExpanded}
+              fullScreen={fullScreen}
               className="order-last xl:order-2"
               customStyle={{
                 height: getHeight(),

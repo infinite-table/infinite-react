@@ -12,11 +12,13 @@ import {
   computeViewportSize,
   generateRandomId,
 } from './utils';
+import { CSSProperties } from 'react';
 
 type CustomPreviewProps = {
   className?: string;
-  customStyle: Record<string, unknown>;
+  customStyle: CSSProperties;
   isExpanded: boolean;
+  fullScreen: boolean;
 };
 
 function useDebounced(value: any): any {
@@ -34,6 +36,7 @@ function useDebounced(value: any): any {
 export function Preview({
   customStyle,
   isExpanded,
+  fullScreen,
   className,
 }: CustomPreviewProps) {
   const { sandpack, listen } = useSandpack();
@@ -134,18 +137,23 @@ export function Preview({
   // - It should work on mobile.
   // The best way to test it is to actually go through some challenges.
 
+  const style: CSSProperties = {
+    // TODO: clean up this mess.
+    ...customStyle,
+    ...viewportStyle,
+    ...overrideStyle,
+  };
+
+  if (fullScreen) {
+    style.maxHeight = style.height;
+  }
   return (
     <div
       className={cn('sp-stack', className)}
-      style={{
-        // TODO: clean up this mess.
-        ...customStyle,
-        ...viewportStyle,
-        ...overrideStyle,
-      }}>
+      style={style}>
       <div
         className={cn(
-          'p-0 sm:p-1 md:p-2 lg:p-4 bg-card dark:bg-wash-dark h-full relative rounded-b-lg lg:rounded-b-none'
+          'p-0 sm:p-1 md:p-2 bg-card dark:bg-wash-dark h-full relative rounded-b-lg lg:rounded-b-none'
         )}
         style={{ overflow }}>
         <div

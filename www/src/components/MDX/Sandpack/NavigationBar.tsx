@@ -7,16 +7,18 @@ import { OpenInCodeSandboxButton } from './OpenInCodeSandboxButton';
 import { ResetButton } from './ResetButton';
 import { DownloadButton } from './DownloadButton';
 import { FilesDropdown } from './FilesDropdown';
-import { ReactNode } from 'react';
+import { FullScreenButton } from './FullScreenButton';
 
 export function NavigationBar({
   showDownload,
   onReset,
+  onFullScreenToggle,
   skipRound,
 }: {
   skipRound?: boolean;
   showDownload: boolean;
   onReset: () => void;
+  onFullScreenToggle?: (fullScreen: boolean) => void;
 }) {
   const { sandpack } = useSandpack();
   const [dropdownActive, setDropdownActive] =
@@ -58,6 +60,8 @@ export function NavigationBar({
         className="px-3 flex items-center justify-end flex-grow text-right"
         translate="yes">
         {showDownload && <DownloadButton />}
+        {/* <OpenInWindowButton onClick={() => {}} /> */}
+        <FullScreenButton onToggle={onFullScreenToggle} />
         <ResetButton onReset={onReset} />
         <OpenInCodeSandboxButton className="ml-2 md:ml-4" />
       </div>
