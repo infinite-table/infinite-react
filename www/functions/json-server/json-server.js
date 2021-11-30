@@ -13,6 +13,9 @@ const {
   employees: employees50k,
 } = require('../../dataserver/data/employees50k.json');
 const {
+  developers,
+} = require('../../dataserver/data/developers.json');
+const {
   developers: developers50k,
 } = require('../../dataserver/data/developers50k.json');
 const router = jsonServer.router({
