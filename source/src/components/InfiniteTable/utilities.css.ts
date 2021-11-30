@@ -38,6 +38,11 @@ export const transformTranslateZero = style({
   transform: 'translate3d(0,0,0)',
 });
 
+export const transform = styleVariants({
+  translateZero: { transform: 'translate3d(0,0,0)' },
+  rotate90: { transform: 'rotate(90deg)' },
+});
+
 export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
 });

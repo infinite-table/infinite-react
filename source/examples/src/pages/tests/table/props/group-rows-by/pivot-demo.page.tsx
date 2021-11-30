@@ -28,13 +28,14 @@ type Employee = {
   streetNo: number;
   department: string;
   team: string;
+  currency: string;
   salary: number;
   age: number;
   email: string;
 };
 
 const dataSource = () => {
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees`)
+  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/employees`)
     .then((r) => r.json())
     .then((data: Employee[]) => {
       return data;
@@ -87,7 +88,7 @@ export default function GroupByExample() {
         primaryKey="id"
         data={dataSource}
         groupRowsBy={groupRowsBy}
-        pivotBy={[{ field: 'city' }]}
+        pivotBy={[{ field: 'currency' }]}
         defaultGroupRowsState={groupRowsState}
       >
         {({ pivotColumns, pivotColumnGroups }) => {

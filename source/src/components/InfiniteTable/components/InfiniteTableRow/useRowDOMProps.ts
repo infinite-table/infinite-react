@@ -167,7 +167,7 @@ export function useRowDOMProps<T>(
     [initialMouseLeave, showHoverRows],
   );
 
-  if (rowInfo.isGroupRow && groupRenderStrategy === 'single-column') {
+  if (rowInfo.isGroupRow) {
     style = style || {};
     //@ts-ignore
     style[stripVar(ThemeVars.components.Row.groupNesting)] =

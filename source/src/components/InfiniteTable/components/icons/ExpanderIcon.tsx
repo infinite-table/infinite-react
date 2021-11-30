@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { join } from '../../../../utils/join';
 import { isControlled } from '../../../utils/isControlled';
-import { fill, flex, cursor } from '../../utilities.css';
+import { fill, flex, cursor, transform } from '../../utilities.css';
 
 type ExpanderIconProps = {
   size?: number;
@@ -14,16 +14,10 @@ type ExpanderIconProps = {
 };
 export function ExpanderIcon(props: ExpanderIconProps) {
   const { size = 24 } = props;
-  const style: React.CSSProperties = {
-    ...props.style,
-  };
 
   const [expanded, setExpanded] = useState(
     props.expanded ?? props.defaultExpanded,
   );
-  if (expanded) {
-    style.transform = `rotate(90deg)`;
-  }
 
   const onClick = () => {
     props.onChange?.(!expanded);
@@ -44,14 +38,15 @@ export function ExpanderIcon(props: ExpanderIconProps) {
       height={`${size}px`}
       viewBox="0 0 24 24"
       width={`${size}px`}
-      style={style}
+      style={props.style}
       onClick={onClick}
       className={join(
         props.className,
-        fill.currentColor,
+        fill.accentColor,
         flex.none,
         cursor.pointer,
         expanded ? fill.accentColor : '',
+        expanded ? transform.rotate90 : '',
         'InfiniteIcon',
         'InfiniteIcon-expander',
         `InfiniteIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,

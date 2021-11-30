@@ -84622,7 +84622,29 @@ function getRandomFrom(array) {
   return array[getRandomInt(0, array.length - 1)];
 }
 var companySizes = [10, 100, 1e3, 1e4];
-var ages = [18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58];
+var ages = [
+  18,
+  18,
+  24,
+  20,
+  26,
+  29,
+  35,
+  38,
+  40,
+  46,
+  50,
+  52,
+  58
+];
+var currencies = [
+  "USD",
+  "GBP",
+  "EUR",
+  "JPY",
+  "AUD",
+  "CHF"
+];
 var availableCompanies = [...Array(20)].map(() => {
   const companySize = getRandomFrom(companySizes);
   const prevSize = companySizes[companySizes.indexOf(companySize) - 1] || 0;
@@ -84724,7 +84746,8 @@ var generate = (size) => {
       streetName,
       streetPrefix: import_faker.default.address.streetSuffix(),
       streetNo: import_faker.default.datatype.number(1e3),
-      age: getRandomFrom(ages)
+      age: getRandomFrom(ages),
+      currency: getRandomFrom(currencies)
     }), getDepartmentAndTeam());
     result.email = import_faker.default.internet.email(result.firstName, result.lastName);
     return result;

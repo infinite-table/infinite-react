@@ -12,7 +12,7 @@ import { OnMountProps, useOnMount } from '../hooks/useOnMount';
 import { VirtualListCls, VirtualListClsOrientation } from './VirtualList.css';
 import {
   position,
-  transformTranslateZero,
+  transform,
   willChange,
 } from '../InfiniteTable/utilities.css';
 import { InfiniteListRootClassName } from './InfiniteListRootClassName';
@@ -21,7 +21,7 @@ const rootClassName = InfiniteListRootClassName;
 const defaultClasses = [
   willChange.transform,
   position.relative,
-  transformTranslateZero,
+  transform.translateZero,
 ];
 
 export type RowListWithExternalScrollingListProps = {

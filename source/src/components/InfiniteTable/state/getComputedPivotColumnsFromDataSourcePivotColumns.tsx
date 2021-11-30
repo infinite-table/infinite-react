@@ -5,6 +5,7 @@ import {
   DataSourcePropPivotBy,
 } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
+import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 import { InfiniteTableProps } from '../types';
 import { InfiniteTablePivotColumn } from '../types/InfiniteTableColumn';
 import { InfiniteTableState } from '../types/InfiniteTableState';
@@ -95,12 +96,11 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
           (rowInfo.groupKeys?.length || 0) < groupRowsBy.length;
         return (
           <div
-            className={join(display.flex, alignItems.center)}
-            style={{
-              paddingInlineStart: `calc(${
-                rowInfo.groupNesting! - 1
-              } * var(--ITableRow-group-column-nesting))`,
-            }}
+            className={join(
+              display.flex,
+              alignItems.center,
+              GroupRowExpanderCls,
+            )}
           >
             {showExpanderIcon ? (
               <ExpanderIcon

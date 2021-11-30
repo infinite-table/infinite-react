@@ -17,12 +17,13 @@ You do that by using a `function` as a direct child of the `DataSource`, and in 
 
 
 ```ts
-const pivotBy = [{field: 'team'}]
+const pivotBy = [{ field: 'team' }]
+ // field needs to be keyof DATA_TYPE both in `pivotBy` and `groupRowsBy`
 const groupRowsBy = [{field: 'department'}, {field: 'country'}]
 
-<DataSource pivotBy={pivotBy} groupRowsBy={groupRowsBy}>
+<DataSource<DATA_TYPE> pivotBy={pivotBy} groupRowsBy={groupRowsBy}>
 { ({pivotColumns, pivotColumnGroups}) => {
-  return <InfiniteTable
+  return <InfiniteTable<DATA_TYPE>
     pivotColumns={pivotColumns}
     pivotColumnGroups={pivotColumnGroups}
   />

@@ -10,14 +10,11 @@ import type { ScrollPosition } from '../types/ScrollPosition';
 import type { RenderItem, RenderItemParam } from '../RawList/types';
 import { RawList } from '../RawList';
 import { VirtualListCls, VirtualListClsOrientation } from './VirtualList.css';
-import {
-  position,
-  transformTranslateZero,
-} from '../InfiniteTable/utilities.css';
+import { position, transform } from '../InfiniteTable/utilities.css';
 import { InfiniteListRootClassName } from './InfiniteListRootClassName';
 
 const rootClassName = InfiniteListRootClassName;
-const defaultClasses = [position.relative, transformTranslateZero];
+const defaultClasses = [position.relative, transform.translateZero];
 
 export type ColumnWidth = number | ((columnWidth: number) => number);
 type ColumnListExternalScrollingListProps = {
