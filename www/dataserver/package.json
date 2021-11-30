@@ -11,7 +11,9 @@
     "watch": "npm run build && node ./config/run-build.js cjs --watch",
     "gen-employees": "node bin/cli.js -c 10000 -o ./data/employees.json -n employees",
     "gen-employees50k": "node bin/cli.js -c 50000 -o ./data/employees50k.json -n employees",
-    "gen": "npm run gen-employees && npm run gen-employees50k"
+    "gen-developers": "node bin/cli.js -c 10000 -o ./data/developers.json -n developers",
+    "gen-developers50k": "node bin/cli.js -c 50000 -o ./data/developers50k.json -n developers",
+    "gen": "npm run gen-employees && npm run gen-employees50k && npm run gen-developers && npm run gen-developers50k"
   },
   "author": "",
   "license": "ISC",

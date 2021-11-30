@@ -45,8 +45,8 @@ const dataSource = () => {
 const avgReducer: InfiniteTableColumnAggregator<Employee, any> = {
   initialValue: 0,
   getter: (data) => data.salary,
-  reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  reducer: (acc, sum) => acc + 1,
+  // done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
 const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
@@ -71,7 +71,7 @@ const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
     field: 'department',
   },
   // { field: 'team' },
-  { field: 'country' },
+  { field: 'team' },
 ];
 
 const groupRowsState = new GroupRowsState({
@@ -88,7 +88,7 @@ export default function GroupByExample() {
         primaryKey="id"
         data={dataSource}
         groupRowsBy={groupRowsBy}
-        pivotBy={[{ field: 'currency' }]}
+        pivotBy={[{ field: 'team' }]}
         defaultGroupRowsState={groupRowsState}
       >
         {({ pivotColumns, pivotColumnGroups }) => {

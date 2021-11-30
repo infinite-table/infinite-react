@@ -84757,6 +84757,176 @@ function write(obj, file) {
   fs.writeFileSync(path.resolve(process.cwd(), file), JSON.stringify(obj, null, 2));
 }
 
+// developers-generator.ts
+var import_faker2 = __toModule(require("faker"));
+var fs2 = require("fs");
+var path2 = require("path");
+var allowedCountries = new Set([
+  "Argentina",
+  "Australia",
+  "Brazil",
+  "Canada",
+  "China",
+  "France",
+  "Germany",
+  "India",
+  "Indonesia",
+  "Italy",
+  "Japan",
+  "Republic of Korea",
+  "Mexico",
+  "Russia",
+  "Saudi Arabia",
+  "South Africa",
+  "Turkey",
+  "Sweden",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Spain"
+]);
+var listOfCountries = Object.keys(countries_default).reduce((acc, country) => {
+  if (allowedCountries.has(country)) {
+    acc[country] = countries_default[country];
+  }
+  return acc;
+}, {});
+var languages = [
+  "JavaScript",
+  "TypeScript",
+  "Python",
+  "C#",
+  "Java",
+  "Ruby",
+  "PHP",
+  "Rust",
+  "Go"
+];
+var reposCount = [1, 5, 7, 10, 12, 24, 35];
+var hobbies = [
+  "photography",
+  "cooking",
+  "dancing",
+  "reading",
+  "sports"
+];
+var stacks = ["frontend", "backend", "full-stack"];
+var designerSkills = ["yes", "no"];
+var countriesWithCodesMap2 = countries_default2.reduce((acc, c) => {
+  acc.set(c.name, c.code);
+  return acc;
+}, new Map());
+var countriesMapByName2 = new Map();
+var countries2 = Object.keys(listOfCountries).map((k) => {
+  let cities = listOfCountries[k];
+  const citiesSize = getRandomFrom2([4, 8, 10, 6]);
+  const citiesWithAddress = [...Array(citiesSize)].map(() => {
+    const streetNameSize = getRandomFrom2([2, 8, 4, 6]);
+    const streetNames = [...Array(streetNameSize)].map(() => import_faker2.default.address.streetName());
+    return {
+      city: getRandomFrom2(cities),
+      streetNames
+    };
+  });
+  return {
+    name: k,
+    cities: citiesWithAddress,
+    code: countriesWithCodesMap2.get(k)
+  };
+}).filter((c) => {
+  if (c.code) {
+    countriesMapByName2.set(c.name, c);
+  }
+  return !!c.code;
+});
+function getRandomInt2(min, max) {
+  return min + Math.floor(Math.random() * (max + 1));
+}
+function getRandomFrom2(array) {
+  return array[getRandomInt2(0, array.length - 1)];
+}
+var companySizes2 = [10, 100, 1e3, 1e4];
+var ages2 = [
+  18,
+  18,
+  24,
+  20,
+  26,
+  29,
+  35,
+  38,
+  40,
+  46,
+  50,
+  52,
+  58
+];
+var currencies2 = [
+  "USD",
+  "GBP",
+  "EUR",
+  "JPY",
+  "AUD",
+  "CHF"
+];
+var availableCompanies2 = [...Array(20)].map(() => {
+  const companySize = getRandomFrom2(companySizes2);
+  const prevSize = companySizes2[companySizes2.indexOf(companySize) - 1] || 0;
+  return {
+    companyName: import_faker2.default.company.companyName(),
+    companySize: `${prevSize} - ${companySize}`
+  };
+});
+var availableCountries2 = countries2.map((c) => {
+  return {
+    country: c.name,
+    countryCode: c.code
+  };
+});
+var salaries = [
+  1e5,
+  2e5,
+  12e4,
+  3e5,
+  4e5,
+  5e5,
+  1e5,
+  9e4,
+  5e4,
+  6e4
+];
+var salaryOffsets2 = [1e3, 2e3, 3e3, 0];
+var generate2 = (size) => {
+  const lastNames = [...Array(Math.floor(size / 5))].map(() => import_faker2.default.name.lastName());
+  return [...Array(size)].map((_, _index) => {
+    var _a, _b;
+    const country = getRandomFrom2(availableCountries2);
+    const city = countriesMapByName2.get(country.country) ? getRandomFrom2(((_a = countriesMapByName2.get(country.country)) == null ? void 0 : _a.cities) || []) : null;
+    const streetName = (_b = getRandomFrom2((city == null ? void 0 : city.streetNames) || [])) != null ? _b : import_faker2.default.address.streetName;
+    const result = __spreadProps(__spreadValues(__spreadProps(__spreadValues({
+      id: _index
+    }, getRandomFrom2(availableCompanies2)), {
+      firstName: import_faker2.default.name.firstName(),
+      lastName: getRandomFrom2(lastNames)
+    }), country), {
+      city: city == null ? void 0 : city.city,
+      streetName,
+      streetPrefix: import_faker2.default.address.streetSuffix(),
+      streetNo: import_faker2.default.datatype.number(1e3),
+      age: getRandomFrom2(ages2),
+      currency: getRandomFrom2(currencies2),
+      preferredLanguage: getRandomFrom2(languages),
+      reposCount: getRandomFrom2(reposCount),
+      stack: getRandomFrom2(stacks),
+      canDesign: getRandomFrom2(designerSkills),
+      salary: getRandomFrom2(salaries) - getRandomFrom2(salaryOffsets2),
+      hobby: getRandomFrom2(hobbies)
+    });
+    result.email = import_faker2.default.internet.email(result.firstName, result.lastName);
+    return result;
+  });
+};
+
 // cli.ts
 var import_commander = __toModule(require("commander"));
 var import_commander2 = __toModule(require("commander"));
@@ -84781,6 +84951,8 @@ function init() {
   const options = program.opts();
   log("");
   log(options);
-  write({ [options.name]: generate(options.count) }, options.outfile);
+  const genFn = options.name === "developers" ? generate2 : generate;
+  write({ [options.name]: genFn(options.count) }, options.outfile);
+  write({ [options.name]: genFn(options.count) }, options.outfile);
 }
 init();

@@ -12,6 +12,9 @@ const {
 const {
   employees: employees50k,
 } = require('../../dataserver/data/employees50k.json');
+const {
+  developers: developers50k,
+} = require('../../dataserver/data/developers50k.json');
 const router = jsonServer.router({
   employees,
   employees10: employees.slice(0, 10),
@@ -22,6 +25,15 @@ const router = jsonServer.router({
   employees30k: employees50k.slice(0, 30000),
   employees40k: employees50k.slice(0, 40000),
   employees50k: employees50k.slice(0, 50000),
+  developers,
+  developers10: developers.slice(0, 10),
+  developers100: developers.slice(0, 100),
+  developers1k: developers.slice(0, 1000),
+  developers10k: developers,
+  developers20k: developers50k.slice(0, 20000),
+  developers30k: developers50k.slice(0, 30000),
+  developers40k: developers50k.slice(0, 40000),
+  developers50k: developers50k.slice(0, 50000),
 });
 
 const app = express();
