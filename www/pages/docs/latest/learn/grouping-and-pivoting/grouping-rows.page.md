@@ -110,6 +110,17 @@ Let's see an example of how the component would render the table with the multi-
 
 </Sandpack>
 
+For the `multi-column` strategy, you can use <PropLink name="hideEmptyGroupColumns" /> in order to hide columns for groups which are currently not visible.
+
+<Sandpack title="Hide Empty Group Columns">
+
+```ts file=../../reference/hideEmptyGroupColumns-example.page.tsx
+```
+```ts file=../../reference/employee-columns.ts as=employee-columns.ts
+```
+
+</Sandpack>
+
 
 ### Single group column
 

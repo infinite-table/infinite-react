@@ -319,7 +319,20 @@ If it's a function, it will be called with the following arguments:
 ```
 
 </Sandpack>
+</Prop>
 
+<Prop name="hideEmptyGroupColumns" type="boolean" default={false}>
+
+> Allows you to hide group columns which don't render any information (this happens when all previous groups are collapsed).
+
+<Sandpack>
+
+```ts file=hideEmptyGroupColumns-example.page.tsx
+```
+``` ts file=employee-columns.ts
+```
+
+</Sandpack>
 </Prop>
 
 <Prop name="loadingText" type="ReactNode" defaultValue="'Loading'">
