@@ -3,11 +3,14 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
+} from '@infinite-table/infinite-react';
+
+import type {
+  InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   InfiniteTablePropColumnAggregations,
   DataSourceGroupRowsBy,
-  InfiniteTableColumn,
   GroupRowsState,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';

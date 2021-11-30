@@ -1,15 +1,18 @@
-import faker from "faker";
+import faker from 'faker';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-import listOfCountries from "all-countries-and-cities-json/countries.json";
-import countriesWithCodes from "./countries.json";
+import listOfCountries from 'all-countries-and-cities-json/countries.json';
+import countriesWithCodes from './countries.json';
 
-const countriesWithCodesMap = countriesWithCodes.reduce((acc, c) => {
-  acc.set(c.name, c.code);
-  return acc;
-}, new Map<string, string>());
+const countriesWithCodesMap = countriesWithCodes.reduce(
+  (acc, c) => {
+    acc.set(c.name, c.code);
+    return acc;
+  },
+  new Map<string, string>()
+);
 
 type Country = {
   name: string;
@@ -26,17 +29,19 @@ const countries: Country[] = Object.keys(listOfCountries)
     // make the cities list shorter, so they repeat
     const citiesSize: number = getRandomFrom([4, 8, 10, 6]);
 
-    const citiesWithAddress = [...Array(citiesSize)].map(() => {
-      const streetNameSize = getRandomFrom([2, 8, 4, 6]);
-      const streetNames = [...Array(streetNameSize)].map(() =>
-        faker.address.streetName()
-      );
+    const citiesWithAddress = [...Array(citiesSize)].map(
+      () => {
+        const streetNameSize = getRandomFrom([2, 8, 4, 6]);
+        const streetNames = [...Array(streetNameSize)].map(
+          () => faker.address.streetName()
+        );
 
-      return {
-        city: getRandomFrom(cities),
-        streetNames,
-      };
-    });
+        return {
+          city: getRandomFrom(cities),
+          streetNames,
+        };
+      }
+    );
     return {
       name: k,
       cities: citiesWithAddress,
@@ -65,11 +70,23 @@ function getRandomFrom<T>(array: T[]) {
 }
 
 const companySizes = [10, 100, 1000, 10_000];
-const ages = [18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58];
+const ages = [
+  18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58,
+];
+const currencies = [
+  'USD',
+  'GBP',
+  'EUR',
+  'JPY',
+  'AUD',
+  'CHF',
+];
 
 const availableCompanies = [...Array(20)].map(() => {
   const companySize = getRandomFrom(companySizes);
-  const prevSize = companySizes[companySizes.indexOf(companySize) - 1] || 0;
+  const prevSize =
+    companySizes[companySizes.indexOf(companySize) - 1] ||
+    0;
 
   return {
     companyName: faker.company.companyName(),
@@ -86,61 +103,61 @@ const availableCountries = countries.map((c) => {
 
 const departments = [
   {
-    name: "IT",
+    name: 'IT',
     teams: [
-      { name: "backend", maxSalary: 100_000 },
-      { name: "frontend", maxSalary: 120_000 },
-      { name: "devops", maxSalary: 130_000 },
-      { name: "tooling", maxSalary: 200_000 },
-      { name: "deployments", maxSalary: 90_000 },
-      { name: "infrastructure", maxSalary: 120_000 },
-      { name: "database", maxSalary: 120_000 },
-      { name: "recovery", maxSalary: 100_000 },
+      { name: 'backend', maxSalary: 100_000 },
+      { name: 'frontend', maxSalary: 120_000 },
+      { name: 'devops', maxSalary: 130_000 },
+      { name: 'tooling', maxSalary: 200_000 },
+      { name: 'deployments', maxSalary: 90_000 },
+      { name: 'infrastructure', maxSalary: 120_000 },
+      { name: 'database', maxSalary: 120_000 },
+      { name: 'recovery', maxSalary: 100_000 },
     ],
   },
   {
-    name: "Sales",
+    name: 'Sales',
     teams: [
-      { name: "b2b", maxSalary: 90_000 },
-      { name: "b2c", maxSalary: 50_000 },
-      { name: "telesales", maxSalary: 50_000 },
-      { name: "phonesales", maxSalary: 50_000 },
+      { name: 'b2b', maxSalary: 90_000 },
+      { name: 'b2c', maxSalary: 50_000 },
+      { name: 'telesales', maxSalary: 50_000 },
+      { name: 'phonesales', maxSalary: 50_000 },
     ],
   },
   {
-    name: "Marketing",
+    name: 'Marketing',
     teams: [
-      { name: "online-marketing", maxSalary: 90_000 },
-      { name: "print-marketing", maxSalary: 60_000 },
-      { name: "telemarketing", maxSalary: 60_000 },
+      { name: 'online-marketing', maxSalary: 90_000 },
+      { name: 'print-marketing', maxSalary: 60_000 },
+      { name: 'telemarketing', maxSalary: 60_000 },
     ],
   },
   {
-    name: "Executive",
+    name: 'Executive',
     teams: [
-      { name: "ExecutiveOperations", maxSalary: 200_000 },
-      { name: "ExecutivePlanning", maxSalary: 220_000 },
+      { name: 'ExecutiveOperations', maxSalary: 200_000 },
+      { name: 'ExecutivePlanning', maxSalary: 220_000 },
     ],
   },
   {
-    name: "Management",
+    name: 'Management',
     teams: [
       {
-        name: "TopLevel",
+        name: 'TopLevel',
         maxSalary: 200_000,
       },
-      { name: "MidLevel", maxSalary: 150_000 },
-      { name: "TeamManagement", maxSalary: 120_000 },
-      { name: "MicroManagement", maxSalary: 100_000 },
+      { name: 'MidLevel', maxSalary: 150_000 },
+      { name: 'TeamManagement', maxSalary: 120_000 },
+      { name: 'MicroManagement', maxSalary: 100_000 },
     ],
   },
   {
-    name: "Support",
+    name: 'Support',
     teams: [
-      { name: "on-call-support", maxSalary: 80_000 },
-      { name: "day-support", maxSalary: 50_000 },
-      { name: "live-support", maxSalary: 90_000 },
-      { name: "chat-support", maxSalary: 50_000 },
+      { name: 'on-call-support', maxSalary: 80_000 },
+      { name: 'day-support', maxSalary: 50_000 },
+      { name: 'live-support', maxSalary: 90_000 },
+      { name: 'chat-support', maxSalary: 50_000 },
     ],
   },
 ];
@@ -158,18 +175,22 @@ function getDepartmentAndTeam() {
 }
 
 export const generate = (size: number) => {
-  const lastNames = [...Array(Math.floor(size / 5))].map(() =>
-    faker.name.lastName()
+  const lastNames = [...Array(Math.floor(size / 5))].map(
+    () => faker.name.lastName()
   );
 
   return [...Array(size)].map((_, _index) => {
     const country = getRandomFrom(availableCountries);
 
     const city = countriesMapByName.get(country.country)
-      ? getRandomFrom(countriesMapByName.get(country.country)?.cities || [])
+      ? getRandomFrom(
+          countriesMapByName.get(country.country)?.cities ||
+            []
+        )
       : null;
     const streetName =
-      getRandomFrom(city?.streetNames || []) ?? faker.address.streetName;
+      getRandomFrom(city?.streetNames || []) ??
+      faker.address.streetName;
     const result: any = {
       id: _index,
       ...getRandomFrom(availableCompanies),
@@ -181,11 +202,15 @@ export const generate = (size: number) => {
       streetPrefix: faker.address.streetSuffix(),
       streetNo: faker.datatype.number(1000),
       age: getRandomFrom(ages),
+      currency: getRandomFrom(currencies),
 
       ...getDepartmentAndTeam(),
     };
 
-    result.email = faker.internet.email(result.firstName, result.lastName);
+    result.email = faker.internet.email(
+      result.firstName,
+      result.lastName
+    );
 
     return result;
   });

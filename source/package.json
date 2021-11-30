@@ -112,7 +112,7 @@
     "debug": "^4.3.1",
     "decamelize": "^5.0.0"
   },
-  "license": "Commercial",
+  "license": "Commercial & Open Source",
   "//": "will be updated at build time",
   "publishedAt": 1624970570587
 }

@@ -10,8 +10,8 @@
     "build": "node ./config/run-build.js cjs",
     "watch": "npm run build && node ./config/run-build.js cjs --watch",
     "gen-employees": "node bin/cli.js -c 10000 -o ./data/employees.json -n employees",
-    "gen-employees100k": "node bin/cli.js -c 50000 -o ./data/employees100k.json -n employees",
-    "gen": "npm run gen-employees && npm run gen-employees100k"
+    "gen-employees50k": "node bin/cli.js -c 50000 -o ./data/employees50k.json -n employees",
+    "gen": "npm run gen-employees && npm run gen-employees50k"
   },
   "author": "",
   "license": "ISC",
