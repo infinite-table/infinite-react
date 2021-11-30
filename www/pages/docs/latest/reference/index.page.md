@@ -142,6 +142,29 @@ When we implement filtering, you'll also have access to the column filter.
 </Sandpack>
 </Prop>
 
+<Prop name="columns.type" type="'string'|'number'">
+
+> Specifies the type of values displayed in the column.
+
+For now there are only 2 column types, but more are coming soon:
+ * `string` - the default type, if none is specified.
+ * `number`
+
+ Specifying the correct column type will ensure the correct sorting function is used.
+
+See the example below - `id` and `age` columns are `type='number'`.
+
+<Sandpack>
+
+```ts file=columns-example.page.tsx
+```
+```ts file=data.ts
+```
+
+</Sandpack>
+</Prop>
+
+
 <Prop name="columns.width" type="number">
 
 > Specifies the fixed width of the column. NOTE - will probably be deprecated in the near future, for a better API.
@@ -161,6 +184,56 @@ A default column with can be specified for all columns by setting the <PropLink 
 
 </Sandpack>
 
+</Prop>
+
+<Prop name="columnOrder">
+
+> Defines the order in which columns are displayed in the component
+
+For uncontrolled usage, see <PropLink name="defaultColumnOrder" />.
+
+When using this controlled prop, make sure you also listen to <PropLink name="onColumnOrderChange" />
+
+<Note>
+
+The `columnOrder` array can contain identifiers that are not yet defined in the <PropLink name="columns" /> Map or can contain duplicate ids. This is a feature, not a bug. We want to allow you to use the `columnOrder` in a flexible way so it can define the order of current and future columns.
+
+Displaying the same column twice is a perfectly valid use case.
+
+</Note>
+
+
+<Sandpack title="Column order">
+
+```ts file=columnOrder-example.page.tsx
+```
+
+</Sandpack>
+</Prop>
+
+<Prop name="defaultColumnOrder">
+
+> Defines the order in which columns are displayed in the component.
+
+For controlled usage, see <PropLink name="columnOrder" />.
+
+When using this uncontrolled prop, you can also listen to <PropLink name="onColumnOrderChange" /> to be notified of column order changes
+
+<Note>
+
+The `defaultColumnOrder` array can contain identifiers that are not yet defined in the <PropLink name="columns" /> Map or can contain duplicate ids. This is a feature, not a bug. We want to allow you to use the `defaultColumnOrder` in a flexible way so it can define the order of current and future columns.
+
+Displaying the same column twice is a perfectly valid use case.
+
+</Note>
+
+
+<Sandpack title="Uncontrolled column order">
+
+```ts file=defaultColumnOrder-example.page.tsx
+```
+
+</Sandpack>
 </Prop>
 
 <Prop name="focusedClassName" type="string">
@@ -261,6 +334,13 @@ If it's a function, it will be called with the following arguments:
 </Sandpack>
 
 </Prop>
+
+<Prop name="onColumnOrderChange" type="(columnOrder: string[])=>void">
+
+> Called as a result of user changing the column order
+
+</Prop>
+
 
 <Prop name="onBlurWithin" type="(event)=> void">
 

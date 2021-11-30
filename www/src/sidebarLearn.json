@@ -12,6 +12,10 @@
           "path": "/docs/latest/learn/getting-started"
         },
         {
+          "title": "Working with Columns",
+          "path": "/docs/latest/learn/columns"
+        },
+        {
           "title": "Data Handling",
           "path": "/docs/latest/learn/data-handling"
         },
