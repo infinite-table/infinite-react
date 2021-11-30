@@ -15,7 +15,7 @@ import type {
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
-type Employee = {
+type Developer = {
   id: number;
   companyName: string;
   companySize: string;
@@ -24,6 +24,11 @@ type Employee = {
   country: string;
   countryCode: string;
   city: string;
+  currency: string;
+  preferredLanguage: string;
+  stack: string;
+  canDesign: 'yes' | 'no';
+  hobby: string;
   streetName: string;
   streetNo: number;
   department: string;
@@ -35,14 +40,14 @@ type Employee = {
 
 const dataSource = () => {
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
+    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
   )
     .then((r) => r.json())
-    .then((data: Employee[]) => data);
+    .then((data: Developer[]) => data);
 };
 
 const avgReducer: InfiniteTableColumnAggregator<
-  Employee,
+  Developer,
   any
 > = {
   initialValue: 0,
@@ -51,29 +56,31 @@ const avgReducer: InfiniteTableColumnAggregator<
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
+const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
   new Map([['salary', avgReducer]]);
 
-const columns: InfiniteTablePropColumns<Employee> = new Map<
-  string,
-  InfiniteTableColumn<Employee>
->([
-  ['department', { field: 'department' }],
-  ['country', { field: 'country' }],
-  ['id', { field: 'id' }],
-  ['firstName', { field: 'firstName' }],
+const columns: InfiniteTablePropColumns<Developer> =
+  new Map<string, InfiniteTableColumn<Developer>>([
+    ['id', { field: 'id' }],
+    ['firstName', { field: 'firstName' }],
+    ['preferredLanguage', { field: 'preferredLanguage' }],
+    ['stack', { field: 'stack' }],
+    ['country', { field: 'country' }],
+    ['canDesign', { field: 'canDesign' }],
+    ['hobby', { field: 'hobby' }],
 
-  ['city', { field: 'city' }],
-  ['age', { field: 'age' }],
-  ['salary', { field: 'salary' }],
-]);
+    ['city', { field: 'city' }],
+    ['age', { field: 'age' }],
+    ['salary', { field: 'salary', type: 'number' }],
+    ['currency', { field: 'currency' }],
+  ]);
 
-const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
+const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = [
   {
-    field: 'department',
+    field: 'preferredLanguage',
   },
   // { field: 'team' },
-  { field: 'country' },
+  { field: 'stack' },
 ];
 
 const groupRowsState = new GroupRowsState({
@@ -81,14 +88,15 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: true,
 });
 
-const pivotBy: DataSourcePivotBy<Employee>[] = [
-  { field: 'team' },
+const pivotBy: DataSourcePivotBy<Developer>[] = [
+  { field: 'hobby' },
+  { field: 'canDesign' },
 ];
 
 export default function GroupByExample() {
   return (
     <>
-      <DataSource<Employee>
+      <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         groupRowsBy={groupRowsBy}
@@ -96,7 +104,7 @@ export default function GroupByExample() {
         defaultGroupRowsState={groupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
-            <InfiniteTable<Employee>
+            <InfiniteTable<Developer>
               columns={columns}
               hideEmptyGroupColumns
               pivotColumns={pivotColumns}

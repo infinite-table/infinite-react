@@ -10,7 +10,7 @@ import { useInfiniteTemplate } from '../../useInfiniteTemplate';
 import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 
 const DEPS_VERSIONS: Record<string, string> = {
-  '@infinite-table/infinite-react': '0.0.3',
+  '@infinite-table/infinite-react': '0.0.4',
   'react-query': '3.33.7',
 };
 
