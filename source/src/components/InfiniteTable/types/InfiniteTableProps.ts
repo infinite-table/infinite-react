@@ -132,7 +132,7 @@ export type InfiniteTableGroupColumnGetterOptions<T> = {
   groupRowsBy: DataSourceGroupRowsBy<T>[];
 };
 
-export type PivotColumnGetterOptions<T> = {
+export type InfiniteTablePivotColumnGetterOptions<T> = {
   column: InfiniteTablePivotColumn<T>;
   groupRowsBy: DataSourcePropGroupRowsBy<T>;
   pivotBy: DataSourcePropPivotBy<T>;
@@ -160,7 +160,9 @@ export type InfiniteTableGroupColumnFunction<T> = (
 ) => InfiniteTableGroupColumnBase<T>;
 export type InfiniteTablePropPivotColumn<T> =
   | InfiniteTablePivotColumnBase<T>
-  | ((options: PivotColumnGetterOptions<T>) => InfiniteTablePivotColumnBase<T>);
+  | ((
+      options: InfiniteTablePivotColumnGetterOptions<T>,
+    ) => InfiniteTablePivotColumnBase<T>);
 
 export type InfiniteTablePropPivotRowLabelsColumn<T> =
   InfiniteTablePropPivotColumn<T>;

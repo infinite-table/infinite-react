@@ -89,8 +89,8 @@ const groupRowsState = new GroupRowsState({
 });
 
 const pivotBy: DataSourcePivotBy<Developer>[] = [
-  { field: 'hobby' },
-  { field: 'canDesign' },
+  { field: 'country' },
+  { field: 'canDesign', column: { width: 400 } },
 ];
 
 export default function GroupByExample() {
@@ -110,6 +110,21 @@ export default function GroupByExample() {
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={200}
+              pivotColumn={({ column }) => {
+                const { pivotGroupKeys } = column;
+
+                console.log({ column });
+                if (column.pivotFieldForColumn) {
+                  return {};
+                }
+                return {
+                  header: `Can design: ${
+                    pivotGroupKeys?.[
+                      pivotGroupKeys.length - 1
+                    ] || 'yes'
+                  }`,
+                };
+              }}
               pivotTotalColumnPosition="start"
               groupRenderStrategy="multi-column"
               columnAggregations={columnAggregations}

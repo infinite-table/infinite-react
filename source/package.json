@@ -7,9 +7,8 @@
   "typings": "index.d.ts",
   "scripts": {
     "css-compile-dont-run-this-outside-build-script": "sass ./src/components/InfiniteTable/index.scss:./dist/tmp.css && cat ./dist/tmp.css >> ./dist/index.css && rm ./dist/tmp.css ",
-    "css-watch": "sass ./src/components/InfiniteTable/index.scss:./dist/index.css --watch",
     "build": "rimraf dist && npm run tsc && node ./build/buildPackageJson.js && npm run esbuild &&  npm run css-compile-dont-run-this-outside-build-script && npm run update-md && cp LICENSE.md ./dist && cp ../README.md ./dist",
-    "watch": "concurrently \"npm run css-watch\" \"npm run tscw\" \"npm run esbuild-esm-watch\"",
+    "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\"",
     "rollup-types": "rollup -c rollup.config.js",
     "update-md": "npm run --prefix .. doctoc",
     "esbuild": "npm run esbuild-esm && npm run esbuild-cjs",

@@ -3,19 +3,20 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
+  GroupRowsState,
+} from '@infinite-table/infinite-react';
+
+import type {
+  InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   InfiniteTablePropColumnAggregations,
   DataSourceGroupRowsBy,
-  InfiniteTableColumn,
-  GroupRowsState,
+  DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import { InfiniteTablePivotColumn } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableColumn';
 
-const domProps = {
-  style: { height: '80vh', border: '1px solid gray' },
-};
-
-type Employee = {
+type Developer = {
   id: number;
   companyName: string;
   companySize: string;
@@ -24,54 +25,60 @@ type Employee = {
   country: string;
   countryCode: string;
   city: string;
+  currency: string;
+  preferredLanguage: string;
+  stack: string;
+  canDesign: 'yes' | 'no';
+  hobby: string;
   streetName: string;
   streetNo: number;
   department: string;
   team: string;
-  currency: string;
   salary: number;
   age: number;
   email: string;
 };
 
 const dataSource = () => {
-  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/employees`)
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
-    .then((data: Employee[]) => {
-      return data;
-    });
+    .then((data: Developer[]) => data);
 };
 
-const avgReducer: InfiniteTableColumnAggregator<Employee, any> = {
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
   getter: (data) => data.salary,
-  reducer: (acc, sum) => acc + 1,
-  // done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  reducer: (acc, sum) => acc + sum,
+  done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
+const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
   new Map([['salary', avgReducer]]);
 
-const columns: InfiniteTablePropColumns<Employee> = new Map<
+const columns: InfiniteTablePropColumns<Developer> = new Map<
   string,
-  InfiniteTableColumn<Employee>
+  InfiniteTableColumn<Developer>
 >([
-  ['department', { field: 'department' }],
-  ['country', { field: 'country' }],
   ['id', { field: 'id' }],
   ['firstName', { field: 'firstName' }],
+  ['preferredLanguage', { field: 'preferredLanguage' }],
+  ['stack', { field: 'stack' }],
+  ['country', { field: 'country' }],
+  ['canDesign', { field: 'canDesign' }],
+  ['hobby', { field: 'hobby' }],
 
   ['city', { field: 'city' }],
   ['age', { field: 'age' }],
-  ['salary', { field: 'salary' }],
+  ['salary', { field: 'salary', type: 'number' }],
+  ['currency', { field: 'currency' }],
 ]);
 
-const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
+const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = [
   {
-    field: 'department',
+    field: 'preferredLanguage',
   },
   // { field: 'team' },
-  { field: 'team' },
+  { field: 'stack' },
 ];
 
 const groupRowsState = new GroupRowsState({
@@ -79,32 +86,45 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: true,
 });
 
-//@ts-ignore
-globalThis.columns = columns;
+const pivotBy: DataSourcePivotBy<Developer>[] = [
+  { field: 'country' },
+  {
+    field: 'canDesign',
+    column: ({ column: pivotCol }) => {
+      const lastKey =
+        pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
+
+      return {
+        width: 400,
+        header: lastKey === 'yes' ? 'Designer' : 'Non-designer',
+      };
+    },
+  },
+];
+
 export default function GroupByExample() {
   return (
     <>
-      <DataSource<Employee>
+      <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         groupRowsBy={groupRowsBy}
-        pivotBy={[{ field: 'team' }]}
+        pivotBy={pivotBy}
         defaultGroupRowsState={groupRowsState}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
-            <InfiniteTable<Employee>
-              domProps={domProps}
+            <InfiniteTable<Developer>
               columns={columns}
+              domProps={{ style: { height: '90vh' } }}
               hideEmptyGroupColumns
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={200}
-              pivotTotalColumnPosition="start"
+              pivotTotalColumnPosition="end"
               groupRenderStrategy="multi-column"
-              // groupRenderStrategy="inline"
               columnAggregations={columnAggregations}
-            ></InfiniteTable>
+            />
           );
         }}
       </DataSource>

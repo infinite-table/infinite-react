@@ -8,6 +8,7 @@ import type {
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableRowInfo } from '.';
 import { CSSProperties } from 'react';
+import { PivotBy } from '../../../utils/groupAndPivot';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -198,8 +199,22 @@ export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {
   pivotColumn?: true;
   pivotTotalColumn?: true;
   pivotGroupKeys?: any[];
+  pivotByForColumn?: DataSourcePivotBy<T>;
+  pivotIndexForColumn?: number;
+  pivotGroupKeyForColumn?: any;
   // groupByField?: string | string[];
-  renderValue?: InfiniteTableColumnRenderValueFunction<T>;
+  // renderValue?: InfiniteTableColumnRenderValueFunction<T>;
+};
+
+export type InfiniteTablePivotFinalColumn<
+  DataType,
+  KeyType extends any = any,
+> = InfiniteTablePivotColumn<DataType> & {
+  pivotBy: DataSourcePivotBy<DataType>[];
+  pivotGroupKeys: KeyType[];
+  pivotByForColumn: PivotBy<DataType, KeyType>;
+  pivotIndexForColumn: number;
+  pivotGroupKeyForColumn: KeyType;
 };
 
 type InfiniteTableComputedColumnBase<T> = {

@@ -1,12 +1,16 @@
 import { useEffect, useMemo } from 'react';
-import { InfiniteTableColumn, InfiniteTableState } from '..';
-import { interceptMap } from '../../..';
-import { DataSourceGroupRowsBy, DataSourcePropPivotBy } from '../../DataSource';
+import type { InfiniteTableColumn, InfiniteTableState } from '..';
+
+import type {
+  DataSourceGroupRowsBy,
+  DataSourcePropGroupRowsBy,
+} from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
+import { interceptMap } from '../../hooks/useInterceptedMap';
 import { getComputedPivotColumnsFromDataSourcePivotColumns } from '../state/getComputedPivotColumnsFromDataSourcePivotColumns';
-import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
-import {
+import type { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
+import type {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from '../types/InfiniteTableProps';
@@ -20,7 +24,7 @@ import {
 
 import { ToggleGrouRowFn, useToggleGroupRow } from './useToggleGroupRow';
 
-function useGroupRowsMap<T>(groupRowsBy: DataSourcePropPivotBy<T>) {
+function useGroupRowsMap<T>(groupRowsBy: DataSourcePropGroupRowsBy<T>) {
   const groupRowsMap = useMemo(() => {
     return groupRowsBy.reduce((acc, groupBy, index) => {
       acc.set(groupBy.field, {

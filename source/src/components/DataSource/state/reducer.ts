@@ -1,12 +1,9 @@
 import type { DataSourceState, DataSourceDerivedState } from '../types';
+import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
+import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 
 import { multisort } from '../../../utils/multisort';
-import {
-  enhancedFlatten,
-  group,
-  getPivotColumnsAndColumnGroups,
-} from '../../../utils/groupAndPivot';
-import { InfiniteTableRowInfo } from '../../InfiniteTable';
+import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
