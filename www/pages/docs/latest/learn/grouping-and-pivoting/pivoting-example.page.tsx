@@ -14,7 +14,6 @@ import type {
   DataSourceGroupRowsBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
-import { InfiniteTablePivotFinalColumn } from '../../../../../../source/dist/components/InfiniteTable/types/InfiniteTableColumn';
 
 type Developer = {
   id: number;
