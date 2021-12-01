@@ -76,39 +76,48 @@ const columns: InfiniteTablePropColumns<Developer> =
     ['currency', { field: 'currency' }],
   ]);
 
-const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = [
-  {
-    field: 'preferredLanguage',
-  },
-  // { field: 'team' },
-  { field: 'stack' },
-];
-
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
 });
 
-const pivotBy: DataSourcePivotBy<Developer>[] = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: ({ column: pivotCol }) => {
-      const lastKey =
-        pivotCol.pivotGroupKeys[
-          pivotCol.pivotGroupKeys.length - 1
-        ];
-
-      return {
-        width: 400,
-        header:
-          lastKey === 'yes' ? 'Designer' : 'Non-designer',
-      };
-    },
-  },
-];
-
 export default function GroupByExample() {
+  const groupRowsBy: DataSourceGroupRowsBy<Developer>[] =
+    React.useMemo(
+      () => [
+        {
+          field: 'preferredLanguage',
+        },
+        { field: 'stack' },
+      ],
+      []
+    );
+
+  const pivotBy: DataSourcePivotBy<Developer>[] =
+    React.useMemo(
+      () => [
+        { field: 'country' },
+        {
+          field: 'canDesign',
+          column: ({ column: pivotCol }) => {
+            const lastKey =
+              pivotCol.pivotGroupKeys[
+                pivotCol.pivotGroupKeys.length - 1
+              ];
+
+            return {
+              width: 400,
+              header:
+                lastKey === 'yes'
+                  ? 'Designer'
+                  : 'Non-designer',
+            };
+          },
+        },
+      ],
+      []
+    );
+
   return (
     <>
       <DataSource<Developer>
