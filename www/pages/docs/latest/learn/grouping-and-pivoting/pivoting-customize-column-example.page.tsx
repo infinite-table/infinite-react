@@ -60,6 +60,7 @@ const columns: InfiniteTablePropColumns<Developer> =
     ['country', { field: 'country' }],
     ['canDesign', { field: 'canDesign' }],
     ['hobby', { field: 'hobby' }],
+
     ['city', { field: 'city' }],
     ['age', { field: 'age' }],
     ['salary', { field: 'salary', type: 'number' }],
@@ -89,6 +90,20 @@ export default function GroupByExample() {
         { field: 'country' },
         {
           field: 'canDesign',
+          column: ({ column: pivotCol }) => {
+            const lastKey =
+              pivotCol.pivotGroupKeys[
+                pivotCol.pivotGroupKeys.length - 1
+              ];
+
+            return {
+              width: 400,
+              header:
+                lastKey === 'yes'
+                  ? 'Designer'
+                  : 'Non-designer',
+            };
+          },
         },
       ],
       []
@@ -109,7 +124,6 @@ export default function GroupByExample() {
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={200}
-              pivotTotalColumnPosition="end"
               columnAggregations={columnAggregations}
             />
           );

@@ -31,7 +31,7 @@ const groupRowsBy = [{field: 'department'}, {field: 'country'}]
 </DataSource>
 ```
 
-<Sandpack>
+<Sandpack title="Pivoting with avg aggregation">
 
 ```ts file=pivoting-example.page.tsx
 ```
@@ -69,3 +69,11 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
 ];
 ```
 
+
+
+<Sandpack title="Pivoting with customized pivot column">
+
+```ts file=pivoting-customize-column-example.page.tsx
+```
+
+</Sandpack>
