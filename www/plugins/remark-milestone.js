@@ -62,7 +62,9 @@ async function getMilestone(milestone, status = 'all') {
           state: issue.state,
           type: typeLabel
             ? typeLabel.name.slice('Type:'.length).trim()
-            : issue.labels[0] || '',
+            : issue.labels[0]
+            ? issue.labels[0].name
+            : '',
           url: issue.url,
         };
       })
