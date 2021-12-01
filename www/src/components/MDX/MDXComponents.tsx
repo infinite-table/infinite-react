@@ -28,6 +28,7 @@ import YouWillLearnCard from './YouWillLearnCard';
 import { Challenges, Hint, Solution } from './Challenges';
 import { IconNavArrow } from '../Icon/IconNavArrow';
 import ButtonLink from '@www/components/ButtonLink';
+import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
 
 const P = (p: JSX.IntrinsicElements['p']) => (
   <p className="whitespace-pre-wrap my-4" {...p} />
@@ -391,6 +392,7 @@ export const MDXComponents = {
   Illustration,
   IllustrationBlock,
   Intro,
+  IconOpenInWindow,
   LearnMore,
   Math,
   MathI,

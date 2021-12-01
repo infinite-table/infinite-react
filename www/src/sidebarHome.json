@@ -12,6 +12,10 @@
           "path": "/docs"
         },
         {
+          "title": "Releases",
+          "path": "/docs/releases"
+        },
+        {
           "title": "Community",
           "path": "/docs/community",
           "routes": [{

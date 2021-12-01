@@ -94,14 +94,24 @@
     margin-bottom: 1rem;
     display: block;
     overflow-x: auto;
+    border-spacing: 5px;
+    border-collapse: separate;
   }
 
   table td,
   table th {
     padding: 0.75rem;
     vertical-align: top;
-    border: 1px solid #dee2e6;
-    overflow: auto;
+    border: 0.5rem solid transparent;
+    border-radius: 0.5rem;
+    overflow: initial;
+    color: currentColor;
+    @apply bg-highlight;
+  }
+  .dark table td,
+  .dark table th {
+    @apply text-primary-dark;
+    @apply bg-highlight-dark;
   }
 
   img {

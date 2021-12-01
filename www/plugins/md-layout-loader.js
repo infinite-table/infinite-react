@@ -19,7 +19,6 @@ const toUpperFirst = (str) => {
 module.exports = async function (src) {
   const callback = this.async();
   const { content, data } = fm(src);
-  console.log({ data });
   const layout = data.layout || 'Learn';
 
   const code =
