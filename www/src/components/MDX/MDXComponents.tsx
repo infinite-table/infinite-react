@@ -401,6 +401,7 @@ export const MDXComponents = {
   Prop,
   PropLink,
   DataSourcePropLink,
+  DPropLink: DataSourcePropLink,
   PropTable,
   Recap,
   Recipes,

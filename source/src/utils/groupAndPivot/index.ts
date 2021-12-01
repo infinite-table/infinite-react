@@ -86,7 +86,7 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
 export type GroupBy<DataType, KeyType> = {
   field: keyof DataType;
   toKey?: (value: any, data: DataType) => GroupKeyType<KeyType>;
-  column?: InfiniteTableGroupColumnBase<DataType>;
+  column?: Partial<InfiniteTableGroupColumnBase<DataType>>;
 };
 
 export type PivotBy<DataType, KeyType> = Omit<

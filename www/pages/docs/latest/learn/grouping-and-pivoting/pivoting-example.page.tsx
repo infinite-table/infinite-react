@@ -14,6 +14,7 @@ import type {
   DataSourceGroupRowsBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import { InfiniteTablePivotFinalColumn } from '../../../../../../source/dist/components/InfiniteTable/types/InfiniteTableColumn';
 
 type Developer = {
   id: number;
@@ -90,7 +91,21 @@ const groupRowsState = new GroupRowsState({
 
 const pivotBy: DataSourcePivotBy<Developer>[] = [
   { field: 'country' },
-  { field: 'canDesign', column: { width: 400 } },
+  {
+    field: 'canDesign',
+    column: ({ column: pivotCol }) => {
+      const lastKey =
+        pivotCol.pivotGroupKeys[
+          pivotCol.pivotGroupKeys.length - 1
+        ];
+
+      return {
+        width: 400,
+        header:
+          lastKey === 'yes' ? 'Designer' : 'Non-designer',
+      };
+    },
+  },
 ];
 
 export default function GroupByExample() {
@@ -110,21 +125,6 @@ export default function GroupByExample() {
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={200}
-              pivotColumn={({ column }) => {
-                const { pivotGroupKeys } = column;
-
-                console.log({ column });
-                if (column.pivotFieldForColumn) {
-                  return {};
-                }
-                return {
-                  header: `Can design: ${
-                    pivotGroupKeys?.[
-                      pivotGroupKeys.length - 1
-                    ] || 'yes'
-                  }`,
-                };
-              }}
               pivotTotalColumnPosition="start"
               groupRenderStrategy="multi-column"
               columnAggregations={columnAggregations}

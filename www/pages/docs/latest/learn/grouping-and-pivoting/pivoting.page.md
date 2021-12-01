@@ -37,3 +37,35 @@ const groupRowsBy = [{field: 'department'}, {field: 'country'}]
 ```
 
 </Sandpack>
+
+
+## Customizing Pivot Columns
+
+There are a number of ways to customize the pivot columns. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
+
+One way to do it is to specify <DPropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
+If you pass an object, it will be applied to all pivot columns corresponding to the `field` property.
+
+
+```tsx
+const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
+  { field: 'country' },
+  { field: 'canDesign', column: { width: 400 } },
+];
+
+<DataSource pivotBy={pivotBy} />
+```
+
+In the above example, the `column.width=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
+
+```tsx
+const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
+  { field: 'country' },
+  { field: 'canDesign', column: ({ column }) => {
+    return {
+      header: column.pivotGroupKeyForColumn === 'yes' ? 'Designer' : 'Not a Designer',
+    }
+  },
+];
+```
+
