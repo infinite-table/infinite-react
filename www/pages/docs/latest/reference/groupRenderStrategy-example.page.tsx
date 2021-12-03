@@ -18,7 +18,6 @@ const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
 ];
 
 const groupColumn: InfiniteTableGroupColumnFunction<Employee> =
-  //TODO continue here, make sure options contain groupRenderStrategy
   (options: {
     groupByForColumn?: { field: keyof Employee };
   }) => {
