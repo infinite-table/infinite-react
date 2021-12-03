@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@components/InfiniteTable/index.scss';
 import '../index.scss';
 
 // globalThis.InfiniteTableLicenseKey =

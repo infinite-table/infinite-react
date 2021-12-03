@@ -97,11 +97,10 @@ export default function GroupByExample() {
               ];
 
             return {
-              width: 400,
               header:
                 lastKey === 'yes'
-                  ? 'Designer'
-                  : 'Non-designer',
+                  ? '💅 Designer'
+                  : '💻 Non-designer',
             };
           },
         },
@@ -123,7 +122,7 @@ export default function GroupByExample() {
               columns={columns}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
-              columnDefaultWidth={200}
+              columnDefaultWidth={180}
               columnAggregations={columnAggregations}
             />
           );

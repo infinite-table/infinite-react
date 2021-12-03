@@ -1,25 +1,18 @@
 import * as React from 'react';
-import { useMemo, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { ReactVirtualRenderer } from './ReactVirtualRenderer';
-import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import { AvoidReactDiff } from './AvoidReactDiff';
 import { RawListProps } from './types';
 import { useLatest } from '../hooks/useLatest';
-import { Renderable } from '../types/Renderable';
+import { useVirtualRenderer } from './useVirtualRenderer';
 
 function RawListFn(props: RawListProps) {
   const { renderItem, brain, debugChannel } = props;
 
-  const { onRenderUpdater, renderer } = useMemo(() => {
-    const onRenderUpdater = buildSubscriptionCallback<Renderable>();
-    const renderer = new ReactVirtualRenderer(brain, {
-      channel: debugChannel,
-    });
-
-    return { onRenderUpdater, renderer };
-  }, []);
-
+  const { onRenderUpdater, renderer } = useVirtualRenderer({
+    brain,
+    debugChannel,
+  });
   const getRenderItem = useLatest(renderItem);
 
   useEffect(() => {
@@ -30,7 +23,7 @@ function RawListFn(props: RawListProps) {
       force: true,
       onRender: onRenderUpdater,
     });
-  }, [renderItem, onRenderUpdater]);
+  }, [brain, renderItem, onRenderUpdater]);
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {
@@ -42,13 +35,6 @@ function RawListFn(props: RawListProps) {
     });
     return remove;
   }, [brain, onRenderUpdater]);
-
-  useEffect(() => {
-    return () => {
-      renderer.destroy();
-      onRenderUpdater.destroy();
-    };
-  }, [renderer, onRenderUpdater]);
 
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }

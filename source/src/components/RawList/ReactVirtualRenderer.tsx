@@ -285,20 +285,20 @@ export class ReactVirtualRenderer extends Logger {
   };
 
   destroy = () => {
-    // if (!process.browser) {
-    //   console.warn('DESTROY ON SERVER');
-    // }
-    //TODO remove this early return - here for DEV
-    if (__DEV__) {
-      return;
-    }
     this.destroyed = true;
-    this.mappedItems.destroy();
-    this.itemDOMElements = [];
-    this.itemDOMRefs = [];
-    this.updaters = [];
+    this.reset();
+
     (this as any).onRender = null;
     (this as any).renderItem = null;
     (this as any).brain = null;
+    (this as any).mappedItems = null;
   };
+
+  reset() {
+    this.itemDOMElements = {};
+    this.itemDOMRefs = {};
+    this.updaters = {};
+    this.items = [];
+    this.mappedItems.reset();
+  }
 }

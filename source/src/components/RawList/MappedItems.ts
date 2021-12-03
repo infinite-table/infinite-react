@@ -17,6 +17,10 @@ export class MappedItems extends Logger {
     this.renderedElements = {};
   }
 
+  reset() {
+    this.init();
+  }
+
   destroy() {
     this.init();
   }
@@ -39,7 +43,7 @@ export class MappedItems extends Logger {
       const itemIndex = map[elementIndex];
 
       if (itemIndex < startIndex || itemIndex > endIndex) {
-        result.push(((elementIndex as any) as number) >> 0);
+        result.push((elementIndex as any as number) >> 0);
       }
     }
 
@@ -91,9 +95,8 @@ export class MappedItems extends Logger {
     if (__DEV__) {
       this.debug(`Render item ${itemIndex} at element ${elementIndex}`);
     }
-    const currentItemIndex: null | number = this.elementIndexToItemIndex[
-      elementIndex
-    ];
+    const currentItemIndex: null | number =
+      this.elementIndexToItemIndex[elementIndex];
 
     if (currentItemIndex != null) {
       delete this.itemIndexToElementIndex[currentItemIndex];

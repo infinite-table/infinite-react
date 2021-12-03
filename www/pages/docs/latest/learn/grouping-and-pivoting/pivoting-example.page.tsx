@@ -35,7 +35,13 @@ const dataSource = () => {
     process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
   )
     .then((r) => r.json())
-    .then((data: Developer[]) => data);
+    .then((data: Developer[]) => data)
+    .then(
+      (data) =>
+        new Promise<Developer[]>((resolve) => {
+          setTimeout(() => resolve(data), 1000);
+        })
+    );
 };
 
 const avgReducer: InfiniteTableColumnAggregator<

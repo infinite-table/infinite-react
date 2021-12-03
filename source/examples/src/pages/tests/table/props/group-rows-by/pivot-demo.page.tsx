@@ -17,25 +17,17 @@ import type {
 
 type Developer = {
   id: number;
-  companyName: string;
-  companySize: string;
   firstName: string;
   lastName: string;
   country: string;
-  countryCode: string;
   city: string;
   currency: string;
   preferredLanguage: string;
   stack: string;
   canDesign: 'yes' | 'no';
   hobby: string;
-  streetName: string;
-  streetNo: number;
-  department: string;
-  team: string;
   salary: number;
   age: number;
-  email: string;
 };
 
 const dataSource = () => {
@@ -72,36 +64,42 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
   ['currency', { field: 'currency' }],
 ]);
 
-const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = [
-  {
-    field: 'preferredLanguage',
-  },
-  // { field: 'team' },
-  { field: 'stack' },
-];
+const domProps = { style: { height: '100vh' } };
 
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
 });
 
-const pivotBy: DataSourcePivotBy<Developer>[] = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: ({ column: pivotCol }) => {
-      const lastKey =
-        pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
-
-      return {
-        width: 400,
-        header: lastKey === 'yes' ? 'Designer' : 'Non-designer',
-      };
-    },
-  },
-];
-
 export default function GroupByExample() {
+  const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'preferredLanguage',
+      },
+      { field: 'stack' },
+    ],
+    [],
+  );
+
+  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
+    () => [
+      { field: 'country' },
+      {
+        field: 'canDesign',
+        column: ({ column: pivotCol }) => {
+          const lastKey =
+            pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
+
+          return {
+            header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+          };
+        },
+      },
+    ],
+    [],
+  );
+
   return (
     <>
       <DataSource<Developer>
@@ -114,14 +112,11 @@ export default function GroupByExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              domProps={domProps}
               columns={columns}
-              domProps={{ style: { height: '90vh' } }}
-              hideEmptyGroupColumns
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
-              columnDefaultWidth={200}
-              pivotTotalColumnPosition="end"
-              groupRenderStrategy="multi-column"
+              columnDefaultWidth={180}
               columnAggregations={columnAggregations}
             />
           );

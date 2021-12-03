@@ -65,7 +65,7 @@ async function getMilestone(milestone, status = 'all') {
             : issue.labels[0]
             ? issue.labels[0].name
             : '',
-          url: issue.url,
+          url: issue.html_url,
         };
       })
       .sort(sortOpenFirst),

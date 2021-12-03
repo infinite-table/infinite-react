@@ -3,6 +3,10 @@ import { Logger } from '../../utils/debug';
 import { Size } from '../types/Size';
 
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
+import type { Renderable } from '../types/Renderable';
+
+import { ReactVirtualRenderer } from '../RawList/ReactVirtualRenderer';
+import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 
 type MainAxisOptions = 'vertical' | 'horizontal';
 
@@ -32,6 +36,7 @@ export type MainAxisSize = number | ((itemIndex: number) => number);
 type BrainCache = number[];
 type OnRenderCountChangeFn = (renderCount: number) => void;
 type OnSizeChangeFn = (size: number) => void;
+type OnDestroyFn = () => void;
 
 export type GetItemPositionFn = (itemIndex: number) => number;
 
@@ -53,12 +58,15 @@ export class VirtualBrain extends Logger {
   private itemOffsetCache!: BrainCache;
   private options!: VirtualBrainOptions;
 
+  private destroyed: boolean = false;
+
   private totalSize: number = 0;
 
   private onScrollFns: OnScrollFn[] = [];
   private onTotalSizeChangeFns: OnSizeChangeFn[] = [];
   private onRenderCountChangeFns: OnRenderCountChangeFn[] = [];
   private onRenderRangeChangeFns: OnRenderRangeChangeFn[] = [];
+  private onDestroyFns: OnDestroyFn[] = [];
 
   name: string | undefined;
 
@@ -201,6 +209,13 @@ export class VirtualBrain extends Logger {
     }
   }
 
+  private notifyDestroy() {
+    const fns = this.onDestroyFns;
+    for (let i = 0, len = fns.length; i < len; i++) {
+      fns[i]();
+    }
+  }
+
   private notifyTotalSizeChange() {
     const totalSize = this.getTotalSize();
 
@@ -329,6 +344,14 @@ export class VirtualBrain extends Logger {
       this.onRenderRangeChangeFns = this.onRenderRangeChangeFns.filter(
         (f) => f !== fn,
       );
+    };
+  };
+
+  public onDestroy = (fn: OnDestroyFn) => {
+    this.onDestroyFns.push(fn);
+
+    return () => {
+      this.onDestroyFns = this.onDestroyFns.filter((f) => f !== fn);
     };
   };
 
@@ -628,9 +651,31 @@ export class VirtualBrain extends Logger {
     return result;
   };
 
+  //TODO decouple this to be framework agnostic
+  createRenderer = () => {
+    const renderer = new ReactVirtualRenderer(this, {});
+    const onRenderUpdater = buildSubscriptionCallback<Renderable>();
+
+    this.onDestroy(() => {
+      renderer.destroy();
+      onRenderUpdater.destroy();
+    });
+
+    return {
+      renderer,
+      onRenderUpdater,
+    };
+  };
+
   destroy = () => {
+    if (this.destroyed) {
+      return;
+    }
+    this.notifyDestroy();
     this.reset();
 
+    this.destroyed = true;
+    this.onDestroyFns = [];
     this.onScrollFns = [];
     this.onTotalSizeChangeFns = [];
     this.onRenderCountChangeFns = [];

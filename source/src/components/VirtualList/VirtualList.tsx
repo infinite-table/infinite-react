@@ -127,7 +127,7 @@ export const VirtualList = (
               brain={virtualBrain}
               renderItem={renderItem}
               repaintId={repaintId}
-              debugChannel={'VirtualList'}
+              debugChannel={'VirtualList-' + mainAxis}
             />
           </div>
           {children}

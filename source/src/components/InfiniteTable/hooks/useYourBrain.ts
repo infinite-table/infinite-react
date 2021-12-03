@@ -52,6 +52,13 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     return brain;
   });
 
+  useEffect(() => {
+    return () => {
+      horizontalVirtualBrain.destroy();
+      verticalVirtualBrain.destroy();
+    };
+  }, []);
+
   horizontalVirtualBrain.update(
     computedUnpinnedColumns.length,
     // no need to have columnSize as a dep
@@ -61,7 +68,10 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
 
   verticalVirtualBrain.update(dataArray.length, rowHeight, rowSpan);
 
-  (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
+  // if (__DEV__) {
+  //   (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
+  //   (globalThis as any).horizontalVirtualBrain = horizontalVirtualBrain;
+  // }
 
   useEffect(() => {
     verticalVirtualBrain.setAvailableSize({
