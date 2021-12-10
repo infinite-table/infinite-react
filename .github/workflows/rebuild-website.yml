@@ -1,4 +1,4 @@
-name: Test
+name: Rebuild website
 
 on:
   issues:
@@ -7,11 +7,8 @@ on:
     types: [created, edited, deleted]
 
 jobs:
-  run-tests:
+  run-netlify-hook:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.17.4]
 
     steps:
       - name: Run netlify hook
