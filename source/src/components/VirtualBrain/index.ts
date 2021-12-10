@@ -3,10 +3,6 @@ import { Logger } from '../../utils/debug';
 import { Size } from '../types/Size';
 
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
-import type { Renderable } from '../types/Renderable';
-
-import { ReactVirtualRenderer } from '../RawList/ReactVirtualRenderer';
-import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 
 type MainAxisOptions = 'vertical' | 'horizontal';
 
@@ -649,22 +645,6 @@ export class VirtualBrain extends Logger {
       result = this.itemOffsetCache[itemIndex];
     }
     return result;
-  };
-
-  //TODO decouple this to be framework agnostic
-  createRenderer = () => {
-    const renderer = new ReactVirtualRenderer(this, {});
-    const onRenderUpdater = buildSubscriptionCallback<Renderable>();
-
-    this.onDestroy(() => {
-      renderer.destroy();
-      onRenderUpdater.destroy();
-    });
-
-    return {
-      renderer,
-      onRenderUpdater,
-    };
   };
 
   destroy = () => {
