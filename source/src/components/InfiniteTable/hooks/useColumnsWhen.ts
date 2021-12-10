@@ -378,5 +378,5 @@ export function getColumnsWhenGrouping<T>(params: {
     computedColumns.set(colId, col);
   });
 
-  return computedColumns;
+  return computedColumns.size ? computedColumns : undefined;
 }
