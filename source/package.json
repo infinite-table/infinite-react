@@ -6,7 +6,6 @@
   "module": "index.esm.js",
   "typings": "index.d.ts",
   "scripts": {
-    
     "build": "rimraf dist && npm run tsc && node ./build/buildPackageJson.js && npm run esbuild && npm run update-md && cp LICENSE.md ./dist && cp ../README.md ./dist",
     "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\"",
     "rollup-types": "rollup -c rollup.config.js",

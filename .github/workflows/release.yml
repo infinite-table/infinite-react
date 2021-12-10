@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.17.4]
 
     steps:
       - uses: actions/checkout@v1
@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - uses: "./.github/actions/will-release-check"
+      - uses: './.github/actions/will-release-check'
         env:
           PRIVATE_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
 
@@ -61,7 +61,7 @@ jobs:
         run: npm test
 
       - name: Ship it
-        uses: "./.github/actions/execute-cmd"
+        uses: './.github/actions/execute-cmd'
         with:
           cmd_to_execute: $WILL_RELEASE_CMD
 
@@ -70,7 +70,7 @@ jobs:
         working-directory: source
 
       - name: Push changes
-        uses: "./.github/actions/git-push-action"
+        uses: './.github/actions/git-push-action'
         with:
           branch: master
           github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
