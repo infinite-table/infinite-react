@@ -1,0 +1,21 @@
+name: Test
+
+on:
+  issues:
+    types: [opened, edited, milestoned]
+  label:
+    types: [created, edited, deleted]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.17.4]
+
+    steps:
+      - name: Run netlify hook
+        env:
+          NETLIFY_HOOK: ${{ secrets.NETLIFY_REBUILD_WEBSITE_HOOK }}
+        run: |
+          curl -X POST -d {} ${NETLIFY_HOOK}
