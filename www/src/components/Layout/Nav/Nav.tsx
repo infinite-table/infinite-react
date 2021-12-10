@@ -98,6 +98,7 @@ function inferSection(
 ): 'learn' | 'reference' | 'home' {
   let [_, docs, v, sectionName] = pathname.split('/');
 
+  //todo continue here
   // console.log({ sectionName, v, docs });
   if (docs === '404') {
     return 'learn';

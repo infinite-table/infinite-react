@@ -20,6 +20,7 @@
     "paths": {
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
+      
       "@infinite-table/infinite-react": ["../source/dist/index.d.ts"],
     },
     "reactNamespace": "React",

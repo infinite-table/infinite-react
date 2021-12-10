@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run update-versions && npm run source-build && npm run generate-lib-dts && npm run next",
-    "next": "next dev -p 3001",
+    "next": "rm -fr .next && next dev -p 3001",
     "build": "npm --prefix dataserver install && npm run update-versions && npm run generate-lib-dts && npm run update-css-vars-list && next build && next export",
     "update-css-vars-list": "node build/create-css-vars-list.js",
     "serve-build": "http-server -p 3000 out",
@@ -37,7 +37,7 @@
     "clipboard": "^2.0.8",
     "copy-to-clipboard": "^3.3.1",
     "dashify": "^2.0.0",
-    "date-fns": "^2.16.1",
+    "date-fns": "^2.27.0",
     "debounce": "^1.2.1",
     "express": "^4.17.1",
     "github-slugger": "^1.3.0",

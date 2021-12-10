@@ -3,9 +3,12 @@ import cn from 'classnames';
 import { RouteItem } from 'components/Layout/useRouteMeta';
 import { useRouter } from 'next/router';
 import { SidebarRouteTree } from '../Sidebar';
-import sidebarHome from '../../../sidebarHome.json';
+
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
+import { getSidebarHome } from '../getSidebarHome';
+
+const sidebarHome = getSidebarHome();
 
 function inferSection(
   pathname: string
@@ -28,7 +31,7 @@ export function MobileNav() {
   let tree = null;
   switch (section) {
     case 'home':
-      tree = sidebarHome.routes[0];
+      tree = sidebarHome.routes![0];
       break;
     case 'learn':
       tree = sidebarLearn.routes[0];

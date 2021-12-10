@@ -22,6 +22,12 @@
             "title": "Acknowledgements",
             "path": "/docs/community/acknowledgements"
           }]
+        },
+        {
+          
+          "path": "/blog",
+          "title": "Blog",
+          "routes": []
         }
       ]
     }

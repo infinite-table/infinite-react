@@ -1,4 +1,5 @@
 const fm = require('gray-matter');
+const path = require('path');
 
 const toUpperFirst = (str) => {
   return str[0].toUpperCase() + str.slice(1);
@@ -19,7 +20,18 @@ const toUpperFirst = (str) => {
 module.exports = async function (src) {
   const callback = this.async();
   const { content, data } = fm(src);
-  const layout = data.layout || 'Learn';
+  const pageParentDir = path
+    .dirname(path.relative('../pages', this.resourcePath))
+    .split(path.sep)
+    .shift();
+  const layoutMap = {
+    blog: 'Post',
+    learn: 'Learn',
+    reference: 'API',
+  };
+
+  const layout =
+    data.layout || layoutMap[pageParentDir] || 'Learn';
 
   const code =
     `import withLayout from '@www/components/Layout/Layout${toUpperFirst(

@@ -9,8 +9,8 @@ export function getAuthor(author: string) {
       'Invalid author. Did you add it to authors.json??'
     );
     return {
-      name: 'React Team',
-      url: 'https://twitter.com/reactjs',
+      name: 'Infinite Table Admin',
+      url: 'https://twitter.com/inf-table',
     };
   }
   return person;

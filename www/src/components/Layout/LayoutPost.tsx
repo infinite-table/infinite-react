@@ -13,6 +13,8 @@ import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
 import { Page } from './Page';
 import { RouteItem, useRouteMeta } from './useRouteMeta';
 import { useTwitter } from './useTwitter';
+import { getSidebarHome } from './getSidebarHome';
+import { Sidebar } from './Sidebar';
 
 interface PageFrontmatter {
   id?: string;
@@ -108,12 +110,9 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
 }
 
 function AppShell(props: { children: React.ReactNode }) {
-  return (
-    <Page
-      routeTree={recentPostsRouteTree as RouteItem}
-      {...props}
-    />
-  );
+  const routeTree = getSidebarHome() as RouteItem;
+
+  return <Page routeTree={routeTree} {...props} />;
 }
 
 export default function withLayoutPost(meta: any) {

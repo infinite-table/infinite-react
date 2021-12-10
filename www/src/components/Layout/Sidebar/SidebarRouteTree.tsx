@@ -75,6 +75,7 @@ export function SidebarRouteTree({
   const slug = pathname;
 
   const currentRoutes = routeTree.routes as RouteItem[];
+  // console.log(currentRoutes);
   const expandedPath = currentRoutes.reduce(
     (acc: string | undefined, curr: RouteItem) => {
       if (acc) return acc;

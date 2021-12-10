@@ -1,6 +1,10 @@
 import * as React from 'react';
-import sidebarHome from '../../sidebarHome.json';
-import { MarkdownPage, MarkdownProps } from './MarkdownPage';
+import { getSidebarHome } from './getSidebarHome';
+
+import {
+  MarkdownPage,
+  MarkdownProps,
+} from './MarkdownPage';
 import { Page } from './Page';
 import { RouteItem } from './useRouteMeta';
 
@@ -10,7 +14,9 @@ interface PageFrontmatter {
 }
 
 export default function withDocs(p: PageFrontmatter) {
-  function LayoutHome(props: MarkdownProps<PageFrontmatter>) {
+  function LayoutHome(
+    props: MarkdownProps<PageFrontmatter>
+  ) {
     return <MarkdownPage {...props} meta={p} />;
   }
   LayoutHome.appShell = AppShell;
@@ -18,5 +24,10 @@ export default function withDocs(p: PageFrontmatter) {
 }
 
 function AppShell(props: { children: React.ReactNode }) {
-  return <Page routeTree={sidebarHome as RouteItem} {...props} />;
+  return (
+    <Page
+      routeTree={getSidebarHome() as RouteItem}
+      {...props}
+    />
+  );
 }
