@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amount || 1,
-    currency: 'eur',
+    currency: 'usd',
     automatic_payment_methods: {
       enabled: true,
     },
