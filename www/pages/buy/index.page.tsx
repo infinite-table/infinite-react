@@ -16,21 +16,21 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
+const root =
+  process.env.NEXT_PUBLIC_DOMAIN ||
+  'https://infinite-table.com';
 export default function BuyPage() {
   const [clientSecret, setClientSecret] = useState('');
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    fetch(
-      'http://localhost:8888/.netlify/functions/payment-intent',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: 10,
-        }),
-      }
-    )
+    fetch(root + '/.netlify/functions/payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: 10,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
   }, []);
