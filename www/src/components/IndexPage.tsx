@@ -3,39 +3,20 @@ import Head from 'next/head';
 import * as React from 'react';
 
 import {
-  backgroundColorBrand,
-  backgroundColorBrandDark,
-  borderRadius,
   colorWhite,
   fontSize,
   marginTop,
   padding,
   paddingX,
-  fontWeight,
-  zIndex,
   maxWidth,
   textAlign,
-  centeredFlexColumn,
   display,
-  flex1,
-  position,
-  shadow,
-  paddingLeft,
-  paddingRight,
-  paddingY,
 } from '@www/styles/utils.css';
-
-import {
-  fullWidthContainer,
-  minHeightFull,
-} from '@www/components/components.css';
 
 import { Cards } from '@www/components/Cards';
 import { GetAccessForm } from '@www/components/GetAccessForm';
 import { Footer } from '@www/components/Footer';
-import { Header } from '@www/components/Header';
-import { MainLayout } from '@www/layouts/MainLayout';
-import { darkIcon, lightIcon } from './Layout/Nav/Nav';
+import IndexWrapper from './IndexWrapper';
 
 const ReactLogo = (
   <img
@@ -48,62 +29,30 @@ const ReactLogo = (
 
 export function IndexPage() {
   return (
-    <MainLayout>
+    <IndexWrapper>
       <div
-        className={`${fullWidthContainer} ${minHeightFull}  `}>
-        <Head>
-          <title>Infinite Table for React</title>
-          <link
-            rel="icon"
-            type="image/svg+xml"
-            href="/favicon.svg"></link>
-        </Head>
-
-        <Header title="Infinite Table" />
-        <main
-          className={`flex flex-col flex-1 justify-center  w-full items-center px-5 relative ${backgroundColorBrand} `}>
-          <div
-            className={[
-              shadow.lg,
-              position.absolute,
-              backgroundColorBrandDark,
-              fontWeight.bold,
-              colorWhite,
-              fontSize.sm,
-              padding[3],
-              borderRadius.md,
-              zIndex['0'],
-            ].join(' ')}
-            style={{ top: '-1.5rem' }}>
-            EARLY ADOPTER version available for REACT{' '}
-            {ReactLogo}
-          </div>
-
-          <div
-            className={[
-              padding[5],
-              marginTop[20],
-              maxWidth['7xl'],
-              paddingX[14],
-              textAlign.center,
-              colorWhite,
-            ].join(' ')}>
-            <p className={`${fontSize['2xl']}`}>
-              <b>Infinite Table</b> for React {ReactLogo} is
-              a UI component for data virtualization.
-            </p>
-            <p className={`${marginTop[6]} ${fontSize.xl}`}>
-              Huge datasets are no longer a problem!
-            </p>
-          </div>
-
-          <Cards />
-
-          <GetAccessForm />
-        </main>
-
-        <Footer />
+        className={[
+          padding[5],
+          marginTop[20],
+          maxWidth['7xl'],
+          paddingX[14],
+          textAlign.center,
+          colorWhite,
+        ].join(' ')}>
+        <p className={`${fontSize['2xl']}`}>
+          <b>Infinite Table</b> for React {ReactLogo} is a
+          UI component for data virtualization.
+        </p>
+        <p className={`${marginTop[6]} ${fontSize.xl}`}>
+          Huge datasets are no longer a problem!
+        </p>
       </div>
-    </MainLayout>
+
+      <Cards />
+
+      <GetAccessForm />
+
+      <Footer />
+    </IndexWrapper>
   );
 }
