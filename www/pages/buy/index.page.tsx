@@ -28,7 +28,7 @@ export default function BuyPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: 10,
+        amount: 100,
       }),
     })
       .then((res) => res.json())
