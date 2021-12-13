@@ -22,7 +22,7 @@ export default function BuyPage() {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch(
-      'https://infinite-table.com/.netlify/functions/payment-intent',
+      'http://localhost:8888/.netlify/functions/payment-intent',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
