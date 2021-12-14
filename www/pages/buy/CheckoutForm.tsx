@@ -14,40 +14,41 @@ export default function CheckoutForm() {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!stripe) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!stripe) {
+  //     return;
+  //   }
 
-    const clientSecret = new URLSearchParams(
-      window.location.search
-    ).get('payment_intent_client_secret');
+  //   const clientSecret = new URLSearchParams(
+  //     window.location.search
+  //   ).get('payment_intent_client_secret');
 
-    if (!clientSecret) {
-      return;
-    }
+  //   if (!clientSecret) {
+  //     return;
+  //   }
 
-    stripe
-      .retrievePaymentIntent(clientSecret)
-      .then(({ paymentIntent }) => {
-        switch (paymentIntent!.status) {
-          case 'succeeded':
-            setMessage('Payment succeeded!');
-            break;
-          case 'processing':
-            setMessage('Your payment is processing.');
-            break;
-          case 'requires_payment_method':
-            setMessage(
-              'Your payment was not successful, please try again.'
-            );
-            break;
-          default:
-            setMessage('Something went wrong.');
-            break;
-        }
-      });
-  }, [stripe]);
+  //   stripe
+  //     .retrievePaymentIntent(clientSecret)
+  //     .then(({ paymentIntent }) => {
+  //       console.log({ paymentIntent });
+  //       switch (paymentIntent!.status) {
+  //         case 'succeeded':
+  //           setMessage('Payment succeeded!');
+  //           break;
+  //         case 'processing':
+  //           setMessage('Your payment is processing.');
+  //           break;
+  //         case 'requires_payment_method':
+  //           setMessage(
+  //             'Your payment was not successful, please try again.'
+  //           );
+  //           break;
+  //         default:
+  //           setMessage('Something went wrong.');
+  //           break;
+  //       }
+  //     });
+  // }, [stripe]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -64,7 +65,7 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: 'https://infinite-table.com',
+        return_url: 'http://infinite-table.com',
       },
     });
 
@@ -86,17 +87,17 @@ export default function CheckoutForm() {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form
+      id="payment-form"
+      onSubmit={handleSubmit}
+      className="p-10 bg-white text-white">
       <PaymentElement id="payment-element" />
       <button
+        className="p-1 px-3 mt-2 rounded bg-wash-dark"
         disabled={isLoading || !stripe || !elements}
         id="submit">
         <span id="button-text">
-          {isLoading ? (
-            <div className="spinner" id="spinner"></div>
-          ) : (
-            'Pay now'
-          )}
+          {isLoading ? <>Paying now ...</> : 'Pay now'}
         </span>
       </button>
       {/* Show any error or success messages */}

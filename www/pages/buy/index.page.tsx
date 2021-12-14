@@ -10,6 +10,9 @@ import {
   StripeElementsOptions,
 } from '@stripe/stripe-js';
 import CheckoutForm from './CheckoutForm';
+import { colorVariables } from '@www/styles/utils.css';
+
+const primaryDark = require('../../colors')['primary'];
 
 const stripePromise = loadStripe(
   //@ts-ignore
@@ -37,6 +40,10 @@ export default function BuyPage() {
 
   const appearance: Appearance = {
     theme: 'stripe',
+    variables: {
+      colorText: primaryDark,
+      colorPrimary: colorVariables.brandDark,
+    },
   };
   const options: StripeElementsOptions = {
     clientSecret,

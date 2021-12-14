@@ -8,13 +8,9 @@ import {
   borderRadius,
   colorWhite,
   fontSize,
-  marginTop,
   padding,
-  paddingX,
   fontWeight,
   zIndex,
-  maxWidth,
-  textAlign,
   display,
   position,
   shadow,
@@ -25,8 +21,6 @@ import {
   minHeightFull,
 } from '@www/components/components.css';
 
-import { Cards } from '@www/components/Cards';
-import { GetAccessForm } from '@www/components/GetAccessForm';
 import { Footer } from '@www/components/Footer';
 import { Header } from '@www/components/Header';
 import { MainLayout } from '@www/layouts/MainLayout';
