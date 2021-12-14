@@ -14,7 +14,6 @@ import { Page } from './Page';
 import { RouteItem, useRouteMeta } from './useRouteMeta';
 import { useTwitter } from './useTwitter';
 import { getSidebarHome } from './getSidebarHome';
-import { Sidebar } from './Sidebar';
 
 interface PageFrontmatter {
   id?: string;

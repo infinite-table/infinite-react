@@ -10,6 +10,7 @@ import { MenuContext } from '@www/components/useMenu';
 
 import { Logo } from '../../Logo';
 import NavLink from './NavLink';
+import { inferSection } from './inferSection';
 
 declare global {
   interface Window {
@@ -93,30 +94,13 @@ export const lightIcon = (
   </svg>
 );
 
-function inferSection(
-  pathname: string
-): 'learn' | 'reference' | 'home' {
-  let [_, docs, v, sectionName] = pathname.split('/');
-
-  //todo continue here
-  // console.log({ sectionName, v, docs });
-  if (docs === '404') {
-    return 'learn';
-  }
-  if (sectionName === 'learn') {
-    return 'learn';
-  } else if (sectionName === 'reference') {
-    return 'reference';
-  } else {
-    return 'home';
-  }
-}
-
 export default function Nav() {
   const { pathname } = useRouter();
   const { isOpen, toggleOpen } =
     React.useContext(MenuContext);
+
   const section = inferSection(pathname);
+  console.log({ pathname, section });
 
   function handleFeedback() {
     const nodes: any = document.querySelectorAll(

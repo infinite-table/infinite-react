@@ -56,9 +56,9 @@ export default function RecentPosts() {
                       __html: post.excerpt?.trim(),
                     }}
                   />
-                  <div className="flex items-center">
+                  <div className="flex items-center mt-2">
                     <div>
-                      <p className="text-sm leading-5 text-gray-80">
+                      <p className="text-sm leading-5 dark:text-gray-400 text-gray-80">
                         By{' '}
                         {toCommaSeparatedList(
                           post.author,
@@ -73,7 +73,7 @@ export default function RecentPosts() {
                           )
                         )}
                       </p>
-                      <div className="flex text-sm leading-5 text-gray-50">
+                      <div className="flex text-sm leading-5 dark:text-gray-400 ">
                         <time dateTime={post.date}>
                           {format(
                             parseISO(post.date),
@@ -90,7 +90,7 @@ export default function RecentPosts() {
             )}
             <div className="text-center">
               <Link href="/blog/all">
-                <a className="p-2 text-center bg-card dark:bg-card-dark font-bold betterhover:hover:bg-secondary-button dark:bg-secondary-button-dark transition duration-150 ease-in-out rounded-lg inline-flex items-center">
+                <a className="px-4 py-1.5 hover:bg-opacity-80 text-center bg-link text-white  font-bold   transition duration-150 ease-in-out rounded-lg inline-flex items-center">
                   View all articles
                 </a>
               </Link>

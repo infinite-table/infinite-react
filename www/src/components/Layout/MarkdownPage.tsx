@@ -97,7 +97,6 @@ export function MarkdownPage<
         text: child.props.children,
       };
     });
-  console.log({ anchors });
   if (anchors.length > 0) {
     anchors.unshift({
       depth: 1,

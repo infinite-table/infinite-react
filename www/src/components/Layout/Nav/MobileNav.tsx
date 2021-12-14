@@ -7,20 +7,9 @@ import { SidebarRouteTree } from '../Sidebar';
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
 import { getSidebarHome } from '../getSidebarHome';
+import { inferSection } from './inferSection';
 
 const sidebarHome = getSidebarHome();
-
-function inferSection(
-  pathname: string
-): 'learn' | 'reference' | 'home' {
-  if (pathname.startsWith('/learn')) {
-    return 'learn';
-  } else if (pathname.startsWith('/reference')) {
-    return 'reference';
-  } else {
-    return 'home';
-  }
-}
 
 export function MobileNav() {
   const { pathname } = useRouter();
