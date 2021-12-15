@@ -11,7 +11,7 @@ const [_fullUrl, protocol, sandboxUrl] = Array.from(
 const isInsideSandbox =
   protocol === 'https' && sandboxUrl === 'sandpack.codesandbox.io';
 
-export const useLicense = (licenseKey: string) => {
+export const useLicense = (licenseKey: string = '') => {
   const valid = useMemo(() => {
     let valid = isValidLicense(licenseKey, {
       publishedAt: __VERSION_TIMESTAMP__,

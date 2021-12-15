@@ -15,39 +15,18 @@ import '@codesandbox/sandpack-react/dist/index.css';
 import '@www/styles/globals.css';
 import * as React from 'react';
 
-(globalThis as any).InfiniteTableLicenseKey =
-  'StartDate=2021-06-29|EndDate=2030-01-01|Owner=Adaptable|Type=distribution|TS=1624971462479|C=137829811,1004007071,2756196225,1839832928,3994409405,636616862';
+import { InfiniteTable } from '@infinite-table/infinite-react';
 
-// //@ts-ignore
-// function MyApp({Component, pageProps}) {
-//   const content = <Component {...pageProps} />;
-
-//   const router = useRouter();
-//   const {pathname} = router;
-
-//   const IS_DOCS = pathname.startsWith("/docs");
-
-//   if (!IS_DOCS) {
-//     return <MainLayout>{content}</MainLayout>;
-//   }
-
-//   console.log("pageProps are", pageProps);
-//   return (
-//     <DocsContext.Provider value={pageProps as DocsContextType}>
-//       <DocsLayout>{content}</DocsLayout>
-//     </DocsContext.Provider>
-//   );
-// }
-
-// export default MyApp;
+//@ts-ignore
+InfiniteTable.defaultProps.licenseKey =
+  process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
 const EmptyAppShell: React.FC = ({ children }) => {
-  if (process.env.NODE_ENV === 'development') {
-    if (!process.browser) {
-      console.log('SERVER< DEV');
-      return null;
-    }
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   if (!process.browser) {
+  //     return null;
+  //   }
+  // }
   return <>{children}</>;
 };
 
@@ -57,13 +36,11 @@ export default function MyApp({
 }: AppProps) {
   let AppShell =
     (Component as any).appShell || EmptyAppShell;
-  console.log({ Component });
   // In order to make sidebar scrolling between pages work as expected
   // we need to access the underlying MDX component.
   if ((Component as any).isMDXComponent) {
     AppShell = (Component as any)({}).props.originalType
       .appShell;
-    console.log({ AppShell });
   }
   React.useEffect(() => {
     // Monkey patch Google Tag Manager in development to just log to the console

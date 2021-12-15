@@ -102,8 +102,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     // groupRenderStrategy: (groupRenderStrategy) =>
     //   groupRenderStrategy ?? 'multi-column',
 
-    licenseKey: (licenseKey) =>
-      licenseKey || (globalThis as any).InfiniteTableLicenseKey || '',
+    licenseKey: (licenseKey) => licenseKey || '',
 
     columnOrder: (columnOrder) => columnOrder ?? true,
     header: (header) => header ?? true,
