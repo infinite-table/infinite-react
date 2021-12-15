@@ -12,6 +12,9 @@ function toCommaSeparatedList<Item>(
   array: Item[],
   renderCallback: (item: Item, index: number) => void
 ): Array<any> {
+  if (!Array.isArray(array)) {
+    array = [];
+  }
   if (array.length <= 1) {
     return array.map(renderCallback);
   }

@@ -1,10 +1,10 @@
 import { MDXProvider } from '@mdx-js/react';
 import recentPostsRouteTree from '@www/blogIndexRecent.json';
 import { DocsPageFooter } from '@www/components/DocsFooter';
-import { ExternalLink } from 'components/ExternalLink';
-import { MDXComponents } from 'components/MDX/MDXComponents';
-import { Seo } from 'components/Seo';
-import { Toc } from 'components/Layout/Toc';
+import { ExternalLink } from '@www/components/ExternalLink';
+import { MDXComponents } from '@www/components/MDX/MDXComponents';
+import { Seo } from '@www/components/Seo';
+import { Toc } from '@www/components/Layout/Toc';
 import format from 'date-fns/format';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -13,6 +13,7 @@ import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
 import { Page } from './Page';
 import { RouteItem, useRouteMeta } from './useRouteMeta';
 import { useTwitter } from './useTwitter';
+import { getSidebarHome } from './getSidebarHome';
 
 interface PageFrontmatter {
   id?: string;
@@ -30,6 +31,9 @@ interface LayoutPostProps {
   children: React.ReactNode;
 }
 
+function formatDate(date: Date | string) {
+  return format(new Date(date), 'MMMM dd, yyyy');
+}
 /** Return the date of the current post given the path */
 function getDateFromPath(path: string) {
   // All paths are /blog/year/month/day/title
@@ -40,18 +44,21 @@ function getDateFromPath(path: string) {
     .map((i) => parseInt(i, 10)); // convert to numbers
 
   return {
-    date: format(
-      new Date(year, month, day),
-      'MMMM dd, yyyy'
-    ),
+    date: formatDate(new Date(year, month, day)),
     dateTime: [year, month, day].join('-'),
   };
 }
 
 function LayoutPost({ meta, children }: LayoutPostProps) {
   const { pathname } = useRouter();
-  const { date, dateTime } = getDateFromPath(pathname);
+
   const { route, nextRoute, prevRoute } = useRouteMeta();
+  //@ts-ignore
+  const { date, dateTime } = route.date
+    ? //@ts-ignore
+      { date: formatDate(route.date), dateTime: route.date }
+    : getDateFromPath(pathname);
+
   const anchors = React.Children.toArray(children)
     .filter(
       (child: any) =>
@@ -70,29 +77,49 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
   return (
     <>
       <div className="w-full px-12">
-        <div className="h-full mx-auto max-w-4xl relative pt-16 w-full overflow-x-hidden">
-          <Seo title={meta.title} />
-          <h1 className="mb-6 pt-8 text-4xl md:text-5xl font-bold leading-snug tracking-tight text-primary dark:text-primary-dark">
-            {meta.title}
-          </h1>
-          <p className="mb-6 text-lgtext-secondary dark:text-secondary-dark">
-            By{' '}
-            {toCommaSeparatedList(meta.author, (author) => (
-              <ExternalLink
-                href={getAuthor(author).url}
-                className="text-link dark:text-link-dark underline font-bold">
-                {getAuthor(author).name}
-              </ExternalLink>
-            ))}
-            <span className="mx-2">·</span>
-            <span className="lead inline-flex text-gray-50">
-              <time dateTime={dateTime}>{date}</time>
-            </span>
-          </p>
+        <div
+          className="px-5 sm:px-12 h-full mx-auto relative overflow-x-hidden
+        lg:pt-0 pt-20 lg:pl-80 2xl:px-80 ">
+          <div className="max-w-4xl ml-0 2xl:mx-auto ">
+            <Seo title={meta.title} />
+            <div className=" ">
+              <h1 className="mb-6 pt-8 text-4xl md:text-5xl font-bold leading-snug tracking-tight text-primary dark:text-primary-dark">
+                {meta.title}
+              </h1>
+              <p className="mb-6 text-lgtext-secondary dark:text-secondary-dark">
+                By{' '}
+                {toCommaSeparatedList(
+                  meta.author,
+                  (author) => {
+                    const url = getAuthor(author).url;
 
-          <MDXProvider components={MDXComponents}>
-            {children}
-          </MDXProvider>
+                    return (
+                      <span key={url}>
+                        {getAuthor(author).name}
+                      </span>
+                    );
+                    // return (
+                    // <ExternalLink
+                    //   key={url}
+                    //   href={url}
+                    //   className="text-link dark:text-link-dark underline font-bold">
+                    //   {getAuthor(author).name}
+                    // </ExternalLink>
+                    // );
+                  }
+                )}
+                <span className="mx-2">·</span>
+                <span className="lead inline-flex text-gray-50">
+                  <time dateTime={dateTime}>{date}</time>
+                </span>
+              </p>
+
+              <MDXProvider components={MDXComponents}>
+                {children}
+              </MDXProvider>
+            </div>
+          </div>
+
           <DocsPageFooter
             route={route}
             nextRoute={nextRoute}
@@ -108,12 +135,9 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
 }
 
 function AppShell(props: { children: React.ReactNode }) {
-  return (
-    <Page
-      routeTree={recentPostsRouteTree as RouteItem}
-      {...props}
-    />
-  );
+  const routeTree = getSidebarHome() as RouteItem;
+
+  return <Page routeTree={routeTree} {...props} />;
 }
 
 export default function withLayoutPost(meta: any) {
@@ -122,6 +146,7 @@ export default function withLayoutPost(meta: any) {
   }
 
   LayoutPostWrapper.appShell = AppShell;
+  LayoutPostWrapper.displayName = 'LayoutPostWrapper';
 
   return LayoutPostWrapper;
 }

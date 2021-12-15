@@ -1,8 +1,21 @@
 {
-  "title": "Recent Posts",
-  "heading": true,
-  "path": "/blog",
   "routes": [
-    
+    {
+      "title": "Recent Posts",
+      "path": "/blog",
+      "heading": true,
+      "routes": [
+        {
+          "path": "/blog/2021/12/10/infinite-launch",
+          "date": "2021-12-10",
+          "title": "Infinite Table Launch 🚀",
+          "author": [
+            "admin"
+          ],
+          "excerpt": "<p>Today we are announcing the first version (<code>0.0.7</code>) of <code>Infinite Table</code> ready to be used by beta users - you can take it from npm</p>\n",
+          "readingTime": "1 min read"
+        }
+      ]
+    }
   ]
 }

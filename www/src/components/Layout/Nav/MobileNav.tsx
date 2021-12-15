@@ -3,21 +3,13 @@ import cn from 'classnames';
 import { RouteItem } from 'components/Layout/useRouteMeta';
 import { useRouter } from 'next/router';
 import { SidebarRouteTree } from '../Sidebar';
-import sidebarHome from '../../../sidebarHome.json';
+
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
+import { getSidebarHome } from '../getSidebarHome';
+import { inferSection } from './inferSection';
 
-function inferSection(
-  pathname: string
-): 'learn' | 'reference' | 'home' {
-  if (pathname.startsWith('/learn')) {
-    return 'learn';
-  } else if (pathname.startsWith('/reference')) {
-    return 'reference';
-  } else {
-    return 'home';
-  }
-}
+const sidebarHome = getSidebarHome();
 
 export function MobileNav() {
   const { pathname } = useRouter();
@@ -28,7 +20,7 @@ export function MobileNav() {
   let tree = null;
   switch (section) {
     case 'home':
-      tree = sidebarHome.routes[0];
+      tree = sidebarHome.routes![0];
       break;
     case 'learn':
       tree = sidebarLearn.routes[0];

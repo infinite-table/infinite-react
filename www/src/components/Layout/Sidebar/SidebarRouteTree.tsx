@@ -114,6 +114,7 @@ export function SidebarRouteTree({
 
           // if route has a path and child routes, treat it as an expandable sidebar item
           if (routes) {
+            // console.log({ expanded, path });
             const isExpanded =
               isMobile || expanded === path;
             return (

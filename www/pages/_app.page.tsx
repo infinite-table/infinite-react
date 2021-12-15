@@ -57,11 +57,13 @@ export default function MyApp({
 }: AppProps) {
   let AppShell =
     (Component as any).appShell || EmptyAppShell;
+  console.log({ Component });
   // In order to make sidebar scrolling between pages work as expected
   // we need to access the underlying MDX component.
   if ((Component as any).isMDXComponent) {
     AppShell = (Component as any)({}).props.originalType
       .appShell;
+    console.log({ AppShell });
   }
   React.useEffect(() => {
     // Monkey patch Google Tag Manager in development to just log to the console

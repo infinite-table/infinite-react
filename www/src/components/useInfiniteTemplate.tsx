@@ -1,5 +1,5 @@
 import raw from 'raw.macro';
-import {SandpackFile} from '@codesandbox/sandpack-react';
+import { SandpackFile } from '@codesandbox/sandpack-react';
 
 export interface TemplateConfig {
   sandpackTemplate: 'react-ts';
@@ -8,8 +8,11 @@ export interface TemplateConfig {
 }
 
 export const useInfiniteTemplate = (): TemplateConfig => {
-  // TODO AFL return based on variant
-  const validCustomFileNames = ['index.tsx', 'App.tsx', 'styles.css'];
+  const validCustomFileNames = [
+    'index.tsx',
+    'App.tsx',
+    'styles.css',
+  ];
   const sandpackTemplate = 'react-ts';
   const sandpackTemplateFiles = getReactTemplateFiles();
 
@@ -19,7 +22,10 @@ export const useInfiniteTemplate = (): TemplateConfig => {
     sandpackTemplateFiles,
   };
 };
-const getReactTemplateFiles = (): Record<string, SandpackFile> => {
+const getReactTemplateFiles = (): Record<
+  string,
+  SandpackFile
+> => {
   return {
     '/src/App.tsx': {
       code: BASE_FILE_REACT_APP,
@@ -38,7 +44,14 @@ const getReactTemplateFiles = (): Record<string, SandpackFile> => {
 };
 
 // react
-const BASE_PATH_REACT_PREFIX = '../code-snippets/base-react/src';
-const BASE_FILE_REACT_APP = raw(`${BASE_PATH_REACT_PREFIX}/App.tsx`);
-const BASE_FILE_REACT_INDEX = raw(`${BASE_PATH_REACT_PREFIX}/index.tsx`);
-const BASE_FILE_REACT_STYLES = raw(`${BASE_PATH_REACT_PREFIX}/styles.css`);
+const BASE_PATH_REACT_PREFIX =
+  '../code-snippets/base-react/src';
+const BASE_FILE_REACT_APP = raw(
+  `${BASE_PATH_REACT_PREFIX}/App.tsx`
+);
+const BASE_FILE_REACT_INDEX = raw(
+  `${BASE_PATH_REACT_PREFIX}/index.tsx`
+);
+const BASE_FILE_REACT_STYLES = raw(
+  `${BASE_PATH_REACT_PREFIX}/styles.css`
+);
