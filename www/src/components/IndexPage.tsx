@@ -51,8 +51,6 @@ export function IndexPage() {
       <Cards />
 
       <GetAccessForm />
-
-      <Footer />
     </IndexWrapper>
   );
 }
