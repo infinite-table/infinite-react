@@ -19,6 +19,13 @@ Infinite Table is a React component for displaying virtualized tabular data. It 
 
 We strive for almost zero dependencies, thus keeping the bundle size small and your application secure.
 
+
+
+```sh 
+npm i @infinite-table/infinite-react
+```
+
+
 ## Installation
 
 <TerminalBlock>

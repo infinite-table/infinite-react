@@ -3,8 +3,11 @@ export function inferSection(
 ): 'learn' | 'reference' | 'home' {
   let [_, docs, v, sectionName] = pathname.split('/');
 
-  //todo continue here
-  console.log({ sectionName, v, docs, _ });
+  //TODO continue here
+  // console.log({ sectionName, v, docs, _ });
+  if (docs === 'blog') {
+    return 'home';
+  }
   if (docs === '404') {
     return 'learn';
   }

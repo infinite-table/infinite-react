@@ -58,6 +58,7 @@ export function useRouteMeta(rootRoute?: RouteItem) {
       breadcrumbs: [],
     };
   }
+  // console.log('routeTree', routeTree);
   const breadcrumbs = getBreadcrumbs(
     cleanedPath,
     routeTree

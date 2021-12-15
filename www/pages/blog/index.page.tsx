@@ -12,6 +12,7 @@ import { getAuthor } from '@www/utils/getAuthor';
 import { removeFromLast } from '@www/utils/removeFromLast';
 import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
 import { RouteItem } from '@www/components/Layout/useRouteMeta';
+import { Logo } from '@www/components/Logo';
 import { getSidebarHome } from '@www/components/Layout/getSidebarHome';
 
 export default function RecentPosts() {
@@ -20,13 +21,14 @@ export default function RecentPosts() {
       <div className="w-full lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
         <div className="max-w-7xl px-5 sm:px-12 mx-auto w-full container pt-10 ">
           <header className="pt-14 pb-8 ">
-            <div className="flex items-center justify-between">
+            <div className="inline-flex items-center mb-8">
               <Seo
                 title="Blog"
                 description="Offical React.js news, announcements, and release notes."
               />
-              <h1 className="text-5xl font-bold text-primary dark:text-primary-dark mb-8">
-                Blog
+              <Logo className="inline-block text-link dark:text-link-dark w-20 sm:w-28 mr-4  h-auto" />
+              <h1 className="text-5xl font-bold text-primary dark:text-primary-dark ">
+                Infinite Blog
               </h1>
               {/* <a
                 href="/feed.xml"
@@ -36,8 +38,8 @@ export default function RecentPosts() {
               </a> */}
             </div>
             <p className="text-primary dark:text-primary-dark text-xl text-primary dark:text-primary-dark leading-large">
-              Infinite Table news, announcements and release
-              notes.
+              News, announcements and release notes on
+              Infinite Table.
             </p>
           </header>
           <div className="space-y-12 pb-40">
@@ -88,13 +90,13 @@ export default function RecentPosts() {
                 </div>
               )
             )}
-            <div className="text-center">
+            {/* <div className="text-center">
               <Link href="/blog/all">
                 <a className="px-4 py-1.5 hover:bg-opacity-80 text-center bg-link text-white  font-bold   transition duration-150 ease-in-out rounded-lg inline-flex items-center">
                   View all articles
                 </a>
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -20,9 +20,6 @@ export function Sidebar({
   let routeTree = React.useContext(SidebarContext);
   const isHidden = isMobileOnly && !isMobileSidebar;
 
-  // todo continue here
-  // console.log('tree');
-  // console.log(routeTree);
   // HACK. Fix up the data structures instead.
   if ((routeTree as any).routes.length === 1) {
     routeTree = (routeTree as any).routes[0];

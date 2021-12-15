@@ -17,15 +17,16 @@ const {
 Promise.resolve()
   .then(async () => {
     const routes = [];
+
     const blogPosts = await globby(
-      '../pages/blog/**/*.page.md'
+      'pages/blog/**/*.page.md'
     );
 
     for (let postpath of blogPosts) {
       const [year, month, day, title] = postpath
-        .replace('../pages/blog/', '')
+        .replace('pages/blog/', '')
         .split('/');
-
+      // console.log({ year, month, day });
       const rawStr = await fs.readFile(postpath, 'utf8');
       const { data, excerpt, content } = fm(rawStr, {
         excerpt: function firstLine(file, options) {
@@ -39,17 +40,18 @@ Promise.resolve()
         excerpt.trimLeft().trim()
       );
 
-      routes.unshift({
+      const route = {
         //remove the .page from end
         path: postpath
-          .replace('../pages', '')
-          .slice(0, -1 * '.page'.length),
+          .replace('pages', '')
+          .slice(0, -1 * '.page.md'.length),
         date: [year, month, day].join('-'),
         title: data.title,
         author: data.author,
         excerpt: rendered,
         readingTime: readingTime(content).text,
-      });
+      };
+      routes.unshift(route);
     }
 
     const sorted = routes.sort((post1, post2) =>
@@ -70,11 +72,14 @@ Promise.resolve()
     };
 
     await fs.writeFile(
-      path.resolve('../src/blogIndex.json'),
+      path.resolve(__dirname, '../src/blogIndex.json'),
       JSON.stringify(blogManifest, null, 2)
     );
     await fs.writeFile(
-      path.resolve('../src/blogIndexRecent.json'),
+      path.resolve(
+        __dirname,
+        '../src/blogIndexRecent.json'
+      ),
       JSON.stringify(blogRecentSidebar, null, 2)
     );
   })

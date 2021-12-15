@@ -140,7 +140,6 @@ function Sandpack(props: SandpackProps) {
     <div className="my-8" translate="no">
       <SandpackProvider
         key={key}
-        // @ts-ignore TODO AFL remove after vanilla-ts is merged
         template={'react-ts'}
         customSetup={{
           ...setup,

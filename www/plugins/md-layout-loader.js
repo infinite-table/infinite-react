@@ -20,18 +20,36 @@ const toUpperFirst = (str) => {
 module.exports = async function (src) {
   const callback = this.async();
   const { content, data } = fm(src);
-  const pageParentDir = path
-    .dirname(path.relative('../pages', this.resourcePath))
-    .split(path.sep)
-    .shift();
+  let dirs = path
+    .dirname(path.relative('../pages/', this.resourcePath))
+    .split(path.sep);
+  console.log('initial dirs', dirs);
+  dirs = dirs.slice(3); // take off `..`, `www` and `pages`
+  console.log({
+    // pageParentDir,
+    data,
+    path: this.resourcePath,
+    dirs,
+  });
   const layoutMap = {
     blog: 'Post',
     learn: 'Learn',
     reference: 'API',
   };
 
-  const layout =
-    data.layout || layoutMap[pageParentDir] || 'Learn';
+  let layout = data.layout;
+
+  if (dirs[0] === 'blog') {
+    layout = 'Post';
+  }
+  if (
+    dirs[0] === 'docs' &&
+    dirs[1] === 'latest' &&
+    dirs[2]
+  ) {
+    layout = layoutMap[dirs[2]] || layout;
+  }
+  layout = layout || 'Learn';
 
   const code =
     `import withLayout from '@www/components/Layout/Layout${toUpperFirst(

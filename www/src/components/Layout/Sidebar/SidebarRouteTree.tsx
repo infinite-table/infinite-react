@@ -75,7 +75,6 @@ export function SidebarRouteTree({
   const slug = pathname;
 
   const currentRoutes = routeTree.routes as RouteItem[];
-  // console.log(currentRoutes);
   const expandedPath = currentRoutes.reduce(
     (acc: string | undefined, curr: RouteItem) => {
       if (acc) return acc;
@@ -115,6 +114,7 @@ export function SidebarRouteTree({
 
           // if route has a path and child routes, treat it as an expandable sidebar item
           if (routes) {
+            // console.log({ expanded, path });
             const isExpanded =
               isMobile || expanded === path;
             return (

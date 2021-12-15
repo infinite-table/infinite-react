@@ -1,14 +1,14 @@
 {
   "routes": [
     {
-      "path": "/blog/2021/12/09/infinite-launch.pa",
-      "date": "2021-12-09",
-      "title": "Infinite Table Launch",
+      "path": "/blog/2021/12/10/infinite-launch",
+      "date": "2021-12-10",
+      "title": "Infinite Table Launch 🚀",
       "author": [
         "admin"
       ],
-      "excerpt": "<p>Today, we are publishing the first Release Candidate for React 17. It has been two and a half years since <a href=\"/blog/2017/09/26/react-v16.0.html\">the previous major release of React</a>, which is a long time even by our standards! In this blog post, we will describe the role of this major release, what changes you can expect in it, and how you can try this release.</p>\n",
-      "readingTime": "20 min read"
+      "excerpt": "<p>Today we are announcing the first version (<code>0.0.7</code>) of <code>Infinite Table</code> ready to be used by beta users - you can take it from npm</p>\n",
+      "readingTime": "1 min read"
     }
   ]
 }
