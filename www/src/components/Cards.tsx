@@ -53,15 +53,15 @@ export const Cards = () => {
         Discover practical examples to help you get started
       </Card>
 
-      <Card title="📢 Blog" href="/docs">
+      <Card title="📢 Blog" href="/blog">
         Read our articles to help you get the most of the
-        infinite table - COMING SOON
+        Infinite Table
       </Card>
 
       <Card
-        title="🧪 Automated tests"
-        href="https://github.com/infinite-table/infinite-react#testing">
-        Thoroughly tested with real browsers and e2e tests
+        title="🧪 API Reference"
+        href="/docs/latest/reference">
+        Thorough documentation for all properties
       </Card>
     </div>
   );
