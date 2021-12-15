@@ -21,6 +21,8 @@ import type {
   InfiniteTablePropComponents,
   InfiniteTableGroupColumnFunction,
   InfiniteTableGroupColumnGetterOptions,
+  InfiniteTablePropColumnSizing,
+  InfiniteTableColumnSizingOptions,
 } from './InfiniteTableProps';
 
 import type {
@@ -52,6 +54,8 @@ export type {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
+  InfiniteTablePropColumnSizing,
+  InfiniteTableColumnSizingOptions,
   InfiniteTableState,
   InfiniteTableAction,
   InfiniteTableProps,

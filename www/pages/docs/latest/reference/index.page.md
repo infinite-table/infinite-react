@@ -29,7 +29,7 @@ For applying a className when the focus is within the component, see <PropLink n
 
 </Prop>
 
-<Prop name="columnDefaultWidth" type="number">
+<Prop name="columnDefaultWidth" type="number" default={200}>
 
 > Specifies the a default width for all columns.
 
@@ -55,7 +55,7 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 </Prop>
 
 
-<Prop name="columnMaxWidth" type="number">
+<Prop name="columnMaxWidth" type="number" default={2000}>
 
 > Specifies the maximum width for all columns.
 
@@ -64,7 +64,7 @@ For specifying the minimum column width, see <PropLink name="columnMinWidth" />.
 
 </Prop>
 
-<Prop name="columnMinWidth" type="number">
+<Prop name="columnMinWidth" type="number" default={30}>
 
 > Specifies the minimum width for all columns.
 
@@ -165,9 +165,11 @@ See the example below - `id` and `age` columns are `type='number'`.
 </Prop>
 
 
-<Prop name="columns.width" type="number">
+<Prop name="columns.width" type="number" hidden>
 
 > Specifies the fixed width of the column. NOTE - will probably be deprecated in the near future, for a better API.
+
+TODO write docs for columnSizing.width
 
 <Note>
 
@@ -507,6 +509,15 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 ```
 </Sandpack>
 
+
+</Prop>
+
+
+<Prop name="viewportReservedWidth" type="number?" default={0}>
+
+> Specifies the width of the space to be kept as blank - useful when there are flex columns. This number can even be negative.
+
+TODO more explanation and an example needed
 
 </Prop>
 

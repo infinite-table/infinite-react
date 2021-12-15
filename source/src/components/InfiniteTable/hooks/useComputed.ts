@@ -20,8 +20,13 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     componentState: dataSourceState,
   } = useDataSourceContextValue<T>();
 
-  const { columnOrder, columnVisibility, columnPinning, bodySize } =
-    componentState;
+  const {
+    columnOrder,
+    columnVisibility,
+    columnPinning,
+    columnSizing,
+    bodySize,
+  } = componentState;
 
   useState(() => {
     componentState.onRowHeightCSSVarChange.onChange((rowHeight) => {
@@ -76,6 +81,8 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     pinnedEndMaxWidth: componentState.pinnedEndMaxWidth,
     bodySize,
 
+    viewportReservedWidth: componentState.viewportReservedWidth,
+
     sortable: componentState.sortable,
     draggableColumns: componentState.draggableColumns,
     sortInfo: dataSourceState.sortInfo ?? undefined,
@@ -88,6 +95,8 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnVisibilityAssumeVisible: true, //props.columnVisibilityAssumeVisible,
 
     columnPinning,
+
+    columnSizing,
   });
 
   const unpinnedColumnWidths = computedUnpinnedColumns.map(

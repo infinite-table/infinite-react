@@ -94,21 +94,6 @@ export type InfiniteTableColumnHeader<T> =
   | Renderable
   | InfiniteTableColumnHeaderRenderFunction<T>;
 
-type InfiniteTableColumnWithFlex = {
-  flex?: number;
-  defaultFlex?: number;
-};
-
-type InfiniteTableColumnWithWidth = {
-  width?: number;
-  defaultWidth?: number;
-};
-
-export type InfiniteTableColumnWithSize = DiscriminatedUnion<
-  InfiniteTableColumnWithFlex,
-  InfiniteTableColumnWithWidth
->;
-
 export type InfiniteTableColumnTypes = 'string' | 'number' | 'date';
 
 // field|valueGetter => THE_VALUE
@@ -161,9 +146,6 @@ export type InfiniteTableColumnRowspanFn<T> = (
 ) => number;
 
 export type InfiniteTableBaseColumn<T> = {
-  maxWidth?: number;
-  minWidth?: number;
-
   sortable?: boolean;
   draggable?: boolean;
 
@@ -187,8 +169,7 @@ export type InfiniteTableBaseColumn<T> = {
   // value
 };
 export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
-  InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> &
-  InfiniteTableColumnWithSize;
+  InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T>;
 
 export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
   groupByField?: string | string[];

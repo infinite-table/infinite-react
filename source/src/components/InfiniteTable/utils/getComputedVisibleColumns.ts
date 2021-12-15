@@ -8,15 +8,18 @@ import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 
 import { computeFlex } from '../../flexbox';
 import type {
+  InfiniteTableColumnSizingOptions,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinning,
+  InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { err } from '../../../utils/debug';
+import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 
-const error = err('getComputedVisibleColumns');
+const logError = err('getComputedVisibleColumns');
 
 export type SortInfoMap<T> = {
   [key: string]: { sortInfo: DataSourceSingleSortInfo<T>; index: number };
@@ -88,6 +91,7 @@ type GetComputedVisibleColumnsParam<T> = {
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
   columnDefaultWidth?: number;
+  viewportReservedWidth?: number;
 
   sortable?: boolean;
   multiSort: boolean;
@@ -97,6 +101,7 @@ type GetComputedVisibleColumnsParam<T> = {
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
   columnPinning: InfiniteTablePropColumnPinning;
+  columnSizing: InfiniteTablePropColumnSizing;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible: boolean;
 };
@@ -115,9 +120,12 @@ export const getComputedVisibleColumns = <T extends unknown>({
   setSortInfo,
   multiSort,
 
+  viewportReservedWidth,
+
   draggableColumns,
   columnOrder,
   columnPinning,
+  columnSizing,
   columnVisibility,
   columnVisibilityAssumeVisible,
 }: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
@@ -128,21 +136,23 @@ export const getComputedVisibleColumns = <T extends unknown>({
     columnPinning,
   );
 
-  const visibleColumnOrder = normalizedColumnOrder.filter(
-    isColumnVisible.bind(null, columnVisibility, columnVisibilityAssumeVisible),
-  );
+  const visibleColumnOrder = normalizedColumnOrder.filter((colId) => {
+    let col = columns.get(colId);
+    if (!col) {
+      logError(
+        `Column with id "${colId}" specified in columnOrder array cannot be found in the columns map.`,
+      );
+      return false;
+    }
+    return isColumnVisible(
+      columnVisibility,
+      columnVisibilityAssumeVisible,
+      colId,
+    );
+  });
 
   const columnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder
-    .map((columnId) => {
-      let col = columns.get(columnId);
-      if (!col) {
-        error(
-          `Column with id "${columnId}" specified in columnOrder array cannot be found in the columns map.`,
-        );
-      }
-
-      return col!;
-    })
+    .map((columnId) => columns.get(columnId)!)
     .filter(Boolean);
 
   const sortedMap = (sortInfo ?? []).reduce(
@@ -162,19 +172,32 @@ export const getComputedVisibleColumns = <T extends unknown>({
   );
 
   const flexResult = computeFlex({
-    availableSize: bodySize.width,
+    availableSize: Math.max(
+      bodySize.width - (viewportReservedWidth ?? 0) - getScrollbarWidth(),
+      0,
+    ),
+
     maxSize: columnMaxWidth,
     minSize: columnMinWidth,
-    items: columnsArray.map((col) => {
-      let size = col.flex != null ? undefined : col.width ?? columnDefaultWidth;
-      if (!size && col.flex == null) {
-        size = col.minWidth ?? columnMinWidth;
+    items: visibleColumnOrder.map((colId) => {
+      const colSizing =
+        columnSizing.get(colId) || ({} as InfiniteTableColumnSizingOptions);
+      let colFlex: number | undefined = colSizing.flex ?? undefined;
+      const colMinWidth = colSizing.minWidth ?? columnMinWidth;
+      const colMaxWidth = colSizing.maxWidth ?? columnMaxWidth;
+      let size =
+        colFlex != undefined
+          ? undefined
+          : colSizing.width ?? columnDefaultWidth;
+
+      if (!size && colFlex == undefined) {
+        size = colMinWidth;
       }
       return {
         size,
-        flex: col.flex!,
-        minSize: col.minWidth,
-        maxSize: col.maxWidth,
+        flex: colFlex!,
+        minSize: colMinWidth,
+        maxSize: colMaxWidth,
       };
     }),
   });

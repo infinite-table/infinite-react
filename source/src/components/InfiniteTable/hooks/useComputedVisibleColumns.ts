@@ -5,6 +5,7 @@ import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
+  InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import type { Size } from '../../types/Size';
@@ -19,6 +20,7 @@ type UseComputedVisibleColumnsParam<T> = {
   bodySize: Size;
   columnMinWidth?: number;
   columnMaxWidth?: number;
+  viewportReservedWidth?: number;
 
   pinnedEndMaxWidth?: number;
   pinnedStartMaxWidth?: number;
@@ -32,6 +34,7 @@ type UseComputedVisibleColumnsParam<T> = {
 
   // columnAggregations: InfiniteTablePropColumnAggregations<T>;
   columnPinning: InfiniteTablePropColumnPinning;
+  columnSizing: InfiniteTablePropColumnSizing;
   columnOrder: InfiniteTablePropColumnOrder;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible?: boolean;
@@ -75,10 +78,13 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnPinning,
   pinnedEndMaxWidth,
   pinnedStartMaxWidth,
+  viewportReservedWidth,
   // columnAggregations,
   columnVisibility,
   columnVisibilityAssumeVisible,
+  columnSizing,
 }: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
+  const columnsSizingRenderId = useRerenderOnKeyChange(columnSizing);
   const columnsRenderId = useRerenderOnKeyChange(columns);
   const visibilityRenderId = useRerenderOnKeyChange(columnVisibility);
   const pinningRenderId = useRerenderOnKeyChange(columnPinning);
@@ -108,6 +114,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnMinWidth,
       columnMaxWidth,
       columnDefaultWidth,
+      viewportReservedWidth,
 
       sortable,
       sortInfo,
@@ -120,6 +127,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnOrder,
 
       columnPinning,
+
+      columnSizing,
 
       columnVisibility,
       columnVisibilityAssumeVisible: columnVisibilityAssumeVisible ?? true,
@@ -148,6 +157,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
     columnsRenderId,
     visibilityRenderId,
+    columnsSizingRenderId,
     pinningRenderId,
     // columnAggregationsRenderId,
   ]);

@@ -16,7 +16,6 @@ import type {
   InfiniteTableBaseColumn,
   InfiniteTableColumn,
   InfiniteTableColumnRenderFunction,
-  InfiniteTableColumnWithSize,
   InfiniteTableComputedColumn,
   InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
@@ -63,6 +62,18 @@ export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
 export type InfiniteTablePropColumnAggregations<T> = Map<
   string,
   InfiniteTableColumnAggregator<T, any>
+>;
+
+export type InfiniteTableColumnSizingOptions = {
+  flex?: number;
+  width?: number;
+  minWidth?: number;
+  maxWidth?: number;
+};
+
+export type InfiniteTablePropColumnSizing = Map<
+  string,
+  InfiniteTableColumnSizingOptions
 >;
 
 export type InfiniteTableImperativeApi<T> = {
@@ -142,14 +153,12 @@ export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
   | 'multi-column'
   | 'inline';
-export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> &
-  InfiniteTableColumnWithSize & {
-    renderValue?: InfiniteTableColumnRenderFunction<T>;
-  };
-export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> &
-  InfiniteTableColumnWithSize & {
-    renderValue?: InfiniteTableColumnRenderFunction<T>;
-  };
+export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & {
+  renderValue?: InfiniteTableColumnRenderFunction<T>;
+};
+export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> & {
+  renderValue?: InfiniteTableColumnRenderFunction<T>;
+};
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
   | InfiniteTableGroupColumnFunction<T>;
@@ -177,6 +186,8 @@ export interface InfiniteTableProps<T> {
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents;
 
+  viewportReservedWidth?: number;
+
   pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
   pivotRowLabelsColumn?: Partial<InfiniteTablePropPivotRowLabelsColumn<T>>;
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
@@ -193,6 +204,9 @@ export interface InfiniteTableProps<T> {
 
   defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
   columnAggregations?: InfiniteTablePropColumnAggregations<T>;
+
+  columnSizing?: InfiniteTablePropColumnSizing;
+  defaultColumnSizing?: InfiniteTablePropColumnSizing;
 
   pivotColumnGroups?: InfiniteTablePropColumnGroups;
   columnGroups?: InfiniteTablePropColumnGroups;

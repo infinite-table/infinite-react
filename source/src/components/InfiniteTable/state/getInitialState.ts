@@ -85,10 +85,12 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     pivotRowLabelsColumn: 1,
     pivotColumnGroups: 1,
 
+    viewportReservedWidth: (viewportReservedWidth) =>
+      viewportReservedWidth ?? 0,
     activeIndex: (activeIndex) => activeIndex ?? 0,
     columnMinWidth: (columnMinWidth) => columnMinWidth ?? 30,
     columnMaxWidth: (columnMaxWidth) => columnMaxWidth ?? 2000,
-    columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 300,
+    columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 200,
     draggableColumns: (draggableColumns) => draggableColumns ?? true,
 
     sortable: (sortable) => sortable ?? true,
@@ -115,6 +117,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 
     columnVisibility: (columnVisibility) => columnVisibility ?? new Map(),
     columnPinning: (columnPinning) => columnPinning ?? new Map(),
+    columnSizing: (columnSizing) => columnSizing ?? new Map(),
     columnAggregations: (columnAggregations) => columnAggregations ?? new Map(),
 
     collapsedColumnGroups: (collapsedColumnGroups) =>

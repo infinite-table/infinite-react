@@ -46,7 +46,7 @@ export const computeFlex = (params: FlexComputeParams): FlexComputeResult => {
 
   items.forEach((item, i) => {
     let maxSize = item.maxSize ?? defaultMaxSize ?? undefined;
-    let minSize = item.maxSize ?? defaultMinSize ?? undefined;
+    let minSize = item.minSize ?? defaultMinSize ?? undefined;
 
     if (item.size != null) {
       if (maxSize != null && item.size > maxSize) {
@@ -81,7 +81,7 @@ export const computeFlex = (params: FlexComputeParams): FlexComputeResult => {
     if (item.flex != null) {
       const approxFlexSize = sizePerFlex * item.flex;
       let maxSize = item.maxSize ?? defaultMaxSize ?? undefined;
-      let minSize = item.maxSize ?? defaultMinSize ?? undefined;
+      let minSize = item.minSize ?? defaultMinSize ?? undefined;
 
       let constrained: boolean = false;
       let substractSize = 0;

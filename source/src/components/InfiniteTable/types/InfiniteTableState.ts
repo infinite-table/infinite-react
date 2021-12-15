@@ -50,6 +50,7 @@ export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
 
 export interface InfiniteTableMappedState<T> {
+  viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
 
   loadingText: InfiniteTableProps<T>['loadingText'];
@@ -100,6 +101,7 @@ export interface InfiniteTableMappedState<T> {
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: NonUndefined<InfiniteTableProps<T>['columnVisibility']>;
   columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
+  columnSizing: NonUndefined<InfiniteTableProps<T>['columnSizing']>;
   columnAggregations: NonUndefined<InfiniteTableProps<T>['columnAggregations']>;
   columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
   collapsedColumnGroups: NonUndefined<
