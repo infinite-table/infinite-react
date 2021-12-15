@@ -173,6 +173,7 @@ export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
 
 export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
   groupByField?: string | string[];
+  id?: string;
 };
 
 export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {

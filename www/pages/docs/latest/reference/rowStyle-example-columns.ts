@@ -18,7 +18,10 @@ export type Employee = {
   email: string;
 };
 
-export const columns = new Map<string, InfiniteTableColumn<Employee>>([
+export const columns = new Map<
+  string,
+  InfiniteTableColumn<Employee>
+>([
   [
     'firstName',
     {
@@ -61,11 +64,13 @@ export const columns = new Map<string, InfiniteTableColumn<Employee>>([
   [
     'team',
     {
-      width: 200,
       field: 'team',
       header: 'Team',
     },
   ],
   ['company', { field: 'companyName', header: 'Company' }],
-  ['companySize', { field: 'companySize', header: 'Company Size' }],
+  [
+    'companySize',
+    { field: 'companySize', header: 'Company Size' },
+  ],
 ]);

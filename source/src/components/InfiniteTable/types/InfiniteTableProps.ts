@@ -155,9 +155,11 @@ export type InfiniteTablePropGroupRenderStrategy =
   | 'inline';
 export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & {
   renderValue?: InfiniteTableColumnRenderFunction<T>;
+  id?: string;
 };
 export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> & {
   renderValue?: InfiniteTableColumnRenderFunction<T>;
+  id?: string;
 };
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>

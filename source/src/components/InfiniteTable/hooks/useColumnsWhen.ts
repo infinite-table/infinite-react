@@ -345,34 +345,34 @@ export function getColumnsWhenGrouping<T>(params: {
 
   if (groupRenderStrategy === 'multi-column') {
     groupRowsBy.forEach((groupByForColumn, groupIndexForColumn, arr) => {
-      computedColumns.set(
-        `group-by-${groupByForColumn.field}`,
-        getColumnForGroupBy<T>(
-          {
-            groupByForColumn,
-            groupRowsBy,
-            groupIndexForColumn,
-            groupCount: arr.length,
-            groupRenderStrategy,
-          },
-          toggleGroupRow,
-          groupColumn,
-        ),
-      );
-    });
-  } else if (groupRenderStrategy === 'single-column') {
-    computedColumns.set(
-      'group-by',
-      getSingleGroupColumn(
+      const generatedGroupColumn = getColumnForGroupBy<T>(
         {
-          groupCount: groupRowsBy.length,
+          groupByForColumn,
           groupRowsBy,
+          groupIndexForColumn,
+          groupCount: arr.length,
           groupRenderStrategy,
         },
         toggleGroupRow,
         groupColumn,
-      ),
+      );
+      computedColumns.set(
+        generatedGroupColumn.id || `group-by-${groupByForColumn.field}`,
+        generatedGroupColumn,
+      );
+    });
+  } else if (groupRenderStrategy === 'single-column') {
+    const singleGroupColumn = getSingleGroupColumn(
+      {
+        groupCount: groupRowsBy.length,
+        groupRowsBy,
+        groupRenderStrategy,
+      },
+      toggleGroupRow,
+      groupColumn,
     );
+
+    computedColumns.set(singleGroupColumn.id || 'group-by', singleGroupColumn);
   }
   columns.forEach((col, colId) => {
     computedColumns.set(colId, col);

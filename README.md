@@ -18,10 +18,9 @@
 
 - [Installation](#installation)
 - [Documentation](#documentation)
-- [Development process](#development-process)
-  - [Running the docs](#running-the-docs)
+- [❤️ TypeScript](#-typescript)
+- [🎨 Themable](#-themable)
 - [Testing](#testing)
-  - [Testing in development](#testing-in-development)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->

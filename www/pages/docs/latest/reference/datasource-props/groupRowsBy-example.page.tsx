@@ -7,11 +7,15 @@ import {
 
 import { columns, Employee } from './columns';
 
+const columnSizing = new Map<string, { width: number }>([
+  ['country-group', { width: 250 }],
+]);
+
 const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
   {
     field: 'country',
     column: {
-      width: 150,
+      id: 'country-group',
       renderValue: ({ value }) => <>Country: {value}</>,
     },
   },
@@ -23,7 +27,10 @@ export default function App() {
       data={dataSource}
       primaryKey="id"
       groupRowsBy={groupRowsBy}>
-      <InfiniteTable<Employee> columns={columns} />
+      <InfiniteTable<Employee>
+        columns={columns}
+        defaultColumnSizing={columnSizing}
+      />
     </DataSource>
   );
 }
@@ -33,8 +40,5 @@ const dataSource = () => {
     process.env.NEXT_PUBLIC_BASE_URL + '/employees1k'
   )
     .then((r) => r.json())
-    .then((data: Employee[]) => {
-      console.log(data);
-      return data;
-    });
+    .then((data: Employee[]) => data);
 };

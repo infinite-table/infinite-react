@@ -11,6 +11,7 @@
     "source-build": "npm run --prefix=../source build",
     "generate-lib-dts": "echo all-fine",
     "update-versions": "node build/generate-versions-info.js",
+    "tscw": "tsc --watch --project tsconfig.json",
     "//": "http://localhost:3002/api/employees?_start=0&_limit=10",
     "serve-data": "node serve-data.js",
     "build-functions": "node build/functions/compile-json-server.js",

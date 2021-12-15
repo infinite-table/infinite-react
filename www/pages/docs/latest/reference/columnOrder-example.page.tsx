@@ -70,7 +70,6 @@ export const columns = new Map<
   [
     'team',
     {
-      width: 200,
       field: 'team',
       header: 'Team',
     },
