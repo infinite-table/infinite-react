@@ -81,6 +81,7 @@ Archive.appShell = function AppShell(props: {
   children: React.ReactNode;
 }) {
   return (
+    //@ts-ignore
     <Page routeTree={blogIndexRecentRouteTree} {...props} />
   );
 };
