@@ -1,8 +1,10 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
-  InfiniteTableColumns,
   InfiniteTablePropColumnGroups,
+  InfiniteTablePropColumnSizingMap,
+  InfiniteTablePropColumnsMap,
+  InfiniteTablePropColumnTypesMap,
   InfiniteTableProps,
 } from './InfiniteTableProps';
 
@@ -30,7 +32,7 @@ export interface InfiniteTableSetupState<T> {
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
-  columnsWhenGrouping?: InfiniteTableColumns<T>;
+  columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
   bodySize: Size;
   focused: boolean;
   focusedWithin: boolean;
@@ -55,7 +57,7 @@ export interface InfiniteTableMappedState<T> {
 
   loadingText: InfiniteTableProps<T>['loadingText'];
   components: InfiniteTableProps<T>['components'];
-  columns: InfiniteTableProps<T>['columns'];
+  columns: InfiniteTablePropColumnsMap<T>;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   onReady: InfiniteTableProps<T>['onReady'];
 
@@ -101,7 +103,8 @@ export interface InfiniteTableMappedState<T> {
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: NonUndefined<InfiniteTableProps<T>['columnVisibility']>;
   columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
-  columnSizing: NonUndefined<InfiniteTableProps<T>['columnSizing']>;
+  columnSizing: InfiniteTablePropColumnSizingMap;
+  columnTypes: InfiniteTablePropColumnTypesMap<T>;
   columnAggregations: NonUndefined<InfiniteTableProps<T>['columnAggregations']>;
   columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
   collapsedColumnGroups: NonUndefined<

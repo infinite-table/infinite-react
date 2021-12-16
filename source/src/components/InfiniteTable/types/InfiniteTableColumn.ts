@@ -94,7 +94,11 @@ export type InfiniteTableColumnHeader<T> =
   | Renderable
   | InfiniteTableColumnHeaderRenderFunction<T>;
 
-export type InfiniteTableColumnTypes = 'string' | 'number' | 'date';
+export type InfiniteTableColumnTypeNames =
+  | 'string'
+  | 'number'
+  | 'date'
+  | string;
 
 // field|valueGetter => THE_VALUE
 // |
@@ -157,7 +161,7 @@ export type InfiniteTableBaseColumn<T> = {
   name?: Renderable;
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
-  type?: InfiniteTableColumnTypes;
+  type?: InfiniteTableColumnTypeNames;
 
   style?: InfiniteTableColumnStyle<T>;
   className?: InfiniteTableColumnClassName<T>;

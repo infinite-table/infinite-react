@@ -64,17 +64,34 @@ export type InfiniteTablePropColumnAggregations<T> = Map<
   InfiniteTableColumnAggregator<T, any>
 >;
 
+export type InfiniteTableColumnType<T = any> = {
+  minWidth?: number;
+  maxWidth?: number;
+  width?: number;
+  flex?: number;
+  comparer?: (a: T, b: T) => number;
+};
+export type InfiniteTablePropColumnTypesMap<T> = Map<
+  string,
+  InfiniteTableColumnType<T>
+>;
+export type InfiniteTablePropColumnTypes<T> =
+  | InfiniteTablePropColumnTypesMap<T>
+  | Record<string, InfiniteTableColumnType<T>>;
+
 export type InfiniteTableColumnSizingOptions = {
   flex?: number;
   width?: number;
   minWidth?: number;
   maxWidth?: number;
 };
-
-export type InfiniteTablePropColumnSizing = Map<
+export type InfiniteTablePropColumnSizingMap = Map<
   string,
   InfiniteTableColumnSizingOptions
 >;
+export type InfiniteTablePropColumnSizing =
+  | InfiniteTablePropColumnSizingMap
+  | Record<string, InfiniteTableColumnSizingOptions>;
 
 export type InfiniteTableImperativeApi<T> = {
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
@@ -97,12 +114,17 @@ export type InfiniteTableInternalProps<T> = {
   ___t?: T;
 };
 
-export type InfiniteTablePropColumns<
+export type InfiniteTablePropColumnsMap<
   T,
   ColumnType = InfiniteTableColumn<T>,
 > = Map<string, ColumnType>;
 
+export type InfiniteTablePropColumns<T, ColumnType = InfiniteTableColumn<T>> =
+  | InfiniteTablePropColumnsMap<T, ColumnType>
+  | Record<string, ColumnType>;
+
 export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
+export type InfiniteTableColumnsMap<T> = InfiniteTablePropColumnsMap<T>;
 
 export type InfiniteTablePropColumnGroups = Map<
   string,
@@ -183,7 +205,7 @@ export type InfiniteTablePropComponents = {
 };
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
-  pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
+  pivotColumns?: InfiniteTablePropColumnsMap<T, InfiniteTablePivotColumn<T>>;
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents;
@@ -220,6 +242,7 @@ export interface InfiniteTableProps<T> {
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
+  columnTypes?: InfiniteTablePropColumnTypes<T>;
   // columnVisibilityAssumeVisible?: boolean;
 
   rowHeight: number | string;

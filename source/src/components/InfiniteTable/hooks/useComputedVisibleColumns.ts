@@ -5,7 +5,8 @@ import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinning,
-  InfiniteTablePropColumnSizing,
+  InfiniteTablePropColumnSizingMap,
+  InfiniteTablePropColumnTypesMap,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import type { Size } from '../../types/Size';
@@ -34,7 +35,8 @@ type UseComputedVisibleColumnsParam<T> = {
 
   // columnAggregations: InfiniteTablePropColumnAggregations<T>;
   columnPinning: InfiniteTablePropColumnPinning;
-  columnSizing: InfiniteTablePropColumnSizing;
+  columnSizing: InfiniteTablePropColumnSizingMap;
+  columnTypes: InfiniteTablePropColumnTypesMap<T>;
   columnOrder: InfiniteTablePropColumnOrder;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible?: boolean;
@@ -76,6 +78,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   setSortInfo,
   columnOrder,
   columnPinning,
+  columnTypes,
   pinnedEndMaxWidth,
   pinnedStartMaxWidth,
   viewportReservedWidth,
@@ -85,6 +88,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnSizing,
 }: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
   const columnsSizingRenderId = useRerenderOnKeyChange(columnSizing);
+  const columnTypesRenderId = useRerenderOnKeyChange(columnTypes);
   const columnsRenderId = useRerenderOnKeyChange(columns);
   const visibilityRenderId = useRerenderOnKeyChange(columnVisibility);
   const pinningRenderId = useRerenderOnKeyChange(columnPinning);
@@ -129,6 +133,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnPinning,
 
       columnSizing,
+      columnTypes,
 
       columnVisibility,
       columnVisibilityAssumeVisible: columnVisibilityAssumeVisible ?? true,
@@ -159,6 +164,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     visibilityRenderId,
     columnsSizingRenderId,
     pinningRenderId,
+    columnTypesRenderId,
     // columnAggregationsRenderId,
   ]);
 

@@ -12,7 +12,8 @@ import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinning,
-  InfiniteTablePropColumnSizing,
+  InfiniteTablePropColumnSizingMap,
+  InfiniteTablePropColumnTypesMap,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
@@ -101,7 +102,8 @@ type GetComputedVisibleColumnsParam<T> = {
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
   columnPinning: InfiniteTablePropColumnPinning;
-  columnSizing: InfiniteTablePropColumnSizing;
+  columnSizing: InfiniteTablePropColumnSizingMap;
+  columnTypes: InfiniteTablePropColumnTypesMap<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible: boolean;
 };
@@ -126,6 +128,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnOrder,
   columnPinning,
   columnSizing,
+  columnTypes,
   columnVisibility,
   columnVisibilityAssumeVisible,
 }: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
@@ -180,11 +183,34 @@ export const getComputedVisibleColumns = <T extends unknown>({
     maxSize: columnMaxWidth,
     minSize: columnMinWidth,
     items: visibleColumnOrder.map((colId) => {
-      const colSizing =
-        columnSizing.get(colId) || ({} as InfiniteTableColumnSizingOptions);
+      const column = columns.get(colId);
+      const colType = column?.type ? columnTypes.get(column.type) : undefined;
+
+      const colTypeSizing: InfiniteTableColumnSizingOptions = {
+        minWidth: colType?.minWidth,
+        maxWidth: colType?.maxWidth,
+        width: colType?.width,
+        flex: colType?.flex,
+      };
+      let colSizing = columnSizing.get(colId) || {};
+
+      // if colSizing has width
+      if (colSizing.width != null) {
+        // it should ignore coltype flex
+        delete colTypeSizing.flex;
+      }
+      // or if it has flex
+      if (colSizing.flex != null) {
+        // it should ignore coltype width
+        delete colTypeSizing.width;
+      }
+
+      colSizing = Object.assign(colTypeSizing, colSizing);
+
       let colFlex: number | undefined = colSizing.flex ?? undefined;
       const colMinWidth = colSizing.minWidth ?? columnMinWidth;
       const colMaxWidth = colSizing.maxWidth ?? columnMaxWidth;
+
       let size =
         colFlex != undefined
           ? undefined

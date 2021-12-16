@@ -2,17 +2,18 @@ import type { DataSourcePivotBy } from '../../components/DataSource';
 import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroups,
-  InfiniteTablePropColumns,
+  InfiniteTablePropColumnsMap,
 } from '../../components/InfiniteTable';
 import type {
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumn,
 } from '../../components/InfiniteTable/types/InfiniteTableColumn';
+
 import type { InfiniteTablePropPivotTotalColumnPosition } from '../../components/InfiniteTable/types/InfiniteTableState';
 import { DeepMap } from '../DeepMap';
 
 export type ComputedColumnsAndGroups<DataType> = {
-  columns: InfiniteTablePropColumns<
+  columns: InfiniteTablePropColumnsMap<
     DataType,
     InfiniteTablePivotColumn<DataType>
   >;
@@ -25,7 +26,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition,
 ): ComputedColumnsAndGroups<DataType> {
   const pivotLength = pivotBy.length;
-  const columns: InfiniteTablePropColumns<
+  const columns: InfiniteTablePropColumnsMap<
     DataType,
     InfiniteTablePivotColumn<DataType>
   > = new Map<string, InfiniteTablePivotColumn<DataType>>([

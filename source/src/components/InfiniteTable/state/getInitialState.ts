@@ -17,6 +17,19 @@ import {
 } from '../types/InfiniteTableState';
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
+function toMap<K extends string, V>(
+  mapOrObject?: Map<K, V> | Record<K, V>,
+): Map<K, V> {
+  if (!mapOrObject) {
+    return new Map<K, V>();
+  }
+
+  if (mapOrObject instanceof Map) {
+    return mapOrObject;
+  }
+
+  return new Map<K, V>(Object.entries(mapOrObject) as [K, V][]);
+}
 /**
  * The computed state is independent from props and cannot
  * be affected by props
@@ -56,7 +69,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
   InfiniteTableMappedState<T>
 > => {
   return {
-    columns: 1,
+    columns: (columns) => toMap(columns) ?? new Map(),
     components: 1,
     loadingText: 1,
     pivotColumns: 1,
@@ -116,7 +129,8 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 
     columnVisibility: (columnVisibility) => columnVisibility ?? new Map(),
     columnPinning: (columnPinning) => columnPinning ?? new Map(),
-    columnSizing: (columnSizing) => columnSizing ?? new Map(),
+    columnSizing: (columnSizing) => toMap(columnSizing) ?? new Map(),
+    columnTypes: (columnTypes) => toMap(columnTypes) ?? new Map(),
     columnAggregations: (columnAggregations) => columnAggregations ?? new Map(),
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
@@ -189,7 +203,7 @@ export const mapPropsToState = <T>(params: {
       state.computedPivotColumns ||
       state.columnsWhenGrouping ||
       state.columnsWhenInlineGroupRenderStrategy ||
-      props.columns,
+      state.columns,
     virtualizeHeader,
     columnGroupsDepthsMap,
     columnGroupsMaxDepth:

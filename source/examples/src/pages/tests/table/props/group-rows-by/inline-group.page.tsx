@@ -10,6 +10,7 @@ import {
   InfiniteTableColumn,
   GroupRowsState,
   InfiniteTablePropGroupRenderStrategy,
+  InfiniteTableColumnSizingOptions,
 } from '@infinite-table/infinite-react';
 import { Person, data } from './pivotData';
 import { useState } from 'react';
@@ -143,6 +144,17 @@ export default function GroupByExample() {
     return columns;
   }, [groupRenderStrategy]);
 
+  const defaultColumnSizing = React.useMemo<
+    Record<string, InfiniteTableColumnSizingOptions>
+  >(
+    () => ({
+      id: { width: 70 },
+      name: { width: 100 },
+      country: { width: 120 },
+    }),
+    [],
+  );
+
   return (
     <div style={{ fontSize: 16 }}>
       <p style={{ padding: 10 }}>
@@ -201,6 +213,7 @@ export default function GroupByExample() {
         <InfiniteTable<Person>
           domProps={domProps}
           columns={columns}
+          defaultColumnSizing={defaultColumnSizing}
           columnDefaultWidth={280}
           groupColumn={groupColumn}
           hideEmptyGroupColumns={hideEmptyGroupColumns}

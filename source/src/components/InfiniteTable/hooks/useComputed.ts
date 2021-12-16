@@ -25,6 +25,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnVisibility,
     columnPinning,
     columnSizing,
+    columnTypes,
     bodySize,
   } = componentState;
 
@@ -97,6 +98,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnPinning,
 
     columnSizing,
+    columnTypes,
   });
 
   const unpinnedColumnWidths = computedUnpinnedColumns.map(
