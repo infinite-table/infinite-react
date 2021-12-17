@@ -6,6 +6,7 @@ import Document, {
   NextScript,
 } from 'next/document';
 
+//@ts-ignore
 class MyDocument extends Document {
   render() {
     //  @todo specify language in HTML?
