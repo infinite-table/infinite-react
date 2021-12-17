@@ -91,7 +91,6 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
     'category',
     {
       field: 'category',
-      width: 200,
     },
   ],
   [

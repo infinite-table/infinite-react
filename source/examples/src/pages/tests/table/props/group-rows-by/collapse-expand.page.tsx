@@ -55,7 +55,7 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
     {
       field: 'country',
       header: 'Country',
-      width: 300,
+
       columnGroup: 'location',
       render: ({ value, rowInfo }) => {
         console.log(rowInfo);
@@ -115,7 +115,7 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       field: 'salary',
       type: 'number',
       header: 'Salary',
-      width: 500,
+
       render: ({ value, rowInfo }) => {
         if (rowInfo.isGroupRow) {
           return (
@@ -132,7 +132,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
   [
     'team',
     {
-      width: 200,
       field: 'team',
       header: 'Team',
     },
@@ -169,7 +168,7 @@ const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
   {
     field: 'country',
   },
-  { field: 'city', column: { width: 500, header: 'hey' } },
+  { field: 'city', column: { header: 'hey' } },
 ];
 export default function GroupByExample() {
   return (

@@ -58,7 +58,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
     'fullName',
     {
       name: 'Full name',
-      width: 300,
       render: ({ data }) => {
         return (
           <>

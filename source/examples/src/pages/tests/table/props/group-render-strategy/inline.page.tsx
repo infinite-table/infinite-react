@@ -43,14 +43,13 @@ const columns: InfiniteTablePropColumns<Person> = new Map<
       field: 'team',
     },
   ],
-  ['id', { field: 'id', width: 70 }],
-  ['name', { field: 'name', width: 100 }],
-  ['country', { field: 'country', width: 120 }],
+  ['id', { field: 'id' }],
+  ['name', { field: 'name' }],
+  ['country', { field: 'country' }],
   [
     'salary',
     {
       field: 'salary',
-      width: 200,
     },
   ],
 ]);

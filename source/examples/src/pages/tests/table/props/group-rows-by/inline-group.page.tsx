@@ -128,14 +128,14 @@ export default function GroupByExample() {
               : undefined,
         },
       ],
-      ['id', { field: 'id', width: 70 }],
-      ['name', { field: 'name', width: 100 }],
-      ['country', { field: 'country', width: 120 }],
+      ['id', { field: 'id' }],
+      ['name', { field: 'name' }],
+      ['country', { field: 'country' }],
       [
         'salary',
         {
           field: 'salary',
-          width: 200,
+
           render: ({ value }) =>
             value ? `$ ${formatter.format(value as any as number)}` : null,
         },

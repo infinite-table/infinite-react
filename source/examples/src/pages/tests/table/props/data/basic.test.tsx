@@ -5,7 +5,7 @@ import { getCellText } from '../../../testUtils';
 export default describe('Table', () => {
   beforeAll(async () => {
     await page.goto(`${process.env.BASEURL}/table/props/data/basic`);
-    await page.waitForTimeout(10);
+    await page.waitForSelector('[data-row-index]');
   });
 
   beforeEach(async () => {

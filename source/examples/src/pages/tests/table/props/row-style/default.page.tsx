@@ -104,7 +104,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       field: 'salary',
       type: 'number',
       header: 'Salary',
-      width: 500,
       render: ({ value, rowInfo }) => {
         if (rowInfo.isGroupRow) {
           return (
@@ -121,7 +120,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
   [
     'team',
     {
-      width: 200,
       field: 'team',
       header: 'Team',
     },

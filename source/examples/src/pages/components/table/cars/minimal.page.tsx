@@ -18,7 +18,7 @@ const columns = new Map<string, InfiniteTableColumn<Car>>([
   ],
   ['model', { field: 'model' }],
   ['price', { field: 'price' }],
-  ['year', { field: 'year', width: 500 }],
+  ['year', { field: 'year' }],
   ['rating', { field: 'rating' }],
 ]);
 

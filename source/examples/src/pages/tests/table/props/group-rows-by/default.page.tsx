@@ -32,7 +32,6 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
   [
     'name',
     {
-      width: 100,
       field: 'name',
     },
   ],
@@ -40,7 +39,6 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
   [
     'country',
     {
-      width: 100,
       field: 'country',
     },
   ],
@@ -62,7 +60,7 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
     {
       field: 'salary',
       type: 'number',
-      width: 300,
+
       render: ({ value, rowInfo }) => {
         if (rowInfo.isGroupRow) {
           return (
@@ -79,7 +77,6 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
   [
     'team',
     {
-      width: 200,
       field: 'team',
     },
   ],

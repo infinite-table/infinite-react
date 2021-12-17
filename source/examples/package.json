@@ -12,7 +12,8 @@
     "test:browser": "jest --config=jest-browser.config.js --runInBand",
     "test:watch": "DEBUG=InfiniteTable:* jest --config=jest-browser.config.js --watch --runInBand",
     "//---- run test:watch with pattern example": "npm run test:watch -- --testPathPattern=x/y/z",
-    "test:debug:watch": "TIMEOUT=60000 DEBUG_ENV=true ndb jest --config=jest-browser.config.js --watch --runInBand"
+    "test:debug:watch": "TIMEOUT=60000 DEBUG_ENV=true ndb jest --config=jest-browser.config.js --watch --runInBand",
+    "tscw": "tsc --watch --project tsconfig.json"
   },
   "dependencies": {
     "@vanilla-extract/babel-plugin": "1.1.2",
