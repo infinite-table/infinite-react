@@ -19,6 +19,7 @@ import type {
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { err } from '../../../utils/debug';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
+import { getColumnComputedType } from './getColumnComputedType';
 
 const logError = err('getComputedVisibleColumns');
 
@@ -184,7 +185,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
     minSize: columnMinWidth,
     items: visibleColumnOrder.map((colId) => {
       const column = columns.get(colId);
-      const colType = column?.type ? columnTypes.get(column.type) : undefined;
+      const colType = getColumnComputedType(column!, columnTypes);
+      // const colType = column?.type ? columnTypes.get(column.type) : undefined;
 
       const colTypeSizing: InfiniteTableColumnSizingOptions = {
         minWidth: colType?.minWidth,
@@ -273,6 +275,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnsArray.forEach((c, i) => {
     const id = visibleColumnOrder[i];
     const nextColumnId = visibleColumnOrder[i + 1];
+    const colType = getColumnComputedType(c, columnTypes);
+
+    // const comparer = c.comparer || colType?.comparer;
 
     const sortingInfo = sortedMap[id as string]
       ? sortedMap[id as string]
@@ -287,6 +292,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedSortIndex = sortingInfo?.index ?? -1;
 
     const computedWidth = computedSizes[i];
+
+    // const computedComp;
 
     const toggleSort = () => {
       let currentSortInfo = computedSortInfo;
@@ -361,8 +368,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedPinned !== getComputedPinned(nextColumnId, columnPinning);
 
     const result: InfiniteTableComputedColumn<T> = {
-      align: 'start' as 'start',
-      verticalAlign: 'center' as 'center',
+      align: colType.align,
+      verticalAlign: colType.verticalAlign,
+      renderValue: colType.renderValue,
+      render: colType.render,
       ...c,
       computedWidth,
       computedAbsoluteOffset,

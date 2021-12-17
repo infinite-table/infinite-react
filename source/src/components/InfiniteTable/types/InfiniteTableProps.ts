@@ -64,20 +64,28 @@ export type InfiniteTablePropColumnAggregations<T> = Map<
   InfiniteTableColumnAggregator<T, any>
 >;
 
-export type InfiniteTableColumnType<T = any> = {
+export type InfiniteTableColumnType<T> = {
   minWidth?: number;
   maxWidth?: number;
   width?: number;
   flex?: number;
-  comparer?: (a: T, b: T) => number;
+  header?: InfiniteTableColumn<T>['header'];
+  comparer?: InfiniteTableColumn<T>['comparer'];
+  draggable?: InfiniteTableColumn<T>['draggable'];
+  sortable?: InfiniteTableColumn<T>['sortable'];
+  resizable?: InfiniteTableColumn<T>['resizable'];
+  align?: InfiniteTableColumn<T>['align'];
+  verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
+  renderValue?: InfiniteTableColumn<T>['renderValue'];
+  render?: InfiniteTableColumn<T>['render'];
 };
 export type InfiniteTablePropColumnTypesMap<T> = Map<
-  string,
+  'default' | string,
   InfiniteTableColumnType<T>
 >;
 export type InfiniteTablePropColumnTypes<T> =
   | InfiniteTablePropColumnTypesMap<T>
-  | Record<string, InfiniteTableColumnType<T>>;
+  | Record<'default' | string, InfiniteTableColumnType<T>>;
 
 export type InfiniteTableColumnSizingOptions = {
   flex?: number;

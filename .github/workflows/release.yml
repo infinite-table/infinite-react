@@ -23,7 +23,7 @@ jobs:
 
       - uses: './.github/actions/will-release-check'
         env:
-          PRIVATE_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
+          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
 
       - name: Echo whoami on public npm registry
         run: npm whoami

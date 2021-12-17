@@ -5,23 +5,9 @@ import {
   InfiniteTable,
   InfiniteTableColumn,
   InfiniteTableImperativeApi,
+  InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
-
-export const columns: Record<string, InfiniteTableColumn<Employee>> = {
-  id: { field: 'id', type: 'custom-number' },
-  country: {
-    field: 'country',
-    type: 'date',
-  },
-  city: { field: 'city', type: 'default' },
-  team: { field: 'team', type: 'default' },
-  department: { field: 'department', type: 'default' },
-  firstName: { field: 'firstName', type: 'default' },
-  lastName: { field: 'lastName', type: 'default' },
-  salary: { field: 'salary', type: 'custom-number' },
-  age: { field: 'age', type: 'custom-number' },
-};
 
 type Employee = {
   id: number;
@@ -49,27 +35,45 @@ const dataSource = () => {
       return data;
     });
 };
-
-const defaultColumnSizing = {
-  // id: { flex: 10 },
-  // country: { flex: 1 },
-  // city: { flex: 1 },
-  // team: { flex: 1 },
-  // department: { flex: 1 },
-  // firstName: { flex: 1 },
-  // lastName: { flex: 1 },
-  // salary: { flex: 1 },
-  // age: { flex: 1 },
+// todo support column type as array or as null - if undefined, `default` will be used
+// column.type = null or  [] will discard the default
+// column.type = 'custom' // will not have default applied
+// column.type = ['custom'] // will not have default applied
+// column.type = ['custom','xxx'] // will  have xxx applied last
+// column.type = ['custom','default'] // will have default applied last
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  id: { field: 'id', type: 'custom-number' },
+  country: {
+    field: 'country',
+  },
+  city: { field: 'city' },
+  team: { field: 'team' },
+  department: { field: 'department' },
+  firstName: { field: 'firstName' },
+  lastName: { field: 'lastName' },
+  salary: { field: 'salary', type: 'custom-number' },
+  age: { field: 'age', type: 'custom-number' },
 };
 
-const columnTypes = {
+const defaultColumnSizing = {
+  age: {
+    width: 1000,
+  },
+  salary: {
+    flex: 2,
+    minWidth: 400,
+  },
+};
+
+const columnTypes: InfiniteTablePropColumnTypes<Employee> = {
   'custom-number': {
-    flex: 5,
-    // width: 1500,
+    align: 'end',
+    width: 100,
   },
   default: {
-    width: 100,
-    // width: 500,
+    width: 500,
+    align: 'center',
+    renderValue: ({ value }) => <>{value}!!!</>,
   },
 };
 

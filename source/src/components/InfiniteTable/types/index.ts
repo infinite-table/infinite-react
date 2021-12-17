@@ -31,6 +31,7 @@ import type {
 
 import type {
   InfiniteTableColumn,
+  InfiniteTableColumnComparer,
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderValueParam,
@@ -52,6 +53,7 @@ export type {
   InfiniteTablePropColumnPinning,
   InfiniteTableColumnGroup,
   InfiniteTableColumn,
+  InfiniteTableColumnComparer,
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderValueParam,

@@ -149,9 +149,14 @@ export type InfiniteTableColumnRowspanFn<T> = (
   params: InfiniteTableColumnRowspanFnParams<T>,
 ) => number;
 
+export type InfiniteTableColumnComparer<T> = (a: T, b: T) => number;
+
 export type InfiniteTableBaseColumn<T> = {
   sortable?: boolean;
   draggable?: boolean;
+  resizable?: boolean;
+
+  comparer?: InfiniteTableColumnComparer<T>;
 
   align?: InfiniteTableColumnAlign;
   verticalAlign?: InfiniteTableColumnVerticalAlign;
@@ -161,7 +166,7 @@ export type InfiniteTableBaseColumn<T> = {
   name?: Renderable;
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
-  type?: InfiniteTableColumnTypeNames;
+  type?: InfiniteTableColumnTypeNames | InfiniteTableColumnTypeNames[] | null;
 
   style?: InfiniteTableColumnStyle<T>;
   className?: InfiniteTableColumnClassName<T>;
