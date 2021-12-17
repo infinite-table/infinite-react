@@ -28,7 +28,6 @@ type Employee = {
 };
 
 const dataSource = () => {
-  // return Promise.resolve(employees);
   return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees`)
     .then((r) => r.json())
     .then((data: Employee[]) => {
