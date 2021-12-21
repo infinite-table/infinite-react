@@ -30,6 +30,7 @@ Below you can see a live pagination demo implemented in combination with [react-
 
 </Sandpack>
 
+In the example above, play around and scroll the table and also make sure to try sorting (eg: sort by country or city). 
 
 <Note>
 

@@ -185,7 +185,6 @@ const Example = () => {
 
   const onDataParamsChange = useCallback(
     (dataParams: DataSourceDataParams<Employee>) => {
-      console.log('data params changed', dataParams);
       setDataParams(dataParams);
     },
     []
@@ -194,6 +193,7 @@ const Example = () => {
   const [scrollTopId, setScrollTop] = React.useState(0);
 
   React.useEffect(() => {
+    // when sorting changes, scroll to the top
     setScrollTop(Date.now());
   }, [dataParams.sortInfo]);
 
