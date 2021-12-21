@@ -27,6 +27,7 @@ import type {
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnTypesMap,
   InfiniteTableColumnSizingOptions,
+  Scrollbars,
 } from './InfiniteTableProps';
 
 import type {
@@ -41,6 +42,7 @@ import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
 import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
 
 export type {
+  Scrollbars,
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
   InfiniteTablePropColumns,

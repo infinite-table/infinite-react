@@ -70,16 +70,14 @@ export const PropLink = ({
   code?: boolean;
 }) => {
   const href = `/docs/latest/reference#${name as string}`;
-  return (
-    <Link href={href}>
-      {children ??
-        (code ? (
-          <InlineCode isLink={false}>{name}</InlineCode>
-        ) : (
-          name
-        ))}
-    </Link>
+  let content = code ? (
+    <InlineCode isLink={false}>
+      {children ?? name}
+    </InlineCode>
+  ) : (
+    children ?? name
   );
+  return <Link href={href}>{content}</Link>;
 };
 
 export const DataSourcePropLink = ({
@@ -166,7 +164,14 @@ export function Prop({
             </H4>
             {defaultValue !== undefined ? (
               <PropInlineCode className="sm:ml-4">
-                Default: {defaultValue}
+                Default:{' '}
+                {defaultValue === false
+                  ? 'false'
+                  : defaultValue === true
+                  ? 'true'
+                  : defaultValue === null
+                  ? 'null'
+                  : defaultValue}
               </PropInlineCode>
             ) : null}
 

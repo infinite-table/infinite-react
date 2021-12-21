@@ -4,6 +4,7 @@ import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 
 import { multisort } from '../../../utils/multisort';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
+import { DataSourceSetupState } from '..';
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
@@ -32,11 +33,13 @@ function toRowInfo<T>(
 
 export function concludeReducer<T>(params: {
   previousState: DataSourceState<T> & DataSourceDerivedState<T>;
-  state: DataSourceState<T> & DataSourceDerivedState<T>;
+  state: DataSourceState<T> &
+    DataSourceDerivedState<T> &
+    DataSourceSetupState<T>;
 }) {
   const { state, previousState } = params;
   const sortInfo = state.sortInfo;
-  const shouldSort = !!sortInfo?.length;
+  const shouldSort = !!sortInfo?.length && !state.controlledSort;
 
   const sortDepsChanged = haveDepsChanged(previousState, state, [
     'originalDataArray',
@@ -143,7 +146,10 @@ export function concludeReducer<T>(params: {
 
   state.dataArray = rowInfoDataArray;
   state.reducedAt = now;
-  (globalThis as any).state = state;
+
+  if (__DEV__) {
+    (globalThis as any).state = state;
+  }
 
   return state;
 }

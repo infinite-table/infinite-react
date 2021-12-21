@@ -1,5 +1,5 @@
 ---
-title: Data Handling
+title: Working with Data
 ---
 
 We've decoupled our data handling from our rendering engine by providing two components (as named exports) inside `@infinite-table/infinite-react` package:

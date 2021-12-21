@@ -30,9 +30,9 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 <Sandpack title="Re-fetching data"> 
 
-```ts file=../../learn/data-handling/refetch-example.page.tsx
+```ts file=../../learn/working-with-data/refetch-example.page.tsx
 ```
-```ts file=../../learn/data-handling/columns.ts as=columns.ts
+```ts file=../../learn/working-with-data/columns.ts as=columns.ts
 ```
 
 </Sandpack>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { Scrollbars } from '../..';
 
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { VirtualBrain } from '../../../VirtualBrain';
@@ -11,7 +12,7 @@ import { InfiniteTableHeaderUnvirtualized } from './InfiniteTableHeaderUnvirtual
 
 export type TableHeaderWrapperProps = {
   brain: VirtualBrain;
-  scrollbars: { vertical: boolean; horizontal: boolean };
+  scrollbars: Scrollbars;
   repaintId?: number | string;
 };
 export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {

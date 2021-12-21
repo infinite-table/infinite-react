@@ -52,8 +52,11 @@ export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
 
 export interface InfiniteTableMappedState<T> {
+  scrollTopId: InfiniteTableProps<T>['scrollTopId'];
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
+
+  onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
   loadingText: InfiniteTableProps<T>['loadingText'];
   components: InfiniteTableProps<T>['components'];

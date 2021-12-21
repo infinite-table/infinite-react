@@ -29,7 +29,7 @@ For applying a className when the focus is within the component, see <PropLink n
 
 </Prop>
 
-<Prop name="columnDefaultWidth" type="number" default={200}>
+<Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
 
@@ -55,7 +55,7 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 </Prop>
 
 
-<Prop name="columnMaxWidth" type="number" default={2000}>
+<Prop name="columnMaxWidth" type="number" defaultValue={2000}>
 
 > Specifies the maximum width for all columns.
 
@@ -64,7 +64,7 @@ For specifying the minimum column width, see <PropLink name="columnMinWidth" />.
 
 </Prop>
 
-<Prop name="columnMinWidth" type="number" default={30}>
+<Prop name="columnMinWidth" type="number" defaultValue={30}>
 
 > Specifies the minimum width for all columns.
 
@@ -142,15 +142,15 @@ When we implement filtering, you'll also have access to the column filter.
 </Sandpack>
 </Prop>
 
-<Prop name="columns.type" type="'string'|'number'">
+<Prop name="columns.type" type="string | string[]" defaultValue="'default'">
 
-> Specifies the type of values displayed in the column.
+> Specifies the column type - a column type is a set of properties that describes the column. Column types allow to easily apply the same properties to multiple columns.
 
 For now there are only 2 column types, but more are coming soon:
  * `string` - the default type, if none is specified.
  * `number`
 
- Specifying the correct column type will ensure the correct sorting function is used.
+Specifying the correct column type will ensure the correct sorting function is used.
 
 See the example below - `id` and `age` columns are `type='number'`.
 
@@ -323,7 +323,7 @@ If it's a function, it will be called with the following arguments:
 </Sandpack>
 </Prop>
 
-<Prop name="hideEmptyGroupColumns" type="boolean" default={false}>
+<Prop name="hideEmptyGroupColumns" type="boolean" defaultValue={false}>
 
 > Allows you to hide group columns which don't render any information (this happens when all previous groups are collapsed).
 
@@ -402,7 +402,7 @@ As an example usage, we're demoing live pagination, done in combination with the
 
 <Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
 
-```ts file=../learn/data-handling/live-pagination-example.page.tsx
+```ts file=../learn/working-with-data/live-pagination-example.page.tsx
 ```
 
 </Sandpack>
@@ -513,7 +513,7 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 </Prop>
 
 
-<Prop name="viewportReservedWidth" type="number?" default={0}>
+<Prop name="viewportReservedWidth" type="number?" defaultValue={0}>
 
 > Specifies the width of the space to be kept as blank - useful when there are flex columns. This number can even be negative.
 

@@ -1,39 +1,185 @@
-import { useLayoutEffect } from 'react';
-import { useComponentState } from '../../hooks/useComponentState';
-import { DataSourceDataInfo, DataSourceData, DataSourceState } from '../types';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { loadDataAsync } from './loadDataAsync';
+import {
+  ComponentStateGeneratedActions,
+  useComponentState,
+} from '../../hooks/useComponentState';
+import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 
-function buildDataSourceInfo<T>(data: T[]): DataSourceDataInfo<T> {
-  return { originalDataArray: data };
+import { Scrollbars } from '../../InfiniteTable';
+import {
+  DataSourceDataParams,
+  DataSourceData,
+  DataSourceState,
+  DataSourceRemoteData,
+  DataSourceLivePaginationCursorValue,
+} from '../types';
+
+export function buildDataSourceDataParams<T>(
+  componentState: DataSourceState<T>,
+): DataSourceDataParams<T> {
+  const sortInfo = componentState.multiSort
+    ? componentState.sortInfo
+    : componentState.sortInfo?.[0] ?? null;
+
+  const dataSourceParams: DataSourceDataParams<T> = {
+    originalDataArray: componentState.originalDataArray,
+    sortInfo,
+    groupRowsBy: componentState.groupRowsBy,
+    pivotBy: componentState.pivotBy,
+  };
+
+  if (componentState.livePagination !== undefined) {
+    dataSourceParams.livePaginationCursor = componentState.livePaginationCursor;
+  }
+
+  return dataSourceParams;
+}
+
+function notifyDataParamsChanged<T>(
+  componentState: DataSourceState<T>,
+  actions: ComponentStateGeneratedActions<DataSourceState<T>>,
+) {
+  if (typeof componentState.data === 'function') {
+    loadData(componentState.data, componentState, actions);
+  }
+
+  const dataParams = buildDataSourceDataParams(componentState);
+
+  componentState.onDataParamsChange?.(dataParams);
+}
+
+function loadData<T>(
+  data: DataSourceData<T>,
+  componentState: DataSourceState<T>,
+  actions: ComponentStateGeneratedActions<DataSourceState<T>>,
+) {
+  const dataParams = buildDataSourceDataParams(componentState);
+
+  if (typeof data === 'function') {
+    data = data(dataParams);
+  }
+
+  const dataIsPromise =
+    //@ts-ignore
+    typeof data === 'object' && typeof data.then === 'function';
+
+  if (dataIsPromise) {
+    actions.loading = true;
+  }
+  Promise.resolve(data).then((dataParam) => {
+    // dataParam can either be an array or an object with a `data` array property
+    let dataArray: T[] = [] as T[];
+
+    if (Array.isArray((dataParam as DataSourceRemoteData<T>).data)) {
+      const remoteData = dataParam as DataSourceRemoteData<T>;
+      dataArray = remoteData.data;
+
+      if (remoteData.livePaginationCursor !== undefined) {
+        actions.livePaginationCursor = remoteData.livePaginationCursor;
+      }
+    } else {
+      dataArray = dataParam as T[];
+    }
+
+    actions.originalDataArray = dataArray;
+    if (dataIsPromise) {
+      actions.loading = false;
+    }
+  });
 }
 
 export function useLoadData<T>() {
   const {
+    getComponentState,
     componentActions: actions,
     componentState: { data },
   } = useComponentState<DataSourceState<T>>();
 
-  const loadData = (data: DataSourceData<T>) => {
-    let dataSourceInfo: DataSourceDataInfo<T> = {
-      originalDataArray: [] as T[],
-    };
-    if (typeof data === 'function') {
-      data = data();
+  useLayoutEffect(() => {
+    loadData(data, getComponentState(), actions);
+  }, [data]);
+
+  useLivePagination();
+}
+
+export function useLivePagination<T>() {
+  const {
+    getComponentState,
+    componentActions: actions,
+    componentState,
+  } = useComponentState<DataSourceState<T>>();
+
+  const {
+    notifyScrollbarsChange,
+    sortInfo,
+    groupRowsBy,
+    pivotBy,
+    livePaginationCursor,
+    scrollBottomId,
+  } = componentState;
+
+  const [scrollbars, setScrollbars] = useState<Scrollbars>({
+    vertical: false,
+    horizontal: false,
+  });
+
+  const scrollbarsRef = useRef<Scrollbars>(scrollbars);
+
+  useEffect(() => {
+    notifyScrollbarsChange.onChange((scrollbars: Scrollbars | null) => {
+      if (!scrollbars) {
+        return;
+      }
+
+      scrollbarsRef.current = scrollbars;
+      setScrollbars(scrollbars);
+    });
+    return () => notifyScrollbarsChange.destroy();
+  }, [notifyScrollbarsChange]);
+
+  const [cursorId, updateCursorId] = useState<
+    | undefined
+    | DataSourceLivePaginationCursorValue
+    | DataSourceState<T>['scrollBottomId']
+  >(undefined);
+
+  useEffect(() => {
+    // this is synced with - ref #lvpgn - search in codebase this ref to understand more
+    const frameId = requestAnimationFrame(() => {
+      if (!scrollbarsRef.current?.vertical) {
+        updateCursorId(livePaginationCursor);
+      }
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [livePaginationCursor]);
+
+  useEffect(() => {
+    const { livePaginationCursor, livePagination } = getComponentState();
+    if (!scrollbars.vertical && livePagination) {
+      // it had vertical scroll but now it doesn't
+      updateCursorId(livePaginationCursor);
     }
-    if (Array.isArray(data)) {
-      dataSourceInfo = buildDataSourceInfo(data);
-      actions.originalDataArray = dataSourceInfo.originalDataArray;
-    } else {
-      actions.loading = true;
-      loadDataAsync(data).then((dataSourceInfo: DataSourceDataInfo<T>) => {
-        actions.originalDataArray = dataSourceInfo.originalDataArray;
-        actions.loading = false;
-      });
-    }
+  }, [scrollbars.vertical]);
+
+  useEffect(() => {
+    updateCursorId(scrollBottomId);
+  }, [scrollBottomId]);
+
+  const depsObject = {
+    sortInfo,
+    groupRowsBy,
+    pivotBy,
+    cursorId,
   };
 
-  useLayoutEffect(() => {
-    loadData(data);
-  }, [data]);
+  useEffectWithChanges(() => {
+    if (cursorId === undefined) {
+      // discard initial
+      return;
+    }
+
+    notifyDataParamsChanged(getComponentState(), actions);
+  }, depsObject);
 }

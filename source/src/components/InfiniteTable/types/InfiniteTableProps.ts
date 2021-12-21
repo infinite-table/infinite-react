@@ -247,6 +247,8 @@ export interface InfiniteTableProps<T> {
   defaultCollapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
   collapsedColumnGroups?: InfiniteTablePropCollapsedColumnGroups;
 
+  onScrollbarsChange?: (scrollbars: Scrollbars) => void;
+
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
@@ -299,4 +301,11 @@ export interface InfiniteTableProps<T> {
       ) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
+
+  scrollTopId?: string | number;
 }
+
+export type Scrollbars = {
+  vertical: boolean;
+  horizontal: boolean;
+};

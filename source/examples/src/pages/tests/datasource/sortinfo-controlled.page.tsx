@@ -31,6 +31,18 @@ export default () => {
   (globalThis as any).setSortInfo = setSortInfo;
 
   const [enabled, setEnabled] = React.useState(false);
+
+  const onSortInfoChange = React.useCallback(
+    (sortInfo: DataSourceSortInfo<Person> | null) => {
+      (globalThis as any).calls++;
+      console.log(sortInfo);
+      if (enabled) {
+        setSortInfo(sortInfo);
+      }
+    },
+    [],
+  );
+
   return (
     <React.StrictMode>
       <p>Currently the sorting is {enabled ? 'enabled' : 'disabled'}</p>
@@ -47,13 +59,7 @@ export default () => {
           primaryKey="id"
           fields={['name', 'id', 'age']}
           sortInfo={sortInfo}
-          onSortInfoChange={(sortInfo) => {
-            (globalThis as any).calls++;
-            console.log(sortInfo);
-            if (enabled) {
-              setSortInfo(sortInfo);
-            }
-          }}
+          onSortInfoChange={onSortInfoChange}
         >
           <Cmp />
         </DataSource>

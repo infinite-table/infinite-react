@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { multisort } from '../../utils/multisort';
+
 import {
   DataSourceProps,
   DataSourceContextValue,
@@ -16,6 +18,7 @@ import {
   mapPropsToState,
   forwardProps,
   initSetupState,
+  getInterceptActions,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 
@@ -50,6 +53,7 @@ const DataSourceRoot = getComponentStateRoot({
   concludeReducer,
   //@ts-ignore
   mapPropsToState,
+  interceptActions: getInterceptActions(),
 });
 
 function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
@@ -86,6 +90,6 @@ function DataSource<T>(props: DataSourceProps<T>) {
   );
 }
 
-export { useDataSource, DataSource, GroupRowsState };
+export { useDataSource, DataSource, GroupRowsState, multisort };
 
 export * from './types';

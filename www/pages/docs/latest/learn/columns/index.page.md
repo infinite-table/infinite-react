@@ -2,12 +2,12 @@
 title: Working with Columns
 ---
 
-Columns are a central feature in `InfiniteTable`. You define columns as a `Map<string, InfiniteTableColumn<DATA_TYPE>>` and then use pass them in the `columns` prop in your `InfiniteTable` component.
+Columns are a central feature in `InfiniteTable`. You define columns as a `Map<string, InfiniteTableColumn<DATA_TYPE>>` (or as an object) and then use pass them in the `columns` prop in your `InfiniteTable` component.
 
 
 <Note>
 
-In `InfiniteTable`, columns are identified by their key in the <PropLink name="columns" /> Map. **We'll refer to this as the column id**.
+In `InfiniteTable`, columns are identified by their key in the <PropLink name="columns" /> Map/object. **We'll refer to this as the column id**.
 The column ids are used in many places - like defining the <PropLink name="columnOrder" code={false} />, column pinning, column visibility, etc. 
 
 </Note>

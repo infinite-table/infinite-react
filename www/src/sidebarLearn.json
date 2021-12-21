@@ -12,12 +12,18 @@
           "path": "/docs/latest/learn/getting-started"
         },
         {
-          "title": "Working with Columns",
-          "path": "/docs/latest/learn/columns"
+          "title": "Working with Data",
+          "path": "/docs/latest/learn/working-with-data",
+          "routes": [
+            {"path":"/docs/latest/learn/working-with-data/sorting", "title": "Sorting"}
+          ]
         },
         {
-          "title": "Data Handling",
-          "path": "/docs/latest/learn/data-handling"
+          "title": "Working with Columns",
+          "path": "/docs/latest/learn/columns",
+          "routes": [
+            {"path":"/docs/latest/learn/columns/column-types", "title": "Column Types"}
+          ]
         },
         {
           "title": "Styling Rows",

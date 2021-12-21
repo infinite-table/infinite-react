@@ -30,6 +30,21 @@ function toMap<K extends string, V>(
 
   return new Map<K, V>(Object.entries(mapOrObject) as [K, V][]);
 }
+
+function toColumnTypesMap<K extends string, V>(
+  mapOrObject?: Map<K, V> | Record<K, V>,
+): Map<K, V> {
+  // if (!mapOrObject) {
+  //   mapOrObject = {} as Record<K, V>;
+  // }
+
+  // // TODO continue here
+  // if (mapOrObject instanceof Map) {
+  // }
+
+  return toMap(mapOrObject);
+}
+
 /**
  * The computed state is independent from props and cannot
  * be affected by props
@@ -70,6 +85,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 > => {
   return {
     columns: (columns) => toMap(columns) ?? new Map(),
+    scrollTopId: 1,
     components: 1,
     loadingText: 1,
     pivotColumns: 1,
@@ -97,6 +113,8 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     pivotColumn: 1,
     pivotRowLabelsColumn: 1,
     pivotColumnGroups: 1,
+
+    onScrollbarsChange: 1,
 
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
@@ -130,7 +148,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     columnVisibility: (columnVisibility) => columnVisibility ?? new Map(),
     columnPinning: (columnPinning) => columnPinning ?? new Map(),
     columnSizing: (columnSizing) => toMap(columnSizing) ?? new Map(),
-    columnTypes: (columnTypes) => toMap(columnTypes) ?? new Map(),
+    columnTypes: (columnTypes) => toColumnTypesMap(columnTypes) ?? new Map(),
     columnAggregations: (columnAggregations) => columnAggregations ?? new Map(),
 
     collapsedColumnGroups: (collapsedColumnGroups) =>

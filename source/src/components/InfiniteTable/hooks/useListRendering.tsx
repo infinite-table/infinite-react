@@ -23,7 +23,10 @@ import {
 } from './usePinnedRendering';
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
-import { InfiniteTablePropColumnAggregations } from '../types/InfiniteTableProps';
+import type {
+  InfiniteTablePropColumnAggregations,
+  Scrollbars,
+} from '../types/InfiniteTableProps';
 import { usePrevious } from '../../hooks/usePrevious';
 
 type ListRenderingParam<T> = {
@@ -41,7 +44,7 @@ import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 import { GroupRowsState } from '../../DataSource';
 
 type ListRenderingResult = {
-  scrollbars: { vertical: boolean; horizontal: boolean };
+  scrollbars: Scrollbars;
 
   horizontalVirtualBrain: VirtualBrain;
   verticalVirtualBrain: VirtualBrain;
@@ -157,7 +160,8 @@ export function useListRendering<T>(
     verticalVirtualBrain.getTotalSize() +
     (hasHorizontalScrollbar ? getScrollbarWidth() : 0);
 
-  const hasVerticalScrollbar = bodySize.height < reservedContentHeight;
+  const hasVerticalScrollbar =
+    bodySize.height > 0 && bodySize.height < reservedContentHeight;
 
   const scrollbars = useMemo(
     () => ({

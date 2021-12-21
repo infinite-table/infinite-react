@@ -12,7 +12,11 @@ import { VirtualBrain } from '../../VirtualBrain';
 import { InfiniteTableRowProps } from '../components/InfiniteTableRow/InfiniteTableRowTypes';
 import { TableRowUnvirtualized } from '../components/InfiniteTableRow/InfiniteTableRowUnvirtualized';
 import { HorizontalScrollbarPlaceholder } from '../components/ScrollbarPlaceholder';
-import { InfiniteTableComputedColumn, InfiniteTableRowInfo } from '../types';
+import type {
+  InfiniteTableComputedColumn,
+  InfiniteTableRowInfo,
+  Scrollbars,
+} from '../types';
 import type { Size } from '../../types/Size';
 import type { RenderRow } from '../../VirtualList/types';
 import { InfiniteTableState } from '../types/InfiniteTableState';
@@ -43,7 +47,7 @@ type UsePinnedParams<T> = {
   computedPinnedEndColumnsWidth: number;
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
   verticalVirtualBrain: VirtualBrain;
-  scrollbars: { vertical: boolean; horizontal: boolean };
+  scrollbars: Scrollbars;
   rowHeight: number;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   computedPinnedStartColumnsWidth: number;

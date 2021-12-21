@@ -51,9 +51,9 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   useColumnsWhen<T>();
 
   const setSortInfo = useCallback((sortInfo: DataSourceSingleSortInfo<T>[]) => {
+    const newSortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
     //@ts-ignore
-    dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
-    // dataSourceActions.sortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
+    dataSourceActions.sortInfo = newSortInfo;
   }, []);
 
   const columns = componentState.computedColumns;

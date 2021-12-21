@@ -2,6 +2,8 @@ import * as React from 'react';
 import fetch from 'isomorphic-fetch';
 
 import {
+  DataSourceData,
+  DataSourceDataParams,
   InfiniteTable,
   InfiniteTableColumn,
   InfiniteTableImperativeApi,
@@ -77,9 +79,34 @@ const columnTypes: InfiniteTablePropColumnTypes<Employee> = {
 };
 
 const App = () => {
+  const onDataChange = React.useCallback(
+    (dataInfo: DataSourceDataParams<Employee>) => {
+      console.log(dataInfo);
+    },
+    [],
+  );
+
+  const [currentData, setData] =
+    React.useState<DataSourceData<Employee>>(dataSource);
+
   return (
     <React.StrictMode>
-      <DataSource<Employee> primaryKey="id" data={dataSource}>
+      <button
+        onClick={() => {
+          setData([] as Employee[]);
+
+          setTimeout(() => {
+            setData(dataSource.bind({}));
+          }, 1000);
+        }}
+      >
+        UPDATE
+      </button>
+      <DataSource<Employee>
+        primaryKey="id"
+        data={currentData}
+        onDataParamsChange={onDataChange}
+      >
         <InfiniteTable<Employee>
           domProps={{
             style: {

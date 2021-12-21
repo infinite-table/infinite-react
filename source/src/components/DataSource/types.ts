@@ -13,14 +13,20 @@ import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
   InfiniteTableRowInfo,
+  Scrollbars,
 } from '../InfiniteTable';
 import { ComponentStateActions } from '../hooks/useComponentState';
 import { GroupRowsState } from './GroupRowsState';
 import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
+import { SubscriptionCallback } from '../types/SubscriptionCallback';
 
-export interface DataSourceDataInfo<T> {
+export interface DataSourceDataParams<T> {
   originalDataArray: T[];
+  sortInfo?: DataSourceSortInfo<T>;
+  groupRowsBy?: DataSourcePropGroupRowsBy<T>;
+  pivotBy?: DataSourcePropPivotBy<T>;
+  livePaginationCursor?: DataSourceLivePaginationCursorValue;
 }
 
 export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
@@ -35,22 +41,17 @@ export type DataSourceSortInfo<T> =
   | DataSourceSingleSortInfo<T>
   | DataSourceSingleSortInfo<T>[];
 
+export type DataSourceRemoteData<T> = {
+  data: T[];
+  livePaginationCursor?: DataSourceLivePaginationCursorValue;
+};
+
 export type DataSourceData<T> =
   | T[]
-  | Promise<
-      | T[]
-      | {
-          data: T[];
-        }
-    >
-  | (() =>
-      | T[]
-      | Promise<
-          | T[]
-          | {
-              data: T[];
-            }
-        >);
+  | Promise<T[] | DataSourceRemoteData<T>>
+  | ((
+      dataInfo: DataSourceDataParams<T>,
+    ) => T[] | Promise<T[] | DataSourceRemoteData<T>>);
 
 export type DataSourceGroupRowsList<KeyType> = true | KeyType[][];
 
@@ -63,7 +64,10 @@ export type DataSourcePropGroupRowsBy<T> = DataSourceGroupRowsBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
 export interface DataSourceMappedState<T> {
+  livePagination: DataSourceProps<T>['livePagination'];
+  livePaginationCursor: DataSourceProps<T>['livePaginationCursor'];
   remoteCount: DataSourceProps<T>['remoteCount'];
+  onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
   groupRowsBy: NonUndefined<DataSourceProps<T>['groupRowsBy']>;
@@ -74,12 +78,16 @@ export interface DataSourceMappedState<T> {
 }
 
 export interface DataSourceSetupState<T> {
+  dataParams?: DataSourceDataParams<T>;
+  notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
   originalDataArray: T[];
   lastSortDataArray?: T[];
   lastGroupDataArray?: InfiniteTableRowInfo<T>[];
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
+  scrollBottomId: number | Symbol | DataSourceLivePaginationCursorValue;
+
   updatedAt: number;
   reducedAt: number;
   groupedAt: number;
@@ -120,8 +128,16 @@ export interface DataSourceProps<T> {
 
   sortInfo?: DataSourceSortInfo<T>;
   defaultSortInfo?: DataSourceSortInfo<T>;
-  onSortInfoChange?: (sortInfo: DataSourceSortInfo<T>) => void;
+  onSortInfoChange?:
+    | ((sortInfo: DataSourceSingleSortInfo<T> | null) => void)
+    | ((sortInfo: DataSourceSingleSortInfo<T>[]) => void);
+
+  onDataParamsChange?: (dataParamsChange: DataSourceDataParams<T>) => void;
+  livePagination?: boolean;
+  livePaginationCursor?: DataSourceLivePaginationCursorValue;
 }
+
+export type DataSourceLivePaginationCursorValue = string | number;
 
 export interface DataSourceState<T>
   extends DataSourceSetupState<T>,
@@ -130,6 +146,7 @@ export interface DataSourceState<T>
 
 export interface DataSourceDerivedState<_T> {
   multiSort: boolean;
+  controlledSort: boolean;
 }
 
 export type DataSourceComponentActions<T> = ComponentStateActions<

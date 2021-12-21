@@ -44,19 +44,30 @@ type ComponentStateContext<T_STATE, T_ACTIONS> = {
   componentActions: T_ACTIONS;
 };
 
-type ComponentStateGeneratedActions<T_STATE> = {
+export type ComponentStateGeneratedActions<T_STATE> = {
   [k in keyof T_STATE]: T_STATE[k] | React.SetStateAction<T_STATE[k]>;
+};
+
+export type ComponentInterceptedActions<T_STATE> = {
+  [k in keyof T_STATE]?: (
+    value: T_STATE[k],
+    {
+      actions,
+      state,
+    }: { actions: ComponentStateGeneratedActions<T_STATE>; state: T_STATE },
+  ) => void;
 };
 
 export type ComponentStateActions<T_STATE> =
   ComponentStateGeneratedActions<T_STATE>;
 
-function getReducerActions<T_STATE, T_PROPS>(
+function getReducerGeneratedActions<T_STATE, T_PROPS>(
   dispatch: React.Dispatch<any>,
   getState: () => T_STATE,
   getProps: () => T_PROPS,
   propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE>,
   allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
+  interceptedActions?: ComponentInterceptedActions<T_STATE>,
 ): ComponentStateGeneratedActions<T_STATE> {
   const state = getState();
   return Object.keys(state).reduce((actions, stateKey) => {
@@ -73,6 +84,10 @@ function getReducerActions<T_STATE, T_PROPS>(
       // it's important that we notify with the value that we receive
       //directly from the setter (see continuation below)
       notifyChange(props, stateKey, value);
+
+      if (interceptedActions && typeof interceptedActions[key] === 'function') {
+        interceptedActions[key]!(value, { actions, state });
+      }
 
       //@ts-ignore
       const forwardFn = propsToForward[key];
@@ -151,6 +166,9 @@ type ComponentStateRootConfig<
     COMPONENT_MAPPED_STATE
   >;
   allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
+  interceptActions?: ComponentInterceptedActions<
+    COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
+  >;
   mapPropsToState?: (params: {
     props: T_PROPS;
     state: COMPONENT_MAPPED_STATE &
@@ -337,12 +355,16 @@ export function getComponentStateRoot<
     const { allowedControlledPropOverrides } = config;
 
     const actions = useMemo(() => {
-      const generatedActions = getReducerActions(
+      const generatedActions = getReducerGeneratedActions<
+        COMPONENT_STATE,
+        T_PROPS
+      >(
         dispatch,
         getComponentState,
         getProps,
-        propsToForward,
+        propsToForward as ForwardPropsToStateFnResult<T_PROPS, COMPONENT_STATE>,
         allowedControlledPropOverrides,
+        config.interceptActions,
       );
 
       return generatedActions;

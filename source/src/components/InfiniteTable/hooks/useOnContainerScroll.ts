@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import { VirtualBrain } from '../../VirtualBrain';
@@ -12,7 +13,7 @@ const TableClassName = internalProps.rootClassName;
 
 const TableClassName__Scrolling = `${TableClassName}--scrolling`;
 
-const SCROLL_BOTTOM_OFFSET = 0;
+const SCROLL_BOTTOM_OFFSET = 1;
 
 export const useOnContainerScroll = <T>({
   verticalVirtualBrain,
@@ -33,6 +34,9 @@ export const useOnContainerScroll = <T>({
       bodySize,
     },
   } = useInfiniteTable<T>();
+
+  const { componentActions: dataSourceActions, getState: getDataSourceState } =
+    useDataSourceContextValue();
 
   const timeoutIdRef = useRef<number>(0);
   const scrollingRef = useRef<boolean>(false);
@@ -113,6 +117,10 @@ export const useOnContainerScroll = <T>({
 
       if (isScrollBottom) {
         onScrollToBottom?.();
+
+        if (getDataSourceState().livePagination) {
+          dataSourceActions.scrollBottomId = Date.now();
+        }
       }
     },
     [onContainerScroll, scrollToBottomOffset, onScrollToBottom, onScrollToTop],

@@ -39,7 +39,7 @@ export default function ControlledPageTest() {
           data={orders}
           primaryKey="OrderId"
           sortInfo={sortInfo}
-          onSortInfoChange={(sortInfo) => {
+          onSortInfoChange={(sortInfo: DataSourceSortInfo<Order> | null) => {
             console.log(sortInfo);
             if (enabled) {
               setSortInfo(sortInfo);

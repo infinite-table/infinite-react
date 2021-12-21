@@ -77,9 +77,15 @@ const InfiniteTableRoot = getComponentStateRoot({
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const { componentState, getComputed, computed } = useInfiniteTable<T>();
+    const {
+      componentState,
+      getComputed,
+      computed,
+      getState: getInfiniteTableState,
+    } = useInfiniteTable<T>();
     const {
       componentState: { dataArray, loading },
+      getState: getDataSourceState,
     } = useDataSourceContextValue<T>();
 
     const {
@@ -127,6 +133,25 @@ export const InfiniteTableComponent = React.memo(
     const domProps = useDOMProps<T>(componentState.domProps);
 
     const LoadMaskCmp = components?.LoadMask ?? LoadMask;
+
+    React.useLayoutEffect(() => {
+      // this needs to be useLayoutEffect
+      // we on live Pagination cursor change we need this - ref #lvpgn
+      const dataSourceState = getDataSourceState();
+      const { onScrollbarsChange } = getInfiniteTableState();
+      const { notifyScrollbarsChange } = dataSourceState;
+
+      if (
+        onScrollbarsChange &&
+        dataSourceState.updatedAt &&
+        dataSourceState.dataArray.length
+      ) {
+        onScrollbarsChange(scrollbars);
+      }
+
+      notifyScrollbarsChange(scrollbars);
+    }, [scrollbars]);
+
     return (
       <div ref={domRef} {...domProps}>
         {header ? (
@@ -194,7 +219,7 @@ function InfiniteTableContextProvider<T>() {
   const { componentActions, componentState } =
     useComponentState<InfiniteTableState<T>>();
 
-  const { scrollerDOMRef } = componentState;
+  const { scrollerDOMRef, scrollTopId } = componentState;
 
   const computed = useComputed<T>();
   const getComputed = useLatest(computed);
@@ -240,6 +265,12 @@ function InfiniteTableContextProvider<T>() {
       componentState.onHeaderHeightCSSVarChange.destroy();
     };
   }, []);
+
+  React.useEffect(() => {
+    if (scrollerDOMRef.current) {
+      scrollerDOMRef.current.scrollTop = 0;
+    }
+  }, [scrollTopId, scrollerDOMRef]);
 
   const TableContext = getInfiniteTableContext<T>();
 

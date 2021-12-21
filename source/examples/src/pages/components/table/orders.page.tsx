@@ -1,6 +1,10 @@
 import * as React from 'react';
 
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+  DataSourceSingleSortInfo,
+} from '@infinite-table/infinite-react';
 
 import orders from '../../../datasets/orders.json';
 import {
@@ -170,7 +174,9 @@ const OrdersPage = () => {
             'ShipCountry',
             'ShipVia',
           ]}
-          onSortInfoChange={(sortInfo) => {
+          onSortInfoChange={(
+            sortInfo: DataSourceSingleSortInfo<Order> | null,
+          ) => {
             console.log(sortInfo);
             // setSortInfo(sortInfo);
           }}
