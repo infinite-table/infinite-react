@@ -13,7 +13,10 @@ import {
 } from '../styles/utils.css';
 
 import { title, width100 } from './components.css';
+import { ExternalLink } from './ExternalLink';
+import { IconOpenInWindow } from './Icon/IconOpenInWindow';
 import { darkIcon, lightIcon } from './Layout/Nav/Nav';
+import { OpenInWindowButton } from './MDX/Sandpack/OpenInWindowButton';
 
 export const Header = (props: { title: string }) => {
   return (
@@ -30,8 +33,8 @@ export const Header = (props: { title: string }) => {
         'text-primary',
         'dark:text-primary-dark',
       ].join(' ')}>
-      <div className="absolute  top-10 right-10">
-        <div className="block dark:hidden">
+      <div className="absolute flex flex-row items-center top-10 right-10 ">
+        <div className="block dark:hidden ">
           <button
             type="button"
             aria-label="Use Dark Mode"
@@ -53,6 +56,12 @@ export const Header = (props: { title: string }) => {
             {lightIcon}
           </button>
         </div>
+        <ExternalLink
+          className="ml-3 hover:text-link dark:hover:text-link "
+          href="https://github.com/infinite-table/infinite-react">
+          GitHub{' '}
+          <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
+        </ExternalLink>
       </div>
       <a className={`${position.relative}`} href="/">
         <img

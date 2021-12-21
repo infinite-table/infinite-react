@@ -7,6 +7,8 @@ import { SidebarRouteTree } from './SidebarRouteTree';
 import { Search } from '@www/components/Search';
 import { Button } from '@www/components/Button';
 import { MobileNav } from '../Nav/MobileNav';
+import { ExternalLink } from '@www/components/ExternalLink';
+import { IconOpenInWindow } from '@www/components/Icon/IconOpenInWindow';
 
 const SIDEBAR_BREAKPOINT = 1023;
 
@@ -91,7 +93,13 @@ export function Sidebar({
           <SidebarRouteTree routeTree={routeTree} />
         )}
       </nav>
-      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex items-center bg-gradient-to-t from-wash dark:from-wash-dark">
+      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-gradient-to-t from-wash dark:from-wash-dark">
+        <ExternalLink
+          className="hover:text-link dark:hover:text-link mb-5"
+          href="https://github.com/infinite-table/infinite-react">
+          GitHub{' '}
+          <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
+        </ExternalLink>
         <Button
           className="w-full text-center justify-center"
           onClick={handleFeedback}>

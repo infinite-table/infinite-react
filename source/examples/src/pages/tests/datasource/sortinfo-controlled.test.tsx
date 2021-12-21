@@ -8,7 +8,7 @@ export default describe('DataSource', () => {
     await page.reload();
   });
 
-  it('should work correctly with sortInfo controlled', async () => {
+  it('should work correctly with sortInfo controlled - no change to the datasource if controlled sortInfo', async () => {
     let result = await page.evaluate(() => {
       return JSON.parse(
         (document.querySelector('#source') as HTMLElement).innerText,
@@ -46,18 +46,18 @@ export default describe('DataSource', () => {
 
     expect(result).toEqual([
       {
-        data: persons[1],
-        id: persons[1].id,
+        data: persons[0],
+        id: persons[0].id,
         collapsed: true,
         indexInAll: 0,
         indexInGroup: 0,
       },
       {
         collapsed: true,
-        data: persons[0],
+        data: persons[1],
         indexInAll: 1,
         indexInGroup: 1,
-        id: persons[0].id,
+        id: persons[1].id,
       },
     ]);
 

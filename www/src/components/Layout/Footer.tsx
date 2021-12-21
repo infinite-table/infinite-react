@@ -2,6 +2,7 @@ import * as React from 'react';
 import NextLink from 'next/link';
 import cn from 'classnames';
 import { ExternalLink } from '@www/components/ExternalLink';
+import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
 
 export function Footer() {
   const socialLinkClasses =
@@ -37,10 +38,19 @@ export function Footer() {
                 Props
               </FooterLink>
             </div>
-            <div className="flex flex-col sm:col-start-2 xl:col-start-4">
-              <div className="text-xs text-left mt-2 pr-0.5">
-                Copyright © {new Date().getFullYear()}{' '}
-                Infinite Table
+
+            <div className="flex flex-col sm:col-start-2 xl:col-start-4 mb-2">
+              <div className="my-2">
+                <ExternalLink
+                  className="hover:text-link dark:hover:text-link "
+                  href="https://github.com/infinite-table/infinite-react">
+                  GitHub{' '}
+                  <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
+                </ExternalLink>
+              </div>
+              <div className="text-xs text-left pr-0.5">
+                Copyright © {new Date().getFullYear()}
+                <br /> Infinite Table
               </div>
             </div>
           </div>

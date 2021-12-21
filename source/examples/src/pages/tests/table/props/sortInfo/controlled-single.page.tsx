@@ -1,6 +1,10 @@
 import * as React from 'react';
 
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+  multisort,
+} from '@infinite-table/infinite-react';
 
 import { DataSourceSortInfo } from '@infinite-table/infinite-react';
 import { useState } from 'react';
@@ -14,7 +18,7 @@ interface Order {
   ShipCountry: string;
   ShipVia: string;
 }
-const orders = getOrders();
+
 export default function ControlledPageTest() {
   const [sortInfo, setSortInfo] = useState<DataSourceSortInfo<Order>>({
     dir: 1,
@@ -22,6 +26,14 @@ export default function ControlledPageTest() {
   });
 
   const [enabled, setEnabled] = useState(false);
+
+  const orders = React.useMemo(() => {
+    const orders = [...getOrders()];
+    return multisort(
+      Array.isArray(sortInfo) ? sortInfo : sortInfo ? [sortInfo] : [],
+      orders,
+    );
+  }, [sortInfo]);
 
   console.log('rerender with', sortInfo);
   return (

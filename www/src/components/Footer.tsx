@@ -2,8 +2,6 @@ import * as React from 'react';
 import {
   display,
   centeredFlexColumn,
-  backgroundColorWhite,
-  colorBrandDark,
   shadow,
   alignSelf,
 } from '../styles/utils.css';
