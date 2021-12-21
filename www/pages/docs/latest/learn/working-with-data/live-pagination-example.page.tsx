@@ -4,6 +4,8 @@ import {
   InfiniteTable,
   InfiniteTableColumn,
   DataSource,
+  DataSourceSingleSortInfo,
+  DataSourceDataParams,
 } from '@infinite-table/infinite-react';
 
 import {
@@ -11,8 +13,17 @@ import {
   QueryClientProvider,
   useInfiniteQuery,
 } from 'react-query';
+import { useCallback } from 'react';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const emptyArray: Employee[] = [];
 
 export const columns = new Map<
   string,
@@ -52,12 +63,22 @@ type Employee = {
   email: string;
 };
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 10;
 
-const dataSource = (page = 1) => {
+const dataSource = ({
+  sortInfo,
+  livePaginationCursor = 0,
+}: {
+  sortInfo: DataSourceSingleSortInfo<Employee> | null;
+  livePaginationCursor: number;
+}) => {
   return fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
-      `/employees10k?_limit=${PAGE_SIZE}&_page=${page}`
+      `/employees10k?_limit=${PAGE_SIZE}&_sort=${
+        sortInfo?.field
+      }&_order=${
+        sortInfo?.dir === 1 ? 'asc' : 'desc'
+      }&_start=${livePaginationCursor}`
   )
     .then(async (r) => {
       const data = await r.json();
@@ -73,10 +94,18 @@ const dataSource = (page = 1) => {
         data: Employee[];
         total: number;
       }) => {
+        const page = livePaginationCursor / PAGE_SIZE + 1;
+
+        const prevPageCursor = Math.max(
+          PAGE_SIZE * (page - 1),
+          0
+        );
         return {
           data,
           hasMore: total > PAGE_SIZE * page,
           page,
+          prevPageCursor,
+          nextPageCursor: prevPageCursor + data.length,
         };
       }
     )
@@ -87,6 +116,8 @@ const dataSource = (page = 1) => {
         data: Employee[];
         hasMore: boolean;
         page: number;
+        nextPageCursor: number;
+        prevPageCursor: number;
       }> => {
         return new Promise((resolve) => {
           setTimeout(() => {
@@ -98,29 +129,53 @@ const dataSource = (page = 1) => {
 };
 
 const Example = () => {
+  const [dataParams, setDataParams] = React.useState<
+    Partial<DataSourceDataParams<Employee>>
+  >({
+    sortInfo: null,
+    groupRowsBy: [],
+    livePaginationCursor: 0,
+  });
   const {
     data,
-    hasNextPage,
-    fetchNextPage,
+    fetchNextPage: fetchNext,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['employees'],
-    ({ pageParam: page }) => dataSource(page),
+    [
+      'employees',
+      dataParams.sortInfo,
+      dataParams.groupRowsBy,
+    ],
+    ({ pageParam = 0 }) => {
+      const params = {
+        livePaginationCursor: pageParam,
+        sortInfo:
+          dataParams.sortInfo as DataSourceSingleSortInfo<Employee> | null,
+      };
+
+      return dataSource(params);
+    },
+
     {
       keepPreviousData: true,
-
       getPreviousPageParam: (firstPage) =>
-        firstPage.page - 1,
-      getNextPageParam: (lastPage) =>
-        lastPage.hasMore ? lastPage.page + 1 : undefined,
+        firstPage.prevPageCursor || 0,
+      getNextPageParam: (lastPage) => {
+        const nextPageCursor = lastPage.hasMore
+          ? lastPage.nextPageCursor
+          : undefined;
+
+        return nextPageCursor;
+      },
 
       select: (data) => {
-        // each page has data: Employee[], hasMore: boolean, page: number
-        // so we need to flatten that into a single `pages` array
-        // (react-query requires it to be called `pages`)
+        const flatData = data.pages.flatMap((x) => x.data);
+        const nextPageCursor =
+          data.pages[data.pages.length - 1].nextPageCursor;
+
         const result = {
-          pages: data.pages.flatMap((x) => x.data),
-          pageParams: data.pageParams,
+          pages: flatData,
+          pageParams: [nextPageCursor],
         };
 
         return result;
@@ -128,11 +183,34 @@ const Example = () => {
     }
   );
 
-  const onScrollToBottom = React.useCallback(() => {
-    if (hasNextPage) {
-      fetchNextPage();
+  const onDataParamsChange = useCallback(
+    (dataParams: DataSourceDataParams<Employee>) => {
+      console.log('data params changed', dataParams);
+      setDataParams(dataParams);
+    },
+    []
+  );
+
+  const [scrollTopId, setScrollTop] = React.useState(0);
+
+  React.useEffect(() => {
+    setScrollTop(Date.now());
+  }, [dataParams.sortInfo]);
+
+  const fetchNextPage = () => {
+    if (isFetchingNextPage) {
+      return;
     }
-  }, [fetchNextPage, hasNextPage]);
+
+    fetchNext();
+  };
+
+  React.useEffect(() => {
+    fetchNextPage();
+  }, [dataParams]);
+
+  const livePaginationCursor =
+    (data?.pageParams[0] as number) || 0;
 
   return (
     <React.StrictMode>
@@ -140,12 +218,17 @@ const Example = () => {
         primaryKey="id"
         // take the data from `data.pages`,
         // as returned from our react-query select function
-        data={data?.pages || []}
-        loading={isFetchingNextPage}>
+
+        sortInfo={dataParams?.sortInfo}
+        data={data?.pages || emptyArray}
+        loading={isFetchingNextPage}
+        onDataParamsChange={onDataParamsChange}
+        livePagination
+        livePaginationCursor={livePaginationCursor}>
         <InfiniteTable<Employee>
+          scrollTopId={scrollTopId}
           columnDefaultWidth={200}
           columns={columns}
-          onScrollToBottom={onScrollToBottom}
         />
       </DataSource>
     </React.StrictMode>

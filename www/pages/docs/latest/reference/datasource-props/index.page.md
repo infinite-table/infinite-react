@@ -57,5 +57,55 @@ Each item in the array can have the following properties:
 
 </Prop>
 
+<Prop name="livePagination" type="boolean">
+
+> Whether the component should use live pagination.
+
+Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> and <DataSourcePropLink name="onDataParamsChange" />
+
+<Sandpack  title="Live pagination - with react-query" deps="react-query">
+
+```ts file=../../learn/working-with-data/live-pagination-example.page.tsx
+```
+</Sandpack>
+
+</Prop>
+
+<Prop name="livePaginationCursor" type="string|number" defaulValue={undefined}>
+
+> A cursor value for live pagination. A good value for this is the id of the last item in the <DataSourcePropLink name="data" /> array.
+
+Use this in combination with <DataSourcePropLink name="livePagination" /> and <DataSourcePropLink name="onDataParamsChange" />
+
+<Sandpack  title="Live pagination - with react-query" deps="react-query">
+
+```ts file=../../learn/working-with-data/live-pagination-example.page.tsx
+```
+</Sandpack>
+
+</Prop>
+
+
+
+<Prop name="onDataParamsChange" type="(dataParams: DataSourceDataParams<DATA_TYPE:>)=>void">
+
+> A function to be called when data-related props/state change.
+
+Can be used to implement <DataSourcePropLink name="livePagination" />
+
+The function is called with an object that has the following properties:
+
+ - `sortInfo` - current sort information - see <DataSourcePropLink name="sortInfo" /> for details
+ - `groupRowsBy` - current grouping information - see <DataSourcePropLink name="groupRowsBy" /> for details
+ - `livePaginationCursor` - the value for the live pagination cursor - see <DataSourcePropLink name="livePaginationCursor" /> for details
+
+<Sandpack  title="Live pagination - with react-query" deps="react-query">
+
+```ts file=../../learn/working-with-data/live-pagination-example.page.tsx
+```
+</Sandpack>
+
+</Prop>
+
 </PropTable> 
 

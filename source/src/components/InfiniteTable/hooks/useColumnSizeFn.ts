@@ -10,13 +10,14 @@ export function useColumnSizeFn<T>(
   const columnSize = useCallback(
     (index: number) => {
       const column = computedUnpinnedColumns[index];
-      if (!column) {
+      if (__DEV__ && !column) {
         console.log(
           'cannot find column at index',
           index,
           computedUnpinnedColumns,
         );
       }
+
       return column ? column.computedWidth : 0;
     },
     [computedUnpinnedColumns],

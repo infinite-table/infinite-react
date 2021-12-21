@@ -83,19 +83,6 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Sandpack>
 
-### Live pagination
-
-For implementing live pagination, we show you how this can be done in combination with [react-query](https://react-query.tanstack.com/).
-
-In the example below, we're using the <PropLink name="onScrollToBottom" code={false}>onScrollToBottom prop</PropLink> to start fetching the next page.
-
-<Sandpack title="Live pagination - with react-query" deps="react-query"> 
-
-```ts file=live-pagination-example.page.tsx
-```
-
-</Sandpack>
-
 ## Live updates
 
 We'll come up with a more suitable API for updating only specific cells/rows in the table component.

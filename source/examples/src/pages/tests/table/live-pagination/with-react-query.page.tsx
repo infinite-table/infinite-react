@@ -79,8 +79,8 @@ function dataSource({
   )
     .then(async (r) => {
       const data = await r.json();
-
       const total = Number(r.headers.get('X-Total-Count')!);
+
       return { data, total };
     })
     .then(({ data, total }: { data: Employee[]; total: number }) => {
