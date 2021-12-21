@@ -3,6 +3,7 @@ const headers = { Authorization: `token ${pat}` };
 
 const repo = `infinite-table/infinite-react`;
 
+const order = ['open', 'closed'];
 const sortOpenFirst = (issue1, issue2) => {
   const state1 = issue1.state;
   const state2 = issue2.state;
