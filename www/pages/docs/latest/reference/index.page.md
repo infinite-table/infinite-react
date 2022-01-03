@@ -517,7 +517,9 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 
 > Specifies the width of the space to be kept as blank - useful when there are flex columns. This number can even be negative.
 
-TODO more explanation and an example needed
+The flexbox algorithm also uses `viewportReservedWidth` to determine the width of the viewport to use for sizing columns - you can use `viewportReservedWidth=100` to always have a `100px` reserved area that won't be used for flexing columns.
+
+Or you can use a negative value, eg `-200` so the flexbox algorithm will use another `200px` (in addition to the available viewport area) for sizing flexible columns - this will result in a horizontal scrollbar being visible.
 
 </Prop>
 

@@ -23,7 +23,8 @@
           "title": "Working with Columns",
           "path": "/docs/latest/learn/columns",
           "routes": [
-            {"path":"/docs/latest/learn/columns/column-types", "title": "Column Types"}
+            {"path":"/docs/latest/learn/columns/column-types", "title": "Column Types"},
+            {"path":"/docs/latest/learn/columns/fixed-and-flexible-size", "title": "Column Sizing"}
           ]
         },
         {

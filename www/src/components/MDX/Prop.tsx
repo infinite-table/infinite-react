@@ -69,13 +69,20 @@ export const PropLink = ({
   children?: React.ReactNode;
   code?: boolean;
 }) => {
-  const href = `/docs/latest/reference#${name as string}`;
+  let theName = name;
+  if (!name && typeof children === 'string') {
+    theName = children as keyof InfiniteTableProps<any>;
+  }
+
+  const href = `/docs/latest/reference#${
+    theName as string
+  }`;
   let content = code ? (
     <InlineCode isLink={false}>
-      {children ?? name}
+      {children ?? theName}
     </InlineCode>
   ) : (
-    children ?? name
+    children ?? theName
   );
   return <Link href={href}>{content}</Link>;
 };
