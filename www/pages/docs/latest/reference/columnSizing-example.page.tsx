@@ -6,24 +6,6 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
-export type Employee = {
-  id: number;
-  companyName: string;
-  companySize: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  countryCode: string;
-  city: string;
-  streetName: string;
-  streetNo: string;
-  department: string;
-  team: string;
-  salary: number;
-  age: number;
-  email: string;
-};
-
 export const columns = new Map<
   string,
   InfiniteTableColumn<Employee>
@@ -40,7 +22,6 @@ export const columns = new Map<
     {
       field: 'country',
       header: 'Country',
-      columnGroup: 'location',
     },
   ],
 
@@ -49,7 +30,6 @@ export const columns = new Map<
     {
       field: 'city',
       header: 'City',
-      columnGroup: 'address',
     },
   ],
   [
@@ -62,10 +42,10 @@ export const columns = new Map<
   ],
 ]);
 
-const defaultColumnSizing: InfiniteTablePropColumnSizing = {
-  country: { flex: 1 },
-  city: { flex: 1 },
-  salary: { flex: 2 },
+const columnSizing: InfiniteTablePropColumnSizing = {
+  country: { width: 100 },
+  city: { flex: 1, minWidth: 100 },
+  salary: { flex: 2, maxWidth: 500 },
 };
 
 export default function App() {
@@ -74,8 +54,7 @@ export default function App() {
       <InfiniteTable<Employee>
         columns={columns}
         columnDefaultWidth={50}
-        viewportReservedWidth={50}
-        defaultColumnSizing={defaultColumnSizing}
+        columnSizing={columnSizing}
       />
     </DataSource>
   );
@@ -87,4 +66,22 @@ const dataSource = () => {
   )
     .then((r) => r.json())
     .then((data: Employee[]) => data);
+};
+
+export type Employee = {
+  id: number;
+  companyName: string;
+  companySize: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  countryCode: string;
+  city: string;
+  streetName: string;
+  streetNo: string;
+  department: string;
+  team: string;
+  salary: number;
+  age: number;
+  email: string;
 };

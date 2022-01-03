@@ -35,7 +35,7 @@ For applying a className when the focus is within the component, see <PropLink n
 
 <Note>
 
-If a column explicitly specifies a `width`, that will be used instead.
+If a column is explicitly sized via <PropLink name="columnSizing.width" />, that will be used instead.
 
 </Note>
 
@@ -60,7 +60,17 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 > Specifies the maximum width for all columns.
 
 
-For specifying the minimum column width, see <PropLink name="columnMinWidth" />. This will be very useful once flex column sizing lands.
+For specifying the minimum column width, see <PropLink name="columnMinWidth" />.
+
+Maximum column width can be controlled more granularly via <PropLink name="columnSizing.maxWidth" />, on a per column level.
+
+
+<Sandpack>
+
+```tsx file=columnMaxWidth-example.page.tsx
+```
+
+</Sandpack>
 
 </Prop>
 
@@ -69,11 +79,46 @@ For specifying the minimum column width, see <PropLink name="columnMinWidth" />.
 > Specifies the minimum width for all columns.
 
 
-For specifying the maximum column width, see <PropLink name="columnMaxWidth" />. This will be very useful once flex column sizing lands.
+For specifying the maximum column width, see <PropLink name="columnMaxWidth" />.
+
+Minimum column width can be controlled more granularly via <PropLink name="columnSizing.minWidth" />, on a per column level.
+
+<Sandpack>
+
+```tsx file=columnMinWidth-example.page.tsx
+```
+
+</Sandpack>
 
 </Prop>
 
-<Prop name="columns" type="Map<string, InfiniteTableColumn<DATA_TYPE>>">
+
+<Prop name="columnOrder">
+
+> Defines the order in which columns are displayed in the component
+
+For uncontrolled usage, see <PropLink name="defaultColumnOrder" />.
+
+When using this controlled prop, make sure you also listen to <PropLink name="onColumnOrderChange" />
+
+<Note>
+
+The `columnOrder` array can contain identifiers that are not yet defined in the <PropLink name="columns" /> Map or can contain duplicate ids. This is a feature, not a bug. We want to allow you to use the `columnOrder` in a flexible way so it can define the order of current and future columns.
+
+Displaying the same column twice is a perfectly valid use case.
+
+</Note>
+
+
+<Sandpack title="Column order">
+
+```ts file=columnOrder-example.page.tsx
+```
+
+</Sandpack>
+</Prop>
+
+<Prop name="columns" type="(Map|Record)<string, InfiniteTableColumn<DATA_TYPE>>">
 
 > Describes the columns available in the component.
 
@@ -165,53 +210,101 @@ See the example below - `id` and `age` columns are `type='number'`.
 </Prop>
 
 
-<Prop name="columns.width" type="number" hidden>
+<Prop name="columnSizing" type="(Map|Record)<string,{width,flex,...}>">
 
-> Specifies the fixed width of the column. NOTE - will probably be deprecated in the near future, for a better API.
+> Defines the sizing of columns in the grid.
 
-TODO write docs for columnSizing.width
+This is a controlled property. For the uncontrolled version, see <PropLink name="defaultColumnSizing" />.
 
-<Note>
+It is an object (or Map) that maps column ids to column sizing options. The values in the objects can contain the following properties:
+ * <PropLink name="columnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
+ * <PropLink name="columnSizing.width">width</PropLink> - use this for fixed sized columns
+ * <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
+ * <PropLink name="columnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
-A default column with can be specified for all columns by setting the <PropLink name="columnDefaultWidth" /> prop.
 
-</Note>
+<Sandpack title="Controlled column sizing">
 
-<Sandpack>
-
-```ts file=columns-width-example.page.tsx
-```
-```ts file=data.ts
+```tsx file=columnSizing-example.page.tsx
 ```
 
 </Sandpack>
 
 </Prop>
 
-<Prop name="columnOrder">
+<Prop name="columnSizing.flex" type="number">
 
-> Defines the order in which columns are displayed in the component
+> Specifies the flex value for the column.
 
-For uncontrolled usage, see <PropLink name="defaultColumnOrder" />.
+See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details.
 
-When using this controlled prop, make sure you also listen to <PropLink name="onColumnOrderChange" />
-
-<Note>
-
-The `columnOrder` array can contain identifiers that are not yet defined in the <PropLink name="columns" /> Map or can contain duplicate ids. This is a feature, not a bug. We want to allow you to use the `columnOrder` in a flexible way so it can define the order of current and future columns.
-
-Displaying the same column twice is a perfectly valid use case.
-
-</Note>
+A column can either be flexible or fixed. For fixed columns, use <PropLink name="columnSizing.width" />.
 
 
-<Sandpack title="Column order">
+<Sandpack title="Controlled column sizing with flex columns">
 
-```ts file=columnOrder-example.page.tsx
+```tsx file=columnSizing-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+
+<Prop name="columnSizing.minWidth" type="number">
+
+> Specifies the minimum width for a column. Especially useful for flexible columns.
+
+See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details on the flex algorithm.
+
+This can also be specified for all columns by specyfing <PropLink name="columnMinWidth" />.
+
+<Sandpack title="Controlled column sizing with minWidth for column">
+
+```tsx file=columnSizing-example.page.tsx
 ```
 
 </Sandpack>
 </Prop>
+
+
+<Prop name="columnSizing.maxWidth" type="number">
+
+> Specifies the maximum width for a column. Especially useful for flexible columns.
+
+See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details on the flex algorithm.
+
+This can also be specified for all columns by specyfing <PropLink name="columnMaxWidth" />.
+
+<Sandpack title="Controlled column sizing with maxWidth for column">
+
+```tsx file=columnSizing-example.page.tsx
+```
+
+</Sandpack>
+</Prop>
+
+
+<Prop name="columnSizing.width" type="number">
+
+> Specifies the fixed width for the column.
+
+See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details.
+
+A column can either be flexible or fixed. For flexible columns, use <PropLink name="columnSizing.flex" />.
+
+
+<Sandpack title="Controlled column sizing with fixed column">
+
+```tsx file=columnSizing-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
 
 <Prop name="defaultColumnOrder">
 
@@ -350,12 +443,6 @@ If it's a function, it will be called with the following arguments:
 
 </Prop>
 
-<Prop name="onColumnOrderChange" type="(columnOrder: string[])=>void">
-
-> Called as a result of user changing the column order
-
-</Prop>
-
 
 <Prop name="onBlurWithin" type="(event)=> void">
 
@@ -376,6 +463,19 @@ This callback is fired when a focusable element inside the component is blurred,
 ```ts file=data.ts
 ```
 </Sandpack>
+</Prop>
+<Prop name="onColumnOrderChange" type="(columnOrder: string[])=>void">
+
+> Called as a result of user changing the column order
+
+</Prop>
+
+
+
+<Prop name="onColumnSizingChange" type="(columnSizing)=>void">
+
+Coming soon, when we finish implementing column resizing via d&d.
+
 </Prop>
 
 <Prop name="onFocusWithin" type="(event)=> void">
@@ -513,13 +613,19 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 </Prop>
 
 
-<Prop name="viewportReservedWidth" type="number?" defaultValue={0}>
+<Prop name="viewportReservedWidth" type="number" defaultValue={0}>
 
 > Specifies the width of the space to be kept as blank - useful when there are flex columns. This number can even be negative.
 
 The flexbox algorithm also uses `viewportReservedWidth` to determine the width of the viewport to use for sizing columns - you can use `viewportReservedWidth=100` to always have a `100px` reserved area that won't be used for flexing columns.
 
 Or you can use a negative value, eg `-200` so the flexbox algorithm will use another `200px` (in addition to the available viewport area) for sizing flexible columns - this will result in a horizontal scrollbar being visible.
+
+<Sandpack title="Using viewportReservedWidth to reserve whitespace when you have flexible columns">
+
+```ts file=viewportReservedWidth-example.page.tsx
+```
+</Sandpack>
 
 </Prop>
 

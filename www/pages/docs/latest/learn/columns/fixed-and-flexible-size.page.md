@@ -56,4 +56,26 @@ This means columns will have the following sizes:
 
  The flexbox algorithm also uses <PropLink name="viewportReservedWidth" /> to determine the width of the viewport to use for sizing columns - you can use <PropLink name="viewportReservedWidth">viewportReservedWidth=100</PropLink> to always have a `100px` reserved area that won't be used for flexing columns.
 
+
+ <Sandpack title="Using viewportReservedWidth to reserve whitespace when you have flexible columns">
+
+```tsx file=../../reference/viewportReservedWidth-example.page.tsx
+```
+</Sandpack>
+
+
 </DeepDive>
+
+Take a look at the snippet below to see column sizing at work with flexible and fixed columns
+
+<Sandpack title="Using controlled columnSizing">
+
+```tsx file=../../reference/columnSizing-example.page.tsx
+```
+</Sandpack>
+
+<Note>
+
+You might find <PropLink name="viewportReservedWidth" /> useful for advanced configuration when you have flexible columns.
+
+</Note>
