@@ -6,24 +6,6 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
-export type Employee = {
-  id: number;
-  companyName: string;
-  companySize: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  countryCode: string;
-  city: string;
-  streetName: string;
-  streetNo: string;
-  department: string;
-  team: string;
-  salary: number;
-  age: number;
-  email: string;
-};
-
 export const columns = new Map<
   string,
   InfiniteTableColumn<Employee>
@@ -40,7 +22,6 @@ export const columns = new Map<
     {
       field: 'country',
       header: 'Country',
-      columnGroup: 'location',
     },
   ],
 
@@ -49,7 +30,6 @@ export const columns = new Map<
     {
       field: 'city',
       header: 'City',
-      columnGroup: 'address',
     },
   ],
   [
@@ -87,4 +67,22 @@ const dataSource = () => {
   )
     .then((r) => r.json())
     .then((data: Employee[]) => data);
+};
+
+export type Employee = {
+  id: number;
+  companyName: string;
+  companySize: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  countryCode: string;
+  city: string;
+  streetName: string;
+  streetNo: string;
+  department: string;
+  team: string;
+  salary: number;
+  age: number;
+  email: string;
 };

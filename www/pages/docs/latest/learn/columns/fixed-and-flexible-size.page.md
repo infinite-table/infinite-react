@@ -18,8 +18,8 @@ Sizing the column is done via the controlled <PropLink name="columnSizing"/> pro
 ## Fixed vs flexible sizing
 
 The <PropLink name="columnSizing" /> prop is an object (or Map) of column ids to column sizing objects. Those sizing objects can have the following properties:
- * <PropLink name="columnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
- * <PropLink name="columnSizing.width">width</PropLink> - use this for fixed sized columns
+ * <PropLink name="columnSizing.flex">flex</PropLink> - use this for <b>flexible columns</b>. Behaves like the flex CSS property.
+ * <PropLink name="columnSizing.width">width</PropLink> - use this for <b>fixed sized columns</b>
  * <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
  * <PropLink name="columnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
@@ -29,6 +29,33 @@ If a column is not specified in the <PropLink name="columnSizing" /> prop (or it
 
 </Note>
 
+
+```tsx
+const columnSizing: InfiniteTablePropColumnSizing = {
+  country: {
+    flex: 1,
+    // minWidth is optional
+    minWidth: 200
+  },
+  city: {
+    width: 400,
+    // and so is maxWidth
+    maxWidth: 500
+  },
+  salary: {
+    flex: 3
+  }
+}
+// any column not specified in the columnSizing (or defaultColumnSizing) prop
+// will have fixed width (defaulting to `columnDefaultWidth`, which in turn defaults to 200px)
+```
+
+<Note>
+
+You might find specifying the column size outside the column object to be a bit verbose to start with, but it will be easier to manage in many cases and is much more flexible. For example, when the user resizes a column via d&d (COMING SOON) and you want to persist the new column sizes, you don't have to update the whole `columns` map but instead update <PropLink name="columnSizing"/> alone.
+The same principle is true for <PropLink name="columnPinning" /> and other column-level props.
+
+</Note>
 
 <DeepDive title="Flexible sizing explained" excerpt="The way flex sizing is implemented is similar to how CSS flexbox algorithm works. Explore this section to find out more details.">
 
@@ -66,7 +93,7 @@ This means columns will have the following sizes:
 
 </DeepDive>
 
-Take a look at the snippet below to see column sizing at work with flexible and fixed columns
+Take a look at the snippet below to see column sizing at work with flexible and fixed columns.
 
 <Sandpack title="Using controlled columnSizing">
 
