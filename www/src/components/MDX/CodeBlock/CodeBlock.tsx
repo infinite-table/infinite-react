@@ -10,8 +10,8 @@ import {
 import rangeParser from 'parse-numeric-range';
 import { CustomTheme } from '../Sandpack/Themes';
 import styles from './CodeBlock.module.css';
-import { IconTerminal } from '@www/components/Icon/IconTerminal';
 import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
+import { CodeMirrorRef } from '@codesandbox/sandpack-react/dist/types/components/CodeEditor/CodeMirror';
 
 interface InlineHiglight {
   step: number;
@@ -36,7 +36,7 @@ const CodeBlock = React.forwardRef(
       noMargin?: boolean;
       noMarkers?: boolean;
     },
-    ref?: React.Ref<HTMLDivElement>
+    ref?: React.Ref<CodeMirrorRef>
   ) => {
     const getDecoratedLineInfo = () => {
       if (!metastring) {

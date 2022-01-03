@@ -7,18 +7,6 @@ import {
 
 import { data, Person } from './data';
 
-export default function App() {
-  return (
-    <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person>
-        licenseKey="<INVALID>"
-        columnDefaultWidth={130}
-        columns={columns}
-      />
-    </DataSource>
-  );
-}
-
 const columns: Map<
   string,
   InfiniteTableColumn<Person>
@@ -42,3 +30,15 @@ const columns: Map<
   ],
   ['age', { field: 'Age', type: 'number' }],
 ]);
+
+export default function App() {
+  return (
+    <DataSource<Person> data={data} primaryKey="Id">
+      <InfiniteTable<Person>
+        licenseKey="<INVALID>"
+        columnDefaultWidth={130}
+        columns={columns}
+      />
+    </DataSource>
+  );
+}
