@@ -22,7 +22,7 @@ export default describe('RowListWithExternalScrolling', () => {
       });
     });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(30);
     let elements = await mapElements((el) => el.textContent);
     expect(elements).toEqual([
       'row 0',
@@ -41,7 +41,7 @@ export default describe('RowListWithExternalScrolling', () => {
       });
     });
 
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(30);
     elements = await mapElements((el) => el.textContent);
     expect(elements).toEqual([
       'row 4',
