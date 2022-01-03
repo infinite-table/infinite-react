@@ -96,7 +96,7 @@ export default function GroupByExample() {
         field: 'country',
         column: ({ column }) => {
           return {
-            // header: `Totals for: ${column.pivotGroupKeyForColumn}`,
+            header: `Totals for: ${column.pivotGroupKeyForColumn}`,
             render: (arg) => {
               const { value } = arg;
               console.log(arg);
