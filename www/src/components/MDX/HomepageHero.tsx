@@ -28,7 +28,7 @@ function HomepageHero() {
           {
             title: 'API Reference',
             description: 'Look up the component props',
-            link: '"/docs/latest/reference"',
+            link: '/docs/latest/reference',
           },
         ]}
       />
