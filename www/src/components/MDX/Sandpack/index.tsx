@@ -11,7 +11,6 @@ import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 
 const DEPS_VERSIONS: Record<string, string> = {
   '@infinite-table/infinite-react': '0.0.9',
-
   'react-query': '3.33.7',
 };
 
