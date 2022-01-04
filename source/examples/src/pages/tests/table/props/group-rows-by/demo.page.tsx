@@ -98,6 +98,12 @@ const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
   },
 ];
 
+const defaultColumnSizing = {
+  'group-by-department': {
+    width: 50,
+  },
+};
+
 export default function GroupByExample() {
   const [strategy, setStrategy] =
     useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
@@ -134,6 +140,7 @@ export default function GroupByExample() {
           columnDefaultWidth={200}
           groupColumn={groupColumn}
           groupRenderStrategy={strategy}
+          defaultColumnSizing={defaultColumnSizing}
         ></InfiniteTable>
       </DataSource>
     </>

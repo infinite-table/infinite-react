@@ -106,3 +106,15 @@ Take a look at the snippet below to see column sizing at work with flexible and 
 You might find <PropLink name="viewportReservedWidth" /> useful for advanced configuration when you have flexible columns.
 
 </Note>
+
+
+<Gotcha>
+
+You can also size (generated) group columns by using their <PropLink name="columns.id">column.id</PropLink> property.
+
+For <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, if no `id` is specified in the group column configuration, each column will have a generated id like this: `"group-by-${field}"`.
+
+For <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>, if no `id` is specified in the <PropLink name="groupColumn" /> it will default to: `"group-by"`.
+
+
+</Gotcha>

@@ -17,25 +17,26 @@ const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
   },
 ];
 
-const groupColumn: InfiniteTableGroupColumnFunction<Employee> =
-  (options: {
-    groupByForColumn?: { field: keyof Employee };
-  }) => {
-    const field = options.groupByForColumn?.field;
-    const groupColumn = {
-      width: field === 'age' ? 160 : 250,
-      header: field === 'age' ? '🎊 Age' : '🎉 Company',
-      renderValue: ({ value }: { value: any }) => {
-        if (field === 'age') {
-          return `Age: ${value}`;
-        }
+const groupColumn: InfiniteTableGroupColumnFunction<
+  Employee
+> = (options: {
+  groupByForColumn?: { field: keyof Employee };
+}) => {
+  const field = options.groupByForColumn?.field;
+  const groupColumn = {
+    width: field === 'age' ? 160 : 250,
+    header: field === 'age' ? '🎊 Age' : '🎉 Company',
+    renderValue: ({ value }: { value: any }) => {
+      if (field === 'age') {
+        return `Age: ${value}`;
+      }
 
-        return value;
-      },
-    };
-
-    return groupColumn;
+      return value;
+    },
   };
+
+  return groupColumn;
+};
 
 const domProps = {
   style: { flex: 1 },
