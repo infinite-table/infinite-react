@@ -25,7 +25,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
   deepMap: DeepMap<KeyType, boolean>,
   pivotBy: DataSourcePivotBy<DataType>[],
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition,
-  aggregationReducers: AggregationReducer<DataType, any>[] = [],
+  _aggregationReducers: AggregationReducer<DataType, any>[] = [],
 ): ComputedColumnsAndGroups<DataType> {
   const pivotLength = pivotBy.length;
   const columns: InfiniteTablePropColumnsMap<
