@@ -48,14 +48,14 @@ export function concludeReducer<T>(params: {
   const shouldSortAgain =
     shouldSort && (sortDepsChanged || !state.lastSortDataArray);
 
-  const groupBy = state.groupRowsBy;
+  const groupBy = state.groupBy;
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length || pivotBy;
   const groupsDepsChanged = haveDepsChanged(previousState, state, [
     'generateGroupRows',
     'originalDataArray',
-    'groupRowsBy',
+    'groupBy',
     'groupRowsState',
     'pivotBy',
     'aggregationReducers',
@@ -100,6 +100,7 @@ export function concludeReducer<T>(params: {
       );
       const flattenResult = enhancedFlatten({
         groupResult,
+        reducers: state.aggregationReducers,
         toPrimaryKey,
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
@@ -112,7 +113,9 @@ export function concludeReducer<T>(params: {
         ? getPivotColumnsAndColumnGroups<T>(
             groupResult.topLevelPivotColumns!,
             pivotBy,
+
             state.pivotTotalColumnPosition ?? 'end',
+            state.aggregationReducers,
           )
         : undefined;
 

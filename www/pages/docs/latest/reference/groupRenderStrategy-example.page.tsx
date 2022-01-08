@@ -2,13 +2,13 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  DataSourcePropGroupRowsBy,
+  DataSourcePropGroupBy,
   InfiniteTableGroupColumnFunction,
   InfiniteTablePropGroupRenderStrategy,
 } from '@infinite-table/infinite-react';
 import { columns, Employee } from './employee-columns';
 
-const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
+const groupBy: DataSourcePropGroupBy<Employee> = [
   {
     field: 'age',
   },
@@ -86,7 +86,7 @@ export default function App() {
       <DataSource<Employee>
         data={dataSource}
         primaryKey="id"
-        groupRowsBy={groupRowsBy}>
+        groupBy={groupBy}>
         <InfiniteTable<Employee>
           domProps={domProps}
           groupRenderStrategy={groupRenderStrategy}

@@ -2,12 +2,12 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  DataSourcePropGroupRowsBy,
+  DataSourcePropGroupBy,
 } from '@infinite-table/infinite-react';
 
 import { columns, Employee } from './columns';
 
-const groupRowsBy: DataSourcePropGroupRowsBy<Employee> = [
+const groupBy: DataSourcePropGroupBy<Employee> = [
   {
     field: 'country',
     column: {
@@ -22,7 +22,7 @@ export default function App() {
     <DataSource<Employee>
       data={dataSource}
       primaryKey="id"
-      groupRowsBy={groupRowsBy}>
+      groupBy={groupBy}>
       <InfiniteTable<Employee> columns={columns} />
     </DataSource>
   );

@@ -25,7 +25,7 @@ export function buildDataSourceDataParams<T>(
   const dataSourceParams: DataSourceDataParams<T> = {
     originalDataArray: componentState.originalDataArray,
     sortInfo,
-    groupRowsBy: componentState.groupRowsBy,
+    groupBy: componentState.groupBy,
     pivotBy: componentState.pivotBy,
   };
 
@@ -113,7 +113,7 @@ export function useLivePagination<T>() {
   const {
     notifyScrollbarsChange,
     sortInfo,
-    groupRowsBy,
+    groupBy,
     pivotBy,
     livePaginationCursor,
     scrollBottomId,
@@ -169,7 +169,7 @@ export function useLivePagination<T>() {
 
   const depsObject = {
     sortInfo,
-    groupRowsBy,
+    groupBy,
     pivotBy,
     cursorId,
   };

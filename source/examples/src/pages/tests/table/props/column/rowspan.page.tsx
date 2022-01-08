@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   InfiniteTableColumn,
   InfiniteTable,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
@@ -84,7 +84,7 @@ const domProps: HTMLProps<HTMLDivElement> = {
   },
 };
 
-const groupBy: DataSourceGroupRowsBy<Person>[] = [
+const groupBy: DataSourceGroupBy<Person>[] = [
   {
     field: 'Age',
     column: {
@@ -121,7 +121,7 @@ export default () => {
   const [count, setCount] = useState(0);
   return (
     <React.StrictMode>
-      <DataSource<Person> data={data} primaryKey="Id" groupRowsBy={groupBy}>
+      <DataSource<Person> data={data} primaryKey="Id" groupBy={groupBy}>
         <button
           onClick={() => {
             setCount((c) => c + 1);

@@ -100,7 +100,7 @@ export default function GroupByExample() {
       <DataSource<Person>
         data={data}
         primaryKey="id"
-        groupRowsBy={[{ field: 'department' }, { field: 'team' }]}
+        groupBy={[{ field: 'department' }, { field: 'team' }]}
         pivotBy={[
           {
             field: 'country',

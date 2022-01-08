@@ -394,10 +394,10 @@ If it's a function, it will be called with the following arguments:
 
  * `options` - an object with the following properties:
  * `options.groupCount` - the count of row groups
- * `options.groupRowsBy` - the array of row groups, used by the `DataSource` to do the grouping
+ * `options.groupBy` - the array of row groups, used by the `DataSource` to do the grouping
  * `options.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
- * `options.groupByForColumn` - the grouping object (one of the items in `options.groupRowsBy`) corresponding to the current column.
- * `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupRowsBy` - corresponding to the current column.
+ * `options.groupByForColumn` - the grouping object (one of the items in `options.groupBy`) corresponding to the current column.
+ * `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupBy` - corresponding to the current column.
  * `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
 
 </Prop>

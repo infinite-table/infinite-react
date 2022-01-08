@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { DataSourceGroupRowsBy, DataSourceState } from '../../DataSource';
+import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 
@@ -15,21 +15,8 @@ import {
   InfiniteTableDerivedState,
   InfiniteTableMappedState,
 } from '../types/InfiniteTableState';
+import { toMap } from '../utils/toMap';
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
-
-function toMap<K extends string, V>(
-  mapOrObject?: Map<K, V> | Record<K, V>,
-): Map<K, V> {
-  if (!mapOrObject) {
-    return new Map<K, V>();
-  }
-
-  if (mapOrObject instanceof Map) {
-    return mapOrObject;
-  }
-
-  return new Map<K, V>(Object.entries(mapOrObject) as [K, V][]);
-}
 
 function toColumnTypesMap<K extends string, V>(
   mapOrObject?: Map<K, V> | Record<K, V>,
@@ -145,11 +132,13 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     headerHeight: (headerHeight) =>
       typeof headerHeight === 'number' ? headerHeight : 0,
 
-    columnVisibility: (columnVisibility) => columnVisibility ?? new Map(),
+    columnVisibility: (columnVisibility) =>
+      toMap(columnVisibility) ?? new Map(),
     columnPinning: (columnPinning) => columnPinning ?? new Map(),
     columnSizing: (columnSizing) => toMap(columnSizing) ?? new Map(),
     columnTypes: (columnTypes) => toColumnTypesMap(columnTypes) ?? new Map(),
-    columnAggregations: (columnAggregations) => columnAggregations ?? new Map(),
+    columnAggregations: (columnAggregations) =>
+      toMap(columnAggregations) ?? new Map(),
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),
@@ -158,7 +147,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 };
 
 type GetGroupColumnStrategyOptions<T> = {
-  groupRowsBy: DataSourceGroupRowsBy<T>[];
+  groupBy: DataSourceGroupBy<T>[];
   groupColumn?: InfiniteTablePropGroupColumn<T>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
 };
@@ -166,7 +155,7 @@ type GetGroupColumnStrategyOptions<T> = {
 function getGroupRenderStrategy<T>(
   options: GetGroupColumnStrategyOptions<T>,
 ): InfiniteTablePropGroupRenderStrategy {
-  const { groupRowsBy, groupColumn, groupRenderStrategy } = options;
+  const { groupBy, groupColumn, groupRenderStrategy } = options;
 
   if (groupRenderStrategy) {
     return groupRenderStrategy;
@@ -176,9 +165,9 @@ function getGroupRenderStrategy<T>(
     return 'single-column';
   }
 
-  const columnsInGroupRowsBy = groupRowsBy.filter((g) => g.column);
+  const columnsInGroupBy = groupBy.filter((g) => g.column);
 
-  if (columnsInGroupRowsBy.length) {
+  if (columnsInGroupBy.length) {
     return 'multi-column';
   }
 
@@ -207,21 +196,23 @@ export const mapPropsToState = <T>(params: {
       ? computeColumnGroupsDepths(computedColumnGroups)
       : state.columnGroupsDepthsMap;
 
-  const groupRowsBy = parentState?.groupRowsBy;
+  const groupBy = parentState?.groupBy;
   const groupRenderStrategy = getGroupRenderStrategy({
     groupRenderStrategy: props.groupRenderStrategy,
-    groupRowsBy,
+    groupBy,
     groupColumn: props.groupColumn,
   });
 
+  const computedColumns =
+    state.computedPivotColumns ||
+    state.columnsWhenGrouping ||
+    state.columnsWhenInlineGroupRenderStrategy ||
+    state.columns;
+
   return {
     groupRenderStrategy,
-    groupRowsBy,
-    computedColumns:
-      state.computedPivotColumns ||
-      state.columnsWhenGrouping ||
-      state.columnsWhenInlineGroupRenderStrategy ||
-      state.columns,
+    groupBy: groupBy,
+    computedColumns,
     virtualizeHeader,
     columnGroupsDepthsMap,
     columnGroupsMaxDepth:

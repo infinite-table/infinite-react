@@ -128,7 +128,7 @@ function App() {
       <DataSource<CarSale>
         primaryKey="id"
         data={carsales}
-        groupRowsBy={[{ field: 'make' }, { field: 'year' }]}
+        groupBy={[{ field: 'make' }, { field: 'year' }]}
       >
         <InfiniteTable
           domProps={{

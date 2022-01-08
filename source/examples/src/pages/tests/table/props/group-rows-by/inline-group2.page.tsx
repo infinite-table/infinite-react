@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
   InfiniteTablePropColumns,
   InfiniteTableColumn,
   GroupRowsState,
@@ -20,7 +20,7 @@ const domProps = {
 };
 
 const formatter = new Intl.NumberFormat();
-const groupRowsBy: DataSourceGroupRowsBy<Person>[] = [
+const groupBy: DataSourceGroupBy<Person>[] = [
   {
     field: 'department',
   },
@@ -69,7 +69,7 @@ export default function GroupByExample() {
     <DataSource<Person>
       primaryKey="id"
       data={data}
-      groupRowsBy={groupRowsBy}
+      groupBy={groupBy}
       defaultGroupRowsState={groupRowsState}
     >
       <InfiniteTable<Person>

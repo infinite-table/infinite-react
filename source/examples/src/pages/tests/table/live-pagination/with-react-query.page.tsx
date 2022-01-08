@@ -131,7 +131,7 @@ const Example = () => {
     Partial<DataSourceDataParams<Employee>>
   >({
     sortInfo: null,
-    groupRowsBy: [],
+    groupBy: [],
     livePaginationCursor: 0,
   });
   const {
@@ -139,7 +139,7 @@ const Example = () => {
     fetchNextPage: fetchNext,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['employees', dataParams.sortInfo, dataParams.groupRowsBy],
+    ['employees', dataParams.sortInfo, dataParams.groupBy],
     ({ pageParam = 0 }) => {
       const params = {
         livePaginationCursor: pageParam,

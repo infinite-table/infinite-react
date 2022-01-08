@@ -9,7 +9,7 @@ import { InfiniteTableState } from '../types/InfiniteTableState';
 export function useColumnAggregations<T>() {
   const {
     componentState: { columnAggregations },
-    getComponentState,
+    // getComponentState,
   } = useComponentState<InfiniteTableState<T>>();
 
   const dataSourceActions = useDataSourceActions<T>();
@@ -18,11 +18,14 @@ export function useColumnAggregations<T>() {
     function updateDataSourceAggregations() {
       const reducers: AggregationReducer<T, any>[] = [];
 
-      const componentState = getComponentState();
+      // const componentState = getComponentState();
       columnAggregations.forEach((aggregator, key) => {
-        const colField = componentState.computedColumns.get(key)?.field;
+        // const column = componentState.computedColumns.get(key);
+        const field = aggregator.field;
         const newAggregator = {
-          getter: (data: T) => (colField ? data[colField] : data),
+          id: key,
+          field: field as keyof T,
+          getter: (data: T) => (field ? data[field] : data),
           ...aggregator,
         };
 

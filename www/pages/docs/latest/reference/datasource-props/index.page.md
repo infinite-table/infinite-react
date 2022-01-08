@@ -39,7 +39,7 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Prop>
 
-<Prop name="groupRowsBy">
+<Prop name="groupBy">
 
 > An array of objects with `field` properties, that control how rows are being grouped.
 
@@ -49,7 +49,7 @@ Each item in the array can have the following properties:
 
 <Sandpack>
 
-```ts file=groupRowsBy-example.page.tsx
+```ts file=groupBy-example.page.tsx
 ```
 ```ts file=columns.ts
 ```
@@ -96,7 +96,7 @@ Can be used to implement <DataSourcePropLink name="livePagination" />
 The function is called with an object that has the following properties:
 
  - `sortInfo` - current sort information - see <DataSourcePropLink name="sortInfo" /> for details
- - `groupRowsBy` - current grouping information - see <DataSourcePropLink name="groupRowsBy" /> for details
+ - `groupBy` - current grouping information - see <DataSourcePropLink name="groupBy" /> for details
  - `livePaginationCursor` - the value for the live pagination cursor - see <DataSourcePropLink name="livePaginationCursor" /> for details
 
 <Sandpack  title="Live pagination - with react-query" deps="react-query">

@@ -1,6 +1,7 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
+  InfiniteTablePropColumnAggregationsMap,
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnsMap,
@@ -18,11 +19,11 @@ import {
   InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
 import { ComponentStateActions } from '../../hooks/useComponentState';
-import { DataSourceGroupRowsBy, DataSourceProps } from '../../DataSource/types';
+import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 
-export type GroupRowsMap<T> = Map<
+export type GroupByMap<T> = Map<
   keyof T,
-  { groupBy: DataSourceGroupRowsBy<T>; groupIndex: number }
+  { groupBy: DataSourceGroupBy<T>; groupIndex: number }
 >;
 
 export interface InfiniteTableSetupState<T> {
@@ -108,7 +109,7 @@ export interface InfiniteTableMappedState<T> {
   columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
-  columnAggregations: NonUndefined<InfiniteTableProps<T>['columnAggregations']>;
+  columnAggregations: InfiniteTablePropColumnAggregationsMap<T>;
   columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
   collapsedColumnGroups: NonUndefined<
     InfiniteTableProps<T>['collapsedColumnGroups']
@@ -119,7 +120,7 @@ export interface InfiniteTableMappedState<T> {
 }
 
 export interface InfiniteTableDerivedState<T> {
-  groupRowsBy: DataSourceProps<T>['groupRowsBy'];
+  groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Map<string, InfiniteTableColumn<T>>;
   virtualizeHeader: boolean;
 

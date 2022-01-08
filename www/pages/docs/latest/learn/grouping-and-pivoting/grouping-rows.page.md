@@ -19,9 +19,9 @@ type Person = {
   id: string;
 }
 
-const groupRowsBy = [{field: 'country'}]
+const groupBy = [{field: 'country'}]
 
-<DataSource<Person> groupRowsBy={groupRowsBy}>
+<DataSource<Person> groupBy={groupBy}>
   <InfiniteTable<Person> />
 </DataSource>
 
@@ -31,7 +31,7 @@ In the example above, we're grouping by `country`, which is a field available in
 Additionally, a `column` object can be used together with the `field` to define how the group column should be rendered.
 
 ```tsx
-const groupRowsBy = [
+const groupBy = [
   {
     field: 'country',
     column: {
@@ -44,7 +44,7 @@ const groupRowsBy = [
 
 The example below puts it all together.
 
-Also see the <DataSourcePropLink name="groupRowsBy"> groupRowsBy API reference</DataSourcePropLink> to find out more.
+Also see the <DataSourcePropLink name="groupBy"> groupBy API reference</DataSourcePropLink> to find out more.
 
 <Sandpack title="Simple row grouping">
 
@@ -54,10 +54,10 @@ Also see the <DataSourcePropLink name="groupRowsBy"> groupRowsBy API reference</
 ```
 </Sandpack>
 
-In `groupRowsBy.column` you can use any column property - so, for example, you can define a custom `renderValue` function to customize the rendering.
+In `groupBy.column` you can use any column property - so, for example, you can define a custom `renderValue` function to customize the rendering.
 
 ```tsx
-const groupRowsBy = [
+const groupBy = [
   {
     field: 'country',
     column: {
@@ -82,7 +82,7 @@ You can specify the rendering strategy by setting the <PropLink name="groupRende
 When grouping by multiple fields, by default the component will render a group column for each group field
 
 ```tsx
-const groupRowsBy = [
+const groupBy = [
   {
     field: 'age',
     column: {

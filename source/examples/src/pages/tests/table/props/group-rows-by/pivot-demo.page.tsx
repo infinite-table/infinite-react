@@ -11,7 +11,7 @@ import type {
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   InfiniteTablePropColumnAggregations,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
@@ -31,36 +31,40 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
 
 const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
-  getter: (data) => data.salary,
   reducer: (acc, sum) => acc + sum,
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
 const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
-  new Map([['salary', avgReducer]]);
+  new Map([
+    ['salary', { field: 'salary', ...avgReducer }],
+    ['age', { field: 'age', ...avgReducer }],
+  ]);
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
   string,
   InfiniteTableColumn<Developer>
 >([
-  ['id', { field: 'id' }],
-  ['firstName', { field: 'firstName' }],
   ['preferredLanguage', { field: 'preferredLanguage' }],
-  ['stack', { field: 'stack' }],
-  ['country', { field: 'country' }],
+  ['age', { field: 'age' }],
+  ['salary', { field: 'salary', type: 'number' }],
   ['canDesign', { field: 'canDesign' }],
+  ['country', { field: 'country' }],
+  ['firstName', { field: 'firstName' }],
+  ['stack', { field: 'stack' }],
+  ['id', { field: 'id' }],
+
   ['hobby', { field: 'hobby' }],
 
   ['city', { field: 'city' }],
-  ['age', { field: 'age' }],
-  ['salary', { field: 'salary', type: 'number' }],
+
   ['currency', { field: 'currency' }],
 ]);
 
@@ -72,7 +76,7 @@ const groupRowsState = new GroupRowsState({
 });
 
 export default function GroupByExample() {
-  const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = React.useMemo(
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
         field: 'preferredLanguage',
@@ -105,7 +109,7 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupRowsBy={groupRowsBy}
+        groupBy={groupBy}
         pivotBy={pivotBy}
         defaultGroupRowsState={groupRowsState}
       >
@@ -122,6 +126,18 @@ export default function GroupByExample() {
           );
         }}
       </DataSource>
+      {/* <DataSource<Developer>
+        primaryKey="id"
+        data={dataSource}
+        groupBy={groupBy}
+      >
+        <InfiniteTable<Developer>
+          domProps={domProps}
+          columns={columns}
+          columnDefaultWidth={180}
+          columnAggregations={columnAggregations}
+        />
+      </DataSource> */}
     </>
   );
 }

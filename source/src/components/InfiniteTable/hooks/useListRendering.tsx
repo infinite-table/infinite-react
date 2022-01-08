@@ -42,6 +42,7 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
 import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 import { GroupRowsState } from '../../DataSource';
+import { toMap } from '../utils/toMap';
 
 type ListRenderingResult = {
   scrollbars: Scrollbars;
@@ -190,7 +191,7 @@ export function useListRendering<T>(
         },
         setColumnAggregations: (
           columnAggregations: InfiniteTablePropColumnAggregations<T>,
-        ) => (componentActions.columnAggregations = columnAggregations),
+        ) => (componentActions.columnAggregations = toMap(columnAggregations)),
         getState,
         getDataSourceState,
       };

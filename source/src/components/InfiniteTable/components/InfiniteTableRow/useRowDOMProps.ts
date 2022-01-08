@@ -57,7 +57,7 @@ export function useRowDOMProps<T>(
     data: rowInfo.data,
     rowInfo,
     rowIndex,
-    groupRowsBy: rowInfo.groupBy,
+    groupBy: rowInfo.groupBy,
   };
 
   if (typeof rowProps === 'function') {

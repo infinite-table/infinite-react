@@ -4,10 +4,10 @@ title: Row groups
 
 ## Row groups
 
-Specify row groups via the controlled `groupRowsBy` (or uncontrolled `defaultGroupRowsBy`) prop on the `DataSource`.
+Specify row groups via the controlled `groupBy` (or uncontrolled `defaultGroupBy`) prop on the `DataSource`.
 
 ```tsx title=defining-grouping
-const groupRowsBy = [
+const groupBy = [
   { field: 'country' },
   { field: 'city' },
 ];
@@ -23,7 +23,7 @@ import {
   DataSource,
   InfiniteTableColumn,
   InfiniteTablePropGroupRenderStrategy,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
 } from '@infinite-table/infinite-react';
 
 type Employee = {
@@ -114,7 +114,7 @@ const dataSource = () => {
     });
 };
 
-const defaultGroupRowsBy: DataSourceGroupRowsBy<Employee>[] =
+const defaultGroupBy: DataSourceGroupBy<Employee>[] =
   [
     { field: 'department' },
     // you can specify a column config for this group.
@@ -156,7 +156,7 @@ function App() {
         data={dataSource}
         primaryKey="id"
         defaultSortInfo={multiSort}
-        defaultGroupRowsBy={defaultGroupRowsBy}>
+        defaultGroupBy={defaultGroupBy}>
         <InfiniteTable<Employee>
           columnDefaultWidth={130}
           groupRenderStrategy={groupRenderStrategy}

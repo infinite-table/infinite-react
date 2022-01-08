@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { join } from '../../../utils/join';
-import {
-  DataSourcePropGroupRowsBy,
-  DataSourcePropPivotBy,
-} from '../../DataSource';
+import { DataSourcePropGroupBy, DataSourcePropPivotBy } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 import { InfiniteTableProps } from '../types';
@@ -19,7 +16,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
     pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
     pivotTotalColumnPosition: InfiniteTableState<T>['pivotTotalColumnPosition'];
     pivotBy: DataSourcePropPivotBy<T>;
-    groupRowsBy: DataSourcePropGroupRowsBy<T>;
+    groupBy: DataSourcePropGroupBy<T>;
   },
 ): InfiniteTableProps<T>['pivotColumns'] {
   if (!pivotColumns) {
@@ -30,7 +27,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
     pivotColumn,
     pivotRowLabelsColumn,
     pivotBy,
-    groupRowsBy,
+    groupBy,
     pivotTotalColumnPosition,
     toggleGroupRow,
   } = params;
@@ -56,7 +53,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
             ...pivotColumn({
               column,
               pivotBy,
-              groupRowsBy,
+              groupBy,
             }),
           } as InfiniteTablePivotColumn<T>;
         } else {
@@ -74,7 +71,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
             ...pivotRowLabelsColumn({
               column,
               pivotBy,
-              groupRowsBy,
+              groupBy,
             }),
           } as InfiniteTablePivotColumn<T>;
         } else {
@@ -87,14 +84,14 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
 
       if (!column.render) {
         column.render = (renderOptions) => {
-          let { value, rowInfo, column, groupRowsBy } = renderOptions;
+          let { value, rowInfo, column, groupBy } = renderOptions;
 
           if (column.renderValue) {
             value = column.renderValue(renderOptions);
           }
 
           const showExpanderIcon =
-            (rowInfo.groupKeys?.length || 0) < groupRowsBy.length;
+            (rowInfo.groupKeys?.length || 0) < groupBy.length;
           return (
             <div
               className={join(

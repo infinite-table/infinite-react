@@ -11,7 +11,7 @@ import type {
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   InfiniteTablePropColumnAggregations,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
@@ -80,7 +80,7 @@ const groupRowsState = new GroupRowsState({
 });
 
 export default function GroupByExample() {
-  const groupRowsBy: DataSourceGroupRowsBy<Developer>[] = React.useMemo(
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
         field: 'preferredLanguage',
@@ -115,7 +115,7 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupRowsBy={groupRowsBy}
+        groupBy={groupBy}
         pivotBy={pivotBy}
         defaultGroupRowsState={groupRowsState}
       >

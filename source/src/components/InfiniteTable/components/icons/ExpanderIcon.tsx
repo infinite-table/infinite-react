@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { join } from '../../../../utils/join';
 import { isControlled } from '../../../utils/isControlled';
-import { fill, flex, cursor, transform } from '../../utilities.css';
+import { ExpanderIconCls, ExpanderIconClsVariants } from './ExpanderIcon.css';
 
 type ExpanderIconProps = {
   size?: number;
@@ -42,11 +42,10 @@ export function ExpanderIcon(props: ExpanderIconProps) {
       onClick={onClick}
       className={join(
         props.className,
-        fill.accentColor,
-        flex.none,
-        cursor.pointer,
-        expanded ? fill.accentColor : '',
-        expanded ? transform.rotate90 : '',
+        ExpanderIconCls,
+        ExpanderIconClsVariants({
+          expanded,
+        }),
         'InfiniteIcon',
         'InfiniteIcon-expander',
         `InfiniteIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,

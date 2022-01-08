@@ -22,6 +22,16 @@ export class DeepMap<KeyType, ValueType> {
   private length = 0;
   private revision = 0;
 
+  static clone<KeyType, ValueType>(map: DeepMap<KeyType, ValueType>) {
+    const clone = new DeepMap<KeyType, ValueType>();
+
+    map.visit((pair, keys) => {
+      clone.set(keys, pair.value!);
+    });
+
+    return clone;
+  }
+
   constructor(initial?: [KeyType[], ValueType][]) {
     if (initial) {
       initial.forEach((entry) => {

@@ -16,6 +16,11 @@ const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
   ['year', 'end'],
 ]);
 
+// const defaultColumnPinning: InfiniteTablePropColumnPinning = {
+//   make: 'end',
+//   year: 'end'
+// }
+
 (globalThis as any).calls = [];
 
 const App = () => {

@@ -26,7 +26,7 @@ export interface InfiniteTableColumnRenderParam<
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
-  groupRowsBy: DataSourceState<DATA_TYPE>['groupRowsBy'];
+  groupBy: DataSourceState<DATA_TYPE>['groupBy'];
 }
 
 export type InfiniteTableColumnRenderValueParam<
@@ -63,7 +63,7 @@ export type InfiniteTableColumnRenderFunction<
   toggleGroupRow,
   toggleCurrentGroupRow,
   rowInfo,
-  groupRowsBy,
+  groupBy,
 }: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
 
 export type InfiniteTableColumnRenderValueFunction<
@@ -138,7 +138,7 @@ export type InfiniteTableColumnClassName<T> =
 export type InfiniteTableColumnValueGetterParams<T> = {
   data: T | null;
   rowInfo: InfiniteTableRowInfo<T>;
-  groupRowInfo: InfiniteTableRowInfo<T> | null;
+  // groupRowInfo: InfiniteTableRowInfo<T> | null;
 };
 export type InfiniteTableColumnValueGetter<
   T,
@@ -157,6 +157,7 @@ export type InfiniteTableBaseColumn<T> = {
   resizable?: boolean;
 
   comparer?: InfiniteTableColumnComparer<T>;
+  hiddenWhenGrouped?: boolean;
 
   align?: InfiniteTableColumnAlign;
   verticalAlign?: InfiniteTableColumnVerticalAlign;

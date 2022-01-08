@@ -6,7 +6,7 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
   InfiniteTablePropGroupRenderStrategy,
 } from '@infinite-table/infinite-react';
 
@@ -86,7 +86,7 @@ const domProps = {
   style: { height: '80vh' },
 };
 
-const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
+const groupBy: DataSourceGroupBy<Employee>[] = [
   {
     field: 'department',
   },
@@ -100,7 +100,7 @@ const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
 
 const defaultColumnSizing = {
   'group-by-department': {
-    width: 50,
+    width: 250,
   },
 };
 
@@ -129,11 +129,7 @@ export default function GroupByExample() {
         <option value="multi-column">Multi column</option>
         <option value="inline">Inline</option>
       </select>
-      <DataSource<Employee>
-        primaryKey="id"
-        data={dataSource}
-        groupRowsBy={groupRowsBy}
-      >
+      <DataSource<Employee> primaryKey="id" data={dataSource} groupBy={groupBy}>
         <InfiniteTable<Employee>
           domProps={domProps}
           columns={columns}

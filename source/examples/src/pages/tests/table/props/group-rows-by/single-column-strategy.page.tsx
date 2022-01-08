@@ -5,7 +5,7 @@ import {
   InfiniteTable,
   DataSource,
   // GroupRowsState,
-  DataSourceGroupRowsBy,
+  DataSourceGroupBy,
   InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
 } from '@infinite-table/infinite-react';
@@ -148,7 +148,7 @@ const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
 //   collapsedRows: true,
 // });
 
-const groupRowsBy: DataSourceGroupRowsBy<Employee>[] = [
+const groupBy: DataSourceGroupBy<Employee>[] = [
   {
     field: 'country',
   },
@@ -160,7 +160,7 @@ export default function GroupByExample() {
       <DataSource<Employee>
         data={dataSource}
         primaryKey="id"
-        defaultGroupRowsBy={groupRowsBy}
+        defaultGroupBy={groupBy}
       >
         <InfiniteTable<Employee>
           domProps={{

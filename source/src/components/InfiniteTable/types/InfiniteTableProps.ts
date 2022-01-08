@@ -5,8 +5,8 @@ import {
   InfiniteTableRowInfo,
 } from '../../../utils/groupAndPivot';
 import {
-  DataSourceGroupRowsBy,
-  DataSourcePropGroupRowsBy,
+  DataSourceGroupBy,
+  DataSourcePropGroupBy,
   DataSourcePropPivotBy,
   DataSourceState,
 } from '../../DataSource';
@@ -37,7 +37,7 @@ export type InfiniteTableRowStyleFnParams<T> = {
   data: T | null;
   rowInfo: InfiniteTableRowInfo<T>;
   rowIndex: number;
-  groupRowsBy?: (keyof T)[];
+  groupBy?: (keyof T)[];
 };
 export type InfiniteTableRowStyleFn<T> = (
   params: InfiniteTableRowStyleFnParams<T>,
@@ -54,15 +54,23 @@ export type InfiniteTablePropRowClassName<T> =
 
 export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
   AggregationReducer<T, AggregationResultType>,
-  'getter'
+  'getter' | 'id'
 > & {
   getter?: AggregationReducer<T, AggregationResultType>['getter'];
+  field?: keyof T;
 };
 
-export type InfiniteTablePropColumnAggregations<T> = Map<
+export type InfiniteTablePropColumnAggregationsMap<T> = Map<
   string,
   InfiniteTableColumnAggregator<T, any>
 >;
+export type InfiniteTablePropColumnAggregationsRecord<T> = Record<
+  string,
+  InfiniteTableColumnAggregator<T, any>
+>;
+export type InfiniteTablePropColumnAggregations<T> =
+  | InfiniteTablePropColumnAggregationsRecord<T>
+  | InfiniteTablePropColumnAggregationsMap<T>;
 
 export type InfiniteTableColumnType<T> = {
   minWidth?: number;
@@ -167,15 +175,15 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
 
 export type InfiniteTableGroupColumnGetterOptions<T> = {
   groupIndexForColumn?: number;
-  groupByForColumn?: DataSourceGroupRowsBy<T>;
+  groupByForColumn?: DataSourceGroupBy<T>;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupCount: number;
-  groupRowsBy: DataSourceGroupRowsBy<T>[];
+  groupBy: DataSourceGroupBy<T>[];
 };
 
 export type InfiniteTablePivotColumnGetterOptions<T> = {
   column: InfiniteTablePivotColumn<T>;
-  groupRowsBy: DataSourcePropGroupRowsBy<T>;
+  groupBy: DataSourcePropGroupBy<T>;
   pivotBy: DataSourcePropPivotBy<T>;
 };
 
@@ -229,9 +237,11 @@ export interface InfiniteTableProps<T> {
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
-  columnPinning?: InfiniteTablePropColumnPinning;
+
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
+
+  columnPinning?: InfiniteTablePropColumnPinning;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
 
   defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;

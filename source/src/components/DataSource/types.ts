@@ -24,7 +24,7 @@ import { SubscriptionCallback } from '../types/SubscriptionCallback';
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
   sortInfo?: DataSourceSortInfo<T>;
-  groupRowsBy?: DataSourcePropGroupRowsBy<T>;
+  groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 }
@@ -33,7 +33,7 @@ export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
   field?: keyof T;
   id?: string;
 };
-export type DataSourceGroupRowsBy<T> = GroupBy<T, any>;
+export type DataSourceGroupBy<T> = GroupBy<T, any>;
 export type DataSourcePivotBy<T> = PivotBy<T, any>;
 
 export type DataSourceSortInfo<T> =
@@ -48,6 +48,7 @@ export type DataSourceRemoteData<T> = {
 
 export type DataSourceData<T> =
   | T[]
+  | DataSourceRemoteData<T>
   | Promise<T[] | DataSourceRemoteData<T>>
   | ((
       dataInfo: DataSourceDataParams<T>,
@@ -60,17 +61,16 @@ export type DataSourceExpandedAndCollapsedGroupRows<KeyType> = {
   collapsedRows: DataSourceGroupRowsList<KeyType>;
 };
 
-export type DataSourcePropGroupRowsBy<T> = DataSourceGroupRowsBy<T>[];
+export type DataSourcePropGroupBy<T> = DataSourceGroupBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
 export interface DataSourceMappedState<T> {
   livePagination: DataSourceProps<T>['livePagination'];
   livePaginationCursor: DataSourceProps<T>['livePaginationCursor'];
-  remoteCount: DataSourceProps<T>['remoteCount'];
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
-  groupRowsBy: NonUndefined<DataSourceProps<T>['groupRowsBy']>;
+  groupBy: NonUndefined<DataSourceProps<T>['groupBy']>;
   groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
@@ -106,7 +106,6 @@ export interface DataSourceProps<T> {
   primaryKey: keyof T;
   fields?: (keyof T)[];
 
-  remoteCount?: number;
   data: DataSourceData<T>;
 
   // other properties, each with controlled and uncontrolled  variant
@@ -118,9 +117,9 @@ export interface DataSourceProps<T> {
   defaultPivotBy?: DataSourcePropPivotBy<T>;
   onPivotByChange?: (pivotBy: DataSourcePropPivotBy<T>) => void;
 
-  groupRowsBy?: DataSourcePropGroupRowsBy<T>;
-  defaultGroupRowsBy?: DataSourcePropGroupRowsBy<T>;
-  onGroupRowsByChange?: (groupBy: DataSourcePropGroupRowsBy<T>) => void;
+  groupBy?: DataSourcePropGroupBy<T>;
+  defaultGroupBy?: DataSourcePropGroupBy<T>;
+  onGroupByChange?: (groupBy: DataSourcePropGroupBy<T>) => void;
 
   groupRowsState?: GroupRowsState;
   defaultGroupRowsState?: GroupRowsState;

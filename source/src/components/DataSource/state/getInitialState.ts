@@ -67,7 +67,6 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
   return {
     onDataParamsChange: (fn) =>
       fn ? discardCallsWithEqualArg(fn, 100, getCompareObject) : undefined,
-    remoteCount: 1,
     data: 1,
     pivotBy: 1,
     primaryKey: 1,
@@ -76,7 +75,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
 
     loading: (loading) => loading ?? false,
     sortInfo: (sortInfo) => normalizeSortInfo(sortInfo),
-    groupRowsBy: (groupRowsBy) => groupRowsBy ?? [],
+    groupBy: (groupBy) => groupBy ?? [],
     groupRowsState: (groupRowsState) => {
       return (
         groupRowsState ||

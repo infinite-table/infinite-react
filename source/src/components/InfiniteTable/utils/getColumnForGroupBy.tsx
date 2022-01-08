@@ -2,7 +2,7 @@ import * as React from 'react';
 import { InfiniteTableColumnRenderParam } from '..';
 
 import { join } from '../../../utils/join';
-import { DataSourceGroupRowsBy } from '../../DataSource';
+import { DataSourceGroupBy } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
@@ -78,7 +78,7 @@ export function getGroupColumnRender<T>({
 export function getColumnForGroupBy<T>(
   options: InfiniteTableGroupColumnGetterOptions<T> & {
     groupIndexForColumn: number;
-    groupByForColumn: DataSourceGroupRowsBy<T>;
+    groupByForColumn: DataSourceGroupBy<T>;
   },
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
@@ -125,7 +125,7 @@ export function getSingleGroupColumn<T>(
 ) {
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group`,
-    groupByField: options.groupRowsBy.map((g) => g.field) as string[],
+    groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
     render: (renderOptions) => {
       let { value, rowInfo, column } = renderOptions;

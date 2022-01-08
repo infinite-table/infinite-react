@@ -73,7 +73,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     value = column.valueGetter({
       data,
       rowInfo,
-      groupRowInfo,
+      // groupRowInfo,
     });
   }
 
@@ -93,12 +93,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       value,
       column,
       rowInfo: rowInfo,
-      groupRowInfo: groupRowInfo,
+      groupRowInfo,
       data,
       rowIndex,
       toggleGroupRow,
       toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
-      groupRowsBy: computedDataSource.groupRowsBy,
+      groupBy: computedDataSource.groupBy,
     };
 
     if (column.render) {

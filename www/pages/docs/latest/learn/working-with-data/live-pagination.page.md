@@ -11,7 +11,7 @@ Specify `DataSource.livePagination=true` and provide a pagination cursor (a good
 In addition, you have to listen to <DataSourcePropLink name="onDataParamsChange" />  which will be triggered with an object that contains the following properties:
 
  - `sortInfo` - information about the current sort state
- - `groupRowsBy` - current grouping info
+ - `groupBy` - current grouping info
  - `livePaginationCursor` - the current pagination cursor
 
 When `dataParams` change (you will be notified via <DataSourcePropLink name="onDataParamsChange" />), you have to fetch new data using the cursor from `dataParams` object.
