@@ -42,11 +42,11 @@ const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
-  new Map([
-    ['salary', { field: 'salary', ...avgReducer }],
-    // ['age', { field: 'age', ...avgReducer }],
-  ]);
+const columnAggregations: InfiniteTablePropColumnAggregations<Developer> = {
+  //TODO continue here - move aggregations in datasource
+  salary: { field: 'salary', ...avgReducer },
+  // age: { field: 'age', ...avgReducer },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
   string,
@@ -60,11 +60,8 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
   ['firstName', { field: 'firstName' }],
   ['stack', { field: 'stack' }],
   ['id', { field: 'id' }],
-
   ['hobby', { field: 'hobby' }],
-
   ['city', { field: 'city' }],
-
   ['currency', { field: 'currency' }],
 ]);
 
@@ -81,26 +78,44 @@ export default function GroupByExample() {
       {
         field: 'preferredLanguage',
       },
-      // { field: 'stack' },
+      { field: 'stack' },
     ],
     [],
   );
 
   const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
     () => [
-      { field: 'stack' },
-      { field: 'country' },
-      // {
-      //   field: 'canDesign',
-      //   // column: ({ column: pivotCol }) => {
-      //   //   const lastKey =
-      //   //     pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
+      { field: 'currency' },
+      {
+        field: 'country',
+        columnGroup: ({ columnGroup }) => {
+          return {
+            header: `Country${
+              columnGroup.pivotTotalColumnGroup ? ' total' : ''
+            }: ${columnGroup.pivotGroupKey}`,
+          };
+        },
+      },
+      {
+        field: 'canDesign',
+        column: ({ column: pivotCol }) => {
+          const lastKey = pivotCol.pivotGroupKey;
 
-      //   //   return {
-      //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-      //   //   };
-      //   // },
-      // },
+          return {
+            defaultWidth: 500,
+            header:
+              (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
+              pivotCol.pivotAggregator.id,
+          };
+        },
+        columnGroup: ({ columnGroup: pivotCol }) => {
+          const lastKey = pivotCol.pivotGroupKey;
+
+          return {
+            header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+          };
+        },
+      },
     ],
     [],
   );
@@ -117,6 +132,7 @@ export default function GroupByExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              generatePivotColumnForSingleAggregation={false}
               domProps={domProps}
               columns={columns}
               pivotColumns={pivotColumns}

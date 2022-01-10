@@ -1,9 +1,14 @@
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
+  InfiniteTableColumn,
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumn,
+  InfiniteTablePivotFinalColumnGroup,
 } from '../../components/InfiniteTable/types/InfiniteTableColumn';
-import { InfiniteTableGroupColumnBase } from '../../components/InfiniteTable/types/InfiniteTableProps';
+import {
+  InfiniteTableColumnGroup,
+  InfiniteTableGroupColumnBase,
+} from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
 
 export type AggregationReducer<T, AggregationResultType> = {
@@ -102,12 +107,19 @@ export type PivotBy<DataType, KeyType> = Omit<
   'column'
 > & {
   column?:
-    | InfiniteTablePivotColumn<DataType>
+    | InfiniteTableColumn<DataType>
     | (({
         column,
       }: {
         column: InfiniteTablePivotFinalColumn<DataType, KeyType>;
       }) => Partial<InfiniteTablePivotColumn<DataType>>);
+  columnGroup?:
+    | InfiniteTableColumnGroup
+    | (({
+        columnGroup,
+      }: {
+        columnGroup: InfiniteTablePivotFinalColumnGroup<DataType, KeyType>;
+      }) => Partial<InfiniteTablePivotFinalColumnGroup<DataType>>);
 };
 
 type GroupParams<DataType, KeyType> = {

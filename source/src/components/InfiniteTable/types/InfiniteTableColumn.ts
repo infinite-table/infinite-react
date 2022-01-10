@@ -8,8 +8,7 @@ import type {
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableColumnGroup, InfiniteTableRowInfo } from '.';
 import { CSSProperties } from 'react';
-import { PivotBy } from '../../../utils/groupAndPivot';
-import { InfiniteTableColumnAggregator } from './InfiniteTableProps';
+import { AggregationReducer, PivotBy } from '../../../utils/groupAndPivot';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -204,21 +203,23 @@ export type InfiniteTablePivotFinalColumnGroup<
   KeyType extends any = any,
 > = InfiniteTableColumnGroup & {
   pivotBy: DataSourcePivotBy<DataType>[];
+  pivotTotalColumnGroup?: true;
   pivotGroupKeys: KeyType[];
-  // pivotByForColumn: PivotBy<DataType, KeyType>;
-  // pivotIndexForColumn: number;
-  // pivotGroupKeyForColumn: KeyType;
+  pivotByAtIndex: PivotBy<DataType, KeyType>;
+  pivotGroupKey: KeyType;
+  pivotIndex: number;
 };
 export type InfiniteTablePivotFinalColumn<
   DataType,
   KeyType extends any = any,
 > = InfiniteTablePivotColumn<DataType> & {
+  pivotAggregator: AggregationReducer<DataType, any>;
+  pivotAggregatorIndex: number;
   pivotBy: DataSourcePivotBy<DataType>[];
   pivotGroupKeys: KeyType[];
-  pivotByForColumn: PivotBy<DataType, KeyType>;
-  pivotIndexForColumn: number;
-  pivotGroupKeyForColumn: KeyType;
-  // aggregator: InfiniteTableColumnAggregator<DataType, any>;
+  pivotByAtIndex: PivotBy<DataType, KeyType>;
+  pivotIndex: number;
+  pivotGroupKey: KeyType;
 };
 
 type InfiniteTableComputedColumnBase<T> = {
