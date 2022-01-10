@@ -1,16 +1,16 @@
-@import "~modern-normalize/modern-normalize.css";
-@import "../../../source//dist/index.css";
+@import '~modern-normalize/modern-normalize.css';
+@import '../../../source/dist/index.css';
 
 @font-face {
-  font-family: "RobotoMono";
-  src: url("/Roboto_Mono/static/RobotoMono-Regular.ttf");
+  font-family: 'RobotoMono';
+  src: url('/Roboto_Mono/static/RobotoMono-Regular.ttf');
 }
 @font-face {
-  font-family: "Roboto";
-  src: url("/Roboto/Roboto-Regular.ttf");
+  font-family: 'Roboto';
+  src: url('/Roboto/Roboto-Regular.ttf');
 }
 html body {
-  font-family: "RobotoMono", sans-serif;
+  font-family: 'RobotoMono', sans-serif;
 }
 body {
   line-height: inherit;
@@ -79,7 +79,7 @@ pre {
   margin: 0;
 }
 
-[role="button"],
+[role='button'],
 button {
   cursor: pointer;
 }
@@ -100,9 +100,9 @@ select {
   text-transform: none;
 }
 
-[type="button"],
-[type="reset"],
-[type="submit"],
+[type='button'],
+[type='reset'],
+[type='submit'],
 button {
   -webkit-appearance: button;
 }

@@ -8,7 +8,10 @@ import { InfiniteTableState } from '../types/InfiniteTableState';
 
 export function useColumnAggregations<T>() {
   const {
-    componentState: { columnAggregations },
+    componentState: {
+      columnAggregations,
+      generatePivotColumnForSingleAggregation,
+    },
     // getComponentState,
   } = useComponentState<InfiniteTableState<T>>();
 
@@ -42,4 +45,9 @@ export function useColumnAggregations<T>() {
       set: updateDataSourceAggregations,
     });
   }, [columnAggregations]);
+
+  useEffect(() => {
+    dataSourceActions.generatePivotColumnForSingleAggregation =
+      generatePivotColumnForSingleAggregation;
+  }, [generatePivotColumnForSingleAggregation]);
 }

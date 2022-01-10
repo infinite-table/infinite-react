@@ -78,6 +78,7 @@ export interface DataSourceMappedState<T> {
 }
 
 export interface DataSourceSetupState<T> {
+  generatePivotColumnForSingleAggregation: boolean;
   dataParams?: DataSourceDataParams<T>;
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
   originalDataArray: T[];

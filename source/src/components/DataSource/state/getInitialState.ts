@@ -30,6 +30,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     pivotTotalColumnPosition: 'end',
     originalDataArray,
     scrollBottomId: Symbol('scrollBottomId'),
+    generatePivotColumnForSingleAggregation: false,
 
     pivotColumns: undefined,
     pivotColumnGroups: undefined,

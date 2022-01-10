@@ -228,6 +228,7 @@ export interface InfiniteTableProps<T> {
 
   viewportReservedWidth?: number;
 
+  // collapsePivotAggregationsInto
   pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
   pivotRowLabelsColumn?: Partial<InfiniteTablePropPivotRowLabelsColumn<T>>;
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
@@ -264,6 +265,8 @@ export interface InfiniteTableProps<T> {
   ) => void;
   columnTypes?: InfiniteTablePropColumnTypes<T>;
   // columnVisibilityAssumeVisible?: boolean;
+
+  generatePivotColumnForSingleAggregation?: boolean;
 
   rowHeight: number | string;
   rowStyle?: InfiniteTablePropRowStyle<T>;

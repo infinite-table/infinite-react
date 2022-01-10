@@ -8,6 +8,8 @@ import {
   DataSource,
   DataSourceGroupBy,
   InfiniteTablePropGroupRenderStrategy,
+  InfiniteTableColumnAggregator,
+  InfiniteTablePropColumnAggregations,
 } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
@@ -115,6 +117,17 @@ export default function GroupByExample() {
       },
     };
   }, []);
+
+  const avgReducer: InfiniteTableColumnAggregator<Employee, any> = {
+    initialValue: 0,
+    reducer: (acc, sum) => acc + sum,
+    done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  };
+  const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
+    new Map([
+      ['salary', { field: 'salary', ...avgReducer }],
+      ['age', { field: 'age', ...avgReducer }],
+    ]);
   return (
     <>
       <select
@@ -137,6 +150,7 @@ export default function GroupByExample() {
           groupColumn={groupColumn}
           groupRenderStrategy={strategy}
           defaultColumnSizing={defaultColumnSizing}
+          columnAggregations={columnAggregations}
         ></InfiniteTable>
       </DataSource>
     </>

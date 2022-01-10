@@ -60,6 +60,7 @@ export function concludeReducer<T>(params: {
     'pivotBy',
     'aggregationReducers',
     'pivotTotalColumnPosition',
+    'generatePivotColumnForSingleAggregation',
     'sortInfo',
   ]);
 
@@ -110,13 +111,15 @@ export function concludeReducer<T>(params: {
       state.groupDeepMap = groupResult.deepMap;
 
       const pivotGroupsAndCols = pivotBy
-        ? getPivotColumnsAndColumnGroups<T>(
-            groupResult.topLevelPivotColumns!,
+        ? getPivotColumnsAndColumnGroups<T>({
+            deepMap: groupResult.topLevelPivotColumns!,
             pivotBy,
 
-            state.pivotTotalColumnPosition ?? 'end',
-            state.aggregationReducers,
-          )
+            pivotTotalColumnPosition: state.pivotTotalColumnPosition ?? 'end',
+            aggregationReducers: state.aggregationReducers,
+            generatePivotColumnForSingleAggregation:
+              state.generatePivotColumnForSingleAggregation,
+          })
         : undefined;
 
       state.pivotColumns = pivotGroupsAndCols?.columns;

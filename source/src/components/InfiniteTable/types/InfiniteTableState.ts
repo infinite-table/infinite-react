@@ -78,6 +78,9 @@ export interface InfiniteTableMappedState<T> {
   focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
   focusedStyle: InfiniteTableProps<T>['focusedStyle'];
   focusedWithinStyle: InfiniteTableProps<T>['focusedWithinStyle'];
+  generatePivotColumnForSingleAggregation: NonUndefined<
+    InfiniteTableProps<T>['generatePivotColumnForSingleAggregation']
+  >;
   domProps: InfiniteTableProps<T>['domProps'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];

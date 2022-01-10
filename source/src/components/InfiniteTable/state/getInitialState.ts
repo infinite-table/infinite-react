@@ -111,6 +111,9 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 200,
     draggableColumns: (draggableColumns) => draggableColumns ?? true,
 
+    generatePivotColumnForSingleAggregation: (
+      generatePivotColumnForSingleAggregation,
+    ) => generatePivotColumnForSingleAggregation ?? false,
     sortable: (sortable) => sortable ?? true,
     hideEmptyGroupColumns: (hideEmptyGroupColumns) =>
       hideEmptyGroupColumns ?? false,

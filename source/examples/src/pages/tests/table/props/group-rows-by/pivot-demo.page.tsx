@@ -31,7 +31,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -39,13 +39,13 @@ const dataSource = () => {
 const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
   reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
 };
 
 const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
   new Map([
     ['salary', { field: 'salary', ...avgReducer }],
-    ['age', { field: 'age', ...avgReducer }],
+    // ['age', { field: 'age', ...avgReducer }],
   ]);
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
@@ -81,25 +81,26 @@ export default function GroupByExample() {
       {
         field: 'preferredLanguage',
       },
-      { field: 'stack' },
+      // { field: 'stack' },
     ],
     [],
   );
 
   const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
     () => [
+      { field: 'stack' },
       { field: 'country' },
-      {
-        field: 'canDesign',
-        column: ({ column: pivotCol }) => {
-          const lastKey =
-            pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
+      // {
+      //   field: 'canDesign',
+      //   // column: ({ column: pivotCol }) => {
+      //   //   const lastKey =
+      //   //     pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
 
-          return {
-            header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-          };
-        },
-      },
+      //   //   return {
+      //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+      //   //   };
+      //   // },
+      // },
     ],
     [],
   );

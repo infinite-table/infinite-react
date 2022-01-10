@@ -21,12 +21,19 @@ export type ComputedColumnsAndGroups<DataType> = {
   columnGroups: InfiniteTablePropColumnGroups;
 };
 
-export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
-  deepMap: DeepMap<KeyType, boolean>,
-  pivotBy: DataSourcePivotBy<DataType>[],
-  pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition,
-  _aggregationReducers: AggregationReducer<DataType, any>[] = [],
-): ComputedColumnsAndGroups<DataType> {
+export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
+  deepMap,
+  pivotBy,
+  pivotTotalColumnPosition,
+  aggregationReducers = [],
+  generatePivotColumnForSingleAggregation = false,
+}: {
+  deepMap: DeepMap<KeyType, boolean>;
+  pivotBy: DataSourcePivotBy<DataType>[];
+  pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
+  aggregationReducers?: AggregationReducer<DataType, any>[];
+  generatePivotColumnForSingleAggregation?: boolean;
+}): ComputedColumnsAndGroups<DataType> {
   const pivotLength = pivotBy.length;
   const columns: InfiniteTablePropColumnsMap<
     DataType,
@@ -51,6 +58,10 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
     InfiniteTableColumnGroup
   >();
 
+  const isSingleAggregationColumn =
+    !generatePivotColumnForSingleAggregation &&
+    aggregationReducers.length === 1;
+
   deepMap.visitDepthFirst((_value, keys: KeyType[], _indexInGroup, next) => {
     keys = [...keys];
 
@@ -60,72 +71,45 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
 
     if (keys.length === pivotLength) {
       const parentKeys = keys.slice(0, -1);
+
       let columnGroupId = parentKeys.join('/');
       const pivotByForColumn = pivotBy[keys.length - 1];
-      // TODO continue here implementing support for multiple aggregations
-      // console.log(aggregationReducers);
-      // aggregationReducers.forEach((reducer) => {
-      let computedPivotColumn: InfiniteTablePivotFinalColumn<DataType> = {
-        pivotBy,
-        pivotColumn: true,
-        pivotGroupKeys: keys,
-        pivotGroupKeyForColumn: keys[keys.length - 1],
-        pivotIndexForColumn: keys.length - 1,
-        pivotByForColumn,
-        sortable: false,
-        columnGroup: parentKeys.length ? `${columnGroupId}` : undefined,
-        header: keys[keys.length - 1],
-        valueGetter: ({ rowInfo }) => {
-          const reducerResult =
-            rowInfo.pivotValuesMap?.get(keys)?.reducerResults[0];
-          const value = reducerResult?.value ?? null;
 
-          return value;
-        },
-        ...pivotByForColumn.column,
-      };
-      if (pivotByForColumn.column) {
-        if (typeof pivotByForColumn.column === 'function') {
-          Object.assign(
-            computedPivotColumn,
-            pivotByForColumn.column({ column: computedPivotColumn }),
-          );
-        } else {
-          Object.assign(computedPivotColumn, pivotByForColumn.column);
-        }
+      if (!isSingleAggregationColumn) {
+        let parentColumnGroupId = columnGroupId;
+
+        columnGroupId = keys.join('/');
+        columnGroups.set(columnGroupId, {
+          header: keys[keys.length - 1],
+          columnGroup: parentColumnGroupId,
+        });
       }
-      columns.set(`${keys.join('/')}`, computedPivotColumn);
-      // });
-    } else {
-      const colGroupId = keys.join('/');
-      const parentKeys = keys.slice(0, -1);
 
-      columnGroups.set(colGroupId, {
-        columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
-        header: keys.join(' >> '),
-      });
+      aggregationReducers.forEach((reducer, index) => {
+        const header = isSingleAggregationColumn
+          ? keys[keys.length - 1]
+          : reducer.id;
 
-      if (pivotTotalColumnPosition !== false) {
-        const pivotByForColumn = pivotBy[keys.length - 1];
-        let computedPivotColumn: InfiniteTablePivotFinalColumn<DataType> = {
-          columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
-          header: `${keys.join('/')} total `,
-          pivotTotalColumn: true,
+        const computedPivotColumn: InfiniteTablePivotFinalColumn<DataType> = {
+          pivotBy,
+          pivotColumn: true,
           pivotGroupKeys: keys,
           pivotGroupKeyForColumn: keys[keys.length - 1],
-          pivotByForColumn,
           pivotIndexForColumn: keys.length - 1,
-          pivotBy,
+          pivotByForColumn,
           sortable: false,
+          columnGroup: columnGroupId,
+          header,
           valueGetter: ({ rowInfo }) => {
-            const value =
-              rowInfo.pivotValuesMap?.get(keys)?.reducerResults[0].value ??
-              null;
+            const reducerResult =
+              rowInfo.pivotValuesMap?.get(keys)?.reducerResults[index];
+            const value = reducerResult?.value ?? null;
 
             return value;
           },
           ...pivotByForColumn.column,
         };
+
         if (pivotByForColumn.column) {
           if (typeof pivotByForColumn.column === 'function') {
             Object.assign(
@@ -136,7 +120,72 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
             Object.assign(computedPivotColumn, pivotByForColumn.column);
           }
         }
-        columns.set(`${keys.join('/')}-total`, computedPivotColumn);
+        const columnId = `${keys.join('/')}-${reducer.id}`;
+
+        columns.set(columnId, computedPivotColumn);
+      });
+    } else {
+      const colGroupId = keys.join('/');
+      const parentKeys = keys.slice(0, -1);
+
+      columnGroups.set(colGroupId, {
+        columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
+        header: keys[keys.length - 1],
+      });
+
+      if (pivotTotalColumnPosition !== false) {
+        const pivotByForColumn = pivotBy[keys.length - 1];
+        let columnGroupId = parentKeys.length
+          ? parentKeys.join('/')
+          : undefined;
+
+        if (!isSingleAggregationColumn) {
+          let parentGroupForTotalsGroup = columnGroupId;
+          columnGroupId = `total:${keys.join('/')}`;
+          columnGroups.set(columnGroupId, {
+            header: `${keys[keys.length - 1]} total`,
+            columnGroup: parentGroupForTotalsGroup,
+          });
+        }
+
+        aggregationReducers.forEach((reducer, index) => {
+          const header = isSingleAggregationColumn
+            ? `${keys[keys.length - 1]} total `
+            : `${reducer.id} total`;
+          const computedPivotColumn: InfiniteTablePivotFinalColumn<DataType> = {
+            columnGroup: columnGroupId,
+            header,
+            pivotTotalColumn: true,
+            pivotGroupKeys: keys,
+            pivotGroupKeyForColumn: keys[keys.length - 1],
+            pivotByForColumn,
+            pivotIndexForColumn: keys.length - 1,
+            pivotBy,
+            sortable: false,
+            valueGetter: ({ rowInfo }) => {
+              const value =
+                rowInfo.pivotValuesMap?.get(keys)?.reducerResults[index]
+                  ?.value ?? null;
+
+              return value;
+            },
+            ...pivotByForColumn.column,
+          };
+          if (pivotByForColumn.column) {
+            if (typeof pivotByForColumn.column === 'function') {
+              Object.assign(
+                computedPivotColumn,
+                pivotByForColumn.column({ column: computedPivotColumn }),
+              );
+            } else {
+              Object.assign(computedPivotColumn, pivotByForColumn.column);
+            }
+          }
+          columns.set(
+            `total:${keys.join('/')}-${reducer.id}`,
+            computedPivotColumn,
+          );
+        });
       }
     }
 
@@ -152,7 +201,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>(
     columns.set('single', {
       header: 'Reduced',
       valueGetter: ({ rowInfo }) => {
-        return rowInfo.reducerResults?.[0].value;
+        return rowInfo.reducerResults?.[0]?.value;
       },
     });
   }
