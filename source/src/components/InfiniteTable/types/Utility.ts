@@ -1,6 +1,8 @@
 export type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 
+export type MapOrRecord<K extends string, V> = Map<K, V> | Record<K, V>;
+
 export type RequireOnlyOneProperty<T, Keys extends keyof T> = Pick<
   T,
   Exclude<keyof T, Keys>
@@ -19,14 +21,12 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
   }[Keys];
 
 export type DiscriminatedUnion<A, B> =
-  | (A &
-      {
-        [K in keyof B]?: undefined;
-      })
-  | (B &
-      {
-        [K in keyof A]?: undefined;
-      });
+  | (A & {
+      [K in keyof B]?: undefined;
+    })
+  | (B & {
+      [K in keyof A]?: undefined;
+    });
 
 export type AllPropertiesOrNone<DATA_TYPE> =
   | DATA_TYPE

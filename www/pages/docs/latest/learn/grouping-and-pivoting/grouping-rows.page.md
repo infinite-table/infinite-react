@@ -2,7 +2,7 @@
 title: Grouping rows
 ---
 
-You can use any field available in the `DataSource` to do the grouping - it can even be a field that is not a column.
+You can use any `field` available in the `DataSource` to do the grouping - it can even be a `field` that is not a column.
 
 <Note>
 
@@ -160,3 +160,8 @@ You can specify an `id` for the single group column by using <PropLink name="gro
 ### Inline group column
 
 When inline group rendering is used (<PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="inline"</PropLink>), the columns bound to the corresponding group by fields are used for rendering, so no group columns are generated. This way of rendering groups is only recommended when you're sure you have small groups (smaller than the number of rows visible in the viewport).
+
+
+## Aggregations
+
+Docs coming

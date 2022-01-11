@@ -111,9 +111,9 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 200,
     draggableColumns: (draggableColumns) => draggableColumns ?? true,
 
-    generatePivotColumnForSingleAggregation: (
-      generatePivotColumnForSingleAggregation,
-    ) => generatePivotColumnForSingleAggregation ?? false,
+    showSeparatePivotColumnForSingleAggregation: (
+      showSeparatePivotColumnForSingleAggregation,
+    ) => showSeparatePivotColumnForSingleAggregation ?? false,
     sortable: (sortable) => sortable ?? true,
     hideEmptyGroupColumns: (hideEmptyGroupColumns) =>
       hideEmptyGroupColumns ?? false,
@@ -140,8 +140,6 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     columnPinning: (columnPinning) => columnPinning ?? new Map(),
     columnSizing: (columnSizing) => toMap(columnSizing) ?? new Map(),
     columnTypes: (columnTypes) => toColumnTypesMap(columnTypes) ?? new Map(),
-    columnAggregations: (columnAggregations) =>
-      toMap(columnAggregations) ?? new Map(),
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),

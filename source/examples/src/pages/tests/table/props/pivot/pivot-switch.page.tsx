@@ -4,6 +4,8 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
+  DataSourceAggregationReducer,
+  DataSourceGroupBy,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
@@ -11,15 +13,9 @@ import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
-  DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
-const domProps = {
-  style: {
-    height: '80vh',
-  },
-};
 type Developer = {
   id: number;
   firstName: string;
@@ -47,15 +43,15 @@ const dataSource = () => {
     );
 };
 
-const avgSalaryReducer: InfiniteTableColumnAggregator<Developer, any> = {
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
   field: 'salary',
   reducer: (acc, sum) => acc + sum,
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
-  salary: avgSalaryReducer,
+const columnAggregations: DataSourcePropAggregationReducers<Developer> = {
+  salary: avgReducer,
 };
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
@@ -76,64 +72,91 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
 ]);
 
 const groupRowsState = new GroupRowsState({
-  expandedRows: [],
+  expandedRows: [['TypeScript']],
   collapsedRows: true,
 });
 
+type Config = {
+  groupBy: DataSourceGroupBy<Developer>[];
+  pivotBy?: DataSourcePivotBy<Developer>[];
+};
+const noPivotConfig: Config = {
+  groupBy: [
+    {
+      field: 'preferredLanguage',
+    },
+    { field: 'stack' },
+  ],
+};
+const pivotConfig: Config = {
+  ...noPivotConfig,
+  pivotBy: [
+    { field: 'country' },
+    {
+      field: 'canDesign',
+    },
+  ],
+};
+
+const domProps = {
+  style: {
+    height: '80vh',
+  },
+};
+
 export default function GroupByExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
-    () => [
-      {
-        field: 'preferredLanguage',
-      },
-      { field: 'stack' },
-    ],
-    [],
+  const [config, setConfig] = React.useState<Config>(noPivotConfig);
+  const groupRowsBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => config.groupBy,
+    [config],
   );
 
-  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
-    () => [
-      {
-        field: 'country',
-        column: ({ column }) => {
-          return {
-            header: `Totals for: ${column.pivotGroupKey}`,
-            render: (arg) => {
-              const { value } = arg;
-              console.log(arg);
-              return value;
-            },
-          };
-        },
-      },
-      // { field: 'currency' },
-    ],
-    [],
+  const pivotBy: DataSourcePivotBy<Developer>[] | undefined = React.useMemo(
+    () => config.pivotBy,
+    [config],
   );
 
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flex: 1,
+        color: 'var(--infinite-row-color)',
+        flexFlow: 'column',
+        background: 'var(--infinite-background)',
+      }}
+    >
+      <div style={{ padding: 10 }}>
+        <button onClick={() => setConfig(noPivotConfig)} disabled>
+          0. No pivot
+        </button>
+        &gt;
+        <button onClick={() => setConfig(pivotConfig)}>1. Pivot</button>
+        &gt;
+        <button onClick={() => setConfig(noPivotConfig)}>2. No pivot</button>
+        &nbsp;pivotBy is <b>{pivotBy === undefined ? 'not set' : 'set'}</b>
+      </div>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={groupBy}
+        groupBy={groupRowsBy}
+        aggregationReducers={columnAggregations}
         pivotBy={pivotBy}
         defaultGroupRowsState={groupRowsState}
-        aggregationReducers={aggregationReducers}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
-              columns={columns}
               domProps={domProps}
+              columns={columns}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={200}
-              pivotTotalColumnPosition="start"
+              pivotTotalColumnPosition="end"
             />
           );
         }}
       </DataSource>
-    </>
+    </div>
   );
 }

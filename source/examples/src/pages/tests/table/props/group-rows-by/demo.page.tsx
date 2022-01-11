@@ -9,7 +9,7 @@ import {
   DataSourceGroupBy,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableColumnAggregator,
-  InfiniteTablePropColumnAggregations,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
@@ -46,6 +46,13 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
     'identifier',
     {
       field: 'id',
+      // render: ({ value, rowInfo }) => {
+      //   if (rowInfo.isGroupRow) {
+      //     return rowInfo.reducerResults.salary;
+      //   }
+
+      //   return value;
+      // },
     },
   ],
   [
@@ -123,11 +130,10 @@ export default function GroupByExample() {
     reducer: (acc, sum) => acc + sum,
     done: (sum, arr) => (arr.length ? sum / arr.length : 0),
   };
-  const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
-    new Map([
-      ['salary', { field: 'salary', ...avgReducer }],
-      ['age', { field: 'age', ...avgReducer }],
-    ]);
+  const aggregationReducers: DataSourcePropAggregationReducers<Employee> = {
+    salary: { field: 'salary', ...avgReducer },
+    age: { field: 'age', ...avgReducer },
+  };
   return (
     <>
       <select
@@ -142,7 +148,12 @@ export default function GroupByExample() {
         <option value="multi-column">Multi column</option>
         <option value="inline">Inline</option>
       </select>
-      <DataSource<Employee> primaryKey="id" data={dataSource} groupBy={groupBy}>
+      <DataSource<Employee>
+        primaryKey="id"
+        data={dataSource}
+        groupBy={groupBy}
+        aggregationReducers={aggregationReducers}
+      >
         <InfiniteTable<Employee>
           domProps={domProps}
           columns={columns}
@@ -150,7 +161,6 @@ export default function GroupByExample() {
           groupColumn={groupColumn}
           groupRenderStrategy={strategy}
           defaultColumnSizing={defaultColumnSizing}
-          columnAggregations={columnAggregations}
         ></InfiniteTable>
       </DataSource>
     </>

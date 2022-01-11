@@ -7,6 +7,19 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
+<Prop name="aggregationReducers" type="Record<string, DataSourceAggregationReducer>">
+
+> Specifies the functions to use for aggregating data
+
+The `DataSourceAggregationReducer` type can have the following properties
+* `initialValue` - type `any`, mandatory
+* `field` - the field to aggregate on. Optional - if not specified, make sure you specify `getter`
+* `getter`: `(data:T)=> any` - a getter function, called with the current `data` object()
+* `reducer`:  `(accumulator, value, data) => any`
+* `done`: `(accumulator, arr) => any`
+
+</Prop>
+
 <Prop name="data" type="DATA_TYPE[]|Promise<DATA_TYPE[]|() => DATA_TYPE[]|Promise<DATA_TYPE[]>">
 
 > Specifies the data the component is bound to. Can be one of the following:

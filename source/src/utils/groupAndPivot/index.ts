@@ -1,3 +1,4 @@
+import { DataSourceAggregationReducer } from '../..';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   InfiniteTableColumn,
@@ -11,20 +12,11 @@ import {
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
 
-export type AggregationReducer<T, AggregationResultType> = {
+export type AggregationReducer<
+  T,
+  AggregationResultType = any,
+> = DataSourceAggregationReducer<T, AggregationResultType> & {
   id: string;
-  field?: keyof T;
-  initialValue: AggregationResultType;
-  getter: (data: T) => any;
-  reducer: (
-    accumulator: any,
-    value: any,
-    data: T,
-  ) => AggregationResultType | any;
-  done?: (
-    accumulatedValue: AggregationResultType | any,
-    array: T[],
-  ) => AggregationResultType;
 };
 
 export type AggregationReducerResult<AggregationResultType extends any = any> =
@@ -37,12 +29,27 @@ function DEFAULT_TO_KEY<T>(value: T): T {
   return value;
 }
 
-export interface InfiniteTableRowInfo<T> {
+export type InfiniteTableRowInfoNormalType<DataType> = {
+  data: DataType;
+  isGroupRow: false;
+};
+export type InfiniteTableRowInfoGroupType<DataType> = {
+  data: Partial<DataType> | null;
+  isGroupRow: true;
+};
+
+export type InfiniteTableRowInfoNormal<T> = InfiniteTableRowInfoBase<T> &
+  InfiniteTableRowInfoNormalType<T>;
+export type InfiniteTableRowInfoGroup<T> = InfiniteTableRowInfoBase<T> &
+  InfiniteTableRowInfoGroupType<T>;
+export type InfiniteTableRowInfo<T> =
+  | InfiniteTableRowInfoNormal<T>
+  | InfiniteTableRowInfoGroup<T>;
+
+export type InfiniteTableRowInfoBase<T> = {
   id: any;
-  data: T | null;
-  groupData?: T[];
   value?: any;
-  isGroupRow?: boolean;
+  groupData?: T[];
   collapsed: boolean;
   collapsedChildrenCount?: number;
   collapsedGroupsCount?: number;
@@ -55,12 +62,11 @@ export interface InfiniteTableRowInfo<T> {
   groupCount?: number;
   groupBy?: (keyof T)[];
   pivotValuesMap?: PivotValuesDeepMap<T, any>;
-  reducerResults?: AggregationReducerResult[];
-}
+  reducerResults?: Record<string, AggregationReducerResult>;
+};
 
-export interface InfiniteTableEnhancedGroupInfo<T>
-  extends InfiniteTableRowInfo<T> {
-  data: null;
+export type InfiniteTableEnhancedGroupInfo<T> = InfiniteTableRowInfo<T> & {
+  data: Partial<T> | null;
   groupData: T[];
   value: any;
   isGroupRow: true;
@@ -71,11 +77,11 @@ export interface InfiniteTableEnhancedGroupInfo<T>
   groupCount: number;
   groupBy: (keyof T)[];
   pivotValuesMap?: PivotValuesDeepMap<T, any>;
-}
+};
 
 export type GroupKeyType<T extends any = any> = T; //string | number | symbol | null | undefined;
 
-type PivotReducerResults<T = any> = AggregationReducerResult<T>[];
+type PivotReducerResults<T = any> = Record<string, AggregationReducerResult<T>>;
 
 type PivotGroupValueType<DataType, KeyType> = {
   reducerResults: PivotReducerResults<KeyType>;
@@ -89,7 +95,7 @@ export type PivotValuesDeepMap<DataType, KeyType> = DeepMap<
 
 export type DeepMapGroupValueType<DataType, KeyType> = {
   items: DataType[];
-  reducerResults: any[];
+  reducerResults: Record<string, AggregationReducerResult>;
   pivotDeepMap?: DeepMap<
     GroupKeyType<KeyType>,
     PivotGroupValueType<DataType, KeyType>
@@ -126,7 +132,7 @@ type GroupParams<DataType, KeyType> = {
   groupBy: GroupBy<DataType, KeyType>[];
   defaultToKey?: (value: any, item: DataType) => GroupKeyType<KeyType>;
   pivot?: PivotBy<DataType, KeyType>[];
-  reducers?: AggregationReducer<DataType, any>[];
+  reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
 };
 
 export type DataGroupResult<DataType, KeyType extends any> = {
@@ -136,22 +142,26 @@ export type DataGroupResult<DataType, KeyType extends any> = {
   >;
   groupParams: GroupParams<DataType, KeyType>;
   initialData: DataType[];
-  reducerResults?: AggregationReducerResult[];
+  reducerResults?: Record<string, AggregationReducerResult>;
   topLevelPivotColumns?: DeepMap<GroupKeyType<KeyType>, boolean>;
   pivot?: PivotBy<DataType, KeyType>[];
 };
 
 function initReducers<DataType>(
-  reducers?: AggregationReducer<DataType, any>[],
-): AggregationReducerResult[] {
-  if (!reducers || !reducers.length) {
-    return [];
+  reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>,
+): Record<string, AggregationReducerResult> {
+  if (!reducers || !Object.keys(reducers).length) {
+    return {};
   }
 
-  return reducers.map((reducer) => ({
-    id: reducer.id,
-    value: reducer.initialValue,
-  }));
+  const result: Record<string, AggregationReducerResult> = {};
+
+  for (let key in reducers)
+    if (reducers.hasOwnProperty(key)) {
+      result[key] = reducers[key].initialValue;
+    }
+
+  return result;
 }
 
 /**
@@ -165,21 +175,24 @@ function initReducers<DataType>(
  */
 function computeReducersFor<DataType>(
   data: DataType,
-  reducers: AggregationReducer<DataType, any>[],
-  reducerResults: AggregationReducerResult[],
+  reducers: Record<string, DataSourceAggregationReducer<DataType, any>>,
+  reducerResults: Record<string, AggregationReducerResult>,
 ) {
-  if (!reducers || !reducers.length) {
+  if (!reducers || !Object.keys(reducers).length) {
     return;
   }
 
-  reducers.forEach((reducer, index) => {
-    const currentValue = reducerResults[index].value;
+  for (let key in reducers)
+    if (reducers.hasOwnProperty(key)) {
+      const reducer = reducers[key];
+      const currentValue = reducerResults[key];
 
-    reducerResults[index] = {
-      value: reducer.reducer(currentValue, reducer.getter(data), data),
-      id: reducer.id,
-    };
-  });
+      const value = reducer.field
+        ? data[reducer.field]
+        : reducer.getter?.(data) ?? null;
+
+      reducerResults[key] = reducer.reducer(currentValue, value, data);
+    }
 }
 
 export function group<DataType, KeyType = any>(
@@ -209,7 +222,7 @@ export function group<DataType, KeyType = any>(
 
   const initialReducerValue = initReducers<DataType>(reducers);
 
-  const globalReducerResults = [...initialReducerValue];
+  const globalReducerResults = { ...initialReducerValue };
 
   for (let i = 0, len = data.length; i < len; i++) {
     let item = data[i];
@@ -227,7 +240,7 @@ export function group<DataType, KeyType = any>(
       if (!deepMap.has(currentGroupKeys)) {
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
-          reducerResults: [...initialReducerValue],
+          reducerResults: { ...initialReducerValue },
         };
         if (pivot) {
           deepMapGroupValue.pivotDeepMap = new DeepMap<
@@ -265,7 +278,7 @@ export function group<DataType, KeyType = any>(
           if (!pivotDeepMap!.has(currentPivotKeys)) {
             topLevelPivotColumns!.set(currentPivotKeys, true);
             pivotDeepMap?.set(currentPivotKeys, {
-              reducerResults: [...initialReducerValue],
+              reducerResults: { ...initialReducerValue },
               items: [],
             });
           }
@@ -365,28 +378,30 @@ type GetEnhancedGroupDataOptions<DataType> = {
   indexInParentGroups: number[];
   indexInGroup: number;
   indexInAll: number;
-  reducersMap: Record<string, keyof DataType>;
+  reducers: Record<string, DataSourceAggregationReducer<DataType, any>>;
 };
 
 function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
   deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupBy, groupKeys, collapsed, parents, reducersMap } = options;
+  const { groupBy, groupKeys, collapsed, parents, reducers } = options;
   const groupNesting = groupKeys.length;
   const { items: groupItems, reducerResults, pivotDeepMap } = deepMapValue;
 
-  let data = null;
+  let data = null as Partial<DataType> | null;
 
-  if (reducerResults.length > 0) {
-    data = reducerResults.reduce((acc, reducerResult) => {
-      const { id } = reducerResult;
-      const field = reducersMap[id];
-      if (field) {
-        acc[field] = reducerResult.value;
+  if (Object.keys(reducerResults).length > 0) {
+    data = {} as Partial<DataType>;
+    for (let key in reducers)
+      if (reducers.hasOwnProperty(key)) {
+        const reducer = reducers[key];
+
+        const field = reducer.field as keyof DataType;
+        if (field) {
+          data[field] = reducerResults[key] as any;
+        }
       }
-      return acc;
-    }, {} as Record<keyof DataType, any>);
   }
 
   const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> = {
@@ -414,19 +429,18 @@ function getEnhancedGroupData<DataType>(
 }
 
 function completeReducers<DataType>(
-  reducers: AggregationReducer<DataType, any>[],
-  reducerResults: AggregationReducerResult[],
+  reducers: Record<string, DataSourceAggregationReducer<DataType, any>>,
+  reducerResults: Record<string, AggregationReducerResult>,
   items: DataType[],
 ) {
-  if (reducers && reducers.length) {
-    reducers?.forEach((reducer: AggregationReducer<DataType, any>, index) => {
-      if (reducer.done) {
-        reducerResults[index] = {
-          value: reducer.done!(reducerResults[index].value, items),
-          id: reducer.id,
-        };
+  if (reducers) {
+    for (let key in reducers)
+      if (reducers.hasOwnProperty(key)) {
+        const reducer = reducers[key];
+        if (reducer.done) {
+          reducerResults[key] = reducer.done!(reducerResults[key], items);
+        }
       }
-    });
   }
 
   return reducerResults;
@@ -436,25 +450,23 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
   groupResult: DataGroupResult<DataType, KeyType>;
   toPrimaryKey: (data: DataType) => any;
   groupRowsState?: GroupRowsState;
-  reducers?: AggregationReducer<DataType, any>[];
+  reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
   generateGroupRows: boolean;
 };
 export function enhancedFlatten<DataType, KeyType = any>(
   param: EnhancedFlattenParam<DataType, KeyType>,
 ): { data: InfiniteTableRowInfo<DataType>[] } {
-  const { groupResult, toPrimaryKey, groupRowsState, generateGroupRows } =
-    param;
+  const {
+    groupResult,
+    toPrimaryKey,
+    groupRowsState,
+    generateGroupRows,
+    reducers = {},
+  } = param;
   const { groupParams, deepMap, pivot } = groupResult;
   const { groupBy } = groupParams;
 
   const groupByStrings = groupBy.map((g) => g.field);
-
-  const reducersMap = (param.reducers || []).reduce((acc, reducer) => {
-    if (reducer.field) {
-      acc[reducer.id] = reducer.field;
-    }
-    return acc;
-  }, {} as Record<string, keyof DataType>);
 
   const result: InfiniteTableRowInfo<DataType>[] = [];
 
@@ -474,7 +486,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
           {
             groupBy: groupByStrings,
             parents: Array.from(parents),
-            reducersMap,
+            reducers,
             indexInGroup,
             indexInParentGroups: Array.from(indexInParentGroups),
             indexInAll: result.length,
@@ -512,7 +524,6 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   isGroupRow: false,
                   collapsed: false,
                   groupKeys,
-
                   parents: Array.from(parents),
                   indexInParentGroups: [...indexInParentGroups, index],
                   indexInGroup: index,

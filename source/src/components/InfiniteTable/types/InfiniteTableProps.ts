@@ -2,7 +2,8 @@ import * as React from 'react';
 import { InfiniteTableState } from '.';
 import {
   AggregationReducer,
-  InfiniteTableRowInfo,
+  InfiniteTableRowInfoGroup,
+  InfiniteTableRowInfoNormal,
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceGroupBy,
@@ -34,11 +35,18 @@ export type InfiniteTablePropColumnPinning = Map<
 >;
 
 export type InfiniteTableRowStyleFnParams<T> = {
-  data: T | null;
-  rowInfo: InfiniteTableRowInfo<T>;
   rowIndex: number;
   groupBy?: (keyof T)[];
-};
+} & (
+  | {
+      data: T;
+      rowInfo: InfiniteTableRowInfoNormal<T>;
+    }
+  | {
+      data: Partial<T> | null;
+      rowInfo: InfiniteTableRowInfoGroup<T>;
+    }
+);
 export type InfiniteTableRowStyleFn<T> = (
   params: InfiniteTableRowStyleFnParams<T>,
 ) => undefined | React.CSSProperties;
@@ -59,18 +67,6 @@ export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
   getter?: AggregationReducer<T, AggregationResultType>['getter'];
   field?: keyof T;
 };
-
-export type InfiniteTablePropColumnAggregationsMap<T> = Map<
-  string,
-  InfiniteTableColumnAggregator<T, any>
->;
-export type InfiniteTablePropColumnAggregationsRecord<T> = Record<
-  string,
-  InfiniteTableColumnAggregator<T, any>
->;
-export type InfiniteTablePropColumnAggregations<T> =
-  | InfiniteTablePropColumnAggregationsRecord<T>
-  | InfiniteTablePropColumnAggregationsMap<T>;
 
 export type InfiniteTableColumnType<T> = {
   minWidth?: number;
@@ -113,9 +109,6 @@ export type InfiniteTableImperativeApi<T> = {
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
-  ) => void;
-  setColumnAggregations: (
-    columnAggregations: InfiniteTablePropColumnAggregations<T>,
   ) => void;
   x?: T;
   getState: () => InfiniteTableState<T>;
@@ -245,9 +238,6 @@ export interface InfiniteTableProps<T> {
   columnPinning?: InfiniteTablePropColumnPinning;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
 
-  defaultColumnAggregations?: InfiniteTablePropColumnAggregations<T>;
-  columnAggregations?: InfiniteTablePropColumnAggregations<T>;
-
   columnSizing?: InfiniteTablePropColumnSizing;
   defaultColumnSizing?: InfiniteTablePropColumnSizing;
 
@@ -266,7 +256,7 @@ export interface InfiniteTableProps<T> {
   columnTypes?: InfiniteTablePropColumnTypes<T>;
   // columnVisibilityAssumeVisible?: boolean;
 
-  generatePivotColumnForSingleAggregation?: boolean;
+  showSeparatePivotColumnForSingleAggregation?: boolean;
 
   rowHeight: number | string;
   rowStyle?: InfiniteTablePropRowStyle<T>;

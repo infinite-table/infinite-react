@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   DataSource,
+  DataSourceAggregationReducer,
   InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
@@ -9,7 +10,6 @@ import {
 import { OlimpicWinner } from '@examples/datasets/OlimpicWinner';
 //@ts-ignore
 import data from '@examples/datasets/olimpiad.json';
-import { InfiniteTableColumnAggregator } from '@infinite-table/infinite-react/components/InfiniteTable/types';
 
 const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
   [
@@ -58,18 +58,12 @@ const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
 ]);
 
 const sum = (a: number, b: number) => a + b;
-const sumAggregation: InfiniteTableColumnAggregator<OlimpicWinner, number> = {
+const sumAggregation: DataSourceAggregationReducer<OlimpicWinner, number> = {
   initialValue: 0,
-  getter: (data: OlimpicWinner) => {
-    return data.gold;
-  },
+  field: 'gold',
   reducer: sum,
 };
-const columnAggregations = new Map([
-  ['count', sumAggregation],
-  // ['model', sumAggregation],
-]);
-
+const columnAggregations = { count: sumAggregation };
 (globalThis as any).columnAggregations = columnAggregations;
 
 function App() {
@@ -82,6 +76,7 @@ function App() {
         primaryKey="id"
         data={data as OlimpicWinner[]}
         groupBy={[{ field: 'country' }, { field: 'year' }]}
+        aggregationReducers={columnAggregations}
       >
         <InfiniteTable
           domProps={{
@@ -93,7 +88,6 @@ function App() {
               position: 'relative',
             },
           }}
-          columnAggregations={columnAggregations}
           columnDefaultWidth={400}
           columnMinWidth={220}
           columns={cols}

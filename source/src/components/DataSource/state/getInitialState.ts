@@ -30,7 +30,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     pivotTotalColumnPosition: 'end',
     originalDataArray,
     scrollBottomId: Symbol('scrollBottomId'),
-    generatePivotColumnForSingleAggregation: false,
+    showSeparatePivotColumnForSingleAggregation: false,
 
     pivotColumns: undefined,
     pivotColumnGroups: undefined,
@@ -41,7 +41,6 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     sortedAt: 0,
     reducedAt: now,
     generateGroupRows: true,
-    aggregationReducers: undefined,
     groupDeepMap: undefined,
     postSortDataArray: undefined,
     postGroupDataArray: undefined,
@@ -73,6 +72,7 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     primaryKey: 1,
     livePagination: 1,
     livePaginationCursor: 1,
+    aggregationReducers: 1,
 
     loading: (loading) => loading ?? false,
     sortInfo: (sortInfo) => normalizeSortInfo(sortInfo),

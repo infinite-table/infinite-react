@@ -6,8 +6,8 @@ import {
   DataSource,
   // GroupRowsState,
   DataSourceGroupBy,
-  InfiniteTablePropColumnAggregations,
   InfiniteTablePropColumnGroups,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import { employees } from './employees10';
@@ -130,18 +130,14 @@ const columnGroups: InfiniteTablePropColumnGroups = new Map([
   ['location', { header: 'Location' }],
 ]);
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Employee> =
-  new Map([
-    [
-      'salary',
-      {
-        initialValue: 0,
-        getter: (data) => data.salary,
-        reducer: (acc, sum) => acc + sum,
-        done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
-      },
-    ],
-  ]);
+const reducers: DataSourcePropAggregationReducers<Employee> = {
+  salary: {
+    field: 'salary',
+    initialValue: 0,
+    reducer: (acc, sum) => acc + sum,
+    done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
+  },
+};
 
 // const groupRowsState = new GroupRowsState({
 //   expandedRows: [['Cuba', 'Havana'], ['Cuba']],
@@ -161,6 +157,7 @@ export default function GroupByExample() {
         data={dataSource}
         primaryKey="id"
         defaultGroupBy={groupBy}
+        aggregationReducers={reducers}
       >
         <InfiniteTable<Employee>
           domProps={{
@@ -182,7 +179,6 @@ export default function GroupByExample() {
           columnDefaultWidth={100}
           columns={columns}
           columnGroups={columnGroups}
-          columnAggregations={columnAggregations}
         />
       </DataSource>
     </React.StrictMode>

@@ -1,7 +1,6 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
-  InfiniteTablePropColumnAggregationsMap,
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnsMap,
@@ -78,8 +77,8 @@ export interface InfiniteTableMappedState<T> {
   focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
   focusedStyle: InfiniteTableProps<T>['focusedStyle'];
   focusedWithinStyle: InfiniteTableProps<T>['focusedWithinStyle'];
-  generatePivotColumnForSingleAggregation: NonUndefined<
-    InfiniteTableProps<T>['generatePivotColumnForSingleAggregation']
+  showSeparatePivotColumnForSingleAggregation: NonUndefined<
+    InfiniteTableProps<T>['showSeparatePivotColumnForSingleAggregation']
   >;
   domProps: InfiniteTableProps<T>['domProps'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
@@ -112,7 +111,6 @@ export interface InfiniteTableMappedState<T> {
   columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
-  columnAggregations: InfiniteTablePropColumnAggregationsMap<T>;
   columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
   collapsedColumnGroups: NonUndefined<
     InfiniteTableProps<T>['collapsedColumnGroups']

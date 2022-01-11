@@ -4,8 +4,8 @@ import { DataSourceSingleSortInfo } from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
 
 import { sortAscending } from '../../../utils/sortAscending';
-import { useCallback, useState } from 'react';
-import { useColumnAggregations } from './useColumnAggregations';
+import { useCallback, useEffect, useState } from 'react';
+
 import { useComponentState } from '../../hooks/useComponentState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
@@ -27,6 +27,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnSizing,
     columnTypes,
     bodySize,
+    showSeparatePivotColumnForSingleAggregation,
   } = componentState;
 
   useState(() => {
@@ -42,7 +43,10 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     });
   });
 
-  useColumnAggregations<T>();
+  useEffect(() => {
+    dataSourceActions.showSeparatePivotColumnForSingleAggregation =
+      showSeparatePivotColumnForSingleAggregation;
+  }, [showSeparatePivotColumnForSingleAggregation]);
 
   const { multiSort } = dataSourceState;
 

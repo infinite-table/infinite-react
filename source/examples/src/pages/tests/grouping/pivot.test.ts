@@ -1,4 +1,5 @@
-import { group, AggregationReducer } from '@src/utils/groupAndPivot';
+import { DataSourceAggregationReducer } from '@infinite-table/infinite-react';
+import { group } from '@src/utils/groupAndPivot';
 import { getFilteredBy, getReducerValue, groupToItems } from './helpers';
 
 type Person = {
@@ -140,11 +141,11 @@ export const data: Person[] = [
   },
 ];
 
-const avgReducer: AggregationReducer<Person, any> = {
+const avgReducer: DataSourceAggregationReducer<Person, number> = {
   initialValue: 0,
-  getter: (data) => data.salary,
-  reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  field: 'salary',
+  reducer: (acc: number, salary: number) => acc + salary,
+  done: (sum: number, arr: any[]) => (arr.length ? sum / arr.length : 0),
 };
 
 export default describe('Pivot', () => {
@@ -205,7 +206,7 @@ export default describe('Pivot', () => {
       {
         groupBy: [{ field: 'department' }, { field: 'team' }],
         pivot: [{ field: 'country' }, { field: 'age' }],
-        reducers: [avgReducer],
+        reducers: { avg: avgReducer },
       },
       data,
     );

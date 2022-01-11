@@ -6,11 +6,11 @@ import {
   DataSourceGroupBy,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
-  InfiniteTablePropColumnAggregations,
   InfiniteTableColumn,
   GroupRowsState,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableColumnSizingOptions,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 import { Person, data } from './pivotData';
 import { useState } from 'react';
@@ -43,9 +43,9 @@ const sumReducer: InfiniteTableColumnAggregator<Person, any> = {
   reducer: sum,
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Person> = new Map(
-  [['salary', sumReducer]],
-);
+const reducers: DataSourcePropAggregationReducers<Person> = {
+  salary: { field: 'salary', ...sumReducer },
+};
 
 // const pivotBy: DataSourcePropPivotBy<Person> = [
 //   {
@@ -100,7 +100,9 @@ export default function GroupByExample() {
                   return (
                     <>
                       {groupData?.value} ({groupData?.groupCount}), total ${' '}
-                      {formatter.format(groupData?.reducerResults?.[0])}
+                      {formatter.format(
+                        groupData?.reducerResults?.salary as any as number,
+                      )}
                     </>
                   );
                 }
@@ -121,7 +123,9 @@ export default function GroupByExample() {
                   return (
                     <>
                       {groupData?.value} ({groupData?.groupCount}), total $
-                      {formatter.format(groupData?.reducerResults?.[0])}
+                      {formatter.format(
+                        groupData?.reducerResults?.salary as any as number,
+                      )}
                     </>
                   );
                 }
@@ -209,6 +213,7 @@ export default function GroupByExample() {
         data={data}
         groupBy={groupBy}
         defaultGroupRowsState={groupRowsState}
+        aggregationReducers={reducers}
       >
         <InfiniteTable<Person>
           domProps={domProps}
@@ -218,7 +223,6 @@ export default function GroupByExample() {
           groupColumn={groupColumn}
           hideEmptyGroupColumns={hideEmptyGroupColumns}
           groupRenderStrategy={groupRenderStrategy}
-          columnAggregations={columnAggregations}
         ></InfiniteTable>
       </DataSource>
     </div>

@@ -29,8 +29,4 @@ export interface InfiniteTableComputedValues<T> {
   // setColumnVisibility: (
   //   columnVisibility: InfiniteTablePropColumnVisibility,
   // ) => void;
-
-  // setColumnAggregations: (
-  //   columnAggregations: InfiniteTablePropColumnAggregations<T>,
-  // ) => void;
 }

@@ -23,10 +23,7 @@ import {
 } from './usePinnedRendering';
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
-import type {
-  InfiniteTablePropColumnAggregations,
-  Scrollbars,
-} from '../types/InfiniteTableProps';
+import type { Scrollbars } from '../types/InfiniteTableProps';
 import { usePrevious } from '../../hooks/usePrevious';
 
 type ListRenderingParam<T> = {
@@ -42,7 +39,6 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
 import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 import { GroupRowsState } from '../../DataSource';
-import { toMap } from '../utils/toMap';
 
 type ListRenderingResult = {
   scrollbars: Scrollbars;
@@ -189,9 +185,6 @@ export function useListRendering<T>(
         ) => {
           componentActions.columnVisibility = columnVisibility;
         },
-        setColumnAggregations: (
-          columnAggregations: InfiniteTablePropColumnAggregations<T>,
-        ) => (componentActions.columnAggregations = toMap(columnAggregations)),
         getState,
         getDataSourceState,
       };

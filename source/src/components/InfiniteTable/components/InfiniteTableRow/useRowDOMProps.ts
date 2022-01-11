@@ -53,9 +53,13 @@ export function useRowDOMProps<T>(
     domRef.current = node;
   }, []);
 
+  // TS hack to discriminate between for grouped vs non-grouped rows
+  const rest = rowInfo.isGroupRow
+    ? { data: rowInfo.data, rowInfo }
+    : { data: rowInfo.data, rowInfo };
+
   const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
-    data: rowInfo.data,
-    rowInfo,
+    ...rest,
     rowIndex,
     groupBy: rowInfo.groupBy,
   };

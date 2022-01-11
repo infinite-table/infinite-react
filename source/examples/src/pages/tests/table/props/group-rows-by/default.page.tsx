@@ -4,9 +4,9 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 import { data, Person } from './people';
-import { InfiniteTablePropColumnAggregations } from '@src/components/InfiniteTable/types/InfiniteTableProps';
 
 const columns = new Map<string, InfiniteTableColumn<Person>>([
   [
@@ -81,19 +81,14 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
     },
   ],
 ]);
-const columnAggregations: InfiniteTablePropColumnAggregations<Person> = new Map(
-  [
-    [
-      'salary',
-      {
-        initialValue: 0,
-        getter: (data) => data.salary,
-        reducer: (acc, sum) => acc + sum,
-        done: (sum, arr) => (arr.length ? sum / arr.length : 0),
-      },
-    ],
-  ],
-);
+const columnAggregations: DataSourcePropAggregationReducers<Person> = {
+  salary: {
+    initialValue: 0,
+    field: 'salary',
+    reducer: (acc, sum) => acc + sum,
+    done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  },
+};
 export default function GroupByExample() {
   return (
     <React.StrictMode>
@@ -101,6 +96,7 @@ export default function GroupByExample() {
         data={data}
         primaryKey="id"
         groupBy={[{ field: 'department' }, { field: 'team' }]}
+        aggregationReducers={columnAggregations}
         pivotBy={[
           {
             field: 'country',
@@ -120,7 +116,6 @@ export default function GroupByExample() {
                   position: 'relative',
                 },
               }}
-              columnAggregations={columnAggregations}
               columnDefaultWidth={150}
               columns={pivotColumns ?? columns}
               columnGroups={pivotColumnGroups}

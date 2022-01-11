@@ -1,15 +1,20 @@
-import { AggregationReducer, DataGroupResult } from '@src/utils/groupAndPivot';
+import { DataSourceAggregationReducer } from '@infinite-table/infinite-react';
+import { DataGroupResult } from '@src/utils/groupAndPivot';
 
 import { curry } from 'lodash';
 
 export function getReducerValue<T>(
   data: T[],
-  reducer: AggregationReducer<T, any>,
+  reducer: DataSourceAggregationReducer<T, any>,
 ) {
   let value = reducer.initialValue;
 
   value = data.reduce((acc, item) => {
-    const currentValue = reducer.getter(item);
+    const currentValue = reducer.getter
+      ? reducer.getter(item)
+      : reducer.field
+      ? item[reducer.field]
+      : null;
 
     return reducer.reducer(acc, currentValue, item);
   }, value);

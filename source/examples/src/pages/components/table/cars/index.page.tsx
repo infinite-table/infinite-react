@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   DataSource,
+  DataSourceAggregationReducer,
   InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
@@ -9,7 +10,6 @@ import {
 import { CarSale } from '@examples/datasets/CarSale';
 //@ts-ignore
 import carsales from '@examples/datasets/carsales';
-import { InfiniteTableColumnAggregator } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableProps';
 
 const columns = new Map<string, InfiniteTableColumn<CarSale>>([
   [
@@ -57,7 +57,7 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
           return (
             <>
               Total sales <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults![0]}</b>
+              <b>{rowInfo.reducerResults!.count}</b>
             </>
           );
         }
@@ -83,17 +83,12 @@ const columns = new Map<string, InfiniteTableColumn<CarSale>>([
 //   ['cat', 'end'],
 // ]);
 
-const sumAggregation: InfiniteTableColumnAggregator<CarSale, number> = {
+const countAggreation: DataSourceAggregationReducer<CarSale, number> = {
   initialValue: 0,
-  reducer: (a, b) => a + b,
+  reducer: (a) => a + 1,
 };
-const columnAggregations = new Map([
-  ['count', sumAggregation],
-  // ['model', sumAggregation],
-]);
+const reducers = { count: countAggreation };
 const columnOrder = ['Group column', 'model', 'cat', 'color', 'count', 'year'];
-
-(globalThis as any).columnAggregations = columnAggregations;
 
 function App() {
   const [cols, setColumns] = React.useState(columns);
@@ -107,7 +102,7 @@ function App() {
     data,
   }: {
     rowIndex: number;
-    data: CarSale | null;
+    data: CarSale | Partial<CarSale> | null;
   }) => {
     return {
       onClick() {
@@ -129,6 +124,7 @@ function App() {
         primaryKey="id"
         data={carsales}
         groupBy={[{ field: 'make' }, { field: 'year' }]}
+        aggregationReducers={reducers}
       >
         <InfiniteTable
           domProps={{
@@ -140,7 +136,6 @@ function App() {
               position: 'relative',
             },
           }}
-          columnAggregations={columnAggregations}
           columnDefaultWidth={columnDefaultWidth}
           columnMinWidth={columnMinWidth}
           columnOrder={columnOrder}

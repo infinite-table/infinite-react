@@ -1,5 +1,8 @@
 import { AggregationReducer } from '.';
-import type { DataSourcePivotBy } from '../../components/DataSource';
+import type {
+  DataSourceAggregationReducer,
+  DataSourcePivotBy,
+} from '../../components/DataSource';
 import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroups,
@@ -61,16 +64,21 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
   deepMap,
   pivotBy,
   pivotTotalColumnPosition,
-  aggregationReducers = [],
-  generatePivotColumnForSingleAggregation = false,
+  reducers = {},
+  showSeparatePivotColumnForSingleAggregation = false,
 }: {
   deepMap: DeepMap<KeyType, boolean>;
   pivotBy: DataSourcePivotBy<DataType>[];
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
-  aggregationReducers?: AggregationReducer<DataType, any>[];
-  generatePivotColumnForSingleAggregation?: boolean;
+  reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
+  showSeparatePivotColumnForSingleAggregation?: boolean;
 }): ComputedColumnsAndGroups<DataType> {
   const pivotLength = pivotBy.length;
+  const aggregationReducers: AggregationReducer<DataType, any>[] = Object.keys(
+    reducers,
+  ).map((key) => {
+    return { ...reducers[key], id: key };
+  });
   const columns: InfiniteTablePropColumnsMap<
     DataType,
     InfiniteTablePivotColumn<DataType>
@@ -95,7 +103,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
   >();
 
   const isSingleAggregationColumn =
-    !generatePivotColumnForSingleAggregation &&
+    !showSeparatePivotColumnForSingleAggregation &&
     aggregationReducers.length === 1;
 
   deepMap.visitDepthFirst((_value, keys: KeyType[], _indexInGroup, next) => {
@@ -148,11 +156,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           columnGroup: parentColumnGroupId,
           header,
           valueGetter: ({ rowInfo }) => {
-            const reducerResult =
-              rowInfo.pivotValuesMap?.get(keys)?.reducerResults[index];
-            const value = reducerResult?.value ?? null;
-
-            return value;
+            return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
+              reducer.id
+            ];
           },
         });
 
@@ -218,11 +224,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
             pivotBy,
             sortable: false,
             valueGetter: ({ rowInfo }) => {
-              const value =
-                rowInfo.pivotValuesMap?.get(keys)?.reducerResults[index]
-                  ?.value ?? null;
-
-              return value;
+              return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
+                reducer.id
+              ];
             },
           });
           columns.set(
@@ -245,7 +249,8 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
     columns.set('single', {
       header: 'Reduced',
       valueGetter: ({ rowInfo }) => {
-        return rowInfo.reducerResults?.[0]?.value;
+        const key = Object.keys(rowInfo.reducerResults || {})[0];
+        return rowInfo.reducerResults?.[key];
       },
     });
   }

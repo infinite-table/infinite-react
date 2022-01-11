@@ -409,7 +409,7 @@ export function getComponentStateRoot<
         if (oldValue === newValue) {
           continue;
         }
-        if (isControlled(key, props)) {
+        if (isControlled(key, props) || isControlled(key, prevProps)) {
           if (propsToForward.hasOwnProperty(k)) {
             let valueToSet = newValue;
             const forwardFn = propsToForward[k as keyof typeof propsToForward];

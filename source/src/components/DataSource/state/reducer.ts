@@ -28,7 +28,14 @@ function toRowInfo<T>(
   id: any,
   index: number,
 ): InfiniteTableRowInfo<T> {
-  return { data, collapsed: true, id, indexInAll: index, indexInGroup: index };
+  return {
+    data,
+    collapsed: true,
+    id,
+    indexInAll: index,
+    indexInGroup: index,
+    isGroupRow: false,
+  };
 }
 
 export function concludeReducer<T>(params: {
@@ -60,7 +67,7 @@ export function concludeReducer<T>(params: {
     'pivotBy',
     'aggregationReducers',
     'pivotTotalColumnPosition',
-    'generatePivotColumnForSingleAggregation',
+    'showSeparatePivotColumnForSingleAggregation',
     'sortInfo',
   ]);
 
@@ -99,6 +106,7 @@ export function concludeReducer<T>(params: {
         },
         dataArray,
       );
+      console.log(groupResult);
       const flattenResult = enhancedFlatten({
         groupResult,
         reducers: state.aggregationReducers,
@@ -116,9 +124,9 @@ export function concludeReducer<T>(params: {
             pivotBy,
 
             pivotTotalColumnPosition: state.pivotTotalColumnPosition ?? 'end',
-            aggregationReducers: state.aggregationReducers,
-            generatePivotColumnForSingleAggregation:
-              state.generatePivotColumnForSingleAggregation,
+            reducers: state.aggregationReducers,
+            showSeparatePivotColumnForSingleAggregation:
+              state.showSeparatePivotColumnForSingleAggregation,
           })
         : undefined;
 

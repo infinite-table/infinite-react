@@ -2,7 +2,6 @@ import * as React from 'react';
 import { MultisortInfo } from '../../utils/multisort';
 import { DeepMap } from '../../utils/DeepMap';
 import {
-  AggregationReducer,
   DeepMapGroupValueType,
   GroupBy,
   GroupKeyType,
@@ -26,6 +25,7 @@ export interface DataSourceDataParams<T> {
   sortInfo?: DataSourceSortInfo<T>;
   groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
+
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 }
 
@@ -65,6 +65,7 @@ export type DataSourcePropGroupBy<T> = DataSourceGroupBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
 export interface DataSourceMappedState<T> {
+  aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
   livePaginationCursor: DataSourceProps<T>['livePaginationCursor'];
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
@@ -77,8 +78,23 @@ export interface DataSourceMappedState<T> {
   sortInfo: DataSourceSingleSortInfo<T>[] | null;
 }
 
+export type DataSourceAggregationReducer<T, AggregationResultType> = {
+  field?: keyof T;
+  initialValue: AggregationResultType;
+  getter?: (data: T) => any;
+  reducer: (
+    accumulator: any,
+    value: any,
+    data: T,
+  ) => AggregationResultType | any;
+  done?: (
+    accumulatedValue: AggregationResultType | any,
+    array: T[],
+  ) => AggregationResultType;
+};
+
 export interface DataSourceSetupState<T> {
-  generatePivotColumnForSingleAggregation: boolean;
+  showSeparatePivotColumnForSingleAggregation: boolean;
   dataParams?: DataSourceDataParams<T>;
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
   originalDataArray: T[];
@@ -94,12 +110,18 @@ export interface DataSourceSetupState<T> {
   groupedAt: number;
   sortedAt: number;
   generateGroupRows: boolean;
-  aggregationReducers?: AggregationReducer<T, any>[];
+
   postSortDataArray?: T[];
   postGroupDataArray?: InfiniteTableRowInfo<T>[];
   pivotColumns?: Map<string, InfiniteTableColumn<T>>;
   pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
 }
+
+export type DataSourcePropAggregationReducers<T> = Record<
+  string,
+  DataSourceAggregationReducer<T, any>
+>;
+
 export interface DataSourceProps<T> {
   children:
     | React.ReactNode
@@ -117,6 +139,9 @@ export interface DataSourceProps<T> {
   pivotBy?: DataSourcePropPivotBy<T>;
   defaultPivotBy?: DataSourcePropPivotBy<T>;
   onPivotByChange?: (pivotBy: DataSourcePropPivotBy<T>) => void;
+
+  aggregationReducers?: DataSourcePropAggregationReducers<T>;
+  defaultAggregationReducers?: DataSourcePropAggregationReducers<T>;
 
   groupBy?: DataSourcePropGroupBy<T>;
   defaultGroupBy?: DataSourcePropGroupBy<T>;

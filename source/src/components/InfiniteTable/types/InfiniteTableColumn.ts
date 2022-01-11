@@ -8,26 +8,35 @@ import type {
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableColumnGroup, InfiniteTableRowInfo } from '.';
 import { CSSProperties } from 'react';
-import { AggregationReducer, PivotBy } from '../../../utils/groupAndPivot';
+import {
+  AggregationReducer,
+  InfiniteTableRowInfoGroup,
+  InfiniteTableRowInfoNormal,
+  PivotBy,
+} from '../../../utils/groupAndPivot';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
-export interface InfiniteTableColumnRenderParam<
+export type InfiniteTableColumnRenderParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
-> {
+> = {
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
-  data: DATA_TYPE | null;
-  rowInfo: InfiniteTableRowInfo<DATA_TYPE>;
   groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   rowIndex: number;
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   groupBy: DataSourceState<DATA_TYPE>['groupBy'];
-}
+} & (
+  | { rowInfo: InfiniteTableRowInfoNormal<DATA_TYPE>; data: DATA_TYPE }
+  | {
+      rowInfo: InfiniteTableRowInfoGroup<DATA_TYPE>;
+      data: Partial<DATA_TYPE> | null;
+    }
+);
 
 export type InfiniteTableColumnRenderValueParam<
   DATA_TYPE,
@@ -38,8 +47,8 @@ export type InfiniteTableColumnRowspanFnParams<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
-  data: DATA_TYPE | null;
   rowInfo: InfiniteTableRowInfo<DATA_TYPE>;
+  data: DATA_TYPE | Partial<DATA_TYPE> | null;
   groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   dataArray: InfiniteTableRowInfo<DATA_TYPE>[];
   rowIndex: number;
@@ -115,11 +124,19 @@ export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
   >;
 
 export type InfiniteTableColumnStyleFnParams<T> = {
-  data: T | null;
   value: Renderable;
-  rowInfo: InfiniteTableRowInfo<T>;
+
   column: InfiniteTableColumn<T>;
-};
+} & (
+  | {
+      data: T;
+      rowInfo: InfiniteTableRowInfoNormal<T>;
+    }
+  | {
+      data: Partial<T> | null;
+      rowInfo: InfiniteTableRowInfoGroup<T>;
+    }
+);
 export type InfiniteTableColumnStyleFn<T> = (
   params: InfiniteTableColumnStyleFnParams<T>,
 ) => undefined | React.CSSProperties;
@@ -135,11 +152,15 @@ export type InfiniteTableColumnClassName<T> =
   | string
   | InfiniteTableColumnClassNameFn<T>;
 
-export type InfiniteTableColumnValueGetterParams<T> = {
-  data: T | null;
-  rowInfo: InfiniteTableRowInfo<T>;
-  // groupRowInfo: InfiniteTableRowInfo<T> | null;
-};
+export type InfiniteTableColumnValueGetterParams<T> =
+  | {
+      data: T;
+      rowInfo: InfiniteTableRowInfoNormal<T>;
+    }
+  | {
+      data: Partial<T> | null;
+      rowInfo: InfiniteTableRowInfoGroup<T>;
+    };
 export type InfiniteTableColumnValueGetter<
   T,
   VALUE_GETTER_TYPE = Renderable,

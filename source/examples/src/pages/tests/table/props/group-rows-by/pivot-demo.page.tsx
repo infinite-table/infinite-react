@@ -4,13 +4,13 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
-  InfiniteTablePropColumnAggregations,
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
@@ -42,10 +42,9 @@ const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Developer> = {
-  //TODO continue here - move aggregations in datasource
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
   salary: { field: 'salary', ...avgReducer },
-  // age: { field: 'age', ...avgReducer },
+  age: { field: 'age', ...avgReducer },
 };
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
@@ -54,7 +53,17 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
 >([
   ['preferredLanguage', { field: 'preferredLanguage' }],
   ['age', { field: 'age' }],
-  ['salary', { field: 'salary', type: 'number' }],
+  [
+    'salary',
+    {
+      field: 'salary',
+      type: 'number',
+
+      // render: ({ rowInfo, data }) => {
+      //   return rowInfo.isGroupRow ? rowInfo.collapsed : data.age;
+      // },
+    },
+  ],
   ['canDesign', { field: 'canDesign' }],
   ['country', { field: 'country' }],
   ['firstName', { field: 'firstName' }],
@@ -85,7 +94,7 @@ export default function GroupByExample() {
 
   const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
     () => [
-      { field: 'currency' },
+      // { field: 'currency' },
       {
         field: 'country',
         columnGroup: ({ columnGroup }) => {
@@ -127,18 +136,17 @@ export default function GroupByExample() {
         data={dataSource}
         groupBy={groupBy}
         pivotBy={pivotBy}
+        aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
-              generatePivotColumnForSingleAggregation={false}
               domProps={domProps}
               columns={columns}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
-              columnDefaultWidth={180}
-              columnAggregations={columnAggregations}
+              columnDefaultWidth={220}
             />
           );
         }}

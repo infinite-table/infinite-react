@@ -70,20 +70,36 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       : null;
 
   if (column.valueGetter) {
-    value = column.valueGetter({
-      data,
-      rowInfo,
-      // groupRowInfo,
-    });
+    value = column.valueGetter(
+      // TS hack to discriminate between the grouped vs non-grouped rows
+      isGroupRow
+        ? {
+            data: rowInfo.data,
+            rowInfo,
+          }
+        : {
+            data: rowInfo.data,
+            rowInfo,
+          },
+    );
   }
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
+  const rest = rowInfo.isGroupRow
+    ? {
+        rowInfo,
+        data: rowInfo.data,
+      }
+    : {
+        rowInfo,
+        data: rowInfo.data,
+      };
+
   const stylingRenderParam: InfiniteTableColumnStyleFnParams<T> = {
     value,
     column,
-    rowInfo: rowInfo,
-    data,
+    ...rest,
   };
 
   let renderValue: Renderable = value;
@@ -92,9 +108,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     const renderParam: InfiniteTableColumnRenderParam<T> = {
       value,
       column,
-      rowInfo: rowInfo,
+
       groupRowInfo,
-      data,
+      ...rest,
       rowIndex,
       toggleGroupRow,
       toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
