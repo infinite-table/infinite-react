@@ -3,6 +3,10 @@ title: Releases
 layout: Home
 ---
 
+## 0.1.1 🚀 
+
+@milestone id="6"
+
 ## 0.1.0 🚀 
 
 This release introduces several breaking changes:

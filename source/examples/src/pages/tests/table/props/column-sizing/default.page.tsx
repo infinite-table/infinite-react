@@ -69,10 +69,10 @@ const defaultColumnSizing = {
 const columnTypes: InfiniteTablePropColumnTypes<Employee> = {
   'custom-number': {
     align: 'end',
-    width: 100,
+    defaultWidth: 100,
   },
   default: {
-    width: 500,
+    defaultWidth: 500,
     align: 'center',
     renderValue: ({ value }) => <>{value}!!!</>,
   },
