@@ -10,7 +10,6 @@ export default describe('Detect columns change', () => {
   beforeEach(async () => {
     await page.reload();
   });
-
   it('expect columns are correctly set when updated on useEffect', async () => {
     await page.waitForSelector('[data-column-id]');
 
