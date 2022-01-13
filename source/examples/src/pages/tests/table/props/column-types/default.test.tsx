@@ -10,7 +10,7 @@ export default describe('Column types tests', () => {
   });
   beforeEach(async () => {
     await page.reload();
-    // await page.waitForSelector('[data-column-id]');
+    await page.waitForSelector('[data-column-id]');
   });
 
   it('expect column types defaultWidth works correctly', async () => {
