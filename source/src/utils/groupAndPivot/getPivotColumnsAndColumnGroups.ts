@@ -87,6 +87,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
       'labels',
       {
         header: 'Row labels',
+        pivotBy,
         valueGetter: (params) => {
           const { rowInfo } = params;
           return rowInfo.groupKeys
@@ -146,6 +147,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
         const computedPivotColumn = prepareColumn({
           pivotBy,
           pivotColumn: true,
+          pivotTotalColumn: false,
           pivotAggregator: reducer,
           pivotAggregatorIndex: index,
           pivotGroupKeys: keys,
@@ -216,6 +218,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
             header,
             pivotAggregator: reducer,
             pivotAggregatorIndex: index,
+            pivotColumn: true,
             pivotTotalColumn: true,
             pivotGroupKeys: keys,
             pivotGroupKey: keys[keys.length - 1],
@@ -248,6 +251,8 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
   if (columns.size === 1) {
     columns.set('single', {
       header: 'Reduced',
+      pivotBy,
+      pivotColumn: true,
       valueGetter: ({ rowInfo }) => {
         const key = Object.keys(rowInfo.reducerResults || {})[0];
         return rowInfo.reducerResults?.[key];

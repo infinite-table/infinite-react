@@ -144,6 +144,11 @@ export default function GroupByExample() {
             <InfiniteTable<Developer>
               domProps={domProps}
               columns={columns}
+              pivotColumn={({ column }) => {
+                console.log(column);
+                // column.pivotBy
+                return column;
+              }}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={220}

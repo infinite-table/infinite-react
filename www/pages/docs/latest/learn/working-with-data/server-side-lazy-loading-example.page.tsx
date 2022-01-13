@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   DataSource,
+  DataSourcePropAggregationReducers,
   GroupRowsState,
   InfiniteTable,
 } from '@infinite-table/infinite-react';
@@ -9,7 +10,6 @@ import {
 import type {
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
-  InfiniteTablePropColumnAggregations,
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
@@ -72,7 +72,7 @@ const avgReducer: InfiniteTableColumnAggregator<
   },
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
+const reducers: DataSourcePropAggregationReducers<Developer> =
   {
     salary: avgReducer,
     age: {
@@ -87,11 +87,9 @@ export default function App() {
         data={dataSource}
         defaultGroupRowsState={groupRowsState}
         groupBy={groupBy}
+        aggregationReducers={reducers}
         primaryKey="id">
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnAggregations={columnAggregations}
-        />
+        <InfiniteTable<Developer> columns={columns} />
       </DataSource>
       {/* 
       <DataSource<Developer>

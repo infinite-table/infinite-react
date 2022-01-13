@@ -5,8 +5,10 @@ import { curry } from 'lodash';
 
 export function getReducerValue<T>(
   data: T[],
-  reducer: DataSourceAggregationReducer<T, any>,
+  container: Record<string, DataSourceAggregationReducer<T, any>>,
 ) {
+  const key = Object.keys(container)[0];
+  const reducer: DataSourceAggregationReducer<T, any> = container[key];
   let value = reducer.initialValue;
 
   value = data.reduce((acc, item) => {
@@ -19,7 +21,7 @@ export function getReducerValue<T>(
     return reducer.reducer(acc, currentValue, item);
   }, value);
 
-  return reducer.done ? reducer.done(value, data) : value;
+  return { [key]: reducer.done ? reducer.done(value, data) : value };
 }
 
 export function groupToItems<T>(result: DataGroupResult<T, any>) {

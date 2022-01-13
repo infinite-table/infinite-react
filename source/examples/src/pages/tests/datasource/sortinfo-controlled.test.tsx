@@ -22,6 +22,7 @@ export default describe('DataSource', () => {
         id: persons[0].id,
         indexInAll: 0,
         indexInGroup: 0,
+        isGroupRow: false,
       },
       {
         data: persons[1],
@@ -29,6 +30,7 @@ export default describe('DataSource', () => {
         id: persons[1].id,
         indexInAll: 1,
         indexInGroup: 1,
+        isGroupRow: false,
       },
     ]);
 
@@ -51,6 +53,7 @@ export default describe('DataSource', () => {
         collapsed: true,
         indexInAll: 0,
         indexInGroup: 0,
+        isGroupRow: false,
       },
       {
         collapsed: true,
@@ -58,6 +61,7 @@ export default describe('DataSource', () => {
         indexInAll: 1,
         indexInGroup: 1,
         id: persons[1].id,
+        isGroupRow: false,
       },
     ]);
 

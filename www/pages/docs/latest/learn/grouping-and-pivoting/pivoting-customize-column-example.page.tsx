@@ -4,13 +4,13 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
-  InfiniteTablePropColumnAggregations,
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
@@ -43,13 +43,15 @@ const avgReducer: InfiniteTableColumnAggregator<
   any
 > = {
   initialValue: 0,
-  getter: (data) => data.salary,
+  field: 'salary',
   reducer: (acc, sum) => acc + sum,
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
-const columnAggregations: InfiniteTablePropColumnAggregations<Developer> =
-  new Map([['salary', avgReducer]]);
+const columnAggregations: DataSourcePropAggregationReducers<Developer> =
+  {
+    salary: avgReducer,
+  };
 
 const columns: InfiniteTablePropColumns<Developer> =
   new Map<string, InfiniteTableColumn<Developer>>([
@@ -115,6 +117,7 @@ export default function GroupByExample() {
         data={dataSource}
         groupBy={groupBy}
         pivotBy={pivotBy}
+        aggregationReducers={columnAggregations}
         defaultGroupRowsState={groupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
@@ -123,7 +126,6 @@ export default function GroupByExample() {
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={180}
-              columnAggregations={columnAggregations}
             />
           );
         }}

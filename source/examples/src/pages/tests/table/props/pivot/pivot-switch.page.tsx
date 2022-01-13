@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
-  DataSourceAggregationReducer,
   DataSourceGroupBy,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';

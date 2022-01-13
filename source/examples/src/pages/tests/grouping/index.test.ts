@@ -232,8 +232,8 @@ export default xdescribe('Grouping', () => {
     const groupResult = group(
       {
         groupBy: [{ field: 'country' }, { field: 'age' }],
-        reducers: [
-          {
+        reducers: {
+          agg: {
             initialValue: 0,
             getter: (person: Person) => person.age,
             reducer: (a, b) => {
@@ -243,7 +243,7 @@ export default xdescribe('Grouping', () => {
               return value * 100;
             },
           },
-        ],
+        },
       },
       arr,
     );

@@ -18,7 +18,9 @@ import type {
   InfiniteTableColumn,
   InfiniteTableColumnRenderFunction,
   InfiniteTableComputedColumn,
+  InfiniteTableComputedPivotFinalColumn,
   InfiniteTablePivotColumn,
+  InfiniteTablePivotFinalColumn,
 } from './InfiniteTableColumn';
 import { InfiniteTablePropPivotTotalColumnPosition } from './InfiniteTableState';
 
@@ -174,8 +176,11 @@ export type InfiniteTableGroupColumnGetterOptions<T> = {
   groupBy: DataSourceGroupBy<T>[];
 };
 
-export type InfiniteTablePivotColumnGetterOptions<T> = {
-  column: InfiniteTablePivotColumn<T>;
+export type InfiniteTablePivotColumnGetterOptions<
+  T,
+  COL_TYPE = InfiniteTableColumn<T>,
+> = {
+  column: COL_TYPE;
   groupBy: DataSourcePropGroupBy<T>;
   pivotBy: DataSourcePropPivotBy<T>;
 };
@@ -189,8 +194,11 @@ export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & {
   id?: string;
 };
 export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> & {
-  renderValue?: InfiniteTableColumnRenderFunction<T>;
-  id?: string;
+  renderValue?: InfiniteTableColumnRenderFunction<
+    T,
+    InfiniteTableComputedPivotFinalColumn<T>
+  >;
+  // id?: string;
 };
 export type InfiniteTablePropGroupColumn<T> =
   | InfiniteTableGroupColumnBase<T>
@@ -200,10 +208,13 @@ export type InfiniteTableGroupColumnFunction<T> = (
   options: InfiniteTableGroupColumnGetterOptions<T>,
   toggleGroupRow: (groupKeys: any[]) => void,
 ) => InfiniteTableGroupColumnBase<T>;
-export type InfiniteTablePropPivotColumn<T> =
-  | InfiniteTablePivotColumnBase<T>
+export type InfiniteTablePropPivotColumn<
+  T,
+  COL_TYPE = InfiniteTableColumn<T>,
+> =
+  | Partial<InfiniteTablePivotColumnBase<T>>
   | ((
-      options: InfiniteTablePivotColumnGetterOptions<T>,
+      options: InfiniteTablePivotColumnGetterOptions<T, COL_TYPE>,
     ) => InfiniteTablePivotColumnBase<T>);
 
 export type InfiniteTablePropPivotRowLabelsColumn<T> =
@@ -221,10 +232,13 @@ export interface InfiniteTableProps<T> {
 
   viewportReservedWidth?: number;
 
-  // collapsePivotAggregationsInto
-  pivotColumn?: Partial<InfiniteTablePropPivotColumn<T>>;
-  pivotRowLabelsColumn?: Partial<InfiniteTablePropPivotRowLabelsColumn<T>>;
+  pivotColumn?: InfiniteTablePropPivotColumn<
+    T,
+    InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
+  >;
+  pivotRowLabelsColumn?: InfiniteTablePropPivotRowLabelsColumn<T>;
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
+
   groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
   hideEmptyGroupColumns?: boolean;

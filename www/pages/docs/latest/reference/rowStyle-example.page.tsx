@@ -11,13 +11,14 @@ import {
   Employee,
 } from './rowStyle-example-columns';
 
-const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
-  data,
-  rowInfo,
-}: {
-  data: Employee | null;
-  rowInfo: InfiniteTableRowInfo<Employee>;
-}) => {
+const rowStyle: InfiniteTablePropRowStyle<Employee> = (
+  param
+) => {
+  const { rowInfo } = param;
+  if (rowInfo.isGroupRow) {
+    return;
+  }
+  const { data } = rowInfo;
   const salary = data ? data.salary : 0;
 
   if (salary > 150_000) {

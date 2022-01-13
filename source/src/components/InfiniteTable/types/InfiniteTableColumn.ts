@@ -203,21 +203,12 @@ export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
   InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T>;
 
 export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
-  groupByField?: string | string[];
+  groupByField: string | string[];
   id?: string;
 };
 
-export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> & {
-  pivotBy?: DataSourcePivotBy<T>[];
-  pivotColumn?: true;
-  pivotTotalColumn?: true;
-  pivotGroupKeys?: any[];
-  pivotByForColumn?: DataSourcePivotBy<T>;
-  pivotIndexForColumn?: number;
-  pivotGroupKeyForColumn?: any;
-  // groupByField?: string | string[];
-  // renderValue?: InfiniteTableColumnRenderValueFunction<T>;
-};
+export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> &
+  Partial<InfiniteTablePivotFinalColumn<T, any>>;
 
 export type InfiniteTablePivotFinalColumnGroup<
   DataType,
@@ -233,10 +224,13 @@ export type InfiniteTablePivotFinalColumnGroup<
 export type InfiniteTablePivotFinalColumn<
   DataType,
   KeyType extends any = any,
-> = InfiniteTablePivotColumn<DataType> & {
+> = InfiniteTableColumn<DataType> & {
+  pivotBy: DataSourcePivotBy<DataType>[];
+  pivotColumn: true;
+  pivotTotalColumn: boolean;
   pivotAggregator: AggregationReducer<DataType, any>;
   pivotAggregatorIndex: number;
-  pivotBy: DataSourcePivotBy<DataType>[];
+
   pivotGroupKeys: KeyType[];
   pivotByAtIndex: PivotBy<DataType, KeyType>;
   pivotIndex: number;
@@ -269,5 +263,8 @@ type InfiniteTableComputedColumnBase<T> = {
 
 export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> &
   InfiniteTableComputedColumnBase<T> &
-  InfiniteTablePivotColumn<T> &
-  InfiniteTableGeneratedGroupColumn<T>;
+  Partial<InfiniteTablePivotFinalColumn<T>> &
+  Partial<InfiniteTableGeneratedGroupColumn<T>>;
+
+export type InfiniteTableComputedPivotFinalColumn<T> =
+  InfiniteTableComputedColumn<T> & InfiniteTablePivotFinalColumn<T>;

@@ -106,7 +106,7 @@ export function concludeReducer<T>(params: {
         },
         dataArray,
       );
-      console.log(groupResult);
+
       const flattenResult = enhancedFlatten({
         groupResult,
         reducers: state.aggregationReducers,

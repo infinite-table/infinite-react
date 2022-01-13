@@ -233,11 +233,11 @@ export default describe('Pivot', () => {
       byDepartmentTeamCountryAge('devops', 'infrastructure', 'Italy', 20),
     );
 
-    expect(res?.reducerResults).toEqual([
-      getReducerValue(res?.items!, avgReducer),
-    ]);
+    expect(res?.reducerResults).toEqual(
+      getReducerValue(res?.items!, { avg: avgReducer }),
+    );
     // see pivot.png in current folder for devops/infrastructure/Italy/20
-    expect(res?.reducerResults).toEqual([70_000]);
+    expect(res?.reducerResults).toEqual({ avg: 70_000 });
 
     // see pivot.png in current folder for devops/infrastructure/Italy/25
     // which is an empty position
@@ -251,9 +251,9 @@ export default describe('Pivot', () => {
       byDepartmentTeamCountry('devops', 'infrastructure', 'Italy'),
     );
 
-    expect(resItaly?.reducerResults).toEqual([
-      getReducerValue(resItaly?.items!, avgReducer),
-    ]);
-    expect(resItaly?.reducerResults).toEqual([65_000]); //see pivot.png in current folder
+    expect(resItaly?.reducerResults).toEqual(
+      getReducerValue(resItaly?.items!, { avg: avgReducer }),
+    );
+    expect(resItaly?.reducerResults).toEqual({ avg: 65_000 }); //see pivot.png in current folder
   });
 });

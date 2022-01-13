@@ -4,7 +4,10 @@ import { DataSourcePropGroupBy, DataSourcePropPivotBy } from '../../DataSource';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 import { InfiniteTableProps } from '../types';
-import { InfiniteTablePivotColumn } from '../types/InfiniteTableColumn';
+import {
+  InfiniteTableComputedPivotFinalColumn,
+  InfiniteTablePivotColumn,
+} from '../types/InfiniteTableColumn';
 import { InfiniteTableState } from '../types/InfiniteTableState';
 import { display, alignItems, cssEllipsisClassName } from '../utilities.css';
 
@@ -51,7 +54,7 @@ export function getComputedPivotColumnsFromDataSourcePivotColumns<T>(
           column = {
             ...column,
             ...pivotColumn({
-              column,
+              column: column as InfiniteTableComputedPivotFinalColumn<T>,
               pivotBy,
               groupBy,
             }),
