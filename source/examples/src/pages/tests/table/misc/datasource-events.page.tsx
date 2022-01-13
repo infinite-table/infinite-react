@@ -1,0 +1,266 @@
+import * as React from 'react';
+
+import {
+  InfiniteTable,
+  InfiniteTableColumn,
+  DataSource,
+  DataSourceSingleSortInfo,
+  DataSourceDataParams,
+} from '@infinite-table/infinite-react';
+
+import {
+  QueryClient,
+  QueryClientProvider,
+  useInfiniteQuery,
+} from 'react-query';
+import { useCallback } from 'react';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const emptyArray: Employee[] = [];
+
+export const columns = new Map<string, InfiniteTableColumn<Employee>>([
+  ['id', { field: 'id' }],
+  [
+    'country',
+    {
+      field: 'country',
+    },
+  ],
+  ['city', { field: 'city' }],
+  ['team', { field: 'team' }],
+  ['department', { field: 'department' }],
+  ['firstName', { field: 'firstName' }],
+  ['lastName', { field: 'lastName' }],
+  ['salary', { field: 'salary' }],
+  ['age', { field: 'age' }],
+]);
+
+type Employee = {
+  id: number;
+  companyName: string;
+  companySize: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  countryCode: string;
+  city: string;
+  streetName: string;
+  streetNo: number;
+  department: string;
+  team: string;
+  salary: number;
+  age: number;
+  email: string;
+};
+
+const PAGE_SIZE = 5;
+
+const dataSource = ({
+  sortInfo,
+  livePaginationCursor = 0,
+}: {
+  sortInfo: DataSourceSingleSortInfo<Employee> | null;
+  livePaginationCursor: number;
+}) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_DATAURL +
+      `/employees10k?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
+        sortInfo?.dir === 1 ? 'asc' : 'desc'
+      }&_start=${livePaginationCursor}`,
+  )
+    .then(async (r) => {
+      const data = await r.json();
+      // we need the remote count, so we take it from headers
+      const total = Number(r.headers.get('X-Total-Count')!);
+      return { data, total };
+    })
+    .then(({ data, total }: { data: Employee[]; total: number }) => {
+      const page = livePaginationCursor / PAGE_SIZE + 1;
+
+      const prevPageCursor = Math.max(PAGE_SIZE * (page - 1), 0);
+      return {
+        data,
+        hasMore: total > PAGE_SIZE * page,
+        page,
+        prevPageCursor,
+        nextPageCursor: prevPageCursor + data.length,
+      };
+    })
+    .then(
+      (
+        response,
+      ): Promise<{
+        data: Employee[];
+        hasMore: boolean;
+        page: number;
+        nextPageCursor: number;
+        prevPageCursor: number;
+      }> => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(response);
+          }, 150);
+        });
+      },
+    );
+};
+
+const log = (...args: any[]) => {
+  console.log(...args);
+};
+
+const domProps = {
+  style: { flex: 1 },
+};
+type SortInfo =
+  | DataSourceSingleSortInfo<Employee>
+  | DataSourceSingleSortInfo<Employee>[]
+  | null;
+const Example = () => {
+  const [sortInfo, setSortInfo] = React.useState<SortInfo>(null);
+  const [dataParams, setDataParams] = React.useState<
+    Partial<DataSourceDataParams<Employee>>
+  >({
+    groupBy: [],
+    livePaginationCursor: 0,
+  });
+  const {
+    data,
+    fetchNextPage: fetchNext,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    ['employees', sortInfo, dataParams.groupBy],
+    ({ pageParam = 0 }) => {
+      const params = {
+        livePaginationCursor: pageParam,
+        sortInfo: sortInfo as DataSourceSingleSortInfo<Employee> | null,
+      };
+
+      return dataSource(params);
+    },
+
+    {
+      keepPreviousData: true,
+      getPreviousPageParam: (firstPage) => firstPage.prevPageCursor || 0,
+      getNextPageParam: (lastPage) => {
+        const nextPageCursor = lastPage.hasMore
+          ? lastPage.nextPageCursor
+          : undefined;
+
+        return nextPageCursor;
+      },
+
+      select: (data) => {
+        const flatData = data.pages.flatMap((x) => x.data);
+        const nextPageCursor = data.pages[data.pages.length - 1].nextPageCursor;
+
+        const result = {
+          pages: flatData,
+          pageParams: [nextPageCursor],
+        };
+
+        return result;
+      },
+    },
+  );
+
+  const onDataParamsChange = useCallback(
+    (dataParams: DataSourceDataParams<Employee>) => {
+      log(
+        'data params changed',
+        dataParams,
+        isFetchingNextPage ? 'while fetching' : undefined,
+      );
+
+      setDataParams(dataParams);
+    },
+    [isFetchingNextPage],
+  );
+
+  const onSortInfoChange = useCallback((sortInfo: SortInfo) => {
+    console.clear();
+    log('sort info changed', sortInfo);
+    setSortInfo(sortInfo);
+  }, []);
+
+  const [scrollTopId, setScrollTop] = React.useState(0);
+
+  React.useEffect(() => {
+    // when sorting changes, scroll to the top
+    setScrollTop(Date.now());
+  }, [dataParams.sortInfo]);
+
+  const fetchNextPage = () => {
+    if (isFetchingNextPage) {
+      log('fetch next page cancelled: already fetching');
+      return;
+    }
+
+    fetchNext();
+  };
+
+  React.useEffect(() => {
+    fetchNextPage();
+  }, [dataParams]);
+
+  const livePaginationCursor = (data?.pageParams[0] as number) || 0;
+
+  return (
+    <React.StrictMode>
+      <div
+        style={{
+          display: 'flex',
+          flex: 1,
+          color: 'var(--infinite-row-color)',
+          flexFlow: 'column',
+          background: 'var(--infinite-background)',
+        }}
+      >
+        <div style={{ padding: 10 }}>
+          <b>Open the console tab</b> and make sure that more than 5 records are
+          displayed
+          <br />
+          Then <b>sort by clicking on country header</b>
+        </div>
+
+        <DataSource<Employee>
+          primaryKey="id"
+          // take the data from `data.pages`,
+          // as returned from our react-query select function
+
+          sortInfo={dataParams?.sortInfo}
+          data={data?.pages || emptyArray}
+          loading={isFetchingNextPage}
+          onDataParamsChange={onDataParamsChange}
+          onSortInfoChange={onSortInfoChange}
+          livePagination
+          livePaginationCursor={livePaginationCursor}
+        >
+          <InfiniteTable<Employee>
+            domProps={domProps}
+            scrollTopId={scrollTopId}
+            columnDefaultWidth={200}
+            columns={columns}
+          />
+        </DataSource>
+      </div>
+    </React.StrictMode>
+  );
+};
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+    </QueryClientProvider>
+  );
+}
+
+export default App;
