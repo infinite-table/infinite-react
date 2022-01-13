@@ -191,11 +191,27 @@ When we implement filtering, you'll also have access to the column filter.
 
 > Specifies the column type - a column type is a set of properties that describes the column. Column types allow to easily apply the same properties to multiple columns.
 
-For now there are only 2 column types, but more are coming soon:
- * `string` - the default type, if none is specified.
- * `number`
 
-Specifying the correct column type will ensure the correct sorting function is used.
+<Note>
+
+Specifying `type: "number"` for numeric columns will ensure correct number sorting function is used (when sorting is done client-side).
+
+</Note>
+
+See <PropLink name="columnTypes"/> for more details on using column types.
+
+
+<Note>
+By default, all columns have the `default` column type applied. So, if you define the `default` column type, but don't specify any <PropLink name="columns.type">type</PropLink> for a column, the default column type properties will be applied to that column.
+</Note>
+
+<Note>
+
+When you want both the default type and another type to be applied, you can do so by specifying `type: ["default", "second-type"]`.
+
+When you dont want the default type to be applied, use  `type: null`.
+
+</Note>
 
 See the example below - `id` and `age` columns are `type='number'`.
 
@@ -209,6 +225,31 @@ See the example below - `id` and `age` columns are `type='number'`.
 </Sandpack>
 </Prop>
 
+<Prop name="columns.defaultFlex" type="number" >
+
+> Specifies a default flex for the column
+
+<Note>
+
+If you want more control on sizing, use controlled <PropLink name="columnSizing" /> (or uncontrolled <PropLink name="defaultColumnSizing" />).
+</Note>
+
+See related <PropLink name="columns.defaultWidth" />
+
+</Prop>
+
+<Prop name="columns.defaultWidth" type="number" >
+
+> Specifies a default width for the column
+
+<Note>
+
+If you want more control on sizing, use controlled <PropLink name="columnSizing" /> (or uncontrolled <PropLink name="defaultColumnSizing" />).
+</Note>
+
+See related <PropLink name="columns.defaultFlex" />
+
+</Prop>
 
 <Prop name="columnSizing" type="(Map|Record)<string,{width,flex,...}>">
 
@@ -305,6 +346,36 @@ A column can either be flexible or fixed. For flexible columns, use <PropLink na
 
 </Prop>
 
+
+<Prop name="columnTypes" type="Record<string,InfiniteTableColumnType>">
+
+> Specifies an object that maps column type ids to column types. Column types are used to apply the same configuration/properties to multiple columns.
+
+<Note>
+By default, all columns have the `default` column type applied. So, if you define the `default` column type, but don't specify any <PropLink name="columns.type">type</PropLink> for a column, the default column type properties will be applied to that column.
+</Note>
+
+
+
+The following properties are currently supported for defining a column type:
+
+ * `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
+ * `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
+ * `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
+ * `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
+ * `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
+ * `renderValue` - See <PropLink name="column.renderValue" />
+ * `valueGetter` - See <PropLink name="column.valueGetter" />
+ * `header` - See <PropLink name="column.header" />
+ * `align` - See <PropLink name="column.align" />
+ * `verticalAlign` - See <PropLink name="column.verticalAlign" />
+ * `sortable` - See <PropLink name="column.sortable" />
+
+<Note>
+When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.
+</Note>
+
+</Prop>
 
 <Prop name="defaultColumnOrder">
 

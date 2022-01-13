@@ -28,6 +28,17 @@ export const getHeaderCellByColumnId = async (columnId: string) => {
   return await page.$(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
+export const getHeaderCellWidthByColumnId = async (
+  columnId: string,
+): Promise<number> => {
+  const node = await getHeaderCellByColumnId(columnId);
+
+  const value = await node!.evaluate(
+    (node) => node.getBoundingClientRect().width,
+  );
+  return value;
+};
+
 export const getHeaderColumnCells = async () => {
   const cells = await page.$$(`.InfiniteHeader [data-name="Cell"]`);
 

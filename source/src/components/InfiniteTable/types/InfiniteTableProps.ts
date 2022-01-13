@@ -16,6 +16,7 @@ import { LoadMaskProps } from '../components/LoadMask';
 import type {
   InfiniteTableBaseColumn,
   InfiniteTableColumn,
+  InfiniteTableColumnPinned,
   InfiniteTableColumnRenderFunction,
   InfiniteTableComputedColumn,
   InfiniteTableComputedPivotFinalColumn,
@@ -73,8 +74,9 @@ export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
 export type InfiniteTableColumnType<T> = {
   minWidth?: number;
   maxWidth?: number;
-  width?: number;
-  flex?: number;
+  defaultWidth?: number;
+  defaultFlex?: number;
+
   header?: InfiniteTableColumn<T>['header'];
   comparer?: InfiniteTableColumn<T>['comparer'];
   draggable?: InfiniteTableColumn<T>['draggable'];
@@ -82,8 +84,10 @@ export type InfiniteTableColumnType<T> = {
   resizable?: InfiniteTableColumn<T>['resizable'];
   align?: InfiniteTableColumn<T>['align'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
+  defaultPinned?: InfiniteTableColumnPinned;
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
+  valueGetter?: InfiniteTableColumn<T>['valueGetter'];
 };
 export type InfiniteTablePropColumnTypesMap<T> = Map<
   'default' | string,

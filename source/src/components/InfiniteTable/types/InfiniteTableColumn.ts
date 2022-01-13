@@ -197,6 +197,9 @@ export type InfiniteTableBaseColumn<T> = {
 
   valueGetter?: InfiniteTableColumnValueGetter<T>;
 
+  defaultWidth?: number;
+  defaultFlex?: number;
+
   // value
 };
 export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &

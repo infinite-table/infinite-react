@@ -191,8 +191,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
       const colTypeSizing: InfiniteTableColumnSizingOptions = {
         minWidth: colType?.minWidth,
         maxWidth: colType?.maxWidth,
-        width: colType?.width,
-        flex: colType?.flex,
+        width: colType?.defaultWidth,
+        flex: colType?.defaultFlex,
       };
       let colSizing = columnSizing.get(colId) || {};
 
@@ -370,14 +370,16 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const result: InfiniteTableComputedColumn<T> = {
       align: colType.align,
       verticalAlign: colType.verticalAlign,
+      valueGetter: colType.valueGetter,
       renderValue: colType.renderValue,
       render: colType.render,
+
       ...c,
       computedWidth,
       computedAbsoluteOffset,
       computedPinningOffset,
       computedOffset,
-      computedSortable: c.sortable ?? sortable ?? true,
+      computedSortable: c.sortable ?? colType.sortable ?? sortable ?? true,
       computedSortInfo,
       computedSortIndex,
       computedMultiSort: multiSort,
@@ -393,7 +395,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedLast,
       toggleSort,
       id: id as string,
-      header: c.header ?? c.name ?? c.field,
+      header: c.header ?? colType.header ?? c.name ?? c.field,
     };
 
     computedOffset += computedWidth;
