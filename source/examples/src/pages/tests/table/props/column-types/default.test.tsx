@@ -8,7 +8,6 @@ export default describe('Detect columns change', () => {
   beforeAll(async () => {
     await page.goto(`${process.env.BASEURL}/table/props/column-types/default`);
   });
-
   beforeEach(async () => {
     await page.reload();
     await page.waitForSelector('[data-column-id]');
