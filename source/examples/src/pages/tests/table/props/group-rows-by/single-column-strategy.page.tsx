@@ -4,7 +4,6 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
-  // GroupRowsState,
   DataSourceGroupBy,
   InfiniteTablePropColumnGroups,
   DataSourcePropAggregationReducers,
