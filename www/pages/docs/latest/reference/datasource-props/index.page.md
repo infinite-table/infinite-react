@@ -9,7 +9,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <Prop name="aggregationReducers" type="Record<string, DataSourceAggregationReducer>">
 
-> Specifies the functions to use for aggregating data
+> Specifies the functions to use for aggregating data. The object is a map where the keys are ids for aggregations and values are object of the shape described below.
 
 The `DataSourceAggregationReducer` type can have the following properties
 * `initialValue` - type `any`, mandatory
@@ -17,6 +17,16 @@ The `DataSourceAggregationReducer` type can have the following properties
 * `getter`: `(data:T)=> any` - a getter function, called with the current `data` object()
 * `reducer`:  `(accumulator, value, data) => any`
 * `done`: `(accumulator, arr) => any`
+
+
+<Sandpack title="Aggregation demo - see `salary` column">
+
+```ts file=groupBy-example.page.tsx
+```
+```ts file=columns.ts
+```
+</Sandpack> 
+
 
 </Prop>
 

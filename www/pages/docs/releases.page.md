@@ -3,6 +3,14 @@ title: Releases
 layout: Home
 ---
 
+## 0.1.0 🚀 
+
+This release introduces several breaking changes:
+
+* `DataSource.groupRowsBy` has been renamed to <DataSourcePropLink name="groupBy"/>
+* `InfiniteTable.columnAggregations` has been removed and you have to use <DataSourcePropLink name="aggregationReducers" />
+
+@milestone id="5"
 
 ## 0.0.10 🚀 
 

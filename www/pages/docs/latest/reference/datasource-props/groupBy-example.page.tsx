@@ -3,6 +3,7 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropGroupBy,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import { columns, Employee } from './columns';
@@ -21,11 +22,23 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
   },
 ];
 
+const reducers: DataSourcePropAggregationReducers<Employee> =
+  {
+    avgSalary: {
+      reducer: (acc, value) => acc + value,
+      done: (sum, arr) =>
+        Math.floor(arr.length ? sum / arr.length : 0),
+      field: 'salary',
+      initialValue: 0,
+    },
+  };
+
 export default function App() {
   return (
     <DataSource<Employee>
       data={dataSource}
       primaryKey="id"
+      aggregationReducers={reducers}
       groupBy={groupBy}>
       <InfiniteTable<Employee>
         columns={columns}

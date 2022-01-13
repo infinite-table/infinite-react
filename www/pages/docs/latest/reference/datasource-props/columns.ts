@@ -18,6 +18,8 @@ export type Employee = {
   email: string;
 };
 
+const formatter = new Intl.NumberFormat('en-US');
+
 export const columns = new Map<
   string,
   InfiniteTableColumn<Employee>
@@ -52,6 +54,12 @@ export const columns = new Map<
       field: 'salary',
       type: 'number',
       header: 'Salary',
+      renderValue: ({ value, rowInfo }) => {
+        value = formatter.format(value as number);
+        return rowInfo.isGroupRow
+          ? `Avg salary: $ ${value}`
+          : value;
+      },
     },
   ],
   [
