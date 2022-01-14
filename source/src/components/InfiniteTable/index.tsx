@@ -136,7 +136,7 @@ export const InfiniteTableComponent = React.memo(
 
     React.useLayoutEffect(() => {
       // this needs to be useLayoutEffect
-      // we on live Pagination cursor change we need this - ref #lvpgn
+      // on live Pagination cursor change we need this - ref #lvpgn
       const dataSourceState = getDataSourceState();
       const { onScrollbarsChange } = getInfiniteTableState();
       const { notifyScrollbarsChange } = dataSourceState;
@@ -289,6 +289,7 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
     </InfiniteTableRoot>
   );
   return <React.StrictMode>{table}</React.StrictMode>;
+  // return table;
 }
 InfiniteTable.defaultProps = {
   rowHeight: 40,

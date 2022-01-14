@@ -32,6 +32,10 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     scrollBottomId: Symbol('scrollBottomId'),
     showSeparatePivotColumnForSingleAggregation: false,
 
+    propsCache: new Map<keyof DataSourceProps<T>, WeakMap<any, any>>([
+      ['sortInfo', new WeakMap()],
+    ]),
+
     pivotColumns: undefined,
     pivotColumnGroups: undefined,
     dataArray,
@@ -60,7 +64,9 @@ function getCompareObject<T>(
 
   return obj;
 }
-export const forwardProps = <T>(): ForwardPropsToStateFnResult<
+export const forwardProps = <T>(
+  setupState: DataSourceSetupState<T>,
+): ForwardPropsToStateFnResult<
   DataSourceProps<T>,
   DataSourceMappedState<T>
 > => {
@@ -71,11 +77,11 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
-    livePaginationCursor: 1,
     aggregationReducers: 1,
 
     loading: (loading) => loading ?? false,
-    sortInfo: (sortInfo) => normalizeSortInfo(sortInfo),
+    sortInfo: (sortInfo) =>
+      normalizeSortInfo(sortInfo, setupState.propsCache.get('sortInfo')),
     groupBy: (groupBy) => groupBy ?? [],
     groupRowsState: (groupRowsState) => {
       return (
@@ -93,15 +99,31 @@ export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
   state: DataSourceState<T>;
 }): DataSourceDerivedState<T> {
-  const { props } = params;
+  const { props, state } = params;
 
   const controlledSort = isControlledValue(props.sortInfo);
-  return {
+
+  const result: DataSourceDerivedState<T> = {
     controlledSort,
     multiSort: Array.isArray(
       controlledSort ? props.sortInfo : props.defaultSortInfo,
     ),
   };
+
+  if (props.livePagination) {
+    const livePaginationCursor =
+      typeof props.livePaginationCursor === 'function'
+        ? props.livePaginationCursor({
+            array: state.dataArray,
+            length: state.dataArray.length,
+            lastItem: state.dataArray[state.dataArray.length - 1].data,
+          })
+        : props.livePaginationCursor;
+
+    result.livePaginationCursor = livePaginationCursor;
+  }
+
+  return result;
 }
 
 export function getInterceptActions<T>(): ComponentInterceptedActions<

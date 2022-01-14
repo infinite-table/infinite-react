@@ -127,8 +127,15 @@ The function is called with an object that has the following properties:
 ```ts file=../../learn/working-with-data/live-pagination-example.page.tsx
 ```
 </Sandpack>
-
 </Prop>
+
+<Prop name="onLivePaginationCursorChange" type="(cursor)=> void">
+
+> A function to be called when the <Prop name="livePaginationCursor" /> changes.
+
+Also see related <PropLink name="onDataParamsChange" />.
+
+</PropLink>
 
 </PropTable> 
 

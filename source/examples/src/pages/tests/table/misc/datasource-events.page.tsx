@@ -66,12 +66,12 @@ const dataSource = ({
   sortInfo,
   livePaginationCursor = 0,
 }: {
-  sortInfo: DataSourceSingleSortInfo<Employee> | null;
+  sortInfo?: DataSourceSingleSortInfo<Employee>;
   livePaginationCursor: number;
 }) => {
   return fetch(
     process.env.NEXT_PUBLIC_DATAURL +
-      `/employees10k?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
+      `/employees100?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
         sortInfo?.dir === 1 ? 'asc' : 'desc'
       }&_start=${livePaginationCursor}`,
   )
@@ -84,13 +84,13 @@ const dataSource = ({
     .then(({ data, total }: { data: Employee[]; total: number }) => {
       const page = livePaginationCursor / PAGE_SIZE + 1;
 
-      const prevPageCursor = Math.max(PAGE_SIZE * (page - 1), 0);
+      const prevPageCursor = livePaginationCursor - PAGE_SIZE; //Math.max(PAGE_SIZE * (page - 2), 0);
       return {
         data,
         hasMore: total > PAGE_SIZE * page,
         page,
         prevPageCursor,
-        nextPageCursor: prevPageCursor + data.length,
+        nextPageCursor: prevPageCursor + PAGE_SIZE + data.length,
       };
     })
     .then(
@@ -106,7 +106,7 @@ const dataSource = ({
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve(response);
-          }, 150);
+          }, 550);
         });
       },
     );
@@ -119,28 +119,27 @@ const log = (...args: any[]) => {
 const domProps = {
   style: { flex: 1 },
 };
-type SortInfo =
-  | DataSourceSingleSortInfo<Employee>
-  | DataSourceSingleSortInfo<Employee>[]
-  | null;
 const Example = () => {
-  const [sortInfo, setSortInfo] = React.useState<SortInfo>(null);
   const [dataParams, setDataParams] = React.useState<
     Partial<DataSourceDataParams<Employee>>
   >({
     groupBy: [],
-    livePaginationCursor: 0,
+    sortInfo: undefined,
+    livePaginationCursor: null,
   });
+
   const {
     data,
     fetchNextPage: fetchNext,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['employees', sortInfo, dataParams.groupBy],
+    ['employees', dataParams.sortInfo, dataParams.groupBy],
     ({ pageParam = 0 }) => {
       const params = {
         livePaginationCursor: pageParam,
-        sortInfo: sortInfo as DataSourceSingleSortInfo<Employee> | null,
+        sortInfo: dataParams.sortInfo as
+          | DataSourceSingleSortInfo<Employee>
+          | undefined,
       };
 
       return dataSource(params);
@@ -148,7 +147,8 @@ const Example = () => {
 
     {
       keepPreviousData: true,
-      getPreviousPageParam: (firstPage) => firstPage.prevPageCursor || 0,
+      getPreviousPageParam: (firstPage) =>
+        firstPage.prevPageCursor ?? -PAGE_SIZE,
       getNextPageParam: (lastPage) => {
         const nextPageCursor = lastPage.hasMore
           ? lastPage.nextPageCursor
@@ -173,22 +173,20 @@ const Example = () => {
 
   const onDataParamsChange = useCallback(
     (dataParams: DataSourceDataParams<Employee>) => {
-      log(
-        'data params changed',
-        dataParams,
-        isFetchingNextPage ? 'while fetching' : undefined,
-      );
+      const params = {
+        groupBy: dataParams.groupBy,
+        sortInfo: dataParams.sortInfo,
+        livePaginationCursor: dataParams.livePaginationCursor,
+      };
 
-      setDataParams(dataParams);
+      if (dataParams.changes?.livePaginationCursor) {
+        fetchNextPage();
+      }
+
+      setDataParams(params);
     },
-    [isFetchingNextPage],
+    [],
   );
-
-  const onSortInfoChange = useCallback((sortInfo: SortInfo) => {
-    console.clear();
-    log('sort info changed', sortInfo);
-    setSortInfo(sortInfo);
-  }, []);
 
   const [scrollTopId, setScrollTop] = React.useState(0);
 
@@ -206,11 +204,14 @@ const Example = () => {
     fetchNext();
   };
 
-  React.useEffect(() => {
-    fetchNextPage();
-  }, [dataParams]);
+  const livePaginationQueryCursor = (data?.pageParams[0] as number) || 0;
 
-  const livePaginationCursor = (data?.pageParams[0] as number) || 0;
+  React.useEffect(() => {
+    setDataParams((dataParams) => ({
+      ...dataParams,
+      livePaginationCursor: livePaginationQueryCursor,
+    }));
+  }, [livePaginationQueryCursor]);
 
   return (
     <React.StrictMode>
@@ -239,9 +240,8 @@ const Example = () => {
           data={data?.pages || emptyArray}
           loading={isFetchingNextPage}
           onDataParamsChange={onDataParamsChange}
-          onSortInfoChange={onSortInfoChange}
           livePagination
-          livePaginationCursor={livePaginationCursor}
+          livePaginationCursor={dataParams?.livePaginationCursor}
         >
           <InfiniteTable<Employee>
             domProps={domProps}

@@ -10,3 +10,5 @@ export {
 } from './components/hooks/useComponentState';
 
 export { interceptMap } from './components/hooks/useInterceptedMap';
+
+export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';

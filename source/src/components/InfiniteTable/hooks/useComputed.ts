@@ -18,6 +18,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const {
     componentActions: dataSourceActions,
     componentState: dataSourceState,
+    getState: getDataSourceState,
   } = useDataSourceContextValue<T>();
 
   const {
@@ -54,11 +55,17 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   useColumnsWhen<T>();
 
-  const setSortInfo = useCallback((sortInfo: DataSourceSingleSortInfo<T>[]) => {
-    const newSortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
-    //@ts-ignore
-    dataSourceActions.sortInfo = newSortInfo;
-  }, []);
+  const setSortInfo = useCallback(
+    (sortInfo: DataSourceSingleSortInfo<T>[]) => {
+      const newSortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
+      //@ts-ignore
+      dataSourceActions.sortInfo = newSortInfo;
+      if (getDataSourceState().livePagination) {
+        dataSourceActions.livePaginationCursor = null;
+      }
+    },
+    [getDataSourceState],
+  );
 
   const columns = componentState.computedColumns;
 

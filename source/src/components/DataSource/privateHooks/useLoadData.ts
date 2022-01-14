@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { dbg } from '../../../utils/debug';
 
 import {
   ComponentStateGeneratedActions,
@@ -13,10 +14,25 @@ import {
   DataSourceState,
   DataSourceRemoteData,
   DataSourceLivePaginationCursorValue,
+  DataSourceDataParamsChanges,
 } from '../types';
+
+const debug = dbg('DataSource:useLoadData');
+
+function anonimizeValues(arg: Record<string, any>) {
+  const result: Record<string, true> = {};
+
+  for (var k in arg)
+    if (arg.hasOwnProperty(k)) {
+      result[k] = true;
+    }
+
+  return result;
+}
 
 export function buildDataSourceDataParams<T>(
   componentState: DataSourceState<T>,
+  changes?: DataSourceDataParamsChanges<T>,
 ): DataSourceDataParams<T> {
   const sortInfo = componentState.multiSort
     ? componentState.sortInfo
@@ -33,18 +49,23 @@ export function buildDataSourceDataParams<T>(
     dataSourceParams.livePaginationCursor = componentState.livePaginationCursor;
   }
 
+  if (changes !== undefined) {
+    dataSourceParams.changes = changes;
+  }
+
   return dataSourceParams;
 }
 
 function notifyDataParamsChanged<T>(
   componentState: DataSourceState<T>,
   actions: ComponentStateGeneratedActions<DataSourceState<T>>,
+  changes?: DataSourceDataParamsChanges<T>,
 ) {
   if (typeof componentState.data === 'function') {
     loadData(componentState.data, componentState, actions);
   }
 
-  const dataParams = buildDataSourceDataParams(componentState);
+  const dataParams = buildDataSourceDataParams(componentState, changes);
 
   componentState.onDataParamsChange?.(dataParams);
 }
@@ -171,15 +192,26 @@ export function useLivePagination<T>() {
     sortInfo,
     groupBy,
     pivotBy,
-    cursorId,
+    livePaginationCursor: cursorId,
   };
 
-  useEffectWithChanges(() => {
+  useEffectWithChanges((changes, prevValues) => {
     if (cursorId === undefined) {
       // discard initial
       return;
     }
 
-    notifyDataParamsChanged(getComponentState(), actions);
+    debug(
+      'onDataParamsChange triggered because the following values have changed',
+      changes,
+      'old values',
+      prevValues,
+    );
+
+    notifyDataParamsChanged(
+      getComponentState(),
+      actions,
+      anonimizeValues(changes),
+    );
   }, depsObject);
 }

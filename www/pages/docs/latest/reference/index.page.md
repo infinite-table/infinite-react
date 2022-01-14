@@ -9,26 +9,6 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 <PropTable>
 
 
-<Prop name="domProps" type="React.HTMLProps<HTMLDivElement>">
-
-> DOM properties to be applied to the component root element.
-
-For applying a className when the component is focused, see <PropLink name="focusedClassName" />
-
-For applying a className when the focus is within the component, see <PropLink name="focusedWithinClassName" />
-
-
-<Sandpack>
-
-```ts file=domprops-example.page.tsx
-```
-```ts file=data.ts
-```
-
-</Sandpack>
-
-</Prop>
-
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
@@ -401,6 +381,28 @@ Displaying the same column twice is a perfectly valid use case.
 
 </Sandpack>
 </Prop>
+
+
+<Prop name="domProps" type="React.HTMLProps<HTMLDivElement>">
+
+> DOM properties to be applied to the component root element.
+
+For applying a className when the component is focused, see <PropLink name="focusedClassName" />
+
+For applying a className when the focus is within the component, see <PropLink name="focusedWithinClassName" />
+
+
+<Sandpack>
+
+```ts file=domprops-example.page.tsx
+```
+```ts file=data.ts
+```
+
+</Sandpack>
+
+</Prop>
+
 
 <Prop name="focusedClassName" type="string">
 

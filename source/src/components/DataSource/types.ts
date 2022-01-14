@@ -27,7 +27,14 @@ export interface DataSourceDataParams<T> {
   pivotBy?: DataSourcePropPivotBy<T>;
 
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
+
+  changes?: DataSourceDataParamsChanges<T>;
 }
+
+export type DataSourceDataParamsChanges<T> = Record<
+  keyof Omit<DataSourceDataParams<T>, 'originalDataArray' | 'changes'>,
+  true
+>;
 
 export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
   field?: keyof T;
@@ -67,7 +74,7 @@ export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
-  livePaginationCursor: DataSourceProps<T>['livePaginationCursor'];
+
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
@@ -94,6 +101,7 @@ export type DataSourceAggregationReducer<T, AggregationResultType> = {
 };
 
 export interface DataSourceSetupState<T> {
+  propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
   showSeparatePivotColumnForSingleAggregation: boolean;
   dataParams?: DataSourceDataParams<T>;
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
@@ -159,10 +167,23 @@ export interface DataSourceProps<T> {
 
   onDataParamsChange?: (dataParamsChange: DataSourceDataParams<T>) => void;
   livePagination?: boolean;
-  livePaginationCursor?: DataSourceLivePaginationCursorValue;
+  livePaginationCursor?: DataSourcePropLivePaginationCursor<T>;
+  onLivePaginationCursorChange?: (
+    livePaginationCursor: DataSourceLivePaginationCursorValue,
+  ) => void;
 }
 
-export type DataSourceLivePaginationCursorValue = string | number;
+export type DataSourcePropLivePaginationCursor<T> =
+  | DataSourceLivePaginationCursorValue
+  | ((
+      params: DataSourceLivePaginationCursorParams<T>,
+    ) => DataSourceLivePaginationCursorValue);
+export type DataSourceLivePaginationCursorParams<T> = {
+  array: InfiniteTableRowInfo<T>[];
+  lastItem: T | Partial<T> | null;
+  length: number;
+};
+export type DataSourceLivePaginationCursorValue = string | number | null;
 
 export interface DataSourceState<T>
   extends DataSourceSetupState<T>,
@@ -172,6 +193,7 @@ export interface DataSourceState<T>
 export interface DataSourceDerivedState<_T> {
   multiSort: boolean;
   controlledSort: boolean;
+  livePaginationCursor?: DataSourceLivePaginationCursorValue;
 }
 
 export type DataSourceComponentActions<T> = ComponentStateActions<

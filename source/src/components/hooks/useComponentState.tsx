@@ -161,10 +161,9 @@ type ComponentStateRootConfig<
   debugName?: string;
   initSetupState?: () => COMPONENT_SETUP_STATE;
 
-  forwardProps?: () => ForwardPropsToStateFnResult<
-    T_PROPS,
-    COMPONENT_MAPPED_STATE
-  >;
+  forwardProps?: (
+    setupState: COMPONENT_SETUP_STATE,
+  ) => ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>;
   allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
   interceptActions?: ComponentInterceptedActions<
     COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
@@ -227,10 +226,18 @@ export function getComponentStateRoot<
   return React.memo(function ComponentStateRoot(
     props: T_PROPS & { children: React.ReactNode },
   ) {
+    const [initialSetupState] = useState<COMPONENT_SETUP_STATE>(() => {
+      return config.initSetupState
+        ? config.initSetupState()
+        : ({} as COMPONENT_SETUP_STATE);
+    });
     const propsToStateSetRef = useRef<Set<string>>(new Set());
     const propsToForward = useMemo<
       ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>
-    >(() => (config.forwardProps ? config.forwardProps() : {}), []);
+    >(
+      () => (config.forwardProps ? config.forwardProps(initialSetupState) : {}),
+      [initialSetupState],
+    );
 
     type COMPONENT_STATE = COMPONENT_MAPPED_STATE &
       COMPONENT_DERIVED_STATE &
@@ -241,9 +248,6 @@ export function getComponentStateRoot<
 
     const [wholeState] = useState<COMPONENT_STATE>(() => {
       // STEP 1: call setupState
-      const initialSetupState = config.initSetupState
-        ? config.initSetupState()
-        : ({} as COMPONENT_SETUP_STATE);
 
       let mappedState = {} as COMPONENT_MAPPED_STATE;
 
