@@ -6,6 +6,7 @@ import {
   DataSource,
   DataSourceSingleSortInfo,
   DataSourceDataParams,
+  DataSourceLivePaginationCursorFn,
 } from '@infinite-table/infinite-react';
 
 import {
@@ -179,10 +180,6 @@ const Example = () => {
         livePaginationCursor: dataParams.livePaginationCursor,
       };
 
-      if (dataParams.changes?.livePaginationCursor) {
-        fetchNextPage();
-      }
-
       setDataParams(params);
     },
     [],
@@ -204,14 +201,14 @@ const Example = () => {
     fetchNext();
   };
 
-  const livePaginationQueryCursor = (data?.pageParams[0] as number) || 0;
+  const livePaginationCursorFn: DataSourceLivePaginationCursorFn<Employee> =
+    useCallback(({ length }) => {
+      return length;
+    }, []);
 
   React.useEffect(() => {
-    setDataParams((dataParams) => ({
-      ...dataParams,
-      livePaginationCursor: livePaginationQueryCursor,
-    }));
-  }, [livePaginationQueryCursor]);
+    fetchNextPage();
+  }, [dataParams.livePaginationCursor]);
 
   return (
     <React.StrictMode>
@@ -241,7 +238,7 @@ const Example = () => {
           loading={isFetchingNextPage}
           onDataParamsChange={onDataParamsChange}
           livePagination
-          livePaginationCursor={dataParams?.livePaginationCursor}
+          livePaginationCursor={livePaginationCursorFn}
         >
           <InfiniteTable<Employee>
             domProps={domProps}

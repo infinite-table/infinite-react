@@ -114,9 +114,10 @@ export function mapPropsToState<T extends any>(params: {
     const livePaginationCursor =
       typeof props.livePaginationCursor === 'function'
         ? props.livePaginationCursor({
-            array: state.dataArray,
-            length: state.dataArray.length,
-            lastItem: state.dataArray[state.dataArray.length - 1].data,
+            array: state.originalDataArray,
+            length: state.originalDataArray.length,
+            lastItem:
+              state.originalDataArray[state.originalDataArray.length - 1],
           })
         : props.livePaginationCursor;
 

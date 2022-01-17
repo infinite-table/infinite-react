@@ -211,7 +211,7 @@ export function useLivePagination<T>() {
     notifyDataParamsChanged(
       getComponentState(),
       actions,
-      anonimizeValues(changes),
+      anonimizeValues(changes) as DataSourceDataParamsChanges<T>,
     );
   }, depsObject);
 }

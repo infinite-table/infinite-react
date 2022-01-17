@@ -175,11 +175,13 @@ export interface DataSourceProps<T> {
 
 export type DataSourcePropLivePaginationCursor<T> =
   | DataSourceLivePaginationCursorValue
-  | ((
-      params: DataSourceLivePaginationCursorParams<T>,
-    ) => DataSourceLivePaginationCursorValue);
+  | DataSourceLivePaginationCursorFn<T>;
+
+export type DataSourceLivePaginationCursorFn<T> = (
+  params: DataSourceLivePaginationCursorParams<T>,
+) => DataSourceLivePaginationCursorValue;
 export type DataSourceLivePaginationCursorParams<T> = {
-  array: InfiniteTableRowInfo<T>[];
+  array: T[];
   lastItem: T | Partial<T> | null;
   length: number;
 };
