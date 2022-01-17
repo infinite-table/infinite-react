@@ -94,11 +94,21 @@ Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> 
 
 </Prop>
 
-<Prop name="livePaginationCursor" type="string|number" defaulValue={undefined}>
+<Prop name="livePaginationCursor" type="string|number|((params) =>string|number)" defaulValue={undefined}>
 
-> A cursor value for live pagination. A good value for this is the id of the last item in the <DataSourcePropLink name="data" /> array.
+> A cursor value for live pagination. A good value for this is the id of the last item in the <DataSourcePropLink name="data" /> array. It can also be defined as a function
 
 Use this in combination with <DataSourcePropLink name="livePagination" /> and <DataSourcePropLink name="onDataParamsChange" />
+
+<Note>
+
+When this is a function, it is called with a parameter object that has the following properties:
+
+ - `array` - the current array of data
+ - `lastItem` - the last item in the array
+ - `length` - the length of the data array
+
+</Note>
 
 <Sandpack  title="Live pagination - with react-query" deps="react-query">
 
@@ -135,7 +145,7 @@ The function is called with an object that has the following properties:
 
 Also see related <PropLink name="onDataParamsChange" />.
 
-</PropLink>
+</Prop>
 
 </PropTable> 
 
