@@ -1,5 +1,5 @@
 import type { DataSourceState, DataSourceDerivedState } from '../types';
-import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
+import { InfiniteTableRowInfo, lazyGroup } from '../../../utils/groupAndPivot';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 
 import { multisort } from '../../../utils/multisort';
@@ -98,7 +98,9 @@ export function concludeReducer<T>(params: {
 
   if (shouldGroup) {
     if (shouldGroupAgain) {
-      const groupResult = group(
+      const groupFn = state.fullLazyLoad ? lazyGroup : group;
+
+      const groupResult = groupFn(
         {
           groupBy,
           pivot: pivotBy,

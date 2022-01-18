@@ -166,7 +166,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           },
         });
 
-        const columnId = `${keys.join('/')}-${reducer.id}`;
+        const columnId = `${reducer.id}:${keys.join('/')}`;
 
         columns.set(columnId, computedPivotColumn);
       });
@@ -198,7 +198,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
       //     });
 
       //     columns.set(
-      //       `total:${keys.join('/')}-${reducer.id}`,
+      //       `total:${reducer.id}:${keys.join('/')}`,
       //       computedPivotTotalColumn,
       //     );
       //   });
@@ -268,7 +268,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
             },
           });
           columns.set(
-            `total:${keys.join('/')}-${reducer.id}`,
+            `total:${reducer.id}:${keys.join('/')}`,
             computedPivotColumn,
           );
         });

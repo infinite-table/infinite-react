@@ -164,7 +164,7 @@ function getSQLRoute(routeSuffix) {
 
 app.use('/.netlify/functions/json-server', router); // path must route to lambda
 
-function generatePivotSQL(pivotWithValues, reducers) {
+function generatePivotSQL(pivotWithValues, reducers = []) {
   const map = new Map();
 
   const nesting = pivotWithValues.length;
@@ -172,7 +172,7 @@ function generatePivotSQL(pivotWithValues, reducers) {
   pivotWithValues.forEach(({ field, values }) => {
     if (!map.size) {
       values.forEach((value) => {
-        reducers.forEach((reducer) => {
+        (reducers || []).forEach((reducer) => {
           const key = `${reducer.field}_${value}`;
           map.set(key, {
             level: 1,
@@ -281,12 +281,15 @@ function buildSQL({
 
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
-  if (groupBy) {
+  if (groupBy && groupBy.length) {
     SQL += ` GROUP BY ${groupBy.map((g) => `${g.field}`)}`;
   }
 
   console.log(SQL);
-  if (sortInfo || groupBy) {
+  if (
+    (sortInfo && sortInfo.length) ||
+    (groupBy && groupBy.length)
+  ) {
     SQL += ` ORDER BY ${
       sortInfo
         ? sortInfo.map(

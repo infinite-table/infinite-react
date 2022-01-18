@@ -73,6 +73,7 @@ export const forwardProps = <T>(
   return {
     onDataParamsChange: (fn) =>
       fn ? discardCallsWithEqualArg(fn, 100, getCompareObject) : undefined,
+    fullLazyLoad: 1,
     data: 1,
     pivotBy: 1,
     primaryKey: 1,

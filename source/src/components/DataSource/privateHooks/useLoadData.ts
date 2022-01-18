@@ -43,6 +43,8 @@ export function buildDataSourceDataParams<T>(
     sortInfo,
     groupBy: componentState.groupBy,
     pivotBy: componentState.pivotBy,
+    aggregationReducers: componentState.aggregationReducers,
+    groupIndex: 0,
   };
 
   if (componentState.livePagination !== undefined) {
@@ -136,6 +138,7 @@ export function useLivePagination<T>() {
     sortInfo,
     groupBy,
     pivotBy,
+    livePagination,
     livePaginationCursor,
     scrollBottomId,
   } = componentState;
@@ -188,12 +191,16 @@ export function useLivePagination<T>() {
     updateCursorId(scrollBottomId);
   }, [scrollBottomId]);
 
-  const depsObject = {
+  const depsObject: any = {
     sortInfo,
     groupBy,
     pivotBy,
-    livePaginationCursor: cursorId,
+    livePaginationCursor: null,
   };
+
+  if (livePagination) {
+    depsObject.livePaginationCursor = cursorId;
+  }
 
   useEffectWithChanges((changes, prevValues) => {
     if (cursorId === undefined) {

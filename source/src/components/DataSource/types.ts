@@ -24,7 +24,9 @@ export interface DataSourceDataParams<T> {
   originalDataArray: T[];
   sortInfo?: DataSourceSortInfo<T>;
   groupBy?: DataSourcePropGroupBy<T>;
+  groupIndex?: number;
   pivotBy?: DataSourcePropPivotBy<T>;
+  aggregationReducers?: DataSourcePropAggregationReducers<T>;
 
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 
@@ -75,6 +77,7 @@ export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
 
+  fullLazyLoad: DataSourceProps<T>['fullLazyLoad'];
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
@@ -86,6 +89,7 @@ export interface DataSourceMappedState<T> {
 }
 
 export type DataSourceAggregationReducer<T, AggregationResultType> = {
+  name?: string;
   field?: keyof T;
   initialValue: AggregationResultType;
   getter?: (data: T) => any;
@@ -130,7 +134,7 @@ export type DataSourcePropAggregationReducers<T> = Record<
   DataSourceAggregationReducer<T, any>
 >;
 
-export interface DataSourceProps<T> {
+export type DataSourceProps<T> = {
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
@@ -138,6 +142,8 @@ export interface DataSourceProps<T> {
   fields?: (keyof T)[];
 
   data: DataSourceData<T>;
+
+  fullLazyLoad?: boolean;
 
   // other properties, each with controlled and uncontrolled  variant
   loading?: boolean;
@@ -171,7 +177,7 @@ export interface DataSourceProps<T> {
   onLivePaginationCursorChange?: (
     livePaginationCursor: DataSourceLivePaginationCursorValue,
   ) => void;
-}
+};
 
 export type DataSourcePropLivePaginationCursor<T> =
   | DataSourceLivePaginationCursorValue

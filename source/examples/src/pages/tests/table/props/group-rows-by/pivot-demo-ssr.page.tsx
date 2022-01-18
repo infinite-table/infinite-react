@@ -5,6 +5,7 @@ import {
   DataSource,
   GroupRowsState,
   DataSourcePropAggregationReducers,
+  DataSourceData,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -30,8 +31,33 @@ type Developer = {
   age: number;
 };
 
-const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
+const dataSource: DataSourceData<Developer> = ({
+  pivotBy,
+  aggregationReducers,
+  groupBy,
+  groupIndex = 0,
+}) => {
+  const args = [
+    pivotBy
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
+      : null,
+    groupBy
+      ? 'groupBy=' +
+        JSON.stringify([groupBy[groupIndex]].map((p) => ({ field: p.field })))
+      : null,
+    aggregationReducers
+      ? 'reducers=' +
+        JSON.stringify(
+          Object.keys(aggregationReducers).map((key) => ({
+            field: aggregationReducers[key].field,
+            name: aggregationReducers[key].name,
+          })),
+        )
+      : null,
+  ]
+    .filter(Boolean)
+    .join('&');
+  return fetch(process.env.NEXT_PUBLIC_DATAURL + '/developers10-sql?' + args)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -43,8 +69,8 @@ const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
 };
 
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
-  salary: { field: 'salary', ...avgReducer },
-  age: { field: 'age', ...avgReducer },
+  salary: { name: 'avg', field: 'salary', ...avgReducer },
+  age: { name: 'avg', field: 'age', ...avgReducer },
 };
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
@@ -138,6 +164,7 @@ export default function GroupByExample() {
         pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
+        fullLazyLoad
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (

@@ -195,6 +195,40 @@ function computeReducersFor<DataType>(
     }
 }
 
+export function lazyGroup<DataType, KeyType = any>(
+  groupParams: GroupParams<DataType, KeyType>,
+  data: DataType[],
+): DataGroupResult<DataType, KeyType> {
+  const deepMap = new DeepMap<
+    GroupKeyType<KeyType>,
+    DeepMapGroupValueType<DataType, KeyType>
+  >();
+
+  const { reducers, pivot } = groupParams;
+
+  const initialReducerValue = initReducers<DataType>(reducers);
+
+  const globalReducerResults = { ...initialReducerValue };
+
+  const result: DataGroupResult<DataType, KeyType> = {
+    deepMap,
+    groupParams,
+    initialData: data,
+
+    reducerResults: globalReducerResults,
+  };
+
+  const topLevelPivotColumns = pivot
+    ? new DeepMap<GroupKeyType<KeyType>, boolean>()
+    : undefined;
+
+  if (pivot) {
+    result.topLevelPivotColumns = topLevelPivotColumns;
+    result.pivot = pivot;
+  }
+
+  return result;
+}
 export function group<DataType, KeyType = any>(
   groupParams: GroupParams<DataType, KeyType>,
   data: DataType[],
