@@ -136,6 +136,10 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       const dataParams = buildDataSourceDataParams(state);
       dataParams.sortInfo = sortInfo;
 
+      // TODO continue here fix onDataParamsChange being called twice
+      if (state.livePagination) {
+        actions.livePaginationCursor = null;
+      }
       actions.dataParams = dataParams;
     },
   };

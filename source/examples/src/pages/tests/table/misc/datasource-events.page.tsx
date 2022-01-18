@@ -61,7 +61,7 @@ type Employee = {
   email: string;
 };
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 50;
 
 const dataSource = ({
   sortInfo,
@@ -72,7 +72,7 @@ const dataSource = ({
 }) => {
   return fetch(
     process.env.NEXT_PUBLIC_DATAURL +
-      `/employees100?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
+      `/employees1k?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
         sortInfo?.dir === 1 ? 'asc' : 'desc'
       }&_start=${livePaginationCursor}`,
   )
@@ -174,6 +174,10 @@ const Example = () => {
 
   const onDataParamsChange = useCallback(
     (dataParams: DataSourceDataParams<Employee>) => {
+      console.log('params changed', dataParams);
+      if (!dataParams.changes) {
+        // debugger;
+      }
       const params = {
         groupBy: dataParams.groupBy,
         sortInfo: dataParams.sortInfo,

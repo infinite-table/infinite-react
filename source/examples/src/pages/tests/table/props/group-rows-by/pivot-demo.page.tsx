@@ -31,7 +31,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -105,26 +105,26 @@ export default function GroupByExample() {
           };
         },
       },
-      {
-        field: 'canDesign',
-        column: ({ column: pivotCol }) => {
-          const lastKey = pivotCol.pivotGroupKey;
+      // {
+      //   field: 'canDesign',
+      //   // column: ({ column: pivotCol }) => {
+      //   //   const lastKey = pivotCol.pivotGroupKey;
 
-          return {
-            defaultWidth: 500,
-            header:
-              (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
-              pivotCol.pivotAggregator.id,
-          };
-        },
-        columnGroup: ({ columnGroup: pivotCol }) => {
-          const lastKey = pivotCol.pivotGroupKey;
+      //   //   return {
+      //   //     defaultWidth: 500,
+      //   //     header:
+      //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
+      //   //       pivotCol.pivotAggregator.id,
+      //   //   };
+      //   // },
+      //   // columnGroup: ({ columnGroup: pivotCol }) => {
+      //   //   const lastKey = pivotCol.pivotGroupKey;
 
-          return {
-            header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-          };
-        },
-      },
+      //   //   return {
+      //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+      //   //   };
+      //   // },
+      // },
     ],
     [],
   );

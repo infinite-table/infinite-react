@@ -119,6 +119,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
       const parentKeys = keys.slice(0, -1);
 
       let parentColumnGroupId = parentKeys.join('/');
+      // const initialParentColumnGroupId = parentColumnGroupId;
 
       if (!isSingleAggregationColumn) {
         const columnGroupId = parentColumnGroupId;
@@ -139,6 +140,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
         );
       }
 
+      // todo when !isSingleAggregationColumn add here pivot total column
       aggregationReducers.forEach((reducer, index) => {
         const header = isSingleAggregationColumn
           ? keys[keys.length - 1]
@@ -168,6 +170,39 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
 
         columns.set(columnId, computedPivotColumn);
       });
+
+      // todo fix https://github.com/infinite-table/infinite-react/issues/22
+
+      // if (!isSingleAggregationColumn) {
+      //   aggregationReducers.forEach((reducer, index) => {
+      //     const computedPivotTotalColumn = prepareColumn({
+      //       columnGroup: parentColumnGroupId,
+      //       header: isSingleAggregationColumn
+      //         ? `${keys[keys.length - 1]} total `
+      //         : `${reducer.id} total`,
+      //       pivotAggregator: reducer,
+      //       pivotAggregatorIndex: index,
+      //       pivotColumn: true,
+      //       pivotTotalColumn: true,
+      //       pivotGroupKeys: keys,
+      //       pivotGroupKey: keys[keys.length - 1],
+      //       pivotByAtIndex: pivotByForColumn,
+      //       pivotIndex: keys.length - 1,
+      //       pivotBy,
+      //       sortable: false,
+      //       valueGetter: ({ rowInfo }) => {
+      //         return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
+      //           reducer.id
+      //         ];
+      //       },
+      //     });
+
+      //     columns.set(
+      //       `total:${keys.join('/')}-${reducer.id}`,
+      //       computedPivotTotalColumn,
+      //     );
+      //   });
+      // }
     } else {
       const colGroupId = keys.join('/');
       const parentKeys = keys.slice(0, -1);

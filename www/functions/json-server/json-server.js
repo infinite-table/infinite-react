@@ -91,7 +91,11 @@ function getSQLRoute(routeSuffix) {
 
     let groupBy = null;
     let pivotBy = null;
+    let filterBy = null;
     let sortInfo = null;
+    let reducers = null;
+    let start = null;
+    let limit = null;
     try {
       groupBy = JSON.parse(query.groupBy);
     } catch (ex) {
@@ -107,40 +111,192 @@ function getSQLRoute(routeSuffix) {
     } catch (ex) {
       sortInfo = null;
     }
+    try {
+      reducers = JSON.parse(query.reducers);
+    } catch (ex) {
+      reducers = null;
+    }
+    try {
+      filterBy = JSON.parse(query.filterBy);
+    } catch (ex) {
+      filterBy = null;
+    }
+
+    if (query.start) {
+      try {
+        start = parseInt(query.start, 10);
+      } catch (ex) {
+        start = 0;
+      }
+    }
+    if (query.limit) {
+      try {
+        limit = parseInt(query.limit, 10);
+      } catch (ex) {
+        limit = null;
+      }
+    }
 
     let SQL = buildSQL({
       groupBy,
       pivotBy,
+      filterBy,
+      reducers,
       sortInfo,
       tableName,
     });
 
-    res.json(alasql(SQL));
+    let result = alasql(SQL);
+    let totalCount = result.length;
+
+    result =
+      limit != null
+        ? result.slice(start, start + limit)
+        : result.slice(start);
+
+    res.json({
+      totalCount,
+      length: result.length,
+      data: result,
+    });
   };
 }
 
 app.use('/.netlify/functions/json-server', router); // path must route to lambda
 
+function generatePivotSQL(pivotWithValues, reducers) {
+  const map = new Map();
+
+  const nesting = pivotWithValues.length;
+
+  pivotWithValues.forEach(({ field, values }) => {
+    if (!map.size) {
+      values.forEach((value) => {
+        reducers.forEach((reducer) => {
+          const key = `${reducer.field}_${value}`;
+          map.set(key, {
+            level: 1,
+            pairs: [{ field, value }],
+          });
+        });
+      });
+    } else {
+      [...map.entries()].forEach(([key, entry]) => {
+        values.forEach((value) => {
+          let { level } = entry;
+
+          level++;
+          const newKey = `${key}_${value}`;
+
+          map.set(newKey, {
+            level,
+            pairs: entry.pairs.concat({ field, value }),
+          });
+        });
+      });
+    }
+  });
+
+  // console.log(...map.keys());
+
+  const colsToSelect = [];
+
+  map.forEach((entry, key) => {
+    const len = entry.level;
+    if (len === nesting) {
+      const { pairs } = entry;
+
+      const condition = pairs
+        .map(({ field, value }) => `${field} = '${value}'`)
+        .join(' AND ');
+
+      reducers.forEach((reducer) => {
+        const as =
+          reducer.field +
+          '_' +
+          pairs
+            .map(({ value }) => value.replace(/ /g, '_'))
+            .join('_');
+        colsToSelect.push(
+          `SUM(CASE WHEN ${condition} THEN ${reducer.field} ELSE 0 END) as ${as}`
+        );
+      });
+    }
+  });
+
+  // console.log(colsToSelect.join('\n'));
+
+  return colsToSelect;
+}
+
 function buildSQL({
   groupBy,
   sortInfo,
   pivotBy,
+  filterBy,
+  reducers,
   tableName,
 }) {
-  let SQL = `SELECT * FROM ${tableName}`;
+  var colsToSelect = [];
+
+  if (groupBy) {
+    colsToSelect = groupBy.map(
+      (col) => `${col.field} as ${col.field}`
+    );
+
+    if (pivotBy) {
+      // colsToSelect = colsToSelect.concat(
+      //   pivotBy.map((col) => `${col.field} as ${col.field}`)
+      // );
+
+      const pivotByWithValues = pivotBy.map((pivot) => {
+        const sql = `select unique(${pivot.field}) as ${pivot.field} from ${tableName}`;
+        return {
+          field: pivot.field,
+          values: alasql(sql).map(
+            (row) => row[pivot.field]
+          ),
+        };
+      });
+
+      colsToSelect.push(
+        ...generatePivotSQL(pivotByWithValues, reducers)
+      );
+    }
+  }
+
+  if (Array.isArray(reducers)) {
+    reducers.forEach(({ field, name }) => {
+      colsToSelect.push(`${name}(${field}) as ${field}`);
+    });
+  }
+
+  let where = '';
+
+  if (Array.isArray(filterBy) && filterBy.length) {
+    where = ` WHERE ${filterBy
+      .map((f) => `${f.field} = '${f.value}'`)
+      .join(' AND ')}`;
+  }
+
+  let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
   if (groupBy) {
     SQL += ` GROUP BY ${groupBy.map((g) => `${g.field}`)}`;
   }
 
-  if (sortInfo) {
-    SQL += ` ORDER BY ${sortInfo.map(
-      (s) => `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`
-    )}`;
-  }
-
-  if (pivotBy) {
-    SQL += ` PIVOT ${pivotBy.map((p) => `${p.field}`)}`;
+  console.log(SQL);
+  if (sortInfo || groupBy) {
+    SQL += ` ORDER BY ${
+      sortInfo
+        ? sortInfo.map(
+            (s) =>
+              `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`
+          ) + (groupBy ? ',' : '')
+        : ''
+    } ${
+      groupBy ? groupBy.map((g) => `${g.field} ASC`) : ''
+    }`;
   }
 
   return SQL;

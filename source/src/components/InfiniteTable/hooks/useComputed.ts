@@ -60,9 +60,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       const newSortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
       //@ts-ignore
       dataSourceActions.sortInfo = newSortInfo;
-      if (getDataSourceState().livePagination) {
-        dataSourceActions.livePaginationCursor = null;
-      }
     },
     [getDataSourceState],
   );
