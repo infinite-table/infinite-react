@@ -84,6 +84,8 @@ sqlRoutes.forEach((name) => {
   );
 });
 
+const KEY_SEPARATOR = '_';
+
 function getSQLRoute(routeSuffix) {
   const tableName = `developers${routeSuffix}`;
   return (req, res) => {
@@ -143,6 +145,21 @@ function getSQLRoute(routeSuffix) {
       }
     }
 
+    const reducersByField = (reducers || []).reduce(
+      (acc, reducer) => {
+        acc[reducer.field] = reducer;
+        return acc;
+      },
+      {}
+    );
+    const groupByMapByField = (groupBy || []).reduce(
+      (acc, group) => {
+        acc[group.field] = group;
+        return acc;
+      },
+      {}
+    );
+
     let SQL = buildSQL({
       groupBy,
       groupKeys,
@@ -164,7 +181,44 @@ function getSQLRoute(routeSuffix) {
     res.json({
       totalCount,
       length: result.length,
-      data: result,
+      data: result.map((x) => {
+        const data = {};
+        const aggregations = {};
+        const values = {};
+
+        Object.keys(x).forEach((k) => {
+          if (reducersByField[k]) {
+            aggregations[k] = x[k];
+            return;
+          }
+          if (groupByMapByField[k]) {
+            data[k] = x[k];
+
+            return;
+          }
+          const [reducerName, ...valueKeys] =
+            k.split(KEY_SEPARATOR);
+
+          values[reducerName] = values[reducerName] || {};
+
+          let target = values[reducerName];
+          valueKeys.forEach((valueKey, i, arr) => {
+            const last = i === arr.length - 1;
+            if (!last) {
+              target = target[valueKey] =
+                target[valueKey] || {};
+            } else {
+              target[valueKey] =
+                typeof x[k] === 'number'
+                  ? Math.floor(x[k])
+                  : x[k];
+            }
+          });
+        });
+
+        // return x;
+        return { data, aggregations, values };
+      }),
     });
   };
 }
@@ -193,7 +247,7 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
           let { level } = entry;
 
           level++;
-          const newKey = `${key}_${value}`;
+          const newKey = `${key}${KEY_SEPARATOR}${value}`;
 
           map.set(newKey, {
             level,
@@ -204,34 +258,33 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
     }
   });
 
-  // console.log(...map.keys());
-
   const colsToSelect = [];
 
   map.forEach((entry, key) => {
     const len = entry.level;
-    if (len === nesting) {
-      const { pairs } = entry;
+    // if (len === nesting) {
+    const { pairs } = entry;
 
-      const condition = pairs
-        .map(({ field, value }) => `${field} = '${value}'`)
-        .join(' AND ');
+    const condition = pairs
+      .map(({ field, value }) => `${field} = '${value}'`)
+      .join(' AND ');
 
-      reducers.forEach((reducer) => {
-        const as =
-          reducer.field +
-          '_' +
-          pairs
-            .map(({ value }) => value.replace(/ /g, '_'))
-            .join('_');
-        colsToSelect.push(
-          `SUM(CASE WHEN ${condition} THEN ${reducer.field} ELSE 0 END) as ${as}`
-        );
-      });
-    }
+    reducers.forEach((reducer) => {
+      const as =
+        pairs
+          .map(({ value }) => value.replace(/ /g, '_'))
+          .join(KEY_SEPARATOR) +
+        KEY_SEPARATOR +
+        reducer.field;
+
+      colsToSelect.push(
+        `${reducer.name}(CASE WHEN ${condition} THEN ${reducer.field} ELSE 0 END) as ${as}`
+      );
+    });
+    // }
   });
 
-  // console.log(colsToSelect.join('\n'));
+  console.log(colsToSelect.join('\n'));
 
   return colsToSelect;
 }
@@ -320,10 +373,15 @@ function buildSQL({
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
   if (groupBy && groupBy.length) {
-    SQL += ` GROUP BY ${groupBy.map((g) => `${g.field}`)}`;
+    SQL += ` GROUP BY ${groupBy
+      .slice(
+        0,
+        groupKeys ? groupKeys.length + 1 : groupBy.length
+      )
+      .map((g) => `${g.field}`)}`;
   }
 
-  console.log(SQL);
+  // console.log(SQL);
   if (
     (sortInfo && sortInfo.length) ||
     (groupBy && groupBy.length)
