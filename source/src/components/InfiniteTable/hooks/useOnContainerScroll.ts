@@ -119,7 +119,7 @@ export const useOnContainerScroll = <T>({
         onScrollToBottom?.();
 
         if (getDataSourceState().livePagination) {
-          dataSourceActions.scrollBottomId = Date.now();
+          dataSourceActions.cursorId = Date.now();
         }
       }
     },

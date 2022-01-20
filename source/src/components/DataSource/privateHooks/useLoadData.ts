@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { dbg } from '../../../utils/debug';
 
 import {
   ComponentStateGeneratedActions,
@@ -8,31 +7,23 @@ import {
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 
 import { Scrollbars } from '../../InfiniteTable';
+
 import {
   DataSourceDataParams,
   DataSourceData,
   DataSourceState,
   DataSourceRemoteData,
-  DataSourceLivePaginationCursorValue,
   DataSourceDataParamsChanges,
 } from '../types';
 
-const debug = dbg('DataSource:useLoadData');
-
-function anonimizeValues(arg: Record<string, any>) {
-  const result: Record<string, true> = {};
-
-  for (var k in arg)
-    if (arg.hasOwnProperty(k)) {
-      result[k] = true;
-    }
-
-  return result;
-}
+const SKIP_DATA_CHANGES_KEYS = {
+  originalDataArray: true,
+  changes: true,
+};
 
 export function buildDataSourceDataParams<T>(
   componentState: DataSourceState<T>,
-  changes?: DataSourceDataParamsChanges<T>,
+  overrides?: Partial<DataSourceDataParams<T>>,
 ): DataSourceDataParams<T> {
   const sortInfo = componentState.multiSort
     ? componentState.sortInfo
@@ -49,27 +40,36 @@ export function buildDataSourceDataParams<T>(
 
   if (componentState.livePagination !== undefined) {
     dataSourceParams.livePaginationCursor = componentState.livePaginationCursor;
+    dataSourceParams.cursorId = componentState.cursorId;
   }
 
-  if (changes !== undefined) {
-    dataSourceParams.changes = changes;
+  if (componentState.fullLazyLoad) {
+    dataSourceParams.lazyLoadBatchSize = componentState.lazyLoadBatchSize;
   }
+
+  if (overrides) {
+    Object.assign(dataSourceParams, overrides);
+  }
+
+  const changes: DataSourceDataParamsChanges<T> = {};
+
+  const oldDataSourceParams: Partial<DataSourceDataParams<T>> =
+    componentState.dataParams || {};
+
+  for (let k in dataSourceParams) {
+    //@ts-ignore
+    if (dataSourceParams.hasOwnProperty(k) && !SKIP_DATA_CHANGES_KEYS[k]) {
+      const key = k as keyof DataSourceDataParams<T>;
+      if (dataSourceParams[key] !== oldDataSourceParams[key]) {
+        //@ts-ignore
+        changes[key] = true;
+      }
+    }
+  }
+
+  dataSourceParams.changes = changes;
 
   return dataSourceParams;
-}
-
-function notifyDataParamsChanged<T>(
-  componentState: DataSourceState<T>,
-  actions: ComponentStateGeneratedActions<DataSourceState<T>>,
-  changes?: DataSourceDataParamsChanges<T>,
-) {
-  if (typeof componentState.data === 'function') {
-    loadData(componentState.data, componentState, actions);
-  }
-
-  const dataParams = buildDataSourceDataParams(componentState, changes);
-
-  componentState.onDataParamsChange?.(dataParams);
 }
 
 function loadData<T>(
@@ -140,7 +140,7 @@ export function useLivePagination<T>() {
     pivotBy,
     livePagination,
     livePaginationCursor,
-    scrollBottomId,
+    cursorId: stateCursorId,
   } = componentState;
 
   const [scrollbars, setScrollbars] = useState<Scrollbars>({
@@ -162,17 +162,11 @@ export function useLivePagination<T>() {
     return () => notifyScrollbarsChange.destroy();
   }, [notifyScrollbarsChange]);
 
-  const [cursorId, updateCursorId] = useState<
-    | undefined
-    | DataSourceLivePaginationCursorValue
-    | DataSourceState<T>['scrollBottomId']
-  >(undefined);
-
   useEffect(() => {
     // this is synced with - ref #lvpgn - search in codebase this ref to understand more
     const frameId = requestAnimationFrame(() => {
-      if (!scrollbarsRef.current?.vertical) {
-        updateCursorId(livePaginationCursor);
+      if (!scrollbarsRef.current?.vertical && livePaginationCursor) {
+        actions.cursorId = livePaginationCursor;
       }
     });
 
@@ -183,42 +177,43 @@ export function useLivePagination<T>() {
     const { livePaginationCursor, livePagination } = getComponentState();
     if (!scrollbars.vertical && livePagination) {
       // it had vertical scroll but now it doesn't
-      updateCursorId(livePaginationCursor);
+
+      // updateCursorId(livePaginationCursor);
+      if (livePaginationCursor) {
+        actions.cursorId = livePaginationCursor;
+      }
     }
   }, [scrollbars.vertical]);
 
-  useEffect(() => {
-    updateCursorId(scrollBottomId);
-  }, [scrollBottomId]);
+  // useEffect(() => {
+  //   updateCursorId(stateCursorId);
+  // }, [stateCursorId]);
 
-  const depsObject: any = {
+  const depsObject = {
     sortInfo,
     groupBy,
     pivotBy,
-    livePaginationCursor: null,
+    cursorId: livePagination ? stateCursorId : null,
   };
 
-  if (livePagination) {
-    depsObject.livePaginationCursor = cursorId;
-  }
+  const initialRef = useRef(true);
+
+  // actions.livePaginationCursor = cursorId;
+
+  // useEffect(() => {
+  //   if (livePagination) {
+  //     actions.livePaginationCursor = cursorId;
+  //   }
+  // }, [livePagination, livePagination ? cursorId : null]);
 
   useEffectWithChanges((changes, prevValues) => {
-    if (cursorId === undefined) {
-      // discard initial
-      return;
+    const componentState = getComponentState();
+    if (typeof componentState.data === 'function') {
+      loadData(componentState.data, componentState, actions);
     }
-
-    debug(
-      'onDataParamsChange triggered because the following values have changed',
-      changes,
-      'old values',
-      prevValues,
-    );
-
-    notifyDataParamsChanged(
-      getComponentState(),
-      actions,
-      anonimizeValues(changes) as DataSourceDataParamsChanges<T>,
-    );
+    if (initialRef.current) {
+      initialRef.current = false;
+      actions.dataParams = buildDataSourceDataParams(componentState);
+    }
   }, depsObject);
 }

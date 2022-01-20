@@ -18,7 +18,12 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
 import { DataSourceDataParams } from '..';
+import { dbg } from '../../../utils/debug';
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 
+export const defaultCursorId = Symbol('cursorId');
+
+const debug = dbg('DataSource:dataParams');
 export function initSetupState<T>(): DataSourceSetupState<T> {
   const now = Date.now();
   const originalDataArray: T[] = [];
@@ -29,7 +34,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
     pivotTotalColumnPosition: 'end',
     originalDataArray,
-    scrollBottomId: Symbol('scrollBottomId'),
+    cursorId: defaultCursorId,
     showSeparatePivotColumnForSingleAggregation: false,
 
     propsCache: new Map<keyof DataSourceProps<T>, WeakMap<any, any>>([
@@ -78,6 +83,7 @@ export const forwardProps = <T>(
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
+    lazyLoadBatchSize: (lazyLoadBatchSize) => lazyLoadBatchSize ?? 50,
     aggregationReducers: 1,
 
     loading: (loading) => loading ?? false,
@@ -96,11 +102,28 @@ export const forwardProps = <T>(
   };
 };
 
+function getLivePaginationCursorValue<T>(
+  livePaginationCursorProp: DataSourceProps<T>['livePaginationCursor'],
+  state: DataSourceState<T>,
+) {
+  const livePaginationCursor =
+    typeof livePaginationCursorProp === 'function'
+      ? livePaginationCursorProp({
+          array: state.originalDataArray,
+          length: state.originalDataArray.length,
+          lastItem: state.originalDataArray[state.originalDataArray.length - 1],
+        })
+      : livePaginationCursorProp;
+
+  return livePaginationCursor;
+}
+
 export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
   state: DataSourceState<T>;
+  oldState: DataSourceState<T> | null;
 }): DataSourceDerivedState<T> {
-  const { props, state } = params;
+  const { props, state, oldState } = params;
 
   const controlledSort = isControlledValue(props.sortInfo);
 
@@ -112,14 +135,14 @@ export function mapPropsToState<T extends any>(params: {
   };
 
   if (props.livePagination) {
+    const dataArrayChanged =
+      !oldState || oldState.originalDataArray !== state.originalDataArray;
+
     const livePaginationCursor =
       typeof props.livePaginationCursor === 'function'
-        ? props.livePaginationCursor({
-            array: state.originalDataArray,
-            length: state.originalDataArray.length,
-            lastItem:
-              state.originalDataArray[state.originalDataArray.length - 1],
-          })
+        ? dataArrayChanged
+          ? getLivePaginationCursorValue(props.livePaginationCursor, state)
+          : state.livePaginationCursor
         : props.livePaginationCursor;
 
     result.livePaginationCursor = livePaginationCursor;
@@ -134,14 +157,87 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
 > {
   return {
     sortInfo: (sortInfo, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state);
-      dataParams.sortInfo = sortInfo;
+      const dataParams = buildDataSourceDataParams(state, {
+        sortInfo,
+        livePaginationCursor: null,
+      });
 
-      // TODO continue here fix onDataParamsChange being called twice
-      if (state.livePagination) {
-        actions.livePaginationCursor = null;
-      }
       actions.dataParams = dataParams;
+
+      if (state.livePagination) {
+        // #waitforupdate do it on raf, since it also does actions.dataParams assignment
+        // so we allow dataParams to be updated (the call 3 lines above) in state
+
+        requestAnimationFrame(() => {
+          actions.livePaginationCursor = null;
+        });
+      }
+    },
+    groupBy: (groupBy, { actions, state }) => {
+      const dataParams = buildDataSourceDataParams(state, {
+        groupBy,
+        livePaginationCursor: null,
+      });
+
+      actions.dataParams = dataParams;
+
+      if (state.livePagination) {
+        // see #waitforupdate above
+
+        requestAnimationFrame(() => {
+          actions.livePaginationCursor = null;
+        });
+      }
+    },
+    pivotBy: (pivotBy, { actions, state }) => {
+      const dataParams = buildDataSourceDataParams(state, {
+        pivotBy,
+        livePaginationCursor: null,
+      });
+
+      actions.dataParams = dataParams;
+
+      if (state.livePagination) {
+        // see #waitforupdate above
+
+        requestAnimationFrame(() => {
+          actions.livePaginationCursor = null;
+        });
+      }
+    },
+    cursorId: (cursorId, { actions, state }) => {
+      const dataParams = buildDataSourceDataParams(state, {
+        cursorId,
+      });
+      actions.dataParams = dataParams;
+    },
+    livePaginationCursor: (livePaginationCursor, { actions, state }) => {
+      const dataParams = buildDataSourceDataParams(state, {
+        livePaginationCursor,
+      });
+
+      actions.dataParams = dataParams;
+    },
+    dataParams: (dataParams, { state }) => {
+      if (
+        shallowEqualObjects(
+          dataParams!,
+          state.dataParams!,
+          new Set<keyof DataSourceDataParams<T>>([
+            'changes',
+            'originalDataArray',
+          ]),
+        )
+      ) {
+        return false;
+      }
+
+      debug(
+        'onDataParamsChange triggered because the following values have changed',
+        dataParams?.changes,
+      );
+
+      return true;
     },
   };
 }

@@ -26,16 +26,24 @@ export interface DataSourceDataParams<T> {
   groupBy?: DataSourcePropGroupBy<T>;
   groupIndex?: number;
   pivotBy?: DataSourcePropPivotBy<T>;
+
+  lazyLoadBatchSize?: number;
+  lazyLoadStartIndex?: number;
+  groupKeys?: any[];
+
   aggregationReducers?: DataSourcePropAggregationReducers<T>;
 
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
+  cursorId?: DataSourceSetupState<T>['cursorId'];
 
   changes?: DataSourceDataParamsChanges<T>;
 }
 
-export type DataSourceDataParamsChanges<T> = Record<
-  keyof Omit<DataSourceDataParams<T>, 'originalDataArray' | 'changes'>,
-  true
+export type DataSourceDataParamsChanges<T> = Partial<
+  Record<
+    keyof Omit<DataSourceDataParams<T>, 'originalDataArray' | 'changes'>,
+    true
+  >
 >;
 
 export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
@@ -78,6 +86,8 @@ export interface DataSourceMappedState<T> {
   livePagination: DataSourceProps<T>['livePagination'];
 
   fullLazyLoad: DataSourceProps<T>['fullLazyLoad'];
+  lazyLoadBatchSize: DataSourceProps<T>['lazyLoadBatchSize'];
+
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
@@ -115,7 +125,7 @@ export interface DataSourceSetupState<T> {
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
-  scrollBottomId: number | Symbol | DataSourceLivePaginationCursorValue;
+  cursorId: number | Symbol | DataSourceLivePaginationCursorValue;
 
   updatedAt: number;
   reducedAt: number;
@@ -144,6 +154,7 @@ export type DataSourceProps<T> = {
   data: DataSourceData<T>;
 
   fullLazyLoad?: boolean;
+  lazyLoadBatchSize?: number;
 
   // other properties, each with controlled and uncontrolled  variant
   loading?: boolean;

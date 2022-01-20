@@ -90,6 +90,7 @@ function getSQLRoute(routeSuffix) {
     const { query } = req;
 
     let groupBy = null;
+    let groupKeys = null;
     let pivotBy = null;
     let filterBy = null;
     let sortInfo = null;
@@ -100,6 +101,11 @@ function getSQLRoute(routeSuffix) {
       groupBy = JSON.parse(query.groupBy);
     } catch (ex) {
       groupBy = null;
+    }
+    try {
+      groupKeys = JSON.parse(query.groupKeys);
+    } catch (ex) {
+      groupKeys = null;
     }
     try {
       pivotBy = JSON.parse(query.pivotBy);
@@ -139,6 +145,7 @@ function getSQLRoute(routeSuffix) {
 
     let SQL = buildSQL({
       groupBy,
+      groupKeys,
       pivotBy,
       filterBy,
       reducers,
@@ -231,6 +238,7 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
 
 function buildSQL({
   groupBy,
+  groupKeys,
   sortInfo,
   pivotBy,
   filterBy,
@@ -242,6 +250,15 @@ function buildSQL({
   if (groupBy) {
     colsToSelect = groupBy.map(
       (col) => `${col.field} as ${col.field}`
+    );
+    const groupKeysLength = groupKeys
+      ? groupKeys.length
+      : 0;
+
+    // limit the fields selected by grouping
+    colsToSelect.length = Math.min(
+      groupKeysLength + 1,
+      colsToSelect.length
     );
 
     if (pivotBy) {
@@ -277,6 +294,27 @@ function buildSQL({
     where = ` WHERE ${filterBy
       .map((f) => `${f.field} = '${f.value}'`)
       .join(' AND ')}`;
+  }
+  if (Array.isArray(groupKeys) && groupKeys.length) {
+    let whereConditionForGroups = [];
+    groupBy.forEach(({ field }, index) => {
+      const groupKey = groupKeys[index];
+      if (groupKey) {
+        whereConditionForGroups.push(
+          `${field} = '${groupKey}'`
+        );
+      }
+    });
+
+    if (!where) {
+      where = ` WHERE ${whereConditionForGroups.join(
+        ' AND '
+      )}`;
+    } else {
+      where += ` AND ${whereConditionForGroups.join(
+        ' AND '
+      )}`;
+    }
   }
 
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;

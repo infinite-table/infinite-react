@@ -48,10 +48,14 @@ export function concludeReducer<T>(params: {
   const sortInfo = state.sortInfo;
   const shouldSort = !!sortInfo?.length && !state.controlledSort;
 
-  const sortDepsChanged = haveDepsChanged(previousState, state, [
+  const originalDataArrayChanged = haveDepsChanged(previousState, state, [
     'originalDataArray',
-    'sortInfo',
   ]);
+
+  const sortInfoChanged = haveDepsChanged(previousState, state, ['sortInfo']);
+
+  const sortDepsChanged = originalDataArrayChanged || sortInfoChanged;
+
   const shouldSortAgain =
     shouldSort && (sortDepsChanged || !state.lastSortDataArray);
 

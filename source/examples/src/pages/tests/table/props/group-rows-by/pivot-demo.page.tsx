@@ -31,7 +31,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -85,7 +85,7 @@ export default function GroupByExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
-        field: 'preferredLanguage',
+        field: 'country',
       },
       { field: 'stack' },
     ],
@@ -94,17 +94,17 @@ export default function GroupByExample() {
 
   const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
     () => [
-      // { field: 'currency' },
-      {
-        field: 'country',
-        columnGroup: ({ columnGroup }) => {
-          return {
-            header: `Country${
-              columnGroup.pivotTotalColumnGroup ? ' total' : ''
-            }: ${columnGroup.pivotGroupKey}`,
-          };
-        },
-      },
+      { field: 'currency' },
+      // {
+      //   field: 'country',
+      //   columnGroup: ({ columnGroup }) => {
+      //     return {
+      //       header: `Country${
+      //         columnGroup.pivotTotalColumnGroup ? ' total' : ''
+      //       }: ${columnGroup.pivotGroupKey}`,
+      //     };
+      //   },
+      // },
       {
         field: 'canDesign',
         // column: ({ column: pivotCol }) => {

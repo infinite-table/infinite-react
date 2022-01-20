@@ -55,7 +55,7 @@ export type ComponentInterceptedActions<T_STATE> = {
       actions,
       state,
     }: { actions: ComponentStateGeneratedActions<T_STATE>; state: T_STATE },
-  ) => void;
+  ) => void | boolean;
 };
 
 export type ComponentStateActions<T_STATE> =
@@ -81,12 +81,18 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
         // early exit, as no change detected
         return;
       }
-      // it's important that we notify with the value that we receive
-      //directly from the setter (see continuation below)
-      notifyChange(props, stateKey, value);
+
+      let notifyTheChange = true;
 
       if (interceptedActions && typeof interceptedActions[key] === 'function') {
-        interceptedActions[key]!(value, { actions, state });
+        if (interceptedActions[key]!(value, { actions, state }) === false) {
+          notifyTheChange = false;
+        }
+      }
+      // it's important that we notify with the value that we receive
+      //directly from the setter (see continuation below)
+      if (notifyTheChange) {
+        notifyChange(props, stateKey, value);
       }
 
       //@ts-ignore
