@@ -19,6 +19,7 @@ import {
   forwardProps,
   initSetupState,
   getInterceptActions,
+  onPropChange,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 
@@ -54,6 +55,7 @@ const DataSourceRoot = getComponentStateRoot({
   concludeReducer,
   //@ts-ignore
   mapPropsToState,
+  onPropChange,
   interceptActions: getInterceptActions(),
 });
 

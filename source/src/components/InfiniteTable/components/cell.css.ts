@@ -64,8 +64,8 @@ export const ColumnCellVariantsObject = {
   pinnedStartLastInCategory: {
     borderRight: ThemeVars.components.Cell.border,
     vars: {
-      [ThemeVars.components.Cell.border]:
-        ThemeVars.components.Cell.borderInvisible,
+      // [ThemeVars.components.Cell.border]:
+      //   ThemeVars.components.Cell.borderInvisible,
     },
   },
   pinnedEndFirstInCategory: {
@@ -121,6 +121,7 @@ export const ColumnCellRecipe = recipe({
       },
       style: ColumnCellVariantsObject.pinnedStartLastInCategory,
     },
+
     {
       variants: {
         pinned: 'end',

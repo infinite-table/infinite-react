@@ -49,6 +49,13 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     ? columnGroupsMaxDepth * headerHeight
     : headerHeight;
 
+  const unvirtualizedStyle: React.HTMLProps<HTMLElement>['style'] =
+    !virtualizeHeader && computedPinnedStartColumnsWidth
+      ? {
+          left: computedPinnedStartWidth,
+        }
+      : undefined;
+
   const header = virtualizeHeader ? (
     <InfiniteTableHeader
       columns={computedUnpinnedColumns}
@@ -66,6 +73,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     />
   ) : (
     <InfiniteTableHeaderUnvirtualized
+      style={unvirtualizedStyle}
       brain={brain}
       scrollable
       pinning={false}

@@ -1,6 +1,7 @@
-import { once } from '../components/hooks/useOnce';
-import { VoidFn } from '../components/types/VoidFn';
+import { once } from './once';
 import { sortAscending } from './sortAscending';
+
+type VoidFn = () => void;
 
 type Pair<KeyType, ValueType> = {
   value?: ValueType;

@@ -174,6 +174,16 @@ type ComponentStateRootConfig<
   interceptActions?: ComponentInterceptedActions<
     COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
   >;
+  onPropChange?: (
+    params: {
+      name: keyof T_PROPS;
+      oldValue: any;
+      newValue: any;
+    },
+    actions: ComponentStateActions<
+      COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
+    >,
+  ) => void;
   mapPropsToState?: (params: {
     props: T_PROPS;
     state: COMPONENT_MAPPED_STATE &
@@ -419,6 +429,11 @@ export function getComponentStateRoot<
         if (oldValue === newValue) {
           continue;
         }
+        config.onPropChange?.(
+          { name: key, oldValue, newValue },
+
+          actions as ACTIONS_TYPE,
+        );
         if (isControlled(key, props) || isControlled(key, prevProps)) {
           if (propsToForward.hasOwnProperty(k)) {
             let valueToSet = newValue;

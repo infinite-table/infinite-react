@@ -3,7 +3,7 @@ import type { Person } from './rowData';
 
 export const columns = new Map<string, InfiniteTableColumn<Person>>([
   ['id', { field: 'id' }], //todo when id is in address group, it should be repeated
-  ['streetNo', { field: 'streetNo', columnGroup: 'street' }],
+  ['streetNo', { field: 'streetNo' }],
   ['city', { field: 'city', columnGroup: 'location' }],
 
   ['streetName', { field: 'streetName', columnGroup: 'street' }],

@@ -14,9 +14,7 @@ import {
 import { Renderable } from '../../types/Renderable';
 import { LoadMaskProps } from '../components/LoadMask';
 import type {
-  InfiniteTableBaseColumn,
   InfiniteTableColumn,
-  InfiniteTableColumnPinned,
   InfiniteTableColumnRenderFunction,
   InfiniteTableComputedColumn,
   InfiniteTableComputedPivotFinalColumn,
@@ -31,11 +29,25 @@ export type InfiniteTablePropColumnOrder =
   | InfiniteTablePropColumnOrderNormalized
   | true;
 
-export type InfiniteTablePropColumnVisibility = Map<string, false>;
-export type InfiniteTablePropColumnPinning = Map<
+export type InfiniteTablePropColumnVisibilityMap = Map<string, false>;
+export type InfiniteTablePropColumnVisibilityRecord = Record<string, false>;
+export type InfiniteTablePropColumnVisibility =
+  | InfiniteTablePropColumnVisibilityMap
+  | InfiniteTablePropColumnVisibilityRecord;
+
+export type InfiniteTablePropColumnPinningMap = Map<
   string,
   true | 'start' | 'end'
 >;
+
+export type InfiniteTableColumnPinnedValues = false | 'start' | 'end';
+export type InfiniteTablePropColumnPinningRecord = Record<
+  string,
+  true | 'start' | 'end'
+>;
+export type InfiniteTablePropColumnPinning =
+  | InfiniteTablePropColumnPinningRecord
+  | InfiniteTablePropColumnPinningMap;
 
 export type InfiniteTableRowStyleFnParams<T> = {
   rowIndex: number;
@@ -76,6 +88,7 @@ export type InfiniteTableColumnType<T> = {
   maxWidth?: number;
   defaultWidth?: number;
   defaultFlex?: number;
+  defaultPinned?: InfiniteTableColumnPinnedValues;
 
   header?: InfiniteTableColumn<T>['header'];
   comparer?: InfiniteTableColumn<T>['comparer'];
@@ -84,7 +97,7 @@ export type InfiniteTableColumnType<T> = {
   resizable?: InfiniteTableColumn<T>['resizable'];
   align?: InfiniteTableColumn<T>['align'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
-  defaultPinned?: InfiniteTableColumnPinned;
+
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
@@ -141,15 +154,23 @@ export type InfiniteTablePropColumns<T, ColumnType = InfiniteTableColumn<T>> =
 export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
 export type InfiniteTableColumnsMap<T> = InfiniteTablePropColumnsMap<T>;
 
-export type InfiniteTablePropColumnGroups = Map<
+export type InfiniteTablePropColumnGroupsMap = Map<
   string,
   InfiniteTableColumnGroup
 >;
+export type InfiniteTablePropColumnGroupsRecord = Record<
+  string,
+  InfiniteTableColumnGroup
+>;
+export type InfiniteTablePropColumnGroups =
+  | InfiniteTablePropColumnGroupsRecord
+  | InfiniteTablePropColumnGroupsMap;
 
 /**
  * the keys is an array of strings: first string in the array is the column group id, next strings are the ids of all columns in the group
  * the value is the id of the column to leave as visible
  */
+export type InfiniteTablePropCollapsedColumnGroupsMap = Map<string[], string>;
 export type InfiniteTablePropCollapsedColumnGroups = Map<string[], string>;
 
 export type InfiniteTableColumnGroupHeaderRenderParams = {
@@ -193,7 +214,7 @@ export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
   | 'multi-column'
   | 'inline';
-export type InfiniteTableGroupColumnBase<T> = InfiniteTableBaseColumn<T> & {
+export type InfiniteTableGroupColumnBase<T> = InfiniteTableColumn<T> & {
   renderValue?: InfiniteTableColumnRenderFunction<T>;
   id?: string;
 };

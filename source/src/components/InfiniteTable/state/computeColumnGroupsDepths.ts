@@ -1,8 +1,8 @@
-import type { InfiniteTablePropColumnGroups } from '../types/InfiniteTableProps';
+import type { InfiniteTablePropColumnGroupsMap } from '../types/InfiniteTableProps';
 import type { InfiniteTableColumnGroupsDepthsMap } from '../types/InfiniteTableState';
 
 export function computeColumnGroupsDepths(
-  columnGroups: InfiniteTablePropColumnGroups,
+  columnGroups: InfiniteTablePropColumnGroupsMap,
 ): InfiniteTableColumnGroupsDepthsMap {
   const map = new Map();
 

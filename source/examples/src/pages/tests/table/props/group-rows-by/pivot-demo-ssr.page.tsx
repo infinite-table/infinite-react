@@ -6,11 +6,11 @@ import {
   GroupRowsState,
   DataSourcePropAggregationReducers,
   DataSourceData,
+  InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 
 import type {
   InfiniteTableColumn,
-  InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   DataSourcePivotBy,
@@ -30,47 +30,47 @@ type Developer = {
   salary: number;
   age: number;
 };
+function getDataSource(size: string) {
+  const dataSource: DataSourceData<Developer> = ({
+    pivotBy,
+    aggregationReducers,
+    groupBy,
 
-const dataSource: DataSourceData<Developer> = ({
-  pivotBy,
-  aggregationReducers,
-  groupBy,
-  groupIndex = 0,
-}) => {
-  const args = [
-    pivotBy
-      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
-      : null,
-    groupBy
-      ? 'groupBy=' +
-        JSON.stringify([groupBy[groupIndex]].map((p) => ({ field: p.field })))
-      : null,
-    aggregationReducers
-      ? 'reducers=' +
-        JSON.stringify(
-          Object.keys(aggregationReducers).map((key) => ({
-            field: aggregationReducers[key].field,
-            name: aggregationReducers[key].name,
-          })),
-        )
-      : null,
-  ]
-    .filter(Boolean)
-    .join('&');
-  return fetch(process.env.NEXT_PUBLIC_DATAURL + '/developers10k-sql?' + args)
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
-
-const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
-  initialValue: 0,
-  reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
-};
+    groupKeys = [],
+  }) => {
+    const args = [
+      pivotBy
+        ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
+        : null,
+      `groupKeys=${JSON.stringify(groupKeys)}`,
+      groupBy
+        ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
+        : null,
+      aggregationReducers
+        ? 'reducers=' +
+          JSON.stringify(
+            Object.keys(aggregationReducers).map((key) => ({
+              field: aggregationReducers[key].field,
+              id: key,
+              name: aggregationReducers[key].reducer,
+            })),
+          )
+        : null,
+    ]
+      .filter(Boolean)
+      .join('&');
+    return fetch(
+      process.env.NEXT_PUBLIC_DATAURL + `/developers${size}-sql?` + args,
+    )
+      .then((r) => r.json())
+      .then((data: Developer[]) => data);
+  };
+  return dataSource;
+}
 
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
-  salary: { name: 'avg', field: 'salary', ...avgReducer },
-  age: { name: 'avg', field: 'age', ...avgReducer },
+  s: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
+  a: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
 };
 
 const columns: InfiniteTablePropColumns<Developer> = new Map<
@@ -100,6 +100,9 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
   ['currency', { field: 'currency' }],
 ]);
 
+const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
+  ['labels', 'start'],
+]);
 const domProps = { style: { height: '100vh' } };
 
 const groupRowsState = new GroupRowsState({
@@ -114,6 +117,7 @@ export default function GroupByExample() {
         field: 'country',
       },
       { field: 'stack' },
+      { field: 'hobby' },
     ],
     [],
   );
@@ -131,32 +135,55 @@ export default function GroupByExample() {
       //     };
       //   },
       // },
+      // {
+      //   field: 'canDesign',
+      //   // column: ({ column: pivotCol }) => {
+      //   //   const lastKey = pivotCol.pivotGroupKey;
+
+      //   //   return {
+      //   //     defaultWidth: 500,
+      //   //     header:
+      //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
+      //   //       pivotCol.pivotAggregator.id,
+      //   //   };
+      //   // },
+      //   // columnGroup: ({ columnGroup: pivotCol }) => {
+      //   //   const lastKey = pivotCol.pivotGroupKey;
+
+      //   //   return {
+      //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+      //   //   };
+      //   // },
+      // },
       {
-        field: 'canDesign',
-        // column: ({ column: pivotCol }) => {
-        //   const lastKey = pivotCol.pivotGroupKey;
+        field: 'preferredLanguage',
 
-        //   return {
-        //     defaultWidth: 500,
-        //     header:
-        //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
-        //       pivotCol.pivotAggregator.id,
-        //   };
-        // },
-        // columnGroup: ({ columnGroup: pivotCol }) => {
-        //   const lastKey = pivotCol.pivotGroupKey;
-
-        //   return {
-        //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-        //   };
-        // },
+        column: ({ column }) => ({
+          header: column.header + '!',
+        }),
       },
     ],
     [],
   );
 
+  const [size, setSize] = React.useState('10');
+  const dataSource = React.useMemo(() => {
+    return getDataSource(size);
+  }, [size]);
   return (
     <>
+      <select
+        value={size}
+        onChange={(e) => {
+          setSize(e.target.value);
+        }}
+      >
+        <option value="10">10 items</option>
+        <option value="100">100 items</option>
+        <option value="1k">1k items</option>
+        <option value="10k">10k items</option>
+        <option value="50k">50k items</option>
+      </select>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
@@ -168,13 +195,20 @@ export default function GroupByExample() {
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
-            <InfiniteTable<Developer>
-              domProps={domProps}
-              columns={columns}
-              pivotColumns={pivotColumns}
-              pivotColumnGroups={pivotColumnGroups}
-              columnDefaultWidth={220}
-            />
+            <div>
+              <InfiniteTable<Developer>
+                domProps={domProps}
+                pivotRowLabelsColumn={{
+                  header: 'test',
+                }}
+                hideEmptyGroupColumns
+                defaultColumnPinning={defaultColumnPinning}
+                columns={columns}
+                pivotColumns={pivotColumns}
+                pivotColumnGroups={pivotColumnGroups}
+                columnDefaultWidth={220}
+              />
+            </div>
           );
         }}
       </DataSource>

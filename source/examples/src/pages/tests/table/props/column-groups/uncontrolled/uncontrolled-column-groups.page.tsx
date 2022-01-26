@@ -35,9 +35,14 @@ const App = () => {
               position: 'relative',
             },
           }}
+          columnPinning={{
+            id: true,
+            streetNo: true,
+          }}
           columnGroups={columnGroups}
           defaultCollapsedColumnGroups={collapsedColumnGroups}
-          columnDefaultWidth={140}
+          pinnedStartMaxWidth={300}
+          columnDefaultWidth={240}
           columnMinWidth={50}
           columns={columns}
         />

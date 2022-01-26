@@ -14,6 +14,7 @@ import {
   InfiniteTableRowInfoNormal,
   PivotBy,
 } from '../../../utils/groupAndPivot';
+import { InfiniteTableColumnPinnedValues } from './InfiniteTableProps';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -58,8 +59,6 @@ export interface InfiniteTableColumnHeaderRenderParams<T> {
   column: InfiniteTableComputedColumn<T>;
   columnSortInfo: DataSourceSingleSortInfo<T> | null | undefined;
 }
-
-export type InfiniteTableColumnPinned = 'start' | 'end' | false;
 
 export type InfiniteTableColumnRenderFunction<
   DATA_TYPE,
@@ -211,7 +210,7 @@ export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
 };
 
 export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> &
-  Partial<InfiniteTablePivotFinalColumn<T, any>>;
+  Partial<InfiniteTablePivotFinalColumnVariant<T, any>>;
 
 export type InfiniteTablePivotFinalColumnGroup<
   DataType,
@@ -235,10 +234,21 @@ export type InfiniteTablePivotFinalColumn<
   pivotAggregatorIndex: number;
 
   pivotGroupKeys: KeyType[];
-  pivotByAtIndex: PivotBy<DataType, KeyType>;
+  pivotByAtIndex?: PivotBy<DataType, KeyType>;
   pivotIndex: number;
   pivotGroupKey: KeyType;
 };
+
+export type InfiniteTablePivotFinalColumnVariant<
+  DataType,
+  KeyType extends any = any,
+> = InfiniteTablePivotFinalColumn<DataType, KeyType>;
+// export type InfiniteTablePivotFinalColumnVariant<
+//   DataType,
+//   KeyType extends any = any,
+// > = Omit<InfiniteTablePivotFinalColumn<DataType, KeyType>, 'pivotByAtIndex'> & {
+//   pivotByAtIndex?: PivotBy<DataType, KeyType>;
+// };
 
 type InfiniteTableComputedColumnBase<T> = {
   computedWidth: number;
@@ -254,7 +264,7 @@ type InfiniteTableComputedColumnBase<T> = {
   computedVisibleIndex: number;
   computedMultiSort: boolean;
 
-  computedPinned: InfiniteTableColumnPinned;
+  computedPinned: InfiniteTableColumnPinnedValues;
   computedDraggable: boolean;
   computedFirstInCategory: boolean;
   computedLastInCategory: boolean;

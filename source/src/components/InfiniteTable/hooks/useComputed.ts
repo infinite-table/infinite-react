@@ -3,7 +3,7 @@ import { InfiniteTableState, InfiniteTableComputedValues } from '../types';
 import { DataSourceSingleSortInfo } from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
 
-import { sortAscending } from '../../../utils/sortAscending';
+import { sortAscending } from '../../../utils/DeepMap/sortAscending';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useComponentState } from '../../hooks/useComponentState';

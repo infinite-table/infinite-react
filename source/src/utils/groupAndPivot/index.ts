@@ -1,16 +1,23 @@
-import { DataSourceAggregationReducer } from '../..';
+import {
+  DataSourceAggregationReducer,
+  DataSourceMappings,
+  LazyGroupDataDeepMap,
+  LazyGroupDataItem,
+} from '../..';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   InfiniteTableColumn,
   InfiniteTablePivotColumn,
-  InfiniteTablePivotFinalColumn,
   InfiniteTablePivotFinalColumnGroup,
+  InfiniteTablePivotFinalColumnVariant,
 } from '../../components/InfiniteTable/types/InfiniteTableColumn';
 import {
   InfiniteTableColumnGroup,
   InfiniteTableGroupColumnBase,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
+
+export const LAZY_ROOT_KEY_FOR_GROUPS: string = '____root____';
 
 export type AggregationReducer<
   T,
@@ -117,7 +124,7 @@ export type PivotBy<DataType, KeyType> = Omit<
     | (({
         column,
       }: {
-        column: InfiniteTablePivotFinalColumn<DataType, KeyType>;
+        column: InfiniteTablePivotFinalColumnVariant<DataType, KeyType>;
       }) => Partial<InfiniteTablePivotColumn<DataType>>);
   columnGroup?:
     | InfiniteTableColumnGroup
@@ -133,6 +140,14 @@ type GroupParams<DataType, KeyType> = {
   defaultToKey?: (value: any, item: DataType) => GroupKeyType<KeyType>;
   pivot?: PivotBy<DataType, KeyType>[];
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
+};
+
+type LazyGroupParams<DataType, KeyType = any> = {
+  // parentDeepMap?: DeepMap<
+  //   GroupKeyType<KeyType>,
+  //   DeepMapGroupValueType<Partial<DataType>, KeyType>
+  // >;
+  mappings?: DataSourceMappings;
 };
 
 export type DataGroupResult<DataType, KeyType extends any> = {
@@ -185,6 +200,9 @@ function computeReducersFor<DataType>(
   for (let key in reducers)
     if (reducers.hasOwnProperty(key)) {
       const reducer = reducers[key];
+      if (typeof reducer.reducer !== 'function') {
+        continue;
+      }
       const currentValue = reducerResults[key];
 
       const value = reducer.field
@@ -195,32 +213,128 @@ function computeReducersFor<DataType>(
     }
 }
 
-export function lazyGroup<DataType, KeyType = any>(
-  groupParams: GroupParams<DataType, KeyType>,
-  data: DataType[],
+type LazyPivotContainer = {
+  values: Record<string, any>;
+  totals?: Record<string, any>;
+};
+
+export function lazyGroup<DataType, KeyType extends string = string>(
+  groupParams: GroupParams<DataType, KeyType> &
+    LazyGroupParams<DataType, KeyType>,
+  rootData: LazyGroupDataDeepMap<DataType>,
 ): DataGroupResult<DataType, KeyType> {
+  const {
+    reducers = {},
+    pivot,
+    groupBy,
+
+    mappings,
+  } = groupParams;
+
   const deepMap = new DeepMap<
     GroupKeyType<KeyType>,
     DeepMapGroupValueType<DataType, KeyType>
   >();
 
-  const { reducers, pivot } = groupParams;
+  function traverseValues(
+    pivotDeepMap: DeepMap<
+      GroupKeyType<KeyType>,
+      PivotGroupValueType<DataType, KeyType>
+    >,
+    container: LazyPivotContainer,
+    pivot: PivotBy<DataType, KeyType>[],
+    pivotIndex: number = 0,
+    currentPivotKeys: KeyType[] = [],
+  ) {
+    const last = pivotIndex === pivot.length - 1;
+    const values = container[(mappings?.values || 'values') as 'values'] || {};
+    for (var k in values)
+      if (values.hasOwnProperty(k)) {
+        const pivotKey = k;
+        currentPivotKeys.push(pivotKey as any as KeyType);
+
+        topLevelPivotColumns!.set(currentPivotKeys, true);
+        pivotDeepMap.set(currentPivotKeys, {
+          reducerResults: values[k][mappings?.totals || 'totals'] || {},
+          items: [],
+        });
+
+        if (!last) {
+          traverseValues(
+            pivotDeepMap,
+            values[k],
+            pivot,
+            pivotIndex + 1,
+            currentPivotKeys,
+          );
+        }
+
+        currentPivotKeys.pop();
+      }
+  }
+
+  const topLevelPivotColumns = pivot
+    ? new DeepMap<GroupKeyType<KeyType>, boolean>()
+    : undefined;
+
+  let currentPivotKeys: GroupKeyType<KeyType>[] = [];
 
   const initialReducerValue = initReducers<DataType>(reducers);
 
   const globalReducerResults = { ...initialReducerValue };
 
+  rootData.visitDepthFirst(
+    (dataArray: LazyGroupDataItem<DataType>[], keys, _index, next) => {
+      const [_rootKey, ...currentGroupKeys] = keys;
+      // const currentPivotKeys = [...currentGroupKeys] as KeyType[];
+
+      for (let i = 0, len = dataArray.length; i < len; i++) {
+        const dataObject = dataArray[i].data;
+        const dataKeys = dataArray[i].keys;
+        let item = dataObject as Partial<DataType>;
+
+        const { field: groupByProperty } = groupBy[dataKeys.length - 1];
+        const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
+
+        currentGroupKeys.push(key);
+
+        const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
+          items: [],
+          reducerResults: dataArray[i].aggregations || {},
+        };
+        deepMap.set(currentGroupKeys, deepMapGroupValue);
+        if (pivot) {
+          const pivotDeepMap = (deepMapGroupValue.pivotDeepMap = new DeepMap<
+            GroupKeyType<KeyType>,
+            PivotGroupValueType<DataType, KeyType>
+          >());
+
+          const pivotContainer = dataArray[i]
+            .pivot as any as LazyPivotContainer;
+
+          traverseValues(
+            pivotDeepMap,
+            pivotContainer,
+            pivot,
+            0,
+            currentPivotKeys,
+          );
+        }
+
+        currentGroupKeys.pop();
+      }
+
+      next?.();
+    },
+  );
+
   const result: DataGroupResult<DataType, KeyType> = {
     deepMap,
     groupParams,
-    initialData: data,
+    initialData: rootData,
 
     reducerResults: globalReducerResults,
   };
-
-  const topLevelPivotColumns = pivot
-    ? new DeepMap<GroupKeyType<KeyType>, boolean>()
-    : undefined;
 
   if (pivot) {
     result.topLevelPivotColumns = topLevelPivotColumns;

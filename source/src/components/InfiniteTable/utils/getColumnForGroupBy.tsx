@@ -81,7 +81,7 @@ export function getColumnForGroupBy<T>(
     groupByForColumn: DataSourceGroupBy<T>;
   },
   toggleGroupRow: (groupRowKeys: any[]) => void,
-  groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
+  groupColumnFromProps?: Partial<InfiniteTablePropGroupColumn<T>>,
 ): InfiniteTableGeneratedGroupColumn<T> {
   const {
     groupByForColumn: groupByForColumn,
@@ -121,7 +121,7 @@ export function getColumnForGroupBy<T>(
 export function getSingleGroupColumn<T>(
   options: InfiniteTableGroupColumnGetterOptions<T>,
   toggleGroupRow: (groupRowKeys: any[]) => void,
-  groupColumnFromProps?: InfiniteTablePropGroupColumn<T>,
+  groupColumnFromProps?: Partial<InfiniteTablePropGroupColumn<T>>,
 ) {
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group`,

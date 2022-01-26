@@ -31,7 +31,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -39,7 +39,9 @@ const dataSource = () => {
 const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
   reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => Math.floor(arr.length ? sum / arr.length : 0),
+  done: (sum, arr) => {
+    return Math.floor(arr.length ? sum / arr.length : 0);
+  },
 };
 
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
@@ -82,12 +84,19 @@ const groupRowsState = new GroupRowsState({
 });
 
 export default function GroupByExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+  const groupBy = React.useMemo<DataSourceGroupBy<Developer>[]>(
     () => [
       {
         field: 'country',
       },
-      { field: 'stack' },
+      {
+        field: 'stack',
+        column: {
+          header: 'test',
+          render: ({ value }) => value,
+        },
+        // TODO add a note in docs about this nice trick
+      },
     ],
     [],
   );
@@ -125,6 +134,9 @@ export default function GroupByExample() {
         //   };
         // },
       },
+      {
+        field: 'preferredLanguage',
+      },
     ],
     [],
   );
@@ -135,7 +147,6 @@ export default function GroupByExample() {
         primaryKey="id"
         data={dataSource}
         groupBy={groupBy}
-        pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
       >
@@ -144,6 +155,7 @@ export default function GroupByExample() {
             <InfiniteTable<Developer>
               domProps={domProps}
               columns={columns}
+              hideEmptyGroupColumns
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={220}

@@ -1,4 +1,15 @@
+/**
+ * DISCLAIMER:
+ *
+ * Please DO NOT use this code as a reference
+ * or a best-practice guide.
+ *
+ * This is written to get the job done with the least amount of effort
+ * and without any optimization - includes some not-reccomended SQL practices, etc.
+ *
+ */
 const cors = require('cors');
+const { DeepMap } = require('@infinite-table/deep-map');
 
 const alasql = require('alasql');
 const express = require('express');
@@ -77,12 +88,64 @@ const sqlRoutes = [
   '50k',
 ];
 
+alasql.aggr.CORRECT_AVERAGE = function (
+  value,
+  accumulator,
+  stage
+) {
+  if (stage == 1) {
+    // first call of aggregator - for first line
+
+    var newAccumulator = value != null ? value : 0;
+
+    return newAccumulator;
+  } else if (stage == 2) {
+    // for every line in the group
+    return accumulator + (value || 0);
+  } else if (stage == 3) {
+    return accumulator || 0;
+  }
+};
+alasql.aggr.CORRECT_AVERAGE = function (
+  value,
+  accumulator,
+  stage
+) {
+  if (stage == 1) {
+    var newAccumulator = value != null ? [value] : [];
+
+    return newAccumulator;
+  } else if (stage == 2) {
+    if (value != null) {
+      accumulator.push(value);
+    }
+    return accumulator;
+  } else if (stage == 3) {
+    return accumulator.length
+      ? accumulator.reduce((a, b) => a + b) /
+          accumulator.length
+      : 0;
+  }
+};
+
+const FNS = {
+  avg: 'CORRECT_AVERAGE',
+  AVG: 'CORRECT_AVERAGE',
+  SUM: 'IMPROVED_SUM',
+  sum: 'IMPROVED_SUM',
+};
+
 sqlRoutes.forEach((name) => {
   app.use(
     `/.netlify/functions/json-server/developers${name}-sql`,
     getSQLRoute(name)
   );
 });
+
+const MAPPINGS = {
+  values: 'v',
+  totals: 't',
+};
 
 const KEY_SEPARATOR = '_';
 
@@ -107,7 +170,7 @@ function getSQLRoute(routeSuffix) {
     try {
       groupKeys = JSON.parse(query.groupKeys);
     } catch (ex) {
-      groupKeys = null;
+      groupKeys = [];
     }
     try {
       pivotBy = JSON.parse(query.pivotBy);
@@ -147,11 +210,13 @@ function getSQLRoute(routeSuffix) {
 
     const reducersByField = (reducers || []).reduce(
       (acc, reducer) => {
-        acc[reducer.field] = reducer;
+        acc[reducer.id || reducer.field] = reducer;
         return acc;
       },
       {}
     );
+
+    const pivotLength = pivotBy ? pivotBy.length : 0;
     const groupByMapByField = (groupBy || []).reduce(
       (acc, group) => {
         acc[group.field] = group;
@@ -181,43 +246,96 @@ function getSQLRoute(routeSuffix) {
     res.json({
       totalCount,
       length: result.length,
+      mappings: MAPPINGS,
       data: result.map((x) => {
+        console.log(x, groupBy);
         const data = {};
         const aggregations = {};
-        const values = {};
+        const pivot = {
+          [MAPPINGS.values]: {},
+          [MAPPINGS.totals]: {},
+        };
 
+        const keyField =
+          groupKeys && groupKeys.length
+            ? groupBy[groupKeys.length].field
+            : groupBy[0].field;
+        const keys = [...groupKeys, x[keyField]];
+
+        console.log({ keys });
         Object.keys(x).forEach((k) => {
+          const theValue =
+            typeof x[k] === 'number'
+              ? Math.floor(x[k])
+              : x[k];
           if (reducersByField[k]) {
-            aggregations[k] = x[k];
+            aggregations[k] = theValue;
             return;
           }
           if (groupByMapByField[k]) {
-            data[k] = x[k];
+            data[k] = theValue;
 
             return;
           }
-          const [reducerName, ...valueKeys] =
-            k.split(KEY_SEPARATOR);
 
-          values[reducerName] = values[reducerName] || {};
+          const valueKeys = k.split(KEY_SEPARATOR);
+          const reducerKey = valueKeys.pop();
 
-          let target = values[reducerName];
-          valueKeys.forEach((valueKey, i, arr) => {
-            const last = i === arr.length - 1;
-            if (!last) {
-              target = target[valueKey] =
-                target[valueKey] || {};
-            } else {
-              target[valueKey] =
-                typeof x[k] === 'number'
-                  ? Math.floor(x[k])
-                  : x[k];
-            }
-          });
+          const path = [];
+
+          const isLeafNode =
+            valueKeys.length === pivotLength;
+          if (isLeafNode) {
+            let leafContainer = valueKeys.reduce(
+              (acc, key, i) => {
+                const isLast = i === valueKeys.length - 1;
+                // const shouldHaveTotals =
+                //   i !== pivotLength - 1;
+                acc[key] =
+                  acc[key] ||
+                  (!isLast
+                    ? {
+                        [MAPPINGS.values]: {},
+                        [MAPPINGS.totals]: {},
+                      }
+                    : { [MAPPINGS.totals]: {} });
+
+                path.push(key);
+
+                return acc[key][
+                  isLast ? MAPPINGS.totals : MAPPINGS.values
+                ];
+              },
+              pivot[MAPPINGS.values]
+            );
+
+            leafContainer[reducerKey] = theValue;
+          } else {
+            let totalsContainer = valueKeys.reduce(
+              (acc, key, i) => {
+                const shouldHaveTotals =
+                  i !== pivotLength - 1;
+                acc[key] =
+                  acc[key] ||
+                  (shouldHaveTotals
+                    ? {
+                        [MAPPINGS.values]: {},
+                        [MAPPINGS.totals]: {},
+                      }
+                    : { [MAPPINGS.values]: {} });
+
+                return acc[key][MAPPINGS.totals];
+              },
+              pivot[MAPPINGS.values]
+            );
+
+            totalsContainer[reducerKey] = theValue;
+          }
         });
 
-        // return x;
-        return { data, aggregations, values };
+        pivot[MAPPINGS.totals] = aggregations;
+
+        return { data, keys, aggregations, pivot };
       }),
     });
   };
@@ -226,65 +344,57 @@ function getSQLRoute(routeSuffix) {
 app.use('/.netlify/functions/json-server', router); // path must route to lambda
 
 function generatePivotSQL(pivotWithValues, reducers = []) {
-  const map = new Map();
+  const deepMap = new DeepMap();
 
-  const nesting = pivotWithValues.length;
-
-  pivotWithValues.forEach(({ field, values }) => {
-    if (!map.size) {
-      values.forEach((value) => {
-        (reducers || []).forEach((reducer) => {
-          const key = `${reducer.field}_${value}`;
-          map.set(key, {
-            level: 1,
-            pairs: [{ field, value }],
-          });
+  pivotWithValues.forEach(({ field, values }, index) => {
+    const existingKeys = deepMap.topDownKeys();
+    if (existingKeys.length > 0) {
+      existingKeys.forEach((key) => {
+        if (key.length < index) {
+          return;
+        }
+        values.forEach((value) => {
+          const newKey = [...key, value];
+          deepMap.set(newKey, { field, value });
         });
       });
     } else {
-      [...map.entries()].forEach(([key, entry]) => {
-        values.forEach((value) => {
-          let { level } = entry;
-
-          level++;
-          const newKey = `${key}${KEY_SEPARATOR}${value}`;
-
-          map.set(newKey, {
-            level,
-            pairs: entry.pairs.concat({ field, value }),
-          });
-        });
+      values.forEach((value) => {
+        const newKey = [value];
+        deepMap.set(newKey, { field, value });
       });
     }
   });
 
+  // console.log(deepMap.topDownKeys(), '!!!');
+
   const colsToSelect = [];
 
-  map.forEach((entry, key) => {
-    const len = entry.level;
-    // if (len === nesting) {
-    const { pairs } = entry;
-
-    const condition = pairs
-      .map(({ field, value }) => `${field} = '${value}'`)
+  deepMap.visit((value, key) => {
+    const condition = key
+      .map((k, i) => `${pivotWithValues[i].field} = '${k}'`)
       .join(' AND ');
-
     reducers.forEach((reducer) => {
       const as =
-        pairs
-          .map(({ value }) => value.replace(/ /g, '_'))
+        key
+          .map((k) =>
+            k.replace(/ /g, '_').replace(/#/g, 'sharp')
+          )
           .join(KEY_SEPARATOR) +
         KEY_SEPARATOR +
-        reducer.field;
+        (reducer.id || reducer.field);
 
       colsToSelect.push(
-        `${reducer.name}(CASE WHEN ${condition} THEN ${reducer.field} ELSE 0 END) as ${as}`
+        `${
+          FNS[reducer.name] || reducer.name
+        }(CASE WHEN ${condition} THEN ${
+          reducer.field
+        } ELSE null END) as ${as}`
       );
     });
-    // }
   });
 
-  console.log(colsToSelect.join('\n'));
+  console.log(colsToSelect);
 
   return colsToSelect;
 }
@@ -315,10 +425,6 @@ function buildSQL({
     );
 
     if (pivotBy) {
-      // colsToSelect = colsToSelect.concat(
-      //   pivotBy.map((col) => `${col.field} as ${col.field}`)
-      // );
-
       const pivotByWithValues = pivotBy.map((pivot) => {
         const sql = `select unique(${pivot.field}) as ${pivot.field} from ${tableName}`;
         return {
@@ -329,6 +435,8 @@ function buildSQL({
         };
       });
 
+      console.log([...colsToSelect]);
+
       colsToSelect.push(
         ...generatePivotSQL(pivotByWithValues, reducers)
       );
@@ -336,8 +444,10 @@ function buildSQL({
   }
 
   if (Array.isArray(reducers)) {
-    reducers.forEach(({ field, name }) => {
-      colsToSelect.push(`${name}(${field}) as ${field}`);
+    reducers.forEach(({ field, name, id }) => {
+      colsToSelect.push(
+        `${name}(${field}) as ${id || field}`
+      );
     });
   }
 
@@ -370,7 +480,11 @@ function buildSQL({
     }
   }
 
+  // colsToSelect.length = 8;
+
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
+
+  // console.log(SQL);
 
   if (groupBy && groupBy.length) {
     SQL += ` GROUP BY ${groupBy

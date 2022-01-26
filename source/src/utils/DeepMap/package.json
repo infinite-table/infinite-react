@@ -1,0 +1,26 @@
+{
+  "name": "@infinite-table/deep-map",
+  "description": "DeepMap structure - ala Map but with keys being arrays",
+  "version": "0.0.1",
+  "main": "index.js",
+  "module": "index.esm.js",
+  "typings": "types.d.ts",
+  "scripts": {
+    "build": "npm run esbuild && npm run tsc",
+    "tsc": "tsc --emitDeclarationOnly  --project tsconfig.deepmap.json --outFile ../../../dist-deepmap/types.d.ts ",
+    "esbuild": "npm run esbuild-esm && npm run esbuild-cjs",
+    "esbuild-esm": "node ../../../run-build-deepmap.js esm",
+    "esbuild-cjs": "node ../../../run-build-deepmap.js cjs",
+    "///": "//",
+    "bump:canary": "npm version prerelease --preid=canary",
+    "bump:major:canary": "npm version premajor --preid=canary",
+    "bump:minor:canary": "npm version preminor --preid=canary",
+    "bump:patch:canary": "npm version prepatch --preid=canary",
+    "////": "//",
+    "bump:patch": "npm version patch",
+    "bump:minor": "npm version minor",
+    "bump:major": "npm version major"
+  },
+ 
+  "license": "MIT"
+}

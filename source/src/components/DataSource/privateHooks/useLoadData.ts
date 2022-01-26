@@ -1,4 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { LazyGroupDataItem } from '..';
+import { DeepMap } from '../../../utils/DeepMap';
+import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 
 import {
   ComponentStateGeneratedActions,
@@ -35,7 +38,6 @@ export function buildDataSourceDataParams<T>(
     groupBy: componentState.groupBy,
     pivotBy: componentState.pivotBy,
     aggregationReducers: componentState.aggregationReducers,
-    groupIndex: 0,
   };
 
   if (componentState.livePagination !== undefined) {
@@ -45,6 +47,7 @@ export function buildDataSourceDataParams<T>(
 
   if (componentState.fullLazyLoad) {
     dataSourceParams.lazyLoadBatchSize = componentState.lazyLoadBatchSize;
+    dataSourceParams.groupKeys = [];
   }
 
   if (overrides) {
@@ -72,12 +75,13 @@ export function buildDataSourceDataParams<T>(
   return dataSourceParams;
 }
 
-function loadData<T>(
+export function loadData<T>(
   data: DataSourceData<T>,
   componentState: DataSourceState<T>,
   actions: ComponentStateGeneratedActions<DataSourceState<T>>,
+  overrides?: Partial<DataSourceDataParams<T>>,
 ) {
-  const dataParams = buildDataSourceDataParams(componentState);
+  const dataParams = buildDataSourceDataParams(componentState, overrides);
 
   if (typeof data === 'function') {
     data = data(dataParams);
@@ -93,6 +97,7 @@ function loadData<T>(
   Promise.resolve(data).then((dataParam) => {
     // dataParam can either be an array or an object with a `data` array property
     let dataArray: T[] = [] as T[];
+    let skipAssign = false;
 
     if (Array.isArray((dataParam as DataSourceRemoteData<T>).data)) {
       const remoteData = dataParam as DataSourceRemoteData<T>;
@@ -101,11 +106,26 @@ function loadData<T>(
       if (remoteData.livePaginationCursor !== undefined) {
         actions.livePaginationCursor = remoteData.livePaginationCursor;
       }
+      if (remoteData.mappings) {
+        actions.pivotMappings = remoteData.mappings;
+      }
+
+      if (componentState.fullLazyLoad && dataParams.groupKeys) {
+        const lazyGroupData = DeepMap.clone(
+          componentState.originalLazyGroupData,
+        );
+        const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
+        lazyGroupData.set(key, dataArray as any as LazyGroupDataItem<T>[]);
+        skipAssign = true;
+        actions.originalLazyGroupData = lazyGroupData;
+      }
     } else {
       dataArray = dataParam as T[];
     }
 
-    actions.originalDataArray = dataArray;
+    if (!skipAssign) {
+      actions.originalDataArray = dataArray;
+    }
     if (dataIsPromise) {
       actions.loading = false;
     }
@@ -206,7 +226,7 @@ export function useLivePagination<T>() {
   //   }
   // }, [livePagination, livePagination ? cursorId : null]);
 
-  useEffectWithChanges((changes, prevValues) => {
+  useEffectWithChanges((_changes, _prevValues) => {
     const componentState = getComponentState();
     if (typeof componentState.data === 'function') {
       loadData(componentState.data, componentState, actions);

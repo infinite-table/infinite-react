@@ -1,10 +1,12 @@
-import { InfiniteTablePropColumnPinning } from '../types';
-import { InfiniteTablePropColumnOrderNormalized } from '../types/InfiniteTableProps';
+import {
+  InfiniteTablePropColumnOrderNormalized,
+  InfiniteTablePropColumnPinningMap,
+} from '../types/InfiniteTableProps';
 
 const order = ['start', undefined, 'end'];
 export const adjustColumnOrderForPinning = (
   columnOrder: InfiniteTablePropColumnOrderNormalized,
-  columnPinning: InfiniteTablePropColumnPinning,
+  columnPinning: InfiniteTablePropColumnPinningMap,
 ) => {
   if (columnPinning.size > 0) {
     // make sure pinned columns are coming first

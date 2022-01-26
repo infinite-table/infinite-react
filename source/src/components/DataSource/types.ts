@@ -24,7 +24,6 @@ export interface DataSourceDataParams<T> {
   originalDataArray: T[];
   sortInfo?: DataSourceSortInfo<T>;
   groupBy?: DataSourcePropGroupBy<T>;
-  groupIndex?: number;
   pivotBy?: DataSourcePropPivotBy<T>;
 
   lazyLoadBatchSize?: number;
@@ -60,6 +59,7 @@ export type DataSourceSortInfo<T> =
 
 export type DataSourceRemoteData<T> = {
   data: T[];
+  mappings?: DataSourceMappings;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
 
@@ -95,29 +95,50 @@ export interface DataSourceMappedState<T> {
   groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
+  collapseGroupRowsOnDataFunctionChange: NonUndefined<
+    DataSourceProps<T>['collapseGroupRowsOnDataFunctionChange']
+  >;
   sortInfo: DataSourceSingleSortInfo<T>[] | null;
 }
 
 export type DataSourceAggregationReducer<T, AggregationResultType> = {
   name?: string;
   field?: keyof T;
-  initialValue: AggregationResultType;
+  initialValue?: AggregationResultType;
   getter?: (data: T) => any;
-  reducer: (
-    accumulator: any,
-    value: any,
-    data: T,
-  ) => AggregationResultType | any;
+  reducer:
+    | string
+    | ((accumulator: any, value: any, data: T) => AggregationResultType | any);
   done?: (
     accumulatedValue: AggregationResultType | any,
     array: T[],
   ) => AggregationResultType;
 };
 
+export type DataSourceMappings = Record<'totals' | 'values', string>;
+
+export type LazyGroupDataItem<DataType> = {
+  data: Partial<DataType>;
+  keys: any[];
+  aggregations?: Record<string, any>;
+  pivot?: {
+    values: Record<string, any>;
+    totals?: Record<string, any>;
+  };
+};
+
+export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
+  KeyType,
+  LazyGroupDataItem<DataType>[]
+>;
+
 export interface DataSourceSetupState<T> {
+  pivotMappings?: DataSourceMappings;
   propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
   showSeparatePivotColumnForSingleAggregation: boolean;
   dataParams?: DataSourceDataParams<T>;
+  originalLazyGroupData: LazyGroupDataDeepMap<T>;
+
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
   originalDataArray: T[];
   lastSortDataArray?: T[];
@@ -175,6 +196,8 @@ export type DataSourceProps<T> = {
   groupRowsState?: GroupRowsState;
   defaultGroupRowsState?: GroupRowsState;
   onGroupRowsStateChange?: (groupRowsState: GroupRowsState) => void;
+
+  collapseGroupRowsOnDataFunctionChange?: boolean;
 
   sortInfo?: DataSourceSortInfo<T>;
   defaultSortInfo?: DataSourceSortInfo<T>;

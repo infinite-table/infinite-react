@@ -153,7 +153,19 @@ export const HeaderCellRecipe = recipe({
         pinned: 'start',
         lastInCategory: true,
       },
-      style: ColumnCellVariantsObject.pinnedStartLastInCategory,
+      style: {
+        ...ColumnCellVariantsObject.pinnedStartLastInCategory,
+        selectors: {
+          [`${InfiniteClsRecipe({
+            hasPinnedStartOverflow: true,
+          })} &`]: {
+            vars: {
+              [ThemeVars.components.Cell.border]:
+                ThemeVars.components.Cell.borderInvisible,
+            },
+          },
+        },
+      },
     },
     {
       variants: {

@@ -6,6 +6,8 @@ import {
   DataSourceDerivedState,
   DataSourceSetupState,
   DataSourceState,
+  LazyGroupDataItem,
+  LazyGroupDataDeepMap,
 } from '../types';
 import { GroupRowsState } from '../GroupRowsState';
 import {
@@ -17,22 +19,30 @@ import { isControlledValue } from '../../utils/isControlledValue';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
-import { DataSourceDataParams } from '..';
+import { DataSourceComponentActions, DataSourceDataParams } from '..';
 import { dbg } from '../../../utils/debug';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
+import { DeepMap } from '../../../utils/DeepMap';
 
 export const defaultCursorId = Symbol('cursorId');
 
 const debug = dbg('DataSource:dataParams');
+
 export function initSetupState<T>(): DataSourceSetupState<T> {
   const now = Date.now();
   const originalDataArray: T[] = [];
   const dataArray: InfiniteTableRowInfo<T>[] = [];
 
+  const originalLazyGroupData: LazyGroupDataDeepMap<T> = new DeepMap<
+    string,
+    LazyGroupDataItem<T>[]
+  >();
+
   return {
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
     pivotTotalColumnPosition: 'end',
+    originalLazyGroupData,
     originalDataArray,
     cursorId: defaultCursorId,
     showSeparatePivotColumnForSingleAggregation: false,
@@ -40,6 +50,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     propsCache: new Map<keyof DataSourceProps<T>, WeakMap<any, any>>([
       ['sortInfo', new WeakMap()],
     ]),
+
+    pivotMappings: undefined,
 
     pivotColumns: undefined,
     pivotColumnGroups: undefined,
@@ -58,7 +70,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   };
 }
 
-function getCompareObject<T>(
+function getCompareObjectForDataParams<T>(
   dataParams: DataSourceDataParams<T>,
 ): Partial<DataSourceDataParams<T>> {
   const obj: Partial<DataSourceDataParams<T>> = {
@@ -77,7 +89,9 @@ export const forwardProps = <T>(
 > => {
   return {
     onDataParamsChange: (fn) =>
-      fn ? discardCallsWithEqualArg(fn, 100, getCompareObject) : undefined,
+      fn
+        ? discardCallsWithEqualArg(fn, 100, getCompareObjectForDataParams)
+        : undefined,
     fullLazyLoad: 1,
     data: 1,
     pivotBy: 1,
@@ -85,6 +99,9 @@ export const forwardProps = <T>(
     livePagination: 1,
     lazyLoadBatchSize: (lazyLoadBatchSize) => lazyLoadBatchSize ?? 50,
     aggregationReducers: 1,
+    collapseGroupRowsOnDataFunctionChange: (
+      collapseGroupRowsOnDataFunctionChange,
+    ) => collapseGroupRowsOnDataFunctionChange ?? true,
 
     loading: (loading) => loading ?? false,
     sortInfo: (sortInfo) =>
@@ -120,12 +137,27 @@ function getLivePaginationCursorValue<T>(
 
 export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
+
   state: DataSourceState<T>;
   oldState: DataSourceState<T> | null;
 }): DataSourceDerivedState<T> {
   const { props, state, oldState } = params;
 
   const controlledSort = isControlledValue(props.sortInfo);
+
+  if (oldState && oldState.data != state.data) {
+    state.originalLazyGroupData = new DeepMap<string, LazyGroupDataItem<T>[]>();
+
+    if (
+      typeof state.data === 'function' &&
+      state.collapseGroupRowsOnDataFunctionChange
+    ) {
+      state.groupRowsState = new GroupRowsState({
+        collapsedRows: [],
+        expandedRows: true,
+      });
+    }
+  }
 
   const result: DataSourceDerivedState<T> = {
     controlledSort,
@@ -149,6 +181,16 @@ export function mapPropsToState<T extends any>(params: {
   }
 
   return result;
+}
+
+export function onPropChange<T>(
+  params: { name: keyof T; newValue: any },
+  actions: DataSourceComponentActions<T>,
+) {
+  const { name, newValue } = params;
+
+  if (name === 'data' && typeof newValue === 'function') {
+  }
 }
 
 export function getInterceptActions<T>(): ComponentInterceptedActions<

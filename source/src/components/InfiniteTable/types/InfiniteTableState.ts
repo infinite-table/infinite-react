@@ -1,10 +1,12 @@
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
-  InfiniteTablePropColumnGroups,
+  InfiniteTablePropColumnGroupsMap,
+  InfiniteTablePropColumnPinningMap,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnsMap,
   InfiniteTablePropColumnTypesMap,
+  InfiniteTablePropColumnVisibilityMap,
   InfiniteTableProps,
 } from './InfiniteTableProps';
 
@@ -26,6 +28,7 @@ export type GroupByMap<T> = Map<
 >;
 
 export interface InfiniteTableSetupState<T> {
+  propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
   scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
@@ -88,7 +91,7 @@ export interface InfiniteTableMappedState<T> {
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
   pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
-  pivotColumnGroups: InfiniteTableProps<T>['pivotColumnGroups'];
+  pivotColumnGroups: InfiniteTablePropColumnGroupsMap;
 
   activeIndex: NonUndefined<InfiniteTableProps<T>['activeIndex']>;
   columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
@@ -107,11 +110,11 @@ export interface InfiniteTableMappedState<T> {
   rowHeight: number;
   headerHeight: number;
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
-  columnVisibility: NonUndefined<InfiniteTableProps<T>['columnVisibility']>;
-  columnPinning: NonUndefined<InfiniteTableProps<T>['columnPinning']>;
+  columnVisibility: InfiniteTablePropColumnVisibilityMap;
+  columnPinning: InfiniteTablePropColumnPinningMap;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
-  columnGroups: NonUndefined<InfiniteTableProps<T>['columnGroups']>;
+  columnGroups: InfiniteTablePropColumnGroupsMap;
   collapsedColumnGroups: NonUndefined<
     InfiniteTableProps<T>['collapsedColumnGroups']
   >;
@@ -131,7 +134,7 @@ export interface InfiniteTableDerivedState<T> {
 
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
-  computedColumnGroups: InfiniteTablePropColumnGroups;
+  computedColumnGroups: InfiniteTablePropColumnGroupsMap;
 
   rowHeightCSSVar: string;
   headerHeightCSSVar: string;

@@ -4,10 +4,10 @@ import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTablePropColumnOrder,
-  InfiniteTablePropColumnPinning,
+  InfiniteTablePropColumnPinningMap,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnTypesMap,
-  InfiniteTablePropColumnVisibility,
+  InfiniteTablePropColumnVisibilityMap,
 } from '../types/InfiniteTableProps';
 import type { Size } from '../../types/Size';
 
@@ -33,11 +33,11 @@ type UseComputedVisibleColumnsParam<T> = {
   sortInfo?: DataSourceSingleSortInfo<T>[];
   setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
 
-  columnPinning: InfiniteTablePropColumnPinning;
+  columnPinning: InfiniteTablePropColumnPinningMap;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
   columnOrder: InfiniteTablePropColumnOrder;
-  columnVisibility: InfiniteTablePropColumnVisibility;
+  columnVisibility: InfiniteTablePropColumnVisibilityMap;
   columnVisibilityAssumeVisible?: boolean;
 };
 

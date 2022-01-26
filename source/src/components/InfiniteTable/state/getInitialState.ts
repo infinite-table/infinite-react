@@ -18,20 +18,6 @@ import {
 import { toMap } from '../utils/toMap';
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
-function toColumnTypesMap<K extends string, V>(
-  mapOrObject?: Map<K, V> | Record<K, V>,
-): Map<K, V> {
-  // if (!mapOrObject) {
-  //   mapOrObject = {} as Record<K, V>;
-  // }
-
-  // // TODO continue here
-  // if (mapOrObject instanceof Map) {
-  // }
-
-  return toMap(mapOrObject);
-}
-
 /**
  * The computed state is independent from props and cannot
  * be affected by props
@@ -40,6 +26,9 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
 
   return {
+    propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([
+      // ['sortInfo', new WeakMap()],
+    ]),
     columnShifts: null,
     domRef: createRef(),
     scrollerDOMRef: createRef(),
@@ -66,12 +55,13 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
   };
 }
 
-export const forwardProps = <T>(): ForwardPropsToStateFnResult<
+export const forwardProps = <T>(
+  setupState: InfiniteTableSetupState<T>,
+): ForwardPropsToStateFnResult<
   InfiniteTableProps<T>,
   InfiniteTableMappedState<T>
 > => {
   return {
-    columns: (columns) => toMap(columns) ?? new Map(),
     scrollTopId: 1,
     components: 1,
     loadingText: 1,
@@ -135,21 +125,26 @@ export const forwardProps = <T>(): ForwardPropsToStateFnResult<
     headerHeight: (headerHeight) =>
       typeof headerHeight === 'number' ? headerHeight : 0,
 
+    columns: (columns) => toMap(columns, setupState.propsCache.get('columns')),
     columnVisibility: (columnVisibility) =>
-      toMap(columnVisibility) ?? new Map(),
-    columnPinning: (columnPinning) => columnPinning ?? new Map(),
-    columnSizing: (columnSizing) => toMap(columnSizing) ?? new Map(),
-    columnTypes: (columnTypes) => toColumnTypesMap(columnTypes) ?? new Map(),
+      toMap(columnVisibility, setupState.propsCache.get('columnVisibility')),
+    columnPinning: (columnPinning) =>
+      toMap(columnPinning, setupState.propsCache.get('columnPinning')),
+    columnSizing: (columnSizing) =>
+      toMap(columnSizing, setupState.propsCache.get('columnSizing')),
+    columnTypes: (columnTypes) =>
+      toMap(columnTypes, setupState.propsCache.get('columnTypes')),
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),
-    columnGroups: (columnGroups) => columnGroups ?? new Map(),
+    columnGroups: (columnGroups) =>
+      toMap(columnGroups, setupState.propsCache.get('columnGroups')),
   };
 };
 
 type GetGroupColumnStrategyOptions<T> = {
   groupBy: DataSourceGroupBy<T>[];
-  groupColumn?: InfiniteTablePropGroupColumn<T>;
+  groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
 };
 

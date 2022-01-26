@@ -1,6 +1,5 @@
 import type {
   InfiniteTableColumn,
-  InfiniteTableColumnPinned,
   InfiniteTableComputedColumn,
 } from '../types/InfiniteTableColumn';
 import type { Size } from '../../types/Size';
@@ -8,13 +7,14 @@ import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 
 import { computeFlex } from '../../flexbox';
 import type {
+  InfiniteTableColumnPinnedValues,
   InfiniteTableColumnSizingOptions,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
-  InfiniteTablePropColumnPinning,
+  InfiniteTablePropColumnPinningMap,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnTypesMap,
-  InfiniteTablePropColumnVisibility,
+  InfiniteTablePropColumnVisibilityMap,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { err } from '../../../utils/debug';
@@ -32,7 +32,7 @@ export const IS_GROUP_COLUMN_ID = (columnId: string) => {
 };
 
 const isColumnVisible = (
-  columnVisibility: InfiniteTablePropColumnVisibility,
+  columnVisibility: InfiniteTablePropColumnVisibilityMap,
   _columnVisibilityAssumeVisible: boolean,
 
   colId: string,
@@ -46,11 +46,11 @@ const isColumnVisible = (
 
 const getComputedPinned = (
   colId: string,
-  columnPinning: InfiniteTablePropColumnPinning,
-): InfiniteTableColumnPinned => {
+  columnPinning: InfiniteTablePropColumnPinningMap,
+): InfiniteTableColumnPinnedValues => {
   const pinned = columnPinning.get(colId);
-  const computedPinned: InfiniteTableColumnPinned =
-    pinned === 'start' || pinned === true
+  const computedPinned: InfiniteTableColumnPinnedValues =
+    pinned === 'start' // || pinned === true
       ? 'start'
       : pinned === 'end'
       ? 'end'
@@ -102,10 +102,10 @@ type GetComputedVisibleColumnsParam<T> = {
 
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
-  columnPinning: InfiniteTablePropColumnPinning;
+  columnPinning: InfiniteTablePropColumnPinningMap;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
-  columnVisibility: InfiniteTablePropColumnVisibility;
+  columnVisibility: InfiniteTablePropColumnVisibilityMap;
   columnVisibilityAssumeVisible: boolean;
 };
 
@@ -194,7 +194,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
         width: colType?.defaultWidth,
         flex: colType?.defaultFlex,
       };
-      let colSizing = columnSizing.get(colId) || {};
+      let colSizing = columnSizing.get(colId) || {
+        width: column?.defaultWidth,
+        flex: column?.defaultFlex,
+      };
 
       // if colSizing has width
       if (colSizing.width != null) {
@@ -245,9 +248,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
   let computedUnpinnedColumnsWidth = 0;
   let computedPinnedStartColumnsWidth = 0;
   let computedPinnedEndColumnsWidth = 0;
-  let prevPinned: InfiniteTableColumnPinned | null = null;
+  let prevPinned: InfiniteTableColumnPinnedValues | null = null;
 
-  const computedPinnedArray: InfiniteTableColumnPinned[] = [];
+  const computedPinnedArray: InfiniteTableColumnPinnedValues[] = [];
 
   let totalPinnedStartWidth = 0;
   let totalUnpinnedWidth = 0;

@@ -66,6 +66,7 @@ export function concludeReducer<T>(params: {
   const groupsDepsChanged = haveDepsChanged(previousState, state, [
     'generateGroupRows',
     'originalDataArray',
+    'originalLazyGroupData',
     'groupBy',
     'groupRowsState',
     'pivotBy',
@@ -102,16 +103,32 @@ export function concludeReducer<T>(params: {
 
   if (shouldGroup) {
     if (shouldGroupAgain) {
-      const groupFn = state.fullLazyLoad ? lazyGroup : group;
-
-      const groupResult = groupFn(
-        {
-          groupBy,
-          pivot: pivotBy,
-          reducers: state.aggregationReducers,
-        },
-        dataArray,
+      // console.log({ shouldGroupAgain });
+      console.log(
+        'grouping',
+        state.originalLazyGroupData.size,
+        state.fullLazyLoad,
       );
+      const groupResult = state.fullLazyLoad
+        ? lazyGroup(
+            {
+              groupBy,
+              // groupByIndex: 0,
+              // parentGroupKeys: [],
+              pivot: pivotBy,
+              mappings: state.pivotMappings,
+              reducers: state.aggregationReducers,
+            },
+            state.originalLazyGroupData,
+          )
+        : group(
+            {
+              groupBy,
+              pivot: pivotBy,
+              reducers: state.aggregationReducers,
+            },
+            dataArray,
+          );
 
       const flattenResult = enhancedFlatten({
         groupResult,
