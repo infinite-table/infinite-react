@@ -248,6 +248,12 @@ export type InfiniteTablePropPivotRowLabelsColumn<T> =
 export type InfiniteTablePropComponents = {
   LoadMask?: React.FC<LoadMaskProps>;
 };
+
+export type ScrollStopInfo = {
+  scrollTop: number;
+  firstVisibleRowIndex: number;
+  lastVisibleRowIndex: number;
+};
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumnsMap<T, InfiniteTablePivotColumn<T>>;
@@ -327,6 +333,8 @@ export interface InfiniteTableProps<T> {
 
   onScrollToTop?: () => void;
   onScrollToBottom?: () => void;
+  scrollStopDelay?: number;
+  onScrollStop?: (param: ScrollStopInfo) => void;
   scrollToBottomOffset?: number;
 
   defaultColumnOrder?: InfiniteTablePropColumnOrder;

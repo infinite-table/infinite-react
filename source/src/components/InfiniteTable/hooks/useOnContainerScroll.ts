@@ -5,9 +5,8 @@ import type { ScrollPosition } from '../../types/ScrollPosition';
 import { VirtualBrain } from '../../VirtualBrain';
 import { InfiniteClsScrolling } from '../InfiniteCls.css';
 import { internalProps } from '../internalProps';
+import { ScrollStopInfo } from '../types/InfiniteTableProps';
 import { useInfiniteTable } from './useInfiniteTable';
-
-const DELAY = 200;
 
 const TableClassName = internalProps.rootClassName;
 
@@ -26,17 +25,30 @@ export const useOnContainerScroll = <T>({
 }) => {
   const {
     componentState: {
+      scrollStopDelay,
       scrollerDOMRef,
       domRef,
       scrollToBottomOffset,
       onScrollToBottom,
       onScrollToTop,
+      onScrollStop: onScrollStopFromProps,
       bodySize,
     },
   } = useInfiniteTable<T>();
 
-  const { componentActions: dataSourceActions, getState: getDataSourceState } =
-    useDataSourceContextValue();
+  const {
+    componentActions: dataSourceActions,
+    getState: getDataSourceState,
+    componentState: { notifyScrollStop },
+  } = useDataSourceContextValue();
+
+  const onScrollStop = useCallback<(param: ScrollStopInfo) => void>(
+    (param) => {
+      onScrollStopFromProps?.(param);
+      notifyScrollStop(param);
+    },
+    [onScrollStopFromProps, notifyScrollStop],
+  );
 
   const timeoutIdRef = useRef<number>(0);
   const scrollingRef = useRef<boolean>(false);
@@ -50,31 +62,43 @@ export const useOnContainerScroll = <T>({
   // as it basically used as a proxy for resizing and node.scrollHeight
   // is dependent on resizing
 
-  const setScrolling = useCallback((scrolling: boolean) => {
-    const prevScrolling = scrollingRef.current;
-    scrollingRef.current = scrolling;
+  const setScrolling = useCallback(
+    (scrolling: boolean) => {
+      const prevScrolling = scrollingRef.current;
+      scrollingRef.current = scrolling;
 
-    if (scrolling) {
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-      }
-      timeoutIdRef.current = setTimeout(() => {
-        setScrolling(false);
-        timeoutIdRef.current = 0;
-      }, DELAY) as any as number;
-    }
-    if (prevScrolling !== scrolling) {
-      const classList = domRef.current?.classList;
-      if (!classList) {
-        return;
-      }
       if (scrolling) {
-        classList.add(InfiniteClsScrolling, TableClassName__Scrolling);
-      } else {
-        classList.remove(InfiniteClsScrolling, TableClassName__Scrolling);
+        if (timeoutIdRef.current) {
+          clearTimeout(timeoutIdRef.current);
+        }
+        timeoutIdRef.current = setTimeout(() => {
+          setScrolling(false);
+          timeoutIdRef.current = 0;
+        }, scrollStopDelay) as any as number;
       }
-    }
-  }, []);
+      if (prevScrolling !== scrolling) {
+        if (!scrolling) {
+          const range = verticalVirtualBrain.getRenderRange();
+
+          onScrollStop({
+            scrollTop: scrollPositionRef.current.scrollTop,
+            firstVisibleRowIndex: range.renderStartIndex,
+            lastVisibleRowIndex: range.renderEndIndex,
+          });
+        }
+        const classList = domRef.current?.classList;
+        if (!classList) {
+          return;
+        }
+        if (scrolling) {
+          classList.add(InfiniteClsScrolling, TableClassName__Scrolling);
+        } else {
+          classList.remove(InfiniteClsScrolling, TableClassName__Scrolling);
+        }
+      }
+    },
+    [scrollStopDelay, onScrollStop],
+  );
 
   const onContainerScroll = useCallback(
     (scrollInfo: ScrollPosition) => {

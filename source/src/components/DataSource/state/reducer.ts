@@ -104,11 +104,11 @@ export function concludeReducer<T>(params: {
   if (shouldGroup) {
     if (shouldGroupAgain) {
       // console.log({ shouldGroupAgain });
-      console.log(
-        'grouping',
-        state.originalLazyGroupData.size,
-        state.fullLazyLoad,
-      );
+      // console.log(
+      //   'grouping',
+      //   state.originalLazyGroupData.size,
+      //   state.fullLazyLoad,
+      // );
       const groupResult = state.fullLazyLoad
         ? lazyGroup(
             {

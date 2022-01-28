@@ -80,6 +80,7 @@ export const forwardProps = <T>(
 
     onScrollToTop: 1,
     onScrollToBottom: 1,
+    onScrollStop: 1,
     scrollToBottomOffset: 1,
 
     rowStyle: 1,
@@ -92,6 +93,8 @@ export const forwardProps = <T>(
     pivotColumnGroups: 1,
 
     onScrollbarsChange: 1,
+
+    scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 100,
 
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,

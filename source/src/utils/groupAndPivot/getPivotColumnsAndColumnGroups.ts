@@ -91,6 +91,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
         pivotBy,
         valueGetter: (params) => {
           const { rowInfo } = params;
+          if (!rowInfo.data) {
+            return 'Loading ... TODO replace this with a loading indicator';
+          }
           return rowInfo.groupKeys
             ? rowInfo.groupKeys[rowInfo.groupKeys?.length - 1]
             : null;

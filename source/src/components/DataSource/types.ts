@@ -19,6 +19,7 @@ import { GroupRowsState } from './GroupRowsState';
 import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
+import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -60,6 +61,7 @@ export type DataSourceSortInfo<T> =
 export type DataSourceRemoteData<T> = {
   data: T[];
   mappings?: DataSourceMappings;
+  totalCount?: number;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
 
@@ -127,9 +129,14 @@ export type LazyGroupDataItem<DataType> = {
   };
 };
 
+export type LazyGroupRowInfo<DataType> = {
+  items: LazyGroupDataItem<DataType>[];
+  totalCount: number;
+};
+
 export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
   KeyType,
-  LazyGroupDataItem<DataType>[]
+  LazyGroupRowInfo<DataType>
 >;
 
 export interface DataSourceSetupState<T> {
@@ -140,6 +147,7 @@ export interface DataSourceSetupState<T> {
   originalLazyGroupData: LazyGroupDataDeepMap<T>;
 
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
+  notifyScrollStop: SubscriptionCallback<ScrollStopInfo>;
   originalDataArray: T[];
   lastSortDataArray?: T[];
   lastGroupDataArray?: InfiniteTableRowInfo<T>[];

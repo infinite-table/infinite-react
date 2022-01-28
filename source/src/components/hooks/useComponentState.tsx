@@ -180,6 +180,7 @@ type ComponentStateRootConfig<
       oldValue: any;
       newValue: any;
     },
+    props: T_PROPS,
     actions: ComponentStateActions<
       COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
     >,
@@ -314,10 +315,15 @@ export function getComponentStateRoot<
       previousState: COMPONENT_STATE,
       action: any,
     ) => {
+      if (action.type === 'REPLACE_STATE') {
+        return action.payload;
+      }
+
       const parentState = getParentState?.() ?? null;
       const mappedState: Partial<COMPONENT_MAPPED_STATE> | null =
         action.payload.mappedState;
-      const updatedProps: Partial<T_PROPS> | null = action.payload.updatedProps;
+      const updatedProps: Partial<T_PROPS> | null =
+        action.payload.updatedPropsToState;
 
       const newState: COMPONENT_STATE = Object.assign({}, previousState);
 
@@ -415,8 +421,16 @@ export function getComponentStateRoot<
       const newMappedState: Partial<COMPONENT_MAPPED_STATE> = {};
       let newMappedStateCount = 0;
 
-      const updatedProps: Partial<T_PROPS> = {};
-      let updatedPropsCount = 0;
+      const updatedPropsToState: Partial<T_PROPS> = {};
+      let updatedPropsToStateCount = 0;
+
+      type UPDATED_PROPS = {
+        [key in keyof T_PROPS]?: {
+          newValue: T_PROPS[key];
+          oldValue: T_PROPS[key];
+        };
+      };
+      const rawUpdatedProps: UPDATED_PROPS = {};
 
       for (var k in props) {
         const key = k as string as keyof T_PROPS;
@@ -429,11 +443,8 @@ export function getComponentStateRoot<
         if (oldValue === newValue) {
           continue;
         }
-        config.onPropChange?.(
-          { name: key, oldValue, newValue },
+        rawUpdatedProps[key] = { newValue, oldValue };
 
-          actions as ACTIONS_TYPE,
-        );
         if (isControlled(key, props) || isControlled(key, prevProps)) {
           if (propsToForward.hasOwnProperty(k)) {
             let valueToSet = newValue;
@@ -451,26 +462,53 @@ export function getComponentStateRoot<
 
             // or even if there is not, but props from propsToStateSet have changed
           } else if (propsToStateSetRef.current.has(k)) {
-            updatedProps[key] = currentProps[key];
-            updatedPropsCount++;
+            updatedPropsToState[key] = currentProps[key];
+            updatedPropsToStateCount++;
           }
         }
       }
 
-      if (updatedPropsCount > 0 || newMappedStateCount > 0) {
+      if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
         debug(
           'Triggered by new values for the following props',
           ...[
             ...Object.keys(newMappedState ?? {}),
-            ...Object.keys(updatedProps ?? {}),
+            ...Object.keys(updatedPropsToState ?? {}),
           ],
         );
-        dispatch({
+        const action = {
           payload: {
             mappedState: newMappedStateCount ? newMappedState : null,
-            updatedProps: updatedPropsCount ? updatedProps : null,
+            updatedPropsToState: updatedPropsToStateCount
+              ? updatedPropsToState
+              : null,
           },
-        });
+        };
+
+        // const newState = theReducer(state, action);
+
+        dispatch(action);
+
+        if (config.onPropChange) {
+          for (var prop in rawUpdatedProps)
+            if (rawUpdatedProps.hasOwnProperty(prop)) {
+              const { newValue, oldValue } = rawUpdatedProps[prop]!;
+              config.onPropChange(
+                { name: prop, newValue, oldValue },
+                props,
+                actions,
+              );
+            }
+        }
+        // config.onPropChange?.(
+        //   { name: key, oldValue, newValue },
+
+        //   actions as ACTIONS_TYPE,
+        // );
+        // dispatch({
+        //   type: 'REPLACE_STATE',
+        //   payload: newState,
+        // });
       }
     });
 

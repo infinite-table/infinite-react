@@ -72,8 +72,10 @@ export interface InfiniteTableMappedState<T> {
   onFocusWithin: InfiniteTableProps<T>['onFocusWithin'];
   onBlurWithin: InfiniteTableProps<T>['onBlurWithin'];
 
+  scrollStopDelay: NonUndefined<InfiniteTableProps<T>['scrollStopDelay']>;
   onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
   onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];
+  onScrollStop: InfiniteTableProps<T>['onScrollStop'];
   scrollToBottomOffset: InfiniteTableProps<T>['scrollToBottomOffset'];
 
   focusedClassName: InfiniteTableProps<T>['focusedClassName'];

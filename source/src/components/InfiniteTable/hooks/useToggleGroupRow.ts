@@ -16,12 +16,9 @@ export function useToggleGroupRow<T>() {
 
     dataSourceActions.groupRowsState = newState;
     if (state.fullLazyLoad && newState.isGroupRowExpanded(groupKeys)) {
-      console.log(groupKeys, '!!!');
-
       loadData(state.data, state, dataSourceActions, {
         groupKeys,
       });
-      // dataSourceActions.groupKeysForDataParams = groupKeys;
     }
   }, []);
 

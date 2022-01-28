@@ -2,7 +2,7 @@ import {
   DataSourceAggregationReducer,
   DataSourceMappings,
   LazyGroupDataDeepMap,
-  LazyGroupDataItem,
+  LazyGroupRowInfo,
 } from '../..';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
@@ -142,11 +142,7 @@ type GroupParams<DataType, KeyType> = {
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
 };
 
-type LazyGroupParams<DataType, KeyType = any> = {
-  // parentDeepMap?: DeepMap<
-  //   GroupKeyType<KeyType>,
-  //   DeepMapGroupValueType<Partial<DataType>, KeyType>
-  // >;
+type LazyGroupParams = {
   mappings?: DataSourceMappings;
 };
 
@@ -219,8 +215,7 @@ type LazyPivotContainer = {
 };
 
 export function lazyGroup<DataType, KeyType extends string = string>(
-  groupParams: GroupParams<DataType, KeyType> &
-    LazyGroupParams<DataType, KeyType>,
+  groupParams: GroupParams<DataType, KeyType> & LazyGroupParams,
   rootData: LazyGroupDataDeepMap<DataType>,
 ): DataGroupResult<DataType, KeyType> {
   const {
@@ -284,11 +279,24 @@ export function lazyGroup<DataType, KeyType extends string = string>(
   const globalReducerResults = { ...initialReducerValue };
 
   rootData.visitDepthFirst(
-    (dataArray: LazyGroupDataItem<DataType>[], keys, _index, next) => {
+    (lazyGroupRowInfo: LazyGroupRowInfo<DataType>, keys, _index, next) => {
       const [_rootKey, ...currentGroupKeys] = keys;
       // const currentPivotKeys = [...currentGroupKeys] as KeyType[];
 
+      const dataArray = lazyGroupRowInfo.items;
       for (let i = 0, len = dataArray.length; i < len; i++) {
+        if (!dataArray[i]) {
+          // we're in the case of lazy loading, so some records might not be available just yet
+          const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
+            items: [],
+            reducerResults: {},
+          };
+          deepMap.set(
+            [...currentGroupKeys, `not-loaded-yet-${i}`] as KeyType[],
+            deepMapGroupValue,
+          );
+          continue;
+        }
         const dataObject = dataArray[i].data;
         const dataKeys = dataArray[i].keys;
         let item = dataObject as Partial<DataType>;
@@ -302,7 +310,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           items: [],
           reducerResults: dataArray[i].aggregations || {},
         };
-        deepMap.set(currentGroupKeys, deepMapGroupValue);
+        deepMap.set(currentGroupKeys as KeyType[], deepMapGroupValue);
         if (pivot) {
           const pivotDeepMap = (deepMapGroupValue.pivotDeepMap = new DeepMap<
             GroupKeyType<KeyType>,

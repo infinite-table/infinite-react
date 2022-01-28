@@ -36,9 +36,18 @@ function getDataSource(size: string) {
     aggregationReducers,
     groupBy,
 
+    lazyLoadStartIndex,
+    lazyLoadBatchSize,
     groupKeys = [],
   }) => {
+    const startLimit: string[] = [];
+    if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
+      const start = lazyLoadStartIndex || 0;
+      startLimit.push(`start=${start}`);
+      startLimit.push(`limit=${lazyLoadBatchSize}`);
+    }
     const args = [
+      ...startLimit,
       pivotBy
         ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
         : null,
@@ -103,7 +112,7 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
 const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
   ['labels', 'start'],
 ]);
-const domProps = { style: { height: '100vh' } };
+const domProps = { style: { height: '90vh' } };
 
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
@@ -114,7 +123,7 @@ export default function GroupByExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
-        field: 'country',
+        field: 'city',
       },
       { field: 'stack' },
       { field: 'hobby' },
@@ -166,7 +175,7 @@ export default function GroupByExample() {
     [],
   );
 
-  const [size, setSize] = React.useState('10');
+  const [size, setSize] = React.useState('1k');
   const dataSource = React.useMemo(() => {
     return getDataSource(size);
   }, [size]);
@@ -187,10 +196,12 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
+        loading={false}
         groupBy={groupBy}
         pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
+        lazyLoadBatchSize={10}
         fullLazyLoad
       >
         {({ pivotColumns, pivotColumnGroups }) => {

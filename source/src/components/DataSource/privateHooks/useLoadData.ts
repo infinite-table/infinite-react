@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { LazyGroupDataItem } from '..';
+import { LazyGroupDataItem, LazyGroupRowInfo } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 
@@ -10,6 +10,7 @@ import {
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 
 import { Scrollbars } from '../../InfiniteTable';
+import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
 
 import {
   DataSourceDataParams,
@@ -46,7 +47,13 @@ export function buildDataSourceDataParams<T>(
   }
 
   if (componentState.fullLazyLoad) {
-    dataSourceParams.lazyLoadBatchSize = componentState.lazyLoadBatchSize;
+    if (
+      componentState.lazyLoadBatchSize != null &&
+      componentState.lazyLoadBatchSize > 0
+    ) {
+      dataSourceParams.lazyLoadBatchSize = componentState.lazyLoadBatchSize;
+      dataSourceParams.lazyLoadStartIndex = 0;
+    }
     dataSourceParams.groupKeys = [];
   }
 
@@ -115,7 +122,33 @@ export function loadData<T>(
           componentState.originalLazyGroupData,
         );
         const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
-        lazyGroupData.set(key, dataArray as any as LazyGroupDataItem<T>[]);
+
+        const newGroupRowInfo: LazyGroupRowInfo<T> = {
+          totalCount: remoteData.totalCount ?? dataArray.length,
+          items: dataArray as any as LazyGroupDataItem<T>[],
+        };
+        if (dataParams.lazyLoadBatchSize) {
+          const existingGroupRowInfo = lazyGroupData.get(key);
+          const currentGroupRowInfo = existingGroupRowInfo ?? {
+            items: [],
+            totalCount: newGroupRowInfo.totalCount,
+          };
+          currentGroupRowInfo.items.length = currentGroupRowInfo.totalCount;
+
+          const start = dataParams.lazyLoadStartIndex ?? 0;
+          const end =
+            start + (dataParams.lazyLoadBatchSize ?? dataArray.length);
+
+          for (let i = start; i < end; i++) {
+            currentGroupRowInfo.items[i] = newGroupRowInfo.items[i - start];
+          }
+
+          if (!existingGroupRowInfo) {
+            lazyGroupData.set(key, currentGroupRowInfo);
+          }
+        } else {
+          lazyGroupData.set(key, newGroupRowInfo);
+        }
         skipAssign = true;
         actions.originalLazyGroupData = lazyGroupData;
       }
@@ -136,24 +169,11 @@ export function useLoadData<T>() {
   const {
     getComponentState,
     componentActions: actions,
-    componentState: { data },
-  } = useComponentState<DataSourceState<T>>();
-
-  useLayoutEffect(() => {
-    loadData(data, getComponentState(), actions);
-  }, [data]);
-
-  useLivePagination();
-}
-
-export function useLivePagination<T>() {
-  const {
-    getComponentState,
-    componentActions: actions,
     componentState,
   } = useComponentState<DataSourceState<T>>();
 
   const {
+    data,
     notifyScrollbarsChange,
     sortInfo,
     groupBy,
@@ -161,6 +181,8 @@ export function useLivePagination<T>() {
     livePagination,
     livePaginationCursor,
     cursorId: stateCursorId,
+    lazyLoadBatchSize,
+    notifyScrollStop,
   } = componentState;
 
   const [scrollbars, setScrollbars] = useState<Scrollbars>({
@@ -205,10 +227,6 @@ export function useLivePagination<T>() {
     }
   }, [scrollbars.vertical]);
 
-  // useEffect(() => {
-  //   updateCursorId(stateCursorId);
-  // }, [stateCursorId]);
-
   const depsObject = {
     sortInfo,
     groupBy,
@@ -226,11 +244,70 @@ export function useLivePagination<T>() {
   //   }
   // }, [livePagination, livePagination ? cursorId : null]);
 
+  useEffect(() => {
+    if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
+      return notifyScrollStop.onChange((param: ScrollStopInfo | null) => {
+        console.log('scroll stop', param);
+        if (!param) {
+          return;
+        }
+
+        const componentState = getComponentState();
+        const {
+          firstVisibleRowIndex: startIndex,
+          lastVisibleRowIndex: endIndex,
+        } = param;
+        const firstBatchStart =
+          Math.floor(startIndex / lazyLoadBatchSize) * lazyLoadBatchSize;
+        const lastBatchStart =
+          Math.floor(endIndex / lazyLoadBatchSize) * lazyLoadBatchSize;
+
+        const isRowLoaded = (index: number) =>
+          componentState.dataArray[index].data != null;
+
+        // TODO continue here - we need to iterate over all the items
+        // and get their group keys as well
+        // so we better move this logic outside of this useEffect fn
+        // into its own function that does this
+        // and then we can call it here
+        for (
+          let batchStartIndex = firstBatchStart;
+          batchStartIndex <= lastBatchStart;
+          batchStartIndex = batchStartIndex + lazyLoadBatchSize
+        ) {
+          if (!isRowLoaded(batchStartIndex)) {
+            loadData(componentState.data, componentState, actions, {
+              lazyLoadBatchSize,
+              lazyLoadStartIndex: batchStartIndex,
+            });
+          }
+        }
+      });
+    }
+  }, [lazyLoadBatchSize]);
+
+  useEffectWithChanges(
+    () => {
+      const componentState = getComponentState();
+      if (typeof componentState.data !== 'function') {
+        loadData(componentState.data, componentState, actions);
+      }
+    },
+    { data },
+  );
+
+  useEffectWithChanges(
+    () => {
+      const componentState = getComponentState();
+      if (typeof componentState.data === 'function') {
+        loadData(componentState.data, componentState, actions);
+      }
+    },
+    { ...depsObject, data },
+  );
+
   useEffectWithChanges((_changes, _prevValues) => {
     const componentState = getComponentState();
-    if (typeof componentState.data === 'function') {
-      loadData(componentState.data, componentState, actions);
-    }
     if (initialRef.current) {
       initialRef.current = false;
       actions.dataParams = buildDataSourceDataParams(componentState);

@@ -6,8 +6,8 @@ import {
   DataSourceDerivedState,
   DataSourceSetupState,
   DataSourceState,
-  LazyGroupDataItem,
   LazyGroupDataDeepMap,
+  LazyGroupRowInfo,
 } from '../types';
 import { GroupRowsState } from '../GroupRowsState';
 import {
@@ -23,10 +23,9 @@ import { DataSourceComponentActions, DataSourceDataParams } from '..';
 import { dbg } from '../../../utils/debug';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { DeepMap } from '../../../utils/DeepMap';
+import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
 
 export const defaultCursorId = Symbol('cursorId');
-
-const debug = dbg('DataSource:dataParams');
 
 export function initSetupState<T>(): DataSourceSetupState<T> {
   const now = Date.now();
@@ -35,12 +34,13 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
 
   const originalLazyGroupData: LazyGroupDataDeepMap<T> = new DeepMap<
     string,
-    LazyGroupDataItem<T>[]
+    LazyGroupRowInfo<T>
   >();
 
   return {
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
+    notifyScrollStop: buildSubscriptionCallback<ScrollStopInfo>(),
     pivotTotalColumnPosition: 'end',
     originalLazyGroupData,
     originalDataArray,
@@ -97,7 +97,7 @@ export const forwardProps = <T>(
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
-    lazyLoadBatchSize: (lazyLoadBatchSize) => lazyLoadBatchSize ?? 50,
+    lazyLoadBatchSize: (lazyLoadBatchSize) => lazyLoadBatchSize ?? -1,
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,
@@ -145,20 +145,6 @@ export function mapPropsToState<T extends any>(params: {
 
   const controlledSort = isControlledValue(props.sortInfo);
 
-  if (oldState && oldState.data != state.data) {
-    state.originalLazyGroupData = new DeepMap<string, LazyGroupDataItem<T>[]>();
-
-    if (
-      typeof state.data === 'function' &&
-      state.collapseGroupRowsOnDataFunctionChange
-    ) {
-      state.groupRowsState = new GroupRowsState({
-        collapsedRows: [],
-        expandedRows: true,
-      });
-    }
-  }
-
   const result: DataSourceDerivedState<T> = {
     controlledSort,
     multiSort: Array.isArray(
@@ -183,15 +169,34 @@ export function mapPropsToState<T extends any>(params: {
   return result;
 }
 
+const debugFullLazyLoad = dbg('DataSource:fullLazyLoad');
+
 export function onPropChange<T>(
   params: { name: keyof T; newValue: any },
+  props: DataSourceProps<T>,
   actions: DataSourceComponentActions<T>,
 ) {
   const { name, newValue } = params;
 
-  if (name === 'data' && typeof newValue === 'function') {
+  if (
+    name === 'data' &&
+    typeof newValue === 'function' &&
+    !props.groupRowsState
+  ) {
+    if (props.fullLazyLoad) {
+      debugFullLazyLoad(`"data" function prop has changed`);
+    }
+
+    if (props.collapseGroupRowsOnDataFunctionChange !== false) {
+      actions.groupRowsState = new GroupRowsState({
+        collapsedRows: true,
+        expandedRows: [],
+      });
+    }
   }
 }
+
+const debugDataParams = dbg('DataSource:dataParams');
 
 export function getInterceptActions<T>(): ComponentInterceptedActions<
   DataSourceState<T>
@@ -274,7 +279,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
         return false;
       }
 
-      debug(
+      debugDataParams(
         'onDataParamsChange triggered because the following values have changed',
         dataParams?.changes,
       );

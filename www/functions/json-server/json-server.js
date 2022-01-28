@@ -245,10 +245,8 @@ function getSQLRoute(routeSuffix) {
 
     res.json({
       totalCount,
-      length: result.length,
       mappings: MAPPINGS,
       data: result.map((x) => {
-        console.log(x, groupBy);
         const data = {};
         const aggregations = {};
         const pivot = {
@@ -262,7 +260,6 @@ function getSQLRoute(routeSuffix) {
             : groupBy[0].field;
         const keys = [...groupKeys, x[keyField]];
 
-        console.log({ keys });
         Object.keys(x).forEach((k) => {
           const theValue =
             typeof x[k] === 'number'
@@ -394,8 +391,6 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
     });
   });
 
-  console.log(colsToSelect);
-
   return colsToSelect;
 }
 
@@ -434,8 +429,6 @@ function buildSQL({
           ),
         };
       });
-
-      console.log([...colsToSelect]);
 
       colsToSelect.push(
         ...generatePivotSQL(pivotByWithValues, reducers)

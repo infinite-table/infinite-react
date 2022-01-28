@@ -61,7 +61,7 @@ type Employee = {
   email: string;
 };
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 5;
 
 const dataSource = ({
   sortInfo,
