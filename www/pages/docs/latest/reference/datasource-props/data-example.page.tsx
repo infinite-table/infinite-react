@@ -74,7 +74,7 @@ const columns: InfiniteTablePropColumns<Employee> = {
   id: {
     field: 'id',
     type: 'number',
-    width: 80,
+    defaultWidth: 80,
   },
   name: {
     field: 'name',
