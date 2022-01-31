@@ -3,7 +3,7 @@ title: Releases
 layout: Home
 ---
 
-## 0.1.4 🚀 
+## 0.2.0 🚀 
 
 * Implement initial support for [server-side pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting)
 
