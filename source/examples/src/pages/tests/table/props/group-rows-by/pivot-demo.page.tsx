@@ -147,6 +147,7 @@ export default function GroupByExample() {
         primaryKey="id"
         data={dataSource}
         groupBy={groupBy}
+        pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
       >

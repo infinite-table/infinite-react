@@ -11,34 +11,31 @@ type Person = {
   Age: number;
 };
 
+function CustomLoadMask() {
+  return null;
+}
+
 export default function App() {
-  const columns: Map<
+  const columns: Record<
     string,
     InfiniteTableColumn<Person>
-  > = React.useMemo(
-    () =>
-      new Map([
-        [
-          'id',
-          {
-            // specifies which field from the data source
-            // should be rendered in this column
-            field: 'Id',
-            type: 'number',
-            sortable: true,
-            width: 80,
-          },
-        ],
-        [
-          'firstName',
-          {
-            field: 'FirstName',
-          },
-        ],
-        ['age', { field: 'Age', type: 'number' }],
-      ]),
-    []
-  );
+  > = React.useMemo(() => {
+    return {
+      id: {
+        // specifies which field from the data source
+        // should be rendered in this column
+        field: 'Id',
+        type: 'number',
+        sortable: true,
+        width: 80,
+      },
+
+      firstName: {
+        field: 'FirstName',
+      },
+      age: { field: 'Age', type: 'number' },
+    };
+  }, []);
 
   const data: Person[] = React.useMemo(
     () => [
@@ -64,6 +61,9 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person>
+        components={{
+          LoadMask: CustomLoadMask,
+        }}
         columnDefaultWidth={130}
         columns={columns}
       />

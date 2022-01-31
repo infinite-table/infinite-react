@@ -7,7 +7,7 @@ import type {
   InfiniteTablePropColumnPinningMap,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnTypesMap,
-  InfiniteTablePropColumnVisibilityMap,
+  InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import type { Size } from '../../types/Size';
 
@@ -37,7 +37,7 @@ type UseComputedVisibleColumnsParam<T> = {
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
   columnOrder: InfiniteTablePropColumnOrder;
-  columnVisibility: InfiniteTablePropColumnVisibilityMap;
+  columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible?: boolean;
 };
 
@@ -88,7 +88,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   const columnsSizingRenderId = useRerenderOnKeyChange(columnSizing);
   const columnTypesRenderId = useRerenderOnKeyChange(columnTypes);
   const columnsRenderId = useRerenderOnKeyChange(columns);
-  const visibilityRenderId = useRerenderOnKeyChange(columnVisibility);
+
   const pinningRenderId = useRerenderOnKeyChange(columnPinning);
 
   const {
@@ -157,7 +157,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnPinning,
 
     columnsRenderId,
-    visibilityRenderId,
     columnsSizingRenderId,
     pinningRenderId,
     columnTypesRenderId,

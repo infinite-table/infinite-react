@@ -50,7 +50,7 @@ export type {
   InfiniteTableGroupColumnFunction,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropComponents,
-  InfiniteTablePropColumnVisibility,
+  InfiniteTablePropColumnVisibility as InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
   InfiniteTableColumnGroup,
   InfiniteTableColumn,

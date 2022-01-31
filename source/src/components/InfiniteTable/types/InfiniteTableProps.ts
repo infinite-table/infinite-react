@@ -29,11 +29,7 @@ export type InfiniteTablePropColumnOrder =
   | InfiniteTablePropColumnOrderNormalized
   | true;
 
-export type InfiniteTablePropColumnVisibilityMap = Map<string, false>;
-export type InfiniteTablePropColumnVisibilityRecord = Record<string, false>;
-export type InfiniteTablePropColumnVisibility =
-  | InfiniteTablePropColumnVisibilityMap
-  | InfiniteTablePropColumnVisibilityRecord;
+export type InfiniteTablePropColumnVisibility = Record<string, false>;
 
 export type InfiniteTablePropColumnPinningMap = Map<
   string,
@@ -295,6 +291,7 @@ export interface InfiniteTableProps<T> {
 
   onScrollbarsChange?: (scrollbars: Scrollbars) => void;
 
+  // TODO P1 clarify columnVisibility as object only
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;

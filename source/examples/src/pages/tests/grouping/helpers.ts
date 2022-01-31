@@ -18,7 +18,9 @@ export function getReducerValue<T>(
       ? item[reducer.field]
       : null;
 
-    return reducer.reducer(acc, currentValue, item);
+    return typeof reducer.reducer === 'function'
+      ? reducer.reducer(acc, currentValue, item)
+      : 0;
   }, value);
 
   return { [key]: reducer.done ? reducer.done(value, data) : value };

@@ -276,7 +276,7 @@ function useHideEmptyGroupColumns<T>(groupRowsMap: GroupByMap<T>) {
     const { computedColumns } = currentState;
 
     let updated = false;
-    const columnVisibility = new Map(currentState.columnVisibility);
+    const columnVisibility = { ...currentState.columnVisibility };
     const cols = computedColumns;
 
     groupBy.forEach(({ field, column: groupColumn }, index) => {
@@ -291,9 +291,9 @@ function useHideEmptyGroupColumns<T>(groupRowsMap: GroupByMap<T>) {
 
       updated = true;
       if (shouldBeHidden) {
-        columnVisibility.set(colId, false);
+        columnVisibility[colId] = false;
       } else {
-        columnVisibility.delete(colId);
+        delete columnVisibility[colId];
       }
     });
 

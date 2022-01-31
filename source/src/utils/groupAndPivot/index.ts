@@ -339,6 +339,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
   const result: DataGroupResult<DataType, KeyType> = {
     deepMap,
     groupParams,
+    //@ts-ignore
     initialData: rootData,
 
     reducerResults: globalReducerResults,

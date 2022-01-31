@@ -206,7 +206,7 @@ const Example = () => {
   };
 
   const livePaginationCursorFn: DataSourceLivePaginationCursorFn<Employee> =
-    useCallback(({ length, lastItem }) => {
+    useCallback(({ length }) => {
       return length;
     }, []);
 

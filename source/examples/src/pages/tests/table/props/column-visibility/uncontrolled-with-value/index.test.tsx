@@ -35,7 +35,7 @@ export default describe('Column visibility uncontrolled', () => {
 
         return fnCalls[fnCalls.length - 1];
       }),
-    ).toEqual([['id', false]]);
+    ).toEqual({ id: false });
   });
 
   it('should display all cols correctly when clearing the visibility map', async () => {
@@ -48,7 +48,7 @@ export default describe('Column visibility uncontrolled', () => {
     await page.evaluate(() => {
       (
         (window as any).api as InfiniteTableImperativeApi<any>
-      ).setColumnVisibility(new Map());
+      ).setColumnVisibility({});
     });
 
     await page.waitForTimeout(20);

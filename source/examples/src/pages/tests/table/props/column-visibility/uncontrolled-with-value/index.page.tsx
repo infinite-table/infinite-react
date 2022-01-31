@@ -11,18 +11,17 @@ import { columns } from '../columns';
 
 import { InfiniteTablePropColumnVisibility } from '@infinite-table/infinite-react';
 
-const defaultColumnVisibility: InfiniteTablePropColumnVisibility = new Map([
-  ['make', false],
-  ['year', false],
-  ['id', false],
-]);
-
+const defaultColumnVisibility: InfiniteTablePropColumnVisibility = {
+  make: false,
+  year: false,
+  id: false,
+};
 (globalThis as any).calls = [];
 
 const onColumnVisibilityChange = (
   columnVisibility: InfiniteTablePropColumnVisibility,
 ) => {
-  (globalThis as any).calls.push(Array.from(columnVisibility));
+  (globalThis as any).calls.push(columnVisibility);
 };
 
 const App = () => {
@@ -32,7 +31,7 @@ const App = () => {
         onClick={() => {
           (
             (globalThis as any).api as InfiniteTableImperativeApi<any>
-          ).setColumnVisibility(new Map([['id', false]]));
+          ).setColumnVisibility({ id: false });
         }}
       >
         only hide id

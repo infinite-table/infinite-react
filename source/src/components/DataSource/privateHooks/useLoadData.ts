@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LazyGroupDataItem, LazyGroupRowInfo } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
@@ -284,6 +284,7 @@ export function useLoadData<T>() {
         }
       });
     }
+    return;
   }, [lazyLoadBatchSize]);
 
   useEffectWithChanges(

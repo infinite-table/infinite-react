@@ -10,15 +10,14 @@ import { DataSource } from '@infinite-table/infinite-react';
 import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 
-const defaultColumnVisibility: InfiniteTablePropColumnVisibility = new Map([
-  ['year', false],
-]);
-
+const defaultColumnVisibility: InfiniteTablePropColumnVisibility = {
+  year: false,
+};
 (globalThis as any).calls = [];
 const onColumnVisibilityChange = (
   columnVisibility: InfiniteTablePropColumnVisibility,
 ) => {
-  (globalThis as any).calls.push(Array.from(columnVisibility.entries()));
+  (globalThis as any).calls.push(columnVisibility);
 };
 
 const App = () => {

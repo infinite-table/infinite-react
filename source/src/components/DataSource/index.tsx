@@ -55,6 +55,7 @@ const DataSourceRoot = getComponentStateRoot({
   concludeReducer,
   //@ts-ignore
   mapPropsToState,
+  //@ts-ignore
   onPropChange,
   interceptActions: getInterceptActions(),
 });

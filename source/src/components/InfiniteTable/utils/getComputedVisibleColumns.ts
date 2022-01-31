@@ -14,7 +14,7 @@ import type {
   InfiniteTablePropColumnPinningMap,
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnTypesMap,
-  InfiniteTablePropColumnVisibilityMap,
+  InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { err } from '../../../utils/debug';
@@ -32,13 +32,13 @@ export const IS_GROUP_COLUMN_ID = (columnId: string) => {
 };
 
 const isColumnVisible = (
-  columnVisibility: InfiniteTablePropColumnVisibilityMap,
+  columnVisibility: InfiniteTablePropColumnVisibility,
   _columnVisibilityAssumeVisible: boolean,
 
   colId: string,
 ) => {
   // if (_columnVisibilityAssumeVisible) {
-  return !columnVisibility.has(colId) || columnVisibility.get(colId) !== false;
+  return columnVisibility[colId] !== false;
   // }
 
   // return columnVisibility.get(colId) === true;
@@ -105,7 +105,7 @@ type GetComputedVisibleColumnsParam<T> = {
   columnPinning: InfiniteTablePropColumnPinningMap;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;
-  columnVisibility: InfiniteTablePropColumnVisibilityMap;
+  columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible: boolean;
 };
 
@@ -148,11 +148,16 @@ export const getComputedVisibleColumns = <T extends unknown>({
       );
       return false;
     }
-    return isColumnVisible(
+
+    const result = isColumnVisible(
       columnVisibility,
       columnVisibilityAssumeVisible,
       colId,
     );
+
+    console.log(columnVisibility, colId, result);
+
+    return result;
   });
 
   const columnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder

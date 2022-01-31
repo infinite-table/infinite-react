@@ -24,12 +24,7 @@ export default describe('Column visibility controlled will never change', () => 
     await page.evaluate(() => {
       (
         (window as any).api as InfiniteTableImperativeApi<any>
-      ).setColumnVisibility(
-        new Map([
-          ['make', false],
-          ['model', false],
-        ]),
-      );
+      ).setColumnVisibility({ make: false, model: false });
     });
 
     colIds = await getHeaderColumnIds();
@@ -39,12 +34,7 @@ export default describe('Column visibility controlled will never change', () => 
     await page.evaluate(() => {
       (
         (window as any).api as InfiniteTableImperativeApi<any>
-      ).setColumnVisibility(
-        new Map([
-          ['year', false],
-          ['id', false],
-        ]),
-      );
+      ).setColumnVisibility({ year: false, id: false });
     });
 
     colIds = await getHeaderColumnIds();
@@ -52,18 +42,8 @@ export default describe('Column visibility controlled will never change', () => 
     expect(colIds).toEqual(cols);
 
     expect(await page.evaluate(() => (window as any).calls)).toEqual([
-      Array.from(
-        new Map([
-          ['make', false],
-          ['model', false],
-        ]).entries(),
-      ),
-      Array.from(
-        new Map([
-          ['year', false],
-          ['id', false],
-        ]).entries(),
-      ),
+      { make: false, model: false },
+      { year: false, id: false },
     ]);
   });
 });

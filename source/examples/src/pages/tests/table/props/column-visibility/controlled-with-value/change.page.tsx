@@ -11,16 +11,16 @@ import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
 import { useState } from 'react';
 
-const defaultColumnVisibility: InfiniteTablePropColumnVisibility = new Map([
-  ['make', false],
-  ['year', false],
-]);
+const defaultColumnVisibility: InfiniteTablePropColumnVisibility = {
+  make: false,
+  year: false,
+};
 
 (globalThis as any).calls = [];
 const onColumnVisibilityChange = (
   columnVisibility: InfiniteTablePropColumnVisibility,
 ) => {
-  (globalThis as any).calls.push(Array.from(columnVisibility.entries()));
+  (globalThis as any).calls.push(columnVisibility);
 };
 
 const App = () => {

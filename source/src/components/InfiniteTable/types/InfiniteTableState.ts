@@ -6,7 +6,7 @@ import type {
   InfiniteTablePropColumnSizingMap,
   InfiniteTablePropColumnsMap,
   InfiniteTablePropColumnTypesMap,
-  InfiniteTablePropColumnVisibilityMap,
+  InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
 } from './InfiniteTableProps';
 
@@ -112,7 +112,7 @@ export interface InfiniteTableMappedState<T> {
   rowHeight: number;
   headerHeight: number;
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
-  columnVisibility: InfiniteTablePropColumnVisibilityMap;
+  columnVisibility: InfiniteTablePropColumnVisibility;
   columnPinning: InfiniteTablePropColumnPinningMap;
   columnSizing: InfiniteTablePropColumnSizingMap;
   columnTypes: InfiniteTablePropColumnTypesMap<T>;

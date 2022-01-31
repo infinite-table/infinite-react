@@ -1,4 +1,4 @@
-import { AggregationReducer, PivotBy } from '.';
+import { AggregationReducer } from '.';
 import type {
   DataSourceAggregationReducer,
   DataSourcePivotBy,

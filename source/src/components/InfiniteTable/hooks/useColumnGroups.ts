@@ -39,29 +39,32 @@ export function useColumnGroups<T>() {
     return interceptMap(collapsedColumnGroups, {
       set: (key: string[], visibleCol: string) => {
         const colIds = key.slice(1);
-        const { columnVisibility } = getComponentState();
+        const columnVisibility = { ...getComponentState().columnVisibility };
 
         colIds.forEach((colId) => {
-          columnVisibility.set(colId, false);
+          columnVisibility[colId] = false;
         });
-        columnVisibility.delete(visibleCol);
+        delete columnVisibility[visibleCol];
+        componentActions.columnVisibility = columnVisibility;
       },
       beforeClear: (currentCollapsedGroups) => {
-        const { columnVisibility } = getComponentState();
+        const columnVisibility = { ...getComponentState().columnVisibility };
         const keys = [...currentCollapsedGroups.keys()];
         keys.forEach((key) => {
           const colIds = key.slice(1);
           colIds.forEach((colId) => {
-            columnVisibility.delete(colId);
+            delete columnVisibility[colId];
           });
         });
+        componentActions.columnVisibility = columnVisibility;
       },
       delete: (key: string[]) => {
-        const { columnVisibility } = getComponentState();
+        const columnVisibility = { ...getComponentState().columnVisibility };
         const colIds = key.slice(1);
         colIds.forEach((colId) => {
-          columnVisibility.delete(colId);
+          delete columnVisibility[colId];
         });
+        componentActions.columnVisibility = columnVisibility;
       },
     });
   }, [collapsedColumnGroups]);

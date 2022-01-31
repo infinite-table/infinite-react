@@ -129,8 +129,7 @@ export const forwardProps = <T>(
       typeof headerHeight === 'number' ? headerHeight : 0,
 
     columns: (columns) => toMap(columns, setupState.propsCache.get('columns')),
-    columnVisibility: (columnVisibility) =>
-      toMap(columnVisibility, setupState.propsCache.get('columnVisibility')),
+    columnVisibility: (columnVisibility) => columnVisibility ?? {},
     columnPinning: (columnPinning) =>
       toMap(columnPinning, setupState.propsCache.get('columnPinning')),
     columnSizing: (columnSizing) =>
