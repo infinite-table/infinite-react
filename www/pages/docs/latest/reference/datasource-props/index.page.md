@@ -165,9 +165,9 @@ The function is called with an object that has the following properties:
 
 <Prop name="onLivePaginationCursorChange" type="(cursor)=> void">
 
-> A function to be called when the <Prop name="livePaginationCursor" /> changes.
+> A function to be called when the <DataSourcePropLink name="livePaginationCursor" /> changes.
 
-Also see related <PropLink name="onDataParamsChange" />.
+Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 </Prop>
 
