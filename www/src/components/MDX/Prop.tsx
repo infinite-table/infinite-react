@@ -90,18 +90,21 @@ export const PropLink = ({
 export const DataSourcePropLink = ({
   name,
   children,
+  code = true,
 }: {
   name: keyof InfiniteTableProps<any>;
   children?: React.ReactNode;
+  code?: boolean;
 }) => {
   const href = `/docs/latest/reference/datasource-props#${name}`;
-  return (
-    <Link href={href}>
-      {children ?? (
-        <InlineCode isLink={false}>{name}</InlineCode>
-      )}
-    </Link>
+  const content = code ? (
+    <InlineCode isLink={false}>
+      {children ?? name}
+    </InlineCode>
+  ) : (
+    children ?? name
   );
+  return <Link href={href}>{content}</Link>;
 };
 
 const PropInlineCode = ({

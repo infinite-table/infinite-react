@@ -143,8 +143,8 @@ sqlRoutes.forEach((name) => {
 });
 
 const MAPPINGS = {
-  values: 'v',
-  totals: 't',
+  values: 'values',
+  totals: 'totals',
 };
 
 const KEY_SEPARATOR = '_';

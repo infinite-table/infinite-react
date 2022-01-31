@@ -50,13 +50,13 @@ If you pass an object, it will be applied to all pivot columns corresponding to 
 ```tsx
 const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
   { field: 'country' },
-  { field: 'canDesign', column: { width: 400 } },
+  { field: 'canDesign', column: { defaultWidth: 400 } },
 ];
 
 <DataSource pivotBy={pivotBy} />
 ```
 
-In the above example, the `column.width=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
+In the above example, the `column.defaultWidth=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
 
 ```tsx
 const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
@@ -77,3 +77,97 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
 ```
 
 </Sandpack>
+
+## Server-side pivoting
+
+By default, pivoting is client side. However, if you specify <DataSourcePropLink name="fullLazyLoad" code>DataSource.fullLazyLoad=true</DataSourcePropLink> and provide a function that returns a promise for the <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> prop, the table will use server-pivoted data.
+
+In the example below, let's assume the following practical scenario, with the data-type being a `Developer{country, stack, preferredLanguage, canDesign, age, salary}`.
+
+```tsx
+const groupBy = [
+  { field: "country" }, // possible values: any valid country
+  { field: "stack" } // possible values: "backend", "frontend", "full-stack"
+]
+const pivotBy = [
+  { field: "preferredLanguage" }, // possible values: "TypeScript","JavaScript","Go"
+  { field: "canDesign" }, // possible values: "yes" or "no"
+]
+
+const aggregationReducers = {
+  salary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
+  age: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
+};
+```
+
+```tsx
+
+const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducers }) => {
+  // make sure you return a Promise that resolves to the correct structure - see details below
+
+  //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
+  //    groupKeys: [], - so we're requesting top-level data
+
+  //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
+  //    groupKeys: ["Canada"], - so we're requesting Canada's data
+
+  //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
+  //    groupKeys: ["Canada"], - so we're requesting Canada's data
+
+}
+
+<DataSource fullLazyLoad data={dataSource}>
+```
+
+```js
+{
+  data: [
+    {
+      aggregations: {
+        // for each aggregation, have an entry
+        salary: SALARY_AGGREGATION_VALUE,
+        age: AGE_AGGREGATION_VALUE,
+      },
+      data: {
+        // data is an object with the common group values
+        country: "Canada"
+      },
+      // the array of keys that uniquely identify this group, including all parent keys
+      keys: ["Canada"],  
+      pivot: {
+        totals: {
+          // for each aggregation, have an entry
+          salary: <SALARY_AGGREGATION_VALUE>,
+          age: <AGE_AGGREGATION_VALUE>,
+        },
+        values: {
+          [for each unique value]: { // eg: for country
+            totals: {
+              // for each aggregation, have an entry
+              salary: <SALARY_AGGREGATION_VALUE>,
+              age: <AGE_AGGREGATION_VALUE>,
+            },
+            values: {
+              [for each unique value]: { // eg: for stack
+                totals: {
+                  salary: <SALARY_AGGREGATION_VALUE>,
+                  age: <AGE_AGGREGATION_VALUE>,
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  // the total number of rows in the remote data set
+  totalCount: 10,
+
+  // you can map "values" and "totals" above to shorter names
+
+  mappings: {
+    values: "values",
+    totals: "totals"
+  }
+}
+```

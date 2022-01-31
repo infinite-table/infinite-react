@@ -78,36 +78,27 @@ function getDataSource(size: string) {
 }
 
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
-  s: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
-  a: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
+  salary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
+  age: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
 };
 
-const columns: InfiniteTablePropColumns<Developer> = new Map<
-  string,
-  InfiniteTableColumn<Developer>
->([
-  ['preferredLanguage', { field: 'preferredLanguage' }],
-  ['age', { field: 'age' }],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
+const columns: InfiniteTablePropColumns<Developer> = {
+  preferredLanguage: { field: 'preferredLanguage' },
+  age: { field: 'age' },
 
-      // render: ({ rowInfo, data }) => {
-      //   return rowInfo.isGroupRow ? rowInfo.collapsed : data.age;
-      // },
-    },
-  ],
-  ['canDesign', { field: 'canDesign' }],
-  ['country', { field: 'country' }],
-  ['firstName', { field: 'firstName' }],
-  ['stack', { field: 'stack' }],
-  ['id', { field: 'id' }],
-  ['hobby', { field: 'hobby' }],
-  ['city', { field: 'city' }],
-  ['currency', { field: 'currency' }],
-]);
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
+  canDesign: { field: 'canDesign' },
+  country: { field: 'country' },
+  firstName: { field: 'firstName' },
+  stack: { field: 'stack' },
+  id: { field: 'id' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  currency: { field: 'currency' },
+};
 
 const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
   ['labels', 'start'],
@@ -119,21 +110,20 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: true,
 });
 
-export default function GroupByExample() {
+export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
-        field: 'city',
+        field: 'country',
       },
       { field: 'stack' },
-      { field: 'hobby' },
     ],
     [],
   );
 
   const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
     () => [
-      { field: 'currency' },
+      { field: 'preferredLanguage' },
       // {
       //   field: 'country',
       //   columnGroup: ({ columnGroup }) => {
@@ -165,7 +155,7 @@ export default function GroupByExample() {
       //   // },
       // },
       {
-        field: 'preferredLanguage',
+        field: 'canDesign',
 
         column: ({ column }) => ({
           header: column.header + '!',
@@ -201,7 +191,6 @@ export default function GroupByExample() {
         pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
-        lazyLoadBatchSize={10}
         fullLazyLoad
       >
         {({ pivotColumns, pivotColumnGroups }) => {

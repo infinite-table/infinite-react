@@ -155,8 +155,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
       colId,
     );
 
-    console.log(columnVisibility, colId, result);
-
     return result;
   });
 

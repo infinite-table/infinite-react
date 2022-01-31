@@ -98,13 +98,15 @@ Displaying the same column twice is a perfectly valid use case.
 </Sandpack>
 </Prop>
 
-<Prop name="columns" type="(Map|Record)<string, InfiniteTableColumn<DATA_TYPE>>">
+<Prop name="columns" type="Record<string, InfiniteTableColumn<DATA_TYPE>>">
 
 > Describes the columns available in the component.
 
 The following properties are available:
 
  * <PropLink name="columns.field">field</PropLink>
+ * <PropLink name="columns.defaultWidth">defaultWidth</PropLink>
+ * <PropLink name="columns.defaultFlex">defaultFlex</PropLink>
  * render
  * renderValue
  * type
