@@ -62,12 +62,22 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   // if (column.id === 'team') {
   //   debugger;
   // }
+
+  if (
+    rowInfo.indexInAll === 0 &&
+    column.groupByField &&
+    column.groupByField === 'stack'
+  ) {
+    debugger;
+  }
   let value =
     isGroupRow && groupBy && column.groupByField
       ? rowInfo.value
       : isColumnWithField(column)
       ? data?.[column.field]
       : null;
+
+  // console.log({ groupBy, value, column });
 
   if (column.valueGetter) {
     value = column.valueGetter(

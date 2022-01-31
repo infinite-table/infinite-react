@@ -10,6 +10,7 @@ import {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableColumnAggregator,
   DataSourcePropAggregationReducers,
+  InfiniteTableGroupColumnBase,
 } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
@@ -117,9 +118,13 @@ export default function GroupByExample() {
   const [strategy, setStrategy] =
     useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
 
-  const groupColumn = React.useMemo(() => {
+  const groupColumn = React.useMemo<
+    InfiniteTableGroupColumnBase<Employee>
+  >(() => {
     return {
-      renderValue: ({ value }: { value: any }) => {
+      renderValue: (arg) => {
+        const { value } = arg;
+
         return value ? <b>{value}📢</b> : null;
       },
     };

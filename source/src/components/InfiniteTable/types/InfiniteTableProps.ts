@@ -228,7 +228,7 @@ export type InfiniteTablePropGroupColumn<T> =
 export type InfiniteTableGroupColumnFunction<T> = (
   options: InfiniteTableGroupColumnGetterOptions<T>,
   toggleGroupRow: (groupKeys: any[]) => void,
-) => InfiniteTableGroupColumnBase<T>;
+) => Partial<InfiniteTableGroupColumnBase<T>>;
 export type InfiniteTablePropPivotColumn<
   T,
   COL_TYPE = InfiniteTableColumn<T>,

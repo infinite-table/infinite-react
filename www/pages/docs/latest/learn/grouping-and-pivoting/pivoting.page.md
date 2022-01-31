@@ -124,7 +124,7 @@ const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducer
   data: [
     {
       aggregations: {
-        // for each aggregation, have an entry
+        // for each aggregation id, have an entry
         salary: SALARY_AGGREGATION_VALUE,
         age: AGE_AGGREGATION_VALUE,
       },
@@ -136,7 +136,7 @@ const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducer
       keys: ["Canada"],  
       pivot: {
         totals: {
-          // for each aggregation, have an entry
+          // for each aggregation id, have an entry
           salary: <SALARY_AGGREGATION_VALUE>,
           age: <AGE_AGGREGATION_VALUE>,
         },
@@ -171,3 +171,11 @@ const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducer
   }
 }
 ```
+
+
+<Sandpack title="Server-side pivoting example">
+
+```ts file=remote-pivoting-example.page.tsx
+```
+
+</Sandpack>

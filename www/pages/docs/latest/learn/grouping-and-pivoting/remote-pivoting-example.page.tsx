@@ -77,6 +77,7 @@ const dataSource: DataSourceData<Developer> = ({
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
   {
     salary: {
+      // the aggregation name will be used as the column header
       name: 'Salary (avg)',
       field: 'salary',
       reducer: 'avg',
@@ -106,10 +107,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
+// make the row labels column (id: 'labels') be pinned
 const defaultColumnPinning: InfiniteTablePropColumnPinning =
   new Map([['labels', 'start']]);
-const domProps = { style: { height: '90vh' } };
 
+// make all rows collapsed by default
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
@@ -131,12 +133,23 @@ export default function RemotePivotExample() {
     React.useMemo(
       () => [
         { field: 'preferredLanguage' },
-
         {
           field: 'canDesign',
-
+          // customize the column group
+          columnGroup: ({ columnGroup }) => {
+            return {
+              ...columnGroup,
+              header: `${
+                columnGroup.pivotGroupKey === 'yes'
+                  ? 'Designer'
+                  : 'Non-designer'
+              }`,
+            };
+          },
+          // customize columns generated under this column group
           column: ({ column }) => ({
-            header: column.header + '!',
+            ...column,
+            header: `🎉 ${column.header}`,
           }),
         },
       ],
@@ -155,8 +168,6 @@ export default function RemotePivotExample() {
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>
-            domProps={domProps}
-            hideEmptyGroupColumns
             defaultColumnPinning={defaultColumnPinning}
             columns={columns}
             pivotColumns={pivotColumns}

@@ -68,6 +68,7 @@ export type InfiniteTableRowInfoBase<T> = {
   indexInAll: number;
   groupCount?: number;
   groupBy?: (keyof T)[];
+  rootGroupBy?: (keyof T)[];
   pivotValuesMap?: PivotValuesDeepMap<T, any>;
   reducerResults?: Record<string, AggregationReducerResult>;
 };
@@ -83,6 +84,7 @@ export type InfiniteTableEnhancedGroupInfo<T> = InfiniteTableRowInfo<T> & {
   groupKeys?: any[];
   groupCount: number;
   groupBy: (keyof T)[];
+  rootGroupBy: (keyof T)[];
   pivotValuesMap?: PivotValuesDeepMap<T, any>;
 };
 
@@ -575,7 +577,11 @@ function getEnhancedGroupData<DataType>(
     indexInGroup: options.indexInGroup,
     indexInAll: options.indexInAll,
     value: groupKeys[groupKeys.length - 1],
-    groupBy: groupBy.slice(0, groupNesting) as (keyof DataType)[],
+    rootGroupBy: groupBy,
+    groupBy:
+      groupNesting === groupBy.length
+        ? groupBy
+        : (groupBy.slice(0, groupNesting) as (keyof DataType)[]),
     isGroupRow: true,
     pivotValuesMap: pivotDeepMap,
     groupNesting,

@@ -164,4 +164,35 @@ When inline group rendering is used (<PropLink name="groupRenderStrategy" code={
 
 ## Aggregations
 
-Docs coming
+When grouping, you can also aggregate the values of the grouped rows. This is done via the <DataSourcePropLink name="aggregationReducers" code>DataSource.aggregationReducers=true</DataSourcePropLink> property. See the example below
+
+<Sandpack title="Grouping with aggregations">
+
+```ts file=grouping-with-aggregations-example.page.tsx
+```
+
+</Sandpack>
+
+Each <DataSourcePropLink name="aggregationReducers" code={false}>reducer</DataSourcePropLink> from the `aggregationReducers` map can have the following properties:
+
+* `field` - the field to aggregate on
+* `getter(data)` - a value-getter function, if the aggregation values are are not mapped directly to a `field`
+* `initialValue` - the initial value to start with when computing the aggregation (for client-side aggregations only)
+* `reducer: string | (acc, current)=>value` - the reducer function to use when computing the aggregation (for client-side aggregations only). For server-side aggregations, this will be a `string`
+* `done(value, arr)` - a function that is called when the aggregation is done (for client-side aggregations only) and returns the final value of the aggregation
+* `name` - useful especially in combination with <DataSourcePropLink name="pivotBy" />, as it will be used as the pivot column header.
+
+If an aggregation reducer is bound to a `field` in the dataset, and there is a column mapped to the same `field`, that column will show the corresponding aggregation value for each group row, as shown in the example above.
+
+<Gotcha>
+
+If you want to prevent the user to expand the last level of group rows, you can override the `render` function for the group column
+
+<Sandpack title="Customized group expand on last group level">
+
+```ts file=grouping-with-aggregations-discard-expand-example.page.tsx
+```
+
+</Sandpack>
+
+</Gotcha>
