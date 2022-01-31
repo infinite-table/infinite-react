@@ -3,6 +3,7 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
+  InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
 type Employee = {
@@ -69,25 +70,16 @@ export default function App() {
   );
 }
 
-const columns: Map<
-  string,
-  InfiniteTableColumn<Employee>
-> = new Map([
-  [
-    'id',
-    {
-      field: 'id',
-      type: 'number',
-      width: 80,
-    },
-  ],
-  [
-    'name',
-    {
-      field: 'name',
-    },
-  ],
-  ['salary', { field: 'salary', type: 'number' }],
-  ['department', { field: 'department', header: 'Dep.' }],
-  ['company', { field: 'company' }],
-]);
+const columns: InfiniteTablePropColumns<Employee> = {
+  id: {
+    field: 'id',
+    type: 'number',
+    width: 80,
+  },
+  name: {
+    field: 'name',
+  },
+  salary: { field: 'salary', type: 'number' },
+  department: { field: 'department', header: 'Dep.' },
+  company: { field: 'company' },
+};

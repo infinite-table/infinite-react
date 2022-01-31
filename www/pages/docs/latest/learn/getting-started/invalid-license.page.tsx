@@ -7,29 +7,23 @@ import {
 
 import { data, Person } from './data';
 
-const columns: Map<
+const columns: Record<
   string,
   InfiniteTableColumn<Person>
-> = new Map([
-  [
-    'id',
-    {
-      // specifies which field from the data source
-      // should be rendered in this column
-      field: 'Id',
-      type: 'number',
-      sortable: true,
-      width: 80,
-    },
-  ],
-  [
-    'firstName',
-    {
-      field: 'FirstName',
-    },
-  ],
-  ['age', { field: 'Age', type: 'number' }],
-]);
+> = {
+  id: {
+    // specifies which field from the data source
+    // should be rendered in this column
+    field: 'Id',
+    type: 'number',
+    sortable: true,
+    defaultWidth: 80,
+  },
+  firstName: {
+    field: 'FirstName',
+  },
+  age: { field: 'Age', type: 'number' },
+};
 
 export default function App() {
   return (

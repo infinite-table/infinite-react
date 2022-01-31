@@ -12,11 +12,12 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 > Specifies the functions to use for aggregating data. The object is a map where the keys are ids for aggregations and values are object of the shape described below.
 
 The `DataSourceAggregationReducer` type can have the following properties
-* `initialValue` - type `any`, mandatory
+* `initialValue` - type `any`, mandatory for client-side aggregations
 * `field` - the field to aggregate on. Optional - if not specified, make sure you specify `getter`
-* `getter`: `(data:T)=> any` - a getter function, called with the current `data` object()
-* `reducer`:  `(accumulator, value, data) => any`
-* `done`: `(accumulator, arr) => any`
+* `getter`: `(data:T)=> any` - a getter function, called with the current `data` object.
+* `reducer`:  `string | (accumulator, value, data: T) => any` - either a string (for server-side aggregations) or a mandatory aggregation function for client-side aggregations.
+* `done`: `(accumulator, arr: T[]) => any` - a function that is called to finish the aggregation after all values have been accumulated. The function should return the final value of the aggregation. Only used for client-side aggregations.
+* `name` - useful especially in combination with <DataSourcePropLink name="pivotBy" />, as it will be used as the pivot column header.
 
 
 <Sandpack title="Aggregation demo - see `salary` column">
@@ -26,6 +27,16 @@ The `DataSourceAggregationReducer` type can have the following properties
 ```ts file=columns.ts
 ```
 </Sandpack> 
+
+Aggregation reducers can be used in combination with grouping and pivoting. The example below shows aggregations used with server-side pivoting
+
+
+<Sandpack title="Aggregations used together with server-side pivoting"> 
+
+```ts file=../../learn/grouping-and-pivoting/remote-pivoting-example.page.tsx
+```
+
+</Sandpack>
 
 
 </Prop>
@@ -56,6 +67,19 @@ It's important to note you can re-fetch data by changing the reference you pass 
 ```ts file=../../learn/working-with-data/refetch-example.page.tsx
 ```
 ```ts file=../../learn/working-with-data/columns.ts as=columns.ts
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="fullLazyLoad" type="boolean" defaultValue={false}>
+
+> Whether the datasource will load data lazily - useful for server-side grouping and pivoting. If set to `true`, the <DataSourcePropLink name="data" /> prop must be a function that returns a promise.
+
+<Sandpack title="Server-side pivoting with full lazy load"> 
+
+```ts file=../../learn/grouping-and-pivoting/remote-pivoting-example.page.tsx
 ```
 
 </Sandpack>
@@ -119,7 +143,6 @@ When this is a function, it is called with a parameter object that has the follo
 </Prop>
 
 
-
 <Prop name="onDataParamsChange" type="(dataParams: DataSourceDataParams<DATA_TYPE:>)=>void">
 
 > A function to be called when data-related props/state change.
@@ -131,6 +154,7 @@ The function is called with an object that has the following properties:
  - `sortInfo` - current sort information - see <DataSourcePropLink name="sortInfo" /> for details
  - `groupBy` - current grouping information - see <DataSourcePropLink name="groupBy" /> for details
  - `livePaginationCursor` - the value for the live pagination cursor - see <DataSourcePropLink name="livePaginationCursor" /> for details
+ - `changes` - an object that can help you figure out what change caused `onDataParamsChange` to be called.
 
 <Sandpack  title="Live pagination - with react-query" deps="react-query">
 

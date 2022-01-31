@@ -6,6 +6,7 @@ import {
   DataSource,
   DataSourceSingleSortInfo,
   DataSourceDataParams,
+  DataSourceLivePaginationCursorFn,
 } from '@infinite-table/infinite-react';
 
 import {
@@ -25,25 +26,23 @@ const queryClient = new QueryClient({
 
 const emptyArray: Employee[] = [];
 
-export const columns = new Map<
+export const columns: Record<
   string,
   InfiniteTableColumn<Employee>
->([
-  ['id', { field: 'id' }],
-  [
-    'country',
-    {
-      field: 'country',
-    },
-  ],
-  ['city', { field: 'city' }],
-  ['team', { field: 'team' }],
-  ['department', { field: 'department' }],
-  ['firstName', { field: 'firstName' }],
-  ['lastName', { field: 'lastName' }],
-  ['salary', { field: 'salary' }],
-  ['age', { field: 'age' }],
-]);
+> = {
+  id: { field: 'id' },
+  country: {
+    field: 'country',
+  },
+  city: { field: 'city' },
+  team: { field: 'team' },
+  department: { field: 'department' },
+  firstName: { field: 'firstName' },
+  lastName: { field: 'lastName' },
+
+  salary: { field: 'salary' },
+  age: { field: 'age' },
+};
 
 type Employee = {
   id: number;
@@ -132,9 +131,9 @@ const Example = () => {
   const [dataParams, setDataParams] = React.useState<
     Partial<DataSourceDataParams<Employee>>
   >({
-    sortInfo: null,
     groupBy: [],
-    livePaginationCursor: 0,
+    sortInfo: undefined,
+    livePaginationCursor: null,
   });
   const {
     data,
@@ -181,7 +180,14 @@ const Example = () => {
 
   const onDataParamsChange = useCallback(
     (dataParams: DataSourceDataParams<Employee>) => {
-      setDataParams(dataParams);
+      const params = {
+        groupBy: dataParams.groupBy,
+        sortInfo: dataParams.sortInfo,
+        livePaginationCursor:
+          dataParams.livePaginationCursor,
+      };
+
+      setDataParams(params);
     },
     []
   );
@@ -203,10 +209,12 @@ const Example = () => {
 
   React.useEffect(() => {
     fetchNextPage();
-  }, [dataParams]);
+  }, [dataParams.livePaginationCursor]);
 
-  const livePaginationCursor =
-    (data?.pageParams[0] as number) || 0;
+  const livePaginationCursorFn: DataSourceLivePaginationCursorFn<Employee> =
+    useCallback(({ length }) => {
+      return length;
+    }, []);
 
   return (
     <React.StrictMode>
@@ -220,7 +228,7 @@ const Example = () => {
         loading={isFetchingNextPage}
         onDataParamsChange={onDataParamsChange}
         livePagination
-        livePaginationCursor={livePaginationCursor}>
+        livePaginationCursor={livePaginationCursorFn}>
         <InfiniteTable<Employee>
           scrollTopId={scrollTopId}
           columnDefaultWidth={200}

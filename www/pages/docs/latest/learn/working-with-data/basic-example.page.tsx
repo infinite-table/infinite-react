@@ -69,25 +69,19 @@ export default function App() {
   );
 }
 
-const columns: Map<
+const columns: Record<
   string,
   InfiniteTableColumn<Employee>
-> = new Map([
-  [
-    'id',
-    {
-      field: 'id',
-      type: 'number',
-      width: 80,
-    },
-  ],
-  [
-    'name',
-    {
-      field: 'name',
-    },
-  ],
-  ['salary', { field: 'salary', type: 'number' }],
-  ['department', { field: 'department', header: 'Dep.' }],
-  ['company', { field: 'company' }],
-]);
+> = {
+  id: {
+    field: 'id',
+    type: 'number',
+    defaultWidth: 80,
+  },
+  name: {
+    field: 'name',
+  },
+  salary: { field: 'salary', type: 'number' },
+  department: { field: 'department', header: 'Dep.' },
+  company: { field: 'company' },
+};

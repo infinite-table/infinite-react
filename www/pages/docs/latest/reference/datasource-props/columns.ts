@@ -1,4 +1,4 @@
-import { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 export type Employee = {
   id: number;
@@ -20,65 +20,43 @@ export type Employee = {
 
 const formatter = new Intl.NumberFormat('en-US');
 
-export const columns = new Map<
-  string,
-  InfiniteTableColumn<Employee>
->([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
+export const columns: InfiniteTablePropColumns<Employee> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+    columnGroup: 'location',
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+    columnGroup: 'address',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    header: 'Salary',
+    renderValue: ({ value, rowInfo }) => {
+      value = formatter.format(value as number);
+      return rowInfo.isGroupRow
+        ? `Avg salary: $ ${value}`
+        : value;
     },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-      columnGroup: 'location',
-    },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-      columnGroup: 'address',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      header: 'Salary',
-      renderValue: ({ value, rowInfo }) => {
-        value = formatter.format(value as number);
-        return rowInfo.isGroupRow
-          ? `Avg salary: $ ${value}`
-          : value;
-      },
-    },
-  ],
-  [
-    'department',
-    {
-      field: 'department',
-      header: 'Department',
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-      header: 'Team',
-    },
-  ],
-  ['company', { field: 'companyName', header: 'Company' }],
-  [
-    'companySize',
-    { field: 'companySize', header: 'Company Size' },
-  ],
-]);
+  },
+  department: {
+    field: 'department',
+    header: 'Department',
+  },
+  team: {
+    field: 'team',
+    header: 'Team',
+  },
+  company: { field: 'companyName', header: 'Company' },
+  companySize: {
+    field: 'companySize',
+    header: 'Company Size',
+  },
+};

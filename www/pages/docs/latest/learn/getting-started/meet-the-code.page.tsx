@@ -12,10 +12,6 @@ type Person = {
   Age: number;
 };
 
-function CustomLoadMask() {
-  return null;
-}
-
 export default function App() {
   const columns: Record<
     string,
@@ -62,9 +58,6 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person>
-        components={{
-          LoadMask: CustomLoadMask,
-        }}
         columnDefaultWidth={130}
         columns={columns}
       />

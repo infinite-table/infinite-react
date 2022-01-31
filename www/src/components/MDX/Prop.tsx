@@ -301,6 +301,7 @@ export function PropTable({
       />
     ) : null
   ) as React.ReactNode;
+
   return (
     <div className="my-4">
       <MaxWidth>

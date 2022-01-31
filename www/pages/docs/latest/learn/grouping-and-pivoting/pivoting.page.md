@@ -125,8 +125,8 @@ const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducer
     {
       aggregations: {
         // for each aggregation id, have an entry
-        salary: SALARY_AGGREGATION_VALUE,
-        age: AGE_AGGREGATION_VALUE,
+        salary: <SALARY_AGGREGATION_VALUE>,
+        age: <AGE_AGGREGATION_VALUE>,
       },
       data: {
         // data is an object with the common group values
@@ -153,6 +153,7 @@ const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducer
                   salary: <SALARY_AGGREGATION_VALUE>,
                   age: <AGE_AGGREGATION_VALUE>,
                 }
+                
               }
             }
           }
