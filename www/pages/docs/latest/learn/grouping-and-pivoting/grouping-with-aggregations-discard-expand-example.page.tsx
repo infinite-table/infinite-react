@@ -2,15 +2,13 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  DataSourcePropGroupBy,
-  InfiniteTableColumnRenderValueParam,
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   GroupRowsState,
-  InfiniteTableProps,
   InfiniteTableGroupColumnFunction,
-  InfiniteTableColumn,
+  InfiniteTableGroupColumnBase,
+  InfiniteTableColumnRenderParam,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -70,15 +68,19 @@ const columns: InfiniteTablePropColumns<Developer> = {
 const groupColumn: InfiniteTableGroupColumnFunction<
   Developer
 > = (arg) => {
-  const column: {
-    render?: InfiniteTableColumn<Developer>['render'];
-  } = {};
+  const column = {} as Partial<
+    InfiniteTableGroupColumnBase<Developer>
+  >;
 
   if (arg.groupIndexForColumn === arg.groupBy.length - 1) {
-    column.render = ({ value, rowInfo }) => {
+    column.render = (
+      param: InfiniteTableColumnRenderParam<Developer>
+    ) => {
+      const { value, rowInfo } = param;
       if (
-        rowInfo.groupBy.length !=
-        rowInfo.rootGroupBy?.length
+        rowInfo.isGroupRow &&
+        rowInfo.groupBy?.length !=
+          rowInfo.rootGroupBy?.length
       ) {
         // we are on a group row that is the last grouping level
         return null;

@@ -1,5 +1,9 @@
 import type { DataSourceState, DataSourceDerivedState } from '../types';
-import { InfiniteTableRowInfo, lazyGroup } from '../../../utils/groupAndPivot';
+import {
+  InfiniteTableRowInfo,
+  InfiniteTableRowInfoNormal,
+  lazyGroup,
+} from '../../../utils/groupAndPivot';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 
 import { multisort } from '../../../utils/multisort';
@@ -27,7 +31,7 @@ function toRowInfo<T>(
   data: T,
   id: any,
   index: number,
-): InfiniteTableRowInfo<T> {
+): InfiniteTableRowInfoNormal<T> {
   return {
     data,
     collapsed: true,
