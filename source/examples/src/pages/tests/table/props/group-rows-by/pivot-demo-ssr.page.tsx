@@ -10,7 +10,6 @@ import {
 } from '@infinite-table/infinite-react';
 
 import type {
-  InfiniteTableColumn,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   DataSourcePivotBy,
