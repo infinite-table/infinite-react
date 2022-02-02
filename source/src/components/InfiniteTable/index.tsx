@@ -47,6 +47,8 @@ import { LoadMask } from './components/LoadMask';
 import { display, position, zIndex, top, left } from './utilities.css';
 import { join } from '../../utils/join';
 import { ThemeVars } from './theme.css';
+import { debounce } from '../utils/debounce';
+import { RenderRange } from '../VirtualBrain';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -86,6 +88,7 @@ export const InfiniteTableComponent = React.memo(
     const {
       componentState: { dataArray, loading },
       getState: getDataSourceState,
+      componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
 
     const {
@@ -102,6 +105,7 @@ export const InfiniteTableComponent = React.memo(
       rowHeightCSSVar,
       headerHeightCSSVar,
       components,
+      scrollStopDelay,
     } = componentState;
 
     const { columnShifts, bodySize } = componentState;
@@ -118,6 +122,7 @@ export const InfiniteTableComponent = React.memo(
       scrollbars,
       applyScrollVertical,
       horizontalVirtualBrain,
+      verticalVirtualBrain,
 
       reservedContentHeight,
     } = useListRendering({
@@ -127,6 +132,18 @@ export const InfiniteTableComponent = React.memo(
       bodySize,
       computed,
     });
+
+    React.useEffect(() => {
+      const dataSourceState = getDataSourceState();
+      const onChange = debounce(
+        (renderRange: RenderRange) => {
+          dataSourceState.notifyRenderRangeChange(renderRange);
+        },
+        { wait: scrollStopDelay },
+      );
+
+      return verticalVirtualBrain.onRenderRangeChange(onChange);
+    }, [verticalVirtualBrain, scrollStopDelay]);
 
     const licenseValid = useLicense(licenseKey);
 
@@ -151,6 +168,10 @@ export const InfiniteTableComponent = React.memo(
 
       notifyScrollbarsChange(scrollbars);
     }, [scrollbars]);
+
+    React.useEffect(() => {
+      dataSourceActions.scrollStopDelayUpdatedByTable = scrollStopDelay;
+    }, [scrollStopDelay]);
 
     return (
       <div ref={domRef} {...domProps}>

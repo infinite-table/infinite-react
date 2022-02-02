@@ -20,6 +20,7 @@ import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/type
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
+import { RenderRange } from '../VirtualBrain';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -145,9 +146,12 @@ export interface DataSourceSetupState<T> {
   showSeparatePivotColumnForSingleAggregation: boolean;
   dataParams?: DataSourceDataParams<T>;
   originalLazyGroupData: LazyGroupDataDeepMap<T>;
+  originalLazyGroupDataChangeDetect: number | string;
+  scrollStopDelayUpdatedByTable: number;
 
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
   notifyScrollStop: SubscriptionCallback<ScrollStopInfo>;
+  notifyRenderRangeChange: SubscriptionCallback<RenderRange>;
   originalDataArray: T[];
   lastSortDataArray?: T[];
   lastGroupDataArray?: InfiniteTableRowInfo<T>[];

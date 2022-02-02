@@ -113,9 +113,9 @@ export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
-        field: 'city',
+        field: 'country',
       },
-      { field: 'age' },
+      { field: 'stack' },
     ],
     [],
   );
@@ -164,7 +164,7 @@ export default function RemotePivotExample() {
     [],
   );
 
-  const [size, setSize] = React.useState('20k');
+  const [size, setSize] = React.useState('1k');
   const dataSource = React.useMemo(() => {
     return getDataSource(size);
   }, [size]);
@@ -185,11 +185,12 @@ export default function RemotePivotExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
+        loading={false}
         groupBy={groupBy}
         pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
-        lazyLoadBatchSize={5}
+        lazyLoadBatchSize={10}
         fullLazyLoad
       >
         {({ pivotColumns, pivotColumnGroups }) => {

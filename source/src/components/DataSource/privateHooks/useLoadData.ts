@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { LazyGroupDataItem, LazyGroupRowInfo } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
+import { getGlobal } from '../../../utils/getGlobal';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 
 import {
@@ -10,7 +11,9 @@ import {
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 
 import { Scrollbars } from '../../InfiniteTable';
-import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
+import { debounce } from '../../utils/debounce';
+
+import { RenderRange } from '../../VirtualBrain';
 
 import {
   DataSourceDataParams,
@@ -20,10 +23,21 @@ import {
   DataSourceDataParamsChanges,
 } from '../types';
 
+const getRafPromise = () =>
+  new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+
 const SKIP_DATA_CHANGES_KEYS = {
   originalDataArray: true,
   changes: true,
 };
+
+function getChangeDetect() {
+  const perfNow = getGlobal().performance?.now();
+
+  return `${Date.now()}:${perfNow}`;
+}
 
 export function buildDataSourceDataParams<T>(
   componentState: DataSourceState<T>,
@@ -98,10 +112,11 @@ export function loadData<T>(
     //@ts-ignore
     typeof data === 'object' && typeof data.then === 'function';
 
-  if (dataIsPromise) {
+  if (dataIsPromise && !componentState.fullLazyLoad) {
     actions.loading = true;
   }
-  Promise.resolve(data).then((dataParam) => {
+
+  return Promise.resolve(data).then((dataParam) => {
     // dataParam can either be an array or an object with a `data` array property
     let dataArray: T[] = [] as T[];
     let skipAssign = false;
@@ -118,9 +133,21 @@ export function loadData<T>(
       }
 
       if (componentState.fullLazyLoad && dataParams.groupKeys) {
-        const lazyGroupData = DeepMap.clone(
-          componentState.originalLazyGroupData,
-        );
+        // #staleLazyGroupData
+        // because cloning would make a copy of it and
+        // multiple promised calls can be concurrent
+        // they would act on clones of the data
+        // and the last one will win and override
+        // previous ones (in the same concurrency window)
+        // therefore we use originalLazyGroupDataChangeDetect
+        // to trigger re-renders and in hooks (useEffect, etc)
+        // whenever we want to check if originalLazyGroupData has changed
+
+        // const lazyGroupData = DeepMap.clone(
+        //   componentState.originalLazyGroupData,
+        // );
+
+        const lazyGroupData = componentState.originalLazyGroupData;
         const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
 
         const newGroupRowInfo: LazyGroupRowInfo<T> = {
@@ -129,6 +156,7 @@ export function loadData<T>(
         };
         if (dataParams.lazyLoadBatchSize) {
           const existingGroupRowInfo = lazyGroupData.get(key);
+
           const currentGroupRowInfo = existingGroupRowInfo ?? {
             items: [],
             totalCount: newGroupRowInfo.totalCount,
@@ -136,12 +164,14 @@ export function loadData<T>(
           currentGroupRowInfo.items.length = currentGroupRowInfo.totalCount;
 
           const start = dataParams.lazyLoadStartIndex ?? 0;
-          const end =
-            start + (dataParams.lazyLoadBatchSize ?? dataArray.length);
+          const end = Math.min(
+            remoteData.totalCount ?? start + dataParams.lazyLoadBatchSize,
+          );
 
           for (let i = start; i < end; i++) {
             currentGroupRowInfo.items[i] = newGroupRowInfo.items[i - start];
           }
+          // console.log('new items', currentGroupRowInfo.items);
 
           if (!existingGroupRowInfo) {
             lazyGroupData.set(key, currentGroupRowInfo);
@@ -150,7 +180,9 @@ export function loadData<T>(
           lazyGroupData.set(key, newGroupRowInfo);
         }
         skipAssign = true;
-        actions.originalLazyGroupData = lazyGroupData;
+        // actions.originalLazyGroupData = lazyGroupData;
+        // see above #staleLazyGroupData
+        actions.originalLazyGroupDataChangeDetect = getChangeDetect();
       }
     } else {
       dataArray = dataParam as T[];
@@ -159,7 +191,7 @@ export function loadData<T>(
     if (!skipAssign) {
       actions.originalDataArray = dataArray;
     }
-    if (dataIsPromise) {
+    if (dataIsPromise && !componentState.fullLazyLoad) {
       actions.loading = false;
     }
   });
@@ -181,8 +213,6 @@ export function useLoadData<T>() {
     livePagination,
     livePaginationCursor,
     cursorId: stateCursorId,
-    lazyLoadBatchSize,
-    notifyScrollStop,
   } = componentState;
 
   const [scrollbars, setScrollbars] = useState<Scrollbars>({
@@ -236,56 +266,7 @@ export function useLoadData<T>() {
 
   const initialRef = useRef(true);
 
-  // actions.livePaginationCursor = cursorId;
-
-  // useEffect(() => {
-  //   if (livePagination) {
-  //     actions.livePaginationCursor = cursorId;
-  //   }
-  // }, [livePagination, livePagination ? cursorId : null]);
-
-  useEffect(() => {
-    if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
-      return notifyScrollStop.onChange((param: ScrollStopInfo | null) => {
-        console.log('scroll stop', param);
-        if (!param) {
-          return;
-        }
-
-        const componentState = getComponentState();
-        const {
-          firstVisibleRowIndex: startIndex,
-          lastVisibleRowIndex: endIndex,
-        } = param;
-        const firstBatchStart =
-          Math.floor(startIndex / lazyLoadBatchSize) * lazyLoadBatchSize;
-        const lastBatchStart =
-          Math.floor(endIndex / lazyLoadBatchSize) * lazyLoadBatchSize;
-
-        const isRowLoaded = (index: number) =>
-          componentState.dataArray[index].data != null;
-
-        // TODO continue here - we need to iterate over all the items
-        // and get their group keys as well
-        // so we better move this logic outside of this useEffect fn
-        // into its own function that does this
-        // and then we can call it here
-        for (
-          let batchStartIndex = firstBatchStart;
-          batchStartIndex <= lastBatchStart;
-          batchStartIndex = batchStartIndex + lazyLoadBatchSize
-        ) {
-          if (!isRowLoaded(batchStartIndex)) {
-            loadData(componentState.data, componentState, actions, {
-              lazyLoadBatchSize,
-              lazyLoadStartIndex: batchStartIndex,
-            });
-          }
-        }
-      });
-    }
-    return;
-  }, [lazyLoadBatchSize]);
+  useLazyLoadRange<T>();
 
   useEffectWithChanges(
     () => {
@@ -314,4 +295,194 @@ export function useLoadData<T>() {
       actions.dataParams = buildDataSourceDataParams(componentState);
     }
   }, depsObject);
+}
+
+function useLazyLoadRange<T>() {
+  const {
+    getComponentState,
+    componentActions: actions,
+    componentState,
+  } = useComponentState<DataSourceState<T>>();
+
+  const loadingCache = useMemo<Map<string, true>>(() => {
+    return new Map();
+  }, [componentState.data]);
+
+  (globalThis as any).loadingCache = loadingCache;
+
+  const {
+    lazyLoadBatchSize,
+    notifyRenderRangeChange,
+    dataArray,
+    scrollStopDelayUpdatedByTable,
+  } = componentState;
+
+  const latestRenderRangeRef = useRef<RenderRange | null>(null);
+
+  const loadRange = (
+    param?: RenderRange | null,
+    cache: Map<string, true> = loadingCache,
+  ) => {
+    const componentState = getComponentState();
+    param = param || latestRenderRangeRef.current;
+    if (!param) {
+      return;
+    }
+    const { renderStartIndex: startIndex, renderEndIndex: endIndex } = param;
+    if (!lazyLoadBatchSize || lazyLoadBatchSize <= 0) {
+      return;
+    }
+
+    lazyLoadRange(
+      {
+        startIndex,
+        endIndex,
+        lazyLoadBatchSize,
+        componentState,
+        componentActions: actions,
+      },
+      cache,
+    );
+  };
+
+  const debouncedLoadRange = useMemo(
+    () => debounce(loadRange, { wait: scrollStopDelayUpdatedByTable }),
+    [scrollStopDelayUpdatedByTable],
+  );
+
+  useEffect(() => {
+    if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
+      return notifyRenderRangeChange.onChange((param: RenderRange | null) => {
+        latestRenderRangeRef.current = param;
+        loadRange(param, loadingCache);
+      });
+    }
+    return;
+  }, [lazyLoadBatchSize, loadingCache]);
+
+  useEffect(() => {
+    if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
+      debouncedLoadRange();
+    }
+    return;
+  }, [dataArray]);
+}
+
+function lazyLoadRange<T>(
+  options: {
+    startIndex: number;
+    endIndex: number;
+    lazyLoadBatchSize: number;
+    componentState: DataSourceState<T>;
+    componentActions: ComponentStateGeneratedActions<DataSourceState<T>>;
+  },
+  cache?: Map<string, true>,
+) {
+  const {
+    startIndex,
+    endIndex,
+    lazyLoadBatchSize,
+    componentState,
+    componentActions,
+  } = options;
+
+  const { dataArray } = componentState;
+  const isRowLoaded = (index: number) => dataArray[index].data != null;
+
+  type FnCall = {
+    lazyLoadStartIndex: number;
+    lazyLoadBatchSize: number;
+    groupKeys: any[];
+  };
+
+  const perGroupFnCalls = new DeepMap<any, Record<any, FnCall>>();
+
+  // TODO remove this hack when DeepMap supports empty arrays as keys
+  const rootGroupKeys = ['_______xxx______'];
+
+  for (let i = startIndex; i <= endIndex; i++) {
+    const rowInfo = dataArray[i];
+    if (!rowInfo) {
+      continue;
+    }
+    const rowLoaded = rowInfo.data != null;
+    const parentGroupKeys = rowInfo.groupKeys ? [...rowInfo.groupKeys] : [];
+    if (rowInfo.groupKeys) {
+      parentGroupKeys.pop();
+    }
+    const cacheKeys = parentGroupKeys.length ? parentGroupKeys : rootGroupKeys;
+    const indexInGroup = rowInfo.indexInGroup;
+
+    if (!rowLoaded) {
+      let fnCalls = perGroupFnCalls.get(cacheKeys);
+
+      const batchStartIndexInGroup =
+        Math.floor(indexInGroup / lazyLoadBatchSize) * lazyLoadBatchSize;
+      const offset = rowInfo.indexInGroup - batchStartIndexInGroup;
+      const absoluteIndexOfBatchStart =
+        dataArray[rowInfo.indexInAll - offset].indexInAll;
+
+      const batchStartRowLoaded = isRowLoaded(absoluteIndexOfBatchStart);
+      const batchStartRowId = dataArray[absoluteIndexOfBatchStart].id;
+
+      if (batchStartRowLoaded || fnCalls?.[batchStartRowId]) {
+        continue;
+      }
+      const shouldSetFnCalls = !fnCalls;
+
+      fnCalls = fnCalls || {};
+
+      const currentFnCall: FnCall = {
+        lazyLoadStartIndex: batchStartIndexInGroup,
+        lazyLoadBatchSize,
+        groupKeys: parentGroupKeys,
+      };
+
+      // const cacheKey = `${parentGroupKeys.join('-')}:${batchStartIndexInGroup}`;
+      // const cached = cache ? cache.get(cacheKey) : false;
+
+      if (!fnCalls[batchStartRowId]) {
+        fnCalls[batchStartRowId] = currentFnCall;
+        // cache?.set(cacheKey, true);
+      }
+
+      if (shouldSetFnCalls) {
+        perGroupFnCalls.set(cacheKeys, fnCalls);
+      }
+    }
+  }
+
+  let initialPromise: Promise<any> = Promise.resolve(true);
+
+  const allFnCalls: FnCall[] = [];
+  perGroupFnCalls.topDownValues().forEach((record) => {
+    allFnCalls.push(...Object.values(record));
+  });
+
+  allFnCalls.reduce((promise, fnCall: FnCall) => {
+    const cacheKey = `${fnCall.groupKeys.join('-')}:${
+      fnCall.lazyLoadStartIndex
+    }`;
+
+    if (cache && cache.has(cacheKey)) {
+      return promise;
+    }
+
+    cache?.set(cacheKey, true);
+    const args: [
+      DataSourceData<T>,
+      DataSourceState<T>,
+      ComponentStateGeneratedActions<DataSourceState<T>>,
+      Partial<DataSourceDataParams<T>>,
+    ] = [componentState.data, componentState, componentActions, fnCall];
+
+    return promise
+      .then(() => getRafPromise())
+      .then(() => loadData(...args))
+      .then(() => {
+        requestAnimationFrame(() => {
+          cache?.delete(cacheKey);
+        });
+      });
+  }, initialPromise);
 }

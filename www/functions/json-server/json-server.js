@@ -265,13 +265,18 @@ function getSQLRoute(routeSuffix) {
             typeof x[k] === 'number'
               ? Math.floor(x[k])
               : x[k];
+
+          let exit = false;
           if (reducersByField[k]) {
             aggregations[k] = theValue;
-            return;
+            exit = true;
           }
           if (groupByMapByField[k]) {
             data[k] = theValue;
 
+            exit = true;
+          }
+          if (exit) {
             return;
           }
 

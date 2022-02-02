@@ -102,7 +102,7 @@ const aggregationReducers = {
 
 ```tsx
 
-const dataSource = ({ groupBy, groupKeys, pivotBy, groupKeys, aggregationReducers }) => {
+const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
   // make sure you return a Promise that resolves to the correct structure - see details below
 
   //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],

@@ -71,6 +71,7 @@ export function concludeReducer<T>(params: {
     'generateGroupRows',
     'originalDataArray',
     'originalLazyGroupData',
+    'originalLazyGroupDataChangeDetect',
     'groupBy',
     'groupRowsState',
     'pivotBy',

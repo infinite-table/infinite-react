@@ -24,6 +24,7 @@ import { dbg } from '../../../utils/debug';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { DeepMap } from '../../../utils/DeepMap';
 import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
+import { RenderRange } from '../../VirtualBrain';
 
 export const defaultCursorId = Symbol('cursorId');
 
@@ -41,8 +42,11 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
     notifyScrollStop: buildSubscriptionCallback<ScrollStopInfo>(),
+    notifyRenderRangeChange: buildSubscriptionCallback<RenderRange>(),
     pivotTotalColumnPosition: 'end',
+    scrollStopDelayUpdatedByTable: 100,
     originalLazyGroupData,
+    originalLazyGroupDataChangeDetect: 0,
     originalDataArray,
     cursorId: defaultCursorId,
     showSeparatePivotColumnForSingleAggregation: false,
