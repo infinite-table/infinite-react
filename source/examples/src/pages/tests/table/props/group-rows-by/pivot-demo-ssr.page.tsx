@@ -78,7 +78,7 @@ function getDataSource(size: string) {
           new Promise<Developer[]>((resolve) => {
             setTimeout(() => {
               resolve(data);
-            }, 50);
+            }, 500);
           }),
       );
   };
@@ -117,10 +117,6 @@ const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
 });
-
-const defaultGroupColumn: InfiniteTablePropGroupColumn<Developer> = {
-  id: 'group-col',
-};
 
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
@@ -210,8 +206,7 @@ export default function RemotePivotExample() {
             <div>
               <InfiniteTable<Developer>
                 domProps={domProps}
-                groupRenderStrategy="single-column"
-                groupColumn={defaultGroupColumn}
+                groupRenderStrategy="multi-column"
                 hideEmptyGroupColumns
                 defaultColumnPinning={defaultColumnPinning}
                 columns={columns}

@@ -431,11 +431,12 @@ function lazyLoadRange<T>(
       continue;
     }
     const rowLoaded = rowInfo.data != null;
-    const parentGroupKeys = rowInfo.groupKeys ? [...rowInfo.groupKeys] : [];
-    if (rowInfo.groupKeys) {
-      parentGroupKeys.pop();
+    const theGroupKeys = rowInfo.groupKeys ? [...rowInfo.groupKeys] : [];
+
+    if (rowInfo.groupKeys && rowInfo.isGroupRow) {
+      theGroupKeys.pop();
     }
-    const cacheKeys = parentGroupKeys.length ? parentGroupKeys : rootGroupKeys;
+    const cacheKeys = theGroupKeys.length ? theGroupKeys : rootGroupKeys;
     const indexInGroup = rowInfo.indexInGroup;
 
     if (!rowLoaded) {
@@ -460,7 +461,7 @@ function lazyLoadRange<T>(
       const currentFnCall: FnCall = {
         lazyLoadStartIndex: batchStartIndexInGroup,
         lazyLoadBatchSize,
-        groupKeys: parentGroupKeys,
+        groupKeys: theGroupKeys,
       };
 
       // const cacheKey = `${parentGroupKeys.join('-')}:${batchStartIndexInGroup}`;

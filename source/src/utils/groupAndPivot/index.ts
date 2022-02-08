@@ -106,6 +106,7 @@ export type PivotValuesDeepMap<DataType, KeyType> = DeepMap<
 
 export type DeepMapGroupValueType<DataType, KeyType> = {
   items: DataType[];
+  commonData?: Partial<DataType>;
   reducerResults: Record<string, AggregationReducerResult>;
   pivotDeepMap?: DeepMap<
     GroupKeyType<KeyType>,
@@ -287,6 +288,19 @@ export function lazyGroup<DataType, KeyType extends string = string>(
       const [_rootKey, ...currentGroupKeys] = keys;
       const dataArray = lazyGroupRowInfo.items;
 
+      if (currentGroupKeys.length == groupBy.length) {
+        const deepMapGroupValue:
+          | undefined
+          | DeepMapGroupValueType<DataType, KeyType> = deepMap.get(
+          currentGroupKeys as KeyType[],
+        );
+        if (deepMapGroupValue) {
+          //@ts-ignore
+          deepMapGroupValue.items = dataArray;
+        }
+        return next?.();
+      }
+
       for (let i = 0, len = dataArray.length; i < len; i++) {
         if (!dataArray[i]) {
           // we're in the case of lazy loading, so some records might not be available just yet
@@ -309,11 +323,11 @@ export function lazyGroup<DataType, KeyType extends string = string>(
 
         const { field: groupByProperty } = groupBy[dataKeys.length - 1];
         const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
-
         currentGroupKeys.push(key);
 
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
+          commonData: dataObject,
           reducerResults: dataArray[i].aggregations || {},
         };
         deepMap.set(currentGroupKeys as KeyType[], deepMapGroupValue);
@@ -550,12 +564,17 @@ function getEnhancedGroupData<DataType>(
 ) {
   const { groupBy, groupKeys, collapsed, parents, reducers } = options;
   const groupNesting = groupKeys.length;
-  const { items: groupItems, reducerResults, pivotDeepMap } = deepMapValue;
+  const {
+    items: groupItems,
+    reducerResults,
+    pivotDeepMap,
+    commonData,
+  } = deepMapValue;
 
   let data = null as Partial<DataType> | null;
 
   if (Object.keys(reducerResults).length > 0) {
-    data = {} as Partial<DataType>;
+    data = commonData || ({} as Partial<DataType>);
     for (let key in reducers)
       if (reducers.hasOwnProperty(key)) {
         const reducer = reducers[key];
@@ -580,7 +599,7 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
-    id: groupKeys,
+    id: `${groupKeys}`, //TODO improve this
     collapsed,
     parents,
     collapsedChildrenCount: 0,
@@ -694,7 +713,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
             result.push(
               ...items.map((item, index) => {
                 return {
-                  id: toPrimaryKey(item),
+                  id: item ? toPrimaryKey(item) : `${groupKeys}-${index}`,
                   data: item,
                   isGroupRow: false,
                   collapsed: false,

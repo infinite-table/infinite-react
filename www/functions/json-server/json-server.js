@@ -242,6 +242,18 @@ function getSQLRoute(routeSuffix) {
       limit != null
         ? result.slice(start, start + limit)
         : result.slice(start);
+    if (
+      (groupKeys &&
+        groupBy &&
+        groupKeys.length >= groupBy.length) ||
+      !groupBy
+    ) {
+      res.json({
+        data: result,
+        totalCount,
+      });
+      return;
+    }
 
     res.json({
       totalCount,
@@ -411,6 +423,8 @@ function buildSQL({
 }) {
   var colsToSelect = [];
 
+  let selectAllCols = false;
+
   if (groupBy) {
     colsToSelect = groupBy.map(
       (col) => `${col.field} as ${col.field}`
@@ -419,26 +433,30 @@ function buildSQL({
       ? groupKeys.length
       : 0;
 
-    // limit the fields selected by grouping
-    colsToSelect.length = Math.min(
-      groupKeysLength + 1,
-      colsToSelect.length
-    );
-
-    if (pivotBy) {
-      const pivotByWithValues = pivotBy.map((pivot) => {
-        const sql = `select unique(${pivot.field}) as ${pivot.field} from ${tableName}`;
-        return {
-          field: pivot.field,
-          values: alasql(sql).map(
-            (row) => row[pivot.field]
-          ),
-        };
-      });
-
-      colsToSelect.push(
-        ...generatePivotSQL(pivotByWithValues, reducers)
+    if (groupKeysLength >= groupBy.length) {
+      selectAllCols = true;
+    } else {
+      // limit the fields selected by grouping
+      colsToSelect.length = Math.min(
+        groupKeysLength + 1,
+        colsToSelect.length
       );
+
+      if (pivotBy) {
+        const pivotByWithValues = pivotBy.map((pivot) => {
+          const sql = `select unique(${pivot.field}) as ${pivot.field} from ${tableName}`;
+          return {
+            field: pivot.field,
+            values: alasql(sql).map(
+              (row) => row[pivot.field]
+            ),
+          };
+        });
+
+        colsToSelect.push(
+          ...generatePivotSQL(pivotByWithValues, reducers)
+        );
+      }
     }
   }
 
@@ -481,11 +499,14 @@ function buildSQL({
 
   // colsToSelect.length = 8;
 
+  if (selectAllCols) {
+    colsToSelect = '*';
+  }
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
   // console.log(SQL);
 
-  if (groupBy && groupBy.length) {
+  if (groupBy && groupBy.length && !selectAllCols) {
     SQL += ` GROUP BY ${groupBy
       .slice(
         0,
@@ -511,6 +532,7 @@ function buildSQL({
     }`;
   }
 
+  console.log(SQL);
   return SQL;
 }
 module.exports = app;

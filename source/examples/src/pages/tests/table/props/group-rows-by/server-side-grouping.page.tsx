@@ -12,7 +12,6 @@ import {
 import type {
   InfiniteTablePropColumns,
   DataSourceGroupBy,
-  DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -120,49 +119,49 @@ export default function RemotePivotExample() {
     [],
   );
 
-  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
-    () => [
-      { field: 'preferredLanguage' },
-      // {
-      //   field: 'country',
-      //   columnGroup: ({ columnGroup }) => {
-      //     return {
-      //       header: `Country${
-      //         columnGroup.pivotTotalColumnGroup ? ' total' : ''
-      //       }: ${columnGroup.pivotGroupKey}`,
-      //     };
-      //   },
-      // },
-      // {
-      //   field: 'canDesign',
-      //   // column: ({ column: pivotCol }) => {
-      //   //   const lastKey = pivotCol.pivotGroupKey;
+  // const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
+  //   () => [
+  //     { field: 'preferredLanguage' },
+  //     // {
+  //     //   field: 'country',
+  //     //   columnGroup: ({ columnGroup }) => {
+  //     //     return {
+  //     //       header: `Country${
+  //     //         columnGroup.pivotTotalColumnGroup ? ' total' : ''
+  //     //       }: ${columnGroup.pivotGroupKey}`,
+  //     //     };
+  //     //   },
+  //     // },
+  //     // {
+  //     //   field: 'canDesign',
+  //     //   // column: ({ column: pivotCol }) => {
+  //     //   //   const lastKey = pivotCol.pivotGroupKey;
 
-      //   //   return {
-      //   //     defaultWidth: 500,
-      //   //     header:
-      //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
-      //   //       pivotCol.pivotAggregator.id,
-      //   //   };
-      //   // },
-      //   // columnGroup: ({ columnGroup: pivotCol }) => {
-      //   //   const lastKey = pivotCol.pivotGroupKey;
+  //     //   //   return {
+  //     //   //     defaultWidth: 500,
+  //     //   //     header:
+  //     //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
+  //     //   //       pivotCol.pivotAggregator.id,
+  //     //   //   };
+  //     //   // },
+  //     //   // columnGroup: ({ columnGroup: pivotCol }) => {
+  //     //   //   const lastKey = pivotCol.pivotGroupKey;
 
-      //   //   return {
-      //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-      //   //   };
-      //   // },
-      // },
-      {
-        field: 'canDesign',
+  //     //   //   return {
+  //     //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+  //     //   //   };
+  //     //   // },
+  //     // },
+  //     {
+  //       field: 'canDesign',
 
-        column: ({ column }) => ({
-          header: column.header + '!',
-        }),
-      },
-    ],
-    [],
-  );
+  //       column: ({ column }) => ({
+  //         header: column.header + '!',
+  //       }),
+  //     },
+  //   ],
+  //   [],
+  // );
 
   const [size, setSize] = React.useState('1k');
   const dataSource = React.useMemo(() => {
@@ -187,10 +186,8 @@ export default function RemotePivotExample() {
         data={dataSource}
         loading={false}
         groupBy={groupBy}
-        pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
-        lazyLoadBatchSize={10}
         fullLazyLoad
       >
         {({ pivotColumns, pivotColumnGroups }) => {

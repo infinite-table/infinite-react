@@ -65,7 +65,7 @@ export function useColumnsWhen<T>() {
 
   useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
-  useHideEmptyGroupColumns<T>(groupByMap);
+  useHideEmptyGroupColumns<T>();
 
   return { toggleGroupRow };
 }
@@ -230,9 +230,13 @@ function useColumnsWhenGrouping<T>() {
   return { toggleGroupRow };
 }
 
-function useHideEmptyGroupColumns<T>(groupRowsMap: GroupByMap<T>) {
+function useHideEmptyGroupColumns<T>() {
   const {
-    componentState: { groupBy, groupRowsState },
+    componentState: {
+      groupBy,
+      groupRowsState,
+      originalLazyGroupDataChangeDetect,
+    },
     getState: getDataSourceState,
   } = useDataSourceContextValue<T>();
 
@@ -302,9 +306,10 @@ function useHideEmptyGroupColumns<T>(groupRowsMap: GroupByMap<T>) {
     getDataSourceState,
     groupRenderStrategy,
     generatedColumns,
+    originalLazyGroupDataChangeDetect,
 
     groupBy,
-    groupRowsMap,
+    // groupByMap,
     hideEmptyGroupColumns ? groupRowsState : null,
     hideEmptyGroupColumns,
   ]);

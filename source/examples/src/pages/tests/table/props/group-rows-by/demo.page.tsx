@@ -15,34 +15,31 @@ import {
 
 import { useState } from 'react';
 
-type Employee = {
+type Developer = {
   id: number;
-  companyName: string;
-  companySize: string;
   firstName: string;
   lastName: string;
   country: string;
-  countryCode: string;
   city: string;
-  streetName: string;
-  streetNo: number;
-  department: string;
-  team: string;
+  currency: string;
+  preferredLanguage: string;
+  stack: string;
+  canDesign: 'yes' | 'no';
+  hobby: string;
   salary: number;
   age: number;
-  email: string;
 };
 
 const dataSource = () => {
   // return Promise.resolve(employees);
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees`)
+  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/developers1k-sql`)
     .then((r) => r.json())
-    .then((data: Employee[]) => {
+    .then((data: Developer[]) => {
       return data;
     });
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
+const columns = new Map<string, InfiniteTableColumn<Developer>>([
   [
     'identifier',
     {
@@ -63,7 +60,7 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       name: 'First Name',
     },
   ],
-  ['deparment', { field: 'department' }],
+  ['city', { field: 'city' }],
   [
     'fullName',
     {
@@ -96,22 +93,22 @@ const domProps = {
   style: { height: '80vh' },
 };
 
-const groupBy: DataSourceGroupBy<Employee>[] = [
-  {
-    field: 'department',
-  },
-  {
-    field: 'team',
-  },
+const groupBy: DataSourceGroupBy<Developer>[] = [
   {
     field: 'country',
+  },
+  {
+    field: 'city',
+  },
+  {
+    field: 'stack',
   },
 ];
 
 const defaultColumnSizing = {
-  'group-by-department': {
-    width: 250,
-  },
+  // 'group-by-department': {
+  //   width: 250,
+  // },
 };
 
 export default function GroupByExample() {
@@ -119,7 +116,7 @@ export default function GroupByExample() {
     useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
 
   const groupColumn = React.useMemo<
-    InfiniteTableGroupColumnBase<Employee>
+    InfiniteTableGroupColumnBase<Developer>
   >(() => {
     return {
       renderValue: (arg) => {
@@ -130,12 +127,12 @@ export default function GroupByExample() {
     };
   }, []);
 
-  const avgReducer: InfiniteTableColumnAggregator<Employee, any> = {
+  const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
     initialValue: 0,
     reducer: (acc, sum) => acc + sum,
     done: (sum, arr) => (arr.length ? sum / arr.length : 0),
   };
-  const aggregationReducers: DataSourcePropAggregationReducers<Employee> = {
+  const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
     salary: { field: 'salary', ...avgReducer },
     age: { field: 'age', ...avgReducer },
   };
@@ -153,13 +150,13 @@ export default function GroupByExample() {
         <option value="multi-column">Multi column</option>
         <option value="inline">Inline</option>
       </select>
-      <DataSource<Employee>
+      <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         groupBy={groupBy}
         aggregationReducers={aggregationReducers}
       >
-        <InfiniteTable<Employee>
+        <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
           columnDefaultWidth={200}

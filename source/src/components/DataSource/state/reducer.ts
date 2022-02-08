@@ -103,7 +103,12 @@ export function concludeReducer<T>(params: {
   state.groupDeepMap = undefined;
 
   const toPrimaryKey = (data: T) => {
-    return data[state.primaryKey];
+    const pk = data[state.primaryKey];
+
+    if (Array.isArray(pk)) {
+      debugger;
+    }
+    return pk;
   };
 
   if (shouldGroup) {
@@ -175,7 +180,7 @@ export function concludeReducer<T>(params: {
 
     if (arrayDifferentAfterSortStep) {
       rowInfoDataArray = dataArray.map((data, index) =>
-        toRowInfo(data, toPrimaryKey(data), index),
+        toRowInfo(data, data ? toPrimaryKey(data) : index, index),
       );
     }
   }
