@@ -198,9 +198,6 @@ export default function RemotePivotExample() {
             <div>
               <InfiniteTable<Developer>
                 domProps={domProps}
-                pivotRowLabelsColumn={{
-                  header: 'test',
-                }}
                 hideEmptyGroupColumns
                 defaultColumnPinning={defaultColumnPinning}
                 columns={columns}

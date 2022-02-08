@@ -96,7 +96,9 @@ export const DataSourcePropLink = ({
   children?: React.ReactNode;
   code?: boolean;
 }) => {
-  const href = `/docs/latest/reference/datasource-props#${name}`;
+  const href = `/docs/latest/reference/datasource-props#${
+    name as string
+  }`;
   const content = code ? (
     <InlineCode isLink={false}>
       {children ?? name}

@@ -12,7 +12,6 @@ import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 
 import { Scrollbars } from '../../InfiniteTable';
 import { debounce } from '../../utils/debounce';
-
 import { RenderRange } from '../../VirtualBrain';
 
 import {
@@ -104,6 +103,27 @@ export function loadData<T>(
 ) {
   const dataParams = buildDataSourceDataParams(componentState, overrides);
 
+  if (componentState.fullLazyLoad && dataParams.groupKeys) {
+    const lazyGroupData = componentState.originalLazyGroupData;
+    const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
+    const existingGroupRowInfo = lazyGroupData.get(key);
+
+    if (existingGroupRowInfo && existingGroupRowInfo.cache) {
+      const items = existingGroupRowInfo.items;
+      const len = items.length;
+      let allLoaded = true;
+      for (let i = 0; i < len; i++) {
+        if (items[i] == null) {
+          allLoaded = false;
+          break;
+        }
+      }
+      if (allLoaded) {
+        return Promise.resolve<any>(true);
+      }
+    }
+  }
+
   if (typeof data === 'function') {
     data = data(dataParams);
   }
@@ -151,16 +171,23 @@ export function loadData<T>(
         const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
 
         const newGroupRowInfo: LazyGroupRowInfo<T> = {
+          cache: !!remoteData.cache ?? true,
           totalCount: remoteData.totalCount ?? dataArray.length,
           items: dataArray as any as LazyGroupDataItem<T>[],
         };
         if (dataParams.lazyLoadBatchSize) {
           const existingGroupRowInfo = lazyGroupData.get(key);
 
-          const currentGroupRowInfo = existingGroupRowInfo ?? {
-            items: [],
-            totalCount: newGroupRowInfo.totalCount,
-          };
+          const currentGroupRowInfo =
+            existingGroupRowInfo ??
+            ({
+              items: [],
+              totalCount: newGroupRowInfo.totalCount,
+              cache: newGroupRowInfo.cache!! ?? true,
+            } as LazyGroupRowInfo<T>);
+          if (existingGroupRowInfo) {
+            existingGroupRowInfo.cache = newGroupRowInfo.cache!!;
+          }
           currentGroupRowInfo.items.length = currentGroupRowInfo.totalCount;
 
           const start = dataParams.lazyLoadStartIndex ?? 0;
@@ -171,8 +198,6 @@ export function loadData<T>(
           for (let i = start; i < end; i++) {
             currentGroupRowInfo.items[i] = newGroupRowInfo.items[i - start];
           }
-          // console.log('new items', currentGroupRowInfo.items);
-
           if (!existingGroupRowInfo) {
             lazyGroupData.set(key, currentGroupRowInfo);
           }

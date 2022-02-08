@@ -62,6 +62,7 @@ export type DataSourceSortInfo<T> =
 export type DataSourceRemoteData<T> = {
   data: T[];
   mappings?: DataSourceMappings;
+  cache?: boolean;
   totalCount?: number;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
@@ -133,6 +134,7 @@ export type LazyGroupDataItem<DataType> = {
 export type LazyGroupRowInfo<DataType> = {
   items: LazyGroupDataItem<DataType>[];
   totalCount: number;
+  cache?: boolean;
 };
 
 export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<

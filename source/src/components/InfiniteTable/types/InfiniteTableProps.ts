@@ -7,6 +7,7 @@ import {
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceGroupBy,
+  DataSourcePivotBy,
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
   DataSourceState,
@@ -18,6 +19,7 @@ import type {
   InfiniteTableColumnRenderFunction,
   InfiniteTableComputedColumn,
   InfiniteTableComputedPivotFinalColumn,
+  InfiniteTableGroupColumnRenderIconFunction,
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumn,
 } from './InfiniteTableColumn';
@@ -195,6 +197,7 @@ export type InfiniteTableGroupColumnGetterOptions<T> = {
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupCount: number;
   groupBy: DataSourceGroupBy<T>[];
+  pivotBy?: DataSourcePivotBy<T>[];
 };
 
 export type InfiniteTablePivotColumnGetterOptions<
@@ -210,8 +213,11 @@ export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
   | 'multi-column'
   | 'inline';
-export type InfiniteTableGroupColumnBase<T> = InfiniteTableColumn<T> & {
+export type InfiniteTableGroupColumnBase<T> = Partial<
+  InfiniteTableColumn<T>
+> & {
   renderValue?: InfiniteTableColumnRenderFunction<T>;
+  renderGroupIcon?: InfiniteTableGroupColumnRenderIconFunction<T>;
   id?: string;
 };
 export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> & {
@@ -238,9 +244,6 @@ export type InfiniteTablePropPivotColumn<
       options: InfiniteTablePivotColumnGetterOptions<T, COL_TYPE>,
     ) => InfiniteTablePivotColumnBase<T>);
 
-export type InfiniteTablePropPivotRowLabelsColumn<T> =
-  InfiniteTablePropPivotColumn<T>;
-
 export type InfiniteTablePropComponents = {
   LoadMask?: React.FC<LoadMaskProps>;
 };
@@ -263,7 +266,7 @@ export interface InfiniteTableProps<T> {
     T,
     InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
   >;
-  pivotRowLabelsColumn?: InfiniteTablePropPivotRowLabelsColumn<T>;
+
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
 
   groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;

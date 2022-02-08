@@ -19,6 +19,8 @@ import { DeepMap } from '../DeepMap';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS: string = '____root____';
 
+export const NOT_LOADED_YET_KEY_PREFIX = '____not_loaded_yet____';
+
 export type AggregationReducer<
   T,
   AggregationResultType = any,
@@ -283,9 +285,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
   rootData.visitDepthFirst(
     (lazyGroupRowInfo: LazyGroupRowInfo<DataType>, keys, _index, next) => {
       const [_rootKey, ...currentGroupKeys] = keys;
-      // const currentPivotKeys = [...currentGroupKeys] as KeyType[];
-
       const dataArray = lazyGroupRowInfo.items;
+
       for (let i = 0, len = dataArray.length; i < len; i++) {
         if (!dataArray[i]) {
           // we're in the case of lazy loading, so some records might not be available just yet
@@ -294,7 +295,10 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             reducerResults: {},
           };
           deepMap.set(
-            [...currentGroupKeys, `not-loaded-yet-${i}`] as KeyType[],
+            [
+              ...currentGroupKeys,
+              `${NOT_LOADED_YET_KEY_PREFIX}${i}`,
+            ] as KeyType[],
             deepMapGroupValue,
           );
           continue;
@@ -563,6 +567,14 @@ function getEnhancedGroupData<DataType>(
       }
   }
 
+  let theValue = groupKeys[groupKeys.length - 1];
+  if (
+    typeof theValue === 'string' &&
+    theValue.startsWith(NOT_LOADED_YET_KEY_PREFIX)
+  ) {
+    theValue = null;
+  }
+
   const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> = {
     data,
     groupCount: groupItems.length,
@@ -576,7 +588,7 @@ function getEnhancedGroupData<DataType>(
     indexInParentGroups: options.indexInParentGroups,
     indexInGroup: options.indexInGroup,
     indexInAll: options.indexInAll,
-    value: groupKeys[groupKeys.length - 1],
+    value: theValue,
     rootGroupBy: groupBy,
     groupBy:
       groupNesting === groupBy.length

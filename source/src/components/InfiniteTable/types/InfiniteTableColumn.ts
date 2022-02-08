@@ -31,6 +31,7 @@ export type InfiniteTableColumnRenderParam<
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   groupBy: DataSourceState<DATA_TYPE>['groupBy'];
+  pivotBy?: DataSourceState<DATA_TYPE>['pivotBy'];
 } & (
   | { rowInfo: InfiniteTableRowInfoNormal<DATA_TYPE>; data: DATA_TYPE }
   | {
@@ -38,6 +39,16 @@ export type InfiniteTableColumnRenderParam<
       data: Partial<DATA_TYPE> | null;
     }
 );
+
+export type InfiniteTableGroupColumnRenderIconParam<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
+  collapsed: boolean;
+  groupIcon: Renderable;
+  // groupRowInfo: InfiniteTableRowInfoGroup<DATA_TYPE>;
+  // data: Partial<DATA_TYPE> | null;
+};
 
 export type InfiniteTableColumnRenderValueParam<
   DATA_TYPE,
@@ -72,7 +83,15 @@ export type InfiniteTableColumnRenderFunction<
   toggleCurrentGroupRow,
   rowInfo,
   groupBy,
+  pivotBy,
 }: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
+
+export type InfiniteTableGroupColumnRenderIconFunction<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = (
+  param: InfiniteTableGroupColumnRenderIconParam<DATA_TYPE, COL_TYPE>,
+) => Renderable | null;
 
 export type InfiniteTableColumnRenderValueFunction<
   DATA_TYPE,

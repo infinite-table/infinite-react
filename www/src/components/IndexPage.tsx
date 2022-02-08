@@ -15,7 +15,6 @@ import {
 
 import { Cards } from '@www/components/Cards';
 import { GetAccessForm } from '@www/components/GetAccessForm';
-import { Footer } from '@www/components/Footer';
 import IndexWrapper from './IndexWrapper';
 
 const ReactLogo = (

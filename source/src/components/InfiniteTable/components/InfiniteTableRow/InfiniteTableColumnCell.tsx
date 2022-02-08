@@ -63,21 +63,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   //   debugger;
   // }
 
-  if (
-    rowInfo.indexInAll === 0 &&
-    column.groupByField &&
-    column.groupByField === 'stack'
-  ) {
-    debugger;
-  }
   let value =
     isGroupRow && groupBy && column.groupByField
       ? rowInfo.value
       : isColumnWithField(column)
       ? data?.[column.field]
       : null;
-
-  // console.log({ groupBy, value, column });
 
   if (column.valueGetter) {
     value = column.valueGetter(
@@ -125,6 +116,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       toggleGroupRow,
       toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
       groupBy: computedDataSource.groupBy,
+      pivotBy: computedDataSource.pivotBy,
     };
 
     if (column.render) {

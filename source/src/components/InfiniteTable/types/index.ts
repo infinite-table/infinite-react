@@ -28,6 +28,7 @@ import type {
   InfiniteTableColumnSizingOptions,
   Scrollbars,
   InfiniteTableGroupColumnBase,
+  InfiniteTablePropGroupColumn,
 } from './InfiniteTableProps';
 
 import type {
@@ -46,6 +47,7 @@ export type {
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
   InfiniteTablePropColumns,
+  InfiniteTablePropGroupColumn,
   InfiniteTablePropColumnsMap,
   InfiniteTableRowInfo,
   InfiniteTableGroupColumnFunction,

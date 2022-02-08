@@ -7,6 +7,7 @@ import {
   DataSourcePropAggregationReducers,
   DataSourceData,
   InfiniteTablePropColumnPinning,
+  InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -71,7 +72,15 @@ function getDataSource(size: string) {
       process.env.NEXT_PUBLIC_DATAURL + `/developers${size}-sql?` + args,
     )
       .then((r) => r.json())
-      .then((data: Developer[]) => data);
+      .then((data: Developer[]) => data)
+      .then(
+        (data) =>
+          new Promise<Developer[]>((resolve) => {
+            setTimeout(() => {
+              resolve(data);
+            }, 50);
+          }),
+      );
   };
   return dataSource;
 }
@@ -100,7 +109,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['labels', 'start'],
+  ['group-col', 'start'],
 ]);
 const domProps = { style: { height: '90vh' } };
 
@@ -108,6 +117,10 @@ const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
 });
+
+const defaultGroupColumn: InfiniteTablePropGroupColumn<Developer> = {
+  id: 'group-col',
+};
 
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
@@ -189,7 +202,7 @@ export default function RemotePivotExample() {
         pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
-        lazyLoadBatchSize={5}
+        lazyLoadBatchSize={10}
         fullLazyLoad
       >
         {({ pivotColumns, pivotColumnGroups }) => {
@@ -197,9 +210,8 @@ export default function RemotePivotExample() {
             <div>
               <InfiniteTable<Developer>
                 domProps={domProps}
-                pivotRowLabelsColumn={{
-                  header: 'test',
-                }}
+                groupRenderStrategy="single-column"
+                groupColumn={defaultGroupColumn}
                 hideEmptyGroupColumns
                 defaultColumnPinning={defaultColumnPinning}
                 columns={columns}

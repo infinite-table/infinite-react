@@ -50,7 +50,6 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     draggingColumnId: null,
     pinnedStartScrollListener: new ScrollListener(),
     pinnedEndScrollListener: new ScrollListener(),
-    computedPivotColumns: undefined,
     columnsWhenInlineGroupRenderStrategy: undefined,
   };
 }
@@ -89,7 +88,6 @@ export const forwardProps = <T>(
     pinnedStartMaxWidth: 1,
     pinnedEndMaxWidth: 1,
     pivotColumn: 1,
-    pivotRowLabelsColumn: 1,
     pivotColumnGroups: 1,
 
     onScrollbarsChange: 1,
@@ -202,7 +200,6 @@ export const mapPropsToState = <T>(params: {
   });
 
   const computedColumns =
-    state.computedPivotColumns ||
     state.columnsWhenGrouping ||
     state.columnsWhenInlineGroupRenderStrategy ||
     state.columns;

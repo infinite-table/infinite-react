@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import type { Ref } from 'react';
 
@@ -38,7 +38,6 @@ type ListRenderingParam<T> = {
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
 import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
-import { GroupRowsState } from '../../DataSource';
 
 type ListRenderingResult = {
   scrollbars: Scrollbars;
@@ -77,6 +76,7 @@ export function useListRendering<T>(
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,
     computedVisibleColumns,
+    toggleGroupRow,
   } = computed;
 
   const { componentState: dataSourceState, getState: getDataSourceState } =
@@ -199,16 +199,6 @@ export function useListRendering<T>(
       horizontalVirtualBrain,
       reservedContentHeight,
     });
-
-  const { componentActions: dataSourceActions } =
-    useDataSourceContextValue<T>();
-
-  const toggleGroupRow = useCallback((groupKeys: any[]) => {
-    const newState = new GroupRowsState(getDataSourceState().groupRowsState);
-    newState.toggleGroupRow(groupKeys);
-
-    dataSourceActions.groupRowsState = newState;
-  }, []);
 
   const pinnedRenderingParams = {
     bodySize,

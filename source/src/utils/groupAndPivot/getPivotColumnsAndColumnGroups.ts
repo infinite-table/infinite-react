@@ -84,23 +84,23 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
     DataType,
     InfiniteTablePivotColumn<DataType>
   > = new Map<string, InfiniteTablePivotColumn<DataType>>([
-    [
-      'labels',
-      {
-        header: 'Row labels',
-        pivotBy,
-        valueGetter: (params) => {
-          const { rowInfo } = params;
-          if (!rowInfo.data) {
-            // TODO replace with loading spinner
-            return 'Loading ...';
-          }
-          return rowInfo.groupKeys
-            ? rowInfo.groupKeys[rowInfo.groupKeys?.length - 1]
-            : null;
-        },
-      },
-    ],
+    // [
+    //   'labels',
+    //   {
+    //     header: 'Row labels',
+    //     pivotBy,
+    //     valueGetter: (params) => {
+    //       const { rowInfo } = params;
+    //       if (!rowInfo.data) {
+    //         // TODO replace with loading spinner
+    //         return 'Loading ...';
+    //       }
+    //       return rowInfo.groupKeys
+    //         ? rowInfo.groupKeys[rowInfo.groupKeys?.length - 1]
+    //         : null;
+    //     },
+    //   },
+    // ],
   ]);
 
   const columnGroups: InfiniteTablePropColumnGroups = new Map<

@@ -246,6 +246,7 @@ function getSQLRoute(routeSuffix) {
     res.json({
       totalCount,
       mappings: MAPPINGS,
+      cache: true,
       data: result.map((x) => {
         const data = {};
         const aggregations = {};

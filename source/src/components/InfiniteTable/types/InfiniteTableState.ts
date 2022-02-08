@@ -15,10 +15,7 @@ import { MutableRefObject } from 'react';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { NonUndefined } from '../../types/NonUndefined';
-import {
-  InfiniteTableColumn,
-  InfiniteTablePivotColumn,
-} from './InfiniteTableColumn';
+import { InfiniteTableColumn } from './InfiniteTableColumn';
 import { ComponentStateActions } from '../../hooks/useComponentState';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 
@@ -43,7 +40,6 @@ export interface InfiniteTableSetupState<T> {
   draggingColumnId: null | string;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
-  computedPivotColumns?: Map<string, InfiniteTablePivotColumn<T>>;
   columnShifts: number[] | null;
 }
 
@@ -92,7 +88,6 @@ export interface InfiniteTableMappedState<T> {
   pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
-  pivotRowLabelsColumn: InfiniteTableProps<T>['pivotRowLabelsColumn'];
   pivotColumnGroups: InfiniteTablePropColumnGroupsMap;
 
   activeIndex: NonUndefined<InfiniteTableProps<T>['activeIndex']>;

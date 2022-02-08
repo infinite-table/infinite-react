@@ -53,7 +53,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   useColumnGroups<T>();
 
-  useColumnsWhen<T>();
+  const { toggleGroupRow } = useColumnsWhen<T>();
 
   const setSortInfo = useCallback(
     (sortInfo: DataSourceSingleSortInfo<T>[]) => {
@@ -165,6 +165,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     : false;
 
   return {
+    toggleGroupRow,
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,
     computedPinnedStartWidth,

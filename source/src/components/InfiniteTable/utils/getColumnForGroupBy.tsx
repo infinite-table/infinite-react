@@ -3,11 +3,13 @@ import { InfiniteTableColumnRenderParam } from '..';
 
 import { join } from '../../../utils/join';
 import { DataSourceGroupBy } from '../../DataSource';
+import { Renderable } from '../../types/Renderable';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
 import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
+  InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
@@ -24,7 +26,7 @@ export function getGroupColumnRender<T>({
   groupIndexForColumn: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    let { value, rowInfo, column } = renderOptions;
+    let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
     if (column.renderValue) {
       value = column.renderValue(renderOptions);
     }
@@ -61,15 +63,34 @@ export function getGroupColumnRender<T>({
         return null;
       }
     }
+    let icon: Renderable = null;
 
-    return (
-      <div className={join(display.flex, alignItems.center)}>
+    const showExpanderIcon = pivotBy
+      ? (groupRowInfo.groupKeys?.length || 0) < groupBy?.length
+      : (groupRowInfo.groupKeys?.length || 0) <= groupBy?.length;
+
+    if (showExpanderIcon) {
+      const defaultIcon = (
         <ExpanderIcon
           expanded={!collapsed}
           onChange={() => {
+            // if (!data) {
+            //   return;
+            // }
             toggleGroupRow(groupKeys!);
           }}
         />
+      );
+      icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon
+        ? (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!(
+            Object.assign({ collapsed, groupIcon: defaultIcon }, renderOptions),
+          )
+        : defaultIcon;
+    }
+
+    return (
+      <div className={join(display.flex, alignItems.center)}>
+        {icon}
         <div className={cssEllipsisClassName}>{value ?? null}</div>
       </div>
     );
@@ -128,7 +149,7 @@ export function getSingleGroupColumn<T>(
     groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
     render: (renderOptions) => {
-      let { value, rowInfo, column } = renderOptions;
+      let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
       if (!rowInfo.isGroupRow) {
         return null;
       }
@@ -136,16 +157,42 @@ export function getSingleGroupColumn<T>(
       if (column.renderValue) {
         value = column.renderValue(renderOptions);
       }
+
+      const collapsed = rowInfo.collapsed;
+
+      let icon: Renderable = null;
+
+      const showExpanderIcon = pivotBy
+        ? (rowInfo.groupKeys?.length || 0) < groupBy?.length
+        : (rowInfo.groupKeys?.length || 0) <= groupBy?.length;
+
+      if (showExpanderIcon) {
+        const defaultIcon = (
+          <ExpanderIcon
+            expanded={!collapsed}
+            onChange={() => {
+              // if (!data) {
+              //   return;
+              // }
+              toggleGroupRow(rowInfo.groupKeys!);
+            }}
+          />
+        );
+        icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon
+          ? (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!(
+              Object.assign(
+                { collapsed, groupIcon: defaultIcon },
+                renderOptions,
+              ),
+            )
+          : defaultIcon;
+      }
+
       return (
         <div
           className={join(display.flex, alignItems.center, GroupRowExpanderCls)}
         >
-          <ExpanderIcon
-            expanded={!rowInfo.collapsed}
-            onChange={() => {
-              toggleGroupRow(rowInfo.groupKeys!);
-            }}
-          />
+          {icon}
           <div className={cssEllipsisClassName}>{value ?? null}</div>
         </div>
       );

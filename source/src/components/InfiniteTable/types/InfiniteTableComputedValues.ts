@@ -24,6 +24,7 @@ export interface InfiniteTableComputedValues<T> {
   computedRemainingSpace: number;
   unpinnedColumnRenderCount: number;
   columnRenderStartIndex: number;
+  toggleGroupRow: (groupKeys: any[]) => void;
   // setColumnPinning: (columnPinning: InfiniteTablePropColumnPinning) => void;
   // setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   // setColumnVisibility: (
