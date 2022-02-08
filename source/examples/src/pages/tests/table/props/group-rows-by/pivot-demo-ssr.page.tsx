@@ -7,7 +7,6 @@ import {
   DataSourcePropAggregationReducers,
   DataSourceData,
   InfiniteTablePropColumnPinning,
-  InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
 
 import type {
