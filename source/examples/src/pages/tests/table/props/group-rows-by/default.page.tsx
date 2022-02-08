@@ -89,6 +89,7 @@ const columnAggregations: DataSourcePropAggregationReducers<Person> = {
     done: (sum, arr) => (arr.length ? sum / arr.length : 0),
   },
 };
+
 export default function GroupByExample() {
   return (
     <React.StrictMode>
