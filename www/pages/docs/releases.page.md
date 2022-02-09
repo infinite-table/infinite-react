@@ -3,6 +3,11 @@ title: Releases
 layout: Home
 ---
 
+<!-- ## 0.2.4 🚀 
+
+@milestone id="7" -->
+
+
 ## 0.2.0 🚀 
 
 * Implement initial support for [server-side pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting)

@@ -96,12 +96,12 @@ export const forwardProps = <T>(
       fn
         ? discardCallsWithEqualArg(fn, 100, getCompareObjectForDataParams)
         : undefined,
-    fullLazyLoad: 1,
+    lazyLoad: (lazyLoad) => !!lazyLoad,
     data: 1,
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
-    lazyLoadBatchSize: (lazyLoadBatchSize) => lazyLoadBatchSize ?? -1,
+
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,
@@ -154,6 +154,8 @@ export function mapPropsToState<T extends any>(params: {
     multiSort: Array.isArray(
       controlledSort ? props.sortInfo : props.defaultSortInfo,
     ),
+    lazyLoadBatchSize:
+      typeof props.lazyLoad === 'object' ? props.lazyLoad.batchSize : undefined,
   };
 
   if (props.livePagination) {
@@ -176,7 +178,7 @@ export function mapPropsToState<T extends any>(params: {
 const debugFullLazyLoad = dbg('DataSource:fullLazyLoad');
 
 export function onPropChange<T>(
-  params: { name: keyof T; newValue: any },
+  params: { name: keyof T; newValue: any; oldValue: any },
   props: DataSourceProps<T>,
   actions: DataSourceComponentActions<T>,
 ) {
@@ -187,7 +189,7 @@ export function onPropChange<T>(
     typeof newValue === 'function' &&
     !props.groupRowsState
   ) {
-    if (props.fullLazyLoad) {
+    if (props.lazyLoad) {
       debugFullLazyLoad(`"data" function prop has changed`);
     }
 

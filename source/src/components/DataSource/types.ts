@@ -89,8 +89,7 @@ export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
 
-  fullLazyLoad: DataSourceProps<T>['fullLazyLoad'];
-  lazyLoadBatchSize: DataSourceProps<T>['lazyLoadBatchSize'];
+  lazyLoad: DataSourceProps<T>['lazyLoad'];
 
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
@@ -188,8 +187,7 @@ export type DataSourceProps<T> = {
 
   data: DataSourceData<T>;
 
-  fullLazyLoad?: boolean;
-  lazyLoadBatchSize?: number;
+  lazyLoad?: boolean | { batchSize?: number };
 
   // other properties, each with controlled and uncontrolled  variant
   loading?: boolean;
@@ -250,6 +248,7 @@ export interface DataSourceDerivedState<_T> {
   multiSort: boolean;
   controlledSort: boolean;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
+  lazyLoadBatchSize?: number;
 }
 
 export type DataSourceComponentActions<T> = ComponentStateActions<

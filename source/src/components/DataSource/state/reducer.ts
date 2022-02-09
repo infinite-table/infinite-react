@@ -1,4 +1,8 @@
-import type { DataSourceState, DataSourceDerivedState } from '../types';
+import type {
+  DataSourceState,
+  DataSourceDerivedState,
+  LazyGroupRowInfo,
+} from '../types';
 import {
   InfiniteTableRowInfo,
   InfiniteTableRowInfoNormal,
@@ -9,6 +13,7 @@ import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { multisort } from '../../../utils/multisort';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { DataSourceSetupState } from '..';
+import { DeepMap } from '../../../utils/DeepMap';
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
@@ -50,11 +55,35 @@ export function concludeReducer<T>(params: {
 }) {
   const { state, previousState } = params;
   const sortInfo = state.sortInfo;
-  const shouldSort = !!sortInfo?.length && !state.controlledSort;
+  let shouldSort = !!sortInfo?.length && !state.controlledSort;
 
-  const originalDataArrayChanged = haveDepsChanged(previousState, state, [
+  if (state.lazyLoad || state.livePagination) {
+    shouldSort = false;
+  }
+
+  let originalDataArrayChanged = haveDepsChanged(previousState, state, [
     'originalDataArray',
   ]);
+
+  const dataSourceChange = previousState && state.data !== previousState.data;
+  let lazyLoadGroupDataChange =
+    state.lazyLoad &&
+    previousState &&
+    (previousState.groupBy !== state.groupBy ||
+      previousState.sortInfo !== state.sortInfo);
+
+  if (dataSourceChange) {
+    lazyLoadGroupDataChange = true;
+  }
+
+  if (lazyLoadGroupDataChange) {
+    state.originalLazyGroupData = new DeepMap<string, LazyGroupRowInfo<T>>();
+    originalDataArrayChanged = true;
+
+    // TODO if we have defaultGroupRowsState in props (so this is uncontrolled)
+    // reset state.groupRowsState to the value in props.defaultGroupRowsState
+    // also make sure onGroupRowsState is triggered to notify the action to consumers
+  }
 
   const sortInfoChanged = haveDepsChanged(previousState, state, ['sortInfo']);
 
@@ -67,19 +96,21 @@ export function concludeReducer<T>(params: {
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length || pivotBy;
-  const groupsDepsChanged = haveDepsChanged(previousState, state, [
-    'generateGroupRows',
-    'originalDataArray',
-    'originalLazyGroupData',
-    'originalLazyGroupDataChangeDetect',
-    'groupBy',
-    'groupRowsState',
-    'pivotBy',
-    'aggregationReducers',
-    'pivotTotalColumnPosition',
-    'showSeparatePivotColumnForSingleAggregation',
-    'sortInfo',
-  ]);
+  const groupsDepsChanged =
+    originalDataArrayChanged ||
+    haveDepsChanged(previousState, state, [
+      'generateGroupRows',
+      'originalDataArray',
+      'originalLazyGroupData',
+      'originalLazyGroupDataChangeDetect',
+      'groupBy',
+      'groupRowsState',
+      'pivotBy',
+      'aggregationReducers',
+      'pivotTotalColumnPosition',
+      'showSeparatePivotColumnForSingleAggregation',
+      'sortInfo',
+    ]);
 
   const shouldGroupAgain =
     shouldGroup && (groupsDepsChanged || !state.lastGroupDataArray);
@@ -113,13 +144,7 @@ export function concludeReducer<T>(params: {
 
   if (shouldGroup) {
     if (shouldGroupAgain) {
-      // console.log({ shouldGroupAgain });
-      // console.log(
-      //   'grouping',
-      //   state.originalLazyGroupData.size,
-      //   state.fullLazyLoad,
-      // );
-      const groupResult = state.fullLazyLoad
+      const groupResult = state.lazyLoad
         ? lazyGroup(
             {
               groupBy,

@@ -59,7 +59,7 @@ export function buildDataSourceDataParams<T>(
     dataSourceParams.cursorId = componentState.cursorId;
   }
 
-  if (componentState.fullLazyLoad) {
+  if (componentState.lazyLoad) {
     if (
       componentState.lazyLoadBatchSize != null &&
       componentState.lazyLoadBatchSize > 0
@@ -103,9 +103,9 @@ export function loadData<T>(
 ) {
   const dataParams = buildDataSourceDataParams(componentState, overrides);
 
-  if (componentState.fullLazyLoad && dataParams.groupKeys) {
+  if (componentState.lazyLoad) {
     const lazyGroupData = componentState.originalLazyGroupData;
-    const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
+    const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...(dataParams.groupKeys || [])];
     const existingGroupRowInfo = lazyGroupData.get(key);
 
     if (existingGroupRowInfo && existingGroupRowInfo.cache) {
@@ -132,7 +132,7 @@ export function loadData<T>(
     //@ts-ignore
     typeof data === 'object' && typeof data.then === 'function';
 
-  if (dataIsPromise && !componentState.fullLazyLoad) {
+  if (dataIsPromise && !componentState.lazyLoad) {
     actions.loading = true;
   }
 
@@ -152,7 +152,7 @@ export function loadData<T>(
         actions.pivotMappings = remoteData.mappings;
       }
 
-      if (componentState.fullLazyLoad && dataParams.groupKeys) {
+      if (componentState.lazyLoad) {
         // #staleLazyGroupData
         // because cloning would make a copy of it and
         // multiple promised calls can be concurrent
@@ -168,7 +168,7 @@ export function loadData<T>(
         // );
 
         const lazyGroupData = componentState.originalLazyGroupData;
-        const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...dataParams.groupKeys];
+        const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...(dataParams.groupKeys || [])];
 
         const newGroupRowInfo: LazyGroupRowInfo<T> = {
           cache: !!remoteData.cache ?? true,
@@ -208,6 +208,13 @@ export function loadData<T>(
         // actions.originalLazyGroupData = lazyGroupData;
         // see above #staleLazyGroupData
         actions.originalLazyGroupDataChangeDetect = getChangeDetect();
+
+        if (!dataParams.groupKeys || !dataParams.groupKeys.length) {
+          const topLevelItems = lazyGroupData.get([LAZY_ROOT_KEY_FOR_GROUPS]);
+
+          //@ts-ignore
+          actions.originalDataArray = [...topLevelItems.items];
+        }
       }
     } else {
       dataArray = dataParam as T[];
@@ -216,7 +223,7 @@ export function loadData<T>(
     if (!skipAssign) {
       actions.originalDataArray = dataArray;
     }
-    if (dataIsPromise && !componentState.fullLazyLoad) {
+    if (dataIsPromise && !componentState.lazyLoad) {
       actions.loading = false;
     }
   });
@@ -440,7 +447,7 @@ function lazyLoadRange<T>(
     const indexInGroup = rowInfo.indexInGroup;
 
     if (!rowLoaded) {
-      let fnCalls = perGroupFnCalls.get(cacheKeys);
+      let cachedFnCalls = perGroupFnCalls.get(cacheKeys);
 
       const batchStartIndexInGroup =
         Math.floor(indexInGroup / lazyLoadBatchSize) * lazyLoadBatchSize;
@@ -451,12 +458,13 @@ function lazyLoadRange<T>(
       const batchStartRowLoaded = isRowLoaded(absoluteIndexOfBatchStart);
       const batchStartRowId = dataArray[absoluteIndexOfBatchStart].id;
 
-      if (batchStartRowLoaded || fnCalls?.[batchStartRowId]) {
+      if (batchStartRowLoaded || cachedFnCalls?.[batchStartRowId]) {
         continue;
       }
-      const shouldSetFnCalls = !fnCalls;
 
-      fnCalls = fnCalls || {};
+      const shouldSetFnCalls = !cachedFnCalls;
+
+      cachedFnCalls = cachedFnCalls || {};
 
       const currentFnCall: FnCall = {
         lazyLoadStartIndex: batchStartIndexInGroup,
@@ -467,13 +475,12 @@ function lazyLoadRange<T>(
       // const cacheKey = `${parentGroupKeys.join('-')}:${batchStartIndexInGroup}`;
       // const cached = cache ? cache.get(cacheKey) : false;
 
-      if (!fnCalls[batchStartRowId]) {
-        fnCalls[batchStartRowId] = currentFnCall;
-        // cache?.set(cacheKey, true);
+      if (!cachedFnCalls[batchStartRowId]) {
+        cachedFnCalls[batchStartRowId] = currentFnCall;
       }
 
       if (shouldSetFnCalls) {
-        perGroupFnCalls.set(cacheKeys, fnCalls);
+        perGroupFnCalls.set(cacheKeys, cachedFnCalls);
       }
     }
   }
@@ -501,6 +508,8 @@ function lazyLoadRange<T>(
       ComponentStateGeneratedActions<DataSourceState<T>>,
       Partial<DataSourceDataParams<T>>,
     ] = [componentState.data, componentState, componentActions, fnCall];
+
+    // TODO make this whole function testable, so we can properly test multiple calls are not issued for the same batch (in the same group)
 
     return promise
       .then(() => getRafPromise())

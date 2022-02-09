@@ -70,7 +70,14 @@ function getDataSource(size: string) {
       process.env.NEXT_PUBLIC_DATAURL + `/developers${size}-sql?` + args,
     )
       .then((r) => r.json())
-      .then((data: Developer[]) => data);
+      .then(
+        (data: Developer[]) =>
+          new Promise<Developer[]>((resolve) => {
+            setTimeout(() => {
+              resolve(data);
+            }, 500);
+          }),
+      );
   };
   return dataSource;
 }
@@ -112,7 +119,7 @@ export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
-        field: 'country',
+        field: 'city',
       },
       { field: 'stack' },
     ],
@@ -188,13 +195,14 @@ export default function RemotePivotExample() {
         groupBy={groupBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
-        fullLazyLoad
+        lazyLoad={true}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <div>
               <InfiniteTable<Developer>
                 domProps={domProps}
+                scrollStopDelay={10}
                 hideEmptyGroupColumns
                 defaultColumnPinning={defaultColumnPinning}
                 columns={columns}

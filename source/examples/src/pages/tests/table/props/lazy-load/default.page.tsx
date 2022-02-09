@@ -12,7 +12,6 @@ import {
 import type {
   InfiniteTablePropColumns,
   DataSourceGroupBy,
-  DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -38,7 +37,11 @@ function getDataSource(size: string) {
     lazyLoadStartIndex,
     lazyLoadBatchSize,
     groupKeys = [],
+    sortInfo,
   }) => {
+    if (sortInfo && !Array.isArray(sortInfo)) {
+      sortInfo = [sortInfo];
+    }
     const startLimit: string[] = [];
     if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
       const start = lazyLoadStartIndex || 0;
@@ -53,6 +56,10 @@ function getDataSource(size: string) {
       `groupKeys=${JSON.stringify(groupKeys)}`,
       groupBy
         ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
+        : null,
+      sortInfo
+        ? 'sortInfo=' +
+          JSON.stringify(sortInfo.map((s) => ({ field: s.field, dir: s.dir })))
         : null,
       aggregationReducers
         ? 'reducers=' +
@@ -71,9 +78,8 @@ function getDataSource(size: string) {
       process.env.NEXT_PUBLIC_DATAURL + `/developers${size}-sql?` + args,
     )
       .then((r) => r.json())
-      .then((data: Developer[]) => data)
       .then(
-        (data) =>
+        (data: Developer[]) =>
           new Promise<Developer[]>((resolve) => {
             setTimeout(() => {
               resolve(data);
@@ -108,7 +114,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['group-col', 'start'],
+  ['labels', 'start'],
 ]);
 const domProps = { style: { height: '90vh' } };
 
@@ -121,63 +127,71 @@ export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
-        field: 'city',
+        field: 'country',
       },
-      { field: 'age' },
+      { field: 'stack' },
     ],
     [],
   );
 
-  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
-    () => [
-      { field: 'preferredLanguage' },
-      // {
-      //   field: 'country',
-      //   columnGroup: ({ columnGroup }) => {
-      //     return {
-      //       header: `Country${
-      //         columnGroup.pivotTotalColumnGroup ? ' total' : ''
-      //       }: ${columnGroup.pivotGroupKey}`,
-      //     };
-      //   },
-      // },
-      // {
-      //   field: 'canDesign',
-      //   // column: ({ column: pivotCol }) => {
-      //   //   const lastKey = pivotCol.pivotGroupKey;
+  // const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
+  //   () => [
+  //     { field: 'preferredLanguage' },
+  //     // {
+  //     //   field: 'country',
+  //     //   columnGroup: ({ columnGroup }) => {
+  //     //     return {
+  //     //       header: `Country${
+  //     //         columnGroup.pivotTotalColumnGroup ? ' total' : ''
+  //     //       }: ${columnGroup.pivotGroupKey}`,
+  //     //     };
+  //     //   },
+  //     // },
+  //     // {
+  //     //   field: 'canDesign',
+  //     //   // column: ({ column: pivotCol }) => {
+  //     //   //   const lastKey = pivotCol.pivotGroupKey;
 
-      //   //   return {
-      //   //     defaultWidth: 500,
-      //   //     header:
-      //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
-      //   //       pivotCol.pivotAggregator.id,
-      //   //   };
-      //   // },
-      //   // columnGroup: ({ columnGroup: pivotCol }) => {
-      //   //   const lastKey = pivotCol.pivotGroupKey;
+  //     //   //   return {
+  //     //   //     defaultWidth: 500,
+  //     //   //     header:
+  //     //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
+  //     //   //       pivotCol.pivotAggregator.id,
+  //     //   //   };
+  //     //   // },
+  //     //   // columnGroup: ({ columnGroup: pivotCol }) => {
+  //     //   //   const lastKey = pivotCol.pivotGroupKey;
 
-      //   //   return {
-      //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-      //   //   };
-      //   // },
-      // },
-      {
-        field: 'canDesign',
+  //     //   //   return {
+  //     //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+  //     //   //   };
+  //     //   // },
+  //     // },
+  //     {
+  //       field: 'canDesign',
 
-        column: ({ column }) => ({
-          header: column.header + '!',
-        }),
-      },
-    ],
-    [],
-  );
+  //       column: ({ column }) => ({
+  //         header: column.header + '!',
+  //       }),
+  //     },
+  //   ],
+  //   [],
+  // );
 
-  const [size, setSize] = React.useState('20k');
+  const [size, setSize] = React.useState('1k');
   const dataSource = React.useMemo(() => {
     return getDataSource(size);
   }, [size]);
+  const [grouping, setGrouping] = React.useState(false);
   return (
     <>
+      <button
+        onClick={() => {
+          setGrouping(!grouping);
+        }}
+      >
+        toggle grouping = currently {grouping ? 'grouping' : 'not grouping'}
+      </button>
       <select
         value={size}
         onChange={(e) => {
@@ -193,18 +207,15 @@ export default function RemotePivotExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={groupBy}
-        pivotBy={pivotBy}
-        aggregationReducers={aggregationReducers}
+        lazyLoad={{ batchSize: 20 }}
         defaultGroupRowsState={groupRowsState}
-        lazyLoad={{ batchSize: 10 }}
+        groupBy={grouping ? groupBy : undefined}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <div>
               <InfiniteTable<Developer>
                 domProps={domProps}
-                groupRenderStrategy="multi-column"
                 hideEmptyGroupColumns
                 defaultColumnPinning={defaultColumnPinning}
                 columns={columns}

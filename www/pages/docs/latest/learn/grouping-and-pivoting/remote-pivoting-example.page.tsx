@@ -164,7 +164,7 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
-      fullLazyLoad>
+      lazyLoad>
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>

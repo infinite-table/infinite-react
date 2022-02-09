@@ -15,7 +15,6 @@ const alasql = require('alasql');
 const express = require('express');
 const serverless = require('serverless-http');
 
-const bodyParser = require('body-parser');
 const jsonServer = require('json-server');
 
 const {
@@ -381,8 +380,6 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
     }
   });
 
-  // console.log(deepMap.topDownKeys(), '!!!');
-
   const colsToSelect = [];
 
   deepMap.visit((value, key) => {
@@ -504,8 +501,6 @@ function buildSQL({
   }
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
-  // console.log(SQL);
-
   if (groupBy && groupBy.length && !selectAllCols) {
     SQL += ` GROUP BY ${groupBy
       .slice(
@@ -515,7 +510,6 @@ function buildSQL({
       .map((g) => `${g.field}`)}`;
   }
 
-  // console.log(SQL);
   if (
     (sortInfo && sortInfo.length) ||
     (groupBy && groupBy.length)
@@ -525,7 +519,7 @@ function buildSQL({
         ? sortInfo.map(
             (s) =>
               `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`
-          ) + (groupBy ? ',' : '')
+          ) + (groupBy && groupBy.length ? ',' : '')
         : ''
     } ${
       groupBy ? groupBy.map((g) => `${g.field} ASC`) : ''
