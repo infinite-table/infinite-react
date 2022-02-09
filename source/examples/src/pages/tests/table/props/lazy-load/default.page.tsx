@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
-  DataSourcePropAggregationReducers,
   DataSourceData,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
@@ -89,11 +88,6 @@ function getDataSource(size: string) {
   };
   return dataSource;
 }
-
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
-  salary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
-  age: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
-};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
