@@ -83,8 +83,8 @@ function getDataSource(size: string) {
 }
 
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
-  salary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
-  age: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
+  avgSalary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
+  avgAge: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -119,9 +119,11 @@ export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
       {
+        field: 'country',
+      },
+      {
         field: 'city',
       },
-      { field: 'stack' },
     ],
     [],
   );

@@ -16,7 +16,8 @@
           "path": "/docs/latest/learn/working-with-data",
           "routes": [
             {"path":"/docs/latest/learn/working-with-data/sorting", "title": "Sorting"},
-            {"path":"/docs/latest/learn/working-with-data/live-pagination", "title": "Live Pagination"}
+            {"path":"/docs/latest/learn/working-with-data/live-pagination", "title": "Live Pagination"},
+            {"path":"/docs/latest/learn/working-with-data/lazy-loading", "title": "Lazy Loading"}
           ]
         },
         {
