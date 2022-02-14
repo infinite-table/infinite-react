@@ -41,9 +41,9 @@ const groupBy = [{field: 'department'}, {field: 'country'}]
 
 ## Customizing Pivot Columns
 
-There are a number of ways to customize the pivot columns. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
+There are a number of ways to customize the <DataSourcePropLink name="pivotBy.column" code={false}>pivot columns</DataSourcePropLink> and <DataSourcePropLink name="pivotBy.columnGroup" code={false}>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
 
-One way to do it is to specify <DPropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
+One way to do it is to specify <DataSourcePropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
 If you pass an object, it will be applied to all pivot columns corresponding to the `field` property.
 
 
@@ -63,7 +63,7 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
   { field: 'country' },
   { field: 'canDesign', column: ({ column }) => {
     return {
-      header: column.pivotGroupKeyForColumn === 'yes' ? 'Designer' : 'Not a Designer',
+      header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Not a Designer',
     }
   },
 ];
@@ -80,7 +80,7 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
 
 ## Server-side pivoting
 
-By default, pivoting is client side. However, if you specify <DataSourcePropLink name="fullLazyLoad" code>DataSource.fullLazyLoad=true</DataSourcePropLink> and provide a function that returns a promise for the <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> prop, the table will use server-pivoted data.
+By default, pivoting is client side. However, if you specify <DataSourcePropLink name="lazyLoad" code>DataSource.lazyLoad</DataSourcePropLink> and provide a function that returns a promise for the <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> prop, the table will use server-pivoted data.
 
 In the example below, let's assume the following practical scenario, with the data-type being a `Developer{country, stack, preferredLanguage, canDesign, age, salary}`.
 
@@ -116,7 +116,7 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
 
 }
 
-<DataSource fullLazyLoad data={dataSource}>
+<DataSource lazyLoad data={dataSource}>
 ```
 
 ```js
@@ -180,3 +180,9 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
 ```
 
 </Sandpack>
+
+<Note>
+
+The <PropLink name="groupRenderStrategy" /> prop is applicable even to pivoted tables, but `groupRenderStrategy="inline"` is not supported in this case.
+
+</Note>

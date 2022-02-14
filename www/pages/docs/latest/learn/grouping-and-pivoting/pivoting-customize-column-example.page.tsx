@@ -122,6 +122,7 @@ export default function PivotByExample() {
           return (
             <InfiniteTable<Developer>
               columns={columns}
+              hideEmptyGroupColumns
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={180}

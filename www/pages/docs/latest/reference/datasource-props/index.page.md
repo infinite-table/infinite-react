@@ -73,9 +73,9 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Prop>
 
-<Prop name="fullLazyLoad" type="boolean" defaultValue={false}>
+<Prop name="lazyLoad" type="boolean|{batchSize:number}" defaultValue={false}>
 
-> Whether the datasource will load data lazily - useful for server-side grouping and pivoting. If set to `true`, the <DataSourcePropLink name="data" /> prop must be a function that returns a promise.
+> Whether the datasource will load data lazily - useful for server-side grouping and pivoting. If set to `true` or to an object (with `batchSize` property), the <DataSourcePropLink name="data" /> prop must be a function that returns a promise.
 
 <Sandpack title="Server-side pivoting with full lazy load"> 
 

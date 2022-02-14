@@ -30,7 +30,8 @@ type Developer = {
   age: number;
 };
 
-const DATA_SOURCE_SIZE = '1k';
+const DATA_SOURCE_SIZE = '10k';
+
 const dataSource: DataSourceData<Developer> = ({
   pivotBy,
   aggregationReducers,
@@ -109,7 +110,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 // make the row labels column (id: 'labels') be pinned
 const defaultColumnPinning: InfiniteTablePropColumnPinning =
-  new Map([['labels', 'start']]);
+  {
+    // make the generated group columns pinned to start
+    'group-by-country': 'start',
+    'group-by-stack': 'start',
+  };
 
 // make all rows collapsed by default
 const groupRowsState = new GroupRowsState({
@@ -123,8 +128,18 @@ export default function RemotePivotExample() {
       () => [
         {
           field: 'country',
+          column: {
+            // give the group column for the country prop a custom id
+            id: 'group-by-country',
+          },
         },
-        { field: 'stack' },
+        {
+          field: 'stack',
+          column: {
+            // give the group column for the stack prop a custom id
+            id: 'group-by-stack',
+          },
+        },
       ],
       []
     );
@@ -156,6 +171,11 @@ export default function RemotePivotExample() {
       []
     );
 
+  const lazyLoad = React.useMemo(
+    () => ({ batchSize: 20 }),
+    []
+  );
+
   return (
     <DataSource<Developer>
       primaryKey="id"
@@ -164,12 +184,13 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
-      lazyLoad>
+      lazyLoad={lazyLoad}>
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>
             defaultColumnPinning={defaultColumnPinning}
             columns={columns}
+            hideEmptyGroupColumns
             pivotColumns={pivotColumns}
             pivotColumnGroups={pivotColumnGroups}
             columnDefaultWidth={220}
