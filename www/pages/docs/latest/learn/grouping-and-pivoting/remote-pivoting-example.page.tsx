@@ -171,11 +171,6 @@ export default function RemotePivotExample() {
       []
     );
 
-  const lazyLoad = React.useMemo(
-    () => ({ batchSize: 20 }),
-    []
-  );
-
   return (
     <DataSource<Developer>
       primaryKey="id"
@@ -184,7 +179,7 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
-      lazyLoad={lazyLoad}>
+      lazyLoad={true}>
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>

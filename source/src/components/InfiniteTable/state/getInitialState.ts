@@ -206,6 +206,7 @@ export const mapPropsToState = <T>(params: {
     state.columns;
 
   return {
+    controlledColumnVisibility: !!props.columnVisibility,
     groupRenderStrategy,
     groupBy: groupBy,
     computedColumns,

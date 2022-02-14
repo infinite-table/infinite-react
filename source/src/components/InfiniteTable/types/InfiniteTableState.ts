@@ -135,6 +135,7 @@ export interface InfiniteTableDerivedState<T> {
 
   rowHeightCSSVar: string;
   headerHeightCSSVar: string;
+  controlledColumnVisibility: boolean;
 }
 
 export type InfiniteTableActions<T> = ComponentStateActions<

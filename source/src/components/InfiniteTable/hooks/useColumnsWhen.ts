@@ -65,7 +65,7 @@ export function useColumnsWhen<T>() {
 
   useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
-  useHideEmptyGroupColumns<T>();
+  useHideColumns<T>();
 
   return { toggleGroupRow };
 }
@@ -230,9 +230,10 @@ function useColumnsWhenGrouping<T>() {
   return { toggleGroupRow };
 }
 
-function useHideEmptyGroupColumns<T>() {
+function useHideColumns<T>() {
   const {
     componentState: {
+      dataArray,
       groupBy,
       groupRowsState,
       originalLazyGroupDataChangeDetect,
@@ -244,6 +245,9 @@ function useHideEmptyGroupColumns<T>() {
     getComponentState,
     componentActions,
     componentState: {
+      columnTypes,
+      computedColumns,
+
       columnsWhenGrouping: generatedColumns,
       hideEmptyGroupColumns,
       groupRenderStrategy,
@@ -251,14 +255,14 @@ function useHideEmptyGroupColumns<T>() {
   } = useComponentState<InfiniteTableState<T>>();
 
   useEffect(() => {
-    if (groupRenderStrategy !== 'multi-column') {
+    if (groupRenderStrategy !== 'multi-column' || !hideEmptyGroupColumns) {
       return;
     }
 
     const groupsLength = groupBy.length;
 
     let expandedGroupsLevel = 0;
-    const { dataArray } = getDataSourceState();
+
     const len = dataArray.length;
 
     for (let i = 0; i < len; i++) {
@@ -307,12 +311,43 @@ function useHideEmptyGroupColumns<T>() {
     groupRenderStrategy,
     generatedColumns,
     originalLazyGroupDataChangeDetect,
-
     groupBy,
-    // groupByMap,
+
+    hideEmptyGroupColumns ? dataArray : null,
     hideEmptyGroupColumns ? groupRowsState : null,
     hideEmptyGroupColumns,
   ]);
+
+  // implements the functionality of column.defaultHiddenWhenGrouped
+  useEffect(() => {
+    const isGrouped = groupBy.length > 0;
+    const currentState = getComponentState();
+
+    const { controlledColumnVisibility, columnVisibility } = currentState;
+
+    if (controlledColumnVisibility) {
+      return;
+    }
+
+    const newColumnVisibility = { ...columnVisibility };
+    let updated = false;
+    computedColumns.forEach((col, id) => {
+      if (col.defaultHiddenWhenGrouped) {
+        const nowHidden = columnVisibility[id] === false;
+        if (!nowHidden && isGrouped) {
+          updated = true;
+          newColumnVisibility[id] = false;
+        }
+        if (nowHidden && !isGrouped) {
+          updated = true;
+          delete newColumnVisibility[id];
+        }
+      }
+    });
+    if (updated) {
+      componentActions.columnVisibility = newColumnVisibility;
+    }
+  }, [computedColumns, columnTypes, groupBy]);
 }
 
 export function getColumnsWhenGrouping<T>(params: {

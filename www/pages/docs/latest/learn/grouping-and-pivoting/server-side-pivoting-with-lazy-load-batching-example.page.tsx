@@ -10,6 +10,7 @@ import {
   DataSourcePivotBy,
   InfiniteTableColumn,
   InfiniteTablePropColumnPinning,
+  InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -68,9 +69,16 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: true,
 });
 
-const groupColumn = {
-  id: 'group-col',
-};
+const groupColumn: InfiniteTablePropGroupColumn<Developer> =
+  {
+    id: 'group-col',
+    // while loading, we can render a custom loading icon
+    renderGroupIcon: ({ groupIcon, data }) =>
+      !data ? '🤷‍' : groupIcon,
+    // while we have no data, we can render a placeholder
+    renderValue: ({ data, value }) =>
+      !data ? ' Loading...' : value,
+  };
 
 const columnPinning: InfiniteTablePropColumnPinning = {
   'group-col': 'start',
@@ -81,7 +89,6 @@ const pivotColumnWithFormatter = ({
 }: {
   column: InfiniteTableColumn<Developer>;
 }) => {
-  console.log('!!!', column);
   return {
     ...column,
     renderValue: ({ value }: { value: any }) =>
@@ -125,6 +132,10 @@ export default function RemotePivotExample() {
       []
     );
 
+  const lazyLoad = React.useMemo(
+    () => ({ batchSize: 10 }),
+    []
+  );
   return (
     <DataSource<Developer>
       primaryKey="id"
@@ -133,7 +144,7 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
-      lazyLoad={{ batchSize: 10 }}>
+      lazyLoad={lazyLoad}>
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>

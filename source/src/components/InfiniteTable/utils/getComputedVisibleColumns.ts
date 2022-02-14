@@ -27,10 +27,6 @@ export type SortInfoMap<T> = {
   [key: string]: { sortInfo: DataSourceSingleSortInfo<T>; index: number };
 };
 
-export const IS_GROUP_COLUMN_ID = (columnId: string) => {
-  return columnId.startsWith('group-by');
-};
-
 const isColumnVisible = (
   columnVisibility: InfiniteTablePropColumnVisibility,
   _columnVisibilityAssumeVisible: boolean,
@@ -376,6 +372,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const result: InfiniteTableComputedColumn<T> = {
       align: colType.align,
       verticalAlign: colType.verticalAlign,
+      defaultHiddenWhenGrouped: colType.defaultHiddenWhenGrouped,
       valueGetter: colType.valueGetter,
       renderValue: colType.renderValue,
       render: colType.render,

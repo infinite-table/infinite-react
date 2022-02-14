@@ -84,9 +84,11 @@ export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
 export type InfiniteTableColumnType<T> = {
   minWidth?: number;
   maxWidth?: number;
+
   defaultWidth?: number;
   defaultFlex?: number;
   defaultPinned?: InfiniteTableColumnPinnedValues;
+  defaultHiddenWhenGrouped?: boolean;
 
   header?: InfiniteTableColumn<T>['header'];
   comparer?: InfiniteTableColumn<T>['comparer'];
