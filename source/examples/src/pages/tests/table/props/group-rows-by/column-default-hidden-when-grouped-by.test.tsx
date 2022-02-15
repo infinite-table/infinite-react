@@ -1,7 +1,4 @@
-import {
-  getHeaderCellByColumnId,
-  getHeaderColumnIds,
-} from '../../../testUtils';
+import { getHeaderCellByColumnId } from '../../../testUtils';
 
 async function isColumnDisplayed(colId: string) {
   const handle = await getHeaderCellByColumnId(colId);
