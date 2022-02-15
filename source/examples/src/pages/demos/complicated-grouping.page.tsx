@@ -8,7 +8,6 @@ import {
   InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumn,
-  InfiniteTablePropColumnVisibility,
 } from '@infinite-table/infinite-react';
 
 // import {InfiniteTablePropColumnVisibility} from  'components/src/....';
@@ -78,27 +77,27 @@ const allColumns: Record<string, InfiniteTableColumn<Transaction>> = {
     field: 'type',
     header: 'Type',
 
-    defaultHiddenWhenGroupedBy: true,
+    defaultHiddenWhenGroupedBy: 'type',
     defaultFlex: 1,
   },
   subType: {
     field: 'subType',
     header: 'SubType',
-    defaultHiddenWhenGroupedBy: true,
+    defaultHiddenWhenGroupedBy: 'subType',
     defaultFlex: 1,
   },
   month: {
     field: 'month',
     header: 'Month',
     type: 'number',
-    defaultHiddenWhenGroupedBy: true, //{ day: true, month: true },
+    defaultHiddenWhenGroupedBy: 'month', //{ day: true, month: true },
     defaultFlex: 1,
   },
   day: {
     field: 'day',
     header: 'Day',
     type: 'number',
-    defaultHiddenWhenGroupedBy: true,
+    defaultHiddenWhenGroupedBy: 'day',
     defaultFlex: 1,
   },
 
@@ -192,16 +191,16 @@ export default function App() {
     [],
   );
 
-  const columnVisibility = React.useMemo(() => {
-    return groupBy.reduce((visibility, groupByItem) => {
-      visibility[groupByItem.field] = false;
+  // const columnVisibility = React.useMemo(() => {
+  //   return groupBy.reduce((visibility, groupByItem) => {
+  //     visibility[groupByItem.field] = false;
 
-      return visibility;
-    }, {} as InfiniteTablePropColumnVisibility);
-  }, [groupBy]);
+  //     return visibility;
+  //   }, {} as InfiniteTablePropColumnVisibility);
+  // }, [groupBy]);
 
-  const onColumnVisibilityChange = React.useCallback((columnVisibility) => {},
-  []);
+  // const onColumnVisibilityChange = React.useCallback((columnVisibility) => {},
+  // []);
 
   const groupColumn = React.useMemo(
     () => createGroupColumn(unbalancedGroup),
