@@ -8,7 +8,6 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
-
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
