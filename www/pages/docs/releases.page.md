@@ -3,6 +3,11 @@ title: Releases
 layout: Home
 ---
 
+
+## 0.2.6 🚀 
+
+@milestone id="9"
+
 ## 0.2.5 🚀 
 
 @milestone id="8"

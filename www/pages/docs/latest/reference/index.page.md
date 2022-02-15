@@ -123,6 +123,28 @@ The following properties are available:
 </Sandpack>
 </Prop>
 
+<Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
+
+> Controls default column visibility when <DataSourcePropLink name="groupBy" /> is used.
+
+This property does not apply (work) when controlled <PropLink name="columnVisibility"  /> is used, it only works with uncontrolled column visibility.
+
+The value for this property can be one of the following:
+ * the `'*'` string - this means, the column is hidden whenever there are groups - so any groups.
+ * a `string`, namely a field from the bound type of the `DataSource` (so type is `keyof DATA_TYPE`) - the column is hidden whenever there is grouping that includes the specified field. The grouping can contain any other fields, but if it includes the specified field, the column is hidden.
+ * `an object with keys` of type `keyof DATA_TYPE` and values being `true` - whenever the grouping includes any of the fields that are in the keys of this object, the column is hidden.
+
+
+<Sandpack>
+
+```ts file=columnDefaultHiddenWhenGroupedBy-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
+
 <Prop name="columns.field" type="keyof DATA_TYPE">
 
 > Binds the column to the specified data field. It should be a keyof `DATA_TYPE`.

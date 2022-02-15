@@ -88,7 +88,7 @@ export type InfiniteTableColumnType<T> = {
   defaultWidth?: number;
   defaultFlex?: number;
   defaultPinned?: InfiniteTableColumnPinnedValues;
-  defaultHiddenWhenGrouped?: boolean;
+  defaultHiddenWhenGroupedBy?: InfiniteTableColumn<T>['defaultHiddenWhenGroupedBy'];
 
   header?: InfiniteTableColumn<T>['header'];
   comparer?: InfiniteTableColumn<T>['comparer'];

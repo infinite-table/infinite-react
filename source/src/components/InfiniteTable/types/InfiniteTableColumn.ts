@@ -196,7 +196,10 @@ export type InfiniteTableBaseColumn<T> = {
   resizable?: boolean;
 
   comparer?: InfiniteTableColumnComparer<T>;
-  defaultHiddenWhenGrouped?: boolean;
+  defaultHiddenWhenGroupedBy?:
+    | '*'
+    | keyof T
+    | { [k in keyof Partial<T>]: true };
 
   align?: InfiniteTableColumnAlign;
   verticalAlign?: InfiniteTableColumnVerticalAlign;

@@ -203,7 +203,7 @@ export function concludeReducer<T>(params: {
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
 
-    if (arrayDifferentAfterSortStep) {
+    if (arrayDifferentAfterSortStep || groupsDepsChanged) {
       rowInfoDataArray = dataArray.map((data, index) =>
         toRowInfo(data, data ? toPrimaryKey(data) : index, index),
       );

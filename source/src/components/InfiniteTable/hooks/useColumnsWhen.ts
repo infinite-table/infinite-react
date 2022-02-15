@@ -65,7 +65,7 @@ export function useColumnsWhen<T>() {
 
   useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
-  useHideColumns<T>();
+  useHideColumns<T>(groupByMap);
 
   return { toggleGroupRow };
 }
@@ -230,7 +230,7 @@ function useColumnsWhenGrouping<T>() {
   return { toggleGroupRow };
 }
 
-function useHideColumns<T>() {
+function useHideColumns<T>(groupByMap: GroupByMap<T>) {
   const {
     componentState: {
       dataArray,
@@ -332,22 +332,32 @@ function useHideColumns<T>() {
     const newColumnVisibility = { ...columnVisibility };
     let updated = false;
     computedColumns.forEach((col, id) => {
-      if (col.defaultHiddenWhenGrouped) {
+      if (col.defaultHiddenWhenGroupedBy) {
         const nowHidden = columnVisibility[id] === false;
-        if (!nowHidden && isGrouped) {
+        const shouldBeHidden =
+          (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||
+          (typeof col.defaultHiddenWhenGroupedBy === 'string' &&
+            groupByMap.get(col.defaultHiddenWhenGroupedBy as keyof T)) ||
+          (typeof col.defaultHiddenWhenGroupedBy === 'object' &&
+            Object.keys(col.defaultHiddenWhenGroupedBy).reduce(
+              (acc: boolean, field) => acc || groupByMap.has(field as keyof T),
+              false,
+            ));
+
+        if (nowHidden !== shouldBeHidden) {
           updated = true;
-          newColumnVisibility[id] = false;
-        }
-        if (nowHidden && !isGrouped) {
-          updated = true;
-          delete newColumnVisibility[id];
+          if (shouldBeHidden) {
+            newColumnVisibility[id] = false;
+          } else {
+            delete newColumnVisibility[id];
+          }
         }
       }
     });
     if (updated) {
       componentActions.columnVisibility = newColumnVisibility;
     }
-  }, [computedColumns, columnTypes, groupBy]);
+  }, [computedColumns, columnTypes, groupBy, groupByMap]);
 }
 
 export function getColumnsWhenGrouping<T>(params: {
