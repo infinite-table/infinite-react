@@ -40,7 +40,6 @@ function InfiniteTableRowFn<T>(
     componentState.rowStyle,
     componentState.rowClassName,
     groupRenderStrategy,
-
     tableDOMRef,
   );
 

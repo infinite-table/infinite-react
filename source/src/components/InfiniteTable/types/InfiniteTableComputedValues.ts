@@ -1,3 +1,4 @@
+import type { VirtualBrainOptions } from '../../VirtualBrain';
 import type { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 import type {
   InfiniteTablePropColumnOrderNormalized,
@@ -5,6 +6,7 @@ import type {
 } from './InfiniteTableProps';
 
 export interface InfiniteTableComputedValues<T> {
+  rowSpan?: VirtualBrainOptions['itemSpan'];
   computedPinnedStartOverflow: boolean;
   computedPinnedEndOverflow: boolean;
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];

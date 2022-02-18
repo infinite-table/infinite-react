@@ -7,7 +7,7 @@ import {
   RowListWithExternalScrolling,
   RowListWithExternalScrollingListProps,
 } from '../../VirtualList/RowListWithExternalScrolling';
-import { VirtualBrain } from '../../VirtualBrain';
+import { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 
 import { InfiniteTableRowProps } from '../components/InfiniteTableRow/InfiniteTableRowTypes';
 import { TableRowUnvirtualized } from '../components/InfiniteTableRow/InfiniteTableRowUnvirtualized';
@@ -52,6 +52,7 @@ type UsePinnedParams<T> = {
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   computedPinnedStartColumnsWidth: number;
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
+  rowSpan?: VirtualBrainOptions['itemSpan'];
 };
 
 type RenderPinnedRowParams<T> = {
@@ -61,6 +62,7 @@ type RenderPinnedRowParams<T> = {
   columnsWidth: number;
   columns: InfiniteTableComputedColumn<T>[];
   verticalBrain: VirtualBrain;
+  rowSpan?: VirtualBrainOptions['itemSpan'];
 };
 
 const UPDATE_SCROLL = (
@@ -194,7 +196,8 @@ function PinnedRowsContainer(props: PinnedRowsContainerProps) {
 }
 
 function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
-  const { getData, getState, columnsWidth, columns, verticalBrain } = params;
+  const { getData, getState, columnsWidth, columns, rowSpan, verticalBrain } =
+    params;
 
   const renderPinnedRow: RenderRow = useCallback(
     (rowParams) => {
@@ -212,6 +215,7 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
         virtualizeColumns: false,
         verticalBrain,
         brain: null!,
+        rowSpan,
         rowWidth: columnsWidth,
         columns: columns,
         ...rowParams,
@@ -246,6 +250,7 @@ export function usePinnedRenderingForSide<T>(
     pinnedStartScrollListener,
     pinnedEndScrollListener,
 
+    rowSpan,
     repaintId,
     toggleGroupRow,
     scrollbars: {
@@ -277,6 +282,7 @@ export function usePinnedRenderingForSide<T>(
     getData,
     getState,
     toggleGroupRow,
+    rowSpan,
     verticalBrain: verticalVirtualBrain,
     columns,
     columnsWidth,

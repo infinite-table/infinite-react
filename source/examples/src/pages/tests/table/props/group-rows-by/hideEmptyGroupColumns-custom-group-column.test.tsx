@@ -3,7 +3,7 @@ import { getHeaderColumnIds } from '../../../testUtils';
 export default describe('hideEmptyGroupColumns', () => {
   beforeAll(async () => {
     await page.goto(
-      `${process.env.BASEURL}/table/props/group-rows-by/hideEmptyGroupColumns`,
+      `${process.env.BASEURL}/table/props/group-rows-by/hideEmptyGroupColumns-custom-group-column`,
     );
   });
 
@@ -20,7 +20,7 @@ export default describe('hideEmptyGroupColumns', () => {
     let ids = await getHeaderColumnIds();
 
     expect(ids).toEqual([
-      'group-by-department',
+      'g-for-department',
       'firstName',
       'country',
       'department',
@@ -32,8 +32,8 @@ export default describe('hideEmptyGroupColumns', () => {
     ids = await getHeaderColumnIds();
 
     expect(ids).toEqual([
-      'group-by-department',
-      'custom-country',
+      'g-for-department',
+      'g-for-country',
       'firstName',
       'country',
       'department',
@@ -44,7 +44,7 @@ export default describe('hideEmptyGroupColumns', () => {
     let ids = await getHeaderColumnIds();
 
     expect(ids).toEqual([
-      'group-by-department',
+      'g-for-department',
       'firstName',
       'country',
       'department',
@@ -56,8 +56,8 @@ export default describe('hideEmptyGroupColumns', () => {
     ids = await getHeaderColumnIds();
 
     expect(ids).toEqual([
-      'group-by-department',
-      'group-by-country',
+      'g-for-department',
+      'g-for-country',
       'firstName',
       'country',
       'department',
@@ -71,8 +71,8 @@ export default describe('hideEmptyGroupColumns', () => {
     let ids = await getHeaderColumnIds();
 
     expect(ids).toEqual([
-      'group-by-department',
-      'group-by-country',
+      'g-for-department',
+      'g-for-country',
       'firstName',
       'country',
       'department',

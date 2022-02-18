@@ -114,6 +114,9 @@ const groupBy: DataSourceGroupBy<Person>[] = [
       // },
     },
   },
+  {
+    field: 'FirstName',
+  },
 ];
 export default () => {
   const columns = ((globalThis as any).getColumns || getColumns)();
@@ -129,11 +132,7 @@ export default () => {
         >
           UPDATE - {count}
         </button>
-        <InfiniteTable<Person>
-          domProps={domProps}
-          columns={columns}
-          groupRenderStrategy="inline"
-        />
+        <InfiniteTable<Person> domProps={domProps} columns={columns} />
       </DataSource>
     </React.StrictMode>
   );

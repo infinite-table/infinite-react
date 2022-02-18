@@ -68,10 +68,10 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
 
   verticalVirtualBrain.update(dataArray.length, rowHeight, rowSpan);
 
-  // if (__DEV__) {
-  //   (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
-  //   (globalThis as any).horizontalVirtualBrain = horizontalVirtualBrain;
-  // }
+  if (__DEV__) {
+    (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
+    (globalThis as any).horizontalVirtualBrain = horizontalVirtualBrain;
+  }
 
   useEffect(() => {
     verticalVirtualBrain.setAvailableSize({

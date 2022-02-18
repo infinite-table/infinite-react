@@ -158,7 +158,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       dataArray: getData(),
       column,
       rowInfo: rowInfo,
-      groupRowInfo: groupRowInfo,
       rowIndex,
       data: rowInfo.data,
     });

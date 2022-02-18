@@ -53,6 +53,9 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
   const { pathname } = useRouter();
 
   const { route, nextRoute, prevRoute } = useRouteMeta();
+  if (!route) {
+    return null;
+  }
   //@ts-ignore
   const { date, dateTime } = route.date
     ? //@ts-ignore

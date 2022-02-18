@@ -4,12 +4,13 @@ import { DataSourceSingleSortInfo } from '../../DataSource/types';
 import { useComputedVisibleColumns } from './useComputedVisibleColumns';
 
 import { sortAscending } from '../../../utils/DeepMap/sortAscending';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useComponentState } from '../../hooks/useComponentState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
 import { useColumnsWhen } from './useColumnsWhen';
+import type { VirtualBrainOptions } from '../../VirtualBrain';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState } =
@@ -109,6 +110,40 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnTypes,
   });
 
+  const rowSpan = useMemo<VirtualBrainOptions['itemSpan']>(() => {
+    const colsWithRowspan = computedVisibleColumns.filter(
+      (col) => typeof col.rowspan === 'function',
+    );
+
+    return colsWithRowspan.length
+      ? ({ itemIndex }) => {
+          let maxSpan = 1;
+
+          const dataArray = getDataSourceState().dataArray;
+          const rowInfo = dataArray[itemIndex];
+          const data = rowInfo.data;
+
+          colsWithRowspan.forEach((column) => {
+            if (!column.rowspan) {
+              return;
+            }
+            const span = column.rowspan({
+              column,
+              data,
+              dataArray,
+              rowInfo,
+              rowIndex: itemIndex,
+            });
+
+            if (span > maxSpan) {
+              maxSpan = span;
+            }
+          });
+          return maxSpan;
+        }
+      : undefined;
+  }, [computedVisibleColumns]);
+
   const unpinnedColumnWidths = computedUnpinnedColumns.map(
     (c) => c.computedWidth,
   );
@@ -165,6 +200,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     : false;
 
   return {
+    rowSpan,
     toggleGroupRow,
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,

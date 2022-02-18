@@ -55,13 +55,12 @@ export type InfiniteTableColumnRenderValueParam<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>;
 
-export type InfiniteTableColumnRowspanFnParams<
+export type InfiniteTableColumnRowspanParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   rowInfo: InfiniteTableRowInfo<DATA_TYPE>;
   data: DATA_TYPE | Partial<DATA_TYPE> | null;
-  groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   dataArray: InfiniteTableRowInfo<DATA_TYPE>[];
   rowIndex: number;
   column: COL_TYPE;
@@ -185,7 +184,7 @@ export type InfiniteTableColumnValueGetter<
 > = (params: InfiniteTableColumnValueGetterParams<T>) => VALUE_GETTER_TYPE;
 
 export type InfiniteTableColumnRowspanFn<T> = (
-  params: InfiniteTableColumnRowspanFnParams<T>,
+  params: InfiniteTableColumnRowspanParam<T>,
 ) => number;
 
 export type InfiniteTableColumnComparer<T> = (a: T, b: T) => number;

@@ -171,9 +171,6 @@ export function getSingleGroupColumn<T>(
           <ExpanderIcon
             expanded={!collapsed}
             onChange={() => {
-              // if (!data) {
-              //   return;
-              // }
               toggleGroupRow(rowInfo.groupKeys!);
             }}
           />

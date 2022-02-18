@@ -610,7 +610,7 @@ export class VirtualBrain extends Logger {
       this.computeCacheFor(lastSizeIndex);
       _prev = lastOffset;
       lastOffset = this.itemOffsetCache[lastSizeIndex];
-      if (_prev === lastOffset) {
+      if (_prev === lastOffset && _prev != 0) {
         return count - 1;
       }
     }
