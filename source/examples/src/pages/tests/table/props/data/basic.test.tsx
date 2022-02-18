@@ -11,7 +11,7 @@ export default describe('Table', () => {
   beforeEach(async () => {
     await page.reload();
   });
-  it('cell content is there', async () => {
+  xit('cell content is there', async () => {
     const data = (await page.evaluate(
       () => (window as any).carsales,
     )) as CarSale[];
