@@ -8,7 +8,7 @@ import {
   InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumn,
-  InfiniteTableColumnRowspanFnParams,
+  InfiniteTableColumnRowspanParam,
 } from '@infinite-table/infinite-react';
 
 import * as React from 'react';
@@ -170,7 +170,7 @@ const createGroupColumn =
         // },
         rowspan: ({
           rowInfo,
-        }: InfiniteTableColumnRowspanFnParams<Transaction>) => {
+        }: InfiniteTableColumnRowspanParam<Transaction>) => {
           if (rowInfo.isGroupRow) {
             if (rowInfo.collapsed) {
               return 1;
