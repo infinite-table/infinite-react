@@ -37,7 +37,7 @@ jobs:
           git config --local user.name "SHIP IT"
 
       - name: Install
-        run: npm i && npm install --prefix source && npm install --prefix source/examples
+        run: npm i --force && npm install --force --prefix source && npm install --force --prefix source/examples
 
       # - name: Linting
       #   run: npm run lint
