@@ -45,6 +45,7 @@ export function useRowDOMProps<T>(
     rowIndex,
     domRef: domRefFromProps,
     rowInfo,
+    rowSpan,
   } = props;
 
   const domRef = useRef<HTMLElement | null>(null);
@@ -80,7 +81,7 @@ export function useRowDOMProps<T>(
         : { ...style, ...rowStyle };
   }
 
-  if (inlineGroupRoot) {
+  if (inlineGroupRoot || rowSpan) {
     style = style || {};
     //TODO remove this harcoded value - should be datasource size - ...
     style.zIndex = 2_000_000 - rowInfo.indexInAll;

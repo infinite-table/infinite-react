@@ -36,6 +36,9 @@ Promise.resolve()
             .join(' ');
         },
       });
+      if (data.draft) {
+        continue;
+      }
       const rendered = await markdownToHtml(
         excerpt.trimLeft().trim()
       );

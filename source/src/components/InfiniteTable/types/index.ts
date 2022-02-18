@@ -37,6 +37,7 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderValueParam,
+  InfiniteTableColumnRowspanFnParams,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -46,6 +47,7 @@ export type {
   Scrollbars,
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
+  InfiniteTableColumnRowspanFnParams,
   InfiniteTablePropColumns,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropColumnsMap,

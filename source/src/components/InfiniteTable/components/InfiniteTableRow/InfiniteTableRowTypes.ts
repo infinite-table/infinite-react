@@ -1,4 +1,4 @@
-import type { VirtualBrain } from '../../../VirtualBrain';
+import type { VirtualBrain, VirtualBrainOptions } from '../../../VirtualBrain';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
 import type {
   InfiniteTableComputedColumn,
@@ -17,6 +17,7 @@ export interface InfiniteTableRowProps<T> {
   getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   repaintId?: number | string;
+  rowSpan?: VirtualBrainOptions['itemSpan'];
 
   virtualizeColumns: boolean;
   showZebraRows?: boolean;

@@ -6,6 +6,7 @@ import {
   DataSource,
   GroupRowsState,
   DataSourceGroupBy,
+  InfiniteTableGroupColumnFunction,
 } from '@infinite-table/infinite-react';
 
 import { employees } from './employees10';
@@ -62,6 +63,15 @@ const domProps: React.HTMLProps<HTMLDivElement> = {
   },
 };
 
+const groupColumnFn: InfiniteTableGroupColumnFunction<Employee> = (options) => {
+  const { groupByForColumn } = options;
+
+  return {
+    id: 'g-for-' + groupByForColumn?.field,
+    header: `G for ${groupByForColumn?.field}`,
+  };
+};
+
 export default function GroupByExample() {
   const [customGroupColumnId, setCustomGroupColumnId] = useState(false);
 
@@ -105,6 +115,7 @@ export default function GroupByExample() {
       >
         <InfiniteTable<Employee>
           domProps={domProps}
+          groupColumn={groupColumnFn}
           hideEmptyGroupColumns={hideEmptyGroupColumns}
           columnDefaultWidth={200}
           columns={columns}

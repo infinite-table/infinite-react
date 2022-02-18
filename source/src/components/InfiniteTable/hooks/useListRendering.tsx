@@ -37,7 +37,7 @@ type ListRenderingParam<T> = {
 
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
-import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
+import type { VirtualBrain } from '../../VirtualBrain';
 
 type ListRenderingResult = {
   scrollbars: Scrollbars;
@@ -75,7 +75,7 @@ export function useListRendering<T>(
     computedUnpinnedColumnsWidth,
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,
-    computedVisibleColumns,
+    rowSpan,
     toggleGroupRow,
   } = computed;
 
@@ -102,40 +102,6 @@ export function useListRendering<T>(
     repaintIdRef.current++;
   }
   const repaintId = repaintIdRef.current;
-
-  const rowSpan = useMemo<VirtualBrainOptions['itemSpan']>(() => {
-    const colsWithRowspan = computedVisibleColumns.filter(
-      (col) => typeof col.rowspan === 'function',
-    );
-
-    return colsWithRowspan.length
-      ? ({ itemIndex }) => {
-          let maxSpan = 1;
-          const dataArray = getData();
-          const rowInfo = dataArray[itemIndex];
-          const data = rowInfo.data;
-
-          colsWithRowspan.forEach((column) => {
-            if (!column.rowspan) {
-              return;
-            }
-            const span = column.rowspan({
-              column,
-              data,
-              dataArray,
-              groupRowInfo: null,
-              rowInfo,
-              rowIndex: itemIndex,
-            });
-
-            if (span > maxSpan) {
-              maxSpan = span;
-            }
-          });
-          return maxSpan;
-        }
-      : undefined;
-  }, [computedVisibleColumns]);
 
   const { horizontalVirtualBrain, verticalVirtualBrain } = useYourBrain({
     computedPinnedStartWidth: computed.computedPinnedStartWidth,
@@ -221,6 +187,7 @@ export function useListRendering<T>(
     verticalVirtualBrain,
     pinnedStartScrollListener,
     pinnedEndScrollListener,
+    rowSpan,
   };
 
   const centerRenderingParams = {

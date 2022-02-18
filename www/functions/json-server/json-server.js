@@ -526,7 +526,6 @@ function buildSQL({
     }`;
   }
 
-  console.log(SQL);
   return SQL;
 }
 module.exports = app;

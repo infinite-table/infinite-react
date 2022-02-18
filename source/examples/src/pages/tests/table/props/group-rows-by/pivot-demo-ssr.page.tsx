@@ -122,6 +122,9 @@ export default function RemotePivotExample() {
     () => [
       {
         field: 'city',
+        column: {
+          id: 'group-col',
+        },
       },
       { field: 'age' },
     ],
@@ -172,7 +175,7 @@ export default function RemotePivotExample() {
     [],
   );
 
-  const [size, setSize] = React.useState('20k');
+  const [size, setSize] = React.useState('10');
   const dataSource = React.useMemo(() => {
     return getDataSource(size);
   }, [size]);

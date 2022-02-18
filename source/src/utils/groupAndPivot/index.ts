@@ -64,6 +64,10 @@ export type InfiniteTableRowInfoBase<T> = {
   collapsedGroupsCount?: number;
   groupNesting?: number;
   groupKeys?: any[];
+  flatRowInfoList?: (
+    | InfiniteTableRowInfo<T>
+    | InfiniteTableEnhancedGroupInfo<T>
+  )[];
   parents?: InfiniteTableEnhancedGroupInfo<T>[];
   indexInParentGroups?: number[];
   indexInGroup: number;
@@ -78,6 +82,10 @@ export type InfiniteTableRowInfoBase<T> = {
 export type InfiniteTableEnhancedGroupInfo<T> = InfiniteTableRowInfo<T> & {
   data: Partial<T> | null;
   groupData: T[];
+  flatRowInfoList: (
+    | InfiniteTableRowInfo<T>
+    | InfiniteTableEnhancedGroupInfo<T>
+  )[];
   value: any;
   isGroupRow: true;
   collapsedChildrenCount: number;
@@ -602,6 +610,7 @@ function getEnhancedGroupData<DataType>(
     id: `${groupKeys}`, //TODO improve this
     collapsed,
     parents,
+    flatRowInfoList: [],
     collapsedChildrenCount: 0,
     collapsedGroupsCount: 0,
     indexInParentGroups: options.indexInParentGroups,
@@ -697,8 +706,13 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       if (collapsed) {
         parents.forEach((parent) => {
+          parent.flatRowInfoList.push(enhancedGroupData);
           parent.collapsedChildrenCount += enhancedGroupData.groupCount;
           parent.collapsedGroupsCount += 1;
+        });
+      } else {
+        parents.forEach((parent) => {
+          parent.flatRowInfoList.push(enhancedGroupData);
         });
       }
 

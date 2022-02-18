@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 import { RenderRow } from '../../VirtualList/types';
-import type { VirtualBrain } from '../../VirtualBrain';
+import type { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 
 import { VirtualRowList } from '../../VirtualList/VirtualRowList';
 import type { Size } from '../../types/Size';
@@ -35,6 +35,7 @@ type UnpinnedRenderingParams<T> = {
   computedUnpinnedColumnsWidth: number;
   computedPinnedStartWidth: number;
   computedPinnedEndWidth: number;
+  rowSpan?: VirtualBrainOptions['itemSpan'];
 
   getState: () => InfiniteTableState<T>;
 };
@@ -57,6 +58,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
 
     computedUnpinnedColumns,
 
+    rowSpan,
     getState,
   } = params;
 
@@ -79,6 +81,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
         showZebraRows,
         showHoverRows,
         getData,
+        rowSpan,
         toggleGroupRow,
         virtualizeColumns: shouldVirtualizeColumns,
         brain: null!,
@@ -102,6 +105,7 @@ export function useUnpinnedRendering<T>(params: UnpinnedRenderingParams<T>) {
     [
       repaintId,
       rowHeight,
+      rowSpan,
 
       computedUnpinnedColumns,
       computedUnpinnedColumnsWidth,

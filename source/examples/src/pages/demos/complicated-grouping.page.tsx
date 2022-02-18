@@ -8,9 +8,8 @@ import {
   InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumn,
+  InfiniteTableColumnRowspanFnParams,
 } from '@infinite-table/infinite-react';
-
-// import {InfiniteTablePropColumnVisibility} from  'components/src/....';
 
 import * as React from 'react';
 
@@ -77,7 +76,7 @@ const allColumns: Record<string, InfiniteTableColumn<Transaction>> = {
     field: 'type',
     header: 'Type',
 
-    defaultHiddenWhenGroupedBy: 'type',
+    defaultHiddenWhenGroupedBy: '*',
     defaultFlex: 1,
   },
   subType: {
@@ -130,6 +129,68 @@ const allColumns: Record<string, InfiniteTableColumn<Transaction>> = {
 const createGroupColumn =
   (manageUnbalancedGroup: boolean = false) =>
   (arg: InfiniteTableGroupColumnGetterOptions<Transaction>) => {
+    if (arg.groupByForColumn?.field === 'type') {
+      return {
+        // rowspan: ({
+        //   rowInfo,
+        //   dataArray,
+        //   column,
+        // }: InfiniteTableColumnRowspanFnParams<Transaction>) => {
+        //   const groupIndex = arg.groupIndexForColumn!;
+        //   const prevRowInfo = dataArray[rowInfo.indexInAll - 1] || {
+        //     indexInParentGroups: [],
+        //   };
+        //   const prevIndexes = prevRowInfo.indexInParentGroups! || [];
+        //   const currentIndexes = rowInfo.indexInParentGroups! || [];
+
+        //   let computeSpan = false;
+        //   for (let i = 0; i <= groupIndex; i++) {
+        //     const prev = prevIndexes[i];
+        //     const current = currentIndexes[i];
+
+        //     if (current !== prev) {
+        //       computeSpan = true;
+        //       break;
+        //     }
+        //   }
+
+        //   if (!computeSpan) {
+        //     return 1;
+        //   }
+        //   const parentGroup = rowInfo.parents![groupIndex];
+
+        //   const rowspan = parentGroup
+        //     ? parentGroup.groupCount -
+        //       (parentGroup.collapsedChildrenCount || 0) +
+        //       (parentGroup.collapsedGroupsCount || 0)
+        //     : 1;
+
+        //   console.log({ rowInfo, rowspan });
+        //   return rowspan;
+        // },
+        rowspan: ({
+          rowInfo,
+        }: InfiniteTableColumnRowspanFnParams<Transaction>) => {
+          if (rowInfo.isGroupRow) {
+            if (rowInfo.collapsed) {
+              return 1;
+            }
+
+            return (rowInfo.flatRowInfoList?.length || 0) + 1;
+            // //   console.log(rowInfo);
+            // const result =
+            //   (rowInfo.groupData?.length || 0) +
+            //   1 -
+            //   (rowInfo.collapsedChildrenCount || 0) -
+            //   (rowInfo.collapsedGroupsCount || 0);
+
+            // console.log({ result, rowInfo });
+            // return result;
+          }
+          return 1;
+        },
+      };
+    }
     if (arg.groupByForColumn?.field === 'subType' && manageUnbalancedGroup) {
       return {
         renderGroupIcon(param) {
@@ -166,7 +227,9 @@ const createGroupColumn =
 
 const defaultGroupRowsState = new GroupRowsState({
   collapsedRows: true,
-  expandedRows: [],
+  expandedRows: [
+    // []
+  ],
 });
 
 defaultGroupRowsState.expandGroupRow(['Pending']);

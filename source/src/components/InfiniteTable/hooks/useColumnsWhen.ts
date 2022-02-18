@@ -9,6 +9,7 @@ import type {
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
 import { interceptMap } from '../../hooks/useInterceptedMap';
+import { usePrevious } from '../../hooks/usePrevious';
 
 import type {
   InfiniteTableComputedPivotFinalColumn,
@@ -248,14 +249,67 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
       columnTypes,
       computedColumns,
 
-      columnsWhenGrouping: generatedColumns,
       hideEmptyGroupColumns,
       groupRenderStrategy,
     },
   } = useComponentState<InfiniteTableState<T>>();
 
+  const prevHideEmptyGroupColumns = usePrevious(hideEmptyGroupColumns);
+
   useEffect(() => {
-    if (groupRenderStrategy !== 'multi-column' || !hideEmptyGroupColumns) {
+    if (groupRenderStrategy !== 'multi-column') {
+      return;
+    }
+    const currentState = getComponentState();
+
+    const computedGroupColumns: Map<
+      string,
+      InfiniteTableGeneratedGroupColumn<T>
+    > = new Map();
+
+    computedColumns.forEach(
+      (
+        column: InfiniteTableColumn<T> | InfiniteTableGeneratedGroupColumn<T>,
+        colId: string,
+      ) => {
+        if (
+          typeof (column as InfiniteTableGeneratedGroupColumn<T>)
+            .groupByField !== 'string'
+        ) {
+          return;
+        }
+        const { groupByField } = column as InfiniteTableGeneratedGroupColumn<T>;
+        const field = groupByField as keyof T;
+        const groupInfoForColumn = groupByMap.get(field);
+        if (!groupInfoForColumn) {
+          return;
+        }
+
+        computedGroupColumns.set(
+          colId,
+          column as InfiniteTableGeneratedGroupColumn<T>,
+        );
+      },
+    );
+
+    if (!hideEmptyGroupColumns) {
+      if (prevHideEmptyGroupColumns) {
+        let updated = false;
+        const columnVisibility = { ...currentState.columnVisibility };
+
+        computedGroupColumns.forEach(
+          (_column: InfiniteTableGeneratedGroupColumn<T>, colId: string) => {
+            if (columnVisibility[colId] === false) {
+              updated = true;
+              delete columnVisibility[colId];
+            }
+          },
+        );
+
+        if (updated) {
+          componentActions.columnVisibility = columnVisibility;
+        }
+      }
       return;
     }
 
@@ -277,31 +331,32 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
       }
     }
 
-    const currentState = getComponentState();
-
-    const { computedColumns } = currentState;
-
     let updated = false;
     const columnVisibility = { ...currentState.columnVisibility };
-    const cols = computedColumns;
 
-    groupBy.forEach(({ field, column: groupColumn }, index) => {
-      const colId = groupColumn?.id || `group-by-${field}`;
-      let col = cols.get(colId);
+    computedGroupColumns.forEach(
+      (column: InfiniteTableGeneratedGroupColumn<T>, colId: string) => {
+        const { groupByField } = column as InfiniteTableGeneratedGroupColumn<T>;
+        const field = groupByField as keyof T;
+        const groupInfoForColumn = groupByMap.get(field)!;
+        const index = groupInfoForColumn.groupIndex;
 
-      if (!col) {
-        return;
-      }
-      const shouldBeHidden =
-        index > expandedGroupsLevel && hideEmptyGroupColumns;
+        const shouldBeHidden =
+          index > expandedGroupsLevel && hideEmptyGroupColumns;
 
-      updated = true;
-      if (shouldBeHidden) {
-        columnVisibility[colId] = false;
-      } else {
-        delete columnVisibility[colId];
-      }
-    });
+        if (shouldBeHidden) {
+          if (columnVisibility[colId] !== false) {
+            updated = true;
+            columnVisibility[colId] = false;
+          }
+        } else {
+          if (columnVisibility.hasOwnProperty(colId)) {
+            updated = true;
+            delete columnVisibility[colId];
+          }
+        }
+      },
+    );
 
     if (updated) {
       componentActions.columnVisibility = columnVisibility;
@@ -309,9 +364,10 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
   }, [
     getDataSourceState,
     groupRenderStrategy,
-    generatedColumns,
     originalLazyGroupDataChangeDetect,
     groupBy,
+    groupByMap,
+    computedColumns,
 
     hideEmptyGroupColumns ? dataArray : null,
     hideEmptyGroupColumns ? groupRowsState : null,
