@@ -36,8 +36,12 @@ export default describe('Column types tests', () => {
     const idNode = await getHeaderCellByColumnId('id');
     const salaryNode = await getHeaderCellByColumnId('salary');
 
-    const idHeader = await idNode!.evaluate((node) => node.innerText);
-    const salaryHeader = await salaryNode!.evaluate((node) => node.innerText);
+    const idHeader = await idNode!.evaluate(
+      (node) => (node as HTMLElement).innerText,
+    );
+    const salaryHeader = await salaryNode!.evaluate(
+      (node) => (node as HTMLElement).innerText,
+    );
 
     expect(idHeader).toEqual('number col');
     expect(salaryHeader).toEqual('number col');

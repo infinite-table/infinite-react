@@ -71,7 +71,7 @@ export const getCellText = async ({
     `[data-row-index="${rowIndex}"] [data-column-id="${columnId}"]`,
   );
 
-  return await cell!.evaluate((node) => node.innerText);
+  return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };
 
 export const getHeaderColumnIds = async () => {

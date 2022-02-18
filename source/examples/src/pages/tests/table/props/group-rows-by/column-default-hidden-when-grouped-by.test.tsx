@@ -16,6 +16,8 @@ async function getRenderedRowCount() {
 
 import { employees } from './employees10';
 
+const timeout = 30;
+
 async function setGroupBy(groupBy: { field: string }[]) {
   await page.evaluate((groupBy) => {
     (window as any).setGroupBy(groupBy);
@@ -41,14 +43,14 @@ export default describe('Table column.defaultHiddenWhenGroupedBy', () => {
     expect(await getRenderedRowCount()).not.toEqual(employees.length);
 
     await setGroupBy([]);
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(timeout);
 
     expect(await getRenderedRowCount()).toEqual(employees.length);
 
     expect(await isColumnDisplayed('teamID')).toBe(true);
 
     await setGroupBy([{ field: 'country' }]);
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(timeout);
 
     expect(await getRenderedRowCount()).not.toEqual(employees.length);
     expect(await isColumnDisplayed('teamID')).toBe(false);
@@ -59,12 +61,12 @@ export default describe('Table column.defaultHiddenWhenGroupedBy', () => {
     expect(await getRenderedRowCount()).not.toEqual(employees.length);
 
     await setGroupBy([{ field: 'country' }]);
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(timeout);
 
     expect(await isColumnDisplayed('departmentID')).toBe(true);
 
     await setGroupBy([{ field: 'country' }, { field: 'department' }]);
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(timeout);
 
     expect(await isColumnDisplayed('departmentID')).toBe(false);
   });
@@ -74,12 +76,12 @@ export default describe('Table column.defaultHiddenWhenGroupedBy', () => {
     expect(await getRenderedRowCount()).not.toEqual(employees.length);
 
     await setGroupBy([{ field: 'country' }]);
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(timeout);
 
     expect(await isColumnDisplayed('salaryID')).toBe(true);
 
     await setGroupBy([{ field: 'country' }, { field: 'team' }]);
-    await page.waitForTimeout(10);
+    await page.waitForTimeout(timeout);
 
     expect(await isColumnDisplayed('salaryID')).toBe(false);
   });
