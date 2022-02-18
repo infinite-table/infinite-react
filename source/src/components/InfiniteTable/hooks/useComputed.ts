@@ -131,7 +131,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
               column,
               data,
               dataArray,
-              groupRowInfo: null,
               rowInfo,
               rowIndex: itemIndex,
             });

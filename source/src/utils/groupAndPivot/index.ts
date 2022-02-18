@@ -726,7 +726,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
             result.push(
               ...items.map((item, index) => {
-                return {
+                const rowInfo: InfiniteTableRowInfo<DataType> = {
                   id: item ? toPrimaryKey(item) : `${groupKeys}-${index}`,
                   data: item,
                   isGroupRow: false,
@@ -740,6 +740,11 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   groupNesting,
                   groupCount: enhancedGroupData.groupCount,
                 };
+                parents.forEach((parent) => {
+                  parent.flatRowInfoList.push(rowInfo);
+                });
+
+                return rowInfo;
               }),
             );
           }

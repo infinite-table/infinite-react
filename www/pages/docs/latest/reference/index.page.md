@@ -190,6 +190,29 @@ When we implement filtering, you'll also have access to the column filter.
 </Sandpack>
 </Prop>
 
+<Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
+
+> Specifies the rowspan for cells on the current column.
+
+The default rowspan for a column cell is 1. If you want to span multiple rows, return a value that is greater than 1.
+
+This function is called with an object that has the following properties:
+
+* column - the current column
+* data - the current data
+* rowInfo - information about the current row
+
+The `rowInfo` object contains information about grouping (if this row is a group row, the collapsed state, etc), parent groups, children of the current row (if it's a row group), etc
+
+<Sandpack>
+
+```ts file=column-rowspan-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.type" type="string | string[]" defaultValue="'default'">
 
 > Specifies the column type - a column type is a set of properties that describes the column. Column types allow to easily apply the same properties to multiple columns.
