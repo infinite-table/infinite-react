@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { isValidLicense } from './decode';
 
-const SANDBOX_REGEX = /(https):\/\/\d+\-\d+\-\d\-(sandpack\.codesandbox\.io)/g;
+const SANDBOX_REGEX = /(https):\/\/\d+\-\d+\-\d+\-(sandpack\.codesandbox\.io)/g;
 
 const origin = typeof window !== 'undefined' ? window.location.origin : '';
 const [_fullUrl, protocol, sandboxUrl] = Array.from(
