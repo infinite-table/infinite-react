@@ -33,7 +33,7 @@ Aggregation reducers can be used in combination with grouping and pivoting. The 
 
 <Sandpack title="Aggregations used together with server-side pivoting"> 
 
-```ts file=../../learn/grouping-and-pivoting/remote-pivoting-example.page.tsx
+```ts file=../../learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx
 ```
 
 </Sandpack>
@@ -79,7 +79,7 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 <Sandpack title="Server-side pivoting with full lazy load"> 
 
-```ts file=../../learn/grouping-and-pivoting/remote-pivoting-example.page.tsx
+```ts file=../../learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx
 ```
 
 </Sandpack>

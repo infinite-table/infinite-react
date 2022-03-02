@@ -26,6 +26,7 @@ export interface RouteItem {
   path?: string;
   /** Whether the entry is a heading */
   heading?: boolean;
+  transient?: boolean;
   /** List of sub-routes */
   routes?: RouteItem[];
 }

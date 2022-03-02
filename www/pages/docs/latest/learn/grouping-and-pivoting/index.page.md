@@ -8,7 +8,7 @@ Infinite Table comes with grouping and pivoting capabilities built-in. The `Data
 <YouWillLearnCard title="Grouping Rows" path="./grouping-and-pivoting/grouping-rows">
 Learn row grouping and explore the possibilities.
 </YouWillLearnCard>
-<YouWillLearnCard title="Pivoting" path="./grouping-and-pivoting/pivoting">
+<YouWillLearnCard title="Pivoting" path="./grouping-and-pivoting/pivoting/overview">
 Read thorough documentation covering pivoting and aggregation.
 </YouWillLearnCard>
 </HeroCards>

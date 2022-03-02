@@ -96,10 +96,10 @@ export function SidebarRouteTree({
   return (
     <ul>
       {currentRoutes.map(
-        ({ path, title, routes, heading }) => {
+        ({ path, title, routes, heading, transient }) => {
           const pagePath =
             path && removeFromLast(path, '.');
-          const selected = slug === pagePath;
+          const selected = slug === pagePath && !transient;
 
           // if current route item has no path and children treat it as an API sidebar heading
           if (!path || !pagePath || heading) {

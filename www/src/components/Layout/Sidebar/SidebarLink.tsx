@@ -54,8 +54,10 @@ export function SidebarLink({
             'my-6': heading,
             'text-primary dark:text-primary-dark':
               heading && !isBreadcrumb,
-            'text-sm pl-6': level > 0,
-            'pl-5': level < 2,
+            'text-sm': level > 0,
+            'pl-5': level === 0,
+            'pl-7': level === 1,
+            'pl-9': level === 2,
             'text-base font-bold': level === 0,
             'dark:text-primary-dark text-primary ':
               level === 0 && !selected,

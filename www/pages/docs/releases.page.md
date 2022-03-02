@@ -25,7 +25,7 @@ layout: Home
 
 ## 0.2.0 🚀 
 
-* Implement initial support for [server-side pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting)
+* Implement initial support for [server-side pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting/overview)
 
 <!-- @milestone id="6" -->
 

@@ -15,17 +15,32 @@
           "title": "Working with Data",
           "path": "/docs/latest/learn/working-with-data",
           "routes": [
-            {"path":"/docs/latest/learn/working-with-data/sorting", "title": "Sorting"},
-            {"path":"/docs/latest/learn/working-with-data/live-pagination", "title": "Live Pagination"},
-            {"path":"/docs/latest/learn/working-with-data/lazy-loading", "title": "Lazy Loading"}
+            {
+              "path": "/docs/latest/learn/working-with-data/sorting",
+              "title": "Sorting"
+            },
+            {
+              "path": "/docs/latest/learn/working-with-data/live-pagination",
+              "title": "Live Pagination"
+            },
+            {
+              "path": "/docs/latest/learn/working-with-data/lazy-loading",
+              "title": "Lazy Loading"
+            }
           ]
         },
         {
           "title": "Working with Columns",
           "path": "/docs/latest/learn/columns",
           "routes": [
-            {"path":"/docs/latest/learn/columns/column-types", "title": "Column Types"},
-            {"path":"/docs/latest/learn/columns/fixed-and-flexible-size", "title": "Column Sizing"}
+            {
+              "path": "/docs/latest/learn/columns/column-types",
+              "title": "Column Types"
+            },
+            {
+              "path": "/docs/latest/learn/columns/fixed-and-flexible-size",
+              "title": "Column Sizing"
+            }
           ]
         },
         {
@@ -42,12 +57,22 @@
             },
             {
               "title": "Pivoting",
-              "path": "/docs/latest/learn/grouping-and-pivoting/pivoting"
+              "transient": true,
+              "path": "/docs/latest/learn/grouping-and-pivoting/pivoting/overview",
+              "routes": [
+                {
+                  "title": "Overview",
+                  "path": "/docs/latest/learn/grouping-and-pivoting/pivoting/overview"
+                },
+                {
+                  "title": "Customizing Pivot Columns",
+                  "path": "/docs/latest/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns"
+                }
+              ]
             }
           ]
-          
         },
-       
+
         {
           "title": "Theming",
           "path": "/docs/latest/learn/theming",
