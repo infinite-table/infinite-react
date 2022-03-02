@@ -16,7 +16,6 @@ const express = require('express');
 const serverless = require('serverless-http');
 
 const jsonServer = require('json-server');
-
 const {
   employees,
 } = require('../../dataserver/data/employees.json');
