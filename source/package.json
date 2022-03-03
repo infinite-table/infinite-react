@@ -6,7 +6,7 @@
   "module": "index.esm.js",
   "typings": "index.d.ts",
   "scripts": {
-    "build": "rimraf dist && npm run tsc && node ./build/buildPackageJson.js && npm run esbuild && npm run update-md && cp LICENSE.md ./dist && cp ../README.md ./dist",
+    "build": "rimraf dist && npm run tsc && npm run concat-dts && node ./build/buildPackageJson.js && npm run esbuild && npm run update-md && cp LICENSE.md ./dist && cp ../README.md ./dist",
     "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\"",
     "rollup-types": "rollup -c rollup.config.js",
     "update-md": "npm run --prefix .. doctoc",
@@ -21,7 +21,8 @@
     "test": "npm run --prefix=examples test ",
     "dev": "npm run --prefix=examples dev",
     "//-": " only build declaration files",
-    "tsc": "tsc --project tsconfig.build.json --outFile dist/index.d.ts ",
+    "tsc": "tsc --project tsconfig.build.json",
+    "concat-dts": "tsup src/index.tsx --dts-only",
     "xxx - no longer used - bundle-types": "dts-bundle-generator --config bundler.config.js",
     "tscw": "tsc --watch --project tsconfig.build.json --outDir dist",
     "xxx - no longer used - concat-dts": "node run-dts-concat.js",
@@ -103,6 +104,7 @@
     "tsc-prog": "^2.2.1",
     "tsdx": "^0.14.1",
     "tslib": "^2.1.0",
+    "tsup": "^5.11.13",
     "typedoc": "^0.20.19",
     "typescript": "^4.5.0-beta"
   },

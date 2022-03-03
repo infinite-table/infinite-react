@@ -10,9 +10,15 @@ import { useInfiniteTemplate } from '../../useInfiniteTemplate';
 import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 
 const DEPS_VERSIONS: Record<string, string> = {
-  '@infinite-table/infinite-react': '0.2.8',
+  '@infinite-table/infinite-react': process.env
+    .NEXT_PUBLIC_INFINITE_REACT_VERSION as string,
   'react-query': '3.34.8',
 };
+
+console.log(
+  'working with infinite-react version: ',
+  DEPS_VERSIONS['@infinite-table/infinite-react']
+);
 
 type SandpackProps = {
   children: React.ReactChildren;

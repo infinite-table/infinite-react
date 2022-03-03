@@ -12,7 +12,24 @@ const {
   remarkPlugins,
 } = require('./plugins/markdownToHtml');
 
+const spawnSync = require('child_process').spawnSync;
+
+const exec = (cmd, args = []) =>
+  spawnSync(cmd, args, { stdio: 'pipe' });
+
+const result = exec('npm', [
+  'show',
+  '@infinite-table/infinite-react',
+  'versions',
+  '--json',
+]);
+
+const versions = JSON.parse(result.stdout);
+
 const nextConfig = withMDX({
+  env: {
+    NEXT_PUBLIC_INFINITE_REACT_VERSION: versions.pop(),
+  },
   pageExtensions: ['page.tsx', 'page.mdx', 'page.md'],
   rewrites() {
     return [

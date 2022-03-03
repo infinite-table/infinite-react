@@ -25,7 +25,7 @@ function codeImport(options = {}) {
     });
 
     for (const [node] of codes) {
-      console.log('node meta', node.meta);
+      // console.log('node meta', node.meta);
       if (!node.meta) {
         continue;
         // console.log('node ', node);

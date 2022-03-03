@@ -1,11 +1,10 @@
 {
-  "include": ["src","examples","./globals.d.ts"],
+  "include": ["src", "examples", "./globals.d.ts"],
   "compilerOptions": {
     "target": "es6",
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
-    "declaration": true,
     "sourceMap": true,
     "rootDir": ".",
     "strict": true,
@@ -25,7 +24,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react",
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "exclude": ["dist"]
 }

@@ -5,6 +5,14 @@ on:
     types: [opened, edited, milestoned]
   label:
     types: [created, edited, deleted]
+  workflow_run:
+    # when the "RELEASE" workflow is completed successfully, we need to react and run this publish-docs workflow
+    workflows: [RELEASE]
+    types: [completed]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   run-netlify-hook:
