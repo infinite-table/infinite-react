@@ -100,7 +100,9 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
     }
 
     const onScroll = (scrollPosition: ScrollPosition) => {
-      UPDATE_SCROLL(domRef.current!, scrollPosition);
+      if (domRef.current) {
+        UPDATE_SCROLL(domRef.current, scrollPosition);
+      }
     };
 
     const removeOnScroll = scroller!.onScroll(onScroll);

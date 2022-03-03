@@ -100,7 +100,6 @@ export default function Nav() {
     React.useContext(MenuContext);
 
   const section = inferSection(pathname);
-  console.log({ pathname, section });
 
   function handleFeedback() {
     const nodes: any = document.querySelectorAll(

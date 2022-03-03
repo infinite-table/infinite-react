@@ -58,7 +58,9 @@ function InfiniteTableHeaderFn<T>(
 
   useEffect(() => {
     const onScroll = (scrollPosition: ScrollPosition) => {
-      domRef.current!.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
+      if (domRef.current) {
+        domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
+      }
     };
 
     const removeOnScroll = brain.onScroll(onScroll);

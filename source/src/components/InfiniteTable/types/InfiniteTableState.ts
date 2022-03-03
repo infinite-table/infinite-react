@@ -3,9 +3,9 @@ import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroupsMap,
   InfiniteTablePropColumnPinningMap,
-  InfiniteTablePropColumnSizingMap,
+  InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnsMap,
-  InfiniteTablePropColumnTypesMap,
+  InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
 } from './InfiniteTableProps';
@@ -109,8 +109,8 @@ export interface InfiniteTableMappedState<T> {
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnPinning: InfiniteTablePropColumnPinningMap;
-  columnSizing: InfiniteTablePropColumnSizingMap;
-  columnTypes: InfiniteTablePropColumnTypesMap<T>;
+  columnSizing: InfiniteTablePropColumnSizing;
+  columnTypes: InfiniteTablePropColumnTypes<T>;
   columnGroups: InfiniteTablePropColumnGroupsMap;
   collapsedColumnGroups: NonUndefined<
     InfiniteTableProps<T>['collapsedColumnGroups']

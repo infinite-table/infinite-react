@@ -219,6 +219,8 @@ export type InfiniteTableBaseColumn<T> = {
 
   defaultWidth?: number;
   defaultFlex?: number;
+  minWidth?: number;
+  maxWidth?: number;
 
   // value
 };

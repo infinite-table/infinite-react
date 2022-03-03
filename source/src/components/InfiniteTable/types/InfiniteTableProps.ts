@@ -106,9 +106,10 @@ export type InfiniteTablePropColumnTypesMap<T> = Map<
   'default' | string,
   InfiniteTableColumnType<T>
 >;
-export type InfiniteTablePropColumnTypes<T> =
-  | InfiniteTablePropColumnTypesMap<T>
-  | Record<'default' | string, InfiniteTableColumnType<T>>;
+export type InfiniteTablePropColumnTypes<T> = Record<
+  'default' | string,
+  InfiniteTableColumnType<T>
+>;
 
 export type InfiniteTableColumnSizingOptions = {
   flex?: number;
@@ -116,13 +117,10 @@ export type InfiniteTableColumnSizingOptions = {
   minWidth?: number;
   maxWidth?: number;
 };
-export type InfiniteTablePropColumnSizingMap = Map<
+export type InfiniteTablePropColumnSizing = Record<
   string,
   InfiniteTableColumnSizingOptions
 >;
-export type InfiniteTablePropColumnSizing =
-  | InfiniteTablePropColumnSizingMap
-  | Record<string, InfiniteTableColumnSizingOptions>;
 
 export type InfiniteTableImperativeApi<T> = {
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;

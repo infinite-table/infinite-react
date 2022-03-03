@@ -12,14 +12,15 @@ import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinningMap,
-  InfiniteTablePropColumnSizingMap,
-  InfiniteTablePropColumnTypesMap,
+  InfiniteTablePropColumnSizing,
+  InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { err } from '../../../utils/debug';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 import { getColumnComputedType } from './getColumnComputedType';
+import { assignNonNull } from './assignFiltered';
 
 const logError = err('getComputedVisibleColumns');
 
@@ -99,8 +100,8 @@ type GetComputedVisibleColumnsParam<T> = {
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
   columnPinning: InfiniteTablePropColumnPinningMap;
-  columnSizing: InfiniteTablePropColumnSizingMap;
-  columnTypes: InfiniteTablePropColumnTypesMap<T>;
+  columnSizing: InfiniteTablePropColumnSizing;
+  columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible: boolean;
 };
@@ -185,35 +186,41 @@ export const getComputedVisibleColumns = <T extends unknown>({
     items: visibleColumnOrder.map((colId) => {
       const column = columns.get(colId);
       const colType = getColumnComputedType(column!, columnTypes);
-      // const colType = column?.type ? columnTypes.get(column.type) : undefined;
-
       const colTypeSizing: InfiniteTableColumnSizingOptions = {
         minWidth: colType?.minWidth,
         maxWidth: colType?.maxWidth,
         width: colType?.defaultWidth,
         flex: colType?.defaultFlex,
       };
-      let colSizing = columnSizing.get(colId) || {
-        width: column?.defaultWidth,
-        flex: column?.defaultFlex,
-      };
+      let colSizing = assignNonNull(
+        {
+          width: column?.defaultWidth,
+          flex: column?.defaultFlex,
+          minWidth: column?.minWidth,
+          maxWidth: column?.maxWidth,
+        },
+        columnSizing[colId],
+      );
 
       // if colSizing has width
       if (colSizing.width != null) {
         // it should ignore coltype flex
         delete colTypeSizing.flex;
       }
+
       // or if it has flex
       if (colSizing.flex != null) {
         // it should ignore coltype width
         delete colTypeSizing.width;
       }
 
-      colSizing = Object.assign(colTypeSizing, colSizing);
+      colSizing = assignNonNull(colTypeSizing, colSizing);
 
       let colFlex: number | undefined = colSizing.flex ?? undefined;
-      const colMinWidth = colSizing.minWidth ?? columnMinWidth;
-      const colMaxWidth = colSizing.maxWidth ?? columnMaxWidth;
+      const colMinWidth =
+        colSizing.minWidth ?? column?.minWidth ?? columnMinWidth;
+      const colMaxWidth =
+        colSizing.maxWidth ?? column?.maxWidth ?? columnMaxWidth;
 
       let size =
         colFlex != undefined
@@ -223,6 +230,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       if (!size && colFlex == undefined) {
         size = colMinWidth;
       }
+
       return {
         size,
         flex: colFlex!,

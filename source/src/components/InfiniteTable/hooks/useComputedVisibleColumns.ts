@@ -5,8 +5,8 @@ import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnPinningMap,
-  InfiniteTablePropColumnSizingMap,
-  InfiniteTablePropColumnTypesMap,
+  InfiniteTablePropColumnSizing,
+  InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
 import type { Size } from '../../types/Size';
@@ -34,8 +34,8 @@ type UseComputedVisibleColumnsParam<T> = {
   setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
 
   columnPinning: InfiniteTablePropColumnPinningMap;
-  columnSizing: InfiniteTablePropColumnSizingMap;
-  columnTypes: InfiniteTablePropColumnTypesMap<T>;
+  columnSizing: InfiniteTablePropColumnSizing;
+  columnTypes: InfiniteTablePropColumnTypes<T>;
   columnOrder: InfiniteTablePropColumnOrder;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible?: boolean;
@@ -85,8 +85,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnVisibilityAssumeVisible,
   columnSizing,
 }: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
-  const columnsSizingRenderId = useRerenderOnKeyChange(columnSizing);
-  const columnTypesRenderId = useRerenderOnKeyChange(columnTypes);
   const columnsRenderId = useRerenderOnKeyChange(columns);
 
   const pinningRenderId = useRerenderOnKeyChange(columnPinning);
@@ -157,9 +155,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnPinning,
 
     columnsRenderId,
-    columnsSizingRenderId,
     pinningRenderId,
-    columnTypesRenderId,
   ]);
 
   const result: UseComputedVisibleColumnsResult<T> = {

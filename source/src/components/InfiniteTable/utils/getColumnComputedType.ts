@@ -1,17 +1,17 @@
 import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTableColumnType,
-  InfiniteTablePropColumnTypesMap,
+  InfiniteTablePropColumnTypes,
 } from '../types/InfiniteTableProps';
 
 const emptyType: InfiniteTableColumnType<any> = Object.freeze({});
 
 export function getColumnComputedType<T>(
   column: InfiniteTableColumn<T>,
-  columnTypes: InfiniteTablePropColumnTypesMap<T>,
+  columnTypes: InfiniteTablePropColumnTypes<T>,
 ): InfiniteTableColumnType<T> {
   const defaultType: InfiniteTableColumnType<T> =
-    columnTypes.get('default') || emptyType;
+    columnTypes['default'] || emptyType;
 
   if (column.type === undefined) {
     return defaultType;
@@ -20,12 +20,12 @@ export function getColumnComputedType<T>(
     return emptyType;
   }
   if (typeof column.type === 'string') {
-    const type = columnTypes.get(column.type) || emptyType;
+    const type = columnTypes[column.type] || emptyType;
 
     return type;
   }
   return column.type.reduce(
-    (acc, columnType) => Object.assign(acc, columnTypes.get(columnType)),
+    (acc, columnType) => Object.assign(acc, columnTypes[columnType]),
     {} as InfiniteTableColumnType<T>,
   );
 }

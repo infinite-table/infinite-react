@@ -131,10 +131,8 @@ export const forwardProps = <T>(
     // TODO check if columnPinning works when the value for a pinned col is `true` instead of `"start"`
     columnPinning: (columnPinning) =>
       toMap(columnPinning, setupState.propsCache.get('columnPinning')),
-    columnSizing: (columnSizing) =>
-      toMap(columnSizing, setupState.propsCache.get('columnSizing')),
-    columnTypes: (columnTypes) =>
-      toMap(columnTypes, setupState.propsCache.get('columnTypes')),
+    columnSizing: (columnSizing) => columnSizing || {},
+    columnTypes: (columnTypes) => columnTypes || {},
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),
