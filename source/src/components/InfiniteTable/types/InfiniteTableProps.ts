@@ -104,6 +104,7 @@ export type InfiniteTableColumnType<T> = {
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
+  style?: InfiniteTableColumn<T>['style'];
 };
 export type InfiniteTablePropColumnTypesMap<T> = Map<
   'default' | string,

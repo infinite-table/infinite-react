@@ -165,6 +165,27 @@ The following properties are available:
 </Sandpack>
 </Prop>
 
+<Prop name="columns.cssEllipsis" type="boolean" defaultValue={true}>
+
+> Specifies if the column should show ellipsis for content that is too long and does not fit the column width.
+
+<Note>
+
+For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
+
+</Note>
+
+
+<Sandpack title="First name column(first) has cssEllipsis set to false">
+
+
+```ts file=columns-cssEllipsis-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
 
 > Controls default column visibility when <DataSourcePropLink name="groupBy" /> is used.
@@ -233,6 +254,29 @@ When we implement filtering, you'll also have access to the column filter.
 </Sandpack>
 </Prop>
 
+<Prop name="columns.headerCssEllipsis" type="boolean" defaultValue={true}>
+
+> Specifies if the column should show ellipsis in the column header if the header is too long and does not fit the column width.
+
+If this property is not specified, the value of <PropLink name="columns.cssEllipsis" /> will be used.
+
+<Note>
+
+For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
+
+</Note>
+
+
+<Sandpack title="Preferred Language column(second) has headerCssEllipsis set to false">
+
+
+```ts file=columns-cssEllipsis-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
 
 > Specifies the rowspan for cells on the current column.
@@ -253,6 +297,36 @@ The `rowInfo` object contains information about grouping (if this row is a group
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="columns.style" type="CSSProperties | (args) => CSSProperties">
+
+> Controls styling for the column. Can be a style object or a function returning a style object.
+
+If defined as a function, it accepts an object as a parameter, which has the following properties:
+
+ * `column` - the current column where the style is being applied
+ * `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
+ * `rowInfo` - the information about the current row - contains details about grouping (if this is a group row, the collapsed state, etc), parent groups, children of the current row, etc
+ * `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
+
+
+
+<Note>
+
+The `style` property can also be specified for <PropLink name="columnTypes"/>
+
+
+</Note>
+
+<Sandpack>
+
+```ts file=columns-style-example.page.tsx
+```
+
+</Sandpack>
+
 
 </Prop>
 
@@ -434,17 +508,20 @@ By default, all columns have the `default` column type applied. So, if you defin
 
 The following properties are currently supported for defining a column type:
 
- * `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
- * `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
+ * `align` - See <PropLink name="column.align" />
+ * `cssEllipsis` - See <PropLink name="column.cssEllipsis" />
  * `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
  * `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
+ * `header` - See <PropLink name="column.header" />
+ * `headerCssEllipsis` - See <PropLink name="column.headerCssEllipsis" />
+ * `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
+ * `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
  * `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
  * `renderValue` - See <PropLink name="column.renderValue" />
  * `valueGetter` - See <PropLink name="column.valueGetter" />
- * `header` - See <PropLink name="column.header" />
- * `align` - See <PropLink name="column.align" />
  * `verticalAlign` - See <PropLink name="column.verticalAlign" />
  * `sortable` - See <PropLink name="column.sortable" />
+ * `style` - See <PropLink name="column.style" />
 
 <Note>
 When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.

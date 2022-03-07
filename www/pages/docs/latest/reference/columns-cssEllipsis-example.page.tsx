@@ -29,39 +29,36 @@ const dataSource = () => {
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
+
 const columns: InfiniteTablePropColumns<Developer> = {
-  id: { field: 'id' },
-  firstName: { field: 'firstName' },
-  preferredLanguage: { field: 'preferredLanguage' },
+  firstName: {
+    field: 'firstName',
+    cssEllipsis: false,
+    defaultWidth: 60,
+  },
+  preferredLanguage: {
+    field: 'preferredLanguage',
+    defaultWidth: 100,
+    headerCssEllipsis: false,
+    cssEllipsis: true,
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
   stack: { field: 'stack' },
   country: { field: 'country' },
   age: { field: 'age', type: 'number' },
-  salary: { field: 'salary', type: 'number' },
   currency: { field: 'currency', type: 'number' },
 };
 
 export default function GroupByExample() {
-  const [scrollTopKey, setScrollTopKey] = React.useState(0);
   return (
     <>
-      <button
-        style={{
-          margin: 10,
-          padding: 10,
-          borderRadius: 5,
-          border: '2px solid magenta',
-        }}
-        onClick={() => {
-          setScrollTopKey((key) => key + 1);
-        }}>
-        Scroll to top
-      </button>
-
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}>
         <InfiniteTable<Developer>
-          scrollTopKey={scrollTopKey}
           columns={columns}
           columnDefaultWidth={200}
         />

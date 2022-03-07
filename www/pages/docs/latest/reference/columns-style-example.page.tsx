@@ -31,64 +31,39 @@ const dataSource = () => {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  id: { field: 'id' },
+  id: {
+    field: 'id',
+    style: {
+      background: 'gray',
+      color: 'white',
+    },
+  },
   firstName: { field: 'firstName' },
   preferredLanguage: { field: 'preferredLanguage' },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    style: ({ value }) => {
+      return {
+        color:
+          value && value > 100_000 ? 'red' : 'currentColor',
+      };
+    },
+  },
   stack: { field: 'stack' },
   country: { field: 'country' },
   age: { field: 'age', type: 'number' },
-  salary: { field: 'salary', type: 'number' },
+
   currency: { field: 'currency', type: 'number' },
 };
 
 export default function GroupByExample() {
-  const [key, setKey] = React.useState(0);
-  const [includeHeader, setIncludeHeader] =
-    React.useState(false);
-
-  const autoSizeColumnsKey = React.useMemo(() => {
-    return {
-      includeHeader,
-      key,
-    };
-  }, [key, includeHeader]);
   return (
     <>
-      <div
-        style={{
-          color: 'var(--infinite-row-color)',
-          background: 'var(--infinite-background)',
-        }}>
-        <label>
-          <input
-            checked={includeHeader}
-            type={'checkbox'}
-            onChange={(e) => {
-              setIncludeHeader(e.target.checked);
-            }}
-          />{' '}
-          Include header
-        </label>
-
-        <button
-          style={{
-            margin: 10,
-            padding: 10,
-            borderRadius: 5,
-            border: '2px solid magenta',
-          }}
-          onClick={() => {
-            setKey((key) => key + 1);
-          }}>
-          Click to auto-size
-        </button>
-      </div>
-
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}>
         <InfiniteTable<Developer>
-          autoSizeColumnsKey={autoSizeColumnsKey}
           columns={columns}
           columnDefaultWidth={200}
         />

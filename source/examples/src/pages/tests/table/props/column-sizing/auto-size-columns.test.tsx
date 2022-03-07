@@ -1,5 +1,8 @@
 import { getColumnWidths } from '../../../testUtils';
 
+function roundDownToTens(val: number) {
+  return val - (val % 10);
+}
 export default describe('Column autosizing tests', () => {
   beforeAll(async () => {
     await page.goto(
@@ -29,7 +32,8 @@ export default describe('Column autosizing tests', () => {
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age']);
 
-    expect(widths).toEqual([67, 127, 188, 800]);
+    // expect(widths).toEqual([67, 127, 188, 800]);
+    expect(widths.map(roundDownToTens)).toEqual([60, 120, 180, 800]);
   });
 
   it('expect autoSizeColumnsKey.columnsToSkip to work', async () => {
@@ -51,7 +55,8 @@ export default describe('Column autosizing tests', () => {
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age']);
 
-    expect(widths).toEqual([200, 127, 188, 50]);
+    // expect(widths).toEqual([200, 127, 188, 50]);
+    expect(widths.map(roundDownToTens)).toEqual([200, 120, 180, 50]);
   });
 
   it('expect autoSizeColumnsKey to work', async () => {
@@ -69,6 +74,7 @@ export default describe('Column autosizing tests', () => {
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age']);
 
-    expect(widths).toEqual([67, 127, 188, 133]);
+    // expect(widths).toEqual([67, 127, 188, 133]);
+    expect(widths.map(roundDownToTens)).toEqual([60, 120, 180, 130]);
   });
 });

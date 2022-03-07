@@ -402,6 +402,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       valueGetter: colType.valueGetter,
       renderValue: colType.renderValue,
       render: colType.render,
+      style: colType.style,
 
       ...c,
       cssEllipsis,
