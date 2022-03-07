@@ -92,6 +92,9 @@ type GetComputedVisibleColumnsParam<T> = {
   columnDefaultWidth?: number;
   viewportReservedWidth?: number;
 
+  columnCssEllipsis: boolean;
+  columnHeaderCssEllipsis: boolean;
+
   sortable?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
@@ -113,6 +116,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnMinWidth,
   columnMaxWidth,
   columnDefaultWidth,
+  columnCssEllipsis,
+  columnHeaderCssEllipsis,
   pinnedStartMaxWidth,
   pinnedEndMaxWidth,
   sortable,
@@ -174,6 +179,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
     },
     {} as SortInfoMap<T>,
   );
+
+  console.log(columnSizing, 'columnSizing');
 
   const flexResult = computeFlex({
     availableSize: Math.max(
@@ -377,6 +384,17 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedLast ||
       computedPinned !== getComputedPinned(nextColumnId, columnPinning);
 
+    const cssEllipsis =
+      c.cssEllipsis ?? colType.cssEllipsis ?? columnCssEllipsis;
+
+    const headerCssEllipsis =
+      c.headerCssEllipsis ??
+      colType.cssEllipsis ??
+      c.cssEllipsis ??
+      colType.headerCssEllipsis ??
+      columnHeaderCssEllipsis ??
+      cssEllipsis;
+
     const result: InfiniteTableComputedColumn<T> = {
       align: colType.align,
       verticalAlign: colType.verticalAlign,
@@ -386,6 +404,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
       render: colType.render,
 
       ...c,
+      cssEllipsis,
+      headerCssEllipsis,
       computedWidth,
       computedAbsoluteOffset,
       computedPinningOffset,

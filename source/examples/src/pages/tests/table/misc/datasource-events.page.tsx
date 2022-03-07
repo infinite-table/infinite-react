@@ -246,7 +246,7 @@ const Example = () => {
         >
           <InfiniteTable<Employee>
             domProps={domProps}
-            scrollTopId={scrollTopId}
+            scrollTopKey={scrollTopId}
             columnDefaultWidth={200}
             columns={columns}
           />

@@ -31,7 +31,7 @@ const defaultStyle: React.CSSProperties = {
 
 const { rootClassName } = internalProps;
 
-const baseCls = `${rootClassName}HeaderCell`;
+export const InfiniteTableHeaderCellClassName = `${rootClassName}HeaderCell`;
 
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
@@ -62,7 +62,7 @@ export function InfiniteTableHeaderCell<T>(
       index={
         column.computedMultiSort ? column.computedSortIndex + 1 : undefined
       }
-      className={`${baseCls}__sort-icon ${HeaderSortIconCls}`}
+      className={`${InfiniteTableHeaderCellClassName}__sort-icon ${HeaderSortIconCls}`}
       direction={
         column.computedSorted ? (column.computedSortedAsc ? 1 : -1) : 0
       }
@@ -118,7 +118,7 @@ export function InfiniteTableHeaderCell<T>(
   if (dragging) {
     draggingProxy = (
       <div
-        className={`${baseCls}Proxy ${HeaderCellProxy}`}
+        className={`${InfiniteTableHeaderCellClassName}Proxy ${HeaderCellProxy}`}
         style={{
           position: 'absolute',
           height: headerHeight,
@@ -151,13 +151,13 @@ export function InfiniteTableHeaderCell<T>(
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         className={join(
-          baseCls,
+          InfiniteTableHeaderCellClassName,
           userSelect.none,
           column.computedSortable ? cursor.pointer : '',
 
           useCellClassName(
             column,
-            [baseCls, InfiniteTableCellClassName],
+            [InfiniteTableHeaderCellClassName, InfiniteTableCellClassName],
             HeaderCellRecipe,
             { dragging },
           ),

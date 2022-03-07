@@ -118,3 +118,25 @@ For <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</Pr
 
 
 </Gotcha>
+
+## Auto-sizing columns
+
+For sizing columns to the width of their content, you can use <PropLink name="autoSizeColumnsKey" /> to declaratively auto-size columns:
+
+- when <PropLink name="autoSizeColumnsKey" /> is a `string` or `number` and the value of the prop is changed, all columns will be auto-sized.
+- when <PropLink name="autoSizeColumnsKey" /> is an object, it needs to have a `key` property (of type `string` or `number`), so whenever the `key` changes, the columns will be auto-sized. Specifying an object for <PropLink name="autoSizeColumnsKey" /> gives you more control over which columns are auto-sized and if the size measurements include the header or not.
+
+When an object is used, the following properties are available:
+
+ * `key` - mandatory property, which, when changed, triggers the update
+ * `includeHeader` - optional boolean, - decides whether the header will be included in the auto-sizing calculations. If not specified, `true` is assumed.
+ * `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
+ * `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
+
+
+<Sandpack title="Auto-sizing columns">
+
+```tsx file=../../reference/autoSizeColumnsKey-example.page.tsx
+```
+
+</Sandpack>

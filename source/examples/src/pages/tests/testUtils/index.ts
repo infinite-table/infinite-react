@@ -39,6 +39,14 @@ export const getHeaderCellWidthByColumnId = async (
   return value;
 };
 
+export const getColumnWidths = async (colIds: string[]) => {
+  return await Promise.all(
+    colIds.map(async (id) => {
+      return await getHeaderCellWidthByColumnId(id);
+    }),
+  );
+};
+
 export const getHeaderColumnCells = async () => {
   const cells = await page.$$(`.InfiniteHeader [data-name="Cell"]`);
 

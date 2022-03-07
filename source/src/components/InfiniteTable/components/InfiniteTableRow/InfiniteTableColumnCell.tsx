@@ -22,7 +22,8 @@ import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDa
 import { ColumnCellRecipe } from '../cell.css';
 
 const { rootClassName } = internalProps;
-const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
+
+export const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
 
 function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,

@@ -21,6 +21,8 @@ type UseComputedVisibleColumnsParam<T> = {
   bodySize: Size;
   columnMinWidth?: number;
   columnMaxWidth?: number;
+  columnCssEllipsis: boolean;
+  columnHeaderCssEllipsis: boolean;
   viewportReservedWidth?: number;
 
   pinnedEndMaxWidth?: number;
@@ -71,6 +73,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnMaxWidth,
   columnDefaultWidth,
   sortable,
+  columnCssEllipsis,
+  columnHeaderCssEllipsis,
   draggableColumns,
   sortInfo,
   multiSort,
@@ -112,6 +116,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnMinWidth,
       columnMaxWidth,
       columnDefaultWidth,
+      columnCssEllipsis,
+      columnHeaderCssEllipsis,
       viewportReservedWidth,
 
       sortable,
@@ -151,6 +157,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
     pinnedEndMaxWidth,
     pinnedStartMaxWidth,
+
+    columnSizing,
 
     columnPinning,
 

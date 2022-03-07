@@ -98,6 +98,9 @@ export type InfiniteTableColumnType<T> = {
   align?: InfiniteTableColumn<T>['align'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
+  cssEllipsis?: boolean;
+  headerCssEllipsis?: boolean;
+
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
@@ -284,6 +287,7 @@ export interface InfiniteTableProps<T> {
 
   columnSizing?: InfiniteTablePropColumnSizing;
   defaultColumnSizing?: InfiniteTablePropColumnSizing;
+  onColumnSizingChange?: (columnSizing: InfiniteTablePropColumnSizing) => void;
 
   pivotColumnGroups?: InfiniteTablePropColumnGroups;
   columnGroups?: InfiniteTablePropColumnGroups;
@@ -317,9 +321,13 @@ export interface InfiniteTableProps<T> {
   focusedWithinClassName?: string;
   focusedStyle?: React.CSSProperties;
   focusedWithinStyle?: React.CSSProperties;
+  columnCssEllipsis?: boolean;
+  columnHeaderCssEllipsis?: boolean;
   columnDefaultWidth?: number;
   columnMinWidth?: number;
   columnMaxWidth?: number;
+
+  resizableColumns?: boolean;
   virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;
   virtualizeRows?: boolean;
 
@@ -352,8 +360,19 @@ export interface InfiniteTableProps<T> {
 
   licenseKey?: string;
 
-  scrollTopId?: string | number;
+  scrollTopKey?: string | number;
+  autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 }
+
+export type InfiniteTablePropAutoSizeColumnsKey =
+  | string
+  | number
+  | {
+      key: string | number;
+      columnsToSkip?: string[];
+      columnsToResize?: string[];
+      includeHeader?: boolean;
+    };
 
 export type Scrollbars = {
   vertical: boolean;

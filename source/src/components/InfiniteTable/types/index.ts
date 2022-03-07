@@ -27,6 +27,7 @@ import type {
   Scrollbars,
   InfiniteTableGroupColumnBase,
   InfiniteTablePropGroupColumn,
+  InfiniteTablePropAutoSizeColumnsKey,
 } from './InfiniteTableProps';
 
 import type {
@@ -43,6 +44,7 @@ import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
 
 export type {
   Scrollbars,
+  InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
   InfiniteTableColumnRowspanParam,

@@ -49,6 +49,7 @@ import { join } from '../../utils/join';
 import { ThemeVars } from './theme.css';
 import { debounce } from '../utils/debounce';
 import { RenderRange } from '../VirtualBrain';
+import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -173,6 +174,8 @@ export const InfiniteTableComponent = React.memo(
       dataSourceActions.scrollStopDelayUpdatedByTable = scrollStopDelay;
     }, [scrollStopDelay]);
 
+    useAutoSizeColumns();
+
     return (
       <div ref={domRef} {...domProps}>
         {header ? (
@@ -240,7 +243,7 @@ function InfiniteTableContextProvider<T>() {
   const { componentActions, componentState } =
     useComponentState<InfiniteTableState<T>>();
 
-  const { scrollerDOMRef, scrollTopId } = componentState;
+  const { scrollerDOMRef, scrollTopKey } = componentState;
 
   const computed = useComputed<T>();
   const getComputed = useLatest(computed);
@@ -291,7 +294,7 @@ function InfiniteTableContextProvider<T>() {
     if (scrollerDOMRef.current) {
       scrollerDOMRef.current.scrollTop = 0;
     }
-  }, [scrollTopId, scrollerDOMRef]);
+  }, [scrollTopKey, scrollerDOMRef]);
 
   const TableContext = getInfiniteTableContext<T>();
 

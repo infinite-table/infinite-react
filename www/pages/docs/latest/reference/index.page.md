@@ -8,6 +8,49 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
+<Prop name="autoSizeColumnsKey" type="number|string|{key,includeHeader,columnsToSkip,columnsToResize}">
+
+> Controls auto-sizing of columns.
+
+Here is a list of possible values for `autoSizeColumnsKey`:
+
+- `string` or `number` - when the value is changing, all columns will be auto-sized.
+
+- an object with a `key` property (of type `string` or `number`) - whenever the `key` changes, the columns will be auto-sized. Specifying an object for `autoSizeColumnsKey` gives you more control over which columns are auto-sized and if the size measurements include the header or not.
+
+When an object is used, the following properties are available:
+
+ * `key` - mandatory property, which, when changed, triggers the update
+ * `includeHeader` - optional boolean, - decides whether the header will be included in the auto-sizing calculations. If not specified, `true` is assumed.
+ * `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
+ * `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
+
+
+<Sandpack title="Auto-sizing columns">
+
+```tsx file=autoSizeColumnsKey-example.page.tsx
+```
+
+</Sandpack>
+
+
+<Note>
+
+When auto-sizing takes place, <PropLink name="onColumnSizingChange" /> is called with the new column sizes. If you use controlled <PropLink name="columnSizing" />, make sure you update its value accordingly.
+
+</Note>
+
+<Note>
+
+When columns are auto-sized, keep in mind that only visible (rendered) rows are taken into account - so if you scroll new rows into view, auto-sizing columns may result in different column sizes.
+
+In the same logic, keep in mind that by default columns are also virtualized (controlled by <PropLink name="virtualizeColumns" />), not only rows, so only visible columns are auto-sized (in case you have more columns, the columns that are not currently visible do not change their sizes).
+
+</Note>
+
+
+</Prop>
+
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
@@ -277,7 +320,7 @@ See related <PropLink name="columns.defaultFlex" />
 
 </Prop>
 
-<Prop name="columnSizing" type="(Map|Record)<string,{width,flex,...}>">
+<Prop name="columnSizing" type="Record<string,{width,flex,...}>">
 
 > Defines the sizing of columns in the grid.
 
@@ -296,6 +339,12 @@ It is an object (or Map) that maps column ids to column sizing options. The valu
 ```
 
 </Sandpack>
+
+<Note>
+
+For auto-sizing columns, see <PropLink name="autoSizeColumnsKey" />.
+
+</Note>
 
 </Prop>
 
@@ -619,6 +668,13 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 
 As an example usage, we're demoing live pagination, done in combination with the [react-query](https://react-query.tanstack.com/) library.
 
+
+<Note>
+
+If you want to scroll to the top of the table, you can use the <PropLink name="scrollTopKey" /> prop.
+
+</Note>
+
 <Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
 
 ```ts file=../learn/working-with-data/live-pagination-example.page.tsx
@@ -745,6 +801,29 @@ Or you can use a negative value, eg `-200` so the flexbox algorithm will use ano
 ```ts file=viewportReservedWidth-example.page.tsx
 ```
 </Sandpack>
+
+</Prop>
+
+<Prop name="scrollTopKey" type="number|string">
+
+> Determines scrolling the table to the top.
+
+Use this property to declaratively tell the `InfiniteTable` component to scroll to the top. Whenever a new value is provided for this property, it will scroll to the top.
+
+<Sandpack title="Declaratively scrolling to the top of the table">
+
+```ts file=scrollTopKey-example.page.tsx
+```
+</Sandpack>
+
+
+</Prop>
+
+<Prop name="virtualizeColumns" type="boolean" defaultValue={true}>
+
+> Configures whether columns are virtualized or not
+
+By default, columns are virtualized in order to improve performance.
 
 </Prop>
 

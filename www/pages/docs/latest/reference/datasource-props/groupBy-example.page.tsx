@@ -8,9 +8,9 @@ import {
 
 import { columns, Employee } from './columns';
 
-const columnSizing = new Map<string, { width: number }>([
-  ['country-group', { width: 250 }],
-]);
+const columnSizing: Record<string, { width: number }> = {
+  'country-group': { width: 250 },
+};
 
 const groupBy: DataSourcePropGroupBy<Employee> = [
   {

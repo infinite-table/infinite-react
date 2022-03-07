@@ -46,6 +46,8 @@ export const CellCls = style([
   },
 ]);
 
+export const ColumnCellCls = style([CellCls]);
+
 export const ColumnCellVariantsObject = {
   first: {
     borderTopLeftRadius: ThemeVars.components.Cell.borderRadius,

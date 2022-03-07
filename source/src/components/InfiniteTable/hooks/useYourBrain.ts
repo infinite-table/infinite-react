@@ -2,13 +2,14 @@
 // but I couldn't stand naming it `useYourBrain` instead 🤷‍♂️
 
 import { useEffect } from 'react';
-import { useOnce } from '../../hooks/useOnce';
 import { Size } from '../../types/Size';
 import { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
 import { InfiniteTableComputedColumn } from '../types';
 import { useColumnSizeFn } from './useColumnSizeFn';
 
 type UseYourBrainParam<T = any> = {
+  horizontalVirtualBrain: VirtualBrain;
+  verticalVirtualBrain: VirtualBrain;
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedStartWidth: number;
   computedPinnedEndWidth: number;
@@ -20,6 +21,8 @@ type UseYourBrainParam<T = any> = {
 export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
   const {
     dataArray,
+    horizontalVirtualBrain,
+    verticalVirtualBrain,
     computedUnpinnedColumns,
     computedPinnedStartWidth,
     computedPinnedEndWidth,
@@ -28,36 +31,6 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     rowSpan,
   } = param;
   const columnSize = useColumnSizeFn<T>(computedUnpinnedColumns);
-
-  const horizontalVirtualBrain = useOnce<VirtualBrain>(() => {
-    const brain = new VirtualBrain({
-      count: computedUnpinnedColumns.length,
-      // no need to have columnSize as a dep
-      // as it only uses computed.columns
-      itemSize: columnSize,
-      mainAxis: 'horizontal',
-    });
-
-    return brain;
-  });
-
-  const verticalVirtualBrain = useOnce<VirtualBrain>(() => {
-    const brain = new VirtualBrain({
-      count: dataArray.length,
-      itemSize: rowHeight,
-      mainAxis: 'vertical',
-      itemSpan: rowSpan,
-    });
-
-    return brain;
-  });
-
-  useEffect(() => {
-    return () => {
-      horizontalVirtualBrain.destroy();
-      verticalVirtualBrain.destroy();
-    };
-  }, []);
 
   horizontalVirtualBrain.update(
     computedUnpinnedColumns.length,

@@ -6,12 +6,21 @@ import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 
-import { cssEllipsisClassName, justifyContent } from '../../utilities.css';
-import { CellCls, CellClsVariants, columnAlignCellStyle } from '../cell.css';
+import {
+  cssEllipsisClassName,
+  justifyContent,
+  overflow,
+} from '../../utilities.css';
+import {
+  ColumnCellCls,
+  CellClsVariants,
+  columnAlignCellStyle,
+} from '../cell.css';
 
 const { rootClassName } = internalProps;
 
 export const InfiniteTableCellClassName = `${rootClassName}Cell`;
+export const InfiniteTableCellContentClassName = `${rootClassName}Cell_content`;
 
 function InfiniteTableCellFn<T>(
   props: InfiniteTableCellProps<T> & React.HTMLAttributes<HTMLElement>,
@@ -68,20 +77,22 @@ function InfiniteTableCellFn<T>(
         columnAlignCellStyle[column.align ?? 'start'],
         justifyContent[column.align ?? 'start'],
         InfiniteTableCellClassName,
-        CellCls,
+        ColumnCellCls,
         shifting
           ? `${InfiniteTableCellClassName}--shifting ${CellClsVariants.shifting}`
           : '',
       )}
     >
       {beforeChildren}
-      {cssEllipsis ? (
-        <div className={`${rootClassName}Cell_content ${cssEllipsisClassName}`}>
+      {
+        <div
+          className={`${InfiniteTableCellContentClassName} ${
+            cssEllipsis ? cssEllipsisClassName : overflow.hidden
+          }`}
+        >
           {children}
         </div>
-      ) : (
-        children
-      )}
+      }
       {afterChildren}
     </div>
   );
