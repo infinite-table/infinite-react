@@ -1,5 +1,8 @@
 name: Test
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - 'www/**'
 
 jobs:
   run-tests:
