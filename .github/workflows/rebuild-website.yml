@@ -42,9 +42,11 @@ jobs:
           repository: infinite-table/infinite-www-dist
           path: infinite-www-dist
 
-      - name: Replace old out folder with new one
-        run: rm -fr ./infinite-www-dist/out && mv ./www/out ./infinite-www-dist
-        shell: bash
+      - name: Copy netlify.toml
+        run: cp ./netlify.toml ./infinite-www-dist
+
+      - name: Replace old www folder with new one
+        run: rm -fr ./infinite-www-dist/www && mv ./www ./infinite-www-dist
 
       - uses: './.github/actions/git-push-action'
         name: Push changes
