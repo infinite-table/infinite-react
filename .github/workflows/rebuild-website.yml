@@ -1,6 +1,9 @@
 name: Rebuild website
 
 on:
+  push:
+    paths:
+      - 'www/**'
   issues:
     types: [opened, edited, milestoned]
   label:

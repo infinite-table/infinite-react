@@ -5,6 +5,7 @@ import { IconNavArrow } from '@www/components/Icon/IconNavArrow';
 interface YouWillLearnCardProps {
   title: string;
   path: string;
+  inline?: boolean;
   children: React.ReactNode;
 }
 
@@ -12,9 +13,13 @@ function YouWillLearnCard({
   title,
   path,
   children,
+  inline,
 }: YouWillLearnCardProps) {
   return (
-    <div className="flex flex-col h-full bg-card dark:bg-card-dark shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8">
+    <div
+      className={`${
+        inline ? 'inline-flex' : 'flex'
+      } flex-col h-full bg-card dark:bg-card-dark shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}>
       <div>
         <h4 className="text-primary dark:text-primary-dark font-bold text-2xl leading-tight">
           {title}

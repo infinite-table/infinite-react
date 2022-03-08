@@ -345,7 +345,9 @@ See <PropLink name="columnTypes"/> for more details on using column types.
 
 
 <Note>
+
 By default, all columns have the `default` column type applied. So, if you define the `default` column type, but don't specify any <PropLink name="columns.type">type</PropLink> for a column, the default column type properties will be applied to that column.
+
 </Note>
 
 <Note>

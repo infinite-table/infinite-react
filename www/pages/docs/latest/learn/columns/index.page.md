@@ -29,41 +29,28 @@ export type Employee = {
 // InfiniteTableColumn is a generic type, you have to bind it to a specific data-type
 import { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
-export const columns = new Map<
-  string,
-  // we're binding it here to the `Employee` type
-  // which means the `column.field` has to be `keyof Employee`
-  InfiniteTableColumn<Employee>
->([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-    },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city'
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number'
-    },
-  ],
-]);
-
+// we're binding it here to the `Employee` type
+// which means the `column.field` has to be `keyof Employee`
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  'firstName':
+  {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  'country':
+  {
+    field: 'country',
+  },
+  'city':
+  {
+    field: 'city'
+  },
+  'salary':
+  {
+    field: 'salary',
+    type: 'number'
+  },
+}
 <InfiniteTable columns={columns} />
 ```
 
@@ -84,11 +71,16 @@ You should use `React.useCallback` / `React.useMemo` / `React.useState` to make 
 
 ## Column Types
 
-For now there are only 2 <PropLink code={false} name="columns.type">column types</PropLink>, but more are coming soon:
- * `string` - the default type, if none is specified.
- * `number`
+Column types allow you to customize column behavior and appearance for multiple columns at once. Most of the properties available for columns are also available for column types - for a full list, see <PropLink>columnTypes</PropLink> reference.
 
-Specifying the correct column type will ensure the correct sorting function is used.
+There are two special <PropLink code={false} name="columns.type">column types</PropLink> for now, but more are coming soon:
+ * `default` - all columns have this type, if not otherwise specified. The type does not contain any configuration, but allows you to define it and apply common configuration to all columns.
+ * `number` - if specified on a column (in combination with local uncontrolled sorting), the column will be sorted numerically.
+
+<YouWillLearnCard inline title="Learn more on Column Types" path="./columns/column-types">
+Find out how to use column types to customize the appearance and behaviour of your columns.
+</YouWillLearnCard>
+ 
 
 ## Column Order
 
