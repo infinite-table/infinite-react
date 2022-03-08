@@ -54,23 +54,22 @@ const dataSource = () => {
     );
 };
 
-const columns: InfiniteTablePropColumns<Developer> =
-  new Map<string, InfiniteTableColumn<Developer>>([
-    ['id', { field: 'id' }],
-    ['firstName', { field: 'firstName' }],
-    ['preferredLanguage', { field: 'preferredLanguage' }],
-    ['stack', { field: 'stack' }],
-    ['country', { field: 'country' }],
-    ['canDesign', { field: 'canDesign' }],
-    ['hobby', { field: 'hobby' }],
-    ['city', { field: 'city' }],
-    ['age', { field: 'age', type: ['number'] }],
-    [
-      'salary',
-      { field: 'salary', type: ['number', 'currency'] },
-    ],
-    ['currency', { field: 'currency' }],
-  ]);
+const columns: InfiniteTablePropColumns<Developer> = {
+  id: { field: 'id' },
+  firstName: { field: 'firstName' },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: { field: 'country' },
+  canDesign: { field: 'canDesign' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  age: { field: 'age', type: ['number'] },
+  salary: {
+    field: 'salary',
+    type: ['number', 'currency'],
+  },
+  currency: { field: 'currency' },
+};
 
 function numberWithCommas(x: number) {
   if (isNaN(x) || typeof x !== 'number') {
@@ -89,21 +88,10 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
     },
     currency: {
       renderValue: (param) => {
-        const { value, data, column } = param;
-        // const columnType = column.type;
-        // if (!Array.isArray(column.type)) {
-        //   return '...';
-        // }
-        // column.type.reduce((acc, type) => {
-        //   param.value = acc;
-        //   if (type === 'currency') {
-        //     return acc;
-        //   }
-        //   acc = columnTypes[type].renderValue(param);
-        //   return acc;
-        // }, value);
-
-        return `${value} ${data?.currency ?? ''}`;
+        const { value, data } = param;
+        return `${numberWithCommas(value as number)} ${
+          data?.currency ?? ''
+        }`;
       },
     },
     default: {
@@ -221,6 +209,7 @@ const Settings: React.FunctionComponent<{
   onReducerKeyChange: (reducerKey: ReducerOptions) => void;
   onGroupChange: (groupBy: GroupByDeveloperType) => void;
   onPivotChange: (pivotBy: PivotByDeveloperType) => void;
+  onColorChange: (color: string) => void;
 }> = ({
   groupBy,
   pivotBy,
@@ -228,6 +217,7 @@ const Settings: React.FunctionComponent<{
   onGroupChange,
   onPivotChange,
   onReducerKeyChange,
+  onColorChange,
 }) => {
   const allGroupOptions = [
     { value: 'country', label: 'country' },
@@ -341,7 +331,14 @@ const Settings: React.FunctionComponent<{
       </div>
       <div>
         Select Pivoted Columns Background:
-        <input type="color" />
+        <input
+          onChange={(event) => {
+            if (event.target.value) {
+              onColorChange(event.target.value);
+            }
+          }}
+          type="color"
+        />
       </div>
     </div>
   );
@@ -352,9 +349,31 @@ export default function GroupByExample() {
     React.useState<GroupByDeveloperType>([]);
   const [pivotBy, setPivotBy] =
     React.useState<PivotByDeveloperType>([]);
-
   const [reducerKey, setReducerKey] =
     React.useState<ReducerOptions>('avg');
+  const [backgroundColor, setBackgroundColor] =
+    React.useState<string>('');
+
+  /**
+   * Forces a rerender when color changes
+   */
+  const preparedColumnTypes = React.useMemo<
+    InfiniteTablePropColumnTypes<Developer>
+  >(
+    () => ({
+      ...columnTypes,
+      default: {
+        style: (params) => {
+          if (params.column.field === 'preferredLanguage') {
+            return {
+              backgroundColor,
+            };
+          }
+        },
+      },
+    }),
+    [backgroundColor]
+  );
 
   const reducerMap = {
     avg: avgReducer,
@@ -379,10 +398,12 @@ export default function GroupByExample() {
 
   return (
     <>
+      {backgroundColor}
       <Settings
         onGroupChange={setGroupBy}
         onPivotChange={setPivotBy}
         onReducerKeyChange={setReducerKey}
+        onColorChange={setBackgroundColor}
         groupBy={preparedGroupBy}
         pivotBy={preparedPivotBy}
         reducerKey={reducerKey}
@@ -407,7 +428,7 @@ export default function GroupByExample() {
           return (
             <InfiniteTable<Developer>
               columns={columns}
-              columnTypes={columnTypes}
+              columnTypes={preparedColumnTypes}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               pivotTotalColumnPosition="end"
