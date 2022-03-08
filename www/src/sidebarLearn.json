@@ -86,6 +86,17 @@
         {
           "title": "Column Groups",
           "path": "/docs/latest/learn/column-groups"
+        },
+        {
+          "title": "Examples",
+          "transient": true,
+          "path": "/docs/latest/learn/examples/dynamic-pivoting-example",
+          "routes": [
+            {
+              "title": "Dynamic pivoting example",
+              "path": "/docs/latest/learn/examples/dynamic-pivoting-example"
+            }
+          ]
         }
       ]
     }

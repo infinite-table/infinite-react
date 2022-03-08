@@ -13,6 +13,7 @@ const DEPS_VERSIONS: Record<string, string> = {
   '@infinite-table/infinite-react': process.env
     .NEXT_PUBLIC_INFINITE_REACT_VERSION as string,
   'react-query': '3.34.8',
+  'react-select': '5.2.2',
 };
 
 console.log(
