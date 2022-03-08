@@ -1,8 +1,8 @@
 name: Test
 on:
   push:
-    paths-ignore:
-      - 'www/**'
+    paths:
+      - 'source/src/**'
 
 jobs:
   run-tests:
