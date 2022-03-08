@@ -222,7 +222,7 @@ const Example = () => {
         livePaginationCursor={livePaginationCursor}
       >
         <InfiniteTable<Employee>
-          scrollTopId={scrollTopId}
+          scrollTopKey={scrollTopId}
           domProps={domProps}
           columnDefaultWidth={440}
           columnMinWidth={50}

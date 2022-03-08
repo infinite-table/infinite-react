@@ -91,6 +91,8 @@ export function useListRendering<T>(
     pinnedEndMaxWidth,
     pinnedStartScrollListener,
     pinnedEndScrollListener,
+    verticalVirtualBrain,
+    horizontalVirtualBrain,
   } = componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);
@@ -103,7 +105,9 @@ export function useListRendering<T>(
   }
   const repaintId = repaintIdRef.current;
 
-  const { horizontalVirtualBrain, verticalVirtualBrain } = useYourBrain({
+  useYourBrain({
+    horizontalVirtualBrain,
+    verticalVirtualBrain,
     computedPinnedStartWidth: computed.computedPinnedStartWidth,
     computedPinnedEndWidth: computed.computedPinnedEndWidth,
     computedUnpinnedColumns: computed.computedUnpinnedColumns,
@@ -140,6 +144,8 @@ export function useListRendering<T>(
     }
 
     const { onReady } = getState();
+
+    componentActions.ready = true;
 
     if (onReady) {
       const imperativeApi: InfiniteTableImperativeApi<T> = {

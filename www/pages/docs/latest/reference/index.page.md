@@ -8,6 +8,49 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
+<Prop name="autoSizeColumnsKey" type="number|string|{key,includeHeader,columnsToSkip,columnsToResize}">
+
+> Controls auto-sizing of columns.
+
+Here is a list of possible values for `autoSizeColumnsKey`:
+
+- `string` or `number` - when the value is changing, all columns will be auto-sized.
+
+- an object with a `key` property (of type `string` or `number`) - whenever the `key` changes, the columns will be auto-sized. Specifying an object for `autoSizeColumnsKey` gives you more control over which columns are auto-sized and if the size measurements include the header or not.
+
+When an object is used, the following properties are available:
+
+ * `key` - mandatory property, which, when changed, triggers the update
+ * `includeHeader` - optional boolean, - decides whether the header will be included in the auto-sizing calculations. If not specified, `true` is assumed.
+ * `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
+ * `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
+
+
+<Sandpack title="Auto-sizing columns">
+
+```tsx file=autoSizeColumnsKey-example.page.tsx
+```
+
+</Sandpack>
+
+
+<Note>
+
+When auto-sizing takes place, <PropLink name="onColumnSizingChange" /> is called with the new column sizes. If you use controlled <PropLink name="columnSizing" />, make sure you update its value accordingly.
+
+</Note>
+
+<Note>
+
+When columns are auto-sized, keep in mind that only visible (rendered) rows are taken into account - so if you scroll new rows into view, auto-sizing columns may result in different column sizes.
+
+In the same logic, keep in mind that by default columns are also virtualized (controlled by <PropLink name="virtualizeColumns" />), not only rows, so only visible columns are auto-sized (in case you have more columns, the columns that are not currently visible do not change their sizes).
+
+</Note>
+
+
+</Prop>
+
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
@@ -122,6 +165,27 @@ The following properties are available:
 </Sandpack>
 </Prop>
 
+<Prop name="columns.cssEllipsis" type="boolean" defaultValue={true}>
+
+> Specifies if the column should show ellipsis for content that is too long and does not fit the column width.
+
+<Note>
+
+For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
+
+</Note>
+
+
+<Sandpack title="First name column(first) has cssEllipsis set to false">
+
+
+```ts file=columns-cssEllipsis-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
 
 > Controls default column visibility when <DataSourcePropLink name="groupBy" /> is used.
@@ -190,6 +254,29 @@ When we implement filtering, you'll also have access to the column filter.
 </Sandpack>
 </Prop>
 
+<Prop name="columns.headerCssEllipsis" type="boolean" defaultValue={true}>
+
+> Specifies if the column should show ellipsis in the column header if the header is too long and does not fit the column width.
+
+If this property is not specified, the value of <PropLink name="columns.cssEllipsis" /> will be used.
+
+<Note>
+
+For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
+
+</Note>
+
+
+<Sandpack title="Preferred Language column(second) has headerCssEllipsis set to false">
+
+
+```ts file=columns-cssEllipsis-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
 
 > Specifies the rowspan for cells on the current column.
@@ -210,6 +297,36 @@ The `rowInfo` object contains information about grouping (if this row is a group
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="columns.style" type="CSSProperties | (args) => CSSProperties">
+
+> Controls styling for the column. Can be a style object or a function returning a style object.
+
+If defined as a function, it accepts an object as a parameter, which has the following properties:
+
+ * `column` - the current column where the style is being applied
+ * `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
+ * `rowInfo` - the information about the current row - contains details about grouping (if this is a group row, the collapsed state, etc), parent groups, children of the current row, etc
+ * `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
+
+
+
+<Note>
+
+The `style` property can also be specified for <PropLink name="columnTypes"/>
+
+
+</Note>
+
+<Sandpack>
+
+```ts file=columns-style-example.page.tsx
+```
+
+</Sandpack>
+
 
 </Prop>
 
@@ -277,7 +394,7 @@ See related <PropLink name="columns.defaultFlex" />
 
 </Prop>
 
-<Prop name="columnSizing" type="(Map|Record)<string,{width,flex,...}>">
+<Prop name="columnSizing" type="Record<string,{width,flex,...}>">
 
 > Defines the sizing of columns in the grid.
 
@@ -296,6 +413,12 @@ It is an object (or Map) that maps column ids to column sizing options. The valu
 ```
 
 </Sandpack>
+
+<Note>
+
+For auto-sizing columns, see <PropLink name="autoSizeColumnsKey" />.
+
+</Note>
 
 </Prop>
 
@@ -385,17 +508,20 @@ By default, all columns have the `default` column type applied. So, if you defin
 
 The following properties are currently supported for defining a column type:
 
- * `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
- * `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
+ * `align` - See <PropLink name="column.align" />
+ * `cssEllipsis` - See <PropLink name="column.cssEllipsis" />
  * `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
  * `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
+ * `header` - See <PropLink name="column.header" />
+ * `headerCssEllipsis` - See <PropLink name="column.headerCssEllipsis" />
+ * `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
+ * `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
  * `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
  * `renderValue` - See <PropLink name="column.renderValue" />
  * `valueGetter` - See <PropLink name="column.valueGetter" />
- * `header` - See <PropLink name="column.header" />
- * `align` - See <PropLink name="column.align" />
  * `verticalAlign` - See <PropLink name="column.verticalAlign" />
  * `sortable` - See <PropLink name="column.sortable" />
+ * `style` - See <PropLink name="column.style" />
 
 <Note>
 When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.
@@ -619,6 +745,13 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 
 As an example usage, we're demoing live pagination, done in combination with the [react-query](https://react-query.tanstack.com/) library.
 
+
+<Note>
+
+If you want to scroll to the top of the table, you can use the <PropLink name="scrollTopKey" /> prop.
+
+</Note>
+
 <Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
 
 ```ts file=../learn/working-with-data/live-pagination-example.page.tsx
@@ -745,6 +878,29 @@ Or you can use a negative value, eg `-200` so the flexbox algorithm will use ano
 ```ts file=viewportReservedWidth-example.page.tsx
 ```
 </Sandpack>
+
+</Prop>
+
+<Prop name="scrollTopKey" type="number|string">
+
+> Determines scrolling the table to the top.
+
+Use this property to declaratively tell the `InfiniteTable` component to scroll to the top. Whenever a new value is provided for this property, it will scroll to the top.
+
+<Sandpack title="Declaratively scrolling to the top of the table">
+
+```ts file=scrollTopKey-example.page.tsx
+```
+</Sandpack>
+
+
+</Prop>
+
+<Prop name="virtualizeColumns" type="boolean" defaultValue={true}>
+
+> Configures whether columns are virtualized or not
+
+By default, columns are virtualized in order to improve performance.
 
 </Prop>
 

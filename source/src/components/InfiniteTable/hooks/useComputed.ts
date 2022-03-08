@@ -84,6 +84,8 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedPinnedEndWidth,
   } = useComputedVisibleColumns({
     columns,
+    columnCssEllipsis: componentState.columnCssEllipsis,
+    columnHeaderCssEllipsis: componentState.columnHeaderCssEllipsis,
     columnMinWidth: componentState.columnMinWidth,
     columnMaxWidth: componentState.columnMaxWidth,
     columnDefaultWidth: componentState.columnDefaultWidth,

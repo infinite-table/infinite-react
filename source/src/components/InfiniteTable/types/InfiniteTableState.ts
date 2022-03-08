@@ -18,6 +18,7 @@ import { NonUndefined } from '../../types/NonUndefined';
 import { InfiniteTableColumn } from './InfiniteTableColumn';
 import { ComponentStateActions } from '../../hooks/useComponentState';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
+import { VirtualBrain } from '../../VirtualBrain';
 
 export type GroupByMap<T> = Map<
   keyof T,
@@ -34,7 +35,10 @@ export interface InfiniteTableSetupState<T> {
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
   bodySize: Size;
+  verticalVirtualBrain: VirtualBrain;
+  horizontalVirtualBrain: VirtualBrain;
   focused: boolean;
+  ready: boolean;
   focusedWithin: boolean;
   scrollPosition: ScrollPosition;
   draggingColumnId: null | string;
@@ -51,7 +55,7 @@ export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
 
 export interface InfiniteTableMappedState<T> {
-  scrollTopId: InfiniteTableProps<T>['scrollTopId'];
+  scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
 
@@ -67,6 +71,8 @@ export interface InfiniteTableMappedState<T> {
   onSelfBlur: InfiniteTableProps<T>['onSelfBlur'];
   onFocusWithin: InfiniteTableProps<T>['onFocusWithin'];
   onBlurWithin: InfiniteTableProps<T>['onBlurWithin'];
+
+  autoSizeColumnsKey: InfiniteTableProps<T>['autoSizeColumnsKey'];
 
   scrollStopDelay: NonUndefined<InfiniteTableProps<T>['scrollStopDelay']>;
   onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
@@ -94,6 +100,8 @@ export interface InfiniteTableMappedState<T> {
   columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
   columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
   columnDefaultWidth: NonUndefined<InfiniteTableProps<T>['columnDefaultWidth']>;
+  columnCssEllipsis: NonUndefined<InfiniteTableProps<T>['columnCssEllipsis']>;
+
   draggableColumns: NonUndefined<InfiniteTableProps<T>['draggableColumns']>;
   sortable: NonUndefined<InfiniteTableProps<T>['sortable']>;
   hideEmptyGroupColumns: NonUndefined<
@@ -129,6 +137,9 @@ export interface InfiniteTableDerivedState<T> {
     InfiniteTableProps<T>['groupRenderStrategy']
   >;
 
+  columnHeaderCssEllipsis: NonUndefined<
+    InfiniteTableProps<T>['columnHeaderCssEllipsis']
+  >;
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
   computedColumnGroups: InfiniteTablePropColumnGroupsMap;

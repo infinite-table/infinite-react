@@ -2,6 +2,7 @@ import { createRef } from 'react';
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
+import { VirtualBrain } from '../../VirtualBrain';
 
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
@@ -29,6 +30,18 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([
       // ['sortInfo', new WeakMap()],
     ]),
+
+    // TODO destroy the brains on unmount
+    horizontalVirtualBrain: new VirtualBrain({
+      count: 0,
+      itemSize: 100,
+      mainAxis: 'horizontal',
+    }),
+    verticalVirtualBrain: new VirtualBrain({
+      count: 0,
+      itemSize: 10,
+      mainAxis: 'vertical',
+    }),
     columnShifts: null,
     domRef: createRef(),
     scrollerDOMRef: createRef(),
@@ -44,6 +57,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
       scrollTop: 0,
       scrollLeft: 0,
     },
+    ready: false,
     focused: false,
     focusedWithin: false,
     columnsWhenGrouping: columnsGeneratedForGrouping,
@@ -61,7 +75,7 @@ export const forwardProps = <T>(
   InfiniteTableMappedState<T>
 > => {
   return {
-    scrollTopId: 1,
+    scrollTopKey: 1,
     components: 1,
     loadingText: 1,
     pivotColumns: 1,
@@ -91,6 +105,7 @@ export const forwardProps = <T>(
     pivotColumnGroups: 1,
 
     onScrollbarsChange: 1,
+    autoSizeColumnsKey: 1,
 
     scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 100,
 
@@ -100,6 +115,8 @@ export const forwardProps = <T>(
     columnMinWidth: (columnMinWidth) => columnMinWidth ?? 30,
     columnMaxWidth: (columnMaxWidth) => columnMaxWidth ?? 2000,
     columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 200,
+
+    columnCssEllipsis: (columnCssEllipsis) => columnCssEllipsis ?? true,
     draggableColumns: (draggableColumns) => draggableColumns ?? true,
 
     showSeparatePivotColumnForSingleAggregation: (
@@ -209,6 +226,8 @@ export const mapPropsToState = <T>(params: {
     groupBy: groupBy,
     computedColumns,
     virtualizeHeader,
+    columnHeaderCssEllipsis:
+      props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,
     columnGroupsDepthsMap,
     columnGroupsMaxDepth:
       columnGroupsDepthsMap != state.columnGroupsDepthsMap

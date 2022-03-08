@@ -142,7 +142,6 @@ export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
 
 export type InfiniteTableColumnStyleFnParams<T> = {
   value: Renderable;
-
   column: InfiniteTableColumn<T>;
 } & (
   | {

@@ -18,6 +18,8 @@ const defaultLineStyle: React.CSSProperties = {
   transition: `width 0.25s, opacity 0.25s`,
 };
 
+export const InfiniteTableIconClassName = 'InfiniteTableIcon';
+
 export function SortIcon(props: SortIconProps) {
   const [rendered, setRendered] = useState(true);
   const [opacity, setOpacity] = useState(0);
@@ -84,7 +86,11 @@ export function SortIcon(props: SortIconProps) {
   return (
     <div
       style={{ ...style, width: size }}
-      className={join(className, 'ITableIcon', 'ITableIcon-sort')}
+      className={join(
+        className,
+        InfiniteTableIconClassName,
+        `${InfiniteTableIconClassName}-sort`,
+      )}
     >
       {showIndex ? (
         <div data-name="index" style={indexStyle}>
