@@ -391,6 +391,7 @@ export default function GroupByExample() {
     column: groupColumn,
   })) as GroupByDeveloperType;
 
+  //@ts-ignore
   const preparedPivotBy = pivotBy.map((pivot) => ({
     ...pivot,
     column: getPivotColumn,
