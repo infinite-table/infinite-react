@@ -17,6 +17,8 @@ concurrency:
 jobs:
   publish-docs:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
     strategy:
       matrix:
         node-version: [14.x]
