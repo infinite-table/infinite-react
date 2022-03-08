@@ -46,7 +46,7 @@ jobs:
         run: rm -fr ./infinite-www-dist/out && mv ./www/out ./infinite-www-dist
         shell: bash
 
-      - uses: './.github/actions/git-commit-push-action'
+      - uses: './.github/actions/git-push-action'
         name: Push changes
         with:
           github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
