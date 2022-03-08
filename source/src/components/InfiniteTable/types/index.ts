@@ -36,7 +36,9 @@ import type {
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderValueParam,
   InfiniteTableColumnRowspanParam,
+  InfiniteTablePivotColumn,
 } from './InfiniteTableColumn';
+
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
 import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
@@ -46,6 +48,7 @@ export type {
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
   InfiniteTableColumnRowspanParam,
+  InfiniteTablePivotColumn,
   InfiniteTablePropColumns,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropColumnsMap,

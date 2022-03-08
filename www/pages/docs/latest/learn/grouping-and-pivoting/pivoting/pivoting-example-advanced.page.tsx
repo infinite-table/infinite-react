@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Select from 'react-select';
+import Select, { Props as SelectProps } from 'react-select';
 
 import {
   InfiniteTable,
@@ -7,6 +7,7 @@ import {
   GroupRowsState,
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumnTypes,
+  InfiniteTablePivotColumn,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -15,6 +16,7 @@ import type {
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   DataSourcePivotBy,
+  InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -62,28 +64,94 @@ const columns: InfiniteTablePropColumns<Developer> =
     ['canDesign', { field: 'canDesign' }],
     ['hobby', { field: 'hobby' }],
     ['city', { field: 'city' }],
-    ['age', { field: 'age' }],
-    ['salary', { field: 'salary', type: 'number' }],
+    ['age', { field: 'age', type: ['number'] }],
+    [
+      'salary',
+      { field: 'salary', type: ['number', 'currency'] },
+    ],
     ['currency', { field: 'currency' }],
   ]);
 
-const columnTypes: InfiniteTablePropColumnTypes<
-  InfiniteTableColumn<Developer>
-> = {
-  default: {},
+function numberWithCommas(x: number) {
+  if (isNaN(x) || typeof x !== 'number') {
+    return '';
+  }
+  return x
+    ?.toString?.()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+const columnTypes: InfiniteTablePropColumnTypes<Developer> =
+  {
+    number: {
+      renderValue: ({ value }) =>
+        numberWithCommas(value as number),
+    },
+    currency: {
+      renderValue: (param) => {
+        const { value, data, column } = param;
+        // const columnType = column.type;
+        // if (!Array.isArray(column.type)) {
+        //   return '...';
+        // }
+        // column.type.reduce((acc, type) => {
+        //   param.value = acc;
+        //   if (type === 'currency') {
+        //     return acc;
+        //   }
+        //   acc = columnTypes[type].renderValue(param);
+        //   return acc;
+        // }, value);
+
+        return `${value} ${data?.currency ?? ''}`;
+      },
+    },
+    default: {
+      style: {
+        color: 'red',
+      },
+    },
+  };
+
+//  Column modifiers
+
+const getPivotColumn = (
+  column: InfiniteTableColumn<Developer>
+): Partial<InfiniteTablePivotColumn<Developer>> => {
+  return {
+    ...column,
+    style: (params) => {
+      if (typeof params.value === 'number') {
+        return {
+          fontStyle: 'italic',
+        };
+      }
+    },
+  };
 };
+
+const getGroupColumn = (
+  column: InfiniteTableColumn<Developer>
+): Partial<InfiniteTableColumn<Developer>> => {
+  return {
+    style: {
+      color: 'red',
+    },
+  };
+};
+
+const groupColumn = {
+  style: {
+    color: 'red',
+  },
+};
+
+// Groupings
 
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
 });
-
-const groupedColumnDef: DataSourceGroupBy<Developer>['column'] =
-  {
-    style: {
-      color: 'red',
-    },
-  };
 
 const avgReducer: InfiniteTableColumnAggregator<
   Developer,
@@ -115,11 +183,35 @@ const minReducer: InfiniteTableColumnAggregator<
   done: (min) => min,
 };
 
-const selectStyles = {
-  option: () => ({
-    color: 'black',
-  }),
+// Style functions
+
+const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
+  ({ data }) => {
+    if (data?.canDesign === 'yes') {
+      return {
+        borderBottom:
+          '1px dotted var(--infinite-row-color)',
+      };
+    }
+
+    return {};
+  };
+
+// React-Select Props
+
+const selectProps: SelectProps = {
+  menuPosition: 'fixed',
+  styles: {
+    container: () => ({
+      flex: 1,
+    }),
+    option: () => ({
+      color: 'black',
+    }),
+  },
 };
+
+// COMPONENTS
 
 type ReducerOptions = 'min' | 'max' | 'avg';
 const Settings: React.FunctionComponent<{
@@ -172,22 +264,32 @@ const Settings: React.FunctionComponent<{
   );
 
   return (
-    <div style={{ zIndex: 3000, maxWidth: 600 }}>
+    <div
+      style={{
+        zIndex: 3000,
+        marginBottom: 10,
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gridGap: 20,
+        padding: 20,
+      }}>
       <div>
         <b>Group By:</b>
         <label>
           <Select
+            {...selectProps}
             value={groupByValue}
-            styles={selectStyles}
             isMulti
             isClearable
             isSearchable
             options={allGroupOptions}
             onChange={(options) => {
               onGroupChange(
-                options.map((option) => ({
-                  field: option.value as keyof Developer,
-                }))
+                (options as typeof allGroupOptions).map(
+                  (option) => ({
+                    field: option.value as keyof Developer,
+                  })
+                )
               );
             }}
           />
@@ -197,7 +299,7 @@ const Settings: React.FunctionComponent<{
         <b>Pivot By:</b>
         <label>
           <Select
-            styles={selectStyles}
+            {...selectProps}
             isMulti
             isClearable
             isSearchable
@@ -209,9 +311,11 @@ const Settings: React.FunctionComponent<{
             )}
             onChange={(newOptions) =>
               onPivotChange(
-                newOptions.map((option) => ({
-                  field: option.value as keyof Developer,
-                }))
+                (newOptions as typeof allPivotOptions).map(
+                  (option) => ({
+                    field: option.value as keyof Developer,
+                  })
+                )
               )
             }
           />
@@ -221,18 +325,23 @@ const Settings: React.FunctionComponent<{
         <label style={{ zIndex: 3000 }}>
           <b>Select aggregation function:</b>
           <Select
-            styles={selectStyles}
+            {...selectProps}
             value={reducerKeyOptions.find(
               (option) => option.value === reducerKey
             )}
             onChange={(option) =>
               onReducerKeyChange(
-                option?.value as ReducerOptions
+                (option as typeof reducerKeyOptions[0])
+                  ?.value as ReducerOptions
               )
             }
             options={reducerKeyOptions}
           />
         </label>
+      </div>
+      <div>
+        Select Pivoted Columns Background:
+        <input type="color" />
       </div>
     </div>
   );
@@ -240,19 +349,9 @@ const Settings: React.FunctionComponent<{
 
 export default function GroupByExample() {
   const [groupBy, setGroupBy] =
-    React.useState<GroupByDeveloperType>([
-      {
-        field: 'preferredLanguage',
-      },
-      { field: 'stack' },
-    ]);
+    React.useState<GroupByDeveloperType>([]);
   const [pivotBy, setPivotBy] =
-    React.useState<PivotByDeveloperType>([
-      { field: 'country' },
-      {
-        field: 'canDesign',
-      },
-    ]);
+    React.useState<PivotByDeveloperType>([]);
 
   const [reducerKey, setReducerKey] =
     React.useState<ReducerOptions>('avg');
@@ -270,20 +369,13 @@ export default function GroupByExample() {
 
   const preparedGroupBy = groupBy.map((group) => ({
     ...group,
-    column: () => ({
-      style: {
-        color: 'red',
-      },
-    }),
-  }));
+    column: groupColumn,
+  })) as GroupByDeveloperType;
+
   const preparedPivotBy = pivotBy.map((pivot) => ({
     ...pivot,
-    column: {
-      style: {
-        color: 'red',
-      },
-    },
-  }));
+    column: getPivotColumn,
+  })) as PivotByDeveloperType;
 
   return (
     <>
@@ -299,8 +391,16 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={preparedGroupBy}
-        pivotBy={pivotBy}
+        groupBy={
+          preparedGroupBy.length
+            ? preparedGroupBy
+            : undefined
+        }
+        pivotBy={
+          preparedPivotBy.length
+            ? preparedPivotBy
+            : undefined
+        }
         aggregationReducers={reducers}
         defaultGroupRowsState={groupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
@@ -311,6 +411,7 @@ export default function GroupByExample() {
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               pivotTotalColumnPosition="end"
+              rowStyle={getRowStyle}
             />
           );
         }}
