@@ -103,7 +103,7 @@ Maximum column width can be controlled more granularly via <PropLink name="colum
 
 For specifying the maximum column width, see <PropLink name="columnMaxWidth" />.
 
-Minimum column width can be controlled more granularly via <PropLink name="columnSizing.minWidth" />, on a per column level.
+Minimum column width can be controlled more granularly via <PropLink name="columnSizing.minWidth" /> or <PropLink name="columns.minWidth" />, on a per column level.
 
 <Sandpack>
 
@@ -276,6 +276,24 @@ For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
 </Sandpack>
 
 </Prop>
+
+<Prop name="columns.maxWidth" type="number">
+
+> Configures the maximum width for the column.
+
+If not specified, <PropLink name="columnMaxWidth" /> will be used (defaults to `2000`).
+
+</Prop>
+
+<Prop name="columns.minWidth" type="number">
+
+> Configures the minimum width for the column.
+
+If not specified, <PropLink name="columnMinWidth" /> will be used (defaults to `30`).
+
+</Prop>
+
+
 
 <Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
 
