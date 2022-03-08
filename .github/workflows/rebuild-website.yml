@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
+      NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
     strategy:
       matrix:
         node-version: [14.x]
