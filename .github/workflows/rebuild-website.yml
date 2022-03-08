@@ -29,14 +29,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: 'Running npm install in www'
-        run: npm i
-        working-directory: www
-
       - name: 'Building'
         run: |
-          npm run build
-        working-directory: www
+          npm run build-website
 
       - name: checkout infinite-www-dist repo
         uses: actions/checkout@v2
