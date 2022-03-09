@@ -50,6 +50,7 @@ function InfiniteTableRowFn<T>(
   };
 
   const renderCellRef = useRef<any>(null);
+
   const renderCell: RenderItem = React.useCallback(
     ({ domRef, itemIndex }) => {
       const column = columns[itemIndex];
