@@ -56,6 +56,7 @@ type UsePinnedParams<T> = {
 };
 
 type RenderPinnedRowParams<T> = {
+  repaintId: string | number;
   getState: () => InfiniteTableState<T>;
   getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
@@ -199,9 +200,10 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
   const { getData, getState, columnsWidth, columns, rowSpan, verticalBrain } =
     params;
 
+  const dataArray = getData();
+
   const renderPinnedRow: RenderRow = useCallback(
     (rowParams) => {
-      const dataArray = getData();
       const rowInfo = dataArray[rowParams.rowIndex];
 
       const { showZebraRows, showHoverRows } = getState();
@@ -223,7 +225,7 @@ function useRenderPinnedRow<T>(params: RenderPinnedRowParams<T>) {
 
       return <TableRowUnvirtualized<T> {...rowProps} />;
     },
-    [columnsWidth, columns, verticalBrain],
+    [columnsWidth, columns, verticalBrain, dataArray],
   );
 
   return renderPinnedRow;
@@ -281,6 +283,7 @@ export function usePinnedRenderingForSide<T>(
   const renderRowPinned: RenderRow = useRenderPinnedRow({
     getData,
     getState,
+    repaintId,
     toggleGroupRow,
     rowSpan,
     verticalBrain: verticalVirtualBrain,

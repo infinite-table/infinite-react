@@ -32,7 +32,7 @@ type Developer = {
 
 const dataSource = () => {
   // return Promise.resolve(employees);
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/developers1k-sql`)
+  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/developers1k-sql`)
     .then((r) => r.json())
     .then((data: Developer[]) => {
       return data;

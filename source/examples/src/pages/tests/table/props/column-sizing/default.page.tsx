@@ -30,7 +30,7 @@ type Employee = {
 };
 
 const dataSource = () => {
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees`)
+  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/employees`)
     .then((r) => r.json())
     .then((data: Employee[]) => {
       return data;

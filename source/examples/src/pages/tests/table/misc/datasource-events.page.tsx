@@ -71,7 +71,7 @@ const dataSource = ({
   livePaginationCursor: number;
 }) => {
   return fetch(
-    process.env.NEXT_PUBLIC_DATAURL +
+    process.env.NEXT_PUBLIC_BASE_URL +
       `/employees1k?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
         sortInfo?.dir === 1 ? 'asc' : 'desc'
       }&_start=${livePaginationCursor}`,

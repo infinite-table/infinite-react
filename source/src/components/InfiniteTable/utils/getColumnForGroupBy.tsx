@@ -157,6 +157,7 @@ export function getSingleGroupColumn<T>(
       if (column.renderValue) {
         value = column.renderValue(renderOptions);
       }
+      // console.log({ rowInfo, value });
 
       const collapsed = rowInfo.collapsed;
 

@@ -26,7 +26,7 @@ async function setGroupBy(groupBy: { field: string }[]) {
 export default describe('Table column.defaultHiddenWhenGroupedBy', () => {
   beforeAll(async () => {
     await page.goto(
-      `${process.env.BASEURL}/table/props/group-rows-by/column-default-hidden-when-grouped-by`,
+      `${process.env.BASEURL}/table/props/group-by/column-default-hidden-when-grouped-by`,
     );
   });
 

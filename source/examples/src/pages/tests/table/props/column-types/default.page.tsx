@@ -26,7 +26,7 @@ type Developer = {
 
 const dataSource = () => {
   // return Promise.resolve(employees);
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/developers10`)
+  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/developers10`)
     .then((r) => r.json())
     .then((data: Developer[]) => {
       return data;

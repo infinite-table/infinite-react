@@ -3,7 +3,7 @@ import { getHeaderColumnIds } from '../../../testUtils';
 export default describe('hideEmptyGroupColumns', () => {
   beforeAll(async () => {
     await page.goto(
-      `${process.env.BASEURL}/table/props/group-rows-by/hideEmptyGroupColumns-custom-group-column`,
+      `${process.env.BASEURL}/table/props/group-by/hideEmptyGroupColumns-custom-group-column`,
     );
   });
 

@@ -10,7 +10,7 @@ import {
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
-import { employees } from '../group-rows-by/employees10';
+import { employees } from '../group-by/employees10';
 import { useState } from 'react';
 
 type Employee = {

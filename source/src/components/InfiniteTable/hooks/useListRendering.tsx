@@ -98,8 +98,8 @@ export function useListRendering<T>(
   const repaintIdRef = useRef<number>(0);
 
   if (
-    !shallowEqualObjects(prevComputed, computed) ||
-    prevDataSourceTimestamp !== dataSourceState.updatedAt
+    prevDataSourceTimestamp !== dataSourceState.updatedAt ||
+    !shallowEqualObjects(prevComputed, computed)
   ) {
     repaintIdRef.current++;
   }

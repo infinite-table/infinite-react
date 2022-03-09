@@ -42,8 +42,9 @@ type Employee = {
   email: string;
 };
 
+console.log('env var', process.env.NEXT_PUBLIC_BASE_URL);
 const dataSource = () => {
-  return fetch(`${process.env.NEXT_PUBLIC_DATAURL!}/employees1k?_limit=100`)
+  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/employees1k?_limit=100`)
     .then(async (r) => {
       const data = await r.json();
 

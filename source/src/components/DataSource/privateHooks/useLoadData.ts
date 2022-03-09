@@ -205,15 +205,20 @@ export function loadData<T>(
           lazyGroupData.set(key, newGroupRowInfo);
         }
         skipAssign = true;
-        // actions.originalLazyGroupData = lazyGroupData;
-        // see above #staleLazyGroupData
-        actions.originalLazyGroupDataChangeDetect = getChangeDetect();
+
+        let skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = false;
 
         if (!dataParams.groupKeys || !dataParams.groupKeys.length) {
           const topLevelItems = lazyGroupData.get([LAZY_ROOT_KEY_FOR_GROUPS]);
 
           //@ts-ignore
           actions.originalDataArray = [...topLevelItems.items];
+          skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = true;
+        }
+        // actions.originalLazyGroupData = lazyGroupData;
+        // see above #staleLazyGroupData
+        if (!skipTriggerChangeAsAlreadyOriginalArrayWasUpdated) {
+          actions.originalLazyGroupDataChangeDetect = getChangeDetect();
         }
       }
     } else {
@@ -352,15 +357,16 @@ function useLazyLoadRange<T>() {
   const latestRenderRangeRef = useRef<RenderRange | null>(null);
 
   const loadRange = (
-    param?: RenderRange | null,
+    renderRange?: RenderRange | null,
     cache: Map<string, true> = loadingCache,
   ) => {
     const componentState = getComponentState();
-    param = param || latestRenderRangeRef.current;
-    if (!param) {
+    renderRange = renderRange || latestRenderRangeRef.current;
+    if (!renderRange) {
       return;
     }
-    const { renderStartIndex: startIndex, renderEndIndex: endIndex } = param;
+    const { renderStartIndex: startIndex, renderEndIndex: endIndex } =
+      renderRange;
     if (!lazyLoadBatchSize || lazyLoadBatchSize <= 0) {
       return;
     }
@@ -384,10 +390,12 @@ function useLazyLoadRange<T>() {
 
   useEffect(() => {
     if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
-      return notifyRenderRangeChange.onChange((param: RenderRange | null) => {
-        latestRenderRangeRef.current = param;
-        loadRange(param, loadingCache);
-      });
+      return notifyRenderRangeChange.onChange(
+        (renderRange: RenderRange | null) => {
+          latestRenderRangeRef.current = renderRange;
+          loadRange(renderRange, loadingCache);
+        },
+      );
     }
     return;
   }, [lazyLoadBatchSize, loadingCache]);
@@ -432,6 +440,9 @@ function lazyLoadRange<T>(
   // TODO remove this hack when DeepMap supports empty arrays as keys
   const rootGroupKeys = ['_______xxx______'];
 
+  /**
+   * We're iterating on all rows from start to end indexes
+   */
   for (let i = startIndex; i <= endIndex; i++) {
     const rowInfo = dataArray[i];
     if (!rowInfo) {
@@ -445,6 +456,8 @@ function lazyLoadRange<T>(
     }
     const cacheKeys = theGroupKeys.length ? theGroupKeys : rootGroupKeys;
     const indexInGroup = rowInfo.indexInGroup;
+
+    // console.log(i, theGroupKeys, cacheKeys, rowInfo);
 
     if (!rowLoaded) {
       let cachedFnCalls = perGroupFnCalls.get(cacheKeys);

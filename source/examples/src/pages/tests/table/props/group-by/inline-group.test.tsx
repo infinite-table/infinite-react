@@ -15,9 +15,7 @@ data.forEach((x) => {
 
 export default describe('Pivot', () => {
   beforeAll(async () => {
-    await page.goto(
-      `${process.env.BASEURL}/table/props/group-rows-by/inline-group`,
-    );
+    await page.goto(`${process.env.BASEURL}/table/props/group-by/inline-group`);
   });
 
   beforeEach(async () => {

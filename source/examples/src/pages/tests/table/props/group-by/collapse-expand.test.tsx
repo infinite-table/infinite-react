@@ -3,7 +3,7 @@
 export default describe('Table', () => {
   beforeAll(async () => {
     await page.goto(
-      `${process.env.BASEURL}/table/props/group-rows-by/collapse-expand`,
+      `${process.env.BASEURL}/table/props/group-by/collapse-expand`,
     );
     await page.waitForTimeout(10);
   });
