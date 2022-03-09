@@ -5,7 +5,7 @@ on:
     paths:
       - 'www/**'
   issues:
-    types: [opened, edited, milestoned]
+    types: [opened, edited, milestoned, closed]
   label:
     types: [created, edited, deleted]
   workflow_run:
