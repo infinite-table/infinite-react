@@ -132,6 +132,9 @@ export type InfiniteTableColumnTypeNames =
 export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
   RequireAtLeastOne<
     {
+      /**
+       * Determines the field property of the column.
+       */
       field?: keyof T;
       render?: InfiniteTableColumnRenderFunction<T>;
       renderValue?: InfiniteTableColumnRenderFunction<T>;
@@ -223,8 +226,17 @@ export type InfiniteTableBaseColumn<T> = {
 
   // value
 };
-export type InfiniteTableColumn<T> = {} & InfiniteTableBaseColumn<T> &
-  InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T>;
+
+/**
+ * Defines a column in the table.
+ *
+ * @typeParam DATA_TYPE The type of the data in the table.
+ *
+ * Can be bound to a field which is a `keyof DATA_TYPE`.
+ */
+export type InfiniteTableColumn<DATA_TYPE> =
+  {} & InfiniteTableBaseColumn<DATA_TYPE> &
+    InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<DATA_TYPE>;
 
 export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
   groupByField: string | string[];

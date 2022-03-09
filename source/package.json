@@ -7,7 +7,7 @@
   "typings": "index.d.ts",
   "scripts": {
     "build": "rimraf dist && npm run tsc && npm run concat-dts && node ./build/buildPackageJson.js && npm run esbuild && npm run update-md && cp LICENSE.md ./dist && cp ../README.md ./dist",
-    "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\"",
+    "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\" \"npm run concat-dts-watch\"",
     "rollup-types": "rollup -c rollup.config.js",
     "update-md": "npm run --prefix .. doctoc",
     "esbuild": "npm run esbuild-esm && npm run esbuild-cjs",
@@ -23,6 +23,7 @@
     "//-": " only build declaration files",
     "tsc": "tsc --project tsconfig.build.json",
     "concat-dts": "tsup src/index.tsx --dts-only",
+    "concat-dts-watch": "tsup src/index.tsx --dts-only --watch",
     "xxx - no longer used - bundle-types": "dts-bundle-generator --config bundler.config.js",
     "tscw": "tsc --watch --project tsconfig.build.json --outDir dist",
     "xxx - no longer used - concat-dts": "node run-dts-concat.js",
