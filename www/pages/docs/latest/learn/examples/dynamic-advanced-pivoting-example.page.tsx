@@ -8,6 +8,7 @@ import {
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumnTypes,
   InfiniteTablePivotColumn,
+  debounce,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -45,13 +46,7 @@ const dataSource = () => {
     process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
   )
     .then((r) => r.json())
-    .then((data: Developer[]) => data)
-    .then(
-      (data) =>
-        new Promise<Developer[]>((resolve) => {
-          setTimeout(() => resolve(data), 1000);
-        })
-    );
+    .then((data: Developer[]) => data);
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -71,27 +66,20 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-function numberWithCommas(x: number) {
-  if (isNaN(x) || typeof x !== 'number') {
-    return '';
-  }
-  return x
-    ?.toString?.()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+const numberFormatter = new Intl.NumberFormat();
 
 const columnTypes: InfiniteTablePropColumnTypes<Developer> =
   {
     number: {
       renderValue: ({ value }) =>
-        numberWithCommas(value as number),
+        numberFormatter.format(value as number),
     },
     currency: {
       renderValue: (param) => {
         const { value, data } = param;
-        return `${numberWithCommas(value as number)} ${
-          data?.currency ?? ''
-        }`;
+        return `${numberFormatter.format(
+          value as number
+        )} ${data?.currency ?? ''}`;
       },
     },
     default: {
@@ -102,7 +90,6 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
   };
 
 //  Column modifiers
-
 const getPivotColumn = (
   column: InfiniteTableColumn<Developer>
 ): Partial<InfiniteTablePivotColumn<Developer>> => {
@@ -118,7 +105,7 @@ const getPivotColumn = (
   };
 };
 
-const getGroupColumn = (
+const _getGroupColumn = (
   column: InfiniteTableColumn<Developer>
 ): Partial<InfiniteTableColumn<Developer>> => {
   return {
@@ -135,7 +122,6 @@ const groupColumn = {
 };
 
 // Groupings
-
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
@@ -253,12 +239,18 @@ const Settings: React.FunctionComponent<{
     groupBy.some((group) => group.field === option.value)
   );
 
+  const debouncedSetColor = React.useMemo(() => {
+    return debounce(onColorChange, { wait: 300 });
+  }, []);
+
   return (
     <div
       style={{
         zIndex: 3000,
         marginBottom: 10,
         display: 'grid',
+        color: 'var(--infinite-row-color)',
+        background: 'var(--infinite-background)',
         gridTemplateColumns: '1fr 1fr 1fr',
         gridGap: 20,
         padding: 20,
@@ -334,7 +326,7 @@ const Settings: React.FunctionComponent<{
         <input
           onChange={(event) => {
             if (event.target.value) {
-              onColorChange(event.target.value);
+              debouncedSetColor(event.target.value);
             }
           }}
           type="color"
@@ -375,27 +367,33 @@ export default function GroupByExample() {
     [backgroundColor]
   );
 
-  const reducerMap = {
-    avg: avgReducer,
-    max: maxReducer,
-    min: minReducer,
-  };
-
   const reducers: DataSourcePropAggregationReducers<Developer> =
-    {
-      default: reducerMap[reducerKey],
-    };
+    React.useMemo(() => {
+      const reducerMap = {
+        avg: avgReducer,
+        max: maxReducer,
+        min: minReducer,
+      };
 
-  const preparedGroupBy = groupBy.map((group) => ({
-    ...group,
-    column: groupColumn,
-  })) as GroupByDeveloperType;
+      return {
+        default: reducerMap[reducerKey],
+      };
+    }, [reducerKey]);
 
-  //@ts-ignore
-  const preparedPivotBy = pivotBy.map((pivot) => ({
-    ...pivot,
-    column: getPivotColumn,
-  })) as PivotByDeveloperType;
+  const preparedGroupBy = React.useMemo(() => {
+    return groupBy.map((group) => ({
+      ...group,
+      column: groupColumn,
+    })) as GroupByDeveloperType;
+  }, [groupBy]);
+
+  const preparedPivotBy = React.useMemo(() => {
+    //@ts-ignore
+    return pivotBy.map((pivot) => ({
+      ...pivot,
+      column: getPivotColumn,
+    })) as PivotByDeveloperType;
+  }, [pivotBy]);
 
   return (
     <>

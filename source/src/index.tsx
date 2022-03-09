@@ -1,3 +1,5 @@
+export { debounce } from './components/utils/debounce';
+
 export * from './components/InfiniteTable';
 
 export * from './components/DataSource';

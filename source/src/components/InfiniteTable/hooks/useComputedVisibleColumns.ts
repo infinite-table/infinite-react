@@ -159,6 +159,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     pinnedStartMaxWidth,
 
     columnSizing,
+    columnTypes,
 
     columnPinning,
 

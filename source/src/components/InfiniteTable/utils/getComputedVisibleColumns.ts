@@ -180,8 +180,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
     {} as SortInfoMap<T>,
   );
 
-  console.log(columnSizing, 'columnSizing');
-
   const flexResult = computeFlex({
     availableSize: Math.max(
       bodySize.width - (viewportReservedWidth ?? 0) - getScrollbarWidth(),

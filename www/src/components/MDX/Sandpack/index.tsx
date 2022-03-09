@@ -16,11 +16,6 @@ const DEPS_VERSIONS: Record<string, string> = {
   'react-select': '5.2.2',
 };
 
-console.log(
-  'working with infinite-react version: ',
-  DEPS_VERSIONS['@infinite-table/infinite-react']
-);
-
 type SandpackProps = {
   children: React.ReactChildren;
   deps?: string;
