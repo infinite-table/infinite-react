@@ -7,6 +7,7 @@ import type {
 } from '../../DataSource/types';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableColumnGroup, InfiniteTableRowInfo } from '.';
+
 import { CSSProperties } from 'react';
 import {
   AggregationReducer,
