@@ -8,7 +8,7 @@ import {
   DataSourceGroupBy,
   DataSourcePropAggregationReducers,
   DataSourcePivotBy,
-  InfiniteTableColumn,
+  // InfiniteTableColumn,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
@@ -64,10 +64,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const numberFormat = new Intl.NumberFormat(undefined, {
-  style: 'currency',
-  currency: 'USD',
-});
+// const numberFormat = new Intl.NumberFormat(undefined, {
+//   style: 'currency',
+//   currency: 'USD',
+// });
 const groupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
@@ -85,17 +85,17 @@ const columnPinning: InfiniteTablePropColumnPinning = {
   'group-col': 'start',
 };
 
-const pivotColumnWithFormatter = ({
-  column,
-}: {
-  column: InfiniteTableColumn<Developer>;
-}) => {
-  return {
-    ...column,
-    renderValue: ({ value }: { value: any }) =>
-      value ? numberFormat.format(value as number) : 0,
-  };
-};
+// const pivotColumnWithFormatter = ({
+//   column,
+// }: {
+//   column: InfiniteTableColumn<Developer>;
+// }) => {
+//   return {
+//     ...column,
+//     renderValue: ({ value }: { value: any }) =>
+//       value ? numberFormat.format(value as number) : 0,
+//   };
+// };
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
