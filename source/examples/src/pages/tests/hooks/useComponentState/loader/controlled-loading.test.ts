@@ -2,7 +2,7 @@ import { getFnCalls } from '../../../testUtils/getFnCalls';
 
 const getCalls = getFnCalls('onLoadingChange');
 
-export default describe('hooks.useProperty - controlled boolean', () => {
+export default xdescribe('hooks.useProperty - controlled boolean', () => {
   beforeAll(async () => {
     await page.goto(`${process.env.BASEURL}/hooks/useComponentState/loader/controlled-loading
     `);
