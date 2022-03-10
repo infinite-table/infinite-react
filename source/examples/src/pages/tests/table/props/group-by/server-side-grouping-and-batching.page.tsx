@@ -96,6 +96,8 @@ const columnPinning: InfiniteTablePropColumnPinning = {
 //       value ? numberFormat.format(value as number) : 0,
 //   };
 // };
+
+console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS);
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
