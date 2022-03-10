@@ -32,11 +32,11 @@ export default describe('Server-side batched grouping with pinned group column',
     const firstBatch = ['Argentina', 'Australia', 'Brazil', 'Canada', 'China'];
     expect(cells.filter(Boolean)).toEqual(firstBatch);
 
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(350);
 
     cells = await getColumnContents('group-col');
 
-    expect(cells.filter(Boolean)).toEqual([
+    expect(cells.filter(Boolean).slice(0, 10)).toEqual([
       ...firstBatch,
       'France',
       'Germany',

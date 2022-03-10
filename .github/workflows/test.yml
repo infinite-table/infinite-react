@@ -26,5 +26,3 @@ jobs:
 
       - name: Run test suite
         run: npm test
-        env:
-          NEXT_PUBLIC_DATAURL: ${{ secrets.NEXT_PUBLIC_DATAURL}}

@@ -211,7 +211,9 @@ const dataSource: DataSourceData<Developer> = ({
   ]
     .filter(Boolean)
     .join('&');
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers30k-sql?` + args)
+  return fetch(
+    process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers30k-sql?` + args,
+  )
     .then((r) => r.json())
     .then((data) => {
       return new Promise((resolve) => {
