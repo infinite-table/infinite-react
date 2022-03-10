@@ -20,9 +20,12 @@ concurrency:
 jobs:
   publish-docs:
     runs-on: ubuntu-latest
+
     env:
       GITHUB_PAT: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
       NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
+      NEXT_PUBLIC_BASE_URL: http://infinite-table.com/.netlify/functions/json-server
+      NEXT_PUBLIC_BASE_URL_FOR_TESTS: http://infinite-table.com/.netlify/functions/json-server
     strategy:
       matrix:
         node-version: [14.x]

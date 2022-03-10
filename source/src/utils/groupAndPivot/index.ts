@@ -133,7 +133,7 @@ export type PivotBy<DataType, KeyType> = Omit<
   'column'
 > & {
   column?:
-    | InfiniteTableColumn<DataType>
+    | Partial<InfiniteTableColumn<DataType>>
     | (({
         column,
       }: {
