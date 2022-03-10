@@ -83,9 +83,7 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
       },
     },
     default: {
-      style: {
-        color: 'red',
-      },
+      style: {},
     },
   };
 
@@ -117,7 +115,8 @@ const _getGroupColumn = (
 
 const groupColumn = {
   style: {
-    color: 'red',
+    fontWeight: '600',
+    color: 'var(--infinite-accent-color)',
   },
 };
 
@@ -251,7 +250,7 @@ const Settings: React.FunctionComponent<{
         display: 'grid',
         color: 'var(--infinite-row-color)',
         background: 'var(--infinite-background)',
-        gridTemplateColumns: '1fr 1fr 1fr',
+        gridTemplateColumns: '1fr 1fr',
         gridGap: 20,
         padding: 20,
       }}>
@@ -322,7 +321,9 @@ const Settings: React.FunctionComponent<{
         </label>
       </div>
       <div>
-        Select Pivoted Columns Background:
+        <b style={{ display: 'block', marginBottom: 10 }}>
+          Select `preferredLanguage` column Background:
+        </b>
         <input
           onChange={(event) => {
             if (event.target.value) {
@@ -388,7 +389,6 @@ export default function GroupByExample() {
   }, [groupBy]);
 
   const preparedPivotBy = React.useMemo(() => {
-    //@ts-ignore
     return pivotBy.map((pivot) => ({
       ...pivot,
       column: getPivotColumn,
@@ -397,7 +397,6 @@ export default function GroupByExample() {
 
   return (
     <>
-      {backgroundColor}
       <Settings
         onGroupChange={setGroupBy}
         onPivotChange={setPivotBy}
