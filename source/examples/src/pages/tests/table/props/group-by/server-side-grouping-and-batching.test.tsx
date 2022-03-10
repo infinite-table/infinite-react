@@ -27,6 +27,7 @@ export default describe('Server-side batched grouping with pinned group column.'
   });
 
   it('should work and lazily load data', async () => {
+    await page.waitForTimeout(50);
     let cells = await getColumnContents('group-col');
 
     const firstBatch = ['Argentina', 'Australia', 'Brazil', 'Canada', 'China'];
@@ -36,7 +37,7 @@ export default describe('Server-side batched grouping with pinned group column.'
 
     cells = await getColumnContents('group-col');
 
-    expect(cells.filter(Boolean).slice(0, 10)).toEqual([
+    expect(cells.slice(0, 10).filter(Boolean)).toEqual([
       ...firstBatch,
       'France',
       'Germany',

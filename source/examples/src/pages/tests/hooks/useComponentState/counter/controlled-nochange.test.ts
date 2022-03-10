@@ -6,7 +6,7 @@ const getValue = async () => {
   return await page.evaluate(() => document.querySelector('#value')!.innerHTML);
 };
 
-export default describe('hooks.use - controlled value', () => {
+export default xdescribe('hooks.use - controlled value', () => {
   beforeAll(async () => {
     await page.goto(
       `${process.env.BASEURL}/hooks/useComponentState/counter/controlled-nochange`,
