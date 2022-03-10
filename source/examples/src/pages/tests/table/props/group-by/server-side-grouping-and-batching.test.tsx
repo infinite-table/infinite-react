@@ -12,7 +12,7 @@ const getColumnContents = async (colId: string) => {
   return result;
 };
 
-export default describe('Server-side batched grouping with pinned group column', () => {
+export default describe('Server-side batched grouping with pinned group column.', () => {
   beforeAll(async () => {
     await page.goto(
       `${process.env.BASEURL}/table/props/group-by/server-side-grouping-and-batching`,
