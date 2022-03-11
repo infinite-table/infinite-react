@@ -10,21 +10,6 @@ export const wait = (timeout: number) => {
   });
 };
 
-type FnCall = {
-  args: any[];
-};
-
-export const getGlobalFnCalls =
-  (fnName: string) => async (): Promise<FnCall[]> => {
-    return await page.evaluate((name: string) => {
-      return (window as any)[name].getCalls().map((c: any) => {
-        return {
-          args: c.args as any[],
-        };
-      });
-    }, fnName);
-  };
-
 export const getHeaderCellByColumnId = async (
   columnId: string,
   { page }: { page: Page },
