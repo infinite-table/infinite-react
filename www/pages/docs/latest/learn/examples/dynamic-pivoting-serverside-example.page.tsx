@@ -9,6 +9,7 @@ import {
   InfiniteTablePropColumnTypes,
   InfiniteTablePivotColumn,
   debounce,
+  DataSourceData,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -41,12 +42,82 @@ type Developer = {
 type GroupByDeveloperType = DataSourceGroupBy<Developer>[];
 type PivotByDeveloperType = DataSourcePivotBy<Developer>[];
 
-const dataSource = () => {
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
+  {
+    salary: {
+      name: 'Salary (avg)',
+      field: 'salary',
+      reducer: 'avg',
+    },
+    age: {
+      name: 'Age (avg)',
+      field: 'age',
+      reducer: 'avg',
+    },
+  };
+
+const dataSource: DataSourceData<Developer> = ({
+  pivotBy,
+  aggregationReducers,
+  groupBy,
+
+  lazyLoadStartIndex,
+  lazyLoadBatchSize,
+  groupKeys = [],
+  sortInfo,
+}) => {
+  if (sortInfo && !Array.isArray(sortInfo)) {
+    sortInfo = [sortInfo];
+  }
+  const startLimit: string[] = [];
+  if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
+    const start = lazyLoadStartIndex || 0;
+    startLimit.push(`start=${start}`);
+    startLimit.push(`limit=${lazyLoadBatchSize}`);
+  }
+  const args = [
+    ...startLimit,
+    pivotBy
+      ? 'pivotBy=' +
+        JSON.stringify(
+          pivotBy.map((p) => ({ field: p.field }))
+        )
+      : null,
+    `groupKeys=${JSON.stringify(groupKeys)}`,
+    groupBy
+      ? 'groupBy=' +
+        JSON.stringify(
+          groupBy.map((p) => ({ field: p.field }))
+        )
+      : null,
+    sortInfo
+      ? 'sortInfo=' +
+        JSON.stringify(
+          sortInfo.map((s) => ({
+            field: s.field,
+            dir: s.dir,
+          }))
+        )
+      : null,
+    aggregationReducers
+      ? 'reducers=' +
+        JSON.stringify(
+          Object.keys(aggregationReducers).map((key) => ({
+            field: aggregationReducers[key].field,
+            id: key,
+            name: aggregationReducers[key].reducer,
+          }))
+        )
+      : null,
+  ]
+    .filter(Boolean)
+    .join('&');
+
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/developers30k-sql?` +
+      args
+  ).then((r) => r.json());
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -57,12 +128,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   country: { field: 'country' },
   canDesign: { field: 'canDesign' },
   hobby: { field: 'hobby' },
-  city: {
-    field: 'city',
-    style: {
-      color: 'blue',
-    },
-  },
+  city: { field: 'city' },
   age: { field: 'age', type: ['number'] },
   salary: {
     field: 'salary',
@@ -104,16 +170,6 @@ const getPivotColumn = (
           fontStyle: 'italic',
         };
       }
-    },
-  };
-};
-
-const _getGroupColumn = (
-  column: InfiniteTableColumn<Developer>
-): Partial<InfiniteTableColumn<Developer>> => {
-  return {
-    style: {
-      color: 'red',
     },
   };
 };
@@ -233,12 +289,6 @@ const Settings: React.FunctionComponent<{
     { value: 'age', label: 'age' },
   ];
 
-  const reducerKeyOptions = [
-    { value: 'min', label: 'Min' },
-    { value: 'max', label: 'Max' },
-    { value: 'avg', label: 'Avg' },
-  ];
-
   const groupByValue = allGroupOptions.filter((option) =>
     groupBy.some((group) => group.field === option.value)
   );
@@ -308,24 +358,6 @@ const Settings: React.FunctionComponent<{
         </label>
       </div>
       <div>
-        <label style={{ zIndex: 3000 }}>
-          <b>Select aggregation function:</b>
-          <Select
-            {...selectProps}
-            value={reducerKeyOptions.find(
-              (option) => option.value === reducerKey
-            )}
-            onChange={(option) =>
-              onReducerKeyChange(
-                (option as typeof reducerKeyOptions[0])
-                  ?.value as ReducerOptions
-              )
-            }
-            options={reducerKeyOptions}
-          />
-        </label>
-      </div>
-      <div>
         <b style={{ display: 'block', marginBottom: 10 }}>
           Select `preferredLanguage` column Background:
         </b>
@@ -344,13 +376,30 @@ const Settings: React.FunctionComponent<{
 
 export default function GroupByExample() {
   const [groupBy, setGroupBy] =
-    React.useState<GroupByDeveloperType>([]);
+    React.useState<GroupByDeveloperType>([
+      {
+        field: 'country',
+      },
+      { field: 'city' },
+    ]);
   const [pivotBy, setPivotBy] =
-    React.useState<PivotByDeveloperType>([]);
+    React.useState<PivotByDeveloperType>([
+      {
+        field: 'preferredLanguage',
+      },
+      {
+        field: 'canDesign',
+      },
+    ]);
   const [reducerKey, setReducerKey] =
     React.useState<ReducerOptions>('avg');
   const [backgroundColor, setBackgroundColor] =
     React.useState<string>('');
+
+  const preparedDataSource = React.useMemo(
+    () => (dataSource as Function).bind(null),
+    [pivotBy, groupBy]
+  );
 
   /**
    * Forces a rerender when color changes
@@ -373,30 +422,17 @@ export default function GroupByExample() {
     [backgroundColor]
   );
 
-  const reducers: DataSourcePropAggregationReducers<Developer> =
-    React.useMemo(() => {
-      const reducerMap = {
-        avg: avgReducer,
-        max: maxReducer,
-        min: minReducer,
-      };
-
-      return {
-        default: reducerMap[reducerKey],
-      };
-    }, [reducerKey]);
-
   const preparedGroupBy = React.useMemo(() => {
     return groupBy.map((group) => ({
       ...group,
-      // column: groupColumn,
+      column: groupColumn,
     })) as GroupByDeveloperType;
   }, [groupBy]);
 
   const preparedPivotBy = React.useMemo(() => {
     return pivotBy.map((pivot) => ({
       ...pivot,
-      // column: getPivotColumn,
+      column: getPivotColumn,
     })) as PivotByDeveloperType;
   }, [pivotBy]);
 
@@ -414,7 +450,8 @@ export default function GroupByExample() {
 
       <DataSource<Developer>
         primaryKey="id"
-        data={dataSource}
+        lazyLoad
+        data={preparedDataSource}
         groupBy={
           preparedGroupBy.length
             ? preparedGroupBy
@@ -425,7 +462,7 @@ export default function GroupByExample() {
             ? preparedPivotBy
             : undefined
         }
-        aggregationReducers={reducers}
+        aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
