@@ -57,7 +57,12 @@ const columns: InfiniteTablePropColumns<Developer> = {
   country: { field: 'country' },
   canDesign: { field: 'canDesign' },
   hobby: { field: 'hobby' },
-  city: { field: 'city' },
+  city: {
+    field: 'city',
+    style: {
+      color: 'blue',
+    },
+  },
   age: { field: 'age', type: ['number'] },
   salary: {
     field: 'salary',
@@ -384,14 +389,14 @@ export default function GroupByExample() {
   const preparedGroupBy = React.useMemo(() => {
     return groupBy.map((group) => ({
       ...group,
-      column: groupColumn,
+      // column: groupColumn,
     })) as GroupByDeveloperType;
   }, [groupBy]);
 
   const preparedPivotBy = React.useMemo(() => {
     return pivotBy.map((pivot) => ({
       ...pivot,
-      column: getPivotColumn,
+      // column: getPivotColumn,
     })) as PivotByDeveloperType;
   }, [pivotBy]);
 

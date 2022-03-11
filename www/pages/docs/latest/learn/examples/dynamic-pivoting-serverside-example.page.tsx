@@ -289,12 +289,6 @@ const Settings: React.FunctionComponent<{
     { value: 'age', label: 'age' },
   ];
 
-  const reducerKeyOptions = [
-    { value: 'min', label: 'Min' },
-    { value: 'max', label: 'Max' },
-    { value: 'avg', label: 'Avg' },
-  ];
-
   const groupByValue = allGroupOptions.filter((option) =>
     groupBy.some((group) => group.field === option.value)
   );
@@ -402,6 +396,11 @@ export default function GroupByExample() {
   const [backgroundColor, setBackgroundColor] =
     React.useState<string>('');
 
+  const preparedDataSource = React.useMemo(
+    () => (dataSource as Function).bind(null),
+    [pivotBy, groupBy]
+  );
+
   /**
    * Forces a rerender when color changes
    */
@@ -452,7 +451,7 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         lazyLoad
-        data={dataSource}
+        data={preparedDataSource}
         groupBy={
           preparedGroupBy.length
             ? preparedGroupBy
