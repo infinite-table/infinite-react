@@ -3,6 +3,7 @@ import { getRowSelector } from '../../../testUtils/getRowElement';
 import { getOrders, multisort } from './getOrders';
 
 import { test, expect, ElementHandle } from '@playwright/test';
+
 const orders = getOrders();
 
 export default test.describe.parallel('Table', () => {

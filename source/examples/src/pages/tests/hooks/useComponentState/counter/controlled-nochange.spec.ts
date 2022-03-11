@@ -5,7 +5,7 @@ function getCalls({ page }: { page: Page }) {
   return getFnCalls('onValueChange', { page });
 }
 
-const getValue = async () => {
+const getValue = async ({ page }: { page: Page }) => {
   return await page.evaluate(() => document.querySelector('#value')!.innerHTML);
 };
 
@@ -30,7 +30,7 @@ export default test.describe.parallel('hooks.use - controlled value', () => {
     //@ts-ignore
     expect(calls[0].args).toEqual([11]);
     // controlled prop is not updated, so actual value wont change
-    expect(await getValue()).toEqual('10');
+    expect(await getValue({ page })).toEqual('10');
 
     await page.click('#innerinc');
 
@@ -39,6 +39,6 @@ export default test.describe.parallel('hooks.use - controlled value', () => {
     //@ts-ignore
     expect(calls[1].args).toEqual([11]);
     // controlled prop is not updated, so actual value wont change
-    expect(await getValue()).toEqual('10');
+    expect(await getValue({ page })).toEqual('10');
   });
 });

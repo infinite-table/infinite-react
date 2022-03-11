@@ -16,7 +16,7 @@ data.forEach((x) => {
 import { test } from '@playwright/test';
 
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async () => {
+  test.beforeEach(async ({ page }) => {
     await page.goto(`tests/table/props/group-by/inline-group`);
 
     // wait for rendering

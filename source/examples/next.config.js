@@ -14,32 +14,17 @@ const withVanillaExtract = createVanillaExtractPlugin();
 const withParentFolder = (nextConfig = {}) => {
   return Object.assign({}, nextConfig, {
     webpack(config, options) {
-      config.module.rules.forEach((rule) => {
-        const ruleContainsTs =
-          rule.test && rule.test.test && rule.test.test('index.tsx');
-
-        if (ruleContainsTs && Array.isArray(rule.include)) {
-          rule.include = rule.include.map((include) => {
-            if (include === examplesFolder) {
-              return parentFolder;
-            }
-
-            return include;
-          });
-        }
-      });
-
       // needed in order to avoid 2 copies of react being included, which makes hooks not work
-      config.resolve = config.resolve || {};
-      config.resolve.alias = config.resolve.alias || {};
-      config.resolve.alias.react = path.resolve('../node_modules/react');
-      config.resolve.alias['react-dom'] = path.resolve(
-        '../node_modules/react-dom',
-      );
-      config.resolve.alias['@infinite-table/infinite-react'] =
-        path.resolve('../src/');
-      config.resolve.alias['@src'] = path.resolve('../src');
-      config.resolve.alias['@examples'] = path.resolve('./src');
+      // config.resolve = config.resolve || {};
+      // config.resolve.alias = config.resolve.alias || {};
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        react: path.resolve(__dirname, '../node_modules/react'),
+        ['react-dom']: path.resolve(__dirname, '../node_modules/react-dom'),
+        '@infinite-table/infinite-react': path.resolve(__dirname, '../src/'),
+        '@src': path.resolve(__dirname, '../src'),
+        '@examples': path.resolve(__dirname, './src'),
+      };
 
       const definePlugin = new webpack.DefinePlugin({
         __DEV__: JSON.stringify(true),
@@ -60,5 +45,8 @@ module.exports = withVanillaExtract({
   pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  experimental: {
+    externalDir: true,
   },
 });

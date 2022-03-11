@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "DEBUG=InfiniteTable:* next dev",
-    "build": "next build && next export",
+    "build": "rimraf node_modules/react && next build && next export",
     "start": "next start",
     "test": "rimraf .next && npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
@@ -14,11 +14,11 @@
     "tscw": "tsc --watch --project tsconfig.json"
   },
   "dependencies": {
-    "@vanilla-extract/babel-plugin": "1.1.2",
+    "@vanilla-extract/babel-plugin": "^1.1.4",
+    "@vanilla-extract/css": "^1.6.8",
     "chokidar-cli": "^3.0.0",
     "isomorphic-fetch": "^3.0.0",
-    "next": "^11.0.1",
-    "puppeteer": "^10.1.0",
+    "next": "^12.1.0",
     "react": "^17.0.2",
     "react-query": "^3.34.8",
     "sinon": "^10.0.0",
@@ -28,16 +28,14 @@
     "@playwright/test": "^1.19.2",
     "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.172",
-    "@vanilla-extract/next-plugin": "1.0.1",
+    "@vanilla-extract/next-plugin": "^2.0.1",
     "babel-plugin-dev-expression": "^0.2.2",
     "concurrently": "^5.1.0",
     "http-server": "^0.12.1",
     "lodash": "^4.17.21",
-    "ndb": "^1.1.5",
     "normalize.css": "^8.0.1",
     "playwright": "^1.19.2",
     "rimraf": "^3.0.2",
-    "tslib": "^2.1.0",
-    "vitest": "^0.6.0"
+    "tslib": "^2.1.0"
   }
 }
