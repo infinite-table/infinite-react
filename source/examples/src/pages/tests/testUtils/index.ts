@@ -104,7 +104,10 @@ export async function getColumnGroupNodes({ page }: { page: Page }) {
   return await page.$$(COL_GROUP_SELECTOR);
 }
 
-export async function getColumnGroupNodeForGroup(groupId: string) {
+export async function getColumnGroupNodeForGroup(
+  groupId: string,
+  { page }: { page: Page },
+) {
   return await page.$$eval(
     COL_GROUP_SELECTOR,
     (nodes, groupId) =>
@@ -114,7 +117,7 @@ export async function getColumnGroupNodeForGroup(groupId: string) {
     groupId,
   );
 }
-export async function getColumnGroupsIds() {
+export async function getColumnGroupsIds({ page }: { page: Page }) {
   return await page.$$eval(COL_GROUP_SELECTOR, (nodes) =>
     [...nodes].map((node) => (node as HTMLElement).dataset.groupId),
   );
