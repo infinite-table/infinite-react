@@ -100,7 +100,7 @@ export const getHeaderColumnIds = async ({ page }: { page: Page }) => {
 };
 
 const COL_GROUP_SELECTOR = '[data-group-id]';
-export async function getColumnGroupNodes() {
+export async function getColumnGroupNodes({ page }: { page: Page }) {
   return await page.$$(COL_GROUP_SELECTOR);
 }
 

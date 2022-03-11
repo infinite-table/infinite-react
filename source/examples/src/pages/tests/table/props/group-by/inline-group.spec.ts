@@ -13,7 +13,7 @@ data.forEach((x) => {
   agePerCountries.get(x.country)?.add(x.age);
 });
 
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 export default test.describe.parallel('Pivot', () => {
   test.beforeEach(async () => {

@@ -1,5 +1,5 @@
 import { getHeaderColumnIds } from '../../../testUtils';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel('hideEmptyGroupColumns', () => {
   test.beforeEach(async ({ page }) => {
