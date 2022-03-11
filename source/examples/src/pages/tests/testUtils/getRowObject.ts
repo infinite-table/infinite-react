@@ -1,4 +1,9 @@
-export const getRowObject = async (rowIndex: number) => {
+import { Page } from '@playwright/test';
+
+export const getRowObject = async (
+  rowIndex: number,
+  { page }: { page: Page },
+) => {
   const row = await page.$(`[data-row-index="${rowIndex}"]`);
 
   const result = await row!.$$eval('[data-name="Cell"]', (cells: Element[]) =>

@@ -11,9 +11,13 @@ import {
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
   DataSourceState,
-} from '../../DataSource';
+} from '../../DataSource/types';
 import { Renderable } from '../../types/Renderable';
-import { LoadMaskProps } from '../components/LoadMask';
+
+export type LoadMaskProps = {
+  visible: boolean;
+  children: Renderable;
+};
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnRenderFunction,

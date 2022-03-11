@@ -10,10 +10,8 @@ import {
   LazyGroupRowInfo,
 } from '../types';
 import { GroupRowsState } from '../GroupRowsState';
-import {
-  ComponentInterceptedActions,
-  ForwardPropsToStateFnResult,
-} from '../../hooks/useComponentState';
+import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
 import { isControlledValue } from '../../utils/isControlledValue';
 
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';

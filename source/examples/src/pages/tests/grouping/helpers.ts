@@ -1,4 +1,4 @@
-import { DataSourceAggregationReducer } from '@infinite-table/infinite-react';
+import { DataSourceAggregationReducer } from '@infinite-table/infinite-react/components/DataSource/types';
 import { DataGroupResult } from '@src/utils/groupAndPivot';
 
 import { curry } from 'lodash';

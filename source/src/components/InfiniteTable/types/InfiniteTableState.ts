@@ -1,3 +1,4 @@
+import type { MutableRefObject } from 'react';
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type {
   InfiniteTableColumnGroup,
@@ -10,13 +11,13 @@ import type {
   InfiniteTableProps,
 } from './InfiniteTableProps';
 
-import { Size } from '../../types/Size';
-import { MutableRefObject } from 'react';
+import type { Size } from '../../types/Size';
+
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
-import { NonUndefined } from '../../types/NonUndefined';
+import type { NonUndefined } from '../../types/NonUndefined';
 import { InfiniteTableColumn } from './InfiniteTableColumn';
-import { ComponentStateActions } from '../../hooks/useComponentState';
+import { ComponentStateActions } from '../../hooks/useComponentState/types';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { VirtualBrain } from '../../VirtualBrain';
 

@@ -1,9 +1,10 @@
 import {
+  ColumnTypeWithInherit,
   DataSourceAggregationReducer,
   DataSourceMappings,
   LazyGroupDataDeepMap,
   LazyGroupRowInfo,
-} from '../..';
+} from '../../components/DataSource/types';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   InfiniteTableColumn,
@@ -15,6 +16,7 @@ import {
   InfiniteTableColumnGroup,
   InfiniteTableGroupColumnBase,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
+
 import { DeepMap } from '../DeepMap';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS: string = '____root____';
@@ -133,7 +135,7 @@ export type PivotBy<DataType, KeyType> = Omit<
   'column'
 > & {
   column?:
-    | Partial<InfiniteTableColumn<DataType>>
+    | ColumnTypeWithInherit<Partial<InfiniteTableColumn<DataType>>>
     | (({
         column,
       }: {
@@ -145,7 +147,9 @@ export type PivotBy<DataType, KeyType> = Omit<
         columnGroup,
       }: {
         columnGroup: InfiniteTablePivotFinalColumnGroup<DataType, KeyType>;
-      }) => Partial<InfiniteTablePivotFinalColumnGroup<DataType>>);
+      }) => ColumnTypeWithInherit<
+        Partial<InfiniteTablePivotFinalColumnGroup<DataType>>
+      >);
 };
 
 type GroupParams<DataType, KeyType> = {

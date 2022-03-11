@@ -1,6 +1,6 @@
 import binarySearch from 'binary-search';
 import { Logger } from '../../utils/debug';
-import { Size } from '../types/Size';
+import type { Size } from '../types/Size';
 
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
 

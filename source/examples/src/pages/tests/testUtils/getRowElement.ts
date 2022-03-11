@@ -1,4 +1,9 @@
-export const getRowElement = async (rowIndex: number) => {
+import { Page } from '@playwright/test';
+
+export const getRowElement = async (
+  rowIndex: number,
+  { page }: { page: Page },
+) => {
   const row = await page.$(getRowSelector(rowIndex));
 
   return row;

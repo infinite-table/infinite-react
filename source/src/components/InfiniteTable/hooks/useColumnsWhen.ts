@@ -484,6 +484,14 @@ export function getColumnsWhenGrouping<T>(params: {
   }
 
   if (pivotColumns) {
+    const columnsByField: Partial<Record<keyof T, InfiniteTableColumn<T>>> = {};
+
+    columns.forEach((col) => {
+      if (col.field) {
+        columnsByField[col.field] = col;
+      }
+    });
+
     pivotColumns.forEach((col, key) => {
       if (col.pivotTotalColumn && pivotTotalColumnPosition === false) {
         // don't include the total columns if specified as false
@@ -513,7 +521,16 @@ export function getColumnsWhenGrouping<T>(params: {
           } as InfiniteTablePivotColumn<T>;
         }
       }
-      // }
+      if (column.inheritFromColumn !== false) {
+        const colToInheritFrom =
+          typeof column.inheritFromColumn === 'string'
+            ? columns.get(column.inheritFromColumn)
+            : column.pivotAggregator?.field
+            ? columnsByField[column.pivotAggregator?.field]
+            : undefined;
+        column = { ...colToInheritFrom, ...column };
+      }
+
       if (!column.render && column.renderValue) {
         column.render = (renderOptions) => {
           return column.renderValue!(renderOptions);

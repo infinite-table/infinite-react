@@ -4,10 +4,8 @@ import { DeepMap } from '../../../utils/DeepMap';
 import { getGlobal } from '../../../utils/getGlobal';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 
-import {
-  ComponentStateGeneratedActions,
-  useComponentState,
-} from '../../hooks/useComponentState';
+import { useComponentState } from '../../hooks/useComponentState';
+import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 
 import { Scrollbars } from '../../InfiniteTable';

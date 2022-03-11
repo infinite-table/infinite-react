@@ -1,6 +1,7 @@
 import type { Renderable } from '../../types/Renderable';
 
 import type {
+  ColumnTypeWithInherit,
   DataSourcePivotBy,
   DataSourceSingleSortInfo,
   DataSourceState,
@@ -245,7 +246,7 @@ export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
 };
 
 export type InfiniteTablePivotColumn<T> = InfiniteTableColumn<T> &
-  Partial<InfiniteTablePivotFinalColumnVariant<T, any>>;
+  ColumnTypeWithInherit<Partial<InfiniteTablePivotFinalColumnVariant<T, any>>>;
 
 export type InfiniteTablePivotFinalColumnGroup<
   DataType,

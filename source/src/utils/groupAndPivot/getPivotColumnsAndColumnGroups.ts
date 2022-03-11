@@ -29,13 +29,20 @@ export type ComputedColumnsAndGroups<DataType> = {
 function prepareColumn<DataType>(
   column: InfiniteTablePivotFinalColumnVariant<DataType>,
 ) {
-  const { pivotByAtIndex: pivotByForColumn } = column;
+  const { pivotByAtIndex: pivotByForColumn, pivotAggregator } = column;
 
   if (pivotByForColumn?.column) {
     if (typeof pivotByForColumn.column === 'function') {
       Object.assign(column, pivotByForColumn.column({ column }));
     } else {
       Object.assign(column, pivotByForColumn.column);
+    }
+  }
+  if (pivotAggregator?.pivotColumn) {
+    if (typeof pivotAggregator.pivotColumn === 'function') {
+      Object.assign(column, pivotAggregator.pivotColumn({ column }));
+    } else {
+      Object.assign(column, pivotAggregator.pivotColumn);
     }
   }
 

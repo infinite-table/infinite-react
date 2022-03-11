@@ -1,19 +1,26 @@
-import { VirtualBrain } from '@src/components/VirtualBrain';
-import { ElementHandle } from 'puppeteer';
+import { ElementHandle, Page } from '@playwright/test';
+import type { VirtualBrain } from '@src/components/VirtualBrain';
+// import { ElementHandle } from 'puppeteer';
 // import { wait } from '.';
 
-export const withBrain = async (fn: (brain: VirtualBrain) => void) => {
+export const withBrain = async (
+  fn: (brain: VirtualBrain) => void,
+  { page }: { page: Page },
+) => {
   const handle = await page.evaluateHandle(() => {
     return (window as any).brain;
-  }, fn as any);
+  });
+  // return 1;
 
   return await (await page.evaluateHandle(fn, handle)).jsonValue();
 };
 
-export const sortElements = async (elements: ElementHandle[]) => {
+export const sortElements = async (
+  elements: ElementHandle<HTMLElement | SVGElement>[],
+) => {
   let indexes: number[] = await Promise.all(
     elements.map(
-      (el: ElementHandle) =>
+      (el: ElementHandle<HTMLElement | SVGElement>) =>
         el.evaluate((el) => Number(el.getAttribute('data-item-index'))),
       // el.evaluate((el) => el.outerHTML),
     ),
@@ -35,11 +42,15 @@ export const sortElements = async (elements: ElementHandle[]) => {
   return result;
 };
 
-export const getElements = async (root?: ElementHandle | string | null) => {
+export const getElements = async (
+  root: ElementHandle<HTMLElement> | string | null | undefined,
+  { page }: { page: Page },
+) => {
   if (typeof root === 'string') {
+    //@ts-ignore
     root = await page.$(root);
   }
-  const source = root || page;
+  const source = (root || page) as ElementHandle<HTMLElement>;
   let els = await source.$$('[data-item-index]');
 
   return sortElements(els);
@@ -47,14 +58,15 @@ export const getElements = async (root?: ElementHandle | string | null) => {
 
 export const mapElements = async (
   fn: (el: HTMLElement) => any,
-  root?: ElementHandle | string,
+  root: ElementHandle<HTMLElement> | string | null | undefined,
+  { page }: { page: Page },
 ) => {
-  const els = await getElements(root);
+  const els = await getElements(root, { page });
 
   return Promise.all(
-    els.map(
-      async (el: ElementHandle) =>
-        await (await page.evaluateHandle(fn, el)).jsonValue(),
-    ),
+    els.map(async (el: ElementHandle) => {
+      //@ts-ignore
+      return await (await page.evaluateHandle(fn, el)).jsonValue();
+    }),
   );
 };

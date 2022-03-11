@@ -5,15 +5,12 @@ import {
   LoadMaskTextCls,
 } from './LoadMask.css';
 import { internalProps } from '../internalProps';
-import { Renderable } from '../../types/Renderable';
+
+import { LoadMaskProps } from '../types/InfiniteTableProps';
 
 const { rootClassName } = internalProps;
 const baseCls = `${rootClassName}-LoadMask`;
 
-export type LoadMaskProps = {
-  visible: boolean;
-  children: Renderable;
-};
 function LoadMaskFn(props: LoadMaskProps) {
   const { visible, children = 'Loading' } = props;
 

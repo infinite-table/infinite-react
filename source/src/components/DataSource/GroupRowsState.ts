@@ -1,4 +1,4 @@
-import { DataSourceExpandedAndCollapsedGroupRows } from '.';
+import { DataSourceExpandedAndCollapsedGroupRows } from './types';
 import { DeepMap } from '../../utils/DeepMap';
 
 export class GroupRowsState<KeyType extends any = any> {

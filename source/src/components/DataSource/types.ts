@@ -13,14 +13,18 @@ import {
   InfiniteTableColumnGroup,
   InfiniteTableRowInfo,
   Scrollbars,
-} from '../InfiniteTable';
-import { ComponentStateActions } from '../hooks/useComponentState';
+} from '../InfiniteTable/types';
+import { ComponentStateActions } from '../hooks/useComponentState/types';
 import { GroupRowsState } from './GroupRowsState';
 import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 import { RenderRange } from '../VirtualBrain';
+import {
+  InfiniteTablePivotColumn,
+  InfiniteTablePivotFinalColumnVariant,
+} from '../InfiniteTable/types/InfiniteTableColumn';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -116,6 +120,17 @@ export type DataSourceAggregationReducer<T, AggregationResultType> = {
     accumulatedValue: AggregationResultType | any,
     array: T[],
   ) => AggregationResultType;
+  pivotColumn?:
+    | ColumnTypeWithInherit<Partial<InfiniteTableColumn<T>>>
+    | (({
+        column,
+      }: {
+        column: InfiniteTablePivotFinalColumnVariant<T>;
+      }) => ColumnTypeWithInherit<Partial<InfiniteTablePivotColumn<T>>>);
+};
+
+export type ColumnTypeWithInherit<COL_TYPE> = COL_TYPE & {
+  inheritFromColumn?: string | boolean;
 };
 
 export type DataSourceMappings = Record<'totals' | 'values', string>;
