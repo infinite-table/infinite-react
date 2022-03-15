@@ -1,4 +1,4 @@
-import { computeFlex } from '@components/flexbox';
+import { computeFlex } from '@src/components/flexbox';
 import { test, expect } from '@playwright/test';
 
 test.describe.parallel('flexbox', () => {
