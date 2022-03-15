@@ -88,6 +88,10 @@
           "path": "/docs/latest/learn/column-groups"
         },
         {
+          "title": "Common Issues",
+          "path": "/docs/latest/learn/common-issues"
+        },
+        {
           "title": "Examples",
           "transient": true,
           "path": "/docs/latest/learn/examples/dynamic-pivoting-example",

@@ -38,6 +38,7 @@ import type {
   InfiniteTableColumnRenderValueParam,
   InfiniteTableColumnRowspanParam,
   InfiniteTablePivotColumn,
+  InfiniteTableGroupColumnRenderIconFunction,
 } from './InfiniteTableColumn';
 
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
@@ -46,6 +47,7 @@ import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
 
 export type {
   Scrollbars,
+  InfiniteTableGroupColumnRenderIconFunction,
   InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
