@@ -18,6 +18,7 @@ The `DataSourceAggregationReducer` type can have the following properties
 * `reducer`:  `string | (accumulator, value, data: T) => any` - either a string (for server-side aggregations) or a mandatory aggregation function for client-side aggregations.
 * `done`: `(accumulator, arr: T[]) => any` - a function that is called to finish the aggregation after all values have been accumulated. The function should return the final value of the aggregation. Only used for client-side aggregations.
 * `name` - useful especially in combination with <DataSourcePropLink name="pivotBy" />, as it will be used as the pivot column header.
+* `pivotColumn` - if specified, will configure the pivot column generated for this aggregation. This object has the same shape as a normal <PropLink name="columns">column</PropLink>, but supports an extra `inheritFromColumn` property, which can either be a `string` (a column id), or a `boolean`. The default behavior for a pivot column is to inherit the configuration of the initial column that has the same `field` property. `inheritFromColumn` allows you to specify another column to inherit from, or, if `false` is passed, the pivot column will not inherit from any other column.
 
 
 <Sandpack title="Aggregation demo - see `salary` column">
@@ -30,7 +31,6 @@ The `DataSourceAggregationReducer` type can have the following properties
 
 Aggregation reducers can be used in combination with grouping and pivoting. The example below shows aggregations used with server-side pivoting
 
-
 <Sandpack title="Aggregations used together with server-side pivoting"> 
 
 ```ts file=../../learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx
@@ -38,6 +38,14 @@ Aggregation reducers can be used in combination with grouping and pivoting. The 
 
 </Sandpack>
 
+Pivot columns generated for aggregations will inehrit from initial columns - the example shows how to leverage this behavior and how to extend it
+
+<Sandpack title="Pivot columns inherit from original columns bound to the same field"> 
+
+```ts file=../../learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx
+```
+
+</Sandpack>
 
 </Prop>
 

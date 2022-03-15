@@ -41,10 +41,43 @@ const groupBy = [{field: 'department'}, {field: 'country'}]
 
 ## Customizing Pivot Columns
 
-There are a number of ways to customize the <DataSourcePropLink name="pivotBy.column" code={false}>pivot columns</DataSourcePropLink> and <DataSourcePropLink name="pivotBy.columnGroup" code={false}>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
+There are a number of ways to customize the pivot columns and <DataSourcePropLink name="pivotBy.columnGroup" code={false}>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
 
-One way to do it is to specify <DataSourcePropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
-If you pass an object, it will be applied to all pivot columns corresponding to the `field` property.
+The default behavior for pivot columns generated for aggregations is that they inherit the properties of the original columns bound to the same field as the aggregation.
+
+```ts
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
+  initialValue: 0,
+  reducer: (acc, sum) => acc + sum,
+  done: (sum, arr) => {
+    return Math.floor(arr.length ? sum / arr.length : 0);
+  },
+};
+const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
+  // will have the same configuration as the `salary` column
+  avgSalary: { field: 'salary', ...avgReducer },
+  avgAge: {
+    field: 'age',
+    ...avgReducer,
+    pivotColumn: {
+      // will have the same configuration as the `preferredLanguage` column
+      inheritFromColumn: 'preferredLanguage',
+      // but specify a custom default width
+      defaultWidth: 500,
+    },
+  },
+}
+```
+
+<Sandpack title="Pivot columns inherit from original columns bound to the same field"> 
+
+```ts file=pivot-column-inherit-example.page.tsx
+```
+
+</Sandpack>
+
+Another way to do it is to specify <DataSourcePropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
+If you pass an object, it will be applied to all pivot columns in the column group generated for the `field` property.
 
 
 ```tsx

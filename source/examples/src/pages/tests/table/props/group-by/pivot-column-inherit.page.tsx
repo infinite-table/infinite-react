@@ -4,11 +4,10 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
-  DataSourcePropAggregationReducers,
+  DataSourceProps,
 } from '@infinite-table/infinite-react';
 
 import type {
-  InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
@@ -73,7 +72,7 @@ const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   },
 };
 
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
   salary: { field: 'salary', ...avgReducer },
   age: {
     field: 'age',
@@ -85,48 +84,36 @@ const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
   },
 };
 
-const columns: InfiniteTablePropColumns<Developer> = new Map<
-  string,
-  InfiniteTableColumn<Developer>
->([
-  [
-    'preferredLanguage',
-    {
-      field: 'preferredLanguage',
-      style: {
-        color: 'blue',
-      },
+const columns: InfiniteTablePropColumns<Developer> = {
+  preferredLanguage: {
+    field: 'preferredLanguage',
+    style: {
+      color: 'blue',
     },
-  ],
-  [
-    'age',
-    {
-      field: 'age',
-      style: {
-        color: 'magenta',
-        background: 'yellow',
-      },
+  },
+  age: {
+    field: 'age',
+    style: {
+      color: 'magenta',
+      background: 'yellow',
     },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      style: {
-        color: 'red',
-      },
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    style: {
+      color: 'red',
     },
-  ],
-  ['canDesign', { field: 'canDesign' }],
-  ['country', { field: 'country' }],
-  ['firstName', { field: 'firstName' }],
-  ['stack', { field: 'stack' }],
-  ['id', { field: 'id' }],
-  ['hobby', { field: 'hobby' }],
-  ['city', { field: 'city' }],
-  ['currency', { field: 'currency' }],
-]);
+  },
+  canDesign: { field: 'canDesign' },
+  country: { field: 'country' },
+  firstName: { field: 'firstName' },
+  stack: { field: 'stack' },
+  id: { field: 'id' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  currency: { field: 'currency' },
+};
 
 const domProps = { style: { height: '100vh' } };
 
