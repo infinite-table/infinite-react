@@ -22,6 +22,7 @@ export class DeepMap<KeyType, ValueType> {
   private map = new Map<KeyType, Pair<KeyType, ValueType>>();
   private length = 0;
   private revision = 0;
+  private emptyKey = Symbol('emptyKey') as any as KeyType;
 
   static clone<KeyType, ValueType>(map: DeepMap<KeyType, ValueType>) {
     const clone = new DeepMap<KeyType, ValueType>();
@@ -46,11 +47,9 @@ export class DeepMap<KeyType, ValueType> {
   set(keys: KeyType[] & { length: Omit<number, 0> }, value: ValueType) {
     let currentMap = this.map;
     if (!keys.length) {
-      throw `Cannot set given keys - please provide a non-empty keys array.`;
-      // currentMap.set((EMPTY_KEY as unknown) as K, { value });
-      // this.length++;
-      // return this;
+      keys = [this.emptyKey];
     }
+
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
       const last = i === len - 1;
@@ -80,8 +79,7 @@ export class DeepMap<KeyType, ValueType> {
   get(keys: KeyType[]): ValueType | undefined {
     let currentMap = this.map;
     if (!keys.length) {
-      throw `Cannot get given keys - please provide a non-empty keys array.`;
-      // return currentMap.get((EMPTY_KEY as unknown) as K)?.value;
+      keys = [this.emptyKey];
     }
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
@@ -123,14 +121,11 @@ export class DeepMap<KeyType, ValueType> {
   }
 
   delete(keys: KeyType[]): boolean {
-    keys = [...keys];
     let currentMap = this.map;
     if (!keys.length) {
-      throw `Cannot delete given keys - please provide a non-empty keys array.`;
-      // if (currentMap.has(EMPTY_KEY as unknown as K)) {
-      //   this.length--;
-      // }
-      // return currentMap.delete((EMPTY_KEY as unknown) as K);
+      keys = [this.emptyKey];
+    } else {
+      keys = [...keys];
     }
 
     let maps = [currentMap];
@@ -197,11 +192,7 @@ export class DeepMap<KeyType, ValueType> {
   has(keys: KeyType[]) {
     let currentMap = this.map;
     if (!keys.length) {
-      throw `Cannot find existing given keys - please provide a non-empty keys array.`;
-      // return (
-      //   currentMap.has((EMPTY_KEY as unknown) as K) &&
-      //   currentMap.get((EMPTY_KEY as unknown) as K)?.value !== undefined
-      // );
+      keys = [this.emptyKey];
     }
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
@@ -234,7 +225,7 @@ export class DeepMap<KeyType, ValueType> {
     }
     const { map } = pair;
 
-    const keys = [...parentKeys, key];
+    const keys = key === this.emptyKey ? [] : [...parentKeys, key];
 
     const next = once(() => {
       if (map) {
@@ -282,7 +273,10 @@ export class DeepMap<KeyType, ValueType> {
       return;
     }
     let i = 0;
-    currentMap.forEach((_, key) => {
+    const hasEmptyKey = currentMap.has(this.emptyKey);
+    let allowEmptyKey = true;
+
+    const iterator = (_: Pair<KeyType, ValueType>, key: KeyType) => {
       const pair = currentMap.get(key);
 
       if (!pair) {
@@ -290,7 +284,11 @@ export class DeepMap<KeyType, ValueType> {
       }
       const { map } = pair;
 
-      const keys = [...parentKeys, key];
+      const isEmptyKey = key === this.emptyKey;
+      if (isEmptyKey && !allowEmptyKey) {
+        return;
+      }
+      const keys = isEmptyKey ? [] : [...parentKeys, key];
 
       const next = map ? () => this.visitWithNext(keys, fn, map) : undefined;
 
@@ -300,7 +298,14 @@ export class DeepMap<KeyType, ValueType> {
       } else {
         next?.();
       }
-    });
+    };
+
+    if (hasEmptyKey) {
+      iterator(undefined as any as Pair<KeyType, ValueType>, this.emptyKey);
+      allowEmptyKey = false;
+      i = 0;
+    }
+    currentMap.forEach(iterator);
   };
 
   private getArray<ReturnType>(
@@ -309,7 +314,12 @@ export class DeepMap<KeyType, ValueType> {
     const result: ReturnType[] = [];
 
     this.visit((pair, keys) => {
-      result.push(fn({ ...pair, keys }));
+      const res = fn({ ...pair, keys });
+      if (keys.length === 0) {
+        result.splice(0, 0, res);
+      } else {
+        result.push(res);
+      }
     });
 
     return result;

@@ -216,7 +216,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       actions.dataParams = dataParams;
 
       if (state.livePagination) {
-        // #waitforupdate do it on raf, since it also does actions.dataParams assignment
+        // #wait_for_update do it on raf, since it also does actions.dataParams assignment
         // so we allow dataParams to be updated (the call 3 lines above) in state
 
         requestAnimationFrame(() => {
@@ -233,7 +233,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       actions.dataParams = dataParams;
 
       if (state.livePagination) {
-        // see #waitforupdate above
+        // see #wait_for_update above
 
         requestAnimationFrame(() => {
           actions.livePaginationCursor = null;
@@ -249,7 +249,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       actions.dataParams = dataParams;
 
       if (state.livePagination) {
-        // see #waitforupdate above
+        // see #wait_for_update above
 
         requestAnimationFrame(() => {
           actions.livePaginationCursor = null;
@@ -258,7 +258,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
     },
     cursorId: (cursorId, { actions, state }) => {
       const dataParams = buildDataSourceDataParams(state, {
-        cursorId,
+        __cursorId: cursorId,
       });
       actions.dataParams = dataParams;
     },

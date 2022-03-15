@@ -468,7 +468,7 @@ export function getColumnsWhenGrouping<T>(params: {
         generatedGroupColumn,
       );
     });
-  } else if (groupRenderStrategy === 'single-column') {
+  } else if (groupRenderStrategy === 'single-column' && groupBy.length) {
     const singleGroupColumn = getSingleGroupColumn(
       {
         groupCount: groupBy.length,

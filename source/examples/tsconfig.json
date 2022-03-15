@@ -16,9 +16,11 @@
     "jsx": "preserve",
     "isolatedModules": true,
     "baseUrl": "./",
+    "rootDir": "../../",
     "paths": {
-      "react": ["../../node_modules/react"],
-      "react-dom": ["../../node_modules/react-dom/profiling"],
+      "react": ["../node_modules/react"],
+      "@types/react": ["../node_modules/@types/react"],
+      "react-dom": ["../node_modules/react-dom/profiling"],
       "@infinite-table/infinite-react/*": ["../src/*"],
       "@infinite-table/infinite-react": ["../src/index"],
       "@src/*": ["../src/*"],

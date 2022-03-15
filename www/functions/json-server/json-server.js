@@ -243,7 +243,8 @@ function getSQLRoute(routeSuffix) {
     if (
       (groupKeys &&
         groupBy &&
-        groupKeys.length >= groupBy.length) ||
+        groupKeys.length >= groupBy.length &&
+        groupBy.length) ||
       !groupBy
     ) {
       res.json({
@@ -268,8 +269,13 @@ function getSQLRoute(routeSuffix) {
         const keyField =
           groupKeys && groupKeys.length
             ? groupBy[groupKeys.length].field
-            : groupBy[0].field;
-        const keys = [...groupKeys, x[keyField]];
+            : groupBy[0]
+            ? groupBy[0].field
+            : null;
+        const keys = keyField
+          ? [...groupKeys, x[keyField]]
+          : [...groupKeys];
+        // console.log(x);
 
         Object.keys(x).forEach((k) => {
           const theValue =
@@ -293,6 +299,7 @@ function getSQLRoute(routeSuffix) {
 
           const valueKeys = k.split(KEY_SEPARATOR);
           const reducerKey = valueKeys.pop();
+          // console.log(valueKeys);
 
           const path = [];
 
@@ -389,7 +396,7 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
       const as =
         key
           .map((k) =>
-            k.replace(/ /g, '_').replace(/#/g, 'sharp')
+            k.replace(/ /g, '').replace(/#/g, 'sharp')
           )
           .join(KEY_SEPARATOR) +
         KEY_SEPARATOR +
@@ -404,6 +411,8 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
       );
     });
   });
+
+  console.log(colsToSelect);
 
   return colsToSelect;
 }
@@ -429,7 +438,10 @@ function buildSQL({
       ? groupKeys.length
       : 0;
 
-    if (groupKeysLength >= groupBy.length) {
+    if (
+      groupKeysLength >= groupBy.length &&
+      groupBy.length
+    ) {
       selectAllCols = true;
     } else {
       // limit the fields selected by grouping
@@ -448,6 +460,12 @@ function buildSQL({
             ),
           };
         });
+        // console.log(
+        //   'pivotByWithValues',
+        //   pivotByWithValues,
+        //   'pivotBy',
+        //   pivotBy
+        // );
 
         colsToSelect.push(
           ...generatePivotSQL(pivotByWithValues, reducers)
@@ -463,6 +481,7 @@ function buildSQL({
       );
     });
   }
+  // console.log('colsToSelect', colsToSelect);
 
   let where = '';
 
@@ -495,6 +514,7 @@ function buildSQL({
 
   // colsToSelect.length = 8;
 
+  // console.log('selectAllCols', selectAllCols);
   if (selectAllCols) {
     colsToSelect = '*';
   }
@@ -525,6 +545,7 @@ function buildSQL({
     }`;
   }
 
+  // console.log(SQL);
   return SQL;
 }
 module.exports = app;

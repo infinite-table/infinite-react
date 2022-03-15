@@ -7,12 +7,10 @@ import {
   GroupRowsState,
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumnTypes,
-  InfiniteTablePivotColumn,
   debounce,
 } from '@infinite-table/infinite-react';
 
 import type {
-  InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
@@ -63,10 +61,19 @@ const columns: InfiniteTablePropColumns<Developer> = {
       color: 'blue',
     },
   },
-  age: { field: 'age', type: ['number'] },
+  age: {
+    field: 'age',
+    type: ['number'],
+    // style: {
+    //   color: 'blue',
+    // },
+  },
   salary: {
     field: 'salary',
     type: ['number', 'currency'],
+    style: {
+      color: 'red',
+    },
   },
   currency: { field: 'currency' },
 };
@@ -77,14 +84,18 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
   {
     number: {
       renderValue: ({ value }) =>
-        numberFormatter.format(value as number),
+        typeof value === 'number'
+          ? numberFormatter.format(value as number)
+          : null,
     },
     currency: {
       renderValue: (param) => {
         const { value, data } = param;
-        return `${numberFormatter.format(
-          value as number
-        )} ${data?.currency ?? ''}`;
+        return typeof value === 'number'
+          ? `${numberFormatter.format(value as number)} ${
+              data?.currency ?? ''
+            }`
+          : null;
       },
     },
     default: {
@@ -92,38 +103,38 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
     },
   };
 
-//  Column modifiers
-const getPivotColumn = (
-  column: InfiniteTableColumn<Developer>
-): Partial<InfiniteTablePivotColumn<Developer>> => {
-  return {
-    ...column,
-    style: (params) => {
-      if (typeof params.value === 'number') {
-        return {
-          fontStyle: 'italic',
-        };
-      }
-    },
-  };
-};
+// //  Column modifiers
+// const getPivotColumn = (
+//   column: InfiniteTableColumn<Developer>
+// ): Partial<InfiniteTablePivotColumn<Developer>> => {
+//   return {
+//     ...column,
+//     style: (params) => {
+//       if (typeof params.value === 'number') {
+//         return {
+//           fontStyle: 'italic',
+//         };
+//       }
+//     },
+//   };
+// };
 
-const _getGroupColumn = (
-  column: InfiniteTableColumn<Developer>
-): Partial<InfiniteTableColumn<Developer>> => {
-  return {
-    style: {
-      color: 'red',
-    },
-  };
-};
+// const _getGroupColumn = (
+//   column: InfiniteTableColumn<Developer>
+// ): Partial<InfiniteTableColumn<Developer>> => {
+//   return {
+//     style: {
+//       color: 'red',
+//     },
+//   };
+// };
 
-const groupColumn = {
-  style: {
-    fontWeight: '600',
-    color: 'var(--infinite-accent-color)',
-  },
-};
+// const groupColumn = {
+//   style: {
+//     fontWeight: '600',
+//     color: 'var(--infinite-accent-color)',
+//   },
+// };
 
 // Groupings
 const groupRowsState = new GroupRowsState({
@@ -136,7 +147,7 @@ const avgReducer: InfiniteTableColumnAggregator<
   any
 > = {
   initialValue: 0,
-  field: 'salary',
+
   reducer: (acc, sum) => acc + sum,
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
@@ -146,7 +157,7 @@ const maxReducer: InfiniteTableColumnAggregator<
   any
 > = {
   initialValue: -Infinity,
-  field: 'salary',
+
   reducer: (acc, next) => (acc < next ? next : acc),
   done: (max) => max,
 };
@@ -156,7 +167,7 @@ const minReducer: InfiniteTableColumnAggregator<
   any
 > = {
   initialValue: Infinity,
-  field: 'salary',
+
   reducer: (acc, next) => (acc > next ? next : acc),
   done: (min) => min,
 };
@@ -342,11 +353,30 @@ const Settings: React.FunctionComponent<{
   );
 };
 
-export default function GroupByExample() {
+type GroupByExampleProps<T> = {
+  domProps?: InfiniteTableProps<T>['domProps'];
+};
+
+export default function GroupByExample(
+  props: GroupByExampleProps<any>
+) {
+  const { domProps } = props;
   const [groupBy, setGroupBy] =
-    React.useState<GroupByDeveloperType>([]);
+    React.useState<GroupByDeveloperType>([
+      {
+        field: 'country',
+      },
+      { field: 'city' },
+    ]);
   const [pivotBy, setPivotBy] =
-    React.useState<PivotByDeveloperType>([]);
+    React.useState<PivotByDeveloperType>([
+      {
+        field: 'preferredLanguage',
+      },
+      {
+        field: 'canDesign',
+      },
+    ]);
   const [reducerKey, setReducerKey] =
     React.useState<ReducerOptions>('avg');
   const [backgroundColor, setBackgroundColor] =
@@ -360,13 +390,9 @@ export default function GroupByExample() {
   >(
     () => ({
       ...columnTypes,
-      default: {
-        style: (params) => {
-          if (params.column.field === 'preferredLanguage') {
-            return {
-              backgroundColor,
-            };
-          }
+      number: {
+        style: {
+          backgroundColor,
         },
       },
     }),
@@ -382,7 +408,17 @@ export default function GroupByExample() {
       };
 
       return {
-        default: reducerMap[reducerKey],
+        salary: {
+          ...reducerMap[reducerKey],
+          name: 'Salary (avg)',
+          field: 'salary',
+        },
+        age: {
+          ...reducerMap[reducerKey],
+          name: 'Age (avg)',
+          field: 'age',
+        },
+        // default: reducerMap[reducerKey],
       };
     }, [reducerKey]);
 
@@ -400,6 +436,13 @@ export default function GroupByExample() {
     })) as PivotByDeveloperType;
   }, [pivotBy]);
 
+  const onDataParamsChange = React.useCallback(
+    (dataParams) => {
+      console.log(dataParams);
+    },
+    []
+  );
+
   return (
     <>
       <Settings
@@ -415,21 +458,15 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={
-          preparedGroupBy.length
-            ? preparedGroupBy
-            : undefined
-        }
-        pivotBy={
-          preparedPivotBy.length
-            ? preparedPivotBy
-            : undefined
-        }
+        groupBy={preparedGroupBy}
+        pivotBy={preparedPivotBy}
         aggregationReducers={reducers}
+        onDataParamsChange={onDataParamsChange}
         defaultGroupRowsState={groupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              domProps={domProps}
               columns={columns}
               columnTypes={preparedColumnTypes}
               pivotColumns={pivotColumns}

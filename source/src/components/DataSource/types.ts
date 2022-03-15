@@ -39,7 +39,7 @@ export interface DataSourceDataParams<T> {
   aggregationReducers?: DataSourcePropAggregationReducers<T>;
 
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
-  cursorId?: DataSourceSetupState<T>['cursorId'];
+  __cursorId?: DataSourceSetupState<T>['cursorId'];
 
   changes?: DataSourceDataParamsChanges<T>;
 }

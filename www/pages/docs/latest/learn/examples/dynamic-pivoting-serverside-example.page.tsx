@@ -247,6 +247,11 @@ const selectProps: SelectProps = {
 
 // COMPONENTS
 
+const defaultColumnPinning: InfiniteTableProps<any>['columnPinning'] =
+  {
+    'group-by': true,
+  };
+
 type ReducerOptions = 'min' | 'max' | 'avg';
 const Settings: React.FunctionComponent<{
   groupBy: GroupByDeveloperType;
@@ -468,6 +473,7 @@ export default function GroupByExample() {
           return (
             <InfiniteTable<Developer>
               columns={columns}
+              columnPinning={defaultColumnPinning}
               columnTypes={preparedColumnTypes}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}

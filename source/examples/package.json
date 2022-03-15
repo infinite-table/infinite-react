@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "DEBUG=InfiniteTable:* next dev",
-    "build": "rimraf node_modules/react && next build && next export",
+    "build": "rimraf node_modules/@types/react && rimraf node_modules/react && next build && next export",
     "start": "next start",
     "test": "rimraf .next && npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
     "start-server": "http-server -s -p 3000 out",
-    "play:test": "time playwright test",
+    "play:test": "time  playwright test",
     "play:test:watch": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path}'",
     "tscw": "tsc --watch --project tsconfig.json"
   },
@@ -22,6 +22,7 @@
     "react": "^17.0.2",
     "react-query": "^3.34.8",
     "sinon": "^10.0.0",
+    "tinycolor2": "^1.4.2",
     "typescript": "^4.5.0-beta"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "playwright": "^1.19.2",
+    "react-select": "^5.2.2",
     "rimraf": "^3.0.2",
     "tslib": "^2.1.0"
   }

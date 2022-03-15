@@ -71,7 +71,7 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
   ['hobby', { field: 'hobby' }],
   ['city', { field: 'city' }],
   ['age', { field: 'age' }],
-  ['salary', { field: 'salary', type: 'number' }],
+  ['salary', { field: 'salary', type: 'number', style: { color: 'red' } }],
   ['currency', { field: 'currency' }],
 ]);
 
@@ -95,29 +95,26 @@ export default function GroupByExample() {
     () => [
       {
         field: 'country',
-        column: ({ column }) => {
-          return {
-            header: `Totals for: ${column.pivotGroupKey}`,
-            render: (arg) => {
-              const { value } = arg;
-              console.log(arg);
-              return value;
-            },
-          };
-        },
       },
-      // { field: 'currency' },
     ],
     [],
   );
 
+  const [pivot, setPivot] = React.useState<boolean>(false);
   return (
     <>
+      <button
+        onClick={() => {
+          setPivot(!pivot);
+        }}
+      >
+        toggle pivot
+      </button>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         groupBy={groupBy}
-        pivotBy={pivotBy}
+        pivotBy={pivot ? pivotBy : undefined}
         defaultGroupRowsState={groupRowsState}
         aggregationReducers={aggregationReducers}
       >
@@ -126,6 +123,7 @@ export default function GroupByExample() {
             <InfiniteTable<Developer>
               columns={columns}
               domProps={domProps}
+              virtualizeColumns={false}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
               columnDefaultWidth={200}

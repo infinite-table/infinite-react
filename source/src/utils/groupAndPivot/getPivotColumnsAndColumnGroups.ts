@@ -295,7 +295,8 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
     }
   });
 
-  if (columns.size === 1) {
+  // if (columns.size === 1 || !pivotLength) {
+  if (!pivotLength) {
     aggregationReducers.forEach((reducer, index) => {
       columns.set(
         `total:${reducer.id}`,

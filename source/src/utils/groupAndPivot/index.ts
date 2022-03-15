@@ -258,7 +258,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
     pivotIndex: number = 0,
     currentPivotKeys: KeyType[] = [],
   ) {
-    const last = pivotIndex === pivot.length - 1;
+    const last = !pivot.length || pivotIndex === pivot.length - 1;
     const values = container[(mappings?.values || 'values') as 'values'] || {};
     for (var k in values)
       if (values.hasOwnProperty(k)) {
@@ -300,7 +300,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
       const [_rootKey, ...currentGroupKeys] = keys;
       const dataArray = lazyGroupRowInfo.items;
 
-      if (currentGroupKeys.length == groupBy.length) {
+      if (currentGroupKeys.length == groupBy.length && groupBy.length) {
         const deepMapGroupValue:
           | undefined
           | DeepMapGroupValueType<DataType, KeyType> = deepMap.get(
@@ -333,16 +333,20 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         const dataKeys = dataArray[i].keys;
         let item = dataObject as Partial<DataType>;
 
-        const { field: groupByProperty } = groupBy[dataKeys.length - 1];
-        const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
-        currentGroupKeys.push(key);
+        if (dataKeys.length) {
+          const { field: groupByProperty } = groupBy[dataKeys.length - 1];
+          const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
+          currentGroupKeys.push(key);
+        }
 
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
           commonData: dataObject,
           reducerResults: dataArray[i].aggregations || {},
         };
+
         deepMap.set(currentGroupKeys as KeyType[], deepMapGroupValue);
+
         if (pivot) {
           const pivotDeepMap = (deepMapGroupValue.pivotDeepMap = new DeepMap<
             GroupKeyType<KeyType>,
@@ -361,7 +365,9 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           );
         }
 
-        currentGroupKeys.pop();
+        if (dataKeys.length) {
+          currentGroupKeys.pop();
+        }
       }
 
       next?.();
@@ -384,6 +390,64 @@ export function lazyGroup<DataType, KeyType extends string = string>(
 
   return result;
 }
+
+function processGroup<KeyType, DataType>(
+  deepMap: DeepMap<
+    GroupKeyType<KeyType>,
+    DeepMapGroupValueType<DataType, KeyType>
+  >,
+  currentGroupKeys: KeyType[],
+  currentPivotKeys: KeyType[],
+  item: DataType,
+  pivot: GroupParams<DataType, KeyType>['pivot'],
+  reducers: GroupParams<DataType, KeyType>['reducers'],
+  topLevelPivotColumns: DeepMap<GroupKeyType<KeyType>, boolean>,
+  initialReducerValue: Record<string, AggregationReducerResult>,
+  defaultToKey: GroupParams<DataType, KeyType>['defaultToKey'] = DEFAULT_TO_KEY,
+) {
+  const {
+    items: currentGroupItems,
+    reducerResults,
+    pivotDeepMap,
+  } = deepMap.get(currentGroupKeys)!;
+
+  currentGroupItems.push(item);
+
+  if (reducers) {
+    computeReducersFor<DataType>(item, reducers, reducerResults);
+  }
+  if (pivot) {
+    for (
+      let pivotIndex = 0, pivotLength = pivot.length;
+      pivotIndex < pivotLength;
+      pivotIndex++
+    ) {
+      const { field: pivotField, toKey: pivotToKey } = pivot[pivotIndex];
+      const pivotKey: GroupKeyType<KeyType> = (pivotToKey || defaultToKey)(
+        item[pivotField],
+        item,
+      );
+
+      currentPivotKeys.push(pivotKey);
+      if (!pivotDeepMap!.has(currentPivotKeys)) {
+        topLevelPivotColumns!.set(currentPivotKeys, true);
+        pivotDeepMap?.set(currentPivotKeys, {
+          reducerResults: { ...initialReducerValue },
+          items: [],
+        });
+      }
+      const { reducerResults: pivotReducerResults, items: pivotGroupItems } =
+        pivotDeepMap!.get(currentPivotKeys)!;
+
+      pivotGroupItems.push(item);
+      if (reducers) {
+        computeReducersFor<DataType>(item, reducers, pivotReducerResults);
+      }
+    }
+    currentPivotKeys.length = 0;
+  }
+}
+
 export function group<DataType, KeyType = any>(
   groupParams: GroupParams<DataType, KeyType>,
   data: DataType[],
@@ -413,6 +477,21 @@ export function group<DataType, KeyType = any>(
 
   const globalReducerResults = { ...initialReducerValue };
 
+  if (!groupByLength) {
+    const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
+      items: [],
+      reducerResults: { ...initialReducerValue },
+    };
+
+    if (pivot) {
+      deepMapGroupValue.pivotDeepMap = new DeepMap<
+        GroupKeyType<KeyType>,
+        PivotGroupValueType<DataType, KeyType>
+      >();
+    }
+    deepMap.set(currentGroupKeys, deepMapGroupValue);
+  }
+
   for (let i = 0, len = data.length; i < len; i++) {
     let item = data[i];
 
@@ -440,49 +519,31 @@ export function group<DataType, KeyType = any>(
         deepMap.set(currentGroupKeys, deepMapGroupValue);
       }
 
-      const {
-        items: currentGroupItems,
-        reducerResults,
-        pivotDeepMap,
-      } = deepMap.get(currentGroupKeys)!;
+      processGroup(
+        deepMap,
+        currentGroupKeys,
+        currentPivotKeys,
+        item,
+        pivot,
+        reducers,
+        topLevelPivotColumns!,
+        initialReducerValue,
+        defaultToKey,
+      );
+    }
 
-      currentGroupItems.push(item);
-
-      if (reducers) {
-        computeReducersFor<DataType>(item, reducers, reducerResults);
-      }
-      if (pivot) {
-        for (
-          let pivotIndex = 0, pivotLength = pivot.length;
-          pivotIndex < pivotLength;
-          pivotIndex++
-        ) {
-          const { field: pivotField, toKey: pivotToKey } = pivot[pivotIndex];
-          const pivotKey: GroupKeyType<KeyType> = (pivotToKey || defaultToKey)(
-            item[pivotField],
-            item,
-          );
-
-          currentPivotKeys.push(pivotKey);
-          if (!pivotDeepMap!.has(currentPivotKeys)) {
-            topLevelPivotColumns!.set(currentPivotKeys, true);
-            pivotDeepMap?.set(currentPivotKeys, {
-              reducerResults: { ...initialReducerValue },
-              items: [],
-            });
-          }
-          const {
-            reducerResults: pivotReducerResults,
-            items: pivotGroupItems,
-          } = pivotDeepMap!.get(currentPivotKeys)!;
-
-          pivotGroupItems.push(item);
-          if (reducers) {
-            computeReducersFor<DataType>(item, reducers, pivotReducerResults);
-          }
-        }
-        currentPivotKeys.length = 0;
-      }
+    if (!groupByLength) {
+      processGroup(
+        deepMap,
+        currentGroupKeys,
+        currentPivotKeys,
+        item,
+        pivot,
+        reducers,
+        topLevelPivotColumns!,
+        initialReducerValue,
+        defaultToKey,
+      );
     }
 
     if (reducers) {

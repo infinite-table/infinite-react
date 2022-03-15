@@ -54,7 +54,7 @@ export function buildDataSourceDataParams<T>(
 
   if (componentState.livePagination !== undefined) {
     dataSourceParams.livePaginationCursor = componentState.livePaginationCursor;
-    dataSourceParams.cursorId = componentState.cursorId;
+    dataSourceParams.__cursorId = componentState.cursorId;
   }
 
   if (componentState.lazyLoad) {
@@ -106,7 +106,7 @@ export function loadData<T>(
     const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...(dataParams.groupKeys || [])];
     const existingGroupRowInfo = lazyGroupData.get(key);
 
-    if (existingGroupRowInfo && existingGroupRowInfo.cache) {
+    if (existingGroupRowInfo && existingGroupRowInfo.cache && key.length > 1) {
       const items = existingGroupRowInfo.items;
       const len = items.length;
       let allLoaded = true;
@@ -323,11 +323,14 @@ export function useLoadData<T>() {
     { ...depsObject, data },
   );
 
+  // only for initial triggering `onDataParamsChange`
   useEffectWithChanges((_changes, _prevValues) => {
     const componentState = getComponentState();
     if (initialRef.current) {
       initialRef.current = false;
-      actions.dataParams = buildDataSourceDataParams(componentState);
+
+      const dataParams = buildDataSourceDataParams(componentState);
+      actions.dataParams = dataParams;
     }
   }, depsObject);
 }
@@ -343,7 +346,7 @@ function useLazyLoadRange<T>() {
     return new Map();
   }, [componentState.data]);
 
-  (globalThis as any).loadingCache = loadingCache;
+  // (globalThis as any).loadingCache = loadingCache;
 
   const {
     lazyLoadBatchSize,

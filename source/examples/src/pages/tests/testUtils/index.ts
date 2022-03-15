@@ -17,6 +17,16 @@ export const getHeaderCellByColumnId = async (
   return await page.$(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
+export const getCellNode = async (
+  { columnId, rowIndex }: { columnId: string; rowIndex: number },
+  { page }: { page: Page },
+) => {
+  const rowSelector = getRowSelector(rowIndex);
+  const row = await page.$(rowSelector);
+
+  return await row!.$(`[data-column-id="${columnId}"]`);
+};
+
 export const getHeaderCellWidthByColumnId = async (
   columnId: string,
   { page }: { page: Page },
@@ -122,3 +132,29 @@ export async function getColumnGroupsIds({ page }: { page: Page }) {
     [...nodes].map((node) => (node as HTMLElement).dataset.groupId),
   );
 }
+
+import { kebabCase } from './kebabCase';
+import { getRowSelector } from './getRowElement';
+
+export async function getComputedStyleProperty(
+  selector: ElementHandle<HTMLElement | SVGElement> | string,
+  propertyName: string,
+  { page }: { page: Page },
+): Promise<string> {
+  if (typeof selector === 'string') {
+    selector = (await page.$(selector)) as ElementHandle<HTMLElement>;
+  }
+
+  const value = await selector.evaluate(
+    (node, propertyName) =>
+      getComputedStyle(node).getPropertyValue(propertyName),
+    kebabCase(propertyName),
+  );
+
+  return value;
+}
+
+const tinycolor = require('tinycolor2');
+
+export const toRGBString = (color: string) => tinycolor(color).toRgbString();
+export const toColorString = (color: string) => tinycolor(color).toString();
