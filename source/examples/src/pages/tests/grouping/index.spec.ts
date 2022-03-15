@@ -43,9 +43,9 @@ const espania = {
   age: 50,
   name: 'espania',
 };
-
-export default xdescribe('Grouping', () => {
-  it('should group on single field', async () => {
+import { test, expect } from '@playwright/test';
+export default test.describe.parallel('Grouping', () => {
+  test('should group on single field', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
 
     const result = group(
@@ -61,7 +61,7 @@ export default xdescribe('Grouping', () => {
       [['es'], [espania]],
     ]);
   });
-  it('should group on two fields', async () => {
+  test('should group on two fields', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
 
     const result = groupToItems(
@@ -86,7 +86,7 @@ export default xdescribe('Grouping', () => {
       [['es', 50], [espania]],
     ]);
   });
-  it('should group and flatten correctly', () => {
+  test('should group and flatten correctly', () => {
     const arr = [john, marrie, bob, espania, bill];
     const result = flatten(
       group(
@@ -110,7 +110,7 @@ export default xdescribe('Grouping', () => {
     ]);
   });
 
-  it('should group and flatten in correct order', () => {
+  test('should group and flatten in correct order', () => {
     const arr = [john, marrie, espania, bob, bill];
     const result = flatten(
       group(
@@ -141,7 +141,7 @@ export default xdescribe('Grouping', () => {
     ]);
   });
 
-  it('should group and flatten in correct order - 2', () => {
+  test('should group and flatten in correct order - 2', () => {
     const arr = [bob, john, marrie, espania, bill];
     const result = flatten(
       group(
@@ -171,7 +171,7 @@ export default xdescribe('Grouping', () => {
     ]);
   });
 
-  it('should enhancedFlatten with collapsed rows', () => {
+  test.skip('should enhancedFlatten with collapsed rows', () => {
     const arr = [
       john /*uk*/,
       marrie /*fr */,
@@ -227,7 +227,7 @@ export default xdescribe('Grouping', () => {
     });
   });
 
-  it('should enhancedFlatten correctly', () => {
+  test.skip('should enhancedFlatten correctly', () => {
     const arr = [john, marrie, bob, espania, bill];
     const groupResult = group(
       {
