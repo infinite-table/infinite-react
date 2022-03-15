@@ -147,7 +147,6 @@ export default function GroupByExample() {
           header: 'test',
           render: ({ value }) => value,
         },
-        // TODO add a note in docs about this nice trick
       },
     ],
     [],

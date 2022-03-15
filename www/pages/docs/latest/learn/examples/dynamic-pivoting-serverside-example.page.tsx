@@ -426,21 +426,6 @@ export default function GroupByExample() {
     }),
     [backgroundColor]
   );
-
-  const preparedGroupBy = React.useMemo(() => {
-    return groupBy.map((group) => ({
-      ...group,
-      column: groupColumn,
-    })) as GroupByDeveloperType;
-  }, [groupBy]);
-
-  const preparedPivotBy = React.useMemo(() => {
-    return pivotBy.map((pivot) => ({
-      ...pivot,
-      column: getPivotColumn,
-    })) as PivotByDeveloperType;
-  }, [pivotBy]);
-
   return (
     <>
       <Settings
@@ -448,8 +433,8 @@ export default function GroupByExample() {
         onPivotChange={setPivotBy}
         onReducerKeyChange={setReducerKey}
         onColorChange={setBackgroundColor}
-        groupBy={preparedGroupBy}
-        pivotBy={preparedPivotBy}
+        groupBy={groupBy}
+        pivotBy={pivotBy}
         reducerKey={reducerKey}
       />
 
@@ -457,16 +442,8 @@ export default function GroupByExample() {
         primaryKey="id"
         lazyLoad
         data={preparedDataSource}
-        groupBy={
-          preparedGroupBy.length
-            ? preparedGroupBy
-            : undefined
-        }
-        pivotBy={
-          preparedPivotBy.length
-            ? preparedPivotBy
-            : undefined
-        }
+        groupBy={groupBy}
+        pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
