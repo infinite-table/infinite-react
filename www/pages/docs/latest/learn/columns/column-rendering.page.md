@@ -141,7 +141,6 @@ For such scenarios, you can specify `column.components.HeaderCell` and `column.c
 
 import { InfiniteTableColumn } from '@infinite-table/infintie-react'
 
-
 const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
   const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
 
