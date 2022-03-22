@@ -9,7 +9,7 @@
     "test": "rimraf .next && npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
     "start-server": "http-server -s -p 3000 out",
-    "play:test": "time playwright test",
+    "play:test": "playwright test",
     "play:test:watch": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path}'",
     "tscw": "tsc --watch --project tsconfig.json"
   },

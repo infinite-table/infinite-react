@@ -17,7 +17,7 @@ export default test.describe.parallel('Table', () => {
     // await page.waitForSelector(getRowSelector(0));
   });
 
-  test('uncontrolled sortInfo should work fine', async ({ page }) => {
+  test.skip('uncontrolled sortInfo should work fine', async ({ page }) => {
     const { headerCell, bodyCells } = await getColumnCells('itemCount', {
       page,
     });
