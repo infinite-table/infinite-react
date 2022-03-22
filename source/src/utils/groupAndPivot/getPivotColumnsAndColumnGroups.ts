@@ -174,7 +174,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           valueGetter: ({ rowInfo }) => {
             return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
               reducer.id
-            ];
+            ] as any as string;
           },
         });
 
@@ -276,7 +276,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
             valueGetter: ({ rowInfo }) => {
               return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
                 reducer.id
-              ];
+              ] as any as string;
             },
           });
           columns.set(
@@ -313,7 +313,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           pivotIndex: -1,
 
           valueGetter: ({ rowInfo }) => {
-            return rowInfo.reducerResults?.[reducer.id];
+            return rowInfo.reducerResults?.[reducer.id] as any as string;
           },
         }),
       );

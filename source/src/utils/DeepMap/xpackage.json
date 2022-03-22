@@ -21,6 +21,6 @@
     "bump:minor": "npm version minor",
     "bump:major": "npm version major"
   },
- 
+
   "license": "MIT"
 }

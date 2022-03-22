@@ -69,6 +69,12 @@ You should use `React.useCallback` / `React.useMemo` / `React.useState` to make 
 
 </Sandpack>
 
+
+<YouWillLearnCard inline title="Learn more about customizing Column Rendering" path="./columns/column-rendering">
+Find out how to render custom content inside columns or even take full control of column cells and header.
+</YouWillLearnCard>
+ 
+
 ## Column Types
 
 Column types allow you to customize column behavior and appearance for multiple columns at once. Most of the properties available for columns are also available for column types - for a full list, see <PropLink>columnTypes</PropLink> reference.

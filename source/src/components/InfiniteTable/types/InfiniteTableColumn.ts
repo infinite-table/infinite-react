@@ -198,7 +198,7 @@ export type InfiniteTableColumnValueGetterParams<T> =
     };
 export type InfiniteTableColumnValueGetter<
   T,
-  VALUE_GETTER_TYPE = Renderable,
+  VALUE_GETTER_TYPE = string | number | boolean | null | undefined,
 > = (params: InfiniteTableColumnValueGetterParams<T>) => VALUE_GETTER_TYPE;
 
 export type InfiniteTableColumnRowspanFn<T> = (

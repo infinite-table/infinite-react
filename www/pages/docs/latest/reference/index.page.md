@@ -186,6 +186,20 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 
 </Prop>
 
+<Prop name="columns.defaultFlex" type="number" >
+
+> Specifies a default flex for the column
+
+<Note>
+
+If you want more control on sizing, use controlled <PropLink name="columnSizing" /> (or uncontrolled <PropLink name="defaultColumnSizing" />).
+</Note>
+
+See related <PropLink name="columns.defaultWidth" />
+
+</Prop>
+
+
 <Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
 
 > Controls default column visibility when <DataSourcePropLink name="groupBy" /> is used.
@@ -204,6 +218,19 @@ The value for this property can be one of the following:
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="columns.defaultWidth" type="number" >
+
+> Specifies a default width for the column
+
+<Note>
+
+If you want more control on sizing, use controlled <PropLink name="columnSizing" /> (or uncontrolled <PropLink name="defaultColumnSizing" />).
+</Note>
+
+See related <PropLink name="columns.defaultFlex" />
 
 </Prop>
 
@@ -294,6 +321,72 @@ If not specified, <PropLink name="columnMinWidth" /> will be used (defaults to `
 </Prop>
 
 
+<Prop name="columns.renderValue" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy,toggleCurrentGroupRow}) => Renderable">
+
+> Customizes the rendering of the column content.
+
+See related <PropLink name="columns.render" />
+
+<Note>
+
+The difference between <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
+
+
+Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
+
+</Note>
+
+
+The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.renderValue">render</PropLink> functions are called with an object that has the following properties:
+
+ * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
+ * rowInfo - very useful information about the current row:
+   - `rowInfo.value` - the value that will be rendered by default
+   - `rowInfo.collapsed` - if the row is collased or not.
+   - `rowInfo.groupBy` - the current group by for the row
+   - `rowInfo.indexInAll` - the index of the row in the whole data set
+   - `rowInfo.indexInGroup` - the index of the row in the current group
+   -  ... there are other useful properties that we'll document in the near future
+
+<Sandpack title="Column with custom renderValue">
+
+```tsx file=column-renderValue-example.page.tsx
+```
+</Sandpack>
+
+</Prop>
+
+<Prop name="columns.render" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
+
+> Customizes the rendering of the column.
+
+See related <PropLink name="columns.renderValue" />
+
+
+<Note>
+
+The difference between <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
+
+
+Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
+
+</Note>
+
+
+The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
+
+ * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
+ * rowInfo - very useful information about the current row:
+   - `rowInfo.value` - the value that will be rendered by default
+   - `rowInfo.collapsed` - if the row is collased or not.
+   - `rowInfo.groupBy` - the current group by for the row
+   - `rowInfo.indexInAll` - the index of the row in the whole data set
+   - `rowInfo.indexInGroup` - the index of the row in the current group
+   -  ... there are other useful properties that we'll document in the near future
+
+  
+
+</Prop>
 
 <Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
 
@@ -388,29 +481,26 @@ See the example below - `id` and `age` columns are `type='number'`.
 </Sandpack>
 </Prop>
 
-<Prop name="columns.defaultFlex" type="number" >
+<Prop name="columns.valueGetter" type="({ data, rowInfo }) => string | number | boolean | null | undefined">
 
-> Specifies a default flex for the column
+> Customizes the value that will be rendered
 
-<Note>
-
-If you want more control on sizing, use controlled <PropLink name="columnSizing" /> (or uncontrolled <PropLink name="defaultColumnSizing" />).
-</Note>
-
-See related <PropLink name="columns.defaultWidth" />
-
-</Prop>
-
-<Prop name="columns.defaultWidth" type="number" >
-
-> Specifies a default width for the column
+The `valueGetter` prop is a function that takes a single argument - an object with `data` and `rowInfo` properties. It should return a plain JavaScript value (so not a `ReactNode` or `JSX.Element`)
 
 <Note>
 
-If you want more control on sizing, use controlled <PropLink name="columnSizing" /> (or uncontrolled <PropLink name="defaultColumnSizing" />).
+Note that the `data` property is of type `DATA_TYPE | Partial<DATA_TYPE> | null` and not simply `DATA_TYPE`, because there are cases when you can have grouping (so for group rows with aggregations `data` will be `Partial<DATA_TYPE>`) or when there are lazily loaded rows or group rows with no aggregations - for which `data` is still `null`.
+
 </Note>
 
-See related <PropLink name="columns.defaultFlex" />
+
+If you want to further customize what's being rendered, see <PropLink name="columns.renderValue" />.
+
+<Sandpack title="Column with custom valueGetter">
+
+```tsx file=column-valueGetter-example.page.tsx
+```
+</Sandpack>
 
 </Prop>
 

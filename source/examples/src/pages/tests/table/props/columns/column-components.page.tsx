@@ -34,7 +34,11 @@ const dataSource = () => {
 };
 
 const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef } = useInfiniteColumnCell();
+  const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
+
+  if (!rowInfo.isGroupRow) {
+    // console.log(data);
+  }
 
   return (
     <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
