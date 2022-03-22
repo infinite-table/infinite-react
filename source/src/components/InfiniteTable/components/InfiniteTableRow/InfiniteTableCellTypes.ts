@@ -24,7 +24,7 @@ export type InfiniteTableCellProps<T> = {
   offset?: number;
   offsetProperty?: 'left' | 'right';
   cssPosition?: CSSProperties['position'];
-  domRef: React.RefCallback<HTMLElement>;
+  domRef?: React.RefCallback<HTMLElement>;
   cellType: 'body' | 'header';
 };
 
