@@ -131,4 +131,54 @@ const nameColumn: InfiniteTableColumn<Employee> = {
 }
 ```
 
-For column headers, you can 
+## Use <PropLink name="columns.components">column.components</PropLink> to customize the column
+
+There are cases when custom rendering via the <PropLink name="columns.render" /> and <PropLink name="columns.renderValue" /> props is not enough and you want to fully control the column cell and render your own custom component for that.
+
+For such scenarios, you can specify `column.components.HeaderCell` and `column.components.ColumnCell`, which will use those components to render the DOM nodes of the column header and column cells respectively.
+
+```tsx
+
+import { InfiniteTableColumn } from '@infinite-table/infintie-react'
+
+
+const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
+  const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
+
+  return (
+    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
+      {props.children}
+    </div>
+  );
+};
+
+const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
+  const { domRef, sortTool } = useInfiniteHeaderCell<Developer>();
+
+  return (
+    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
+      {sortTool}
+      First name
+    </div>
+  );
+};
+
+const nameColumn: InfiniteTableColumn<Developer> = {
+  header: 'Name',
+  field: 'firstName',
+  components: {
+    ColumnCell,
+    HeaderCell
+  }
+}
+```
+
+<Note>
+
+When using custom components, make sure you get `domRef` from the corresponding hook (`useInfiniteColumnCell` for column cells and `useInfiniteHeaderCell` for header cells) and pass it on to the final `JSX.Element` that is the DOM root of the component.
+
+Also you have to make sure you spread all other `props` you receive in the component, as they are `HTMLProps` that need to end-up in the DOM (eg: `className` for theming and default styles, etc).
+
+Both `components.ColumnCell` and `components.HeaderCell` need to be declared with `props` being of type `HTMLProps<HTMLDivElement>`.
+
+</Note>

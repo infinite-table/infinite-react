@@ -97,14 +97,11 @@ export default function GroupByExample() {
                   const groupData =
                     parents?.[groupBy?.indexOf('department') ?? -1] || rowInfo;
 
-                  return (
-                    <>
-                      {groupData?.value} ({groupData?.groupCount}), total ${' '}
-                      {formatter.format(
-                        groupData?.reducerResults?.salary as any as number,
-                      )}
-                    </>
-                  );
+                  return `${groupData?.value} (${
+                    groupData?.groupCount
+                  }), total ${' '} ${formatter.format(
+                    groupData?.reducerResults?.salary as any as number,
+                  )}`;
                 }
               : undefined,
         },
@@ -113,23 +110,6 @@ export default function GroupByExample() {
         'team',
         {
           field: 'team',
-          valueGetter:
-            groupRenderStrategy === 'inline'
-              ? ({ rowInfo }) => {
-                  const { groupBy, parents } = rowInfo;
-                  const groupData =
-                    parents?.[groupBy?.indexOf('team') ?? -1] || rowInfo;
-
-                  return (
-                    <>
-                      {groupData?.value} ({groupData?.groupCount}), total $
-                      {formatter.format(
-                        groupData?.reducerResults?.salary as any as number,
-                      )}
-                    </>
-                  );
-                }
-              : undefined,
         },
       ],
       ['id', { field: 'id' }],
