@@ -1,4 +1,3 @@
-// @ts-ignore
 import { useDocSearchKeyboardEvents } from '@docsearch/react';
 import { IconSearch } from '@www/components/Icon/IconSearch';
 import Head from 'next/head';

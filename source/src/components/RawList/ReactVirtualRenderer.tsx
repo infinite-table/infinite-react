@@ -163,7 +163,7 @@ export class ReactVirtualRenderer extends Logger {
   };
 
   private renderElement(elementIndex: number) {
-    const domRef = (node: HTMLElement) => {
+    const domRef = (node: HTMLElement | null) => {
       if (node) {
         this.itemDOMElements[elementIndex] = node;
         this.updateElementPosition(elementIndex);

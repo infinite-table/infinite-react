@@ -67,8 +67,8 @@ jobs:
       - name: copy .npmrc
         run: cp .npmrc source && cp .npmrc source/dist
 
-      # - name: Run test suite
-      #   run: npm test
+      - name: Run test suite
+        run: npm test
 
       - name: Ship it
         uses: './.github/actions/execute-cmd'

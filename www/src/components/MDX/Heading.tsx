@@ -55,6 +55,7 @@ const Heading = forwardRefWithAs<HeadingProps, 'div'>(
             </a>
           )}
         </Comp>
+        {/* @ts-ignore */}
         <style jsx>
           {`
             .heading {

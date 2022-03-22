@@ -68,6 +68,7 @@ export function Toc({
             })}
         </ul>
       </div>
+      {/* @ts-ignore */}
       <style jsx global>{`
         .toc {
           /** Screen - nav - toc offset */

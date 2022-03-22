@@ -61,18 +61,19 @@ const nextConfig = withMDX({
         })
       );
     }
-    config.resolve.alias['@www'] = path.resolve('./src');
-    config.resolve.alias['@infinite-table/infinite-react'] =
-      path.resolve('../source/dist/index.esm.js');
-    config.resolve.alias[
-      '@infinite-table/infinite-react/index.css'
-    ] = path.resolve('../source/dist/index.css');
-    config.resolve.alias.react = path.resolve(
-      './node_modules/react'
-    );
-    config.resolve.alias['react-dom'] = path.resolve(
-      './node_modules/react-dom'
-    );
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@www': path.resolve('./src'),
+      '@infinite-table/infinite-react': path.resolve(
+        '../source/dist/index.esm.js'
+      ),
+      '@infinite-table/infinite-react/index.css':
+        path.resolve('../source/dist/index.css'),
+      react: path.resolve('../source/node_modules/react'),
+      'react-dom': path.resolve(
+        '../source/node_modules/react-dom'
+      ),
+    };
     // needed for bundling the ts-compiler for browser usage
     // config.resolve.alias['os'] = path.resolve(
     //   './build/shims/os-shim.js'

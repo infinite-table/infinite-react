@@ -82,6 +82,7 @@ const Blockquote = ({
         {...props}>
         <span className="block relative">{children}</span>
       </blockquote>
+      {/* @ts-ignore */}
       <style jsx global>{`
         .mdx-blockquote > span > p:first-of-type {
           margin-bottom: 0;
@@ -287,6 +288,7 @@ function IllustrationBlock({
           authorLink={authorLink}
         />
       ) : null}
+      {/* @ts-ignore */}
       <style jsx global>{`
         .mdx-illustration-block {
           display: flex;

@@ -241,8 +241,8 @@ export type InfiniteTableBaseColumn<T> = {
   maxWidth?: number;
 
   components?: {
-    ColumnCell?: React.ComponentType<HTMLProps<HTMLDivElement>>;
-    HeaderCell?: React.ComponentType<HTMLProps<HTMLDivElement>>;
+    ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
+    HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
   };
 };
 

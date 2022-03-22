@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -17,11 +13,18 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": "./",
     "paths": {
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
-      
-      "@infinite-table/infinite-react": ["../source/dist/index.d.ts"],
+
+      "@infinite-table/infinite-react": [
+        "../source/dist/index.d.ts"
+      ],
+      "react": ["../source/node_modules/@types/react"],
+      "react-dom": [
+        "../source/node_modules/react-dom/profiling"
+      ]
     },
     "reactNamespace": "React",
     "incremental": true
@@ -32,9 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     "src/**/*.ts",
-    "src/**/*.tsx",
+    "src/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
