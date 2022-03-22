@@ -9,24 +9,30 @@ import {
 } from '../../types';
 import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
-export interface InfiniteTableCellProps<T> {
+export type InfiniteTableCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
+  renderChildren: () => Renderable;
 
   cssEllipsis?: boolean;
-  children: Renderable;
+  // children: Renderable;
   virtualized?: boolean;
   skipColumnShifting?: boolean;
+
   beforeChildren?: Renderable;
   afterChildren?: Renderable;
 
   offset?: number;
   offsetProperty?: 'left' | 'right';
   cssPosition?: CSSProperties['position'];
-  domRef?: React.RefCallback<HTMLElement>;
-}
+  domRef: React.RefCallback<HTMLElement>;
+  cellType: 'body' | 'header';
+};
 
 export interface InfiniteTableColumnCellProps<T>
-  extends Omit<InfiniteTableCellProps<T>, 'children'> {
+  extends Omit<
+    InfiniteTableCellProps<T>,
+    'children' | 'cellType' | 'renderChildren'
+  > {
   virtualized: boolean;
   hidden: boolean;
   rowInfo: InfiniteTableRowInfo<T>;
@@ -38,7 +44,10 @@ export interface InfiniteTableColumnCellProps<T>
 }
 
 export interface InfiniteTableHeaderCellProps<T>
-  extends Omit<InfiniteTableCellProps<T>, 'children'> {
+  extends Omit<
+    InfiniteTableCellProps<T>,
+    'children' | 'cellType' | 'renderChildren'
+  > {
   columns: Map<string, InfiniteTableComputedColumn<T>>;
   headerHeight: number;
   onResize?: OnResizeFn;

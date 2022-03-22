@@ -3,7 +3,9 @@ import type { InfiniteTableColumn } from '../../types';
 import type {
   InfiniteTableColumnWithField,
   InfiniteTableColumnStyleFnParams,
-  InfiniteTableColumnRenderParam,
+  InfiniteTableColumnRenderParams,
+  InfiniteTableColumnCellContextType,
+  InfiniteTableColumnRenderFunction,
 } from '../../types/InfiniteTableColumn';
 
 import type { Renderable } from '../../../types/Renderable';
@@ -16,12 +18,20 @@ import {
 } from './InfiniteTableCell';
 
 import { internalProps } from '../../internalProps';
-import { InfiniteTableColumnCellProps } from './InfiniteTableCellTypes';
+import {
+  InfiniteTableCellProps,
+  InfiniteTableColumnCellProps,
+} from './InfiniteTableCellTypes';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 import { ColumnCellRecipe } from '../cell.css';
+import { useContext } from 'react';
 
 const { rootClassName } = internalProps;
+
+export const InfiniteTableColumnCellContext = React.createContext<
+  InfiniteTableColumnCellContextType<any>
+>(null as any as InfiniteTableColumnCellContextType<any>);
 
 export const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
 
@@ -29,6 +39,16 @@ function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
 ): c is InfiniteTableColumnWithField<T> & InfiniteTableColumn<T> {
   return typeof (c as InfiniteTableColumnWithField<T>).field === 'string';
+}
+
+type RenderHookCmpForColumnCellProps<T> = {
+  renderFn: InfiniteTableColumnRenderFunction<T>;
+  renderParam: InfiniteTableColumnRenderParams<T>;
+};
+function RenderHookCmpForColumnCell<T>(
+  props: RenderHookCmpForColumnCellProps<T>,
+) {
+  return <>{props.renderFn(props.renderParam)}</>;
 }
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
@@ -106,26 +126,36 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   let renderValue: Renderable = value;
 
-  if (column.render || column.renderValue) {
-    const renderParam: InfiniteTableColumnRenderParam<T> = {
-      value,
-      column,
+  const renderParam: InfiniteTableColumnRenderParams<T> = {
+    value,
+    column,
 
-      groupRowInfo,
-      ...rest,
-      rowIndex,
-      toggleGroupRow,
-      toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
-      groupBy: computedDataSource.groupBy,
-      pivotBy: computedDataSource.pivotBy,
-    };
+    domRef,
+    groupRowInfo,
+    ...rest,
+    rowIndex,
+    toggleGroupRow,
+    toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
+    groupBy: computedDataSource.groupBy,
+    pivotBy: computedDataSource.pivotBy,
+  };
 
-    if (column.render) {
-      renderValue = column.render(renderParam);
-    } else if (column.renderValue) {
-      renderValue = column.renderValue(renderParam);
+  const renderChildren = () => {
+    if (hidden) {
+      return null;
     }
-  }
+
+    const renderFn = column.render || column.renderValue;
+    if (renderFn) {
+      return (
+        <RenderHookCmpForColumnCell<T>
+          renderFn={renderFn}
+          renderParam={renderParam}
+        />
+      );
+    }
+    return renderValue;
+  };
 
   const colClassName: undefined | string = column.className
     ? typeof column.className === 'function'
@@ -171,32 +201,47 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       }
     }
   }
+  const cellProps: InfiniteTableCellProps<T> = {
+    domRef,
+    offsetProperty,
+    ...dataset,
+    cellType: 'body',
+    column,
+    offset: virtualized ? 0 : column.computedPinningOffset,
+    style,
+    cssEllipsis: column.cssEllipsis ?? true,
+    className: join(
+      useCellClassName(
+        column,
+        [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
+        ColumnCellRecipe,
+        { dragging: false },
+      ),
+      colClassName,
+    ),
+    renderChildren,
+  };
+
+  const ContextProvider =
+    InfiniteTableColumnCellContext.Provider as React.Provider<
+      InfiniteTableColumnCellContextType<T>
+    >;
 
   return (
-    <InfiniteTableCell<T>
-      domRef={domRef}
-      offsetProperty={offsetProperty}
-      {...dataset}
-      column={column}
-      offset={virtualized ? 0 : column.computedPinningOffset}
-      style={style}
-      cssEllipsis={column.cssEllipsis ?? true}
-      className={join(
-        useCellClassName(
-          column,
-          [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
-          ColumnCellRecipe,
-          { dragging: false },
-        ),
-        colClassName,
-      )}
-    >
-      {hidden ? null : renderValue}
-    </InfiniteTableCell>
+    <ContextProvider value={renderParam}>
+      <InfiniteTableCell<T> {...cellProps}></InfiniteTableCell>
+    </ContextProvider>
   );
 }
 
-// export const TableColumnCell = TableColumnCellFn;
 export const InfiniteTableColumnCell = React.memo(
   InfiniteTableColumnCellFn,
 ) as typeof InfiniteTableColumnCellFn;
+
+export function useInfiniteColumnCell<T>() {
+  const result = useContext(
+    InfiniteTableColumnCellContext,
+  ) as InfiniteTableColumnCellContextType<T>;
+
+  return result;
+}

@@ -9,7 +9,7 @@ import type {
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 import type { InfiniteTableColumnGroup, InfiniteTableRowInfo } from '.';
 
-import { CSSProperties } from 'react';
+import { CSSProperties, HTMLProps } from 'react';
 import {
   AggregationReducer,
   InfiniteTableRowInfoGroup,
@@ -17,14 +17,27 @@ import {
   PivotBy,
 } from '../../../utils/groupAndPivot';
 import { InfiniteTableColumnPinnedValues } from './InfiniteTableProps';
+import { InfiniteTableCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
-export type InfiniteTableColumnRenderParam<
+
+export type InfiniteTableColumnHeaderParams<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
+  domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+  sortTool: JSX.Element;
+  column: COL_TYPE;
+  columnSortInfo: DataSourceSingleSortInfo<DATA_TYPE> | null;
+};
+
+export type InfiniteTableColumnRenderParams<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = {
+  domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
   groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
@@ -42,10 +55,15 @@ export type InfiniteTableColumnRenderParam<
     }
 );
 
+export type InfiniteTableColumnCellContextType<DATA_TYPE> =
+  InfiniteTableColumnRenderParams<DATA_TYPE> & {};
+export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
+  InfiniteTableColumnHeaderParams<DATA_TYPE> & {};
+
 export type InfiniteTableGroupColumnRenderIconParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
-> = InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
+> = InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE> & {
   collapsed: boolean;
   groupIcon: Renderable;
   // groupRowInfo: InfiniteTableRowInfoGroup<DATA_TYPE>;
@@ -55,7 +73,7 @@ export type InfiniteTableGroupColumnRenderIconParam<
 export type InfiniteTableColumnRenderValueParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
-> = InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>;
+> = InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE>;
 
 export type InfiniteTableColumnRowspanParam<
   DATA_TYPE,
@@ -67,10 +85,6 @@ export type InfiniteTableColumnRowspanParam<
   rowIndex: number;
   column: COL_TYPE;
 };
-export interface InfiniteTableColumnHeaderRenderParams<T> {
-  column: InfiniteTableComputedColumn<T>;
-  columnSortInfo: DataSourceSingleSortInfo<T> | null | undefined;
-}
 
 export type InfiniteTableColumnRenderFunction<
   DATA_TYPE,
@@ -85,7 +99,7 @@ export type InfiniteTableColumnRenderFunction<
   rowInfo,
   groupBy,
   pivotBy,
-}: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>) => Renderable | null;
+}: InfiniteTableColumnRenderParams<DATA_TYPE, COL_TYPE>) => Renderable | null;
 
 export type InfiniteTableGroupColumnRenderIconFunction<
   DATA_TYPE,
@@ -102,7 +116,7 @@ export type InfiniteTableColumnRenderValueFunction<
 export type InfiniteTableColumnHeaderRenderFunction<T> = ({
   columnSortInfo,
   column,
-}: InfiniteTableColumnHeaderRenderParams<T>) => Renderable;
+}: InfiniteTableColumnHeaderParams<T>) => Renderable;
 
 export type InfiniteTableColumnWithField<T> = {
   field: keyof T;
@@ -226,7 +240,10 @@ export type InfiniteTableBaseColumn<T> = {
   minWidth?: number;
   maxWidth?: number;
 
-  // value
+  components?: {
+    ColumnCell?: React.ComponentType<HTMLProps<HTMLDivElement>>;
+    HeaderCell?: React.ComponentType<HTMLProps<HTMLDivElement>>;
+  };
 };
 
 /**

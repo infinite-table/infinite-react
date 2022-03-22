@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { join } from '../../../../utils/join';
 
 import {
   InfiniteTableCell,
   InfiniteTableCellClassName,
 } from '../InfiniteTableRow/InfiniteTableCell';
-import { InfiniteTableComputedColumn } from '../../types/InfiniteTableColumn';
+import {
+  InfiniteTableColumnHeaderParams,
+  InfiniteTableColumnHeaderRenderFunction,
+  InfiniteTableComputedColumn,
+  InfiniteTableHeaderCellContextType,
+} from '../../types/InfiniteTableColumn';
 import { internalProps } from '../../internalProps';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { setupResizeObserver } from '../../../ResizeObserver';
@@ -24,6 +29,10 @@ import {
   HeaderSortIconCls,
 } from './header.css';
 
+export const InfiniteTableHeaderCellContext = React.createContext<
+  InfiniteTableHeaderCellContextType<any>
+>(null as any as InfiniteTableHeaderCellContextType<any>);
+
 const defaultStyle: React.CSSProperties = {
   position: 'absolute' as 'absolute',
   top: 0,
@@ -32,6 +41,16 @@ const defaultStyle: React.CSSProperties = {
 const { rootClassName } = internalProps;
 
 export const InfiniteTableHeaderCellClassName = `${rootClassName}HeaderCell`;
+
+type RenderHookCmpForHeaderCellProps<T> = {
+  renderFn: InfiniteTableColumnHeaderRenderFunction<T>;
+  renderParam: InfiniteTableColumnHeaderParams<T>;
+};
+function RenderHookCmpForHeaderCell<T>(
+  props: RenderHookCmpForHeaderCellProps<T>,
+) {
+  return <>{props.renderFn(props.renderParam)}</>;
+}
 
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
@@ -49,14 +68,14 @@ export function InfiniteTableHeaderCell<T>(
   const sortInfo = column.computedSortInfo;
 
   let header = column.header;
-  if (header instanceof Function) {
-    header = header({
-      column,
-      columnSortInfo: sortInfo,
-    });
-  }
-  header = header ?? column.name;
 
+  const ref = useCallback(
+    (node: HTMLElement | null) => {
+      domRef.current = node;
+      props.domRef?.(node);
+    },
+    [props.domRef],
+  );
   const sortTool = (
     <SortIcon
       index={
@@ -69,14 +88,28 @@ export function InfiniteTableHeaderCell<T>(
     />
   );
 
+  const renderParam: InfiniteTableColumnHeaderParams<T> = {
+    domRef: ref,
+    column,
+    columnSortInfo: sortInfo,
+    sortTool,
+  };
+
+  const renderChildren = () => {
+    if (header instanceof Function) {
+      header = (
+        <RenderHookCmpForHeaderCell<T>
+          renderFn={header}
+          renderParam={renderParam}
+        />
+      );
+    }
+    header = header ?? column.name;
+
+    return header;
+  };
+
   const domRef = useRef<HTMLElement | null>(null);
-  const ref = useCallback(
-    (node: HTMLElement | null) => {
-      domRef.current = node;
-      props.domRef?.(node);
-    },
-    [props.domRef],
-  );
 
   const {
     computed: { computedRemainingSpace },
@@ -138,11 +171,16 @@ export function InfiniteTableHeaderCell<T>(
 
     draggingProxy = createPortal(draggingProxy, portalDOMRef.current!);
   }
+  const ContextProvider =
+    InfiniteTableHeaderCellContext.Provider as React.Provider<
+      InfiniteTableHeaderCellContextType<T>
+    >;
 
   return (
-    <>
+    <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
         domRef={ref}
+        cellType="header"
         column={column}
         data-name={`HeaderCell`}
         data-column-id={column.id}
@@ -165,10 +203,17 @@ export function InfiniteTableHeaderCell<T>(
         )}
         cssEllipsis={column.headerCssEllipsis ?? column.cssEllipsis ?? true}
         afterChildren={sortTool}
-      >
-        {header}
-      </InfiniteTableCell>
+        renderChildren={renderChildren}
+      />
       {draggingProxy}
-    </>
+    </ContextProvider>
   );
+}
+
+export function useInfiniteHeaderCell<T>() {
+  const result = useContext(
+    InfiniteTableHeaderCellContext,
+  ) as InfiniteTableHeaderCellContextType<T>;
+
+  return result;
 }

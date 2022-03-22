@@ -32,12 +32,17 @@ function InfiniteTableCellFn<T>(
     offsetProperty = 'left',
     column,
     domRef,
-    children,
+
     afterChildren,
     beforeChildren,
     offset,
+    cellType,
+    cssPosition: _cssPosition,
+    renderChildren,
     ...domProps
   } = props;
+
+  const children = renderChildren();
 
   const { columnShifts } = useInfiniteTableState();
 
@@ -65,37 +70,44 @@ function InfiniteTableCellFn<T>(
     }
   }
 
-  return (
-    <div
-      {...domProps}
-      ref={domRef}
-      style={style}
-      data-name={`Cell`}
-      className={join(
-        domProps.className,
+  const finalDOMProps = {
+    ...domProps,
+    ref: domRef,
+    style,
+    'data-name': 'Cell',
+    className: join(
+      domProps.className,
 
-        columnAlignCellStyle[column.align ?? 'start'],
-        justifyContent[column.align ?? 'start'],
-        InfiniteTableCellClassName,
-        ColumnCellCls,
-        shifting
-          ? `${InfiniteTableCellClassName}--shifting ${CellClsVariants.shifting}`
-          : '',
-      )}
-    >
-      {beforeChildren}
-      {
-        <div
-          className={`${InfiniteTableCellContentClassName} ${
-            cssEllipsis ? cssEllipsisClassName : overflow.hidden
-          }`}
-        >
-          {children}
-        </div>
-      }
-      {afterChildren}
-    </div>
-  );
+      columnAlignCellStyle[column.align ?? 'start'],
+      justifyContent[column.align ?? 'start'],
+      InfiniteTableCellClassName,
+      ColumnCellCls,
+      shifting
+        ? `${InfiniteTableCellClassName}--shifting ${CellClsVariants.shifting}`
+        : '',
+    ),
+    children: (
+      <>
+        {beforeChildren}
+        {
+          <div
+            className={`${InfiniteTableCellContentClassName} ${
+              cssEllipsis ? cssEllipsisClassName : overflow.hidden
+            }`}
+          >
+            {children}
+          </div>
+        }
+        {afterChildren}
+      </>
+    ),
+  };
+
+  const RenderComponent =
+    cellType === 'body'
+      ? column.components?.ColumnCell || 'div'
+      : column.components?.HeaderCell || 'div';
+  return <RenderComponent {...finalDOMProps} />;
 }
 
 export const InfiniteTableCell = React.memo(

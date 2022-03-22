@@ -50,6 +50,8 @@ import { ThemeVars } from './theme.css';
 import { debounce } from '../utils/debounce';
 import { RenderRange } from '../VirtualBrain';
 import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
+import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
+import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -321,3 +323,5 @@ InfiniteTable.defaultProps = {
 };
 
 export * from './types';
+
+export { useInfiniteColumnCell, useInfiniteHeaderCell };
