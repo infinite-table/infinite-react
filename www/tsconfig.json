@@ -22,9 +22,7 @@
         "../source/dist/index.d.ts"
       ],
       "react": ["../source/node_modules/@types/react"],
-      "react-dom": [
-        "../source/node_modules/react-dom/profiling"
-      ]
+      "react-dom": ["../source/node_modules/react-dom"]
     },
     "reactNamespace": "React",
     "incremental": true

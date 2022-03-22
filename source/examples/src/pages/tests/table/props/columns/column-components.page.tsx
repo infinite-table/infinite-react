@@ -34,15 +34,11 @@ const dataSource = () => {
 };
 
 const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
-
-  if (!rowInfo.isGroupRow) {
-    // console.log(data);
-  }
+  const { domRef, value } = useInfiniteColumnCell<Developer>();
 
   return (
-    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {props.children}
+    <div ref={domRef} {...props} style={{ ...props.style, color: 'yellow' }}>
+      x{value}x
     </div>
   );
 };
@@ -67,9 +63,10 @@ const columns: InfiniteTablePropColumns<Developer> = new Map<
     'firstName',
     {
       field: 'firstName',
-      renderValue: () => {
+      render: () => {
         const { data } = useInfiniteColumnCell<Developer>();
-        return <>{data?.firstName}!</>;
+
+        return <>{data?.firstName}!!!!!!</>;
       },
 
       components: {

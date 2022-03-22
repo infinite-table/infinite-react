@@ -105,6 +105,7 @@ export type InfiniteTableColumnType<T> = {
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
 
+  components?: InfiniteTableColumn<T>['components'];
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
