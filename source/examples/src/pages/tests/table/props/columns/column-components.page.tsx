@@ -93,7 +93,11 @@ const domProps = {
 
 export default function GroupByExample() {
   return (
-    <DataSource<Developer> primaryKey="id" data={dataSource}>
+    <DataSource<Developer>
+      primaryKey="id"
+      data={dataSource}
+      groupBy={[{ field: 'stack' }]}
+    >
       <InfiniteTable<Developer>
         domProps={domProps}
         columns={columns}

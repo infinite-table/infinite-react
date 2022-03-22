@@ -15,6 +15,7 @@ import {
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
 import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
+import { RenderHookComponent } from './RenderHookComponent';
 
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
@@ -28,7 +29,12 @@ export function getGroupColumnRender<T>({
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
     let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
     if (column.renderValue) {
-      value = column.renderValue(renderOptions);
+      value = (
+        <RenderHookComponent
+          render={column.renderValue}
+          renderParam={renderOptions}
+        />
+      );
     }
 
     // for groupRenderStrategy !== 'inline', we work on group rows
@@ -81,11 +87,17 @@ export function getGroupColumnRender<T>({
           }}
         />
       );
-      icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon
-        ? (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!(
-            Object.assign({ collapsed, groupIcon: defaultIcon }, renderOptions),
-          )
-        : defaultIcon;
+      icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon ? (
+        <RenderHookComponent
+          render={(column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!}
+          renderParam={Object.assign(
+            { collapsed, groupIcon: defaultIcon },
+            renderOptions,
+          )}
+        />
+      ) : (
+        defaultIcon
+      );
     }
 
     return (

@@ -8,7 +8,6 @@ import {
 } from '../InfiniteTableRow/InfiniteTableCell';
 import {
   InfiniteTableColumnHeaderParams,
-  InfiniteTableColumnHeaderRenderFunction,
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
@@ -28,6 +27,7 @@ import {
   HeaderCellProxy,
   HeaderSortIconCls,
 } from './header.css';
+import { RenderHookComponent } from '../../utils/RenderHookComponent';
 
 export const InfiniteTableHeaderCellContext = React.createContext<
   InfiniteTableHeaderCellContextType<any>
@@ -41,16 +41,6 @@ const defaultStyle: React.CSSProperties = {
 const { rootClassName } = internalProps;
 
 export const InfiniteTableHeaderCellClassName = `${rootClassName}HeaderCell`;
-
-type RenderHookCmpForHeaderCellProps<T> = {
-  renderFn: InfiniteTableColumnHeaderRenderFunction<T>;
-  renderParam: InfiniteTableColumnHeaderParams<T>;
-};
-function RenderHookCmpForHeaderCell<T>(
-  props: RenderHookCmpForHeaderCellProps<T>,
-) {
-  return <>{props.renderFn(props.renderParam)}</>;
-}
 
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
@@ -98,10 +88,7 @@ export function InfiniteTableHeaderCell<T>(
   const renderChildren = () => {
     if (header instanceof Function) {
       header = (
-        <RenderHookCmpForHeaderCell<T>
-          renderFn={header}
-          renderParam={renderParam}
-        />
+        <RenderHookComponent render={header} renderParam={renderParam} />
       );
     }
     header = header ?? column.name;

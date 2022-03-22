@@ -5,7 +5,6 @@ import type {
   InfiniteTableColumnStyleFnParams,
   InfiniteTableColumnRenderParams,
   InfiniteTableColumnCellContextType,
-  InfiniteTableColumnRenderFunction,
 } from '../../types/InfiniteTableColumn';
 
 import type { Renderable } from '../../../types/Renderable';
@@ -26,6 +25,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 import { ColumnCellRecipe } from '../cell.css';
 import { useContext } from 'react';
+import { RenderHookComponent } from '../../utils/RenderHookComponent';
 
 const { rootClassName } = internalProps;
 
@@ -39,16 +39,6 @@ function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
 ): c is InfiniteTableColumnWithField<T> & InfiniteTableColumn<T> {
   return typeof (c as InfiniteTableColumnWithField<T>).field === 'string';
-}
-
-type RenderHookCmpForColumnCellProps<T> = {
-  renderFn: InfiniteTableColumnRenderFunction<T>;
-  renderParam: InfiniteTableColumnRenderParams<T>;
-};
-function RenderHookCmpForColumnCell<T>(
-  props: RenderHookCmpForColumnCellProps<T>,
-) {
-  return <>{props.renderFn(props.renderParam)}</>;
 }
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
@@ -148,10 +138,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     const renderFn = column.render || column.renderValue;
     if (renderFn) {
       return (
-        <RenderHookCmpForColumnCell<T>
-          renderFn={renderFn}
-          renderParam={renderParam}
-        />
+        <RenderHookComponent render={renderFn} renderParam={renderParam} />
       );
     }
     return renderValue;

@@ -72,7 +72,6 @@ function InfiniteTableCellFn<T>(
 
   const finalDOMProps = {
     ...domProps,
-    ref: domRef,
     style,
     'data-name': 'Cell',
     className: join(
@@ -105,9 +104,12 @@ function InfiniteTableCellFn<T>(
 
   const RenderComponent =
     cellType === 'body'
-      ? column.components?.ColumnCell || 'div'
-      : column.components?.HeaderCell || 'div';
-  return <RenderComponent {...finalDOMProps} />;
+      ? column.components?.ColumnCell
+      : column.components?.HeaderCell;
+  if (RenderComponent) {
+    return <RenderComponent {...finalDOMProps} />;
+  }
+  return <div {...finalDOMProps} ref={domRef} />;
 }
 
 export const InfiniteTableCell = React.memo(
