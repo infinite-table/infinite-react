@@ -38,6 +38,7 @@ export default test.describe.parallel('DeepMap', () => {
     expect(map.get([john, bill])).toEqual(2);
     expect(map.get([john])).toEqual(3);
   });
+
   test('set/get work correctly with objects as keys', async () => {
     const map = new DeepMap<Person, number>();
 

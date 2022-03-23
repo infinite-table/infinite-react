@@ -9,7 +9,7 @@ type Person = {
   Age: number;
 };
 
-const data: Person[] = [...new Array(1_000_000)].map((_x, i) => {
+const data: Person[] = [...new Array(100_000)].map((_x, i) => {
   return {
     Id: i,
     Age: i,

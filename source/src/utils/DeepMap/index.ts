@@ -53,17 +53,15 @@ export class DeepMap<KeyType, ValueType> {
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
       const last = i === len - 1;
-      if (last) {
-        const pair = currentMap.has(key) ? currentMap.get(key)! : {};
+      const pair = currentMap.get(key)! || {};
 
+      if (last) {
         pair.revision = this.revision++;
         pair.value = value;
 
         currentMap.set(key, pair);
         this.length++;
       } else {
-        const pair = currentMap.has(key) ? currentMap.get(key)! : {};
-
         if (!pair.map) {
           pair.map = new Map<KeyType, ValueType>();
           currentMap.set(key, pair);
@@ -84,11 +82,10 @@ export class DeepMap<KeyType, ValueType> {
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
       const last = i === len - 1;
+      const pair = currentMap.get(key);
       if (last) {
-        return currentMap.get(key)?.value;
+        return pair ? pair.value : undefined;
       } else {
-        const pair = currentMap.get(key);
-
         if (!pair || !pair.map) {
           return;
         }
@@ -135,9 +132,8 @@ export class DeepMap<KeyType, ValueType> {
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
       const last = i === len - 1;
+      const pair = currentMap.get(key);
       if (last) {
-        const pair = currentMap.get(key);
-
         if (pair) {
           if (pair.hasOwnProperty('value')) {
             delete pair.value;
@@ -158,8 +154,6 @@ export class DeepMap<KeyType, ValueType> {
 
         break;
       } else {
-        const pair = currentMap.get(key);
-
         if (!pair || !pair.map) {
           result = false;
           break;
@@ -170,11 +164,11 @@ export class DeepMap<KeyType, ValueType> {
     }
 
     while (maps.length) {
-      let map = maps.pop();
-      let key = keys.pop();
+      const map = maps.pop();
+      const key = keys.pop();
       if (key && map?.size === 0) {
-        let parentMap = maps[maps.length - 1];
-        let pair = parentMap?.get(key);
+        const parentMap = maps[maps.length - 1];
+        const pair = parentMap?.get(key);
         if (pair) {
           // pair.map === map ; which can be deleted
           delete pair.map;
@@ -197,12 +191,10 @@ export class DeepMap<KeyType, ValueType> {
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
       const last = i === len - 1;
+      const pair = currentMap.get(key);
       if (last) {
-        const pair = currentMap.get(key);
-        return !!pair && pair.hasOwnProperty('value');
+        return pair ? pair.hasOwnProperty('value') : false;
       } else {
-        const pair = currentMap.get(key);
-
         if (!pair || !pair.map) {
           return false;
         }

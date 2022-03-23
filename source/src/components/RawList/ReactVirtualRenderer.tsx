@@ -5,7 +5,7 @@ import type { RenderItem } from './types';
 import type { SubscriptionCallback } from '../types/SubscriptionCallback';
 import type { RenderRange } from '../VirtualBrain';
 
-import { Logger } from '../../utils/debug';
+import { dbg, Logger } from '../../utils/debug';
 
 import { VirtualBrain } from '../VirtualBrain';
 
@@ -236,7 +236,9 @@ export class ReactVirtualRenderer extends Logger {
     this.mappedItems.renderItemAtElement(itemIndex, elementIndex, renderedNode);
 
     if (__DEV__) {
-      this.debug(`Render item ${itemIndex} at element ${elementIndex}`);
+      dbg(`ReactVirtualRenderer:${this.brain.getOptions().mainAxis}`)(
+        `Render item ${itemIndex} at element ${elementIndex}`,
+      );
     }
     itemUpdater(renderedNode);
 

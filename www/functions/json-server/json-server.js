@@ -396,7 +396,10 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
       const as =
         key
           .map((k) =>
-            `${k}`.replace(/ /g, '').replace(/#/g, 'sharp')
+            `${k}`
+              .replace(/ /g, '')
+              .replace(/#/g, 'sharp')
+              .replace(/-/g, '')
           )
           .join(KEY_SEPARATOR) +
         KEY_SEPARATOR +

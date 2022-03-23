@@ -27,6 +27,7 @@ import {
   getGroupColumnRender,
   getSingleGroupColumn,
 } from '../utils/getColumnForGroupBy';
+import { useEffectWithRaf } from './useEffectWithRaf';
 
 import { ToggleGrouRowFn, useToggleGroupRow } from './useToggleGroupRow';
 
@@ -256,7 +257,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
 
   const prevHideEmptyGroupColumns = usePrevious(hideEmptyGroupColumns);
 
-  useEffect(() => {
+  useEffectWithRaf(() => {
     if (groupRenderStrategy !== 'multi-column') {
       return;
     }
