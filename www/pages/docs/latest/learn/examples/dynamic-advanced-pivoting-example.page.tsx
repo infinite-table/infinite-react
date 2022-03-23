@@ -64,9 +64,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
   age: {
     field: 'age',
     type: ['number'],
-    // style: {
-    //   color: 'blue',
-    // },
   },
   salary: {
     field: 'salary',
@@ -102,39 +99,6 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
       style: {},
     },
   };
-
-// //  Column modifiers
-// const getPivotColumn = (
-//   column: InfiniteTableColumn<Developer>
-// ): Partial<InfiniteTablePivotColumn<Developer>> => {
-//   return {
-//     ...column,
-//     style: (params) => {
-//       if (typeof params.value === 'number') {
-//         return {
-//           fontStyle: 'italic',
-//         };
-//       }
-//     },
-//   };
-// };
-
-// const _getGroupColumn = (
-//   column: InfiniteTableColumn<Developer>
-// ): Partial<InfiniteTableColumn<Developer>> => {
-//   return {
-//     style: {
-//       color: 'red',
-//     },
-//   };
-// };
-
-// const groupColumn = {
-//   style: {
-//     fontWeight: '600',
-//     color: 'var(--infinite-accent-color)',
-//   },
-// };
 
 // Groupings
 const groupRowsState = new GroupRowsState({
@@ -173,7 +137,6 @@ const minReducer: InfiniteTableColumnAggregator<
 };
 
 // Style functions
-
 const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
   ({ data }) => {
     if (data?.canDesign === 'yes') {
@@ -187,7 +150,6 @@ const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
   };
 
 // React-Select Props
-
 const selectProps: SelectProps = {
   menuPosition: 'fixed',
   styles: {
@@ -201,7 +163,6 @@ const selectProps: SelectProps = {
 };
 
 // COMPONENTS
-
 type ReducerOptions = 'min' | 'max' | 'avg';
 const Settings: React.FunctionComponent<{
   groupBy: GroupByDeveloperType;
@@ -338,7 +299,7 @@ const Settings: React.FunctionComponent<{
       </div>
       <div>
         <b style={{ display: 'block', marginBottom: 10 }}>
-          Select `preferredLanguage` column Background:
+          Select `number` column type Background:
         </b>
         <input
           onChange={(event) => {
@@ -418,21 +379,18 @@ export default function GroupByExample(
           name: 'Age (avg)',
           field: 'age',
         },
-        // default: reducerMap[reducerKey],
       };
     }, [reducerKey]);
 
   const preparedGroupBy = React.useMemo(() => {
     return groupBy.map((group) => ({
       ...group,
-      // column: groupColumn,
     })) as GroupByDeveloperType;
   }, [groupBy]);
 
   const preparedPivotBy = React.useMemo(() => {
     return pivotBy.map((pivot) => ({
       ...pivot,
-      // column: getPivotColumn,
     })) as PivotByDeveloperType;
   }, [pivotBy]);
 
@@ -458,8 +416,16 @@ export default function GroupByExample(
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={preparedGroupBy}
-        pivotBy={preparedPivotBy}
+        groupBy={
+          preparedGroupBy.length
+            ? preparedGroupBy
+            : undefined
+        }
+        pivotBy={
+          preparedPivotBy.length
+            ? preparedPivotBy
+            : undefined
+        }
         aggregationReducers={reducers}
         onDataParamsChange={onDataParamsChange}
         defaultGroupRowsState={groupRowsState}>

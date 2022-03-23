@@ -7,14 +7,11 @@ import {
   GroupRowsState,
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumnTypes,
-  InfiniteTablePivotColumn,
   debounce,
   DataSourceData,
 } from '@infinite-table/infinite-react';
 
 import type {
-  InfiniteTableColumn,
-  InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   DataSourcePivotBy,
@@ -138,7 +135,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const numberFormatter = new Intl.NumberFormat();
-
 const columnTypes: InfiniteTablePropColumnTypes<Developer> =
   {
     number: {
@@ -158,67 +154,13 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> =
     },
   };
 
-//  Column modifiers
-const getPivotColumn = (
-  column: InfiniteTableColumn<Developer>
-): Partial<InfiniteTablePivotColumn<Developer>> => {
-  return {
-    ...column,
-    style: (params) => {
-      if (typeof params.value === 'number') {
-        return {
-          fontStyle: 'italic',
-        };
-      }
-    },
-  };
-};
-
-const groupColumn = {
-  style: {
-    fontWeight: '600',
-    color: 'var(--infinite-accent-color)',
-  },
-};
-
 // Groupings
-const groupRowsState = new GroupRowsState({
+const defaultGroupRowsState = new GroupRowsState({
   expandedRows: [],
   collapsedRows: true,
 });
 
-const avgReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
-  initialValue: 0,
-  field: 'salary',
-  reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => (arr.length ? sum / arr.length : 0),
-};
-
-const maxReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
-  initialValue: -Infinity,
-  field: 'salary',
-  reducer: (acc, next) => (acc < next ? next : acc),
-  done: (max) => max,
-};
-
-const minReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
-  initialValue: Infinity,
-  field: 'salary',
-  reducer: (acc, next) => (acc > next ? next : acc),
-  done: (min) => min,
-};
-
 // Style functions
-
 const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
   ({ data }) => {
     if (data?.canDesign === 'yes') {
@@ -232,7 +174,6 @@ const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
   };
 
 // React-Select Props
-
 const selectProps: SelectProps = {
   menuPosition: 'fixed',
   styles: {
@@ -246,28 +187,22 @@ const selectProps: SelectProps = {
 };
 
 // COMPONENTS
-
 const defaultColumnPinning: InfiniteTableProps<any>['columnPinning'] =
   {
     'group-by': true,
   };
 
-type ReducerOptions = 'min' | 'max' | 'avg';
 const Settings: React.FunctionComponent<{
   groupBy: GroupByDeveloperType;
   pivotBy: PivotByDeveloperType;
-  reducerKey: ReducerOptions;
-  onReducerKeyChange: (reducerKey: ReducerOptions) => void;
   onGroupChange: (groupBy: GroupByDeveloperType) => void;
   onPivotChange: (pivotBy: PivotByDeveloperType) => void;
   onColorChange: (color: string) => void;
 }> = ({
   groupBy,
   pivotBy,
-  reducerKey,
   onGroupChange,
   onPivotChange,
-  onReducerKeyChange,
   onColorChange,
 }) => {
   const allGroupOptions = [
@@ -364,7 +299,7 @@ const Settings: React.FunctionComponent<{
       </div>
       <div>
         <b style={{ display: 'block', marginBottom: 10 }}>
-          Select `preferredLanguage` column Background:
+          Select `number` column type Background:
         </b>
         <input
           onChange={(event) => {
@@ -396,8 +331,6 @@ export default function GroupByExample() {
         field: 'canDesign',
       },
     ]);
-  const [reducerKey, setReducerKey] =
-    React.useState<ReducerOptions>('avg');
   const [backgroundColor, setBackgroundColor] =
     React.useState<string>('');
 
@@ -431,11 +364,9 @@ export default function GroupByExample() {
       <Settings
         onGroupChange={setGroupBy}
         onPivotChange={setPivotBy}
-        onReducerKeyChange={setReducerKey}
         onColorChange={setBackgroundColor}
         groupBy={groupBy}
         pivotBy={pivotBy}
-        reducerKey={reducerKey}
       />
 
       <DataSource<Developer>
@@ -445,7 +376,7 @@ export default function GroupByExample() {
         groupBy={groupBy}
         pivotBy={pivotBy}
         aggregationReducers={aggregationReducers}
-        defaultGroupRowsState={groupRowsState}>
+        defaultGroupRowsState={defaultGroupRowsState}>
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
