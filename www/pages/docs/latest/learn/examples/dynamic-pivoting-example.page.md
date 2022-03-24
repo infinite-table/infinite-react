@@ -2,7 +2,8 @@
 title: Dynamic Pivoting Example
 ---
 
-This demo shows how you can use Infinite Table api to construct a grid with grouping and pivoting defined at runtime.
+This example showcases client-side grouping, pivoting and aggregation.
+These properties are changed dynamically at run-time via the UI.
 
 It also showcases different way of customizing columns based on dynamic conditions:
 
@@ -13,6 +14,34 @@ It also showcases different way of customizing columns based on dynamic conditio
 <Sandpack deps="react-select">
 
 ```tsx file=dynamic-advanced-pivoting-example.page.tsx
+
+```
+
+```tsx file=Settings.tsx
+
+```
+
+```tsx file=types.ts
+
+```
+
+</Sandpack>
+
+## Server-side Dynamic Pivoting Example
+
+This example is very similar with the above one, but pivoting, grouping and aggregation is done on the server-side.
+
+<Sandpack deps="react-select">
+
+```tsx file=dynamic-advanced-pivoting-example.page.tsx
+
+```
+
+```tsx file=Settings.tsx
+
+```
+
+```tsx file=types.ts
 
 ```
 
