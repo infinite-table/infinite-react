@@ -218,7 +218,7 @@ export default function GroupByExample(
 
   const onDataParamsChange = React.useCallback(
     (dataParams) => {
-      console.log(dataParams);
+      console.log('data source params change:', dataParams);
     },
     []
   );
