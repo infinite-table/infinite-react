@@ -1,9 +1,5 @@
-import {
-  type DependencyList,
-  type EffectCallback,
-  useEffect,
-  useRef,
-} from 'react';
+import type { EffectCallback, DependencyList } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function useEffectWithRaf(fn: EffectCallback, deps: DependencyList) {
   const rafId = useRef<number>(0);
