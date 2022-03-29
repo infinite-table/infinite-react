@@ -165,6 +165,161 @@ The following properties are available:
 </Sandpack>
 </Prop>
 
+<Prop name="columns.components">
+
+> Specifies custom React components to use for column cells or header
+
+The column components object can have either of the two following properties:
+
+ * <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
+ * <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
+
+</Prop>
+
+
+<Prop name="columns.components.ColumnCell">
+
+> Specifies a custom React component to use for column cells
+
+For column header see related <PropLink name="columns.components.HeaderCell"/>.
+
+Inside a component used as a cell, you have to use <HookLink name="useInfiniteColumnCell"/> to retrieve information about the currently rendered cell.
+
+<Note>
+
+It's very important that you take
+```tsx
+const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
+```
+the `domRef` from the <HookLink name="useInfiniteColumnCell"/> hook and pass it on to the root DOM element of your cell component.
+
+```tsx
+<div ref={domRef}>
+  ...
+</div>
+```
+**If you don't do this, the column rendering will not work.**
+
+</Note>
+
+<Note>
+
+Also note that your React Component should be a functional component and have this signature
+
+```tsx
+function CustomComponent(props: React.HTMLProps<HTMLDivElement>) {
+  return ...
+}
+```
+that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
+
+In order to access the cell-related information, you don't use the props, but you call the <HookLink name="useInfiniteColumnCell"/> hook.
+
+```tsx {4,8}
+const ExampleCellComponent: React.FunctionComponent<
+  React.HTMLProps<HTMLDivElement>
+> = (props) => {
+  const { domRef } = useInfiniteColumnCell<Developer>();
+  
+  return (
+    <div
+      ref={domRef}
+      {...props}
+      className={`${props.className} extra-cls`}
+      style={style}
+    >
+      {props.children} <div style={{ flex: 1 }} /> {emoji}
+    </div>
+  )
+}
+
+```
+
+</Note>
+
+
+<Sandpack title="Custom components">
+
+```tsx file=column-components-example.page.tsx
+
+```
+
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="columns.components.HeaderCell">
+
+> Specifies a custom React component to use for column headers
+
+For column cells see related <PropLink name="columns.components.ColumnCell"/>.
+
+Inside a custom component used as a column header, you have to use <HookLink name="useInfiniteHeaderCell"/> to retrieve information about the currently rendered header cell.
+
+<Note>
+
+It's very important that you take
+```tsx
+const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
+```
+the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it on to the root DOM element of your header component.
+
+```tsx
+<div ref={domRef}>
+  ...
+</div>
+```
+**If you don't do this, the column header rendering will not work.**
+
+</Note>
+
+<Note>
+
+Also note that your React Component should be a functional component and have this signature
+
+```tsx
+function CustomHeaderComponent(props: React.HTMLProps<HTMLDivElement>) {
+  return ...
+}
+```
+that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
+
+In order to access the column header-related information, you don't use the props, but you call the <HookLink name="useInfiniteHeaderCell"/> hook.
+
+```tsx {4,8}
+const ExampleHeaderComponent: React.FunctionComponent<
+  React.HTMLProps<HTMLDivElement>
+> = (props) => {
+  const { domRef } = useInfiniteHeaderCell<Developer>();
+  
+  return (
+    <div
+      ref={domRef}
+      {...props}
+      className={`${props.className} extra-cls`}
+      style={style}
+    >
+      {props.children} <div style={{ flex: 1 }} /> {emoji}
+    </div>
+  );
+}
+
+```
+
+</Note>
+
+
+<Sandpack title="Custom components">
+
+```tsx file=column-components-example.page.tsx
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.cssEllipsis" type="boolean" defaultValue={true}>
 
 > Specifies if the column should show ellipsis for content that is too long and does not fit the column width.
@@ -259,7 +414,7 @@ If no <PropLink name="columns.header" /> is specified, it will be used as the co
 
 <Note>
 
-If no `header` is specified for a column, the `field` will be used instead.
+If no `header` is specified for a column, the <PropLink name="columns.field">field</PropLink> will be used instead.
 
 </Note>
 
@@ -279,6 +434,20 @@ When we implement filtering, you'll also have access to the column filter.
 ```
 
 </Sandpack>
+
+<Note>
+
+In the `column.header` function you can use hooks or render custom React components. To make it easier to access the param of the `header` function, we've exposed the <HookLink name="useInfiniteHeaderCell" /> - use it to gain access to the same object that is passed as an argument to the `header` function.
+
+</Note>
+
+<Sandpack title="Column with custom header that uses useInfiniteHeaderCell">
+
+```ts file=column-header-hooks-example.page.tsx
+```
+
+</Sandpack>  
+
 </Prop>
 
 <Prop name="columns.headerCssEllipsis" type="boolean" defaultValue={true}>
@@ -373,7 +542,7 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 </Note>
 
 
-The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
+The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
 
  * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
  * rowInfo - very useful information about the current row:
@@ -384,7 +553,28 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
    - `rowInfo.indexInGroup` - the index of the row in the current group
    -  ... there are other useful properties that we'll document in the near future
 
-  
+
+<Sandpack title="Column with custom render">
+
+```ts file=column-render-example.page.tsx
+```
+
+</Sandpack>  
+
+<Note>
+
+In the `column.render` function you can use hooks or render custom React components. To make it easier to access the param of the `render` function, we've exposed the `useInfiniteColumnCell` - use it to gain access to the same object that is passed as an argument to the `render` function.
+
+
+</Note>
+
+<Sandpack title="Column with custom render that uses useInfiniteColumnCell">
+
+```ts file=column-render-hooks-example.page.tsx
+```
+
+</Sandpack>  
+
 
 </Prop>
 
@@ -865,6 +1055,52 @@ If you want to scroll to the top of the table, you can use the <PropLink name="s
 <Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
 
 ```ts file=../learn/working-with-data/live-pagination-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+<Prop name="pivotGrandTotalColumnPosition" defaultValue={false} type={'"start"|"end"|false'}>
+
+> Controls the position and visibility of pivot grand-total columns
+
+If specified as `false`, the pivot grand-total columns are not displayed.
+
+For normal pivot total columns, see <PropLink name="pivotTotalColumnPosition"/>.
+
+
+<Sandpack title="Pivoting with pivotGrandTotalColumnPosition=start">
+
+```ts file=pivot-grand-total-column-position-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+<Prop name="pivotTotalColumnPosition" defaultValue={'"end"'} type={'"start"|"end"|false'}>
+
+> Controls the position and visibility of pivot total columns
+
+If specified as `false`, the pivot total columns are not displayed.
+
+For grand-total pivot columns, see <PropLink name="pivotGrandTotalColumnPosition"/>.
+
+<Note>
+
+Pivot total columns only make sense when pivoting by two or more pivot fields, and thus will only display if this is the case. You can however, display grand-total columns if you have a single pivot field (or even no pivot fields - so <DataSourcePropLink name="pivotBy"/> is an empty array).
+
+In case there are no pivot fields, but <DataSourcePropLink name="pivotBy"/> is an empty array, by default, a total column will be displayed for each aggregation (unless you specify <PropLink name="pivotTotalColumnPosition"/> as `false`).
+
+</Note>
+
+
+<Sandpack title="Pivoting with pivotTotalColumnPosition=start">
+
+```ts file=pivot-total-column-position-example.page.tsx
 ```
 
 </Sandpack>

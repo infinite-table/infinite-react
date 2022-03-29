@@ -119,7 +119,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const renderParam: InfiniteTableColumnRenderParams<T> = {
     value,
     column,
-
     domRef,
     groupRowInfo,
     ...rest,
@@ -215,7 +214,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     >;
 
   return (
-    <ContextProvider value={renderParam}>
+    <ContextProvider
+      value={renderParam as InfiniteTableColumnCellContextType<T>}
+    >
       <InfiniteTableCell<T> {...cellProps}></InfiniteTableCell>
     </ContextProvider>
   );

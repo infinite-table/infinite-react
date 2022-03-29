@@ -16,7 +16,10 @@ import {
 } from '../InfiniteTable/types';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import { GroupRowsState } from './GroupRowsState';
-import { InfiniteTablePropPivotTotalColumnPosition } from '../InfiniteTable/types/InfiniteTableState';
+import {
+  InfiniteTablePropPivotGrandTotalColumnPosition,
+  InfiniteTablePropPivotTotalColumnPosition,
+} from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
@@ -174,6 +177,7 @@ export interface DataSourceSetupState<T> {
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
+  pivotGrandTotalColumnPosition: InfiniteTablePropPivotGrandTotalColumnPosition;
   cursorId: number | Symbol | DataSourceLivePaginationCursorValue;
 
   updatedAt: number;

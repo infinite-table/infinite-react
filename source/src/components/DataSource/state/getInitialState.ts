@@ -42,6 +42,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     notifyScrollStop: buildSubscriptionCallback<ScrollStopInfo>(),
     notifyRenderRangeChange: buildSubscriptionCallback<RenderRange>(),
     pivotTotalColumnPosition: 'end',
+    pivotGrandTotalColumnPosition: false,
     scrollStopDelayUpdatedByTable: 100,
     originalLazyGroupData,
     originalLazyGroupDataChangeDetect: 0,

@@ -3,12 +3,7 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  GroupRowsState,
   DataSourcePropAggregationReducers,
-  InfiniteTablePropColumnTypes,
-} from '@infinite-table/infinite-react';
-
-import type {
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
@@ -33,11 +28,44 @@ type Developer = {
   streetPrefix: string;
 };
 
-const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers50k')
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
+const developers: Developer[] = [
+  {
+    id: 0,
+    firstName: 'Nya',
+    lastName: 'Klein',
+    country: 'India',
+
+    city: 'Unnao',
+    streetName: 'Purdy Lane',
+    streetPrefix: 'Landing',
+    streetNo: 183,
+    age: 24,
+    currency: 'JPY',
+    preferredLanguage: 'TypeScript',
+    stack: 'backend',
+    canDesign: 'yes',
+    salary: 60000,
+    hobby: 'sports',
+  },
+  {
+    id: 1,
+    firstName: 'Rob',
+    lastName: 'Boston',
+    country: 'USA',
+
+    city: 'LA',
+    streetName: 'Purdy Lane',
+    streetPrefix: 'Landing',
+    streetNo: 183,
+    age: 24,
+    currency: 'USD',
+    preferredLanguage: 'TypeScript',
+    stack: 'frontend',
+    canDesign: 'no',
+    salary: 10000,
+    hobby: 'sports',
+  },
+];
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id' },
@@ -49,91 +77,20 @@ const columns: InfiniteTablePropColumns<Developer> = {
   hobby: { field: 'hobby' },
   city: {
     field: 'city',
-    style: {
-      color: 'blue',
-    },
   },
   age: {
     field: 'age',
     type: ['number'],
-    // style: {
-    //   color: 'blue',
-    // },
   },
   salary: {
     field: 'salary',
     type: ['number', 'currency'],
-    style: {
-      color: 'red',
-    },
   },
   currency: { field: 'currency' },
 };
 
-const numberFormatter = new Intl.NumberFormat();
-
-const columnTypes: InfiniteTablePropColumnTypes<Developer> = {
-  number: {
-    renderValue: ({ value }) =>
-      typeof value === 'number'
-        ? numberFormatter.format(value as number)
-        : null,
-  },
-  currency: {
-    renderValue: (param) => {
-      const { value, data } = param;
-      return typeof value === 'number'
-        ? `${numberFormatter.format(value as number)} ${data?.currency ?? ''}`
-        : null;
-    },
-  },
-  default: {
-    style: {},
-  },
-};
-
-// //  Column modifiers
-// const getPivotColumn = (
-//   column: InfiniteTableColumn<Developer>
-// ): Partial<InfiniteTablePivotColumn<Developer>> => {
-//   return {
-//     ...column,
-//     style: (params) => {
-//       if (typeof params.value === 'number') {
-//         return {
-//           fontStyle: 'italic',
-//         };
-//       }
-//     },
-//   };
-// };
-
-// const _getGroupColumn = (
-//   column: InfiniteTableColumn<Developer>
-// ): Partial<InfiniteTableColumn<Developer>> => {
-//   return {
-//     style: {
-//       color: 'red',
-//     },
-//   };
-// };
-
-// const groupColumn = {
-//   style: {
-//     fontWeight: '600',
-//     color: 'var(--infinite-accent-color)',
-//   },
-// };
-
-// Groupings
-const groupRowsState = new GroupRowsState({
-  expandedRows: [],
-  collapsedRows: true,
-});
-
 const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
-
   reducer: (acc, sum) => acc + sum,
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
@@ -151,22 +108,16 @@ const reducers: DataSourcePropAggregationReducers<Developer> = {
   },
 };
 const groupBy: DataSourceGroupBy<Developer>[] = [
-  // {
-  //   field: 'ci',
-  // },
-  { field: 'city' },
-  { field: 'age' },
+  { field: 'country' },
+
   { field: 'stack' },
 ];
 const pivotBy: DataSourcePivotBy<Developer>[] = [
   {
-    field: 'preferredLanguage',
-  },
-  {
     field: 'stack',
   },
   {
-    field: 'age',
+    field: 'canDesign',
   },
 ];
 
@@ -177,15 +128,34 @@ export default function PivotPerfExample() {
     },
   };
 
+  const [totalColumnVisible, setTotalColumnVisible] = React.useState<
+    'start' | 'end' | false
+  >(false);
+
   return (
     <>
+      <button
+        data-name="toggle-total-col"
+        onClick={() => {
+          setTotalColumnVisible((x) =>
+            x === 'end'
+              ? 'start'
+              : x === 'start'
+              ? false
+              : x == false
+              ? 'end'
+              : x,
+          );
+        }}
+      >
+        Toggle total column
+      </button>
       <DataSource<Developer>
         primaryKey="id"
-        data={dataSource}
+        data={developers}
         groupBy={groupBy}
         pivotBy={pivotBy}
         aggregationReducers={reducers}
-        defaultGroupRowsState={groupRowsState}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
@@ -193,10 +163,10 @@ export default function PivotPerfExample() {
               domProps={domProps}
               columns={columns}
               hideEmptyGroupColumns
-              columnTypes={columnTypes}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
-              pivotTotalColumnPosition="end"
+              groupRenderStrategy="single-column"
+              pivotTotalColumnPosition={totalColumnVisible}
             />
           );
         }}

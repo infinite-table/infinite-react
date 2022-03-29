@@ -15,8 +15,12 @@ import type {
 } from '../../components/InfiniteTable/types/InfiniteTableColumn';
 import { InfiniteTablePropColumnGroupsMap } from '../../components/InfiniteTable/types/InfiniteTableProps';
 
-import type { InfiniteTablePropPivotTotalColumnPosition } from '../../components/InfiniteTable/types/InfiniteTableState';
+import type {
+  InfiniteTablePropPivotTotalColumnPosition,
+  InfiniteTablePropPivotGrandTotalColumnPosition,
+} from '../../components/InfiniteTable/types/InfiniteTableState';
 import { DeepMap } from '../DeepMap';
+import { once } from '../DeepMap/once';
 
 export type ComputedColumnsAndGroups<DataType> = {
   columns: InfiniteTablePropColumnsMap<
@@ -72,12 +76,14 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
   deepMap,
   pivotBy,
   pivotTotalColumnPosition,
+  pivotGrandTotalColumnPosition,
   reducers = {},
   showSeparatePivotColumnForSingleAggregation = false,
 }: {
   deepMap: DeepMap<KeyType, boolean>;
   pivotBy: DataSourcePivotBy<DataType>[];
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
+  pivotGrandTotalColumnPosition: InfiniteTablePropPivotGrandTotalColumnPosition;
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
   showSeparatePivotColumnForSingleAggregation?: boolean;
 }): ComputedColumnsAndGroups<DataType> {
@@ -114,6 +120,37 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
     string,
     InfiniteTableColumnGroup
   >();
+
+  const addGrandTotalColumns = once(function () {
+    aggregationReducers.forEach((reducer, index) => {
+      columns.set(
+        `total:${reducer.id}`,
+        prepareColumn({
+          header: `${reducer.name || reducer.id} total`,
+          pivotBy,
+          pivotColumn: true,
+          pivotTotalColumn: true,
+          pivotAggregator: reducer,
+          pivotAggregatorIndex: index,
+
+          pivotGroupKeys: [],
+          pivotGroupKey: '',
+          pivotIndex: -1,
+
+          valueGetter: ({ rowInfo }) => {
+            return rowInfo.reducerResults?.[reducer.id] as any as string;
+          },
+        }),
+      );
+    });
+  });
+
+  if (
+    (!pivotLength && pivotTotalColumnPosition === 'start') ||
+    pivotGrandTotalColumnPosition === 'start'
+  ) {
+    addGrandTotalColumns();
+  }
 
   const isSingleAggregationColumn =
     !showSeparatePivotColumnForSingleAggregation &&
@@ -295,30 +332,14 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
     }
   });
 
-  // if (columns.size === 1 || !pivotLength) {
-  if (!pivotLength) {
-    aggregationReducers.forEach((reducer, index) => {
-      columns.set(
-        `total:${reducer.id}`,
-        prepareColumn({
-          header: `${reducer.name || reducer.id} total`,
-          pivotBy,
-          pivotColumn: true,
-          pivotTotalColumn: true,
-          pivotAggregator: reducer,
-          pivotAggregatorIndex: index,
-
-          pivotGroupKeys: [],
-          pivotGroupKey: '',
-          pivotIndex: -1,
-
-          valueGetter: ({ rowInfo }) => {
-            return rowInfo.reducerResults?.[reducer.id] as any as string;
-          },
-        }),
-      );
-    });
+  if (
+    (!pivotLength && pivotTotalColumnPosition === 'end') ||
+    pivotGrandTotalColumnPosition === 'end'
+  ) {
+    addGrandTotalColumns();
   }
+
+  console.log(columns.keys());
 
   const result = {
     columns,

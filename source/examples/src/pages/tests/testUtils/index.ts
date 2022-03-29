@@ -2,6 +2,8 @@ import { Page, ElementHandle } from '@playwright/test';
 
 import { sortElements } from './listUtils';
 
+export { getRow, getRows } from './getRowElement';
+
 export const wait = (timeout: number) => {
   return new Promise((resolve) => {
     setTimeout(() => {

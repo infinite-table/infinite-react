@@ -54,6 +54,8 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
 export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;
 
 export type InfiniteTablePropPivotTotalColumnPosition = false | 'start' | 'end';
+export type InfiniteTablePropPivotGrandTotalColumnPosition =
+  InfiniteTablePropPivotTotalColumnPosition;
 
 export interface InfiniteTableMappedState<T> {
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
@@ -127,6 +129,7 @@ export interface InfiniteTableMappedState<T> {
   pivotTotalColumnPosition: NonUndefined<
     InfiniteTableProps<T>['pivotTotalColumnPosition']
   >;
+  pivotGrandTotalColumnPosition: InfiniteTableProps<T>['pivotGrandTotalColumnPosition'];
 }
 
 export interface InfiniteTableDerivedState<T> {

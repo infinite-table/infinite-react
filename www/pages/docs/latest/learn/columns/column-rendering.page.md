@@ -96,9 +96,9 @@ Changing the group icon using `render`. The icon can also be changed using `rend
 
 Inside the <PropLink name="columns.render" /> and <PropLink name="columns.renderValue" /> functions, you can use hooks - both provided by `InfiniteTable` and any other `React` hooks.
 
-### Hook: `useInfiniteColumnCell<DATA_TYPE>()`
+### Hook: <HookLink name="useInfiniteColumnCell"/>
 
-When you're inside a rendering function for a column cell, you can use `useInfiniteColumnCell` hook to get access to the current cell's rendering information - the argument passed to the `render` or `renderValue` functions.
+When you're inside a rendering function for a column cell, you can use <HookLink name="useInfiniteColumnCell">useInfiniteColumnCell hook</HookLink> to get access to the current cell's rendering information - the argument passed to the <PropLink name="columns.render">render</PropLink> or <PropLink name="columns.renderValue">renderValue</PropLink> functions.
 
 ```tsx
 import {
@@ -131,9 +131,9 @@ const nameColumn: InfiniteTableColumn<Employee> = {
 
 </Sandpack>
 
-### Hook: `useInfiniteHeaderCell<DATA_TYPE>()`
+### Hook: <HookLink name="useInfiniteHeaderCell" />
 
-For column headers, you can use `useInfiniteHeaderCell` hook to get access to the current header's rendering information - the argument passed to the `header` function.
+For column headers, you can use <HookLink name="useInfiniteHeaderCell" /> hook to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function.
 
 ```tsx
 import {
@@ -154,9 +154,9 @@ const nameColumn: InfiniteTableColumn<Employee> = {
 };
 ```
 
-<Sandpack title="Column Header with render & useInfiniteColumnCell">
+<Sandpack title="Column Header with render & useInfiniteHeaderCell">
 
-```tsx file=../../reference/column-render-header-hooks-example.page.tsx
+```tsx file=../../reference/column-header-hooks-example.page.tsx
 
 ```
 
@@ -216,11 +216,22 @@ const nameColumn: InfiniteTableColumn<Developer> = {
 
 <Note>
 
-When using custom components, make sure you get `domRef` from the corresponding hook (`useInfiniteColumnCell` for column cells and `useInfiniteHeaderCell` for header cells) and pass it on to the final `JSX.Element` that is the DOM root of the component.
+
+When using custom components, make sure you get `domRef` from the corresponding hook (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) and pass it on to the final `JSX.Element` that is the DOM root of the component.
+
+
+```tsx
+// inside a component specified in column.components.ColumnCell
+const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
+
+return <div ref={domRef}>
+   ...
+</div>
+```
 
 Also you have to make sure you spread all other `props` you receive in the component, as they are `HTMLProps` that need to end-up in the DOM (eg: `className` for theming and default styles, etc).
 
-Both `components.ColumnCell` and `components.HeaderCell` need to be declared with `props` being of type `HTMLProps<HTMLDivElement>`.
+Both <PropLink name="columns.components.ColumnCell">components.ColumnCell</PropLink> and <PropLink name="columns.components.HeaderCell">components.HeaderCell</PropLink> need to be declared with `props` being of type `HTMLProps<HTMLDivElement>`.
 
 </Note>
 
@@ -231,3 +242,9 @@ Both `components.ColumnCell` and `components.HeaderCell` need to be declared wit
 ```
 
 </Sandpack>
+
+<Note>
+
+If you're using the <HookLink name="useInfiniteColumnCell" /> hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> functions (and not as part of a custom component in <PropLink name="columns.components.ColumnCell" />), you don't need to pass on the `domRef` to the root of the DOM you're rendering (same is true if you're using <HookLink name="useInfiniteHeaderCell" /> inside the <PropLink name="columns.header" /> function).
+
+</Note>

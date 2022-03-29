@@ -52,7 +52,11 @@ export function useColumnsWhen<T>() {
   } = useDataSourceContextValue<T>();
 
   const {
-    componentState: { groupRenderStrategy, pivotTotalColumnPosition },
+    componentState: {
+      groupRenderStrategy,
+      pivotTotalColumnPosition,
+      pivotGrandTotalColumnPosition,
+    },
   } = useComponentState<InfiniteTableState<T>>();
 
   const groupByMap = useGroupByMap(groupBy);
@@ -64,6 +68,12 @@ export function useColumnsWhen<T>() {
   useEffect(() => {
     dataSourceActions.pivotTotalColumnPosition = pivotTotalColumnPosition;
   }, [pivotTotalColumnPosition]);
+  useEffect(() => {
+    if (pivotGrandTotalColumnPosition != undefined) {
+      dataSourceActions.pivotGrandTotalColumnPosition =
+        pivotGrandTotalColumnPosition;
+    }
+  }, [pivotGrandTotalColumnPosition]);
 
   useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
@@ -185,6 +195,7 @@ function useColumnsWhenGrouping<T>() {
       pivotColumns,
       pivotColumn,
       pivotTotalColumnPosition,
+      pivotGrandTotalColumnPosition,
     },
   } = useComponentState<InfiniteTableState<T>>();
 
@@ -197,6 +208,7 @@ function useColumnsWhenGrouping<T>() {
         groupColumn,
         pivotColumn,
         pivotTotalColumnPosition,
+        pivotGrandTotalColumnPosition,
         groupRenderStrategy:
           groupRenderStrategy === 'inline'
             ? 'single-column'
@@ -423,6 +435,7 @@ export function getColumnsWhenGrouping<T>(params: {
   pivotBy?: DataSourcePivotBy<T>[];
   toggleGroupRow: (groupKeys: any[]) => void;
   pivotTotalColumnPosition: InfiniteTableState<T>['pivotTotalColumnPosition'];
+  pivotGrandTotalColumnPosition: InfiniteTableState<T>['pivotGrandTotalColumnPosition'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
@@ -434,6 +447,7 @@ export function getColumnsWhenGrouping<T>(params: {
     pivotBy,
     groupColumn,
     pivotTotalColumnPosition,
+    pivotGrandTotalColumnPosition,
     pivotColumn,
     groupRenderStrategy,
     toggleGroupRow,
@@ -494,8 +508,15 @@ export function getColumnsWhenGrouping<T>(params: {
     });
 
     pivotColumns.forEach((col, key) => {
-      if (col.pivotTotalColumn && pivotTotalColumnPosition === false) {
+      const isSimpleTotalColumn = col.pivotTotalColumn && col.columnGroup;
+      const isGrandTotalColumn = col.pivotTotalColumn && !col.columnGroup;
+
+      if (isSimpleTotalColumn && pivotTotalColumnPosition === false) {
         // don't include the total columns if specified as false
+        return;
+      }
+      if (isGrandTotalColumn && pivotGrandTotalColumnPosition === false) {
+        // don't include the grand total columns if specified as false
         return;
       }
 

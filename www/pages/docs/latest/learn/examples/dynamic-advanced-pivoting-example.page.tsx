@@ -34,17 +34,6 @@ const dataSource = () => {
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id' },
   firstName: { field: 'firstName' },
-  preferredLanguage: { field: 'preferredLanguage' },
-  stack: { field: 'stack' },
-  country: { field: 'country' },
-  canDesign: { field: 'canDesign' },
-  hobby: { field: 'hobby' },
-  city: {
-    field: 'city',
-    style: {
-      color: 'blue',
-    },
-  },
   age: {
     field: 'age',
     type: ['number'],
@@ -56,6 +45,18 @@ const columns: InfiniteTablePropColumns<Developer> = {
       color: 'red',
     },
   },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: { field: 'country' },
+  canDesign: { field: 'canDesign' },
+  hobby: { field: 'hobby' },
+  city: {
+    field: 'city',
+    style: {
+      color: 'blue',
+    },
+  },
+
   currency: { field: 'currency' },
 };
 

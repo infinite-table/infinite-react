@@ -92,7 +92,7 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> =
     },
   };
 
-export default function ColumnValueGetterExample() {
+export default function ColumnCustomRenderExample() {
   return (
     <>
       <DataSource<Developer>

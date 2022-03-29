@@ -108,6 +108,7 @@ export function concludeReducer<T>(params: {
       'pivotBy',
       'aggregationReducers',
       'pivotTotalColumnPosition',
+      'pivotGrandTotalColumnPosition',
       'showSeparatePivotColumnForSingleAggregation',
       'sortInfo',
     ]);
@@ -182,6 +183,8 @@ export function concludeReducer<T>(params: {
             pivotBy,
 
             pivotTotalColumnPosition: state.pivotTotalColumnPosition ?? 'end',
+            pivotGrandTotalColumnPosition:
+              state.pivotGrandTotalColumnPosition ?? false,
             reducers: state.aggregationReducers,
             showSeparatePivotColumnForSingleAggregation:
               state.showSeparatePivotColumnForSingleAggregation,

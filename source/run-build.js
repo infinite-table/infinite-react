@@ -1,4 +1,3 @@
-// TODO use a command line helper for this
 const { vanillaExtractPlugin } = require('@vanilla-extract/esbuild-plugin');
 
 const format = process.argv[2];

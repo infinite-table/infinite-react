@@ -128,6 +128,8 @@ export const forwardProps = <T>(
 
     pivotTotalColumnPosition: (pivotTotalColumnPosition) =>
       pivotTotalColumnPosition ?? 'end',
+    pivotGrandTotalColumnPosition: 1,
+
     // groupRenderStrategy: (groupRenderStrategy) =>
     //   groupRenderStrategy ?? 'multi-column',
 
@@ -225,6 +227,7 @@ export const mapPropsToState = <T>(params: {
     groupRenderStrategy,
     groupBy: groupBy,
     computedColumns,
+
     virtualizeHeader,
     columnHeaderCssEllipsis:
       props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,

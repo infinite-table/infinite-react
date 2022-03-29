@@ -8,6 +8,7 @@ import {
   PropTable,
   PropLink,
   DataSourcePropLink,
+  HookLink,
 } from './Prop';
 import ConsoleBlock from './ConsoleBlock';
 import Convention from './Convention';
@@ -404,6 +405,7 @@ export const MDXComponents = {
   PropLink,
   DataSourcePropLink,
   DPropLink: DataSourcePropLink,
+  HookLink,
   PropTable,
   Recap,
   Recipes,

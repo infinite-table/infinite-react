@@ -12,3 +12,14 @@ export const getRowElement = async (
 export const getRowSelector = (rowIndex: number) => {
   return `[data-row-index="${rowIndex}"]`;
 };
+
+export const getRows = ({ page }: { page: Page }) => {
+  return page.locator(`[data-row-index]`);
+};
+
+export const getRow = (
+  { rowIndex }: { rowIndex: number },
+  { page }: { page: Page },
+) => {
+  return page.locator(getRowSelector(rowIndex));
+};

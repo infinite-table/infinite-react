@@ -61,6 +61,9 @@ const DefaultHeaderComponent: React.FunctionComponent<
 
   return (
     <div ref={domRef} {...props} style={style}>
+      {/* here you would usually have: */}
+      {/* {props.children} {sortTool} */}
+      {/* but in this case we want to override the default sort tool as well (which is part of props.children) */}
       {column.field} {sortTool}
     </div>
   );
@@ -69,19 +72,19 @@ const DefaultHeaderComponent: React.FunctionComponent<
 const StackComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
-  const params = useInfiniteColumnCell<Developer>();
-  const { value, domRef } = params;
+  const { value, domRef } =
+    useInfiniteColumnCell<Developer>();
 
   const isFrontEnd = value === 'frontend';
   const emoji = isFrontEnd ? '⚛️' : '💽';
   const style = {
-    ...props.style,
     padding: '5px 20px',
     border: `1px solid ${isFrontEnd ? 'red' : 'green'}`,
+    ...props.style,
   };
   return (
     <div ref={domRef} {...props} style={style}>
-      {value} <div style={{ flex: 1 }} /> {emoji}
+      {props.children} <div style={{ flex: 1 }} /> {emoji}
     </div>
   );
 };
@@ -89,6 +92,7 @@ const StackComponent: React.FunctionComponent<
 const columnTypes: InfiniteTablePropColumnTypes<Developer> =
   {
     default: {
+      // override all columns to use these components
       components: {
         HeaderCell: DefaultHeaderComponent,
       },
@@ -99,7 +103,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id', defaultWidth: 80 },
   stack: {
     field: 'stack',
+    renderValue: ({ data }) => 'Stack: ' + data?.stack,
     components: {
+      HeaderCell: DefaultHeaderComponent,
       ColumnCell: StackComponent,
     },
   },

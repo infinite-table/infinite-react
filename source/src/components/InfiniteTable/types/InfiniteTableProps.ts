@@ -27,7 +27,10 @@ import type {
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumn,
 } from './InfiniteTableColumn';
-import { InfiniteTablePropPivotTotalColumnPosition } from './InfiniteTableState';
+import {
+  InfiniteTablePropPivotGrandTotalColumnPosition,
+  InfiniteTablePropPivotTotalColumnPosition,
+} from './InfiniteTableState';
 
 // export type TablePropColumnOrderItem = string | { id: string; visible: boolean };
 export type InfiniteTablePropColumnOrderNormalized = string[];
@@ -277,6 +280,7 @@ export interface InfiniteTableProps<T> {
   >;
 
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
+  pivotGrandTotalColumnPosition?: InfiniteTablePropPivotGrandTotalColumnPosition;
 
   groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;

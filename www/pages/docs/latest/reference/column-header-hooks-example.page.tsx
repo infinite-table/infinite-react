@@ -50,7 +50,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
 };
 
-export default function ColumnValueGetterExample() {
+export default function ColumnHeaderExampleWithHooks() {
   return (
     <>
       <DataSource<Developer>

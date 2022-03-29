@@ -72,6 +72,15 @@ export function MarkdownPage<
           text: 'Recap',
         };
       }
+      // if (child.props.mdxType === 'h') {
+      //   debugger;
+      //   return {
+      //     url: '#recap',
+      //     depth: 0,
+      //     text: 'Recap',
+      //   };
+      // }
+      console.log(child.props.mdxType);
       if (child.props.mdxType === 'PropTable') {
         return React.Children.toArray(child.props.children)
           .filter(
@@ -85,6 +94,37 @@ export function MarkdownPage<
             };
           });
       }
+
+      let text = child.props.children;
+      if (child.props?.mdxType.startsWith('h')) {
+        const children = React.Children.toArray(
+          child.props.children
+        );
+        text = children
+          .map((child) => {
+            if (!child) {
+              return null;
+            }
+            if (
+              typeof child === 'string' ||
+              typeof child == 'number'
+            ) {
+              return child;
+            }
+            //@ts-ignore
+            if (child.props?.mdxType) {
+              //@ts-ignore
+              return typeof child.props.children ===
+                'string'
+                ? //@ts-ignore
+                  child.props.children
+                : //@ts-ignore
+                  child.props.name;
+            }
+          })
+          .filter(Boolean)
+          .join(' ');
+      }
       return {
         url: '#' + child.props.id,
         depth:
@@ -94,7 +134,7 @@ export function MarkdownPage<
               0
             )) ??
           0,
-        text: child.props.children,
+        text,
       };
     });
   if (anchors.length > 0) {

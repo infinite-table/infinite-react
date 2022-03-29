@@ -16,6 +16,8 @@ You do that by using a `function` as a direct child of the `DataSource`, and in 
 </Note>
 
 
+For more pivoting examples, see [our pivoting demos](/docs/latest/learn/examples/dynamic-pivoting-example)
+
 ```ts
 const pivotBy = [{ field: 'team' }]
  // field needs to be keyof DATA_TYPE both in `pivotBy` and `groupBy`
@@ -41,7 +43,7 @@ const groupBy = [{field: 'department'}, {field: 'country'}]
 
 ## Customizing Pivot Columns
 
-There are a number of ways to customize the pivot columns and <DataSourcePropLink name="pivotBy.columnGroup" code={false}>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
+There are a number of ways to customize the pivot columns and <DataSourcePropLink name="pivotBy.columnGroup" nocode>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
 
 The default behavior for pivot columns generated for aggregations is that they inherit the properties of the original columns bound to the same field as the aggregation.
 
@@ -98,11 +100,9 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
     return {
       header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Not a Designer',
     }
-  },
+  }},
 ];
 ```
-
-
 
 <Sandpack title="Pivoting with customized pivot column">
 
@@ -110,6 +110,26 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
 ```
 
 </Sandpack>
+
+## Total and grand-total columns
+
+In <DPropLink name="pivotBy" nocode>pivot mode</DPropLink> you can configure both <PropLink name="pivotTotalColumnPosition" nocode>total columns</PropLink> and <PropLink name="pivotGrandTotalColumnPosition" nocode>grand-total columns</PropLink>. By default, grand-total columns are not displayed, so you have to explicitly set the <PropLink name="pivotGrandTotalColumnPosition" /> prop for them to be visible.
+
+<Sandpack title="Pivoting with customized position for totals and grand-total columns">
+
+```ts file=../../../reference/pivot-grand-total-column-position-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+**What are grand-total columns?**
+
+
+For each <DPropLink name="aggregationReducers" nocode>aggregation reducer</DPropLink> specified in the `DataSource`, you can have a total column - this is what <PropLink name="pivotGrandTotalColumnPosition" nocode>grand-total columns</PropLink> basically are.
+
+</Note>
 
 ## Server-side pivoting
 
