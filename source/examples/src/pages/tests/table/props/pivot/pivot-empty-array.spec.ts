@@ -19,6 +19,7 @@ export default test.describe.parallel('Pivot', () => {
       'total:salary',
       'total:age',
     ]);
+
     expect(columnGroupIds).toEqual([]);
 
     // toggles show totals to false
