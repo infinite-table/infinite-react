@@ -223,6 +223,7 @@ export type InfiniteTablePivotColumnGetterOptions<
 
 export type InfiniteTablePropGroupRenderStrategy =
   | 'single-column'
+  // | 'single-column-extended'
   | 'multi-column'
   | 'inline';
 export type InfiniteTableGroupColumnBase<T> = Partial<

@@ -209,6 +209,12 @@ export function getSingleGroupColumn<T>(
     },
   };
 
+  // if (options.groupRenderStrategy === 'single-column-extended') {
+  //   generatedGroupColumn.colspan = () => {
+  //     return 2;
+  //   };
+  // }
+
   if (groupColumnFromProps) {
     if (typeof groupColumnFromProps === 'function') {
       generatedGroupColumn = {

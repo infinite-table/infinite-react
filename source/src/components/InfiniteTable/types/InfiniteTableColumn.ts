@@ -86,6 +86,22 @@ export type InfiniteTableColumnRowspanParam<
   column: COL_TYPE;
 };
 
+export type InfiniteTableColumnColspanParam<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = {
+  rowInfo: InfiniteTableRowInfo<DATA_TYPE>;
+  data: DATA_TYPE | Partial<DATA_TYPE> | null;
+  dataArray: InfiniteTableRowInfo<DATA_TYPE>[];
+  rowIndex: number;
+  column: COL_TYPE;
+  computedVisibleIndex: number;
+  computedVisibleColumns: COL_TYPE[];
+  computedPinnedStartColumns: COL_TYPE[];
+  computedPinnedEndColumns: COL_TYPE[];
+  computedUnpinnedColumns: COL_TYPE[];
+};
+
 export type InfiniteTableColumnRenderFunction<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
@@ -204,6 +220,9 @@ export type InfiniteTableColumnValueGetter<
 export type InfiniteTableColumnRowspanFn<T> = (
   params: InfiniteTableColumnRowspanParam<T>,
 ) => number;
+export type InfiniteTableColumnColspanFn<T> = (
+  params: InfiniteTableColumnColspanParam<T>,
+) => number;
 
 export type InfiniteTableColumnComparer<T> = (a: T, b: T) => number;
 
@@ -232,6 +251,7 @@ export type InfiniteTableBaseColumn<T> = {
   className?: InfiniteTableColumnClassName<T>;
 
   rowspan?: InfiniteTableColumnRowspanFn<T>;
+  // colspan?: InfiniteTableColumnColspanFn<T>;
 
   valueGetter?: InfiniteTableColumnValueGetter<T>;
 

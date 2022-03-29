@@ -484,6 +484,11 @@ export function getColumnsWhenGrouping<T>(params: {
       );
     });
   } else if (groupRenderStrategy === 'single-column' && groupBy.length) {
+    // } else if (
+    //   (groupRenderStrategy === 'single-column' ||
+    //     groupRenderStrategy === 'single-column-extended') &&
+    //   groupBy.length
+    // ) {
     const singleGroupColumn = getSingleGroupColumn(
       {
         groupCount: groupBy.length,
