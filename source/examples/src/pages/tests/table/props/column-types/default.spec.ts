@@ -9,6 +9,7 @@ import { test, expect } from '@playwright/test';
 export default test.describe.parallel('Column types tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`tests/table/props/column-types/default`);
+    await page.waitForSelector('[data-column-id]');
   });
 
   test('expect column types defaultWidth works correctly', async ({ page }) => {
