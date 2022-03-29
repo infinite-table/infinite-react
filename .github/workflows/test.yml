@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.14.0]
+        node-version: [14.x]
 
     steps:
       - uses: actions/checkout@v1
@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install
-        run: npm i --force && npm install --force  --prefix source && npm install --force  --prefix source/examples
+        run: npm ci --force && npm ci --force  --prefix source && npm ci --force  --prefix source/examples
       # - name: Linting
       #   run: npm run lint
       #   working-directory: source
