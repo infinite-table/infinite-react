@@ -437,7 +437,7 @@ When we implement filtering, you'll also have access to the column filter.
 
 <Note>
 
-In the `column.header` function you can use hooks or render custom React components. To make it easier to access the param of the `header` function, we've exposed the <HookLink name="useInfiniteHeaderCell" /> - use it to gain access to the same object that is passed as an argument to the `header` function.
+In the `column.header` function you can use hooks or <PropLink name="columns.components.HeaderCell" nocode>render custom React components via column.components.HeaderCell</PropLink>. To make it easier to access the param of the `header` function, we've exposed the <HookLink name="useInfiniteHeaderCell" /> - use it to gain access to the same object that is passed as an argument to the `header` function.
 
 </Note>
 
@@ -490,6 +490,60 @@ If not specified, <PropLink name="columnMinWidth" /> will be used (defaults to `
 </Prop>
 
 
+
+<Prop name="columns.render" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
+
+> Customizes the rendering of the column.
+
+See related <PropLink name="columns.renderValue" />
+
+<Note>
+
+The difference between <PropLink name="columns.render"/> and  <PropLink name="columns.renderValue"/>  is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
+
+
+Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
+
+</Note>
+
+
+The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
+
+ * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
+ * rowInfo - very useful information about the current row:
+   - `rowInfo.value` - the value that will be rendered by default
+   - `rowInfo.collapsed` - if the row is collased or not.
+   - `rowInfo.groupBy` - the current group by for the row
+   - `rowInfo.indexInAll` - the index of the row in the whole data set
+   - `rowInfo.indexInGroup` - the index of the row in the current group
+   -  ... there are other useful properties that we'll document in the near future
+
+
+<Sandpack title="Column with custom render">
+
+```ts file=column-render-example.page.tsx
+```
+
+</Sandpack>  
+
+<Note>
+
+In the `column.render` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `render` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `render` function.
+
+
+</Note>
+
+<Sandpack title="Column with custom render that uses useInfiniteColumnCell">
+
+```ts file=column-render-hooks-example.page.tsx
+```
+
+</Sandpack>  
+
+
+</Prop>
+
+
 <Prop name="columns.renderValue" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy,toggleCurrentGroupRow}) => Renderable">
 
 > Customizes the rendering of the column content.
@@ -523,59 +577,13 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 ```
 </Sandpack>
 
-</Prop>
-
-<Prop name="columns.render" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
-
-> Customizes the rendering of the column.
-
-See related <PropLink name="columns.renderValue" />
-
 
 <Note>
 
-The difference between <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
-
-
-Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
-
-</Note>
-
-
-The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
-
- * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
- * rowInfo - very useful information about the current row:
-   - `rowInfo.value` - the value that will be rendered by default
-   - `rowInfo.collapsed` - if the row is collased or not.
-   - `rowInfo.groupBy` - the current group by for the row
-   - `rowInfo.indexInAll` - the index of the row in the whole data set
-   - `rowInfo.indexInGroup` - the index of the row in the current group
-   -  ... there are other useful properties that we'll document in the near future
-
-
-<Sandpack title="Column with custom render">
-
-```ts file=column-render-example.page.tsx
-```
-
-</Sandpack>  
-
-<Note>
-
-In the `column.render` function you can use hooks or render custom React components. To make it easier to access the param of the `render` function, we've exposed the `useInfiniteColumnCell` - use it to gain access to the same object that is passed as an argument to the `render` function.
+In the `column.renderValue` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `renderValue` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `renderValue` function.
 
 
 </Note>
-
-<Sandpack title="Column with custom render that uses useInfiniteColumnCell">
-
-```ts file=column-render-hooks-example.page.tsx
-```
-
-</Sandpack>  
-
-
 </Prop>
 
 <Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
