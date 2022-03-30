@@ -27,7 +27,6 @@ export const useOnContainerScroll = <T>({
     componentState: {
       scrollStopDelay,
       scrollerDOMRef,
-      domRef,
       scrollToBottomOffset,
       onScrollToBottom,
       onScrollToTop,
@@ -86,7 +85,7 @@ export const useOnContainerScroll = <T>({
             lastVisibleRowIndex: range.renderEndIndex,
           });
         }
-        const classList = domRef.current?.classList;
+        const classList = scrollerDOMRef.current?.classList;
         if (!classList) {
           return;
         }
@@ -110,7 +109,7 @@ export const useOnContainerScroll = <T>({
     [
       horizontalVirtualBrain,
       verticalVirtualBrain,
-      domRef.current,
+      scrollerDOMRef.current,
       setScrolling,
     ],
   );

@@ -149,6 +149,11 @@ const reducers: DataSourcePropAggregationReducers<Developer> = {
     name: 'Age (avg)',
     field: 'age',
   },
+  last: {
+    ...avgReducer,
+    name: 'Age (avg)',
+    field: 'age',
+  },
 };
 const groupBy: DataSourceGroupBy<Developer>[] = [
   // {
@@ -190,6 +195,10 @@ export default function PivotPerfExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              defaultColumnPinning={{
+                'group-by': 'start',
+              }}
+              groupRenderStrategy="single-column"
               domProps={domProps}
               columns={columns}
               hideEmptyGroupColumns

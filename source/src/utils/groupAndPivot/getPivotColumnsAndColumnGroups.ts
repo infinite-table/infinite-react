@@ -339,8 +339,6 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
     addGrandTotalColumns();
   }
 
-  console.log(columns.keys());
-
   const result = {
     columns,
     columnGroups,
