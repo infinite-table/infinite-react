@@ -525,13 +525,6 @@ function lazyLoadRange<T>(
 
     // TODO make this whole function testable, so we can properly test multiple calls are not issued for the same batch (in the same group)
 
-    return promise
-      .then(() => getRafPromise())
-      .then(() => loadData(...args))
-      .then(() => {
-        requestAnimationFrame(() => {
-          cache?.delete(cacheKey);
-        });
-      });
+    return promise.then(() => getRafPromise()).then(() => loadData(...args));
   }, initialPromise);
 }
