@@ -1,5 +1,4 @@
 import dts from 'rollup-plugin-dts';
-
 const config = [
   {
     input: './dist/index.d.ts',
