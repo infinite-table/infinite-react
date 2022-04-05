@@ -14,7 +14,7 @@ import type {
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 
-import { Settings as Dude, Settings } from './Settings';
+import { Settings } from './Settings';
 import {
   Developer,
   GroupByDeveloperType,

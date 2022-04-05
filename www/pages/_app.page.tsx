@@ -6,7 +6,6 @@ import { AppProps } from 'next/app';
 import '@docsearch/css';
 import './styles/fonts.css';
 import './styles/algolia.css';
-import './styles/index.css';
 import './styles/sandpack.css';
 import '@codesandbox/sandpack-react/dist/index.css';
 
@@ -34,6 +33,17 @@ export default function MyApp({
   Component,
   pageProps,
 }: AppProps) {
+  React.useEffect(() => {
+    /**
+     * This prevents from loading general styles.
+     * E.g. these styles break css for pure pages.
+     * comparison devexpress table is broken but these styles.
+     */
+    if (!pageProps?.suppressGeneralStyles) {
+      require('./styles/index.css');
+    }
+  }, []);
+
   let AppShell =
     (Component as any).appShell || EmptyAppShell;
   // In order to make sidebar scrolling between pages work as expected
