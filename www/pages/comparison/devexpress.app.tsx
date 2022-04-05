@@ -18,7 +18,10 @@ class App extends React.Component {
       <DataGrid
         allowColumnResizing
         allowColumnReordering
-        style={{ height: 600, maxHeight: '100vh' }}
+        style={{
+          height: 600,
+          maxHeight: 'calc(100vh - 10px)',
+        }}
         dataSource={url}
         keyExpr="id"
         showBorders={true}
