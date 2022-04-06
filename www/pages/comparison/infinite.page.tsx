@@ -9,7 +9,11 @@ import {
   InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 
-import { columns, COLUMN_WIDTH } from './columns';
+import {
+  columns,
+  COLUMN_WIDTH,
+  ROW_HEIGHT,
+} from './columns';
 
 export type Developer = {
   id: number;
@@ -64,12 +68,11 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: [],
 });
 
-const columnTypes: InfiniteTablePropColumnTypes<Developer> =
-  {
-    default: {
-      defaultWidth: COLUMN_WIDTH,
-    },
-  };
+const columnTypes = {
+  default: {
+    defaultWidth: COLUMN_WIDTH,
+  },
+};
 
 const App: React.FunctionComponent = (props) => {
   return (
@@ -82,8 +85,9 @@ const App: React.FunctionComponent = (props) => {
         {() => {
           return (
             <InfiniteTable<Developer>
-              rowHeight={30}
+              rowHeight={ROW_HEIGHT}
               columns={preparedColumns}
+              columnTypes={columnTypes}
             />
           );
         }}

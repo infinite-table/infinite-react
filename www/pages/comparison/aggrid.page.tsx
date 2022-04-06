@@ -10,6 +10,7 @@ import {
   columns,
   COLUMN_GROUP_WIDTH,
   COLUMN_WIDTH,
+  ROW_HEIGHT,
 } from './columns';
 
 const columnDefs: ColDef[] = columns.map((column) => {
@@ -39,13 +40,13 @@ const columnDefs: ColDef[] = columns.map((column) => {
 });
 
 const defaultColDef = {
-  width: COLUMN_WIDTH,
+  initialWidth: COLUMN_WIDTH,
   sortable: true,
   resizable: true,
 };
 
 const autoGroupColumnDef = {
-  width: COLUMN_GROUP_WIDTH,
+  initialWidth: COLUMN_GROUP_WIDTH,
 };
 
 const getData = () => {
@@ -71,6 +72,7 @@ const App = () => {
         defaultColDef={defaultColDef}
         autoGroupColumnDef={autoGroupColumnDef}
         rowData={rowData}
+        rowHeight={ROW_HEIGHT}
         onGridReady={onGridReady}
         columnDefs={columnDefs}></AgGridReact>
     </div>

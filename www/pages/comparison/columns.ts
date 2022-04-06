@@ -3,7 +3,7 @@
  */
 export const ROW_HEIGHT = 34;
 export const COLUMN_WIDTH = 150;
-export const COLUMN_GROUP_WIDTH = 300;
+export const COLUMN_GROUP_WIDTH = 150;
 
 const getRandomColumns = (numberOfCOlumns: number) => {
   return Array(numberOfCOlumns)
