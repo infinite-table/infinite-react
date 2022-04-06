@@ -89,7 +89,7 @@
     margin-bottom: 1rem;
   }
 
-  table {
+  article table {
     width: 100%;
     margin-bottom: 1rem;
     display: block;
@@ -98,8 +98,8 @@
     border-collapse: separate;
   }
 
-  table td,
-  table th {
+  article table td,
+  article table th {
     padding: 0.75rem;
     vertical-align: top;
     border: 0.5rem solid transparent;
@@ -108,8 +108,8 @@
     color: currentColor;
     @apply bg-highlight;
   }
-  .dark table td,
-  .dark table th {
+  .dark article table td,
+  .dark article table th {
     @apply text-primary-dark;
     @apply bg-highlight-dark;
   }

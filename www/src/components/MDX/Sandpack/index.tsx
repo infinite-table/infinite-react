@@ -14,6 +14,12 @@ const DEPS_VERSIONS: Record<string, string> = {
     .NEXT_PUBLIC_INFINITE_REACT_VERSION as string,
   'react-query': '3.34.8',
   'react-select': '5.2.2',
+  'devextreme-react': '21.2.6',
+  devextreme: '21.2.6',
+  'ag-grid-community': '27.1.0',
+  'ag-grid-react': '27.1.0',
+  'ag-grid-enterprise': '27.1.0',
+  '@progress/kendo-react-grid': '5.1.0',
 };
 
 type SandpackProps = {
@@ -82,7 +88,9 @@ function Sandpack(props: SandpackProps) {
         // throw new Error(`Code block has an unsupported filename: ${fileName}`);
       }
 
-      const filePath = `/src/${fileName}`; // path in the folder structure
+      const filePath = fileName.includes('index.html')
+        ? `/public/index.html`
+        : `/src/${fileName}`; // path in the folder structure
       const fileActive = index === 0; //!!getMetaTag('active', nodeMetaTags) || inline;
       const fileHidden = !!getMetaTag(
         'hidden',

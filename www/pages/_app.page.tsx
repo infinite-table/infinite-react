@@ -3,10 +3,10 @@ import { AppProps } from 'next/app';
 // import { DocsLayout } from '@www/layouts/DocsLayout';
 // import { MainLayout } from '@www/layouts/MainLayout';
 
+import './styles/index.css';
 import '@docsearch/css';
 import './styles/fonts.css';
 import './styles/algolia.css';
-import './styles/index.css';
 import './styles/sandpack.css';
 import '@codesandbox/sandpack-react/dist/index.css';
 
