@@ -20,6 +20,8 @@ import {
   DataSourceDataParamsChanges,
 } from '../types';
 
+// const error = err('useLoadData');
+
 const getRafPromise = () =>
   new Promise((resolve) => {
     requestAnimationFrame(resolve);
@@ -183,6 +185,7 @@ export function loadData<T>(
               totalCount: newGroupRowInfo.totalCount,
               cache: newGroupRowInfo.cache!! ?? true,
             } as LazyGroupRowInfo<T>);
+
           if (existingGroupRowInfo) {
             existingGroupRowInfo.cache = newGroupRowInfo.cache!!;
           }
@@ -190,11 +193,16 @@ export function loadData<T>(
 
           const start = dataParams.lazyLoadStartIndex ?? 0;
           const end = Math.min(
-            remoteData.totalCount ?? start + dataParams.lazyLoadBatchSize,
+            remoteData.totalCount ?? dataArray.length,
+            start + dataParams.lazyLoadBatchSize,
           );
 
           for (let i = start; i < end; i++) {
-            currentGroupRowInfo.items[i] = newGroupRowInfo.items[i - start];
+            const it = newGroupRowInfo.items[i - start];
+            if (!it) {
+              throw `lazily loaded item not found at index ${i - start}`;
+            }
+            currentGroupRowInfo.items[i] = it;
           }
           if (!existingGroupRowInfo) {
             lazyGroupData.set(key, currentGroupRowInfo);
@@ -344,7 +352,7 @@ function useLazyLoadRange<T>() {
 
   const loadingCache = useMemo<Map<string, true>>(() => {
     return new Map();
-  }, [componentState.data]);
+  }, [componentState.data, componentState.dataParams]);
 
   // (globalThis as any).loadingCache = loadingCache;
 
@@ -525,13 +533,6 @@ function lazyLoadRange<T>(
 
     // TODO make this whole function testable, so we can properly test multiple calls are not issued for the same batch (in the same group)
 
-    return promise
-      .then(() => getRafPromise())
-      .then(() => loadData(...args))
-      .then(() => {
-        requestAnimationFrame(() => {
-          cache?.delete(cacheKey);
-        });
-      });
+    return promise.then(() => getRafPromise()).then(() => loadData(...args));
   }, initialPromise);
 }

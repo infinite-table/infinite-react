@@ -1,8 +1,4 @@
-import {
-  getCellNode,
-  getColumnGroupsIds,
-  getHeaderColumnIds,
-} from '../../../testUtils';
+import { getCellNode, getHeaderColumnIds } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
 import { developers } from './pivot-total-column-position-data';
 

@@ -6,7 +6,6 @@ title: Getting started
 
 It's built specifically for React from the ground up and with performance in mind.
 
-
 # Installation
 
 `Infinite Table` is available on the public npm registry - install it by running the following command:
@@ -20,6 +19,7 @@ npm i @infinite-table/infinite-react
 <Sandpack>
 
 ```ts file=meet-the-code.page.tsx
+
 ```
 
 </Sandpack>
@@ -40,13 +40,14 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 - with a license - requests for licence quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the [Powered by Infinite Table](infinite-table.com) footer go away.
 - without a license, but it will include a [Powered by Infinite Table](infinite-table.com) link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io) - which are used throughout this demo site. Check the demo below to see the license footer in action.
 
-
 <Sandpack title="Invalid License Demo">
 
 ```ts file=invalid-license.page.tsx
+
 ```
 
 ```ts file=data.tsx
+
 ```
 
 </Sandpack>
