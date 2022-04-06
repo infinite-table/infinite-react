@@ -138,6 +138,7 @@ export const InfiniteTableComponent = React.memo(
 
     React.useEffect(() => {
       const dataSourceState = getDataSourceState();
+      console.log(scrollStopDelay);
       const onChange = debounce(
         (renderRange: RenderRange) => {
           dataSourceState.notifyRenderRangeChange(renderRange);
