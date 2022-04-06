@@ -1,6 +1,9 @@
-function getRandomInt(min: number, max: number) {
-  return min + Math.floor(Math.random() * (max + 1));
-}
+/**
+ * Devexpress row hight cannot be changed only with css.
+ */
+export const ROW_HEIGHT = 34;
+export const COLUMN_WIDTH = 150;
+export const COLUMN_GROUP_WIDTH = 300;
 
 const getRandomColumns = (numberOfCOlumns: number) => {
   return Array(numberOfCOlumns)
@@ -8,7 +11,7 @@ const getRandomColumns = (numberOfCOlumns: number) => {
     .map((_, index) => {
       return {
         field: `Gen Col. ${index}`,
-        getValue: () => getRandomInt(0, 100),
+        getValue: () => index,
       };
     });
 };

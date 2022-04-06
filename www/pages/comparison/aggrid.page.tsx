@@ -6,7 +6,11 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-import { columns } from './columns';
+import {
+  columns,
+  COLUMN_GROUP_WIDTH,
+  COLUMN_WIDTH,
+} from './columns';
 
 const columnDefs: ColDef[] = columns.map((column) => {
   const colDef: ColDef = {};
@@ -35,13 +39,13 @@ const columnDefs: ColDef[] = columns.map((column) => {
 });
 
 const defaultColDef = {
-  width: 100,
+  width: COLUMN_WIDTH,
   sortable: true,
   resizable: true,
 };
 
 const autoGroupColumnDef = {
-  width: 200,
+  width: COLUMN_GROUP_WIDTH,
 };
 
 const getData = () => {

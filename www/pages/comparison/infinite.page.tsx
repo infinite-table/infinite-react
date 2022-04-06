@@ -6,11 +6,10 @@ import {
   GroupRowsState,
   InfiniteTableColumn,
   DataSourceGroupBy,
+  InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
-
-import { columns } from './columns';
+import { columns, COLUMN_WIDTH } from './columns';
 
 export type Developer = {
   id: number;
@@ -39,17 +38,13 @@ const dataSource = () => {
 };
 
 const groupBy: DataSourceGroupBy<Developer>[] = [];
-const preparedColumns: InfiniteTablePropColumns<Developer> =
-  {};
-
-columns.forEach((column) => {
+const preparedColumns = columns.reduce((acc, column) => {
   const field = column.field as keyof Developer;
-  const colDef: InfiniteTableColumn<Developer> = {
+  const col: InfiniteTableColumn<Developer> = {
     field,
   };
-
   if (typeof column.getValue === 'function') {
-    colDef.valueGetter = (params) => {
+    col.valueGetter = (params) => {
       return params.data
         ? column?.getValue?.(params.data)
         : null;
@@ -59,13 +54,22 @@ columns.forEach((column) => {
     groupBy.push({ field });
   }
 
-  preparedColumns[field] = colDef;
-});
+  acc[field] = col;
+
+  return acc;
+}, {} as Record<string, InfiniteTableColumn<Developer>>);
 
 const groupRowsState = new GroupRowsState({
   expandedRows: true,
   collapsedRows: [],
 });
+
+const columnTypes: InfiniteTablePropColumnTypes<Developer> =
+  {
+    default: {
+      defaultWidth: COLUMN_WIDTH,
+    },
+  };
 
 const App: React.FunctionComponent = (props) => {
   return (
@@ -78,6 +82,7 @@ const App: React.FunctionComponent = (props) => {
         {() => {
           return (
             <InfiniteTable<Developer>
+              rowHeight={30}
               columns={preparedColumns}
             />
           );

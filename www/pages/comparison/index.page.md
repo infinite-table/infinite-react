@@ -32,7 +32,7 @@
 
 </Sandpack>
 
-## Infinite
+## Infinite Table
 
 <Sandpack >
 

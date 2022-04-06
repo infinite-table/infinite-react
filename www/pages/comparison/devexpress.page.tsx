@@ -28,12 +28,4 @@ class Page extends React.Component {
   }
 }
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      suppressGeneralStyles: true,
-    }, // will be passed to the page component as props
-  };
-}
-
 export default Page;

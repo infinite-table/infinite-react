@@ -5,7 +5,7 @@ import DataGrid, {
   Scrolling,
 } from 'devextreme-react/data-grid';
 
-import { columns } from './columns';
+import { columns, COLUMN_WIDTH } from './columns';
 
 const url =
   process.env.NEXT_PUBLIC_BASE_URL + '/developers10k';
@@ -25,7 +25,7 @@ class App extends React.Component {
         dataSource={url}
         keyExpr="id"
         showBorders={true}
-        columnWidth={100}>
+        columnWidth={COLUMN_WIDTH}>
         <GroupPanel />
         <Scrolling
           mode="virtual"
