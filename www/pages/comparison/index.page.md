@@ -1,4 +1,4 @@
-# Comparison between top 3 react-grids and infinite-table
+# Comparison of React DataGrids
 
 ## DevExtreme Data Grid
 
