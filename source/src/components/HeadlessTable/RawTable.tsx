@@ -14,6 +14,11 @@ import {
 export type RawTableProps = {
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
+
+  fixedColsStart?: number;
+  fixedColsEnd?: number;
+  fixedRowsStart?: number;
+  fixedRowsEnd?: number;
 };
 
 function createRenderer(brain: MatrixBrain) {
@@ -38,10 +43,21 @@ export function RawTableFn(props: RawTableProps) {
   }, [brain]);
 
   useEffect(() => {
-    const renderRange = brain.getRenderRange();
-    const extraCells = brain.getExtraCells();
+    const removeOnScroll = brain.onScroll(renderer.adjustFixedElementsOnScroll);
+    const removeOnSizeChange = brain.onAvailableSizeChange(() => {
+      renderer.adjustFixedElementsOnScroll();
+    });
 
-    renderer.renderRange(renderRange, extraCells, {
+    return () => {
+      removeOnScroll();
+      removeOnSizeChange();
+    };
+  }, [brain]);
+
+  useEffect(() => {
+    const renderRange = brain.getRenderRange();
+
+    renderer.renderRange(renderRange, {
       onRender: onRenderUpdater,
       force: true,
       renderCell,
@@ -52,8 +68,8 @@ export function RawTableFn(props: RawTableProps) {
   // (globalThis as any).renderer = renderer;
 
   useEffect(() => {
-    const remove = brain.onRenderRangeChange((renderRange, extraCells) => {
-      renderer.renderRange(renderRange, extraCells, {
+    const remove = brain.onRenderRangeChange((renderRange) => {
+      renderer.renderRange(renderRange, {
         force: false,
         onRender: onRenderUpdater,
         renderCell,

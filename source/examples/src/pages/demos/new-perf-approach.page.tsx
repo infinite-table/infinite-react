@@ -12,6 +12,8 @@ export default function App() {
       heightWithRowspan,
       colspan,
       rowspan,
+      rowFixed,
+      colFixed,
       width,
       height,
       domRef,
@@ -20,14 +22,11 @@ export default function App() {
       <b
         ref={domRef}
         style={{
-          position: 'absolute',
           overflow: 'hidden',
           height: heightWithRowspan,
           width: widthWithColspan,
           zIndex: colspan > 1 || rowspan > 1 ? 1 : 0,
-          background: 'white',
-          left: 0,
-          top: 0,
+          background: rowFixed || colFixed ? 'yellow' : '#f6ac9f',
           border: '1px solid gray',
           color: rowIndex % 4 === 0 ? 'red' : 'black',
         }}
@@ -38,14 +37,20 @@ export default function App() {
   };
 
   return (
-    <HeadlessTable
-      rowHeight={40}
-      colWidth={150}
-      cols={50}
-      rows={2000}
-      height={1800}
-      width={1500}
-      renderCell={renderCell}
-    />
+    <div style={{ border: '2px solid red', padding: '10px' }}>
+      <HeadlessTable
+        rowHeight={40}
+        colWidth={150}
+        fixedColsStart={2}
+        // fixedColsEnd={2}
+        fixedRowsStart={2}
+        fixedRowsEnd={2}
+        cols={20}
+        rows={300}
+        height={1000}
+        width={1600}
+        renderCell={renderCell}
+      />
+    </div>
   );
 }

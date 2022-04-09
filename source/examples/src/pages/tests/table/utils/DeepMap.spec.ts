@@ -29,6 +29,48 @@ const marrie = {
 };
 
 export default test.describe.parallel('DeepMap', () => {
+  test('delete should work properly', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([1, 0], 2);
+    map.set([1, 1], 3);
+    map.set([2, 0], 4);
+    map.set([2, 1], 5);
+    map.set([3, 0], 6);
+    map.set([3, 1], 7);
+    map.set([4, 0], 8);
+    map.set([4, 1], 9);
+    map.set([5, 1], 0);
+    map.set([0, 0], 1);
+
+    expect([...map.entries()]).toEqual([
+      [[1, 0], 2],
+      [[1, 1], 3],
+      [[2, 0], 4],
+      [[2, 1], 5],
+      [[3, 0], 6],
+      [[3, 1], 7],
+      [[4, 0], 8],
+      [[4, 1], 9],
+      [[5, 1], 0],
+      [[0, 0], 1],
+    ]);
+
+    map.delete([5, 1]);
+
+    expect([...map.entries()]).toEqual([
+      [[1, 0], 2],
+      [[1, 1], 3],
+      [[2, 0], 4],
+      [[2, 1], 5],
+      [[3, 0], 6],
+      [[3, 1], 7],
+      [[4, 0], 8],
+      [[4, 1], 9],
+      // [[5, 1], 0],
+      [[0, 0], 1],
+    ]);
+  });
   test('constructor should work correctly', () => {
     const map = new DeepMap<Person, number>([
       [[john, bill], 2],

@@ -165,17 +165,19 @@ export class DeepMap<KeyType, ValueType> {
 
     while (maps.length) {
       const map = maps.pop();
+      const keysLen = keys.length;
       const key = keys.pop();
-      if (key && map?.size === 0) {
+      if (keysLen > 0 && map?.size === 0) {
         const parentMap = maps[maps.length - 1];
-        const pair = parentMap?.get(key);
+        const parentKey = keys[keys.length - 1];
+        const pair = parentMap?.get(parentKey);
         if (pair) {
           // pair.map === map ; which can be deleted
           delete pair.map;
 
           if (!pair.hasOwnProperty('value')) {
             // whole pair can be successfully deleted from parentMap
-            parentMap.delete(key);
+            parentMap.delete(parentKey);
           }
         }
       }

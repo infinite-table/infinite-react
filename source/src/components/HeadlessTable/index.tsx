@@ -7,8 +7,10 @@ import {
   position,
   transformTranslateZero,
 } from '../InfiniteTable/utilities.css';
+import { useResizeObserver } from '../ResizeObserver';
 
 import { ScrollPosition } from '../types/ScrollPosition';
+import { Size } from '../types/Size';
 import { MatrixBrain, SpanFunction } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
@@ -19,6 +21,11 @@ import { TableRenderCellFnParam } from './ReactHeadlessTableRenderer';
 export type HeadlessTableProps = {
   rows: number;
   cols: number;
+
+  fixedColsStart?: number;
+  fixedColsEnd?: number;
+  fixedRowsStart?: number;
+  fixedRowsEnd?: number;
 
   width: number;
   height: number;
@@ -31,13 +38,39 @@ export type HeadlessTableProps = {
   rowspan?: SpanFunction;
   colspan?: SpanFunction;
 };
+
+const measureSizeStyle: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0, // this is same as top,left,bottom,right:0
+  pointerEvents: 'none',
+  zIndex: -1_000,
+};
 export function HeadlessTable(props: HeadlessTableProps) {
   const [brain] = React.useState(() => new MatrixBrain());
 
   useEffect(() => {
+    brain.updateFixedCells({
+      fixedColsStart: props.fixedColsStart,
+      fixedColsEnd: props.fixedColsEnd,
+      fixedRowsStart: props.fixedRowsStart,
+      fixedRowsEnd: props.fixedRowsEnd,
+    });
+  }, [
+    props.fixedColsStart,
+    props.fixedColsEnd,
+    props.fixedRowsStart,
+    props.fixedRowsEnd,
+    brain,
+  ]);
+
+  const [measureSize, setMeasureSize] = useState<Size | null>(null);
+
+  const size = measureSize || { width: props.width, height: props.height };
+
+  useEffect(() => {
     brain.update({
-      height: props.height,
-      width: props.width,
+      height: size.height,
+      width: size.width,
 
       cols: props.cols,
       rows: props.rows,
@@ -49,8 +82,8 @@ export function HeadlessTable(props: HeadlessTableProps) {
       colspan: props.colspan,
     });
   }, [
-    props.height,
-    props.width,
+    size.height,
+    size.width,
 
     props.cols,
     props.rows,
@@ -65,6 +98,9 @@ export function HeadlessTable(props: HeadlessTableProps) {
   ]);
 
   const domRef = useRef<HTMLDivElement>(null);
+  const measureSizeRef = useRef<HTMLDivElement>(null);
+
+  useResizeObserver(measureSizeRef, setMeasureSize);
 
   const onContainerScroll = useCallback(
     (scrollPos: ScrollPosition) => {
@@ -74,17 +110,17 @@ export function HeadlessTable(props: HeadlessTableProps) {
     [brain],
   );
 
-  const [totalSize, setTotalSize] = useState({
+  const [scrollSize, setTotalScrollSize] = useState({
     width: 0,
     height: 0,
   });
 
   useEffect(() => {
     const removeOnRenderCount = brain.onRenderCountChange(() => {
-      setTotalSize(brain.getTotalSize());
+      setTotalScrollSize(brain.getTotalSize());
     });
 
-    setTotalSize(brain.getTotalSize());
+    setTotalScrollSize(brain.getTotalSize());
 
     return () => {
       removeOnRenderCount();
@@ -108,18 +144,22 @@ export function HeadlessTable(props: HeadlessTableProps) {
           ref={domRef}
           className={scrollTransformTargetCls}
           data-name="scroll-transform-target"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(11,150px)',
-          }}
         >
-          <RawTable renderCell={props.renderCell} brain={brain} />
+          <RawTable
+            fixedColsStart={props.fixedColsStart}
+            fixedColsEnd={props.fixedColsEnd}
+            fixedRowsStart={props.fixedRowsStart}
+            fixedRowsEnd={props.fixedRowsEnd}
+            renderCell={props.renderCell}
+            brain={brain}
+          />
         </div>
         <SpacePlaceholder
           count={props.rows}
-          width={totalSize.width}
-          height={totalSize.height}
+          width={scrollSize.width}
+          height={scrollSize.height}
         />
+        <div ref={measureSizeRef} style={measureSizeStyle} />
       </VirtualScrollContainer>
     </div>
   );

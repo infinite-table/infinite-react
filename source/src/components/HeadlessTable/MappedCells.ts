@@ -1,4 +1,5 @@
 import { Logger } from '../../utils/debug';
+import { DeepMap } from '../../utils/DeepMap';
 import { Renderable } from '../types/Renderable';
 import { TableRenderRange } from '../VirtualBrain/MatrixBrain';
 
@@ -26,7 +27,7 @@ export class MappedCells extends Logger {
    * The key in the map is the cell address (built like this: `${rowIndex}:${columnIndex}`)
    * while the value is the element index it is being rendered to.
    */
-  private cellToElementIndex!: Map<string, number>;
+  private cellToElementIndex!: DeepMap<number, number>;
 
   /**
    * Keeps the JSX of rendered elements in memory, so we can possibly reuse it later.
@@ -36,11 +37,16 @@ export class MappedCells extends Logger {
   constructor() {
     super(`MappedCells`);
     this.init();
+
+    // if (__DEV__) {
+    //   (globalThis as any).mappedCells = this;
+    //   (globalThis as any).DeepMap = DeepMap;
+    // }
   }
 
   init() {
     this.elementIndexToCell = new Map();
-    this.cellToElementIndex = new Map();
+    this.cellToElementIndex = new DeepMap();
     this.renderedElements = new Map();
   }
 
@@ -90,7 +96,7 @@ export class MappedCells extends Logger {
   };
 
   isCellRendered = (rowIndex: number, columnIndex: number): boolean => {
-    return this.cellToElementIndex.has(`${rowIndex}:${columnIndex}`);
+    return this.cellToElementIndex.has([rowIndex, columnIndex]);
   };
 
   isElementRendered = (elementIndex: number): boolean => {
@@ -112,9 +118,7 @@ export class MappedCells extends Logger {
     rowIndex: number,
     columnIndex: number,
   ): Renderable | null => {
-    const elementIndex = this.cellToElementIndex.get(
-      `${rowIndex}:${columnIndex}`,
-    );
+    const elementIndex = this.cellToElementIndex.get([rowIndex, columnIndex]);
 
     return elementIndex != null
       ? this.renderedElements.get(elementIndex) || null
@@ -125,9 +129,7 @@ export class MappedCells extends Logger {
     rowIndex: number,
     columnIndex: number,
   ): number | null => {
-    const elementIndex = this.cellToElementIndex.get(
-      `${rowIndex}:${columnIndex}`,
-    );
+    const elementIndex = this.cellToElementIndex.get([rowIndex, columnIndex]);
 
     return elementIndex ?? null;
   };
@@ -144,11 +146,11 @@ export class MappedCells extends Logger {
       );
     }
 
-    const key = `${rowIndex}:${colIndex}`;
+    const key = [rowIndex, colIndex];
 
     const currentCell = this.elementIndexToCell.get(elementIndex);
     if (currentCell) {
-      this.cellToElementIndex.delete(`${currentCell[0]}:${currentCell[1]}`);
+      this.cellToElementIndex.delete([currentCell[0], currentCell[1]]);
     }
     if (renderNode) {
       this.renderedElements.set(elementIndex, renderNode);
@@ -159,7 +161,7 @@ export class MappedCells extends Logger {
   };
 
   discardCell = (rowIndex: number, colIndex: number) => {
-    const key = `${rowIndex}:${colIndex}`;
+    const key = [rowIndex, colIndex];
     const elementIndex = this.cellToElementIndex.get(key);
 
     if (elementIndex != null) {
@@ -172,7 +174,7 @@ export class MappedCells extends Logger {
   discardElement = (elementIndex: number): [number, number] | null => {
     const cell = this.elementIndexToCell.get(elementIndex);
     if (cell) {
-      const key = `${cell[0]}:${cell[1]}`;
+      const key = [cell[0], cell[1]];
 
       this.renderedElements.delete(elementIndex);
       this.elementIndexToCell.delete(elementIndex);
