@@ -42,13 +42,13 @@ export default function App() {
         rowHeight={40}
         colWidth={150}
         fixedColsStart={2}
-        // fixedColsEnd={2}
+        fixedColsEnd={2}
         fixedRowsStart={2}
         fixedRowsEnd={2}
-        cols={20}
-        rows={300}
+        cols={11}
+        rows={50}
         height={1000}
-        width={1600}
+        width={1200}
         renderCell={renderCell}
       />
     </div>

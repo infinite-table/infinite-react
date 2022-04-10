@@ -16,6 +16,7 @@ import {
 import { MappedCells } from './MappedCells';
 
 type FixedPosition = false | 'start' | 'end';
+
 export type TableRenderCellFnParam = {
   domRef: RefCallback<HTMLElement>;
   rowIndex: number;
@@ -31,13 +32,6 @@ export type TableRenderCellFnParam = {
   colFixed: FixedPosition;
 };
 export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
-
-type CellFixedPosition =
-  | 'row-start'
-  | 'row-end'
-  | 'col-start'
-  | 'col-end'
-  | false;
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
@@ -95,6 +89,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       this.debug(`Render range ${start}-${end}. Force ${force}`);
     }
 
+    const { mappedCells } = this;
+
     const fixedRanges = this.getFixedRanges(range);
     const ranges = [range, ...fixedRanges];
 
@@ -121,12 +117,30 @@ export class ReactHeadlessTableRenderer extends Logger {
      * the render count is always the rows times cols that are inside the viewport
      * and is not modified by row or column spanning
      */
-    const renderCount = ranges.reduce(
+    let renderCount = ranges.reduce(
       (sum, range) => sum + getRenderRangeCellCount(range),
       0,
     );
 
-    const { mappedCells } = this;
+    // renderCount += 4;
+
+    // const { fixedRowsStart, fixedColsStart, fixedRowsEnd, fixedColsEnd } =
+    //   this.brain.getFixedCellInfo();
+
+    // console.log(ranges, renderCount);
+
+    // if (fixedRowsStart && fixedColsStart) {
+    //   // renderCount -= fixedRowsStart * fixedColsStart;
+    // }
+    // if (fixedRowsStart && fixedColsEnd) {
+    //   // renderCount -= fixedRowsStart * fixedColsEnd;
+    // }
+    // if (fixedRowsEnd && fixedColsStart) {
+    //   // renderCount -= fixedRowsEnd * fixedColsStart;
+    // }
+    // if (fixedRowsEnd && fixedColsEnd) {
+    //   // renderCount -= fixedRowsEnd * fixedColsEnd;
+    // }
 
     if (this.itemDOMElements[renderCount]) {
       mappedCells.discardElementsStartingWith(renderCount, (elementIndex) => {
@@ -181,6 +195,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       elementsOutsideItemRange.splice(0, 0, i);
     }
 
+    const visitedCells = new Map<string, boolean>();
+
     ranges.forEach((range) => {
       const [start, end] = range;
       const [startRow, startCol] = start;
@@ -188,6 +204,11 @@ export class ReactHeadlessTableRenderer extends Logger {
 
       for (let row = startRow; row < endRow; row++) {
         for (let col = startCol; col < endCol; col++) {
+          const key = `${row}:${col}`;
+          if (visitedCells.has(key)) {
+            continue;
+          }
+          visitedCells.set(key, true);
           const cellRendered = mappedCells.isCellRendered(row, col);
 
           // for cells that belong to the first row of the render range
@@ -282,6 +303,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     //   // so we need to show new items
     result = [...this.items];
 
+    this.adjustFixedElementsOnScroll();
     if (onRender) {
       onRender(result);
     }
@@ -325,6 +347,20 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (!fixedRowsStart && !fixedColsStart && !fixedRowsEnd && !fixedColsEnd) {
       return [];
     }
+    /**
+     * The current range includes all non-fixed cells in the viewport
+     *
+     * So for example, if we have 10x10 (10 rows and 10 cols), with
+     * fixed rows start = 2
+     * fixed rows end = 2
+     * fixed cols start = 2
+     * fixed cols end = 2
+     *
+     * then the current range will be [2, 2] to [8, 8]
+     *
+     *
+     *
+     */
     const colCount = this.brain.getColCount();
     const rowCount = this.brain.getRowCount();
 
@@ -334,24 +370,82 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const arr: TableRenderRange[] = [];
 
+    /**
+     *  *--*-----*--*
+     *  | 1|  2  |3 |
+     *  *--*-----*--*
+     *  |  |     |  |
+     *  |4 | 5   |6 |
+     *  *--*-----*--*
+     *  |7 |8    |9 |
+     *  *--*-----*--*
+     */
+
     if (fixedColsStart) {
-      const fixedColsStartRange: TableRenderRange = [
+      /**
+       * if we have overlap, both cols start and rows fixed at start and end
+       *
+       * then for this if-branch, we push to the resulting array
+       * both 1, 4 and 7
+       *
+       * and when we'll get to fixedRowsStart, we'll only push 2 there
+       * and when we'll get to fixedRowsEnd, we'll only push 8 there
+       *
+       *
+       */
+      if (fixedRowsStart) {
+        arr.push([
+          [0, 0],
+          [fixedRowsStart, fixedColsStart],
+        ]);
+      }
+      if (fixedRowsEnd) {
+        arr.push([
+          [rowCount - fixedRowsEnd, 0],
+          [rowCount, fixedColsStart],
+        ]);
+      }
+      arr.push([
         [startRow, 0],
         [endRow, fixedColsStart],
-      ];
-
-      arr.push(fixedColsStartRange);
+      ]);
     }
-
     if (fixedColsEnd) {
-      const fixedColsEndRange: TableRenderRange = [
+      /**
+       * if we have overlap, both cols fixed at end and rows fixed at start and end
+       *
+       * then for this if-branch, we push to the resulting array
+       * both 3, 6 and 9
+       *
+       * and when we'll get to fixedRowsStart, we'll only push 2 there
+       * and when we'll get to fixedRowsEnd, we'll only push 8 there
+       *
+       */
+      if (fixedRowsStart) {
+        arr.push([
+          [0, colCount - fixedColsEnd],
+          [fixedRowsStart, colCount],
+        ]);
+      }
+      if (fixedRowsEnd) {
+        arr.push([
+          [rowCount - fixedRowsEnd, colCount - fixedColsEnd],
+          [rowCount, colCount],
+        ]);
+      }
+      arr.push([
         [startRow, colCount - fixedColsEnd],
         [endRow, colCount],
-      ];
-      arr.push(fixedColsEndRange);
+      ]);
     }
 
     if (fixedRowsStart) {
+      /**
+       * If we have cols start and end, this will be only section 2
+       * otherwise, if we only have cols start, though we only push 1 range, it will include section 2 and 3
+       * and if we only have cols end, though we only push 1 range it will include section 1 and 2
+       * and if we have no fixed cols, this will be one range that inclues 1, 2 and 3
+       */
       const fixedRowsStartRange: TableRenderRange = [
         [0, startCol],
         [fixedRowsStart, endCol],
@@ -360,6 +454,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
 
     if (fixedRowsEnd) {
+      /**
+       * Likewise for fixedRowsEnd
+       */
       const fixedRowsEndRange: TableRenderRange = [
         [rowCount - fixedRowsEnd, startCol],
         [rowCount, endCol],
@@ -533,12 +630,6 @@ export class ReactHeadlessTableRenderer extends Logger {
         (itemElement.dataset as any).rowIndex = rowIndex;
         (itemElement.dataset as any).colIndex = colIndex;
       }
-      // if (fixedColsEnd && colIndex >= cols - fixedColsEnd) {
-      //   itemElement.style.zIndex = `${cols - colIndex}`;
-      // }
-      // if (rowIndex < fixedRowsStart) {
-      //   itemElement.style.zIndex = `${fixedRowsStart - rowIndex}`;
-      // }
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
         itemElement.style.transform = `translate3d(${x}px, ${y}px, 0)`;
@@ -551,7 +642,6 @@ export class ReactHeadlessTableRenderer extends Logger {
         itemElement.style.left = `${x}px`;
         itemElement.style.top = `${y}px`;
       }
-      this.adjustFixedElementsOnScroll();
     }
   };
 
@@ -612,17 +702,15 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     function adjustRowStart(
       rowIndex: number,
-      colIndex: number,
+      _colIndex: number,
       node: HTMLElement,
       coords: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) {
-      const fixedColStart = colIndex < fixedColsStart;
-
       node.style.zIndex = `${fixedRowsStart - rowIndex}`;
-      node.style.transform = `translate3d(${
-        coords.x + (fixedColStart ? scrollPosition.scrollLeft : 0)
-      }px, ${coords.y + scrollPosition.scrollTop}px, 0)`;
+      node.style.transform = `translate3d(${coords.x}px, ${
+        coords.y + scrollPosition.scrollTop
+      }px, 0)`;
     }
 
     function adjustColEnd(
@@ -637,16 +725,59 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     function adjustRowEnd(
       rowIndex: number,
-      colIndex: number,
+      _colIndex: number,
       node: HTMLElement,
       coords: { x: number; y: number },
     ) {
       node.style.zIndex = `${rows - rowIndex}`;
       node.style.transform = `translate3d(${coords.x}px, ${fixedEndRowsOffsets[rowIndex]}px, 0)`;
+    }
 
-      if (fixedColsEnd && colIndex >= cols - fixedColsEnd) {
-        adjustColEnd(rowIndex, colIndex, node, coords);
-      }
+    function adjustColStartRowStart(
+      _rowIndex: number,
+      _colIndex: number,
+      node: HTMLElement,
+      { x, y }: { x: number; y: number },
+      scrollPosition: ScrollPosition,
+    ) {
+      node.style.zIndex = `10000`;
+      node.style.transform = `translate3d(${x + scrollPosition.scrollLeft}px, ${
+        y + scrollPosition.scrollTop
+      }px, 0)`;
+    }
+
+    function adjustColStartRowEnd(
+      _rowIndex: number,
+      _colIndex: number,
+      node: HTMLElement,
+      { x, y }: { x: number; y: number },
+      scrollPosition: ScrollPosition,
+    ) {
+      node.style.zIndex = `20000`;
+      node.style.transform = `translate3d(${x + scrollPosition.scrollLeft}px, ${
+        fixedEndRowsOffsets[_rowIndex]
+      }px, 0)`;
+    }
+
+    function adjustColEndRowStart(
+      _rowIndex: number,
+      colIndex: number,
+      node: HTMLElement,
+      coords: { y: number },
+    ) {
+      node.style.zIndex = `30000`;
+      node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${
+        coords.y + scrollPosition.scrollTop
+      }px, 0)`;
+    }
+
+    function adjustColEndRowEnd(
+      rowIndex: number,
+      colIndex: number,
+      node: HTMLElement,
+    ) {
+      node.style.zIndex = `40000`;
+      node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${fixedEndRowsOffsets[rowIndex]}px, 0)`;
     }
 
     if (fixedColsStart || fixedColsEnd) {
@@ -664,8 +795,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       }
     }
 
-    if (fixedRowsStart) {
-      for (let colIndex = 0; colIndex < cols; colIndex++) {
+    if (fixedRowsStart || fixedRowsEnd) {
+      for (let colIndex = startCol; colIndex < endCol; colIndex++) {
         for (let rowIndex = 0; rowIndex < fixedRowsStart; rowIndex++) {
           adjustElementPosition(rowIndex, colIndex, adjustRowStart);
         }
@@ -674,6 +805,42 @@ export class ReactHeadlessTableRenderer extends Logger {
           for (let rowIndex = firstRowFixedEnd; rowIndex < rows; rowIndex++) {
             adjustElementPosition(rowIndex, colIndex, adjustRowEnd);
           }
+        }
+      }
+    }
+
+    if (fixedColsStart && fixedRowsStart) {
+      for (let rowIndex = 0; rowIndex < fixedRowsStart; rowIndex++) {
+        for (let colIndex = 0; colIndex < fixedColsStart; colIndex++) {
+          adjustElementPosition(rowIndex, colIndex, adjustColStartRowStart);
+        }
+      }
+    }
+    if (fixedColsStart && fixedRowsEnd) {
+      const firstRowFixedEnd = rows - fixedRowsEnd;
+      for (let rowIndex = firstRowFixedEnd; rowIndex < rows; rowIndex++) {
+        for (let colIndex = 0; colIndex < fixedColsStart; colIndex++) {
+          adjustElementPosition(rowIndex, colIndex, adjustColStartRowEnd);
+        }
+      }
+    }
+
+    if (fixedColsEnd && fixedRowsStart) {
+      const firstColFixedEnd = cols - fixedColsEnd;
+      for (let rowIndex = 0; rowIndex < fixedRowsStart; rowIndex++) {
+        for (let colIndex = firstColFixedEnd; colIndex < cols; colIndex++) {
+          adjustElementPosition(rowIndex, colIndex, adjustColEndRowStart);
+        }
+      }
+    }
+
+    if (fixedColsEnd && fixedRowsEnd) {
+      const firstRowFixedEnd = rows - fixedRowsEnd;
+      const firstColFixedEnd = cols - fixedColsEnd;
+
+      for (let rowIndex = firstRowFixedEnd; rowIndex < rows; rowIndex++) {
+        for (let colIndex = firstColFixedEnd; colIndex < cols; colIndex++) {
+          adjustElementPosition(rowIndex, colIndex, adjustColEndRowEnd);
         }
       }
     }
