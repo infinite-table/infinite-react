@@ -103,6 +103,10 @@ export class MappedCells extends Logger {
     return this.elementIndexToCell.has(elementIndex);
   };
 
+  getElementsForRowIndex = (rowIndex: number): number[] => {
+    return this.cellToElementIndex.getValuesStartingWith([rowIndex]);
+  };
+
   getRenderedNodeAtElement = (elementIndex: number): Renderable | null => {
     return this.renderedElements.get(elementIndex) || null;
   };

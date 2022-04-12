@@ -73,6 +73,7 @@ export type FnOnRenderCountChange = ({
 export type OnAvailableSizeChange = (size: Size) => void;
 
 export class MatrixBrain extends Logger {
+  private scrolling: boolean = false;
   private width: MatrixBrainOptions['width'] = 0;
   private height: MatrixBrainOptions['height'] = 0;
 
@@ -121,6 +122,11 @@ export class MatrixBrain extends Logger {
   private destroyed: boolean = false;
   private onRenderCountChangeFns: FnOnRenderCountChange[] = [];
   private onAvailableSizeChangeFns: OnAvailableSizeChange[] = [];
+  private onScrollStartFns: VoidFunction[] = [];
+  private onScrollStopFns: VoidFunction[] = [];
+
+  private scrollTimeoutId: number = 0;
+  private scrollStopDelay: number = 250;
 
   /**
    * Number of columns that are fixed at the start
@@ -159,6 +165,10 @@ export class MatrixBrain extends Logger {
 
     this.extraSpanCells = [];
   }
+
+  public setScrollStopDelay = (scrollStopDelay: number) => {
+    this.scrollStopDelay = scrollStopDelay;
+  };
 
   public getRowCount = () => {
     return this.rows;
@@ -329,7 +339,44 @@ export class MatrixBrain extends Logger {
     this.setRenderCount(this.computeRenderCount(which));
   }
 
+  private setScrolling = (scrolling: boolean) => {
+    const prevScrolling = this.scrolling;
+    this.scrolling = scrolling;
+
+    if (scrolling) {
+      if (this.scrollTimeoutId) {
+        clearTimeout(this.scrollTimeoutId);
+      }
+      this.scrollTimeoutId = setTimeout(() => {
+        this.setScrolling(false);
+        this.scrollTimeoutId = 0;
+      }, this.scrollStopDelay) as any as number;
+    }
+    if (scrolling !== prevScrolling) {
+      if (scrolling) {
+        this.notifyScrollStart();
+      } else {
+        this.notifyScrollStop();
+      }
+    }
+  };
+
+  private notifyScrollStart = () => {
+    const fns = this.onScrollStartFns;
+    for (let i = 0, len = fns.length; i < len; i++) {
+      fns[i]();
+    }
+  };
+
+  private notifyScrollStop = () => {
+    const fns = this.onScrollStopFns;
+    for (let i = 0, len = fns.length; i < len; i++) {
+      fns[i]();
+    }
+  };
+
   public setScrollPosition = (scrollPosition: ScrollPosition) => {
+    this.setScrolling(true);
     const changeHorizontal =
       scrollPosition.scrollLeft !== this.scrollPosition.scrollLeft;
     const changeVertical =
@@ -1247,6 +1294,20 @@ export class MatrixBrain extends Logger {
     };
   };
 
+  onScrollStart = (fn: VoidFunction) => {
+    this.onScrollStartFns.push(fn);
+    return () => {
+      this.onScrollStartFns = this.onScrollStartFns.filter((f) => f !== fn);
+    };
+  };
+
+  onScrollStop = (fn: VoidFunction) => {
+    this.onScrollStopFns.push(fn);
+    return () => {
+      this.onScrollStopFns = this.onScrollStopFns.filter((f) => f !== fn);
+    };
+  };
+
   onRenderRangeChange = (fn: FnOnRenderRangeChange) => {
     this.onRenderRangeChangeFns.push(fn);
 
@@ -1312,6 +1373,8 @@ export class MatrixBrain extends Logger {
     this.destroyed = true;
     this.onDestroyFns = [];
     this.onScrollFns = [];
+    this.onScrollStartFns = [];
+    this.onScrollStopFns = [];
     this.onRenderCountChangeFns = [];
     this.onRenderRangeChangeFns = [];
   };

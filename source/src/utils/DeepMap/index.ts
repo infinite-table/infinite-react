@@ -44,6 +44,39 @@ export class DeepMap<KeyType, ValueType> {
     }
   }
 
+  getValuesStartingWith(keys: KeyType[]): ValueType[] {
+    let currentMap = this.map;
+    let pair: Pair<KeyType, ValueType> | undefined;
+    if (!keys.length) {
+      keys = [this.emptyKey];
+    }
+
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const key = keys[i];
+
+      pair = currentMap.get(key);
+
+      if (!pair || !pair.map) {
+        return [];
+      }
+
+      currentMap = pair.map;
+    }
+
+    const result: ValueType[] =
+      pair && pair.value !== undefined ? [pair.value!] : [];
+    this.visitWithNext(
+      keys,
+      (value, _key, _i, next) => {
+        result.push(value);
+        next?.();
+      },
+      currentMap,
+    );
+
+    return result;
+  }
+
   set(keys: KeyType[] & { length: Omit<number, 0> }, value: ValueType) {
     let currentMap = this.map;
     if (!keys.length) {
@@ -166,7 +199,7 @@ export class DeepMap<KeyType, ValueType> {
     while (maps.length) {
       const map = maps.pop();
       const keysLen = keys.length;
-      const key = keys.pop();
+      keys.pop();
       if (keysLen > 0 && map?.size === 0) {
         const parentMap = maps[maps.length - 1];
         const parentKey = keys[keys.length - 1];

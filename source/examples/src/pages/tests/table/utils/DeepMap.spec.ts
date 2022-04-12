@@ -71,6 +71,26 @@ export default test.describe.parallel('DeepMap', () => {
       [[0, 0], 1],
     ]);
   });
+
+  test.only('get values starting with keys should work properly', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([1, 0], 2);
+    map.set([1, 1], 3);
+    map.set([2, 0], 4);
+    map.set([2, 1], 5);
+    map.set([3, 0], 6);
+    map.set([3, 1], 7);
+    map.set([4, 10], 80);
+    map.set([4, 20], 90);
+    map.set([5, 1], 110);
+    map.set([5], 1110);
+    map.set([0, 0], 1);
+
+    expect(map.getValuesStartingWith([4])).toEqual([80, 90]);
+    expect(map.getValuesStartingWith([5])).toEqual([1110, 110]);
+  });
+
   test('constructor should work correctly', () => {
     const map = new DeepMap<Person, number>([
       [[john, bill], 2],

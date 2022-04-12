@@ -30,15 +30,19 @@ export type TableRenderCellFnParam = {
   heightWithRowspan: number;
   rowFixed: FixedPosition;
   colFixed: FixedPosition;
+  onMouseEnter: VoidFunction;
+  onMouseLeave: VoidFunction;
 };
 export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
+const HOVERED_CLASS_NAME = 'InfiniteRow--hovered';
 
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
 
   private destroyed = false;
+  private scrolling = false;
 
   private itemDOMElements: Record<number, HTMLElement | null> = {};
   private itemDOMRefs: Record<number, RefCallback<HTMLElement>> = {};
@@ -48,11 +52,28 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private items: Renderable[] = [];
 
+  private currentHoveredRow: number = -1;
+  private onDestroy: VoidFunction;
+
   constructor(brain: MatrixBrain) {
     super('ReactHeadlessTableRenderer');
     this.brain = brain;
 
     this.mappedCells = new MappedCells();
+
+    const removeOnScroll = brain.onScroll(this.adjustFixedElementsOnScroll);
+    const removeOnSizeChange = brain.onAvailableSizeChange(() => {
+      this.adjustFixedElementsOnScroll();
+    });
+    const removeOnScrollStart = brain.onScrollStart(this.onScrollStart);
+    const removeOnScrollStop = brain.onScrollStop(this.onScrollStop);
+
+    this.onDestroy = () => {
+      removeOnScroll();
+      removeOnSizeChange();
+      removeOnScrollStart();
+      removeOnScrollStop();
+    };
   }
 
   getExtraSpanCellsForRange = (range: TableRenderRange) => {
@@ -570,6 +591,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       hidden: !!covered,
       heightWithRowspan,
       widthWithColspan,
+      onMouseEnter: this.onMouseEnter.bind(null, rowIndex),
+      onMouseLeave: this.onMouseLeave.bind(null, rowIndex),
       domRef: this.itemDOMRefs[elementIndex],
     });
 
@@ -601,6 +624,42 @@ export class ReactHeadlessTableRenderer extends Logger {
     return;
   }
 
+  private onMouseEnter = (rowIndex: number) => {
+    this.currentHoveredRow = rowIndex;
+    if (this.scrolling) {
+      return;
+    }
+    this.addHoverClass(rowIndex);
+  };
+
+  private addHoverClass = (rowIndex: number) => {
+    this.mappedCells.getElementsForRowIndex(rowIndex).forEach((elIndex) => {
+      const node = this.itemDOMElements[elIndex];
+
+      if (node) {
+        node.classList.add(HOVERED_CLASS_NAME);
+      }
+    });
+  };
+
+  private onMouseLeave = (rowIndex: number) => {
+    this.currentHoveredRow = -1;
+    if (this.scrolling) {
+      return;
+    }
+    this.removeHoverClass(rowIndex);
+  };
+
+  private removeHoverClass = (rowIndex: number) => {
+    this.mappedCells.getElementsForRowIndex(rowIndex).forEach((elIndex) => {
+      const node = this.itemDOMElements[elIndex];
+
+      if (node) {
+        node.classList.remove(HOVERED_CLASS_NAME);
+      }
+    });
+  };
+
   private updateElementPosition = (elementIndex: number) => {
     const itemElement = this.itemDOMElements[elementIndex];
     const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
@@ -622,6 +681,13 @@ export class ReactHeadlessTableRenderer extends Logger {
     const { x, y } = itemPosition;
 
     if (itemElement) {
+      if (this.currentHoveredRow != -1 && !this.scrolling) {
+        if (this.currentHoveredRow === rowIndex) {
+          itemElement.classList.add(HOVERED_CLASS_NAME);
+        } else {
+          itemElement.classList.remove(HOVERED_CLASS_NAME);
+        }
+      }
       // itemElement.style.gridColumn = `${colIndex} / span 1`;
       // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
@@ -645,6 +711,21 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
   };
 
+  private onScrollStart = () => {
+    this.scrolling = true;
+    if (this.currentHoveredRow != -1) {
+      this.removeHoverClass(this.currentHoveredRow);
+    }
+  };
+
+  private onScrollStop = () => {
+    this.scrolling = false;
+
+    if (this.currentHoveredRow != -1) {
+      this.addHoverClass(this.currentHoveredRow);
+    }
+  };
+
   public adjustFixedElementsOnScroll = (
     scrollPosition: ScrollPosition = this.brain.getScrollPosition(),
   ) => {
@@ -655,6 +736,10 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const { fixedColsStart, fixedColsEnd, fixedRowsStart, fixedRowsEnd } =
       this.brain.getFixedCellInfo();
+
+    if (!fixedColsStart && !fixedColsEnd && !fixedRowsStart && !fixedRowsEnd) {
+      return;
+    }
     const fixedEndColsOffsets = this.brain.getFixedEndColsOffsets();
     const fixedEndRowsOffsets = this.brain.getFixedEndRowsOffsets();
 
@@ -849,6 +934,7 @@ export class ReactHeadlessTableRenderer extends Logger {
   destroy = () => {
     this.destroyed = true;
     this.reset();
+    this.onDestroy();
 
     (this as any).brain = null;
     (this as any).mappedCells = null;

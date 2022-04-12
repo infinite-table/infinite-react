@@ -42,17 +42,17 @@ export function RawTableFn(props: RawTableProps) {
     return createRenderer(brain);
   }, [brain]);
 
-  useEffect(() => {
-    const removeOnScroll = brain.onScroll(renderer.adjustFixedElementsOnScroll);
-    const removeOnSizeChange = brain.onAvailableSizeChange(() => {
-      renderer.adjustFixedElementsOnScroll();
-    });
+  // useEffect(() => {
+  //   const removeOnScroll = brain.onScroll(renderer.adjustElementsOnScroll);
+  //   const removeOnSizeChange = brain.onAvailableSizeChange(() => {
+  //     renderer.adjustElementsOnScroll();
+  //   });
 
-    return () => {
-      removeOnScroll();
-      removeOnSizeChange();
-    };
-  }, [brain]);
+  //   return () => {
+  //     removeOnScroll();
+  //     removeOnSizeChange();
+  //   };
+  // }, [brain]);
 
   useEffect(() => {
     const renderRange = brain.getRenderRange();

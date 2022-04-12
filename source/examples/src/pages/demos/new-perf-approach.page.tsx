@@ -14,12 +14,16 @@ export default function App() {
       rowspan,
       rowFixed,
       colFixed,
+      onMouseEnter,
+      onMouseLeave,
       width,
       height,
       domRef,
     } = param;
     return (
       <b
+        onMouseLeave={onMouseLeave}
+        onMouseEnter={onMouseEnter}
         ref={domRef}
         style={{
           overflow: 'hidden',
@@ -45,10 +49,10 @@ export default function App() {
         fixedColsEnd={2}
         fixedRowsStart={2}
         fixedRowsEnd={2}
-        cols={11}
-        rows={50}
+        cols={1100}
+        rows={50000}
         height={1000}
-        width={1200}
+        width={1900}
         renderCell={renderCell}
       />
     </div>

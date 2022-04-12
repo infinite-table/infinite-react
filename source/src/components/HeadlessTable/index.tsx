@@ -37,6 +37,8 @@ export type HeadlessTableProps = {
 
   rowspan?: SpanFunction;
   colspan?: SpanFunction;
+
+  scrollStopDelay?: number;
 };
 
 const measureSizeStyle: React.CSSProperties = {
@@ -62,6 +64,12 @@ export function HeadlessTable(props: HeadlessTableProps) {
     props.fixedRowsEnd,
     brain,
   ]);
+
+  useEffect(() => {
+    if (props.scrollStopDelay != null) {
+      brain.setScrollStopDelay(props.scrollStopDelay);
+    }
+  }, [props.scrollStopDelay, brain]);
 
   const [measureSize, setMeasureSize] = useState<Size | null>(null);
 
