@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  MutableRefObject,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
 import { join } from '../../utils/join';
 
 import {
@@ -11,7 +19,11 @@ import { useResizeObserver } from '../ResizeObserver';
 
 import { ScrollPosition } from '../types/ScrollPosition';
 import { Size } from '../types/Size';
-import { MatrixBrain, SpanFunction } from '../VirtualBrain/MatrixBrain';
+import {
+  MatrixBrain,
+  MatrixBrainOptions,
+  SpanFunction,
+} from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
 import { VirtualScrollContainer } from '../VirtualScrollContainer';
@@ -19,8 +31,11 @@ import { RawTable } from './RawTable';
 import { TableRenderCellFnParam } from './ReactHeadlessTableRenderer';
 
 export type HeadlessTableProps = {
+  scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
   rows: number;
   cols: number;
+
+  brain: MatrixBrain;
 
   fixedColsStart?: number;
   fixedColsEnd?: number;
@@ -47,23 +62,64 @@ const measureSizeStyle: React.CSSProperties = {
   pointerEvents: 'none',
   zIndex: -1_000,
 };
-export function HeadlessTable(props: HeadlessTableProps) {
-  const [brain] = React.useState(() => new MatrixBrain());
 
+export function useMatrixBrain(
+  brain: MatrixBrain,
+  brainOptions: Partial<MatrixBrainOptions>,
+  fixedCellsInfo: {
+    fixedColsStart?: number;
+    fixedColsEnd?: number;
+    fixedRowsStart?: number;
+    fixedRowsEnd?: number;
+  },
+) {
   useEffect(() => {
     brain.updateFixedCells({
-      fixedColsStart: props.fixedColsStart,
-      fixedColsEnd: props.fixedColsEnd,
-      fixedRowsStart: props.fixedRowsStart,
-      fixedRowsEnd: props.fixedRowsEnd,
+      fixedColsStart: fixedCellsInfo.fixedColsStart,
+      fixedColsEnd: fixedCellsInfo.fixedColsEnd,
+      fixedRowsStart: fixedCellsInfo.fixedRowsStart,
+      fixedRowsEnd: fixedCellsInfo.fixedRowsEnd,
     });
   }, [
-    props.fixedColsStart,
-    props.fixedColsEnd,
-    props.fixedRowsStart,
-    props.fixedRowsEnd,
+    fixedCellsInfo.fixedColsStart,
+    fixedCellsInfo.fixedColsEnd,
+    fixedCellsInfo.fixedRowsStart,
+    fixedCellsInfo.fixedRowsEnd,
     brain,
   ]);
+
+  useEffect(() => {
+    brain.update({
+      height: brainOptions.height,
+      width: brainOptions.width,
+
+      cols: brainOptions.cols,
+      rows: brainOptions.rows,
+
+      colWidth: brainOptions.colWidth,
+      rowHeight: brainOptions.rowHeight,
+
+      rowspan: brainOptions.rowspan,
+      colspan: brainOptions.colspan,
+    });
+  }, [
+    brainOptions.height,
+    brainOptions.width,
+
+    brainOptions.cols,
+    brainOptions.rows,
+
+    brainOptions.colspan,
+    brainOptions.rowspan,
+
+    brainOptions.colWidth,
+    brainOptions.rowHeight,
+
+    brain,
+  ]);
+}
+export function HeadlessTable(props: HeadlessTableProps) {
+  const brain = props.brain;
 
   useEffect(() => {
     if (props.scrollStopDelay != null) {
@@ -75,35 +131,20 @@ export function HeadlessTable(props: HeadlessTableProps) {
 
   const size = measureSize || { width: props.width, height: props.height };
 
-  useEffect(() => {
-    brain.update({
+  useMatrixBrain(
+    brain,
+    {
+      ...props,
       height: size.height,
       width: size.width,
-
-      cols: props.cols,
-      rows: props.rows,
-
-      colSize: props.colWidth,
-      rowSize: props.rowHeight,
-
-      rowspan: props.rowspan,
-      colspan: props.colspan,
-    });
-  }, [
-    size.height,
-    size.width,
-
-    props.cols,
-    props.rows,
-
-    props.colspan,
-    props.rowspan,
-
-    props.colWidth,
-    props.rowHeight,
-
-    brain,
-  ]);
+    },
+    {
+      fixedColsStart: props.fixedColsStart,
+      fixedColsEnd: props.fixedColsEnd,
+      fixedRowsStart: props.fixedRowsStart,
+      fixedRowsEnd: props.fixedRowsEnd,
+    },
+  );
 
   const domRef = useRef<HTMLDivElement>(null);
   const measureSizeRef = useRef<HTMLDivElement>(null);
@@ -147,7 +188,10 @@ export function HeadlessTable(props: HeadlessTableProps) {
         height: props.height,
       }}
     >
-      <VirtualScrollContainer onContainerScroll={onContainerScroll}>
+      <VirtualScrollContainer
+        onContainerScroll={onContainerScroll}
+        ref={props.scrollerDOMRef as RefObject<HTMLDivElement>}
+      >
         <div
           ref={domRef}
           className={scrollTransformTargetCls}
@@ -167,6 +211,11 @@ export function HeadlessTable(props: HeadlessTableProps) {
           width={scrollSize.width}
           height={scrollSize.height}
         />
+        {/**
+         * we need this size measurer, even though we have props.width and props.height passed down to us
+         * because this measurer also accounts for scrollbars showing/hiding which changes the
+         * dimensions of the space available for virtualization
+         */}
         <div ref={measureSizeRef} style={measureSizeStyle} />
       </VirtualScrollContainer>
     </div>
