@@ -2,7 +2,6 @@ import React from 'react';
 import { RefCallback } from 'react';
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
-import { RowHoverCls } from '../InfiniteTable/components/InfiniteTableRow/row.css';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
@@ -41,13 +40,14 @@ export type RenderableWithPosition = {
 };
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
-const HOVERED_CLASS_NAME = RowHoverCls;
 
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
 
   private destroyed = false;
   private scrolling = false;
+
+  public cellHoverClassNames: string[] = [];
 
   private itemDOMElements: (HTMLElement | null)[] = [];
   private itemDOMRefs: RefCallback<HTMLElement>[] = [];
@@ -687,7 +687,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       const node = this.itemDOMElements[elIndex];
 
       if (node) {
-        node.classList.add(HOVERED_CLASS_NAME);
+        this.cellHoverClassNames.forEach((cls) => {
+          node.classList.add(cls);
+        });
       }
     });
   };
@@ -705,7 +707,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       const node = this.itemDOMElements[elIndex];
 
       if (node) {
-        node.classList.remove(HOVERED_CLASS_NAME);
+        this.cellHoverClassNames.forEach((cls) => {
+          node.classList.remove(cls);
+        });
       }
     });
   };
@@ -733,9 +737,13 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (itemElement) {
       if (this.currentHoveredRow != -1 && !this.scrolling) {
         if (this.currentHoveredRow === rowIndex) {
-          itemElement.classList.add(HOVERED_CLASS_NAME);
+          this.cellHoverClassNames.forEach((cls) => {
+            itemElement.classList.add(cls);
+          });
         } else {
-          itemElement.classList.remove(HOVERED_CLASS_NAME);
+          this.cellHoverClassNames.forEach((cls) => {
+            itemElement.classList.remove(cls);
+          });
         }
       }
       // itemElement.style.gridColumn = `${colIndex} / span 1`;

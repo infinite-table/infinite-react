@@ -6,6 +6,7 @@ import { VirtualBrain } from '../../VirtualBrain';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import { ThemeVars } from '../theme.css';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
 import {
   InfiniteTableColumns,
@@ -27,13 +28,28 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 export function initSetupState<T>(): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
 
+  const brain = new MatrixBrain();
+  const headerBrain = new MatrixBrain();
+
+  brain.onScroll((scrollPosition) => {
+    headerBrain.setScrollPosition({
+      scrollLeft: scrollPosition.scrollLeft,
+      scrollTop: 0,
+    });
+  });
+
+  brain.onAvailableSizeChange((size) => {
+    headerBrain.setAvailableSize({ width: size.width });
+  });
   return {
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([
       // ['sortInfo', new WeakMap()],
     ]),
 
     // TODO destroy the brains on unmount
-    brain: new MatrixBrain(),
+    brain,
+
+    headerBrain,
 
     columnShifts: null,
     domRef: createRef(),
@@ -136,7 +152,7 @@ export const forwardProps = <T>(
 
     rowHeight: (rowHeight) => (typeof rowHeight === 'number' ? rowHeight : 0),
     headerHeight: (headerHeight) =>
-      typeof headerHeight === 'number' ? headerHeight : 0,
+      typeof headerHeight === 'number' ? headerHeight : 30,
 
     columns: (columns) => toMap(columns, setupState.propsCache.get('columns')),
     columnVisibility: (columnVisibility) => columnVisibility ?? {},
@@ -234,7 +250,7 @@ export const mapPropsToState = <T>(params: {
     rowHeightCSSVar: typeof props.rowHeight === 'string' ? props.rowHeight : '',
     headerHeightCSSVar:
       typeof props.headerHeight === 'string'
-        ? props.headerHeight || '--ITableHeader__height'
+        ? props.headerHeight || ThemeVars.components.Header.height
         : '',
   };
 };

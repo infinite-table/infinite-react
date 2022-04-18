@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { join } from '../../../../utils/join';
-import { dbg } from '../../../../utils/debug';
 
 import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 
@@ -12,13 +11,16 @@ import { internalProps } from '../../internalProps';
 
 import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
 
-import { RawList } from '../../../RawList';
-
-import type { RenderItem } from '../../../RawList/types';
 import { ScrollPosition } from '../../../types/ScrollPosition';
 import { HeaderClsRecipe } from './header.css';
 
-const debug = dbg('Header');
+import {
+  TableRenderCellFn,
+  TableRenderCellFnParam,
+} from '../../../HeadlessTable/ReactHeadlessTableRenderer';
+import { transformTranslateZero } from '../../utilities.css';
+import { RawTable } from '../../../HeadlessTable/RawTable';
+
 const { rootClassName } = internalProps;
 
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -26,36 +28,14 @@ export const TableHeaderClassName = `${rootClassName}Header`;
 function InfiniteTableHeaderFn<T>(
   props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { repaintId, brain, columns, style, className, pinning } = props;
+  const { brain, columns, style, className } = props;
+
   const {
     computed,
-    componentState: { headerHeight },
+    componentState: { headerHeight, headerBrain },
   } = useInfiniteTable<T>();
 
   const { computedVisibleColumnsMap } = computed;
-
-  const renderColumn: RenderItem = useCallback(
-    ({ domRef, itemIndex: columnIndex }) => {
-      const column = columns[columnIndex];
-
-      if (!column) {
-        if (__DEV__) {
-          debug('Cannot find column to render at ', columnIndex);
-        }
-        return null;
-      }
-      return (
-        <InfiniteTableHeaderCell<T>
-          domRef={domRef}
-          column={column}
-          width={column.computedWidth}
-          headerHeight={headerHeight}
-          columns={computedVisibleColumnsMap}
-        />
-      );
-    },
-    [computedVisibleColumnsMap, columns, repaintId, headerHeight],
-  );
 
   useEffect(() => {
     const onScroll = (scrollPosition: ScrollPosition) => {
@@ -72,7 +52,6 @@ function InfiniteTableHeaderFn<T>(
   const domRef = useRef<HTMLDivElement | null>(null);
 
   const headerCls = HeaderClsRecipe({
-    pinned: pinning,
     overflow: false,
     virtualized: true,
   });
@@ -81,7 +60,7 @@ function InfiniteTableHeaderFn<T>(
     ref: domRef,
     className: join(
       TableHeaderClassName,
-
+      transformTranslateZero,
       `${TableHeaderClassName}--virtualized`,
       className,
       headerCls,
@@ -89,9 +68,45 @@ function InfiniteTableHeaderFn<T>(
     style,
   };
 
+  const renderCell: TableRenderCellFn = useCallback(
+    (params: TableRenderCellFnParam) => {
+      const {
+        rowIndex,
+        colIndex,
+        domRef,
+        hidden,
+        widthWithColspan,
+        heightWithRowspan,
+      } = params;
+
+      const column = columns[colIndex];
+      if (!column) {
+        return null;
+      }
+      return (
+        <InfiniteTableHeaderCell<T>
+          domRef={domRef}
+          column={column}
+          width={widthWithColspan}
+          headerHeight={headerHeight}
+          columns={computedVisibleColumnsMap}
+        />
+      );
+    },
+    [columns, headerHeight],
+  );
+
+  if (__DEV__) {
+    (globalThis as any).headerBrain = headerBrain;
+  }
+
   return (
     <div {...domProps}>
-      <RawList brain={brain} renderItem={renderColumn} />
+      <RawTable
+        renderCell={renderCell}
+        brain={headerBrain}
+        cellHoverClassNames={[]}
+      />
     </div>
   );
 }

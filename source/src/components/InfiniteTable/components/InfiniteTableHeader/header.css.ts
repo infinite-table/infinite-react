@@ -43,9 +43,20 @@ globalStyle(`${HeaderSortIconCls} [data-name='index']`, {
   padding: 1,
 });
 
+export const HeaderScrollbarPlaceholderCls = style([
+  {
+    background: ThemeVars.components.Header.background,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+  position.absolute,
+]);
+
 export const HeaderClsRecipe = recipe({
   base: [
     flexFlow.row,
+    position.absolute,
     {
       background: ThemeVars.components.Header.background,
       color: ThemeVars.components.Header.color,

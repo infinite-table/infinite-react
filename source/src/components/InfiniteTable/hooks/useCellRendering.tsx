@@ -69,6 +69,7 @@ export function useCellRendering<T>(
     computedVisibleColumns,
     rowspan,
     toggleGroupRow,
+    columnSize,
   } = computed;
 
   const { componentState: dataSourceState, getState: getDataSourceState } =
@@ -91,6 +92,7 @@ export function useCellRendering<T>(
   const repaintId = repaintIdRef.current;
 
   useYourBrain({
+    columnSize,
     brain,
     computedPinnedStartColumns,
     computedPinnedEndColumns,

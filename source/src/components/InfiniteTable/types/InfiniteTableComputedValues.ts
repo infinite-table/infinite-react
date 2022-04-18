@@ -6,6 +6,10 @@ import type {
 } from './InfiniteTableProps';
 
 export interface InfiniteTableComputedValues<T> {
+  scrollbars: {
+    vertical: boolean;
+    horizontal: boolean;
+  };
   rowspan?: MatrixBrainOptions['rowspan'];
   computedPinnedStartOverflow: boolean;
   computedPinnedEndOverflow: boolean;
@@ -27,6 +31,7 @@ export interface InfiniteTableComputedValues<T> {
   unpinnedColumnRenderCount: number;
   columnRenderStartIndex: number;
   toggleGroupRow: (groupKeys: any[]) => void;
+  columnSize: (colIndex: number) => number;
   // setColumnPinning: (columnPinning: InfiniteTablePropColumnPinning) => void;
   // setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   // setColumnVisibility: (

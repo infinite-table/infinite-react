@@ -50,13 +50,11 @@ import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTab
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
 import { HeadlessTable } from '../HeadlessTable';
 import { useCellRendering } from './hooks/useCellRendering';
+import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
-const ONLY_VERTICAL_SCROLLBAR = {
-  horizontal: false,
-  vertical: true,
-};
+const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
 
 const InfiniteTableRoot = getComponentStateRoot({
   // @ts-ignore
@@ -108,6 +106,7 @@ export const InfiniteTableComponent = React.memo(
       components,
       scrollStopDelay,
       brain,
+      headerBrain,
     } = componentState;
 
     const { columnShifts, bodySize } = componentState;
@@ -160,6 +159,7 @@ export const InfiniteTableComponent = React.memo(
     }, [scrollbars]);
 
     React.useEffect(() => {
+      brain.setScrollStopDelay(scrollStopDelay);
       dataSourceActions.scrollStopDelayUpdatedByTable = scrollStopDelay;
     }, [scrollStopDelay]);
 
@@ -169,7 +169,7 @@ export const InfiniteTableComponent = React.memo(
       <div ref={domRef} {...domProps}>
         {header ? (
           <TableHeaderWrapper
-            brain={brain}
+            brain={headerBrain}
             repaintId={repaintId}
             scrollbars={scrollbars}
           />
@@ -180,12 +180,7 @@ export const InfiniteTableComponent = React.memo(
             scrollStopDelay={scrollStopDelay}
             brain={brain}
             renderCell={renderCell}
-            // style={useMemo(
-            //   () => ({
-            //     height: bodySize.height,
-            //   }),
-            //   [],
-            // )}
+            cellHoverClassNames={HOVERED_CLASS_NAMES}
             scrollerDOMRef={scrollerDOMRef}
           ></HeadlessTable>
 

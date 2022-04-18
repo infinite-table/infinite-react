@@ -72,6 +72,7 @@ export default function DataTestPage() {
             age: 'start',
             canDesign: 'end',
           }}
+          headerHeight=""
           columnDefaultWidth={100}
           columns={columns}
         />

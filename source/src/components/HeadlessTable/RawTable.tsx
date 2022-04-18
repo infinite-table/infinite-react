@@ -14,6 +14,7 @@ import {
 export type RawTableProps = {
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
+  cellHoverClassNames?: string[];
 };
 
 function createRenderer(brain: MatrixBrain) {
@@ -38,6 +39,10 @@ export function RawTableFn(props: RawTableProps) {
   }, [brain]);
 
   useEffect(() => {
+    renderer.cellHoverClassNames = props.cellHoverClassNames || [];
+  }, [renderer, props.cellHoverClassNames]);
+
+  useEffect(() => {
     const renderRange = brain.getRenderRange();
 
     renderer.renderRange(renderRange, {
@@ -47,8 +52,10 @@ export function RawTableFn(props: RawTableProps) {
     });
   }, [renderer, brain, renderCell, onRenderUpdater]);
 
-  (globalThis as any).brain = brain;
-  (globalThis as any).renderer = renderer;
+  if (__DEV__) {
+    (globalThis as any).brain = brain;
+    (globalThis as any).renderer = renderer;
+  }
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {

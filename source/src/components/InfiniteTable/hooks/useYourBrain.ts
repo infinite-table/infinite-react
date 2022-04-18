@@ -11,6 +11,7 @@ import { useColumnSizeFn } from './useColumnSizeFn';
 type UseYourBrainParam<T = any> = {
   brain: MatrixBrain;
 
+  columnSize: (rowIndex: number) => number;
   computedVisibleColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
@@ -28,11 +29,10 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     computedPinnedEndColumns,
     computedPinnedStartColumns,
     computedVisibleColumns,
-
+    columnSize,
     rowHeight,
     rowspan,
   } = param;
-  const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
 
   useMatrixBrain(
     brain,

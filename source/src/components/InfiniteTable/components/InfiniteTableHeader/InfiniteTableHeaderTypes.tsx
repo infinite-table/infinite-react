@@ -4,10 +4,7 @@ import { Renderable } from '../../../types/Renderable';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../../VirtualBrain/ScrollListener';
 
-import {
-  InfiniteTableColumnPinnedValues,
-  InfiniteTableComputedColumnGroup,
-} from '../../types/InfiniteTableProps';
+import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 export type InfiniteTableHeaderProps<T> = {
   repaintId?: string | number;
@@ -15,7 +12,7 @@ export type InfiniteTableHeaderProps<T> = {
   columns: InfiniteTableComputedColumn<T>[];
   totalWidth: number;
   availableWidth: number;
-  pinning: InfiniteTableColumnPinnedValues;
+  headerHeight: number;
 };
 
 export type InfiniteTableHeaderGroupProps<T> = {

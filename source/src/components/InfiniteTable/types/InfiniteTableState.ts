@@ -37,6 +37,7 @@ export interface InfiniteTableSetupState<T> {
   columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
   bodySize: Size;
   brain: MatrixBrain;
+  headerBrain: MatrixBrain;
   focused: boolean;
   ready: boolean;
   focusedWithin: boolean;

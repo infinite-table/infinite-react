@@ -1,12 +1,14 @@
 import * as React from 'react';
 import type { Scrollbars } from '../..';
+import { useMatrixBrain } from '../../../HeadlessTable';
 
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 import { VerticalScrollbarPlaceholder } from '../ScrollbarPlaceholder';
-import { HeaderWrapperCls } from './header.css';
+import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
+import { InfiniteTableHeader } from './InfiniteTableHeader';
 import { InfiniteTableHeaderUnvirtualized } from './InfiniteTableHeaderUnvirtualized';
 
 export type TableHeaderWrapperProps = {
@@ -15,124 +17,71 @@ export type TableHeaderWrapperProps = {
   repaintId?: number | string;
 };
 export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
-  const { brain, scrollbars, repaintId } = props;
+  const { brain, scrollbars } = props;
 
   const tableContextValue = useInfiniteTable<T>();
 
   const {
-    computedUnpinnedColumns,
     computedPinnedStartColumns,
     computedPinnedEndColumns,
-    computedPinnedStartColumnsWidth,
-    computedPinnedStartWidth,
-    computedPinnedEndWidth,
-    computedPinnedEndColumnsWidth,
     computedUnpinnedColumnsWidth,
-    computedPinnedStartOverflow,
-    computedPinnedEndOverflow,
+    computedVisibleColumns,
+    columnSize,
   } = tableContextValue.computed;
 
   const {
-    componentState: {
-      virtualizeHeader,
-      headerHeight,
-      columnGroupsMaxDepth,
-      pinnedStartScrollListener,
-      pinnedEndScrollListener,
-    },
+    componentState: { headerHeight, columnGroupsMaxDepth },
   } = tableContextValue;
 
-  const hasPinnedStart = computedPinnedStartColumns.length > 0;
-  const hasPinnedEnd = computedPinnedEndColumns.length > 0;
   const height = columnGroupsMaxDepth
     ? columnGroupsMaxDepth * headerHeight
     : headerHeight;
 
-  const unvirtualizedStyle: React.HTMLProps<HTMLElement>['style'] =
-    !virtualizeHeader && computedPinnedStartColumnsWidth
-      ? {
-          left: computedPinnedStartWidth,
-        }
-      : undefined;
+  useMatrixBrain(
+    brain,
+    {
+      colWidth: columnSize,
+      rowHeight: headerHeight,
+      rows: columnGroupsMaxDepth || 1,
+      cols: computedVisibleColumns.length,
+      height,
+    },
+    {
+      fixedColsEnd: computedPinnedEndColumns.length,
+      fixedColsStart: computedPinnedStartColumns.length,
+    },
+  );
 
-  // const header = virtualizeHeader ? (
-  //   <InfiniteTableHeader
-  //     columns={computedUnpinnedColumns}
-  //     repaintId={virtualizeHeader ? repaintId : undefined}
-  //     brain={brain}
-  //     pinning={false}
-  //     style={{
-  //       position: 'absolute',
-  //       left: computedPinnedStartWidth,
-  //       width: computedUnpinnedColumnsWidth,
-  //       height: columnGroupsMaxDepth || headerHeight,
-  //     }}
-  //     availableWidth={computedUnpinnedColumnsWidth}
-  //     totalWidth={computedUnpinnedColumnsWidth}
-  //   />
-  // ) : (
   const header = (
-    <InfiniteTableHeaderUnvirtualized
-      style={unvirtualizedStyle}
+    <InfiniteTableHeader
+      columns={computedVisibleColumns}
       brain={brain}
-      scrollable
-      pinning={false}
-      columns={computedUnpinnedColumns}
+      headerHeight={headerHeight}
       availableWidth={computedUnpinnedColumnsWidth}
       totalWidth={computedUnpinnedColumnsWidth}
     />
   );
 
+  const verticalScrollbarPlaceholder =
+    scrollbars.vertical && getScrollbarWidth() ? (
+      <div
+        className={HeaderScrollbarPlaceholderCls}
+        style={{
+          zIndex: 1000,
+          width: getScrollbarWidth(),
+        }}
+      />
+    ) : null;
+
   return (
     <div
       className={HeaderWrapperCls}
       style={{
-        height: virtualizeHeader ? height : undefined,
+        height: height,
       }}
     >
-      {hasPinnedStart ? (
-        <InfiniteTableHeaderUnvirtualized
-          style={{
-            left: 0,
-            position: 'absolute',
-            width: computedPinnedStartWidth,
-          }}
-          availableWidth={computedPinnedStartWidth}
-          totalWidth={computedPinnedStartColumnsWidth}
-          columns={computedPinnedStartColumns}
-          scrollable={computedPinnedStartOverflow}
-          pinning={'start'}
-          scrollListener={
-            computedPinnedStartOverflow ? pinnedStartScrollListener : undefined
-          }
-        />
-      ) : null}
       {header}
-      {hasPinnedEnd ? (
-        <InfiniteTableHeaderUnvirtualized
-          style={{
-            right: scrollbars.vertical ? getScrollbarWidth() : 0,
-            position: 'absolute',
-            width: computedPinnedEndWidth,
-          }}
-          columns={computedPinnedEndColumns}
-          availableWidth={computedPinnedEndWidth}
-          totalWidth={computedPinnedEndColumnsWidth}
-          scrollable={computedPinnedEndOverflow}
-          pinning={'end'}
-          scrollListener={
-            computedPinnedEndOverflow ? pinnedEndScrollListener : undefined
-          }
-        />
-      ) : null}
-      {scrollbars.vertical ? (
-        <VerticalScrollbarPlaceholder
-          style={{
-            height: '100%',
-            right: 0,
-          }}
-        ></VerticalScrollbarPlaceholder>
-      ) : null}
+      {verticalScrollbarPlaceholder}
     </div>
   );
 }

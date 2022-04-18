@@ -24,6 +24,7 @@ export type HeadlessTableProps = {
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
   scrollStopDelay?: number;
+  cellHoverClassNames?: string[];
 };
 
 export function useMatrixBrainLazy(
@@ -124,8 +125,14 @@ export function useMatrixBrain(
 export function HeadlessTable(
   props: HeadlessTableProps & React.HTMLProps<HTMLDivElement>,
 ) {
-  const { brain, scrollerDOMRef, scrollStopDelay, renderCell, ...domProps } =
-    props;
+  const {
+    brain,
+    scrollerDOMRef,
+    scrollStopDelay,
+    renderCell,
+    cellHoverClassNames,
+    ...domProps
+  } = props;
 
   const domRef = useRef<HTMLDivElement>(null);
 
@@ -190,7 +197,11 @@ export function HeadlessTable(
         className={scrollTransformTargetCls}
         data-name="scroll-transform-target"
       >
-        <RawTable renderCell={renderCell} brain={brain} />
+        <RawTable
+          renderCell={renderCell}
+          brain={brain}
+          cellHoverClassNames={cellHoverClassNames}
+        />
       </div>
       <SpacePlaceholder width={scrollSize.width} height={scrollSize.height} />
     </VirtualScrollContainer>

@@ -11,6 +11,8 @@ import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataS
 import { useColumnGroups } from './useColumnGroups';
 import { useColumnsWhen } from './useColumnsWhen';
 import { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
+import { useColumnSizeFn } from './useColumnSizeFn';
+import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState } =
@@ -28,6 +30,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnPinning,
     columnSizing,
     columnTypes,
+    brain,
     bodySize,
     showSeparatePivotColumnForSingleAggregation,
   } = componentState;
@@ -193,7 +196,31 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     ? computedPinnedEndColumnsWidth > computedPinnedEndWidth
     : false;
 
+  const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
+
+  const hasHorizontalScrollbar =
+    computedUnpinnedColumnsWidth >
+    bodySize.width -
+      computedPinnedStartColumnsWidth -
+      computedPinnedEndColumnsWidth;
+
+  const reservedContentHeight =
+    brain.getTotalSize().height +
+    (hasHorizontalScrollbar ? getScrollbarWidth() : 0);
+
+  const hasVerticalScrollbar =
+    bodySize.height > 0 && bodySize.height < reservedContentHeight;
+
+  const scrollbars = useMemo(
+    () => ({
+      vertical: hasVerticalScrollbar,
+      horizontal: hasHorizontalScrollbar,
+    }),
+    [hasVerticalScrollbar, hasHorizontalScrollbar],
+  );
   return {
+    scrollbars,
+    columnSize,
     rowspan,
     toggleGroupRow,
     computedPinnedStartOverflow,
