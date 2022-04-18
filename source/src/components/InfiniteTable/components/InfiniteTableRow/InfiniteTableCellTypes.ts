@@ -13,6 +13,7 @@ export type InfiniteTableCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
   renderChildren: () => Renderable;
 
+  width: number;
   cssEllipsis?: boolean;
   // children: Renderable;
   virtualized?: boolean;
@@ -33,6 +34,9 @@ export interface InfiniteTableColumnCellProps<T>
     InfiniteTableCellProps<T>,
     'children' | 'cellType' | 'renderChildren'
   > {
+  onMouseEnter?: VoidFunction;
+  onMouseLeave?: VoidFunction;
+  showZebraRows: boolean;
   virtualized: boolean;
   hidden: boolean;
   rowInfo: InfiniteTableRowInfo<T>;

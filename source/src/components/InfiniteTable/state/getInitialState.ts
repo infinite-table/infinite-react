@@ -3,6 +3,7 @@ import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { VirtualBrain } from '../../VirtualBrain';
+import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
@@ -32,16 +33,8 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     ]),
 
     // TODO destroy the brains on unmount
-    horizontalVirtualBrain: new VirtualBrain({
-      count: 0,
-      itemSize: 100,
-      mainAxis: 'horizontal',
-    }),
-    verticalVirtualBrain: new VirtualBrain({
-      count: 0,
-      itemSize: 10,
-      mainAxis: 'vertical',
-    }),
+    brain: new MatrixBrain(),
+
     columnShifts: null,
     domRef: createRef(),
     scrollerDOMRef: createRef(),

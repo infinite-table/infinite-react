@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import type { Ref } from 'react';
 
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useLatest } from '../../hooks/useLatest';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
-
-import { useUnpinnedRendering } from './useUnpinnedRendering';
 
 import type {
   InfiniteTableComputedValues,
@@ -16,17 +14,12 @@ import type {
 } from '../types';
 import type { Size } from '../../types/Size';
 
-import { useOnContainerScroll } from './useOnContainerScroll';
-import {
-  usePinnedEndRendering,
-  usePinnedStartRendering,
-} from './usePinnedRendering';
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
 import type { Scrollbars } from '../types/InfiniteTableProps';
 import { usePrevious } from '../../hooks/usePrevious';
 
-type ListRenderingParam<T> = {
+type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
   domRef: Ref<HTMLElement>;
 
@@ -37,28 +30,31 @@ type ListRenderingParam<T> = {
 
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useInfiniteTable } from './useInfiniteTable';
-import type { VirtualBrain } from '../../VirtualBrain';
+import {
+  TableRenderCellFn,
+  TableRenderCellFnParam,
+} from '../../HeadlessTable/ReactHeadlessTableRenderer';
+import { InfiniteTableColumnCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
+import React from 'react';
+import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 
-type ListRenderingResult = {
+type CellRenderingResult = {
   scrollbars: Scrollbars;
 
-  horizontalVirtualBrain: VirtualBrain;
-  verticalVirtualBrain: VirtualBrain;
-  applyScrollHorizontal: ({ scrollLeft }: { scrollLeft: number }) => void;
-  applyScrollVertical: ({ scrollTop }: { scrollTop: number }) => void;
-  pinnedStartList: JSX.Element | null;
-  pinnedEndList: JSX.Element | null;
-  pinnedStartScrollbarPlaceholder: JSX.Element | null;
-  pinnedEndScrollbarPlaceholder: JSX.Element | null;
-  centerList: JSX.Element | null;
+  // pinnedStartList: JSX.Element | null;
+  // pinnedEndList: JSX.Element | null;
+  // pinnedStartScrollbarPlaceholder: JSX.Element | null;
+  // pinnedEndScrollbarPlaceholder: JSX.Element | null;
+  // centerList: JSX.Element | null;
   repaintId: number;
   reservedContentHeight: number;
+  renderCell: TableRenderCellFn;
 };
 
-export function useListRendering<T>(
-  param: ListRenderingParam<T>,
-): ListRenderingResult {
-  const { computed, bodySize, columnShifts } = param;
+export function useCellRendering<T>(
+  param: CellRenderingParam<T>,
+): CellRenderingResult {
+  const { computed, bodySize } = param;
 
   const { componentActions, componentState, getState } = useInfiniteTable<T>();
 
@@ -71,7 +67,7 @@ export function useListRendering<T>(
     computedPinnedEndColumnsWidth,
     computedUnpinnedColumnsWidth,
     computedVisibleColumns,
-    rowspan: rowSpan,
+    rowspan,
     toggleGroupRow,
   } = computed;
 
@@ -81,14 +77,8 @@ export function useListRendering<T>(
   const { dataArray } = dataSourceState;
 
   const getData = useLatest(dataArray);
-  const {
-    rowHeight,
-    pinnedStartMaxWidth,
-    pinnedEndMaxWidth,
-    pinnedStartScrollListener,
-    pinnedEndScrollListener,
-    brain,
-  } = componentState;
+  const { rowHeight, groupRenderStrategy, brain, showZebraRows } =
+    componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);
 
@@ -108,7 +98,7 @@ export function useListRendering<T>(
     rowHeight,
     dataArray,
     bodySize,
-    // rowSpan,
+    rowspan,
   });
 
   const hasHorizontalScrollbar =
@@ -159,38 +149,66 @@ export function useListRendering<T>(
     }
   }, [!!bodySize.height]);
 
-  const { applyScrollHorizontal, applyScrollVertical } =
-    useOnContainerScroll<T>({
-      verticalVirtualBrain,
-      horizontalVirtualBrain,
-      reservedContentHeight,
-    });
-
   const [, rerender] = useRerender();
   useEffect(() => {
     rerender();
   }, [dataSourceState]);
 
-  const { pinnedStartList, pinnedStartScrollbarPlaceholder } =
-    usePinnedStartRendering<T>(pinnedRenderingParams);
+  const renderCell: TableRenderCellFn = useCallback(
+    (params: TableRenderCellFnParam) => {
+      const {
+        rowIndex,
+        colIndex,
+        heightWithRowspan,
+        domRef,
+        hidden,
+        width,
+        onMouseLeave,
+        onMouseEnter,
+      } = params;
 
-  const { pinnedEndList, pinnedEndScrollbarPlaceholder } =
-    usePinnedEndRendering<T>(pinnedRenderingParams);
+      const dataArray = getData();
+      const rowInfo = dataArray[rowIndex];
+      const column = computedVisibleColumns[colIndex];
 
-  const centerList = useUnpinnedRendering(centerRenderingParams);
+      const cellProps: InfiniteTableColumnCellProps<T> = {
+        getData,
+        virtualized: true,
+        showZebraRows,
+        groupRenderStrategy,
+        rowIndex,
+        rowInfo,
+        hidden,
+        toggleGroupRow,
+        rowHeight: heightWithRowspan,
+        onMouseEnter,
+        onMouseLeave,
+        domRef,
+        width,
+        column,
+      };
+
+      // return (
+      //   <div ref={domRef}>
+      //     {rowIndex}, {colIndex}
+      //   </div>
+      // );
+      return <InfiniteTableColumnCell<T> {...cellProps} />;
+    },
+    [
+      rowHeight,
+      getData,
+      computedVisibleColumns,
+      groupRenderStrategy,
+      toggleGroupRow,
+      showZebraRows,
+      repaintId,
+    ],
+  );
 
   return {
     scrollbars,
-
-    horizontalVirtualBrain,
-    verticalVirtualBrain,
-    applyScrollHorizontal,
-    applyScrollVertical,
-    pinnedStartList,
-    pinnedEndList,
-    pinnedStartScrollbarPlaceholder,
-    pinnedEndScrollbarPlaceholder,
-    centerList,
+    renderCell,
     repaintId,
     reservedContentHeight,
   };

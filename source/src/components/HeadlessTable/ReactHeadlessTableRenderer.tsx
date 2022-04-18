@@ -2,20 +2,20 @@ import React from 'react';
 import { RefCallback } from 'react';
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
+import { RowHoverCls } from '../InfiniteTable/components/InfiniteTableRow/row.css';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import {
+  FixedPosition,
   getRenderRangeCellCount,
   MatrixBrain,
   TableRenderRange,
 } from '../VirtualBrain/MatrixBrain';
 
 import { MappedCells } from './MappedCells';
-
-type FixedPosition = false | 'start' | 'end';
 
 export type TableRenderCellFnParam = {
   domRef: RefCallback<HTMLElement>;
@@ -35,8 +35,13 @@ export type TableRenderCellFnParam = {
 };
 export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
 
+export type RenderableWithPosition = {
+  renderable: Renderable;
+  position: 'start' | 'end' | null;
+};
+
 const ITEM_POSITION_WITH_TRANSFORM = true;
-const HOVERED_CLASS_NAME = 'InfiniteRow--hovered';
+const HOVERED_CLASS_NAME = RowHoverCls;
 
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
@@ -44,9 +49,9 @@ export class ReactHeadlessTableRenderer extends Logger {
   private destroyed = false;
   private scrolling = false;
 
-  private itemDOMElements: Record<number, HTMLElement | null> = {};
-  private itemDOMRefs: Record<number, RefCallback<HTMLElement>> = {};
-  private updaters: Record<number, SubscriptionCallback<Renderable>> = {};
+  private itemDOMElements: (HTMLElement | null)[] = [];
+  private itemDOMRefs: RefCallback<HTMLElement>[] = [];
+  private updaters: SubscriptionCallback<Renderable>[] = [];
 
   private mappedCells: MappedCells;
 
@@ -64,6 +69,11 @@ export class ReactHeadlessTableRenderer extends Logger {
     const removeOnScroll = brain.onScroll(this.adjustFixedElementsOnScroll);
     const removeOnSizeChange = brain.onAvailableSizeChange(() => {
       this.adjustFixedElementsOnScroll();
+      //for whatever reason, sometimes there's a misplaced fixed cell and we need to
+      //have it executed again, on a raf
+      requestAnimationFrame(() => {
+        this.adjustFixedElementsOnScroll();
+      });
     });
     const removeOnScrollStart = brain.onScrollStart(this.onScrollStart);
     const removeOnScrollStop = brain.onScrollStop(this.onScrollStop);
@@ -77,7 +87,7 @@ export class ReactHeadlessTableRenderer extends Logger {
   }
 
   getExtraSpanCellsForRange = (range: TableRenderRange) => {
-    const [start, end] = range;
+    const { start, end } = range;
     const [startRow, startCol] = start;
     const [endRow, endCol] = end;
 
@@ -104,7 +114,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       return [];
     }
 
-    const [start, end] = range;
+    const { start, end } = range;
 
     if (__DEV__) {
       this.debug(`Render range ${start}-${end}. Force ${force}`);
@@ -117,6 +127,14 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const extraCellsMap = new Map<string, boolean>();
     const extraCells = ranges.map(this.getExtraSpanCellsForRange).flat();
+
+    const {
+      end: [endRow],
+    } = range;
+
+    if (endRow === 22) {
+      debugger;
+    }
 
     /**
      * We can have some extra cells outside the render range that should still
@@ -163,24 +181,26 @@ export class ReactHeadlessTableRenderer extends Logger {
     //   // renderCount -= fixedRowsEnd * fixedColsEnd;
     // }
 
-    if (this.itemDOMElements[renderCount]) {
+    if (this.itemDOMElements.length >= renderCount) {
       mappedCells.discardElementsStartingWith(renderCount, (elementIndex) => {
-        delete this.itemDOMElements[elementIndex];
-        delete this.itemDOMRefs[elementIndex];
-
         // when less items become rendered
         // we unmount the extra items by calling destroy on the updater
         // so we don't need to re-render the whole container
         if (this.updaters[elementIndex]) {
           this.updaters[elementIndex].destroy();
-          delete this.updaters[elementIndex];
         }
-
-        delete this.items[elementIndex];
         if (__DEV__) {
+          // console.log(`Discard element ${elementIndex}`);
           this.debug(`Discard element ${elementIndex}`);
         }
       });
+      this.itemDOMElements.length = Math.min(
+        this.itemDOMElements.length,
+        renderCount,
+      );
+      this.itemDOMRefs.length = Math.min(this.itemDOMRefs.length, renderCount);
+      this.updaters.length = Math.min(this.updaters.length, renderCount);
+      this.items.length = Math.min(this.items.length, renderCount);
     }
 
     // we only need to keep those that are outside all ranges
@@ -208,6 +228,10 @@ export class ReactHeadlessTableRenderer extends Logger {
       },
     );
 
+    if (this.items.length > renderCount) {
+      this.items.length = renderCount;
+    }
+
     // start from the last rendered, and render additional elements, until we have renderCount
     // this loop might not even execute the body once if all the elements are present
     for (let i = this.items.length; i < renderCount; i++) {
@@ -219,7 +243,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     const visitedCells = new Map<string, boolean>();
 
     ranges.forEach((range) => {
-      const [start, end] = range;
+      const { start, end } = range;
       const [startRow, startCol] = start;
       const [endRow, endCol] = end;
 
@@ -385,7 +409,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     const colCount = this.brain.getColCount();
     const rowCount = this.brain.getRowCount();
 
-    const [start, end] = currentRenderRange;
+    const { start, end } = currentRenderRange;
     const [startRow, startCol] = start;
     const [endRow, endCol] = end;
 
@@ -404,7 +428,7 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     if (fixedColsStart) {
       /**
-       * if we have overlap, both cols start and rows fixed at start and end
+       * if we have overlap, both cols fixed at start AND rows fixed at start and end
        *
        * then for this if-branch, we push to the resulting array
        * both 1, 4 and 7
@@ -415,21 +439,30 @@ export class ReactHeadlessTableRenderer extends Logger {
        *
        */
       if (fixedRowsStart) {
-        arr.push([
-          [0, 0],
-          [fixedRowsStart, fixedColsStart],
-        ]);
+        // range 1
+        arr.push({
+          rowFixed: 'start',
+          colFixed: 'start',
+          start: [0, 0],
+          end: [fixedRowsStart, fixedColsStart],
+        });
       }
       if (fixedRowsEnd) {
-        arr.push([
-          [rowCount - fixedRowsEnd, 0],
-          [rowCount, fixedColsStart],
-        ]);
+        // range 7
+        arr.push({
+          rowFixed: 'end',
+          colFixed: 'start',
+          start: [rowCount - fixedRowsEnd, 0],
+          end: [rowCount, fixedColsStart],
+        });
       }
-      arr.push([
-        [startRow, 0],
-        [endRow, fixedColsStart],
-      ]);
+      // range 4
+      arr.push({
+        rowFixed: false,
+        colFixed: 'start',
+        start: [startRow, 0],
+        end: [endRow, fixedColsStart],
+      });
     }
     if (fixedColsEnd) {
       /**
@@ -443,21 +476,30 @@ export class ReactHeadlessTableRenderer extends Logger {
        *
        */
       if (fixedRowsStart) {
-        arr.push([
-          [0, colCount - fixedColsEnd],
-          [fixedRowsStart, colCount],
-        ]);
+        // range 3
+        arr.push({
+          colFixed: 'end',
+          rowFixed: 'start',
+          start: [0, colCount - fixedColsEnd],
+          end: [fixedRowsStart, colCount],
+        });
       }
       if (fixedRowsEnd) {
-        arr.push([
-          [rowCount - fixedRowsEnd, colCount - fixedColsEnd],
-          [rowCount, colCount],
-        ]);
+        // range 9
+        arr.push({
+          colFixed: 'end',
+          rowFixed: 'end',
+          start: [rowCount - fixedRowsEnd, colCount - fixedColsEnd],
+          end: [rowCount, colCount],
+        });
       }
-      arr.push([
-        [startRow, colCount - fixedColsEnd],
-        [endRow, colCount],
-      ]);
+      // range 6
+      arr.push({
+        colFixed: 'end',
+        rowFixed: false,
+        start: [startRow, colCount - fixedColsEnd],
+        end: [endRow, colCount],
+      });
     }
 
     if (fixedRowsStart) {
@@ -467,10 +509,12 @@ export class ReactHeadlessTableRenderer extends Logger {
        * and if we only have cols end, though we only push 1 range it will include section 1 and 2
        * and if we have no fixed cols, this will be one range that inclues 1, 2 and 3
        */
-      const fixedRowsStartRange: TableRenderRange = [
-        [0, startCol],
-        [fixedRowsStart, endCol],
-      ];
+      const fixedRowsStartRange: TableRenderRange = {
+        start: [0, startCol],
+        end: [fixedRowsStart, endCol],
+        rowFixed: 'start',
+        colFixed: false,
+      };
       arr.push(fixedRowsStartRange);
     }
 
@@ -478,10 +522,12 @@ export class ReactHeadlessTableRenderer extends Logger {
       /**
        * Likewise for fixedRowsEnd
        */
-      const fixedRowsEndRange: TableRenderRange = [
-        [rowCount - fixedRowsEnd, startCol],
-        [rowCount, endCol],
-      ];
+      const fixedRowsEndRange: TableRenderRange = {
+        rowFixed: 'end',
+        colFixed: false,
+        start: [rowCount - fixedRowsEnd, startCol],
+        end: [rowCount, endCol],
+      };
       arr.push(fixedRowsEndRange);
     }
 
@@ -605,6 +651,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       return;
     }
 
+    // console.log('render row', rowIndex);
+
     this.mappedCells.renderCellAtElement(
       rowIndex,
       colIndex,
@@ -618,6 +666,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       );
     }
 
+    // console.log('update', rowIndex, colIndex, renderedNode);
     itemUpdater(renderedNode);
 
     this.updateElementPosition(elementIndex);
@@ -626,6 +675,7 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private onMouseEnter = (rowIndex: number) => {
     this.currentHoveredRow = rowIndex;
+
     if (this.scrolling) {
       return;
     }
@@ -743,7 +793,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     const fixedEndColsOffsets = this.brain.getFixedEndColsOffsets();
     const fixedEndRowsOffsets = this.brain.getFixedEndRowsOffsets();
 
-    const [start, end] = this.brain.getRenderRange();
+    const { start, end } = this.brain.getRenderRange();
 
     const [startRow, startCol] = start;
     const [endRow, endCol] = end;
@@ -768,6 +818,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       }
       const itemPosition = brain.getCellOffset(rowIndex, colIndex);
       const node = itemDOMElements[elementIndex];
+      // console.log('adjusting', node);
 
       if (elementIndex != null && node && itemPosition) {
         fn(rowIndex, colIndex, node!, itemPosition, scrollPosition);
@@ -805,7 +856,10 @@ export class ReactHeadlessTableRenderer extends Logger {
       { y }: { y: number },
     ) {
       node.style.zIndex = `${cols - colIndex}`;
-      node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${y}px, 0)`;
+      const val = fixedEndColsOffsets[colIndex];
+      // console.log('value', val);
+
+      node.style.transform = `translate3d(${val}px, ${y}px, 0)`;
     }
 
     function adjustRowEnd(
@@ -941,9 +995,9 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   reset() {
-    this.itemDOMElements = {};
-    this.itemDOMRefs = {};
-    this.updaters = {};
+    this.itemDOMElements = [];
+    this.itemDOMRefs = [];
+    this.updaters = [];
     this.items = [];
     this.mappedCells.reset();
   }

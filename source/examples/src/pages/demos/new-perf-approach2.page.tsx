@@ -1,5 +1,5 @@
 import { TableRenderCellFnParam } from '@src/components/HeadlessTable/ReactHeadlessTableRenderer';
-// import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
+import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
 
 import * as React from 'react';
 import { MatrixBrain } from '@infinite-table/infinite-react/components/VirtualBrain/MatrixBrain';
@@ -56,23 +56,6 @@ export default function App() {
   //     width,
   //   });
   // }, [width, height]);
-
-  React.useEffect(() => {
-    brain.updateFixedCells({
-      fixedColsStart: 0,
-      fixedColsEnd: 2,
-      // fixedRowsStart: 2,
-      // fixedRowsEnd: 2,
-    });
-    brain.update({
-      rowHeight: 40,
-      colWidth: 150,
-      width,
-      height,
-      rows: 1500,
-      cols: 4,
-    });
-  }, [width, height]);
   return (
     <>
       <button
@@ -90,23 +73,18 @@ export default function App() {
         -
       </button>
       <div style={{ border: '2px solid red', padding: '10px' }}>
-        {/* <HeadlessTableWithPinnedContainers */}
-        <HeadlessTable
+        <HeadlessTableWithPinnedContainers
           brain={brain}
-          // rowHeight={40}
-          // colWidth={150}
-          // fixedColsStart={2}
-          // fixedColsEnd={2}
-          // fixedRowsStart={2}
-          // fixedRowsEnd={2}
+          rowHeight={40}
+          colWidth={150}
+          fixedColsStart={2}
+          fixedColsEnd={2}
+          fixedRowsStart={2}
+          fixedRowsEnd={2}
           cols={1100}
           rows={5000}
           height={height}
           width={width}
-          style={{
-            width,
-            height,
-          }}
           renderCell={renderCell}
         />
       </div>

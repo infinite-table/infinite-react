@@ -50,6 +50,7 @@ export function renderColumnHeaderGroups<T>(
             headerHeight={
               (columnGroupsMaxDepth - colGroupItem.depth + 2) * headerHeight
             }
+            width={col.computedWidth}
             column={col}
             columns={allVisibleColumns}
             virtualized={false}

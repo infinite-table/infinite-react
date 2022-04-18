@@ -48,6 +48,7 @@ function InfiniteTableHeaderFn<T>(
         <InfiniteTableHeaderCell<T>
           domRef={domRef}
           column={column}
+          width={column.computedWidth}
           headerHeight={headerHeight}
           columns={computedVisibleColumnsMap}
         />

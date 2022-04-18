@@ -19,7 +19,7 @@ import type { NonUndefined } from '../../types/NonUndefined';
 import { InfiniteTableColumn } from './InfiniteTableColumn';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
-import { VirtualBrain } from '../../VirtualBrain';
+import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 export type GroupByMap<T> = Map<
   keyof T,
@@ -36,8 +36,7 @@ export interface InfiniteTableSetupState<T> {
   onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
   bodySize: Size;
-  verticalVirtualBrain: VirtualBrain;
-  horizontalVirtualBrain: VirtualBrain;
+  brain: MatrixBrain;
   focused: boolean;
   ready: boolean;
   focusedWithin: boolean;

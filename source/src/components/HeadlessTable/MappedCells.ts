@@ -17,10 +17,10 @@ import { TableRenderRange } from '../VirtualBrain/MatrixBrain';
 export class MappedCells extends Logger {
   /**
    * This is the mapping from element index to cell info.
-   * The key in the map is the element index while the value is an array where
+   * The index in the array is the element index while the value at the position is an array where
    * the first number is the row index and the second number is the column index.
    */
-  private elementIndexToCell!: Map<number, [number, number]>;
+  private elementIndexToCell!: ([number, number] | null)[];
 
   /**
    * This is the mapping from cell address to element index.
@@ -32,7 +32,7 @@ export class MappedCells extends Logger {
   /**
    * Keeps the JSX of rendered elements in memory, so we can possibly reuse it later.
    */
-  private renderedElements!: Map<number, Renderable>;
+  private renderedElements!: Renderable[];
 
   constructor() {
     super(`MappedCells`);
@@ -45,9 +45,9 @@ export class MappedCells extends Logger {
   }
 
   init() {
-    this.elementIndexToCell = new Map();
+    this.elementIndexToCell = [];
     this.cellToElementIndex = new DeepMap();
-    this.renderedElements = new Map();
+    this.renderedElements = [];
   }
 
   reset() {
@@ -55,9 +55,9 @@ export class MappedCells extends Logger {
   }
 
   destroy() {
-    this.elementIndexToCell.clear();
+    this.elementIndexToCell = [];
     this.cellToElementIndex.clear();
-    this.renderedElements.clear();
+    this.renderedElements = [];
   }
 
   /**
@@ -71,14 +71,22 @@ export class MappedCells extends Logger {
    * @returns an array of element indexes that are outside the specified range
    */
   getElementsOutsideRenderRange = (range: TableRenderRange) => {
-    const [start, end] = range;
-    const entries = this.elementIndexToCell.entries();
+    const { start, end } = range;
     const [startRow, startCol] = start;
     const [endRow, endCol] = end;
 
     const result: number[] = [];
 
-    for (const [elementIndex, [rowIndex, colIndex]] of entries) {
+    for (
+      let elementIndex = 0, len = this.elementIndexToCell.length;
+      elementIndex < len;
+      elementIndex++
+    ) {
+      const entry = this.elementIndexToCell[elementIndex];
+      if (!entry) {
+        continue;
+      }
+      const [rowIndex, colIndex] = entry;
       const rowBefore = rowIndex < startRow;
       const rowAfter = rowIndex >= endRow;
 
@@ -100,7 +108,7 @@ export class MappedCells extends Logger {
   };
 
   isElementRendered = (elementIndex: number): boolean => {
-    return this.elementIndexToCell.has(elementIndex);
+    return !!this.elementIndexToCell[elementIndex];
   };
 
   getElementsForRowIndex = (rowIndex: number): number[] => {
@@ -108,13 +116,13 @@ export class MappedCells extends Logger {
   };
 
   getRenderedNodeAtElement = (elementIndex: number): Renderable | null => {
-    return this.renderedElements.get(elementIndex) || null;
+    return this.renderedElements[elementIndex] || null;
   };
 
   getRenderedCellAtElement = (
     elementIndex: number,
   ): [number, number] | null => {
-    const cell = this.elementIndexToCell.get(elementIndex);
+    const cell = this.elementIndexToCell[elementIndex];
     return cell || null;
   };
 
@@ -125,7 +133,7 @@ export class MappedCells extends Logger {
     const elementIndex = this.cellToElementIndex.get([rowIndex, columnIndex]);
 
     return elementIndex != null
-      ? this.renderedElements.get(elementIndex) || null
+      ? this.renderedElements[elementIndex] || null
       : null;
   };
 
@@ -152,15 +160,15 @@ export class MappedCells extends Logger {
 
     const key = [rowIndex, colIndex];
 
-    const currentCell = this.elementIndexToCell.get(elementIndex);
+    const currentCell = this.elementIndexToCell[elementIndex];
     if (currentCell) {
       this.cellToElementIndex.delete([currentCell[0], currentCell[1]]);
     }
     if (renderNode) {
-      this.renderedElements.set(elementIndex, renderNode);
+      this.renderedElements[elementIndex] = renderNode;
     }
 
-    this.elementIndexToCell.set(elementIndex, [rowIndex, colIndex]);
+    this.elementIndexToCell[elementIndex] = [rowIndex, colIndex];
     this.cellToElementIndex.set(key, elementIndex);
   };
 
@@ -169,19 +177,19 @@ export class MappedCells extends Logger {
     const elementIndex = this.cellToElementIndex.get(key);
 
     if (elementIndex != null) {
-      this.renderedElements.delete(elementIndex);
-      this.elementIndexToCell.delete(elementIndex);
+      this.renderedElements[elementIndex] = null;
+      this.elementIndexToCell[elementIndex] = null;
       this.cellToElementIndex.delete(key);
     }
   };
 
   discardElement = (elementIndex: number): [number, number] | null => {
-    const cell = this.elementIndexToCell.get(elementIndex);
+    const cell = this.elementIndexToCell[elementIndex];
     if (cell) {
       const key = [cell[0], cell[1]];
 
-      this.renderedElements.delete(elementIndex);
-      this.elementIndexToCell.delete(elementIndex);
+      this.renderedElements[elementIndex] = null;
+      this.elementIndexToCell[elementIndex] = null;
       this.cellToElementIndex.delete(key);
 
       return cell;
@@ -190,22 +198,31 @@ export class MappedCells extends Logger {
   };
 
   discardElementsStartingWith = (
-    elementIndex: number,
+    elIndex: number,
     callback?: (index: number, cell: [number, number] | null) => void,
   ) => {
     let discardedCell: [number, number] | null = null;
     let oneDiscarded: boolean = false;
-    do {
-      discardedCell = this.discardElement(elementIndex);
-      if (discardedCell) {
-        oneDiscarded = true;
+
+    if (elIndex < this.elementIndexToCell.length) {
+      for (
+        let elementIndex = elIndex, len = this.elementIndexToCell.length;
+        elementIndex < len;
+        elementIndex++
+      ) {
+        discardedCell = this.discardElement(elementIndex);
+        if (discardedCell) {
+          oneDiscarded = true;
+        }
         if (callback) {
           callback(elementIndex, discardedCell);
         }
       }
 
-      elementIndex++;
-    } while (discardedCell);
+      this.elementIndexToCell.length = elIndex;
+
+      this.renderedElements.length = elIndex;
+    }
 
     return oneDiscarded;
   };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { RefObject } from 'react';
+import { RefObject, useMemo } from 'react';
 
 import type {
   InfiniteTableContextValue,
@@ -31,10 +31,7 @@ import {
 import { InfiniteTableBody } from './components/InfiniteTableBody';
 
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
-import { VirtualScrollContainer } from '../VirtualScrollContainer';
-import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 
-import { useListRendering } from './hooks/useListRendering';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
 import { useLicense } from './hooks/useLicense/useLicense';
 import { CSSVariableWatch } from '../CSSVariableWatch';
@@ -44,14 +41,15 @@ import {
 } from '../hooks/useComponentState';
 import { useDOMProps } from './hooks/useDOMProps';
 import { LoadMask } from './components/LoadMask';
-import { display, position, zIndex, top, left } from './utilities.css';
+import { position, zIndex, top, left } from './utilities.css';
 import { join } from '../../utils/join';
 import { ThemeVars } from './theme.css';
 import { debounce } from '../utils/debounce';
-import { RenderRange } from '../VirtualBrain';
 import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
 import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
+import { HeadlessTable } from '../HeadlessTable';
+import { useCellRendering } from './hooks/useCellRendering';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -89,7 +87,7 @@ export const InfiniteTableComponent = React.memo(
       getState: getInfiniteTableState,
     } = useInfiniteTable<T>();
     const {
-      componentState: { dataArray, loading },
+      componentState: { loading },
       getState: getDataSourceState,
       componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
@@ -109,26 +107,12 @@ export const InfiniteTableComponent = React.memo(
       headerHeightCSSVar,
       components,
       scrollStopDelay,
+      brain,
     } = componentState;
 
     const { columnShifts, bodySize } = componentState;
 
-    const {
-      pinnedStartList,
-      pinnedEndList,
-      centerList,
-
-      pinnedEndScrollbarPlaceholder,
-      pinnedStartScrollbarPlaceholder,
-
-      repaintId,
-      scrollbars,
-      applyScrollVertical,
-      horizontalVirtualBrain,
-      verticalVirtualBrain,
-
-      reservedContentHeight,
-    } = useListRendering({
+    const { scrollbars, renderCell, repaintId } = useCellRendering({
       getComputed,
       domRef: componentState.domRef,
       columnShifts,
@@ -138,16 +122,18 @@ export const InfiniteTableComponent = React.memo(
 
     React.useEffect(() => {
       const dataSourceState = getDataSourceState();
-      console.log(scrollStopDelay);
       const onChange = debounce(
-        (renderRange: RenderRange) => {
-          dataSourceState.notifyRenderRangeChange(renderRange);
+        (renderRange: [number, number]) => {
+          dataSourceState.notifyRenderRangeChange({
+            renderStartIndex: renderRange[0],
+            renderEndIndex: renderRange[1],
+          });
         },
         { wait: scrollStopDelay },
       );
 
-      return verticalVirtualBrain.onRenderRangeChange(onChange);
-    }, [verticalVirtualBrain, scrollStopDelay]);
+      return brain.onVerticalRenderRangeChange(onChange);
+    }, [brain, scrollStopDelay]);
 
     const licenseValid = useLicense(licenseKey);
 
@@ -183,33 +169,25 @@ export const InfiniteTableComponent = React.memo(
       <div ref={domRef} {...domProps}>
         {header ? (
           <TableHeaderWrapper
-            brain={horizontalVirtualBrain}
+            brain={brain}
             repaintId={repaintId}
             scrollbars={scrollbars}
           />
         ) : null}
 
         <InfiniteTableBody>
-          <VirtualScrollContainer
-            ref={scrollerDOMRef as RefObject<HTMLDivElement>}
-            onContainerScroll={applyScrollVertical}
-            scrollable={ONLY_VERTICAL_SCROLLBAR}
-          >
-            <div className={display.flex}>
-              {pinnedStartList}
-              {centerList}
-              {pinnedEndList}
-            </div>
-
-            <SpacePlaceholder
-              count={dataArray.length}
-              width={0}
-              height={reservedContentHeight}
-            />
-          </VirtualScrollContainer>
-
-          {pinnedStartScrollbarPlaceholder}
-          {pinnedEndScrollbarPlaceholder}
+          <HeadlessTable
+            scrollStopDelay={scrollStopDelay}
+            brain={brain}
+            renderCell={renderCell}
+            // style={useMemo(
+            //   () => ({
+            //     height: bodySize.height,
+            //   }),
+            //   [],
+            // )}
+            scrollerDOMRef={scrollerDOMRef}
+          ></HeadlessTable>
 
           <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
         </InfiniteTableBody>

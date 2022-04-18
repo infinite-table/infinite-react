@@ -2,16 +2,15 @@ import * as React from 'react';
 import type { Scrollbars } from '../..';
 
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
-import { VirtualBrain } from '../../../VirtualBrain';
+import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 import { VerticalScrollbarPlaceholder } from '../ScrollbarPlaceholder';
 import { HeaderWrapperCls } from './header.css';
-import { InfiniteTableHeader } from './InfiniteTableHeader';
 import { InfiniteTableHeaderUnvirtualized } from './InfiniteTableHeaderUnvirtualized';
 
 export type TableHeaderWrapperProps = {
-  brain: VirtualBrain;
+  brain: MatrixBrain;
   scrollbars: Scrollbars;
   repaintId?: number | string;
 };
@@ -56,22 +55,23 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
         }
       : undefined;
 
-  const header = virtualizeHeader ? (
-    <InfiniteTableHeader
-      columns={computedUnpinnedColumns}
-      repaintId={virtualizeHeader ? repaintId : undefined}
-      brain={brain}
-      pinning={false}
-      style={{
-        position: 'absolute',
-        left: computedPinnedStartWidth,
-        width: computedUnpinnedColumnsWidth,
-        height: columnGroupsMaxDepth || headerHeight,
-      }}
-      availableWidth={computedUnpinnedColumnsWidth}
-      totalWidth={computedUnpinnedColumnsWidth}
-    />
-  ) : (
+  // const header = virtualizeHeader ? (
+  //   <InfiniteTableHeader
+  //     columns={computedUnpinnedColumns}
+  //     repaintId={virtualizeHeader ? repaintId : undefined}
+  //     brain={brain}
+  //     pinning={false}
+  //     style={{
+  //       position: 'absolute',
+  //       left: computedPinnedStartWidth,
+  //       width: computedUnpinnedColumnsWidth,
+  //       height: columnGroupsMaxDepth || headerHeight,
+  //     }}
+  //     availableWidth={computedUnpinnedColumnsWidth}
+  //     totalWidth={computedUnpinnedColumnsWidth}
+  //   />
+  // ) : (
+  const header = (
     <InfiniteTableHeaderUnvirtualized
       style={unvirtualizedStyle}
       brain={brain}

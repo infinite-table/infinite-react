@@ -30,8 +30,8 @@ export default test.describe.parallel('MatrixBrain', () => {
     const brain = new MatrixBrain();
 
     brain.update({
-      colSize: COL_SIZE,
-      rowSize: ROW_SIZE,
+      colWidth: COL_SIZE,
+      rowHeight: ROW_SIZE,
       width: WIDTH,
       height: HEIGHT,
       cols: COLS,
@@ -90,8 +90,8 @@ export default test.describe.parallel('MatrixBrain', () => {
     const brain = new MatrixBrain();
 
     brain.update({
-      colSize: COL_SIZE,
-      rowSize: ROW_SIZE,
+      colWidth: COL_SIZE,
+      rowHeight: ROW_SIZE,
       width: WIDTH,
       height: HEIGHT,
       cols: COLS,
@@ -122,8 +122,8 @@ export default test.describe.parallel('MatrixBrain', () => {
     const brain = new MatrixBrain();
 
     brain.update({
-      colSize: COL_SIZE,
-      rowSize: ROW_SIZE,
+      colWidth: COL_SIZE,
+      rowHeight: ROW_SIZE,
       width: WIDTH,
       height: HEIGHT,
       cols: COLS,
@@ -204,8 +204,8 @@ export default test.describe.parallel('MatrixBrain', () => {
     const brain = new MatrixBrain();
 
     brain.update({
-      colSize: COL_SIZE,
-      rowSize: ROW_SIZE,
+      colWidth: COL_SIZE,
+      rowHeight: ROW_SIZE,
       width: WIDTH,
       height: HEIGHT,
       cols: COLS,

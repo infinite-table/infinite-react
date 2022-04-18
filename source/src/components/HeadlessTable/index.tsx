@@ -8,62 +8,25 @@ import {
   useState,
 } from 'react';
 
-import { join } from '../../utils/join';
-
-import {
-  boxSizingBorderBox,
-  position,
-  transformTranslateZero,
-} from '../InfiniteTable/utilities.css';
-import { useResizeObserver } from '../ResizeObserver';
+import { setupResizeObserver } from '../ResizeObserver';
 
 import { ScrollPosition } from '../types/ScrollPosition';
 import { Size } from '../types/Size';
-import {
-  MatrixBrain,
-  MatrixBrainOptions,
-  SpanFunction,
-} from '../VirtualBrain/MatrixBrain';
+import { MatrixBrain, MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
 import { VirtualScrollContainer } from '../VirtualScrollContainer';
 import { RawTable } from './RawTable';
-import { TableRenderCellFnParam } from './ReactHeadlessTableRenderer';
+import { TableRenderCellFn } from './ReactHeadlessTableRenderer';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
-  rows: number;
-  cols: number;
-
   brain: MatrixBrain;
-
-  fixedColsStart?: number;
-  fixedColsEnd?: number;
-  fixedRowsStart?: number;
-  fixedRowsEnd?: number;
-
-  width: number;
-  height: number;
-
-  rowHeight: number;
-  colWidth: number;
-
-  renderCell: (params: TableRenderCellFnParam) => React.ReactNode;
-
-  rowspan?: SpanFunction;
-  colspan?: SpanFunction;
-
+  renderCell: TableRenderCellFn;
   scrollStopDelay?: number;
 };
 
-const measureSizeStyle: React.CSSProperties = {
-  position: 'absolute',
-  inset: 0, // this is same as top,left,bottom,right:0
-  pointerEvents: 'none',
-  zIndex: -1_000,
-};
-
-export function useMatrixBrain(
+export function useMatrixBrainLazy(
   brain: MatrixBrain,
   brainOptions: Partial<MatrixBrainOptions>,
   fixedCellsInfo: {
@@ -118,38 +81,85 @@ export function useMatrixBrain(
     brain,
   ]);
 }
-export function HeadlessTable(props: HeadlessTableProps) {
-  const brain = props.brain;
 
-  useEffect(() => {
-    if (props.scrollStopDelay != null) {
-      brain.setScrollStopDelay(props.scrollStopDelay);
-    }
-  }, [props.scrollStopDelay, brain]);
+export function useMatrixBrain(
+  brain: MatrixBrain,
+  brainOptions: Partial<MatrixBrainOptions>,
+  fixedCellsInfo?: {
+    fixedColsStart?: number;
+    fixedColsEnd?: number;
+    fixedRowsStart?: number;
+    fixedRowsEnd?: number;
+  },
+) {
+  if (
+    fixedCellsInfo &&
+    (fixedCellsInfo.fixedColsStart ||
+      fixedCellsInfo.fixedColsEnd ||
+      fixedCellsInfo.fixedRowsStart ||
+      fixedCellsInfo.fixedRowsEnd)
+  ) {
+    brain.updateFixedCells({
+      fixedColsStart: fixedCellsInfo.fixedColsStart,
+      fixedColsEnd: fixedCellsInfo.fixedColsEnd,
+      fixedRowsStart: fixedCellsInfo.fixedRowsStart,
+      fixedRowsEnd: fixedCellsInfo.fixedRowsEnd,
+    });
+  }
 
-  const [measureSize, setMeasureSize] = useState<Size | null>(null);
+  brain.update({
+    height: brainOptions.height,
+    width: brainOptions.width,
 
-  const size = measureSize || { width: props.width, height: props.height };
+    cols: brainOptions.cols,
+    rows: brainOptions.rows,
 
-  useMatrixBrain(
-    brain,
-    {
-      ...props,
-      height: size.height,
-      width: size.width,
-    },
-    {
-      fixedColsStart: props.fixedColsStart,
-      fixedColsEnd: props.fixedColsEnd,
-      fixedRowsStart: props.fixedRowsStart,
-      fixedRowsEnd: props.fixedRowsEnd,
-    },
-  );
+    colWidth: brainOptions.colWidth,
+    rowHeight: brainOptions.rowHeight,
+
+    rowspan: brainOptions.rowspan,
+    colspan: brainOptions.colspan,
+  });
+}
+export function HeadlessTable(
+  props: HeadlessTableProps & React.HTMLProps<HTMLDivElement>,
+) {
+  const { brain, scrollerDOMRef, scrollStopDelay, renderCell, ...domProps } =
+    props;
 
   const domRef = useRef<HTMLDivElement>(null);
-  const measureSizeRef = useRef<HTMLDivElement>(null);
 
-  useResizeObserver(measureSizeRef, setMeasureSize);
+  const [scrollSize, setTotalScrollSize] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  useEffect(() => {
+    if (scrollStopDelay != null) {
+      brain.setScrollStopDelay(scrollStopDelay);
+    }
+  }, [scrollStopDelay, brain]);
+
+  useEffect(() => {
+    const node = domRef.current?.parentNode as HTMLElement;
+    if (!node) {
+      return;
+    }
+    const onResize = () => {
+      // it's not enough to read the size from onResize
+      // since that doesn't account for scrollbar presence and size
+      // so we need to read it from the DOM from clientWidth/clientHeight
+      const size: Size = {
+        height: node.clientHeight,
+        width: node.clientWidth,
+      };
+
+      brain.update(size);
+    };
+    const remove = setupResizeObserver(node, onResize);
+
+    return remove;
+  }, []);
 
   const onContainerScroll = useCallback(
     (scrollPos: ScrollPosition) => {
@@ -159,11 +169,6 @@ export function HeadlessTable(props: HeadlessTableProps) {
     [brain],
   );
 
-  const [scrollSize, setTotalScrollSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
   useEffect(() => {
     const removeOnRenderCount = brain.onRenderCountChange(() => {
       setTotalScrollSize(brain.getTotalSize());
@@ -171,53 +176,23 @@ export function HeadlessTable(props: HeadlessTableProps) {
 
     setTotalScrollSize(brain.getTotalSize());
 
-    return () => {
-      removeOnRenderCount();
-    };
+    return removeOnRenderCount;
   }, [brain]);
 
   return (
-    <div
-      className={join(
-        transformTranslateZero,
-        position.relative,
-        boxSizingBorderBox,
-      )}
-      style={{
-        width: props.width,
-        height: props.height,
-      }}
+    <VirtualScrollContainer
+      onContainerScroll={onContainerScroll}
+      {...domProps}
+      ref={scrollerDOMRef as RefObject<HTMLDivElement>}
     >
-      <VirtualScrollContainer
-        onContainerScroll={onContainerScroll}
-        ref={props.scrollerDOMRef as RefObject<HTMLDivElement>}
+      <div
+        ref={domRef}
+        className={scrollTransformTargetCls}
+        data-name="scroll-transform-target"
       >
-        <div
-          ref={domRef}
-          className={scrollTransformTargetCls}
-          data-name="scroll-transform-target"
-        >
-          <RawTable
-            fixedColsStart={props.fixedColsStart}
-            fixedColsEnd={props.fixedColsEnd}
-            fixedRowsStart={props.fixedRowsStart}
-            fixedRowsEnd={props.fixedRowsEnd}
-            renderCell={props.renderCell}
-            brain={brain}
-          />
-        </div>
-        <SpacePlaceholder
-          count={props.rows}
-          width={scrollSize.width}
-          height={scrollSize.height}
-        />
-        {/**
-         * we need this size measurer, even though we have props.width and props.height passed down to us
-         * because this measurer also accounts for scrollbars showing/hiding which changes the
-         * dimensions of the space available for virtualization
-         */}
-        <div ref={measureSizeRef} style={measureSizeStyle} />
-      </VirtualScrollContainer>
-    </div>
+        <RawTable renderCell={renderCell} brain={brain} />
+      </div>
+      <SpacePlaceholder width={scrollSize.width} height={scrollSize.height} />
+    </VirtualScrollContainer>
   );
 }

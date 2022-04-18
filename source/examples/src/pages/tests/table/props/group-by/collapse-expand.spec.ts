@@ -7,13 +7,11 @@ export default test.describe.parallel('Table', () => {
   });
 
   test('cell content is there', async ({ page }) => {
-    // wait for rendering
-
-    await page.waitForSelector('[data-row-index]');
-
     const getRowCount = async () =>
       await page.evaluate(
-        () => document.querySelectorAll('[data-row-index]').length,
+        () =>
+          document.querySelectorAll('[data-row-index][data-col-index="0"]')
+            .length,
       );
 
     let count = await getRowCount();

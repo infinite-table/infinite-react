@@ -14,11 +14,6 @@ import {
 export type RawTableProps = {
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
-
-  fixedColsStart?: number;
-  fixedColsEnd?: number;
-  fixedRowsStart?: number;
-  fixedRowsEnd?: number;
 };
 
 function createRenderer(brain: MatrixBrain) {
@@ -42,18 +37,6 @@ export function RawTableFn(props: RawTableProps) {
     return createRenderer(brain);
   }, [brain]);
 
-  // useEffect(() => {
-  //   const removeOnScroll = brain.onScroll(renderer.adjustElementsOnScroll);
-  //   const removeOnSizeChange = brain.onAvailableSizeChange(() => {
-  //     renderer.adjustElementsOnScroll();
-  //   });
-
-  //   return () => {
-  //     removeOnScroll();
-  //     removeOnSizeChange();
-  //   };
-  // }, [brain]);
-
   useEffect(() => {
     const renderRange = brain.getRenderRange();
 
@@ -64,20 +47,20 @@ export function RawTableFn(props: RawTableProps) {
     });
   }, [renderer, brain, renderCell, onRenderUpdater]);
 
-  // (globalThis as any).brain = brain;
-  // (globalThis as any).renderer = renderer;
+  (globalThis as any).brain = brain;
+  (globalThis as any).renderer = renderer;
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {
       renderer.renderRange(renderRange, {
-        force: false,
+        force: false, // TODO should be false
         onRender: onRenderUpdater,
         renderCell,
       });
     });
 
     return remove;
-  }, []);
+  }, [renderCell]);
 
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }

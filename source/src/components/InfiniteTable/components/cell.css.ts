@@ -1,5 +1,5 @@
 import { style, styleVariants } from '@vanilla-extract/css';
-import { recipe } from '@vanilla-extract/recipes';
+import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 
 import { ThemeVars } from '../theme.css';
 import {
@@ -73,16 +73,33 @@ export const ColumnCellVariantsObject = {
   pinnedEndFirstInCategory: {
     borderLeft: ThemeVars.components.Cell.border,
     vars: {
-      [ThemeVars.components.Cell.border]:
-        ThemeVars.components.Cell.borderInvisible,
+      // [ThemeVars.components.Cell.border]:
+      //   ThemeVars.components.Cell.borderInvisible,
     },
   },
 };
 
 export const ColumnCellRecipe = recipe({
-  base: [position.absolute, height['100%'], background.inherit, top['0']],
+  base: [
+    position.absolute,
+    height['100%'],
+    background.inherit,
+    top['0'],
+    {
+      color: ThemeVars.components.Cell.color,
+    },
+  ],
   variants: {
     dragging: { false: {} },
+    zebra: {
+      false: {},
+      even: {
+        background: ThemeVars.components.Row.background,
+      },
+      odd: {
+        background: ThemeVars.components.Row.oddBackground,
+      },
+    },
     first: {
       true: {
         borderTopLeftRadius: ThemeVars.components.Cell.borderRadius,
@@ -133,3 +150,5 @@ export const ColumnCellRecipe = recipe({
     },
   ],
 });
+
+export type ColumnCellVariantsType = RecipeVariants<typeof ColumnCellRecipe>;

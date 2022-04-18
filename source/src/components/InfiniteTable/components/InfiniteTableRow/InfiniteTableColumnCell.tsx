@@ -45,7 +45,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     rowInfo,
     getData,
+    width,
     column,
+    onMouseLeave,
+    onMouseEnter,
     offsetProperty,
     toggleGroupRow,
     virtualized,
@@ -53,10 +56,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowHeight,
     domRef,
     hidden,
+    showZebraRows,
   } = props;
 
   if (!column) {
-    return null;
+    return <div ref={domRef}>no column</div>;
   }
 
   const { data, isGroupRow, groupBy } = rowInfo;
@@ -155,53 +159,38 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       : column.style
     : undefined;
 
-  const style = colStyle
+  const style: React.CSSProperties = colStyle
     ? {
         ...colStyle,
-        width: column.computedWidth,
       }
-    : {
-        width: column.computedWidth,
-      };
+    : {};
 
-  const dataset: any = {
-    'data-name': `Cell`,
-    'data-column-id': column.id,
-    'data-column-index': column.computedVisibleIndex,
-  };
+  style.width = width;
+  style.height = rowHeight;
 
-  if (typeof column.rowspan === 'function') {
-    const rowspan = column.rowspan({
-      dataArray: getData(),
-      column,
-      rowInfo: rowInfo,
-      rowIndex,
-      data: rowInfo.data,
-    });
+  const odd =
+    (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
 
-    if (rowspan > 1) {
-      style.height = rowspan * rowHeight;
+  const zebra = showZebraRows ? (odd ? 'odd' : 'even') : false;
 
-      for (let i = 0; i < rowspan; i++) {
-        dataset[`data-hover-${rowIndex + i}`] = true;
-      }
-    }
-  }
-  const cellProps: InfiniteTableCellProps<T> = {
+  const cellProps: InfiniteTableCellProps<T> &
+    React.HTMLAttributes<HTMLElement> = {
     domRef,
     offsetProperty,
-    ...dataset,
     cellType: 'body',
     column,
+    width,
     offset: virtualized ? 0 : column.computedPinningOffset,
     style,
+    onMouseLeave,
+    onMouseEnter,
     cssEllipsis: column.cssEllipsis ?? true,
     className: join(
       useCellClassName(
         column,
         [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
         ColumnCellRecipe,
-        { dragging: false },
+        { dragging: false, zebra },
       ),
       colClassName,
     ),

@@ -16,7 +16,6 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
   const rafId = useRef<any>(null);
 
   useLayoutEffect(() => {
-    // register to updater changes
     const remove = props.updater.onChange((children) => {
       // so when updater triggers a change
       // we can re-render and set the children
