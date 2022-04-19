@@ -19,8 +19,6 @@ export default function App() {
       colFixed,
       onMouseEnter,
       onMouseLeave,
-      width,
-      height,
       domRef,
     } = param;
     return (

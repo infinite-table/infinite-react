@@ -115,6 +115,11 @@ export const HeaderCellRecipe = recipe({
     },
   ],
   variants: {
+    zebra: {
+      false: {},
+      even: {},
+      odd: {},
+    },
     dragging: {
       true: {
         zIndex: 100,

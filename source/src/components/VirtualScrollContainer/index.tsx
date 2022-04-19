@@ -18,6 +18,7 @@ export interface VirtualScrollContainerProps {
   children?: Renderable;
 
   scrollable?: Scrollable;
+  tabIndex?: number;
 
   onContainerScroll?: (scrollPos: {
     scrollTop: number;
@@ -35,6 +36,7 @@ export const VirtualScrollContainer = React.forwardRef(
       scrollable = true,
       onContainerScroll,
       className,
+      tabIndex,
       style,
     } = props;
 
@@ -46,6 +48,7 @@ export const VirtualScrollContainer = React.forwardRef(
       <div
         ref={domRef}
         style={style}
+        tabIndex={tabIndex}
         className={join(
           className,
           rootClassName,

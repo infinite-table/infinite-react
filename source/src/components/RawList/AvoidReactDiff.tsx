@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { Renderable } from '../types/Renderable';
 import type { SubscriptionCallback } from '../types/SubscriptionCallback';
@@ -15,7 +15,7 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
 
   const rafId = useRef<any>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const remove = props.updater.onChange((children) => {
       // so when updater triggers a change
       // we can re-render and set the children

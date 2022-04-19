@@ -47,7 +47,7 @@ export function InfiniteTableHeaderCell<T>(
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
   const columns: Map<string, InfiniteTableComputedColumn<T>> = props.columns;
-  const { onResize, virtualized = true, headerHeight } = props;
+  const { onResize, virtualized = true, headerHeight, width } = props;
   let { cssPosition, offset: offsetFromProps } = props;
 
   if (virtualized === false) {
@@ -142,7 +142,7 @@ export function InfiniteTableHeaderCell<T>(
         style={{
           position: 'absolute',
           height: headerHeight,
-          width: column.computedWidth,
+          width,
           left:
             column.computedAbsoluteOffset +
             draggingDiff.left +
@@ -172,6 +172,7 @@ export function InfiniteTableHeaderCell<T>(
         data-name={`HeaderCell`}
         data-column-id={column.id}
         style={style}
+        width={width}
         offset={offset}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
@@ -184,7 +185,7 @@ export function InfiniteTableHeaderCell<T>(
             column,
             [InfiniteTableHeaderCellClassName, InfiniteTableCellClassName],
             HeaderCellRecipe,
-            { dragging },
+            { dragging, zebra: false },
           ),
           CellCls,
         )}

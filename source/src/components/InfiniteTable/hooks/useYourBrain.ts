@@ -6,7 +6,6 @@ import { Size } from '../../types/Size';
 
 import { MatrixBrain, SpanFunction } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableComputedColumn } from '../types';
-import { useColumnSizeFn } from './useColumnSizeFn';
 
 type UseYourBrainParam<T = any> = {
   brain: MatrixBrain;

@@ -1,4 +1,4 @@
-import { ColumnCellVariantsType } from '../components/cell.css';
+import type { ColumnCellVariantsType } from '../components/cell.css';
 
 import { InfiniteTableComputedColumn } from '../types';
 

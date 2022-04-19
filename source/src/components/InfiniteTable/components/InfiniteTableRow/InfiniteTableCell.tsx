@@ -32,6 +32,7 @@ function InfiniteTableCellFn<T>(
     offsetProperty = 'left',
     column,
     domRef,
+    width,
 
     afterChildren,
     beforeChildren,
@@ -48,8 +49,7 @@ function InfiniteTableCellFn<T>(
 
   const shifting = !!columnShifts;
   const style: React.CSSProperties = {
-    width: column.computedWidth,
-    left: offset ?? 0,
+    width,
     ...domProps.style,
   };
 

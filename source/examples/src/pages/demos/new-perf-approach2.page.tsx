@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { TableRenderCellFnParam } from '@src/components/HeadlessTable/ReactHeadlessTableRenderer';
 import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
 

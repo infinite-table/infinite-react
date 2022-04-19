@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { RefObject, useMemo } from 'react';
+import { RefObject } from 'react';
 
 import type {
   InfiniteTableContextValue,
@@ -111,7 +111,9 @@ export const InfiniteTableComponent = React.memo(
 
     const { columnShifts, bodySize } = componentState;
 
-    const { scrollbars, renderCell, repaintId } = useCellRendering({
+    const { scrollbars } = computed;
+
+    const { renderCell, repaintId } = useCellRendering({
       getComputed,
       domRef: componentState.domRef,
       columnShifts,
@@ -177,6 +179,7 @@ export const InfiniteTableComponent = React.memo(
 
         <InfiniteTableBody>
           <HeadlessTable
+            tabIndex={0}
             scrollStopDelay={scrollStopDelay}
             brain={brain}
             renderCell={renderCell}
@@ -247,12 +250,6 @@ function InfiniteTableContextProvider<T>() {
         height: size.height,
       };
       bodySize.width = scrollerDOMRef.current?.scrollWidth ?? bodySize.width;
-      const state = getState();
-
-      if (!state.virtualizeHeader) {
-        componentActions.bodySize = bodySize;
-        return;
-      }
 
       componentActions.bodySize = bodySize;
     },

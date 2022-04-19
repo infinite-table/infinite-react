@@ -10,13 +10,14 @@ import {
   HeaderGroup_Children,
   HeaderGroup_Header,
 } from './header.css';
+import { useCallback, useRef } from 'react';
 
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
 export function InfiniteTableHeaderGroup<T>(
   props: InfiniteTableHeaderGroupProps<T>,
 ) {
-  const { columnGroup, height, headerHeight } = props;
+  const { columnGroup, height, headerHeight, width } = props;
 
   let { header } = columnGroup;
 
@@ -26,18 +27,23 @@ export function InfiniteTableHeaderGroup<T>(
     });
   }
   const style: React.CSSProperties = {
-    width: columnGroup.computedWidth,
+    width,
     height,
   };
+  const domRef = useRef<HTMLElement | null>(null);
+  const ref = useCallback(
+    (node: HTMLElement | null) => {
+      domRef.current = node;
+      props.domRef?.(node);
+    },
+    [props.domRef],
+  );
 
   return (
     <div
+      ref={ref}
       data-group-id={columnGroup.id}
-      className={join(
-        HeaderGroupCls,
-        TableHeaderGroupClassName,
-        `${TableHeaderGroupClassName}--unvirtualized`,
-      )}
+      className={join(HeaderGroupCls, TableHeaderGroupClassName)}
       style={style}
     >
       <div

@@ -44,6 +44,28 @@ export class MappedCells extends Logger {
     // }
   }
 
+  getElementFromListForColumn = (
+    elementsOutsideItemRange: number[],
+    colIndex: number,
+  ): number | undefined => {
+    const { elementIndexToCell } = this;
+    const last = elementsOutsideItemRange.length - 1;
+    for (let i = last; i >= 0; i--) {
+      const elementIndex = elementsOutsideItemRange[i];
+
+      const cell = elementIndexToCell[elementIndex];
+      if (cell && cell[1] === colIndex) {
+        if (i === last) {
+          return elementsOutsideItemRange.pop();
+        }
+        elementsOutsideItemRange.splice(i, 1);
+        // console.log('found ', elementIndex, 'at index', i, 'for col', colIndex);
+        return elementIndex;
+      }
+    }
+    return elementsOutsideItemRange.pop();
+  };
+
   init() {
     this.elementIndexToCell = [];
     this.cellToElementIndex = new DeepMap();

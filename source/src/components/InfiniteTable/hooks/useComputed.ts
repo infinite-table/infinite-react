@@ -1,18 +1,16 @@
-import { InfiniteTableState, InfiniteTableComputedValues } from '../types';
-
-import { DataSourceSingleSortInfo } from '../../DataSource/types';
-import { useComputedVisibleColumns } from './useComputedVisibleColumns';
-
-import { sortAscending } from '../../../utils/DeepMap/sortAscending';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
+import type { DataSourceSingleSortInfo } from '../../DataSource/types';
+import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
+
+import { useComputedVisibleColumns } from './useComputedVisibleColumns';
+import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 import { useComponentState } from '../../hooks/useComponentState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useColumnGroups } from './useColumnGroups';
 import { useColumnsWhen } from './useColumnsWhen';
-import { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
 import { useColumnSizeFn } from './useColumnSizeFn';
-import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState } =
@@ -107,7 +105,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnOrder,
 
     columnVisibility,
-    columnVisibilityAssumeVisible: true, //props.columnVisibilityAssumeVisible,
+    columnVisibilityAssumeVisible: true,
 
     columnPinning,
 
@@ -148,46 +146,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
         }
       : undefined;
   }, [computedVisibleColumns]);
-
-  const unpinnedColumnWidths = computedUnpinnedColumns.map(
-    (c) => c.computedWidth,
-  );
-
-  let sortedUnpinnedColumnWidths: number[] = [...unpinnedColumnWidths].sort(
-    sortAscending,
-  );
-
-  let unpinnedColumnRenderCount = 0;
-  let colWidthSum = 0;
-
-  const unpinnedViewportSize =
-    bodySize.width -
-    computedPinnedEndColumnsWidth -
-    computedPinnedStartColumnsWidth;
-  while (unpinnedViewportSize > 0 && colWidthSum <= unpinnedViewportSize) {
-    colWidthSum += sortedUnpinnedColumnWidths[unpinnedColumnRenderCount];
-    unpinnedColumnRenderCount++;
-  }
-  if (unpinnedViewportSize > 0) {
-    unpinnedColumnRenderCount++;
-  }
-  unpinnedColumnRenderCount = Math.min(
-    unpinnedColumnRenderCount,
-    computedUnpinnedColumns.length,
-  );
-
-  let columnRenderStartIndex = 0;
-
-  const scrollLeft = componentState.scrollPosition.scrollLeft;
-
-  colWidthSum = 0;
-  while (colWidthSum < scrollLeft) {
-    colWidthSum += unpinnedColumnWidths[columnRenderStartIndex];
-    columnRenderStartIndex++;
-  }
-  if (colWidthSum > scrollLeft) {
-    columnRenderStartIndex--;
-  }
 
   const computedPinnedStartOverflow = computedPinnedStartWidth
     ? computedPinnedStartColumnsWidth > computedPinnedStartWidth
@@ -240,7 +198,5 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedUnpinnedColumnsWidth,
     computedUnpinnedOffset,
     computedPinnedEndOffset,
-    unpinnedColumnRenderCount,
-    columnRenderStartIndex,
   };
 }

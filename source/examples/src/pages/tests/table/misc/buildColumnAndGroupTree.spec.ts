@@ -1,3 +1,5 @@
+import { test, expect } from '@playwright/test';
+
 import {
   buildColumnAndGroupTree,
   ColGroupTreeGroupItem,
@@ -12,6 +14,7 @@ function getComputedColumn<T>(config: {
   field: keyof T;
   computedWidth?: number;
   columnGroup?: string;
+  index: number;
 }): InfiniteTableComputedColumn<T> {
   return {
     computedAbsoluteOffset: 0,
@@ -30,7 +33,7 @@ function getComputedColumn<T>(config: {
     computedSorted: false,
     computedSortedAsc: false,
     computedSortedDesc: false,
-    computedVisibleIndex: 0,
+    computedVisibleIndex: config.index,
     computedWidth: 100,
 
     toggleSort: () => {},
@@ -51,8 +54,10 @@ type Person = {
   id: number;
 };
 
-export default describe('buildColumnAndGroupTree', () => {
-  it('should work correctly for groups that dont repeat twice', () => {
+export default test.describe.parallel('buildColumnAndGroupTree', () => {
+  test.only('should work correctly for groups that dont repeat twice', async ({
+    page,
+  }) => {
     const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
       ['contact info', { header: 'Contact info' }],
       ['street', { header: 'street', columnGroup: 'address' }],
@@ -62,40 +67,48 @@ export default describe('buildColumnAndGroupTree', () => {
       getComputedColumn({
         field: 'id',
         computedWidth: 10,
+        index: 0,
       }),
       getComputedColumn({
         field: 'firstName',
         computedWidth: 20,
+        index: 1,
       }),
       getComputedColumn({
         field: 'streetName',
         columnGroup: 'street',
         computedWidth: 30,
+        index: 2,
       }),
       getComputedColumn({
         field: 'streetNo',
         columnGroup: 'street',
         computedWidth: 50,
+        index: 3,
       }),
       getComputedColumn({
         field: 'country',
         columnGroup: 'address',
         computedWidth: 70,
+        index: 4,
       }),
       getComputedColumn({
         field: 'city',
         columnGroup: 'address',
         computedWidth: 100,
+        index: 5,
       }),
       getComputedColumn({
         field: 'email',
         columnGroup: 'contact info',
         computedWidth: 200,
+        index: 6,
       }),
       getComputedColumn({
         field: 'phone',
         columnGroup: 'contact info',
         computedWidth: 500,
+        index: 7,
       }),
     ];
     const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
@@ -115,13 +128,60 @@ export default describe('buildColumnAndGroupTree', () => {
      *
      */
 
-    const tree = buildColumnAndGroupTree<Person>(
+    const { tree, pathsToCells } = buildColumnAndGroupTree<Person>(
       columns,
       columnGroups,
       columnGroupsDepthsMap,
+      1,
     );
 
     expect(tree.length).toEqual(4);
+
+    expect(pathsToCells.get([0, 0])).toMatchObject({
+      id: 'id',
+      type: 'column',
+    });
+    expect(pathsToCells.get([1, 0])).toMatchObject({
+      id: 'id',
+      type: 'column',
+    });
+    expect(pathsToCells.get([2, 0])).toMatchObject({
+      id: 'id',
+      type: 'column',
+    });
+
+    expect(pathsToCells.get([0, 1])).toMatchObject({
+      id: 'firstName',
+      type: 'column',
+    });
+    expect(pathsToCells.get([1, 1])).toMatchObject({
+      id: 'firstName',
+      type: 'column',
+    });
+    expect(pathsToCells.get([2, 1])).toMatchObject({
+      id: 'firstName',
+      type: 'column',
+    });
+    expect(pathsToCells.get([0, 2])).toMatchObject({
+      id: 'address',
+      type: 'group',
+    });
+    expect(pathsToCells.get([0, 3])).toMatchObject({
+      id: 'address',
+      type: 'group',
+    });
+    expect(pathsToCells.get([0, 4])).toMatchObject({
+      id: 'address',
+      type: 'group',
+    });
+    expect(pathsToCells.get([0, 5])).toMatchObject({
+      id: 'address',
+      type: 'group',
+    });
+    expect(pathsToCells.get([1, 2])).toMatchObject({
+      id: 'street',
+      type: 'group',
+    });
 
     expect(tree[0]).toMatchObject({
       id: 'id',
@@ -242,7 +302,7 @@ export default describe('buildColumnAndGroupTree', () => {
     });
   });
 
-  it('should work correctly for groups that are repeated', () => {
+  test('should work correctly for groups that are repeated', () => {
     const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
       ['contact info', { header: 'Contact info' }],
       ['street', { header: 'street', columnGroup: 'address' }],
@@ -254,40 +314,49 @@ export default describe('buildColumnAndGroupTree', () => {
         field: 'streetNo',
         columnGroup: 'street',
         computedWidth: 50,
+        index: 0,
       }),
       getComputedColumn({
         field: 'city',
         columnGroup: 'location',
         computedWidth: 100,
+        index: 1,
       }),
       getComputedColumn({
         field: 'firstName',
         computedWidth: 20,
+        index: 2,
       }),
+
       getComputedColumn({
         field: 'streetName',
         columnGroup: 'street',
         computedWidth: 30,
+        index: 3,
       }),
       getComputedColumn({
         field: 'country',
         columnGroup: 'location',
         computedWidth: 100,
+        index: 4,
       }),
       getComputedColumn({
         field: 'region',
         columnGroup: 'location',
         computedWidth: 120,
+        index: 5,
       }),
       getComputedColumn({
         field: 'email',
         columnGroup: 'contact info',
         computedWidth: 200,
+        index: 6,
       }),
       getComputedColumn({
         field: 'phone',
         columnGroup: 'contact info',
         computedWidth: 500,
+        index: 7,
       }),
     ];
     const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
@@ -305,10 +374,11 @@ export default describe('buildColumnAndGroupTree', () => {
      *       50           100       20         30                     100      120      200      500
      */
 
-    const tree = buildColumnAndGroupTree<Person>(
+    const { tree } = buildColumnAndGroupTree<Person>(
       columns,
       columnGroups,
       columnGroupsDepthsMap,
+      1,
     );
 
     expect(tree.length).toEqual(4);
@@ -456,7 +526,7 @@ export default describe('buildColumnAndGroupTree', () => {
     });
   });
 
-  it('should work correctly for groups that are repeated - case 2', () => {
+  test('should work correctly for groups that are repeated - case 2', () => {
     const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
       ['contact info', { header: 'Contact info' }],
       ['street', { header: 'street', columnGroup: 'address' }],
@@ -468,41 +538,49 @@ export default describe('buildColumnAndGroupTree', () => {
         field: 'streetNo',
         columnGroup: 'street',
         computedWidth: 50,
+        index: 0,
       }),
       getComputedColumn({
         field: 'city',
         columnGroup: 'location',
         computedWidth: 100,
+        index: 1,
       }),
 
       getComputedColumn({
         field: 'streetName',
         columnGroup: 'street',
         computedWidth: 30,
+        index: 2,
       }),
       getComputedColumn({
         field: 'firstName',
         computedWidth: 20,
+        index: 3,
       }),
       getComputedColumn({
         field: 'country',
         columnGroup: 'location',
         computedWidth: 100,
+        index: 4,
       }),
       getComputedColumn({
         field: 'region',
         columnGroup: 'location',
         computedWidth: 120,
+        index: 5,
       }),
       getComputedColumn({
         field: 'email',
         columnGroup: 'contact info',
         computedWidth: 200,
+        index: 6,
       }),
       getComputedColumn({
         field: 'phone',
         columnGroup: 'contact info',
         computedWidth: 500,
+        index: 7,
       }),
     ];
     const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
@@ -519,10 +597,11 @@ export default describe('buildColumnAndGroupTree', () => {
      * widths
      *       50           100       30         20                     100      120      200      500
      */
-    const tree = buildColumnAndGroupTree<Person>(
+    const { tree } = buildColumnAndGroupTree<Person>(
       columns,
       columnGroups,
       columnGroupsDepthsMap,
+      1,
     );
 
     expect(tree.length).toEqual(4);
@@ -585,7 +664,7 @@ export default describe('buildColumnAndGroupTree', () => {
     });
   });
 
-  it('should work for very complicated scenario', () => {
+  test('should work for very complicated scenario', () => {
     type Alphabet = {
       d: string;
       e: string;
@@ -606,26 +685,31 @@ export default describe('buildColumnAndGroupTree', () => {
         field: 'd',
         columnGroup: 'c',
         computedWidth: 10,
+        index: 0,
       }),
       getComputedColumn({
         field: 'e',
         columnGroup: 'b',
         computedWidth: 20,
+        index: 1,
       }),
       getComputedColumn({
         field: 'f',
         columnGroup: 'a',
         computedWidth: 30,
+        index: 2,
       }),
       getComputedColumn({
         field: 'l',
         columnGroup: 'h',
         computedWidth: 40,
+        index: 3,
       }),
       getComputedColumn({
         field: 'k',
         columnGroup: 'a',
         computedWidth: 50,
+        index: 4,
       }),
     ];
     const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
@@ -648,10 +732,11 @@ export default describe('buildColumnAndGroupTree', () => {
      *
      */
 
-    const tree = buildColumnAndGroupTree<Alphabet>(
+    const { tree } = buildColumnAndGroupTree<Alphabet>(
       columns,
       columnGroups,
       columnGroupsDepthsMap,
+      3,
     );
 
     expect(tree.length).toEqual(1);

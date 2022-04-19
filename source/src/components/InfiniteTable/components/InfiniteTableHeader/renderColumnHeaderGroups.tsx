@@ -38,6 +38,7 @@ export function renderColumnHeaderGroups<T>(
     columns,
     columnGroups,
     columnGroupsDepthsMap,
+    columnGroupsMaxDepth,
   );
 
   function toJSX(items: ColGroupTreeItem<T>[]): JSX.Element[] {

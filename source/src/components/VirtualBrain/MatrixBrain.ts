@@ -82,6 +82,7 @@ export type OnAvailableSizeChange = (size: Size) => void;
 export class MatrixBrain extends Logger {
   private scrolling: boolean = false;
   private width: MatrixBrainOptions['width'] = 0;
+
   private height: MatrixBrainOptions['height'] = 0;
 
   private cols: MatrixBrainOptions['cols'] = 0;
@@ -157,27 +158,39 @@ export class MatrixBrain extends Logger {
    * Number of rows that are fixed at the end
    */
   private fixedRowsEnd: number = 0;
-  private _updateRenderCountRafId?: number = 0;
 
   constructor() {
     super(`MatrixBrain`);
     this.reset();
   }
 
-  private reset() {
+  private reset(which: WhichDirection = ALL_DIRECTIONS) {
+    if (which.vertical) {
+      this.resetVertical();
+    }
+
+    if (which.horizontal) {
+      this.resetHorizontal();
+    }
+
+    this.extraSpanCells = [];
+  }
+
+  private resetVertical() {
     this.rowspanParent = new Map();
     this.rowspanValue = new Map();
     this.rowHeightCache = [];
     this.rowOffsetCache = [0];
     this.verticalRenderCount = 0;
-
+    this.verticalTotalSize = 0;
+  }
+  private resetHorizontal() {
     this.colspanParent = new Map();
     this.colspanValue = new Map();
     this.colWidthCache = [];
     this.colOffsetCache = [0];
     this.horizontalRenderCount = 0;
-
-    this.extraSpanCells = [];
+    this.horizontalTotalSize = 0;
   }
 
   public setScrollStopDelay = (scrollStopDelay: number) => {
@@ -350,6 +363,7 @@ export class MatrixBrain extends Logger {
     //   cancelAnimationFrame(this._updateRenderCountRafId);
     // }
     // this._updateRenderCountRafId = requestAnimationFrame(() => {
+    this.reset(which);
     this.doUpdateRenderCount(which);
     //   delete this._updateRenderCountRafId;
     // });
@@ -400,7 +414,10 @@ export class MatrixBrain extends Logger {
     }
   };
 
-  public setScrollPosition = (scrollPosition: ScrollPosition) => {
+  public setScrollPosition = (
+    scrollPosition: ScrollPosition,
+    callback?: (scrollPos: ScrollPosition) => void,
+  ) => {
     this.setScrolling(true);
     const changeHorizontal =
       scrollPosition.scrollLeft !== this.scrollPosition.scrollLeft;
@@ -410,6 +427,7 @@ export class MatrixBrain extends Logger {
     this.scrollPosition = scrollPosition;
 
     if (changeHorizontal || changeVertical) {
+      callback?.(scrollPosition);
       this.updateRenderRange({
         horizontal: changeHorizontal,
         vertical: changeVertical,
@@ -824,6 +842,7 @@ export class MatrixBrain extends Logger {
 
     if (colspan) {
       const colStart = horizontal.startIndex;
+
       const rowStart = vertical.startIndex;
       const rowEnd = vertical.endIndex;
 
@@ -1085,7 +1104,7 @@ export class MatrixBrain extends Logger {
 
     if (cache[itemIndex] === undefined) {
       let i = cache.length;
-      let lastIndex = Math.min(itemIndex, count - 1);
+      let lastIndex = count ? Math.min(itemIndex, count - 1) : 0;
 
       const cell = { rowIndex, colIndex };
 
@@ -1184,11 +1203,19 @@ export class MatrixBrain extends Logger {
     return itemSpanParent![itemIndex];
   };
 
-  public getRowHeightWithSpan = (rowIndex: number, rowspan: number) => {
-    return this.getItemSizeWithSpan(rowIndex, 0, rowspan, 'vertical');
+  public getRowHeightWithSpan = (
+    rowIndex: number,
+    colIndex: number,
+    rowspan: number,
+  ) => {
+    return this.getItemSizeWithSpan(rowIndex, colIndex, rowspan, 'vertical');
   };
-  public getColWidthWithSpan = (colIndex: number, colspan: number) => {
-    return this.getItemSizeWithSpan(colIndex, 0, colspan, 'horizontal');
+  public getColWidthWithSpan = (
+    rowIndex: number,
+    colIndex: number,
+    colspan: number,
+  ) => {
+    return this.getItemSizeWithSpan(rowIndex, colIndex, colspan, 'horizontal');
   };
 
   private getItemSizeWithSpan = (

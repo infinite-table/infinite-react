@@ -104,13 +104,7 @@ export function useAutoSizeColumns<T>() {
   const {
     getComponentState,
     componentActions,
-    componentState: {
-      domRef,
-      ready,
-      autoSizeColumnsKey,
-      verticalVirtualBrain,
-      horizontalVirtualBrain,
-    },
+    componentState: { domRef, ready, autoSizeColumnsKey, brain },
   } = useComponentState<InfiniteTableState<T>>();
 
   const [refreshId, setRefreshId] = useState(0);
@@ -139,15 +133,8 @@ export function useAutoSizeColumns<T>() {
       }
     };
 
-    const removeVertical = verticalVirtualBrain.onRenderRangeChange(onChange);
-    const removeHorizontal =
-      horizontalVirtualBrain.onRenderRangeChange(onChange);
-
-    return () => {
-      removeVertical();
-      removeHorizontal();
-    };
-  }, [verticalVirtualBrain, horizontalVirtualBrain]);
+    return brain.onRenderRangeChange(onChange);
+  }, [brain]);
 
   useEffect(() => {
     if (theKey == null) {

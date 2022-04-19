@@ -14,8 +14,8 @@
     "tscw": "tsc --watch --project tsconfig.json"
   },
   "dependencies": {
-    "@vanilla-extract/babel-plugin": "^1.1.4",
-    "@vanilla-extract/css": "^1.6.8",
+    "@vanilla-extract/babel-plugin": "^1.1.5",
+    "@vanilla-extract/css": "^1.7.0",
     "chokidar-cli": "^3.0.0",
     "isomorphic-fetch": "^3.0.0",
     "next": "^12.1.0",
@@ -26,16 +26,16 @@
     "typescript": "4.6.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.19.2",
+    "@playwright/test": "^1.21.1-beta-1650321640000",
     "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.172",
-    "@vanilla-extract/next-plugin": "^2.0.1",
+    "@vanilla-extract/next-plugin": "^2.0.2",
     "babel-plugin-dev-expression": "^0.2.2",
     "concurrently": "^5.1.0",
     "http-server": "^0.12.1",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
-    "playwright": "^1.19.2",
+    "playwright": "^1.21.1-beta-1650321640000",
     "react-select": "^5.2.2",
     "rimraf": "^3.0.2",
     "tslib": "^2.1.0"

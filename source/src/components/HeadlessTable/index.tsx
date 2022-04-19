@@ -170,8 +170,9 @@ export function HeadlessTable(
 
   const onContainerScroll = useCallback(
     (scrollPos: ScrollPosition) => {
-      brain.setScrollPosition(scrollPos);
-      domRef.current!.style.transform = `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`;
+      brain.setScrollPosition(scrollPos, (scrollPos) => {
+        domRef.current!.style.transform = `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`;
+      });
     },
     [brain],
   );

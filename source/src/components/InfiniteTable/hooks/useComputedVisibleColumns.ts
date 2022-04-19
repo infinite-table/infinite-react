@@ -9,10 +9,11 @@ import type {
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
+
 import type { Size } from '../../types/Size';
+import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
 
 import { getComputedVisibleColumns } from '../utils/getComputedVisibleColumns';
-import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
 import { useRerenderOnKeyChange } from './useRerenderOnKeyChange';
 
 type UseComputedVisibleColumnsParam<T> = {

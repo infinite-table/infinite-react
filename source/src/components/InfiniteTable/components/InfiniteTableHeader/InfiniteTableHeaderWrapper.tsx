@@ -1,15 +1,14 @@
 import * as React from 'react';
 import type { Scrollbars } from '../..';
-import { useMatrixBrain } from '../../../HeadlessTable';
+import { useMatrixBrain, useMatrixBrainLazy } from '../../../HeadlessTable';
 
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { buildColumnAndGroupTree } from './buildColumnAndGroupTree';
 
-import { VerticalScrollbarPlaceholder } from '../ScrollbarPlaceholder';
 import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
-import { InfiniteTableHeaderUnvirtualized } from './InfiniteTableHeaderUnvirtualized';
 
 export type TableHeaderWrapperProps = {
   brain: MatrixBrain;
@@ -24,27 +23,108 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   const {
     computedPinnedStartColumns,
     computedPinnedEndColumns,
-    computedUnpinnedColumnsWidth,
     computedVisibleColumns,
     columnSize,
   } = tableContextValue.computed;
 
   const {
-    componentState: { headerHeight, columnGroupsMaxDepth },
+    componentState: {
+      headerHeight,
+      columnGroupsDepthsMap,
+      columnGroupsMaxDepth,
+      computedColumnGroups,
+    },
   } = tableContextValue;
 
-  const height = columnGroupsMaxDepth
-    ? columnGroupsMaxDepth * headerHeight
-    : headerHeight;
+  const rows =
+    !computedColumnGroups || !computedColumnGroups.size
+      ? 1
+      : columnGroupsMaxDepth + 2;
+
+  const height = rows * headerHeight;
+  // console.log({
+  //   columnGroupsMaxDepth,
+  //   computedColumnGroups,
+  //   rows,
+  //   headerHeight,
+  // });
+
+  const columnAndGroupTreeInfo = React.useMemo(() => {
+    if (!computedColumnGroups || !computedColumnGroups.size) {
+      return undefined;
+    }
+
+    return buildColumnAndGroupTree(
+      computedVisibleColumns,
+      computedColumnGroups,
+      columnGroupsDepthsMap,
+      columnGroupsMaxDepth,
+    );
+  }, [computedVisibleColumns, computedColumnGroups, columnGroupsDepthsMap]);
+
+  const cellspan = React.useCallback(
+    ({ rowIndex, colIndex }: { rowIndex: number; colIndex: number }) => {
+      const column = computedVisibleColumns[colIndex];
+
+      let rowspan = 1;
+      let colspan = 1;
+      if (!column || !columnAndGroupTreeInfo) {
+        return { rowspan, colspan };
+      }
+
+      const treeItem = columnAndGroupTreeInfo.pathsToCells.get([
+        rowIndex,
+        colIndex,
+      ]);
+
+      if (!treeItem) {
+        return { rowspan, colspan };
+      }
+      if (treeItem.type === 'column') {
+        return {
+          colspan,
+          rowspan: rows - treeItem.depth,
+        };
+      }
+
+      const index = treeItem.columnItems.findIndex(
+        (child) => child.id === column.id,
+      );
+
+      return {
+        rowspan,
+        colspan: index === 0 ? treeItem.columnItems.length : 1,
+      };
+    },
+    [
+      computedColumnGroups,
+      columnGroupsMaxDepth,
+      computedVisibleColumns,
+      columnAndGroupTreeInfo,
+      rows,
+      columnGroupsDepthsMap,
+    ],
+  );
+
+  const rowspan = React.useCallback(
+    ({ rowIndex, colIndex }) => cellspan({ rowIndex, colIndex }).rowspan,
+    [cellspan],
+  );
+  const colspan = React.useCallback(
+    ({ rowIndex, colIndex }) => cellspan({ rowIndex, colIndex }).colspan,
+    [cellspan],
+  );
 
   useMatrixBrain(
     brain,
     {
       colWidth: columnSize,
       rowHeight: headerHeight,
-      rows: columnGroupsMaxDepth || 1,
+      rows,
       cols: computedVisibleColumns.length,
       height,
+      rowspan,
+      colspan,
     },
     {
       fixedColsEnd: computedPinnedEndColumns.length,
@@ -56,9 +136,9 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     <InfiniteTableHeader
       columns={computedVisibleColumns}
       brain={brain}
-      headerHeight={headerHeight}
-      availableWidth={computedUnpinnedColumnsWidth}
-      totalWidth={computedUnpinnedColumnsWidth}
+      headerHeight={height}
+      columnGroupsMaxDepth={columnGroupsMaxDepth}
+      columnAndGroupTreeInfo={columnAndGroupTreeInfo}
     />
   );
 

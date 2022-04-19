@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import type { Ref } from 'react';
 
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useLatest } from '../../hooks/useLatest';
-import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 
 import type {
   InfiniteTableComputedValues,
@@ -16,7 +15,6 @@ import type { Size } from '../../types/Size';
 
 import { useYourBrain } from './useYourBrain';
 import { useRerender } from '../../hooks/useRerender';
-import type { Scrollbars } from '../types/InfiniteTableProps';
 import { usePrevious } from '../../hooks/usePrevious';
 
 type CellRenderingParam<T> = {
@@ -39,15 +37,12 @@ import React from 'react';
 import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 
 type CellRenderingResult = {
-  scrollbars: Scrollbars;
-
   // pinnedStartList: JSX.Element | null;
   // pinnedEndList: JSX.Element | null;
   // pinnedStartScrollbarPlaceholder: JSX.Element | null;
   // pinnedEndScrollbarPlaceholder: JSX.Element | null;
   // centerList: JSX.Element | null;
   repaintId: number;
-  reservedContentHeight: number;
   renderCell: TableRenderCellFn;
 };
 
@@ -63,9 +58,6 @@ export function useCellRendering<T>(
   const {
     computedPinnedStartColumns,
     computedPinnedEndColumns,
-    computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth,
-    computedUnpinnedColumnsWidth,
     computedVisibleColumns,
     rowspan,
     toggleGroupRow,
@@ -103,27 +95,6 @@ export function useCellRendering<T>(
     rowspan,
   });
 
-  const hasHorizontalScrollbar =
-    computedUnpinnedColumnsWidth >
-    bodySize.width -
-      computedPinnedStartColumnsWidth -
-      computedPinnedEndColumnsWidth;
-
-  const reservedContentHeight =
-    brain.getTotalSize().height +
-    (hasHorizontalScrollbar ? getScrollbarWidth() : 0);
-
-  const hasVerticalScrollbar =
-    bodySize.height > 0 && bodySize.height < reservedContentHeight;
-
-  const scrollbars = useMemo(
-    () => ({
-      vertical: hasVerticalScrollbar,
-      horizontal: hasHorizontalScrollbar,
-    }),
-    [hasVerticalScrollbar, hasHorizontalScrollbar],
-  );
-
   useEffect(() => {
     if (!bodySize.height) {
       return;
@@ -152,8 +123,9 @@ export function useCellRendering<T>(
   }, [!!bodySize.height]);
 
   const [, rerender] = useRerender();
+
   useEffect(() => {
-    rerender();
+    rerender(); // TODO check this is still needed
   }, [dataSourceState]);
 
   const renderCell: TableRenderCellFn = useCallback(
@@ -190,11 +162,6 @@ export function useCellRendering<T>(
         column,
       };
 
-      // return (
-      //   <div ref={domRef}>
-      //     {rowIndex}, {colIndex}
-      //   </div>
-      // );
       return <InfiniteTableColumnCell<T> {...cellProps} />;
     },
     [
@@ -209,9 +176,7 @@ export function useCellRendering<T>(
   );
 
   return {
-    scrollbars,
     renderCell,
     repaintId,
-    reservedContentHeight,
   };
 }

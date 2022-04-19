@@ -127,15 +127,6 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const extraCellsMap = new Map<string, boolean>();
     const extraCells = ranges.map(this.getExtraSpanCellsForRange).flat();
-
-    const {
-      end: [endRow],
-    } = range;
-
-    if (endRow === 22) {
-      debugger;
-    }
-
     /**
      * We can have some extra cells outside the render range that should still
      * be visible (even though they are outside). This is due to row/col spanning.
@@ -292,7 +283,10 @@ export class ReactHeadlessTableRenderer extends Logger {
 
           const elementIndex = cellRendered
             ? mappedCells.getElementIndexForCell(row, col)
-            : elementsOutsideItemRange.pop();
+            : mappedCells.getElementFromListForColumn(
+                elementsOutsideItemRange,
+                col,
+              );
 
           if (elementIndex == null) {
             if (__DEV__) {
@@ -375,7 +369,6 @@ export class ReactHeadlessTableRenderer extends Logger {
       <AvoidReactDiff
         key={elementIndex}
         name={`${elementIndex}`}
-        // useraf
         updater={this.updaters[elementIndex]}
       />
     );
@@ -615,10 +608,12 @@ export class ReactHeadlessTableRenderer extends Logger {
     const heightWithRowspan =
       rowspan === 1
         ? height
-        : this.brain.getRowHeightWithSpan(rowIndex, rowspan);
+        : this.brain.getRowHeightWithSpan(rowIndex, colIndex, rowspan);
 
     const widthWithColspan =
-      colspan === 1 ? width : this.brain.getColWidthWithSpan(colIndex, colspan);
+      colspan === 1
+        ? width
+        : this.brain.getColWidthWithSpan(rowIndex, colIndex, colspan);
 
     const { row: rowFixed, col: colFixed } = this.isCellFixed(
       rowIndex,
@@ -897,7 +892,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       _rowIndex: number,
       _colIndex: number,
       node: HTMLElement,
-      { x, y }: { x: number; y: number },
+      { x }: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) {
       node.style.zIndex = `20000`;

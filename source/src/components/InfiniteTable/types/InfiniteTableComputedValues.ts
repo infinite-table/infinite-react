@@ -28,8 +28,6 @@ export interface InfiniteTableComputedValues<T> {
   computedUnpinnedOffset: number;
   computedPinnedEndOffset: number;
   computedRemainingSpace: number;
-  unpinnedColumnRenderCount: number;
-  columnRenderStartIndex: number;
   toggleGroupRow: (groupKeys: any[]) => void;
   columnSize: (colIndex: number) => number;
   // setColumnPinning: (columnPinning: InfiniteTablePropColumnPinning) => void;

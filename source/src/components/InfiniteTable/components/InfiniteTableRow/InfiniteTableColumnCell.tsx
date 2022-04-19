@@ -44,7 +44,7 @@ function isColumnWithField<T>(
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     rowInfo,
-    getData,
+    // getData,
     width,
     column,
     onMouseLeave,
@@ -153,16 +153,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       : column.className
     : undefined;
 
-  const colStyle: undefined | React.CSSProperties = column.style
+  const style: React.CSSProperties = column.style
     ? typeof column.style === 'function'
-      ? column.style(stylingRenderParam)
-      : column.style
-    : undefined;
-
-  const style: React.CSSProperties = colStyle
-    ? {
-        ...colStyle,
-      }
+      ? column.style(stylingRenderParam) || {}
+      : { ...column.style }
     : {};
 
   style.width = width;

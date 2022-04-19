@@ -86,7 +86,10 @@ export default test.describe.parallel('MappedCells', () => {
     cells.renderCellAtElement(6, 1, 9);
     cells.renderCellAtElement(6, 2, 10);
 
-    const elements = cells.getElementsOutsideRenderRange([1, 1], [6, 2]);
+    const elements = cells.getElementsOutsideRenderRange({
+      start: [1, 1],
+      end: [6, 2],
+    });
 
     expect(elements).toEqual([0, 1, 2, 3, 5, 6, 8, 9, 10]);
   });

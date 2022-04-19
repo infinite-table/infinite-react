@@ -61,7 +61,20 @@ export function RawTableFn(props: RawTableProps) {
     const remove = brain.onRenderRangeChange((renderRange) => {
       renderer.renderRange(renderRange, {
         force: false, // TODO should be false
-        onRender: onRenderUpdater,
+        onRender: (items) => {
+          const currentItems = onRenderUpdater.get();
+          if (
+            currentItems &&
+            items &&
+            (currentItems as any).length === items.length
+          ) {
+            // dont update, as each item in turn
+            // is an AvoidReactDiff component
+            // which is updating itself
+            return;
+          }
+          onRenderUpdater(items);
+        },
         renderCell,
       });
     });

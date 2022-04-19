@@ -2,7 +2,6 @@ import { createRef } from 'react';
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
-import { VirtualBrain } from '../../VirtualBrain';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
@@ -28,9 +27,20 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 export function initSetupState<T>(): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
 
+  /**
+   * This is the main virtualization brain that powers the table
+   */
   const brain = new MatrixBrain();
+
+  /**
+   * The brain that virtualises the header is different from the main brain
+   * because obviously the header will have different rowspans/colspans
+   * (which are due to column groups) than the main grid viewport
+   */
   const headerBrain = new MatrixBrain();
 
+  // however, we sync the headerBrain with the main brain
+  // on horizontal scrolling
   brain.onScroll((scrollPosition) => {
     headerBrain.setScrollPosition({
       scrollLeft: scrollPosition.scrollLeft,
@@ -38,20 +48,20 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     });
   });
 
+  // and on width changes
   brain.onAvailableSizeChange((size) => {
     headerBrain.setAvailableSize({ width: size.width });
   });
+
   return {
-    propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([
-      // ['sortInfo', new WeakMap()],
-    ]),
+    propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
 
     // TODO destroy the brains on unmount
     brain,
-
     headerBrain,
 
     columnShifts: null,
+
     domRef: createRef(),
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
@@ -71,8 +81,10 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     focusedWithin: false,
     columnsWhenGrouping: columnsGeneratedForGrouping,
     draggingColumnId: null,
+
     pinnedStartScrollListener: new ScrollListener(),
     pinnedEndScrollListener: new ScrollListener(),
+
     columnsWhenInlineGroupRenderStrategy: undefined,
   };
 }
@@ -204,13 +216,8 @@ export const mapPropsToState = <T>(params: {
   parentState: DataSourceState<T>;
 }): InfiniteTableDerivedState<T> => {
   const { props, state, oldState, parentState } = params;
-  const { virtualizeColumns, header } = state;
 
   const computedColumnGroups = state.pivotColumnGroups || state.columnGroups;
-  const virtualizeHeader =
-    header &&
-    virtualizeColumns &&
-    (!computedColumnGroups || computedColumnGroups?.size === 0);
 
   const columnGroupsDepthsMap =
     (state.columnGroups && state.columnGroups != oldState?.columnGroups) ||
@@ -237,7 +244,6 @@ export const mapPropsToState = <T>(params: {
     groupBy: groupBy,
     computedColumns,
 
-    virtualizeHeader,
     columnHeaderCssEllipsis:
       props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,
     columnGroupsDepthsMap,
