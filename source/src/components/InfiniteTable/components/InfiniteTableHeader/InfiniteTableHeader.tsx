@@ -18,9 +18,11 @@ import {
   TableRenderCellFn,
   TableRenderCellFnParam,
 } from '../../../HeadlessTable/ReactHeadlessTableRenderer';
-import { transformTranslateZero } from '../../utilities.css';
+
+// import { transformTranslateZero } from '../../utilities.css';
 import { RawTable } from '../../../HeadlessTable/RawTable';
 import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
+import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 const { rootClassName } = internalProps;
 
@@ -69,7 +71,7 @@ function InfiniteTableHeaderFn<T>(
     ref: domRef,
     className: join(
       TableHeaderClassName,
-      transformTranslateZero,
+
       `${TableHeaderClassName}--virtualized`,
       className,
       headerCls,
@@ -99,22 +101,23 @@ function InfiniteTableHeaderFn<T>(
 
       if (colGroupItem && colGroupItem.type === 'group') {
         const columns = colGroupItem.columnItems.map((item) => item.ref);
+        const computedColumnGroup: InfiniteTableComputedColumnGroup = {
+          ...colGroupItem.ref,
+          id: colGroupItem.id,
+          uniqueGroupId: colGroupItem.uniqueGroupId,
+          depth: colGroupItem.depth,
+          columns: columns.map((c) => c.id),
+          computedWidth: colGroupItem.computedWidth,
+          groupOffset: colGroupItem.groupOffset,
+        };
+
         return (
           <InfiniteTableHeaderGroup
             domRef={domRef}
             columns={columns}
             width={widthWithColspan}
             height={height}
-            headerHeight={height}
-            columnGroup={{
-              ...colGroupItem.ref,
-              id: colGroupItem.id,
-              uniqueGroupId: colGroupItem.uniqueGroupId,
-              depth: colGroupItem.depth,
-              columns: columns.map((c) => c.id),
-              computedWidth: colGroupItem.computedWidth,
-              groupOffset: colGroupItem.groupOffset,
-            }}
+            columnGroup={computedColumnGroup}
           />
         );
       }
@@ -124,7 +127,7 @@ function InfiniteTableHeaderFn<T>(
           domRef={domRef}
           column={column}
           width={widthWithColspan}
-          headerHeight={heightWithRowspan}
+          height={heightWithRowspan}
           columns={computedVisibleColumnsMap}
         />
       );

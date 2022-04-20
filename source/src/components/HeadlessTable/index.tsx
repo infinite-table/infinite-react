@@ -10,14 +10,15 @@ import {
 
 import { setupResizeObserver } from '../ResizeObserver';
 
-import { ScrollPosition } from '../types/ScrollPosition';
-import { Size } from '../types/Size';
+import type { ScrollPosition } from '../types/ScrollPosition';
+import type { Size } from '../types/Size';
+import type { TableRenderCellFn } from './ReactHeadlessTableRenderer';
+
 import { MatrixBrain, MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
 import { VirtualScrollContainer } from '../VirtualScrollContainer';
 import { RawTable } from './RawTable';
-import { TableRenderCellFn } from './ReactHeadlessTableRenderer';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;

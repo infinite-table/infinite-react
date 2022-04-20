@@ -1,18 +1,19 @@
 import type { ColumnCellVariantsType } from '../components/cell.css';
+import { HeaderCellVariantsType } from '../components/InfiniteTableHeader/header.css';
 
 import { InfiniteTableComputedColumn } from '../types';
 
 export function useCellClassName<T>(
   column: InfiniteTableComputedColumn<T>,
   baseClasses: string[],
-  variants: (x: ColumnCellVariantsType) => string,
+  variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
     dragging: boolean;
     zebra: 'odd' | 'even' | false;
   },
 ) {
   const result = [...baseClasses];
-  const variantObject: ColumnCellVariantsType = {
+  const variantObject: ColumnCellVariantsType | HeaderCellVariantsType = {
     first: column.computedFirst,
     last: column.computedLast,
     groupByField: !!column.groupByField,

@@ -48,7 +48,7 @@ export interface InfiniteTableSetupState<T> {
   columnShifts: number[] | null;
 }
 
-export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
+export type InfiniteTableColumnGroupWithDepth = InfiniteTableColumnGroup & {
   depth: number;
 };
 export type InfiniteTableColumnGroupsDepthsMap = Map<string, number>;

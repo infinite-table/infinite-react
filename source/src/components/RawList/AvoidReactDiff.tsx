@@ -11,12 +11,12 @@ export type AvoidReactDiffProps = {
 };
 
 function AvoidReactDiffFn(props: AvoidReactDiffProps) {
-  const [children, setChildren] = useState<Renderable>(props.updater.get());
+  const [children, setChildren] = useState<Renderable>(props.updater.get);
 
   const rafId = useRef<any>(null);
 
   useEffect(() => {
-    const remove = props.updater.onChange((children) => {
+    function onChange(children: Renderable) {
       // so when updater triggers a change
       // we can re-render and set the children
 
@@ -30,7 +30,8 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
       } else {
         setChildren(children);
       }
-    });
+    }
+    const remove = props.updater.onChange(onChange);
 
     return () => {
       if (rafId.current != null) {

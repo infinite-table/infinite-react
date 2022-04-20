@@ -1,5 +1,4 @@
 import { InfiniteTableComputedColumn } from '../..';
-import { Renderable } from '../../../types/Renderable';
 
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../../VirtualBrain/ScrollListener';
@@ -19,11 +18,9 @@ export type InfiniteTableHeaderProps<T> = {
 export type InfiniteTableHeaderGroupProps<T> = {
   columns: InfiniteTableComputedColumn<T>[];
   columnGroup: InfiniteTableComputedColumnGroup;
-  children?: Renderable;
   height: number;
   width: number;
   domRef?: React.RefCallback<HTMLElement>;
-  headerHeight: number;
 };
 
 export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<

@@ -53,6 +53,6 @@ export interface InfiniteTableHeaderCellProps<T>
     'children' | 'cellType' | 'renderChildren'
   > {
   columns: Map<string, InfiniteTableComputedColumn<T>>;
-  headerHeight: number;
+  height: number;
   onResize?: OnResizeFn;
 }

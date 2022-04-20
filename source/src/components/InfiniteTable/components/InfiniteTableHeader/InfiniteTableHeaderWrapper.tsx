@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { Scrollbars } from '../..';
-import { useMatrixBrain, useMatrixBrainLazy } from '../../../HeadlessTable';
+import { useMatrixBrain } from '../../../HeadlessTable';
 
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';

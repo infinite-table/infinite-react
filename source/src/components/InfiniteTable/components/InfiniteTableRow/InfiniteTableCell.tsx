@@ -73,7 +73,6 @@ function InfiniteTableCellFn<T>(
   const finalDOMProps = {
     ...domProps,
     style,
-    'data-name': 'Cell',
     className: join(
       domProps.className,
 

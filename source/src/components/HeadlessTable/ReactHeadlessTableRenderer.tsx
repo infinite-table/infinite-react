@@ -752,9 +752,11 @@ export class ReactHeadlessTableRenderer extends Logger {
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
         itemElement.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-        itemElement.style.visibility = '';
         itemElement.style.willChange = 'transform';
         itemElement.style.backfaceVisibility = 'hidden';
+        // need to set it to auto
+        // in case some fixed cells are reused
+        // as the fixed cells had a zIndex
         itemElement.style.zIndex = 'auto';
       } else {
         itemElement.style.display = '';

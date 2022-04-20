@@ -68,12 +68,16 @@ export default function DataTestPage() {
               position: 'relative',
             },
           }}
-          columnPinning={{
-            age: 'start',
-            canDesign: 'end',
+          // columnPinning={{
+          //   age: 'start',
+          //   canDesign: 'end',
+          // }}
+          viewportReservedWidth={100}
+          columnTypes={{
+            default: {
+              defaultFlex: 1,
+            },
           }}
-          headerHeight=""
-          columnDefaultWidth={100}
           columns={columns}
         />
       </DataSource>

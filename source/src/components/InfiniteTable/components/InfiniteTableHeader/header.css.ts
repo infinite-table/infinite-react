@@ -7,7 +7,6 @@ import {
   alignItems,
   display,
   flexFlow,
-  flex,
   overflow,
   position,
 } from '../../utilities.css';
@@ -224,8 +223,7 @@ export const HeaderWrapperCls = style([
   flexFlow.row,
 ]);
 
-export const HeaderGroupCls = style([flexFlow.column, display.flex]);
-export const HeaderGroup_Header = style([
+export const HeaderGroupCls = style([
   display.flex,
   flexFlow.row,
   alignItems.center,
@@ -234,11 +232,4 @@ export const HeaderGroup_Header = style([
     borderBottom: ThemeVars.components.Cell.border,
     borderRight: ThemeVars.components.Cell.border,
   },
-]);
-
-export const HeaderGroup_Children = style([
-  display.flex,
-  flexFlow.row,
-  alignItems.stretch,
-  flex['1'],
 ]);

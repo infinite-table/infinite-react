@@ -55,9 +55,7 @@ type Person = {
 };
 
 export default test.describe.parallel('buildColumnAndGroupTree', () => {
-  test.only('should work correctly for groups that dont repeat twice', async ({
-    page,
-  }) => {
+  test('should work correctly for groups that dont repeat twice', async () => {
     const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
       ['contact info', { header: 'Contact info' }],
       ['street', { header: 'street', columnGroup: 'address' }],

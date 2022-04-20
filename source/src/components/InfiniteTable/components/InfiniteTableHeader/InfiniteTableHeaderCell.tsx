@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { createPortal } from 'react-dom';
+
 import { useCallback, useContext, useEffect, useRef } from 'react';
 import { join } from '../../../../utils/join';
 
@@ -6,11 +8,12 @@ import {
   InfiniteTableCell,
   InfiniteTableCellClassName,
 } from '../InfiniteTableRow/InfiniteTableCell';
-import {
+import type {
   InfiniteTableColumnHeaderParams,
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
+
 import { internalProps } from '../../internalProps';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { setupResizeObserver } from '../../../ResizeObserver';
@@ -18,7 +21,7 @@ import { InfiniteTableHeaderCellProps } from '../InfiniteTableRow/InfiniteTableC
 import { useCellClassName } from '../../hooks/useCellClassName';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { createPortal } from 'react-dom';
+
 import { SortIcon } from '../icons/SortIcon';
 import { cursor, userSelect } from '../../utilities.css';
 import {
@@ -33,11 +36,6 @@ export const InfiniteTableHeaderCellContext = React.createContext<
   InfiniteTableHeaderCellContextType<any>
 >(null as any as InfiniteTableHeaderCellContextType<any>);
 
-const defaultStyle: React.CSSProperties = {
-  position: 'absolute' as 'absolute',
-  top: 0,
-};
-
 const { rootClassName } = internalProps;
 
 export const InfiniteTableHeaderCellClassName = `${rootClassName}HeaderCell`;
@@ -47,13 +45,7 @@ export function InfiniteTableHeaderCell<T>(
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
   const columns: Map<string, InfiniteTableComputedColumn<T>> = props.columns;
-  const { onResize, virtualized = true, headerHeight, width } = props;
-  let { cssPosition, offset: offsetFromProps } = props;
-
-  if (virtualized === false) {
-    cssPosition = cssPosition ?? 'relative';
-    offsetFromProps = offsetFromProps ?? 0;
-  }
+  const { onResize, height, width } = props;
 
   const sortInfo = column.computedSortInfo;
 
@@ -116,10 +108,8 @@ export function InfiniteTableHeaderCell<T>(
     };
   }, [domRef.current, props.onResize]);
 
-  let style: React.CSSProperties = {
-    ...defaultStyle,
-    position: cssPosition ?? 'absolute',
-    height: headerHeight,
+  const style: React.CSSProperties = {
+    height,
   };
 
   const { onPointerDown, onPointerUp, dragging, draggingDiff, proxyOffset } =
@@ -130,9 +120,6 @@ export function InfiniteTableHeaderCell<T>(
       columns,
     });
 
-  let offset: number =
-    offsetFromProps ?? (virtualized ? 0 : column.computedPinningOffset);
-
   let draggingProxy = null;
 
   if (dragging) {
@@ -141,7 +128,7 @@ export function InfiniteTableHeaderCell<T>(
         className={`${InfiniteTableHeaderCellClassName}Proxy ${HeaderCellProxy}`}
         style={{
           position: 'absolute',
-          height: headerHeight,
+          height,
           width,
           left:
             column.computedAbsoluteOffset +
@@ -173,7 +160,6 @@ export function InfiniteTableHeaderCell<T>(
         data-column-id={column.id}
         style={style}
         width={width}
-        offset={offset}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         className={join(

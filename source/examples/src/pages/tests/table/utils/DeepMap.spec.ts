@@ -72,7 +72,7 @@ export default test.describe.parallel('DeepMap', () => {
     ]);
   });
 
-  test.only('get values starting with keys should work properly', async () => {
+  test('get values starting with keys should work properly', async () => {
     const map = new DeepMap<number, number>();
 
     map.set([1, 0], 2);
