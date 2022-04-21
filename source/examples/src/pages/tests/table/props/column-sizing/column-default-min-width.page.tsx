@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   DataSourceData,
   DataSourceDataParams,
@@ -10,6 +8,8 @@ import {
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+import * as React from 'react';
+
 import { employees } from '../group-by/employees10';
 
 type Employee = {
@@ -78,7 +78,7 @@ const domProps: InfiniteTableProps<Employee>['domProps'] = {
   style: {
     margin: '5px',
     height: '90vh',
-    width: '95vw',
+    width: 5000,
     border: '1px solid gray',
     position: 'relative',
   },
@@ -114,7 +114,6 @@ function App() {
       >
         <InfiniteTable<Employee>
           domProps={domProps}
-          virtualizeColumns={false}
           columnTypes={columnTypes}
           defaultColumnSizing={defaultColumnSizing}
           columnMinWidth={50}

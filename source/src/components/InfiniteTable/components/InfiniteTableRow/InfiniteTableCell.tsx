@@ -2,10 +2,7 @@ import * as React from 'react';
 
 import { join } from '../../../../utils/join';
 import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
-
 import { internalProps } from '../../internalProps';
-import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
-
 import {
   cssEllipsisClassName,
   justifyContent,
@@ -16,6 +13,8 @@ import {
   CellClsVariants,
   columnAlignCellStyle,
 } from '../cell.css';
+
+import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 
 const { rootClassName } = internalProps;
 
@@ -73,6 +72,8 @@ function InfiniteTableCellFn<T>(
   const finalDOMProps = {
     ...domProps,
     style,
+    // do not remove this from here, as it's being used by auto sizing - the `useAutoSizeColumns` fn hook
+    'data-column-id': column.id,
     className: join(
       domProps.className,
 

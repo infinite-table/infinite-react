@@ -100,7 +100,7 @@ export const InfiniteTableComponent = React.memo(
 
     const { scrollbars } = computed;
 
-    const { renderCell, repaintId } = useCellRendering({
+    const { renderCell } = useCellRendering({
       getComputed,
       domRef: componentState.domRef,
       columnShifts,
@@ -139,11 +139,7 @@ export const InfiniteTableComponent = React.memo(
     return (
       <div ref={domRef} {...domProps}>
         {header ? (
-          <TableHeaderWrapper
-            brain={headerBrain}
-            repaintId={repaintId}
-            scrollbars={scrollbars}
-          />
+          <TableHeaderWrapper brain={headerBrain} scrollbars={scrollbars} />
         ) : null}
 
         <InfiniteTableBody>

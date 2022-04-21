@@ -1,19 +1,18 @@
 import * as React from 'react';
+
 import type { Scrollbars } from '../..';
 import { useMatrixBrain } from '../../../HeadlessTable';
-
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { buildColumnAndGroupTree } from './buildColumnAndGroupTree';
 
+import { buildColumnAndGroupTree } from './buildColumnAndGroupTree';
 import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
 
 export type TableHeaderWrapperProps = {
   brain: MatrixBrain;
   scrollbars: Scrollbars;
-  repaintId?: number | string;
 };
 export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   const { brain, scrollbars } = props;
@@ -66,8 +65,8 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     ({ rowIndex, colIndex }: { rowIndex: number; colIndex: number }) => {
       const column = computedVisibleColumns[colIndex];
 
-      let rowspan = 1;
-      let colspan = 1;
+      const rowspan = 1;
+      const colspan = 1;
       if (!column || !columnAndGroupTreeInfo) {
         return { rowspan, colspan };
       }

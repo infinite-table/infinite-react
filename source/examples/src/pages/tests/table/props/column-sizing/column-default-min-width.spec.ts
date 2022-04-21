@@ -1,5 +1,6 @@
-import { getHeaderCellWidthByColumnId } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getHeaderCellWidthByColumnId } from '../../../testUtils';
 
 export default test.describe.parallel('Column types tests', () => {
   test.beforeEach(async ({ page }) => {

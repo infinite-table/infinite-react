@@ -1,8 +1,9 @@
+import { test, expect, ElementHandle } from '@playwright/test';
+
 import { getColumnCells } from '../../../testUtils';
 import { getRowSelector } from '../../../testUtils/getRowElement';
-import { getOrders, multisort } from './getOrders';
 
-import { test, expect, ElementHandle } from '@playwright/test';
+import { getOrders, multisort } from './getOrders';
 
 const orders = getOrders();
 

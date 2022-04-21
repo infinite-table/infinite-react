@@ -1,6 +1,7 @@
-import { columns } from '../columns';
-import { getHeaderColumnIds } from '../../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getHeaderColumnIds } from '../../../../testUtils';
+import { columns } from '../columns';
 export default test.describe.parallel(
   'Column visibility uncontrolled without any default value',
   () => {

@@ -113,8 +113,8 @@ export class MatrixBrain extends Logger {
   private colOffsetCache!: number[];
   private horizontalTotalSize = 0;
 
-  private horizontalRenderCount = 0;
-  private verticalRenderCount = 0;
+  private horizontalRenderCount?: number = undefined;
+  private verticalRenderCount?: number = undefined;
 
   private horizontalRenderRange: RenderRangeType = {
     startIndex: 0,
@@ -185,7 +185,7 @@ export class MatrixBrain extends Logger {
     this.rowspanValue = new Map();
     this.rowHeightCache = [];
     this.rowOffsetCache = [0];
-    this.verticalRenderCount = 0;
+    this.verticalRenderCount = undefined;
     this.verticalTotalSize = 0;
   }
   private resetHorizontal() {
@@ -193,7 +193,7 @@ export class MatrixBrain extends Logger {
     this.colspanValue = new Map();
     this.colWidthCache = [];
     this.colOffsetCache = [0];
-    this.horizontalRenderCount = 0;
+    this.horizontalRenderCount = undefined;
     this.horizontalTotalSize = 0;
   }
 
@@ -538,7 +538,7 @@ export class MatrixBrain extends Logger {
       }
       renderCount += 1;
     } else {
-      renderCount = Math.ceil(size / itemSize) + 1;
+      renderCount = (itemSize ? Math.ceil(size / itemSize) : 0) + 1;
     }
 
     renderCount = Math.min(count, renderCount);
@@ -720,8 +720,8 @@ export class MatrixBrain extends Logger {
     const recomputeHorizontal = which.horizontal;
     const recomputeVertical = which.vertical;
 
-    let horizontalRenderCount = this.horizontalRenderCount;
-    let verticalRenderCount = this.verticalRenderCount;
+    let horizontalRenderCount = this.horizontalRenderCount || 0;
+    let verticalRenderCount = this.verticalRenderCount || 0;
 
     if (recomputeHorizontal) {
       horizontalRenderCount = this.computeDirectionalRenderCount(
@@ -775,8 +775,8 @@ export class MatrixBrain extends Logger {
     const { horizontalRenderCount, verticalRenderCount } = this;
 
     const renderCount = {
-      horizontal: horizontalRenderCount,
-      vertical: verticalRenderCount,
+      horizontal: horizontalRenderCount!,
+      vertical: verticalRenderCount!,
     };
 
     const fns = this.onRenderCountChangeFns;
@@ -907,7 +907,7 @@ export class MatrixBrain extends Logger {
         : this.verticalRenderCount;
     const count = direction === 'horizontal' ? this.cols : this.rows;
 
-    if (renderCount === 0) {
+    if (!renderCount) {
       return {
         startIndex: 0,
         endIndex: 0,

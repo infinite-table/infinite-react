@@ -1,7 +1,7 @@
 import { CarSale } from '@examples/datasets/CarSale';
-import { getCellText } from '../../../testUtils';
-
 import { test, expect } from '@playwright/test';
+
+import { getCellText } from '../../../testUtils';
 
 export default test.describe.parallel('Table', () => {
   test.beforeEach(async ({ page }) => {

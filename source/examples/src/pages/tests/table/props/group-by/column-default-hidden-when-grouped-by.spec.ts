@@ -1,5 +1,8 @@
-import { getHeaderCellByColumnId } from '../../../testUtils';
 import { test, expect, Page } from '@playwright/test';
+
+import { getHeaderCellByColumnId } from '../../../testUtils';
+
+import { employees } from './employees10';
 
 async function isColumnDisplayed(colId: string, { page }: { page: Page }) {
   const handle = await getHeaderCellByColumnId(colId, { page });
@@ -12,10 +15,11 @@ async function isColumnDisplayed(colId: string, { page }: { page: Page }) {
 }
 
 async function getRenderedRowCount({ page }: { page: Page }) {
-  return await page.$$eval('[data-row-index]', (rows) => rows.length);
+  return await page.$$eval(
+    '.InfiniteColumnCell[data-row-index][data-col-index="0"]',
+    (rows) => rows.length,
+  );
 }
-
-import { employees } from './employees10';
 
 const timeout = 30;
 

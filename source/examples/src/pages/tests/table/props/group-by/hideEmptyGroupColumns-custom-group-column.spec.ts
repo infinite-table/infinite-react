@@ -1,5 +1,6 @@
-import { getHeaderColumnIds } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getHeaderColumnIds } from '../../../testUtils';
 
 export default test.describe.parallel('hideEmptyGroupColumns', () => {
   test.beforeEach(async ({ page }) => {
@@ -71,7 +72,7 @@ export default test.describe.parallel('hideEmptyGroupColumns', () => {
     await page.click('input[type="checkbox"]');
 
     await page.waitForTimeout(20);
-    let ids = await getHeaderColumnIds({ page });
+    const ids = await getHeaderColumnIds({ page });
 
     expect(ids).toEqual([
       'g-for-department',

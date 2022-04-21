@@ -1,5 +1,6 @@
-import { getColumnGroupsIds, getHeaderColumnIds } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getColumnGroupsIds, getHeaderColumnIds } from '../../../testUtils';
 
 export default test.describe.parallel('Pivot', () => {
   test.beforeEach(async ({ page }) => {

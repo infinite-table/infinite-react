@@ -1,5 +1,6 @@
-import { mapElements, withBrain } from '../testUtils/listUtils';
 import { test, expect } from '@playwright/test';
+
+import { mapRowElements, withBrain } from '../testUtils/listUtils';
 
 export default test.describe.parallel('RowListWithExternalScrolling', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,7 +22,7 @@ export default test.describe.parallel('RowListWithExternalScrolling', () => {
     );
 
     await page.waitForTimeout(30);
-    let elements = await mapElements((el) => el.textContent, undefined, {
+    let elements = await mapRowElements((el) => el.textContent, undefined, {
       page,
     });
     expect(elements).toEqual([
@@ -45,7 +46,9 @@ export default test.describe.parallel('RowListWithExternalScrolling', () => {
     );
 
     await page.waitForTimeout(30);
-    elements = await mapElements((el) => el.textContent, undefined, { page });
+    elements = await mapRowElements((el) => el.textContent, undefined, {
+      page,
+    });
     expect(elements).toEqual([
       'row 4',
       'row 5',
@@ -74,7 +77,7 @@ export default test.describe.parallel('RowListWithExternalScrolling', () => {
     );
 
     await page.waitForTimeout(20);
-    let elements = await mapElements((el) => el.textContent, undefined, {
+    let elements = await mapRowElements((el) => el.textContent, undefined, {
       page,
     });
     expect(elements).toEqual(['row 0', 'row 1', 'row 2', 'row 3']);
@@ -90,7 +93,9 @@ export default test.describe.parallel('RowListWithExternalScrolling', () => {
     );
 
     await page.waitForTimeout(20);
-    elements = await mapElements((el) => el.textContent, undefined, { page });
+    elements = await mapRowElements((el) => el.textContent, undefined, {
+      page,
+    });
     expect(elements).toEqual(['row 1', 'row 2', 'row 3', 'row 4']);
 
     await withBrain(
@@ -104,7 +109,9 @@ export default test.describe.parallel('RowListWithExternalScrolling', () => {
     );
 
     await page.waitForTimeout(20);
-    elements = await mapElements((el) => el.textContent, undefined, { page });
+    elements = await mapRowElements((el) => el.textContent, undefined, {
+      page,
+    });
     expect(elements).toEqual(['row 1', 'row 2', 'row 3', 'row 4']);
   });
 });

@@ -1,5 +1,6 @@
-import { getCellNode, getComputedStyleProperty } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getCellNode, getComputedStyleProperty } from '../../../testUtils';
 
 export default test.describe.parallel('groupBy.column.style', () => {
   test.beforeEach(async ({ page }) => {

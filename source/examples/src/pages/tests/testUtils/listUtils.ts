@@ -18,10 +18,10 @@ export const withBrain = async (
 export const sortElements = async (
   elements: ElementHandle<HTMLElement | SVGElement>[],
 ) => {
-  let indexes: number[] = await Promise.all(
+  const indexes: number[] = await Promise.all(
     elements.map(
       (el: ElementHandle<HTMLElement | SVGElement>) =>
-        el.evaluate((el) => Number(el.getAttribute('data-item-index'))),
+        el.evaluate((el) => Number(el.getAttribute('data-row-index'))),
       // el.evaluate((el) => el.outerHTML),
     ),
   );
@@ -44,6 +44,7 @@ export const sortElements = async (
 
 export const getElements = async (
   root: ElementHandle<HTMLElement> | string | null | undefined,
+  type: 'row' | 'col',
   { page }: { page: Page },
 ) => {
   if (typeof root === 'string') {
@@ -51,17 +52,37 @@ export const getElements = async (
     root = await page.$(root);
   }
   const source = (root || page) as ElementHandle<HTMLElement>;
-  let els = await source.$$('[data-item-index]');
+  const els = await source.$$(
+    type === 'row' ? '[data-row-index]' : '[data-col-index]',
+  );
 
   return sortElements(els);
 };
 
+/**
+ * @deprecated
+ */
 export const mapElements = async (
   fn: (el: HTMLElement) => any,
   root: ElementHandle<HTMLElement> | string | null | undefined,
   { page }: { page: Page },
 ) => {
-  const els = await getElements(root, { page });
+  const els = await getElements(root, 'row', { page });
+
+  return Promise.all(
+    els.map(async (el: ElementHandle) => {
+      //@ts-ignore
+      return await (await page.evaluateHandle(fn, el)).jsonValue();
+    }),
+  );
+};
+
+export const mapRowElements = async (
+  fn: (el: HTMLElement) => any,
+  root: ElementHandle<HTMLElement> | string | null | undefined,
+  { page }: { page: Page },
+) => {
+  const els = await getElements(root, 'row', { page });
 
   return Promise.all(
     els.map(async (el: ElementHandle) => {

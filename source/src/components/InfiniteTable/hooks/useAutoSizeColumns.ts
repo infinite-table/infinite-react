@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
+
 import { getGlobal } from '../../../utils/getGlobal';
 import { useComponentState } from '../../hooks/useComponentState';
 import { useLatest } from '../../hooks/useLatest';
@@ -29,13 +30,14 @@ function getColumnContentMaxWidths(
   const { includeHeader, columnsToResize, columnsToSkip } = options;
   const query = `.${InfiniteTableCellClassName} > .${InfiniteTableCellContentClassName}`;
 
-  let match = domRef.current?.querySelectorAll(query);
+  const match = domRef.current?.querySelectorAll(query);
 
   const measuredMaxWidths: Record<string, number> = {};
 
   const computedPaddingsForColumns: Record<string, number> = {};
 
   if (match && match.length) {
+    console.log(match);
     match.forEach((content) => {
       const cell = content.parentElement!;
       const isHeader = cell.matches(`.${InfiniteTableHeaderCellClassName}`);

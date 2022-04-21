@@ -34,7 +34,7 @@ type CellRenderingParam<T> = {
 };
 
 type CellRenderingResult = {
-  repaintId: number;
+  // repaintId: number;
   renderCell: TableRenderCellFn;
 };
 
@@ -76,16 +76,16 @@ export function useCellRendering<T>(
     onScrollToBottom,
     scrollToBottomOffset,
   } = componentState;
-  const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
-  const repaintIdRef = useRef<number>(0);
+  // const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
+  // const repaintIdRef = useRef<number>(0);
 
-  if (
-    prevDataSourceTimestamp !== dataSourceState.updatedAt ||
-    !shallowEqualObjects(prevComputed, computed)
-  ) {
-    repaintIdRef.current++;
-  }
-  const repaintId = repaintIdRef.current;
+  // if (
+  //   prevDataSourceTimestamp !== dataSourceState.updatedAt ||
+  //   !shallowEqualObjects(prevComputed, computed)
+  // ) {
+  //   repaintIdRef.current++;
+  // }
+  // const repaintId = repaintIdRef.current;
 
   useYourBrain({
     columnSize,
@@ -188,6 +188,10 @@ export function useCellRendering<T>(
       const rowInfo = dataArray[rowIndex];
       const column = computedVisibleColumns[colIndex];
 
+      if (!rowInfo) {
+        return null;
+      }
+
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
         virtualized: true,
@@ -214,12 +218,12 @@ export function useCellRendering<T>(
       groupRenderStrategy,
       toggleGroupRow,
       showZebraRows,
-      repaintId,
+      // repaintId, // TODO continue here and run this test: http://localhost:3000/tests/table/props/sortInfo/controlled-single
     ],
   );
 
   return {
     renderCell,
-    repaintId,
+    // repaintId,
   };
 }

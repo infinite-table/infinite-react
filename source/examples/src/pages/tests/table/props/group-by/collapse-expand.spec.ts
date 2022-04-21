@@ -10,8 +10,9 @@ export default test.describe.parallel('Table', () => {
     const getRowCount = async () =>
       await page.evaluate(
         () =>
-          document.querySelectorAll('[data-row-index][data-col-index="0"]')
-            .length,
+          document.querySelectorAll(
+            '.InfiniteColumnCell[data-row-index][data-col-index="0"]',
+          ).length,
       );
 
     let count = await getRowCount();

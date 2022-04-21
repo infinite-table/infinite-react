@@ -1,5 +1,6 @@
-import { getHeaderColumnIds } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getHeaderColumnIds } from '../../../testUtils';
 
 export default test.describe.parallel('RawList', () => {
   test.beforeEach(async ({ page }) => {

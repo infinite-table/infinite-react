@@ -1,5 +1,7 @@
 import { Page, ElementHandle } from '@playwright/test';
 
+import { getRowSelector } from './getRowElement';
+import { kebabCase } from './kebabCase';
 import { sortElements } from './listUtils';
 
 export { getRow, getRows } from './getRowElement';
@@ -23,10 +25,9 @@ export const getCellNode = async (
   { columnId, rowIndex }: { columnId: string; rowIndex: number },
   { page }: { page: Page },
 ) => {
-  const rowSelector = getRowSelector(rowIndex);
-  const row = await page.$(rowSelector);
-
-  return await row!.$(`[data-column-id="${columnId}"]`);
+  return await page.$(
+    `.InfiniteColumnCell[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+  );
 };
 
 export const getHeaderCellWidthByColumnId = async (
@@ -53,7 +54,7 @@ export const getColumnWidths = async (
 };
 
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
-  const cells = await page.$$(`.InfiniteHeader [data-name="Cell"]`);
+  const cells = await page.$$(`.InfiniteHeader [data-column-id]`);
 
   const result = await sortElements(cells);
 
@@ -87,14 +88,14 @@ export const getCellText = async (
   { page }: { page: Page },
 ) => {
   const cell = await page.$(
-    `[data-row-index="${rowIndex}"] [data-column-id="${columnId}"]`,
+    `[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
   );
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };
 
 export const getHeaderColumnIds = async ({ page }: { page: Page }) => {
-  let cells = await getHeaderColumnCells({ page });
+  const cells = await getHeaderColumnCells({ page });
 
   const result = Promise.all(
     cells.map((cell: any) =>
@@ -134,9 +135,6 @@ export async function getColumnGroupsIds({ page }: { page: Page }) {
     [...nodes].map((node) => (node as HTMLElement).dataset.groupId),
   );
 }
-
-import { kebabCase } from './kebabCase';
-import { getRowSelector } from './getRowElement';
 
 export async function getComputedStyleProperty(
   selector: ElementHandle<HTMLElement | SVGElement> | string,
