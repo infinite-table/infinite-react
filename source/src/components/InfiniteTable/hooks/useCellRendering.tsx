@@ -1,21 +1,28 @@
-import { useCallback, useEffect, useRef } from 'react';
-
 import type { Ref } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import React from 'react';
 
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import {
+  TableRenderCellFn,
+  TableRenderCellFnParam,
+} from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { useLatest } from '../../hooks/useLatest';
-
+import { usePrevious } from '../../hooks/usePrevious';
+import { useRerender } from '../../hooks/useRerender';
+import type { Size } from '../../types/Size';
+import { InfiniteTableColumnCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
+import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import type {
   InfiniteTableComputedValues,
   InfiniteTableImperativeApi,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
 } from '../types';
-import type { Size } from '../../types/Size';
 
+import { useInfiniteTable } from './useInfiniteTable';
 import { useYourBrain } from './useYourBrain';
-import { useRerender } from '../../hooks/useRerender';
-import { usePrevious } from '../../hooks/usePrevious';
 
 type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -26,25 +33,12 @@ type CellRenderingParam<T> = {
   getComputed: () => InfiniteTableComputedValues<T> | undefined;
 };
 
-import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
-import { useInfiniteTable } from './useInfiniteTable';
-import {
-  TableRenderCellFn,
-  TableRenderCellFnParam,
-} from '../../HeadlessTable/ReactHeadlessTableRenderer';
-import { InfiniteTableColumnCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
-import React from 'react';
-import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
-
 type CellRenderingResult = {
-  // pinnedStartList: JSX.Element | null;
-  // pinnedEndList: JSX.Element | null;
-  // pinnedStartScrollbarPlaceholder: JSX.Element | null;
-  // pinnedEndScrollbarPlaceholder: JSX.Element | null;
-  // centerList: JSX.Element | null;
   repaintId: number;
   renderCell: TableRenderCellFn;
 };
+
+const SCROLL_BOTTOM_OFFSET = 1;
 
 export function useCellRendering<T>(
   param: CellRenderingParam<T>,
@@ -64,14 +58,24 @@ export function useCellRendering<T>(
     columnSize,
   } = computed;
 
-  const { componentState: dataSourceState, getState: getDataSourceState } =
-    useDataSourceContextValue<T>();
+  const {
+    componentState: dataSourceState,
+    getState: getDataSourceState,
+    componentActions: dataSourceActions,
+  } = useDataSourceContextValue<T>();
 
   const { dataArray } = dataSourceState;
 
   const getData = useLatest(dataArray);
-  const { rowHeight, groupRenderStrategy, brain, showZebraRows } =
-    componentState;
+  const {
+    rowHeight,
+    groupRenderStrategy,
+    brain,
+    showZebraRows,
+    onScrollToTop,
+    onScrollToBottom,
+    scrollToBottomOffset,
+  } = componentState;
   const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
   const repaintIdRef = useRef<number>(0);
 
@@ -94,6 +98,45 @@ export function useCellRendering<T>(
     bodySize,
     rowspan,
   });
+
+  const scrollTopMaxRef = useRef<number>(0);
+
+  useEffect(() => {
+    return brain.onRenderCountChange(() => {
+      scrollTopMaxRef.current = brain.scrollTopMax;
+    });
+  }, [brain]);
+
+  useEffect(() => {
+    return brain.onScrollStop((scrollPosition) => {
+      const { scrollTop } = scrollPosition;
+      if (scrollTop === 0) {
+        onScrollToTop?.();
+      }
+
+      const offset = scrollToBottomOffset ?? SCROLL_BOTTOM_OFFSET;
+      const isScrollBottom = scrollTop + offset >= scrollTopMaxRef.current;
+
+      if (isScrollBottom) {
+        onScrollToBottom?.();
+
+        const { livePagination, livePaginationCursor, dataArray } =
+          getDataSourceState();
+        if (livePagination) {
+          dataSourceActions.cursorId =
+            livePaginationCursor !== undefined
+              ? // when there is a `livePaginationCursor` defined we set the cursorId to Date.now
+                // as that will trigger the dataSource to fetch more data
+                Date.now()
+              : // but when there is no `livePaginationCursor` defined we use the `dataArray.length`
+                // as the cursorId, we we can't randomise it, otherwise when we get to the end
+                // of the dataset, we will still request more data
+                // see #useDataArrayLengthAsCursor ref
+                dataArray.length;
+        }
+      }
+    });
+  }, [brain, onScrollToTop, onScrollToBottom]);
 
   useEffect(() => {
     if (!bodySize.height) {

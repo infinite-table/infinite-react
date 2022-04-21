@@ -1,11 +1,11 @@
 import { EffectCallback, useEffect, useRef } from 'react';
 
-export function useEffectWithChanges(
+export function useEffectWithChanges<T>(
   fn: (
-    changes: Record<string, any>,
+    changes: Record<keyof T, any>,
     prevValues: Record<string, any>,
   ) => void | (() => void),
-  deps: Record<string, any>,
+  deps: Record<keyof T, any>,
 ) {
   const prevRef = useRef({});
 

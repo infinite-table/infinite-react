@@ -3,7 +3,6 @@
 
 import { useMatrixBrain } from '../../HeadlessTable';
 import { Size } from '../../types/Size';
-
 import { MatrixBrain, SpanFunction } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableComputedColumn } from '../types';
 
@@ -51,13 +50,6 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
       fixedColsStart: computedPinnedStartColumns.length,
     },
   );
-
-  // useEffect(() => {
-  //   brain.setAvailableSize({
-  //     height: bodySize.height,
-  //     width: bodySize.width,
-  //   });
-  // }, [bodySize, brain]);
 
   return brain;
 }

@@ -1,10 +1,9 @@
 //@ts-nocheck
-import { TableRenderCellFnParam } from '@src/components/HeadlessTable/ReactHeadlessTableRenderer';
-import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
-
-import * as React from 'react';
-import { MatrixBrain } from '@infinite-table/infinite-react/components/VirtualBrain/MatrixBrain';
 import { HeadlessTable } from '@src/components/HeadlessTable';
+import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
+import { TableRenderCellFnParam } from '@src/components/HeadlessTable/ReactHeadlessTableRenderer';
+import { MatrixBrain } from '@src/components/VirtualBrain/MatrixBrain';
+import * as React from 'react';
 import { useState } from 'react';
 
 export default function App() {

@@ -1,4 +1,5 @@
 import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
+
 import type { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 import type {
   InfiniteTablePropColumnOrderNormalized,

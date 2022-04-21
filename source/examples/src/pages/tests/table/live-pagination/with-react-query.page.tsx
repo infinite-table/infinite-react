@@ -1,6 +1,3 @@
-import * as React from 'react';
-import fetch from 'isomorphic-fetch';
-
 import {
   DataSourceDataParams,
   DataSourceSingleSortInfo,
@@ -8,8 +5,9 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+import fetch from 'isomorphic-fetch';
+import * as React from 'react';
 import { useCallback } from 'react';
-
 import {
   QueryClient,
   QueryClientProvider,
@@ -71,7 +69,7 @@ function dataSource({
 
   return fetch(
     `${process.env
-      .NEXT_PUBLIC_BASE_URL!}/employees1k?_limit=${PAGE_SIZE}&_sort=${
+      .NEXT_PUBLIC_BASE_URL!}/employees100?_limit=${PAGE_SIZE}&_sort=${
       sortInfo?.field
     }&_order=${
       sortInfo?.dir === 1 ? 'asc' : 'desc'

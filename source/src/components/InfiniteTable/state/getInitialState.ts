@@ -1,9 +1,9 @@
 import { createRef } from 'react';
+
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
-
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { ThemeVars } from '../theme.css';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
@@ -18,6 +18,7 @@ import {
   InfiniteTableMappedState,
 } from '../types/InfiniteTableState';
 import { toMap } from '../utils/toMap';
+
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
 /**
@@ -47,6 +48,10 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
       scrollTop: 0,
     });
   });
+
+  if (__DEV__) {
+    (globalThis as any).brain = brain;
+  }
 
   // and on width changes
   brain.onAvailableSizeChange((size) => {

@@ -1,56 +1,48 @@
 import * as React from 'react';
+import type { RefObject } from 'react';
 
-import { RefObject } from 'react';
+import { join } from '../../utils/join';
+import { CSSVariableWatch } from '../CSSVariableWatch';
+import {
+  useDataSource,
+  useDataSourceContextValue,
+} from '../DataSource/publicHooks/useDataSource';
+import { HeadlessTable } from '../HeadlessTable';
+import {
+  getComponentStateRoot,
+  useComponentState,
+} from '../hooks/useComponentState';
+import { useLatest } from '../hooks/useLatest';
+import { useResizeObserver } from '../ResizeObserver';
+import { debounce } from '../utils/debounce';
 
-import type {
-  InfiniteTableContextValue,
-  InfiniteTableProps,
-  InfiniteTableState,
-} from './types';
-
-import { internalProps, rootClassName } from './internalProps';
-
+import { InfiniteTableBody } from './components/InfiniteTableBody';
+import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
+import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
+import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
+import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
+import { RowHoverCls } from './components/InfiniteTableRow/row.css';
+import { LoadMask } from './components/LoadMask';
+import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
+import { useCellRendering } from './hooks/useCellRendering';
+import { useComputed } from './hooks/useComputed';
+import { useDOMProps } from './hooks/useDOMProps';
+import { useInfiniteTable } from './hooks/useInfiniteTable';
+import { useLicense } from './hooks/useLicense/useLicense';
 import { getInfiniteTableContext } from './InfiniteTableContext';
-
+import { internalProps, rootClassName } from './internalProps';
 import {
   forwardProps,
   mapPropsToState,
   initSetupState,
 } from './state/getInitialState';
-
-import { useResizeObserver } from '../ResizeObserver';
-import { useInfiniteTable } from './hooks/useInfiniteTable';
-import { useComputed } from './hooks/useComputed';
-import { useLatest } from '../hooks/useLatest';
-
-import {
-  useDataSource,
-  useDataSourceContextValue,
-} from '../DataSource/publicHooks/useDataSource';
-
-import { InfiniteTableBody } from './components/InfiniteTableBody';
-
-import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
-
-import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
-import { useLicense } from './hooks/useLicense/useLicense';
-import { CSSVariableWatch } from '../CSSVariableWatch';
-import {
-  getComponentStateRoot,
-  useComponentState,
-} from '../hooks/useComponentState';
-import { useDOMProps } from './hooks/useDOMProps';
-import { LoadMask } from './components/LoadMask';
-import { position, zIndex, top, left } from './utilities.css';
-import { join } from '../../utils/join';
 import { ThemeVars } from './theme.css';
-import { debounce } from '../utils/debounce';
-import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
-import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
-import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
-import { HeadlessTable } from '../HeadlessTable';
-import { useCellRendering } from './hooks/useCellRendering';
-import { RowHoverCls } from './components/InfiniteTableRow/row.css';
+import type {
+  InfiniteTableContextValue,
+  InfiniteTableProps,
+  InfiniteTableState,
+} from './types';
+import { position, zIndex, top, left } from './utilities.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -78,12 +70,7 @@ const InfiniteTableRoot = getComponentStateRoot({
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const {
-      componentState,
-      getComputed,
-      computed,
-      getState: getInfiniteTableState,
-    } = useInfiniteTable<T>();
+    const { componentState, getComputed, computed } = useInfiniteTable<T>();
     const {
       componentState: { loading },
       getState: getDataSourceState,
@@ -141,24 +128,6 @@ export const InfiniteTableComponent = React.memo(
     const domProps = useDOMProps<T>(componentState.domProps);
 
     const LoadMaskCmp = components?.LoadMask ?? LoadMask;
-
-    React.useLayoutEffect(() => {
-      // this needs to be useLayoutEffect
-      // on live Pagination cursor change we need this - ref #lvpgn
-      const dataSourceState = getDataSourceState();
-      const { onScrollbarsChange } = getInfiniteTableState();
-      const { notifyScrollbarsChange } = dataSourceState;
-
-      if (
-        onScrollbarsChange &&
-        dataSourceState.updatedAt &&
-        dataSourceState.dataArray.length
-      ) {
-        onScrollbarsChange(scrollbars);
-      }
-
-      notifyScrollbarsChange(scrollbars);
-    }, [scrollbars]);
 
     React.useEffect(() => {
       brain.setScrollStopDelay(scrollStopDelay);

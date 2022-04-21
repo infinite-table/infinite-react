@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
-import type { DataSourceSingleSortInfo } from '../../DataSource/types';
-import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
-
-import { useComputedVisibleColumns } from './useComputedVisibleColumns';
-import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
-import { useComponentState } from '../../hooks/useComponentState';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import type { DataSourceSingleSortInfo } from '../../DataSource/types';
+import { useComponentState } from '../../hooks/useComponentState';
+import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
+
 import { useColumnGroups } from './useColumnGroups';
-import { useColumnsWhen } from './useColumnsWhen';
+import { useColumnRowspan } from './useColumnRowspan';
 import { useColumnSizeFn } from './useColumnSizeFn';
+import { useColumnsWhen } from './useColumnsWhen';
+import { useComputedVisibleColumns } from './useComputedVisibleColumns';
+import { useScrollbars } from './useScrollbars';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState } =
@@ -113,39 +113,9 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnTypes,
   });
 
-  const rowspan = useMemo<MatrixBrainOptions['rowspan']>(() => {
-    const colsWithRowspan = computedVisibleColumns.filter(
-      (col) => typeof col.rowspan === 'function',
-    );
-
-    return colsWithRowspan.length
-      ? ({ rowIndex }) => {
-          let maxSpan = 1;
-
-          const dataArray = getDataSourceState().dataArray;
-          const rowInfo = dataArray[rowIndex];
-          const data = rowInfo.data;
-
-          colsWithRowspan.forEach((column) => {
-            if (!column.rowspan) {
-              return;
-            }
-            const span = column.rowspan({
-              column,
-              data,
-              dataArray,
-              rowInfo,
-              rowIndex,
-            });
-
-            if (span > maxSpan) {
-              maxSpan = span;
-            }
-          });
-          return maxSpan;
-        }
-      : undefined;
-  }, [computedVisibleColumns]);
+  const rowspan = useColumnRowspan(computedVisibleColumns);
+  const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
+  const scrollbars = useScrollbars<T>(brain);
 
   const computedPinnedStartOverflow = computedPinnedStartWidth
     ? computedPinnedStartColumnsWidth > computedPinnedStartWidth
@@ -154,28 +124,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     ? computedPinnedEndColumnsWidth > computedPinnedEndWidth
     : false;
 
-  const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
-
-  const hasHorizontalScrollbar =
-    computedUnpinnedColumnsWidth >
-    bodySize.width -
-      computedPinnedStartColumnsWidth -
-      computedPinnedEndColumnsWidth;
-
-  const reservedContentHeight =
-    brain.getTotalSize().height +
-    (hasHorizontalScrollbar ? getScrollbarWidth() : 0);
-
-  const hasVerticalScrollbar =
-    bodySize.height > 0 && bodySize.height < reservedContentHeight;
-
-  const scrollbars = useMemo(
-    () => ({
-      vertical: hasVerticalScrollbar,
-      horizontal: hasHorizontalScrollbar,
-    }),
-    [hasVerticalScrollbar, hasHorizontalScrollbar],
-  );
   return {
     scrollbars,
     columnSize,

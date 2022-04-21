@@ -1,10 +1,9 @@
-import { Logger } from '../../utils/debug';
+import binarySearch from 'binary-search';
 
+import { Logger } from '../../utils/debug';
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
 import type { Size } from '../types/Size';
 import type { VoidFn } from '../types/VoidFn';
-
-import binarySearch from 'binary-search';
 
 export type FixedPosition = false | 'start' | 'end';
 export type SpanFunction = ({
@@ -79,8 +78,13 @@ export type FnOnRenderCountChange = ({
 
 export type OnAvailableSizeChange = (size: Size) => void;
 
+export type FnOnScrollStop = (
+  scrollPosition: ScrollPosition,
+  range: TableRenderRange,
+) => void;
+
 export class MatrixBrain extends Logger {
-  private scrolling: boolean = false;
+  private scrolling = false;
   private width: MatrixBrainOptions['width'] = 0;
 
   private height: MatrixBrainOptions['height'] = 0;
@@ -100,17 +104,17 @@ export class MatrixBrain extends Logger {
   private rowHeightCache!: number[];
   private rowOffsetCache!: number[];
 
-  private verticalTotalSize: number = 0;
+  private verticalTotalSize = 0;
 
   private colspanParent!: Map<number, number[]>;
   private colspanValue!: Map<number, number[]>;
 
   private colWidthCache!: number[];
   private colOffsetCache!: number[];
-  private horizontalTotalSize: number = 0;
+  private horizontalTotalSize = 0;
 
-  private horizontalRenderCount: number = 0;
-  private verticalRenderCount: number = 0;
+  private horizontalRenderCount = 0;
+  private verticalRenderCount = 0;
 
   private horizontalRenderRange: RenderRangeType = {
     startIndex: 0,
@@ -133,31 +137,31 @@ export class MatrixBrain extends Logger {
     [];
 
   private onDestroyFns: VoidFn[] = [];
-  private destroyed: boolean = false;
+  private destroyed = false;
   private onRenderCountChangeFns: FnOnRenderCountChange[] = [];
   private onAvailableSizeChangeFns: OnAvailableSizeChange[] = [];
   private onScrollStartFns: VoidFunction[] = [];
-  private onScrollStopFns: VoidFunction[] = [];
+  private onScrollStopFns: FnOnScrollStop[] = [];
 
-  private scrollTimeoutId: number = 0;
-  private scrollStopDelay: number = 250;
+  private scrollTimeoutId = 0;
+  private scrollStopDelay = 250;
 
   /**
    * Number of columns that are fixed at the start
    */
-  private fixedColsStart: number = 0;
+  private fixedColsStart = 0;
   /**
    * Number of columns that are fixed at the end
    */
-  private fixedColsEnd: number = 0;
+  private fixedColsEnd = 0;
   /**
    * Number of rows that are fixed at the start
    */
-  private fixedRowsStart: number = 0;
+  private fixedRowsStart = 0;
   /**
    * Number of rows that are fixed at the end
    */
-  private fixedRowsEnd: number = 0;
+  private fixedRowsEnd = 0;
 
   constructor() {
     super(`MatrixBrain`);
@@ -365,6 +369,7 @@ export class MatrixBrain extends Logger {
     // this._updateRenderCountRafId = requestAnimationFrame(() => {
     this.reset(which);
     this.doUpdateRenderCount(which);
+
     //   delete this._updateRenderCountRafId;
     // });
   };
@@ -376,6 +381,15 @@ export class MatrixBrain extends Logger {
 
     this.setRenderCount(this.computeRenderCount(which));
   };
+
+  get scrollTopMax() {
+    const totalSize = this.getTotalSize();
+    return totalSize.height - this.height;
+  }
+  get scrollLeftMax() {
+    const totalSize = this.getTotalSize();
+    return totalSize.width - this.width;
+  }
 
   private setScrolling = (scrolling: boolean) => {
     const prevScrolling = this.scrolling;
@@ -409,8 +423,11 @@ export class MatrixBrain extends Logger {
   private notifyScrollStop = () => {
     const fns = this.onScrollStopFns;
 
+    const scrollPos = this.scrollPosition;
+    const range = this.getRenderRange();
+
     for (let i = 0, len = fns.length; i < len; i++) {
-      fns[i]();
+      fns[i](scrollPos, range);
     }
   };
 
@@ -576,8 +593,8 @@ export class MatrixBrain extends Logger {
 
     const { scrollLeft } = this.scrollPosition;
     const { width } = this.getAvailableSize();
-    let offsets = [];
-    let widths = [];
+    const offsets = [];
+    const widths = [];
     let sum = 0;
 
     for (
@@ -625,8 +642,8 @@ export class MatrixBrain extends Logger {
 
     const { scrollTop } = this.scrollPosition;
     const { height } = this.getAvailableSize();
-    let offsets = [];
-    let heights = [];
+    const offsets = [];
+    const heights = [];
     let sum = 0;
 
     for (
@@ -957,7 +974,7 @@ export class MatrixBrain extends Logger {
     const itemSizeCache =
       direction === 'horizontal' ? this.colWidthCache : this.rowHeightCache;
 
-    let lastOffsetIndex = itemOffsetCache.length - 1;
+    const lastOffsetIndex = itemOffsetCache.length - 1;
     let lastSizeIndex = itemSizeCache.length - 1;
     let lastOffset = itemOffsetCache[lastOffsetIndex];
 
@@ -1104,7 +1121,7 @@ export class MatrixBrain extends Logger {
 
     if (cache[itemIndex] === undefined) {
       let i = cache.length;
-      let lastIndex = count ? Math.min(itemIndex, count - 1) : 0;
+      const lastIndex = count ? Math.min(itemIndex, count - 1) : 0;
 
       const cell = { rowIndex, colIndex };
 
@@ -1274,7 +1291,7 @@ export class MatrixBrain extends Logger {
       direction === 'horizontal' ? this.colWidthCache : this.rowHeightCache;
     if (cachedSize === undefined) {
       let i = itemSizeCache.length;
-      let lastIndex = Math.min(itemIndex, count - 1);
+      const lastIndex = Math.min(itemIndex, count - 1);
 
       for (; i <= lastIndex; i++) {
         this.computeCacheFor(i, direction);
@@ -1292,7 +1309,7 @@ export class MatrixBrain extends Logger {
     };
   };
 
-  private getTotalSizeFor = (direction: 'horizontal' | 'vertical') => {
+  public getTotalSizeFor = (direction: 'horizontal' | 'vertical') => {
     const count = direction === 'horizontal' ? this.cols : this.rows;
     const itemSize =
       direction === 'horizontal' ? this.colWidth : this.rowHeight;
@@ -1403,7 +1420,7 @@ export class MatrixBrain extends Logger {
     };
   };
 
-  onScrollStop = (fn: VoidFunction) => {
+  onScrollStop = (fn: (scrollPos: ScrollPosition) => void) => {
     this.onScrollStopFns.push(fn);
     return () => {
       this.onScrollStopFns = this.onScrollStopFns.filter((f) => f !== fn);

@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-
 import { MappedCells } from '@src/components/HeadlessTable/MappedCells';
 
 export default test.describe.parallel('MappedCells', () => {

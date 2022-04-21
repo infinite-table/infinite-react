@@ -1,5 +1,6 @@
 import React from 'react';
 import { RefCallback } from 'react';
+
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
@@ -57,7 +58,7 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private items: Renderable[] = [];
 
-  private currentHoveredRow: number = -1;
+  private currentHoveredRow = -1;
   private onDestroy: VoidFunction;
 
   constructor(brain: MatrixBrain) {
@@ -147,7 +148,7 @@ export class ReactHeadlessTableRenderer extends Logger {
      * the render count is always the rows times cols that are inside the viewport
      * and is not modified by row or column spanning
      */
-    let renderCount = ranges.reduce(
+    const renderCount = ranges.reduce(
       (sum, range) => sum + getRenderRangeCellCount(range),
       0,
     );
@@ -537,8 +538,8 @@ export class ReactHeadlessTableRenderer extends Logger {
     const colCount = this.brain.getColCount();
     const rowCount = this.brain.getRowCount();
 
-    let rowFixed: boolean = false;
-    let colFixed: boolean = false;
+    let rowFixed = false;
+    let colFixed = false;
 
     let pos: FixedPosition = false;
 

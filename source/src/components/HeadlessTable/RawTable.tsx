@@ -4,8 +4,8 @@ import { useEffect, useMemo } from 'react';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
-
 import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
+
 import {
   ReactHeadlessTableRenderer,
   TableRenderCellFn,
@@ -51,11 +51,6 @@ export function RawTableFn(props: RawTableProps) {
       renderCell,
     });
   }, [renderer, brain, renderCell, onRenderUpdater]);
-
-  if (__DEV__) {
-    (globalThis as any).brain = brain;
-    (globalThis as any).renderer = renderer;
-  }
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {
