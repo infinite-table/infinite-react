@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { GroupRowsState } from '../../DataSource';
 import { loadData } from '../../DataSource/privateHooks/useLoadData';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
@@ -17,9 +18,7 @@ export function useToggleGroupRow<T>() {
     dataSourceActions.groupRowsState = newState;
     if (state.lazyLoad && newState.isGroupRowExpanded(groupKeys)) {
       loadData(state.data, state, dataSourceActions, {
-        overrides: {
-          groupKeys,
-        },
+        groupKeys,
       });
     }
   }, []);

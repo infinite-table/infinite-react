@@ -1,6 +1,10 @@
-import { mapElements, withBrain } from '../testUtils/listUtils';
-
 import { test, expect } from '@playwright/test';
+
+import {
+  mapElements,
+  mapListElements,
+  withBrain,
+} from '../testUtils/listUtils';
 
 export default test.describe.parallel('RawList', () => {
   test.beforeEach(async ({ page }) => {
@@ -72,14 +76,14 @@ export default test.describe.parallel('RawList', () => {
     expect(range).toEqual({ renderStartIndex: 1, renderEndIndex: 4 });
 
     await page.waitForTimeout(50);
-    const result = await mapElements((el) => el.textContent, undefined, {
+    const result = await mapListElements((el) => el.textContent, undefined, {
       page,
     });
     expect(result).toEqual(['#1', '#2', '#3', '#4']);
   });
 
   test('should render item when available size = 1', async ({ page }) => {
-    let range = await withBrain(
+    const range = await withBrain(
       (brain) => {
         const ITEM_SIZE = 50;
         brain.update(0, ITEM_SIZE);
@@ -106,7 +110,7 @@ export default test.describe.parallel('RawList', () => {
   test('should render no items when available size is zero', async ({
     page,
   }) => {
-    let range = await withBrain(
+    const range = await withBrain(
       (brain) => {
         const ITEM_SIZE = 50;
         brain.update(0, ITEM_SIZE);

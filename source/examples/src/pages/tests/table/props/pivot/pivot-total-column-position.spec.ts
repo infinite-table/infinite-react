@@ -2,11 +2,13 @@ import { test, expect } from '@playwright/test';
 
 import { getColumnGroupsIds, getHeaderColumnIds } from '../../../testUtils';
 
+// TODO column group tests need to be improved, as not maintainable
+
 export default test.describe.parallel('Pivot', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`tests/table/props/pivot/pivot-total-column-position`);
 
-    await page.waitForSelector('[data-column-id]');
+    await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
   });
 
   test('totals columns not needed when pivotBy.length < 2', async ({
@@ -26,7 +28,10 @@ export default test.describe.parallel('Pivot', () => {
       'total:salary',
       'total:age',
     ];
-    const expectedGroupIds = ['backend', 'frontend'];
+    const BACKEND = 'backend,salary:backend,age:backend';
+    const FRONTEND = 'frontend,salary:frontend,age:frontend';
+    const expectedGroupIds = [BACKEND, FRONTEND];
+
     expect(columnIds).toEqual(expectedColumnIds);
     expect(columnGroupIds).toEqual(expectedGroupIds);
 
@@ -57,7 +62,10 @@ export default test.describe.parallel('Pivot', () => {
       'total:salary',
       'total:age',
     ]);
-    const expectedGroupIds = ['backend', 'frontend'];
+    const expectedGroupIds = [
+      'backend,salary:backend,age:backend',
+      'frontend,salary:frontend,age:frontend',
+    ];
     expect(columnGroupIds).toEqual(expectedGroupIds);
 
     // toggles pivot for "canDesign" field
@@ -77,10 +85,10 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     expect(columnGroupIds).toEqual([
-      'backend',
-      'backend/yes',
-      'frontend',
-      'frontend/no',
+      'backend,salary:backend/yes,age:backend/yes',
+      'frontend,salary:frontend/no,age:frontend/no',
+      'backend/yes,salary:backend/yes,age:backend/yes',
+      'frontend/no,salary:frontend/no,age:frontend/no',
     ]);
 
     // toggles show totals to true
@@ -104,12 +112,12 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     expect(columnGroupIds).toEqual([
-      'backend',
-      'backend/yes',
-      'total:backend',
-      'frontend',
-      'frontend/no',
-      'total:frontend',
+      'backend,salary:backend/yes,age:backend/yes',
+      'total:backend,total:salary:backend,total:age:backend',
+      'frontend,salary:frontend/no,age:frontend/no',
+      'backend/yes,salary:backend/yes,age:backend/yes',
+      'frontend/no,salary:frontend/no,age:frontend/no',
+      'total:frontend,total:salary:frontend,total:age:frontend',
     ]);
   });
 });

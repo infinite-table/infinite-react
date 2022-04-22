@@ -4,16 +4,19 @@ export const getRowObject = async (
   rowIndex: number,
   { page }: { page: Page },
 ) => {
-  const row = await page.$(`[data-row-index="${rowIndex}"]`);
-
-  const result = await row!.$$eval('[data-name="Cell"]', (cells: Element[]) =>
-    cells.reduce((acc: Record<string, string>, cell) => {
-      acc[cell.getAttribute('data-column-id') as string] = (
-        cell as HTMLElement
-      ).innerText;
-      return acc;
-    }, {}),
+  const cells = await page.locator(
+    `.InfiniteColumnCell[data-row-index="${rowIndex}"]`,
   );
 
-  return result;
+  return await cells.evaluateAll((nodes) => {
+    return (nodes as HTMLElement[]).reduce(
+      (acc: Record<string, string>, node: HTMLElement) => {
+        const colId = node.dataset.columnId as string;
+
+        acc[colId] = node.innerText;
+        return acc;
+      },
+      {},
+    );
+  });
 };

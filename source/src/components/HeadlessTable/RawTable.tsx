@@ -12,6 +12,7 @@ import {
 } from './ReactHeadlessTableRenderer';
 
 export type RawTableProps = {
+  name?: string;
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
   cellHoverClassNames?: string[];

@@ -277,15 +277,23 @@ export class MatrixBrain extends Logger {
       }
     }
 
-    if (options.rowspan && options.rowspan != this.rowspan) {
+    const rowspanDefined = options.rowspan != null;
+    const colspanDefined = options.colspan != null;
+
+    const rowspanChanged = rowspanDefined && options.rowspan != this.rowspan;
+    const colspanChanged = colspanDefined && options.colspan != this.colspan;
+
+    if (rowspanChanged) {
       this.rowspan = options.rowspan;
     }
-    if (options.colspan && options.colspan != this.colspan) {
+    if (colspanChanged) {
       this.colspan = options.colspan;
     }
 
-    const horizontalChange = colsChanged || colWidthChanged || widthChanged;
-    const verticalChange = rowsChanged || rowHeightChanged || heightChanged;
+    const horizontalChange =
+      colsChanged || colWidthChanged || widthChanged || colspanChanged;
+    const verticalChange =
+      rowsChanged || rowHeightChanged || heightChanged || rowspanChanged;
 
     if (horizontalChange || verticalChange) {
       this.updateRenderCount({

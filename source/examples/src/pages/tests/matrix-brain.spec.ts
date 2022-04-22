@@ -1,6 +1,5 @@
-import { OnScrollFn } from '@src/components/types/ScrollPosition';
 import { test, expect } from '@playwright/test';
-
+import { OnScrollFn } from '@src/components/types/ScrollPosition';
 import {
   FnOnRenderRangeChange,
   MatrixBrain,
@@ -38,20 +37,20 @@ export default test.describe.parallel('MatrixBrain', () => {
       rows: ROWS,
     });
 
-    expect(brain.getRenderRange()).toEqual([
-      [0, 0],
-      [Math.ceil(HEIGHT / ROW_SIZE) + 1, Math.ceil(WIDTH / COL_SIZE) + 1],
-    ]);
+    expect(brain.getRenderRange()).toEqual({
+      start: [0, 0],
+      end: [Math.ceil(HEIGHT / ROW_SIZE) + 1, Math.ceil(WIDTH / COL_SIZE) + 1],
+    });
     // scroll just a bit, to not trigger a render range change
     brain.setScrollPosition({
       scrollLeft: 20,
       scrollTop: 0,
     });
 
-    expect(brain.getRenderRange()).toEqual([
-      [0, 0],
-      [Math.ceil(HEIGHT / ROW_SIZE) + 1, Math.ceil(WIDTH / COL_SIZE) + 1],
-    ]);
+    expect(brain.getRenderRange()).toEqual({
+      start: [0, 0],
+      end: [Math.ceil(HEIGHT / ROW_SIZE) + 1, Math.ceil(WIDTH / COL_SIZE) + 1],
+    });
 
     // scroll horizontally more, to trigger a render range change on horizontal only
     brain.setScrollPosition({
@@ -59,13 +58,13 @@ export default test.describe.parallel('MatrixBrain', () => {
       scrollTop: 0,
     });
 
-    expect(brain.getRenderRange()).toEqual([
-      [0, 1],
-      [
+    expect(brain.getRenderRange()).toEqual({
+      start: [0, 1],
+      end: [
         Math.ceil(HEIGHT / ROW_SIZE) + 1,
         Math.min(Math.ceil(WIDTH / COL_SIZE) + 2, COLS),
       ],
-    ]);
+    });
 
     // scroll horizontally even more, to trigger a render range change on horizontal only
     brain.setScrollPosition({
@@ -73,10 +72,10 @@ export default test.describe.parallel('MatrixBrain', () => {
       scrollTop: 0,
     });
 
-    expect(brain.getRenderRange()).toEqual([
-      [0, 3],
-      [Math.ceil(HEIGHT / ROW_SIZE) + 1, 7],
-    ]);
+    expect(brain.getRenderRange()).toEqual({
+      start: [0, 3],
+      end: [Math.ceil(HEIGHT / ROW_SIZE) + 1, 7],
+    });
   });
 
   test('should correctly return the render range when scrolling in both directions', async () => {
@@ -103,10 +102,10 @@ export default test.describe.parallel('MatrixBrain', () => {
       scrollTop: 345,
     });
 
-    expect(brain.getRenderRange()).toEqual([
-      [6, 2],
-      [16, 6],
-    ]);
+    expect(brain.getRenderRange()).toEqual({
+      start: [6, 2],
+      end: [16, 6],
+    });
   });
 
   test('should correctly trigger onRenderRange change when scrolling and changing available size', async ({
@@ -145,10 +144,10 @@ export default test.describe.parallel('MatrixBrain', () => {
     await page.waitForTimeout(5);
 
     expect(onRenderRangeChange.callCount).toBe(1);
-    expect(onRenderRangeChange.firstArg).toEqual([
-      [0, 0],
-      [12, 5],
-    ]);
+    expect(onRenderRangeChange.firstArg).toEqual({
+      start: [0, 0],
+      end: [12, 5],
+    });
 
     // scroll down and right a bit, but not too much so the render range stays the same
     brain.setScrollPosition({
@@ -169,10 +168,10 @@ export default test.describe.parallel('MatrixBrain', () => {
     await page.waitForTimeout(5);
 
     expect(onRenderRangeChange.callCount).toBe(2);
-    expect(onRenderRangeChange.firstArg).toEqual([
-      [1, 1],
-      [13, 6],
-    ]);
+    expect(onRenderRangeChange.firstArg).toEqual({
+      start: [1, 1],
+      end: [13, 6],
+    });
 
     // now set a new size
 
@@ -185,10 +184,10 @@ export default test.describe.parallel('MatrixBrain', () => {
 
     // and expect render range to have changed
     expect(onRenderRangeChange.callCount).toBe(3);
-    expect(onRenderRangeChange.firstArg).toEqual([
-      [1, 1],
-      [15, 7],
-    ]);
+    expect(onRenderRangeChange.firstArg).toEqual({
+      start: [1, 1],
+      end: [15, 7],
+    });
   });
 
   test('should correctly trigger onRenderRangeChange when count gets smaller than the max render range', async ({
@@ -221,10 +220,10 @@ export default test.describe.parallel('MatrixBrain', () => {
 
     await page.waitForTimeout(5);
 
-    expect(brain.getRenderRange()).toEqual([
-      [0, 0],
-      [10, 4],
-    ]);
+    expect(brain.getRenderRange()).toEqual({
+      start: [0, 0],
+      end: [10, 4],
+    });
 
     brain.update({
       rows: 5,
@@ -232,9 +231,9 @@ export default test.describe.parallel('MatrixBrain', () => {
     await page.waitForTimeout(5);
 
     expect(onRenderRangeChange.callCount).toEqual(1);
-    expect(onRenderRangeChange.firstArg).toEqual([
-      [0, 0],
-      [5, 4],
-    ]);
+    expect(onRenderRangeChange.firstArg).toEqual({
+      start: [0, 0],
+      end: [5, 4],
+    });
   });
 });

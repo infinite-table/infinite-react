@@ -28,7 +28,10 @@ export default test.describe.parallel('Pivot', () => {
       'salary:frontend',
     ];
     expect(columnIds).toEqual(expectedColumnIds);
-    expect(columnGroupIds).toEqual(['backend', 'frontend']);
+    expect(columnGroupIds).toEqual([
+      'backend,salary:backend',
+      'frontend,salary:frontend',
+    ]);
 
     const { headerCell: salaryBackend } = await getColumnCells(
       'salary:backend',

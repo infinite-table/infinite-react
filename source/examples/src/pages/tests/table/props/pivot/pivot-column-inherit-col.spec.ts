@@ -6,8 +6,8 @@ export default test.describe.parallel(
   'Pivoting and inheriting column configuration.',
   () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`/tests/table/props/pivot/pivot-column-inherit`);
-      await page.waitForSelector('[data-column-id]');
+      await page.goto(`/tests/table/props/pivot/pivot-column-inherit-col`);
+      await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
     });
 
     test('should have the column correctly inherited', async ({ page }) => {

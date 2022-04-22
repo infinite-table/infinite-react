@@ -1,5 +1,5 @@
-import { multisort } from '@src/utils/multisort';
 import { test, expect } from '@playwright/test';
+import { multisort } from '@src/utils/multisort';
 
 export default test.describe.parallel('multisort', () => {
   test('should sort empty array', () => {

@@ -1,6 +1,5 @@
 import { Page, ElementHandle } from '@playwright/test';
 
-import { getRowSelector } from './getRowElement';
 import { kebabCase } from './kebabCase';
 import { sortElements } from './listUtils';
 
@@ -56,7 +55,7 @@ export const getColumnWidths = async (
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
   const cells = await page.$$(`.InfiniteHeader [data-column-id]`);
 
-  const result = await sortElements(cells);
+  const result = await sortElements(cells, 'col');
 
   return result;
 };
@@ -147,7 +146,7 @@ export async function getComputedStyleProperty(
 
   const value = await selector.evaluate(
     (node, propertyName) =>
-      getComputedStyle(node).getPropertyValue(propertyName),
+      window.getComputedStyle(node).getPropertyValue(propertyName),
     kebabCase(propertyName),
   );
 

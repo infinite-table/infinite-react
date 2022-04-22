@@ -15,10 +15,11 @@ export default test.describe.parallel('Pivoting and generated columns', () => {
 
     expect(ids).toEqual([
       'group-by',
-      'total:salary:JPY',
-      'total:age:JPY',
+
       'salary:JPY/yes',
       'age:JPY/yes',
+      'total:salary:JPY',
+      'total:age:JPY',
     ]);
   });
 

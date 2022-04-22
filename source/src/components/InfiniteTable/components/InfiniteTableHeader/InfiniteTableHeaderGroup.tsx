@@ -1,11 +1,11 @@
 import * as React from 'react';
-import type { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
 
 import { join } from '../../../../utils/join';
 import { rootClassName } from '../../internalProps';
-
 import { cssEllipsisClassName } from '../../utilities.css';
+
 import { HeaderGroupCls } from './header.css';
+import type { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
 
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
@@ -25,7 +25,7 @@ export function InfiniteTableHeaderGroup<T>(
   return (
     <div
       ref={props.domRef}
-      data-group-id={columnGroup.id}
+      data-group-id={columnGroup.uniqueGroupId}
       className={join(HeaderGroupCls, TableHeaderGroupClassName)}
       style={{ width, height }}
     >

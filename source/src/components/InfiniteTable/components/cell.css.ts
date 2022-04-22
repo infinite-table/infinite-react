@@ -4,12 +4,9 @@ import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 import { ThemeVars } from '../theme.css';
 import {
   alignItems,
-  background,
   display,
   flexFlow,
-  height,
   position,
-  top,
   whiteSpace,
   willChange,
 } from '../utilities.css';
@@ -81,10 +78,6 @@ export const ColumnCellVariantsObject = {
 
 export const ColumnCellRecipe = recipe({
   base: [
-    position.absolute,
-    height['100%'],
-    background.inherit,
-    top['0'],
     {
       color: ThemeVars.components.Cell.color,
     },

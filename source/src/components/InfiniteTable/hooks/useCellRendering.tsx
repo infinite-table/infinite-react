@@ -2,14 +2,12 @@ import type { Ref } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import React from 'react';
 
-import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,
 } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { useLatest } from '../../hooks/useLatest';
-import { usePrevious } from '../../hooks/usePrevious';
 import { useRerender } from '../../hooks/useRerender';
 import type { Size } from '../../types/Size';
 import { InfiniteTableColumnCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
@@ -34,7 +32,6 @@ type CellRenderingParam<T> = {
 };
 
 type CellRenderingResult = {
-  // repaintId: number;
   renderCell: TableRenderCellFn;
 };
 
@@ -46,8 +43,6 @@ export function useCellRendering<T>(
   const { computed, bodySize } = param;
 
   const { componentActions, componentState, getState } = useInfiniteTable<T>();
-
-  const prevComputed = usePrevious(computed, null);
 
   const {
     computedPinnedStartColumns,
@@ -76,16 +71,8 @@ export function useCellRendering<T>(
     onScrollToBottom,
     scrollToBottomOffset,
   } = componentState;
-  // const prevDataSourceTimestamp = usePrevious(dataSourceState.updatedAt);
-  // const repaintIdRef = useRef<number>(0);
 
-  // if (
-  //   prevDataSourceTimestamp !== dataSourceState.updatedAt ||
-  //   !shallowEqualObjects(prevComputed, computed)
-  // ) {
-  //   repaintIdRef.current++;
-  // }
-  // const repaintId = repaintIdRef.current;
+  const repaintId = dataSourceState.updatedAt;
 
   useYourBrain({
     columnSize,
@@ -218,7 +205,7 @@ export function useCellRendering<T>(
       groupRenderStrategy,
       toggleGroupRow,
       showZebraRows,
-      // repaintId, // TODO continue here and run this test: http://localhost:3000/tests/table/props/sortInfo/controlled-single
+      repaintId,
     ],
   );
 

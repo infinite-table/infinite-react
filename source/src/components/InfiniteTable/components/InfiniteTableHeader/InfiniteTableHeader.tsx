@@ -2,27 +2,22 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { join } from '../../../../utils/join';
-
-import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
-
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-
-import { internalProps } from '../../internalProps';
-
-import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
-
-import { ScrollPosition } from '../../../types/ScrollPosition';
-import { HeaderClsRecipe } from './header.css';
-
+import { RawTable } from '../../../HeadlessTable/RawTable';
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,
 } from '../../../HeadlessTable/ReactHeadlessTableRenderer';
+import { ScrollPosition } from '../../../types/ScrollPosition';
+import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { internalProps } from '../../internalProps';
+import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
+
+import { HeaderClsRecipe } from './header.css';
+import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
+import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
+import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
 
 // import { transformTranslateZero } from '../../utilities.css';
-import { RawTable } from '../../../HeadlessTable/RawTable';
-import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
-import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 const { rootClassName } = internalProps;
 
@@ -38,6 +33,7 @@ function InfiniteTableHeaderFn<T>(
     className,
     headerHeight,
     columnAndGroupTreeInfo,
+
     columnGroupsMaxDepth,
   } = props;
 

@@ -17,11 +17,15 @@ export const withBrain = async (
 
 export const sortElements = async (
   elements: ElementHandle<HTMLElement | SVGElement>[],
+  type: 'row' | 'col' | string = 'row',
 ) => {
   const indexes: number[] = await Promise.all(
     elements.map(
       (el: ElementHandle<HTMLElement | SVGElement>) =>
-        el.evaluate((el) => Number(el.getAttribute('data-row-index'))),
+        el.evaluate(
+          (el, type) => Number(el.getAttribute(`data-${type}-index`)),
+          type,
+        ),
       // el.evaluate((el) => el.outerHTML),
     ),
   );
@@ -44,7 +48,7 @@ export const sortElements = async (
 
 export const getElements = async (
   root: ElementHandle<HTMLElement> | string | null | undefined,
-  type: 'row' | 'col',
+  type: 'row' | 'col' | string,
   { page }: { page: Page },
 ) => {
   if (typeof root === 'string') {
@@ -52,11 +56,9 @@ export const getElements = async (
     root = await page.$(root);
   }
   const source = (root || page) as ElementHandle<HTMLElement>;
-  const els = await source.$$(
-    type === 'row' ? '[data-row-index]' : '[data-col-index]',
-  );
+  const els = await source.$$(`[data-${type}-index]`);
 
-  return sortElements(els);
+  return sortElements(els, type);
 };
 
 /**
@@ -83,6 +85,21 @@ export const mapRowElements = async (
   { page }: { page: Page },
 ) => {
   const els = await getElements(root, 'row', { page });
+
+  return Promise.all(
+    els.map(async (el: ElementHandle) => {
+      //@ts-ignore
+      return await (await page.evaluateHandle(fn, el)).jsonValue();
+    }),
+  );
+};
+
+export const mapListElements = async (
+  fn: (el: HTMLElement) => any,
+  root: ElementHandle<HTMLElement> | string | null | undefined,
+  { page }: { page: Page },
+) => {
+  const els = await getElements(root, 'item', { page });
 
   return Promise.all(
     els.map(async (el: ElementHandle) => {

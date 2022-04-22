@@ -12,12 +12,12 @@ export function useEffectWithChanges<T>(
   const oldValuesRef = useRef<Record<string, any>>({});
   const oldValues: Record<string, any> = oldValuesRef.current;
 
-  const changesRef = useRef<Record<string, any>>({});
+  const changesRef = useRef<Record<keyof T, any>>({} as Record<keyof T, any>);
   const changes: Record<string, any> = changesRef.current;
 
   const useEffectDeps: any[] = [];
 
-  for (let k in deps) {
+  for (const k in deps) {
     if (deps.hasOwnProperty(k)) {
       if (deps[k] !== (prevRef.current as any)[k]) {
         changes[k] = deps[k];
@@ -34,7 +34,7 @@ export function useEffectWithChanges<T>(
 
     const result = fn(changes, oldValues);
 
-    changesRef.current = {};
+    changesRef.current = {} as Record<keyof T, any>;
     oldValuesRef.current = {};
     return result;
   }, useEffectDeps);
@@ -46,7 +46,7 @@ export function useEffectWithObject(
 ) {
   const useEffectDeps: any[] = [];
 
-  for (let k in deps) {
+  for (const k in deps) {
     if (deps.hasOwnProperty(k)) {
       useEffectDeps.push(deps[k]);
     }
