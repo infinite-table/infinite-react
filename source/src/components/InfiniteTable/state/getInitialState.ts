@@ -23,7 +23,7 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
 /**
  * The computed state is independent from props and cannot
- * be affected by props
+ * be affected by props.
  */
 export function initSetupState<T>(): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
