@@ -1,7 +1,7 @@
-import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
-import { getHeaderColumnIds } from '../../../../testUtils';
-
 import { test, expect } from '@playwright/test';
+import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+
+import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default test.describe.parallel(
   'Column order controlled will never change',

@@ -9,7 +9,7 @@ export default test.describe.parallel('hideEmptyGroupColumns', () => {
     );
 
     // wait for rendering
-    await page.waitForSelector('[data-row-index]');
+    await page.waitForSelector('.InfiniteColumnCell[data-row-index]');
   });
 
   test('should work in complex case, when we have a custom id for a group column ', async ({
