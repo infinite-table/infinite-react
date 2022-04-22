@@ -15,7 +15,7 @@ const initialColumns = ['id', 'make', 'year', 'price'];
 
 export default test.describe.parallel('Column order toggle', () => {
   test('should display all cols', async ({ page }) => {
-    await page.waitForTimeout(50);
+    await page.waitForInfinite();
     let colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(initialColumns);

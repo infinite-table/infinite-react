@@ -22,7 +22,7 @@ export default test.describe.parallel(
     test('should remove column when a new key is removed from the columns map', async ({
       page,
     }) => {
-      await page.waitForTimeout(50);
+      await page.waitForInfinite();
       let colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([

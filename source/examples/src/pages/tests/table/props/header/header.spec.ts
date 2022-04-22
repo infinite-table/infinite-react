@@ -4,7 +4,7 @@ import { getHeaderColumnIds } from '../../../testUtils';
 
 export default test.describe.parallel('RawList', () => {
   test('should correctly render virtualized header', async ({ page }) => {
-    await page.waitForTimeout(20);
+    await page.waitForInfinite();
     let cols = await getHeaderColumnIds({ page });
 
     expect(cols).toEqual(['Id', 'FirstName', 'LastName', 'Age']);
