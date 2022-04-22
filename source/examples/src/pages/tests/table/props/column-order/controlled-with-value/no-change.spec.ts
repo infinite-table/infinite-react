@@ -1,17 +1,11 @@
 import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
-import { getHeaderColumnIds } from '../../../../testUtils';
+import { test, expect } from '@testing';
 
-import { test, expect } from '@playwright/test';
+import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default test.describe.parallel(
   'Column order controlled will never change',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-order/controlled-with-value/no-change`,
-      );
-    });
-
     test('should not change column order', async ({ page }) => {
       await page.waitForTimeout(20);
       let colIds = await getHeaderColumnIds({ page });

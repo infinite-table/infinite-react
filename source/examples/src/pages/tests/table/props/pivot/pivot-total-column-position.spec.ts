@@ -1,16 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import { getColumnGroupsIds, getHeaderColumnIds } from '../../../testUtils';
 
 // TODO column group tests need to be improved, as not maintainable
 
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/pivot/pivot-total-column-position`);
-
-    await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
-  });
-
   test('totals columns not needed when pivotBy.length < 2', async ({
     page,
   }) => {

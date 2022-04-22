@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import {
   getColumnCells,
@@ -7,17 +7,10 @@ import {
 } from '../../../testUtils';
 
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(
-      `tests/table/props/pivot/showSeparatePivotColumnForSingleAggregation-example`,
-    );
-
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('showSeparatePivotColumnForSingleAggregation true then false should have correct behavior', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     let columnIds = await getHeaderColumnIds({ page });
     let columnGroupIds = await getColumnGroupsIds({ page });
 

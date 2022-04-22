@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
 
 import { getFnCalls } from '../../../testUtils/getFnCalls';
 import {
@@ -24,12 +24,6 @@ async function getRowHeight(
 }
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/row-height/cssvar`);
-
-    await page.waitForSelector(getRowSelector(0));
-  });
-
   test('row height is correct and changed accordingly via CSS variable', async ({
     page,
   }) => {

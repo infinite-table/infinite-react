@@ -1,14 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 export default test.describe.parallel(
   'Column groups should render correctly',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-groups/uncontrolled/uncontrolled-column-groups`,
-      );
-    });
-
     /*
      *
      * See ./current.png image in the current folder for how nesting should look like in this test

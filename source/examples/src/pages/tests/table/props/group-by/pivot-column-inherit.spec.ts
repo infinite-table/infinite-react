@@ -1,15 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import { getHeaderColumnIds, getColumnWidths } from '../../../testUtils';
 
 export default test.describe.parallel('Pivoting and generated columns', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`/tests/table/props/group-by/pivot-column-inherit`);
-
-    // wait for rendering
-    await page.waitForSelector('[data-row-index]');
-  });
-
   test('should generate the correct columns', async ({ page }) => {
     const ids = await getHeaderColumnIds({ page });
 

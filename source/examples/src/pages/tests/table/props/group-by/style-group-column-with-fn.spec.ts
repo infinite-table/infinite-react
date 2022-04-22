@@ -1,12 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import { getCellNode, getComputedStyleProperty } from '../../../testUtils';
 
 export default test.describe.parallel('groupBy.column.style', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`/tests/table/props/group-by/style-group-column-with-fn`);
-  });
-
   test('should correctly apply styles', async ({ page }) => {
     const node1 = await getCellNode(
       { columnId: 'group-by-country', rowIndex: 0 },

@@ -1,17 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import { getHeaderColumnIds } from '../../../testUtils';
 
 export default test.describe.parallel('hideEmptyGroupColumns', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(
-      `tests/table/props/group-by/hideEmptyGroupColumns-custom-group-column`,
-    );
-
-    // wait for rendering
-    await page.waitForSelector('.InfiniteColumnCell[data-row-index]');
-  });
-
   test('should work in complex case, when we have a custom id for a group column ', async ({
     page,
   }) => {

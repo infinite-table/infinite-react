@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
 
 import { getHeaderCellByColumnId } from '../../../testUtils';
 
@@ -34,15 +34,6 @@ async function setGroupBy(
 export default test.describe.parallel(
   'Table column.defaultHiddenWhenGroupedBy',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `/tests/table/props/group-by/column-default-hidden-when-grouped-by`,
-      );
-
-      // wait for rendering
-      await page.waitForSelector('[data-row-index]');
-    });
-
     test('team column should be hidden whenever there is grouping', async ({
       page,
     }) => {

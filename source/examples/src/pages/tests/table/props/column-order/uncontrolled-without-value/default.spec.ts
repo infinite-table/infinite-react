@@ -1,17 +1,11 @@
+import { test, expect } from '@testing';
+
 import { getHeaderColumnIds } from '../../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel(
   'Column order uncontrolled without any defaultValue',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-order/uncontrolled-without-value`,
-      );
-    });
-
     test('should display all cols', async ({ page }) => {
-      await page.waitForTimeout(50);
       const colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([

@@ -1,18 +1,12 @@
-import { test, expect, ElementHandle } from '@playwright/test';
+import { test, expect, ElementHandle } from '@testing';
 
 import { getColumnCells } from '../../../testUtils';
-import { getRowSelector } from '../../../testUtils/getRowElement';
 
 import { getOrders, multisort } from './getOrders';
 
 const orders = getOrders();
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/sortInfo/controlled-single`);
-    await page.waitForSelector(getRowSelector(0));
-  });
-
   test('controlled sortInfo should work properly', async ({ page }) => {
     await page.waitForTimeout(50);
 

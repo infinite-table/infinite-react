@@ -1,17 +1,11 @@
-import { test, expect } from '@playwright/test';
 import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+import { test, expect } from '@testing';
 
 import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default test.describe.parallel(
   'Column visibility controlled will never change',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-visibility/controlled-with-value/change`,
-      );
-    });
-
     test('should change column visibility', async ({ page }) => {
       await page.waitForTimeout(20);
       let colIds = await getHeaderColumnIds({ page });

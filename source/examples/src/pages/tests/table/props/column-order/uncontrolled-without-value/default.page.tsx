@@ -1,9 +1,8 @@
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
-
-import { rowData, Car } from '../rowData';
 import { columns } from '../columns';
+import { rowData, Car } from '../rowData';
 
 const App = () => {
   return (

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import { getHeaderColumnIds } from '../../../testUtils';
 import { getRowObject } from '../../../testUtils/getRowObject';
@@ -14,10 +14,6 @@ const expectedFirstRow = {
 const initialColumns = ['id', 'make', 'year', 'price'];
 
 export default test.describe.parallel('Column order toggle', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/column-order/toggle-columns`);
-  });
-
   test('should display all cols', async ({ page }) => {
     await page.waitForTimeout(50);
     let colIds = await getHeaderColumnIds({ page });

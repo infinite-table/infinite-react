@@ -1,8 +1,10 @@
-import { multisort } from '@src/utils/multisort';
-import { test, expect, ElementHandle, Page } from '@playwright/test';
-import { getColumnCells } from '../../../testUtils';
-import { getOrders, mapToString, Order } from './getOrders';
 import { getFnCalls } from '@examples/pages/tests/testUtils/getFnCalls';
+import { multisort } from '@src/utils/multisort';
+import { test, expect, ElementHandle, Page } from '@testing';
+
+import { getColumnCells } from '../../../testUtils';
+
+import { getOrders, mapToString, Order } from './getOrders';
 
 async function getCalls({ page }: { page: Page }) {
   return await getFnCalls('onSortInfoChange', { page });
@@ -11,10 +13,6 @@ async function getCalls({ page }: { page: Page }) {
 const orders = getOrders();
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/sortInfo/uncontrolled-single`);
-  });
-
   test('uncontrolled sortInfo should work fine', async ({ page }) => {
     await page.waitForTimeout(50);
     const { headerCell, bodyCells } = await getColumnCells('OrderId', { page });

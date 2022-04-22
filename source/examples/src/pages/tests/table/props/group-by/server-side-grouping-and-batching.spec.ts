@@ -1,4 +1,4 @@
-import { test, expect, Page, Response } from '@playwright/test';
+import { test, expect, Page, Response } from '@testing';
 
 import { getColumnCells } from '../../../testUtils';
 
@@ -17,12 +17,6 @@ const getColumnContents = async (colId: string, { page }: { page: Page }) => {
 export default test.describe.parallel(
   'Server-side batched grouping with pinned group column.',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `/tests/table/props/group-by/server-side-grouping-and-batching`,
-      );
-    });
-
     test('should work and lazily load data', async ({ page }) => {
       const condition = (response: Response) =>
         response.url().includes('developers') && response.status() === 200;

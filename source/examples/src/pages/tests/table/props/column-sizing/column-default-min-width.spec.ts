@@ -1,14 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 import { getHeaderCellWidthByColumnId } from '../../../testUtils';
 
 export default test.describe.parallel('Column types tests', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/column-sizing/column-default-min-width`);
-
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('expect column widths to be set correctly', async ({ page }) => {
     const idSize = await getHeaderCellWidthByColumnId('id', { page });
     const ageSize = await getHeaderCellWidthByColumnId('age', { page });

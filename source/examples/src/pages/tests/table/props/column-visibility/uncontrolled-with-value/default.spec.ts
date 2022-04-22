@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
 import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+import { test, expect } from '@testing';
 
 import {
   getHeaderColumnIds,
@@ -7,12 +7,6 @@ import {
 } from '../../../../testUtils';
 
 export default test.describe.parallel('Column visibility uncontrolled', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(
-      `tests/table/props/column-visibility/uncontrolled-with-value`,
-    );
-  });
-
   test('should display specified cols correctly', async ({ page }) => {
     await page.waitForTimeout(20);
     let colIds = await getHeaderColumnIds({ page });

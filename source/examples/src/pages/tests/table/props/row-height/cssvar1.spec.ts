@@ -1,11 +1,7 @@
 import { getCellNode } from '@examples/pages/tests/testUtils';
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 export default test.describe.parallel('RawList', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/row-height/cssvar1`);
-  });
-
   test('should correctly render rows', async ({ page }) => {
     await page.waitForTimeout(20);
 

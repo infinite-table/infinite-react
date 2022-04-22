@@ -1,5 +1,5 @@
 // import { getColumnGroupsIds, getHeaderColumnIds } from '../../../../../utils';
-import { test } from '@playwright/test';
+import { test } from '@testing';
 
 import { data } from './pivotData';
 
@@ -16,12 +16,6 @@ data.forEach((x) => {
 });
 
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/group-by/inline-group`);
-
-    // wait for rendering
-    await page.waitForSelector('[data-row-index]');
-  });
   test.skip('column groups are correct', async () => {
     // const colGroups = await getColumnGroupsIds();
     // expect(colGroups).toEqual([...countries]);

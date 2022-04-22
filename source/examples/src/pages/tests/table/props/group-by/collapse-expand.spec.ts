@@ -1,12 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/group-by/collapse-expand`);
-    await page.waitForTimeout(10);
-  });
-
   test('cell content is there', async ({ page }) => {
+    await page.waitForInfinite();
     const getRowCount = async () =>
       await page.evaluate(
         () =>
