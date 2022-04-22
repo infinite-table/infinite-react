@@ -1,10 +1,7 @@
 import { test, expect, Page } from '@testing';
 
 import { getFnCalls } from '../../../testUtils/getFnCalls';
-import {
-  getRowElement,
-  getRowSelector,
-} from '../../../testUtils/getRowElement';
+import { getRowElement } from '../../../testUtils/getRowElement';
 
 async function getCalls({ page }: { page: Page }) {
   return getFnCalls('onRowHeightChange', { page });

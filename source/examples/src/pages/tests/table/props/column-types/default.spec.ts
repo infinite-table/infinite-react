@@ -8,6 +8,7 @@ import {
 
 export default test.describe.parallel('Column types tests', () => {
   test('expect column types defaultWidth works correctly', async ({ page }) => {
+    await page.waitForInfinite();
     const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'country', 'city', 'salary']);
@@ -24,12 +25,13 @@ export default test.describe.parallel('Column types tests', () => {
   });
 
   test('expect column types header works correctly', async ({ page }) => {
+    await page.waitForInfinite();
     const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'country', 'city', 'salary']);
 
-    const idNode = await getHeaderCellByColumnId('id', { page });
-    const salaryNode = await getHeaderCellByColumnId('salary', { page });
+    const idNode = getHeaderCellByColumnId('id', { page });
+    const salaryNode = getHeaderCellByColumnId('salary', { page });
 
     const idHeader = await idNode!.evaluate(
       (node) => (node as HTMLElement).innerText,

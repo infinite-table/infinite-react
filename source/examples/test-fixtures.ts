@@ -1,12 +1,14 @@
 import {
   test as base,
   expect,
+  Response,
   PlaywrightTestArgs,
   PlaywrightTestOptions,
   PlaywrightWorkerArgs,
   PlaywrightWorkerOptions,
   Page,
   ElementHandle,
+  Locator,
 } from '@playwright/test';
 
 const fs = require('fs');
@@ -15,7 +17,7 @@ const pathSep = path.sep;
 
 export { expect };
 
-export type { Page, ElementHandle };
+export type { Page, ElementHandle, Locator, Response };
 
 export const test = base.extend<
   PlaywrightTestArgs & PlaywrightTestOptions,

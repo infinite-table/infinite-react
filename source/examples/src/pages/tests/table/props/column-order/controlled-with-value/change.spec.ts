@@ -7,7 +7,7 @@ export default test.describe.parallel(
   'Column order controlled will never change',
   () => {
     test('should change column order', async ({ page }) => {
-      await page.waitForTimeout(50);
+      await page.waitForInfinite();
       let colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual(['id', 'model', 'price']);

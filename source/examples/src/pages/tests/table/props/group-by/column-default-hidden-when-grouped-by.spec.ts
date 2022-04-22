@@ -5,13 +5,7 @@ import { getHeaderCellByColumnId } from '../../../testUtils';
 import { employees } from './employees10';
 
 async function isColumnDisplayed(colId: string, { page }: { page: Page }) {
-  const handle = await getHeaderCellByColumnId(colId, { page });
-
-  const result = handle != null;
-
-  // console.log(handle, result);
-
-  return result;
+  return (await getHeaderCellByColumnId(colId, { page }).count()) > 0;
 }
 
 async function getRenderedRowCount({ page }: { page: Page }) {

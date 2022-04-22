@@ -58,6 +58,7 @@ export default test.describe.parallel('Pivot', () => {
   test('showSeparatePivotColumnForSingleAggregation true then false + another pivot level', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     await page.click('button[data-name="toggle-show-separate"]');
 
     let columnIds = await getHeaderColumnIds({ page });

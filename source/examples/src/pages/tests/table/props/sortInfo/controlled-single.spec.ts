@@ -47,7 +47,7 @@ export default test.describe.parallel('Table', () => {
     expect(values).toEqual(expected);
 
     // now click the button to enable onSortInfoChange
-    await (await page.$('button'))?.click();
+    await page.locator('button').click();
 
     await headerCell.click();
 
@@ -85,7 +85,7 @@ export default test.describe.parallel('Table', () => {
     ).toEqual(ascById);
 
     // click again to sort desc
-    await orderIdHeaderCell.click();
+    await orderIdHeaderCell?.click();
     await page.waitForTimeout(20);
 
     expect(

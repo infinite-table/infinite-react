@@ -8,7 +8,8 @@ import {
 
 export default test.describe.parallel('Column visibility uncontrolled', () => {
   test('should display specified cols correctly', async ({ page }) => {
-    await page.waitForTimeout(20);
+    await page.waitForInfinite();
+
     let colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['model', 'price']);
@@ -33,7 +34,7 @@ export default test.describe.parallel('Column visibility uncontrolled', () => {
   test('should display all cols correctly when clearing the visibility map', async ({
     page,
   }) => {
-    await page.waitForTimeout(20);
+    await page.waitForInfinite();
     let colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['model', 'price']);

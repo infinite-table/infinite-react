@@ -4,6 +4,7 @@ import { getHeaderColumnIds } from '../../../testUtils';
 
 export default test.describe.parallel('Pivot and grouping edge cases', () => {
   test('expect columns to be correctly set', async ({ page }) => {
+    await page.waitForInfinite();
     let columnIds = await getHeaderColumnIds({ page });
 
     expect(columnIds).toEqual(['id', 'firstName', 'age', 'salary', 'currency']);

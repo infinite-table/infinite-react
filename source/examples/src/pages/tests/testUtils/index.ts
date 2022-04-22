@@ -13,11 +13,11 @@ export const wait = (timeout: number) => {
   });
 };
 
-export const getHeaderCellByColumnId = async (
+export const getHeaderCellByColumnId = (
   columnId: string,
   { page }: { page: Page },
 ) => {
-  return await page.$(`.InfiniteHeader [data-column-id="${columnId}"]`);
+  return page.locator(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
 export const getCellNode = async (
@@ -33,7 +33,7 @@ export const getHeaderCellWidthByColumnId = async (
   columnId: string,
   { page }: { page: Page },
 ): Promise<number> => {
-  const node = await getHeaderCellByColumnId(columnId, { page });
+  const node = getHeaderCellByColumnId(columnId, { page });
 
   const value = await node!.evaluate(
     (node) => node.getBoundingClientRect().width,
@@ -53,7 +53,7 @@ export const getColumnWidths = async (
 };
 
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
-  const cells = await page.$$(`.InfiniteHeader [data-column-id]`);
+  const cells = page.locator(`.InfiniteHeader [data-column-id]`);
 
   const result = await sortElements(cells, 'col');
 
@@ -64,8 +64,12 @@ export const getColumnCells = async (
   columnName: string,
   { page }: { page: Page },
 ) => {
-  const [headerCell, ...bodyCells] = await page.$$(
-    `[data-column-id="${columnName}"]`,
+  const headerCell = page.locator(
+    `.InfiniteHeader [data-column-id="${columnName}"]`,
+  );
+
+  const bodyCells = await page.locator(
+    `.InfiniteColumnCell[data-column-id="${columnName}"]`,
   );
 
   const cells = await sortElements(bodyCells);

@@ -6,6 +6,7 @@ export default test.describe.parallel(
   'Column order uncontrolled without any defaultValue',
   () => {
     test('should display all cols', async ({ page }) => {
+      await page.waitForInfinite();
       const colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([

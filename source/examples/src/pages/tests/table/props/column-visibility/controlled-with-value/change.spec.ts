@@ -7,7 +7,7 @@ export default test.describe.parallel(
   'Column visibility controlled will never change',
   () => {
     test('should change column visibility', async ({ page }) => {
-      await page.waitForTimeout(20);
+      await page.waitForInfinite();
       let colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual(['id', 'model', 'price']);

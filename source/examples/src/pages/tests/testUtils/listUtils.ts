@@ -1,5 +1,5 @@
-import { ElementHandle, Page } from '@playwright/test';
 import type { VirtualBrain } from '@src/components/VirtualBrain';
+import { ElementHandle, Locator, Page } from '@testing';
 // import { ElementHandle } from 'puppeteer';
 // import { wait } from '.';
 
@@ -16,9 +16,11 @@ export const withBrain = async (
 };
 
 export const sortElements = async (
-  elements: ElementHandle<HTMLElement | SVGElement>[],
+  locator: Locator,
   type: 'row' | 'col' | string = 'row',
 ) => {
+  const elements =
+    (await locator.elementHandles()) as ElementHandle<HTMLElement>[];
   const indexes: number[] = await Promise.all(
     elements.map(
       (el: ElementHandle<HTMLElement | SVGElement>) =>
@@ -47,16 +49,16 @@ export const sortElements = async (
 };
 
 export const getElements = async (
-  root: ElementHandle<HTMLElement> | string | null | undefined,
+  root: Locator | string | null | undefined,
   type: 'row' | 'col' | string,
   { page }: { page: Page },
 ) => {
   if (typeof root === 'string') {
     //@ts-ignore
-    root = await page.$(root);
+    root = await page.locator(root);
   }
-  const source = (root || page) as ElementHandle<HTMLElement>;
-  const els = await source.$$(`[data-${type}-index]`);
+  const source = (root || page.locator('body')) as Locator;
+  const els = await source.locator(`[data-${type}-index]`);
 
   return sortElements(els, type);
 };
@@ -66,7 +68,7 @@ export const getElements = async (
  */
 export const mapElements = async (
   fn: (el: HTMLElement) => any,
-  root: ElementHandle<HTMLElement> | string | null | undefined,
+  root: Locator | string | null | undefined,
   { page }: { page: Page },
 ) => {
   const els = await getElements(root, 'row', { page });
@@ -81,7 +83,7 @@ export const mapElements = async (
 
 export const mapRowElements = async (
   fn: (el: HTMLElement) => any,
-  root: ElementHandle<HTMLElement> | string | null | undefined,
+  root: Locator | string | null | undefined,
   { page }: { page: Page },
 ) => {
   const els = await getElements(root, 'row', { page });
@@ -96,7 +98,7 @@ export const mapRowElements = async (
 
 export const mapListElements = async (
   fn: (el: HTMLElement) => any,
-  root: ElementHandle<HTMLElement> | string | null | undefined,
+  root: Locator | string | null | undefined,
   { page }: { page: Page },
 ) => {
   const els = await getElements(root, 'item', { page });

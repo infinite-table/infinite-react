@@ -5,6 +5,7 @@ import { getHeaderColumnIds } from '../../../../testUtils';
 
 export default test.describe.parallel('Column order uncontrolled', () => {
   test('should display specified cols correctly', async ({ page }) => {
+    await page.waitForInfinite();
     let colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'model', 'price', 'year']);

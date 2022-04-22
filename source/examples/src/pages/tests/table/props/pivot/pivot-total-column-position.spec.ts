@@ -8,6 +8,7 @@ export default test.describe.parallel('Pivot', () => {
   test('totals columns not needed when pivotBy.length < 2', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     let columnIds = await getHeaderColumnIds({ page });
     let columnGroupIds = await getColumnGroupsIds({ page });
 
@@ -44,6 +45,7 @@ export default test.describe.parallel('Pivot', () => {
   test('totals columns are displayed correctly when pivotBy.length > 1', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     let columnIds = await getHeaderColumnIds({ page });
     let columnGroupIds = await getColumnGroupsIds({ page });
 

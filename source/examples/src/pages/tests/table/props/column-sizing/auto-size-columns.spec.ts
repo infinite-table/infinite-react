@@ -9,6 +9,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
   test('expect autoSizeColumnsKey.columnsToResize to work', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     let widths = await getColumnWidths(['id', 'country', 'city', 'age'], {
       page,
     });
@@ -33,6 +34,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
   });
 
   test('expect autoSizeColumnsKey.columnsToSkip to work', async ({ page }) => {
+    await page.waitForInfinite();
     let widths = await getColumnWidths(['id', 'country', 'city', 'age'], {
       page,
     });
@@ -58,6 +60,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
   });
 
   test('expect autoSizeColumnsKey to work', async ({ page }) => {
+    await page.waitForInfinite();
     let widths = await getColumnWidths(['id', 'country', 'city', 'age'], {
       page,
     });
