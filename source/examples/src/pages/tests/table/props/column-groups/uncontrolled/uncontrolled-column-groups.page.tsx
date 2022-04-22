@@ -1,10 +1,9 @@
+import { InfiniteTableColumnGroup } from '@src/components/InfiniteTable/types/InfiniteTableProps';
+import { InfiniteTable, DataSource } from '@src/index';
 import * as React from 'react';
 
-import { InfiniteTable, DataSource } from '@src/index';
-import { InfiniteTableColumnGroup } from '@src/components/InfiniteTable/types/InfiniteTableProps';
-
-import { rowData, Person } from '../rowData';
 import { columns } from '../columns';
+import { rowData, Person } from '../rowData';
 
 const getColumnGroups = () => {
   const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([

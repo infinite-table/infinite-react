@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTableColumn,
   InfiniteTable,
@@ -8,8 +6,9 @@ import {
   DataSourceGroupBy,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
-
 import { InfiniteTablePropColumnGroups } from '@src/components/InfiniteTable/types/InfiniteTableProps';
+import * as React from 'react';
+
 import { employees } from './employees10';
 
 type Employee = {

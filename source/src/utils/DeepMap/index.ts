@@ -44,6 +44,39 @@ export class DeepMap<KeyType, ValueType> {
     }
   }
 
+  getValuesStartingWith(keys: KeyType[]): ValueType[] {
+    let currentMap = this.map;
+    let pair: Pair<KeyType, ValueType> | undefined;
+    if (!keys.length) {
+      keys = [this.emptyKey];
+    }
+
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const key = keys[i];
+
+      pair = currentMap.get(key);
+
+      if (!pair || !pair.map) {
+        return [];
+      }
+
+      currentMap = pair.map;
+    }
+
+    const result: ValueType[] =
+      pair && pair.value !== undefined ? [pair.value!] : [];
+    this.visitWithNext(
+      keys,
+      (value, _key, _i, next) => {
+        result.push(value);
+        next?.();
+      },
+      currentMap,
+    );
+
+    return result;
+  }
+
   set(keys: KeyType[] & { length: Omit<number, 0> }, value: ValueType) {
     let currentMap = this.map;
     if (!keys.length) {
@@ -165,17 +198,19 @@ export class DeepMap<KeyType, ValueType> {
 
     while (maps.length) {
       const map = maps.pop();
-      const key = keys.pop();
-      if (key && map?.size === 0) {
+      const keysLen = keys.length;
+      keys.pop();
+      if (keysLen > 0 && map?.size === 0) {
         const parentMap = maps[maps.length - 1];
-        const pair = parentMap?.get(key);
+        const parentKey = keys[keys.length - 1];
+        const pair = parentMap?.get(parentKey);
         if (pair) {
           // pair.map === map ; which can be deleted
           delete pair.map;
 
           if (!pair.hasOwnProperty('value')) {
             // whole pair can be successfully deleted from parentMap
-            parentMap.delete(key);
+            parentMap.delete(parentKey);
           }
         }
       }

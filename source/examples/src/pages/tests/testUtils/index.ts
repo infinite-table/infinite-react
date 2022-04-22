@@ -1,5 +1,6 @@
 import { Page, ElementHandle } from '@playwright/test';
 
+import { kebabCase } from './kebabCase';
 import { sortElements } from './listUtils';
 
 export { getRow, getRows } from './getRowElement';
@@ -23,10 +24,9 @@ export const getCellNode = async (
   { columnId, rowIndex }: { columnId: string; rowIndex: number },
   { page }: { page: Page },
 ) => {
-  const rowSelector = getRowSelector(rowIndex);
-  const row = await page.$(rowSelector);
-
-  return await row!.$(`[data-column-id="${columnId}"]`);
+  return await page.$(
+    `.InfiniteColumnCell[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+  );
 };
 
 export const getHeaderCellWidthByColumnId = async (
@@ -53,9 +53,9 @@ export const getColumnWidths = async (
 };
 
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
-  const cells = await page.$$(`.InfiniteHeader [data-name="Cell"]`);
+  const cells = await page.$$(`.InfiniteHeader [data-column-id]`);
 
-  const result = await sortElements(cells);
+  const result = await sortElements(cells, 'col');
 
   return result;
 };
@@ -87,14 +87,14 @@ export const getCellText = async (
   { page }: { page: Page },
 ) => {
   const cell = await page.$(
-    `[data-row-index="${rowIndex}"] [data-column-id="${columnId}"]`,
+    `[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
   );
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };
 
 export const getHeaderColumnIds = async ({ page }: { page: Page }) => {
-  let cells = await getHeaderColumnCells({ page });
+  const cells = await getHeaderColumnCells({ page });
 
   const result = Promise.all(
     cells.map((cell: any) =>
@@ -135,9 +135,6 @@ export async function getColumnGroupsIds({ page }: { page: Page }) {
   );
 }
 
-import { kebabCase } from './kebabCase';
-import { getRowSelector } from './getRowElement';
-
 export async function getComputedStyleProperty(
   selector: ElementHandle<HTMLElement | SVGElement> | string,
   propertyName: string,
@@ -149,7 +146,7 @@ export async function getComputedStyleProperty(
 
   const value = await selector.evaluate(
     (node, propertyName) =>
-      getComputedStyle(node).getPropertyValue(propertyName),
+      window.getComputedStyle(node).getPropertyValue(propertyName),
     kebabCase(propertyName),
   );
 

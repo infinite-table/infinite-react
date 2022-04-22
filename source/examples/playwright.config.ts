@@ -7,7 +7,7 @@ const height = 1200;
 const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  timeout: 5 * 1000,
+  timeout: 5000 * 1000,
 
   use: {
     trace: 'on-first-retry',
@@ -22,6 +22,7 @@ const config: PlaywrightTestConfig = {
     {
       name: 'chromium',
       testMatch: /.*.spec.ts/,
+
       use: { ...devices['Desktop Chrome'] },
     },
   ],

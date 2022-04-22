@@ -1,5 +1,6 @@
-import { getColumnCells } from '../../../testUtils';
 import { test, expect, Page, Response } from '@playwright/test';
+
+import { getColumnCells } from '../../../testUtils';
 
 const getColumnContents = async (colId: string, { page }: { page: Page }) => {
   const cells = await getColumnCells(colId, { page });

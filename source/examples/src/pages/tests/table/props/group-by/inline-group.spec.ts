@@ -1,4 +1,6 @@
 // import { getColumnGroupsIds, getHeaderColumnIds } from '../../../../../utils';
+import { test } from '@playwright/test';
+
 import { data } from './pivotData';
 
 const countries = new Set<string>();
@@ -12,8 +14,6 @@ data.forEach((x) => {
   }
   agePerCountries.get(x.country)?.add(x.age);
 });
-
-import { test } from '@playwright/test';
 
 export default test.describe.parallel('Pivot', () => {
   test.beforeEach(async ({ page }) => {

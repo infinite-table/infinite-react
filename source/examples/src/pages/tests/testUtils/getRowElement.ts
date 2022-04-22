@@ -1,5 +1,8 @@
 import { Page } from '@playwright/test';
 
+/**
+ * @deprecated
+ */
 export const getRowElement = async (
   rowIndex: number,
   { page }: { page: Page },
@@ -9,14 +12,23 @@ export const getRowElement = async (
   return row;
 };
 
+/**
+ * @deprecated
+ */
 export const getRowSelector = (rowIndex: number) => {
-  return `[data-row-index="${rowIndex}"]`;
+  return `.InfiniteColumnCell[data-row-index="${rowIndex}"]`;
 };
 
+/**
+ * @deprecated
+ */
 export const getRows = ({ page }: { page: Page }) => {
   return page.locator(`[data-row-index]`);
 };
 
+/**
+ * @deprecated
+ */
 export const getRow = (
   { rowIndex }: { rowIndex: number },
   { page }: { page: Page },

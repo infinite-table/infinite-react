@@ -1,64 +1,52 @@
 import * as React from 'react';
+import type { RefObject } from 'react';
 
-import { RefObject } from 'react';
+import { join } from '../../utils/join';
+import { CSSVariableWatch } from '../CSSVariableWatch';
+import {
+  useDataSource,
+  useDataSourceContextValue,
+} from '../DataSource/publicHooks/useDataSource';
+import { HeadlessTable } from '../HeadlessTable';
+import {
+  getComponentStateRoot,
+  useComponentState,
+} from '../hooks/useComponentState';
+import { useLatest } from '../hooks/useLatest';
+import { useResizeObserver } from '../ResizeObserver';
+import { debounce } from '../utils/debounce';
 
-import type {
-  InfiniteTableContextValue,
-  InfiniteTableProps,
-  InfiniteTableState,
-} from './types';
-
-import { internalProps, rootClassName } from './internalProps';
-
+import { InfiniteTableBody } from './components/InfiniteTableBody';
+import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
+import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
+import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
+import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
+import { RowHoverCls } from './components/InfiniteTableRow/row.css';
+import { LoadMask } from './components/LoadMask';
+import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
+import { useCellRendering } from './hooks/useCellRendering';
+import { useComputed } from './hooks/useComputed';
+import { useDOMProps } from './hooks/useDOMProps';
+import { useInfiniteTable } from './hooks/useInfiniteTable';
+import { useLicense } from './hooks/useLicense/useLicense';
 import { getInfiniteTableContext } from './InfiniteTableContext';
-
+import { internalProps, rootClassName } from './internalProps';
 import {
   forwardProps,
   mapPropsToState,
   initSetupState,
 } from './state/getInitialState';
-
-import { useResizeObserver } from '../ResizeObserver';
-import { useInfiniteTable } from './hooks/useInfiniteTable';
-import { useComputed } from './hooks/useComputed';
-import { useLatest } from '../hooks/useLatest';
-
-import {
-  useDataSource,
-  useDataSourceContextValue,
-} from '../DataSource/publicHooks/useDataSource';
-
-import { InfiniteTableBody } from './components/InfiniteTableBody';
-
-import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
-import { VirtualScrollContainer } from '../VirtualScrollContainer';
-import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
-
-import { useListRendering } from './hooks/useListRendering';
-import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
-import { useLicense } from './hooks/useLicense/useLicense';
-import { CSSVariableWatch } from '../CSSVariableWatch';
-import {
-  getComponentStateRoot,
-  useComponentState,
-} from '../hooks/useComponentState';
-import { useDOMProps } from './hooks/useDOMProps';
-import { LoadMask } from './components/LoadMask';
-import { display, position, zIndex, top, left } from './utilities.css';
-import { join } from '../../utils/join';
 import { ThemeVars } from './theme.css';
-import { debounce } from '../utils/debounce';
-import { RenderRange } from '../VirtualBrain';
-import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
-import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
-import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
+import type {
+  InfiniteTableContextValue,
+  InfiniteTableProps,
+  InfiniteTableState,
+} from './types';
+import { position, zIndex, top, left } from './utilities.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
-const ONLY_VERTICAL_SCROLLBAR = {
-  horizontal: false,
-  vertical: true,
-};
+const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
 
 const InfiniteTableRoot = getComponentStateRoot({
   // @ts-ignore
@@ -82,14 +70,9 @@ const InfiniteTableRoot = getComponentStateRoot({
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
+    const { componentState, getComputed, computed } = useInfiniteTable<T>();
     const {
-      componentState,
-      getComputed,
-      computed,
-      getState: getInfiniteTableState,
-    } = useInfiniteTable<T>();
-    const {
-      componentState: { dataArray, loading },
+      componentState: { loading },
       getState: getDataSourceState,
       componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
@@ -109,26 +92,15 @@ export const InfiniteTableComponent = React.memo(
       headerHeightCSSVar,
       components,
       scrollStopDelay,
+      brain,
+      headerBrain,
     } = componentState;
 
     const { columnShifts, bodySize } = componentState;
 
-    const {
-      pinnedStartList,
-      pinnedEndList,
-      centerList,
+    const { scrollbars } = computed;
 
-      pinnedEndScrollbarPlaceholder,
-      pinnedStartScrollbarPlaceholder,
-
-      repaintId,
-      scrollbars,
-      applyScrollVertical,
-      horizontalVirtualBrain,
-      verticalVirtualBrain,
-
-      reservedContentHeight,
-    } = useListRendering({
+    const { renderCell } = useCellRendering({
       getComputed,
       domRef: componentState.domRef,
       columnShifts,
@@ -139,14 +111,17 @@ export const InfiniteTableComponent = React.memo(
     React.useEffect(() => {
       const dataSourceState = getDataSourceState();
       const onChange = debounce(
-        (renderRange: RenderRange) => {
-          dataSourceState.notifyRenderRangeChange(renderRange);
+        (renderRange: [number, number]) => {
+          dataSourceState.notifyRenderRangeChange({
+            renderStartIndex: renderRange[0],
+            renderEndIndex: renderRange[1],
+          });
         },
         { wait: scrollStopDelay },
       );
 
-      return verticalVirtualBrain.onRenderRangeChange(onChange);
-    }, [verticalVirtualBrain, scrollStopDelay]);
+      return brain.onVerticalRenderRangeChange(onChange);
+    }, [brain, scrollStopDelay]);
 
     const licenseValid = useLicense(licenseKey);
 
@@ -154,25 +129,8 @@ export const InfiniteTableComponent = React.memo(
 
     const LoadMaskCmp = components?.LoadMask ?? LoadMask;
 
-    React.useLayoutEffect(() => {
-      // this needs to be useLayoutEffect
-      // on live Pagination cursor change we need this - ref #lvpgn
-      const dataSourceState = getDataSourceState();
-      const { onScrollbarsChange } = getInfiniteTableState();
-      const { notifyScrollbarsChange } = dataSourceState;
-
-      if (
-        onScrollbarsChange &&
-        dataSourceState.updatedAt &&
-        dataSourceState.dataArray.length
-      ) {
-        onScrollbarsChange(scrollbars);
-      }
-
-      notifyScrollbarsChange(scrollbars);
-    }, [scrollbars]);
-
     React.useEffect(() => {
+      brain.setScrollStopDelay(scrollStopDelay);
       dataSourceActions.scrollStopDelayUpdatedByTable = scrollStopDelay;
     }, [scrollStopDelay]);
 
@@ -181,34 +139,18 @@ export const InfiniteTableComponent = React.memo(
     return (
       <div ref={domRef} {...domProps}>
         {header ? (
-          <TableHeaderWrapper
-            brain={horizontalVirtualBrain}
-            repaintId={repaintId}
-            scrollbars={scrollbars}
-          />
+          <TableHeaderWrapper brain={headerBrain} scrollbars={scrollbars} />
         ) : null}
 
         <InfiniteTableBody>
-          <VirtualScrollContainer
-            ref={scrollerDOMRef as RefObject<HTMLDivElement>}
-            onContainerScroll={applyScrollVertical}
-            scrollable={ONLY_VERTICAL_SCROLLBAR}
-          >
-            <div className={display.flex}>
-              {pinnedStartList}
-              {centerList}
-              {pinnedEndList}
-            </div>
-
-            <SpacePlaceholder
-              count={dataArray.length}
-              width={0}
-              height={reservedContentHeight}
-            />
-          </VirtualScrollContainer>
-
-          {pinnedStartScrollbarPlaceholder}
-          {pinnedEndScrollbarPlaceholder}
+          <HeadlessTable
+            tabIndex={0}
+            scrollStopDelay={scrollStopDelay}
+            brain={brain}
+            renderCell={renderCell}
+            cellHoverClassNames={HOVERED_CLASS_NAMES}
+            scrollerDOMRef={scrollerDOMRef}
+          ></HeadlessTable>
 
           <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
         </InfiniteTableBody>
@@ -273,12 +215,6 @@ function InfiniteTableContextProvider<T>() {
         height: size.height,
       };
       bodySize.width = scrollerDOMRef.current?.scrollWidth ?? bodySize.width;
-      const state = getState();
-
-      if (!state.virtualizeHeader) {
-        componentActions.bodySize = bodySize;
-        return;
-      }
 
       componentActions.bodySize = bodySize;
     },

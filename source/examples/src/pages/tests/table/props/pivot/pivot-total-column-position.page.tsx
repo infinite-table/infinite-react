@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -9,6 +7,7 @@ import {
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { Developer, developers } from './pivot-total-column-position-data';
 
@@ -58,6 +57,7 @@ export default function PivotPerfExample() {
   const domProps = {
     style: {
       height: '80vh',
+      width: 2500,
     },
   };
 

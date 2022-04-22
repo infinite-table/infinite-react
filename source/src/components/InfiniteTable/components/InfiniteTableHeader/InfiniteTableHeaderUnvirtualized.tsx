@@ -78,6 +78,7 @@ function InfiniteTableHeaderUnvirtualizedFn<T>(
         return (
           <InfiniteTableHeaderCell<T>
             key={c.id}
+            width={c.computedWidth}
             headerHeight={headerHeight}
             column={c}
             columns={columnsMap}

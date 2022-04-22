@@ -1,6 +1,7 @@
+import { test, expect } from '@playwright/test';
+
 import { getHeaderColumnIds } from '../../../../testUtils';
 
-import { test, expect } from '@playwright/test';
 export default test.describe.parallel('Detect columns change', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`tests/table/props/columns/columns-change/default`);
@@ -11,7 +12,7 @@ export default test.describe.parallel('Detect columns change', () => {
   }) => {
     await page.waitForSelector('[data-column-id]');
 
-    let colIds = await getHeaderColumnIds({ page });
+    const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['identifier', 'firstName', 'age']);
   });

@@ -4,7 +4,6 @@ import { recipe } from '@vanilla-extract/recipes';
 import { ThemeVars } from '../../theme.css';
 
 const RowCls = style({
-  color: ThemeVars.components.Row.color,
   willChange: 'transform',
   position: 'absolute',
   top: 0,

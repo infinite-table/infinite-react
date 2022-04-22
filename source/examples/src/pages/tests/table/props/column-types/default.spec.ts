@@ -1,10 +1,10 @@
+import { test, expect } from '@playwright/test';
+
 import {
   getHeaderColumnIds,
   getHeaderCellWidthByColumnId,
   getHeaderCellByColumnId,
 } from '../../../testUtils';
-
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel('Column types tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,7 +13,7 @@ export default test.describe.parallel('Column types tests', () => {
   });
 
   test('expect column types defaultWidth works correctly', async ({ page }) => {
-    let colIds = await getHeaderColumnIds({ page });
+    const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'country', 'city', 'salary']);
 
@@ -29,7 +29,7 @@ export default test.describe.parallel('Column types tests', () => {
   });
 
   test('expect column types header works correctly', async ({ page }) => {
-    let colIds = await getHeaderColumnIds({ page });
+    const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'country', 'city', 'salary']);
 

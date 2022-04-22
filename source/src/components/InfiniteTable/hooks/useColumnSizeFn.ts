@@ -5,21 +5,19 @@ import { InfiniteTableComputedColumn } from '../types';
 const debug = dbg('useColumnSizeFn');
 
 /**
- * Returns a function that can be used to retrieve the width of an unpinned column, by the column index
+ * Returns a function that can be used to retrieve the width of a column column, by the column index
  */
-export function useColumnSizeFn<T>(
-  computedUnpinnedColumns: InfiniteTableComputedColumn<T>[],
-) {
+export function useColumnSizeFn<T>(columns: InfiniteTableComputedColumn<T>[]) {
   const columnSize = useCallback(
     (index: number) => {
-      const column = computedUnpinnedColumns[index];
+      const column = columns[index];
       if (__DEV__ && !column) {
-        debug('cannot find column at index', index, computedUnpinnedColumns);
+        debug('cannot find column at index', index, columns);
       }
 
       return column ? column.computedWidth : 0;
     },
-    [computedUnpinnedColumns],
+    [columns],
   );
 
   return columnSize;

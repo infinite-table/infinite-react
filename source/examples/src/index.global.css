@@ -11,3 +11,7 @@ body {
   display: flex;
   flex-flow: column;
 }
+/* 
+.InfiniteRow--hovered {
+  background: green !important;
+} */

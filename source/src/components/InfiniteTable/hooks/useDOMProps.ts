@@ -113,8 +113,8 @@ export function useDOMProps<T>(
     InfiniteClsRecipe({
       hasPinnedStart: !!computedPinnedStartColumnsWidth,
       hasPinnedEnd: !!computedPinnedEndColumnsWidth,
-      hasPinnedStartOverflow: !!computed.computedPinnedStartOverflow,
-      hasPinnedEndOverflow: !!computed.computedPinnedEndOverflow,
+      // hasPinnedStartOverflow: !!computed.computedPinnedStartOverflow,
+      // hasPinnedEndOverflow: !!computed.computedPinnedEndOverflow,
       focused,
       focusedWithin,
     }),

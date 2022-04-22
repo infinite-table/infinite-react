@@ -24,7 +24,6 @@ function InfiniteTableRowFn<T>(
     rowIndex,
     //TODO continue here?? receive columnWidth from props
     brain,
-    verticalBrain,
     columns,
   } = props;
   const tableContextValue = useInfiniteTable<T>();
@@ -75,15 +74,7 @@ function InfiniteTableRowFn<T>(
         />
       );
     },
-    [
-      columns,
-      rowIndex,
-      rowInfo,
-      rowHeight,
-      groupRenderStrategy,
-      getData,
-      verticalBrain,
-    ], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
+    [columns, rowIndex, rowInfo, rowHeight, groupRenderStrategy, getData], // don't add repaintId here since it would make this out-of-sync with the available columns when columnOrder controlled changes
   );
 
   if (renderCellRef.current !== renderCell) {

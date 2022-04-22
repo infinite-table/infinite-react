@@ -2,23 +2,23 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { join } from '../../../../utils/join';
-import { dbg } from '../../../../utils/debug';
-
-import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
-
+import { RawTable } from '../../../HeadlessTable/RawTable';
+import {
+  TableRenderCellFn,
+  TableRenderCellFnParam,
+} from '../../../HeadlessTable/ReactHeadlessTableRenderer';
+import { ScrollPosition } from '../../../types/ScrollPosition';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-
 import { internalProps } from '../../internalProps';
+import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
+import { HeaderClsRecipe } from './header.css';
+import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
+import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
 
-import { RawList } from '../../../RawList';
+// import { transformTranslateZero } from '../../utilities.css';
 
-import type { RenderItem } from '../../../RawList/types';
-import { ScrollPosition } from '../../../types/ScrollPosition';
-import { HeaderClsRecipe } from './header.css';
-
-const debug = dbg('Header');
 const { rootClassName } = internalProps;
 
 export const TableHeaderClassName = `${rootClassName}Header`;
@@ -26,35 +26,23 @@ export const TableHeaderClassName = `${rootClassName}Header`;
 function InfiniteTableHeaderFn<T>(
   props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { repaintId, brain, columns, style, className, pinning } = props;
+  const {
+    brain,
+    columns,
+    style,
+    className,
+    headerHeight,
+    columnAndGroupTreeInfo,
+
+    columnGroupsMaxDepth,
+  } = props;
+
   const {
     computed,
-    componentState: { headerHeight },
+    componentState: { headerBrain },
   } = useInfiniteTable<T>();
 
   const { computedVisibleColumnsMap } = computed;
-
-  const renderColumn: RenderItem = useCallback(
-    ({ domRef, itemIndex: columnIndex }) => {
-      const column = columns[columnIndex];
-
-      if (!column) {
-        if (__DEV__) {
-          debug('Cannot find column to render at ', columnIndex);
-        }
-        return null;
-      }
-      return (
-        <InfiniteTableHeaderCell<T>
-          domRef={domRef}
-          column={column}
-          headerHeight={headerHeight}
-          columns={computedVisibleColumnsMap}
-        />
-      );
-    },
-    [computedVisibleColumnsMap, columns, repaintId, headerHeight],
-  );
 
   useEffect(() => {
     const onScroll = (scrollPosition: ScrollPosition) => {
@@ -71,7 +59,6 @@ function InfiniteTableHeaderFn<T>(
   const domRef = useRef<HTMLDivElement | null>(null);
 
   const headerCls = HeaderClsRecipe({
-    pinned: pinning,
     overflow: false,
     virtualized: true,
   });
@@ -85,12 +72,77 @@ function InfiniteTableHeaderFn<T>(
       className,
       headerCls,
     ),
-    style,
+    style: { ...style, height: headerHeight },
   };
+
+  const renderCell: TableRenderCellFn = useCallback(
+    (params: TableRenderCellFnParam) => {
+      const {
+        rowIndex,
+        colIndex,
+        domRef,
+        height,
+        widthWithColspan,
+        heightWithRowspan,
+        hidden,
+      } = params;
+
+      const column = columns[colIndex];
+      if (!column || hidden) {
+        return null;
+      }
+      const colGroupItem = columnAndGroupTreeInfo
+        ? columnAndGroupTreeInfo.pathsToCells.get([rowIndex, colIndex])
+        : null;
+
+      if (colGroupItem && colGroupItem.type === 'group') {
+        const columns = colGroupItem.columnItems.map((item) => item.ref);
+        const computedColumnGroup: InfiniteTableComputedColumnGroup = {
+          ...colGroupItem.ref,
+          id: colGroupItem.id,
+          uniqueGroupId: colGroupItem.uniqueGroupId,
+          depth: colGroupItem.depth,
+          columns: columns.map((c) => c.id),
+          computedWidth: colGroupItem.computedWidth,
+          groupOffset: colGroupItem.groupOffset,
+        };
+
+        return (
+          <InfiniteTableHeaderGroup
+            domRef={domRef}
+            columns={columns}
+            width={widthWithColspan}
+            height={height}
+            columnGroup={computedColumnGroup}
+          />
+        );
+      }
+
+      return (
+        <InfiniteTableHeaderCell<T>
+          domRef={domRef}
+          column={column}
+          width={widthWithColspan}
+          height={heightWithRowspan}
+          columns={computedVisibleColumnsMap}
+        />
+      );
+    },
+
+    // leave headerHeight here, as it's needed even
+    // though it's not directly used inside the fn
+    // but it can change - eg, when the corresponding CSS variable  changes
+    // do it needs to trigger a re-render
+    [columns, headerHeight, columnAndGroupTreeInfo, columnGroupsMaxDepth],
+  );
 
   return (
     <div {...domProps}>
-      <RawList brain={brain} renderItem={renderColumn} />
+      <RawTable
+        renderCell={renderCell}
+        brain={headerBrain}
+        cellHoverClassNames={[]}
+      />
     </div>
   );
 }
@@ -98,4 +150,3 @@ function InfiniteTableHeaderFn<T>(
 export const InfiniteTableHeader = React.memo(
   InfiniteTableHeaderFn,
 ) as typeof InfiniteTableHeaderFn;
-// export const TableHeader = TableHeaderFn; //React.memo(TableHeaderFn) as typeof TableHeaderFn;

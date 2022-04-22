@@ -1,5 +1,6 @@
-import { getHeaderColumnIds, getColumnWidths } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getHeaderColumnIds, getColumnWidths } from '../../../testUtils';
 
 export default test.describe.parallel('Pivoting and generated columns', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,6 +15,7 @@ export default test.describe.parallel('Pivoting and generated columns', () => {
 
     expect(ids).toEqual([
       'group-by',
+
       'salary:JPY/yes',
       'age:JPY/yes',
       'total:salary:JPY',

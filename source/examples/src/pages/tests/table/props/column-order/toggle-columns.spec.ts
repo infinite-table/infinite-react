@@ -1,7 +1,7 @@
+import { test, expect } from '@playwright/test';
+
 import { getHeaderColumnIds } from '../../../testUtils';
 import { getRowObject } from '../../../testUtils/getRowObject';
-
-import { test, expect } from '@playwright/test';
 
 import { rowData } from './rowData';
 

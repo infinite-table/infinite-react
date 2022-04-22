@@ -1,6 +1,6 @@
-import { getColumnCells } from '../../../testUtils';
-
 import { test, expect, ElementHandle } from '@playwright/test';
+
+import { getColumnCells } from '../../../testUtils';
 
 export default test.describe.parallel('Table', () => {
   test.beforeEach(async ({ page }) => {

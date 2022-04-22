@@ -1,5 +1,6 @@
-import { getColumnWidths } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getColumnWidths } from '../../../testUtils';
 
 function roundDownToTens(val: number) {
   return val - (val % 10);

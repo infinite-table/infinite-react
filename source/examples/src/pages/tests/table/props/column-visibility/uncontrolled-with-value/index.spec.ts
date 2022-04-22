@@ -1,6 +1,6 @@
+import { test, expect } from '@playwright/test';
 import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
 
-import { test, expect } from '@playwright/test';
 import {
   getHeaderColumnIds,
   getHeaderColumnCells,
@@ -61,7 +61,7 @@ export default test.describe.parallel('Column visibility uncontrolled', () => {
     const transforms = await Promise.all(
       cells.map(async (cell) =>
         cell.evaluate((node) =>
-          parseInt((node as any).style.transform.split('translateX(')[1]),
+          parseInt(node.style.transform.split('translate3d(')[1]),
         ),
       ),
     );

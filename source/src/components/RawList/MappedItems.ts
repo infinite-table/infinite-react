@@ -50,16 +50,6 @@ export class MappedItems extends Logger {
     return result;
   };
 
-  getFirstUnrenderedElementIndex = (endIndex: number, startFrom = 0) => {
-    for (let i = startFrom; i <= endIndex; i++) {
-      if (this.getItemRenderedAtElementIndex(i) == null) {
-        return i;
-      }
-    }
-
-    return -1;
-  };
-
   getElementIndexForItem = (itemIndex: number): number | null => {
     return this.itemIndexToElementIndex[itemIndex] ?? null;
   };

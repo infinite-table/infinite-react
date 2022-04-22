@@ -1,5 +1,7 @@
-import { getCellNode, getHeaderColumnIds } from '../../../testUtils';
 import { test, expect } from '@playwright/test';
+
+import { getCellNode, getHeaderColumnIds } from '../../../testUtils';
+
 import { developers } from './pivot-total-column-position-data';
 
 export default test.describe.parallel('Pivot', () => {
