@@ -1,12 +1,8 @@
+import { test, expect, ElementHandle } from '@testing';
+
 import { getColumnCells } from '../../../testUtils';
 
-import { test, expect, ElementHandle } from '@playwright/test';
-
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/sortable/sortable`);
-  });
-
   test('sortable=false - sorting column does not work, as table is sortable=false', async ({
     page,
   }) => {

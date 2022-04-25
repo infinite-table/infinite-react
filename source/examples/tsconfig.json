@@ -24,7 +24,8 @@
       "@infinite-table/infinite-react": ["../src/index"],
       "@src/*": ["../src/*"],
       "@examples/*": ["./src/*"],
-      "@components/*": ["../src/components/*"]
+      "@components/*": ["../src/components/*"],
+      "@testing": ["./test-fixtures"]
     },
     "incremental": true
   }

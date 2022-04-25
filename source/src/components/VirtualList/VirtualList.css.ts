@@ -19,8 +19,11 @@ export const VirtualListClsOrientation = styleVariants({
   },
 });
 
-export const scrollTransformTargetCls = style({
-  height: 0,
-  width: 0,
-  willChange: 'transform',
-});
+export const scrollTransformTargetCls = style(
+  {
+    height: 0,
+    width: 0,
+    willChange: 'transform',
+  },
+  'scrollTransformTarget',
+);

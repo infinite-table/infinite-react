@@ -15,6 +15,7 @@ function SpacePlaceholderFn(props: SpacePlaceholderProps) {
     zIndex: -1,
     opacity: 0,
     pointerEvents: 'none',
+    contain: 'strict',
   };
 
   return (

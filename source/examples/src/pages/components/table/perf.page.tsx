@@ -1,11 +1,10 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   InfiniteTableColumn,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 interface DataItem {
   id: string;
@@ -60,19 +59,21 @@ const App = () => {
 
   const [dataSourceCount, setDataSourceCount] = React.useState(100);
   const dataSource = React.useMemo(() => {
-    return [...Array(dataSourceCount)].map((_x, rowIndex) => {
-      const result = Array.from(columns.values()).reduce(
-        (acc: DataItem, col: InfiniteTableColumn<DataItem>) => {
-          acc[col.field!] = `${col.field as string}-${rowIndex}`;
-          return acc;
-        },
-        {} as DataItem,
-      );
+    return Promise.resolve(
+      [...Array(dataSourceCount)].map((_x, rowIndex) => {
+        const result = Array.from(columns.values()).reduce(
+          (acc: DataItem, col: InfiniteTableColumn<DataItem>) => {
+            acc[col.field!] = `${col.field as string}-${rowIndex}`;
+            return acc;
+          },
+          {} as DataItem,
+        );
 
-      result.id = `id-${rowIndex}`;
+        result.id = `id-${rowIndex}`;
 
-      return result;
-    });
+        return result;
+      }),
+    );
   }, [columns, dataSourceCount]);
 
   const [expanded, setExpanded] = React.useState(true);

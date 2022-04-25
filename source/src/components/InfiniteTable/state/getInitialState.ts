@@ -1,10 +1,11 @@
 import { createRef } from 'react';
+
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
-import { VirtualBrain } from '../../VirtualBrain';
-
+import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import { ThemeVars } from '../theme.css';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
 import {
   InfiniteTableColumns,
@@ -17,32 +18,55 @@ import {
   InfiniteTableMappedState,
 } from '../types/InfiniteTableState';
 import { toMap } from '../utils/toMap';
+
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
 /**
  * The computed state is independent from props and cannot
- * be affected by props
+ * be affected by props.
  */
 export function initSetupState<T>(): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
 
+  /**
+   * This is the main virtualization brain that powers the table
+   */
+  const brain = new MatrixBrain();
+
+  /**
+   * The brain that virtualises the header is different from the main brain
+   * because obviously the header will have different rowspans/colspans
+   * (which are due to column groups) than the main grid viewport
+   */
+  const headerBrain = new MatrixBrain();
+
+  // however, we sync the headerBrain with the main brain
+  // on horizontal scrolling
+  brain.onScroll((scrollPosition) => {
+    headerBrain.setScrollPosition({
+      scrollLeft: scrollPosition.scrollLeft,
+      scrollTop: 0,
+    });
+  });
+
+  if (__DEV__) {
+    (globalThis as any).brain = brain;
+  }
+
+  // and on width changes
+  brain.onAvailableSizeChange((size) => {
+    headerBrain.setAvailableSize({ width: size.width });
+  });
+
   return {
-    propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([
-      // ['sortInfo', new WeakMap()],
-    ]),
+    propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
 
     // TODO destroy the brains on unmount
-    horizontalVirtualBrain: new VirtualBrain({
-      count: 0,
-      itemSize: 100,
-      mainAxis: 'horizontal',
-    }),
-    verticalVirtualBrain: new VirtualBrain({
-      count: 0,
-      itemSize: 10,
-      mainAxis: 'vertical',
-    }),
+    brain,
+    headerBrain,
+
     columnShifts: null,
+
     domRef: createRef(),
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
@@ -62,8 +86,10 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     focusedWithin: false,
     columnsWhenGrouping: columnsGeneratedForGrouping,
     draggingColumnId: null,
+
     pinnedStartScrollListener: new ScrollListener(),
     pinnedEndScrollListener: new ScrollListener(),
+
     columnsWhenInlineGroupRenderStrategy: undefined,
   };
 }
@@ -143,7 +169,7 @@ export const forwardProps = <T>(
 
     rowHeight: (rowHeight) => (typeof rowHeight === 'number' ? rowHeight : 0),
     headerHeight: (headerHeight) =>
-      typeof headerHeight === 'number' ? headerHeight : 0,
+      typeof headerHeight === 'number' ? headerHeight : 30,
 
     columns: (columns) => toMap(columns, setupState.propsCache.get('columns')),
     columnVisibility: (columnVisibility) => columnVisibility ?? {},
@@ -195,13 +221,8 @@ export const mapPropsToState = <T>(params: {
   parentState: DataSourceState<T>;
 }): InfiniteTableDerivedState<T> => {
   const { props, state, oldState, parentState } = params;
-  const { virtualizeColumns, header } = state;
 
   const computedColumnGroups = state.pivotColumnGroups || state.columnGroups;
-  const virtualizeHeader =
-    header &&
-    virtualizeColumns &&
-    (!computedColumnGroups || computedColumnGroups?.size === 0);
 
   const columnGroupsDepthsMap =
     (state.columnGroups && state.columnGroups != oldState?.columnGroups) ||
@@ -228,7 +249,6 @@ export const mapPropsToState = <T>(params: {
     groupBy: groupBy,
     computedColumns,
 
-    virtualizeHeader,
     columnHeaderCssEllipsis:
       props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,
     columnGroupsDepthsMap,
@@ -241,7 +261,7 @@ export const mapPropsToState = <T>(params: {
     rowHeightCSSVar: typeof props.rowHeight === 'string' ? props.rowHeight : '',
     headerHeightCSSVar:
       typeof props.headerHeight === 'string'
-        ? props.headerHeight || '--ITableHeader__height'
+        ? props.headerHeight || ThemeVars.components.Header.height
         : '',
   };
 };

@@ -1,30 +1,48 @@
 import * as React from 'react';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Renderable } from '../types/Renderable';
-import { SubscriptionCallback } from '../types/SubscriptionCallback';
+import type { Renderable } from '../types/Renderable';
+import type { SubscriptionCallback } from '../types/SubscriptionCallback';
 
 export type AvoidReactDiffProps = {
   name?: string;
+  useraf?: boolean;
   updater: SubscriptionCallback<Renderable>;
 };
 
 function AvoidReactDiffFn(props: AvoidReactDiffProps) {
-  const [children, setChildren] = useState<Renderable>(props.updater.get());
+  const [children, setChildren] = useState<Renderable>(props.updater.get);
 
-  useLayoutEffect(() => {
-    // register to updater changes
-    const remove = props.updater.onChange((children) => {
+  const rafId = useRef<any>(null);
+
+  useEffect(() => {
+    function onChange(children: Renderable) {
       // so when updater triggers a change
       // we can re-render and set the children
 
-      setChildren(children);
-    });
+      if (props.useraf) {
+        if (rafId.current != null) {
+          cancelAnimationFrame(rafId.current);
+        }
+        rafId.current = requestAnimationFrame(() => {
+          setChildren(children);
+        });
+      } else {
+        setChildren(children);
+      }
+    }
+    const remove = props.updater.onChange(onChange);
 
-    return remove;
-  }, [props.updater]);
+    return () => {
+      if (rafId.current != null) {
+        cancelAnimationFrame(rafId.current);
+      }
+      remove();
+    };
+  }, [props.updater, props.useraf]);
 
-  return <>{children}</>;
+  return (children as React.ReactNode) ?? null;
 }
 
+//@ts-ignore
 export const AvoidReactDiff = React.memo(AvoidReactDiffFn);

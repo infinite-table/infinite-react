@@ -5,7 +5,7 @@ export default test.describe.parallel('DataSource', () => {
     await page.goto(`tests/datasource/default`);
   });
 
-  test('should show loading for 2 seconds', async ({ page }) => {
+  test.skip('should show loading for 2 seconds', async ({ page }) => {
     await expect(await page.content()).toContain('loading');
 
     await page.waitForTimeout(100);

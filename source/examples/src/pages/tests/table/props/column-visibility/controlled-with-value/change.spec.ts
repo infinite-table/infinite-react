@@ -1,18 +1,13 @@
 import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+import { test, expect } from '@testing';
+
 import { getHeaderColumnIds } from '../../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel(
   'Column visibility controlled will never change',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-visibility/controlled-with-value/change`,
-      );
-    });
-
     test('should change column visibility', async ({ page }) => {
-      await page.waitForTimeout(20);
+      await page.waitForInfinite();
       let colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual(['id', 'model', 'price']);

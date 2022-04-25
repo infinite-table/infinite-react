@@ -1,3 +1,4 @@
+import { DeepMap } from '../../../../utils/DeepMap';
 import {
   InfiniteTableColumnGroup,
   InfiniteTableComputedColumn,
@@ -34,15 +35,30 @@ export type ColGroupTreeItem<T> =
  *  |_______________________|           |_______________________________________|_________________|
  *  |    street   | LOCATION|           |          street       |   LOCATION    |                 |
  *  |_____________|_________|___________|_______________________|_______________|                 |
- *  |   streetNo  | city    | firstName | streetName            |country|region |  email  | phone |
+ *  |   streetNo  | city    | firstName  | streetName            |country|region |  email  | phone |
  *
  */
+
+export type ColumnAndGroupTreeInfo<T> = {
+  tree: ColGroupTreeItem<T>[];
+  pathsToCells: DeepMap<number, ColGroupTreeItem<T>>;
+};
 
 export function buildColumnAndGroupTree<T>(
   columns: InfiniteTableComputedColumn<T>[],
   columnGroups: InfiniteTableState<T>['columnGroups'],
   columnGroupsDepthsMap: InfiniteTableState<T>['columnGroupsDepthsMap'],
-): ColGroupTreeItem<T>[] {
+  columnGroupsMaxDepth: number,
+
+  /**
+   * The returned pathsToCells is a deepmap that maps cells to their corresponding treeitem,
+   * namely, it answers the question - for cell at [2,3] - third row, forth col,
+   * which is my tree item?
+   *
+   * For example, in the above drawing, [0,1] we have the ADDRESS tree item
+   * For example, in the above drawing, at [1,1] we have the LOCATION tree item
+   */
+): ColumnAndGroupTreeInfo<T> {
   /*
    * this is basically a tree with multiple top-level nodes
    * and we return the top-level nodes in the tree (we consider the table above to be a tree,
@@ -119,7 +135,6 @@ export function buildColumnAndGroupTree<T>(
         if (!colGroupItem) {
           colGroupItem = {
             id: groupId,
-
             type: 'group',
             ref: colGroup,
             columnItems: [],
@@ -153,6 +168,7 @@ export function buildColumnAndGroupTree<T>(
   });
 
   const result: ColGroupTreeItem<T>[] = [];
+  const pathsToCells: DeepMap<number, ColGroupTreeItem<T>> = new DeepMap();
 
   let groupOffset = 0;
 
@@ -178,12 +194,22 @@ export function buildColumnAndGroupTree<T>(
 
       groupOffset += itemWidth;
     }
+
+    if (item.type === 'group') {
+      item.columnItems.forEach((colItem) => {
+        pathsToCells.set([item.depth, colItem.ref.computedVisibleIndex], item);
+      });
+    } else {
+      for (let i = item.depth; i <= columnGroupsMaxDepth + 1; i++) {
+        pathsToCells.set([i, item.ref.computedVisibleIndex], item);
+      }
+    }
   });
 
   map.clear();
   temporaryMap.clear();
 
-  return result;
+  return { tree: result, pathsToCells };
 }
 
 function assignGroupOffsetsAndComputedWidths<T>(

@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -9,6 +7,7 @@ import {
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;

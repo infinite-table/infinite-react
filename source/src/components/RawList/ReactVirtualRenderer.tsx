@@ -205,6 +205,7 @@ export class ReactVirtualRenderer extends Logger {
       //   debugger;
       //   itemIndex = spanParent;
       // } else {
+
       covered = true;
       // }
     }

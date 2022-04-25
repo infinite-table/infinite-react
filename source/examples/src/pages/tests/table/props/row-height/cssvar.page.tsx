@@ -1,98 +1,162 @@
 import * as React from 'react';
 
 import {
-  InfiniteTableColumn,
   InfiniteTable,
   DataSource,
+  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import { CarSale } from '@examples/datasets/CarSale';
 
-const styles = require('./cssvar.module.css');
-interface Person {
-  Id: number;
-  FirstName: string;
-  LastName: string;
-  Address: string;
-  Age: number;
-}
-
-const data = [
+const carsales: CarSale[] = [
   {
-    Id: 20,
-    FirstName: 'Bob',
-    LastName: 'Bobson',
-    Address: 'United States, Nashvile 8, rue due Secour',
-    Age: 3,
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'RDX 2WD',
+    year: 2010,
+    sales: 15,
+    color: 'red',
+    id: 0,
   },
   {
-    Id: 3,
-    FirstName: 'Alice',
-    LastName: 'Aliceson',
-    Address: 'United States, San Francisco 5',
-    Age: 50,
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'RDX 4WD',
+    year: 2007,
+    sales: 1,
+    color: 'red',
+    id: 1,
   },
   {
-    Id: 10,
-    FirstName: 'Bill',
-    LastName: 'Billson',
-    Address: 'France, Paris, Sur seine',
-    Age: 5,
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'RDX 4WD',
+    year: 2008,
+    sales: 2,
+    color: 'magenta',
+    id: 2,
+  },
+  {
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'RDX 4WD',
+    year: 2009,
+    sales: 136,
+    color: 'blue',
+    id: 3,
+  },
+  {
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'RDX 4WD',
+    year: 2010,
+    color: 'blue',
+    sales: 30,
+    id: 4,
+  },
+  {
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'TSX',
+    year: 2009,
+    sales: 14,
+    color: 'yellow',
+    id: 5,
+  },
+  {
+    category: '1 - Category 1 Truck',
+    make: 'Acura',
+    model: 'TSX',
+    year: 2010,
+    sales: 14,
+    color: 'red',
+    id: 6,
+  },
+  {
+    category: '1 - Category 1 Truck',
+    make: 'Audi',
+    model: 'A3',
+    year: 2009,
+    sales: 2,
+    color: 'magenta',
+    id: 7,
   },
 ];
 
-const columns = new Map<string, InfiniteTableColumn<Person>>([
+(globalThis as any).carsales = carsales;
+
+const columns = new Map<string, InfiniteTableColumn<CarSale>>([
+  ['make', { field: 'make' }],
+  ['model', { field: 'model' }],
   [
-    'Id',
+    'category',
     {
-      field: 'Id',
-      type: 'number',
+      field: 'category',
     },
   ],
   [
-    'FirstName',
+    'count',
     {
-      field: 'FirstName',
-      header: 'First Name',
+      field: 'sales',
     },
   ],
   [
-    'LastName',
+    'year',
     {
-      field: 'LastName',
-      header: 'Last Name',
-    },
-  ],
-  [
-    'Age',
-    {
-      field: 'Age',
+      field: 'year',
       type: 'number',
     },
   ],
 ]);
-export default () => {
+
+const domProps = {
+  style: {
+    margin: '5px',
+    height: 900,
+    border: '1px solid gray',
+    position: 'relative',
+  } as React.CSSProperties,
+};
+
+const sinon = require('sinon');
+
+const onRowHeightChange = sinon.spy((_rowHeight: number) => {});
+
+(globalThis as any).onRowHeightChange = onRowHeightChange;
+export default function DataTestPage() {
+  const [rowHeight, setRowHeight] = React.useState(40);
   return (
     <React.StrictMode>
-      <div className={styles.wrap}>
-        <DataSource<Person>
-          data={data}
-          primaryKey="Id"
-          fields={['Id', 'FirstName', 'Age', 'Address', 'LastName']}
-        >
-          <InfiniteTable<Person>
-            domProps={{
-              style: {
-                margin: '5px',
-                height: '80vh',
-                border: '1px solid gray',
-                position: 'relative',
-              },
+      <div style={{ '--rh': `${rowHeight}px` } as React.CSSProperties}>
+        Current row height (VIA CSS VAR --rh): {rowHeight}
+        <br />
+        Press buttons below to increment/decrement row height by 10
+        <div style={{ display: 'flex', flexFlow: 'row' }}>
+          <button
+            data-name="up"
+            onClick={() => {
+              setRowHeight((rowHeight) => rowHeight + 10);
             }}
-            columnDefaultWidth={200}
+          >
+            UP
+          </button>
+          <button
+            data-name="down"
+            onClick={() => {
+              setRowHeight((rowHeight) => rowHeight - 10);
+            }}
+          >
+            DOWN
+          </button>
+        </div>
+        <DataSource<CarSale> data={carsales} primaryKey="id">
+          <InfiniteTable<CarSale>
+            domProps={domProps}
+            rowHeight={'--rh'}
             columns={columns}
-            rowHeight={'--custom-row-height'}
+            onRowHeightChange={onRowHeightChange}
           />
         </DataSource>
       </div>
     </React.StrictMode>
   );
-};
+}

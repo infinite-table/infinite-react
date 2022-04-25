@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
+
 import { getGlobal } from '../../../utils/getGlobal';
 import { useComponentState } from '../../hooks/useComponentState';
 import { useLatest } from '../../hooks/useLatest';
@@ -29,13 +30,14 @@ function getColumnContentMaxWidths(
   const { includeHeader, columnsToResize, columnsToSkip } = options;
   const query = `.${InfiniteTableCellClassName} > .${InfiniteTableCellContentClassName}`;
 
-  let match = domRef.current?.querySelectorAll(query);
+  const match = domRef.current?.querySelectorAll(query);
 
   const measuredMaxWidths: Record<string, number> = {};
 
   const computedPaddingsForColumns: Record<string, number> = {};
 
   if (match && match.length) {
+    console.log(match);
     match.forEach((content) => {
       const cell = content.parentElement!;
       const isHeader = cell.matches(`.${InfiniteTableHeaderCellClassName}`);
@@ -104,13 +106,7 @@ export function useAutoSizeColumns<T>() {
   const {
     getComponentState,
     componentActions,
-    componentState: {
-      domRef,
-      ready,
-      autoSizeColumnsKey,
-      verticalVirtualBrain,
-      horizontalVirtualBrain,
-    },
+    componentState: { domRef, ready, autoSizeColumnsKey, brain },
   } = useComponentState<InfiniteTableState<T>>();
 
   const [refreshId, setRefreshId] = useState(0);
@@ -139,15 +135,8 @@ export function useAutoSizeColumns<T>() {
       }
     };
 
-    const removeVertical = verticalVirtualBrain.onRenderRangeChange(onChange);
-    const removeHorizontal =
-      horizontalVirtualBrain.onRenderRangeChange(onChange);
-
-    return () => {
-      removeVertical();
-      removeHorizontal();
-    };
-  }, [verticalVirtualBrain, horizontalVirtualBrain]);
+    return brain.onRenderRangeChange(onChange);
+  }, [brain]);
 
   useEffect(() => {
     if (theKey == null) {

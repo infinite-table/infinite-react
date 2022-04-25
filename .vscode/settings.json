@@ -27,5 +27,18 @@
     "www/src/ts-compiler-bundle-large.js": true
   },
   "editor.tabSize": 2,
-  "prettier.prettierPath": "node_modules/prettier"
+  "prettier.prettierPath": "node_modules/prettier",
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  }
 }

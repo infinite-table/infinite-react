@@ -1,18 +1,15 @@
+import { test, expect } from '@testing';
+
 import { getColumnWidths } from '../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 function roundDownToTens(val: number) {
   return val - (val % 10);
 }
 export default test.describe.parallel('Column autosizing tests', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/column-sizing/auto-size-columns`);
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('expect autoSizeColumnsKey.columnsToResize to work', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     let widths = await getColumnWidths(['id', 'country', 'city', 'age'], {
       page,
     });
@@ -37,6 +34,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
   });
 
   test('expect autoSizeColumnsKey.columnsToSkip to work', async ({ page }) => {
+    await page.waitForInfinite();
     let widths = await getColumnWidths(['id', 'country', 'city', 'age'], {
       page,
     });
@@ -62,6 +60,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
   });
 
   test('expect autoSizeColumnsKey to work', async ({ page }) => {
+    await page.waitForInfinite();
     let widths = await getColumnWidths(['id', 'country', 'city', 'age'], {
       page,
     });

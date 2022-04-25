@@ -1,12 +1,9 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
@@ -14,10 +11,12 @@ import type {
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 const domProps = {
   style: {
     height: '80vh',
+    width: 2000,
   },
 };
 type Developer = {
@@ -123,10 +122,9 @@ export default function GroupByExample() {
             <InfiniteTable<Developer>
               columns={columns}
               domProps={domProps}
-              virtualizeColumns={false}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
-              columnDefaultWidth={200}
+              columnDefaultWidth={150}
               pivotTotalColumnPosition="start"
             />
           );

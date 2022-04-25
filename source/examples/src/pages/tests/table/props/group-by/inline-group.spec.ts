@@ -1,4 +1,6 @@
 // import { getColumnGroupsIds, getHeaderColumnIds } from '../../../../../utils';
+import { test } from '@testing';
+
 import { data } from './pivotData';
 
 const countries = new Set<string>();
@@ -13,15 +15,7 @@ data.forEach((x) => {
   agePerCountries.get(x.country)?.add(x.age);
 });
 
-import { test } from '@playwright/test';
-
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/group-by/inline-group`);
-
-    // wait for rendering
-    await page.waitForSelector('[data-row-index]');
-  });
   test.skip('column groups are correct', async () => {
     // const colGroups = await getColumnGroupsIds();
     // expect(colGroups).toEqual([...countries]);

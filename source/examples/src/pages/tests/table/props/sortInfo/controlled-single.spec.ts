@@ -1,17 +1,12 @@
-import { getColumnCells } from '../../../testUtils';
-import { getRowSelector } from '../../../testUtils/getRowElement';
-import { getOrders, multisort } from './getOrders';
+import { test, expect, ElementHandle } from '@testing';
 
-import { test, expect, ElementHandle } from '@playwright/test';
+import { getColumnCells } from '../../../testUtils';
+
+import { getOrders, multisort } from './getOrders';
 
 const orders = getOrders();
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/sortInfo/controlled-single`);
-    await page.waitForSelector(getRowSelector(0));
-  });
-
   test('controlled sortInfo should work properly', async ({ page }) => {
     await page.waitForTimeout(50);
 
@@ -52,7 +47,7 @@ export default test.describe.parallel('Table', () => {
     expect(values).toEqual(expected);
 
     // now click the button to enable onSortInfoChange
-    await (await page.$('button'))?.click();
+    await page.locator('button').click();
 
     await headerCell.click();
 
@@ -90,7 +85,7 @@ export default test.describe.parallel('Table', () => {
     ).toEqual(ascById);
 
     // click again to sort desc
-    await orderIdHeaderCell.click();
+    await orderIdHeaderCell?.click();
     await page.waitForTimeout(20);
 
     expect(

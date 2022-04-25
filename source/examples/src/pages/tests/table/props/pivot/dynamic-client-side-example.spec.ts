@@ -1,14 +1,10 @@
+import { test, expect } from '@testing';
+
 import { getHeaderColumnIds } from '../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel('Pivot and grouping edge cases', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/pivot/dynamic-client-side-example`);
-
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('expect columns to be correctly set', async ({ page }) => {
+    await page.waitForInfinite();
     let columnIds = await getHeaderColumnIds({ page });
 
     expect(columnIds).toEqual(['id', 'firstName', 'age', 'salary', 'currency']);

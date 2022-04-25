@@ -7,7 +7,6 @@ import {
   alignItems,
   display,
   flexFlow,
-  flex,
   overflow,
   position,
 } from '../../utilities.css';
@@ -43,9 +42,20 @@ globalStyle(`${HeaderSortIconCls} [data-name='index']`, {
   padding: 1,
 });
 
+export const HeaderScrollbarPlaceholderCls = style([
+  {
+    background: ThemeVars.components.Header.background,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+  position.absolute,
+]);
+
 export const HeaderClsRecipe = recipe({
   base: [
     flexFlow.row,
+    position.absolute,
     {
       background: ThemeVars.components.Header.background,
       color: ThemeVars.components.Header.color,
@@ -104,6 +114,11 @@ export const HeaderCellRecipe = recipe({
     },
   ],
   variants: {
+    zebra: {
+      false: {},
+      even: {},
+      odd: {},
+    },
     dragging: {
       true: {
         zIndex: 100,
@@ -208,8 +223,7 @@ export const HeaderWrapperCls = style([
   flexFlow.row,
 ]);
 
-export const HeaderGroupCls = style([flexFlow.column, display.flex]);
-export const HeaderGroup_Header = style([
+export const HeaderGroupCls = style([
   display.flex,
   flexFlow.row,
   alignItems.center,
@@ -218,11 +232,4 @@ export const HeaderGroup_Header = style([
     borderBottom: ThemeVars.components.Cell.border,
     borderRight: ThemeVars.components.Cell.border,
   },
-]);
-
-export const HeaderGroup_Children = style([
-  display.flex,
-  flexFlow.row,
-  alignItems.stretch,
-  flex['1'],
 ]);

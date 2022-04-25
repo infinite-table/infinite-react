@@ -1,7 +1,9 @@
 import { getFnCalls } from '@examples/pages/tests/testUtils/getFnCalls';
 import { DataSourceSingleSortInfo } from '@infinite-table/infinite-react/components/DataSource/types';
-import { test, expect, ElementHandle, Page } from '@playwright/test';
+import { test, expect, ElementHandle, Page } from '@testing';
+
 import { getColumnCells } from '../../../testUtils';
+
 // import { getRowSelector } from '../../../testUtils/getRowElement';
 import { getOrders, mapToString, multisort, Order } from './getOrders';
 const orders = getOrders();
@@ -11,12 +13,6 @@ async function getCalls({ page }: { page: Page }) {
 }
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/sortInfo/uncontrolled-multisort`);
-
-    // await page.waitForSelector(getRowSelector(0));
-  });
-
   test.skip('uncontrolled sortInfo should work fine', async ({ page }) => {
     const { headerCell, bodyCells } = await getColumnCells('itemCount', {
       page,

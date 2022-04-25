@@ -1,16 +1,12 @@
+import { test, expect } from '@testing';
+
 import { getCellNode, getComputedStyleProperty } from '../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel(
   'Pivoting and inheriting column configuration.',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(`/tests/table/props/pivot/pivot-column-inherit`);
-    });
-
     test('should have the column correctly inherited', async ({ page }) => {
-      await page.waitForSelector('[data-row-index]');
-
+      await page.waitForInfinite();
       const node = await getCellNode(
         {
           columnId: 'salary',

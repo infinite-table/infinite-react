@@ -1,5 +1,6 @@
 import { Page, ElementHandle } from '@playwright/test';
 
+import { kebabCase } from './kebabCase';
 import { sortElements } from './listUtils';
 
 export { getRow, getRows } from './getRowElement';
@@ -12,28 +13,27 @@ export const wait = (timeout: number) => {
   });
 };
 
-export const getHeaderCellByColumnId = async (
+export const getHeaderCellByColumnId = (
   columnId: string,
   { page }: { page: Page },
 ) => {
-  return await page.$(`.InfiniteHeader [data-column-id="${columnId}"]`);
+  return page.locator(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
 export const getCellNode = async (
   { columnId, rowIndex }: { columnId: string; rowIndex: number },
   { page }: { page: Page },
 ) => {
-  const rowSelector = getRowSelector(rowIndex);
-  const row = await page.$(rowSelector);
-
-  return await row!.$(`[data-column-id="${columnId}"]`);
+  return await page.$(
+    `.InfiniteColumnCell[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+  );
 };
 
 export const getHeaderCellWidthByColumnId = async (
   columnId: string,
   { page }: { page: Page },
 ): Promise<number> => {
-  const node = await getHeaderCellByColumnId(columnId, { page });
+  const node = getHeaderCellByColumnId(columnId, { page });
 
   const value = await node!.evaluate(
     (node) => node.getBoundingClientRect().width,
@@ -53,9 +53,9 @@ export const getColumnWidths = async (
 };
 
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
-  const cells = await page.$$(`.InfiniteHeader [data-name="Cell"]`);
+  const cells = page.locator(`.InfiniteHeader [data-column-id]`);
 
-  const result = await sortElements(cells);
+  const result = await sortElements(cells, 'col');
 
   return result;
 };
@@ -64,8 +64,12 @@ export const getColumnCells = async (
   columnName: string,
   { page }: { page: Page },
 ) => {
-  const [headerCell, ...bodyCells] = await page.$$(
-    `[data-column-id="${columnName}"]`,
+  const headerCell = page.locator(
+    `.InfiniteHeader [data-column-id="${columnName}"]`,
+  );
+
+  const bodyCells = await page.locator(
+    `.InfiniteColumnCell[data-column-id="${columnName}"]`,
   );
 
   const cells = await sortElements(bodyCells);
@@ -87,14 +91,14 @@ export const getCellText = async (
   { page }: { page: Page },
 ) => {
   const cell = await page.$(
-    `[data-row-index="${rowIndex}"] [data-column-id="${columnId}"]`,
+    `[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
   );
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };
 
 export const getHeaderColumnIds = async ({ page }: { page: Page }) => {
-  let cells = await getHeaderColumnCells({ page });
+  const cells = await getHeaderColumnCells({ page });
 
   const result = Promise.all(
     cells.map((cell: any) =>
@@ -135,9 +139,6 @@ export async function getColumnGroupsIds({ page }: { page: Page }) {
   );
 }
 
-import { kebabCase } from './kebabCase';
-import { getRowSelector } from './getRowElement';
-
 export async function getComputedStyleProperty(
   selector: ElementHandle<HTMLElement | SVGElement> | string,
   propertyName: string,
@@ -149,7 +150,7 @@ export async function getComputedStyleProperty(
 
   const value = await selector.evaluate(
     (node, propertyName) =>
-      getComputedStyle(node).getPropertyValue(propertyName),
+      window.getComputedStyle(node).getPropertyValue(propertyName),
     kebabCase(propertyName),
   );
 

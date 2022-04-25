@@ -1,67 +1,55 @@
 // CONFESSION: this should have been named `useVirtualAndHorizontalBrains`
 // but I couldn't stand naming it `useYourBrain` instead 🤷‍♂️
 
-import { useEffect } from 'react';
+import { useMatrixBrain } from '../../HeadlessTable';
 import { Size } from '../../types/Size';
-import { VirtualBrain, VirtualBrainOptions } from '../../VirtualBrain';
+import { MatrixBrain, SpanFunction } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableComputedColumn } from '../types';
-import { useColumnSizeFn } from './useColumnSizeFn';
 
 type UseYourBrainParam<T = any> = {
-  horizontalVirtualBrain: VirtualBrain;
-  verticalVirtualBrain: VirtualBrain;
-  computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
-  computedPinnedStartWidth: number;
-  computedPinnedEndWidth: number;
+  brain: MatrixBrain;
+
+  columnSize: (rowIndex: number) => number;
+  computedVisibleColumns: InfiniteTableComputedColumn<T>[];
+  computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
+  computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
+
   dataArray: any[];
   rowHeight: number;
   bodySize: Size;
-  rowSpan?: VirtualBrainOptions['itemSpan'];
+  rowspan?: SpanFunction;
+  colspan?: SpanFunction;
 };
 export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
   const {
     dataArray,
-    horizontalVirtualBrain,
-    verticalVirtualBrain,
-    computedUnpinnedColumns,
-    computedPinnedStartWidth,
-    computedPinnedEndWidth,
-    rowHeight,
-    bodySize,
-    rowSpan,
-  } = param;
-  const columnSize = useColumnSizeFn<T>(computedUnpinnedColumns);
-
-  horizontalVirtualBrain.update(
-    computedUnpinnedColumns.length,
-    // no need to have columnSize as a dep
-    // as it only uses computed.columns
+    brain,
+    computedPinnedEndColumns,
+    computedPinnedStartColumns,
+    computedVisibleColumns,
     columnSize,
+    rowHeight,
+    rowspan,
+  } = param;
+
+  useMatrixBrain(
+    brain,
+    {
+      colWidth: columnSize,
+      rowHeight,
+      // don't update width and height here
+      // since it's updated by HeadlessTable, to account also for scrollbar sizes
+      // height: bodySize.height,
+      // width: bodySize.width,
+      rows: dataArray.length,
+      cols: computedVisibleColumns.length,
+      rowspan,
+    },
+    {
+      fixedColsEnd: computedPinnedEndColumns.length,
+      fixedColsStart: computedPinnedStartColumns.length,
+    },
   );
 
-  verticalVirtualBrain.update(dataArray.length, rowHeight, rowSpan);
-
-  if (__DEV__) {
-    (globalThis as any).verticalVirtualBrain = verticalVirtualBrain;
-    (globalThis as any).horizontalVirtualBrain = horizontalVirtualBrain;
-  }
-
-  useEffect(() => {
-    verticalVirtualBrain.setAvailableSize({
-      height: bodySize.height,
-      width: 0,
-    });
-  }, [bodySize, verticalVirtualBrain]);
-
-  useEffect(() => {
-    horizontalVirtualBrain.setAvailableSize({
-      height: 0,
-      width: Math.max(
-        bodySize.width - computedPinnedStartWidth - computedPinnedEndWidth,
-        0,
-      ),
-    });
-  }, [bodySize.width, computedPinnedStartWidth, computedPinnedEndWidth]);
-
-  return { horizontalVirtualBrain, verticalVirtualBrain };
+  return brain;
 }

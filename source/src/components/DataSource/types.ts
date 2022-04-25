@@ -40,6 +40,8 @@ export interface DataSourceDataParams<T> {
   lazyLoadStartIndex?: number;
   groupKeys?: any[];
 
+  append?: boolean;
+
   aggregationReducers?: DataSourcePropAggregationReducers<T>;
 
   livePaginationCursor?: DataSourceLivePaginationCursorValue;

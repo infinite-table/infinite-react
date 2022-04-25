@@ -1,14 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 export default test.describe.parallel(
   'Column groups should render correctly',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-groups/uncontrolled/uncontrolled-column-groups`,
-      );
-    });
-
     /*
      *
      * See ./current.png image in the current folder for how nesting should look like in this test
@@ -18,24 +12,35 @@ export default test.describe.parallel(
     test('should remove column when a new key is removed from the columns map', async ({
       page,
     }) => {
-      let secondAddressGroup = await page.evaluate(() => {
-        return (
-          document.querySelectorAll(
-            '[data-group-id="address"]',
-          )[1] as HTMLElement
-        ).innerText.split('\n');
-      });
+      const locationText = await (
+        await page.locator(
+          '.InfiniteHeader [data-group-id="location,country,region"]',
+        )
+      ).innerText();
+      const countryText = await (
+        await page.locator(
+          '.InfiniteHeader [data-col-index="5"][data-row-index="2"]',
+        )
+      ).innerText();
 
-      expect(secondAddressGroup).toEqual([
-        'Address',
-        'location',
-        'country',
-        'region',
-      ]);
+      expect(locationText).toEqual('location');
+      expect(countryText).toEqual('country');
+
+      const secondAddressNode = await page.locator(
+        '.InfiniteHeader [data-col-index="5"][data-row-index="0"]',
+      );
+
+      expect(
+        await secondAddressNode.evaluate((node) => node.dataset.groupId),
+      ).toEqual('address,country,region');
+      expect(
+        await secondAddressNode.evaluate(
+          (node: HTMLElement) => node.offsetWidth,
+        ),
+      ).toEqual(480);
 
       await page.evaluate(() => {
         // update the groups via columnGroups.set method
-
         (window as any).columnGroups.set('contact info', {
           columnGroup: 'address',
           header: 'Contact info',
@@ -44,23 +49,14 @@ export default test.describe.parallel(
 
       await page.waitForTimeout(30);
 
-      secondAddressGroup = await page.evaluate(() => {
-        return (
-          document.querySelectorAll(
-            '[data-group-id="address"]',
-          )[1] as HTMLElement
-        ).innerText.split('\n');
-      });
-
-      expect(secondAddressGroup).toEqual([
-        'Address',
-        'location',
-        'country',
-        'region',
-        'Contact info',
-        'email',
-        'phone',
-      ]);
+      expect(
+        await secondAddressNode.evaluate((node) => node.dataset.groupId),
+      ).toEqual('address,country,region,email,phone');
+      expect(
+        await secondAddressNode.evaluate(
+          (node: HTMLElement) => node.offsetWidth,
+        ),
+      ).toEqual(960);
     });
   },
 );

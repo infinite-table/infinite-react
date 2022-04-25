@@ -1,22 +1,16 @@
+import { test, expect } from '@testing';
+
 import {
   getColumnCells,
   getColumnGroupsIds,
   getHeaderColumnIds,
 } from '../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(
-      `tests/table/props/pivot/showSeparatePivotColumnForSingleAggregation-example`,
-    );
-
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('showSeparatePivotColumnForSingleAggregation true then false should have correct behavior', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     let columnIds = await getHeaderColumnIds({ page });
     let columnGroupIds = await getColumnGroupsIds({ page });
 
@@ -27,7 +21,10 @@ export default test.describe.parallel('Pivot', () => {
       'salary:frontend',
     ];
     expect(columnIds).toEqual(expectedColumnIds);
-    expect(columnGroupIds).toEqual(['backend', 'frontend']);
+    expect(columnGroupIds).toEqual([
+      'backend,salary:backend',
+      'frontend,salary:frontend',
+    ]);
 
     const { headerCell: salaryBackend } = await getColumnCells(
       'salary:backend',
@@ -61,6 +58,7 @@ export default test.describe.parallel('Pivot', () => {
   test('showSeparatePivotColumnForSingleAggregation true then false + another pivot level', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     await page.click('button[data-name="toggle-show-separate"]');
 
     let columnIds = await getHeaderColumnIds({ page });

@@ -1,8 +1,6 @@
-import {
-  getRowElement,
-  getRowSelector,
-} from '../../../testUtils/getRowElement';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
+
+import { getRowElement } from '../../../testUtils/getRowElement';
 
 async function getRowHeight(rowIndex: number, { page }: { page: Page }) {
   try {
@@ -14,12 +12,9 @@ async function getRowHeight(rowIndex: number, { page }: { page: Page }) {
 }
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/rowHeight/basic`);
-
-    await page.waitForSelector(getRowSelector(0));
-  });
-
+  // TODO we should rewrite this test, as we no longer have rows, but only cells
+  // though the test is still testing appropriately, as it's measuring the height of a cell in the row
+  // so just the naming has to be updated
   test('row height is correct and changed accordingly with controlled prop', async ({
     page,
   }) => {

@@ -1,4 +1,5 @@
-import type { VirtualBrainOptions } from '../../VirtualBrain';
+import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
+
 import type { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 import type {
   InfiniteTablePropColumnOrderNormalized,
@@ -6,7 +7,11 @@ import type {
 } from './InfiniteTableProps';
 
 export interface InfiniteTableComputedValues<T> {
-  rowSpan?: VirtualBrainOptions['itemSpan'];
+  scrollbars: {
+    vertical: boolean;
+    horizontal: boolean;
+  };
+  rowspan?: MatrixBrainOptions['rowspan'];
   computedPinnedStartOverflow: boolean;
   computedPinnedEndOverflow: boolean;
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
@@ -24,9 +29,8 @@ export interface InfiniteTableComputedValues<T> {
   computedUnpinnedOffset: number;
   computedPinnedEndOffset: number;
   computedRemainingSpace: number;
-  unpinnedColumnRenderCount: number;
-  columnRenderStartIndex: number;
   toggleGroupRow: (groupKeys: any[]) => void;
+  columnSize: (colIndex: number) => number;
   // setColumnPinning: (columnPinning: InfiniteTablePropColumnPinning) => void;
   // setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   // setColumnVisibility: (

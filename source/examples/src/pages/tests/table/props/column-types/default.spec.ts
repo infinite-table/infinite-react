@@ -1,19 +1,15 @@
+import { test, expect } from '@testing';
+
 import {
   getHeaderColumnIds,
   getHeaderCellWidthByColumnId,
   getHeaderCellByColumnId,
 } from '../../../testUtils';
 
-import { test, expect } from '@playwright/test';
-
 export default test.describe.parallel('Column types tests', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/column-types/default`);
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('expect column types defaultWidth works correctly', async ({ page }) => {
-    let colIds = await getHeaderColumnIds({ page });
+    await page.waitForInfinite();
+    const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'country', 'city', 'salary']);
 
@@ -29,12 +25,13 @@ export default test.describe.parallel('Column types tests', () => {
   });
 
   test('expect column types header works correctly', async ({ page }) => {
-    let colIds = await getHeaderColumnIds({ page });
+    await page.waitForInfinite();
+    const colIds = await getHeaderColumnIds({ page });
 
     expect(colIds).toEqual(['id', 'country', 'city', 'salary']);
 
-    const idNode = await getHeaderCellByColumnId('id', { page });
-    const salaryNode = await getHeaderCellByColumnId('salary', { page });
+    const idNode = getHeaderCellByColumnId('id', { page });
+    const salaryNode = getHeaderCellByColumnId('salary', { page });
 
     const idHeader = await idNode!.evaluate(
       (node) => (node as HTMLElement).innerText,

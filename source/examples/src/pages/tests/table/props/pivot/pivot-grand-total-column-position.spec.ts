@@ -1,19 +1,14 @@
+import { test, expect } from '@testing';
+
 import { getCellNode, getHeaderColumnIds } from '../../../testUtils';
-import { test, expect } from '@playwright/test';
+
 import { developers } from './pivot-total-column-position-data';
 
 export default test.describe.parallel('Pivot', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(
-      `tests/table/props/pivot/pivot-grand-total-column-position`,
-    );
-
-    await page.waitForSelector('[data-column-id]');
-  });
-
   test('grand totals columns are displayed in correct position', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     // grand total position: false
     let columnIds = await getHeaderColumnIds({ page });
 

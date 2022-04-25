@@ -1,19 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 export default test.describe.parallel('Table', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/group-by/collapse-expand`);
-    await page.waitForTimeout(10);
-  });
-
   test('cell content is there', async ({ page }) => {
-    // wait for rendering
-
-    await page.waitForSelector('[data-row-index]');
-
+    await page.waitForInfinite();
     const getRowCount = async () =>
       await page.evaluate(
-        () => document.querySelectorAll('[data-row-index]').length,
+        () =>
+          document.querySelectorAll(
+            '.InfiniteColumnCell[data-row-index][data-col-index="0"]',
+          ).length,
       );
 
     let count = await getRowCount();

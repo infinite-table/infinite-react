@@ -1,21 +1,19 @@
+import { test, expect, Page } from '@testing';
+
 import { getHeaderCellByColumnId } from '../../../testUtils';
-import { test, expect, Page } from '@playwright/test';
+
+import { employees } from './employees10';
 
 async function isColumnDisplayed(colId: string, { page }: { page: Page }) {
-  const handle = await getHeaderCellByColumnId(colId, { page });
-
-  const result = handle != null;
-
-  // console.log(handle, result);
-
-  return result;
+  return (await getHeaderCellByColumnId(colId, { page }).count()) > 0;
 }
 
 async function getRenderedRowCount({ page }: { page: Page }) {
-  return await page.$$eval('[data-row-index]', (rows) => rows.length);
+  return await page.$$eval(
+    '.InfiniteColumnCell[data-row-index][data-col-index="0"]',
+    (rows) => rows.length,
+  );
 }
-
-import { employees } from './employees10';
 
 const timeout = 30;
 
@@ -30,15 +28,6 @@ async function setGroupBy(
 export default test.describe.parallel(
   'Table column.defaultHiddenWhenGroupedBy',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `/tests/table/props/group-by/column-default-hidden-when-grouped-by`,
-      );
-
-      // wait for rendering
-      await page.waitForSelector('[data-row-index]');
-    });
-
     test('team column should be hidden whenever there is grouping', async ({
       page,
     }) => {

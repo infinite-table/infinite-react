@@ -1,22 +1,56 @@
+import { test, expect, Page } from '@testing';
+
+import { getFnCalls } from '../../../testUtils/getFnCalls';
 import { getRowElement } from '../../../testUtils/getRowElement';
-import { test, expect } from '@playwright/test';
 
-export default test.describe.parallel('RawList', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/table/props/row-height/cssvar`);
-  });
+async function getCalls({ page }: { page: Page }) {
+  return getFnCalls('onRowHeightChange', { page });
+}
 
-  test('should correctly render rows', async ({ page }) => {
+async function getRowHeight(
+  rowIndex: number,
+
+  { page }: { page: Page },
+) {
+  try {
+    const el = await getRowElement(rowIndex, { page });
+    return (await el?.boundingBox())?.height;
+  } catch (ex) {
+    return 0;
+  }
+}
+
+export default test.describe.parallel('Table', () => {
+  test('row height is correct and changed accordingly via CSS variable', async ({
+    page,
+  }) => {
+    expect(await getRowHeight(0, { page })).toEqual(40);
+    expect(await getRowHeight(1, { page })).toEqual(40);
+
+    await page.click(`[data-name="up"]`);
     await page.waitForTimeout(20);
 
-    const row = await getRowElement(1, { page });
+    let calls = await getCalls({ page });
+    expect(await getRowHeight(0, { page })).toEqual(50);
 
-    const height = await page.evaluate(
-      //@ts-ignore
-      (r) => r.getBoundingClientRect().height,
-      row,
-    );
+    //@ts-ignore
+    expect(calls[calls.length - 1].args).toEqual([50]);
 
-    expect(height).toEqual(90);
+    await page.click(`[data-name="up"]`);
+    await page.waitForTimeout(20);
+
+    calls = await getCalls({ page });
+
+    expect(await getRowHeight(1, { page })).toEqual(60);
+    //@ts-ignore
+    expect(calls[calls.length - 1].args).toEqual([60]);
+
+    await page.click(`[data-name="down"]`);
+    await page.click(`[data-name="down"]`);
+    await page.click(`[data-name="down"]`);
+    await page.waitForTimeout(20);
+
+    expect(await getRowHeight(0, { page })).toEqual(30);
+    expect(await getRowHeight(1, { page })).toEqual(30);
   });
 });

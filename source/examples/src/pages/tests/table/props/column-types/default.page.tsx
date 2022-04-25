@@ -1,6 +1,3 @@
-import * as React from 'react';
-import fetch from 'isomorphic-fetch';
-
 import {
   InfiniteTable,
   InfiniteTableColumn,
@@ -8,6 +5,8 @@ import {
   InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+import fetch from 'isomorphic-fetch';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -43,7 +42,6 @@ export const columns = new Map<string, InfiniteTableColumn<Developer>>([
     },
   ],
   ['city', { field: 'city' }],
-
   ['salary', { field: 'salary', type: ['default', 'numeric'] }],
 ]);
 

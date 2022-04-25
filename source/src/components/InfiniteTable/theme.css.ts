@@ -94,14 +94,15 @@ export const ThemeVars = createGlobalThemeContract(
         border: 'cell-border',
         borderInvisible: 'cell-border-invisible',
         borderRadius: 'cell-border-radius',
-      },
-      Row: {
+
         /**
          * Text color inside rows. Defaults to `currentColor`
          *
          * Overriden in `dark` theme.
          */
-        color: 'row-color',
+        color: 'cell-color',
+      },
+      Row: {
         /**
          * Background color for rows. Defaults to [`--infinite-background`](#background).
          *
@@ -159,6 +160,7 @@ const HeaderVars = {
 };
 
 const CellVars = {
+  [ThemeVars.components.Cell.color]: 'currentColor',
   [ThemeVars.components.Cell.borderWidth]: '1px',
   [ThemeVars.components.Cell
     .padding]: `${ThemeVars.spacing[2]} ${ThemeVars.spacing[3]}`,
@@ -169,7 +171,6 @@ const CellVars = {
 };
 
 const RowVars = {
-  [ThemeVars.components.Row.color]: 'currentColor',
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
   [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',
@@ -223,7 +224,7 @@ const DarkTheme = {
   [ThemeVars.components.Row.hoverBackground]: '#3b4754',
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#242a31',
-  [ThemeVars.components.Row.color]: '#c3c3c3',
+  [ThemeVars.components.Cell.color]: '#c3c3c3',
 };
 
 globalStyle(':root', {

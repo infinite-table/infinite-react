@@ -1,11 +1,11 @@
-import * as React from 'react';
-import fetch from 'isomorphic-fetch';
-
 import {
+  DataSourceDataParams,
   InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+import fetch from 'isomorphic-fetch';
+import * as React from 'react';
 
 export const columns = new Map<string, InfiniteTableColumn<Employee>>([
   ['id', { field: 'id' }],
@@ -42,8 +42,13 @@ type Employee = {
   email: string;
 };
 
-const dataSource = () => {
-  return fetch(`${process.env.NEXT_PUBLIC_BASE_URL!}/employees1k?_limit=100`)
+const dataSource = (params: DataSourceDataParams<Employee>) => {
+  console.log(params);
+  return fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL!}/employees100?_limit=10&_start=${
+      params.append ? params.originalDataArray.length : 0
+    }`,
+  )
     .then(async (r) => {
       const data = await r.json();
 
@@ -51,8 +56,14 @@ const dataSource = () => {
       return { data, total };
     })
     .then(({ data, total }: { data: Employee[]; total: number }) => {
-      console.log({ data, total });
       return { data, total };
+    })
+    .then((data) => {
+      return new Promise<{ data: Employee[]; total: number }>((resolve) => {
+        setTimeout(() => {
+          resolve(data);
+        }, 100);
+      });
     });
 };
 
@@ -69,7 +80,7 @@ const domProps = {
 const App = () => {
   return (
     <React.StrictMode>
-      <DataSource<Employee> primaryKey="id" data={dataSource}>
+      <DataSource<Employee> primaryKey="id" data={dataSource} livePagination>
         <InfiniteTable<Employee>
           domProps={domProps}
           columnDefaultWidth={440}

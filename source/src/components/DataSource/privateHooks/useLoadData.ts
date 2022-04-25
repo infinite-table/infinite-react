@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+
 import { LazyGroupDataItem, LazyGroupRowInfo } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import { getGlobal } from '../../../utils/getGlobal';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
-
 import { useComponentState } from '../../hooks/useComponentState';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
-
 import { Scrollbars } from '../../InfiniteTable';
 import { debounce } from '../../utils/debounce';
 import { RenderRange } from '../../VirtualBrain';
-
 import {
   DataSourceDataParams,
   DataSourceData,
@@ -48,6 +46,7 @@ export function buildDataSourceDataParams<T>(
     : componentState.sortInfo?.[0] ?? null;
 
   const dataSourceParams: DataSourceDataParams<T> = {
+    append: false,
     originalDataArray: componentState.originalDataArray,
     sortInfo,
     groupBy: componentState.groupBy,
@@ -80,7 +79,7 @@ export function buildDataSourceDataParams<T>(
   const oldDataSourceParams: Partial<DataSourceDataParams<T>> =
     componentState.dataParams || {};
 
-  for (let k in dataSourceParams) {
+  for (const k in dataSourceParams) {
     //@ts-ignore
     if (dataSourceParams.hasOwnProperty(k) && !SKIP_DATA_CHANGES_KEYS[k]) {
       const key = k as keyof DataSourceDataParams<T>;
@@ -103,6 +102,7 @@ export function loadData<T>(
   overrides?: Partial<DataSourceDataParams<T>>,
 ) {
   const dataParams = buildDataSourceDataParams(componentState, overrides);
+  const append = dataParams.append;
 
   if (componentState.lazyLoad) {
     const lazyGroupData = componentState.originalLazyGroupData;
@@ -184,11 +184,11 @@ export function loadData<T>(
             ({
               items: [],
               totalCount: newGroupRowInfo.totalCount,
-              cache: newGroupRowInfo.cache!! ?? true,
+              cache: newGroupRowInfo.cache! ?? true,
             } as LazyGroupRowInfo<T>);
 
           if (existingGroupRowInfo) {
-            existingGroupRowInfo.cache = newGroupRowInfo.cache!!;
+            existingGroupRowInfo.cache = newGroupRowInfo.cache!;
           }
           currentGroupRowInfo.items.length = currentGroupRowInfo.totalCount;
 
@@ -240,7 +240,12 @@ export function loadData<T>(
     }
 
     if (!skipAssign) {
-      actions.originalDataArray = dataArray;
+      if (append) {
+        console.log('appending', dataArray);
+      }
+      actions.originalDataArray = append
+        ? componentState.originalDataArray.concat(dataArray)
+        : dataArray;
     }
     if (dataIsPromise && !componentState.lazyLoad) {
       actions.loading = false;
@@ -257,6 +262,7 @@ export function useLoadData<T>() {
 
   const {
     data,
+    dataArray,
     notifyScrollbarsChange,
     sortInfo,
     groupBy,
@@ -286,10 +292,18 @@ export function useLoadData<T>() {
   }, [notifyScrollbarsChange]);
 
   useEffect(() => {
+    if (!livePagination) {
+      return;
+    }
     // this is synced with - ref #lvpgn - search in codebase this ref to understand more
     const frameId = requestAnimationFrame(() => {
-      if (!scrollbarsRef.current?.vertical && livePaginationCursor) {
-        actions.cursorId = livePaginationCursor;
+      if (!scrollbarsRef.current?.vertical) {
+        if (livePaginationCursor) {
+          // this line makes it so that when we have live pagination, with a livePaginationCursor,
+          // if the data that was loaded does not fill the whole viewport, we need to keep requesting the new
+          // batch of data - so this assignment here does that
+          actions.cursorId = livePaginationCursor;
+        }
       }
     });
 
@@ -297,13 +311,48 @@ export function useLoadData<T>() {
   }, [livePaginationCursor]);
 
   useEffect(() => {
-    const { livePaginationCursor, livePagination } = getComponentState();
+    if (!livePagination || livePaginationCursor !== undefined) {
+      // the case when `livePaginationCursor` is defined is handled in the effect above
+      return;
+    }
+
+    const frameId = requestAnimationFrame(() => {
+      if (!scrollbarsRef.current?.vertical) {
+        // this line makes it so that when we have live pagination, with a livePaginationCursor,
+        // if the data that was loaded does not fill the whole viewport, we need to keep requesting the new
+        // batch of data - so this assignment here does that - basically we're use dataArray.length as the cursor
+        // #useDataArrayLengthAsCursor ref
+
+        if (stateCursorId != null && dataArray.length) {
+          actions.cursorId = dataArray.length;
+        }
+      }
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [dataArray.length, livePaginationCursor]);
+
+  useEffect(() => {
+    const state = getComponentState();
+
+    const { livePaginationCursor, livePagination, dataArray } = state;
+
     if (!scrollbars.vertical && livePagination) {
       // it had vertical scroll but now it doesn't
 
-      // updateCursorId(livePaginationCursor);
+      // the current case is when the grid was loaded initially and had data + vertical scrollbar
+      // but now the viewport has been resized to fit all the rows and there is extra vertical space
+      // so we're in a position where we need to request the next batch of data
+
       if (livePaginationCursor) {
+        // only do this if livePaginationCursor is defined and not zero
         actions.cursorId = livePaginationCursor;
+      } else if (livePaginationCursor === undefined && dataArray.length) {
+        // there is no cursor passed as a prop, so we use dataArray.length as a cursor
+        // so only do this if the length > 0
+        // #useDataArrayLengthAsCursor ref
+
+        actions.cursorId = dataArray.length;
       }
     }
   }, [scrollbars.vertical]);
@@ -330,10 +379,15 @@ export function useLoadData<T>() {
   );
 
   useEffectWithChanges(
-    () => {
+    (changes) => {
+      const appendWhenLivePagination =
+        Object.keys(changes).length === 1 && !!changes.cursorId;
+
       const componentState = getComponentState();
       if (typeof componentState.data === 'function') {
-        loadData(componentState.data, componentState, actions);
+        loadData(componentState.data, componentState, actions, {
+          append: appendWhenLivePagination,
+        });
       }
     },
     { ...depsObject, data },
@@ -474,8 +528,6 @@ function lazyLoadRange<T>(
     const cacheKeys = theGroupKeys.length ? theGroupKeys : rootGroupKeys;
     const indexInGroup = rowInfo.indexInGroup;
 
-    // console.log(i, theGroupKeys, cacheKeys, rowInfo);
-
     if (!rowLoaded) {
       let cachedFnCalls = perGroupFnCalls.get(cacheKeys);
 
@@ -515,7 +567,7 @@ function lazyLoadRange<T>(
     }
   }
 
-  let initialPromise: Promise<any> = Promise.resolve(true);
+  const initialPromise: Promise<any> = Promise.resolve(true);
 
   const allFnCalls: FnCall[] = [];
   perGroupFnCalls.topDownValues().forEach((record) => {

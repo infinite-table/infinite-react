@@ -12,8 +12,8 @@ import { columns } from '../column-visibility/columns';
 import { useState } from 'react';
 
 const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['make', 'end'],
-  ['year', 'end'],
+  ['make', 'start'],
+  ['year', 'start'],
 ]);
 
 // const defaultColumnPinning: InfiniteTablePropColumnPinning = {

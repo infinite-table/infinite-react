@@ -1,17 +1,12 @@
+import { test, expect } from '@testing';
+
 import { getHeaderColumnIds } from '../../../../testUtils';
-import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel(
   'Column order uncontrolled without any defaultValue',
   () => {
-    test.beforeEach(async ({ page }) => {
-      await page.goto(
-        `tests/table/props/column-order/uncontrolled-without-value`,
-      );
-    });
-
     test('should display all cols', async ({ page }) => {
-      await page.waitForTimeout(50);
+      await page.waitForInfinite();
       const colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([
@@ -27,7 +22,7 @@ export default test.describe.parallel(
     test('should remove column when a new key is removed from the columns map', async ({
       page,
     }) => {
-      await page.waitForTimeout(50);
+      await page.waitForInfinite();
       let colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([
