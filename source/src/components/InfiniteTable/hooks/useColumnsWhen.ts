@@ -29,7 +29,7 @@ import {
 } from '../utils/getColumnForGroupBy';
 import { useEffectWithRaf } from './useEffectWithRaf';
 
-import { ToggleGrouRowFn, useToggleGroupRow } from './useToggleGroupRow';
+import { ToggleGroupRowFn, useToggleGroupRow } from './useToggleGroupRow';
 
 function useGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
   const groupByMap = useMemo(() => {
@@ -94,7 +94,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
     columns: Map<string, InfiniteTableColumn<T>>,
     groupByMap: GroupByMap<T>,
     groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
-    toggleGroupRow: ToggleGrouRowFn,
+    toggleGroupRow: ToggleGroupRowFn,
   ) {
     const computedColumns = new Map<string, InfiniteTableColumn<T>>();
 

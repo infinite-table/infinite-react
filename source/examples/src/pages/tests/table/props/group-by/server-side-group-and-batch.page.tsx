@@ -101,10 +101,11 @@ console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS);
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
+      // { field: 'country' },
       {
         field: 'city',
       },
-      { field: 'country' },
+      // { field: 'stack' },
     ],
     [],
   );
@@ -148,7 +149,7 @@ export default function RemotePivotExample() {
         return (
           <InfiniteTable<Developer>
             domProps={domProps}
-            scrollStopDelay={10}
+            scrollStopDelay={250}
             columnPinning={columnPinning}
             columns={columns}
             groupColumn={groupColumn}
@@ -222,7 +223,7 @@ const dataSource: DataSourceData<Developer> = ({
         new Promise((resolve) => {
           setTimeout(() => {
             resolve(data);
-          }, 500);
+          }, 2000);
         }),
     );
 };

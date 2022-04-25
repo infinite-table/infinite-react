@@ -28,6 +28,7 @@ import {
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumnVariant,
 } from '../InfiniteTable/types/InfiniteTableColumn';
+import { GroupRowsLoadingState } from './GroupRowsLoadingState';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -103,6 +104,9 @@ export interface DataSourceMappedState<T> {
   primaryKey: DataSourceProps<T>['primaryKey'];
   groupBy: NonUndefined<DataSourceProps<T>['groupBy']>;
   groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
+  groupRowsLoadingState: NonUndefined<
+    DataSourceProps<T>['groupRowsLoadingState']
+  >;
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
   collapseGroupRowsOnDataFunctionChange: NonUndefined<
@@ -227,6 +231,13 @@ export type DataSourceProps<T> = {
   groupRowsState?: GroupRowsState;
   defaultGroupRowsState?: GroupRowsState;
   onGroupRowsStateChange?: (groupRowsState: GroupRowsState) => void;
+
+  // TODO AFL: makes no sense, but otherwise cannot set an initialstate?
+  groupRowsLoadingState?: GroupRowsLoadingState;
+  // TODO AFL: handle loading change event?
+  onGroupRowsLoadingStateChange?: (
+    groupRowsLoadingState: GroupRowsLoadingState,
+  ) => void;
 
   collapseGroupRowsOnDataFunctionChange?: boolean;
 

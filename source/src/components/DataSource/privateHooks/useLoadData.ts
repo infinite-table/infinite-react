@@ -19,6 +19,7 @@ import {
   DataSourceRemoteData,
   DataSourceDataParamsChanges,
 } from '../types';
+import { updateGroupRowLoadingState } from '../../InfiniteTable/hooks/useLoadingGroupRow';
 
 // const error = err('useLoadData');
 
@@ -220,6 +221,13 @@ export function loadData<T>(
           //@ts-ignore
           actions.originalDataArray = [...topLevelItems.items];
           skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = true;
+        } else {
+          updateGroupRowLoadingState(
+            dataParams.groupKeys,
+            false,
+            componentState,
+            actions,
+          );
         }
         // actions.originalLazyGroupData = lazyGroupData;
         // see above #staleLazyGroupData

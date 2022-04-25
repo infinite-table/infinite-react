@@ -23,6 +23,7 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { DeepMap } from '../../../utils/DeepMap';
 import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
 import { RenderRange } from '../../VirtualBrain';
+import { GroupRowsLoadingState } from '../GroupRowsLoadingState';
 
 export const defaultCursorId = Symbol('cursorId');
 
@@ -119,6 +120,8 @@ export const forwardProps = <T>(
         })
       );
     },
+    groupRowsLoadingState: (groupRowsLoadingState) =>
+      groupRowsLoadingState ?? new GroupRowsLoadingState(),
   };
 };
 

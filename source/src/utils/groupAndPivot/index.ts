@@ -18,6 +18,7 @@ import {
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
 
 import { DeepMap } from '../DeepMap';
+import { GroupRowsLoadingState } from '../../components/DataSource/GroupRowsLoadingState';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS: string = '____root____';
 
@@ -60,6 +61,14 @@ export type InfiniteTableRowInfo<T> =
 export type InfiniteTableRowInfoBase<T> = {
   id: any;
   value?: any;
+
+  loadingGroupData?: boolean;
+  groupDataPartiallyLoaded?: boolean;
+  groupDataLoaded?: boolean;
+
+  // TODO AFL: later
+  loadingError?: boolean;
+
   groupData?: T[];
   collapsed: boolean;
   collapsedChildrenCount?: number;
@@ -624,6 +633,7 @@ type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
   collapsed: boolean;
+  loadingGroupData: boolean;
   parents: InfiniteTableEnhancedGroupInfo<DataType>[];
   indexInParentGroups: number[];
   indexInGroup: number;
@@ -635,7 +645,8 @@ function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
   deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupBy, groupKeys, collapsed, parents, reducers } = options;
+  const { groupBy, groupKeys, collapsed, loadingGroupData, parents, reducers } =
+    options;
   const groupNesting = groupKeys.length;
   const {
     items: groupItems,
@@ -674,6 +685,7 @@ function getEnhancedGroupData<DataType>(
     groupKeys,
     id: `${groupKeys}`, //TODO improve this
     collapsed,
+    loadingGroupData,
     parents,
     flatRowInfoList: [],
     collapsedChildrenCount: 0,
@@ -692,6 +704,8 @@ function getEnhancedGroupData<DataType>(
     groupNesting,
     reducerResults,
   };
+
+  console.log('enhancedGroupData', enhancedGroupData);
 
   return enhancedGroupData;
 }
@@ -720,6 +734,7 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
   groupRowsState?: GroupRowsState;
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
   generateGroupRows: boolean;
+  groupRowsLoadingState?: GroupRowsLoadingState;
 };
 export function enhancedFlatten<DataType, KeyType = any>(
   param: EnhancedFlattenParam<DataType, KeyType>,
@@ -728,6 +743,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
     groupResult,
     toPrimaryKey,
     groupRowsState,
+    groupRowsLoadingState,
     generateGroupRows,
     reducers = {},
   } = param;
@@ -749,6 +765,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
 
+      const loadingGroupData =
+        groupRowsLoadingState?.isLoadingGroupData(groupKeys) ?? false;
+
       const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> =
         getEnhancedGroupData(
           {
@@ -760,6 +779,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
             indexInAll: result.length,
             groupKeys,
             collapsed,
+            loadingGroupData,
           },
           deepMapValue,
         );
@@ -821,6 +841,8 @@ export function enhancedFlatten<DataType, KeyType = any>(
       indexInParentGroups.pop();
     },
   );
+
+  console.log('result ', result);
 
   return {
     data: result,

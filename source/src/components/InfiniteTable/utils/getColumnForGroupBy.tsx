@@ -16,6 +16,8 @@ import {
 } from '../types/InfiniteTableProps';
 import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
 import { RenderHookComponent } from './RenderHookComponent';
+import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
+import { LoadingIcon } from '../components/icons/LoadingIcon';
 
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
@@ -75,7 +77,11 @@ export function getGroupColumnRender<T>({
       ? (groupRowInfo.groupKeys?.length || 0) < groupBy?.length
       : (groupRowInfo.groupKeys?.length || 0) <= groupBy?.length;
 
-    if (showExpanderIcon) {
+    const isLoading = showLoadingIcon(groupRowInfo);
+
+    if (isLoading) {
+      icon = <LoadingIcon />;
+    } else if (showExpanderIcon) {
       const defaultIcon = (
         <ExpanderIcon
           expanded={!collapsed}
@@ -179,7 +185,11 @@ export function getSingleGroupColumn<T>(
         ? (rowInfo.groupKeys?.length || 0) < groupBy?.length
         : (rowInfo.groupKeys?.length || 0) <= groupBy?.length;
 
-      if (showExpanderIcon) {
+      const isLoading = showLoadingIcon(rowInfo);
+
+      if (isLoading) {
+        icon = <LoadingIcon />;
+      } else if (showExpanderIcon) {
         const defaultIcon = (
           <ExpanderIcon
             expanded={!collapsed}

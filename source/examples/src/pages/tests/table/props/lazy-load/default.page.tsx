@@ -8,10 +8,7 @@ import {
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 
-import type {
-  InfiniteTablePropColumns,
-  DataSourceGroupBy,
-} from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 type Developer = {
   id: number;
@@ -74,7 +71,9 @@ function getDataSource(size: string) {
       .filter(Boolean)
       .join('&');
     return fetch(
-      process.env.NEXT_PUBLIC_BASE_URL + `/developers${size}-sql?` + args,
+      process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS +
+        `/developers${size}-sql?` +
+        args,
     )
       .then((r) => r.json())
       .then(
@@ -82,7 +81,7 @@ function getDataSource(size: string) {
           new Promise<Developer[]>((resolve) => {
             setTimeout(() => {
               resolve(data);
-            }, 500);
+            }, 1000);
           }),
       );
   };
@@ -118,15 +117,15 @@ const groupRowsState = new GroupRowsState({
 });
 
 export default function RemotePivotExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
-    () => [
-      {
-        field: 'country',
-      },
-      { field: 'stack' },
-    ],
-    [],
-  );
+  // const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+  //   () => [
+  //     {
+  //       field: 'country',
+  //     },
+  //     { field: 'stack' },
+  //   ],
+  //   [],
+  // );
 
   // const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
   //   () => [
@@ -202,24 +201,16 @@ export default function RemotePivotExample() {
         primaryKey="id"
         data={dataSource}
         lazyLoad={{ batchSize: 20 }}
-        defaultGroupRowsState={groupRowsState}
-        groupBy={grouping ? groupBy : undefined}
+        //   defaultGroupRowsState={groupRowsState}
+        groupBy={undefined}
       >
-        {({ pivotColumns, pivotColumnGroups }) => {
-          return (
-            <div>
-              <InfiniteTable<Developer>
-                domProps={domProps}
-                hideEmptyGroupColumns
-                defaultColumnPinning={defaultColumnPinning}
-                columns={columns}
-                pivotColumns={pivotColumns}
-                pivotColumnGroups={pivotColumnGroups}
-                columnDefaultWidth={220}
-              />
-            </div>
-          );
-        }}
+        <InfiniteTable<Developer>
+          domProps={domProps}
+          // hideEmptyGroupColumns
+          //   defaultColumnPinning={defaultColumnPinning}
+          columns={columns}
+          columnDefaultWidth={220}
+        />
       </DataSource>
       {/* <DataSource<Developer>
         primaryKey="id"

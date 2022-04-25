@@ -30,6 +30,11 @@ export const fill = styleVariants({
   accentColor: { fill: ThemeVars.color.accent },
 });
 
+export const stroke = styleVariants({
+  currentColor: { stroke: 'currentColor' },
+  accentColor: { stroke: ThemeVars.color.accent },
+});
+
 export const background = styleVariants({
   inherit: { background: 'inherit' },
 });

@@ -172,6 +172,7 @@ export function concludeReducer<T>(params: {
         toPrimaryKey,
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
+        groupRowsLoadingState: state.groupRowsLoadingState,
       });
 
       rowInfoDataArray = flattenResult.data;
@@ -206,6 +207,7 @@ export function concludeReducer<T>(params: {
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
 
+    // TODO AFL update loading flags
     if (arrayDifferentAfterSortStep || groupsDepsChanged) {
       rowInfoDataArray = dataArray.map((data, index) =>
         toRowInfo(data, data ? toPrimaryKey(data) : index, index),
