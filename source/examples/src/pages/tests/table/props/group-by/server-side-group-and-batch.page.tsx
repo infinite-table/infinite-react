@@ -223,7 +223,7 @@ const dataSource: DataSourceData<Developer> = ({
         new Promise((resolve) => {
           setTimeout(() => {
             resolve(data);
-          }, 2000);
+          }, 500);
         }),
     );
 };

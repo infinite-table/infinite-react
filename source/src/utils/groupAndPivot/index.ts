@@ -62,8 +62,15 @@ export type InfiniteTableRowInfoBase<T> = {
   id: any;
   value?: any;
 
+  loadingSelf?: boolean;
   loadingGroupData?: boolean;
+  /**
+   * TRUE when the data of some direct children is available
+   */
   groupDataPartiallyLoaded?: boolean;
+  /**
+   * TRUE when the data of all direct children is available
+   */
   groupDataLoaded?: boolean;
 
   // TODO AFL: later
@@ -767,6 +774,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       const loadingGroupData =
         groupRowsLoadingState?.isLoadingGroupData(groupKeys) ?? false;
+
+      // partially TRUE when at least one item has data
+      // completely TRUE when at all item has data
 
       const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> =
         getEnhancedGroupData(
