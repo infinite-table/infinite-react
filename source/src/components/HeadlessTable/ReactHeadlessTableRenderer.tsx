@@ -61,6 +61,8 @@ export class ReactHeadlessTableRenderer extends Logger {
   private currentHoveredRow = -1;
   private onDestroy: VoidFunction;
 
+  private hoverRowUpdatesInProgress: Map<number, boolean> = new Map();
+
   constructor(brain: MatrixBrain) {
     super('ReactHeadlessTableRenderer');
     this.brain = brain;
@@ -710,6 +712,28 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
+  private updateHoverClassNamesForRow = (rowIndex: number) => {
+    if (this.scrolling) {
+      return;
+    }
+    if (this.hoverRowUpdatesInProgress.has(rowIndex)) {
+      return;
+    }
+
+    this.hoverRowUpdatesInProgress.set(rowIndex, true);
+
+    requestAnimationFrame(() => {
+      if (this.currentHoveredRow != -1 && !this.scrolling) {
+        if (this.currentHoveredRow === rowIndex) {
+          this.addHoverClass(rowIndex);
+        } else {
+          this.removeHoverClass(rowIndex);
+        }
+      }
+      this.hoverRowUpdatesInProgress.delete(rowIndex);
+    });
+  };
+
   private updateElementPosition = (elementIndex: number) => {
     const itemElement = this.itemDOMElements[elementIndex];
     const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
@@ -731,17 +755,8 @@ export class ReactHeadlessTableRenderer extends Logger {
     const { x, y } = itemPosition;
 
     if (itemElement) {
-      if (this.currentHoveredRow != -1 && !this.scrolling) {
-        if (this.currentHoveredRow === rowIndex) {
-          this.cellHoverClassNames.forEach((cls) => {
-            itemElement.classList.add(cls);
-          });
-        } else {
-          this.cellHoverClassNames.forEach((cls) => {
-            itemElement.classList.remove(cls);
-          });
-        }
-      }
+      this.updateHoverClassNamesForRow(rowIndex);
+
       // itemElement.style.gridColumn = `${colIndex} / span 1`;
       // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
@@ -996,6 +1011,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.reset();
     this.onDestroy();
 
+    this.hoverRowUpdatesInProgress.clear();
+
+    (this as any).hoverRowUpdatesInProgress = null;
     (this as any).brain = null;
     (this as any).mappedCells = null;
   };
