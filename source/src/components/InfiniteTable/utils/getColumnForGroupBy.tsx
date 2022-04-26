@@ -16,6 +16,8 @@ import {
 } from '../types/InfiniteTableProps';
 import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
 import { RenderHookComponent } from './RenderHookComponent';
+import { stripVar } from '../../../utils/stripVar';
+import { ThemeVars } from '../theme.css';
 
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
@@ -160,6 +162,10 @@ export function getSingleGroupColumn<T>(
     header: `Group`,
     groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
+    style: ({ rowInfo }) => ({
+      [stripVar(ThemeVars.components.Row.groupNesting)]:
+        rowInfo.groupNesting! - 1,
+    }),
     render: (renderOptions) => {
       let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
       if (!rowInfo.isGroupRow) {
