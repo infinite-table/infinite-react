@@ -16,8 +16,8 @@ import {
 } from '../types/InfiniteTableProps';
 import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
 import { RenderHookComponent } from './RenderHookComponent';
-import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
-import { LoadingIcon } from '../components/icons/LoadingIcon';
+import { stripVar } from '../../../utils/stripVar';
+import { ThemeVars } from '../theme.css';
 
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
@@ -77,11 +77,7 @@ export function getGroupColumnRender<T>({
       ? (groupRowInfo.groupKeys?.length || 0) < groupBy?.length
       : (groupRowInfo.groupKeys?.length || 0) <= groupBy?.length;
 
-    const isLoading = showLoadingIcon(groupRowInfo);
-
-    if (isLoading) {
-      icon = <LoadingIcon />;
-    } else if (showExpanderIcon) {
+    if (showExpanderIcon) {
       const defaultIcon = (
         <ExpanderIcon
           expanded={!collapsed}
@@ -166,6 +162,10 @@ export function getSingleGroupColumn<T>(
     header: `Group`,
     groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
+    style: ({ rowInfo }) => ({
+      [stripVar(ThemeVars.components.Row.groupNesting)]:
+        rowInfo.groupNesting! - 1,
+    }),
     render: (renderOptions) => {
       let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
       if (!rowInfo.isGroupRow) {
@@ -185,11 +185,7 @@ export function getSingleGroupColumn<T>(
         ? (rowInfo.groupKeys?.length || 0) < groupBy?.length
         : (rowInfo.groupKeys?.length || 0) <= groupBy?.length;
 
-      const isLoading = showLoadingIcon(rowInfo);
-
-      if (isLoading) {
-        icon = <LoadingIcon />;
-      } else if (showExpanderIcon) {
+      if (showExpanderIcon) {
         const defaultIcon = (
           <ExpanderIcon
             expanded={!collapsed}

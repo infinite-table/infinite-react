@@ -25,6 +25,9 @@ const groupBy: DataSourceGroupBy<Person>[] = [
   {
     field: 'team',
   },
+  {
+    field: 'country',
+  },
 ];
 
 const columns: InfiniteTablePropColumns<Person> = new Map<
