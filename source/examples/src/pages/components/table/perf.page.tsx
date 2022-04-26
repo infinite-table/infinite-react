@@ -236,7 +236,8 @@ const App = () => {
             </button>
           </div>
           <p>
-            {dataSourceCount} rows, {columnCount} columns, row height 40
+            {dataSourceCount} rows, {columnCount} columns, row height{' '}
+            {rowHeight}
           </p>
         </div>
         <DataSource<DataItem>
@@ -259,7 +260,7 @@ const App = () => {
             }}
             defaultColumnPinning={defaultColumnPinning}
             key={rowHeight}
-            rowHeight={'--it-row-height'}
+            rowHeight={rowHeight}
             columnDefaultWidth={150}
             columnMinWidth={40}
             columns={columns}
