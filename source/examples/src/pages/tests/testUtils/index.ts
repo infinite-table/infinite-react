@@ -1,4 +1,4 @@
-import { Page, ElementHandle } from '@playwright/test';
+import { Page, ElementHandle, Locator } from '@playwright/test';
 
 import { kebabCase } from './kebabCase';
 import { sortElements } from './listUtils';
@@ -27,6 +27,19 @@ export const getCellNode = async (
   return await page.$(
     `.InfiniteColumnCell[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
   );
+};
+
+export const getCellNodeLocator = (
+  { columnId, rowIndex }: { columnId: string; rowIndex: number },
+  { page }: { page: Page },
+) => {
+  return page.locator(
+    `.InfiniteColumnCell[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+  );
+};
+
+export const getFirstChild = (locator: Locator) => {
+  return locator.locator(':first-child').first();
 };
 
 export const getHeaderCellWidthByColumnId = async (
