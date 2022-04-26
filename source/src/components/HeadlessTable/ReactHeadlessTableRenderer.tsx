@@ -722,7 +722,7 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     this.hoverRowUpdatesInProgress.set(rowIndex, true);
 
-    requestAnimationFrame(() => {
+    const checkHoverClass = () => {
       if (this.currentHoveredRow != -1 && !this.scrolling) {
         if (this.currentHoveredRow === rowIndex) {
           this.addHoverClass(rowIndex);
@@ -730,6 +730,9 @@ export class ReactHeadlessTableRenderer extends Logger {
           this.removeHoverClass(rowIndex);
         }
       }
+    };
+    requestAnimationFrame(() => {
+      checkHoverClass();
       this.hoverRowUpdatesInProgress.delete(rowIndex);
     });
   };
