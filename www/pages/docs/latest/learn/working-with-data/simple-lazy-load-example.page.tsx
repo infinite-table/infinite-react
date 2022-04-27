@@ -42,6 +42,7 @@ export default function App() {
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
+      defaultGroupBy={[{ field: 'country' }]}
       lazyLoad={lazyLoad}>
       <InfiniteTable<Developer> columns={columns} />
     </DataSource>

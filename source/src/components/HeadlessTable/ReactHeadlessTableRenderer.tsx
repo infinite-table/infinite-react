@@ -3,6 +3,7 @@ import { RefCallback } from 'react';
 
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
+import { raf } from '../../utils/raf';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
@@ -74,7 +75,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       this.adjustFixedElementsOnScroll();
       //for whatever reason, sometimes there's a misplaced fixed cell and we need to
       //have it executed again, on a raf
-      requestAnimationFrame(() => {
+      raf(() => {
         this.adjustFixedElementsOnScroll();
       });
     });
@@ -731,7 +732,7 @@ export class ReactHeadlessTableRenderer extends Logger {
         }
       }
     };
-    requestAnimationFrame(() => {
+    raf(() => {
       checkHoverClass();
       this.hoverRowUpdatesInProgress.delete(rowIndex);
     });
