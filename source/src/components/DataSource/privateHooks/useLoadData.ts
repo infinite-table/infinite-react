@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { LazyGroupDataItem, LazyGroupRowInfo } from '..';
+import { LazyGroupDataItem, LazyRowInfoGroup } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
-import { getGlobal } from '../../../utils/getGlobal';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { useComponentState } from '../../hooks/useComponentState';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
@@ -18,7 +17,9 @@ import {
   DataSourceDataParamsChanges,
 } from '../types';
 
-// const error = err('useLoadData');
+import { getChangeDetect } from './getChangeDetect';
+
+const CACHE_DEFAULT = true;
 
 const getRafPromise = () =>
   new Promise((resolve) => {
@@ -29,12 +30,6 @@ const SKIP_DATA_CHANGES_KEYS = {
   originalDataArray: true,
   changes: true,
 };
-
-function getChangeDetect() {
-  const perfNow = getGlobal().performance?.now();
-
-  return `${Date.now()}:${perfNow}`;
-}
 
 export function buildDataSourceDataParams<T>(
   componentState: DataSourceState<T>,
@@ -52,6 +47,10 @@ export function buildDataSourceDataParams<T>(
     pivotBy: componentState.pivotBy,
     aggregationReducers: componentState.aggregationReducers,
   };
+
+  if (dataSourceParams.groupBy) {
+    dataSourceParams.groupRowsState = componentState.groupRowsState.getState();
+  }
 
   if (componentState.livePagination !== undefined) {
     dataSourceParams.livePaginationCursor = componentState.livePaginationCursor;
@@ -109,7 +108,7 @@ export function loadData<T>(
     const existingGroupRowInfo = lazyGroupData.get(key);
 
     if (existingGroupRowInfo && existingGroupRowInfo.cache && key.length > 1) {
-      const items = existingGroupRowInfo.items;
+      const items = existingGroupRowInfo.children;
       const len = items.length;
       let allLoaded = true;
       for (let i = 0; i < len; i++) {
@@ -122,6 +121,25 @@ export function loadData<T>(
         return Promise.resolve<any>(true);
       }
     }
+
+    if (existingGroupRowInfo) {
+      // if there's a group row already, make sure it's marked as loading its children
+      if (!existingGroupRowInfo.childrenLoading) {
+        existingGroupRowInfo.childrenLoading = true;
+      }
+    } else {
+      // there's no info for this group yet, so create it
+      // #creategroupdatabeforeload
+      lazyGroupData.set(key, {
+        error: undefined,
+        children: [],
+        childrenLoading: true,
+        childrenRequested: false,
+        cache: CACHE_DEFAULT,
+        totalCount: 0,
+      });
+    }
+    actions.originalLazyGroupDataChangeDetect = getChangeDetect();
   }
 
   if (typeof data === 'function') {
@@ -138,7 +156,7 @@ export function loadData<T>(
 
   return Promise.resolve(data).then((dataParam) => {
     // dataParam can either be an array or an object with a `data` array property
-    let dataArray: T[] = [] as T[];
+    let dataArray: T[] | LazyGroupDataItem<T>[] = [] as T[];
     let skipAssign = false;
 
     if (Array.isArray((dataParam as DataSourceRemoteData<T>).data)) {
@@ -168,76 +186,133 @@ export function loadData<T>(
         // );
 
         const lazyGroupData = componentState.originalLazyGroupData;
-        const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...(dataParams.groupKeys || [])];
 
-        const newGroupRowInfo: LazyGroupRowInfo<T> = {
-          cache: !!remoteData.cache ?? true,
-          totalCount: remoteData.totalCount ?? dataArray.length,
-          items: dataArray as any as LazyGroupDataItem<T>[],
-        };
-        if (dataParams.lazyLoadBatchSize) {
-          const existingGroupRowInfo = lazyGroupData.get(key);
+        function resolveRemoteData(
+          keys: any[],
+          remoteData: DataSourceRemoteData<T>,
+          parentKeys?: any[],
+        ) {
+          const theKey = [LAZY_ROOT_KEY_FOR_GROUPS, ...keys];
+          const dataArray = remoteData.data as LazyGroupDataItem<T>[];
+          const newGroupRowInfo: LazyRowInfoGroup<T> = {
+            cache: !!remoteData.cache ?? CACHE_DEFAULT,
+            childrenLoading: false,
+            childrenRequested: true,
+            totalCount: remoteData.totalCount ?? dataArray.length,
+            children: dataArray,
+          };
 
-          const currentGroupRowInfo =
-            existingGroupRowInfo ??
-            ({
-              items: [],
-              totalCount: newGroupRowInfo.totalCount,
-              cache: newGroupRowInfo.cache! ?? true,
-            } as LazyGroupRowInfo<T>);
+          const childDatasets: {
+            keys: KeyType[];
+            dataset: DataSourceRemoteData<T>;
+          }[] = [];
 
-          if (existingGroupRowInfo) {
-            existingGroupRowInfo.cache = newGroupRowInfo.cache!;
-          }
-          currentGroupRowInfo.items.length = currentGroupRowInfo.totalCount;
+          if (dataParams.lazyLoadBatchSize && !parentKeys) {
+            const existingGroupRowInfo = lazyGroupData.get(theKey);
 
-          const start = dataParams.lazyLoadStartIndex ?? 0;
-          const end = Math.min(
-            remoteData.totalCount ?? dataArray.length,
-            start + dataParams.lazyLoadBatchSize,
-          );
+            const currentGroupRowInfo =
+              existingGroupRowInfo ??
+              ({
+                children: [],
+                childrenRequested: true,
+                childrenLoading: false,
+                totalCount: newGroupRowInfo.totalCount,
+                cache: newGroupRowInfo.cache! ?? CACHE_DEFAULT,
+              } as LazyRowInfoGroup<T>);
 
-          for (let i = start; i < end; i++) {
-            const it = newGroupRowInfo.items[i - start];
-            if (!it) {
-              throw `lazily loaded item not found at index ${i - start}`;
+            if (existingGroupRowInfo) {
+              // make sure we update the existing info with what we received from the server
+              // because the existing one was probably created artificially
+              // even before the initial response is received - see #creategroupdatabeforeload
+              // so the totalCount was not set correctly
+              existingGroupRowInfo.cache = newGroupRowInfo.cache!;
+              existingGroupRowInfo.totalCount = newGroupRowInfo.totalCount;
+              existingGroupRowInfo.childrenLoading = false;
+              existingGroupRowInfo.childrenRequested = true;
+              existingGroupRowInfo.error = newGroupRowInfo.error;
             }
-            currentGroupRowInfo.items[i] = it;
+
+            currentGroupRowInfo.children.length =
+              currentGroupRowInfo.totalCount;
+
+            const start = dataParams.lazyLoadStartIndex ?? 0;
+            const end = Math.min(
+              remoteData.totalCount ?? dataArray.length,
+              start + dataParams.lazyLoadBatchSize,
+            );
+
+            for (let i = start; i < end; i++) {
+              const it = newGroupRowInfo.children[i - start];
+              if (!it) {
+                throw `lazily loaded item not found at index ${i - start}`;
+              }
+              currentGroupRowInfo.children[i] = it;
+
+              if (it.dataset) {
+                childDatasets.push({
+                  keys: it.keys,
+                  dataset: it.dataset,
+                });
+              }
+            }
+            if (!existingGroupRowInfo) {
+              lazyGroupData.set(theKey, currentGroupRowInfo);
+            }
+          } else {
+            if (parentKeys) {
+              newGroupRowInfo.children.forEach((child) => {
+                if (child.dataset) {
+                  childDatasets.push({
+                    keys: child.keys,
+                    dataset: child.dataset,
+                  });
+                }
+              });
+
+              // we need this assignment, in order to make the group
+              // accomodate all children that will potentially be lazily loaded
+              newGroupRowInfo.children.length = newGroupRowInfo.totalCount;
+            }
+
+            lazyGroupData.set(theKey, newGroupRowInfo);
           }
-          if (!existingGroupRowInfo) {
-            lazyGroupData.set(key, currentGroupRowInfo);
+
+          let skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = false;
+
+          if (!keys || !keys.length) {
+            const topLevelLazyGroupData = lazyGroupData.get([
+              LAZY_ROOT_KEY_FOR_GROUPS,
+            ]);
+
+            //@ts-ignore
+            actions.originalDataArray = [...topLevelLazyGroupData.children];
+            skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = true;
           }
-        } else {
-          lazyGroupData.set(key, newGroupRowInfo);
+          // actions.originalLazyGroupData = lazyGroupData;
+          // see above #staleLazyGroupData
+          if (!skipTriggerChangeAsAlreadyOriginalArrayWasUpdated) {
+            actions.originalLazyGroupDataChangeDetect = getChangeDetect();
+          }
+
+          if (childDatasets.length) {
+            const parentKeys = keys;
+            childDatasets.forEach(({ keys, dataset }) => {
+              resolveRemoteData(keys, dataset, parentKeys);
+            });
+          }
         }
+
         skipAssign = true;
-
-        let skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = false;
-
-        if (!dataParams.groupKeys || !dataParams.groupKeys.length) {
-          const topLevelItems = lazyGroupData.get([LAZY_ROOT_KEY_FOR_GROUPS]);
-
-          //@ts-ignore
-          actions.originalDataArray = [...topLevelItems.items];
-          skipTriggerChangeAsAlreadyOriginalArrayWasUpdated = true;
-        }
-        // actions.originalLazyGroupData = lazyGroupData;
-        // see above #staleLazyGroupData
-        if (!skipTriggerChangeAsAlreadyOriginalArrayWasUpdated) {
-          actions.originalLazyGroupDataChangeDetect = getChangeDetect();
-        }
+        resolveRemoteData(dataParams.groupKeys || [], remoteData);
       }
     } else {
       dataArray = dataParam as T[];
     }
 
     if (!skipAssign) {
-      if (append) {
-        console.log('appending', dataArray);
-      }
       actions.originalDataArray = append
-        ? componentState.originalDataArray.concat(dataArray)
-        : dataArray;
+        ? componentState.originalDataArray.concat(dataArray as any as T[])
+        : (dataArray as any as T[]);
     }
     if (dataIsPromise && !componentState.lazyLoad) {
       actions.loading = false;
@@ -404,11 +479,23 @@ function useLazyLoadRange<T>() {
     componentState,
   } = useComponentState<DataSourceState<T>>();
 
-  const loadingCache = useMemo<Map<string, true>>(() => {
-    return new Map();
+  // TODO continue here at http://localhost:3000/tests/table/props/group-by/server-side-group-and-batch
+  // and see why server-side calls are still being made when cache: true
+  // probably because in useToggleGroupRow we have a loadData call
+  // which triggers it - maybe fixed now, but please check
+
+  // also, scenario 2, when cache: false
+  // the second batch in brazil does not load correctly after being loaded on previous expand
+
+  // const loadingCache = componentState.lazyLoadLoadingCache;
+
+  useEffect(() => {
+    actions.lazyLoadCacheOfLoadedBatches = new DeepMap<string, true>();
   }, [componentState.data, componentState.dataParams]);
 
-  // (globalThis as any).loadingCache = loadingCache;
+  // const loadingCache = useMemo<Map<string, true>>(() => {
+  //   return new Map();
+  // }, [componentState.data, componentState.dataParams]);
 
   const {
     lazyLoadBatchSize,
@@ -421,7 +508,8 @@ function useLazyLoadRange<T>() {
 
   const loadRange = (
     renderRange?: RenderRange | null,
-    cache: Map<string, true> = loadingCache,
+    cache: DeepMap<string, true> = getComponentState()
+      .lazyLoadCacheOfLoadedBatches,
   ) => {
     const componentState = getComponentState();
     renderRange = renderRange || latestRenderRangeRef.current;
@@ -456,12 +544,12 @@ function useLazyLoadRange<T>() {
       return notifyRenderRangeChange.onChange(
         (renderRange: RenderRange | null) => {
           latestRenderRangeRef.current = renderRange;
-          loadRange(renderRange, loadingCache);
+          loadRange(renderRange);
         },
       );
     }
     return;
-  }, [lazyLoadBatchSize, loadingCache]);
+  }, [lazyLoadBatchSize]);
 
   useEffect(() => {
     if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
@@ -479,7 +567,7 @@ function lazyLoadRange<T>(
     componentState: DataSourceState<T>;
     componentActions: ComponentStateGeneratedActions<DataSourceState<T>>;
   },
-  cache?: Map<string, true>,
+  cache?: DeepMap<string, true>,
 ) {
   const {
     startIndex,
@@ -490,7 +578,19 @@ function lazyLoadRange<T>(
   } = options;
 
   const { dataArray } = componentState;
-  const isRowLoaded = (index: number) => dataArray[index].data != null;
+  const isRowLoaded = (index: number) => {
+    const rowInfo = dataArray[index];
+
+    // if (
+    //   rowInfo.isGroupRow &&
+    //   rowInfo.dataSourceHasGrouping &&
+    //   !rowInfo.collapsed && rowInfo.childrenRequested
+    // ) {
+    //   return rowInfo.childrenRequested;
+    // }
+
+    return rowInfo.data != null;
+  };
 
   type FnCall = {
     lazyLoadStartIndex: number;
@@ -511,14 +611,53 @@ function lazyLoadRange<T>(
     if (!rowInfo) {
       continue;
     }
-    const rowLoaded = rowInfo.data != null;
-    const theGroupKeys = rowInfo.groupKeys ? [...rowInfo.groupKeys] : [];
+    const rowLoaded = isRowLoaded(i);
+    const theGroupKeys =
+      rowInfo.dataSourceHasGrouping && rowInfo.groupKeys
+        ? [...rowInfo.groupKeys]
+        : [];
 
-    if (rowInfo.groupKeys && rowInfo.isGroupRow) {
+    if (
+      rowInfo.isGroupRow &&
+      rowInfo.dataSourceHasGrouping &&
+      rowInfo.groupKeys
+    ) {
       theGroupKeys.pop();
     }
     const cacheKeys = theGroupKeys.length ? theGroupKeys : rootGroupKeys;
     const indexInGroup = rowInfo.indexInGroup;
+
+    if (
+      rowInfo.isGroupRow &&
+      !rowInfo.collapsed &&
+      !rowInfo.childrenRequested
+    ) {
+      // we might have expanded groups that have never been loaded
+      // so we need to try load them as well - not their batch in the parent group
+      // but rather the group they are expanding
+
+      const currentFnCall: FnCall = {
+        lazyLoadStartIndex: 0,
+        lazyLoadBatchSize,
+        groupKeys: rowInfo.groupKeys,
+      };
+      const cacheKeys = rowInfo.groupKeys;
+      let cachedFnCalls = perGroupFnCalls.get(cacheKeys);
+
+      if (!cachedFnCalls?.[rowInfo.id]) {
+        const shouldSetFnCalls = !cachedFnCalls;
+
+        cachedFnCalls = cachedFnCalls || {};
+
+        if (!cachedFnCalls[rowInfo.id]) {
+          cachedFnCalls[rowInfo.id] = currentFnCall;
+        }
+
+        if (shouldSetFnCalls) {
+          perGroupFnCalls.set(cacheKeys, cachedFnCalls);
+        }
+      }
+    }
 
     if (!rowLoaded) {
       let cachedFnCalls = perGroupFnCalls.get(cacheKeys);
@@ -546,9 +685,6 @@ function lazyLoadRange<T>(
         groupKeys: theGroupKeys,
       };
 
-      // const cacheKey = `${parentGroupKeys.join('-')}:${batchStartIndexInGroup}`;
-      // const cached = cache ? cache.get(cacheKey) : false;
-
       if (!cachedFnCalls[batchStartRowId]) {
         cachedFnCalls[batchStartRowId] = currentFnCall;
       }
@@ -567,9 +703,7 @@ function lazyLoadRange<T>(
   });
 
   allFnCalls.reduce((promise, fnCall: FnCall) => {
-    const cacheKey = `${fnCall.groupKeys.join('-')}:${
-      fnCall.lazyLoadStartIndex
-    }`;
+    const cacheKey = [...fnCall.groupKeys, fnCall.lazyLoadStartIndex];
 
     if (cache && cache.has(cacheKey)) {
       return promise;

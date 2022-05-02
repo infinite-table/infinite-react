@@ -147,6 +147,8 @@ const MAPPINGS = {
 
 const KEY_SEPARATOR = '_';
 
+const CACHE = true;
+
 function getSQLRoute(routeSuffix) {
   const tableName = `developers${routeSuffix}`;
   return (req, res) => {
@@ -158,10 +160,13 @@ function getSQLRoute(routeSuffix) {
     let filterBy = null;
     let sortInfo = null;
     let reducers = null;
-    let start = null;
-    let limit = null;
+    let expandedRows = null;
+
     try {
       groupBy = JSON.parse(query.groupBy);
+      if (groupBy && !groupBy.length) {
+        groupBy = null;
+      }
     } catch (ex) {
       groupBy = null;
     }
@@ -169,6 +174,11 @@ function getSQLRoute(routeSuffix) {
       groupKeys = JSON.parse(query.groupKeys);
     } catch (ex) {
       groupKeys = [];
+    }
+    try {
+      expandedRows = JSON.parse(query.expandedRows);
+    } catch (ex) {
+      expandedRows = [];
     }
     try {
       pivotBy = JSON.parse(query.pivotBy);
@@ -191,73 +201,103 @@ function getSQLRoute(routeSuffix) {
       filterBy = null;
     }
 
-    if (query.start) {
-      try {
-        start = parseInt(query.start, 10);
-      } catch (ex) {
-        start = 0;
-      }
-    }
-    if (query.limit) {
-      try {
-        limit = parseInt(query.limit, 10);
-      } catch (ex) {
-        limit = null;
-      }
-    }
-
-    const reducersByField = (reducers || []).reduce(
-      (acc, reducer) => {
-        acc[reducer.id || reducer.field] = reducer;
-        return acc;
-      },
-      {}
-    );
-
-    const pivotLength = pivotBy ? pivotBy.length : 0;
-    const groupByMapByField = (groupBy || []).reduce(
-      (acc, group) => {
-        acc[group.field] = group;
-        return acc;
-      },
-      {}
-    );
-
-    let SQL = buildSQL({
+    const jsonResult = getResultSet({
+      query,
+      pivotBy,
+      reducers,
+      filterBy,
+      sortInfo,
       groupBy,
       groupKeys,
-      pivotBy,
-      filterBy,
-      reducers,
-      sortInfo,
+      expandedRows,
       tableName,
     });
+    res.json(jsonResult);
+  };
+}
 
-    let result = alasql(SQL);
-    let totalCount = result.length;
-
-    result =
-      limit != null
-        ? result.slice(start, start + limit)
-        : result.slice(start);
-    if (
-      (groupKeys &&
-        groupBy &&
-        groupKeys.length >= groupBy.length &&
-        groupBy.length) ||
-      !groupBy
-    ) {
-      res.json({
-        data: result,
-        totalCount,
-      });
-      return;
+function getResultSet({
+  tableName,
+  query,
+  pivotBy,
+  reducers,
+  filterBy,
+  sortInfo,
+  groupBy,
+  groupKeys,
+  expandedRows,
+}) {
+  let start = null;
+  let limit = null;
+  if (query.start) {
+    try {
+      start = parseInt(query.start, 10);
+    } catch (ex) {
+      start = 0;
     }
+  }
 
-    res.json({
+  if (query.limit) {
+    try {
+      limit = parseInt(query.limit, 10);
+    } catch (ex) {
+      limit = null;
+    }
+  }
+
+  const reducersByField = (reducers || []).reduce(
+    (acc, reducer) => {
+      acc[reducer.id || reducer.field] = reducer;
+      return acc;
+    },
+    {}
+  );
+
+  const pivotLength = pivotBy ? pivotBy.length : 0;
+  const groupByMapByField = (groupBy || []).reduce(
+    (acc, group) => {
+      acc[group.field] = group;
+      return acc;
+    },
+    {}
+  );
+
+  let SQL = buildSQL({
+    groupBy,
+    groupKeys,
+    pivotBy,
+    filterBy,
+    reducers,
+    sortInfo,
+    tableName,
+  });
+
+  let result = alasql(SQL);
+  let totalCount = result.length;
+
+  result =
+    limit != null
+      ? result.slice(start, start + limit)
+      : result.slice(start);
+
+  let jsonResult;
+  if (
+    (groupKeys &&
+      groupBy &&
+      groupKeys.length >= groupBy.length &&
+      groupBy.length) ||
+    !groupBy
+  ) {
+    jsonResult = {
+      data: result,
+      totalCount,
+      cache: CACHE,
+    };
+  } else {
+    jsonResult = {
       totalCount,
       mappings: MAPPINGS,
-      cache: true,
+      cache: CACHE,
       data: result.map((x) => {
         const data = {};
         const aggregations = {};
@@ -357,8 +397,43 @@ function getSQLRoute(routeSuffix) {
 
         return { data, keys, aggregations, pivot };
       }),
+    };
+  }
+
+  if (expandedRows && expandedRows.length && groupKeys) {
+    const expandedKeys = expandedRows.reduce(
+      (acc, keys) => {
+        acc[JSON.stringify(keys)] = true;
+        return acc;
+      },
+      {}
+    );
+
+    jsonResult.data.forEach((data) => {
+      if (
+        data.keys &&
+        expandedKeys[JSON.stringify(data.keys)]
+      ) {
+        // we should expand this
+        data.dataset = getResultSet({
+          tableName,
+          groupKeys: data.keys,
+          expandedRows,
+          reducers,
+          groupBy,
+          query: {
+            start: 0,
+            limit,
+          },
+          tableName,
+          pivotBy,
+          sortInfo,
+        });
+      }
     });
-  };
+  }
+
+  return jsonResult;
 }
 
 app.use('/.netlify/functions/json-server', router); // path must route to lambda

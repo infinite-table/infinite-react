@@ -10,7 +10,6 @@ import {
   InfiniteTableColumn,
   InfiniteTableColumnRowspanParam,
 } from '@infinite-table/infinite-react';
-
 import * as React from 'react';
 
 type Transaction = {
@@ -127,7 +126,7 @@ const allColumns: Record<string, InfiniteTableColumn<Transaction>> = {
 };
 
 const createGroupColumn =
-  (manageUnbalancedGroup: boolean = false) =>
+  (manageUnbalancedGroup = false) =>
   (arg: InfiniteTableGroupColumnGetterOptions<Transaction>) => {
     if (arg.groupByForColumn?.field === 'type') {
       return {
@@ -176,7 +175,7 @@ const createGroupColumn =
               return 1;
             }
 
-            return (rowInfo.flatRowInfoList?.length || 0) + 1;
+            return (rowInfo.deepRowInfoArray?.length || 0) + 1;
             // //   console.log(rowInfo);
             // const result =
             //   (rowInfo.groupData?.length || 0) +

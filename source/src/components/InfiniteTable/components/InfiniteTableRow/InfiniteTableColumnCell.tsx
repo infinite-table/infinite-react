@@ -1,31 +1,29 @@
 import * as React from 'react';
+import { useContext } from 'react';
+
+import { join } from '../../../../utils/join';
+import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
+import type { Renderable } from '../../../types/Renderable';
+import { useCellClassName } from '../../hooks/useCellClassName';
+import { internalProps } from '../../internalProps';
 import type { InfiniteTableColumn } from '../../types';
 import type {
   InfiniteTableColumnWithField,
   InfiniteTableColumnStyleFnParams,
-  InfiniteTableColumnRenderParams,
+  InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
 } from '../../types/InfiniteTableColumn';
-
-import type { Renderable } from '../../../types/Renderable';
-
-import { join } from '../../../../utils/join';
+import { RenderHookComponent } from '../../utils/RenderHookComponent';
+import { ColumnCellRecipe } from '../cell.css';
 
 import {
   InfiniteTableCell,
   InfiniteTableCellClassName,
 } from './InfiniteTableCell';
-
-import { internalProps } from '../../internalProps';
 import {
   InfiniteTableCellProps,
   InfiniteTableColumnCellProps,
 } from './InfiniteTableCellTypes';
-import { useCellClassName } from '../../hooks/useCellClassName';
-import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
-import { ColumnCellRecipe } from '../cell.css';
-import { useContext } from 'react';
-import { RenderHookComponent } from '../../utils/RenderHookComponent';
 
 const { rootClassName } = internalProps;
 
@@ -63,7 +61,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return <div ref={domRef}>no column</div>;
   }
 
-  const { data, isGroupRow, groupBy } = rowInfo;
+  const { data, isGroupRow, dataSourceHasGrouping } = rowInfo;
+  const groupBy = dataSourceHasGrouping ? rowInfo.groupBy : undefined;
 
   const groupRowInfo = null;
   //TODO compute this here, so it's not computed in everywhere in rowspan/render/valueGetter methods
@@ -91,10 +90,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       isGroupRow
         ? {
             data: rowInfo.data,
+            isGroupRow,
             rowInfo,
           }
         : {
             data: rowInfo.data,
+            isGroupRow,
             rowInfo,
           },
     );
@@ -112,26 +113,34 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         data: rowInfo.data,
       };
 
-  const stylingRenderParam: InfiniteTableColumnStyleFnParams<T> = {
+  const stylingRenderParam = {
     value,
     column,
+    isGroupRow,
     ...rest,
-  };
+  } as InfiniteTableColumnStyleFnParams<T>;
 
-  let renderValue: Renderable = value;
+  const renderValue: Renderable = value;
 
-  const renderParam: InfiniteTableColumnRenderParams<T> = {
+  const renderParam: InfiniteTableColumnRenderParam<T> = {
     value,
     column,
     domRef,
     groupRowInfo,
+    isGroupRow,
     ...rest,
     rowIndex,
     toggleGroupRow,
-    toggleCurrentGroupRow: () => toggleGroupRow(rowInfo.groupKeys!),
+    toggleCurrentGroupRow: () => {
+      if (!rowInfo.isGroupRow) {
+        return;
+      }
+
+      toggleGroupRow(rowInfo.groupKeys!);
+    },
     groupBy: computedDataSource.groupBy,
     pivotBy: computedDataSource.pivotBy,
-  };
+  } as InfiniteTableColumnRenderParam<T>;
 
   const renderChildren = () => {
     if (hidden) {

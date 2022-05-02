@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -12,6 +11,7 @@ import {
   InfiniteTablePropColumnPinning,
   InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -79,6 +79,43 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   // renderGroupIcon: ({ groupIcon, data }) => (!data ? '🤷‍' : groupIcon),
   // // while we have no data, we can render a placeholder
   // renderValue: ({ data, value }) => (!data ? ' Loading...' : value),
+  // renderGroupIcon: ({ rowInfo, value, groupIcon }) => {
+  //   if (!rowInfo.dataSourceHasGrouping) {
+  //     return null;
+  //   }
+
+  //   let pre = '';
+
+  //   if (!rowInfo.selfLoaded) {
+  //     pre = '...';
+  //   } else {
+  //     if (rowInfo.childrenLoading) {
+  //       pre = 'loading';
+  //     } else if (!rowInfo.childrenRequested) {
+  //       pre = 'not loaded';
+  //     } else if (
+  //       rowInfo.directChildrenLoadedCount < rowInfo.directChildrenCount
+  //     ) {
+  //       pre = ' more to load';
+  //     }
+  //   }
+  //   // const pre = !rowInfo.selfLoaded
+  //   //   ? '...'
+  //   //   : !rowInfo.childrenRequested
+  //   //   ? 'never loaded'
+  //   //   : rowInfo.childrenLoading
+  //   //   ? 'x.x.x.'
+  //   //   : rowInfo.directChildrenLoadedCount < rowInfo.directChildrenCount
+  //   //   ? ' more to load'
+  //   //   : null;
+
+  //   return (
+  //     <>
+  //       {pre}
+  //       {groupIcon}
+  //     </>
+  //   );
+  // },
 };
 
 const columnPinning: InfiniteTablePropColumnPinning = {
@@ -101,10 +138,12 @@ console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS);
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
+      { field: 'country' },
       {
         field: 'city',
       },
-      { field: 'country' },
+
+      // { field: 'stack' },
     ],
     [],
   );
@@ -148,7 +187,7 @@ export default function RemotePivotExample() {
         return (
           <InfiniteTable<Developer>
             domProps={domProps}
-            scrollStopDelay={10}
+            scrollStopDelay={250}
             columnPinning={columnPinning}
             columns={columns}
             groupColumn={groupColumn}
@@ -171,6 +210,7 @@ const dataSource: DataSourceData<Developer> = ({
   lazyLoadStartIndex,
   lazyLoadBatchSize,
   groupKeys = [],
+  groupRowsState,
   sortInfo,
 }) => {
   if (sortInfo && !Array.isArray(sortInfo)) {
@@ -182,6 +222,7 @@ const dataSource: DataSourceData<Developer> = ({
     startLimit.push(`start=${start}`);
     startLimit.push(`limit=${lazyLoadBatchSize}`);
   }
+  console.log({ groupRowsState });
   const args = [
     ...startLimit,
     pivotBy
@@ -199,6 +240,9 @@ const dataSource: DataSourceData<Developer> = ({
             dir: s.dir,
           })),
         )
+      : null,
+    groupRowsState
+      ? 'expandedRows=' + JSON.stringify(groupRowsState.expandedRows)
       : null,
     aggregationReducers
       ? 'reducers=' +
@@ -222,7 +266,7 @@ const dataSource: DataSourceData<Developer> = ({
         new Promise((resolve) => {
           setTimeout(() => {
             resolve(data);
-          }, 500);
+          }, 1150);
         }),
     );
 };

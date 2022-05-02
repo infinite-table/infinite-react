@@ -1,19 +1,18 @@
-import type {
-  DataSourceState,
-  DataSourceDerivedState,
-  LazyGroupRowInfo,
-} from '../types';
+import { DataSourceSetupState } from '..';
+import { DeepMap } from '../../../utils/DeepMap';
 import {
   InfiniteTableRowInfo,
-  InfiniteTableRowInfoNormal,
+  InfiniteTable_NoGrouping_RowInfoNormal,
   lazyGroup,
 } from '../../../utils/groupAndPivot';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
-
-import { multisort } from '../../../utils/multisort';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
-import { DataSourceSetupState } from '..';
-import { DeepMap } from '../../../utils/DeepMap';
+import { multisort } from '../../../utils/multisort';
+import type {
+  DataSourceState,
+  DataSourceDerivedState,
+  LazyRowInfoGroup,
+} from '../types';
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
@@ -36,10 +35,10 @@ function toRowInfo<T>(
   data: T,
   id: any,
   index: number,
-): InfiniteTableRowInfoNormal<T> {
+): InfiniteTable_NoGrouping_RowInfoNormal<T> {
   return {
+    dataSourceHasGrouping: false,
     data,
-    collapsed: true,
     id,
     indexInAll: index,
     indexInGroup: index,
@@ -77,7 +76,7 @@ export function concludeReducer<T>(params: {
   }
 
   if (lazyLoadGroupDataChange) {
-    state.originalLazyGroupData = new DeepMap<string, LazyGroupRowInfo<T>>();
+    state.originalLazyGroupData = new DeepMap<string, LazyRowInfoGroup<T>>();
     originalDataArrayChanged = true;
 
     // TODO if we have defaultGroupRowsState in props (so this is uncontrolled)
@@ -95,7 +94,7 @@ export function concludeReducer<T>(params: {
   const groupBy = state.groupBy;
   const pivotBy = state.pivotBy;
 
-  const shouldGroup = groupBy.length || pivotBy;
+  const shouldGroup = groupBy.length > 0 || !!pivotBy;
   const groupsDepsChanged =
     originalDataArrayChanged ||
     haveDepsChanged(previousState, state, [
@@ -132,14 +131,11 @@ export function concludeReducer<T>(params: {
   }
   state.postSortDataArray = dataArray;
 
-  state.groupDeepMap = undefined;
+  // state.groupDeepMap = undefined;
 
   const toPrimaryKey = (data: T) => {
     const pk = data[state.primaryKey];
 
-    if (Array.isArray(pk)) {
-      debugger;
-    }
     return pk;
   };
 
@@ -165,9 +161,11 @@ export function concludeReducer<T>(params: {
             },
             dataArray,
           );
+      // console.log(groupResult);
 
       const flattenResult = enhancedFlatten({
         groupResult,
+        lazyLoad: !!state.lazyLoad,
         reducers: state.aggregationReducers,
         toPrimaryKey,
         groupRowsState: state.groupRowsState,
@@ -206,6 +204,7 @@ export function concludeReducer<T>(params: {
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
 
+    // TODO AFL update loading flags
     if (arrayDifferentAfterSortStep || groupsDepsChanged) {
       rowInfoDataArray = dataArray.map((data, index) =>
         toRowInfo(data, data ? toPrimaryKey(data) : index, index),

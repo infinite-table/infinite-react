@@ -1,11 +1,11 @@
+import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   ColumnTypeWithInherit,
   DataSourceAggregationReducer,
   DataSourceMappings,
   LazyGroupDataDeepMap,
-  LazyGroupRowInfo,
+  LazyRowInfoGroup,
 } from '../../components/DataSource/types';
-import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import {
   InfiniteTableColumn,
   InfiniteTablePivotColumn,
@@ -16,10 +16,9 @@ import {
   InfiniteTableColumnGroup,
   InfiniteTableGroupColumnBase,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
-
 import { DeepMap } from '../DeepMap';
 
-export const LAZY_ROOT_KEY_FOR_GROUPS: string = '____root____';
+export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
 export const NOT_LOADED_YET_KEY_PREFIX = '____not_loaded_yet____';
 
@@ -40,64 +39,228 @@ function DEFAULT_TO_KEY<T>(value: T): T {
   return value;
 }
 
-export type InfiniteTableRowInfoNormalType<DataType> = {
-  data: DataType;
-  isGroupRow: false;
-};
-export type InfiniteTableRowInfoGroupType<DataType> = {
-  data: Partial<DataType> | null;
-  isGroupRow: true;
-};
-
-export type InfiniteTableRowInfoNormal<T> = InfiniteTableRowInfoBase<T> &
-  InfiniteTableRowInfoNormalType<T>;
-export type InfiniteTableRowInfoGroup<T> = InfiniteTableRowInfoBase<T> &
-  InfiniteTableRowInfoGroupType<T>;
+/**
+ * InfiniteTableRowInfo can have different object shape depending on the presence or absence of grouping.
+ *
+ * You can use `dataSourceHasGrouping: boolean` as a discriminator to determine the shape of the object, to know
+ * if the dataSource had grouping or not. Furthermore, for when the dataSource has grouping,
+ * you can use `isGroupRow: boolean` to discriminate between group rows vs normal rows.
+ *
+ */
 export type InfiniteTableRowInfo<T> =
-  | InfiniteTableRowInfoNormal<T>
-  | InfiniteTableRowInfoGroup<T>;
+  | InfiniteTable_HasGrouping_RowInfoNormal<T>
+  | InfiniteTable_HasGrouping_RowInfoGroup<T>
+  | InfiniteTable_NoGrouping_RowInfoNormal<T>;
 
-export type InfiniteTableRowInfoBase<T> = {
+export type InfiniteTableRowInfoDataDiscriminator<T> =
+  | {
+      data: T;
+      isGroupRow: false;
+      rowInfo:
+        | InfiniteTable_NoGrouping_RowInfoNormal<T>
+        | InfiniteTable_HasGrouping_RowInfoNormal<T>;
+    }
+  | {
+      data: Partial<T> | null;
+      rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
+      isGroupRow: true;
+    };
+
+/**
+ * This is the base row info for all scenarios - things every
+ * rowInfo is guaranteed to have (be it group or normal row, or dataSource with or without grouping)
+ *
+ */
+export type InfiniteTable_RowInfoBase<_T> = {
   id: any;
   value?: any;
-  groupData?: T[];
-  collapsed: boolean;
-  collapsedChildrenCount?: number;
-  collapsedGroupsCount?: number;
-  groupNesting?: number;
-  groupKeys?: any[];
-  flatRowInfoList?: (
-    | InfiniteTableRowInfo<T>
-    | InfiniteTableEnhancedGroupInfo<T>
-  )[];
-  parents?: InfiniteTableEnhancedGroupInfo<T>[];
-  indexInParentGroups?: number[];
-  indexInGroup: number;
+
   indexInAll: number;
-  groupCount?: number;
-  groupBy?: (keyof T)[];
-  rootGroupBy?: (keyof T)[];
-  pivotValuesMap?: PivotValuesDeepMap<T, any>;
-  reducerResults?: Record<string, AggregationReducerResult>;
+  indexInGroup: number;
 };
 
-export type InfiniteTableEnhancedGroupInfo<T> = InfiniteTableRowInfo<T> & {
+export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
+  dataSourceHasGrouping: true;
+  data: T;
+  isGroupRow: false;
+} & InfiniteTable_HasGrouping_RowInfoBase<T> &
+  InfiniteTable_RowInfoBase<T>;
+
+export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
+  dataSourceHasGrouping: true;
   data: Partial<T> | null;
-  groupData: T[];
-  flatRowInfoList: (
-    | InfiniteTableRowInfo<T>
-    | InfiniteTableEnhancedGroupInfo<T>
-  )[];
-  value: any;
   isGroupRow: true;
-  collapsedChildrenCount: number;
-  collapsedGroupsCount: number;
-  groupNesting: number;
-  groupKeys?: any[];
+
+  /**
+   * This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting,
+   * in the order in which they are visible in the table
+   */
+  deepRowInfoArray: (
+    | InfiniteTable_HasGrouping_RowInfoNormal<T>
+    | InfiniteTable_HasGrouping_RowInfoGroup<T>
+  )[];
+
+  reducerResults?: Record<string, AggregationReducerResult>;
+
+  /**
+   * The count of all leaf nodes (normal rows) that are inside this group.
+   * This count is the same as the length of the groupData array property.
+   */
   groupCount: number;
-  groupBy: (keyof T)[];
-  rootGroupBy: (keyof T)[];
+
+  /**
+   * The array of all leaf nodes (normal rows) that are inside this group.
+   */
+  groupData: T[];
+
+  /**
+   * The count of all leaf nodes (normal rows) inside the group that are not being visible
+   * due to collapsing (either the current row is collapsed or any of its children)
+   */
+  collapsedChildrenCount: number;
+
+  // TODO document this
+  collapsedGroupsCount: number;
+
+  /**
+   * The count of the direct children of the current group. Direct children can be either normal rows or groups.
+   */
+  directChildrenCount: number;
+  directChildrenLoadedCount: number;
+
+  /**
+   *
+   * A DeepMap of pivot values.
+   *
+   * For each pivot reducer result, it contains all the items that make up the pivot value.
+   *
+   */
   pivotValuesMap?: PivotValuesDeepMap<T, any>;
+
+  /**
+   * For non-lazy grouping, this is always true.
+   * For lazy/batched grouping, this is true if the group has been expanded at least once (and if the remote call has been configured with cache: true),
+   * since if the remote call is not cached, collapsing the row group should lose all the data that was loaded for it, and it's as if it was never loaded, so in that case, childrenRequested is false.
+   *
+   * NOTE: if this is true, it doesn't mean that (all or some of) the children have been loaded, it only means that at least some children have been requested.
+   *
+   * Use directChildrenCount and directChildrenLoadedCount to know if all the children have been loaded or not.
+   */
+  childrenRequested: boolean;
+
+  /**
+   * Boolean flag that will be true while lazy loading direct children of the current row group.
+   *
+   * NOTE: with batched loading, if the user is no longer scrolling, after everything
+   * in the viewport has loaded (and thus for example a certain row group had childrenLoading: true)
+   * if no new batches are being loaded, childrenLoading will be false again, even though
+   * the current row group still has children that are not loaded yet.
+   * Use directChildrenLoadedCount and directChildrenCount to know if all the children have been loaded or not.
+   */
+  childrenLoading: boolean;
+} & InfiniteTable_HasGrouping_RowInfoBase<T> &
+  InfiniteTable_RowInfoBase<T>;
+
+export type InfiniteTable_NoGrouping_RowInfoNormal<T> = {
+  dataSourceHasGrouping: false;
+  data: T;
+  isGroupRow: false;
+} & InfiniteTable_RowInfoBase<T>;
+
+export type InfiniteTable_HasGrouping_RowInfoBase<T> = {
+  /**
+   * Available on all rowInfo objects when the datasource is grouped, otherwise, it will be undefined.
+   *
+   * For group rows, the group keys will have all the keys starting from the topmost parent
+   * down to the current group row (including the group row).
+   * For normal rows, the group keys will have all the keys starting from the topmost parent
+   * down to the last group row in the hierarchy (the direct parent of the current row).
+   *
+   * Example: People grouped by country and city
+   *
+   * Italy  - country         - groupKeys: ['Italy']
+   *    Rome - city           - groupKeys: ['Italy', 'Rome']
+   *      Marco    - person   - groupKeys: ['Italy', 'Rome']
+   *      Luca     - person   - groupKeys: ['Italy', 'Rome']
+   *      Giuseppe  - person  - groupKeys: ['Italy', 'Rome']
+   *
+   */
+  groupKeys: any[];
+
+  /**
+   * Available on all rowInfo objects when the datasource is grouped, otherwise, it will be undefined.
+   *
+   * Has the same structure as groupKeys, but it will contain the fields used to group the rows.
+   *
+   * Example: People grouped by country and city
+   *
+   * Italy  - country         - groupKeys: ['country']
+   *    Rome - city           - groupKeys: ['country', 'city']
+   *      Marco    - person   - groupKeys: ['country', 'city']
+   *      Luca     - person   - groupKeys: ['country', 'city']
+   *      Giuseppe  - person  - groupKeys: ['country', 'city']
+   */
+  groupBy: (keyof T)[];
+
+  /**
+   * The groupBy value of the DataSource component, mapped to the groupBy.field
+   */
+  rootGroupBy: (keyof T)[];
+
+  /**
+   * Available on all rowInfo objects when the datasource is grouped.
+   *
+   * Italy  - country         - parent mapped to their ids will be: [] // rowInfo.parents.map((p: any) => p.id)
+   *    Rome - city           - parent mapped to their ids will be: ['Italy']
+   *      Marco    - person   - parent mapped to their ids will be: ['Italy','Italy,Rome']
+   *      Luca     - person   - parent mapped to their ids will be: ['Italy','Italy,Rome']
+   *      Giuseppe  - person  - parent mapped to their ids will be: ['Italy','Italy,Rome']
+   * USA - country            - parent mapped to their ids will be: []
+   *    LA - city             - parent mapped to their ids will be: ['USA']
+   *      Bob  - person       - parent mapped to their ids will be: ['USA','USA,LA']
+   */
+  parents: InfiniteTable_HasGrouping_RowInfoGroup<T>[];
+
+  /**
+   * Available when the datasource is grouped, this will be set for both group and normal rows.
+   * Italy  - country         - indexInParentGroups: [0]
+   *    Rome - city           - indexInParentGroups: [0,0]
+   *      Marco    - person   - indexInParentGroups: [0,0,0]
+   *      Luca     - person   - indexInParentGroups: [0,0,1]
+   *      Giuseppe  - person  - indexInParentGroups: [0,0,2]
+   * USA - country            - indexInParentGroups: [1]
+   *    LA - city             - indexInParentGroups: [1,0]
+   *      Bob  - person       - indexInParentGroups: [1,0,2]
+   */
+  indexInParentGroups: number[];
+
+  /**
+   * Available on all rowInfo objects when the datasource is grouped.
+   *
+   * For every rowInfo object, it counts the number of leaf/normal rows that the group contains.
+   * For normal rows, the groupCount represents the groupCount of the direct parent.
+   *
+   * Italy  - country         - groupCount: 3
+   *    Rome - city           - groupCount: 2
+   *      Marco    - person   - groupCount: 2
+   *      Luca     - person   - groupCount: 2
+   *    Napoli - city         - groupCount: 1
+   *      Giuseppe  - person  - groupCount: 1
+   * USA - country            - groupCount: 1
+   *    LA - city             - groupCount: 1
+   *      Bob  - person       - groupCount: 1
+   */
+  groupCount: number;
+
+  groupNesting: number;
+
+  collapsed: boolean;
+
+  /**
+   * This is false only when the DataSource is configured with lazy batching and the current
+   * row has not been loaded yet. It has nothing to do with children, only with self.
+   */
+  selfLoaded: boolean;
 };
 
 export type GroupKeyType<T extends any = any> = T; //string | number | symbol | null | undefined;
@@ -115,8 +278,15 @@ export type PivotValuesDeepMap<DataType, KeyType> = DeepMap<
 >;
 
 export type DeepMapGroupValueType<DataType, KeyType> = {
+  /**
+   * These are leaf items. This array may be empty when there is batched lazy loading
+   */
   items: DataType[];
   commonData?: Partial<DataType>;
+  childrenLoading: boolean;
+  childrenRequested: boolean;
+  cache: boolean;
+  error?: string;
   reducerResults: Record<string, AggregationReducerResult>;
   pivotDeepMap?: DeepMap<
     GroupKeyType<KeyType>,
@@ -184,7 +354,7 @@ function initReducers<DataType>(
 
   const result: Record<string, AggregationReducerResult> = {};
 
-  for (let key in reducers)
+  for (const key in reducers)
     if (reducers.hasOwnProperty(key)) {
       result[key] = reducers[key].initialValue;
     }
@@ -210,7 +380,7 @@ function computeReducersFor<DataType>(
     return;
   }
 
-  for (let key in reducers)
+  for (const key in reducers)
     if (reducers.hasOwnProperty(key)) {
       const reducer = reducers[key];
       if (typeof reducer.reducer !== 'function') {
@@ -255,12 +425,12 @@ export function lazyGroup<DataType, KeyType extends string = string>(
     >,
     container: LazyPivotContainer,
     pivot: PivotBy<DataType, KeyType>[],
-    pivotIndex: number = 0,
+    pivotIndex = 0,
     currentPivotKeys: KeyType[] = [],
   ) {
     const last = !pivot.length || pivotIndex === pivot.length - 1;
     const values = container[(mappings?.values || 'values') as 'values'] || {};
-    for (var k in values)
+    for (const k in values)
       if (values.hasOwnProperty(k)) {
         const pivotKey = k;
         currentPivotKeys.push(pivotKey as any as KeyType);
@@ -289,16 +459,16 @@ export function lazyGroup<DataType, KeyType extends string = string>(
     ? new DeepMap<GroupKeyType<KeyType>, boolean>()
     : undefined;
 
-  let currentPivotKeys: GroupKeyType<KeyType>[] = [];
+  const currentPivotKeys: GroupKeyType<KeyType>[] = [];
 
   const initialReducerValue = initReducers<DataType>(reducers);
 
   const globalReducerResults = { ...initialReducerValue };
 
   rootData.visitDepthFirst(
-    (lazyGroupRowInfo: LazyGroupRowInfo<DataType>, keys, _index, next) => {
+    (lazyGroupRowInfo: LazyRowInfoGroup<DataType>, keys, _index, next) => {
       const [_rootKey, ...currentGroupKeys] = keys;
-      const dataArray = lazyGroupRowInfo.items;
+      const dataArray = lazyGroupRowInfo.children;
 
       if (currentGroupKeys.length == groupBy.length && groupBy.length) {
         const deepMapGroupValue:
@@ -313,12 +483,25 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         return next?.();
       }
 
+      if (lazyGroupRowInfo) {
+        const current = deepMap.get(currentGroupKeys as KeyType[]);
+        if (current) {
+          current.cache = lazyGroupRowInfo.cache;
+          current.childrenLoading = lazyGroupRowInfo.childrenLoading;
+          current.childrenRequested = lazyGroupRowInfo.childrenRequested;
+          current.error = lazyGroupRowInfo.error;
+        }
+      }
+
       for (let i = 0, len = dataArray.length; i < len; i++) {
         if (!dataArray[i]) {
           // we're in the case of lazy loading, so some records might not be available just yet
           const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
             items: [],
             reducerResults: {},
+            cache: false,
+            childrenLoading: false,
+            childrenRequested: false,
           };
           deepMap.set(
             [
@@ -331,7 +514,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         }
         const dataObject = dataArray[i].data;
         const dataKeys = dataArray[i].keys;
-        let item = dataObject as Partial<DataType>;
+        const item = dataObject as Partial<DataType>;
 
         if (dataKeys.length) {
           const { field: groupByProperty } = groupBy[dataKeys.length - 1];
@@ -341,6 +524,9 @@ export function lazyGroup<DataType, KeyType extends string = string>(
 
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
+          cache: false,
+          childrenLoading: false,
+          childrenRequested: false,
           commonData: dataObject,
           reducerResults: dataArray[i].aggregations || {},
         };
@@ -470,8 +656,8 @@ export function group<DataType, KeyType = any>(
     DeepMapGroupValueType<DataType, KeyType>
   >();
 
-  let currentGroupKeys: GroupKeyType<KeyType>[] = [];
-  let currentPivotKeys: GroupKeyType<KeyType>[] = [];
+  const currentGroupKeys: GroupKeyType<KeyType>[] = [];
+  const currentPivotKeys: GroupKeyType<KeyType>[] = [];
 
   const initialReducerValue = initReducers<DataType>(reducers);
 
@@ -480,6 +666,9 @@ export function group<DataType, KeyType = any>(
   if (!groupByLength) {
     const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
       items: [],
+      cache: false,
+      childrenLoading: false,
+      childrenRequested: false,
       reducerResults: { ...initialReducerValue },
     };
 
@@ -493,7 +682,7 @@ export function group<DataType, KeyType = any>(
   }
 
   for (let i = 0, len = data.length; i < len; i++) {
-    let item = data[i];
+    const item = data[i];
 
     for (let groupByIndex = 0; groupByIndex < groupByLength; groupByIndex++) {
       const { field: groupByProperty, toKey: groupToKey } =
@@ -508,6 +697,9 @@ export function group<DataType, KeyType = any>(
       if (!deepMap.has(currentGroupKeys)) {
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
+          cache: false,
+          childrenLoading: false,
+          childrenRequested: false,
           reducerResults: { ...initialReducerValue },
         };
         if (pivot) {
@@ -621,13 +813,18 @@ export function flatten<DataType, KeyType extends any>(
 }
 
 type GetEnhancedGroupDataOptions<DataType> = {
+  lazyLoad: boolean;
   groupKeys: any[];
   groupBy: (keyof DataType)[];
   collapsed: boolean;
-  parents: InfiniteTableEnhancedGroupInfo<DataType>[];
+  parents: InfiniteTable_HasGrouping_RowInfoGroup<DataType>[];
   indexInParentGroups: number[];
   indexInGroup: number;
   indexInAll: number;
+  childrenLoading: boolean;
+  childrenRequested: boolean;
+  directChildrenCount: number;
+  directChildrenLoadedCount: number;
   reducers: Record<string, DataSourceAggregationReducer<DataType, any>>;
 };
 
@@ -635,11 +832,13 @@ function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
   deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupBy, groupKeys, collapsed, parents, reducers } = options;
+  const { groupBy, groupKeys, collapsed, parents, reducers, lazyLoad } =
+    options;
   const groupNesting = groupKeys.length;
   const {
     items: groupItems,
     reducerResults,
+
     pivotDeepMap,
     commonData,
   } = deepMapValue;
@@ -648,7 +847,7 @@ function getEnhancedGroupData<DataType>(
 
   if (Object.keys(reducerResults).length > 0) {
     data = commonData || ({} as Partial<DataType>);
-    for (let key in reducers)
+    for (const key in reducers)
       if (reducers.hasOwnProperty(key)) {
         const reducer = reducers[key];
 
@@ -659,28 +858,40 @@ function getEnhancedGroupData<DataType>(
       }
   }
 
+  let selfLoaded = true;
   let theValue = groupKeys[groupKeys.length - 1];
   if (
     typeof theValue === 'string' &&
     theValue.startsWith(NOT_LOADED_YET_KEY_PREFIX)
   ) {
+    selfLoaded = false;
     theValue = null;
   }
 
-  const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> = {
+  const enhancedGroupData: InfiniteTable_HasGrouping_RowInfoGroup<DataType> = {
     data,
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
     id: `${groupKeys}`, //TODO improve this
     collapsed,
+    dataSourceHasGrouping: true,
+    selfLoaded,
+
     parents,
-    flatRowInfoList: [],
+    deepRowInfoArray: [],
     collapsedChildrenCount: 0,
     collapsedGroupsCount: 0,
+    // childrenRequested: collapsed ? (!lazyLoad ? false : cacheExists) : true,
+    childrenRequested: lazyLoad ? options.childrenRequested : true,
+    childrenLoading: options.childrenLoading,
     indexInParentGroups: options.indexInParentGroups,
     indexInGroup: options.indexInGroup,
     indexInAll: options.indexInAll,
+    directChildrenCount: options.directChildrenCount,
+    directChildrenLoadedCount: lazyLoad
+      ? options.directChildrenLoadedCount
+      : options.directChildrenCount,
     value: theValue,
     rootGroupBy: groupBy,
     groupBy:
@@ -702,7 +913,7 @@ function completeReducers<DataType>(
   items: DataType[],
 ) {
   if (reducers) {
-    for (let key in reducers)
+    for (const key in reducers)
       if (reducers.hasOwnProperty(key)) {
         const reducer = reducers[key];
         if (reducer.done) {
@@ -715,6 +926,7 @@ function completeReducers<DataType>(
 }
 
 export type EnhancedFlattenParam<DataType, KeyType = any> = {
+  lazyLoad: boolean;
   groupResult: DataGroupResult<DataType, KeyType>;
   toPrimaryKey: (data: DataType) => any;
   groupRowsState?: GroupRowsState;
@@ -725,6 +937,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
   param: EnhancedFlattenParam<DataType, KeyType>,
 ): { data: InfiniteTableRowInfo<DataType>[] } {
   const {
+    lazyLoad,
     groupResult,
     toPrimaryKey,
     groupRowsState,
@@ -738,7 +951,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
   const result: InfiniteTableRowInfo<DataType>[] = [];
 
-  const parents: InfiniteTableEnhancedGroupInfo<DataType>[] = [];
+  const parents: InfiniteTable_HasGrouping_RowInfoGroup<DataType>[] = [];
   const indexInParentGroups: number[] = [];
 
   deepMap.visitDepthFirst(
@@ -749,9 +962,14 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
 
-      const enhancedGroupData: InfiniteTableEnhancedGroupInfo<DataType> =
+      indexInParentGroups.push(indexInGroup);
+      // partially TRUE when at least one item has data
+      // completely TRUE when at all item has data
+
+      const enhancedGroupData: InfiniteTable_HasGrouping_RowInfoGroup<DataType> =
         getEnhancedGroupData(
           {
+            lazyLoad,
             groupBy: groupByStrings,
             parents: Array.from(parents),
             reducers,
@@ -759,43 +977,89 @@ export function enhancedFlatten<DataType, KeyType = any>(
             indexInParentGroups: Array.from(indexInParentGroups),
             indexInAll: result.length,
             groupKeys,
+            childrenLoading: deepMapValue.childrenLoading,
+            childrenRequested: deepMapValue.childrenRequested,
+            directChildrenCount:
+              groupKeys.length === groupByStrings.length
+                ? deepMapValue.items.length
+                : deepMap.getDirectChildrenSizeFor(groupKeys),
+            directChildrenLoadedCount: 0,
             collapsed,
           },
           deepMapValue,
         );
 
-      const include = generateGroupRows || collapsed;
+      const parent = parents[parents.length - 1];
+
+      const parentCollapsed = parent?.collapsed ?? false;
+
+      // const itemHidden = collapsed || parentCollapsed;
+
+      let include = generateGroupRows || collapsed;
+
+      if (parentCollapsed) {
+        include = false;
+      }
       if (include) {
         result.push(enhancedGroupData);
       }
 
       if (collapsed) {
+        enhancedGroupData.collapsedChildrenCount = enhancedGroupData.groupCount;
         parents.forEach((parent) => {
-          parent.flatRowInfoList.push(enhancedGroupData);
+          if (!parentCollapsed) {
+            parent.deepRowInfoArray.push(enhancedGroupData);
+          }
           parent.collapsedChildrenCount += enhancedGroupData.groupCount;
           parent.collapsedGroupsCount += 1;
         });
       } else {
-        parents.forEach((parent) => {
-          parent.flatRowInfoList.push(enhancedGroupData);
-        });
+        if (!parentCollapsed) {
+          parents.forEach((parent) => {
+            parent.deepRowInfoArray.push(enhancedGroupData);
+          });
+        }
       }
 
-      indexInParentGroups.push(indexInGroup);
+      if (parent && enhancedGroupData.selfLoaded && lazyLoad) {
+        parent.directChildrenLoadedCount += 1;
+      }
       parents.push(enhancedGroupData);
 
-      if (!collapsed) {
+      const continueWithChildren = !collapsed || lazyLoad;
+
+      if (continueWithChildren) {
         if (!next) {
           if (!pivot) {
             const startIndex = result.length;
 
-            result.push(
-              ...items.map((item, index) => {
-                const rowInfo: InfiniteTableRowInfo<DataType> = {
+            // using items.map would have been easier
+            // but we have sparse arrays, and if the last items are sparse
+            // eg: var a = Array(10); a[0] = 1;  a[1] = 2 but the rest of the positions
+            // are not assigned
+            // then iterating over it with `.map` or `.forEach` wont get to the end
+            // which we need
+
+            // this is a use-case we have when there is server-side batching
+
+            // we prefer index assignment, see we have to increment the length
+            // of the result array
+            // by the number of items we want to add
+            // this is in order to make the whole loop a tiny bit faster
+            if (!collapsed) {
+              result.length += items.length;
+            }
+            for (let index = 0, len = items.length; index < len; index++) {
+              const item = items[index];
+              const rowInfo: InfiniteTable_HasGrouping_RowInfoNormal<DataType> =
+                {
                   id: item ? toPrimaryKey(item) : `${groupKeys}-${index}`,
                   data: item,
+                  dataSourceHasGrouping: true,
                   isGroupRow: false,
-                  collapsed: false,
+                  selfLoaded: !!item,
+                  rootGroupBy: groupByStrings,
+                  collapsed,
                   groupKeys,
                   parents: Array.from(parents),
                   indexInParentGroups: [...indexInParentGroups, index],
@@ -805,13 +1069,21 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   groupNesting,
                   groupCount: enhancedGroupData.groupCount,
                 };
-                parents.forEach((parent) => {
-                  parent.flatRowInfoList.push(rowInfo);
-                });
+              parents.forEach((parent, i) => {
+                const last = i === parents.length - 1;
+                if (last && item) {
+                  parent.directChildrenLoadedCount += 1;
+                }
+                if (!parentCollapsed) {
+                  parent.deepRowInfoArray.push(rowInfo);
+                }
+              });
 
-                return rowInfo;
-              }),
-            );
+              if (!collapsed) {
+                // we prefer index assignment, see above
+                result[startIndex + index] = rowInfo;
+              }
+            }
           }
         } else {
           next();
