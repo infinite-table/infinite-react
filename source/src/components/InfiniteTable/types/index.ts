@@ -1,7 +1,19 @@
-import type { InfiniteTableState } from './InfiniteTableState';
+import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
+
 import type { InfiniteTableAction } from './InfiniteTableAction';
 import type { InfiniteTableActionType } from './InfiniteTableActionType';
-
+import type {
+  InfiniteTableColumn,
+  InfiniteTableColumnComparer,
+  InfiniteTableComputedColumn,
+  InfiniteTableColumnRenderParam,
+  InfiniteTableColumnRenderValueParam,
+  InfiniteTableColumnRowspanParam,
+  InfiniteTablePivotColumn,
+  InfiniteTableGroupColumnRenderIconFunction,
+} from './InfiniteTableColumn';
+import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
+import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
 import type {
   InfiniteTableProps,
   InfiniteTableImperativeApi,
@@ -29,21 +41,7 @@ import type {
   InfiniteTablePropGroupColumn,
   InfiniteTablePropAutoSizeColumnsKey,
 } from './InfiniteTableProps';
-
-import type {
-  InfiniteTableColumn,
-  InfiniteTableColumnComparer,
-  InfiniteTableComputedColumn,
-  InfiniteTableColumnRenderParams,
-  InfiniteTableColumnRenderValueParam,
-  InfiniteTableColumnRowspanParam,
-  InfiniteTablePivotColumn,
-  InfiniteTableGroupColumnRenderIconFunction,
-} from './InfiniteTableColumn';
-
-import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
-import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
-import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
+import type { InfiniteTableState } from './InfiniteTableState';
 
 export type {
   Scrollbars,
@@ -61,13 +59,13 @@ export type {
   InfiniteTableGroupColumnBase,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropComponents,
-  InfiniteTablePropColumnVisibility as InfiniteTablePropColumnVisibility,
+  InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
   InfiniteTableColumnGroup,
   InfiniteTableColumn,
   InfiniteTableColumnComparer,
   InfiniteTableComputedColumn,
-  InfiniteTableColumnRenderParams as InfiniteTableColumnRenderParam,
+  InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderValueParam,
   InfiniteTableContextValue,
   InfiniteTablePropGroupRenderStrategy,

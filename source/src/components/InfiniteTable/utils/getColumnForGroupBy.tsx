@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { InfiniteTableColumnRenderParam } from '..';
+import { InfiniteTable_HasGrouping_RowInfoGroup } from '../../../utils/groupAndPivot';
 import { join } from '../../../utils/join';
 import { stripVar } from '../../../utils/stripVar';
 import { DataSourceGroupBy } from '../../DataSource';
@@ -10,7 +11,10 @@ import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { LoadingIcon } from '../components/icons/LoadingIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 import { ThemeVars } from '../theme.css';
-import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
+import {
+  InfiniteTableGeneratedGroupColumn,
+  InfiniteTableGroupColumnRenderIconParam,
+} from '../types/InfiniteTableColumn';
 import {
   InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
@@ -32,6 +36,7 @@ export function getGroupColumnRender<T>({
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
     let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
+
     if (column.renderValue) {
       value = (
         <RenderHookComponent
@@ -42,12 +47,14 @@ export function getGroupColumnRender<T>({
     }
 
     // for groupRenderStrategy !== 'inline', we work on group rows
-    const groupRowInfo =
+    const groupRowInfo = (
       groupRenderStrategy !== 'inline'
         ? rowInfo
         : // while for inline, we need to still work on group rows, but the current row is a data item
           // so we go find the group row via the parents of enhanced data
-          rowInfo.parents?.[groupIndexForColumn] || rowInfo;
+          (rowInfo.isGroupRow && rowInfo.parents?.[groupIndexForColumn]) ||
+          rowInfo
+    ) as InfiniteTable_HasGrouping_RowInfoGroup<T>;
 
     if (!groupRowInfo) {
       return null;
@@ -166,27 +173,26 @@ export function getSingleGroupColumn<T>(
     groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
     style: ({ rowInfo }) => ({
-      [stripVar(ThemeVars.components.Row.groupNesting)]:
-        rowInfo.groupNesting! - 1,
+      [stripVar(ThemeVars.components.Row.groupNesting)]: rowInfo.isGroupRow
+        ? rowInfo.groupNesting! - 1
+        : 0,
     }),
     render: (renderOptions) => {
       let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
-      if (!rowInfo.isGroupRow) {
-        return null;
-      }
 
       if (column.renderValue) {
         value = column.renderValue(renderOptions);
       }
-      // console.log({ rowInfo, value });
 
-      const collapsed = rowInfo.collapsed;
+      const collapsed = rowInfo.isGroupRow ? rowInfo.collapsed : false;
 
       let icon: Renderable = null;
 
-      const showExpanderIcon = pivotBy
-        ? (rowInfo.groupKeys?.length || 0) < groupBy?.length
-        : (rowInfo.groupKeys?.length || 0) <= groupBy?.length;
+      const showExpanderIcon = rowInfo.isGroupRow
+        ? pivotBy
+          ? (rowInfo.groupKeys?.length || 0) < groupBy?.length
+          : (rowInfo.groupKeys?.length || 0) <= groupBy?.length
+        : false;
 
       const isLoading = showLoadingIcon(rowInfo);
 
@@ -197,18 +203,24 @@ export function getSingleGroupColumn<T>(
           <ExpanderIcon
             expanded={!collapsed}
             onChange={() => {
+              if (!rowInfo.isGroupRow) {
+                return;
+              }
               toggleGroupRow(rowInfo.groupKeys!);
             }}
           />
         );
-        icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon
-          ? (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!(
-              Object.assign(
-                { collapsed, groupIcon: defaultIcon },
-                renderOptions,
-              ),
-            )
-          : defaultIcon;
+        icon = defaultIcon;
+        if ((column as InfiniteTableGroupColumnBase<T>).renderGroupIcon) {
+          const renderParam = Object.assign(
+            { collapsed, groupIcon: defaultIcon },
+            renderOptions,
+          ) as InfiniteTableGroupColumnRenderIconParam<T>;
+
+          icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!(
+            renderParam,
+          );
+        }
       }
 
       return (

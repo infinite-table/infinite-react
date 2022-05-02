@@ -45,6 +45,27 @@ export class DeepMap<KeyType, ValueType> {
   }
 
   getValuesStartingWith(keys: KeyType[]): ValueType[] {
+    const result: ValueType[] = [];
+    this.getStartingWith(keys, (_keys, value) => {
+      result.push(value);
+    });
+
+    return result;
+  }
+
+  getKeysStartingWith(keys: KeyType[]): KeyType[][] {
+    const result: KeyType[][] = [];
+    this.getStartingWith(keys, (keys) => {
+      result.push(keys);
+    });
+
+    return result;
+  }
+
+  private getStartingWith(
+    keys: KeyType[],
+    fn: (key: KeyType[], value: ValueType) => void,
+  ) {
     let currentMap = this.map;
     let pair: Pair<KeyType, ValueType> | undefined;
     if (!keys.length) {
@@ -57,24 +78,44 @@ export class DeepMap<KeyType, ValueType> {
       pair = currentMap.get(key);
 
       if (!pair || !pair.map) {
-        return [];
+        return;
       }
 
       currentMap = pair.map;
     }
 
-    const result: ValueType[] =
-      pair && pair.value !== undefined ? [pair.value!] : [];
+    if (pair && pair.value !== undefined) {
+      fn(keys, pair.value!);
+    }
     this.visitWithNext(
       keys,
-      (value, _key, _i, next) => {
-        result.push(value);
+      (value, keys, _i, next) => {
+        fn(keys, value);
         next?.();
       },
       currentMap,
     );
+  }
 
-    return result;
+  getDirectChildrenSizeFor(keys: KeyType[]) {
+    let currentMap = this.map;
+    if (!keys.length) {
+      keys = [this.emptyKey];
+    }
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const key = keys[i];
+      const last = i === len - 1;
+      const pair = currentMap.get(key);
+
+      if (!pair || !pair.map) {
+        return 0;
+      }
+      currentMap = pair.map;
+      if (last) {
+        return currentMap?.size ?? 0;
+      }
+    }
+    return 0;
   }
 
   set(keys: KeyType[] & { length: Omit<number, 0> }, value: ValueType) {
@@ -158,7 +199,7 @@ export class DeepMap<KeyType, ValueType> {
       keys = [...keys];
     }
 
-    let maps = [currentMap];
+    const maps = [currentMap];
 
     let result = false;
 

@@ -1,5 +1,6 @@
-import { DataSourceExpandedAndCollapsedGroupRows } from './types';
 import { DeepMap } from '../../utils/DeepMap';
+
+import { DataSourcePropGroupRowsStateObject } from './types';
 
 export class GroupRowsState<KeyType extends any = any> {
   private expandedMap?: DeepMap<KeyType, true>;
@@ -7,17 +8,17 @@ export class GroupRowsState<KeyType extends any = any> {
   private collapsedAll!: boolean;
   private expandedAll!: boolean;
 
-  private initialState!: DataSourceExpandedAndCollapsedGroupRows<KeyType>;
+  private initialState!: DataSourcePropGroupRowsStateObject<KeyType>;
 
   constructor(
     state:
-      | DataSourceExpandedAndCollapsedGroupRows<KeyType>
+      | DataSourcePropGroupRowsStateObject<KeyType>
       | GroupRowsState<KeyType>,
   ) {
     this.update(state instanceof GroupRowsState ? state.getState() : state);
   }
 
-  public getState(): DataSourceExpandedAndCollapsedGroupRows<KeyType> {
+  public getState(): DataSourcePropGroupRowsStateObject<KeyType> {
     return {
       expandedRows: this.expandedAll
         ? true
@@ -36,7 +37,7 @@ export class GroupRowsState<KeyType extends any = any> {
     delete this.collapsedMap;
   }
 
-  private update(state: DataSourceExpandedAndCollapsedGroupRows<KeyType>) {
+  private update(state: DataSourcePropGroupRowsStateObject<KeyType>) {
     this.initialState = state;
 
     const { collapsedRows, expandedRows } = this.initialState;

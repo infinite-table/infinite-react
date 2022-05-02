@@ -1,4 +1,3 @@
-import { AggregationReducer } from '.';
 import type {
   DataSourceAggregationReducer,
   DataSourcePivotBy,
@@ -14,13 +13,14 @@ import type {
   InfiniteTablePivotFinalColumnVariant,
 } from '../../components/InfiniteTable/types/InfiniteTableColumn';
 import { InfiniteTablePropColumnGroupsMap } from '../../components/InfiniteTable/types/InfiniteTableProps';
-
 import type {
   InfiniteTablePropPivotTotalColumnPosition,
   InfiniteTablePropPivotGrandTotalColumnPosition,
 } from '../../components/InfiniteTable/types/InfiniteTableState';
 import { DeepMap } from '../DeepMap';
 import { once } from '../DeepMap/once';
+
+import { AggregationReducer } from '.';
 
 export type ComputedColumnsAndGroups<DataType> = {
   columns: InfiniteTablePropColumnsMap<
@@ -138,7 +138,11 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           pivotIndex: -1,
 
           valueGetter: ({ rowInfo }) => {
-            return rowInfo.reducerResults?.[reducer.id] as any as string;
+            // return rowInfo.reducerResults?.[reducer.id] as any as string;
+
+            return rowInfo.isGroupRow
+              ? (rowInfo.reducerResults?.[reducer.id] as any as string)
+              : null;
           },
         }),
       );
@@ -209,6 +213,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           columnGroup: parentColumnGroupId,
           header,
           valueGetter: ({ rowInfo }) => {
+            if (!rowInfo.isGroupRow) {
+              return null;
+            }
             return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
               reducer.id
             ] as any as string;
@@ -276,7 +283,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           : undefined;
 
         if (!isSingleAggregationColumn) {
-          let parentGroupForTotalsGroup = columnGroupId;
+          const parentGroupForTotalsGroup = columnGroupId;
           columnGroupId = `total:${keys.join('/')}`;
           columnGroups.set(
             columnGroupId,
@@ -311,6 +318,9 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
             pivotBy,
             sortable: false,
             valueGetter: ({ rowInfo }) => {
+              if (!rowInfo.isGroupRow) {
+                return null;
+              }
               return rowInfo.pivotValuesMap?.get(keys)?.reducerResults[
                 reducer.id
               ] as any as string;

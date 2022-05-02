@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { InfiniteTableState } from '.';
+
 import {
   AggregationReducer,
-  InfiniteTableRowInfoGroup,
-  InfiniteTableRowInfoNormal,
+  InfiniteTableRowInfoDataDiscriminator,
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceGroupBy,
@@ -14,10 +13,6 @@ import {
 } from '../../DataSource/types';
 import { Renderable } from '../../types/Renderable';
 
-export type LoadMaskProps = {
-  visible: boolean;
-  children: Renderable;
-};
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnRenderFunction,
@@ -31,6 +26,13 @@ import {
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
 } from './InfiniteTableState';
+
+import { InfiniteTableState } from '.';
+
+export type LoadMaskProps = {
+  visible: boolean;
+  children: Renderable;
+};
 
 // export type TablePropColumnOrderItem = string | { id: string; visible: boolean };
 export type InfiniteTablePropColumnOrderNormalized = string[];
@@ -57,16 +59,7 @@ export type InfiniteTablePropColumnPinning =
 export type InfiniteTableRowStyleFnParams<T> = {
   rowIndex: number;
   groupBy?: (keyof T)[];
-} & (
-  | {
-      data: T;
-      rowInfo: InfiniteTableRowInfoNormal<T>;
-    }
-  | {
-      data: Partial<T> | null;
-      rowInfo: InfiniteTableRowInfoGroup<T>;
-    }
-);
+} & InfiniteTableRowInfoDataDiscriminator<T>;
 export type InfiniteTableRowStyleFn<T> = (
   params: InfiniteTableRowStyleFnParams<T>,
 ) => undefined | React.CSSProperties;

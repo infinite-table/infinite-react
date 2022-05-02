@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MultisortInfo } from '../../utils/multisort';
+
 import { DeepMap } from '../../utils/DeepMap';
 import {
   DeepMapGroupValueType,
@@ -7,34 +7,36 @@ import {
   GroupKeyType,
   PivotBy,
 } from '../../utils/groupAndPivot';
-
+import { MultisortInfo } from '../../utils/multisort';
+import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
   InfiniteTableRowInfo,
   Scrollbars,
 } from '../InfiniteTable/types';
-import { ComponentStateActions } from '../hooks/useComponentState/types';
-import { GroupRowsState } from './GroupRowsState';
+import {
+  InfiniteTablePivotColumn,
+  InfiniteTablePivotFinalColumnVariant,
+} from '../InfiniteTable/types/InfiniteTableColumn';
+import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
 } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
-import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 import { RenderRange } from '../VirtualBrain';
-import {
-  InfiniteTablePivotColumn,
-  InfiniteTablePivotFinalColumnVariant,
-} from '../InfiniteTable/types/InfiniteTableColumn';
-import { GroupRowsLoadingState } from './GroupRowsLoadingState';
+
+import { GroupRowsState } from './GroupRowsState';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
   sortInfo?: DataSourceSortInfo<T>;
   groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
+
+  groupRowsState?: DataSourcePropGroupRowsStateObject<any>;
 
   lazyLoadBatchSize?: number;
   lazyLoadStartIndex?: number;
@@ -70,7 +72,7 @@ export type DataSourceSortInfo<T> =
   | DataSourceSingleSortInfo<T>[];
 
 export type DataSourceRemoteData<T> = {
-  data: T[];
+  data: T[] | LazyGroupDataItem<T>[];
   mappings?: DataSourceMappings;
   cache?: boolean;
   totalCount?: number;
@@ -87,7 +89,7 @@ export type DataSourceData<T> =
 
 export type DataSourceGroupRowsList<KeyType> = true | KeyType[][];
 
-export type DataSourceExpandedAndCollapsedGroupRows<KeyType> = {
+export type DataSourcePropGroupRowsStateObject<KeyType> = {
   expandedRows: DataSourceGroupRowsList<KeyType>;
   collapsedRows: DataSourceGroupRowsList<KeyType>;
 };
@@ -105,10 +107,7 @@ export interface DataSourceMappedState<T> {
   data: DataSourceProps<T>['data'];
   primaryKey: DataSourceProps<T>['primaryKey'];
   groupBy: NonUndefined<DataSourceProps<T>['groupBy']>;
-  groupRowsState: NonUndefined<DataSourceProps<T>['groupRowsState']>;
-  groupRowsLoadingState: NonUndefined<
-    DataSourceProps<T>['groupRowsLoadingState']
-  >;
+  groupRowsState: GroupRowsState<T>;
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
   collapseGroupRowsOnDataFunctionChange: NonUndefined<
@@ -148,24 +147,32 @@ export type LazyGroupDataItem<DataType> = {
   data: Partial<DataType>;
   keys: any[];
   aggregations?: Record<string, any>;
+  dataset?: DataSourceRemoteData<DataType>;
   pivot?: {
     values: Record<string, any>;
     totals?: Record<string, any>;
   };
 };
 
-export type LazyGroupRowInfo<DataType> = {
-  items: LazyGroupDataItem<DataType>[];
+export type LazyRowInfoGroup<DataType> = {
+  /**
+   * Those are direct children of the current lazy group row
+   */
+  children: LazyGroupDataItem<DataType>[];
+  childrenLoading: boolean;
+  childrenRequested: boolean;
+  cache: boolean;
   totalCount: number;
-  cache?: boolean;
+  error?: string;
 };
 
 export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
   KeyType,
-  LazyGroupRowInfo<DataType>
+  LazyRowInfoGroup<DataType>
 >;
 
 export interface DataSourceSetupState<T> {
+  lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
   pivotMappings?: DataSourceMappings;
   propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
   showSeparatePivotColumnForSingleAggregation: boolean;
@@ -184,7 +191,7 @@ export interface DataSourceSetupState<T> {
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition: InfiniteTablePropPivotGrandTotalColumnPosition;
-  cursorId: number | Symbol | DataSourceLivePaginationCursorValue;
+  cursorId: number | symbol | DataSourceLivePaginationCursorValue;
 
   updatedAt: number;
   reducedAt: number;
@@ -230,16 +237,11 @@ export type DataSourceProps<T> = {
   defaultGroupBy?: DataSourcePropGroupBy<T>;
   onGroupByChange?: (groupBy: DataSourcePropGroupBy<T>) => void;
 
-  groupRowsState?: GroupRowsState;
-  defaultGroupRowsState?: GroupRowsState;
+  groupRowsState?: GroupRowsState | DataSourcePropGroupRowsStateObject<any>;
+  defaultGroupRowsState?:
+    | GroupRowsState
+    | DataSourcePropGroupRowsStateObject<keyof T>;
   onGroupRowsStateChange?: (groupRowsState: GroupRowsState) => void;
-
-  // TODO AFL: makes no sense, but otherwise cannot set an initialstate?
-  groupRowsLoadingState?: GroupRowsLoadingState;
-  // TODO AFL: handle loading change event?
-  onGroupRowsLoadingStateChange?: (
-    groupRowsLoadingState: GroupRowsLoadingState,
-  ) => void;
 
   collapseGroupRowsOnDataFunctionChange?: boolean;
 

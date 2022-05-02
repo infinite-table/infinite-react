@@ -1,5 +1,5 @@
-import { DeepMap } from '@src/utils/DeepMap';
 import { test, expect } from '@playwright/test';
+import { DeepMap } from '@src/utils/DeepMap';
 
 type Person = {
   name: string;
@@ -28,7 +28,8 @@ const marrie = {
   name: 'marrie',
 };
 
-export default test.describe.parallel('DeepMap', () => {
+// TODO figure out why making this `test.decribe.parallel` fails a test
+export default test.describe('DeepMap', () => {
   test('delete should work properly', async () => {
     const map = new DeepMap<number, number>();
 
@@ -89,6 +90,51 @@ export default test.describe.parallel('DeepMap', () => {
 
     expect(map.getValuesStartingWith([4])).toEqual([80, 90]);
     expect(map.getValuesStartingWith([5])).toEqual([1110, 110]);
+  });
+
+  test('get keys starting with keys should work properly', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([1, 0], 2);
+    map.set([1, 1], 3);
+    map.set([2, 0], 4);
+    map.set([2, 1], 5);
+    map.set([3, 0], 6);
+    map.set([3, 1], 7);
+    map.set([4, 10], 80);
+    map.set([4, 20], 90);
+    map.set([5, 1], 110);
+    map.set([5], 1110);
+    map.set([0, 0], 1);
+
+    expect(map.getKeysStartingWith([4])).toEqual([
+      [4, 10],
+      [4, 20],
+    ]);
+    expect(map.getKeysStartingWith([5])).toEqual([[5], [5, 1]]);
+  });
+
+  test('getDirectChildrenSizeFor  should work properly', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([4, 10], 80);
+    map.set([4, 20], 90);
+    map.set([4, 20, 40], 90);
+    map.set([5, 1], 110);
+    map.set([5, 1, 10], 110);
+    map.set([5], 1110);
+    map.set([100, 0], 1);
+    map.set([101], 1);
+    map.set([7, 10], 1);
+    map.set([7, 10], 1);
+
+    expect(map.getDirectChildrenSizeFor([4])).toEqual(2);
+    expect(map.getDirectChildrenSizeFor([5])).toEqual(1);
+    expect(map.getDirectChildrenSizeFor([100])).toEqual(1);
+    expect(map.getDirectChildrenSizeFor([101])).toEqual(0);
+    expect(map.getDirectChildrenSizeFor([111111, 123, 321321312])).toEqual(0);
+    expect(map.getDirectChildrenSizeFor([7])).toEqual(1);
+    expect(map.getDirectChildrenSizeFor([7, 10])).toEqual(0);
   });
 
   test('constructor should work correctly', () => {

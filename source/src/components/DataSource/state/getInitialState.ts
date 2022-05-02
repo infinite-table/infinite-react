@@ -1,5 +1,17 @@
+import { DataSourceComponentActions, DataSourceDataParams } from '..';
+import { dbg } from '../../../utils/debug';
+import { DeepMap } from '../../../utils/DeepMap';
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
+import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
 import { InfiniteTableRowInfo, Scrollbars } from '../../InfiniteTable';
-import { normalizeSortInfo } from './normalizeSortInfo';
+import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
+import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
+import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
+import { isControlledValue } from '../../utils/isControlledValue';
+import { RenderRange } from '../../VirtualBrain';
+import { GroupRowsState } from '../GroupRowsState';
+import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
 import {
   DataSourceMappedState,
   DataSourceProps,
@@ -7,23 +19,10 @@ import {
   DataSourceSetupState,
   DataSourceState,
   LazyGroupDataDeepMap,
-  LazyGroupRowInfo,
+  LazyRowInfoGroup,
 } from '../types';
-import { GroupRowsState } from '../GroupRowsState';
-import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
-import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
-import { isControlledValue } from '../../utils/isControlledValue';
 
-import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
-import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
-import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
-import { DataSourceComponentActions, DataSourceDataParams } from '..';
-import { dbg } from '../../../utils/debug';
-import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
-import { DeepMap } from '../../../utils/DeepMap';
-import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
-import { RenderRange } from '../../VirtualBrain';
-import { GroupRowsLoadingState } from '../GroupRowsLoadingState';
+import { normalizeSortInfo } from './normalizeSortInfo';
 
 export const defaultCursorId = Symbol('cursorId');
 
@@ -34,10 +33,11 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
 
   const originalLazyGroupData: LazyGroupDataDeepMap<T> = new DeepMap<
     string,
-    LazyGroupRowInfo<T>
+    LazyRowInfoGroup<T>
   >();
 
   return {
+    lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
     notifyScrollStop: buildSubscriptionCallback<ScrollStopInfo>(),
@@ -112,6 +112,9 @@ export const forwardProps = <T>(
       normalizeSortInfo(sortInfo, setupState.propsCache.get('sortInfo')),
     groupBy: (groupBy) => groupBy ?? [],
     groupRowsState: (groupRowsState) => {
+      if (groupRowsState && !(groupRowsState instanceof GroupRowsState)) {
+        groupRowsState = new GroupRowsState(groupRowsState);
+      }
       return (
         groupRowsState ||
         new GroupRowsState({
@@ -120,8 +123,6 @@ export const forwardProps = <T>(
         })
       );
     },
-    groupRowsLoadingState: (groupRowsLoadingState) =>
-      groupRowsLoadingState ?? new GroupRowsLoadingState(),
   };
 };
 

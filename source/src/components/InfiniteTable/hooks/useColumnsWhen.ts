@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import type { InfiniteTableColumn, InfiniteTableState } from '..';
 
+import type { InfiniteTableColumn, InfiniteTableState } from '..';
 import type {
   DataSourceGroupBy,
   DataSourcePivotBy,
@@ -10,7 +10,6 @@ import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataS
 import { useComponentState } from '../../hooks/useComponentState';
 import { interceptMap } from '../../hooks/useInterceptedMap';
 import { usePrevious } from '../../hooks/usePrevious';
-
 import type {
   InfiniteTableComputedPivotFinalColumn,
   InfiniteTableGeneratedGroupColumn,
@@ -21,14 +20,13 @@ import type {
   InfiniteTableProps,
 } from '../types/InfiniteTableProps';
 import { GroupByMap } from '../types/InfiniteTableState';
-
 import {
   getColumnForGroupBy,
   getGroupColumnRender,
   getSingleGroupColumn,
 } from '../utils/getColumnForGroupBy';
-import { useEffectWithRaf } from './useEffectWithRaf';
 
+import { useEffectWithRaf } from './useEffectWithRaf';
 import { ToggleGroupRowFn, useToggleGroupRow } from './useToggleGroupRow';
 
 function useGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
@@ -112,12 +110,20 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
           groupByField: field as string,
           field: field,
           valueGetter: ({ rowInfo }) => {
-            return rowInfo.groupKeys?.[groupIndex];
+            return rowInfo.isGroupRow
+              ? rowInfo.groupKeys?.[groupIndex]
+              : rowInfo.value;
           },
           rowspan: ({ rowInfo, dataArray }) => {
+            if (!rowInfo.isGroupRow) {
+              return 1;
+            }
             const prevRowInfo = dataArray[rowInfo.indexInAll - 1] || {
               indexInParentGroups: [],
             };
+            if (!prevRowInfo || !prevRowInfo.dataSourceHasGrouping) {
+              return 1;
+            }
             const prevIndexes = prevRowInfo.indexInParentGroups! || [];
             const currentIndexes = rowInfo.indexInParentGroups! || [];
 
@@ -333,11 +339,14 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     const len = dataArray.length;
 
     for (let i = 0; i < len; i++) {
-      const data = dataArray[i];
+      const rowInfo = dataArray[i];
 
+      if (!rowInfo.isGroupRow) {
+        continue;
+      }
       expandedGroupsLevel = Math.max(
         expandedGroupsLevel,
-        data.groupNesting! - 1,
+        rowInfo.groupNesting! - 1,
       );
       if (expandedGroupsLevel === groupsLength - 1) {
         break;
