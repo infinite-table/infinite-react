@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { InfiniteTableColumnRenderParam } from '..';
 
+import { InfiniteTableColumnRenderParam } from '..';
 import { join } from '../../../utils/join';
+import { stripVar } from '../../../utils/stripVar';
 import { DataSourceGroupBy } from '../../DataSource';
+import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
 import { Renderable } from '../../types/Renderable';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
+import { LoadingIcon } from '../components/icons/LoadingIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
-
+import { ThemeVars } from '../theme.css';
 import { InfiniteTableGeneratedGroupColumn } from '../types/InfiniteTableColumn';
 import {
   InfiniteTableGroupColumnBase,
@@ -15,11 +18,8 @@ import {
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
 import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
+
 import { RenderHookComponent } from './RenderHookComponent';
-import { stripVar } from '../../../utils/stripVar';
-import { ThemeVars } from '../theme.css';
-import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
-import { LoadingIcon } from '../components/icons/LoadingIcon';
 
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
@@ -42,7 +42,7 @@ export function getGroupColumnRender<T>({
     }
 
     // for groupRenderStrategy !== 'inline', we work on group rows
-    let groupRowInfo =
+    const groupRowInfo =
       groupRenderStrategy !== 'inline'
         ? rowInfo
         : // while for inline, we need to still work on group rows, but the current row is a data item
@@ -124,11 +124,8 @@ export function getColumnForGroupBy<T>(
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: Partial<InfiniteTablePropGroupColumn<T>>,
 ): InfiniteTableGeneratedGroupColumn<T> {
-  const {
-    groupByForColumn: groupByForColumn,
-    groupIndexForColumn: groupIndexForColumn,
-    groupRenderStrategy,
-  } = options;
+  const { groupByForColumn, groupIndexForColumn, groupRenderStrategy } =
+    options;
 
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group by ${groupByForColumn.field}`,

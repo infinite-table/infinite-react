@@ -3,6 +3,7 @@ import { RefCallback } from 'react';
 
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
+import { raf } from '../../utils/raf';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
@@ -61,6 +62,8 @@ export class ReactHeadlessTableRenderer extends Logger {
   private currentHoveredRow = -1;
   private onDestroy: VoidFunction;
 
+  private hoverRowUpdatesInProgress: Map<number, boolean> = new Map();
+
   constructor(brain: MatrixBrain) {
     super('ReactHeadlessTableRenderer');
     this.brain = brain;
@@ -72,7 +75,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       this.adjustFixedElementsOnScroll();
       //for whatever reason, sometimes there's a misplaced fixed cell and we need to
       //have it executed again, on a raf
-      requestAnimationFrame(() => {
+      raf(() => {
         this.adjustFixedElementsOnScroll();
       });
     });
@@ -710,6 +713,31 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
+  private updateHoverClassNamesForRow = (rowIndex: number) => {
+    if (this.scrolling) {
+      return;
+    }
+    if (this.hoverRowUpdatesInProgress.has(rowIndex)) {
+      return;
+    }
+
+    this.hoverRowUpdatesInProgress.set(rowIndex, true);
+
+    const checkHoverClass = () => {
+      if (this.currentHoveredRow != -1 && !this.scrolling) {
+        if (this.currentHoveredRow === rowIndex) {
+          this.addHoverClass(rowIndex);
+        } else {
+          this.removeHoverClass(rowIndex);
+        }
+      }
+    };
+    raf(() => {
+      checkHoverClass();
+      this.hoverRowUpdatesInProgress.delete(rowIndex);
+    });
+  };
+
   private updateElementPosition = (elementIndex: number) => {
     const itemElement = this.itemDOMElements[elementIndex];
     const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
@@ -731,17 +759,8 @@ export class ReactHeadlessTableRenderer extends Logger {
     const { x, y } = itemPosition;
 
     if (itemElement) {
-      if (this.currentHoveredRow != -1 && !this.scrolling) {
-        if (this.currentHoveredRow === rowIndex) {
-          this.cellHoverClassNames.forEach((cls) => {
-            itemElement.classList.add(cls);
-          });
-        } else {
-          this.cellHoverClassNames.forEach((cls) => {
-            itemElement.classList.remove(cls);
-          });
-        }
-      }
+      this.updateHoverClassNamesForRow(rowIndex);
+
       // itemElement.style.gridColumn = `${colIndex} / span 1`;
       // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
@@ -996,6 +1015,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.reset();
     this.onDestroy();
 
+    this.hoverRowUpdatesInProgress.clear();
+
+    (this as any).hoverRowUpdatesInProgress = null;
     (this as any).brain = null;
     (this as any).mappedCells = null;
   };

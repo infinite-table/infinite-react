@@ -45,17 +45,17 @@ const App = () => {
     return getColumns(columnCount);
   }, [columnCount]);
 
-  const defaultColumnPinning: InfiniteTablePropColumnPinning =
-    React.useMemo(() => {
-      const ids = Array.from(columns.keys());
+  // const defaultColumnPinning: InfiniteTablePropColumnPinning =
+  //   React.useMemo(() => {
+  //     const ids = Array.from(columns.keys());
 
-      return new Map([
-        [ids[0], 'start'],
-        [ids[1], 'start'],
-        [ids[2], 'end'],
-        [ids[3], 'end'],
-      ]);
-    }, [columns]);
+  //     return new Map([
+  //       [ids[0], 'start'],
+  //       [ids[1], 'start'],
+  //       [ids[2], 'end'],
+  //       [ids[3], 'end'],
+  //     ]);
+  //   }, [columns]);
 
   const [dataSourceCount, setDataSourceCount] = React.useState(100);
   const dataSource = React.useMemo(() => {
@@ -236,7 +236,8 @@ const App = () => {
             </button>
           </div>
           <p>
-            {dataSourceCount} rows, {columnCount} columns, row height 40
+            {dataSourceCount} rows, {columnCount} columns, row height{' '}
+            {rowHeight}
           </p>
         </div>
         <DataSource<DataItem>
@@ -257,9 +258,9 @@ const App = () => {
                 position: 'relative',
               },
             }}
-            defaultColumnPinning={defaultColumnPinning}
+            // defaultColumnPinning={defaultColumnPinning}
             key={rowHeight}
-            rowHeight={'--it-row-height'}
+            rowHeight={rowHeight}
             columnDefaultWidth={150}
             columnMinWidth={40}
             columns={columns}
