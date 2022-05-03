@@ -74,9 +74,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
 export type InfiniteTable_RowInfoBase<_T> = {
   id: any;
   value?: any;
-
   indexInAll: number;
-  indexInGroup: number;
 };
 
 export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
@@ -143,7 +141,7 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
    * For lazy/batched grouping, this is true if the group has been expanded at least once (and if the remote call has been configured with cache: true),
    * since if the remote call is not cached, collapsing the row group should lose all the data that was loaded for it, and it's as if it was never loaded, so in that case, childrenAvailable is false.
    *
-   * NOTE: if this is true, it doesn't mean that (all or some of) the children have been loaded, it only means that at least some children have been requested.
+   * NOTE: if this is true, it doesn't mean that all the children have been loaded, it only means that some children have been loaded and are available
    *
    * Use directChildrenCount and directChildrenLoadedCount to know if all the children have been loaded or not.
    */
@@ -170,6 +168,8 @@ export type InfiniteTable_NoGrouping_RowInfoNormal<T> = {
 } & InfiniteTable_RowInfoBase<T>;
 
 export type InfiniteTable_HasGrouping_RowInfoBase<T> = {
+  indexInGroup: number;
+
   /**
    * Available on all rowInfo objects when the datasource is grouped, otherwise, it will be undefined.
    *

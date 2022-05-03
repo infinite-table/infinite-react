@@ -41,7 +41,6 @@ function toRowInfo<T>(
     data,
     id,
     indexInAll: index,
-    indexInGroup: index,
     isGroupRow: false,
     selfLoaded: true,
   };

@@ -47,8 +47,8 @@ export interface InfiniteTableColumnCellProps<T>
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndex: number;
   rowHeight: number;
-  rowStyle: InfiniteTablePropRowStyle<T>;
-  rowClassName: InfiniteTablePropRowClassName<T>;
+  rowStyle?: InfiniteTablePropRowStyle<T>;
+  rowClassName?: InfiniteTablePropRowClassName<T>;
 }
 
 export interface InfiniteTableHeaderCellProps<T>

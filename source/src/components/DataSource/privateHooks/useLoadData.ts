@@ -625,7 +625,9 @@ function lazyLoadRange<T>(
       theGroupKeys.pop();
     }
     const cacheKeys = theGroupKeys.length ? theGroupKeys : rootGroupKeys;
-    const indexInGroup = rowInfo.indexInGroup;
+    const indexInGroup = rowInfo.isGroupRow
+      ? rowInfo.indexInGroup
+      : rowInfo.indexInAll;
 
     if (
       rowInfo.isGroupRow &&
@@ -664,7 +666,9 @@ function lazyLoadRange<T>(
 
       const batchStartIndexInGroup =
         Math.floor(indexInGroup / lazyLoadBatchSize) * lazyLoadBatchSize;
-      const offset = rowInfo.indexInGroup - batchStartIndexInGroup;
+      const offset =
+        (rowInfo.isGroupRow ? rowInfo.indexInGroup : rowInfo.indexInAll) -
+        batchStartIndexInGroup;
       const absoluteIndexOfBatchStart =
         dataArray[rowInfo.indexInAll - offset].indexInAll;
 

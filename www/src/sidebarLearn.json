@@ -48,8 +48,19 @@
           ]
         },
         {
-          "title": "Styling Rows",
-          "path": "/docs/latest/learn/styling-rows"
+          "title": "Working with Rows",
+          "path": "/docs/latest/learn/rows/styling-rows",
+          "transient": true,
+          "routes": [
+            {
+              "path": "/docs/latest/learn/rows/styling-rows",
+              "title": "Styling Rows"
+            },
+            {
+              "path": "/docs/latest/learn/rows/using-row-info",
+              "title": "Using Rows at Runtime"
+            }
+          ]
         },
         {
           "title": "Grouping and Pivoting",

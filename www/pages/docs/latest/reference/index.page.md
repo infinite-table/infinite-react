@@ -510,13 +510,7 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
 
  * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
- * rowInfo - very useful information about the current row:
-   - `rowInfo.value` - the value that will be rendered by default
-   - `rowInfo.collapsed` - if the row is collased or not.
-   - `rowInfo.groupBy` - the current group by for the row
-   - `rowInfo.indexInAll` - the index of the row in the whole data set
-   - `rowInfo.indexInGroup` - the index of the row in the current group
-   -  ... there are other useful properties that we'll document in the near future
+ * rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
 
 
 <Sandpack title="Column with custom render">
@@ -563,13 +557,7 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.renderValue">render</PropLink> functions are called with an object that has the following properties:
 
  * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
- * rowInfo - very useful information about the current row:
-   - `rowInfo.value` - the value that will be rendered by default
-   - `rowInfo.collapsed` - if the row is collased or not.
-   - `rowInfo.groupBy` - the current group by for the row
-   - `rowInfo.indexInAll` - the index of the row in the whole data set
-   - `rowInfo.indexInGroup` - the index of the row in the current group
-   -  ... there are other useful properties that we'll document in the near future
+ * rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
 
 <Sandpack title="Column with custom renderValue">
 
@@ -598,7 +586,7 @@ This function is called with an object that has the following properties:
 * data - the current data
 * rowInfo - information about the current row
 
-The `rowInfo` object contains information about grouping (if this row is a group row, the collapsed state, etc), parent groups, children of the current row (if it's a row group), etc
+The `rowInfo` object contains information about grouping (if this row is a group row, the collapsed state, etc), parent groups, children of the current row (if it's a row group), etc. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
 
 <Sandpack>
 
@@ -617,7 +605,7 @@ If defined as a function, it accepts an object as a parameter, which has the fol
 
  * `column` - the current column where the style is being applied
  * `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
- * `rowInfo` - the information about the current row - contains details about grouping (if this is a group row, the collapsed state, etc), parent groups, children of the current row, etc
+ * `rowInfo` - the information about the current row - see [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
  * `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
 
 
@@ -1175,6 +1163,8 @@ The `rowInfo` object contains the following properties:
 * `groupBy` - the fields used to group the `DataSource`
 * `isGroupRow` - whether the row is a group row
 * `collapsed` - for a group row, whether the group row is collapsed
+
+See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
 
 </AnatomyStep>
 
