@@ -5,7 +5,7 @@ import { columns } from '../columns';
 export default test.describe.parallel(
   'Column visibility uncontrolled without any default value',
   () => {
-    test('should display all cols', async ({ page }) => {
+    test('should display all columns', async ({ page }) => {
       await page.waitForInfinite();
       const colIds = await getHeaderColumnIds({ page });
 
