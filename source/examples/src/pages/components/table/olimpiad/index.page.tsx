@@ -1,15 +1,14 @@
-import * as React from 'react';
-
+import data from '@examples/datasets/olimpiad.json';
+import { OlimpicWinner } from '@examples/datasets/OlimpicWinner';
 import {
   DataSource,
   DataSourceAggregationReducer,
   InfiniteTable,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
-import { OlimpicWinner } from '@examples/datasets/OlimpicWinner';
 //@ts-ignore
-import data from '@examples/datasets/olimpiad.json';
 
 const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
   [
@@ -23,12 +22,17 @@ const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
         return (
           <div
             style={{
-              paddingLeft:
-                ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
-                30,
+              paddingLeft: rowInfo.isGroupRow
+                ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
+                  30
+                : 0,
             }}
           >
-            {rowInfo.groupKeys ? rowInfo.value : value ?? null}
+            {rowInfo.isGroupRow
+              ? rowInfo.groupKeys
+                ? rowInfo.value
+                : value ?? null
+              : null}
           </div>
         );
       },

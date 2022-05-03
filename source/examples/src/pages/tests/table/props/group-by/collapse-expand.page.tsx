@@ -56,6 +56,9 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       columnGroup: 'location',
       render: ({ value, rowInfo }) => {
         console.log(rowInfo);
+        if (!rowInfo.isGroupRow) {
+          return value;
+        }
         const { isGroupRow, groupKeys } = rowInfo;
         if (isGroupRow) {
           return <>Group for {groupKeys?.join(',')}</>;

@@ -1,5 +1,7 @@
+import { test, expect } from '@playwright/test';
 import { GroupRowsState } from '@src/components/DataSource/GroupRowsState';
 import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
+
 import { groupToItems } from './helpers';
 
 type Person = {
@@ -43,7 +45,6 @@ const espania = {
   age: 50,
   name: 'espania',
 };
-import { test, expect } from '@playwright/test';
 export default test.describe.parallel('Grouping', () => {
   test('should group on single field', async () => {
     const arr: Person[] = [john, bill, bob, marrie, espania];
@@ -194,6 +195,7 @@ export default test.describe.parallel('Grouping', () => {
         collapsedRows: [['uk']],
       }),
       generateGroupRows: true,
+      lazyLoad: false,
     });
 
     expect(result.data[0]).toMatchObject({
@@ -265,6 +267,7 @@ export default test.describe.parallel('Grouping', () => {
       groupResult,
       toPrimaryKey: (data) => data.id,
       generateGroupRows: true,
+      lazyLoad: false,
     });
 
     expect(result.data).toEqual([

@@ -4,9 +4,7 @@ import {
   DataSourceData,
   InfiniteTablePropColumns,
   GroupRowsState,
-  DataSourceGroupBy,
   DataSourcePropAggregationReducers,
-  DataSourcePivotBy,
   // InfiniteTableColumn,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropGroupColumn,
@@ -47,7 +45,9 @@ const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  preferredLanguage: { field: 'preferredLanguage' },
+  preferredLanguage: {
+    field: 'preferredLanguage',
+  },
   age: { field: 'age' },
 
   salary: {
@@ -79,6 +79,43 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   // renderGroupIcon: ({ groupIcon, data }) => (!data ? '🤷‍' : groupIcon),
   // // while we have no data, we can render a placeholder
   // renderValue: ({ data, value }) => (!data ? ' Loading...' : value),
+  // renderGroupIcon: ({ rowInfo, value, groupIcon }) => {
+  //   if (!rowInfo.dataSourceHasGrouping) {
+  //     return null;
+  //   }
+
+  //   let pre = '';
+
+  //   if (!rowInfo.selfLoaded) {
+  //     pre = '...';
+  //   } else {
+  //     if (rowInfo.childrenLoading) {
+  //       pre = 'loading';
+  //     } else if (!rowInfo.childrenRequested) {
+  //       pre = 'not loaded';
+  //     } else if (
+  //       rowInfo.directChildrenLoadedCount < rowInfo.directChildrenCount
+  //     ) {
+  //       pre = ' more to load';
+  //     }
+  //   }
+  //   // const pre = !rowInfo.selfLoaded
+  //   //   ? '...'
+  //   //   : !rowInfo.childrenRequested
+  //   //   ? 'never loaded'
+  //   //   : rowInfo.childrenLoading
+  //   //   ? 'x.x.x.'
+  //   //   : rowInfo.directChildrenLoadedCount < rowInfo.directChildrenCount
+  //   //   ? ' more to load'
+  //   //   : null;
+
+  //   return (
+  //     <>
+  //       {pre}
+  //       {groupIcon}
+  //     </>
+  //   );
+  // },
 };
 
 const columnPinning: InfiniteTablePropColumnPinning = {
@@ -99,78 +136,35 @@ const columnPinning: InfiniteTablePropColumnPinning = {
 
 console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS);
 export default function RemotePivotExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
-    () => [
-      {
-        field: 'country',
-      },
-      // { field: 'city' },
-    ],
-    [],
-  );
-
-  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
-    () => [
-      // {
-      //   field: 'preferredLanguage',
-      //   // for totals columns
-      //   column: pivotColumnWithFormatter,
-      // },
-      // {
-      //   field: 'canDesign',
-      //   columnGroup: ({ columnGroup }) => {
-      //     return {
-      //       ...columnGroup,
-      //       header:
-      //         columnGroup.pivotGroupKey === 'yes'
-      //           ? 'Designer 💅'
-      //           : 'Non-Designer 💻',
-      //     };
-      //   },
-      //   column: pivotColumnWithFormatter,
-      // },
-    ],
-    [],
-  );
-
   const lazyLoad = React.useMemo(() => ({ batchSize: 5 }), []);
   return (
     <DataSource<Developer>
       primaryKey="id"
       data={dataSource}
-      groupBy={groupBy}
-      pivotBy={pivotBy.length ? pivotBy : undefined}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
       lazyLoad={lazyLoad}
     >
-      {({ pivotColumns, pivotColumnGroups }) => {
-        return (
-          <InfiniteTable<Developer>
-            domProps={domProps}
-            scrollStopDelay={10}
-            columnPinning={columnPinning}
-            columns={columns}
-            groupColumn={groupColumn}
-            groupRenderStrategy="single-column"
-            columnDefaultWidth={220}
-            pivotColumns={pivotColumns}
-            pivotColumnGroups={pivotColumnGroups}
-          />
-        );
-      }}
+      <InfiniteTable<Developer>
+        domProps={domProps}
+        scrollStopDelay={250}
+        columnPinning={columnPinning}
+        columns={columns}
+        groupColumn={groupColumn}
+        groupRenderStrategy="single-column"
+        columnDefaultWidth={220}
+      />
     </DataSource>
   );
 }
 
 const dataSource: DataSourceData<Developer> = ({
   pivotBy,
-  aggregationReducers,
-  groupBy,
 
   lazyLoadStartIndex,
   lazyLoadBatchSize,
-  groupKeys = [],
+
+  groupRowsState,
   sortInfo,
 }) => {
   if (sortInfo && !Array.isArray(sortInfo)) {
@@ -182,15 +176,16 @@ const dataSource: DataSourceData<Developer> = ({
     startLimit.push(`start=${start}`);
     startLimit.push(`limit=${lazyLoadBatchSize}`);
   }
+  console.log({ groupRowsState });
   const args = [
     ...startLimit,
     pivotBy
       ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
-    `groupKeys=${JSON.stringify(groupKeys)}`,
-    groupBy
-      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
-      : null,
+    // `groupKeys=${JSON.stringify(groupKeys)}`,
+    // groupBy
+    //   ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
+    //   : null,
     sortInfo
       ? 'sortInfo=' +
         JSON.stringify(
@@ -200,20 +195,32 @@ const dataSource: DataSourceData<Developer> = ({
           })),
         )
       : null,
-    aggregationReducers
-      ? 'reducers=' +
-        JSON.stringify(
-          Object.keys(aggregationReducers).map((key) => ({
-            field: aggregationReducers[key].field,
-            id: key,
-            name: aggregationReducers[key].reducer,
-          })),
-        )
+    groupRowsState
+      ? 'expandedRows=' + JSON.stringify(groupRowsState.expandedRows)
       : null,
+    // aggregationReducers
+    //   ? 'reducers=' +
+    //     JSON.stringify(
+    //       Object.keys(aggregationReducers).map((key) => ({
+    //         field: aggregationReducers[key].field,
+    //         id: key,
+    //         name: aggregationReducers[key].reducer,
+    //       })),
+    //     )
+    //   : null,
   ]
     .filter(Boolean)
     .join('&');
   return fetch(
     process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers30k-sql?` + args,
-  ).then((r) => r.json());
+  )
+    .then((r) => r.json())
+    .then(
+      (data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(data);
+          }, 1150);
+        }),
+    );
 };

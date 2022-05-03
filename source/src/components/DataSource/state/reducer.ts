@@ -43,6 +43,7 @@ function toRowInfo<T>(
     indexInAll: index,
     indexInGroup: index,
     isGroupRow: false,
+    selfLoaded: true,
   };
 }
 

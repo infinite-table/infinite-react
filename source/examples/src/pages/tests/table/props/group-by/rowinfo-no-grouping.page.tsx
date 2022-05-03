@@ -2,8 +2,6 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
-  DataSourceGroupBy,
-  InfiniteTableRowInfo,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 

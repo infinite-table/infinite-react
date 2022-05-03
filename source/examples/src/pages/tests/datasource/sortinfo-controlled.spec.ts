@@ -1,5 +1,6 @@
-import { persons } from './sortPersons';
 import { test, expect } from '@playwright/test';
+
+import { persons } from './sortPersons';
 
 export default test.describe.parallel('DataSource', () => {
   test.beforeEach(async ({ page }) => {
@@ -19,19 +20,21 @@ export default test.describe.parallel('DataSource', () => {
     expect(result).toEqual([
       {
         data: persons[0],
-        collapsed: true,
         id: persons[0].id,
         indexInAll: 0,
         indexInGroup: 0,
         isGroupRow: false,
+        selfLoaded: true,
+        dataSourceHasGrouping: false,
       },
       {
         data: persons[1],
-        collapsed: true,
         id: persons[1].id,
         indexInAll: 1,
         indexInGroup: 1,
         isGroupRow: false,
+        selfLoaded: true,
+        dataSourceHasGrouping: false,
       },
     ]);
 
@@ -51,18 +54,20 @@ export default test.describe.parallel('DataSource', () => {
       {
         data: persons[0],
         id: persons[0].id,
-        collapsed: true,
+        dataSourceHasGrouping: false,
         indexInAll: 0,
         indexInGroup: 0,
         isGroupRow: false,
+        selfLoaded: true,
       },
       {
-        collapsed: true,
+        dataSourceHasGrouping: false,
         data: persons[1],
         indexInAll: 1,
         indexInGroup: 1,
         id: persons[1].id,
         isGroupRow: false,
+        selfLoaded: true,
       },
     ]);
 

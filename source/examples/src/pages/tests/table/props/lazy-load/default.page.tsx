@@ -1,14 +1,10 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
-  GroupRowsState,
   DataSourceData,
-  InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -106,15 +102,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['labels', 'start'],
-]);
+// const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
+//   ['labels', 'start'],
+// ]);
 const domProps = { style: { height: '90vh' } };
 
-const groupRowsState = new GroupRowsState({
-  expandedRows: [],
-  collapsedRows: true,
-});
+// const groupRowsState = new GroupRowsState({
+//   expandedRows: [],
+//   collapsedRows: true,
+// });
 
 export default function RemotePivotExample() {
   // const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(

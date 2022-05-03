@@ -126,6 +126,7 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
    * The count of the direct children of the current group. Direct children can be either normal rows or groups.
    */
   directChildrenCount: number;
+
   directChildrenLoadedCount: number;
 
   /**
@@ -140,13 +141,13 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   /**
    * For non-lazy grouping, this is always true.
    * For lazy/batched grouping, this is true if the group has been expanded at least once (and if the remote call has been configured with cache: true),
-   * since if the remote call is not cached, collapsing the row group should lose all the data that was loaded for it, and it's as if it was never loaded, so in that case, childrenRequested is false.
+   * since if the remote call is not cached, collapsing the row group should lose all the data that was loaded for it, and it's as if it was never loaded, so in that case, childrenAvailable is false.
    *
    * NOTE: if this is true, it doesn't mean that (all or some of) the children have been loaded, it only means that at least some children have been requested.
    *
    * Use directChildrenCount and directChildrenLoadedCount to know if all the children have been loaded or not.
    */
-  childrenRequested: boolean;
+  childrenAvailable: boolean;
 
   /**
    * Boolean flag that will be true while lazy loading direct children of the current row group.
@@ -165,6 +166,7 @@ export type InfiniteTable_NoGrouping_RowInfoNormal<T> = {
   dataSourceHasGrouping: false;
   data: T;
   isGroupRow: false;
+  selfLoaded: boolean;
 } & InfiniteTable_RowInfoBase<T>;
 
 export type InfiniteTable_HasGrouping_RowInfoBase<T> = {
@@ -284,7 +286,7 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
   items: DataType[];
   commonData?: Partial<DataType>;
   childrenLoading: boolean;
-  childrenRequested: boolean;
+  childrenAvailable: boolean;
   cache: boolean;
   error?: string;
   reducerResults: Record<string, AggregationReducerResult>;
@@ -488,7 +490,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         if (current) {
           current.cache = lazyGroupRowInfo.cache;
           current.childrenLoading = lazyGroupRowInfo.childrenLoading;
-          current.childrenRequested = lazyGroupRowInfo.childrenRequested;
+          current.childrenAvailable = lazyGroupRowInfo.childrenAvailable;
           current.error = lazyGroupRowInfo.error;
         }
       }
@@ -501,7 +503,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             reducerResults: {},
             cache: false,
             childrenLoading: false,
-            childrenRequested: false,
+            childrenAvailable: false,
           };
           deepMap.set(
             [
@@ -526,7 +528,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           items: [],
           cache: false,
           childrenLoading: false,
-          childrenRequested: false,
+          childrenAvailable: false,
           commonData: dataObject,
           reducerResults: dataArray[i].aggregations || {},
         };
@@ -668,7 +670,7 @@ export function group<DataType, KeyType = any>(
       items: [],
       cache: false,
       childrenLoading: false,
-      childrenRequested: false,
+      childrenAvailable: false,
       reducerResults: { ...initialReducerValue },
     };
 
@@ -699,7 +701,7 @@ export function group<DataType, KeyType = any>(
           items: [],
           cache: false,
           childrenLoading: false,
-          childrenRequested: false,
+          childrenAvailable: false,
           reducerResults: { ...initialReducerValue },
         };
         if (pivot) {
@@ -822,7 +824,7 @@ type GetEnhancedGroupDataOptions<DataType> = {
   indexInGroup: number;
   indexInAll: number;
   childrenLoading: boolean;
-  childrenRequested: boolean;
+  childrenAvailable: boolean;
   directChildrenCount: number;
   directChildrenLoadedCount: number;
   reducers: Record<string, DataSourceAggregationReducer<DataType, any>>;
@@ -882,8 +884,8 @@ function getEnhancedGroupData<DataType>(
     deepRowInfoArray: [],
     collapsedChildrenCount: 0,
     collapsedGroupsCount: 0,
-    // childrenRequested: collapsed ? (!lazyLoad ? false : cacheExists) : true,
-    childrenRequested: lazyLoad ? options.childrenRequested : true,
+    // childrenAvailable: collapsed ? (!lazyLoad ? false : cacheExists) : true,
+    childrenAvailable: lazyLoad ? options.childrenAvailable : true,
     childrenLoading: options.childrenLoading,
     indexInParentGroups: options.indexInParentGroups,
     indexInGroup: options.indexInGroup,
@@ -978,7 +980,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
             indexInAll: result.length,
             groupKeys,
             childrenLoading: deepMapValue.childrenLoading,
-            childrenRequested: deepMapValue.childrenRequested,
+            childrenAvailable: deepMapValue.childrenAvailable,
             directChildrenCount:
               groupKeys.length === groupByStrings.length
                 ? deepMapValue.items.length

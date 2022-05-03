@@ -18,34 +18,64 @@ export default test.describe.parallel(
   'Server-side batched grouping with pinned group column.',
   () => {
     test('should work and lazily load data', async ({ page }) => {
-      const condition = (response: Response) =>
-        response.url().includes('developers') && response.status() === 200;
+      const responses: string[] = [];
+
+      const condition = (response: Response) => {
+        const ok =
+          response.url().includes('developers') && response.status() === 200;
+
+        if (ok) {
+          return response.json().then((resp) => {
+            responses.push(...resp.data.map((d: any) => d.data.country));
+            responses.push('-');
+
+            return ok;
+          });
+        }
+
+        return ok;
+      };
 
       await page.waitForResponse(condition);
 
-      let cells = await getColumnContents('group-col', { page });
-
-      const firstBatch = [
+      expect(responses).toEqual([
         'Argentina',
         'Australia',
         'Brazil',
         'Canada',
         'China',
-      ];
-
-      expect(cells.filter(Boolean)).toEqual(firstBatch);
+        '-',
+      ]);
 
       await page.waitForResponse(condition);
 
-      cells = await getColumnContents('group-col', { page });
+      const cells = await getColumnContents('group-col', { page });
 
       expect(cells.slice(0, 10).filter(Boolean)).toEqual([
-        ...firstBatch,
+        'Argentina',
+        'Australia',
+        'Brazil',
+        'Canada',
+        'China',
         'France',
         'Germany',
         'India',
         'Indonesia',
         'Italy',
+      ]);
+      expect(responses).toEqual([
+        'Argentina',
+        'Australia',
+        'Brazil',
+        'Canada',
+        'China',
+        '-',
+        'France',
+        'Germany',
+        'India',
+        'Indonesia',
+        'Italy',
+        '-',
       ]);
     });
   },

@@ -18,6 +18,7 @@ export default test.describe.parallel('Table', () => {
   test('row height is correct and changed accordingly with controlled prop', async ({
     page,
   }) => {
+    await page.waitForInfinite();
     expect(await getRowHeight(0, { page })).toEqual(40);
     expect(await getRowHeight(1, { page })).toEqual(40);
 

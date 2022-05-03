@@ -1,11 +1,11 @@
-import * as React from 'react';
-
 import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSource,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+
 import { data, Person } from './people';
 
 const columns = new Map<string, InfiniteTableColumn<Person>>([
@@ -18,12 +18,17 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
         return (
           <div
             style={{
-              paddingLeft:
-                ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
-                30,
+              paddingLeft: rowInfo.isGroupRow
+                ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
+                  30
+                : 0,
             }}
           >
-            {rowInfo.groupKeys ? rowInfo.value : value ?? null}
+            {rowInfo.isGroupRow
+              ? rowInfo.groupKeys
+                ? rowInfo.value
+                : value ?? null
+              : null}
           </div>
         );
       },

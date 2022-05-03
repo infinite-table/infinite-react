@@ -37,7 +37,6 @@ function getColumnContentMaxWidths(
   const computedPaddingsForColumns: Record<string, number> = {};
 
   if (match && match.length) {
-    console.log(match);
     match.forEach((content) => {
       const cell = content.parentElement!;
       const isHeader = cell.matches(`.${InfiniteTableHeaderCellClassName}`);

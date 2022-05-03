@@ -160,7 +160,7 @@ export type LazyRowInfoGroup<DataType> = {
    */
   children: LazyGroupDataItem<DataType>[];
   childrenLoading: boolean;
-  childrenRequested: boolean;
+  childrenAvailable: boolean;
   cache: boolean;
   totalCount: number;
   error?: string;

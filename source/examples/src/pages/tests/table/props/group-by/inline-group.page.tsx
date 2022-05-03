@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -12,8 +10,10 @@ import {
   InfiniteTableColumnSizingOptions,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
-import { Person, data } from './pivotData';
+import * as React from 'react';
 import { useState } from 'react';
+
+import { Person, data } from './pivotData';
 
 const domProps = {
   style: {
@@ -92,6 +92,9 @@ export default function GroupByExample() {
           valueGetter:
             groupRenderStrategy === 'inline'
               ? ({ rowInfo }) => {
+                  if (!rowInfo.isGroupRow) {
+                    return null;
+                  }
                   const { groupBy, parents } = rowInfo;
 
                   const groupData =

@@ -134,7 +134,7 @@ export function loadData<T>(
         error: undefined,
         children: [],
         childrenLoading: true,
-        childrenRequested: false,
+        childrenAvailable: false,
         cache: CACHE_DEFAULT,
         totalCount: 0,
       });
@@ -197,7 +197,7 @@ export function loadData<T>(
           const newGroupRowInfo: LazyRowInfoGroup<T> = {
             cache: !!remoteData.cache ?? CACHE_DEFAULT,
             childrenLoading: false,
-            childrenRequested: true,
+            childrenAvailable: true,
             totalCount: remoteData.totalCount ?? dataArray.length,
             children: dataArray,
           };
@@ -214,7 +214,7 @@ export function loadData<T>(
               existingGroupRowInfo ??
               ({
                 children: [],
-                childrenRequested: true,
+                childrenAvailable: true,
                 childrenLoading: false,
                 totalCount: newGroupRowInfo.totalCount,
                 cache: newGroupRowInfo.cache! ?? CACHE_DEFAULT,
@@ -228,7 +228,7 @@ export function loadData<T>(
               existingGroupRowInfo.cache = newGroupRowInfo.cache!;
               existingGroupRowInfo.totalCount = newGroupRowInfo.totalCount;
               existingGroupRowInfo.childrenLoading = false;
-              existingGroupRowInfo.childrenRequested = true;
+              existingGroupRowInfo.childrenAvailable = true;
               existingGroupRowInfo.error = newGroupRowInfo.error;
             }
 
@@ -584,9 +584,9 @@ function lazyLoadRange<T>(
     // if (
     //   rowInfo.isGroupRow &&
     //   rowInfo.dataSourceHasGrouping &&
-    //   !rowInfo.collapsed && rowInfo.childrenRequested
+    //   !rowInfo.collapsed && rowInfo.childrenAvailable
     // ) {
-    //   return rowInfo.childrenRequested;
+    //   return rowInfo.childrenAvailable;
     // }
 
     return rowInfo.data != null;
@@ -630,7 +630,7 @@ function lazyLoadRange<T>(
     if (
       rowInfo.isGroupRow &&
       !rowInfo.collapsed &&
-      !rowInfo.childrenRequested
+      !rowInfo.childrenAvailable
     ) {
       // we might have expanded groups that have never been loaded
       // so we need to try load them as well - not their batch in the parent group
