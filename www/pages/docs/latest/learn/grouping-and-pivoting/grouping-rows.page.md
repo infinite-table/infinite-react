@@ -324,3 +324,60 @@ You know when to serve last-level rows, because in that case, the length of the 
 ```ts file=server-side-grouping-with-lazy-load-example.page.tsx
 ```
 </Sandpack>
+
+## Eager loading for group row nodes
+
+When using lazy-loading together with batching, node data (without children) is loaded when a node (normal or grouped) comes into view. Only when a group node is expanded will its children be loaded. However, you can do this loading eagerly, by using the `dataset` property on the node you want to load.
+
+<Note>
+
+This can be useful in combination with using `dataParams.groupRowsState` from the <DataSourcePropLink name="data"/> function - so your datasource can know which groups are expanded, and thus it can serve those groups already loaded with children.
+
+</Note>
+
+
+```tsx {18}
+//request:
+groupKeys: [] // empty keys array, so it's a top-level group
+groupBy: [{"field":"country"},{"field":"city"}]
+reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
+// lazyLoadStartIndex: 0, - passed if lazyLoad is configured with a batchSize
+// lazyLoadBatchSize: 20 - passed if lazyLoad is configured with a batchSize
+
+//response
+{
+  cache: true,
+  totalCount: 20,
+  data: [
+    {
+      data: {country: "Argentina"},
+      aggregations: {avgSalary: 20000, avgAge: 30},
+      keys: ["Argentina"],
+      // NOTE this dataset property used for eager-loading of group nodes
+      dataset: {
+        // the shape of the dataset is the same as the one normally returned by the datasource
+        cache: true,
+        totalCount: 4,
+        data: [
+          {
+            data: {country: "Argentina", city: "Buenos Aires"},
+            aggregations: {avgSalary: 20000, avgAge: 30},
+            keys: ["Argentina", "Buenos Aires"],
+          },
+          {
+            data: {country: "Argentina", city: "Cordoba"},
+            aggregations: {avgSalary: 25000, avgAge: 35},
+            keys: ["Argentina", "Cordoba"],
+          },
+        ]
+      }
+    },
+    {
+      data: {country: "Australia"},
+      aggregations: {avgSalary: 25000, avgAge: 35},
+      keys: ["Australia"],
+    }
+    //...
+  ]
+}
+```
