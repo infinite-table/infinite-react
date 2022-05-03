@@ -51,7 +51,6 @@ const defaultGroupBy: DataSourceGroupBy<Developer>[] = [
     field: 'country',
     column: {
       rowspan: ({ rowInfo }) => {
-        
         const rowspan =
           rowInfo.isGroupRow &&
           rowInfo.groupNesting === 3 &&

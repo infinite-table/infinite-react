@@ -624,6 +624,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       colIndex,
     );
 
+    const hidden = !!covered;
+
     const renderedNode = renderCell({
       rowIndex,
       colIndex,
@@ -633,7 +635,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       colspan,
       rowFixed,
       colFixed,
-      hidden: !!covered,
+      hidden,
       heightWithRowspan,
       widthWithColspan,
       onMouseEnter: this.onMouseEnter.bind(null, rowIndex),
@@ -668,7 +670,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     // console.log('update', rowIndex, colIndex, renderedNode);
     itemUpdater(renderedNode);
 
-    this.updateElementPosition(elementIndex);
+    this.updateElementPosition(elementIndex, { hidden, rowspan, colspan });
     return;
   }
 
@@ -738,7 +740,10 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private updateElementPosition = (elementIndex: number) => {
+  private updateElementPosition = (
+    elementIndex: number,
+    options?: { hidden: boolean; rowspan: number; colspan: number },
+  ) => {
     const itemElement = this.itemDOMElements[elementIndex];
     const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
 
@@ -767,6 +772,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       if (__DEV__) {
         // (itemElement.dataset as any).elementIndex = elementIndex;
         (itemElement.dataset as any).rowIndex = rowIndex;
+
         (itemElement.dataset as any).colIndex = colIndex;
       }
 
@@ -777,7 +783,10 @@ export class ReactHeadlessTableRenderer extends Logger {
         // need to set it to auto
         // in case some fixed cells are reused
         // as the fixed cells had a zIndex
-        itemElement.style.zIndex = 'auto';
+        const hidden = options
+          ? options.hidden
+          : !!this.isCellCovered(rowIndex, colIndex);
+        itemElement.style.zIndex = hidden ? '-1' : 'auto';
       } else {
         itemElement.style.display = '';
         itemElement.style.left = `${x}px`;

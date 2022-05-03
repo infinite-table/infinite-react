@@ -18,6 +18,9 @@ export function useColumnRowspan<T>(
       ? ({ rowIndex, colIndex }) => {
           const dataArray = getDataSourceState().dataArray;
           const rowInfo = dataArray[rowIndex];
+          if (!rowInfo) {
+            return 1;
+          }
           const data = rowInfo.data;
 
           const column = computedVisibleColumns[colIndex];
