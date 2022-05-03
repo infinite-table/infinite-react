@@ -7,6 +7,7 @@ layout: Home
 
 @milestone id="26"
 
+Rename `rowInfo.flatRowInfoArray` to `rowInfo.deepRowInfoArray`
 
 ## 0.3.0 🚀 
 

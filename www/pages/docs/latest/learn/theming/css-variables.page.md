@@ -360,14 +360,14 @@ Overriden in the `dark` theme - eg: `1px solid #2a323d`
 --infinite-cell-border-radius
 ```
 
-### Row color
+### Cell color
 
 Text color inside rows. Defaults to `currentColor`
 
 Overriden in `dark` theme.
 
 ```css
---infinite-row-color
+--infinite-cell-color
 ```
 
 ### Row background

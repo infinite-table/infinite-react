@@ -51,11 +51,12 @@ const defaultGroupBy: DataSourceGroupBy<Developer>[] = [
     field: 'country',
     column: {
       rowspan: ({ rowInfo }) => {
+        
         const rowspan =
           rowInfo.isGroupRow &&
           rowInfo.groupNesting === 3 &&
           !rowInfo.collapsed
-            ? (rowInfo.flatRowInfoList?.length || 0) + 1
+            ? (rowInfo.deepRowInfoArray?.length || 0) + 1
             : 1;
 
         return rowspan;

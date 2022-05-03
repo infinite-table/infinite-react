@@ -70,6 +70,9 @@ const groupColumn = {
     value,
     rowInfo,
   }: InfiniteTableColumnRenderValueParam<Developer>) => {
+    if (!rowInfo.isGroupRow) {
+      return value
+    }
     const groupBy = rowInfo.groupBy || [];
     const collapsed = rowInfo.collapsed;
     const groupField = groupBy[groupBy.length - 1];
