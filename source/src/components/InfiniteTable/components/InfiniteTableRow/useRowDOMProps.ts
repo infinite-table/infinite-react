@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {
   CSSProperties,
   MutableRefObject,
@@ -7,17 +8,17 @@ import {
 } from 'react';
 
 import { join } from '../../../../utils/join';
+import { stripVar } from '../../../../utils/stripVar';
+import { ThemeVars } from '../../theme.css';
+import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
+import { InfiniteTableState } from '../../types/InfiniteTableState';
+
 import {
   InfiniteTableRowClassName,
   InfiniteTableRowClassName__hover,
 } from './InfiniteTableRowClassName';
-
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';
-import { InfiniteTableState } from '../../types/InfiniteTableState';
-import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 import { RowClsRecipe, RowHoverCls } from './row.css';
-import { ThemeVars } from '../../theme.css';
-import { stripVar } from '../../../../utils/stripVar';
 
 export type TableRowHTMLAttributes = React.HTMLAttributes<HTMLDivElement> & {
   'data-virtualize-columns': 'on' | 'off';
@@ -62,7 +63,6 @@ export function useRowDOMProps<T>(
   const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
     ...rest,
     rowIndex,
-    groupBy: rowInfo.groupBy,
   };
 
   if (typeof rowProps === 'function') {
@@ -90,7 +90,7 @@ export function useRowDOMProps<T>(
   const odd =
     (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
 
-  let rowComputedClassName =
+  const rowComputedClassName =
     typeof rowClassName === 'function'
       ? rowClassName(rowPropsAndStyleArgs)
       : rowClassName;

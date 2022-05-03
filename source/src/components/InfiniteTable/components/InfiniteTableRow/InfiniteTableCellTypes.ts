@@ -1,11 +1,13 @@
 import { CSSProperties } from 'react';
-import { InfiniteTableComputedColumn } from '../..';
 
+import { InfiniteTableComputedColumn } from '../..';
 import { Renderable } from '../../../types/Renderable';
 import { OnResizeFn } from '../../../types/Size';
 import {
   InfiniteTableRowInfo,
   InfiniteTablePropGroupRenderStrategy,
+  InfiniteTablePropRowStyle,
+  InfiniteTablePropRowClassName,
 } from '../../types';
 import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
@@ -45,6 +47,8 @@ export interface InfiniteTableColumnCellProps<T>
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndex: number;
   rowHeight: number;
+  rowStyle: InfiniteTablePropRowStyle<T>;
+  rowClassName: InfiniteTablePropRowClassName<T>;
 }
 
 export interface InfiniteTableHeaderCellProps<T>

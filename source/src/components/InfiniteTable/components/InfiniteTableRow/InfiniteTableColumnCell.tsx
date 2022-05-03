@@ -13,6 +13,7 @@ import type {
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
 } from '../../types/InfiniteTableColumn';
+import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 import { RenderHookComponent } from '../../utils/RenderHookComponent';
 import { ColumnCellRecipe } from '../cell.css';
 
@@ -42,6 +43,8 @@ function isColumnWithField<T>(
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     rowInfo,
+    rowStyle,
+    rowClassName,
     // getData,
     width,
     column,
@@ -106,17 +109,18 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const rest = rowInfo.isGroupRow
     ? {
         rowInfo,
+        isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
       }
     : {
         rowInfo,
+        isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
       };
 
   const stylingRenderParam = {
     value,
     column,
-    isGroupRow,
     ...rest,
   } as InfiniteTableColumnStyleFnParams<T>;
 
@@ -127,8 +131,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     column,
     domRef,
     groupRowInfo,
-    isGroupRow,
     ...rest,
+    isGroupRow,
     rowIndex,
     toggleGroupRow,
     toggleCurrentGroupRow: () => {
@@ -156,17 +160,36 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return renderValue;
   };
 
+  const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
+    ...rest,
+    rowIndex,
+  };
+
+  const rowComputedClassName =
+    typeof rowClassName === 'function'
+      ? rowClassName(rowPropsAndStyleArgs)
+      : rowClassName;
+
   const colClassName: undefined | string = column.className
     ? typeof column.className === 'function'
       ? column.className(stylingRenderParam)
       : column.className
     : undefined;
 
-  const style: React.CSSProperties = column.style
+  let style: React.CSSProperties | undefined;
+
+  if (rowStyle) {
+    style =
+      typeof rowStyle === 'function'
+        ? { ...style, ...rowStyle(rowPropsAndStyleArgs) }
+        : { ...style, ...rowStyle };
+  }
+
+  style = column.style
     ? typeof column.style === 'function'
-      ? column.style(stylingRenderParam) || {}
-      : { ...column.style }
-    : {};
+      ? { ...style, ...(column.style(stylingRenderParam) || {}) }
+      : { ...style, ...column.style }
+    : style || {};
 
   style.width = width;
   style.height = rowHeight;
@@ -196,6 +219,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         { dragging: false, zebra },
       ),
       colClassName,
+      rowComputedClassName,
     ),
     renderChildren,
   };

@@ -58,7 +58,6 @@ export type InfiniteTablePropColumnPinning =
 
 export type InfiniteTableRowStyleFnParams<T> = {
   rowIndex: number;
-  groupBy?: (keyof T)[];
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 export type InfiniteTableRowStyleFn<T> = (
   params: InfiniteTableRowStyleFnParams<T>,

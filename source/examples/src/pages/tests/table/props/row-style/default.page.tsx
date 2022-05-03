@@ -1,7 +1,3 @@
-import * as React from 'react';
-
-import classNames from './row-style.module.css';
-
 import {
   InfiniteTableColumn,
   InfiniteTable,
@@ -10,6 +6,10 @@ import {
   InfiniteTablePropColumnPinning,
   InfiniteTablePropRowClassName,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+
+import classNames from './row-style.module.css';
+
 // import { employees } from './employees10';
 
 type Employee = {
@@ -141,9 +141,8 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({ data }) => {
   const salary = data?.salary ?? 0;
 
   if (salary > 150000) {
-    return { background: 'tomato' };
+    return { background: 'tomato', color: 'blue' };
   }
-  return;
 };
 const rowClassName: InfiniteTablePropRowClassName<Employee> = ({ data }) => {
   const salary = data?.salary ?? 0;

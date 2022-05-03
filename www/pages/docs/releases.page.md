@@ -2,6 +2,16 @@
 title: Releases
 layout: Home
 ---
+
+
+## 0.3.1 🚀 
+
+@milestone id="26"
+
+## 0.3.0 🚀 
+
+@milestone id="25"
+
 ## 0.3.0-canary.0 🚀 
 
 New virtualization engine implemented for better performance.

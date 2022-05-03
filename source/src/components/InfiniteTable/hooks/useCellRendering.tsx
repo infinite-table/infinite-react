@@ -67,6 +67,8 @@ export function useCellRendering<T>(
     groupRenderStrategy,
     brain,
     showZebraRows,
+    rowStyle,
+    rowClassName,
     onScrollToTop,
     onScrollToBottom,
     scrollToBottomOffset,
@@ -194,6 +196,8 @@ export function useCellRendering<T>(
         domRef,
         width,
         column,
+        rowStyle,
+        rowClassName,
       };
 
       return <InfiniteTableColumnCell<T> {...cellProps} />;
@@ -206,6 +210,8 @@ export function useCellRendering<T>(
       toggleGroupRow,
       showZebraRows,
       repaintId,
+      rowStyle,
+      rowClassName,
     ],
   );
 
