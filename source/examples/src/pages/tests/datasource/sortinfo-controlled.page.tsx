@@ -1,10 +1,9 @@
-import * as React from 'react';
-
 import {
   DataSource,
   DataSourceSortInfo,
   useDataSource,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { Person, persons } from './sortPersons';
 const Cmp = () => {
