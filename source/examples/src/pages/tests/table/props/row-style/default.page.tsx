@@ -143,6 +143,7 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({ data }) => {
   if (salary > 150000) {
     return { background: 'tomato', color: 'blue' };
   }
+  return;
 };
 const rowClassName: InfiniteTablePropRowClassName<Employee> = ({ data }) => {
   const salary = data?.salary ?? 0;
