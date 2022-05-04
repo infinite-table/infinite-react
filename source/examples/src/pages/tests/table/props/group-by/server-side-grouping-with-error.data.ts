@@ -75,10 +75,7 @@ export const data = [
 ] as Developer[];
 
 function getDataSource(cached: boolean) {
-  const dataSource: DataSourceData<Developer> = ({
-    groupBy,
-    groupKeys = [],
-  }) => {
+  const dataSource: DataSourceData<Developer> = ({ groupKeys = [] }) => {
     if (groupKeys.length === 0) {
       return Promise.resolve({
         cache: cached,

@@ -15,6 +15,13 @@ import { InfiniteTableColumn } from '@infinite-table/infinite-react'
 Note that it's a generic type, so when you use it, you have to bind it to your `DATA_TYPE` (the type of your data object).
 </Note>
 
+<Note>
+
+When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local/transient state.
+
+This is important because `InfiniteTable` uses virtualization heavily, in both *column cells and column headers*, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+</Note>
+
 ## Change the value using `valueGetter`
 
 The simplest way to change what's being rendered in a column is to use the `valueGetter` prop and return a new value for the column.
