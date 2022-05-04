@@ -7,6 +7,7 @@ export default test.describe.parallel(
   () => {
     test('should display all cols', async ({ page }) => {
       await page.waitForInfinite();
+      await page.waitForTimeout(50);
       const colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([
@@ -23,6 +24,7 @@ export default test.describe.parallel(
       page,
     }) => {
       await page.waitForInfinite();
+      await page.waitForTimeout(50);
 
       let colIds = await getHeaderColumnIds({ page });
 

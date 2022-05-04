@@ -7,6 +7,7 @@ export default test.describe.parallel(
   () => {
     test('should display all columns', async ({ page }) => {
       await page.waitForInfinite();
+      await page.waitForTimeout(50);
       const colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual(Array.from(columns.keys()));
