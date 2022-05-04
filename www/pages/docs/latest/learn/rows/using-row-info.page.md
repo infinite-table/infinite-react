@@ -106,7 +106,7 @@ Example: People grouped by country and city
 * `directChildrenLoadedCount` - type: `number`. Like `directChildrenCount`, but only counts the rows that are loaded (when batched lazy loading is configured).
 * `childrenAvailable` - type: `boolean`. For lazy/batched grouping, this is true if the group has been expanded at least once. NOTE: if this is true, it doesn't mean that all the children have been loaded, it only means that at least some children have been loaded and are available. Use `directChildrenCount` and `directChildrenLoadedCount` to know if all the children have been loaded or not.
 * `childrenLoading` - type: `boolean`. Boolean flag that will be true while lazy loading direct children of the current row group. Use `directChildrenLoadedCount` and `directChildrenCount` to know if all the children have been loaded or not.
-* `groupKeys` - type: `any[]`, but usually it's actually `string[]`. For normal rows, the group keys will have all the keys starting from the topmost parent down to the last group row in the hierarchy (the direct parent of the current row).
+* `groupKeys` - type: `any[]`, but usually it's actually `string[]`. For group rows, the group keys will have all the keys starting from the topmost parent down to the current group row (key for current group row is included).
 * `groupBy` - type `(keyof T)[]`. Has the same structure as groupKeys, but it will contain the fields used to group the rows.
 * `rootGroupBy` - type `(keyof T)[]`. The groupBy value of the DataSource component, mapped to the `groupBy.field`
 * `groupCount` - type: `number`. The count of leaf rows that the current group (in this case, the parent group) contains

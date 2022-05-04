@@ -3,7 +3,7 @@ export function assignFiltered(
   target: any,
   ...rest: any[]
 ) {
-  let result = target;
+  const result = target;
 
   rest.forEach((obj) => {
     for (const key in obj) {
@@ -18,4 +18,12 @@ export function assignFiltered(
 
 export function assignNonNull(target: any, ...rest: any[]) {
   return assignFiltered((value) => value != null, target, ...rest);
+}
+
+export function assignExcept(
+  exceptKeys: Record<string, boolean>,
+  target: any,
+  ...rest: any[]
+) {
+  return assignFiltered((_value, key) => !(key in exceptKeys), target, ...rest);
 }

@@ -98,6 +98,8 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
     | InfiniteTable_HasGrouping_RowInfoGroup<T>
   )[];
 
+  error?: string;
+
   reducerResults?: Record<string, AggregationReducerResult>;
 
   /**
@@ -516,11 +518,15 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         }
         const dataObject = dataArray[i].data;
         const dataKeys = dataArray[i].keys;
-        const item = dataObject as Partial<DataType>;
+        // const item = dataObject as Partial<DataType>;
 
         if (dataKeys.length) {
-          const { field: groupByProperty } = groupBy[dataKeys.length - 1];
-          const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
+          // const { field: groupByProperty } = groupBy[dataKeys.length - 1];
+          // const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
+
+          // we need to take the key that comes from the server, and not from the property
+          // although they should be probably be the same
+          const key = dataKeys[dataKeys.length - 1];
           currentGroupKeys.push(key);
         }
 
@@ -819,6 +825,7 @@ type GetEnhancedGroupDataOptions<DataType> = {
   groupKeys: any[];
   groupBy: (keyof DataType)[];
   collapsed: boolean;
+  error?: string;
   parents: InfiniteTable_HasGrouping_RowInfoGroup<DataType>[];
   indexInParentGroups: number[];
   indexInGroup: number;
@@ -845,10 +852,10 @@ function getEnhancedGroupData<DataType>(
     commonData,
   } = deepMapValue;
 
-  let data = null as Partial<DataType> | null;
+  let data = commonData ?? (null as Partial<DataType> | null);
 
   if (Object.keys(reducerResults).length > 0) {
-    data = commonData || ({} as Partial<DataType>);
+    data = { ...commonData } as Partial<DataType>;
     for (const key in reducers)
       if (reducers.hasOwnProperty(key)) {
         const reducer = reducers[key];
@@ -861,7 +868,13 @@ function getEnhancedGroupData<DataType>(
   }
 
   let selfLoaded = true;
-  let theValue = groupKeys[groupKeys.length - 1];
+
+  let theValue =
+    // if there is a value for the current groupBy in the data object, use it
+    (data != null ? data[groupBy[groupKeys.length - 1]] : null) ??
+    // otherwise just use the group key
+    groupKeys[groupKeys.length - 1];
+
   if (
     typeof theValue === 'string' &&
     theValue.startsWith(NOT_LOADED_YET_KEY_PREFIX)
@@ -879,6 +892,7 @@ function getEnhancedGroupData<DataType>(
     collapsed,
     dataSourceHasGrouping: true,
     selfLoaded,
+    error: options.error,
 
     parents,
     deepRowInfoArray: [],
@@ -965,8 +979,6 @@ export function enhancedFlatten<DataType, KeyType = any>(
       const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
 
       indexInParentGroups.push(indexInGroup);
-      // partially TRUE when at least one item has data
-      // completely TRUE when at all item has data
 
       const enhancedGroupData: InfiniteTable_HasGrouping_RowInfoGroup<DataType> =
         getEnhancedGroupData(
@@ -979,6 +991,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
             indexInParentGroups: Array.from(indexInParentGroups),
             indexInAll: result.length,
             groupKeys,
+            error: deepMapValue.error,
             childrenLoading: deepMapValue.childrenLoading,
             childrenAvailable: deepMapValue.childrenAvailable,
             directChildrenCount:

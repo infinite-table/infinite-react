@@ -7,6 +7,7 @@ import { useComponentState } from '../../hooks/useComponentState';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 import { Scrollbars } from '../../InfiniteTable';
+import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { debounce } from '../../utils/debounce';
 import { RenderRange } from '../../VirtualBrain';
 import {
@@ -200,6 +201,7 @@ export function loadData<T>(
             childrenAvailable: true,
             totalCount: remoteData.totalCount ?? dataArray.length,
             children: dataArray,
+            error: remoteData.error,
           };
 
           const childDatasets: {
@@ -209,27 +211,22 @@ export function loadData<T>(
 
           if (dataParams.lazyLoadBatchSize && !parentKeys) {
             const existingGroupRowInfo = lazyGroupData.get(theKey);
+            const isGroupNew = !existingGroupRowInfo;
 
-            const currentGroupRowInfo =
-              existingGroupRowInfo ??
-              ({
-                children: [],
-                childrenAvailable: true,
-                childrenLoading: false,
-                totalCount: newGroupRowInfo.totalCount,
-                cache: newGroupRowInfo.cache! ?? CACHE_DEFAULT,
-              } as LazyRowInfoGroup<T>);
+            // make sure we update the existing info with what we received from the server
+            // because the existing one was probably created artificially
+            // even before the initial response is received - see #creategroupdatabeforeload
+            // so the totalCount was not set correctly
+            const currentGroupRowInfo = assignExcept(
+              {
+                children: true,
+              },
+              existingGroupRowInfo || {},
+              newGroupRowInfo,
+            );
 
-            if (existingGroupRowInfo) {
-              // make sure we update the existing info with what we received from the server
-              // because the existing one was probably created artificially
-              // even before the initial response is received - see #creategroupdatabeforeload
-              // so the totalCount was not set correctly
-              existingGroupRowInfo.cache = newGroupRowInfo.cache!;
-              existingGroupRowInfo.totalCount = newGroupRowInfo.totalCount;
-              existingGroupRowInfo.childrenLoading = false;
-              existingGroupRowInfo.childrenAvailable = true;
-              existingGroupRowInfo.error = newGroupRowInfo.error;
+            if (isGroupNew) {
+              currentGroupRowInfo.chidren = [];
             }
 
             currentGroupRowInfo.children.length =
@@ -255,13 +252,13 @@ export function loadData<T>(
                 });
               }
             }
-            if (!existingGroupRowInfo) {
+            if (isGroupNew) {
               lazyGroupData.set(theKey, currentGroupRowInfo);
             }
           } else {
             if (parentKeys) {
               newGroupRowInfo.children.forEach((child) => {
-                if (child.dataset) {
+                if (child && child.dataset) {
                   childDatasets.push({
                     keys: child.keys,
                     dataset: child.dataset,

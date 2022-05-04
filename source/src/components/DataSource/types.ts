@@ -75,6 +75,7 @@ export type DataSourceRemoteData<T> = {
   data: T[] | LazyGroupDataItem<T>[];
   mappings?: DataSourceMappings;
   cache?: boolean;
+  error?: string;
   totalCount?: number;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
