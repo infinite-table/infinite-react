@@ -23,6 +23,7 @@ export default test.describe.parallel(
       page,
     }) => {
       await page.waitForInfinite();
+
       let colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual([
