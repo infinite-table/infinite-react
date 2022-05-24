@@ -1,5 +1,5 @@
-import { OnScrollFn } from '@src/components/types/ScrollPosition';
 import { test, expect } from '@playwright/test';
+import { OnScrollFn } from '@src/components/types/ScrollPosition';
 import {
   OnRenderRangeChangeFn,
   VirtualBrain,
@@ -13,7 +13,7 @@ export default test.describe.parallel('VirtualBrain', () => {
   test.beforeEach(() => {
     globalThis.__DEV__ = true;
   });
-  test('should correctly trigger onRenderCountChange and onRenderRange change when scrolling and chainging available size', async ({
+  test('should correctly trigger onRenderCountChange and onRenderRange change when scrolling and changing available size', async ({
     page,
   }) => {
     const brain = new VirtualBrain({

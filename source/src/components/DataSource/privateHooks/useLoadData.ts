@@ -46,6 +46,7 @@ export function buildDataSourceDataParams<T>(
     sortInfo,
     groupBy: componentState.groupBy,
     pivotBy: componentState.pivotBy,
+    filterValue: componentState.filterValue,
     aggregationReducers: componentState.aggregationReducers,
   };
 
@@ -71,6 +72,17 @@ export function buildDataSourceDataParams<T>(
 
   if (overrides) {
     Object.assign(dataSourceParams, overrides);
+  }
+
+  if (dataSourceParams.filterValue && dataSourceParams.filterValue.length) {
+    dataSourceParams.filterValue = dataSourceParams.filterValue.map((f) => {
+      const value = { ...f };
+      // delete it as it's not serializable
+      // and we want to make it easier for developers to send this filterValue
+      // as is on the server
+      delete value.valueGetter;
+      return value;
+    });
   }
 
   const changes: DataSourceDataParamsChanges<T> = {};
@@ -108,6 +120,14 @@ export function loadData<T>(
     const key = [LAZY_ROOT_KEY_FOR_GROUPS, ...(dataParams.groupKeys || [])];
     const existingGroupRowInfo = lazyGroupData.get(key);
 
+    if (!existingGroupRowInfo) {
+      const groupCacheKeys = [
+        ...(dataParams.groupKeys || []),
+        dataParams.lazyLoadStartIndex,
+      ];
+      componentState.lazyLoadCacheOfLoadedBatches.set(groupCacheKeys, true);
+    }
+
     if (existingGroupRowInfo && existingGroupRowInfo.cache && key.length > 1) {
       const items = existingGroupRowInfo.children;
       const len = items.length;
@@ -138,6 +158,7 @@ export function loadData<T>(
         childrenAvailable: false,
         cache: CACHE_DEFAULT,
         totalCount: 0,
+        totalCountUnfiltered: 0,
       });
     }
     actions.originalLazyGroupDataChangeDetect = getChangeDetect();
@@ -170,6 +191,9 @@ export function loadData<T>(
       if (remoteData.mappings) {
         actions.pivotMappings = remoteData.mappings;
       }
+      if (remoteData.totalCountUnfiltered) {
+        actions.unfilteredCount = remoteData.totalCountUnfiltered;
+      }
 
       if (componentState.lazyLoad) {
         // #staleLazyGroupData
@@ -200,6 +224,7 @@ export function loadData<T>(
             childrenLoading: false,
             childrenAvailable: true,
             totalCount: remoteData.totalCount ?? dataArray.length,
+            totalCountUnfiltered: remoteData.totalCount ?? dataArray.length,
             children: dataArray,
             error: remoteData.error,
           };
@@ -331,6 +356,7 @@ export function useLoadData<T>() {
     sortInfo,
     groupBy,
     pivotBy,
+    filterValue,
     livePagination,
     livePaginationCursor,
     cursorId: stateCursorId,
@@ -425,6 +451,7 @@ export function useLoadData<T>() {
     sortInfo,
     groupBy,
     pivotBy,
+    filterValue,
     cursorId: livePagination ? stateCursorId : null,
   };
 
@@ -475,16 +502,6 @@ function useLazyLoadRange<T>() {
     componentActions: actions,
     componentState,
   } = useComponentState<DataSourceState<T>>();
-
-  // TODO continue here at http://localhost:3000/tests/table/props/group-by/server-side-group-and-batch
-  // and see why server-side calls are still being made when cache: true
-  // probably because in useToggleGroupRow we have a loadData call
-  // which triggers it - maybe fixed now, but please check
-
-  // also, scenario 2, when cache: false
-  // the second batch in brazil does not load correctly after being loaded on previous expand
-
-  // const loadingCache = componentState.lazyLoadLoadingCache;
 
   useEffect(() => {
     actions.lazyLoadCacheOfLoadedBatches = new DeepMap<string, true>();
@@ -622,7 +639,7 @@ function lazyLoadRange<T>(
       theGroupKeys.pop();
     }
     const cacheKeys = theGroupKeys.length ? theGroupKeys : rootGroupKeys;
-    const indexInGroup = rowInfo.isGroupRow
+    const indexInGroup = rowInfo.dataSourceHasGrouping
       ? rowInfo.indexInGroup
       : rowInfo.indexInAll;
 
@@ -663,9 +680,7 @@ function lazyLoadRange<T>(
 
       const batchStartIndexInGroup =
         Math.floor(indexInGroup / lazyLoadBatchSize) * lazyLoadBatchSize;
-      const offset =
-        (rowInfo.isGroupRow ? rowInfo.indexInGroup : rowInfo.indexInAll) -
-        batchStartIndexInGroup;
+      const offset = indexInGroup - batchStartIndexInGroup;
       const absoluteIndexOfBatchStart =
         dataArray[rowInfo.indexInAll - offset].indexInAll;
 

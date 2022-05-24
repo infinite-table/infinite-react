@@ -14,7 +14,7 @@ import {
 export const columnAlignCellStyle = styleVariants({
   center: { justifyContent: 'center' },
   start: { justifyContent: 'flex-start' },
-  end: { justifyContent: 'flex-end' },
+  end: { justifyContent: 'flex-start', flexFlow: 'row-reverse' },
 });
 
 export const CellBorderObject = {
@@ -30,6 +30,7 @@ export const CellClsVariants = styleVariants({
     transition: 'none',
   },
 });
+
 export const CellCls = style([
   display.flex,
   flexFlow.row,
@@ -122,6 +123,10 @@ export const ColumnCellRecipe = recipe({
     pinned: {
       start: {},
       end: {},
+      false: {},
+    },
+    filtered: {
+      true: {},
       false: {},
     },
   },

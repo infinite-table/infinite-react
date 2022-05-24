@@ -24,11 +24,12 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     computedPinnedEndColumns,
     computedVisibleColumns,
     columnSize,
+    showColumnFilters,
   } = tableContextValue.computed;
 
   const {
     componentState: {
-      headerHeight,
+      columnHeaderHeight,
       columnGroupsDepthsMap,
       columnGroupsMaxDepth,
       computedColumnGroups,
@@ -40,12 +41,13 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       ? 1
       : columnGroupsMaxDepth + 2;
 
-  const height = rows * headerHeight;
+  const height =
+    rows * columnHeaderHeight + (showColumnFilters ? columnHeaderHeight : 0);
   // console.log({
   //   columnGroupsMaxDepth,
   //   computedColumnGroups,
   //   rows,
-  //   headerHeight,
+  //   columnHeaderHeight,
   // });
 
   const columnAndGroupTreeInfo = React.useMemo(() => {
@@ -114,11 +116,24 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     [cellspan],
   );
 
+  const rowHeight = React.useCallback(
+    (index) => {
+      // if we need to show the column filters
+
+      return showColumnFilters
+        ? index < rows - 1
+          ? columnHeaderHeight
+          : 2 * columnHeaderHeight
+        : columnHeaderHeight;
+    },
+    [rows, showColumnFilters, columnHeaderHeight],
+  );
+
   useMatrixBrain(
     brain,
     {
       colWidth: columnSize,
-      rowHeight: headerHeight,
+      rowHeight,
       rows,
       cols: computedVisibleColumns.length,
       height,
@@ -135,7 +150,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     <InfiniteTableHeader
       columns={computedVisibleColumns}
       brain={brain}
-      headerHeight={height}
+      columnHeaderHeight={height}
       columnGroupsMaxDepth={columnGroupsMaxDepth}
       columnAndGroupTreeInfo={columnAndGroupTreeInfo}
     />

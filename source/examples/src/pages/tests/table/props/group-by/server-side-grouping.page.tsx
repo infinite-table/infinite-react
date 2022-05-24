@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -8,11 +6,11 @@ import {
   DataSourceData,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTablePropColumns,
   DataSourceGroupBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -84,7 +82,7 @@ function getDataSource(size: string) {
 
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
   avgSalary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
-  avgAge: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
+  // avgAge: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -197,7 +195,7 @@ export default function RemotePivotExample() {
         groupBy={groupBy}
         aggregationReducers={aggregationReducers}
         defaultGroupRowsState={groupRowsState}
-        lazyLoad={true}
+        lazyLoad={{ batchSize: 5 }}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (

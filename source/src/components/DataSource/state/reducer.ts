@@ -12,6 +12,10 @@ import type {
   DataSourceState,
   DataSourceDerivedState,
   LazyRowInfoGroup,
+  DataSourcePropFilterFunction,
+  DataSourcePropFilterValue,
+  DataSourceFilterOperatorFunctionParam,
+  DataSourcePropFilterTypes,
 } from '../types';
 
 const haveDepsChanged = <StateType>(
@@ -46,6 +50,84 @@ function toRowInfo<T>(
   };
 }
 
+function filterDataSource<T>(params: {
+  dataArray: T[];
+  operatorsByFilterType: DataSourceDerivedState<T>['operatorsByFilterType'];
+  filterTypes: DataSourcePropFilterTypes<T>;
+  filterFunction?: DataSourcePropFilterFunction<T>;
+  filterValue?: DataSourcePropFilterValue<T>;
+  toPrimaryKey: (data: T, index: number) => any;
+}) {
+  const {
+    filterTypes,
+    filterValue: filterValueArray,
+    operatorsByFilterType,
+    filterFunction,
+    toPrimaryKey,
+  } = params;
+  let { dataArray } = params;
+  if (filterFunction) {
+    dataArray = dataArray.filter((data, index, arr) =>
+      filterFunction({
+        data,
+        index,
+        dataArray: arr,
+        primaryKey: toPrimaryKey(data, index),
+      }),
+    );
+  }
+
+  if (filterValueArray && filterValueArray.length) {
+    return dataArray.filter((data, index, arr) => {
+      const param = {
+        data,
+        index,
+        dataArray: arr,
+        primaryKey: toPrimaryKey(data, index),
+      };
+
+      for (let i = 0, len = filterValueArray.length; i < len; i++) {
+        const currentFilterValue = filterValueArray[i];
+
+        const {
+          disabled,
+          filterValue,
+          field,
+          filterType: filterTypeKey,
+          valueGetter,
+          operator,
+        } = currentFilterValue;
+        const filterType = filterTypes[filterTypeKey];
+        if (disabled || !filterType) {
+          continue;
+        }
+        const currentOperator =
+          operatorsByFilterType[filterTypeKey]?.[operator];
+        if (!currentOperator) {
+          continue;
+        }
+
+        const getter =
+          valueGetter || (({ data }) => (field ? data[field] : data));
+
+        const operatorFnParam = {
+          ...param,
+        } as DataSourceFilterOperatorFunctionParam<T>;
+        operatorFnParam.filterValue = filterValue;
+        operatorFnParam.currentValue = getter(param);
+        operatorFnParam.emptyValues = filterType.emptyValues;
+
+        if (!currentOperator.fn(operatorFnParam)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  return dataArray;
+}
+
 export function concludeReducer<T>(params: {
   previousState: DataSourceState<T> & DataSourceDerivedState<T>;
   state: DataSourceState<T> &
@@ -53,6 +135,8 @@ export function concludeReducer<T>(params: {
     DataSourceSetupState<T>;
 }) {
   const { state, previousState } = params;
+
+  const primaryKeyDescriptor = state.primaryKey;
   const sortInfo = state.sortInfo;
   let shouldSort = !!sortInfo?.length && !state.controlledSort;
 
@@ -84,9 +168,28 @@ export function concludeReducer<T>(params: {
     // also make sure onGroupRowsState is triggered to notify the action to consumers
   }
 
+  const { filterFunction, filterValue, filterTypes, operatorsByFilterType } =
+    state;
+  const shouldFilter =
+    !!filterFunction || (Array.isArray(filterValue) && filterValue.length);
+
+  const shouldFilterClientSide = shouldFilter && state.filterMode === 'client';
+
+  const filterDepsChanged = haveDepsChanged(previousState, state, [
+    'filterFunction',
+    'filterValue',
+    'filterTypes',
+  ]);
+  const filterChanged = originalDataArrayChanged || filterDepsChanged;
+
   const sortInfoChanged = haveDepsChanged(previousState, state, ['sortInfo']);
 
-  const sortDepsChanged = originalDataArrayChanged || sortInfoChanged;
+  const sortDepsChanged =
+    originalDataArrayChanged || filterDepsChanged || sortInfoChanged;
+
+  const shouldFilterAgain =
+    state.filterMode === 'client' &&
+    (filterChanged || !state.lastFilterDataArray);
 
   const shouldSortAgain =
     shouldSort && (sortDepsChanged || !state.lastSortDataArray);
@@ -97,9 +200,9 @@ export function concludeReducer<T>(params: {
   const shouldGroup = groupBy.length > 0 || !!pivotBy;
   const groupsDepsChanged =
     originalDataArrayChanged ||
+    sortDepsChanged ||
     haveDepsChanged(previousState, state, [
       'generateGroupRows',
-      'originalDataArray',
       'originalLazyGroupData',
       'originalLazyGroupDataChangeDetect',
       'groupBy',
@@ -109,7 +212,6 @@ export function concludeReducer<T>(params: {
       'pivotTotalColumnPosition',
       'pivotGrandTotalColumnPosition',
       'showSeparatePivotColumnForSingleAggregation',
-      'sortInfo',
     ]);
 
   const shouldGroupAgain =
@@ -119,12 +221,48 @@ export function concludeReducer<T>(params: {
 
   let dataArray = state.originalDataArray;
 
-  let rowInfoDataArray: InfiniteTableRowInfo<T>[] = state.dataArray;
+  const toPrimaryKey =
+    typeof primaryKeyDescriptor === 'function'
+      ? (data: T, index: number) => primaryKeyDescriptor({ data, index })
+      : (data: T, _index?: number) => {
+          const pk = data[primaryKeyDescriptor];
+
+          return pk;
+        };
+
+  if (!shouldFilter) {
+    state.unfilteredCount = dataArray.length;
+  }
+  if (shouldFilterClientSide) {
+    state.unfilteredCount = dataArray.length;
+
+    dataArray = shouldFilterAgain
+      ? filterDataSource({
+          dataArray,
+          toPrimaryKey,
+          filterTypes,
+          operatorsByFilterType,
+          filterFunction,
+          filterValue,
+        })
+      : state.lastFilterDataArray!;
+
+    state.lastFilterDataArray = dataArray;
+    state.filteredAt = now;
+  }
+
+  state.filteredCount = dataArray.length;
+
+  state.postFilterDataArray = dataArray;
 
   if (shouldSort) {
+    const prevKnownTypes = multisort.knownTypes;
+    multisort.knownTypes = state.sortTypes;
     dataArray = shouldSortAgain
       ? multisort(sortInfo!, [...dataArray])
       : state.lastSortDataArray!;
+
+    multisort.knownTypes = prevKnownTypes;
 
     state.lastSortDataArray = dataArray;
     state.sortedAt = now;
@@ -133,11 +271,7 @@ export function concludeReducer<T>(params: {
 
   // state.groupDeepMap = undefined;
 
-  const toPrimaryKey = (data: T) => {
-    const pk = data[state.primaryKey];
-
-    return pk;
-  };
+  let rowInfoDataArray: InfiniteTableRowInfo<T>[] = state.dataArray;
 
   if (shouldGroup) {
     if (shouldGroupAgain) {
@@ -204,10 +338,9 @@ export function concludeReducer<T>(params: {
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
 
-    // TODO AFL update loading flags
     if (arrayDifferentAfterSortStep || groupsDepsChanged) {
       rowInfoDataArray = dataArray.map((data, index) =>
-        toRowInfo(data, data ? toPrimaryKey(data) : index, index),
+        toRowInfo(data, data ? toPrimaryKey(data, index) : index, index),
       );
     }
   }

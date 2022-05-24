@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
 
-import type { DataSourceSingleSortInfo } from '../../DataSource/types';
+import type {
+  DataSourcePropFilterValue,
+  DataSourceSingleSortInfo,
+} from '../../DataSource/types';
+import type { Size } from '../../types/Size';
 import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTablePropColumnOrder,
@@ -9,11 +13,9 @@ import type {
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
-
-import type { Size } from '../../types/Size';
 import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
-
 import { getComputedVisibleColumns } from '../utils/getComputedVisibleColumns';
+
 import { useRerenderOnKeyChange } from './useRerenderOnKeyChange';
 
 type UseComputedVisibleColumnsParam<T> = {
@@ -35,6 +37,8 @@ type UseComputedVisibleColumnsParam<T> = {
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
   setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
+
+  filterValue?: DataSourcePropFilterValue<T>;
 
   columnPinning: InfiniteTablePropColumnPinningMap;
   columnSizing: InfiniteTablePropColumnSizing;
@@ -80,6 +84,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   sortInfo,
   multiSort,
   setSortInfo,
+  filterValue,
   columnOrder,
   columnPinning,
   columnTypes,
@@ -121,6 +126,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnHeaderCssEllipsis,
       viewportReservedWidth,
 
+      filterValue,
+
       sortable,
       sortInfo,
       setSortInfo,
@@ -151,6 +158,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
     sortInfo,
     setSortInfo,
     multiSort,
+
+    filterValue,
 
     columnOrder,
     columnVisibility,

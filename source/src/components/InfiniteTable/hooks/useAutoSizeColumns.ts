@@ -49,8 +49,10 @@ function getColumnContentMaxWidths(
       const contentClone = content.cloneNode(true) as HTMLElement;
       contentClone.style.visibility = 'hidden';
       contentClone.style.pointerEvents = 'none';
+
       contentClone.classList.remove(...cssEllipsisClassName.split(' '));
       contentClone.style.position = 'absolute';
+      contentClone.style.width = 'auto';
 
       cell.appendChild(contentClone);
       let measuredWidth = contentClone.offsetWidth;

@@ -9,17 +9,22 @@ export type MultisortInfo<T> = {
   dir: SortDir;
 
   /**
-   * a property whose value to use for sorting on the array items
-   */
-  field?: keyof T;
-
-  /**
    * for now 'string' and 'number' are known types, meaning they have
    * sort functions already implemented
    */
   type?: string;
 
   fn?: (a: any, b: any) => number;
+
+  /**
+   * a property whose value to use for sorting on the array items
+   */
+  field?: keyof T;
+
+  /**
+   * or a function to retrieve the item value to use for sorting
+   */
+  valueGetter?: (item: T) => any;
 };
 
 export interface MultisortFn<T> {
@@ -41,13 +46,14 @@ export const multisort = <T>(
 
 multisort.knownTypes = TYPES;
 
-var getSingleSortFunction = <T>(info: MultisortInfo<T>) => {
+const getSingleSortFunction = <T>(info: MultisortInfo<T>) => {
   if (!info) {
     return;
   }
 
   const field = info.field;
-  var dir = info.dir < 0 ? -1 : info.dir > 0 ? 1 : 0;
+  const valueGetter = info.valueGetter;
+  const dir = info.dir < 0 ? -1 : info.dir > 0 ? 1 : 0;
 
   if (!dir) {
     return;
@@ -71,8 +77,12 @@ var getSingleSortFunction = <T>(info: MultisortInfo<T>) => {
   }
 
   return (first: T, second: T) => {
-    const a = field ? first[field] : first;
-    const b = field ? second[field] : second;
+    const a = valueGetter ? valueGetter(first) : field ? first[field] : first;
+    const b = valueGetter
+      ? valueGetter(second)
+      : field
+      ? second[field]
+      : second;
 
     return dir * fn!(a, b);
   };

@@ -13,6 +13,24 @@ export const wait = (timeout: number) => {
   });
 };
 
+export const getValuesByColumnId = async (
+  columnId: string,
+  { page }: { page: Page },
+) => {
+  const { bodyCells } = await getColumnCells(columnId, {
+    page,
+  });
+
+  const values = await Promise.all(
+    bodyCells.map(
+      async (cell: ElementHandle) =>
+        await cell.evaluate((node) => node.textContent),
+    ),
+  );
+
+  return values;
+};
+
 export const getHeaderCellByColumnId = (
   columnId: string,
   { page }: { page: Page },
@@ -174,3 +192,9 @@ const tinycolor = require('tinycolor2');
 
 export const toRGBString = (color: string) => tinycolor(color).toRgbString();
 export const toColorString = (color: string) => tinycolor(color).toString();
+
+export const getRowCount = async ({ page }: { page: Page }) => {
+  return await page
+    .locator('.InfiniteColumnCell[data-row-index][data-col-index="0"]')
+    .count();
+};

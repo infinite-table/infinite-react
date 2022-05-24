@@ -1,7 +1,8 @@
-import { getColumnCells } from '../../../testUtils';
-import { rowData } from './rowData';
+import { test, expect } from '@playwright/test';
 
-import { test, expect, ElementHandle } from '@playwright/test';
+import { getValuesByColumnId } from '../../../testUtils';
+
+import { rowData } from './rowData';
 
 export default test.describe.parallel('Virtualization', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,14 +11,7 @@ export default test.describe.parallel('Virtualization', () => {
 
   test('should display first row correctly', async ({ page }) => {
     await page.waitForTimeout(50);
-    let { bodyCells } = await getColumnCells('model', { page });
-
-    let values = await Promise.all(
-      bodyCells.map(
-        async (cell: ElementHandle) =>
-          await cell.evaluate((node) => node.textContent),
-      ),
-    );
+    const values = await getValuesByColumnId('model', { page });
 
     expect(values[0]).toEqual(rowData[0].model); // Celica
   });

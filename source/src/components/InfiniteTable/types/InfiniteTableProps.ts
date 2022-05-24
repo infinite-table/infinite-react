@@ -18,6 +18,7 @@ import type {
   InfiniteTableColumnRenderFunction,
   InfiniteTableComputedColumn,
   InfiniteTableComputedPivotFinalColumn,
+  InfiniteTableDataTypeNames,
   InfiniteTableGroupColumnRenderIconFunction,
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumn,
@@ -84,9 +85,14 @@ export type InfiniteTableColumnType<T> = {
   minWidth?: number;
   maxWidth?: number;
 
+  filterType?: string;
+  sortType?: string;
+  dataType?: InfiniteTableDataTypeNames;
+
   defaultWidth?: number;
   defaultFlex?: number;
   defaultPinned?: InfiniteTableColumnPinnedValues;
+  defaultFilterable?: boolean;
   defaultHiddenWhenGroupedBy?: InfiniteTableColumn<T>['defaultHiddenWhenGroupedBy'];
 
   header?: InfiniteTableColumn<T>['header'];
@@ -104,6 +110,7 @@ export type InfiniteTableColumnType<T> = {
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
+  valueFormatter?: InfiniteTableColumn<T>['valueFormatter'];
   style?: InfiniteTableColumn<T>['style'];
 };
 export type InfiniteTablePropColumnTypesMap<T> = Map<
@@ -258,6 +265,21 @@ export type ScrollStopInfo = {
   firstVisibleRowIndex: number;
   lastVisibleRowIndex: number;
 };
+
+export type InfiniteTablePropFilterEditors<T> = Record<
+  string,
+  React.FC<InfiniteTableFilterEditorProps<T>>
+>;
+
+export type InfiniteTableFilterEditorProps<T extends any> = {
+  filterType: string;
+  operator: string;
+  ariaLabel: string;
+  filterValue: T;
+  className: string;
+  onChange: (value: T | undefined) => void;
+};
+
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumnsMap<T, InfiniteTablePivotColumn<T>>;
@@ -284,6 +306,8 @@ export interface InfiniteTableProps<T> {
 
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
+
+  // filterableColumns?: Record<string, boolean>;
 
   columnPinning?: InfiniteTablePropColumnPinning;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
@@ -313,13 +337,14 @@ export interface InfiniteTableProps<T> {
   rowHeight: number | string;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
-  headerHeight: number | string;
+  columnHeaderHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
   showZebraRows?: boolean;
   showHoverRows?: boolean;
   sortable?: boolean;
   draggableColumns?: boolean;
   header?: boolean;
+  headerOptions?: InfiniteTablePropHeaderOptions;
   focusedClassName?: string;
   focusedWithinClassName?: string;
   focusedStyle?: React.CSSProperties;
@@ -353,6 +378,8 @@ export interface InfiniteTableProps<T> {
   onColumnOrderChange?: (columnOrder: InfiniteTablePropColumnOrder) => void;
   onRowHeightChange?: (rowHeight: number) => void;
 
+  filterEditors?: InfiniteTablePropFilterEditors<T>;
+
   onReady?: (api: InfiniteTableImperativeApi<T>) => void;
 
   rowProps?:
@@ -366,6 +393,10 @@ export interface InfiniteTableProps<T> {
   scrollTopKey?: string | number;
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 }
+
+export type InfiniteTablePropHeaderOptions = {
+  alwaysReserveSpaceForSortIcon: boolean;
+};
 
 export type InfiniteTablePropAutoSizeColumnsKey =
   | string

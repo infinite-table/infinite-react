@@ -1,13 +1,12 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
   multisort,
 } from '@infinite-table/infinite-react';
-
 import { DataSourceSortInfo } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
+
 import { getOrders } from './getOrders';
 
 interface Order {
@@ -35,7 +34,6 @@ export default function ControlledPageTest() {
     );
   }, [sortInfo]);
 
-  console.log('rerender with', sortInfo);
   return (
     <React.StrictMode>
       <div>

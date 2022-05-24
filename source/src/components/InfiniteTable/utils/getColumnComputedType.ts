@@ -4,7 +4,9 @@ import type {
   InfiniteTablePropColumnTypes,
 } from '../types/InfiniteTableProps';
 
-const emptyType: InfiniteTableColumnType<any> = Object.freeze({});
+const emptyType: InfiniteTableColumnType<any> = Object.freeze({
+  filterType: 'string',
+});
 
 export function getColumnComputedType<T>(
   column: InfiniteTableColumn<T>,

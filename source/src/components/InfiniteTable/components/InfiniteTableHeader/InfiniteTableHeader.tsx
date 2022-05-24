@@ -31,7 +31,7 @@ function InfiniteTableHeaderFn<T>(
     columns,
     style,
     className,
-    headerHeight,
+    columnHeaderHeight,
     columnAndGroupTreeInfo,
 
     columnGroupsMaxDepth,
@@ -39,10 +39,10 @@ function InfiniteTableHeaderFn<T>(
 
   const {
     computed,
-    componentState: { headerBrain },
+    componentState: { headerBrain, headerOptions },
   } = useInfiniteTable<T>();
 
-  const { computedVisibleColumnsMap } = computed;
+  const { computedVisibleColumnsMap, showColumnFilters } = computed;
 
   useEffect(() => {
     const onScroll = (scrollPosition: ScrollPosition) => {
@@ -72,7 +72,7 @@ function InfiniteTableHeaderFn<T>(
       className,
       headerCls,
     ),
-    style: { ...style, height: headerHeight },
+    style: { ...style, height: columnHeaderHeight },
   };
 
   const renderCell: TableRenderCellFn = useCallback(
@@ -122,6 +122,7 @@ function InfiniteTableHeaderFn<T>(
         <InfiniteTableHeaderCell<T>
           domRef={domRef}
           column={column}
+          headerOptions={headerOptions}
           width={widthWithColspan}
           height={heightWithRowspan}
           columns={computedVisibleColumnsMap}
@@ -129,11 +130,18 @@ function InfiniteTableHeaderFn<T>(
       );
     },
 
-    // leave headerHeight here, as it's needed even
+    // leave columnHeaderHeight here, as it's needed even
     // though it's not directly used inside the fn
     // but it can change - eg, when the corresponding CSS variable  changes
     // do it needs to trigger a re-render
-    [columns, headerHeight, columnAndGroupTreeInfo, columnGroupsMaxDepth],
+    [
+      headerOptions,
+      columns,
+      columnHeaderHeight,
+      columnAndGroupTreeInfo,
+      columnGroupsMaxDepth,
+      showColumnFilters,
+    ],
   );
 
   return (

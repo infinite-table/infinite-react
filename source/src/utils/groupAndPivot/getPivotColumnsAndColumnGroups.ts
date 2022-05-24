@@ -137,7 +137,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           pivotGroupKey: '',
           pivotIndex: -1,
 
-          valueGetter: ({ rowInfo }) => {
+          valueFormatter: ({ rowInfo }) => {
             // return rowInfo.reducerResults?.[reducer.id] as any as string;
 
             return rowInfo.isGroupRow
@@ -212,7 +212,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
           sortable: false,
           columnGroup: parentColumnGroupId,
           header,
-          valueGetter: ({ rowInfo }) => {
+          valueFormatter: ({ rowInfo }) => {
             if (!rowInfo.isGroupRow) {
               return null;
             }
@@ -317,7 +317,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
             pivotIndex: keys.length - 1,
             pivotBy,
             sortable: false,
-            valueGetter: ({ rowInfo }) => {
+            valueFormatter: ({ rowInfo }) => {
               if (!rowInfo.isGroupRow) {
                 return null;
               }

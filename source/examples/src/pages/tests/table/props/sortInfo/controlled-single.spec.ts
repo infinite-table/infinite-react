@@ -1,6 +1,6 @@
-import { test, expect, ElementHandle } from '@testing';
+import { test, expect } from '@testing';
 
-import { getColumnCells } from '../../../testUtils';
+import { getColumnCells, getValuesByColumnId } from '../../../testUtils';
 
 import { getOrders, multisort } from './getOrders';
 
@@ -10,17 +10,11 @@ export default test.describe.parallel('Table', () => {
   test('controlled sortInfo should work properly', async ({ page }) => {
     await page.waitForTimeout(50);
 
-    const { headerCell, bodyCells } = await getColumnCells('CompanyName', {
+    const { headerCell } = await getColumnCells('CompanyName', {
       page,
     });
 
-    let values = await Promise.all(
-      // the first one is the header
-      bodyCells.map(
-        async (cell: ElementHandle) =>
-          await cell.evaluate((node) => node.textContent),
-      ),
-    );
+    let values = await getValuesByColumnId('CompanyName', { page });
 
     const expected = multisort(
       [{ field: 'CompanyName', dir: 1 }],
@@ -35,12 +29,7 @@ export default test.describe.parallel('Table', () => {
     await page.waitForTimeout(20);
 
     // refetch values
-    values = await Promise.all(
-      bodyCells.map(
-        async (cell: ElementHandle) =>
-          await cell.evaluate((node) => node.textContent),
-      ),
-    );
+    values = await getValuesByColumnId('CompanyName', { page });
 
     // expect them to be the same, since we have controlled prop
     // and no onSortInfoChange yet
@@ -52,19 +41,13 @@ export default test.describe.parallel('Table', () => {
     await headerCell.click();
 
     await page.waitForTimeout(20);
-
-    values = await Promise.all(
-      // the first one is the header
-      bodyCells.map(
-        async (cell: ElementHandle) =>
-          await cell.evaluate((node) => node.textContent),
-      ),
-    );
+    values = await getValuesByColumnId('CompanyName', { page });
 
     expect(values).toEqual([...expected].reverse());
 
-    const { headerCell: orderIdHeaderCell, bodyCells: orderIdBodyCells } =
-      await getColumnCells('OrderId', { page });
+    const { headerCell: orderIdHeaderCell } = await getColumnCells('OrderId', {
+      page,
+    });
 
     // click to sort ascending
     await orderIdHeaderCell.click();
@@ -74,42 +57,22 @@ export default test.describe.parallel('Table', () => {
       [{ dir: 1, field: 'OrderId', type: 'number' }],
       [...orders],
     ).map((o) => o.OrderId + '');
-    expect(
-      await Promise.all(
-        // the first one is the header
-        orderIdBodyCells.map(
-          async (cell: ElementHandle) =>
-            await cell.evaluate((node) => node.textContent),
-        ),
-      ),
-    ).toEqual(ascById);
+    expect(await getValuesByColumnId('OrderId', { page })).toEqual(ascById);
 
     // click again to sort desc
     await orderIdHeaderCell?.click();
     await page.waitForTimeout(20);
 
-    expect(
-      await Promise.all(
-        // the first one is the header
-        orderIdBodyCells.map(
-          async (cell: ElementHandle) =>
-            await cell.evaluate((node) => node.textContent),
-        ),
-      ),
-    ).toEqual([...ascById].reverse());
+    expect(await getValuesByColumnId('OrderId', { page })).toEqual(
+      [...ascById].reverse(),
+    );
 
     // click again to unsort
     await orderIdHeaderCell.click();
     await page.waitForTimeout(20);
 
-    expect(
-      await Promise.all(
-        // the first one is the header
-        orderIdBodyCells.map(
-          async (cell: ElementHandle) =>
-            await cell.evaluate((node) => node.textContent),
-        ),
-      ),
-    ).toEqual([...orders].map((o) => o.OrderId + ''));
+    expect(await getValuesByColumnId('OrderId', { page })).toEqual(
+      [...orders].map((o) => o.OrderId + ''),
+    );
   });
 });

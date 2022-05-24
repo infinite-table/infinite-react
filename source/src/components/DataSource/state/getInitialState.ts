@@ -1,6 +1,7 @@
 import { DataSourceComponentActions, DataSourceDataParams } from '..';
 import { dbg } from '../../../utils/debug';
 import { DeepMap } from '../../../utils/DeepMap';
+import defaultSortTypes from '../../../utils/multisort/sortTypes';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
@@ -10,6 +11,7 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
 import { isControlledValue } from '../../utils/isControlledValue';
 import { RenderRange } from '../../VirtualBrain';
+import { defaultFilterTypes } from '../defaultFilterTypes';
 import { GroupRowsState } from '../GroupRowsState';
 import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
 import {
@@ -20,6 +22,7 @@ import {
   DataSourceState,
   LazyGroupDataDeepMap,
   LazyRowInfoGroup,
+  DataSourceFilterOperator,
 } from '../types';
 
 import { normalizeSortInfo } from './normalizeSortInfo';
@@ -60,10 +63,13 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     pivotColumns: undefined,
     pivotColumnGroups: undefined,
     dataArray,
+    unfilteredCount: dataArray.length,
+    filteredCount: dataArray.length,
 
     updatedAt: now,
     groupedAt: 0,
     sortedAt: 0,
+    filteredAt: 0,
     reducedAt: now,
     generateGroupRows: true,
     groupDeepMap: undefined,
@@ -101,6 +107,16 @@ export const forwardProps = <T>(
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
+    filterFunction: 1,
+    filterValue: 1,
+    filterDelay: (filterDelay) => filterDelay ?? 200,
+    filterTypes: (filterTypes) => {
+      return { ...defaultFilterTypes, ...filterTypes };
+    },
+
+    sortTypes: (sortTypes) => {
+      return { ...defaultSortTypes, ...sortTypes };
+    },
 
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
@@ -151,9 +167,32 @@ export function mapPropsToState<T extends any>(params: {
   const { props, state, oldState } = params;
 
   const controlledSort = isControlledValue(props.sortInfo);
+  const controlledFilter = isControlledValue(props.filterValue);
 
+  const { filterTypes } = state;
+
+  const operatorsByFilterType = Object.keys(filterTypes).reduce((acc, key) => {
+    const operators = filterTypes[key].operators;
+
+    acc[key] = acc[key] || {};
+    const currentFilterTypeOperators = acc[key];
+
+    operators.forEach((operator) => {
+      currentFilterTypeOperators[operator.name] = operator;
+    });
+
+    return acc;
+  }, {} as Record<string, Record<string, DataSourceFilterOperator<T>>>);
   const result: DataSourceDerivedState<T> = {
+    operatorsByFilterType,
     controlledSort,
+    controlledFilter,
+    filterMode:
+      props.filterMode ?? props.filterFunction != null
+        ? 'client'
+        : typeof props.data === 'function'
+        ? 'server'
+        : 'client',
     multiSort: Array.isArray(
       controlledSort ? props.sortInfo : props.defaultSortInfo,
     ),
@@ -248,6 +287,22 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
     pivotBy: (pivotBy, { actions, state }) => {
       const dataParams = buildDataSourceDataParams(state, {
         pivotBy,
+        livePaginationCursor: null,
+      });
+
+      actions.dataParams = dataParams;
+
+      if (state.livePagination) {
+        // see #wait_for_update above
+
+        requestAnimationFrame(() => {
+          actions.livePaginationCursor = null;
+        });
+      }
+    },
+    filterValue: (filterValue, { actions, state }) => {
+      const dataParams = buildDataSourceDataParams(state, {
+        filterValue,
         livePaginationCursor: null,
       });
 

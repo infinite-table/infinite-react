@@ -8,11 +8,7 @@ import {
   justifyContent,
   overflow,
 } from '../../utilities.css';
-import {
-  ColumnCellCls,
-  CellClsVariants,
-  columnAlignCellStyle,
-} from '../cell.css';
+import { ColumnCellCls, CellClsVariants } from '../cell.css';
 
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 
@@ -29,9 +25,12 @@ function InfiniteTableCellFn<T>(
     virtualized = true,
     skipColumnShifting = false,
     offsetProperty = 'left',
+    contentStyle,
     column,
     domRef,
     width,
+
+    contentClassName,
 
     afterChildren,
     beforeChildren,
@@ -51,10 +50,6 @@ function InfiniteTableCellFn<T>(
     width,
     ...domProps.style,
   };
-
-  // if (column.computedPinned === 'end') {
-  // style.background = 'red';
-  // }
 
   if (
     !skipColumnShifting &&
@@ -77,7 +72,6 @@ function InfiniteTableCellFn<T>(
     className: join(
       domProps.className,
 
-      columnAlignCellStyle[column.align ?? 'start'],
       justifyContent[column.align ?? 'start'],
       InfiniteTableCellClassName,
       ColumnCellCls,
@@ -90,9 +84,12 @@ function InfiniteTableCellFn<T>(
         {beforeChildren}
         {
           <div
-            className={`${InfiniteTableCellContentClassName} ${
-              cssEllipsis ? cssEllipsisClassName : overflow.hidden
-            }`}
+            className={join(
+              InfiniteTableCellContentClassName,
+              cssEllipsis ? cssEllipsisClassName : overflow.hidden,
+              contentClassName,
+            )}
+            style={contentStyle}
           >
             {children}
           </div>

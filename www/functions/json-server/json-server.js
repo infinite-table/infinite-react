@@ -75,16 +75,16 @@ alasql.tables.developers30k = { data: developers30k };
 alasql.tables.developers40k = { data: developers40k };
 alasql.tables.developers50k = { data: developers50k };
 
-const sqlRoutes = [
-  '10',
-  '100',
-  '1k',
-  '10k',
-  '20k',
-  '30k',
-  '40k',
-  '50k',
-];
+const sqlRoutes = {
+  10: 10,
+  100: 100,
+  '1k': 1_000,
+  '10k': 10_000,
+  '20k': 20_000,
+  '30k': 30_000,
+  '40k': 40_000,
+  '50k': 50_000,
+};
 
 alasql.aggr.CORRECT_AVERAGE = function (
   value,
@@ -133,10 +133,10 @@ const FNS = {
   sum: 'IMPROVED_SUM',
 };
 
-sqlRoutes.forEach((name) => {
+Object.keys(sqlRoutes).forEach((name) => {
   app.use(
     `/.netlify/functions/json-server/developers${name}-sql`,
-    getSQLRoute(name)
+    getSQLRoute(name, sqlRoutes[name])
   );
 });
 
@@ -149,7 +149,7 @@ const KEY_SEPARATOR = '_';
 
 const CACHE = true;
 
-function getSQLRoute(routeSuffix) {
+function getSQLRoute(routeSuffix = '', size) {
   const tableName = `developers${routeSuffix}`;
   return (req, res) => {
     const { query } = req;
@@ -211,6 +211,7 @@ function getSQLRoute(routeSuffix) {
       groupKeys,
       expandedRows,
       tableName,
+      size,
     });
     res.json(jsonResult);
   };
@@ -226,6 +227,7 @@ function getResultSet({
   groupBy,
   groupKeys,
   expandedRows,
+  size,
 }) {
   let start = null;
   let limit = null;
@@ -432,6 +434,8 @@ function getResultSet({
       }
     });
   }
+
+  // jsonResult.totalCountUnfiltered = size;
 
   return jsonResult;
 }

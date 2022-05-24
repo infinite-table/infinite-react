@@ -30,7 +30,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
     // expect(widths).toEqual([67, 127, 188, 800]);
-    expect(widths.map(roundDownToTens)).toEqual([60, 120, 180, 800]);
+    expect(widths.map(roundDownToTens)).toEqual([70, 110, 170, 800]);
   });
 
   test('expect autoSizeColumnsKey.columnsToSkip to work', async ({ page }) => {
@@ -78,6 +78,6 @@ export default test.describe.parallel('Column autosizing tests', () => {
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
     // expect(widths).toEqual([67, 127, 188, 133]);
-    expect(widths.map(roundDownToTens)).toEqual([60, 120, 180, 130]);
+    expect(widths.map(roundDownToTens)).toEqual([70, 110, 170, 130]);
   });
 });

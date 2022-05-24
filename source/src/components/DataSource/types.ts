@@ -16,6 +16,7 @@ import {
   Scrollbars,
 } from '../InfiniteTable/types';
 import {
+  DiscriminatedUnion,
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumnVariant,
 } from '../InfiniteTable/types/InfiniteTableColumn';
@@ -35,6 +36,7 @@ export interface DataSourceDataParams<T> {
   sortInfo?: DataSourceSortInfo<T>;
   groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
+  filterValue?: DataSourcePropFilterValue<T>;
 
   groupRowsState?: DataSourcePropGroupRowsStateObject<any>;
 
@@ -77,6 +79,7 @@ export type DataSourceRemoteData<T> = {
   cache?: boolean;
   error?: string;
   totalCount?: number;
+  totalCountUnfiltered?: number;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
 
@@ -106,11 +109,16 @@ export interface DataSourceMappedState<T> {
 
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
+  filterFunction: DataSourceProps<T>['filterFunction'];
+  filterValue: DataSourceProps<T>['filterValue'];
+  filterTypes: NonUndefined<DataSourceProps<T>['filterTypes']>;
   primaryKey: DataSourceProps<T>['primaryKey'];
+  filterDelay: NonUndefined<DataSourceProps<T>['filterDelay']>;
   groupBy: NonUndefined<DataSourceProps<T>['groupBy']>;
   groupRowsState: GroupRowsState<T>;
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
+  sortTypes: NonUndefined<DataSourceProps<T>['sortTypes']>;
   collapseGroupRowsOnDataFunctionChange: NonUndefined<
     DataSourceProps<T>['collapseGroupRowsOnDataFunctionChange']
   >;
@@ -164,6 +172,8 @@ export type LazyRowInfoGroup<DataType> = {
   childrenAvailable: boolean;
   cache: boolean;
   totalCount: number;
+  // TODO make sure this is properly implemented
+  totalCountUnfiltered: number;
   error?: string;
 };
 
@@ -173,6 +183,8 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 >;
 
 export interface DataSourceSetupState<T> {
+  unfilteredCount: number;
+  filteredCount: number;
   lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
   pivotMappings?: DataSourceMappings;
   propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
@@ -186,6 +198,7 @@ export interface DataSourceSetupState<T> {
   notifyScrollStop: SubscriptionCallback<ScrollStopInfo>;
   notifyRenderRangeChange: SubscriptionCallback<RenderRange>;
   originalDataArray: T[];
+  lastFilterDataArray?: T[];
   lastSortDataArray?: T[];
   lastGroupDataArray?: InfiniteTableRowInfo<T>[];
   dataArray: InfiniteTableRowInfo<T>[];
@@ -198,8 +211,10 @@ export interface DataSourceSetupState<T> {
   reducedAt: number;
   groupedAt: number;
   sortedAt: number;
+  filteredAt: number;
   generateGroupRows: boolean;
 
+  postFilterDataArray?: T[];
   postSortDataArray?: T[];
   postGroupDataArray?: InfiniteTableRowInfo<T>[];
   pivotColumns?: Map<string, InfiniteTableColumn<T>>;
@@ -215,7 +230,9 @@ export type DataSourceProps<T> = {
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
-  primaryKey: keyof T;
+  primaryKey:
+    | keyof T
+    | (({ data, index }: { data: T; index: number }) => string);
   fields?: (keyof T)[];
 
   data: DataSourceData<T>;
@@ -258,7 +275,81 @@ export type DataSourceProps<T> = {
   onLivePaginationCursorChange?: (
     livePaginationCursor: DataSourceLivePaginationCursorValue,
   ) => void;
+
+  filterFunction?: DataSourcePropFilterFunction<T>;
+
+  filterMode?: 'client' | 'server';
+  filterValue?: DataSourcePropFilterValue<T>;
+  defaultFilterValue?: DataSourcePropFilterValue<T>;
+  onFilterValueChange?: (filterValue: DataSourcePropFilterValue<T>) => void;
+
+  filterDelay?: number;
+  filterTypes?: DataSourcePropFilterTypes<T>;
+
+  sortTypes?: DataSourcePropSortTypes;
 };
+
+export type DataSourcePropSortTypes = Record<
+  string,
+  (first: any, second: any) => number
+>;
+
+export type DataSourcePropFilterTypes<T> = Record<
+  string,
+  DataSourceFilterType<T>
+>;
+
+export type DataSourceFilterFunctionParam<T> = {
+  data: T;
+  index: number;
+  dataArray: T[];
+  primaryKey: any;
+};
+export type DataSourcePropFilterFunction<T> = (
+  filterParam: DataSourceFilterFunctionParam<T>,
+) => boolean;
+
+export type DataSourcePropFilterValue<T> = DataSourceFilterValueItem<T>[];
+
+export type DataSourceFilterValueItem<T> = DiscriminatedUnion<
+  {
+    field: keyof T;
+  },
+  { id: string }
+> & {
+  valueGetter?: DataSourceFilterValueItemValueGetter<T>;
+  filterValue: any;
+  disabled?: boolean;
+  filterType: string;
+  operator: string;
+};
+
+export type DataSourceFilterValueItemValueGetter<T> = (
+  param: DataSourceFilterFunctionParam<T>,
+) => any;
+
+export type DataSourceFilterType<T> = {
+  emptyValues: Set<any>;
+  label?: string;
+  defaultOperator: string;
+  operators: DataSourceFilterOperator<T>[];
+};
+
+export type DataSourceFilterOperator<T> = {
+  name: string;
+  label?: string;
+  fn: DataSourceFilterOperatorFunction<T>;
+};
+
+export type DataSourceFilterOperatorFunction<T> = (
+  filterOperatorFunctionParam: DataSourceFilterOperatorFunctionParam<T>,
+) => boolean;
+
+export type DataSourceFilterOperatorFunctionParam<T> = {
+  currentValue: any;
+  filterValue: any;
+  emptyValues: Set<any>;
+} & DataSourceFilterFunctionParam<T>;
 
 export type DataSourcePropLivePaginationCursor<T> =
   | DataSourceLivePaginationCursorValue
@@ -279,9 +370,16 @@ export interface DataSourceState<T>
     DataSourceDerivedState<T>,
     DataSourceMappedState<T> {}
 
-export interface DataSourceDerivedState<_T> {
+export interface DataSourceDerivedState<T> {
+  operatorsByFilterType: Record<
+    string,
+    Record<string, DataSourceFilterOperator<T>>
+  >;
+  filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
+
   multiSort: boolean;
   controlledSort: boolean;
+  controlledFilter: boolean;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
   lazyLoadBatchSize?: number;
 }

@@ -8,16 +8,19 @@ import {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTablePropRowStyle,
   InfiniteTablePropRowClassName,
+  InfiniteTablePropHeaderOptions,
 } from '../../types';
 import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
-export type InfiniteTableCellProps<T> = {
+export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
   renderChildren: () => Renderable;
 
   width: number;
   cssEllipsis?: boolean;
   // children: Renderable;
+  contentStyle?: CSSProperties;
+  contentClassName?: string;
   virtualized?: boolean;
   skipColumnShifting?: boolean;
 
@@ -28,8 +31,14 @@ export type InfiniteTableCellProps<T> = {
   offsetProperty?: 'left' | 'right';
   cssPosition?: CSSProperties['position'];
   domRef?: React.RefCallback<HTMLElement>;
-  cellType: 'body' | 'header';
 };
+export type InfiniteTableCellProps<T> =
+  | ({
+      cellType: 'header';
+    } & InfiniteTableBaseCellProps<T>)
+  | ({
+      cellType: 'body';
+    } & InfiniteTableBaseCellProps<T>);
 
 export interface InfiniteTableColumnCellProps<T>
   extends Omit<
@@ -58,5 +67,6 @@ export interface InfiniteTableHeaderCellProps<T>
   > {
   columns: Map<string, InfiniteTableComputedColumn<T>>;
   height: number;
+  headerOptions: InfiniteTablePropHeaderOptions;
   onResize?: OnResizeFn;
 }

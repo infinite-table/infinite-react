@@ -1,6 +1,5 @@
 import type { ColumnCellVariantsType } from '../components/cell.css';
 import { HeaderCellVariantsType } from '../components/InfiniteTableHeader/header.css';
-
 import { InfiniteTableComputedColumn } from '../types';
 
 export function useCellClassName<T>(
@@ -14,6 +13,7 @@ export function useCellClassName<T>(
 ) {
   const result = [...baseClasses];
   const variantObject: ColumnCellVariantsType | HeaderCellVariantsType = {
+    filtered: column.computedFiltered,
     first: column.computedFirst,
     last: column.computedLast,
     groupByField: !!column.groupByField,

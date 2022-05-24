@@ -39,11 +39,13 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
         componentActions.rowHeight = rowHeight;
       }
     });
-    componentState.onHeaderHeightCSSVarChange.onChange((headerHeight) => {
-      if (headerHeight) {
-        componentActions.headerHeight = headerHeight;
-      }
-    });
+    componentState.onColumnHeaderHeightCSSVarChange.onChange(
+      (columnHeaderHeight) => {
+        if (columnHeaderHeight) {
+          componentActions.columnHeaderHeight = columnHeaderHeight;
+        }
+      },
+    );
   });
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       showSeparatePivotColumnForSingleAggregation;
   }, [showSeparatePivotColumnForSingleAggregation]);
 
-  const { multiSort } = dataSourceState;
+  const { multiSort, filterValue } = dataSourceState;
 
   useColumnGroups<T>();
 
@@ -59,7 +61,9 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   const setSortInfo = useCallback(
     (sortInfo: DataSourceSingleSortInfo<T>[]) => {
-      const newSortInfo = multiSort ? sortInfo : sortInfo[0] ?? null;
+      const newSortInfo = getDataSourceState().multiSort
+        ? sortInfo
+        : sortInfo[0] ?? null;
       //@ts-ignore
       dataSourceActions.sortInfo = newSortInfo;
     },
@@ -108,6 +112,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnVisibilityAssumeVisible: true,
 
     columnPinning,
+    filterValue,
 
     columnSizing,
     columnTypes,
@@ -125,6 +130,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     : false;
 
   return {
+    showColumnFilters: !!dataSourceState.filterValue,
     scrollbars,
     columnSize,
     rowspan,

@@ -15,11 +15,11 @@ export const stringComparator = function (
   return first.localeCompare(second);
 };
 
-const sortTypes: {
+export const defaultSortTypes: {
   [key: string]: (first: any, second: any) => number;
 } = {
   number: numberComparator,
   string: stringComparator,
 };
 
-export default sortTypes;
+export default defaultSortTypes;

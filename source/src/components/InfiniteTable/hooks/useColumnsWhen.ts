@@ -66,6 +66,7 @@ export function useColumnsWhen<T>() {
   useEffect(() => {
     dataSourceActions.pivotTotalColumnPosition = pivotTotalColumnPosition;
   }, [pivotTotalColumnPosition]);
+
   useEffect(() => {
     if (pivotGrandTotalColumnPosition != undefined) {
       dataSourceActions.pivotGrandTotalColumnPosition =
@@ -75,6 +76,7 @@ export function useColumnsWhen<T>() {
 
   useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
+
   useHideColumns<T>(groupByMap);
 
   return { toggleGroupRow };
@@ -109,7 +111,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
         base = {
           groupByField: field as string,
           field: field,
-          valueGetter: ({ rowInfo }) => {
+          valueFormatter: ({ rowInfo }) => {
             return rowInfo.isGroupRow
               ? rowInfo.groupKeys?.[groupIndex]
               : rowInfo.value;

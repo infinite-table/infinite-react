@@ -18,6 +18,13 @@ const columns = new Map<string, InfiniteTableColumn<Person>>([
     {
       field: 'firstName',
       header: 'First Name',
+      render: ({ value, rowInfo }) => {
+        return (
+          <>
+            {value} {rowInfo.indexInAll}!
+          </>
+        );
+      },
       // render: ({ rowInfo }: { rowInfo: InfiniteTableRowInfo<Person> }) => {
       //   if (!rowInfo.dataSourceHasGrouping) {
       //     return null;

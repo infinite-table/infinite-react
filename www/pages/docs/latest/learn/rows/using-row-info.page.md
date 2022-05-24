@@ -20,7 +20,7 @@ When there is no <DataSourcePropLink name="groupBy">grouping</DataSourcePropLink
  * `dataSourceHasGrouping` - type: `false`
  * `isGroupRow` - type: `false`
  * `id` - type: `any`. The id of the row, as defined by the <DataSourcePropLink name="idProperty" /> prop.
- * `selfLoaded` - type: `boolean`. Useful in lazy-loading scenarios, when there is batching present. If you're not in such a scenario, the value will be `false`.
+ * `selfLoaded` - type: `boolean`. Useful in lazy-loading scenarios, when there is batching present. If you're not in such a scenario, the value will be `false`. You can use this to show a loading indicator for the row.
  * `indexInAll` - type `number`. The index of the row in the full dataset. Called like this because for grouping scenarios, there's also an `indexInGroup`
 
 
@@ -85,6 +85,7 @@ When there is <DataSourcePropLink name="groupBy">grouping</DataSourcePropLink> d
 * `data` - type: `Partial<DATA_TYPE> | null`. The `data` object that might be available is the result of the <DataSourcePropLink name="aggregationReducers">aggregation reducers</DataSourcePropLink>. If none are specified, `data` will be `null`
 * `dataSourceHasGrouping` - type: `true`
 * `isGroupRow` - type: `true`
+* `error` - type: `string?`. If there was an error while loading the group (when the group row is expanded), this will contain the error message. If the group row was loaded with the `cache: true` flag sent in the server response, the error will remain on the `rowInfo` object even when you collapse the group row, otherwise, if `cache: true` was not present, the `error` property will be removed on collapse.
 * `indexInAll` - like the above
 * `indexInGroup` - type: `number`. The index of the row in the its parent group.
 * `deepRowInfoArray` - an array of `rowInfo` objects. This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting, in the order in which they are visible in the table.

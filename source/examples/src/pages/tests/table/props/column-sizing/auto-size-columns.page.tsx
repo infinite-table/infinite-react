@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   DataSourceData,
   InfiniteTable,
@@ -8,8 +6,10 @@ import {
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
-import { employees } from '../group-by/employees10';
+import * as React from 'react';
 import { useState } from 'react';
+
+import { employees } from '../group-by/employees10';
 
 type Employee = {
   id: number;

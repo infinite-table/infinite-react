@@ -9,6 +9,7 @@ import {
 } from '../../../utils/groupAndPivot';
 import type {
   ColumnTypeWithInherit,
+  DataSourceFilterValueItem,
   DataSourcePivotBy,
   DataSourceSingleSortInfo,
   DataSourceState,
@@ -30,9 +31,10 @@ export type InfiniteTableColumnHeaderParams<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
-  sortTool: JSX.Element;
+  sortTool: JSX.Element | null;
   column: COL_TYPE;
   columnSortInfo: DataSourceSingleSortInfo<DATA_TYPE> | null;
+  columnFilterValue: DataSourceFilterValueItem<DATA_TYPE> | null;
 };
 
 export type InfiniteTableColumnRenderParamBase<
@@ -158,6 +160,8 @@ export type InfiniteTableColumnHeader<T> =
   | Renderable
   | InfiniteTableColumnHeaderRenderFunction<T>;
 
+export type InfiniteTableDataTypeNames = 'string' | 'number' | 'date' | string;
+
 export type InfiniteTableColumnTypeNames =
   | 'string'
   | 'number'
@@ -177,8 +181,9 @@ export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
       render?: InfiniteTableColumnRenderFunction<T>;
       renderValue?: InfiniteTableColumnRenderFunction<T>;
       valueGetter?: InfiniteTableColumnValueGetter<T>;
+      valueFormatter?: InfiniteTableColumnValueFormatter<T>;
     },
-    'render' | 'renderValue' | 'field' | 'valueGetter'
+    'render' | 'renderValue' | 'field' | 'valueGetter' | 'valueFormatter'
   >;
 
 export type InfiniteTableColumnStyleFnParams<T> = {
@@ -201,13 +206,24 @@ export type InfiniteTableColumnClassName<T> =
   | string
   | InfiniteTableColumnClassNameFn<T>;
 
-export type InfiniteTableColumnValueGetterParams<T> =
+export type InfiniteTableColumnValueGetterParams<T> = {
+  data: T;
+  field?: keyof T;
+};
+
+export type InfiniteTableColumnValueFormatterParams<T> =
   InfiniteTableRowInfoDataDiscriminator<T>;
 
 export type InfiniteTableColumnValueGetter<
   T,
-  VALUE_GETTER_TYPE = string | number | boolean | null | undefined,
+  VALUE_GETTER_TYPE = string | number | boolean | Date | null | undefined,
 > = (params: InfiniteTableColumnValueGetterParams<T>) => VALUE_GETTER_TYPE;
+export type InfiniteTableColumnValueFormatter<
+  T,
+  VALUE_FORMATTER_TYPE = string | number | boolean | Date | null | undefined,
+> = (
+  params: InfiniteTableColumnValueFormatterParams<T>,
+) => VALUE_FORMATTER_TYPE;
 
 export type InfiniteTableColumnRowspanFn<T> = (
   params: InfiniteTableColumnRowspanParam<T>,
@@ -238,6 +254,9 @@ export type InfiniteTableBaseColumn<T> = {
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
   type?: InfiniteTableColumnTypeNames | InfiniteTableColumnTypeNames[] | null;
+  dataType?: InfiniteTableDataTypeNames;
+  sortType?: string;
+  filterType?: string;
 
   style?: InfiniteTableColumnStyle<T>;
   className?: InfiniteTableColumnClassName<T>;
@@ -246,9 +265,12 @@ export type InfiniteTableBaseColumn<T> = {
   // colspan?: InfiniteTableColumnColspanFn<T>;
 
   valueGetter?: InfiniteTableColumnValueGetter<T>;
+  valueFormatter?: InfiniteTableColumnValueFormatter<T>;
 
   defaultWidth?: number;
   defaultFlex?: number;
+  defaultFilterable?: boolean;
+
   minWidth?: number;
   maxWidth?: number;
 
@@ -316,6 +338,9 @@ export type InfiniteTablePivotFinalColumnVariant<
 // };
 
 type InfiniteTableComputedColumnBase<T> = {
+  computedFilterType: string;
+  computedSortType: string;
+  computedDataType: string;
   computedWidth: number;
   computedOffset: number;
   computedPinningOffset: number;
@@ -328,6 +353,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedSortIndex: number;
   computedVisibleIndex: number;
   computedMultiSort: boolean;
+  computedFiltered: boolean;
+  computedFilterable: boolean;
+  computedFilterValue: DataSourceFilterValueItem<T> | null;
 
   computedPinned: InfiniteTableColumnPinnedValues;
   computedDraggable: boolean;

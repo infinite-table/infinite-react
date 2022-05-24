@@ -59,11 +59,15 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
       rowInfo:
         | InfiniteTable_NoGrouping_RowInfoNormal<T>
         | InfiniteTable_HasGrouping_RowInfoNormal<T>;
+      field?: keyof T;
+      value: any;
     }
   | {
       data: Partial<T> | null;
       rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
       isGroupRow: true;
+      field?: keyof T;
+      value: any;
     };
 
 /**
@@ -474,27 +478,19 @@ export function lazyGroup<DataType, KeyType extends string = string>(
       const [_rootKey, ...currentGroupKeys] = keys;
       const dataArray = lazyGroupRowInfo.children;
 
+      const current = deepMap.get(currentGroupKeys as KeyType[]);
+      if (current) {
+        current.cache = lazyGroupRowInfo.cache;
+        current.childrenLoading = lazyGroupRowInfo.childrenLoading;
+        current.childrenAvailable = lazyGroupRowInfo.childrenAvailable;
+        current.error = lazyGroupRowInfo.error;
+      }
       if (currentGroupKeys.length == groupBy.length && groupBy.length) {
-        const deepMapGroupValue:
-          | undefined
-          | DeepMapGroupValueType<DataType, KeyType> = deepMap.get(
-          currentGroupKeys as KeyType[],
-        );
-        if (deepMapGroupValue) {
+        if (current) {
           //@ts-ignore
-          deepMapGroupValue.items = dataArray;
+          current.items = dataArray;
         }
         return next?.();
-      }
-
-      if (lazyGroupRowInfo) {
-        const current = deepMap.get(currentGroupKeys as KeyType[]);
-        if (current) {
-          current.cache = lazyGroupRowInfo.cache;
-          current.childrenLoading = lazyGroupRowInfo.childrenLoading;
-          current.childrenAvailable = lazyGroupRowInfo.childrenAvailable;
-          current.error = lazyGroupRowInfo.error;
-        }
       }
 
       for (let i = 0, len = dataArray.length; i < len; i++) {
@@ -944,7 +940,7 @@ function completeReducers<DataType>(
 export type EnhancedFlattenParam<DataType, KeyType = any> = {
   lazyLoad: boolean;
   groupResult: DataGroupResult<DataType, KeyType>;
-  toPrimaryKey: (data: DataType) => any;
+  toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
   generateGroupRows: boolean;
@@ -1066,9 +1062,12 @@ export function enhancedFlatten<DataType, KeyType = any>(
             }
             for (let index = 0, len = items.length; index < len; index++) {
               const item = items[index];
+              const indexInAll = startIndex + index;
               const rowInfo: InfiniteTable_HasGrouping_RowInfoNormal<DataType> =
                 {
-                  id: item ? toPrimaryKey(item) : `${groupKeys}-${index}`,
+                  id: item
+                    ? toPrimaryKey(item, indexInAll)
+                    : `${groupKeys}-${index}`,
                   data: item,
                   dataSourceHasGrouping: true,
                   isGroupRow: false,
@@ -1079,7 +1078,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   parents: Array.from(parents),
                   indexInParentGroups: [...indexInParentGroups, index],
                   indexInGroup: index,
-                  indexInAll: startIndex + index,
+                  indexInAll,
                   groupBy: groupByStrings,
                   groupNesting,
                   groupCount: enhancedGroupData.groupCount,

@@ -1,19 +1,17 @@
 import * as React from 'react';
 
 import { multisort } from '../../utils/multisort';
-
 import {
-  DataSourceProps,
-  DataSourceContextValue,
-  DataSourceState,
-} from './types';
+  getComponentStateRoot,
+  useComponentState,
+} from '../hooks/useComponentState';
+import { useLatest } from '../hooks/useLatest';
 
 import { getDataSourceContext } from './DataSourceContext';
-
-import { useDataSource } from './publicHooks/useDataSource';
-
+import { defaultFilterTypes } from './defaultFilterTypes';
+import { GroupRowsState } from './GroupRowsState';
 import { useLoadData } from './privateHooks/useLoadData';
-
+import { useDataSource } from './publicHooks/useDataSource';
 import {
   mapPropsToState,
   forwardProps,
@@ -22,14 +20,11 @@ import {
   onPropChange,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
-
 import {
-  getComponentStateRoot,
-  useComponentState,
-} from '../hooks/useComponentState';
-
-import { GroupRowsState } from './GroupRowsState';
-import { useLatest } from '../hooks/useLatest';
+  DataSourceProps,
+  DataSourceContextValue,
+  DataSourceState,
+} from './types';
 
 type DataSourceChildren<T> =
   | React.ReactNode
@@ -94,6 +89,12 @@ function DataSource<T>(props: DataSourceProps<T>) {
   );
 }
 
-export { useDataSource, DataSource, GroupRowsState, multisort };
+export {
+  useDataSource,
+  DataSource,
+  GroupRowsState,
+  multisort,
+  defaultFilterTypes as filterTypes,
+};
 
 export * from './types';

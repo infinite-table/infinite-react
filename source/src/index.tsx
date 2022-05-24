@@ -14,3 +14,10 @@ export {
 export { interceptMap } from './components/hooks/useInterceptedMap';
 
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';
+
+export {
+  defaultFilterEditors,
+  StringFilterEditor,
+  NumberFilterEditor,
+} from './components/InfiniteTable/components/FilterEditors';
+export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';

@@ -70,7 +70,7 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in the `dark` theme.
          */
         color: 'header-color',
-        height: 'header-height',
+        columnHeaderHeight: 'column-header-height',
       },
       HeaderCell: {
         draggingBackground: 'header-cell-dragging-background',
@@ -81,7 +81,10 @@ export const ThemeVars = createGlobalThemeContract(
          */
         background: 'header-cell-background',
         padding: 'header-cell-padding',
+        paddingX: 'header-cell-padding-x',
+        paddingY: 'header-cell-padding-y',
         iconSize: 'header-cell-icon-size',
+        sortIconMargin: 'header-cell-sort-icon-margin',
       },
       Cell: {
         padding: 'cell-padding',
@@ -147,16 +150,19 @@ const LoadMaskVars = {
 
 const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.background]: '#ededed',
+  [ThemeVars.components.HeaderCell.paddingX]: ThemeVars.spacing['3'],
+  [ThemeVars.components.HeaderCell.paddingY]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell
-    .padding]: `${ThemeVars.spacing['3']} ${ThemeVars.spacing['3']}`,
+    .padding]: `${ThemeVars.components.HeaderCell.paddingY} ${ThemeVars.components.HeaderCell.paddingX} `,
   [ThemeVars.components.HeaderCell.draggingBackground]: '#d4d3d3',
   [ThemeVars.components.HeaderCell.iconSize]: '16px',
+  [ThemeVars.components.HeaderCell.sortIconMargin]: '16px',
 };
 const HeaderVars = {
   [ThemeVars.components.Header.background]:
     ThemeVars.components.HeaderCell.background,
   [ThemeVars.components.Header.color]: '#6f6f6f',
-  [ThemeVars.components.Header.height]: '30px',
+  [ThemeVars.components.Header.columnHeaderHeight]: '30px',
 };
 
 const CellVars = {

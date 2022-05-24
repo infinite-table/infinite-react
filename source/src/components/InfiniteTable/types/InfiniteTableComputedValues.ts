@@ -11,6 +11,7 @@ export interface InfiniteTableComputedValues<T> {
     vertical: boolean;
     horizontal: boolean;
   };
+  showColumnFilters: boolean;
   rowspan?: MatrixBrainOptions['rowspan'];
   computedPinnedStartOverflow: boolean;
   computedPinnedEndOverflow: boolean;

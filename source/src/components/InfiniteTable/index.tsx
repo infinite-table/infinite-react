@@ -17,6 +17,7 @@ import { useResizeObserver } from '../ResizeObserver';
 import { debounce } from '../utils/debounce';
 
 import { InfiniteTableBody } from './components/InfiniteTableBody';
+import { InfiniteTableFooter } from './components/InfiniteTableFooter';
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
@@ -58,7 +59,7 @@ const InfiniteTableRoot = getComponentStateRoot({
   // @ts-ignore
   allowedControlledPropOverrides: {
     rowHeight: true,
-    headerHeight: true,
+    columnHeaderHeight: true,
   } as Record<keyof InfiniteTableProps<any>, true>,
   // @ts-ignore
   getParentState: () => useDataSource(),
@@ -87,9 +88,9 @@ export const InfiniteTableComponent = React.memo(
 
       header,
       onRowHeightCSSVarChange,
-      onHeaderHeightCSSVarChange,
+      onColumnHeaderHeightCSSVarChange,
       rowHeightCSSVar,
-      headerHeightCSSVar,
+      columnHeaderHeightCSSVar,
       components,
       scrollStopDelay,
       brain,
@@ -155,8 +156,6 @@ export const InfiniteTableComponent = React.memo(
           <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
         </InfiniteTableBody>
 
-        {licenseValid ? null : <InfiniteTableLicenseFooter />}
-
         <div
           ref={portalDOMRef as RefObject<HTMLDivElement>}
           className={join(
@@ -173,12 +172,14 @@ export const InfiniteTableComponent = React.memo(
             onChange={onRowHeightCSSVarChange}
           />
         ) : null}
-        {headerHeightCSSVar ? (
+        {columnHeaderHeightCSSVar ? (
           <CSSVariableWatch
-            varName={headerHeightCSSVar}
-            onChange={onHeaderHeightCSSVarChange}
+            varName={columnHeaderHeightCSSVar}
+            onChange={onColumnHeaderHeightCSSVarChange}
           />
         ) : null}
+        <InfiniteTableFooter />
+        {licenseValid ? null : <InfiniteTableLicenseFooter />}
       </div>
     );
   },
@@ -224,7 +225,7 @@ function InfiniteTableContextProvider<T>() {
   React.useEffect(() => {
     return () => {
       componentState.onRowHeightCSSVarChange.destroy();
-      componentState.onHeaderHeightCSSVarChange.destroy();
+      componentState.onColumnHeaderHeightCSSVarChange.destroy();
     };
   }, []);
 
@@ -255,7 +256,7 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
 }
 InfiniteTable.defaultProps = {
   rowHeight: 40,
-  headerHeight: ThemeVars.components.Header.height,
+  columnHeaderHeight: ThemeVars.components.Header.columnHeaderHeight,
 };
 
 export * from './types';

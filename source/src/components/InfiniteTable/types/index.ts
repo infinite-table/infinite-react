@@ -27,6 +27,8 @@ import type {
   InfiniteTablePropRowStyle,
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
+  InfiniteTableFilterEditorProps,
+  InfiniteTablePropFilterEditors,
   InfiniteTablePropRowClassName,
   InfiniteTablePropColumns,
   InfiniteTablePropColumnsMap,
@@ -40,11 +42,13 @@ import type {
   InfiniteTableGroupColumnBase,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropAutoSizeColumnsKey,
+  InfiniteTablePropHeaderOptions,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
 export type {
   Scrollbars,
+  InfiniteTablePropHeaderOptions,
   InfiniteTableGroupColumnRenderIconFunction,
   InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTableColumnAggregator,
@@ -83,4 +87,6 @@ export type {
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
   InfiniteTableGroupColumnGetterOptions,
+  InfiniteTableFilterEditorProps,
+  InfiniteTablePropFilterEditors,
 };

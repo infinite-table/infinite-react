@@ -1,11 +1,16 @@
+import { err } from '../../../utils/debug';
+import type {
+  DataSourceFilterValueItem,
+  DataSourcePropFilterValue,
+  DataSourceSingleSortInfo,
+} from '../../DataSource/types';
+import { computeFlex } from '../../flexbox';
+import type { Size } from '../../types/Size';
+import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
 } from '../types/InfiniteTableColumn';
-import type { Size } from '../../types/Size';
-import type { DataSourceSingleSortInfo } from '../../DataSource/types';
-
-import { computeFlex } from '../../flexbox';
 import type {
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnSizingOptions,
@@ -16,11 +21,10 @@ import type {
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
 } from '../types/InfiniteTableProps';
+
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
-import { err } from '../../../utils/debug';
-import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
-import { getColumnComputedType } from './getColumnComputedType';
 import { assignNonNull } from './assignFiltered';
+import { getColumnComputedType } from './getColumnComputedType';
 
 const logError = err('getComputedVisibleColumns');
 
@@ -95,6 +99,8 @@ type GetComputedVisibleColumnsParam<T> = {
   columnCssEllipsis: boolean;
   columnHeaderCssEllipsis: boolean;
 
+  filterValue?: DataSourcePropFilterValue<T>;
+
   sortable?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
@@ -120,6 +126,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnHeaderCssEllipsis,
   pinnedStartMaxWidth,
   pinnedEndMaxWidth,
+  filterValue,
   sortable,
   sortInfo,
   setSortInfo,
@@ -137,13 +144,28 @@ export const getComputedVisibleColumns = <T extends unknown>({
 }: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
   let computedOffset = 0;
 
+  const filterValueRecord = (filterValue || []).reduce(
+    (acc, filterValueItem) => {
+      const { id, field } = filterValueItem;
+
+      if (field) {
+        acc[field as string] = filterValueItem;
+      }
+      if (id) {
+        acc[id] = filterValueItem;
+      }
+      return acc;
+    },
+    {} as Record<string, DataSourceFilterValueItem<T>>,
+  );
+
   const normalizedColumnOrder = adjustColumnOrderForPinning(
     columnOrder === true ? [...columns.keys()] : columnOrder,
     columnPinning,
   );
 
   const visibleColumnOrder = normalizedColumnOrder.filter((colId) => {
-    let col = columns.get(colId);
+    const col = columns.get(colId);
     if (!col) {
       logError(
         `Column with id "${colId}" specified in columnOrder array cannot be found in the columns map.`,
@@ -221,7 +243,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
       colSizing = assignNonNull(colTypeSizing, colSizing);
 
-      let colFlex: number | undefined = colSizing.flex ?? undefined;
+      const colFlex: number | undefined = colSizing.flex ?? undefined;
       const colMinWidth =
         colSizing.minWidth ?? column?.minWidth ?? columnMinWidth;
       const colMaxWidth =
@@ -310,57 +332,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     // const computedComp;
 
-    const toggleSort = () => {
-      let currentSortInfo = computedSortInfo;
-      let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
-
-      if (!currentSortInfo) {
-        newColumnSortInfo = {
-          dir: 1,
-          id,
-          field: c.field,
-          type: c.type,
-        } as DataSourceSingleSortInfo<T>;
-      } else {
-        if (computedSortedDesc) {
-          newColumnSortInfo = null;
-        } else {
-          newColumnSortInfo = {
-            ...computedSortInfo,
-            dir: -1,
-          };
-        }
-      }
-
-      if (c.field && newColumnSortInfo && !newColumnSortInfo.field) {
-        newColumnSortInfo.field = c.field;
-      }
-
-      let finalSortInfo = sortInfo ? [...sortInfo] : [];
-      if (multiSort) {
-        if (computedSortIndex === -1) {
-          // it should be added to the end
-          if (newColumnSortInfo) {
-            finalSortInfo.push(newColumnSortInfo);
-          }
-        } else {
-          // it's an existing sort - so should be updated
-          finalSortInfo = finalSortInfo
-            .map((info, index) => {
-              if (index === computedSortIndex) {
-                return newColumnSortInfo;
-              }
-              return info;
-            })
-            .filter((x) => x != null) as DataSourceSingleSortInfo<T>[];
-        }
-      } else {
-        finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];
-      }
-
-      setSortInfo(finalSortInfo);
-    };
-
     // const pinned = columnPinning.get(id);
     const computedPinned = getComputedPinned(id, columnPinning);
 
@@ -393,19 +364,43 @@ export const getComputedVisibleColumns = <T extends unknown>({
       columnHeaderCssEllipsis ??
       cssEllipsis;
 
+    const computedFilterValue =
+      filterValueRecord[id] || c.field
+        ? filterValueRecord[c.field as string] || null
+        : null;
+
+    const computedFiltered = computedFilterValue != null;
+    const computedFilterable =
+      c.defaultFilterable ?? colType.defaultFilterable ?? true;
+
+    const computedDataType =
+      c.dataType ||
+      colType.dataType ||
+      (Array.isArray(c.type) ? c.type[0] : c.type) ||
+      'string';
+    const computedSortType = c.sortType || colType.sortType || computedDataType;
+    const computedFilterType =
+      c.filterType || colType.filterType || computedDataType;
+
     const result: InfiniteTableComputedColumn<T> = {
       align: colType.align,
       verticalAlign: colType.verticalAlign,
       defaultHiddenWhenGroupedBy: colType.defaultHiddenWhenGroupedBy,
       valueGetter: colType.valueGetter,
+      valueFormatter: colType.valueFormatter,
       renderValue: colType.renderValue,
       render: colType.render,
       style: colType.style,
       components: colType.components,
-
       ...c,
+      computedDataType,
+      computedSortType,
+      computedFilterType,
       cssEllipsis,
       headerCssEllipsis,
+      computedFilterValue,
+      computedFiltered,
+      computedFilterable,
       computedWidth,
       computedAbsoluteOffset,
       computedPinningOffset,
@@ -424,7 +419,64 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedLastInCategory,
       computedFirst: i === 0,
       computedLast,
-      toggleSort,
+      toggleSort: () => {
+        const currentSortInfo = computedSortInfo;
+        let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
+
+        if (!currentSortInfo) {
+          newColumnSortInfo = {
+            dir: 1,
+            id,
+            field: c.field,
+            type: computedSortType,
+          } as DataSourceSingleSortInfo<T>;
+        } else {
+          if (computedSortedDesc) {
+            newColumnSortInfo = null;
+          } else {
+            newColumnSortInfo = {
+              ...computedSortInfo,
+              dir: -1,
+            };
+          }
+        }
+
+        if (c.field && newColumnSortInfo && !newColumnSortInfo.field) {
+          newColumnSortInfo.field = c.field;
+        }
+        if (
+          c.valueGetter &&
+          newColumnSortInfo &&
+          !newColumnSortInfo.valueGetter
+        ) {
+          newColumnSortInfo.valueGetter = (data) =>
+            c.valueGetter!({ data, field: c.field });
+        }
+
+        let finalSortInfo = sortInfo ? [...sortInfo] : [];
+        if (multiSort) {
+          if (computedSortIndex === -1) {
+            // it should be added to the end
+            if (newColumnSortInfo) {
+              finalSortInfo.push(newColumnSortInfo);
+            }
+          } else {
+            // it's an existing sort - so should be updated
+            finalSortInfo = finalSortInfo
+              .map((info, index) => {
+                if (index === computedSortIndex) {
+                  return newColumnSortInfo;
+                }
+                return info;
+              })
+              .filter((x) => x != null) as DataSourceSingleSortInfo<T>[];
+          }
+        } else {
+          finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];
+        }
+
+        setSortInfo(finalSortInfo);
+      },
       id: id as string,
       header: c.header ?? colType.header ?? c.name ?? c.field,
     };

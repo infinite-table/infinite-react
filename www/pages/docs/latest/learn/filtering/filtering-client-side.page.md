@@ -1,0 +1,3 @@
+---
+title: Client-side Filtering
+---

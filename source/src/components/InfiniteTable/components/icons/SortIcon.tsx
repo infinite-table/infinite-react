@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+
 import { join } from '../../../../utils/join';
+import { HeaderSortIconIndexCls } from '../InfiniteTableHeader/header.css';
 
 type SortIconProps = {
   direction: 1 | -1 | 0;
@@ -72,12 +74,7 @@ export function SortIcon(props: SortIconProps) {
     return null;
   }
 
-  const indexStyle: React.CSSProperties = {
-    position: 'absolute',
-    transition: 'top 0.2s',
-    top: 0,
-    right: 2,
-  };
+  const indexStyle: React.CSSProperties = {};
 
   if (direction === -1) {
     indexStyle.top = '100%';
@@ -93,7 +90,11 @@ export function SortIcon(props: SortIconProps) {
       )}
     >
       {showIndex ? (
-        <div data-name="index" style={indexStyle}>
+        <div
+          data-name="index"
+          style={indexStyle}
+          className={HeaderSortIconIndexCls}
+        >
           {index}
         </div>
       ) : null}

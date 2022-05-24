@@ -222,7 +222,7 @@ const dataSource: DataSourceData<Developer> = ({
     startLimit.push(`start=${start}`);
     startLimit.push(`limit=${lazyLoadBatchSize}`);
   }
-  console.log({ groupRowsState });
+
   const args = [
     ...startLimit,
     pivotBy

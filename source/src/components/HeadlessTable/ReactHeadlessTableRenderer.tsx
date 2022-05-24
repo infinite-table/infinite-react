@@ -696,6 +696,9 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   private onMouseLeave = (rowIndex: number) => {
+    if (this.currentHoveredRow != -1 && this.currentHoveredRow === rowIndex) {
+      this.removeHoverClass(rowIndex);
+    }
     this.currentHoveredRow = -1;
     if (this.scrolling) {
       return;
@@ -797,9 +800,9 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private onScrollStart = () => {
     this.scrolling = true;
-    if (this.currentHoveredRow != -1) {
-      this.removeHoverClass(this.currentHoveredRow);
-    }
+    // if (this.currentHoveredRow != -1) {
+    //   this.removeHoverClass(this.currentHoveredRow);
+    // }
   };
 
   private onScrollStop = () => {

@@ -5,10 +5,12 @@ import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import { defaultFilterEditors } from '../components/FilterEditors';
 import { ThemeVars } from '../theme.css';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
 import {
   InfiniteTableColumns,
+  InfiniteTablePropFilterEditors,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
@@ -72,7 +74,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     portalDOMRef: createRef(),
 
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
-    onHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
+    onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
     bodySize: {
       width: 0,
       height: 0,
@@ -135,6 +137,12 @@ export const forwardProps = <T>(
 
     scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 250,
 
+    filterEditors: (filterEditors) =>
+      ({
+        ...defaultFilterEditors,
+        ...filterEditors,
+      } as InfiniteTablePropFilterEditors<T>),
+
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
     activeIndex: (activeIndex) => activeIndex ?? 0,
@@ -144,6 +152,10 @@ export const forwardProps = <T>(
 
     columnCssEllipsis: (columnCssEllipsis) => columnCssEllipsis ?? true,
     draggableColumns: (draggableColumns) => draggableColumns ?? true,
+    headerOptions: (headerOptions) => ({
+      alwaysReserveSpaceForSortIcon: true,
+      ...headerOptions,
+    }),
 
     showSeparatePivotColumnForSingleAggregation: (
       showSeparatePivotColumnForSingleAggregation,
@@ -168,8 +180,8 @@ export const forwardProps = <T>(
     virtualizeColumns: (virtualizeColumns) => virtualizeColumns ?? true,
 
     rowHeight: (rowHeight) => (typeof rowHeight === 'number' ? rowHeight : 0),
-    headerHeight: (headerHeight) =>
-      typeof headerHeight === 'number' ? headerHeight : 30,
+    columnHeaderHeight: (columnHeaderHeight) =>
+      typeof columnHeaderHeight === 'number' ? columnHeaderHeight : 30,
 
     columns: (columns) => toMap(columns, setupState.propsCache.get('columns')),
     columnVisibility: (columnVisibility) => columnVisibility ?? {},
@@ -259,9 +271,10 @@ export const mapPropsToState = <T>(params: {
     computedColumnGroups,
 
     rowHeightCSSVar: typeof props.rowHeight === 'string' ? props.rowHeight : '',
-    headerHeightCSSVar:
-      typeof props.headerHeight === 'string'
-        ? props.headerHeight || ThemeVars.components.Header.height
+    columnHeaderHeightCSSVar:
+      typeof props.columnHeaderHeight === 'string'
+        ? props.columnHeaderHeight ||
+          ThemeVars.components.Header.columnHeaderHeight
         : '',
   };
 };

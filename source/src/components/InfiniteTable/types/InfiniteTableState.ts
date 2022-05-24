@@ -1,5 +1,15 @@
 import type { MutableRefObject } from 'react';
+
+import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
+import { ComponentStateActions } from '../../hooks/useComponentState/types';
+import type { NonUndefined } from '../../types/NonUndefined';
 import type { ScrollPosition } from '../../types/ScrollPosition';
+import type { Size } from '../../types/Size';
+import { SubscriptionCallback } from '../../types/SubscriptionCallback';
+import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
+import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+
+import { InfiniteTableColumn } from './InfiniteTableColumn';
 import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroupsMap,
@@ -10,16 +20,6 @@ import type {
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
 } from './InfiniteTableProps';
-
-import type { Size } from '../../types/Size';
-
-import { SubscriptionCallback } from '../../types/SubscriptionCallback';
-import { ScrollListener } from '../../VirtualBrain/ScrollListener';
-import type { NonUndefined } from '../../types/NonUndefined';
-import { InfiniteTableColumn } from './InfiniteTableColumn';
-import { ComponentStateActions } from '../../hooks/useComponentState/types';
-import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
-import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 export type GroupByMap<T> = Map<
   keyof T,
@@ -33,7 +33,7 @@ export interface InfiniteTableSetupState<T> {
   scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
-  onHeaderHeightCSSVarChange: SubscriptionCallback<number>;
+  onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
   bodySize: Size;
   brain: MatrixBrain;
@@ -61,6 +61,7 @@ export interface InfiniteTableMappedState<T> {
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
+  headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
@@ -82,6 +83,8 @@ export interface InfiniteTableMappedState<T> {
   onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];
   onScrollStop: InfiniteTableProps<T>['onScrollStop'];
   scrollToBottomOffset: InfiniteTableProps<T>['scrollToBottomOffset'];
+
+  filterEditors: NonUndefined<InfiniteTableProps<T>['filterEditors']>;
 
   focusedClassName: InfiniteTableProps<T>['focusedClassName'];
   focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
@@ -116,7 +119,7 @@ export interface InfiniteTableMappedState<T> {
   header: NonUndefined<InfiniteTableProps<T>['header']>;
   virtualizeColumns: NonUndefined<InfiniteTableProps<T>['virtualizeColumns']>;
   rowHeight: number;
-  headerHeight: number;
+  columnHeaderHeight: number;
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnPinning: InfiniteTablePropColumnPinningMap;
@@ -148,7 +151,7 @@ export interface InfiniteTableDerivedState<T> {
   computedColumnGroups: InfiniteTablePropColumnGroupsMap;
 
   rowHeightCSSVar: string;
-  headerHeightCSSVar: string;
+  columnHeaderHeightCSSVar: string;
   controlledColumnVisibility: boolean;
 }
 

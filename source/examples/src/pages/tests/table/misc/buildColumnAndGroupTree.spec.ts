@@ -1,14 +1,13 @@
 import { test, expect } from '@playwright/test';
-
 import {
   buildColumnAndGroupTree,
   ColGroupTreeGroupItem,
 } from '@src/components/InfiniteTable/components/InfiniteTableHeader/buildColumnAndGroupTree';
+import { computeColumnGroupsDepths } from '@src/components/InfiniteTable/state/computeColumnGroupsDepths';
 import {
   InfiniteTableComputedColumn,
   InfiniteTableColumnGroup,
 } from '@src/components/InfiniteTable/types';
-import { computeColumnGroupsDepths } from '@src/components/InfiniteTable/state/computeColumnGroupsDepths';
 
 function getComputedColumn<T>(config: {
   field: keyof T;
@@ -19,6 +18,9 @@ function getComputedColumn<T>(config: {
   return {
     computedAbsoluteOffset: 0,
     computedDraggable: true,
+    computedDataType: 'string',
+    computedFilterType: 'string',
+    computedSortType: 'string',
     computedFirst: false,
     computedFirstInCategory: false,
     computedSortIndex: -1,
@@ -35,6 +37,9 @@ function getComputedColumn<T>(config: {
     computedSortedDesc: false,
     computedVisibleIndex: config.index,
     computedWidth: 100,
+    computedFiltered: false,
+    computedFilterable: true,
+    computedFilterValue: null,
 
     toggleSort: () => {},
     id: config.field as string,

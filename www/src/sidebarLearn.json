@@ -87,6 +87,25 @@
             }
           ]
         },
+        {
+          "title": "Filtering",
+          "path": "/docs/latest/learn/filtering",
+          "transient": true,
+          "routes": [
+            {
+              "title": "Filtering",
+              "path": "/docs/latest/learn/filtering"
+            },
+            {
+              "title": "Client-side Filtering",
+              "path": "/docs/latest/learn/filtering/filtering-client-side"
+            },
+            {
+              "title": "Server-side Filtering",
+              "path": "/docs/latest/learn/filtering/filtering-server-side"
+            }
+          ]
+        },
 
         {
           "title": "Theming",

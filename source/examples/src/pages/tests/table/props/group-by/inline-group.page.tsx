@@ -89,7 +89,7 @@ export default function GroupByExample() {
         'department',
         {
           field: 'department',
-          valueGetter:
+          valueFormatter:
             groupRenderStrategy === 'inline'
               ? ({ rowInfo }) => {
                   if (!rowInfo.isGroupRow) {
