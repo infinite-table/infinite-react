@@ -15,7 +15,6 @@ import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
   renderChildren: () => Renderable;
-
   width: number;
   cssEllipsis?: boolean;
   // children: Renderable;
