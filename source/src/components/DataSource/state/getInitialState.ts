@@ -117,6 +117,7 @@ export const forwardProps = <T>(
     sortTypes: (sortTypes) => {
       return { ...defaultSortTypes, ...sortTypes };
     },
+    sortMode: (sortMode) => sortMode ?? 'local',
 
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
@@ -189,10 +190,11 @@ export function mapPropsToState<T extends any>(params: {
     controlledFilter,
     filterMode:
       props.filterMode ?? props.filterFunction != null
-        ? 'client'
+        ? 'local'
         : typeof props.data === 'function'
-        ? 'server'
-        : 'client',
+        ? 'remote'
+        : 'local',
+
     multiSort: Array.isArray(
       controlledSort ? props.sortInfo : props.defaultSortInfo,
     ),

@@ -88,3 +88,5 @@ react-test
 # /www/src/ts-compiler-bundle-large.js
 # Local Netlify folder
 .netlify
+
+test-results

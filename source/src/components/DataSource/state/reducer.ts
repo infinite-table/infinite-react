@@ -173,7 +173,7 @@ export function concludeReducer<T>(params: {
   const shouldFilter =
     !!filterFunction || (Array.isArray(filterValue) && filterValue.length);
 
-  const shouldFilterClientSide = shouldFilter && state.filterMode === 'client';
+  const shouldFilterClientSide = shouldFilter && state.filterMode === 'local';
 
   const filterDepsChanged = haveDepsChanged(previousState, state, [
     'filterFunction',
@@ -188,7 +188,7 @@ export function concludeReducer<T>(params: {
     originalDataArrayChanged || filterDepsChanged || sortInfoChanged;
 
   const shouldFilterAgain =
-    state.filterMode === 'client' &&
+    state.filterMode === 'local' &&
     (filterChanged || !state.lastFilterDataArray);
 
   const shouldSortAgain =
@@ -255,7 +255,8 @@ export function concludeReducer<T>(params: {
 
   state.postFilterDataArray = dataArray;
 
-  if (shouldSort) {
+  const shouldSortClientSide = shouldSort && state.sortMode === 'local';
+  if (shouldSortClientSide) {
     const prevKnownTypes = multisort.knownTypes;
     multisort.knownTypes = state.sortTypes;
     dataArray = shouldSortAgain
@@ -268,8 +269,6 @@ export function concludeReducer<T>(params: {
     state.sortedAt = now;
   }
   state.postSortDataArray = dataArray;
-
-  // state.groupDeepMap = undefined;
 
   let rowInfoDataArray: InfiniteTableRowInfo<T>[] = state.dataArray;
 

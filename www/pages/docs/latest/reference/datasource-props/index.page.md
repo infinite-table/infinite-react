@@ -81,6 +81,23 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Prop>
 
+
+<Prop name="defaultSortInfo" type="DataSourceSingleSortInfo<T>|DataSourceSingleSortInfo<T>[]|null">
+
+> Information for sorting the data. This is an uncontrolled prop.
+
+For detailed explanations, see <DataSourcePropLink name="sortInfo" />
+
+<Sandpack title="Local uncontrolled single sorting"> 
+
+```ts file=../../learn/working-with-data/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
 <Prop name="lazyLoad" type="boolean|{batchSize:number}" defaultValue={false}>
 
 > Whether the datasource will load data lazily - useful for server-side grouping and pivoting. If set to `true` or to an object (with `batchSize` property), the <DataSourcePropLink name="data" /> prop must be a function that returns a promise.
@@ -161,6 +178,7 @@ The function is called with an object that has the following properties:
 
  - `sortInfo` - current sort information - see <DataSourcePropLink name="sortInfo" /> for details
  - `groupBy` - current grouping information - see <DataSourcePropLink name="groupBy" /> for details
+ - `filterValue` - current filtering information - see <DataSourcePropLink name="filterValue" /> for details
  - `livePaginationCursor` - the value for the live pagination cursor - see <DataSourcePropLink name="livePaginationCursor" /> for details
  - `changes` - an object that can help you figure out what change caused `onDataParamsChange` to be called.
 
@@ -178,6 +196,51 @@ The function is called with an object that has the following properties:
 Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 </Prop>
+
+<Prop name="sortInfo" type="DataSourceSingleSortInfo<T>|DataSourceSingleSortInfo<T>[]|null">
+
+> Information for sorting the data. This is a controlled prop.
+
+Also see related <DataSourcePropLink name="defaultSortInfo" />, <DataSourcePropLink name="sortMode" />, <PropLink name="sortable" /> and <PropLink name="columns.sortable" />.
+
+Sorting can be single (only one field/column can be sorted at a time) or multiple (multiple fields/columns can be sorted at the same time). Therefore, this property an be an array of objects or a single object (or null) - the shape of the objects (of type `DataSourceSingleSortInfo<T>`)is the following.
+
+ * `dir` - `1 | -1` - the direction of the sorting
+ * `field`? - `keyof DATA_TYPE` - the field to sort
+ * `id`? - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not found to an exact field.
+ * `type` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
+
+When you want to use multiple sorting, but have no default sort order/information, use `[]` (the empty array) to denote multiple sorting should be enabled.
+
+If no `sortInfo` is provided, by default, when clicking a sortable column, single sorting will be applied.
+
+<Note>
+
+For configuring if a column is sortable or not, see <PropLink name="columns.sortable" /> and <PropLink name="sortable" />. By default, all columns are sortable.
+
+</Note>
+
+<Sandpack title="Remote + controlled multi sorting"> 
+
+```ts file=../../learn/working-with-data/remote-controlled-multi-sorting-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="sortMode" type="'local'|'remote'">
+
+> Specifies where the sorting should be done.
+
+See related <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" />.
+
+When set to `'local'`, the data is sorted locally (in the browser) after the data-source is loaded. When set to `'remote'`, the data should be sorted by the server (or by the data-source function that serves the data).
+
+See [the Sorting page](/docs/latest/learn/working-with-data/sorting) for more details.
+
+</Prop>
+
 
 </PropTable> 
 

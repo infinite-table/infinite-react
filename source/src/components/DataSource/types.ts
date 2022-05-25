@@ -73,6 +73,8 @@ export type DataSourceSortInfo<T> =
   | DataSourceSingleSortInfo<T>
   | DataSourceSingleSortInfo<T>[];
 
+export type DataSourcePropSortInfo<T> = DataSourceSortInfo<T>;
+
 export type DataSourceRemoteData<T> = {
   data: T[] | LazyGroupDataItem<T>[];
   mappings?: DataSourceMappings;
@@ -109,6 +111,7 @@ export interface DataSourceMappedState<T> {
 
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
+  sortMode: DataSourceProps<T>['sortMode'];
   filterFunction: DataSourceProps<T>['filterFunction'];
   filterValue: DataSourceProps<T>['filterValue'];
   filterTypes: NonUndefined<DataSourceProps<T>['filterTypes']>;
@@ -278,7 +281,8 @@ export type DataSourceProps<T> = {
 
   filterFunction?: DataSourcePropFilterFunction<T>;
 
-  filterMode?: 'client' | 'server';
+  sortMode?: 'local' | 'remote';
+  filterMode?: 'local' | 'remote';
   filterValue?: DataSourcePropFilterValue<T>;
   defaultFilterValue?: DataSourcePropFilterValue<T>;
   onFilterValueChange?: (filterValue: DataSourcePropFilterValue<T>) => void;
