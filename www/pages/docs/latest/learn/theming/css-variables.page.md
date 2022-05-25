@@ -276,12 +276,12 @@ Overriden in the `dark` theme.
 --infinite-header-color
 ```
 
-### Header height
+### Column header height
 
 
 
 ```css
---infinite-header-height
+--infinite-column-header-height
 ```
 
 ### Header cell dragging background
@@ -310,12 +310,36 @@ Overriden in the `dark` theme.
 --infinite-header-cell-padding
 ```
 
+### Header cell padding x
+
+
+
+```css
+--infinite-header-cell-padding-x
+```
+
+### Header cell padding y
+
+
+
+```css
+--infinite-header-cell-padding-y
+```
+
 ### Header cell icon size
 
 
 
 ```css
 --infinite-header-cell-icon-size
+```
+
+### Header cell sort icon margin
+
+
+
+```css
+--infinite-header-cell-sort-icon-margin
 ```
 
 ### Cell padding

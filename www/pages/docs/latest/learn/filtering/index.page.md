@@ -13,4 +13,4 @@ Figure out how to use filtering with server-side integration.
 </YouWillLearnCard>
 </HeroCards>
 
-Filtering, like most other features, are implemented in both controlled and uncontrolled variants. Thus, we have <DataSourcePropLink name="filter">
+Filtering, like most other features, are implemented in both controlled and uncontrolled variants. Thus, we have <DataSourcePropLink name="filter" />
