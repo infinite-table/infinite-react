@@ -21,21 +21,30 @@ type Developer = {
   age: number;
 };
 
-const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
+const dataSource: DataSourceData<Developer> = ({
+  sortInfo,
+}) => {
   if (sortInfo && !Array.isArray(sortInfo)) {
     sortInfo = [sortInfo];
   }
   const args = [
     sortInfo
       ? 'sortInfo=' +
-        JSON.stringify(sortInfo.map((s) => ({ field: s.field, dir: s.dir })))
+        JSON.stringify(
+          sortInfo.map((s) => ({
+            field: s.field,
+            dir: s.dir,
+          }))
+        )
       : null,
   ]
     .filter(Boolean)
     .join('&');
 
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?` + args,
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/developers100-sql?` +
+      args
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
@@ -59,23 +68,20 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const domProps = { style: { height: '90vh' } };
-
 export default function RemoteUncontrolledMultiSortingExample() {
-  
   return (
     <>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        defaultSortInfo={[{
-          field: 'salary',
-          dir:-1
-        }]}
-        sortMode="remote"
-      >
+        defaultSortInfo={[
+          {
+            field: 'salary',
+            dir: -1,
+          },
+        ]}
+        sortMode="remote">
         <InfiniteTable<Developer>
-          domProps={domProps}
           columns={columns}
           columnDefaultWidth={220}
         />

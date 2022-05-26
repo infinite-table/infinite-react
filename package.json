@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/infinite-table/react-table#readme",
   "devDependencies": {
-    "doctoc": "^2.0.0"
+    "@typescript-eslint/parser": "^5.26.0",
+    "doctoc": "^2.0.0",
+    "prettier": "^2.6.2"
   }
 }

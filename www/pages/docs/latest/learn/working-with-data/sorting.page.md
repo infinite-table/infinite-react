@@ -2,9 +2,57 @@
 title: Sorting
 ---
 
-
-
 `InfiniteTable` comes with multiple sorting behaviours, which are described below.
+
+
+## Single and multiple sorting
+
+Both single and multiple sorting are supported via the <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" /> props. For single sorting, specify an object like 
+```ts
+// sort by `firstName`, in ascending order
+sortInfo = { field: 'firstName', dir: 1 }
+
+// no sorting
+sortInfo = null
+```
+while if you want to specify multiple sorting, specify an array of objects like
+
+```ts
+// sort by age in descending order, then by `firstName` in ascending order
+sortInfo = [
+  { field: 'age', type: 'number', dir: -1 },
+  { field: 'firstName', dir: 1 },
+]
+
+// no sorting
+sortInfo = []
+```
+
+<Sandpack title="Local + uncontrolled multi-sorting example"> 
+
+```ts file=local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx
+```
+</Sandpack>
+
+
+<Sandpack title="Remote + uncontrolled multi-sorting example"> 
+
+```ts file=remote-uncontrolled-multi-sorting-example.page.tsx
+```
+</Sandpack>
+
+<Note>
+
+If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /> there's no way to switch between single and multiple sorting after the component is mounted. If you have this use-case, you need to use the controlled <DataSourcePropLink name="sortInfo" /> prop.
+
+</Note>
+
+The sort information object has the following shape:
+
+ * `dir` - `1 | -1` - the direction of the sorting
+ * `field`? - `keyof DATA_TYPE` - the field to sort by - optional.
+ * `id`? - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
+ * `type` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
 
 ## Controlled and uncontrolled sorting
 
@@ -76,44 +124,45 @@ For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">so
 
 In the example above, remote and controlled sorting are combined - because `sortMode="remote"` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
 
-### Single and multiple sorting
+## Custom sort functions with sortTypes
 
-Both single and multiple sorting are supported via the <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" /> props. For single sorting, specify an object like 
+By default, all columns are sorted as strings, even if they contain numeric values. To make numeric columns sort as numbers, you need to specify <PropLink name="columns.dataType" code={false}>a `dataType` for the column</PropLink>, or, <PropLink name="columns.sortType" code={false}>a column `sortType`</PropLink>.
+
+There are two `dataType` values that can be used: 
+* `"string"`
+* `"number"`
+
+Each dataType has its own sorting function and its own filtering operators & functions.
+
+Sorting works in combination with the <PropLink name="sortTypes" /> property, which is an object with keys being sort types and values being functions that compare two values of the same type.
+
 ```ts
-// sort by `firstName`, in ascending order
-sortInfo = { field: 'firstName', dir: 1 }
-
-// no sorting
-sortInfo = null
-```
-while if you want to specify multiple sorting, specify an array of objects like
-
-```ts
-// sort by age in descending order, then by `firstName` in ascending order
-sortInfo = [
-  { field: 'age', type: 'number', dir: -1 },
-  { field: 'firstName', dir: 1 },
-]
-
-// no sorting
-sortInfo = []
+const sortTypes = {
+  "string": (a, b) => a.localeCompare(b),
+  "number": (a, b) => a - b,
+}
 ```
 
-<Sandpack title="Local + uncontrolled multi-sorting example"> 
-
-```ts file=local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx
-```
-</Sandpack>
-
-
-<Sandpack title="Remote + uncontrolled multi-sorting example"> 
-
-```ts file=remote-uncontrolled-multi-sorting-example.page.tsx
-```
-</Sandpack>
+Those are the two sort types supported by default.
 
 <Note>
 
-If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /> there's no way to switch between single and multiple sorting after the component is mounted. If you have this use-case, you need to use the controlled <DataSourcePropLink name="sortInfo" /> prop.
+A column can choose to use a specific <PropLink name="columns.sortType" />, in which case, for local sorting, the corresponding sort function will be used, or, it can simply specify a <PropLink name="columns.dataType">dataType</PropLink> and the `sortType` with the same name will be used (when no explicit <PropLink name="columns.sortType">sortType</PropLink> is defined).
+
+To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a column will be used as the <PropLink name="columns.sortType">sortType</PropLink> and <PropLink name="columns.filterType">filterType</PropLink>, when those are not explicitly specified.
+
+</Note>
+
+<Sandpack  title="Custom sort by color - magenta will come first">
+
+```ts file=../../reference/datasource-props/sortTypes-example.page.tsx
+```
+
+</Sandpack>
+
+
+<Note>
+
+In this example, for the `"color"` column, we specified <PropLink name="columns.sortType">column.sortType="color"</PropLink> - we could have passed that as `column.dataType` instead, but if the grid had filtering, it wouldn't know what filters to use for "color" - so we used<PropLink name="columns.sortType">column.sortType</PropLink> to only change how the data is sorted.
 
 </Note>

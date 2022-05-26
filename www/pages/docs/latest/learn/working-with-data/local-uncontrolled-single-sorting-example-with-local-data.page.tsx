@@ -2,6 +2,7 @@ import {
   InfiniteTable,
   DataSource,
 } from '@infinite-table/infinite-react';
+
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -40,8 +41,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const domProps = { style: { height: '90vh' } };
-
 export default function LocalUncontrolledSingleSortingExample() {
   return (
     <>
@@ -53,7 +52,6 @@ export default function LocalUncontrolledSingleSortingExample() {
           dir: -1,
         }}>
         <InfiniteTable<Developer>
-          domProps={domProps}
           columns={columns}
           columnDefaultWidth={220}
         />
@@ -61,7 +59,6 @@ export default function LocalUncontrolledSingleSortingExample() {
     </>
   );
 }
-
 
 const dataSource: Developer[] = [
   {

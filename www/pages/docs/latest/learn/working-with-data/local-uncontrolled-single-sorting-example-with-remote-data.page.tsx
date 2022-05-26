@@ -47,19 +47,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const domProps = { style: { height: '90vh' } };
-
 export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
   return (
     <>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        defaultSortInfo={{field: 'salary', dir: -1}}
-        sortMode="local"
-        >
+        defaultSortInfo={{ field: 'salary', dir: -1 }}
+        sortMode="local">
         <InfiniteTable<Developer>
-          domProps={domProps}
           columns={columns}
           columnDefaultWidth={220}
         />

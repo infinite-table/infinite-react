@@ -207,7 +207,7 @@ Sorting can be single (only one field/column can be sorted at a time) or multipl
 
  * `dir` - `1 | -1` - the direction of the sorting
  * `field`? - `keyof DATA_TYPE` - the field to sort
- * `id`? - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not found to an exact field.
+ * `id`? - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
  * `type` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
 
 When you want to use multiple sorting, but have no default sort order/information, use `[]` (the empty array) to denote multiple sorting should be enabled.
@@ -241,6 +241,44 @@ See [the Sorting page](/docs/latest/learn/working-with-data/sorting) for more de
 
 </Prop>
 
+<Prop name="sortTypes" type="Record<string, ((a,b) => number)>">
+
+> Describes the available sorting functions used for local sorting. The object you provide will be merged into the default sort types.
+
+Currently there are two `sortTypes` available:
+
+* `"string"`
+* `"number"`
+
+Those values can be used for the <PropLink name="columns.sortType">column.sortType</PropLink> and <PropLink name="columns.sortType">column.dataType</PropLink> properties.
+
+```ts
+// default implementation
+const sortTypes = {
+  "string": (a, b) => a.localeCompare(b),
+  "number": (a, b) => a - b,
+}
+```
+
+
+When a column does not explicitly specify the <PropLink name="columns.sortType">column.sortType</PropLink>, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used instead. And if no <PropLink name="columns.dataType">column.dataType</PropLink> is defined, it will default to `string`.
+
+You can add new sort types to the DataSource and InfiniteTable components by specifying this property - the object will be merged into the default sort types.
+
+<Sandpack  title="Custom sort by color - magenta will come first">
+
+```ts file=./sortTypes-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+In this example, for the `"color"` column, we specified <PropLink name="columns.sortType">column.sortType="color"</PropLink> - we could have passed that as `column.dataType` instead, but if the grid had filtering, it wouldn't know what filters to use for "color" - so we used<PropLink name="columns.sortType">column.sortType</PropLink> to only change how the data is sorted.
+
+</Note>
+
+</Prop>
 
 </PropTable> 
 

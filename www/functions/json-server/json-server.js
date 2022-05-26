@@ -418,7 +418,6 @@ function getResultSet({
       ) {
         // we should expand this
         data.dataset = getResultSet({
-          tableName,
           groupKeys: data.keys,
           expandedRows,
           reducers,

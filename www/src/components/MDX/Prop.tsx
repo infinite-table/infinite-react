@@ -294,10 +294,16 @@ export function PropTable({
 
       if (child.props.mdxType === 'Prop') {
         const name = child.props.name;
+        
         let hidden = child.props.hidden;
 
+        if (!name) {
+          hidden = true
+          
+        }
         if (
-          filterText &&
+          !hidden &&
+          filterText && 
           !name.toLowerCase().includes(filterText)
         ) {
           hidden = true;
