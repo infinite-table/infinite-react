@@ -166,3 +166,25 @@ To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a colu
 In this example, for the `"color"` column, we specified <PropLink name="columns.sortType">column.sortType="color"</PropLink> - we could have passed that as `column.dataType` instead, but if the grid had filtering, it wouldn't know what filters to use for "color" - so we used<PropLink name="columns.sortType">column.sortType</PropLink> to only change how the data is sorted.
 
 </Note>
+
+<Note>
+
+When you provide a <DataSourcePropLink name="defaultSortInfo"/> prop and the sorting information uses a custom <DataSourcePropLink name="sortTypes">sortType</DataSourcePropLink>, make sure you specify that as the `type` property of the sorting info object. 
+
+```tsx
+defaultSortInfo={{
+  field: 'color',
+  dir: 1,
+  // note this custom sort type
+  type: 'color',
+}}
+```
+
+You will need to have a property for that type in your <DataSourcePropLink name="sortTypes"/> object as well.
+
+```tsx
+sortTypes={{
+  color: (a, b) => //...
+}}
+```
+</Note>

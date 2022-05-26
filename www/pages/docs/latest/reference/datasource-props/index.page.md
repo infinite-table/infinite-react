@@ -88,6 +88,29 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 For detailed explanations, see <DataSourcePropLink name="sortInfo" />
 
+<Note>
+
+When you provide a `defaultSortInfo` prop and the sorting information uses a custom <DataSourcePropLink name="sortTypes">sortType</DataSourcePropLink>, make sure you specify that as the `type` property of the sorting info object.
+
+```tsx
+defaultSortInfo={{
+  field: 'color',
+  dir: 1,
+  // note this custom sort type
+  type: 'color',
+}}
+```
+
+You will need to have a property for that type in your <DataSourcePropLink name="sortTypes"/> object as well.
+
+```tsx
+sortTypes={{
+  color: (a, b) => //...
+}}
+```
+
+</Note>
+
 <Sandpack title="Local uncontrolled single sorting"> 
 
 ```ts file=../../learn/working-with-data/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx
@@ -95,6 +118,13 @@ For detailed explanations, see <DataSourcePropLink name="sortInfo" />
 
 </Sandpack>
 
+
+<Sandpack  title="Custom sort by color - magenta will come first">
+
+```ts file=./customSortType-with-uncontrolled-sortInfo-example.page.tsx
+```
+
+</Sandpack>
 
 </Prop>
 
@@ -226,6 +256,7 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 ```
 
 </Sandpack>
+
 
 </Prop>
 

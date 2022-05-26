@@ -117,18 +117,16 @@ const newSortTypes = {
 
 export default function DataTestPage() {
   return (
-    <>
-      <DataSource<CarSale>
-        data={carsales}
-        primaryKey="id"
-        defaultSortInfo={{
-          field: 'color',
-          dir: 1,
-          type: 'color',
-        }}
-        sortTypes={newSortTypes}>
-        <InfiniteTable<CarSale> columns={columns} />
-      </DataSource>
-    </>
+    <DataSource<CarSale>
+      data={carsales}
+      primaryKey="id"
+      defaultSortInfo={{
+        field: 'color',
+        dir: 1,
+        type: 'color',
+      }}
+      sortTypes={newSortTypes}>
+      <InfiniteTable<CarSale> columns={columns} />
+    </DataSource>
   );
 }

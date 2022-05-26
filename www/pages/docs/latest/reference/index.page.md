@@ -597,6 +597,21 @@ The `rowInfo` object contains information about grouping (if this row is a group
 
 </Prop>
 
+<Prop name="columns.sortType" type="string" defaultValue="'string'">
+
+> Specifies the sort type for the column. See related <DataSourcePropLink name="sortTypes" />
+
+For local sorting, the sort order for a column is determined by the specified `sortType`. If no `sortType` is specified, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used as the `sortType`. If no `sortType` or `dataType` is specified, `"string"` is used.
+
+<Sandpack  title="Custom sort by color - magenta will come first">
+
+```ts file=./datasource-props/sortTypes-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.style" type="CSSProperties | (args) => CSSProperties">
 
 > Controls styling for the column. Can be a style object or a function returning a style object.
