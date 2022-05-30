@@ -7,6 +7,7 @@ export function useCellClassName<T>(
   baseClasses: string[],
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
+    rowActive: boolean;
     dragging: boolean;
     zebra: 'odd' | 'even' | false;
   },
@@ -20,6 +21,7 @@ export function useCellClassName<T>(
     firstInCategory: column.computedFirstInCategory,
     lastInCategory: column.computedLastInCategory,
     pinned: column.computedPinned || false,
+    rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
     zebra: extraFlags.zebra,
   };

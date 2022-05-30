@@ -56,10 +56,15 @@ export function SortIcon(props: SortIconProps) {
       setRendered(true);
     }
     if (newOpacity !== opacity) {
-      requestAnimationFrame(() => {
+      const rafId = requestAnimationFrame(() => {
         setOpacity(newOpacity);
       });
+
+      return () => {
+        cancelAnimationFrame(rafId);
+      };
     }
+    return () => {};
   }, [direction, rendered]);
 
   const onTransitionEnd = () => {

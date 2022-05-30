@@ -85,6 +85,10 @@ export const ColumnCellRecipe = recipe({
   ],
   variants: {
     dragging: { false: {}, true: {} },
+    rowActive: {
+      false: {},
+      true: {},
+    },
     zebra: {
       false: {},
       even: {

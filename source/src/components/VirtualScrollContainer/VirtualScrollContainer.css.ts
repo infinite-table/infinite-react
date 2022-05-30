@@ -6,6 +6,7 @@ export const VirtualScrollContainerCls = style([
   {
     backfaceVisibility: 'hidden',
     WebkitOverflowScrolling: 'touch',
+    outline: 'none',
 
     /** MANDATORY BLOCK - START **/
     position: 'fixed',

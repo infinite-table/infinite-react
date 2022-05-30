@@ -335,7 +335,7 @@ export function InfiniteTableHeaderCell<T>(
             column,
             [InfiniteTableHeaderCellClassName, InfiniteTableCellClassName],
             HeaderCellRecipe,
-            { dragging, zebra: false },
+            { dragging, zebra: false, rowActive: false },
           ),
           CellCls,
         )}

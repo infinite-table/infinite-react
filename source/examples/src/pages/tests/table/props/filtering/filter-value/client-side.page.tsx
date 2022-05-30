@@ -128,7 +128,7 @@ export default function RowStyleDefault() {
         <DataSource<Employee>
           data={dataSource}
           primaryKey="id"
-          filterMode="client"
+          filterMode="local"
           filterValue={filterValue}
         >
           <InfiniteTable<Employee>

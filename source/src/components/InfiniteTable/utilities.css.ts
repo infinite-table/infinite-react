@@ -52,6 +52,10 @@ export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
 });
 
+export const pointerEvents = styleVariants({
+  none: { pointerEvents: 'none' },
+});
+
 export const flex = styleVariants({
   1: { flex: 1 },
   none: { flex: 'none' },

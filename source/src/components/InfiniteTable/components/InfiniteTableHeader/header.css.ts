@@ -131,6 +131,7 @@ export const HeaderCellRecipe = recipe({
     display.block,
   ],
   variants: {
+    rowActive: { false: {}, true: {} },
     zebra: {
       false: {},
       even: {},

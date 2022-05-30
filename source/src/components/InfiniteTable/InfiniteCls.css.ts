@@ -15,6 +15,7 @@ export const InfiniteCls = style([
   display.flex,
   flexFlow.column,
   {
+    outline: 'none',
     fontFamily: ThemeVars.fontFamily,
     color: ThemeVars.color.color,
     background: ThemeVars.background,

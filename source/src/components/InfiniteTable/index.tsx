@@ -1,8 +1,9 @@
 import * as React from 'react';
-import type { RefObject } from 'react';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 
 import { join } from '../../utils/join';
 import { CSSVariableWatch } from '../CSSVariableWatch';
+
 import {
   useDataSource,
   useDataSourceContextValue,
@@ -14,6 +15,7 @@ import {
 } from '../hooks/useComponentState';
 import { useLatest } from '../hooks/useLatest';
 import { useResizeObserver } from '../ResizeObserver';
+import { clamp } from '../utils/clamp';
 import { debounce } from '../utils/debounce';
 
 import { InfiniteTableBody } from './components/InfiniteTableBody';
@@ -24,6 +26,7 @@ import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFoo
 import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMask';
+import { getImperativeApi } from './getImperativeApi';
 import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
 import { useCellRendering } from './hooks/useCellRendering';
 import { useComputed } from './hooks/useComputed';
@@ -43,12 +46,119 @@ import type {
   InfiniteTableProps,
   InfiniteTableState,
 } from './types';
+import {
+  DataSourceStateGetter,
+  InfiniteTableStateGetter,
+} from './types/InfiniteTableProps';
+import { InfiniteTableActions } from './types/InfiniteTableState';
 import { position, zIndex, top, left } from './utilities.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
 const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
 
+function handleRowNavigation<T>(
+  getState: InfiniteTableStateGetter<T>,
+  actions: InfiniteTableActions<T>,
+  getDataSourceState: DataSourceStateGetter<T>,
+  key: string,
+) {
+  const direction = key === 'ArrowDown' ? 1 : key === 'ArrowUp' ? -1 : 0;
+
+  if (!direction) {
+    return handleRowNavigationPageUpDownHomeEnd(
+      getState,
+      actions,
+      getDataSourceState,
+      key,
+    );
+  }
+
+  return handleRowNavigationArrowKeys(
+    getState,
+    actions,
+    getDataSourceState,
+    key,
+  );
+}
+
+function handleRowNavigationArrowKeys<T>(
+  getState: InfiniteTableStateGetter<T>,
+  actions: InfiniteTableActions<T>,
+  getDataSourceState: DataSourceStateGetter<T>,
+  key: string,
+) {
+  const direction = key === 'ArrowDown' ? 1 : key === 'ArrowUp' ? -1 : 0;
+
+  if (!direction) {
+    return false;
+  }
+
+  const state = getState();
+  let { activeRowIndex } = state;
+
+  if (activeRowIndex == null) {
+    return false;
+  }
+
+  activeRowIndex += direction;
+
+  const arrLength = getDataSourceState().dataArray.length;
+
+  activeRowIndex = clamp(activeRowIndex, 0, arrLength - 1);
+
+  actions.activeRowIndex = activeRowIndex;
+
+  return true;
+}
+
+function handleRowNavigationPageUpDownHomeEnd<T>(
+  getState: InfiniteTableStateGetter<T>,
+  actions: InfiniteTableActions<T>,
+  getDataSourceState: DataSourceStateGetter<T>,
+  key: string,
+) {
+  const arrLength = getDataSourceState().dataArray.length;
+  const state = getState();
+
+  const { brain, activeRowIndex } = state;
+
+  if (activeRowIndex == null) {
+    return false;
+  }
+
+  const {
+    start: [startRow],
+    end: [endRow],
+  } = brain.getRenderRange();
+  const renderRowCount = endRow - startRow - 1;
+  const KeyToFunction = {
+    PageDown: () => {
+      actions.activeRowIndex = Math.min(
+        activeRowIndex + renderRowCount,
+        arrLength - 1,
+      );
+    },
+    PageUp: () => {
+      actions.activeRowIndex = Math.max(activeRowIndex - renderRowCount, 0);
+    },
+    End: () => {
+      actions.activeRowIndex = arrLength - 1;
+    },
+    Home: () => {
+      actions.activeRowIndex = 0;
+    },
+  };
+  const Fn = KeyToFunction[key as keyof typeof KeyToFunction];
+
+  if (!Fn) {
+    return false;
+  }
+
+  Fn();
+
+  return true;
+}
 const InfiniteTableRoot = getComponentStateRoot({
   // @ts-ignore
   initSetupState,
@@ -71,12 +181,27 @@ const InfiniteTableRoot = getComponentStateRoot({
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const { componentState, getComputed, computed } = useInfiniteTable<T>();
+    const {
+      componentState,
+      getComputed,
+      computed,
+      componentActions: actions,
+      getState,
+    } = useInfiniteTable<T>();
     const {
       componentState: { loading },
       getState: getDataSourceState,
       componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
+
+    const [imperativeApi] = useState(() => {
+      return getImperativeApi(
+        getState,
+        getComputed,
+        getDataSourceState,
+        actions,
+      );
+    });
 
     const {
       domRef,
@@ -95,13 +220,25 @@ export const InfiniteTableComponent = React.memo(
       scrollStopDelay,
       brain,
       headerBrain,
+      renderer,
+      activeRowIndex,
+      onRenderUpdater,
     } = componentState;
+
+    useEffect(() => {
+      if (activeRowIndex != null) {
+        imperativeApi.scrollRowIntoView(activeRowIndex, {
+          offset: 30,
+        });
+      }
+    }, [activeRowIndex]);
 
     const { columnShifts, bodySize } = componentState;
 
     const { scrollbars } = computed;
 
     const { renderCell } = useCellRendering({
+      imperativeApi,
       getComputed,
       domRef: componentState.domRef,
       columnShifts,
@@ -137,8 +274,16 @@ export const InfiniteTableComponent = React.memo(
 
     useAutoSizeColumns();
 
+    const onKeyDown = useCallback((event) => {
+      if (
+        handleRowNavigation(getState, actions, getDataSourceState, event.key)
+      ) {
+        event.preventDefault();
+      }
+    }, []);
+
     return (
-      <div ref={domRef} {...domProps}>
+      <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
         {header ? (
           <TableHeaderWrapper brain={headerBrain} scrollbars={scrollbars} />
         ) : null}
@@ -146,7 +291,10 @@ export const InfiniteTableComponent = React.memo(
         <InfiniteTableBody>
           <HeadlessTable
             tabIndex={0}
+            activeRowIndex={componentState.ready ? activeRowIndex : null}
             scrollStopDelay={scrollStopDelay}
+            renderer={renderer}
+            onRenderUpdater={onRenderUpdater}
             brain={brain}
             renderCell={renderCell}
             cellHoverClassNames={HOVERED_CLASS_NAMES}

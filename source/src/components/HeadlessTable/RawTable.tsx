@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
+import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
 
@@ -16,6 +17,8 @@ export type RawTableProps = {
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
   cellHoverClassNames?: string[];
+  renderer?: ReactHeadlessTableRenderer;
+  onRenderUpdater?: SubscriptionCallback<Renderable>;
 };
 
 function createRenderer(brain: MatrixBrain) {
@@ -36,8 +39,13 @@ export function RawTableFn(props: RawTableProps) {
   const { brain, renderCell } = props;
 
   const { renderer, onRenderUpdater } = useMemo(() => {
-    return createRenderer(brain);
-  }, [brain]);
+    return props.onRenderUpdater && props.renderer
+      ? {
+          renderer: props.renderer,
+          onRenderUpdater: props.onRenderUpdater,
+        }
+      : createRenderer(brain);
+  }, [brain, props.onRenderUpdater, props.renderer]);
 
   useEffect(() => {
     renderer.cellHoverClassNames = props.cellHoverClassNames || [];

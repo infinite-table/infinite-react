@@ -1019,7 +1019,7 @@ export class MatrixBrain extends Logger {
     };
   };
 
-  private getItemOffsetFor = (
+  public getItemOffsetFor = (
     itemIndex: number,
     direction: 'horizontal' | 'vertical',
   ): number => {

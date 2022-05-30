@@ -382,16 +382,31 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedFilterType =
       c.filterType || colType.filterType || computedDataType;
 
+    const field = c.field ?? colType.field;
+    const valueGetter = c.valueGetter ?? colType.valueGetter;
+
+    let sortableColumnOrType = c.sortable ?? colType.sortable;
+
+    if (sortableColumnOrType == null) {
+      //not explicitly set, so if no field or valueGetter defined, we'll make this unsortable
+      if (field == null && valueGetter == null) {
+        sortableColumnOrType = false;
+      }
+    }
+
+    let computedSortable = sortableColumnOrType ?? sortable ?? true;
+
     const result: InfiniteTableComputedColumn<T> = {
       align: colType.align,
       verticalAlign: colType.verticalAlign,
       defaultHiddenWhenGroupedBy: colType.defaultHiddenWhenGroupedBy,
-      valueGetter: colType.valueGetter,
+      valueGetter,
       valueFormatter: colType.valueFormatter,
       renderValue: colType.renderValue,
       render: colType.render,
       style: colType.style,
       components: colType.components,
+      field,
       ...c,
       computedDataType,
       computedSortType,
@@ -405,7 +420,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedAbsoluteOffset,
       computedPinningOffset,
       computedOffset,
-      computedSortable: c.sortable ?? colType.sortable ?? sortable ?? true,
+      computedSortable,
       computedSortInfo,
       computedSortIndex,
       computedMultiSort: multiSort,

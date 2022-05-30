@@ -1,8 +1,10 @@
 import type { MutableRefObject } from 'react';
 
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
+import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
 import type { NonUndefined } from '../../types/NonUndefined';
+import { Renderable } from '../../types/Renderable';
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type { Size } from '../../types/Size';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
@@ -27,6 +29,8 @@ export type GroupByMap<T> = Map<
 >;
 
 export interface InfiniteTableSetupState<T> {
+  renderer: ReactHeadlessTableRenderer;
+  onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
@@ -78,6 +82,7 @@ export interface InfiniteTableMappedState<T> {
 
   autoSizeColumnsKey: InfiniteTableProps<T>['autoSizeColumnsKey'];
 
+  activeRowIndex: number | null;
   scrollStopDelay: NonUndefined<InfiniteTableProps<T>['scrollStopDelay']>;
   onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
   onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];
@@ -102,7 +107,6 @@ export interface InfiniteTableMappedState<T> {
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
   pivotColumnGroups: InfiniteTablePropColumnGroupsMap;
 
-  activeIndex: NonUndefined<InfiniteTableProps<T>['activeIndex']>;
   columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
   columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
   columnDefaultWidth: NonUndefined<InfiniteTableProps<T>['columnDefaultWidth']>;
@@ -138,6 +142,7 @@ export interface InfiniteTableMappedState<T> {
 export interface InfiniteTableDerivedState<T> {
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Map<string, InfiniteTableColumn<T>>;
+  enableKeyboardNavigation: boolean;
 
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']

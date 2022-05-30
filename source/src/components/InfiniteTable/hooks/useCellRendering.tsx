@@ -15,8 +15,6 @@ import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/Infinite
 import type {
   InfiniteTableComputedValues,
   InfiniteTableImperativeApi,
-  InfiniteTablePropColumnOrder,
-  InfiniteTablePropColumnVisibility,
 } from '../types';
 
 import { useInfiniteTable } from './useInfiniteTable';
@@ -25,6 +23,8 @@ import { useYourBrain } from './useYourBrain';
 type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
   domRef: Ref<HTMLElement>;
+
+  imperativeApi: InfiniteTableImperativeApi<T>;
 
   bodySize: Size;
   columnShifts: number[] | null;
@@ -40,7 +40,7 @@ const SCROLL_BOTTOM_OFFSET = 1;
 export function useCellRendering<T>(
   param: CellRenderingParam<T>,
 ): CellRenderingResult {
-  const { computed, bodySize } = param;
+  const { computed, bodySize, imperativeApi } = param;
 
   const { componentActions, componentState, getState } = useInfiniteTable<T>();
 
@@ -137,19 +137,6 @@ export function useCellRendering<T>(
     componentActions.ready = true;
 
     if (onReady) {
-      const imperativeApi: InfiniteTableImperativeApi<T> = {
-        setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => {
-          componentActions.columnOrder = columnOrder;
-        },
-        setColumnVisibility: (
-          columnVisibility: InfiniteTablePropColumnVisibility,
-        ) => {
-          componentActions.columnVisibility = columnVisibility;
-        },
-        getState,
-        getDataSourceState,
-      };
-
       onReady(imperativeApi);
     }
   }, [!!bodySize.height]);

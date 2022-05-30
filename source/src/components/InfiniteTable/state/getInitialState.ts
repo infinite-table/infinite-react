@@ -1,7 +1,9 @@
 import { createRef } from 'react';
 
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
+import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
@@ -23,6 +25,20 @@ import { toMap } from '../utils/toMap';
 
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 
+function createRenderer(brain: MatrixBrain) {
+  const renderer = new ReactHeadlessTableRenderer(brain);
+  const onRenderUpdater = buildSubscriptionCallback<Renderable>();
+
+  brain.onDestroy(() => {
+    renderer.destroy();
+    onRenderUpdater.destroy();
+  });
+
+  return {
+    renderer,
+    onRenderUpdater,
+  };
+}
 /**
  * The computed state is independent from props and cannot
  * be affected by props.
@@ -55,12 +71,20 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     (globalThis as any).brain = brain;
   }
 
+  const { renderer, onRenderUpdater } = createRenderer(brain);
+
   // and on width changes
   brain.onAvailableSizeChange((size) => {
     headerBrain.setAvailableSize({ width: size.width });
   });
 
+  if (__DEV__) {
+    (globalThis as any).renderer = renderer;
+  }
+
   return {
+    renderer,
+    onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
 
     // TODO destroy the brains on unmount
@@ -145,7 +169,7 @@ export const forwardProps = <T>(
 
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
-    activeIndex: (activeIndex) => activeIndex ?? 0,
+
     columnMinWidth: (columnMinWidth) => columnMinWidth ?? 30,
     columnMaxWidth: (columnMaxWidth) => columnMaxWidth ?? 2000,
     columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 200,
@@ -173,6 +197,7 @@ export const forwardProps = <T>(
 
     licenseKey: (licenseKey) => licenseKey || '',
 
+    activeRowIndex: (activeRowIndex) => activeRowIndex ?? null,
     columnOrder: (columnOrder) => columnOrder ?? true,
     header: (header) => header ?? true,
     showZebraRows: (showZebraRows) => showZebraRows ?? true,
@@ -260,6 +285,7 @@ export const mapPropsToState = <T>(params: {
     groupRenderStrategy,
     groupBy: groupBy,
     computedColumns,
+    enableKeyboardNavigation: state.activeRowIndex != null,
 
     columnHeaderCssEllipsis:
       props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,

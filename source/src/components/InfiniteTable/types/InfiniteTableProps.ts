@@ -24,6 +24,7 @@ import type {
   InfiniteTablePivotFinalColumn,
 } from './InfiniteTableColumn';
 import {
+  InfiniteTableActions,
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
 } from './InfiniteTableState';
@@ -105,6 +106,7 @@ export type InfiniteTableColumnType<T> = {
 
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
+  field?: keyof T;
 
   components?: InfiniteTableColumn<T>['components'];
   renderValue?: InfiniteTableColumn<T>['renderValue'];
@@ -133,12 +135,31 @@ export type InfiniteTablePropColumnSizing = Record<
   InfiniteTableColumnSizingOptions
 >;
 
+export type InfiniteTableStateGetter<T> = () => InfiniteTableState<T>;
+export type InfiniteTableActionsGetter<T> = () => InfiniteTableActions<T>;
+export type DataSourceStateGetter<T> = () => DataSourceState<T>;
+
 export type InfiniteTableImperativeApi<T> = {
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
   x?: T;
+  scrollRowIntoView: (
+    rowIndex: number,
+    config?: {
+      scrollAdjustPosition?: ScrollAdjustPosition;
+      offset?: number;
+    },
+  ) => void;
+  scrollColumnIntoView: (
+    colId: string,
+    config?: {
+      scrollAdjustPosition?: ScrollAdjustPosition;
+      offset?: number;
+    },
+  ) => void;
+
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
 };
@@ -342,6 +363,8 @@ export interface InfiniteTableProps<T> {
   showZebraRows?: boolean;
   showHoverRows?: boolean;
   sortable?: boolean;
+  defaultActiveRowIndex?: number | null;
+  activeRowIndex?: number | null;
   draggableColumns?: boolean;
   header?: boolean;
   headerOptions?: InfiniteTablePropHeaderOptions;
@@ -358,9 +381,6 @@ export interface InfiniteTableProps<T> {
   resizableColumns?: boolean;
   virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;
   virtualizeRows?: boolean;
-
-  defaultActiveIndex?: number;
-  activeIndex?: number;
 
   onSelfFocus?: (event: React.FocusEvent<HTMLDivElement>) => void;
   onSelfBlur?: (event: React.FocusEvent<HTMLDivElement>) => void;
@@ -412,3 +432,5 @@ export type Scrollbars = {
   vertical: boolean;
   horizontal: boolean;
 };
+
+export type ScrollAdjustPosition = 'start' | 'end' | 'center';

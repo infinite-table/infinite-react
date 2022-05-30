@@ -12,20 +12,29 @@ import { setupResizeObserver } from '../ResizeObserver';
 
 import type { ScrollPosition } from '../types/ScrollPosition';
 import type { Size } from '../types/Size';
-import type { TableRenderCellFn } from './ReactHeadlessTableRenderer';
+import type {
+  ReactHeadlessTableRenderer,
+  TableRenderCellFn,
+} from './ReactHeadlessTableRenderer';
 
 import { MatrixBrain, MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
 import { VirtualScrollContainer } from '../VirtualScrollContainer';
 import { RawTable } from './RawTable';
+import { SubscriptionCallback } from '../types/SubscriptionCallback';
+import { Renderable } from '../types/Renderable';
+import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicator';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
+  activeRowIndex?: number | null;
   scrollStopDelay?: number;
   cellHoverClassNames?: string[];
+  renderer?: ReactHeadlessTableRenderer;
+  onRenderUpdater?: SubscriptionCallback<Renderable>;
 };
 
 export function useMatrixBrainLazy(
@@ -132,6 +141,9 @@ export function HeadlessTable(
     scrollStopDelay,
     renderCell,
     cellHoverClassNames,
+    renderer,
+    activeRowIndex,
+    onRenderUpdater,
     ...domProps
   } = props;
 
@@ -200,11 +212,15 @@ export function HeadlessTable(
         data-name="scroll-transform-target"
       >
         <RawTable
+          renderer={renderer}
+          onRenderUpdater={onRenderUpdater}
           renderCell={renderCell}
           brain={brain}
           cellHoverClassNames={cellHoverClassNames}
         />
       </div>
+
+      <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
       <SpacePlaceholder width={scrollSize.width} height={scrollSize.height} />
     </VirtualScrollContainer>
   );

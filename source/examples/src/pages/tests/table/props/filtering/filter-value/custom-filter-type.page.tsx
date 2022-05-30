@@ -73,7 +73,7 @@ export default function RowStyleDefault() {
           primaryKey="id"
           defaultFilterValue={[]}
           filterTypes={filterTypes}
-          filterMode="client"
+          filterMode="local"
           filterDelay={0}
         >
           <InfiniteTable<Employee>

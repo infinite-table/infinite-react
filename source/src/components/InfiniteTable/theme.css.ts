@@ -119,6 +119,17 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in `dark` theme.
          */
         oddBackground: 'row-odd-background',
+
+        /**
+         * The border color for the active row
+         */
+        activeBorderColor: 'active-row-border-color',
+
+        activeBorderWidth: 'active-row-border-width',
+        activeBorderStyle: 'active-row-border-style',
+
+        activeBorder: 'active-row-border',
+
         /**
          * Background color for rows, on hover.
          *
@@ -183,6 +194,11 @@ const RowVars = {
   [ThemeVars.components.Row.groupRowColumnNesting]: '30px',
   [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
+  [ThemeVars.components.Row
+    .activeBorder]: `${ThemeVars.components.Row.activeBorderWidth} ${ThemeVars.components.Row.activeBorderStyle} ${ThemeVars.components.Row.activeBorderColor}`,
+  [ThemeVars.components.Row.activeBorderStyle]: 'dashed',
+  [ThemeVars.components.Row.activeBorderWidth]: '1px',
+  [ThemeVars.components.Row.activeBorderColor]: '#c6c6c6',
 };
 
 const LightTheme = {

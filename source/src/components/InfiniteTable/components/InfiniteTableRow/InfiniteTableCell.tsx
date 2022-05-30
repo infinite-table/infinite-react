@@ -43,7 +43,12 @@ function InfiniteTableCellFn<T>(
 
   const children = renderChildren();
 
+  // TODO very important - dont access any context here,
+  // otherwise we'll be re-rendering all cells every time
+  // something changes, and this could be very costly for performance
+  // so remove the call to useInfiniteTableState
   const { columnShifts } = useInfiniteTableState();
+  // const columnShifts = null;
 
   const shifting = !!columnShifts;
   const style: React.CSSProperties = {

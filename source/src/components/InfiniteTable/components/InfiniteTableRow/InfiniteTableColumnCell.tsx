@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 
 import { join } from '../../../../utils/join';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 import type { Renderable } from '../../../types/Renderable';
 import { useCellClassName } from '../../hooks/useCellClassName';
+import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import type { InfiniteTableColumn } from '../../types';
 import type {
@@ -45,6 +46,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowInfo,
     rowStyle,
     rowClassName,
+
     // getData,
     width,
     column,
@@ -55,6 +57,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     virtualized,
     rowIndex,
     rowHeight,
+
     domRef,
     hidden,
     showZebraRows,
@@ -114,6 +117,19 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     );
   }
 
+  const { getState, componentActions } = useInfiniteTable<T>();
+  const { activeRowIndex } = getState();
+  const rowActive = rowIndex === activeRowIndex;
+
+  const onClick = useCallback(() => {
+    const { activeRowIndex } = getState();
+
+    if (activeRowIndex == null) {
+      return;
+    }
+    componentActions.activeRowIndex = rowIndex;
+  }, [rowIndex]);
+
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
   const rest = rowInfo.isGroupRow
@@ -121,6 +137,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         rowInfo,
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
+        rowActive,
         value,
         field: column.field,
       }
@@ -128,6 +145,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         rowInfo,
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
+        rowActive,
         value,
         field: column.field,
       };
@@ -147,18 +165,18 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     isGroupRow,
     rowIndex,
     toggleGroupRow,
-    toggleCurrentGroupRow: () => {
+    toggleCurrentGroupRow: useCallback(() => {
       if (!rowInfo.isGroupRow) {
         return;
       }
 
       toggleGroupRow(rowInfo.groupKeys!);
-    },
+    }, []),
     groupBy: computedDataSource.groupBy,
     pivotBy: computedDataSource.pivotBy,
   } as InfiniteTableColumnRenderParam<T>;
 
-  const renderChildren = () => {
+  const renderChildren = useCallback(() => {
     if (hidden) {
       return null;
     }
@@ -170,7 +188,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       );
     }
     return renderValue;
-  };
+  }, [column, hidden, ...Object.values(renderParam)]);
 
   const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
     ...rest,
@@ -206,6 +224,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   style.width = width;
   style.height = rowHeight;
 
+  const memoizedStyle = useMemo(
+    () => style,
+    [!style ? null : JSON.stringify(style)],
+  );
+
   const odd =
     (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
 
@@ -219,16 +242,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     column,
     width,
     offset: virtualized ? 0 : column.computedPinningOffset,
-    style,
+    style: memoizedStyle,
     onMouseLeave,
     onMouseEnter,
+    onClick,
     cssEllipsis: column.cssEllipsis ?? true,
     className: join(
       useCellClassName(
         column,
         [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
         ColumnCellRecipe,
-        { dragging: false, zebra },
+        { dragging: false, zebra, rowActive },
       ),
       colClassName,
       rowComputedClassName,

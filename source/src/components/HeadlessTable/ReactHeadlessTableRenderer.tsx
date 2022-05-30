@@ -4,6 +4,7 @@ import { RefCallback } from 'react';
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
 import { raf } from '../../utils/raf';
+import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
@@ -89,6 +90,272 @@ export class ReactHeadlessTableRenderer extends Logger {
       removeOnScrollStop();
     };
   }
+
+  public getFullyVisibleRowsRange = () => {
+    let {
+      start: [startRow],
+      end: [endRow],
+    } = this.brain.getRenderRange();
+
+    while (!this.isRowFullyVisible(startRow)) {
+      startRow++;
+
+      if (startRow === endRow) {
+        return null;
+      }
+    }
+    while (!this.isRowFullyVisible(endRow)) {
+      endRow--;
+
+      if (endRow === startRow) {
+        return null;
+      }
+    }
+
+    return { start: startRow, end: endRow };
+  };
+
+  public getScrollPositionForScrollRowIntoView = (
+    rowIndex: number,
+    config: {
+      scrollAdjustPosition?: ScrollAdjustPosition;
+      offset?: number;
+    } = { offset: 0 },
+  ): ScrollPosition => {
+    const { brain } = this;
+    const scrollPosition = brain.getScrollPosition();
+    let { scrollAdjustPosition, offset = 0 } = config;
+    if (this.isRowFullyVisible(rowIndex) && !scrollAdjustPosition) {
+      return scrollPosition;
+    }
+
+    const rowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
+    const rowHeight = brain.getItemSize(rowIndex, 'vertical');
+
+    const top = scrollPosition.scrollTop;
+
+    const availableSize = brain.getAvailableSize();
+    const bottom = top + availableSize.height;
+
+    if (!scrollAdjustPosition) {
+      scrollAdjustPosition =
+        rowOffset > bottom ? 'end' : rowOffset < top ? 'start' : 'end';
+    }
+
+    let scrollTop = scrollPosition.scrollTop;
+    if (scrollAdjustPosition === 'center') {
+      scrollTop = rowOffset - Math.floor(brain.getAvailableSize().height / 2);
+    } else if (scrollAdjustPosition === 'start') {
+      offset = -offset;
+      scrollTop += rowOffset - top + offset;
+    } else {
+      offset += rowHeight;
+      scrollTop += rowOffset - bottom + offset;
+    }
+
+    return {
+      ...scrollPosition,
+      scrollTop,
+    };
+  };
+
+  public getScrollPositionForScrollColumnIntoView = (
+    colIndex: number,
+    config: {
+      scrollAdjustPosition?: ScrollAdjustPosition;
+      offset?: number;
+    } = { offset: 0 },
+  ): ScrollPosition => {
+    const { brain } = this;
+    const scrollPosition = brain.getScrollPosition();
+    let { scrollAdjustPosition, offset = 0 } = config;
+    if (this.isColumnFullyVisible(colIndex) && !scrollAdjustPosition) {
+      return scrollPosition;
+    }
+
+    const rowOffset = brain.getItemOffsetFor(colIndex, 'horizontal');
+    const colWidth = brain.getItemSize(colIndex, 'horizontal');
+
+    const left = scrollPosition.scrollLeft;
+
+    const availableSize = brain.getAvailableSize();
+    const right = left + availableSize.width;
+
+    if (!scrollAdjustPosition) {
+      scrollAdjustPosition =
+        rowOffset > right ? 'end' : rowOffset < left ? 'start' : 'end';
+    }
+
+    let scrollLeft = scrollPosition.scrollLeft;
+    if (scrollAdjustPosition === 'center') {
+      scrollLeft = rowOffset - Math.floor(brain.getAvailableSize().width / 2);
+    } else if (scrollAdjustPosition === 'start') {
+      offset = -offset;
+      scrollLeft += rowOffset - left + offset;
+    } else {
+      offset += colWidth;
+      scrollLeft += rowOffset - right + offset;
+    }
+
+    return {
+      ...scrollPosition,
+      scrollLeft,
+    };
+  };
+
+  public getScrollPositionForScrollCellIntoView = (
+    rowIndex: number,
+    colIndex: number,
+    config: {
+      rowScrollAdjustPosition?: ScrollAdjustPosition;
+      colScrollAdjustPosition?: ScrollAdjustPosition;
+      scrollAdjustPosition?: ScrollAdjustPosition;
+      offsetTop: number;
+      offsetLeft: number;
+    } = { offsetLeft: 0, offsetTop: 0 },
+  ): ScrollPosition => {
+    const { scrollLeft } = this.getScrollPositionForScrollColumnIntoView(
+      colIndex,
+      {
+        scrollAdjustPosition:
+          config.colScrollAdjustPosition || config.scrollAdjustPosition,
+        offset: config.offsetLeft,
+      },
+    );
+    const { scrollTop } = this.getScrollPositionForScrollRowIntoView(rowIndex, {
+      scrollAdjustPosition:
+        config.rowScrollAdjustPosition || config.scrollAdjustPosition,
+      offset: config.offsetTop,
+    });
+
+    return { scrollLeft, scrollTop };
+  };
+
+  public isRowFullyVisible = (rowIndex: number, offsetMargin = 2) => {
+    return this.isRowVisible(
+      rowIndex,
+      this.brain.getRowHeight(rowIndex) - offsetMargin,
+    );
+  };
+
+  public isRowVisible = (rowIndex: number, offsetMargin = 10) => {
+    if (!this.isRowRendered(rowIndex)) {
+      return false;
+    }
+    const { brain } = this;
+
+    const {
+      start: [startRow],
+      end: [endRow],
+    } = this.brain.getRenderRange();
+
+    const midRow = Math.floor((startRow + endRow) / 2);
+
+    if (rowIndex < startRow) {
+      return false;
+    }
+    if (rowIndex >= endRow) {
+      return false;
+    }
+
+    if (rowIndex >= midRow) {
+      const lastVisibleRow = brain.getItemAt(
+        brain.getAvailableSize().height +
+          brain.getScrollPosition().scrollTop -
+          offsetMargin,
+        'vertical',
+      );
+
+      return rowIndex <= lastVisibleRow;
+    }
+
+    if (rowIndex < midRow) {
+      const firstVisibleRow = brain.getItemAt(
+        brain.getScrollPosition().scrollTop + offsetMargin,
+        'vertical',
+      );
+
+      return rowIndex >= firstVisibleRow;
+    }
+
+    return true;
+  };
+
+  public isRowRendered = (rowIndex: number) => {
+    const elements = this.mappedCells.getElementsForRowIndex(rowIndex);
+
+    return elements.length > 0;
+  };
+
+  public isCellVisible = (rowIndex: number, colIndex: number) => {
+    return this.isRowVisible(rowIndex) && this.isColumnVisible(colIndex);
+  };
+
+  public isCellFullyVisible = (rowIndex: number, colIndex: number) => {
+    return this.isRowFullyVisible(rowIndex) && this.isColumnVisible(colIndex);
+  };
+
+  public isColumnFullyVisible = (colIndex: number, offsetMargin = 2) => {
+    return this.isColumnVisible(
+      colIndex,
+      this.brain.getColWidth(colIndex) - offsetMargin,
+    );
+  };
+
+  public isColumnVisible = (colIndex: number, offsetMargin = 10) => {
+    if (!this.isColumnRendered(colIndex)) {
+      return false;
+    }
+
+    const { brain } = this;
+
+    const {
+      start: [_, startCol],
+      end: [__, endCol],
+    } = brain.getRenderRange();
+    const midCol = Math.floor((startCol + endCol) / 2);
+
+    if (colIndex < startCol) {
+      return false;
+    }
+    if (colIndex >= endCol) {
+      return false;
+    }
+
+    if (colIndex >= midCol) {
+      const lastVisibleCol = brain.getItemAt(
+        brain.getAvailableSize().width +
+          brain.getScrollPosition().scrollLeft -
+          offsetMargin,
+        'horizontal',
+      );
+
+      return colIndex <= lastVisibleCol;
+    }
+
+    if (colIndex < midCol) {
+      const firstVisibleCol = brain.getItemAt(
+        brain.getScrollPosition().scrollLeft + offsetMargin,
+        'horizontal',
+      );
+
+      return colIndex >= firstVisibleCol;
+    }
+
+    return true;
+  };
+
+  public isCellRendered = (rowIndex: number, colIndex: number) => {
+    return this.isRowRendered(rowIndex) && this.isColumnRendered(colIndex);
+  };
+
+  public isColumnRendered = (colIndex: number) => {
+    const {
+      start: [startRow],
+    } = this.brain.getRenderRange();
+
+    return this.mappedCells.getRenderedNodeForCell(startRow, colIndex) !== null;
+  };
 
   getExtraSpanCellsForRange = (range: TableRenderRange) => {
     const { start, end } = range;
