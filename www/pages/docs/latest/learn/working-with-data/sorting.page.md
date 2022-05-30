@@ -7,15 +7,58 @@ title: Sorting
 
 ## Single and multiple sorting
 
-Both single and multiple sorting are supported via the <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" /> props. For single sorting, specify an object like 
+Both single and multiple sorting are supported via the <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" /> props.
+
+### Single sorting
+
+For single sorting, <DataSourcePropLink name="sortInfo" /> (or the uncontrolled <DataSourcePropLink name="defaultSortInfo" />) should an object like 
 ```ts
 // sort by `firstName`, in ascending order
 sortInfo = { field: 'firstName', dir: 1 }
+```
 
+or you can use
+
+```ts
 // no sorting
 sortInfo = null
 ```
-while if you want to specify multiple sorting, specify an array of objects like
+for explicit no sorting.
+
+<Note>
+
+When you use controlled sorting via <DataSourcePropLink name="sortInfo" />, make sure you also listen to <DataSourcePropLink name="onSortInfoChange" /> for changes, to get notifications when sorting is changed by the user. Also, for controlled sorting, it's your responsibility to sort the data - read bellow in the [controlled and uncontrolled section](#controlled-and-uncontrolled-sorting).
+
+</Note>
+
+
+The sort information object has the following shape:
+
+ * `dir` - `1 | -1` - the direction of the sorting
+ * `field?` - `keyof DATA_TYPE` - the field to sort by - optional.
+ * `id?` - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
+ * `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
+
+
+
+<Sandpack title="Local + uncontrolled single-sorting example"> 
+
+<Description>
+
+This example shows initial sorting by `salary` in ascending order. Click the header of the `salary` column to sort in descending order and then click it again to unsort.
+
+</Description>
+
+
+```ts file=local-uncontrolled-single-sorting-example-with-local-data.page.tsx
+```
+</Sandpack>
+
+
+
+### Multiple sorting
+
+If you want to use multiple sorting, specify an array of objects like
 
 ```ts
 // sort by age in descending order, then by `firstName` in ascending order
@@ -28,7 +71,16 @@ sortInfo = [
 sortInfo = []
 ```
 
+This allows sorting by multiple fields (to which columns are bound) - you can specify however many you want - so when sorting two objects in the `DataSource`, the first `sortInfo` is used to compare the two, and then, on equal values, the next `sortInfo` is used and so on.
+
 <Sandpack title="Local + uncontrolled multi-sorting example"> 
+
+<Description>
+
+This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. Click the `salary` column to toggle the column sort to descending. Clicking it a second time will remove it from the sort altogether.
+
+</Description>
+
 
 ```ts file=local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx
 ```
@@ -47,12 +99,6 @@ If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /
 
 </Note>
 
-The sort information object has the following shape:
-
- * `dir` - `1 | -1` - the direction of the sorting
- * `field`? - `keyof DATA_TYPE` - the field to sort by - optional.
- * `id`? - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
- * `type` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
 
 ## Controlled and uncontrolled sorting
 

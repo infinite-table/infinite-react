@@ -25,12 +25,11 @@ type Developer = {
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
-  age: { field: 'age' },
-
   salary: {
     field: 'salary',
     type: 'number',
   },
+  age: { field: 'age' },
   canDesign: { field: 'canDesign' },
   country: { field: 'country' },
   firstName: { field: 'firstName' },
@@ -49,7 +48,7 @@ export default function LocalUncontrolledSingleSortingExample() {
         data={dataSource}
         defaultSortInfo={{
           field: 'salary',
-          dir: -1,
+          dir: 1,
         }}>
         <InfiniteTable<Developer>
           columns={columns}

@@ -15,12 +15,15 @@ import { Preview } from './Preview';
 import { CustomTheme } from './Themes';
 import { CSSProperties } from 'react';
 import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
+import { useState } from 'react';
 
 export function CustomPreset({
   isSingleFile,
   title,
+  description,
   onReset,
 }: {
+  description?: React.ReactNode;
   title?: React.ReactNode;
   isSingleFile: boolean;
   onReset: () => void;
@@ -31,6 +34,15 @@ export function CustomPreset({
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const { listen, sandpack } = useSandpack();
+
+  const [viewMode, setViewMode] = useState<
+    'code' | 'preview' | 'both'
+  >('both');
+
+  const showCode =
+    viewMode === 'code' || viewMode === 'both';
+  const showPreview =
+    viewMode === 'preview' || viewMode === 'both';
 
   // useEffect(() => {
   //   const unsubscribe = listen((msg) => {
@@ -86,6 +98,16 @@ export function CustomPreset({
     return isExpanded ? editorHeight : 406;
   };
 
+  const descriptionBlock = description ? (
+    <div
+      className={
+        'leading-base bg-card dark:bg-card-dark w-full border-b border-border dark:border-gray-60'
+      }>
+      <div className="sandpackDescription text-primary dark:text-primary-dark text-sm px-4 py-0.5 relative">
+        {description}
+      </div>
+    </div>
+  ) : null;
   return (
     <>
       <div
@@ -104,7 +126,10 @@ export function CustomPreset({
             : undefined
         }>
         {titleBlock}
+        {!fullScreen && descriptionBlock}
         <NavigationBar
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
           skipRound={!!titleBlock}
           showDownload={isSingleFile}
           onReset={onReset}
@@ -120,28 +145,33 @@ export function CustomPreset({
               minHeight: 216,
               height: fullScreen ? '100vh' : '',
             }}>
-            <SandpackCodeEditor
-              customStyle={{
-                height: getHeight(),
-                maxHeight: isExpanded
-                  ? fullScreen
-                    ? getHeight()
-                    : ''
-                  : 406, //40px is navbar height
-              }}
-              showLineNumbers
-              showInlineErrors
-              showTabs={false}
-            />
-            <Preview
-              isExpanded={isExpanded}
-              fullScreen={fullScreen}
-              className="order-last xl:order-2"
-              customStyle={{
-                height: getHeight(),
-                maxHeight: isExpanded ? '' : 406,
-              }}
-            />
+            {showCode ? (
+              <SandpackCodeEditor
+                customStyle={{
+                  height: getHeight(),
+                  maxHeight: isExpanded
+                    ? fullScreen
+                      ? getHeight()
+                      : ''
+                    : 406, //40px is navbar height
+                }}
+                showLineNumbers
+                showInlineErrors
+                showTabs={false}
+              />
+            ) : null}
+            {showPreview ? (
+              <Preview
+                isExpanded={isExpanded}
+                fullScreen={fullScreen}
+                className="order-last xl:order-2"
+                customStyle={{
+                  height: getHeight(),
+                  minHeight: getHeight(),
+                  maxHeight: isExpanded ? '' : 406,
+                }}
+              />
+            ) : null}
             {isExpandable && (
               <button
                 translate="yes"

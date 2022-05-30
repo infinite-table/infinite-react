@@ -9,7 +9,7 @@ interface ExpandableExampleProps {
   children: React.ReactNode;
   title: string;
   excerpt?: string;
-  type: 'DeepDive' | 'Example';
+  type: 'DeepDive' | 'Example' | 'ExpandableDescription';
 }
 
 function ExpandableExample({

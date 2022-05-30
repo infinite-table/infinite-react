@@ -33,9 +33,20 @@ type SandpackProps = {
 function Sandpack(props: SandpackProps) {
   let { children, setup, autorun = true, title } = props;
   let [resetKey, setResetKey] = React.useState(0);
-  let codeSnippets = React.Children.toArray(
+
+  const isSandpackDescriptionElement = (
+    el: React.ReactElement
+  ) => el.props.mdxType === 'Description';
+
+  const sandpackChildren = React.Children.toArray(
     children
   ) as React.ReactElement[];
+  const codeSnippets = sandpackChildren.filter(
+    (el) => !isSandpackDescriptionElement(el)
+  );
+  const description = sandpackChildren.find(
+    isSandpackDescriptionElement
+  );
 
   const { sandpackTemplateFiles, validCustomFileNames } =
     useInfiniteTemplate();
@@ -163,6 +174,7 @@ function Sandpack(props: SandpackProps) {
         recompileDelay={500}>
         <CustomPreset
           title={title}
+          description={description}
           isSingleFile={false}
           onReset={() => {
             setResetKey((k) => k + 1);

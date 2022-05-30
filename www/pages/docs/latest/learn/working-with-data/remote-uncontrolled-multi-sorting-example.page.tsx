@@ -52,12 +52,11 @@ const dataSource: DataSourceData<Developer> = ({
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
-  age: { field: 'age' },
-
   salary: {
     field: 'salary',
     type: 'number',
   },
+  age: { field: 'age' },
   canDesign: { field: 'canDesign' },
   country: { field: 'country' },
   firstName: { field: 'firstName' },

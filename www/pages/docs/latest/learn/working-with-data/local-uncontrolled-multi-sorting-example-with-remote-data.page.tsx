@@ -31,14 +31,13 @@ const dataSource: DataSourceData<Developer> = () => {
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
-  age: { field: 'age' },
-
+  country: { field: 'country' },
   salary: {
     field: 'salary',
     type: 'number',
   },
+  age: { field: 'age' },
   canDesign: { field: 'canDesign' },
-  country: { field: 'country' },
   firstName: { field: 'firstName' },
   stack: { field: 'stack' },
   id: { field: 'id' },
@@ -49,15 +48,17 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 const domProps = { style: { height: '90vh' } };
 
-export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
+export default function LocalUncontrolledMultiSortingExampleWithRemoteData() {
   return (
     <>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        defaultSortInfo={[{field: 'salary', dir: -1}]}
-        sortMode="local"
-        >
+        defaultSortInfo={[
+          { field: 'country', dir: -1 },
+          { field: 'salary', dir: 1 },
+        ]}
+        sortMode="local">
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}

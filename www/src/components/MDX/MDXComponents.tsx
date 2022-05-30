@@ -389,6 +389,16 @@ export const MDXComponents = {
     title: string;
     excerpt: string;
   }) => <ExpandableExample {...props} type="DeepDive" />,
+  ExpandableDescription: (props: {
+    children: React.ReactNode;
+    title: string;
+    excerpt: string;
+  }) => (
+    <ExpandableExample
+      {...props}
+      type="ExpandableDescription"
+    />
+  ),
   Gotcha,
   HomepageHero,
   HeroCards,
@@ -396,6 +406,9 @@ export const MDXComponents = {
   IllustrationBlock,
   Intro,
   IconOpenInWindow,
+  Description: (props: { children: React.ReactNode }) => (
+    <>{props.children}</>
+  ),
   LearnMore,
   Math,
   MathI,
