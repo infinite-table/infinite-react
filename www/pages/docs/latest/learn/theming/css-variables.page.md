@@ -394,6 +394,120 @@ Overriden in `dark` theme.
 --infinite-cell-color
 ```
 
+### Active cell border color r
+
+The RED component of the color used for the active cell when cell keyboard navigation is enabled.
+
+You can also specify the GREEN and BLUE components of the color using the next two css vars.
+
+The border color of the active cell is decomposed into multiple variables for convenience as by default
+the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
+
+If you don't want this, you can use `--infinite-active-cell-background` instead.
+
+```css
+--infinite-active-cell-border-color--r
+```
+
+### Active cell border color g
+
+The GREEN component of the color used for the active cell when cell keyboard navigation is enabled.
+
+You can also specify the RED and BLUE components of the color using the next two css vars.
+
+The border color of the active cell is decomposed into multiple variables for convenience as by default
+the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
+
+If you don't want this, you can use `--infinite-active-cell-background` instead.
+
+```css
+--infinite-active-cell-border-color--g
+```
+
+### Active cell border color b
+
+The BLUE component of the color used for the active cell when cell keyboard navigation is enabled.
+
+You can also specify the RED and GREEN components of the color using the next two css vars.
+
+The border color of the active cell is decomposed into multiple variables for convenience as by default
+the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
+
+If you don't want this, you can use `--infinite-active-cell-background` instead.
+
+```css
+--infinite-active-cell-border-color--b
+```
+
+### Active cell background alpha
+
+The opacity of the background color for the active cell when cell keyboard navigation is enabled.
+
+The background color of the active cell is based on the value of the above 3 variables, but with the opacity specified by this variable.
+This is applied when the component has focus.
+
+```css
+--infinite-active-cell-background-alpha
+```
+
+### Active cell background alpha table unfocused
+
+Same as the above, but applied when the component does not have focus.
+
+```css
+--infinite-active-cell-background-alpha--table-unfocused
+```
+
+### Active cell border color
+
+The color for border of the active cell (when cell keyboard navigation is enabled).
+
+```css
+--infinite-active-cell-border-color
+```
+
+### Active cell background from border
+
+You can ignore this one
+
+```css
+--infinite-active-cell-background-from-border
+```
+
+### Active cell background
+
+The background color of the active cell defaults to the same color (with modified opacity, as explained above) as the border color.
+
+However, specify this to explicitly override the default.
+
+```css
+--infinite-active-cell-background
+```
+
+### Active cell border width
+
+The width of the border for the active cell.
+
+```css
+--infinite-active-cell-border-width
+```
+
+### Active cell border style
+
+The style of the border for the active cell (eg: 'solid', 'dashed', 'dotted') - defaults to 'dashed'.
+
+```css
+--infinite-active-cell-border-style
+```
+
+### Active cell border
+
+Specifies the border for the active cell. Defaults to `var(--infinite-active-cell-border-width) var(--infinite-active-cell-border-style) var(--infinite-active-cell-border-color)`.
+
+```css
+--infinite-active-cell-border
+```
+
 ### Row background
 
 Background color for rows. Defaults to [`--infinite-background`](#background).
@@ -412,6 +526,56 @@ Overriden in `dark` theme.
 
 ```css
 --infinite-row-odd-background
+```
+
+### Active row border color
+
+The border color for the active row. Defaults to the same value as `var(--infinite-active-cell-border-color)`.
+
+```css
+--infinite-active-row-border-color
+```
+
+### Active row background
+
+The background color of the active row defaults to the same color (with modified opacity, as explained above) as the border color - defined above.
+
+However, specify this to explicitly override the default.
+
+```css
+--infinite-active-row-background
+```
+
+### Active row background from border
+
+You can ignore this one
+
+```css
+--infinite-active-row-background-from-border
+```
+
+### Active row border width
+
+The width of the border for the active row. Defaults to the same value as `var(--infinite-active-cell-border-width)`.
+
+```css
+--infinite-active-row-border-width
+```
+
+### Active row border style
+
+The style of the border for the active row (eg: 'solid', 'dashed', 'dotted') - defaults to the same value as `var(--infinite-active-cell-border-style)`, which is `dashed` by default.
+
+```css
+--infinite-active-row-border-style
+```
+
+### Active row border
+
+Specifies the border for the active row. Defaults to `var(--infinite-active-row-border-width) var(--infinite-active-row-border-style) var(--infinite-active-row-border-color)`.
+
+```css
+--infinite-active-row-border
 ```
 
 ### Row hover background

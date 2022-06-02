@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../theme.css';
 import { left, top, pointerEvents, position } from '../utilities.css';
@@ -11,7 +11,10 @@ export const ActiveCellIndicatorBaseCls = style(
     top['0'],
     {
       border: ThemeVars.components.Cell.activeBorder,
-      background: ThemeVars.components.Cell.activeBackground,
+      background: fallbackVar(
+        ThemeVars.components.Cell.activeBackground,
+        ThemeVars.components.Cell.activeBackgroundFromBorder,
+      ),
     },
   ],
   'ActiveCellIndicator',

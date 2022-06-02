@@ -63,6 +63,21 @@
           ]
         },
         {
+          "title": "Keyboard Navigation",
+          "path": "/docs/latest/learn/keyboard-navigation/navigating-rows",
+          "transient": true,
+          "routes": [
+            {
+              "path": "/docs/latest/learn/keyboard-navigation/navigating-rows",
+              "title": "Keyboard Navigation for Rows"
+            },
+            {
+              "path": "/docs/latest/learn/keyboard-navigation/navigating-cells",
+              "title": "Keyboard Navigation for Cells"
+            }
+          ]
+        },
+        {
           "title": "Grouping and Pivoting",
           "path": "/docs/latest/learn/grouping-and-pivoting",
           "routes": [

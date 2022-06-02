@@ -41,7 +41,16 @@ export const InfiniteClsRecipe = recipe({
     },
     focusedWithin: {
       true: {},
-      false: {},
+      false: {
+        vars: {
+          [ThemeVars.components.Cell
+            .activeBackgroundAlpha]: `${ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused}`,
+          [ThemeVars.components.Cell
+            .activeBackgroundFromBorder]: `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${ThemeVars.components.Cell.activeBorderColor_G}, ${ThemeVars.components.Cell.activeBorderColor_B}, ${ThemeVars.components.Cell.activeBackgroundAlpha})`,
+          [ThemeVars.components.Row.activeBackgroundFromBorder]:
+            ThemeVars.components.Cell.activeBackgroundFromBorder,
+        },
+      },
     },
     hasPinnedStart: {
       true: {},

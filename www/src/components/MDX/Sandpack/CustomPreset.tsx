@@ -130,7 +130,7 @@ export function CustomPreset({
         <NavigationBar
           viewMode={viewMode}
           onViewModeChange={setViewMode}
-          skipRound={!!titleBlock}
+          skipRound={!!titleBlock || !!descriptionBlock}
           showDownload={isSingleFile}
           onReset={onReset}
           onFullScreenToggle={setFullScreen}

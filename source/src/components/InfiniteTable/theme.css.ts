@@ -105,15 +105,87 @@ export const ThemeVars = createGlobalThemeContract(
          */
         color: 'cell-color',
 
-        activeBackground: 'active-cell-background',
         /**
-         * The border color for the active cell
+         * The RED component of the color used for the active cell when cell keyboard navigation is enabled.
+         *
+         * You can also specify the GREEN and BLUE components of the color using the next two css vars.
+         *
+         * The border color of the active cell is decomposed into multiple variables for convenience as by default
+         * the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
+         *
+         * If you don't want this, you can use `--infinite-active-cell-background` instead.
+         */
+        activeBorderColor_R: 'active-cell-border-color--r',
+
+        /**
+         * The GREEN component of the color used for the active cell when cell keyboard navigation is enabled.
+         *
+         * You can also specify the RED and BLUE components of the color using the next two css vars.
+         *
+         * The border color of the active cell is decomposed into multiple variables for convenience as by default
+         * the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
+         *
+         * If you don't want this, you can use `--infinite-active-cell-background` instead.
+         */
+        activeBorderColor_G: 'active-cell-border-color--g',
+
+        /**
+         * The BLUE component of the color used for the active cell when cell keyboard navigation is enabled.
+         *
+         * You can also specify the RED and GREEN components of the color using the next two css vars.
+         *
+         * The border color of the active cell is decomposed into multiple variables for convenience as by default
+         * the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
+         *
+         * If you don't want this, you can use `--infinite-active-cell-background` instead.
+         */
+        activeBorderColor_B: 'active-cell-border-color--b',
+
+        /**
+         * The opacity of the background color for the active cell when cell keyboard navigation is enabled.
+         *
+         * The background color of the active cell is based on the value of the above 3 variables, but with the opacity specified by this variable.
+         * This is applied when the component has focus.
+         */
+        activeBackgroundAlpha: 'active-cell-background-alpha',
+
+        /**
+         * Same as the above, but applied when the component does not have focus.
+         */
+        activeBackgroundAlphaWhenTableUnfocused:
+          'active-cell-background-alpha--table-unfocused',
+
+        /**
+         * The color for border of the active cell (when cell keyboard navigation is enabled).
          */
         activeBorderColor: 'active-cell-border-color',
 
+        /**
+         * You can ignore this one
+         * @ignore
+         */
+        activeBackgroundFromBorder: 'active-cell-background-from-border',
+
+        /**
+         * The background color of the active cell defaults to the same color (with modified opacity, as explained above) as the border color.
+         *
+         * However, specify this to explicitly override the default.
+         */
+        activeBackground: 'active-cell-background',
+
+        /**
+         * The width of the border for the active cell.
+         */
         activeBorderWidth: 'active-cell-border-width',
+
+        /**
+         * The style of the border for the active cell (eg: 'solid', 'dashed', 'dotted') - defaults to 'dashed'.
+         */
         activeBorderStyle: 'active-cell-border-style',
 
+        /**
+         * Specifies the border for the active cell. Defaults to `var(--infinite-active-cell-border-width) var(--infinite-active-cell-border-style) var(--infinite-active-cell-border-color)`.
+         */
         activeBorder: 'active-cell-border',
       },
       Row: {
@@ -131,15 +203,37 @@ export const ThemeVars = createGlobalThemeContract(
          */
         oddBackground: 'row-odd-background',
 
-        activeBackground: 'active-row-background',
         /**
-         * The border color for the active row
+         * The border color for the active row. Defaults to the same value as `var(--infinite-active-cell-border-color)`.
          */
         activeBorderColor: 'active-row-border-color',
 
+        /**
+         * The background color of the active row defaults to the same color (with modified opacity, as explained above) as the border color - defined above.
+         *
+         * However, specify this to explicitly override the default.
+         */
+        activeBackground: 'active-row-background',
+
+        /**
+         * You can ignore this one
+         * @ignore
+         */
+        activeBackgroundFromBorder: 'active-row-background-from-border',
+
+        /**
+         * The width of the border for the active row. Defaults to the same value as `var(--infinite-active-cell-border-width)`.
+         */
         activeBorderWidth: 'active-row-border-width',
+
+        /**
+         * The style of the border for the active row (eg: 'solid', 'dashed', 'dotted') - defaults to the same value as `var(--infinite-active-cell-border-style)`, which is `dashed` by default.
+         */
         activeBorderStyle: 'active-row-border-style',
 
+        /**
+         * Specifies the border for the active row. Defaults to `var(--infinite-active-row-border-width) var(--infinite-active-row-border-style) var(--infinite-active-row-border-color)`.
+         */
         activeBorder: 'active-row-border',
 
         /**
@@ -200,10 +294,19 @@ const CellVars = {
 
   [ThemeVars.components.Cell
     .activeBorder]: `${ThemeVars.components.Cell.activeBorderWidth} ${ThemeVars.components.Cell.activeBorderStyle} ${ThemeVars.components.Cell.activeBorderColor}`,
+
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',
-  [ThemeVars.components.Cell.activeBorderColor]: '#4d95d7',
-  [ThemeVars.components.Cell.activeBackground]: 'rgba(77,149,215,0.15)',
+  [ThemeVars.components.Cell.activeBorderColor_R]: '77',
+  [ThemeVars.components.Cell.activeBorderColor_G]: '149',
+  [ThemeVars.components.Cell.activeBorderColor_B]: '215',
+  [ThemeVars.components.Cell
+    .activeBorderColor]: `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
+
+  [ThemeVars.components.Cell.activeBackgroundAlpha]: '0.25',
+  [ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused]: '0.1',
+  [ThemeVars.components.Cell
+    .activeBackgroundFromBorder]: `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${ThemeVars.components.Cell.activeBorderColor_G}, ${ThemeVars.components.Cell.activeBorderColor_B}, ${ThemeVars.components.Cell.activeBackgroundAlpha})`,
 };
 
 const RowVars = {
@@ -223,6 +326,8 @@ const RowVars = {
     ThemeVars.components.Cell.activeBorderColor,
   [ThemeVars.components.Row.activeBackground]:
     ThemeVars.components.Cell.activeBackground,
+  [ThemeVars.components.Row.activeBackgroundFromBorder]:
+    ThemeVars.components.Cell.activeBackgroundFromBorder,
 };
 
 const LightTheme = {

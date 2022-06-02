@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../theme.css';
 import { left, top, pointerEvents, position, width } from '../utilities.css';
@@ -12,7 +12,10 @@ export const ActiveRowIndicatorBaseCls = style(
     left['0'],
     {
       border: ThemeVars.components.Row.activeBorder,
-      background: ThemeVars.components.Row.activeBackground,
+      background: fallbackVar(
+        ThemeVars.components.Row.activeBackground,
+        ThemeVars.components.Row.activeBackgroundFromBorder,
+      ),
     },
   ],
   'ActiveRowIndicator',
