@@ -83,6 +83,7 @@ export interface InfiniteTableMappedState<T> {
   autoSizeColumnsKey: InfiniteTableProps<T>['autoSizeColumnsKey'];
 
   activeRowIndex: number | null;
+  activeCellIndex: [number, number] | null;
   scrollStopDelay: NonUndefined<InfiniteTableProps<T>['scrollStopDelay']>;
   onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
   onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];

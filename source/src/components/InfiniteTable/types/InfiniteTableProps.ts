@@ -30,6 +30,7 @@ import {
 } from './InfiniteTableState';
 
 import { InfiniteTableState } from '.';
+import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -136,6 +137,8 @@ export type InfiniteTablePropColumnSizing = Record<
 >;
 
 export type InfiniteTableStateGetter<T> = () => InfiniteTableState<T>;
+export type InfiniteTableComputedValuesGetter<T> =
+  () => InfiniteTableComputedValues<T>;
 export type InfiniteTableActionsGetter<T> = () => InfiniteTableActions<T>;
 export type DataSourceStateGetter<T> = () => DataSourceState<T>;
 
@@ -154,6 +157,14 @@ export type InfiniteTableImperativeApi<T> = {
   ) => void;
   scrollColumnIntoView: (
     colId: string,
+    config?: {
+      scrollAdjustPosition?: ScrollAdjustPosition;
+      offset?: number;
+    },
+  ) => void;
+  scrollCellIntoView: (
+    rowIndex: number,
+    colIdOrIndex: string | number,
     config?: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
@@ -365,6 +376,10 @@ export interface InfiniteTableProps<T> {
   sortable?: boolean;
   defaultActiveRowIndex?: number | null;
   activeRowIndex?: number | null;
+  onActiveRowIndexChange?: (activeRowIndex: number) => void;
+  onActiveCellIndexChange?: (activeCellIndex: [number, number]) => void;
+  activeCellIndex?: [number, number] | null;
+  defaultActiveCellIndex?: [number, number] | null;
   draggableColumns?: boolean;
   header?: boolean;
   headerOptions?: InfiniteTablePropHeaderOptions;

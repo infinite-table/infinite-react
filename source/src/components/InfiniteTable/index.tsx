@@ -15,7 +15,7 @@ import {
 } from '../hooks/useComponentState';
 import { useLatest } from '../hooks/useLatest';
 import { useResizeObserver } from '../ResizeObserver';
-import { clamp } from '../utils/clamp';
+
 import { debounce } from '../utils/debounce';
 
 import { InfiniteTableBody } from './components/InfiniteTableBody';
@@ -35,6 +35,7 @@ import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useLicense } from './hooks/useLicense/useLicense';
 import { getInfiniteTableContext } from './InfiniteTableContext';
 import { internalProps, rootClassName } from './internalProps';
+import { handleKeyboardNavigation } from './keyboardNavigationAndSelection';
 import {
   forwardProps,
   mapPropsToState,
@@ -46,119 +47,12 @@ import type {
   InfiniteTableProps,
   InfiniteTableState,
 } from './types';
-import {
-  DataSourceStateGetter,
-  InfiniteTableStateGetter,
-} from './types/InfiniteTableProps';
-import { InfiniteTableActions } from './types/InfiniteTableState';
 import { position, zIndex, top, left } from './utilities.css';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
 const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
 
-function handleRowNavigation<T>(
-  getState: InfiniteTableStateGetter<T>,
-  actions: InfiniteTableActions<T>,
-  getDataSourceState: DataSourceStateGetter<T>,
-  key: string,
-) {
-  const direction = key === 'ArrowDown' ? 1 : key === 'ArrowUp' ? -1 : 0;
-
-  if (!direction) {
-    return handleRowNavigationPageUpDownHomeEnd(
-      getState,
-      actions,
-      getDataSourceState,
-      key,
-    );
-  }
-
-  return handleRowNavigationArrowKeys(
-    getState,
-    actions,
-    getDataSourceState,
-    key,
-  );
-}
-
-function handleRowNavigationArrowKeys<T>(
-  getState: InfiniteTableStateGetter<T>,
-  actions: InfiniteTableActions<T>,
-  getDataSourceState: DataSourceStateGetter<T>,
-  key: string,
-) {
-  const direction = key === 'ArrowDown' ? 1 : key === 'ArrowUp' ? -1 : 0;
-
-  if (!direction) {
-    return false;
-  }
-
-  const state = getState();
-  let { activeRowIndex } = state;
-
-  if (activeRowIndex == null) {
-    return false;
-  }
-
-  activeRowIndex += direction;
-
-  const arrLength = getDataSourceState().dataArray.length;
-
-  activeRowIndex = clamp(activeRowIndex, 0, arrLength - 1);
-
-  actions.activeRowIndex = activeRowIndex;
-
-  return true;
-}
-
-function handleRowNavigationPageUpDownHomeEnd<T>(
-  getState: InfiniteTableStateGetter<T>,
-  actions: InfiniteTableActions<T>,
-  getDataSourceState: DataSourceStateGetter<T>,
-  key: string,
-) {
-  const arrLength = getDataSourceState().dataArray.length;
-  const state = getState();
-
-  const { brain, activeRowIndex } = state;
-
-  if (activeRowIndex == null) {
-    return false;
-  }
-
-  const {
-    start: [startRow],
-    end: [endRow],
-  } = brain.getRenderRange();
-  const renderRowCount = endRow - startRow - 1;
-  const KeyToFunction = {
-    PageDown: () => {
-      actions.activeRowIndex = Math.min(
-        activeRowIndex + renderRowCount,
-        arrLength - 1,
-      );
-    },
-    PageUp: () => {
-      actions.activeRowIndex = Math.max(activeRowIndex - renderRowCount, 0);
-    },
-    End: () => {
-      actions.activeRowIndex = arrLength - 1;
-    },
-    Home: () => {
-      actions.activeRowIndex = 0;
-    },
-  };
-  const Fn = KeyToFunction[key as keyof typeof KeyToFunction];
-
-  if (!Fn) {
-    return false;
-  }
-
-  Fn();
-
-  return true;
-}
 const InfiniteTableRoot = getComponentStateRoot({
   // @ts-ignore
   initSetupState,
@@ -222,6 +116,7 @@ export const InfiniteTableComponent = React.memo(
       headerBrain,
       renderer,
       activeRowIndex,
+      activeCellIndex,
       onRenderUpdater,
     } = componentState;
 
@@ -232,6 +127,18 @@ export const InfiniteTableComponent = React.memo(
         });
       }
     }, [activeRowIndex]);
+
+    useEffect(() => {
+      if (activeCellIndex != null) {
+        imperativeApi.scrollCellIntoView(
+          activeCellIndex[0],
+          activeCellIndex[1],
+          {
+            offset: 30,
+          },
+        );
+      }
+    }, [activeCellIndex]);
 
     const { columnShifts, bodySize } = componentState;
 
@@ -276,7 +183,14 @@ export const InfiniteTableComponent = React.memo(
 
     const onKeyDown = useCallback((event) => {
       if (
-        handleRowNavigation(getState, actions, getDataSourceState, event.key)
+        handleKeyboardNavigation({
+          getState,
+          actions,
+          getDataSourceState,
+          getComputed,
+          key: event.key,
+          shiftKey: !!event.shiftKey,
+        })
       ) {
         event.preventDefault();
       }
@@ -292,6 +206,7 @@ export const InfiniteTableComponent = React.memo(
           <HeadlessTable
             tabIndex={0}
             activeRowIndex={componentState.ready ? activeRowIndex : null}
+            activeCellIndex={componentState.ready ? activeCellIndex : null}
             scrollStopDelay={scrollStopDelay}
             renderer={renderer}
             onRenderUpdater={onRenderUpdater}

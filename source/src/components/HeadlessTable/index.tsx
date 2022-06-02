@@ -25,12 +25,14 @@ import { RawTable } from './RawTable';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { Renderable } from '../types/Renderable';
 import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicator';
+import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicator';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
   activeRowIndex?: number | null;
+  activeCellIndex?: [number, number] | null;
   scrollStopDelay?: number;
   cellHoverClassNames?: string[];
   renderer?: ReactHeadlessTableRenderer;
@@ -143,6 +145,7 @@ export function HeadlessTable(
     cellHoverClassNames,
     renderer,
     activeRowIndex,
+    activeCellIndex,
     onRenderUpdater,
     ...domProps
   } = props;
@@ -221,6 +224,7 @@ export function HeadlessTable(
       </div>
 
       <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
+      <ActiveCellIndicator brain={brain} activeCellIndex={activeCellIndex} />
       <SpacePlaceholder width={scrollSize.width} height={scrollSize.height} />
     </VirtualScrollContainer>
   );

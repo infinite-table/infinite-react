@@ -198,6 +198,7 @@ export const forwardProps = <T>(
     licenseKey: (licenseKey) => licenseKey || '',
 
     activeRowIndex: (activeRowIndex) => activeRowIndex ?? null,
+    activeCellIndex: (activeCellIndex) => activeCellIndex ?? null,
     columnOrder: (columnOrder) => columnOrder ?? true,
     header: (header) => header ?? true,
     showZebraRows: (showZebraRows) => showZebraRows ?? true,

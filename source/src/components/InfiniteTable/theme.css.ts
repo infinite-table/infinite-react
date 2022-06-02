@@ -104,6 +104,17 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in `dark` theme.
          */
         color: 'cell-color',
+
+        activeBackground: 'active-cell-background',
+        /**
+         * The border color for the active cell
+         */
+        activeBorderColor: 'active-cell-border-color',
+
+        activeBorderWidth: 'active-cell-border-width',
+        activeBorderStyle: 'active-cell-border-style',
+
+        activeBorder: 'active-cell-border',
       },
       Row: {
         /**
@@ -120,6 +131,7 @@ export const ThemeVars = createGlobalThemeContract(
          */
         oddBackground: 'row-odd-background',
 
+        activeBackground: 'active-row-background',
         /**
          * The border color for the active row
          */
@@ -185,6 +197,13 @@ const CellVars = {
     .border]: `${ThemeVars.components.Cell.borderWidth} solid #c6c6c6`,
   [ThemeVars.components.Cell.borderInvisible]: 'none',
   [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
+
+  [ThemeVars.components.Cell
+    .activeBorder]: `${ThemeVars.components.Cell.activeBorderWidth} ${ThemeVars.components.Cell.activeBorderStyle} ${ThemeVars.components.Cell.activeBorderColor}`,
+  [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
+  [ThemeVars.components.Cell.activeBorderWidth]: '1px',
+  [ThemeVars.components.Cell.activeBorderColor]: '#4d95d7',
+  [ThemeVars.components.Cell.activeBackground]: 'rgba(77,149,215,0.15)',
 };
 
 const RowVars = {
@@ -196,9 +215,14 @@ const RowVars = {
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
   [ThemeVars.components.Row
     .activeBorder]: `${ThemeVars.components.Row.activeBorderWidth} ${ThemeVars.components.Row.activeBorderStyle} ${ThemeVars.components.Row.activeBorderColor}`,
-  [ThemeVars.components.Row.activeBorderStyle]: 'dashed',
-  [ThemeVars.components.Row.activeBorderWidth]: '1px',
-  [ThemeVars.components.Row.activeBorderColor]: '#c6c6c6',
+  [ThemeVars.components.Row.activeBorderStyle]:
+    ThemeVars.components.Cell.activeBorderStyle,
+  [ThemeVars.components.Row.activeBorderWidth]:
+    ThemeVars.components.Cell.activeBorderWidth,
+  [ThemeVars.components.Row.activeBorderColor]:
+    ThemeVars.components.Cell.activeBorderColor,
+  [ThemeVars.components.Row.activeBackground]:
+    ThemeVars.components.Cell.activeBackground,
 };
 
 const LightTheme = {

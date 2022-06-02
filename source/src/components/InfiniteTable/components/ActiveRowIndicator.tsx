@@ -27,6 +27,8 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
   const active =
     props.activeRowIndex != null && brain.getRowCount() > props.activeRowIndex;
 
+  const [rerenderId, rerender] = useRerender();
+
   useLayoutEffect(() => {
     if (props.activeRowIndex == null) {
       return;
@@ -37,14 +39,10 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
         rowHeight: brain.getRowHeight(props.activeRowIndex),
       }),
     );
-  }, [props.activeRowIndex]);
-
-  const [, rerender] = useRerender();
-
-  useEffect(() => brain.onRenderCountChange(rerender), [brain]);
+  }, [props.activeRowIndex, rerenderId]);
 
   useEffect(() => {
-    return brain.onScroll((scrollPos) => {
+    const removeOnScroll = brain.onScroll((scrollPos) => {
       const node = domRef.current!;
       // #top_overflow_200k
       // initially we did this
@@ -58,11 +56,19 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
         -scrollPos.scrollTop + topOffset
       }px, 0px)`;
     });
+
+    const removeOnRenderCountChange = brain.onRenderCountChange(rerender);
+
+    return () => {
+      removeOnRenderCountChange();
+      removeOnScroll();
+    };
   }, [brain]);
 
   return (
     <div
       ref={domRef}
+      data-name="active-row-indicator"
       className={`${baseCls} ${
         active ? ActiveRowIndicatorCls.visible : ActiveRowIndicatorCls.hidden
       }`}
@@ -77,8 +83,6 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
               transform: `translate3d(0px, ${
                 -brain.getScrollPosition().scrollTop + state.top
               }px,0)`,
-
-              top: 0,
               height: state.rowHeight,
             }
           : undefined

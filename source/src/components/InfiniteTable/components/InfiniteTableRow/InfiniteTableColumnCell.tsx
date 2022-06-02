@@ -122,13 +122,19 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const rowActive = rowIndex === activeRowIndex;
 
   const onClick = useCallback(() => {
-    const { activeRowIndex } = getState();
+    const { activeRowIndex, activeCellIndex } = getState();
 
-    if (activeRowIndex == null) {
+    if (activeRowIndex != null) {
+      componentActions.activeRowIndex = rowIndex;
       return;
     }
-    componentActions.activeRowIndex = rowIndex;
-  }, [rowIndex]);
+    if (activeCellIndex != null) {
+      componentActions.activeCellIndex = [
+        rowIndex,
+        column.computedVisibleIndex,
+      ];
+    }
+  }, [rowIndex, column.computedVisibleIndex]);
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
