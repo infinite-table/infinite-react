@@ -495,7 +495,7 @@ Neither party will be liable to the other for any failure or delay in performing
 
 ### 18.1
 
-Except as expressly permitted under these Terms, the Licensee may not sub-license or assign, sub-contract or delegate any or all of its rights or obligations under these Terms without the prior written consent of the Licensor.
+Except as expressly permitted under these Terms, the Licensee may not sub-license or assign, sub-contract or delegate any or all of its rights or obligations under these Terms without the prior written consent of the Licensor. Licensed use of this Software within AdapTable is deemed perpetual.
 
 ### 18.2 
 
