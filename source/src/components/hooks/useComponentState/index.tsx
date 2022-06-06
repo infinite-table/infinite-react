@@ -110,14 +110,14 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
   }, {} as ComponentStateGeneratedActions<T_STATE>);
 }
 
-export type ForwardPropsToStateFnResult<TYPE_PROPS, TYPE_RESULT> = Partial<{
+export type ForwardPropsToStateFnResult<TYPE_PROPS, TYPE_RESULT> = {
   [propName in keyof TYPE_PROPS & keyof TYPE_RESULT]:
     | 1
     | ((value: TYPE_PROPS[propName]) => TYPE_RESULT[propName]);
-}>;
+};
 
 function forwardProps<T_PROPS, T_RESULT>(
-  propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_RESULT>,
+  propsToForward: Partial<ForwardPropsToStateFnResult<T_PROPS, T_RESULT>>,
   props: T_PROPS,
 ): T_RESULT {
   const mappedState = {} as T_RESULT;
@@ -233,7 +233,7 @@ export function getComponentStateRoot<
     });
     const propsToStateSetRef = useRef<Set<string>>(new Set());
     const propsToForward = useMemo<
-      ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>
+      Partial<ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>>
     >(
       () => (config.forwardProps ? config.forwardProps(initialSetupState) : {}),
       [initialSetupState],

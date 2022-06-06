@@ -83,6 +83,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   //   debugger;
   // }
 
+  const { getState, componentActions } = useInfiniteTable<T>();
+  const { activeRowIndex, keyboardNavigation } = getState();
+  const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
+
   let value =
     isGroupRow && groupBy && column.groupByField
       ? rowInfo.value
@@ -104,12 +108,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             data: rowInfo.data,
             isGroupRow,
             rowInfo,
+            rowActive,
             field: column.field,
             value,
           }
         : {
             data: rowInfo.data,
             isGroupRow,
+            rowActive,
             rowInfo,
             field: column.field,
             value,
@@ -117,24 +123,20 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     );
   }
 
-  const { getState, componentActions } = useInfiniteTable<T>();
-  const { activeRowIndex } = getState();
-  const rowActive = rowIndex === activeRowIndex;
-
   const onClick = useCallback(() => {
     const { activeRowIndex, activeCellIndex } = getState();
 
-    if (activeRowIndex != null) {
+    if (activeRowIndex !== undefined && keyboardNavigation === 'row') {
       componentActions.activeRowIndex = rowIndex;
       return;
     }
-    if (activeCellIndex != null) {
+    if (activeCellIndex !== undefined && keyboardNavigation === 'cell') {
       componentActions.activeCellIndex = [
         rowIndex,
         column.computedVisibleIndex,
       ];
     }
-  }, [rowIndex, column.computedVisibleIndex]);
+  }, [rowIndex, column.computedVisibleIndex, keyboardNavigation]);
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 

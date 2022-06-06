@@ -7,7 +7,6 @@ import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useState } from 'react';
-import { CSSProperties } from '@vanilla-extract/css';
 
 type Developer = {
   id: number;
@@ -27,7 +26,7 @@ type Developer = {
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
     'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`,
+      `/developers1k-sql?`
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
@@ -53,16 +52,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
 export default function KeyboardNavigationForRows() {
   const [color, setColor] = useState({
     r: 77,
-    // r: 255,
-    g: 0,
-    // g: 0,
+    g: 149,
     b: 215,
-    // b: 0,
   });
 
-  const defaultColor = `#${color.r.toString(16)}${color.g.toString(
-    16,
-  )}${color.b.toString(16)}`;
+  const defaultColor = `#${color.r.toString(
+    16
+  )}${color.g.toString(16)}${color.b.toString(16)}`;
 
   const domProps = useMemo(() => {
     return {
@@ -91,25 +87,7 @@ export default function KeyboardNavigationForRows() {
 
   console.log(color, domProps.style);
   return (
-    <div
-      style={
-        {
-          // '--infinite-active-cell-background': 'unset',
-          // '--infinite-active-cell-border': '10px dashed blue',
-          // '--infinite-active-cell-border-style': 'solid',
-          // '--infinite-active-cell-border-width': '5px',
-          // '--infinite-active-row-border-style': 'dashed',
-          '--infinite-active-cell-border-width': '3px',
-          // '--infinite-active-row-border-color': 'yellow',
-          // '--infinite-active-row-background': 'red',
-          // '--infinite-row-background-alpha': '1',
-          // '--infinite-active-row-background-alpha--table-unfocused': '0.3',
-          // '--infinite-active-cell-background-alpha--table-unfocused': '0.8',
-          // '--infinite-active-cell-background-alpha': '1',
-        } as CSSProperties
-      }
-    >
-      <input />
+    <>
       <div>
         <input
           type="color"
@@ -117,15 +95,15 @@ export default function KeyboardNavigationForRows() {
           defaultValue={defaultColor}
         />
       </div>
-      <DataSource<Developer> primaryKey="id" data={dataSource}>
+      <DataSource<Developer>
+        primaryKey="id"
+        data={dataSource}>
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
-          keyboardNavigation="row"
-          defaultActiveRowIndex={8}
+          defaultActiveRowIndex={0}
         />
       </DataSource>
-      <input />
-    </div>
+    </>
   );
 }

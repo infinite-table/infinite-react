@@ -115,6 +115,7 @@ export const InfiniteTableComponent = React.memo(
       brain,
       headerBrain,
       renderer,
+      keyboardNavigation,
       activeRowIndex,
       activeCellIndex,
       onRenderUpdater,
@@ -205,8 +206,16 @@ export const InfiniteTableComponent = React.memo(
         <InfiniteTableBody>
           <HeadlessTable
             tabIndex={0}
-            activeRowIndex={componentState.ready ? activeRowIndex : null}
-            activeCellIndex={componentState.ready ? activeCellIndex : null}
+            activeRowIndex={
+              componentState.ready && keyboardNavigation === 'row'
+                ? activeRowIndex
+                : null
+            }
+            activeCellIndex={
+              componentState.ready && keyboardNavigation === 'cell'
+                ? activeCellIndex
+                : null
+            }
             scrollStopDelay={scrollStopDelay}
             renderer={renderer}
             onRenderUpdater={onRenderUpdater}

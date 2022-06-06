@@ -53,7 +53,7 @@ export default function App() {
         display: 'flex',
         flex: 1,
 
-        color: 'var(--infinite-row-color)',
+        color: 'var(--infinite-cell-color)',
         flexFlow: 'column',
         background: 'var(--infinite-background)',
       }}>

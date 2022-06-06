@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { ThemeVars } from './theme.css';
 
@@ -33,6 +33,15 @@ export const InfiniteClsScrolling = style(
   'InfiniteClsScrolling',
 );
 
+const activeCellBorderVarsForUnfocusedState = {
+  // we adjust the alpha opacity for the background
+  [ThemeVars.components.Cell
+    .activeBackgroundAlpha]: `${ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused}`,
+  [ThemeVars.components.Row.activeBackgroundAlpha]: fallbackVar(
+    ThemeVars.components.Row.activeBackgroundAlphaWhenTableUnfocused,
+    ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused,
+  ),
+};
 export const InfiniteClsRecipe = recipe({
   variants: {
     focused: {
@@ -41,16 +50,7 @@ export const InfiniteClsRecipe = recipe({
     },
     focusedWithin: {
       true: {},
-      false: {
-        vars: {
-          [ThemeVars.components.Cell
-            .activeBackgroundAlpha]: `${ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused}`,
-          [ThemeVars.components.Cell
-            .activeBackgroundFromBorder]: `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${ThemeVars.components.Cell.activeBorderColor_G}, ${ThemeVars.components.Cell.activeBorderColor_B}, ${ThemeVars.components.Cell.activeBackgroundAlpha})`,
-          [ThemeVars.components.Row.activeBackgroundFromBorder]:
-            ThemeVars.components.Cell.activeBackgroundFromBorder,
-        },
-      },
+      false: {},
     },
     hasPinnedStart: {
       true: {},
@@ -69,6 +69,17 @@ export const InfiniteClsRecipe = recipe({
       false: {},
     },
   },
+  compoundVariants: [
+    {
+      variants: {
+        focused: false,
+        focusedWithin: false,
+      },
+      style: {
+        vars: activeCellBorderVarsForUnfocusedState,
+      },
+    },
+  ],
 });
 
 export const PinnedRowsClsVariants = styleVariants({

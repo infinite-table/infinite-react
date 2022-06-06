@@ -66,6 +66,7 @@ export interface InfiniteTableMappedState<T> {
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
+  keyboardNavigation: NonUndefined<InfiniteTableProps<T>['keyboardNavigation']>;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
@@ -82,8 +83,8 @@ export interface InfiniteTableMappedState<T> {
 
   autoSizeColumnsKey: InfiniteTableProps<T>['autoSizeColumnsKey'];
 
-  activeRowIndex: number | null;
-  activeCellIndex: [number, number] | null;
+  activeRowIndex: InfiniteTableProps<T>['activeRowIndex'];
+  activeCellIndex: InfiniteTableProps<T>['activeCellIndex'];
   scrollStopDelay: NonUndefined<InfiniteTableProps<T>['scrollStopDelay']>;
   onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
   onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];
@@ -143,7 +144,6 @@ export interface InfiniteTableMappedState<T> {
 export interface InfiniteTableDerivedState<T> {
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Map<string, InfiniteTableColumn<T>>;
-  enableKeyboardNavigation: boolean;
 
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']

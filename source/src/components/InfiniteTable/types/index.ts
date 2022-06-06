@@ -43,6 +43,7 @@ import type {
   InfiniteTablePropGroupColumn,
   InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTablePropHeaderOptions,
+  InfiniteTablePropKeyboardNavigation,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
@@ -79,6 +80,7 @@ export type {
   InfiniteTableState,
   InfiniteTableAction,
   InfiniteTableProps,
+  InfiniteTablePropKeyboardNavigation,
   InfiniteTablePropColumnTypes,
   InfiniteTableImperativeApi,
   InfiniteTableActionType,

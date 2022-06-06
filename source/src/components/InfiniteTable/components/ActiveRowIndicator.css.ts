@@ -11,11 +11,35 @@ export const ActiveRowIndicatorBaseCls = style(
     top['0'],
     left['0'],
     {
-      border: ThemeVars.components.Row.activeBorder,
+      border: fallbackVar(
+        ThemeVars.components.Row.activeBorder,
+        `${fallbackVar(
+          ThemeVars.components.Row.activeBorderWidth,
+          ThemeVars.components.Cell.activeBorderWidth,
+        )} ${fallbackVar(
+          ThemeVars.components.Row.activeBorderStyle,
+          ThemeVars.components.Cell.activeBorderStyle,
+        )} ${fallbackVar(
+          ThemeVars.components.Row.activeBorderColor,
+          `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
+        )}`,
+      ),
       background: fallbackVar(
         ThemeVars.components.Row.activeBackground,
-        ThemeVars.components.Row.activeBackgroundFromBorder,
+        ThemeVars.components.Cell.activeBackground,
+        `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${
+          ThemeVars.components.Cell.activeBorderColor_G
+        }, ${ThemeVars.components.Cell.activeBorderColor_B}, ${fallbackVar(
+          ThemeVars.components.Row.activeBackgroundAlpha,
+          ThemeVars.components.Cell.activeBackgroundAlpha,
+        )})`,
       ),
+      vars: {
+        [ThemeVars.components.Row.activeBorderStyle]: fallbackVar(
+          ThemeVars.components.Row.activeBorderStyle,
+          ThemeVars.components.Cell.activeBorderStyle,
+        ),
+      },
     },
   ],
   'ActiveRowIndicator',

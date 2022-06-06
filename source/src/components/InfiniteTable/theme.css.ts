@@ -108,6 +108,12 @@ export const ThemeVars = createGlobalThemeContract(
         /**
          * The RED component of the color used for the active cell when cell keyboard navigation is enabled.
          *
+         * The easiest way to define the color of the active cell is to use these 3 variables:
+         *   `--infinite-active-cell-border-color--r`
+         *   `--infinite-active-cell-border-color--g`
+         *   `--infinite-active-cell-border-color--b`
+         * as they define both the border and the background color of the active cell and the active row.
+         *
          * You can also specify the GREEN and BLUE components of the color using the next two css vars.
          *
          * The border color of the active cell is decomposed into multiple variables for convenience as by default
@@ -119,6 +125,12 @@ export const ThemeVars = createGlobalThemeContract(
 
         /**
          * The GREEN component of the color used for the active cell when cell keyboard navigation is enabled.
+         *
+         * The easiest way to define the color of the active cell is to use these 3 variables:
+         *   `--infinite-active-cell-border-color--r`
+         *   `--infinite-active-cell-border-color--g`
+         *   `--infinite-active-cell-border-color--b`
+         * as they define both the border and the background color of the active cell and the active row.
          *
          * You can also specify the RED and BLUE components of the color using the next two css vars.
          *
@@ -132,6 +144,12 @@ export const ThemeVars = createGlobalThemeContract(
         /**
          * The BLUE component of the color used for the active cell when cell keyboard navigation is enabled.
          *
+         * The easiest way to define the color of the active cell is to use these 3 variables:
+         *   `--infinite-active-cell-border-color--r`
+         *   `--infinite-active-cell-border-color--g`
+         *   `--infinite-active-cell-border-color--b`
+         * as they define both the border and the background color of the active cell and the active row.
+         *
          * You can also specify the RED and GREEN components of the color using the next two css vars.
          *
          * The border color of the active cell is decomposed into multiple variables for convenience as by default
@@ -142,7 +160,7 @@ export const ThemeVars = createGlobalThemeContract(
         activeBorderColor_B: 'active-cell-border-color--b',
 
         /**
-         * The opacity of the background color for the active cell when cell keyboard navigation is enabled.
+         * The opacity of the background color for the active cell (when cell keyboard navigation is enabled).
          *
          * The background color of the active cell is based on the value of the above 3 variables, but with the opacity specified by this variable.
          * This is applied when the component has focus.
@@ -156,23 +174,16 @@ export const ThemeVars = createGlobalThemeContract(
           'active-cell-background-alpha--table-unfocused',
 
         /**
-         * The color for border of the active cell (when cell keyboard navigation is enabled).
-         */
-        activeBorderColor: 'active-cell-border-color',
-
-        /**
-         * You can ignore this one
-         * @ignore
-         */
-        activeBackgroundFromBorder: 'active-cell-background-from-border',
-
-        /**
          * The background color of the active cell defaults to the same color (with modified opacity, as explained above) as the border color.
          *
          * However, specify this to explicitly override the default.
          */
         activeBackground: 'active-cell-background',
 
+        /**
+         * The color for border of the active cell (when cell keyboard navigation is enabled).
+         */
+        activeBorderColor: 'active-cell-border-color',
         /**
          * The width of the border for the active cell.
          */
@@ -204,30 +215,24 @@ export const ThemeVars = createGlobalThemeContract(
         oddBackground: 'row-odd-background',
 
         /**
-         * The border color for the active row. Defaults to the same value as `var(--infinite-active-cell-border-color)`.
-         */
-        activeBorderColor: 'active-row-border-color',
-
-        /**
-         * The background color of the active row defaults to the same color (with modified opacity, as explained above) as the border color - defined above.
+         * The background color of the active row. Defaults to the value of `var(--infinite-active-cell-background)`.
          *
          * However, specify this to explicitly override the default.
          */
         activeBackground: 'active-row-background',
 
         /**
-         * You can ignore this one
-         * @ignore
+         * The border color for the active row. Defaults to the value of `var(--infinite-active-cell-border-color)`.
          */
-        activeBackgroundFromBorder: 'active-row-background-from-border',
+        activeBorderColor: 'active-row-border-color',
 
         /**
-         * The width of the border for the active row. Defaults to the same value as `var(--infinite-active-cell-border-width)`.
+         * The width of the border for the active row. Defaults to the value of `var(--infinite-active-cell-border-width)`.
          */
         activeBorderWidth: 'active-row-border-width',
 
         /**
-         * The style of the border for the active row (eg: 'solid', 'dashed', 'dotted') - defaults to the same value as `var(--infinite-active-cell-border-style)`, which is `dashed` by default.
+         * The style of the border for the active row (eg: 'solid', 'dashed', 'dotted') - defaults to the value of `var(--infinite-active-cell-border-style)`, which is `dashed` by default.
          */
         activeBorderStyle: 'active-row-border-style',
 
@@ -235,6 +240,28 @@ export const ThemeVars = createGlobalThemeContract(
          * Specifies the border for the active row. Defaults to `var(--infinite-active-row-border-width) var(--infinite-active-row-border-style) var(--infinite-active-row-border-color)`.
          */
         activeBorder: 'active-row-border',
+
+        /**
+         * The opacity of the background color for the active row (when row keyboard navigation is enabled).
+         * When you explicitly specify `--infinite-active-row-background`, this variable will not be used.
+         * Instead, this variable is used when the active row background uses the color of the active cell (border).
+         *
+         * This is applied when the component has focus.
+         *
+         * Defaults to the value of `var(--infinite-active-cell-background-alpha)`.
+         */
+        activeBackgroundAlpha: 'active-row-background-alpha',
+
+        /**
+         * Same as the above, but applied when the component does not have focus.
+         *
+         * When you explicitly specify `--infinite-active-row-background`, this variable will not be used.
+         * Instead, this variable is used when the active row background uses the color of the active cell (border).
+         *
+         * Defaults to the value of `var(--infinite-active-cell-background-alpha--table-unfocused)`.
+         */
+        activeBackgroundAlphaWhenTableUnfocused:
+          'active-row-background-alpha--table-unfocused',
 
         /**
          * Background color for rows, on hover.
@@ -292,21 +319,14 @@ const CellVars = {
   [ThemeVars.components.Cell.borderInvisible]: 'none',
   [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
 
-  [ThemeVars.components.Cell
-    .activeBorder]: `${ThemeVars.components.Cell.activeBorderWidth} ${ThemeVars.components.Cell.activeBorderStyle} ${ThemeVars.components.Cell.activeBorderColor}`,
-
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',
   [ThemeVars.components.Cell.activeBorderColor_R]: '77',
   [ThemeVars.components.Cell.activeBorderColor_G]: '149',
   [ThemeVars.components.Cell.activeBorderColor_B]: '215',
-  [ThemeVars.components.Cell
-    .activeBorderColor]: `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
 
   [ThemeVars.components.Cell.activeBackgroundAlpha]: '0.25',
   [ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused]: '0.1',
-  [ThemeVars.components.Cell
-    .activeBackgroundFromBorder]: `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${ThemeVars.components.Cell.activeBorderColor_G}, ${ThemeVars.components.Cell.activeBorderColor_B}, ${ThemeVars.components.Cell.activeBackgroundAlpha})`,
 };
 
 const RowVars = {
@@ -316,18 +336,6 @@ const RowVars = {
   [ThemeVars.components.Row.groupRowColumnNesting]: '30px',
   [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
-  [ThemeVars.components.Row
-    .activeBorder]: `${ThemeVars.components.Row.activeBorderWidth} ${ThemeVars.components.Row.activeBorderStyle} ${ThemeVars.components.Row.activeBorderColor}`,
-  [ThemeVars.components.Row.activeBorderStyle]:
-    ThemeVars.components.Cell.activeBorderStyle,
-  [ThemeVars.components.Row.activeBorderWidth]:
-    ThemeVars.components.Cell.activeBorderWidth,
-  [ThemeVars.components.Row.activeBorderColor]:
-    ThemeVars.components.Cell.activeBorderColor,
-  [ThemeVars.components.Row.activeBackground]:
-    ThemeVars.components.Cell.activeBackground,
-  [ThemeVars.components.Row.activeBackgroundFromBorder]:
-    ThemeVars.components.Cell.activeBackgroundFromBorder,
 };
 
 const LightTheme = {

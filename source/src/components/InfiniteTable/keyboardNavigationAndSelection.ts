@@ -161,13 +161,13 @@ export function handleCellNavigation<T>(options: NavigationOptions<T>) {
 export function handleKeyboardNavigation<T>(options: NavigationOptions<T>) {
   const { getState } = options;
   const state = getState();
-  const { activeRowIndex, activeCellIndex } = state;
+  const { activeRowIndex, activeCellIndex, keyboardNavigation } = state;
 
-  if (activeRowIndex != null) {
+  if (activeRowIndex != null && keyboardNavigation === 'row') {
     return handleRowNavigation(options);
   }
 
-  if (activeCellIndex != null) {
+  if (activeCellIndex != null && keyboardNavigation === 'cell') {
     return handleCellNavigation(options);
   }
 

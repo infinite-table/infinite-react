@@ -8,6 +8,27 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
+<Prop name="activeCellIndex" type="[number,number]">
+
+> Specifies the active cell for keyboard navigation. This is a controlled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-cells) page for more details.
+
+See <PropLink name="defaultActiveCellIndex" /> for the uncontrolled version of this prop and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
+
+<Sandpack title="Controlled keyboard navigation for cells">
+
+<Description>
+
+This example starts with cell `[2,0]` already active.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="autoSizeColumnsKey" type="number|string|{key,includeHeader,columnsToSkip,columnsToResize}">
 
 > Controls auto-sizing of columns.
@@ -840,6 +861,29 @@ When any of the properties defined in a column type are also defined in a column
 
 </Prop>
 
+
+<Prop name="defaultActiveCellIndex" type="[number,number]">
+
+> Specifies the active cell for keyboard navigation. This is an uncontrolled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-cells) page for more details.
+
+See <PropLink name="activeCellIndex" /> for the controlled version of this prop and
+<PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
+
+<Sandpack title="Uncontrolled keyboard navigation for cells">
+
+<Description>
+
+This example starts with cell `[2,0]` already active.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="defaultColumnOrder">
 
 > Defines the order in which columns are displayed in the component.
@@ -984,6 +1028,49 @@ If it's a function, it will be called with the following arguments:
 ```
 
 </Sandpack>
+</Prop>
+
+<Prop name="keyboardNavigation" type="'cell'|'row'|false" defaultValue="'cell'">
+
+> Determines whether keyboard navigation is enabled.
+
+Available values:
+ - `'cell'` - enables keyboard navigation for cells. This is the default
+ - `'row'` - enables keyboard navigation for rows.
+ - `false` - disables keyboard navigation.
+
+
+For cell keyboard navigation, see <PropLink name="activeCellIndex" />.
+For row keyboard navigation, see <PropLink name="activeRowIndex" />.
+
+
+<Sandpack title="Keyboard navigation">
+
+<Description>
+
+This example starts with cell `[2,0]` already active.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+```
+
+</Sandpack>
+
+<Sandpack title="Disabled Keyboard navigation">
+
+<Description>
+
+In this example the keyboard navigation is disabled.
+
+</Description>
+
+
+```ts file=../learn/keyboard-navigation/navigation-disabled-example.page.tsx
+```
+
+</Sandpack>
+
 </Prop>
 
 <Prop name="loadingText" type="ReactNode" defaultValue="'Loading'">

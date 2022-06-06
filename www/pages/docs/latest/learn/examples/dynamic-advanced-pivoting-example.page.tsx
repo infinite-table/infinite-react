@@ -127,7 +127,7 @@ const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
     if (data?.canDesign === 'yes') {
       return {
         borderBottom:
-          '1px dotted var(--infinite-row-color)',
+          '1px dotted var(--infinite-cell-color)',
       };
     }
 

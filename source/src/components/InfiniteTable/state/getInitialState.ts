@@ -196,9 +196,10 @@ export const forwardProps = <T>(
     //   groupRenderStrategy ?? 'multi-column',
 
     licenseKey: (licenseKey) => licenseKey || '',
+    keyboardNavigation: (keyboardNavigation) => keyboardNavigation || 'cell',
 
-    activeRowIndex: (activeRowIndex) => activeRowIndex ?? null,
-    activeCellIndex: (activeCellIndex) => activeCellIndex ?? null,
+    activeRowIndex: 1,
+    activeCellIndex: 1,
     columnOrder: (columnOrder) => columnOrder ?? true,
     header: (header) => header ?? true,
     showZebraRows: (showZebraRows) => showZebraRows ?? true,
@@ -286,7 +287,6 @@ export const mapPropsToState = <T>(params: {
     groupRenderStrategy,
     groupBy: groupBy,
     computedColumns,
-    enableKeyboardNavigation: state.activeRowIndex != null,
 
     columnHeaderCssEllipsis:
       props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,

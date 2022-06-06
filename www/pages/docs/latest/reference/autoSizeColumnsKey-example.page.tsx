@@ -56,7 +56,7 @@ export default function GroupByExample() {
     <>
       <div
         style={{
-          color: 'var(--infinite-row-color)',
+          color: 'var(--infinite-cell-color)',
           background: 'var(--infinite-background)',
         }}>
         <label>

@@ -10,10 +10,20 @@ export const ActiveCellIndicatorBaseCls = style(
     left['0'],
     top['0'],
     {
-      border: ThemeVars.components.Cell.activeBorder,
+      border: fallbackVar(
+        ThemeVars.components.Cell.activeBorder,
+
+        `${ThemeVars.components.Cell.activeBorderWidth} ${
+          ThemeVars.components.Cell.activeBorderStyle
+        } ${fallbackVar(
+          ThemeVars.components.Cell.activeBorderColor,
+          `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
+        )}`,
+      ),
+
       background: fallbackVar(
         ThemeVars.components.Cell.activeBackground,
-        ThemeVars.components.Cell.activeBackgroundFromBorder,
+        `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${ThemeVars.components.Cell.activeBorderColor_G}, ${ThemeVars.components.Cell.activeBorderColor_B}, ${ThemeVars.components.Cell.activeBackgroundAlpha})`,
       ),
     },
   ],

@@ -92,7 +92,7 @@ export const Settings: React.FunctionComponent<{
         zIndex: 3000,
         marginBottom: 10,
         display: 'grid',
-        color: 'var(--infinite-row-color)',
+        color: 'var(--infinite-cell-color)',
         background: 'var(--infinite-background)',
         gridTemplateColumns: '1fr 1fr',
         gridGap: 20,

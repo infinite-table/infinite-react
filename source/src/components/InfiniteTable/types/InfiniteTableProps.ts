@@ -374,6 +374,8 @@ export interface InfiniteTableProps<T> {
   showZebraRows?: boolean;
   showHoverRows?: boolean;
   sortable?: boolean;
+
+  keyboardNavigation?: InfiniteTablePropKeyboardNavigation;
   defaultActiveRowIndex?: number | null;
   activeRowIndex?: number | null;
   onActiveRowIndexChange?: (activeRowIndex: number) => void;
@@ -428,6 +430,8 @@ export interface InfiniteTableProps<T> {
   scrollTopKey?: string | number;
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 }
+
+export type InfiniteTablePropKeyboardNavigation = 'cell' | 'row' | false;
 
 export type InfiniteTablePropHeaderOptions = {
   alwaysReserveSpaceForSortIcon: boolean;

@@ -2,7 +2,7 @@
 title: Keyboard Navigation for Rows
 ---
 
-Infinite Table supports keyboard navigation for both rows and cells. This page documents using if for quickly navigating rows in the table.
+Infinite Table supports keyboard navigation for both rows and cells. This page documents using it for quickly navigating rows in the table.
 
 
 The easiest way to enable keyboard navigation is to specify <PropLink name="defaultActiveRowIndex">defaultActiveRowIndex=0</PropLink>. This tells the table that there should be a default active row, namely, the row at index 0.
