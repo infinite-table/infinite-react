@@ -100,12 +100,7 @@ export default function KeyboardNavigationForRows() {
         />
       </div>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer>
-          domProps={domProps}
-          columns={columns}
-          keyboardNavigation="row"
-          defaultActiveRowIndex={8}
-        />
+        <InfiniteTable<Developer> domProps={domProps} columns={columns} />
       </DataSource>
       <input />
     </div>
