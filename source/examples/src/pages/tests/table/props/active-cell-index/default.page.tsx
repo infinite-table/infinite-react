@@ -99,8 +99,13 @@ export default function KeyboardNavigationForRows() {
           defaultValue={defaultColor}
         />
       </div>
+
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> domProps={domProps} columns={columns} />
+        <InfiniteTable<Developer>
+          domProps={domProps}
+          columns={columns}
+          keyboardNavigation={false}
+        />
       </DataSource>
       <input />
     </div>

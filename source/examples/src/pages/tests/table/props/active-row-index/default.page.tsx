@@ -62,8 +62,7 @@ export default function LocalUncontrolledSingleSortingExample() {
           columns={columns}
           columnDefaultWidth={220}
           defaultActiveRowIndex={0}
-          activeRowIndex={undefined}
-          keyboardNavigation="row" //row | false
+          keyboardNavigation={false} //row | false
           domProps={{
             style: { height: '90vh' },
           }}

@@ -196,7 +196,7 @@ export const forwardProps = <T>(
     //   groupRenderStrategy ?? 'multi-column',
 
     licenseKey: (licenseKey) => licenseKey || '',
-    keyboardNavigation: (keyboardNavigation) => keyboardNavigation || 'cell',
+    keyboardNavigation: (keyboardNavigation) => keyboardNavigation ?? 'cell',
 
     activeRowIndex: 1,
     activeCellIndex: 1,
