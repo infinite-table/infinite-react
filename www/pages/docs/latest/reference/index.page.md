@@ -8,13 +8,15 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable>
 
-<Prop name="activeCellIndex" type="[number,number]">
+<Prop name="activeCellIndex" type="[number,number] | null">
 
 > Specifies the active cell for keyboard navigation. This is a controlled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-cells) page for more details.
 
 See <PropLink name="defaultActiveCellIndex" /> for the uncontrolled version of this prop and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
 Use the <PropLink name="onActiveCellIndexChange" /> callback to be notified when the active cell changes.
+
+`null` is a valid value, and it means no cell is currently rendered as active. Especially useful for controlled scenarios, when you need ultimate control over the behavior of keyboard navigation.
 
 <Sandpack title="Controlled keyboard navigation for cells">
 
@@ -32,13 +34,15 @@ This example starts with cell `[2,0]` already active.
 </Prop>
 
 
-<Prop name="activeRowIndex" type="number">
+<Prop name="activeRowIndex" type="number | null">
 
 > Specifies the active row for keyboard navigation. This is a controlled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-rows) page for more details.
 
 See <PropLink name="defaultActiveRowIndex" /> for the uncontrolled version of this prop and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
 Use the <PropLink name="onActiveRowIndexChange" /> callback to be notified when the active row changes.
+
+`null` is a valid value, and it means no row is currently rendered as active. Especially useful for controlled scenarios, when you need ultimate control over the behavior of keyboard navigation.
 
 <Sandpack title="Controlled keyboard navigation for rows">
 
