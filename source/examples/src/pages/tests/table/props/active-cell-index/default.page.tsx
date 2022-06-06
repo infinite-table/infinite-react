@@ -7,7 +7,6 @@ import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useState } from 'react';
-import { CSSProperties } from '@vanilla-extract/css';
 
 type Developer = {
   id: number;
