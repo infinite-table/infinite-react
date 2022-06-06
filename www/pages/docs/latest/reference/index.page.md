@@ -1035,7 +1035,7 @@ If it's a function, it will be called with the following arguments:
 > Determines whether keyboard navigation is enabled.
 
 Available values:
- - `'cell'` - enables keyboard navigation for cells. This is the default
+ - `'cell'` - enables keyboard navigation for cells. This is the default.
  - `'row'` - enables keyboard navigation for rows.
  - `false` - disables keyboard navigation.
 

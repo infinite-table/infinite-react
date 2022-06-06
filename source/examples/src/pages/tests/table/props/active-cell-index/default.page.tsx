@@ -91,24 +91,7 @@ export default function KeyboardNavigationForRows() {
 
   console.log(color, domProps.style);
   return (
-    <div
-      style={
-        {
-          // '--infinite-active-cell-background': 'unset',
-          // '--infinite-active-cell-border': '10px dashed blue',
-          // '--infinite-active-cell-border-style': 'solid',
-          // '--infinite-active-cell-border-width': '5px',
-          // '--infinite-active-row-border-style': 'dashed',
-          '--infinite-active-cell-border-width': '3px',
-          // '--infinite-active-row-border-color': 'yellow',
-          // '--infinite-active-row-background': 'red',
-          // '--infinite-row-background-alpha': '1',
-          // '--infinite-active-row-background-alpha--table-unfocused': '0.3',
-          // '--infinite-active-cell-background-alpha--table-unfocused': '0.8',
-          // '--infinite-active-cell-background-alpha': '1',
-        } as CSSProperties
-      }
-    >
+    <div>
       <input />
       <div>
         <input
