@@ -61,13 +61,6 @@ export default function LocalUncontrolledSingleSortingExample() {
         <InfiniteTable<Developer>
           columns={columns}
           columnDefaultWidth={220}
-          rowStyle={({ rowActive }) => {
-            if (rowActive) {
-              return {
-                color: 'red',
-              };
-            }
-          }}
           defaultActiveRowIndex={0}
           activeRowIndex={undefined}
           keyboardNavigation="row" //row | false
