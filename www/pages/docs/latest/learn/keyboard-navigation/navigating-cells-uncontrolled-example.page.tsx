@@ -49,7 +49,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 const domProps = { style: { height: '90vh' } };
 
-export default function KeyboardNavigationForRows() {
+export default function KeyboardNavigationForCells() {
   return (
     <>
       <DataSource<Developer>

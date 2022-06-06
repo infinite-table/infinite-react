@@ -14,6 +14,8 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 See <PropLink name="defaultActiveCellIndex" /> for the uncontrolled version of this prop and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
+Use the <PropLink name="onActiveCellIndexChange" /> callback to be notified when the active cell changes.
+
 <Sandpack title="Controlled keyboard navigation for cells">
 
 <Description>
@@ -28,6 +30,31 @@ This example starts with cell `[2,0]` already active.
 </Sandpack>
 
 </Prop>
+
+
+<Prop name="activeRowIndex" type="number">
+
+> Specifies the active row for keyboard navigation. This is a controlled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-rows) page for more details.
+
+See <PropLink name="defaultActiveRowIndex" /> for the uncontrolled version of this prop and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
+
+Use the <PropLink name="onActiveRowIndexChange" /> callback to be notified when the active row changes.
+
+<Sandpack title="Controlled keyboard navigation for rows">
+
+<Description>
+
+This example starts with row at index `2` already active.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 
 <Prop name="autoSizeColumnsKey" type="number|string|{key,includeHeader,columnsToSkip,columnsToResize}">
 
@@ -884,6 +911,28 @@ This example starts with cell `[2,0]` already active.
 
 </Prop>
 
+<Prop name="defaultActiveRowIndex" type="number">
+
+> Specifies the active row for keyboard navigation. This is an uncontrolled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-rows) page for more details.
+
+See <PropLink name="activeRowIndex" /> for the controlled version of this prop and
+<PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
+
+<Sandpack title="Uncontrolled keyboard navigation for rows">
+
+<Description>
+
+This example starts with row at index `2` already active.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-rows-uncontrolled-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="defaultColumnOrder">
 
 > Defines the order in which columns are displayed in the component.
@@ -1082,6 +1131,49 @@ In this example the keyboard navigation is disabled.
 
 ```ts file=loadingText-example.page.tsx
 ```
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="onActiveCellIndexChange" type="(activeCellIndex:[number,number])=>void">
+
+> Callback triggered by cell navigation. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-cells) page for more details.
+
+See related <PropLink name="activeCellIndex" /> and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
+
+<Sandpack title="Controlled keyboard navigation (for cells) with callback">
+
+<Description>
+
+This example uses `onActiveCellIndexChange` to react to changes in the `activeCellIndex`.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="onActiveRowIndexChange" type="(activeRowIndex:number)=>void">
+
+> Callback triggered by row navigation. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-rows) page for more details.
+
+See related <PropLink name="activeRowIndex" /> and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
+
+<Sandpack title="Controlled keyboard navigation (for rows) with callback">
+
+<Description>
+
+This example uses `onActiveRowIndexChange` to react to changes in the `activeRowIndex`.
+
+</Description>
+
+```ts file=../learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx
+```
+
 </Sandpack>
 
 </Prop>

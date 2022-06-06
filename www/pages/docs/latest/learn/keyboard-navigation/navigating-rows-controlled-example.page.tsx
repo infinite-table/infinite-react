@@ -49,24 +49,24 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 const domProps = { style: { height: '90vh' } };
 
-export default function KeyboardNavigationForCells() {
-  const [activeCellIndex, setActiveCellIndex] =
-    React.useState<[number, number]>([2, 0]);
+export default function KeyboardNavigationForRows() {
+  const [activeRowIndex, setActiveRowIndex] =
+    React.useState(2);
   return (
     <>
       <div
         style={{
           color: 'var(--infinite-cell-color)',
         }}>
-        Current active cell: {activeCellIndex[0]},{' '}
-        {activeCellIndex[1]}.
+        Current active row: {activeRowIndex}.
       </div>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}>
         <InfiniteTable<Developer>
-          activeCellIndex={activeCellIndex}
-          onActiveCellIndexChange={setActiveCellIndex}
+          keyboardNavigation="row"
+          activeRowIndex={activeRowIndex}
+          onActiveRowIndexChange={setActiveRowIndex}
           columns={columns}
         />
       </DataSource>

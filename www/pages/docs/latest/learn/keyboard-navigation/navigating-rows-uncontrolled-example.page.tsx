@@ -58,7 +58,8 @@ export default function KeyboardNavigationForRows() {
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
-          defaultActiveRowIndex={0}
+          keyboardNavigation="row"
+          defaultActiveRowIndex={2}
         />
       </DataSource>
     </>
