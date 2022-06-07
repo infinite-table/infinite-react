@@ -6,6 +6,7 @@ interface YouWillLearnCardProps {
   title: string;
   path: string;
   inline?: boolean;
+  newTab?: boolean;
   children: React.ReactNode;
 }
 
@@ -14,6 +15,7 @@ function YouWillLearnCard({
   path,
   children,
   inline,
+  newTab,
 }: YouWillLearnCardProps) {
   return (
     <div
@@ -29,6 +31,7 @@ function YouWillLearnCard({
       <div>
         <ButtonLink
           href={path}
+          target={newTab ? '_blank' : '_self'}
           className="mt-1"
           type="primary"
           size="md"

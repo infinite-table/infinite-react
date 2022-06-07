@@ -32,7 +32,7 @@ export function MobileNav() {
 
   return (
     <>
-      <div className="sticky top-0 px-5 mb-2 bg-wash dark:bg-wash-dark flex justify-end border-b border-border dark:border-border-dark items-center self-center w-full z-10">
+      <div className="sticky mt-5 top-0 px-5 mb-2 bg-wash dark:bg-wash-dark flex justify-end border-b border-border dark:border-border-dark items-center self-center w-full z-10">
         <TabButton
           isActive={section === 'home'}
           onClick={() => setSection('home')}>

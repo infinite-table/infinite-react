@@ -77,9 +77,9 @@ export function Sidebar({
         top: 0,
         visibility: isHidden ? 'hidden' : undefined,
       }}>
-      <div className="px-5">
-        <Search />
-      </div>
+      {/* <div className="px-5"> */}
+      {/* <Search /> TODO uncomment search component */}
+      {/* </div> */}
       <nav
         role="navigation"
         ref={menuRef}
