@@ -334,6 +334,4 @@ InfiniteTable.defaultProps = {
 
 export * from './types';
 
-export { LightTheme, ThemeVars, DarkTheme } from './theme.css';
-
 export { useInfiniteColumnCell, useInfiniteHeaderCell };
