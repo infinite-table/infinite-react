@@ -41,7 +41,7 @@ import {
   mapPropsToState,
   initSetupState,
 } from './state/getInitialState';
-import { ThemeVars } from './theme.css';
+import { LightTheme, ThemeVars } from './theme.css';
 import type {
   InfiniteTableContextValue,
   InfiniteTableProps,
@@ -332,5 +332,7 @@ InfiniteTable.defaultProps = {
 };
 
 export * from './types';
+
+export { LightTheme, DarkTheme, ThemeVars } from './theme.css';
 
 export { useInfiniteColumnCell, useInfiniteHeaderCell };

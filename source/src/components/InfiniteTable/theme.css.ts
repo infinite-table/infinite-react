@@ -338,7 +338,7 @@ const RowVars = {
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };
 
-const LightTheme = {
+export const LightTheme = {
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
   [ThemeVars.spacing[2]]: '0.25rem' /* 4px when 1rem=16px */,
@@ -373,7 +373,7 @@ const LightTheme = {
   ...RowVars,
 };
 
-const DarkTheme = {
+export const DarkTheme = {
   [ThemeVars.background]: '#101419',
   [ThemeVars.components.Cell.border]: '1px solid #2a323d',
   [ThemeVars.components.Header.color]: '#c3c3c3',
@@ -395,15 +395,9 @@ globalStyle(':root', {
   },
 });
 
-globalStyle('.light', {
+globalStyle('.light, .infinite-light, .light:root, .infinite-light:root', {
   vars: LightTheme,
 });
-globalStyle('.infinite-light', {
-  vars: LightTheme,
-});
-globalStyle('.dark', {
-  vars: DarkTheme,
-});
-globalStyle('.infinite-dark', {
+globalStyle('.dark, .infinite-dark', {
   vars: DarkTheme,
 });
