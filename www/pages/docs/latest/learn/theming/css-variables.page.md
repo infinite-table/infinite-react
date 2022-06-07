@@ -278,7 +278,7 @@ Overriden in the `dark` theme.
 
 ### Column header height
 
-
+The height of the column header.
 
 ```css
 --infinite-column-header-height

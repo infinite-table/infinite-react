@@ -1,5 +1,7 @@
 import { createGlobalThemeContract, globalStyle } from '@vanilla-extract/css';
+import { toCSSVarName } from './utils/toCSSVarName';
 
+export const columnHeaderHeightName = 'column-header-height';
 export const ThemeVars = createGlobalThemeContract(
   {
     color: {
@@ -70,7 +72,13 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in the `dark` theme.
          */
         color: 'header-color',
-        columnHeaderHeight: 'column-header-height',
+
+        /**
+         * The height of the column header.
+         *
+         * @alias column-header-height
+         */
+        columnHeaderHeight: columnHeaderHeightName,
       },
       HeaderCell: {
         draggingBackground: 'header-cell-dragging-background',
@@ -279,7 +287,7 @@ export const ThemeVars = createGlobalThemeContract(
       },
     },
   },
-  (value: string | null) => `--infinite-${value}`,
+  toCSSVarName,
 );
 
 // declare here vars that default to other vars
@@ -338,7 +346,7 @@ const RowVars = {
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };
 
-export const LightTheme = {
+const LightTheme = {
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
   [ThemeVars.spacing[2]]: '0.25rem' /* 4px when 1rem=16px */,
@@ -373,7 +381,7 @@ export const LightTheme = {
   ...RowVars,
 };
 
-export const DarkTheme = {
+const DarkTheme = {
   [ThemeVars.background]: '#101419',
   [ThemeVars.components.Cell.border]: '1px solid #2a323d',
   [ThemeVars.components.Header.color]: '#c3c3c3',

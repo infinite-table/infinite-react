@@ -104,17 +104,17 @@ export default () => {
                 {
                   field: 'FirstName',
                   header: 'First name - flex 1',
-                  flex: 1,
+                  defaultFlex: 1,
                 },
                 {
                   field: 'LastName',
                   header: 'First name - flex 1',
-                  flex: 1,
+                  defaultFlex: 1,
                 },
                 {
                   field: 'Address',
                   header: `Address - flex ${addressFlex}`,
-                  flex: addressFlex,
+                  defaultFlex: addressFlex,
                 },
                 { field: 'Age', type: 'number' },
               ].map((c) => [c.field, c as InfiniteTableColumn<Person>]),

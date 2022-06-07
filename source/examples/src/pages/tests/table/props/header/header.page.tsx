@@ -72,7 +72,6 @@ export default () => {
   const [header, setHeader] = React.useState(true);
   const toggle = () => setHeader((header) => !header);
 
-  console.log('props header:', header);
   return (
     <React.StrictMode>
       <button onClick={toggle}>toggle</button>
@@ -88,7 +87,7 @@ export default () => {
               height: '80vh',
               border: '1px solid gray',
               position: 'relative',
-            },
+            } as React.CSSProperties,
           }}
           columnDefaultWidth={200}
           columns={columns}

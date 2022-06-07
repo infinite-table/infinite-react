@@ -41,7 +41,7 @@ import {
   mapPropsToState,
   initSetupState,
 } from './state/getInitialState';
-import { ThemeVars } from './theme.css';
+import { columnHeaderHeightName } from './theme.css';
 
 import type {
   InfiniteTableContextValue,
@@ -49,6 +49,7 @@ import type {
   InfiniteTableState,
 } from './types';
 import { position, zIndex, top, left } from './utilities.css';
+import { toCSSVarName } from './utils/toCSSVarName';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -329,7 +330,7 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
 }
 InfiniteTable.defaultProps = {
   rowHeight: 40,
-  columnHeaderHeight: ThemeVars.components.Header.columnHeaderHeight,
+  columnHeaderHeight: toCSSVarName(columnHeaderHeightName),
 };
 
 export * from './types';

@@ -85,13 +85,41 @@ function traverseThemeVars(node, list = []) {
       traverseThemeVars(prop.initializer, list);
     }
     if (prop.initializer.text) {
-      list.push({
-        name: `--infinite-${prop.initializer.text}`,
-        description:
-          prop.jsDoc && prop.jsDoc[0]
-            ? prop.jsDoc[0].comment
-            : '',
-      });
+      const description =
+        prop.jsDoc && prop.jsDoc[0]
+          ? prop.jsDoc[0].comment
+          : '';
+
+      let cssVarName = prop.initializer.text;
+      let ignore = false;
+
+      if (prop.jsDoc?.[0].tags) {
+        const tags = prop.jsDoc[0].tags.map((tag) => {
+          return {
+            name: tag.tagName.text,
+            comment: tag.comment,
+          };
+        });
+
+        const aliasTag = tags.filter(
+          (tag) => tag.name === 'alias'
+        )[0];
+        if (
+          tags.filter((tag) => tag.name === 'ignore')[0]
+        ) {
+          ignore = true;
+        }
+        if (aliasTag) {
+          cssVarName = aliasTag.comment;
+        }
+      }
+
+      if (!ignore) {
+        list.push({
+          name: `--infinite-${cssVarName}`,
+          description: description,
+        });
+      }
     }
   });
   return list;
@@ -108,9 +136,7 @@ const vars = extract(
   ),
   ['ThemeVars']
 );
-
 console.log(vars);
-
 const mdFilePath = path.resolve(
   __dirname,
   '../pages/docs/latest/learn/theming/css-variables.page.md'
