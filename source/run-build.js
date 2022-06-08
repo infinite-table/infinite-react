@@ -23,7 +23,7 @@ require('esbuild').build({
   bundle: true,
   plugins: [vanillaExtractPlugin({ processCss, identifiers: 'short' })],
   define: {
-    __DEV__: JSON.stringify(true),
+    __DEV__: JSON.stringify(false),
     __VERSION__: JSON.stringify(require('./package.json').version),
     __VERSION_TIMESTAMP__: JSON.stringify(
       require('./package.json').publishedAt,

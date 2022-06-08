@@ -99,6 +99,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     bodySize,
 
     viewportReservedWidth: componentState.viewportReservedWidth,
+    resizableColumns: componentState.resizableColumns,
 
     sortable: componentState.sortable,
     draggableColumns: componentState.draggableColumns,

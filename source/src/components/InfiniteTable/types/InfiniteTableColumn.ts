@@ -343,6 +343,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedSortType: string;
   computedDataType: string;
   computedWidth: number;
+  computedFlex: number | null;
+  computedMinWidth: number | null;
+  computedMaxWidth: number | null;
   computedOffset: number;
   computedPinningOffset: number;
   computedAbsoluteOffset: number;
@@ -360,6 +363,7 @@ type InfiniteTableComputedColumnBase<T> = {
 
   computedPinned: InfiniteTableColumnPinnedValues;
   computedDraggable: boolean;
+  computedResizable: boolean;
   computedFirstInCategory: boolean;
   computedLastInCategory: boolean;
   computedFirst: boolean;

@@ -108,7 +108,8 @@ export default () => {
                 },
                 {
                   field: 'LastName',
-                  header: 'First name - flex 1',
+                  header: 'flex 1 - maxWidth 200',
+                  maxWidth: 200,
                   defaultFlex: 1,
                 },
                 {

@@ -422,6 +422,9 @@ export class MatrixBrain extends Logger {
   };
 
   private notifyScrollStart = () => {
+    if (this.destroyed) {
+      return;
+    }
     const fns = this.onScrollStartFns;
     for (let i = 0, len = fns.length; i < len; i++) {
       fns[i]();
@@ -429,6 +432,9 @@ export class MatrixBrain extends Logger {
   };
 
   private notifyScrollStop = () => {
+    if (this.destroyed) {
+      return;
+    }
     const fns = this.onScrollStopFns;
 
     const scrollPos = this.scrollPosition;
@@ -463,52 +469,79 @@ export class MatrixBrain extends Logger {
   };
 
   private notifyAvailableSizeChange = () => {
+    if (this.destroyed) {
+      return;
+    }
     const fns = this.onAvailableSizeChangeFns;
 
     const range = this.getAvailableSize();
 
     for (let i = 0, len = fns.length; i < len; i++) {
       raf(() => {
+        if (this.destroyed) {
+          return;
+        }
         fns[i](range);
       });
     }
   };
 
   private notifyRenderRangeChange = () => {
+    if (this.destroyed) {
+      return;
+    }
     const fns = this.onRenderRangeChangeFns;
 
     const range = this.getRenderRange();
 
     for (let i = 0, len = fns.length; i < len; i++) {
       raf(() => {
+        if (this.destroyed) {
+          return;
+        }
         fns[i](range);
       });
     }
   };
   private notifyVerticalRenderRangeChange = () => {
+    if (this.destroyed) {
+      return;
+    }
     const fns = this.onVerticalRenderRangeChangeFns;
 
     const range = this.verticalRenderRange;
 
     for (let i = 0, len = fns.length; i < len; i++) {
       raf(() => {
+        if (this.destroyed) {
+          return;
+        }
         fns[i]([range.startIndex, range.endIndex]);
       });
     }
   };
   private notifyHorizontalRenderRangeChange = () => {
+    if (this.destroyed) {
+      return;
+    }
     const fns = this.onHorizontalRenderRangeChangeFns;
 
     const range = this.horizontalRenderRange;
 
     for (let i = 0, len = fns.length; i < len; i++) {
       raf(() => {
+        if (this.destroyed) {
+          return;
+        }
         fns[i]([range.startIndex, range.endIndex]);
       });
     }
   };
 
   private notifyScrollChange() {
+    if (this.destroyed) {
+      return;
+    }
     const { scrollPosition } = this;
 
     const fns = this.onScrollFns;
@@ -780,6 +813,9 @@ export class MatrixBrain extends Logger {
   };
 
   private notifyRenderCountChange() {
+    if (this.destroyed) {
+      return;
+    }
     const { horizontalRenderCount, verticalRenderCount } = this;
 
     const renderCount = {
@@ -790,6 +826,9 @@ export class MatrixBrain extends Logger {
     const fns = this.onRenderCountChangeFns;
     for (let i = 0, len = fns.length; i < len; i++) {
       raf(() => {
+        if (this.destroyed) {
+          return;
+        }
         fns[i](renderCount);
       });
     }

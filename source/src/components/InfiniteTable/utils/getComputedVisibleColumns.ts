@@ -95,6 +95,7 @@ type GetComputedVisibleColumnsParam<T> = {
   pinnedEndMaxWidth?: number;
   columnDefaultWidth?: number;
   viewportReservedWidth?: number;
+  resizableColumns: boolean | undefined;
 
   columnCssEllipsis: boolean;
   columnHeaderCssEllipsis: boolean;
@@ -133,6 +134,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   multiSort,
 
   viewportReservedWidth,
+  resizableColumns,
 
   draggableColumns,
   columnOrder,
@@ -267,7 +269,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     }),
   });
 
-  const { computedSizes } = flexResult;
+  const { computedSizes, flexSizes, minSizes, maxSizes } = flexResult;
 
   const computedPinnedStartColumns: InfiniteTableComputedColumn<T>[] = [];
   const computedPinnedEndColumns: InfiniteTableComputedColumn<T>[] = [];
@@ -329,6 +331,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedSortIndex = sortingInfo?.index ?? -1;
 
     const computedWidth = computedSizes[i];
+    const computedFlex = flexSizes[i] || null;
+    const computedMinWidth = minSizes[i] || null;
+    const computedMaxWidth = maxSizes[i] || null;
 
     // const computedComp;
 
@@ -406,8 +411,14 @@ export const getComputedVisibleColumns = <T extends unknown>({
       render: colType.render,
       style: colType.style,
       components: colType.components,
+      columnGroup: colType.columnGroup,
       field,
       ...c,
+      computedResizable:
+        c.resizable ?? colType.resizable ?? resizableColumns ?? true,
+      computedMinWidth,
+      computedMaxWidth,
+      computedFlex,
       computedDataType,
       computedSortType,
       computedFilterType,

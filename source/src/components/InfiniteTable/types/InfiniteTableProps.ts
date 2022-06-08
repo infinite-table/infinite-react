@@ -105,6 +105,8 @@ export type InfiniteTableColumnType<T> = {
   align?: InfiniteTableColumn<T>['align'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
+  columnGroup?: string;
+
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
   field?: keyof T;

@@ -169,6 +169,7 @@ export const forwardProps = <T>(
 
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
+    resizableColumns: (resizableColumns) => resizableColumns ?? true,
 
     columnMinWidth: (columnMinWidth) => columnMinWidth ?? 30,
     columnMaxWidth: (columnMaxWidth) => columnMaxWidth ?? 2000,

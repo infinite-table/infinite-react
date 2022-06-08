@@ -28,6 +28,8 @@ type UseComputedVisibleColumnsParam<T> = {
   columnHeaderCssEllipsis: boolean;
   viewportReservedWidth?: number;
 
+  resizableColumns: boolean | undefined;
+
   pinnedEndMaxWidth?: number;
   pinnedStartMaxWidth?: number;
 
@@ -91,6 +93,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   pinnedEndMaxWidth,
   pinnedStartMaxWidth,
   viewportReservedWidth,
+  resizableColumns,
   columnVisibility,
   columnVisibilityAssumeVisible,
   columnSizing,
@@ -125,6 +128,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnCssEllipsis,
       columnHeaderCssEllipsis,
       viewportReservedWidth,
+      resizableColumns,
 
       filterValue,
 

@@ -150,7 +150,11 @@ export function InfiniteTableHeaderCell<T>(
   const domRef = useRef<HTMLElement | null>(null);
 
   const {
-    computed: { computedRemainingSpace, showColumnFilters },
+    computed: {
+      computedRemainingSpace,
+      showColumnFilters,
+      computedVisibleColumns,
+    },
     componentState: { portalDOMRef, columnHeaderHeight, filterEditors },
   } = useInfiniteTable<T>();
 
@@ -309,6 +313,19 @@ export function InfiniteTableHeaderCell<T>(
     defaultFilterEditors[filterType] ||
     StringFilterEditor) as React.FC<InfiniteTableFilterEditorProps<T>>;
 
+  const resizeHandle = null;
+  // column.computedResizable ? (
+  //   <div
+  //     style={{
+  //       position: 'absolute',
+  //       right: -10,
+  //       top: 0,
+  //       bottom: 0,
+  //       borderRight: '20px solid magenta',
+  //     }}
+  //   />
+  // ) : null;
+
   return (
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
@@ -317,6 +334,10 @@ export function InfiniteTableHeaderCell<T>(
         column={column}
         data-name={`HeaderCell`}
         data-column-id={column.id}
+        // this is used by ReactHeadlessRenderer - look for #updatezindex
+        data-z-index={
+          computedVisibleColumns.length * 10 - column.computedVisibleIndex * 10
+        }
         style={style}
         width={width}
         onPointerDown={onPointerDown}
@@ -341,21 +362,24 @@ export function InfiniteTableHeaderCell<T>(
         )}
         cssEllipsis={column.headerCssEllipsis ?? column.cssEllipsis ?? true}
         afterChildren={
-          showColumnFilters ? (
-            column.computedFilterable ? (
-              <InfiniteTableColumnHeaderFilter
-                filterEditor={FilterEditor}
-                filterTypes={filterTypes}
-                onChange={debouncedOnFilterValueChange}
-                columnFilterType={filterType}
-                columnLabel={column.field || column.name || column.id}
-                columnFilterValue={column.computedFilterValue}
-                columnHeaderHeight={columnHeaderHeight}
-              />
-            ) : (
-              <InfiniteTableColumnHeaderFilterEmpty />
-            )
-          ) : null
+          <>
+            {showColumnFilters ? (
+              column.computedFilterable ? (
+                <InfiniteTableColumnHeaderFilter
+                  filterEditor={FilterEditor}
+                  filterTypes={filterTypes}
+                  onChange={debouncedOnFilterValueChange}
+                  columnFilterType={filterType}
+                  columnLabel={column.field || column.name || column.id}
+                  columnFilterValue={column.computedFilterValue}
+                  columnHeaderHeight={columnHeaderHeight}
+                />
+              ) : (
+                <InfiniteTableColumnHeaderFilterEmpty />
+              )
+            ) : null}
+            {resizeHandle}
+          </>
         }
         renderChildren={renderChildren}
       />

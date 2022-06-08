@@ -1,3 +1,5 @@
+import { InfiniteTableComputedColumn } from '../InfiniteTable';
+import { InfiniteTablePropColumnSizing } from '../InfiniteTable/types/InfiniteTableProps';
 import { RequireAtLeastOne } from '../InfiniteTable/types/Utility';
 
 type FlexItem = {
@@ -25,6 +27,8 @@ type FlexComputeResult = {
   items: SizedFlexItem[];
   flexSizes: number[];
   computedSizes: number[];
+  minSizes: (number | undefined)[];
+  maxSizes: (number | undefined)[];
   remainingSize: number;
 };
 
@@ -44,9 +48,15 @@ export const computeFlex = (params: FlexComputeParams): FlexComputeResult => {
   let totalFlex = 0;
   let totalFlexCount = 0;
 
+  const minSizes: (number | undefined)[] = [];
+  const maxSizes: (number | undefined)[] = [];
+
   items.forEach((item, i) => {
     let maxSize = item.maxSize ?? defaultMaxSize ?? undefined;
     let minSize = item.minSize ?? defaultMinSize ?? undefined;
+
+    minSizes.push(minSize);
+    maxSizes.push(maxSize);
 
     if (item.size != null) {
       if (maxSize != null && item.size > maxSize) {
@@ -191,7 +201,195 @@ export const computeFlex = (params: FlexComputeParams): FlexComputeResult => {
   return {
     items: resultItems,
     flexSizes,
+    minSizes,
+    maxSizes,
     computedSizes,
     remainingSize: Math.round(availableSize - totalTakenSize),
   };
+};
+
+type FlexComputeResizeItem = {
+  id: InfiniteTableComputedColumn<any>['id'];
+  computedWidth: InfiniteTableComputedColumn<any>['computedWidth'];
+  computedFlex: InfiniteTableComputedColumn<any>['computedFlex'];
+  computedMinWidth: InfiniteTableComputedColumn<any>['computedMinWidth'];
+  computedMaxWidth: InfiniteTableComputedColumn<any>['computedMaxWidth'];
+};
+type FlexComputeResizeParams = {
+  items: FlexComputeResizeItem[];
+  columnSizing: InfiniteTablePropColumnSizing;
+  availableSize: number;
+  reservedWidth?: number;
+  dragHandlePositionAfter: number;
+  dragHandleOffset: number;
+  shareSpaceOnResize: boolean;
+};
+
+type FlexComputeResizeResult = {
+  maxReached: boolean;
+  minReached: boolean;
+  columnSizing: InfiniteTablePropColumnSizing;
+};
+
+function resizeClamp(
+  value: number,
+  min: number | null,
+  max: number | null,
+  direction: 1 | -1,
+): { value: number; clamped: 'min' | 'max' | false; diff: number } {
+  if (min != null && value <= min) {
+    return { value: min, clamped: 'min', diff: (value - min) * direction };
+  }
+  if (max != null && value >= max) {
+    return { value: max, clamped: 'max', diff: (max - value) * direction };
+  }
+  return { value, clamped: false, diff: 0 };
+}
+
+export const computeResize = (
+  params: FlexComputeResizeParams,
+): FlexComputeResizeResult => {
+  const { availableSize, reservedWidth = 0 } = params;
+
+  const columnSizing: InfiniteTablePropColumnSizing = Object.keys(
+    params.columnSizing,
+  ).reduce((acc, key) => {
+    acc[key] = { ...params.columnSizing[key] };
+    return acc;
+  }, {} as InfiniteTablePropColumnSizing);
+
+  if (availableSize < 0) {
+    throw 'The provided availableSize cannot be negative!';
+  }
+
+  let dragHandleOffset = params.dragHandleOffset;
+
+  const totalWidth = params.items.reduce((acc, item) => {
+    return acc + item.computedWidth;
+  }, 0);
+
+  if (!params.shareSpaceOnResize && reservedWidth > 0) {
+    const maxUsableSize = availableSize - reservedWidth;
+    if (totalWidth + dragHandleOffset > maxUsableSize) {
+      dragHandleOffset = maxUsableSize - totalWidth;
+    }
+  }
+
+  const firstIndex = params.dragHandlePositionAfter;
+  const secondIndex = params.dragHandlePositionAfter + 1;
+
+  const firstItem = params.items[firstIndex];
+  const secondItem: FlexComputeResizeItem | undefined =
+    params.items[secondIndex];
+
+  const firstId = firstItem.id;
+  const secondId = secondItem?.id;
+
+  // the computed width holds the actual size
+  const firstSize = firstItem.computedWidth;
+  const firstMinSize = firstItem.computedMinWidth;
+  const firstMaxSize = firstItem.computedMaxWidth;
+  // even though if flex is present, we use it to determine which property to put in the result
+  const firstPropertyToAdjust = firstItem.computedFlex ? 'flex' : 'width';
+
+  const secondSize = secondItem?.computedWidth;
+  const secondMinSize = secondItem?.computedMinWidth;
+  const secondMaxSize = secondItem?.computedMaxWidth;
+  const secondPropertyToAdjust = secondItem?.computedFlex ? 'flex' : 'width';
+
+  let maxReached = false;
+  let minReached = false;
+
+  const direction = dragHandleOffset > 0 ? 1 : -1;
+
+  let {
+    value: firstAdjustedSize,
+    clamped: firstClamped,
+    diff: firstDiff,
+  } = resizeClamp(
+    firstSize + dragHandleOffset,
+    firstMinSize,
+    firstMaxSize,
+    direction,
+  );
+
+  if (params.shareSpaceOnResize) {
+    // there's no item on the right side of the handle
+    if (secondItem == null) {
+      columnSizing[firstId] = {
+        ...columnSizing[firstId],
+        [firstPropertyToAdjust]: firstAdjustedSize,
+      };
+
+      minReached = firstClamped === 'min';
+      maxReached = firstClamped === 'max';
+
+      return { columnSizing, minReached, maxReached };
+    }
+    let {
+      value: secondAdjustedSize,
+      clamped: secondClamped,
+      diff: secondDiff,
+    } = resizeClamp(
+      secondSize - dragHandleOffset,
+      secondMinSize,
+      secondMaxSize,
+      direction,
+    );
+
+    if (firstClamped && secondClamped) {
+      // both are clamped, so decide which one to take
+      // take the one with the greater diff
+      if (Math.abs(firstDiff) > Math.abs(secondDiff)) {
+        // first is smaller, so make second not clamped
+        secondClamped = false;
+      } else {
+        // second is smaller, so make first not clamped
+        firstClamped = false;
+      }
+    }
+
+    if (!firstClamped && !secondClamped) {
+      //this is the happy case, so all good
+    } else if (firstClamped) {
+      const clampResultForSecond = resizeClamp(
+        secondSize - dragHandleOffset - firstDiff,
+        secondMinSize,
+        secondMaxSize,
+        direction,
+      );
+      secondAdjustedSize = clampResultForSecond.value;
+      secondClamped = clampResultForSecond.clamped;
+      secondDiff = clampResultForSecond.diff;
+    } else if (secondClamped) {
+      const clampResultForFirst = resizeClamp(
+        firstSize + dragHandleOffset + secondDiff,
+        firstMinSize,
+        firstMaxSize,
+        direction,
+      );
+      firstAdjustedSize = clampResultForFirst.value;
+      firstClamped = clampResultForFirst.clamped;
+      firstDiff = clampResultForFirst.diff;
+    }
+
+    columnSizing[firstId] = {
+      ...columnSizing[firstId],
+      [firstPropertyToAdjust]: firstAdjustedSize,
+    };
+    columnSizing[secondId] = {
+      ...columnSizing[secondId],
+      [secondPropertyToAdjust]: secondAdjustedSize,
+    };
+
+    minReached = firstClamped === 'min' || secondClamped === 'min';
+    maxReached = firstClamped === 'max' || secondClamped === 'max';
+  } else {
+    columnSizing[firstId] = {
+      ...columnSizing[firstId],
+      [firstPropertyToAdjust]: firstAdjustedSize,
+    };
+  }
+
+  return { columnSizing, minReached, maxReached };
 };

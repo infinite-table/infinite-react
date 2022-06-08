@@ -8,7 +8,7 @@ test.describe.parallel('flexbox', () => {
         items: [],
         availableSize: 0,
       }),
-    ).toEqual({
+    ).toMatchObject({
       flexSizes: [],
       items: [],
       computedSizes: [],
@@ -45,7 +45,7 @@ test.describe.parallel('flexbox', () => {
           { size: 30 },
         ],
       }),
-    ).toEqual({
+    ).toMatchObject({
       flexSizes: [0, 0],
       computedSizes: [10, 30],
       remainingSize: 60,
@@ -69,7 +69,7 @@ test.describe.parallel('flexbox', () => {
           { size: 30 },
         ],
       }),
-    ).toEqual({
+    ).toMatchObject({
       flexSizes: [0, 60, 0],
       computedSizes: [10, 60, 30],
       remainingSize: 0,
@@ -95,7 +95,7 @@ test.describe.parallel('flexbox', () => {
           { size: 1 },
         ],
       }),
-    ).toEqual({
+    ).toMatchObject({
       flexSizes: [0, 5, 2, 0],
       computedSizes: [2, 5, 2, 1],
       remainingSize: 0,
@@ -123,7 +123,7 @@ test.describe.parallel('flexbox', () => {
           { size: 1 },
         ],
       }),
-    ).toEqual({
+    ).toMatchObject({
       flexSizes: [0, 2, 5, 0],
       computedSizes: [2, 2, 5, 1],
       remainingSize: 0,
@@ -153,7 +153,7 @@ test.describe.parallel('flexbox', () => {
           },
         ],
       }),
-    ).toEqual({
+    ).toMatchObject({
       items: [
         { size: 2, computedSize: 2 },
         { flex: 1, flexSize: 4, computedSize: 4 },
@@ -182,7 +182,7 @@ test.describe.parallel('flexbox', () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       items: [
         { size: 2, computedSize: 2 },
         { flex: 1, minSize: 4, flexSize: 4, computedSize: 4 },
@@ -197,6 +197,7 @@ test.describe.parallel('flexbox', () => {
   test('should work when flex available space (FAB) = 8, and flex = 2(max 3) + 1 + 2', () => {
     const result = computeFlex({
       availableSize: 10,
+      maxSize: 5,
       items: [
         {
           size: 2,
@@ -212,7 +213,8 @@ test.describe.parallel('flexbox', () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      maxSizes: [5, 3, 5, 5],
       items: [
         { size: 2, computedSize: 2 },
         {

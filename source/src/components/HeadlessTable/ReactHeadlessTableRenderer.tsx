@@ -1056,7 +1056,11 @@ export class ReactHeadlessTableRenderer extends Logger {
         const hidden = options
           ? options.hidden
           : !!this.isCellCovered(rowIndex, colIndex);
-        itemElement.style.zIndex = hidden ? '-1' : 'auto';
+        itemElement.style.zIndex = hidden
+          ? '-1'
+          : // #updatezindex - we need to allow elements use their own zIndex, so we
+            // resort to allowing them to have it as a data-z-index attribute
+            itemElement.dataset.zIndex || 'auto';
       } else {
         itemElement.style.display = '';
         itemElement.style.left = `${x}px`;
@@ -1183,7 +1187,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       { x, y }: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) {
-      node.style.zIndex = `10000`;
+      node.style.zIndex = `1000000`;
       node.style.transform = `translate3d(${x + scrollPosition.scrollLeft}px, ${
         y + scrollPosition.scrollTop
       }px, 0)`;
@@ -1196,7 +1200,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       { x }: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) {
-      node.style.zIndex = `20000`;
+      node.style.zIndex = `2000000`;
       node.style.transform = `translate3d(${x + scrollPosition.scrollLeft}px, ${
         fixedEndRowsOffsets[_rowIndex]
       }px, 0)`;
@@ -1208,7 +1212,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       node: HTMLElement,
       coords: { y: number },
     ) {
-      node.style.zIndex = `30000`;
+      node.style.zIndex = `3000000`;
       node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${
         coords.y + scrollPosition.scrollTop
       }px, 0)`;
@@ -1219,7 +1223,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       colIndex: number,
       node: HTMLElement,
     ) {
-      node.style.zIndex = `40000`;
+      node.style.zIndex = `4000000`;
       node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${fixedEndRowsOffsets[rowIndex]}px, 0)`;
     }
 
