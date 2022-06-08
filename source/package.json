@@ -1,7 +1,7 @@
 {
   "name": "@infinite-table/infinite-react",
   "description": "Infinite Table for React",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "main": "index.js",
   "module": "index.esm.js",
   "typings": "index.d.ts",
