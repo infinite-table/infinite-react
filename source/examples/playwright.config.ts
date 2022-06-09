@@ -10,7 +10,7 @@ const config: PlaywrightTestConfig = {
   timeout: 5000 * 1000,
 
   use: {
-    trace: 'on-first-retry',
+    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     // video: 'on-first-retry',
     headless: true,
     viewport: { width, height },

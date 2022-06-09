@@ -1294,6 +1294,9 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   destroy = () => {
+    if (this.destroyed) {
+      return;
+    }
     this.destroyed = true;
     this.reset();
     this.onDestroy();

@@ -196,6 +196,12 @@ type ComponentStateRootConfig<
 
   getParentState?: () => T_PARENT_STATE;
 
+  cleanup?: (
+    state: COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      COMPONENT_DERIVED_STATE,
+  ) => void;
+
   onControlledPropertyChange?: (
     name: string,
     newValue: any,
@@ -494,6 +500,12 @@ export function getComponentStateRoot<
         // });
       }
     });
+
+    useEffect(() => {
+      return () => {
+        config.cleanup?.(getComponentState());
+      };
+    }, []);
 
     return (
       <Context.Provider value={contextValue}>{props.children}</Context.Provider>

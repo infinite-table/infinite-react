@@ -40,6 +40,7 @@ import {
   forwardProps,
   mapPropsToState,
   initSetupState,
+  cleanupState,
 } from './state/getInitialState';
 import { columnHeaderHeightName } from './theme.css';
 
@@ -62,6 +63,8 @@ const InfiniteTableRoot = getComponentStateRoot({
   forwardProps,
   // @ts-ignore
   mapPropsToState,
+  // @ts-ignore
+  cleanup: cleanupState,
   // @ts-ignore
   allowedControlledPropOverrides: {
     rowHeight: true,
