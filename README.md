@@ -93,6 +93,9 @@ import "@infinite-table/infinite-react/index.css"
 
 This file includes both the light and the dark themes.
 
+## Releases
+
+We release often - see [what each release contains hre](https://infinite-table.com/docs/releases). Due to our automated releases which have integrated tests, we're confident that we're delivering the best possible experience to our users.
 
 ## License 
 
