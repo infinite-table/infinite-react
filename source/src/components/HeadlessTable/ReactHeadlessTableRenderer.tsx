@@ -4,6 +4,8 @@ import { RefCallback } from 'react';
 import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
 import { raf } from '../../utils/raf';
+import { stripVar } from '../../utils/stripVar';
+import { InternalVars } from '../InfiniteTable/theme.css';
 import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
@@ -44,6 +46,15 @@ export type RenderableWithPosition = {
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
+const currentColumnTransformX = stripVar(InternalVars.currentColumnTransformX);
+const currentColumnTransformY = stripVar(InternalVars.currentColumnTransformY);
+
+function setTransform(element: HTMLElement, x: number, y: number) {
+  element.style.setProperty(currentColumnTransformX, `${x}px`);
+  element.style.setProperty(currentColumnTransformY, `${y}px`);
+
+  element.style.transform = `translate3d(${InternalVars.currentColumnTransformX}, ${InternalVars.currentColumnTransformY}, 0)`;
+}
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
 
@@ -1047,7 +1058,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       }
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
-        itemElement.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        setTransform(itemElement, x, y);
+
         itemElement.style.willChange = 'transform';
         itemElement.style.backfaceVisibility = 'hidden';
         // need to set it to auto
@@ -1141,7 +1153,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       { scrollLeft }: ScrollPosition,
     ) {
       node.style.zIndex = `${fixedColsStart - colIndex}`;
-      node.style.transform = `translate3d(${x + scrollLeft}px, ${y}px, 0)`;
+      setTransform(node, x + scrollLeft, y);
     }
 
     function adjustRowStart(
@@ -1152,9 +1164,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollPosition: ScrollPosition,
     ) {
       node.style.zIndex = `${fixedRowsStart - rowIndex}`;
-      node.style.transform = `translate3d(${coords.x}px, ${
-        coords.y + scrollPosition.scrollTop
-      }px, 0)`;
+      setTransform(node, coords.x, coords.y + scrollPosition.scrollTop);
     }
 
     function adjustColEnd(
@@ -1167,7 +1177,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       const val = fixedEndColsOffsets[colIndex];
       // console.log('value', val);
 
-      node.style.transform = `translate3d(${val}px, ${y}px, 0)`;
+      setTransform(node, val, y);
     }
 
     function adjustRowEnd(
@@ -1177,7 +1187,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       coords: { x: number; y: number },
     ) {
       node.style.zIndex = `${rows - rowIndex}`;
-      node.style.transform = `translate3d(${coords.x}px, ${fixedEndRowsOffsets[rowIndex]}px, 0)`;
+      setTransform(node, coords.x, fixedEndRowsOffsets[rowIndex]);
     }
 
     function adjustColStartRowStart(
@@ -1188,9 +1198,11 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollPosition: ScrollPosition,
     ) {
       node.style.zIndex = `1000000`;
-      node.style.transform = `translate3d(${x + scrollPosition.scrollLeft}px, ${
-        y + scrollPosition.scrollTop
-      }px, 0)`;
+      setTransform(
+        node,
+        x + scrollPosition.scrollLeft,
+        y + scrollPosition.scrollTop,
+      );
     }
 
     function adjustColStartRowEnd(
@@ -1201,9 +1213,11 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollPosition: ScrollPosition,
     ) {
       node.style.zIndex = `2000000`;
-      node.style.transform = `translate3d(${x + scrollPosition.scrollLeft}px, ${
-        fixedEndRowsOffsets[_rowIndex]
-      }px, 0)`;
+      setTransform(
+        node,
+        x + scrollPosition.scrollLeft,
+        fixedEndRowsOffsets[_rowIndex],
+      );
     }
 
     function adjustColEndRowStart(
@@ -1213,9 +1227,11 @@ export class ReactHeadlessTableRenderer extends Logger {
       coords: { y: number },
     ) {
       node.style.zIndex = `3000000`;
-      node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${
-        coords.y + scrollPosition.scrollTop
-      }px, 0)`;
+      setTransform(
+        node,
+        fixedEndColsOffsets[colIndex],
+        coords.y + scrollPosition.scrollTop,
+      );
     }
 
     function adjustColEndRowEnd(
@@ -1224,7 +1240,11 @@ export class ReactHeadlessTableRenderer extends Logger {
       node: HTMLElement,
     ) {
       node.style.zIndex = `4000000`;
-      node.style.transform = `translate3d(${fixedEndColsOffsets[colIndex]}px, ${fixedEndRowsOffsets[rowIndex]}px, 0)`;
+      setTransform(
+        node,
+        fixedEndColsOffsets[colIndex],
+        fixedEndRowsOffsets[rowIndex],
+      );
     }
 
     if (fixedColsStart || fixedColsEnd) {

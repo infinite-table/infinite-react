@@ -50,6 +50,7 @@ export const transform = styleVariants({
 
 export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
+  colResize: { cursor: 'col-resize' },
 });
 
 export const pointerEvents = styleVariants({

@@ -227,7 +227,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       : { ...style, ...column.style }
     : style || {};
 
-  style.width = width;
+  // style.width = width;
   style.height = rowHeight;
 
   const memoizedStyle = useMemo(

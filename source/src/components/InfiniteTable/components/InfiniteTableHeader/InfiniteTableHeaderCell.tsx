@@ -44,6 +44,7 @@ import {
   InfiniteTableColumnHeaderFilter,
   InfiniteTableColumnHeaderFilterEmpty,
 } from './InfiniteTableColumnHeaderFilter';
+import { ResizeHandle } from './ResizeHandle';
 
 export const InfiniteTableHeaderCellContext = React.createContext<
   InfiniteTableHeaderCellContextType<any>
@@ -155,6 +156,8 @@ export function InfiniteTableHeaderCell<T>(
       showColumnFilters,
       computedVisibleColumns,
     },
+    getState,
+    componentActions,
     componentState: { portalDOMRef, columnHeaderHeight, filterEditors },
   } = useInfiniteTable<T>();
 
@@ -313,18 +316,27 @@ export function InfiniteTableHeaderCell<T>(
     defaultFilterEditors[filterType] ||
     StringFilterEditor) as React.FC<InfiniteTableFilterEditorProps<T>>;
 
-  const resizeHandle = null;
-  // column.computedResizable ? (
-  //   <div
-  //     style={{
-  //       position: 'absolute',
-  //       right: -10,
-  //       top: 0,
-  //       bottom: 0,
-  //       borderRight: '20px solid magenta',
-  //     }}
-  //   />
-  // ) : null;
+  // const resizeHandle = null;
+
+  const onColumnResize = useCallback((newWidth) => {
+    const { columnSizing } = getState();
+
+    componentActions.columnSizing = {
+      ...columnSizing,
+      [column.id]: {
+        ...columnSizing[column.id],
+        width: newWidth,
+      },
+    };
+  }, []);
+  const resizeHandle = column.computedResizable ? (
+    <ResizeHandle
+      initialWidth={column.computedWidth}
+      columnIndex={column.computedVisibleIndex}
+      totalColumns={computedVisibleColumns.length}
+      onResize={onColumnResize}
+    />
+  ) : null;
 
   return (
     <ContextProvider value={renderParam}>

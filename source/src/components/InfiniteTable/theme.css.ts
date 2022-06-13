@@ -1,7 +1,16 @@
-import { createGlobalThemeContract, globalStyle } from '@vanilla-extract/css';
+import {
+  createGlobalThemeContract,
+  createThemeContract,
+  globalStyle,
+} from '@vanilla-extract/css';
 import { toCSSVarName } from './utils/toCSSVarName';
 
 export const columnHeaderHeightName = 'column-header-height';
+export const InternalVars = createThemeContract({
+  currentColumnWidth: null,
+  currentColumnTransformX: null,
+  currentColumnTransformY: null,
+});
 export const ThemeVars = createGlobalThemeContract(
   {
     color: {
@@ -93,6 +102,9 @@ export const ThemeVars = createGlobalThemeContract(
         paddingY: 'header-cell-padding-y',
         iconSize: 'header-cell-icon-size',
         sortIconMargin: 'header-cell-sort-icon-margin',
+        resizeHandleActiveAreaWidth: 'resize-handle-active-area-width',
+        resizeHandleWidth: 'resize-handle-width',
+        resizeHandleHoverBackground: 'resize-handle-hover-background',
       },
       Cell: {
         padding: 'cell-padding',
@@ -301,6 +313,10 @@ const LoadMaskVars = {
 };
 
 const HeaderCellVars = {
+  [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '20px',
+  [ThemeVars.components.HeaderCell.resizeHandleWidth]: '2px',
+  [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]:
+    ThemeVars.color.accent,
   [ThemeVars.components.HeaderCell.background]: '#ededed',
   [ThemeVars.components.HeaderCell.paddingX]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell.paddingY]: ThemeVars.spacing['3'],

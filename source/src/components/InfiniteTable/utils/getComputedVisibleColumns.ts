@@ -332,8 +332,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     const computedWidth = computedSizes[i];
     const computedFlex = flexSizes[i] || null;
-    const computedMinWidth = minSizes[i] || null;
-    const computedMaxWidth = maxSizes[i] || null;
+    const computedMinWidth = minSizes[i] || 0;
+    const computedMaxWidth = maxSizes[i] || 10_000;
 
     // const computedComp;
 

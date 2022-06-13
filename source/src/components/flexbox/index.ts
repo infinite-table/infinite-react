@@ -228,6 +228,7 @@ type FlexComputeResizeParams = {
 type FlexComputeResizeResult = {
   maxReached: boolean;
   minReached: boolean;
+  constrained: boolean;
   columnSizing: InfiniteTablePropColumnSizing;
 };
 
@@ -391,5 +392,10 @@ export const computeResize = (
     };
   }
 
-  return { columnSizing, minReached, maxReached };
+  return {
+    columnSizing,
+    minReached,
+    maxReached,
+    constrained: minReached || maxReached,
+  };
 };

@@ -93,6 +93,9 @@ export default () => {
           columnDefaultWidth={columnDefaultWidth}
           columnMinWidth={minWidth}
           sortable={false}
+          onColumnSizingChange={(columnSizing) => {
+            console.log(columnSizing);
+          }}
           columns={
             new Map(
               [

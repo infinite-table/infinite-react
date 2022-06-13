@@ -1,8 +1,10 @@
 import * as React from 'react';
 
 import { join } from '../../../../utils/join';
+import { stripVar } from '../../../../utils/stripVar';
 import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
 import { internalProps } from '../../internalProps';
+import { InternalVars } from '../../theme.css';
 import {
   cssEllipsisClassName,
   justifyContent,
@@ -51,10 +53,11 @@ function InfiniteTableCellFn<T>(
   // const columnShifts = null;
 
   const shifting = !!columnShifts;
-  const style: React.CSSProperties = {
-    width,
+  const style = {
+    [stripVar(InternalVars.currentColumnWidth)]: `${width}px`,
+    width: InternalVars.currentColumnWidth,
     ...domProps.style,
-  };
+  } as React.CSSProperties;
 
   if (
     !skipColumnShifting &&
