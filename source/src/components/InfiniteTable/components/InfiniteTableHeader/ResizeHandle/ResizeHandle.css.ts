@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+import { recipe } from '@vanilla-extract/recipes';
 import { ThemeVars } from '../../../theme.css';
 
 import { position, right, top, bottom, cursor } from '../../../utilities.css';
@@ -19,8 +20,8 @@ export const ResizeHandleCls = style(
   'ResizeHandleCls',
 );
 
-export const ResizeHandleDraggerCls = style(
-  [
+export const ResizeHandleDraggerClsRecipe = recipe({
+  base: [
     position.absolute,
     top['0'],
 
@@ -36,5 +37,18 @@ export const ResizeHandleDraggerCls = style(
       },
     },
   ],
-  'ResizeHandleDraggerCls',
-);
+  variants: {
+    constrained: {
+      false: {},
+      true: {
+        selectors: {
+          [`${ResizeHandleCls}:hover &`]: {
+            background:
+              ThemeVars.components.HeaderCell
+                .resizeHandleConstrainedHoverBackground,
+          },
+        },
+      },
+    },
+  },
+});

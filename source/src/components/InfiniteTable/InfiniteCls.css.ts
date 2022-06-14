@@ -1,6 +1,6 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
-import { ThemeVars } from './theme.css';
+import { InternalVars, ThemeVars } from './theme.css';
 
 import {
   boxSizingBorderBox,
@@ -20,6 +20,9 @@ export const InfiniteCls = style([
     color: ThemeVars.color.color,
     background: ThemeVars.background,
     minHeight: ThemeVars.minHeight,
+    vars: {
+      [InternalVars.activeCellWidth]: '0px',
+    },
   },
   boxSizingBorderBox,
 ]);

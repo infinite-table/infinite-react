@@ -1,12 +1,23 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  CSSProperties,
+} from 'react';
+
 import { useRerender } from '../../hooks/useRerender';
+import { ScrollPosition } from '../../types/ScrollPosition';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { internalProps } from '../internalProps';
+import { InternalVars } from '../theme.css';
+import { setInfiniteVars } from '../utils/infiniteDOMUtils';
 import { ActiveCellIndicatorCls } from './ActiveCellIndicator.css';
 
 const { rootClassName } = internalProps;
+
 const baseCls = `${rootClassName}-ActiveCellIndicator`;
 
 export type ActiveCellIndicatorInfo = {
@@ -17,6 +28,49 @@ export type ActiveCellIndicatorInfo = {
 type ActiveCellIndicatorProps = {
   activeCellIndex?: [number, number] | null;
   brain: MatrixBrain;
+};
+
+type ActiveCellVars = {
+  scrollPosition: ScrollPosition;
+  activeColWidth: number;
+
+  activeCellOffsetX: number;
+  activeCellOffsetY: number;
+
+  activeRowHeight: number;
+};
+
+function updateInfiniteCSSVarsForActiveCell(
+  vars: ActiveCellVars,
+  node: HTMLElement,
+) {
+  setInfiniteVars(
+    {
+      activeCellWidth: `${vars.activeColWidth}px`,
+      activeRowHeight: `${vars.activeRowHeight}px`,
+      activeCellColumnTransformX: `${
+        -vars.scrollPosition.scrollLeft + vars.activeCellOffsetX
+      }px`,
+      activeCellColumnTransformY: `${
+        -vars.scrollPosition.scrollTop + vars.activeCellOffsetY
+      }px`,
+    },
+    node,
+  );
+}
+
+const DEFAULT_VARS: ActiveCellVars = {
+  scrollPosition: { scrollLeft: 0, scrollTop: 0 },
+  activeColWidth: 0,
+  activeCellOffsetX: 0,
+  activeCellOffsetY: 0,
+  activeRowHeight: 0,
+};
+
+const ActiveStyle: CSSProperties = {
+  transform: `translate3d(${InternalVars.activeCellColumnTransformX}, ${InternalVars.activeCellColumnTransformY},0)`,
+  width: InternalVars.activeCellWidth,
+  height: InternalVars.activeRowHeight,
 };
 const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
   const { brain } = props;
@@ -33,6 +87,8 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
   const domRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef(state);
 
+  const varsRef = useRef<ActiveCellVars>(DEFAULT_VARS);
+
   const active =
     props.activeCellIndex != null &&
     brain.getRowCount() > props.activeCellIndex[0];
@@ -43,19 +99,36 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     }
 
     const rowIndex = props.activeCellIndex[0];
+
+    const rowHeight = brain.getRowHeight(rowIndex);
+
+    const colWidth = brain.getColWidth(props.activeCellIndex[1]);
+    const left = brain.getItemOffsetFor(props.activeCellIndex[1], 'horizontal');
+    const top = brain.getItemOffsetFor(rowIndex, 'vertical');
+
+    updateInfiniteCSSVarsForActiveCell(
+      (varsRef.current = {
+        scrollPosition: brain.getScrollPosition(),
+        activeColWidth: colWidth,
+        activeCellOffsetX: left,
+        activeCellOffsetY: top,
+        activeRowHeight: rowHeight,
+      }),
+      domRef.current!,
+    );
+
     setState(
       (stateRef.current = {
-        top: brain.getItemOffsetFor(rowIndex, 'vertical'),
-        rowHeight: brain.getRowHeight(rowIndex),
-        left: brain.getItemOffsetFor(props.activeCellIndex[1], 'horizontal'),
-        colWidth: brain.getColWidth(props.activeCellIndex[1]),
+        top: top,
+        rowHeight,
+        left,
+        colWidth,
       }),
     );
   }, [props.activeCellIndex, rerenderId]);
 
   useEffect(() => {
     const removeOnSCroll = brain.onScroll((scrollPos) => {
-      const node = domRef.current!;
       // #top_overflow_200k
       // initially we did this
       // node.style.transform = `translate3d(0px, ${-scrollPos.scrollTop}px, 0px)`;
@@ -65,9 +138,20 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
 
       const topOffset = stateRef.current.top;
       const leftOffset = stateRef.current.left;
-      node.style.transform = `translate3d(${
-        -scrollPos.scrollLeft + leftOffset
-      }px, ${-scrollPos.scrollTop + topOffset}px, 0px)`;
+
+      updateInfiniteCSSVarsForActiveCell(
+        {
+          ...varsRef.current,
+          scrollPosition: scrollPos,
+          activeColWidth: stateRef.current.colWidth,
+          activeCellOffsetX: leftOffset,
+          activeCellOffsetY: topOffset,
+        },
+        domRef.current!,
+      );
+      // node.style.transform = `translate3d(${
+      //   -scrollPos.scrollLeft + leftOffset
+      // }px, ${-scrollPos.scrollTop + topOffset}px, 0px)`;
     });
 
     const removeOnRenderCountChange = brain.onRenderCountChange(() => {
@@ -85,8 +169,6 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     };
   }, [brain]);
 
-  const scrollPosition = brain.getScrollPosition();
-
   return (
     <div
       ref={domRef}
@@ -99,17 +181,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
       // and is no longer positioned well by the browser
       // so we ended up with this solution - make sure data-top is kept here
 
-      style={
-        active
-          ? {
-              transform: `translate3d(${
-                -scrollPosition.scrollLeft + state.left
-              }px, ${-scrollPosition.scrollTop + state.top}px,0)`,
-              width: state.colWidth,
-              height: state.rowHeight,
-            }
-          : undefined
-      }
+      style={active ? ActiveStyle : undefined}
     ></div>
   );
 };

@@ -13,6 +13,26 @@ export const wait = (timeout: number) => {
   });
 };
 
+const resizeHandle = async (diff: number, handle: Locator, page: Page) => {
+  const box = (await handle.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + diff, 0);
+  await page.mouse.up();
+};
+
+export const resizeColumnById = async (
+  columnId: string,
+  diff: number,
+  { page }: { page: Page },
+) => {
+  const country = getHeaderCellByColumnId(columnId, { page });
+
+  const handle = await country.locator('.InfiniteHeaderCell_ResizeHandle');
+
+  await resizeHandle(diff, handle, page);
+};
+
 export const getValuesByColumnId = async (
   columnId: string,
   { page }: { page: Page },

@@ -127,7 +127,11 @@ export const HeaderCellRecipe = recipe({
       background: ThemeVars.components.HeaderCell.background,
       padding: 0,
       borderRight: ThemeVars.components.Cell.border,
+      ':hover': {
+        background: ThemeVars.components.HeaderCell.hoverBackground,
+      },
     },
+
     display.block,
   ],
   variants: {

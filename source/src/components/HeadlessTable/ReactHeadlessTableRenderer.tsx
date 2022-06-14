@@ -1050,12 +1050,10 @@ export class ReactHeadlessTableRenderer extends Logger {
       // itemElement.style.gridColumn = `${colIndex} / span 1`;
       // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
-      if (__DEV__) {
-        // (itemElement.dataset as any).elementIndex = elementIndex;
-        (itemElement.dataset as any).rowIndex = rowIndex;
+      // (itemElement.dataset as any).elementIndex = elementIndex;
+      (itemElement.dataset as any).rowIndex = rowIndex;
 
-        (itemElement.dataset as any).colIndex = colIndex;
-      }
+      (itemElement.dataset as any).colIndex = colIndex;
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
         setTransform(itemElement, x, y);

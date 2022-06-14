@@ -29,24 +29,19 @@ const columns: InfiniteTablePropColumns<Developer> = {
     renderValue: ({ rowInfo }) => {
       return `${rowInfo.indexInAll}`;
     },
+    defaultFlex: 1,
   },
   preferredLanguage: {
     field: 'preferredLanguage',
     header: 'This is my preferred language',
+    defaultFlex: 3,
   },
   salary: {
     field: 'salary',
     type: 'number',
+    defaultFlex: 2,
   },
-  age: { field: 'age' },
-  canDesign: { field: 'canDesign' },
-  country: { field: 'country' },
-  firstName: { field: 'firstName' },
-  stack: { field: 'stack' },
-  id: { field: 'id' },
-  hobby: { field: 'hobby' },
-  city: { field: 'city', defaultWidth: 3600 },
-  currency: { field: 'currency' },
+  age: { field: 'age', defaultWidth: 100 },
 };
 
 const dataSource: DataSourceData<Developer> = ({}) => {
@@ -58,8 +53,11 @@ const dataSource: DataSourceData<Developer> = ({}) => {
 const sinon = require('sinon');
 
 const onColumnSizingChange = sinon.spy((_rowHeight: number) => {});
+const onViewportReservedWidthChange = sinon.spy((_width: number) => {});
 
 (globalThis as any).onColumnSizingChange = onColumnSizingChange;
+(globalThis as any).onViewportReservedWidthChange =
+  onViewportReservedWidthChange;
 
 export default () => {
   return (
@@ -70,14 +68,14 @@ export default () => {
             style: {
               margin: '5px',
               height: 500,
-              width: 1000,
+              width: '80vw',
               border: '1px solid gray',
               position: 'relative',
             },
           }}
-          columnDefaultWidth={100}
           columnMinWidth={50}
           onColumnSizingChange={onColumnSizingChange}
+          onViewportReservedWidthChange={onViewportReservedWidthChange}
           columns={columns}
         />
       </DataSource>

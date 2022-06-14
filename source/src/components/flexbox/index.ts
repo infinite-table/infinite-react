@@ -219,13 +219,15 @@ type FlexComputeResizeParams = {
   items: FlexComputeResizeItem[];
   columnSizing: InfiniteTablePropColumnSizing;
   availableSize: number;
-  reservedWidth?: number;
+  reservedWidth: number;
   dragHandlePositionAfter: number;
   dragHandleOffset: number;
   shareSpaceOnResize: boolean;
 };
 
-type FlexComputeResizeResult = {
+export type FlexComputeResizeResult = {
+  reservedWidth: number;
+  adjustedDiff: number;
   maxReached: boolean;
   minReached: boolean;
   constrained: boolean;
@@ -265,16 +267,16 @@ export const computeResize = (
 
   let dragHandleOffset = params.dragHandleOffset;
 
-  const totalWidth = params.items.reduce((acc, item) => {
-    return acc + item.computedWidth;
-  }, 0);
+  // const totalWidth = params.items.reduce((acc, item) => {
+  //   return acc + item.computedWidth;
+  // }, 0);
 
-  if (!params.shareSpaceOnResize && reservedWidth > 0) {
-    const maxUsableSize = availableSize - reservedWidth;
-    if (totalWidth + dragHandleOffset > maxUsableSize) {
-      dragHandleOffset = maxUsableSize - totalWidth;
-    }
-  }
+  // if (!params.shareSpaceOnResize && reservedWidth > 0) {
+  //   const maxUsableSize = availableSize - reservedWidth;
+  //   if (totalWidth + dragHandleOffset > maxUsableSize) {
+  //     dragHandleOffset = maxUsableSize - totalWidth;
+  //   }
+  // }
 
   const firstIndex = params.dragHandlePositionAfter;
   const secondIndex = params.dragHandlePositionAfter + 1;
@@ -325,7 +327,15 @@ export const computeResize = (
       minReached = firstClamped === 'min';
       maxReached = firstClamped === 'max';
 
-      return { columnSizing, minReached, maxReached };
+      const adjustedDiff = firstAdjustedSize - firstSize;
+      return {
+        adjustedDiff,
+        reservedWidth,
+        columnSizing,
+        minReached,
+        maxReached,
+        constrained: minReached || maxReached,
+      };
     }
     let {
       value: secondAdjustedSize,
@@ -390,9 +400,17 @@ export const computeResize = (
       ...columnSizing[firstId],
       [firstPropertyToAdjust]: firstAdjustedSize,
     };
+
+    minReached = firstClamped === 'min';
+    maxReached = firstClamped === 'max';
   }
 
+  const adjustedDiff = firstAdjustedSize - firstSize;
   return {
+    adjustedDiff,
+    reservedWidth: !params.shareSpaceOnResize
+      ? reservedWidth - adjustedDiff
+      : reservedWidth,
     columnSizing,
     minReached,
     maxReached,

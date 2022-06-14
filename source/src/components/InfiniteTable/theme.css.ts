@@ -10,6 +10,10 @@ export const InternalVars = createThemeContract({
   currentColumnWidth: null,
   currentColumnTransformX: null,
   currentColumnTransformY: null,
+  activeCellWidth: null,
+  activeCellColumnTransformX: null,
+  activeCellColumnTransformY: null,
+  activeRowHeight: null,
 });
 export const ThemeVars = createGlobalThemeContract(
   {
@@ -18,6 +22,7 @@ export const ThemeVars = createGlobalThemeContract(
        * Brand-specific accent color. This probably needs override to match your app.
        */
       accent: 'accent-color',
+      error: 'error-color',
       /**
        * The text color inside the component
        */
@@ -97,6 +102,7 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in the `dark` theme.
          */
         background: 'header-cell-background',
+        hoverBackground: 'header-cell-hover-background',
         padding: 'header-cell-padding',
         paddingX: 'header-cell-padding-x',
         paddingY: 'header-cell-padding-y',
@@ -105,6 +111,8 @@ export const ThemeVars = createGlobalThemeContract(
         resizeHandleActiveAreaWidth: 'resize-handle-active-area-width',
         resizeHandleWidth: 'resize-handle-width',
         resizeHandleHoverBackground: 'resize-handle-hover-background',
+        resizeHandleConstrainedHoverBackground:
+          'resize-handle-constrained-hover-background',
       },
       Cell: {
         padding: 'cell-padding',
@@ -314,10 +322,13 @@ const LoadMaskVars = {
 
 const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '20px',
-  [ThemeVars.components.HeaderCell.resizeHandleWidth]: '2px',
+  [ThemeVars.components.HeaderCell.resizeHandleWidth]: '4px',
   [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]:
     ThemeVars.color.accent,
+  [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
+    ThemeVars.color.error,
   [ThemeVars.components.HeaderCell.background]: '#ededed',
+  [ThemeVars.components.HeaderCell.hoverBackground]: '#dfdfdf',
   [ThemeVars.components.HeaderCell.paddingX]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell.paddingY]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell
@@ -387,6 +398,7 @@ const LightTheme = {
   [ThemeVars.fontFamily]: 'inherit',
   [ThemeVars.color.color]: '#484848',
   [ThemeVars.color.accent]: '#ff7043',
+  [ThemeVars.color.error]: '#ff0000',
   [ThemeVars.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.background]: 'white',
   [ThemeVars.minHeight]: '100px',
@@ -402,6 +414,7 @@ const DarkTheme = {
   [ThemeVars.components.Cell.border]: '1px solid #2a323d',
   [ThemeVars.components.Header.color]: '#c3c3c3',
   [ThemeVars.components.HeaderCell.background]: '#1b2129',
+  [ThemeVars.components.HeaderCell.hoverBackground]: '#222932',
   [ThemeVars.components.Header.background]:
     ThemeVars.components.HeaderCell.background,
   [ThemeVars.components.Row.hoverBackground]: '#3b4754',

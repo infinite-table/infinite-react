@@ -171,7 +171,7 @@ export const forwardProps = <T>(
     resizableColumns: (resizableColumns) => resizableColumns ?? true,
 
     columnMinWidth: (columnMinWidth) => columnMinWidth ?? 30,
-    columnMaxWidth: (columnMaxWidth) => columnMaxWidth ?? 2000,
+    columnMaxWidth: (columnMaxWidth) => columnMaxWidth ?? 5000,
     columnDefaultWidth: (columnDefaultWidth) => columnDefaultWidth ?? 200,
 
     columnCssEllipsis: (columnCssEllipsis) => columnCssEllipsis ?? true,

@@ -179,7 +179,7 @@ export function HeadlessTable(
 
       brain.update(size);
     };
-    const remove = setupResizeObserver(node, onResize);
+    const remove = setupResizeObserver(node, onResize, { debounce: 50 });
 
     return remove;
   }, []);

@@ -8,6 +8,7 @@ import {
 } from 'react';
 
 import { Size, OnResizeFn } from '../types/Size';
+import { debounce } from '../utils/debounce';
 
 interface ResizeObserverProps {
   /**
@@ -29,8 +30,14 @@ interface ResizeObserverProps {
 export const setupResizeObserver = (
   node: HTMLElement,
   callback: OnResizeFn,
+  config: { debounce?: number } = { debounce: 0 },
 ): (() => void) => {
+  const debounceTime = config.debounce ?? 0;
   const RO = (window as any).ResizeObserver;
+
+  const onResizeCallback = debounceTime
+    ? debounce(callback, { wait: debounceTime })
+    : callback;
 
   const observer = new RO((entries: any[]) => {
     const entry = entries[0];
@@ -47,7 +54,7 @@ export const setupResizeObserver = (
       width = rect.width;
     }
 
-    callback({ width, height });
+    onResizeCallback({ width, height });
   });
 
   observer.observe(node);
@@ -66,7 +73,10 @@ export const setupResizeObserver = (
 export const useResizeObserver = (
   ref: React.MutableRefObject<HTMLElement | null>,
   callback: OnResizeFn,
-  config: { earlyAttach: boolean } = { earlyAttach: false },
+  config: { earlyAttach: boolean; debounce?: number } = {
+    earlyAttach: false,
+    debounce: 0,
+  },
 ) => {
   const sizeRef = useRef<Size>({
     width: 0,
@@ -76,18 +86,25 @@ export const useResizeObserver = (
   const effectFn = (callback: OnResizeFn) => {
     let disconnect: () => void;
     if (ref.current) {
-      disconnect = setupResizeObserver(ref.current, (size) => {
-        size = {
-          width: Math.round(size.width),
-          height: Math.round(size.height),
-        };
-        const prevSize = sizeRef.current;
-        if (prevSize.width !== size.width || prevSize.height !== size.height) {
-          sizeRef.current = size;
+      disconnect = setupResizeObserver(
+        ref.current,
+        (size) => {
+          size = {
+            width: Math.round(size.width),
+            height: Math.round(size.height),
+          };
+          const prevSize = sizeRef.current;
+          if (
+            prevSize.width !== size.width ||
+            prevSize.height !== size.height
+          ) {
+            sizeRef.current = size;
 
-          callback(size);
-        }
-      });
+            callback(size);
+          }
+        },
+        { debounce: config.debounce },
+      );
     }
     return () => {
       if (disconnect) {
@@ -101,7 +118,7 @@ export const useResizeObserver = (
       return effectFn(callback);
     }
     return () => {};
-  }, [ref.current, callback, config.earlyAttach]);
+  }, [ref.current, callback, config.earlyAttach, config.debounce]);
 
   useLayoutEffect(() => {
     if (config.earlyAttach) {

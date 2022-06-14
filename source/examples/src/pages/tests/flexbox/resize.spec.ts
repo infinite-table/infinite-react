@@ -5,6 +5,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
   test('resize with share space should work, when resizing the last item and check maxWidth works', () => {
     const testData = {
       columnSizing: {},
+      reservedWidth: 0,
       availableSize: 1000,
       dragHandleOffset: 10,
       dragHandlePositionAfter: 0,
@@ -23,6 +24,8 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
     let result = computeResize(testData);
 
     expect(result).toMatchObject({
+      adjustedDiff: 10,
+      constrained: false,
       columnSizing: {
         a: {
           width: testData.items[0].computedWidth + testData.dragHandleOffset,
@@ -47,6 +50,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
 
   test('shareSpaceOnResize should work when in the middle and no limits not reached', () => {
     const testData = {
+      reservedWidth: 0,
       columnSizing: {},
       availableSize: 1000,
       dragHandleOffset: 10,
@@ -86,6 +90,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
 
   test('shareSpaceOnResize should work when second item min size is reached', () => {
     const testData = {
+      reservedWidth: 0,
       columnSizing: {},
       availableSize: 1000,
       dragHandleOffset: 20,
@@ -113,7 +118,8 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
 
     expect(result).toMatchObject({
       minReached: true,
-
+      adjustedDiff: 20,
+      constrained: true,
       columnSizing: {
         a: {
           width: testData.items[0].computedWidth + testData.dragHandleOffset,
@@ -151,6 +157,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       columnSizing: {},
       availableSize: 1000,
       dragHandleOffset: -60,
+      reservedWidth: 0,
       dragHandlePositionAfter: 0,
       shareSpaceOnResize: true,
       items: [
@@ -175,6 +182,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
 
     expect(result).toMatchObject({
       maxReached: true,
+      adjustedDiff: -50,
       columnSizing: {
         a: {
           width: testData.items[0].computedWidth - 50,
@@ -191,6 +199,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       columnSizing: {},
       availableSize: 1000,
       dragHandleOffset: 100,
+      reservedWidth: 0,
       dragHandlePositionAfter: 0,
       shareSpaceOnResize: true,
       items: [
@@ -232,6 +241,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       availableSize: 1000,
       dragHandleOffset: -100,
       dragHandlePositionAfter: 0,
+      reservedWidth: 0,
       shareSpaceOnResize: true,
       items: [
         {
@@ -272,6 +282,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       availableSize: 1000,
       dragHandleOffset: -100,
       dragHandlePositionAfter: 0,
+      reservedWidth: 0,
       shareSpaceOnResize: true,
       items: [
         {
@@ -312,6 +323,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       availableSize: 1000,
       dragHandleOffset: 100,
       dragHandlePositionAfter: 0,
+      reservedWidth: 0,
       shareSpaceOnResize: true,
       items: [
         {
@@ -351,6 +363,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       columnSizing: {},
       availableSize: 1000,
       dragHandleOffset: 100,
+      reservedWidth: 0,
       dragHandlePositionAfter: 0,
       shareSpaceOnResize: true,
       items: [
@@ -392,6 +405,7 @@ test.describe.parallel('resize shareSpaceOnResize', () => {
       availableSize: 1000,
       dragHandleOffset: -100,
       dragHandlePositionAfter: 0,
+      reservedWidth: 0,
       shareSpaceOnResize: true,
       items: [
         {
@@ -435,6 +449,7 @@ test.describe.parallel('resize normal', () => {
       dragHandleOffset: 10,
       dragHandlePositionAfter: 0,
       shareSpaceOnResize: false,
+      reservedWidth: 0,
       items: [
         {
           id: 'a',
@@ -508,6 +523,7 @@ test.describe.parallel('resize normal', () => {
       dragHandleOffset: -50,
       dragHandlePositionAfter: 0,
       shareSpaceOnResize: false,
+      reservedWidth: 100,
       items: [
         {
           id: 'a',
@@ -529,6 +545,10 @@ test.describe.parallel('resize normal', () => {
     let result = computeResize(testData);
 
     expect(result).toMatchObject({
+      adjustedDiff: -30,
+      reservedWidth: 130,
+      minReached: true,
+      constrained: true,
       columnSizing: {
         a: {
           width: testData.items[0].computedWidth - 30,

@@ -288,15 +288,16 @@ function InfiniteTableContextProvider<T>() {
     scrollerDOMRef,
     (size) => {
       const bodySize = {
-        // TODO this can be improved
         width: size.width, //- reservedScrollSpace,
         height: size.height,
       };
-      bodySize.width = scrollerDOMRef.current?.scrollWidth ?? bodySize.width;
+
+      // TODO this was here before, but cant remember why
+      // bodySize.width = scrollerDOMRef.current?.scrollWidth ?? bodySize.width;
 
       componentActions.bodySize = bodySize;
     },
-    { earlyAttach: true },
+    { earlyAttach: true, debounce: 50 },
   );
 
   React.useEffect(() => {
@@ -328,8 +329,10 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
       <InfiniteTableContextProvider />
     </InfiniteTableRoot>
   );
-  return <React.StrictMode>{table}</React.StrictMode>;
-  // return table;
+  if (__DEV__) {
+    return <React.StrictMode>{table}</React.StrictMode>;
+  }
+  return table;
 }
 InfiniteTable.defaultProps = {
   rowHeight: 40,

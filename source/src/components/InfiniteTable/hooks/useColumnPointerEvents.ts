@@ -56,9 +56,6 @@ export const useColumnPointerEvents = <T>({
   const [proxyOffset, setProxyOffset] = useState<TopLeftOrNull>(null);
 
   const breakpointsRef: MutableRefObject<ColumnBreakpoint[]> = useRef([]);
-  const pointerMoveRef: React.MutableRefObject<
-    ((e: PointerEvent) => void) | null
-  > = useRef(null);
   const didDragRef: React.MutableRefObject<boolean> = useRef(false);
   const initialClientPos: React.MutableRefObject<ClientPosition | null> =
     useRef(null);
@@ -171,52 +168,58 @@ export const useColumnPointerEvents = <T>({
         }
         setDraggingDiff({ left: diffX, top: diffY });
       };
-      pointerMoveRef.current = onPointerMove;
+
+      const onPointerUp = (e: PointerEvent) => {
+        const target = domRef.current!;
+
+        target.style.cursor = cursorRef.current!;
+        target.releasePointerCapture(e.pointerId);
+
+        target.removeEventListener('pointermove', onPointerMove);
+        target.removeEventListener('pointerup', onPointerUp);
+
+        setDraggingDiff(null);
+        componentActions.columnShifts = null;
+        componentActions.draggingColumnId = null;
+
+        if (!didDragRef.current && column.computedSortable) {
+          column.toggleSort();
+        }
+
+        const dropIndex = currentDropIndexRef.current;
+        if (dropIndex != null && dropIndex !== columnIndex) {
+          const newOrder = moveXatY(
+            computedColumnOrder,
+            columnIndex,
+            dropIndex > columnIndex ? dropIndex - 1 : dropIndex,
+          );
+
+          componentActions.columnOrder = newOrder;
+        }
+
+        breakpointsRef.current = [];
+
+        didDragRef.current = false;
+        initialClientPos.current = null;
+        currentDropIndexRef.current = null;
+      };
+
       target.addEventListener('pointermove', onPointerMove);
+      target.addEventListener('pointerup', onPointerUp);
 
       target.setPointerCapture(e.pointerId);
     },
-    [columns, column, columnIndex, columnsArray, computedRemainingSpace],
-  );
-
-  const onPointerUp = useCallback(
-    (e) => {
-      const target = domRef.current!;
-
-      target.style.cursor = cursorRef.current!;
-      target.releasePointerCapture(e.pointerId);
-      target.removeEventListener('pointermove', pointerMoveRef.current!);
-
-      setDraggingDiff(null);
-      componentActions.columnShifts = null;
-      componentActions.draggingColumnId = null;
-
-      if (!didDragRef.current && column.computedSortable) {
-        column.toggleSort();
-      }
-
-      const dropIndex = currentDropIndexRef.current;
-      if (dropIndex != null && dropIndex !== columnIndex) {
-        const newOrder = moveXatY(
-          computedColumnOrder,
-          columnIndex,
-          dropIndex > columnIndex ? dropIndex - 1 : dropIndex,
-        );
-
-        componentActions.columnOrder = newOrder;
-      }
-
-      breakpointsRef.current = [];
-      pointerMoveRef.current = null;
-      didDragRef.current = false;
-      initialClientPos.current = null;
-      currentDropIndexRef.current = null;
-    },
-    [column, columnIndex, componentActions, computedColumnOrder],
+    [
+      columns,
+      column,
+      columnIndex,
+      columnsArray,
+      computedRemainingSpace,
+      computedColumnOrder,
+    ],
   );
 
   return {
-    onPointerUp: column.computedDraggable ? onPointerUp : () => {},
     onPointerDown: column.computedDraggable ? onPointerDown : () => {},
     dragging,
     proxyOffset,

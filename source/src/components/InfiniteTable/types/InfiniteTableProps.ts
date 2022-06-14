@@ -322,6 +322,7 @@ export interface InfiniteTableProps<T> {
   components?: InfiniteTablePropComponents;
 
   viewportReservedWidth?: number;
+  onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;
 
   pivotColumn?: InfiniteTablePropPivotColumn<
     T,
