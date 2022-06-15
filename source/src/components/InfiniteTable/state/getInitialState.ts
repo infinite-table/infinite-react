@@ -95,6 +95,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     domRef: createRef(),
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
+    activeCellIndicatorDOMRef: createRef(),
 
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),

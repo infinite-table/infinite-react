@@ -1,14 +1,18 @@
-import { FocusEvent } from 'react';
+import { CSSProperties, FocusEvent } from 'react';
 import { InfiniteTableClassName } from '..';
 import { join } from '../../../utils/join';
+import { stripVar } from '../../../utils/stripVar';
 import {
   InfiniteCls,
   InfiniteClsRecipe,
   InfiniteClsShiftingColumns,
 } from '../InfiniteCls.css';
+import { InternalVars } from '../theme.css';
 import { rafFn } from '../utils/rafFn';
 import { useInfiniteTable } from './useInfiniteTable';
 
+const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
+const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 export function useDOMProps<T>(
   initialDOMProps?: React.HTMLProps<HTMLDivElement>,
 ) {
@@ -23,8 +27,23 @@ export function useDOMProps<T>(
     onSelfFocus,
     onSelfBlur,
   } = componentState;
-  const { computedPinnedStartColumnsWidth, computedPinnedEndColumnsWidth } =
-    computed;
+  const {
+    computedPinnedStartColumnsWidth,
+    computedPinnedEndColumnsWidth,
+    computedVisibleColumns,
+  } = computed;
+
+  const cssVars: CSSProperties = computedVisibleColumns.reduce(
+    (vars: CSSProperties, col) => {
+      const index = col.computedVisibleIndex;
+      //@ts-ignore
+      vars[`${columnWidthAtIndex}-${index}`] = col.computedWidth + 'px';
+      //@ts-ignore
+      vars[`${columnOffsetAtIndex}-${index}`] = col.computedOffset + 'px';
+      return vars;
+    },
+    {},
+  );
 
   const setFocused = rafFn((focused: boolean) => {
     componentActions.focused = focused;
@@ -124,6 +143,7 @@ export function useDOMProps<T>(
 
   domProps.style = {
     ...initialDOMProps?.style,
+    ...cssVars,
   };
   if (focused) {
     if (componentState.focusedStyle) {

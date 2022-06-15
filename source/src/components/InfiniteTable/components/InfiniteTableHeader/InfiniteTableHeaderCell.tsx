@@ -9,24 +9,19 @@ import {
   DataSourceFilterValueItem,
   DataSourcePropFilterTypes,
 } from '../../../DataSource/types';
-import { computeResize } from '../../../flexbox';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { debounce } from '../../../utils/debounce';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
-import {
-  InfiniteTableFilterEditorProps,
-  InfiniteTablePropColumnSizing,
-} from '../../types';
+import { InfiniteTableFilterEditorProps } from '../../types';
 import type {
   InfiniteTableColumnHeaderParams,
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
 import { cursor, justifyContent, userSelect } from '../../utilities.css';
-import { setInfiniteVar } from '../../utils/infiniteDOMUtils';
 import { RenderHookComponent } from '../../utils/RenderHookComponent';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
 import { SortIcon } from '../icons/SortIcon';
@@ -49,7 +44,7 @@ import {
   InfiniteTableColumnHeaderFilter,
   InfiniteTableColumnHeaderFilterEmpty,
 } from './InfiniteTableColumnHeaderFilter';
-import { ResizeHandle } from './ResizeHandle';
+import { useColumnResizeHandle } from './useColumnResizeHandle';
 
 export const InfiniteTableHeaderCellContext = React.createContext<
   InfiniteTableHeaderCellContextType<any>
@@ -108,6 +103,7 @@ export function InfiniteTableHeaderCell<T>(
     },
     [props.domRef],
   );
+
   const alwaysShow = headerOptions.alwaysReserveSpaceForSortIcon;
   const sortTool =
     column.computedSorted || alwaysShow ? (
@@ -161,9 +157,6 @@ export function InfiniteTableHeaderCell<T>(
       showColumnFilters,
       computedVisibleColumns,
     },
-    getState,
-    getComputed,
-    componentActions,
     componentState: { portalDOMRef, columnHeaderHeight, filterEditors },
   } = useInfiniteTable<T>();
 
@@ -322,135 +315,7 @@ export function InfiniteTableHeaderCell<T>(
     defaultFilterEditors[filterType] ||
     StringFilterEditor) as React.FC<InfiniteTableFilterEditorProps<T>>;
 
-  const computeResizeForDiff = useCallback(
-    ({
-      diff,
-      shareSpaceOnResize,
-    }: {
-      diff: number;
-      shareSpaceOnResize: boolean;
-    }) => {
-      const state = getState();
-      const {
-        columnSizing,
-        viewportReservedWidth,
-        bodySize,
-        activeCellIndex,
-        brain,
-      } = state;
-
-      const columns = getComputed().computedVisibleColumns;
-
-      let atLeastOneFlex = false;
-
-      const columnSizingWithFlex = columns.reduce((acc, col) => {
-        if (col.computedFlex) {
-          acc[col.id] = { flex: col.computedFlex };
-          atLeastOneFlex = true;
-        }
-        return acc;
-      }, {} as InfiniteTablePropColumnSizing);
-
-      const columnSizingForResize = atLeastOneFlex
-        ? {
-            ...columnSizingWithFlex,
-
-            ...columnSizing,
-          }
-        : columnSizing;
-
-      const result = computeResize({
-        shareSpaceOnResize,
-        availableSize: bodySize.width,
-        reservedWidth: viewportReservedWidth || 0,
-        dragHandleOffset: diff,
-        dragHandlePositionAfter: column.computedVisibleIndex,
-        columnSizing: columnSizingForResize,
-        items: columns.map((c) => {
-          return {
-            id: c.id,
-            computedFlex: c.computedFlex,
-            computedWidth: c.computedWidth,
-            computedMinWidth: c.computedMinWidth,
-            computedMaxWidth: c.computedMaxWidth,
-          };
-        }),
-      });
-
-      if (
-        activeCellIndex &&
-        activeCellIndex[1] >= column.computedVisibleIndex
-      ) {
-        const activeColumn = columns[activeCellIndex[1]];
-        const currentColumn = columns[column.computedVisibleIndex];
-
-        if (activeCellIndex[1] === currentColumn.computedVisibleIndex) {
-          setInfiniteVar(
-            'activeCellWidth',
-            `${currentColumn.computedWidth + result.adjustedDiff}px`,
-            domRef.current,
-          );
-        } else if (activeColumn) {
-          setInfiniteVar(
-            'activeCellColumnTransformX',
-            `${
-              -brain.getScrollPosition().scrollLeft +
-              activeColumn.computedOffset +
-              result.adjustedDiff
-            }px`,
-            domRef.current,
-          );
-        }
-
-        if (
-          shareSpaceOnResize &&
-          activeCellIndex[1] === currentColumn.computedVisibleIndex + 1 &&
-          activeColumn
-        ) {
-          setInfiniteVar(
-            'activeCellWidth',
-            `${activeColumn.computedWidth - result.adjustedDiff}px`,
-            domRef.current,
-          );
-        }
-      }
-
-      return result;
-    },
-    [],
-  );
-
-  const onColumnResize = useCallback(
-    ({
-      diff,
-      shareSpaceOnResize,
-    }: {
-      diff: number;
-      shareSpaceOnResize: boolean;
-    }) => {
-      const { columnSizing, reservedWidth } = computeResizeForDiff({
-        diff,
-        shareSpaceOnResize,
-      });
-
-      if (!shareSpaceOnResize) {
-        console.log('setting viewportReservedWidth ', reservedWidth);
-        componentActions.viewportReservedWidth = reservedWidth;
-      }
-      componentActions.columnSizing = columnSizing;
-    },
-    [],
-  );
-
-  const resizeHandle = column.computedResizable ? (
-    <ResizeHandle
-      initialWidth={column.computedWidth}
-      columnIndex={column.computedVisibleIndex}
-      totalColumns={computedVisibleColumns.length}
-      computeResize={computeResizeForDiff}
-      onResize={onColumnResize}
-    />
-  ) : null;
+  const resizeHandle = useColumnResizeHandle(column);
 
   return (
     <ContextProvider value={renderParam}>

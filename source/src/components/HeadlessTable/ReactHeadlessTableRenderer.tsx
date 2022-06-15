@@ -7,6 +7,7 @@ import { raf } from '../../utils/raf';
 import { stripVar } from '../../utils/stripVar';
 import { InternalVars } from '../InfiniteTable/theme.css';
 import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
+import { getParentInfiniteNode } from '../InfiniteTable/utils/infiniteDOMUtils';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
@@ -46,15 +47,10 @@ export type RenderableWithPosition = {
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
-const currentColumnTransformX = stripVar(InternalVars.currentColumnTransformX);
 const currentColumnTransformY = stripVar(InternalVars.currentColumnTransformY);
 
-function setTransform(element: HTMLElement, x: number, y: number) {
-  element.style.setProperty(currentColumnTransformX, `${x}px`);
-  element.style.setProperty(currentColumnTransformY, `${y}px`);
+const columnTransformX = stripVar(InternalVars.columnOffsetAtIndex);
 
-  element.style.transform = `translate3d(${InternalVars.currentColumnTransformX}, ${InternalVars.currentColumnTransformY}, 0)`;
-}
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
 
@@ -75,6 +71,25 @@ export class ReactHeadlessTableRenderer extends Logger {
   private onDestroy: VoidFunction;
 
   private hoverRowUpdatesInProgress: Map<number, boolean> = new Map();
+  private infiniteNode: HTMLElement | null = null;
+
+  setTransform = (
+    element: HTMLElement,
+    _rowIndex: number,
+    colIndex: number,
+    x: number,
+    y: number,
+  ) => {
+    const transformXVar = `${columnTransformX}-${colIndex}`;
+
+    if (!this.infiniteNode) {
+      this.infiniteNode = getParentInfiniteNode(element);
+    }
+    this.infiniteNode!.style.setProperty(transformXVar, `${x}px`);
+    element.style.setProperty(currentColumnTransformY, `${y}px`);
+
+    element.style.transform = `translate3d(var(${transformXVar}), ${InternalVars.currentColumnTransformY}, 0)`;
+  };
 
   constructor(brain: MatrixBrain) {
     super('ReactHeadlessTableRenderer');
@@ -1056,7 +1071,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       (itemElement.dataset as any).colIndex = colIndex;
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
-        setTransform(itemElement, x, y);
+        this.setTransform(itemElement, rowIndex, colIndex, x, y);
 
         itemElement.style.willChange = 'transform';
         itemElement.style.backfaceVisibility = 'hidden';
@@ -1143,107 +1158,127 @@ export class ReactHeadlessTableRenderer extends Logger {
       }
     }
 
-    function adjustColStart(
+    const adjustColStart = (
       _rowIndex: number,
       colIndex: number,
       node: HTMLElement,
       { x, y }: { x: number; y: number },
       { scrollLeft }: ScrollPosition,
-    ) {
+    ) => {
       node.style.zIndex = `${fixedColsStart - colIndex}`;
-      setTransform(node, x + scrollLeft, y);
-    }
+      this.setTransform(node, _rowIndex, colIndex, x + scrollLeft, y);
+    };
 
-    function adjustRowStart(
+    const adjustRowStart = (
       rowIndex: number,
       _colIndex: number,
       node: HTMLElement,
       coords: { x: number; y: number },
       scrollPosition: ScrollPosition,
-    ) {
+    ) => {
       node.style.zIndex = `${fixedRowsStart - rowIndex}`;
-      setTransform(node, coords.x, coords.y + scrollPosition.scrollTop);
-    }
+      this.setTransform(
+        node,
+        rowIndex,
+        _colIndex,
+        coords.x,
+        coords.y + scrollPosition.scrollTop,
+      );
+    };
 
-    function adjustColEnd(
+    const adjustColEnd = (
       _rowIndex: number,
       colIndex: number,
       node: HTMLElement,
       { y }: { y: number },
-    ) {
+    ) => {
       node.style.zIndex = `${cols - colIndex}`;
       const val = fixedEndColsOffsets[colIndex];
       // console.log('value', val);
 
-      setTransform(node, val, y);
-    }
+      this.setTransform(node, _rowIndex, colIndex, val, y);
+    };
 
-    function adjustRowEnd(
+    const adjustRowEnd = (
       rowIndex: number,
       _colIndex: number,
       node: HTMLElement,
       coords: { x: number; y: number },
-    ) {
+    ) => {
       node.style.zIndex = `${rows - rowIndex}`;
-      setTransform(node, coords.x, fixedEndRowsOffsets[rowIndex]);
-    }
+      this.setTransform(
+        node,
+        rowIndex,
+        _colIndex,
+        coords.x,
+        fixedEndRowsOffsets[rowIndex],
+      );
+    };
 
-    function adjustColStartRowStart(
+    const adjustColStartRowStart = (
       _rowIndex: number,
       _colIndex: number,
       node: HTMLElement,
       { x, y }: { x: number; y: number },
       scrollPosition: ScrollPosition,
-    ) {
+    ) => {
       node.style.zIndex = `1000000`;
-      setTransform(
+      this.setTransform(
         node,
+        _rowIndex,
+        _colIndex,
         x + scrollPosition.scrollLeft,
         y + scrollPosition.scrollTop,
       );
-    }
+    };
 
-    function adjustColStartRowEnd(
+    const adjustColStartRowEnd = (
       _rowIndex: number,
       _colIndex: number,
       node: HTMLElement,
       { x }: { x: number; y: number },
       scrollPosition: ScrollPosition,
-    ) {
+    ) => {
       node.style.zIndex = `2000000`;
-      setTransform(
+      this.setTransform(
         node,
+        _rowIndex,
+        _colIndex,
         x + scrollPosition.scrollLeft,
         fixedEndRowsOffsets[_rowIndex],
       );
-    }
+    };
 
-    function adjustColEndRowStart(
+    const adjustColEndRowStart = (
       _rowIndex: number,
       colIndex: number,
       node: HTMLElement,
       coords: { y: number },
-    ) {
+    ) => {
       node.style.zIndex = `3000000`;
-      setTransform(
+      this.setTransform(
         node,
+        _rowIndex,
+        colIndex,
         fixedEndColsOffsets[colIndex],
         coords.y + scrollPosition.scrollTop,
       );
-    }
+    };
 
-    function adjustColEndRowEnd(
+    const adjustColEndRowEnd = (
       rowIndex: number,
       colIndex: number,
       node: HTMLElement,
-    ) {
+    ) => {
       node.style.zIndex = `4000000`;
-      setTransform(
+      this.setTransform(
         node,
+        rowIndex,
+        colIndex,
         fixedEndColsOffsets[colIndex],
         fixedEndRowsOffsets[rowIndex],
       );
-    }
+    };
 
     if (fixedColsStart || fixedColsEnd) {
       for (let rowIndex = startRow; rowIndex < endRow; rowIndex++) {

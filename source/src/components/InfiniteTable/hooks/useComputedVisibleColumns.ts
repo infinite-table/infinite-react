@@ -158,6 +158,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnMaxWidth,
     columnDefaultWidth,
 
+    viewportReservedWidth,
+
     sortable,
     sortInfo,
     setSortInfo,

@@ -1,8 +1,15 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../theme.css';
-import { left, top, pointerEvents, position } from '../utilities.css';
+import { left, top, pointerEvents, position, height } from '../utilities.css';
 
+export const ActiveIndicatorWrapperCls = style([
+  pointerEvents.none,
+  position.sticky,
+  left['0'],
+  top['0'],
+  height['0'],
+]);
 export const ActiveCellIndicatorBaseCls = style(
   [
     pointerEvents.none,

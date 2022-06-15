@@ -6,7 +6,6 @@ import {
   DataSourceData,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
-import { useState } from 'react';
 
 type Developer = {
   id: number;
@@ -42,7 +41,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultFlex: 2,
   },
-  age: { field: 'age', defaultWidth: 200 },
+  age: { field: 'age', defaultWidth: 150 },
 };
 
 const dataSource: DataSourceData<Developer> = ({}) => {
@@ -61,15 +60,14 @@ const onViewportReservedWidthChange = sinon.spy((_width: number) => {});
   onViewportReservedWidthChange;
 
 export default () => {
-  const [width, setWidth] = useState(802);
+  const [reservedWidth, setReservedWidth] = React.useState(0);
+
+  (globalThis as any).viewportReservedWidth = reservedWidth;
   return (
     <React.StrictMode>
       <>
-        <button data-name="inc" onClick={() => setWidth((w) => w + 100)}>
-          + 100px
-        </button>
-        <button data-name="inc" onClick={() => setWidth((w) => w - 100)}>
-          - 100px
+        <button onClick={() => setReservedWidth(0)}>
+          Fit - current reserved width is {reservedWidth}
         </button>
         <DataSource<Developer> data={dataSource} primaryKey="id">
           <InfiniteTable<Developer>
@@ -77,17 +75,20 @@ export default () => {
               style: {
                 margin: '5px',
                 height: 500,
-                width,
+                width: '80vw',
                 border: '1px solid gray',
                 position: 'relative',
               },
             }}
             columnMinWidth={50}
             onColumnSizingChange={(columnSizing) => {
+              console.log(columnSizing);
               onColumnSizingChange(columnSizing);
             }}
+            viewportReservedWidth={reservedWidth}
             onViewportReservedWidthChange={(reservedWidth) => {
               onViewportReservedWidthChange(reservedWidth);
+              setReservedWidth(reservedWidth);
             }}
             columns={columns}
           />

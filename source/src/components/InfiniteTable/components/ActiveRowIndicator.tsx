@@ -4,6 +4,7 @@ import { useRerender } from '../../hooks/useRerender';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { internalProps } from '../internalProps';
+import { ActiveIndicatorWrapperCls } from './ActiveCellIndicator.css';
 import { ActiveRowIndicatorCls } from './ActiveRowIndicator.css';
 
 const { rootClassName } = internalProps;
@@ -66,28 +67,31 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
   }, [brain]);
 
   return (
-    <div
-      ref={domRef}
-      data-name="active-row-indicator"
-      className={`${baseCls} ${
-        active ? ActiveRowIndicatorCls.visible : ActiveRowIndicatorCls.hidden
-      }`}
-      // #top_overflow_200k
-      // Initially we used only `style.top` but seems like a css `top` > 200_000 does not behave
-      // and is no longer positioned well by the browser
-      // so we ended up with this solution - make sure data-top is kept here
+    // #correct-scroll-size this wrapper is here in order to make the indicator not take up space in the scroll container - to reproduce: remove this and click on a row, you will see that if you scroll at the bottom, there is extra space
+    <div className={ActiveIndicatorWrapperCls}>
+      <div
+        ref={domRef}
+        data-name="active-row-indicator"
+        className={`${baseCls} ${
+          active ? ActiveRowIndicatorCls.visible : ActiveRowIndicatorCls.hidden
+        }`}
+        // #top_overflow_200k
+        // Initially we used only `style.top` but seems like a css `top` > 200_000 does not behave
+        // and is no longer positioned well by the browser
+        // so we ended up with this solution - make sure data-top is kept here
 
-      style={
-        active
-          ? {
-              transform: `translate3d(0px, ${
-                -brain.getScrollPosition().scrollTop + state.top
-              }px,0)`,
-              height: state.rowHeight,
-            }
-          : undefined
-      }
-    ></div>
+        style={
+          active
+            ? {
+                transform: `translate3d(0px, ${
+                  -brain.getScrollPosition().scrollTop + state.top
+                }px,0)`,
+                height: state.rowHeight,
+              }
+            : undefined
+        }
+      ></div>
+    </div>
   );
 };
 

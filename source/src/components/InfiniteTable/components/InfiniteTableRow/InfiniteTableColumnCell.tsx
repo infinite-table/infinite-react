@@ -52,9 +52,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     column,
     onMouseLeave,
     onMouseEnter,
-    offsetProperty,
+
     toggleGroupRow,
-    virtualized,
     rowIndex,
     rowHeight,
 
@@ -243,11 +242,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const cellProps: InfiniteTableCellProps<T> &
     React.HTMLAttributes<HTMLElement> = {
     domRef,
-    offsetProperty,
     cellType: 'body',
     column,
     width,
-    offset: virtualized ? 0 : column.computedPinningOffset,
+
     style: memoizedStyle,
     onMouseLeave,
     onMouseEnter,

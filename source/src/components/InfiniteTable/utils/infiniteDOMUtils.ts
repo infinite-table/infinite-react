@@ -8,8 +8,11 @@ export function getParentInfiniteNode(node: HTMLElement) {
   return selectParent(node, InfiniteSelector);
 }
 
-export function setInfiniteVar(
-  varName: keyof typeof InternalVars,
+const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
+const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+
+export function setInfiniteVarOnRoot(
+  varName: keyof typeof InternalVars | string,
   varValue: string | number,
   node: HTMLElement | null,
 ) {
@@ -17,25 +20,70 @@ export function setInfiniteVar(
     ? getParentInfiniteNode(node)
     : (document.querySelector(InfiniteSelector) as HTMLElement);
 
-  if (infinite) {
-    infinite.style.setProperty(stripVar(InternalVars[varName]), `${varValue}`);
+  setInfiniteVarOnNode(varName, varValue, infinite);
+}
+
+export function setInfiniteVarOnNode(
+  varName: keyof typeof InternalVars | string,
+  varValue: string | number,
+  node: HTMLElement | null,
+) {
+  if (node) {
+    const prop = InternalVars[varName as keyof typeof InternalVars]
+      ? stripVar(InternalVars[varName as keyof typeof InternalVars])
+      : varName;
+
+    node.style.setProperty(prop, `${varValue}`);
   }
 }
 
-export function setInfiniteVars(
-  vars: Partial<Record<keyof typeof InternalVars, string | number>>,
+export function setInfiniteVarsOnRoot(
+  vars: Partial<Record<keyof typeof InternalVars | string, string | number>>,
   node: HTMLElement | null,
 ) {
   const infinite = node
     ? getParentInfiniteNode(node)
     : (document.querySelector(InfiniteSelector) as HTMLElement);
 
-  if (infinite) {
+  setInfiniteVarsOnNode(vars, infinite);
+}
+
+export function setInfiniteVarsOnNode(
+  vars: Partial<Record<keyof typeof InternalVars, string | number>>,
+  node: HTMLElement | null,
+) {
+  if (node) {
     for (var varName in vars) {
-      infinite.style.setProperty(
-        stripVar(InternalVars[varName as keyof typeof InternalVars]),
+      node.style.setProperty(
+        InternalVars[varName as keyof typeof InternalVars]
+          ? stripVar(InternalVars[varName as keyof typeof InternalVars])
+          : varName,
         `${vars[varName as keyof typeof InternalVars]}`,
       );
     }
   }
+}
+
+export function setInfiniteColumnWidth(
+  colIndex: number,
+  colWidth: number | string,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarOnRoot(
+    `${columnWidthAtIndex}-${colIndex}`,
+    typeof colWidth === 'number' ? colWidth + 'px' : colWidth,
+    node,
+  );
+}
+
+export function setInfiniteColumnOffset(
+  colIndex: number,
+  colOffset: number | string,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarOnRoot(
+    `${columnOffsetAtIndex}-${colIndex}`,
+    typeof colOffset === 'number' ? colOffset + 'px' : colOffset,
+    node,
+  );
 }

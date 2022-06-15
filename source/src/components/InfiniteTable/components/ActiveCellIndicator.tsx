@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  CSSProperties,
-} from 'react';
+import { useEffect, useLayoutEffect, useRef, CSSProperties } from 'react';
 
 import { useRerender } from '../../hooks/useRerender';
 import { ScrollPosition } from '../../types/ScrollPosition';
@@ -13,8 +7,11 @@ import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { internalProps } from '../internalProps';
 import { InternalVars } from '../theme.css';
-import { setInfiniteVars } from '../utils/infiniteDOMUtils';
-import { ActiveCellIndicatorCls } from './ActiveCellIndicator.css';
+import { setInfiniteVarsOnRoot } from '../utils/infiniteDOMUtils';
+import {
+  ActiveCellIndicatorCls,
+  ActiveIndicatorWrapperCls,
+} from './ActiveCellIndicator.css';
 
 const { rootClassName } = internalProps;
 
@@ -44,7 +41,7 @@ function updateInfiniteCSSVarsForActiveCell(
   vars: ActiveCellVars,
   node: HTMLElement,
 ) {
-  setInfiniteVars(
+  setInfiniteVarsOnRoot(
     {
       activeCellWidth: `${vars.activeColWidth}px`,
       activeRowHeight: `${vars.activeRowHeight}px`,
@@ -77,15 +74,18 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
 
   const [rerenderId, rerender] = useRerender();
 
-  const [state, setState] = useState({
+  const domRef = useRef<HTMLDivElement>(null);
+  const stateRef = useRef<{
+    top: number;
+    rowHeight: number;
+    colWidth: number;
+    left: number;
+  }>({
     top: 0,
     rowHeight: 0,
     colWidth: 0,
     left: 0,
   });
-
-  const domRef = useRef<HTMLDivElement>(null);
-  const stateRef = useRef(state);
 
   const varsRef = useRef<ActiveCellVars>(DEFAULT_VARS);
 
@@ -117,14 +117,12 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
       domRef.current!,
     );
 
-    setState(
-      (stateRef.current = {
-        top: top,
-        rowHeight,
-        left,
-        colWidth,
-      }),
-    );
+    stateRef.current = {
+      top: top,
+      rowHeight,
+      left,
+      colWidth,
+    };
   }, [props.activeCellIndex, rerenderId]);
 
   useEffect(() => {
@@ -149,9 +147,6 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
         },
         domRef.current!,
       );
-      // node.style.transform = `translate3d(${
-      //   -scrollPos.scrollLeft + leftOffset
-      // }px, ${-scrollPos.scrollTop + topOffset}px, 0px)`;
     });
 
     const removeOnRenderCountChange = brain.onRenderCountChange(() => {
@@ -170,19 +165,24 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
   }, [brain]);
 
   return (
-    <div
-      ref={domRef}
-      data-name="active-cell-indicator"
-      className={`${baseCls} ${
-        active ? ActiveCellIndicatorCls.visible : ActiveCellIndicatorCls.hidden
-      }`}
-      // #top_overflow_200k
-      // Initially we used only `style.top` but seems like a css `top` > 200_000 does not behave
-      // and is no longer positioned well by the browser
-      // so we ended up with this solution - make sure data-top is kept here
+    // #correct-scroll-size this wrapper is here in order to make the indicator not take up space in the scroll container - to reproduce: remove this and click on a row, you will see that if you scroll at the bottom, there is extra space
+    <div className={ActiveIndicatorWrapperCls}>
+      <div
+        ref={domRef}
+        data-name="active-cell-indicator"
+        className={`${baseCls} ${
+          active
+            ? ActiveCellIndicatorCls.visible
+            : ActiveCellIndicatorCls.hidden
+        }`}
+        // #top_overflow_200k
+        // Initially we used only `style.top` but seems like a css `top` > 200_000 does not behave
+        // and is no longer positioned well by the browser
+        // so we ended up with this solution - make sure data-top is kept here
 
-      style={active ? ActiveStyle : undefined}
-    ></div>
+        style={active ? ActiveStyle : undefined}
+      ></div>
+    </div>
   );
 };
 

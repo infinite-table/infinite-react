@@ -36,6 +36,7 @@ export interface InfiniteTableSetupState<T> {
   domRef: MutableRefObject<HTMLDivElement | null>;
   scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
+  activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;

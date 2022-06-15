@@ -1,7 +1,9 @@
 import * as React from 'react';
 
 import { join } from '../../../../utils/join';
+import { stripVar } from '../../../../utils/stripVar';
 import { rootClassName } from '../../internalProps';
+import { InternalVars } from '../../theme.css';
 import { cssEllipsisClassName } from '../../utilities.css';
 
 import { HeaderGroupCls } from './header.css';
@@ -9,10 +11,12 @@ import type { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
 
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
+const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
+
 export function InfiniteTableHeaderGroup<T>(
   props: InfiniteTableHeaderGroupProps<T>,
 ) {
-  const { columnGroup, height, width } = props;
+  const { columnGroup, height, columns } = props;
 
   let { header } = columnGroup;
 
@@ -21,6 +25,17 @@ export function InfiniteTableHeaderGroup<T>(
       columnGroup,
     });
   }
+
+  const width =
+    columns.length > 1
+      ? `calc( ` +
+        columns
+          .map(
+            (col) => `var(${columnWidthAtIndex}-${col.computedVisibleIndex})`,
+          )
+          .join(' + ') +
+        ' )'
+      : `var(${columnWidthAtIndex}-${columns[0].computedVisibleIndex})`;
 
   return (
     <div

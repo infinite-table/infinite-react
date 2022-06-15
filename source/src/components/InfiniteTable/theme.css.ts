@@ -14,6 +14,8 @@ export const InternalVars = createThemeContract({
   activeCellColumnTransformX: null,
   activeCellColumnTransformY: null,
   activeRowHeight: null,
+  columnWidthAtIndex: null,
+  columnOffsetAtIndex: null,
 });
 export const ThemeVars = createGlobalThemeContract(
   {
@@ -323,8 +325,7 @@ const LoadMaskVars = {
 const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '20px',
   [ThemeVars.components.HeaderCell.resizeHandleWidth]: '4px',
-  [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]:
-    ThemeVars.color.accent,
+  [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]: '#6bff6b',
   [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
     ThemeVars.color.error,
   [ThemeVars.components.HeaderCell.background]: '#ededed',

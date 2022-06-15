@@ -19,6 +19,8 @@ const { rootClassName } = internalProps;
 export const InfiniteTableCellClassName = `${rootClassName}Cell`;
 export const InfiniteTableCellContentClassName = `${rootClassName}Cell_content`;
 
+const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
+
 function InfiniteTableCellFn<T>(
   props: InfiniteTableCellProps<T> & React.HTMLAttributes<HTMLElement>,
 ) {
@@ -26,7 +28,7 @@ function InfiniteTableCellFn<T>(
     cssEllipsis = true,
     virtualized = true,
     skipColumnShifting = false,
-    offsetProperty = 'left',
+
     contentStyle,
     column,
     domRef,
@@ -36,7 +38,7 @@ function InfiniteTableCellFn<T>(
 
     afterChildren,
     beforeChildren,
-    offset,
+
     cellType,
     cssPosition: _cssPosition,
     renderChildren,
@@ -54,8 +56,7 @@ function InfiniteTableCellFn<T>(
 
   const shifting = !!columnShifts;
   const style = {
-    [stripVar(InternalVars.currentColumnWidth)]: `${width}px`,
-    width: InternalVars.currentColumnWidth,
+    width: `var(${columnWidthAtIndex}-${column.computedVisibleIndex})`,
     ...domProps.style,
   } as React.CSSProperties;
 
@@ -64,7 +65,7 @@ function InfiniteTableCellFn<T>(
     columnShifts &&
     columnShifts[column.computedVisibleIndex]
   ) {
-    const shiftLeft = columnShifts[column.computedVisibleIndex] + (offset ?? 0);
+    const shiftLeft = columnShifts[column.computedVisibleIndex];
     if (virtualized) {
       style.left = shiftLeft;
     } else {

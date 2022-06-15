@@ -1,17 +1,18 @@
 import React, { PointerEvent, useRef, useState } from 'react';
 import { FlexComputeResizeResult } from '../../../../flexbox';
 import { internalProps } from '../../../internalProps';
+import { InfiniteTableComputedColumn } from '../../../types';
 
-import { getResizer } from './fetchElements';
+import { getResizer } from './resizer';
 import {
   ResizeHandleCls,
   ResizeHandleDraggerClsRecipe,
 } from './ResizeHandle.css';
 
-type ResizeHandleProps = {
+type ResizeHandleProps<T> = {
   columnIndex: number;
-  initialWidth: number;
-  totalColumns: number;
+  columns: InfiniteTableComputedColumn<T>[];
+
   computeResize: ({
     diff,
     shareSpaceOnResize,
@@ -32,7 +33,8 @@ const { rootClassName } = internalProps;
 
 export const InfiniteTableHeaderCellResizeHandleCls = `${rootClassName}HeaderCell_ResizeHandle`;
 
-function ResizeHandleFn(props: ResizeHandleProps) {
+function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
+  const domRef = useRef<HTMLDivElement>(null);
   const [constrained, setConstrained] = useState(false);
   const constrainedRef = useRef<boolean>(constrained);
   constrainedRef.current = constrained;
@@ -48,8 +50,9 @@ function ResizeHandleFn(props: ResizeHandleProps) {
     target.setPointerCapture(pointerId);
 
     const resizer = getResizer(props.columnIndex, {
-      totalColumns: props.totalColumns,
+      columns: props.columns,
       shareSpaceOnResize,
+      domRef,
     });
 
     const resizeDiff = (diff: number) => {
@@ -93,6 +96,7 @@ function ResizeHandleFn(props: ResizeHandleProps) {
 
   return (
     <div
+      ref={domRef}
       className={`${InfiniteTableHeaderCellResizeHandleCls} ${ResizeHandleCls}`}
       onPointerDown={onPointerDown}
     >
@@ -104,7 +108,4 @@ function ResizeHandleFn(props: ResizeHandleProps) {
     </div>
   );
 }
-export const ResizeHandle = React.memo(
-  ResizeHandleFn,
-  () => true,
-) as typeof ResizeHandleFn;
+export const ResizeHandle = React.memo(ResizeHandleFn) as typeof ResizeHandleFn;

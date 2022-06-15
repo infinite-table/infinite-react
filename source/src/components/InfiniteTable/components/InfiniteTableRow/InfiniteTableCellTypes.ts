@@ -26,8 +26,6 @@ export type InfiniteTableBaseCellProps<T> = {
   beforeChildren?: Renderable;
   afterChildren?: Renderable;
 
-  offset?: number;
-  offsetProperty?: 'left' | 'right';
   cssPosition?: CSSProperties['position'];
   domRef?: React.RefCallback<HTMLElement>;
 };
