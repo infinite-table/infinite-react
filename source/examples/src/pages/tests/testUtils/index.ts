@@ -152,6 +152,29 @@ export const getColumnOffsetsFromDOM = async ({ page }: { page: Page }) => {
   return offsets;
 };
 
+export const getActiveCellIndicatorOffsetFromDOM = async ({
+  page,
+}: {
+  page: Page;
+}) => {
+  const indicatorNode = page.locator('[data-name="active-cell-indicator"]');
+
+  return await indicatorNode.evaluate((node) => {
+    const [xVar, yVar] = node.style.transform
+      .split('translate3d(')[1]
+      .split(',')
+      .map((x) => x.trim());
+
+    function stripVar(cssVariableWithVarString: string) {
+      return cssVariableWithVarString.slice(4, -1);
+    }
+    return [
+      getComputedStyle(node).getPropertyValue(stripVar(xVar)),
+      getComputedStyle(node).getPropertyValue(stripVar(yVar)),
+    ];
+  });
+};
+
 export const getColumnCells = async (
   columnName: string,
   { page }: { page: Page },

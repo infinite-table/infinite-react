@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useLayoutEffect, useRef, CSSProperties } from 'react';
 import { stripVar } from '../../../utils/stripVar';
+import { useRerender } from '../../hooks/useRerender';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { internalProps } from '../internalProps';
@@ -42,6 +43,7 @@ const ActiveStyle: CSSProperties = {
 
 const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
   const { brain } = props;
+  const [_rerenderId, rerender] = useRerender();
 
   const domRef = useRef<HTMLDivElement>(null);
 
@@ -83,9 +85,9 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
       );
     });
 
-    // const removeOnRenderCountChange = brain.onRenderCountChange(() => {
-    //   rerender();
-    // });
+    const removeOnRenderCountChange = brain.onRenderCountChange(() => {
+      rerender();
+    });
 
     // const removeOnAvailableSizeChange = brain.onAvailableSizeChange(() => {
     //   rerender();
@@ -93,7 +95,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
 
     return () => {
       // removeOnAvailableSizeChange();
-      // removeOnRenderCountChange();
+      removeOnRenderCountChange();
       removeOnSCroll();
     };
   }, [brain]);

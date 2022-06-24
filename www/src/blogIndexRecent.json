@@ -6,6 +6,16 @@
       "heading": true,
       "routes": [
         {
+          "path": "/blog/2022/06/24/navigating-your-datagrid",
+          "date": "2022-06-24",
+          "title": "Navigating your DataGrid",
+          "author": [
+            "admin"
+          ],
+          "excerpt": "<p>test</p>\n",
+          "readingTime": "1 min read"
+        },
+        {
           "path": "/blog/2021/12/10/infinite-launch",
           "date": "2021-12-10",
           "title": "Infinite Table Launch 🚀",
