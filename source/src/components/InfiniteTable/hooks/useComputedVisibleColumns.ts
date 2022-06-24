@@ -170,6 +170,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnOrder,
     columnVisibility,
     columnVisibilityAssumeVisible,
+    resizableColumns,
 
     pinnedEndMaxWidth,
     pinnedStartMaxWidth,

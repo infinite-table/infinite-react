@@ -57,7 +57,7 @@ export default test.describe.parallel('Column Group Resizing', () => {
       page,
     });
 
-    // on resize, space distributed equally, and they are having the minimim widths
+    // on resize, space distributed equally, and they are
     expect(sizes).toEqual([50, 50, 50]);
   });
 });

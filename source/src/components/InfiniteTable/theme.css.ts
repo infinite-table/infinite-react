@@ -122,9 +122,28 @@ export const ThemeVars = createGlobalThemeContract(
         paddingY: 'header-cell-padding-y',
         iconSize: 'header-cell-icon-size',
         sortIconMargin: 'header-cell-sort-icon-margin',
+        /**
+         * The width of the area you can hover over in order to grab the column resize handle.
+         * Defaults to `20px`.
+         *
+         * The purpose of this active area is to make it easier to grab the resize handle.
+         */
         resizeHandleActiveAreaWidth: 'resize-handle-active-area-width',
+
+        /**
+         * The width of the colored column resize handle that is displayed on hover and on drag. Defaults to `2px`
+         */
         resizeHandleWidth: 'resize-handle-width',
+
+        /**
+         * The color of the column resize handle - the resize handle is the visible indicator that you see
+         * when hovering over the right-edge of a resizable column. Also visible on drag while doing a column resize.
+         */
         resizeHandleHoverBackground: 'resize-handle-hover-background',
+
+        /**
+         * The color of the column resize handle when it has reached a min/max constraint.
+         */
         resizeHandleConstrainedHoverBackground:
           'resize-handle-constrained-hover-background',
       },

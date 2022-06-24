@@ -665,4 +665,75 @@ test.describe.parallel('group resize', () => {
       },
     });
   });
+
+  test('should do group resize and respect max widths while resize the rest of the columns', () => {
+    const testData = {
+      columnSizing: {},
+      availableSize: 4000,
+      dragHandleOffset: 660,
+      dragHandlePositionAfter: 3,
+      shareSpaceOnResize: false,
+      columnGroupSize: 4,
+      reservedWidth: 0,
+
+      items: [
+        {
+          id: '1',
+          computedWidth: 100,
+          computedFlex: 0,
+          computedMaxWidth: 130,
+          computedMinWidth: 0,
+          resizable: true,
+        },
+        {
+          id: '2',
+          computedWidth: 100,
+          computedFlex: 0,
+          computedMaxWidth: 130,
+          computedMinWidth: 0,
+          resizable: true,
+        },
+        {
+          id: '3',
+          computedWidth: 100,
+          computedFlex: 0,
+          computedMaxWidth: 2000,
+          computedMinWidth: 0,
+          resizable: true,
+        },
+        {
+          id: '4',
+          computedWidth: 100,
+          computedFlex: 0,
+          computedMaxWidth: 2000,
+          computedMinWidth: 0,
+          resizable: true,
+        },
+      ],
+    };
+
+    let result = computeGroupResize(testData);
+
+    expect(result).toMatchObject({
+      adjustedDiffs: [30, 30, 300, 300],
+
+      minReached: false,
+      maxReached: false,
+      constrained: false,
+      columnSizing: {
+        '1': {
+          width: testData.items[0].computedWidth + 30,
+        },
+        '2': {
+          width: testData.items[1].computedWidth + 30,
+        },
+        '3': {
+          width: testData.items[2].computedWidth + 300,
+        },
+        '4': {
+          width: testData.items[3].computedWidth + 300,
+        },
+      },
+    });
+  });
 });

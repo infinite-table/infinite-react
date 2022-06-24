@@ -3,11 +3,10 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumnSizing,
-  InfiniteTablePropColumns,
+  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
-import { useState } from 'react';
 
-export const columns: InfiniteTablePropColumns<Employee> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
@@ -29,47 +28,28 @@ export const columns: InfiniteTablePropColumns<Employee> = {
   },
 };
 
-const columnSizing: InfiniteTablePropColumnSizing = {
-  country: { width: 100 },
-  city: { flex: 1, minWidth: 100 },
-  salary: { flex: 2, maxWidth: 500 },
-};
-
 export default function App() {
   const [columnSizing, setColumnSizing] =
     React.useState<InfiniteTablePropColumnSizing>({
       country: { width: 100 },
-      city: { flex: 1, minWidth: 100 },
-      salary: { flex: 2, maxWidth: 500 },
+      city: { flex: 1, minWidth: 300 },
+      salary: { flex: 2 },
     });
-
-  const [viewportReservedWidth, setViewportReservedWidth] =
-    useState(0);
 
   return (
     <>
-      <p style={{ color: 'var(--infinite-cell-color)' }}>
+      <p>
         Current column sizing:{' '}
         <code>
           <pre>{JSON.stringify(columnSizing, null, 2)}</pre>
         </code>
-        Viewport reserved width: {viewportReservedWidth} -{' '}
-        <button onClick={() => setViewportReservedWidth(0)}>
-          click to reset to 0
-        </button>
       </p>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id">
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           columns={columns}
           columnDefaultWidth={50}
           columnSizing={columnSizing}
           onColumnSizingChange={setColumnSizing}
-          viewportReservedWidth={viewportReservedWidth}
-          onViewportReservedWidthChange={
-            setViewportReservedWidth
-          }
         />
       </DataSource>
     </>
@@ -77,9 +57,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

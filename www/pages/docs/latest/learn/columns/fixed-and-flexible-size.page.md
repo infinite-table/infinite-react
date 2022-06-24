@@ -2,7 +2,19 @@
 title: Column Sizing
 ---
 
-Columns can be configured to have either a fixed or flexible size. In addition, you can have column min and max sizes and also default column sizes.
+Columns are a core concept for `Infinite Table` and sizing columns is an important topic to master. Here is a summary of how columns can be sized:
+
+* fixed-sized columns can be specified via <PropLink name="columns.defaultWidth" />
+* flexible columns need <PropLink name="columns.defaultFlex" />
+* <PropLink name="columns.minWidth" /> specifies the minimum size for a column
+* <PropLink name="columns.maxWidth" /> is for the maximum width a column can take
+* default values are available for all of the above:
+  * <PropLink name="columnDefaultWidth" /> gives all columns (that are otherwise unconfigured) a default size
+  * <PropLink name="columnMinWidth" /> specifies the minimum width for all columns (that don't have one)
+  * <PropLink name="columnMaxWidth" /> specifies the maximum width for all columns (that don't have one)
+
+For fine-grained controlled-behavior on column sizing, use the controlled <PropLink name="columnSizing"/> prop (for uncontrolled variant, see <PropLink name="defaultColumnSizing" />). If you want to get updates to columns changing size as a result of user interaction, use <PropLink name="onColumnSizingChange" />.
+
 
 <Note>
 
@@ -12,12 +24,21 @@ For setting a minimum and maximum width for all columns, use <PropLink name="col
 
 </Note>
 
-Sizing the column is done via the controlled <PropLink name="columnSizing"/> prop and it's uncontrolled variant, <PropLink name="defaultColumnSizing" />. If you want to get updates to columns changing size as a result of user interaction, use <PropLink name="onColumnSizingChange" />.
 
 
-## Fixed vs flexible sizing
+## Understanding default column sizing
 
-The <PropLink name="columnSizing" /> prop is an object (or Map) of column ids to column sizing objects. Those sizing objects can have the following properties:
+The easiest way to get started and specify a sizing behavior for columns is to use <PropLink name="columns.defaultWidth">column.defaultWidth</PropLink>, <PropLink name="columns.defaultFlex">column.defaultFlex</PropLink> and/or <PropLink name="columnDefaultWidth" /> (including related pros for specifying limits, like <PropLink name="columns.minWidth">column.minWidth</PropLink>, <PropLink name="columns.maxWidth">column.maxWidth</PropLink> and <PropLink name="columnMinWidth" /> / <PropLink name="columnMaxWidth" />).
+
+Those properties have `default` in their name because after the initial rendering of a column, you can't change its size by updating those values - more technically, <PropLink name="columns.defaultWidth">column.defaultWidth</PropLink> and <PropLink name="columns.defaultFlex">column.defaultFlex</PropLink> are uncontrolled props.
+
+We suggest you use those to get started and if you don't have care about responding to the user changing the widths of those columns via drag&drop. As long as you're not using <PropLink name="onColumnSizingChange" /> to be notified of column size changes, you're probably good with those.
+
+## Controlled column sizing
+
+However, once you start using <PropLink name="onColumnSizingChange" /> and want to have full control of column sizing (maybe you want to restore it later to the state the user had it when the app was closed), you probably want to use controlled <PropLink name="columnSizing" />.
+
+The <PropLink name="columnSizing" /> prop is an object of column ids to column sizing objects. Those sizing objects can have the following properties:
  * <PropLink name="columnSizing.flex">flex</PropLink> - use this for <b>flexible columns</b>. Behaves like the flex CSS property.
  * <PropLink name="columnSizing.width">width</PropLink> - use this for <b>fixed sized columns</b>
  * <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
@@ -25,7 +46,7 @@ The <PropLink name="columnSizing" /> prop is an object (or Map) of column ids to
 
 <Note>
 
-If a column is not specified in the <PropLink name="columnSizing" /> prop (or its uncontrolled variant), or sized otherwise (eg: via the column type), it will have a fixed size, defaulting to <PropLink name="columnDefaultWidth"/> (which also defaults to `200` if no value is passed in).
+If a column is not specified in the <PropLink name="columnSizing" /> prop (or its uncontrolled variant), or sized otherwise (eg: via the column type), it will have a fixed size, defaulting to <PropLink name="columnDefaultWidth"/> (which also defaults to `200` if no value is passed in). You can also specify a <PropLink name="columnMinWidth" /> and <PropLink name="columnMaxWidth" /> - those will be applied for all columns (namely for those that dont explicitly specify other min/max widths).
 
 </Note>
 
@@ -52,12 +73,24 @@ const columnSizing: InfiniteTablePropColumnSizing = {
 
 <Note>
 
-You might find specifying the column size outside the column object to be a bit verbose to start with, but it will be easier to manage in many cases and is much more flexible. For example, when the user resizes a column via d&d (COMING SOON) and you want to persist the new column sizes, you don't have to update the whole `columns` map but instead update <PropLink name="columnSizing"/> alone.
+You might find specifying the column size outside the column object to be a bit verbose to start with, but it will be easier to manage in many cases and is much more flexible. For example, when the user resizes a column via drag & drop and you want to persist the new column sizes, you don't have to update the whole `columns` object but instead update <PropLink name="columnSizing"/> alone.
 The same principle is true for <PropLink name="columnPinning" /> and other column-level props.
 
 </Note>
 
-<DeepDive title="Flexible sizing explained" excerpt="The way flex sizing is implemented is similar to how CSS flexbox algorithm works. Explore this section to find out more details.">
+<Note>
+
+The `columnSizing` prop also has an uncontrolled version, namely <PropLink name="defaultColumnSizing" />.
+
+</Note>
+
+## Using flexible column sizing
+
+<Note>
+
+The way flex sizing is implemented is similar to how CSS flexbox algorithm works. Explore this section to find out more details.
+
+</Note>
 
 Imagine you have `1000px` of space available to the viewport of `InfiniteTable` and you have 3 columns: 
 * a fixed column `100px` wide - name it col `A`
@@ -86,12 +119,16 @@ This means columns will have the following sizes:
 
  <Sandpack title="Using viewportReservedWidth to reserve whitespace when you have flexible columns">
 
+ <Description>
+
+ This example has a `viewportReservedWidth` of `50px`.
+
+ </Description>
+
 ```tsx file=../../reference/viewportReservedWidth-example.page.tsx
 ```
 </Sandpack>
 
-
-</DeepDive>
 
 Take a look at the snippet below to see column sizing at work with flexible and fixed columns.
 
@@ -107,6 +144,12 @@ You might find <PropLink name="viewportReservedWidth" /> useful for advanced con
 
 </Note>
 
+<Note>
+
+When he user is performing a column resize (via drag & drop), <PropLink name="onViewportReservedWidth" /> is called when the resize is finished (not the case for resizing with the **SHIFT** key pressed, when adjacent columns share the space between them).
+
+</Note>
+
 
 <Gotcha>
 
@@ -118,6 +161,103 @@ For <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</Pr
 
 
 </Gotcha>
+
+## Resizing columns via drag & drop
+
+Columns are user-resizable via drag & drop. If you don't want a column to be resizable, specify <PropLink name="columns.resizable">column.resizable=false</PropLink>
+
+<Note>
+
+By default, all columns are resizable since <PropLink name="resizableColumns" /> defaults to `true`. The <PropLink name="resizableColumns" /> prop controls the behavior for all columns that don't explicitly specify their <PropLink name="columns.resizable">column.resizable</PropLink> property.
+
+</Note>
+
+When initially rendered, columns are displayed with their <PropLink name="columns.defaultWidth" /> (you can also use <PropLink name="columnDefaultWidth" />) or <PropLink name="columns.defaultFlex" />. Flexible columns take up available space taking into account their flex value, as detailed above.
+
+When the user is resizing columns (or column groups), the effect is seen in real-time, so it's very easy to adjust the columns to desired widths. After the user drops the resize handle to the desired position, <PropLink name="onColumnSizingChange" /> is being called, to allow the developer to react to column sizing changes. Also <PropLink name="onViewportReservedWidth" /> is called as well when the resize is finished (not the case for resizing with the **SHIFT** key pressed, when adjacent columns share the space between them).
+
+<Note>
+
+When flexible columns are resized, they are kept flexible even after the resize. Note however that their flex values will be different to the original flex values and will reflect the new proportions each flex column is taking up at the moment of the resize.
+
+More exactly, the new flex values will be the actual pixel widths. As an example, say there are 2 flex columns, first one with flex `1` and second one with flex `3` and they have an available space of `800px`. 
+
+```ts
+const columns = { 
+  first: { flex: 1, field: 'one' },
+  second: { flex: 2, field: 'two' }
+}
+```
+
+Initially they will occupy `200px` and `600px` respectively. If the user resizes them to be of equal size, <PropLink name="onColumnSizingChange" /> will be called with an object like
+
+```ts
+{
+  first: { flex: 400 },
+  second: {flex: 400 }
+}
+```
+since those are the actual widths measured from the DOM. This works out well, even if the available space of the table grows, as the proportions will be the same.
+
+</Note>
+
+### Resize Restrictions
+
+When resizing, the user needs to drag the resize handle to adjust the columns to new sizes. While doing so, the resize handle has a (green) color to indicate everything is okay. However, when restrictions are hit (either column <PropLink name="columns.minWidth">min</PropLink> or <PropLink name="columns.maxWidth">max</PropLink> widths), the resize handle turns red to indicate further resizing is not possible.
+
+### Sharing space on resize
+
+By default when resizing a specific column, the following columns are pushed to the right (when making the column wider) or moved to the left (when making the column narrower).
+
+For sharing space between resizable columns when resizing, the user needs to **hold the SHIFT key** when grabbing the resize handle. When the handle is dropped and the resize confirmed, <PropLink name="onColumnSizingChange" /> is called, but <PropLink name="onViewportReservedWidth" /> is not called for this scenario, since the reserved width is preserved.
+
+### Resizing column groups
+
+Just as columns are being resized, it is also possible to resize column groups. For this, the user needs to hover over the right border of the column group and start dragging the resize handle.
+
+<Note>
+
+For multi-level column groups, it's possible to resize any of them. Just grab the handle from the desired group and start dragging. The handle height will indicate which column group is being resized.
+
+</Note>
+
+<Note>
+
+If a column group has at least one resizable column, it can be resized.
+
+When resizing, the space is shared proportionally betweem all resizable columns in the group.
+
+Once a min/max limit has been reached for a certain column in the group, the column respects the limit and the other columns keep resizing as usual. When the min/max limit has been reached for all columns in the group, the resize handle turns red to indicate further resizing is no longer possible.
+
+</Note>
+
+
+<Sandpack title="Resizing column groups">
+<Description>
+
+Try resizing the `Finance` and `Regional Info` column groups.
+
+The columns in the `Finance` group can be resized an extra `30px` (they have a `maxWidth` of `130px`).
+
+</Description>
+
+```tsx file=../../reference/column-groups-example.page.tsx
+```
+</Sandpack>
+
+### Customizing the resize handle colors
+
+It's possible to customize the resize handle colors and width.
+
+For adjusting the handle colors, use the following CSS variables:
+
+ - `--infinite-resize-handle-hover-background` - the color of the resize handle when it's in a `green`/all good state.
+ - `--infinite-resize-handle-constrained-hover-background` - the color of the resize handle when it has reached a min/max constraint.
+
+You can also adjust the width of the resize handle:
+
+ - `--infinite-resize-handle-width` - the width of the `green`/`red` column resize handle. Defaults to `2px`
+ - `--infinite-resize-handle-active-area-width` - the width of the area you can hover over in order to grab the resize handle. Defaults to `20px`. The purpose of this active area is to make it easier to grab the resize handle.
 
 ## Auto-sizing columns
 

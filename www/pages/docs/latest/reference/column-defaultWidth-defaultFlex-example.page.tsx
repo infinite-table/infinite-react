@@ -2,9 +2,9 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTablePropColumnSizing,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import { useState } from 'react';
 
 export const columns: Record<
   string,
@@ -12,11 +12,13 @@ export const columns: Record<
 > = {
   firstName: {
     field: 'firstName',
-    header: 'First Name',
+    header: 'Name: defaultWidth 200',
+    defaultWidth: 200,
   },
   country: {
     field: 'country',
-    header: 'Country',
+    header: 'Country - defaultFlex: 1',
+    defaultFlex: 1,
   },
   city: {
     field: 'city',
@@ -29,19 +31,13 @@ export const columns: Record<
   },
 };
 
-const defaultColumnSizing: InfiniteTablePropColumnSizing = {
-  country: { width: 100 },
-  city: { flex: 1, maxWidth: 300 },
-  salary: { flex: 2 },
-};
-
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
       <InfiniteTable<Employee>
         columns={columns}
-        columnDefaultWidth={50}
-        defaultColumnSizing={defaultColumnSizing}
+        columnDefaultWidth={100}
+        columnMinWidth={30}
       />
     </DataSource>
   );

@@ -25,6 +25,7 @@
   - [📦 Small bundle size](#-small-bundle-size)
   - [🧪 Automated end-to-end tests](#%F0%9F%A7%AA-automated-end-to-end-tests)
 - [🎨 Themable](#-themable)
+- [Releases](#releases)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->

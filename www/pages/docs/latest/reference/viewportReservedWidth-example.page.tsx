@@ -5,42 +5,30 @@ import {
   InfiniteTablePropColumnSizing,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import { useState } from 'react';
 
-export const columns = new Map<
+export const columns: Record<
   string,
   InfiniteTableColumn<Employee>
->([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-    },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      header: 'Salary',
-    },
-  ],
-]);
+> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    header: 'Salary',
+  },
+};
 
 const defaultColumnSizing: InfiniteTablePropColumnSizing = {
   country: { flex: 1 },
@@ -49,15 +37,42 @@ const defaultColumnSizing: InfiniteTablePropColumnSizing = {
 };
 
 export default function App() {
+  const [viewportReservedWidth, setViewportReservedWidth] =
+    useState(0);
   return (
-    <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee>
-        columns={columns}
-        columnDefaultWidth={50}
-        viewportReservedWidth={50}
-        defaultColumnSizing={defaultColumnSizing}
-      />
-    </DataSource>
+    <>
+      <div style={{ color: 'var(--infinite-cell-color' }}>
+        <p>
+          Current viewport reserved width:{' '}
+          {viewportReservedWidth}px.
+        </p>
+
+        <button
+          style={{
+            padding: 5,
+            margin: 5,
+            border: '2px solid currentColor',
+          }}
+          onClick={() => {
+            setViewportReservedWidth(0);
+          }}>
+          Click to reset viewportReservedWidth to 0
+        </button>
+      </div>
+      <DataSource<Employee>
+        data={dataSource}
+        primaryKey="id">
+        <InfiniteTable<Employee>
+          columns={columns}
+          columnDefaultWidth={50}
+          viewportReservedWidth={viewportReservedWidth}
+          onViewportReservedWidthChange={
+            setViewportReservedWidth
+          }
+          defaultColumnSizing={defaultColumnSizing}
+        />
+      </DataSource>
+    </>
   );
 }
 

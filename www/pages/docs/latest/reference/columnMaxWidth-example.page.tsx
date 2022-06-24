@@ -3,44 +3,28 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumnSizing,
-  InfiniteTableColumn,
+  InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-export const columns = new Map<
-  string,
-  InfiniteTableColumn<Employee>
->([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-    },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      header: 'Salary',
-    },
-  ],
-]);
+export const columns: InfiniteTablePropColumns<Employee> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    header: 'Salary',
+  },
+};
 
 const defaultColumnSizing: InfiniteTablePropColumnSizing = {
   firstName: { flex: 1 },

@@ -109,7 +109,7 @@ In the same logic, keep in mind that by default columns are also virtualized (co
 
 <Note>
 
-If a column is explicitly sized via <PropLink name="columnSizing.width" />, that will be used instead.
+If a column is explicitly sized via <PropLink name="columns.defaultWidth">column.defaultWidth</PropLink>, <PropLink name="columns.defaultFlex">column.defaultFlex</PropLink>, <PropLink name="columnSizing.width" /> (or <PropLink name="defaultColumnSizing.width" />), that will be used instead.
 
 </Note>
 
@@ -626,6 +626,14 @@ In the `column.renderValue` function you can use hooks or <PropLink name="column
 </Note>
 </Prop>
 
+<Prop name="columns.resizable" type="boolean">
+
+> Specifies if the current column is resizable or not.
+
+By default, all columns are resizable, since <PropLink name="resizableColumns" /> defaults to `true`.
+
+</Prop>
+
 <Prop name="columns.rowspan" type="({ rowInfo, data, rowIndex, column }) => number">
 
 > Specifies the rowspan for cells on the current column.
@@ -763,7 +771,7 @@ If you want to further customize what's being rendered, see <PropLink name="colu
 
 This is a controlled property. For the uncontrolled version, see <PropLink name="defaultColumnSizing" />.
 
-It is an object (or Map) that maps column ids to column sizing options. The values in the objects can contain the following properties:
+It is an object that maps column ids to column sizing options. The values in the objects can contain the following properties:
  * <PropLink name="columnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
  * <PropLink name="columnSizing.width">width</PropLink> - use this for fixed sized columns
  * <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
@@ -789,10 +797,9 @@ For auto-sizing columns, see <PropLink name="autoSizeColumnsKey" />.
 
 > Specifies the flex value for the column.
 
-See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details.
+See [using flexible column sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#using-flexible-column-sizing) for more details.
 
-A column can either be flexible or fixed. For fixed columns, use <PropLink name="columnSizing.width" />.
-
+A column can either be flexible or fixed-width. For fixed columns, use <PropLink name="columnSizing.width" /> if you're using <PropLink name="columnSizing" /> or <PropLink name="columns.defaultWidth">column.defaultWidth</PropLink> for default-uncontrolled sizing.
 
 <Sandpack title="Controlled column sizing with flex columns">
 
@@ -809,7 +816,7 @@ A column can either be flexible or fixed. For fixed columns, use <PropLink name=
 
 > Specifies the minimum width for a column. Especially useful for flexible columns.
 
-See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details on the flex algorithm.
+See [Using flexible column sizing](/docs/latest/learn/columns/fixed-and-flexible-size#using-flexible-column-sizing) for more details on the flex algorithm.
 
 This can also be specified for all columns by specyfing <PropLink name="columnMinWidth" />.
 
@@ -826,7 +833,7 @@ This can also be specified for all columns by specyfing <PropLink name="columnMi
 
 > Specifies the maximum width for a column. Especially useful for flexible columns.
 
-See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details on the flex algorithm.
+See [Using flexible column sizing](/docs/latest/learn/columns/fixed-and-flexible-size#using-flexible-column-sizing) for more details on the flex algorithm.
 
 This can also be specified for all columns by specyfing <PropLink name="columnMaxWidth" />.
 
@@ -843,7 +850,7 @@ This can also be specified for all columns by specyfing <PropLink name="columnMa
 
 > Specifies the fixed width for the column.
 
-See [fixed vs flexible sizing section](/docs/latest/learn/columns/fixed-and-flexible-size#fixed-vs-flexible-sizing) for more details.
+See [Using flexible column sizing](/docs/latest/learn/columns/fixed-and-flexible-size#using-flexible-column-sizing) for more details.
 
 A column can either be flexible or fixed. For flexible columns, use <PropLink name="columnSizing.flex" />.
 
@@ -960,6 +967,69 @@ Displaying the same column twice is a perfectly valid use case.
 ```
 
 </Sandpack>
+</Prop>
+
+<Prop name="defaultColumnSizing" type="Record<string,{width,flex,...}>">
+
+> Defines a default sizing of columns in the grid.
+
+This is an uncontrolled property. For the controlled version and more details, see <PropLink name="columnSizing" />.
+
+It is an object that maps column ids to column sizing options. The values in the objects can contain the following properties:
+ * <PropLink name="defaultColumnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
+ * <PropLink name="defaultColumnSizing.width">width</PropLink> - use this for fixed sized columns
+ * <PropLink name="defaultColumnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
+ * <PropLink name="defaultColumnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
+
+
+<Sandpack title="Uncontrolled column sizing">
+
+```tsx file=defaultColumnSizing-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+For auto-sizing columns, see <PropLink name="autoSizeColumnsKey" />.
+
+</Note>
+
+</Prop>
+
+
+<Prop name="defaultColumnSizing.flex" type="number">
+
+> Specifies the flex value for the column.
+
+See <PropLink name="columnSizing.flex" /> for details.
+
+</Prop>
+
+
+<Prop name="defaultColumnSizing.minWidth" type="number">
+
+> Specifies the minimum width for a column. Especially useful for flexible columns.
+
+See <PropLink name="columnSizing.minWidth" /> for details.
+
+</Prop>
+
+<Prop name="defaultColumnSizing.maxWidth" type="number">
+
+> Specifies the maximum width for a column. Especially useful for flexible columns.
+
+See <PropLink name="columnSizing.maxWidth" /> for details.
+
+</Prop>
+
+
+<Prop name="defaultColumnSizing.width" type="number">
+
+> Specifies the fixed width for the column.
+
+See <PropLink name="columnSizing.width" /> for details.
+
 </Prop>
 
 
@@ -1210,12 +1280,25 @@ This callback is fired when a focusable element inside the component is blurred,
 </Prop>
 
 
-
 <Prop name="onColumnSizingChange" type="(columnSizing)=>void">
 
-Coming soon, when we finish implementing column resizing via d&d.
+> Called as a result of user doing a column resize.
+
+Use this callback to get updated information after a column resize is performed.
+
+This works well in combination with the controlled <PropLink name="columnSizing" /> prop (though you don't have to use controlled <PropLink name="columnSizing" /> in order to use this callback). For more info on resizing columns, see [Column Sizing](/docs/latest/learn/columns/fixed-and-flexible-size).
+
+See related <PropLink name="onViewportReservedWidthChange" />
+
+<Sandpack title="Controlled column sizing example with onColumnSizingChange">
+
+```ts file=onColumnSizingChange-example.page.tsx
+```
+
+</Sandpack>
 
 </Prop>
+
 
 <Prop name="onFocusWithin" type="(event)=> void">
 
@@ -1253,6 +1336,26 @@ If you want to scroll to the top of the table, you can use the <PropLink name="s
 
 </Sandpack>
 
+</Prop>
+
+
+<Prop name="onViewportReservedWidthChange" type="(reserved: number) => void">
+
+> Callback to be notified of changes to <PropLink name="viewportReservedWidth" />
+
+See <PropLink name="viewportReservedWidth" /> for details. See related <PropLink name="onColumnSizingChange" />.
+
+When he user is performing a column resize (via drag & drop), <PropLink name="onViewportReservedWidthChange" /> is called when the resize is finished (not the case for resizing with the **SHIFT** key pressed, when adjacent columns share the space between them since the reserved width is preserved).
+
+<Sandpack title="Using onViewportReservedWidth to respond to user column resizing">
+
+<Description>
+Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
+</Description>
+
+```ts file=viewportReservedWidth-example.page.tsx
+```
+</Sandpack>
 
 </Prop>
 
@@ -1299,6 +1402,26 @@ In case there are no pivot fields, but <DataSourcePropLink name="pivotBy"/> is a
 
 </Sandpack>
 
+
+</Prop>
+
+<Prop name="resizableColumns" type="boolean" defaultValue={true}>
+
+> Controls if by default all columns are resizable or not.
+
+This property controls the behavior for all columns that don't have <PropLink name="columns.resizable" /> explicitly specified.
+
+<Sandpack title="Resizable columns example">
+
+<Description>
+For resizable columns, hover the mouse between column headers to grab & drag the resize handle.
+
+Hold SHIFT when grabbing in order to **share space on resize**.
+</Description>
+
+```ts file=resizableColumns-example.page.tsx
+```
+</Sandpack>
 
 </Prop>
 
@@ -1415,7 +1538,13 @@ The flexbox algorithm also uses `viewportReservedWidth` to determine the width o
 
 Or you can use a negative value, eg `-200` so the flexbox algorithm will use another `200px` (in addition to the available viewport area) for sizing flexible columns - this will result in a horizontal scrollbar being visible.
 
+For reacting to column resizing, you need to listen to <PropLink name="onViewportReservedWidthChange" />
+
 <Sandpack title="Using viewportReservedWidth to reserve whitespace when you have flexible columns">
+
+<Description>
+Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
+</Description>
 
 ```ts file=viewportReservedWidth-example.page.tsx
 ```

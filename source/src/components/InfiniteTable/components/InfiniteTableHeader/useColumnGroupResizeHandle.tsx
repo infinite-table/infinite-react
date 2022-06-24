@@ -40,7 +40,7 @@ export function useColumnGroupResizeHandle<T>(
 
     const columnSizingWithFlex = columns.reduce((acc, col) => {
       if (col.computedFlex) {
-        acc[col.id] = { flex: col.computedWidth }; // we explicitly need to have here `{ flex: col.computedWidth }` and not `{ flex: col.computedFlex }`
+        acc[col.id] = { ...columnSizing[col.id], flex: col.computedWidth }; // we explicitly need to have here `{ flex: col.computedWidth }` and not `{ flex: col.computedFlex }`
         // this is to make the test #advancedcolumnresizing work
 
         atLeastOneFlex = true;

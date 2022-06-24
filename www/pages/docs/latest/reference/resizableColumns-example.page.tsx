@@ -3,11 +3,14 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumnSizing,
-  InfiniteTablePropColumns,
+  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { useState } from 'react';
 
-export const columns: InfiniteTablePropColumns<Employee> = {
+export const columns: Record<
+  string,
+  InfiniteTableColumn<Employee>
+> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
@@ -16,12 +19,10 @@ export const columns: InfiniteTablePropColumns<Employee> = {
     field: 'country',
     header: 'Country',
   },
-
   city: {
     field: 'city',
     header: 'City',
   },
-
   salary: {
     field: 'salary',
     type: 'number',
@@ -29,47 +30,35 @@ export const columns: InfiniteTablePropColumns<Employee> = {
   },
 };
 
-const columnSizing: InfiniteTablePropColumnSizing = {
-  country: { width: 100 },
-  city: { flex: 1, minWidth: 100 },
-  salary: { flex: 2, maxWidth: 500 },
-};
-
 export default function App() {
-  const [columnSizing, setColumnSizing] =
-    React.useState<InfiniteTablePropColumnSizing>({
-      country: { width: 100 },
-      city: { flex: 1, minWidth: 100 },
-      salary: { flex: 2, maxWidth: 500 },
-    });
-
-  const [viewportReservedWidth, setViewportReservedWidth] =
-    useState(0);
-
+  const [resizableColumns, setResizableColumns] =
+    useState(true);
   return (
     <>
-      <p style={{ color: 'var(--infinite-cell-color)' }}>
-        Current column sizing:{' '}
-        <code>
-          <pre>{JSON.stringify(columnSizing, null, 2)}</pre>
-        </code>
-        Viewport reserved width: {viewportReservedWidth} -{' '}
-        <button onClick={() => setViewportReservedWidth(0)}>
-          click to reset to 0
+      <div style={{ color: 'var(--infinite-cell-color)' }}>
+        <button
+          style={{
+            padding: 10,
+            border: '2px solid currentColor',
+          }}
+          onClick={() => setResizableColumns((r) => !r)}>
+          Click to toggle
         </button>
-      </p>
+
+        <p style={{ padding: 10 }}>
+          Columns are currently{' '}
+          {resizableColumns ? 'resizable' : 'NOT RESIZABLE'}
+          .
+        </p>
+      </div>
       <DataSource<Employee>
         data={dataSource}
         primaryKey="id">
         <InfiniteTable<Employee>
+          resizableColumns={resizableColumns}
           columns={columns}
-          columnDefaultWidth={50}
-          columnSizing={columnSizing}
-          onColumnSizingChange={setColumnSizing}
-          viewportReservedWidth={viewportReservedWidth}
-          onViewportReservedWidthChange={
-            setViewportReservedWidth
-          }
+          columnDefaultWidth={100}
+          columnMinWidth={30}
         />
       </DataSource>
     </>

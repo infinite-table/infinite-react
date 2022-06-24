@@ -21,27 +21,22 @@ export default function App() {
   );
 }
 
-const columns: Map<
+const columns: Record<
   string,
   InfiniteTableColumn<Person>
-> = new Map([
-  [
-    'id',
-    {
-      field: 'Id',
-      type: 'number',
-      sortable: true,
-      width: 80,
-    },
-  ],
-  [
-    'firstName',
-    {
-      field: 'FirstName',
-      render: ({ value }: { value: any }) => (
-        <input type="text" value={value} />
-      ),
-    },
-  ],
-  ['age', { field: 'Age', type: 'number' }],
-]);
+> = {
+  id: {
+    field: 'Id',
+    type: 'number',
+    sortable: true,
+    defaultWidth: 80,
+  },
+  firstName: {
+    field: 'FirstName',
+    render: ({ value }: { value: any }) => (
+      <input type="text" value={value} />
+    ),
+  },
+
+  age: { field: 'Age', type: 'number' },
+};

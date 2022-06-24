@@ -16,6 +16,7 @@ type FlexComputeParams = {
   minSize?: number;
   maxSize?: number;
   items: FlexItemWithSizeOrFlex[];
+  computeSpecialSpaceDistribution?: boolean;
 };
 
 type SizedFlexItem = FlexItem & {
@@ -81,7 +82,9 @@ export const computeFlex = (params: FlexComputeParams): FlexComputeResult => {
     totalFixedSize += item.size ?? 0;
   });
 
-  let availableSizeForFlex = Math.max(availableSize - totalFixedSize, 0);
+  let availableSizeForFlex = params.computeSpecialSpaceDistribution
+    ? Math.max(availableSize, 0)
+    : Math.max(availableSize - totalFixedSize, 0);
   let sizePerFlex = availableSizeForFlex / totalFlex;
 
   // now we need another iteration in order to adjust constrained items
@@ -480,10 +483,13 @@ export const computeGroupResize = (
         unresizableWidth += item.computedWidth;
       }
       return {
+        maxSize: item.computedMaxWidth,
+        minSize: item.computedMinWidth,
         flex: item.resizable ? item.computedWidth : null,
         size: 0,
       };
     }),
+    computeSpecialSpaceDistribution: true,
     availableSize: Math.max(
       beforeSizes.reduce(sum, 0) + dragHandleOffset - unresizableWidth,
       0,

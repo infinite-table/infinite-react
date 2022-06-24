@@ -8,52 +8,38 @@ import {
 
 import { Person, data } from './column-groups-data';
 
-const columnGroups: Map<string, InfiniteTableColumnGroup> =
-  new Map([
-    ['contact info', { header: 'Contact info' }],
-    [
-      'street',
-      { header: 'street', columnGroup: 'address' },
-    ],
-    [
-      'location',
-      { header: 'location', columnGroup: 'address' },
-    ],
-    ['address', { header: 'Address' }],
-  ]);
+const columnGroups: Record<
+  string,
+  InfiniteTableColumnGroup
+> = {
+  'contact info': { header: 'Contact info' },
 
-const columns = new Map<
+  street: { header: 'street', columnGroup: 'address' },
+  location: { header: 'location', columnGroup: 'address' },
+  address: { header: 'Address' },
+};
+
+const columns: Record<
   string,
   InfiniteTableColumn<Person>
->([
-  ['id', { field: 'id' }],
-  [
-    'streetNo',
-    { field: 'streetNo', columnGroup: 'street' },
-  ],
-  ['city', { field: 'city', columnGroup: 'location' }],
+> = {
+  id: { field: 'id' },
 
-  [
-    'streetName',
-    { field: 'streetName', columnGroup: 'street' },
-  ],
-  ['firstName', { field: 'firstName' }],
+  streetNo: { field: 'streetNo', columnGroup: 'street' },
+  city: { field: 'city', columnGroup: 'location' },
 
-  [
-    'country',
-    { field: 'country', columnGroup: 'location' },
-  ],
-  ['region', { field: 'region', columnGroup: 'location' }],
+  streetName: {
+    field: 'streetName',
+    columnGroup: 'street',
+  },
+  firstName: { field: 'firstName' },
 
-  [
-    'email',
-    { field: 'email', columnGroup: 'contact info' },
-  ],
-  [
-    'phone',
-    { field: 'phone', columnGroup: 'contact info' },
-  ],
-]);
+  country: { field: 'country', columnGroup: 'location' },
+  region: { field: 'region', columnGroup: 'location' },
+
+  email: { field: 'email', columnGroup: 'contact info' },
+  phone: { field: 'phone', columnGroup: 'contact info' },
+};
 
 export default function App() {
   return (
