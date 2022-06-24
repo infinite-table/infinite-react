@@ -1565,9 +1565,9 @@ export class MatrixBrain extends Logger {
     this.onScrollFns = [];
     this.onScrollStartFns = [];
     this.onScrollStopFns = [];
-    this.onRenderCountChangeFns = [];
-    this.onRenderRangeChangeFns = [];
-    this.onVerticalRenderRangeChangeFns = [];
-    this.onHorizontalRenderRangeChangeFns = [];
+    this.onRenderCountChangeFns = new Set();
+    this.onRenderRangeChangeFns = new Set();
+    this.onVerticalRenderRangeChangeFns = new Set();
+    this.onHorizontalRenderRangeChangeFns = new Set();
   };
 }

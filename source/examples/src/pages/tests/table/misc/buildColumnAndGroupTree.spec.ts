@@ -21,6 +21,8 @@ function getComputedColumn<T>(config: {
     computedDataType: 'string',
     computedFilterType: 'string',
     computedSortType: 'string',
+    computedMaxWidth: 10_000,
+    computedMinWidth: 10,
     computedFirst: false,
     computedFirstInCategory: false,
     computedSortIndex: -1,
@@ -43,8 +45,9 @@ function getComputedColumn<T>(config: {
 
     toggleSort: () => {},
     id: config.field as string,
+
     ...config,
-  };
+  } as any as InfiniteTableComputedColumn<T>;
 }
 
 type Person = {
