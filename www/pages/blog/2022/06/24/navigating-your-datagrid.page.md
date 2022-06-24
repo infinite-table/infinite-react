@@ -1,5 +1,5 @@
 ---
-title: Navigating your DataGrid
+title: DataGrid Keyboard Navigation
 author: [admin]
 ---
 
