@@ -4,6 +4,8 @@ import { getCellNode, getComputedStyleProperty } from '../../../testUtils';
 
 export default test.describe.parallel('groupBy.column.style', () => {
   test('should correctly apply styles', async ({ page }) => {
+    await page.waitForInfinite();
+
     const node1 = await getCellNode(
       { columnId: 'group-by-country', rowIndex: 0 },
       { page },

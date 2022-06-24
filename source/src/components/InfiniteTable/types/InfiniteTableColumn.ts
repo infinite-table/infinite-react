@@ -344,8 +344,8 @@ type InfiniteTableComputedColumnBase<T> = {
   computedDataType: string;
   computedWidth: number;
   computedFlex: number | null;
-  computedMinWidth: number | null;
-  computedMaxWidth: number | null;
+  computedMinWidth: number;
+  computedMaxWidth: number;
   computedOffset: number;
   computedPinningOffset: number;
   computedAbsoluteOffset: number;

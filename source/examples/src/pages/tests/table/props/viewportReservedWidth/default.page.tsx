@@ -82,7 +82,6 @@ export default () => {
             }}
             columnMinWidth={50}
             onColumnSizingChange={(columnSizing) => {
-              console.log(columnSizing);
               onColumnSizingChange(columnSizing);
             }}
             viewportReservedWidth={reservedWidth}

@@ -82,8 +82,8 @@ export default test.describe.parallel('Pivot', () => {
 
     expect(columnGroupIds).toEqual([
       'backend,salary:backend/yes,age:backend/yes',
-      'frontend,salary:frontend/no,age:frontend/no',
       'backend/yes,salary:backend/yes,age:backend/yes',
+      'frontend,salary:frontend/no,age:frontend/no',
       'frontend/no,salary:frontend/no,age:frontend/no',
     ]);
 
@@ -109,9 +109,9 @@ export default test.describe.parallel('Pivot', () => {
 
     expect(columnGroupIds).toEqual([
       'backend,salary:backend/yes,age:backend/yes',
+      'backend/yes,salary:backend/yes,age:backend/yes',
       'total:backend,total:salary:backend,total:age:backend',
       'frontend,salary:frontend/no,age:frontend/no',
-      'backend/yes,salary:backend/yes,age:backend/yes',
       'frontend/no,salary:frontend/no,age:frontend/no',
       'total:frontend,total:salary:frontend,total:age:frontend',
     ]);

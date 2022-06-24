@@ -27,7 +27,8 @@ function InfiniteTableHeaderFn<T>(
   props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
 ) {
   const {
-    brain,
+    bodyBrain,
+    headerBrain: brain,
     columns,
     style,
     className,
@@ -109,6 +110,8 @@ function InfiniteTableHeaderFn<T>(
 
         return (
           <InfiniteTableHeaderGroup
+            bodyBrain={bodyBrain}
+            columnGroupsMaxDepth={columnGroupsMaxDepth}
             domRef={domRef}
             columns={columns}
             width={widthWithColspan}
@@ -131,8 +134,7 @@ function InfiniteTableHeaderFn<T>(
     },
 
     // leave columnHeaderHeight here, as it's needed even
-    // though it's not directly used inside the fn
-    // but it can change - eg, when the corresponding CSS variable  changes
+    // since it can change - eg, when the corresponding CSS variable changes
     // do it needs to trigger a re-render
     [
       headerOptions,
@@ -147,6 +149,7 @@ function InfiniteTableHeaderFn<T>(
   return (
     <div {...domProps}>
       <RawTable
+        name="header"
         renderCell={renderCell}
         brain={headerBrain}
         cellHoverClassNames={[]}

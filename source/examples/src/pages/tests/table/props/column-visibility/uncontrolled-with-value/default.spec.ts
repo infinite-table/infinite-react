@@ -3,7 +3,7 @@ import { test, expect } from '@testing';
 
 import {
   getHeaderColumnIds,
-  getHeaderColumnCells,
+  getColumnOffsetsFromDOM,
 } from '../../../../testUtils';
 
 export default test.describe.parallel('Column visibility uncontrolled', () => {
@@ -51,15 +51,7 @@ export default test.describe.parallel('Column visibility uncontrolled', () => {
 
     expect(colIds).toEqual(['id', 'make', 'model', 'price', 'year']);
 
-    const cells = await getHeaderColumnCells({ page });
-
-    const transforms = await Promise.all(
-      cells.map(async (cell) =>
-        cell.evaluate((node) =>
-          parseInt(node.style.transform.split('translate3d(')[1]),
-        ),
-      ),
-    );
+    const transforms = await getColumnOffsetsFromDOM({ page });
 
     expect(transforms).toEqual([0, 100, 200, 300, 400]);
   });

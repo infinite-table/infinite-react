@@ -10,10 +10,22 @@ export const InternalVars = createThemeContract({
   currentColumnWidth: null,
   currentColumnTransformX: null,
   currentColumnTransformY: null,
-  activeCellWidth: null,
-  activeCellColumnTransformX: null,
-  activeCellColumnTransformY: null,
-  activeRowHeight: null,
+
+  activeCellRowOffset: null,
+  activeCellRowHeight: null,
+
+  activeCellOffsetX: null,
+  activeCellOffsetY: null,
+
+  scrollLeftForActiveCell: null,
+  scrollTopForActiveCell: null,
+
+  // this will be set to `${columnWidthAtIndex}-${the index of the column on which the active cell is}`
+  activeCellColWidth: null,
+
+  // this will be set to `${columnOffsetAtIndex}-${the index of the column on which the active cell is}`
+  activeCellColOffset: null,
+
   columnWidthAtIndex: null,
   columnOffsetAtIndex: null,
 });
@@ -324,7 +336,7 @@ const LoadMaskVars = {
 
 const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '20px',
-  [ThemeVars.components.HeaderCell.resizeHandleWidth]: '4px',
+  [ThemeVars.components.HeaderCell.resizeHandleWidth]: '2px',
   [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]: '#6bff6b',
   [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
     ThemeVars.color.error,

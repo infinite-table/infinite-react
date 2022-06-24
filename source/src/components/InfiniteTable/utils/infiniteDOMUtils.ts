@@ -87,3 +87,10 @@ export function setInfiniteColumnOffset(
     node,
   );
 }
+
+export function getCSSVarNameForColWidth(colIndex: number) {
+  return `${columnWidthAtIndex}-${colIndex}`;
+}
+export function getCSSVarNameForColOffset(colIndex: number) {
+  return `${columnOffsetAtIndex}-${colIndex}`;
+}

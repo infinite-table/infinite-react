@@ -8,11 +8,18 @@ import {
   InfiniteClsShiftingColumns,
 } from '../InfiniteCls.css';
 import { InternalVars } from '../theme.css';
+import {
+  getCSSVarNameForColOffset,
+  getCSSVarNameForColWidth,
+} from '../utils/infiniteDOMUtils';
 import { rafFn } from '../utils/rafFn';
 import { useInfiniteTable } from './useInfiniteTable';
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+const activeCellColWidth = stripVar(InternalVars.activeCellColWidth);
+const activeCellColOffset = stripVar(InternalVars.activeCellColOffset);
+
 export function useDOMProps<T>(
   initialDOMProps?: React.HTMLProps<HTMLDivElement>,
 ) {
@@ -26,6 +33,7 @@ export function useDOMProps<T>(
     onFocusWithin,
     onSelfFocus,
     onSelfBlur,
+    activeCellIndex,
   } = componentState;
   const {
     computedPinnedStartColumnsWidth,
@@ -44,6 +52,17 @@ export function useDOMProps<T>(
     },
     {},
   );
+
+  if (activeCellIndex != null) {
+    //@ts-ignore
+    cssVars[activeCellColWidth] = `var(${getCSSVarNameForColWidth(
+      activeCellIndex[1],
+    )})`;
+    //@ts-ignore
+    cssVars[activeCellColOffset] = `var(${getCSSVarNameForColOffset(
+      activeCellIndex[1],
+    )})`;
+  }
 
   const setFocused = rafFn((focused: boolean) => {
     componentActions.focused = focused;

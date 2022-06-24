@@ -129,17 +129,17 @@ export class MatrixBrain extends Logger {
 
   private onScrollFns: OnScrollFn[] = [];
   // private onTotalSizeChangeFns: OnSizeChangeFn[] = [];
-  private onRenderRangeChangeFns: FnOnRenderRangeChange[] = [];
+  private onRenderRangeChangeFns: Set<FnOnRenderRangeChange> = new Set();
 
-  private onVerticalRenderRangeChangeFns: FnOnDirectionalRenderRangeChange[] =
-    [];
-  private onHorizontalRenderRangeChangeFns: FnOnDirectionalRenderRangeChange[] =
-    [];
+  private onVerticalRenderRangeChangeFns: Set<FnOnDirectionalRenderRangeChange> =
+    new Set();
+  private onHorizontalRenderRangeChangeFns: Set<FnOnDirectionalRenderRangeChange> =
+    new Set();
 
   private onDestroyFns: VoidFn[] = [];
   private destroyed = false;
-  private onRenderCountChangeFns: FnOnRenderCountChange[] = [];
-  private onAvailableSizeChangeFns: OnAvailableSizeChange[] = [];
+  private onRenderCountChangeFns: Set<FnOnRenderCountChange> = new Set();
+  private onAvailableSizeChangeFns: Set<OnAvailableSizeChange> = new Set();
   private onScrollStartFns: VoidFunction[] = [];
   private onScrollStopFns: FnOnScrollStop[] = [];
 
@@ -344,8 +344,8 @@ export class MatrixBrain extends Logger {
     width = width ?? this.width;
     height = height ?? this.height;
 
-    const widthSame = size.width === this.width;
-    const heightSame = size.height === this.height;
+    const widthSame = width === this.width;
+    const heightSame = height === this.height;
 
     if (widthSame && heightSame) {
       return;
@@ -476,14 +476,20 @@ export class MatrixBrain extends Logger {
 
     const range = this.getAvailableSize();
 
-    for (let i = 0, len = fns.length; i < len; i++) {
+    fns.forEach((fn) => {
       raf(() => {
         if (this.destroyed) {
           return;
         }
-        fns[i](range);
+        // #check-for-presence - we need to check the fn is still in the collection,
+        // as it might have been removed between the time of fns.forEach and the time
+        // it took the raf to trigger, so we only need to call fns that are still present in the collection
+        // this is an important detail, which can cause mis-renderings if not adressed properly (like this)
+        if (fns.has(fn)) {
+          fn(range);
+        }
       });
-    }
+    });
   };
 
   private notifyRenderRangeChange = () => {
@@ -494,14 +500,17 @@ export class MatrixBrain extends Logger {
 
     const range = this.getRenderRange();
 
-    for (let i = 0, len = fns.length; i < len; i++) {
+    fns.forEach((fn) => {
       raf(() => {
         if (this.destroyed) {
           return;
         }
-        fns[i](range);
+        // #check-for-presence - see above note
+        if (fns.has(fn)) {
+          fn(range);
+        }
       });
-    }
+    });
   };
   private notifyVerticalRenderRangeChange = () => {
     if (this.destroyed) {
@@ -511,14 +520,17 @@ export class MatrixBrain extends Logger {
 
     const range = this.verticalRenderRange;
 
-    for (let i = 0, len = fns.length; i < len; i++) {
+    fns.forEach((fn) => {
       raf(() => {
         if (this.destroyed) {
           return;
         }
-        fns[i]([range.startIndex, range.endIndex]);
+        // #check-for-presence - see above note
+        if (fns.has(fn)) {
+          fn([range.startIndex, range.endIndex]);
+        }
       });
-    }
+    });
   };
   private notifyHorizontalRenderRangeChange = () => {
     if (this.destroyed) {
@@ -528,14 +540,17 @@ export class MatrixBrain extends Logger {
 
     const range = this.horizontalRenderRange;
 
-    for (let i = 0, len = fns.length; i < len; i++) {
+    fns.forEach((fn) => {
       raf(() => {
         if (this.destroyed) {
           return;
         }
-        fns[i]([range.startIndex, range.endIndex]);
+        // #check-for-presence - see above note
+        if (fns.has(fn)) {
+          fn([range.startIndex, range.endIndex]);
+        }
       });
-    }
+    });
   };
 
   private notifyScrollChange() {
@@ -824,14 +839,18 @@ export class MatrixBrain extends Logger {
     };
 
     const fns = this.onRenderCountChangeFns;
-    for (let i = 0, len = fns.length; i < len; i++) {
+
+    fns.forEach((fn) => {
       raf(() => {
         if (this.destroyed) {
           return;
         }
-        fns[i](renderCount);
+        // #check-for-presence - see above note
+        if (fns.has(fn)) {
+          fn(renderCount);
+        }
       });
-    }
+    });
   }
 
   public updateFixedCells = (config: {
@@ -1475,45 +1494,37 @@ export class MatrixBrain extends Logger {
   };
 
   onRenderRangeChange = (fn: FnOnRenderRangeChange) => {
-    this.onRenderRangeChangeFns.push(fn);
+    this.onRenderRangeChangeFns.add(fn);
     return () => {
-      this.onRenderRangeChangeFns = this.onRenderRangeChangeFns.filter(
-        (f) => f !== fn,
-      );
+      this.onRenderRangeChangeFns.delete(fn);
     };
   };
   onVerticalRenderRangeChange = (fn: FnOnDirectionalRenderRangeChange) => {
-    this.onVerticalRenderRangeChangeFns.push(fn);
+    this.onVerticalRenderRangeChangeFns.add(fn);
     return () => {
-      this.onVerticalRenderRangeChangeFns =
-        this.onVerticalRenderRangeChangeFns.filter((f) => f !== fn);
+      this.onVerticalRenderRangeChangeFns.delete(fn);
     };
   };
   onHorizontalRenderRangeChange = (fn: FnOnDirectionalRenderRangeChange) => {
-    this.onHorizontalRenderRangeChangeFns.push(fn);
+    this.onHorizontalRenderRangeChangeFns.add(fn);
     return () => {
-      this.onHorizontalRenderRangeChangeFns =
-        this.onHorizontalRenderRangeChangeFns.filter((f) => f !== fn);
+      this.onHorizontalRenderRangeChangeFns.delete(fn);
     };
   };
 
   onRenderCountChange = (fn: FnOnRenderCountChange) => {
-    this.onRenderCountChangeFns.push(fn);
+    this.onRenderCountChangeFns.add(fn);
 
     return () => {
-      this.onRenderCountChangeFns = this.onRenderCountChangeFns.filter(
-        (f) => f !== fn,
-      );
+      this.onRenderCountChangeFns.delete(fn);
     };
   };
 
   onAvailableSizeChange = (fn: OnAvailableSizeChange) => {
-    this.onAvailableSizeChangeFns.push(fn);
+    this.onAvailableSizeChangeFns.add(fn);
 
     return () => {
-      this.onAvailableSizeChangeFns = this.onAvailableSizeChangeFns.filter(
-        (f) => f !== fn,
-      );
+      this.onAvailableSizeChangeFns.delete(fn);
     };
   };
 

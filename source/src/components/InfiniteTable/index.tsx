@@ -205,7 +205,11 @@ export const InfiniteTableComponent = React.memo(
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
         {header ? (
-          <TableHeaderWrapper brain={headerBrain} scrollbars={scrollbars} />
+          <TableHeaderWrapper
+            bodyBrain={brain}
+            headerBrain={headerBrain}
+            scrollbars={scrollbars}
+          />
         ) : null}
 
         <InfiniteTableBody>

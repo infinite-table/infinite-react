@@ -158,10 +158,25 @@ export function handleCellNavigation<T>(options: NavigationOptions<T>) {
   return true;
 }
 
+const validKeys: Record<string, boolean> = {
+  ArrowUp: true,
+  ArrowDown: true,
+  ArrowLeft: true,
+  ArrowRight: true,
+  PageUp: true,
+  PageDown: true,
+  Home: true,
+  End: true,
+};
+
 export function handleKeyboardNavigation<T>(options: NavigationOptions<T>) {
   const { getState } = options;
   const state = getState();
   const { activeRowIndex, activeCellIndex, keyboardNavigation } = state;
+
+  if (!validKeys[options.key]) {
+    return false;
+  }
 
   if (activeRowIndex != null && keyboardNavigation === 'row') {
     return handleRowNavigation(options);

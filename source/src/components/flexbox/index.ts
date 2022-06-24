@@ -3,10 +3,10 @@ import { InfiniteTablePropColumnSizing } from '../InfiniteTable/types/InfiniteTa
 import { RequireAtLeastOne } from '../InfiniteTable/types/Utility';
 
 type FlexItem = {
-  size?: number;
-  flex?: number;
-  maxSize?: number;
-  minSize?: number;
+  size?: number | null;
+  flex?: number | null;
+  maxSize?: number | null;
+  minSize?: number | null;
 };
 
 type FlexItemWithSizeOrFlex = RequireAtLeastOne<FlexItem, 'size' | 'flex'>;
@@ -67,15 +67,17 @@ export const computeFlex = (params: FlexComputeParams): FlexComputeResult => {
       }
     }
 
-    if (item.size == null && item.flex == null) {
+    const itemFlex = item.flex == 0 ? null : item.flex;
+
+    if (item.size == null && itemFlex == null) {
       throw `Items must specify either a size or a flex property. Item at index ${i} doesn't have either of those.`;
     }
 
-    if (item.flex != null) {
+    if (itemFlex != null) {
       totalFlexCount += 1;
     }
 
-    totalFlex += item.flex ?? 0;
+    totalFlex += itemFlex ?? 0;
     totalFixedSize += item.size ?? 0;
   });
 
@@ -225,8 +227,26 @@ type FlexComputeResizeParams = {
   shareSpaceOnResize: boolean;
 };
 
+type FlexComputeGroupResizeParams = Omit<
+  FlexComputeResizeParams,
+  'shareSpaceOnResize' | 'items'
+> & {
+  columnGroupSize: number;
+  items: (FlexComputeResizeItem & { resizable: boolean })[];
+};
+
 export type FlexComputeResizeResult = {
   reservedWidth: number;
+  adjustedDiff: number;
+  maxReached: boolean;
+  minReached: boolean;
+  constrained: boolean;
+  columnSizing: InfiniteTablePropColumnSizing;
+};
+
+export type FlexComputeGroupResizeResult = {
+  reservedWidth: number;
+  adjustedDiffs: number[];
   adjustedDiff: number;
   maxReached: boolean;
   minReached: boolean;
@@ -266,17 +286,6 @@ export const computeResize = (
   }
 
   let dragHandleOffset = params.dragHandleOffset;
-
-  // const totalWidth = params.items.reduce((acc, item) => {
-  //   return acc + item.computedWidth;
-  // }, 0);
-
-  // if (!params.shareSpaceOnResize && reservedWidth > 0) {
-  //   const maxUsableSize = availableSize - reservedWidth;
-  //   if (totalWidth + dragHandleOffset > maxUsableSize) {
-  //     dragHandleOffset = maxUsableSize - totalWidth;
-  //   }
-  // }
 
   const firstIndex = params.dragHandlePositionAfter;
   const secondIndex = params.dragHandlePositionAfter + 1;
@@ -415,5 +424,133 @@ export const computeResize = (
     minReached,
     maxReached,
     constrained: minReached || maxReached,
+  };
+};
+
+function sum(a: number, b: number) {
+  return a + b;
+}
+
+function cloneColumnSizing(columnSizing: InfiniteTablePropColumnSizing) {
+  const newColumnSizing: InfiniteTablePropColumnSizing = Object.keys(
+    columnSizing,
+  ).reduce((acc, key) => {
+    acc[key] = { ...columnSizing[key] };
+    return acc;
+  }, {} as InfiniteTablePropColumnSizing);
+
+  return newColumnSizing;
+}
+export const computeGroupResize = (
+  params: FlexComputeGroupResizeParams,
+): FlexComputeGroupResizeResult => {
+  const { availableSize, reservedWidth = 0 } = params;
+
+  const columnSizing: InfiniteTablePropColumnSizing = Object.keys(
+    params.columnSizing,
+  ).reduce((acc, key) => {
+    acc[key] = { ...params.columnSizing[key] };
+    return acc;
+  }, {} as InfiniteTablePropColumnSizing);
+
+  if (availableSize < 0) {
+    throw 'The provided availableSize cannot be negative!';
+  }
+
+  let dragHandleOffset = params.dragHandleOffset;
+
+  const beforeIndexes = [...new Array(params.columnGroupSize)]
+    .map((_, index) => params.dragHandlePositionAfter - index)
+    .reverse();
+
+  const beforeItems = beforeIndexes.map((i) => params.items[i]);
+
+  // the computed width holds the actual size
+  const beforeSizes = beforeItems.map((item) => item.computedWidth);
+
+  // even though if flex is present, we use it to determine which property to put in the result
+  const beforePropertiesToAdjust = beforeItems.map((item) =>
+    item.computedFlex ? 'flex' : 'width',
+  );
+
+  let unresizableWidth = 0;
+  const { computedSizes } = computeFlex({
+    items: beforeItems.map((item) => {
+      if (item.resizable === false) {
+        unresizableWidth += item.computedWidth;
+      }
+      return {
+        flex: item.resizable ? item.computedWidth : null,
+        size: 0,
+      };
+    }),
+    availableSize: Math.max(
+      beforeSizes.reduce(sum, 0) + dragHandleOffset - unresizableWidth,
+      0,
+    ),
+  });
+
+  const diffsForEachItem = beforeItems.map((item, index) => {
+    return computedSizes[index] - item.computedWidth;
+  });
+
+  let groupMinReached = true;
+  let groupMaxReached = true;
+  let groupConstrained = true;
+
+  const adjustedDiffs: number[] = [];
+
+  diffsForEachItem.forEach((diff, i) => {
+    const item = beforeItems[i];
+
+    if (!item.resizable) {
+      adjustedDiffs.push(0);
+      return;
+    }
+    const propertyToAdjust = beforePropertiesToAdjust[i];
+    const itemSize = beforeSizes[i];
+
+    const currentColumnSizing = cloneColumnSizing(columnSizing);
+    const { maxReached, minReached, constrained, adjustedDiff } = computeResize(
+      {
+        availableSize: params.availableSize,
+        reservedWidth: params.reservedWidth,
+        dragHandleOffset: diff,
+        // doesn't matter for share space on resize: false
+        dragHandlePositionAfter: beforeIndexes[i],
+        shareSpaceOnResize: false,
+        items: params.items,
+        columnSizing: currentColumnSizing,
+      },
+    );
+
+    columnSizing[item.id] = {
+      ...currentColumnSizing[item.id],
+      [propertyToAdjust]: itemSize + adjustedDiff,
+    };
+
+    adjustedDiffs.push(adjustedDiff);
+
+    if (!maxReached) {
+      groupMaxReached = false;
+    }
+    if (!minReached) {
+      groupMinReached = false;
+    }
+    if (!constrained) {
+      groupConstrained = false;
+    }
+  });
+
+  const adjustedDiff = adjustedDiffs.reduce(sum, 0);
+
+  return {
+    minReached: groupMinReached,
+    maxReached: groupMaxReached,
+    constrained: groupConstrained,
+    adjustedDiffs,
+    adjustedDiff,
+    columnSizing,
+    reservedWidth: reservedWidth - adjustedDiff,
   };
 };

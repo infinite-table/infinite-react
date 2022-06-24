@@ -26,9 +26,25 @@ export const resizeColumnById = async (
   diff: number,
   { page }: { page: Page },
 ) => {
-  const country = getHeaderCellByColumnId(columnId, { page });
+  const colHeaderCell = getHeaderCellByColumnId(columnId, { page });
 
-  const handle = await country.locator('.InfiniteHeaderCell_ResizeHandle');
+  const handle = await colHeaderCell.locator(
+    '.InfiniteHeaderCell_ResizeHandle',
+  );
+
+  await resizeHandle(diff, handle, page);
+};
+
+export const resizeColumnGroupById = async (
+  columnGroupId: string,
+  diff: number,
+  { page }: { page: Page },
+) => {
+  const groupCell = page.locator(
+    `.InfiniteHeader [data-group-id^="${columnGroupId}"]`,
+  );
+
+  const handle = await groupCell.locator('.InfiniteHeaderCell_ResizeHandle');
 
   await resizeHandle(diff, handle, page);
 };
@@ -111,6 +127,31 @@ export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
   return result;
 };
 
+export const getColumnOffsetsFromDOM = async ({ page }: { page: Page }) => {
+  const cells = await getHeaderColumnCells({ page });
+
+  const offsets = await Promise.all(
+    cells.map(async (cell) =>
+      cell.evaluate((node) => {
+        const variableForXTransform = node.style.transform
+          .split('translate3d(')[1]
+          .split(',')[0];
+
+        function stripVar(cssVariableWithVarString: string) {
+          return cssVariableWithVarString.slice(4, -1);
+        }
+        return parseInt(
+          getComputedStyle(node).getPropertyValue(
+            stripVar(variableForXTransform),
+          ),
+        );
+      }),
+    ),
+  );
+
+  return offsets;
+};
+
 export const getColumnCells = async (
   columnName: string,
   { page }: { page: Page },
@@ -151,7 +192,7 @@ export const getCellText = async (
 export const getHeaderColumnIds = async ({ page }: { page: Page }) => {
   const cells = await getHeaderColumnCells({ page });
 
-  const result = Promise.all(
+  const result = await Promise.all(
     cells.map((cell: any) =>
       cell.evaluate((node: any) => node.getAttribute('data-column-id')),
     ),

@@ -14,6 +14,12 @@ export const ResizeHandleCls = style(
     {
       transform: 'translateX(50%)',
       width: ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth,
+      overflow: 'hidden',
+      selectors: {
+        '&:hover': {
+          overflow: 'visible',
+        },
+      },
     },
   ],
 

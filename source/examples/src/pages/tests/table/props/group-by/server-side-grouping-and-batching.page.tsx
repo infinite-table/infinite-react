@@ -216,4 +216,11 @@ const dataSource: DataSourceData<Developer> = ({
   return fetch(
     process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers30k-sql?` + args,
   ).then((r) => r.json());
+  // .then((res) => {
+  //   return new Promise((resolve) => {
+  //     setTimeout(() => {
+  //       resolve(res);
+  //     }, 10);
+  //   });
+  // });
 };

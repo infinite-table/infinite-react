@@ -6,7 +6,7 @@ export default test.describe.parallel('Detect columns change', () => {
   test('expect columns are correctly set when updated on useEffect', async ({
     page,
   }) => {
-    await page.waitForSelector('[data-column-id]');
+    await page.waitForInfinite();
 
     const colIds = await getHeaderColumnIds({ page });
 

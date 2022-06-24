@@ -12,9 +12,14 @@ const config: PlaywrightTestConfig = {
   use: {
     trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     // video: 'on-first-retry',
+    // video: 'retain-on-failure',
     headless: true,
+
     viewport: { width, height },
     ignoreHTTPSErrors: true,
+    // launchOptions: {
+    //   slowMo: 500000, // uncomment this and also add headless: false, so you can easily debug
+    // },
 
     baseURL: 'http://localhost:3000/',
   },

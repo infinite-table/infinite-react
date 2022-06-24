@@ -86,7 +86,6 @@ function App() {
       <DataSource<Employee> primaryKey="id" data={currentData}>
         <InfiniteTable<Employee>
           domProps={domProps}
-          virtualizeColumns={false}
           columnSizing={columnSizing}
           onColumnSizingChange={setColumnSizing}
           columnMinWidth={50}

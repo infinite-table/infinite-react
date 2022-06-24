@@ -59,6 +59,8 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   public cellHoverClassNames: string[] = [];
 
+  public name: string = '';
+
   private itemDOMElements: (HTMLElement | null)[] = [];
   private itemDOMRefs: RefCallback<HTMLElement>[] = [];
   private updaters: SubscriptionCallback<Renderable>[] = [];
@@ -1015,6 +1017,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (this.scrolling) {
       return;
     }
+    if (__DEV__ && !this.hoverRowUpdatesInProgress) {
+      return;
+    }
     if (this.hoverRowUpdatesInProgress.has(rowIndex)) {
       return;
     }
@@ -1032,6 +1037,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     };
     raf(() => {
       checkHoverClass();
+      if (__DEV__ && !this.hoverRowUpdatesInProgress) {
+        return;
+      }
       this.hoverRowUpdatesInProgress.delete(rowIndex);
     });
   };

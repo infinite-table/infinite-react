@@ -69,6 +69,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
 
   if (__DEV__) {
     (globalThis as any).brain = brain;
+    (globalThis as any).headerBrain = headerBrain;
   }
 
   const { renderer, onRenderUpdater } = createRenderer(brain);

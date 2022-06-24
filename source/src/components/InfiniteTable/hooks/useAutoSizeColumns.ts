@@ -75,13 +75,22 @@ function getColumnContentMaxWidths(
         cell.childNodes.forEach((child) => {
           if (child !== content) {
             const el = child as HTMLElement;
-            otherElementsLength += Math.max(
+            let elWidth = Math.max(
               el.offsetWidth,
               parseInt(el.style.width, 10),
             );
-            const style = getGlobal().getComputedStyle(el);
-            otherElementsLength +=
-              parseInt(style.marginLeft, 10) + parseInt(style.marginRight, 10);
+            if (isNaN(elWidth)) {
+              elWidth = 0;
+            }
+
+            otherElementsLength += elWidth;
+
+            if (elWidth > 0) {
+              const style = getGlobal().getComputedStyle(el);
+              otherElementsLength +=
+                parseInt(style.marginLeft, 10) +
+                parseInt(style.marginRight, 10);
+            }
           }
         });
         measuredWidth += otherElementsLength;

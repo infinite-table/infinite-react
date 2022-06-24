@@ -56,7 +56,7 @@ const groupBy: DataSourceGroupBy<Developer>[] = [{ field: 'country' }];
 export default function PivotPerfExample() {
   const domProps = {
     style: {
-      height: '80vh',
+      height: 800,
       width: 2500,
     },
   };

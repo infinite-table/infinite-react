@@ -3,7 +3,7 @@ import { FlexComputeResizeResult } from '../../../../flexbox';
 import { internalProps } from '../../../internalProps';
 import { InfiniteTableComputedColumn } from '../../../types';
 
-import { getResizer } from './resizer';
+import { getColumnResizer } from './columnResizer';
 import {
   ResizeHandleCls,
   ResizeHandleDraggerClsRecipe,
@@ -20,6 +20,7 @@ type ResizeHandleProps<T> = {
     diff: number;
     shareSpaceOnResize: boolean;
   }) => FlexComputeResizeResult;
+
   onResize: ({
     diff,
     shareSpaceOnResize,
@@ -30,6 +31,10 @@ type ResizeHandleProps<T> = {
 };
 
 const { rootClassName } = internalProps;
+
+/**
+ * For the resize handle for column groups, see GroupResizeHandle.tsx
+ */
 
 export const InfiniteTableHeaderCellResizeHandleCls = `${rootClassName}HeaderCell_ResizeHandle`;
 
@@ -49,7 +54,7 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
 
     target.setPointerCapture(pointerId);
 
-    const resizer = getResizer(props.columnIndex, {
+    const resizer = getColumnResizer(props.columnIndex, {
       columns: props.columns,
       shareSpaceOnResize,
       domRef,

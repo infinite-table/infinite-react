@@ -39,11 +39,16 @@ export default test.describe.parallel(
       await page.waitForResponse(condition);
 
       expect(responses).toEqual([
-        'Argentina',
-        'Australia',
-        'Brazil',
-        'Canada',
-        'China',
+        // 'Argentina',
+        // 'Australia',
+        // 'Brazil',
+        // 'Canada',
+        // 'China',
+        'France',
+        'Germany',
+        'India',
+        'Indonesia',
+        'Italy',
         '-',
       ]);
 
@@ -64,17 +69,23 @@ export default test.describe.parallel(
         'Italy',
       ]);
       expect(responses).toEqual([
-        'Argentina',
-        'Australia',
-        'Brazil',
-        'Canada',
-        'China',
-        '-',
+        // 'Argentina',
+        // 'Australia',
+        // 'Brazil',
+        // 'Canada',
+        // 'China',
+        // '-',
         'France',
         'Germany',
         'India',
         'Indonesia',
         'Italy',
+        '-',
+        'Japan',
+        'Mexico',
+        'Saudi Arabia',
+        'South Africa',
+        'Spain',
         '-',
       ]);
     });

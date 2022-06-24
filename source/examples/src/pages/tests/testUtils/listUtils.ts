@@ -24,10 +24,9 @@ export const sortElements = async (
   const indexes: number[] = await Promise.all(
     elements.map(
       (el: ElementHandle<HTMLElement | SVGElement>) =>
-        el.evaluate(
-          (el, type) => Number(el.getAttribute(`data-${type}-index`)),
-          type,
-        ),
+        el.evaluate((el, type) => {
+          return Number(el.getAttribute(`data-${type}-index`));
+        }, type),
       // el.evaluate((el) => el.outerHTML),
     ),
   );

@@ -11,11 +11,12 @@ import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
 
 export type TableHeaderWrapperProps = {
-  brain: MatrixBrain;
+  headerBrain: MatrixBrain;
+  bodyBrain: MatrixBrain;
   scrollbars: Scrollbars;
 };
 export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
-  const { brain, scrollbars } = props;
+  const { headerBrain, bodyBrain, scrollbars } = props;
 
   const tableContextValue = useInfiniteTable<T>();
 
@@ -130,7 +131,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   );
 
   useMatrixBrain(
-    brain,
+    headerBrain,
     {
       colWidth: columnSize,
       rowHeight,
@@ -149,7 +150,8 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   const header = (
     <InfiniteTableHeader
       columns={computedVisibleColumns}
-      brain={brain}
+      headerBrain={headerBrain}
+      bodyBrain={bodyBrain}
       columnHeaderHeight={height}
       columnGroupsMaxDepth={columnGroupsMaxDepth}
       columnAndGroupTreeInfo={columnAndGroupTreeInfo}

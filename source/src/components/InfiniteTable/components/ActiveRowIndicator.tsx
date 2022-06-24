@@ -14,6 +14,9 @@ type ActiveRowIndicatorProps = {
   activeRowIndex?: number | null;
   brain: MatrixBrain;
 };
+
+// TODO update Active Row indicator to leverage CSS variables more, see ActiveCellIndicator
+
 const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
   const { brain } = props;
 
@@ -68,7 +71,7 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
 
   return (
     // #correct-scroll-size this wrapper is here in order to make the indicator not take up space in the scroll container - to reproduce: remove this and click on a row, you will see that if you scroll at the bottom, there is extra space
-    <div className={ActiveIndicatorWrapperCls}>
+    <div className={ActiveIndicatorWrapperCls} data-name="active-row">
       <div
         ref={domRef}
         data-name="active-row-indicator"

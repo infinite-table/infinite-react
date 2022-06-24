@@ -9,7 +9,6 @@ import {
 import {
   setInfiniteColumnOffset,
   setInfiniteColumnWidth,
-  setInfiniteVarOnRoot,
 } from '../../utils/infiniteDOMUtils';
 import { ResizeHandle } from './ResizeHandle';
 
@@ -32,13 +31,8 @@ export function useColumnResizeHandle<T>(
       shareSpaceOnResize: boolean;
     }) => {
       const state = getState();
-      const {
-        columnSizing,
-        viewportReservedWidth,
-        bodySize,
-        activeCellIndex,
-        brain,
-      } = state;
+      const { columnSizing, viewportReservedWidth, bodySize, activeCellIndex } =
+        state;
 
       const columns = getComputed().computedVisibleColumns;
 
@@ -57,7 +51,7 @@ export function useColumnResizeHandle<T>(
       const columnSizingForResize = atLeastOneFlex
         ? {
             // #advancedcolumnresizing-important
-            // yep, this order is correct - first current columnSizing from state
+            // yep, this order is correct - first apply current columnSizing from state
             ...columnSizing,
 
             // and then for flex columns, we override with actual computed widths from above
@@ -91,26 +85,12 @@ export function useColumnResizeHandle<T>(
         const currentColumn = columns[column.computedVisibleIndex];
 
         if (activeCellIndex[1] === currentColumn.computedVisibleIndex) {
-          setInfiniteVarOnRoot(
-            'activeCellWidth',
-            `${currentColumn.computedWidth + result.adjustedDiff}px`,
-            domRef.current,
-          );
           setInfiniteColumnWidth(
             currentColumn.computedVisibleIndex,
             currentColumn.computedWidth + result.adjustedDiff,
             domRef.current,
           );
         } else if (activeColumn) {
-          setInfiniteVarOnRoot(
-            'activeCellColumnTransformX',
-            `${
-              -brain.getScrollPosition().scrollLeft +
-              activeColumn.computedOffset +
-              result.adjustedDiff
-            }px`,
-            domRef.current,
-          );
           setInfiniteColumnOffset(
             activeColumn.computedVisibleIndex,
             activeColumn.computedOffset + result.adjustedDiff,
@@ -123,11 +103,6 @@ export function useColumnResizeHandle<T>(
           activeCellIndex[1] === currentColumn.computedVisibleIndex + 1 &&
           activeColumn
         ) {
-          setInfiniteVarOnRoot(
-            'activeCellWidth',
-            `${activeColumn.computedWidth - result.adjustedDiff}px`,
-            domRef.current,
-          );
           setInfiniteColumnWidth(
             activeColumn.computedVisibleIndex,
             activeColumn.computedWidth - result.adjustedDiff,

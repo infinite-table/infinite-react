@@ -1,13 +1,13 @@
 import { InfiniteTableComputedColumn } from '../..';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
-import { ScrollListener } from '../../../VirtualBrain/ScrollListener';
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 import { ColumnAndGroupTreeInfo } from './buildColumnAndGroupTree';
 
 export type InfiniteTableHeaderProps<T> = {
   repaintId?: string | number;
-  brain: MatrixBrain;
+  headerBrain: MatrixBrain;
+  bodyBrain: MatrixBrain;
   columns: InfiniteTableComputedColumn<T>[];
   columnHeaderHeight: number;
   columnGroupsMaxDepth: number;
@@ -15,18 +15,11 @@ export type InfiniteTableHeaderProps<T> = {
 };
 
 export type InfiniteTableHeaderGroupProps<T> = {
+  bodyBrain: MatrixBrain;
   columns: InfiniteTableComputedColumn<T>[];
   columnGroup: InfiniteTableComputedColumnGroup;
+  columnGroupsMaxDepth: number;
   height: number;
   width: number;
   domRef?: React.RefCallback<HTMLElement>;
-};
-
-export type InfiniteTableHeaderUnvirtualizedProps<T> = Omit<
-  InfiniteTableHeaderProps<T>,
-  'repaintId' | 'brain'
-> & {
-  brain?: MatrixBrain;
-  scrollListener?: ScrollListener;
-  scrollable?: boolean;
 };
