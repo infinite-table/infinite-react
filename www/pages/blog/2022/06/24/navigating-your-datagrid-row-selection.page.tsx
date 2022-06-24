@@ -23,13 +23,11 @@ type Developer = {
 
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
-    'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql`
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
-
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
   country: { field: 'country' },
@@ -47,8 +45,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const domProps = { style: { height: '90vh' } };
-
 export default function KeyboardNavigationForRows() {
   return (
     <>
@@ -56,7 +52,6 @@ export default function KeyboardNavigationForRows() {
         primaryKey="id"
         data={dataSource}>
         <InfiniteTable<Developer>
-          domProps={domProps}
           columns={columns}
           keyboardNavigation="row"
           defaultActiveRowIndex={2}

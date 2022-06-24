@@ -53,7 +53,7 @@ export default function KeyboardNavigationForCells() {
         primaryKey="id"
         data={dataSource}>
         <InfiniteTable<Developer>
-          defaultActiveCellIndex={[2, 2]}
+          defaultActiveCellIndex={[1, 1]}
           columns={columns}
         />
       </DataSource>

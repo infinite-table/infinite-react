@@ -5,9 +5,6 @@ import {
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
-import { useMemo } from 'react';
-import { useState } from 'react';
-import { resolve } from 'node:path/win32';
 
 type Developer = {
   id: number;

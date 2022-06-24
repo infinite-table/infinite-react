@@ -28,13 +28,11 @@ type Developer = {
 
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
-    'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql`
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
-
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
   country: { field: 'country' },
@@ -63,7 +61,7 @@ const defaultColor = `#${rgb.r.toString(
   16
 )}${rgb.g.toString(16)}${rgb.b.toString(16)}`;
 
-export default function KeyboardNavigationForCells() {
+export default function KeyboardNavigationTheming() {
   const [color, setColor] = useState({
     ...rgb,
   });

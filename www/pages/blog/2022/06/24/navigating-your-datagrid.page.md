@@ -30,7 +30,6 @@ Click any cell in the grid and start navigating around using arrow keys.
 
 </Description>
 
-
 ```tsx file=navigating-your-datagrid-keyboard-navigation-initial-example.page.tsx
 ```
 
@@ -39,7 +38,13 @@ Click any cell in the grid and start navigating around using arrow keys.
 
 Another nice feature of keyboard navigation for cells is that you can specify a default active cell - you do so by using `defaultActiveCell=[2,0]` - meaning the cell on row 2 and column 0 should be active initially.
 
-<Sandpack title="Controlled column sizing with maxWidth for column">
+<Sandpack title="Default cell selection">
+
+<Description>
+
+In this example, the cell at position `[1, 1]` (so second row and second column) is selected by default.
+
+</Description>
 
 ```tsx file=navigating-your-datagrid-keyboard-navigation-with-default-active-cell.page.tsx
 ```
@@ -50,11 +55,17 @@ Another nice feature of keyboard navigation for cells is that you can specify a 
 
 Besides cell navigation, row navigation is also available. Switch to row navigation mode by specifying `keyboardNavigation="row"` - the rest is similar: user clicks a row, which becomes the active row. Using arrow keys, page up/down and home/end works as expected.
 
-Having a default row set as active is also possible, via `defaultActiveRowIndex={2}` - this means the row at index `2` should be initially rendered as active.
+Having a default row set as active is also possible, via  <PropLink name="defaultActiveRowIndex">defaultActiveRowIndex={2}</PropLink> - this means the row at index `2` should be initially rendered as active.
 
-<Sandpack title="Controlled column sizing with maxWidth for column">
+<Sandpack title="Keyboard navigation for rows with default selection">
 
-```tsx file=navigating-your-datagrid-third-example.page.tsx
+<Description>
+
+In this example, keyboard navigation for rows is enabled, with row at index 2 being active by default.
+
+</Description>
+
+```tsx file=navigating-your-datagrid-row-selection.page.tsx
 ```
 
 </Sandpack>
@@ -63,21 +74,21 @@ Having a default row set as active is also possible, via `defaultActiveRowIndex=
 
 Both cell and row navigation can be used as React uncontrolled and controlled behaviors.
 
-In the controlled version, you have to use `onActiveCellIndexChange` (or `onActiveRowIndexChange`) to respond to navigation changes and update the corresponding index.
+In the controlled version, you have to use <PropLink name="onActiveCellIndexChange" /> (or <PropLink name="onActiveRowIndexChange"/>) to respond to navigation changes and update the corresponding index.
 
 
 The example below demoes controlled cell navigation - initially starting with no active cell, and it updates the active cell as a result to user changes. This means you as a developer are responsible for updating the value when needed, as you no longer wish to leave this update to happen internally in the table. This makes controlled behavior excellent for advanced use-cases when you want to implement custom navigation logic.
 
-<Sandpack title="Controlled column sizing with maxWidth for column">
+<Sandpack title="Controlled cell navigation">
 
-```tsx file=navigating-your-datagrid-fourth-example.page.tsx
+```tsx file=navigating-your-datagrid-controlled-cell-navigation.page.tsx
 ```
 
 </Sandpack>
 
 ## Turning off keyboard navigation
 
-Disabling keyboard navigation is done by specifying `keyboardNavigation=false` - this ensures the user can no longer interact with the table rows or cells via the keyboard.
+Disabling keyboard navigation is done by specifying <PropLink name="keyboardNavigation">keyboardNavigation=false</PropLink> - this ensures the user can no longer interact with the table rows or cells via the keyboard.
 
 ## Theming
 
@@ -102,9 +113,10 @@ To summarize, use:
 to control border and background color of the active cell highlight element.
 
 See below a demo on how easy it is to customize the colors for the active element highlighter
-<Sandpack title="Controlled column sizing with maxWidth for column">
 
-```tsx file=navigating-your-datagrid-fifth-example.page.tsx
+<Sandpack title="Theming keyboard navigation">
+
+```tsx file=navigating-your-datagrid-theming.page.tsx
 ```
 
 </Sandpack>
