@@ -5,6 +5,7 @@ import { getCellText } from '../../../testUtils';
 
 export default test.describe.parallel('Table', () => {
   test('cell content is there', async ({ page }) => {
+    await page.waitForInfinite();
     const data = (await page.evaluate(
       () => (window as any).carsales,
     )) as CarSale[];

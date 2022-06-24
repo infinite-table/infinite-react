@@ -182,7 +182,7 @@ export const getCellText = async (
   },
   { page }: { page: Page },
 ) => {
-  const cell = await page.$(
+  const cell = page.locator(
     `[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
   );
 
