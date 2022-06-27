@@ -900,6 +900,39 @@ When any of the properties defined in a column type are also defined in a column
 </Prop>
 
 
+<Prop name="columnTypes.defaultFlex" type="number" >
+
+> Specifies a default flex value for the column type. Will be overriden in any column that already specifies a `defaultFlex` property.
+
+See related <PropLink name="columnTypes.defaultWidth" />, <PropLink name="columns.defaultFlex" /> and <PropLink name="columns.defaultWidth" />
+
+</Prop>
+
+<Prop name="columnTypes.defaultWidth" type="number" >
+
+> Specifies a default fixed width for the column type. Will be overriden in any column that already specifies a `defaultWidth` property.
+
+See related <PropLink name="columnTypes.defaultFlex" />, <PropLink name="columns.defaultWidth" /> and <PropLink name="columns.defaultFlex" />
+
+</Prop>
+
+
+<Prop name="columnTypes.maxWidth" type="number" >
+
+> Specifies a default maximum width for the column type. Will be overriden in any column that already specifies a `maxWidth` property.
+
+See related <PropLink name="columnTypes.maxWidth" /> and <PropLink name="columns.maxWidth" />
+
+</Prop>
+
+<Prop name="columnTypes.minWidth" type="number" >
+
+> Specifies a default minimum width for the column type. Will be overriden in any column that already specifies a `minWidth` property.
+
+See related <PropLink name="columnTypes.maxWidth" /> and <PropLink name="columns.minWidth" />
+
+</Prop>
+
 <Prop name="defaultActiveCellIndex" type="[number,number]">
 
 > Specifies the active cell for keyboard navigation. This is an uncontrolled prop. See the [Keyboard Navigation](/docs/latest/learn/keyboard-navigation/navigating-cells) page for more details.

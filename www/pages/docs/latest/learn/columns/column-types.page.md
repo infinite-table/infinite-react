@@ -2,9 +2,9 @@
 title: Column Types
 ---
 
-Column types allow you to specify common properties for multiple columns easily. Things like <PropLink name="columnTypes.minWidth">minWidth</PropLink>, <PropLink name="columnTypes.maxWidth">maxWidth</PropLink>, <PropLink name="columnTypes.flex">flex</PropLink> and <PropLink name="columnTypes.header">header</PropLink> are all available. For a full list, see <PropLink>columnTypes</PropLink> reference.
+Column types allow you to specify common properties for multiple columns easily. Things like <PropLink name="columnTypes.minWidth">minWidth</PropLink>, <PropLink name="columnTypes.maxWidth">maxWidth</PropLink>, <PropLink name="columnTypes.defaultFlex">defaultFlex</PropLink> and <PropLink name="columnTypes.header">header</PropLink> are all available. For a full list, see <PropLink>columnTypes</PropLink> reference.
 
-You specify the type of a column via the <PropLink name="columns.type">columns.type</PropLink> property:
+You specify the type of a column via the <PropLink name="columns.type">column.type</PropLink> property:
 
 ```tsx
 type Person = {
