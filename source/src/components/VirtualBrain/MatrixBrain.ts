@@ -618,6 +618,44 @@ export class MatrixBrain extends Logger {
       : this.getFixedEndRowsHeight();
   }
 
+  isColFixedEnd = (colIndex: number) => {
+    if (!this.fixedColsEnd) {
+      return false;
+    }
+
+    return colIndex >= this.cols - this.fixedColsEnd;
+  };
+  isColFixedStart = (colIndex: number) => {
+    if (!this.fixedColsStart) {
+      return false;
+    }
+
+    return colIndex < this.fixedColsStart;
+  };
+
+  isRowFixedEnd = (rowIndex: number) => {
+    if (!this.fixedRowsEnd) {
+      return false;
+    }
+
+    return rowIndex >= this.rows - this.fixedRowsEnd;
+  };
+  isRowFixedStart = (rowIndex: number) => {
+    if (!this.fixedRowsStart) {
+      return false;
+    }
+
+    return rowIndex < this.fixedRowsStart;
+  };
+
+  isColFixed = (colIndex: number) => {
+    return this.isColFixedStart(colIndex) || this.isColFixedEnd(colIndex);
+  };
+
+  isRowFixed = (rowIndex: number) => {
+    return this.isRowFixedStart(rowIndex) || this.isRowFixedEnd(rowIndex);
+  };
+
   getFixedEndColsWidth = () => {
     if (!this.fixedColsEnd) {
       return 0;

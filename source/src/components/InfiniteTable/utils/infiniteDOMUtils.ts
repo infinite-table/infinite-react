@@ -10,6 +10,10 @@ export function getParentInfiniteNode(node: HTMLElement) {
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+const columnOffsetAtIndexWhileReordering = stripVar(
+  InternalVars.columnOffsetAtIndexWhileReordering,
+);
+const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 export function setInfiniteVarOnRoot(
   varName: keyof typeof InternalVars | string,
@@ -84,6 +88,32 @@ export function setInfiniteColumnOffset(
   setInfiniteVarOnRoot(
     `${columnOffsetAtIndex}-${colIndex}`,
     typeof colOffset === 'number' ? colOffset + 'px' : colOffset,
+    node,
+  );
+}
+
+export function setInfiniteColumnZIndex(
+  colIndex: number,
+  colZIndex: number | string,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarOnRoot(
+    `${columnZIndexAtIndex}-${colIndex}`,
+    `${colZIndex}`,
+    node,
+  );
+}
+
+export function setInfiniteColumnOffsetWhileReordering(
+  colIndex: number,
+  offset: string | number,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarOnRoot(
+    `${columnOffsetAtIndexWhileReordering}-${colIndex}`,
+    typeof offset === 'number'
+      ? `calc( var(${columnOffsetAtIndex}-${colIndex}) + ${offset}px )`
+      : offset,
     node,
   );
 }

@@ -91,8 +91,6 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     brain,
     headerBrain,
 
-    columnShifts: null,
-
     domRef: createRef(),
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
@@ -108,11 +106,11 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
       scrollTop: 0,
       scrollLeft: 0,
     },
+    columnReorderInProgress: false,
     ready: false,
     focused: false,
     focusedWithin: false,
     columnsWhenGrouping: columnsGeneratedForGrouping,
-    draggingColumnId: null,
 
     pinnedStartScrollListener: new ScrollListener(),
     pinnedEndScrollListener: new ScrollListener(),
@@ -198,7 +196,6 @@ export const forwardProps = <T>(
     //   groupRenderStrategy ?? 'multi-column',
 
     licenseKey: (licenseKey) => licenseKey || '',
-    keyboardNavigation: (keyboardNavigation) => keyboardNavigation ?? 'cell',
 
     activeRowIndex: 1,
     activeCellIndex: 1,
@@ -305,6 +302,14 @@ export const mapPropsToState = <T>(params: {
     groupRenderStrategy,
     groupBy: groupBy,
     computedColumns,
+
+    keyboardNavigation:
+      state.keyboardNavigation ??
+      (state.activeCellIndex != null
+        ? 'cell'
+        : state.activeRowIndex != null
+        ? 'row'
+        : 'cell'),
 
     columnHeaderCssEllipsis:
       props.columnHeaderCssEllipsis ?? props.columnCssEllipsis ?? true,

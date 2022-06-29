@@ -45,12 +45,11 @@ export interface InfiniteTableSetupState<T> {
   headerBrain: MatrixBrain;
   focused: boolean;
   ready: boolean;
+  columnReorderInProgress: boolean;
   focusedWithin: boolean;
   scrollPosition: ScrollPosition;
-  draggingColumnId: null | string;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
-  columnShifts: number[] | null;
 }
 
 export type InfiniteTableColumnGroupWithDepth = InfiniteTableColumnGroup & {
@@ -68,7 +67,6 @@ export interface InfiniteTableMappedState<T> {
   resizableColumns: InfiniteTableProps<T>['resizableColumns'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
-  keyboardNavigation: NonUndefined<InfiniteTableProps<T>['keyboardNavigation']>;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
@@ -154,6 +152,7 @@ export interface InfiniteTableDerivedState<T> {
   columnHeaderCssEllipsis: NonUndefined<
     InfiniteTableProps<T>['columnHeaderCssEllipsis']
   >;
+  keyboardNavigation: NonUndefined<InfiniteTableProps<T>['keyboardNavigation']>;
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
   computedColumnGroups: InfiniteTablePropColumnGroupsMap;

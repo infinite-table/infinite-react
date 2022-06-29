@@ -3,6 +3,7 @@ import { useCallback, useContext, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { join } from '../../../../utils/join';
+import { stripVar } from '../../../../utils/stripVar';
 import { defaultFilterTypes } from '../../../DataSource/defaultFilterTypes';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 import {
@@ -15,6 +16,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
+import { InternalVars } from '../../theme.css';
 import { InfiniteTableFilterEditorProps } from '../../types';
 import type {
   InfiniteTableColumnHeaderParams,
@@ -84,6 +86,9 @@ export function getColumnFilterType<T>(
 
   return columnFilterType;
 }
+
+const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
+const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
@@ -156,6 +161,7 @@ export function InfiniteTableHeaderCell<T>(
       computedRemainingSpace,
       showColumnFilters,
       computedVisibleColumns,
+      computedPinnedStartColumns,
     },
     componentState: { portalDOMRef, columnHeaderHeight, filterEditors },
   } = useInfiniteTable<T>();
@@ -184,13 +190,14 @@ export function InfiniteTableHeaderCell<T>(
     height: height,
   };
 
-  const { onPointerDown, dragging, draggingDiff, proxyOffset } =
-    useColumnPointerEvents({
-      computedRemainingSpace,
-      columnId: column.id,
-      domRef,
-      columns,
-    });
+  const { onPointerDown, dragging, proxyPosition } = useColumnPointerEvents({
+    pinnedStartColsCount: computedPinnedStartColumns.length,
+    visibleColsCount: computedVisibleColumns.length,
+    computedRemainingSpace,
+    columnId: column.id,
+    domRef,
+    columns,
+  });
 
   let draggingProxy = null;
 
@@ -202,13 +209,12 @@ export function InfiniteTableHeaderCell<T>(
           position: 'absolute',
           height,
           width,
-          left:
-            column.computedAbsoluteOffset +
-            draggingDiff.left +
-            (proxyOffset?.left ?? 0),
+          left: `calc( var(${columnOffsetAtIndex}-${
+            column.computedVisibleIndex
+          }) + ${proxyPosition!.left ?? 0}px)`,
 
-          top: draggingDiff?.top + (proxyOffset?.top ?? 0),
-          zIndex: 1,
+          top: proxyPosition!.top ?? 0,
+          zIndex: 1_000_000_000,
         }}
       >
         {header}
@@ -317,6 +323,8 @@ export function InfiniteTableHeaderCell<T>(
 
   const resizeHandle = useColumnResizeHandle(column);
 
+  const zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
+  style.zIndex = zIndex;
   return (
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
@@ -326,9 +334,7 @@ export function InfiniteTableHeaderCell<T>(
         data-name={`HeaderCell`}
         data-column-id={column.id}
         // this is used by ReactHeadlessRenderer - look for #updatezindex
-        data-z-index={
-          computedVisibleColumns.length * 10 - column.computedVisibleIndex * 10
-        }
+        data-z-index={zIndex}
         style={style}
         width={width}
         onPointerDown={onPointerDown}

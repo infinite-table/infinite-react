@@ -2,11 +2,13 @@ import * as React from 'react';
 import { useCallback, useContext, useMemo } from 'react';
 
 import { join } from '../../../../utils/join';
+import { stripVar } from '../../../../utils/stripVar';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 import type { Renderable } from '../../../types/Renderable';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
+import { InternalVars } from '../../theme.css';
 import type { InfiniteTableColumn } from '../../types';
 import type {
   InfiniteTableColumnWithField,
@@ -28,6 +30,8 @@ import {
 } from './InfiniteTableCellTypes';
 
 const { rootClassName } = internalProps;
+
+const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 export const InfiniteTableColumnCellContext = React.createContext<
   InfiniteTableColumnCellContextType<any>
@@ -228,6 +232,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   // style.width = width;
   style.height = rowHeight;
+  style.zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
 
   const memoizedStyle = useMemo(
     () => style,

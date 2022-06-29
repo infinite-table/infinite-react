@@ -5,6 +5,7 @@ import { InfiniteClsRecipe } from '../../InfiniteCls.css';
 import { ThemeVars } from '../../theme.css';
 import {
   alignItems,
+  cssEllipsisClassName,
   display,
   flexFlow,
   height,
@@ -20,14 +21,6 @@ import {
 } from '../cell.css';
 
 export { CellCls, CellClsVariants };
-
-export const HeaderCellProxy = style({
-  background: ThemeVars.components.Header.background,
-  opacity: 0.9,
-  padding: ThemeVars.components.Cell.padding,
-  paddingLeft: 20,
-  zIndex: 200,
-});
 
 export const HeaderSortIconCls = style([position.relative], 'SortIconCls');
 export const HeaderSortIconRecipe = recipe({
@@ -120,6 +113,18 @@ export const HeaderClsRecipe = recipe({
   ],
 });
 
+export const HeaderCellProxy = style([
+  {
+    background: ThemeVars.components.HeaderCell.hoverBackground,
+    color: ThemeVars.components.Cell.color,
+    opacity: 0.8,
+    padding: ThemeVars.components.Cell.padding,
+    paddingLeft: 20,
+    zIndex: 2_000,
+  },
+  cssEllipsisClassName,
+]);
+
 export const HeaderCellRecipe = recipe({
   base: [
     {
@@ -142,11 +147,7 @@ export const HeaderCellRecipe = recipe({
       odd: {},
     },
     dragging: {
-      true: {
-        zIndex: 100,
-        opacity: 0.8,
-        background: ThemeVars.components.HeaderCell.draggingBackground,
-      },
+      true: {},
       false: {},
     },
 
@@ -221,17 +222,17 @@ export const HeaderCellRecipe = recipe({
         lastInCategory: true,
       },
       style: {
-        selectors: {
-          [`${InfiniteClsRecipe({
-            hasPinnedEndOverflow: true,
-          })} &`]: {
-            borderRight: ThemeVars.components.Cell.border,
-            vars: {
-              [ThemeVars.components.Cell.border]:
-                ThemeVars.components.Cell.borderInvisible,
-            },
-          },
+        // selectors: {
+        //   [`${InfiniteClsRecipe({
+        //     hasPinnedEndOverflow: true,
+        //   })} &`]: {
+        borderRight: ThemeVars.components.Cell.border,
+        vars: {
+          [ThemeVars.components.Cell.border]:
+            ThemeVars.components.Cell.borderInvisible,
         },
+        // },
+        // },
       },
     },
   ],

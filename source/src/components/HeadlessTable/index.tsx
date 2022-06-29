@@ -221,10 +221,10 @@ export function HeadlessTable(
           brain={brain}
           cellHoverClassNames={cellHoverClassNames}
         />
+        <ActiveCellIndicator brain={brain} activeCellIndex={activeCellIndex} />
       </div>
-
       <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
-      <ActiveCellIndicator brain={brain} activeCellIndex={activeCellIndex} />
+
       <SpacePlaceholder width={scrollSize.width} height={scrollSize.height} />
     </VirtualScrollContainer>
   );

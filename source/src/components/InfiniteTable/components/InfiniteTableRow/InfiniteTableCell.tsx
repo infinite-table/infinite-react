@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
-import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
+
 import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
 import {
@@ -10,7 +10,7 @@ import {
   justifyContent,
   overflow,
 } from '../../utilities.css';
-import { ColumnCellCls, CellClsVariants } from '../cell.css';
+import { ColumnCellCls } from '../cell.css';
 
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 
@@ -51,42 +51,26 @@ function InfiniteTableCellFn<T>(
   // otherwise we'll be re-rendering all cells every time
   // something changes, and this could be very costly for performance
   // so remove the call to useInfiniteTableState
-  const { columnShifts } = useInfiniteTableState();
-  // const columnShifts = null;
-
-  const shifting = !!columnShifts;
   const style = {
     width: `var(${columnWidthAtIndex}-${column.computedVisibleIndex})`,
     ...domProps.style,
   } as React.CSSProperties;
-
-  if (
-    !skipColumnShifting &&
-    columnShifts &&
-    columnShifts[column.computedVisibleIndex]
-  ) {
-    const shiftLeft = columnShifts[column.computedVisibleIndex];
-    if (virtualized) {
-      style.left = shiftLeft;
-    } else {
-      style.transform = `translate3d(${shiftLeft}px, 0px, 0px)`;
-    }
-  }
 
   const finalDOMProps = {
     ...domProps,
     style,
     // do not remove this from here, as it's being used by auto sizing - the `useAutoSizeColumns` fn hook
     'data-column-id': column.id,
+    'data-z-index': style.zIndex,
     className: join(
       domProps.className,
 
       justifyContent[column.align ?? 'start'],
       InfiniteTableCellClassName,
       ColumnCellCls,
-      shifting
-        ? `${InfiniteTableCellClassName}--shifting ${CellClsVariants.shifting}`
-        : '',
+      // shifting
+      //   ? `${InfiniteTableCellClassName}--shifting ${CellClsVariants.shifting}`
+      //   : '',
     ),
     children: (
       <>

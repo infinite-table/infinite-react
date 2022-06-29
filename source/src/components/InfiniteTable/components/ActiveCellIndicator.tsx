@@ -16,6 +16,8 @@ const { rootClassName } = internalProps;
 
 const baseCls = `${rootClassName}-ActiveCellIndicator`;
 
+const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
+
 export type ActiveCellIndicatorInfo = {
   index: [number, number];
   colOffset: number;
@@ -27,13 +29,8 @@ type ActiveCellIndicatorProps = {
 };
 
 const ActiveStyle: CSSProperties = {
-  [stripVar(
-    InternalVars.activeCellOffsetX,
-  )]: `calc( ${InternalVars.scrollLeftForActiveCell} + ${InternalVars.activeCellColOffset} )`,
-
-  [stripVar(
-    InternalVars.activeCellOffsetY,
-  )]: `calc( ${InternalVars.scrollTopForActiveCell} + ${InternalVars.activeCellRowOffset} )`,
+  [stripVar(InternalVars.activeCellOffsetX)]: InternalVars.activeCellColOffset,
+  [stripVar(InternalVars.activeCellOffsetY)]: InternalVars.activeCellRowOffset,
 
   transform: `translate3d(${InternalVars.activeCellOffsetX}, ${InternalVars.activeCellOffsetY}, 0px)`,
 
@@ -61,12 +58,9 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
 
     const node = domRef.current!;
-    const scrollPosition = brain.getScrollPosition();
 
     setInfiniteVarsOnNode(
       {
-        scrollTopForActiveCell: `${-scrollPosition.scrollTop}px`,
-        scrollLeftForActiveCell: `${-scrollPosition.scrollLeft}px`,
         activeCellRowHeight: `${activeCellRowHeight}px`,
         activeCellRowOffset: `${activeCellRowOffset}px`,
       },
@@ -75,16 +69,6 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
   }, [props.activeCellIndex]);
 
   useEffect(() => {
-    const removeOnSCroll = brain.onScroll((scrollPosition) => {
-      setInfiniteVarsOnNode(
-        {
-          scrollTopForActiveCell: `${-scrollPosition.scrollTop}px`,
-          scrollLeftForActiveCell: `${-scrollPosition.scrollLeft}px`,
-        },
-        domRef.current!,
-      );
-    });
-
     const removeOnRenderCountChange = brain.onRenderCountChange(() => {
       rerender();
     });
@@ -94,15 +78,25 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     // });
 
     return () => {
-      // removeOnAvailableSizeChange();
       removeOnRenderCountChange();
-      removeOnSCroll();
     };
   }, [brain]);
 
   return (
     // #correct-scroll-size this wrapper is here in order to make the indicator not take up space in the scroll container - to reproduce: remove this and click on a row, you will see that if you scroll at the bottom, there is extra space
-    <div className={ActiveIndicatorWrapperCls} data-name="active-cell">
+    <div
+      className={ActiveIndicatorWrapperCls}
+      data-name="active-cell"
+      style={
+        active
+          ? {
+              zIndex: `var(${columnZIndexAtIndex}-${
+                props.activeCellIndex![1]
+              })`,
+            }
+          : undefined
+      }
+    >
       <div
         ref={domRef}
         data-name="active-cell-indicator"

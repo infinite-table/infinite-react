@@ -37,11 +37,22 @@ export function getImperativeApi<T>(
 
       const scrollPosition =
         state.renderer.getScrollPositionForScrollRowIntoView(rowIndex, config);
+
+      if (!scrollPosition) {
+        return false;
+      }
       const currentScrollPosition = state.brain.getScrollPosition();
+
+      const scrollTopMax = state.brain.scrollTopMax;
+
+      if (scrollPosition.scrollTop > scrollTopMax + (config.offset || 0)) {
+        return false;
+      }
 
       if (scrollPosition.scrollTop !== currentScrollPosition.scrollTop) {
         state.scrollerDOMRef.current!.scrollTop = scrollPosition.scrollTop;
       }
+      return true;
     },
     scrollColumnIntoView(
       colId: string,
@@ -56,7 +67,7 @@ export function getImperativeApi<T>(
       const computedColumn = computed.computedVisibleColumnsMap.get(colId);
 
       if (!computedColumn) {
-        return;
+        return false;
       }
       const colIndex = computedColumn.computedVisibleIndex;
 
@@ -65,11 +76,23 @@ export function getImperativeApi<T>(
           colIndex,
           config,
         );
+
+      if (!scrollPosition) {
+        return false;
+      }
+
       const currentScrollPosition = state.brain.getScrollPosition();
+
+      const scrollLeftMax = state.brain.scrollLeftMax;
+      if (scrollPosition.scrollLeft > scrollLeftMax + (config.offset || 0)) {
+        return false;
+      }
 
       if (scrollPosition.scrollLeft !== currentScrollPosition.scrollLeft) {
         state.scrollerDOMRef.current!.scrollLeft = scrollPosition.scrollLeft;
       }
+
+      return true;
     },
 
     scrollCellIntoView(
@@ -89,7 +112,7 @@ export function getImperativeApi<T>(
           computed.computedVisibleColumnsMap.get(colIdOrIndex);
 
         if (!computedColumn) {
-          return;
+          return false;
         }
         colIndex = computedColumn.computedVisibleIndex;
       }
@@ -102,11 +125,25 @@ export function getImperativeApi<T>(
       const scrollPositionForRow =
         state.renderer.getScrollPositionForScrollRowIntoView(rowIndex, config);
 
+      if (!scrollPositionForCol || !scrollPositionForRow) {
+        return false;
+      }
+
       const newScrollPosition = {
         scrollLeft: scrollPositionForCol.scrollLeft,
         scrollTop: scrollPositionForRow.scrollTop,
       };
       const currentScrollPosition = state.brain.getScrollPosition();
+
+      const scrollLeftMax = state.brain.scrollLeftMax;
+      const scrollTopMax = state.brain.scrollTopMax;
+
+      if (newScrollPosition.scrollLeft > scrollLeftMax + (config.offset || 0)) {
+        return false;
+      }
+      if (newScrollPosition.scrollTop > scrollTopMax + (config.offset || 0)) {
+        return false;
+      }
 
       if (newScrollPosition.scrollLeft !== currentScrollPosition.scrollLeft) {
         state.scrollerDOMRef.current!.scrollLeft = newScrollPosition.scrollLeft;
@@ -114,8 +151,14 @@ export function getImperativeApi<T>(
       if (newScrollPosition.scrollTop !== currentScrollPosition.scrollTop) {
         state.scrollerDOMRef.current!.scrollTop = newScrollPosition.scrollTop;
       }
+
+      return true;
     },
   };
+
+  if (__DEV__) {
+    (globalThis as any).imperativeApi = imperativeApi;
+  }
 
   return imperativeApi;
 }

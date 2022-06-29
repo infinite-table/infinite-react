@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useState } from 'react';
 
 import { join } from '../../utils/join';
 import { CSSVariableWatch } from '../CSSVariableWatch';
@@ -33,6 +33,8 @@ import { useComputed } from './hooks/useComputed';
 import { useDOMProps } from './hooks/useDOMProps';
 import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useLicense } from './hooks/useLicense/useLicense';
+import { useScrollToActiveCell } from './hooks/useScrollToActiveCell';
+import { useScrollToActiveRow } from './hooks/useScrollToActiveRow';
 import { getInfiniteTableContext } from './InfiniteTableContext';
 import { internalProps, rootClassName } from './internalProps';
 import { handleKeyboardNavigation } from './keyboardNavigationAndSelection';
@@ -88,7 +90,7 @@ export const InfiniteTableComponent = React.memo(
       getState,
     } = useInfiniteTable<T>();
     const {
-      componentState: { loading },
+      componentState: { loading, dataArray },
       getState: getDataSourceState,
       componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
@@ -126,27 +128,10 @@ export const InfiniteTableComponent = React.memo(
       onRenderUpdater,
     } = componentState;
 
-    useEffect(() => {
-      if (activeRowIndex != null) {
-        imperativeApi.scrollRowIntoView(activeRowIndex, {
-          offset: 30,
-        });
-      }
-    }, [activeRowIndex]);
+    useScrollToActiveRow(activeRowIndex, dataArray.length, imperativeApi);
+    useScrollToActiveCell(activeCellIndex, dataArray.length, imperativeApi);
 
-    useEffect(() => {
-      if (activeCellIndex != null) {
-        imperativeApi.scrollCellIntoView(
-          activeCellIndex[0],
-          activeCellIndex[1],
-          {
-            offset: 30,
-          },
-        );
-      }
-    }, [activeCellIndex]);
-
-    const { columnShifts, bodySize } = componentState;
+    const { bodySize } = componentState;
 
     const { scrollbars } = computed;
 
@@ -154,7 +139,7 @@ export const InfiniteTableComponent = React.memo(
       imperativeApi,
       getComputed,
       domRef: componentState.domRef,
-      columnShifts,
+
       bodySize,
       computed,
     });
@@ -221,7 +206,10 @@ export const InfiniteTableComponent = React.memo(
                 : null
             }
             activeCellIndex={
-              componentState.ready && keyboardNavigation === 'cell'
+              componentState.ready &&
+              keyboardNavigation === 'cell' &&
+              // we want to hide the active cell indicator while column reodering is happening
+              !componentState.columnReorderInProgress
                 ? activeCellIndex
                 : null
             }
@@ -241,7 +229,7 @@ export const InfiniteTableComponent = React.memo(
           ref={portalDOMRef as RefObject<HTMLDivElement>}
           className={join(
             `${rootClassName}Portal`,
-            zIndex[1000],
+            zIndex[10_000_000],
             position.absolute,
             top[0],
             left[0],

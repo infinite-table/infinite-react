@@ -27,7 +27,7 @@ type CellRenderingParam<T> = {
   imperativeApi: InfiniteTableImperativeApi<T>;
 
   bodySize: Size;
-  columnShifts: number[] | null;
+
   getComputed: () => InfiniteTableComputedValues<T> | undefined;
 };
 

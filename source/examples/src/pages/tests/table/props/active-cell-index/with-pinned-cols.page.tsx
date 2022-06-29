@@ -70,26 +70,21 @@ export default () => {
             style: {
               margin: '5px',
               height: 500,
-              width: 1000,
+              width: 800,
               left: 200,
               border: '1px solid gray',
               position: 'relative',
             },
           }}
-          columnPinning={
-            {
-              // index: 'start',
-              // city: 'end',
-              // hobby: 'end',
-              // currency: 'start',
-            }
-          }
-          onColumnOrderChange={(columnOrder) => {
-            console.log(columnOrder);
+          columnPinning={{
+            index: 'start',
+            city: 'end',
+            hobby: 'end',
+            currency: 'start',
           }}
+          defaultActiveCellIndex={[100, 0]}
           columnDefaultWidth={100}
           columnMinWidth={50}
-          onColumnSizingChange={onColumnSizingChange}
           columns={columns}
         />
       </DataSource>

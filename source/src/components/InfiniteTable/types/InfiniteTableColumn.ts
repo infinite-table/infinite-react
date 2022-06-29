@@ -356,6 +356,7 @@ type InfiniteTableComputedColumnBase<T> = {
   computedSortedDesc: boolean;
   computedSortIndex: number;
   computedVisibleIndex: number;
+  computedVisibleIndexInCategory: number;
   computedMultiSort: boolean;
   computedFiltered: boolean;
   computedFilterable: boolean;

@@ -1,5 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css';
 import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
+import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 
 import { ThemeVars } from '../theme.css';
 import {
@@ -44,7 +45,16 @@ export const CellCls = style([
   },
 ]);
 
-export const ColumnCellCls = style([CellCls]);
+export const ColumnCellCls = style([
+  CellCls,
+  {
+    selectors: {
+      [`${InfiniteClsShiftingColumns} &`]: {
+        transition: `transform ${ThemeVars.components.Cell.reorderEffectDuration}`,
+      },
+    },
+  },
+]);
 
 export const ColumnCellVariantsObject = {
   first: {
@@ -134,6 +144,7 @@ export const ColumnCellRecipe = recipe({
       false: {},
     },
   },
+
   compoundVariants: [
     {
       variants: {

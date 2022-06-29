@@ -17,9 +17,7 @@ export const InternalVars = createThemeContract({
   activeCellOffsetX: null,
   activeCellOffsetY: null,
 
-  scrollLeftForActiveCell: null,
-  scrollTopForActiveCell: null,
-
+  scrollTopForActiveRow: null,
   // this will be set to `${columnWidthAtIndex}-${the index of the column on which the active cell is}`
   activeCellColWidth: null,
 
@@ -28,6 +26,11 @@ export const InternalVars = createThemeContract({
 
   columnWidthAtIndex: null,
   columnOffsetAtIndex: null,
+  columnOffsetAtIndexWhileReordering: null,
+  columnZIndexAtIndex: null,
+
+  computedVisibleColumnsCount: null,
+  baseZIndexForCells: null,
 });
 export const ThemeVars = createGlobalThemeContract(
   {
@@ -109,7 +112,6 @@ export const ThemeVars = createGlobalThemeContract(
         columnHeaderHeight: columnHeaderHeightName,
       },
       HeaderCell: {
-        draggingBackground: 'header-cell-dragging-background',
         /**
          * Background for header cells.
          *
@@ -158,6 +160,7 @@ export const ThemeVars = createGlobalThemeContract(
         border: 'cell-border',
         borderInvisible: 'cell-border-invisible',
         borderRadius: 'cell-border-radius',
+        reorderEffectDuration: 'column-reorder-effect-duration',
 
         /**
          * Text color inside rows. Defaults to `currentColor`
@@ -365,7 +368,7 @@ const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.paddingY]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell
     .padding]: `${ThemeVars.components.HeaderCell.paddingY} ${ThemeVars.components.HeaderCell.paddingX} `,
-  [ThemeVars.components.HeaderCell.draggingBackground]: '#d4d3d3',
+
   [ThemeVars.components.HeaderCell.iconSize]: '16px',
   [ThemeVars.components.HeaderCell.sortIconMargin]: '16px',
 };
@@ -385,6 +388,7 @@ const CellVars = {
     .border]: `${ThemeVars.components.Cell.borderWidth} solid #c6c6c6`,
   [ThemeVars.components.Cell.borderInvisible]: 'none',
   [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
+  [ThemeVars.components.Cell.reorderEffectDuration]: '0.2s',
 
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',

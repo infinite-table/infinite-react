@@ -2,12 +2,9 @@ import { CSSProperties, FocusEvent } from 'react';
 import { InfiniteTableClassName } from '..';
 import { join } from '../../../utils/join';
 import { stripVar } from '../../../utils/stripVar';
-import {
-  InfiniteCls,
-  InfiniteClsRecipe,
-  InfiniteClsShiftingColumns,
-} from '../InfiniteCls.css';
+import { InfiniteCls, InfiniteClsRecipe } from '../InfiniteCls.css';
 import { InternalVars } from '../theme.css';
+import { InfiniteTableComputedColumn } from '../types';
 import {
   getCSSVarNameForColOffset,
   getCSSVarNameForColWidth,
@@ -17,15 +14,49 @@ import { useInfiniteTable } from './useInfiniteTable';
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 const activeCellColWidth = stripVar(InternalVars.activeCellColWidth);
 const activeCellColOffset = stripVar(InternalVars.activeCellColOffset);
+const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
+const computedVisibleColumnsCountCSSVar = stripVar(
+  InternalVars.computedVisibleColumnsCount,
+);
+
+export function getColumnZIndex<T>(
+  col: InfiniteTableComputedColumn<T>,
+  params: { pinnedStartColsCount: number; visibleColsCount: number },
+) {
+  let computedZIndex: number | 'auto' = 'auto';
+
+  const index = col.computedVisibleIndex;
+
+  if (col.computedPinned) {
+    if (col.computedPinned === 'start') {
+      computedZIndex =
+        params.pinnedStartColsCount - col.computedVisibleIndexInCategory;
+    } else if (col.computedPinned === 'end') {
+      computedZIndex =
+        params.visibleColsCount - col.computedVisibleIndexInCategory;
+    }
+  } else {
+    computedZIndex = -index * 10;
+  }
+
+  const zIndexValue =
+    typeof computedZIndex === 'number'
+      ? `calc( var(${baseZIndexForCells}) ` +
+        (computedZIndex < 0 ? '-' : '+') +
+        ` ${Math.abs(computedZIndex)} )`
+      : 'auto';
+
+  return zIndexValue;
+}
 
 export function useDOMProps<T>(
   initialDOMProps?: React.HTMLProps<HTMLDivElement>,
 ) {
   const { computed, componentState, componentActions } = useInfiniteTable<T>();
   const {
-    columnShifts,
     focused,
     focusedWithin,
     domRef,
@@ -38,16 +69,28 @@ export function useDOMProps<T>(
   const {
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
+    computedPinnedStartColumns,
     computedVisibleColumns,
   } = computed;
 
   const cssVars: CSSProperties = computedVisibleColumns.reduce(
     (vars: CSSProperties, col) => {
       const index = col.computedVisibleIndex;
+
       //@ts-ignore
       vars[`${columnWidthAtIndex}-${index}`] = col.computedWidth + 'px';
+
       //@ts-ignore
       vars[`${columnOffsetAtIndex}-${index}`] = col.computedOffset + 'px';
+
+      const zIndexValue = getColumnZIndex(col, {
+        pinnedStartColsCount: computedPinnedStartColumns.length,
+        visibleColsCount: computedVisibleColumns.length,
+      });
+
+      //@ts-ignore
+      vars[`${columnZIndexAtIndex}-${index}`] = `${zIndexValue}`;
+
       return vars;
     },
     {},
@@ -63,6 +106,11 @@ export function useDOMProps<T>(
       activeCellIndex[1],
     )})`;
   }
+
+  //@ts-ignore
+  cssVars[computedVisibleColumnsCountCSSVar] = computedVisibleColumns.length;
+  //@ts-ignore
+  cssVars[baseZIndexForCells] = computedVisibleColumns.length * 10;
 
   const setFocused = rafFn((focused: boolean) => {
     componentActions.focused = focused;
@@ -121,9 +169,6 @@ export function useDOMProps<T>(
   const className = join(
     InfiniteTableClassName,
     InfiniteCls,
-    columnShifts
-      ? `${InfiniteClsShiftingColumns} ${InfiniteTableClassName}--shifting`
-      : '',
 
     domProps?.className,
     computedPinnedStartColumnsWidth

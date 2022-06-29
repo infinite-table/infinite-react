@@ -51,7 +51,7 @@ const getComputedPinned = (
 ): InfiniteTableColumnPinnedValues => {
   const pinned = columnPinning.get(colId);
   const computedPinned: InfiniteTableColumnPinnedValues =
-    pinned === 'start' // || pinned === true
+    pinned === 'start' || pinned === true
       ? 'start'
       : pinned === 'end'
       ? 'end'
@@ -316,6 +316,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const nextColumnId = visibleColumnOrder[i + 1];
     const colType = getColumnComputedType(c, columnTypes);
 
+    const computedVisibleIndex = i;
+
     // const comparer = c.comparer || colType?.comparer;
 
     const sortingInfo = sortedMap[id as string]
@@ -341,12 +343,24 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedPinned = getComputedPinned(id, columnPinning);
 
     const computedLast = i === visibleColumnOrder.length - 1;
+    let computedVisibleIndexInCategory = computedVisibleIndex;
     const computedPinningOffset =
       computedPinned === 'start'
         ? computedPinnedStartColumnsWidth
         : computedPinned === 'end'
         ? computedPinnedEndColumnsWidth
         : computedOffset - computedPinnedStartColumnsWidth;
+
+    if (computedPinned == 'start') {
+      computedVisibleIndexInCategory = computedVisibleIndex;
+    } else if (computedPinned === 'end') {
+      computedVisibleIndexInCategory =
+        computedVisibleIndex -
+        (computedPinnedStartColumns.length + computedUnpinnedColumns.length);
+    } else {
+      computedVisibleIndexInCategory =
+        computedVisibleIndex - computedPinnedStartColumns.length;
+    }
 
     const computedAbsoluteOffset =
       computedPinned === 'start' || computedPinned === false
@@ -430,6 +444,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedWidth,
       computedAbsoluteOffset,
       computedPinningOffset,
+      computedVisibleIndexInCategory,
       computedOffset,
       computedSortable,
       computedSortInfo,
@@ -438,7 +453,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedSorted,
       computedSortedAsc,
       computedSortedDesc,
-      computedVisibleIndex: i,
+      computedVisibleIndex,
       computedPinned,
       computedDraggable: c.draggable ?? draggableColumns ?? true,
       computedFirstInCategory,

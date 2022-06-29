@@ -26,14 +26,7 @@ type Developer = {
 const dataSource: DataSourceData<Developer> = ({}) => {
   return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql`)
     .then((r) => r.json())
-    .then((data: Developer[]) => data)
-    .then((result) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(result);
-        }, 100);
-      });
-    });
+    .then((data: Developer[]) => data);
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -58,10 +51,10 @@ export default function KeyboardNavigationForRows() {
     <DataSource<Developer> primaryKey="id" data={dataSource}>
       <InfiniteTable<Developer>
         columns={columns}
-        defaultActiveCellIndex={[0, 2]}
+        defaultActiveCellIndex={[80, 2]}
         domProps={{
           style: {
-            height: '90vh',
+            height: 800,
           },
         }}
       />

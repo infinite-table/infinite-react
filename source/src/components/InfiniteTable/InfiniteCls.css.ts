@@ -101,6 +101,11 @@ export const PinnedRowsContainerClsVariants = recipe({
   },
 });
 
-export const InfiniteClsShiftingColumns = style([userSelect.none]);
+export const InfiniteClsShiftingColumns = style(
+  {
+    userSelect: 'none',
+  },
+  'shiftingcols',
+);
 
 export const FooterCls = style([position.relative]);

@@ -1,18 +1,24 @@
 import binarySearch from 'binary-search';
 import * as React from 'react';
 
-import {
-  MutableRefObject,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useInfiniteTable } from './useInfiniteTable';
 import { moveXatY } from '../utils/moveXatY';
 
 import type { InfiniteTableComputedColumn } from '../types';
+import {
+  setInfiniteColumnOffsetWhileReordering,
+  setInfiniteColumnZIndex,
+} from '../utils/infiniteDOMUtils';
+
+import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
+import { InternalVars } from '../theme.css';
+import { stripVar } from '../../../utils/stripVar';
+import { getColumnZIndex } from './useDOMProps';
+
+const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 
 type ClientPosition = {
   clientX: number;
@@ -30,15 +36,19 @@ type ColumnBreakpoint = {
   breakpoint: number;
 };
 
+const PROXY_OFFSET = 10;
+
 const getBreakPoints = <T>(
   columns: Map<string, InfiniteTableComputedColumn<T>>,
 ) => {
-  return Array.from(columns.values()).map((c) => {
-    return {
-      columnId: c.id,
-      breakpoint: c.computedAbsoluteOffset + Math.round(c.computedWidth / 2),
-    };
-  });
+  return Array.from(columns.values())
+    .map((c) => {
+      return {
+        columnId: c.id,
+        breakpoint: c.computedAbsoluteOffset + Math.round(c.computedWidth / 2),
+      };
+    })
+    .filter(Boolean);
 };
 
 export const useColumnPointerEvents = <T>({
@@ -46,82 +56,122 @@ export const useColumnPointerEvents = <T>({
   domRef,
   columns,
   computedRemainingSpace,
+  pinnedStartColsCount,
+  visibleColsCount,
 }: {
+  pinnedStartColsCount: number;
+  visibleColsCount: number;
   computedRemainingSpace: number;
   columns: Map<string, InfiniteTableComputedColumn<T>>;
   columnId: string;
   domRef: React.MutableRefObject<HTMLElement | null>;
 }) => {
-  const [draggingDiff, setDraggingDiff] = useState<TopLeftOrNull>(null);
-  const [proxyOffset, setProxyOffset] = useState<TopLeftOrNull>(null);
+  const [proxyPosition, setProxyPosition] = useState<TopLeftOrNull>(null);
 
-  const breakpointsRef: MutableRefObject<ColumnBreakpoint[]> = useRef([]);
-  const didDragRef: React.MutableRefObject<boolean> = useRef(false);
-  const initialClientPos: React.MutableRefObject<ClientPosition | null> =
-    useRef(null);
-  const currentDropIndexRef: React.MutableRefObject<number | null> =
-    useRef(null);
+  const dragging = proxyPosition != null;
 
-  const dragging = draggingDiff != null;
-
-  const { componentActions, computed } = useInfiniteTable();
+  const {
+    componentActions,
+    computed,
+    componentState: { domRef: rootRef, brain },
+  } = useInfiniteTable();
 
   const { computedColumnOrder } = computed;
 
   const column = useMemo(() => columns.get(columnId)!, [columnId, columns]);
 
-  const { columnIndex, columnWidth, columnsArray } = useMemo(() => {
+  const { dragColumnIndex, columnsArray } = useMemo(() => {
     const columnsArray = Array.from(columns.values());
+    const columnIndex = columnsArray.findIndex((c) => c.id === columnId);
     return {
       columnsArray,
-      columnIndex: columnsArray.findIndex((c) => c.id === columnId),
+      dragColumnIndex: columnIndex,
       columnWidth: column.computedWidth,
+      columnOffsetVar: `var(${columnOffsetAtIndex}-${column.computedVisibleIndex})`,
     };
   }, [columns, columnId, column]);
 
-  let cursorRef: MutableRefObject<React.CSSProperties['cursor']> =
-    useRef('auto');
-
   const onPointerDown = useCallback(
     (e) => {
+      let breakpoints: ColumnBreakpoint[] = [];
       const target = domRef.current!;
 
-      cursorRef.current = target.style.cursor;
-
-      didDragRef.current = false;
-      initialClientPos.current = {
-        clientX: e.clientX,
-        clientY: e.clientY,
+      const initialClientPos: ClientPosition = {
+        clientX: Math.round(e.clientX),
+        clientY: Math.round(e.clientY),
       };
 
-      const onPointerMove = (e: PointerEvent) => {
-        if (!didDragRef.current) {
-          didDragRef.current = true;
-          breakpointsRef.current = getBreakPoints(columns);
+      const initialScrollPosition = brain.getScrollPosition();
 
-          setDraggingDiff({ top: 0, left: 0 });
-          const rect = (target as HTMLElement).getBoundingClientRect();
-          setProxyOffset({
-            left: e.clientX - rect.x - 10,
-            top: e.clientY - rect.y - 10,
-          });
+      const initialProxyPosition = {
+        left: PROXY_OFFSET - initialScrollPosition.scrollLeft,
+        top: PROXY_OFFSET,
+      };
+
+      let currentClientPos: ClientPosition = initialClientPos!;
+
+      let currentDiff = {
+        x: 0,
+        y: 0,
+      };
+
+      function updateColumnOffsets(pos: ClientPosition) {
+        const clientX = Math.round(pos.clientX);
+        const clientY = Math.round(pos.clientY);
+
+        if (
+          clientX === currentClientPos.clientX &&
+          clientY === currentClientPos.clientY
+        ) {
+          return;
+        }
+
+        currentClientPos = { clientX, clientY };
+
+        currentDiff.x = currentClientPos.clientX - initialClientPos!.clientX;
+        currentDiff.y = currentClientPos.clientY - initialClientPos!.clientY;
+
+        setProxyPosition({
+          left: initialProxyPosition.left + currentDiff.x,
+          top: initialProxyPosition.top + currentDiff.y,
+        });
+      }
+
+      updateColumnOffsets(initialClientPos);
+
+      let initialCursor: React.CSSProperties['cursor'] =
+        target.style.cursor ?? 'auto';
+
+      let didDragAtLeastOnce = false;
+
+      let currentDropIndex: number = dragColumnIndex;
+
+      const onPointerMove = (e: PointerEvent) => {
+        if (!didDragAtLeastOnce) {
+          didDragAtLeastOnce = true;
+          componentActions.columnReorderInProgress = true;
+
+          breakpoints = getBreakPoints(columns);
+
+          setInfiniteColumnZIndex(dragColumnIndex, 1_000_000, rootRef.current);
+
+          rootRef.current?.classList.add(InfiniteClsShiftingColumns);
           target.style.cursor = 'grabbing';
         }
 
-        const diffX = e.clientX - initialClientPos.current!.clientX;
-        const diffY = e.clientY - initialClientPos.current!.clientY;
+        // todo fix next - this, when there is horizontal scrolling
 
+        updateColumnOffsets(e);
+
+        const diffX = currentDiff.x;
         const dir = diffX < 0 ? -1 : 1;
 
-        const columnPinned = column.computedPinned;
         let currentPos =
           dir === -1
             ? column.computedAbsoluteOffset + diffX
             : column.computedAbsoluteOffset + column.computedWidth + diffX;
 
-        const breakpoints = breakpointsRef.current;
-
-        let index = binarySearch<ColumnBreakpoint, number>(
+        let idx = binarySearch<ColumnBreakpoint, number>(
           breakpoints,
           currentPos,
           ({ breakpoint }, value) => {
@@ -129,79 +179,116 @@ export const useColumnPointerEvents = <T>({
           },
         );
 
-        if (index < 0) {
-          index = ~index;
+        if (idx < 0) {
+          idx = ~idx;
         }
 
-        if (index !== currentDropIndexRef.current) {
-          currentDropIndexRef.current = index;
-          const shifts = columnsArray.map(() => 0);
-
-          let total = 0;
-
-          if (dir === -1) {
-            for (let i = index; i < columnIndex; i++) {
-              let shiftBy = columnWidth;
-              if (
-                columnPinned === 'end' &&
-                columnsArray[i].computedPinned === false &&
-                columnsArray[i].computedLastInCategory &&
-                computedRemainingSpace > 0
-              ) {
-                shiftBy += computedRemainingSpace;
-              }
-              shifts[i] = shiftBy;
-              total -= shiftBy;
-            }
-          } else {
-            for (let i = columnIndex + 1; i < index; i++) {
-              shifts[i] = -columnWidth;
-              total += columnWidth;
-            }
-          }
-          if (index !== columnIndex) {
-            shifts[columnIndex] = total;
+        if (idx !== currentDropIndex) {
+          currentDropIndex = idx;
+          if (dir === 1 && currentDropIndex === dragColumnIndex + 1) {
+            currentDropIndex = dragColumnIndex;
           }
 
-          componentActions.columnShifts = shifts;
-          componentActions.draggingColumnId = column.id;
+          columnsArray.forEach((col) => {
+            const colIndex = col.computedVisibleIndex;
+
+            if (dir === -1) {
+              let newPosition =
+                colIndex === dragColumnIndex
+                  ? `var(${columnOffsetAtIndex}-${currentDropIndex})`
+                  : colIndex < currentDropIndex || colIndex > dragColumnIndex
+                  ? // this col should have the initial pos, so we're good
+                    `var(${columnOffsetAtIndex}-${colIndex})`
+                  : `calc( var(${columnOffsetAtIndex}-${colIndex}) + var(${columnWidthAtIndex}-${dragColumnIndex}) )`;
+
+              setInfiniteColumnOffsetWhileReordering(
+                colIndex,
+                newPosition,
+                rootRef.current,
+              );
+              return;
+            }
+
+            if (dir === 1) {
+              let newPosition =
+                colIndex < dragColumnIndex || colIndex >= currentDropIndex
+                  ? `var(${columnOffsetAtIndex}-${colIndex})`
+                  : colIndex === dragColumnIndex
+                  ? `calc( var(${columnOffsetAtIndex}-${
+                      currentDropIndex - 1
+                    }) + var(${columnWidthAtIndex}-${
+                      currentDropIndex - 1
+                    }) - var(${columnWidthAtIndex}-${dragColumnIndex}) )`
+                  : `calc( var(${columnOffsetAtIndex}-${colIndex}) - var(${columnWidthAtIndex}-${dragColumnIndex}) )`;
+
+              setInfiniteColumnOffsetWhileReordering(
+                colIndex,
+                newPosition,
+                rootRef.current,
+              );
+              return;
+            }
+          });
         }
-        setDraggingDiff({ left: diffX, top: diffY });
       };
 
       const onPointerUp = (e: PointerEvent) => {
         const target = domRef.current!;
 
-        target.style.cursor = cursorRef.current!;
+        rootRef.current?.classList.remove(InfiniteClsShiftingColumns);
+
+        columnsArray.forEach((col) => {
+          setInfiniteColumnOffsetWhileReordering(
+            col.computedVisibleIndex,
+            '',
+            rootRef.current,
+          );
+        });
+
+        setInfiniteColumnZIndex(
+          dragColumnIndex,
+          getColumnZIndex(column, {
+            pinnedStartColsCount,
+            visibleColsCount,
+          }),
+          rootRef.current,
+        );
+
+        target.style.cursor = initialCursor as string;
         target.releasePointerCapture(e.pointerId);
 
         target.removeEventListener('pointermove', onPointerMove);
         target.removeEventListener('pointerup', onPointerUp);
 
-        setDraggingDiff(null);
-        componentActions.columnShifts = null;
-        componentActions.draggingColumnId = null;
+        setProxyPosition(null);
 
-        if (!didDragRef.current && column.computedSortable) {
+        if (!didDragAtLeastOnce && column.computedSortable) {
           column.toggleSort();
         }
 
-        const dropIndex = currentDropIndexRef.current;
-        if (dropIndex != null && dropIndex !== columnIndex) {
+        if (currentDropIndex != null && currentDropIndex !== dragColumnIndex) {
           const newOrder = moveXatY(
             computedColumnOrder,
-            columnIndex,
-            dropIndex > columnIndex ? dropIndex - 1 : dropIndex,
+            dragColumnIndex,
+            currentDropIndex > dragColumnIndex
+              ? currentDropIndex - 1
+              : currentDropIndex,
           );
+
+          columnsArray.forEach((col) => {
+            setInfiniteColumnOffsetWhileReordering(
+              col.computedVisibleIndex,
+              '',
+              rootRef.current,
+            );
+          });
 
           componentActions.columnOrder = newOrder;
         }
 
-        breakpointsRef.current = [];
+        componentActions.columnReorderInProgress = false;
 
-        didDragRef.current = false;
-        initialClientPos.current = null;
-        currentDropIndexRef.current = null;
+        breakpoints = [];
       };
 
       target.addEventListener('pointermove', onPointerMove);
@@ -212,7 +299,9 @@ export const useColumnPointerEvents = <T>({
     [
       columns,
       column,
-      columnIndex,
+      dragColumnIndex,
+      visibleColsCount,
+      pinnedStartColsCount,
       columnsArray,
       computedRemainingSpace,
       computedColumnOrder,
@@ -222,7 +311,7 @@ export const useColumnPointerEvents = <T>({
   return {
     onPointerDown: column.computedDraggable ? onPointerDown : () => {},
     dragging,
-    proxyOffset,
-    draggingDiff: draggingDiff ?? { top: 0, left: 0 },
+    proxyPosition,
+    // draggingDiff: draggingDiff ?? { top: 0, left: 0 },
   };
 };

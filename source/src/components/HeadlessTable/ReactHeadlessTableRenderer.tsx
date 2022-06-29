@@ -48,8 +48,10 @@ export type RenderableWithPosition = {
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
 const currentColumnTransformY = stripVar(InternalVars.currentColumnTransformY);
-
-const columnTransformX = stripVar(InternalVars.columnOffsetAtIndex);
+const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+const columnOffsetAtIndexWhileReordering = stripVar(
+  InternalVars.columnOffsetAtIndexWhileReordering,
+);
 
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
@@ -81,16 +83,26 @@ export class ReactHeadlessTableRenderer extends Logger {
     colIndex: number,
     x: number,
     y: number,
+    zIndex: number | 'auto' | undefined | null,
   ) => {
-    const transformXVar = `${columnTransformX}-${colIndex}`;
+    const columnOffsetX = `${columnOffsetAtIndex}-${colIndex}`;
+    const columnOffsetXWhileReordering = `${columnOffsetAtIndexWhileReordering}-${colIndex}`;
+    // const columnZIndex = `${columnZIndexAtIndex}-${colIndex}`;
 
     if (!this.infiniteNode) {
       this.infiniteNode = getParentInfiniteNode(element);
     }
-    this.infiniteNode!.style.setProperty(transformXVar, `${x}px`);
+
+    this.infiniteNode!.style.setProperty(columnOffsetX, `${x}px`);
     element.style.setProperty(currentColumnTransformY, `${y}px`);
 
-    element.style.transform = `translate3d(var(${transformXVar}), ${InternalVars.currentColumnTransformY}, 0)`;
+    // this does not change, but we need for initial setup
+    element.style.transform = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), ${InternalVars.currentColumnTransformY}, 0)`;
+
+    if (zIndex != null) {
+      // TODO this would be needed if zIndex would not be managed in grid
+      // this.infiniteNode!.style.setProperty(columnZIndex, `${zIndex}`);
+    }
   };
 
   constructor(brain: MatrixBrain) {
@@ -149,7 +161,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
     } = { offset: 0 },
-  ): ScrollPosition => {
+  ): ScrollPosition | null => {
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
     let { scrollAdjustPosition, offset = 0 } = config;
@@ -160,25 +172,43 @@ export class ReactHeadlessTableRenderer extends Logger {
     const rowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
     const rowHeight = brain.getItemSize(rowIndex, 'vertical');
 
+    const fixedStartRowsHeight = brain.getFixedStartRowsHeight();
+    const fixedEndRowsHeight = brain.getFixedEndRowsHeight();
+
     const top = scrollPosition.scrollTop;
 
     const availableSize = brain.getAvailableSize();
+
+    if (!availableSize.height) {
+      return null;
+    }
     const bottom = top + availableSize.height;
 
     if (!scrollAdjustPosition) {
       scrollAdjustPosition =
-        rowOffset > bottom ? 'end' : rowOffset < top ? 'start' : 'end';
+        rowOffset > bottom - fixedEndRowsHeight
+          ? 'end'
+          : rowOffset < top + fixedStartRowsHeight
+          ? 'start'
+          : 'end';
     }
 
     let scrollTop = scrollPosition.scrollTop;
     if (scrollAdjustPosition === 'center') {
-      scrollTop = rowOffset - Math.floor(brain.getAvailableSize().height / 2);
+      scrollTop =
+        rowOffset -
+        Math.floor(
+          (brain.getAvailableSize().height -
+            fixedStartRowsHeight -
+            fixedEndRowsHeight) /
+            2,
+        );
     } else if (scrollAdjustPosition === 'start') {
       offset = -offset;
-      scrollTop += rowOffset - top + offset;
+      scrollTop += rowOffset - top + offset - fixedStartRowsHeight;
     } else {
       offset += rowHeight;
-      scrollTop += rowOffset - bottom + offset;
+      scrollTop += rowOffset - bottom + offset + fixedEndRowsHeight;
     }
 
     return {
@@ -193,7 +223,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
     } = { offset: 0 },
-  ): ScrollPosition => {
+  ): ScrollPosition | null => {
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
     let { scrollAdjustPosition, offset = 0 } = config;
@@ -201,28 +231,46 @@ export class ReactHeadlessTableRenderer extends Logger {
       return scrollPosition;
     }
 
-    const rowOffset = brain.getItemOffsetFor(colIndex, 'horizontal');
+    const colOffset = brain.getItemOffsetFor(colIndex, 'horizontal');
     const colWidth = brain.getItemSize(colIndex, 'horizontal');
+
+    const fixedStartColsWidth = brain.getFixedStartColsWidth();
+    const fixedEndColsWidth = brain.getFixedStartColsWidth();
 
     const left = scrollPosition.scrollLeft;
 
     const availableSize = brain.getAvailableSize();
+
+    if (!availableSize.width) {
+      return null;
+    }
     const right = left + availableSize.width;
 
     if (!scrollAdjustPosition) {
       scrollAdjustPosition =
-        rowOffset > right ? 'end' : rowOffset < left ? 'start' : 'end';
+        colOffset > right - fixedEndColsWidth
+          ? 'end'
+          : colOffset < left + fixedStartColsWidth
+          ? 'start'
+          : 'end';
     }
 
     let scrollLeft = scrollPosition.scrollLeft;
     if (scrollAdjustPosition === 'center') {
-      scrollLeft = rowOffset - Math.floor(brain.getAvailableSize().width / 2);
+      scrollLeft =
+        colOffset -
+        Math.floor(
+          (brain.getAvailableSize().width -
+            fixedStartColsWidth -
+            fixedEndColsWidth) /
+            2,
+        );
     } else if (scrollAdjustPosition === 'start') {
       offset = -offset;
-      scrollLeft += rowOffset - left + offset;
+      scrollLeft += colOffset - left + offset - fixedStartColsWidth;
     } else {
       offset += colWidth;
-      scrollLeft += rowOffset - right + offset;
+      scrollLeft += colOffset - right + offset + fixedEndColsWidth;
     }
 
     return {
@@ -241,8 +289,8 @@ export class ReactHeadlessTableRenderer extends Logger {
       offsetTop: number;
       offsetLeft: number;
     } = { offsetLeft: 0, offsetTop: 0 },
-  ): ScrollPosition => {
-    const { scrollLeft } = this.getScrollPositionForScrollColumnIntoView(
+  ): ScrollPosition | null => {
+    const scrollPosForCol = this.getScrollPositionForScrollColumnIntoView(
       colIndex,
       {
         scrollAdjustPosition:
@@ -250,11 +298,22 @@ export class ReactHeadlessTableRenderer extends Logger {
         offset: config.offsetLeft,
       },
     );
-    const { scrollTop } = this.getScrollPositionForScrollRowIntoView(rowIndex, {
-      scrollAdjustPosition:
-        config.rowScrollAdjustPosition || config.scrollAdjustPosition,
-      offset: config.offsetTop,
-    });
+
+    const scrollPosForRow = this.getScrollPositionForScrollRowIntoView(
+      rowIndex,
+      {
+        scrollAdjustPosition:
+          config.rowScrollAdjustPosition || config.scrollAdjustPosition,
+        offset: config.offsetTop,
+      },
+    );
+
+    if (!scrollPosForCol || !scrollPosForRow) {
+      return null;
+    }
+
+    const { scrollLeft } = scrollPosForCol;
+    const { scrollTop } = scrollPosForRow;
 
     return { scrollLeft, scrollTop };
   };
@@ -270,7 +329,12 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (!this.isRowRendered(rowIndex)) {
       return false;
     }
+
     const { brain } = this;
+
+    if (brain.isRowFixed(rowIndex)) {
+      return true;
+    }
 
     const {
       start: [startRow],
@@ -337,11 +401,14 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const { brain } = this;
 
+    if (brain.isColFixed(colIndex)) {
+      return true;
+    }
+
     const {
       start: [_, startCol],
       end: [__, endCol],
     } = brain.getRenderRange();
-    const midCol = Math.floor((startCol + endCol) / 2);
 
     if (colIndex < startCol) {
       return false;
@@ -350,11 +417,14 @@ export class ReactHeadlessTableRenderer extends Logger {
       return false;
     }
 
+    const midCol = Math.floor((startCol + endCol) / 2);
+
     if (colIndex >= midCol) {
       const lastVisibleCol = brain.getItemAt(
         brain.getAvailableSize().width +
           brain.getScrollPosition().scrollLeft -
-          offsetMargin,
+          offsetMargin -
+          brain.getFixedEndColsWidth(),
         'horizontal',
       );
 
@@ -363,7 +433,9 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     if (colIndex < midCol) {
       const firstVisibleCol = brain.getItemAt(
-        brain.getScrollPosition().scrollLeft + offsetMargin,
+        brain.getScrollPosition().scrollLeft +
+          offsetMargin +
+          brain.getFixedStartColsWidth(),
         'horizontal',
       );
 
@@ -1079,7 +1151,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       (itemElement.dataset as any).colIndex = colIndex;
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
-        this.setTransform(itemElement, rowIndex, colIndex, x, y);
+        this.setTransform(itemElement, rowIndex, colIndex, x, y, null);
 
         itemElement.style.willChange = 'transform';
         itemElement.style.backfaceVisibility = 'hidden';
@@ -1159,7 +1231,6 @@ export class ReactHeadlessTableRenderer extends Logger {
       }
       const itemPosition = brain.getCellOffset(rowIndex, colIndex);
       const node = itemDOMElements[elementIndex];
-      // console.log('adjusting', node);
 
       if (elementIndex != null && node && itemPosition) {
         fn(rowIndex, colIndex, node!, itemPosition, scrollPosition);
@@ -1173,8 +1244,14 @@ export class ReactHeadlessTableRenderer extends Logger {
       { x, y }: { x: number; y: number },
       { scrollLeft }: ScrollPosition,
     ) => {
-      node.style.zIndex = `${fixedColsStart - colIndex}`;
-      this.setTransform(node, _rowIndex, colIndex, x + scrollLeft, y);
+      this.setTransform(
+        node,
+        _rowIndex,
+        colIndex,
+        x + scrollLeft,
+        y,
+        fixedColsStart - colIndex,
+      );
     };
 
     const adjustRowStart = (
@@ -1184,13 +1261,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       coords: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) => {
-      node.style.zIndex = `${fixedRowsStart - rowIndex}`;
       this.setTransform(
         node,
         rowIndex,
         _colIndex,
         coords.x,
         coords.y + scrollPosition.scrollTop,
+        fixedRowsStart - rowIndex,
       );
     };
 
@@ -1200,11 +1277,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       node: HTMLElement,
       { y }: { y: number },
     ) => {
-      node.style.zIndex = `${cols - colIndex}`;
       const val = fixedEndColsOffsets[colIndex];
-      // console.log('value', val);
 
-      this.setTransform(node, _rowIndex, colIndex, val, y);
+      this.setTransform(node, _rowIndex, colIndex, val, y, cols - colIndex);
     };
 
     const adjustRowEnd = (
@@ -1213,13 +1288,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       node: HTMLElement,
       coords: { x: number; y: number },
     ) => {
-      node.style.zIndex = `${rows - rowIndex}`;
       this.setTransform(
         node,
         rowIndex,
         _colIndex,
         coords.x,
         fixedEndRowsOffsets[rowIndex],
+        rows - rowIndex,
       );
     };
 
@@ -1230,13 +1305,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       { x, y }: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) => {
-      node.style.zIndex = `1000000`;
       this.setTransform(
         node,
         _rowIndex,
         _colIndex,
         x + scrollPosition.scrollLeft,
         y + scrollPosition.scrollTop,
+        100_000,
       );
     };
 
@@ -1247,13 +1322,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       { x }: { x: number; y: number },
       scrollPosition: ScrollPosition,
     ) => {
-      node.style.zIndex = `2000000`;
       this.setTransform(
         node,
         _rowIndex,
         _colIndex,
         x + scrollPosition.scrollLeft,
         fixedEndRowsOffsets[_rowIndex],
+        200_000,
       );
     };
 
@@ -1263,13 +1338,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       node: HTMLElement,
       coords: { y: number },
     ) => {
-      node.style.zIndex = `3000000`;
       this.setTransform(
         node,
         _rowIndex,
         colIndex,
         fixedEndColsOffsets[colIndex],
         coords.y + scrollPosition.scrollTop,
+        300_000,
       );
     };
 
@@ -1278,13 +1353,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       colIndex: number,
       node: HTMLElement,
     ) => {
-      node.style.zIndex = `4000000`;
       this.setTransform(
         node,
         rowIndex,
         colIndex,
         fixedEndColsOffsets[colIndex],
         fixedEndRowsOffsets[rowIndex],
+        400_000,
       );
     };
 

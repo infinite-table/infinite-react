@@ -156,14 +156,14 @@ export type InfiniteTableImperativeApi<T> = {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
     },
-  ) => void;
+  ) => boolean;
   scrollColumnIntoView: (
     colId: string,
     config?: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
     },
-  ) => void;
+  ) => boolean;
   scrollCellIntoView: (
     rowIndex: number,
     colIdOrIndex: string | number,
@@ -171,7 +171,7 @@ export type InfiniteTableImperativeApi<T> = {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
     },
-  ) => void;
+  ) => boolean;
 
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;

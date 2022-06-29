@@ -133,18 +133,12 @@ export const getColumnOffsetsFromDOM = async ({ page }: { page: Page }) => {
   const offsets = await Promise.all(
     cells.map(async (cell) =>
       cell.evaluate((node) => {
-        const variableForXTransform = node.style.transform
-          .split('translate3d(')[1]
-          .split(',')[0];
+        const matrixValue = getComputedStyle(node).transform;
 
-        function stripVar(cssVariableWithVarString: string) {
-          return cssVariableWithVarString.slice(4, -1);
+        function stripMatrixString(value: string) {
+          return value.slice(7, -1);
         }
-        return parseInt(
-          getComputedStyle(node).getPropertyValue(
-            stripVar(variableForXTransform),
-          ),
-        );
+        return parseInt(stripMatrixString(matrixValue).split(',')[4]);
       }),
     ),
   );
@@ -152,6 +146,16 @@ export const getColumnOffsetsFromDOM = async ({ page }: { page: Page }) => {
   return offsets;
 };
 
+export const getScrollPosition = async ({ page }: { page: Page }) => {
+  const scroller = page.locator('.InfiniteBody > :first-child');
+
+  return await scroller.evaluate((node) => {
+    return {
+      scrollLeft: node.scrollLeft,
+      scrollTop: node.scrollTop,
+    };
+  });
+};
 export const getActiveCellIndicatorOffsetFromDOM = async ({
   page,
 }: {
@@ -172,6 +176,23 @@ export const getActiveCellIndicatorOffsetFromDOM = async ({
       getComputedStyle(node).getPropertyValue(stripVar(xVar)),
       getComputedStyle(node).getPropertyValue(stripVar(yVar)),
     ];
+  });
+};
+
+export const getActiveRowIndicatorOffsetFromDOM = async ({
+  page,
+}: {
+  page: Page;
+}) => {
+  const indicatorNode = page.locator('[data-name="active-row-indicator"]');
+
+  return await indicatorNode.evaluate((node) => {
+    const matrixValue = getComputedStyle(node).transform;
+
+    function stripMatrixString(value: string) {
+      return value.slice(7, -1);
+    }
+    return parseInt(stripMatrixString(matrixValue).split(',')[5]);
   });
 };
 

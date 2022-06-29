@@ -46,6 +46,11 @@ export const ActiveRowIndicatorBaseCls = style(
 );
 
 export const ActiveRowIndicatorCls = styleVariants({
-  visible: [ActiveRowIndicatorBaseCls, { display: 'block' }],
+  visible: [
+    ActiveRowIndicatorBaseCls,
+    {
+      display: 'block',
+    },
+  ],
   hidden: [ActiveRowIndicatorBaseCls, { display: 'none' }],
 });

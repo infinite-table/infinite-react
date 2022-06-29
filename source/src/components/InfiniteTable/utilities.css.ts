@@ -67,6 +67,8 @@ export const zIndex = styleVariants({
   1000: { zIndex: 1000 },
   10_000: { zIndex: 10_000 },
   100_000: { zIndex: 100_000 },
+  1_000_000: { zIndex: 1_000_000 },
+  10_000_000: { zIndex: 10_000_000 },
 });
 
 export const display = styleVariants({
