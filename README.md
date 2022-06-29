@@ -16,8 +16,8 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [What is Infinite?](#what-is-infinite)
-- [Installation](#installation)
+- [🤔 What is Infinite?](#-what-is-infinite)
+- [📦 Installation](#-installation)
 - [📄 Extensive documentation](#-extensive-documentation)
 - [❤️ TypeScript](#-typescript)
 - [🏢 Enterprise-ready](#-enterprise-ready)
@@ -25,8 +25,8 @@
   - [📦 Small bundle size](#-small-bundle-size)
   - [🧪 Automated end-to-end tests](#%F0%9F%A7%AA-automated-end-to-end-tests)
 - [🎨 Themable](#-themable)
-- [Releases](#releases)
-- [License](#license)
+- [🚀 Releases](#-releases)
+- [📑 License](#-license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
