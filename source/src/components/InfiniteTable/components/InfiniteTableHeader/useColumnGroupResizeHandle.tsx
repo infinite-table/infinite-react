@@ -30,64 +30,70 @@ export function useColumnGroupResizeHandle<T>(
 
   const lastColumnInGroup = groupColumns[groupColumns.length - 1];
 
-  const computeResizeForDiff = useCallback((diff: number) => {
-    const state = getState();
-    const { columnSizing, viewportReservedWidth, bodySize } = state;
+  const computeResizeForDiff = useCallback(
+    (diff: number) => {
+      const state = getState();
+      const { columnSizing, viewportReservedWidth, bodySize } = state;
 
-    const columns = getComputed().computedVisibleColumns;
+      const columns = getComputed().computedVisibleColumns;
 
-    let atLeastOneFlex = false;
+      let atLeastOneFlex = false;
 
-    const columnSizingWithFlex = columns.reduce((acc, col) => {
-      if (col.computedFlex) {
-        acc[col.id] = { ...columnSizing[col.id], flex: col.computedWidth }; // we explicitly need to have here `{ flex: col.computedWidth }` and not `{ flex: col.computedFlex }`
-        // this is to make the test #advancedcolumnresizing work
+      const columnSizingWithFlex = columns.reduce((acc, col) => {
+        if (col.computedFlex) {
+          acc[col.id] = { ...columnSizing[col.id], flex: col.computedWidth }; // we explicitly need to have here `{ flex: col.computedWidth }` and not `{ flex: col.computedFlex }`
+          // this is to make the test #advancedcolumnresizing work
 
-        atLeastOneFlex = true;
-      }
-      return acc;
-    }, {} as InfiniteTablePropColumnSizing);
-
-    const columnSizingForResize = atLeastOneFlex
-      ? {
-          // #advancedcolumnresizing-important
-          // yep, this order is correct - first apply current columnSizing from state
-          ...columnSizing,
-
-          // and then for flex columns, we override with actual computed widths from above
-          ...columnSizingWithFlex,
+          atLeastOneFlex = true;
         }
-      : columnSizing;
+        return acc;
+      }, {} as InfiniteTablePropColumnSizing);
 
-    const result = computeGroupResize({
-      availableSize: bodySize.width,
-      reservedWidth: viewportReservedWidth || 0,
-      dragHandleOffset: diff,
-      dragHandlePositionAfter: lastColumnInGroup.computedVisibleIndex,
-      columnSizing: columnSizingForResize,
-      columnGroupSize: groupColumns.length,
-      items: columns.map((c) => {
-        return {
-          id: c.id,
-          resizable: c.computedResizable,
-          computedFlex: c.computedFlex,
-          computedWidth: c.computedWidth,
-          computedMinWidth: c.computedMinWidth,
-          computedMaxWidth: c.computedMaxWidth,
-        };
-      }),
-    });
+      const columnSizingForResize = atLeastOneFlex
+        ? {
+            // #advancedcolumnresizing-important
+            // yep, this order is correct - first apply current columnSizing from state
+            ...columnSizing,
 
-    return result;
-  }, []);
+            // and then for flex columns, we override with actual computed widths from above
+            ...columnSizingWithFlex,
+          }
+        : columnSizing;
 
-  const onColumnResize = useCallback((diff: number) => {
-    const { columnSizing, reservedWidth } = computeResizeForDiff(diff);
+      const result = computeGroupResize({
+        availableSize: bodySize.width,
+        reservedWidth: viewportReservedWidth || 0,
+        dragHandleOffset: diff,
+        dragHandlePositionAfter: lastColumnInGroup.computedVisibleIndex,
+        columnSizing: columnSizingForResize,
+        columnGroupSize: groupColumns.length,
+        items: columns.map((c) => {
+          return {
+            id: c.id,
+            resizable: c.computedResizable,
+            computedFlex: c.computedFlex,
+            computedWidth: c.computedWidth,
+            computedMinWidth: c.computedMinWidth,
+            computedMaxWidth: c.computedMaxWidth,
+          };
+        }),
+      });
 
-    componentActions.viewportReservedWidth = reservedWidth;
+      return result;
+    },
+    [lastColumnInGroup],
+  );
 
-    componentActions.columnSizing = columnSizing;
-  }, []);
+  const onColumnResize = useCallback(
+    (diff: number) => {
+      const { columnSizing, reservedWidth } = computeResizeForDiff(diff);
+
+      componentActions.viewportReservedWidth = reservedWidth;
+
+      componentActions.columnSizing = columnSizing;
+    },
+    [computeResizeForDiff],
+  );
 
   const groupResizable = groupColumns.some((c) => c.computedResizable);
   const resizeHandle = groupResizable ? (
