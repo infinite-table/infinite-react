@@ -72,6 +72,7 @@ export function useColumnResizeHandle<T>(
       });
 
       // TODO I think this can be removed
+
       // if (
       //   activeCellIndex &&
       //   activeCellIndex[1] >= column.computedVisibleIndex
