@@ -7,8 +7,10 @@ import { InternalVars } from '../../theme.css';
 import { cssEllipsisClassName } from '../../utilities.css';
 
 import { HeaderGroupCls } from './header.css';
-import type { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
+
 import { useColumnGroupResizeHandle } from './useColumnGroupResizeHandle';
+
+import type { InfiniteTableHeaderGroupProps } from './InfiniteTableHeaderTypes';
 
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
