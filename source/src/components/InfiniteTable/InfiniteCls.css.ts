@@ -7,7 +7,6 @@ import {
   display,
   flexFlow,
   position,
-  userSelect,
 } from './utilities.css';
 
 export const InfiniteCls = style([

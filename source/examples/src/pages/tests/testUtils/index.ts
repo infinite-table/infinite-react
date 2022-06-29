@@ -74,6 +74,13 @@ export const getHeaderCellByColumnId = (
   return page.locator(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
+export const getHeaderCellByIndex = (
+  colIndex: number,
+  { page }: { page: Page },
+) => {
+  return page.locator(`.InfiniteHeader [data-col-index="${colIndex}"]`).last();
+};
+
 export const getCellNode = async (
   { columnId, rowIndex }: { columnId: string; rowIndex: number },
   { page }: { page: Page },
@@ -117,6 +124,30 @@ export const getColumnWidths = async (
       return await getHeaderCellWidthByColumnId(id, { page });
     }),
   );
+};
+
+export const getColumnOffsetById = async (
+  columnId: string,
+  { page }: { page: Page },
+) => {
+  const node = getHeaderCellByColumnId(columnId, { page });
+
+  const value = await node!.evaluate((node) => {
+    const matrix = getComputedStyle(node).transform;
+    const translatex = matrix.slice('.matrix('.length, -1).split(',')[4];
+
+    return parseInt(translatex);
+  });
+  return value;
+};
+
+export const getColumnIdByIndex = async (
+  colIndex: number,
+  { page }: { page: Page },
+) => {
+  const node = getHeaderCellByIndex(colIndex, { page });
+
+  return await node.getAttribute('data-column-id');
 };
 
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {

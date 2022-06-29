@@ -6,10 +6,6 @@ import {
   InfiniteTableComputedColumn,
   InfiniteTablePropColumnSizing,
 } from '../../types';
-import {
-  setInfiniteColumnOffset,
-  setInfiniteColumnWidth,
-} from '../../utils/infiniteDOMUtils';
 import { ResizeHandle } from './ResizeHandle';
 
 export function useColumnResizeHandle<T>(
@@ -17,7 +13,6 @@ export function useColumnResizeHandle<T>(
 ) {
   const {
     computed: { computedVisibleColumns },
-    componentState: { domRef },
     getState,
     getComputed,
     componentActions,
@@ -31,8 +26,7 @@ export function useColumnResizeHandle<T>(
       shareSpaceOnResize: boolean;
     }) => {
       const state = getState();
-      const { columnSizing, viewportReservedWidth, bodySize, activeCellIndex } =
-        state;
+      const { columnSizing, viewportReservedWidth, bodySize } = state;
 
       const columns = getComputed().computedVisibleColumns;
 
@@ -77,43 +71,44 @@ export function useColumnResizeHandle<T>(
         }),
       });
 
-      if (
-        activeCellIndex &&
-        activeCellIndex[1] >= column.computedVisibleIndex
-      ) {
-        const activeColumn = columns[activeCellIndex[1]];
-        const currentColumn = columns[column.computedVisibleIndex];
+      // TODO I think this can be removed
+      // if (
+      //   activeCellIndex &&
+      //   activeCellIndex[1] >= column.computedVisibleIndex
+      // ) {
+      //   const activeColumn = columns[activeCellIndex[1]];
+      //   const currentColumn = columns[column.computedVisibleIndex];
 
-        if (activeCellIndex[1] === currentColumn.computedVisibleIndex) {
-          setInfiniteColumnWidth(
-            currentColumn.computedVisibleIndex,
-            currentColumn.computedWidth + result.adjustedDiff,
-            domRef.current,
-          );
-        } else if (activeColumn) {
-          setInfiniteColumnOffset(
-            activeColumn.computedVisibleIndex,
-            activeColumn.computedOffset + result.adjustedDiff,
-            domRef.current,
-          );
-        }
+      //   if (activeCellIndex[1] === currentColumn.computedVisibleIndex) {
+      //     setInfiniteColumnWidth(
+      //       currentColumn.computedVisibleIndex,
+      //       currentColumn.computedWidth + result.adjustedDiff,
+      //       domRef.current,
+      //     );
+      //   } else if (activeColumn) {
+      //     setInfiniteColumnOffset(
+      //       activeColumn.computedVisibleIndex,
+      //       activeColumn.computedOffset + result.adjustedDiff,
+      //       domRef.current,
+      //     );
+      //   }
 
-        if (
-          shareSpaceOnResize &&
-          activeCellIndex[1] === currentColumn.computedVisibleIndex + 1 &&
-          activeColumn
-        ) {
-          setInfiniteColumnWidth(
-            activeColumn.computedVisibleIndex,
-            activeColumn.computedWidth - result.adjustedDiff,
-            domRef.current,
-          );
-        }
-      }
+      //   if (
+      //     shareSpaceOnResize &&
+      //     activeCellIndex[1] === currentColumn.computedVisibleIndex + 1 &&
+      //     activeColumn
+      //   ) {
+      //     setInfiniteColumnWidth(
+      //       activeColumn.computedVisibleIndex,
+      //       activeColumn.computedWidth - result.adjustedDiff,
+      //       domRef.current,
+      //     );
+      //   }
+      // }
 
       return result;
     },
-    [],
+    [column],
   );
 
   const onColumnResize = useCallback(
@@ -134,7 +129,7 @@ export function useColumnResizeHandle<T>(
       }
       componentActions.columnSizing = columnSizing;
     },
-    [],
+    [computeResizeForDiff],
   );
 
   const resizeHandle = column.computedResizable ? (
