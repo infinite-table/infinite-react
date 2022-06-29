@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { rootClassName } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
 import { cssEllipsisClassName } from '../../utilities.css';
@@ -14,14 +13,11 @@ import { useColumnGroupResizeHandle } from './useColumnGroupResizeHandle';
 export const TableHeaderGroupClassName = `${rootClassName}HeaderGroup`;
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
+const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 export function InfiniteTableHeaderGroup<T>(
   props: InfiniteTableHeaderGroupProps<T>,
 ) {
-  const {
-    computed: { computedVisibleColumns },
-  } = useInfiniteTable<T>();
-
   const { columnGroup, height, columns, bodyBrain, columnGroupsMaxDepth } =
     props;
 
@@ -54,10 +50,10 @@ export function InfiniteTableHeaderGroup<T>(
 
   // the zIndexes are bigger at groups that are at the top
   // also groups to the left have a higher zIndex
-  const zIndex =
-    computedVisibleColumns.length * 10 -
-    firstColumn.computedVisibleIndex * 10 +
-    height * (columnGroupsMaxDepth - columnGroup.depth + 2);
+
+  const zIndex = `calc(var(${columnZIndexAtIndex}-${
+    firstColumn.computedVisibleIndex
+  }) + ${columnGroupsMaxDepth - columnGroup.depth})`;
 
   return (
     <div

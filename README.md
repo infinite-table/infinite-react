@@ -31,23 +31,24 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## What is Infinite?
+## 🤔 What is Infinite?
 
 Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
-* [sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
-* [row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-* [pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting) - both server-side and client-side
-* [aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
-* [live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
-* [lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
-* [keyboard navigation](https://infinite-table.com/docs/latest/learn/keyboard-navigation/navigating-cells)
-* [fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
-* [column grouping](https://infinite-table.com/docs/latest/learn/column-groups)
-* [theming](https://infinite-table.com/docs/latest/learn/theming)
+* [🔃 sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
+* [💪 row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+* [🏢 pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting) - both server-side and client-side
+* [🧪 aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
+* [🌪️ live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
+* [🌴lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
+* [🧭 keyboard navigation for cells and rows](https://infinite-table.com/docs/latest/learn/keyboard-navigation/navigating-cells)
+* [↔️ fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
+* [🧩 column grouping](https://infinite-table.com/docs/latest/learn/column-groups)
+* [🗃 filtering](https://infinite-table.com/docs/latest/learn/filtering)
+* [🎨 theming](https://infinite-table.com/docs/latest/learn/theming)
 
 
-## Installation
+## 📦 Installation
 
 ```bash
 npm install @infinite-table/infinite-react --save
@@ -94,10 +95,10 @@ import "@infinite-table/infinite-react/index.css"
 
 This file includes both the light and the dark themes.
 
-## Releases
+## 🚀 Releases
 
 We release often - see [what each release contains hre](https://infinite-table.com/docs/releases). Due to our automated releases which have integrated tests, we're confident that we're delivering the best possible experience to our users.
 
-## License 
+## 📑 License 
 
 Both Open and [Commercial License](https://github.com/infinite-table/react-table/blob/master/source/LICENSE.md)
