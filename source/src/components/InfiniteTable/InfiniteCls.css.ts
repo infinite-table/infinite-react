@@ -1,12 +1,19 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
-import { ThemeVars } from './theme.css';
+import { InternalVars, ThemeVars } from './theme.css';
 
 import {
   boxSizingBorderBox,
+  cursor,
+  top,
   display,
   flexFlow,
+  pointerEvents,
   position,
+  userSelect,
+  visibility,
+  width,
+  zIndex,
 } from './utilities.css';
 
 export const InfiniteCls = style([
@@ -108,3 +115,49 @@ export const InfiniteClsShiftingColumns = style(
 );
 
 export const FooterCls = style([position.relative]);
+
+export const InfiniteClsHasPinnedStart = style({});
+export const InfiniteClsHasPinnedEnd = style({});
+
+export const PinnedIndicatorCls = style([
+  position.absolute,
+  top[0],
+  cursor.colResize,
+  userSelect.none,
+  width[0],
+  visibility.hidden,
+  pointerEvents['none'],
+  zIndex[1000],
+  {
+    transform: `translate3d(-100%, 0px, 0px)`,
+    borderRight: ThemeVars.components.Cell.pinnedBorder,
+    bottom: InternalVars.scrollbarWidthHorizontal,
+  },
+]);
+export const PinnedStartIndicatorBorder = style([
+  PinnedIndicatorCls,
+  {
+    left: InternalVars.pinnedStartWidth,
+
+    selectors: {
+      [`${InfiniteClsHasPinnedStart} &`]: {
+        visibility: 'visible',
+      },
+    },
+  },
+]);
+
+export const PinnedEndIndicatorBorder = style([
+  PinnedIndicatorCls,
+
+  {
+    // right: `calc( ${InternalVars.pinnedEndWidth} + ${InternalVars.scrollbarWidthVertical})`,
+    left: `calc( ${InternalVars.pinnedEndOffset} )`,
+
+    selectors: {
+      [`${InfiniteClsHasPinnedEnd} &`]: {
+        visibility: 'visible',
+      },
+    },
+  },
+]);

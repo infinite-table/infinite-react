@@ -64,10 +64,12 @@ const Gotcha = ({
 );
 const Note = ({
   children,
+  title,
 }: {
   children: React.ReactNode;
+  title?: React.ReactNode;
 }) => (
-  <ExpandableCallout type="note">
+  <ExpandableCallout type="note" title={title}>
     {children}
   </ExpandableCallout>
 );

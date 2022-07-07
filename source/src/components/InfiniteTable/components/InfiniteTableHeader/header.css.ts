@@ -77,12 +77,13 @@ export const HeaderClsRecipe = recipe({
       end: {},
       false: {},
     },
-    virtualized: {
+    firstInCategory: {
       true: {},
-      false: {
-        position: 'relative',
-        overflow: 'hidden',
-      },
+      false: {},
+    },
+    lastInCategory: {
+      true: {},
+      false: {},
     },
     overflow: {
       true: { zIndex: 10 },
@@ -102,6 +103,13 @@ export const HeaderClsRecipe = recipe({
     },
     {
       variants: {
+        pinned: 'start',
+        firstInCategory: true,
+      },
+      style: ColumnCellVariantsObject.pinnedStartFirstInCategory,
+    },
+    {
+      variants: {
         overflow: true,
         pinned: 'end',
       },
@@ -109,6 +117,13 @@ export const HeaderClsRecipe = recipe({
         ...ColumnCellVariantsObject.pinnedEndFirstInCategory,
         vars: {},
       },
+    },
+    {
+      variants: {
+        pinned: 'end',
+        lastInCategory: true,
+      },
+      style: ColumnCellVariantsObject.pinnedEndLastInCategory,
     },
   ],
 });
@@ -178,9 +193,17 @@ export const HeaderCellRecipe = recipe({
     pinned: {
       start: {
         ...ColumnCellVariantsObject.pinnedStart,
+
         zIndex: 10,
+        // vars: {
+        //   [ThemeVars.components.Cell.reorderEffectDuration]: '0',
+        // },
       },
-      end: {},
+      end: {
+        // vars: {
+        //   [ThemeVars.components.Cell.reorderEffectDuration]: '0',
+        // },
+      },
       false: {},
     },
     filtered: {
@@ -228,8 +251,8 @@ export const HeaderCellRecipe = recipe({
         //   })} &`]: {
         borderRight: ThemeVars.components.Cell.border,
         vars: {
-          [ThemeVars.components.Cell.border]:
-            ThemeVars.components.Cell.borderInvisible,
+          // [ThemeVars.components.Cell.border]:
+          //   ThemeVars.components.Cell.borderInvisible,
         },
         // },
         // },
@@ -284,6 +307,7 @@ export const HeaderGroupCls = style([
     padding: ThemeVars.components.Cell.padding,
     borderBottom: ThemeVars.components.Cell.border,
     borderRight: ThemeVars.components.Cell.border,
+    background: ThemeVars.components.HeaderCell.background,
   },
 ]);
 

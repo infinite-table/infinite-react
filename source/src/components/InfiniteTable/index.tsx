@@ -9,6 +9,7 @@ import {
   useDataSourceContextValue,
 } from '../DataSource/publicHooks/useDataSource';
 import { HeadlessTable } from '../HeadlessTable';
+
 import {
   getComponentStateRoot,
   useComponentState,
@@ -35,6 +36,10 @@ import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useLicense } from './hooks/useLicense/useLicense';
 import { useScrollToActiveCell } from './hooks/useScrollToActiveCell';
 import { useScrollToActiveRow } from './hooks/useScrollToActiveRow';
+import {
+  PinnedEndIndicatorBorder,
+  PinnedStartIndicatorBorder,
+} from './InfiniteCls.css';
 import { getInfiniteTableContext } from './InfiniteTableContext';
 import { internalProps, rootClassName } from './internalProps';
 import { handleKeyboardNavigation } from './keyboardNavigationAndSelection';
@@ -88,21 +93,13 @@ export const InfiniteTableComponent = React.memo(
       computed,
       componentActions: actions,
       getState,
+      imperativeApi,
     } = useInfiniteTable<T>();
     const {
       componentState: { loading, dataArray },
       getState: getDataSourceState,
       componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
-
-    const [imperativeApi] = useState(() => {
-      return getImperativeApi(
-        getState,
-        getComputed,
-        getDataSourceState,
-        actions,
-      );
-    });
 
     const {
       domRef,
@@ -209,7 +206,7 @@ export const InfiniteTableComponent = React.memo(
               componentState.ready &&
               keyboardNavigation === 'cell' &&
               // we want to hide the active cell indicator while column reodering is happening
-              !componentState.columnReorderInProgress
+              !componentState.columnReorderDragColumnId
                 ? activeCellIndex
                 : null
             }
@@ -234,6 +231,14 @@ export const InfiniteTableComponent = React.memo(
             top[0],
             left[0],
           )}
+        />
+        <div
+          data-name="pinned-start-border"
+          className={PinnedStartIndicatorBorder}
+        />
+        <div
+          data-name="pinned-end-border"
+          className={PinnedEndIndicatorBorder}
         />
         {rowHeightCSSVar ? (
           <CSSVariableWatch
@@ -268,12 +273,24 @@ function InfiniteTableContextProvider<T>() {
     (globalThis as any).getComputed = getComputed;
   }
 
+  const { getState: getDataSourceState } = useDataSourceContextValue<T>();
+
+  const [imperativeApi] = useState(() => {
+    return getImperativeApi(
+      getState,
+      getComputed,
+      getDataSourceState,
+      componentActions,
+    );
+  });
+
   const contextValue: InfiniteTableContextValue<T> = {
     componentActions,
     componentState,
     computed,
     getComputed,
     getState,
+    imperativeApi,
   };
 
   useResizeObserver(

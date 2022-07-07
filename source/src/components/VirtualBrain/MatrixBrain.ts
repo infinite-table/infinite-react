@@ -680,7 +680,9 @@ export class MatrixBrain extends Logger {
    * The indexes in the returned array are the absolute indexes of the cols, so the returned array is an array with holes
    *
    */
-  getFixedEndColsOffsets = (): number[] => {
+  getFixedEndColsOffsets = (
+    { skipScroll }: { skipScroll: boolean } = { skipScroll: false },
+  ): number[] => {
     if (!this.fixedColsEnd) {
       return [];
     }
@@ -701,7 +703,7 @@ export class MatrixBrain extends Logger {
       sum += colWidth;
     }
 
-    const baseOffset = width - sum + scrollLeft;
+    const baseOffset = width - sum + (skipScroll ? 0 : scrollLeft);
 
     sum = 0;
 
@@ -729,7 +731,9 @@ export class MatrixBrain extends Logger {
    * The indexes in the returned array are the absolute indexes of the rows, so the returned array is an array with holes
    *
    */
-  getFixedEndRowsOffsets = (): number[] => {
+  getFixedEndRowsOffsets = (
+    { skipScroll }: { skipScroll: boolean } = { skipScroll: false },
+  ): number[] => {
     if (!this.fixedRowsEnd) {
       return [];
     }
@@ -750,7 +754,7 @@ export class MatrixBrain extends Logger {
       sum += rowHeight;
     }
 
-    const baseOffset = height - sum + scrollTop;
+    const baseOffset = height - sum + (skipScroll ? 0 : scrollTop);
 
     sum = 0;
 
@@ -844,9 +848,15 @@ export class MatrixBrain extends Logger {
     horizontal,
     vertical,
   }: {
-    horizontal: number;
-    vertical: number;
+    horizontal: number | undefined;
+    vertical: number | undefined;
   }) => {
+    if (horizontal === undefined) {
+      horizontal = this.horizontalRenderCount;
+    }
+    if (vertical === undefined) {
+      vertical = this.verticalRenderCount;
+    }
     const horizontalSame = horizontal === this.horizontalRenderCount;
     const verticalSame = vertical === this.verticalRenderCount;
 

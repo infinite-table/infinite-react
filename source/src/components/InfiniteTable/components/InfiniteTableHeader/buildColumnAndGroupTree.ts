@@ -4,11 +4,13 @@ import {
   InfiniteTableComputedColumn,
   InfiniteTableState,
 } from '../../types';
+import { InfiniteTableColumnPinnedValues } from '../../types/InfiniteTableProps';
 
 export type ColGroupTreeBaseItem = {
   id: string;
   groupOffset: number;
   depth: number;
+  computedPinned: InfiniteTableColumnPinnedValues;
   computedWidth: number;
 };
 export type ColGroupTreeColumnItem<T> = ColGroupTreeBaseItem & {
@@ -94,12 +96,15 @@ export function buildColumnAndGroupTree<T>(
 
   columns.forEach((col, index) => {
     const colId = col.id;
-    const previousColumnId = columns[index - 1]?.id ?? '';
+    const previousColumn = columns[index - 1];
+    const previousColumnId = previousColumn?.id ?? '';
 
     const parentGroups = new Set<string>();
 
     const parentGroupsOfPreviousColumn =
-      mapOfAllParentGroupsForColumns.get(previousColumnId) ?? new Set();
+      previousColumn?.computedPinned !== col.computedPinned
+        ? new Set()
+        : mapOfAllParentGroupsForColumns.get(previousColumnId) ?? new Set();
 
     mapOfAllParentGroupsForColumns.set(colId, parentGroups);
 
@@ -108,6 +113,7 @@ export function buildColumnAndGroupTree<T>(
       id: colId,
       ref: col,
       groupOffset: 0,
+      computedPinned: col.computedPinned,
       computedWidth: col.computedWidth,
       depth: col.columnGroup
         ? (columnGroupsDepthsMap.get(col.columnGroup) ?? 0) + 1
@@ -142,6 +148,7 @@ export function buildColumnAndGroupTree<T>(
             groupOffset: 0,
             uniqueGroupId: [groupId],
             computedWidth: 0,
+            computedPinned: colItem.computedPinned,
             depth: columnGroupsDepthsMap.get(groupId) ?? 0,
           };
           map.set(groupAbsoluteId, colGroupItem);

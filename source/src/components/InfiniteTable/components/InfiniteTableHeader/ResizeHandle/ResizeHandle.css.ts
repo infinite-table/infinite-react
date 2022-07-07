@@ -2,7 +2,15 @@ import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { ThemeVars } from '../../../theme.css';
 
-import { position, right, top, bottom, cursor } from '../../../utilities.css';
+import {
+  position,
+  right,
+  top,
+  bottom,
+  cursor,
+  left,
+  overflow,
+} from '../../../utilities.css';
 
 export const ResizeHandleCls = style(
   [
@@ -11,10 +19,10 @@ export const ResizeHandleCls = style(
     right['0'],
     bottom['0'],
     cursor.colResize,
+    overflow.hidden,
     {
       transform: 'translateX(50%)',
       width: ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth,
-      overflow: 'hidden',
       selectors: {
         '&:hover': {
           overflow: 'visible',
@@ -25,6 +33,62 @@ export const ResizeHandleCls = style(
 
   'ResizeHandleCls',
 );
+
+export const ResizeHandleRecipeCls = recipe({
+  variants: {
+    computedPinned: {
+      start: {},
+      end: [
+        left['0'],
+        right['auto'],
+        {
+          transform: 'translateX(-50%)',
+        },
+      ],
+      false: {},
+    },
+    computedFirstInCategory: {
+      true: {},
+      false: {},
+    },
+    computedLastInCategory: {
+      true: {},
+      false: {},
+    },
+  },
+  compoundVariants: [
+    {
+      variants: {
+        computedPinned: 'end',
+        computedLastInCategory: false,
+        computedFirstInCategory: true,
+      },
+      style: {
+        transform: 'none',
+      },
+    },
+    {
+      variants: {
+        computedPinned: false,
+        computedFirstInCategory: false,
+        computedLastInCategory: true,
+      },
+      style: {
+        transform: 'none',
+      },
+    },
+    {
+      variants: {
+        computedPinned: 'start',
+        computedFirstInCategory: false,
+        computedLastInCategory: true,
+      },
+      style: {
+        transform: 'none',
+      },
+    },
+  ],
+});
 
 export const ResizeHandleDraggerClsRecipe = recipe({
   base: [

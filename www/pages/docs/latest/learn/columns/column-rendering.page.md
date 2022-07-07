@@ -1,5 +1,6 @@
 ---
 title: Column Rendering
+description: Customize column rendering for Infinite Table DataGrid to match your app and use custom components. Column styling and formatting, conditional rendering...
 ---
 
 Columns render the <PropLink name="columns.field">field</PropLink> value of the data they are bound to. This is the default behavior, which can be customized in a number of ways that we're exploring below.

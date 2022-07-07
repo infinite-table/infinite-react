@@ -2,7 +2,13 @@ import { CSSProperties, FocusEvent } from 'react';
 import { InfiniteTableClassName } from '..';
 import { join } from '../../../utils/join';
 import { stripVar } from '../../../utils/stripVar';
-import { InfiniteCls, InfiniteClsRecipe } from '../InfiniteCls.css';
+import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
+import {
+  InfiniteCls,
+  InfiniteClsHasPinnedEnd,
+  InfiniteClsHasPinnedStart,
+  InfiniteClsRecipe,
+} from '../InfiniteCls.css';
 import { InternalVars } from '../theme.css';
 import { InfiniteTableComputedColumn } from '../types';
 import {
@@ -12,12 +18,36 @@ import {
 import { rafFn } from '../utils/rafFn';
 import { useInfiniteTable } from './useInfiniteTable';
 
+const scrollbarWidthHorizontal = stripVar(
+  InternalVars.scrollbarWidthHorizontal,
+);
+const scrollbarWidthVertical = stripVar(InternalVars.scrollbarWidthVertical);
+
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
+const scrollLeftCSSVar = stripVar(InternalVars.scrollLeft);
+// const columnReorderEffectDurationAtIndex = stripVar(
+//   InternalVars.columnReorderEffectDurationAtIndex,
+// );
 const activeCellColWidth = stripVar(InternalVars.activeCellColWidth);
 const activeCellColOffset = stripVar(InternalVars.activeCellColOffset);
 const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
+
+const pinnedStartWidthCSSVar = stripVar(InternalVars.pinnedStartWidth);
+const pinnedStartDraggingWidthCSSVar = stripVar(
+  InternalVars.pinnedStartDraggingWidth,
+);
+
+const bodyWidthCSSVar = stripVar(InternalVars.bodyWidth);
+const bodyHeightCSSVar = stripVar(InternalVars.bodyHeight);
+const pinnedEndOffsetCSSVar = stripVar(InternalVars.pinnedEndOffset);
+
+const pinnedEndWidthCSSVar = stripVar(InternalVars.pinnedEndWidth);
+const pinnedEndDraggingWidthCSSVar = stripVar(
+  InternalVars.pinnedEndDraggingWidth,
+);
+
 const computedVisibleColumnsCountCSSVar = stripVar(
   InternalVars.computedVisibleColumnsCount,
 );
@@ -36,7 +66,7 @@ export function getColumnZIndex<T>(
         params.pinnedStartColsCount - col.computedVisibleIndexInCategory;
     } else if (col.computedPinned === 'end') {
       computedZIndex =
-        params.visibleColsCount - col.computedVisibleIndexInCategory;
+        params.visibleColsCount + col.computedVisibleIndexInCategory;
     }
   } else {
     computedZIndex = -index * 10;
@@ -55,6 +85,8 @@ export function getColumnZIndex<T>(
 export function useDOMProps<T>(
   initialDOMProps?: React.HTMLProps<HTMLDivElement>,
 ) {
+  const scrollbarWidth = getScrollbarWidth();
+
   const { computed, componentState, componentActions } = useInfiniteTable<T>();
   const {
     focused,
@@ -64,15 +96,19 @@ export function useDOMProps<T>(
     onFocusWithin,
     onSelfFocus,
     onSelfBlur,
+    bodySize,
     activeCellIndex,
   } = componentState;
   const {
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
     computedPinnedStartColumns,
+    computedPinnedEndColumns,
     computedVisibleColumns,
+    scrollbars,
   } = computed;
 
+  const prevPinnedEndCols: InfiniteTableComputedColumn<T>[] = [];
   const cssVars: CSSProperties = computedVisibleColumns.reduce(
     (vars: CSSProperties, col) => {
       const index = col.computedVisibleIndex;
@@ -81,7 +117,19 @@ export function useDOMProps<T>(
       vars[`${columnWidthAtIndex}-${index}`] = col.computedWidth + 'px';
 
       //@ts-ignore
-      vars[`${columnOffsetAtIndex}-${index}`] = col.computedOffset + 'px';
+      vars[`${columnOffsetAtIndex}-${index}`] =
+        col.computedPinned === 'start'
+          ? `calc( ${col.computedOffset}px + var(${scrollLeftCSSVar}) )`
+          : col.computedPinned === 'end'
+          ? // see #startcoloffsets-pinnedend
+            `calc( var(${pinnedEndOffsetCSSVar}) ${
+              prevPinnedEndCols.length ? '+' : ''
+            } ${prevPinnedEndCols
+              .map(
+                (c) => `var(${columnWidthAtIndex}-${c.computedVisibleIndex})`,
+              )
+              .join(' + ')} + var(${scrollLeftCSSVar}) )`
+          : `${col.computedOffset}px`;
 
       const zIndexValue = getColumnZIndex(col, {
         pinnedStartColsCount: computedPinnedStartColumns.length,
@@ -90,7 +138,12 @@ export function useDOMProps<T>(
 
       //@ts-ignore
       vars[`${columnZIndexAtIndex}-${index}`] = `${zIndexValue}`;
+      //@ts-ignore
+      // vars[`${columnReorderEffectDurationAtIndex}-${index}`] = '0s';
 
+      if (col.computedPinned === 'end') {
+        prevPinnedEndCols.push(col);
+      }
       return vars;
     },
     {},
@@ -109,8 +162,45 @@ export function useDOMProps<T>(
 
   //@ts-ignore
   cssVars[computedVisibleColumnsCountCSSVar] = computedVisibleColumns.length;
+
+  //@ts-ignore
+  cssVars[scrollbarWidthHorizontal] = scrollbars.horizontal
+    ? `${scrollbarWidth}px`
+    : '0px';
+  //@ts-ignore
+  cssVars[scrollbarWidthVertical] = scrollbars.vertical
+    ? `${scrollbarWidth}px`
+    : '0px';
+  //@ts-ignore
+  cssVars[pinnedStartWidthCSSVar] =
+    `calc( ` +
+    computedPinnedStartColumns
+      .map((c) => `var(${getCSSVarNameForColWidth(c.computedVisibleIndex)})`)
+      .join(' + ') +
+    ` - var(${pinnedStartDraggingWidthCSSVar}, 0px) ` +
+    ')';
+
+  //@ts-ignore
+  cssVars[pinnedEndWidthCSSVar] =
+    `calc( ` +
+    computedPinnedEndColumns
+      .map((c) => `var(${getCSSVarNameForColWidth(c.computedVisibleIndex)})`)
+      .join(' + ') +
+    ` - var(${pinnedEndDraggingWidthCSSVar}, 0px) ` +
+    ')';
   //@ts-ignore
   cssVars[baseZIndexForCells] = computedVisibleColumns.length * 10;
+
+  //@ts-ignore
+  cssVars[
+    pinnedEndOffsetCSSVar
+  ] = `calc( var(${bodyWidthCSSVar}) - var(${pinnedEndWidthCSSVar}) - var(${scrollbarWidthVertical}) )`;
+
+  //@ts-ignore
+  cssVars[bodyWidthCSSVar] = `${bodySize.width}px`;
+
+  //@ts-ignore
+  cssVars[bodyHeightCSSVar] = `${bodySize.height}px`;
 
   const setFocused = rafFn((focused: boolean) => {
     componentActions.focused = focused;
@@ -172,10 +262,10 @@ export function useDOMProps<T>(
 
     domProps?.className,
     computedPinnedStartColumnsWidth
-      ? `${InfiniteTableClassName}--has-pinned-start`
+      ? `${InfiniteTableClassName}--has-pinned-start ${InfiniteClsHasPinnedStart}`
       : null,
     computedPinnedEndColumnsWidth
-      ? `${InfiniteTableClassName}--has-pinned-end`
+      ? `${InfiniteTableClassName}--has-pinned-end  ${InfiniteClsHasPinnedEnd}`
       : null,
     focused ? `${InfiniteTableClassName}--focused` : null,
     focusedWithin ? `${InfiniteTableClassName}--focused-within` : null,

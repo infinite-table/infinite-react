@@ -1,8 +1,9 @@
 ---
-title: Keyboard Navigation for Cells
+title: Keyboard Navigation for Table Cells
+description: Documentation for Cell Keyboard Navigation for your React Infinite Table DataGrid component
 ---
 
-By default, <PropLink name="keyboardNavigation" code={false}>keyboard navigation</PropLink> for cells is enabled in Infinite Table. When a cell is clicked, it shows a highlight that indicates it is the currently active cell. From that point onwards, the user can use the keyboard to navigate the table cells.
+By default, <PropLink name="keyboardNavigation" code={false}>keyboard navigation</PropLink> for table cells is enabled in React Infinite Table. When a cell is clicked, it shows a highlight that indicates it is the currently active cell. From that point onwards, the user can use the keyboard to navigate the table cells.
 
 
 <Sandpack>

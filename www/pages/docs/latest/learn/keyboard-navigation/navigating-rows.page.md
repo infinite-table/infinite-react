@@ -1,7 +1,7 @@
 ---
-title: Keyboard Navigation for Rows
+title: Keyboard Navigation for Table Rows
 ---
-To enable keyboard navigation for rows, specify <PropLink name="keyboardNavigation">keyboardNavigation="row"</PropLink>.
+To enable keyboard navigation for table rows, specify <PropLink name="keyboardNavigation">keyboardNavigation="row"</PropLink> in your React Infinite Table component.
 
 When row navigation is enabled, clicking a row highlights it and the user can use the arrow keys to navigate the table rows.
 

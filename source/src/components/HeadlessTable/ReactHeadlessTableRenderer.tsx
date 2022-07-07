@@ -7,7 +7,10 @@ import { raf } from '../../utils/raf';
 import { stripVar } from '../../utils/stripVar';
 import { InternalVars } from '../InfiniteTable/theme.css';
 import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
-import { getParentInfiniteNode } from '../InfiniteTable/utils/infiniteDOMUtils';
+import {
+  getParentInfiniteNode,
+  setInfiniteScrollPosition,
+} from '../InfiniteTable/utils/infiniteDOMUtils';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
@@ -48,6 +51,8 @@ export type RenderableWithPosition = {
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
 const currentColumnTransformY = stripVar(InternalVars.currentColumnTransformY);
+
+const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
@@ -77,24 +82,43 @@ export class ReactHeadlessTableRenderer extends Logger {
   private hoverRowUpdatesInProgress: Map<number, boolean> = new Map();
   private infiniteNode: HTMLElement | null = null;
 
+  private getInfiniteNode(node: HTMLElement) {
+    if (!this.infiniteNode) {
+      this.infiniteNode = getParentInfiniteNode(node);
+    }
+    return this.infiniteNode!;
+  }
+
   setTransform = (
     element: HTMLElement,
     _rowIndex: number,
     colIndex: number,
-    x: number,
-    y: number,
+
+    {
+      //@ts-ignore
+      x,
+      y,
+      //@ts-ignore
+      scrollLeft,
+      scrollTop,
+    }: { x: number; y: number; scrollLeft?: boolean; scrollTop?: boolean },
     zIndex: number | 'auto' | undefined | null,
   ) => {
     const columnOffsetX = `${columnOffsetAtIndex}-${colIndex}`;
     const columnOffsetXWhileReordering = `${columnOffsetAtIndexWhileReordering}-${colIndex}`;
     // const columnZIndex = `${columnZIndexAtIndex}-${colIndex}`;
 
-    if (!this.infiniteNode) {
-      this.infiniteNode = getParentInfiniteNode(element);
-    }
+    // const infiniteNode = this.getInfiniteNode(element);
 
-    this.infiniteNode!.style.setProperty(columnOffsetX, `${x}px`);
-    element.style.setProperty(currentColumnTransformY, `${y}px`);
+    // TODO this would be needed if it were not managed by the grid/table component
+    // infiniteNode.style.setProperty(
+    //   columnOffsetX,
+    //   scrollLeft ? `calc( ${x}px + var(${scrollLeftCSSVar}) )` : `${x}px`,
+    // );
+    element.style.setProperty(
+      currentColumnTransformY,
+      scrollTop ? `calc( ${y}px + var(${scrollTopCSSVar}) )` : `${y}px`,
+    );
 
     // this does not change, but we need for initial setup
     element.style.transform = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), ${InternalVars.currentColumnTransformY}, 0)`;
@@ -1151,7 +1175,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       (itemElement.dataset as any).colIndex = colIndex;
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
-        this.setTransform(itemElement, rowIndex, colIndex, x, y, null);
+        this.setTransform(itemElement, rowIndex, colIndex, { x, y }, null);
 
         itemElement.style.willChange = 'transform';
         itemElement.style.backfaceVisibility = 'hidden';
@@ -1203,8 +1227,20 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (!fixedColsStart && !fixedColsEnd && !fixedRowsStart && !fixedRowsEnd) {
       return;
     }
-    const fixedEndColsOffsets = this.brain.getFixedEndColsOffsets();
-    const fixedEndRowsOffsets = this.brain.getFixedEndRowsOffsets();
+
+    if (itemDOMElements[0]) {
+      setInfiniteScrollPosition(
+        scrollPosition,
+        this.getInfiniteNode(itemDOMElements[0]!),
+      );
+    }
+
+    const fixedEndColsOffsets = this.brain.getFixedEndColsOffsets({
+      skipScroll: true,
+    });
+    const fixedEndRowsOffsets = this.brain.getFixedEndRowsOffsets({
+      skipScroll: true,
+    });
 
     const { start, end } = this.brain.getRenderRange();
 
@@ -1219,7 +1255,6 @@ export class ReactHeadlessTableRenderer extends Logger {
         colIndex: number,
         node: HTMLElement,
         { x, y }: { x: number; y: number },
-        scrollPosition: ScrollPosition,
       ) => void,
     ) {
       const elementIndex = mappedCells.getElementIndexForCell(
@@ -1233,7 +1268,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       const node = itemDOMElements[elementIndex];
 
       if (elementIndex != null && node && itemPosition) {
-        fn(rowIndex, colIndex, node!, itemPosition, scrollPosition);
+        fn(rowIndex, colIndex, node!, itemPosition);
       }
     }
 
@@ -1242,14 +1277,12 @@ export class ReactHeadlessTableRenderer extends Logger {
       colIndex: number,
       node: HTMLElement,
       { x, y }: { x: number; y: number },
-      { scrollLeft }: ScrollPosition,
     ) => {
       this.setTransform(
         node,
         _rowIndex,
         colIndex,
-        x + scrollLeft,
-        y,
+        { x: x, y, scrollLeft: true },
         fixedColsStart - colIndex,
       );
     };
@@ -1259,14 +1292,13 @@ export class ReactHeadlessTableRenderer extends Logger {
       _colIndex: number,
       node: HTMLElement,
       coords: { x: number; y: number },
-      scrollPosition: ScrollPosition,
     ) => {
       this.setTransform(
         node,
         rowIndex,
         _colIndex,
-        coords.x,
-        coords.y + scrollPosition.scrollTop,
+
+        { x: coords.x, y: coords.y, scrollTop: true },
         fixedRowsStart - rowIndex,
       );
     };
@@ -1279,7 +1311,13 @@ export class ReactHeadlessTableRenderer extends Logger {
     ) => {
       const val = fixedEndColsOffsets[colIndex];
 
-      this.setTransform(node, _rowIndex, colIndex, val, y, cols - colIndex);
+      this.setTransform(
+        node,
+        _rowIndex,
+        colIndex,
+        { x: val, y, scrollLeft: true },
+        cols - colIndex,
+      );
     };
 
     const adjustRowEnd = (
@@ -1292,8 +1330,7 @@ export class ReactHeadlessTableRenderer extends Logger {
         node,
         rowIndex,
         _colIndex,
-        coords.x,
-        fixedEndRowsOffsets[rowIndex],
+        { x: coords.x, y: fixedEndRowsOffsets[rowIndex], scrollTop: true },
         rows - rowIndex,
       );
     };
@@ -1303,14 +1340,12 @@ export class ReactHeadlessTableRenderer extends Logger {
       _colIndex: number,
       node: HTMLElement,
       { x, y }: { x: number; y: number },
-      scrollPosition: ScrollPosition,
     ) => {
       this.setTransform(
         node,
         _rowIndex,
         _colIndex,
-        x + scrollPosition.scrollLeft,
-        y + scrollPosition.scrollTop,
+        { x: x, scrollLeft: true, y: y, scrollTop: true },
         100_000,
       );
     };
@@ -1320,14 +1355,17 @@ export class ReactHeadlessTableRenderer extends Logger {
       _colIndex: number,
       node: HTMLElement,
       { x }: { x: number; y: number },
-      scrollPosition: ScrollPosition,
     ) => {
       this.setTransform(
         node,
         _rowIndex,
         _colIndex,
-        x + scrollPosition.scrollLeft,
-        fixedEndRowsOffsets[_rowIndex],
+        {
+          x: x,
+          scrollLeft: true,
+          y: fixedEndRowsOffsets[_rowIndex],
+          scrollTop: true,
+        },
         200_000,
       );
     };
@@ -1342,8 +1380,12 @@ export class ReactHeadlessTableRenderer extends Logger {
         node,
         _rowIndex,
         colIndex,
-        fixedEndColsOffsets[colIndex],
-        coords.y + scrollPosition.scrollTop,
+        {
+          x: fixedEndColsOffsets[colIndex],
+          y: coords.y,
+          scrollLeft: true,
+          scrollTop: true,
+        },
         300_000,
       );
     };
@@ -1357,8 +1399,12 @@ export class ReactHeadlessTableRenderer extends Logger {
         node,
         rowIndex,
         colIndex,
-        fixedEndColsOffsets[colIndex],
-        fixedEndRowsOffsets[rowIndex],
+        {
+          x: fixedEndColsOffsets[colIndex],
+          y: fixedEndRowsOffsets[rowIndex],
+          scrollLeft: true,
+          scrollTop: true,
+        },
         400_000,
       );
     };

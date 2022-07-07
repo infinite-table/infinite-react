@@ -88,13 +88,24 @@ export function getColumnFilterType<T>(
 }
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
-const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
-  const columns: Map<string, InfiniteTableComputedColumn<T>> = props.columns;
+
+  const {
+    computed: { showColumnFilters },
+    componentState: {
+      portalDOMRef,
+      columnHeaderHeight,
+      filterEditors,
+      columnReorderDragColumnId,
+    },
+  } = useInfiniteTable<T>();
+
+  const dragging = columnReorderDragColumnId === column.id;
+
   const { onResize, height, width, headerOptions } = props;
 
   const sortInfo = column.computedSortInfo;
@@ -128,6 +139,7 @@ export function InfiniteTableHeaderCell<T>(
     ) : null;
 
   const renderParam: InfiniteTableColumnHeaderParams<T> = {
+    dragging,
     domRef: ref,
     column,
     columnSortInfo: sortInfo,
@@ -157,16 +169,6 @@ export function InfiniteTableHeaderCell<T>(
   const domRef = useRef<HTMLElement | null>(null);
 
   const {
-    computed: {
-      computedRemainingSpace,
-      showColumnFilters,
-      computedVisibleColumns,
-      computedPinnedStartColumns,
-    },
-    componentState: { portalDOMRef, columnHeaderHeight, filterEditors },
-  } = useInfiniteTable<T>();
-
-  const {
     componentActions: dataSourceActions,
     getState: getDataSourceState,
     componentState: { filterDelay, filterTypes },
@@ -185,33 +187,40 @@ export function InfiniteTableHeaderCell<T>(
     };
   }, [domRef.current, props.onResize]);
 
-  const style: React.CSSProperties = {
+  let style: React.CSSProperties = {
     // height: column.computedFiltered? height*2: height,
     height: height,
   };
 
-  const { onPointerDown, dragging, proxyPosition } = useColumnPointerEvents({
-    pinnedStartColsCount: computedPinnedStartColumns.length,
-    visibleColsCount: computedVisibleColumns.length,
-    computedRemainingSpace,
+  if (column.headerStyle) {
+    style =
+      typeof column.headerStyle === 'function'
+        ? { ...style, ...(column.headerStyle(renderParam) || {}) }
+        : { ...style, ...column.headerStyle };
+  }
+
+  const headerClassName =
+    typeof column.headerClassName === 'function'
+      ? column.headerClassName(renderParam)
+      : column.headerClassName;
+
+  const { onPointerDown, proxyPosition } = useColumnPointerEvents({
     columnId: column.id,
     domRef,
-    columns,
   });
 
   let draggingProxy = null;
 
-  if (dragging) {
+  if (dragging && proxyPosition) {
     draggingProxy = (
       <div
+        key={column.id}
         className={`${InfiniteTableHeaderCellClassName}Proxy ${HeaderCellProxy}`}
         style={{
           position: 'absolute',
           height,
           width,
-          left: `calc( var(${columnOffsetAtIndex}-${
-            column.computedVisibleIndex
-          }) + ${proxyPosition!.left ?? 0}px)`,
+          left: proxyPosition!.left ?? 0,
 
           top: proxyPosition!.top ?? 0,
           zIndex: 1_000_000_000,
@@ -347,12 +356,17 @@ export function InfiniteTableHeaderCell<T>(
           InfiniteTableHeaderCellClassName,
           userSelect.none,
           column.computedSortable ? cursor.pointer : '',
+          headerClassName,
 
           useCellClassName(
             column,
             [InfiniteTableHeaderCellClassName, InfiniteTableCellClassName],
             HeaderCellRecipe,
-            { dragging, zebra: false, rowActive: false },
+            {
+              dragging,
+              zebra: false,
+              rowActive: false,
+            },
           ),
           CellCls,
         )}

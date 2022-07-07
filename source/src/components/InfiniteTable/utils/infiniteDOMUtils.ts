@@ -1,15 +1,23 @@
 import { selectParent } from '../../../utils/selectParent';
 import { stripVar } from '../../../utils/stripVar';
+import { ScrollPosition } from '../../types/ScrollPosition';
 import { internalProps } from '../internalProps';
-import { InternalVars } from '../theme.css';
+import { InternalVars, ThemeVars } from '../theme.css';
+import { InfiniteTableComputedColumn } from '../types';
 
 const InfiniteSelector = `.${internalProps.rootClassName}`;
 export function getParentInfiniteNode(node: HTMLElement) {
   return selectParent(node, InfiniteSelector);
 }
 
+const scrollLeft = stripVar(InternalVars.scrollLeft);
+const scrollTop = stripVar(InternalVars.scrollTop);
+
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+const columnReorderEffectDurationAtIndex = stripVar(
+  InternalVars.columnReorderEffectDurationAtIndex,
+);
 const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
@@ -92,6 +100,23 @@ export function setInfiniteColumnOffset(
   );
 }
 
+export function addToInfiniteColumnOffset<T>(
+  column: InfiniteTableComputedColumn<T>,
+  amountToAdd: number,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarOnRoot(
+    `${columnOffsetAtIndex}-${column.computedVisibleIndex}`,
+    !column.computedPinned
+      ? `${column.computedAbsoluteOffset + amountToAdd}px`
+      : `calc( ${
+          column.computedAbsoluteOffset + amountToAdd
+        }px + var(${scrollLeft}))`,
+
+    node,
+  );
+}
+
 export function setInfiniteColumnZIndex(
   colIndex: number,
   colZIndex: number | string,
@@ -118,9 +143,47 @@ export function setInfiniteColumnOffsetWhileReordering(
   );
 }
 
+export function clearInfiniteColumnReorderDuration(
+  colIndex: number,
+  node: HTMLElement | null,
+  defaultValue?: string,
+) {
+  setInfiniteVarOnRoot(
+    `${columnReorderEffectDurationAtIndex}-${colIndex}`,
+    defaultValue ?? '',
+    node,
+  );
+}
+
+export function restoreInfiniteColumnReorderDuration(
+  colIndex: number,
+  node: HTMLElement | null,
+) {
+  const varName = `${columnReorderEffectDurationAtIndex}-${colIndex}`;
+
+  setInfiniteVarOnRoot(
+    varName,
+    ThemeVars.components.Cell.reorderEffectDuration,
+    node,
+  );
+}
+
 export function getCSSVarNameForColWidth(colIndex: number) {
   return `${columnWidthAtIndex}-${colIndex}`;
 }
 export function getCSSVarNameForColOffset(colIndex: number) {
   return `${columnOffsetAtIndex}-${colIndex}`;
+}
+
+export function setInfiniteScrollPosition(
+  scrollPosition: ScrollPosition,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarsOnNode(
+    {
+      [scrollLeft]: `${scrollPosition.scrollLeft}px`,
+      [scrollTop]: `${scrollPosition.scrollTop}px`,
+    },
+    node,
+  );
 }

@@ -7,6 +7,7 @@ type CalloutVariants = 'gotcha' | 'note';
 
 interface ExpandableCalloutProps {
   children: React.ReactNode;
+  title?: React.ReactNode;
   type: CalloutVariants;
 }
 
@@ -34,6 +35,7 @@ const variantMap = {
 function ExpandableCallout({
   children,
   type,
+  title,
 }: ExpandableCalloutProps) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const variant = variantMap[type];
@@ -56,6 +58,8 @@ function ExpandableCallout({
           )}
         />
         {variant.title}
+        {title ? ' – ' : ''}
+        {title}
       </h3>
       <div className="relative">
         <div ref={contentRef} className="py-2">

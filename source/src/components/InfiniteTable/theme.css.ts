@@ -24,13 +24,32 @@ export const InternalVars = createThemeContract({
   // this will be set to `${columnOffsetAtIndex}-${the index of the column on which the active cell is}`
   activeCellColOffset: null,
 
+  columnReorderEffectDurationAtIndex: null,
   columnWidthAtIndex: null,
   columnOffsetAtIndex: null,
   columnOffsetAtIndexWhileReordering: null,
   columnZIndexAtIndex: null,
 
+  pinnedStartWidth: null,
+  pinnedEndWidth: null,
+
+  pinnedStartDraggingWidth: null,
+  pinnedEndDraggingWidth: null,
+
+  pinnedEndOffset: null,
+
   computedVisibleColumnsCount: null,
+
   baseZIndexForCells: null,
+
+  bodyWidth: null,
+  bodyHeight: null,
+
+  scrollbarWidthHorizontal: null,
+  scrollbarWidthVertical: null,
+
+  scrollLeft: null,
+  scrollTop: null,
 });
 export const ThemeVars = createGlobalThemeContract(
   {
@@ -161,6 +180,7 @@ export const ThemeVars = createGlobalThemeContract(
         borderInvisible: 'cell-border-invisible',
         borderRadius: 'cell-border-radius',
         reorderEffectDuration: 'column-reorder-effect-duration',
+        pinnedBorder: 'pinned-cell-border',
 
         /**
          * Text color inside rows. Defaults to `currentColor`
@@ -386,9 +406,12 @@ const CellVars = {
     .padding]: `${ThemeVars.spacing[2]} ${ThemeVars.spacing[3]}`,
   [ThemeVars.components.Cell
     .border]: `${ThemeVars.components.Cell.borderWidth} solid #c6c6c6`,
+
+  [ThemeVars.components.Cell
+    .pinnedBorder]: `${ThemeVars.components.Cell.borderWidth} solid #2a323d`,
   [ThemeVars.components.Cell.borderInvisible]: 'none',
   [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
-  [ThemeVars.components.Cell.reorderEffectDuration]: '0.2s',
+  [ThemeVars.components.Cell.reorderEffectDuration]: '.2s',
 
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',

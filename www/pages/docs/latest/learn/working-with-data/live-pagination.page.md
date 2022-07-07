@@ -1,5 +1,6 @@
 ---
 title: Live Pagination
+description: Live Pagination DataSource documentation and examples for Infinite Table DataGrid
 ---
 
 ### Live pagination
@@ -16,7 +17,7 @@ In addition, you have to listen to <DataSourcePropLink name="onDataParamsChange"
 
 When `dataParams` change (you will be notified via <DataSourcePropLink name="onDataParamsChange" />), you have to fetch new data using the cursor from `dataParams` object.
 
-<Note>
+<Note title="onDataParamsChange trigger">
 
 Basically <DataSourcePropLink name="onDataParamsChange" /> is triggered whenever props (and state) that affect the `DataSource` change - be it via sorting, filtering, live pagination, pivoting, etc.
 </Note>

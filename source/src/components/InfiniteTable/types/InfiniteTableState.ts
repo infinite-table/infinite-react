@@ -15,7 +15,7 @@ import { InfiniteTableColumn } from './InfiniteTableColumn';
 import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroupsMap,
-  InfiniteTablePropColumnPinningMap,
+  InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnsMap,
   InfiniteTablePropColumnTypes,
@@ -45,7 +45,7 @@ export interface InfiniteTableSetupState<T> {
   headerBrain: MatrixBrain;
   focused: boolean;
   ready: boolean;
-  columnReorderInProgress: boolean;
+  columnReorderDragColumnId: false | string;
   focusedWithin: boolean;
   scrollPosition: ScrollPosition;
   pinnedStartScrollListener: ScrollListener;
@@ -128,7 +128,7 @@ export interface InfiniteTableMappedState<T> {
   columnHeaderHeight: number;
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: InfiniteTablePropColumnVisibility;
-  columnPinning: InfiniteTablePropColumnPinningMap;
+
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnGroups: InfiniteTablePropColumnGroupsMap;
@@ -148,6 +148,9 @@ export interface InfiniteTableDerivedState<T> {
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']
   >;
+
+  columnPinning: InfiniteTablePropColumnPinning;
+  columnPinningWhileDragging: InfiniteTablePropColumnPinning;
 
   columnHeaderCssEllipsis: NonUndefined<
     InfiniteTableProps<T>['columnHeaderCssEllipsis']

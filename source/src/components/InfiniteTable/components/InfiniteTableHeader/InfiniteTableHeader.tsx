@@ -61,7 +61,6 @@ function InfiniteTableHeaderFn<T>(
 
   const headerCls = HeaderClsRecipe({
     overflow: false,
-    virtualized: true,
   });
 
   const domProps: React.HTMLProps<HTMLDivElement> = {

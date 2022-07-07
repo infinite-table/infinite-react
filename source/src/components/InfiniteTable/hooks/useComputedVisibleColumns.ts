@@ -8,7 +8,7 @@ import type { Size } from '../../types/Size';
 import type { InfiniteTableColumn } from '../types';
 import type {
   InfiniteTablePropColumnOrder,
-  InfiniteTablePropColumnPinningMap,
+  InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
@@ -42,7 +42,7 @@ type UseComputedVisibleColumnsParam<T> = {
 
   filterValue?: DataSourcePropFilterValue<T>;
 
-  columnPinning: InfiniteTablePropColumnPinningMap;
+  columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnOrder: InfiniteTablePropColumnOrder;
@@ -99,8 +99,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnSizing,
 }: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
   const columnsRenderId = useRerenderOnKeyChange(columns);
-
-  const pinningRenderId = useRerenderOnKeyChange(columnPinning);
 
   const {
     computedRemainingSpace,
@@ -181,7 +179,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnPinning,
 
     columnsRenderId,
-    pinningRenderId,
   ]);
 
   const result: UseComputedVisibleColumnsResult<T> = {

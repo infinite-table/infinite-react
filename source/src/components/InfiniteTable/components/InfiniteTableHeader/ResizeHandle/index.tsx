@@ -7,6 +7,7 @@ import { getColumnResizer } from './columnResizer';
 import {
   ResizeHandleCls,
   ResizeHandleDraggerClsRecipe,
+  ResizeHandleRecipeCls,
 } from './ResizeHandle.css';
 
 type ResizeHandleProps<T> = {
@@ -44,6 +45,15 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
   const constrainedRef = useRef<boolean>(constrained);
   constrainedRef.current = constrained;
 
+  const col = props.columns[props.columnIndex];
+
+  if (!col) {
+    return null;
+  }
+  const computedPinned = col.computedPinned;
+  const computedFirstInCategory = col.computedFirstInCategory;
+  const computedLastInCategory = col.computedLastInCategory;
+
   const onPointerDown = (e: PointerEvent) => {
     e.stopPropagation();
 
@@ -61,6 +71,9 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
     });
 
     const resizeDiff = (diff: number) => {
+      if (computedPinned === 'end') {
+        diff *= -1;
+      }
       const { adjustedDiff, constrained } = props.computeResize({
         diff,
         shareSpaceOnResize,
@@ -99,13 +112,29 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
     target.addEventListener('pointerup', onPointerUp);
   };
 
+  const style =
+    (computedPinned === false || computedPinned === 'start') &&
+    computedLastInCategory
+      ? {
+          right: computedPinned === 'start' ? 0 : 0, //ThemeVars.components.HeaderCell.resizeHandleWidth,
+        }
+      : computedPinned === 'end' && computedFirstInCategory
+      ? { right: 'none', left: 0 }
+      : undefined;
   return (
     <div
       ref={domRef}
-      className={`${InfiniteTableHeaderCellResizeHandleCls} ${ResizeHandleCls}`}
+      className={`${InfiniteTableHeaderCellResizeHandleCls} ${ResizeHandleCls} ${ResizeHandleRecipeCls(
+        {
+          computedPinned,
+          computedFirstInCategory,
+          computedLastInCategory,
+        },
+      )}`}
       onPointerDown={onPointerDown}
     >
       <div
+        style={style}
         className={ResizeHandleDraggerClsRecipe({
           constrained,
         })}

@@ -26,6 +26,23 @@ export function getImperativeApi<T>(
     },
     getState,
     getDataSourceState,
+    get scrollLeft() {
+      const state = getState();
+      return state.brain.getScrollPosition().scrollLeft;
+    },
+    set scrollLeft(scrollLeft: number) {
+      const state = getState();
+      state.scrollerDOMRef.current!.scrollLeft = Math.max(scrollLeft, 0);
+    },
+
+    get scrollTop() {
+      const state = getState();
+      return state.brain.getScrollPosition().scrollTop;
+    },
+    set scrollTop(scrollTop: number) {
+      const state = getState();
+      state.scrollerDOMRef.current!.scrollTop = Math.max(scrollTop, 0);
+    },
     scrollRowIntoView(
       rowIndex: number,
       config: {

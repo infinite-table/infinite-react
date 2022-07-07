@@ -1,6 +1,8 @@
 ---
 id: home
 layout: Home
+title: Infinite Table Docs - your React DataGrid component
+description: Developer Documentation for Infinite Table, your go-to React DataGrid component to handle huge amounts of data
 permalink: index.html
 ---
 

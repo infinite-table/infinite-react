@@ -6,6 +6,7 @@ export interface SeoProps {
   title: string;
   description?: string;
   image?: string;
+  titleSuffix?: boolean;
   // jsonld?: JsonLDType | Array<JsonLDType>;
   children?: React.ReactNode;
 }
@@ -13,11 +14,15 @@ export interface SeoProps {
 export const Seo = withRouter(
   ({
     title,
-    description = 'UI component for data virtualization',
+    titleSuffix = true,
+    description,
     router,
     children,
   }: SeoProps & { router: Router }) => {
-    title += ' | Infinite Table for React';
+    if (titleSuffix) {
+      title += ' | Infinite Table DataGrid for React';
+    }
+    description = description || title;
     return (
       <Head>
         {/* DEFAULT */}
@@ -53,7 +58,15 @@ export const Seo = withRouter(
         <meta
           property="og:url"
           key="og:url"
-          content={`https://infinite-table.com/${router.pathname}`}
+          content={`https://infinite-table.com${
+            router.pathname === '/' ? '' : router.pathname
+          }`}
+        />
+        <link
+          rel="canonical"
+          href={`https://infinite-table.com${
+            router.pathname === '/' ? '' : router.pathname
+          }`}
         />
         {title != null && (
           <meta

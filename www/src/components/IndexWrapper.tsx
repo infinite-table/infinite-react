@@ -24,6 +24,7 @@ import {
 import { Footer } from '@www/components/Footer';
 import { Header } from '@www/components/Header';
 import { MainLayout } from '@www/layouts/MainLayout';
+import { Seo } from './Seo';
 
 const ReactLogo = (
   <img
@@ -43,13 +44,14 @@ export default function IndexWrapper({
     <MainLayout>
       <div
         className={`${fullWidthContainer} ${minHeightFull}  `}>
-        <Head>
-          <title>Infinite Table for React</title>
+        <Seo
+          titleSuffix={false}
+          title="Infinite Table for React | for your DataGrid component for large datasets">
           <link
             rel="icon"
             type="image/svg+xml"
             href="/favicon.svg"></link>
-        </Head>
+        </Seo>
 
         <Header title="Infinite Table" />
         <main

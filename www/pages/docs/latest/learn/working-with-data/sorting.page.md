@@ -1,5 +1,6 @@
 ---
 title: Sorting
+description: Docs and examples on sorting the DataSource for Infinite Table DataGrid
 ---
 
 `InfiniteTable` comes with multiple sorting behaviours, which are described below.

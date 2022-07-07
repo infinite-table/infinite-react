@@ -20,6 +20,9 @@ export const InfiniteTableCellClassName = `${rootClassName}Cell`;
 export const InfiniteTableCellContentClassName = `${rootClassName}Cell_content`;
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
+const columnReorderEffectDurationAtIndex = stripVar(
+  InternalVars.columnReorderEffectDurationAtIndex,
+);
 
 function InfiniteTableCellFn<T>(
   props: InfiniteTableCellProps<T> & React.HTMLAttributes<HTMLElement>,
@@ -53,6 +56,7 @@ function InfiniteTableCellFn<T>(
   // so remove the call to useInfiniteTableState
   const style = {
     width: `var(${columnWidthAtIndex}-${column.computedVisibleIndex})`,
+    transition: `transform var(${columnReorderEffectDurationAtIndex}-${column.computedVisibleIndex}, 0s)`,
     ...domProps.style,
   } as React.CSSProperties;
 

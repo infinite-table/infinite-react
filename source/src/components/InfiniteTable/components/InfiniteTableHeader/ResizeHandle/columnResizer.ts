@@ -2,6 +2,7 @@ import { RefObject } from 'react';
 
 import { InfiniteTableComputedColumn } from '../../../types';
 import {
+  addToInfiniteColumnOffset,
   setInfiniteColumnOffset,
   setInfiniteColumnWidth,
 } from '../../../utils/infiniteDOMUtils';
@@ -42,19 +43,54 @@ export function getColumnResizer<T>(
           nextColumn.computedWidth - diff,
           domRef.current,
         );
-        setInfiniteColumnOffset(
-          nextColIndex,
-          nextColumn.computedOffset + diff,
-          domRef.current,
-        );
+
+        if (nextColumn.computedPinned === 'start') {
+          addToInfiniteColumnOffset(nextColumn, diff, domRef.current);
+        } else {
+          setInfiniteColumnOffset(
+            nextColIndex,
+            nextColumn.computedOffset + diff,
+            domRef.current,
+          );
+        }
         return;
       }
+      if (column.computedPinned === 'end') {
+        // when a pinned end col is resized
+        // we need to adjust just it's own width
+        // and no other offsets, since the offsets are computed
+        // based on the widths of previos pinned end cols
+        // see #startcoloffsets-pinnedend
+
+        // TODO it would be a great idea to computed offsets for all other columns
+        // in this way, and we would not need to adjust offsets anymore on resize - just
+        // adjust column widths
+        return;
+      }
+
+      if (column.computedPinned === 'start') {
+        for (let i = nextColIndex, len = columns.length; i < len; i++) {
+          const col = columns[i];
+
+          if (col.computedPinned === 'start') {
+            addToInfiniteColumnOffset(col, diff, domRef.current);
+            continue;
+          }
+          if (col.computedPinned === 'end') {
+            continue;
+          }
+          setInfiniteColumnOffset(i, col.computedOffset + diff, domRef.current);
+        }
+        return;
+      }
+
       for (let i = nextColIndex, len = columns.length; i < len; i++) {
-        setInfiniteColumnOffset(
-          i,
-          columns[i].computedOffset + diff,
-          domRef.current,
-        );
+        const col = columns[i];
+
+        if (col.computedPinned) {
+          continue;
+        }
+        setInfiniteColumnOffset(i, col.computedOffset + diff, domRef.current);
       }
     },
   };
@@ -88,7 +124,8 @@ export function getColumnGroupResizer<T>(
      */
     resize(diffs: number[]) {
       const { columns, domRef } = config;
-      let offset = columns[colIndexes[0]].computedOffset;
+      const firstCol = columns[colIndexes[0]];
+      let offset = firstCol.computedOffset;
       let diffSum = 0;
 
       const node = domRef.current;
@@ -102,14 +139,27 @@ export function getColumnGroupResizer<T>(
 
         setInfiniteColumnWidth(colIndex, newWidth, node);
 
+        if (column.computedPinned === 'end') {
+          return;
+        }
+
         if (offset) {
           setInfiniteColumnOffset(colIndex, offset, node);
         }
         offset += newWidth;
       });
 
+      if (firstCol.computedPinned === 'end') {
+        return;
+      }
+
       for (let i = lastColIndex + 1; i < columns.length; i++) {
-        setInfiniteColumnOffset(i, columns[i].computedOffset + diffSum, node);
+        const col = columns[i];
+
+        if (col.computedPinned === 'end') {
+          continue;
+        }
+        setInfiniteColumnOffset(i, col.computedOffset + diffSum, node);
       }
     },
   };

@@ -45,19 +45,12 @@ export type InfiniteTablePropColumnOrder =
 
 export type InfiniteTablePropColumnVisibility = Record<string, false>;
 
-export type InfiniteTablePropColumnPinningMap = Map<
-  string,
-  true | 'start' | 'end'
->;
-
 export type InfiniteTableColumnPinnedValues = false | 'start' | 'end';
-export type InfiniteTablePropColumnPinningRecord = Record<
+
+export type InfiniteTablePropColumnPinning = Record<
   string,
   true | 'start' | 'end'
 >;
-export type InfiniteTablePropColumnPinning =
-  | InfiniteTablePropColumnPinningRecord
-  | InfiniteTablePropColumnPinningMap;
 
 export type InfiniteTableRowStyleFnParams<T> = {
   rowIndex: number;
@@ -117,6 +110,8 @@ export type InfiniteTableColumnType<T> = {
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
   valueFormatter?: InfiniteTableColumn<T>['valueFormatter'];
   style?: InfiniteTableColumn<T>['style'];
+  headerStyle?: InfiniteTableColumn<T>['headerStyle'];
+  headerClassName?: InfiniteTableColumn<T>['headerClassName'];
 };
 export type InfiniteTablePropColumnTypesMap<T> = Map<
   'default' | string,
@@ -150,6 +145,13 @@ export type InfiniteTableImperativeApi<T> = {
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
   x?: T;
+
+  get scrollLeft(): number;
+  set scrollLeft(value: number);
+
+  get scrollTop(): number;
+  set scrollTop(value: number);
+
   scrollRowIntoView: (
     rowIndex: number,
     config?: {

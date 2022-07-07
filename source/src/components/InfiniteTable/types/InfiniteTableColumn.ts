@@ -32,6 +32,7 @@ export type InfiniteTableColumnHeaderParams<
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
   sortTool: JSX.Element | null;
+  dragging: boolean;
   column: COL_TYPE;
   columnSortInfo: DataSourceSingleSortInfo<DATA_TYPE> | null;
   columnFilterValue: DataSourceFilterValueItem<DATA_TYPE> | null;
@@ -138,10 +139,9 @@ export type InfiniteTableColumnRenderValueFunction<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = InfiniteTableColumnRenderFunction<DATA_TYPE, COL_TYPE>;
 
-export type InfiniteTableColumnHeaderRenderFunction<T> = ({
-  columnSortInfo,
-  column,
-}: InfiniteTableColumnHeaderParams<T>) => Renderable;
+export type InfiniteTableColumnHeaderRenderFunction<T> = (
+  headerParams: InfiniteTableColumnHeaderParams<T>,
+) => Renderable;
 
 export type InfiniteTableColumnWithField<T> = {
   field: keyof T;
@@ -196,6 +196,14 @@ export type InfiniteTableColumnStyleFn<T> = (
   params: InfiniteTableColumnStyleFnParams<T>,
 ) => undefined | React.CSSProperties;
 
+export type InfiniteTableColumnHeaderClassNameFn<T> = (
+  params: InfiniteTableColumnHeaderParams<T>,
+) => undefined | string;
+
+export type InfiniteTableColumnHeaderStyleFn<T> = (
+  params: InfiniteTableColumnHeaderParams<T>,
+) => undefined | React.CSSProperties;
+
 export type InfiniteTableColumnClassNameFn<T> = (
   params: InfiniteTableColumnStyleFnParams<T>,
 ) => undefined | string;
@@ -203,9 +211,16 @@ export type InfiniteTableColumnClassNameFn<T> = (
 export type InfiniteTableColumnStyle<T> =
   | CSSProperties
   | InfiniteTableColumnStyleFn<T>;
+
+export type InfiniteTableColumnHeaderStyle<T> =
+  | CSSProperties
+  | InfiniteTableColumnHeaderStyleFn<T>;
 export type InfiniteTableColumnClassName<T> =
   | string
   | InfiniteTableColumnClassNameFn<T>;
+export type InfiniteTableColumnHeaderClassName<T> =
+  | string
+  | InfiniteTableColumnHeaderClassNameFn<T>;
 
 export type InfiniteTableColumnValueGetterParams<T> = {
   data: T;
@@ -260,6 +275,8 @@ export type InfiniteTableBaseColumn<T> = {
   filterType?: string;
 
   style?: InfiniteTableColumnStyle<T>;
+  headerStyle?: InfiniteTableColumnHeaderStyle<T>;
+  headerClassName?: InfiniteTableColumnHeaderClassName<T>;
   className?: InfiniteTableColumnClassName<T>;
 
   rowspan?: InfiniteTableColumnRowspanFn<T>;

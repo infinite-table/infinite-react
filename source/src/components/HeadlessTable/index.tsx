@@ -26,6 +26,10 @@ import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { Renderable } from '../types/Renderable';
 import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicator';
 import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicator';
+import {
+  PinnedEndIndicatorBorder,
+  PinnedStartIndicatorBorder,
+} from './headless-table.css';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
@@ -225,7 +229,10 @@ export function HeadlessTable(
       </div>
       <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
 
-      <SpacePlaceholder width={scrollSize.width} height={scrollSize.height} />
+      <SpacePlaceholder
+        width={scrollSize.width}
+        height={scrollSize.height}
+      ></SpacePlaceholder>
     </VirtualScrollContainer>
   );
 }

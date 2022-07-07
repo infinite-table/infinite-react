@@ -477,6 +477,12 @@ If a function is provided, it will be called with an argument with the following
 
 When we implement filtering, you'll also have access to the column filter.
 
+<Note>
+
+For styling the column header, you can use <PropLink name="columns.headerStyle">headerStyle</PropLink> or <PropLink name="columns.headerClassName">headerClassName</PropLink>.
+
+</Note>
+
 
 <Sandpack>
 
@@ -502,6 +508,27 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 
 </Prop>
 
+<Prop name="columns.headerClassName" type="string | (args) => string">
+
+> Controls the css class name for the column header. Can be a string or a function returning a string.
+
+If defined as a function, it accepts an object as a parameter, which has the following properties:
+
+ * `column` - the current column where the style is being applied
+ * `columnSortInfo` - the sorting information for the column
+ * `columnFilterValue` - the filtering information for the column
+ * `dragging` - whether the current column is being dragged at the current time (during a column reorder)
+ 
+<Note>
+
+The `headerClassName` property can also be specified for <PropLink name="columnTypes.headerClassName">columnTypes</PropLink>.
+
+For styling with inline styles, see <PropLink name="columns.headerStyle" />.
+
+</Note>
+
+</Prop>
+
 <Prop name="columns.headerCssEllipsis" type="boolean" defaultValue={true}>
 
 > Specifies if the column should show ellipsis in the column header if the header is too long and does not fit the column width.
@@ -522,6 +549,27 @@ For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="columns.headerStyle" type="CSSProperties | (args) => CSSProperties">
+
+> Controls styling for the column header. Can be a style object or a function returning a style object.
+
+If defined as a function, it accepts an object as a parameter, which has the following properties:
+
+ * `column` - the current column where the style is being applied
+ * `columnSortInfo` - the sorting information for the column
+ * `columnFilterValue` - the filtering information for the column
+ * `dragging` - whether the current column is being dragged at the current time (during a column reorder)
+ 
+<Note>
+
+The `headerStyle` property can also be specified for <PropLink name="columnTypes.headerStyle">columnTypes</PropLink>.
+
+For styling with CSS, see <PropLink name="columns.headerClassName" />.
+
+</Note>
 
 </Prop>
 
@@ -905,6 +953,22 @@ When any of the properties defined in a column type are also defined in a column
 > Specifies a default flex value for the column type. Will be overriden in any column that already specifies a `defaultFlex` property.
 
 See related <PropLink name="columnTypes.defaultWidth" />, <PropLink name="columns.defaultFlex" /> and <PropLink name="columns.defaultWidth" />
+
+</Prop>
+
+<Prop name="columnTypes.headerClassName" type="string | (args) => string">
+
+> Controls styling for the column header for columns with this column type. Can be a string or a function returning a string.
+
+See docs at <PropLink name="columns.headerClassName" />.
+
+</Prop>
+
+<Prop name="columnTypes.headerStyle" type="CSSProperties | (args) => CSSProperties">
+
+> Controls styling for the column header for columns with this column type. Can be a style object or a function returning a style object.
+
+See docs at <PropLink name="columns.headerStyle" />.
 
 </Prop>
 

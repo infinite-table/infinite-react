@@ -64,15 +64,20 @@ export const flex = styleVariants({
 export const zIndex = styleVariants({
   1: { zIndex: 1 },
   10: { zIndex: 10 },
+  100: { zIndex: 100 },
   1000: { zIndex: 1000 },
+  '1k': { zIndex: 1000 },
   10_000: { zIndex: 10_000 },
+  '10k': { zIndex: 10_000 },
   100_000: { zIndex: 100_000 },
+  '100k': { zIndex: 100_000 },
   1_000_000: { zIndex: 1_000_000 },
   10_000_000: { zIndex: 10_000_000 },
 });
 
 export const display = styleVariants({
   flex: { display: 'flex' },
+  none: { display: 'none' },
   block: { display: 'block' },
   inlineBlock: { display: 'inline-block' },
 });
@@ -96,6 +101,7 @@ export const top = styleVariants({
 export const left = styleVariants({
   '100%': { left: '100%' },
   '0': { left: '0' },
+  auto: { left: 'auto' },
 });
 export const bottom = styleVariants({
   '100%': { bottom: '100%' },
@@ -104,6 +110,7 @@ export const bottom = styleVariants({
 export const right = styleVariants({
   '100%': { right: '100%' },
   '0': { right: '0' },
+  auto: { right: 'auto' },
 });
 export const flexFlow = styleVariants({
   column: { flexFlow: 'column' },
@@ -125,6 +132,11 @@ export const overflow = styleVariants({
   hidden: { overflow: 'hidden' },
   auto: { overflow: 'auto' },
   visible: { overflow: 'visible' },
+});
+
+export const visibility = styleVariants({
+  visible: { visibility: 'visible' },
+  hidden: { visibility: 'hidden' },
 });
 
 export const willChange = styleVariants({

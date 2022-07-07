@@ -35,6 +35,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
     columnGroup: 'finance',
     maxWidth: 130,
   },
+  id: { field: 'id', defaultWidth: 80 },
+  firstName: {
+    field: 'firstName',
+  },
+  stack: {
+    field: 'stack',
+  },
   salary: {
     field: 'salary',
     columnGroup: 'finance',
@@ -48,16 +55,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'preferredLanguage',
     columnGroup: 'regionalInfo',
   },
-  id: { field: 'id', defaultWidth: 80 },
-  firstName: {
-    field: 'firstName',
-  },
-  stack: {
-    field: 'stack',
-  },
 };
 
-const columnGroups: Record<string, InfiniteTableColumnGroup> = {
+const columnGrous: Record<string, InfiniteTableColumnGroup> = {
   regionalInfo: {
     header: 'Regional Info',
   },
@@ -81,7 +81,11 @@ export default function ColumnValueGetterExample() {
               position: 'relative',
             },
           }}
-          columnGroups={columnGroups}
+          columnPinning={{
+            country: 'end',
+            preferredLanguage: 'end',
+          }}
+          columnGroups={columnGrous}
           columns={columns}
           columnDefaultWidth={100}
         />

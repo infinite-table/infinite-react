@@ -50,6 +50,7 @@ export const ColumnCellCls = style([
   {
     selectors: {
       [`${InfiniteClsShiftingColumns} &`]: {
+        // color: 'red',
         transition: `transform ${ThemeVars.components.Cell.reorderEffectDuration}`,
       },
     },
@@ -71,20 +72,10 @@ export const ColumnCellVariantsObject = {
   pinnedStart: {},
   pinnedEnd: {},
   unpinned: {},
-  pinnedStartLastInCategory: {
-    borderRight: ThemeVars.components.Cell.border,
-    vars: {
-      // [ThemeVars.components.Cell.border]:
-      //   ThemeVars.components.Cell.borderInvisible,
-    },
-  },
-  pinnedEndFirstInCategory: {
-    borderLeft: ThemeVars.components.Cell.border,
-    vars: {
-      // [ThemeVars.components.Cell.border]:
-      //   ThemeVars.components.Cell.borderInvisible,
-    },
-  },
+  pinnedStartLastInCategory: {},
+  pinnedStartFirstInCategory: {},
+  pinnedEndFirstInCategory: {},
+  pinnedEndLastInCategory: {},
 };
 
 export const ColumnCellRecipe = recipe({
@@ -135,8 +126,16 @@ export const ColumnCellRecipe = recipe({
       false: {},
     },
     pinned: {
-      start: {},
-      end: {},
+      start: {
+        // vars: {
+        //   [ThemeVars.components.Cell.reorderEffectDuration]: '0',
+        // },
+      },
+      end: {
+        // vars: {
+        //   [ThemeVars.components.Cell.reorderEffectDuration]: '0',
+        // },
+      },
       false: {},
     },
     filtered: {
@@ -153,13 +152,26 @@ export const ColumnCellRecipe = recipe({
       },
       style: ColumnCellVariantsObject.pinnedStartLastInCategory,
     },
-
+    {
+      variants: {
+        pinned: 'start',
+        firstInCategory: true,
+      },
+      style: ColumnCellVariantsObject.pinnedStartFirstInCategory,
+    },
     {
       variants: {
         pinned: 'end',
         firstInCategory: true,
       },
       style: ColumnCellVariantsObject.pinnedEndFirstInCategory,
+    },
+    {
+      variants: {
+        pinned: 'end',
+        lastInCategory: true,
+      },
+      style: ColumnCellVariantsObject.pinnedEndLastInCategory,
     },
   ],
 });

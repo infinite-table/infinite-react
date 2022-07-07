@@ -1,18 +1,18 @@
 import {
   InfiniteTablePropColumnOrderNormalized,
-  InfiniteTablePropColumnPinningMap,
+  InfiniteTablePropColumnPinning,
 } from '../types/InfiniteTableProps';
 
 const order = ['start', undefined, 'end'];
 export const adjustColumnOrderForPinning = (
   columnOrder: InfiniteTablePropColumnOrderNormalized,
-  columnPinning: InfiniteTablePropColumnPinningMap,
+  columnPinning: InfiniteTablePropColumnPinning,
 ) => {
-  if (columnPinning.size > 0) {
+  if (columnPinning && Object.keys(columnPinning).length > 0) {
     // make sure pinned columns are coming first
     columnOrder.sort((colId1: string, colId2: string) => {
-      let p1 = columnPinning.get(colId1);
-      let p2 = columnPinning.get(colId2);
+      let p1 = columnPinning[colId1];
+      let p2 = columnPinning[colId2];
 
       if (p1 === true) {
         p1 = 'start';

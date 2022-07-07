@@ -16,7 +16,7 @@ import type {
   InfiniteTableColumnSizingOptions,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
-  InfiniteTablePropColumnPinningMap,
+  InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
@@ -47,9 +47,12 @@ const isColumnVisible = (
 
 const getComputedPinned = (
   colId: string,
-  columnPinning: InfiniteTablePropColumnPinningMap,
+  columnPinning: InfiniteTablePropColumnPinning,
 ): InfiniteTableColumnPinnedValues => {
-  const pinned = columnPinning.get(colId);
+  if (!columnPinning) {
+    return false;
+  }
+  const pinned = columnPinning[colId];
   const computedPinned: InfiniteTableColumnPinnedValues =
     pinned === 'start' || pinned === true
       ? 'start'
@@ -109,7 +112,7 @@ type GetComputedVisibleColumnsParam<T> = {
 
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
-  columnPinning: InfiniteTablePropColumnPinningMap;
+  columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -424,6 +427,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
       renderValue: colType.renderValue,
       render: colType.render,
       style: colType.style,
+      headerStyle: colType.headerStyle,
+      headerClassName: colType.headerClassName,
       components: colType.components,
       columnGroup: colType.columnGroup,
       field,

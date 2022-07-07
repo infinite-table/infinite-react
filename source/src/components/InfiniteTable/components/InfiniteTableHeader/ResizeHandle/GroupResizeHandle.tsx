@@ -6,9 +6,11 @@ import { InfiniteTableComputedColumn } from '../../../types';
 import { getColumnGroupResizer } from './columnResizer';
 import {
   ResizeHandleCls,
+  ResizeHandleRecipeCls,
   ResizeHandleDraggerClsRecipe,
 } from './ResizeHandle.css';
 import type { MatrixBrain } from '../../../../VirtualBrain/MatrixBrain';
+import { ThemeVars } from '../../../theme.css';
 
 type GroupResizeHandleProps<T> = {
   groupColumns: InfiniteTableComputedColumn<T>[];
@@ -32,6 +34,14 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
   const constrainedRef = useRef<boolean>(constrained);
   constrainedRef.current = constrained;
 
+  const col = props.groupColumns[0];
+  if (!col) {
+    return null;
+  }
+  const computedPinned = col.computedPinned;
+  const computedFirstInCategory = col.computedFirstInCategory;
+  const computedLastInCategory = col.computedLastInCategory;
+
   const onPointerDown = (e: PointerEvent) => {
     e.stopPropagation();
 
@@ -52,6 +62,9 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
     );
 
     const resizeDiff = (diff: number) => {
+      if (computedPinned === 'end') {
+        diff *= -1;
+      }
       const { constrained, adjustedDiffs, adjustedDiff } =
         props.computeResize(diff);
 
@@ -106,14 +119,33 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
     target.addEventListener('pointerup', onPointerUp);
   };
 
+  const style =
+    (computedPinned === false || computedPinned === 'start') &&
+    computedLastInCategory
+      ? {
+          right:
+            computedPinned === 'start'
+              ? 0
+              : ThemeVars.components.HeaderCell.resizeHandleWidth,
+        }
+      : computedPinned === 'end' && computedFirstInCategory
+      ? { right: 'none', left: 0 }
+      : undefined;
+
   return (
     <div
       ref={domRef}
-      className={`${InfiniteTableHeaderCellResizeHandleCls} ${ResizeHandleCls}`}
+      className={`${InfiniteTableHeaderCellResizeHandleCls} ${ResizeHandleCls} ${ResizeHandleRecipeCls(
+        {
+          computedPinned,
+          computedFirstInCategory,
+          computedLastInCategory,
+        },
+      )}`}
       onPointerDown={onPointerDown}
     >
       <div
-        style={props.style}
+        style={{ ...style, ...props.style }}
         className={ResizeHandleDraggerClsRecipe({
           constrained,
         })}
