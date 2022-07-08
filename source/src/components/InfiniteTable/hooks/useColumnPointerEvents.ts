@@ -110,8 +110,6 @@ export const useColumnPointerEvents = ({
         (dragColumn.computedPinned === 'end' ? dragColumn.computedWidth : 0);
       const pinnedEndColsLeft = tableRect.right - pinnedEndCurrentWidth;
 
-      const scrollLeftMax = brain.scrollLeftMax;
-
       const speedScroller = progressiveSpeedScroller({
         scrollOffsetStart: pinnedStartColsRight,
         scrollOffsetEnd: pinnedEndColsLeft,
