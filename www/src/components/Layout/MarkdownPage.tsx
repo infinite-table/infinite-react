@@ -201,11 +201,7 @@ export function MarkdownPage<
       <div className="lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
         <Seo title={title} description={description} />
         {!isHomePage && (
-          <PageHeading
-            title={title}
-            description={description}
-            tags={route?.tags}
-          />
+          <PageHeading title={title} tags={route?.tags} />
         )}
         <div className="px-5 sm:px-12">
           <div className="max-w-7xl mx-auto">

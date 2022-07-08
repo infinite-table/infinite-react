@@ -3,6 +3,7 @@ import cn from 'classnames';
 
 interface ButtonProps {
   children: React.ReactNode;
+  as?: string;
   onClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
@@ -17,11 +18,14 @@ export function Button({
   active,
   className,
   style,
+  as,
 }: ButtonProps) {
+  const Cmp = as || 'button';
   return (
-    <button
+    //@ts-ignore
+    <Cmp
       style={style}
-      onMouseDown={(evt) => {
+      onMouseDown={(evt: any) => {
         evt.preventDefault();
         evt.stopPropagation();
       }}
@@ -37,7 +41,7 @@ export function Button({
         }
       )}>
       {children}
-    </button>
+    </Cmp>
   );
 }
 

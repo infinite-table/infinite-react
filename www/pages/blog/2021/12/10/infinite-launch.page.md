@@ -1,9 +1,9 @@
 ---
-title: "Infinite Table Launch 🚀"
+title: "Infinite Table Alpha Launch 🚀"
 author: [admin]
 ---
 
-Today we are announcing the first version (`0.0.7`) of `Infinite Table` ready to be used by beta users - you can take it from npm
+Today we are announcing the alpha version (`0.0.7`) of `Infinite Table` ready to be used by early adopters - you can take it from npm
 
 <TerminalBlock>
 npm i @infinite-table/infinite-react

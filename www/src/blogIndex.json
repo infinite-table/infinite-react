@@ -11,13 +11,23 @@
       "readingTime": "4 min read"
     },
     {
-      "path": "/blog/2021/12/10/infinite-launch",
-      "date": "2021-12-10",
-      "title": "Infinite Table Launch 🚀",
+      "path": "/blog/2022/06/15/infinite-launch-beta",
+      "date": "2022-06-15",
+      "title": "Infinite Table Beta Launch 🚀",
       "author": [
         "admin"
       ],
-      "excerpt": "<p>Today we are announcing the first version (<code>0.0.7</code>) of <code>Infinite Table</code> ready to be used by beta users - you can take it from npm</p>\n",
+      "excerpt": "<p>Today we are announcing the beta version (<code>0.3.12</code>) of <code>Infinite Table</code> ready to be used by early adopters.</p>\n",
+      "readingTime": "1 min read"
+    },
+    {
+      "path": "/blog/2021/12/10/infinite-launch",
+      "date": "2021-12-10",
+      "title": "Infinite Table Alpha Launch 🚀",
+      "author": [
+        "admin"
+      ],
+      "excerpt": "<p>Today we are announcing the alpha version (<code>0.0.7</code>) of <code>Infinite Table</code> ready to be used by early adopters - you can take it from npm</p>\n",
       "readingTime": "1 min read"
     }
   ]
