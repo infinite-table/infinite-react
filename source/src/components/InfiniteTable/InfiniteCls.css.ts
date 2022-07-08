@@ -127,7 +127,7 @@ export const PinnedIndicatorCls = style([
   width[0],
   visibility.hidden,
   pointerEvents['none'],
-  zIndex[1000],
+  zIndex[10_000_000],
   {
     transform: `translate3d(-100%, 0px, 0px)`,
     borderRight: ThemeVars.components.Cell.pinnedBorder,

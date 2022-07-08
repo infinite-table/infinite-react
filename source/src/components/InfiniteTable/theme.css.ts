@@ -33,9 +33,6 @@ export const InternalVars = createThemeContract({
   pinnedStartWidth: null,
   pinnedEndWidth: null,
 
-  pinnedStartDraggingWidth: null,
-  pinnedEndDraggingWidth: null,
-
   pinnedEndOffset: null,
 
   computedVisibleColumnsCount: null,

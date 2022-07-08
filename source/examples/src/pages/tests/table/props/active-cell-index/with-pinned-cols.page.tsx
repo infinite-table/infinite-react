@@ -39,11 +39,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'salary',
     type: 'number',
   },
-  // age: { field: 'age' },
-  // canDesign: { field: 'canDesign', defaultWidth: 30 },
-  // country: { field: 'country', defaultWidth: 150 },
-  // firstName: { field: 'firstName' },
-  // stack: { field: 'stack' },
+  age: { field: 'age' },
+  canDesign: { field: 'canDesign', defaultWidth: 30 },
+  country: { field: 'country', defaultWidth: 150 },
+  firstName: { field: 'firstName' },
+  stack: { field: 'stack' },
   id: { field: 'id' },
   hobby: { field: 'hobby' },
   city: { field: 'city' },
@@ -71,7 +71,7 @@ export default () => {
             style: {
               margin: '25px',
               height: 550,
-              width: '80vw',
+              width: 800,
               left: 0,
               top: 20,
               border: '1px solid gray',
@@ -80,13 +80,13 @@ export default () => {
           }}
           columnPinning={{
             // TODO continue here - the only edge case is when reordering pinned end cols and we're not scrolled max to left
-            // index: 'start',
-            city: 'end',
-            hobby: 'end',
-            // currency: 'start',
+            index: 'start',
+            city: 'start',
+            hobby: 'start',
+            // currency: 'end',
           }}
           defaultActiveCellIndex={[100, 0]}
-          columnDefaultWidth={200}
+          columnDefaultWidth={100}
           columnMinWidth={50}
           columns={columns}
         />

@@ -35,18 +35,12 @@ const activeCellColOffset = stripVar(InternalVars.activeCellColOffset);
 const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
 
 const pinnedStartWidthCSSVar = stripVar(InternalVars.pinnedStartWidth);
-const pinnedStartDraggingWidthCSSVar = stripVar(
-  InternalVars.pinnedStartDraggingWidth,
-);
 
 const bodyWidthCSSVar = stripVar(InternalVars.bodyWidth);
 const bodyHeightCSSVar = stripVar(InternalVars.bodyHeight);
 const pinnedEndOffsetCSSVar = stripVar(InternalVars.pinnedEndOffset);
 
 const pinnedEndWidthCSSVar = stripVar(InternalVars.pinnedEndWidth);
-const pinnedEndDraggingWidthCSSVar = stripVar(
-  InternalVars.pinnedEndDraggingWidth,
-);
 
 const computedVisibleColumnsCountCSSVar = stripVar(
   InternalVars.computedVisibleColumnsCount,
@@ -177,7 +171,6 @@ export function useDOMProps<T>(
     computedPinnedStartColumns
       .map((c) => `var(${getCSSVarNameForColWidth(c.computedVisibleIndex)})`)
       .join(' + ') +
-    ` - var(${pinnedStartDraggingWidthCSSVar}, 0px) ` +
     ')';
 
   //@ts-ignore
@@ -186,7 +179,6 @@ export function useDOMProps<T>(
     computedPinnedEndColumns
       .map((c) => `var(${getCSSVarNameForColWidth(c.computedVisibleIndex)})`)
       .join(' + ') +
-    ` - var(${pinnedEndDraggingWidthCSSVar}, 0px) ` +
     ')';
   //@ts-ignore
   cssVars[baseZIndexForCells] = computedVisibleColumns.length * 10;
