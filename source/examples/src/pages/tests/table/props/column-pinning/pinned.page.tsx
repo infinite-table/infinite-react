@@ -11,10 +11,10 @@ import { rowData, Car } from '../column-visibility/rowData';
 import { columns } from '../column-visibility/columns';
 import { useState } from 'react';
 
-const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['make', 'start'],
-  ['year', 'start'],
-]);
+const defaultColumnPinning: InfiniteTablePropColumnPinning = {
+  make: 'start',
+  year: 'start',
+};
 
 // const defaultColumnPinning: InfiniteTablePropColumnPinning = {
 //   make: 'end',

@@ -55,12 +55,12 @@ const dataSource = () => {
     });
 };
 
-const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['country', 'start'],
-  ['city', 'start'],
-  ['team', 'end'],
-  ['salary', 'end'],
-]);
+const defaultColumnPinning: InfiniteTablePropColumnPinning = {
+  country: 'start',
+  city: 'start',
+  team: 'end',
+  salary: 'end',
+};
 
 (globalThis as any).calls = [];
 
