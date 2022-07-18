@@ -1,6 +1,6 @@
 import { test, expect, Page } from '@testing';
 
-import { getColumnCells, toggleGroupRow } from '../../../testUtils';
+import { getColumnCells } from '../../../testUtils';
 
 const getColumnContents = async (colId: string, { page }: { page: Page }) => {
   const cells = await getColumnCells(colId, { page });
@@ -28,7 +28,7 @@ export default test.describe.parallel(
         'Canada',
 
         'France',
-        // france comes with a child dataset already loaded, so the group text is empty for that, as we're in a child row
+        // France comes with a child dataset already loaded, so the group text is empty for that, as we're in a child row
         '',
         'Germany',
         'India',
@@ -37,8 +37,6 @@ export default test.describe.parallel(
         'United Arab Emirates',
         'United States',
       ]);
-
-      await toggleGroupRow({ rowIndex: 0 }, { page });
 
       const countryCol = await getColumnContents('country', { page });
 

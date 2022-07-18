@@ -56,8 +56,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const groupRowsState = new GroupRowsState({
-  expandedRows: true,
-  collapsedRows: [],
+  expandedRows: [['France'], ['Canada']],
+  collapsedRows: true,
+  // expandedRows: true,
+  // collapsedRows: [],
 });
 export default function RemoteGroupByExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
