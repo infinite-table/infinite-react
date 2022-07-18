@@ -505,6 +505,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             childrenLoading: false,
             childrenAvailable: false,
           };
+
           deepMap.set(
             [
               ...currentGroupKeys,
