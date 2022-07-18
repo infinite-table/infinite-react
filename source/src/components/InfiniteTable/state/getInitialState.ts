@@ -1,5 +1,4 @@
 import { createRef } from 'react';
-
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
