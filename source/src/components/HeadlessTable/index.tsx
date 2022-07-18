@@ -26,10 +26,6 @@ import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { Renderable } from '../types/Renderable';
 import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicator';
 import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicator';
-import {
-  PinnedEndIndicatorBorder,
-  PinnedStartIndicatorBorder,
-} from './headless-table.css';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;

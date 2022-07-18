@@ -59,6 +59,7 @@ export default function IndexWrapper({
           <div
             className={[
               shadow.lg,
+
               position.absolute,
               backgroundColorBrandDark,
               fontWeight.bold,
@@ -68,9 +69,11 @@ export default function IndexWrapper({
               borderRadius.md,
               zIndex['0'],
             ].join(' ')}
-            style={{ top: '-1.5rem' }}>
-            EARLY ADOPTER version available for REACT{' '}
+            style={{ top: '-1.5rem', textAlign: 'center' }}>
+            EARLY ADOPTER version available soon for REACT{' '}
             {ReactLogo}
+            <br />
+            Officially launching in September 2022
           </div>
           {children}
         </main>

@@ -107,9 +107,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const defaultColumnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['group-col', 'start'],
-]);
+const defaultColumnPinning: InfiniteTablePropColumnPinning = {
+  'group-col': 'start',
+};
 const domProps = { style: { height: '90vh' } };
 
 const groupRowsState = new GroupRowsState({

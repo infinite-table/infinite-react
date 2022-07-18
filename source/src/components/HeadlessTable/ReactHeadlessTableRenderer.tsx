@@ -141,6 +141,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       //for whatever reason, sometimes there's a misplaced fixed cell and we need to
       //have it executed again, on a raf
       raf(() => {
+        if (this.destroyed) {
+          return;
+        }
         this.adjustFixedElementsOnScroll();
       });
     });
@@ -1132,10 +1135,11 @@ export class ReactHeadlessTableRenderer extends Logger {
       }
     };
     raf(() => {
-      checkHoverClass();
-      if (__DEV__ && !this.hoverRowUpdatesInProgress) {
+      if (this.destroyed) {
         return;
       }
+      checkHoverClass();
+
       this.hoverRowUpdatesInProgress.delete(rowIndex);
     });
   };

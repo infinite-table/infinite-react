@@ -115,6 +115,11 @@ export function Sidebar({
           <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
         </ExternalLink>
         <Button
+          as="div"
+          className="w-full text-center justify-center leading-relaxed">
+          Officially Launching in September 2022
+        </Button>
+        <Button
           className="w-full text-center justify-center"
           onClick={handleFeedback}>
           {feedbackIcon} Feedback

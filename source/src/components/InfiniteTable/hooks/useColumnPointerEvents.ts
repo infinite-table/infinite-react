@@ -1,4 +1,3 @@
-import binarySearch from 'binary-search';
 import * as React from 'react';
 
 import { useCallback, useState } from 'react';
@@ -6,10 +5,8 @@ import { useCallback, useState } from 'react';
 import { useInfiniteTable } from './useInfiniteTable';
 import { moveXatY } from '../utils/moveXatY';
 
-import type { InfiniteTableComputedColumn } from '../types';
 import {
   clearInfiniteColumnReorderDuration,
-  restoreInfiniteColumnReorderDuration,
   setInfiniteColumnOffsetWhileReordering,
   setInfiniteColumnZIndex,
 } from '../utils/infiniteDOMUtils';
@@ -18,8 +15,6 @@ import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 import { InternalVars } from '../theme.css';
 import { stripVar } from '../../../utils/stripVar';
 import { getColumnZIndex } from './useDOMProps';
-import { ScrollPosition } from '../../types/ScrollPosition';
-import { progressiveSpeedScroller } from '../utils/progressiveSpeedScroller';
 import {
   reorderColumnsOnDrag,
   ReorderDragResult,
@@ -29,34 +24,11 @@ const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
 
-type ClientPosition = {
-  clientX: number;
-  clientY: number;
-};
-
 type TopLeft = {
   left: number;
   top: number;
 };
 type TopLeftOrNull = TopLeft | null;
-
-type ColumnBreakpoint = {
-  columnId: string;
-  index: number;
-  breakpoint: number;
-};
-
-const getBreakPoints = <T>(columns: InfiniteTableComputedColumn<T>[]) => {
-  return columns
-    .map((c) => {
-      return {
-        columnId: c.id,
-        index: c.computedVisibleIndex,
-        breakpoint: c.computedOffset + Math.round(c.computedWidth / 2),
-      };
-    })
-    .filter(Boolean);
-};
 
 export const useColumnPointerEvents = ({
   columnId,

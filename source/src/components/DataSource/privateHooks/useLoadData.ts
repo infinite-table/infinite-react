@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { LazyGroupDataItem, LazyRowInfoGroup } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
+import { raf } from '../../../utils/raf';
 import { useComponentState } from '../../hooks/useComponentState';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
@@ -24,7 +25,7 @@ const CACHE_DEFAULT = true;
 
 const getRafPromise = () =>
   new Promise((resolve) => {
-    requestAnimationFrame(resolve);
+    raf(resolve);
   });
 
 const SKIP_DATA_CHANGES_KEYS = {
@@ -281,20 +282,20 @@ export function loadData<T>(
               lazyGroupData.set(theKey, currentGroupRowInfo);
             }
           } else {
-            if (parentKeys) {
-              newGroupRowInfo.children.forEach((child) => {
-                if (child && child.dataset) {
-                  childDatasets.push({
-                    keys: child.keys,
-                    dataset: child.dataset,
-                  });
-                }
-              });
+            // if (parentKeys) {
+            newGroupRowInfo.children.forEach((child) => {
+              if (child && child.dataset) {
+                childDatasets.push({
+                  keys: child.keys,
+                  dataset: child.dataset,
+                });
+              }
+            });
 
-              // we need this assignment, in order to make the group
-              // accomodate all children that will potentially be lazily loaded
-              newGroupRowInfo.children.length = newGroupRowInfo.totalCount;
-            }
+            // we need this assignment, in order to make the group
+            // accomodate all children that will potentially be lazily loaded
+            newGroupRowInfo.children.length = newGroupRowInfo.totalCount;
+            // }
 
             lazyGroupData.set(theKey, newGroupRowInfo);
           }
@@ -532,8 +533,24 @@ function useLazyLoadRange<T>() {
     }
     const { renderStartIndex: startIndex, renderEndIndex: endIndex } =
       renderRange;
-    if (!lazyLoadBatchSize || lazyLoadBatchSize <= 0) {
+
+    const { lazyLoadBatchSize, lazyLoad } = componentState;
+
+    if (!lazyLoad) {
       return;
+    }
+
+    if (!lazyLoadBatchSize || lazyLoadBatchSize <= 0) {
+      // when the batch size is not defined
+      // we could still have rows that should be lazily loaded
+      // eg: some rows are defined as expanded in the `groupRowsState`, so
+      // if we detect some rows like this, we need to try and lazily load them
+
+      // but if there is no grouping, there will be no such rows,
+      // so we can safely return
+      if (!componentState.groupBy || componentState.groupBy.length === 0) {
+        return;
+      }
     }
 
     lazyLoadRange(
@@ -554,15 +571,14 @@ function useLazyLoadRange<T>() {
   );
 
   useEffect(() => {
-    if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
-      return notifyRenderRangeChange.onChange(
-        (renderRange: RenderRange | null) => {
-          latestRenderRangeRef.current = renderRange;
-          loadRange(renderRange);
-        },
-      );
-    }
-    return;
+    // if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
+    return notifyRenderRangeChange.onChange(
+      (renderRange: RenderRange | null) => {
+        latestRenderRangeRef.current = renderRange;
+        loadRange(renderRange);
+      },
+    );
+    // }
   }, [lazyLoadBatchSize]);
 
   useEffect(() => {
@@ -577,7 +593,7 @@ function lazyLoadRange<T>(
   options: {
     startIndex: number;
     endIndex: number;
-    lazyLoadBatchSize: number;
+    lazyLoadBatchSize: number | undefined;
     componentState: DataSourceState<T>;
     componentActions: ComponentStateGeneratedActions<DataSourceState<T>>;
   },
@@ -608,7 +624,7 @@ function lazyLoadRange<T>(
 
   type FnCall = {
     lazyLoadStartIndex: number;
-    lazyLoadBatchSize: number;
+    lazyLoadBatchSize: number | undefined;
     groupKeys: any[];
   };
 
@@ -675,7 +691,7 @@ function lazyLoadRange<T>(
       }
     }
 
-    if (!rowLoaded) {
+    if (!rowLoaded && lazyLoadBatchSize != undefined) {
       let cachedFnCalls = perGroupFnCalls.get(cacheKeys);
 
       const batchStartIndexInGroup =
