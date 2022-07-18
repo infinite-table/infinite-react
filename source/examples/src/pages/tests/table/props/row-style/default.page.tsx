@@ -154,10 +154,10 @@ const rowClassName: InfiniteTablePropRowClassName<Employee> = ({ data }) => {
   return;
 };
 
-const columnPinning: InfiniteTablePropColumnPinning = new Map([
-  ['company', 'start'],
-  ['companySize', 'end'],
-]);
+const columnPinning: InfiniteTablePropColumnPinning = {
+  company: 'start',
+  companySize: 'end',
+};
 export default function RowStyleDefault() {
   return (
     <React.StrictMode>

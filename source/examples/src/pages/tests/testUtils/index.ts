@@ -95,7 +95,7 @@ export const getCellNodeLocator = (
     columnId,
     rowIndex,
     colIndex,
-  }: { columnId?: string; colIndex: number; rowIndex: number },
+  }: { columnId?: string; colIndex?: number; rowIndex: number },
   { page }: { page: Page },
 ) => {
   const colSelector = columnId
