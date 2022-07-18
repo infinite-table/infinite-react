@@ -51,3 +51,5 @@
 //     expect(indexes).toEqual([]);
 //   });
 // });
+
+export default {};
