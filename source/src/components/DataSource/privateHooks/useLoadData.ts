@@ -514,6 +514,7 @@ function useLazyLoadRange<T>() {
 
   const {
     lazyLoadBatchSize,
+    lazyLoad,
     notifyRenderRangeChange,
     dataArray,
     scrollStopDelayUpdatedByTable,
@@ -571,15 +572,16 @@ function useLazyLoadRange<T>() {
   );
 
   useEffect(() => {
-    // if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
-    return notifyRenderRangeChange.onChange(
-      (renderRange: RenderRange | null) => {
-        latestRenderRangeRef.current = renderRange;
-        loadRange(renderRange);
-      },
-    );
-    // }
-  }, [lazyLoadBatchSize]);
+    if (lazyLoad) {
+      return notifyRenderRangeChange.onChange(
+        (renderRange: RenderRange | null) => {
+          latestRenderRangeRef.current = renderRange;
+          loadRange(renderRange);
+        },
+      );
+    }
+    return;
+  }, [lazyLoadBatchSize, lazyLoad]);
 
   useEffect(() => {
     if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {

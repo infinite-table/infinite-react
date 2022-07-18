@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@testing';
+import { Request } from '@playwright/test';
 
 import { getColumnCells } from '../../../testUtils';
 
@@ -38,10 +39,45 @@ export default test.describe.parallel(
         'United States',
       ]);
 
+      const urls: string[] = [];
+
+      const condition = (request: Request) => {
+        const ok =
+          request.url().includes('developers10') && request.method() === 'GET';
+
+        urls.push(request.url());
+
+        return ok;
+      };
+
+      // wait for Canada to be loaded as well, from the remote location
+      await page.waitForRequest(condition);
+      // also wait for node to be expanded
+      await page.waitForTimeout(20);
+
+      const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
+
+      const paramsForRequests = queryStrings.map((query) => {
+        const searchParams = new URLSearchParams(query);
+
+        const obj: any = {};
+        for (const [key, value] of searchParams) {
+          obj[key] = JSON.parse(value);
+        }
+        return obj;
+      });
+
+      // expect a request was made for Canada
+      expect(paramsForRequests[0].groupKeys).toEqual(['Canada']);
+
       const countryCol = await getColumnContents('country', { page });
+
+      // Canada was also loaded, so expect it there
+      contents.splice(0, 0, 'Canada');
 
       // France group row is rendered as expanded
       // so we expect in the "country" column to have it be there
+
       expect(countryCol).toEqual(contents.map((c) => c || 'France'));
     });
   },
