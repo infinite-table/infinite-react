@@ -2,6 +2,7 @@ import { DataSourceComponentActions, DataSourceDataParams } from '..';
 import { dbg } from '../../../utils/debug';
 import { DeepMap } from '../../../utils/DeepMap';
 import defaultSortTypes from '../../../utils/multisort/sortTypes';
+import { raf } from '../../../utils/raf';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
@@ -265,7 +266,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
         // #wait_for_update do it on raf, since it also does actions.dataParams assignment
         // so we allow dataParams to be updated (the call 3 lines above) in state
 
-        requestAnimationFrame(() => {
+        raf(() => {
           actions.livePaginationCursor = null;
         });
       }
@@ -281,7 +282,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       if (state.livePagination) {
         // see #wait_for_update above
 
-        requestAnimationFrame(() => {
+        raf(() => {
           actions.livePaginationCursor = null;
         });
       }
@@ -297,7 +298,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       if (state.livePagination) {
         // see #wait_for_update above
 
-        requestAnimationFrame(() => {
+        raf(() => {
           actions.livePaginationCursor = null;
         });
       }
@@ -313,7 +314,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       if (state.livePagination) {
         // see #wait_for_update above
 
-        requestAnimationFrame(() => {
+        raf(() => {
           actions.livePaginationCursor = null;
         });
       }

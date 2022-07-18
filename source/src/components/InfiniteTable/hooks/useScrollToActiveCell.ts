@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { raf } from '../../../utils/raf';
 
 import { InfiniteTableImperativeApi } from '../types';
 
@@ -23,7 +24,7 @@ export function useScrollToActiveCell<T>(
       function tryScroll(times = 0) {
         times++;
         cancelAnimationFrame(rafId.current!);
-        rafId.current = requestAnimationFrame(() => {
+        rafId.current = raf(() => {
           didScrollRef.current = imperativeApi.scrollCellIntoView(
             activeCellIndex![0],
             activeCellIndex![1],

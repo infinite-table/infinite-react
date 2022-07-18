@@ -519,11 +519,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         // const item = dataObject as Partial<DataType>;
 
         if (dataKeys.length) {
-          // const { field: groupByProperty } = groupBy[dataKeys.length - 1];
-          // const key = item[groupByProperty]! as any as GroupKeyType<KeyType>;
-
           // we need to take the key that comes from the server, and not from the property
-          // although they should be probably be the same
+          // although they should probably be the same
           const key = dataKeys[dataKeys.length - 1];
           currentGroupKeys.push(key);
         }

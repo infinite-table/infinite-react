@@ -91,11 +91,18 @@ export const getCellNode = async (
 };
 
 export const getCellNodeLocator = (
-  { columnId, rowIndex }: { columnId: string; rowIndex: number },
+  {
+    columnId,
+    rowIndex,
+    colIndex,
+  }: { columnId?: string; colIndex: number; rowIndex: number },
   { page }: { page: Page },
 ) => {
+  const colSelector = columnId
+    ? `[data-column-id="${columnId}"]`
+    : `[data-col-index="${colIndex}"]`;
   return page.locator(
-    `.InfiniteColumnCell[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+    `.InfiniteColumnCell[data-row-index="${rowIndex}"]${colSelector}`,
   );
 };
 
@@ -247,6 +254,17 @@ export const getColumnCells = async (
   };
 };
 
+export const toggleGroupRow = async (
+  { rowIndex, colIndex }: { rowIndex: number; colIndex?: number },
+  { page }: { page: Page },
+) => {
+  const locator = getCellNodeLocator(
+    { rowIndex, colIndex: colIndex || 0 },
+    { page },
+  );
+  await locator.locator('[data-name="expander-icon"]').click();
+};
+
 export const getCellText = async (
   {
     columnId,
@@ -258,7 +276,22 @@ export const getCellText = async (
   { page }: { page: Page },
 ) => {
   const cell = page.locator(
-    `[data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+    `.InfiniteBody [data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
+  );
+
+  return await cell!.evaluate((node) => (node as HTMLElement).innerText);
+};
+
+export const getHeaderCellText = async (
+  {
+    columnId,
+  }: {
+    columnId: string;
+  },
+  { page }: { page: Page },
+) => {
+  const cell = page.locator(
+    `[data-name="HeaderCell"][data-column-id="${columnId}"]`,
   );
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
