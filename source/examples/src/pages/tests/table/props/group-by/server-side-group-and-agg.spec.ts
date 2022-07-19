@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@testing';
+import { Request } from '@playwright/test';
 
 import { getColumnCells, toggleGroupRow } from '../../../testUtils';
 
@@ -18,7 +19,27 @@ export default test.describe.parallel(
   'Server-side grouped with agg and no pivot',
   () => {
     test('should work and lazily load data', async ({ page }) => {
-      await page.waitForInfinite();
+      page.load();
+
+      const urls: string[] = [];
+
+      const condition = (request: Request) => {
+        const ok =
+          request.url().includes('developers10') && request.method() === 'GET';
+
+        if (ok) {
+          urls.push(request.url());
+        }
+
+        return ok;
+      };
+
+      // wait for initial request
+      await page.waitForRequest(condition);
+
+      expect(urls.length).toBe(1);
+
+      await page.waitForInfiniteSelector();
 
       const contents = await getColumnContents('group-by-country', { page });
 
