@@ -35,6 +35,8 @@ export default test.describe.parallel(
 
       await toggleGroupRow({ rowIndex: 0 }, { page });
 
+      await page.waitForTimeout(20);
+
       const countryCol = await getColumnContents('country', { page });
 
       // as we've expanded the first row and since it has only 1 child in this example

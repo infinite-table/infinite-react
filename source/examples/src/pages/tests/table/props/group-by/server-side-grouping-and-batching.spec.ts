@@ -24,31 +24,30 @@ export default test.describe.parallel(
         const ok =
           response.url().includes('developers') && response.status() === 200;
 
-        if (ok) {
-          return response.json().then((resp) => {
-            responses.push(...resp.data.map((d: any) => d.data.country));
-            responses.push('-');
+        return response.json().then((resp) => {
+          responses.push(...resp.data.map((d: any) => d.data.country));
+          responses.push('-');
 
-            return ok;
-          });
-        }
-
-        return ok;
+          return ok;
+        });
       };
 
-      await page.waitForResponse(condition);
+      page.click('button');
+      page.waitForResponse(condition);
+
+      await page.waitForTimeout(150);
 
       expect(responses).toEqual([
-        // 'Argentina',
-        // 'Australia',
-        // 'Brazil',
-        // 'Canada',
-        // 'China',
-        'France',
-        'Germany',
-        'India',
-        'Indonesia',
-        'Italy',
+        'Argentina',
+        'Australia',
+        'Brazil',
+        'Canada',
+        'China',
+        // 'France',
+        // 'Germany',
+        // 'India',
+        // 'Indonesia',
+        // 'Italy',
         '-',
       ]);
 
@@ -69,23 +68,23 @@ export default test.describe.parallel(
         'Italy',
       ]);
       expect(responses).toEqual([
-        // 'Argentina',
-        // 'Australia',
-        // 'Brazil',
-        // 'Canada',
-        // 'China',
-        // '-',
+        'Argentina',
+        'Australia',
+        'Brazil',
+        'Canada',
+        'China',
+        '-',
         'France',
         'Germany',
         'India',
         'Indonesia',
         'Italy',
-        '-',
-        'Japan',
-        'Mexico',
-        'Saudi Arabia',
-        'South Africa',
-        'Spain',
+        // '-',
+        // 'Japan',
+        // 'Mexico',
+        // 'Saudi Arabia',
+        // 'South Africa',
+        // 'Spain',
         '-',
       ]);
     });
