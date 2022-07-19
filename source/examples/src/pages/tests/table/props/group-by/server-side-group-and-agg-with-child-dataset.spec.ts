@@ -41,7 +41,7 @@ export default test.describe.parallel(
       // wait for Canada to be loaded as well, from the remote location
       await page.waitForRequest(condition);
       // also wait for node to be expanded
-      await page.waitForTimeout(50);
+      await page.waitForTimeout(20);
 
       const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
 
