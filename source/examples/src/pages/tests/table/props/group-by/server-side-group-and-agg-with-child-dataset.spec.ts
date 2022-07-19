@@ -57,9 +57,9 @@ export default test.describe.parallel(
 
       expect(urls.length).toEqual(2);
 
-      expect(paramsForRequests[1].groupKeys).toEqual(['Canada']);
-
       const contents = await getColumnContents('group-by-country', { page });
+
+      // expect(paramsForRequests[1].groupKeys).toEqual(['Canada']);
 
       expect(contents).toEqual([
         'Canada',
