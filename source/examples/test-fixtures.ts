@@ -19,11 +19,16 @@ export { expect };
 
 export type { Page, ElementHandle, Locator, Response };
 
+type TestExtras = {
+  waitForInfinite: () => Promise<void>;
+  waitForInfiniteSelector: () => Promise<void>;
+  load: () => Promise<void>;
+};
 export const test = base.extend<
   PlaywrightTestArgs & PlaywrightTestOptions,
   PlaywrightWorkerArgs &
     PlaywrightWorkerOptions & {
-      page: Page & { waitForInfinite: () => Promise<void> };
+      page: Page & TestExtras;
     }
 >({
   //@ts-ignore
@@ -41,12 +46,19 @@ export const test = base.extend<
 
     const exists = fs.existsSync(filePath);
 
-    if (exists) {
-      await page.goto(url);
-    }
+    page.load = async () => {
+      if (exists) {
+        await page.goto(url);
+      }
+    };
+
+    page.waitForInfiniteSelector = async () => {
+      await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
+    };
 
     page.waitForInfinite = async () => {
-      await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
+      await page.load();
+      await page.waitForInfiniteSelector();
     };
 
     await use(page);

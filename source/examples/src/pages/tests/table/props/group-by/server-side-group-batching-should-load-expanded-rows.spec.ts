@@ -6,19 +6,23 @@ export default test.describe.parallel(
   'Server-side grouping with lazy load and batching',
   () => {
     test('should load expanded rows', async ({ page }) => {
-      await page.waitForInfinite();
+      page.load();
       const urls: string[] = [];
 
       const condition = (request: Request) => {
         const ok =
           request.url().includes('developers10') && request.method() === 'GET';
 
-        urls.push(request.url());
+        if (ok) {
+          urls.push(request.url());
+        }
 
         return ok;
       };
 
+      // wait for initial call
       await page.waitForRequest(condition);
+      // wait for france to be requested
       await page.waitForRequest(condition);
 
       const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
@@ -34,7 +38,7 @@ export default test.describe.parallel(
       });
 
       // expect a request was made for France
-      expect(paramsForRequests[0].groupKeys).toEqual(['France']);
+      expect(paramsForRequests[1].groupKeys).toEqual(['France']);
 
       const firstFrance = await getCellText(
         { columnId: 'country', rowIndex: 1 },

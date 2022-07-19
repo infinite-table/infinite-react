@@ -21,23 +21,7 @@ export default test.describe.parallel(
     test('should work and lazily load data that has a child dataset', async ({
       page,
     }) => {
-      await page.waitForInfinite();
-
-      const contents = await getColumnContents('group-by-country', { page });
-
-      expect(contents).toEqual([
-        'Canada',
-
-        'France',
-        // France comes with a child dataset already loaded, so the group text is empty for that, as we're in a child row
-        '',
-        'Germany',
-        'India',
-        'Mexico',
-        'Sweden',
-        'United Arab Emirates',
-        'United States',
-      ]);
+      page.load();
 
       const urls: string[] = [];
 
@@ -45,11 +29,15 @@ export default test.describe.parallel(
         const ok =
           request.url().includes('developers10') && request.method() === 'GET';
 
-        urls.push(request.url());
+        if (ok) {
+          urls.push(request.url());
+        }
 
         return ok;
       };
 
+      // wait for initial request
+      await page.waitForRequest(condition);
       // wait for Canada to be loaded as well, from the remote location
       await page.waitForRequest(condition);
       // also wait for node to be expanded
@@ -62,23 +50,31 @@ export default test.describe.parallel(
 
         const obj: any = {};
         for (const [key, value] of searchParams) {
-          obj[key] = JSON.parse(value);
+          obj[key] = value ? JSON.parse(value) : '';
         }
         return obj;
       });
 
-      // expect a request was made for Canada
-      expect(paramsForRequests[0].groupKeys).toEqual(['Canada']);
+      expect(urls.length).toEqual(2);
 
-      const countryCol = await getColumnContents('country', { page });
+      expect(paramsForRequests[1].groupKeys).toEqual(['Canada']);
 
-      // Canada was also loaded, so expect it there
-      contents.splice(0, 0, 'Canada');
+      const contents = await getColumnContents('group-by-country', { page });
 
-      // France group row is rendered as expanded
-      // so we expect in the "country" column to have it be there
-
-      expect(countryCol).toEqual(contents.map((c) => c || 'France'));
+      expect(contents).toEqual([
+        'Canada',
+        // Canada was expanded, so the group text is empty for that, as we're in a child row
+        '',
+        'France',
+        // France comes with a child dataset already loaded, so the group text is empty for that, as we're in a child row
+        '',
+        'Germany',
+        'India',
+        'Mexico',
+        'Sweden',
+        'United Arab Emirates',
+        'United States',
+      ]);
     });
   },
 );

@@ -1,6 +1,6 @@
 import { getFnCalls } from '../../../testUtils/getFnCalls';
 
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
 
 async function getCalls({ page }: { page: Page }) {
   return await getFnCalls('onValueChange', { page });
@@ -12,7 +12,7 @@ const getValue = async ({ page }: { page: Page }) => {
 
 export default test.describe.parallel('hooks.use - controlled value', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/hooks/useComponentState/counter/uncontrolled`);
+    await page.load();
   });
 
   test('should work correctly for uncontrolled - inner changes should trigger onValueChange', async ({

@@ -31,6 +31,7 @@ export default test.describe.parallel(
     test('team column should be hidden whenever there is grouping', async ({
       page,
     }) => {
+      await page.load();
       expect(await isColumnDisplayed('teamID', { page })).toBe(false);
 
       expect(await getRenderedRowCount({ page })).not.toEqual(employees.length);
@@ -52,6 +53,7 @@ export default test.describe.parallel(
     test('department should be hidden whenever there is grouping by department', async ({
       page,
     }) => {
+      await page.load();
       expect(await isColumnDisplayed('departmentID', { page })).toBe(false);
       expect(await getRenderedRowCount({ page })).not.toEqual(employees.length);
 
@@ -71,6 +73,7 @@ export default test.describe.parallel(
     test('salary should be hidden whenever there is grouping by salary or team', async ({
       page,
     }) => {
+      await page.load();
       expect(await isColumnDisplayed('salaryID', { page })).toBe(false);
       expect(await getRenderedRowCount({ page })).not.toEqual(employees.length);
 

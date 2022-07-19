@@ -6,6 +6,7 @@ export default test.describe.parallel('DataSource', () => {
   test('should work correctly with sortInfo controlled - no change to the datasource if controlled sortInfo', async ({
     page,
   }) => {
+    await page.load();
     page.waitForLoadState('domcontentloaded');
     let result = await page.evaluate(() => {
       return JSON.parse(

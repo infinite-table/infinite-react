@@ -30,7 +30,7 @@ type Developer = {
 
 const domProps = {
   style: {
-    height: 800,
+    height: '80vh',
   },
 };
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
@@ -134,45 +134,32 @@ export default function RemotePivotExample() {
   );
 
   const lazyLoad = React.useMemo(() => ({ batchSize: 5 }), []);
-
-  const [render, setRender] = React.useState(false);
   return (
-    <>
-      <button
-        onClick={() => {
-          setRender(true);
-        }}
-      >
-        render
-      </button>
-      {render ? (
-        <DataSource<Developer>
-          primaryKey="id"
-          data={dataSource}
-          groupBy={groupBy}
-          pivotBy={pivotBy.length ? pivotBy : undefined}
-          aggregationReducers={aggregationReducers}
-          defaultGroupRowsState={groupRowsState}
-          lazyLoad={lazyLoad}
-        >
-          {({ pivotColumns, pivotColumnGroups }) => {
-            return (
-              <InfiniteTable<Developer>
-                domProps={domProps}
-                scrollStopDelay={10}
-                columnPinning={columnPinning}
-                columns={columns}
-                groupColumn={groupColumn}
-                groupRenderStrategy="single-column"
-                columnDefaultWidth={220}
-                pivotColumns={pivotColumns}
-                pivotColumnGroups={pivotColumnGroups}
-              />
-            );
-          }}
-        </DataSource>
-      ) : null}
-    </>
+    <DataSource<Developer>
+      primaryKey="id"
+      data={dataSource}
+      groupBy={groupBy}
+      pivotBy={pivotBy.length ? pivotBy : undefined}
+      aggregationReducers={aggregationReducers}
+      defaultGroupRowsState={groupRowsState}
+      lazyLoad={lazyLoad}
+    >
+      {({ pivotColumns, pivotColumnGroups }) => {
+        return (
+          <InfiniteTable<Developer>
+            domProps={domProps}
+            scrollStopDelay={10}
+            columnPinning={columnPinning}
+            columns={columns}
+            groupColumn={groupColumn}
+            groupRenderStrategy="single-column"
+            columnDefaultWidth={220}
+            pivotColumns={pivotColumns}
+            pivotColumnGroups={pivotColumnGroups}
+          />
+        );
+      }}
+    </DataSource>
   );
 }
 

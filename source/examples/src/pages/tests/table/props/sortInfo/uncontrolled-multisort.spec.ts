@@ -14,6 +14,7 @@ async function getCalls({ page }: { page: Page }) {
 
 export default test.describe.parallel('Table', () => {
   test.skip('uncontrolled sortInfo should work fine', async ({ page }) => {
+    await page.waitForInfinite();
     const { headerCell, bodyCells } = await getColumnCells('itemCount', {
       page,
     });

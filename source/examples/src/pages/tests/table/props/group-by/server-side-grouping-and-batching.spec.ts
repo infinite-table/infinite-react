@@ -18,24 +18,25 @@ export default test.describe.parallel(
   'Server-side batched grouping with pinned group column.',
   () => {
     test('should work and lazily load data', async ({ page }) => {
+      page.load();
       const responses: string[] = [];
 
       const condition = (response: Response) => {
         const ok =
           response.url().includes('developers') && response.status() === 200;
 
-        return response.json().then((resp) => {
-          responses.push(...resp.data.map((d: any) => d.data.country));
-          responses.push('-');
+        if (ok) {
+          return response.json().then((resp) => {
+            responses.push(...resp.data.map((d: any) => d.data.country));
+            responses.push('-');
 
-          return ok;
-        });
+            return ok;
+          });
+        }
+        return ok;
       };
 
-      page.click('button');
-      page.waitForResponse(condition);
-
-      await page.waitForTimeout(150);
+      await page.waitForResponse(condition);
 
       expect(responses).toEqual([
         'Argentina',
