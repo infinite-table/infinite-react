@@ -18,7 +18,6 @@ export default test.describe.parallel(
   'Server-side batched grouping with pinned group column.',
   () => {
     test('should work and lazily load data', async ({ page }) => {
-      await page.waitForInfinite();
       const responses: string[] = [];
 
       const condition = (response: Response) => {
