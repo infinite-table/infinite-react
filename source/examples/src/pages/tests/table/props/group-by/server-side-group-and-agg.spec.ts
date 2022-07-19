@@ -37,9 +37,9 @@ export default test.describe.parallel(
 
       await page.load();
 
-      expect(urls.length).toBe(1);
-
       await page.waitForInfiniteSelector();
+
+      expect(urls.length).toBe(1);
 
       const contents = await getColumnContents('group-by-country', { page });
 
