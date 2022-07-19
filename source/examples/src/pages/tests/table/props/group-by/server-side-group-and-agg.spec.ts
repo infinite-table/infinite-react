@@ -19,8 +19,6 @@ export default test.describe.parallel(
   'Server-side grouped with agg and no pivot',
   () => {
     test('should work and lazily load data', async ({ page }) => {
-      page.load();
-
       const urls: string[] = [];
 
       const condition = (request: Request) => {
@@ -35,7 +33,9 @@ export default test.describe.parallel(
       };
 
       // wait for initial request
-      await page.waitForRequest(condition);
+      page.waitForRequest(condition);
+
+      await page.load();
 
       expect(urls.length).toBe(1);
 

@@ -21,8 +21,6 @@ export default test.describe.parallel(
     test('should work and lazily load data that has a child dataset', async ({
       page,
     }) => {
-      page.load();
-
       const urls: string[] = [];
 
       const condition = (request: Request) => {
@@ -37,7 +35,9 @@ export default test.describe.parallel(
       };
 
       // wait for initial request
-      await page.waitForRequest(condition);
+      page.waitForRequest(condition);
+
+      await page.load();
       // wait for Canada to be loaded as well, from the remote location
       await page.waitForRequest(condition);
       // also wait for node to be expanded
