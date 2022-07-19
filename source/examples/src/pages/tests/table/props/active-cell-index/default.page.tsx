@@ -101,11 +101,7 @@ export default function KeyboardNavigationForRows() {
       </div>
 
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer>
-          domProps={domProps}
-          columns={columns}
-          keyboardNavigation={false}
-        />
+        <InfiniteTable<Developer> domProps={domProps} columns={columns} />
       </DataSource>
       <input />
     </div>
