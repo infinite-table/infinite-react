@@ -194,12 +194,16 @@ export const getScrollPosition = async ({ page }: { page: Page }) => {
     };
   });
 };
+
+export const getActiveCellIndicatorLocator = ({ page }: { page: Page }) => {
+  return page.locator('[data-name="active-cell-indicator"]');
+};
 export const getActiveCellIndicatorOffsetFromDOM = async ({
   page,
 }: {
   page: Page;
 }) => {
-  const indicatorNode = page.locator('[data-name="active-cell-indicator"]');
+  const indicatorNode = getActiveCellIndicatorLocator({ page });
 
   return await indicatorNode.evaluate((node) => {
     const [xVar, yVar] = node.style.transform

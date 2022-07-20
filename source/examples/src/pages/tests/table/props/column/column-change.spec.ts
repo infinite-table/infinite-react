@@ -8,6 +8,7 @@ import { test, expect } from '@testing';
 
 export default test.describe.parallel('Column change', () => {
   test('works correctly', async ({ page }) => {
+    await page.load();
     let widths = await getColumnWidths(['firstName', 'salary', 'stack'], {
       page,
     });

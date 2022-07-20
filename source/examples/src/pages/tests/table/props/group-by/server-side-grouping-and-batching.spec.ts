@@ -18,7 +18,7 @@ export default test.describe.parallel(
   'Server-side batched grouping with pinned group column.',
   () => {
     test('should work and lazily load data', async ({ page }) => {
-      await page.waitForInfinite();
+      page.load();
       const responses: string[] = [];
 
       const condition = (response: Response) => {
@@ -33,23 +33,22 @@ export default test.describe.parallel(
             return ok;
           });
         }
-
         return ok;
       };
 
       await page.waitForResponse(condition);
 
       expect(responses).toEqual([
-        // 'Argentina',
-        // 'Australia',
-        // 'Brazil',
-        // 'Canada',
-        // 'China',
-        'France',
-        'Germany',
-        'India',
-        'Indonesia',
-        'Italy',
+        'Argentina',
+        'Australia',
+        'Brazil',
+        'Canada',
+        'China',
+        // 'France',
+        // 'Germany',
+        // 'India',
+        // 'Indonesia',
+        // 'Italy',
         '-',
       ]);
 
@@ -70,23 +69,23 @@ export default test.describe.parallel(
         'Italy',
       ]);
       expect(responses).toEqual([
-        // 'Argentina',
-        // 'Australia',
-        // 'Brazil',
-        // 'Canada',
-        // 'China',
-        // '-',
+        'Argentina',
+        'Australia',
+        'Brazil',
+        'Canada',
+        'China',
+        '-',
         'France',
         'Germany',
         'India',
         'Indonesia',
         'Italy',
-        '-',
-        'Japan',
-        'Mexico',
-        'Saudi Arabia',
-        'South Africa',
-        'Spain',
+        // '-',
+        // 'Japan',
+        // 'Mexico',
+        // 'Saudi Arabia',
+        // 'South Africa',
+        // 'Spain',
         '-',
       ]);
     });

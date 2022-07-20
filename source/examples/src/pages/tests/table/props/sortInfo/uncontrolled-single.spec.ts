@@ -14,7 +14,7 @@ const orders = getOrders();
 
 export default test.describe.parallel('Table', () => {
   test('uncontrolled sortInfo should work fine', async ({ page }) => {
-    await page.waitForTimeout(50);
+    await page.waitForInfinite();
     const { headerCell, bodyCells } = await getColumnCells('OrderId', { page });
 
     let values = await Promise.all(

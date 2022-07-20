@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
 
 import { getFnCalls } from '../../../testUtils/getFnCalls';
 
@@ -12,7 +12,7 @@ const getValue = async ({ page }: { page: Page }) => {
 
 export default test.describe.parallel('hooks.use - controlled sortInfo', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/hooks/useComponentState/counter/controlled-change`);
+    await page.load();
   });
 
   test('should work correctly for controlled - outside changes should not trigger onValueChange', async ({

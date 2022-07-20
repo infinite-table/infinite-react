@@ -6,6 +6,7 @@ export default test.describe.parallel('Table', () => {
   test('sortable=false - sorting column does not work, as table is sortable=false', async ({
     page,
   }) => {
+    await page.load();
     await page.waitForTimeout(50);
 
     const { headerCell, bodyCells } = await getColumnCells('firstName', {
@@ -41,6 +42,7 @@ export default test.describe.parallel('Table', () => {
   test('sortable=false - sorting column with sortable=true should work', async ({
     page,
   }) => {
+    await page.load();
     await page.waitForTimeout(50);
 
     const { headerCell, bodyCells } = await getColumnCells('id', { page });

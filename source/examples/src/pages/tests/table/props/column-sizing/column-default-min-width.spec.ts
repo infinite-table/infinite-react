@@ -4,6 +4,7 @@ import { getHeaderCellWidthByColumnId } from '../../../testUtils';
 
 export default test.describe.parallel('Column types tests', () => {
   test('expect column widths to be set correctly', async ({ page }) => {
+    await page.load();
     const idSize = await getHeaderCellWidthByColumnId('id', { page });
     const ageSize = await getHeaderCellWidthByColumnId('age', { page });
     const countrySize = await getHeaderCellWidthByColumnId('country', { page });

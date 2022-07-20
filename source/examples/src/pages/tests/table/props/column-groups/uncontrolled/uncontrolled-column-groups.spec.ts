@@ -12,6 +12,7 @@ export default test.describe.parallel(
     test('should remove column when a new key is removed from the columns map', async ({
       page,
     }) => {
+      await page.load();
       const locationText = await (
         await page.locator(
           '.InfiniteHeader [data-group-id="location,country,region"]',

@@ -1,5 +1,4 @@
 import { createRef } from 'react';
-
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
@@ -308,7 +307,7 @@ export const mapPropsToState = <T>(params: {
     computedColumns,
 
     keyboardNavigation:
-      state.keyboardNavigation ??
+      props.keyboardNavigation ??
       (state.activeCellIndex != null
         ? 'cell'
         : state.activeRowIndex != null

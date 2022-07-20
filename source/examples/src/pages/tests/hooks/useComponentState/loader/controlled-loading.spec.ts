@@ -1,6 +1,6 @@
 import { getFnCalls } from '../../../testUtils/getFnCalls';
 
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
 
 function getCalls({ page }: { page: Page }) {
   return getFnCalls('onLoadingChange', { page });
@@ -10,8 +10,7 @@ export default test.describe.parallel(
   'hooks.useProperty - controlled boolean',
   () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`tests/hooks/useComponentState/loader/controlled-loading
-    `);
+      await page.load();
     });
 
     test('should work correctly for controlled - outside changes should not trigger onLoadingChange', async ({

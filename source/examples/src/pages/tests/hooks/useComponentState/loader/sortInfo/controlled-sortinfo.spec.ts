@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@testing';
 import { getFnCalls } from '../../../../testUtils/getFnCalls';
 
 async function getCalls({ page }: { page: Page }) {
@@ -9,8 +9,7 @@ export default test.describe.parallel(
   'hooks.useProperty - controlled sortInfo',
   () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(`tests/hooks/useComponentState/loader/sortInfo/controlled-sortinfo
-    `);
+      await page.load();
     });
 
     test('should work correctly for controlled - outside changes should not trigger onSortInfoChange', async ({

@@ -8,7 +8,7 @@ const orders = getOrders();
 
 export default test.describe.parallel('Table', () => {
   test('controlled sortInfo should work properly', async ({ page }) => {
-    await page.waitForTimeout(50);
+    await page.waitForInfinite();
 
     const { headerCell } = await getColumnCells('CompanyName', {
       page,
