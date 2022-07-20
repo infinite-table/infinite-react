@@ -146,6 +146,8 @@ export const forwardProps = <T>(
     onScrollStop: 1,
     scrollToBottomOffset: 1,
 
+    columnPinning: 1,
+
     rowStyle: 1,
     rowProps: 1,
     rowClassName: 1,
@@ -296,11 +298,6 @@ export const mapPropsToState = <T>(params: {
     state.columns;
 
   return {
-    columnPinning:
-      state.columnPinningWhileDragging ||
-      state.columnPinning ||
-      props.columnPinning,
-    columnPinningWhileDragging: state.columnPinningWhileDragging,
     controlledColumnVisibility: !!props.columnVisibility,
     groupRenderStrategy,
     groupBy: groupBy,

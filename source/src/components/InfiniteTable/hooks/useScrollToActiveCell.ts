@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { raf } from '../../../utils/raf';
+import { cancelRaf, raf } from '../../../utils/raf';
 
 import { InfiniteTableImperativeApi } from '../types';
 
@@ -16,14 +16,14 @@ export function useScrollToActiveCell<T>(
   useEffect(() => {
     if (activeCellIndex != null) {
       didScrollRef.current = false;
-      cancelAnimationFrame(rafId.current!);
+      cancelRaf(rafId.current!);
     }
   }, [activeCellIndex]);
   useEffect(() => {
     if (activeCellIndex != null && !didScrollRef.current) {
       function tryScroll(times = 0) {
         times++;
-        cancelAnimationFrame(rafId.current!);
+        cancelRaf(rafId.current!);
         rafId.current = raf(() => {
           didScrollRef.current = imperativeApi.scrollCellIntoView(
             activeCellIndex![0],
@@ -42,7 +42,7 @@ export function useScrollToActiveCell<T>(
     }
 
     return () => {
-      cancelAnimationFrame(rafId.current!);
+      cancelRaf(rafId.current!);
     };
   }, [activeCellIndex, dataCount]);
 }

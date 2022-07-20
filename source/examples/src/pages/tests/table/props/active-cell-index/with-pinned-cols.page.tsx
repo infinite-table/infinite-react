@@ -78,11 +78,11 @@ export default () => {
               position: 'relative',
             },
           }}
-          columnPinning={{
+          defaultColumnPinning={{
             // TODO continue here - the only edge case is when reordering pinned end cols and we're not scrolled max to left
             index: 'start',
             city: 'start',
-            hobby: 'start',
+            // hobby: 'start',
             // currency: 'end',
           }}
           defaultActiveCellIndex={[100, 0]}

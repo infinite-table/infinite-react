@@ -6,10 +6,11 @@ import { InternalVars } from '../theme.css';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {
-  InfiniteTableColumnPinnedValues,
   InfiniteTableImperativeApi,
+  InfiniteTablePropColumnPinning,
 } from '../types/InfiniteTableProps';
 import {
+  clearInfiniteColumnReorderDuration,
   restoreInfiniteColumnReorderDuration,
   setInfiniteColumnOffsetWhileReordering,
   setInfiniteVarOnRoot,
@@ -35,8 +36,8 @@ type ColumnBreakpoint = {
 };
 
 export type ReorderDragResult = {
-  currentDropIndex: number;
-  currentDragColumnPinned: InfiniteTableColumnPinnedValues;
+  columnPinning: InfiniteTablePropColumnPinning;
+  columnOrder: string[];
 };
 
 export type ReorderParams<T> = {
@@ -71,7 +72,7 @@ export type ReorderParams<T> = {
 const PROXY_OFFSET = 10;
 
 const pinnedStartWidthCSSVar = stripVar(InternalVars.pinnedStartWidth);
-const pinnedEndWidthCSSVar = stripVar(InternalVars.pinnedEndWidth);
+// const pinnedEndWidthCSSVar = stripVar(InternalVars.pinnedEndWidth);
 
 export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
   const {
@@ -91,7 +92,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
   } = params;
 
   // returns the total width of the pinned start columns
-  // but not that one of them may be the drag column
+  // we need to take into account that one of them may be the drag column
   // and it might have been dragged out of pinning
   // so we need to substract it
   function getCurrentPinnedWidth(pinned: 'start' | 'end') {
@@ -134,24 +135,43 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
   }
 
   const getBreakPoints = <T>(columns: InfiniteTableComputedColumn<T>[]) => {
-    return columns
-      .map((c) => {
-        return {
-          columnId: c.id,
-          index: c.computedVisibleIndex,
-          breakpoint:
-            // tableRect.left +
-            c.computedOffset + Math.round(c.computedWidth / 2),
-        };
-      })
-      .filter(isColumnVisible);
+    const breakpoints: ColumnBreakpoint[] = [];
+
+    columns.forEach((c) => {
+      const b = {
+        columnId: c.id,
+        index: c.computedVisibleIndex,
+        breakpoint:
+          // tableRect.left +
+          c.computedOffset + Math.round(c.computedWidth / 2),
+      };
+
+      if (isColumnVisible(b)) {
+        breakpoints.push(b);
+      }
+      // if (c.computedPinned === 'start' && c.computedLastInCategory) {
+      //   breakpoints.push({
+      //     index: c.computedVisibleIndex,
+      //     breakpoint: c.computedOffset + c.computedWidth,
+      //   });
+      // }
+
+      // if (c.computedPinned === 'end' && c.computedFirstInCategory) {
+      //   breakpoints.push({
+      //     index: c.computedVisibleIndex,
+      //     breakpoint: c.computedOffset,
+      //   });
+      // }
+    });
+
+    return breakpoints;
   };
 
   const initialPinnedStartCount = computedPinnedStartColumns.length;
   let currentPinnedStartCount = initialPinnedStartCount;
 
-  const initialPinnedEndCount = computedPinnedEndColumns.length;
-  let currentPinnedEndCount = initialPinnedEndCount;
+  // const initialPinnedEndCount = computedPinnedEndColumns.length;
+  // let currentPinnedEndCount = initialPinnedEndCount;
 
   const initialMousePosition: MousePosition = {
     clientX: Math.round(params.initialMousePosition.clientX),
@@ -210,68 +230,9 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
 
     currentMousePosition = { clientX, clientY };
 
-    // UPDATE PINNING - BLOCK START
-    const pinnedStartWidth = getCurrentPinnedWidth('start');
-    const pinnedEndWidth = getCurrentPinnedWidth('end');
+    const currentScrollLeft = brain.getScrollPosition().scrollLeft;
 
-    // update when going from `start` to `false`
-    if (
-      currentDragColumnPinned === 'start' &&
-      currentMousePosition.clientX > tableRect.left + pinnedStartWidth
-    ) {
-      console.log('boom');
-      currentDragColumnPinned = false;
-      setInfiniteVarOnRoot(
-        pinnedStartWidthCSSVar,
-        `${pinnedStartWidth - dragColumn.computedWidth}px`,
-        infiniteDOMNode,
-      );
-    }
-
-    // update when going from `false` to `start`
-    if (
-      pinnedStartWidth &&
-      currentDragColumnPinned === false &&
-      currentMousePosition.clientX < tableRect.left + pinnedStartWidth
-    ) {
-      currentDragColumnPinned = 'start';
-      setInfiniteVarOnRoot(
-        pinnedStartWidthCSSVar,
-        `${pinnedStartWidth + dragColumn.computedWidth}px`,
-        infiniteDOMNode,
-      );
-    }
-
-    // update when going from `end` to `false`
-    if (
-      currentDragColumnPinned === 'end' &&
-      currentMousePosition.clientX < tableRect.right - pinnedEndWidth
-    ) {
-      currentDragColumnPinned = false;
-      setInfiniteVarOnRoot(
-        pinnedEndWidthCSSVar,
-        `${pinnedEndWidth - dragColumn.computedWidth}px`,
-        infiniteDOMNode,
-      );
-    }
-
-    // update when going from `false` to `end`
-    if (
-      pinnedEndWidth &&
-      currentDragColumnPinned === false &&
-      currentMousePosition.clientX > tableRect.right - pinnedEndWidth
-    ) {
-      currentDragColumnPinned = 'end';
-      setInfiniteVarOnRoot(
-        pinnedEndWidthCSSVar,
-        `${pinnedEndWidth + dragColumn.computedWidth}px`,
-        infiniteDOMNode,
-      );
-    }
-    // UPDATE PINNING - BLOCK END
-
-    const scrollLeftDiff =
-      brain.getScrollPosition().scrollLeft - initialScrollPosition.scrollLeft;
+    const scrollLeftDiff = currentScrollLeft - initialScrollPosition.scrollLeft;
 
     currentDiff.x =
       currentMousePosition.clientX - initialMousePosition!.clientX;
@@ -288,11 +249,54 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     });
   }
 
-  function updateDropIndex(
-    newDropIndex: number,
-    newPinnedStartCount: number,
-    newPinnedEndCount: number,
+  function updatePinnedStartCount(columnIndexes: number[]) {
+    let pinnedStartCount = 0;
+
+    if (!initialDragColumnPinned) {
+      columnIndexes.forEach((colIndex, i) => {
+        if (computedVisibleColumns[colIndex]?.computedPinned === 'start') {
+          pinnedStartCount = i + 1;
+        }
+      });
+    } else if (initialDragColumnPinned === 'start') {
+      columnIndexes.forEach((colIndex, i) => {
+        if (pinnedStartCount) {
+          return;
+        }
+        if (computedVisibleColumns[colIndex]?.computedPinned !== 'start') {
+          pinnedStartCount = i;
+        }
+      });
+    }
+
+    currentPinnedStartCount = pinnedStartCount;
+
+    updatePinningMarker('start', columnIndexes, pinnedStartCount);
+  }
+
+  function updatePinningMarker(
+    where: 'start', //| 'end' // pinning end marker coming soon
+    columnIndexes: number[],
+    pinnedCount: number,
   ) {
+    if (where === 'start') {
+      let width = 0;
+
+      for (let i = 0; i < pinnedCount; i++) {
+        const colIndex = columnIndexes[i];
+        const col = computedVisibleColumns[colIndex];
+        width += col.computedWidth;
+      }
+      // update pinned start marker to correct offset/width
+      setInfiniteVarOnRoot(
+        pinnedStartWidthCSSVar,
+        `${width}px`,
+        infiniteDOMNode,
+      );
+    }
+  }
+
+  function updateDropIndex(newDropIndex: number) {
     if (newDropIndex === currentDropIndex) {
       return;
     }
@@ -307,83 +311,44 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
         : currentDropIndex,
     );
 
-    let pinnedStartChanged = newPinnedStartCount !== currentPinnedStartCount;
-    let pinnedEndChanged = newPinnedEndCount != currentPinnedEndCount;
+    let pinnedStartCount = 0;
+    // let pinnedEndCount = 0;
 
-    let unpinnedChanged = false;
+    currentPinnedStartCount = pinnedStartCount;
+    // currentPinnedEndCount = pinnedEndCount;
 
-    currentPinnedStartCount = newPinnedStartCount;
-    currentPinnedEndCount = newPinnedEndCount;
+    const indexesWithTransition = new Set<number>();
 
-    const indexesWithTransition = new Set();
     newColumnIndexes.forEach((newIndex, i) => {
       const currentIndex = currentIndexes[i];
 
       if (newIndex !== currentIndex) {
         indexesWithTransition.add(newIndex);
-
-        // if there was a swap/change in the pinned start columns
-        if (i < currentPinnedStartCount) {
-          // then mark pinned start as having changed
-          pinnedStartChanged = true;
-        }
-        // if there was a swap/change in the pinned end columns
-        else if (i >= newColumnIndexes.length - currentPinnedStartCount) {
-          // then mark pinned end as having changed
-          pinnedEndChanged = true;
-        } else {
-          unpinnedChanged = true;
-        }
       }
+
+      updatePinnedStartCount(newColumnIndexes);
     });
 
     currentIndexes = newColumnIndexes;
 
-    if (pinnedStartChanged) {
-      adjustPinnedStartOffsets();
-    }
-    if (pinnedEndChanged) {
-      adjustPinnedEndOffsets();
-    }
-    if (unpinnedChanged) {
-      adjustUnpinnedOffsets();
-    }
+    adjustAllOffsets(indexesWithTransition);
 
-    adjustAllOffsets();
-
-    return newColumnIndexes;
+    return {
+      newColumnIndexes,
+      indexesWithTransition,
+      pinnedStartCount: currentPinnedStartCount,
+    };
   }
 
-  function adjustPinnedStartOffsets() {
-    for (let i = 0; i < currentPinnedStartCount; i++) {}
-  }
-  function adjustPinnedEndOffsets() {
-    // the last `currentPinnedEndCount` indexes from `currentIndexes` are pinned to end
-    // so we iterate them
-    for (
-      let i = currentIndexes.length - currentPinnedEndCount;
-      i < currentIndexes.length;
-      i++
-    ) {}
-  }
-  function adjustUnpinnedOffsets() {
-    for (
-      let i = currentPinnedStartCount;
-      i < currentIndexes.length - currentPinnedEndCount;
-      i++
-    ) {}
-  }
-
-  function adjustAllOffsets() {
+  function adjustAllOffsets(indexesWithTransition: Set<number>) {
     computedVisibleColumns.forEach((col) => {
       const colIndex = col.computedVisibleIndex;
 
-      // TODO apply/clear the transition duration for reordering
-      // if (indexesWithTransition.has(colIndex)) {
-      restoreInfiniteColumnReorderDuration(colIndex, infiniteDOMNode);
-      // } else {
-      //   clearInfiniteColumnReorderDuration(colIndex, rootRef.current);
-      // }
+      if (indexesWithTransition.has(colIndex)) {
+        restoreInfiniteColumnReorderDuration(colIndex, infiniteDOMNode);
+      } else {
+        clearInfiniteColumnReorderDuration(colIndex, infiniteDOMNode);
+      }
 
       const isDragColumn = colIndex === dragColumnIndex;
 
@@ -420,7 +385,6 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
           : `calc( var(${columnOffsetAtIndexCSSVar}-${colIndex}) - var(${columnWidthAtIndexCSSVar}-${dragColumnIndex}) )`;
       }
 
-      // console.log(colIndex, newPosition);
       setInfiniteColumnOffsetWhileReordering(
         colIndex,
         newPosition,
@@ -458,18 +422,12 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
 
       const breakpoints = getBreakPoints(computedVisibleColumns);
 
-      // console.log(breakpoints);
-
       let currentPos =
         dir === -1
           ? dragColumn.computedOffset + diffX
           : dragColumn.computedOffset + dragColumn.computedWidth + diffX;
 
-      // console.log(
-      //   breakpoints.map((b) => b.breakpoint),
-      //   currentPos,
-      // );
-      let idx = binarySearch<ColumnBreakpoint, number>(
+      let idx = binarySearch<{ breakpoint: number }, number>(
         breakpoints,
         currentPos,
         ({ breakpoint }, value) => {
@@ -485,20 +443,34 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
         : breakpoints[breakpoints.length - 1].index + 1;
 
       if (idx != null && idx !== currentDropIndex) {
-        // currentDropIndex = idx;
-
         if (dir === 1 && currentDropIndex === dragColumnIndex + 1) {
           idx = dragColumnIndex;
         }
 
-        updateDropIndex(
-          idx,
-          computedPinnedStartColumns.length,
-          computedPinnedEndColumns.length,
-        );
+        updateDropIndex(idx);
       }
 
-      return { currentDropIndex, currentDragColumnPinned };
+      const columnPinning: InfiniteTablePropColumnPinning = {};
+
+      // will need to adjust pinning end to take into account the count of pinned end cols after the drag
+      // but for now, we don't support column reordering when we have pinned end cols
+      computedPinnedEndColumns.forEach((col) => {
+        columnPinning[col.id] = 'end';
+      });
+
+      for (let i = 0; i < currentPinnedStartCount; i++) {
+        const colIndex = currentIndexes[i];
+        const col = computedVisibleColumns[colIndex];
+        columnPinning[col.id] = 'start';
+      }
+
+      const columnOrder = currentIndexes.map((colIndex) => {
+        return computedVisibleColumns[colIndex].id;
+      });
+      return {
+        columnPinning,
+        columnOrder,
+      };
     },
   };
 }

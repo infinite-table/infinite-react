@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 
 import { useInfiniteTable } from './useInfiniteTable';
-import { moveXatY } from '../utils/moveXatY';
 
 import {
   clearInfiniteColumnReorderDuration,
@@ -19,6 +18,8 @@ import {
   reorderColumnsOnDrag,
   ReorderDragResult,
 } from './reorderColumnsOnDrag';
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
+import { InfiniteTablePropColumnPinning } from '../types';
 
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
@@ -29,6 +30,17 @@ type TopLeft = {
   top: number;
 };
 type TopLeftOrNull = TopLeft | null;
+
+const equalPinning = (
+  pinning1: null | InfiniteTablePropColumnPinning,
+  pinning2: null | InfiniteTablePropColumnPinning,
+) => {
+  if (!!pinning1 != !!pinning2) {
+    return false;
+  }
+
+  return shallowEqualObjects(pinning1, pinning2);
+};
 
 export const useColumnPointerEvents = ({
   columnId,
@@ -97,37 +109,13 @@ export const useColumnPointerEvents = ({
       let reorderDragResult: ReorderDragResult | null = null;
 
       function persistColumnOrder(reorderDragResult: ReorderDragResult) {
-        const { currentDropIndex, currentDragColumnPinned } = reorderDragResult;
+        const { columnPinning, columnOrder } = reorderDragResult;
 
-        const actions: VoidFunction[] = [];
-
-        const computedPinned = dragColumn.computedPinned;
-        if (computedPinned !== currentDragColumnPinned) {
-          const columnPinning = getState().columnPinning || {};
-          actions.push(() => {
-            const newPinning = { ...columnPinning };
-            if (computedPinned && !currentDragColumnPinned) {
-              delete newPinning[columnId];
-            } else {
-              if (currentDragColumnPinned) {
-                newPinning[columnId] = currentDragColumnPinned;
-              } else {
-                delete newPinning[columnId];
-              }
-            }
-            console.log('pinning', newPinning);
-            componentActions.columnPinning = newPinning;
-          });
+        if (!equalPinning(getState().columnPinning, columnPinning)) {
+          console.log('update pinning');
+          componentActions.columnPinning = columnPinning;
         }
-        if (currentDropIndex != null && currentDropIndex !== dragColumnIndex) {
-          const newOrder = moveXatY(
-            getComputed().computedColumnOrder,
-            dragColumnIndex,
-            currentDropIndex > dragColumnIndex
-              ? currentDropIndex - 1
-              : currentDropIndex,
-          );
-
+        if (JSON.stringify(columnOrder, getComputed().computedColumnOrder)) {
           computedVisibleColumns.forEach((col) => {
             setInfiniteColumnOffsetWhileReordering(
               col.computedVisibleIndex,
@@ -136,13 +124,8 @@ export const useColumnPointerEvents = ({
             );
           });
 
-          actions.push(() => {
-            console.log('order', newOrder);
-            componentActions.columnOrder = newOrder;
-          });
+          componentActions.columnOrder = columnOrder;
         }
-
-        actions.forEach((action) => action());
       }
 
       const onPointerMove = (e: PointerEvent) => {
@@ -180,7 +163,6 @@ export const useColumnPointerEvents = ({
         const target = domRef.current!;
         rootRef.current?.classList.remove(InfiniteClsShiftingColumns);
 
-        // return;
         dragger.stop();
 
         brain.setAvailableSize({

@@ -129,6 +129,7 @@ export const PinnedIndicatorCls = style([
   pointerEvents['none'],
   zIndex[10_000_000],
   {
+    // zIndex: InternalVars.baseZIndexForCells,
     transform: `translate3d(-100%, 0px, 0px)`,
     borderRight: ThemeVars.components.Cell.pinnedBorder,
     bottom: InternalVars.scrollbarWidthHorizontal,

@@ -70,6 +70,8 @@ export interface InfiniteTableMappedState<T> {
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
+  columnPinning: InfiniteTablePropColumnPinning;
+
   loadingText: InfiniteTableProps<T>['loadingText'];
   components: InfiniteTableProps<T>['components'];
   columns: InfiniteTablePropColumnsMap<T>;
@@ -148,9 +150,6 @@ export interface InfiniteTableDerivedState<T> {
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']
   >;
-
-  columnPinning: InfiniteTablePropColumnPinning;
-  columnPinningWhileDragging: InfiniteTablePropColumnPinning;
 
   columnHeaderCssEllipsis: NonUndefined<
     InfiniteTableProps<T>['columnHeaderCssEllipsis']
