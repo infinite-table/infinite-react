@@ -44,6 +44,10 @@
             {
               "path": "/docs/latest/learn/columns/fixed-and-flexible-size",
               "title": "Column Sizing"
+            },
+            {
+              "path": "/docs/latest/learn/columns/column-order",
+              "title": "Column Order"
             }
           ]
         },

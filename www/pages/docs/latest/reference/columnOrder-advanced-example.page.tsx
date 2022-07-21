@@ -62,12 +62,15 @@ export const columns: InfiniteTablePropColumns<Employee> = {
 };
 
 export default function App() {
-  const [columnOrder, setColumnOrder] = useState<string[]>([
+  const [columnOrder, setColumnOrder] = useState<
+    string[] | true
+  >([
     'firstName',
     'country',
     'team',
     'company',
-    'department',
+    'firstName',
+    'not existing column',
     'companySize',
   ]);
 
@@ -77,10 +80,39 @@ export default function App() {
         <p>
           Current column order:{' '}
           <code>
-            <pre>{columnOrder.join(', ')}.</pre>
+            <pre>
+              {JSON.stringify(columnOrder, null, 2)}.
+            </pre>
           </code>
         </p>
-        <p>Drag column headers to reorder.</p>
+        <p>
+          Note: if the column order contains columns that
+          don't exist in the `columns` definition, they will
+          be skipped.
+        </p>
+
+        <button
+          style={{
+            border: '2px solid currentColor',
+            padding: 5,
+          }}
+          onClick={() => {
+            setColumnOrder(['firstName', 'country']);
+          }}>
+          Click to only show "firstName" and "country".
+        </button>
+
+        <button
+          style={{
+            border: '2px solid currentColor',
+            padding: 5,
+            marginLeft: 5,
+          }}
+          onClick={() => {
+            setColumnOrder(true);
+          }}>
+          Click to reset column order.
+        </button>
       </div>
 
       <DataSource<Employee>

@@ -167,13 +167,15 @@ Minimum column width can be controlled more granularly via <PropLink name="colum
 </Prop>
 
 
-<Prop name="columnOrder">
+<Prop name="columnOrder" type="string[]|true">>
 
 > Defines the order in which columns are displayed in the component
 
 For uncontrolled usage, see <PropLink name="defaultColumnOrder" />.
 
 When using this controlled prop, make sure you also listen to <PropLink name="onColumnOrderChange" />
+
+See [Column Order](/docs/latest/learn/columns/column-order) for more details on ordering columns both programatically and via drag & drop.
 
 <Note>
 
@@ -190,6 +192,23 @@ Displaying the same column twice is a perfectly valid use case.
 ```
 
 </Sandpack>
+
+This prop can either be an array of strings (column ids) or the boolean `true`. When `true`, all columns present in the <PropLink name="columns" /> object will be displayed, in the iteration order of the object keys.
+
+<Sandpack title="Column order advanced example">
+
+```ts file=columnOrder-advanced-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+Using <PropLink name="columnOrder" /> in combination with <PropLink name="columnVisibility" /> is very powerful - for example, you can have a specific column order even for columns which are not visible at a certain moment, so when they will be made visible, you'll know exactly where they will be displayed.
+
+</Note>
+
+
 </Prop>
 
 <Prop name="columns" type="Record<string, InfiniteTableColumn<DATA_TYPE>>">
@@ -1041,7 +1060,7 @@ This example starts with row at index `2` already active.
 
 </Prop>
 
-<Prop name="defaultColumnOrder">
+<Prop name="defaultColumnOrder" type="string[]|true" defaultValue={true}>
 
 > Defines the order in which columns are displayed in the component.
 
@@ -1056,6 +1075,8 @@ The `defaultColumnOrder` array can contain identifiers that are not yet defined 
 Displaying the same column twice is a perfectly valid use case.
 
 </Note>
+
+See [Column Order](/docs/latest/learn/columns/column-order) for more details on ordering columns both programatically and via drag & drop.
 
 
 <Sandpack title="Uncontrolled column order">

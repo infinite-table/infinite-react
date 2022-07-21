@@ -417,7 +417,9 @@ export interface InfiniteTableProps<T> {
 
   defaultColumnOrder?: InfiniteTablePropColumnOrder;
   columnOrder?: InfiniteTablePropColumnOrder;
-  onColumnOrderChange?: (columnOrder: InfiniteTablePropColumnOrder) => void;
+  onColumnOrderChange?: (
+    columnOrder: InfiniteTablePropColumnOrderNormalized,
+  ) => void;
   onRowHeightChange?: (rowHeight: number) => void;
 
   filterEditors?: InfiniteTablePropFilterEditors<T>;
