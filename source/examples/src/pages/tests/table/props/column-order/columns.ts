@@ -1,16 +1,14 @@
-import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import type { Car } from './rowData';
 
-export const columns = new Map<string, InfiniteTableColumn<Car>>([
-  ['id', { field: 'id' }],
-  [
-    'make',
-    {
-      field: 'make',
-    },
-  ],
-  ['model', { field: 'model' }],
-  ['price', { field: 'price' }],
-  ['year', { field: 'year' }],
-  ['rating', { field: 'rating' }],
-]);
+export const columns: InfiniteTablePropColumns<Car> = {
+  id: { field: 'id' },
+
+  make: {
+    field: 'make',
+  },
+  model: { field: 'model' },
+  price: { field: 'price' },
+  year: { field: 'year' },
+  rating: { field: 'rating' },
+};

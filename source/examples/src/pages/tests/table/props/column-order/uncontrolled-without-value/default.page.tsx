@@ -5,12 +5,19 @@ import { columns } from '../columns';
 import { rowData, Car } from '../rowData';
 
 const App = () => {
+  const [cols, setCols] = React.useState(columns);
   return (
     <>
       <button
         onClick={() => {
-          columns.delete('id');
-          columns.delete('make');
+          const cols = {
+            ...columns,
+          };
+          //@ts-ignore
+          delete cols.id;
+          //@ts-ignore
+          delete cols.make;
+          setCols(cols);
         }}
       >
         hide id and make columns
@@ -32,7 +39,7 @@ const App = () => {
             }}
             columnDefaultWidth={140}
             columnMinWidth={50}
-            columns={columns}
+            columns={cols}
           />
         </DataSource>
       </React.StrictMode>
