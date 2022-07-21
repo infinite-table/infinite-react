@@ -80,9 +80,7 @@ export default function App() {
         <p>
           Current column order:{' '}
           <code>
-            <pre>
-              {JSON.stringify(columnOrder, null, 2)}.
-            </pre>
+            <pre>{JSON.stringify(columnOrder)}.</pre>
           </code>
         </p>
         <p>
