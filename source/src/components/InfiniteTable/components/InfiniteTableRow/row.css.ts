@@ -21,6 +21,8 @@ export const RowHoverCls = style({
   vars: {
     [ThemeVars.components.Row.background]:
       ThemeVars.components.Row.hoverBackground,
+    [ThemeVars.components.Row.selectedBackground]:
+      ThemeVars.components.Row.selectedHoverBackground,
     [ThemeVars.components.Row.oddBackground]:
       ThemeVars.components.Row.hoverBackground,
   },

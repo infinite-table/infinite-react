@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GroupRowsState } from '@src/components/DataSource/GroupRowsState';
+import { GroupRowsState } from '@src/components/DataSource';
 import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
 
 import { groupToItems } from './helpers';

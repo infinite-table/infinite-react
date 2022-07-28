@@ -8,6 +8,7 @@ import {
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { multisort } from '../../../utils/multisort';
+import { RowSelectionState } from '../RowSelectionState';
 import type {
   DataSourceState,
   DataSourceDerivedState,
@@ -39,15 +40,22 @@ function toRowInfo<T>(
   data: T,
   id: any,
   index: number,
+  isRowSelected?: (rowInfo: InfiniteTableRowInfo<T>) => boolean,
 ): InfiniteTable_NoGrouping_RowInfoNormal<T> {
-  return {
+  const rowInfo: InfiniteTable_NoGrouping_RowInfoNormal<T> = {
     dataSourceHasGrouping: false,
     data,
     id,
     indexInAll: index,
     isGroupRow: false,
     selfLoaded: true,
+    rowSelected: false,
   };
+  if (isRowSelected) {
+    rowInfo.rowSelected = isRowSelected(rowInfo);
+  }
+
+  return rowInfo;
 }
 
 function filterDataSource<T>(params: {
@@ -198,6 +206,10 @@ export function concludeReducer<T>(params: {
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length > 0 || !!pivotBy;
+  const selectionDepsChanged = haveDepsChanged(previousState, state, [
+    'rowSelection',
+    'isRowSelected',
+  ]);
   const groupsDepsChanged =
     originalDataArrayChanged ||
     sortDepsChanged ||
@@ -272,7 +284,29 @@ export function concludeReducer<T>(params: {
 
   let rowInfoDataArray: InfiniteTableRowInfo<T>[] = state.dataArray;
 
+  let isRowSelected:
+    | ((rowInfo: InfiniteTableRowInfo<T>) => boolean)
+    | undefined =
+    state.selectionMode === 'single-row'
+      ? (rowInfo) => {
+          return rowInfo.id === state.rowSelection;
+        }
+      : state.selectionMode === 'multi-row'
+      ? (rowInfo) => {
+          return (state.rowSelection as RowSelectionState).isRowSelected(
+            rowInfo.id,
+          );
+        }
+      : undefined;
+
+  if (state.isRowSelected) {
+    isRowSelected = (rowInfo) =>
+      state.isRowSelected!(rowInfo, state.rowSelection, state.selectionMode) ||
+      false;
+  }
+
   if (shouldGroup) {
+    // TODO handle selection in grouping
     if (shouldGroupAgain) {
       const groupResult = state.lazyLoad
         ? lazyGroup(
@@ -294,13 +328,14 @@ export function concludeReducer<T>(params: {
             },
             dataArray,
           );
-      // console.log(groupResult);
 
       const flattenResult = enhancedFlatten({
         groupResult,
         lazyLoad: !!state.lazyLoad,
         reducers: state.aggregationReducers,
         toPrimaryKey,
+        isRowSelected,
+
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
       });
@@ -337,9 +372,18 @@ export function concludeReducer<T>(params: {
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
 
-    if (arrayDifferentAfterSortStep || groupsDepsChanged) {
+    if (
+      arrayDifferentAfterSortStep ||
+      groupsDepsChanged ||
+      selectionDepsChanged
+    ) {
       rowInfoDataArray = dataArray.map((data, index) =>
-        toRowInfo(data, data ? toPrimaryKey(data, index) : index, index),
+        toRowInfo(
+          data,
+          data ? toPrimaryKey(data, index) : index,
+          index,
+          isRowSelected,
+        ),
       );
     }
   }

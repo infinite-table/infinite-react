@@ -17,6 +17,7 @@ import { useLatest } from '../useLatest';
 import { usePrevious } from '../usePrevious';
 import {
   ComponentInterceptedActions,
+  ComponentMappedCallbackParams,
   ComponentStateActions,
   ComponentStateContext,
   ComponentStateGeneratedActions,
@@ -51,6 +52,7 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
   propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE>,
   allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
   interceptedActions?: ComponentInterceptedActions<T_STATE>,
+  mappedCallbackParams?: ComponentMappedCallbackParams<T_STATE>,
 ): ComponentStateGeneratedActions<T_STATE> {
   const state = getState();
   return Object.keys(state).reduce((actions, stateKey) => {
@@ -72,10 +74,15 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
           notifyTheChange = false;
         }
       }
+
       // it's important that we notify with the value that we receive
       //directly from the setter (see continuation below)
       if (notifyTheChange) {
-        notifyChange(props, stateKey, value);
+        const valueToNotify =
+          mappedCallbackParams && mappedCallbackParams[key]
+            ? mappedCallbackParams[key](value, state)
+            : value;
+        notifyChange(props, stateKey, valueToNotify);
       }
 
       //@ts-ignore
@@ -155,6 +162,9 @@ type ComponentStateRootConfig<
   ) => ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>;
   allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
   interceptActions?: ComponentInterceptedActions<
+    COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
+  >;
+  mappedCallbackParams?: ComponentMappedCallbackParams<
     COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
   >;
   onPropChange?: (
@@ -380,6 +390,7 @@ export function getComponentStateRoot<
         propsToForward as ForwardPropsToStateFnResult<T_PROPS, COMPONENT_STATE>,
         allowedControlledPropOverrides,
         config.interceptActions,
+        config.mappedCallbackParams,
       );
 
       return generatedActions;

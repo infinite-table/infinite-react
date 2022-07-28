@@ -30,6 +30,10 @@ import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
 
 import { GroupRowsState } from './GroupRowsState';
+import {
+  RowSelectionState,
+  RowSelectionStateObject,
+} from './RowSelectionState';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -106,6 +110,7 @@ export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
+  isRowSelected: DataSourceProps<T>['isRowSelected'];
 
   lazyLoad: DataSourceProps<T>['lazyLoad'];
 
@@ -228,6 +233,48 @@ export type DataSourcePropAggregationReducers<T> = Record<
   string,
   DataSourceAggregationReducer<T, any>
 >;
+export type DataSourcePropMultiRowSelectionChangeParamType =
+  RowSelectionStateObject;
+
+export type DataSourcePropRowSelection =
+  | DataSourcePropRowSelection_MultiRow
+  | DataSourcePropRowSelection_SingleRow;
+
+export type DataSourcePropRowSelection_MultiRow =
+  | RowSelectionStateObject
+  | RowSelectionState;
+export type DataSourcePropRowSelection_SingleRow = null | string | number;
+
+export type DataSourcePropCellSelection = any;
+
+export type DataSourcePropSelectionMode =
+  | 'single-cell'
+  | 'single-row'
+  | 'multi-cell'
+  | 'multi-row';
+
+export type DataSourcePropOnRowSelectionChange_MultiRow = (params: {
+  rowSelection: DataSourcePropRowSelection_MultiRow;
+  rowSelectionState: RowSelectionState;
+  selectionMode: 'multi-row';
+}) => void;
+export type DataSourcePropOnRowSelectionChange_SingleRow = (params: {
+  rowSelection: DataSourcePropRowSelection_SingleRow;
+  selectionMode: 'single-row';
+}) => void;
+
+export type DataSourcePropOnRowSelectionChange =
+  | DataSourcePropOnRowSelectionChange_SingleRow
+  | DataSourcePropOnRowSelectionChange_MultiRow;
+export type DataSourcePropOnCellSelectionChange = (
+  cellSelectionParams: any,
+) => void;
+
+export type DataSourcePropIsRowSelected<T> = (
+  rowInfo: InfiniteTableRowInfo<T>,
+  rowSelection: DataSourcePropRowSelection,
+  selectionMode: DataSourcePropSelectionMode,
+) => boolean;
 
 export type DataSourceProps<T> = {
   children:
@@ -239,6 +286,17 @@ export type DataSourceProps<T> = {
   fields?: (keyof T)[];
 
   data: DataSourceData<T>;
+
+  selectionMode?: DataSourcePropSelectionMode;
+
+  rowSelection?: DataSourcePropRowSelection;
+  defaultRowSelection?: DataSourcePropRowSelection;
+
+  cellSelection?: DataSourcePropCellSelection;
+  defaultCellSelection?: DataSourcePropCellSelection;
+  onCellSelectionChange?: DataSourcePropOnCellSelectionChange;
+
+  isRowSelected?: DataSourcePropIsRowSelected<T>;
 
   lazyLoad?: boolean | { batchSize?: number };
 
@@ -291,7 +349,26 @@ export type DataSourceProps<T> = {
   filterTypes?: DataSourcePropFilterTypes<T>;
 
   sortTypes?: DataSourcePropSortTypes;
-};
+} & (
+  | {
+      selectionMode?: 'multi-row';
+      rowSelection?: DataSourcePropRowSelection_MultiRow;
+      defaultRowSelection?: DataSourcePropRowSelection_MultiRow;
+      onRowSelectionChange?: DataSourcePropOnRowSelectionChange_MultiRow;
+    }
+  | {
+      selectionMode?: 'single-row';
+      rowSelection?: DataSourcePropRowSelection_SingleRow;
+      defaultRowSelection?: DataSourcePropRowSelection_SingleRow;
+      onRowSelectionChange?: DataSourcePropOnRowSelectionChange_SingleRow;
+    }
+  | {
+      selectionMode?: 'single-cell';
+    }
+  | {
+      selectionMode?: 'multi-cell';
+    }
+);
 
 export type DataSourcePropSortTypes = Record<
   string,
@@ -374,11 +451,13 @@ export interface DataSourceState<T>
     DataSourceDerivedState<T>,
     DataSourceMappedState<T> {}
 
-export interface DataSourceDerivedState<T> {
+export type DataSourceDerivedState<T> = {
   operatorsByFilterType: Record<
     string,
     Record<string, DataSourceFilterOperator<T>>
   >;
+  rowSelection: NonUndefined<DataSourceProps<T>['rowSelection']>;
+  selectionMode: NonUndefined<DataSourceProps<T>['selectionMode']>;
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
 
   multiSort: boolean;
@@ -386,7 +465,7 @@ export interface DataSourceDerivedState<T> {
   controlledFilter: boolean;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
   lazyLoadBatchSize?: number;
-}
+};
 
 export type DataSourceComponentActions<T> = ComponentStateActions<
   DataSourceState<T>

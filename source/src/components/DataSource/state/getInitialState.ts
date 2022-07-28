@@ -1,4 +1,9 @@
-import { DataSourceComponentActions, DataSourceDataParams } from '..';
+import {
+  DataSourceComponentActions,
+  DataSourceDataParams,
+  DataSourcePropRowSelection,
+  RowSelectionState,
+} from '..';
 import { dbg } from '../../../utils/debug';
 import { DeepMap } from '../../../utils/DeepMap';
 import defaultSortTypes from '../../../utils/multisort/sortTypes';
@@ -15,6 +20,7 @@ import { RenderRange } from '../../VirtualBrain';
 import { defaultFilterTypes } from '../defaultFilterTypes';
 import { GroupRowsState } from '../GroupRowsState';
 import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
+import { RowSelectionStateObject } from '../RowSelectionState';
 import {
   DataSourceMappedState,
   DataSourceProps,
@@ -24,6 +30,9 @@ import {
   LazyGroupDataDeepMap,
   LazyRowInfoGroup,
   DataSourceFilterOperator,
+  DataSourcePropOnRowSelectionChange_MultiRow,
+  DataSourcePropOnRowSelectionChange,
+  DataSourcePropOnRowSelectionChange_SingleRow,
 } from '../types';
 
 import { normalizeSortInfo } from './normalizeSortInfo';
@@ -120,6 +129,7 @@ export const forwardProps = <T>(
     },
     sortMode: (sortMode) => sortMode ?? 'local',
 
+    isRowSelected: 1,
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,
@@ -185,7 +195,58 @@ export function mapPropsToState<T extends any>(params: {
 
     return acc;
   }, {} as Record<string, Record<string, DataSourceFilterOperator<T>>>);
+
+  let selectionMode = props.selectionMode;
+  if (!selectionMode) {
+    if (
+      props.cellSelection !== undefined ||
+      props.defaultCellSelection !== undefined
+    ) {
+      selectionMode = 'multi-cell';
+    } else {
+      const rowSelectionProp = props.rowSelection ?? props.defaultRowSelection;
+      if (rowSelectionProp !== undefined) {
+        if (rowSelectionProp && typeof rowSelectionProp === 'object') {
+          selectionMode = 'multi-row';
+        } else {
+          selectionMode = 'single-row';
+        }
+      }
+      selectionMode = selectionMode ?? 'multi-row';
+    }
+  }
+
+  let rowSelectionState: DataSourcePropRowSelection | undefined;
+
+  let currentRowSelection =
+    props.rowSelection !== undefined
+      ? props.rowSelection
+      : state.rowSelection ?? null;
+
+  if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
+    if (currentRowSelection === null) {
+      rowSelectionState =
+        selectionMode === 'single-row'
+          ? null
+          : new RowSelectionState({
+              selectedRows: {},
+              deselectedRows: true,
+            });
+    } else {
+      rowSelectionState =
+        selectionMode === 'single-row'
+          ? currentRowSelection
+          : currentRowSelection instanceof RowSelectionState
+          ? currentRowSelection
+          : new RowSelectionState(
+              currentRowSelection as RowSelectionStateObject,
+            );
+    }
+  }
+
   const result: DataSourceDerivedState<T> = {
+    selectionMode,
+    rowSelection: rowSelectionState ?? null,
     operatorsByFilterType,
     controlledSort,
     controlledFilter,
@@ -248,6 +309,36 @@ export function onPropChange<T>(
 }
 
 const debugDataParams = dbg('DataSource:dataParams');
+
+export type DataSourceMappedCallbackParams<T> = {
+  [k in keyof DataSourceState<T>]: (
+    value: DataSourceState<T>[k],
+    state: DataSourceState<T>,
+  ) => any;
+};
+
+export function getMappedCallbackParams<T>() {
+  return {
+    rowSelection: (
+      rowSelection,
+      state: DataSourceState<T>,
+    ): Parameters<DataSourcePropOnRowSelectionChange>[0] => {
+      if (state.selectionMode === 'single-row') {
+        return {
+          selectionMode: 'single-row',
+          rowSelection,
+        } as Parameters<DataSourcePropOnRowSelectionChange_SingleRow>[0];
+      }
+      return {
+        selectionMode: 'multi-row',
+        get rowSelection() {
+          return (rowSelection as RowSelectionState).getState();
+        },
+        rowSelectionState: rowSelection,
+      } as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>[0];
+    },
+  } as DataSourceMappedCallbackParams<T>;
+}
 
 export function getInterceptActions<T>(): ComponentInterceptedActions<
   DataSourceState<T>

@@ -1,4 +1,4 @@
-import type { ColumnCellVariantsType } from '../components/cell.css';
+import { ColumnCellVariantsType } from '../components/cell.css';
 import { HeaderCellVariantsType } from '../components/InfiniteTableHeader/header.css';
 import { InfiniteTableComputedColumn } from '../types';
 
@@ -8,6 +8,7 @@ export function useCellClassName<T>(
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
     rowActive: boolean;
+    rowSelected: boolean;
     dragging: boolean;
     zebra: 'odd' | 'even' | false;
   },
@@ -21,6 +22,7 @@ export function useCellClassName<T>(
     firstInCategory: column.computedFirstInCategory,
     lastInCategory: column.computedLastInCategory,
     pinned: column.computedPinned || false,
+    rowSelected: extraFlags.rowSelected,
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
     zebra: extraFlags.zebra,

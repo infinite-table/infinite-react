@@ -49,6 +49,7 @@ export type InfiniteTableColumnRenderParamBase<
   groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   rowIndex: number;
   rowActive: boolean;
+  rowSelected: boolean;
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;

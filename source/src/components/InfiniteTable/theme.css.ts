@@ -295,6 +295,8 @@ export const ThemeVars = createGlobalThemeContract(
          */
         oddBackground: 'row-odd-background',
 
+        selectedBackground: 'row-selected-background',
+
         /**
          * The background color of the active row. Defaults to the value of `var(--infinite-active-cell-background)`.
          *
@@ -350,6 +352,7 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in the `dark` theme.
          */
         hoverBackground: 'row-hover-background',
+        selectedHoverBackground: 'row-selected-hover-background',
         groupRowBackground: 'group-row-background',
         groupRowColumnNesting: 'group-row-column-nesting',
         groupNesting: 'dont-override-group-row-nesting-length',
@@ -423,6 +426,8 @@ const CellVars = {
 const RowVars = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
+  [ThemeVars.components.Row.selectedBackground]: '#d1e9ff',
+  [ThemeVars.components.Row.selectedHoverBackground]: '#add8ff',
   [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',
   [ThemeVars.components.Row.groupRowColumnNesting]: '30px',
   [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
@@ -474,6 +479,8 @@ const DarkTheme = {
   [ThemeVars.components.Header.background]:
     ThemeVars.components.HeaderCell.background,
   [ThemeVars.components.Row.hoverBackground]: '#3b4754',
+  [ThemeVars.components.Row.selectedBackground]: '#0a2e4f',
+  [ThemeVars.components.Row.selectedHoverBackground]: '#0b243a',
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#242a31',
   [ThemeVars.components.Cell.color]: '#c3c3c3',

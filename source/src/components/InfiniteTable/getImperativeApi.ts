@@ -150,22 +150,31 @@ export function getImperativeApi<T>(
         scrollLeft: scrollPositionForCol.scrollLeft,
         scrollTop: scrollPositionForRow.scrollTop,
       };
+
       const currentScrollPosition = state.brain.getScrollPosition();
 
       const scrollLeftMax = state.brain.scrollLeftMax;
       const scrollTopMax = state.brain.scrollTopMax;
 
-      if (newScrollPosition.scrollLeft > scrollLeftMax + (config.offset || 0)) {
-        return false;
-      }
-      if (newScrollPosition.scrollTop > scrollTopMax + (config.offset || 0)) {
+      const cantScrollLeft =
+        newScrollPosition.scrollLeft > scrollLeftMax + (config.offset || 0);
+      const cantScrollTop =
+        newScrollPosition.scrollTop > scrollTopMax + (config.offset || 0);
+
+      if (cantScrollLeft && cantScrollTop) {
         return false;
       }
 
-      if (newScrollPosition.scrollLeft !== currentScrollPosition.scrollLeft) {
+      if (
+        newScrollPosition.scrollLeft !== currentScrollPosition.scrollLeft &&
+        !cantScrollLeft
+      ) {
         state.scrollerDOMRef.current!.scrollLeft = newScrollPosition.scrollLeft;
       }
-      if (newScrollPosition.scrollTop !== currentScrollPosition.scrollTop) {
+      if (
+        newScrollPosition.scrollTop !== currentScrollPosition.scrollTop &&
+        !cantScrollTop
+      ) {
         state.scrollerDOMRef.current!.scrollTop = newScrollPosition.scrollTop;
       }
 

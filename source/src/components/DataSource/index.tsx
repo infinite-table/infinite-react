@@ -12,12 +12,14 @@ import { defaultFilterTypes } from './defaultFilterTypes';
 import { GroupRowsState } from './GroupRowsState';
 import { useLoadData } from './privateHooks/useLoadData';
 import { useDataSource } from './publicHooks/useDataSource';
+import { RowSelectionState } from './RowSelectionState';
 import {
   mapPropsToState,
   forwardProps,
   initSetupState,
   getInterceptActions,
   onPropChange,
+  getMappedCallbackParams,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 import {
@@ -43,6 +45,7 @@ function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
 }
 
 const DataSourceRoot = getComponentStateRoot({
+  //@ts-ignore
   initSetupState,
   //@ts-ignore
   forwardProps,
@@ -52,7 +55,10 @@ const DataSourceRoot = getComponentStateRoot({
   mapPropsToState,
   //@ts-ignore
   onPropChange,
+  //@ts-ignore
   interceptActions: getInterceptActions(),
+  //@ts-ignore
+  mappedCallbackParams: getMappedCallbackParams(),
 });
 
 function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
@@ -93,6 +99,7 @@ export {
   useDataSource,
   DataSource,
   GroupRowsState,
+  RowSelectionState,
   multisort,
   defaultFilterTypes as filterTypes,
 };

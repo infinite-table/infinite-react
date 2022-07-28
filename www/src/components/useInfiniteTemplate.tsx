@@ -100,8 +100,16 @@ body,
   padding: 5px;
   overflow: hidden;
 }
+
+
 .Infinite {
   flex: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background:rgb(35, 39, 47);
+  }
 }
 
 `;

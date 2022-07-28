@@ -189,6 +189,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       offset?: number;
     } = { offset: 0 },
   ): ScrollPosition | null => {
+    if (this.destroyed) {
+      return null;
+    }
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
     let { scrollAdjustPosition, offset = 0 } = config;
@@ -251,6 +254,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       offset?: number;
     } = { offset: 0 },
   ): ScrollPosition | null => {
+    if (this.destroyed) {
+      return null;
+    }
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
     let { scrollAdjustPosition, offset = 0 } = config;
@@ -317,6 +323,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       offsetLeft: number;
     } = { offsetLeft: 0, offsetTop: 0 },
   ): ScrollPosition | null => {
+    if (this.destroyed) {
+      return null;
+    }
     const scrollPosForCol = this.getScrollPositionForScrollColumnIntoView(
       colIndex,
       {
@@ -1148,6 +1157,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     elementIndex: number,
     options?: { hidden: boolean; rowspan: number; colspan: number },
   ) => {
+    if (this.destroyed) {
+      return;
+    }
     const itemElement = this.itemDOMElements[elementIndex];
     const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
 

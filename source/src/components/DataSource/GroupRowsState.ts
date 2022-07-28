@@ -1,105 +1,56 @@
-import { DeepMap } from '../../utils/DeepMap';
+import { BooleanDeepCollectionState } from './BooleanDeepCollectionState';
 
 import { DataSourcePropGroupRowsStateObject } from './types';
 
-export class GroupRowsState<KeyType extends any = any> {
-  private expandedMap?: DeepMap<KeyType, true>;
-  private collapsedMap?: DeepMap<KeyType, true>;
-  private collapsedAll!: boolean;
-  private expandedAll!: boolean;
-
-  private initialState!: DataSourcePropGroupRowsStateObject<KeyType>;
-
+export class GroupRowsState<
+  KeyType extends any = any,
+> extends BooleanDeepCollectionState<
+  DataSourcePropGroupRowsStateObject<KeyType>,
+  KeyType
+> {
   constructor(
     state:
       | DataSourcePropGroupRowsStateObject<KeyType>
       | GroupRowsState<KeyType>,
   ) {
-    this.update(state instanceof GroupRowsState ? state.getState() : state);
+    //@ts-ignore
+    super(state);
   }
-
   public getState(): DataSourcePropGroupRowsStateObject<KeyType> {
     return {
-      expandedRows: this.expandedAll
+      expandedRows: this.allPositive
         ? true
-        : this.expandedMap?.topDownKeys() ?? [],
-      collapsedRows: this.collapsedAll
+        : this.positiveMap?.topDownKeys() ?? [],
+      collapsedRows: this.allNegative
         ? true
-        : this.collapsedMap?.topDownKeys() ?? [],
+        : this.negativeMap?.topDownKeys() ?? [],
     };
   }
 
-  public destroy() {
-    this.expandedMap?.clear();
-    this.collapsedMap?.clear();
-
-    delete this.expandedMap;
-    delete this.collapsedMap;
+  getPositiveFromState(state: DataSourcePropGroupRowsStateObject<KeyType>) {
+    return state.expandedRows;
   }
-
-  private update(state: DataSourcePropGroupRowsStateObject<KeyType>) {
-    this.initialState = state;
-
-    const { collapsedRows, expandedRows } = this.initialState;
-
-    this.collapsedAll = collapsedRows === true;
-    this.expandedAll = expandedRows === true;
-
-    if (this.collapsedAll && this.expandedAll) {
-      throw `Cannot have both collapsedRows and expandedRows be true!`;
-    }
-
-    if (collapsedRows !== true) {
-      this.collapsedMap?.clear();
-      this.collapsedMap =
-        this.collapsedMap ??
-        new DeepMap(collapsedRows.map((keys) => [keys, true]));
-    }
-    if (expandedRows !== true) {
-      this.expandedMap?.clear();
-      this.expandedMap =
-        this.expandedMap ??
-        new DeepMap(expandedRows.map((keys) => [keys, true]));
-    }
+  getNegativeFromState(state: DataSourcePropGroupRowsStateObject<KeyType>) {
+    return state.collapsedRows;
   }
 
   public areAllCollapsed() {
-    return (
-      this.collapsedAll &&
-      (this.expandedMap ? this.expandedMap.size === 0 : true)
-    );
+    return this.areAllNegative();
   }
   public areAllExpanded() {
-    return (
-      this.expandedAll &&
-      (this.collapsedMap ? this.collapsedMap.size === 0 : true)
-    );
+    return this.areAllPositive();
   }
 
   public collapseAll() {
-    this.update({
-      collapsedRows: true,
-      expandedRows: [],
-    });
+    this.makeAllNegative();
   }
 
   public expandAll() {
-    this.update({
-      expandedRows: true,
-      collapsedRows: [],
-    });
+    this.makeAllPositive();
   }
 
   public isGroupRowExpanded(keys: KeyType[]) {
-    if (this.expandedAll === true) {
-      if (this.collapsedAll === true) {
-        throw 'Cannot have both expandedRows and collapsedRows be "true"';
-      }
-
-      return !this.collapsedMap?.has(keys);
-    }
-
-    return this.expandedMap?.has(keys);
+    return this.isItemPositive(keys);
   }
 
   public isGroupRowCollapsed(keys: KeyType[]) {
@@ -107,44 +58,7 @@ export class GroupRowsState<KeyType extends any = any> {
   }
 
   public setGroupRowExpanded(keys: KeyType[], shouldExpand: boolean) {
-    if (shouldExpand === this.isGroupRowExpanded(keys)) {
-      return;
-    }
-
-    if (shouldExpand) {
-      if (this.collapsedAll === true) {
-        if (!this.expandedMap) {
-          throw `No expandedMap found when trying to expand group row ${keys.join(
-            ',',
-          )}`;
-        }
-        this.expandedMap.set(keys, true);
-      } else if (this.expandedAll === true) {
-        if (!this.collapsedMap) {
-          throw `No collapsedMap found when trying to expand group row ${keys.join(
-            ',',
-          )}`;
-        }
-        this.collapsedMap.delete(keys);
-      }
-    } else {
-      // we should collapse the group row
-      if (this.expandedAll === true) {
-        if (!this.collapsedMap) {
-          throw `No collapsedMap found when trying to collapse group row ${keys.join(
-            ',',
-          )}`;
-        }
-        this.collapsedMap.set(keys, true);
-      } else if (this.collapsedAll === true) {
-        if (!this.expandedMap) {
-          throw `No expandedMap found when trying to collapse group row ${keys.join(
-            ',',
-          )}`;
-        }
-        this.expandedMap?.delete(keys);
-      }
-    }
+    return this.setItemValue(keys, shouldExpand);
   }
 
   public collapseGroupRow(keys: KeyType[]) {
@@ -155,6 +69,6 @@ export class GroupRowsState<KeyType extends any = any> {
   }
 
   public toggleGroupRow(keys: KeyType[]) {
-    this.setGroupRowExpanded(keys, !this.isGroupRowExpanded(keys));
+    this.toggleItem(keys);
   }
 }

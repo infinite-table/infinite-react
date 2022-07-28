@@ -8,6 +8,7 @@ import {
   display,
   flexFlow,
   position,
+  userSelect,
   whiteSpace,
   willChange,
 } from '../utilities.css';
@@ -39,6 +40,7 @@ export const CellCls = style([
   position.absolute,
   willChange.transform,
   whiteSpace.nowrap,
+  userSelect.none,
   {
     padding: ThemeVars.components.Cell.padding,
     ...CellBorderObject,
@@ -98,6 +100,12 @@ export const ColumnCellRecipe = recipe({
       odd: {
         background: ThemeVars.components.Row.oddBackground,
       },
+    },
+    rowSelected: {
+      true: {
+        background: ThemeVars.components.Row.selectedBackground,
+      },
+      false: {},
     },
     first: {
       true: {

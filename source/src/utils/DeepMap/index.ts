@@ -35,6 +35,10 @@ export class DeepMap<KeyType, ValueType> {
   }
 
   constructor(initial?: [KeyType[], ValueType][]) {
+    this.fill(initial);
+  }
+
+  fill(initial?: [KeyType[], ValueType][]) {
     if (initial) {
       initial.forEach((entry) => {
         const [keys, value] = entry;

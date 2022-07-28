@@ -4,6 +4,7 @@ import { useCallback, useContext, useMemo } from 'react';
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
+
 import type { Renderable } from '../../../types/Renderable';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
@@ -70,7 +71,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return <div ref={domRef}>no column</div>;
   }
 
-  const { data, isGroupRow, dataSourceHasGrouping } = rowInfo;
+  const { data, isGroupRow, dataSourceHasGrouping, rowSelected } = rowInfo;
   const groupBy = dataSourceHasGrouping ? rowInfo.groupBy : undefined;
 
   const groupRowInfo = null;
@@ -89,6 +90,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const { getState, componentActions } = useInfiniteTable<T>();
   const { activeRowIndex, keyboardNavigation } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
+  // const rowSelected =
+  //   rowSelection instanceof RowSelectionState
+  //     ? rowSelection.isRowSelected(id)
+  //     : rowSelection !== false
+  //     ? `${rowSelection}` === `${id}`
+  //     : false;
 
   let value =
     isGroupRow && groupBy && column.groupByField
@@ -112,6 +119,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             isGroupRow,
             rowInfo,
             rowActive,
+            rowSelected,
             field: column.field,
             value,
           }
@@ -119,6 +127,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             data: rowInfo.data,
             isGroupRow,
             rowActive,
+            rowSelected,
             rowInfo,
             field: column.field,
             value,
@@ -126,18 +135,26 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     );
   }
 
-  const onClick = useCallback(() => {
-    if (keyboardNavigation === 'row') {
-      componentActions.activeRowIndex = rowIndex;
-      return;
-    }
-    if (keyboardNavigation === 'cell') {
-      componentActions.activeCellIndex = [
+  const onClick = useCallback(
+    (event) => {
+      const colIndex = column.computedVisibleIndex;
+
+      getState().cellClick({
         rowIndex,
-        column.computedVisibleIndex,
-      ];
-    }
-  }, [rowIndex, column.computedVisibleIndex, keyboardNavigation]);
+        colIndex,
+        event,
+      });
+
+      if (keyboardNavigation === 'row') {
+        componentActions.activeRowIndex = rowIndex;
+        return;
+      }
+      if (keyboardNavigation === 'cell') {
+        componentActions.activeCellIndex = [rowIndex, colIndex];
+      }
+    },
+    [rowIndex, column.computedVisibleIndex, keyboardNavigation],
+  );
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
@@ -147,6 +164,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
         rowActive,
+        rowSelected,
         value,
         field: column.field,
       }
@@ -155,6 +173,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
         rowActive,
+        rowSelected,
         value,
         field: column.field,
       };
@@ -261,7 +280,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         column,
         [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
         ColumnCellRecipe,
-        { dragging: false, zebra, rowActive },
+        { dragging: false, zebra, rowActive, rowSelected },
       ),
       colClassName,
       rowComputedClassName,

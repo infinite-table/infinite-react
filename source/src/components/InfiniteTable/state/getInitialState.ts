@@ -1,7 +1,8 @@
-import { createRef } from 'react';
+import { createRef, KeyboardEvent, MouseEvent } from 'react';
 import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import { CellPosition } from '../../types/CellPosition';
 import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
@@ -97,6 +98,10 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
 
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
+    cellClick: buildSubscriptionCallback<
+      CellPosition & { event: MouseEvent }
+    >(),
+    keyDown: buildSubscriptionCallback<KeyboardEvent>(),
     bodySize: {
       width: 0,
       height: 0,

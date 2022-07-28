@@ -57,6 +57,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
       data: T;
       isGroupRow: false;
       rowActive: boolean;
+      rowSelected: boolean;
       rowInfo:
         | InfiniteTable_NoGrouping_RowInfoNormal<T>
         | InfiniteTable_HasGrouping_RowInfoNormal<T>;
@@ -65,6 +66,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
     }
   | {
       rowActive: boolean;
+      rowSelected: boolean;
       data: Partial<T> | null;
       rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
       isGroupRow: true;
@@ -81,6 +83,7 @@ export type InfiniteTable_RowInfoBase<_T> = {
   id: any;
   value?: any;
   indexInAll: number;
+  rowSelected: boolean;
 };
 
 export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
@@ -884,6 +887,7 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
+    rowSelected: false,
     id: `${groupKeys}`, //TODO improve this
     collapsed,
     dataSourceHasGrouping: true,
@@ -942,6 +946,8 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
   groupResult: DataGroupResult<DataType, KeyType>;
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
+  isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean;
+
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
   generateGroupRows: boolean;
 };
@@ -953,6 +959,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
     groupResult,
     toPrimaryKey,
     groupRowsState,
+    isRowSelected,
     generateGroupRows,
     reducers = {},
   } = param;
@@ -1063,15 +1070,17 @@ export function enhancedFlatten<DataType, KeyType = any>(
             for (let index = 0, len = items.length; index < len; index++) {
               const item = items[index];
               const indexInAll = startIndex + index;
+              const itemId = item
+                ? toPrimaryKey(item, indexInAll)
+                : `${groupKeys}-${index}`;
               const rowInfo: InfiniteTable_HasGrouping_RowInfoNormal<DataType> =
                 {
-                  id: item
-                    ? toPrimaryKey(item, indexInAll)
-                    : `${groupKeys}-${index}`,
+                  id: itemId,
                   data: item,
                   dataSourceHasGrouping: true,
                   isGroupRow: false,
                   selfLoaded: !!item,
+                  rowSelected: false,
                   rootGroupBy: groupByStrings,
                   collapsed,
                   groupKeys,
@@ -1083,6 +1092,10 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   groupNesting,
                   groupCount: enhancedGroupData.groupCount,
                 };
+              if (isRowSelected) {
+                rowInfo.rowSelected = isRowSelected(rowInfo);
+              }
+
               parents.forEach((parent, i) => {
                 const last = i === parents.length - 1;
                 if (last && item) {

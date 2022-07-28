@@ -34,6 +34,7 @@ import { useComputed } from './hooks/useComputed';
 import { useDOMProps } from './hooks/useDOMProps';
 import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useLicense } from './hooks/useLicense/useLicense';
+import { useRowSelection } from './hooks/useRowSelection';
 import { useScrollToActiveCell } from './hooks/useScrollToActiveCell';
 import { useScrollToActiveRow } from './hooks/useScrollToActiveRow';
 import {
@@ -127,6 +128,7 @@ export const InfiniteTableComponent = React.memo(
 
     useScrollToActiveRow(activeRowIndex, dataArray.length, imperativeApi);
     useScrollToActiveCell(activeCellIndex, dataArray.length, imperativeApi);
+    useRowSelection();
 
     const { bodySize } = componentState;
 
@@ -169,7 +171,9 @@ export const InfiniteTableComponent = React.memo(
 
     useAutoSizeColumns();
 
-    const onKeyDown = useCallback((event) => {
+    const onKeyDown = useCallback((event: React.KeyboardEvent) => {
+      getState().keyDown(event);
+
       if (
         handleKeyboardNavigation({
           getState,

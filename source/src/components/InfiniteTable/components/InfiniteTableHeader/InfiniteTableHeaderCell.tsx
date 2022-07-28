@@ -121,8 +121,9 @@ export function InfiniteTableHeaderCell<T>(
   );
 
   const alwaysShow = headerOptions.alwaysReserveSpaceForSortIcon;
+
   const sortTool =
-    column.computedSorted || alwaysShow ? (
+    column.computedSortable && (column.computedSorted || alwaysShow) ? (
       <SortIcon
         index={
           column.computedMultiSort ? column.computedSortIndex + 1 : undefined
@@ -364,6 +365,7 @@ export function InfiniteTableHeaderCell<T>(
             HeaderCellRecipe,
             {
               dragging,
+              rowSelected: false,
               zebra: false,
               rowActive: false,
             },

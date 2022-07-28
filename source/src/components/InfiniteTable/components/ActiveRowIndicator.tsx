@@ -21,7 +21,9 @@ type ActiveRowIndicatorProps = {
 const ActiveStyle: CSSProperties = {
   [stripVar(InternalVars.activeCellOffsetY)]: InternalVars.activeCellRowOffset,
 
-  transform: `translate3d(0px, calc( ${InternalVars.activeCellOffsetY} + ${InternalVars.scrollTopForActiveRow}), 0px)`,
+  transform: `translate3d(0px, calc( ${
+    InternalVars.activeCellOffsetY
+  } + var(${stripVar(InternalVars.scrollTopForActiveRow)}, 0px)), 0px)`,
   height: InternalVars.activeCellRowHeight,
 };
 
@@ -46,13 +48,12 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
 
     const node = domRef.current!;
 
-    setInfiniteVarsOnNode(
-      {
-        activeCellRowHeight: `${activeCellRowHeight}px`,
-        activeCellRowOffset: `${activeCellRowOffset}px`,
-      },
-      node,
-    );
+    const vars = {
+      activeCellRowHeight: `${activeCellRowHeight}px`,
+      activeCellRowOffset: `${activeCellRowOffset}px`,
+    };
+
+    setInfiniteVarsOnNode(vars, node);
   }, [props.activeRowIndex]);
 
   useEffect(() => {

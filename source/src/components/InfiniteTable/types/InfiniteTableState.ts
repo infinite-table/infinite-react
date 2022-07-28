@@ -1,8 +1,9 @@
-import type { MutableRefObject } from 'react';
+import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
 
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
+import { CellPosition } from '../../types/CellPosition';
 import type { NonUndefined } from '../../types/NonUndefined';
 import { Renderable } from '../../types/Renderable';
 import type { ScrollPosition } from '../../types/ScrollPosition';
@@ -39,6 +40,8 @@ export interface InfiniteTableSetupState<T> {
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
+  cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
+  keyDown: SubscriptionCallback<KeyboardEvent>;
   columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
   bodySize: Size;
   brain: MatrixBrain;
