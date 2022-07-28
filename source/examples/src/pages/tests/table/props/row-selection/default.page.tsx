@@ -6,10 +6,7 @@ import {
   DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
 
-import type {
-  InfiniteTablePropColumns,
-  DataSourcePropRowSelection,
-} from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
 import { RowSelectionState } from '@infinite-table/infinite-react/components/DataSource/RowSelectionState';
