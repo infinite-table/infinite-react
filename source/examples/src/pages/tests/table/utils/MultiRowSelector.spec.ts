@@ -17,7 +17,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
     });
-    selector.rowSelection = rowSelection;
+    selector.rowSelectionState = rowSelection;
 
     // shift+click row 2, expect all rows up to index 2 (inclusive) to be selected
     selector.multiSelectClick(2);
@@ -75,7 +75,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
     });
-    selector.rowSelection = rowSelection;
+    selector.rowSelectionState = rowSelection;
 
     selector.resetClick(3);
 
@@ -125,7 +125,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
       getIdForIndex: (index) => `${index}`,
     });
 
-    selector.rowSelection = rowSelection;
+    selector.rowSelectionState = rowSelection;
 
     selector.resetClick(3);
 
@@ -190,7 +190,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
       getIdForIndex: (index) => `${index}`,
     });
 
-    selector.rowSelection = rowSelection;
+    selector.rowSelectionState = rowSelection;
 
     selector.resetClick(5);
 
@@ -245,7 +245,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
     });
-    selector.rowSelection = rowSelection;
+    selector.rowSelectionState = rowSelection;
 
     selector.resetClick(5);
 
@@ -316,7 +316,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
       getIdForIndex: (index) => `${index}`,
     });
 
-    selector.rowSelection = rowSelection;
+    selector.rowSelectionState = rowSelection;
 
     selector.resetClick(10);
 
