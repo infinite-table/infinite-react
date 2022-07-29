@@ -4,6 +4,7 @@ import {
   InfiniteTableRowInfo,
   InfiniteTable_NoGrouping_RowInfoNormal,
   lazyGroup,
+  SELECTION_REDUCER_KEY,
 } from '../../../utils/groupAndPivot';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
@@ -17,6 +18,7 @@ import type {
   DataSourcePropFilterValue,
   DataSourceFilterOperatorFunctionParam,
   DataSourcePropFilterTypes,
+  DataSourceAggregationReducer,
 } from '../types';
 
 const haveDepsChanged = <StateType>(
@@ -227,7 +229,8 @@ export function concludeReducer<T>(params: {
     ]);
 
   const shouldGroupAgain =
-    shouldGroup && (groupsDepsChanged || !state.lastGroupDataArray);
+    (shouldGroup && (groupsDepsChanged || !state.lastGroupDataArray)) ||
+    (selectionDepsChanged && state.selectionMode === 'multi-row');
 
   const now = Date.now();
 
@@ -308,6 +311,26 @@ export function concludeReducer<T>(params: {
   if (shouldGroup) {
     // TODO handle selection in grouping
     if (shouldGroupAgain) {
+      let aggregationReducers = state.aggregationReducers;
+
+      if (state.selectionMode === 'multi-row') {
+        const selectionReducer: DataSourceAggregationReducer<T, boolean> = {
+          initialValue: true,
+          reducer: (groupSelected, _value, data, index) => {
+            const rowId = toPrimaryKey(data, index);
+            return (
+              groupSelected &&
+              (state.rowSelection as RowSelectionState).isRowSelected(
+                rowId as string,
+              )
+            );
+          },
+        };
+        aggregationReducers = {
+          ...aggregationReducers,
+          [SELECTION_REDUCER_KEY]: selectionReducer,
+        };
+      }
       const groupResult = state.lazyLoad
         ? lazyGroup(
             {
@@ -316,7 +339,7 @@ export function concludeReducer<T>(params: {
               // parentGroupKeys: [],
               pivot: pivotBy,
               mappings: state.pivotMappings,
-              reducers: state.aggregationReducers,
+              reducers: aggregationReducers,
             },
             state.originalLazyGroupData,
           )
@@ -324,17 +347,19 @@ export function concludeReducer<T>(params: {
             {
               groupBy,
               pivot: pivotBy,
-              reducers: state.aggregationReducers,
+              reducers: aggregationReducers,
             },
             dataArray,
           );
 
+      state.indexer.clear();
       const flattenResult = enhancedFlatten({
         groupResult,
         lazyLoad: !!state.lazyLoad,
-        reducers: state.aggregationReducers,
+        reducers: aggregationReducers,
         toPrimaryKey,
         isRowSelected,
+        indexer: state.indexer,
 
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
@@ -351,7 +376,7 @@ export function concludeReducer<T>(params: {
             pivotTotalColumnPosition: state.pivotTotalColumnPosition ?? 'end',
             pivotGrandTotalColumnPosition:
               state.pivotGrandTotalColumnPosition ?? false,
-            reducers: state.aggregationReducers,
+            reducers: aggregationReducers,
             showSeparatePivotColumnForSingleAggregation:
               state.showSeparatePivotColumnForSingleAggregation,
           })
@@ -377,14 +402,20 @@ export function concludeReducer<T>(params: {
       groupsDepsChanged ||
       selectionDepsChanged
     ) {
-      rowInfoDataArray = dataArray.map((data, index) =>
-        toRowInfo(
+      state.indexer.clear();
+
+      rowInfoDataArray = dataArray.map((data, index) => {
+        const rowInfo = toRowInfo(
           data,
           data ? toPrimaryKey(data, index) : index,
           index,
           isRowSelected,
-        ),
-      );
+        );
+
+        state.indexer.add(index, rowInfo.id);
+
+        return rowInfo;
+      });
     }
   }
 

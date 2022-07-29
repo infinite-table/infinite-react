@@ -31,6 +31,7 @@ import {
 
 import { InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
+import { InfiniteCheckBoxProps } from '../components/CheckBox';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -151,6 +152,16 @@ export type InfiniteTableImperativeApi<T> = {
 
   get scrollTop(): number;
   set scrollTop(value: number);
+
+  toggleRowSelection: (pk: any) => boolean;
+  selectRow: (pk: any) => boolean;
+  isRowSelected: (pk: any) => boolean;
+  isGroupRowSelected: (groupKeys: any[]) => boolean;
+  deselectRow: (pk: any) => boolean;
+  selectGroupRow: (groupKeys: any[]) => boolean;
+  deselectGroupRow: (groupKeys: any[]) => boolean;
+  selectAllRows: () => boolean;
+  deselectAllRows: () => boolean;
 
   scrollRowIntoView: (
     rowIndex: number,
@@ -294,6 +305,7 @@ export type InfiniteTablePropPivotColumn<
 
 export type InfiniteTablePropComponents = {
   LoadMask?: React.FC<LoadMaskProps>;
+  CheckBox?: React.FC<InfiniteCheckBoxProps>;
 };
 
 export type ScrollStopInfo = {

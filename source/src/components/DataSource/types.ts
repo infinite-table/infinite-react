@@ -30,6 +30,7 @@ import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
 
 import { GroupRowsState } from './GroupRowsState';
+import { Indexer } from './Indexer';
 import {
   RowSelectionState,
   RowSelectionStateObject,
@@ -140,7 +141,12 @@ export type DataSourceAggregationReducer<T, AggregationResultType> = {
   getter?: (data: T) => any;
   reducer:
     | string
-    | ((accumulator: any, value: any, data: T) => AggregationResultType | any);
+    | ((
+        accumulator: any,
+        value: any,
+        data: T,
+        index: number,
+      ) => AggregationResultType | any);
   done?: (
     accumulatedValue: AggregationResultType | any,
     array: T[],
@@ -191,6 +197,7 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 >;
 
 export interface DataSourceSetupState<T> {
+  indexer: Indexer;
   unfilteredCount: number;
   filteredCount: number;
   lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
@@ -248,6 +255,7 @@ export type DataSourcePropRowSelection_SingleRow = null | string | number;
 export type DataSourcePropCellSelection = any;
 
 export type DataSourcePropSelectionMode =
+  | false
   | 'single-cell'
   | 'single-row'
   | 'multi-cell'
@@ -367,6 +375,9 @@ export type DataSourceProps<T> = {
     }
   | {
       selectionMode?: 'multi-cell';
+    }
+  | {
+      selectionMode?: false;
     }
 );
 

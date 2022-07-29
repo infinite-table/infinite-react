@@ -19,6 +19,7 @@ import { isControlledValue } from '../../utils/isControlledValue';
 import { RenderRange } from '../../VirtualBrain';
 import { defaultFilterTypes } from '../defaultFilterTypes';
 import { GroupRowsState } from '../GroupRowsState';
+import { Indexer } from '../Indexer';
 import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
 import { RowSelectionStateObject } from '../RowSelectionState';
 import {
@@ -33,6 +34,7 @@ import {
   DataSourcePropOnRowSelectionChange_MultiRow,
   DataSourcePropOnRowSelectionChange,
   DataSourcePropOnRowSelectionChange_SingleRow,
+  DataSourcePropSelectionMode,
 } from '../types';
 
 import { normalizeSortInfo } from './normalizeSortInfo';
@@ -50,6 +52,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   >();
 
   return {
+    // TODO cleanup indexer on unmount
+    indexer: new Indexer(),
     lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
@@ -196,12 +200,15 @@ export function mapPropsToState<T extends any>(params: {
     return acc;
   }, {} as Record<string, Record<string, DataSourceFilterOperator<T>>>);
 
-  let selectionMode = props.selectionMode;
-  if (!selectionMode) {
+  let selectionMode: DataSourcePropSelectionMode | undefined =
+    props.selectionMode;
+
+  if (selectionMode === undefined) {
     if (
       props.cellSelection !== undefined ||
       props.defaultCellSelection !== undefined
     ) {
+      // TODO implement single cell selection as well
       selectionMode = 'multi-cell';
     } else {
       const rowSelectionProp = props.rowSelection ?? props.defaultRowSelection;
@@ -221,26 +228,31 @@ export function mapPropsToState<T extends any>(params: {
   let currentRowSelection =
     props.rowSelection !== undefined
       ? props.rowSelection
-      : state.rowSelection ?? null;
+      : state.rowSelection ??
+        (props.defaultRowSelection !== undefined
+          ? props.defaultRowSelection
+          : null);
 
-  if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
-    if (currentRowSelection === null) {
-      rowSelectionState =
-        selectionMode === 'single-row'
-          ? null
-          : new RowSelectionState({
-              selectedRows: {},
-              deselectedRows: true,
-            });
-    } else {
-      rowSelectionState =
-        selectionMode === 'single-row'
-          ? currentRowSelection
-          : currentRowSelection instanceof RowSelectionState
-          ? currentRowSelection
-          : new RowSelectionState(
-              currentRowSelection as RowSelectionStateObject,
-            );
+  if (selectionMode !== false) {
+    if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
+      if (currentRowSelection === null) {
+        rowSelectionState =
+          selectionMode === 'single-row'
+            ? null
+            : new RowSelectionState({
+                selectedRows: {},
+                deselectedRows: true,
+              });
+      } else {
+        rowSelectionState =
+          selectionMode === 'single-row'
+            ? currentRowSelection
+            : currentRowSelection instanceof RowSelectionState
+            ? currentRowSelection
+            : new RowSelectionState(
+                currentRowSelection as RowSelectionStateObject,
+              );
+      }
     }
   }
 

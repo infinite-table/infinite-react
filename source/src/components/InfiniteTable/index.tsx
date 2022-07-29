@@ -277,14 +277,16 @@ function InfiniteTableContextProvider<T>() {
     (globalThis as any).getComputed = getComputed;
   }
 
-  const { getState: getDataSourceState } = useDataSourceContextValue<T>();
+  const { getState: getDataSourceState, componentActions: dataSourceActions } =
+    useDataSourceContextValue<T>();
 
   const [imperativeApi] = useState(() => {
     return getImperativeApi(
-      getState,
       getComputed,
+      getState,
       getDataSourceState,
       componentActions,
+      dataSourceActions,
     );
   });
 

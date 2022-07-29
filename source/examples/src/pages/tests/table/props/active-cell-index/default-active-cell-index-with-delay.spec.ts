@@ -9,6 +9,8 @@ export default test.describe.parallel('Default active cell index', () => {
   test('works correctly even with lazy data', async ({ page }) => {
     await page.waitForInfinite();
 
+    await page.waitForTimeout(30);
+
     const offset = await getActiveCellIndicatorOffsetFromDOM({ page });
 
     const ROW_HEIGHT = 40;

@@ -87,7 +87,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   //   debugger;
   // }
 
-  const { getState, componentActions } = useInfiniteTable<T>();
+  const { getState, componentActions, imperativeApi } = useInfiniteTable<T>();
   const { activeRowIndex, keyboardNavigation } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
   // const rowSelected =
@@ -119,7 +119,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             isGroupRow,
             rowInfo,
             rowActive,
-            rowSelected,
             field: column.field,
             value,
           }
@@ -127,7 +126,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             data: rowInfo.data,
             isGroupRow,
             rowActive,
-            rowSelected,
             rowInfo,
             field: column.field,
             value,
@@ -158,13 +156,15 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const { componentState: computedDataSource } = useDataSourceContextValue<T>();
 
+  const { selectionMode } = computedDataSource;
+
   const rest = rowInfo.isGroupRow
     ? {
         rowInfo,
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
         rowActive,
-        rowSelected,
+
         value,
         field: column.field,
       }
@@ -173,7 +173,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
         rowActive,
-        rowSelected,
         value,
         field: column.field,
       };
@@ -190,7 +189,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     domRef,
     groupRowInfo,
     ...rest,
-    isGroupRow,
+    selectionMode,
+    selectRow: imperativeApi.selectRow,
+    deselectRow: imperativeApi.deselectRow,
+    toggleRowSelection: imperativeApi.toggleRowSelection,
+
+    selectCurrentRow: () => {
+      return imperativeApi.selectRow(rowInfo.id);
+    },
+    deselectCurrentRow: () => {
+      return imperativeApi.deselectRow(rowInfo.id);
+    },
     rowIndex,
     toggleGroupRow,
     toggleCurrentGroupRow: useCallback(() => {
@@ -202,7 +211,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     }, []),
     groupBy: computedDataSource.groupBy,
     pivotBy: computedDataSource.pivotBy,
-  } as InfiniteTableColumnRenderParam<T>;
+  };
 
   const renderChildren = useCallback(() => {
     if (hidden) {

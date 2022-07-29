@@ -4,6 +4,14 @@ export * from './components/InfiniteTable';
 
 export * from './components/DataSource';
 
+import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBox';
+import { LoadMask } from './components/InfiniteTable/components/LoadMask';
+
+export const components = {
+  CheckBox: InfiniteCheckBox,
+  LoadMask,
+};
+
 export { group, flatten } from './utils/groupAndPivot';
 
 export {

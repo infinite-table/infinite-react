@@ -1,4 +1,5 @@
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
+import { Indexer } from '../../components/DataSource/Indexer';
 import {
   ColumnTypeWithInherit,
   DataSourceAggregationReducer,
@@ -17,6 +18,8 @@ import {
   InfiniteTableGroupColumnBase,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
+
+export const SELECTION_REDUCER_KEY = '__selectionReducer';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -57,7 +60,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
       data: T;
       isGroupRow: false;
       rowActive: boolean;
-      rowSelected: boolean;
+      // rowSelected: boolean;
       rowInfo:
         | InfiniteTable_NoGrouping_RowInfoNormal<T>
         | InfiniteTable_HasGrouping_RowInfoNormal<T>;
@@ -66,7 +69,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
     }
   | {
       rowActive: boolean;
-      rowSelected: boolean;
+      // rowSelected: boolean;
       data: Partial<T> | null;
       rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
       isGroupRow: true;
@@ -386,6 +389,7 @@ function initReducers<DataType>(
  */
 function computeReducersFor<DataType>(
   data: DataType,
+  index: number,
   reducers: Record<string, DataSourceAggregationReducer<DataType, any>>,
   reducerResults: Record<string, AggregationReducerResult>,
 ) {
@@ -405,7 +409,7 @@ function computeReducersFor<DataType>(
         ? data[reducer.field]
         : reducer.getter?.(data) ?? null;
 
-      reducerResults[key] = reducer.reducer(currentValue, value, data);
+      reducerResults[key] = reducer.reducer(currentValue, value, data, index);
     }
 }
 
@@ -592,6 +596,7 @@ function processGroup<KeyType, DataType>(
   currentGroupKeys: KeyType[],
   currentPivotKeys: KeyType[],
   item: DataType,
+  itemIndex: number,
   pivot: GroupParams<DataType, KeyType>['pivot'],
   reducers: GroupParams<DataType, KeyType>['reducers'],
   topLevelPivotColumns: DeepMap<GroupKeyType<KeyType>, boolean>,
@@ -607,7 +612,7 @@ function processGroup<KeyType, DataType>(
   currentGroupItems.push(item);
 
   if (reducers) {
-    computeReducersFor<DataType>(item, reducers, reducerResults);
+    computeReducersFor<DataType>(item, itemIndex, reducers, reducerResults);
   }
   if (pivot) {
     for (
@@ -634,7 +639,12 @@ function processGroup<KeyType, DataType>(
 
       pivotGroupItems.push(item);
       if (reducers) {
-        computeReducersFor<DataType>(item, reducers, pivotReducerResults);
+        computeReducersFor<DataType>(
+          item,
+          itemIndex,
+          reducers,
+          pivotReducerResults,
+        );
       }
     }
     currentPivotKeys.length = 0;
@@ -723,6 +733,7 @@ export function group<DataType, KeyType = any>(
         currentGroupKeys,
         currentPivotKeys,
         item,
+        i,
         pivot,
         reducers,
         topLevelPivotColumns!,
@@ -737,6 +748,7 @@ export function group<DataType, KeyType = any>(
         currentGroupKeys,
         currentPivotKeys,
         item,
+        i,
         pivot,
         reducers,
         topLevelPivotColumns!,
@@ -746,7 +758,7 @@ export function group<DataType, KeyType = any>(
     }
 
     if (reducers) {
-      computeReducersFor<DataType>(item, reducers, globalReducerResults);
+      computeReducersFor<DataType>(item, i, reducers, globalReducerResults);
     }
 
     currentGroupKeys.length = 0;
@@ -887,7 +899,7 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
-    rowSelected: false,
+    rowSelected: !!reducerResults[SELECTION_REDUCER_KEY] || false,
     id: `${groupKeys}`, //TODO improve this
     collapsed,
     dataSourceHasGrouping: true,
@@ -943,6 +955,7 @@ function completeReducers<DataType>(
 
 export type EnhancedFlattenParam<DataType, KeyType = any> = {
   lazyLoad: boolean;
+  indexer: Indexer<KeyType>;
   groupResult: DataGroupResult<DataType, KeyType>;
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
@@ -960,6 +973,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
     toPrimaryKey,
     groupRowsState,
     isRowSelected,
+    indexer,
     generateGroupRows,
     reducers = {},
   } = param;
@@ -1007,6 +1021,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
           deepMapValue,
         );
 
+      indexer.add(enhancedGroupData.indexInAll, enhancedGroupData.id);
       const parent = parents[parents.length - 1];
 
       const parentCollapsed = parent?.collapsed ?? false;
@@ -1095,6 +1110,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
               if (isRowSelected) {
                 rowInfo.rowSelected = isRowSelected(rowInfo);
               }
+              indexer.add(rowInfo.indexInAll, rowInfo.id);
 
               parents.forEach((parent, i) => {
                 const last = i === parents.length - 1;

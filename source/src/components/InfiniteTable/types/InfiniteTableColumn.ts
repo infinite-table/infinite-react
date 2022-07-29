@@ -11,6 +11,7 @@ import type {
   ColumnTypeWithInherit,
   DataSourceFilterValueItem,
   DataSourcePivotBy,
+  DataSourcePropSelectionMode,
   DataSourceSingleSortInfo,
   DataSourceState,
 } from '../../DataSource/types';
@@ -25,6 +26,9 @@ import type { InfiniteTableColumnGroup } from '.';
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
+export type InfiniteTableSelectRowFn = (id: any) => void;
+export type InfiniteTableIsRowSelectedFn = (id: any) => boolean;
+export type InfiniteTableIsGroupRowSelectedFn = (groupKeys: any[]) => boolean;
 
 export type InfiniteTableColumnHeaderParams<
   DATA_TYPE,
@@ -49,10 +53,16 @@ export type InfiniteTableColumnRenderParamBase<
   groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   rowIndex: number;
   rowActive: boolean;
-  rowSelected: boolean;
+
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
+  selectCurrentRow: () => void;
+  selectRow: InfiniteTableSelectRowFn;
+  deselectRow: InfiniteTableSelectRowFn;
+  deselectCurrentRow: () => void;
+  toggleRowSelection: InfiniteTableSelectRowFn;
+  selectionMode: DataSourcePropSelectionMode | undefined;
   groupBy: DataSourceState<DATA_TYPE>['groupBy'];
   pivotBy?: DataSourceState<DATA_TYPE>['pivotBy'];
 };

@@ -29,8 +29,15 @@ export function useRowSelection<T>() {
       }
       const { rowIndex, event } = args;
 
-      let { rowSelection: rowSelectionState, selectionMode } =
-        getDataSourceState();
+      let {
+        rowSelection: rowSelectionState,
+        selectionMode,
+        groupBy,
+      } = getDataSourceState();
+
+      if (groupBy.length) {
+        return;
+      }
 
       if (selectionMode === 'multi-row') {
         // clone the row selection

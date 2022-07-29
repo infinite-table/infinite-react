@@ -1,4 +1,9 @@
-import { DataSourceState } from '../DataSource';
+import { InfiniteTable_HasGrouping_RowInfoGroup } from '../../utils/groupAndPivot';
+import {
+  DataSourceComponentActions,
+  DataSourceState,
+  RowSelectionState,
+} from '../DataSource';
 import {
   InfiniteTableState,
   InfiniteTableImperativeApi,
@@ -10,14 +15,177 @@ import { ScrollAdjustPosition } from './types/InfiniteTableProps';
 import { InfiniteTableActions } from './types/InfiniteTableState';
 
 export function getImperativeApi<T>(
-  getState: () => InfiniteTableState<T>,
   getComputed: () => InfiniteTableComputedValues<T>,
+  getState: () => InfiniteTableState<T>,
   getDataSourceState: () => DataSourceState<T>,
   componentActions: InfiniteTableActions<T>,
+  dataSourceActions: DataSourceComponentActions<T>,
 ) {
+  function setGroupRowSelection(groupKeys: string[], selected: boolean) {
+    const { selectionMode, rowSelection: currentRowSelection } =
+      getDataSourceState();
+
+    if (selectionMode === 'multi-row') {
+      const rowSelectionState = new RowSelectionState(
+        currentRowSelection as RowSelectionState<string>,
+      );
+
+      const primaryKey = `${groupKeys}`;
+      const index = getDataSourceState().indexer.getIndexOf(primaryKey);
+      if (index != null) {
+        const rowInfo = getDataSourceState().dataArray[
+          index
+        ] as InfiniteTable_HasGrouping_RowInfoGroup<T>;
+
+        rowInfo.deepRowInfoArray.forEach((rowInfo) => {
+          if (!rowInfo.isGroupRow) {
+            if (selected) {
+              rowSelectionState.selectRow(rowInfo.id);
+            } else {
+              rowSelectionState.deselectRow(rowInfo.id);
+            }
+          }
+        });
+        dataSourceActions.rowSelection = rowSelectionState;
+
+        return true;
+      }
+    }
+
+    return false;
+  }
   const imperativeApi: InfiniteTableImperativeApi<T> = {
     setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => {
       componentActions.columnOrder = columnOrder;
+    },
+    selectRow: (pk: any) => {
+      const { selectionMode, rowSelection: currentRowSelection } =
+        getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        const rowSelectionState = new RowSelectionState(
+          currentRowSelection as RowSelectionState<string>,
+        );
+
+        rowSelectionState.selectRow(pk);
+
+        dataSourceActions.rowSelection = rowSelectionState;
+        return true;
+      } else if (selectionMode === 'single-row') {
+        dataSourceActions.rowSelection = pk;
+        return false;
+      }
+
+      return false;
+    },
+    deselectRow: (pk: any) => {
+      const { selectionMode, rowSelection: currentRowSelection } =
+        getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        const rowSelectionState = new RowSelectionState(
+          currentRowSelection as RowSelectionState<string>,
+        );
+
+        rowSelectionState.deselectRow(pk);
+
+        dataSourceActions.rowSelection = rowSelectionState;
+        return true;
+      } else if (selectionMode === 'single-row') {
+        dataSourceActions.rowSelection = null;
+
+        return true;
+      }
+
+      return false;
+    },
+    isRowSelected: (pk: any) => {
+      const { selectionMode, rowSelection } = getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        return (rowSelection as RowSelectionState).isRowSelected(pk);
+      } else if (selectionMode === 'single-row') {
+        return rowSelection === pk;
+      }
+
+      return false;
+    },
+    selectGroupRow: (groupKeys: string[]) => {
+      return setGroupRowSelection(groupKeys, true);
+    },
+    deselectGroupRow: (groupKeys: string[]) => {
+      return setGroupRowSelection(groupKeys, false);
+    },
+    isGroupRowSelected: (groupKeys: string[]) => {
+      const { selectionMode } = getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        const primaryKey = `${groupKeys}`;
+        const index = getDataSourceState().indexer.getIndexOf(primaryKey);
+
+        if (index != null) {
+          const rowInfo = getDataSourceState().dataArray[
+            index
+          ] as InfiniteTable_HasGrouping_RowInfoGroup<T>;
+
+          return rowInfo.rowSelected;
+        }
+      }
+
+      return false;
+    },
+    toggleRowSelection: (pk: any) => {
+      const { selectionMode, rowSelection: currentRowSelection } =
+        getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        const rowSelectionState = new RowSelectionState(
+          currentRowSelection as RowSelectionState<string>,
+        );
+
+        rowSelectionState.toggleRowSelection(pk);
+
+        dataSourceActions.rowSelection = rowSelectionState;
+        return true;
+      } else if (selectionMode === 'single-row') {
+        const rowSelection = currentRowSelection === pk ? null : pk;
+        dataSourceActions.rowSelection = rowSelection;
+        return true;
+      }
+
+      return false;
+    },
+    selectAllRows: () => {
+      const { selectionMode, rowSelection: currentRowSelection } =
+        getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        const rowSelectionState = new RowSelectionState(
+          currentRowSelection as RowSelectionState<string>,
+        );
+
+        rowSelectionState.selectAll();
+        dataSourceActions.rowSelection = rowSelectionState;
+        return true;
+      }
+
+      return false;
+    },
+    deselectAllRows: () => {
+      const { selectionMode, rowSelection: currentRowSelection } =
+        getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        const rowSelectionState = new RowSelectionState(
+          currentRowSelection as RowSelectionState<string>,
+        );
+
+        rowSelectionState.deselectAll();
+        dataSourceActions.rowSelection = rowSelectionState;
+        return true;
+      }
+
+      return false;
     },
     setColumnVisibility: (
       columnVisibility: InfiniteTablePropColumnVisibility,
