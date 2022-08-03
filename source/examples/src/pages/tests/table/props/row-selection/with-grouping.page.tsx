@@ -4,12 +4,16 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection_MultiRow,
+  useInfiniteColumnCell,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
-import { RowSelectionState } from '@infinite-table/infinite-react/components/DataSource/RowSelectionState';
+import { RowSelectionState } from '@infinite-table/infinite-react';
+import { components } from '@infinite-table/infinite-react';
+
+const { CheckBox } = components;
 
 type Developer = {
   id: number;
@@ -30,44 +34,33 @@ type Developer = {
 const dataSource = () => {
   return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
-    .then((data: Developer[]) => data);
+    .then((data: Developer[]) => {
+      return data;
+    });
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  checkbox: {
-    defaultWidth: 180,
-    align: 'center',
-    resizable: false,
-    style: {
-      cursor: 'pointer',
-    },
-    renderValue: () => 'x',
-    render: (details) => {
-      const { rowInfo } = details;
-      return (
-        <>
-          <input
-            type="checkbox"
-            checked={rowInfo.rowSelected}
-            onChange={() => {}}
-          />
-          group selected:{' '}
-          {rowInfo.dataSourceHasGrouping &&
-          rowInfo.parents.length &&
-          rowInfo.parents[rowInfo.parents.length - 1].rowSelected
-            ? 'yes'
-            : 'no'}
-        </>
-      );
-    },
-  },
   id: { field: 'id' },
 
   firstName: {
     field: 'firstName',
   },
 
-  preferredLanguage: { field: 'preferredLanguage' },
+  preferredLanguage: {
+    field: 'preferredLanguage',
+    renderValue: ({ value }) => `Lang: ${value}`,
+    renderGroupValue: ({ renderBag }) => {
+      return <>{renderBag.value}----</>;
+    },
+    renderLeafValue: () => {
+      console.log('leaf value');
+      const { renderBag } = useInfiniteColumnCell();
+      return <>{renderBag.value}xxxx</>;
+    },
+    render: ({ renderBag }) => {
+      return <>{renderBag.value}!!!</>;
+    },
+  },
   stack: { field: 'stack' },
 };
 
@@ -80,11 +73,28 @@ const domProps = {
 export default function GroupByExample() {
   const [rowSelection, _setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
+      //@ts-ignore
+      // selectedGroups: [
+      //   [
+      //     'France',
+      //     {
+      //       deselectedRows: { '21312': true },
+      //       selectedGroups: [],
+      //     },
+      //   ],
+      //   ['backend', 'TypeScript'],
+      // ],
       selectedRows: {
         0: true,
         1: true,
         2: true,
         3: true,
+
+        // 'backend,TypeScript': true,
+
+        5: true,
+        8: true,
+        41: true,
       },
       deselectedRows: true,
     });
@@ -92,7 +102,7 @@ export default function GroupByExample() {
   return (
     <>
       <div>
-        Selected{' '}
+        <CheckBox checked={null}></CheckBox>test Selected{' '}
         {rowSelection instanceof RowSelectionState
           ? rowSelection.getSelectedCount()
           : false}
@@ -100,7 +110,12 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={[{ field: 'stack' }, { field: 'preferredLanguage' }]}
+        groupBy={[
+          { field: 'stack' },
+          {
+            field: 'preferredLanguage',
+          },
+        ]}
         selectionMode="multi-row"
         defaultRowSelection={rowSelection}
         // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell
@@ -134,6 +149,10 @@ export default function GroupByExample() {
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
+          groupRenderStrategy="single-column"
+          groupColumn={{
+            field: 'firstName',
+          }}
           columnDefaultWidth={200}
         />
       </DataSource>

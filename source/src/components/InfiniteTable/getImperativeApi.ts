@@ -1,9 +1,16 @@
-import { InfiniteTable_HasGrouping_RowInfoGroup } from '../../utils/groupAndPivot';
+import { DeepMap } from '../../utils/DeepMap';
+import {
+  InfiniteTable_HasGrouping_RowInfoGroup,
+  LAZY_ROOT_KEY_FOR_GROUPS,
+} from '../../utils/groupAndPivot';
 import {
   DataSourceComponentActions,
   DataSourceState,
+  GroupRowsState,
   RowSelectionState,
 } from '../DataSource';
+import { getChangeDetect } from '../DataSource/privateHooks/getChangeDetect';
+import { loadData } from '../DataSource/privateHooks/useLoadData';
 import {
   InfiniteTableState,
   InfiniteTableImperativeApi,
@@ -22,13 +29,29 @@ export function getImperativeApi<T>(
   dataSourceActions: DataSourceComponentActions<T>,
 ) {
   function setGroupRowSelection(groupKeys: string[], selected: boolean) {
-    const { selectionMode, rowSelection: currentRowSelection } =
-      getDataSourceState();
+    const {
+      selectionMode,
+      rowSelection: currentRowSelection,
+      groupDeepMap,
+      toPrimaryKey,
+    } = getDataSourceState();
 
-    if (selectionMode === 'multi-row') {
+    if (selectionMode === 'multi-row' && groupDeepMap) {
       const rowSelectionState = new RowSelectionState(
         currentRowSelection as RowSelectionState<string>,
       );
+      const groupResult = groupDeepMap.get(groupKeys);
+
+      if (groupResult?.items) {
+        groupResult.items.forEach((data) => {
+          const id = toPrimaryKey(data);
+          if (selected) {
+            rowSelectionState.selectRow(id);
+          } else {
+            rowSelectionState.deselectRow(id);
+          }
+        });
+      }
 
       const primaryKey = `${groupKeys}`;
       const index = getDataSourceState().indexer.getIndexOf(primaryKey);
@@ -55,6 +78,52 @@ export function getImperativeApi<T>(
     return false;
   }
   const imperativeApi: InfiniteTableImperativeApi<T> = {
+    get allRowsSelected() {
+      return getDataSourceState().allRowsSelected;
+    },
+    getSelectedRowCount() {
+      const { selectionMode, selectedRowCount } = getDataSourceState();
+      if (selectionMode != 'multi-row') {
+        throw `Cannot get the selected row count unless "selectionMode" is "multi-row"!`;
+      }
+      return selectedRowCount;
+    },
+    getSelectedRows() {
+      // TODO continue here this does not return rows from collapsed groups
+      // because the indexer cant find them - we should index also before the filtering/grouping operations occur
+
+      const { rowSelection, indexer, dataArray } = getDataSourceState();
+
+      if (!rowSelection || !(rowSelection instanceof RowSelectionState)) {
+        return [];
+      }
+
+      if (rowSelection.isRowDefaultDeselected()) {
+        const { selectedRows } = rowSelection.getState();
+        return Object.keys(selectedRows).reduce((res, id) => {
+          const index = indexer.getIndexOf(id);
+          if (index == null) {
+            return res;
+          }
+          const rowInfo = dataArray[index];
+          if (!rowInfo || !rowInfo.data) {
+            return res;
+          }
+          res.push(rowInfo.data as T);
+          return res;
+        }, [] as T[]);
+      } else {
+        // by default, rows are selected
+        return dataArray
+          .filter((rowInfo) => {
+            return (
+              !rowInfo.isGroupRow && rowSelection.isRowSelected(rowInfo.id)
+            );
+          })
+          .map((rowInfo) => rowInfo.data as T);
+      }
+      return [];
+    },
     setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => {
       componentActions.columnOrder = columnOrder;
     },
@@ -116,6 +185,42 @@ export function getImperativeApi<T>(
     deselectGroupRow: (groupKeys: string[]) => {
       return setGroupRowSelection(groupKeys, false);
     },
+    toggleGroupRow(groupKeys: any[]) {
+      const state = getDataSourceState();
+      const newState = new GroupRowsState(state.groupRowsState);
+      newState.toggleGroupRow(groupKeys);
+
+      dataSourceActions.groupRowsState = newState;
+      if (state.lazyLoad) {
+        const dataKeys = [LAZY_ROOT_KEY_FOR_GROUPS, ...groupKeys];
+        const currentData = state.originalLazyGroupData.get(dataKeys);
+
+        if (newState.isGroupRowExpanded(groupKeys)) {
+          if (!currentData?.cache) {
+            loadData(state.data, state, dataSourceActions, {
+              groupKeys,
+            });
+          }
+        } else {
+          if (!currentData?.cache) {
+            const keysToDelete =
+              state.lazyLoadCacheOfLoadedBatches.getKeysStartingWith(groupKeys);
+            keysToDelete.forEach((keys) => {
+              state.lazyLoadCacheOfLoadedBatches.delete(keys);
+            });
+
+            dataSourceActions.lazyLoadCacheOfLoadedBatches = DeepMap.clone(
+              state.lazyLoadCacheOfLoadedBatches,
+            );
+
+            state.originalLazyGroupData.delete(dataKeys);
+
+            dataSourceActions.originalLazyGroupDataChangeDetect =
+              getChangeDetect();
+          }
+        }
+      }
+    },
     isGroupRowSelected: (groupKeys: string[]) => {
       const { selectionMode } = getDataSourceState();
 
@@ -130,6 +235,21 @@ export function getImperativeApi<T>(
 
           return rowInfo.rowSelected;
         }
+      }
+
+      return false;
+    },
+    toggleGroupRowSelection(groupKeys: string[]) {
+      const { selectionMode } = getDataSourceState();
+
+      if (selectionMode === 'multi-row') {
+        if (this.isGroupRowSelected(groupKeys)) {
+          this.deselectGroupRow(groupKeys);
+        } else {
+          this.selectGroupRow(groupKeys);
+        }
+
+        return true;
       }
 
       return false;

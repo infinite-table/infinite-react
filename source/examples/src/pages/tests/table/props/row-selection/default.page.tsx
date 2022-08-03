@@ -41,7 +41,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     style: {
       cursor: 'pointer',
     },
-    render: (rowInfo) => {
+    render: ({ rowInfo }) => {
       return (
         <input
           type="checkbox"

@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { DeepMap } from '../../utils/DeepMap';
 import {
+  AggregationReducerResult,
   DeepMapGroupValueType,
   GroupBy,
   GroupKeyType,
@@ -218,6 +219,9 @@ export interface DataSourceSetupState<T> {
   lastGroupDataArray?: InfiniteTableRowInfo<T>[];
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
+  reducerResults?: Record<string, AggregationReducerResult>;
+  allRowsSelected: boolean;
+  selectedRowCount: number;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition: InfiniteTablePropPivotGrandTotalColumnPosition;
   cursorId: number | symbol | DataSourceLivePaginationCursorValue;
@@ -463,11 +467,13 @@ export interface DataSourceState<T>
     DataSourceMappedState<T> {}
 
 export type DataSourceDerivedState<T> = {
+  // TODO pass as second arg the index
+  toPrimaryKey: (data: T) => any;
   operatorsByFilterType: Record<
     string,
     Record<string, DataSourceFilterOperator<T>>
   >;
-  rowSelection: NonUndefined<DataSourceProps<T>['rowSelection']>;
+  rowSelection: RowSelectionState | null | number | string;
   selectionMode: NonUndefined<DataSourceProps<T>['selectionMode']>;
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
 

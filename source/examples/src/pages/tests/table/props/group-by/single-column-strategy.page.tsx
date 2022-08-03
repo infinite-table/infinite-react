@@ -33,95 +33,66 @@ const dataSource = () => {
   return Promise.resolve(employees);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
 
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-      columnGroup: 'location',
-    },
-  ],
+  country: {
+    field: 'country',
+    header: 'Country',
+    columnGroup: 'location',
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+    columnGroup: 'address',
+  },
+  streetName: {
+    field: 'streetName',
+    header: 'Street Name',
+    columnGroup: 'street',
+  },
+  streetNo: {
+    columnGroup: 'street',
+    field: 'streetNo',
+    header: 'Street Number',
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+    header: 'Age',
+  },
+  department: {
+    field: 'department',
+    header: 'Department',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    header: 'Salary',
 
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-      columnGroup: 'address',
+    render: ({ value, rowInfo }) => {
+      if (rowInfo.isGroupRow) {
+        return (
+          <>
+            Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+            <b>{rowInfo.reducerResults![0]}</b>
+          </>
+        );
+      }
+      return <>{value}</>;
     },
-  ],
+  },
+  team: {
+    field: 'team',
+    header: 'Team',
+  },
 
-  [
-    'streetName',
-    {
-      field: 'streetName',
-      header: 'Street Name',
-      columnGroup: 'street',
-    },
-  ],
-  [
-    'streetNo',
-    {
-      columnGroup: 'street',
-      field: 'streetNo',
-      header: 'Street Number',
-    },
-  ],
-
-  [
-    'age',
-    {
-      field: 'age',
-      type: 'number',
-      header: 'Age',
-    },
-  ],
-  [
-    'department',
-    {
-      field: 'department',
-      header: 'Department',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      header: 'Salary',
-
-      render: ({ value, rowInfo }) => {
-        if (rowInfo.isGroupRow) {
-          return (
-            <>
-              Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults![0]}</b>
-            </>
-          );
-        }
-        return <>{value}</>;
-      },
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-      header: 'Team',
-    },
-  ],
-  ['company', { field: 'companyName', header: 'Company' }],
-  ['companySize', { field: 'companySize', header: 'Company Size' }],
-]);
+  company: { field: 'companyName', header: 'Company' },
+  companySize: { field: 'companySize', header: 'Company Size' },
+};
 
 const columnGroups: InfiniteTablePropColumnGroups = new Map([
   ['address', { columnGroup: 'location', header: 'Address' }],

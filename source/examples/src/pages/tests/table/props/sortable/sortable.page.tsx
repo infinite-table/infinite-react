@@ -45,25 +45,17 @@ export default function SortablePage() {
           columnDefaultWidth={100}
           sortable={false}
           virtualizeColumns={false}
-          columns={
-            new Map([
-              [
-                'id',
-                {
-                  field: 'Id',
-                  type: 'number',
-                  sortable: true,
-                },
-              ],
-              [
-                'firstName',
-                {
-                  field: 'FirstName',
-                },
-              ],
-              ['age', { field: 'Age', type: 'number' }],
-            ])
-          }
+          columns={{
+            id: {
+              field: 'Id',
+              type: 'number',
+              sortable: true,
+            },
+            firstName: {
+              field: 'FirstName',
+            },
+            age: { field: 'Age', type: 'number' },
+          }}
         />
       </DataSource>
     </React.StrictMode>

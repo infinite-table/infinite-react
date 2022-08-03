@@ -3,12 +3,14 @@ import {
   InfiniteTableStateGetter,
   DataSourceStateGetter,
   InfiniteTableComputedValuesGetter,
+  InfiniteTableImperativeApi,
 } from './types/InfiniteTableProps';
 import { InfiniteTableActions } from './types/InfiniteTableState';
 
 export type NavigationOptions<T> = {
   getState: InfiniteTableStateGetter<T>;
   actions: InfiniteTableActions<T>;
+  imperativeApi: InfiniteTableImperativeApi<T>;
   getDataSourceState: DataSourceStateGetter<T>;
   getComputed: InfiniteTableComputedValuesGetter<T>;
   key: string;
@@ -167,15 +169,60 @@ const validKeys: Record<string, boolean> = {
   PageDown: true,
   Home: true,
   End: true,
+  Enter: true,
+  ' ': true,
 };
 
 export function handleKeyboardNavigation<T>(options: NavigationOptions<T>) {
-  const { getState } = options;
+  const { getState, getDataSourceState, imperativeApi } = options;
   const state = getState();
+  const dataSourceState = getDataSourceState();
   const { activeRowIndex, activeCellIndex, keyboardNavigation } = state;
 
   if (!validKeys[options.key]) {
     return false;
+  }
+
+  if (options.key === 'Enter') {
+    if (keyboardNavigation === 'row' && activeRowIndex != null) {
+      const rowInfo = dataSourceState.dataArray[activeRowIndex];
+      if (rowInfo && rowInfo.isGroupRow) {
+        imperativeApi.toggleGroupRow(rowInfo.groupKeys);
+        return true;
+      }
+    }
+    if (keyboardNavigation === 'cell' && activeCellIndex != null) {
+      const rowInfo = dataSourceState.dataArray[activeCellIndex[0]];
+      if (rowInfo && rowInfo.isGroupRow) {
+        imperativeApi.toggleGroupRow(rowInfo.groupKeys);
+        return true;
+      }
+    }
+    return false;
+  }
+  if (options.key === ' ') {
+    if (keyboardNavigation === 'row' && activeRowIndex != null) {
+      const rowInfo = dataSourceState.dataArray[activeRowIndex];
+      if (rowInfo) {
+        if (rowInfo.isGroupRow) {
+          imperativeApi.toggleGroupRowSelection(rowInfo.groupKeys);
+        } else {
+          imperativeApi.toggleRowSelection(rowInfo.id);
+        }
+        return true;
+      }
+    }
+    if (keyboardNavigation === 'cell' && activeCellIndex != null) {
+      const rowInfo = dataSourceState.dataArray[activeCellIndex[0]];
+      if (rowInfo) {
+        if (rowInfo.isGroupRow) {
+          imperativeApi.toggleGroupRowSelection(rowInfo.groupKeys);
+        } else {
+          imperativeApi.toggleRowSelection(rowInfo.id);
+        }
+        return true;
+      }
+    }
   }
 
   if (activeRowIndex != null && keyboardNavigation === 'row') {

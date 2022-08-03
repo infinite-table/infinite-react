@@ -136,3 +136,5 @@ export const data: Person[] = [
     team: 'infrastructure',
   },
 ];
+
+data.length = 1;

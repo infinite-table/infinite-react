@@ -1,3 +1,4 @@
+import { Indexer } from '@src/components/DataSource/Indexer';
 import { test, expect } from '@playwright/test';
 import { GroupRowsState } from '@src/components/DataSource';
 import { group, flatten, enhancedFlatten } from '@src/utils/groupAndPivot';
@@ -189,6 +190,7 @@ export default test.describe.parallel('Grouping', () => {
 
     const result = enhancedFlatten({
       groupResult,
+      indexer: new Indexer(),
       toPrimaryKey: (data) => data.id,
       groupRowsState: new GroupRowsState({
         expandedRows: true,
@@ -264,6 +266,7 @@ export default test.describe.parallel('Grouping', () => {
       arr.reduce((acc, p) => acc + p.age, 0) * 100,
     ]);
     const result = enhancedFlatten({
+      indexer: new Indexer(),
       groupResult,
       toPrimaryKey: (data) => data.id,
       generateGroupRows: true,

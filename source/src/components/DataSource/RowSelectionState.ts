@@ -103,9 +103,10 @@ export class RowSelectionState<
     this.toggleItem(key as RowKeyType);
   }
 
-  public getSelectedCount(): number {
+  public getSelectedCount(maxCount?: number): number {
     if (this.isRowDefaultSelected()) {
-      return this.negativeMap ? -this.negativeMap.size : 0;
+      const unselectedCount = this.negativeMap ? this.negativeMap.size : 0;
+      return maxCount ? maxCount - unselectedCount : -unselectedCount;
     }
 
     return this.positiveMap?.size ?? 0;

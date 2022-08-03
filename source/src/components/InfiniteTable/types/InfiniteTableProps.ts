@@ -16,10 +16,10 @@ import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnRenderFunction,
+  InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableComputedColumn,
   InfiniteTableComputedPivotFinalColumn,
   InfiniteTableDataTypeNames,
-  InfiniteTableGroupColumnRenderIconFunction,
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumn,
 } from './InfiniteTableColumn';
@@ -147,16 +147,23 @@ export type InfiniteTableImperativeApi<T> = {
   ) => void;
   x?: T;
 
+  get allRowsSelected(): boolean;
+  getSelectedRowCount(): number;
+
   get scrollLeft(): number;
   set scrollLeft(value: number);
 
   get scrollTop(): number;
   set scrollTop(value: number);
 
+  getSelectedRows: () => T[];
+
+  toggleGroupRow: (groupKeys: any[]) => void;
   toggleRowSelection: (pk: any) => boolean;
   selectRow: (pk: any) => boolean;
   isRowSelected: (pk: any) => boolean;
   isGroupRowSelected: (groupKeys: any[]) => boolean;
+  toggleGroupRowSelection: (groupKeys: any[]) => boolean;
   deselectRow: (pk: any) => boolean;
   selectGroupRow: (groupKeys: any[]) => boolean;
   deselectGroupRow: (groupKeys: any[]) => boolean;
@@ -198,17 +205,16 @@ export type InfiniteTableInternalProps<T> = {
   ___t?: T;
 };
 
-export type InfiniteTablePropColumnsMap<
+export type InfiniteTableColumnsMap<
   T,
   ColumnType = InfiniteTableColumn<T>,
 > = Map<string, ColumnType>;
 
 export type InfiniteTablePropColumns<T, ColumnType = InfiniteTableColumn<T>> =
-  | InfiniteTablePropColumnsMap<T, ColumnType>
-  | Record<string, ColumnType>;
+  | Record<string, ColumnType>
+  | InfiniteTableColumnsMap<T, ColumnType>;
 
 export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
-export type InfiniteTableColumnsMap<T> = InfiniteTablePropColumnsMap<T>;
 
 export type InfiniteTablePropColumnGroupsMap = Map<
   string,
@@ -276,7 +282,7 @@ export type InfiniteTableGroupColumnBase<T> = Partial<
   InfiniteTableColumn<T>
 > & {
   renderValue?: InfiniteTableColumnRenderFunction<T>;
-  renderGroupIcon?: InfiniteTableGroupColumnRenderIconFunction<T>;
+  renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<T>;
   id?: string;
 };
 export type InfiniteTablePivotColumnBase<T> = InfiniteTableColumn<T> & {
@@ -330,7 +336,7 @@ export type InfiniteTableFilterEditorProps<T extends any> = {
 
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
-  pivotColumns?: InfiniteTablePropColumnsMap<T, InfiniteTablePivotColumn<T>>;
+  pivotColumns?: InfiniteTableColumnsMap<T, InfiniteTablePivotColumn<T>>;
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents;

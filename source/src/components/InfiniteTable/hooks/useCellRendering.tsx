@@ -1,6 +1,6 @@
 import type { Ref } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
-import React from 'react';
+import * as React from 'react';
 
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import {

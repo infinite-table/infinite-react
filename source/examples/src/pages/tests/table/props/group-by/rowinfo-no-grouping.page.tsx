@@ -41,15 +41,12 @@ const dataSource = () => {
   ] as Person[]);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Person>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+};
 export default function GroupByExample() {
   return (
     <React.StrictMode>

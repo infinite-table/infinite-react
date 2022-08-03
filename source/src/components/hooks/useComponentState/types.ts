@@ -18,8 +18,14 @@ export type ComponentInterceptedActions<T_STATE> = {
   ) => void | boolean;
 };
 
-export type ComponentMappedCallbackParams<T_STATE> = {
-  [k in keyof T_STATE]: (value: T_STATE[k], state: T_STATE) => any;
+export type ComponentMappedCallbacks<T_STATE> = {
+  [k in keyof T_STATE]: (
+    value: T_STATE[k],
+    state: T_STATE,
+  ) => {
+    callbackName: string;
+    callbackParam: any;
+  };
 };
 
 export type ComponentStateActions<T_STATE> =

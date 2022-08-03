@@ -1,7 +1,6 @@
 import {
   DataSourceComponentActions,
   DataSourceDataParams,
-  DataSourcePropRowSelection,
   RowSelectionState,
 } from '..';
 import { dbg } from '../../../utils/debug';
@@ -87,6 +86,9 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     reducedAt: now,
     generateGroupRows: true,
     groupDeepMap: undefined,
+    reducerResults: undefined,
+    allRowsSelected: false,
+    selectedRowCount: 0,
     postSortDataArray: undefined,
     postGroupDataArray: undefined,
     lastSortDataArray: undefined,
@@ -223,7 +225,7 @@ export function mapPropsToState<T extends any>(params: {
     }
   }
 
-  let rowSelectionState: DataSourcePropRowSelection | undefined;
+  let rowSelectionState: RowSelectionState | null | number | string = null;
 
   let currentRowSelection =
     props.rowSelection !== undefined
@@ -246,7 +248,7 @@ export function mapPropsToState<T extends any>(params: {
       } else {
         rowSelectionState =
           selectionMode === 'single-row'
-            ? currentRowSelection
+            ? (currentRowSelection as string | number)
             : currentRowSelection instanceof RowSelectionState
             ? currentRowSelection
             : new RowSelectionState(
@@ -256,12 +258,25 @@ export function mapPropsToState<T extends any>(params: {
     }
   }
 
+  const primaryKeyDescriptor = state.primaryKey;
+  const toPrimaryKey =
+    typeof primaryKeyDescriptor === 'function'
+      ? (data: T, index: number) => primaryKeyDescriptor({ data, index })
+      : (data: T, _index?: number) => {
+          const pk = data[primaryKeyDescriptor];
+
+          return pk;
+        };
+
   const result: DataSourceDerivedState<T> = {
     selectionMode,
+    //@ts-ignore
+    toPrimaryKey,
     rowSelection: rowSelectionState ?? null,
     operatorsByFilterType,
     controlledSort,
     controlledFilter,
+
     filterMode:
       props.filterMode ?? props.filterFunction != null
         ? 'local'
@@ -326,28 +341,35 @@ export type DataSourceMappedCallbackParams<T> = {
   [k in keyof DataSourceState<T>]: (
     value: DataSourceState<T>[k],
     state: DataSourceState<T>,
-  ) => any;
+  ) => {
+    callbackName?: string;
+    callbackParam: any;
+  };
 };
 
-export function getMappedCallbackParams<T>() {
+export function getMappedCallbacks<T>() {
   return {
     rowSelection: (
       rowSelection,
       state: DataSourceState<T>,
-    ): Parameters<DataSourcePropOnRowSelectionChange>[0] => {
+    ): { callbackParam: Parameters<DataSourcePropOnRowSelectionChange>[0] } => {
       if (state.selectionMode === 'single-row') {
         return {
-          selectionMode: 'single-row',
-          rowSelection,
-        } as Parameters<DataSourcePropOnRowSelectionChange_SingleRow>[0];
+          callbackParam: {
+            selectionMode: 'single-row',
+            rowSelection,
+          } as Parameters<DataSourcePropOnRowSelectionChange_SingleRow>[0],
+        };
       }
       return {
-        selectionMode: 'multi-row',
-        get rowSelection() {
-          return (rowSelection as RowSelectionState).getState();
-        },
-        rowSelectionState: rowSelection,
-      } as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>[0];
+        callbackParam: {
+          selectionMode: 'multi-row',
+          get rowSelection() {
+            return (rowSelection as RowSelectionState).getState();
+          },
+          rowSelectionState: rowSelection,
+        } as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>[0],
+      };
     },
   } as DataSourceMappedCallbackParams<T>;
 }

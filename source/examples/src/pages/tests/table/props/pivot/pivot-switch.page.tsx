@@ -11,7 +11,6 @@ import {
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
-  InfiniteTablePropColumns,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
 
@@ -53,23 +52,19 @@ const columnAggregations: DataSourcePropAggregationReducers<Developer> = {
   salary: avgReducer,
 };
 
-const columns: InfiniteTablePropColumns<Developer> = new Map<
-  string,
-  InfiniteTableColumn<Developer>
->([
-  ['id', { field: 'id' }],
-  ['firstName', { field: 'firstName' }],
-  ['preferredLanguage', { field: 'preferredLanguage' }],
-  ['stack', { field: 'stack' }],
-  ['country', { field: 'country' }],
-  ['canDesign', { field: 'canDesign' }],
-  ['hobby', { field: 'hobby' }],
-  ['city', { field: 'city' }],
-  ['age', { field: 'age' }],
-  ['salary', { field: 'salary', type: 'number' }],
-  ['currency', { field: 'currency' }],
-]);
-
+const columns: Record<string, InfiniteTableColumn<Developer>> = {
+  id: { field: 'id' },
+  firstName: { field: 'firstName' },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: { field: 'country' },
+  canDesign: { field: 'canDesign' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  age: { field: 'age' },
+  salary: { field: 'salary', type: 'number' },
+  currency: { field: 'currency' },
+};
 const groupRowsState = new GroupRowsState({
   expandedRows: [['TypeScript']],
   collapsedRows: true,

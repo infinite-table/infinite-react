@@ -4,7 +4,8 @@ import {
   InfiniteTableRowInfo,
   InfiniteTable_NoGrouping_RowInfoNormal,
   lazyGroup,
-  SELECTION_REDUCER_KEY,
+  GROUP_SELECTED_REDUCER_KEY,
+  GROUP_CHILDREN_SELECTED_COUNT_KEY,
 } from '../../../utils/groupAndPivot';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
@@ -309,12 +310,11 @@ export function concludeReducer<T>(params: {
   }
 
   if (shouldGroup) {
-    // TODO handle selection in grouping
     if (shouldGroupAgain) {
       let aggregationReducers = state.aggregationReducers;
 
       if (state.selectionMode === 'multi-row') {
-        const selectionReducer: DataSourceAggregationReducer<T, boolean> = {
+        const groupSelectedReducer: DataSourceAggregationReducer<T, boolean> = {
           initialValue: true,
           reducer: (groupSelected, _value, data, index) => {
             const rowId = toPrimaryKey(data, index);
@@ -326,9 +326,26 @@ export function concludeReducer<T>(params: {
             );
           },
         };
+        const groupChildrenSelectedCountReducer: DataSourceAggregationReducer<
+          T,
+          number
+        > = {
+          initialValue: 0,
+          reducer: (selectedCount, _value, data, index) => {
+            const rowId = toPrimaryKey(data, index);
+            return (
+              selectedCount +
+              (state.rowSelection as RowSelectionState).isRowSelected(
+                rowId as string,
+              )
+            );
+          },
+        };
         aggregationReducers = {
           ...aggregationReducers,
-          [SELECTION_REDUCER_KEY]: selectionReducer,
+          [GROUP_SELECTED_REDUCER_KEY]: groupSelectedReducer,
+          [GROUP_CHILDREN_SELECTED_COUNT_KEY]:
+            groupChildrenSelectedCountReducer,
         };
       }
       const groupResult = state.lazyLoad
@@ -368,6 +385,8 @@ export function concludeReducer<T>(params: {
       rowInfoDataArray = flattenResult.data;
       state.groupDeepMap = groupResult.deepMap;
 
+      state.reducerResults = groupResult.reducerResults;
+
       const pivotGroupsAndCols = pivotBy
         ? getPivotColumnsAndColumnGroups<T>({
             deepMap: groupResult.topLevelPivotColumns!,
@@ -376,7 +395,7 @@ export function concludeReducer<T>(params: {
             pivotTotalColumnPosition: state.pivotTotalColumnPosition ?? 'end',
             pivotGrandTotalColumnPosition:
               state.pivotGrandTotalColumnPosition ?? false,
-            reducers: aggregationReducers,
+            reducers: state.aggregationReducers,
             showSeparatePivotColumnForSingleAggregation:
               state.showSeparatePivotColumnForSingleAggregation,
           })
@@ -427,6 +446,29 @@ export function concludeReducer<T>(params: {
 
   state.dataArray = rowInfoDataArray;
   state.reducedAt = now;
+
+  if (state.selectionMode === 'multi-row') {
+    if (shouldGroup) {
+      state.allRowsSelected =
+        (state.reducerResults?.[
+          GROUP_SELECTED_REDUCER_KEY
+        ] as any as boolean) || false;
+      state.selectedRowCount =
+        (state.reducerResults?.[
+          GROUP_CHILDREN_SELECTED_COUNT_KEY
+        ] as any as number) || 0;
+    } else {
+      // todo here we will have to use totalCount instead of state.dataArray for cases
+      // when remote/lazy data source is used
+      const dataArrayCount = state.dataArray.length;
+      state.selectedRowCount =
+        (state.rowSelection as RowSelectionState)!.getSelectedCount(
+          dataArrayCount,
+        );
+
+      state.allRowsSelected = dataArrayCount === state.selectedRowCount;
+    }
+  }
 
   if (__DEV__) {
     (globalThis as any).state = state;

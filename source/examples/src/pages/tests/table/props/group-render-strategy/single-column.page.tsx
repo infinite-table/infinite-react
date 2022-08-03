@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   DataSourceGroupBy,
-  InfiniteTablePropColumns,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { Person, data } from './pivotData';
@@ -30,32 +29,21 @@ const groupBy: DataSourceGroupBy<Person>[] = [
   },
 ];
 
-const columns: InfiniteTablePropColumns<Person> = new Map<
-  string,
-  InfiniteTableColumn<Person>
->([
-  [
-    'department',
-    {
-      field: 'department',
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-    },
-  ],
-  ['id', { field: 'id' }],
-  ['name', { field: 'name' }],
-  ['country', { field: 'country' }],
-  [
-    'salary',
-    {
-      field: 'salary',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  department: {
+    field: 'department',
+  },
+  team: {
+    field: 'team',
+  },
+  id: { field: 'id' },
+  name: { field: 'name' },
+  country: { field: 'country' },
+
+  salary: {
+    field: 'salary',
+  },
+};
 
 export default function GroupRenderStrategyInline() {
   return (

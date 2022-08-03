@@ -23,6 +23,7 @@ import { GroupByMap } from '../types/InfiniteTableState';
 import {
   getColumnForGroupBy,
   getGroupColumnRender,
+  getGroupColumnRenderGroupIcon,
   getSingleGroupColumn,
 } from '../utils/getColumnForGroupBy';
 
@@ -153,10 +154,15 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
 
             return rowspan;
           },
-          render: getGroupColumnRender({
+          renderGroupIcon: getGroupColumnRenderGroupIcon({
             groupIndexForColumn: groupIndex,
             groupRenderStrategy,
             toggleGroupRow,
+            initialRenderGroupIcon: column.renderGroupIcon,
+          }),
+          render: getGroupColumnRender({
+            groupIndexForColumn: groupIndex,
+            groupRenderStrategy,
           }),
         };
       }

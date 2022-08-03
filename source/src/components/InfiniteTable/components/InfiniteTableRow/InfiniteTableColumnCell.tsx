@@ -5,7 +5,6 @@ import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
 
-import type { Renderable } from '../../../types/Renderable';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
@@ -16,10 +15,13 @@ import type {
   InfiniteTableColumnStyleFnParams,
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
+  InfiniteTableColumnRenderFunction,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
-import { RenderHookComponent } from '../../utils/RenderHookComponent';
-import { ColumnCellRecipe } from '../cell.css';
+import { objectValuesExcept } from '../../utils/objectValuesExcept';
+import { RenderCellHookComponent } from '../../utils/RenderHookComponent';
+import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
+import { InfiniteCheckBox } from '../CheckBox';
 
 import {
   InfiniteTableCell,
@@ -39,6 +41,54 @@ export const InfiniteTableColumnCellContext = React.createContext<
 >(null as any as InfiniteTableColumnCellContextType<any>);
 
 export const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
+
+export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
+  any
+> = (params) => {
+  const {
+    rowInfo,
+    selectCurrentRow,
+    deselectCurrentRow,
+    toggleCurrentGroupRowSelection,
+    column,
+  } = params;
+
+  if (rowInfo.isGroupRow && !column.groupByField) {
+    return null;
+  }
+  // if (column.groupByField && !rowInfo.isGroupRow) {
+  //   return null;
+  // }
+
+  return (
+    <InfiniteCheckBox
+      domProps={{
+        className: SelectionCheckboxCls,
+      }}
+      onChange={(selected) => {
+        if (rowInfo.isGroupRow) {
+          toggleCurrentGroupRowSelection();
+          return;
+        }
+
+        if (selected) {
+          selectCurrentRow();
+        } else {
+          deselectCurrentRow();
+        }
+      }}
+      checked={
+        rowInfo.isGroupRow
+          ? !rowInfo.rowSelected
+            ? rowInfo.childrenSelectedCount > 0
+              ? null
+              : false
+            : true
+          : rowInfo.rowSelected
+      }
+    />
+  );
+};
 
 function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
@@ -182,8 +232,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     ...rest,
   } as InfiniteTableColumnStyleFnParams<T>;
 
-  const renderValue: Renderable = value;
-
   const renderParam: InfiniteTableColumnRenderParam<T> = {
     column,
     domRef,
@@ -193,13 +241,18 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     selectRow: imperativeApi.selectRow,
     deselectRow: imperativeApi.deselectRow,
     toggleRowSelection: imperativeApi.toggleRowSelection,
+    renderBag: {
+      value,
+      selectionCheckBox: null,
+      groupIcon: null,
+    },
 
-    selectCurrentRow: () => {
+    selectCurrentRow: useCallback(() => {
       return imperativeApi.selectRow(rowInfo.id);
-    },
-    deselectCurrentRow: () => {
+    }, [rowInfo]),
+    deselectCurrentRow: useCallback(() => {
       return imperativeApi.deselectRow(rowInfo.id);
-    },
+    }, [rowInfo]),
     rowIndex,
     toggleGroupRow,
     toggleCurrentGroupRow: useCallback(() => {
@@ -208,7 +261,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       }
 
       toggleGroupRow(rowInfo.groupKeys!);
-    }, []),
+    }, [rowInfo]),
+    toggleCurrentGroupRowSelection: useCallback(() => {
+      return imperativeApi.toggleGroupRowSelection(
+        rowInfo.isGroupRow ? rowInfo.groupKeys : [],
+      );
+    }, [rowInfo]),
     groupBy: computedDataSource.groupBy,
     pivotBy: computedDataSource.pivotBy,
   };
@@ -218,14 +276,100 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       return null;
     }
 
-    const renderFn = column.render || column.renderValue;
-    if (renderFn) {
-      return (
-        <RenderHookComponent render={renderFn} renderParam={renderParam} />
+    if (column.renderGroupIcon) {
+      renderParam.renderBag.groupIcon = (
+        <RenderCellHookComponent
+          render={column.renderGroupIcon}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
       );
     }
-    return renderValue;
-  }, [column, hidden, ...Object.values(renderParam)]);
+    if (column.renderSelectionCheckBox) {
+      // make selectionCheckBox available in the render bag
+      // when we have column.renderSelectionCheckBox refined as a function
+      // as people might want to use the default value
+      // and enhance it
+      renderParam.renderBag.selectionCheckBox = (
+        <RenderCellHookComponent
+          render={defaultRenderSelectionCheckBox}
+          renderParam={renderParam}
+        />
+      );
+
+      if (column.renderSelectionCheckBox !== true) {
+        renderParam.renderBag.selectionCheckBox = (
+          <RenderCellHookComponent
+            render={column.renderSelectionCheckBox}
+            renderParam={{
+              ...renderParam,
+              renderBag: { ...renderParam.renderBag },
+            }}
+          />
+        );
+      }
+    }
+
+    if (column.renderValue) {
+      renderParam.renderBag.value = (
+        <RenderCellHookComponent
+          render={column.renderValue}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
+      );
+    }
+
+    if (rowInfo.isGroupRow && column.renderGroupValue) {
+      renderParam.renderBag.value = (
+        <RenderCellHookComponent
+          render={column.renderGroupValue}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
+      );
+    }
+    if (!rowInfo.isGroupRow && column.renderLeafValue) {
+      renderParam.renderBag.value = (
+        <RenderCellHookComponent
+          render={column.renderLeafValue}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
+      );
+    }
+
+    if (column.render) {
+      return (
+        <RenderCellHookComponent
+          render={column.render}
+          renderParam={renderParam}
+        />
+      );
+    }
+
+    return (
+      <>
+        {renderParam.renderBag.groupIcon}
+        {renderParam.renderBag.selectionCheckBox}
+        {renderParam.renderBag.value}
+      </>
+    );
+  }, [
+    column,
+    hidden,
+    ...objectValuesExcept(renderParam, {
+      renderBag: true,
+    }),
+  ]);
 
   const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
     ...rest,
@@ -297,18 +441,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     renderChildren,
   };
 
-  const ContextProvider =
-    InfiniteTableColumnCellContext.Provider as React.Provider<
-      InfiniteTableColumnCellContextType<T>
-    >;
+  // const ContextProvider =
+  //   InfiniteTableColumnCellContext.Provider as React.Provider<
+  //     InfiniteTableColumnCellContextType<T>
+  //   >;
 
-  return (
-    <ContextProvider
-      value={renderParam as InfiniteTableColumnCellContextType<T>}
-    >
-      <InfiniteTableCell<T> {...cellProps}></InfiniteTableCell>
-    </ContextProvider>
-  );
+  return <InfiniteTableCell<T> {...cellProps}></InfiniteTableCell>;
 }
 
 export const InfiniteTableColumnCell = React.memo(

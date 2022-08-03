@@ -280,6 +280,9 @@ export const ThemeVars = createGlobalThemeContract(
          */
         activeBorder: 'active-cell-border',
       },
+      SelectionCheckBox: {
+        marginInline: 'selection-checkbox-margin-inline',
+      },
       Row: {
         /**
          * Background color for rows. Defaults to [`--infinite-background`](#background).
@@ -423,6 +426,11 @@ const CellVars = {
   [ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused]: '0.1',
 };
 
+const SelectionCheckBoxVars = {
+  [ThemeVars.components.SelectionCheckBox
+    .marginInline]: `${ThemeVars.spacing[2]}`,
+};
+
 const RowVars = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
@@ -463,6 +471,8 @@ const LightTheme = {
   [ThemeVars.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.background]: 'white',
   [ThemeVars.minHeight]: '100px',
+
+  ...SelectionCheckBoxVars,
   ...LoadMaskVars,
   ...HeaderCellVars,
   ...HeaderVars,

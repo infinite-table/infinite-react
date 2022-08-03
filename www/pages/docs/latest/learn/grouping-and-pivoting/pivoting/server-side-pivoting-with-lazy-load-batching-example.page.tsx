@@ -73,7 +73,7 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> =
   {
     id: 'group-col',
     // while loading, we can render a custom loading icon
-    renderGroupIcon: ({ groupIcon, data }) =>
+    renderGroupIcon: ({ renderBag: { groupIcon }, data }) =>
       !data ? '🤷‍' : groupIcon,
     // while we have no data, we can render a placeholder
     renderValue: ({ data, value }) =>

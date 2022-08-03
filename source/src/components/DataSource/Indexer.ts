@@ -1,10 +1,10 @@
 export class Indexer<PrimaryKeyType = string> {
   indexToPrimaryKey: Map<number, PrimaryKeyType> = new Map();
-  primaryKeyToIndex: Map<PrimaryKeyType, number> = new Map();
+  primaryKeyToIndex: Map<string, number> = new Map();
 
   add(index: number, primaryKey: PrimaryKeyType) {
     this.indexToPrimaryKey.set(index, primaryKey);
-    this.primaryKeyToIndex.set(primaryKey, index);
+    this.primaryKeyToIndex.set(`${primaryKey}`, index);
   }
 
   clear() {
@@ -13,7 +13,7 @@ export class Indexer<PrimaryKeyType = string> {
   }
 
   getIndexOf(primaryKey: PrimaryKeyType) {
-    return this.primaryKeyToIndex.get(primaryKey);
+    return this.primaryKeyToIndex.get(`${primaryKey}`);
   }
 
   getPrimaryKeyFor(index: number) {

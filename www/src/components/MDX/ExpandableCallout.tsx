@@ -57,9 +57,7 @@ function ExpandableCallout({
             variant.textColor
           )}
         />
-        {variant.title}
-        {title ? ' – ' : ''}
-        {title}
+        {title ?? variant.title}
       </h3>
       <div className="relative">
         <div ref={contentRef} className="py-2">

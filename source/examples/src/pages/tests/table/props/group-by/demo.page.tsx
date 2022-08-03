@@ -39,55 +39,41 @@ const dataSource = () => {
     });
 };
 
-const columns = new Map<string, InfiniteTableColumn<Developer>>([
-  [
-    'identifier',
-    {
-      field: 'id',
-      // render: ({ value, rowInfo }) => {
-      //   if (rowInfo.isGroupRow) {
-      //     return rowInfo.reducerResults.salary;
-      //   }
+const columns: Record<string, InfiniteTableColumn<Developer>> = {
+  identifier: {
+    field: 'id',
+    // render: ({ value, rowInfo }) => {
+    //   if (rowInfo.isGroupRow) {
+    //     return rowInfo.reducerResults.salary;
+    //   }
 
-      //   return value;
-      // },
+    //   return value;
+    // },
+  },
+  name: {
+    field: 'firstName',
+    name: 'First Name',
+  },
+  city: { field: 'city' },
+
+  fullName: {
+    name: 'Full name',
+    render: ({ data }) => {
+      return (
+        <>
+          {data?.firstName} - {data?.lastName}
+        </>
+      );
     },
-  ],
-  [
-    'name',
-    {
-      field: 'firstName',
-      name: 'First Name',
-    },
-  ],
-  ['city', { field: 'city' }],
-  [
-    'fullName',
-    {
-      name: 'Full name',
-      render: ({ data }) => {
-        return (
-          <>
-            {data?.firstName} - {data?.lastName}
-          </>
-        );
-      },
-    },
-  ],
-  [
-    'age',
-    {
-      field: 'age',
-      type: 'number',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-    },
-  ],
-]);
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+  },
+  country: {
+    field: 'country',
+  },
+};
 
 const domProps = {
   style: { height: '80vh' },

@@ -5,7 +5,7 @@ import type {
 import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroups,
-  InfiniteTablePropColumnsMap,
+  InfiniteTableColumnsMap,
 } from '../../components/InfiniteTable';
 import type {
   InfiniteTablePivotColumn,
@@ -23,7 +23,7 @@ import { once } from '../DeepMap/once';
 import { AggregationReducer } from '.';
 
 export type ComputedColumnsAndGroups<DataType> = {
-  columns: InfiniteTablePropColumnsMap<
+  columns: InfiniteTableColumnsMap<
     DataType,
     InfiniteTablePivotColumn<DataType>
   >;
@@ -93,7 +93,7 @@ export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
   ).map((key) => {
     return { ...reducers[key], id: key };
   });
-  const columns: InfiniteTablePropColumnsMap<
+  const columns: InfiniteTableColumnsMap<
     DataType,
     InfiniteTablePivotColumn<DataType>
   > = new Map<string, InfiniteTablePivotColumn<DataType>>([

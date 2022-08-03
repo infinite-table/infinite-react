@@ -36,27 +36,19 @@ export default () => {
           }}
           rowHeight={40}
           columnDefaultWidth={150}
-          columns={
-            new Map([
-              [
-                'OrderId',
-                {
-                  field: 'OrderId',
-                  type: 'number',
-                },
-              ],
-              [
-                'CompanyName',
-                {
-                  field: 'CompanyName',
-                },
-              ],
-              ['ItemCount', { field: 'ItemCount', type: 'number' }],
-              ['OrderCost', { field: 'OrderCost', type: 'number' }],
-              ['ShipCountry', { field: 'ShipCountry' }],
-              ['ShipVia', { field: 'ShipVia' }],
-            ])
-          }
+          columns={{
+            OrderId: {
+              field: 'OrderId',
+              type: 'number',
+            },
+            CompanyName: {
+              field: 'CompanyName',
+            },
+            ItemCount: { field: 'ItemCount', type: 'number' },
+            OrderCost: { field: 'OrderCost', type: 'number' },
+            ShipCountry: { field: 'ShipCountry' },
+            ShipVia: { field: 'ShipVia' },
+          }}
         />
       </DataSource>
     </React.StrictMode>

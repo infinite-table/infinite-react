@@ -11,7 +11,7 @@ export function getReducerValue<T>(
   const reducer: DataSourceAggregationReducer<T, any> = container[key];
   let value = reducer.initialValue;
 
-  value = data.reduce((acc, item) => {
+  value = data.reduce((acc, item, index) => {
     const currentValue = reducer.getter
       ? reducer.getter(item)
       : reducer.field
@@ -19,7 +19,7 @@ export function getReducerValue<T>(
       : null;
 
     return typeof reducer.reducer === 'function'
-      ? reducer.reducer(acc, currentValue, item)
+      ? reducer.reducer(acc, currentValue, item, index)
       : 0;
   }, value);
 

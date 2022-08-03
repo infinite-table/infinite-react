@@ -1243,9 +1243,10 @@ If it's a function, it will be called with the following arguments:
 
 </Prop>
 
-<Prop name="groupRenderStrategy" type="'single-column'|'multi-column'|'inline'">
+<Prop name="groupRenderStrategy" type="'single-column'|'multi-column'">
 
-> Determines how grouping is rendered - whether a single or multiple columns are generated. In case of inline, no group column is generated but the column corresponding to the group field is used.
+> Determines how grouping is rendered - whether a single or multiple columns are generated. 
+<!-- In case of inline, no group column is generated but the column corresponding to the group field is used. -->
 
 <Sandpack>
 

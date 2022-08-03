@@ -11,7 +11,7 @@ import {
   InfiniteTable,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
-import { InfiniteTableGroupColumnRenderIconFunction } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableColumn';
+import { InfiniteTable_HasGrouping_RowInfoGroup } from '@infinite-table/infinite-react/utils/groupAndPivot';
 
 import * as React from 'react';
 
@@ -93,9 +93,13 @@ const domProps = {
     height: '80vh',
   },
 };
-const GroupIconRenderer: InfiniteTableGroupColumnRenderIconFunction<
-  Developer
-> = ({ toggleCurrentGroupRow, collapsed }) => {
+const GroupIconRenderer = ({
+  toggleCurrentGroupRow,
+  rowInfo,
+}: {
+  toggleCurrentGroupRow: VoidFunction;
+  rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<any>;
+}) => {
   const handleToggle = React.useCallback(
     () => toggleCurrentGroupRow(),
     [toggleCurrentGroupRow],
@@ -104,7 +108,7 @@ const GroupIconRenderer: InfiniteTableGroupColumnRenderIconFunction<
   // NOTE: Workaround is to change onClick by onClick={() => toggleCurrentGroupRow()} in this use case
   return (
     <div style={{ display: 'flex' }} onClick={handleToggle}>
-      {collapsed ? '>' : 'v'}&nbsp;
+      {rowInfo.collapsed ? '>' : 'v'}&nbsp;
     </div>
   );
 };

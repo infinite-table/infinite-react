@@ -8,7 +8,6 @@ import {
 } from '@infinite-table/infinite-react';
 
 import type {
-  InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
@@ -49,32 +48,27 @@ const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
   age: { field: 'age', ...avgReducer },
 };
 
-const columns: InfiniteTablePropColumns<Developer> = new Map<
-  string,
-  InfiniteTableColumn<Developer>
->([
-  ['preferredLanguage', { field: 'preferredLanguage' }],
-  ['age', { field: 'age' }],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
+const columns: InfiniteTablePropColumns<Developer> = {
+  preferredLanguage: { field: 'preferredLanguage' },
+  age: { field: 'age' },
 
-      // render: ({ rowInfo, data }) => {
-      //   return rowInfo.isGroupRow ? rowInfo.collapsed : data.age;
-      // },
-    },
-  ],
-  ['canDesign', { field: 'canDesign' }],
-  ['country', { field: 'country' }],
-  ['firstName', { field: 'firstName' }],
-  ['stack', { field: 'stack' }],
-  ['id', { field: 'id' }],
-  ['hobby', { field: 'hobby' }],
-  ['city', { field: 'city' }],
-  ['currency', { field: 'currency' }],
-]);
+  salary: {
+    field: 'salary',
+    type: 'number',
+
+    // render: ({ rowInfo, data }) => {
+    //   return rowInfo.isGroupRow ? rowInfo.collapsed : data.age;
+    // },
+  },
+  canDesign: { field: 'canDesign' },
+  country: { field: 'country' },
+  firstName: { field: 'firstName' },
+  stack: { field: 'stack' },
+  id: { field: 'id' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  currency: { field: 'currency' },
+};
 
 const domProps = { style: { height: '100vh' } };
 

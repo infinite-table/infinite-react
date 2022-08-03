@@ -17,15 +17,17 @@ import { useLatest } from '../useLatest';
 import { usePrevious } from '../usePrevious';
 import {
   ComponentInterceptedActions,
-  ComponentMappedCallbackParams,
+  ComponentMappedCallbacks,
   ComponentStateActions,
   ComponentStateContext,
   ComponentStateGeneratedActions,
 } from './types';
 
-export const notifyChange = (props: any, propName: string, newValue: any) => {
-  const upperPropName = toUpperFirst(propName);
-  const callbackPropName = `on${upperPropName}Change` as string;
+export const notifyChange = (
+  props: any,
+  callbackPropName: string,
+  newValue: any,
+) => {
   const callbackProp = props[callbackPropName] as Function;
 
   if (typeof callbackProp === 'function') {
@@ -52,7 +54,7 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
   propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE>,
   allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
   interceptedActions?: ComponentInterceptedActions<T_STATE>,
-  mappedCallbackParams?: ComponentMappedCallbackParams<T_STATE>,
+  mappedCallbacks?: ComponentMappedCallbacks<T_STATE>,
 ): ComponentStateGeneratedActions<T_STATE> {
   const state = getState();
   return Object.keys(state).reduce((actions, stateKey) => {
@@ -76,13 +78,18 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
       }
 
       // it's important that we notify with the value that we receive
-      //directly from the setter (see continuation below)
+      // directly from the setter (see continuation below)
       if (notifyTheChange) {
-        const valueToNotify =
-          mappedCallbackParams && mappedCallbackParams[key]
-            ? mappedCallbackParams[key](value, state)
-            : value;
-        notifyChange(props, stateKey, valueToNotify);
+        let callbackParam = value;
+        let callbackName = `on${toUpperFirst(stateKey)}Change` as string;
+
+        if (mappedCallbacks && mappedCallbacks[key]) {
+          const res = mappedCallbacks[key](value, state);
+          callbackName = res.callbackName || callbackName;
+          callbackParam = res.callbackParam;
+        }
+
+        notifyChange(props, callbackName, callbackParam);
       }
 
       //@ts-ignore
@@ -164,7 +171,7 @@ type ComponentStateRootConfig<
   interceptActions?: ComponentInterceptedActions<
     COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
   >;
-  mappedCallbackParams?: ComponentMappedCallbackParams<
+  mappedCallbacks?: ComponentMappedCallbacks<
     COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
   >;
   onPropChange?: (
@@ -390,7 +397,7 @@ export function getComponentStateRoot<
         propsToForward as ForwardPropsToStateFnResult<T_PROPS, COMPONENT_STATE>,
         allowedControlledPropOverrides,
         config.interceptActions,
-        config.mappedCallbackParams,
+        config.mappedCallbacks,
       );
 
       return generatedActions;

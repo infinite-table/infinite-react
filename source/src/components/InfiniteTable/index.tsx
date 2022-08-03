@@ -180,6 +180,7 @@ export const InfiniteTableComponent = React.memo(
           actions,
           getDataSourceState,
           getComputed,
+          imperativeApi,
           key: event.key,
           shiftKey: !!event.shiftKey,
         })

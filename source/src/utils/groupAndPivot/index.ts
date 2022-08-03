@@ -19,7 +19,8 @@ import {
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
 import { DeepMap } from '../DeepMap';
 
-export const SELECTION_REDUCER_KEY = '__selectionReducer';
+export const GROUP_SELECTED_REDUCER_KEY = '__groupFullySelected';
+export const GROUP_CHILDREN_SELECTED_COUNT_KEY = '__groupChildrenSelectedCount';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -102,6 +103,11 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   isGroupRow: true;
 
   /**
+   * The count of all selected leaf nodes (normal rows) inside the group that are selected
+   */
+  childrenSelectedCount: number;
+
+  /**
    * This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting,
    * in the order in which they are visible in the table
    */
@@ -117,6 +123,7 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   /**
    * The count of all leaf nodes (normal rows) that are inside this group.
    * This count is the same as the length of the groupData array property.
+   *
    */
   groupCount: number;
 
@@ -899,7 +906,9 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
-    rowSelected: !!reducerResults[SELECTION_REDUCER_KEY] || false,
+    rowSelected: !!reducerResults[GROUP_SELECTED_REDUCER_KEY] || false,
+    childrenSelectedCount:
+      (reducerResults[GROUP_CHILDREN_SELECTED_COUNT_KEY] as any as number) || 0,
     id: `${groupKeys}`, //TODO improve this
     collapsed,
     dataSourceHasGrouping: true,
@@ -1104,7 +1113,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   indexInGroup: index,
                   indexInAll,
                   groupBy: groupByStrings,
-                  groupNesting,
+                  groupNesting: groupNesting + 1,
                   groupCount: enhancedGroupData.groupCount,
                 };
               if (isRowSelected) {

@@ -14,6 +14,14 @@ Brand-specific accent color. This probably needs override to match your app.
 --infinite-accent-color
 ```
 
+### Error color
+
+
+
+```css
+--infinite-error-color
+```
+
 ### Color
 
 The text color inside the component
@@ -284,14 +292,6 @@ The height of the column header.
 --infinite-column-header-height
 ```
 
-### Header cell dragging background
-
-
-
-```css
---infinite-header-cell-dragging-background
-```
-
 ### Header cell background
 
 Background for header cells.
@@ -300,6 +300,14 @@ Overriden in the `dark` theme.
 
 ```css
 --infinite-header-cell-background
+```
+
+### Header cell hover background
+
+
+
+```css
+--infinite-header-cell-hover-background
 ```
 
 ### Header cell padding
@@ -342,6 +350,42 @@ Overriden in the `dark` theme.
 --infinite-header-cell-sort-icon-margin
 ```
 
+### Resize handle active area width
+
+The width of the area you can hover over in order to grab the column resize handle.
+Defaults to `20px`.
+
+The purpose of this active area is to make it easier to grab the resize handle.
+
+```css
+--infinite-resize-handle-active-area-width
+```
+
+### Resize handle width
+
+The width of the colored column resize handle that is displayed on hover and on drag. Defaults to `2px`
+
+```css
+--infinite-resize-handle-width
+```
+
+### Resize handle hover background
+
+The color of the column resize handle - the resize handle is the visible indicator that you see
+when hovering over the right-edge of a resizable column. Also visible on drag while doing a column resize.
+
+```css
+--infinite-resize-handle-hover-background
+```
+
+### Resize handle constrained hover background
+
+The color of the column resize handle when it has reached a min/max constraint.
+
+```css
+--infinite-resize-handle-constrained-hover-background
+```
+
 ### Cell padding
 
 
@@ -382,6 +426,22 @@ Overriden in the `dark` theme - eg: `1px solid #2a323d`
 
 ```css
 --infinite-cell-border-radius
+```
+
+### Column reorder effect duration
+
+
+
+```css
+--infinite-column-reorder-effect-duration
+```
+
+### Pinned cell border
+
+
+
+```css
+--infinite-pinned-cell-border
 ```
 
 ### Cell color
@@ -518,6 +578,14 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 --infinite-active-cell-border
 ```
 
+### Selection checkbox margin inline
+
+
+
+```css
+--infinite-selection-checkbox-margin-inline
+```
+
 ### Row background
 
 Background color for rows. Defaults to [`--infinite-background`](#background).
@@ -536,6 +604,14 @@ Overriden in `dark` theme.
 
 ```css
 --infinite-row-odd-background
+```
+
+### Row selected background
+
+
+
+```css
+--infinite-row-selected-background
 ```
 
 ### Active row background
@@ -615,6 +691,14 @@ Overriden in the `dark` theme.
 
 ```css
 --infinite-row-hover-background
+```
+
+### Row selected hover background
+
+
+
+```css
+--infinite-row-selected-hover-background
 ```
 
 ### Group row background

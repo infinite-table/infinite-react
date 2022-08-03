@@ -1,7 +1,10 @@
 import * as React from 'react';
 
 import { InfiniteTableColumnRenderParam } from '..';
-import { InfiniteTable_HasGrouping_RowInfoGroup } from '../../../utils/groupAndPivot';
+import {
+  InfiniteTableRowInfo,
+  InfiniteTable_HasGrouping_RowInfoGroup,
+} from '../../../utils/groupAndPivot';
 import { join } from '../../../utils/join';
 import { stripVar } from '../../../utils/stripVar';
 import { DataSourceGroupBy } from '../../DataSource';
@@ -10,13 +13,13 @@ import { Renderable } from '../../types/Renderable';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { LoadingIcon } from '../components/icons/LoadingIcon';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
+
 import { ThemeVars } from '../theme.css';
 import {
+  InfiniteTableColumn,
   InfiniteTableGeneratedGroupColumn,
-  InfiniteTableGroupColumnRenderIconParam,
 } from '../types/InfiniteTableColumn';
 import {
-  InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
@@ -25,26 +28,97 @@ import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
 
 import { RenderHookComponent } from './RenderHookComponent';
 
+function styleForGroupColumn<T>({
+  rowInfo,
+}: {
+  rowInfo: InfiniteTableRowInfo<T>;
+}) {
+  return {
+    [stripVar(ThemeVars.components.Row.groupNesting)]:
+      rowInfo.dataSourceHasGrouping
+        ? rowInfo.isGroupRow
+          ? rowInfo.groupNesting - 1
+          : rowInfo.groupNesting
+        : 0,
+  };
+}
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
   groupRenderStrategy,
-  toggleGroupRow,
 }: {
-  toggleGroupRow: (groupRowKeys: any[]) => void;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupIndexForColumn: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
+    const { rowInfo, renderBag } = renderOptions;
 
-    if (column.renderValue) {
-      value = (
-        <RenderHookComponent
-          render={column.renderValue}
-          renderParam={renderOptions}
-        />
-      );
+    let { value: valueToRender, groupIcon, selectionCheckBox } = renderBag;
+
+    // for groupRenderStrategy !== 'inline', we work on group rows
+    // const groupRowInfo = (
+    //   groupRenderStrategy !== 'inline'
+    //     ? rowInfo
+    //     : // while for inline, we need to still work on group rows, but the current row is a data item
+    //       // so we go find the group row via the parents of enhanced data
+    //       (rowInfo.isGroupRow && rowInfo.parents?.[groupIndexForColumn]) ||
+    //       rowInfo
+    // ) as InfiniteTable_HasGrouping_RowInfoGroup<T>;
+    const groupRowInfo = rowInfo as InfiniteTable_HasGrouping_RowInfoGroup<T>;
+
+    if (groupRenderStrategy === 'multi-column') {
+      if (
+        groupIndexForColumn + 1 !== groupRowInfo.groupNesting &&
+        groupRowInfo.isGroupRow
+      ) {
+        return null;
+      }
+    } else if (
+      groupRenderStrategy === 'single-column' &&
+      !groupRowInfo.isGroupRow
+    ) {
+      // groupIcon = null;
+      // return null;
     }
+
+    // if (!groupIcon) {
+    //   return valueToRender;
+    // }
+
+    return (
+      <div
+        className={join(
+          display.flex,
+          alignItems.center,
+          groupRenderStrategy === 'single-column' ||
+            (groupRenderStrategy === 'multi-column' &&
+              !rowInfo.isGroupRow &&
+              selectionCheckBox)
+            ? GroupRowExpanderCls
+            : null,
+        )}
+      >
+        {groupIcon}
+        {selectionCheckBox}
+
+        <div className={cssEllipsisClassName}>{valueToRender ?? null}</div>
+      </div>
+    );
+  };
+}
+
+export function getGroupColumnRenderGroupIcon<T>({
+  groupIndexForColumn,
+  groupRenderStrategy,
+  toggleGroupRow,
+  initialRenderGroupIcon,
+}: {
+  toggleGroupRow: (groupRowKeys: any[]) => void;
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+  groupIndexForColumn: number;
+  initialRenderGroupIcon?: InfiniteTableColumn<T>['renderGroupIcon'];
+}) {
+  return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
+    const { rowInfo, value, groupBy, pivotBy } = renderOptions;
 
     // for groupRenderStrategy !== 'inline', we work on group rows
     const groupRowInfo = (
@@ -61,7 +135,6 @@ export function getGroupColumnRender<T>({
     }
 
     const collapsed = groupRowInfo!.collapsed;
-    const groupKeys = groupRowInfo!.groupKeys!;
 
     if (groupRenderStrategy === 'inline') {
       if (groupRowInfo.groupCount === 1) {
@@ -76,10 +149,15 @@ export function getGroupColumnRender<T>({
         return null;
       }
 
-      if (groupIndexForColumn + 1 !== groupRowInfo.groupNesting) {
-        return null;
+      if (groupRenderStrategy === 'multi-column') {
+        if (groupIndexForColumn + 1 !== groupRowInfo.groupNesting) {
+          return null;
+        }
       }
     }
+
+    const groupKeys = groupRowInfo!.groupKeys!;
+
     let icon: Renderable = null;
 
     const showExpanderIcon = pivotBy
@@ -102,25 +180,20 @@ export function getGroupColumnRender<T>({
           }}
         />
       );
-      icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon ? (
+      icon = defaultIcon;
+    }
+
+    if (initialRenderGroupIcon) {
+      renderOptions.renderBag.groupIcon = icon;
+      icon = (
         <RenderHookComponent
-          render={(column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!}
-          renderParam={Object.assign(
-            { collapsed, groupIcon: defaultIcon },
-            renderOptions,
-          )}
+          render={initialRenderGroupIcon!}
+          renderParam={renderOptions}
         />
-      ) : (
-        defaultIcon
       );
     }
 
-    return (
-      <div className={join(display.flex, alignItems.center)}>
-        {icon}
-        <div className={cssEllipsisClassName}>{value ?? null}</div>
-      </div>
-    );
+    return icon;
   };
 }
 export function getColumnForGroupBy<T>(
@@ -138,12 +211,19 @@ export function getColumnForGroupBy<T>(
     header: `Group by ${groupByForColumn.field}`,
     groupByField: groupByForColumn.field as string,
     sortable: false,
+    // renderSelectionCheckBox: true,
+    style: styleForGroupColumn,
     render: getGroupColumnRender({
+      groupIndexForColumn,
+      groupRenderStrategy,
+    }),
+    ...groupByForColumn.column,
+    renderGroupIcon: getGroupColumnRenderGroupIcon({
+      initialRenderGroupIcon: groupByForColumn.column?.renderGroupIcon,
       groupIndexForColumn,
       toggleGroupRow,
       groupRenderStrategy,
     }),
-    ...groupByForColumn.column,
   };
 
   if (groupColumnFromProps) {
@@ -168,91 +248,30 @@ export function getSingleGroupColumn<T>(
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: Partial<InfiniteTablePropGroupColumn<T>>,
 ) {
+  const theGroupColumnFromProps =
+    typeof groupColumnFromProps === 'function'
+      ? groupColumnFromProps(options, toggleGroupRow)
+      : groupColumnFromProps;
+
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group`,
     groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
-    style: ({ rowInfo }) => ({
-      [stripVar(ThemeVars.components.Row.groupNesting)]: rowInfo.isGroupRow
-        ? rowInfo.groupNesting! - 1
-        : 0,
+    renderSelectionCheckBox: true,
+    style: styleForGroupColumn,
+
+    render: getGroupColumnRender({
+      groupIndexForColumn: 0,
+      groupRenderStrategy: 'single-column',
     }),
-    render: (renderOptions) => {
-      let { value, rowInfo, column, groupBy, pivotBy } = renderOptions;
-
-      if (column.renderValue) {
-        value = column.renderValue(renderOptions);
-      }
-
-      const collapsed = rowInfo.isGroupRow ? rowInfo.collapsed : false;
-
-      let icon: Renderable = null;
-
-      const showExpanderIcon = rowInfo.isGroupRow
-        ? pivotBy
-          ? (rowInfo.groupKeys?.length || 0) < groupBy?.length
-          : (rowInfo.groupKeys?.length || 0) <= groupBy?.length
-        : false;
-
-      const isLoading = showLoadingIcon(rowInfo);
-
-      if (isLoading) {
-        icon = <LoadingIcon />;
-      } else if (showExpanderIcon) {
-        const defaultIcon = (
-          <ExpanderIcon
-            expanded={!collapsed}
-            onChange={() => {
-              if (!rowInfo.isGroupRow) {
-                return;
-              }
-              toggleGroupRow(rowInfo.groupKeys!);
-            }}
-          />
-        );
-        icon = defaultIcon;
-        if ((column as InfiniteTableGroupColumnBase<T>).renderGroupIcon) {
-          const renderParam = Object.assign(
-            { collapsed, groupIcon: defaultIcon },
-            renderOptions,
-          ) as InfiniteTableGroupColumnRenderIconParam<T>;
-
-          icon = (column as InfiniteTableGroupColumnBase<T>).renderGroupIcon!(
-            renderParam,
-          );
-        }
-      }
-
-      return (
-        <div
-          className={join(display.flex, alignItems.center, GroupRowExpanderCls)}
-        >
-          {icon}
-          <div className={cssEllipsisClassName}>{value ?? null}</div>
-        </div>
-      );
-    },
+    ...groupColumnFromProps,
+    renderGroupIcon: getGroupColumnRenderGroupIcon({
+      initialRenderGroupIcon: theGroupColumnFromProps?.renderGroupIcon,
+      groupIndexForColumn: 0,
+      toggleGroupRow,
+      groupRenderStrategy: 'single-column',
+    }),
   };
-
-  // if (options.groupRenderStrategy === 'single-column-extended') {
-  //   generatedGroupColumn.colspan = () => {
-  //     return 2;
-  //   };
-  // }
-
-  if (groupColumnFromProps) {
-    if (typeof groupColumnFromProps === 'function') {
-      generatedGroupColumn = {
-        ...generatedGroupColumn,
-        ...groupColumnFromProps(options, toggleGroupRow),
-      } as InfiniteTableGeneratedGroupColumn<T>;
-    } else {
-      generatedGroupColumn = {
-        ...generatedGroupColumn,
-        ...groupColumnFromProps,
-      } as InfiniteTableGeneratedGroupColumn<T>;
-    }
-  }
 
   return generatedGroupColumn;
 }

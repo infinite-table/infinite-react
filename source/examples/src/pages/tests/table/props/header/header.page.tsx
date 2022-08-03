@@ -38,36 +38,25 @@ const data = [
   },
 ];
 
-const columns = new Map<string, InfiniteTableColumn<Person>>([
-  [
-    'Id',
-    {
-      field: 'Id',
-      type: 'number',
-    },
-  ],
-  [
-    'FirstName',
-    {
-      field: 'FirstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'LastName',
-    {
-      field: 'LastName',
-      header: 'Last Name',
-    },
-  ],
-  [
-    'Age',
-    {
-      field: 'Age',
-      type: 'number',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  Id: {
+    field: 'Id',
+    type: 'number',
+  },
+  FirstName: {
+    field: 'FirstName',
+    header: 'First Name',
+  },
+  LastName: {
+    field: 'LastName',
+    header: 'Last Name',
+  },
+  Age: {
+    field: 'Age',
+    type: 'number',
+  },
+};
+
 export default () => {
   const [header, setHeader] = React.useState(true);
   const toggle = () => setHeader((header) => !header);

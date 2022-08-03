@@ -8,84 +8,62 @@ import * as React from 'react';
 
 import { data, Person } from './people';
 
-const columns = new Map<string, InfiniteTableColumn<Person>>([
-  [
-    'groupcol',
-    {
-      type: 'number',
-      header: 'Group',
-      render: ({ value, rowInfo }) => {
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  groupcol: {
+    type: 'number',
+    header: 'Group',
+    render: ({ value, rowInfo }) => {
+      return (
+        <div
+          style={{
+            paddingLeft: rowInfo.isGroupRow
+              ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
+                30
+              : 0,
+          }}
+        >
+          {rowInfo.isGroupRow
+            ? rowInfo.groupKeys
+              ? rowInfo.value
+              : value ?? null
+            : null}
+        </div>
+      );
+    },
+  },
+  name: {
+    field: 'name',
+  },
+  country: {
+    field: 'country',
+  },
+  department: {
+    field: 'department',
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+
+    render: ({ value, rowInfo }) => {
+      if (rowInfo.isGroupRow) {
         return (
-          <div
-            style={{
-              paddingLeft: rowInfo.isGroupRow
-                ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
-                  30
-                : 0,
-            }}
-          >
-            {rowInfo.isGroupRow
-              ? rowInfo.groupKeys
-                ? rowInfo.value
-                : value ?? null
-              : null}
-          </div>
+          <>
+            Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+            <b>{rowInfo.reducerResults![0]}</b>
+          </>
         );
-      },
+      }
+      return <>{value}</>;
     },
-  ],
-  [
-    'name',
-    {
-      field: 'name',
-    },
-  ],
-
-  [
-    'country',
-    {
-      field: 'country',
-    },
-  ],
-  [
-    'department',
-    {
-      field: 'department',
-    },
-  ],
-  [
-    'age',
-    {
-      field: 'age',
-      type: 'number',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-
-      render: ({ value, rowInfo }) => {
-        if (rowInfo.isGroupRow) {
-          return (
-            <>
-              Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults![0]}</b>
-            </>
-          );
-        }
-        return <>{value}</>;
-      },
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-    },
-  ],
-]);
+  },
+  team: {
+    field: 'team',
+  },
+};
 const columnAggregations: DataSourcePropAggregationReducers<Person> = {
   salary: {
     initialValue: 0,

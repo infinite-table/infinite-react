@@ -63,56 +63,39 @@ const dataSource: DataSourceData<Developer> = ({ filterValue, sortInfo }) => {
     });
 };
 
-const columns = new Map<string, InfiniteTableColumn<Developer>>([
-  [
-    'identifier',
-    {
-      field: 'id',
+const columns: Record<string, InfiniteTableColumn<Developer>> = {
+  identifier: {
+    field: 'id',
+  },
+  name: {
+    field: 'firstName',
+    name: 'First Name',
+  },
+  city: { field: 'city' },
+  stack: { field: 'stack' },
+
+  fullName: {
+    name: 'Full name',
+    render: ({ data }) => {
+      return (
+        <>
+          {data?.firstName} - {data?.lastName}
+        </>
+      );
     },
-  ],
-  [
-    'name',
-    {
-      field: 'firstName',
-      name: 'First Name',
-    },
-  ],
-  ['city', { field: 'city' }],
-  ['stack', { field: 'stack' }],
-  [
-    'fullName',
-    {
-      name: 'Full name',
-      render: ({ data }) => {
-        return (
-          <>
-            {data?.firstName} - {data?.lastName}
-          </>
-        );
-      },
-    },
-  ],
-  [
-    'age',
-    {
-      field: 'age',
-      type: 'number',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-    },
-  ],
-]);
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
+  country: {
+    field: 'country',
+  },
+};
 const domProps: React.HTMLAttributes<HTMLDivElement> = {
   style: {
     margin: '5px',

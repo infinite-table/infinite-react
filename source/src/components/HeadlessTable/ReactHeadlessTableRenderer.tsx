@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { RefCallback } from 'react';
 
 import { Logger } from '../../utils/debug';

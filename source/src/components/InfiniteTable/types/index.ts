@@ -10,7 +10,6 @@ import type {
   InfiniteTableColumnRenderValueParam,
   InfiniteTableColumnRowspanParam,
   InfiniteTablePivotColumn,
-  InfiniteTableGroupColumnRenderIconFunction,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -31,7 +30,7 @@ import type {
   InfiniteTablePropFilterEditors,
   InfiniteTablePropRowClassName,
   InfiniteTablePropColumns,
-  InfiniteTablePropColumnsMap,
+  InfiniteTableColumnsMap,
   InfiniteTablePropComponents,
   InfiniteTableGroupColumnFunction,
   InfiniteTableGroupColumnGetterOptions,
@@ -50,7 +49,6 @@ import type { InfiniteTableState } from './InfiniteTableState';
 export type {
   Scrollbars,
   InfiniteTablePropHeaderOptions,
-  InfiniteTableGroupColumnRenderIconFunction,
   InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTableColumnAggregator,
   InfiniteTableComputedValues,
@@ -58,7 +56,7 @@ export type {
   InfiniteTablePivotColumn,
   InfiniteTablePropColumns,
   InfiniteTablePropGroupColumn,
-  InfiniteTablePropColumnsMap,
+  InfiniteTableColumnsMap,
   InfiniteTableRowInfo,
   InfiniteTableGroupColumnFunction,
   InfiniteTableGroupColumnBase,

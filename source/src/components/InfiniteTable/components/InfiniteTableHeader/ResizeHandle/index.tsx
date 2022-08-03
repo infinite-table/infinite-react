@@ -1,4 +1,5 @@
-import React, { PointerEvent, useRef, useState } from 'react';
+import { PointerEvent, useRef, useState } from 'react';
+import * as React from 'react';
 import { FlexComputeResizeResult } from '../../../../flexbox';
 import { internalProps } from '../../../internalProps';
 import { InfiniteTableComputedColumn } from '../../../types';

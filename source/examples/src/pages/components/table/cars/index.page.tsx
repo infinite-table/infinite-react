@@ -9,76 +9,62 @@ import {
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
-const columns = new Map<string, InfiniteTableColumn<CarSale>>([
-  [
-    'Group column',
-    {
-      type: 'number',
-      header: 'Group',
-      sortable: false,
+const columns: Record<string, InfiniteTableColumn<CarSale>> = {
+  'Group column': {
+    type: 'number',
+    header: 'Group',
+    sortable: false,
 
-      render: ({ value, rowInfo }) => {
+    render: ({ value, rowInfo }) => {
+      return (
+        <div
+          style={{
+            paddingLeft: rowInfo.isGroupRow
+              ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
+                30
+              : 0,
+          }}
+        >
+          {rowInfo.isGroupRow
+            ? rowInfo.groupKeys
+              ? rowInfo.value
+              : value ?? null
+            : null}
+        </div>
+      );
+    },
+  },
+  make: { field: 'make' },
+  model: { field: 'model' },
+  color: { field: 'color' },
+
+  cat: {
+    field: 'category',
+    render: ({ value, rowInfo }) => <>{rowInfo.isGroupRow ? 'hello' : value}</>,
+  },
+  count: {
+    field: 'sales',
+    type: 'number',
+    render: ({ value, rowInfo }) => {
+      if (rowInfo.isGroupRow) {
         return (
-          <div
-            style={{
-              paddingLeft: rowInfo.isGroupRow
-                ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
-                  30
-                : 0,
-            }}
-          >
-            {rowInfo.isGroupRow
-              ? rowInfo.groupKeys
-                ? rowInfo.value
-                : value ?? null
-              : null}
-          </div>
+          <>
+            Total sales <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+            <b>{rowInfo.reducerResults!.count}</b>
+          </>
         );
-      },
+      }
+      return <>{value}</>;
     },
-  ],
-
-  ['make', { field: 'make' }],
-  ['model', { field: 'model' }],
-  ['color', { field: 'color' }],
-  [
-    'cat',
-    {
-      field: 'category',
-      render: ({ value, rowInfo }) => (
-        <>{rowInfo.isGroupRow ? 'hello' : value}</>
-      ),
+  },
+  year: {
+    field: 'year',
+    type: 'number',
+    render: ({ value, rowInfo }) => {
+      return rowInfo.isGroupRow ? null : `Year: ${value}`;
     },
-  ],
-  [
-    'count',
-    {
-      field: 'sales',
-      type: 'number',
-      render: ({ value, rowInfo }) => {
-        if (rowInfo.isGroupRow) {
-          return (
-            <>
-              Total sales <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults!.count}</b>
-            </>
-          );
-        }
-        return <>{value}</>;
-      },
-    },
-  ],
-  [
-    'year',
-    {
-      field: 'year',
-      type: 'number',
-      render: ({ value, rowInfo }) => {
-        return rowInfo.isGroupRow ? null : `Year: ${value}`;
-      },
-    },
-  ],
-]);
+  },
+};
 
 // const columnPinning: InfiniteTablePropColumnPinning = new Map([
 //   ['id', 'start'],

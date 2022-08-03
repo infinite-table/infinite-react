@@ -72,9 +72,10 @@ const groupBy = [
 When you want to group by multiple fields, `InfiniteTable` offers multiple grouping strategies:
  * multi column mode - the default.
  * single column mode
- * inline mode
+ <!-- * inline mode -->
 
-You can specify the rendering strategy by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column` or `inline`.
+You can specify the rendering strategy by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column` 
+<!-- or `inline`. -->
 
 
 ### Multiple groups columns
@@ -157,9 +158,13 @@ You can specify an `id` for the single group column by using <PropLink name="gro
 
 </Gotcha>
 
+<!-- 
+
 ### Inline group column
 
-When inline group rendering is used (<PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="inline"</PropLink>), the columns bound to the corresponding group by fields are used for rendering, so no group columns are generated. This way of rendering groups is only recommended when you're sure you have small groups (smaller than the number of rows visible in the viewport).
+When inline group rendering is used (<PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="inline"</PropLink>), the columns bound to the corresponding group by fields are used for rendering, so no group columns are generated. This way of rendering groups is only recommended when you're sure you have small groups (smaller than the number of rows visible in the viewport). 
+
+-->
 
 
 ## Aggregations

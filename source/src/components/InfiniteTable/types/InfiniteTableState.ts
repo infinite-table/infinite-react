@@ -18,7 +18,7 @@ import type {
   InfiniteTablePropColumnGroupsMap,
   InfiniteTablePropColumnPinning,
   InfiniteTablePropColumnSizing,
-  InfiniteTablePropColumnsMap,
+  InfiniteTableColumnsMap,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
@@ -42,7 +42,7 @@ export interface InfiniteTableSetupState<T> {
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
   keyDown: SubscriptionCallback<KeyboardEvent>;
-  columnsWhenGrouping?: InfiniteTablePropColumnsMap<T>;
+  columnsWhenGrouping?: InfiniteTableColumnsMap<T>;
   bodySize: Size;
   brain: MatrixBrain;
   headerBrain: MatrixBrain;
@@ -77,7 +77,7 @@ export interface InfiniteTableMappedState<T> {
 
   loadingText: InfiniteTableProps<T>['loadingText'];
   components: InfiniteTableProps<T>['components'];
-  columns: InfiniteTablePropColumnsMap<T>;
+  columns: InfiniteTableColumnsMap<T>;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   onReady: InfiniteTableProps<T>['onReady'];
 

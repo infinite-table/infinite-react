@@ -11,7 +11,7 @@ import { defaultFilterEditors } from '../components/FilterEditors';
 import { ThemeVars } from '../theme.css';
 import { InfiniteTableProps, InfiniteTableState } from '../types';
 import {
-  InfiniteTableColumns,
+  InfiniteTableColumnsMap,
   InfiniteTablePropFilterEditors,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
@@ -44,7 +44,7 @@ function createRenderer(brain: MatrixBrain) {
  * be affected by props.
  */
 export function initSetupState<T>(): InfiniteTableSetupState<T> {
-  const columnsGeneratedForGrouping: InfiniteTableColumns<T> = new Map();
+  const columnsGeneratedForGrouping: InfiniteTableColumnsMap<T> = new Map();
 
   /**
    * This is the main virtualization brain that powers the table

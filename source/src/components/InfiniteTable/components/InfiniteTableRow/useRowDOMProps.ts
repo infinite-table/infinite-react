@@ -172,7 +172,7 @@ export function useRowDOMProps<T>(
     [initialMouseLeave, showHoverRows],
   );
 
-  if (rowInfo.isGroupRow) {
+  if (rowInfo.dataSourceHasGrouping) {
     style = style || {};
     //@ts-ignore
     style[stripVar(ThemeVars.components.Row.groupNesting)] =

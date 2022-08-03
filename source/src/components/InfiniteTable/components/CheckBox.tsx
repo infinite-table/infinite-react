@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
+import { join } from '../../../utils/join';
 import {
   ForwardPropsToStateFnResult,
   getComponentStateRoot,
   useComponentState,
 } from '../../hooks/useComponentState';
 import { NonUndefined } from '../../types/NonUndefined';
+import { CheckBoxCls } from './CheckBox.css';
 
 export type InfiniteCheckBoxPropChecked = true | false | null;
 export type InfiniteCheckBoxProps = {
@@ -16,6 +19,7 @@ export type InfiniteCheckBoxProps = {
 
 export type InfiniteCheckBoxMappedState = {
   checked: NonUndefined<InfiniteCheckBoxProps['checked']>;
+  domProps: InfiniteCheckBoxProps['domProps'];
 };
 
 function forwardProps(): ForwardPropsToStateFnResult<
@@ -24,6 +28,7 @@ function forwardProps(): ForwardPropsToStateFnResult<
 > {
   return {
     checked: 1,
+    domProps: 1,
   };
 }
 
@@ -33,21 +38,44 @@ const InfiniteCheckBoxRoot = getComponentStateRoot({
   // @ts-ignore
   forwardProps,
   // @ts-ignore
-  mapPropsToState,
+  // mapPropsToState,
   // @ts-ignore
-  cleanup: cleanupState,
-  // @ts-ignore
+  // cleanup: cleanupState,
+  // @ts-ignore,
+  mappedCallbacks: {
+    checked: (checked) => {
+      return {
+        callbackName: 'onChange',
+        callbackParam: checked,
+      };
+    },
+  },
 
   debugName: 'InfiniteCheckBox',
 });
 
 function InfiniteCheckBoxComponent() {
-  const { componentState } = useComponentState<InfiniteCheckBoxState>();
+  const { componentState, componentActions } =
+    useComponentState<InfiniteCheckBoxState>();
+
+  const { checked, domProps } = componentState;
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current!.indeterminate = checked == null;
+  }, [checked]);
+
   return (
     <input
+      {...domProps}
+      className={join(CheckBoxCls, domProps?.className)}
       type="checkbox"
-      checked={!!componentState.checked}
-      onChange={() => {}}
+      ref={inputRef}
+      checked={!!checked}
+      onChange={() => {
+        componentActions.checked = !checked;
+      }}
     />
   );
 }

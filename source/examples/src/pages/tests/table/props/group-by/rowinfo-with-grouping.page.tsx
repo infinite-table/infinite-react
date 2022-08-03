@@ -12,28 +12,25 @@ const dataSource = () => {
   return Promise.resolve(data);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Person>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-      render: ({ value, rowInfo }) => {
-        return (
-          <>
-            {value} {rowInfo.indexInAll}!
-          </>
-        );
-      },
-      // render: ({ rowInfo }: { rowInfo: InfiniteTableRowInfo<Person> }) => {
-      //   if (!rowInfo.dataSourceHasGrouping) {
-      //     return null;
-      //   }
-      //   return rowInfo.groupKeys.join(' - ');
-      // },
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+    render: ({ value, rowInfo }) => {
+      return (
+        <>
+          {value} {rowInfo.indexInAll}!
+        </>
+      );
     },
-  ],
-]);
+    // render: ({ rowInfo }: { rowInfo: InfiniteTableRowInfo<Person> }) => {
+    //   if (!rowInfo.dataSourceHasGrouping) {
+    //     return null;
+    //   }
+    //   return rowInfo.groupKeys.join(' - ');
+    // },
+  },
+};
 const groupBy: DataSourceGroupBy<Person>[] = [
   {
     field: 'country',

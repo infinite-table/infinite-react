@@ -19,7 +19,7 @@ import {
   initSetupState,
   getInterceptActions,
   onPropChange,
-  getMappedCallbackParams,
+  getMappedCallbacks,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 import {
@@ -58,7 +58,7 @@ const DataSourceRoot = getComponentStateRoot({
   //@ts-ignore
   interceptActions: getInterceptActions(),
   //@ts-ignore
-  mappedCallbackParams: getMappedCallbackParams(),
+  mappedCallbacks: getMappedCallbacks(),
 });
 
 function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {

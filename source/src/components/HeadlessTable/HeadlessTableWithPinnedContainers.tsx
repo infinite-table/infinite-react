@@ -1,11 +1,6 @@
 //@ts-nocheck
-import React, {
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import * as React from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { HeadlessTableProps, useMatrixBrain } from '.';
 import { join } from '../../utils/join';
 import {

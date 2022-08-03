@@ -50,6 +50,11 @@ export type InfiniteTableColumnRenderParamBase<
 
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
+  renderBag: {
+    value: string | number | Renderable;
+    groupIcon?: Renderable;
+    selectionCheckBox?: Renderable;
+  };
   groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   rowIndex: number;
   rowActive: boolean;
@@ -57,6 +62,7 @@ export type InfiniteTableColumnRenderParamBase<
   column: COL_TYPE;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
+  toggleCurrentGroupRowSelection: () => void;
   selectCurrentRow: () => void;
   selectRow: InfiniteTableSelectRowFn;
   deselectRow: InfiniteTableSelectRowFn;
@@ -72,12 +78,14 @@ export type InfiniteTableColumnRenderParam<
 > = InfiniteTableColumnRenderParamBase<DATA_TYPE, COL_TYPE> &
   InfiniteTableRowInfoDataDiscriminator<DATA_TYPE>;
 
-export type InfiniteTableGroupColumnRenderParams<DATA_TYPE, COL_TYPE> =
-  InfiniteTableColumnRenderParamBase<DATA_TYPE, COL_TYPE> & {
-    rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<DATA_TYPE>;
-    isGroupRow: true;
-    data: Partial<DATA_TYPE> | null;
-  };
+export type InfiniteTableGroupColumnRenderParams<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = InfiniteTableColumnRenderParamBase<DATA_TYPE, COL_TYPE> & {
+  rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<DATA_TYPE>;
+  isGroupRow: true;
+  data: Partial<DATA_TYPE> | null;
+};
 
 export type InfiniteTableColumnCellContextType<DATA_TYPE> =
   InfiniteTableColumnRenderParam<DATA_TYPE> & {};
@@ -124,6 +132,14 @@ export type InfiniteTableColumnColspanParam<
   computedUnpinnedColumns: COL_TYPE[];
 };
 
+export type InfiniteTableColumnRenderFunctionForGroupRows<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = (
+  renderParams: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
+    isGroupRow: true;
+  },
+) => Renderable | null;
 export type InfiniteTableColumnRenderFunction<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
@@ -136,13 +152,6 @@ export type InfiniteTableGroupColumnRenderFunction<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = (
   renderParams: InfiniteTableGroupColumnRenderParams<DATA_TYPE, COL_TYPE>,
-) => Renderable | null;
-
-export type InfiniteTableGroupColumnRenderIconFunction<
-  DATA_TYPE,
-  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
-> = (
-  param: InfiniteTableGroupColumnRenderIconParam<DATA_TYPE, COL_TYPE>,
 ) => Renderable | null;
 
 export type InfiniteTableColumnRenderValueFunction<
@@ -183,20 +192,19 @@ export type InfiniteTableColumnTypeNames =
 // field|valueGetter => THE_VALUE
 // |
 // \/
-export type InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<T> =
-  RequireAtLeastOne<
-    {
-      /**
-       * Determines the field property of the column.
-       */
-      field?: keyof T;
-      render?: InfiniteTableColumnRenderFunction<T>;
-      renderValue?: InfiniteTableColumnRenderFunction<T>;
-      valueGetter?: InfiniteTableColumnValueGetter<T>;
-      valueFormatter?: InfiniteTableColumnValueFormatter<T>;
-    },
-    'render' | 'renderValue' | 'field' | 'valueGetter' | 'valueFormatter'
-  >;
+export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
+  {
+    /**
+     * Determines the field property of the column.
+     */
+    field?: keyof T;
+    render?: InfiniteTableColumnRenderFunction<T>;
+    renderValue?: InfiniteTableColumnRenderFunction<T>;
+    valueGetter?: InfiniteTableColumnValueGetter<T>;
+    valueFormatter?: InfiniteTableColumnValueFormatter<T>;
+  },
+  'render' | 'renderValue' | 'field' | 'valueGetter' | 'valueFormatter'
+>;
 
 export type InfiniteTableColumnStyleFnParams<T> = {
   value: Renderable;
@@ -293,6 +301,11 @@ export type InfiniteTableBaseColumn<T> = {
   rowspan?: InfiniteTableColumnRowspanFn<T>;
   // colspan?: InfiniteTableColumnColspanFn<T>;
 
+  field?: keyof T;
+  render?: InfiniteTableColumnRenderFunction<T>;
+  renderValue?: InfiniteTableColumnRenderFunction<T>;
+  renderGroupValue?: InfiniteTableColumnRenderFunction<T>;
+  renderLeafValue?: InfiniteTableColumnRenderFunction<T>;
   valueGetter?: InfiniteTableColumnValueGetter<T>;
   valueFormatter?: InfiniteTableColumnValueFormatter<T>;
 
@@ -302,6 +315,9 @@ export type InfiniteTableBaseColumn<T> = {
 
   minWidth?: number;
   maxWidth?: number;
+
+  renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<T>;
+  renderSelectionCheckBox?: boolean | InfiniteTableColumnRenderFunction<T>;
 
   components?: {
     ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
@@ -317,8 +333,8 @@ export type InfiniteTableBaseColumn<T> = {
  * Can be bound to a field which is a `keyof DATA_TYPE`.
  */
 export type InfiniteTableColumn<DATA_TYPE> =
-  {} & InfiniteTableBaseColumn<DATA_TYPE> &
-    InfiniteTableColumnWithRenderOrRenderValueOrFieldOrValueGetter<DATA_TYPE>;
+  {} & InfiniteTableBaseColumn<DATA_TYPE>;
+// InfiniteTableColumnWithRenderDescriptor<DATA_TYPE>;
 
 export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
   groupByField: string | string[];

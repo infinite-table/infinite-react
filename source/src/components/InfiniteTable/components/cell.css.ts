@@ -80,6 +80,10 @@ export const ColumnCellVariantsObject = {
   pinnedEndLastInCategory: {},
 };
 
+export const SelectionCheckboxCls = style({
+  marginInline: ThemeVars.components.SelectionCheckBox.marginInline,
+});
+
 export const ColumnCellRecipe = recipe({
   base: [
     {

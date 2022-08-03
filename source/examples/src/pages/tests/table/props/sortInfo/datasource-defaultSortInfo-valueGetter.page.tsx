@@ -83,33 +83,25 @@ export const carsales: CarSale[] = [
 
 (globalThis as any).carsales = carsales;
 
-const columns = new Map<string, InfiniteTableColumn<CarSale>>([
-  ['make', { field: 'make' }],
-  ['model', { field: 'model' }],
-  ['color', { field: 'color', dataType: 'color' }],
-  [
-    'category',
-    {
-      field: 'category',
-    },
-  ],
-  [
-    'sales',
-    {
-      field: 'sales',
-      dataType: 'number',
-    },
-  ],
-  [
-    'y',
-    {
-      valueGetter: ({ data }) => data.year,
-      renderValue: ({ data }) => data?.year,
-      header: 'Year',
-      dataType: 'number',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<CarSale>> = {
+  make: { field: 'make' },
+  model: { field: 'model' },
+  color: { field: 'color', dataType: 'color' },
+
+  category: {
+    field: 'category',
+  },
+  sales: {
+    field: 'sales',
+    dataType: 'number',
+  },
+  y: {
+    valueGetter: ({ data }) => data.year,
+    renderValue: ({ data }) => data?.year,
+    header: 'Year',
+    dataType: 'number',
+  },
+};
 
 const domProps = {
   style: {

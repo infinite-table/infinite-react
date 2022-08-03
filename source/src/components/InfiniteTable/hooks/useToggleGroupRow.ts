@@ -14,6 +14,8 @@ export function useToggleGroupRow<T>() {
     useDataSourceContextValue<T>();
 
   const toggleGroupRow = useCallback<ToggleGroupRowFn>((groupKeys: any[]) => {
+    // todo this  is duplicated in imperative api
+
     const state = getDataSourceState();
     const newState = new GroupRowsState(state.groupRowsState);
     newState.toggleGroupRow(groupKeys);

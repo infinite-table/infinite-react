@@ -80,7 +80,6 @@ export default function App() {
           <option value="single-column">
             single-column
           </option>
-          <option value="inline">inline</option>
         </select>
       </div>
       <DataSource<Employee>

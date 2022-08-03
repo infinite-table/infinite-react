@@ -8,20 +8,17 @@ import {
 
 import { rowData, Car } from './rowData';
 
-const columns = new Map<string, InfiniteTableColumn<Car>>([
-  ['id', { field: 'id' }],
-  [
-    'make',
-    {
-      field: 'model',
-    },
-  ],
-  ['model', { field: 'model' }],
-  ['price', { field: 'price' }],
-  ['year', { field: 'year' }],
-  ['rating', { field: 'rating' }],
-]);
+const columns: Record<string, InfiniteTableColumn<Car>> = {
+  id: { field: 'id' },
 
+  make: {
+    field: 'model',
+  },
+  model: { field: 'model' },
+  price: { field: 'price' },
+  year: { field: 'year' },
+  rating: { field: 'rating' },
+};
 const App = () => {
   return (
     <React.StrictMode>

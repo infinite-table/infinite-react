@@ -11,6 +11,7 @@ import {
   InfiniteTable,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
+import { InfiniteTable_HasGrouping_RowInfoGroup } from '@infinite-table/infinite-react/utils/groupAndPivot';
 
 import * as React from 'react';
 
@@ -88,10 +89,10 @@ const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
 };
 const GroupIconRenderer = ({
   toggleCurrentGroupRow,
-  collapsed,
+  rowInfo,
 }: {
   toggleCurrentGroupRow: Function;
-  collapsed: boolean;
+  rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<any>;
 }) => {
   const handleToggle = React.useCallback(
     () => toggleCurrentGroupRow(),
@@ -101,7 +102,7 @@ const GroupIconRenderer = ({
   // NOTE: Workaround is to change onClick by onClick={() => toggleCurrentGroupRow()} in this use case
   return (
     <div style={{ display: 'flex' }} onClick={handleToggle}>
-      {collapsed ? '>' : 'v'}&nbsp;
+      {rowInfo.collapsed ? '>' : 'v'}&nbsp;
     </div>
   );
 };
@@ -151,8 +152,8 @@ export default function RemotePivotExample() {
         column: {
           // give the group column for the country prop a custom id
           id: 'group-by-country',
-          renderGroupIcon: ({ toggleCurrentGroupRow, collapsed }) => (
-            <GroupIconRenderer {...{ toggleCurrentGroupRow, collapsed }} />
+          renderGroupIcon: ({ toggleCurrentGroupRow, rowInfo }) => (
+            <GroupIconRenderer {...{ toggleCurrentGroupRow, rowInfo }} />
           ),
         },
       },
@@ -173,8 +174,8 @@ export default function RemotePivotExample() {
           // give the group column for the stack prop a custom id
           id: 'group-by-stack',
           // renderGroupIcon: GroupIconRenderer,
-          renderGroupIcon: ({ toggleCurrentGroupRow, collapsed }) => (
-            <GroupIconRenderer {...{ toggleCurrentGroupRow, collapsed }} />
+          renderGroupIcon: ({ toggleCurrentGroupRow, rowInfo }) => (
+            <GroupIconRenderer {...{ toggleCurrentGroupRow, rowInfo }} />
           ),
         },
       },

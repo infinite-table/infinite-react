@@ -4,7 +4,6 @@ import {
   InfiniteTableColumn,
   InfiniteTable,
   DataSourceGroupBy,
-  InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 import { HTMLProps, useState } from 'react';
@@ -47,30 +46,21 @@ const ageColumn: InfiniteTableColumn<Person> = {
 };
 
 const getColumns = () => {
-  const columns: InfiniteTablePropColumns<Person> = new Map<
-    string,
-    InfiniteTableColumn<Person>
-  >(
-    [
-      ageColumn,
-      {
-        field: 'Id',
-        type: 'number',
-        sortable: true,
-      },
-      {
-        field: 'FirstName',
-        header: 'First name',
-      },
-      {
-        field: 'LastName',
-        header: 'Last name',
-      },
-      {
-        field: 'Address',
-      },
-    ].map((c) => [c.field, c as InfiniteTableColumn<Person>]),
-  );
+  const columns: Record<string, InfiniteTableColumn<Person>> = {
+    Age: ageColumn,
+    Id: { field: 'Id', type: 'number', sortable: true },
+    FirstName: {
+      field: 'FirstName',
+      header: 'First name',
+    },
+    LastName: {
+      field: 'LastName',
+      header: 'Last name',
+    },
+    Address: {
+      field: 'Address',
+    },
+  };
 
   return columns;
 };

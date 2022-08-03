@@ -4,7 +4,6 @@ import {
   DataSourceGroupBy,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
-  InfiniteTableColumn,
   GroupRowsState,
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableColumnSizingOptions,
@@ -68,7 +67,7 @@ const groupRowsState = new GroupRowsState({
 });
 
 const groupOptions: InfiniteTablePropGroupRenderStrategy[] = [
-  'inline',
+  // 'inline',
   'multi-column',
   'single-column',
 ];
@@ -81,53 +80,42 @@ export default function GroupByExample() {
 
   // TODO add renderValue for each column, for easy override
   const columns = React.useMemo(() => {
-    const columns: InfiniteTablePropColumns<Person> = new Map<
-      string,
-      InfiniteTableColumn<Person>
-    >([
-      [
-        'department',
-        {
-          field: 'department',
-          valueFormatter:
-            groupRenderStrategy === 'inline'
-              ? ({ rowInfo }) => {
-                  if (!rowInfo.isGroupRow) {
-                    return null;
-                  }
-                  const { groupBy, parents } = rowInfo;
-
-                  const groupData =
-                    parents?.[groupBy?.indexOf('department') ?? -1] || rowInfo;
-
-                  return `${groupData?.value} (${
-                    groupData?.groupCount
-                  }), total ${' '} ${formatter.format(
-                    groupData?.reducerResults?.salary as any as number,
-                  )}`;
+    const columns: InfiniteTablePropColumns<Person> = {
+      department: {
+        field: 'department',
+        valueFormatter:
+          groupRenderStrategy === 'inline'
+            ? ({ rowInfo }) => {
+                if (!rowInfo.isGroupRow) {
+                  return null;
                 }
-              : undefined,
-        },
-      ],
-      [
-        'team',
-        {
-          field: 'team',
-        },
-      ],
-      ['id', { field: 'id' }],
-      ['name', { field: 'name' }],
-      ['country', { field: 'country' }],
-      [
-        'salary',
-        {
-          field: 'salary',
+                const { groupBy, parents } = rowInfo;
 
-          render: ({ value }) =>
-            value ? `$ ${formatter.format(value as any as number)}` : null,
-        },
-      ],
-    ]);
+                const groupData =
+                  parents?.[groupBy?.indexOf('department') ?? -1] || rowInfo;
+
+                return `${groupData?.value} (${
+                  groupData?.groupCount
+                }), total ${' '} ${formatter.format(
+                  groupData?.reducerResults?.salary as any as number,
+                )}`;
+              }
+            : undefined,
+      },
+      team: {
+        field: 'team',
+      },
+      id: { field: 'id' },
+      name: { field: 'name' },
+      country: { field: 'country' },
+
+      salary: {
+        field: 'salary',
+
+        render: ({ value }) =>
+          value ? `$ ${formatter.format(value as any as number)}` : null,
+      },
+    };
     return columns;
   }, [groupRenderStrategy]);
 
