@@ -251,6 +251,7 @@ export function getImperativeApi<T>(
       } else if (selectionMode === 'single-row') {
         const rowSelection = currentRowSelection === pk ? null : pk;
         dataSourceActions.rowSelection = rowSelection;
+
         return true;
       }
 
