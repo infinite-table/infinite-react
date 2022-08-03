@@ -18,7 +18,6 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
 ];
 
 const groupColumn: InfiniteTableColumn<Employee> = {
-  renderSelectionCheckBox: false,
   header: 'Grouping',
   defaultWidth: 250,
   // in this function we have access to collapsed info
