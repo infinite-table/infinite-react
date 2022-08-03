@@ -51,26 +51,7 @@ export function getImperativeApi<T>(
             rowSelectionState.deselectRow(id);
           }
         });
-      }
-
-      const primaryKey = `${groupKeys}`;
-      const index = getDataSourceState().indexer.getIndexOf(primaryKey);
-      if (index != null) {
-        const rowInfo = getDataSourceState().dataArray[
-          index
-        ] as InfiniteTable_HasGrouping_RowInfoGroup<T>;
-
-        rowInfo.deepRowInfoArray.forEach((rowInfo) => {
-          if (!rowInfo.isGroupRow) {
-            if (selected) {
-              rowSelectionState.selectRow(rowInfo.id);
-            } else {
-              rowSelectionState.deselectRow(rowInfo.id);
-            }
-          }
-        });
         dataSourceActions.rowSelection = rowSelectionState;
-
         return true;
       }
     }

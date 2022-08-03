@@ -9,6 +9,7 @@ import {
   DataSourcePivotBy,
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
+  DataSourcePropSelectionMode,
   DataSourceState,
 } from '../../DataSource/types';
 import { Renderable } from '../../types/Renderable';
@@ -258,6 +259,7 @@ export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
 export type InfiniteTableGroupColumnGetterOptions<T> = {
   groupIndexForColumn?: number;
   groupByForColumn?: DataSourceGroupBy<T>;
+  selectionMode: DataSourcePropSelectionMode;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupCount: number;
   groupBy: DataSourceGroupBy<T>[];

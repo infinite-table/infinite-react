@@ -4,6 +4,7 @@ import {
   DataSource,
   DataSourcePropGroupBy,
   InfiniteTableColumnRenderValueParam,
+  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { columns, Employee } from './columns';
 
@@ -16,9 +17,10 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
   },
 ];
 
-const groupColumn = {
+const groupColumn: InfiniteTableColumn<Employee> = {
+  renderSelectionCheckBox: false,
   header: 'Grouping',
-  width: 250,
+  defaultWidth: 250,
   // in this function we have access to collapsed info
   // and grouping info about the current row - see rowInfo.groupBy
   renderValue: ({
@@ -26,7 +28,7 @@ const groupColumn = {
     rowInfo,
   }: InfiniteTableColumnRenderValueParam<Employee>) => {
     if (!rowInfo.isGroupRow) {
-      return value
+      return value;
     }
     const groupBy = rowInfo.groupBy || [];
     const collapsed = rowInfo.collapsed;

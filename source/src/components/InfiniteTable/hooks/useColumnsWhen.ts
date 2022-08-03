@@ -5,6 +5,7 @@ import type {
   DataSourceGroupBy,
   DataSourcePivotBy,
   DataSourcePropGroupBy,
+  DataSourcePropSelectionMode,
 } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
@@ -197,7 +198,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
 
 function useColumnsWhenGrouping<T>() {
   const {
-    componentState: { groupBy, pivotBy },
+    componentState: { groupBy, pivotBy, selectionMode },
   } = useDataSourceContextValue<T>();
 
   const {
@@ -231,6 +232,7 @@ function useColumnsWhenGrouping<T>() {
         pivotBy,
         pivotColumns,
         toggleGroupRow,
+        selectionMode,
       });
 
       componentActions.columnsWhenGrouping = columnsWhenGrouping;
@@ -247,7 +249,7 @@ function useColumnsWhenGrouping<T>() {
     columns,
     groupBy,
     pivotBy,
-
+    selectionMode,
     groupColumn,
     groupRenderStrategy,
     pivotColumns,
@@ -449,6 +451,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
 export function getColumnsWhenGrouping<T>(params: {
   columns: Map<string, InfiniteTableColumn<T>>;
   groupBy: DataSourceGroupBy<T>[];
+  selectionMode: DataSourcePropSelectionMode;
   pivotBy?: DataSourcePivotBy<T>[];
   toggleGroupRow: (groupKeys: any[]) => void;
   pivotTotalColumnPosition: InfiniteTableState<T>['pivotTotalColumnPosition'];
@@ -462,6 +465,7 @@ export function getColumnsWhenGrouping<T>(params: {
     pivotColumns,
     groupBy,
     pivotBy,
+    selectionMode,
     groupColumn,
     pivotTotalColumnPosition,
     pivotGrandTotalColumnPosition,
@@ -491,6 +495,7 @@ export function getColumnsWhenGrouping<T>(params: {
           groupIndexForColumn,
           groupCount: arr.length,
           groupRenderStrategy,
+          selectionMode,
         },
         toggleGroupRow,
         groupColumn,
@@ -512,6 +517,7 @@ export function getColumnsWhenGrouping<T>(params: {
         groupBy,
         pivotBy,
         groupRenderStrategy,
+        selectionMode,
       },
       toggleGroupRow,
       groupColumn,

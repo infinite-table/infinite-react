@@ -8,6 +8,7 @@ import {
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   GroupRowsState,
+  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -61,9 +62,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
   city: { field: 'city' },
   currency: { field: 'currency' },
 };
-const groupColumn = {
+const groupColumn: InfiniteTableColumn<Developer> = {
   header: 'Grouping',
   defaultWidth: 250,
+
   // in this function we have access to collapsed info
   // and grouping info about the current row - see rowInfo.groupBy
   renderValue: ({
@@ -71,7 +73,7 @@ const groupColumn = {
     rowInfo,
   }: InfiniteTableColumnRenderValueParam<Developer>) => {
     if (!rowInfo.isGroupRow) {
-      return value
+      return value;
     }
     const groupBy = rowInfo.groupBy || [];
     const collapsed = rowInfo.collapsed;

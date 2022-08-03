@@ -207,6 +207,18 @@ export function getColumnForGroupBy<T>(
   const { groupByForColumn, groupIndexForColumn, groupRenderStrategy } =
     options;
 
+  let userDefinedGroupColumn: Partial<InfiniteTableColumn<T>> =
+    typeof groupColumnFromProps === 'function'
+      ? groupColumnFromProps(options, toggleGroupRow)
+      : { ...groupColumnFromProps };
+
+  if (groupByForColumn.column) {
+    userDefinedGroupColumn = {
+      ...userDefinedGroupColumn,
+      ...groupByForColumn.column,
+    };
+  }
+
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group by ${groupByForColumn.field}`,
     groupByField: groupByForColumn.field as string,
@@ -217,9 +229,9 @@ export function getColumnForGroupBy<T>(
       groupIndexForColumn,
       groupRenderStrategy,
     }),
-    ...groupByForColumn.column,
+    ...userDefinedGroupColumn,
     renderGroupIcon: getGroupColumnRenderGroupIcon({
-      initialRenderGroupIcon: groupByForColumn.column?.renderGroupIcon,
+      initialRenderGroupIcon: userDefinedGroupColumn?.renderGroupIcon,
       groupIndexForColumn,
       toggleGroupRow,
       groupRenderStrategy,
@@ -257,7 +269,7 @@ export function getSingleGroupColumn<T>(
     header: `Group`,
     groupByField: options.groupBy.map((g) => g.field) as string[],
     sortable: false,
-    renderSelectionCheckBox: true,
+    renderSelectionCheckBox: options.selectionMode === 'multi-row',
     style: styleForGroupColumn,
 
     render: getGroupColumnRender({

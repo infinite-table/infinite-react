@@ -221,7 +221,7 @@ export function mapPropsToState<T extends any>(params: {
           selectionMode = 'single-row';
         }
       }
-      selectionMode = selectionMode ?? 'multi-row';
+      selectionMode = selectionMode ?? false;
     }
   }
 
