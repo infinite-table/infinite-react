@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  DataSourcePropGroupBy,
   InfiniteTableColumnRenderValueParam,
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumns,
