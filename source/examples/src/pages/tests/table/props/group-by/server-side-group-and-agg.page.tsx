@@ -26,7 +26,7 @@ type Developer = {
 
 const domProps = {
   style: {
-    height: '80vh',
+    height: 800,
   },
 };
 const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
