@@ -122,9 +122,9 @@ export default function GroupByExample() {
         primaryKey="id"
         data={dataSource}
         groupBy={groupBy as DataSourcePropGroupBy<Developer>}
-        // selectionMode="multi-row"
-        // rowSelection={rowSelection}
-        // onRowSelectionChange={onRowSelectionChange}
+        selectionMode="multi-row"
+        rowSelection={rowSelection}
+        onRowSelectionChange={onRowSelectionChange}
         // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell
         // multiRowSelection={{}}
         // singleRowSelection={{}}
