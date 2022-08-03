@@ -1,14 +1,16 @@
 ---
-title: "Month in review - July 2022"
+title: "Monthly Update - July 2022"
 author: [admin]
 ---
-In July, we've been hard at work preparing for our Autumn release. We have implemented a few new functionalities:
+In July, we've been hard at work preparing for our Autumn release.
+
+We have implemented a few new functionalities:
 
  * [column resizing](#column-resizing) is now available
- * [column reordering](#column-reordering) via drag & drop
+ * [column reordering](#column-reordering) can be achieved via drag & drop
  * [keyboard navigation](#keyboard-navigation) with support for both row and cell navigation
 
-and we have updated some of the existing features:
+And we have updated some of the existing features:
 
  * [lazy grouping](#lazy-grouping) 
     - expands lazy loaded rows correctly and 
@@ -96,13 +98,13 @@ This example starts with cell `[2,0]` already active.
 
 ### Lazy grouping
 
-Server side grouping (with lazy loading) now correctly loads lazy rows configured configured as expanded.
+Server side grouping has support for lazy loading - `InfiniteTable` will automatically load lazy rows that are configured as expanded.
 
 <Sandpack title="Lazy loaded rows are properly expanded">
 
 <Description>
 
-In this example, `France` is specified as expanded, so as soon as it is rendered, `InfiniteTable` will also request it's children.
+In this example, `France` is specified as expanded, so as soon as it is rendered, `InfiniteTable` will also request its children.
 
 </Description>
 

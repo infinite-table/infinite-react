@@ -6,14 +6,14 @@
       "heading": true,
       "routes": [
         {
-          "path": "/blog/2022/08/01/month-in-review-july-2022",
+          "path": "/blog/2022/08/01/infinite-table-monthly-update-july-2022",
           "date": "2022-08-01",
-          "title": "Month in review - July 2022",
+          "title": "Monthly Update - July 2022",
           "author": [
             "admin"
           ],
           "excerpt": "<p>In July, we’ve been hard at work preparing for our Autumn release. We have implemented a few new functionalities:</p>\n",
-          "readingTime": "3 min read"
+          "readingTime": "4 min read"
         },
         {
           "path": "/blog/2022/06/24/navigating-your-datagrid",
