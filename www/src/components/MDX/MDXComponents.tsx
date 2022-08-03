@@ -74,6 +74,16 @@ const Note = ({
   </ExpandableCallout>
 );
 
+const ReadMore = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <ExpandableCallout type="readMore">
+    {children}
+  </ExpandableCallout>
+);
+
 const Blockquote = ({
   children,
   ...props
@@ -415,6 +425,7 @@ export const MDXComponents = {
   Math,
   MathI,
   Note,
+  ReadMore,
   PackageImport,
   Prop,
   PropLink,

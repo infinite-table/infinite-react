@@ -5,6 +5,7 @@ import {
   DataSource,
   DataSourcePropRowSelection_MultiRow,
   useInfiniteColumnCell,
+  DataSourcePropGroupBy,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
@@ -53,7 +54,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
       return <>{renderBag.value}----</>;
     },
     renderLeafValue: () => {
-      console.log('leaf value');
       const { renderBag } = useInfiniteColumnCell();
       return <>{renderBag.value}xxxx</>;
     },
@@ -70,8 +70,15 @@ const domProps = {
   },
 };
 
+const groupBy = [
+  { field: 'stack' },
+  {
+    field: 'preferredLanguage',
+  },
+];
+
 export default function GroupByExample() {
-  const [rowSelection, _setRowSelection] =
+  const [rowSelection, setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
       //@ts-ignore
       // selectedGroups: [
@@ -99,6 +106,10 @@ export default function GroupByExample() {
       deselectedRows: true,
     });
 
+  const onRowSelectionChange = React.useCallback(({ rowSelection }) => {
+    setRowSelection(rowSelection);
+  }, []);
+
   return (
     <>
       <div>
@@ -110,14 +121,10 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={[
-          { field: 'stack' },
-          {
-            field: 'preferredLanguage',
-          },
-        ]}
+        groupBy={groupBy as DataSourcePropGroupBy<Developer>}
         selectionMode="multi-row"
-        defaultRowSelection={rowSelection}
+        rowSelection={rowSelection}
+        onRowSelectionChange={onRowSelectionChange}
         // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell
         // multiRowSelection={{}}
         // singleRowSelection={{}}

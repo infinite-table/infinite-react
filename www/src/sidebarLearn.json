@@ -48,6 +48,10 @@
             {
               "path": "/docs/latest/learn/columns/column-order",
               "title": "Column Order"
+            },
+            {
+              "path": "/docs/latest/learn/columns/column-grouping",
+              "title": "Column Grouping"
             }
           ]
         },

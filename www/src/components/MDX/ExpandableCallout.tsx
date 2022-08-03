@@ -2,8 +2,9 @@ import * as React from 'react';
 import cn from 'classnames';
 import { IconNote } from '../Icon/IconNote';
 import { IconGotcha } from '../Icon/IconGotcha';
+import { IconReadMore } from '../Icon/IconReadMore';
 
-type CalloutVariants = 'gotcha' | 'note';
+type CalloutVariants = 'gotcha' | 'note' | 'readMore';
 
 interface ExpandableCalloutProps {
   children: React.ReactNode;
@@ -29,6 +30,15 @@ const variantMap = {
     textColor: 'text-yellow-50 dark:text-yellow-40',
     overlayGradient:
       'linear-gradient(rgba(249, 247, 243, 0), rgba(249, 247, 243, 1)',
+  },
+  readMore: {
+    title: 'Find Out More',
+    Icon: IconReadMore,
+    containerClasses:
+      'dark:bg-opacity-30 dark:bg-purple-30 bg-purple-50 bg-opacity-20 text-primary dark:text-primary-dark text-base',
+    textColor: 'text-purple-70 dark:text-purple-20',
+    overlayGradient:
+      'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
   },
 };
 
