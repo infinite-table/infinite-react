@@ -4,6 +4,7 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumnGroup,
+  InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
@@ -73,9 +74,10 @@ const columnGrous: Record<
   },
 };
 
-const defaultColumnPinning = {
-  country: 'start',
-};
+const defaultColumnPinning: InfiniteTablePropColumnPinning =
+  {
+    country: 'start',
+  };
 export default function ColumnGroupsWithPinningExample() {
   return (
     <>
