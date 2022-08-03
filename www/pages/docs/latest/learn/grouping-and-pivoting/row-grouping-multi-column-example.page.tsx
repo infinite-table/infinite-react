@@ -10,7 +10,7 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
   {
     field: 'age',
     column: {
-      renderValue: ({ value }: { value: any }) =>
+      renderGroupValue: ({ value }: { value: any }) =>
         `Age: ${value}`,
     },
   },

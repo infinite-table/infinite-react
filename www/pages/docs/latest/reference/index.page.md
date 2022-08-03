@@ -614,7 +614,7 @@ If not specified, <PropLink name="columnMinWidth" /> will be used (defaults to `
 
 > Customizes the rendering of the column.
 
-See related <PropLink name="columns.renderValue" />
+See related <PropLink name="columns.renderValue" />, <PropLink name="columns.renderGroupValue" />
 
 <Note>
 
@@ -656,12 +656,34 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 </Prop>
 
+<Prop name="columns.renderGroupValue" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
-<Prop name="columns.renderValue" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy,toggleCurrentGroupRow}) => Renderable">
+> Customizes the rendering of the column content, but only for group rows.
+
+This prop is different from <PropLink name="columns.render" />, <PropLink name="columns.renderValue" />, as it is only called for group rows.
+
+<Note>
+
+This function prop is called with a parameter - the `value` property of this parameter is not useful for group rows, as it refers to the current data item, which is a group item, not a normal data item. Instead, use `rowInfo.value`, as that's the current group row value.
+
+</Note>
+
+
+<Sandpack title="Column with custom renderGroupValue">
+
+```tsx file=column-renderGroupValue-example.page.tsx
+```
+</Sandpack>
+
+
+
+</Prop>
+
+<Prop name="columns.renderValue" type="({ value, data, rowInfo, column, renderBag, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
 
 > Customizes the rendering of the column content.
 
-See related <PropLink name="columns.render" />
+See related <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />
 
 <Note>
 
