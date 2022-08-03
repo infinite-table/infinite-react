@@ -4,13 +4,13 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
-  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
+  DataSourcePropAggregationReducers,
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';

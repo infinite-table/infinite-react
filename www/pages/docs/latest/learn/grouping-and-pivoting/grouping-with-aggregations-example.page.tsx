@@ -2,12 +2,15 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
+  GroupRowsState,
+} from '@infinite-table/infinite-react';
+
+import type {
+  InfiniteTableColumn,
+  InfiniteTablePropColumns,
   InfiniteTableColumnRenderValueParam,
   DataSourcePropAggregationReducers,
-  InfiniteTablePropColumns,
   DataSourceGroupBy,
-  GroupRowsState,
-  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
 type Developer = {

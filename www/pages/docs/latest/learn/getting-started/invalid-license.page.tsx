@@ -2,8 +2,9 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+
+import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
 import { data, Person } from './data';
 

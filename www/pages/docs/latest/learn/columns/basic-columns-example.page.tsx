@@ -4,7 +4,7 @@ import {
   DataSource,
 } from '@infinite-table/infinite-react';
 
-import { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
 export type Employee = {
   id: number;

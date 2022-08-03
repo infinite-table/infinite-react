@@ -4,11 +4,10 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
-  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import type {
-  InfiniteTableColumn,
+  DataSourcePropAggregationReducers,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,

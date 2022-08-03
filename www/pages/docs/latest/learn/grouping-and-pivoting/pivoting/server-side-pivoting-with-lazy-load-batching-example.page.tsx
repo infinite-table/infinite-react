@@ -2,9 +2,12 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
+  GroupRowsState,
+} from '@infinite-table/infinite-react';
+
+import type {
   DataSourceData,
   InfiniteTablePropColumns,
-  GroupRowsState,
   DataSourceGroupBy,
   DataSourcePropAggregationReducers,
   DataSourcePivotBy,
