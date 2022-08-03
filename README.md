@@ -40,7 +40,7 @@ Infinite Table is a React DataGrid component for displaying virtualized tabular 
 * [🏢 pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting) - both server-side and client-side
 * [🧪 aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
 * [🌪️ live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
-* [🌴lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
+* [🌴 lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
 * [🧭 keyboard navigation for cells and rows](https://infinite-table.com/docs/latest/learn/keyboard-navigation/navigating-cells)
 * [↔️ fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
 * [🧩 column grouping](https://infinite-table.com/docs/latest/learn/column-groups)

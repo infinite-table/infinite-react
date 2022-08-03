@@ -12,16 +12,16 @@ permalink: index.html
 
 Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
-* [sorting](/docs/latest/learn/working-with-data/sorting)
-* [row grouping](/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-* [pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting) - both server-side and client-side
-* [aggregations](/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
-* [live pagination](/docs/latest/learn/working-with-data/live-pagination)
-* [lazy loading](/docs/latest/learn/working-with-data/lazy-loading)
-* [keyboard navigation](/docs/latest/learn/keyboard-navigation/navigating-cells)
-* [fixed and flexible columns](/docs/latest/learn/columns/fixed-and-flexible-size)
-* [column grouping](/docs/latest/learn/column-groups)
-* [theming](/docs/latest/learn/theming)
+* [🔃 sorting](/docs/latest/learn/working-with-data/sorting)
+* [💪 row grouping](/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+* [🏢 pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting) - both server-side and client-side
+* [🧪 aggregations](/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
+* [🌪️ live pagination](/docs/latest/learn/working-with-data/live-pagination)
+* [🌴 lazy loading](/docs/latest/learn/working-with-data/lazy-loading)
+* [🧭 keyboard navigation](/docs/latest/learn/keyboard-navigation/navigating-cells)
+* [↔️ fixed and flexible columns](/docs/latest/learn/columns/fixed-and-flexible-size)
+* [🧩 column grouping](/docs/latest/learn/column-groups)
+* [🎨 theming](/docs/latest/learn/theming)
 
 
 ## Installation
