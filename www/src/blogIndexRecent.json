@@ -9,16 +9,18 @@
           "path": "/blog/2022/08/01/infinite-table-monthly-update-july-2022",
           "date": "2022-08-01",
           "title": "Monthly Update - July 2022",
+          "description": "Infinite Table update for July 2022",
           "author": [
             "admin"
           ],
-          "excerpt": "<p>In July, we’ve been hard at work preparing for our Autumn release. We have implemented a few new functionalities:</p>\n",
+          "excerpt": "<p>In July, we’ve been hard at work preparing for our Autumn release.</p>\n",
           "readingTime": "4 min read"
         },
         {
           "path": "/blog/2022/06/24/navigating-your-datagrid",
           "date": "2022-06-24",
           "title": "DataGrid Keyboard Navigation",
+          "description": "DataGrid Keyboard Navigation",
           "author": [
             "admin"
           ],
@@ -29,6 +31,7 @@
           "path": "/blog/2022/06/15/infinite-launch-beta",
           "date": "2022-06-15",
           "title": "Infinite Table Beta Launch 🚀",
+          "description": "Infinite Table Beta Launch 🚀",
           "author": [
             "admin"
           ],
@@ -39,6 +42,7 @@
           "path": "/blog/2021/12/10/infinite-launch",
           "date": "2021-12-10",
           "title": "Infinite Table Alpha Launch 🚀",
+          "description": "Infinite Table Alpha Launch 🚀",
           "author": [
             "admin"
           ],

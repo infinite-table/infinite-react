@@ -50,6 +50,7 @@ Promise.resolve()
           .slice(0, -1 * '.page.md'.length),
         date: [year, month, day].join('-'),
         title: data.title,
+        description: data.description || data.title,
         author: data.author,
         excerpt: rendered,
         readingTime: readingTime(content).text,

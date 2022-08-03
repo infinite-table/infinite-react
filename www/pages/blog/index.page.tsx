@@ -24,7 +24,7 @@ export default function RecentPosts() {
             <div className="inline-flex items-center mb-8">
               <Seo
                 title="Blog"
-                description="Offical React.js news, announcements, and release notes."
+                description="Offical Infinite Table React news, announcements, and release notes."
               />
               <Logo className="inline-block text-link dark:text-link-dark w-20 sm:w-28 mr-4  h-auto" />
               <h1 className="text-5xl font-bold text-primary dark:text-primary-dark ">

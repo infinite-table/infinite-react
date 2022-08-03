@@ -1,5 +1,6 @@
 ---
 title: "Monthly Update - July 2022"
+description: "Infinite Table update for July 2022"
 author: [admin]
 ---
 In July, we've been hard at work preparing for our Autumn release.
