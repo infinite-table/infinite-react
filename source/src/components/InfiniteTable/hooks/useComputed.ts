@@ -4,6 +4,7 @@ import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataS
 import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 import { useComponentState } from '../../hooks/useComponentState';
 import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
+import { MultiRowSelector } from '../utils/MultiRowSelector';
 
 import { useColumnGroups } from './useColumnGroups';
 import { useColumnRowspan } from './useColumnRowspan';
@@ -87,6 +88,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedRemainingSpace,
     computedPinnedStartWidth,
     computedPinnedEndWidth,
+    renderSelectionCheckBox,
   } = useComputedVisibleColumns({
     columns,
     columnCssEllipsis: componentState.columnCssEllipsis,
@@ -130,12 +132,23 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     ? computedPinnedEndColumnsWidth > computedPinnedEndWidth
     : false;
 
+  const [multiRowSelector] = useState(() => {
+    const multiRowSelector = new MultiRowSelector({
+      getIdForIndex: (index: number) =>
+        getDataSourceState().dataArray[index].id,
+    });
+
+    return multiRowSelector;
+  });
+
   return {
+    multiRowSelector,
     showColumnFilters: !!dataSourceState.filterValue,
     scrollbars,
     columnSize,
     rowspan,
     toggleGroupRow,
+    renderSelectionCheckBox,
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,
     computedPinnedStartWidth,

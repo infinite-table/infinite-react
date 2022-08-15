@@ -12,10 +12,7 @@ import { useRerender } from '../../hooks/useRerender';
 import type { Size } from '../../types/Size';
 import { InfiniteTableColumnCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
 import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
-import type {
-  InfiniteTableComputedValues,
-  InfiniteTableImperativeApi,
-} from '../types';
+import type { InfiniteTableComputedValues, InfiniteTableApi } from '../types';
 
 import { useInfiniteTable } from './useInfiniteTable';
 import { useYourBrain } from './useYourBrain';
@@ -24,7 +21,7 @@ type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
   domRef: Ref<HTMLElement>;
 
-  imperativeApi: InfiniteTableImperativeApi<T>;
+  imperativeApi: InfiniteTableApi<T>;
 
   bodySize: Size;
 
@@ -48,6 +45,7 @@ export function useCellRendering<T>(
     computedPinnedStartColumns,
     computedPinnedEndColumns,
     computedVisibleColumns,
+    computedVisibleColumnsMap,
     rowspan,
     toggleGroupRow,
     columnSize,
@@ -183,6 +181,7 @@ export function useCellRendering<T>(
         domRef,
         width,
         column,
+        columnsMap: computedVisibleColumnsMap,
         rowStyle,
         rowClassName,
       };
@@ -193,6 +192,7 @@ export function useCellRendering<T>(
       rowHeight,
       getData,
       computedVisibleColumns,
+      computedVisibleColumnsMap,
       groupRenderStrategy,
       toggleGroupRow,
       showZebraRows,

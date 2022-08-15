@@ -57,6 +57,18 @@ export const RowClsRecipe = recipe({
   },
 });
 
-export const GroupRowExpanderCls = style({
-  paddingInlineStart: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+export const GroupRowExpanderCls = recipe({
+  variants: {
+    align: {
+      start: {
+        paddingInlineStart: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+      },
+      center: {
+        paddingInlineStart: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+      },
+      end: {
+        paddingInlineEnd: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+      },
+    },
+  },
 });

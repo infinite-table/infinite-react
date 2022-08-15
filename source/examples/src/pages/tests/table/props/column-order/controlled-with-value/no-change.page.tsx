@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   InfiniteTable,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnOrder,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
@@ -36,7 +36,7 @@ const App = () => {
           }}
           columnOrder={defaultColumnOrder}
           onColumnOrderChange={onColumnOrderChange}
-          onReady={(api: InfiniteTableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

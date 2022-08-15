@@ -56,9 +56,6 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   if (rowInfo.isGroupRow && !column.groupByField) {
     return null;
   }
-  // if (column.groupByField && !rowInfo.isGroupRow) {
-  //   return null;
-  // }
 
   return (
     <InfiniteCheckBox
@@ -77,15 +74,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
           deselectCurrentRow();
         }
       }}
-      checked={
-        rowInfo.isGroupRow
-          ? !rowInfo.rowSelected
-            ? rowInfo.childrenSelectedCount > 0
-              ? null
-              : false
-            : true
-          : rowInfo.rowSelected
-      }
+      checked={rowInfo.rowSelected}
     />
   );
 };
@@ -111,6 +100,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     toggleGroupRow,
     rowIndex,
     rowHeight,
+    columnsMap,
 
     domRef,
     hidden,
@@ -234,13 +224,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const renderParam: InfiniteTableColumnRenderParam<T> = {
     column,
+    columnsMap,
     domRef,
     groupRowInfo,
     ...rest,
     selectionMode,
-    selectRow: imperativeApi.selectRow,
-    deselectRow: imperativeApi.deselectRow,
-    toggleRowSelection: imperativeApi.toggleRowSelection,
+    selectRow: imperativeApi.selectionApi.selectRow,
+    deselectRow: imperativeApi.selectionApi.deselectRow,
+    toggleRowSelection: imperativeApi.selectionApi.toggleRowSelection,
     renderBag: {
       value,
       selectionCheckBox: null,
@@ -248,10 +239,16 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     },
 
     selectCurrentRow: useCallback(() => {
-      return imperativeApi.selectRow(rowInfo.id);
+      return imperativeApi.selectionApi.selectRow(
+        rowInfo.id,
+        rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
+      );
     }, [rowInfo]),
     deselectCurrentRow: useCallback(() => {
-      return imperativeApi.deselectRow(rowInfo.id);
+      return imperativeApi.selectionApi.deselectRow(
+        rowInfo.id,
+        rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
+      );
     }, [rowInfo]),
     rowIndex,
     toggleGroupRow,
@@ -263,7 +260,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       toggleGroupRow(rowInfo.groupKeys!);
     }, [rowInfo]),
     toggleCurrentGroupRowSelection: useCallback(() => {
-      return imperativeApi.toggleGroupRowSelection(
+      if (!rowInfo.isGroupRow) {
+        return;
+      }
+      return imperativeApi.selectionApi.toggleGroupRowSelection(
         rowInfo.isGroupRow ? rowInfo.groupKeys : [],
       );
     }, [rowInfo]),
@@ -287,9 +287,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         />
       );
     }
-    if (column.renderSelectionCheckBox) {
+    if (column.renderSelectionCheckBox && selectionMode == 'multi-row') {
       // make selectionCheckBox available in the render bag
-      // when we have column.renderSelectionCheckBox refined as a function
+      // when we have column.renderSelectionCheckBox defined as a function
       // as people might want to use the default value
       // and enhance it
       renderParam.renderBag.selectionCheckBox = (
@@ -358,9 +358,16 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
     return (
       <>
-        {renderParam.renderBag.groupIcon}
-        {renderParam.renderBag.selectionCheckBox}
+        {column.align !== 'end' ? renderParam.renderBag.groupIcon : null}
+        {column.align !== 'end'
+          ? renderParam.renderBag.selectionCheckBox
+          : null}
         {renderParam.renderBag.value}
+
+        {column.align === 'end'
+          ? renderParam.renderBag.selectionCheckBox
+          : null}
+        {column.align === 'end' ? renderParam.renderBag.groupIcon : null}
       </>
     );
   }, [

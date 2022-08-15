@@ -4,12 +4,11 @@ import {
   InfiniteTableRowInfo,
   InfiniteTable_NoGrouping_RowInfoNormal,
   lazyGroup,
-  GROUP_SELECTED_REDUCER_KEY,
-  GROUP_CHILDREN_SELECTED_COUNT_KEY,
 } from '../../../utils/groupAndPivot';
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { multisort } from '../../../utils/multisort';
+import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getSelectionApi';
 import { RowSelectionState } from '../RowSelectionState';
 import type {
   DataSourceState,
@@ -19,7 +18,6 @@ import type {
   DataSourcePropFilterValue,
   DataSourceFilterOperatorFunctionParam,
   DataSourcePropFilterTypes,
-  DataSourceAggregationReducer,
 } from '../types';
 
 const haveDepsChanged = <StateType>(
@@ -43,7 +41,7 @@ function toRowInfo<T>(
   data: T,
   id: any,
   index: number,
-  isRowSelected?: (rowInfo: InfiniteTableRowInfo<T>) => boolean,
+  isRowSelected?: (rowInfo: InfiniteTableRowInfo<T>) => boolean | null,
 ): InfiniteTable_NoGrouping_RowInfoNormal<T> {
   const rowInfo: InfiniteTable_NoGrouping_RowInfoNormal<T> = {
     dataSourceHasGrouping: false,
@@ -147,7 +145,6 @@ export function concludeReducer<T>(params: {
 }) {
   const { state, previousState } = params;
 
-  const primaryKeyDescriptor = state.primaryKey;
   const sortInfo = state.sortInfo;
   let shouldSort = !!sortInfo?.length && !state.controlledSort;
 
@@ -157,6 +154,7 @@ export function concludeReducer<T>(params: {
 
   let originalDataArrayChanged = haveDepsChanged(previousState, state, [
     'originalDataArray',
+    'originalLazyGroupDataChangeDetect',
   ]);
 
   const dataSourceChange = previousState && state.data !== previousState.data;
@@ -177,6 +175,14 @@ export function concludeReducer<T>(params: {
     // TODO if we have defaultGroupRowsState in props (so this is uncontrolled)
     // reset state.groupRowsState to the value in props.defaultGroupRowsState
     // also make sure onGroupRowsState is triggered to notify the action to consumers
+  }
+
+  const shouldIndex = originalDataArrayChanged;
+  if (shouldIndex) {
+    state.indexer.clear();
+    if (!state.lazyLoad) {
+      state.indexer.indexArray(state.originalDataArray, state.toPrimaryKey);
+    }
   }
 
   const { filterFunction, filterValue, filterTypes, operatorsByFilterType } =
@@ -212,6 +218,7 @@ export function concludeReducer<T>(params: {
   const selectionDepsChanged = haveDepsChanged(previousState, state, [
     'rowSelection',
     'isRowSelected',
+    'originalLazyGroupDataChangeDetect',
   ]);
   const groupsDepsChanged =
     originalDataArrayChanged ||
@@ -231,20 +238,13 @@ export function concludeReducer<T>(params: {
 
   const shouldGroupAgain =
     (shouldGroup && (groupsDepsChanged || !state.lastGroupDataArray)) ||
-    (selectionDepsChanged && state.selectionMode === 'multi-row');
+    selectionDepsChanged;
 
   const now = Date.now();
 
   let dataArray = state.originalDataArray;
 
-  const toPrimaryKey =
-    typeof primaryKeyDescriptor === 'function'
-      ? (data: T, index: number) => primaryKeyDescriptor({ data, index })
-      : (data: T, _index?: number) => {
-          const pk = data[primaryKeyDescriptor];
-
-          return pk;
-        };
+  const toPrimaryKey = state.toPrimaryKey;
 
   if (!shouldFilter) {
     state.unfilteredCount = dataArray.length;
@@ -288,8 +288,16 @@ export function concludeReducer<T>(params: {
 
   let rowInfoDataArray: InfiniteTableRowInfo<T>[] = state.dataArray;
 
+  const rowSelectionState =
+    state.rowSelection instanceof RowSelectionState
+      ? state.rowSelection
+      : undefined;
+
+  //@ts-ignore
+  rowSelectionState?.xcache();
+
   let isRowSelected:
-    | ((rowInfo: InfiniteTableRowInfo<T>) => boolean)
+    | ((rowInfo: InfiniteTableRowInfo<T>) => boolean | null)
     | undefined =
     state.selectionMode === 'single-row'
       ? (rowInfo) => {
@@ -297,57 +305,30 @@ export function concludeReducer<T>(params: {
         }
       : state.selectionMode === 'multi-row'
       ? (rowInfo) => {
-          return (state.rowSelection as RowSelectionState).isRowSelected(
-            rowInfo.id,
-          );
+          const rowSelection = rowSelectionState as RowSelectionState;
+
+          return rowInfo.isGroupRow
+            ? rowSelection.getGroupRowSelectionState(rowInfo.groupKeys)
+            : rowSelection.isRowSelected(
+                rowInfo.id,
+                rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
+              );
         }
       : undefined;
 
-  if (state.isRowSelected) {
+  if (state.isRowSelected && state.selectionMode === 'multi-row') {
     isRowSelected = (rowInfo) =>
-      state.isRowSelected!(rowInfo, state.rowSelection, state.selectionMode) ||
-      false;
+      state.isRowSelected!(
+        rowInfo,
+        rowSelectionState as RowSelectionState,
+        state.selectionMode as 'multi-row',
+      );
   }
 
   if (shouldGroup) {
     if (shouldGroupAgain) {
       let aggregationReducers = state.aggregationReducers;
 
-      if (state.selectionMode === 'multi-row') {
-        const groupSelectedReducer: DataSourceAggregationReducer<T, boolean> = {
-          initialValue: true,
-          reducer: (groupSelected, _value, data, index) => {
-            const rowId = toPrimaryKey(data, index);
-            return (
-              groupSelected &&
-              (state.rowSelection as RowSelectionState).isRowSelected(
-                rowId as string,
-              )
-            );
-          },
-        };
-        const groupChildrenSelectedCountReducer: DataSourceAggregationReducer<
-          T,
-          number
-        > = {
-          initialValue: 0,
-          reducer: (selectedCount, _value, data, index) => {
-            const rowId = toPrimaryKey(data, index);
-            return (
-              selectedCount +
-              (state.rowSelection as RowSelectionState).isRowSelected(
-                rowId as string,
-              )
-            );
-          },
-        };
-        aggregationReducers = {
-          ...aggregationReducers,
-          [GROUP_SELECTED_REDUCER_KEY]: groupSelectedReducer,
-          [GROUP_CHILDREN_SELECTED_COUNT_KEY]:
-            groupChildrenSelectedCountReducer,
-        };
-      }
       const groupResult = state.lazyLoad
         ? lazyGroup(
             {
@@ -357,6 +338,8 @@ export function concludeReducer<T>(params: {
               pivot: pivotBy,
               mappings: state.pivotMappings,
               reducers: aggregationReducers,
+              indexer: state.indexer,
+              toPrimaryKey,
             },
             state.originalLazyGroupData,
           )
@@ -369,21 +352,24 @@ export function concludeReducer<T>(params: {
             dataArray,
           );
 
-      state.indexer.clear();
+      state.groupDeepMap = groupResult.deepMap;
+      if (rowSelectionState) {
+        rowSelectionState.getConfig = rowSelectionStateConfigGetter(state);
+      }
+
       const flattenResult = enhancedFlatten({
         groupResult,
         lazyLoad: !!state.lazyLoad,
         reducers: aggregationReducers,
         toPrimaryKey,
         isRowSelected,
-        indexer: state.indexer,
+        rowSelectionState,
 
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
       });
 
       rowInfoDataArray = flattenResult.data;
-      state.groupDeepMap = groupResult.deepMap;
 
       state.reducerResults = groupResult.reducerResults;
 
@@ -421,17 +407,13 @@ export function concludeReducer<T>(params: {
       groupsDepsChanged ||
       selectionDepsChanged
     ) {
-      state.indexer.clear();
-
       rowInfoDataArray = dataArray.map((data, index) => {
         const rowInfo = toRowInfo(
           data,
-          data ? toPrimaryKey(data, index) : index,
+          data ? toPrimaryKey(data) : index,
           index,
           isRowSelected,
         );
-
-        state.indexer.add(index, rowInfo.id);
 
         return rowInfo;
       });
@@ -448,25 +430,30 @@ export function concludeReducer<T>(params: {
   state.reducedAt = now;
 
   if (state.selectionMode === 'multi-row') {
-    if (shouldGroup) {
-      state.allRowsSelected =
-        (state.reducerResults?.[
-          GROUP_SELECTED_REDUCER_KEY
-        ] as any as boolean) || false;
-      state.selectedRowCount =
-        (state.reducerResults?.[
-          GROUP_CHILDREN_SELECTED_COUNT_KEY
-        ] as any as number) || 0;
-    } else {
-      // todo here we will have to use totalCount instead of state.dataArray for cases
-      // when remote/lazy data source is used
-      const dataArrayCount = state.dataArray.length;
-      state.selectedRowCount =
-        (state.rowSelection as RowSelectionState)!.getSelectedCount(
-          dataArrayCount,
-        );
+    if (shouldGroup && state.lazyLoad) {
+      let allRowsSelected = true;
+      let someRowsSelected = false;
 
-      state.allRowsSelected = dataArrayCount === state.selectedRowCount;
+      state.dataArray.forEach((rowInfo) => {
+        if (rowInfo.isGroupRow && rowInfo.groupKeys.length === 1) {
+          const { rowSelected } = rowInfo;
+          if (rowSelected !== true) {
+            allRowsSelected = false;
+          }
+          if (rowSelected === true || rowSelected === null) {
+            someRowsSelected = true;
+          }
+        }
+      });
+      state.allRowsSelected = allRowsSelected;
+      state.someRowsSelected = someRowsSelected;
+    } else {
+      const dataArrayCount = state.filteredCount;
+      const selectedRowCount =
+        (state.rowSelection as RowSelectionState)!.getSelectedCount();
+
+      state.allRowsSelected = dataArrayCount === selectedRowCount;
+      state.someRowsSelected = selectedRowCount > 0;
     }
   }
 

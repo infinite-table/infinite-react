@@ -21,7 +21,7 @@ import { InfiniteTableCellProps } from '../components/InfiniteTableRow/InfiniteT
 import { InfiniteTableColumnPinnedValues } from './InfiniteTableProps';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 
-import type { InfiniteTableColumnGroup } from '.';
+import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -30,16 +30,26 @@ export type InfiniteTableSelectRowFn = (id: any) => void;
 export type InfiniteTableIsRowSelectedFn = (id: any) => boolean;
 export type InfiniteTableIsGroupRowSelectedFn = (groupKeys: any[]) => boolean;
 
-export type InfiniteTableColumnHeaderParams<
+export type InfiniteTableColumnHeaderParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
-  sortTool: JSX.Element | null;
   dragging: boolean;
   column: COL_TYPE;
+  columnsMap: Map<string, COL_TYPE>;
   columnSortInfo: DataSourceSingleSortInfo<DATA_TYPE> | null;
   columnFilterValue: DataSourceFilterValueItem<DATA_TYPE> | null;
+  selectionMode: DataSourcePropSelectionMode;
+  allRowsSelected: boolean;
+  someRowsSelected: boolean;
+  api: InfiniteTableApi<DATA_TYPE>;
+
+  renderBag: {
+    header: string | number | Renderable;
+    sortIcon?: Renderable;
+    selectionCheckBox?: Renderable;
+  };
 };
 
 export type InfiniteTableColumnRenderParamBase<
@@ -50,6 +60,7 @@ export type InfiniteTableColumnRenderParamBase<
 
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
+
   renderBag: {
     value: string | number | Renderable;
     groupIcon?: Renderable;
@@ -60,6 +71,7 @@ export type InfiniteTableColumnRenderParamBase<
   rowActive: boolean;
 
   column: COL_TYPE;
+  columnsMap: Map<string, COL_TYPE>;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   toggleCurrentGroupRowSelection: () => void;
@@ -90,7 +102,7 @@ export type InfiniteTableGroupColumnRenderParams<
 export type InfiniteTableColumnCellContextType<DATA_TYPE> =
   InfiniteTableColumnRenderParam<DATA_TYPE> & {};
 export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
-  InfiniteTableColumnHeaderParams<DATA_TYPE> & {};
+  InfiniteTableColumnHeaderParam<DATA_TYPE> & {};
 
 export type InfiniteTableGroupColumnRenderIconParam<
   DATA_TYPE,
@@ -160,7 +172,7 @@ export type InfiniteTableColumnRenderValueFunction<
 > = InfiniteTableColumnRenderFunction<DATA_TYPE, COL_TYPE>;
 
 export type InfiniteTableColumnHeaderRenderFunction<T> = (
-  headerParams: InfiniteTableColumnHeaderParams<T>,
+  headerParams: InfiniteTableColumnHeaderParam<T>,
 ) => Renderable;
 
 export type InfiniteTableColumnWithField<T> = {
@@ -208,7 +220,7 @@ export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
 
 export type InfiniteTableColumnStyleFnParams<T> = {
   value: Renderable;
-  column: InfiniteTableColumn<T>;
+  column: InfiniteTableComputedColumn<T>;
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 
 export type InfiniteTableColumnStyleFn<T> = (
@@ -216,11 +228,11 @@ export type InfiniteTableColumnStyleFn<T> = (
 ) => undefined | React.CSSProperties;
 
 export type InfiniteTableColumnHeaderClassNameFn<T> = (
-  params: InfiniteTableColumnHeaderParams<T>,
+  params: InfiniteTableColumnHeaderParam<T>,
 ) => undefined | string;
 
 export type InfiniteTableColumnHeaderStyleFn<T> = (
-  params: InfiniteTableColumnHeaderParams<T>,
+  params: InfiniteTableColumnHeaderParam<T>,
 ) => undefined | React.CSSProperties;
 
 export type InfiniteTableColumnClassNameFn<T> = (
@@ -285,6 +297,7 @@ export type InfiniteTableBaseColumn<T> = {
   columnGroup?: string;
 
   header?: InfiniteTableColumnHeader<T>;
+  renderHeader?: InfiniteTableColumnHeaderRenderFunction<T>;
   name?: Renderable;
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
@@ -317,7 +330,11 @@ export type InfiniteTableBaseColumn<T> = {
   maxWidth?: number;
 
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<T>;
+  renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<T>;
   renderSelectionCheckBox?: boolean | InfiniteTableColumnRenderFunction<T>;
+  renderHeaderSelectionCheckBox?:
+    | boolean
+    | InfiniteTableColumnHeaderRenderFunction<T>;
 
   components?: {
     ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;

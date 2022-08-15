@@ -6,6 +6,7 @@ import {
   DataSourcePropRowSelection_MultiRow,
   useInfiniteColumnCell,
   DataSourcePropGroupBy,
+  InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
@@ -61,7 +62,12 @@ const columns: InfiniteTablePropColumns<Developer> = {
       return <>{renderBag.value}!!!</>;
     },
   },
-  stack: { field: 'stack' },
+  stack: {
+    field: 'stack',
+    renderValue: ({ value }) => {
+      return <>x - {value}</>;
+    },
+  },
 };
 
 const domProps = {
@@ -77,38 +83,35 @@ const groupBy = [
   },
 ];
 
+const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
+  field: 'firstName',
+  // align: 'end',
+  renderValue: (arg) => {
+    const { groupBy, columnsMap, rowInfo } = arg;
+
+    const groupByItem =
+      groupBy[rowInfo.dataSourceHasGrouping ? rowInfo.groupNesting - 1 : 0];
+
+    if (!groupByItem) {
+      return <>{arg.value}</>;
+    }
+
+    const groupColumn = columnsMap.get(groupByItem.field);
+
+    // return <>{arg.value}</>;
+    // const groupByCol = groupBy
+    return <>{groupColumn?.renderValue?.(arg) ?? arg.value}</>;
+  },
+};
+
 export default function GroupByExample() {
   const [rowSelection, setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
-      //@ts-ignore
-      // selectedGroups: [
-      //   [
-      //     'France',
-      //     {
-      //       deselectedRows: { '21312': true },
-      //       selectedGroups: [],
-      //     },
-      //   ],
-      //   ['backend', 'TypeScript'],
-      // ],
-      selectedRows: {
-        0: true,
-        1: true,
-        2: true,
-        3: true,
-
-        // 'backend,TypeScript': true,
-
-        5: true,
-        8: true,
-        41: true,
-      },
-      deselectedRows: true,
+      // deselectedRows: [['backend', 'TypeScript']],
+      defaultSelection: false,
+      selectedRows: [],
+      deselectedRows: [['backend', 'TypeScript']],
     });
-
-  const onRowSelectionChange = React.useCallback(({ rowSelection }) => {
-    setRowSelection(rowSelection);
-  }, []);
 
   return (
     <>
@@ -124,7 +127,7 @@ export default function GroupByExample() {
         groupBy={groupBy as DataSourcePropGroupBy<Developer>}
         selectionMode="multi-row"
         rowSelection={rowSelection}
-        onRowSelectionChange={onRowSelectionChange}
+        onRowSelectionChange={setRowSelection}
         // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell
         // multiRowSelection={{}}
         // singleRowSelection={{}}
@@ -156,10 +159,12 @@ export default function GroupByExample() {
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
+          keyboardNavigation="row"
           groupRenderStrategy="single-column"
-          groupColumn={{
-            field: 'firstName',
-          }}
+          // groupColumn={{
+          //   field: 'firstName',
+          // }}
+          groupColumn={groupColumn}
           columnDefaultWidth={200}
         />
       </DataSource>

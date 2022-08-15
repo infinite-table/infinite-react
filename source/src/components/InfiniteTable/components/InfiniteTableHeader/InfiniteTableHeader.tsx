@@ -127,7 +127,7 @@ function InfiniteTableHeaderFn<T>(
           headerOptions={headerOptions}
           width={widthWithColspan}
           height={heightWithRowspan}
-          columns={computedVisibleColumnsMap}
+          columnsMap={computedVisibleColumnsMap}
         />
       );
     },

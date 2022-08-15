@@ -14,5 +14,18 @@ export const ExpanderIconClsVariants = recipe({
       true: transform.rotate90,
       false: {},
     },
+    direction: {
+      end: {},
+      start: {},
+    },
   },
+  compoundVariants: [
+    {
+      variants: {
+        expanded: false,
+        direction: 'end',
+      },
+      style: transform.rotate180,
+    },
+  ],
 });

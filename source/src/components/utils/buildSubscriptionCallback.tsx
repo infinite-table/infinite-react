@@ -6,39 +6,40 @@ import {
 export function buildSubscriptionCallback<T>(
   withRaf = false,
 ): SubscriptionCallback<T> {
-  let result: T | null = null;
+  let lastCallValue: T | null = null;
   let fns: SubscriptionCallbackOnChangeFn<T>[] = [];
 
   let rafId: number | null = null;
 
-  const updater = (items: T, callback?: () => void) => {
+  const updater = (items: T, callback?: (results: any[]) => void) => {
+    const results: any[] = [];
     if (withRaf) {
       if (rafId != null) {
         cancelAnimationFrame(rafId);
         rafId = null;
       }
       requestAnimationFrame(() => {
-        result = items;
+        lastCallValue = items;
         rafId = null;
 
         // change happens here
         for (let i = 0, len = fns.length; i < len; i++) {
-          fns[i](items);
+          results.push(fns[i](items));
         }
-        callback?.();
+        callback?.(results);
       });
     } else {
-      result = items;
+      lastCallValue = items;
 
       // change happens here
       for (let i = 0, len = fns.length; i < len; i++) {
-        fns[i](items);
+        results.push(fns[i](items));
       }
-      callback?.();
+      callback?.(results);
     }
   };
 
-  updater.get = () => result;
+  updater.get = () => lastCallValue;
 
   // this attaches a new listener to changes
   updater.onChange = (fn: SubscriptionCallbackOnChangeFn<T>) => {
@@ -52,6 +53,8 @@ export function buildSubscriptionCallback<T>(
     updater(null as any as T);
     fns.length = 0;
   };
+
+  updater.getListenersCount = () => fns.length;
 
   return updater;
 }

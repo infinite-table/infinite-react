@@ -34,23 +34,26 @@ const dataSource = () => {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  checkbox: {
-    defaultWidth: 40,
-    align: 'center',
-    resizable: false,
-    style: {
-      cursor: 'pointer',
-    },
-    render: ({ rowInfo }) => {
-      return (
-        <input
-          type="checkbox"
-          checked={rowInfo.rowSelected}
-          onChange={() => {}}
-        />
-      );
-    },
-  },
+  // checkbox: {
+  //   defaultWidth: 40,
+  //   align: 'center',
+  //   resizable: false,
+  //   style: {
+  //     cursor: 'pointer',
+  //   },
+  //   render: ({ rowInfo }) => {
+  //     return (
+  //       <input
+  //         type="checkbox"
+  //         style={{
+  //           cursor: 'pointer',
+  //         }}
+  //         checked={rowInfo.rowSelected as boolean}
+  //         onChange={() => {}}
+  //       />
+  //     );
+  //   },
+  // },
   id: { field: 'id' },
 
   firstName: {
@@ -70,11 +73,8 @@ const domProps = {
 export default function GroupByExample() {
   const [rowSelection, _setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
-      selectedRows: {
-        2: true,
-        3: true,
-      },
-      deselectedRows: true,
+      selectedRows: [2, 3],
+      defaultSelection: false,
     });
 
   return (
@@ -124,6 +124,8 @@ export default function GroupByExample() {
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
+          keyboardSelection={true}
+          keyboardNavigation={'cell'}
           columnDefaultWidth={200}
         />
       </DataSource>

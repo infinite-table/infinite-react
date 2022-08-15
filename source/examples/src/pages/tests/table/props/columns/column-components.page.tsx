@@ -44,11 +44,11 @@ const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
 };
 
 const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, sortTool } = useInfiniteHeaderCell<Developer>();
+  const { domRef, renderBag } = useInfiniteHeaderCell<Developer>();
 
   return (
     <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {sortTool}
+      {renderBag.sortIcon}
       First name
     </div>
   );

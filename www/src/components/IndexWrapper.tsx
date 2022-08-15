@@ -46,7 +46,7 @@ export default function IndexWrapper({
         className={`${fullWidthContainer} ${minHeightFull}  `}>
         <Seo
           titleSuffix={false}
-          title="Infinite Table for React | for your DataGrid component for large datasets">
+          title="Infinite Table for React | the DataGrid component for large datasets">
           <link
             rel="icon"
             type="image/svg+xml"

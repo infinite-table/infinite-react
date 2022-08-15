@@ -1,4 +1,4 @@
-import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+import { InfiniteTableApi } from '@src/components/InfiniteTable/types';
 import { test, expect } from '@testing';
 
 import {
@@ -41,9 +41,7 @@ export default test.describe.parallel('Column visibility uncontrolled', () => {
 
     await page.waitForTimeout(30);
     await page.evaluate(() => {
-      (
-        (window as any).api as InfiniteTableImperativeApi<any>
-      ).setColumnVisibility({});
+      ((window as any).api as InfiniteTableApi<any>).setColumnVisibility({});
     });
 
     await page.waitForTimeout(20);

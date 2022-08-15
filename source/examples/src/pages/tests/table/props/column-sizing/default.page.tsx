@@ -6,7 +6,7 @@ import {
   DataSourceDataParams,
   InfiniteTable,
   InfiniteTableColumn,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
@@ -117,7 +117,7 @@ const App = () => {
               position: 'relative',
             },
           }}
-          onReady={(api: InfiniteTableImperativeApi<Employee>) => {
+          onReady={(api: InfiniteTableApi<Employee>) => {
             (globalThis as any).api = api;
           }}
           columnTypes={columnTypes}

@@ -14,6 +14,7 @@ import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
 
 export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
+
   renderChildren: () => Renderable;
   width: number;
   cssEllipsis?: boolean;
@@ -42,6 +43,7 @@ export interface InfiniteTableColumnCellProps<T>
     InfiniteTableCellProps<T>,
     'children' | 'cellType' | 'renderChildren'
   > {
+  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   onMouseEnter?: VoidFunction;
   onMouseLeave?: VoidFunction;
   showZebraRows: boolean;
@@ -62,7 +64,7 @@ export interface InfiniteTableHeaderCellProps<T>
     InfiniteTableCellProps<T>,
     'children' | 'cellType' | 'renderChildren'
   > {
-  columns: Map<string, InfiniteTableComputedColumn<T>>;
+  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   height: number;
   headerOptions: InfiniteTablePropHeaderOptions;
   onResize?: OnResizeFn;

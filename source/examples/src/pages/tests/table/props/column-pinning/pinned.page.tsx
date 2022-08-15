@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   InfiniteTable,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
@@ -42,7 +42,7 @@ const App = () => {
           pinnedStartMaxWidth={500}
           pinnedEndMaxWidth={500}
           columnPinning={columnPinning}
-          onReady={(api: InfiniteTableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={440}

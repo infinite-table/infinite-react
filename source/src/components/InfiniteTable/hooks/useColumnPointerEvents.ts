@@ -62,6 +62,10 @@ export const useColumnPointerEvents = ({
 
   const onPointerDown = useCallback(
     (e) => {
+      if (e.target.tagName === 'INPUT') {
+        // early exit, so that (for example) checkbox selection works in the column header when clicking the checkbox
+        return;
+      }
       const {
         computedVisibleColumns,
         computedVisibleColumnsMap,
@@ -69,7 +73,12 @@ export const useColumnPointerEvents = ({
         computedUnpinnedColumns,
         computedPinnedEndColumns,
       } = getComputed();
+
       const dragColumn = computedVisibleColumnsMap.get(columnId)!;
+
+      if (!dragColumn.computedDraggable) {
+        return;
+      }
 
       const target = domRef.current!;
 

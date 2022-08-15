@@ -1,4 +1,4 @@
-import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+import { InfiniteTableApi } from '@src/components/InfiniteTable/types';
 import { test, expect } from '@testing';
 
 import { getHeaderColumnIds } from '../../../../testUtils';
@@ -12,7 +12,7 @@ export default test.describe.parallel('Column order uncontrolled', () => {
 
     await page.waitForTimeout(30);
     await page.evaluate(() => {
-      ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder([
+      ((window as any).api as InfiniteTableApi<any>).setColumnOrder([
         'make',
         'model',
       ]);
@@ -24,7 +24,7 @@ export default test.describe.parallel('Column order uncontrolled', () => {
     expect(colIds).toEqual(['make', 'model']);
 
     await page.evaluate(() => {
-      ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder([
+      ((window as any).api as InfiniteTableApi<any>).setColumnOrder([
         'id',
         'rating',
       ]);

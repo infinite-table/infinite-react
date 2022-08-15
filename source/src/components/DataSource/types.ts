@@ -147,6 +147,7 @@ export type DataSourceAggregationReducer<T, AggregationResultType> = {
         value: any,
         data: T,
         index: number,
+        groupKeys: any[] | undefined,
       ) => AggregationResultType | any);
   done?: (
     accumulatedValue: AggregationResultType | any,
@@ -172,6 +173,7 @@ export type LazyGroupDataItem<DataType> = {
   keys: any[];
   aggregations?: Record<string, any>;
   dataset?: DataSourceRemoteData<DataType>;
+  totalChildrenCount?: number;
   pivot?: {
     values: Record<string, any>;
     totals?: Record<string, any>;
@@ -198,7 +200,7 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 >;
 
 export interface DataSourceSetupState<T> {
-  indexer: Indexer;
+  indexer: Indexer<T, any>;
   unfilteredCount: number;
   filteredCount: number;
   lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
@@ -221,7 +223,8 @@ export interface DataSourceSetupState<T> {
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   reducerResults?: Record<string, AggregationReducerResult>;
   allRowsSelected: boolean;
-  selectedRowCount: number;
+  // selectedRowCount: number;
+  someRowsSelected: boolean;
   pivotTotalColumnPosition: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition: InfiniteTablePropPivotGrandTotalColumnPosition;
   cursorId: number | symbol | DataSourceLivePaginationCursorValue;
@@ -251,9 +254,7 @@ export type DataSourcePropRowSelection =
   | DataSourcePropRowSelection_MultiRow
   | DataSourcePropRowSelection_SingleRow;
 
-export type DataSourcePropRowSelection_MultiRow =
-  | RowSelectionStateObject
-  | RowSelectionState;
+export type DataSourcePropRowSelection_MultiRow = RowSelectionStateObject;
 export type DataSourcePropRowSelection_SingleRow = null | string | number;
 
 export type DataSourcePropCellSelection = any;
@@ -265,15 +266,24 @@ export type DataSourcePropSelectionMode =
   | 'multi-cell'
   | 'multi-row';
 
-export type DataSourcePropOnRowSelectionChange_MultiRow = (params: {
-  rowSelection: DataSourcePropRowSelection_MultiRow;
-  rowSelectionState: RowSelectionState;
-  selectionMode: 'multi-row';
-}) => void;
-export type DataSourcePropOnRowSelectionChange_SingleRow = (params: {
-  rowSelection: DataSourcePropRowSelection_SingleRow;
-  selectionMode: 'single-row';
-}) => void;
+// export type DataSourcePropOnRowSelectionChange_MultiRow = (params: {
+//   rowSelection: DataSourcePropRowSelection_MultiRow;
+//   rowSelectionState: RowSelectionState;
+//   selectionMode: 'multi-row';
+// }) => void;
+// export type DataSourcePropOnRowSelectionChange_SingleRow = (params: {
+//   rowSelection: DataSourcePropRowSelection_SingleRow;
+//   selectionMode: 'single-row';
+// }) => void;
+
+export type DataSourcePropOnRowSelectionChange_MultiRow = (
+  rowSelection: DataSourcePropRowSelection_MultiRow,
+  selectionMode: 'multi-row',
+) => void;
+export type DataSourcePropOnRowSelectionChange_SingleRow = (
+  rowSelection: DataSourcePropRowSelection_SingleRow,
+  selectionMode: 'single-row',
+) => void;
 
 export type DataSourcePropOnRowSelectionChange =
   | DataSourcePropOnRowSelectionChange_SingleRow
@@ -284,25 +294,27 @@ export type DataSourcePropOnCellSelectionChange = (
 
 export type DataSourcePropIsRowSelected<T> = (
   rowInfo: InfiniteTableRowInfo<T>,
-  rowSelection: DataSourcePropRowSelection,
-  selectionMode: DataSourcePropSelectionMode,
-) => boolean;
+  rowSelectionState: RowSelectionState,
+  selectionMode: 'multi-row',
+) => boolean | null;
 
 export type DataSourceProps<T> = {
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
-  primaryKey:
-    | keyof T
-    | (({ data, index }: { data: T; index: number }) => string);
+  primaryKey: keyof T | ((data: T) => string);
   fields?: (keyof T)[];
 
   data: DataSourceData<T>;
 
   selectionMode?: DataSourcePropSelectionMode;
 
-  rowSelection?: DataSourcePropRowSelection;
-  defaultRowSelection?: DataSourcePropRowSelection;
+  rowSelection?:
+    | DataSourcePropRowSelection_MultiRow
+    | DataSourcePropRowSelection_SingleRow;
+  defaultRowSelection?:
+    | DataSourcePropRowSelection_MultiRow
+    | DataSourcePropRowSelection_SingleRow;
 
   cellSelection?: DataSourcePropCellSelection;
   defaultCellSelection?: DataSourcePropCellSelection;
@@ -461,6 +473,10 @@ export type DataSourceLivePaginationCursorParams<T> = {
 };
 export type DataSourceLivePaginationCursorValue = string | number | null;
 
+// export type DataSourceState<T> = DataSourceSetupState<T> &
+//   DataSourceDerivedState<T> &
+//   DataSourceMappedState<T>;
+
 export interface DataSourceState<T>
   extends DataSourceSetupState<T>,
     DataSourceDerivedState<T>,
@@ -473,8 +489,7 @@ export type DataSourceDerivedState<T> = {
     string,
     Record<string, DataSourceFilterOperator<T>>
   >;
-  rowSelection: RowSelectionState | null | number | string;
-  selectionMode: NonUndefined<DataSourceProps<T>['selectionMode']>;
+
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
 
   multiSort: boolean;
@@ -482,7 +497,23 @@ export type DataSourceDerivedState<T> = {
   controlledFilter: boolean;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
   lazyLoadBatchSize?: number;
+  rowSelection: RowSelectionState | null | number | string;
+  selectionMode: NonUndefined<DataSourceProps<T>['selectionMode']>;
 };
+// & (
+//   | {
+//       rowSelection: RowSelectionState;
+//       selectionMode: 'multi-row';
+//     }
+//   | {
+//       rowSelection: null | number | string;
+//       selectionMode: 'single-row';
+//     }
+//   | {
+//       selectionMode: false | 'single-cell' | 'multi-cell';
+//       rowSelection: null;
+//     }
+// );
 
 export type DataSourceComponentActions<T> = ComponentStateActions<
   DataSourceState<T>

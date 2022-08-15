@@ -5,7 +5,10 @@ import { createPortal } from 'react-dom';
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { defaultFilterTypes } from '../../../DataSource/defaultFilterTypes';
-import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
+import {
+  useDataSource,
+  useDataSourceContextValue,
+} from '../../../DataSource/publicHooks/useDataSource';
 import {
   DataSourceFilterValueItem,
   DataSourcePropFilterTypes,
@@ -19,12 +22,18 @@ import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
 import { InfiniteTableFilterEditorProps } from '../../types';
 import type {
-  InfiniteTableColumnHeaderParams,
+  InfiniteTableColumnHeaderParam,
+  InfiniteTableColumnHeaderRenderFunction,
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
 import { cursor, justifyContent, userSelect } from '../../utilities.css';
-import { RenderHookComponent } from '../../utils/RenderHookComponent';
+import {
+  RenderHeaderCellHookComponent,
+  RenderHookComponent,
+} from '../../utils/RenderHookComponent';
+import { SelectionCheckboxCls } from '../cell.css';
+import { InfiniteCheckBox } from '../CheckBox';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
 import { SortIcon } from '../icons/SortIcon';
 import {
@@ -47,6 +56,30 @@ import {
   InfiniteTableColumnHeaderFilterEmpty,
 } from './InfiniteTableColumnHeaderFilter';
 import { useColumnResizeHandle } from './useColumnResizeHandle';
+
+export const defaultRenderSelectionCheckBox: InfiniteTableColumnHeaderRenderFunction<
+  any
+> = (params) => {
+  const { allRowsSelected, someRowsSelected, api } = params;
+
+  const selected = allRowsSelected ? true : someRowsSelected ? null : false;
+
+  return (
+    <InfiniteCheckBox
+      domProps={{
+        className: SelectionCheckboxCls,
+      }}
+      onChange={(selected) => {
+        if (selected) {
+          api.selectionApi.selectAll();
+        } else {
+          api.selectionApi.deselectAll();
+        }
+      }}
+      checked={selected}
+    />
+  );
+};
 
 export const InfiniteTableHeaderCellContext = React.createContext<
   InfiniteTableHeaderCellContextType<any>
@@ -96,6 +129,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const {
     computed: { showColumnFilters },
+    imperativeApi: api,
     componentState: {
       portalDOMRef,
       columnHeaderHeight,
@@ -104,9 +138,12 @@ export function InfiniteTableHeaderCell<T>(
     },
   } = useInfiniteTable<T>();
 
+  const { allRowsSelected, someRowsSelected, selectionMode } =
+    useDataSource<T>();
+
   const dragging = columnReorderDragColumnId === column.id;
 
-  const { onResize, height, width, headerOptions } = props;
+  const { onResize, height, width, headerOptions, columnsMap } = props;
 
   const sortInfo = column.computedSortInfo;
 
@@ -122,7 +159,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const alwaysShow = headerOptions.alwaysReserveSpaceForSortIcon;
 
-  const sortTool =
+  const sortIcon =
     column.computedSortable && (column.computedSorted || alwaysShow) ? (
       <SortIcon
         index={
@@ -139,30 +176,97 @@ export function InfiniteTableHeaderCell<T>(
       />
     ) : null;
 
-  const renderParam: InfiniteTableColumnHeaderParams<T> = {
+  const renderParam: InfiniteTableColumnHeaderParam<T> = {
     dragging,
     domRef: ref,
     column,
+    columnsMap,
     columnSortInfo: sortInfo,
     columnFilterValue: column.computedFilterValue,
-    sortTool,
+    someRowsSelected,
+    allRowsSelected,
+    selectionMode,
+    api,
+    renderBag: {
+      sortIcon,
+      selectionCheckBox: null,
+      header:
+        column.header && typeof column.header !== 'function'
+          ? column.header
+          : column.name,
+    },
   };
 
   const align = column.align || 'start';
 
   const renderChildren = () => {
-    if (header instanceof Function) {
-      header = (
-        <RenderHookComponent render={header} renderParam={renderParam} />
+    if (column.renderSortIcon) {
+      renderParam.renderBag.sortIcon = (
+        <RenderHeaderCellHookComponent
+          render={column.renderSortIcon}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
       );
     }
-    header = header ?? column.name;
+
+    if (column.renderSelectionCheckBox && selectionMode === 'multi-row') {
+      // make selectionCheckBox available in the render bag
+      // when we have column.renderSelectionCheckBox defined as a function
+      // as people might want to use the default value
+      // and enhance it
+      renderParam.renderBag.selectionCheckBox = (
+        <RenderHeaderCellHookComponent
+          render={defaultRenderSelectionCheckBox}
+          renderParam={renderParam}
+        />
+      );
+      if (
+        column.renderHeaderSelectionCheckBox &&
+        column.renderHeaderSelectionCheckBox !== true
+      ) {
+        renderParam.renderBag.selectionCheckBox = (
+          <RenderHeaderCellHookComponent
+            render={column.renderHeaderSelectionCheckBox}
+            renderParam={{
+              ...renderParam,
+              renderBag: { ...renderParam.renderBag },
+            }}
+          />
+        );
+      }
+    }
+
+    if (header instanceof Function) {
+      renderParam.renderBag.header = (
+        <RenderHookComponent
+          render={header}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
+      );
+    }
+
+    if (column.renderHeader) {
+      return (
+        <RenderHeaderCellHookComponent
+          render={column.renderHeader}
+          renderParam={renderParam}
+        />
+      );
+    }
 
     return (
       <>
-        {align === 'end' ? sortTool : null}
-        {header}
-        {align !== 'end' ? sortTool : null}
+        {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
+        {align === 'end' ? renderParam.renderBag.sortIcon : null}
+        {renderParam.renderBag.header}
+        {align !== 'end' ? renderParam.renderBag.sortIcon : null}
+        {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
       </>
     );
   };

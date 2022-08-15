@@ -24,7 +24,7 @@ export type ComponentMappedCallbacks<T_STATE> = {
     state: T_STATE,
   ) => {
     callbackName: string;
-    callbackParam: any;
+    callbackParams: any[];
   };
 };
 

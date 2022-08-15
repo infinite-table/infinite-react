@@ -264,7 +264,7 @@ function getResultSet({
     {}
   );
 
-  let SQL = buildSQL({
+  const sqlParams = {
     groupBy,
     groupKeys,
     pivotBy,
@@ -272,9 +272,11 @@ function getResultSet({
     reducers,
     sortInfo,
     tableName,
-  });
+  };
+  let SQL = buildSQL(sqlParams);
 
   let result = alasql(SQL);
+
   let totalCount = result.length;
 
   result =
@@ -317,6 +319,16 @@ function getResultSet({
         const keys = keyField
           ? [...groupKeys, x[keyField]]
           : [...groupKeys];
+
+        const countSQL = buildSQL({
+          ...sqlParams,
+          groupKeys: keys,
+          justCount: true,
+        });
+
+        const countResult = alasql(countSQL);
+        const totalChildrenCount = countResult[0].__count;
+        console.log(countSQL, countResult);
         // console.log(x);
 
         Object.keys(x).forEach((k) => {
@@ -397,7 +409,13 @@ function getResultSet({
 
         pivot[MAPPINGS.totals] = aggregations;
 
-        return { data, keys, aggregations, pivot };
+        return {
+          data,
+          keys,
+          aggregations,
+          pivot,
+          totalChildrenCount,
+        };
       }),
     };
   }
@@ -506,6 +524,7 @@ function buildSQL({
   filterBy,
   reducers,
   tableName,
+  justCount,
 }) {
   var colsToSelect = [];
 
@@ -596,34 +615,38 @@ function buildSQL({
   // colsToSelect.length = 8;
 
   // console.log('selectAllCols', selectAllCols);
-  if (selectAllCols) {
-    colsToSelect = '*';
+  if (selectAllCols || justCount) {
+    colsToSelect = justCount
+      ? 'count("*") as __count'
+      : '*';
   }
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
-  if (groupBy && groupBy.length && !selectAllCols) {
-    SQL += ` GROUP BY ${groupBy
-      .slice(
-        0,
-        groupKeys ? groupKeys.length + 1 : groupBy.length
-      )
-      .map((g) => `${g.field}`)}`;
-  }
+  if (!justCount) {
+    if (groupBy && groupBy.length && !selectAllCols) {
+      SQL += ` GROUP BY ${groupBy
+        .slice(
+          0,
+          groupKeys ? groupKeys.length + 1 : groupBy.length
+        )
+        .map((g) => `${g.field}`)}`;
+    }
 
-  if (
-    (sortInfo && sortInfo.length) ||
-    (groupBy && groupBy.length)
-  ) {
-    SQL += ` ORDER BY ${
-      sortInfo
-        ? sortInfo.map(
-            (s) =>
-              `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`
-          ) + (groupBy && groupBy.length ? ',' : '')
-        : ''
-    } ${
-      groupBy ? groupBy.map((g) => `${g.field} ASC`) : ''
-    }`;
+    if (
+      (sortInfo && sortInfo.length) ||
+      (groupBy && groupBy.length)
+    ) {
+      SQL += ` ORDER BY ${
+        sortInfo
+          ? sortInfo.map(
+              (s) =>
+                `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`
+            ) + (groupBy && groupBy.length ? ',' : '')
+          : ''
+      } ${
+        groupBy ? groupBy.map((g) => `${g.field} ASC`) : ''
+      }`;
+    }
   }
 
   // console.log(SQL);

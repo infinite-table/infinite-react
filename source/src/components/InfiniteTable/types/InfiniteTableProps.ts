@@ -33,6 +33,7 @@ import {
 import { InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
+import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -141,15 +142,13 @@ export type InfiniteTableComputedValuesGetter<T> =
 export type InfiniteTableActionsGetter<T> = () => InfiniteTableActions<T>;
 export type DataSourceStateGetter<T> = () => DataSourceState<T>;
 
-export type InfiniteTableImperativeApi<T> = {
+export type InfiniteTableApi<T> = {
+  get selectionApi(): InfiniteTableSelectionApi;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
   x?: T;
-
-  get allRowsSelected(): boolean;
-  getSelectedRowCount(): number;
 
   get scrollLeft(): number;
   set scrollLeft(value: number);
@@ -157,19 +156,9 @@ export type InfiniteTableImperativeApi<T> = {
   get scrollTop(): number;
   set scrollTop(value: number);
 
-  getSelectedRows: () => T[];
-
   toggleGroupRow: (groupKeys: any[]) => void;
-  toggleRowSelection: (pk: any) => boolean;
-  selectRow: (pk: any) => boolean;
-  isRowSelected: (pk: any) => boolean;
-  isGroupRowSelected: (groupKeys: any[]) => boolean;
-  toggleGroupRowSelection: (groupKeys: any[]) => boolean;
-  deselectRow: (pk: any) => boolean;
-  selectGroupRow: (groupKeys: any[]) => boolean;
-  deselectGroupRow: (groupKeys: any[]) => boolean;
-  selectAllRows: () => boolean;
-  deselectAllRows: () => boolean;
+  collapseGroupRow: (groupKeys: any[]) => boolean;
+  expandGroupRow: (groupKeys: any[]) => boolean;
 
   scrollRowIntoView: (
     rowIndex: number,
@@ -401,6 +390,7 @@ export interface InfiniteTableProps<T> {
   sortable?: boolean;
 
   keyboardNavigation?: InfiniteTablePropKeyboardNavigation;
+  keyboardSelection?: InfiniteTablePropKeyboardSelection;
   defaultActiveRowIndex?: number | null;
   activeRowIndex?: number | null;
   onActiveRowIndexChange?: (activeRowIndex: number) => void;
@@ -444,7 +434,7 @@ export interface InfiniteTableProps<T> {
 
   filterEditors?: InfiniteTablePropFilterEditors<T>;
 
-  onReady?: (api: InfiniteTableImperativeApi<T>) => void;
+  onReady?: (api: InfiniteTableApi<T>) => void;
 
   rowProps?:
     | React.HTMLProps<HTMLDivElement>
@@ -459,6 +449,7 @@ export interface InfiniteTableProps<T> {
 }
 
 export type InfiniteTablePropKeyboardNavigation = 'cell' | 'row' | false;
+export type InfiniteTablePropKeyboardSelection = boolean;
 
 export type InfiniteTablePropHeaderOptions = {
   alwaysReserveSpaceForSortIcon: boolean;

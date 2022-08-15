@@ -113,6 +113,69 @@ export default test.describe('DeepMap', () => {
     ]);
     expect(map.getKeysStartingWith([5])).toEqual([[5], [5, 1]]);
   });
+  test('get keys starting with keys should work properly - scenario 3', async () => {
+    const map = new DeepMap<number | string, number>();
+
+    map.set([4], 1);
+    map.set([5], 1);
+    map.set([6], 1);
+    map.set(['Europe'], 1);
+
+    expect(map.getKeysStartingWith(['Europe'])).toEqual([['Europe']]);
+
+    expect(map.getKeysStartingWith(['Europe', 'Spain'])).toEqual([]);
+  });
+
+  test('get keys starting with keys + exclude should work properly', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([1, 0], 2);
+    map.set([1, 1], 3);
+    map.set([2, 0], 4);
+    map.set([2, 1], 5);
+    map.set([3, 0], 6);
+    map.set([3, 1], 7);
+    map.set([4, 10], 80);
+    map.set([4, 20], 90);
+    map.set([5, 1], 110);
+    map.set([5], 1110);
+    map.set([0, 0], 1);
+
+    expect(map.getKeysStartingWith([4])).toEqual([
+      [4, 10],
+      [4, 20],
+    ]);
+    expect(map.getKeysStartingWith([5], true)).toEqual([[5, 1]]);
+    expect(map.getKeysStartingWith([5])).toEqual([[5], [5, 1]]);
+  });
+
+  test('get keys starting with depth limit', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([], 1111);
+    map.set([1], 1);
+    map.set([1, 0], 2);
+    map.set([1, 1, 2], 3);
+    map.set([2], 4);
+    // map.set([2, 1], 5);
+    // map.set([2, 2], 6);
+    // map.set([2, 1, 2], 7);
+    // map.set([2, 1, 3], 8);
+
+    expect(map.getKeysStartingWith([], true, 1)).toEqual([[1], [2]]);
+    expect(map.getKeysStartingWith([], false, 1)).toEqual([[], [1], [2]]);
+
+    expect(map.getKeysStartingWith([1], false, 1)).toEqual([[1], [1, 0]]);
+    expect(map.getKeysStartingWith([1], true, 1)).toEqual([[1, 0]]);
+    expect(map.getKeysStartingWith([1, 1, 2], true, 1)).toEqual([]);
+
+    const value = map.getKeysStartingWith([1], true, 2);
+
+    expect(value).toEqual([
+      [1, 0],
+      [1, 1, 2],
+    ]);
+  });
 
   test('getDirectChildrenSizeFor  should work properly', async () => {
     const map = new DeepMap<number, number>();
@@ -121,6 +184,7 @@ export default test.describe('DeepMap', () => {
     map.set([4, 20], 90);
     map.set([4, 20, 40], 90);
     map.set([5, 1], 110);
+    map.set([5, 2], 110);
     map.set([5, 1, 10], 110);
     map.set([5], 1110);
     map.set([100, 0], 1);
@@ -129,12 +193,53 @@ export default test.describe('DeepMap', () => {
     map.set([7, 10], 1);
 
     expect(map.getDirectChildrenSizeFor([4])).toEqual(2);
-    expect(map.getDirectChildrenSizeFor([5])).toEqual(1);
+    expect(map.getDirectChildrenSizeFor([4, 20])).toEqual(1);
+    expect(map.getDirectChildrenSizeFor([5])).toEqual(2);
     expect(map.getDirectChildrenSizeFor([100])).toEqual(1);
     expect(map.getDirectChildrenSizeFor([101])).toEqual(0);
     expect(map.getDirectChildrenSizeFor([111111, 123, 321321312])).toEqual(0);
     expect(map.getDirectChildrenSizeFor([7])).toEqual(1);
     expect(map.getDirectChildrenSizeFor([7, 10])).toEqual(0);
+  });
+
+  test('getAllChildrenSizeFor  should work properly', async () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([4, 10], 80);
+    map.set([4, 20], 90);
+    map.set([4, 20, 40], 11);
+    map.set([4, 20, 50], 22);
+    map.set([4, 20, 50, 60], 33);
+    map.set([5, 1], 110);
+    map.set([5, 1, 10], 110);
+    map.set([5], 1110);
+    map.set([100, 0], 1);
+    map.set([101], 1);
+    map.set([7, 10], 1);
+    map.set([7, 10], 1);
+    expect(map.getAllChildrenSizeFor([4, 20])).toEqual(3);
+    expect(map.getAllChildrenSizeFor([4])).toEqual(5);
+    expect(map.getAllChildrenSizeFor([4, 10])).toEqual(0);
+    expect(map.getAllChildrenSizeFor([4111, 11110])).toEqual(0);
+
+    expect(map.getAllChildrenSizeFor([4, 20])).toEqual(3);
+
+    expect(map.delete([4, 20, 40])).toBe(true);
+    expect(map.delete([4, 20, 41])).toBe(false);
+    expect(map.getAllChildrenSizeFor([4, 20])).toEqual(2);
+    expect(map.getAllChildrenSizeFor([4])).toEqual(4);
+
+    map.delete([4, 10]);
+
+    expect(map.getAllChildrenSizeFor([4])).toEqual(3);
+    expect(map.getAllChildrenSizeFor([])).toEqual(10);
+    // expect(map.getDirectChildrenSizeFor([4, 20])).toEqual(1);
+    // expect(map.getDirectChildrenSizeFor([5])).toEqual(1);
+    // expect(map.getDirectChildrenSizeFor([100])).toEqual(1);
+    // expect(map.getDirectChildrenSizeFor([101])).toEqual(0);
+    // expect(map.getDirectChildrenSizeFor([111111, 123, 321321312])).toEqual(0);
+    // expect(map.getDirectChildrenSizeFor([7])).toEqual(1);
+    // expect(map.getDirectChildrenSizeFor([7, 10])).toEqual(0);
   });
 
   test('constructor should work correctly', () => {

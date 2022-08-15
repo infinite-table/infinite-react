@@ -4,7 +4,7 @@ import fetch from 'isomorphic-fetch';
 import {
   InfiniteTable,
   InfiniteTableColumn,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnPinning,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
@@ -83,7 +83,7 @@ const App = () => {
           pinnedStartMaxWidth={500}
           pinnedEndMaxWidth={500}
           columnPinning={columnPinning}
-          onReady={(api: InfiniteTableImperativeApi<Employee>) => {
+          onReady={(api: InfiniteTableApi<Employee>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={440}

@@ -19,7 +19,7 @@ export function getReducerValue<T>(
       : null;
 
     return typeof reducer.reducer === 'function'
-      ? reducer.reducer(acc, currentValue, item, index)
+      ? reducer.reducer(acc, currentValue, item, index, [])
       : 0;
   }, value);
 

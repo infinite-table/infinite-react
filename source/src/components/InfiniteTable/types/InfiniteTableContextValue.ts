@@ -1,9 +1,9 @@
 import { InfiniteTableActions, InfiniteTableState } from './InfiniteTableState';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
-import { InfiniteTableImperativeApi } from './InfiniteTableProps';
+import { InfiniteTableApi } from './InfiniteTableProps';
 
 export interface InfiniteTableContextValue<T> {
-  imperativeApi: InfiniteTableImperativeApi<T>;
+  imperativeApi: InfiniteTableApi<T>;
   componentState: InfiniteTableState<T>;
   componentActions: InfiniteTableActions<T>;
   computed: InfiniteTableComputedValues<T>;

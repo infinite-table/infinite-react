@@ -11,9 +11,10 @@ type ExpanderIconProps = {
   onChange?: (expanded: boolean) => void;
   style?: React.CSSProperties;
   className?: string;
+  direction?: 'end' | 'start';
 };
 export function ExpanderIcon(props: ExpanderIconProps) {
-  const { size = 24 } = props;
+  const { size = 24, direction = 'start' } = props;
 
   const [expanded, setExpanded] = useState(
     props.expanded ?? props.defaultExpanded,
@@ -44,11 +45,13 @@ export function ExpanderIcon(props: ExpanderIconProps) {
         props.className,
         ExpanderIconCls,
         ExpanderIconClsVariants({
+          direction: direction || 'start',
           expanded,
         }),
         'InfiniteIcon',
         'InfiniteIcon-expander',
         `InfiniteIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,
+        `InfiniteIcon-expander--${direction === 'end' ? 'end' : 'start'}`,
       )}
     >
       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />

@@ -203,6 +203,8 @@ export const forwardProps = <T>(
 
     licenseKey: (licenseKey) => licenseKey || '',
 
+    keyboardSelection: (keyboardSelection) => keyboardSelection ?? true,
+
     activeRowIndex: 1,
     activeCellIndex: 1,
     columnOrder: (columnOrder) => columnOrder ?? true,

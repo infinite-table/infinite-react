@@ -46,7 +46,7 @@ const InfiniteCheckBoxRoot = getComponentStateRoot({
     checked: (checked) => {
       return {
         callbackName: 'onChange',
-        callbackParam: checked,
+        callbackParams: [checked],
       };
     },
   },

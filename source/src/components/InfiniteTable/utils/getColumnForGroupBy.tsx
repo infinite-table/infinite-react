@@ -24,7 +24,12 @@ import {
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
-import { alignItems, cssEllipsisClassName, display } from '../utilities.css';
+import {
+  alignItems,
+  cssEllipsisClassName,
+  display,
+  flexFlow,
+} from '../utilities.css';
 
 import { RenderHookComponent } from './RenderHookComponent';
 
@@ -50,7 +55,7 @@ export function getGroupColumnRender<T>({
   groupIndexForColumn: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    const { rowInfo, renderBag } = renderOptions;
+    const { rowInfo, renderBag, column } = renderOptions;
 
     let { value: valueToRender, groupIcon, selectionCheckBox } = renderBag;
 
@@ -88,12 +93,13 @@ export function getGroupColumnRender<T>({
       <div
         className={join(
           display.flex,
+          column.align === 'end' ? flexFlow.rowReverse : flexFlow.row,
           alignItems.center,
           groupRenderStrategy === 'single-column' ||
             (groupRenderStrategy === 'multi-column' &&
               !rowInfo.isGroupRow &&
               selectionCheckBox)
-            ? GroupRowExpanderCls
+            ? GroupRowExpanderCls({ align: column.align || 'start' })
             : null,
         )}
       >
@@ -115,10 +121,11 @@ export function getGroupColumnRenderGroupIcon<T>({
   toggleGroupRow: (groupRowKeys: any[]) => void;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupIndexForColumn: number;
+
   initialRenderGroupIcon?: InfiniteTableColumn<T>['renderGroupIcon'];
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    const { rowInfo, value, groupBy, pivotBy } = renderOptions;
+    const { rowInfo, value, groupBy, pivotBy, column } = renderOptions;
 
     // for groupRenderStrategy !== 'inline', we work on group rows
     const groupRowInfo = (
@@ -172,6 +179,7 @@ export function getGroupColumnRenderGroupIcon<T>({
       const defaultIcon = (
         <ExpanderIcon
           expanded={!collapsed}
+          direction={column.align === 'end' ? 'end' : 'start'}
           onChange={() => {
             // if (!data) {
             //   return;

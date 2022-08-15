@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {
   InfiniteTable,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnVisibility,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
@@ -47,7 +47,7 @@ const App = () => {
             setColumnVisibility(columnVisibility);
             onColumnVisibilityChange(columnVisibility);
           }}
-          onReady={(api: InfiniteTableImperativeApi<Car>) => {
+          onReady={(api: InfiniteTableApi<Car>) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

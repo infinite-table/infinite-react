@@ -55,12 +55,22 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
   },
   canDesign: { field: 'canDesign' },
-  country: { field: 'country' },
+  country: {
+    field: 'country',
+    renderValue: ({ value }) => {
+      return <>* - {value}</>;
+    },
+  },
   firstName: { field: 'firstName' },
   stack: { field: 'stack' },
   id: { field: 'id' },
   hobby: { field: 'hobby' },
-  city: { field: 'city' },
+  city: {
+    field: 'city',
+    renderValue: ({ value }) => {
+      return <>x - {value}</>;
+    },
+  },
   currency: { field: 'currency' },
 };
 
@@ -69,12 +79,29 @@ const columns: InfiniteTablePropColumns<Developer> = {
 //   currency: 'USD',
 // });
 const groupRowsState = new GroupRowsState({
-  expandedRows: [],
+  expandedRows: [['France'], ['France', 'Persan']],
   collapsedRows: true,
 });
 
 const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   id: 'group-col',
+  renderValue: (arg) => {
+    const { groupBy, columnsMap, rowInfo } = arg;
+
+    const groupByItem =
+      groupBy[rowInfo.dataSourceHasGrouping ? rowInfo.groupNesting - 1 : 0];
+
+    if (!groupByItem) {
+      return <>{arg.value}</>;
+    }
+
+    const groupColumn = columnsMap.get(groupByItem.field);
+
+    // return <>{arg.value}</>;
+    // const groupByCol = groupBy
+    return <>{groupColumn?.renderValue?.(arg) ?? arg.value}</>;
+  },
+
   // while loading, we can render a custom loading icon
   // renderGroupIcon: ({ groupIcon, data }) => (!data ? '🤷‍' : groupIcon),
   // // while we have no data, we can render a placeholder
@@ -135,10 +162,33 @@ const columnPinning: InfiniteTablePropColumnPinning = {
 // };
 
 console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS);
+
+const defaultRowSelection = {
+  defaultSelection: false,
+
+  selectedRows: [
+    ['France', 'Cabariot', 73],
+    ['France', 'Persan', 4],
+    ['France', 'Vernou-sur-Brenne', 33],
+    ['France', 'Villelaure', 38],
+    ['France', 'Villelaure', 64],
+
+    // ,
+    // 84,
+    // ['Germany'],
+    // ['Germany', 'Puderbach', 84],
+  ],
+  deselectedRows: [
+    // ['Germany', 'Puderbach'],
+    // ['Germany', 'Puderbach', 84],
+  ],
+};
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
-      { field: 'country' },
+      {
+        field: 'country',
+      },
       {
         field: 'city',
       },
@@ -181,7 +231,9 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy.length ? pivotBy : undefined}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
+      defaultRowSelection={defaultRowSelection}
       lazyLoad={lazyLoad}
+      selectionMode="multi-row"
     >
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
@@ -258,7 +310,7 @@ const dataSource: DataSourceData<Developer> = ({
     .filter(Boolean)
     .join('&');
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers30k-sql?` + args,
+    process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers10-sql?` + args,
   )
     .then((r) => r.json())
     .then(
@@ -266,7 +318,7 @@ const dataSource: DataSourceData<Developer> = ({
         new Promise((resolve) => {
           setTimeout(() => {
             resolve(data);
-          }, 1150);
+          }, 0);
         }),
     );
 };

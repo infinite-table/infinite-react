@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RefObject, useCallback, useState } from 'react';
+import { RefObject } from 'react';
 
 import { join } from '../../utils/join';
 import { CSSVariableWatch } from '../CSSVariableWatch';
@@ -27,14 +27,14 @@ import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFoo
 import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMask';
-import { getImperativeApi } from './getImperativeApi';
+import { getImperativeApi } from './api/getImperativeApi';
 import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
 import { useCellRendering } from './hooks/useCellRendering';
 import { useComputed } from './hooks/useComputed';
 import { useDOMProps } from './hooks/useDOMProps';
 import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useLicense } from './hooks/useLicense/useLicense';
-import { useRowSelection } from './hooks/useRowSelection';
+
 import { useScrollToActiveCell } from './hooks/useScrollToActiveCell';
 import { useScrollToActiveRow } from './hooks/useScrollToActiveRow';
 import {
@@ -43,7 +43,7 @@ import {
 } from './InfiniteCls.css';
 import { getInfiniteTableContext } from './InfiniteTableContext';
 import { internalProps, rootClassName } from './internalProps';
-import { handleKeyboardNavigation } from './keyboardNavigationAndSelection';
+
 import {
   forwardProps,
   mapPropsToState,
@@ -59,6 +59,7 @@ import type {
 } from './types';
 import { position, zIndex, top, left } from './utilities.css';
 import { toCSSVarName } from './utils/toCSSVarName';
+import { useDOMEventHandlers } from './eventHandlers';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -88,14 +89,8 @@ const InfiniteTableRoot = getComponentStateRoot({
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const {
-      componentState,
-      getComputed,
-      computed,
-      componentActions: actions,
-      getState,
-      imperativeApi,
-    } = useInfiniteTable<T>();
+    const { componentState, getComputed, computed, imperativeApi } =
+      useInfiniteTable<T>();
     const {
       componentState: { loading, dataArray },
       getState: getDataSourceState,
@@ -128,7 +123,9 @@ export const InfiniteTableComponent = React.memo(
 
     useScrollToActiveRow(activeRowIndex, dataArray.length, imperativeApi);
     useScrollToActiveCell(activeCellIndex, dataArray.length, imperativeApi);
-    useRowSelection();
+    // useRowSelection();
+
+    const { onKeyDown } = useDOMEventHandlers<T>();
 
     const { bodySize } = componentState;
 
@@ -170,24 +167,6 @@ export const InfiniteTableComponent = React.memo(
     }, [scrollStopDelay]);
 
     useAutoSizeColumns();
-
-    const onKeyDown = useCallback((event: React.KeyboardEvent) => {
-      getState().keyDown(event);
-
-      if (
-        handleKeyboardNavigation({
-          getState,
-          actions,
-          getDataSourceState,
-          getComputed,
-          imperativeApi,
-          key: event.key,
-          shiftKey: !!event.shiftKey,
-        })
-      ) {
-        event.preventDefault();
-      }
-    }, []);
 
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
@@ -281,14 +260,14 @@ function InfiniteTableContextProvider<T>() {
   const { getState: getDataSourceState, componentActions: dataSourceActions } =
     useDataSourceContextValue<T>();
 
-  const [imperativeApi] = useState(() => {
-    return getImperativeApi(
+  const [imperativeApi] = React.useState(() => {
+    return getImperativeApi({
       getComputed,
       getState,
       getDataSourceState,
       componentActions,
       dataSourceActions,
-    );
+    });
   });
 
   const contextValue: InfiniteTableContextValue<T> = {

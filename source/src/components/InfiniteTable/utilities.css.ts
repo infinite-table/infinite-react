@@ -46,6 +46,7 @@ export const transformTranslateZero = style({
 export const transform = styleVariants({
   translateZero: { transform: 'translate3d(0,0,0)' },
   rotate90: { transform: 'rotate(90deg)' },
+  rotate180: { transform: 'rotate(180deg)' },
 });
 
 export const cursor = styleVariants({
@@ -114,7 +115,9 @@ export const right = styleVariants({
 });
 export const flexFlow = styleVariants({
   column: { flexFlow: 'column' },
+  columnReverse: { flexFlow: 'column-reverse' },
   row: { flexFlow: 'row' },
+  rowReverse: { flexFlow: 'row-reverse' },
 });
 
 export const alignItems = styleVariants({

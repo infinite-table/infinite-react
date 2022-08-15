@@ -26,12 +26,12 @@ import {
 export const notifyChange = (
   props: any,
   callbackPropName: string,
-  newValue: any,
+  values: any[],
 ) => {
   const callbackProp = props[callbackPropName] as Function;
 
   if (typeof callbackProp === 'function') {
-    callbackProp(newValue);
+    callbackProp(...values);
   }
 };
 
@@ -80,16 +80,16 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
       // it's important that we notify with the value that we receive
       // directly from the setter (see continuation below)
       if (notifyTheChange) {
-        let callbackParam = value;
+        let callbackParams = [value];
         let callbackName = `on${toUpperFirst(stateKey)}Change` as string;
 
         if (mappedCallbacks && mappedCallbacks[key]) {
           const res = mappedCallbacks[key](value, state);
           callbackName = res.callbackName || callbackName;
-          callbackParam = res.callbackParam;
+          callbackParams = res.callbackParams;
         }
 
-        notifyChange(props, callbackName, callbackParam);
+        notifyChange(props, callbackName, callbackParams);
       }
 
       //@ts-ignore
@@ -196,6 +196,9 @@ type ComponentStateRootConfig<
           COMPONENT_SETUP_STATE &
           Partial<COMPONENT_DERIVED_STATE>);
     parentState: T_PARENT_STATE | null;
+    getState: () => COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      COMPONENT_DERIVED_STATE;
   }) => COMPONENT_DERIVED_STATE;
   concludeReducer?: (params: {
     previousState: COMPONENT_MAPPED_STATE &
@@ -298,6 +301,7 @@ export function getComponentStateRoot<
           state,
           oldState: null,
           parentState,
+          getState: getComponentState,
         });
 
         propsToStateSetRef.current = new Set([
@@ -353,6 +357,7 @@ export function getComponentStateRoot<
           state: newState,
           oldState: previousState,
           parentState,
+          getState: getComponentState,
         });
 
         propsToStateSetRef.current = new Set([

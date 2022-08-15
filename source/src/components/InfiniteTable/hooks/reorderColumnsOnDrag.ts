@@ -6,7 +6,7 @@ import { InternalVars } from '../theme.css';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnPinning,
 } from '../types/InfiniteTableProps';
 import {
@@ -62,7 +62,7 @@ export type ReorderParams<T> = {
 
   initialMousePosition: MousePosition;
 
-  imperativeApi: InfiniteTableImperativeApi<T>;
+  imperativeApi: InfiniteTableApi<T>;
 
   setProxyPosition: (position: TopLeftOrNull) => void;
   columnOffsetAtIndexCSSVar: string;

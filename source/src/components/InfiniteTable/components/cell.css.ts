@@ -110,6 +110,7 @@ export const ColumnCellRecipe = recipe({
         background: ThemeVars.components.Row.selectedBackground,
       },
       false: {},
+      null: {},
     },
     first: {
       true: {

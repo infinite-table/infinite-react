@@ -1,4 +1,5 @@
 import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
+import { MultiRowSelector } from '../utils/MultiRowSelector';
 
 import type { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 import type {
@@ -11,7 +12,9 @@ export interface InfiniteTableComputedValues<T> {
     vertical: boolean;
     horizontal: boolean;
   };
+  multiRowSelector: MultiRowSelector;
   showColumnFilters: boolean;
+  renderSelectionCheckBox: boolean;
   rowspan?: MatrixBrainOptions['rowspan'];
   computedPinnedStartOverflow: boolean;
   computedPinnedEndOverflow: boolean;

@@ -1,5 +1,7 @@
+import { RowSelectionState } from '../../components/DataSource';
 import { GroupRowsState } from '../../components/DataSource/GroupRowsState';
 import { Indexer } from '../../components/DataSource/Indexer';
+
 import {
   ColumnTypeWithInherit,
   DataSourceAggregationReducer,
@@ -17,10 +19,8 @@ import {
   InfiniteTableColumnGroup,
   InfiniteTableGroupColumnBase,
 } from '../../components/InfiniteTable/types/InfiniteTableProps';
+import { deepClone } from '../deepClone';
 import { DeepMap } from '../DeepMap';
-
-export const GROUP_SELECTED_REDUCER_KEY = '__groupFullySelected';
-export const GROUP_CHILDREN_SELECTED_COUNT_KEY = '__groupChildrenSelectedCount';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -87,7 +87,7 @@ export type InfiniteTable_RowInfoBase<_T> = {
   id: any;
   value?: any;
   indexInAll: number;
-  rowSelected: boolean;
+  rowSelected: boolean | null;
 };
 
 export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
@@ -101,11 +101,6 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   dataSourceHasGrouping: true;
   data: Partial<T> | null;
   isGroupRow: true;
-
-  /**
-   * The count of all selected leaf nodes (normal rows) inside the group that are selected
-   */
-  childrenSelectedCount: number;
 
   /**
    * This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting,
@@ -131,6 +126,26 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
    * The array of all leaf nodes (normal rows) that are inside this group.
    */
   groupData: T[];
+
+  /**
+   * The count of all selected leaf nodes (normal rows) inside the group that are selected
+   */
+  selectedChildredCount: number;
+
+  /**
+   * The count of all deselected leaf nodes (normal rows) inside the group that are selected
+   */
+  deselectedChildredCount: number;
+
+  /**
+   * Will be used only with lazy loading, if the server provides this info on the data items.
+   *
+   * Represents the total count of all leaf nodes (normal rows) that are under this group
+   * at any level (so not only direct children). This is needed for multiple selection to work properly,
+   * so the table component knows how many rows are on the remote backend, and whether to show a group as selected or not
+   * when it has a certain number of rows selected
+   */
+  totalChildrenCount?: number;
 
   /**
    * The count of all leaf nodes (normal rows) inside the group that are not being visible
@@ -308,6 +323,7 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
   commonData?: Partial<DataType>;
   childrenLoading: boolean;
   childrenAvailable: boolean;
+  totalChildrenCount?: number;
   cache: boolean;
   error?: string;
   reducerResults: Record<string, AggregationReducerResult>;
@@ -348,12 +364,15 @@ export type PivotBy<DataType, KeyType> = Omit<
 type GroupParams<DataType, KeyType> = {
   groupBy: GroupBy<DataType, KeyType>[];
   defaultToKey?: (value: any, item: DataType) => GroupKeyType<KeyType>;
+
   pivot?: PivotBy<DataType, KeyType>[];
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
 };
 
-type LazyGroupParams = {
+type LazyGroupParams<DataType> = {
   mappings?: DataSourceMappings;
+  indexer: Indexer<DataType>;
+  toPrimaryKey: (item: DataType) => any;
 };
 
 export type DataGroupResult<DataType, KeyType extends any> = {
@@ -399,6 +418,7 @@ function computeReducersFor<DataType>(
   index: number,
   reducers: Record<string, DataSourceAggregationReducer<DataType, any>>,
   reducerResults: Record<string, AggregationReducerResult>,
+  groupKeys: any[] | undefined,
 ) {
   if (!reducers || !Object.keys(reducers).length) {
     return;
@@ -416,7 +436,13 @@ function computeReducersFor<DataType>(
         ? data[reducer.field]
         : reducer.getter?.(data) ?? null;
 
-      reducerResults[key] = reducer.reducer(currentValue, value, data, index);
+      reducerResults[key] = reducer.reducer(
+        currentValue,
+        value,
+        data,
+        index,
+        groupKeys,
+      );
     }
 }
 
@@ -426,7 +452,7 @@ type LazyPivotContainer = {
 };
 
 export function lazyGroup<DataType, KeyType extends string = string>(
-  groupParams: GroupParams<DataType, KeyType> & LazyGroupParams,
+  groupParams: GroupParams<DataType, KeyType> & LazyGroupParams<DataType>,
   rootData: LazyGroupDataDeepMap<DataType>,
 ): DataGroupResult<DataType, KeyType> {
   const {
@@ -434,6 +460,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
     pivot,
     groupBy,
 
+    indexer,
+    toPrimaryKey,
     mappings,
   } = groupParams;
 
@@ -487,7 +515,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
 
   const initialReducerValue = initReducers<DataType>(reducers);
 
-  const globalReducerResults = { ...initialReducerValue };
+  const globalReducerResults = deepClone(initialReducerValue);
 
   rootData.visitDepthFirst(
     (lazyGroupRowInfo: LazyRowInfoGroup<DataType>, keys, _index, next) => {
@@ -505,6 +533,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
         if (current) {
           //@ts-ignore
           current.items = dataArray;
+
+          indexer.indexArray(dataArray as any as DataType[], toPrimaryKey);
         }
         return next?.();
       }
@@ -546,6 +576,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           childrenLoading: false,
           childrenAvailable: false,
           commonData: dataObject,
+          totalChildrenCount: dataArray[i].totalChildrenCount,
           reducerResults: dataArray[i].aggregations || {},
         };
 
@@ -619,7 +650,13 @@ function processGroup<KeyType, DataType>(
   currentGroupItems.push(item);
 
   if (reducers) {
-    computeReducersFor<DataType>(item, itemIndex, reducers, reducerResults);
+    computeReducersFor<DataType>(
+      item,
+      itemIndex,
+      reducers,
+      reducerResults,
+      currentGroupKeys,
+    );
   }
   if (pivot) {
     for (
@@ -637,7 +674,7 @@ function processGroup<KeyType, DataType>(
       if (!pivotDeepMap!.has(currentPivotKeys)) {
         topLevelPivotColumns!.set(currentPivotKeys, true);
         pivotDeepMap?.set(currentPivotKeys, {
-          reducerResults: { ...initialReducerValue },
+          reducerResults: deepClone(initialReducerValue),
           items: [],
         });
       }
@@ -651,11 +688,29 @@ function processGroup<KeyType, DataType>(
           itemIndex,
           reducers,
           pivotReducerResults,
+          currentGroupKeys,
         );
       }
     }
     currentPivotKeys.length = 0;
   }
+}
+
+export function getGroupKeysForDataItem<DataType, KeyType = any>(
+  data: DataType,
+  groupBy: GroupBy<DataType, KeyType>[],
+) {
+  return groupBy.reduce((groupKeys, groupBy) => {
+    const { field: groupByProperty, toKey: groupToKey } = groupBy;
+    const key: GroupKeyType<KeyType> = (groupToKey || DEFAULT_TO_KEY)(
+      data[groupByProperty],
+      data,
+    );
+
+    groupKeys.push(key);
+
+    return groupKeys;
+  }, [] as any[]);
 }
 
 export function group<DataType, KeyType = any>(
@@ -685,7 +740,7 @@ export function group<DataType, KeyType = any>(
 
   const initialReducerValue = initReducers<DataType>(reducers);
 
-  const globalReducerResults = { ...initialReducerValue };
+  const globalReducerResults = deepClone(initialReducerValue);
 
   if (!groupByLength) {
     const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
@@ -693,7 +748,7 @@ export function group<DataType, KeyType = any>(
       cache: false,
       childrenLoading: false,
       childrenAvailable: false,
-      reducerResults: { ...initialReducerValue },
+      reducerResults: deepClone(initialReducerValue),
     };
 
     if (pivot) {
@@ -724,7 +779,7 @@ export function group<DataType, KeyType = any>(
           cache: false,
           childrenLoading: false,
           childrenAvailable: false,
-          reducerResults: { ...initialReducerValue },
+          reducerResults: deepClone(initialReducerValue),
         };
         if (pivot) {
           deepMapGroupValue.pivotDeepMap = new DeepMap<
@@ -765,7 +820,13 @@ export function group<DataType, KeyType = any>(
     }
 
     if (reducers) {
-      computeReducersFor<DataType>(item, i, reducers, globalReducerResults);
+      computeReducersFor<DataType>(
+        item,
+        i,
+        reducers,
+        globalReducerResults,
+        currentGroupKeys,
+      );
     }
 
     currentGroupKeys.length = 0;
@@ -850,6 +911,7 @@ type GetEnhancedGroupDataOptions<DataType> = {
   indexInAll: number;
   childrenLoading: boolean;
   childrenAvailable: boolean;
+  totalChildrenCount?: number;
   directChildrenCount: number;
   directChildrenLoadedCount: number;
   reducers: Record<string, DataSourceAggregationReducer<DataType, any>>;
@@ -874,6 +936,7 @@ function getEnhancedGroupData<DataType>(
 
   if (Object.keys(reducerResults).length > 0) {
     data = { ...commonData } as Partial<DataType>;
+
     for (const key in reducers)
       if (reducers.hasOwnProperty(key)) {
         const reducer = reducers[key];
@@ -906,9 +969,10 @@ function getEnhancedGroupData<DataType>(
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
-    rowSelected: !!reducerResults[GROUP_SELECTED_REDUCER_KEY] || false,
-    childrenSelectedCount:
-      (reducerResults[GROUP_CHILDREN_SELECTED_COUNT_KEY] as any as number) || 0,
+
+    rowSelected: false,
+    selectedChildredCount: 0,
+    deselectedChildredCount: 0,
     id: `${groupKeys}`, //TODO improve this
     collapsed,
     dataSourceHasGrouping: true,
@@ -919,6 +983,7 @@ function getEnhancedGroupData<DataType>(
     deepRowInfoArray: [],
     collapsedChildrenCount: 0,
     collapsedGroupsCount: 0,
+    totalChildrenCount: options.totalChildrenCount,
     // childrenAvailable: collapsed ? (!lazyLoad ? false : cacheExists) : true,
     childrenAvailable: lazyLoad ? options.childrenAvailable : true,
     childrenLoading: options.childrenLoading,
@@ -964,13 +1029,14 @@ function completeReducers<DataType>(
 
 export type EnhancedFlattenParam<DataType, KeyType = any> = {
   lazyLoad: boolean;
-  indexer: Indexer<KeyType>;
+
   groupResult: DataGroupResult<DataType, KeyType>;
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
-  isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean;
+  isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean | null;
 
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
+  rowSelectionState?: RowSelectionState;
   generateGroupRows: boolean;
 };
 export function enhancedFlatten<DataType, KeyType = any>(
@@ -982,7 +1048,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
     toPrimaryKey,
     groupRowsState,
     isRowSelected,
-    indexer,
+    rowSelectionState,
     generateGroupRows,
     reducers = {},
   } = param;
@@ -1018,6 +1084,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
             indexInAll: result.length,
             groupKeys,
             error: deepMapValue.error,
+            totalChildrenCount: deepMapValue.totalChildrenCount,
             childrenLoading: deepMapValue.childrenLoading,
             childrenAvailable: deepMapValue.childrenAvailable,
             directChildrenCount:
@@ -1030,7 +1097,19 @@ export function enhancedFlatten<DataType, KeyType = any>(
           deepMapValue,
         );
 
-      indexer.add(enhancedGroupData.indexInAll, enhancedGroupData.id);
+      if (isRowSelected) {
+        enhancedGroupData.rowSelected = isRowSelected(enhancedGroupData);
+        if (rowSelectionState) {
+          const selectionCount = rowSelectionState.getSelectionCountFor(
+            enhancedGroupData.groupKeys,
+          );
+          enhancedGroupData.selectedChildredCount =
+            selectionCount.selectedCount;
+          enhancedGroupData.deselectedChildredCount =
+            selectionCount.deselectedCount;
+        }
+      }
+
       const parent = parents[parents.length - 1];
 
       const parentCollapsed = parent?.collapsed ?? false;
@@ -1119,7 +1198,6 @@ export function enhancedFlatten<DataType, KeyType = any>(
               if (isRowSelected) {
                 rowInfo.rowSelected = isRowSelected(rowInfo);
               }
-              indexer.add(rowInfo.indexInAll, rowInfo.id);
 
               parents.forEach((parent, i) => {
                 const last = i === parents.length - 1;

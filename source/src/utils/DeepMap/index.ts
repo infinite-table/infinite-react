@@ -6,6 +6,7 @@ type VoidFn = () => void;
 type Pair<KeyType, ValueType> = {
   value?: ValueType;
   map?: Map<KeyType, Pair<KeyType, ValueType>>;
+  length: number;
   revision?: number;
 };
 
@@ -48,20 +49,38 @@ export class DeepMap<KeyType, ValueType> {
     }
   }
 
-  getValuesStartingWith(keys: KeyType[]): ValueType[] {
+  getValuesStartingWith(
+    keys: KeyType[],
+    excludeSelf?: boolean,
+    depthLimit?: number,
+  ): ValueType[] {
     const result: ValueType[] = [];
-    this.getStartingWith(keys, (_keys, value) => {
-      result.push(value);
-    });
+    this.getStartingWith(
+      keys,
+      (_keys, value) => {
+        result.push(value);
+      },
+      excludeSelf,
+      depthLimit,
+    );
 
     return result;
   }
 
-  getKeysStartingWith(keys: KeyType[]): KeyType[][] {
+  getKeysStartingWith(
+    keys: KeyType[],
+    excludeSelf?: boolean,
+    depthLimit?: number,
+  ): KeyType[][] {
     const result: KeyType[][] = [];
-    this.getStartingWith(keys, (keys) => {
-      result.push(keys);
-    });
+    this.getStartingWith(
+      keys,
+      (keys) => {
+        result.push(keys);
+      },
+      excludeSelf,
+      depthLimit,
+    );
 
     return result;
   }
@@ -69,11 +88,62 @@ export class DeepMap<KeyType, ValueType> {
   private getStartingWith(
     keys: KeyType[],
     fn: (key: KeyType[], value: ValueType) => void,
+    excludeSelf?: boolean,
+    depthLimit?: number,
   ) {
     let currentMap = this.map;
     let pair: Pair<KeyType, ValueType> | undefined;
+    let stop = false;
+
+    if (keys.length) {
+      for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+
+        pair = currentMap.get(key);
+
+        if (!pair || !pair.map) {
+          stop = true;
+          if (i === len - 1) {
+            // if on the last key
+            // we want to allow the if clause below to run and check if the value on the last
+            // pair is present
+            stop = true;
+            break;
+          } else {
+            return;
+          }
+        }
+
+        currentMap = pair.map;
+      }
+    }
+
+    if (pair && pair.value !== undefined) {
+      if (!excludeSelf) {
+        fn(keys, pair.value!);
+      }
+    }
+    if (stop) {
+      return;
+    }
+
+    this.visitWithNext(
+      keys,
+      (value, keys, _i, next) => {
+        fn(keys, value);
+        next?.();
+      },
+      currentMap,
+      depthLimit,
+      excludeSelf,
+    );
+  }
+
+  private getMapAt(keys: KeyType[]) {
+    let currentMap = this.map;
+    let pair: Pair<KeyType, ValueType> | undefined;
     if (!keys.length) {
-      keys = [this.emptyKey];
+      return this.map;
     }
 
     for (let i = 0, len = keys.length; i < len; i++) {
@@ -82,23 +152,33 @@ export class DeepMap<KeyType, ValueType> {
       pair = currentMap.get(key);
 
       if (!pair || !pair.map) {
-        return;
+        return undefined;
       }
 
       currentMap = pair.map;
     }
+    return currentMap;
+  }
 
-    if (pair && pair.value !== undefined) {
-      fn(keys, pair.value!);
+  getAllChildrenSizeFor(keys: KeyType[]) {
+    let currentMap = this.map;
+    let pair: Pair<KeyType, ValueType> | undefined;
+    if (!keys.length) {
+      return this.length;
     }
-    this.visitWithNext(
-      keys,
-      (value, keys, _i, next) => {
-        fn(keys, value);
-        next?.();
-      },
-      currentMap,
-    );
+
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const key = keys[i];
+
+      pair = currentMap.get(key);
+
+      if (!pair || !pair.map) {
+        return 0;
+      }
+
+      currentMap = pair.map;
+    }
+    return pair!.length;
   }
 
   getDirectChildrenSizeFor(keys: KeyType[]) {
@@ -131,7 +211,9 @@ export class DeepMap<KeyType, ValueType> {
     for (let i = 0, len = keys.length; i < len; i++) {
       const key = keys[i];
       const last = i === len - 1;
-      const pair = currentMap.get(key)! || {};
+      const pair = currentMap.get(key)! || {
+        length: 0,
+      };
 
       if (last) {
         pair.revision = this.revision++;
@@ -141,9 +223,10 @@ export class DeepMap<KeyType, ValueType> {
         this.length++;
       } else {
         if (!pair.map) {
-          pair.map = new Map<KeyType, ValueType>();
+          pair.map = new Map<KeyType, Pair<KeyType, ValueType>>();
           currentMap.set(key, pair);
         }
+        pair.length++;
 
         currentMap = pair.map;
       }
@@ -204,6 +287,7 @@ export class DeepMap<KeyType, ValueType> {
     }
 
     const maps = [currentMap];
+    const pairs = [];
 
     let result = false;
 
@@ -218,6 +302,9 @@ export class DeepMap<KeyType, ValueType> {
             delete pair.revision;
 
             result = true;
+            pairs.forEach((pair) => {
+              pair.length--;
+            });
             this.length--;
           }
 
@@ -236,6 +323,7 @@ export class DeepMap<KeyType, ValueType> {
           result = false;
           break;
         }
+        pairs.push(pair);
         currentMap = pair.map;
         maps.push(currentMap);
       }
@@ -340,13 +428,22 @@ export class DeepMap<KeyType, ValueType> {
       next?: VoidFn,
     ) => void,
     currentMap: Map<KeyType, Pair<KeyType, ValueType>> = this.map,
+    depthLimit?: number,
+    skipSelfValue?: boolean,
   ) => {
     if (!currentMap) {
       return;
     }
     let i = 0;
     const hasEmptyKey = currentMap.has(this.emptyKey);
-    let allowEmptyKey = true;
+    let allowEmptyKey = skipSelfValue ? false : true;
+
+    if (depthLimit !== undefined) {
+      if (depthLimit < 0) {
+        return;
+      }
+      depthLimit--;
+    }
 
     const iterator = (_: Pair<KeyType, ValueType>, key: KeyType) => {
       const pair = currentMap.get(key);
@@ -362,7 +459,15 @@ export class DeepMap<KeyType, ValueType> {
       }
       const keys = isEmptyKey ? [] : [...parentKeys, key];
 
-      const next = map ? () => this.visitWithNext(keys, fn, map) : undefined;
+      let next = map
+        ? () =>
+            this.visitWithNext(
+              keys,
+              fn,
+              map,
+              depthLimit !== undefined ? depthLimit - 1 : undefined,
+            )
+        : undefined;
 
       if (pair.hasOwnProperty('value')) {
         fn(pair.value!, keys, i, next);
@@ -391,6 +496,22 @@ export class DeepMap<KeyType, ValueType> {
         result.splice(0, 0, res);
       } else {
         result.push(res);
+      }
+    });
+
+    return result;
+  }
+
+  valuesAt(keys: KeyType[]): ValueType[] {
+    const map = this.getMapAt(keys);
+    if (!map) {
+      return [];
+    }
+
+    const result: ValueType[] = [];
+    map.forEach((bag) => {
+      if (bag.value !== undefined) {
+        result.push(bag.value);
       }
     });
 

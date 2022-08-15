@@ -1,4 +1,4 @@
-import { InfiniteTableImperativeApi } from '@src/components/InfiniteTable/types';
+import { InfiniteTableApi } from '@src/components/InfiniteTable/types';
 import { test, expect } from '@testing';
 
 import { getHeaderColumnIds } from '../../../../testUtils';
@@ -13,9 +13,10 @@ export default test.describe.parallel(
       expect(colIds).toEqual(['id', 'model', 'price']);
 
       await page.evaluate(() => {
-        ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder(
-          ['make', 'model'],
-        );
+        ((window as any).api as InfiniteTableApi<any>).setColumnOrder([
+          'make',
+          'model',
+        ]);
       });
 
       colIds = await getHeaderColumnIds({ page });
@@ -23,9 +24,10 @@ export default test.describe.parallel(
       expect(colIds).toEqual(['id', 'model', 'price']);
 
       await page.evaluate(() => {
-        ((window as any).api as InfiniteTableImperativeApi<any>).setColumnOrder(
-          ['id', 'rating'],
-        );
+        ((window as any).api as InfiniteTableApi<any>).setColumnOrder([
+          'id',
+          'rating',
+        ]);
       });
 
       colIds = await getHeaderColumnIds({ page });

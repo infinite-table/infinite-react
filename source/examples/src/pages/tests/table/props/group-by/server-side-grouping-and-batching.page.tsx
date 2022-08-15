@@ -140,6 +140,7 @@ export default function RemotePivotExample() {
       data={dataSource}
       groupBy={groupBy}
       pivotBy={pivotBy.length ? pivotBy : undefined}
+      selectionMode="multi-row"
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
       lazyLoad={lazyLoad}

@@ -64,6 +64,7 @@ const getComputedPinned = (
 };
 
 export type GetComputedVisibleColumnsResult<T> = {
+  renderSelectionCheckBox: boolean;
   computedRemainingSpace: number;
   computedPinnedStartColumnsWidth: number;
   computedPinnedStartWidth: number;
@@ -575,6 +576,12 @@ export const getComputedVisibleColumns = <T extends unknown>({
     computedVisibleColumnsMap,
     computedPinnedEndWidth,
     computedPinnedStartWidth,
+    renderSelectionCheckBox: computedVisibleColumns.reduce(
+      (bool: boolean, c: InfiniteTableComputedColumn<T>) => {
+        return bool || !!c.renderSelectionCheckBox;
+      },
+      false,
+    ),
   };
 
   return result;

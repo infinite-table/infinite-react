@@ -1,12 +1,12 @@
 import { useRef, useEffect } from 'react';
-import { InfiniteTableImperativeApi } from '../types';
+import { InfiniteTableApi } from '../types';
 
 const RETRIES = 10;
 
 export function useScrollToActiveRow<T>(
   activeRowIndex: number | null | undefined,
   dataCount: number,
-  imperativeApi: InfiniteTableImperativeApi<T>,
+  imperativeApi: InfiniteTableApi<T>,
 ) {
   const didScrollRef = useRef<boolean>(false);
   const rafId = useRef<number | null>(null);

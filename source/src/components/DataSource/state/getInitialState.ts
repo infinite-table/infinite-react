@@ -11,6 +11,7 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
 import { InfiniteTableRowInfo, Scrollbars } from '../../InfiniteTable';
+import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getSelectionApi';
 import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
@@ -52,7 +53,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
 
   return {
     // TODO cleanup indexer on unmount
-    indexer: new Indexer(),
+    indexer: new Indexer<T, any>(),
     lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
@@ -88,7 +89,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     groupDeepMap: undefined,
     reducerResults: undefined,
     allRowsSelected: false,
-    selectedRowCount: 0,
+    someRowsSelected: false,
+    // selectedRowCount: 0,
     postSortDataArray: undefined,
     postGroupDataArray: undefined,
     lastSortDataArray: undefined,
@@ -180,9 +182,10 @@ export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
 
   state: DataSourceState<T>;
+  getState?: () => DataSourceState<T>;
   oldState: DataSourceState<T> | null;
 }): DataSourceDerivedState<T> {
-  const { props, state, oldState } = params;
+  const { props, state, oldState, getState } = params;
 
   const controlledSort = isControlledValue(props.sortInfo);
   const controlledFilter = isControlledValue(props.filterValue);
@@ -230,10 +233,11 @@ export function mapPropsToState<T extends any>(params: {
   let currentRowSelection =
     props.rowSelection !== undefined
       ? props.rowSelection
-      : state.rowSelection ??
-        (props.defaultRowSelection !== undefined
-          ? props.defaultRowSelection
-          : null);
+      : state.rowSelection === undefined
+      ? props.defaultRowSelection !== undefined
+        ? props.defaultRowSelection
+        : null
+      : state.rowSelection;
 
   if (selectionMode !== false) {
     if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
@@ -241,10 +245,14 @@ export function mapPropsToState<T extends any>(params: {
         rowSelectionState =
           selectionMode === 'single-row'
             ? null
-            : new RowSelectionState({
-                selectedRows: {},
-                deselectedRows: true,
-              });
+            : new RowSelectionState(
+                {
+                  selectedRows: [],
+                  deselectedRows: [],
+                  defaultSelection: false,
+                },
+                rowSelectionStateConfigGetter(getState || state),
+              );
       } else {
         rowSelectionState =
           selectionMode === 'single-row'
@@ -253,6 +261,7 @@ export function mapPropsToState<T extends any>(params: {
             ? currentRowSelection
             : new RowSelectionState(
                 currentRowSelection as RowSelectionStateObject,
+                rowSelectionStateConfigGetter(getState || state),
               );
       }
     }
@@ -261,18 +270,15 @@ export function mapPropsToState<T extends any>(params: {
   const primaryKeyDescriptor = state.primaryKey;
   const toPrimaryKey =
     typeof primaryKeyDescriptor === 'function'
-      ? (data: T, index: number) => primaryKeyDescriptor({ data, index })
-      : (data: T, _index?: number) => {
-          const pk = data[primaryKeyDescriptor];
-
-          return pk;
-        };
+      ? (data: T) => primaryKeyDescriptor(data)
+      : (data: T) => data[primaryKeyDescriptor];
 
   const result: DataSourceDerivedState<T> = {
     selectionMode,
-    //@ts-ignore
+    // for whatever reason I had to do this cast to appease TS
+    rowSelection: rowSelectionState as any as null,
+
     toPrimaryKey,
-    rowSelection: rowSelectionState ?? null,
     operatorsByFilterType,
     controlledSort,
     controlledFilter,
@@ -343,7 +349,7 @@ export type DataSourceMappedCallbackParams<T> = {
     state: DataSourceState<T>,
   ) => {
     callbackName?: string;
-    callbackParam: any;
+    callbackParams: any[];
   };
 };
 
@@ -352,23 +358,20 @@ export function getMappedCallbacks<T>() {
     rowSelection: (
       rowSelection,
       state: DataSourceState<T>,
-    ): { callbackParam: Parameters<DataSourcePropOnRowSelectionChange>[0] } => {
+    ): { callbackParams: any[] } => {
       if (state.selectionMode === 'single-row') {
         return {
-          callbackParam: {
-            selectionMode: 'single-row',
+          callbackParams: [
             rowSelection,
-          } as Parameters<DataSourcePropOnRowSelectionChange_SingleRow>[0],
+            'single-row',
+          ] as Parameters<DataSourcePropOnRowSelectionChange_SingleRow>,
         };
       }
       return {
-        callbackParam: {
-          selectionMode: 'multi-row',
-          get rowSelection() {
-            return (rowSelection as RowSelectionState).getState();
-          },
-          rowSelectionState: rowSelection,
-        } as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>[0],
+        callbackParams: [
+          (rowSelection as RowSelectionState).getState(),
+          'multi-row',
+        ] as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>,
       };
     },
   } as DataSourceMappedCallbackParams<T>;
@@ -376,7 +379,6 @@ export function getMappedCallbacks<T>() {
 
 export function getInterceptActions<T>(): ComponentInterceptedActions<
   DataSourceState<T>
-  // DataSourceProps<T>
 > {
   return {
     sortInfo: (sortInfo, { actions, state }) => {

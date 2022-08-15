@@ -1,25 +1,12 @@
-import { clamp } from '../utils/clamp';
-import {
-  InfiniteTableStateGetter,
-  DataSourceStateGetter,
-  InfiniteTableComputedValuesGetter,
-  InfiniteTableImperativeApi,
-} from './types/InfiniteTableProps';
-import { InfiniteTableActions } from './types/InfiniteTableState';
+import { clamp } from '../../utils/clamp';
+import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 
-export type NavigationOptions<T> = {
-  getState: InfiniteTableStateGetter<T>;
-  actions: InfiniteTableActions<T>;
-  imperativeApi: InfiniteTableImperativeApi<T>;
-  getDataSourceState: DataSourceStateGetter<T>;
-  getComputed: InfiniteTableComputedValuesGetter<T>;
-  key: string;
-  shiftKey: boolean;
-};
-
-export function handleRowNavigation<T>(options: NavigationOptions<T>) {
-  const { key, getState, getDataSourceState, actions } = options;
-  const arrLength = getDataSourceState().dataArray.length;
+export function handleRowNavigation<T>(
+  options: InfiniteTableKeyboardEventHandlerContext<T>,
+) {
+  const { key, getState, getDataSourceState, actions, api } = options;
+  const dataArray = getDataSourceState().dataArray;
+  const arrLength = dataArray.length;
   const state = getState();
 
   const { brain } = state;
@@ -45,6 +32,27 @@ export function handleRowNavigation<T>(options: NavigationOptions<T>) {
     ArrowUp: () => {
       activeRowIndex = clamp(activeRowIndex! - 1, min, max);
     },
+    ArrowLeft: () => {
+      const rowInfo = dataArray[activeRowIndex!];
+      if (rowInfo && rowInfo.isGroupRow) {
+        return api.collapseGroupRow(rowInfo.groupKeys);
+      }
+      return false;
+    },
+    ArrowRight: () => {
+      const rowInfo = dataArray[activeRowIndex!];
+      if (rowInfo && rowInfo.isGroupRow) {
+        return api.expandGroupRow(rowInfo.groupKeys);
+      }
+      return false;
+    },
+    Enter: () => {
+      const rowInfo = dataArray[activeRowIndex!];
+      if (rowInfo && rowInfo.isGroupRow) {
+        return api.toggleGroupRow(rowInfo.groupKeys);
+      }
+      return false;
+    },
     PageDown: () => {
       activeRowIndex = Math.min(
         activeRowIndex! + renderRowCount,
@@ -61,6 +69,7 @@ export function handleRowNavigation<T>(options: NavigationOptions<T>) {
       activeRowIndex = min;
     },
   };
+
   const Fn = KeyToFunction[key as keyof typeof KeyToFunction];
 
   if (!Fn) {
@@ -74,10 +83,20 @@ export function handleRowNavigation<T>(options: NavigationOptions<T>) {
   return true;
 }
 
-export function handleCellNavigation<T>(options: NavigationOptions<T>) {
-  const { key, shiftKey, getState, getComputed, getDataSourceState, actions } =
-    options;
+export function handleCellNavigation<T>(
+  options: InfiniteTableKeyboardEventHandlerContext<T>,
+) {
+  const {
+    api,
+    key,
+    shiftKey,
+    getState,
+    getComputed,
+    getDataSourceState,
+    actions,
+  } = options;
 
+  const dataArray = getDataSourceState().dataArray;
   const state = getState();
   const { activeCellIndex, brain } = state;
   if (!activeCellIndex) {
@@ -117,6 +136,13 @@ export function handleCellNavigation<T>(options: NavigationOptions<T>) {
     },
     ArrowRight: () => {
       colIndex = clamp(colIndex + 1, minCol, maxCol);
+    },
+    Enter: () => {
+      const rowInfo = dataArray[rowIndex];
+      if (rowInfo && rowInfo.isGroupRow) {
+        return api.toggleGroupRow(rowInfo.groupKeys);
+      }
+      return false;
     },
     PageDown: () => {
       if (!shiftKey) {
@@ -173,58 +199,17 @@ const validKeys: Record<string, boolean> = {
   ' ': true,
 };
 
-export function handleKeyboardNavigation<T>(options: NavigationOptions<T>) {
-  const { getState, getDataSourceState, imperativeApi } = options;
+export function handleKeyboardNavigation<T>(
+  options: InfiniteTableKeyboardEventHandlerContext<T>,
+) {
+  const { getState } = options;
   const state = getState();
-  const dataSourceState = getDataSourceState();
+
   const { activeRowIndex, activeCellIndex, keyboardNavigation } = state;
 
   if (!validKeys[options.key]) {
     return false;
   }
-
-  if (options.key === 'Enter') {
-    if (keyboardNavigation === 'row' && activeRowIndex != null) {
-      const rowInfo = dataSourceState.dataArray[activeRowIndex];
-      if (rowInfo && rowInfo.isGroupRow) {
-        imperativeApi.toggleGroupRow(rowInfo.groupKeys);
-        return true;
-      }
-    }
-    if (keyboardNavigation === 'cell' && activeCellIndex != null) {
-      const rowInfo = dataSourceState.dataArray[activeCellIndex[0]];
-      if (rowInfo && rowInfo.isGroupRow) {
-        imperativeApi.toggleGroupRow(rowInfo.groupKeys);
-        return true;
-      }
-    }
-    return false;
-  }
-  if (options.key === ' ') {
-    if (keyboardNavigation === 'row' && activeRowIndex != null) {
-      const rowInfo = dataSourceState.dataArray[activeRowIndex];
-      if (rowInfo) {
-        if (rowInfo.isGroupRow) {
-          imperativeApi.toggleGroupRowSelection(rowInfo.groupKeys);
-        } else {
-          imperativeApi.toggleRowSelection(rowInfo.id);
-        }
-        return true;
-      }
-    }
-    if (keyboardNavigation === 'cell' && activeCellIndex != null) {
-      const rowInfo = dataSourceState.dataArray[activeCellIndex[0]];
-      if (rowInfo) {
-        if (rowInfo.isGroupRow) {
-          imperativeApi.toggleGroupRowSelection(rowInfo.groupKeys);
-        } else {
-          imperativeApi.toggleRowSelection(rowInfo.id);
-        }
-        return true;
-      }
-    }
-  }
-
   if (activeRowIndex != null && keyboardNavigation === 'row') {
     return handleRowNavigation(options);
   }

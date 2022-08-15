@@ -15,7 +15,7 @@ import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues'
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
 import type {
   InfiniteTableProps,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
@@ -80,7 +80,7 @@ export type {
   InfiniteTableProps,
   InfiniteTablePropKeyboardNavigation,
   InfiniteTablePropColumnTypes,
-  InfiniteTableImperativeApi,
+  InfiniteTableApi,
   InfiniteTableActionType,
   InfiniteTablePropRowStyle,
   InfiniteTablePropRowClassName,

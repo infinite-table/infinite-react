@@ -2,17 +2,31 @@ import { RowSelectionState } from '@src/components/DataSource/RowSelectionState'
 import { MultiRowSelector } from '@src/components/InfiniteTable/utils/MultiRowSelector';
 
 import { test, expect } from '@playwright/test';
+import { buildRowSelectionState } from './RowSelectionState.spec';
 
 /**
  * The behavior for these tests has been first reproduced in Finder for MacOS
  * so if you modify some test, make sure you first get the same behavior in Finder file selection
  */
+
+function getState(rowSelection: RowSelectionState) {
+  return {
+    deselectedRows: true,
+    selectedRows: rowSelection.getState().selectedRows!.reduce((acc, rowId) => {
+      acc[rowId[0]] = true;
+      return acc;
+    }, {}),
+  };
+}
 export default test.describe.parallel('MultiRowSelector', () => {
   test('should work when starting with a shift+click', () => {
-    const rowSelection = new RowSelectionState({
-      deselectedRows: true,
-      selectedRows: {},
-    });
+    const rowSelection = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+      },
+      {},
+    );
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
@@ -22,7 +36,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     // shift+click row 2, expect all rows up to index 2 (inclusive) to be selected
     selector.multiSelectClick(2);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         0: true,
@@ -34,7 +48,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     // now simple click on row 5, should be the only selection
     selector.resetClick(5);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -44,7 +58,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     // now shift+click on row 7, so rows 5 to 7 should be selected
     selector.multiSelectClick(7);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -56,7 +70,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     // and finally shift+click on row 3, so rows 5 to 3 should be selected
     selector.multiSelectClick(3);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -67,10 +81,13 @@ export default test.describe.parallel('MultiRowSelector', () => {
   });
 
   test('shift clicking should work fine', () => {
-    const rowSelection = new RowSelectionState({
-      deselectedRows: true,
-      selectedRows: {},
-    });
+    const rowSelection = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+      },
+      {},
+    );
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
@@ -81,7 +98,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(5);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -92,7 +109,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(8);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -106,7 +123,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(2);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -116,10 +133,13 @@ export default test.describe.parallel('MultiRowSelector', () => {
   });
 
   test('shift clicking in combination with cmd+click used to select rows', () => {
-    const rowSelection = new RowSelectionState({
-      deselectedRows: true,
-      selectedRows: {},
-    });
+    const rowSelection = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+      },
+      {},
+    );
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
@@ -131,7 +151,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(5);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -141,7 +161,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     });
 
     selector.singleAddClick(10);
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -152,7 +172,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     });
 
     selector.multiSelectClick(8);
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -165,7 +185,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     });
 
     selector.multiSelectClick(12);
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         3: true,
@@ -181,10 +201,13 @@ export default test.describe.parallel('MultiRowSelector', () => {
   // tested in finder, with a folder that contains 21 text files, from 0 to 20,
   // so it is very much like this test
   test('should work as in finder, v1', () => {
-    const rowSelection = new RowSelectionState({
-      deselectedRows: true,
-      selectedRows: {},
-    });
+    const rowSelection = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+      },
+      {},
+    );
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
@@ -196,7 +219,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(10);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -211,7 +234,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     selector.singleAddClick(8);
     selector.singleAddClick(7);
     selector.singleAddClick(6);
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -222,7 +245,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(12);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -237,10 +260,13 @@ export default test.describe.parallel('MultiRowSelector', () => {
   // tested in finder, with a folder that contains 21 text files, from 0 to 20,
   // so it is very much like this test
   test('should work as in finder, v2', () => {
-    const rowSelection = new RowSelectionState({
-      deselectedRows: true,
-      selectedRows: {},
-    });
+    const rowSelection = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+      },
+      {},
+    );
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
@@ -251,7 +277,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(10);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -266,7 +292,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     selector.singleAddClick(8);
     selector.singleAddClick(7);
     selector.singleAddClick(6);
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -278,7 +304,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     selector.singleAddClick(7);
     selector.multiSelectClick(12);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         5: true,
@@ -293,7 +319,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(4);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         4: true,
@@ -307,10 +333,13 @@ export default test.describe.parallel('MultiRowSelector', () => {
   // tested in finder, with a folder that contains 21 text files, from 0 to 20,
   // so it is very much like this test
   test('should work as in finder, v3', () => {
-    const rowSelection = new RowSelectionState({
-      deselectedRows: true,
-      selectedRows: {},
-    });
+    const rowSelection = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+      },
+      {},
+    );
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
@@ -323,7 +352,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     selector.singleAddClick(6);
     selector.multiSelectClick(4);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         4: true,
@@ -338,7 +367,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(12);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         8: true,
@@ -352,7 +381,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
     selector.singleAddClick(4);
     selector.singleAddClick(2);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         8: true,
@@ -367,7 +396,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     selector.multiSelectClick(5);
 
-    expect(rowSelection.getState()).toEqual({
+    expect(getState(rowSelection)).toEqual({
       deselectedRows: true,
       selectedRows: {
         8: true,

@@ -1,22 +1,27 @@
-export class Indexer<PrimaryKeyType = string> {
-  indexToPrimaryKey: Map<number, PrimaryKeyType> = new Map();
-  primaryKeyToIndex: Map<string, number> = new Map();
+export class Indexer<DataType, PrimaryKeyType = string> {
+  primaryKeyToData: Map<string, DataType> = new Map();
 
-  add(index: number, primaryKey: PrimaryKeyType) {
-    this.indexToPrimaryKey.set(index, primaryKey);
-    this.primaryKeyToIndex.set(`${primaryKey}`, index);
-  }
+  add = (primaryKey: PrimaryKeyType, data: DataType) => {
+    this.primaryKeyToData.set(`${primaryKey}`, data);
+  };
 
-  clear() {
-    this.indexToPrimaryKey.clear();
-    this.primaryKeyToIndex.clear();
-  }
+  clear = () => {
+    this.primaryKeyToData.clear();
+  };
 
-  getIndexOf(primaryKey: PrimaryKeyType) {
-    return this.primaryKeyToIndex.get(`${primaryKey}`);
-  }
+  getDataForPrimaryKey = (primaryKey: PrimaryKeyType): DataType | undefined => {
+    return this.primaryKeyToData.get(`${primaryKey}`);
+  };
 
-  getPrimaryKeyFor(index: number) {
-    return this.indexToPrimaryKey.get(index);
-  }
+  indexArray = (
+    arr: DataType[],
+    toPrimaryKey: (data: DataType) => PrimaryKeyType,
+  ) => {
+    arr.forEach((item) => {
+      if (item != null) {
+        // we need this check because for lazy loading we have rows which are not loaded yet
+        this.add(toPrimaryKey(item), item);
+      }
+    });
+  };
 }

@@ -51,6 +51,7 @@ type UseComputedVisibleColumnsParam<T> = {
 };
 
 type UseComputedVisibleColumnsResult<T> = {
+  renderSelectionCheckBox: boolean;
   columns: UseComputedVisibleColumnsParam<T>['columns'];
 
   computedRemainingSpace: GetComputedVisibleColumnsResult<T>['computedRemainingSpace'];
@@ -115,6 +116,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedPinnedEndOffset,
     computedPinnedEndWidth,
     computedPinnedStartWidth,
+    renderSelectionCheckBox,
   } = useMemo(() => {
     return getComputedVisibleColumns({
       columns,
@@ -182,6 +184,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   ]);
 
   const result: UseComputedVisibleColumnsResult<T> = {
+    renderSelectionCheckBox,
     columns,
     computedPinnedEndWidth,
     computedPinnedStartWidth,

@@ -86,7 +86,7 @@ export class MultiRowSelector {
       let multiSelectEndIndex = undefined;
 
       // we have to go to previous rows and find the last row that we meet that is selected
-      // without going over any unselected rows and that's the selection end
+      // without going over any deselected rows and that's the selection end
       for (let i = index - 1; i >= 0; i--) {
         const id = this.getIdForIndex(i);
         if (this.rowSelectionState.isRowSelected(id)) {

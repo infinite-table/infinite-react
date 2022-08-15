@@ -124,6 +124,7 @@ export interface InfiniteTableMappedState<T> {
   hideEmptyGroupColumns: NonUndefined<
     InfiniteTableProps<T>['hideEmptyGroupColumns']
   >;
+  keyboardSelection: NonUndefined<InfiniteTableProps<T>['keyboardSelection']>;
   columnOrder: NonUndefined<InfiniteTableProps<T>['columnOrder']>;
   showZebraRows: NonUndefined<InfiniteTableProps<T>['showZebraRows']>;
   showHoverRows: NonUndefined<InfiniteTableProps<T>['showHoverRows']>;
@@ -158,6 +159,7 @@ export interface InfiniteTableDerivedState<T> {
     InfiniteTableProps<T>['columnHeaderCssEllipsis']
   >;
   keyboardNavigation: NonUndefined<InfiniteTableProps<T>['keyboardNavigation']>;
+
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
   computedColumnGroups: InfiniteTablePropColumnGroupsMap;
