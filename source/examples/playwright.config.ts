@@ -6,10 +6,14 @@ const height = 1200;
 
 const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  timeout: 5000,
+
+  retries: process.env.CI ? 3 : 1,
+
+  maxFailures: process.env.CI ? 10 : undefined,
+  timeout: process.env.CI ? 10000 : 5000,
 
   workers: 4,
+  fullyParallel: true,
 
   use: {
     trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
