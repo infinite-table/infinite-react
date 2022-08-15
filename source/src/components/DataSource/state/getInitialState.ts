@@ -181,10 +181,9 @@ export function mapPropsToState<T extends any>(params: {
   props: DataSourceProps<T>;
 
   state: DataSourceState<T>;
-  getState?: () => DataSourceState<T>;
   oldState: DataSourceState<T> | null;
 }): DataSourceDerivedState<T> {
-  const { props, state, oldState, getState } = params;
+  const { props, state, oldState } = params;
 
   const controlledSort = isControlledValue(props.sortInfo);
   const controlledFilter = isControlledValue(props.filterValue);
@@ -250,7 +249,7 @@ export function mapPropsToState<T extends any>(params: {
                   deselectedRows: [],
                   defaultSelection: false,
                 },
-                rowSelectionStateConfigGetter(getState || state),
+                rowSelectionStateConfigGetter(state),
               );
       } else {
         rowSelectionState =
@@ -260,7 +259,7 @@ export function mapPropsToState<T extends any>(params: {
             ? currentRowSelection
             : new RowSelectionState(
                 currentRowSelection as RowSelectionStateObject,
-                rowSelectionStateConfigGetter(getState || state),
+                rowSelectionStateConfigGetter(state),
               );
       }
     }

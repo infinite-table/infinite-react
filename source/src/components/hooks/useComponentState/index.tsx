@@ -196,9 +196,6 @@ type ComponentStateRootConfig<
           COMPONENT_SETUP_STATE &
           Partial<COMPONENT_DERIVED_STATE>);
     parentState: T_PARENT_STATE | null;
-    getState: () => COMPONENT_MAPPED_STATE &
-      COMPONENT_SETUP_STATE &
-      COMPONENT_DERIVED_STATE;
   }) => COMPONENT_DERIVED_STATE;
   concludeReducer?: (params: {
     previousState: COMPONENT_MAPPED_STATE &
@@ -301,7 +298,7 @@ export function getComponentStateRoot<
           state,
           oldState: null,
           parentState,
-          getState: getComponentState,
+          // getState: getComponentState,
         });
 
         propsToStateSetRef.current = new Set([
@@ -357,7 +354,7 @@ export function getComponentStateRoot<
           state: newState,
           oldState: previousState,
           parentState,
-          getState: getComponentState,
+          // getState: getComponentState
         });
 
         propsToStateSetRef.current = new Set([
