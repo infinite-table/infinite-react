@@ -13,7 +13,7 @@ function getState(rowSelection: RowSelectionState) {
   return {
     deselectedRows: true,
     selectedRows: rowSelection.getState().selectedRows!.reduce((acc, rowId) => {
-      acc[rowId[0]] = true;
+      acc[rowId] = true;
       return acc;
     }, {}),
   };
