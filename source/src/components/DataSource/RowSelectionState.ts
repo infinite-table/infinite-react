@@ -1,5 +1,6 @@
 import { DataSourceState } from '.';
 import { DeepMap } from '../../utils/DeepMap';
+
 import { getGroupKeysForDataItem } from '../../utils/groupAndPivot';
 
 type RowSelectionStateItem = (any | any[])[];
