@@ -4,6 +4,10 @@ on:
     paths:
       - 'source/src/**'
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   run-tests:
     env:

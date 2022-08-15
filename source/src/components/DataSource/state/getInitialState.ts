@@ -32,7 +32,6 @@ import {
   LazyRowInfoGroup,
   DataSourceFilterOperator,
   DataSourcePropOnRowSelectionChange_MultiRow,
-  DataSourcePropOnRowSelectionChange,
   DataSourcePropOnRowSelectionChange_SingleRow,
   DataSourcePropSelectionMode,
 } from '../types';

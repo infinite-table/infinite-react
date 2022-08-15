@@ -93,7 +93,7 @@ export default function GroupByExample() {
         data={dataSource}
         selectionMode="multi-row"
         defaultRowSelection={rowSelection}
-        onRowSelectionChange={({ rowSelection }) => {
+        onRowSelectionChange={(rowSelection) => {
           console.log(JSON.stringify(rowSelection, null, 2));
         }}
         // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell

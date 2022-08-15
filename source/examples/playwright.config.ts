@@ -9,6 +9,8 @@ const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 2 : 0,
   timeout: 5000,
 
+  workers: 4,
+
   use: {
     trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
     // video: 'on-first-retry',
