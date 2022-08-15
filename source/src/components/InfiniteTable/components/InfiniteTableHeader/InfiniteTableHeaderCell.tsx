@@ -28,10 +28,7 @@ import type {
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
 import { cursor, justifyContent, userSelect } from '../../utilities.css';
-import {
-  RenderHeaderCellHookComponent,
-  RenderHookComponent,
-} from '../../utils/RenderHookComponent';
+import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponent';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
@@ -241,7 +238,7 @@ export function InfiniteTableHeaderCell<T>(
 
     if (header instanceof Function) {
       renderParam.renderBag.header = (
-        <RenderHookComponent
+        <RenderHeaderCellHookComponent
           render={header}
           renderParam={{
             ...renderParam,

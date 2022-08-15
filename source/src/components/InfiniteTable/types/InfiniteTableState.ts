@@ -41,6 +41,7 @@ export interface InfiniteTableSetupState<T> {
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
+  cellMouseDown: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
   keyDown: SubscriptionCallback<KeyboardEvent>;
   columnsWhenGrouping?: InfiniteTableColumnsMap<T>;
   bodySize: Size;

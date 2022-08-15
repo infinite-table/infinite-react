@@ -9,28 +9,28 @@ import * as React from 'react';
 import { data, Person } from './people';
 
 const columns: Record<string, InfiniteTableColumn<Person>> = {
-  groupcol: {
-    type: 'number',
-    header: 'Group',
-    render: ({ value, rowInfo }) => {
-      return (
-        <div
-          style={{
-            paddingLeft: rowInfo.isGroupRow
-              ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
-                30
-              : 0,
-          }}
-        >
-          {rowInfo.isGroupRow
-            ? rowInfo.groupKeys
-              ? rowInfo.value
-              : value ?? null
-            : null}
-        </div>
-      );
-    },
-  },
+  // groupcol: {
+  //   type: 'number',
+  //   header: 'Group',
+  //   render: ({ value, rowInfo }) => {
+  //     return (
+  //       <div
+  //         style={{
+  //           paddingLeft: rowInfo.isGroupRow
+  //             ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
+  //               30
+  //             : 0,
+  //         }}
+  //       >
+  //         {rowInfo.isGroupRow
+  //           ? rowInfo.groupKeys
+  //             ? rowInfo.value
+  //             : value ?? null
+  //           : null}
+  //       </div>
+  //     );
+  //   },
+  // },
   name: {
     field: 'name',
   },
@@ -81,13 +81,13 @@ export default function GroupByExample() {
         primaryKey="id"
         groupBy={[{ field: 'department' }, { field: 'team' }]}
         aggregationReducers={columnAggregations}
-        pivotBy={[
-          {
-            field: 'country',
-          },
-          { field: 'age' },
-          { field: 'salary' },
-        ]}
+        // pivotBy={[
+        //   {
+        //     field: 'country',
+        //   },
+        //   { field: 'age' },
+        //   { field: 'salary' },
+        // ]}
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (

@@ -50,6 +50,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
   preferredLanguage: {
     field: 'preferredLanguage',
+    valueFormatter: ({ value }) => `+${value}+`,
     renderValue: ({ value }) => `Lang: ${value}`,
     renderGroupValue: ({ renderBag }) => {
       return <>{renderBag.value}----</>;
@@ -86,22 +87,15 @@ const groupBy = [
 const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   field: 'firstName',
   // align: 'end',
-  renderValue: (arg) => {
-    const { groupBy, columnsMap, rowInfo } = arg;
+  // renderValue: (arg) => {
+  //   const { groupByColumn, value } = arg;
 
-    const groupByItem =
-      groupBy[rowInfo.dataSourceHasGrouping ? rowInfo.groupNesting - 1 : 0];
+  //   if (!groupByColumn) {
+  //     return <>{value}</>;
+  //   }
 
-    if (!groupByItem) {
-      return <>{arg.value}</>;
-    }
-
-    const groupColumn = columnsMap.get(groupByItem.field);
-
-    // return <>{arg.value}</>;
-    // const groupByCol = groupBy
-    return <>{groupColumn?.renderValue?.(arg) ?? arg.value}</>;
-  },
+  //   return <>{groupByColumn.renderValue?.(arg) ?? arg.value}</>;
+  // },
 };
 
 export default function GroupByExample() {

@@ -101,6 +101,9 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     cellClick: buildSubscriptionCallback<
       CellPosition & { event: MouseEvent }
     >(),
+    cellMouseDown: buildSubscriptionCallback<
+      CellPosition & { event: MouseEvent }
+    >(),
     keyDown: buildSubscriptionCallback<KeyboardEvent>(),
     bodySize: {
       width: 0,

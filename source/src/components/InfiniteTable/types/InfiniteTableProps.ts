@@ -272,7 +272,6 @@ export type InfiniteTablePropGroupRenderStrategy =
 export type InfiniteTableGroupColumnBase<T> = Partial<
   InfiniteTableColumn<T>
 > & {
-  renderValue?: InfiniteTableColumnRenderFunction<T>;
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<T>;
   id?: string;
 };

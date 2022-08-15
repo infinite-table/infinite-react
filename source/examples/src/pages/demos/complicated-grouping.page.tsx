@@ -193,7 +193,7 @@ const createGroupColumn =
     if (arg.groupByForColumn?.field === 'subType' && manageUnbalancedGroup) {
       return {
         renderGroupIcon(param) {
-          const { rowInfo, groupBy, renderBag } = param;
+          const { rowInfo, rootGroupBy: groupBy, renderBag } = param;
 
           const { groupIcon } = renderBag;
           if (rowInfo.isGroupRow) {

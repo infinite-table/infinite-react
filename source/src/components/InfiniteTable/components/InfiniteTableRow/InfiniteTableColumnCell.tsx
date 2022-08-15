@@ -9,9 +9,8 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
-import type { InfiniteTableColumn } from '../../types';
+
 import type {
-  InfiniteTableColumnWithField,
   InfiniteTableColumnStyleFnParams,
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
@@ -22,6 +21,11 @@ import { objectValuesExcept } from '../../utils/objectValuesExcept';
 import { RenderCellHookComponent } from '../../utils/RenderHookComponent';
 import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
+import {
+  getColumnRenderParam,
+  getFormattedValueContextForCell,
+  InfiniteTableColumnRenderingContext,
+} from './columnRendering';
 
 import {
   InfiniteTableCell,
@@ -79,12 +83,6 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   );
 };
 
-function isColumnWithField<T>(
-  c: InfiniteTableColumn<T>,
-): c is InfiniteTableColumnWithField<T> & InfiniteTableColumn<T> {
-  return typeof (c as InfiniteTableColumnWithField<T>).field === 'string';
-}
-
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     rowInfo,
@@ -97,7 +95,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     onMouseLeave,
     onMouseEnter,
 
-    toggleGroupRow,
+    // toggleGroupRow,
     rowIndex,
     rowHeight,
     columnsMap,
@@ -111,73 +109,46 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return <div ref={domRef}>no column</div>;
   }
 
-  const { data, isGroupRow, dataSourceHasGrouping, rowSelected } = rowInfo;
-  const groupBy = dataSourceHasGrouping ? rowInfo.groupBy : undefined;
-
-  const groupRowInfo = null;
-  //TODO compute this here, so it's not computed in everywhere in rowspan/render/valueGetter methods
-  // let groupRowEnhancedData = !groupBy
-  //   ? null
-  //   : groupRenderStrategy !== 'inline'
-  //   ? enhancedData
-  //   : // while for inline, we need to still work on group rows, but the current row is a data item
-  //     // so we go find the group row via the parents of enhanced data
-  //     enhancedData.parents?.[groupIndex] || enhancedData;
-  // if (column.id === 'team') {
-  //   debugger;
-  // }
+  const { rowSelected } = rowInfo;
 
   const { getState, componentActions, imperativeApi } = useInfiniteTable<T>();
+  const { componentState: dataSourceState, getState: getDataSourceState } =
+    useDataSourceContextValue<T>();
   const { activeRowIndex, keyboardNavigation } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
-  // const rowSelected =
-  //   rowSelection instanceof RowSelectionState
-  //     ? rowSelection.isRowSelected(id)
-  //     : rowSelection !== false
-  //     ? `${rowSelection}` === `${id}`
-  //     : false;
 
-  let value =
-    isGroupRow && groupBy && column.groupByField
-      ? rowInfo.value
-      : isColumnWithField(column)
-      ? data?.[column.field]
-      : null;
+  const renderingContext: InfiniteTableColumnRenderingContext<T> = {
+    getState,
+    getDataSourceState,
+    actions: componentActions,
+    api: imperativeApi,
+  };
 
-  if (column.valueGetter) {
-    if (!rowInfo.isGroupRow && rowInfo.data) {
-      value = column.valueGetter({ data: rowInfo.data, field: column.field });
-    }
-  }
-
-  if (column.valueFormatter) {
-    value = column.valueFormatter(
-      // TS hack to discriminate between the grouped vs non-grouped rows
-      isGroupRow
-        ? {
-            data: rowInfo.data,
-            isGroupRow,
-            rowInfo,
-            rowActive,
-            field: column.field,
-            value,
-          }
-        : {
-            data: rowInfo.data,
-            isGroupRow,
-            rowActive,
-            rowInfo,
-            field: column.field,
-            value,
-          },
-    );
-  }
+  const formattedResult = getFormattedValueContextForCell(
+    column,
+    rowInfo,
+    renderingContext,
+  );
+  const { formattedValueContext, formattedValue } = formattedResult;
 
   const onClick = useCallback(
     (event) => {
       const colIndex = column.computedVisibleIndex;
 
       getState().cellClick({
+        rowIndex,
+        colIndex,
+        event,
+      });
+    },
+    [rowIndex, column.computedVisibleIndex, keyboardNavigation],
+  );
+
+  const onMouseDown = useCallback(
+    (event) => {
+      const colIndex = column.computedVisibleIndex;
+
+      getState().cellMouseDown({
         rowIndex,
         colIndex,
         event,
@@ -194,82 +165,37 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [rowIndex, column.computedVisibleIndex, keyboardNavigation],
   );
 
-  const { componentState: computedDataSource } = useDataSourceContextValue<T>();
-
-  const { selectionMode } = computedDataSource;
-
-  const rest = rowInfo.isGroupRow
-    ? {
-        rowInfo,
-        isGroupRow: rowInfo.isGroupRow,
-        data: rowInfo.data,
-        rowActive,
-
-        value,
-        field: column.field,
-      }
-    : {
-        rowInfo,
-        isGroupRow: rowInfo.isGroupRow,
-        data: rowInfo.data,
-        rowActive,
-        value,
-        field: column.field,
-      };
+  const { selectionMode } = dataSourceState;
 
   const stylingRenderParam = {
     column,
-    ...rest,
+    ...formattedValueContext,
   } as InfiniteTableColumnStyleFnParams<T>;
 
-  const renderParam: InfiniteTableColumnRenderParam<T> = {
+  const renderParam = getColumnRenderParam({
     column,
-    columnsMap,
-    domRef,
-    groupRowInfo,
-    ...rest,
-    selectionMode,
-    selectRow: imperativeApi.selectionApi.selectRow,
-    deselectRow: imperativeApi.selectionApi.deselectRow,
-    toggleRowSelection: imperativeApi.selectionApi.toggleRowSelection,
-    renderBag: {
-      value,
-      selectionCheckBox: null,
-      groupIcon: null,
-    },
+    rowInfo,
+    formattedValue,
+    formattedValueContext,
+    context: { ...renderingContext, columnsMap },
+  }) as InfiniteTableColumnRenderParam<T>;
 
-    selectCurrentRow: useCallback(() => {
-      return imperativeApi.selectionApi.selectRow(
-        rowInfo.id,
-        rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
-      );
-    }, [rowInfo]),
-    deselectCurrentRow: useCallback(() => {
-      return imperativeApi.selectionApi.deselectRow(
-        rowInfo.id,
-        rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
-      );
-    }, [rowInfo]),
-    rowIndex,
-    toggleGroupRow,
-    toggleCurrentGroupRow: useCallback(() => {
-      if (!rowInfo.isGroupRow) {
-        return;
-      }
+  renderParam.domRef = domRef;
 
-      toggleGroupRow(rowInfo.groupKeys!);
-    }, [rowInfo]),
-    toggleCurrentGroupRowSelection: useCallback(() => {
-      if (!rowInfo.isGroupRow) {
-        return;
-      }
-      return imperativeApi.selectionApi.toggleGroupRowSelection(
-        rowInfo.isGroupRow ? rowInfo.groupKeys : [],
-      );
-    }, [rowInfo]),
-    groupBy: computedDataSource.groupBy,
-    pivotBy: computedDataSource.pivotBy,
-  };
+  renderParam.selectCurrentRow = useCallback(renderParam.selectCurrentRow, [
+    rowInfo,
+  ]);
+  renderParam.deselectCurrentRow = useCallback(renderParam.deselectCurrentRow, [
+    rowInfo,
+  ]);
+  renderParam.toggleCurrentGroupRow = useCallback(
+    renderParam.toggleCurrentGroupRow,
+    [rowInfo],
+  );
+  renderParam.toggleCurrentGroupRowSelection = useCallback(
+    renderParam.toggleCurrentGroupRowSelection,
+    [rowInfo],
+  );
 
   const renderChildren = useCallback(() => {
     if (hidden) {
@@ -379,7 +305,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   ]);
 
   const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
-    ...rest,
+    ...formattedValueContext,
     rowIndex,
   };
 
@@ -434,6 +360,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     onMouseLeave,
     onMouseEnter,
     onClick,
+    onMouseDown,
     cssEllipsis: column.cssEllipsis ?? true,
     className: join(
       useCellClassName(

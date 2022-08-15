@@ -30,16 +30,15 @@ The simplest way to change what's being rendered in a column is to use the `valu
 ```tsx
 const nameColumn: InfiniteTableColumn<Employee> = {
   header: 'Employee Name',
-  valueGetter: ({ data }) =>
-    `${data.firstName} ${data.lastName}`,
+  valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
 };
 ```
 
 <Note>
 
-The <PropLink name="columns.valueGetter"/> prop is a function that takes a single argument - an object with `data` and `rowInfo` properties.
+The <PropLink name="columns.valueGetter"/> prop is a function that takes a single argument - an object with `data` and `field` properties.
 
-Note that the `data` property is of type `DATA_TYPE | Partial<DATA_TYPE> | null` and not simply `DATA_TYPE`, because there are cases when you can have grouping (so for group rows with aggregations `data` will be `Partial<DATA_TYPE>`) or when there are lazily loaded rows or group rows with no aggregations - for which `data` is still `null`.
+Note that the <PropLink name="columns.valueGetter"/> is only called for non-group rows, so the `data` property is of type `DATA_TYPE`.
 
 </Note>
 
@@ -53,13 +52,13 @@ Note that the `data` property is of type `DATA_TYPE | Partial<DATA_TYPE> | null`
 
 <Note>
 
-<PropLink name="columns.valueGetter"/>
+The column value getter should not return JSX or other markup, because the value return by <PropLink name="columns.valueGetter"/> will be used when the column is sorted (when sorting is done client-side and not remotely). For more in-depth inforation on sorting see [the column sorting page](./column-sorting).
 
 </Note>
 
 ## Use <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> to display custom content
 
-The next step in customizing the column is to use the <PropLink name="columns.renderValue" /> or the <PropLink name="columns.render"/> props. In those functions, you have access to more information than in the <PropLink name="columns.valueGetter"/> function. For example, you have access to the current value of `groupBy` and `pivotBy` props.
+The next step in customizing the rendering for a column is to use the <PropLink name="columns.renderValue" /> or the <PropLink name="columns.render"/> props. In those functions, you have access to more information than in the <PropLink name="columns.valueGetter"/> function. For example, you have access to the current value of `groupBy` and `pivotBy` props.
 
 <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.renderValue">render</PropLink> can return any value that React can render.
 

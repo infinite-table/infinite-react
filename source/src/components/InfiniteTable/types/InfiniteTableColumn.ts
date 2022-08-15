@@ -66,12 +66,14 @@ export type InfiniteTableColumnRenderParamBase<
     groupIcon?: Renderable;
     selectionCheckBox?: Renderable;
   };
-  groupRowInfo: InfiniteTableRowInfo<DATA_TYPE> | null;
   rowIndex: number;
   rowActive: boolean;
 
+  api: InfiniteTableApi<DATA_TYPE>;
+
   column: COL_TYPE;
   columnsMap: Map<string, COL_TYPE>;
+  groupByColumn?: InfiniteTableComputedColumn<DATA_TYPE>;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   toggleCurrentGroupRowSelection: () => void;
@@ -81,7 +83,7 @@ export type InfiniteTableColumnRenderParamBase<
   deselectCurrentRow: () => void;
   toggleRowSelection: InfiniteTableSelectRowFn;
   selectionMode: DataSourcePropSelectionMode | undefined;
-  groupBy: DataSourceState<DATA_TYPE>['groupBy'];
+  rootGroupBy: DataSourceState<DATA_TYPE>['groupBy'];
   pivotBy?: DataSourceState<DATA_TYPE>['pivotBy'];
 };
 export type InfiniteTableColumnRenderParam<

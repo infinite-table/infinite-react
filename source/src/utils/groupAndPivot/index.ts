@@ -67,6 +67,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
         | InfiniteTable_HasGrouping_RowInfoNormal<T>;
       field?: keyof T;
       value: any;
+      rowSelected: boolean | null;
     }
   | {
       rowActive: boolean;
@@ -76,6 +77,7 @@ export type InfiniteTableRowInfoDataDiscriminator<T> =
       isGroupRow: true;
       field?: keyof T;
       value: any;
+      rowSelected: boolean | null;
     };
 
 /**
