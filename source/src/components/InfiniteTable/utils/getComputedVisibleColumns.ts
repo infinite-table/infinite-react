@@ -192,11 +192,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
 }: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
   let computedOffset = 0;
 
-  const computedColumnsMap: Map<
-    string,
-    InfiniteTableComputedColumn<T>
-  > = new Map();
-
   const filterValueRecord = (filterValue || []).reduce(
     (acc, filterValueItem) => {
       const { id, field } = filterValueItem;
@@ -350,6 +345,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
     InfiniteTableComputedColumn<T>
   > = new Map();
 
+  const computedColumnsMap: Map<
+    string,
+    InfiniteTableComputedColumn<T>
+  > = new Map();
+
   let computedUnpinnedColumnsWidth = 0;
   let computedPinnedStartColumnsWidth = 0;
   let computedPinnedEndColumnsWidth = 0;
@@ -388,6 +388,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       theComputedVisibleIndex = -1;
     }
     const computedVisible = theComputedVisibleIndex != -1;
+
     const nextColumnId = visibleColumnOrder[theComputedVisibleIndex + 1];
     const colType = getColumnComputedType(c, columnTypes);
 
@@ -444,11 +445,14 @@ export const getComputedVisibleColumns = <T extends unknown>({
       : 0;
 
     if (computedPinned == 'start') {
-      computedVisibleIndexInCategory = computedVisibleIndex;
+      computedVisibleIndexInCategory = computedVisible
+        ? computedVisibleIndex
+        : -1;
     } else if (computedPinned === 'end') {
-      computedVisibleIndexInCategory =
-        computedVisibleIndex -
-        (computedPinnedStartColumns.length + computedUnpinnedColumns.length);
+      computedVisibleIndexInCategory = computedVisible
+        ? computedVisibleIndex -
+          (computedPinnedStartColumns.length + computedUnpinnedColumns.length)
+        : -1;
     } else {
       computedVisibleIndexInCategory = computedVisible
         ? computedVisibleIndex - computedPinnedStartColumns.length
