@@ -18,7 +18,10 @@ import type {
 import type { Renderable } from '../../types/Renderable';
 import { InfiniteTableCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
 
-import { InfiniteTableColumnPinnedValues } from './InfiniteTableProps';
+import {
+  InfiniteTableColumnPinnedValues,
+  InfiniteTableColumnType,
+} from './InfiniteTableProps';
 import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
 
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
@@ -283,66 +286,10 @@ export type InfiniteTableColumnColspanFn<T> = (
 
 export type InfiniteTableColumnComparer<T> = (a: T, b: T) => number;
 
-export type InfiniteTableBaseColumn<T> = {
-  sortable?: boolean;
-  draggable?: boolean;
-  resizable?: boolean;
-
-  comparer?: InfiniteTableColumnComparer<T>;
-  defaultHiddenWhenGroupedBy?:
-    | '*'
-    | keyof T
-    | { [k in keyof Partial<T>]: true };
-
-  align?: InfiniteTableColumnAlign;
-  verticalAlign?: InfiniteTableColumnVerticalAlign;
-  columnGroup?: string;
-
-  header?: InfiniteTableColumnHeader<T>;
-  renderHeader?: InfiniteTableColumnHeaderRenderFunction<T>;
-  name?: Renderable;
-  cssEllipsis?: boolean;
-  headerCssEllipsis?: boolean;
-  type?: InfiniteTableColumnTypeNames | InfiniteTableColumnTypeNames[] | null;
-  dataType?: InfiniteTableDataTypeNames;
-  sortType?: string;
-  filterType?: string;
-
-  style?: InfiniteTableColumnStyle<T>;
-  headerStyle?: InfiniteTableColumnHeaderStyle<T>;
-  headerClassName?: InfiniteTableColumnHeaderClassName<T>;
-  className?: InfiniteTableColumnClassName<T>;
-
-  rowspan?: InfiniteTableColumnRowspanFn<T>;
-  // colspan?: InfiniteTableColumnColspanFn<T>;
-
-  field?: keyof T;
-  render?: InfiniteTableColumnRenderFunction<T>;
-  renderValue?: InfiniteTableColumnRenderFunction<T>;
-  renderGroupValue?: InfiniteTableColumnRenderFunction<T>;
-  renderLeafValue?: InfiniteTableColumnRenderFunction<T>;
-  valueGetter?: InfiniteTableColumnValueGetter<T>;
-  valueFormatter?: InfiniteTableColumnValueFormatter<T>;
-
-  defaultWidth?: number;
-  defaultFlex?: number;
-  defaultFilterable?: boolean;
-
-  minWidth?: number;
-  maxWidth?: number;
-
-  renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<T>;
-  renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<T>;
-  renderSelectionCheckBox?: boolean | InfiniteTableColumnRenderFunction<T>;
-  renderHeaderSelectionCheckBox?:
-    | boolean
-    | InfiniteTableColumnHeaderRenderFunction<T>;
-
-  components?: {
-    ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
-    HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
-  };
-};
+export type InfiniteTableColumnSortableFn<T> = (context: {
+  column: InfiniteTableComputedColumn<T>;
+  columns: Map<string, InfiniteTableComputedColumn<T>>;
+}) => boolean;
 
 /**
  * Defines a column in the table.
@@ -351,11 +298,73 @@ export type InfiniteTableBaseColumn<T> = {
  *
  * Can be bound to a field which is a `keyof DATA_TYPE`.
  */
-export type InfiniteTableColumn<DATA_TYPE> =
-  {} & InfiniteTableBaseColumn<DATA_TYPE>;
-// InfiniteTableColumnWithRenderDescriptor<DATA_TYPE>;
+export type InfiniteTableColumn<DATA_TYPE> = {
+  sortable?: boolean;
+  draggable?: boolean;
+  resizable?: boolean;
 
-export type InfiniteTableGeneratedGroupColumn<T> = InfiniteTableColumn<T> & {
+  comparer?: InfiniteTableColumnComparer<DATA_TYPE>;
+  defaultHiddenWhenGroupedBy?:
+    | '*'
+    | keyof DATA_TYPE
+    | { [k in keyof Partial<DATA_TYPE>]: true };
+
+  align?: InfiniteTableColumnAlign;
+  verticalAlign?: InfiniteTableColumnVerticalAlign;
+  columnGroup?: string;
+
+  header?: InfiniteTableColumnHeader<DATA_TYPE>;
+  renderHeader?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
+  name?: Renderable;
+  cssEllipsis?: boolean;
+  headerCssEllipsis?: boolean;
+  type?: InfiniteTableColumnTypeNames | InfiniteTableColumnTypeNames[] | null;
+  dataType?: InfiniteTableDataTypeNames;
+  sortType?: string;
+  filterType?: string;
+
+  style?: InfiniteTableColumnStyle<DATA_TYPE>;
+  headerStyle?: InfiniteTableColumnHeaderStyle<DATA_TYPE>;
+  headerClassName?: InfiniteTableColumnHeaderClassName<DATA_TYPE>;
+  className?: InfiniteTableColumnClassName<DATA_TYPE>;
+
+  rowspan?: InfiniteTableColumnRowspanFn<DATA_TYPE>;
+  // colspan?: InfiniteTableColumnColspanFn<T>;
+
+  field?: keyof DATA_TYPE;
+  render?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderGroupValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderLeafValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
+  valueFormatter?: InfiniteTableColumnValueFormatter<DATA_TYPE>;
+
+  defaultWidth?: number;
+  defaultFlex?: number;
+  defaultFilterable?: boolean;
+
+  minWidth?: number;
+  maxWidth?: number;
+
+  renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
+  renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
+  renderSelectionCheckBox?:
+    | boolean
+    | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderHeaderSelectionCheckBox?:
+    | boolean
+    | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
+
+  components?: {
+    ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
+    HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
+  };
+};
+
+export type InfiniteTableGeneratedGroupColumn<T> = Omit<
+  InfiniteTableColumn<T>,
+  'sortable'
+> & {
   groupByField: string | string[];
   id?: string;
 };
@@ -418,6 +427,7 @@ type InfiniteTableComputedColumnBase<T> = {
   computedSortedAsc: boolean;
   computedSortedDesc: boolean;
   computedSortIndex: number;
+  computedVisible: boolean;
   computedVisibleIndex: number;
   computedVisibleIndexInCategory: number;
   computedMultiSort: boolean;
@@ -433,7 +443,10 @@ type InfiniteTableComputedColumnBase<T> = {
   computedFirst: boolean;
   computedLast: boolean;
   toggleSort: () => void;
+  colType: InfiniteTableColumnType<T>;
   id: string;
+
+  initialDefinition: InfiniteTableColumn<T>;
 };
 
 export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> &

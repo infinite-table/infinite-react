@@ -206,6 +206,7 @@ function useColumnsWhenGrouping<T>() {
     componentState: {
       columns,
       groupColumn,
+      hideGroupColumns,
       groupRenderStrategy,
       pivotColumns,
       pivotColumn,
@@ -250,6 +251,7 @@ function useColumnsWhenGrouping<T>() {
     groupBy,
     pivotBy,
     selectionMode,
+    hideGroupColumns,
     groupColumn,
     groupRenderStrategy,
     pivotColumns,
@@ -279,6 +281,8 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
       computedColumns,
 
       hideEmptyGroupColumns,
+      // hideGroupColumns,
+
       groupRenderStrategy,
     },
   } = useComponentState<InfiniteTableState<T>>();
@@ -474,10 +478,6 @@ export function getColumnsWhenGrouping<T>(params: {
     toggleGroupRow,
     columns,
   } = params;
-
-  // if (pivotColumns) {
-  //   return undefined;
-  // }
 
   if (groupRenderStrategy === 'inline') {
     return undefined;

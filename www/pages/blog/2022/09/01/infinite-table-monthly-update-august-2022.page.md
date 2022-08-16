@@ -25,6 +25,19 @@ And we have updated some of the existing features:
 
 ### Row Selection
 
+### Improved sorting
+
+group columns can now be sorted
+
+<!-- const defaultSortInfo: DataSourceSortInfo<Developer> = [
+  {
+    dir: 1,
+    id: 'group-by',
+    field: ['stack', 'preferredLanguage'],
+  },
+  // { dir: 1, field: 'age' },
+]; -->
+
 
 ## Updated Features
 

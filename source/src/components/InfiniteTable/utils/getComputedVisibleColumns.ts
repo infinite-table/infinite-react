@@ -10,6 +10,8 @@ import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
+  InfiniteTableGeneratedGroupColumn,
+  RequireAtLeastOne,
 } from '../types/InfiniteTableColumn';
 import type {
   InfiniteTableColumnPinnedValues,
@@ -29,7 +31,10 @@ import { getColumnComputedType } from './getColumnComputedType';
 const logError = err('getComputedVisibleColumns');
 
 export type SortInfoMap<T> = {
-  [key: string]: { sortInfo: DataSourceSingleSortInfo<T>; index: number };
+  [key: string]: {
+    sortInfo: DataSourceSingleSortInfo<T>;
+    index: number;
+  };
 };
 
 const isColumnVisible = (
@@ -71,6 +76,8 @@ export type GetComputedVisibleColumnsResult<T> = {
   computedPinnedEndColumnsWidth: number;
   computedPinnedEndWidth: number;
   computedUnpinnedColumnsWidth: number;
+
+  computedColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
 
   columnMinWidth?: number;
   columnMaxWidth?: number;
@@ -120,6 +127,41 @@ type GetComputedVisibleColumnsParam<T> = {
   columnVisibilityAssumeVisible: boolean;
 };
 
+function isGroupColumnSortable<T>(
+  column: InfiniteTableComputedColumn<T>,
+  columns: Map<string, InfiniteTableComputedColumn<T>>,
+) {
+  let sortableColumnOrType = column.sortable ?? column.colType.sortable;
+
+  if (sortableColumnOrType != null) {
+    return sortableColumnOrType;
+  }
+
+  if (column.computedSortable === false) {
+    return false;
+  }
+
+  let groupByField = column.groupByField || [];
+  if (groupByField != null && !Array.isArray(groupByField)) {
+    groupByField = [groupByField];
+  }
+  const fields = (groupByField || []).reduce((acc, field: string) => {
+    acc[field] = true;
+    return acc;
+  }, {} as Record<string, boolean>);
+
+  const groupColumns: InfiniteTableComputedColumn<T>[] = [];
+  columns.forEach((col) => {
+    if (col.field && fields[col.field as string]) {
+      groupColumns.push(col);
+    }
+  });
+
+  return groupColumns.reduce((sortable, col) => {
+    return sortable && col.computedSortable === true;
+  }, true as boolean);
+}
+
 export const getComputedVisibleColumns = <T extends unknown>({
   columns,
 
@@ -149,6 +191,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnVisibilityAssumeVisible,
 }: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
   let computedOffset = 0;
+
+  const computedColumnsMap: Map<
+    string,
+    InfiniteTableComputedColumn<T>
+  > = new Map();
 
   const filterValueRecord = (filterValue || []).reduce(
     (acc, filterValueItem) => {
@@ -188,16 +235,23 @@ export const getComputedVisibleColumns = <T extends unknown>({
     return result;
   });
 
-  const columnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder
-    .map((columnId) => columns.get(columnId)!)
-    .filter(Boolean);
+  const columnIdsToVisibleIndex: Map<string, number> = new Map();
+
+  const visibleColumnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder.map(
+    (columnId, index) => {
+      const col = columns.get(columnId)!;
+
+      columnIdsToVisibleIndex.set(columnId, index);
+
+      return col;
+    },
+  );
 
   const sortedMap = (sortInfo ?? []).reduce(
     (acc: SortInfoMap<T>, info: DataSourceSingleSortInfo<T>, index) => {
       if (info.id) {
         acc[info.id] = { sortInfo: info, index };
-      }
-      if (info.field) {
+      } else if (info.field) {
         acc[info.field as unknown as keyof SortInfoMap<T>] = {
           sortInfo: info,
           index,
@@ -208,6 +262,69 @@ export const getComputedVisibleColumns = <T extends unknown>({
     {} as SortInfoMap<T>,
   );
 
+  type ColSizeOptions = {
+    flex?: number;
+    size?: number;
+    minSize?: number;
+    maxSize?: number;
+  };
+
+  function getColSize(
+    colId: string,
+  ): RequireAtLeastOne<ColSizeOptions, 'flex' | 'size'> {
+    const column = columns.get(colId);
+    const colType = getColumnComputedType(column!, columnTypes);
+    const colTypeSizing: InfiniteTableColumnSizingOptions = {
+      minWidth: colType?.minWidth,
+      maxWidth: colType?.maxWidth,
+      width: colType?.defaultWidth,
+      flex: colType?.defaultFlex,
+    };
+    let colSizing = assignNonNull(
+      {
+        width: column?.defaultWidth,
+        flex: column?.defaultFlex,
+        minWidth: column?.minWidth,
+        maxWidth: column?.maxWidth,
+      },
+      columnSizing[colId],
+    );
+
+    // if colSizing has width
+    if (colSizing.width != null) {
+      // it should ignore coltype flex
+      delete colTypeSizing.flex;
+    }
+
+    // or if it has flex
+    if (colSizing.flex != null) {
+      // it should ignore coltype width
+      delete colTypeSizing.width;
+    }
+
+    colSizing = assignNonNull(colTypeSizing, colSizing);
+
+    const colFlex: number | undefined = colSizing.flex ?? undefined;
+    const colMinWidth =
+      colSizing.minWidth ?? column?.minWidth ?? columnMinWidth;
+    const colMaxWidth =
+      colSizing.maxWidth ?? column?.maxWidth ?? columnMaxWidth;
+
+    let size =
+      colFlex != undefined ? undefined : colSizing.width ?? columnDefaultWidth;
+
+    if (!size && colFlex == undefined) {
+      size = colMinWidth;
+    }
+
+    return {
+      size,
+      flex: colFlex!,
+      minSize: colMinWidth,
+      maxSize: colMaxWidth,
+    };
+  }
+
   const flexResult = computeFlex({
     availableSize: Math.max(
       bodySize.width - (viewportReservedWidth ?? 0) - getScrollbarWidth(),
@@ -216,61 +333,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     maxSize: columnMaxWidth,
     minSize: columnMinWidth,
-    items: visibleColumnOrder.map((colId) => {
-      const column = columns.get(colId);
-      const colType = getColumnComputedType(column!, columnTypes);
-      const colTypeSizing: InfiniteTableColumnSizingOptions = {
-        minWidth: colType?.minWidth,
-        maxWidth: colType?.maxWidth,
-        width: colType?.defaultWidth,
-        flex: colType?.defaultFlex,
-      };
-      let colSizing = assignNonNull(
-        {
-          width: column?.defaultWidth,
-          flex: column?.defaultFlex,
-          minWidth: column?.minWidth,
-          maxWidth: column?.maxWidth,
-        },
-        columnSizing[colId],
-      );
-
-      // if colSizing has width
-      if (colSizing.width != null) {
-        // it should ignore coltype flex
-        delete colTypeSizing.flex;
-      }
-
-      // or if it has flex
-      if (colSizing.flex != null) {
-        // it should ignore coltype width
-        delete colTypeSizing.width;
-      }
-
-      colSizing = assignNonNull(colTypeSizing, colSizing);
-
-      const colFlex: number | undefined = colSizing.flex ?? undefined;
-      const colMinWidth =
-        colSizing.minWidth ?? column?.minWidth ?? columnMinWidth;
-      const colMaxWidth =
-        colSizing.maxWidth ?? column?.maxWidth ?? columnMaxWidth;
-
-      let size =
-        colFlex != undefined
-          ? undefined
-          : colSizing.width ?? columnDefaultWidth;
-
-      if (!size && colFlex == undefined) {
-        size = colMinWidth;
-      }
-
-      return {
-        size,
-        flex: colFlex!,
-        minSize: colMinWidth,
-        maxSize: colMaxWidth,
-      };
-    }),
+    items: visibleColumnOrder.map(getColSize),
   });
 
   const { computedSizes, flexSizes, minSizes, maxSizes } = flexResult;
@@ -280,6 +343,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
   const computedUnpinnedColumns: InfiniteTableComputedColumn<T>[] = [];
 
   const computedVisibleColumns: InfiniteTableComputedColumn<T>[] = [];
+  computedVisibleColumns.length = visibleColumnOrder.length;
+
   const computedVisibleColumnsMap: Map<
     string,
     InfiniteTableComputedColumn<T>
@@ -296,7 +361,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   let totalUnpinnedWidth = 0;
   let totalPinnedEndWidth = 0;
 
-  columnsArray.forEach((_c, i) => {
+  visibleColumnsArray.forEach((_c, i) => {
     const id = visibleColumnOrder[i];
     const computedWidth = computedSizes[i];
 
@@ -315,14 +380,18 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
   const firstPinnedEndAbsoluteOffset = bodySize.width - totalPinnedEndWidth;
 
-  columnsArray.forEach((c, i) => {
-    const id = visibleColumnOrder[i];
-    const nextColumnId = visibleColumnOrder[i + 1];
+  const groupColumns: InfiniteTableComputedColumn<T>[] = [];
+  columns.forEach((c, id) => {
+    let theComputedVisibleIndex = columnIdsToVisibleIndex.get(id);
+
+    if (theComputedVisibleIndex == undefined) {
+      theComputedVisibleIndex = -1;
+    }
+    const computedVisible = theComputedVisibleIndex != -1;
+    const nextColumnId = visibleColumnOrder[theComputedVisibleIndex + 1];
     const colType = getColumnComputedType(c, columnTypes);
 
-    const computedVisibleIndex = i;
-
-    // const comparer = c.comparer || colType?.comparer;
+    const computedVisibleIndex = theComputedVisibleIndex;
 
     const sortingInfo = sortedMap[id as string]
       ? sortedMap[id as string]
@@ -336,24 +405,43 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedSortedDesc = computedSorted && !computedSortedAsc;
     const computedSortIndex = sortingInfo?.index ?? -1;
 
-    const computedWidth = computedSizes[i];
-    const computedFlex = flexSizes[i] || null;
-    const computedMinWidth = minSizes[i] || 0;
-    const computedMaxWidth = maxSizes[i] || 10_000;
+    const colSizeForNonVisibleColumn: ColSizeOptions = computedVisible
+      ? {}
+      : getColSize(id);
+
+    const computedWidth = computedVisible
+      ? computedSizes[theComputedVisibleIndex]
+      : colSizeForNonVisibleColumn.size || 0;
+    const computedFlex = computedVisible
+      ? flexSizes[theComputedVisibleIndex] || null
+      : null;
+
+    const computedMinWidth = computedVisible
+      ? minSizes[theComputedVisibleIndex] || 0
+      : colSizeForNonVisibleColumn.minSize || 0;
+
+    const computedMaxWidth = computedVisible
+      ? maxSizes[theComputedVisibleIndex] || 10_000
+      : colSizeForNonVisibleColumn.maxSize || 10_000;
 
     // const computedComp;
 
     // const pinned = columnPinning.get(id);
-    const computedPinned = getComputedPinned(id, columnPinning);
+    const computedPinned = computedVisible
+      ? getComputedPinned(id, columnPinning)
+      : false;
 
-    const computedLast = i === visibleColumnOrder.length - 1;
+    const computedLast = computedVisible
+      ? theComputedVisibleIndex === visibleColumnOrder.length - 1
+      : false;
     let computedVisibleIndexInCategory = computedVisibleIndex;
-    const computedPinningOffset =
-      computedPinned === 'start'
+    const computedPinningOffset = computedVisible
+      ? computedPinned === 'start'
         ? computedPinnedStartColumnsWidth
         : computedPinned === 'end'
         ? computedPinnedEndColumnsWidth
-        : computedOffset - computedPinnedStartColumnsWidth;
+        : computedOffset - computedPinnedStartColumnsWidth
+      : 0;
 
     if (computedPinned == 'start') {
       computedVisibleIndexInCategory = computedVisibleIndex;
@@ -362,19 +450,24 @@ export const getComputedVisibleColumns = <T extends unknown>({
         computedVisibleIndex -
         (computedPinnedStartColumns.length + computedUnpinnedColumns.length);
     } else {
-      computedVisibleIndexInCategory =
-        computedVisibleIndex - computedPinnedStartColumns.length;
+      computedVisibleIndexInCategory = computedVisible
+        ? computedVisibleIndex - computedPinnedStartColumns.length
+        : -1;
     }
 
-    const computedAbsoluteOffset =
-      computedPinned === 'start' || computedPinned === false
+    const computedAbsoluteOffset = computedVisible
+      ? computedPinned === 'start' || computedPinned === false
         ? computedOffset
-        : firstPinnedEndAbsoluteOffset + computedPinnedEndColumnsWidth;
+        : firstPinnedEndAbsoluteOffset + computedPinnedEndColumnsWidth
+      : -1;
 
-    const computedFirstInCategory = computedPinned !== prevPinned;
-    const computedLastInCategory =
-      computedLast ||
-      computedPinned !== getComputedPinned(nextColumnId, columnPinning);
+    const computedFirstInCategory = computedVisible
+      ? computedPinned !== prevPinned
+      : false;
+    const computedLastInCategory = computedVisible
+      ? computedLast ||
+        computedPinned !== getComputedPinned(nextColumnId, columnPinning)
+      : false;
 
     const cssEllipsis =
       c.cssEllipsis ?? colType.cssEllipsis ?? columnCssEllipsis;
@@ -387,10 +480,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
       columnHeaderCssEllipsis ??
       cssEllipsis;
 
-    const computedFilterValue =
-      filterValueRecord[id] || c.field
+    const computedFilterValue = computedVisible
+      ? filterValueRecord[id] || c.field
         ? filterValueRecord[c.field as string] || null
-        : null;
+        : null
+      : null;
 
     const computedFiltered = computedFilterValue != null;
     const computedFilterable =
@@ -410,7 +504,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     let sortableColumnOrType = c.sortable ?? colType.sortable;
 
-    if (sortableColumnOrType == null) {
+    if (
+      sortableColumnOrType == null &&
+      !(c as InfiniteTableGeneratedGroupColumn<T>).groupByField
+    ) {
       //not explicitly set, so if no field or valueGetter defined, we'll make this unsortable
       if (field == null && valueGetter == null) {
         sortableColumnOrType = false;
@@ -420,7 +517,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
     let computedSortable = sortableColumnOrType ?? sortable ?? true;
 
     const result: InfiniteTableComputedColumn<T> = {
+      initialDefinition: c,
+      colType,
       align: colType.align,
+      computedVisible,
       verticalAlign: colType.verticalAlign,
       defaultHiddenWhenGroupedBy: colType.defaultHiddenWhenGroupedBy,
       valueGetter,
@@ -464,17 +564,20 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedDraggable: c.draggable ?? draggableColumns ?? true,
       computedFirstInCategory,
       computedLastInCategory,
-      computedFirst: i === 0,
+      computedFirst: theComputedVisibleIndex === 0,
       computedLast,
       toggleSort: () => {
         const currentSortInfo = computedSortInfo;
         let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
 
+        const field = (result.groupByField ? result.groupByField : c.field) as
+          | keyof T
+          | (keyof T)[];
         if (!currentSortInfo) {
           newColumnSortInfo = {
             dir: 1,
             id,
-            field: c.field,
+            field,
             type: computedSortType,
           } as DataSourceSingleSortInfo<T>;
         } else {
@@ -488,8 +591,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
           }
         }
 
-        if (c.field && newColumnSortInfo && !newColumnSortInfo.field) {
-          newColumnSortInfo.field = c.field;
+        if (field && newColumnSortInfo && !newColumnSortInfo.field) {
+          newColumnSortInfo.field = field;
         }
         if (
           c.valueGetter &&
@@ -528,25 +631,34 @@ export const getComputedVisibleColumns = <T extends unknown>({
       header: c.header ?? colType.header ?? c.name ?? c.field,
     };
 
-    computedOffset += computedWidth;
+    if (computedVisible) {
+      computedOffset += computedWidth;
+      computedVisibleColumnsMap.set(result.id, result);
+      computedVisibleColumns[theComputedVisibleIndex] = result;
 
-    computedVisibleColumnsMap.set(result.id, result);
-    computedVisibleColumns.push(result);
+      if (computedPinned === 'start') {
+        computedPinnedStartColumns.push(result);
+        computedPinnedStartColumnsWidth += result.computedWidth;
+      }
+      if (computedPinned === 'end') {
+        computedPinnedEndColumns.push(result);
+        computedPinnedEndColumnsWidth += result.computedWidth;
+      }
+      if (!computedPinned) {
+        computedUnpinnedColumns.push(result);
+        computedUnpinnedColumnsWidth += result.computedWidth;
+      }
 
-    if (computedPinned === 'start') {
-      computedPinnedStartColumns.push(result);
-      computedPinnedStartColumnsWidth += result.computedWidth;
+      prevPinned = computedPinned;
     }
-    if (computedPinned === 'end') {
-      computedPinnedEndColumns.push(result);
-      computedPinnedEndColumnsWidth += result.computedWidth;
+    if (result.groupByField) {
+      groupColumns.push(result);
     }
-    if (!computedPinned) {
-      computedUnpinnedColumns.push(result);
-      computedUnpinnedColumnsWidth += result.computedWidth;
-    }
+    computedColumnsMap.set(result.id, result);
+  });
 
-    prevPinned = computedPinned;
+  groupColumns.forEach((col) => {
+    col.computedSortable = isGroupColumnSortable(col, computedColumnsMap);
   });
 
   const computedPinnedStartWidth =
@@ -573,6 +685,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedPinnedStartColumnsWidth + computedUnpinnedColumnsWidth,
     computedUnpinnedColumns,
     computedVisibleColumns,
+
+    computedColumnsMap,
     computedVisibleColumnsMap,
     computedPinnedEndWidth,
     computedPinnedStartWidth,

@@ -23,6 +23,7 @@ export interface InfiniteTableComputedValues<T> {
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
   computedVisibleColumns: InfiniteTableComputedColumn<T>[];
   computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  computedColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   computedColumnVisibility: InfiniteTablePropColumnVisibility;
   computedColumnOrder: InfiniteTablePropColumnOrderNormalized;
   computedPinnedStartColumnsWidth: number;

@@ -765,6 +765,7 @@ export function group<DataType, KeyType = any>(
   for (let i = 0, len = data.length; i < len; i++) {
     const item = data[i];
 
+    const commonData: Partial<DataType> = {};
     for (let groupByIndex = 0; groupByIndex < groupByLength; groupByIndex++) {
       const { field: groupByProperty, toKey: groupToKey } =
         groupBy[groupByIndex];
@@ -773,12 +774,14 @@ export function group<DataType, KeyType = any>(
         item,
       );
 
+      commonData[groupByProperty] = key as any as DataType[keyof DataType];
       currentGroupKeys.push(key);
 
       if (!deepMap.has(currentGroupKeys)) {
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
           cache: false,
+          commonData: { ...commonData },
           childrenLoading: false,
           childrenAvailable: false,
           reducerResults: deepClone(initialReducerValue),

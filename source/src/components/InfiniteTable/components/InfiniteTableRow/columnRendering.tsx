@@ -12,7 +12,6 @@ import {
   InfiniteTableColumnWithField,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableActions } from '../../types/InfiniteTableState';
-import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 
 function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
@@ -34,24 +33,74 @@ export function getColumnRenderFunction<T>(
   },
 ) {}
 
+export function getGroupByColumn<T>(options: {
+  rowInfo: InfiniteTableRowInfo<T>;
+  column: InfiniteTableComputedColumn<T>;
+  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+}) {
+  const { column, rowInfo, columnsMap } = options;
+  const groupByColumn =
+    rowInfo.isGroupRow && column.groupByField
+      ? columnsMap.get(
+          rowInfo.isGroupRow
+            ? (rowInfo.groupBy[rowInfo.groupBy.length - 1] as any as string)
+            : '',
+        )
+      : undefined;
+
+  return groupByColumn;
+}
+
+export function getColumnRenderingParams<T>(options: {
+  column: InfiniteTableComputedColumn<T>;
+  rowInfo: InfiniteTableRowInfo<T>;
+  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  context: InfiniteTableColumnRenderingContext<T>;
+}) {
+  const { column } = options;
+  const groupByColumn = getGroupByColumn(options);
+
+  const formattedResult = getFormattedValueContextForCell({
+    ...options,
+    column: groupByColumn || column,
+  });
+  const { formattedValueContext } = formattedResult;
+
+  return {
+    stylingParam: {
+      column: options.column,
+      ...formattedValueContext,
+    },
+    formattedValueContext,
+    renderFunctions: {
+      renderGroupIcon: groupByColumn?.renderGroupIcon || column.renderGroupIcon,
+      renderSelectionCheckBox: column.renderSelectionCheckBox,
+      renderValue: groupByColumn?.renderValue || column.renderValue,
+      renderGroupValue:
+        groupByColumn?.renderGroupValue || column.renderGroupValue,
+      renderLeafValue: groupByColumn?.renderLeafValue || column.renderLeafValue,
+    },
+    renderParams: getColumnRenderParam({
+      ...options,
+
+      formattedValueContext,
+    }),
+    groupByColumn,
+  };
+}
+
 export function getColumnRenderParam<T>(options: {
   column: InfiniteTableComputedColumn<T>;
   rowInfo: InfiniteTableRowInfo<T>;
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
-  formattedValue: any;
-  context: InfiniteTableColumnRenderingContext<T> & {
-    columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
-  };
-}) {
-  const {
-    column,
-    context,
-    rowInfo,
+  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
 
-    formattedValueContext,
-    formattedValue: value,
-  } = options;
-  const { columnsMap, api: imperativeApi, getDataSourceState } = context;
+  context: InfiniteTableColumnRenderingContext<T>;
+}) {
+  const { column, context, rowInfo, columnsMap, formattedValueContext } =
+    options;
+  const { value } = formattedValueContext;
+  const { api: imperativeApi, getDataSourceState } = context;
 
   const { indexInAll: rowIndex } = rowInfo;
 
@@ -177,14 +226,16 @@ export function getFormattedValueParamForCell<T>(
       };
 }
 
-export function getFormattedValueContextForCell<T>(
-  column: InfiniteTableComputedColumn<T>,
-  rowInfo: InfiniteTableRowInfo<T>,
-  context: InfiniteTableColumnRenderingContext<T>,
-): {
+export function getFormattedValueContextForCell<T>(options: {
+  column: InfiniteTableComputedColumn<T>;
+  rowInfo: InfiniteTableRowInfo<T>;
+  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  context: InfiniteTableColumnRenderingContext<T>;
+}): {
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
   formattedValue: any;
 } {
+  const { column, rowInfo, context } = options;
   const rawValue = getRawValueForCell(column, rowInfo);
   const formattedValueContext = getFormattedValueParamForCell(
     rawValue,
@@ -196,6 +247,8 @@ export function getFormattedValueContextForCell<T>(
   const formattedValue: any = column.valueFormatter
     ? column.valueFormatter(formattedValueContext)
     : rawValue;
+
+  formattedValueContext.value = formattedValue;
 
   return {
     formattedValue,

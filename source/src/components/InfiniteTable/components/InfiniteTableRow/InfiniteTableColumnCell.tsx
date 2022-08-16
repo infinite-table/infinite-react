@@ -11,19 +11,18 @@ import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
 
 import type {
-  InfiniteTableColumnStyleFnParams,
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnRenderFunction,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
+import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
 import { RenderCellHookComponent } from '../../utils/RenderHookComponent';
 import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import {
-  getColumnRenderParam,
-  getFormattedValueContextForCell,
+  getColumnRenderingParams,
   InfiniteTableColumnRenderingContext,
 } from './columnRendering';
 
@@ -114,6 +113,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const { getState, componentActions, imperativeApi } = useInfiniteTable<T>();
   const { componentState: dataSourceState, getState: getDataSourceState } =
     useDataSourceContextValue<T>();
+
   const { activeRowIndex, keyboardNavigation } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
 
@@ -124,12 +124,20 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     api: imperativeApi,
   };
 
-  const formattedResult = getFormattedValueContextForCell(
+  const {
+    stylingParam,
+    renderParams,
+    formattedValueContext,
+    renderFunctions,
+    groupByColumn,
+  } = getColumnRenderingParams({
     column,
     rowInfo,
-    renderingContext,
-  );
-  const { formattedValueContext, formattedValue } = formattedResult;
+    columnsMap,
+    context: renderingContext,
+  });
+
+  const renderParam = renderParams as InfiniteTableColumnRenderParam<T>;
 
   const onClick = useCallback(
     (event) => {
@@ -167,19 +175,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const { selectionMode } = dataSourceState;
 
-  const stylingRenderParam = {
-    column,
-    ...formattedValueContext,
-  } as InfiniteTableColumnStyleFnParams<T>;
-
-  const renderParam = getColumnRenderParam({
-    column,
-    rowInfo,
-    formattedValue,
-    formattedValueContext,
-    context: { ...renderingContext, columnsMap },
-  }) as InfiniteTableColumnRenderParam<T>;
-
   renderParam.domRef = domRef;
 
   renderParam.selectCurrentRow = useCallback(renderParam.selectCurrentRow, [
@@ -202,10 +197,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       return null;
     }
 
-    if (column.renderGroupIcon) {
+    if (renderFunctions.renderGroupIcon) {
       renderParam.renderBag.groupIcon = (
         <RenderCellHookComponent
-          render={column.renderGroupIcon}
+          render={renderFunctions.renderGroupIcon}
           renderParam={{
             ...renderParam,
             renderBag: { ...renderParam.renderBag },
@@ -213,7 +208,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         />
       );
     }
-    if (column.renderSelectionCheckBox && selectionMode == 'multi-row') {
+    if (
+      renderFunctions.renderSelectionCheckBox &&
+      selectionMode == 'multi-row'
+    ) {
       // make selectionCheckBox available in the render bag
       // when we have column.renderSelectionCheckBox defined as a function
       // as people might want to use the default value
@@ -225,10 +223,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         />
       );
 
-      if (column.renderSelectionCheckBox !== true) {
+      if (renderFunctions.renderSelectionCheckBox !== true) {
         renderParam.renderBag.selectionCheckBox = (
           <RenderCellHookComponent
-            render={column.renderSelectionCheckBox}
+            render={renderFunctions.renderSelectionCheckBox}
             renderParam={{
               ...renderParam,
               renderBag: { ...renderParam.renderBag },
@@ -238,10 +236,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       }
     }
 
-    if (column.renderValue) {
+    if (renderFunctions.renderValue) {
       renderParam.renderBag.value = (
         <RenderCellHookComponent
-          render={column.renderValue}
+          render={renderFunctions.renderValue}
           renderParam={{
             ...renderParam,
             renderBag: { ...renderParam.renderBag },
@@ -250,10 +248,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       );
     }
 
-    if (rowInfo.isGroupRow && column.renderGroupValue) {
+    if (rowInfo.isGroupRow && renderFunctions.renderGroupValue) {
       renderParam.renderBag.value = (
         <RenderCellHookComponent
-          render={column.renderGroupValue}
+          render={renderFunctions.renderGroupValue}
           renderParam={{
             ...renderParam,
             renderBag: { ...renderParam.renderBag },
@@ -261,10 +259,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         />
       );
     }
-    if (!rowInfo.isGroupRow && column.renderLeafValue) {
+    if (!rowInfo.isGroupRow && renderFunctions.renderLeafValue) {
       renderParam.renderBag.value = (
         <RenderCellHookComponent
-          render={column.renderLeafValue}
+          render={renderFunctions.renderLeafValue}
           renderParam={{
             ...renderParam,
             renderBag: { ...renderParam.renderBag },
@@ -314,13 +312,19 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       ? rowClassName(rowPropsAndStyleArgs)
       : rowClassName;
 
-  const colClassName: undefined | string = column.className
-    ? typeof column.className === 'function'
-      ? column.className(stylingRenderParam)
-      : column.className
+  const columnClassName = (groupByColumn || column).className;
+
+  const colClassName: undefined | string = columnClassName
+    ? typeof columnClassName === 'function'
+      ? columnClassName(stylingParam)
+      : columnClassName
     : undefined;
 
   let style: React.CSSProperties | undefined;
+
+  if (rowInfo.isGroupRow && column.groupByField) {
+    style = styleForGroupColumn({ rowInfo });
+  }
 
   if (rowStyle) {
     style =
@@ -329,13 +333,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         : { ...style, ...rowStyle };
   }
 
-  style = column.style
-    ? typeof column.style === 'function'
-      ? { ...style, ...(column.style(stylingRenderParam) || {}) }
-      : { ...style, ...column.style }
+  const columnStyle = (groupByColumn || column).style;
+
+  style = columnStyle
+    ? typeof columnStyle === 'function'
+      ? { ...style, ...(columnStyle(stylingParam) || {}) }
+      : { ...style, ...columnStyle }
     : style || {};
 
-  // style.width = width;
   style.height = rowHeight;
   style.zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
 

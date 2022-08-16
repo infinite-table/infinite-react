@@ -35,6 +35,12 @@ const equalPinning = (
   pinning1: null | InfiniteTablePropColumnPinning,
   pinning2: null | InfiniteTablePropColumnPinning,
 ) => {
+  const empty1 = !pinning1 || Object.keys(pinning1).length === 0;
+  const empty2 = !pinning2 || Object.keys(pinning2).length === 0;
+
+  if (empty1 && empty2) {
+    return true;
+  }
   if (!!pinning1 != !!pinning2) {
     return false;
   }
@@ -121,7 +127,6 @@ export const useColumnPointerEvents = ({
         const { columnPinning, columnOrder } = reorderDragResult;
 
         if (!equalPinning(getState().columnPinning, columnPinning)) {
-          console.log('update pinning');
           componentActions.columnPinning = columnPinning;
         }
         if (JSON.stringify(columnOrder, getComputed().computedColumnOrder)) {
@@ -132,6 +137,8 @@ export const useColumnPointerEvents = ({
               rootRef.current,
             );
           });
+
+          // console.log('new order', columnOrder);
 
           componentActions.columnOrder = columnOrder;
         }

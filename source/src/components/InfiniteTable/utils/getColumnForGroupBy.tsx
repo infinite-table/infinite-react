@@ -33,7 +33,7 @@ import {
 
 import { RenderCellHookComponent } from './RenderHookComponent';
 
-function styleForGroupColumn<T>({
+export function styleForGroupColumn<T>({
   rowInfo,
 }: {
   rowInfo: InfiniteTableRowInfo<T>;
@@ -55,7 +55,7 @@ export function getGroupColumnRender<T>({
   groupIndexForColumn: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    const { rowInfo, renderBag, column, groupByColumn } = renderOptions;
+    const { rowInfo, renderBag, column } = renderOptions;
 
     // TODO continue here to take valueToRender from corrensponding groupByColumn
     // see http://localhost:3000/tests/table/props/row-selection/with-grouping
@@ -91,9 +91,9 @@ export function getGroupColumnRender<T>({
     //   return valueToRender;
     // }
 
-    if (groupByColumn && groupByColumn.renderValue) {
-      valueToRender = groupByColumn.renderValue(renderOptions);
-    }
+    // if (groupByColumn && groupByColumn.renderValue) {
+    //   valueToRender = groupByColumn.renderValue(renderOptions);
+    // }
 
     return (
       <div
@@ -242,9 +242,9 @@ export function getColumnForGroupBy<T>(
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group by ${groupByForColumn.field}`,
     groupByField: groupByForColumn.field as string,
-    sortable: false,
+
     // renderSelectionCheckBox: true,
-    style: styleForGroupColumn,
+
     render: getGroupColumnRender({
       groupIndexForColumn,
       groupRenderStrategy,
@@ -285,12 +285,16 @@ export function getSingleGroupColumn<T>(
       ? groupColumnFromProps(options, toggleGroupRow)
       : groupColumnFromProps;
 
+  const base: { sortable?: boolean } = {};
+
+  if (options.sortable != undefined) {
+    base.sortable = options.sortable;
+  }
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
+    ...base,
     header: `Group`,
     groupByField: options.groupBy.map((g) => g.field) as string[],
-    sortable: false,
     renderSelectionCheckBox: options.selectionMode === 'multi-row',
-    style: styleForGroupColumn,
 
     render: getGroupColumnRender({
       groupIndexForColumn: 0,

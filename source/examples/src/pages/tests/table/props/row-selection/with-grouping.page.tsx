@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection_MultiRow,
-  useInfiniteColumnCell,
   DataSourcePropGroupBy,
   InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
@@ -52,15 +51,18 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'preferredLanguage',
     valueFormatter: ({ value }) => `+${value}+`,
     renderValue: ({ value }) => `Lang: ${value}`,
-    renderGroupValue: ({ renderBag }) => {
-      return <>{renderBag.value}----</>;
-    },
-    renderLeafValue: () => {
-      const { renderBag } = useInfiniteColumnCell();
-      return <>{renderBag.value}xxxx</>;
-    },
+    // renderGroupValue: ({ renderBag }) => {
+    //   return <>{renderBag.value}----</>;
+    // },
+    // renderLeafValue: () => {
+    //   const { renderBag } = useInfiniteColumnCell();
+    //   return <>{renderBag.value}xxxx</>;
+    // },
     render: ({ renderBag }) => {
       return <>{renderBag.value}!!!</>;
+    },
+    style: ({ value }) => {
+      return value === 'Rust' ? { color: 'red' } : { color: 'magenta' };
     },
   },
   stack: {
