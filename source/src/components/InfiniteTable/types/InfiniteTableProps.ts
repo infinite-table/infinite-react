@@ -410,7 +410,7 @@ export interface InfiniteTableProps<T> {
   columnMinWidth?: number;
   columnMaxWidth?: number;
 
-  hideGroupColumns?: boolean;
+  hideColumnWhenGrouped?: boolean;
 
   resizableColumns?: boolean;
   virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;

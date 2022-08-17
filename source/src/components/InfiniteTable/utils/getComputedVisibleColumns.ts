@@ -381,7 +381,22 @@ export const getComputedVisibleColumns = <T extends unknown>({
   const firstPinnedEndAbsoluteOffset = bodySize.width - totalPinnedEndWidth;
 
   const groupColumns: InfiniteTableComputedColumn<T>[] = [];
-  columns.forEach((c, id) => {
+
+  const orderedColumns: Map<string, InfiniteTableColumn<T>> = new Map();
+  visibleColumnOrder.forEach((id, index) => {
+    const c = visibleColumnsArray[index];
+    orderedColumns.set(id, c);
+  });
+  columns.forEach((c, key) => {
+    if (!orderedColumns.has(key)) {
+      orderedColumns.set(key, c);
+    }
+  });
+
+  // we need to loop over this in the visibility order
+  // as we calculate computedOffset based on previous item
+  // and also have a  reference
+  orderedColumns.forEach((c, id) => {
     let theComputedVisibleIndex = columnIdsToVisibleIndex.get(id);
 
     if (theComputedVisibleIndex == undefined) {
@@ -521,7 +536,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
     let computedSortable = sortableColumnOrType ?? sortable ?? true;
 
     const result: InfiniteTableComputedColumn<T> = {
-      initialDefinition: c,
       colType,
       align: colType.align,
       computedVisible,

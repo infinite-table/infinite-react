@@ -206,37 +206,57 @@ function useColumnsWhenGrouping<T>() {
     componentState: {
       columns,
       groupColumn,
-      hideGroupColumns,
+      hideColumnWhenGrouped,
       groupRenderStrategy,
       pivotColumns,
       pivotColumn,
       pivotTotalColumnPosition,
       pivotGrandTotalColumnPosition,
     },
+    getComponentState,
   } = useComponentState<InfiniteTableState<T>>();
 
   const toggleGroupRow = useToggleGroupRow();
 
   useEffect(() => {
     const update = () => {
-      const columnsWhenGrouping = getColumnsWhenGrouping({
-        columns,
-        groupColumn,
-        pivotColumn,
-        pivotTotalColumnPosition,
-        pivotGrandTotalColumnPosition,
-        groupRenderStrategy:
-          groupRenderStrategy === 'inline'
-            ? 'single-column'
-            : groupRenderStrategy,
-        groupBy,
-        pivotBy,
-        pivotColumns,
-        toggleGroupRow,
-        selectionMode,
-      });
+      const { columns: columnsWhenGrouping, groupColumnIds } =
+        getColumnsWhenGrouping({
+          columns,
+          groupColumn,
+          pivotColumn,
+          pivotTotalColumnPosition,
+          pivotGrandTotalColumnPosition,
+          groupRenderStrategy:
+            groupRenderStrategy === 'inline'
+              ? 'single-column'
+              : groupRenderStrategy,
+          groupBy,
+          pivotBy,
+          pivotColumns,
+          toggleGroupRow,
+          selectionMode,
+        });
 
       componentActions.columnsWhenGrouping = columnsWhenGrouping;
+
+      let currentColumnOrder = getComponentState().columnOrder;
+      if (groupColumnIds.length && Array.isArray(currentColumnOrder)) {
+        const colOrder = new Set(currentColumnOrder);
+        let shouldUpdate = false;
+        groupColumnIds.forEach((groupColId) => {
+          if (!colOrder.has(groupColId)) {
+            shouldUpdate = true;
+            currentColumnOrder = [
+              groupColId,
+              ...(currentColumnOrder as string[]),
+            ];
+          }
+        });
+        if (shouldUpdate) {
+          componentActions.columnOrder = currentColumnOrder;
+        }
+      }
     };
 
     update();
@@ -251,7 +271,7 @@ function useColumnsWhenGrouping<T>() {
     groupBy,
     pivotBy,
     selectionMode,
-    hideGroupColumns,
+    hideColumnWhenGrouped,
     groupColumn,
     groupRenderStrategy,
     pivotColumns,
@@ -280,8 +300,8 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
       columnTypes,
       computedColumns,
 
+      hideColumnWhenGrouped,
       hideEmptyGroupColumns,
-      // hideGroupColumns,
 
       groupRenderStrategy,
     },
@@ -410,24 +430,28 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     hideEmptyGroupColumns,
   ]);
 
-  // implements the functionality of column.defaultHiddenWhenGrouped
+  // implements the functionality of column.defaultHiddenWhenGrouped and hideColumnWhenGrouped
   useEffect(() => {
     const isGrouped = groupBy.length > 0;
     const currentState = getComponentState();
 
-    const { controlledColumnVisibility, columnVisibility } = currentState;
+    const { columnVisibility, hideColumnWhenGrouped } = currentState;
 
-    if (controlledColumnVisibility) {
-      return;
-    }
+    // if (controlledColumnVisibility) {
+    //   return;
+    // }
 
     const newColumnVisibility = { ...columnVisibility };
+
     let updated = false;
     computedColumns.forEach((col, id) => {
-      if (col.defaultHiddenWhenGroupedBy) {
+      if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped) {
         const nowHidden = columnVisibility[id] === false;
         const shouldBeHidden =
           (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||
+          ((col.defaultHiddenWhenGroupedBy === true || hideColumnWhenGrouped) &&
+            col.field &&
+            groupByMap.get(col.field)) ||
           (typeof col.defaultHiddenWhenGroupedBy === 'string' &&
             groupByMap.get(col.defaultHiddenWhenGroupedBy as keyof T)) ||
           (typeof col.defaultHiddenWhenGroupedBy === 'object' &&
@@ -449,7 +473,13 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     if (updated) {
       componentActions.columnVisibility = newColumnVisibility;
     }
-  }, [computedColumns, columnTypes, groupBy, groupByMap]);
+  }, [
+    computedColumns,
+    columnTypes,
+    groupBy,
+    groupByMap,
+    hideColumnWhenGrouped,
+  ]);
 }
 
 export function getColumnsWhenGrouping<T>(params: {
@@ -464,7 +494,10 @@ export function getColumnsWhenGrouping<T>(params: {
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
-}): Map<string, InfiniteTableColumn<T>> | undefined {
+}): {
+  columns: Map<string, InfiniteTableColumn<T>> | undefined;
+  groupColumnIds: string[];
+} {
   const {
     pivotColumns,
     groupBy,
@@ -480,10 +513,12 @@ export function getColumnsWhenGrouping<T>(params: {
   } = params;
 
   if (groupRenderStrategy === 'inline') {
-    return undefined;
+    return { columns: undefined, groupColumnIds: [] };
   }
 
   const computedColumns = new Map<string, InfiniteTableColumn<T>>();
+
+  const groupColumnIds: string[] = [];
 
   if (groupRenderStrategy === 'multi-column') {
     groupBy.forEach((groupByForColumn, groupIndexForColumn, arr) => {
@@ -500,10 +535,12 @@ export function getColumnsWhenGrouping<T>(params: {
         toggleGroupRow,
         groupColumn,
       );
-      computedColumns.set(
-        generatedGroupColumn.id || `group-by-${groupByForColumn.field}`,
-        generatedGroupColumn,
-      );
+
+      const groupColumnId =
+        generatedGroupColumn.id || `group-by-${groupByForColumn.field}`;
+
+      groupColumnIds.push(groupColumnId);
+      computedColumns.set(groupColumnId, generatedGroupColumn);
     });
   } else if (groupRenderStrategy === 'single-column' && groupBy.length) {
     // } else if (
@@ -523,7 +560,9 @@ export function getColumnsWhenGrouping<T>(params: {
       groupColumn,
     );
 
-    computedColumns.set(singleGroupColumn.id || 'group-by', singleGroupColumn);
+    const groupColumnId = singleGroupColumn.id || 'group-by';
+    groupColumnIds.push(groupColumnId);
+    computedColumns.set(groupColumnId, singleGroupColumn);
   }
 
   if (pivotColumns) {
@@ -594,5 +633,8 @@ export function getColumnsWhenGrouping<T>(params: {
     });
   }
 
-  return computedColumns.size ? computedColumns : undefined;
+  return {
+    columns: computedColumns.size ? computedColumns : undefined,
+    groupColumnIds,
+  };
 }

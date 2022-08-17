@@ -306,6 +306,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   comparer?: InfiniteTableColumnComparer<DATA_TYPE>;
   defaultHiddenWhenGroupedBy?:
     | '*'
+    | true
     | keyof DATA_TYPE
     | { [k in keyof Partial<DATA_TYPE>]: true };
 
@@ -445,8 +446,6 @@ type InfiniteTableComputedColumnBase<T> = {
   toggleSort: () => void;
   colType: InfiniteTableColumnType<T>;
   id: string;
-
-  initialDefinition: InfiniteTableColumn<T>;
 };
 
 export type InfiniteTableComputedColumn<T> = InfiniteTableColumn<T> &

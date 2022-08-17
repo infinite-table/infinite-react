@@ -38,6 +38,7 @@ group columns can now be sorted
   // { dir: 1, field: 'age' },
 ]; -->
 
+columns have `defaultHiddenWhenGroupedBy`
 
 ## Updated Features
 

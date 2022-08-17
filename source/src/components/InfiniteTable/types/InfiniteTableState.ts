@@ -125,7 +125,9 @@ export interface InfiniteTableMappedState<T> {
   hideEmptyGroupColumns: NonUndefined<
     InfiniteTableProps<T>['hideEmptyGroupColumns']
   >;
-  hideGroupColumns: NonUndefined<InfiniteTableProps<T>['hideGroupColumns']>;
+  hideColumnWhenGrouped: NonUndefined<
+    InfiniteTableProps<T>['hideColumnWhenGrouped']
+  >;
   keyboardSelection: NonUndefined<InfiniteTableProps<T>['keyboardSelection']>;
   columnOrder: NonUndefined<InfiniteTableProps<T>['columnOrder']>;
   showZebraRows: NonUndefined<InfiniteTableProps<T>['showZebraRows']>;

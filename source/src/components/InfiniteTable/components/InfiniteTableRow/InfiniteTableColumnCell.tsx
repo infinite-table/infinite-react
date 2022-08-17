@@ -322,7 +322,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   let style: React.CSSProperties | undefined;
 
-  if (rowInfo.isGroupRow && column.groupByField) {
+  if (rowInfo.dataSourceHasGrouping && column.groupByField) {
     style = styleForGroupColumn({ rowInfo });
   }
 

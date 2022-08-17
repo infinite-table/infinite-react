@@ -67,6 +67,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
   stack: {
     field: 'stack',
+    // defaultHiddenWhenGroupedBy: true,
     renderValue: ({ value }) => {
       return <>x - {value}</>;
     },
@@ -109,6 +110,9 @@ export default function GroupByExample() {
       deselectedRows: [['backend', 'TypeScript']],
     });
 
+  const [currentGroupBy, setCurrentGroupBy] = useState(
+    groupBy as DataSourcePropGroupBy<Developer>,
+  );
   return (
     <>
       <div>
@@ -117,10 +121,24 @@ export default function GroupByExample() {
           ? rowSelection.getSelectedCount()
           : false}
       </div>
+      <button
+        onClick={() => {
+          setCurrentGroupBy([]);
+        }}
+      >
+        ungroup
+      </button>
+      <button
+        onClick={() => {
+          setCurrentGroupBy(groupBy as DataSourcePropGroupBy<Developer>);
+        }}
+      >
+        regroup
+      </button>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={groupBy as DataSourcePropGroupBy<Developer>}
+        groupBy={currentGroupBy}
         selectionMode="multi-row"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
@@ -157,6 +175,10 @@ export default function GroupByExample() {
           columns={columns}
           keyboardNavigation="row"
           groupRenderStrategy="single-column"
+          hideColumnWhenGrouped
+          onColumnOrderChange={(columnOrder) => {
+            console.log(columnOrder);
+          }}
           // groupColumn={{
           //   field: 'firstName',
           // }}
