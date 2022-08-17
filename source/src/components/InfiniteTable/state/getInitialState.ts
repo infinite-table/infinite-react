@@ -314,6 +314,7 @@ export const mapPropsToState = <T>(params: {
     groupRenderStrategy,
     groupBy: groupBy,
     computedColumns,
+    initialColumns: props.columns,
 
     keyboardNavigation:
       props.keyboardNavigation ??

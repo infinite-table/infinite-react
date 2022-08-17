@@ -1,11 +1,12 @@
+import { ColumnTestingModel } from '@examples/pages/tests/testUtils/ColumnTestingModel';
+import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderModel';
+import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import {
   test as base,
   expect,
   Response,
   PlaywrightTestArgs,
   PlaywrightTestOptions,
-  PlaywrightWorkerArgs,
-  PlaywrightWorkerOptions,
   Page,
   ElementHandle,
   Locator,
@@ -24,11 +25,14 @@ type TestExtras = {
   waitForInfiniteSelector: () => Promise<void>;
   load: () => Promise<void>;
 };
+
 export const test = base.extend<
-  PlaywrightTestArgs & PlaywrightTestOptions,
-  PlaywrightWorkerArgs &
-    PlaywrightWorkerOptions & {
+  PlaywrightTestArgs &
+    PlaywrightTestOptions & {
       page: Page & TestExtras;
+      rowModel: RowTestingModel;
+      headerModel: HeaderTestingModel;
+      columnModel: ColumnTestingModel;
     }
 >({
   //@ts-ignore
@@ -62,5 +66,15 @@ export const test = base.extend<
     };
 
     await use(page);
+  },
+
+  rowModel: async ({ page }, use) => {
+    await use(RowTestingModel.get(page));
+  },
+  headerModel: async ({ page }, use) => {
+    await use(HeaderTestingModel.get(page));
+  },
+  columnModel: async ({ page }, use) => {
+    await use(ColumnTestingModel.get(page));
   },
 });

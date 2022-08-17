@@ -48,6 +48,9 @@ export function useCellClassName<T>(
   if (column.computedLastInCategory) {
     result.push(...baseClasses.map((c) => `${c}--last-in-category`));
   }
+  if (extraFlags.rowSelected) {
+    result.push(...baseClasses.map((c) => `${c}--row-selected`));
+  }
   if (column.computedPinned) {
     result.push(
       ...baseClasses.map((c) => `${c}--pinned-${column.computedPinned}`),

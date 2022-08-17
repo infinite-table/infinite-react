@@ -20,6 +20,7 @@ import {
 } from './reorderColumnsOnDrag';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { InfiniteTablePropColumnPinning } from '../types';
+import adjustColumnOrderForAllColumns from './adjustColumnOrderForAllColumns';
 
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
@@ -129,7 +130,9 @@ export const useColumnPointerEvents = ({
         if (!equalPinning(getState().columnPinning, columnPinning)) {
           componentActions.columnPinning = columnPinning;
         }
-        if (JSON.stringify(columnOrder, getComputed().computedColumnOrder)) {
+        console.log('old order', getComputed().computedColumnOrder);
+        const currentComputedColumnOrder = getComputed().computedColumnOrder;
+        if (JSON.stringify(columnOrder, currentComputedColumnOrder)) {
           computedVisibleColumns.forEach((col) => {
             setInfiniteColumnOffsetWhileReordering(
               col.computedVisibleIndex,
@@ -138,9 +141,19 @@ export const useColumnPointerEvents = ({
             );
           });
 
-          // console.log('new order', columnOrder);
-
-          componentActions.columnOrder = columnOrder;
+          // componentActions.columnOrder = columnOrder;
+          // we can't simply do the above line
+          // as it would discard non visible columns from the column order
+          // as the `columnOrder` variable only takes into account visible columns
+          // so we have to adjust it to account for all columns
+          componentActions.columnOrder = adjustColumnOrderForAllColumns({
+            newColumnOrder: columnOrder,
+            visibleColumnOrder: getComputed().computedVisibleColumns.map(
+              (c) => c.id,
+            ),
+            existingColumnOrder: currentComputedColumnOrder,
+            dragColumnId: columnId,
+          });
         }
       }
 

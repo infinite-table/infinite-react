@@ -154,6 +154,7 @@ export interface InfiniteTableMappedState<T> {
 export interface InfiniteTableDerivedState<T> {
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Map<string, InfiniteTableColumn<T>>;
+  initialColumns: InfiniteTableProps<T>['columns'];
 
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']

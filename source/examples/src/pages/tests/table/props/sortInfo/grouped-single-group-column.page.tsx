@@ -72,7 +72,7 @@ const data: Developer[] = [
     stack: 'backend',
   },
   {
-    id: 4,
+    id: 5,
     firstName: 'Matthew',
     lastName: 'Hilson',
     age: 29,
@@ -143,7 +143,7 @@ export default () => {
             }}
             groupRenderStrategy="single-column"
             rowHeight={40}
-            hideGroupColumns={hideGroupColumns}
+            hideColumnWhenGrouped={hideGroupColumns}
             columnDefaultWidth={150}
             columns={columns}
           />

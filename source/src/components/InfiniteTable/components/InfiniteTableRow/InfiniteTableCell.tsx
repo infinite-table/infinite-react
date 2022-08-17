@@ -39,6 +39,8 @@ function InfiniteTableCellFn<T>(
 
     contentClassName,
 
+    rowId,
+
     afterChildren,
     beforeChildren,
 
@@ -63,6 +65,7 @@ function InfiniteTableCellFn<T>(
   const finalDOMProps = {
     ...domProps,
     style,
+
     // do not remove this from here, as it's being used by auto sizing - the `useAutoSizeColumns` fn hook
     'data-column-id': column.id,
     'data-z-index': style.zIndex,
@@ -95,6 +98,11 @@ function InfiniteTableCellFn<T>(
       </>
     ),
   };
+
+  if (rowId != null) {
+    //@ts-ignore
+    finalDOMProps['data-row-id'] = `${rowId}`;
+  }
 
   const RenderComponent =
     cellType === 'body'

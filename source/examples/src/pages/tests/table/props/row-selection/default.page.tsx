@@ -16,54 +16,89 @@ type Developer = {
 
   firstName: string;
   lastName: string;
-  country: string;
-  city: string;
+
   currency: string;
   preferredLanguage: string;
   stack: string;
   canDesign: 'yes' | 'no';
-  hobby: string;
-  salary: number;
+
   age: number;
 };
 
-const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
+const data: Developer[] = [
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Bob',
+    age: 20,
+    canDesign: 'yes',
+    currency: 'USD',
+    preferredLanguage: 'JavaScript',
+    stack: 'frontend',
+  },
+  {
+    id: 2,
+    firstName: 'Marry',
+    lastName: 'Bob',
+    age: 25,
+    canDesign: 'yes',
+    currency: 'USD',
+    preferredLanguage: 'JavaScript',
+    stack: 'frontend',
+  },
+  {
+    id: 3,
+    firstName: 'Bill',
+    lastName: 'Bobson',
+    age: 30,
+    canDesign: 'no',
+    currency: 'CAD',
+    preferredLanguage: 'TypeScript',
+    stack: 'frontend',
+  },
+  {
+    id: 4,
+    firstName: 'Mark',
+    lastName: 'Twain',
+    age: 31,
+    canDesign: 'yes',
+    currency: 'CAD',
+    preferredLanguage: 'Rust',
+    stack: 'backend',
+  },
+  {
+    id: 5,
+    firstName: 'Matthew',
+    lastName: 'Hilson',
+    age: 29,
+    canDesign: 'yes',
+    currency: 'CAD',
+    preferredLanguage: 'Go',
+    stack: 'backend',
+  },
+];
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  // checkbox: {
-  //   defaultWidth: 40,
-  //   align: 'center',
-  //   resizable: false,
-  //   style: {
-  //     cursor: 'pointer',
-  //   },
-  //   render: ({ rowInfo }) => {
-  //     return (
-  //       <input
-  //         type="checkbox"
-  //         style={{
-  //           cursor: 'pointer',
-  //         }}
-  //         checked={rowInfo.rowSelected as boolean}
-  //         onChange={() => {}}
-  //       />
-  //     );
-  //   },
-  // },
-  id: { field: 'id' },
-
   firstName: {
     field: 'firstName',
+    renderSelectionCheckBox: true,
   },
-
-  preferredLanguage: { field: 'preferredLanguage' },
-  stack: { field: 'stack' },
+  lastName: {
+    field: 'lastName',
+  },
+  stack: {
+    field: 'stack',
+  },
+  preferredLanguage: {
+    field: 'preferredLanguage',
+  },
+  age: {
+    field: 'age',
+  },
+  canDesign: {
+    field: 'canDesign',
+  },
 };
-
 const domProps = {
   style: {
     height: '80vh',
@@ -71,11 +106,13 @@ const domProps = {
 };
 
 export default function GroupByExample() {
-  const [rowSelection, _setRowSelection] =
+  const [rowSelection, setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
       selectedRows: [2, 3],
       defaultSelection: false,
     });
+
+  (globalThis as any).rowSelection = rowSelection;
 
   return (
     <>
@@ -87,39 +124,10 @@ export default function GroupByExample() {
       </div>
       <DataSource<Developer>
         primaryKey="id"
-        data={dataSource}
+        data={data}
         selectionMode="multi-row"
-        defaultRowSelection={rowSelection}
-        onRowSelectionChange={(args) => {
-          console.log(args, '!!');
-        }}
-        // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell
-        // multiRowSelection={{}}
-        // singleRowSelection={{}}
-        // rowSelection={{
-
-        // }}
-
-        // onRowSelectionChange={({rowSection, selectionType: 'multi-row'})} {
-        //   if (selectionType == 'multi-row') {
-        //     // rowSection
-        //   } else {
-        //     rowSelection
-        //   }
-        // }
-
-        // onSingleRowSelectionChange={(newId)=>{}}
-        // singleCellSelection={[rowId, colId]}
-        // onSingleCellSelectionChange={([rowId, colId]) => {
-
-        // }}
-        // multiCellSelection={{
-        //   selectedCells: {
-
-        //   },
-        //   deselectedCells: true
-        // }}
-        // onMultiCellSelectionChange={....}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
       >
         <InfiniteTable<Developer>
           domProps={domProps}

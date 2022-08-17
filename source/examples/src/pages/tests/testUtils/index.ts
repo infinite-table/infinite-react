@@ -74,11 +74,17 @@ export const getHeaderCellByColumnId = (
   return page.locator(`.InfiniteHeader [data-column-id="${columnId}"]`);
 };
 
-export const getHeaderCellByIndex = (
-  colIndex: number,
-  { page }: { page: Page },
-) => {
-  return page.locator(`.InfiniteHeader [data-col-index="${colIndex}"]`).last();
+export const getHeaderCellByIndex = ({
+  colIndex,
+  page,
+}: {
+  page: Page;
+  colIndex?: number;
+}) => {
+  const selector = `.InfiniteHeader [data-col-index${
+    colIndex != null ? `="${colIndex}"` : ''
+  }]`;
+  return page.locator(selector).last();
 };
 
 export const getCellNode = async (
@@ -104,6 +110,15 @@ export const getCellNodeLocator = (
   return page.locator(
     `.InfiniteColumnCell[data-row-index="${rowIndex}"]${colSelector}`,
   );
+};
+
+export const getCellInRow = (
+  { rowIndex }: { rowIndex: number },
+  { page }: { page: Page },
+) => {
+  return page
+    .locator(`.InfiniteColumnCell[data-row-index="${rowIndex}"]`)
+    .first();
 };
 
 export const getFirstChild = (locator: Locator) => {
@@ -152,7 +167,7 @@ export const getColumnIdByIndex = async (
   colIndex: number,
   { page }: { page: Page },
 ) => {
-  const node = getHeaderCellByIndex(colIndex, { page });
+  const node = getHeaderCellByIndex({ colIndex, page });
 
   return await node.getAttribute('data-column-id');
 };
@@ -163,6 +178,20 @@ export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
   const result = await sortElements(cells, 'col');
 
   return result;
+};
+
+export const getSelectedRowIds = async ({ page }: { page: Page }) => {
+  const cells = await page.locator(
+    `.InfiniteColumnCell[data-col-index="0"].InfiniteColumnCell--row-selected`,
+  );
+
+  const result = await sortElements(cells, 'row');
+
+  const selectedRowIds = await Promise.all(
+    result.map(async (el) => await el.evaluate((node) => node.dataset.rowId)),
+  );
+
+  return selectedRowIds;
 };
 
 export const getColumnOffsetsFromDOM = async ({ page }: { page: Page }) => {

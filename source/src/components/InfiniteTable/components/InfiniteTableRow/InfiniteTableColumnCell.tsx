@@ -360,6 +360,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     cellType: 'body',
     column,
     width,
+    rowId: rowInfo.id,
 
     style: memoizedStyle,
     onMouseLeave,
