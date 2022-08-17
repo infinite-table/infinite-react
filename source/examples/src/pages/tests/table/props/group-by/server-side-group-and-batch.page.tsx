@@ -86,7 +86,7 @@ const groupRowsState = new GroupRowsState({
 const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   id: 'group-col',
   renderValue: (arg) => {
-    const { groupBy, columnsMap, rowInfo } = arg;
+    const { rootGroupBy: groupBy, columnsMap, rowInfo } = arg;
 
     const groupByItem =
       groupBy[rowInfo.dataSourceHasGrouping ? rowInfo.groupNesting - 1 : 0];

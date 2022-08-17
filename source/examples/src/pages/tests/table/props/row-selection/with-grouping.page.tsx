@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection_MultiRow,
-  useInfiniteColumnCell,
   DataSourcePropGroupBy,
   InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
@@ -50,20 +49,25 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
   preferredLanguage: {
     field: 'preferredLanguage',
+    valueFormatter: ({ value }) => `+${value}+`,
     renderValue: ({ value }) => `Lang: ${value}`,
-    renderGroupValue: ({ renderBag }) => {
-      return <>{renderBag.value}----</>;
-    },
-    renderLeafValue: () => {
-      const { renderBag } = useInfiniteColumnCell();
-      return <>{renderBag.value}xxxx</>;
-    },
+    // renderGroupValue: ({ renderBag }) => {
+    //   return <>{renderBag.value}----</>;
+    // },
+    // renderLeafValue: () => {
+    //   const { renderBag } = useInfiniteColumnCell();
+    //   return <>{renderBag.value}xxxx</>;
+    // },
     render: ({ renderBag }) => {
       return <>{renderBag.value}!!!</>;
+    },
+    style: ({ value }) => {
+      return value === 'Rust' ? { color: 'red' } : { color: 'magenta' };
     },
   },
   stack: {
     field: 'stack',
+    // defaultHiddenWhenGroupedBy: true,
     renderValue: ({ value }) => {
       return <>x - {value}</>;
     },
@@ -86,22 +90,15 @@ const groupBy = [
 const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   field: 'firstName',
   // align: 'end',
-  renderValue: (arg) => {
-    const { groupBy, columnsMap, rowInfo } = arg;
+  // renderValue: (arg) => {
+  //   const { groupByColumn, value } = arg;
 
-    const groupByItem =
-      groupBy[rowInfo.dataSourceHasGrouping ? rowInfo.groupNesting - 1 : 0];
+  //   if (!groupByColumn) {
+  //     return <>{value}</>;
+  //   }
 
-    if (!groupByItem) {
-      return <>{arg.value}</>;
-    }
-
-    const groupColumn = columnsMap.get(groupByItem.field);
-
-    // return <>{arg.value}</>;
-    // const groupByCol = groupBy
-    return <>{groupColumn?.renderValue?.(arg) ?? arg.value}</>;
-  },
+  //   return <>{groupByColumn.renderValue?.(arg) ?? arg.value}</>;
+  // },
 };
 
 export default function GroupByExample() {
@@ -113,6 +110,9 @@ export default function GroupByExample() {
       deselectedRows: [['backend', 'TypeScript']],
     });
 
+  const [currentGroupBy, setCurrentGroupBy] = useState(
+    groupBy as DataSourcePropGroupBy<Developer>,
+  );
   return (
     <>
       <div>
@@ -121,10 +121,24 @@ export default function GroupByExample() {
           ? rowSelection.getSelectedCount()
           : false}
       </div>
+      <button
+        onClick={() => {
+          setCurrentGroupBy([]);
+        }}
+      >
+        ungroup
+      </button>
+      <button
+        onClick={() => {
+          setCurrentGroupBy(groupBy as DataSourcePropGroupBy<Developer>);
+        }}
+      >
+        regroup
+      </button>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={groupBy as DataSourcePropGroupBy<Developer>}
+        groupBy={currentGroupBy}
         selectionMode="multi-row"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
@@ -161,6 +175,10 @@ export default function GroupByExample() {
           columns={columns}
           keyboardNavigation="row"
           groupRenderStrategy="single-column"
+          hideColumnWhenGrouped
+          onColumnOrderChange={(columnOrder) => {
+            console.log(columnOrder);
+          }}
           // groupColumn={{
           //   field: 'firstName',
           // }}

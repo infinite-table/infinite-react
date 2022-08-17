@@ -253,6 +253,7 @@ export type InfiniteTableGroupColumnGetterOptions<T> = {
   groupCount: number;
   groupBy: DataSourceGroupBy<T>[];
   pivotBy?: DataSourcePivotBy<T>[];
+  sortable?: boolean;
 };
 
 export type InfiniteTablePivotColumnGetterOptions<
@@ -272,7 +273,6 @@ export type InfiniteTablePropGroupRenderStrategy =
 export type InfiniteTableGroupColumnBase<T> = Partial<
   InfiniteTableColumn<T>
 > & {
-  renderValue?: InfiniteTableColumnRenderFunction<T>;
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<T>;
   id?: string;
 };
@@ -409,6 +409,8 @@ export interface InfiniteTableProps<T> {
   columnDefaultWidth?: number;
   columnMinWidth?: number;
   columnMaxWidth?: number;
+
+  hideColumnWhenGrouped?: boolean;
 
   resizableColumns?: boolean;
   virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;

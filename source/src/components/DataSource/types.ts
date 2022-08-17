@@ -67,8 +67,8 @@ export type DataSourceDataParamsChanges<T> = Partial<
   >
 >;
 
-export type DataSourceSingleSortInfo<T> = MultisortInfo<T> & {
-  field?: keyof T;
+export type DataSourceSingleSortInfo<T> = Omit<MultisortInfo<T>, 'field'> & {
+  field?: keyof T | (keyof T)[];
   id?: string;
 };
 export type DataSourceGroupBy<T> = GroupBy<T, any>;

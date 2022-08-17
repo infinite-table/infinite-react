@@ -89,6 +89,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedPinnedStartWidth,
     computedPinnedEndWidth,
     renderSelectionCheckBox,
+    computedColumnsMap,
   } = useComputedVisibleColumns({
     columns,
     columnCssEllipsis: componentState.columnCssEllipsis,
@@ -148,6 +149,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnSize,
     rowspan,
     toggleGroupRow,
+    computedColumnsMap,
     renderSelectionCheckBox,
     computedPinnedStartOverflow,
     computedPinnedEndOverflow,

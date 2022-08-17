@@ -18,8 +18,13 @@ const onSortInfoChange = sinon.spy(
 const defaultSortInfo: DataSourceSortInfo<Order> = [
   {
     dir: 1,
-    field: 'ItemCount',
+    id: 'itemCount',
+    // field: 'ItemCount',
   },
+  // {
+  //   dir: 1,
+  //   field: 'ItemCount',
+  // },
   { dir: 1, field: 'CompanyName' },
 ];
 
@@ -55,6 +60,7 @@ export default () => {
               field: 'CompanyName',
             },
             itemCount: { field: 'ItemCount', type: 'number' },
+            itemCount2: { field: 'ItemCount', type: 'number' },
             orderCost: { field: 'OrderCost', type: 'number' },
             shipCountry: { field: 'ShipCountry' },
             shipVia: { field: 'ShipVia' },

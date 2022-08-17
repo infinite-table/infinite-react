@@ -34,13 +34,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id', defaultWidth: 80 },
   name: {
     header: 'Full Name',
-    sortable: false,
-    valueGetter: ({ data }) => {
-      if (!data) {
-        return null;
-      }
-      return `${data.firstName} ${data.lastName}`;
-    },
+    valueGetter: ({ data }) =>
+      `${data.firstName} ${data.lastName}`,
   },
 
   preferredLanguage: { field: 'preferredLanguage' },

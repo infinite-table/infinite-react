@@ -31,9 +31,9 @@ import {
   flexFlow,
 } from '../utilities.css';
 
-import { RenderHookComponent } from './RenderHookComponent';
+import { RenderCellHookComponent } from './RenderHookComponent';
 
-function styleForGroupColumn<T>({
+export function styleForGroupColumn<T>({
   rowInfo,
 }: {
   rowInfo: InfiniteTableRowInfo<T>;
@@ -57,6 +57,8 @@ export function getGroupColumnRender<T>({
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
     const { rowInfo, renderBag, column } = renderOptions;
 
+    // TODO continue here to take valueToRender from corrensponding groupByColumn
+    // see http://localhost:3000/tests/table/props/row-selection/with-grouping
     let { value: valueToRender, groupIcon, selectionCheckBox } = renderBag;
 
     // for groupRenderStrategy !== 'inline', we work on group rows
@@ -87,6 +89,10 @@ export function getGroupColumnRender<T>({
 
     // if (!groupIcon) {
     //   return valueToRender;
+    // }
+
+    // if (groupByColumn && groupByColumn.renderValue) {
+    //   valueToRender = groupByColumn.renderValue(renderOptions);
     // }
 
     return (
@@ -125,7 +131,13 @@ export function getGroupColumnRenderGroupIcon<T>({
   initialRenderGroupIcon?: InfiniteTableColumn<T>['renderGroupIcon'];
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    const { rowInfo, value, groupBy, pivotBy, column } = renderOptions;
+    const {
+      rowInfo,
+      value,
+      rootGroupBy: groupBy,
+      pivotBy,
+      column,
+    } = renderOptions;
 
     // for groupRenderStrategy !== 'inline', we work on group rows
     const groupRowInfo = (
@@ -194,7 +206,7 @@ export function getGroupColumnRenderGroupIcon<T>({
     if (initialRenderGroupIcon) {
       renderOptions.renderBag.groupIcon = icon;
       icon = (
-        <RenderHookComponent
+        <RenderCellHookComponent
           render={initialRenderGroupIcon!}
           renderParam={renderOptions}
         />
@@ -230,9 +242,9 @@ export function getColumnForGroupBy<T>(
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group by ${groupByForColumn.field}`,
     groupByField: groupByForColumn.field as string,
-    sortable: false,
+
     // renderSelectionCheckBox: true,
-    style: styleForGroupColumn,
+
     render: getGroupColumnRender({
       groupIndexForColumn,
       groupRenderStrategy,
@@ -273,12 +285,16 @@ export function getSingleGroupColumn<T>(
       ? groupColumnFromProps(options, toggleGroupRow)
       : groupColumnFromProps;
 
+  const base: { sortable?: boolean } = {};
+
+  if (options.sortable != undefined) {
+    base.sortable = options.sortable;
+  }
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
+    ...base,
     header: `Group`,
     groupByField: options.groupBy.map((g) => g.field) as string[],
-    sortable: false,
     renderSelectionCheckBox: options.selectionMode === 'multi-row',
-    style: styleForGroupColumn,
 
     render: getGroupColumnRender({
       groupIndexForColumn: 0,

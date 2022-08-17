@@ -43,7 +43,7 @@ function InfiniteTableHeaderFn<T>(
     componentState: { headerBrain, headerOptions },
   } = useInfiniteTable<T>();
 
-  const { computedVisibleColumnsMap, showColumnFilters } = computed;
+  const { computedColumnsMap, showColumnFilters } = computed;
 
   useEffect(() => {
     const onScroll = (scrollPosition: ScrollPosition) => {
@@ -127,7 +127,7 @@ function InfiniteTableHeaderFn<T>(
           headerOptions={headerOptions}
           width={widthWithColspan}
           height={heightWithRowspan}
-          columnsMap={computedVisibleColumnsMap}
+          columnsMap={computedColumnsMap}
         />
       );
     },

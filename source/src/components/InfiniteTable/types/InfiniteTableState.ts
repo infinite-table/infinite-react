@@ -41,6 +41,7 @@ export interface InfiniteTableSetupState<T> {
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
+  cellMouseDown: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
   keyDown: SubscriptionCallback<KeyboardEvent>;
   columnsWhenGrouping?: InfiniteTableColumnsMap<T>;
   bodySize: Size;
@@ -123,6 +124,9 @@ export interface InfiniteTableMappedState<T> {
   sortable: NonUndefined<InfiniteTableProps<T>['sortable']>;
   hideEmptyGroupColumns: NonUndefined<
     InfiniteTableProps<T>['hideEmptyGroupColumns']
+  >;
+  hideColumnWhenGrouped: NonUndefined<
+    InfiniteTableProps<T>['hideColumnWhenGrouped']
   >;
   keyboardSelection: NonUndefined<InfiniteTableProps<T>['keyboardSelection']>;
   columnOrder: NonUndefined<InfiniteTableProps<T>['columnOrder']>;

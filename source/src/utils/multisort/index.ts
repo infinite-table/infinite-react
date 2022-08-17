@@ -27,6 +27,13 @@ export type MultisortInfo<T> = {
   valueGetter?: (item: T) => any;
 };
 
+export type MultisortInfoAllowMultipleFields<T> = Omit<
+  MultisortInfo<T>,
+  'field'
+> & {
+  field?: keyof T | (keyof T)[];
+};
+
 export interface MultisortFn<T> {
   (sortInfo: MultisortInfo<T>[], array: T[]): T[];
   knownTypes: {
@@ -35,11 +42,23 @@ export interface MultisortFn<T> {
 }
 
 export const multisort = <T>(
-  sortInfo: MultisortInfo<T>[],
+  sortInfo: MultisortInfoAllowMultipleFields<T>[],
   array: T[],
   get?: (item: any) => T,
 ): T[] => {
-  array.sort(getMultisortFunction<T>(sortInfo, get));
+  const plainSortInfo = sortInfo
+    .map((sortInfo) => {
+      if (Array.isArray(sortInfo.field)) {
+        return sortInfo.field.map((field) => {
+          return { ...sortInfo, field } as MultisortInfo<T>;
+        });
+      }
+
+      return sortInfo as MultisortInfo<T>;
+    })
+    .flat();
+
+  array.sort(getMultisortFunction<T>(plainSortInfo, get));
 
   return array;
 };
