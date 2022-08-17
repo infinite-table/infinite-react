@@ -14,6 +14,9 @@ import type {
   InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnRenderFunction,
+  InfiniteTableColumnClassName,
+  InfiniteTableColumnStyleFnParams,
+  InfiniteTableColumnStyle,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
@@ -81,6 +84,29 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
     />
   );
 };
+
+function applyColumnClassName<T>(
+  columnClassName: InfiniteTableColumnClassName<T>,
+  param: InfiniteTableColumnStyleFnParams<T>,
+) {
+  const colClassName: undefined | string = columnClassName
+    ? typeof columnClassName === 'function'
+      ? columnClassName(param)
+      : columnClassName
+    : undefined;
+
+  return colClassName;
+}
+
+function applyColumnStyle<T>(
+  existingStyle: React.CSSProperties | undefined,
+  columnStyle: InfiniteTableColumnStyle<T>,
+  param: InfiniteTableColumnStyleFnParams<T>,
+) {
+  return typeof columnStyle === 'function'
+    ? { ...existingStyle, ...columnStyle(param) }
+    : { ...existingStyle, ...columnStyle };
+}
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
@@ -312,13 +338,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       ? rowClassName(rowPropsAndStyleArgs)
       : rowClassName;
 
-  const columnClassName = (groupByColumn || column).className;
+  let colClassName: string | undefined = undefined;
 
-  const colClassName: undefined | string = columnClassName
-    ? typeof columnClassName === 'function'
-      ? columnClassName(stylingParam)
-      : columnClassName
-    : undefined;
+  if (groupByColumn?.className) {
+    colClassName = applyColumnClassName(groupByColumn.className, stylingParam);
+  }
+  if (column.className) {
+    colClassName = join(
+      colClassName,
+      applyColumnClassName(column.className, stylingParam),
+    );
+  }
 
   let style: React.CSSProperties | undefined;
 
@@ -333,13 +363,13 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         : { ...style, ...rowStyle };
   }
 
-  const columnStyle = (groupByColumn || column).style;
-
-  style = columnStyle
-    ? typeof columnStyle === 'function'
-      ? { ...style, ...(columnStyle(stylingParam) || {}) }
-      : { ...style, ...columnStyle }
-    : style || {};
+  if (groupByColumn?.style) {
+    style = applyColumnStyle(style, groupByColumn.style, stylingParam);
+  }
+  if (column.style) {
+    style = applyColumnStyle(style, column.style, stylingParam);
+  }
+  style = style || {};
 
   style.height = rowHeight;
   style.zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
