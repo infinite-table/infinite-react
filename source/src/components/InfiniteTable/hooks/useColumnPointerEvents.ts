@@ -131,6 +131,7 @@ export const useColumnPointerEvents = ({
           componentActions.columnPinning = columnPinning;
         }
         const currentComputedColumnOrder = getComputed().computedColumnOrder;
+
         if (JSON.stringify(columnOrder, currentComputedColumnOrder)) {
           computedVisibleColumns.forEach((col) => {
             setInfiniteColumnOffsetWhileReordering(
