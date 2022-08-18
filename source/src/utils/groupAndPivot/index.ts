@@ -56,29 +56,32 @@ export type InfiniteTableRowInfo<T> =
   | InfiniteTable_HasGrouping_RowInfoGroup<T>
   | InfiniteTable_NoGrouping_RowInfoNormal<T>;
 
+export type InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T> = {
+  data: T;
+  isGroupRow: false;
+  rowActive: boolean;
+  // rowSelected: boolean;
+  rowInfo:
+    | InfiniteTable_NoGrouping_RowInfoNormal<T>
+    | InfiniteTable_HasGrouping_RowInfoNormal<T>;
+  field?: keyof T;
+  value: any;
+  rowSelected: boolean | null;
+};
+
+export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
+  rowActive: boolean;
+  // rowSelected: boolean;
+  data: Partial<T> | null;
+  rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
+  isGroupRow: true;
+  field?: keyof T;
+  value: any;
+  rowSelected: boolean | null;
+};
 export type InfiniteTableRowInfoDataDiscriminator<T> =
-  | {
-      data: T;
-      isGroupRow: false;
-      rowActive: boolean;
-      // rowSelected: boolean;
-      rowInfo:
-        | InfiniteTable_NoGrouping_RowInfoNormal<T>
-        | InfiniteTable_HasGrouping_RowInfoNormal<T>;
-      field?: keyof T;
-      value: any;
-      rowSelected: boolean | null;
-    }
-  | {
-      rowActive: boolean;
-      // rowSelected: boolean;
-      data: Partial<T> | null;
-      rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
-      isGroupRow: true;
-      field?: keyof T;
-      value: any;
-      rowSelected: boolean | null;
-    };
+  | InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T>
+  | InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T>;
 
 /**
  * This is the base row info for all scenarios - things every

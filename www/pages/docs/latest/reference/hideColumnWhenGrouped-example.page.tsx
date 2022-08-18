@@ -2,10 +2,13 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
+} from '@infinite-table/infinite-react';
+
+import type {
   DataSourcePropGroupBy,
   InfiniteTablePropColumns,
-  DataSourceProps,
 } from '@infinite-table/infinite-react';
+import { useState } from 'react';
 
 const groupBy: DataSourcePropGroupBy<Developer> = [
   {
@@ -16,33 +19,39 @@ const groupBy: DataSourcePropGroupBy<Developer> = [
   },
 ];
 
-const domProps = {
-  style: { flex: 1 },
-};
-
-const groupRowsState: DataSourceProps<Developer>['groupRowsState'] =
-  {
-    expandedRows: [],
-    collapsedRows: true,
-  };
-
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
     field: 'country',
   },
-  firstName: { field: 'firstName' },
+  firstName: {
+    field: 'firstName',
+  },
+  preferredLanguage: {
+    field: 'preferredLanguage',
+  },
+  stack: {
+    field: 'stack',
+    style: {
+      color: 'tomato',
+    },
+  },
   age: { field: 'age' },
   salary: {
     field: 'salary',
     type: 'number',
   },
   canDesign: { field: 'canDesign' },
-  stack: { field: 'stack' },
 };
 
+const groupColumn = {
+  field: 'firstName',
+};
+
+const domProps = {
+  style: { flex: 1 },
+};
 export default function App() {
-  const [hideEmptyGroupColumns, setHideEmptyGroupColumns] =
-    React.useState(true);
+  const [hideColumnWhenGrouped, setHidden] = useState(true);
   return (
     <div
       style={{
@@ -56,30 +65,24 @@ export default function App() {
         <label>
           <input
             type="checkbox"
-            checked={hideEmptyGroupColumns}
+            checked={hideColumnWhenGrouped}
             onChange={() => {
-              setHideEmptyGroupColumns(
-                !hideEmptyGroupColumns
-              );
+              setHidden(!hideColumnWhenGrouped);
             }}
           />
-          Hide Empty Group Columns (make sure all `Stack`
-          groups are collapsed to see it in action). Try to
-          expand the group column to see the new group
-          column being added on-the-fly.
+          Hide Column When Grouped
         </label>
       </div>
       <DataSource<Developer>
         data={dataSource}
         primaryKey="id"
-        defaultGroupRowsState={groupRowsState}
         groupBy={groupBy}>
         <InfiniteTable<Developer>
-          domProps={domProps}
-          hideEmptyGroupColumns={hideEmptyGroupColumns}
-          groupRenderStrategy={'multi-column'}
+          groupColumn={groupColumn}
           columns={columns}
+          hideColumnWhenGrouped={hideColumnWhenGrouped}
           columnDefaultWidth={250}
+          domProps={domProps}
         />
       </DataSource>
     </div>
@@ -88,7 +91,7 @@ export default function App() {
 
 const dataSource = () => {
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10'
+    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);

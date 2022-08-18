@@ -426,7 +426,7 @@ See related <PropLink name="columns.defaultWidth" />
 </Prop>
 
 
-<Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
+<Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| true | keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
 
 > Controls default column visibility when <DataSourcePropLink name="groupBy" /> is used.
 
@@ -435,6 +435,7 @@ This property does not apply (work) when controlled <PropLink name="columnVisibi
 The value for this property can be one of the following:
  * the `'*'` string - this means, the column is hidden whenever there are groups - so any groups.
  * a `string`, namely a field from the bound type of the `DataSource` (so type is `keyof DATA_TYPE`) - the column is hidden whenever there is grouping that includes the specified field. The grouping can contain any other fields, but if it includes the specified field, the column is hidden.
+ * `true` - the column is hidden when there grouping that uses the field that the column is bound to.
  * `an object with keys` of type `keyof DATA_TYPE` and values being `true` - whenever the grouping includes any of the fields that are in the keys of this object, the column is hidden.
 
 
@@ -1263,6 +1264,13 @@ If it's a function, it will be called with the following arguments:
  * `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupBy` - corresponding to the current column.
  * `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
 
+
+<Gotcha>
+
+You can still use <PropLink name="groupColumn" /> as a function with single column group render strategy, but in this case, you have to be explicit and specify <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>.
+
+</Gotcha>
+
 </Prop>
 
 <Prop name="groupRenderStrategy" type="'single-column'|'multi-column'">
@@ -1275,6 +1283,25 @@ If it's a function, it will be called with the following arguments:
 ```ts file=groupRenderStrategy-example.page.tsx
 ```
 ``` ts file=employee-columns.ts
+```
+
+</Sandpack>
+</Prop>
+
+
+<Prop name="hideColumnWhenGrouped" type="boolean" defaultValue={false}>
+
+> Allows you to hide group columns bound to fields that are grouped by (fields mentioned in <DataSourcePropLink name="groupBy">groupBy.field</DataSourcePropLink>).
+
+<Sandpack>
+
+<Description>
+
+In this example, toggle the checkbox to see the `stack` and `preferredLanguage` columns hide/show as the value of `hideColumnWhenGrouped` changes.
+
+</Description>
+
+```ts file=hideColumnWhenGrouped-example.page.tsx
 ```
 
 </Sandpack>

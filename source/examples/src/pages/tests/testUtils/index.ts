@@ -301,16 +301,16 @@ export const toggleGroupRow = async (
 export const getCellText = async (
   {
     columnId,
+    colIndex,
     rowIndex,
   }: {
-    columnId: string;
+    columnId?: string;
+    colIndex?: number;
     rowIndex: number;
   },
   { page }: { page: Page },
 ) => {
-  const cell = page.locator(
-    `.InfiniteBody [data-row-index="${rowIndex}"][data-column-id="${columnId}"]`,
-  );
+  const cell = getCellNodeLocator({ columnId, rowIndex, colIndex }, { page });
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };

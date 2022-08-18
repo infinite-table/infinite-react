@@ -130,7 +130,6 @@ export const useColumnPointerEvents = ({
         if (!equalPinning(getState().columnPinning, columnPinning)) {
           componentActions.columnPinning = columnPinning;
         }
-        console.log('old order', getComputed().computedColumnOrder);
         const currentComputedColumnOrder = getComputed().computedColumnOrder;
         if (JSON.stringify(columnOrder, currentComputedColumnOrder)) {
           computedVisibleColumns.forEach((col) => {

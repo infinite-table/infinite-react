@@ -445,7 +445,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
 
     let updated = false;
     computedColumns.forEach((col, id) => {
-      if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped) {
+      if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped != null) {
         const nowHidden = columnVisibility[id] === false;
         const shouldBeHidden =
           (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||

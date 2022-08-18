@@ -1,6 +1,17 @@
-import { Page } from '@playwright/test';
-import { getCellInRow, getSelectedRowIds } from '.';
+import { ElementHandle, Page } from '@playwright/test';
 
+import {
+  getCellInRow,
+  getCellNodeLocator,
+  getCellText,
+  getSelectedRowIds,
+} from '.';
+
+type CellLocation = {
+  colId?: string;
+  colIndex?: number;
+  rowIndex: number;
+};
 export class RowTestingModel {
   static get(page: Page) {
     return new RowTestingModel(page);
@@ -10,6 +21,51 @@ export class RowTestingModel {
 
   constructor(page: Page) {
     this.page = page;
+  }
+
+  async getTextForCell({ colId, colIndex, rowIndex }: CellLocation) {
+    return await getCellText(
+      {
+        rowIndex,
+        colIndex: colIndex,
+        columnId: colId,
+      },
+      { page: this.page },
+    );
+  }
+
+  getCellLocator({ colId, colIndex, rowIndex }: CellLocation) {
+    return getCellNodeLocator(
+      {
+        rowIndex,
+        colIndex: colIndex,
+        columnId: colId,
+      },
+      { page: this.page },
+    );
+  }
+
+  async getCellComputedStylePropertyValue(
+    cellLocation: CellLocation,
+    propertyName: string,
+  ) {
+    const cell = this.getCellLocator(cellLocation);
+    const node = await cell.elementHandle();
+
+    return await this.page.evaluate(
+      //@ts-ignore
+      ({
+        node,
+        propertyName,
+      }: {
+        node: ElementHandle<HTMLElement>;
+        propertyName: string;
+      }) => {
+        //@ts-ignore
+        return getComputedStyle(node).getPropertyValue(propertyName);
+      },
+      { node, propertyName },
+    );
   }
 
   async clickRow(rowIndex: number) {

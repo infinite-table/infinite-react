@@ -125,6 +125,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowHeight,
     columnsMap,
 
+    fieldsToColumn,
+
     domRef,
     hidden,
     showZebraRows,
@@ -160,6 +162,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     column,
     rowInfo,
     columnsMap,
+    fieldsToColumn,
     context: renderingContext,
   });
 

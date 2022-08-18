@@ -46,6 +46,7 @@ export function useCellRendering<T>(
     computedPinnedEndColumns,
     computedVisibleColumns,
     computedColumnsMap,
+    fieldsToColumn,
     rowspan,
     toggleGroupRow,
     columnSize,
@@ -182,6 +183,7 @@ export function useCellRendering<T>(
         width,
         column,
         columnsMap: computedColumnsMap,
+        fieldsToColumn,
         rowStyle,
         rowClassName,
       };
@@ -193,6 +195,7 @@ export function useCellRendering<T>(
       getData,
       computedVisibleColumns,
       computedColumnsMap,
+      fieldsToColumn,
       groupRenderStrategy,
       toggleGroupRow,
       showZebraRows,

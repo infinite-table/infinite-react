@@ -30,11 +30,11 @@ In the example above, we're grouping by `country`, which is a field available in
 
 Additionally, a `column` object can be used together with the `field` to define how the group column should be rendered.
 
-```tsx
+```tsx {4}
 const groupBy = [
   {
     field: 'country',
-    column: {
+    column: { // custom column configuration for group column
       width: 150,
       header: 'Country group',
     }
@@ -56,7 +56,7 @@ Also see the <DataSourcePropLink name="groupBy" code={false}>groupBy API referen
 
 In `groupBy.column` you can use any column property - so, for example, you can define a custom `renderValue` function to customize the rendering.
 
-```tsx
+```tsx {5}
 const groupBy = [
   {
     field: 'country',
@@ -67,16 +67,27 @@ const groupBy = [
 ]
 ```
 
+<Note>
+
+The generated group column(s) - can be one for all groups or one for each group - will inherit the `style`/`className`/renderers from the columns corresponding to the group fields themselves (if those columns exist).
+
+Additionally, there are other ways to override those inherited configurations, in order to configure the group columns:
+ * use <PropLink name="groupBy.column" /> to specify how each grouping column should look for the respective field (in case of <PropLink name="groupRenderStrategy">groupRenderStrateg="multi-column"</PropLink>)
+ * use <PropLink name="groupColumn" /> prop 
+    * can be used as an object - ideal for when you have simple requirements and when <PropLink name="groupRenderStrategy">groupRenderStrateg="single-column"</PropLink>
+    * as a function that returns a column configuration - can be used like this in either single or multiple group render strategy
+
+</Note>
+
 ## Grouping strategies
 
-When you want to group by multiple fields, `InfiniteTable` offers multiple grouping strategies:
- * multi column mode - the default.
- * single column mode
+Multiple grouping strategies are supported by, `InfiniteTable` DataGrid:
+ * multi column mode - multiple group columns are generated, one for each specified group field
+ * single column mode - a single group column is generated, even when there are multiple group fields
  <!-- * inline mode -->
 
-You can specify the rendering strategy by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column` 
+You can specify the rendering strategy explicitly by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column`. If you don't set it explicitly, it will choose the best default based on your configuration.
 <!-- or `inline`. -->
-
 
 ### Multiple groups columns
 
@@ -130,9 +141,17 @@ You can specify an `id` for group columns. This is helpful if you want to size t
 
 ### Single group column
 
-You can group by multiple fields, yet only render a single group column. To choose this rendering strategy, specify <PropLink name="groupRenderStrategy" /> property to be `single-column`.
+You can group by multiple fields, yet only render a single group column. To choose this rendering strategy, specify <PropLink name="groupRenderStrategy" /> property to be `single-column` (or specify <PropLink name="groupColumn" /> as an object.)
+
 
 In this case, you can't override the group column for each group field, as there's only one group column being generated. However, you can specify a <PropLink name="groupColumn" /> property to customize the generated column.
+
+<Note>
+
+By default the generated group column will "inherit" many of the properties (the column style or className or renderers) of the columns corresponding to the group fields (if such columns exist, because it's not mandatory that they are defined).
+
+</Note>
+
  
 <Sandpack title="Single-column group render strategy">
 
@@ -154,7 +173,7 @@ If <PropLink name="groupColumn" /> is specified to an object and no <PropLink na
 
 <Gotcha>
 
-You can specify an `id` for the single group column by using <PropLink name="groupColumn" />, as detailed above. This is helpful if you want to size this column (via <PropLink name="columnSizing" />) or pin it (via <PropLink name="columnPinning" />) or configure it in other ways. If no `id` is specified, it will default to `"group-by"`.
+You can specify an `id` for the single <PropLink name="groupColumn" />. This is helpful if you want to size this column (via <PropLink name="columnSizing" />) or pin it (via <PropLink name="columnPinning" />) or configure it in other ways. If no `id` is specified, it will default to `"group-by"`.
 
 </Gotcha>
 
@@ -165,6 +184,140 @@ You can specify an `id` for the single group column by using <PropLink name="gro
 When inline group rendering is used (<PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="inline"</PropLink>), the columns bound to the corresponding group by fields are used for rendering, so no group columns are generated. This way of rendering groups is only recommended when you're sure you have small groups (smaller than the number of rows visible in the viewport). 
 
 -->
+
+## Customizing the group column
+
+There are many ways to customize the group column(s) and we're going to show a few of them below:
+
+### Binding the group column to a `field`
+
+By default, group columns only show values in the group rows - but they are normal columns, so why not bind them to a <PropLink name="columns.field" code={false}>field</PropLink> of the `DATA_TYPE`?
+
+
+```tsx {6,11}
+const groupColumn = {
+  id: 'the-group', // can specify an id
+  style: {
+    color: 'tomato'
+  },
+  field: 'firstName' // non-group rows will render the first name
+}
+const columns = {
+  theFirstName: {
+    field: 'firstName',
+    style: { // this style will also be applied in the group column,
+      // since it is bound to this same `field`
+      fontWeight: 'bold'
+    }
+  }
+}
+```
+
+This makes the column display the value of the `field` in non-group/normal rows. Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in non-group rows.
+
+<Sandpack title="Bind group column to a field">
+
+```ts file=../../reference/bind-group-column-to-field-example.page.tsx
+```
+
+</Sandpack>
+
+### Use `groupColumn` to customize rendering
+
+The <PropLink name="groupColumn" /> will inherit its own rendering and styling from the columns that are bound to the fields used in <DataSourcePropLink name="groupBy.field" />. However, you can override any of those properties so you have full control over the rendering process.
+
+
+```tsx {3,6}
+const groupColumn = {
+  field: 'firstName',
+  renderGroupValue: ({ value }) => {
+    return `Group: ${value}`
+  },
+  renderLeafValue: ({ value }) => {
+    return `First name: ${value}`
+  }
+}
+```
+
+
+<Sandpack title="Customize group column renderer">
+
+<Description>
+
+The column that renders the `firstName` has a custom renderer that adds a `.` at the end.
+The group column is bound to the same `firstName` field, but specifies a different renderer, which will be used instead.
+
+</Description>
+
+```ts file=../../reference/group-column-custom-renderers-example.page.tsx
+```
+
+</Sandpack>
+
+
+<HeroCards>
+<YouWillLearnCard title="Column rendering" path="../columns/column-rendering">
+Learn more about customizing column rendering via multiple renderer functions.
+</YouWillLearnCard>
+</HeroCards>
+
+
+## Hiding columns when grouping
+
+When grouping is enabled, you can choose to hide some columns. Here are the two main ways to do this:
+
+ * use <PropLink name="hideColumnWhenGrouped" /> - this will make columns bound to the group fields be hidden when grouping is active
+ * use <PropLink name="columns.defaultHiddenWhenGroupedBy" /> (also available on the column types, as <PropLink name="columnTypes.defaultHiddenWhenGroupedBy" />) - this is a column-level property, so you have more fine-grained control over what is hidden and when.
+
+Valid values for <PropLink name="columns.defaultHiddenWhenGroupedBy" /> are:
+
+ * `"*"` - when any grouping is active, hide the column that specifies this property
+ * `true` - when the field this column is bound to is used in grouping, hides this column
+ * `keyof DATA_TYPE` - specify an exact field that, when grouped by, makes this column be hidden
+ * `{ [k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
+
+ 
+<Sandpack title="Hide columns when grouping">
+
+<Description>
+
+In this example, the column bound to `firstName` field is set to hide when any grouping is active, since the group column is anyways found to the `firstName` field.
+
+In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the `stack` and `preferredLanguage` columns are also hidden, since they are grouped by.
+
+</Description>
+
+```ts file=../../reference/hide-columns-when-grouping-example.page.tsx
+```
+
+</Sandpack>
+
+
+## Sorting the group column
+
+When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
+
+
+```ts
+const sortInfo = [
+  { field: ['stack','age'], dir: 1, id: 'group-by', }
+]
+```
+
+ <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
+
+ <Note>
+
+ Both in single and multi group column render strategy, the <PropLink name="columns.sortable" /> property can be used to override the default behavior.
+
+ </Note>
+
+<Sandpack title="Group column with initial descending sorting">
+
+```ts file=../../reference/group-column-sorted-initially-example.page.tsx
+```
+
+</Sandpack>
 
 
 ## Aggregations
@@ -183,7 +336,7 @@ Each <DataSourcePropLink name="aggregationReducers" code={false}>reducer</DataSo
 * `field` - the field to aggregate on
 * `getter(data)` - a value-getter function, if the aggregation values are are not mapped directly to a `field`
 * `initialValue` - the initial value to start with when computing the aggregation (for client-side aggregations only)
-* `reducer: string | (acc, current)=>value` - the reducer function to use when computing the aggregation (for client-side aggregations only). For server-side aggregations, this will be a `string`
+* `reducer: string | (acc, current, data: DATA_TYPE, index)=>value` - the reducer function to use when computing the aggregation (for client-side aggregations only). For server-side aggregations, this will be a `string`
 * `done(value, arr)` - a function that is called when the aggregation is done (for client-side aggregations only) and returns the final value of the aggregation
 * `name` - useful especially in combination with <DataSourcePropLink name="pivotBy" />, as it will be used as the pivot column header.
 

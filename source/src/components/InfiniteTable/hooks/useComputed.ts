@@ -90,6 +90,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedPinnedEndWidth,
     renderSelectionCheckBox,
     computedColumnsMap,
+    fieldsToColumn,
   } = useComputedVisibleColumns({
     columns,
     columnCssEllipsis: componentState.columnCssEllipsis,
@@ -168,5 +169,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedUnpinnedColumnsWidth,
     computedUnpinnedOffset,
     computedPinnedEndOffset,
+    fieldsToColumn,
   };
 }

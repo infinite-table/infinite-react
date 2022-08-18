@@ -11,35 +11,43 @@ import type {
 
 const groupBy: DataSourcePropGroupBy<Developer> = [
   {
-    field: 'country',
-    column: {
-      header: 'Country group',
-      renderGroupValue: ({ value }) => (
-        <>Country: {value}</>
-      ),
-    },
+    field: 'stack',
+  },
+  {
+    field: 'preferredLanguage',
   },
 ];
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
     field: 'country',
-    // specyfing a style here for the column
-    // note: it will also be "picked up" by the group column
-    // if you're grouping by the 'country' field
+  },
+  theFirstName: {
+    field: 'firstName',
+    style: {
+      color: 'orange',
+    },
+    // hide this column when grouping active
+    // as the group column is anyways bound to this field
+    defaultHiddenWhenGroupedBy: '*',
+  },
+  stack: {
+    field: 'stack',
     style: {
       color: 'tomato',
     },
   },
-  firstName: { field: 'firstName' },
+  preferredLanguage: { field: 'preferredLanguage' },
   age: { field: 'age' },
   salary: {
     field: 'salary',
     type: 'number',
   },
-
   canDesign: { field: 'canDesign' },
-  stack: { field: 'stack' },
+};
+
+const groupColumn = {
+  field: 'firstName',
 };
 
 export default function App() {
@@ -48,7 +56,12 @@ export default function App() {
       data={dataSource}
       primaryKey="id"
       groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} />
+      <InfiniteTable<Developer>
+        groupColumn={groupColumn}
+        columns={columns}
+        hideColumnWhenGrouped
+        columnDefaultWidth={250}
+      />
     </DataSource>
   );
 }

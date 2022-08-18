@@ -25,28 +25,23 @@ export type InfiniteTableColumnRenderingContext<T> = {
   actions: InfiniteTableActions<T>;
   api: InfiniteTableApi<T>;
 };
-export function getColumnRenderFunction<T>(
-  _column: InfiniteTableComputedColumn<T>,
-  _rowInfo: InfiniteTableRowInfo<T>,
-  _context: InfiniteTableColumnRenderingContext<T> & {
-    columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
-  },
-) {}
 
 export function getGroupByColumn<T>(options: {
   rowInfo: InfiniteTableRowInfo<T>;
   column: InfiniteTableComputedColumn<T>;
-  columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
 }) {
-  const { column, rowInfo, columnsMap } = options;
-  const groupByColumn =
-    rowInfo.isGroupRow && column.groupByField
-      ? columnsMap.get(
-          rowInfo.isGroupRow
-            ? (rowInfo.groupBy[rowInfo.groupBy.length - 1] as any as string)
-            : '',
-        )
-      : undefined;
+  const { column, rowInfo, fieldsToColumn } = options;
+  let groupByColumn: InfiniteTableComputedColumn<T> | undefined = undefined;
+  if (column.groupByField) {
+    if (rowInfo.isGroupRow) {
+      groupByColumn = fieldsToColumn.get(
+        rowInfo.groupBy[rowInfo.groupBy.length - 1],
+      );
+    } else if (column.field) {
+      groupByColumn = fieldsToColumn.get(column.field);
+    }
+  }
 
   return groupByColumn;
 }
@@ -55,6 +50,7 @@ export function getColumnRenderingParams<T>(options: {
   column: InfiniteTableComputedColumn<T>;
   rowInfo: InfiniteTableRowInfo<T>;
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   context: InfiniteTableColumnRenderingContext<T>;
 }) {
   const { column } = options;
@@ -73,12 +69,12 @@ export function getColumnRenderingParams<T>(options: {
     },
     formattedValueContext,
     renderFunctions: {
-      renderGroupIcon: groupByColumn?.renderGroupIcon || column.renderGroupIcon,
+      renderGroupIcon: column.renderGroupIcon || groupByColumn?.renderGroupIcon,
       renderSelectionCheckBox: column.renderSelectionCheckBox,
-      renderValue: groupByColumn?.renderValue || column.renderValue,
+      renderValue: column.renderValue || groupByColumn?.renderValue,
       renderGroupValue:
-        groupByColumn?.renderGroupValue || column.renderGroupValue,
-      renderLeafValue: groupByColumn?.renderLeafValue || column.renderLeafValue,
+        column.renderGroupValue || groupByColumn?.renderGroupValue,
+      renderLeafValue: column.renderLeafValue || groupByColumn?.renderLeafValue,
     },
     renderParams: getColumnRenderParam({
       ...options,
@@ -94,11 +90,18 @@ export function getColumnRenderParam<T>(options: {
   rowInfo: InfiniteTableRowInfo<T>;
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
 
   context: InfiniteTableColumnRenderingContext<T>;
 }) {
-  const { column, context, rowInfo, columnsMap, formattedValueContext } =
-    options;
+  const {
+    column,
+    context,
+    rowInfo,
+    columnsMap,
+    fieldsToColumn,
+    formattedValueContext,
+  } = options;
   const { value } = formattedValueContext;
   const { api: imperativeApi, getDataSourceState } = context;
 
@@ -107,19 +110,14 @@ export function getColumnRenderParam<T>(options: {
   const dataSourceState = getDataSourceState();
   const { selectionMode } = dataSourceState;
 
-  const groupByColumn = rowInfo.isGroupRow
-    ? columnsMap.get(
-        rowInfo.isGroupRow
-          ? (rowInfo.groupBy[rowInfo.groupBy.length - 1] as any as string)
-          : '',
-      )
-    : undefined;
+  const groupByColumn = getGroupByColumn({ rowInfo, column, fieldsToColumn });
 
   const toggleGroupRow = imperativeApi.toggleGroupRow;
 
   const renderParam: Omit<InfiniteTableColumnRenderParam<T>, 'domRef'> = {
     column,
     columnsMap,
+    fieldsToColumn,
 
     ...formattedValueContext,
     groupByColumn,

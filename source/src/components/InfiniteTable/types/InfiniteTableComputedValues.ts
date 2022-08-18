@@ -34,6 +34,7 @@ export interface InfiniteTableComputedValues<T> {
   computedUnpinnedOffset: number;
   computedPinnedEndOffset: number;
   computedRemainingSpace: number;
+  fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   toggleGroupRow: (groupKeys: any[]) => void;
   columnSize: (colIndex: number) => number;
   // setColumnPinning: (columnPinning: InfiniteTablePropColumnPinning) => void;

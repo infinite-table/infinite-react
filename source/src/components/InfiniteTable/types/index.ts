@@ -10,6 +10,8 @@ import type {
   InfiniteTableColumnRenderValueParam,
   InfiniteTableColumnRowspanParam,
   InfiniteTablePivotColumn,
+  InfiniteTableColumnRenderFunctionForGroupRows,
+  InfiniteTableColumnRenderFunctionForNormalRows,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -69,6 +71,8 @@ export type {
   InfiniteTableColumnComparer,
   InfiniteTableComputedColumn,
   InfiniteTableColumnRenderParam,
+  InfiniteTableColumnRenderFunctionForGroupRows,
+  InfiniteTableColumnRenderFunctionForNormalRows,
   InfiniteTableColumnRenderValueParam,
   InfiniteTableContextValue,
   InfiniteTablePropGroupRenderStrategy,

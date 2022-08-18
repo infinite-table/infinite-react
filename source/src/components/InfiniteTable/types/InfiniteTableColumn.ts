@@ -76,6 +76,7 @@ export type InfiniteTableColumnRenderParamBase<
 
   column: COL_TYPE;
   columnsMap: Map<string, COL_TYPE>;
+  fieldsToColumn: Map<keyof DATA_TYPE, COL_TYPE>;
   groupByColumn?: InfiniteTableComputedColumn<DATA_TYPE>;
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
@@ -155,6 +156,15 @@ export type InfiniteTableColumnRenderFunctionForGroupRows<
 > = (
   renderParams: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
     isGroupRow: true;
+  },
+) => Renderable | null;
+
+export type InfiniteTableColumnRenderFunctionForNormalRows<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = (
+  renderParams: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
+    isGroupRow: false;
   },
 ) => Renderable | null;
 export type InfiniteTableColumnRenderFunction<
@@ -335,8 +345,8 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   field?: keyof DATA_TYPE;
   render?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
-  renderGroupValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
-  renderLeafValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderGroupValue?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
+  renderLeafValue?: InfiniteTableColumnRenderFunctionForNormalRows<DATA_TYPE>;
   valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
   valueFormatter?: InfiniteTableColumnValueFormatter<DATA_TYPE>;
 

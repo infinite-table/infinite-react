@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
+  DataSourcePropSortInfo,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -11,51 +12,73 @@ import type {
 
 const groupBy: DataSourcePropGroupBy<Developer> = [
   {
-    field: 'country',
-    column: {
-      header: 'Country group',
-      renderGroupValue: ({ value }) => (
-        <>Country: {value}</>
-      ),
-    },
+    field: 'stack',
+  },
+  {
+    field: 'preferredLanguage',
   },
 ];
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
     field: 'country',
-    // specyfing a style here for the column
-    // note: it will also be "picked up" by the group column
-    // if you're grouping by the 'country' field
+  },
+  theFirstName: {
+    field: 'firstName',
+    style: {
+      color: 'orange',
+    },
+    // hide this column when grouping active
+    // as the group column is anyways bound to this field
+    defaultHiddenWhenGroupedBy: '*',
+  },
+  stack: {
+    field: 'stack',
     style: {
       color: 'tomato',
     },
   },
-  firstName: { field: 'firstName' },
+  preferredLanguage: { field: 'preferredLanguage' },
   age: { field: 'age' },
   salary: {
     field: 'salary',
     type: 'number',
   },
-
   canDesign: { field: 'canDesign' },
-  stack: { field: 'stack' },
 };
+
+const groupColumn = {
+  field: 'firstName',
+};
+
+const defaultSortInfo: DataSourcePropSortInfo<Developer> = [
+  {
+    field: ['stack', 'preferredLanguage'],
+    dir: -1,
+    id: 'group-by',
+  },
+];
 
 export default function App() {
   return (
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
+      defaultSortInfo={defaultSortInfo}
       groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} />
+      <InfiniteTable<Developer>
+        groupColumn={groupColumn}
+        columns={columns}
+        hideColumnWhenGrouped
+        columnDefaultWidth={250}
+      />
     </DataSource>
   );
 }
 
 const dataSource = () => {
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
+    process.env.NEXT_PUBLIC_BASE_URL + '/developers10'
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);

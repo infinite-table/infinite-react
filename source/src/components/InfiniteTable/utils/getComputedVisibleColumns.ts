@@ -94,6 +94,7 @@ export type GetComputedVisibleColumnsResult<T> = {
 
   computedVisibleColumns: InfiniteTableComputedColumn<T>[];
   computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
 };
 
 type GetComputedVisibleColumnsParam<T> = {
@@ -393,6 +394,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
     }
   });
 
+  const fieldsToColumn: Map<
+    keyof T,
+    InfiniteTableComputedColumn<T>
+  > = new Map();
+
   // we need to loop over this in the visibility order
   // as we calculate computedOffset based on previous item
   // and also have a  reference
@@ -673,6 +679,15 @@ export const getComputedVisibleColumns = <T extends unknown>({
       groupColumns.push(result);
     }
     computedColumnsMap.set(result.id, result);
+
+    if (
+      result.field &&
+      // for now, do not include group columns
+      !result.groupByField &&
+      !fieldsToColumn.has(result.field)
+    ) {
+      fieldsToColumn.set(result.field, result);
+    }
   });
 
   groupColumns.forEach((col) => {
@@ -714,6 +729,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       },
       false,
     ),
+    fieldsToColumn,
   };
 
   return result;

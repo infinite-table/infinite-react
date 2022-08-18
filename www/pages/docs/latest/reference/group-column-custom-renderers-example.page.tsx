@@ -6,40 +6,50 @@ import {
 
 import type {
   DataSourcePropGroupBy,
+  InfiniteTableColumn,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
 const groupBy: DataSourcePropGroupBy<Developer> = [
   {
-    field: 'country',
-    column: {
-      header: 'Country group',
-      renderGroupValue: ({ value }) => (
-        <>Country: {value}</>
-      ),
-    },
+    field: 'stack',
+  },
+  {
+    field: 'preferredLanguage',
   },
 ];
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
     field: 'country',
-    // specyfing a style here for the column
-    // note: it will also be "picked up" by the group column
-    // if you're grouping by the 'country' field
+  },
+  firstName: {
+    field: 'firstName',
+    style: {
+      color: 'orange',
+    },
+    renderValue: ({ value, rowInfo }) =>
+      rowInfo.isGroupRow ? null : `${value}.`,
+  },
+  stack: {
+    field: 'stack',
     style: {
       color: 'tomato',
     },
   },
-  firstName: { field: 'firstName' },
   age: { field: 'age' },
   salary: {
     field: 'salary',
     type: 'number',
   },
-
   canDesign: { field: 'canDesign' },
-  stack: { field: 'stack' },
+};
+
+const groupColumn: InfiniteTableColumn<Developer> = {
+  field: 'firstName',
+  renderValue: ({ value }) => {
+    return `First name: ${value}`;
+  },
 };
 
 export default function App() {
@@ -48,7 +58,11 @@ export default function App() {
       data={dataSource}
       primaryKey="id"
       groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} />
+      <InfiniteTable<Developer>
+        groupColumn={groupColumn}
+        columns={columns}
+        columnDefaultWidth={250}
+      />
     </DataSource>
   );
 }

@@ -46,6 +46,7 @@ export interface InfiniteTableColumnCellProps<T>
     'children' | 'cellType' | 'renderChildren'
   > {
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   onMouseEnter?: VoidFunction;
   onMouseLeave?: VoidFunction;
   showZebraRows: boolean;
