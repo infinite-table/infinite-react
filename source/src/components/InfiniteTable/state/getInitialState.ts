@@ -118,6 +118,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     focused: false,
     focusedWithin: false,
     columnsWhenGrouping: columnsGeneratedForGrouping,
+    columnVisibilityForGrouping: {},
 
     pinnedStartScrollListener: new ScrollListener(),
     pinnedEndScrollListener: new ScrollListener(),

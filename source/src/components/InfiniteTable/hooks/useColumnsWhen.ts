@@ -435,19 +435,23 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     const isGrouped = groupBy.length > 0;
     const currentState = getComponentState();
 
-    const { columnVisibility, hideColumnWhenGrouped } = currentState;
-
-    // if (controlledColumnVisibility) {
-    //   return;
-    // }
+    const {
+      columnVisibility,
+      columnVisibilityForGrouping,
+      hideColumnWhenGrouped,
+    } = currentState;
 
     const newColumnVisibility = { ...columnVisibility };
+    let newColumnVisibilityForGrouping = { ...columnVisibilityForGrouping };
 
-    let updated = false;
+    let updatedVisibilityWhenGrouping = false;
+
+    let newlyHiddenColumns = new Set<string>();
+    let newlyDisplayedColumns = new Set<string>();
+
     computedColumns.forEach((col, id) => {
       if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped != null) {
-        const nowHidden = columnVisibility[id] === false;
-        const shouldBeHidden =
+        const hideWhenGrouped =
           (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||
           ((col.defaultHiddenWhenGroupedBy === true || hideColumnWhenGrouped) &&
             col.field &&
@@ -460,17 +464,40 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
               false,
             ));
 
-        if (nowHidden !== shouldBeHidden) {
-          updated = true;
-          if (shouldBeHidden) {
-            newColumnVisibility[id] = false;
-          } else {
-            delete newColumnVisibility[id];
+        if (hideWhenGrouped) {
+          if (newColumnVisibilityForGrouping[id] !== false) {
+            if (columnVisibility[id] === false) {
+              // if the column is already specified as invisible,
+              // dont put it in the list of cols made invisible due to grouping rules
+              return;
+            }
+            // should be hidden and was not already
+            newColumnVisibilityForGrouping[id] = false;
+            updatedVisibilityWhenGrouping = true;
+            newlyHiddenColumns.add(id);
+          }
+        } else {
+          if (newColumnVisibilityForGrouping[id] === false) {
+            //should be visible and was not already
+            delete newColumnVisibilityForGrouping[id];
+            updatedVisibilityWhenGrouping = true;
+            newlyDisplayedColumns.add(id);
           }
         }
       }
     });
-    if (updated) {
+
+    if (updatedVisibilityWhenGrouping) {
+      componentActions.columnVisibilityForGrouping =
+        newColumnVisibilityForGrouping;
+
+      newlyDisplayedColumns.forEach((colId) => {
+        delete newColumnVisibility[colId];
+      });
+      newlyHiddenColumns.forEach((colId) => {
+        newColumnVisibility[colId] = false;
+      });
+
       componentActions.columnVisibility = newColumnVisibility;
     }
   }, [

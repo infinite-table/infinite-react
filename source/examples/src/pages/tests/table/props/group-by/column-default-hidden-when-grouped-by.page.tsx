@@ -32,74 +32,47 @@ const dataSource = () => {
   return Promise.resolve(employees);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstNameID',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstNameID: {
+    field: 'firstName',
+    header: 'First Name',
+  },
 
-  [
-    'countryID',
-    {
-      field: 'country',
-    },
-  ],
+  countryID: {
+    field: 'country',
+  },
 
-  [
-    'cityID',
-    {
-      field: 'city',
-    },
-  ],
+  cityID: {
+    field: 'city',
+  },
 
-  [
-    'streetNameID',
-    {
-      field: 'streetName',
-    },
-  ],
-  [
-    'streetNoID',
-    {
-      field: 'streetNo',
-    },
-  ],
+  streetNameID: {
+    field: 'streetName',
+  },
+  streetNoID: {
+    field: 'streetNo',
+  },
+  ageID: {
+    field: 'age',
+    type: 'number',
+  },
+  departmentID: {
+    field: 'department',
+    defaultHiddenWhenGroupedBy: 'department',
+  },
+  salaryID: {
+    field: 'salary',
+    type: 'number',
+    defaultHiddenWhenGroupedBy: { salary: true, team: true },
+  },
+  teamID: {
+    field: 'team',
+    defaultHiddenWhenGroupedBy: '*',
+  },
 
-  [
-    'ageID',
-    {
-      field: 'age',
-      type: 'number',
-    },
-  ],
-  [
-    'departmentID',
-    {
-      field: 'department',
-      defaultHiddenWhenGroupedBy: 'department',
-    },
-  ],
-  [
-    'salaryID',
-    {
-      field: 'salary',
-      type: 'number',
-      defaultHiddenWhenGroupedBy: { salary: true, team: true },
-    },
-  ],
-  [
-    'teamID',
-    {
-      field: 'team',
-      defaultHiddenWhenGroupedBy: '*',
-    },
-  ],
-  ['companyID', { field: 'companyName' }],
-  ['companySizeID', { field: 'companySize' }],
-]);
+  companyID: { field: 'companyName' },
+  companySizeID: { field: 'companySize' },
+};
 
 export default function GroupByExample() {
   const [groupBy, setGroupBy] = useState<DataSourceGroupBy<Employee>[]>(() => [
@@ -136,7 +109,7 @@ export default function GroupByExample() {
               header: `Group by ${groupByForColumn.field}`,
             };
           }}
-          columnDefaultWidth={200}
+          columnDefaultWidth={100}
           columns={columns}
         />
       </DataSource>

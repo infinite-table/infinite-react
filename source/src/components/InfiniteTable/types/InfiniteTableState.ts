@@ -50,6 +50,7 @@ export interface InfiniteTableSetupState<T> {
   focused: boolean;
   ready: boolean;
   columnReorderDragColumnId: false | string;
+  columnVisibilityForGrouping: Record<string, false>;
   focusedWithin: boolean;
   scrollPosition: ScrollPosition;
   pinnedStartScrollListener: ScrollListener;

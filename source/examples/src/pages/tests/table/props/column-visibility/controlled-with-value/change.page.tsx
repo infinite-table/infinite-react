@@ -25,7 +25,7 @@ const onColumnVisibilityChange = (
 
 const App = () => {
   const [columnVisibility, setColumnVisibility] =
-    useState<InfiniteTablePropColumnVisibility>(defaultColumnVisibility);
+    useState<InfiniteTablePropColumnVisibility>(() => defaultColumnVisibility);
   return (
     <React.StrictMode>
       <DataSource<Car>
