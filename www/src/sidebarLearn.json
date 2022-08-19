@@ -71,6 +71,21 @@
           ]
         },
         {
+          "title": "Selection",
+          "path": "/docs/latest/learn/selection/row-selection",
+          "transient": true,
+          "routes": [
+            {
+              "path": "/docs/latest/learn/selection/row-selection",
+              "title": "Row Selection"
+            },
+            {
+              "path": "/docs/latest/learn/selection/cell-selection",
+              "title": "Cell Selection"
+            }
+          ]
+        },
+        {
           "title": "Keyboard Navigation",
           "path": "/docs/latest/learn/keyboard-navigation/navigating-cells",
           "transient": true,

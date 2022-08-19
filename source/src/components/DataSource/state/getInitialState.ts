@@ -214,7 +214,10 @@ export function mapPropsToState<T extends any>(params: {
       // TODO implement single cell selection as well
       selectionMode = 'multi-cell';
     } else {
-      const rowSelectionProp = props.rowSelection ?? props.defaultRowSelection;
+      const rowSelectionProp =
+        props.rowSelection !== undefined
+          ? props.rowSelection
+          : props.defaultRowSelection;
       if (rowSelectionProp !== undefined) {
         if (rowSelectionProp && typeof rowSelectionProp === 'object') {
           selectionMode = 'multi-row';

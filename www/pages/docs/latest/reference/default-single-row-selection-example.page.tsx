@@ -9,35 +9,18 @@ import type {
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-const groupBy: DataSourcePropGroupBy<Developer> = [
-  {
-    field: 'stack',
-  },
-  {
-    field: 'preferredLanguage',
-  },
-];
-
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
     field: 'country',
   },
-  theFirstName: {
+  firstName: {
     field: 'firstName',
-    style: {
-      color: 'orange',
-    },
-    renderLeafValue: ({ value }) => {
-      return `${value}!`;
-    },
   },
   stack: {
     field: 'stack',
-    style: {
-      color: 'tomato',
-    },
   },
   age: { field: 'age' },
+  id: { field: 'id' },
   salary: {
     field: 'salary',
     type: 'number',
@@ -45,18 +28,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
   canDesign: { field: 'canDesign' },
 };
 
-const groupColumn = {
-  field: 'firstName',
-};
-
 export default function App() {
   return (
     <DataSource<Developer>
       data={dataSource}
-      primaryKey="id"
-      groupBy={groupBy}>
+      defaultRowSelection={3}
+      primaryKey="id">
       <InfiniteTable<Developer>
-        groupColumn={groupColumn}
         columns={columns}
         columnDefaultWidth={150}
       />
@@ -66,7 +44,7 @@ export default function App() {
 
 const dataSource = () => {
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
+    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);

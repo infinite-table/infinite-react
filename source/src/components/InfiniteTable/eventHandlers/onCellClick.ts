@@ -33,15 +33,13 @@ export function updateRowSelectionOnCellClick<T>(
     preventDefault: VoidFunction;
   },
 ) {
-  const { rowIndex, getDataSourceState, getComputed, dataSourceActions } =
+  const { rowIndex, getDataSourceState, getComputed, dataSourceActions, api } =
     context;
 
   const { multiRowSelector, renderSelectionCheckBox } = getComputed();
   const dataSourceState = getDataSourceState();
 
-  const { selectionMode, groupBy } = dataSourceState;
-
-  let { rowSelection: rowSelectionState } = dataSourceState;
+  const { selectionMode, groupBy, dataArray } = dataSourceState;
 
   if (groupBy.length) {
     return false;
@@ -56,6 +54,7 @@ export function updateRowSelectionOnCellClick<T>(
       // but used by the keyboard selection
       return false;
     }
+    let { rowSelection: rowSelectionState } = dataSourceState;
     // clone the row selection
     rowSelectionState = new RowSelectionState(
       rowSelectionState as RowSelectionState<string>,
@@ -79,6 +78,12 @@ export function updateRowSelectionOnCellClick<T>(
       return true;
     }
   } else if (selectionMode === 'single-row') {
+    const id = dataArray[rowIndex].id;
+    if (event.metaKey || event.ctrlKey) {
+      api.selectionApi.toggleRowSelection(id);
+    } else {
+      api.selectionApi.selectRow(id);
+    }
   }
   return false;
 }

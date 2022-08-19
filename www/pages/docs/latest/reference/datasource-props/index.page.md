@@ -227,6 +227,88 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 </Prop>
 
+<Prop name="onRowSelectionChange" type="(rowSelection, selectionMode='single-row'|'multi-row') => void">
+
+> A function to be called when the <DPropLink name="rowSelection" /> changes.
+
+<Sandpack  title="Controlled row selection with onRowSelectionChange">
+
+<Description>
+
+Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
+
+</Description>
+
+```ts file=../controlled-single-row-selection-example.page.tsx
+```
+</Sandpack>
+
+
+</Prop>
+
+
+<Prop name="rowSelection" type="string|number|null|object">
+
+> Describes the selected row(s) in the `DataSource`
+
+For single selection, the prop will be of type: `number | string | null`. Use `null` for empty selection in single selection mode.
+
+For multiple selection, the prop will have the following shape:
+
+```ts
+const rowSelection = {
+  selectedRows: [3, 6, 100, 23], // those specific rows are selected
+  defaultSelection: false // all rows deselected by default
+}
+
+// or 
+const rowSelection = {
+  deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
+  defaultSelection: true // all other rows are selected
+}
+
+// or, for grouped data - this example assumes groupBy=continent,country,city
+const rowSelection = {
+  selectedRows: [
+    45, // row with id 45 is selected, no matter the group
+    ['Europe','France'], // all rows in Europe/France are selected
+    ['Asia'] // all rows in Asia are selected
+  ]
+  deselectedRows: [
+    ['Europe','France','Paris'] // all rows in Paris are deselected
+  ],
+  defaultSelection: false // all other rows are selected
+}
+```
+
+<Note>
+
+For multiple selection, if we have no grouping, you either specify all rows are selected and then do a list of possibly deselected rows, or the other way around, you have all rows as deselected and specify a list of selected rows.
+
+For grouped/nested data, this is not enough, so basically in each list (`rowSelection.selectedRows` and `rowSelection.deselectedRows`), you can have both ids or group keys of any length. This allows you to specify selection in a very flexible and powerful way. Don't worry, at any time you can use our api to get the actual list of selected ids, even in grouped scenarios where your selection can be very complex.
+
+</Note>
+
+<Sandpack  title="Single row selection (controlled) with onRowSelectionChange">
+
+<Description>
+
+Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
+
+</Description>
+
+```ts file=../controlled-single-row-selection-example.page.tsx
+```
+</Sandpack>
+
+<Note title="Coming soon">
+
+Multiple row selection demo with grouped data.
+
+</Note>
+
+</Prop>
+
 <Prop name="sortInfo" type="DataSourceSingleSortInfo<T>|DataSourceSingleSortInfo<T>[]|null">
 
 > Information for sorting the data. This is a controlled prop.
