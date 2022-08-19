@@ -68,6 +68,7 @@ const groupColumn: InfiniteTableProps<Developer>['groupColumn'] =
 const domProps = {
   style: {
     flex: 1,
+    minHeight: 500,
   },
 };
 
