@@ -26,7 +26,7 @@ You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-ro
 This is the most basic row selection - in this case the <DPropLink name="rowSelection" /> prop (or the uncontrolled variant <DPropLink name="defaultRowSelection" />) will be a string or a number (or `null` for no selection).
 
 
-```ts {3}
+```ts {4}
 <DataSource<DATA_TYPE>
   primaryKey="id"
   data={[...]}
