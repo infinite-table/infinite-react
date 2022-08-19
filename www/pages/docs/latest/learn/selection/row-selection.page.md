@@ -142,7 +142,7 @@ Selection multiple rows is made easier when there is a checkbox column and even-
 
 Configuring checkbox selection is as easy as specifying <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink> on any of the columns in the grid. <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink> can either be the boolean `true` or a render function that allows the customization of the selection checkbox.
 
-```ts {7}
+```ts {8}
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
