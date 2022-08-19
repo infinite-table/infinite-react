@@ -7,6 +7,11 @@ import {
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
+  id: {
+    field: 'id',
+    renderSelectionCheckBox: true,
+    defaultWidth: 80,
+  },
   country: {
     field: 'country',
   },
@@ -17,7 +22,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'stack',
   },
   age: { field: 'age', defaultWidth: 80, type: 'number' },
-  id: { field: 'id', defaultWidth: 80 },
+
   salary: {
     field: 'salary',
     type: 'number',
