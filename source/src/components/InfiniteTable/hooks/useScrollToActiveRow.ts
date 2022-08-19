@@ -26,7 +26,7 @@ export function useScrollToActiveRow<T>(
           didScrollRef.current = imperativeApi.scrollRowIntoView(
             activeRowIndex!,
             {
-              offset: 30,
+              offset: 0,
             },
           );
           if (!didScrollRef.current && times < RETRIES) {

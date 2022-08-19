@@ -92,7 +92,7 @@ export function handleKeyboardSelection<T>(
 
       // if we have a selection checkbox column, then we wont allow shift be used with the space key
       if (renderSelectionCheckBox) {
-        event.shiftKey = false;
+        // event.shiftKey = false;
         event.metaKey = false;
         // but rather make the selection only additive
         event.ctrlKey = true;

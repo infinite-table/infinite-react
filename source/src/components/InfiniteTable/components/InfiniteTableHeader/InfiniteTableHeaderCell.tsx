@@ -220,13 +220,16 @@ export function InfiniteTableHeaderCell<T>(
           renderParam={renderParam}
         />
       );
+
+      const renderHeaderSelectionCheckBox =
+        column.renderHeaderSelectionCheckBox ?? column.renderSelectionCheckBox;
       if (
-        column.renderHeaderSelectionCheckBox &&
-        column.renderHeaderSelectionCheckBox !== true
+        renderHeaderSelectionCheckBox &&
+        renderHeaderSelectionCheckBox !== true
       ) {
         renderParam.renderBag.selectionCheckBox = (
           <RenderHeaderCellHookComponent
-            render={column.renderHeaderSelectionCheckBox}
+            render={renderHeaderSelectionCheckBox}
             renderParam={{
               ...renderParam,
               renderBag: { ...renderParam.renderBag },

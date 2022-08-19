@@ -1364,6 +1364,29 @@ In this example the keyboard navigation is disabled.
 
 </Prop>
 
+
+<Prop name="keyboardSelection" type="boolean" defaultValue={true}>
+
+> Determines whether the keyboard can be used for selecting/deselecting rows/cells.
+
+
+By default <PropLink name="keyboardSelection" /> is enabled, so you can use the keyboard **spacebar** key to select multiple rows.  Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
+
+For specifying the selection mode, use <DPropLink name="selectionMode" />
+
+
+<Sandpack  title="Toggling keyboard navigation">
+
+```ts file=default-selection-mode-multi-row-keyboard-toggle-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+
+
 <Prop name="loadingText" type="ReactNode" defaultValue="'Loading'">
 
 > The text inside the load mask - displayed when <DataSourcePropLink name="loading">loading=true</DataSourcePropLink>.

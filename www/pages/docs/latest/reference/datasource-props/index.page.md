@@ -159,6 +159,7 @@ Each item in the array can have the following properties:
 
 </Prop>
 
+
 <Prop name="livePagination" type="boolean">
 
 > Whether the component should use live pagination.
@@ -306,6 +307,21 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 Multiple row selection demo with grouped data.
 
 </Note>
+
+</Prop>
+
+<Prop name="selectionMode" type="'single-row'|'multi-row'|false">
+
+> Specifies the type of selection that should be enabled.
+
+<HeroCards>
+<YouWillLearnCard title="Selection Docs" path="../learn/selection/row-selection">
+
+Read more on row selection (`multi-row` and `single-row`) and cell selection.
+
+</YouWillLearnCard>
+</HeroCards>
+
 
 </Prop>
 
