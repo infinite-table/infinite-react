@@ -7,7 +7,10 @@ import {
   DataSourceState,
   RowSelectionState,
 } from '../../DataSource';
-import { GetRowSelectionStateConfig } from '../../DataSource/RowSelectionState';
+import {
+  GetRowSelectionStateConfig,
+  RowSelectionStateObject,
+} from '../../DataSource/RowSelectionState';
 
 type ArrayOfIds = Pick<InfiniteTable_RowInfoBase<any>, 'id'>[];
 
@@ -26,7 +29,9 @@ export type InfiniteTableSelectionApi = {
 
   getGroupRowSelectionState(groupKeys: any[]): boolean | null;
 
-  getSelectedPrimaryKeys(): (string | number)[];
+  getSelectedPrimaryKeys(
+    rowSelection?: RowSelectionStateObject,
+  ): (string | number)[];
   selectAll(): void;
   deselectAll(): void;
 };
@@ -305,12 +310,29 @@ export function getSelectionApi<T>(
       return rowSelection.getGroupRowSelectionState(groupKeys);
     },
 
-    getSelectedPrimaryKeys: () => {
+    getSelectedPrimaryKeys: (rowSelection?: RowSelectionStateObject) => {
+      const state = getDataSourceState();
+      const rowSelectionState = rowSelection
+        ? new RowSelectionState(
+            rowSelection,
+            rowSelectionStateConfigGetter(state),
+          )
+        : (state.rowSelection as RowSelectionState);
+
       const selected: (string | number)[] = [];
 
-      getDataSourceState().dataArray.forEach((rowInfo) => {
-        if (!rowInfo.isGroupRow && rowInfo.rowSelected) {
-          selected.push(rowInfo.id);
+      if (state.lazyLoad) {
+        console.error(
+          `getSelectedPrimaryKeys  should not be called for lazy-loaded datasources as it wont return reliable results`,
+        );
+      }
+
+      // we can't iterate over state.dataArray as that has collapsed rows
+      // and wont reflect all the rows in the dataset
+      state.originalDataArray.forEach((data) => {
+        const id = state.toPrimaryKey(data);
+        if (rowSelectionState.isRowSelected(id)) {
+          selected.push(id);
         }
       });
 

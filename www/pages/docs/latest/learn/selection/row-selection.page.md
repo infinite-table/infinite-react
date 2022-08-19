@@ -11,19 +11,19 @@ Row selection (both single and multiple) is driven by the <DPropLink name="rowSe
 
 <Note>
 
-Row selection is defined on the `DataSource` component, so that's where you specify your <DPropLink name="rowSelection" /> prop (or the uncontrolled version of it, namely <DPropLink name="defaultRowSelection" />).
+Row selection is defined on the `DataSource` component, so that's where you specify your <DPropLink name="rowSelection" /> prop (or the uncontrolled version of it, namely <DPropLink name="defaultRowSelection" /> and also the callback prop of <DPropLink name="onRowSelectionChange" />).
 
 </Note>
 
 <Note>
 
-You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be deduced from the value of your <PropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
+You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be deduced from the value of your <DPropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
 
 </Note>
 
 # Single Row Selection
 
-This is the most basic row selection - in this case the <PropLink name="rowSelection" /> prop (or the uncontrolled variant <PropLink name="defaultRowSelection" />) will be a string or a number (or `null` for no selection).
+This is the most basic row selection - in this case the <DPropLink name="rowSelection" /> prop (or the uncontrolled variant <DPropLink name="defaultRowSelection" />) will be a string or a number (or `null` for no selection).
 
 
 ```ts {3}
@@ -63,13 +63,13 @@ Both `cell` and `row` <PropLink name="keyboardNavigation" /> are available and y
 
 ## Controlled single row selection
 
-Row selection can be used as a <PropLink name="rowSelection" code={false}>controlled</PropLink> or <PropLink name="defaultRowSelection" code={false}>uncontrolled</PropLink> property. For the controlled version, make sure you also define your <PropLink name="onRowSelectionChange" /> callback prop to update the selection.
+Row selection can be used as a <DPropLink name="rowSelection" code={false}>controlled</DPropLink> or <PropLink name="defaultRowSelection" code={false}>uncontrolled</PropLink> property. For the controlled version, make sure you also define your <DPropLink name="onRowSelectionChange" /> callback prop to update the selection.
 
 <Sandpack title="Controlled single row selection">
 
 <Description>
 
-This example uses <PropLink name="onRowSelectionChange" /> callback prop to update the controlled <PropLink name="rowSelection" />
+This example uses <DPropLink name="onRowSelectionChange" /> callback prop to update the controlled <DPropLink name="rowSelection" />
 
 </Description>
 
@@ -268,6 +268,24 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 </Note>
 
 
-### Controlled rowSelection with checkbox column
+### Controlled selection with checkbox column
 
-When using the controlled  ...
+When using the controlled <DPropLink name="rowSelection" />, make sure to specify the <DPropLink name="onRowSelectionChange" /> callback prop to update the selection accordinly as a result of user interaction.
+
+<Sandpack title="Multi row checkbox selection with grouping" >
+
+<Description>
+
+This example shows how you can use multiple row selection with a predefined controlled value.
+
+Go ahead and select some groups/rows and see the selection value adjust.
+
+The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
+
+</Description>
+
+
+```ts file=../../reference/controlled-multi-row-selection-example.page.tsx
+```
+
+</Sandpack>
