@@ -494,6 +494,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
       newlyDisplayedColumns.forEach((colId) => {
         delete newColumnVisibility[colId];
       });
+
       newlyHiddenColumns.forEach((colId) => {
         newColumnVisibility[colId] = false;
       });
