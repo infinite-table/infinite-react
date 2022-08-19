@@ -4,8 +4,6 @@ import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
-import { useState } from 'react';
-
 type Developer = {
   id: number;
 
