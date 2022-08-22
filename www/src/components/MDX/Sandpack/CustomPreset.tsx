@@ -111,7 +111,7 @@ export function CustomPreset({
   return (
     <>
       <div
-        className="shadow-lg dark:shadow-lg-dark rounded-lg"
+        className="shadow-lg dark:shadow-lg-dark rounded-lg overflow-hidden"
         ref={containerRef}
         style={
           fullScreen

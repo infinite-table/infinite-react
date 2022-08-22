@@ -80,6 +80,63 @@ This example starts with cell `[2,0]` already active and uses <PropLink name="on
 ```
 </Sandpack>
 
+
+## Toggling group rows
+
+When the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>, you can use the keyboard to collapse/expand group rows, by pressing the `Enter` key on the active row.
+
+
+<Hint>
+
+Your active cell doesn't need to be in the group column in order for `Enter` key to collapse/expand the group row - being on a group row is enough.
+
+</Hint>
+
+<Sandpack>
+
+<Description>
+
+Press the `Enter` key on the active group row to toggle it.
+
+</Description>
+
+```ts file=../../reference/keyboard-toggle-group-rows-cell-nav.page.tsx
+```
+</Sandpack>
+
+
+## Selecting Rows with the Keyboard
+
+When <DPropLink name="rowSelection" /> is enabled (read more about it in the [row selection page](../selection/row-selection)), you can use the spacebar key to select a group row (or `shift` + spacebar to do multiple selection).
+
+By default <PropLink name="keyboardSelection" /> is enabled, so you can use the **spacebar** key to select multiple rows, when <DPropLink name="selectionMode">selectionMode="multi-row"</DPropLink>. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
+
+<Sandpack title="Multi row selection with keyboard support">
+
+<Description>
+
+Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would do clicking + the same modifier keys.
+
+</Description>
+
+
+```ts file=../../reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+For selection all the rows in the table, you can use `cmd`/`ctrl` + `A` keyboard shortcut.
+
+</Note>
+
+<Hint>
+
+Keyboard selection is also possible when there's a column configured with checkbox selection - [make sure you read more about it](../selection/row-selection#using-a-selection-checkbox).
+
+</Hint>
+
 ## Theming
 
 There are a number of ways to customize the appearance of the element that highlights the active cell.

@@ -26,7 +26,10 @@ import Sandpack from './Sandpack';
 import SimpleCallout from './SimpleCallout';
 import TerminalBlock from './TerminalBlock';
 import YouWillLearnCard from './YouWillLearnCard';
-import { Challenges, Hint, Solution } from './Challenges';
+import {
+  Challenges,
+  /*Hint, */ Solution,
+} from './Challenges';
 import { IconNavArrow } from '../Icon/IconNavArrow';
 import ButtonLink from '@www/components/ButtonLink';
 import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
@@ -372,6 +375,16 @@ function IllustrationBlock({
     </div>
   );
 }
+
+const Hint = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <ExpandableCallout type="hint">
+    {children}
+  </ExpandableCallout>
+);
 
 export const MDXComponents = {
   p: P,

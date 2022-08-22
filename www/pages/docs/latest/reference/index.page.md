@@ -1506,6 +1506,17 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 </Sandpack>
 </Prop>
 
+<Prop name="onReady" type="InfiniteTableApi<DATA_TYPE>">
+
+> Callback prop that is being called when the table is ready.
+
+This is called only once with the instance of `InfiniteTableApi<DATA_TYPE>`.
+
+The `ready` state for the table means it has been layout out and has measured its available size for laying out the columns.
+
+It will never be called again after the component is ready.
+
+</Prop>
 
 <Prop name="onScrollToBottom" type="()=>void">
 

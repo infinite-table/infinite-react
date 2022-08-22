@@ -59,20 +59,19 @@ const reducers: DataSourcePropAggregationReducers<Developer> =
     salary: avgReducer,
   };
 
-const columns: InfiniteTablePropColumns<Developer> =
-  new Map<string, InfiniteTableColumn<Developer>>([
-    ['id', { field: 'id' }],
-    ['firstName', { field: 'firstName' }],
-    ['preferredLanguage', { field: 'preferredLanguage' }],
-    ['stack', { field: 'stack' }],
-    ['country', { field: 'country' }],
-    ['canDesign', { field: 'canDesign' }],
-    ['hobby', { field: 'hobby' }],
-    ['city', { field: 'city' }],
-    ['age', { field: 'age' }],
-    ['salary', { field: 'salary', type: 'number' }],
-    ['currency', { field: 'currency' }],
-  ]);
+const columns: InfiniteTablePropColumns<Developer> = {
+  id: { field: 'id' },
+  firstName: { field: 'firstName' },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: { field: 'country' },
+  canDesign: { field: 'canDesign' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  age: { field: 'age' },
+  salary: { field: 'salary', type: 'number' },
+  currency: { field: 'currency' },
+};
 
 const groupRowsState = new GroupRowsState({
   expandedRows: [],

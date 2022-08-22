@@ -3,7 +3,7 @@ title: Infinite Table API
 layout: API
 ---
 
-When rendering the `InfiniteTable` component, you can get access to the API by getting it from the `onReady` callback prop.
+When rendering the `InfiniteTable` component, you can get access to the API by getting it from the <PropLink name="onReady" /> callback prop.
 
 ```tsx {3}
 <InfiniteTable<DATA_TYPE>

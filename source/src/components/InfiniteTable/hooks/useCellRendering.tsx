@@ -71,6 +71,7 @@ export function useCellRendering<T>(
     onScrollToTop,
     onScrollToBottom,
     scrollToBottomOffset,
+    ready,
   } = componentState;
 
   const repaintId = dataSourceState.updatedAt;
@@ -131,14 +132,18 @@ export function useCellRendering<T>(
       return;
     }
 
-    const { onReady } = getState();
-
     componentActions.ready = true;
+  }, [!!bodySize.height]);
+
+  useEffect(() => {
+    if (!ready) {
+    }
+    const { onReady } = getState();
 
     if (onReady) {
       onReady(imperativeApi);
     }
-  }, [!!bodySize.height]);
+  }, [ready]);
 
   const [, rerender] = useRerender();
 

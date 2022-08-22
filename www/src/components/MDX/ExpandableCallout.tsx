@@ -3,8 +3,13 @@ import cn from 'classnames';
 import { IconNote } from '../Icon/IconNote';
 import { IconGotcha } from '../Icon/IconGotcha';
 import { IconReadMore } from '../Icon/IconReadMore';
+import { IconHint } from '../Icon/IconHint';
 
-type CalloutVariants = 'gotcha' | 'note' | 'readMore';
+type CalloutVariants =
+  | 'gotcha'
+  | 'note'
+  | 'readMore'
+  | 'hint';
 
 interface ExpandableCalloutProps {
   children: React.ReactNode;
@@ -31,11 +36,20 @@ const variantMap = {
     overlayGradient:
       'linear-gradient(rgba(249, 247, 243, 0), rgba(249, 247, 243, 1)',
   },
+  hint: {
+    title: 'Hint',
+    Icon: IconHint,
+    containerClasses:
+      'bg-green-10   dark:bg-green-50 text-primary dark:text-primary-dark dark:bg-opacity-40',
+    textColor: 'text-green-50 dark:text-green-30',
+    overlayGradient:
+      'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
+  },
   readMore: {
     title: 'Find Out More',
     Icon: IconReadMore,
     containerClasses:
-      'dark:bg-opacity-30 dark:bg-purple-30 bg-purple-50 bg-opacity-20 text-primary dark:text-primary-dark text-base',
+      'dark:bg-opacity-30 dark:bg-purple-30 bg-purple-50 bg-opacity-20 text-primary dark:text-primary-dark',
     textColor: 'text-purple-70 dark:text-purple-20',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',

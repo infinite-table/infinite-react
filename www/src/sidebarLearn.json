@@ -67,6 +67,10 @@
             {
               "path": "/docs/latest/learn/rows/using-row-info",
               "title": "Using Rows at Runtime"
+            },
+            {
+              "path": "/docs/latest/learn/selection/row-selection#",
+              "title": "Selecting Rows"
             }
           ]
         },
