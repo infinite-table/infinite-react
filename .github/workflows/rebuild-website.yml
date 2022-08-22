@@ -51,6 +51,9 @@ jobs:
       - name: Copy netlify.toml
         run: cp ./netlify.toml ./infinite-www-dist
 
+      - name: Copy redirects
+        run: cp ./_redirects ./infinite-www-dist
+
       - name: Replace old www folder with new one
         run: rm -fr ./infinite-www-dist/www && mv ./www ./infinite-www-dist
 

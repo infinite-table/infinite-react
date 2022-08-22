@@ -39,16 +39,6 @@ const nextConfig = withMDX({
       },
     ];
   },
-  async redirects() {
-    return [
-      {
-        source: '/docs/latest/sorting',
-        destination:
-          '/docs/latest/learn/working-with-data/sorting',
-        permanent: true,
-      },
-    ];
-  },
   experimental: {
     plugins: true,
     // TODO: this doesn't work because https://github.com/vercel/next.js/issues/30714
