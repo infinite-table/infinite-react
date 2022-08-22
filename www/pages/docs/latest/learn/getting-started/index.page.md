@@ -1,5 +1,5 @@
 ---
-title: Getting started
+title: Getting Started
 description: Get help starting with Infinite Table for React. Our DataGrid component helps with sorting, filtering, row/column grouping, pivoting, aggregations ...
 ---
 
@@ -15,7 +15,7 @@ It's built specifically for React from the ground up and with performance in min
 npm i @infinite-table/infinite-react
 </TerminalBlock>
 
-## Meet the code
+## Meet the Code
 
 <Sandpack>
 
@@ -25,7 +25,7 @@ npm i @infinite-table/infinite-react
 
 </Sandpack>
 
-## Using the components
+## Using the Components
 
 In the code snippet above, you notice we're using 2 components:
 
@@ -53,7 +53,7 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 
 </Sandpack>
 
-## About the docs
+## About the Docs
 
 > We're grateful for the work done by the [team behind reactjs.org](https://github.com/reactjs/reactjs.org) and the new React documentation found at [beta.reactjs.org](https://beta.reactjs.org/) - we've built our documentation on their excellent work 🙏 and we're grateful for that.
 

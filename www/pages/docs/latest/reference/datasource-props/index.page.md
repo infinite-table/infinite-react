@@ -245,6 +245,23 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 </Sandpack>
 
 
+<Sandpack title="Multi row checkbox selection with grouping" >
+
+<Description>
+
+This example shows how you can use multiple row selection with a predefined controlled value.
+
+Go ahead and select some groups/rows and see the selection value adjust.
+
+The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
+
+</Description>
+
+
+```ts file=../controlled-multi-row-selection-example.page.tsx
+```
+
+</Sandpack>
 </Prop>
 
 
@@ -302,11 +319,24 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 ```
 </Sandpack>
 
-<Note title="Coming soon">
 
-Multiple row selection demo with grouped data.
+<Sandpack title="Multi row checkbox selection with grouping" >
 
-</Note>
+<Description>
+
+This example shows how you can use multiple row selection with a predefined controlled value.
+
+Go ahead and select some groups/rows and see the selection value adjust.
+
+The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
+
+</Description>
+
+
+```ts file=../controlled-multi-row-selection-example.page.tsx
+```
+
+</Sandpack>
 
 </Prop>
 

@@ -17,6 +17,15 @@
           "path": "/docs/latest/reference/datasource-props"
         },
         {
+          "title": "Infinite Table API",
+          "path": "/docs/latest/reference/api"
+        },
+        {
+          "title": "Infinite Table Selection API",
+          "path": "/docs/latest/reference/selection-api"
+        },
+
+        {
           "title": "Hooks",
           "path": "/docs/latest/reference/hooks"
         }

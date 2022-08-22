@@ -47,7 +47,7 @@ The <DataSourcePropLink name="data" /> prop is probably the most important part,
 ```
 </Sandpack>
 
-## Data loading strategies
+## Data Loading Strategies
 
 We're aware there are countless strategies for loading data - each with its own strengths. So we decided we should focus on building what we do best, namely building virtualized components.
 
@@ -83,6 +83,6 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Sandpack>
 
-## Live updates
+## Live Updates
 
 We'll come up with a more suitable API for updating only specific cells/rows in the table component.

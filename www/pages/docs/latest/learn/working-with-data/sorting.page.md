@@ -6,11 +6,11 @@ description: Docs and examples on sorting the DataSource for Infinite Table Data
 `InfiniteTable` comes with multiple sorting behaviours, which are described below.
 
 
-## Single and multiple sorting
+## Single and Multiple Sorting
 
 Both single and multiple sorting are supported via the <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" /> props.
 
-### Single sorting
+### Single Sorting
 
 For single sorting, <DataSourcePropLink name="sortInfo" /> (or the uncontrolled <DataSourcePropLink name="defaultSortInfo" />) should an object like 
 ```ts
@@ -57,7 +57,7 @@ This example shows initial sorting by `salary` in ascending order. Click the hea
 
 
 
-### Multiple sorting
+### Multiple Sorting
 
 If you want to use multiple sorting, specify an array of objects like
 
@@ -101,7 +101,7 @@ If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /
 </Note>
 
 
-## Controlled and uncontrolled sorting
+## Controlled and Uncontrolled Sorting
 
  - ** uncontrolled (embedded) sorting** - the `<DataSource />` sorts the data internally (when <DataSourcePropLink name="sortMode">sortMode=local</DataSourcePropLink>, which is the default), based on the <DataSourcePropLink name="defaultSortInfo" /> prop. As the user interacts with the table, <DataSourcePropLink name="onSortInfoChange" /> is being called with updated sort info and the `<DataSource />` continues to sort the data accordingly.
 
@@ -115,7 +115,7 @@ If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /
 
 Both controlled <DataSourcePropLink name="sortInfo" /> and uncontrolled <DataSourcePropLink name="defaultSortInfo" /> work in combination with <DataSourcePropLink name="onSortInfoChange" /> - use it to be notified when sorting changes, so you can react and update your app accordingly if needed.
 
-## Local and remote sorting
+## Local and Remote Sorting
 
 Sorting can be done both locally in the browser and remotely on the server. For configuring where sorting is being performed, use the <DataSourcePropLink name="sortMode" /> prop - it can be either `local` or `remote` (defaults to `local`).
 
@@ -127,7 +127,7 @@ This is also the case for <DataSourcePropLink name="sortMode">sortMode=remote</D
 
 </Note>
 
-### Local sorting
+### Local Sorting
 
 When you use uncontrolled sorting locally, the `<DataSource />` will sort the data internally, based on the <DataSourcePropLink name="defaultSortInfo" /> prop. Local sorting is available for any configured <DataSourcePropLink name="data" /> source - be it an array or a function that returns a promise.
 
@@ -153,7 +153,7 @@ You can use <DataSourcePropLink name="onDataParamsChange" />, which is called wh
 </Sandpack>
 
 
-### Remote sorting
+### Remote Sorting
 
 Sorting remotely makes a lot of sense when using a function as your <DataSourcePropLink name="data" /> source. Whenever the sort information is changed, the function will be called with all the information needed to retrieve the data from the remote endpoint.
 
@@ -171,7 +171,7 @@ For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">so
 
 In the example above, remote and controlled sorting are combined - because `sortMode="remote"` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
 
-## Custom sort functions with sortTypes
+## Custom Sort Functions with `sortTypes`
 
 By default, all columns are sorted as strings, even if they contain numeric values. To make numeric columns sort as numbers, you need to specify <PropLink name="columns.dataType" code={false}>a `dataType` for the column</PropLink>, or, <PropLink name="columns.sortType" code={false}>a column `sortType`</PropLink>.
 

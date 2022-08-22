@@ -293,8 +293,19 @@ export function getSelectionApi<T>(
       dataSourceActions.rowSelection = rowSelectionState;
     },
 
-    getGroupRowSelectionState(groupKeys: any[]) {
-      const { selectionMode, rowSelection, groupBy } = getDataSourceState();
+    getGroupRowSelectionState(
+      groupKeys: any[],
+      rowSelection?: RowSelectionStateObject | RowSelectionState,
+    ) {
+      const state = getDataSourceState();
+      const { selectionMode, groupBy } = state;
+
+      const rowSelectionState = rowSelection
+        ? new RowSelectionState(
+            rowSelection,
+            rowSelectionStateConfigGetter(state),
+          )
+        : (state.rowSelection as RowSelectionState);
 
       if (selectionMode !== 'multi-row') {
         throw 'Selection mode should be "multi-row"';
@@ -303,14 +314,16 @@ export function getSelectionApi<T>(
         throw 'No grouping specified';
       }
 
-      if (!(rowSelection instanceof RowSelectionState)) {
+      if (!(rowSelectionState instanceof RowSelectionState)) {
         throw 'Invalid row selection';
       }
 
-      return rowSelection.getGroupRowSelectionState(groupKeys);
+      return rowSelectionState.getGroupRowSelectionState(groupKeys);
     },
 
-    getSelectedPrimaryKeys: (rowSelection?: RowSelectionStateObject) => {
+    getSelectedPrimaryKeys: (
+      rowSelection?: RowSelectionStateObject | RowSelectionState,
+    ) => {
       const state = getDataSourceState();
       const rowSelectionState = rowSelection
         ? new RowSelectionState(

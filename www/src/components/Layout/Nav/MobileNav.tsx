@@ -46,7 +46,7 @@ export function MobileNav() {
         <TabButton
           isActive={section === 'reference'}
           onClick={() => setSection('reference')}>
-          API
+          Reference
         </TabButton>
       </div>
       <SidebarRouteTree

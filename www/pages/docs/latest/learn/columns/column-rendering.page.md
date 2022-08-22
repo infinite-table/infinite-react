@@ -73,13 +73,13 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
   - `rowInfo.indexInGroup` - the index of the row in the current group
   - ... there are other useful properties that we'll document in the near future
 
-<Note>
+<DeepDive title="Column renderValue vs render">
 
 The difference between <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
 
 Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
 
-</Note>
+</DeepDive>
 
 <Sandpack title="Column with custom renderValue">
 

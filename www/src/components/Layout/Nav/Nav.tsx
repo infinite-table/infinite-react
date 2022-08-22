@@ -174,7 +174,7 @@ export default function Nav() {
         <NavLink
           href="/docs/latest/reference"
           isActive={section === 'reference'}>
-          API
+          Reference
         </NavLink>
       </div>
       <div className="flex my-4 h-10 mx-0 w-full lg:hidden justify-end slg:max-w-sm">
