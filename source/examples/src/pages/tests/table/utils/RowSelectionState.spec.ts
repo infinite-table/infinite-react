@@ -8,10 +8,27 @@ import { Indexer } from '@infinite-table/infinite-react/components/DataSource/In
 export function buildRowSelectionState(
   rowSelectionStateObject: RowSelectionStateObject | RowSelectionState,
   rows: Record<any, any[]>,
+  onlyUsePrimaryKeys?: boolean,
 ): RowSelectionState<any> {
   const config = {
+    onlyUsePrimaryKeys,
     getGroupKeysForPrimaryKey: (x: any) => {
       return rows[x] || [];
+    },
+    getAllPrimaryKeysInsideGroup: (groupKeys: any[]) => {
+      const set = new Set(groupKeys);
+      return Object.keys(rows)
+        .map((k) => {
+          const keys = rows[k];
+
+          // the keys of the row are all in the set of group keys, so the row is in the group
+          // thus it should include the key of the row in the result
+          if (keys.filter((k) => set.has(k)).length === set.size) {
+            return (k as any) * 1;
+          }
+          return false;
+        })
+        .filter((x) => x !== false);
     },
     getGroupCount(groupKeys: any[]) {
       return Object.keys(rows).filter((k) => {
@@ -41,7 +58,9 @@ export function buildRowSelectionState(
     rowSelectionStateObject,
     () => {
       return {
+        onlyUsePrimaryKeys: !!onlyUsePrimaryKeys,
         groupBy: [],
+        toPrimaryKey: (x) => x,
         indexer: new Indexer(),
         groupDeepMap: undefined,
         totalCount: 0,
@@ -69,6 +88,20 @@ export default test.describe.parallel('RowSelectionState', () => {
     expect(state.isRowSelected(5, [])).toBe(true);
     expect(state.isRowSelected(7, [])).toBe(false);
     expect(state.isRowSelected(71, [])).toBe(true);
+
+    const stateO = buildRowSelectionState(
+      {
+        selectedRows: [4, 5, 6],
+        deselectedRows: [7],
+        defaultSelection: true,
+      },
+      ROWS,
+      true,
+    );
+
+    expect(stateO.isRowSelected(5, [])).toBe(true);
+    expect(stateO.isRowSelected(7, [])).toBe(false);
+    expect(stateO.isRowSelected(71, [])).toBe(true);
   });
   test('isRowSelected should be false when parent group is in deselected groups', () => {
     const rows: Record<any, any[]> = {
@@ -89,6 +122,19 @@ export default test.describe.parallel('RowSelectionState', () => {
     expect(state.isRowSelected(10, undefined)).toBe(false);
     expect(state.isRowSelected(7, undefined)).toBe(false);
     expect(state.isRowSelected(7, ['ccc'])).toBe(true);
+
+    const stateWithIds = buildRowSelectionState(
+      {
+        defaultSelection: true,
+        selectedRows: [4, 5, 6],
+        deselectedRows: [7, 10],
+      },
+      rows,
+      true,
+    );
+
+    expect(stateWithIds.isRowSelected(10)).toBe(false);
+    expect(stateWithIds.isRowSelected(7)).toBe(false);
   });
 
   test('isRowSelected should be true when parent group is in selected groups', () => {
@@ -119,7 +165,7 @@ export default test.describe.parallel('RowSelectionState', () => {
       1: ['Paris'],
       11: ['Italy'],
     };
-    debugger;
+
     const state = buildRowSelectionState(
       {
         defaultSelection: false,
@@ -498,7 +544,6 @@ export default test.describe.parallel('RowSelectionState', () => {
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       true,
     );
-
     state.deselectRow(10, ['backend', 'TypeScript']);
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       null,
@@ -507,13 +552,14 @@ export default test.describe.parallel('RowSelectionState', () => {
 
     state.deselectRow(11, ['backend', 'TypeScript']);
     expect(state.isRowDeselected(11)).toBe(true);
+    expect(state.isRowSelected(12)).toBe(true);
 
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       null,
     );
 
     state.deselectRow(12);
-    expect(state.isRowDeselected(11)).toBe(true);
+    expect(state.isRowDeselected(12)).toBe(true);
 
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       false,
@@ -523,6 +569,7 @@ export default test.describe.parallel('RowSelectionState', () => {
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       true,
     );
+
     state.deselectRow(12);
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       null,
@@ -530,6 +577,56 @@ export default test.describe.parallel('RowSelectionState', () => {
 
     state.selectGroupRow(['backend']);
     expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      true,
+    );
+
+    const state1 = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [10, 11, 12],
+        deselectedRows: [],
+      },
+      rows,
+      true,
+    );
+
+    expect(state1.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      true,
+    );
+
+    state1.deselectRow(10);
+    expect(state1.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      null,
+    );
+    expect(state1.isRowDeselected(10)).toBe(true);
+
+    state1.deselectRow(11);
+    expect(state1.isRowDeselected(11)).toBe(true);
+    expect(state1.isRowSelected(12)).toBe(true);
+
+    expect(state1.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      null,
+    );
+
+    state1.deselectRow(12);
+    expect(state1.isRowDeselected(12)).toBe(true);
+
+    expect(state1.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      false,
+    );
+
+    state1.selectGroupRow(['backend', 'TypeScript']);
+    expect(state.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      true,
+    );
+
+    state1.deselectRow(12);
+    expect(state1.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
+      null,
+    );
+
+    state1.selectGroupRow(['backend']);
+    expect(state1.getGroupRowSelectionState(['backend', 'TypeScript'])).toBe(
       true,
     );
   });
@@ -554,7 +651,7 @@ export default test.describe.parallel('RowSelectionState', () => {
     );
 
     state.selectGroupRow(['backend']);
-    debugger;
+
     expect(state.getGroupRowSelectionState(['backend'])).toBe(true);
 
     state.deselectGroupRow(['backend', 'TypeScript']);
@@ -563,5 +660,174 @@ export default test.describe.parallel('RowSelectionState', () => {
 
     state.deselectRow(16);
     expect(state.getGroupRowSelectionState(['backend'])).toBe(false);
+
+    const state1 = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [],
+        deselectedRows: [],
+      },
+      rows,
+      true,
+    );
+
+    state1.selectGroupRow(['backend']);
+
+    expect(state1.getGroupRowSelectionState(['backend'])).toBe(true);
+
+    state1.deselectGroupRow(['backend', 'TypeScript']);
+    state1.deselectGroupRow(['backend', 'Rust']);
+    expect(state1.getGroupRowSelectionState(['backend'])).toBe(null);
+
+    state1.deselectRow(16);
+    expect(state1.getGroupRowSelectionState(['backend'])).toBe(false);
+  });
+
+  test('test another scenario1', () => {
+    const rows: Record<any, string[]> = {
+      10: ['backend', 'TypeScript'],
+      11: ['backend', 'TypeScript'],
+      12: ['backend', 'TypeScript'],
+      13: ['backend', 'Rust'],
+      14: ['backend', 'Rust'],
+      15: ['backend', 'Rust'],
+      16: ['backend', 'go'],
+    };
+    const state = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [['backend', 'go']],
+        deselectedRows: [],
+      },
+      rows,
+    );
+
+    state.deselectRow(16);
+    expect(state.getState()).toEqual({
+      defaultSelection: false,
+      deselectedRows: [['backend', 'go']],
+      selectedRows: [],
+    });
+
+    const state1 = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [16],
+        deselectedRows: [],
+      },
+      rows,
+      true,
+    );
+
+    state1.deselectRow(16);
+    expect(state1.getState()).toEqual({
+      defaultSelection: false,
+      deselectedRows: [],
+      selectedRows: [],
+    });
+  });
+
+  test('test another scenario2', () => {
+    const rows: Record<any, string[]> = {
+      10: ['backend', 'TypeScript'],
+      11: ['backend', 'TypeScript'],
+      12: ['backend', 'TypeScript'],
+      13: ['backend', 'Rust'],
+      14: ['backend', 'Rust'],
+      15: ['backend', 'Rust'],
+      16: ['backend', 'go'],
+      17: ['frontend', 'ts'],
+    };
+    // const state = buildRowSelectionState(
+    //   {
+    //     defaultSelection: true,
+    //     deselectedRows: [['backend', 'go']],
+    //     selectedRows: [],
+    //   },
+    //   rows,
+    // );
+
+    // state.selectRow(16);
+    // expect(state.getState()).toEqual({
+    //   defaultSelection: true,
+    //   selectedRows: [],
+    //   deselectedRows: [],
+    // });
+
+    const state1 = buildRowSelectionState(
+      {
+        defaultSelection: true,
+        deselectedRows: [['frontend']],
+        selectedRows: [],
+      },
+      rows,
+    );
+
+    state1.selectGroupRow(['frontend']);
+    expect(state1.getState()).toEqual({
+      defaultSelection: true,
+      selectedRows: [],
+      deselectedRows: [],
+    });
+
+    const state2 = buildRowSelectionState(
+      {
+        defaultSelection: true,
+        deselectedRows: [17],
+        selectedRows: [],
+      },
+      rows,
+      true,
+    );
+
+    state2.selectGroupRow(['frontend']);
+    expect(state2.getState()).toEqual({
+      defaultSelection: true,
+      selectedRows: [],
+      deselectedRows: [],
+    });
+  });
+
+  test('onlyUsePrimaryKeys: true - scenario 1', () => {
+    const rows: Record<any, any[]> = {
+      7: ['Italy', 'Rome'], //explicitly selected
+      10: ['Italy', 'Rome'],
+      11: ['Italy', 'Milano'], //explicitly deselected
+      12: ['Italy', 'Milano'],
+      13: ['France', 'Paris'],
+    };
+
+    const state = buildRowSelectionState(
+      {
+        defaultSelection: true,
+        onlyUsePrimaryKeys: true,
+        deselectedRows: [11],
+        selectedRows: [7],
+      },
+      rows,
+    );
+
+    expect(state.isRowSelected(10)).toBe(true);
+    expect(state.getGroupRowSelectionState(['Italy'])).toBe(null);
+    expect(state.getGroupRowSelectionState(['Italy', 'Rome'])).toBe(true);
+
+    // expect(state.isRowSelected(10, undefined)).toBe(false);
+    // expect(state.isRowSelected(7, undefined)).toBe(false);
+    // expect(state.isRowSelected(7, ['ccc'])).toBe(true);
+
+    const state1 = buildRowSelectionState(
+      {
+        defaultSelection: true,
+        onlyUsePrimaryKeys: true,
+        deselectedRows: [11],
+        selectedRows: [7],
+      },
+      rows,
+      true,
+    );
+
+    expect(state1.isRowSelected(10)).toBe(true);
+    expect(state1.getGroupRowSelectionState(['Italy'])).toBe(null);
+    expect(state1.getGroupRowSelectionState(['Italy', 'Rome'])).toBe(true);
   });
 });

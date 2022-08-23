@@ -289,3 +289,11 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 ```
 
 </Sandpack>
+
+## Multi Selection with Lazy Load and Grouping
+
+Probably the most complex use-case for multi selection (with checkbox) is the combination of grouping and lazy-loading.
+
+In this scenario, not all groups and/or rows are loaded at a given point in time, but we need to be able to know how to render each checkbox for each group - either checked, unchecked or indeterminate, all this depending on whether all children, at any nesting levels are selected or not.
+
+In order to make this possible, the <DPropLink name="rowSelection" /> value will only contain arrays (and not individual primary keys) in the `selectedRows` and `deselectedRows` arrays.

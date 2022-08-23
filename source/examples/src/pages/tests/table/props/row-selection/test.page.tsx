@@ -4,73 +4,30 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection_MultiRow,
-  DataSourcePropGroupBy,
   InfiniteTablePropGroupColumn,
+  DataSourcePropGroupBy,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
-import { RowSelectionState } from '@infinite-table/infinite-react';
-import { components } from '@infinite-table/infinite-react';
-
-const { CheckBox } = components;
 
 type Developer = {
   id: number;
 
-  firstName: string;
-  lastName: string;
-  country: string;
-  city: string;
-  currency: string;
-  preferredLanguage: string;
   stack: string;
-  canDesign: 'yes' | 'no';
-  hobby: string;
-  salary: number;
-  age: number;
-};
-
-const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
-    .then((r) => r.json())
-    .then((data: Developer[]) => {
-      return data;
-    });
+  language: string;
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id' },
 
-  firstName: {
-    field: 'firstName',
-  },
-
-  preferredLanguage: {
-    field: 'preferredLanguage',
-    valueFormatter: ({ value }) => `+${value}+`,
-    renderValue: ({ value }) => `Lang: ${value}`,
-    // renderGroupValue: ({ renderBag }) => {
-    //   return <>{renderBag.value}----</>;
-    // },
-    // renderLeafValue: () => {
-    //   const { renderBag } = useInfiniteColumnCell();
-    //   return <>{renderBag.value}xxxx</>;
-    // },
-    render: ({ renderBag }) => {
-      return <>{renderBag.value}!!!</>;
-    },
-    style: ({ value }) => {
-      return value === 'Rust' ? { color: 'red' } : { color: 'magenta' };
-    },
-  },
   stack: {
     field: 'stack',
-    // defaultHiddenWhenGroupedBy: true,
-    renderValue: ({ value }) => {
-      return <>x - {value}</>;
-    },
+  },
+
+  language: {
+    field: 'language',
   },
 };
 
@@ -80,15 +37,8 @@ const domProps = {
   },
 };
 
-const groupBy = [
-  { field: 'stack' },
-  {
-    field: 'preferredLanguage',
-  },
-];
-
 const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
-  field: 'firstName',
+  field: 'id',
   // align: 'end',
   // renderValue: (arg) => {
   //   const { groupByColumn, value } = arg;
@@ -101,44 +51,66 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   // },
 };
 
+const dataSource: Developer[] = [
+  {
+    id: 10,
+    stack: 'backend',
+    language: 'TypeScript',
+  },
+  {
+    id: 11,
+    stack: 'backend',
+    language: 'TypeScript',
+  },
+  {
+    id: 12,
+    stack: 'backend',
+    language: 'TypeScript',
+  },
+  {
+    id: 13,
+    stack: 'backend',
+    language: 'Rust',
+  },
+  // {
+  //   id: 14,
+  //   stack: 'backend',
+  //   language: 'Rust',
+  // },
+  // {
+  //   id: 15,
+  //   stack: 'backend',
+  //   language: 'Rust',
+  // },
+  // { id: 16, stack: 'backend', language: 'go' },
+  // { id: 17, stack: 'frontend', language: 'ts' },
+];
+const currentGroupBy: DataSourcePropGroupBy<Developer> = [
+  {
+    field: 'stack',
+  },
+  { field: 'language' },
+];
 export default function GroupByExample() {
   const [rowSelection, setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
-      // deselectedRows: [['backend', 'TypeScript']],
       defaultSelection: false,
-      selectedRows: [8],
-      deselectedRows: [['backend', 'TypeScript'], ['backend']],
+      selectedRows: [10, 11, 12],
+      deselectedRows: [],
     });
 
-  const [currentGroupBy, setCurrentGroupBy] = useState(
-    groupBy as DataSourcePropGroupBy<Developer>,
-  );
   return (
     <>
       <div>
-        <CheckBox checked={null}></CheckBox>test Selected{' '}
-        {rowSelection instanceof RowSelectionState
-          ? rowSelection.getSelectedCount()
-          : false}
+        <pre>
+          <code>{JSON.stringify(rowSelection)}</code>
+        </pre>
       </div>
-      <button
-        onClick={() => {
-          setCurrentGroupBy([]);
-        }}
-      >
-        ungroup
-      </button>
-      <button
-        onClick={() => {
-          setCurrentGroupBy(groupBy as DataSourcePropGroupBy<Developer>);
-        }}
-      >
-        regroup
-      </button>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         groupBy={currentGroupBy}
+        usePrimaryKeysForMultiRowSelection={true}
         selectionMode="multi-row"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}

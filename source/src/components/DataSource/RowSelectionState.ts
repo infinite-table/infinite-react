@@ -25,9 +25,11 @@ export type RowSelectionStateObject =
 export type RowSelectionStateConfig<T> = {
   groupBy: DataSourceState<T>['groupBy'];
   groupDeepMap: DataSourceState<T>['groupDeepMap'];
+  toPrimaryKey: DataSourceState<T>['toPrimaryKey'];
   totalCount: number;
   indexer: DataSourceState<T>['indexer'];
   lazyLoad: boolean;
+  onlyUsePrimaryKeys: boolean;
 };
 
 export type GetRowSelectionStateConfig<T> = () => RowSelectionStateConfig<T>;
@@ -37,6 +39,7 @@ type RowSelectionStateOverrideForTesting = {
   getGroupByLength: RowSelectionState<any>['getGroupByLength'];
   getGroupCount: RowSelectionState<any>['getGroupCount'];
   getGroupKeysDirectlyInsideGroup: RowSelectionState<any>['getGroupKeysDirectlyInsideGroup'];
+  getAllPrimaryKeysInsideGroup: RowSelectionState<any>['getAllPrimaryKeysInsideGroup'];
 };
 
 export class RowSelectionState<T = any> {
@@ -47,6 +50,8 @@ export class RowSelectionState<T = any> {
 
   selectedMap: DeepMap<any, true> = new DeepMap();
   deselectedMap: DeepMap<any, true> = new DeepMap();
+
+  onlyUsePrimaryKeys: boolean = false;
 
   // TODO make it easy to share the cache with another instance
   selectionCache: DeepMap<any, boolean | null> = new DeepMap();
@@ -91,6 +96,21 @@ export class RowSelectionState<T = any> {
     return groupDeepMap?.getKeysStartingWith(groupKeys, true, 1) || [];
   }
 
+  getAllPrimaryKeysInsideGroup(groupKeys: any[]): any[] {
+    const { groupDeepMap } = this.getConfig();
+
+    if (!groupKeys.length) {
+      const topLevelKeys = groupDeepMap?.getKeysStartingWith([], true, 1) || [];
+
+      return topLevelKeys
+        .map((groupKeys) => this.getAllPrimaryKeysInsideGroup(groupKeys))
+        .flat();
+    }
+
+    const group = groupDeepMap?.get(groupKeys);
+    return group ? group.items.map(this.getConfig().toPrimaryKey) : [];
+  }
+
   getGroupByLength() {
     return this.getConfig().groupBy.length;
   }
@@ -120,6 +140,8 @@ export class RowSelectionState<T = any> {
 
     this.getConfig = getConfig;
 
+    this.onlyUsePrimaryKeys = getConfig().onlyUsePrimaryKeys;
+
     if (_forTestingOnly) {
       Object.assign(this, _forTestingOnly);
     }
@@ -128,7 +150,11 @@ export class RowSelectionState<T = any> {
   }
   mapSet = (name: 'selected' | 'deselected', key: any | any[]) => {
     if (!Array.isArray(key)) {
-      key = [...this.getGroupKeysForPrimaryKey(key), key];
+      if (this.onlyUsePrimaryKeys) {
+        key = [key];
+      } else {
+        key = [...this.getGroupKeysForPrimaryKey(key), key];
+      }
     }
 
     this.xcache();
@@ -178,9 +204,12 @@ export class RowSelectionState<T = any> {
     // so now we're doing the opposite transformation
     const normalize = (allKeys: any[]) => {
       const groupByLength = this.getGroupByLength();
-      return allKeys.map((keys) =>
-        keys.length > groupByLength ? keys.pop() : keys,
-      );
+      return allKeys.map((keys) => {
+        if (this.onlyUsePrimaryKeys) {
+          return keys[0];
+        }
+        return keys.length > groupByLength ? keys.pop() : keys;
+      });
     };
     const selectedRows = normalize(this.selectedMap.topDownKeys());
     const deselectedRows = normalize(this.deselectedMap.topDownKeys());
@@ -224,6 +253,12 @@ export class RowSelectionState<T = any> {
    */
   public isRowSelected(key: any, groupKeys?: any[]) {
     // use the empty arr to avoid lots of new empty array allocations
+
+    if (this.onlyUsePrimaryKeys) {
+      return this.defaultSelection
+        ? !this.deselectedMap.has([key])
+        : this.selectedMap.has([key]);
+    }
 
     groupKeys = groupKeys || this.getGroupKeysForPrimaryKey(key);
     const finalKey = [...groupKeys, key];
@@ -320,7 +355,11 @@ export class RowSelectionState<T = any> {
 
     const { selectedCount, deselectedCount } = this.getSelectionCountFor(
       initialGroupKeys,
-      this.getGroupRowBooleanSelectionStateFromParent(initialGroupKeys),
+      this.onlyUsePrimaryKeys
+        ? // there is no need for the state from the parent group
+          // when we are in this case, so don't do that
+          undefined
+        : this.getGroupRowBooleanSelectionStateFromParent(initialGroupKeys),
     );
 
     const result =
@@ -386,6 +425,19 @@ export class RowSelectionState<T = any> {
   }
 
   public selectGroupRow(groupKeys: any[]) {
+    if (this.onlyUsePrimaryKeys) {
+      const keys = this.getAllPrimaryKeysInsideGroup(groupKeys);
+
+      keys.forEach((key) => {
+        if (this.defaultSelection === true) {
+          this.deselectedMap.delete([key]);
+        } else {
+          this._selectedMapSet(key);
+        }
+      });
+      this.xcache();
+      return;
+    }
     // retrieve any selection under this group
     const selectedKeys = this.selectedMap.getKeysStartingWith(groupKeys, true);
 
@@ -395,9 +447,13 @@ export class RowSelectionState<T = any> {
     });
 
     // finally make sure this selection is set
-
     // so set it explicitly in the selection map
-    this._selectedMapSet(groupKeys);
+    if (groupKeys.length === 1 && this.defaultSelection === true) {
+      // this is top level, but default selection is the same
+      // so we can skip putting it in the map
+    } else {
+      this._selectedMapSet(groupKeys);
+    }
 
     // delete it from deselection map in case it's there
     const deselectedKeys = this.deselectedMap.getKeysStartingWith(groupKeys);
@@ -408,6 +464,19 @@ export class RowSelectionState<T = any> {
   }
 
   public deselectGroupRow(groupKeys: any[]) {
+    if (this.onlyUsePrimaryKeys) {
+      const keys = this.getAllPrimaryKeysInsideGroup(groupKeys);
+
+      keys.forEach((key) => {
+        if (this.defaultSelection === false) {
+          this.selectedMap.delete([key]);
+        } else {
+          this._deselectedMapSet(key);
+        }
+      });
+      this.xcache();
+      return;
+    }
     // retrieve any deselection under this group
     const deselectedKeys = this.deselectedMap.getKeysStartingWith(
       groupKeys,
@@ -420,9 +489,11 @@ export class RowSelectionState<T = any> {
     });
 
     // finally make sure this deselection is set
-
     // so set it explicitly in the deselection map
-    this._deselectedMapSet(groupKeys);
+    if (groupKeys.length === 1 && this.defaultSelection === false) {
+    } else {
+      this._deselectedMapSet(groupKeys);
+    }
 
     // delete it from selection map in case it's there
     const selectedKeys = this.selectedMap.getKeysStartingWith(groupKeys);
@@ -433,6 +504,20 @@ export class RowSelectionState<T = any> {
   }
 
   public setRowAsSelected(key: string | number, groupKeys?: any[]) {
+    if (this.onlyUsePrimaryKeys) {
+      if (this.defaultSelection) {
+        // all selected by default, so to make it selected
+        // we need to remove it from deselected map
+        this.deselectedMap.delete([key]);
+      } else {
+        // all deselected by default, so we have to explicitly mention it in the selection map
+        this._selectedMapSet(key);
+      }
+
+      this.xcache();
+      return;
+    }
+
     groupKeys = groupKeys || this.getGroupKeysForPrimaryKey(key);
 
     const finalKey = [...groupKeys, key];
@@ -456,10 +541,26 @@ export class RowSelectionState<T = any> {
   }
 
   public setRowAsDeselected(key: string | number, groupKeys?: any[]) {
+    if (this.onlyUsePrimaryKeys) {
+      if (this.defaultSelection) {
+        // all selected by default,
+        // so we have to explicitly mention this in the deselectedMap
+        this._deselectedMapSet(key);
+      } else {
+        // all deselected by default
+        // so remove it from selected map
+        this.selectedMap.delete([key]);
+      }
+
+      this.xcache();
+      return;
+    }
+
     groupKeys = groupKeys || this.getGroupKeysForPrimaryKey(key);
     const finalKey = [...groupKeys, key];
 
     this.selectedMap.delete(finalKey);
+    this.xcache();
 
     // if the group is not fully deselected, also mark this row as deselected
     if (this.getGroupRowSelectionState(groupKeys) !== false) {
@@ -525,6 +626,42 @@ export class RowSelectionState<T = any> {
           };
 
       this.selectionCountCache.set(groupKeys, result);
+      return result;
+    }
+
+    if (this.onlyUsePrimaryKeys) {
+      const allKeys = this.getAllPrimaryKeysInsideGroup(groupKeys);
+
+      let selectedCount = 0;
+      let deselectedCount = 0;
+
+      allKeys.forEach((key) => {
+        if (this.defaultSelection) {
+          // by default all are selected
+
+          if (this.deselectedMap.has([key])) {
+            // so count it as deselected if it's in the deselection map
+            deselectedCount++;
+            return;
+          }
+          selectedCount++;
+        } else {
+          // by default all are deselected
+          if (this.selectedMap.has([key])) {
+            selectedCount++;
+            return;
+          }
+          deselectedCount++;
+        }
+      });
+
+      const result = {
+        selectedCount,
+        deselectedCount,
+      };
+
+      this.selectionCountCache.set(groupKeys, result);
+
       return result;
     }
 

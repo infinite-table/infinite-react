@@ -126,6 +126,8 @@ export const forwardProps = <T>(
     livePagination: 1,
     filterFunction: 1,
     filterValue: 1,
+    usePrimaryKeysForMultiRowSelection: (usePrimaryKeysForMultiRowSelection) =>
+      usePrimaryKeysForMultiRowSelection ?? false,
     filterDelay: (filterDelay) => filterDelay ?? 200,
     filterTypes: (filterTypes) => {
       return { ...defaultFilterTypes, ...filterTypes };
