@@ -57,7 +57,7 @@ export function rowSelectionStateConfigGetter<T>(
     return {
       lazyLoad: !!state.lazyLoad,
       toPrimaryKey: state.toPrimaryKey,
-      onlyUsePrimaryKeys: state.usePrimaryKeysForMultiRowSelection,
+      onlyUsePrimaryKeys: !state.useGroupKeysForMultiRowSelection,
       groupBy: state.groupBy,
       groupDeepMap: state.groupDeepMap,
       indexer: state.indexer,

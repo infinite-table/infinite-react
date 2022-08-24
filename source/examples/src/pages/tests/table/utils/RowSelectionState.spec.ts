@@ -660,6 +660,15 @@ export default test.describe.parallel('RowSelectionState', () => {
 
     state.deselectRow(16);
     expect(state.getGroupRowSelectionState(['backend'])).toBe(false);
+    expect(state.getState()).toEqual({
+      defaultSelection: false,
+      deselectedRows: [
+        ['backend', 'TypeScript'],
+        ['backend', 'Rust'],
+        ['backend', 'go'],
+      ],
+      selectedRows: [['backend']],
+    });
 
     const state1 = buildRowSelectionState(
       {
@@ -681,6 +690,42 @@ export default test.describe.parallel('RowSelectionState', () => {
 
     state1.deselectRow(16);
     expect(state1.getGroupRowSelectionState(['backend'])).toBe(false);
+
+    state1.selectRow(16);
+
+    expect(state1.getState()).toEqual({
+      defaultSelection: false,
+      deselectedRows: [],
+      selectedRows: [16],
+    });
+
+    const state2 = buildRowSelectionState(
+      {
+        defaultSelection: true,
+        selectedRows: [],
+        deselectedRows: [],
+      },
+      rows,
+      true,
+    );
+
+    state2.selectGroupRow(['backend']);
+
+    expect(state2.getGroupRowSelectionState(['backend'])).toBe(true);
+
+    state2.deselectGroupRow(['backend', 'TypeScript']);
+    state2.deselectGroupRow(['backend', 'Rust']);
+    expect(state2.getGroupRowSelectionState(['backend'])).toBe(null);
+
+    state2.deselectRow(16);
+    expect(state2.getGroupRowSelectionState(['backend'])).toBe(false);
+    state2.selectRow(16);
+
+    expect(state2.getState()).toEqual({
+      defaultSelection: true,
+      deselectedRows: [10, 11, 12, 13, 14, 15],
+      selectedRows: [],
+    });
   });
 
   test('test another scenario1', () => {

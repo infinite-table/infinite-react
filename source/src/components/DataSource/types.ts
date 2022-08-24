@@ -115,8 +115,8 @@ export interface DataSourceMappedState<T> {
   isRowSelected: DataSourceProps<T>['isRowSelected'];
 
   lazyLoad: DataSourceProps<T>['lazyLoad'];
-  usePrimaryKeysForMultiRowSelection: NonUndefined<
-    DataSourceProps<T>['usePrimaryKeysForMultiRowSelection']
+  useGroupKeysForMultiRowSelection: NonUndefined<
+    DataSourceProps<T>['useGroupKeysForMultiRowSelection']
   >;
 
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
@@ -311,7 +311,7 @@ export type DataSourceProps<T> = {
   data: DataSourceData<T>;
 
   selectionMode?: DataSourcePropSelectionMode;
-  usePrimaryKeysForMultiRowSelection?: boolean;
+  useGroupKeysForMultiRowSelection?: boolean;
 
   rowSelection?:
     | DataSourcePropRowSelection_MultiRow

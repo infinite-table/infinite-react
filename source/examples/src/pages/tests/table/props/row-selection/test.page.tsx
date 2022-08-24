@@ -109,8 +109,6 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
-        groupBy={currentGroupBy}
-        usePrimaryKeysForMultiRowSelection={true}
         selectionMode="multi-row"
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
