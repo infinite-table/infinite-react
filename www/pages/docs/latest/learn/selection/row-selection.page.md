@@ -131,7 +131,7 @@ Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would d
 
 <Note>
 
-For selection all the rows in the table, you can use `cmd`/`ctrl` + `A` keyboard shortcut.
+For selecting all the rows in the table, you can use `cmd`/`ctrl` + `A` keyboard shortcut.
 
 </Note>
 
@@ -161,9 +161,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 <Note>
 
-Any column can show a selection checkbox if <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink> is set to `true`.
+Any column can show a selection checkbox if <PropLink name="columns.renderSelectionCheckBox">column.renderSelectionCheckBox</PropLink> is set to `true`.
 
-Nothing stops you from having even multiple checkbox columns.
+Nothing stops you from even having multiple checkbox columns.
 
 </Note>
 
@@ -240,15 +240,15 @@ const rowSelection = {
 As shown above, the `rowSelection.selectedRows` and `rowSelection.deselectedRows` arrays can either contain:
 
  * primary keys of rows (which are usually strings or numbers) - any non-array element inside `rowSelection.selectedRows`/`rowSelection.deselectedRows` is considered an id/primaryKey value for a leaf row in the grouped dataset.
- * arrays of group keys - those arrays describe the path of the specified selected group. Please note that `rowSelection.selectedRows` can contain certain paths while `rowSelection.deselectedRows` can contain child paths of those paths ... or any other imaginable combination. For this kind of <DPropLink name="rowSelection" /> values, you need to enable <DPropLink name="useGroupKeysForMultiRowSelection" />.
+ * arrays of group keys (can be combined with primary keys as well) - those arrays describe the path of the specified selected group. Please note that `rowSelection.selectedRows` can contain certain paths while `rowSelection.deselectedRows` can contain child paths of those paths ... or any other imaginable combination. For this kind of <DPropLink name="rowSelection" />, you need to enable <DPropLink name="useGroupKeysForMultiRowSelection" />.
 
 
 <Gotcha>
  
-Row Selection only uses primary keys by default, even when you have groupe data.
+Row Selection only uses primary keys by default, even when you have grouped data.
 
-For grouped data however, you might want to use selection with group keys - for doing that, specify <DPropLink name="useGroupKeysForMultiRowSelection">DataSource.useGroupKeysForMultiRowSelection=true</DPropLink>.
-Note however, that if you use selection with group keys, selection will not be consistent when the <DPropLink name="groupBy" /> changes.
+For grouping however, you might want to use selection with group keys - for doing that, specify <DPropLink name="useGroupKeysForMultiRowSelection">DataSource.useGroupKeysForMultiRowSelection=true</DPropLink>.
+Note that if you use selection with group keys, the selection will not be relevant/consistent when the <DPropLink name="groupBy" /> changes.
 
 When you have both grouping and <DPropLink name="lazyLoad">lazy loading</DPropLink>, <DPropLink name="useGroupKeysForMultiRowSelection" /> must be enabled - read more about it in the note below.
 
@@ -276,7 +276,7 @@ const rowSelection = {
 }
 ```
 
-In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in those array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection
+In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.
 
 </Note>
 
@@ -309,4 +309,4 @@ Probably the most complex use-case for multi selection (with checkbox) is the co
 
 In this scenario, not all groups and/or rows are loaded at a given point in time, but we need to be able to know how to render each checkbox for each group - either checked, unchecked or indeterminate, all this depending on whether all children, at any nesting levels are selected or not.
 
-In order to make this possible, the <DPropLink name="rowSelection" /> value will only contain arrays (and not individual primary keys) in the `selectedRows` and `deselectedRows` arrays.
+In order to make this possible, the <DPropLink name="rowSelection" /> value will only contain arrays (and not individual primary keys) in the `selectedRows` and `deselectedRows` arrays and the DataSource will be configured with <DPropLink name="useGroupKeysForMultiRowSelection" />.

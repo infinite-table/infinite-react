@@ -73,47 +73,12 @@ const domProps = {
 };
 
 export default function App() {
-  const apiRef = useRef<InfiniteTableApi<Developer> | null>(
-    null
-  );
   const [rowSelection, setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
-      selectedRows: [
-        ['yes', 'backend', 'TypeScript'],
-        4,
-        ['yes', 'frontend'],
-      ],
-      deselectedRows: [4, 2],
+      selectedRows: [0, 8, 10],
       defaultSelection: false,
     });
 
-  const [selectedIds, setSelectedIds] = useState<string[]>(
-    []
-  );
-
-  const onReady = useCallback(
-    (api: InfiniteTableApi<Developer>) => {
-      apiRef.current = api;
-
-      setSelectedIds(
-        api.selectionApi.getSelectedPrimaryKeys(
-          rowSelection
-        ) as string[]
-      );
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (!apiRef.current) {
-      return;
-    }
-    setSelectedIds(
-      apiRef.current.selectionApi.getSelectedPrimaryKeys(
-        rowSelection
-      ) as string[]
-    );
-  }, [rowSelection]);
   return (
     <div
       style={{
@@ -132,16 +97,12 @@ export default function App() {
         <code
           style={{
             display: 'block',
-            height: 300,
+            height: 100,
             overflow: 'auto',
             border: '1px dashed currentColor',
           }}>
-          <pre>
-            {' '}
-            {JSON.stringify(rowSelection, null, 2)}.
-          </pre>
+          <pre> {JSON.stringify(rowSelection)}.</pre>
         </code>
-        Current selected ids: {selectedIds.join(', ')}
       </div>
 
       <DataSource<Developer>
@@ -151,7 +112,6 @@ export default function App() {
         onRowSelectionChange={setRowSelection}
         primaryKey="id">
         <InfiniteTable<Developer>
-          onReady={onReady}
           columns={columns}
           domProps={domProps}
           hideColumnWhenGrouped

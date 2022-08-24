@@ -80,7 +80,10 @@ export default function App() {
     useState<DataSourcePropRowSelection_MultiRow>({
       selectedRows: [
         ['yes', 'backend', 'TypeScript'],
-        4,
+        ['yes', 'backend', 'Go'],
+        16,
+        26,
+        30,
         ['yes', 'frontend'],
       ],
       deselectedRows: [4, 2],
