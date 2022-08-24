@@ -617,7 +617,8 @@ export class RowSelectionState<T = any> {
       return cachedResult;
     }
 
-    if (groupKeys.length > this.getGroupByLength()) {
+    const groupByLength = this.getGroupByLength();
+    if (groupKeys.length > groupByLength) {
       const result = this.isRowSelected(groupKeys)
         ? { selectedCount: 1, deselectedCount: 0 }
         : {
@@ -629,7 +630,7 @@ export class RowSelectionState<T = any> {
       return result;
     }
 
-    if (this.onlyUsePrimaryKeys) {
+    if (groupByLength && this.onlyUsePrimaryKeys) {
       const allKeys = this.getAllPrimaryKeysInsideGroup(groupKeys);
 
       let selectedCount = 0;

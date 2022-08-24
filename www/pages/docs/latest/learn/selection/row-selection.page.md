@@ -220,6 +220,9 @@ const rowSelection = {
 }
 
 // or, for grouped data - this example assumes groupBy=continent,country,city
+
+// for using this form of multi-row selection when you have grouping,
+// you have to specify DataSource.useGroupKeysForMultiRowSelection = true
 const rowSelection = {
   selectedRows: [
     45, // row with id 45 is selected, no matter the group it is nested in
@@ -233,18 +236,27 @@ const rowSelection = {
 }
 ```
 
-For non-grouped data, the first two forms of the `rowSelection` prop are enough, but for nested grouped data, we need the third form as well.
 
-In this case, selection can have various nested values, so we had to come up with a simple way allow you to express the selection state.
+As shown above, the `rowSelection.selectedRows` and `rowSelection.deselectedRows` arrays can either contain:
 
-The `rowSelection.selectedRows` and `rowSelection.deselectedRows` arrays can either contain:
+ * primary keys of rows (which are usually strings or numbers) - any non-array element inside `rowSelection.selectedRows`/`rowSelection.deselectedRows` is considered an id/primaryKey value for a leaf row in the grouped dataset.
+ * arrays of group keys - those arrays describe the path of the specified selected group. Please note that `rowSelection.selectedRows` can contain certain paths while `rowSelection.deselectedRows` can contain child paths of those paths ... or any other imaginable combination. For this kind of <DPropLink name="rowSelection" /> values, you need to enable <DPropLink name="useGroupKeysForMultiRowSelection" />.
 
- * ids of rows (which are usually strings or numbers) - any non-array element inside `rowSelection.selectedRows`/`rowSelection.deselectedRows` is considered an id/primaryKey value for a leaf row in the grouped dataset.
- * arrays of group keys - those arrays describe the path of the specified selected group. Please note that `rowSelection.selectedRows` can contain certain paths while `rowSelection.deselectedRows` can contain child paths of those paths ... or any other imaginable combination.
+
+<Gotcha>
+ 
+Row Selection only uses primary keys by default, even when you have groupe data.
+
+For grouped data however, you might want to use selection with group keys - for doing that, specify <DPropLink name="useGroupKeysForMultiRowSelection">DataSource.useGroupKeysForMultiRowSelection=true</DPropLink>.
+Note however, that if you use selection with group keys, selection will not be consistent when the <DPropLink name="groupBy" /> changes.
+
+When you have both grouping and <DPropLink name="lazyLoad">lazy loading</DPropLink>, <DPropLink name="useGroupKeysForMultiRowSelection" /> must be enabled - read more about it in the note below.
+
+</Gotcha>
 
 <Note>
 
-When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have ids as strings/numbers, but rather specified by the full path.
+When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
 
 ```ts {6}
 // this example assumes groupBy=continent,country,city
@@ -265,6 +277,7 @@ const rowSelection = {
 ```
 
 In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in those array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection
+
 </Note>
 
 

@@ -439,5 +439,23 @@ In this example, for the `"color"` column, we specified <PropLink name="columns.
 
 </Prop>
 
+<Prop name="useGroupKeysForMultiRowSelection" type="boolean" defaultValue={false}>
+
+<Sandpack title="Multi row checkbox selection using group keys" >
+
+<Description>
+
+This example shows how you can use have row selection with group keys instead of just the primary keys of rows.
+
+</Description>
+
+
+```ts file=../controlled-multi-row-selection-example-with-group-keys.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 </PropTable> 
 

@@ -109,7 +109,7 @@ If you don't provide a value for the `rowSelection` and are calling this method 
 
 <Prop name="getSelectedPrimaryKeys" type="(rowSelection?: DataSourceRowSelection) => (string|number)[]">
 
-> Retrieves the ids (primary keys) of the selected rows. This is especially useful when the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>
+> Retrieves the ids (primary keys) of the selected rows, when the selection contains group keys instead of primary keys (so when <DPropLink name="useGroupKeysForMultiRowSelection" /> is `true` and the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>
 
 If you provide a the value of a `rowSelection`, it will be used as the source of truth for retrieving the row ids. If no value for `rowSelection` is provided, it will use the current row selection.
 
@@ -129,13 +129,14 @@ This example shows how you can use getSelectedPrimaryKeys with multiple row sele
 </Description>
 
 
-```ts file=../controlled-multi-row-selection-example.page.tsx
+```ts file=../controlled-multi-row-selection-example-with-group-keys.page.tsx
 ```
 
 </Sandpack>
 
 
 </Prop>
+
 
 <Prop name="isRowSelected" type="(primaryKey: any, groupKeys?: any[]) => boolean">
 
