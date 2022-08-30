@@ -5,6 +5,9 @@ import {
   getCellNodeLocator,
   getCellText,
   getSelectedRowIds,
+  isNodeExpanded,
+  isNodeGroupRow,
+  toggleGroupRow,
 } from '.';
 
 type CellLocation = {
@@ -43,6 +46,28 @@ export class RowTestingModel {
       },
       { page: this.page },
     );
+  }
+
+  async toggleGroupRow(rowIndex: number) {
+    await toggleGroupRow({ rowIndex, colIndex: 0 }, { page: this.page });
+  }
+
+  async isRowExpanded(rowIndex: number) {
+    const node = this.getCellLocator({
+      rowIndex,
+      colIndex: 0,
+    });
+
+    return await isNodeExpanded(node);
+  }
+
+  async isGroupRow(rowIndex: number) {
+    const node = this.getCellLocator({
+      rowIndex,
+      colIndex: 0,
+    });
+
+    return await isNodeGroupRow(node);
   }
 
   async getCellComputedStylePropertyValue(

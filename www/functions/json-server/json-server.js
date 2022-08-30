@@ -328,7 +328,7 @@ function getResultSet({
 
         const countResult = alasql(countSQL);
         const totalChildrenCount = countResult[0].__count;
-        console.log(countSQL, countResult);
+        // console.log(countSQL, countResult);
         // console.log(x);
 
         Object.keys(x).forEach((k) => {

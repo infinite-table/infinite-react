@@ -539,6 +539,20 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           //@ts-ignore
           current.items = dataArray;
 
+          for (let i = 0, len = currentGroupKeys.length; i < len; i++) {
+            const currentKeys = currentGroupKeys.slice(0, i);
+            const deepMapGroupValue = deepMap.get(
+              currentKeys as KeyType[],
+            ) as DeepMapGroupValueType<DataType, KeyType>;
+
+            if (deepMapGroupValue) {
+              deepMapGroupValue.items = deepMapGroupValue.items || [];
+              deepMapGroupValue.items = deepMapGroupValue.items.concat(
+                dataArray as any as DataType[],
+              );
+            }
+          }
+
           indexer.indexArray(dataArray as any as DataType[], toPrimaryKey);
         }
         return next?.();
@@ -565,7 +579,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           continue;
         }
         const dataObject = dataArray[i].data;
-        const dataKeys = dataArray[i].keys;
+        const dataKeys = dataArray[i].keys || [];
         // const item = dataObject as Partial<DataType>;
 
         if (dataKeys.length) {
@@ -911,7 +925,7 @@ type GetEnhancedGroupDataOptions<DataType> = {
   lazyLoad: boolean;
   groupKeys: any[];
   groupBy: (keyof DataType)[];
-  collapsed: boolean;
+
   error?: string;
   parents: InfiniteTable_HasGrouping_RowInfoGroup<DataType>[];
   indexInParentGroups: number[];
@@ -929,8 +943,7 @@ function getEnhancedGroupData<DataType>(
   options: GetEnhancedGroupDataOptions<DataType>,
   deepMapValue: DeepMapGroupValueType<DataType, any>,
 ) {
-  const { groupBy, groupKeys, collapsed, parents, reducers, lazyLoad } =
-    options;
+  const { groupBy, groupKeys, parents, reducers, lazyLoad } = options;
   const groupNesting = groupKeys.length;
   const {
     items: groupItems,
@@ -982,7 +995,7 @@ function getEnhancedGroupData<DataType>(
     selectedChildredCount: 0,
     deselectedChildredCount: 0,
     id: `${groupKeys}`, //TODO improve this
-    collapsed,
+    collapsed: false,
     dataSourceHasGrouping: true,
     selfLoaded,
     error: options.error,
@@ -1076,7 +1089,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       const groupNesting = groupKeys.length;
 
-      const collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
+      let collapsed = groupRowsState?.isGroupRowCollapsed(groupKeys) ?? false;
 
       indexInParentGroups.push(indexInGroup);
 
@@ -1100,7 +1113,6 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 ? deepMapValue.items.length
                 : deepMap.getDirectChildrenSizeFor(groupKeys),
             directChildrenLoadedCount: 0,
-            collapsed,
           },
           deepMapValue,
         );
@@ -1122,6 +1134,11 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       const parentCollapsed = parent?.collapsed ?? false;
 
+      if (parentCollapsed) {
+        collapsed = true;
+      }
+      enhancedGroupData.collapsed = collapsed;
+
       // const itemHidden = collapsed || parentCollapsed;
 
       let include = generateGroupRows || collapsed;
@@ -1129,26 +1146,17 @@ export function enhancedFlatten<DataType, KeyType = any>(
       if (parentCollapsed) {
         include = false;
       }
+
       if (include) {
         result.push(enhancedGroupData);
       }
 
-      if (collapsed) {
-        enhancedGroupData.collapsedChildrenCount = enhancedGroupData.groupCount;
-        parents.forEach((parent) => {
-          if (!parentCollapsed) {
-            parent.deepRowInfoArray.push(enhancedGroupData);
-          }
-          parent.collapsedChildrenCount += enhancedGroupData.groupCount;
-          parent.collapsedGroupsCount += 1;
-        });
-      } else {
-        if (!parentCollapsed) {
-          parents.forEach((parent) => {
-            parent.deepRowInfoArray.push(enhancedGroupData);
-          });
-        }
-      }
+      enhancedGroupData.collapsedChildrenCount = 0;
+      parents.forEach((parent) => {
+        parent.deepRowInfoArray.push(enhancedGroupData);
+
+        parent.collapsedGroupsCount += collapsed ? 1 : 0;
+      });
 
       if (parent && enhancedGroupData.selfLoaded && lazyLoad) {
         parent.directChildrenLoadedCount += 1;
@@ -1212,9 +1220,13 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 if (last && item) {
                   parent.directChildrenLoadedCount += 1;
                 }
-                if (!parentCollapsed) {
-                  parent.deepRowInfoArray.push(rowInfo);
+
+                if (collapsed) {
+                  // if the current parent is collapsed - this will be true if there is any collapsed parent
+                  parent.collapsedChildrenCount += 1;
                 }
+
+                parent.deepRowInfoArray.push(rowInfo);
               });
 
               if (!collapsed) {

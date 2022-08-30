@@ -10,7 +10,9 @@ export const showLoadingIcon = (
 
   if (rowInfo.dataSourceHasGrouping) {
     return rowInfo.isGroupRow
-      ? rowInfo.childrenLoading || !rowInfo.selfLoaded
+      ? rowInfo.childrenLoading ||
+          !rowInfo.selfLoaded ||
+          !rowInfo.childrenAvailable
       : !rowInfo.selfLoaded;
   }
 

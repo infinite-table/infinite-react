@@ -472,6 +472,8 @@ export function InfiniteTableHeaderCell<T>(
               rowSelected: false,
               zebra: false,
               rowActive: false,
+              groupRow: false,
+              rowExpanded: false,
             },
           ),
           CellCls,

@@ -515,8 +515,10 @@ function useLazyLoadRange<T>() {
   const {
     lazyLoadBatchSize,
     lazyLoad,
+    originalLazyGroupDataChangeDetect,
     notifyRenderRangeChange,
     dataArray,
+    groupRowsState,
     scrollStopDelayUpdatedByTable,
   } = componentState;
 
@@ -571,23 +573,43 @@ function useLazyLoadRange<T>() {
     [scrollStopDelayUpdatedByTable],
   );
 
-  useEffect(() => {
-    if (lazyLoad) {
-      return notifyRenderRangeChange.onChange(
-        (renderRange: RenderRange | null) => {
-          latestRenderRangeRef.current = renderRange;
-          loadRange(renderRange);
-        },
-      );
-    }
-    return;
-  }, [lazyLoadBatchSize, lazyLoad]);
+  useEffectWithChanges(
+    (changes) => {
+      if (lazyLoad) {
+        // when there is changes in lazily loaded data or group row state
+        // we need to trigger another loadRange immediately,
+
+        if (
+          changes.originalLazyGroupDataChangeDetect ||
+          changes.groupRowsState
+        ) {
+          loadRange(notifyRenderRangeChange.get());
+        }
+        // even before waiting for the render range change, as that will only
+        // happen on user scroll or table viewport resize
+
+        // though loading a new range when the render range has changed is needed
+        return notifyRenderRangeChange.onChange(
+          (renderRange: RenderRange | null) => {
+            latestRenderRangeRef.current = renderRange;
+            loadRange(renderRange);
+          },
+        );
+      }
+      return;
+    },
+    {
+      lazyLoadBatchSize,
+      lazyLoad,
+      originalLazyGroupDataChangeDetect,
+      groupRowsState,
+    },
+  );
 
   useEffect(() => {
     if (lazyLoadBatchSize && lazyLoadBatchSize > 0) {
       debouncedLoadRange();
     }
-    return;
   }, [dataArray]);
 }
 

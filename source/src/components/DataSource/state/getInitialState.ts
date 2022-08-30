@@ -148,18 +148,6 @@ export const forwardProps = <T>(
     sortInfo: (sortInfo) =>
       normalizeSortInfo(sortInfo, setupState.propsCache.get('sortInfo')),
     groupBy: (groupBy) => groupBy ?? [],
-    groupRowsState: (groupRowsState) => {
-      if (groupRowsState && !(groupRowsState instanceof GroupRowsState)) {
-        groupRowsState = new GroupRowsState(groupRowsState);
-      }
-      return (
-        groupRowsState ||
-        new GroupRowsState({
-          expandedRows: true,
-          collapsedRows: [],
-        })
-      );
-    },
   };
 };
 
@@ -276,8 +264,27 @@ export function mapPropsToState<T extends any>(params: {
       ? (data: T) => primaryKeyDescriptor(data)
       : (data: T) => data[primaryKeyDescriptor];
 
+  let groupRowsState =
+    props.groupRowsState || state.groupRowsState || props.defaultGroupRowsState;
+
+  if (groupRowsState && !(groupRowsState instanceof GroupRowsState)) {
+    groupRowsState = new GroupRowsState(groupRowsState);
+  }
+
+  groupRowsState =
+    groupRowsState ||
+    new GroupRowsState(
+      state.lazyLoad
+        ? { expandedRows: [], collapsedRows: true }
+        : {
+            expandedRows: true,
+            collapsedRows: [],
+          },
+    );
+
   const result: DataSourceDerivedState<T> = {
     selectionMode,
+    groupRowsState,
     // for whatever reason I had to do this cast to appease TS
     rowSelection: rowSelectionState as any as null,
 

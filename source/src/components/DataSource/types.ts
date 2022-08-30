@@ -129,7 +129,7 @@ export interface DataSourceMappedState<T> {
   primaryKey: DataSourceProps<T>['primaryKey'];
   filterDelay: NonUndefined<DataSourceProps<T>['filterDelay']>;
   groupBy: NonUndefined<DataSourceProps<T>['groupBy']>;
-  groupRowsState: GroupRowsState<T>;
+
   pivotBy: DataSourceProps<T>['pivotBy'];
   loading: NonUndefined<DataSourceProps<T>['loading']>;
   sortTypes: NonUndefined<DataSourceProps<T>['sortTypes']>;
@@ -496,7 +496,7 @@ export type DataSourceDerivedState<T> = {
   >;
 
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
-
+  groupRowsState: GroupRowsState<T>;
   multiSort: boolean;
   controlledSort: boolean;
   controlledFilter: boolean;

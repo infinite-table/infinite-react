@@ -7,6 +7,8 @@ export function useCellClassName<T>(
   baseClasses: string[],
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
+    groupRow: boolean;
+    rowExpanded: boolean;
     rowActive: boolean;
     rowSelected: boolean | null;
     dragging: boolean;
@@ -50,6 +52,21 @@ export function useCellClassName<T>(
   }
   if (extraFlags.rowSelected) {
     result.push(...baseClasses.map((c) => `${c}--row-selected`));
+  }
+
+  if (extraFlags.groupRow) {
+    result.push(...baseClasses.map((c) => `${c}--group-row`));
+
+    result.push(
+      ...baseClasses.map(
+        (c) =>
+          `${c}--${
+            extraFlags.rowExpanded
+              ? 'group-row-expanded'
+              : 'group-row-collapsed'
+          }`,
+      ),
+    );
   }
   if (column.computedPinned) {
     result.push(
