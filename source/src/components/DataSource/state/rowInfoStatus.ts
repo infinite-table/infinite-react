@@ -8,11 +8,17 @@ export const showLoadingIcon = (
   //   return true;
   // }
 
+  // if (rowInfo.dataSourceHasGrouping) {
+  //   return rowInfo.isGroupRow
+  //     ? rowInfo.childrenLoading ||
+  //         !rowInfo.selfLoaded ||
+  //         !rowInfo.childrenAvailable
+  //     : !rowInfo.selfLoaded;
+  // }
+
   if (rowInfo.dataSourceHasGrouping) {
     return rowInfo.isGroupRow
-      ? rowInfo.childrenLoading ||
-          !rowInfo.selfLoaded ||
-          !rowInfo.childrenAvailable
+      ? rowInfo.childrenLoading || !rowInfo.selfLoaded
       : !rowInfo.selfLoaded;
   }
 

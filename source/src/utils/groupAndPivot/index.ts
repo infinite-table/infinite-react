@@ -1106,7 +1106,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
             groupKeys,
             error: deepMapValue.error,
             totalChildrenCount: deepMapValue.totalChildrenCount,
-            childrenLoading: deepMapValue.childrenLoading,
+            childrenLoading:
+              deepMapValue.childrenLoading ||
+              (!collapsed && !deepMapValue.childrenAvailable),
             childrenAvailable: deepMapValue.childrenAvailable,
             directChildrenCount:
               groupKeys.length === groupByStrings.length
@@ -1163,7 +1165,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
       }
       parents.push(enhancedGroupData);
 
-      const continueWithChildren = !collapsed || lazyLoad;
+      const continueWithChildren = true; //!collapsed || lazyLoad;
 
       if (continueWithChildren) {
         if (!next) {
