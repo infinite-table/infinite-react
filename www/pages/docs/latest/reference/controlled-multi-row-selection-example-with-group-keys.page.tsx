@@ -12,10 +12,10 @@ import {
 } from '@infinite-table/infinite-react';
 
 import type {
-  DataSourceProps,
   InfiniteTableProps,
   InfiniteTableApi,
   InfiniteTablePropColumns,
+  DataSourceProps,
   DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
 
@@ -158,7 +158,6 @@ export default function App() {
           onReady={onReady}
           columns={columns}
           domProps={domProps}
-          hideColumnWhenGrouped
           groupColumn={groupColumn}
           columnDefaultWidth={150}
         />

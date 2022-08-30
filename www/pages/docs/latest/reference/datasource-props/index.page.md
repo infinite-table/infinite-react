@@ -291,7 +291,7 @@ const rowSelection = {
     45, // row with id 45 is selected, no matter the group
     ['Europe','France'], // all rows in Europe/France are selected
     ['Asia'] // all rows in Asia are selected
-  ]
+  ],
   deselectedRows: [
     ['Europe','France','Paris'] // all rows in Paris are deselected
   ],
@@ -299,13 +299,7 @@ const rowSelection = {
 }
 ```
 
-<Note>
-
-For multiple selection, if we have no grouping, you either specify all rows are selected and then do a list of possibly deselected rows, or the other way around, you have all rows as deselected and specify a list of selected rows.
-
-For grouped/nested data, this is not enough, so basically in each list (`rowSelection.selectedRows` and `rowSelection.deselectedRows`), you can have both ids or group keys of any length. This allows you to specify selection in a very flexible and powerful way. Don't worry, at any time you can use our api to get the actual list of selected ids, even in grouped scenarios where your selection can be very complex.
-
-</Note>
+For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
 
 <Sandpack  title="Single row selection (controlled) with onRowSelectionChange">
 
@@ -318,6 +312,38 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 ```ts file=../controlled-single-row-selection-example.page.tsx
 ```
 </Sandpack>
+
+<Note>
+
+When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
+
+```ts {6}
+// this example assumes groupBy=continent,country,city
+const rowSelection = {
+  selectedRows: [
+    // row with id 45 is selected - we need this because in the lazyLoad scenario,
+    // not all parents might have been made available yet
+    ['Europe','Italy', 'Rome', 45],
+    ['Europe','France'], // all rows in Europe/France are selected
+    ['Asia'] // all rows in Asia are selected
+  ]
+  deselectedRows: [
+    ['Europe','Italy','Rome'] // all rows in Rome are deselected
+    // but note that row with id 45 is selected, so Rome will be rendered with an indeterminate selection state
+  ],
+  defaultSelection: false // all other rows are selected
+}
+```
+
+In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.
+
+</Note>
+
+<Gotcha>
+
+The <DPropLink name="useGroupKeysForMultiRowSelection" /> prop can be used for both lazy and non-lazy `DataSource` components.
+
+</Gotcha>
 
 
 <Sandpack title="Multi row checkbox selection with grouping" >
@@ -440,6 +466,10 @@ In this example, for the `"color"` column, we specified <PropLink name="columns.
 </Prop>
 
 <Prop name="useGroupKeysForMultiRowSelection" type="boolean" defaultValue={false}>
+
+> Specifies whether <DPropLink name="rowSelection" /> contains group keys or only row ids/primary keys.
+
+When this is `true`, you might want to use the [getSelectedPrimaryKeys](./selection-api#getSelectedPrimaryKeys) method.
 
 <Sandpack title="Multi row checkbox selection using group keys" >
 

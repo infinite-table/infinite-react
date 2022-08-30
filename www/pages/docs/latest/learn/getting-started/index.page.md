@@ -34,6 +34,28 @@ In the code snippet above, you notice we're using 2 components:
 
 Both components are named exports of the `@infinite-table/infinite-react` package.
 
+## TypeScript Types
+
+Our `TypeScript` types are published as part of the package, as named exports from the root of the package.
+
+There are 2 components that you can use and import:
+
+ * `InfiniteTable`
+ * `DataSource`
+
+Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME><PROP_NAME>`, so here are a few examples to clarify the rule:
+
+```ts
+import {
+  InfiniteTablePropColumns, // or accessible as InfiniteTableProps['columns']
+      // corresponding to the `columns` prop
+
+  DataSourcePropGroupBy, // or accessible as DataSourceProps['groupBy']
+      // corresponding to the `groupBy` prop
+} from '@infinite-table/infinite-react'
+```
+
+
 ## Licensing
 
 You can use `@infinite-table/infinite-react` in 2 ways:

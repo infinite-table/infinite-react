@@ -86,6 +86,10 @@ export default () => {
         <DataSource<Developer>
           data={dataSource}
           primaryKey="id"
+          defaultGroupRowsState={{
+            expandedRows: true,
+            collapsedRows: [],
+          }}
           groupBy={[
             {
               field: 'country',

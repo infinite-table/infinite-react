@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  useCallback,
-  useRef,
-  useEffect,
-  useState,
-} from 'react';
+import { useState } from 'react';
 
 import {
   InfiniteTable,
@@ -12,10 +7,9 @@ import {
 } from '@infinite-table/infinite-react';
 
 import type {
-  DataSourceProps,
   InfiniteTableProps,
-  InfiniteTableApi,
   InfiniteTablePropColumns,
+  DataSourceProps,
   DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
 
@@ -114,7 +108,6 @@ export default function App() {
         <InfiniteTable<Developer>
           columns={columns}
           domProps={domProps}
-          hideColumnWhenGrouped
           groupColumn={groupColumn}
           columnDefaultWidth={150}
         />

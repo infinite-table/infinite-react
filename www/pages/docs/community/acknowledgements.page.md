@@ -5,43 +5,9 @@ layout: Home
 
 ## React 
 
-React was originally created by [Jordan Walke](https://github.com/jordwalke). Today, React has a [dedicated full-time team working on it](/community/team.html), as well as over a thousand [open source contributors](https://github.com/facebook/react/blob/main/AUTHORS). We'd like to recognize a few people who have made significant contributions to React and its documentation in the past and have helped maintain them over the years:
+React was originally created by [Jordan Walke](https://github.com/jordwalke). Today, React has a [dedicated full-time team working on it](https://reactjs.org/community/team.html), as well as over a thousand [open source contributors](https://github.com/facebook/react/blob/main/AUTHORS).
 
-* [Almero Steyn](https://github.com/AlmeroSteyn)
-* [Andreas Svensson](https://github.com/syranide)
-* [Alex Krolick](https://github.com/alexkrolick)
-* [Alexey Pyltsyn](https://github.com/lex111)
-* [Brandon Dail](https://github.com/aweary)
-* [Caleb Meredith](https://github.com/calebmer)
-* [Chang Yan](https://github.com/cyan33)
-* [Cheng Lou](https://github.com/chenglou)
-* [Christoph Nakazawa](https://github.com/cpojer)
-* [Christopher Chedeau](https://github.com/vjeux)
-* [Clement Hoang](https://github.com/clemmy)
-* [Dominic Gannaway](https://github.com/trueadm)
-* [Flarnie Marchan](https://github.com/flarnie)
-* [Jason Quense](https://github.com/jquense)
-* [Jesse Beach](https://github.com/jessebeach)
-* [Jessica Franco](https://github.com/Jessidhia)
-* [Jim Sproch](https://github.com/jimfb)
-* [Josh Duck](https://github.com/joshduck)
-* [Joe Critchley](https://github.com/joecritch)
-* [Jeff Morrison](https://github.com/jeffmo)
-* [Keyan Zhang](https://github.com/keyz)
-* [Nat Alison](https://github.com/tesseralis)
-* [Nathan Hunzaker](https://github.com/nhunzaker)
-* [Nicolas Gallagher](https://github.com/necolas)
-* [Paul O'Shannessy](https://github.com/zpao)
-* [Pete Hunt](https://github.com/petehunt)
-* [Philipp Spiess](https://github.com/philipp-spiess)
-* [Sander Spies](https://github.com/sanderspies)
-* [Sasha Aickin](https://github.com/aickin)
-* [Sophia Shoemaker](https://github.com/mrscobbler)
-* [Sophie Alpert](https://github.com/sophiebits)
-* [Sunil Pai](https://github.com/threepointone)
-* [Tim Yung](https://github.com/yungsters)
-* [Yuzhi Zheng](https://github.com/yuzhi)
 
-This list is not exhaustive.
+## Documentation
 
-We'd like to give special thanks to [Tom Occhino](https://github.com/tomocchino) and [Adam Wolff](https://github.com/wolffiex) for their guidance and support over the years. We are also thankful to all the volunteers who [translated React into other languages](https://translations.reactjs.org/).
+We're grateful for the work done by the [team behind reactjs.org](https://github.com/reactjs/reactjs.org) and the new React documentation found at [beta.reactjs.org](https://beta.reactjs.org/) - we've built our documentation on their excellent work 🙏 and we're grateful for that.

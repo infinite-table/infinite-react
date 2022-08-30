@@ -17,7 +17,7 @@ Row selection is defined on the `DataSource` component, so that's where you spec
 
 <Note>
 
-You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be deduced from the value of your <DPropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
+You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be derived from the value of your <DPropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
 
 </Note>
 
@@ -228,7 +228,7 @@ const rowSelection = {
     45, // row with id 45 is selected, no matter the group it is nested in
     ['Europe','France'], // all rows in Europe/France are selected
     ['Asia'] // all rows in Asia are selected
-  ]
+  ],
   deselectedRows: [
     ['Europe','France','Paris'] // all rows in Paris are deselected
   ],
@@ -239,7 +239,7 @@ const rowSelection = {
 
 As shown above, the `rowSelection.selectedRows` and `rowSelection.deselectedRows` arrays can either contain:
 
- * primary keys of rows (which are usually strings or numbers) - any non-array element inside `rowSelection.selectedRows`/`rowSelection.deselectedRows` is considered an id/primaryKey value for a leaf row in the grouped dataset.
+ * primary keys of rows (which are usually strings or numbers) - any non-array value inside `rowSelection.selectedRows`/`rowSelection.deselectedRows` is considered an id/primaryKey value for a leaf row in the grouped dataset.
  * arrays of group keys (can be combined with primary keys as well) - those arrays describe the path of the specified selected group. Please note that `rowSelection.selectedRows` can contain certain paths while `rowSelection.deselectedRows` can contain child paths of those paths ... or any other imaginable combination. For this kind of <DPropLink name="rowSelection" />, you need to enable <DPropLink name="useGroupKeysForMultiRowSelection" />.
 
 
@@ -283,7 +283,7 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 
 ### Controlled selection with checkbox column
 
-When using the controlled <DPropLink name="rowSelection" />, make sure to specify the <DPropLink name="onRowSelectionChange" /> callback prop to update the selection accordinly as a result of user interaction.
+When using the controlled <DPropLink name="rowSelection" />, make sure to specify the <DPropLink name="onRowSelectionChange" /> callback prop to update the selection accordingly as a result of user interaction.
 
 <Sandpack title="Multi row checkbox selection with grouping" >
 
@@ -310,3 +310,20 @@ Probably the most complex use-case for multi selection (with checkbox) is the co
 In this scenario, not all groups and/or rows are loaded at a given point in time, but we need to be able to know how to render each checkbox for each group - either checked, unchecked or indeterminate, all this depending on whether all children, at any nesting levels are selected or not.
 
 In order to make this possible, the <DPropLink name="rowSelection" /> value will only contain arrays (and not individual primary keys) in the `selectedRows` and `deselectedRows` arrays and the DataSource will be configured with <DPropLink name="useGroupKeysForMultiRowSelection" />.
+
+
+
+<Sandpack title="Multi row checkbox selection with lazy data and grouping" >
+
+<Description>
+
+The `DataSet` has lazy loading and grouping.
+
+The selection uses group keys (see <DPropLink name="useGroupKeysForMultiRowSelection" />), so it can specify as selected even rows/groups that have not been loaded yet.
+
+</Description>
+
+```ts file=../../reference/lazy-multi-row-selection-example.page.tsx
+```
+
+</Sandpack>

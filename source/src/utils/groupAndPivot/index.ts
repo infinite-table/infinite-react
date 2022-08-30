@@ -1107,8 +1107,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
             error: deepMapValue.error,
             totalChildrenCount: deepMapValue.totalChildrenCount,
             childrenLoading:
-              deepMapValue.childrenLoading ||
-              (!collapsed && !deepMapValue.childrenAvailable),
+              (deepMapValue.childrenLoading ||
+                (!collapsed && !deepMapValue.childrenAvailable)) &&
+              lazyLoad,
             childrenAvailable: deepMapValue.childrenAvailable,
             directChildrenCount:
               groupKeys.length === groupByStrings.length

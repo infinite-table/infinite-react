@@ -109,9 +109,15 @@ If you don't provide a value for the `rowSelection` and are calling this method 
 
 <Prop name="getSelectedPrimaryKeys" type="(rowSelection?: DataSourceRowSelection) => (string|number)[]">
 
-> Retrieves the ids (primary keys) of the selected rows, when the selection contains group keys instead of primary keys (so when <DPropLink name="useGroupKeysForMultiRowSelection" /> is `true` and the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>
+> Retrieves the ids (primary keys) of the selected rows, when the selection contains group keys instead of primary keys (so when <DPropLink name="useGroupKeysForMultiRowSelection" /> is `true` and the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>).
 
 If you provide a the value of a `rowSelection`, it will be used as the source of truth for retrieving the row ids. If no value for `rowSelection` is provided, it will use the current row selection.
+
+<Note>
+
+This will not work properly when the `DataSource` is configured with <DPropLink name="lazyLoad" code={false}>lazy loading</DPropLink>, since it cannot give you primary keys of rows not yet loaded.
+
+</Note>
 
 <Note>
 

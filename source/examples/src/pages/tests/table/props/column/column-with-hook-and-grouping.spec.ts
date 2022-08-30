@@ -23,7 +23,7 @@ export default test.describe.parallel('Column piped rendering', () => {
     expect(await leafRow.locator('button').innerText()).toEqual('Country: USA');
   });
 
-  test('is working with group icon', async ({ page }) => {
+  test('is working with group icon', async ({ page, rowModel }) => {
     await page.waitForInfinite();
 
     const groupRow = getCellNodeLocator(
@@ -34,11 +34,11 @@ export default test.describe.parallel('Column piped rendering', () => {
     const btn = groupRow.locator('button');
     expect(await btn.isVisible()).toBe(true);
 
-    expect(await getRowCount({ page })).toBe(5);
+    expect(await rowModel.getRenderedRowCount()).toBe(5);
 
     await btn.locator('svg').click();
 
-    expect(await getRowCount({ page })).toBe(3);
+    expect(await rowModel.getRenderedRowCount()).toBe(3);
 
     await btn.locator('svg').click();
 
