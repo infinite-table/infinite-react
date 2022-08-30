@@ -8,15 +8,12 @@ import { useState } from 'react';
 
 type Developer = {
   id: number;
-
   firstName: string;
   lastName: string;
-
   currency: string;
   preferredLanguage: string;
   stack: string;
   canDesign: 'yes' | 'no';
-
   age: number;
 };
 
