@@ -321,6 +321,8 @@ The `DataSet` has lazy loading and grouping.
 
 The selection uses group keys (see <DPropLink name="useGroupKeysForMultiRowSelection" />), so it can specify as selected even rows/groups that have not been loaded yet.
 
+Note in the example below that some of the group rows are partly selected, even if the leaf rows which are specified as selected in the <DPropLink name="rowSelection" /> are not yet loaded.
+
 </Description>
 
 ```ts file=../../reference/lazy-multi-row-selection-example.page.tsx
