@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Collapsing works', () => {
-  test('should toggle second level group corectly', async ({
+  test.skip('should toggle second level group corectly', async ({
     page,
     rowModel,
   }) => {
