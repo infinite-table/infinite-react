@@ -3,6 +3,7 @@ export { debounce } from './components/utils/debounce';
 export * from './components/InfiniteTable';
 
 export * from './components/DataSource';
+export * from './components/Menu';
 
 import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBox';
 import { LoadMask } from './components/InfiniteTable/components/LoadMask';

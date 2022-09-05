@@ -15,12 +15,11 @@ import {
   InfiniteTablePivotFinalColumnGroup,
   InfiniteTablePivotFinalColumnVariant,
 } from '../../components/InfiniteTable/types/InfiniteTableColumn';
-import {
-  InfiniteTableColumnGroup,
-  InfiniteTableGroupColumnBase,
-} from '../../components/InfiniteTable/types/InfiniteTableProps';
+import type { InfiniteTableColumnGroup } from '../../components/InfiniteTable/types/InfiniteTableProps';
+import type { GroupBy } from './types';
 import { deepClone } from '../deepClone';
 import { DeepMap } from '../DeepMap';
+import { DEFAULT_TO_KEY } from './defaultToKey';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -38,10 +37,6 @@ export type AggregationReducerResult<AggregationResultType extends any = any> =
     value: AggregationResultType;
     id: string;
   };
-
-function DEFAULT_TO_KEY<T>(value: T): T {
-  return value;
-}
 
 /**
  * InfiniteTableRowInfo can have different object shape depending on the presence or absence of grouping.
@@ -336,12 +331,6 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
     GroupKeyType<KeyType>,
     PivotGroupValueType<DataType, KeyType>
   >;
-};
-
-export type GroupBy<DataType, KeyType> = {
-  field: keyof DataType;
-  toKey?: (value: any, data: DataType) => GroupKeyType<KeyType>;
-  column?: Partial<InfiniteTableGroupColumnBase<DataType>>;
 };
 
 export type PivotBy<DataType, KeyType> = Omit<
@@ -713,23 +702,6 @@ function processGroup<KeyType, DataType>(
     }
     currentPivotKeys.length = 0;
   }
-}
-
-export function getGroupKeysForDataItem<DataType, KeyType = any>(
-  data: DataType,
-  groupBy: GroupBy<DataType, KeyType>[],
-) {
-  return groupBy.reduce((groupKeys, groupBy) => {
-    const { field: groupByProperty, toKey: groupToKey } = groupBy;
-    const key: GroupKeyType<KeyType> = (groupToKey || DEFAULT_TO_KEY)(
-      data[groupByProperty],
-      data,
-    );
-
-    groupKeys.push(key);
-
-    return groupKeys;
-  }, [] as any[]);
 }
 
 export function group<DataType, KeyType = any>(

@@ -31,7 +31,7 @@ import {
   flexFlow,
 } from '../utilities.css';
 
-import { RenderCellHookComponent } from './RenderHookComponent';
+import { RenderCellHookComponent } from './RenderHookComponentForInfinite';
 
 export function styleForGroupColumn<T>({
   rowInfo,

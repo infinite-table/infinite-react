@@ -1,7 +1,6 @@
 import { DataSourceState } from '.';
 import { DeepMap } from '../../utils/DeepMap';
-
-import { getGroupKeysForDataItem } from '../../utils/groupAndPivot';
+import { getGroupKeysForDataItem } from '../../utils/groupAndPivot/getGroupKeysForDataItem';
 
 type RowSelectionStateItem = (any | any[])[];
 
@@ -34,7 +33,7 @@ export type RowSelectionStateConfig<T> = {
 
 export type GetRowSelectionStateConfig<T> = () => RowSelectionStateConfig<T>;
 
-type RowSelectionStateOverrideForTesting = {
+type RowSelectionStateOverride = {
   getGroupKeysForPrimaryKey: RowSelectionState<any>['getGroupKeysForPrimaryKey'];
   getGroupByLength: RowSelectionState<any>['getGroupByLength'];
   getGroupCount: RowSelectionState<any>['getGroupCount'];
@@ -118,19 +117,15 @@ export class RowSelectionState<T = any> {
   static from<T>(
     rowSeleStateObject: RowSelectionStateObject,
     getConfig: GetRowSelectionStateConfig<T>,
-    _forTestingOnly?: RowSelectionStateOverrideForTesting,
+    overrides?: RowSelectionStateOverride,
   ) {
-    return new RowSelectionState(
-      rowSeleStateObject,
-      getConfig,
-      _forTestingOnly,
-    );
+    return new RowSelectionState(rowSeleStateObject, getConfig, overrides);
   }
 
   constructor(
     state: RowSelectionStateObject | RowSelectionState,
     getConfig: GetRowSelectionStateConfig<T>,
-    _forTestingOnly?: RowSelectionStateOverrideForTesting,
+    _forTestingOnly?: RowSelectionStateOverride,
   ) {
     const stateObject =
       state instanceof Object.getPrototypeOf(this).constructor

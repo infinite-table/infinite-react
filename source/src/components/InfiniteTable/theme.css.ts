@@ -283,6 +283,20 @@ export const ThemeVars = createGlobalThemeContract(
       SelectionCheckBox: {
         marginInline: 'selection-checkbox-margin-inline',
       },
+      Menu: {
+        background: 'menu-background',
+        color: 'menu-color',
+        padding: 'menu-padding',
+        cellPaddingVertical: 'menu-cell-padding-vertical',
+        cellPaddingHorizontal: 'menu-cell-padding-horizontal',
+        cellMarginVertical: 'menu-cell-margin-vertical',
+        itemDisabledBackground: 'menu-item-disabled-background',
+        itemHoverBackground: 'menu-item-hover-background',
+        itemHoverOpacity: 'menu-item-hover-opacity',
+        itemPressedOpacity: 'menu-item-pressed-opacity',
+        itemPressedBackground: 'menu-item-pressed-background',
+        itemDisabledOpacity: 'menu-item-disabled-opacity',
+      },
       Row: {
         /**
          * Background color for rows. Defaults to [`--infinite-background`](#background).
@@ -442,6 +456,24 @@ const RowVars = {
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };
 
+const MenuVars = {
+  [ThemeVars.components.Menu.background]: ThemeVars.background,
+  [ThemeVars.components.Menu.color]: ThemeVars.components.Cell.color,
+  [ThemeVars.components.Menu.padding]: ThemeVars.spacing[3],
+  [ThemeVars.components.Menu.cellPaddingVertical]: ThemeVars.spacing[3],
+  [ThemeVars.components.Menu.cellPaddingHorizontal]: ThemeVars.spacing[3],
+  [ThemeVars.components.Menu.cellMarginVertical]: ThemeVars.spacing[0],
+  [ThemeVars.components.Menu.itemDisabledBackground]:
+    ThemeVars.components.Menu.background,
+  [ThemeVars.components.Menu.itemDisabledOpacity]: 0.5,
+  [ThemeVars.components.Menu.itemHoverBackground]:
+    ThemeVars.components.Row.hoverBackground,
+  [ThemeVars.components.Menu.itemPressedBackground]:
+    ThemeVars.components.Row.hoverBackground,
+  [ThemeVars.components.Menu.itemHoverOpacity]: 0.95,
+  [ThemeVars.components.Menu.itemPressedOpacity]: 1,
+};
+
 const LightTheme = {
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
@@ -473,6 +505,7 @@ const LightTheme = {
   [ThemeVars.minHeight]: '100px',
 
   ...SelectionCheckBoxVars,
+  ...MenuVars,
   ...LoadMaskVars,
   ...HeaderCellVars,
   ...HeaderVars,
@@ -497,6 +530,7 @@ const DarkTheme = {
 };
 
 globalStyle(':root', {
+  //@ts-ignore
   vars: LightTheme,
   '@media': {
     '(prefers-color-scheme: dark)': {
@@ -506,6 +540,7 @@ globalStyle(':root', {
 });
 
 globalStyle('.light, .infinite-light, .light:root, .infinite-light:root', {
+  //@ts-ignore
   vars: LightTheme,
 });
 globalStyle('.dark, .infinite-dark', {

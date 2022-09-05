@@ -3,8 +3,12 @@ import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 
 export function handleRowNavigation<T>(
   options: InfiniteTableKeyboardEventHandlerContext<T>,
+  event: {
+    key: string;
+  },
 ) {
-  const { key, getState, getDataSourceState, actions, api } = options;
+  const { getState, getDataSourceState, actions, api } = options;
+  const { key } = event;
   const dataArray = getDataSourceState().dataArray;
   const arrLength = dataArray.length;
   const state = getState();
@@ -85,16 +89,17 @@ export function handleRowNavigation<T>(
 
 export function handleCellNavigation<T>(
   options: InfiniteTableKeyboardEventHandlerContext<T>,
+  event: { key: string; shiftKey: boolean },
 ) {
   const {
     api,
-    key,
-    shiftKey,
+
     getState,
     getComputed,
     getDataSourceState,
     actions,
   } = options;
+  const { key, shiftKey } = event;
 
   const dataArray = getDataSourceState().dataArray;
   const state = getState();
@@ -201,21 +206,26 @@ const validKeys: Record<string, boolean> = {
 
 export function handleKeyboardNavigation<T>(
   options: InfiniteTableKeyboardEventHandlerContext<T>,
+  event: {
+    key: string;
+    shiftKey: boolean;
+  },
 ) {
+  const { key } = event;
   const { getState } = options;
   const state = getState();
 
   const { activeRowIndex, activeCellIndex, keyboardNavigation } = state;
 
-  if (!validKeys[options.key]) {
+  if (!validKeys[key]) {
     return false;
   }
   if (activeRowIndex != null && keyboardNavigation === 'row') {
-    return handleRowNavigation(options);
+    return handleRowNavigation(options, event);
   }
 
   if (activeCellIndex != null && keyboardNavigation === 'cell') {
-    return handleCellNavigation(options);
+    return handleCellNavigation(options, event);
   }
 
   return false;

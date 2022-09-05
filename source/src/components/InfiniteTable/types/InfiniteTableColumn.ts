@@ -55,6 +55,11 @@ export type InfiniteTableColumnHeaderParam<
   };
 };
 
+export type InfiniteTableColumnRenderBag = {
+  value: string | number | Renderable;
+  groupIcon?: Renderable;
+  selectionCheckBox?: Renderable;
+};
 export type InfiniteTableColumnRenderParamBase<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
@@ -64,11 +69,7 @@ export type InfiniteTableColumnRenderParamBase<
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
 
-  renderBag: {
-    value: string | number | Renderable;
-    groupIcon?: Renderable;
-    selectionCheckBox?: Renderable;
-  };
+  renderBag: InfiniteTableColumnRenderBag;
   rowIndex: number;
   rowActive: boolean;
 

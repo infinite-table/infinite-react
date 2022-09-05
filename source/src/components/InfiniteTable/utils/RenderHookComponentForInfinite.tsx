@@ -6,17 +6,10 @@ import {
   InfiniteTableColumnCellContextType,
   InfiniteTableHeaderCellContextType,
 } from '../types/InfiniteTableColumn';
-
-export type RenderHookComponentProps<RENDER_FN extends Function, PARAM_TYPE> = {
-  render: RENDER_FN;
-  renderParam: PARAM_TYPE;
-};
-
-function RenderHookComponent<RENDER_FN extends Function, PARAM_TYPE>(
-  props: RenderHookComponentProps<RENDER_FN, PARAM_TYPE>,
-) {
-  return props.render(props.renderParam) ?? null;
-}
+import {
+  RenderHookComponent,
+  RenderHookComponentProps,
+} from '../../RenderHookComponent';
 
 export function RenderCellHookComponent<T, RENDER_FN extends Function>(
   props: RenderHookComponentProps<

@@ -5,10 +5,10 @@ import { DeepMap } from '../../utils/DeepMap';
 import {
   AggregationReducerResult,
   DeepMapGroupValueType,
-  GroupBy,
   GroupKeyType,
   PivotBy,
 } from '../../utils/groupAndPivot';
+import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfo } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {

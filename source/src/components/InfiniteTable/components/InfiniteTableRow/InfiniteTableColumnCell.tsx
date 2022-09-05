@@ -21,7 +21,7 @@ import type {
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
-import { RenderCellHookComponent } from '../../utils/RenderHookComponent';
+import { RenderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import {

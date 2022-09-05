@@ -1,8 +1,8 @@
 import { RowSelectionState } from '../../DataSource/RowSelectionState';
-import { rowSelectionStateConfigGetter } from '../api/getSelectionApi';
+
 import {
   InfiniteTableCellClickEventHandlerContext,
-  InfiniteTableEventHandlerContext,
+  InfiniteTableEventHandlerAbstractContext,
   InfiniteTableKeyboardEventHandlerContext,
 } from './eventHandlerTypes';
 
@@ -21,9 +21,9 @@ export function onCellClick<T>(
 }
 
 export function updateRowSelectionOnCellClick<T>(
-  context: InfiniteTableEventHandlerContext<T> & {
+  context: InfiniteTableEventHandlerAbstractContext<T> & {
     rowIndex: number;
-  } & InfiniteTableKeyboardEventHandlerContext<T>,
+  },
 
   event: {
     key: string;
@@ -33,8 +33,14 @@ export function updateRowSelectionOnCellClick<T>(
     preventDefault: VoidFunction;
   },
 ) {
-  const { rowIndex, getDataSourceState, getComputed, dataSourceActions, api } =
-    context;
+  const {
+    rowIndex,
+    getDataSourceState,
+    getComputed,
+    dataSourceActions,
+    api,
+    cloneRowSelection,
+  } = context;
 
   const { multiRowSelector, renderSelectionCheckBox } = getComputed();
   const dataSourceState = getDataSourceState();
@@ -56,9 +62,8 @@ export function updateRowSelectionOnCellClick<T>(
     }
     let { rowSelection: rowSelectionState } = dataSourceState;
     // clone the row selection
-    rowSelectionState = new RowSelectionState(
-      rowSelectionState as RowSelectionState<string>,
-      rowSelectionStateConfigGetter(getDataSourceState),
+    rowSelectionState = cloneRowSelection(
+      rowSelectionState as RowSelectionState<T>,
     );
 
     multiRowSelector.rowSelectionState = rowSelectionState;

@@ -92,6 +92,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 const domProps = {
   style: {
     height: '80vh',
+    margin: 10,
   },
 };
 

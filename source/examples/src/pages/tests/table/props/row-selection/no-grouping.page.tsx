@@ -4,30 +4,56 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection_MultiRow,
-  InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
+import { RowSelectionState } from '@infinite-table/infinite-react/components/DataSource/RowSelectionState';
 
 type Developer = {
   id: number;
 
+  firstName: string;
+  lastName: string;
+  country: string;
+  city: string;
+  currency: string;
+  preferredLanguage: string;
   stack: string;
-  language: string;
+  canDesign: 'yes' | 'no';
+  hobby: string;
+  salary: number;
+  age: number;
+};
+
+const dataSource = () => {
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
+    .then((r) => r.json())
+    .then((data: Developer[]) => data);
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id' },
 
-  stack: {
-    field: 'stack',
+  firstName: {
+    field: 'firstName',
+
+    align: 'end',
   },
 
-  language: {
-    field: 'language',
+  preferredLanguage: {
+    field: 'preferredLanguage',
+
+    header: ({ renderBag }) => {
+      return (
+        <>
+          {renderBag.sortIcon}- {'Language'}{' '}
+        </>
+      );
+    },
   },
+  stack: { field: 'stack' },
 };
 
 const domProps = {
@@ -36,75 +62,29 @@ const domProps = {
   },
 };
 
-const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
-  field: 'id',
-  // align: 'end',
-  // renderValue: (arg) => {
-  //   const { groupByColumn, value } = arg;
-
-  //   if (!groupByColumn) {
-  //     return <>{value}</>;
-  //   }
-
-  //   return <>{groupByColumn.renderValue?.(arg) ?? arg.value}</>;
-  // },
-};
-
-const dataSource: Developer[] = [
-  {
-    id: 10,
-    stack: 'backend',
-    language: 'TypeScript',
-  },
-  {
-    id: 11,
-    stack: 'backend',
-    language: 'TypeScript',
-  },
-  {
-    id: 12,
-    stack: 'backend',
-    language: 'TypeScript',
-  },
-  {
-    id: 13,
-    stack: 'backend',
-    language: 'Rust',
-  },
-  // {
-  //   id: 14,
-  //   stack: 'backend',
-  //   language: 'Rust',
-  // },
-  // {
-  //   id: 15,
-  //   stack: 'backend',
-  //   language: 'Rust',
-  // },
-  // { id: 16, stack: 'backend', language: 'go' },
-  // { id: 17, stack: 'frontend', language: 'ts' },
-];
 export default function GroupByExample() {
-  const [rowSelection, setRowSelection] =
+  const [rowSelection, _setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
+      selectedRows: [2, 3],
       defaultSelection: false,
-      selectedRows: [10, 11, 12],
-      deselectedRows: [],
     });
 
   return (
     <>
       <div>
-        <pre>
-          <code>{JSON.stringify(rowSelection)}</code>
-        </pre>
+        Selected{' '}
+        {rowSelection instanceof RowSelectionState
+          ? rowSelection.getSelectedCount()
+          : false}
       </div>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         selectionMode="multi-row"
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
+        defaultRowSelection={rowSelection}
+        onRowSelectionChange={(rowSelection) => {
+          console.log(JSON.stringify(rowSelection, null, 2));
+        }}
         // selectionMode="multi-row" | 'single-row' | multi-cell | single-cell
         // multiRowSelection={{}}
         // singleRowSelection={{}}
@@ -136,16 +116,6 @@ export default function GroupByExample() {
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
-          keyboardNavigation="row"
-          groupRenderStrategy="single-column"
-          hideColumnWhenGrouped
-          onColumnOrderChange={(columnOrder) => {
-            console.log(columnOrder);
-          }}
-          // groupColumn={{
-          //   field: 'firstName',
-          // }}
-          groupColumn={groupColumn}
           columnDefaultWidth={200}
         />
       </DataSource>

@@ -1,6 +1,5 @@
 import { RowSelectionState } from '../../DataSource';
-import { rowSelectionStateConfigGetter } from '../api/getSelectionApi';
-import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
+import { InfiniteTableEventHandlerAbstractContext } from './eventHandlerTypes';
 import { updateRowSelectionOnCellClick } from './onCellClick';
 
 const validKeys: Record<string, boolean> = {
@@ -10,17 +9,23 @@ const validKeys: Record<string, boolean> = {
 };
 
 export function handleKeyboardSelection<T>(
-  context: InfiniteTableKeyboardEventHandlerContext<T>,
+  context: InfiniteTableEventHandlerAbstractContext<T>,
+  keyboardEvent: {
+    key: string;
+    metaKey: boolean;
+    ctrlKey: boolean;
+    shiftKey: boolean;
+    preventDefault: VoidFunction;
+  },
 ) {
   const {
     getState,
     getDataSourceState,
     dataSourceActions,
     api: imperativeApi,
-    key,
-    ctrlKey,
-    metaKey,
+    cloneRowSelection,
   } = context;
+  const { key, ctrlKey, metaKey } = keyboardEvent;
 
   if (!validKeys[key]) {
     return false;
@@ -65,9 +70,8 @@ export function handleKeyboardSelection<T>(
   }
 
   if (key === 'a' && (ctrlKey || metaKey)) {
-    const rowSelectionState = new RowSelectionState(
-      rowSelection as RowSelectionState<string>,
-      rowSelectionStateConfigGetter(getDataSourceState),
+    const rowSelectionState = cloneRowSelection(
+      rowSelection as RowSelectionState<T>,
     );
 
     rowSelectionState.selectAll();
@@ -78,7 +82,7 @@ export function handleKeyboardSelection<T>(
 
   if (key === ' ') {
     if (groupBy.length) {
-      if (rowInfo.isGroupRow) {
+      if (rowInfo.isGroupRow && rowInfo.groupKeys) {
         imperativeApi.selectionApi.toggleGroupRowSelection(rowInfo.groupKeys);
       } else {
         imperativeApi.selectionApi.toggleRowSelection(rowInfo.id);
@@ -87,7 +91,7 @@ export function handleKeyboardSelection<T>(
     } else {
       // no grouping, but space should be treated like a mouse click
 
-      const event = { ...context };
+      const event = { ...keyboardEvent };
       const { renderSelectionCheckBox } = context.getComputed();
 
       // if we have a selection checkbox column, then we wont allow shift be used with the space key

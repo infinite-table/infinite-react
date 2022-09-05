@@ -2,6 +2,7 @@ import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { CellPosition } from '../../types/CellPosition';
+import { cloneRowSelection } from '../api/getSelectionApi';
 import { useInfiniteTable } from '../hooks/useInfiniteTable';
 import { InfiniteTableEventHandlerContext } from './eventHandlerTypes';
 import { onCellClick } from './onCellClick';
@@ -25,6 +26,9 @@ function useEventHandlersContext<T>() {
       actions,
       getDataSourceState,
       dataSourceActions,
+      cloneRowSelection: (rowSelection) => {
+        return cloneRowSelection<T>(rowSelection, getDataSourceState);
+      },
     };
     return context;
   }, [getState, actions, getDataSourceState, dataSourceActions]);
@@ -37,17 +41,7 @@ function handleDOMEvents<T>() {
 
   useEffect(() => {
     const removeOnKeyDown = context.getState().keyDown.onChange((event) => {
-      onKeyDown(
-        {
-          ...context,
-          key: event!.key,
-          metaKey: event!.metaKey,
-          ctrlKey: event!.ctrlKey,
-          shiftKey: event!.shiftKey,
-          preventDefault: () => event!.preventDefault(),
-        },
-        event!,
-      );
+      onKeyDown(context, event!);
     });
 
     function cellClickHandler(
@@ -70,7 +64,6 @@ function handleDOMEvents<T>() {
           ...context,
           rowIndex: cellClickParam.rowIndex,
           colIndex: cellClickParam.colIndex,
-          ...virtualEvent,
         },
         virtualEvent,
       );

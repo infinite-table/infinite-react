@@ -31,9 +31,9 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 🤔 What is Infinite?
+## 🤔 What is Infinite Table?
 
-Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
+`Infinite Table` is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
 * [🔃 sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
 * [💪 row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side

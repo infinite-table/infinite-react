@@ -30,6 +30,10 @@ export const fill = styleVariants({
   accentColor: { fill: ThemeVars.color.accent },
 });
 
+export const margin = styleVariants({
+  none: { margin: 0 },
+});
+
 export const stroke = styleVariants({
   currentColor: { stroke: 'currentColor' },
   accentColor: { stroke: ThemeVars.color.accent },
@@ -51,6 +55,7 @@ export const transform = styleVariants({
 
 export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
+  default: { cursor: 'default' },
   colResize: { cursor: 'col-resize' },
 });
 
@@ -78,9 +83,13 @@ export const zIndex = styleVariants({
 
 export const display = styleVariants({
   flex: { display: 'flex' },
+  contents: { display: 'contents' },
   none: { display: 'none' },
   block: { display: 'block' },
+  grid: { display: 'grid' },
   inlineBlock: { display: 'inline-block' },
+  inlineFlex: { display: 'inline-flex' },
+  inlineGrid: { display: 'inline-grid' },
 });
 export const userSelect = styleVariants({
   none: { userSelect: 'none' },

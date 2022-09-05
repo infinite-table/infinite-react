@@ -1,7 +1,5 @@
-import {
-  getGroupKeysForDataItem,
-  InfiniteTable_RowInfoBase,
-} from '../../../utils/groupAndPivot';
+import { InfiniteTable_RowInfoBase } from '../../../utils/groupAndPivot';
+import { getGroupKeysForDataItem } from '../../../utils/groupAndPivot/getGroupKeysForDataItem';
 
 import {
   DataSourceComponentActions,
@@ -45,6 +43,16 @@ export type GetSelectionApiParam<T> = {
   };
 };
 
+export function cloneRowSelection<T>(
+  rowSelection: RowSelectionState<T> | RowSelectionStateObject,
+  stateOrGetDataSourceState: DataSourceState<T> | (() => DataSourceState<T>),
+) {
+  return new RowSelectionState<T>(
+    rowSelection,
+    rowSelectionStateConfigGetter(stateOrGetDataSourceState),
+  );
+}
+
 export function rowSelectionStateConfigGetter<T>(
   stateOrStateGetter: DataSourceState<T> | (() => DataSourceState<T>),
 ): GetRowSelectionStateConfig<T> {
@@ -81,14 +89,6 @@ export function getSelectionApi<T>(
     get allRowsSelected() {
       return getDataSourceState().allRowsSelected;
     },
-
-    // getSelectedRowCount() {
-    //   const { selectionMode, selectedRowCount } = getDataSourceState();
-    //   if (selectionMode != 'multi-row') {
-    //     throw `Cannot get the selected row count unless "selectionMode" is "multi-row"!`;
-    //   }
-    //   return selectedRowCount;
-    // },
 
     selectAll() {
       const { rowSelection, selectionMode } = getDataSourceState();

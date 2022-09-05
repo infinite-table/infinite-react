@@ -28,7 +28,7 @@ import type {
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
 import { cursor, justifyContent, userSelect } from '../../utilities.css';
-import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponent';
+import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
