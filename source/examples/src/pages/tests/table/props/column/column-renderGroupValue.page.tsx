@@ -22,9 +22,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -51,20 +49,18 @@ const groupBy: DataSourcePropGroupBy<Developer> = [
     field: 'country',
     column: {
       header: 'Country group',
-      renderGroupValue: ({ value }) => (
-        <>Country: {value}</>
-      ),
+      renderGroupValue: ({ value }) => <>Country: {value}</>,
     },
   },
 ];
 
 export default function App() {
   return (
-    <DataSource<Developer>
-      data={dataSource}
-      primaryKey="id"
-      groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} />
+    <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
+      <InfiniteTable<Developer>
+        columns={columns}
+        domProps={{ style: { height: 500 } }}
+      />
     </DataSource>
   );
 }

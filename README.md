@@ -37,7 +37,7 @@
 
 * [🔃 sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
 * [💪 row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-* [🏢 pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting) - both server-side and client-side
+* [🏢 pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
 * [🧪 aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
 * [🌪️ live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
 * [🌴 lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)

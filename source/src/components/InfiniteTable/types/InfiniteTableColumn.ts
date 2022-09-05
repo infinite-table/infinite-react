@@ -349,7 +349,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   renderGroupValue?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
   renderLeafValue?: InfiniteTableColumnRenderFunctionForNormalRows<DATA_TYPE>;
   valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
-  valueFormatter?: InfiniteTableColumnValueFormatter<DATA_TYPE>;
+  valueFormatter?: InfiniteTableColumnValueFormatter<DATA_TYPE, Renderable>;
 
   defaultWidth?: number;
   defaultFlex?: number;

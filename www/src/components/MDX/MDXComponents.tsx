@@ -7,6 +7,7 @@ import {
   Prop,
   PropTable,
   PropLink,
+  LearnLink,
   DataSourcePropLink,
   HookLink,
 } from './Prop';
@@ -442,6 +443,7 @@ export const MDXComponents = {
   PackageImport,
   Prop,
   PropLink,
+  LearnLink,
   DataSourcePropLink,
   DPropLink: DataSourcePropLink,
   HookLink,

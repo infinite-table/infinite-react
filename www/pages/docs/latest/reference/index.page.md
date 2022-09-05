@@ -478,6 +478,20 @@ If no <PropLink name="columns.header" /> is specified, it will be used as the co
 ```
 
 </Sandpack>
+
+Group columns can also be bound to a field, like in the snippet below.
+
+<Sandpack>
+
+<Description>
+In this example, the group column is bound to the `firstName` field, so this field will be rendered in non-group rows for this column.
+</Description>
+
+```ts file=group-column-bound-to-field-example.page.tsx
+```
+
+</Sandpack>
+
 </Prop>
 
 <Prop name="columns.header" type="React.ReactNode|({column, columnSortInfo})=>React.ReactNode">
@@ -657,22 +671,16 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 </Prop>
 
-<Prop name="columns.renderGroupValue" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
-> Customizes the rendering of the column content, but only for group rows.
+<Prop name="columns.renderGroupIcon" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
-This prop is different from <PropLink name="columns.render" />, <PropLink name="columns.renderValue" />, as it is only called for group rows.
+> Customizes the rendering of the collapse/expand group icon for group rows.
 
-<Note>
+For actual content of group cells, see related <PropLink name="columns.renderGroupValue" />
 
-This function prop is called with a parameter - the `value` property of this parameter is not useful for group rows, as it refers to the current data item, which is a group item, not a normal data item. Instead, use `rowInfo.value`, as that's the current group row value.
+<Sandpack title="Column with custom renderGroupIcon">
 
-</Note>
-
-
-<Sandpack title="Column with custom renderGroupValue">
-
-```tsx file=column-renderGroupValue-example.page.tsx
+```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
 ```
 </Sandpack>
 
@@ -680,6 +688,75 @@ This function prop is called with a parameter - the `value` property of this par
 
 </Prop>
 
+<Prop name="columns.renderSelectionCheckBox" type="boolean | ({ data, rowSelected: boolean | null, selectRow, deselectRow, ... })">
+
+> Specifies that the current column will have a selection checkbox - if a function is provided, will be used to customizes the rendering of the checkbox rendered for selection.
+
+See related <DPropLink name="rowSelection" />.
+
+If `true` is provided, the default selection checkbox will be rendered. When a function is provided, it will be used for rendering the checkbox for selection.
+
+<Note>
+
+`rowSelected` property in the function parameter can be either `boolean` or `null`. The `null` value is used for groups with indeterminate state, meaning the group has some children selected, but not all of them.
+</Note>
+
+<Sandpack title="Column with custom renderSelectionCheckBox">
+
+<Description>
+This example shows how you can use the default selection checkbox and decorate it.
+</Description>
+
+```tsx file=column-renderSelectionCheckBox-example.page.tsx
+```
+</Sandpack>
+
+
+
+</Prop>
+
+
+<Prop name="columns.renderGroupValue" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
+
+> Customizes the rendering of a group column content, but only for group rows.
+
+This prop is different from <PropLink name="columns.render" />, <PropLink name="columns.renderValue" />, as it is only called for group rows.
+
+<Note>
+
+This function prop is called with a parameter - the `value` property of this parameter is not useful for group rows (of non-group columns), as it refers to the current data item, which is a group item, not a normal data item. Instead, use `rowInfo.value`, as that's the current group row value.
+
+</Note>
+
+See related <PropLink name="columns.renderGroupIcon" /> for customizing the collapse/expand group icon.
+See related <PropLink name="columns.renderLeafValue" /> for customizing the value for non-group rows in a group column.
+
+
+<Sandpack title="Column with custom renderGroupValue">
+
+```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+```
+</Sandpack>
+
+
+</Prop>
+
+
+<Prop name="columns.renderLeafValue" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
+
+> Customizes the rendering of the group column content, but only for non-group rows.
+
+See related <PropLink name="columns.renderGroupValue" /> for customizing the value for group rows in a group column.
+
+
+<Sandpack title="Column with custom renderLeafValue">
+
+```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+```
+</Sandpack>
+
+
+</Prop>
 <Prop name="columns.renderValue" type="({ value, data, rowInfo, column, renderBag, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
 
 > Customizes the rendering of the column content.
@@ -832,11 +909,35 @@ See the example below - `id` and `age` columns are `type='number'`.
 </Sandpack>
 </Prop>
 
-<Prop name="columns.valueGetter" type="({ data, rowInfo }) => string | number | boolean | null | undefined">
+
+<Prop name="columns.valueFormatter" type="({ data?, isGroupRow, rowInfo, field?, rowSelected, rowActive, isGroupRow }) => Renderable">
 
 > Customizes the value that will be rendered
 
-The `valueGetter` prop is a function that takes a single argument - an object with `data` and `rowInfo` properties. It should return a plain JavaScript value (so not a `ReactNode` or `JSX.Element`)
+The `valueFormatter` prop is the next function called after the <PropLink name="columns.valueGetter" /> during the [rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline). Unlike <PropLink name="columns.valueGetter" />, <PropLink name="columns.valueFormatter" /> can return any renderable value, like `JSX.Element`s.
+
+<Note>
+
+Unlike `valueGetter`, it is being called with an object that has both the `data` item (might be null or partial for group rows) and the `rowInfo` object, and some extra flags regarding the row state (selection, active, etc). Use the TS `isGroupRow` flag as discriminator to decide if `data` is available.
+
+</Note>
+
+If you want to further customize what's being rendered, see related <PropLink name="columns.valueGetter" />, <PropLink name="columns.renderValue" />, <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />, <PropLink name="columns.renderLeafValue" /> and <PropLink name="columns.renderGroupIcon" />.
+
+<Sandpack title="Column with custom valueFormatter">
+
+```tsx file=column-valueFormatter-example.page.tsx
+```
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="columns.valueGetter" type="({ data, field? }) => string | number | boolean | null | undefined">
+
+> Customizes the value that will be rendered
+
+The `valueGetter` prop is a function that takes a single argument - an object with `data` and `field` properties. It should return a plain JavaScript value (so not a `ReactNode` or `JSX.Element`)
 
 <Note>
 
@@ -845,7 +946,7 @@ Note that the `data` property is of type `DATA_TYPE | Partial<DATA_TYPE> | null`
 </Note>
 
 
-If you want to further customize what's being rendered, see <PropLink name="columns.renderValue" />.
+If you want to further customize what's being rendered, see related <PropLink name="columns.valueFormatter" />, <PropLink name="columns.renderValue" />, <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />, <PropLink name="columns.renderLeafValue" /> and <PropLink name="columns.renderGroupIcon" />.
 
 <Sandpack title="Column with custom valueGetter">
 
@@ -854,6 +955,7 @@ If you want to further customize what's being rendered, see <PropLink name="colu
 </Sandpack>
 
 </Prop>
+
 
 <Prop name="columnSizing" type="Record<string,{width,flex,...}>">
 

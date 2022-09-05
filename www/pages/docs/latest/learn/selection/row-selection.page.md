@@ -204,7 +204,7 @@ The only supported modifier key when selecting a row by pressing **spacebar** is
 
 ## Specify a `rowSelection` value
 
-When multiple row selection is used, the <PropLink name="rowSelection" /> prop should be an object that can have the following shape:
+When multiple row selection is used, the <DPropLink name="rowSelection" /> prop should be an object that can have the following shape:
 
 
 ```ts
@@ -270,7 +270,8 @@ const rowSelection = {
   ]
   deselectedRows: [
     ['Europe','Italy','Rome'] // all rows in Rome are deselected
-    // but note that row with id 45 is selected, so Rome will be rendered with an indeterminate selection state
+    // but note that row with id 45 is selected, so Rome will be
+    // rendered with an indeterminate selection state
   ],
   defaultSelection: false // all other rows are selected
 }

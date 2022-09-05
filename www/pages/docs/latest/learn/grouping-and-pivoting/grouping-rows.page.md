@@ -50,8 +50,6 @@ Also see the <DataSourcePropLink name="groupBy" code={false}>groupBy API referen
 
 ```ts file=row-grouping-example.page.tsx
 ```
-```ts file=columns.ts
-```
 </Sandpack>
 
 In `groupBy.column` you can use any column property - so, for example, you can define a custom `renderValue` function to customize the rendering.
@@ -308,7 +306,7 @@ const sortInfo = [
 
  <Note>
 
- Both in single and multi group column render strategy, the <PropLink name="columns.sortable" /> property can be used to override the default behavior.
+ The <PropLink name="columns.sortable" /> property can be used to override the default behavior.
 
  </Note>
 

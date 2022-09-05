@@ -6,6 +6,17 @@
       "heading": true,
       "routes": [
         {
+          "path": "/blog/2022/09/01/infinite-table-monthly-update-august-2022",
+          "date": "2022-09-01",
+          "title": "Monthly Update - August 2022",
+          "description": "Infinite Table update for August 2022",
+          "author": [
+            "admin"
+          ],
+          "excerpt": "<p>In August, we’ve contined our work on preparing for our Autumn release, mainly focusing on adding new functionalities and documenting them thoroughly, along with improving existing features and documentation.</p>\n",
+          "readingTime": "2 min read"
+        },
+        {
           "path": "/blog/2022/08/01/infinite-table-monthly-update-july-2022",
           "date": "2022-08-01",
           "title": "Monthly Update - July 2022",

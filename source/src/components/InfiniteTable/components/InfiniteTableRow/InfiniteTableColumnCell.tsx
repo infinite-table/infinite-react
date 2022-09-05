@@ -167,6 +167,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   });
 
   const renderParam = renderParams as InfiniteTableColumnRenderParam<T>;
+  const renderParamRef =
+    React.useRef<InfiniteTableColumnRenderParam<T>>(renderParam);
 
   const onClick = useCallback(
     (event) => {
@@ -300,6 +302,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       );
     }
 
+    renderParamRef.current = renderParam;
+
     if (column.render) {
       return (
         <RenderCellHookComponent
@@ -421,12 +425,19 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     renderChildren,
   };
 
-  // const ContextProvider =
-  //   InfiniteTableColumnCellContext.Provider as React.Provider<
-  //     InfiniteTableColumnCellContextType<T>
-  //   >;
-
-  return <InfiniteTableCell<T> {...cellProps}></InfiniteTableCell>;
+  const ContextProvider =
+    InfiniteTableColumnCellContext.Provider as React.Provider<
+      InfiniteTableColumnCellContextType<T>
+    >;
+  return (
+    // this context is here for supporting useInfiniteColumnCell to be used
+    // with a custom column component, specified via column.components.ColumnCell
+    <ContextProvider
+      value={renderParamRef.current as InfiniteTableColumnCellContextType<T>}
+    >
+      <InfiniteTableCell<T> {...cellProps}></InfiniteTableCell>
+    </ContextProvider>
+  );
 }
 
 export const InfiniteTableColumnCell = React.memo(

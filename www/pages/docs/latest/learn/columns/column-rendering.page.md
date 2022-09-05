@@ -64,20 +64,26 @@ The next step in customizing the rendering for a column is to use the <PropLink 
 
 The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
 
-- data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
-- rowInfo - very useful information about the current row:
-  - `rowInfo.value` - the value that will be rendered by default
+- `data` - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
+- `rowInfo` - very useful information about the current row:
   - `rowInfo.collapsed` - if the row is collased or not.
   - `rowInfo.groupBy` - the current group by for the row
   - `rowInfo.indexInAll` - the index of the row in the whole data set
   - `rowInfo.indexInGroup` - the index of the row in the current group
+  - `rowInfo.value` - the value (only for group rows) that will be rendered by default in group column cells.
   - ... there are other useful properties that we'll document in the near future
+- `column` - the current column being rendered
+- `columnsMap` - the `Map` of columns available to the table. Note these might not be all visible. The keys in this map will be column ids.
+- `fieldsToColumn` a `Map` that links `DataSource` fields to columns. Columns bound to fields (so with <PropLink name="columns.field" /> specified) will be included in this `Map`.
+- `api` - A reference to the [Infinite Table API](/docs/latest/reference/api) object.
 
 <DeepDive title="Column renderValue vs render">
 
-The difference between <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
+<PropLink name="columns.render"/> is the last function called in the rendering pipeline for a column cell, while <PropLink name="columns.renderValue"/> is called before render, towards the beginning of the [rendering pipeline  (read more about this below)](#rendering-pipeline).
 
-Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
+Avoid overriding <PropLink name="columns.render"/> for special columns (like group columns) unless you know what you're doing. Special columns use the `render` function to render additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override this additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
+
+However, there are easier ways to override the collapse/expand group icon, like using <PropLink name="columns.renderGroupIcon"/>.
 
 </DeepDive>
 
@@ -89,11 +95,32 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 
 </Sandpack>
 
-Changing the group icon using `render`. The icon can also be changed using `renderGroupIcon`.
+
+Changing the group icon using `render`. The icon can also be changed using <PropLink name="columns.renderGroupIcon" />.
 
 <Sandpack title="Column with render - custom expand/collapse icon">
 
+<Description>
+
+This snippet shows overriding the group collapse/expand tool via the <PropLink name="columns.render" /> function.
+
+</Description>
+
 ```tsx file=../../reference/column-render-example.page.tsx
+
+```
+
+</Sandpack>
+
+<Sandpack title="Column with custom expand/collapse tool via renderGroupIcon">
+
+<Description>
+
+This snippet shows how you can override the group collapse/expand tool via the <PropLink name="columns.renderGroupIcon" /> function.
+
+</Description>
+
+```tsx file=../../reference/column-renderGroupIcon-example.page.tsx
 
 ```
 
@@ -255,3 +282,67 @@ Both <PropLink name="columns.components.ColumnCell">components.ColumnCell</PropL
 If you're using the <HookLink name="useInfiniteColumnCell" /> hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> functions (and not as part of a custom component in <PropLink name="columns.components.ColumnCell" />), you don't need to pass on the `domRef` to the root of the DOM you're rendering (same is true if you're using <HookLink name="useInfiniteHeaderCell" /> inside the <PropLink name="columns.header" /> function).
 
 </Note>
+
+If the above <PropLink name="columns.components" /> is still not enough, read about the rendering pipeline below.
+
+## Rendering pipeline
+
+The rendering pipeline for columns is a series of functions defined on the column that are called while rendering.
+
+<Note>
+All the columns that have `render` in their name, will be called with an object that has a `renderBag` property on it, which contains the values that the previous function in the pipeline returned.
+</Note>
+
+For example:
+
+```tsx
+const column: InfiniteTableColumn<T> = {
+  valueGetter: ({ data, field }) => {
+    return data[field] * 10
+  },
+  renderValue: ({ value, renderBag })=> {
+    // accessing `value` here would give us the result from `data[field]`
+    // but using `renderBag.value` would give us `data[field] * 10`, 
+    // namely the result of the previous function in the pipeline
+  }
+}
+```
+
+Second example:
+
+```tsx
+const column: InfiniteTableColumn<T> = {
+  renderGroupIcon: ({ renderBag }) => {
+    // we can use `renderBag.groupIcon` to have access to the default group icon
+    return <b style={{ padding: 10 }}>
+      {renderBag.groupIcon}
+    </b>
+  },
+  render: ({ renderBag })=> {
+    <>
+      {renderBag.value}
+      {renderBag.groupIcon}
+      {renderBag.selectionCheckBox}
+    </>
+  }
+}
+```
+
+These are all the properties available in the `renderBag` object:
+
+ * `value`
+ * `groupIcon`
+ * `selectionCheckBox`
+
+Here is the full list of the functions in the rendering pipeline, in order:
+
+1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
+2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
+3.<PropLink name="columns.renderGroupIcon" /> - can use all properties in `renderBag`
+4.<PropLink name="columns.renderSelectionCheckBox" /> - can use all properties in `renderBag`
+5.<PropLink name="columns.renderValue" /> - can use all properties in `renderBag`
+6.<PropLink name="columns.renderGroupValue" /> - can use all properties in `renderBag`
+7.<PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag`
+8.<PropLink name="columns.render" /> - can use all properties in `renderBag`
+
+Additionally, the <PropLink name="columns.components.ColumnCell" /> custom component does have access to the `renderBag` via <HookLink name="useInfiniteColumnCell" />

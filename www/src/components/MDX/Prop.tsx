@@ -119,6 +119,19 @@ export const DataSourcePropLink = ({
   return <Link href={href}>{content}</Link>;
 };
 
+export const LearnLink = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: React.ReactNode;
+}) => {
+  const href = `/docs/latest/learn/${name as string}`;
+
+  const content = children ?? name;
+  return <Link href={href}>{content}</Link>;
+};
+
 export const HookLink = ({
   name,
   children,
@@ -294,16 +307,15 @@ export function PropTable({
 
       if (child.props.mdxType === 'Prop') {
         const name = child.props.name;
-        
+
         let hidden = child.props.hidden;
 
         if (!name) {
-          hidden = true
-          
+          hidden = true;
         }
         if (
           !hidden &&
-          filterText && 
+          filterText &&
           !name.toLowerCase().includes(filterText)
         ) {
           hidden = true;
