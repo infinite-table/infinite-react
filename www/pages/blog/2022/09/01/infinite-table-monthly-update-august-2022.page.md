@@ -1,7 +1,6 @@
 ---
 title: "Monthly Update - August 2022"
 description: "Infinite Table update for August 2022"
-
 author: [admin]
 ---
 In August, we've contined our work on preparing for our Autumn release, mainly focusing on adding new functionalities and documenting them thoroughly, along with improving existing features and documentation.
