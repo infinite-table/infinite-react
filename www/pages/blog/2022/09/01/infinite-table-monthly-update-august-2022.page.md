@@ -1,9 +1,12 @@
 ---
 title: "Monthly Update - August 2022"
-description: "Infinite Table update for August 2022"
+description: "Infinite Table update for August 2022 - row selection, column rendering, group columns"
 author: [admin]
 ---
 In August, we continued our work on preparing for our Autumn release, mainly focusing on adding new functionalities and documenting them thoroughly, along with improving existing features and documentation.
+
+
+## Summary 
 
 We have implemented a few new functionalities:
 
