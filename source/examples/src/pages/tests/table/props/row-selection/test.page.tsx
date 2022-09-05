@@ -13,6 +13,7 @@ import { useState } from 'react';
 
 type Developer = {
   id: number;
+
   stack: string;
   language: string;
 };
