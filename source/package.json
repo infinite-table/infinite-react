@@ -10,7 +10,7 @@
     "react-datagrid",
     "react-infinite"
   ],
-  "version": "0.4.10",
+  "version": "0.4.11",
   "main": "index.js",
   "module": "index.esm.js",
   "typings": "index.d.ts",
