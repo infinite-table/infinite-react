@@ -126,6 +126,7 @@ export function getColumnRenderParam<T>(options: {
     selectRow: imperativeApi.selectionApi.selectRow,
     deselectRow: imperativeApi.selectionApi.deselectRow,
     toggleRowSelection: imperativeApi.selectionApi.toggleRowSelection,
+    toggleGroupRowSelection: imperativeApi.selectionApi.toggleGroupRowSelection,
     renderBag: {
       value,
       selectionCheckBox: null,
@@ -152,6 +153,13 @@ export function getColumnRenderParam<T>(options: {
       }
 
       toggleGroupRow(rowInfo.groupKeys!);
+    },
+
+    toggleCurrentRowSelection: () => {
+      if (rowInfo.isGroupRow) {
+        return;
+      }
+      return imperativeApi.selectionApi.toggleRowSelection(rowInfo.id);
     },
 
     toggleCurrentGroupRowSelection: () => {
@@ -193,7 +201,7 @@ export function getRawValueForCell<T>(
 }
 
 export function getFormattedValueParamForCell<T>(
-  rawValue: any,
+  value: any,
   column: InfiniteTableComputedColumn<T>,
   rowInfo: InfiniteTableRowInfo<T>,
   context: InfiniteTableColumnRenderingContext<T>,
@@ -210,7 +218,7 @@ export function getFormattedValueParamForCell<T>(
         data: rowInfo.data,
         rowSelected,
         rowActive,
-        value: rawValue,
+        value,
         field: column.field,
       }
     : {
@@ -219,7 +227,7 @@ export function getFormattedValueParamForCell<T>(
         data: rowInfo.data,
         rowSelected,
         rowActive,
-        value: rawValue,
+        value,
         field: column.field,
       };
 }

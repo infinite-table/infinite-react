@@ -640,11 +640,17 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 
 </Note>
 
+<Hint>
+
+To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/latest/learn/columns/column-rendering#rendering-pipeline).
+
+</Hint>
 
 The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
 
  * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
  * rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
+ * renderBag - read more about this in the docs for [Column rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline)
 
 
 <Sandpack title="Column with custom render">
@@ -678,6 +684,13 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 For actual content of group cells, see related <PropLink name="columns.renderGroupValue" />
 
+<Hint>
+
+To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/latest/learn/columns/column-rendering#rendering-pipeline).
+
+</Hint>
+
+
 <Sandpack title="Column with custom renderGroupIcon">
 
 ```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
@@ -700,6 +713,13 @@ If `true` is provided, the default selection checkbox will be rendered. When a f
 
 `rowSelected` property in the function parameter can be either `boolean` or `null`. The `null` value is used for groups with indeterminate state, meaning the group has some children selected, but not all of them.
 </Note>
+
+<Hint>
+
+To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/latest/learn/columns/column-rendering#rendering-pipeline).
+
+</Hint>
+
 
 <Sandpack title="Column with custom renderSelectionCheckBox">
 
@@ -773,10 +793,18 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 </Note>
 
 
-The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.renderValue">render</PropLink> functions are called with an object that has the following properties:
+<Hint>
+
+To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/latest/learn/columns/column-rendering#rendering-pipeline).
+
+</Hint>
+
+
+The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
 
  * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
  * rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
+ * renderBag - read more about this in the docs for [Column rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline)
 
 <Sandpack title="Column with custom renderValue">
 

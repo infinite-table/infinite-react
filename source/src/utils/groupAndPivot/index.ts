@@ -55,7 +55,6 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T> = {
   data: T;
   isGroupRow: false;
   rowActive: boolean;
-  // rowSelected: boolean;
   rowInfo:
     | InfiniteTable_NoGrouping_RowInfoNormal<T>
     | InfiniteTable_HasGrouping_RowInfoNormal<T>;
@@ -66,7 +65,6 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T> = {
 
 export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
   rowActive: boolean;
-  // rowSelected: boolean;
   data: Partial<T> | null;
   rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
   isGroupRow: true;

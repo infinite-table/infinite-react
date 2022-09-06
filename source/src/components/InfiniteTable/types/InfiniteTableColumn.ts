@@ -82,11 +82,15 @@ export type InfiniteTableColumnRenderParamBase<
   toggleCurrentGroupRow: () => void;
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   toggleCurrentGroupRowSelection: () => void;
+  toggleCurrentRowSelection: () => void;
+
   selectCurrentRow: () => void;
   selectRow: InfiniteTableSelectRowFn;
   deselectRow: InfiniteTableSelectRowFn;
   deselectCurrentRow: () => void;
+
   toggleRowSelection: InfiniteTableSelectRowFn;
+  toggleGroupRowSelection: InfiniteTableToggleGroupRowFn;
   selectionMode: DataSourcePropSelectionMode | undefined;
   rootGroupBy: DataSourceState<DATA_TYPE>['groupBy'];
   pivotBy?: DataSourceState<DATA_TYPE>['pivotBy'];

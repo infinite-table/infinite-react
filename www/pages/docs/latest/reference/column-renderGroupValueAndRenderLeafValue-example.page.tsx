@@ -36,14 +36,14 @@ const columns: InfiniteTablePropColumns<Developer> = {
     renderGroupValue: ({ rowInfo, value }) => {
       return (
         <>
-          {value} = {rowInfo.value} stuff
+          {value} → {rowInfo.value} stuff
         </>
       );
     },
     renderLeafValue: ({ value, rowInfo }) => {
       return (
         <b>
-          🎇 {value} = {rowInfo.value}
+          🎇 {value} → {rowInfo.value}
         </b>
       );
     },

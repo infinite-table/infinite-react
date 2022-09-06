@@ -218,6 +218,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     renderParam.toggleCurrentGroupRow,
     [rowInfo],
   );
+  renderParam.toggleCurrentRowSelection = useCallback(
+    renderParam.toggleCurrentRowSelection,
+    [rowInfo],
+  );
   renderParam.toggleCurrentGroupRowSelection = useCallback(
     renderParam.toggleCurrentGroupRowSelection,
     [rowInfo],

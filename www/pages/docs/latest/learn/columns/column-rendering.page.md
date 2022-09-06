@@ -290,51 +290,143 @@ If the above <PropLink name="columns.components" /> is still not enough, read ab
 The rendering pipeline for columns is a series of functions defined on the column that are called while rendering.
 
 <Note>
-All the columns that have `render` in their name, will be called with an object that has a `renderBag` property on it, which contains the values that the previous function in the pipeline returned.
+All the columns that have `render` in their name, will be called with an object that has a `renderBag` property, which contains values that will be rendered.
 </Note>
 
-For example:
+The default <PropLink name="columns.render" /> function (the last one in the pipeline) ends up rendering a few things:
+
+ * a `value`  - generally comes from the <PropLink name="columns.field">field</PropLink> the column is bound to
+ * a `groupIcon` - for group columns
+ * a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
+
+When the rendering process stars for a column cell, all the above end up in the `renderBag` object.
+
+### Rendering pipeline - `renderBag.value`
+
+As already mentioned, the `value` defaults to the value of the column <PropLink name="columns.field">field</PropLink> for the current row.
+
+If the column is not bound to a field, you can define a <PropLink name="columns.valueGetter">valueGetter</PropLink>. The <PropLink name="columns.valueGetter">valueGetter</PropLink> only has access to `{data, field?}` in order to compute a value and return it.
+
+After the <PropLink name="columns.valueGetter">valueGetter</PropLink> is called, the <PropLink name="columns.valueFormatter">valueFormatter</PropLink> is next in the rendering pipeline.
+
+This is called with more details about the current cell
 
 ```tsx
 const column: InfiniteTableColumn<T> = {
-  valueGetter: ({ data, field }) => {
-    return data[field] * 10
+  // the valueGetter can be useful when rows are nested objects
+  // or you want to compose multiple values from the row
+  valueGetter: ({ data }) => {
+    return data.person.salary * 10
   },
-  renderValue: ({ value, renderBag })=> {
-    // accessing `value` here would give us the result from `data[field]`
-    // but using `renderBag.value` would give us `data[field] * 10`, 
-    // namely the result of the previous function in the pipeline
+  valueFormatter: ({ value, isGroupRow, data, field, rowInfo, rowSelected, rowActive })=> {
+    // the value here is what the `valueFormatter` returned
+    return `USD ${value}`
   }
 }
 ```
 
-Second example:
+After <PropLink name="columns.valueGetter">valueGetter</PropLink> and <PropLink name="columns.valueFormatter">valueFormatter</PropLink> are called, the resulting value is the actual value used for the cell. This value will also be assigned to `renderBag.value`
 
-```tsx
+When <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> are called by `InfiniteTable`, both `value` and `renderBag` will be available as properties to the arguments object.
+
+```tsx {3,12}
 const column: InfiniteTableColumn<T> = {
-  renderGroupIcon: ({ renderBag }) => {
-    // we can use `renderBag.groupIcon` to have access to the default group icon
-    return <b style={{ padding: 10 }}>
-      {renderBag.groupIcon}
-    </b>
+  valueGetter: () => 'world',
+  renderValue: ({ value, renderBag, rowInfo }) => {
+    // at this stage, `value` is 'world' and `renderBag.value` has the same value, 'world'
+    return <b>{value}</b>
   },
-  render: ({ renderBag })=> {
-    <>
-      {renderBag.value}
+
+  render: ({ value, renderBag, rowInfo }) => {
+    // at this stage `value` is 'world'
+    // but `renderBag.value` is <b>world</b>, as this was the value returned by `renderValue`
+    return <div>
+      Hello {renderBag.value}!
+    </div>
+  }
+}
+```
+
+<Note>
+
+After the <PropLink name="columns.renderValue">renderValue</PropLink> function is called, the following are also called (if available): 
+ - <PropLink name="columns.renderGroupValue">renderGroupValue</PropLink> - for group rows
+ - <PropLink name="columns.renderLeafValue">renderLeafValue</PropLink> - for leaf rows
+
+You can think of them as an equivalent to <PropLink name="columns.renderValue">renderValue</PropLink>, but narrowed down to group/non-group rows.
+
+Inside those functions, the `renderBag.value` refers to the value returned by the <PropLink name="columns.renderValue">renderValue</PropLink> function.
+
+</Note>
+
+### Rendering pipeline - `renderBag.groupIcon`
+
+In a similar way to `renderBag.value`, the `renderBag.groupIcon` is also piped through to the <PropLink name="columns.render">render</PropLink> function.
+
+```tsx {2,9}
+const column: InfiniteTableColumn<T> = {
+  renderGroupIcon: ({ renderBag, toggleGroupRow }) => {
+    return <> [ {renderBag.groupIcon} ] </>
+  },
+  render: ({  renderBag })=> {
+    
+    return <>
+      {/* use the groupIcon from the renderBag */}
       {renderBag.groupIcon}
-      {renderBag.selectionCheckBox}
+      {renderBag.value}
     </>
   }
 }
 ```
 
-These are all the properties available in the `renderBag` object:
+<Hint>
 
- * `value`
- * `groupIcon`
- * `selectionCheckBox`
+Inside <PropLink name="columns.renderGroupIcon" />, you have access to `renderBag.groupIcon`, which is basically the default group icon - so you can use that if you want, and build on that.
 
-Here is the full list of the functions in the rendering pipeline, in order of invocation:
+Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `toggleGroupRow` so you can properly hook the collapse/expand behaviour to your custom group icon.
+
+</Hint>
+
+
+### Rendering pipeline - `renderBag.selectionCheckBox`
+
+Like with the previous properties of `renderBag`, you can customize the `selectionCheckBox` (used when multiple selection is configured) to be piped-through - for columns that specify <PropLink name="columns.renderSelectionCheckBox" />.
+
+
+```tsx {2,25}
+const column: InfiniteTableColumn<T> = {
+  renderSelectionCheckBox: ({
+    renderBag,
+    rowSelected,
+    isGroupRow,
+    toggleCurrentRowSelection,
+    toggleCurrentGroupRowSelection,
+  }) => {
+    const toggle = isGroupRow? 
+      toggleCurrentGroupRowSelection:
+      toggleCurrentRowSelection
+
+    // you could return renderBag.groupIcon to have the default icon
+
+    const selection = rowSelected  === null 
+        ? '-' : // we're in a group row with indeterminate state if rowSelected === null
+        rowSelected 
+          ?'x':'o' 
+
+    return <div onClick={toggle}> [ {selection} ] </div>
+  },
+  render: ({  renderBag })=> {
+    return <>
+      {/* use the selectionCheckBox from the renderBag */}
+      {renderBag.selectionCheckBox}
+      {renderBag.groupIcon}
+      {renderBag.value}
+    </>
+  }
+}
+```
+
+To recap, here is the full list of the functions in the rendering pipeline, in order of invocation:
 
 1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
 2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`

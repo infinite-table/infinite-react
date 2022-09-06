@@ -59,10 +59,14 @@ const Divider = () => (
 
 const Gotcha = ({
   children,
+  title,
 }: {
   children: React.ReactNode;
+  title?: React.ReactNode;
 }) => (
-  <ExpandableCallout type="gotcha">
+  <ExpandableCallout
+    type="gotcha"
+    title={title || 'Gotcha'}>
     {children}
   </ExpandableCallout>
 );
@@ -379,10 +383,12 @@ function IllustrationBlock({
 
 const Hint = ({
   children,
+  title,
 }: {
+  title?: React.ReactNode;
   children: React.ReactNode;
 }) => (
-  <ExpandableCallout type="hint">
+  <ExpandableCallout type="hint" title={title || 'Hint'}>
     {children}
   </ExpandableCallout>
 );

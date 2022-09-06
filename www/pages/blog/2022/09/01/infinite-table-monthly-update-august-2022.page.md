@@ -8,11 +8,11 @@ In August, we continued our work on preparing for our Autumn release,  focusing 
 
 ## Summary 
 
-We have implemented a few new functionalities:
+We have implemented a few new functionalities, including:
 
- * [row selection is now available](#row-selection)
+ * [row selection is now available 🎉](#row-selection)
  * [column rendering pipeline](#column-rendering-pipeline)
- * [group columns are now sortable](#sortable-group-columns)
+ * [group columns are now sortable 🔃](#sortable-group-columns)
  
 
 And we have updated some of the existing features:
@@ -22,7 +22,7 @@ And we have updated some of the existing features:
  * [group columns can be bound to a field](#group-columns-bound-to-a-field)
  * [using the column valueGetter in sorting](#column-valuegetter-in-sorting)
  
-<Note title="Coming soon">
+<Hint title="Coming soon">
 
 We started working on column and context menus.
 We will first release fully customizable **column** menus to show/hide columns and to easily perform other operations on columns.
@@ -32,7 +32,7 @@ This will be followed by **context** menus where you will be able to define your
 
 Don't worry, the menus will be fully customizable, the menu items are fully replaceable with whatever you need, or you will be able to swap our menu component with a custom one of your own.
 
-</Note>
+</Hint>
 
 ## New Features
 
@@ -74,56 +74,44 @@ Single vs multiple selection, grouped or ungrouped data, checkbox selection, laz
 
 The rendering pipeline for columns is a series of functions defined on the column that are called while rendering.
 
-Most of those functions existed even before, but piping the return values from one to the other was not available. We think this is a big deal and opens up lots of use-cases.
-
 <Note>
-
-All the columns that have `render` in their name, will be called with an object that has a `renderBag` property on it, which contains the values that the previous function in the pipeline returned.
-
+All the columns that have `render` in their name, will be called with an object that has a `renderBag` property, which contains values that will be rendered.
 </Note>
+
+The default <PropLink name="columns.render" /> function (the last one in the pipeline) ends up rendering a few things:
+
+ * a `value`  - generally comes from the <PropLink name="columns.field">field</PropLink> the column is bound to
+ * a `groupIcon` - for group columns
+ * a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
+
+When the rendering process stars for a column cell, all the above end up in the `renderBag` object.
 
 For example:
 
-```tsx
+```tsx {3,12}
 const column: InfiniteTableColumn<T> = {
-  valueGetter: ({ data, field }) => {
-    return data[field] * 10
+  valueGetter: () => 'world',
+  renderValue: ({ value, renderBag, rowInfo }) => {
+    // at this stage, `value` is 'world' and `renderBag.value` has the same value, 'world'
+    return <b>{value}</b>
   },
-  renderValue: ({ value, renderBag })=> {
-    // accessing `value` here would give us the result from `data[field]`
-    // but using `renderBag.value` would give us `data[field] * 10`, 
-    // namely the result of the previous function in the pipeline
+
+  render: ({ value, renderBag, rowInfo }) => {
+    // at this stage `value` is 'world'
+    // but `renderBag.value` is <b>world</b>, as this was the value returned by `renderValue`
+    return <div>
+      Hello {renderBag.value}!
+    </div>
   }
 }
 ```
 
-Second example:
 
-```tsx
-const column: InfiniteTableColumn<T> = {
-  renderGroupIcon: ({ renderBag }) => {
-    // we can use `renderBag.groupIcon` to have access to the default group icon and decorate it
-    return <b style={{ padding: 10 }}>
-      {renderBag.groupIcon}
-    </b>
-  },
+<YouWillLearnCard  title="Find out more on column rendering" path="/docs/latest/learn/columns/column-rendering#rendering-pipeline">
 
-  render: ({ renderBag })=> {
-    // allows you to fully customize the end-result
-    <>
-      {renderBag.value}
-      {renderBag.groupIcon}
-      {renderBag.selectionCheckBox}
-    </>
-  }
-}
-```
+Read about how using the rendering pipeline helps your write less code.
 
-These are all the properties available in the `renderBag` object:
-
- * `value`
- * `groupIcon`
- * `selectionCheckBox`
+</YouWillLearnCard>
 
 Here is the full list of the functions in the rendering pipeline, in order of invocation:
 
@@ -153,11 +141,11 @@ const sortInfo = [
 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
 
- <Note>
+ <Hint>
 
-In both single and multi group column render strategy, the <PropLink name="columns.sortable" /> property can be used to override the default behavior.
+In both single and multi group column render strategy, you can use the <PropLink name="columns.sortable" /> property to override the default behavior.
 
- </Note>
+ </Hint>
 
 
 
@@ -246,4 +234,6 @@ In addition, you can now use <PropLink name="columns.renderGroupValue" /> and <P
 
 ### Column valueGetter in Sorting
 
-Columns allow you to define a <PropLink name="columns.valueGetter" /> to change the value they are rendering (eg: when the `DataSet` has nested objects). Previously, this value returned by <PropLink name="columns.valueGetter" /> was not used when sorting the table. With the latest updated, the value returned by `valueGetter` is correctly used when sorting the grid locally.
+Columns allow you to define a <PropLink name="columns.valueGetter">valueGetter</PropLink> to change the value they are rendering (e.g. useful when the `DataSet` has nested objects). 
+
+Previously, this value returned by <PropLink name="columns.valueGetter" /> was not used when sorting the table. With the latest update, the value returned by  <PropLink name="columns.valueGetter">valueGetter</PropLink> is correctly used when sorting the grid locally.
