@@ -3,16 +3,16 @@ title: "Monthly Update - August 2022"
 description: "Infinite Table update for August 2022 - row selection, column rendering, group columns"
 author: [admin]
 ---
-In August, we continued our work on preparing for our Autumn release, mainly focusing on adding new functionalities and documenting them thoroughly, along with improving existing features and documentation.
+In August, we continued our work on preparing for our Autumn release,  focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.
 
 
 ## Summary 
 
 We have implemented a few new functionalities:
 
- * [row selection](#row-selection) is now available
+ * [row selection is now available](#row-selection)
  * [column rendering pipeline](#column-rendering-pipeline)
- * [group columns](#sortable-group-columns) are now sortable
+ * [group columns are now sortable](#sortable-group-columns)
  
 
 And we have updated some of the existing features:
@@ -24,8 +24,9 @@ And we have updated some of the existing features:
  
 <Note title="Coming soon">
 
-We started working on adding support for column menus and context menus. This will allow you to have fully customizable column menus to show/hide columns and to easily perform other operations on columns. 
-As soon as this ships, we'll also have context menus so you will be able to define your own custom actions on rows/cells in the table.
+We started working on column and context menus.
+We will first release fully customizable **column** menus to show/hide columns and to easily perform other operations on columns.
+This will be followed by **context** menus where you will be able to define your own custom actions on rows/cells in the table.
 
 ---
 
@@ -39,17 +40,19 @@ Here's what we shipped in the month of August:
 
 ### Row Selection
 
-Row selection can be single or multiple, with or without a checkbox, with or without grouping and for a lazy or non-lazy `DataSource` - 😅 that was a long enumeration, but seriously, we think we got something great out there. Specify the selection via the <DPropLink name="rowSelection" /> (controlled) or <DPropLink name="defaultRowSelection" /> (uncontrolled) props, and listen to changes via the <DPropLink name="onRowSelectionChange" /> callback prop.
+Row selection can be single or multiple, with or without a checkbox, with or without grouping and for a lazy or non-lazy `DataSource` - 😅 that was a long enumeration, but seriously, we think we got something great out there.
+
+You can specify the selection via the <DPropLink name="rowSelection" /> (controlled) or <DPropLink name="defaultRowSelection" /> (uncontrolled) props, and listen to changes via the <DPropLink name="onRowSelectionChange" /> callback prop.
 
 <Sandpack title="Multi row checkbox selection with grouping" >
 
 <Description>
 
-This example shows how you can use multiple row selection with a predefined controlled value.
+* Example shows how you can use multiple row selection with a predefined controlled value.
 
-Go ahead and select some groups/rows and see the selection value adjust.
+* Go ahead and select some groups/rows and see the selection value adjust.
 
-The example also shows how you can use the [InfiniteTableApi](/docs/latest/reference/api) to retrieve the actual ids of the selected rows.
+* Example also shows how you can use the [InfiniteTableApi](/docs/latest/reference/api) to retrieve the actual ids of the selected rows.
 
 </Description>
 
@@ -69,7 +72,9 @@ Single vs multiple selection, grouped or ungrouped data, checkbox selection, laz
 
 ### Column Rendering Pipeline
 
-The rendering pipeline for columns is a series of functions defined on the column that are called while rendering. Most of those functions existed even before, but piping the return values from one to the other was not available. We think this is a big deal and opens up lots of use-cases.
+The rendering pipeline for columns is a series of functions defined on the column that are called while rendering.
+
+Most of those functions existed even before, but piping the return values from one to the other was not available. We think this is a big deal and opens up lots of use-cases.
 
 <Note>
 
@@ -131,11 +136,13 @@ Here is the full list of the functions in the rendering pipeline, in order of in
 7.<PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag`
 8.<PropLink name="columns.render" /> - can use all properties in `renderBag`
 
-Additionally, the <PropLink name="columns.components.ColumnCell" /> custom component does have access to the `renderBag` via <HookLink name="useInfiniteColumnCell" />
+Additionally, the <PropLink name="columns.components.ColumnCell" /> custom component has access to the `renderBag` via <HookLink name="useInfiniteColumnCell" />
 
 ### Sortable Group Columns
 
-When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
+When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable.
+
+Sorting the group column makes the `sortInfo` have a value that looks like this:
 
 
 ```ts
@@ -144,11 +151,11 @@ const sortInfo = [
 ]
 ```
 
- <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
+When <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
 
  <Note>
 
- Both in single and multi group column render strategy, the <PropLink name="columns.sortable" /> property can be used to override the default behavior.
+In both single and multi group column render strategy, the <PropLink name="columns.sortable" /> property can be used to override the default behavior.
 
  </Note>
 
@@ -156,13 +163,11 @@ const sortInfo = [
 
 ## Updated Features
 
-Here's a list of updated functionalities that we added in the last month:
-
+Here’s a list of Infinite Table functionalities that we enhanced in the last month:
 
 ### Enhanced Group Columns
 
 Group columns now inherit configuration from the columns bound to the field they are grouped by - if such columns exist.
-
 
  
 <Sandpack title="Group column inherits style from related column">
@@ -205,7 +210,7 @@ Valid values for <PropLink name="columns.defaultHiddenWhenGroupedBy" /> are:
  * `"*"` - when any grouping is active, hide the column that specifies this property
  * `true` - when the field this column is bound to is used in grouping, hides this column
  * `keyof DATA_TYPE` - specify an exact field that, when grouped by, makes this column be hidden
- * `{ [k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
+ * `{[k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
 
  
 <Sandpack title="Hide columns when grouping">
@@ -241,4 +246,4 @@ In addition, you can now use <PropLink name="columns.renderGroupValue" /> and <P
 
 ### Column valueGetter in Sorting
 
-<PropLink name="columns.valueGetter" /> is now used for local sorting if the sorted column has one defined.
+Columns allow you to define a <PropLink name="columns.valueGetter" /> to change the value they are rendering (eg: when the `DataSet` has nested objects). Previously, this value returned by <PropLink name="columns.valueGetter" /> was not used when sorting the table. With the latest updated, the value returned by `valueGetter` is correctly used when sorting the grid locally.

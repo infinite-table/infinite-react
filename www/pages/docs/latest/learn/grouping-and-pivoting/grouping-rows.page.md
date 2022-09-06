@@ -272,7 +272,7 @@ Valid values for <PropLink name="columns.defaultHiddenWhenGroupedBy" /> are:
  * `"*"` - when any grouping is active, hide the column that specifies this property
  * `true` - when the field this column is bound to is used in grouping, hides this column
  * `keyof DATA_TYPE` - specify an exact field that, when grouped by, makes this column be hidden
- * `{ [k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
+ * `{[k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
 
  
 <Sandpack title="Hide columns when grouping">
