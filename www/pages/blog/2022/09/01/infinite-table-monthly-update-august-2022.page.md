@@ -75,7 +75,9 @@ Single vs multiple selection, grouped or ungrouped data, checkbox selection, laz
 The rendering pipeline for columns is a series of functions defined on the column that are called while rendering.
 
 <Note>
-All the columns that have `render` in their name, will be called with an object that has a `renderBag` property, which contains values that will be rendered.
+
+All the functions that have the word `render` in their name will be called with an object that has a `renderBag` property, which contains values that will be rendered.
+
 </Note>
 
 The default <PropLink name="columns.render" /> function (the last one in the pipeline) ends up rendering a few things:
@@ -84,7 +86,7 @@ The default <PropLink name="columns.render" /> function (the last one in the pip
  * a `groupIcon` - for group columns
  * a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
 
-When the rendering process stars for a column cell, all the above end up in the `renderBag` object.
+When the rendering process starts for a column cell, all the above end up in the `renderBag` object.
 
 For example:
 
