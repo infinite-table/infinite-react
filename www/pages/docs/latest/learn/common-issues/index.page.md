@@ -1,3 +1,8 @@
+---
+title: Common issues
+description: Avoid common pitfalls and issues when using the component. Learn how to use it properly to perform smooth and avoid jank.
+author: [admin]
+---
 As people have started using `<InfiniteTable />` we've noticed a few issues keep popping up.
 
 While we're trying to refine our API to be easier to use and understand, developers using the component still need to be aware of some design decisions and conventions used in the component.
@@ -82,3 +87,12 @@ When in dev mode, you can set `localStorage.debug = "*"` in your localstorage to
 `InfiniteTable:rerender Triggered by new values for the following props +1s columns`
 
 </Note>
+
+## Issue: State inside custom components rendered in cells is lost while scrolling
+
+
+
+When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local/transient state.
+
+This is important because `InfiniteTable` heavily uses virtualization, in both *column cells and column headers*, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+

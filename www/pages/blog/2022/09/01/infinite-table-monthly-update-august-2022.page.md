@@ -120,7 +120,7 @@ These are all the properties available in the `renderBag` object:
  * `groupIcon`
  * `selectionCheckBox`
 
-Here is the full list of the functions in the rendering pipeline, in order:
+Here is the full list of the functions in the rendering pipeline, in order of invocation:
 
 1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
 2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
@@ -153,23 +153,6 @@ const sortInfo = [
  </Note>
 
 
-When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
-
-
-```ts
-const sortInfo = [
-  { field: ['stack','age'], dir: 1, id: 'group-by', }
-]
-```
-
- <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
-
- <Note>
-
- Both in single and multi group column render strategy, the <PropLink name="columns.sortable" /> property can be used to override the default behavior.
-
- </Note>
-
 
 ## Updated Features
 
@@ -201,7 +184,7 @@ In this example, the group column inherits the styling of the `country` column, 
 The generated group column(s) - can be one for all groups or one for each group - will inherit the `style`/`className`/renderers from the columns corresponding to the group fields themselves (if those columns exist).
 
 Additionally, there are other ways to override those inherited configurations, in order to configure the group columns:
- * use <PropLink name="groupBy.column" /> to specify how each grouping column should look for the respective field (in case of <PropLink name="groupRenderStrategy">groupRenderStrateg="multi-column"</PropLink>)
+ * use <DPropLink name="groupBy.column" /> to specify how each grouping column should look for the respective field (in case of <PropLink name="groupRenderStrategy">groupRenderStrateg="multi-column"</PropLink>)
  * use <PropLink name="groupColumn" /> prop 
     * can be used as an object - ideal for when you have simple requirements and when <PropLink name="groupRenderStrategy">groupRenderStrateg="single-column"</PropLink>
     * as a function that returns a column configuration - can be used like this in either single or multiple group render strategy

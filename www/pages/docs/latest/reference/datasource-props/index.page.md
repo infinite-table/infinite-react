@@ -81,6 +81,53 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Prop>
 
+<Prop name="defaultRowSelection" type="string|number|null|object">
+
+> Describes the selected row(s) in the `DataSource`
+
+See more docs in the controlled version of this prop, <PropLink name="rowSelection" />
+
+For single selection, the prop will be of type: `number | string | null`. Use `null` for empty selection in single selection mode.
+
+For multiple selection, the prop will have the following shape:
+
+```ts
+const rowSelection = {
+  selectedRows: [3, 6, 100, 23], // those specific rows are selected
+  defaultSelection: false // all rows deselected by default
+}
+
+// or 
+const rowSelection = {
+  deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
+  defaultSelection: true // all other rows are selected
+}
+
+// or, for grouped data - this example assumes groupBy=continent,country,city
+const rowSelection = {
+  selectedRows: [
+    45, // row with id 45 is selected, no matter the group
+    ['Europe','France'], // all rows in Europe/France are selected
+    ['Asia'] // all rows in Asia are selected
+  ],
+  deselectedRows: [
+    ['Europe','France','Paris'] // all rows in Paris are deselected
+  ],
+  defaultSelection: false // all other rows are selected
+}
+```
+
+For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
+
+<Sandpack  title="Uncontrolled, multiple row selection with checkbox column">
+
+
+```ts file=../uncontrolled-multiple-row-selection-example.page.tsx
+```
+</Sandpack>
+
+</Prop>
+
 
 <Prop name="defaultSortInfo" type="DataSourceSingleSortInfo<T>|DataSourceSingleSortInfo<T>[]|null">
 

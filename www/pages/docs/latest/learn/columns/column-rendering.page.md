@@ -334,7 +334,7 @@ These are all the properties available in the `renderBag` object:
  * `groupIcon`
  * `selectionCheckBox`
 
-Here is the full list of the functions in the rendering pipeline, in order:
+Here is the full list of the functions in the rendering pipeline, in order of invocation:
 
 1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
 2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
