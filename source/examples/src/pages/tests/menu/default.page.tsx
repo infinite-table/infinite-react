@@ -1,6 +1,10 @@
 import * as React from 'react';
 
-import { Menu, MenuItemDefinition } from '@infinite-table/infinite-react';
+import {
+  Menu,
+  MenuItemDefinition,
+  useOverlay,
+} from '@infinite-table/infinite-react';
 
 const items: MenuItemDefinition[] = [
   {
@@ -25,10 +29,43 @@ const items: MenuItemDefinition[] = [
 
     menu: {
       items: [
+        {
+          key: 'col1',
+          label: 'column 1',
+        },
         '-',
         {
           key: 'age',
           label: 'Age',
+        },
+        {
+          key: 'col2',
+          label: 'column 2',
+        },
+        {
+          key: 'translate',
+          label: 'Translate',
+          menu: {
+            items: [
+              {
+                key: 'en',
+                label: 'Into english',
+              },
+
+              {
+                key: 'es',
+                label: 'Into spanish',
+              },
+              {
+                key: 'de',
+                label: 'Into detsch',
+              },
+              {
+                key: 'fr',
+                label: 'Into french',
+              },
+            ],
+          },
         },
       ],
     },
@@ -36,12 +73,23 @@ const items: MenuItemDefinition[] = [
   {
     key: 'test',
     label: 'test',
+    onAction(key, x) {
+      console.log(key, x);
+    },
     // label: 'test',
   },
 ];
+
 function App() {
-  return (
-    <div>
+  const { portal, showOverlay } = useOverlay({});
+
+  const onContextMenu = (event: React.MouseEvent) => {
+    const { pageX, pageY } = event;
+    console.log({ pageX, pageY });
+
+    event.preventDefault();
+
+    showOverlay(
       <Menu
         items={items}
         style={{ border: '1px solid gray', margin: 10 }}
@@ -56,10 +104,48 @@ function App() {
           },
           { name: 'shortcut' },
         ]}
-      />
-
-      <hr />
-      {/* 
+      />,
+      {
+        id: 'contextMenu',
+        alignTo: {
+          top: pageY,
+          left: pageX,
+        },
+        constrainTo: true,
+        alignPosition: [
+          ['TopLeft', 'TopLeft'],
+          ['BottomRight', 'TopLeft'],
+        ],
+      },
+    );
+  };
+  return (
+    <>
+      <div id="portal" style={{ position: 'fixed' }} />
+      <div onContextMenu={onContextMenu}>
+        <Menu
+          onAction={(key, x) => {
+            console.log(key, x, 'menu');
+          }}
+          items={items}
+          style={{ border: '1px solid gray', margin: 10, marginLeft: '70vw' }}
+          columns={[
+            {
+              name: 'label',
+              flex: 2,
+            },
+            {
+              name: 'icon',
+              flex: 1,
+            },
+            { name: 'shortcut' },
+          ]}
+        />
+        <hr />
+        Portal:
+        {portal}
+        Portal Done
+        {/* 
       <Menu
         style={{ width: '30vw', border: '1px solid gray', margin: 10 }}
         columns={[
@@ -94,8 +180,11 @@ function App() {
         <MenuItem key="y">Paste</MenuItem>
         <MenuItem key="yz">Copy paste</MenuItem>
       </Menu> */}
-      <div style={{ height: '150vh', width: 20, background: 'magenta' }}></div>
-    </div>
+        <div
+          style={{ height: '150vh', width: 20, background: 'magenta' }}
+        ></div>
+      </div>
+    </>
   );
 }
 

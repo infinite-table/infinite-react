@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { HTMLProps, useState } from 'react';
+import { HTMLProps, useRef, useState } from 'react';
 import { join } from '../../utils/join';
+import { getChangeDetect } from '../DataSource/privateHooks/getChangeDetect';
 import { ExpanderIcon } from '../InfiniteTable/components/icons/ExpanderIcon';
 import { RenderHookComponent } from '../RenderHookComponent';
 import { clamp } from '../utils/clamp';
+import { Rectangle } from '../../utils/pageGeometry/Rectangle';
 import {
   MenuCls,
   MenuItemCls,
@@ -20,8 +22,11 @@ import type {
   MenuRuntimeItem,
   MenuRuntimeItemSelectable,
 } from './MenuProps';
+import { useOverlay } from '../hooks/useOverlay';
+import { selectParent } from '../../utils/selectParent';
 
 const SEPARATOR: MenuItemDefinition = '-';
+const SUBMENU_COL_NAME = 'submenu';
 
 function MenuSeparator() {
   return <hr className={MenuSeparatorCls} />;
@@ -30,9 +35,10 @@ function MenuSeparator() {
 type RuntimeItemContext = {
   columns: MenuColumn[];
   activeItemKey: string | null;
+  menuId: string;
 };
 const toRuntimeItem = (
-  { columns, activeItemKey }: RuntimeItemContext,
+  { columns, activeItemKey, menuId }: RuntimeItemContext,
   item: MenuItemDefinition,
 ) => {
   const menuItem =
@@ -41,6 +47,7 @@ const toRuntimeItem = (
       (item as MenuItemObject).label != null)
       ? (item as MenuItemObject)
       : null;
+
   const menuDecoration =
     menuItem === null ? (
       item === SEPARATOR ? (
@@ -54,12 +61,16 @@ const toRuntimeItem = (
     menuItem != null
       ? {
           type: 'item',
+          parentMenuId: menuId,
           disabled: !!menuItem.disabled,
           active: menuItem.key === activeItemKey,
           value: menuItem,
           span: menuItem.span || 1,
           key: menuItem.key,
           menu: menuItem.menu || null,
+          style: menuItem.style,
+          className: menuItem.className,
+          originalMenuItem: menuItem,
         }
       : {
           type: 'decoration',
@@ -115,15 +126,20 @@ const defaultColumns: MenuColumn[] = [
 ];
 
 function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
+  const [menuId] = useState<string>(() => getChangeDetect());
   const {
     children,
     items,
     columns: cols,
     addSubmenuColumnIfNeeded,
+    bubbleActionsFromSubmenus,
+    wrapLabels,
+    onAction,
     ...domProps
   } = props;
 
   const [activeItemKey, setActiveItemKey] = useState<string | null>(null);
+  const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
 
   const columns = cols || defaultColumns;
 
@@ -131,7 +147,7 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
 
   let renderedChildren: MenuRenderable = null;
 
-  const context = { columns, activeItemKey };
+  const context = { columns, activeItemKey, menuId: menuId };
   if (items) {
     runtimeItems = items.map(toRuntimeItem.bind(null, context));
   } else if (!items && typeof children !== 'function') {
@@ -143,9 +159,9 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
       runtimeItems.filter((item) => item.type === 'item' && item.menu != null)
         .length > 0;
 
-    if (hasSubmenus && !columns.find((col) => col.name == 'submenu')) {
+    if (hasSubmenus && !columns.find((col) => col.name == SUBMENU_COL_NAME)) {
       columns.push({
-        name: 'submenu',
+        name: SUBMENU_COL_NAME,
         render: ({ domProps, item }) => {
           return item.menu ? (
             <div {...domProps}>
@@ -159,23 +175,119 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
     }
   }
 
-  // if (typeof children === 'function' && items) {
-  //   renderedChildren = runtimeItems.map((item) => {
-  //     return (children as Function)!({
-  //       item,
-  //       columns,
-  //     });
-  //   });
-  // } else {
+  const onItemClick = (
+    event: React.MouseEvent,
+    item: MenuRuntimeItemSelectable,
+  ) => {
+    if (item.originalMenuItem.onClick) {
+      item.originalMenuItem.onClick(event);
+    }
+    if (item.originalMenuItem.onAction) {
+      item.originalMenuItem.onAction(item.key, item.originalMenuItem);
+    }
+    if (onAction) {
+      onAction(item.key, item.originalMenuItem);
+    }
+  };
+
+  const { showOverlay, portal } = useOverlay({
+    portalContainer: '#portal',
+  });
+
+  const hoveredItemRef = useRef<{
+    time: number;
+    item: MenuRuntimeItemSelectable;
+  } | null>(null);
+
+  let showSubmenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  function setHovered(
+    hover: boolean,
+    item: MenuRuntimeItemSelectable | null,
+    node: HTMLDivElement | null,
+  ) {
+    if (item && hover) {
+      hoveredItemRef.current = {
+        item,
+        time: Date.now(),
+      };
+      showSubmenuTimeoutRef.current = setTimeout(() => {
+        setExpandedItemKey(item.key);
+
+        if (!node || !node.parentElement) {
+          return;
+        }
+        const firstColNode = node.parentElement.firstChild! as HTMLElement;
+        const rect = Rectangle.from(firstColNode.getBoundingClientRect());
+
+        const menuNode = selectParent(
+          firstColNode,
+          `[data-menu-id="${menuId}"]`,
+        );
+        if (!menuNode) {
+          return;
+        }
+
+        const menuRect = Rectangle.from(menuNode.getBoundingClientRect());
+
+        // make the rectable stretch to cover all the menu horizontally
+        rect.left = menuRect.left;
+        rect.width = menuRect.width;
+
+        showOverlay(<Menu {...item.menu} />, {
+          alignTo: rect,
+          alignPosition: [
+            ['TopLeft', 'TopRight'],
+            ['TopRight', 'TopLeft'],
+          ],
+          constrainTo: true,
+          id: `${menuId}-submenu-${item.key}`,
+        });
+      }, 500);
+    } else {
+      hoveredItemRef.current = null;
+      clearTimeout(showSubmenuTimeoutRef.current!);
+      if (expandedItemKey) {
+        setExpandedItemKey(null);
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(showSubmenuTimeoutRef.current!);
+    };
+  }, []);
+
+  const onItemEnter = (
+    item: MenuRuntimeItemSelectable,
+    event: React.MouseEvent,
+  ) => {
+    setHovered(true, item, event.target as HTMLDivElement);
+  };
+  const onItemLeave = (item: MenuRuntimeItemSelectable) => {
+    setHovered(false, item, null);
+  };
+
   renderedChildren = runtimeItems.map((runtimeItem, index) => (
     <RuntimeItemRenderer
+      key={runtimeItem.type === 'item' ? runtimeItem.key : index}
+      onItemEnter={onItemEnter}
+      onItemLeave={onItemLeave}
       columns={columns}
+      expanded={
+        runtimeItem.type === 'item' && runtimeItem.key === expandedItemKey
+      }
       item={runtimeItem}
       index={index}
-      onClick={(item) => setActiveItemKey(item.key)}
+      onClick={(event, item) => {
+        setActiveItemKey(item.key);
+        onItemClick(event, item);
+      }}
     />
   ));
-  // }
 
   const gridTemplateColumns = columns
     .map((col) => {
@@ -192,6 +304,9 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
     gridTemplateColumns,
     gridTemplateRows: runtimeItems.map(() => `auto`).join(' '),
   };
+  if (!wrapLabels) {
+    style.whiteSpace = 'nowrap';
+  }
 
   function handleKeydown(event: { key: string }) {
     const selectableRuntimeItems = runtimeItems.filter(
@@ -232,8 +347,12 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
     }
   }
 
+  function onMenuMouseEnter() {}
+  function onMenuMouseLeave() {}
+
   return (
     <div
+      data-menu-id={menuId}
       {...domProps}
       onKeyDown={(event) => {
         if (domProps.onKeyDown) {
@@ -241,10 +360,13 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
         }
         handleKeydown(event);
       }}
+      onMouseEnter={onMenuMouseEnter}
+      onMouseLeave={onMenuMouseLeave}
       tabIndex={0}
       className={join(MenuCls, domProps.className)}
       style={style}
     >
+      {portal}
       {renderedChildren}
     </div>
   );
@@ -252,6 +374,8 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
 
 const menuDefaultProps: MenuProps = {
   addSubmenuColumnIfNeeded: true,
+  bubbleActionsFromSubmenus: true,
+  wrapLabels: false,
 };
 Menu.defaultProps = menuDefaultProps;
 
@@ -259,7 +383,16 @@ function RuntimeItemRenderer(props: {
   columns: MenuColumn[];
   item: MenuRuntimeItem;
   index: number;
-  onClick: (item: MenuRuntimeItemSelectable) => void;
+  expanded: boolean;
+  onItemEnter?: (
+    item: MenuRuntimeItemSelectable,
+    event: React.MouseEvent,
+  ) => void;
+  onItemLeave?: (
+    item: MenuRuntimeItemSelectable,
+    event: React.MouseEvent,
+  ) => void;
+  onClick: (event: React.MouseEvent, item: MenuRuntimeItemSelectable) => void;
 }) {
   const [hover, setHover] = React.useState(false);
   const [pressed, setPressed] = React.useState(false);
@@ -293,20 +426,28 @@ function RuntimeItemRenderer(props: {
 
         const domProps: React.HTMLProps<HTMLDivElement> = {
           style,
-          className: MenuItemCls({
-            hover,
-            disabled: !!item.disabled,
-            active: item.active,
-            pressed,
-          }),
-          onMouseEnter: () => {
+          //@ts-ignore
+          'data-menu-column-id': `${item.parentMenuId}-col-${col.name}`,
+          'data-menu-row-id': `${item.parentMenuId}-row-${index}`,
+          className: join(
+            MenuItemCls({
+              hover: hover,
+              disabled: !!item.disabled,
+              active: item.active,
+              pressed: pressed || props.expanded,
+            }),
+            item.className,
+          ),
+          onMouseEnter: (event) => {
             if (!item.disabled) {
               setHover(true);
+              props.onItemEnter?.(item, event);
             }
           },
-          onMouseLeave: () => {
+          onMouseLeave: (event) => {
             if (!item.disabled) {
               setHover(false);
+              props.onItemLeave?.(item, event);
             }
           },
           onMouseDown: () => {
@@ -319,15 +460,16 @@ function RuntimeItemRenderer(props: {
               setPressed(false);
             }
           },
-          onClick: () => {
+          onClick: (event: React.MouseEvent) => {
             if (!item.disabled) {
-              props.onClick(item);
+              props.onClick(event, item);
             }
           },
         };
 
         return col.render ? (
           <RenderHookComponent
+            key={`${key}-${field}`}
             render={col.render}
             renderParam={{
               item: target,

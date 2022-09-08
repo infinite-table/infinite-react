@@ -1,7 +1,7 @@
 import { Point, PointCoords } from '../Point';
 import { Rectangle, RectangleCoords } from '../Rectangle';
 
-type Alignable = RectangleCoords | HTMLElement | DOMRect;
+export type Alignable = RectangleCoords | HTMLElement | DOMRect;
 
 export type AlignPositionEnum =
   | 'TopLeft'
@@ -16,7 +16,7 @@ export type AlignPositionEnum =
 
 type AlignPositionItem = [AlignPositionEnum, AlignPositionEnum];
 
-type AlignPositionOptions = {
+export type AlignPositionOptions = {
   alignPosition: AlignPositionItem[];
   constrainTo?: Alignable;
   alignAnchor: Alignable;

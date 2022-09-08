@@ -8,12 +8,15 @@ export type MenuRenderable = string | number | RemoveObject<Renderable>;
 export type MenuRuntimeItemSelectable = {
   type: 'item';
   key: string;
+  parentMenuId: string;
   active: boolean;
   value: MenuItemObject;
   style?: CSSProperties;
+  className?: string;
   disabled: boolean;
   span: number;
   menu: MenuProps | null;
+  originalMenuItem: MenuItemObject;
 };
 export type MenuRuntimeItem =
   | MenuRuntimeItemSelectable
@@ -34,7 +37,10 @@ export type MenuProps = {
   items?: MenuItemDefinition[];
   columns?: MenuColumn[];
   children?: MenuRenderable;
+  wrapLabels?: boolean;
+  bubbleActionsFromSubmenus?: boolean;
   addSubmenuColumnIfNeeded?: boolean;
+  onAction?: (key: string, item: MenuItemObject) => void;
 };
 
 export type MenuSeparator = '-';
@@ -52,6 +58,10 @@ export type MenuItemObject = {
   menu?: Omit<MenuProps, 'children' | 'items'> & {
     items: (MenuItemObject | MenuSeparator)[];
   };
+  style?: CSSProperties;
+  className?: string;
+  onClick?: (event: React.MouseEvent) => void;
+  onAction?: (key: string, item: MenuItemObject) => void;
   [k: string]: any;
 };
 

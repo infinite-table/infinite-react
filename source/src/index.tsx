@@ -4,6 +4,7 @@ export * from './components/InfiniteTable';
 
 export * from './components/DataSource';
 export * from './components/Menu';
+export * from './components/hooks/useOverlay';
 
 import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBox';
 import { LoadMask } from './components/InfiniteTable/components/LoadMask';

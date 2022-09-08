@@ -17,14 +17,9 @@
         },
         {
           "title": "Community",
-          "path": "/docs/community",
-          "routes": [{
-            "title": "Acknowledgements",
-            "path": "/docs/community/acknowledgements"
-          }]
+          "path": "/docs/community"
         },
         {
-          
           "path": "/blog",
           "title": "Blog",
           "routes": []

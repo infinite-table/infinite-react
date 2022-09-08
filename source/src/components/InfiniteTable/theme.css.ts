@@ -470,7 +470,7 @@ const MenuVars = {
     ThemeVars.components.Row.hoverBackground,
   [ThemeVars.components.Menu.itemPressedBackground]:
     ThemeVars.components.Row.hoverBackground,
-  [ThemeVars.components.Menu.itemHoverOpacity]: 0.95,
+  [ThemeVars.components.Menu.itemHoverOpacity]: 0.9,
   [ThemeVars.components.Menu.itemPressedOpacity]: 1,
 };
 
