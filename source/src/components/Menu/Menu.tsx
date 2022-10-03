@@ -155,10 +155,6 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
   const setActiveItemKey = useCallback((key: string | null) => {
     componentActions.activeItemKey = key;
   }, []);
-  // const [keyboardActiveItemKey, setKeyboardActiveItemKey] = useState<
-  //   string | null
-  // >(null);
-  // const [activeItemKey, setActiveItemKey] = useState<string | null>(null);
 
   let mountedRef = useRef<boolean>(true);
 
@@ -489,13 +485,6 @@ function RuntimeItemRenderer(props: {
   onItemLeave?: (item: MenuRuntimeItemSelectable, event: PointerEvent) => void;
   onClick: (event: React.MouseEvent, item: MenuRuntimeItemSelectable) => void;
 }) {
-  /**
-   * Improvement: we should have a better hover state:
-   *
-   * Namely, changing the hover background color should only happen if a menu item is
-   * hovered over and ready to be expanded (either expanded, or, if it has no children, no other item should be expanded)
-   */
-  // const [hover, setHover] = React.useState(false);
   const [pressed, setPressed] = React.useState(false);
   const { columns, item, index, active, keyboardActive } = props;
   const key = item.type === 'item' ? item.value.key : index;
