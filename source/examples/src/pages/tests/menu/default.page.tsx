@@ -121,7 +121,7 @@ const items: MenuItemDefinition[] = [
   {
     key: 'commands',
     label: 'Commands',
-    menu: {
+    menux: {
       items: [
         {
           key: 'Export',

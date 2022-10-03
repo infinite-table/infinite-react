@@ -14,7 +14,7 @@ import { useLoadData } from './privateHooks/useLoadData';
 import { useDataSource } from './publicHooks/useDataSource';
 import { RowSelectionState } from './RowSelectionState';
 import {
-  mapPropsToState,
+  deriveStateFromProps,
   forwardProps,
   initSetupState,
   getInterceptActions,
@@ -52,7 +52,7 @@ const DataSourceRoot = getComponentStateRoot({
   //@ts-ignore
   concludeReducer,
   //@ts-ignore
-  mapPropsToState,
+  mapPropsToState: deriveStateFromProps,
   //@ts-ignore
   onPropChange,
   //@ts-ignore

@@ -2,8 +2,38 @@ import { getGlobal } from '../../utils/getGlobal';
 import { Point } from '../../utils/pageGeometry/Point';
 import { Rectangle } from '../../utils/pageGeometry/Rectangle';
 import { Triangle } from '../../utils/pageGeometry/Triangle';
+import { raf } from '../../utils/raf';
 
-const ACTIVE_OTHER_MENU_ITEM_TIMEOUT = 450;
+const ACTIVE_OTHER_MENU_ITEM_TIMEOUT = 250;
+
+export function waitForValueOnRaf<ReturnType>(
+  getter: () => ReturnType,
+  timeout: number = 100,
+): Promise<ReturnType | undefined> {
+  const start = Date.now();
+  return new Promise((resolve) => {
+    let value;
+
+    const fn = () => {
+      value = getter();
+      if (value !== undefined) {
+        resolve(value);
+        return;
+      }
+      if (Date.now() - start > timeout) {
+        resolve(undefined);
+        return;
+      }
+
+      raf(fn);
+    };
+
+    // it's important to start it on next tick
+    raf(() => {
+      fn();
+    });
+  });
+}
 
 const globalObject = getGlobal();
 
@@ -22,7 +52,8 @@ type MenuTriangleParams = {
    */
   onItemActivate: (itemKey: string | null, target: HTMLElement | null) => void;
   itemHasSubMenu: (itemKey: string) => boolean;
-  getMenuRectFor: (itemKey: string) => Rectangle | null;
+  getMenuRectFor: (itemKey: string) => Rectangle | undefined;
+  parentMenuId?: string;
 };
 /**
  * Here's the logic of menu and the menu triangle solution:
@@ -42,14 +73,13 @@ export class MenuTriangleContext {
   private activeItem: string | null = null;
   private currentHoveredItem: string | null = null;
 
-  private activeItemTimestamp: number = 0;
+  // private activeItemTimestamp: number = 0;
   private activeItemLeavePoint: Point | null = null;
 
   private menuLeaveTimeoutId: any = null;
 
-  private activeItemEventTarget: HTMLElement | null = null;
+  // private activeItemEventTarget: HTMLElement | null = null;
   private activeItemMenuRect: Rectangle | null = null;
-  private eventTargetForEnter: HTMLElement | null = null;
 
   private lastPointerMoveTimestamp: number = 0;
   private mouseMoveTimeoutId: number = 0;
@@ -74,7 +104,6 @@ export class MenuTriangleContext {
       'pointermove',
       this.onPointerMoveWhileActiveItem,
     );
-    this.eventTargetForEnter = null;
   };
 
   /**
@@ -170,9 +199,9 @@ export class MenuTriangleContext {
       horizontalDirectionSign * (horizontalDiff - this.lastHorizontalDiff) <
       0
     ) {
-      // this.lastHorizontalDiff = 0;
-      // activateHovered();
-      // return;
+      this.lastHorizontalDiff = 0;
+      activateHovered();
+      return;
     }
     this.lastHorizontalDiff = horizontalDiff;
 
@@ -227,31 +256,35 @@ export class MenuTriangleContext {
       this.params.onItemActivate(null, null);
 
       this.activeItem = null;
-      this.activeItemTimestamp = 0;
-      this.activeItemEventTarget = null;
+      // this.activeItemTimestamp = 0;
+      // this.activeItemEventTarget = null;
       this.activeItemMenuRect = null;
 
       return;
     }
 
     this.activeItem = itemKey;
-    this.activeItemTimestamp = Date.now();
-    this.activeItemEventTarget = target as HTMLElement;
+    // this.activeItemTimestamp = Date.now();
+    // this.activeItemEventTarget = target as HTMLElement;
 
     this.params.onItemActivate(itemKey, target);
 
+    this.activeItemMenuRect = null;
     // wait for the active item to be rendered
     // so we can retrieve the rect
-    requestAnimationFrame(() => {
+
+    waitForValueOnRaf(() => {
+      if (this.activeItem != itemKey) {
+        return false;
+      }
+      return this.params.getMenuRectFor(itemKey);
+    }).then((rect: Rectangle | false | undefined) => {
       if (this.activeItem != itemKey) {
         return;
       }
-
-      const rect = this.params.getMenuRectFor(itemKey);
-      if (!rect) {
-        return;
+      if (rect) {
+        this.activeItemMenuRect = rect;
       }
-      this.activeItemMenuRect = rect;
     });
   };
 

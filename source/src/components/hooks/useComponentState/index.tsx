@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useRef,
+  useLayoutEffect,
 } from 'react';
 
 import { dbg } from '../../../utils/debug';
@@ -164,6 +165,8 @@ type ComponentStateRootConfig<
 > = {
   debugName?: string;
   initSetupState?: () => COMPONENT_SETUP_STATE;
+
+  layoutEffect?: boolean;
 
   forwardProps?: (
     setupState: COMPONENT_SETUP_STATE,
@@ -426,7 +429,8 @@ export function getComponentStateRoot<
 
     const prevProps = usePrevious(props);
 
-    useEffect(() => {
+    const effectFn = config.layoutEffect ? useLayoutEffect : useEffect;
+    effectFn(() => {
       const currentProps = props;
       const newMappedState: Partial<COMPONENT_MAPPED_STATE> = {};
       let newMappedStateCount = 0;
