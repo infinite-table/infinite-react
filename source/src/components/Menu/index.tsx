@@ -230,7 +230,7 @@ function useRealignRef() {
 
   return refCallback;
 }
-function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
+function MenuComponent(props: MenuProps & HTMLProps<HTMLDivElement>) {
   const {
     children,
     portalContainer: _portalContainerFromProps,
@@ -330,7 +330,7 @@ function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
 
       if (alignTo) {
         showOverlay(
-          <Menu
+          <MenuComponent
             key={overlayId}
             parentMenuItemKey={item.key}
             parentMenuId={menuId}
@@ -553,7 +553,7 @@ const menuDefaultProps: MenuProps & { [propToIdentifyMenu]?: boolean } = {
    */
   [propToIdentifyMenu]: true,
 };
-Menu.defaultProps = menuDefaultProps;
+MenuComponent.defaultProps = menuDefaultProps;
 
 function RuntimeItemRenderer(props: {
   columns: MenuColumn[];
@@ -699,7 +699,7 @@ MenuItem.defaultProps = {
   __is_menu_item: true,
 };
 
-export { Menu, MenuItem };
+export { MenuComponent as Menu, MenuItem };
 export type {
   MenuProps,
   MenuItemObject,
