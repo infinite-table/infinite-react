@@ -22,12 +22,15 @@ export const MenuCls = style([
     padding: ThemeVars.components.Menu.padding,
     color: ThemeVars.components.Menu.color,
     background: ThemeVars.components.Menu.background,
+    outline: 'none',
   },
 ]);
 
-export const MenuRowCls = style([display.contents]);
+export const MenuRowCls = style({
+  display: 'contents',
+});
 
-const activeItemBorder = fallbackVar(
+const keyboardActiveItemBorder = fallbackVar(
   ThemeVars.components.Row.activeBorder,
   `${fallbackVar(
     ThemeVars.components.Row.activeBorderWidth,
@@ -46,7 +49,7 @@ export const MenuItemCls = recipe({
       paddingBlock: ThemeVars.components.Menu.cellPaddingVertical,
       paddingInline: ThemeVars.components.Menu.cellPaddingHorizontal,
       marginBlock: ThemeVars.components.Menu.cellMarginVertical,
-      border: activeItemBorder,
+      border: keyboardActiveItemBorder,
       borderColor: 'transparent',
     },
     display.flex,
@@ -65,10 +68,10 @@ export const MenuItemCls = recipe({
       ],
       false: [cursor.pointer],
     },
-    hover: {
+    active: {
       true: {
-        background: ThemeVars.components.Menu.itemHoverBackground,
-        opacity: ThemeVars.components.Menu.itemHoverOpacity,
+        background: ThemeVars.components.Menu.itemActiveBackground,
+        opacity: ThemeVars.components.Menu.itemActiveOpacity,
       },
       false: {},
     },
@@ -76,22 +79,26 @@ export const MenuItemCls = recipe({
       false: {},
       true: {},
     },
-    active: {
+    keyboardActive: {
       true: {
         selectors: {
-          [`${MenuCls}:focus &`]: {
-            border: activeItemBorder,
+          [`${MenuCls}:focus > ${MenuRowCls} > &`]: {
+            border: keyboardActiveItemBorder,
           },
-          [`${MenuCls}:focus &:first-child`]: {
+          [`${MenuCls}:focus > ${MenuRowCls} > &:first-child:last-child`]: {
+            border: keyboardActiveItemBorder,
+          },
+          [`${MenuCls}:focus > ${MenuRowCls} > &:first-child`]: {
             borderRightColor: 'transparent',
           },
-          [`${MenuCls}:focus &:last-child`]: {
+          [`${MenuCls}:focus > ${MenuRowCls} > &:last-child`]: {
             borderLeftColor: 'transparent',
           },
-          [`${MenuCls}:focus &:not(:first-child):not(:last-child)`]: {
-            borderLeftColor: 'transparent',
-            borderRightColor: 'transparent',
-          },
+          [`${MenuCls}:focus > ${MenuRowCls} > &:not(:first-child):not(:last-child)`]:
+            {
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
+            },
         },
       },
       false: {},
@@ -101,7 +108,7 @@ export const MenuItemCls = recipe({
     {
       variants: {
         pressed: true,
-        hover: true,
+        active: true,
       },
       style: {
         background: ThemeVars.components.Menu.itemPressedBackground,

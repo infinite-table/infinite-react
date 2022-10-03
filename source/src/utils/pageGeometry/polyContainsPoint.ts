@@ -1,11 +1,45 @@
 import { PointCoords } from './Point';
 import { ArrayWith3, ArrayWithAtLeast3 } from './types';
 
+function sortPoints(
+  points: ArrayWithAtLeast3<PointCoords>,
+): ArrayWithAtLeast3<PointCoords> {
+  if (points.length < 3) {
+    return points;
+  }
+
+  const [...result] = points;
+
+  result.sort((a, b) => {
+    const angleA = Math.atan2(a.top, a.left);
+    const angleB = Math.atan2(b.top, b.left);
+
+    if (angleA === angleB) {
+      // we need this here, for cases where there is equal left
+      // the angle is the same, so we need to sort by top
+      return b.top - a.top;
+    }
+
+    return angleA > angleB ? 1 : -1;
+  });
+
+  return result;
+}
+
 export function polyContainsPoint(
   points: ArrayWithAtLeast3<PointCoords>,
   point: PointCoords,
 ): boolean {
-  const rootPoint = points[0];
+  // we need to sort the points so they are in clockwise or counter clockwise order
+  points = sortPoints(points);
+
+  const [rootPoint] = points;
+
+  // starting from the root point
+  // draw a triangle to any other 2 neighboring points, in sort order (as sorted above in previous step)
+  // and check if the point is inside that triangle
+
+  // this is a pretty effective way to check if a point is inside a polygon
 
   for (
     let i = 1, len = points.length - 1 /*yes, -1 is correct*/;

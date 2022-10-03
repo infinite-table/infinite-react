@@ -20,6 +20,46 @@ const items: MenuItemDefinition[] = [
     shortcut: 'cmd + c',
     disabled: true,
   },
+  {
+    key: 'actions',
+    label: 'actions',
+    menu: {
+      items: [
+        {
+          key: 'say hello',
+          label: 'say hello',
+        },
+        {
+          key: 'welcome',
+          label: 'welcome',
+        },
+        {
+          key: 'greetings',
+          label: 'greetings',
+        },
+        {
+          key: 'hello',
+          label: 'hello',
+        },
+        {
+          key: 'hi',
+          label: 'hi',
+        },
+        {
+          key: 'salut',
+          label: 'salut',
+        },
+        {
+          key: 'aurevoir',
+          label: 'aurevoir',
+        },
+        {
+          key: 'abientot',
+          label: 'abientot',
+        },
+      ],
+    },
+  },
   '-',
   {
     key: 'columns',
@@ -78,19 +118,93 @@ const items: MenuItemDefinition[] = [
     },
     // label: 'test',
   },
+  {
+    key: 'commands',
+    label: 'Commands',
+    menu: {
+      items: [
+        {
+          key: 'Export',
+          label: 'Export',
+          menu: {
+            items: [
+              {
+                key: 'pdf',
+                label: 'Export as PDF',
+              },
+              {
+                key: 'excel',
+                label: 'Export as Excel',
+              },
+              {
+                key: 'csv',
+                label: 'Export as CSV',
+              },
+              {
+                key: 'json',
+                label: 'Export as JSON',
+              },
+            ],
+          },
+        },
+        {
+          key: 'Save',
+          label: 'Save',
+          menu: {
+            items: [
+              {
+                key: 'save',
+                label: 'Save',
+              },
+              {
+                key: 'save as',
+                label: 'Save as',
+                menu: {
+                  items: [
+                    {
+                      key: 'save as pdf',
+                      label: 'Save as PDF',
+                    },
+                    {
+                      key: 'save as excel',
+                      label: 'Save as Excel',
+                    },
+                    {
+                      key: 'save as csv',
+                      label: 'Save as CSV',
+                    },
+                    {
+                      key: 'save as json',
+                      label: 'Save as JSON',
+                    },
+                  ],
+                },
+              },
+              {
+                key: 'save all',
+                label: 'Save all',
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
 ];
 
 function App() {
-  const { portal, showOverlay } = useOverlay({});
+  const { portal, showOverlay } = useOverlay({
+    portalContainer: '#portal',
+  });
 
   const onContextMenu = (event: React.MouseEvent) => {
     const { pageX, pageY } = event;
-    console.log({ pageX, pageY });
 
     event.preventDefault();
 
     showOverlay(
       <Menu
+        id={'test'}
         items={items}
         style={{ border: '1px solid gray', margin: 10 }}
         columns={[
@@ -106,29 +220,34 @@ function App() {
         ]}
       />,
       {
-        id: 'contextMenu',
         alignTo: {
           top: pageY,
           left: pageX,
         },
-        constrainTo: true,
         alignPosition: [
-          ['TopLeft', 'TopLeft'],
+          ['TopRight', 'TopLeft'],
           ['BottomRight', 'TopLeft'],
+          ['BottomRight', 'BottomLeft'],
+          ['TopLeft', 'BottomLeft'],
+          ['BottomLeft', 'BottomLeft'],
         ],
       },
     );
   };
   return (
     <>
-      <div id="portal" style={{ position: 'fixed' }} />
-      <div onContextMenu={onContextMenu}>
+      <div onContextMenu={onContextMenu} data-context-menu>
         <Menu
+          portalContainer={'#portal'}
           onAction={(key, x) => {
             console.log(key, x, 'menu');
           }}
           items={items}
-          style={{ border: '1px solid gray', margin: 10, marginLeft: '70vw' }}
+          style={{
+            border: '3px solid magenta',
+            margin: 10,
+            marginLeft: '70vw',
+          }}
           columns={[
             {
               name: 'label',
@@ -142,9 +261,7 @@ function App() {
           ]}
         />
         <hr />
-        Portal:
-        {portal}
-        Portal Done
+        Portal: Portal Done
         {/* 
       <Menu
         style={{ width: '30vw', border: '1px solid gray', margin: 10 }}
@@ -180,10 +297,19 @@ function App() {
         <MenuItem key="y">Paste</MenuItem>
         <MenuItem key="yz">Copy paste</MenuItem>
       </Menu> */}
-        <div
-          style={{ height: '150vh', width: 20, background: 'magenta' }}
-        ></div>
+        <div style={{ height: '150vh', width: 20, background: 'gray' }}></div>
+        {portal}
       </div>
+
+      <div
+        id="portal"
+        style={{
+          position: 'fixed',
+          width: 0,
+          height: 0,
+          zIndex: 1000,
+        }}
+      ></div>
     </>
   );
 }

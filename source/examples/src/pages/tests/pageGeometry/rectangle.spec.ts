@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 import { Rectangle } from '@src/utils/pageGeometry/Rectangle';
+import { ConvexPoly } from '@src/utils/pageGeometry/ConvexPoly';
 
 export default test.describe.parallel('Rectangle', () => {
   test('contains point should be fine - test moving point vertically', async ({}) => {
@@ -249,5 +250,68 @@ export default test.describe.parallel('Rectangle', () => {
 
     expect(r1.intersects(r2)).toBe(true);
     expect(r2.intersects(r1)).toBe(true);
+  });
+
+  test('contains point case 3', () => {
+    const r1 = new Rectangle({
+      top: 0,
+      left: 0,
+      width: 1280,
+      height: 937,
+    });
+    expect(
+      r1.containsPoint({
+        top: 396.79,
+        left: 803,
+      }),
+    ).toBe(true);
+  });
+
+  test('contains point case 4', () => {
+    const r1 = new Rectangle({
+      height: 571.5,
+      left: 0,
+      top: 70.5625,
+      width: 1440,
+    });
+
+    expect(
+      r1.contains(
+        new Rectangle({
+          top: 203,
+          left: 422.765623,
+          width: 345.234375,
+          height: 282.171875,
+        }),
+      ),
+    );
+  });
+
+  test('convex poly ', () => {
+    const p = new ConvexPoly([
+      {
+        top: 322,
+        left: 0,
+      },
+      {
+        top: 322,
+        left: 1440,
+      },
+      {
+        top: 894,
+        left: 0,
+      },
+      {
+        top: 894,
+        left: 1440,
+      },
+    ]);
+
+    expect(
+      p.containsPoint({
+        top: 869,
+        left: 360,
+      }),
+    ).toBe(true);
   });
 });

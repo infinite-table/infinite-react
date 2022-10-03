@@ -5,7 +5,7 @@ export type LicenseDetails = {
   distribution: boolean;
   trial: boolean;
   skipAirtable?: boolean;
-
+  type: string;
   count?: number;
   timestamp?: number;
 

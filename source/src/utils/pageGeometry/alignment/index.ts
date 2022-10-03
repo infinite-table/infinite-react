@@ -83,6 +83,7 @@ export function getAlignPosition(
       position: alignPosition[i],
       constrainRect: constrainRectangle,
     });
+
     if (i === 0) {
       firstAlignResult = {
         ...alignResult,

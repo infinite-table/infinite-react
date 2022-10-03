@@ -291,8 +291,8 @@ export const ThemeVars = createGlobalThemeContract(
         cellPaddingHorizontal: 'menu-cell-padding-horizontal',
         cellMarginVertical: 'menu-cell-margin-vertical',
         itemDisabledBackground: 'menu-item-disabled-background',
-        itemHoverBackground: 'menu-item-hover-background',
-        itemHoverOpacity: 'menu-item-hover-opacity',
+        itemActiveBackground: 'menu-item-active-background',
+        itemActiveOpacity: 'menu-item-active-opacity',
         itemPressedOpacity: 'menu-item-pressed-opacity',
         itemPressedBackground: 'menu-item-pressed-background',
         itemDisabledOpacity: 'menu-item-disabled-opacity',
@@ -466,11 +466,11 @@ const MenuVars = {
   [ThemeVars.components.Menu.itemDisabledBackground]:
     ThemeVars.components.Menu.background,
   [ThemeVars.components.Menu.itemDisabledOpacity]: 0.5,
-  [ThemeVars.components.Menu.itemHoverBackground]:
+  [ThemeVars.components.Menu.itemActiveBackground]:
     ThemeVars.components.Row.hoverBackground,
   [ThemeVars.components.Menu.itemPressedBackground]:
     ThemeVars.components.Row.hoverBackground,
-  [ThemeVars.components.Menu.itemHoverOpacity]: 0.9,
+  [ThemeVars.components.Menu.itemActiveOpacity]: 0.9,
   [ThemeVars.components.Menu.itemPressedOpacity]: 1,
 };
 
