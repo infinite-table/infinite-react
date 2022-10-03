@@ -117,7 +117,7 @@ export function Sidebar({
         <Button
           as="div"
           className="w-full text-center justify-center leading-relaxed">
-          Officially Launching in September 2022
+          Officially Launching in October 2022
         </Button>
         <Button
           className="w-full text-center justify-center"

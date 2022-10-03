@@ -73,7 +73,7 @@ export default function IndexWrapper({
             EARLY ADOPTER version available soon for REACT{' '}
             {ReactLogo}
             <br />
-            Officially launching in September 2022
+            Officially launching in October 2022
           </div>
           {children}
         </main>
