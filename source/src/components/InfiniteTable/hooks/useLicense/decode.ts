@@ -11,12 +11,11 @@ export const fieldsToLicenseDetails = (
 
   const details: LicenseDetails = {
     distribution: fieldsMap.get('Type') === 'distribution',
-    count: fieldsMap.get('DeveloperCount')
-      ? Number(fieldsMap.get('DeveloperCount'))
-      : 0,
+    count: fieldsMap.get('DevCount') ? Number(fieldsMap.get('DevCount')) : 0,
     start: new Date(fieldsMap.get('StartDate')!),
     end: new Date(fieldsMap.get('EndDate')!),
     owner: fieldsMap.get('Owner')!,
+    type: fieldsMap.get('Type')!,
     timestamp: fieldsMap.get('TS') ? Number(fieldsMap.get('TS')) : 0,
     trial: fieldsMap.get('Trial') === 'true' ? true : false,
     ref: fieldsMap.get('Ref') ?? '',

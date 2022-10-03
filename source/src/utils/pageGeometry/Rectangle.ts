@@ -37,6 +37,9 @@ export class Rectangle extends PolyWithPoints {
 
   constructor(coordsAndSize: RectangleCoords) {
     super();
+    if (!coordsAndSize) {
+      debugger;
+    }
     this.top = coordsAndSize.top;
     this.left = coordsAndSize.left;
 
@@ -53,12 +56,28 @@ export class Rectangle extends PolyWithPoints {
     return new ConvexPoly(this.getPoints()).containsPoint(p);
   }
 
+  getTopLeft() {
+    return { left: this.left, top: this.top };
+  }
+
+  getTopRight() {
+    return { left: this.left + this.width, top: this.top };
+  }
+
+  getBottomLeft() {
+    return { left: this.left, top: this.top + this.height };
+  }
+
+  getBottomRight() {
+    return { left: this.left + this.width, top: this.top + this.height };
+  }
+
   getPoints() {
     return [
-      { left: this.left, top: this.top },
-      { left: this.left, top: this.top + this.height },
-      { left: this.left + this.width, top: this.top + this.height },
-      { left: this.left + this.width, top: this.top },
+      this.getTopLeft(),
+      this.getTopRight(),
+      this.getBottomLeft(),
+      this.getBottomRight(),
     ].map(Point.from) as [Point, Point, Point, Point];
   }
 

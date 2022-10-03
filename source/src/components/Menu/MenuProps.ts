@@ -1,7 +1,9 @@
 import { CSSProperties, HTMLProps } from 'react';
+import { ElementContainerGetter, OverlayShowParams } from '../hooks/useOverlay';
 import { NonUndefined } from '../types/NonUndefined';
 import { RemoveObject } from '../types/RemoveObject';
 import { Renderable } from '../types/Renderable';
+import { MenuApi, MenuState } from './MenuState';
 
 export type MenuRenderable = string | number | RemoveObject<Renderable>;
 
@@ -10,6 +12,7 @@ export type MenuRuntimeItemSelectable = {
   key: string;
   parentMenuId: string;
   active: boolean;
+  keyboardActive: boolean;
   value: MenuItemObject;
   style?: CSSProperties;
   className?: string;
@@ -34,13 +37,20 @@ export type MenuChildrenFnParam = {
 };
 
 export type MenuProps = {
+  id?: string;
+  portalContainer?: ElementContainerGetter | false | null;
   items?: MenuItemDefinition[];
+  constrainTo?: OverlayShowParams['constrainTo'];
   columns?: MenuColumn[];
   children?: MenuRenderable;
   wrapLabels?: boolean;
+  onShow?: (api: MenuApi) => void;
+  onHide?: (state: MenuState) => void;
   bubbleActionsFromSubmenus?: boolean;
   addSubmenuColumnIfNeeded?: boolean;
   onAction?: (key: string, item: MenuItemObject) => void;
+  parentMenuId?: string;
+  parentMenuItemKey?: string;
 };
 
 export type MenuSeparator = '-';

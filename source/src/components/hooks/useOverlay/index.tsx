@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { ReactNode, useLayoutEffect, useState } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import {
   Alignable,
@@ -11,14 +17,16 @@ import type { PointCoords } from '../../../utils/pageGeometry/Point';
 import type { RectangleCoords } from '../../../utils/pageGeometry/Rectangle';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
+import { propToIdentifyMenu } from '../../Menu/propToIdentifyMenu';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 
 type OverlayParams = {
-  portalContainer?: ElementContainerGetter;
+  portalContainer?: ElementContainerGetter | null | false;
+  constrainTo?: OverlayShowParams['constrainTo'];
 };
 
-type ElementContainerGetter =
+export type ElementContainerGetter =
   | (() => HTMLElement | string | Promise<HTMLElement | string>)
   | string
   | HTMLElement
@@ -40,7 +48,7 @@ function isHTMLElement(
   return typeof el.tagName === 'string';
 }
 
-type AdvancedAlignable = Alignable | ElementContainerGetter;
+export type AdvancedAlignable = Alignable | ElementContainerGetter;
 
 async function retrieveAdvancedAlignable(
   target: AdvancedAlignable,
@@ -59,7 +67,7 @@ async function retrieveAdvancedAlignable(
     target = target.getBoundingClientRect();
   }
 
-  return Rectangle.from(target);
+  return target ? Rectangle.from(target) : null;
 }
 
 async function retrieveElement(
@@ -74,20 +82,20 @@ async function retrieveElement(
     result = elementGetter;
   }
 
-  function assignPortal(result: HTMLElement | string | null) {
-    let portalElement: HTMLElement | null = null;
+  function queryForElement(result: HTMLElement | string | null) {
+    let el: HTMLElement | null = null;
 
     if (typeof result === 'string') {
-      portalElement = document.querySelector(result)!;
+      el = document.querySelector(result)!;
     }
     if (isHTMLElement(result)) {
-      portalElement = result;
+      el = result;
     }
 
-    return portalElement || null;
+    return el || null;
   }
 
-  return assignPortal(await result);
+  return queryForElement(await result);
 }
 
 function DefaultOverlayPortal(props: { children: ReactNode }) {
@@ -102,22 +110,32 @@ function OverlayContent(
   } & OverlayHandle,
 ) {
   const nodeRef = React.useRef<HTMLDivElement | null>(null);
-  React.useEffect(() => {
+  useEffect(() => {
     return props.realign.onChange((handle) => {
       if (nodeRef.current && handle) {
         alignOverlayNode(nodeRef.current, handle);
       }
     });
   }, [props.realign]);
+
   return (
     <div
       style={{ position: 'absolute', top: 0, left: 0 }}
-      ref={(node) => {
+      ref={useCallback((node) => {
         if (node) {
           alignOverlayNode(node, props);
+          // const rect = alignOverlayNode(node, props);
+          // const realignEvent = new CustomEvent('realign', {
+          //   bubbles: true,
+          //   detail: {
+          //     rect,
+          //   },
+          // });
+
+          // node.firstChild?.dispatchEvent(realignEvent);
         }
         nodeRef.current = node;
-      }}
+      }, [])}
     >
       {props.children}
     </div>
@@ -149,6 +167,7 @@ async function alignOverlayNode(
   const constrainToRectangle = constrainTo
     ? (await retrieveAdvancedAlignable(constrainTo)) || undefined
     : undefined;
+
   const alignToRectangle = alignTo
     ? await retrieveAdvancedAlignable(alignTo as AdvancedAlignable)
     : undefined;
@@ -166,17 +185,36 @@ async function alignOverlayNode(
   });
 
   node.style.transform = `translate3d(${alignedRect.left}px,${alignedRect.top}px, 0px)`;
+
+  const rect = node.getBoundingClientRect();
+
+  if (rect.left !== alignedRect.left || rect.top !== alignedRect.top) {
+    // let's take the diff from offsetParent to the alignRect
+    // and adjust it like that
+    const offsetParent = node.offsetParent as HTMLElement;
+
+    if (offsetParent) {
+      const offsetParentRect = offsetParent.getBoundingClientRect();
+      const offsetParentLeft = offsetParentRect.left;
+      const offsetParentTop = offsetParentRect.top;
+
+      const leftDiff = alignedRect.left - offsetParentLeft;
+      const topDiff = alignedRect.top - offsetParentTop;
+
+      node.style.transform = `translate3d(${leftDiff}px,${topDiff}px, 0px)`;
+    }
+  }
 }
 
 /**
- * If portal container is given, it will create a React portal form that element
+ * If portal container is given, it will create a React portal from that element
  * otherwise it will simply render another node as portal
  *
  * @param portalContainer
  */
-function useOverlayPortal(
+export function useOverlayPortal(
   content: ReactNode,
-  portalContainer?: ElementContainerGetter,
+  portalContainer?: ElementContainerGetter | null | false,
 ) {
   const [container, setContainer] = useState<HTMLElement | null>(null);
 
@@ -200,13 +238,18 @@ function useOverlayPortal(
   return portalContainer ? (
     container ? (
       createPortal(content, container)
-    ) : null
+    ) : (
+      // we're probably still fetching the container
+      <></>
+    )
+  ) : portalContainer === null || portalContainer === false ? (
+    content
   ) : (
     <DefaultOverlayPortal>{content}</DefaultOverlayPortal>
   );
 }
 
-type OverlayShowParams = {
+export type OverlayShowParams = {
   id?: string | number;
   constrainTo?: AdvancedAlignable | boolean;
   alignPosition: AlignPositionOptions['alignPosition'];
@@ -214,59 +257,135 @@ type OverlayShowParams = {
 };
 
 type OverlayHandle = {
-  id: string;
+  key: string;
   children: ReactNode;
+
+  constrainTo: OverlayShowParams['constrainTo'];
   alignPosition: OverlayShowParams['alignPosition'];
   alignTo: OverlayShowParams['alignTo'];
-  constrainTo: OverlayShowParams['constrainTo'];
+
   realign: SubscriptionCallback<OverlayHandle>;
 };
 
+function getIdForReactOnlyChild(children: ReactNode) {
+  if (React.Children.count(children) === 1) {
+    const child = React.Children.only(children);
+    if (React.isValidElement(child)) {
+      return child.props.id || child.key;
+    }
+  }
+  return null;
+}
+
+function injectPortalContainerAndConstrainInMenuChild(
+  children: ReactNode,
+  portalContainer: OverlayParams['portalContainer'],
+  constrainTo: OverlayParams['constrainTo'],
+) {
+  if (React.Children.count(children) === 1) {
+    const child = React.Children.only(children);
+    // here we could have tested for child.type === Menu,
+    // but if we had done that, we could have had to import the `Menu` component
+    // which in turns imports this, so we try to avoid that
+    if (
+      React.isValidElement(child) &&
+      child.props[propToIdentifyMenu] &&
+      child.props.portalContainer === undefined
+    ) {
+      const newProps: Partial<OverlayParams> = {};
+      if (child.props.portalContainer === undefined) {
+        newProps.portalContainer = portalContainer;
+      }
+      if (child.props.constrainTo === undefined) {
+        newProps.constrainTo = constrainTo;
+      }
+      return React.cloneElement(child, newProps);
+    }
+  }
+  return children;
+}
+
+//@ts-ignore
+globalThis.allhandles = {};
+//@ts-ignore
+globalThis.thehandles = {};
+
 export function useOverlay(params: OverlayParams) {
+  const rootParams = params;
   const [contentForPortal, setContentForPortal] = useState<ReactNode[]>([]);
   const [handles] = useState<Map<string, OverlayHandle>>(() => new Map());
 
+  //@ts-ignore
+  globalThis.thehandles = handles;
+
+  const [handleToRealign, setHandleToRealign] = useState<string | null>(null);
+  const [realignTimestamp, setRealignTimestamp] = useState(0);
+
   const portal = useOverlayPortal(contentForPortal, params.portalContainer);
 
-  function updateContent() {
-    const contentForPortal: ReactNode[] = [];
+  const updateContent = useCallback(
+    function () {
+      const contentForPortal: ReactNode[] = [];
 
-    for (const [_, handle] of handles) {
-      contentForPortal.push(
-        <OverlayContent key={handle.id} {...handle}></OverlayContent>,
+      for (const [_, handle] of handles) {
+        contentForPortal.push(
+          <OverlayContent {...handle} key={handle.key}></OverlayContent>,
+        );
+      }
+
+      setContentForPortal(contentForPortal);
+    },
+    [handles],
+  );
+
+  const showOverlay = useCallback(
+    (children: ReactNode, params: OverlayShowParams) => {
+      const id =
+        params.id || getIdForReactOnlyChild(children) || getChangeDetect();
+      const key = `${id}`;
+
+      let handle = handles.get(key);
+
+      children = injectPortalContainerAndConstrainInMenuChild(
+        children,
+        rootParams.portalContainer,
+        rootParams.constrainTo,
       );
+
+      if (handle) {
+        Object.assign(handle, params, { children });
+        updateContent();
+        setHandleToRealign(handle.key);
+        setRealignTimestamp(Date.now());
+        return;
+      }
+
+      handle = {
+        key,
+        children,
+        alignPosition: params.alignPosition,
+        alignTo: params.alignTo,
+        constrainTo: params.constrainTo,
+        realign: buildSubscriptionCallback<OverlayHandle>(),
+      };
+
+      handles.set(handle.key, handle);
+
+      updateContent();
+
+      return key;
+    },
+    [handles, rootParams.portalContainer, updateContent],
+  );
+
+  React.useEffect(() => {
+    if (handleToRealign) {
+      const handle = handles.get(handleToRealign);
+      if (handle) {
+        handle.realign(handle);
+      }
     }
-
-    setContentForPortal(contentForPortal);
-  }
-
-  const showOverlay = (children: ReactNode, params: OverlayShowParams) => {
-    const key = getChangeDetect();
-    const id = `${params.id ?? key}`;
-
-    let handle = handles.get(id);
-
-    if (handle) {
-      Object.assign(handle, params);
-      handle.realign(handle);
-      return;
-    }
-
-    handle = {
-      id,
-      children,
-      alignPosition: params.alignPosition,
-      alignTo: params.alignTo,
-      constrainTo: params.constrainTo,
-      realign: buildSubscriptionCallback<OverlayHandle>(),
-    };
-
-    handles.set(handle.id, handle);
-
-    updateContent();
-
-    return id;
-  };
+  }, [handleToRealign, realignTimestamp]);
 
   const hideOverlay = (id: string) => {
     id = `${id}`;
@@ -276,9 +395,19 @@ export function useOverlay(params: OverlayParams) {
     }
   };
 
+  const clearAll = () => {
+    handles.clear();
+    updateContent();
+  };
+
+  React.useEffect(() => {
+    // return clearAll;
+  }, []);
+
   return {
     portal,
     hideOverlay,
+    clearAll,
     showOverlay,
   };
 }

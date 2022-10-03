@@ -167,7 +167,7 @@ function getLivePaginationCursorValue<T>(
   return livePaginationCursor;
 }
 
-export function mapPropsToState<T extends any>(params: {
+export function deriveStateFromProps<T extends any>(params: {
   props: DataSourceProps<T>;
 
   state: DataSourceState<T>;
