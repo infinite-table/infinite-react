@@ -210,6 +210,14 @@ export const InfiniteTableComponent = React.memo(
         </InfiniteTableBody>
 
         <div
+          data-name="pinned-start-border"
+          className={PinnedStartIndicatorBorder}
+        />
+        <div
+          data-name="pinned-end-border"
+          className={PinnedEndIndicatorBorder}
+        />
+        <div
           ref={portalDOMRef as RefObject<HTMLDivElement>}
           className={join(
             `${rootClassName}Portal`,
@@ -221,15 +229,6 @@ export const InfiniteTableComponent = React.memo(
         >
           {menuPortal}
         </div>
-
-        <div
-          data-name="pinned-start-border"
-          className={PinnedStartIndicatorBorder}
-        />
-        <div
-          data-name="pinned-end-border"
-          className={PinnedEndIndicatorBorder}
-        />
         {rowHeightCSSVar ? (
           <CSSVariableWatch
             varName={rowHeightCSSVar}
