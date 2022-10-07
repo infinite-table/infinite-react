@@ -22,12 +22,14 @@ import {
 const SUBMENU_COL_NAME = 'submenu';
 
 export function getInitialMenuState(): MenuSetupState {
+  const domRef = React.createRef<HTMLDivElement | null>();
   return {
     keyboardActiveItemKey: null,
     activeItemKey: null,
     generatedId: getChangeDetect(),
     focused: false,
     destroyed: false,
+    domRef,
   };
 }
 
@@ -42,6 +44,7 @@ export const forwardProps = (): ForwardPropsToStateFnResult<
     onAction: 1,
     onShow: 1,
     onHide: 1,
+    autoFocus: 1,
     wrapLabels: 1,
   };
 };

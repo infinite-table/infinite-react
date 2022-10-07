@@ -1,3 +1,4 @@
+import { MutableRefObject } from 'react';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
   MenuColumn,
@@ -7,6 +8,7 @@ import {
 } from './MenuProps';
 
 export type MenuSetupState = {
+  domRef: MutableRefObject<HTMLDivElement | null>;
   keyboardActiveItemKey: string | null;
   activeItemKey: string | null;
   generatedId: string;
@@ -25,6 +27,7 @@ export type MenuMappedState = {
   parentMenuId: MenuProps['parentMenuId'];
   parentMenuItemKey: MenuProps['parentMenuItemKey'];
   constrainTo: MenuProps['constrainTo'];
+  autoFocus: MenuProps['autoFocus'];
   onAction: MenuProps['onAction'];
   onShow: MenuProps['onShow'];
   onHide: MenuProps['onHide'];

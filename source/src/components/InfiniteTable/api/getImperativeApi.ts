@@ -1,6 +1,7 @@
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
-import { GroupRowsState } from '../../DataSource';
+import { SortDir } from '../../../utils/multisort';
+import { DataSourceSingleSortInfo, GroupRowsState } from '../../DataSource';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { loadData } from '../../DataSource/privateHooks/useLoadData';
 import {
@@ -8,7 +9,10 @@ import {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnVisibility,
 } from '../types';
-import { ScrollAdjustPosition } from '../types/InfiniteTableProps';
+import {
+  InfiniteTableColumnPinnedValues,
+  ScrollAdjustPosition,
+} from '../types/InfiniteTableProps';
 import { getSelectionApi } from './getSelectionApi';
 
 import { GetImperativeApiParam } from './type';
@@ -90,9 +94,135 @@ export function getImperativeApi<T>(param: GetImperativeApiParam<T>) {
       }
     },
 
-    setColumnVisibility: (
-      columnVisibility: InfiniteTablePropColumnVisibility,
-    ) => {
+    setSortingForColumn(columnId: string, dir: SortDir | null) {
+      const col = getComputed().computedColumnsMap.get(columnId);
+
+      if (!col) {
+        return;
+      }
+
+      if (dir === null) {
+        this.setSortInfoForColumn(columnId, null);
+        return;
+      }
+
+      const sortInfo: DataSourceSingleSortInfo<T> = {
+        dir,
+      };
+
+      const field = (col.groupByField ? col.groupByField : col.field) as
+        | keyof T
+        | (keyof T)[];
+
+      if (field) {
+        sortInfo.field = field;
+      }
+      if (col.computedSortType) {
+        sortInfo.type = col.computedSortType;
+      }
+
+      if (col.valueGetter) {
+        sortInfo.valueGetter = (data) =>
+          col.valueGetter!({ data, field: col.field });
+      }
+
+      this.setSortInfoForColumn(columnId, sortInfo);
+    },
+
+    setPinningForColumn(
+      columnId: string,
+      pinning: InfiniteTableColumnPinnedValues,
+    ) {
+      const columnPinning = { ...getState().columnPinning };
+
+      if (pinning === false) {
+        delete columnPinning[columnId];
+      } else {
+        columnPinning[columnId] = pinning;
+      }
+
+      componentActions.columnPinning = columnPinning;
+    },
+
+    setSortInfoForColumn(
+      columnId: string,
+      columnSortInfo: DataSourceSingleSortInfo<T> | null,
+    ) {
+      const dataSourceState = getDataSourceState();
+      const col = getComputed().computedColumnsMap.get(columnId);
+
+      if (!col) {
+        return;
+      }
+
+      if (!dataSourceState.multiSort) {
+        dataSourceActions.sortInfo = columnSortInfo ? [columnSortInfo] : null;
+        return;
+      }
+
+      const colField = col.field;
+
+      let newSortInfo = dataSourceState.sortInfo?.slice() ?? [];
+
+      if (columnSortInfo === null) {
+        // we need to filter out any existing sortInfo for this column
+        newSortInfo = newSortInfo.filter((sortInfo) => {
+          if (sortInfo.id) {
+            if (sortInfo.id === columnId) {
+              return false;
+            }
+            return true;
+          }
+          if (sortInfo.field) {
+            if (sortInfo.field === colField) {
+              return false;
+            }
+            return true;
+          }
+
+          return true;
+        });
+        dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
+        return;
+      }
+
+      newSortInfo = newSortInfo.map((sortInfo) => {
+        if (sortInfo.id) {
+          if (sortInfo.id === columnId) {
+            return columnSortInfo;
+          }
+          return sortInfo;
+        }
+        if (sortInfo.field) {
+          if (sortInfo.field === colField) {
+            return columnSortInfo;
+          }
+          return sortInfo;
+        }
+
+        return sortInfo;
+      });
+      dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
+    },
+
+    setVisibilityForColumn(columnId: string, visible: boolean) {
+      const columnVisibility = {
+        ...getState().columnVisibility,
+      };
+
+      if (visible) {
+        delete columnVisibility[columnId];
+      } else {
+        columnVisibility[columnId] = false;
+      }
+      componentActions.columnVisibility = columnVisibility;
+    },
+
+    getVisibleColumnsCount() {
+      return getComputed().computedVisibleColumns.length;
+    },
+
+    setColumnVisibility(columnVisibility: InfiniteTablePropColumnVisibility) {
       componentActions.columnVisibility = columnVisibility;
     },
     getState,

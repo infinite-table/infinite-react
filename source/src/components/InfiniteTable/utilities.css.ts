@@ -136,6 +136,8 @@ export const alignItems = styleVariants({
 
 export const justifyContent = styleVariants({
   center: { justifyContent: 'center' },
+  spaceBetween: { justifyContent: 'space-between' },
+  spaceAround: { justifyContent: 'space-around' },
   start: { justifyContent: 'flex-start' },
   end: { justifyContent: 'flex-end' },
 });

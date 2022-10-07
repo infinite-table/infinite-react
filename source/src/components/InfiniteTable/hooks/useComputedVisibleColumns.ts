@@ -56,6 +56,7 @@ type UseComputedVisibleColumnsResult<T> = {
   fieldsToColumn: GetComputedVisibleColumnsResult<T>['fieldsToColumn'];
 
   computedColumnsMap: GetComputedVisibleColumnsResult<T>['computedColumnsMap'];
+  computedColumnsMapInInitialOrder: GetComputedVisibleColumnsResult<T>['computedColumnsMapInInitialOrder'];
   computedRemainingSpace: GetComputedVisibleColumnsResult<T>['computedRemainingSpace'];
   computedUnpinnedOffset: GetComputedVisibleColumnsResult<T>['computedUnpinnedOffset'];
   computedPinnedEndOffset: GetComputedVisibleColumnsResult<T>['computedPinnedEndOffset'];
@@ -120,6 +121,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedPinnedStartWidth,
     renderSelectionCheckBox,
     computedColumnsMap,
+    computedColumnsMapInInitialOrder,
     fieldsToColumn,
   } = useMemo(() => {
     return getComputedVisibleColumns({
@@ -205,6 +207,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedVisibleColumns,
     computedVisibleColumnsMap,
     computedColumnOrder,
+    computedColumnsMapInInitialOrder,
     fieldsToColumn,
   };
 

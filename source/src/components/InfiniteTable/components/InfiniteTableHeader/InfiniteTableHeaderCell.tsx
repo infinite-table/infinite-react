@@ -19,7 +19,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
-import { InternalVars } from '../../theme.css';
+import { InternalVars, ThemeVars } from '../../theme.css';
 import { InfiniteTableFilterEditorProps } from '../../types';
 import type {
   InfiniteTableColumnHeaderParam,
@@ -27,11 +27,12 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
-import { cursor, justifyContent, userSelect } from '../../utilities.css';
+import { cursor, flex, justifyContent, userSelect } from '../../utilities.css';
 import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
+import { MenuIcon } from '../icons/MenuIcon';
 import { SortIcon } from '../icons/SortIcon';
 import {
   InfiniteTableCell,
@@ -119,6 +120,7 @@ export function getColumnFilterType<T>(
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
+const spacer = <div className={flex['1']}></div>;
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
 ) {
@@ -132,6 +134,7 @@ export function InfiniteTableHeaderCell<T>(
       columnHeaderHeight,
       filterEditors,
       columnReorderDragColumnId,
+      onColumnMenuClick,
     },
   } = useInfiniteTable<T>();
 
@@ -173,6 +176,26 @@ export function InfiniteTableHeaderCell<T>(
       />
     ) : null;
 
+  const align = column.align || 'start';
+
+  const menuIcon = (
+    <MenuIcon
+      style={{
+        [align === 'end'
+          ? 'marginInlineStart'
+          : 'marginInlineEnd']: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
+      }}
+      domProps={{
+        onClick: (event) => {
+          onColumnMenuClick({
+            target: event.target as HTMLElement,
+            column,
+          });
+        },
+      }}
+    />
+  );
+
   const renderParam: InfiniteTableColumnHeaderParam<T> = {
     dragging,
     domRef: ref,
@@ -186,6 +209,18 @@ export function InfiniteTableHeaderCell<T>(
     api,
     renderBag: {
       sortIcon,
+      menuIcon:
+        align === 'end' ? (
+          <>
+            {menuIcon}
+            {spacer}
+          </>
+        ) : (
+          <>
+            {spacer}
+            {menuIcon}
+          </>
+        ),
       selectionCheckBox: null,
       header:
         column.header && typeof column.header !== 'function'
@@ -193,8 +228,6 @@ export function InfiniteTableHeaderCell<T>(
           : column.name,
     },
   };
-
-  const align = column.align || 'start';
 
   const renderChildren = () => {
     if (column.renderSortIcon) {
@@ -262,11 +295,15 @@ export function InfiniteTableHeaderCell<T>(
 
     return (
       <>
+        {align === 'end' ? renderParam.renderBag.menuIcon : null}
         {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
         {align === 'end' ? renderParam.renderBag.sortIcon : null}
+
         {renderParam.renderBag.header}
+
         {align !== 'end' ? renderParam.renderBag.sortIcon : null}
         {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
+        {align !== 'end' ? renderParam.renderBag.menuIcon : null}
       </>
     );
   };

@@ -139,6 +139,7 @@ export const ThemeVars = createGlobalThemeContract(
         paddingX: 'header-cell-padding-x',
         paddingY: 'header-cell-padding-y',
         iconSize: 'header-cell-icon-size',
+        menuIconLineWidth: 'header-cell-menu-icon-line-width',
         sortIconMargin: 'header-cell-sort-icon-margin',
         /**
          * The width of the area you can hover over in order to grab the column resize handle.
@@ -296,6 +297,8 @@ export const ThemeVars = createGlobalThemeContract(
         itemPressedOpacity: 'menu-item-pressed-opacity',
         itemPressedBackground: 'menu-item-pressed-background',
         itemDisabledOpacity: 'menu-item-disabled-opacity',
+        borderRadius: 'menu-border-radius',
+        shadowColor: 'menu-shadow-color',
       },
       Row: {
         /**
@@ -407,6 +410,7 @@ const HeaderCellVars = {
     .padding]: `${ThemeVars.components.HeaderCell.paddingY} ${ThemeVars.components.HeaderCell.paddingX} `,
 
   [ThemeVars.components.HeaderCell.iconSize]: '16px',
+  [ThemeVars.components.HeaderCell.menuIconLineWidth]: '1px',
   [ThemeVars.components.HeaderCell.sortIconMargin]: '16px',
 };
 const HeaderVars = {
@@ -472,6 +476,8 @@ const MenuVars = {
     ThemeVars.components.Row.hoverBackground,
   [ThemeVars.components.Menu.itemActiveOpacity]: 0.9,
   [ThemeVars.components.Menu.itemPressedOpacity]: 1,
+  [ThemeVars.components.Menu.borderRadius]: ThemeVars.spacing[2],
+  [ThemeVars.components.Menu.shadowColor]: `rgba(0,0,0,0.25)`,
 };
 
 const LightTheme = {
@@ -527,6 +533,8 @@ const DarkTheme = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#242a31',
   [ThemeVars.components.Cell.color]: '#c3c3c3',
+  [ThemeVars.components.Menu.shadowColor]: `rgba(0,0,0,0.25)`,
+  [ThemeVars.components.Menu.shadowColor]: `rgba(255,255,255,0.25)`,
 };
 
 globalStyle(':root', {

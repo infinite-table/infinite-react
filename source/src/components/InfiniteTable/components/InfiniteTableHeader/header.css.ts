@@ -9,8 +9,10 @@ import {
   display,
   flexFlow,
   height,
+  justifyContent,
   overflow,
   position,
+  visibility,
   width,
 } from '../../utilities.css';
 import {
@@ -23,6 +25,7 @@ import {
 export { CellCls, CellClsVariants };
 
 export const HeaderSortIconCls = style([position.relative], 'SortIconCls');
+
 export const HeaderSortIconRecipe = recipe({
   variants: {
     align: {
@@ -261,6 +264,33 @@ export const HeaderCellRecipe = recipe({
     },
   ],
 });
+
+export const HeaderMenuIconCls = style(
+  [
+    position.relative,
+    display.flex,
+    flexFlow.column,
+
+    justifyContent.spaceAround,
+    visibility.hidden,
+    {
+      cursor: 'context-menu',
+      paddingBlockStart: '2px',
+      paddingBlockEnd: '2px',
+      width: ThemeVars.components.HeaderCell.iconSize,
+      height: ThemeVars.components.HeaderCell.iconSize,
+      selectors: {
+        '&:active': {
+          top: '1px',
+        },
+        [`${HeaderCellRecipe({})}:hover &`]: {
+          visibility: 'visible',
+        },
+      },
+    },
+  ],
+  'MenuIconCls',
+);
 
 export type HeaderCellVariantsType = RecipeVariants<typeof HeaderCellRecipe>;
 

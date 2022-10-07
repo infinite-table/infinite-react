@@ -9,7 +9,11 @@ import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { defaultFilterEditors } from '../components/FilterEditors';
 import { ThemeVars } from '../theme.css';
-import { InfiniteTableProps, InfiniteTableState } from '../types';
+import {
+  InfiniteTableComputedColumn,
+  InfiniteTableProps,
+  InfiniteTableState,
+} from '../types';
 import {
   InfiniteTableColumnsMap,
   InfiniteTablePropFilterEditors,
@@ -87,6 +91,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     renderer,
     onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
+    columnContextMenuVisibleForColumnId: null,
 
     brain,
     headerBrain,
@@ -95,6 +100,11 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
     activeCellIndicatorDOMRef: createRef(),
+
+    onColumnMenuClick: buildSubscriptionCallback<{
+      target: HTMLElement;
+      column: InfiniteTableComputedColumn<T>;
+    }>(),
 
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
@@ -155,6 +165,7 @@ export const forwardProps = <T>(
     onScrollStop: 1,
     scrollToBottomOffset: 1,
 
+    getColumContextMenuItems: 1,
     columnPinning: 1,
 
     rowStyle: 1,

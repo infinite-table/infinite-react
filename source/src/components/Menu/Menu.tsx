@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 import { join } from '../../utils/join';
-import { clamp } from '../utils/clamp';
+
 import { Rectangle } from '../../utils/pageGeometry/Rectangle';
 
 import { RenderHookComponent } from '../RenderHookComponent';
@@ -17,6 +17,7 @@ import { MenuCls, MenuItemCls, MenuRowCls } from './MenuCls.css';
 import type {
   MenuColumn,
   MenuItemObject,
+  MenuProps,
   MenuRenderable,
   MenuRuntimeItem,
   MenuRuntimeItemSelectable,
@@ -28,10 +29,64 @@ import { MenuTriangleContext } from './MenuTriangleContext';
 
 import { useMenuContext } from './MenuContext';
 import { Menu } from '.';
-import { MenuApi } from './MenuState';
+import { MenuApi, MenuState } from './MenuState';
 import { raf } from '../../utils/raf';
 import { display } from '../InfiniteTable/utilities.css';
 
+function renderSubmenuForItem(
+  item: MenuRuntimeItemSelectable,
+  config: {
+    api: MenuApi;
+    parentMenuId: string;
+    constrainTo: MenuState['constrainTo'];
+    setSubmenuApi: (api: MenuApi) => void;
+    setActiveItemKey: (itemKey: string | null) => void;
+    setKeyboardActiveItemKey: (itemKey: string | null) => void;
+  },
+) {
+  const {
+    parentMenuId,
+    setSubmenuApi,
+    setActiveItemKey,
+    setKeyboardActiveItemKey,
+    constrainTo,
+    api,
+  } = config;
+  const overlayId = `${parentMenuId}-submenu`;
+
+  let itemMenu = item.menu;
+  if (!itemMenu) {
+    return null;
+  }
+
+  if (typeof itemMenu === 'function') {
+    itemMenu = itemMenu();
+  }
+
+  return (
+    <Menu
+      key={overlayId}
+      parentMenuItemKey={item.key}
+      parentMenuId={parentMenuId}
+      constrainTo={constrainTo}
+      {...itemMenu}
+      onShow={(state, api) => {
+        (itemMenu as MenuProps)?.onShow?.(state, api);
+        setSubmenuApi(api);
+      }}
+      onHide={(state) => {
+        // the submenu was focused but now is unmounted
+        setActiveItemKey(null);
+        setKeyboardActiveItemKey(item.key);
+
+        if (state.focused) {
+          // so make sure we focus current menu
+          api.focus();
+        }
+      }}
+    />
+  );
+}
 /**
  *
  * @param menuId The menu id
@@ -39,6 +94,20 @@ import { display } from '../InfiniteTable/utilities.css';
  * @returns Rectangle
  */
 function getMenuItemRect(menuId: string, itemKey: string) {
+  const cells = getMenuItemNodes(menuId, itemKey);
+  if (!cells.length) {
+    return null;
+  }
+  const first = Rectangle.from(cells[0]?.getBoundingClientRect());
+  const last = Rectangle.from(cells[cells.length - 1].getBoundingClientRect());
+
+  const rect = first;
+  rect.width = last.left + last.width - first.left;
+
+  return rect;
+}
+
+function getMenuItemNodes(menuId: string, itemKey: string): HTMLDivElement[] {
   const menuNode = selectParent(
     document.querySelector(
       `[data-menu-id="${menuId}"] [data-menu-item-key="${itemKey}"]`,
@@ -47,17 +116,29 @@ function getMenuItemRect(menuId: string, itemKey: string) {
   );
 
   if (!menuNode) {
-    return null;
+    return [];
   }
 
   const cells = menuNode.querySelectorAll(`[data-menu-item-key="${itemKey}"]`);
-  const first = Rectangle.from(cells[0]?.getBoundingClientRect());
-  const last = Rectangle.from(cells[cells.length - 1].getBoundingClientRect());
 
-  const rect = first;
-  rect.width = last.left + last.width - first.left;
+  return Array.from(cells) as HTMLDivElement[];
+}
 
-  return rect;
+function getFirstCheckBoxInsideMenuItem(menuId: string, itemKey: string) {
+  const cells = getMenuItemNodes(menuId, itemKey);
+  if (!cells.length) {
+    return null;
+  }
+
+  for (const cell of cells) {
+    const input = cell.querySelector(
+      'input[type="checkbox"]',
+    ) as HTMLInputElement | null;
+    if (input) {
+      return input;
+    }
+  }
+  return null;
 }
 
 function useSubmenus({
@@ -143,7 +224,9 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
       wrapLabels,
       onShow,
       onHide,
+      autoFocus,
       parentMenuItemKey,
+      domRef,
     },
     componentActions,
     getState,
@@ -174,52 +257,39 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
   useLayoutEffect(() => {
     const { runtimeItems } = getState();
 
-    const item = runtimeItems.filter(
+    const activeItem = runtimeItems.filter(
       (item) => item.type === 'item' && activeItemKey === item.key,
     )[0] as MenuRuntimeItemSelectable | null;
 
-    if (!item || !item.menu) {
+    if (!activeItem || !activeItem.menu) {
       setSubmenuApi(null);
       clearAll();
       return;
     }
 
-    if (item) {
-      const overlayId = `${menuId}-submenu`;
-      const alignTo = getMenuItemRect(menuId, item.key)!;
+    if (activeItem) {
+      const alignTo = getMenuItemRect(menuId, activeItem.key)!;
+
+      const menu = () =>
+        renderSubmenuForItem(activeItem, {
+          constrainTo,
+          setSubmenuApi,
+          setActiveItemKey,
+          setKeyboardActiveItemKey,
+          parentMenuId: menuId,
+          api,
+        });
 
       if (alignTo) {
-        showOverlay(
-          <Menu
-            key={overlayId}
-            parentMenuItemKey={item.key}
-            parentMenuId={menuId}
-            constrainTo={constrainTo}
-            {...item.menu}
-            onShow={(api) => {
-              item.menu?.onShow?.(api);
-              setSubmenuApi(api);
-            }}
-            onHide={(state) => {
-              // the submenu was focused but now is unmounted
-              setActiveItemKey(null);
-              setKeyboardActiveItemKey(item.key);
-
-              if (state.focused) {
-                // so make sure we focus current menu
-                api.focus();
-              }
-            }}
-          />,
-          {
-            alignTo,
-            alignPosition: [
-              ['TopLeft', 'TopRight'],
-              ['TopRight', 'TopLeft'],
-            ],
-            constrainTo,
-          },
-        );
+        showOverlay(menu, {
+          id: `${menuId}-submenu`,
+          alignTo,
+          alignPosition: [
+            ['TopLeft', 'TopRight'],
+            ['TopRight', 'TopLeft'],
+          ],
+          constrainTo,
+        });
       }
       return;
     }
@@ -253,7 +323,6 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
     portalContainer: false,
   });
 
-  const domRef = useRef<HTMLDivElement | null>(null);
   const { onItemEnter, onItemLeave } = useSubmenus({
     onItemActivate: (item) => {
       if (!isMounted()) {
@@ -303,28 +372,56 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
     style.whiteSpace = 'nowrap';
   }
 
-  function handleKeydown(event: { key: string; preventDefault: VoidFunction }) {
-    const selectableRuntimeItems = runtimeItems.filter(
-      (item) => item.type === 'item' && !item.disabled,
-    ) as MenuRuntimeItemSelectable[];
-
-    let activeIndex = selectableRuntimeItems.findIndex(
-      (runtimeItem) => runtimeItem.key === keyboardActiveItemKey,
+  function handleKeydown(keyboardEvent: KeyboardEvent) {
+    const { runtimeItems, runtimeSelectableItems } = getState();
+    let activeIndex = runtimeItems.findIndex(
+      (runtimeItem) =>
+        runtimeItem.type === 'item' &&
+        runtimeItem.key === keyboardActiveItemKey,
     );
-    let newActiveIndex = activeIndex;
+
+    let newActiveItemKey = keyboardActiveItemKey;
+
+    const activeItem = runtimeItems[activeIndex] as MenuRuntimeItemSelectable;
 
     const validKeys = {
       ArrowUp: () => {
-        newActiveIndex--;
+        const newActiveItem = runtimeItems
+          .slice(0, activeIndex)
+          .filter((item) => item.type === 'item' && !item.disabled)
+          .pop();
+        if (
+          newActiveItem &&
+          newActiveItem.type === 'item' &&
+          newActiveItem.key
+        ) {
+          newActiveItemKey = newActiveItem.key;
+        }
       },
       ArrowDown: () => {
-        newActiveIndex++;
+        const newActiveItem = runtimeItems
+          .slice(activeIndex + 1)
+          .filter((item) => item.type === 'item' && !item.disabled)[0];
+        if (
+          newActiveItem &&
+          newActiveItem.type === 'item' &&
+          newActiveItem.key
+        ) {
+          newActiveItemKey = newActiveItem.key;
+        }
+      },
+      Home: () => {
+        validKeys.PageUp();
+      },
+      End: () => {
+        validKeys.PageDown();
       },
       PageUp: () => {
-        newActiveIndex = 0;
+        newActiveItemKey = runtimeSelectableItems[0].key;
       },
       PageDown: () => {
-        newActiveIndex = getState().runtimeSelectableItems.length - 1;
+        newActiveItemKey =
+          runtimeSelectableItems[runtimeSelectableItems.length - 1].key;
       },
       ArrowLeft: () => {
         setActiveItemKey(null);
@@ -336,51 +433,67 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
       },
 
       ArrowRight: () => {
-        const activeItem = getState().runtimeSelectableItems[activeIndex];
-
-        if (activeItem) {
-          setActiveItemKey(activeItem.key);
-
-          raf(() => {
-            if (
-              mountedRef.current &&
-              submenuApi &&
-              submenuApi.getParentMenuId() === getState().menuId
-            ) {
-              submenuApi.focus();
-            }
-          });
-        }
-      },
-      Enter: () => {
-        const activeItem = getState().runtimeSelectableItems[activeIndex];
-        // we close it if it was opened
-        if (activeItem && activeItem.originalMenuItem.menu && submenuApi) {
-          validKeys.ArrowLeft();
+        if (!activeItem) {
           return;
         }
-        // or open if was closed
-        if (activeItem) {
-          setActiveItemKey(activeItem.key);
+        setActiveItemKey(activeItem.key);
+
+        raf(() => {
+          if (
+            mountedRef.current &&
+            submenuApi &&
+            submenuApi.getParentMenuId() === getState().menuId
+          ) {
+            submenuApi.focus();
+          }
+        });
+      },
+      Enter: () => {
+        if (!activeItem) {
+          return;
         }
+        if (activeItem.originalMenuItem?.menu) {
+          // we close it if it was opened
+          if (activeItem && activeItem.originalMenuItem.menu && submenuApi) {
+            validKeys.ArrowLeft();
+            return;
+          }
+          // or open if was closed
+          if (activeItem) {
+            setActiveItemKey(activeItem.key);
+          }
+        } else {
+          onItemClick(keyboardEvent as any as React.MouseEvent, activeItem);
+        }
+      },
+      ' ': () => {
+        if (!activeItem) {
+          return;
+        }
+        if (!activeItem.originalMenuItem.menu) {
+          onItemClick(keyboardEvent as any as React.MouseEvent, activeItem);
+        }
+
+        const checkbox = getFirstCheckBoxInsideMenuItem(menuId, activeItem.key);
+        if (!checkbox) {
+          return;
+        }
+
+        checkbox.click();
       },
       Escape: () => {},
     };
 
     validKeys.Escape = validKeys.ArrowLeft;
 
-    const fn = validKeys[event.key as keyof typeof validKeys];
+    const fn = validKeys[keyboardEvent.key as keyof typeof validKeys];
+
     if (fn) {
       fn();
-      event.preventDefault();
+      keyboardEvent.preventDefault();
     }
-    newActiveIndex = clamp(
-      newActiveIndex,
-      0,
-      selectableRuntimeItems.length - 1,
-    );
-    if (newActiveIndex != activeIndex) {
-      setKeyboardActiveItemKey(selectableRuntimeItems[newActiveIndex].key);
+    if (newActiveItemKey != activeItemKey) {
+      setKeyboardActiveItemKey(newActiveItemKey);
     }
   }
   function onMenuBlur() {
@@ -433,12 +546,15 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
   });
 
   const refCallback = useCallback((node) => {
-    domRef.current = node;
-
     if (node) {
-      onShow?.(api);
+      domRef.current = node;
+      onShow?.(getState(), api);
+      if (autoFocus) {
+        api.focus();
+      }
     } else {
       onHide?.(getState());
+      domRef.current = node;
     }
   }, []);
   const result = (
@@ -451,7 +567,7 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
         ref={refCallback}
         onKeyDown={(event) => {
           domProps.onKeyDown?.(event);
-          handleKeydown(event);
+          handleKeydown(event as any as KeyboardEvent);
         }}
         onMouseDown={(event) => {
           shouldSelectFirstItemOnFocus.current = false;
@@ -463,7 +579,7 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
         }}
         onFocus={onMenuFocus}
         onBlur={onMenuBlur}
-        className={join(MenuCls, domProps.className)}
+        className={join(MenuCls, domProps.className, 'InfiniteMenu')}
         style={style}
       >
         {renderedChildren}

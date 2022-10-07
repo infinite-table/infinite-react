@@ -12,7 +12,10 @@ import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
-import { InfiniteTableColumn } from './InfiniteTableColumn';
+import {
+  InfiniteTableColumn,
+  InfiniteTableComputedColumn,
+} from './InfiniteTableColumn';
 import type {
   InfiniteTableColumnGroup,
   InfiniteTablePropColumnGroupsMap,
@@ -39,6 +42,11 @@ export interface InfiniteTableSetupState<T> {
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
+  onColumnMenuClick: SubscriptionCallback<{
+    target: HTMLElement;
+    column: InfiniteTableComputedColumn<T>;
+  }>;
+  columnContextMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
   cellMouseDown: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
@@ -74,6 +82,8 @@ export interface InfiniteTableMappedState<T> {
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
+
+  getColumContextMenuItems: InfiniteTableProps<T>['getColumContextMenuItems'];
 
   columnPinning: InfiniteTablePropColumnPinning;
 

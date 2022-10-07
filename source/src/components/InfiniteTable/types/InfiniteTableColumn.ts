@@ -51,6 +51,7 @@ export type InfiniteTableColumnHeaderParam<
   renderBag: {
     header: string | number | Renderable;
     sortIcon?: Renderable;
+    menuIcon?: Renderable;
     selectionCheckBox?: Renderable;
   };
 };

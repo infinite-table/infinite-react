@@ -16,10 +16,12 @@ import {
 import type { PointCoords } from '../../../utils/pageGeometry/Point';
 import type { RectangleCoords } from '../../../utils/pageGeometry/Rectangle';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
+
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { propToIdentifyMenu } from '../../Menu/propToIdentifyMenu';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
+import { useRerender } from '../useRerender';
 
 type OverlayParams = {
   portalContainer?: ElementContainerGetter | null | false;
@@ -106,7 +108,7 @@ function DefaultOverlayPortal(props: { children: ReactNode }) {
 
 function OverlayContent(
   props: {
-    children: ReactNode;
+    children: () => ReactNode;
   } & OverlayHandle,
 ) {
   const nodeRef = React.useRef<HTMLDivElement | null>(null);
@@ -137,7 +139,7 @@ function OverlayContent(
         nodeRef.current = node;
       }, [])}
     >
-      {props.children}
+      {typeof props.children === 'function' ? props.children() : props.children}
     </div>
   );
 }
@@ -258,7 +260,7 @@ export type OverlayShowParams = {
 
 type OverlayHandle = {
   key: string;
-  children: ReactNode;
+  children: () => ReactNode;
 
   constrainTo: OverlayShowParams['constrainTo'];
   alignPosition: OverlayShowParams['alignPosition'];
@@ -312,48 +314,51 @@ globalThis.thehandles = {};
 
 export function useOverlay(params: OverlayParams) {
   const rootParams = params;
-  const [contentForPortal, setContentForPortal] = useState<ReactNode[]>([]);
-  const [handles] = useState<Map<string, OverlayHandle>>(() => new Map());
 
-  //@ts-ignore
-  globalThis.thehandles = handles;
+  const [handles] = useState<Map<string, OverlayHandle>>(() => new Map());
 
   const [handleToRealign, setHandleToRealign] = useState<string | null>(null);
   const [realignTimestamp, setRealignTimestamp] = useState(0);
 
-  const portal = useOverlayPortal(contentForPortal, params.portalContainer);
+  const getContentForPortal = useCallback(() => {
+    const contentForPortal: ReactNode[] = [];
 
-  const updateContent = useCallback(
-    function () {
-      const contentForPortal: ReactNode[] = [];
+    for (const [_, handle] of handles) {
+      contentForPortal.push(
+        <OverlayContent {...handle} key={handle.key}></OverlayContent>,
+      );
+    }
 
-      for (const [_, handle] of handles) {
-        contentForPortal.push(
-          <OverlayContent {...handle} key={handle.key}></OverlayContent>,
-        );
-      }
+    return contentForPortal;
+  }, []);
 
-      setContentForPortal(contentForPortal);
-    },
-    [handles],
+  const portal = useOverlayPortal(
+    getContentForPortal(),
+    params.portalContainer,
   );
 
+  const [_, updateContent] = useRerender();
+
   const showOverlay = useCallback(
-    (children: ReactNode, params: OverlayShowParams) => {
+    (content: ReactNode | (() => ReactNode), params: OverlayShowParams) => {
       const id =
-        params.id || getIdForReactOnlyChild(children) || getChangeDetect();
+        params.id || getIdForReactOnlyChild(content) || getChangeDetect();
       const key = `${id}`;
 
       let handle = handles.get(key);
 
-      children = injectPortalContainerAndConstrainInMenuChild(
-        children,
-        rootParams.portalContainer,
-        rootParams.constrainTo,
-      );
+      const childrenFn = () => {
+        const children = typeof content === 'function' ? content() : content;
+
+        return injectPortalContainerAndConstrainInMenuChild(
+          children,
+          rootParams.portalContainer,
+          rootParams.constrainTo,
+        );
+      };
 
       if (handle) {
-        Object.assign(handle, params, { children });
+        Object.assign(handle, params, { children: childrenFn });
         updateContent();
         setHandleToRealign(handle.key);
         setRealignTimestamp(Date.now());
@@ -362,7 +367,7 @@ export function useOverlay(params: OverlayParams) {
 
       handle = {
         key,
-        children,
+        children: childrenFn,
         alignPosition: params.alignPosition,
         alignTo: params.alignTo,
         constrainTo: params.constrainTo,
@@ -373,7 +378,7 @@ export function useOverlay(params: OverlayParams) {
 
       updateContent();
 
-      return key;
+      return () => updateContent();
     },
     [handles, rootParams.portalContainer, updateContent],
   );
@@ -408,6 +413,7 @@ export function useOverlay(params: OverlayParams) {
     portal,
     hideOverlay,
     clearAll,
+    rerenderOverlays: updateContent,
     showOverlay,
   };
 }

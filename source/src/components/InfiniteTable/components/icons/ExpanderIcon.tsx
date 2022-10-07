@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
+
 import { join } from '../../../../utils/join';
 import { isControlled } from '../../../utils/isControlled';
 import { ExpanderIconCls, ExpanderIconClsVariants } from './ExpanderIcon.css';
+import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
 
 type ExpanderIconProps = {
   size?: number;
@@ -13,6 +15,7 @@ type ExpanderIconProps = {
   className?: string;
   direction?: 'end' | 'start';
 };
+
 export function ExpanderIcon(props: ExpanderIconProps) {
   const { size = 24, direction = 'start' } = props;
 
@@ -48,8 +51,8 @@ export function ExpanderIcon(props: ExpanderIconProps) {
           direction: direction || 'start',
           expanded,
         }),
-        'InfiniteIcon',
-        'InfiniteIcon-expander',
+        `${InfiniteTableIconClassName}`,
+        `${InfiniteTableIconClassName}-expander`,
         `InfiniteIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,
         `InfiniteIcon-expander--${direction === 'end' ? 'end' : 'start'}`,
       )}

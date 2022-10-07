@@ -2,10 +2,7 @@ import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
 import { MultiRowSelector } from '../utils/MultiRowSelector';
 
 import type { InfiniteTableComputedColumn } from './InfiniteTableColumn';
-import type {
-  InfiniteTablePropColumnOrderNormalized,
-  InfiniteTablePropColumnVisibility,
-} from './InfiniteTableProps';
+import type { InfiniteTablePropColumnOrderNormalized } from './InfiniteTableProps';
 
 export interface InfiniteTableComputedValues<T> {
   scrollbars: {
@@ -24,7 +21,8 @@ export interface InfiniteTableComputedValues<T> {
   computedVisibleColumns: InfiniteTableComputedColumn<T>[];
   computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   computedColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
-  computedColumnVisibility: InfiniteTablePropColumnVisibility;
+  computedColumnsMapInInitialOrder: Map<string, InfiniteTableComputedColumn<T>>;
+  // computedColumnVisibility: InfiniteTablePropColumnVisibility;
   computedColumnOrder: InfiniteTablePropColumnOrderNormalized;
   computedPinnedStartColumnsWidth: number;
   computedPinnedStartWidth: number;

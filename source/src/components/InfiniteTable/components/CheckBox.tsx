@@ -11,6 +11,7 @@ import { CheckBoxCls } from './CheckBox.css';
 
 export type InfiniteCheckBoxPropChecked = true | false | null;
 export type InfiniteCheckBoxProps = {
+  disabled?: boolean;
   checked?: InfiniteCheckBoxPropChecked;
   defaultChecked?: InfiniteCheckBoxPropChecked;
   onChange?: (checked: InfiniteCheckBoxPropChecked) => void;
@@ -19,6 +20,7 @@ export type InfiniteCheckBoxProps = {
 
 export type InfiniteCheckBoxMappedState = {
   checked: NonUndefined<InfiniteCheckBoxProps['checked']>;
+  disabled: NonUndefined<InfiniteCheckBoxProps['disabled']>;
   domProps: InfiniteCheckBoxProps['domProps'];
 };
 
@@ -28,6 +30,7 @@ function forwardProps(): ForwardPropsToStateFnResult<
 > {
   return {
     checked: 1,
+    disabled: (disabled) => disabled ?? false,
     domProps: 1,
   };
 }
@@ -58,7 +61,7 @@ function InfiniteCheckBoxComponent() {
   const { componentState, componentActions } =
     useComponentState<InfiniteCheckBoxState>();
 
-  const { checked, domProps } = componentState;
+  const { checked, domProps, disabled } = componentState;
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -69,11 +72,15 @@ function InfiniteCheckBoxComponent() {
   return (
     <input
       {...domProps}
-      className={join(CheckBoxCls, domProps?.className)}
+      className={join('InfiniteCheckBox', CheckBoxCls, domProps?.className)}
       type="checkbox"
       ref={inputRef}
       checked={!!checked}
+      disabled={disabled}
       onChange={() => {
+        if (disabled) {
+          return;
+        }
         componentActions.checked = !checked;
       }}
     />

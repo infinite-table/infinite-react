@@ -78,6 +78,7 @@ export type GetComputedVisibleColumnsResult<T> = {
   computedUnpinnedColumnsWidth: number;
 
   computedColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
+  computedColumnsMapInInitialOrder: Map<string, InfiniteTableComputedColumn<T>>;
 
   columnMinWidth?: number;
   columnMaxWidth?: number;
@@ -388,7 +389,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const c = visibleColumnsArray[index];
     orderedColumns.set(id, c);
   });
+
+  const columnIdsInitialColumnOrder: string[] = [];
+
   columns.forEach((c, key) => {
+    columnIdsInitialColumnOrder.push(key);
     if (!orderedColumns.has(key)) {
       orderedColumns.set(key, c);
     }
@@ -694,6 +699,23 @@ export const getComputedVisibleColumns = <T extends unknown>({
     col.computedSortable = isGroupColumnSortable(col, computedColumnsMap);
   });
 
+  const computedColumnsMapInInitialOrder = new Map<
+    string,
+    InfiniteTableComputedColumn<T>
+  >();
+  columnIdsInitialColumnOrder.forEach((id) => {
+    const col = computedColumnsMap.get(id);
+    if (col) {
+      computedColumnsMapInInitialOrder.set(id, col);
+    }
+  });
+
+  computedColumnsMap.forEach((col) => {
+    if (!computedColumnsMapInInitialOrder.has(col.id)) {
+      computedColumnsMapInInitialOrder.set(col.id, col);
+    }
+  });
+
   const computedPinnedStartWidth =
     pinnedStartMaxWidth != null
       ? Math.min(pinnedStartMaxWidth, computedPinnedStartColumnsWidth)
@@ -720,6 +742,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     computedVisibleColumns,
 
     computedColumnsMap,
+    computedColumnsMapInInitialOrder,
     computedVisibleColumnsMap,
     computedPinnedEndWidth,
     computedPinnedStartWidth,

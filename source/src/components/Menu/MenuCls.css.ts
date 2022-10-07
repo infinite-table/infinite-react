@@ -22,7 +22,9 @@ export const MenuCls = style([
     padding: ThemeVars.components.Menu.padding,
     color: ThemeVars.components.Menu.color,
     background: ThemeVars.components.Menu.background,
+    borderRadius: ThemeVars.components.Menu.borderRadius,
     outline: 'none',
+    boxShadow: `0 6px 12px -2px ${ThemeVars.components.Menu.shadowColor},0 3px 7px -3px ${ThemeVars.components.Menu.background}`,
   },
 ]);
 
@@ -69,10 +71,7 @@ export const MenuItemCls = recipe({
       false: [cursor.pointer],
     },
     active: {
-      true: {
-        background: ThemeVars.components.Menu.itemActiveBackground,
-        opacity: ThemeVars.components.Menu.itemActiveOpacity,
-      },
+      true: {},
       false: {},
     },
     pressed: {
@@ -82,19 +81,20 @@ export const MenuItemCls = recipe({
     keyboardActive: {
       true: {
         selectors: {
-          [`${MenuCls}:focus > ${MenuRowCls} > &`]: {
+          [`${MenuCls}:focus-within > ${MenuRowCls} > &`]: {
             border: keyboardActiveItemBorder,
           },
-          [`${MenuCls}:focus > ${MenuRowCls} > &:first-child:last-child`]: {
-            border: keyboardActiveItemBorder,
-          },
-          [`${MenuCls}:focus > ${MenuRowCls} > &:first-child`]: {
+          [`${MenuCls}:focus-within > ${MenuRowCls} > &:first-child:last-child`]:
+            {
+              border: keyboardActiveItemBorder,
+            },
+          [`${MenuCls}:focus-within > ${MenuRowCls} > &:first-child`]: {
             borderRightColor: 'transparent',
           },
-          [`${MenuCls}:focus > ${MenuRowCls} > &:last-child`]: {
+          [`${MenuCls}:focus-within > ${MenuRowCls} > &:last-child`]: {
             borderLeftColor: 'transparent',
           },
-          [`${MenuCls}:focus > ${MenuRowCls} > &:not(:first-child):not(:last-child)`]:
+          [`${MenuCls}:focus-within > ${MenuRowCls} > &:not(:first-child):not(:last-child)`]:
             {
               borderLeftColor: 'transparent',
               borderRightColor: 'transparent',
@@ -107,8 +107,19 @@ export const MenuItemCls = recipe({
   compoundVariants: [
     {
       variants: {
+        active: true,
+        disabled: false,
+      },
+      style: {
+        background: ThemeVars.components.Menu.itemActiveBackground,
+        opacity: ThemeVars.components.Menu.itemActiveOpacity,
+      },
+    },
+    {
+      variants: {
         pressed: true,
         active: true,
+        disabled: false,
       },
       style: {
         background: ThemeVars.components.Menu.itemPressedBackground,

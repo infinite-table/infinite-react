@@ -60,6 +60,7 @@ import type {
 import { position, zIndex, top, left } from './utilities.css';
 import { toCSSVarName } from './utils/toCSSVarName';
 import { useDOMEventHandlers } from './eventHandlers';
+import { useColumnMenu } from './hooks/useColumnMenu';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -89,8 +90,8 @@ const InfiniteTableRoot = getComponentStateRoot({
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const { componentState, getComputed, computed, imperativeApi } =
-      useInfiniteTable<T>();
+    const context = useInfiniteTable<T>();
+    const { componentState, getComputed, computed, imperativeApi } = context;
     const {
       componentState: { loading, dataArray },
       getState: getDataSourceState,
@@ -168,6 +169,8 @@ export const InfiniteTableComponent = React.memo(
 
     useAutoSizeColumns();
 
+    const { menuPortal } = useColumnMenu();
+
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
         {header ? (
@@ -215,7 +218,10 @@ export const InfiniteTableComponent = React.memo(
             top[0],
             left[0],
           )}
-        />
+        >
+          {menuPortal}
+        </div>
+
         <div
           data-name="pinned-start-border"
           className={PinnedStartIndicatorBorder}
@@ -299,6 +305,7 @@ function InfiniteTableContextProvider<T>() {
     return () => {
       componentState.onRowHeightCSSVarChange.destroy();
       componentState.onColumnHeaderHeightCSSVarChange.destroy();
+      componentState.onColumnMenuClick.destroy();
     };
   }, []);
 

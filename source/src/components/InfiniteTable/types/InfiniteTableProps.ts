@@ -10,6 +10,7 @@ import {
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
   DataSourcePropSelectionMode,
+  DataSourceSingleSortInfo,
   DataSourceState,
 } from '../../DataSource/types';
 import { Renderable } from '../../types/Renderable';
@@ -34,6 +35,8 @@ import { InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
+import { MenuProps } from '../../Menu/MenuProps';
+import { SortDir } from '../../../utils/multisort';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -159,6 +162,21 @@ export type InfiniteTableApi<T> = {
   toggleGroupRow: (groupKeys: any[]) => void;
   collapseGroupRow: (groupKeys: any[]) => boolean;
   expandGroupRow: (groupKeys: any[]) => boolean;
+
+  setSortInfoForColumn: (
+    columnId: string,
+    sortInfo: DataSourceSingleSortInfo<T> | null,
+  ) => void;
+
+  setPinningForColumn: (
+    columnId: string,
+    pinning: InfiniteTableColumnPinnedValues,
+  ) => void;
+
+  setSortingForColumn: (columnId: string, dir: SortDir | null) => void;
+
+  setVisibilityForColumn: (columnId: string, visible: boolean) => void;
+  getVisibleColumnsCount: () => number;
 
   scrollRowIntoView: (
     rowIndex: number,
@@ -303,6 +321,7 @@ export type InfiniteTablePropPivotColumn<
 export type InfiniteTablePropComponents = {
   LoadMask?: React.FC<LoadMaskProps>;
   CheckBox?: React.FC<InfiniteCheckBoxProps>;
+  Menu?: React.FC<MenuProps>;
 };
 
 export type ScrollStopInfo = {
@@ -448,6 +467,14 @@ export interface InfiniteTableProps<T> {
 
   scrollTopKey?: string | number;
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
+
+  getColumContextMenuItems?: (params: {
+    column: InfiniteTableComputedColumn<T>;
+    api: InfiniteTableApi<T>;
+    getState: () => InfiniteTableState<T>;
+    getComputed: () => InfiniteTableComputedValues<T>;
+    actions: InfiniteTableActions<T>;
+  }) => MenuProps['items'];
 }
 
 export type InfiniteTablePropKeyboardNavigation = 'cell' | 'row' | false;

@@ -55,6 +55,7 @@ export function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
     constrainTo,
     columns,
     parentMenuItemKey,
+    autoFocus,
     id,
     //@ts-ignore
     __is_infinite_menu_component,

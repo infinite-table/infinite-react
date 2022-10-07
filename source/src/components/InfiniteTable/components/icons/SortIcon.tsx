@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { join } from '../../../../utils/join';
 import { HeaderSortIconIndexCls } from '../InfiniteTableHeader/header.css';
+import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
 
 type SortIconProps = {
   direction: 1 | -1 | 0;
@@ -19,8 +20,6 @@ const defaultLineStyle: React.CSSProperties = {
   marginBottom: 2,
   transition: `width 0.25s, opacity 0.25s`,
 };
-
-export const InfiniteTableIconClassName = 'InfiniteTableIcon';
 
 export function SortIcon(props: SortIconProps) {
   const [rendered, setRendered] = useState(true);
