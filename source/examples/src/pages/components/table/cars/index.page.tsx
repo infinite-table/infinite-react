@@ -50,7 +50,7 @@ const columns: Record<string, InfiniteTableColumn<CarSale>> = {
         return (
           <>
             Total sales <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-            <b>{rowInfo.reducerResults!.count}</b>
+            <b>{rowInfo.reducerResults!.count.value}</b>
           </>
         );
       }

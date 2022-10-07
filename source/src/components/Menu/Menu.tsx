@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   HTMLProps,
   useCallback,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -367,20 +366,22 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
 
   function handleKeydown(keyboardEvent: KeyboardEvent) {
     const { runtimeItems, runtimeSelectableItems } = getState();
-    let activeIndex = runtimeItems.findIndex(
+    let keyboardActiveIndex = runtimeItems.findIndex(
       (runtimeItem) =>
         runtimeItem.type === 'item' &&
         runtimeItem.key === keyboardActiveItemKey,
     );
 
-    let newActiveItemKey = keyboardActiveItemKey;
+    let newKeyboardActiveItemKey = keyboardActiveItemKey;
 
-    const activeItem = runtimeItems[activeIndex] as MenuRuntimeItemSelectable;
+    const keyboardActiveItem = runtimeItems[
+      keyboardActiveIndex
+    ] as MenuRuntimeItemSelectable;
 
     const validKeys = {
       ArrowUp: () => {
         const newActiveItem = runtimeItems
-          .slice(0, activeIndex)
+          .slice(0, keyboardActiveIndex)
           .filter((item) => item.type === 'item' && !item.disabled)
           .pop();
         if (
@@ -388,19 +389,20 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
           newActiveItem.type === 'item' &&
           newActiveItem.key
         ) {
-          newActiveItemKey = newActiveItem.key;
+          newKeyboardActiveItemKey = newActiveItem.key;
         }
       },
       ArrowDown: () => {
         const newActiveItem = runtimeItems
-          .slice(activeIndex + 1)
+          .slice(keyboardActiveIndex + 1)
           .filter((item) => item.type === 'item' && !item.disabled)[0];
+
         if (
           newActiveItem &&
           newActiveItem.type === 'item' &&
           newActiveItem.key
         ) {
-          newActiveItemKey = newActiveItem.key;
+          newKeyboardActiveItemKey = newActiveItem.key;
         }
       },
       Home: () => {
@@ -410,10 +412,10 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
         validKeys.PageDown();
       },
       PageUp: () => {
-        newActiveItemKey = runtimeSelectableItems[0].key;
+        newKeyboardActiveItemKey = runtimeSelectableItems[0].key;
       },
       PageDown: () => {
-        newActiveItemKey =
+        newKeyboardActiveItemKey =
           runtimeSelectableItems[runtimeSelectableItems.length - 1].key;
       },
       ArrowLeft: () => {
@@ -426,14 +428,14 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
       },
 
       ArrowRight: () => {
-        if (!activeItem) {
+        if (!keyboardActiveItem) {
           return;
         }
-        setActiveItemKey(activeItem.key);
+        setActiveItemKey(keyboardActiveItem.key);
 
         raf(() => {
           if (
-            mountedRef.current &&
+            isMounted() &&
             submenuApi &&
             submenuApi.getParentMenuId() === getState().menuId
           ) {
@@ -442,32 +444,45 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
         });
       },
       Enter: () => {
-        if (!activeItem) {
+        if (!keyboardActiveItem) {
           return;
         }
-        if (activeItem.originalMenuItem?.menu) {
+        if (keyboardActiveItem.originalMenuItem?.menu) {
           // we close it if it was opened
-          if (activeItem && activeItem.originalMenuItem.menu && submenuApi) {
+          if (
+            keyboardActiveItem &&
+            keyboardActiveItem.originalMenuItem.menu &&
+            submenuApi
+          ) {
             validKeys.ArrowLeft();
             return;
           }
           // or open if was closed
-          if (activeItem) {
-            setActiveItemKey(activeItem.key);
+          if (keyboardActiveItem) {
+            setActiveItemKey(keyboardActiveItem.key);
           }
         } else {
-          onItemClick(keyboardEvent as any as React.MouseEvent, activeItem);
+          onItemClick(
+            keyboardEvent as any as React.MouseEvent,
+            keyboardActiveItem,
+          );
         }
       },
       ' ': () => {
-        if (!activeItem) {
+        if (!keyboardActiveItem) {
           return;
         }
-        if (!activeItem.originalMenuItem.menu) {
-          onItemClick(keyboardEvent as any as React.MouseEvent, activeItem);
+        if (!keyboardActiveItem.originalMenuItem.menu) {
+          onItemClick(
+            keyboardEvent as any as React.MouseEvent,
+            keyboardActiveItem,
+          );
         }
 
-        const checkbox = getFirstCheckBoxInsideMenuItem(menuId, activeItem.key);
+        const checkbox = getFirstCheckBoxInsideMenuItem(
+          menuId,
+          keyboardActiveItem.key,
+        );
         if (!checkbox) {
           return;
         }
@@ -485,8 +500,8 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
       fn();
       keyboardEvent.preventDefault();
     }
-    if (newActiveItemKey != activeItemKey) {
-      setKeyboardActiveItemKey(newActiveItemKey);
+    if (newKeyboardActiveItemKey != keyboardActiveItemKey) {
+      setKeyboardActiveItemKey(newKeyboardActiveItemKey);
     }
   }
   function onMenuBlur() {
