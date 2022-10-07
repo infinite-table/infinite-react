@@ -282,6 +282,10 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.renderer.destroy();
   state.onRenderUpdater.destroy();
 
+  state.onRowHeightCSSVarChange.destroy();
+  state.onColumnHeaderHeightCSSVarChange.destroy();
+  state.onColumnMenuClick.destroy();
+
   state.domRef.current = null;
   state.scrollerDOMRef.current = null;
   state.portalDOMRef.current = null;

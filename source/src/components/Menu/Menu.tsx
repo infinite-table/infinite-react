@@ -32,6 +32,7 @@ import { Menu } from '.';
 import { MenuApi, MenuState } from './MenuState';
 import { raf } from '../../utils/raf';
 import { display } from '../InfiniteTable/utilities.css';
+import { useMounted } from '../hooks/useMounted';
 
 function renderSubmenuForItem(
   item: MenuRuntimeItemSelectable,
@@ -239,15 +240,7 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
     componentActions.activeItemKey = key;
   }, []);
 
-  let mountedRef = useRef<boolean>(true);
-
-  const isMounted = () => mountedRef.current;
-
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
+  const isMounted = useMounted();
 
   const [submenuApi, setSubmenuApi] = useState<MenuApi | null>(null);
 

@@ -46,7 +46,7 @@ export const useCSSVariableWatch = (
       lastValueRef.current = value;
 
       debug(`Variable ${params.varName} found and equals ${value}.`);
-      params.onChange(value);
+      return params.onChange(value);
     } else {
       error(
         `Specified variable ${params.varName} not found or does not have a numeric value.`,

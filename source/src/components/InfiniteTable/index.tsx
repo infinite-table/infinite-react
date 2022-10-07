@@ -302,14 +302,6 @@ function InfiniteTableContextProvider<T>() {
   );
 
   React.useEffect(() => {
-    return () => {
-      componentState.onRowHeightCSSVarChange.destroy();
-      componentState.onColumnHeaderHeightCSSVarChange.destroy();
-      componentState.onColumnMenuClick.destroy();
-    };
-  }, []);
-
-  React.useEffect(() => {
     if (scrollerDOMRef.current) {
       scrollerDOMRef.current.scrollTop = 0;
     }

@@ -6,9 +6,6 @@ InfiniteTable.defaultProps.licenseKey =
   process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
 function MyApp({ Component, pageProps }) {
-  if (!process.browser) {
-    return null;
-  }
   return (
     <div
       // className="__next it--theme-dark"

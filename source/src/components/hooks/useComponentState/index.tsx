@@ -15,6 +15,7 @@ import { proxyFn } from '../../../utils/proxyFnCall';
 import { toUpperFirst } from '../../../utils/toUpperFirst';
 
 import { isControlled } from '../../utils/isControlled';
+import { useEffectOnce } from '../useEffectOnceWithProperUnmount';
 import { useLatest } from '../useLatest';
 import { usePrevious } from '../usePrevious';
 import {
@@ -273,7 +274,7 @@ export function getComponentStateRoot<
     const parentState = config.getParentState?.() ?? null;
     const getParentState = useLatest(parentState);
 
-    const [wholeState] = useState<COMPONENT_STATE>(() => {
+    function initStateOnce() {
       // STEP 1: call setupState
 
       let mappedState = {} as COMPONENT_MAPPED_STATE;
@@ -318,7 +319,8 @@ export function getComponentStateRoot<
       return state as COMPONENT_MAPPED_STATE &
         COMPONENT_DERIVED_STATE &
         COMPONENT_SETUP_STATE;
-    });
+    }
+    const [wholeState] = useState<COMPONENT_STATE>(initStateOnce);
 
     const getProps = useLatest(props);
 
@@ -526,11 +528,11 @@ export function getComponentStateRoot<
       }
     });
 
-    useEffect(() => {
+    useEffectOnce(() => {
       return () => {
         config.cleanup?.(getComponentState());
       };
-    }, []);
+    });
 
     return (
       <Context.Provider value={contextValue}>{props.children}</Context.Provider>
