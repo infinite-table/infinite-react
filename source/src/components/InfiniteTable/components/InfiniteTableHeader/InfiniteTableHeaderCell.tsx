@@ -368,7 +368,7 @@ export function InfiniteTableHeaderCell<T>(
           zIndex: 1_000_000_000,
         }}
       >
-        {header}
+        {renderParam.renderBag.header}
       </div>
     );
 
@@ -384,7 +384,7 @@ export function InfiniteTableHeaderCell<T>(
   };
 
   const setFilterValue = useCallback(
-    (filterValue) => {
+    (filterValue: DataSourceFilterValueItem<T>) => {
       const state = getDataSourceState();
       let newFilterValue = state.filterValue ?? [];
 

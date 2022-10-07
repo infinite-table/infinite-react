@@ -31,3 +31,5 @@ export type DiscriminatedUnion<A, B> =
 export type AllPropertiesOrNone<DATA_TYPE> =
   | DATA_TYPE
   | { [KEY in keyof DATA_TYPE]?: never };
+
+export type KeyOfNoSymbol<T> = Exclude<keyof T, Symbol>;

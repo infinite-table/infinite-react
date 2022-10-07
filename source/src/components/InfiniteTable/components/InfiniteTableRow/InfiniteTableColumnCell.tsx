@@ -171,7 +171,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     React.useRef<InfiniteTableColumnRenderParam<T>>(renderParam);
 
   const onClick = useCallback(
-    (event) => {
+    (event: React.MouseEvent) => {
       const colIndex = column.computedVisibleIndex;
 
       getState().cellClick({
@@ -184,7 +184,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   );
 
   const onMouseDown = useCallback(
-    (event) => {
+    (event: React.MouseEvent) => {
       const colIndex = column.computedVisibleIndex;
 
       getState().cellMouseDown({

@@ -22,7 +22,11 @@ import {
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnType,
 } from './InfiniteTableProps';
-import type { DiscriminatedUnion, RequireAtLeastOne } from './Utility';
+import type {
+  DiscriminatedUnion,
+  KeyOfNoSymbol,
+  RequireAtLeastOne,
+} from './Utility';
 
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
 
@@ -348,7 +352,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   rowspan?: InfiniteTableColumnRowspanFn<DATA_TYPE>;
   // colspan?: InfiniteTableColumnColspanFn<T>;
 
-  field?: keyof DATA_TYPE;
+  field?: KeyOfNoSymbol<DATA_TYPE>;
   render?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderGroupValue?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;

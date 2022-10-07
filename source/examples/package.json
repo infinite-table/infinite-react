@@ -20,7 +20,7 @@
     "chokidar-cli": "^3.0.0",
     "isomorphic-fetch": "^3.0.0",
     "next": "^12.1.0",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-query": "^3.34.8",
     "sinon": "^10.0.0",
     "tinycolor2": "^1.4.2",

@@ -109,16 +109,18 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   );
 
   const rowspan = React.useCallback(
-    ({ rowIndex, colIndex }) => cellspan({ rowIndex, colIndex }).rowspan,
+    ({ rowIndex, colIndex }: { rowIndex: number; colIndex: number }) =>
+      cellspan({ rowIndex, colIndex }).rowspan,
     [cellspan],
   );
   const colspan = React.useCallback(
-    ({ rowIndex, colIndex }) => cellspan({ rowIndex, colIndex }).colspan,
+    ({ rowIndex, colIndex }: { rowIndex: number; colIndex: number }) =>
+      cellspan({ rowIndex, colIndex }).colspan,
     [cellspan],
   );
 
   const rowHeight = React.useCallback(
-    (index) => {
+    (index: number) => {
       // if we need to show the column filters
 
       return showColumnFilters

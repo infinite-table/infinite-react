@@ -545,7 +545,7 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
     return result;
   });
 
-  const refCallback = useCallback((node) => {
+  const refCallback = useCallback((node: HTMLDivElement) => {
     if (node) {
       domRef.current = node;
       onShow?.(getState(), api);

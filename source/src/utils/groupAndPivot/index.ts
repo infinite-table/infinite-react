@@ -20,6 +20,7 @@ import type { GroupBy } from './types';
 import { deepClone } from '../deepClone';
 import { DeepMap } from '../DeepMap';
 import { DEFAULT_TO_KEY } from './defaultToKey';
+import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -761,7 +762,8 @@ export function group<DataType, KeyType = any>(
         item,
       );
 
-      commonData[groupByProperty] = key as any as DataType[keyof DataType];
+      commonData[groupByProperty] =
+        key as any as DataType[KeyOfNoSymbol<DataType>];
       currentGroupKeys.push(key);
 
       if (!deepMap.has(currentGroupKeys)) {

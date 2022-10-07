@@ -68,8 +68,9 @@ export const useColumnPointerEvents = ({
   } = useInfiniteTable();
 
   const onPointerDown = useCallback(
-    (e) => {
-      if (e.target.tagName === 'INPUT') {
+    (e: React.PointerEvent) => {
+      //@ts-ignore
+      if (e.target?.tagName === 'INPUT') {
         // early exit, so that (for example) checkbox selection works in the column header when clicking the checkbox
         return;
       }

@@ -72,7 +72,10 @@ function prepareColumnGroup<DataType>(
   return columnGroup;
 }
 
-export function getPivotColumnsAndColumnGroups<DataType, KeyType = any>({
+export function getPivotColumnsAndColumnGroups<
+  DataType,
+  KeyType extends string | number = string | number,
+>({
   deepMap,
   pivotBy,
   pivotTotalColumnPosition,

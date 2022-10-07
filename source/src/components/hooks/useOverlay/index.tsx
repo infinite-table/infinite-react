@@ -123,7 +123,7 @@ function OverlayContent(
   return (
     <div
       style={{ position: 'absolute', top: 0, left: 0 }}
-      ref={useCallback((node) => {
+      ref={useCallback((node: HTMLDivElement) => {
         if (node) {
           alignOverlayNode(node, props);
           // const rect = alignOverlayNode(node, props);
@@ -269,7 +269,7 @@ type OverlayHandle = {
   realign: SubscriptionCallback<OverlayHandle>;
 };
 
-function getIdForReactOnlyChild(children: ReactNode) {
+function getIdForReactOnlyChild(children: ReactNode | (() => ReactNode)) {
   if (React.Children.count(children) === 1) {
     const child = React.Children.only(children);
     if (React.isValidElement(child)) {

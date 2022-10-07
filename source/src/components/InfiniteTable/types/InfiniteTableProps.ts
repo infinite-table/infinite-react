@@ -37,6 +37,7 @@ import { InfiniteCheckBoxProps } from '../components/CheckBox';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
 import { MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
+import { KeyOfNoSymbol } from './Utility';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -108,7 +109,7 @@ export type InfiniteTableColumnType<T> = {
 
   cssEllipsis?: boolean;
   headerCssEllipsis?: boolean;
-  field?: keyof T;
+  field?: KeyOfNoSymbol<T>;
 
   components?: InfiniteTableColumn<T>['components'];
   renderValue?: InfiniteTableColumn<T>['renderValue'];
@@ -319,9 +320,9 @@ export type InfiniteTablePropPivotColumn<
     ) => InfiniteTablePivotColumnBase<T>);
 
 export type InfiniteTablePropComponents = {
-  LoadMask?: React.FC<LoadMaskProps>;
+  LoadMask?: React.FC<React.PropsWithChildren<LoadMaskProps>>;
   CheckBox?: React.FC<InfiniteCheckBoxProps>;
-  Menu?: React.FC<MenuProps>;
+  Menu?: React.FC<React.PropsWithChildren<MenuProps>>;
 };
 
 export type ScrollStopInfo = {
