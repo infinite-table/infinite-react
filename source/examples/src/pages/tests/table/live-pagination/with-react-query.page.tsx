@@ -233,6 +233,7 @@ const Example = () => {
 
 function App() {
   return (
+    //@ts-ignore
     <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>

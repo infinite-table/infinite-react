@@ -83,7 +83,7 @@ const columns: Record<string, InfiniteTableColumn<Employee>> = {
         return (
           <>
             Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-            <b>{rowInfo.reducerResults![0]}</b>
+            <b>{JSON.stringify(rowInfo.reducerResults)}</b>
           </>
         );
       }

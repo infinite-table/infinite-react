@@ -7,6 +7,7 @@ import {
   useInfiniteColumnCell,
   DataSourcePropGroupBy,
   InfiniteTablePropGroupColumn,
+  DataSourcePropOnRowSelectionChange_MultiRow,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
@@ -112,9 +113,13 @@ export default function GroupByExample() {
       deselectedRows: [['backend', 'TypeScript']],
     });
 
-  const onRowSelectionChange = React.useCallback(({ rowSelection }) => {
-    setRowSelection(rowSelection);
-  }, []);
+  const onRowSelectionChange =
+    React.useCallback<DataSourcePropOnRowSelectionChange_MultiRow>(
+      (rowSelection) => {
+        setRowSelection(rowSelection);
+      },
+      [],
+    );
 
   return (
     <>

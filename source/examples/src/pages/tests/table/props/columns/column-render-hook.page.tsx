@@ -41,7 +41,7 @@ function Cmp({ value }: { value: string }) {
     };
   }, [ticker]);
 
-  const onClick = React.useCallback((event) => {
+  const onClick = React.useCallback((event: React.MouseEvent) => {
     console.log('clicked', event.target);
     setTicker(0);
   }, []);

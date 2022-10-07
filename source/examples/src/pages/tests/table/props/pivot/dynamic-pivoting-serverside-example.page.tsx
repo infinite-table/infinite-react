@@ -9,6 +9,7 @@ import {
   DataSourcePropAggregationReducers,
   InfiniteTablePropColumnTypes,
   debounce,
+  DataSourceDataParams,
 } from '@infinite-table/infinite-react';
 
 import type {
@@ -413,9 +414,12 @@ export default function GroupByExample() {
     })) as PivotByDeveloperType;
   }, [pivotBy]);
 
-  const onDataParamsChange = React.useCallback((dataParams) => {
-    console.log(dataParams);
-  }, []);
+  const onDataParamsChange = React.useCallback(
+    (dataParams: DataSourceDataParams<Developer>) => {
+      console.log(dataParams);
+    },
+    [],
+  );
 
   return (
     <>

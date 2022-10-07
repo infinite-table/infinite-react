@@ -34,10 +34,11 @@ export type AggregationReducer<
 };
 
 export type AggregationReducerResult<AggregationResultType extends any = any> =
-  {
-    value: AggregationResultType;
-    id: string;
-  };
+  AggregationResultType;
+// {
+//   value: AggregationResultType;
+//   id: string;
+// };
 
 /**
  * InfiniteTableRowInfo can have different object shape depending on the presence or absence of grouping.

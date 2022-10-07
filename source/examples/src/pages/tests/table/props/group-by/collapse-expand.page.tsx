@@ -55,7 +55,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
 
       columnGroup: 'location',
       render: ({ value, rowInfo }) => {
-        console.log(rowInfo);
         if (!rowInfo.isGroupRow) {
           return value;
         }
@@ -121,7 +120,7 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
           return (
             <>
               Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults![0]}</b>
+              <b>{rowInfo.reducerResults?.salary}</b>
             </>
           );
         }
