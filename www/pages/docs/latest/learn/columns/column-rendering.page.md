@@ -300,6 +300,7 @@ The default <PropLink name="columns.render" /> function (the last one in the pip
  * a `value`  - generally comes from the <PropLink name="columns.field">field</PropLink> the column is bound to
  * a `groupIcon` - for group columns
  * a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
+ <!-- * a `menuIcon` - for all columns by default, unless they have <PropLink name="columns.renderMenuIcon">renderMenuIcon=false</PropLink> - this is the icon that opens the column menu -->
 
 When the rendering process starts for a column cell, all the above end up in the `renderBag` object.
 
@@ -390,6 +391,37 @@ Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `tog
 </Hint>
 
 
+<!-- ### Rendering pipeline - `renderBag.sortIcon`
+
+Similarly to `renderBag.value`, the `renderBag.sortIcon` is also piped through to the <PropLink name="columns.render">render</PropLink> function.
+
+```tsx {2,10} 
+const column: InfiniteTableColumn<T> = {
+  renderSortIcon: ({ renderBag, column }) => {
+    // you can use the column to get the sort direction
+    return <> [ {renderBag.sortIcon} ] </>
+  },
+  render: ({  renderBag })=> {
+    
+    return <>
+      
+      {renderBag.sortIcon}
+      {renderBag.menuIcon}
+      {renderBag.value}
+    </>
+  }
+}
+```
+
+<Hint>
+
+Inside <PropLink name="columns.renderSortIcon" />, you have access to `renderBag.sortIcon`, which is basically the default sort icon - so you can use that if you want, and build on that.
+
+Also inside <PropLink name="columns.renderSortIcon" />, you have access to the current `column` so you can know what sorting is currently applied to the column.
+
+</Hint> -->
+
+
 ### Rendering pipeline - `renderBag.selectionCheckBox`
 
 Like with the previous properties of `renderBag`, you can customize the `selectionCheckBox` (used when multiple selection is configured) to be piped-through - for columns that specify <PropLink name="columns.renderSelectionCheckBox" />.
@@ -428,14 +460,59 @@ const column: InfiniteTableColumn<T> = {
 }
 ```
 
+
+<!-- ### Rendering pipeline - `renderBag.menuIcon`
+
+Similarly to the previous properties of `renderBag`, you can customize the `menuIcon` for a column (when clicked, it shows the column menu) to be piped-through - for columns that specify <PropLink name="columns.renderMenuIcon" />.
+
+
+```tsx {2,16}
+const column: InfiniteTableColumn<T> = {
+  renderMenuIcon: ({
+    renderBag,
+    column,
+    columnsMap
+  }) => {
+    if (column.type === 'number') {
+      return false
+    } 
+
+    return renderBag.menuIcon
+  },
+  render: ({  renderBag })=> {
+    return <>
+      
+      {renderBag.menuIcon}
+      {renderBag.selectionCheckBox}
+      {renderBag.sortIcon}
+      {renderBag.value}
+    </>
+  }
+}
+```
+
+
+<Hint>
+
+Inside <PropLink name="columns.renderMenuIcon" />, you have access to `renderBag.menuIcon`, which is basically the default menu icon - so you can use that if you want or you can customize it.
+
+Also inside <PropLink name="columns.renderMenuIcon" />, you have access to the current `column` and all the information you need about it.
+
+</Hint> -->
+
+
 To recap, here is the full list of the functions in the rendering pipeline, in order of invocation:
 
 1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
 2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
+
 3.<PropLink name="columns.renderGroupIcon" /> - can use all properties in `renderBag`
 4.<PropLink name="columns.renderSelectionCheckBox" /> - can use all properties in `renderBag`
+<!-- 5.<PropLink name="columns.renderMenuIcon" /> - can use all properties in `renderBag`
+6.<PropLink name="columns.renderSortIcon" /> - can use all properties in `renderBag` -->
 5.<PropLink name="columns.renderValue" /> - can use all properties in `renderBag`
 6.<PropLink name="columns.renderGroupValue" /> - can use all properties in `renderBag`
+
 7.<PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag`
 8.<PropLink name="columns.render" /> - can use all properties in `renderBag`
 
