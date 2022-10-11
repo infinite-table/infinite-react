@@ -23,15 +23,23 @@ export function useColumnMenu<T>() {
       }
       const { target, column } = info;
 
-      showOverlay(() => getContextMenuForColumn(column.id, context), {
-        constrainTo: () => domRef.current!,
-        id: 'column-menu',
-        alignTo: target,
-        alignPosition: [
-          ['TopLeft', 'BottomLeft'],
-          ['TopRight', 'BottomRight'],
-        ],
-      });
+      function onHideIntent() {
+        clearAll();
+        componentActions.columnContextMenuVisibleForColumnId = null;
+      }
+
+      showOverlay(
+        () => getContextMenuForColumn(column.id, context, onHideIntent),
+        {
+          constrainTo: () => domRef.current!,
+          id: 'column-menu',
+          alignTo: target,
+          alignPosition: [
+            ['TopLeft', 'BottomLeft'],
+            ['TopRight', 'BottomRight'],
+          ],
+        },
+      );
 
       actions.columnContextMenuVisibleForColumnId = column.id;
     });
@@ -48,9 +56,12 @@ export function useColumnMenu<T>() {
           componentActions.columnContextMenuVisibleForColumnId = null;
         }
       }
-      window.addEventListener('mousedown', handleMouseDown);
+      document.documentElement.addEventListener('mousedown', handleMouseDown);
       return () => {
-        window.removeEventListener('mousedown', handleMouseDown);
+        document.documentElement.removeEventListener(
+          'mousedown',
+          handleMouseDown,
+        );
       };
     }
 

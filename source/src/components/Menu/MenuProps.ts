@@ -46,6 +46,7 @@ export type MenuProps = {
   wrapLabels?: boolean;
   onShow?: (state: MenuState, api: MenuApi) => void;
   onHide?: (state: MenuState) => void;
+  onHideIntent?: (state: MenuState) => void;
   bubbleActionsFromSubmenus?: boolean;
   addSubmenuColumnIfNeeded?: boolean;
   onAction?: (key: string, item: MenuItemObject) => void;

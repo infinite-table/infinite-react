@@ -70,16 +70,16 @@ function renderSubmenuForItem(
       parentMenuId={parentMenuId}
       constrainTo={constrainTo}
       {...itemMenu}
+      autoFocus={false}
       onShow={(state, api) => {
         (itemMenu as MenuProps)?.onShow?.(state, api);
         setSubmenuApi(api);
       }}
       onHide={(state) => {
-        // the submenu was focused but now is unmounted
-        setActiveItemKey(null);
-        setKeyboardActiveItemKey(item.key);
-
         if (state.focused) {
+          // the submenu was focused but now is unmounted
+          setActiveItemKey(null);
+          setKeyboardActiveItemKey(item.key);
           // so make sure we focus current menu
           api.focus();
         }
@@ -489,10 +489,18 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
 
         checkbox.click();
       },
-      Escape: () => {},
-    };
+      Escape: () => {
+        validKeys.ArrowLeft();
 
-    validKeys.Escape = validKeys.ArrowLeft;
+        const state = getState();
+
+        if (!state.parentMenuId) {
+          // this is a root menu, so make known to the parent that
+          // it should possibly be hidden/destroyed on Escape
+          state.onHideIntent?.(state);
+        }
+      },
+    };
 
     const fn = validKeys[keyboardEvent.key as keyof typeof validKeys];
 
@@ -655,13 +663,11 @@ function RuntimeItemRenderer(props: {
           ),
           onPointerEnter: (event) => {
             if (!item.disabled) {
-              // setHover(true);
               props.onItemEnter?.(item, event as any as PointerEvent);
             }
           },
           onPointerLeave: (event) => {
             if (!item.disabled) {
-              // setHover(false);
               props.onItemLeave?.(item, event as any as PointerEvent);
             }
           },

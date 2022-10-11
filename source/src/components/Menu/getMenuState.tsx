@@ -40,6 +40,7 @@ export const forwardProps = (): ForwardPropsToStateFnResult<
   return {
     parentMenuId: 1,
     parentMenuItemKey: 1,
+    onHideIntent: 1,
     constrainTo: 1,
     onAction: 1,
     onShow: 1,

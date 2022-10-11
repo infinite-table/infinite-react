@@ -28,6 +28,7 @@ export type MenuMappedState = {
   parentMenuItemKey: MenuProps['parentMenuItemKey'];
   constrainTo: MenuProps['constrainTo'];
   autoFocus: MenuProps['autoFocus'];
+  onHideIntent: MenuProps['onHideIntent'];
   onAction: MenuProps['onAction'];
   onShow: MenuProps['onShow'];
   onHide: MenuProps['onHide'];

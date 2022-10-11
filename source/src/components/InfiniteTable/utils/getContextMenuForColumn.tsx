@@ -1,11 +1,14 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { Menu } from '../../Menu';
+import { MenuState } from '../../Menu/MenuState';
 import { InfiniteTableContextValue } from '../types';
 import { defaultGetColumContextMenuItems } from './defaultGetColumContextMenuItems';
 
 export function getContextMenuForColumn<T>(
   columnId: string | null,
   context: InfiniteTableContextValue<T>,
+  onHideIntent?: VoidFunction,
 ) {
   if (columnId == null) {
     return null;
@@ -42,6 +45,13 @@ export function getContextMenuForColumn<T>(
     event.__insideMenu = true;
   }, []);
 
+  const onHide = (state: MenuState) => {
+    state.domRef.current?.parentNode?.removeEventListener(
+      'mousedown',
+      onRootMouseDown,
+    );
+  };
+
   return (
     <MenuCmp
       autoFocus
@@ -52,12 +62,11 @@ export function getContextMenuForColumn<T>(
           onRootMouseDown,
         );
       }}
-      onHide={(state) => {
-        state.domRef.current?.parentNode?.removeEventListener(
-          'mousedown',
-          onRootMouseDown,
-        );
-      }}
+      onHide={onHide}
+      onHideIntent={useCallback((state: MenuState) => {
+        onHide(state);
+        onHideIntent?.();
+      }, [])}
     />
   );
 }

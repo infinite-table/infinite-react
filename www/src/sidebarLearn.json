@@ -38,6 +38,10 @@
               "title": "Column Rendering"
             },
             {
+              "path": "/docs/latest/learn/columns/column-headers",
+              "title": "Column Headers"
+            },
+            {
               "path": "/docs/latest/learn/columns/column-types",
               "title": "Column Types"
             },

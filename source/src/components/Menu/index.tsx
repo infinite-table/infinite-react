@@ -57,6 +57,7 @@ export function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
     parentMenuItemKey,
     autoFocus,
     id,
+    onHideIntent,
     //@ts-ignore
     __is_infinite_menu_component,
     ...domProps
