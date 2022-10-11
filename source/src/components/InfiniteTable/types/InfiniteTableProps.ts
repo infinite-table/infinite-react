@@ -112,6 +112,10 @@ export type InfiniteTableColumnType<T> = {
   field?: KeyOfNoSymbol<T>;
 
   components?: InfiniteTableColumn<T>['components'];
+  renderMenuIcon?: InfiniteTableColumn<T>['renderMenuIcon'];
+  renderSortIcon?: InfiniteTableColumn<T>['renderSortIcon'];
+  renderSelectionCheckBox?: InfiniteTableColumn<T>['renderSelectionCheckBox'];
+  renderHeaderSelectionCheckBox?: InfiniteTableColumn<T>['renderHeaderSelectionCheckBox'];
   renderValue?: InfiniteTableColumn<T>['renderValue'];
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];

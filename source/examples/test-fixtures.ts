@@ -1,5 +1,5 @@
 import { ColumnTestingModel } from '@examples/pages/tests/testUtils/ColumnTestingModel';
-import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderModel';
+import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderTestingModel';
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import {
   test as base,

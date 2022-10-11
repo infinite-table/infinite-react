@@ -557,12 +557,20 @@ export const getComputedVisibleColumns = <T extends unknown>({
       renderValue: colType.renderValue,
       render: colType.render,
       style: colType.style,
+      renderMenuIcon: colType.renderMenuIcon,
+      renderSortIcon: colType.renderSortIcon,
+      renderSelectionCheckBox: colType.renderSelectionCheckBox,
+      renderHeaderSelectionCheckBox: colType.renderHeaderSelectionCheckBox,
       headerStyle: colType.headerStyle,
       headerClassName: colType.headerClassName,
-      components: colType.components,
+
       columnGroup: colType.columnGroup,
       field,
       ...c,
+      components: {
+        ...colType.components,
+        ...c.components,
+      },
       computedResizable:
         c.resizable ?? colType.resizable ?? resizableColumns ?? true,
       computedMinWidth,

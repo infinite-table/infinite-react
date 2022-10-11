@@ -242,6 +242,15 @@ export function InfiniteTableHeaderCell<T>(
       );
     }
 
+    if (typeof column.renderMenuIcon === 'function') {
+      renderParam.renderBag.menuIcon = (
+        <RenderHeaderCellHookComponent
+          render={column.renderMenuIcon}
+          renderParam={renderParam}
+        />
+      );
+    }
+
     if (column.renderSelectionCheckBox && selectionMode === 'multi-row') {
       // make selectionCheckBox available in the render bag
       // when we have column.renderSelectionCheckBox defined as a function
@@ -293,9 +302,22 @@ export function InfiniteTableHeaderCell<T>(
       );
     }
 
+    const theMenuIcon =
+      column.renderMenuIcon === false ? null : align === 'end' ? (
+        <>
+          {renderParam.renderBag.menuIcon}
+          {spacer}
+        </>
+      ) : (
+        <>
+          {spacer}
+          {renderParam.renderBag.menuIcon}
+        </>
+      );
+
     return (
       <>
-        {align === 'end' ? renderParam.renderBag.menuIcon : null}
+        {align === 'end' ? theMenuIcon : null}
         {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
         {align === 'end' ? renderParam.renderBag.sortIcon : null}
 
@@ -303,7 +325,7 @@ export function InfiniteTableHeaderCell<T>(
 
         {align !== 'end' ? renderParam.renderBag.sortIcon : null}
         {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
-        {align !== 'end' ? renderParam.renderBag.menuIcon : null}
+        {align !== 'end' ? theMenuIcon : null}
       </>
     );
   };

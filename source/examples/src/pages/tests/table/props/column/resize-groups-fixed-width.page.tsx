@@ -28,6 +28,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   salary: {
     field: 'salary',
     type: 'number',
+    renderMenuIcon: false,
     columnGroup: 'test',
   },
   age: { field: 'age', columnGroup: 'test' },
@@ -70,6 +71,11 @@ export default () => {
           columnGroups={{
             test: {
               header: 'testing',
+            },
+          }}
+          columnTypes={{
+            default: {
+              renderMenuIcon: false,
             },
           }}
           columnDefaultWidth={100}

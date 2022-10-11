@@ -1,14 +1,11 @@
-import {
-  getRowCount,
-  getValuesByColumnId,
-} from '@examples/pages/tests/testUtils';
+import { getValuesByColumnId } from '@examples/pages/tests/testUtils';
 import { test, expect, Response } from '@testing';
 
 export default test.describe.parallel('Server side filtering', () => {
-  test('Filters correctly', async ({ page }) => {
+  test('Filters correctly', async ({ page, rowModel }) => {
     await page.waitForInfinite();
 
-    expect(await getRowCount({ page })).toEqual(100);
+    expect(await rowModel.getRenderedRowCount()).toEqual(100);
 
     let length = 0;
     const condition = (response: Response) => {
@@ -30,14 +27,18 @@ export default test.describe.parallel('Server side filtering', () => {
       page.locator('button[data-name="stack"]').click(),
     ]);
 
-    expect(await getRowCount({ page })).toEqual(length);
+    await page.waitForTimeout(10);
+
+    expect(await rowModel.getRenderedRowCount()).toEqual(length);
 
     await Promise.all([
       page.waitForResponse(condition),
       page.locator('button[data-name="country"]').click(),
     ]);
 
-    expect(await getRowCount({ page })).toEqual(length);
+    await page.waitForTimeout(10);
+
+    expect(await rowModel.getRenderedRowCount()).toEqual(length);
 
     const values = await getValuesByColumnId('country', { page });
 

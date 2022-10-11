@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('destroy cleanup', () => {
-  test('brain should be destroyed', async ({ page }) => {
+  test.skip('brain should be destroyed', async ({ page }) => {
     await page.waitForInfinite();
 
     const destroyButton = page.locator('button');

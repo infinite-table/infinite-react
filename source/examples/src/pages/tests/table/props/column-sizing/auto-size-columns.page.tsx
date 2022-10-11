@@ -36,10 +36,11 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
     field: 'country',
     type: 'country',
     defaultWidth: 300,
+    renderMenuIcon: false,
   },
   city: { field: 'city' },
   team: { field: 'team' },
-  salary: { field: 'salary', type: 'empty' },
+  salary: { field: 'salary', type: 'empty', renderMenuIcon: false },
   age: {
     field: 'age',
     header: 'the age field',
@@ -90,6 +91,11 @@ function App() {
           onColumnSizingChange={setColumnSizing}
           columnMinWidth={50}
           columns={columns}
+          columnTypes={{
+            default: {
+              renderMenuIcon: false,
+            },
+          }}
           columnDefaultWidth={200}
           autoSizeColumnsKey={
             autoSizeId
