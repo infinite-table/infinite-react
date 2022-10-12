@@ -314,4 +314,29 @@ export default test.describe.parallel('Rectangle', () => {
       }),
     ).toBe(true);
   });
+
+  test('contains rectangle', () => {
+    const constrainRect = new Rectangle({
+      left: 5,
+      top: 5,
+      bottom: 389,
+      right: 696,
+    });
+
+    const targetRect = new Rectangle({
+      left: 478.8,
+      top: 29,
+      bottom: 286,
+      right: 660,
+    });
+
+    expect(
+      constrainRect.containsPoint({
+        top: 286,
+        left: 478.8,
+      }),
+    ).toBe(true);
+
+    expect(constrainRect.contains(targetRect)).toBe(true);
+  });
 });

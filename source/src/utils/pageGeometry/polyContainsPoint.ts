@@ -1,6 +1,36 @@
 import { PointCoords } from './Point';
 import { ArrayWith3, ArrayWithAtLeast3 } from './types';
 
+/*
+ *
+ * See https://www.baeldung.com/cs/sort-points-clockwise for a reference
+ */
+
+function getAngle(p: PointCoords, center: PointCoords) {
+  let angle = Math.atan2(p.top - center.top, p.left - center.left);
+
+  if (angle <= 0) {
+    angle = 2 * Math.PI + angle;
+  }
+
+  return angle;
+}
+
+function getDistance(p1: PointCoords, p2: PointCoords) {
+  return Math.sqrt((p2.top - p1.top) ** 2 + (p2.left - p1.left) ** 2);
+}
+
+function comparePoints(p1: PointCoords, p2: PointCoords, center: PointCoords) {
+  const angle1 = getAngle(p1, center);
+  const angle2 = getAngle(p2, center);
+
+  if (angle1 === angle2) {
+    return getDistance(center, p2) - getDistance(center, p1);
+  }
+
+  return angle1 - angle2;
+}
+
 function sortPoints(
   points: ArrayWithAtLeast3<PointCoords>,
 ): ArrayWithAtLeast3<PointCoords> {
@@ -10,18 +40,17 @@ function sortPoints(
 
   const [...result] = points;
 
-  result.sort((a, b) => {
-    const angleA = Math.atan2(a.top, a.left);
-    const angleB = Math.atan2(b.top, b.left);
+  const center = { top: 0, left: 0 };
 
-    if (angleA === angleB) {
-      // we need this here, for cases where there is equal left
-      // the angle is the same, so we need to sort by top
-      return b.top - a.top;
-    }
-
-    return angleA > angleB ? 1 : -1;
+  points.forEach((p) => {
+    center.top += p.top;
+    center.left += p.left;
   });
+
+  center.top /= points.length;
+  center.left /= points.length;
+
+  result.sort((a, b) => comparePoints(a, b, center));
 
   return result;
 }

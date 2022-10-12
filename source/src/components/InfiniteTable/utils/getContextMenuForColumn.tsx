@@ -55,7 +55,6 @@ export function getContextMenuForColumn<T>(
   return (
     <MenuCmp
       autoFocus
-      // constrainTo={() => getState().domRef.current!}
       items={items}
       onShow={(state) => {
         state.domRef.current?.parentNode?.addEventListener(

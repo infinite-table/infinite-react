@@ -95,7 +95,7 @@ export function getAlignPosition(
       return {
         ...alignResult,
 
-        index: 0,
+        index: i,
       };
     }
   }

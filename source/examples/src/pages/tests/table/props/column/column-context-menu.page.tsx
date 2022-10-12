@@ -54,6 +54,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
+    defaultFlex: 1,
   },
   preferredLanguage: {
     field: 'currency',

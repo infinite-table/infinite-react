@@ -31,7 +31,7 @@ export function useColumnMenu<T>() {
       showOverlay(
         () => getContextMenuForColumn(column.id, context, onHideIntent),
         {
-          constrainTo: () => domRef.current!,
+          constrainTo: domRef.current!,
           id: 'column-menu',
           alignTo: target,
           alignPosition: [
