@@ -1,0 +1,41 @@
+{
+  "extends": "../source/tsconfig.json",
+  "exclude": ["node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../source/globals.d.ts"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "isolatedModules": true,
+    "baseUrl": "./",
+    "rootDir": "../../",
+    "paths": {
+      "react": ["../node_modules/@types/react"],
+      "react-dom": ["../node_modules/react-dom"],
+      "@infinite-table/infinite-react/*": [
+        "../source/src/*"
+      ],
+      "@infinite-table/infinite-react": [
+        "../source/src/index"
+      ],
+      "@src/*": ["../source/src/*"],
+      "@examples/*": ["./src/*"],
+      "@components/*": ["../source/src/components/*"],
+      "@testing": ["./test-fixtures"]
+    },
+    "incremental": true
+  }
+}

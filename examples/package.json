@@ -1,0 +1,45 @@
+{
+  "name": "@infinite-table/examples",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "DEBUG=InfiniteTable:* next dev",
+    "build": "rimraf node_modules/@types/react && rimraf node_modules/react && next build && next export",
+    "start": "next start",
+    "test": "rimraf .next && npm run build && npm run run-test",
+    "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
+    "start-server": "http-server -s -p 3000 out",
+    "play:test": "playwright test",
+    "play:debug:test": "PWDEBUG=console playwright test",
+    "play:test:watch": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path}'",
+    "tscw": "tsc --watch --project tsconfig.json"
+  },
+  "dependencies": {
+    "@vanilla-extract/babel-plugin": "^1.1.5",
+    "@vanilla-extract/css": "^1.7.0",
+    "chokidar-cli": "^3.0.0",
+    "isomorphic-fetch": "^3.0.0",
+    "next": "^12.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-query": "^3.34.8",
+    "sinon": "^10.0.0",
+    "tinycolor2": "^1.4.2",
+    "typescript": "4.6.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.22.2",
+    "@types/isomorphic-fetch": "0.0.35",
+    "@types/lodash": "^4.14.172",
+    "@vanilla-extract/next-plugin": "^2.0.2",
+    "babel-plugin-dev-expression": "^0.2.2",
+    "concurrently": "^5.1.0",
+    "http-server": "^0.12.1",
+    "lodash": "^4.17.21",
+    "normalize.css": "^8.0.1",
+    "playwright": "1.22.2",
+    "react-select": "^5.2.2",
+    "rimraf": "^3.0.2",
+    "tslib": "^2.1.0"
+  }
+}
