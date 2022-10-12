@@ -224,6 +224,7 @@ function App() {
           top: pageY,
           left: pageX,
         },
+        constrainTo: true,
         alignPosition: [
           ['TopRight', 'TopLeft'],
           ['BottomRight', 'TopLeft'],

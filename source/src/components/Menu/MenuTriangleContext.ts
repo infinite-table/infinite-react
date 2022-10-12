@@ -144,7 +144,7 @@ export class MenuTriangleContext {
     // update the value of the last move timestamp
     this.lastPointerMoveTimestamp = now;
 
-    const activateHovered = () => {
+    const activateHoveredItem = () => {
       this.setActiveItem(null, null);
       // so we trigger onItemChange for the last hovered item again
       // because the move was slow or out of triangle
@@ -155,7 +155,7 @@ export class MenuTriangleContext {
     if (timeoutGone) {
       // the last mouse move was too long ago
       // so we trigger onItemChange for the last hovered item
-      activateHovered();
+      activateHoveredItem();
       return;
     }
 
@@ -171,7 +171,7 @@ export class MenuTriangleContext {
       const timeoutGone = elapsedTime > this.getTimeout();
 
       if (timeoutGone) {
-        activateHovered();
+        activateHoveredItem();
       }
     }, this.getTimeout()) as any as number;
 
@@ -188,37 +188,34 @@ export class MenuTriangleContext {
     // we need to check if the user is moving the mouse back from the submenu to the menu again
     // this is a reverse movement, so we should activate the last hovered item
 
-    const horizontalDirectionSign = Math.sign(
-      this.activeItemMenuRect.left - this.activeItemLeavePoint.left,
-    );
+    const submenuToTheRight =
+      this.activeItemLeavePoint.left < this.activeItemMenuRect.left;
+
+    const horizontalDirectionSign = submenuToTheRight ? 1 : -1;
     const horizontalDiff =
       horizontalDirectionSign *
       (currentPoint.left - this.activeItemLeavePoint.left);
 
-    if (
-      horizontalDirectionSign * (horizontalDiff - this.lastHorizontalDiff) <
-      0
-    ) {
+    if (horizontalDiff - this.lastHorizontalDiff < 0) {
       this.lastHorizontalDiff = 0;
-      activateHovered();
+      activateHoveredItem();
       return;
     }
     this.lastHorizontalDiff = horizontalDiff;
 
-    // we need to check if the user is moving diagonally down and to the right
-    const triangle =
-      this.activeItemLeavePoint.left < this.activeItemMenuRect.left
-        ? new Triangle([
-            this.activeItemLeavePoint,
-            this.activeItemMenuRect.getTopLeft(),
-            this.activeItemMenuRect.getBottomLeft(),
-          ])
-        : new Triangle([
-            // in this case, the menu is placed to the left, so adjust the triangle
-            this.activeItemLeavePoint,
-            this.activeItemMenuRect.getTopRight(),
-            this.activeItemMenuRect.getBottomRight(),
-          ]);
+    // we need to check if the user is moving diagonally down and to the right/left (depending on the submenu position)
+    const triangle = submenuToTheRight
+      ? new Triangle([
+          this.activeItemLeavePoint,
+          this.activeItemMenuRect.getTopLeft(),
+          this.activeItemMenuRect.getBottomLeft(),
+        ])
+      : new Triangle([
+          // in this case, the menu is placed to the left, so adjust the triangle
+          this.activeItemLeavePoint,
+          this.activeItemMenuRect.getTopRight(),
+          this.activeItemMenuRect.getBottomRight(),
+        ]);
 
     if (!triangle.containsPoint(currentPoint)) {
       this.setActiveItem(null, null);

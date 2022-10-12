@@ -57,6 +57,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
   preferredLanguage: {
     field: 'currency',
+    defaultFlex: 1,
   },
 };
 
