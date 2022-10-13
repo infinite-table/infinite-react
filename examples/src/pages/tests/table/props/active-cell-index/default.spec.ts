@@ -2,7 +2,6 @@ import {
   getActiveCellIndicatorOffsetFromDOM,
   getCellNodeLocator,
 } from '@examples/pages/tests/testUtils';
-
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Default keyboard navigation', () => {
