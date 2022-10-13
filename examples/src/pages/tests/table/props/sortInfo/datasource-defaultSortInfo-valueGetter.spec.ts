@@ -1,25 +1,18 @@
-import { expect, test, ElementHandle } from '@testing';
-
-import { getColumnCells, getHeaderCellByColumnId } from '../../../testUtils';
+import { expect, test } from '@testing';
 
 export default test.describe.parallel(
   'DataSource.defaultSortInfo.valueGetter',
   () => {
-    test('should work properly', async ({ page }) => {
+    test('should work properly', async ({ page, headerModel, rowModel }) => {
       await page.waitForInfinite();
 
-      const { bodyCells, headerCell } = await getColumnCells('y', {
-        page,
-      });
+      const headerText = await (
+        await headerModel.getHeaderCellLocator({ colId: 'y' })
+      ).innerText();
 
-      expect(await headerCell.innerText()).toEqual('Year\n1');
+      expect(headerText).toEqual('Year\n1');
 
-      let values = await Promise.all(
-        bodyCells.map(
-          async (cell: ElementHandle) =>
-            await cell.evaluate((node) => node.textContent),
-        ),
-      );
+      let values = await rowModel.getTextForColumnCells({ colId: 'y' });
 
       // expect ascending order
       expect(values).toEqual(
@@ -28,14 +21,9 @@ export default test.describe.parallel(
       );
 
       // click to make it descending
-      await getHeaderCellByColumnId('y', { page }).click();
+      await headerModel.clickColumnHeader({ colId: 'y' });
 
-      values = await Promise.all(
-        bodyCells.map(
-          async (cell: ElementHandle) =>
-            await cell.evaluate((node) => node.textContent),
-        ),
-      );
+      values = await rowModel.getTextForColumnCells({ colId: 'y' });
 
       // expect descending order
       expect(values).toEqual(
@@ -44,16 +32,12 @@ export default test.describe.parallel(
       );
 
       // click remove sorting
-      await getHeaderCellByColumnId('y', { page }).click();
-      // click again to make it ascending
-      await getHeaderCellByColumnId('y', { page }).click();
+      await headerModel.clickColumnHeader({ colId: 'y' });
 
-      values = await Promise.all(
-        bodyCells.map(
-          async (cell: ElementHandle) =>
-            await cell.evaluate((node) => node.textContent),
-        ),
-      );
+      // click again to make it ascending
+      await headerModel.clickColumnHeader({ colId: 'y' });
+
+      values = await rowModel.getTextForColumnCells({ colId: 'y' });
 
       // expect ascending order
       expect(values).toEqual(

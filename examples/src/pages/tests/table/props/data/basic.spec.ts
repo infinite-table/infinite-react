@@ -13,7 +13,7 @@ export default test.describe.parallel('Table', () => {
     const text = await getCellText(
       {
         rowIndex: data.length - 2,
-        columnId: 'model',
+        colId: 'model',
       },
       { page },
     );

@@ -4,7 +4,7 @@ import { Request } from '@playwright/test';
 import { getColumnCells } from '../../../testUtils';
 
 const getColumnContents = async (colId: string, { page }: { page: Page }) => {
-  const cells = await getColumnCells(colId, { page });
+  const cells = await getColumnCells({ colId }, { page });
 
   const result = await Promise.all(
     cells.bodyCells.map(
@@ -20,6 +20,7 @@ export default test.describe.parallel(
   () => {
     test('should work and lazily load data that has a child dataset', async ({
       page,
+      rowModel,
     }) => {
       const urls: string[] = [];
 
@@ -38,6 +39,7 @@ export default test.describe.parallel(
       page.waitForRequest(condition);
 
       await page.load();
+
       // wait for Canada to be loaded as well, from the remote location
       await page.waitForRequest(condition);
       // also wait for node to be expanded
@@ -57,7 +59,9 @@ export default test.describe.parallel(
 
       expect(urls.length).toEqual(2);
 
-      const contents = await getColumnContents('group-by-country', { page });
+      const contents = await rowModel.getTextForColumnCells({
+        colId: 'group-by-country',
+      });
 
       expect(paramsForRequests[1].groupKeys).toEqual(['Canada']);
 

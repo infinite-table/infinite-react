@@ -22,11 +22,11 @@ const resizeHandle = async (diff: number, handle: Locator, page: Page) => {
 };
 
 export const resizeColumnById = async (
-  columnId: string,
+  colId: string,
   diff: number,
   { page }: { page: Page },
 ) => {
-  const colHeaderCell = getHeaderCellByColumnId(columnId, { page });
+  const colHeaderCell = getHeaderCellForColumn({ colId }, { page });
 
   const handle = await colHeaderCell.locator(
     '.InfiniteHeaderCell_ResizeHandle',
@@ -49,41 +49,15 @@ export const resizeColumnGroupById = async (
   await resizeHandle(diff, handle, page);
 };
 
-export const getValuesByColumnId = async (
-  columnId: string,
-  { page }: { page: Page },
-) => {
-  const { bodyCells } = await getColumnCells(columnId, {
+export const getHeaderCellForColumn = (
+  colLocation: ColLocation,
+  {
     page,
-  });
-
-  const values = await Promise.all(
-    bodyCells.map(
-      async (cell: ElementHandle) =>
-        await cell.evaluate((node) => node.textContent),
-    ),
-  );
-
-  return values;
-};
-
-export const getHeaderCellByColumnId = (
-  columnId: string,
-  { page }: { page: Page },
+  }: {
+    page: Page;
+  },
 ) => {
-  return page.locator(`.InfiniteHeader [data-column-id="${columnId}"]`);
-};
-
-export const getHeaderCellByIndex = ({
-  colIndex,
-  page,
-}: {
-  page: Page;
-  colIndex?: number;
-}) => {
-  const selector = `.InfiniteHeader [data-col-index${
-    colIndex != null ? `="${colIndex}"` : ''
-  }]`;
+  const selector = `.InfiniteHeader ${getColSelector(colLocation)}`;
   return page.locator(selector).last();
 };
 
@@ -137,10 +111,10 @@ export const getFirstChild = (locator: Locator) => {
 };
 
 export const getHeaderCellWidthByColumnId = async (
-  columnId: string,
+  colId: string,
   { page }: { page: Page },
 ): Promise<number> => {
-  const node = getHeaderCellByColumnId(columnId, { page });
+  const node = getHeaderCellForColumn({ colId }, { page });
 
   const value = await node!.evaluate(
     (node) => node.getBoundingClientRect().width,
@@ -160,10 +134,10 @@ export const getColumnWidths = async (
 };
 
 export const getColumnOffsetById = async (
-  columnId: string,
+  colId: string,
   { page }: { page: Page },
 ) => {
-  const node = getHeaderCellByColumnId(columnId, { page });
+  const node = getHeaderCellForColumn({ colId }, { page });
 
   const value = await node!.evaluate((node) => {
     const matrix = getComputedStyle(node).transform;
@@ -175,10 +149,10 @@ export const getColumnOffsetById = async (
 };
 
 export const getColumnIdByIndex = async (
-  colIndex: number,
+  colLocation: ColLocation,
   { page }: { page: Page },
 ) => {
-  const node = getHeaderCellByIndex({ colIndex, page });
+  const node = getHeaderCellForColumn(colLocation, { page });
 
   return await node.getAttribute('data-column-id');
 };
@@ -278,17 +252,29 @@ export const getActiveRowIndicatorOffsetFromDOM = async ({
   });
 };
 
+export type ColLocation = {
+  colIndex?: number;
+  colId?: string;
+};
+export type CellLocation = ColLocation & {
+  rowIndex: number;
+};
+const getColSelector = ({ colIndex, colId }: ColLocation) => {
+  const colSelector = colId
+    ? `[data-column-id="${colId}"]`
+    : `[data-col-index="${colIndex}"]`;
+
+  return colSelector;
+};
+
 export const getColumnCells = async (
-  columnName: string,
+  colLocation: { colIndex?: number; colId?: string },
   { page }: { page: Page },
 ) => {
-  const headerCell = page.locator(
-    `.InfiniteHeader [data-column-id="${columnName}"]`,
-  );
+  const colSelector = getColSelector(colLocation);
+  const headerCell = page.locator(`.InfiniteHeader ${colSelector}`);
 
-  const bodyCells = await page.locator(
-    `.InfiniteColumnCell[data-column-id="${columnName}"]`,
-  );
+  const bodyCells = await page.locator(`.InfiniteColumnCell${colSelector}`);
 
   const cells = await sortElements(bodyCells);
 
@@ -311,17 +297,20 @@ export const toggleGroupRow = async (
 
 export const getCellText = async (
   {
-    columnId,
+    colId,
     colIndex,
     rowIndex,
   }: {
-    columnId?: string;
+    colId?: string;
     colIndex?: number;
     rowIndex: number;
   },
   { page }: { page: Page },
 ) => {
-  const cell = getCellNodeLocator({ columnId, rowIndex, colIndex }, { page });
+  const cell = getCellNodeLocator(
+    { columnId: colId, rowIndex, colIndex },
+    { page },
+  );
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };

@@ -1,20 +1,18 @@
 import { ElementHandle, Page } from '@playwright/test';
 
 import {
+  CellLocation,
+  ColLocation,
   getCellInRow,
   getCellNodeLocator,
   getCellText,
+  getColumnCells,
   getSelectedRowIds,
   isNodeExpanded,
   isNodeGroupRow,
   toggleGroupRow,
 } from '.';
 
-type CellLocation = {
-  colId?: string;
-  colIndex?: number;
-  rowIndex: number;
-};
 export class RowTestingModel {
   static get(page: Page) {
     return new RowTestingModel(page);
@@ -30,10 +28,21 @@ export class RowTestingModel {
     return await getCellText(
       {
         rowIndex,
-        colIndex: colIndex,
-        columnId: colId,
+        colIndex,
+        colId,
       },
       { page: this.page },
+    );
+  }
+
+  async getTextForColumnCells({ colId, colIndex }: ColLocation) {
+    const { bodyCells } = await getColumnCells(
+      { colId, colIndex },
+      { page: this.page },
+    );
+
+    return await Promise.all(
+      bodyCells.map(async (cell) => await cell.textContent()),
     );
   }
 

@@ -1,4 +1,3 @@
-import { getValuesByColumnId } from '@examples/pages/tests/testUtils';
 import { test, expect, Response } from '@testing';
 
 export default test.describe.parallel('Server side filtering', () => {
@@ -40,7 +39,7 @@ export default test.describe.parallel('Server side filtering', () => {
 
     expect(await rowModel.getRenderedRowCount()).toEqual(length);
 
-    const values = await getValuesByColumnId('country', { page });
+    const values = await rowModel.getTextForColumnCells({ colId: 'country' });
 
     expect(values).toEqual(new Array(length).fill('United States'));
   });

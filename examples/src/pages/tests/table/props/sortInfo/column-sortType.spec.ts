@@ -1,19 +1,12 @@
 import { expect, test } from '@testing';
 
-import {
-  getHeaderCellByColumnId,
-  getValuesByColumnId,
-} from '../../../testUtils';
-
 export default test.describe.parallel('column.sortType', () => {
-  test('should work properly', async ({ page }) => {
+  test('should work properly', async ({ page, headerModel, rowModel }) => {
     await page.waitForInfinite();
 
-    await getHeaderCellByColumnId('sales', {
-      page,
-    }).click();
+    await headerModel.clickColumnHeader({ colId: 'sales' });
 
-    const values = await getValuesByColumnId('sales', { page });
+    const values = await rowModel.getTextForColumnCells({ colId: 'sales' });
     const sorted = values.map((x: any) => x * 1);
 
     sorted.sort((a, b) => a - b);

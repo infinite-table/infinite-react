@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import {
   getColumnWidths,
-  getHeaderCellByColumnId,
+  getHeaderCellForColumn,
   getHeaderColumnCells,
   getSelectedRowIds,
 } from '.';
@@ -55,9 +55,12 @@ export class ColumnTestingModel {
   }
 
   async moveColumn(colId: string, leftOrRight: number) {
-    const headerCell = await getHeaderCellByColumnId(colId, {
-      page: this.page,
-    }).elementHandle();
+    const headerCell = await getHeaderCellForColumn(
+      { colId },
+      {
+        page: this.page,
+      },
+    ).elementHandle();
 
     const box = (await headerCell!.boundingBox())!;
     await this.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);

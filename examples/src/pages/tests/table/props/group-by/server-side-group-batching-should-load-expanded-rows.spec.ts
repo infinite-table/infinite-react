@@ -41,11 +41,11 @@ export default test.describe.parallel(
       expect(paramsForRequests[1].groupKeys).toEqual(['France']);
 
       const firstFrance = await getCellText(
-        { columnId: 'country', rowIndex: 1 },
+        { colId: 'country', rowIndex: 1 },
         { page },
       );
       const secondFrance = await getCellText(
-        { columnId: 'country', rowIndex: 1 },
+        { colId: 'country', rowIndex: 1 },
         { page },
       );
 

@@ -4,7 +4,7 @@ import { Request } from '@playwright/test';
 import { getColumnCells, toggleGroupRow } from '../../../testUtils';
 
 const getColumnContents = async (colId: string, { page }: { page: Page }) => {
-  const cells = await getColumnCells(colId, { page });
+  const cells = await getColumnCells({ colId }, { page });
 
   const result = await Promise.all(
     cells.bodyCells.map(

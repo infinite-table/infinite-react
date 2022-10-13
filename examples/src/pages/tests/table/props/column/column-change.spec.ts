@@ -18,7 +18,7 @@ export default test.describe.parallel('Column change', () => {
       { page },
     );
     let cellText = await getCellText(
-      { columnId: 'firstName', rowIndex: 0 },
+      { colId: 'firstName', rowIndex: 0 },
       { page },
     );
 
@@ -34,10 +34,7 @@ export default test.describe.parallel('Column change', () => {
 
     headerText = await getHeaderCellText({ columnId: 'firstName' }, { page });
 
-    cellText = await getCellText(
-      { columnId: 'firstName', rowIndex: 0 },
-      { page },
-    );
+    cellText = await getCellText({ colId: 'firstName', rowIndex: 0 }, { page });
 
     expect(widths).toEqual([500, 100, 100]);
     expect(headerText).toEqual('lastName');

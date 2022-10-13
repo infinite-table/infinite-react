@@ -46,6 +46,14 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
         `index: ${1000 - rowInfo.indexInAll} - ${value}!`,
     },
   ],
+  // [
+  //   'normalage',
+  //   {
+  //     field: 'age',
+  //     header: 'normalage',
+  //     type: 'number',
+  //   },
+  // ],
   [
     'department',
     {

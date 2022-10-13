@@ -27,7 +27,7 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     const { headerCell: salaryBackend } = await getColumnCells(
-      'salary:backend',
+      { colId: 'salary:backend' },
       {
         page,
       },
@@ -41,7 +41,7 @@ export default test.describe.parallel('Pivot', () => {
     columnGroupIds = await getColumnGroupsIds({ page });
 
     const { headerCell: salaryBackend2 } = await getColumnCells(
-      'salary:backend',
+      { colId: 'salary:backend' },
       {
         page,
       },
