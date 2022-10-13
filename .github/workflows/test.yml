@@ -33,4 +33,4 @@ jobs:
       #   working-directory: source
 
       - name: Run test suite
-        run: npm test
+        run: npm run test:ci

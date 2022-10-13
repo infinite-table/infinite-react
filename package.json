@@ -5,9 +5,10 @@
   "description": "The most productive Data Table for React",
   "main": "index.js",
   "scripts": {
-    "docs": "npm start --prefix documentation",
+    "clean-deps": "rm -fr node_modules && rm -fr source/node_modules && rm -fr www/node_modules && rm -fr examples/node_modules",
     "dev": "npm-run-all --parallel www-serve:data examples-dev",
     "test": "npm-run-all --parallel www-serve:data examples-test",
+    "test:ci": "npm run examples-test",
     "test:watch": "npm-run-all --parallel www-serve:data examples-dev-no-output examples-test:watch",
     "build:watch": "npm run --prefix source watch",
     "build": "npm run --prefix source build",
