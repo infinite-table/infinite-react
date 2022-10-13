@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'source/src/**'
+      - 'examples/src/**/*.spec.ts'
 
 concurrency:
   group: ${{ github.workflow }}
@@ -11,7 +12,7 @@ concurrency:
 jobs:
   run-tests:
     env:
-      NEXT_PUBLIC_BASE_URL: http://infinite-table.com/.netlify/functions/json-server
+      NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
     runs-on: ubuntu-latest
     strategy:
       matrix:
