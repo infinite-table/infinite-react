@@ -1,13 +1,12 @@
 import { InfiniteTableApi } from '@src/components/InfiniteTable/types';
 import { test, expect } from '@testing';
 
-import { getHeaderColumnIds } from '../../../../testUtils';
 import { columns } from '../columns';
 
 export default test.describe.parallel('Column order = true', () => {
-  test('should work', async ({ page }) => {
+  test.only('should work', async ({ page, columnModel }) => {
     await page.waitForInfinite();
-    let colIds = await getHeaderColumnIds({ page });
+    let colIds = await columnModel.getVisibleColumnIds();
 
     expect(colIds).toEqual(['id', 'model', 'price']);
 
@@ -15,7 +14,7 @@ export default test.describe.parallel('Column order = true', () => {
       ((window as any).api as InfiniteTableApi<any>).setColumnOrder(true);
     });
 
-    colIds = await getHeaderColumnIds({ page });
+    colIds = await columnModel.getVisibleColumnIds();
 
     expect(colIds).toEqual(Object.keys(columns));
   });
