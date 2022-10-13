@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -67,7 +67,8 @@ export default function App() {
         { field: 'preferredLanguage' },
         { field: 'country' },
       ]}
-      primaryKey="id">
+      primaryKey="id"
+    >
       <InfiniteTable<Developer>
         columns={columns}
         columnDefaultWidth={250}
@@ -78,9 +79,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

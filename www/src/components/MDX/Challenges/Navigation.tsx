@@ -1,7 +1,9 @@
-import React, { createRef } from 'react';
-import cn from 'classnames';
 import { IconChevron } from '@www/components/Icon/IconChevron';
+import cn from 'classnames';
+import React, { createRef } from 'react';
+
 import { ChallengeContents } from './Challenges';
+
 const debounce = require('debounce');
 
 export function Navigation({

@@ -1,13 +1,9 @@
-import * as React from 'react';
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   DataSourcePropGroupBy,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -30,15 +26,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default function App() {
-  const [keyboardSelection, setKeyboardSelection] =
-    useState(true);
+  const [keyboardSelection, setKeyboardSelection] = useState(true);
   return (
     <>
       <div
         style={{
           color: 'var(--infinite-cell-color)',
           padding: 10,
-        }}>
+        }}
+      >
         Keyboard selection is now{' '}
         <b>{keyboardSelection ? 'enabled' : 'disabled'}</b>.
         <button
@@ -48,14 +44,16 @@ export default function App() {
             padding: 5,
             marginTop: 10,
           }}
-          onClick={() => setKeyboardSelection((x) => !x)}>
+          onClick={() => setKeyboardSelection((x) => !x)}
+        >
           Click to toggle keyboard selection
         </button>
       </div>
       <DataSource<Developer>
         data={dataSource}
         selectionMode="multi-row"
-        primaryKey="id">
+        primaryKey="id"
+      >
         <InfiniteTable<Developer>
           keyboardNavigation="row"
           keyboardSelection={keyboardSelection}
@@ -68,9 +66,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

@@ -5,7 +5,6 @@ layout: API
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
 
-
 <PropTable>
 
 <Prop name="activeCellIndex" type="[number,number] | null">
@@ -27,12 +26,12 @@ This example starts with cell `[2,0]` already active.
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="activeRowIndex" type="number | null">
 
@@ -53,12 +52,12 @@ This example starts with row at index `2` already active.
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="autoSizeColumnsKey" type="number|string|{key,includeHeader,columnsToSkip,columnsToResize}">
 
@@ -72,19 +71,18 @@ Here is a list of possible values for `autoSizeColumnsKey`:
 
 When an object is used, the following properties are available:
 
- * `key` - mandatory property, which, when changed, triggers the update
- * `includeHeader` - optional boolean, - decides whether the header will be included in the auto-sizing calculations. If not specified, `true` is assumed.
- * `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
- * `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
-
+- `key` - mandatory property, which, when changed, triggers the update
+- `includeHeader` - optional boolean, - decides whether the header will be included in the auto-sizing calculations. If not specified, `true` is assumed.
+- `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
+- `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
 
 <Sandpack title="Auto-sizing columns">
 
 ```tsx file=autoSizeColumnsKey-example.page.tsx
+
 ```
 
 </Sandpack>
-
 
 <Note>
 
@@ -99,7 +97,6 @@ When columns are auto-sized, keep in mind that only visible (rendered) rows are 
 In the same logic, keep in mind that by default columns are also virtualized (controlled by <PropLink name="virtualizeColumns" />), not only rows, so only visible columns are auto-sized (in case you have more columns, the columns that are not currently visible do not change their sizes).
 
 </Note>
-
 
 </Prop>
 
@@ -121,27 +118,28 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 <Sandpack>
 
 ```ts file=columnDefaultWidth-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
 
 </Sandpack>
 </Prop>
 
-
 <Prop name="columnMaxWidth" type="number" defaultValue={2000}>
 
 > Specifies the maximum width for all columns.
-
 
 For specifying the minimum column width, see <PropLink name="columnMinWidth" />.
 
 Maximum column width can be controlled more granularly via <PropLink name="columnSizing.maxWidth" />, on a per column level.
 
-
 <Sandpack>
 
 ```tsx file=columnMaxWidth-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -152,7 +150,6 @@ Maximum column width can be controlled more granularly via <PropLink name="colum
 
 > Specifies the minimum width for all columns.
 
-
 For specifying the maximum column width, see <PropLink name="columnMaxWidth" />.
 
 Minimum column width can be controlled more granularly via <PropLink name="columnSizing.minWidth" /> or <PropLink name="columns.minWidth" />, on a per column level.
@@ -160,12 +157,12 @@ Minimum column width can be controlled more granularly via <PropLink name="colum
 <Sandpack>
 
 ```tsx file=columnMinWidth-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="columnOrder" type="string[]|true">
 
@@ -185,10 +182,10 @@ Displaying the same column twice is a perfectly valid use case.
 
 </Note>
 
-
 <Sandpack title="Column order">
 
 ```ts file=columnOrder-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -198,6 +195,7 @@ This prop can either be an array of strings (column ids) or the boolean `true`. 
 <Sandpack title="Column order advanced example">
 
 ```ts file=columnOrder-advanced-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -208,7 +206,6 @@ Using <PropLink name="columnOrder" /> in combination with <PropLink name="column
 
 </Note>
 
-
 </Prop>
 
 <Prop name="columns" type="Record<string, InfiniteTableColumn<DATA_TYPE>>">
@@ -217,20 +214,23 @@ Using <PropLink name="columnOrder" /> in combination with <PropLink name="column
 
 The following properties are available:
 
- * <PropLink name="columns.field">field</PropLink>
- * <PropLink name="columns.defaultWidth">defaultWidth</PropLink>
- * <PropLink name="columns.defaultFlex">defaultFlex</PropLink>
- * render
- * renderValue
- * type
- * <PropLink name="columns.header">header</PropLink>
- * ...etc
+- <PropLink name="columns.field">field</PropLink>
+- <PropLink name="columns.defaultWidth">defaultWidth</PropLink>
+- <PropLink name="columns.defaultFlex">defaultFlex</PropLink>
+- render
+- renderValue
+- type
+- <PropLink name="columns.header">header</PropLink>
+- ...etc
 
 <Sandpack>
 
 ```ts file=columns-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
 
 </Sandpack>
@@ -242,11 +242,10 @@ The following properties are available:
 
 The column components object can have either of the two following properties:
 
- * <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
- * <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
+- <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
+- <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
 
 </Prop>
-
 
 <Prop name="columns.components.ColumnCell">
 
@@ -259,16 +258,17 @@ Inside a component used as a cell, you have to use <HookLink name="useInfiniteCo
 <Note>
 
 It's very important that you take
+
 ```tsx
 const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
 ```
+
 the `domRef` from the <HookLink name="useInfiniteColumnCell"/> hook and pass it on to the root DOM element of your cell component.
 
 ```tsx
-<div ref={domRef}>
-  ...
-</div>
+<div ref={domRef}>...</div>
 ```
+
 **If you don't do this, the column rendering will not work.**
 
 </Note>
@@ -282,6 +282,7 @@ function CustomComponent(props: React.HTMLProps<HTMLDivElement>) {
   return ...
 }
 ```
+
 that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
 
 In order to access the cell-related information, you don't use the props, but you call the <HookLink name="useInfiniteColumnCell"/> hook.
@@ -291,7 +292,7 @@ const ExampleCellComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
   const { domRef } = useInfiniteColumnCell<Developer>();
-  
+
   return (
     <div
       ref={domRef}
@@ -301,13 +302,11 @@ const ExampleCellComponent: React.FunctionComponent<
     >
       {props.children} <div style={{ flex: 1 }} /> {emoji}
     </div>
-  )
-}
-
+  );
+};
 ```
 
 </Note>
-
 
 <Sandpack title="Custom components">
 
@@ -318,7 +317,6 @@ const ExampleCellComponent: React.FunctionComponent<
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="columns.components.HeaderCell">
 
@@ -331,16 +329,17 @@ Inside a custom component used as a column header, you have to use <HookLink nam
 <Note>
 
 It's very important that you take
+
 ```tsx
 const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
 ```
+
 the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it on to the root DOM element of your header component.
 
 ```tsx
-<div ref={domRef}>
-  ...
-</div>
+<div ref={domRef}>...</div>
 ```
+
 **If you don't do this, the column header rendering will not work.**
 
 </Note>
@@ -354,6 +353,7 @@ function CustomHeaderComponent(props: React.HTMLProps<HTMLDivElement>) {
   return ...
 }
 ```
+
 that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
 
 In order to access the column header-related information, you don't use the props, but you call the <HookLink name="useInfiniteHeaderCell"/> hook.
@@ -363,7 +363,7 @@ const ExampleHeaderComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
   const { domRef } = useInfiniteHeaderCell<Developer>();
-  
+
   return (
     <div
       ref={domRef}
@@ -374,12 +374,10 @@ const ExampleHeaderComponent: React.FunctionComponent<
       {props.children} <div style={{ flex: 1 }} /> {emoji}
     </div>
   );
-}
-
+};
 ```
 
 </Note>
-
 
 <Sandpack title="Custom components">
 
@@ -401,11 +399,10 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 
 </Note>
 
-
 <Sandpack title="First name column(first) has cssEllipsis set to false">
 
-
 ```ts file=columns-cssEllipsis-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -425,7 +422,6 @@ See related <PropLink name="columns.defaultWidth" />
 
 </Prop>
 
-
 <Prop name="columns.defaultHiddenWhenGroupedBy" type="'*'| true | keyof DATA_TYPE | { [keyof DATA_TYPE]: true }">
 
 > Controls default column visibility when <DataSourcePropLink name="groupBy" /> is used.
@@ -433,15 +429,16 @@ See related <PropLink name="columns.defaultWidth" />
 This property does not apply (work) when controlled <PropLink name="columnVisibility"  /> is used, it only works with uncontrolled column visibility.
 
 The value for this property can be one of the following:
- * the `'*'` string - this means, the column is hidden whenever there are groups - so any groups.
- * a `string`, namely a field from the bound type of the `DataSource` (so type is `keyof DATA_TYPE`) - the column is hidden whenever there is grouping that includes the specified field. The grouping can contain any other fields, but if it includes the specified field, the column is hidden.
- * `true` - the column is hidden when there grouping that uses the field that the column is bound to.
- * `an object with keys` of type `keyof DATA_TYPE` and values being `true` - whenever the grouping includes any of the fields that are in the keys of this object, the column is hidden.
 
+- the `'*'` string - this means, the column is hidden whenever there are groups - so any groups.
+- a `string`, namely a field from the bound type of the `DataSource` (so type is `keyof DATA_TYPE`) - the column is hidden whenever there is grouping that includes the specified field. The grouping can contain any other fields, but if it includes the specified field, the column is hidden.
+- `true` - the column is hidden when there grouping that uses the field that the column is bound to.
+- `an object with keys` of type `keyof DATA_TYPE` and values being `true` - whenever the grouping includes any of the fields that are in the keys of this object, the column is hidden.
 
 <Sandpack>
 
 ```ts file=columnDefaultHiddenWhenGroupedBy-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -461,7 +458,6 @@ See related <PropLink name="columns.defaultFlex" />
 
 </Prop>
 
-
 <Prop name="columns.field" type="keyof DATA_TYPE">
 
 > Binds the column to the specified data field. It should be a keyof `DATA_TYPE`.
@@ -473,8 +469,11 @@ If no <PropLink name="columns.header" /> is specified, it will be used as the co
 <Sandpack>
 
 ```ts file=columns-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
 
 </Sandpack>
@@ -488,6 +487,7 @@ In this example, the group column is bound to the `firstName` field, so this fie
 </Description>
 
 ```ts file=group-column-bound-to-field-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -506,8 +506,8 @@ If no `header` is specified for a column, the <PropLink name="columns.field">fie
 
 If a function is provided, it will be called with an argument with the following properties:
 
- * `column`
- * `columnSortInfo` - will allow you to render custom header based on the sort state of the column.
+- `column`
+- `columnSortInfo` - will allow you to render custom header based on the sort state of the column.
 
 When we implement filtering, you'll also have access to the column filter.
 
@@ -517,12 +517,14 @@ For styling the column header, you can use <PropLink name="columns.headerStyle">
 
 </Note>
 
-
 <Sandpack>
 
 ```ts file=columns-header-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
 
 </Sandpack>
@@ -536,9 +538,10 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 <Sandpack title="Column with custom header that uses useInfiniteHeaderCell">
 
 ```ts file=column-header-hooks-example.page.tsx
+
 ```
 
-</Sandpack>  
+</Sandpack>
 
 </Prop>
 
@@ -548,11 +551,11 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 
 If defined as a function, it accepts an object as a parameter, which has the following properties:
 
- * `column` - the current column where the style is being applied
- * `columnSortInfo` - the sorting information for the column
- * `columnFilterValue` - the filtering information for the column
- * `dragging` - whether the current column is being dragged at the current time (during a column reorder)
- 
+- `column` - the current column where the style is being applied
+- `columnSortInfo` - the sorting information for the column
+- `columnFilterValue` - the filtering information for the column
+- `dragging` - whether the current column is being dragged at the current time (during a column reorder)
+
 <Note>
 
 The `headerClassName` property can also be specified for <PropLink name="columnTypes.headerClassName">columnTypes</PropLink>.
@@ -575,11 +578,10 @@ For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
 
 </Note>
 
-
 <Sandpack title="Preferred Language column(second) has headerCssEllipsis set to false">
 
-
 ```ts file=columns-cssEllipsis-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -592,11 +594,11 @@ For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
 
 If defined as a function, it accepts an object as a parameter, which has the following properties:
 
- * `column` - the current column where the style is being applied
- * `columnSortInfo` - the sorting information for the column
- * `columnFilterValue` - the filtering information for the column
- * `dragging` - whether the current column is being dragged at the current time (during a column reorder)
- 
+- `column` - the current column where the style is being applied
+- `columnSortInfo` - the sorting information for the column
+- `columnFilterValue` - the filtering information for the column
+- `dragging` - whether the current column is being dragged at the current time (during a column reorder)
+
 <Note>
 
 The `headerStyle` property can also be specified for <PropLink name="columnTypes.headerStyle">columnTypes</PropLink>.
@@ -623,8 +625,6 @@ If not specified, <PropLink name="columnMinWidth" /> will be used (defaults to `
 
 </Prop>
 
-
-
 <Prop name="columns.render" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
 
 > Customizes the rendering of the column.
@@ -633,8 +633,7 @@ See related <PropLink name="columns.renderValue" />, <PropLink name="columns.ren
 
 <Note>
 
-The difference between <PropLink name="columns.render"/> and  <PropLink name="columns.renderValue"/>  is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
-
+The difference between <PropLink name="columns.render"/> and <PropLink name="columns.renderValue"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
 
 Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
 
@@ -648,35 +647,33 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
 
- * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
- * rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
- * renderBag - read more about this in the docs for [Column rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline)
-
+- data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
+- rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
+- renderBag - read more about this in the docs for [Column rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline)
 
 <Sandpack title="Column with custom render">
 
 ```ts file=column-render-example.page.tsx
+
 ```
 
-</Sandpack>  
+</Sandpack>
 
 <Note>
 
 In the `column.render` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `render` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `render` function.
-
 
 </Note>
 
 <Sandpack title="Column with custom render that uses useInfiniteColumnCell">
 
 ```ts file=column-render-hooks-example.page.tsx
+
 ```
 
-</Sandpack>  
-
+</Sandpack>
 
 </Prop>
-
 
 <Prop name="columns.renderGroupIcon" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
@@ -690,14 +687,13 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Hint>
 
-
 <Sandpack title="Column with custom renderGroupIcon">
 
 ```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+
 ```
+
 </Sandpack>
-
-
 
 </Prop>
 
@@ -720,7 +716,6 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Hint>
 
-
 <Sandpack title="Column with custom renderSelectionCheckBox">
 
 <Description>
@@ -728,13 +723,12 @@ This example shows how you can use the default selection checkbox and decorate i
 </Description>
 
 ```tsx file=column-renderSelectionCheckBox-example.page.tsx
+
 ```
+
 </Sandpack>
 
-
-
 </Prop>
-
 
 <Prop name="columns.renderGroupValue" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
@@ -751,16 +745,15 @@ This function prop is called with a parameter - the `value` property of this par
 See related <PropLink name="columns.renderGroupIcon" /> for customizing the collapse/expand group icon.
 See related <PropLink name="columns.renderLeafValue" /> for customizing the value for non-group rows in a group column.
 
-
 <Sandpack title="Column with custom renderGroupValue">
 
 ```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+
 ```
+
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="columns.renderLeafValue" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
@@ -768,13 +761,13 @@ See related <PropLink name="columns.renderLeafValue" /> for customizing the valu
 
 See related <PropLink name="columns.renderGroupValue" /> for customizing the value for group rows in a group column.
 
-
 <Sandpack title="Column with custom renderLeafValue">
 
 ```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
-```
-</Sandpack>
 
+```
+
+</Sandpack>
 
 </Prop>
 <Prop name="columns.renderValue" type="({ value, data, rowInfo, column, renderBag, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
@@ -787,11 +780,9 @@ See related <PropLink name="columns.render" />, <PropLink name="columns.renderGr
 
 The difference between <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> is only for special columns (for now, only group columns are special columns, but more will come) when `InfiniteTable` renders additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override the additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
 
-
 Note that for customizing the collapse/expand tool, you can use specify `renderGroupIcon` function on the group column.
 
 </Note>
-
 
 <Hint>
 
@@ -799,24 +790,23 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Hint>
 
-
 The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
 
- * data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
- * rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
- * renderBag - read more about this in the docs for [Column rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline)
+- data - the data object (of type `DATA_TYPE | Partial<DATA_TYPE> | null`) for the row.
+- rowInfo - very useful information about the current row. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
+- renderBag - read more about this in the docs for [Column rendering pipeline](/docs/latest/learn/columns/column-rendering#rendering-pipeline)
 
 <Sandpack title="Column with custom renderValue">
 
 ```tsx file=column-renderValue-example.page.tsx
-```
-</Sandpack>
 
+```
+
+</Sandpack>
 
 <Note>
 
 In the `column.renderValue` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `renderValue` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `renderValue` function.
-
 
 </Note>
 </Prop>
@@ -837,15 +827,16 @@ The default rowspan for a column cell is 1. If you want to span multiple rows, r
 
 This function is called with an object that has the following properties:
 
-* column - the current column
-* data - the current data
-* rowInfo - information about the current row
+- column - the current column
+- data - the current data
+- rowInfo - information about the current row
 
 The `rowInfo` object contains information about grouping (if this row is a group row, the collapsed state, etc), parent groups, children of the current row (if it's a row group), etc. See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
 
 <Sandpack>
 
 ```ts file=column-rowspan-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -861,6 +852,7 @@ For local sorting, the sort order for a column is determined by the specified `s
 <Sandpack  title="Custom sort by color - magenta will come first">
 
 ```ts file=./datasource-props/sortTypes-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -873,34 +865,30 @@ For local sorting, the sort order for a column is determined by the specified `s
 
 If defined as a function, it accepts an object as a parameter, which has the following properties:
 
- * `column` - the current column where the style is being applied
- * `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
- * `rowInfo` - the information about the current row - see [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
- * `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
-
-
+- `column` - the current column where the style is being applied
+- `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
+- `rowInfo` - the information about the current row - see [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
+- `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
 
 <Note>
 
 The `style` property can also be specified for <PropLink name="columnTypes"/>
-
 
 </Note>
 
 <Sandpack>
 
 ```ts file=columns-style-example.page.tsx
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
 <Prop name="columns.type" type="string | string[]" defaultValue="'default'">
 
 > Specifies the column type - a column type is a set of properties that describes the column. Column types allow to easily apply the same properties to multiple columns.
-
 
 <Note>
 
@@ -909,7 +897,6 @@ Specifying `type: "number"` for numeric columns will ensure correct number sorti
 </Note>
 
 See <PropLink name="columnTypes"/> for more details on using column types.
-
 
 <Note>
 
@@ -921,7 +908,7 @@ By default, all columns have the `default` column type applied. So, if you defin
 
 When you want both the default type and another type to be applied, you can do so by specifying `type: ["default", "second-type"]`.
 
-When you dont want the default type to be applied, use  `type: null`.
+When you dont want the default type to be applied, use `type: null`.
 
 </Note>
 
@@ -930,13 +917,15 @@ See the example below - `id` and `age` columns are `type='number'`.
 <Sandpack>
 
 ```ts file=columns-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
 
 </Sandpack>
 </Prop>
-
 
 <Prop name="columns.valueFormatter" type="({ data?, isGroupRow, rowInfo, field?, rowSelected, rowActive, isGroupRow }) => Renderable">
 
@@ -955,11 +944,12 @@ If you want to further customize what's being rendered, see related <PropLink na
 <Sandpack title="Column with custom valueFormatter">
 
 ```tsx file=column-valueFormatter-example.page.tsx
+
 ```
+
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="columns.valueGetter" type="({ data, field? }) => string | number | boolean | null | undefined">
 
@@ -973,17 +963,17 @@ Note that the `data` property is of type `DATA_TYPE | Partial<DATA_TYPE> | null`
 
 </Note>
 
-
 If you want to further customize what's being rendered, see related <PropLink name="columns.valueFormatter" />, <PropLink name="columns.renderValue" />, <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />, <PropLink name="columns.renderLeafValue" /> and <PropLink name="columns.renderGroupIcon" />.
 
 <Sandpack title="Column with custom valueGetter">
 
 ```tsx file=column-valueGetter-example.page.tsx
+
 ```
+
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="columnSizing" type="Record<string,{width,flex,...}>">
 
@@ -992,15 +982,16 @@ If you want to further customize what's being rendered, see related <PropLink na
 This is a controlled property. For the uncontrolled version, see <PropLink name="defaultColumnSizing" />.
 
 It is an object that maps column ids to column sizing options. The values in the objects can contain the following properties:
- * <PropLink name="columnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
- * <PropLink name="columnSizing.width">width</PropLink> - use this for fixed sized columns
- * <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
- * <PropLink name="columnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
+- <PropLink name="columnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
+- <PropLink name="columnSizing.width">width</PropLink> - use this for fixed sized columns
+- <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
+- <PropLink name="columnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
 <Sandpack title="Controlled column sizing">
 
 ```tsx file=columnSizing-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1024,13 +1015,12 @@ A column can either be flexible or fixed-width. For fixed columns, use <PropLink
 <Sandpack title="Controlled column sizing with flex columns">
 
 ```tsx file=columnSizing-example.page.tsx
+
 ```
 
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="columnSizing.minWidth" type="number">
 
@@ -1043,11 +1033,11 @@ This can also be specified for all columns by specyfing <PropLink name="columnMi
 <Sandpack title="Controlled column sizing with minWidth for column">
 
 ```tsx file=columnSizing-example.page.tsx
+
 ```
 
 </Sandpack>
 </Prop>
-
 
 <Prop name="columnSizing.maxWidth" type="number">
 
@@ -1060,11 +1050,11 @@ This can also be specified for all columns by specyfing <PropLink name="columnMa
 <Sandpack title="Controlled column sizing with maxWidth for column">
 
 ```tsx file=columnSizing-example.page.tsx
+
 ```
 
 </Sandpack>
 </Prop>
-
 
 <Prop name="columnSizing.width" type="number">
 
@@ -1074,17 +1064,15 @@ See [Using flexible column sizing](/docs/latest/learn/columns/fixed-and-flexible
 
 A column can either be flexible or fixed. For flexible columns, use <PropLink name="columnSizing.flex" />.
 
-
 <Sandpack title="Controlled column sizing with fixed column">
 
 ```tsx file=columnSizing-example.page.tsx
+
 ```
 
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="columnTypes" type="Record<string,InfiniteTableColumnType>">
 
@@ -1094,31 +1082,28 @@ A column can either be flexible or fixed. For flexible columns, use <PropLink na
 By default, all columns have the `default` column type applied. So, if you define the `default` column type, but don't specify any <PropLink name="columns.type">type</PropLink> for a column, the default column type properties will be applied to that column.
 </Note>
 
-
-
 The following properties are currently supported for defining a column type:
 
- * `align` - See <PropLink name="column.align" />
- * `cssEllipsis` - See <PropLink name="column.cssEllipsis" />
- * `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
- * `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
- * `header` - See <PropLink name="column.header" />
- * `headerCssEllipsis` - See <PropLink name="column.headerCssEllipsis" />
- * `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
- * `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
- * `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
- * `renderValue` - See <PropLink name="column.renderValue" />
- * `valueGetter` - See <PropLink name="column.valueGetter" />
- * `verticalAlign` - See <PropLink name="column.verticalAlign" />
- * `sortable` - See <PropLink name="column.sortable" />
- * `style` - See <PropLink name="column.style" />
+- `align` - See <PropLink name="column.align" />
+- `cssEllipsis` - See <PropLink name="column.cssEllipsis" />
+- `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
+- `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
+- `header` - See <PropLink name="column.header" />
+- `headerCssEllipsis` - See <PropLink name="column.headerCssEllipsis" />
+- `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
+- `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
+- `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
+- `renderValue` - See <PropLink name="column.renderValue" />
+- `valueGetter` - See <PropLink name="column.valueGetter" />
+- `verticalAlign` - See <PropLink name="column.verticalAlign" />
+- `sortable` - See <PropLink name="column.sortable" />
+- `style` - See <PropLink name="column.style" />
 
 <Note>
 When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.
 </Note>
 
 </Prop>
-
 
 <Prop name="columnTypes.defaultFlex" type="number" >
 
@@ -1152,7 +1137,6 @@ See related <PropLink name="columnTypes.defaultFlex" />, <PropLink name="columns
 
 </Prop>
 
-
 <Prop name="columnTypes.maxWidth" type="number" >
 
 > Specifies a default maximum width for the column type. Will be overriden in any column that already specifies a `maxWidth` property.
@@ -1185,6 +1169,7 @@ This example starts with cell `[2,0]` already active.
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1207,6 +1192,7 @@ This example starts with row at index `2` already active.
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-rows-uncontrolled-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1231,10 +1217,10 @@ Displaying the same column twice is a perfectly valid use case.
 
 See [Column Order](/docs/latest/learn/columns/column-order) for more details on ordering columns both programatically and via drag & drop.
 
-
 <Sandpack title="Uncontrolled column order">
 
 ```ts file=defaultColumnOrder-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1247,15 +1233,16 @@ See [Column Order](/docs/latest/learn/columns/column-order) for more details on 
 This is an uncontrolled property. For the controlled version and more details, see <PropLink name="columnSizing" />.
 
 It is an object that maps column ids to column sizing options. The values in the objects can contain the following properties:
- * <PropLink name="defaultColumnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
- * <PropLink name="defaultColumnSizing.width">width</PropLink> - use this for fixed sized columns
- * <PropLink name="defaultColumnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
- * <PropLink name="defaultColumnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
+- <PropLink name="defaultColumnSizing.flex">flex</PropLink> - use this for flexible columns. Behaves like the `flex` CSS property.
+- <PropLink name="defaultColumnSizing.width">width</PropLink> - use this for fixed sized columns
+- <PropLink name="defaultColumnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
+- <PropLink name="defaultColumnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
 <Sandpack title="Uncontrolled column sizing">
 
 ```tsx file=defaultColumnSizing-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1268,7 +1255,6 @@ For auto-sizing columns, see <PropLink name="autoSizeColumnsKey" />.
 
 </Prop>
 
-
 <Prop name="defaultColumnSizing.flex" type="number">
 
 > Specifies the flex value for the column.
@@ -1276,7 +1262,6 @@ For auto-sizing columns, see <PropLink name="autoSizeColumnsKey" />.
 See <PropLink name="columnSizing.flex" /> for details.
 
 </Prop>
-
 
 <Prop name="defaultColumnSizing.minWidth" type="number">
 
@@ -1294,7 +1279,6 @@ See <PropLink name="columnSizing.maxWidth" /> for details.
 
 </Prop>
 
-
 <Prop name="defaultColumnSizing.width" type="number">
 
 > Specifies the fixed width for the column.
@@ -1302,7 +1286,6 @@ See <PropLink name="columnSizing.maxWidth" /> for details.
 See <PropLink name="columnSizing.width" /> for details.
 
 </Prop>
-
 
 <Prop name="domProps" type="React.HTMLProps<HTMLDivElement>">
 
@@ -1312,18 +1295,19 @@ For applying a className when the component is focused, see <PropLink name="focu
 
 For applying a className when the focus is within the component, see <PropLink name="focusedWithinClassName" />
 
-
 <Sandpack>
 
 ```ts file=domprops-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="focusedClassName" type="string">
 
@@ -1335,13 +1319,11 @@ For focus style, see <PropLink name="focusedStyle" />.
 
 </Prop>
 
-
 <Prop name="focusedWithinClassName" type="string">
 
 > CSS class name to be applied to the component root element when there is focus within (inside) the component.
 
 For applying a className when the component root element is focused, see <PropLink name="focusedClassName" />
-
 
 </Prop>
 
@@ -1352,9 +1334,13 @@ For applying a className when the component root element is focused, see <PropLi
 <Sandpack title="focusedStyle example">
 
 ```ts file=focusedStyle-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
+
 </Sandpack>
 </Prop>
 
@@ -1371,9 +1357,13 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 <Sandpack title="focusedWithinStyle example - focus an input inside the table to see it in action">
 
 ```ts file=focusedWithinStyle-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -1386,14 +1376,13 @@ If this is an object and no explicit <PropLink name="groupRenderStrategy" /> is 
 
 If it's a function, it will be called with the following arguments:
 
- * `options` - an object with the following properties:
- * `options.groupCount` - the count of row groups
- * `options.groupBy` - the array of row groups, used by the `DataSource` to do the grouping
- * `options.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
- * `options.groupByForColumn` - the grouping object (one of the items in `options.groupBy`) corresponding to the current column.
- * `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupBy` - corresponding to the current column.
- * `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
-
+- `options` - an object with the following properties:
+- `options.groupCount` - the count of row groups
+- `options.groupBy` - the array of row groups, used by the `DataSource` to do the grouping
+- `options.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
+- `options.groupByForColumn` - the grouping object (one of the items in `options.groupBy`) corresponding to the current column.
+- `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupBy` - corresponding to the current column.
+- `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
 
 <Gotcha>
 
@@ -1405,19 +1394,22 @@ You can still use <PropLink name="groupColumn" /> as a function with single colu
 
 <Prop name="groupRenderStrategy" type="'single-column'|'multi-column'">
 
-> Determines how grouping is rendered - whether a single or multiple columns are generated. 
+> Determines how grouping is rendered - whether a single or multiple columns are generated.
+
 <!-- In case of inline, no group column is generated but the column corresponding to the group field is used. -->
 
 <Sandpack>
 
 ```ts file=groupRenderStrategy-example.page.tsx
+
 ```
-``` ts file=employee-columns.ts
+
+```ts file=employee-columns.ts
+
 ```
 
 </Sandpack>
 </Prop>
-
 
 <Prop name="hideColumnWhenGrouped" type="boolean" defaultValue={false}>
 
@@ -1432,6 +1424,7 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 </Description>
 
 ```ts file=hideColumnWhenGrouped-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1444,8 +1437,11 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 <Sandpack>
 
 ```ts file=hideEmptyGroupColumns-example.page.tsx
+
 ```
-``` ts file=employee-columns.ts
+
+```ts file=employee-columns.ts
+
 ```
 
 </Sandpack>
@@ -1456,14 +1452,13 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 > Determines whether keyboard navigation is enabled.
 
 Available values:
- - `'cell'` - enables keyboard navigation for cells. This is the default.
- - `'row'` - enables keyboard navigation for rows.
- - `false` - disables keyboard navigation.
 
+- `'cell'` - enables keyboard navigation for cells. This is the default.
+- `'row'` - enables keyboard navigation for rows.
+- `false` - disables keyboard navigation.
 
 For cell keyboard navigation, see <PropLink name="activeCellIndex" />.
 For row keyboard navigation, see <PropLink name="activeRowIndex" />.
-
 
 <Sandpack title="Keyboard navigation">
 
@@ -1474,6 +1469,7 @@ This example starts with cell `[2,0]` already active.
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1486,50 +1482,45 @@ In this example the keyboard navigation is disabled.
 
 </Description>
 
-
 ```ts file=../learn/keyboard-navigation/navigation-disabled-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="keyboardSelection" type="boolean" defaultValue={true}>
 
 > Determines whether the keyboard can be used for selecting/deselecting rows/cells.
 
-
-By default <PropLink name="keyboardSelection" /> is enabled, so you can use the keyboard **spacebar** key to select multiple rows.  Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
+By default <PropLink name="keyboardSelection" /> is enabled, so you can use the keyboard **spacebar** key to select multiple rows. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
 
 For specifying the selection mode, use <DPropLink name="selectionMode" />
-
 
 <Sandpack  title="Toggling keyboard navigation">
 
 ```ts file=default-selection-mode-multi-row-keyboard-toggle-example.page.tsx
+
 ```
 
 </Sandpack>
 
-
 </Prop>
-
-
 
 <Prop name="loadingText" type="ReactNode" defaultValue="'Loading'">
 
 > The text inside the load mask - displayed when <DataSourcePropLink name="loading">loading=true</DataSourcePropLink>.
 
-
 <Sandpack title="Customized loading text">
 
 ```ts file=loadingText-example.page.tsx
+
 ```
+
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="onActiveCellIndexChange" type="(activeCellIndex:[number,number])=>void">
 
@@ -1546,6 +1537,7 @@ This example uses `onActiveCellIndexChange` to react to changes in the `activeCe
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -1567,12 +1559,12 @@ This example uses `onActiveRowIndexChange` to react to changes in the `activeRow
 </Description>
 
 ```ts file=../learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="onBlurWithin" type="(event)=> void">
 
@@ -1589,9 +1581,13 @@ This callback is fired when a focusable element inside the component is blurred,
 <Sandpack title="Blur an input inside the table to see the callback fired">
 
 ```ts file=onBlurWithin-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
+
 </Sandpack>
 </Prop>
 <Prop name="onColumnOrderChange" type="(columnOrder: string[])=>void">
@@ -1599,7 +1595,6 @@ This callback is fired when a focusable element inside the component is blurred,
 > Called as a result of user changing the column order
 
 </Prop>
-
 
 <Prop name="onColumnSizingChange" type="(columnSizing)=>void">
 
@@ -1614,12 +1609,12 @@ See related <PropLink name="onViewportReservedWidthChange" />
 <Sandpack title="Controlled column sizing example with onColumnSizingChange">
 
 ```ts file=onColumnSizingChange-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="onFocusWithin" type="(event)=> void">
 
@@ -1630,9 +1625,13 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 <Sandpack title="Focus an input inside the table to see the callback fired">
 
 ```ts file=onFocusWithin-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
+
 </Sandpack>
 </Prop>
 
@@ -1654,7 +1653,6 @@ It will never be called again after the component is ready.
 
 As an example usage, we're demoing live pagination, done in combination with the [react-query](https://react-query.tanstack.com/) library.
 
-
 <Note>
 
 If you want to scroll to the top of the table, you can use the <PropLink name="scrollTopKey" /> prop.
@@ -1664,12 +1662,12 @@ If you want to scroll to the top of the table, you can use the <PropLink name="s
 <Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
 
 ```ts file=../learn/working-with-data/live-pagination-example.page.tsx
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="onViewportReservedWidthChange" type="(reserved: number) => void">
 
@@ -1686,7 +1684,9 @@ Resize a column to see `viewportReservedWidth` updated and then click the button
 </Description>
 
 ```ts file=viewportReservedWidth-example.page.tsx
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -1699,14 +1699,13 @@ If specified as `false`, the pivot grand-total columns are not displayed.
 
 For normal pivot total columns, see <PropLink name="pivotTotalColumnPosition"/>.
 
-
 <Sandpack title="Pivoting with pivotGrandTotalColumnPosition=start">
 
 ```ts file=pivot-grand-total-column-position-example.page.tsx
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -1726,14 +1725,13 @@ In case there are no pivot fields, but <DataSourcePropLink name="pivotBy"/> is a
 
 </Note>
 
-
 <Sandpack title="Pivoting with pivotTotalColumnPosition=start">
 
 ```ts file=pivot-total-column-position-example.page.tsx
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -1752,7 +1750,9 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 </Description>
 
 ```ts file=resizableColumns-example.page.tsx
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -1764,19 +1764,26 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 <Sandpack title="rowHeight as number">
 
 ```ts file=rowHeight-number-example.page.tsx
+
 ```
+
 ```ts file=data.ts
+
 ```
+
 </Sandpack>
 
 <Sandpack title="rowHeight from CSS variable name">
 
 ```ts file=rowHeight-cssvar-example.page.tsx
-```
-```ts file=data.ts
-```
-</Sandpack>
 
+```
+
+```ts file=data.ts
+
+```
+
+</Sandpack>
 
 </Prop>
 
@@ -1786,7 +1793,6 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 The `rowClassName` prop can be either a string or a function that returns a string. When used as a function, the parameters of the function are the same as the parameters of the <PropLink name="rowStyle" /> function.
 
-
 </Prop>
 
 <Prop name="rowStyle" type="CSSProperties|({data, rowInfo, rowIndex}) => CSSProperties">
@@ -1795,8 +1801,7 @@ The `rowClassName` prop can be either a string or a function that returns a stri
 
 The `rowStyle` prop can be either an object (typed as `React.CSSProperties`) or a function
 
-
-### `rowStyle` as a function 
+### `rowStyle` as a function
 
 <APIAnatomy>
 
@@ -1809,13 +1814,14 @@ When Infinite Table calls `rowStyle`, the `data` property can be null - this is 
 <AnatomyStep title="rowInfo">
 
 The `rowInfo` object contains the following properties:
-* `id` - the id of the current row
-* `data` - the data object
-* `indexInAll` - the index in the whole dataset
-* `indexInGroup` - the index of the row in the current group
-* `groupBy` - the fields used to group the `DataSource`
-* `isGroupRow` - whether the row is a group row
-* `collapsed` - for a group row, whether the group row is collapsed
+
+- `id` - the id of the current row
+- `data` - the data object
+- `indexInAll` - the index in the whole dataset
+- `indexInGroup` - the index of the row in the current group
+- `groupBy` - the fields used to group the `DataSource`
+- `isGroupRow` - whether the row is a group row
+- `collapsed` - for a group row, whether the group row is collapsed
 
 See [Using RowInfo](/docs/latest/learn/rows/using-row-info) for more details.
 
@@ -1827,12 +1833,10 @@ You can either return a valid style object, or undefined.
 
 </AnatomyStep>
 
-
-
-```tsx  [[1, 5, "data: Employee | null;"], [2,6,"rowInfo: InfiniteTableRowInfo<Employee>;"], [3,11,"{ background: 'tomato' };"]]
+```tsx [[1, 5, "data: Employee | null;"], [2,6,"rowInfo: InfiniteTableRowInfo<Employee>;"], [3,11,"{ background: 'tomato' };"]]
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   data,
-  rowInfo
+  rowInfo,
 }: {
   data: Employee | null;
   rowInfo: InfiniteTableRowInfo<Employee>;
@@ -1847,20 +1851,22 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   }
 };
 ```
-</APIAnatomy>
 
+</APIAnatomy>
 
 <Sandpack title="rowStyle example usage">
 
 ```ts file=rowStyle-example.page.tsx
+
 ```
+
 ```ts file=rowStyle-example-columns.ts
+
 ```
+
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="viewportReservedWidth" type="number" defaultValue={0}>
 
@@ -1879,7 +1885,9 @@ Resize a column to see `viewportReservedWidth` updated and then click the button
 </Description>
 
 ```ts file=viewportReservedWidth-example.page.tsx
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -1893,9 +1901,10 @@ Use this property to declaratively tell the `InfiniteTable` component to scroll 
 <Sandpack title="Declaratively scrolling to the top of the table">
 
 ```ts file=scrollTopKey-example.page.tsx
-```
-</Sandpack>
 
+```
+
+</Sandpack>
 
 </Prop>
 
@@ -1907,5 +1916,4 @@ By default, columns are virtualized in order to improve performance.
 
 </Prop>
 
-</PropTable> 
-
+</PropTable>

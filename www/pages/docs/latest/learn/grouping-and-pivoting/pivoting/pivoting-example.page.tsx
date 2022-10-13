@@ -1,11 +1,8 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnAggregator,
@@ -14,6 +11,7 @@ import type {
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -31,33 +29,27 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data)
     .then(
       (data) =>
         new Promise<Developer[]>((resolve) => {
           setTimeout(() => resolve(data), 1000);
-        })
+        }),
     );
 };
 
-const avgReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
   field: 'salary',
   reducer: (acc, sum) => acc + sum,
   done: (sum, arr) => (arr.length ? sum / arr.length : 0),
 };
 
-const reducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: avgReducer,
-  };
+const reducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: avgReducer,
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id' },
@@ -79,27 +71,25 @@ const groupRowsState = new GroupRowsState({
 });
 
 export default function GroupByExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] =
-    React.useMemo(
-      () => [
-        {
-          field: 'preferredLanguage',
-        },
-        { field: 'stack' },
-      ],
-      []
-    );
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'preferredLanguage',
+      },
+      { field: 'stack' },
+    ],
+    [],
+  );
 
-  const pivotBy: DataSourcePivotBy<Developer>[] =
-    React.useMemo(
-      () => [
-        { field: 'country' },
-        {
-          field: 'canDesign',
-        },
-      ],
-      []
-    );
+  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
+    () => [
+      { field: 'country' },
+      {
+        field: 'canDesign',
+      },
+    ],
+    [],
+  );
 
   return (
     <>
@@ -109,7 +99,8 @@ export default function GroupByExample() {
         groupBy={groupBy}
         pivotBy={pivotBy}
         aggregationReducers={reducers}
-        defaultGroupRowsState={groupRowsState}>
+        defaultGroupRowsState={groupRowsState}
+      >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>

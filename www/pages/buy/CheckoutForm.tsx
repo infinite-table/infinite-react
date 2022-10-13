@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import {
   PaymentElement,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
+import React, { useEffect, useState } from 'react';
 
 export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [message, setMessage] = useState<string | null>(
-    null
-  );
+  const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // useEffect(() => {
@@ -74,10 +72,7 @@ export default function CheckoutForm() {
     // your `return_url`. For some payment methods like iDEAL, your customer will
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
-    if (
-      error.type === 'card_error' ||
-      error.type === 'validation_error'
-    ) {
+    if (error.type === 'card_error' || error.type === 'validation_error') {
       setMessage(error.message || 'There was an error.');
     } else {
       setMessage('An unexpected error occured.');
@@ -90,12 +85,14 @@ export default function CheckoutForm() {
     <form
       id="payment-form"
       onSubmit={handleSubmit}
-      className="p-10 bg-white text-white">
+      className="p-10 bg-white text-white"
+    >
       <PaymentElement id="payment-element" />
       <button
         className="p-1 px-3 mt-2 rounded bg-wash-dark"
         disabled={isLoading || !stripe || !elements}
-        id="submit">
+        id="submit"
+      >
         <span id="button-text">
           {isLoading ? <>Paying now ...</> : 'Pay now'}
         </span>

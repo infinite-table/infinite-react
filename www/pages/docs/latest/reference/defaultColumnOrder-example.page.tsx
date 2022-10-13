@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 export type Employee = {
   id: number;
@@ -84,9 +84,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

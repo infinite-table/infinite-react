@@ -1,6 +1,3 @@
-import * as React from 'react';
-import cn from 'classnames';
-import humanizeString from 'humanize-string';
 import {
   ClasserProvider,
   Sandpack,
@@ -8,11 +5,16 @@ import {
   SandpackProvider,
   SandpackThemeProvider,
 } from '@codesandbox/sandpack-react';
-import rangeParser from 'parse-numeric-range';
-import { CustomTheme } from '../Sandpack/Themes';
-import styles from './CodeBlock.module.css';
-import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
 import { CodeMirrorRef } from '@codesandbox/sandpack-react/dist/types/components/CodeEditor/CodeMirror';
+import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
+import cn from 'classnames';
+import humanizeString from 'humanize-string';
+import rangeParser from 'parse-numeric-range';
+import * as React from 'react';
+
+import { CustomTheme } from '../Sandpack/Themes';
+
+import styles from './CodeBlock.module.css';
 
 interface InlineHiglight {
   step: number;
@@ -21,132 +23,127 @@ interface InlineHiglight {
   endColumn: number;
 }
 
-const CodeBlock = React.forwardRef(
-  (
-    {
-      children,
-      className = 'language-js',
-      metastring,
+const CodeBlock = React.forwardRef(function CodeBlockFn(
+  {
+    children,
+    className = 'language-js',
+    metastring,
 
-      noMargin,
-      noMarkers,
-    }: {
-      children: string;
-      className?: string;
-      metastring: string;
-      noMargin?: boolean;
-      noMarkers?: boolean;
-    },
-    ref?: React.Ref<CodeMirrorRef>,
-  ) => {
-    const getDecoratedLineInfo = () => {
-      if (!metastring) {
-        return [];
-      }
+    noMargin,
+    noMarkers,
+  }: {
+    children: string;
+    className?: string;
+    metastring: string;
+    noMargin?: boolean;
+    noMarkers?: boolean;
+  },
+  ref?: React.Ref<CodeMirrorRef>,
+) {
+  const getDecoratedLineInfo = () => {
+    if (!metastring) {
+      return [];
+    }
 
-      const linesToHighlight = getHighlightLines(metastring);
-      const highlightedLineConfig = linesToHighlight.map((line) => {
-        return {
-          className: 'bg-github-highlight dark:bg-opacity-10',
-          line,
-        };
-      });
+    const linesToHighlight = getHighlightLines(metastring);
+    const highlightedLineConfig = linesToHighlight.map((line) => {
+      return {
+        className: 'bg-github-highlight dark:bg-opacity-10',
+        line,
+      };
+    });
 
-      const inlineHighlightLines = getInlineHighlights(metastring, children);
-      const inlineHighlightConfig = inlineHighlightLines.map(
-        (line: InlineHiglight) => ({
-          ...line,
-          elementAttributes: {
-            'data-step': `${line.step}`,
-          },
-          className: cn(
-            'code-step bg-opacity-10 relative rounded-md p-1 ml-2',
-            {
-              'pl-3 before:content-[attr(data-step)] before:block before:w-4 before:h-4 before:absolute before:top-1 before:-left-2 before:rounded-full before:text-white before:text-center before:text-xs before:leading-4':
-                !noMarkers,
-              'bg-blue-40 before:bg-blue-40': line.step === 1,
-              'bg-yellow-40 before:bg-yellow-40': line.step === 2,
-              'bg-green-40 before:bg-green-40': line.step === 3,
-              'bg-purple-40 before:bg-purple-40': line.step === 4,
-            },
-          ),
+    const inlineHighlightLines = getInlineHighlights(metastring, children);
+    const inlineHighlightConfig = inlineHighlightLines.map(
+      (line: InlineHiglight) => ({
+        ...line,
+        elementAttributes: {
+          'data-step': `${line.step}`,
+        },
+        className: cn('code-step bg-opacity-10 relative rounded-md p-1 ml-2', {
+          'pl-3 before:content-[attr(data-step)] before:block before:w-4 before:h-4 before:absolute before:top-1 before:-left-2 before:rounded-full before:text-white before:text-center before:text-xs before:leading-4':
+            !noMarkers,
+          'bg-blue-40 before:bg-blue-40': line.step === 1,
+          'bg-yellow-40 before:bg-yellow-40': line.step === 2,
+          'bg-green-40 before:bg-green-40': line.step === 3,
+          'bg-purple-40 before:bg-purple-40': line.step === 4,
         }),
-      );
+      }),
+    );
 
-      return highlightedLineConfig.concat(inlineHighlightConfig);
-    };
+    return highlightedLineConfig.concat(inlineHighlightConfig);
+  };
 
-    // e.g. "language-js"
-    const language = className.substring(9);
-    const filename = '/index.' + language;
-    const decorators = getDecoratedLineInfo();
+  // e.g. "language-js"
+  const language = className.substring(9);
+  const filename = '/index.' + language;
+  const decorators = getDecoratedLineInfo();
 
-    const title = getTitle(metastring);
-    const hasTitle = !!title;
-    const titleBlock = hasTitle ? (
+  const title = getTitle(metastring);
+  const hasTitle = !!title;
+  const titleBlock = hasTitle ? (
+    <div
+      className={cn(
+        'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg',
+        !noMargin && 'mt-8',
+      )}
+    >
+      <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
+        <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
+      </div>
+    </div>
+  ) : null;
+  return (
+    <>
+      {titleBlock}
       <div
+        translate="no"
+        style={
+          hasTitle
+            ? {
+                borderTopRightRadius: 0,
+                borderTopLeftRadius: 0,
+              }
+            : {}
+        }
         className={cn(
-          'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg',
-          !noMargin && 'mt-8',
+          'rounded-lg h-full w-full overflow-x-auto flex items-center bg-wash dark:bg-gray-95 shadow-lg',
+          !noMargin && (hasTitle ? 'mb-8' : 'my-8'),
         )}
       >
-        <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
-          <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
-        </div>
-      </div>
-    ) : null;
-    return (
-      <>
-        {titleBlock}
-        <div
-          translate="no"
-          style={
-            hasTitle
-              ? {
-                  borderTopRightRadius: 0,
-                  borderTopLeftRadius: 0,
-                }
-              : {}
-          }
-          className={cn(
-            'rounded-lg h-full w-full overflow-x-auto flex items-center bg-wash dark:bg-gray-95 shadow-lg',
-            !noMargin && (hasTitle ? 'mb-8' : 'my-8'),
-          )}
+        <SandpackProvider
+          template="react"
+          customSetup={{
+            entry: filename,
+          }}
+          options={{
+            activeFile: filename,
+          }}
+          files={{
+            [filename]: {
+              code: children.trimEnd(),
+            },
+          }}
         >
-          <SandpackProvider
-            template="react"
-            customSetup={{
-              entry: filename,
-            }}
-            options={{
-              activeFile: filename,
-            }}
-            files={{
-              [filename]: {
-                code: children.trimEnd(),
-              },
-            }}
-          >
-            {/* <SandpackThemeProvider theme={CustomTheme}> */}
-            <SandpackThemeProvider theme={'dark'}>
-              <ClasserProvider
-                classes={{
-                  'sp-cm': styles.codeViewer,
-                }}
-              >
-                <SandpackCodeViewer
-                  ref={ref}
-                  showLineNumbers={false}
-                  decorators={decorators}
-                />
-              </ClasserProvider>
-            </SandpackThemeProvider>
-          </SandpackProvider>
-        </div>
-      </>
-    );
-  },
-);
+          {/* <SandpackThemeProvider theme={CustomTheme}> */}
+          <SandpackThemeProvider theme={'dark'}>
+            <ClasserProvider
+              classes={{
+                'sp-cm': styles.codeViewer,
+              }}
+            >
+              <SandpackCodeViewer
+                ref={ref}
+                showLineNumbers={false}
+                decorators={decorators}
+              />
+            </ClasserProvider>
+          </SandpackThemeProvider>
+        </SandpackProvider>
+      </div>
+    </>
+  );
+});
 
 export default CodeBlock;
 

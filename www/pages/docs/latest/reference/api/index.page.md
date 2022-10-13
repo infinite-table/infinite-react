@@ -19,24 +19,24 @@ For API on row/group selection, see the [Selection API page](./selection-api).
 
 <PropTable>
 
-
 <Prop name="collapseGroupRow" type="(groupKeys: any[]) => boolean">
 
 > Collapses the specified group row. Returns true if the group was expanded and is now being collapsed.
 
 ```tsx
-api.collapseGroupRow(['USA','New York']) // collapses the group with these keys
+api.collapseGroupRow(['USA', 'New York']); // collapses the group with these keys
 ```
-</Prop>
 
+</Prop>
 
 <Prop name="expandGroupRow" type="(groupKeys: any[]) => boolean">
 
 > Expands the specified group row. Returns true if the group was collapsed and is now being expanded.
 
 ```tsx
-api.expandGroupRow(['USA','New York']) // expands the group with these keys
+api.expandGroupRow(['USA', 'New York']); // expands the group with these keys
 ```
+
 </Prop>
 
 <Prop name="scrollCellIntoView" type="(rowIndex: number; colIdOrIndex: string | number) => boolean">
@@ -56,7 +56,6 @@ The only parameter of this method is the column id.
 
 </Prop>
 
-
 <Prop name="scrollLeft" type="getter<number>|setter<number>">
 
 > Gets or sets the `scrollLeft` value in the grid viewport
@@ -65,14 +64,13 @@ Can be used as either a setter, to set the scroll left position or a getter to r
 
 ```ts
 // use as setter - will scroll the table viewport
-api.scrollLeft = 200
+api.scrollLeft = 200;
 
 // use as getter to read the current scroll left value
-const scrollLeft = api.scrollLeft
+const scrollLeft = api.scrollLeft;
 ```
+
 </Prop>
-
-
 
 <Prop name="scrollRowIntoView" type="(rowIndex: number) => boolean">
 
@@ -90,14 +88,13 @@ Can be used as either a setter, to set the scroll top position or a getter to re
 
 ```ts
 // use as setter - will scroll the table viewport
-api.scrollTop = 1200
+api.scrollTop = 1200;
 
 // use as getter to read the current scroll top value
-const scrollTop = api.scrollTop
+const scrollTop = api.scrollTop;
 ```
+
 </Prop>
-
-
 
 <Prop name="selectionApi" type="InfiniteTableSelectionApi">
 
@@ -112,10 +109,11 @@ const scrollTop = api.scrollTop
 If `true` is specified, it resets the column order to the order the columns are specified in the <PropLink name="columns" /> prop (the iteration order of that object).
 
 ```ts
-api.setColumnOrder(['id', 'firstName','age'])
+api.setColumnOrder(['id', 'firstName', 'age']);
 // restore default order
-api.setColumnOrder(true)
+api.setColumnOrder(true);
 ```
+
 </Prop>
 
 <Prop name="toggleGroupRow" type="(groupKeys: any[]) => void">
@@ -123,13 +121,9 @@ api.setColumnOrder(true)
 > Toggles the collapse/expand state of the specified group row
 
 ```tsx
-api.toggleGroupRow(['USA','New York']) // toggle the group with these keys
+api.toggleGroupRow(['USA', 'New York']); // toggle the group with these keys
 ```
+
 </Prop>
 
-
-
-
-
-</PropTable> 
-
+</PropTable>

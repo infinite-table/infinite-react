@@ -1,11 +1,13 @@
-import * as React from 'react';
-import cn from 'classnames';
 import { Button } from '@www/components/Button';
 import { H2 } from '@www/components/MDX/Heading';
-import { Navigation } from './Navigation';
+import cn from 'classnames';
+import * as React from 'react';
+
+import { IconArrowSmall } from '../../Icon/IconArrowSmall';
 import { IconHint } from '../../Icon/IconHint';
 import { IconSolution } from '../../Icon/IconSolution';
-import { IconArrowSmall } from '../../Icon/IconArrowSmall';
+
+import { Navigation } from './Navigation';
 
 interface ChallengesProps {
   children: React.ReactElement[];

@@ -22,9 +22,7 @@ type Developer = {
 };
 
 const dataSource: DataSourceData<Developer> = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?`
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -58,7 +56,8 @@ export default function LocalUncontrolledMultiSortingExampleWithRemoteData() {
           { field: 'country', dir: -1 },
           { field: 'salary', dir: 1 },
         ]}
-        sortMode="local">
+        sortMode="local"
+      >
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}

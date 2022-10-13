@@ -1,12 +1,12 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+import { CSSProperties } from 'react';
 
 import { data, Person } from './data';
-import { CSSProperties } from 'react';
 
 export default function App() {
   return (
@@ -18,21 +18,16 @@ export default function App() {
           display: 'flex',
           '--row-height': '70px',
         } as CSSProperties
-      }>
+      }
+    >
       <DataSource<Person> data={data} primaryKey="Id">
-        <InfiniteTable<Person>
-          rowHeight={'--row-height'}
-          columns={columns}
-        />
+        <InfiniteTable<Person> rowHeight={'--row-height'} columns={columns} />
       </DataSource>
     </div>
   );
 }
 
-const columns: Map<
-  string,
-  InfiniteTableColumn<Person>
-> = new Map([
+const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
   [
     'id',
     {

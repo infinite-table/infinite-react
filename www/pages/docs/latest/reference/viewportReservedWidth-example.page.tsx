@@ -1,16 +1,13 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumnSizing,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
-export const columns: Record<
-  string,
-  InfiniteTableColumn<Employee>
-> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
@@ -37,15 +34,11 @@ const defaultColumnSizing: InfiniteTablePropColumnSizing = {
 };
 
 export default function App() {
-  const [viewportReservedWidth, setViewportReservedWidth] =
-    useState(0);
+  const [viewportReservedWidth, setViewportReservedWidth] = useState(0);
   return (
     <>
       <div style={{ color: 'var(--infinite-cell-color' }}>
-        <p>
-          Current viewport reserved width:{' '}
-          {viewportReservedWidth}px.
-        </p>
+        <p>Current viewport reserved width: {viewportReservedWidth}px.</p>
 
         <button
           style={{
@@ -55,20 +48,17 @@ export default function App() {
           }}
           onClick={() => {
             setViewportReservedWidth(0);
-          }}>
+          }}
+        >
           Click to reset viewportReservedWidth to 0
         </button>
       </div>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id">
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           columns={columns}
           columnDefaultWidth={50}
           viewportReservedWidth={viewportReservedWidth}
-          onViewportReservedWidthChange={
-            setViewportReservedWidth
-          }
+          onViewportReservedWidthChange={setViewportReservedWidth}
           defaultColumnSizing={defaultColumnSizing}
         />
       </DataSource>
@@ -77,9 +67,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

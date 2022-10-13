@@ -1,11 +1,6 @@
-import * as React from 'react';
-
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Person = {
   Id: number;
@@ -53,15 +48,12 @@ export default function App() {
         Age: 5,
       },
     ],
-    []
+    [],
   );
 
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person>
-        columnDefaultWidth={130}
-        columns={columns}
-      />
+      <InfiniteTable<Person> columnDefaultWidth={130} columns={columns} />
     </DataSource>
   );
 }

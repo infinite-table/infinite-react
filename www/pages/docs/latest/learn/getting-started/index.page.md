@@ -40,21 +40,19 @@ Our `TypeScript` types are published as part of the package, as named exports fr
 
 There are 2 components that you can use and import:
 
- * `InfiniteTable`
- * `DataSource`
+- `InfiniteTable`
+- `DataSource`
 
 Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME><PROP_NAME>`, so here are a few examples to clarify the rule:
 
 ```ts
 import {
   InfiniteTablePropColumns, // or accessible as InfiniteTableProps['columns']
-      // corresponding to the `columns` prop
-
+  // corresponding to the `columns` prop
   DataSourcePropGroupBy, // or accessible as DataSourceProps['groupBy']
-      // corresponding to the `groupBy` prop
-} from '@infinite-table/infinite-react'
+  // corresponding to the `groupBy` prop
+} from '@infinite-table/infinite-react';
 ```
-
 
 ## Licensing
 

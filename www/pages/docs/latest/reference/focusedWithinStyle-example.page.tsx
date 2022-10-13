@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { data, Person } from './data';
 
@@ -21,10 +21,7 @@ export default function App() {
   );
 }
 
-const columns: Record<
-  string,
-  InfiniteTableColumn<Person>
-> = {
+const columns: Record<string, InfiniteTableColumn<Person>> = {
   id: {
     field: 'Id',
     type: 'number',
@@ -33,9 +30,7 @@ const columns: Record<
   },
   firstName: {
     field: 'FirstName',
-    render: ({ value }: { value: any }) => (
-      <input type="text" value={value} />
-    ),
+    render: ({ value }: { value: any }) => <input type="text" value={value} />,
   },
 
   age: { field: 'Age', type: 'number' },

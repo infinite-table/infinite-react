@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -8,32 +6,27 @@ import {
   InfiniteTablePropColumnTypes,
   DataSourceData,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTablePropColumns,
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { Settings as CSettings } from './Settings';
-import {
-  Developer,
-  GroupByDeveloperType,
-  PivotByDeveloperType,
-} from './types';
+import { Developer, GroupByDeveloperType, PivotByDeveloperType } from './types';
 
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      name: 'Salary (avg)',
-      field: 'salary',
-      reducer: 'avg',
-    },
-    age: {
-      name: 'Age (avg)',
-      field: 'age',
-      reducer: 'avg',
-    },
-  };
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    name: 'Salary (avg)',
+    field: 'salary',
+    reducer: 'avg',
+  },
+  age: {
+    name: 'Age (avg)',
+    field: 'age',
+    reducer: 'avg',
+  },
+};
 
 const dataSource: DataSourceData<Developer> = ({
   pivotBy,
@@ -57,17 +50,11 @@ const dataSource: DataSourceData<Developer> = ({
   const args = [
     ...startLimit,
     pivotBy
-      ? 'pivotBy=' +
-        JSON.stringify(
-          pivotBy.map((p) => ({ field: p.field }))
-        )
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
     groupBy
-      ? 'groupBy=' +
-        JSON.stringify(
-          groupBy.map((p) => ({ field: p.field }))
-        )
+      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,
     sortInfo
       ? 'sortInfo=' +
@@ -75,7 +62,7 @@ const dataSource: DataSourceData<Developer> = ({
           sortInfo.map((s) => ({
             field: s.field,
             dir: s.dir,
-          }))
+          })),
         )
       : null,
     aggregationReducers
@@ -85,7 +72,7 @@ const dataSource: DataSourceData<Developer> = ({
             field: aggregationReducers[key].field,
             id: key,
             name: aggregationReducers[key].reducer,
-          }))
+          })),
         )
       : null,
   ]
@@ -93,9 +80,7 @@ const dataSource: DataSourceData<Developer> = ({
     .join('&');
 
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      `/developers30k-sql?` +
-      args
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers30k-sql?` + args,
   ).then((r) => r.json());
 };
 
@@ -117,24 +102,22 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const numberFormatter = new Intl.NumberFormat();
-const columnTypes: InfiniteTablePropColumnTypes<Developer> =
-  {
-    number: {
-      renderValue: ({ value }) =>
-        numberFormatter.format(value as number),
+const columnTypes: InfiniteTablePropColumnTypes<Developer> = {
+  number: {
+    renderValue: ({ value }) => numberFormatter.format(value as number),
+  },
+  currency: {
+    renderValue: (param) => {
+      const { value, data } = param;
+      return `${numberFormatter.format(value as number)} ${
+        data?.currency ?? ''
+      }`;
     },
-    currency: {
-      renderValue: (param) => {
-        const { value, data } = param;
-        return `${numberFormatter.format(
-          value as number
-        )} ${data?.currency ?? ''}`;
-      },
-    },
-    default: {
-      style: {},
-    },
-  };
+  },
+  default: {
+    style: {},
+  },
+};
 
 // Groupings
 const defaultGroupRowsState = new GroupRowsState({
@@ -143,49 +126,42 @@ const defaultGroupRowsState = new GroupRowsState({
 });
 
 // Style functions
-const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] =
-  ({ data }) => {
-    if (data?.canDesign === 'yes') {
-      return {
-        borderBottom:
-          '1px dotted var(--infinite-cell-color)',
-      };
-    }
+const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] = ({ data }) => {
+  if (data?.canDesign === 'yes') {
+    return {
+      borderBottom: '1px dotted var(--infinite-cell-color)',
+    };
+  }
 
-    return {};
-  };
+  return {};
+};
 
 // COMPONENTS
-const defaultColumnPinning: InfiniteTableProps<any>['columnPinning'] =
-  {
-    'group-by': true,
-  };
+const defaultColumnPinning: InfiniteTableProps<any>['columnPinning'] = {
+  'group-by': true,
+};
 
 export default function GroupByExample() {
-  const [groupBy, setGroupBy] =
-    React.useState<GroupByDeveloperType>([
-      {
-        field: 'country',
-      },
-      { field: 'city' },
-    ]);
-  const [pivotEnabled, setPivotEnabled] =
-    React.useState(true);
-  const [pivotBy, setPivotBy] =
-    React.useState<PivotByDeveloperType>([
-      {
-        field: 'preferredLanguage',
-      },
-      {
-        field: 'canDesign',
-      },
-    ]);
-  const [backgroundColor, setBackgroundColor] =
-    React.useState<string>('');
+  const [groupBy, setGroupBy] = React.useState<GroupByDeveloperType>([
+    {
+      field: 'country',
+    },
+    { field: 'city' },
+  ]);
+  const [pivotEnabled, setPivotEnabled] = React.useState(true);
+  const [pivotBy, setPivotBy] = React.useState<PivotByDeveloperType>([
+    {
+      field: 'preferredLanguage',
+    },
+    {
+      field: 'canDesign',
+    },
+  ]);
+  const [backgroundColor, setBackgroundColor] = React.useState<string>('');
 
   const preparedDataSource = React.useMemo(
     () => (dataSource as Function).bind(null),
-    [pivotBy, groupBy]
+    [pivotBy, groupBy],
   );
 
   /**
@@ -206,7 +182,7 @@ export default function GroupByExample() {
         },
       },
     }),
-    [backgroundColor]
+    [backgroundColor],
   );
   return (
     <>
@@ -227,7 +203,8 @@ export default function GroupByExample() {
         groupBy={groupBy}
         pivotBy={pivotEnabled ? pivotBy : undefined}
         aggregationReducers={aggregationReducers}
-        defaultGroupRowsState={defaultGroupRowsState}>
+        defaultGroupRowsState={defaultGroupRowsState}
+      >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>

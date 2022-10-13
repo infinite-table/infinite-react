@@ -1,20 +1,13 @@
-import * as React from 'react';
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { Person, data } from './column-groups-data';
 
-const columnGroups: Record<
-  string,
-  InfiniteTableColumnGroup
-> = {
+const columnGroups: Record<string, InfiniteTableColumnGroup> = {
   'contact info': { header: 'Contact info' },
 
   street: { header: 'street', columnGroup: 'address' },
@@ -22,10 +15,7 @@ const columnGroups: Record<
   address: { header: 'Address' },
 };
 
-const columns: Record<
-  string,
-  InfiniteTableColumn<Person>
-> = {
+const columns: Record<string, InfiniteTableColumn<Person>> = {
   id: { field: 'id' },
 
   streetNo: { field: 'streetNo', columnGroup: 'street' },

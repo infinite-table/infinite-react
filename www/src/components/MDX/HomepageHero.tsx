@@ -1,6 +1,7 @@
-import * as React from 'react';
 import { Logo } from '@www/components/Logo';
 import YouWillLearnCard from '@www/components/MDX/YouWillLearnCard';
+import * as React from 'react';
+
 import HeroCards from './HeroCards';
 
 function HomepageHero() {
@@ -21,8 +22,7 @@ function HomepageHero() {
         cards={[
           {
             title: 'Learn Infinite Table',
-            description:
-              'Learn & unleash the power of Infinite Table',
+            description: 'Learn & unleash the power of Infinite Table',
             link: '/docs/latest/learn/getting-started',
           },
           {

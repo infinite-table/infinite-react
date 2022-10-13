@@ -10,7 +10,7 @@ If the table <PropLink name="columns"/> collection already has a column bound to
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: {
     field: 'preferredLanguage',
-    style: {  color: 'blue', },
+    style: { color: 'blue' },
   },
   age: {
     field: 'age',
@@ -53,12 +53,13 @@ const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
       defaultWidth: 500,
     },
   },
-}
+};
 ```
 
-<Sandpack title="Pivot columns inherit from original columns bound to the same field"> 
+<Sandpack title="Pivot columns inherit from original columns bound to the same field">
 
 ```ts file=pivot-column-inherit-example.page.tsx
+
 ```
 
 </Sandpack>

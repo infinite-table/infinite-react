@@ -1,11 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
-
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   InfiniteTablePropColumns,
   InfiniteTablePropGroupColumn,
@@ -13,6 +6,8 @@ import type {
   DataSourcePropRowSelection_MultiRow,
   DataSourcePropGroupBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+import { useState } from 'react';
 
 type Developer = {
   id: number;
@@ -38,17 +33,11 @@ const dataSource: DataSourceData<Developer> = ({
 }) => {
   const args = [
     pivotBy
-      ? 'pivotBy=' +
-        JSON.stringify(
-          pivotBy.map((p) => ({ field: p.field }))
-        )
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
     groupBy
-      ? 'groupBy=' +
-        JSON.stringify(
-          groupBy.map((p) => ({ field: p.field }))
-        )
+      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,
     aggregationReducers
       ? 'reducers=' +
@@ -57,17 +46,13 @@ const dataSource: DataSourceData<Developer> = ({
             field: aggregationReducers[key].field,
             id: key,
             name: aggregationReducers[key].reducer,
-          }))
+          })),
         )
       : null,
   ]
     .filter(Boolean)
     .join('&');
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      `/developers100-sql?` +
-      args
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?` + args)
     .then((r) => r.json())
     .then((data: Developer[]) => data)
     .then((data) => {
@@ -110,24 +95,22 @@ const groupBy: DataSourcePropGroupBy<Developer> = [
   },
 ];
 
-const groupColumn: InfiniteTablePropGroupColumn<Developer> =
-  {
-    field: 'firstName',
-    defaultWidth: 250,
-  };
+const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
+  field: 'firstName',
+  defaultWidth: 250,
+};
 
 export default function GroupByExample() {
-  const [rowSelection] =
-    useState<DataSourcePropRowSelection_MultiRow>({
-      defaultSelection: false,
-      selectedRows: [
-        ['backend', 'Java'],
-        ['backend', 'JavaScript'],
-        ['backend', 'CSharp', 'no', 37],
-        ['backend', 'PHP', 'no', 66],
-        ['frontend'],
-      ],
-    });
+  const [rowSelection] = useState<DataSourcePropRowSelection_MultiRow>({
+    defaultSelection: false,
+    selectedRows: [
+      ['backend', 'Java'],
+      ['backend', 'JavaScript'],
+      ['backend', 'CSharp', 'no', 37],
+      ['backend', 'PHP', 'no', 66],
+      ['frontend'],
+    ],
+  });
 
   return (
     <DataSource<Developer>
@@ -137,7 +120,8 @@ export default function GroupByExample() {
       lazyLoad
       selectionMode="multi-row"
       defaultRowSelection={rowSelection}
-      useGroupKeysForMultiRowSelection>
+      useGroupKeysForMultiRowSelection
+    >
       <InfiniteTable<Developer>
         domProps={domProps}
         columns={columns}

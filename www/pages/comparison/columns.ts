@@ -38,8 +38,7 @@ export const columns: {
   { field: 'streetPrefix' },
   {
     header: 'Full Name',
-    getValue: (data: any) =>
-      `${data.firstName} ${data.lastName}`,
+    getValue: (data: any) => `${data.firstName} ${data.lastName}`,
   },
   {
     header: 'Full Address',

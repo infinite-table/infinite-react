@@ -21,9 +21,7 @@ type Developer = {
   age: number;
 };
 
-const dataSource: DataSourceData<Developer> = ({
-  sortInfo,
-}) => {
+const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
   if (sortInfo && !Array.isArray(sortInfo)) {
     sortInfo = [sortInfo];
   }
@@ -34,18 +32,14 @@ const dataSource: DataSourceData<Developer> = ({
           sortInfo.map((s) => ({
             field: s.field,
             dir: s.dir,
-          }))
+          })),
         )
       : null,
   ]
     .filter(Boolean)
     .join('&');
 
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      `/developers100-sql?` +
-      args
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?` + args)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -79,11 +73,9 @@ export default function RemoteUncontrolledMultiSortingExample() {
             dir: -1,
           },
         ]}
-        sortMode="remote">
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={220}
-        />
+        sortMode="remote"
+      >
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
       </DataSource>
     </>
   );

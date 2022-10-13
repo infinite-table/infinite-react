@@ -1,11 +1,10 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
@@ -38,20 +37,16 @@ export default function App() {
       <DataSource<Developer>
         data={dataSource}
         defaultRowSelection={defaultRowSelection}
-        primaryKey="id">
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={150}
-        />
+        primaryKey="id"
+      >
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
       </DataSource>
     </>
   );
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

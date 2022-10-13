@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -8,12 +6,12 @@ import {
   InfiniteTablePropColumnTypes,
   DataSourceDataParams,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { Settings } from './Settings';
 import { Developer, GroupByDeveloperType, PivotByDeveloperType } from './types';

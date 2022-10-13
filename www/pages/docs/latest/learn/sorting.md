@@ -5,7 +5,7 @@ Sorting is done by the `DataSource` component which controls the `data` of the v
 Sorting can be **single** or **multiple** - meaning it can operate on a single field in the datasource or on multiple fields. For single sorting, the `defaultSortInfo` (or controlled `sortInfo`) props should be an object (or null or undefined),
 
 ```tsx title=uncontrolled-single-sorting
-const defaultSortInfo = { dir: 1, field: "NameOfFieldYouWantToSortBy" };
+const defaultSortInfo = { dir: 1, field: 'NameOfFieldYouWantToSortBy' };
 <DataSource<T> defaultSortInfo={defaultSortInfo} />;
 ```
 
@@ -13,8 +13,8 @@ while for multiple sorting, you need to specify an array.
 
 ```tsx title=uncontrolled-multiple-sorting
 const defaultSortInfo = [
-  { dir: 1, field: "NameOfFieldYouWantToSortBy" },
-  { dir: -1, field: "SecondField" },
+  { dir: 1, field: 'NameOfFieldYouWantToSortBy' },
+  { dir: -1, field: 'SecondField' },
 ];
 <DataSource<T> defaultSortInfo={defaultSortInfo} />;
 ```
@@ -25,13 +25,13 @@ However, for changing the sorting via user interaction, it's enough to click on 
 Specifying `sortable` on column level overrides the grid property.
 
 ```tsx height=450 live title=multi-sort-example
-import * as React from "react";
+import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   DataSourceSortInfo,
   InfiniteTableColumn,
-} from "@infinite-table/infinite-react";
+} from '@infinite-table/infinite-react';
 
 type Person = {
   Id: number;
@@ -42,55 +42,55 @@ type Person = {
 const data: Person[] = [
   {
     Id: 1,
-    FirstName: "Bob",
+    FirstName: 'Bob',
     Age: 18,
   },
   {
     Id: 2,
-    FirstName: "Alice",
+    FirstName: 'Alice',
     Age: 20,
   },
   {
     Id: 3,
-    FirstName: "Bill",
+    FirstName: 'Bill',
     Age: 20,
   },
   {
     Id: 4,
-    FirstName: "Zeneth",
+    FirstName: 'Zeneth',
     Age: 20,
   },
   {
     Id: 5,
-    FirstName: "Robert",
+    FirstName: 'Robert',
     Age: 29,
   },
 ];
 
 const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
   [
-    "id",
+    'id',
     {
       // specifies which field from the data source
       // should be rendered in this column
-      field: "Id",
-      type: "number",
+      field: 'Id',
+      type: 'number',
       sortable: true,
       width: 100,
     },
   ],
   [
-    "firstName",
+    'firstName',
     {
-      field: "FirstName",
+      field: 'FirstName',
     },
   ],
-  ["age", { field: "Age", type: "number" }],
+  ['age', { field: 'Age', type: 'number' }],
 ]);
 
 const defaultSortInfo: DataSourceSortInfo<Person> = [
-  { field: "Age", dir: 1 },
-  { field: "FirstName", dir: -1 },
+  { field: 'Age', dir: 1 },
+  { field: 'FirstName', dir: -1 },
 ];
 
 function App() {

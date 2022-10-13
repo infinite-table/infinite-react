@@ -1,5 +1,6 @@
-import * as React from 'react';
 import cn from 'classnames';
+import * as React from 'react';
+
 import { RouteTag } from './Layout/useRouteMeta';
 
 const variantMap = {
@@ -38,8 +39,9 @@ function Tag({ text, variant, className }: TagProps) {
       <span
         className={cn(
           'inline font-bold text-sm uppercase py-1 px-2 rounded',
-          classes
-        )}>
+          classes,
+        )}
+      >
         {text || name}
       </span>
     </span>

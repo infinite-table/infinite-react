@@ -1,8 +1,5 @@
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import * as React from 'react';
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
 
 import { columns, Employee } from './columns';
 
@@ -11,17 +8,14 @@ const getDataSourceFor = (size: string) => {
     return () => Promise.resolve([]);
   }
   return () => {
-    return fetch(
-      process.env.NEXT_PUBLIC_BASE_URL + '/employees' + size
-    )
+    return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees' + size)
       .then((r) => r.json())
       .then((data: Employee[]) => data);
   };
 };
 
 export default function App() {
-  const [dataSourceSize, setDataSourceSize] =
-    React.useState<string>('10');
+  const [dataSourceSize, setDataSourceSize] = React.useState<string>('10');
 
   const dataSource = React.useMemo(() => {
     return getDataSourceFor(dataSourceSize);
@@ -34,10 +28,9 @@ export default function App() {
         color: 'var(--infinite-cell-color)',
         flexFlow: 'column',
         background: 'var(--infinite-background)',
-      }}>
-      <p style={{ padding: 10 }}>
-        Please select the size of the datasource:
-      </p>
+      }}
+    >
+      <p style={{ padding: 10 }}>Please select the size of the datasource:</p>
       <div style={{ padding: 10 }}>
         <select
           style={{
@@ -52,7 +45,8 @@ export default function App() {
             const newSize = event.target.value as string;
 
             setDataSourceSize(newSize);
-          }}>
+          }}
+        >
           <option value="0">no items</option>
           <option value="10">10 items</option>
           <option value="100">100 items</option>
@@ -60,13 +54,8 @@ export default function App() {
           <option value="10k">10k items</option>
         </select>
       </div>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id">
-        <InfiniteTable<Employee>
-          columns={columns}
-          columnDefaultWidth={150}
-        />
+      <DataSource<Employee> data={dataSource} primaryKey="id">
+        <InfiniteTable<Employee> columns={columns} columnDefaultWidth={150} />
       </DataSource>
     </div>
   );

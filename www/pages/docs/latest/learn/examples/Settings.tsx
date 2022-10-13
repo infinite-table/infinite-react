@@ -79,7 +79,7 @@ export const Settings: React.FunctionComponent<{
   ];
 
   const groupByValue = allGroupOptions.filter((option) =>
-    groupBy.some((group) => group.field === option.value)
+    groupBy.some((group) => group.field === option.value),
   );
 
   const debouncedSetColor = React.useMemo(() => {
@@ -97,7 +97,8 @@ export const Settings: React.FunctionComponent<{
         gridTemplateColumns: '1fr 1fr',
         gridGap: 20,
         padding: 20,
-      }}>
+      }}
+    >
       <div>
         <b>Group By:</b>
         <label>
@@ -110,11 +111,9 @@ export const Settings: React.FunctionComponent<{
             options={allGroupOptions}
             onChange={(options) => {
               onGroupChange(
-                (options as typeof allGroupOptions).map(
-                  (option) => ({
-                    field: option.value as keyof Developer,
-                  })
-                )
+                (options as typeof allGroupOptions).map((option) => ({
+                  field: option.value as keyof Developer,
+                })),
               );
             }}
           />
@@ -129,9 +128,7 @@ export const Settings: React.FunctionComponent<{
             <input
               checked={Boolean(pivotEnabled)}
               type="checkbox"
-              onChange={(event) =>
-                onPivotEnableChange(event.target.checked)
-              }
+              onChange={(event) => onPivotEnableChange(event.target.checked)}
             />
           </label>
         </div>
@@ -144,17 +141,13 @@ export const Settings: React.FunctionComponent<{
             isSearchable
             options={allPivotOptions}
             value={allPivotOptions.filter((option) =>
-              pivotBy.some(
-                (pivot) => pivot.field === option.value
-              )
+              pivotBy.some((pivot) => pivot.field === option.value),
             )}
             onChange={(newOptions) =>
               onPivotChange(
-                (newOptions as typeof allPivotOptions).map(
-                  (option) => ({
-                    field: option.value as keyof Developer,
-                  })
-                )
+                (newOptions as typeof allPivotOptions).map((option) => ({
+                  field: option.value as keyof Developer,
+                })),
               )
             }
           />
@@ -168,12 +161,12 @@ export const Settings: React.FunctionComponent<{
             <Select
               {...selectProps}
               value={reducerKeyOptions.find(
-                (option) => option.value === reducerKey
+                (option) => option.value === reducerKey,
               )}
               onChange={(option) =>
                 onReducerKeyChange(
                   (option as typeof reducerKeyOptions[0])
-                    ?.value as ReducerOptions
+                    ?.value as ReducerOptions,
                 )
               }
               options={reducerKeyOptions}

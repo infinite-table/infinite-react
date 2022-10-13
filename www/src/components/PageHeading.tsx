@@ -1,6 +1,7 @@
-import * as React from 'react';
 import Breadcrumbs from '@www/components/Breadcrumbs';
 import Tag from '@www/components/Tag';
+import * as React from 'react';
+
 import { RouteTag } from './Layout/useRouteMeta';
 import { H1 } from './MDX/Heading';
 

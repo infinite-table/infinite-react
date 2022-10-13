@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import * as React from 'react';
+
 import { useTocHighlight } from './useTocHighlight';
 
 export function Toc({
@@ -15,10 +16,7 @@ export function Toc({
   // TODO: We currently have a mismatch between the headings in the document
   // and the headings we find in MarkdownPage (i.e. we don't find Recap or Challenges).
   // Select the max TOC item we have here for now, but remove this after the fix.
-  const selectedIndex = Math.min(
-    currentIndex,
-    headings.length - 1
-  );
+  const selectedIndex = Math.min(currentIndex, headings.length - 1);
   return (
     <nav
       role="navigation"
@@ -27,7 +25,8 @@ export function Toc({
         // This keeps the layout fixed width instead of adjusting for content.
         width: 'inherit',
         maxWidth: 'inherit',
-      }}>
+      }}
+    >
       <h2 className="mb-3 lg:mb-3 uppercase tracking-wide font-bold text-sm text-secondary dark:text-secondary-dark px-4 w-full">
         On this page
       </h2>
@@ -51,16 +50,18 @@ export function Toc({
                     {
                       'pl-4': h?.depth === 3,
                       hidden: h.depth && h.depth > 3,
-                    }
-                  )}>
+                    },
+                  )}
+                >
                   <a
                     className={cx(
                       selectedIndex === i
                         ? 'text-link dark:text-link-dark font-bold'
                         : 'text-secondary dark:text-secondary-dark',
-                      'block hover:text-link dark:hover:text-link-dark'
+                      'block hover:text-link dark:hover:text-link-dark',
                     )}
-                    href={h.url}>
+                    href={h.url}
+                  >
                     {h.text}
                   </a>
                 </li>

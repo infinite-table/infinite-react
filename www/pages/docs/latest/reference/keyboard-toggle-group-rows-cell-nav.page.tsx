@@ -1,16 +1,4 @@
-import * as React from 'react';
-import {
-  useCallback,
-  useRef,
-  useEffect,
-  useState,
-} from 'react';
-
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   DataSourceProps,
   InfiniteTableProps,
@@ -18,6 +6,8 @@ import type {
   InfiniteTablePropColumns,
   DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
@@ -40,25 +30,23 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
 };
 
-const defaultGroupBy: DataSourceProps<Developer>['groupBy'] =
-  [
-    {
-      field: 'canDesign',
-    },
-    {
-      field: 'stack',
-    },
-    {
-      field: 'preferredLanguage',
-    },
-  ];
-
-const groupColumn: InfiniteTableProps<Developer>['groupColumn'] =
+const defaultGroupBy: DataSourceProps<Developer>['groupBy'] = [
   {
-    field: 'firstName',
+    field: 'canDesign',
+  },
+  {
+    field: 'stack',
+  },
+  {
+    field: 'preferredLanguage',
+  },
+];
 
-    defaultWidth: 300,
-  };
+const groupColumn: InfiniteTableProps<Developer>['groupColumn'] = {
+  field: 'firstName',
+
+  defaultWidth: 300,
+};
 
 const domProps = {
   style: {
@@ -72,7 +60,8 @@ export default function App() {
     <DataSource<Developer>
       data={dataSource}
       groupBy={defaultGroupBy}
-      primaryKey="id">
+      primaryKey="id"
+    >
       <InfiniteTable<Developer>
         columns={columns}
         domProps={domProps}
@@ -86,9 +75,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

@@ -1,12 +1,12 @@
-import * as React from 'react';
-import NextLink from 'next/link';
-import cn from 'classnames';
 import { ExternalLink } from '@www/components/ExternalLink';
+import cn from 'classnames';
+import NextLink from 'next/link';
+import * as React from 'react';
+
 import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
 
 export function Footer() {
-  const socialLinkClasses =
-    'hover:text-primary dark:text-primary-dark';
+  const socialLinkClasses = 'hover:text-primary dark:text-primary-dark';
   return (
     <>
       <div className="self-stretch w-full sm:pl-0 lg:pl-80 sm:pr-0 2xl:pr-80 pl-0 pr-0">
@@ -16,9 +16,7 @@ export function Footer() {
         <footer className="text-secondary dark:text-secondary-dark py-12 px-5 sm:px-12 md:px-12 sm:py-12 md:py-16 lg:py-14">
           <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-x-12 gap-y-8 max-w-7xl mx-auto ">
             <div className="flex flex-col">
-              <FooterLink
-                href="/docs/latest/learn"
-                isHeader={true}>
+              <FooterLink href="/docs/latest/learn" isHeader={true}>
                 Learn Infinite Table
               </FooterLink>
               <FooterLink href="/docs/latest/learn/getting-started">
@@ -29,21 +27,18 @@ export function Footer() {
               </FooterLink>
             </div>
             <div className="flex flex-col">
-              <FooterLink
-                href="/docs/latest/reference"
-                isHeader={true}>
+              <FooterLink href="/docs/latest/reference" isHeader={true}>
                 API Reference
               </FooterLink>
-              <FooterLink href="/docs/latest/reference">
-                Props
-              </FooterLink>
+              <FooterLink href="/docs/latest/reference">Props</FooterLink>
             </div>
 
             <div className="flex flex-col sm:col-start-2 xl:col-start-4 mb-2">
               <div className="my-2">
                 <ExternalLink
                   className="hover:text-link dark:hover:text-link "
-                  href="https://github.com/infinite-table/infinite-react">
+                  href="https://github.com/infinite-table/infinite-react"
+                >
                   GitHub{' '}
                   <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
                 </ExternalLink>
@@ -69,16 +64,11 @@ function FooterLink({
   children: React.ReactNode;
   isHeader?: boolean;
 }) {
-  const classes = cn(
-    'border-b inline-block border-transparent',
-    {
-      'text-sm text-primary dark:text-primary-dark':
-        !isHeader,
-      'text-md text-secondary dark:text-secondary-dark my-2 font-bold':
-        isHeader,
-      'hover:border-gray-10': href,
-    }
-  );
+  const classes = cn('border-b inline-block border-transparent', {
+    'text-sm text-primary dark:text-primary-dark': !isHeader,
+    'text-md text-secondary dark:text-secondary-dark my-2 font-bold': isHeader,
+    'hover:border-gray-10': href,
+  });
 
   if (!href) {
     return <div className={classes}>{children}</div>;

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { useRouter } from 'next/router';
+import * as React from 'react';
 
 /**
  * While Next.js provides file-based routing, we still need to construct
@@ -60,25 +60,20 @@ export function useRouteMeta(rootRoute?: RouteItem) {
     };
   }
   // console.log('routeTree', routeTree);
-  const breadcrumbs = getBreadcrumbs(
-    cleanedPath,
-    routeTree
-  );
+  const breadcrumbs = getBreadcrumbs(cleanedPath, routeTree);
   return {
     ...getRouteMeta(cleanedPath, routeTree),
-    breadcrumbs:
-      breadcrumbs.length > 0 ? breadcrumbs : [routeTree],
+    breadcrumbs: breadcrumbs.length > 0 ? breadcrumbs : [routeTree],
   };
 }
 
-export const SidebarContext =
-  React.createContext<RouteItem>({ title: 'root' });
+export const SidebarContext = React.createContext<RouteItem>({ title: 'root' });
 
 // Performs a depth-first search to find the current route and its previous/next route
 function getRouteMeta(
   searchPath: string,
   currentRoute: RouteItem,
-  ctx: RouteMeta = {}
+  ctx: RouteMeta = {},
 ): RouteMeta {
   const { routes } = currentRoute;
 
@@ -109,7 +104,7 @@ function getRouteMeta(
 function getBreadcrumbs(
   path: string,
   currentRoute: RouteItem,
-  breadcrumbs: RouteItem[] = []
+  breadcrumbs: RouteItem[] = [],
 ): RouteItem[] {
   if (currentRoute.path === path) {
     return breadcrumbs;

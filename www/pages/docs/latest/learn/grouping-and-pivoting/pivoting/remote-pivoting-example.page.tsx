@@ -1,11 +1,8 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTablePropColumns,
   InfiniteTablePropColumnPinning,
@@ -14,6 +11,7 @@ import type {
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -41,17 +39,11 @@ const dataSource: DataSourceData<Developer> = ({
 }) => {
   const args = [
     pivotBy
-      ? 'pivotBy=' +
-        JSON.stringify(
-          pivotBy.map((p) => ({ field: p.field }))
-        )
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
     groupBy
-      ? 'groupBy=' +
-        JSON.stringify(
-          groupBy.map((p) => ({ field: p.field }))
-        )
+      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,
     aggregationReducers
       ? 'reducers=' +
@@ -60,7 +52,7 @@ const dataSource: DataSourceData<Developer> = ({
             field: aggregationReducers[key].field,
             id: key,
             name: aggregationReducers[key].reducer,
-          }))
+          })),
         )
       : null,
   ]
@@ -69,26 +61,25 @@ const dataSource: DataSourceData<Developer> = ({
   return fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
       `/developers${DATA_SOURCE_SIZE}-sql?` +
-      args
+      args,
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
 
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      // the aggregation name will be used as the column header
-      name: 'Salary (avg)',
-      field: 'salary',
-      reducer: 'avg',
-    },
-    age: {
-      name: 'Age (avg)',
-      field: 'age',
-      reducer: 'avg',
-    },
-  };
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    // the aggregation name will be used as the column header
+    name: 'Salary (avg)',
+    field: 'salary',
+    reducer: 'avg',
+  },
+  age: {
+    name: 'Age (avg)',
+    field: 'age',
+    reducer: 'avg',
+  },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
@@ -109,12 +100,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 // make the row labels column (id: 'labels') be pinned
-const defaultColumnPinning: InfiniteTablePropColumnPinning =
-  {
-    // make the generated group columns pinned to start
-    'group-by-country': 'start',
-    'group-by-stack': 'start',
-  };
+const defaultColumnPinning: InfiniteTablePropColumnPinning = {
+  // make the generated group columns pinned to start
+  'group-by-country': 'start',
+  'group-by-stack': 'start',
+};
 
 // make all rows collapsed by default
 const groupRowsState = new GroupRowsState({
@@ -123,53 +113,49 @@ const groupRowsState = new GroupRowsState({
 });
 
 export default function RemotePivotExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] =
-    React.useMemo(
-      () => [
-        {
-          field: 'country',
-          column: {
-            // give the group column for the country prop a custom id
-            id: 'group-by-country',
-          },
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'country',
+        column: {
+          // give the group column for the country prop a custom id
+          id: 'group-by-country',
         },
-        {
-          field: 'stack',
-          column: {
-            // give the group column for the stack prop a custom id
-            id: 'group-by-stack',
-          },
+      },
+      {
+        field: 'stack',
+        column: {
+          // give the group column for the stack prop a custom id
+          id: 'group-by-stack',
         },
-      ],
-      []
-    );
+      },
+    ],
+    [],
+  );
 
-  const pivotBy: DataSourcePivotBy<Developer>[] =
-    React.useMemo(
-      () => [
-        { field: 'preferredLanguage' },
-        {
-          field: 'canDesign',
-          // customize the column group
-          columnGroup: ({ columnGroup }) => {
-            return {
-              ...columnGroup,
-              header: `${
-                columnGroup.pivotGroupKey === 'yes'
-                  ? 'Designer'
-                  : 'Non-designer'
-              }`,
-            };
-          },
-          // customize columns generated under this column group
-          column: ({ column }) => ({
-            ...column,
-            header: `🎉 ${column.header}`,
-          }),
+  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
+    () => [
+      { field: 'preferredLanguage' },
+      {
+        field: 'canDesign',
+        // customize the column group
+        columnGroup: ({ columnGroup }) => {
+          return {
+            ...columnGroup,
+            header: `${
+              columnGroup.pivotGroupKey === 'yes' ? 'Designer' : 'Non-designer'
+            }`,
+          };
         },
-      ],
-      []
-    );
+        // customize columns generated under this column group
+        column: ({ column }) => ({
+          ...column,
+          header: `🎉 ${column.header}`,
+        }),
+      },
+    ],
+    [],
+  );
 
   return (
     <DataSource<Developer>
@@ -179,7 +165,8 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
-      lazyLoad={true}>
+      lazyLoad={true}
+    >
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>

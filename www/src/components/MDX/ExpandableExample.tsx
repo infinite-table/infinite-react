@@ -1,9 +1,10 @@
-import * as React from 'react';
 import cn from 'classnames';
-import { IconChevron } from '../Icon/IconChevron';
-import { IconDeepDive } from '../Icon/IconDeepDive';
-import { IconCodeBlock } from '../Icon/IconCodeBlock';
+import * as React from 'react';
+
 import { Button } from '../Button';
+import { IconChevron } from '../Icon/IconChevron';
+import { IconCodeBlock } from '../Icon/IconCodeBlock';
+import { IconDeepDive } from '../Icon/IconDeepDive';
 
 interface ExpandableExampleProps {
   children: React.ReactNode;

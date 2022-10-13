@@ -1,21 +1,20 @@
-import * as React from 'react';
 import cn from 'classnames';
 import { RouteItem } from 'components/Layout/useRouteMeta';
 import { useRouter } from 'next/router';
-import { SidebarRouteTree } from '../Sidebar';
+import * as React from 'react';
 
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
 import { getSidebarHome } from '../getSidebarHome';
+import { SidebarRouteTree } from '../Sidebar';
+
 import { inferSection } from './inferSection';
 
 const sidebarHome = getSidebarHome();
 
 export function MobileNav() {
   const { pathname } = useRouter();
-  const [section, setSection] = React.useState(() =>
-    inferSection(pathname)
-  );
+  const [section, setSection] = React.useState(() => inferSection(pathname));
 
   let tree = null;
   switch (section) {
@@ -35,24 +34,24 @@ export function MobileNav() {
       <div className="sticky mt-5 top-0 px-5 mb-2 bg-wash dark:bg-wash-dark flex justify-end border-b border-border dark:border-border-dark items-center self-center w-full z-10">
         <TabButton
           isActive={section === 'home'}
-          onClick={() => setSection('home')}>
+          onClick={() => setSection('home')}
+        >
           Home
         </TabButton>
         <TabButton
           isActive={section === 'learn'}
-          onClick={() => setSection('learn')}>
+          onClick={() => setSection('learn')}
+        >
           Learn
         </TabButton>
         <TabButton
           isActive={section === 'reference'}
-          onClick={() => setSection('reference')}>
+          onClick={() => setSection('reference')}
+        >
           Reference
         </TabButton>
       </div>
-      <SidebarRouteTree
-        routeTree={tree as RouteItem}
-        isMobile={true}
-      />
+      <SidebarRouteTree routeTree={tree as RouteItem} isMobile={true} />
     </>
   );
 }
@@ -63,9 +62,7 @@ function TabButton({
   isActive,
 }: {
   children: any;
-  onClick: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isActive: boolean;
 }) {
   const classes = cn(
@@ -74,7 +71,7 @@ function TabButton({
       'text-link dark:text-link-dark dark:border-link-dark border-link font-bold':
         isActive,
       'border-transparent': !isActive,
-    }
+    },
   );
   return (
     <button className={classes} onClick={onClick}>

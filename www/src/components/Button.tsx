@@ -1,12 +1,10 @@
-import * as React from 'react';
 import cn from 'classnames';
+import * as React from 'react';
 
 interface ButtonProps {
   children: React.ReactNode;
   as?: string;
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   active: boolean;
   className?: string;
   style?: Record<string, string>;
@@ -38,8 +36,9 @@ export function Button({
             active,
           'bg-transparent text-secondary dark:text-secondary-dark bg-secondary-button dark:bg-secondary-button-dark hover:text-link focus:text-link border-transparent':
             !active,
-        }
-      )}>
+        },
+      )}
+    >
       {children}
     </Cmp>
   );

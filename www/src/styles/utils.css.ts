@@ -381,28 +381,28 @@ export const centeredFlexProps = style({
   justifyContent: 'center',
   alignItems: 'center',
 });
-export const centeredFlexColumn = style(
+export const centeredFlexColumn = style([
   display.flex,
   flexDirection.column,
   centeredFlexProps,
-);
-export const centeredFlexRow = style(
+]);
+export const centeredFlexRow = style([
   display.flex,
   flexDirection.row,
   centeredFlexProps,
-);
+]);
 
 export const flex1 = style({
   flex: 1,
 });
 
-export const main = style(
+export const main = style([
   flexDirection.column,
   flex1,
-  style({
+  {
     alignItems: 'center',
-  }),
-);
+  },
+]);
 
 export const shadow = styleVariants(
   {

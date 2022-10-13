@@ -1,10 +1,10 @@
-import React from 'react';
 import DataGrid, {
   Column,
   GroupPanel,
   Scrolling,
   // @ts-ignore
 } from 'devextreme-react/data-grid';
+import React from 'react';
 
 import { columns, COLUMN_WIDTH } from './columns';
 

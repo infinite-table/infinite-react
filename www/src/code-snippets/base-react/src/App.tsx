@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import '@infinite-table/infinite-react/index.css';
 
@@ -49,7 +49,7 @@ const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
       field: 'FirstName',
     },
   ],
-  ['age', {field: 'Age', type: 'number'}],
+  ['age', { field: 'Age', type: 'number' }],
 ]);
 
 const domProps = {

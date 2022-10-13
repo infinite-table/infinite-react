@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import * as React from 'react';
 import {
   useSandpack,
   LoadingOverlay,
   RefreshButton,
 } from '@codesandbox/sandpack-react';
 import cn from 'classnames';
+import * as React from 'react';
+import { CSSProperties } from 'react';
 
 import { Error } from './Error';
 import { computeViewportSize, generateRandomId } from './utils';
-import { CSSProperties } from 'react';
 
 type CustomPreviewProps = {
   className?: string;
@@ -42,14 +42,14 @@ export function Preview({
     number | null
   >(null);
 
-  let {
-    error: rawError,
+  const {
     registerBundler,
     unregisterBundler,
     errorScreenRegisteredRef,
     openInCSBRegisteredRef,
     loadingScreenRegisteredRef,
   } = sandpack;
+  let { error: rawError } = sandpack;
 
   if (
     rawError &&

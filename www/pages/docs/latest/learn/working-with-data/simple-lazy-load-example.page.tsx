@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   DataSourceData,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useMemo } from 'react';
 
 type Developer = {
@@ -42,7 +42,8 @@ export default function App() {
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
-      lazyLoad={lazyLoad}>
+      lazyLoad={lazyLoad}
+    >
       <InfiniteTable<Developer> columns={columns} />
     </DataSource>
   );
@@ -70,17 +71,11 @@ const dataSource: DataSourceData<Developer> = ({
   const args = [
     ...startLimit,
     pivotBy
-      ? 'pivotBy=' +
-        JSON.stringify(
-          pivotBy.map((p) => ({ field: p.field }))
-        )
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
     groupBy
-      ? 'groupBy=' +
-        JSON.stringify(
-          groupBy.map((p) => ({ field: p.field }))
-        )
+      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,
     sortInfo
       ? 'sortInfo=' +
@@ -88,7 +83,7 @@ const dataSource: DataSourceData<Developer> = ({
           sortInfo.map((s) => ({
             field: s.field,
             dir: s.dir,
-          }))
+          })),
         )
       : null,
     aggregationReducers
@@ -98,15 +93,13 @@ const dataSource: DataSourceData<Developer> = ({
             field: aggregationReducers[key].field,
             id: key,
             name: aggregationReducers[key].reducer,
-          }))
+          })),
         )
       : null,
   ]
     .filter(Boolean)
     .join('&');
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      `/developers10k-sql?` +
-      args
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers10k-sql?` + args,
   ).then((r) => r.json());
 };

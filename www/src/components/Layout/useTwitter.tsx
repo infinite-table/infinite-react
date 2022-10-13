@@ -13,7 +13,7 @@ const injectTwitterScript = function injectTwitterScript() {
   }
 
   addJS(
-    '\n    window.twttr = (function(d, s, id) {\n      var js,\n        fjs = d.getElementsByTagName(s)[0],\n        t = window.twttr || {};\n      if (d.getElementById(id)) return t;\n      js = d.createElement(s);\n      js.id = id;\n      js.src = "https://platform.twitter.com/widgets.js";\n      fjs.parentNode.insertBefore(js, fjs);\n      t._e = [];\n      t.ready = function(f) {\n        t._e.push(f);\n      };\n      return t;\n    })(document, "script", "twitter-wjs");\n  '
+    '\n    window.twttr = (function(d, s, id) {\n      var js,\n        fjs = d.getElementsByTagName(s)[0],\n        t = window.twttr || {};\n      if (d.getElementById(id)) return t;\n      js = d.createElement(s);\n      js.id = id;\n      js.src = "https://platform.twitter.com/widgets.js";\n      fjs.parentNode.insertBefore(js, fjs);\n      t._e = [];\n      t.ready = function(f) {\n        t._e.push(f);\n      };\n      return t;\n    })(document, "script", "twitter-wjs");\n  ',
   );
 };
 
@@ -36,8 +36,7 @@ export function useTwitter() {
       if (
         typeof (window as any).twttr !== 'undefined' &&
         (window as any).twttr.widgets &&
-        typeof (window as any).twttr.widgets.load ===
-          'function'
+        typeof (window as any).twttr.widgets.load === 'function'
       ) {
         (window as any).twttr.widgets.load();
       }

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -8,6 +7,7 @@ import {
   DataSourceGroupBy,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -24,14 +24,13 @@ type Developer = {
   age: number;
 };
 
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      name: 'Salary (avg)',
-      field: 'salary',
-      reducer: 'avg',
-    },
-  };
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    name: 'Salary (avg)',
+    field: 'salary',
+    reducer: 'avg',
+  },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
@@ -56,8 +55,10 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: true,
 });
 export default function RemoteGroupByExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] =
-    React.useMemo(() => [{ field: 'country' }], []);
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => [{ field: 'country' }],
+    [],
+  );
 
   return (
     <DataSource<Developer>
@@ -66,11 +67,9 @@ export default function RemoteGroupByExample() {
       data={dataSource}
       groupBy={groupBy}
       defaultGroupRowsState={groupRowsState}
-      aggregationReducers={aggregationReducers}>
-      <InfiniteTable<Developer>
-        columns={columns}
-        columnDefaultWidth={220}
-      />
+      aggregationReducers={aggregationReducers}
+    >
+      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
     </DataSource>
   );
 }
@@ -100,17 +99,11 @@ const dataSource: DataSourceData<Developer> = ({
   const args = [
     ...startLimit,
     pivotBy
-      ? 'pivotBy=' +
-        JSON.stringify(
-          pivotBy.map((p) => ({ field: p.field }))
-        )
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
     groupBy
-      ? 'groupBy=' +
-        JSON.stringify(
-          groupBy.map((p) => ({ field: p.field }))
-        )
+      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,
     sortInfo
       ? 'sortInfo=' +
@@ -118,7 +111,7 @@ const dataSource: DataSourceData<Developer> = ({
           sortInfo.map((s) => ({
             field: s.field,
             dir: s.dir,
-          }))
+          })),
         )
       : null,
 
@@ -129,15 +122,13 @@ const dataSource: DataSourceData<Developer> = ({
             field: aggregationReducers[key].field,
             id: key,
             name: aggregationReducers[key].reducer,
-          }))
+          })),
         )
       : null,
   ]
     .filter(Boolean)
     .join('&');
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      `/developers1k-sql?` +
-      args
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql?` + args,
   ).then((r) => r.json());
 };

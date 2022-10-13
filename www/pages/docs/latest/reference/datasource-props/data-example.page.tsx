@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Employee = {
   id: string | number;
@@ -62,10 +62,7 @@ const data = new Promise<Employee[]>((resolve) => {
 export default function App() {
   return (
     <DataSource<Employee> data={data} primaryKey="id">
-      <InfiniteTable<Employee>
-        columnDefaultWidth={130}
-        columns={columns}
-      />
+      <InfiniteTable<Employee> columnDefaultWidth={130} columns={columns} />
     </DataSource>
   );
 }

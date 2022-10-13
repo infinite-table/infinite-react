@@ -41,9 +41,7 @@ export const columns: InfiniteTablePropColumns<Employee> = {
     header: 'Salary',
     renderValue: ({ value, rowInfo }) => {
       value = formatter.format(value as number);
-      return rowInfo.isGroupRow
-        ? `Avg salary: $ ${value}`
-        : value;
+      return rowInfo.isGroupRow ? `Avg salary: $ ${value}` : value;
     },
   },
   department: {

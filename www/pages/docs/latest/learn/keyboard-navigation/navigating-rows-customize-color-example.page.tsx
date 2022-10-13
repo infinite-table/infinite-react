@@ -26,7 +26,7 @@ type Developer = {
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
     'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`
+      `/developers1k-sql?`,
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
@@ -56,9 +56,9 @@ export default function KeyboardNavigationForRows() {
     b: 215,
   });
 
-  const defaultColor = `#${color.r.toString(
-    16
-  )}${color.g.toString(16)}${color.b.toString(16)}`;
+  const defaultColor = `#${color.r.toString(16)}${color.g.toString(
+    16,
+  )}${color.b.toString(16)}`;
 
   const domProps = useMemo(() => {
     return {
@@ -95,9 +95,7 @@ export default function KeyboardNavigationForRows() {
           defaultValue={defaultColor}
         />
       </div>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}

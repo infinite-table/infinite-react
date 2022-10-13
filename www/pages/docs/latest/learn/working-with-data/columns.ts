@@ -18,10 +18,7 @@ export type Employee = {
   email: string;
 };
 
-export const columns: Record<
-  string,
-  InfiniteTableColumn<Employee>
-> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',

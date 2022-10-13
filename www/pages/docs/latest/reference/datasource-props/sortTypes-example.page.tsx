@@ -84,10 +84,7 @@ const carsales: CarSale[] = [
   },
 ];
 
-const columns: Record<
-  string,
-  InfiniteTableColumn<CarSale>
-> = {
+const columns: Record<string, InfiniteTableColumn<CarSale>> = {
   color: { field: 'color', sortType: 'color' },
   make: { field: 'make' },
   model: { field: 'model' },
@@ -126,7 +123,8 @@ export default function DataTestPage() {
           dir: 1,
           type: 'color',
         }}
-        sortTypes={newSortTypes}>
+        sortTypes={newSortTypes}
+      >
         <InfiniteTable<CarSale> columns={columns} />
       </DataSource>
     </>

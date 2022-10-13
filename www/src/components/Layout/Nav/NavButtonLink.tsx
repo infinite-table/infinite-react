@@ -1,7 +1,7 @@
-import * as React from 'react';
 import cn from 'classnames';
-import NextLink from 'next/link';
 import { ExternalLink } from 'components/ExternalLink';
+import NextLink from 'next/link';
+import * as React from 'react';
 
 interface NavButtonLinkProps {
   href: string;
@@ -16,7 +16,7 @@ export default function NavButtonLink({
 }: NavButtonLinkProps) {
   const classes = cn(
     'mr-3 text-xs items-center border-b border-link border-opacity-0 hover:text-link hover:border-opacity-100',
-    className
+    className,
   );
   if (href.startsWith('https://')) {
     return (

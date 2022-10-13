@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -6,6 +5,7 @@ import {
   DataSourceGroupBy,
   InfiniteTableGroupColumnBase,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -52,9 +52,7 @@ const defaultGroupBy: DataSourceGroupBy<Developer>[] = [
     column: {
       rowspan: ({ rowInfo }) => {
         const rowspan =
-          rowInfo.isGroupRow &&
-          rowInfo.groupNesting === 3 &&
-          !rowInfo.collapsed
+          rowInfo.isGroupRow && rowInfo.groupNesting === 3 && !rowInfo.collapsed
             ? (rowInfo.deepRowInfoArray?.length || 0) + 1
             : 1;
 
@@ -69,19 +67,15 @@ export default function App() {
     <DataSource<Developer>
       data={dataSource}
       defaultGroupBy={defaultGroupBy}
-      primaryKey="id">
-      <InfiniteTable<Developer>
-        columns={columns}
-        columnDefaultWidth={250}
-      />
+      primaryKey="id"
+    >
+      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={250} />
     </DataSource>
   );
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

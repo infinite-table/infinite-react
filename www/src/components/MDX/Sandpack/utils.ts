@@ -28,7 +28,7 @@ const VIEWPORT_SIZE_PRESET_MAP: Record<
 
 export const computeViewportSize = (
   viewport: ViewportSize,
-  orientation: ViewportOrientation
+  orientation: ViewportOrientation,
 ): { width?: number; height?: number } => {
   if (viewport === 'auto') {
     return {};

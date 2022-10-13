@@ -5,8 +5,7 @@
   --docsearch-primary-color: #0074a6;
   --docsearch-container-background: rgba(52, 58, 70, 0.8);
   --docsearch-modal-shadow: none;
-  --docsearch-searchbox-shadow: 0 0 0 3px
-    rgba(66, 153, 225, 0.5);
+  --docsearch-searchbox-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
   --ifm-z-index-fixed: 1000;
   --docsearch-hit-height: 48px;
   --docsearch-searchbox-height: 72px;

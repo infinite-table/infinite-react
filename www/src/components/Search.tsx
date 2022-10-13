@@ -1,11 +1,11 @@
 import { useDocSearchKeyboardEvents } from '@docsearch/react';
 import { IconSearch } from '@www/components/Icon/IconSearch';
+import { siteConfig } from '@www/siteConfig';
 import Head from 'next/head';
 import Link from 'next/link';
 import Router from 'next/router';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { siteConfig } from '@www/siteConfig';
 
 export interface SearchProps {
   appId?: string;
@@ -53,7 +53,6 @@ export const Search: React.FC<SearchProps> = ({
         return Promise.resolve();
       }
 
-      // @ts-ignore
       return Promise.all([
         // @ts-ignore
         import('@docsearch/react/modal'),

@@ -1,6 +1,6 @@
-import * as React from 'react';
 import ButtonLink from '@www/components/ButtonLink';
 import { IconNavArrow } from '@www/components/Icon/IconNavArrow';
+import * as React from 'react';
 
 interface YouWillLearnCardProps {
   title: string;
@@ -21,7 +21,8 @@ function YouWillLearnCard({
     <div
       className={`${
         inline ? 'inline-flex' : 'flex'
-      } flex-col h-full bg-card dark:bg-card-dark shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}>
+      } flex-col h-full bg-card dark:bg-card-dark shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}
+    >
       <div>
         <h4 className="text-primary dark:text-primary-dark font-bold text-2xl leading-tight">
           {title}
@@ -35,12 +36,10 @@ function YouWillLearnCard({
           className="mt-1"
           type="primary"
           size="md"
-          label={title}>
+          label={title}
+        >
           Read More
-          <IconNavArrow
-            displayDirection="right"
-            className="inline ml-1"
-          />
+          <IconNavArrow displayDirection="right" className="inline ml-1" />
         </ButtonLink>
       </div>
     </div>

@@ -1,8 +1,24 @@
+import ButtonLink from '@www/components/ButtonLink';
 import * as React from 'react';
 
+import { IconNavArrow } from '../Icon/IconNavArrow';
+import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
+
 import { APIAnatomy, AnatomyStep } from './APIAnatomy';
+import { Challenges, /*Hint, */ Solution } from './Challenges';
 import CodeBlock from './CodeBlock';
 import { CodeDiagram } from './CodeDiagram';
+import ConsoleBlock from './ConsoleBlock';
+import Convention from './Convention';
+import ExpandableCallout from './ExpandableCallout';
+import ExpandableExample from './ExpandableExample';
+import { H1, H2, H3, H4 } from './Heading';
+import HeroCards from './HeroCards';
+import HomepageHero from './HomepageHero';
+import InlineCode from './InlineCode';
+import Intro from './Intro';
+import Link from './Link';
+import { PackageImport } from './PackageImport';
 import {
   Prop,
   PropTable,
@@ -11,26 +27,11 @@ import {
   DataSourcePropLink,
   HookLink,
 } from './Prop';
-import ConsoleBlock from './ConsoleBlock';
-import Convention from './Convention';
-import ExpandableCallout from './ExpandableCallout';
-import ExpandableExample from './ExpandableExample';
-import { H1, H2, H3, H4 } from './Heading';
-import HomepageHero from './HomepageHero';
-import HeroCards from './HeroCards';
-import InlineCode from './InlineCode';
-import Intro from './Intro';
-import Link from './Link';
-import { PackageImport } from './PackageImport';
 import Recap from './Recap';
 import Sandpack from './Sandpack';
 import SimpleCallout from './SimpleCallout';
 import TerminalBlock from './TerminalBlock';
 import YouWillLearnCard from './YouWillLearnCard';
-import { Challenges, /*Hint, */ Solution } from './Challenges';
-import { IconNavArrow } from '../Icon/IconNavArrow';
-import ButtonLink from '@www/components/ButtonLink';
-import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
 
 const P = (p: JSX.IntrinsicElements['p']) => (
   <p className="whitespace-pre-wrap my-4" {...p} />
@@ -265,8 +266,10 @@ function IllustrationBlock({
       ) : null}
       {sequential ? (
         <ol className="mdx-illustration-block flex">
-          {images.map((x: any) => (
-            <li className="flex-1">{x}</li>
+          {images.map((x: any, i: number) => (
+            <li className="flex-1" key={i}>
+              {x}
+            </li>
           ))}
         </ol>
       ) : (

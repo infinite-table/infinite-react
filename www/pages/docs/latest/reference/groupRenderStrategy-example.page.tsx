@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -6,6 +5,8 @@ import {
   InfiniteTableGroupColumnFunction,
   InfiniteTablePropGroupRenderStrategy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+
 import { columns, Employee } from './employee-columns';
 
 const groupBy: DataSourcePropGroupBy<Employee> = [
@@ -17,9 +18,7 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
   },
 ];
 
-const groupColumn: InfiniteTableGroupColumnFunction<
-  Employee
-> = (options: {
+const groupColumn: InfiniteTableGroupColumnFunction<Employee> = (options: {
   groupByForColumn?: { field: keyof Employee };
 }) => {
   const field = options.groupByForColumn?.field;
@@ -44,9 +43,7 @@ const domProps = {
 
 export default function App() {
   const [groupRenderStrategy, setGroupRenderStrategy] =
-    React.useState<InfiniteTablePropGroupRenderStrategy>(
-      'multi-column'
-    );
+    React.useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
   return (
     <div
       style={{
@@ -56,10 +53,9 @@ export default function App() {
         color: 'var(--infinite-cell-color)',
         flexFlow: 'column',
         background: 'var(--infinite-background)',
-      }}>
-      <p style={{ padding: 10 }}>
-        Please select the group render strategy
-      </p>
+      }}
+    >
+      <p style={{ padding: 10 }}>Please select the group render strategy</p>
       <div style={{ padding: 10 }}>
         <select
           style={{
@@ -75,17 +71,13 @@ export default function App() {
               .value as InfiniteTablePropGroupRenderStrategy;
 
             setGroupRenderStrategy(groupRenderStrategy);
-          }}>
+          }}
+        >
           <option value="multi-column">multi-column</option>
-          <option value="single-column">
-            single-column
-          </option>
+          <option value="single-column">single-column</option>
         </select>
       </div>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id"
-        groupBy={groupBy}>
+      <DataSource<Employee> data={dataSource} primaryKey="id" groupBy={groupBy}>
         <InfiniteTable<Employee>
           domProps={domProps}
           groupRenderStrategy={groupRenderStrategy}
@@ -101,7 +93,7 @@ export default function App() {
 const dataSource = () => {
   return fetch(
     'https://infinite-table.com/.netlify/functions/json-server' +
-      '/employees1k'
+      '/employees1k',
   )
     .then((r) => r.json())
     .then((data: Employee[]) => data);

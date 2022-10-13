@@ -24,7 +24,7 @@ type Developer = {
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
     'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`
+      `/developers1k-sql?`,
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
@@ -50,9 +50,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 export default function KeyboardNavigationForCells() {
   return (
     <>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           // keyboardNavigation="cell" is the default, so no need to specify it
           columns={columns}

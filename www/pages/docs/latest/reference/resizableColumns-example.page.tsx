@@ -1,15 +1,12 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
-export const columns: Record<
-  string,
-  InfiniteTableColumn<Employee>
-> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
@@ -30,8 +27,7 @@ export const columns: Record<
 };
 
 export default function App() {
-  const [resizableColumns, setResizableColumns] =
-    useState(true);
+  const [resizableColumns, setResizableColumns] = useState(true);
   return (
     <>
       <div style={{ color: 'var(--infinite-cell-color)' }}>
@@ -40,19 +36,17 @@ export default function App() {
             padding: 10,
             border: '2px solid currentColor',
           }}
-          onClick={() => setResizableColumns((r) => !r)}>
+          onClick={() => setResizableColumns((r) => !r)}
+        >
           Click to toggle
         </button>
 
         <p style={{ padding: 10 }}>
           Columns are currently{' '}
-          {resizableColumns ? 'resizable' : 'NOT RESIZABLE'}
-          .
+          {resizableColumns ? 'resizable' : 'NOT RESIZABLE'}.
         </p>
       </div>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id">
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           resizableColumns={resizableColumns}
           columns={columns}
@@ -65,9 +59,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

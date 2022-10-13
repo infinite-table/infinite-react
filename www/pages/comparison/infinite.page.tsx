@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -8,12 +6,9 @@ import {
   DataSourceGroupBy,
   InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
-import {
-  columns,
-  COLUMN_WIDTH,
-  ROW_HEIGHT,
-} from './columns';
+import { columns, COLUMN_WIDTH, ROW_HEIGHT } from './columns';
 
 export type Developer = {
   id: number;
@@ -34,9 +29,7 @@ export type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -49,9 +42,7 @@ const preparedColumns = columns.reduce((acc, column) => {
   };
   if (typeof column.getValue === 'function') {
     col.valueGetter = (params) => {
-      return params.data
-        ? column?.getValue?.(params.data)
-        : null;
+      return params.data ? column?.getValue?.(params.data) : null;
     };
   }
   if (column.group) {
@@ -81,7 +72,8 @@ const App: React.FunctionComponent = (props) => {
         primaryKey="id"
         data={dataSource}
         groupBy={groupBy}
-        defaultGroupRowsState={groupRowsState}>
+        defaultGroupRowsState={groupRowsState}
+      >
         {() => {
           return (
             <InfiniteTable<Developer>

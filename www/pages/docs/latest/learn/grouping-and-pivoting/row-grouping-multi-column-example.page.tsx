@@ -1,17 +1,16 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   DataSourcePropGroupBy,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 const groupBy: DataSourcePropGroupBy<Developer> = [
   {
     field: 'age',
     column: {
-      renderGroupValue: ({ value }: { value: any }) =>
-        `Age: ${value}`,
+      renderGroupValue: ({ value }: { value: any }) => `Age: ${value}`,
     },
   },
   {
@@ -35,22 +34,14 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 export default function App() {
   return (
-    <DataSource<Developer>
-      data={dataSource}
-      primaryKey="id"
-      groupBy={groupBy}>
-      <InfiniteTable<Developer>
-        columns={columns}
-        columnDefaultWidth={150}
-      />
+    <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
+      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
     </DataSource>
   );
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

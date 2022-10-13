@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -10,6 +9,7 @@ import {
   InfiniteTableGroupColumnBase,
   InfiniteTableColumnRenderParam,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -32,18 +32,17 @@ const avgReducer = {
   done: (value: number, arr: any[]) =>
     arr.length ? Math.floor(value / arr.length) : 0,
 };
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      field: 'salary',
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    field: 'salary',
 
-      ...avgReducer,
-    },
-    age: {
-      field: 'age',
-      ...avgReducer,
-    },
-  };
+    ...avgReducer,
+  },
+  age: {
+    field: 'age',
+    ...avgReducer,
+  },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
@@ -65,22 +64,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 // TODO remove this after the next release
 //@ts-ignore
-const groupColumn: InfiniteTableGroupColumnFunction<
-  Developer
-> = (arg) => {
-  const column = {} as Partial<
-    InfiniteTableGroupColumnBase<Developer>
-  >;
+const groupColumn: InfiniteTableGroupColumnFunction<Developer> = (arg) => {
+  const column = {} as Partial<InfiniteTableGroupColumnBase<Developer>>;
 
   if (arg.groupIndexForColumn === arg.groupBy.length - 1) {
-    column.render = (
-      param: InfiniteTableColumnRenderParam<Developer>
-    ) => {
+    column.render = (param: InfiniteTableColumnRenderParam<Developer>) => {
       const { value, rowInfo } = param;
       if (
         rowInfo.isGroupRow &&
-        rowInfo.groupBy?.length !=
-          rowInfo.rootGroupBy?.length
+        rowInfo.groupBy?.length != rowInfo.rootGroupBy?.length
       ) {
         // we are on a group row that is the last grouping level
         return null;
@@ -98,23 +90,23 @@ const defaultGroupRowsState = new GroupRowsState({
 });
 
 export default function App() {
-  const groupBy: DataSourceGroupBy<Developer>[] =
-    React.useMemo(
-      () => [
-        {
-          field: 'country',
-        },
-        { field: 'stack' },
-      ],
-      []
-    );
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'country',
+      },
+      { field: 'stack' },
+    ],
+    [],
+  );
   return (
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
       defaultGroupRowsState={defaultGroupRowsState}
       aggregationReducers={aggregationReducers}
-      groupBy={groupBy}>
+      groupBy={groupBy}
+    >
       <InfiniteTable<Developer>
         groupRenderStrategy="multi-column"
         groupColumn={groupColumn}
@@ -126,9 +118,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

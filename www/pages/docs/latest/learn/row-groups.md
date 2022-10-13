@@ -7,10 +7,7 @@ title: Row groups
 Specify row groups via the controlled `groupBy` (or uncontrolled `defaultGroupBy`) prop on the `DataSource`.
 
 ```tsx title=defining-grouping
-const groupBy = [
-  { field: 'country' },
-  { field: 'city' },
-];
+const groupBy = [{ field: 'country' }, { field: 'city' }];
 ```
 
 ## Row groups in action
@@ -44,10 +41,7 @@ type Employee = {
   email: string;
 };
 
-const columns = new Map<
-  string,
-  InfiniteTableColumn<Employee>
->([
+const columns = new Map<string, InfiniteTableColumn<Employee>>([
   [
     'firstName',
     {
@@ -96,10 +90,7 @@ const columns = new Map<
     },
   ],
   ['company', { field: 'companyName', header: 'Company' }],
-  [
-    'companySize',
-    { field: 'companySize', header: 'Company Size' },
-  ],
+  ['companySize', { field: 'companySize', header: 'Company Size' }],
 ]);
 
 declare var fetch: any;
@@ -114,12 +105,11 @@ const dataSource = () => {
     });
 };
 
-const defaultGroupBy: DataSourceGroupBy<Employee>[] =
-  [
-    { field: 'department' },
-    // you can specify a column config for this group.
-    { field: 'team', column: { header: 'What team?' } },
-  ];
+const defaultGroupBy: DataSourceGroupBy<Employee>[] = [
+  { field: 'department' },
+  // you can specify a column config for this group.
+  { field: 'team', column: { header: 'What team?' } },
+];
 const multiSort = [];
 
 const groupColumnDefaults = {
@@ -130,9 +120,7 @@ const groupColumnDefaults = {
 };
 function App() {
   const [groupRenderStrategy, setGroupRenderStrategy] =
-    useState<InfiniteTablePropGroupRenderStrategy>(
-      'multi-column'
-    );
+    useState<InfiniteTablePropGroupRenderStrategy>('multi-column');
 
   return (
     <>
@@ -144,10 +132,9 @@ function App() {
           onChange={(e: any) => {
             const { value } = e.target;
             setGroupRenderStrategy(value);
-          }}>
-          <option value="single-column">
-            Single column
-          </option>
+          }}
+        >
+          <option value="single-column">Single column</option>
           <option value="multi-column">Multi column</option>
         </select>
       </div>
@@ -156,7 +143,8 @@ function App() {
         data={dataSource}
         primaryKey="id"
         defaultSortInfo={multiSort}
-        defaultGroupBy={defaultGroupBy}>
+        defaultGroupBy={defaultGroupBy}
+      >
         <InfiniteTable<Employee>
           columnDefaultWidth={130}
           groupRenderStrategy={groupRenderStrategy}

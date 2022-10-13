@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   InfiniteTableColumn,
@@ -8,13 +6,13 @@ import {
   DataSourceDataParams,
   DataSourceLivePaginationCursorFn,
 } from '@infinite-table/infinite-react';
-
+import * as React from 'react';
+import { useCallback } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
 } from 'react-query';
-import { useCallback } from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,10 +24,7 @@ const queryClient = new QueryClient({
 
 const emptyArray: Employee[] = [];
 
-export const columns: Record<
-  string,
-  InfiniteTableColumn<Employee>
-> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   id: { field: 'id' },
   country: {
     field: 'country',
@@ -73,11 +68,9 @@ const dataSource = ({
 }) => {
   return fetch(
     process.env.NEXT_PUBLIC_BASE_URL +
-      `/employees10k?_limit=${PAGE_SIZE}&_sort=${
-        sortInfo?.field
-      }&_order=${
+      `/employees10k?_limit=${PAGE_SIZE}&_sort=${sortInfo?.field}&_order=${
         sortInfo?.dir === 1 ? 'asc' : 'desc'
-      }&_start=${livePaginationCursor}`
+      }&_start=${livePaginationCursor}`,
   )
     .then(async (r) => {
       const data = await r.json();
@@ -85,32 +78,21 @@ const dataSource = ({
       const total = Number(r.headers.get('X-Total-Count')!);
       return { data, total };
     })
-    .then(
-      ({
-        data,
-        total,
-      }: {
-        data: Employee[];
-        total: number;
-      }) => {
-        const page = livePaginationCursor / PAGE_SIZE + 1;
+    .then(({ data, total }: { data: Employee[]; total: number }) => {
+      const page = livePaginationCursor / PAGE_SIZE + 1;
 
-        const prevPageCursor = Math.max(
-          PAGE_SIZE * (page - 1),
-          0
-        );
-        return {
-          data,
-          hasMore: total > PAGE_SIZE * page,
-          page,
-          prevPageCursor,
-          nextPageCursor: prevPageCursor + data.length,
-        };
-      }
-    )
+      const prevPageCursor = Math.max(PAGE_SIZE * (page - 1), 0);
+      return {
+        data,
+        hasMore: total > PAGE_SIZE * page,
+        page,
+        prevPageCursor,
+        nextPageCursor: prevPageCursor + data.length,
+      };
+    })
     .then(
       (
-        response
+        response,
       ): Promise<{
         data: Employee[];
         hasMore: boolean;
@@ -123,7 +105,7 @@ const dataSource = ({
             resolve(response);
           }, 150);
         });
-      }
+      },
     );
 };
 
@@ -153,8 +135,7 @@ const Example = () => {
 
     {
       keepPreviousData: true,
-      getPreviousPageParam: (firstPage) =>
-        firstPage.prevPageCursor || 0,
+      getPreviousPageParam: (firstPage) => firstPage.prevPageCursor || 0,
       getNextPageParam: (lastPage) => {
         const nextPageCursor = lastPage.hasMore
           ? lastPage.nextPageCursor
@@ -165,8 +146,7 @@ const Example = () => {
 
       select: (data) => {
         const flatData = data.pages.flatMap((x) => x.data);
-        const nextPageCursor =
-          data.pages[data.pages.length - 1].nextPageCursor;
+        const nextPageCursor = data.pages[data.pages.length - 1].nextPageCursor;
 
         const result = {
           pages: flatData,
@@ -175,7 +155,7 @@ const Example = () => {
 
         return result;
       },
-    }
+    },
   );
 
   const onDataParamsChange = useCallback(
@@ -183,13 +163,12 @@ const Example = () => {
       const params = {
         groupBy: dataParams.groupBy,
         sortInfo: dataParams.sortInfo,
-        livePaginationCursor:
-          dataParams.livePaginationCursor,
+        livePaginationCursor: dataParams.livePaginationCursor,
       };
 
       setDataParams(params);
     },
-    []
+    [],
   );
 
   const [scrollTopId, setScrollTop] = React.useState(0);
@@ -228,7 +207,8 @@ const Example = () => {
         loading={isFetchingNextPage}
         onDataParamsChange={onDataParamsChange}
         livePagination
-        livePaginationCursor={livePaginationCursorFn}>
+        livePaginationCursor={livePaginationCursorFn}
+      >
         <InfiniteTable<Employee>
           scrollTopKey={scrollTopId}
           columnDefaultWidth={200}

@@ -58,22 +58,21 @@ When a column has multiple column types, they are applied in order, from left to
 Assume a column has the following types:
 
 ```tsx
-
 const columns = {
   salary: {
-    type: ['number', 'currency']
-  }
-}
+    type: ['number', 'currency'],
+  },
+};
 
-const numberFormatter = new Intl.NumberFormat()
+const numberFormatter = new Intl.NumberFormat();
 const columnTypes = {
   number: {
-    renderValue: ({ value }) => numberFormatter.format(value) // makes 12345 render as 12,345
+    renderValue: ({ value }) => numberFormatter.format(value), // makes 12345 render as 12,345
   },
   currency: {
-    renderValue: ({ value }) => `USD: ${value}` // makes 12345 render as USD: 12345
-  }
-}
+    renderValue: ({ value }) => `USD: ${value}`, // makes 12345 render as USD: 12345
+  },
+};
 ```
 
 <Note>

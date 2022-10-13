@@ -5,7 +5,7 @@ title: Theming
 Infinite Table ships with a CSS file that you need to import in your codebase to make the component look as intended.
 
 ```ts
-import "@infinite-table/infinite-react/index.css"
+import '@infinite-table/infinite-react/index.css';
 ```
 
 The above CSS file includes both the **`light`** and the **`dark`** theme. By default, the `light` theme is applied - or, if you include the component in a container with the `light` CSS className.
@@ -13,7 +13,7 @@ The above CSS file includes both the **`light`** and the **`dark`** theme. By de
 ```tsx title=explicitly-apply-light-theme-via-container-className
 <div className="light">
   <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props}/>
+    <InfiniteTable {...props} />
   </DataSource>
 </div>
 ```
@@ -30,7 +30,7 @@ If instead you specify a `dark` CSS className, the dark theme will be applied
 <body className="dark">
   <div>
     <DataSource {...dataSouceProps}>
-      <InfiniteTable {...props}/>
+      <InfiniteTable {...props} />
     </DataSource>
   </div>
 </body>
@@ -39,9 +39,13 @@ If instead you specify a `dark` CSS className, the dark theme will be applied
 <Sandpack>
 
 ```ts file=theme-switching-example.page.tsx
+
 ```
+
 ```ts file=columns.ts
+
 ```
+
 </Sandpack>
 
 <Note>

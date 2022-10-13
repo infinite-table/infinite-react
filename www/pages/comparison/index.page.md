@@ -1,7 +1,7 @@
 # Comparison of React DataGrids
 
 ## DevExtreme Data Grid
-
+<!-- 
 <Sandpack deps="devextreme-react,devextreme">
 
 ```tsx file=devexpress.app.tsx
@@ -17,7 +17,6 @@
 ```
 
 </Sandpack>
-
 
 ## AG Grid
 
@@ -45,4 +44,4 @@
 
 ```
 
-</Sandpack>
+</Sandpack> -->

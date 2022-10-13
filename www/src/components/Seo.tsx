@@ -1,6 +1,6 @@
-import * as React from 'react';
 import Head from 'next/head';
 import { withRouter, Router } from 'next/router';
+import * as React from 'react';
 
 export interface SeoProps {
   title: string;

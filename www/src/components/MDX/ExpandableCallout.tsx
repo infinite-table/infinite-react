@@ -1,9 +1,10 @@
-import * as React from 'react';
 import cn from 'classnames';
-import { IconNote } from '../Icon/IconNote';
+import * as React from 'react';
+
 import { IconGotcha } from '../Icon/IconGotcha';
-import { IconReadMore } from '../Icon/IconReadMore';
 import { IconHint } from '../Icon/IconHint';
+import { IconNote } from '../Icon/IconNote';
+import { IconReadMore } from '../Icon/IconReadMore';
 
 type CalloutVariants = 'gotcha' | 'note' | 'readMore' | 'hint';
 

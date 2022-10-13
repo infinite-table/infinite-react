@@ -7,11 +7,10 @@ Columns are a central feature in `InfiniteTable`. You define columns as a an obj
 
 The <PropLink name="columns" /> prop is typed as `Record<string, InfiniteTableColumn<DATA_TYPE>>` or `InfiniteTablePropColumns<DATA_TYPE>`, which is an alias for the former.
 
-
 <Note title="Understanding column id">
 
 In `InfiniteTable`, columns are identified by their key in the <PropLink name="columns" /> object. **We'll refer to this as the column id**.
-The column ids are used in many places - like defining the <PropLink name="columnOrder" code={false}>column order</PropLink>, column pinning, column visibility, etc. 
+The column ids are used in many places - like defining the <PropLink name="columnOrder" code={false}>column order</PropLink>, column pinning, column visibility, etc.
 
 </Note>
 
@@ -26,7 +25,7 @@ export type Employee = {
   department: string;
   team: string;
   salary: number;
-  
+
 };
 
 // InfiniteTableColumn is a generic type, you have to bind it to a specific data-type
@@ -68,28 +67,29 @@ You should use `React.useCallback` / `React.useMemo` / `React.useState` to make 
 <Sandpack title="Basic Column Configuration">
 
 ```ts file=basic-columns-example.page.tsx
+
 ```
 
 </Sandpack>
 
-
 <YouWillLearnCard inline title="Learn more about customizing Column Rendering" path="./columns/column-rendering">
 Find out how to render custom content inside columns or even take full control of column cells and header.
 </YouWillLearnCard>
- 
+
 
 ## Column Types
 
 Column types allow you to customize column behavior and appearance for multiple columns at once. Most of the properties available for columns are also available for column types - for a full list, see <PropLink>columnTypes</PropLink> reference.
 
 There are two special <PropLink code={false} name="columns.type">column types</PropLink> for now, but more are coming soon:
- * `default` - all columns have this type, if not otherwise specified. The type does not contain any configuration, but allows you to define it and apply common configuration to all columns.
- * `number` - if specified on a column (in combination with local uncontrolled sorting), the column will be sorted numerically.
+
+- `default` - all columns have this type, if not otherwise specified. The type does not contain any configuration, but allows you to define it and apply common configuration to all columns.
+- `number` - if specified on a column (in combination with local uncontrolled sorting), the column will be sorted numerically.
 
 <YouWillLearnCard inline title="Learn more on Column Types" path="./columns/column-types">
 Find out how to use column types to customize the appearance and behaviour of your columns.
 </YouWillLearnCard>
- 
+
 
 ## Column Order
 
@@ -110,6 +110,7 @@ The <PropLink name="columnOrder" /> array can contain identifiers that are not y
 <Sandpack title="Column Order demo, with firstName col displayed twice">
 
 ```tsx file=../../reference/columnOrder-example.page.tsx
-```
-</Sandpack>
 
+```
+
+</Sandpack>

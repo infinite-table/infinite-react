@@ -1,12 +1,10 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
   useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -24,11 +22,15 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
+};
+
+const HobbyHeader: React.FC = function () {
+  const { column } = useInfiniteHeaderCell<Developer>();
+
+  return <b style={{ color: '#0000c2' }}>{column?.field} 🤷📸👨🏻‍🍳💃📚⛹️</b>;
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -38,28 +40,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
   hobby: {
     field: 'hobby',
-    header: () => {
-      const { column } = useInfiniteHeaderCell<Developer>();
-
-      return (
-        <b style={{ color: '#0000c2' }}>
-          {column?.field} 🤷📸👨🏻‍🍳💃📚⛹️
-        </b>
-      );
-    },
+    header: HobbyHeader,
   },
 };
 
 export default function ColumnHeaderExampleWithHooks() {
   return (
     <>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={200}
-        />
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={200} />
       </DataSource>
     </>
   );

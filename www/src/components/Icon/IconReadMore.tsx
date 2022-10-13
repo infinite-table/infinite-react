@@ -2,8 +2,8 @@
  * Copyright (c) Facebook, Inc. and its affiliates.
  */
 
-import * as React from 'react';
 import cn from 'classnames';
+import * as React from 'react';
 
 export const IconReadMore = React.memo<JSX.IntrinsicElements['svg']>(
   function IconHint({ className }) {

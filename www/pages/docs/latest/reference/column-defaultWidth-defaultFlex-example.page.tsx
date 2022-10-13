@@ -1,15 +1,12 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
-export const columns: Record<
-  string,
-  InfiniteTableColumn<Employee>
-> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {
     field: 'firstName',
     header: 'Name: defaultWidth 200',
@@ -44,9 +41,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

@@ -1,13 +1,14 @@
-import * as React from 'react';
 import { FileTabs, useSandpack } from '@codesandbox/sandpack-react';
-import { OpenInCodeSandboxButton } from './OpenInCodeSandboxButton';
-import { ResetButton } from './ResetButton';
-import { DownloadButton } from './DownloadButton';
-import { FilesDropdown } from './FilesDropdown';
-import { FullScreenButton } from './FullScreenButton';
 import { IconCode } from '@www/components/Icon/IconCode';
 import { IconCodeAndPreview } from '@www/components/Icon/IconCodeAndPreview';
 import { IconPreview } from '@www/components/Icon/IconPreview';
+import * as React from 'react';
+
+import { DownloadButton } from './DownloadButton';
+import { FilesDropdown } from './FilesDropdown';
+import { FullScreenButton } from './FullScreenButton';
+import { OpenInCodeSandboxButton } from './OpenInCodeSandboxButton';
+import { ResetButton } from './ResetButton';
 
 export type ViewMode = 'code' | 'preview' | 'both';
 export function NavigationBar({

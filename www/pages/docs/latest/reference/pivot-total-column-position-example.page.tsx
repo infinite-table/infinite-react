@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -8,8 +6,8 @@ import {
   InfiniteTableColumnAggregator,
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -27,9 +25,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -59,38 +55,31 @@ const defaultPivotBy: DataSourcePivotBy<Developer>[] = [
       return {
         ...columnGroup,
         header:
-          columnGroup.pivotGroupKey === 'yes'
-            ? 'Designer'
-            : 'Non-designer',
+          columnGroup.pivotGroupKey === 'yes' ? 'Designer' : 'Non-designer',
       };
     },
   },
 ];
 
-const avgReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
 
   reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) =>
-    Math.round(arr.length ? sum / arr.length : 0),
+  done: (sum, arr) => Math.round(arr.length ? sum / arr.length : 0),
 };
 
-const aggregations: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      ...avgReducer,
-      name: 'Salary (avg)',
-      field: 'salary',
-    },
-    age: {
-      ...avgReducer,
-      name: 'Age (avg)',
-      field: 'age',
-    },
-  };
+const aggregations: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    ...avgReducer,
+    name: 'Salary (avg)',
+    field: 'salary',
+  },
+  age: {
+    ...avgReducer,
+    name: 'Age (avg)',
+    field: 'age',
+  },
+};
 
 export default function ColumnValueGetterExample() {
   return (
@@ -100,7 +89,8 @@ export default function ColumnValueGetterExample() {
         defaultGroupBy={defaultGroupBy}
         defaultPivotBy={defaultPivotBy}
         aggregationReducers={aggregations}
-        data={dataSource}>
+        data={dataSource}
+      >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>

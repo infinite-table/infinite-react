@@ -1,8 +1,9 @@
+//@ts-nocheck
+import { ColDef } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 import React, { useState } from 'react';
 //@ts-ignore
-import { AgGridReact } from 'ag-grid-react';
 //@ts-ignore
-import { ColDef } from 'ag-grid-community';
 
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';

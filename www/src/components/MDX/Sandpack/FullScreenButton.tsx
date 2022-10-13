@@ -1,8 +1,7 @@
-import * as React from 'react';
-import { useEffect } from 'react';
-
 import { IconFullScreen } from '@www/components/Icon/IconFullScreen';
 import { IconFullScreenExit } from '@www/components/Icon/IconFullScreenExit';
+import * as React from 'react';
+import { useEffect } from 'react';
 
 export interface FullScreenButtonProps {
   onToggle?: (fullScreen: boolean) => void;

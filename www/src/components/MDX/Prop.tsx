@@ -1,17 +1,20 @@
-import * as React from 'react';
+import { InfiniteTableProps } from '@infinite-table/infinite-react';
 import cn from 'classnames';
-import Link from './Link';
+import { useRef } from 'react';
+import * as React from 'react';
+
 import tailwindConfig from '../../../tailwind.config';
-import { H4 } from './Heading';
 import { Button } from '../Button';
 import { IconChevron } from '../Icon/IconChevron';
-import { IconCodeBlock } from '../Icon/IconCodeBlock';
 import { IconClose } from '../Icon/IconClose';
-import { useRef } from 'react';
-import { InfiniteTableProps } from '@infinite-table/infinite-react';
-import { StyledInput } from '../StyledInput';
+import { IconCodeBlock } from '../Icon/IconCodeBlock';
 import { MaxWidth } from '../Layout/MarkdownPage';
+import { StyledInput } from '../StyledInput';
+
+import { H4 } from './Heading';
 import InlineCode from './InlineCode';
+import Link from './Link';
+
 const debounce = require('debounce');
 
 interface PropProps {
@@ -75,7 +78,7 @@ export const PropLink = ({
   if (nocode) {
     code = false;
   }
-  let content = code ? (
+  const content = code ? (
     <InlineCode isLink={false}>{children ?? theName}</InlineCode>
   ) : (
     children ?? theName
@@ -334,9 +337,10 @@ export function PropTable({
           defaultValue={filterText}
           //@ts-ignore
           onChange={onChange}
-          //@ts-ignore
-          children={inputChildren}
-        ></StyledInput>
+        >
+          {/* @ts-ignore */}
+          {inputChildren}
+        </StyledInput>
       </MaxWidth>
       {contents}
       {/* {children} */}

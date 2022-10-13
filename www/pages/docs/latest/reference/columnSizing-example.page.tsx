@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
 export const columns: InfiniteTablePropColumns<Employee> = {
@@ -43,8 +43,7 @@ export default function App() {
       salary: { flex: 2, maxWidth: 500 },
     });
 
-  const [viewportReservedWidth, setViewportReservedWidth] =
-    useState(0);
+  const [viewportReservedWidth, setViewportReservedWidth] = useState(0);
 
   return (
     <>
@@ -58,18 +57,14 @@ export default function App() {
           click to reset to 0
         </button>
       </p>
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id">
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           columns={columns}
           columnDefaultWidth={50}
           columnSizing={columnSizing}
           onColumnSizingChange={setColumnSizing}
           viewportReservedWidth={viewportReservedWidth}
-          onViewportReservedWidthChange={
-            setViewportReservedWidth
-          }
+          onViewportReservedWidthChange={setViewportReservedWidth}
         />
       </DataSource>
     </>
@@ -77,9 +72,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

@@ -22,9 +22,7 @@ type Developer = {
 };
 
 const dataSource: DataSourceData<Developer> = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?`
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -54,11 +52,9 @@ export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
         primaryKey="id"
         data={dataSource}
         defaultSortInfo={{ field: 'salary', dir: -1 }}
-        sortMode="local">
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={220}
-        />
+        sortMode="local"
+      >
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
       </DataSource>
     </>
   );

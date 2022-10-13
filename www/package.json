@@ -17,7 +17,9 @@
     "serve:data": "nodemon serve-data.js",
     "debug:data": "node --inspect serve-data.js",
     "build-functions": "node build/functions/compile-json-server.js",
-    "watch-functions": "npm run build-functions && node build/functions/compile-json-server.js --watch"
+    "watch-functions": "npm run build-functions && node build/functions/compile-json-server.js --watch",
+    "format": "prettier --write '{src,pages}/**/*.{js,jsx,ts,tsx,json,scss,css,md}'",
+    "lint": "next lint"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -59,8 +61,8 @@
     "parse-numeric-range": "^1.2.0",
     "prism-react-renderer": "^1.2.1",
     "raw.macro": "^0.4.2",
-    "react-collapsed": "3.1.0",
     "react": "^18.2.0",
+    "react-collapsed": "3.1.0",
     "react-dom": "^18.2.0",
     "react-live": "^2.2.3",
     "react-query": "^3.35.0",
@@ -70,6 +72,7 @@
     "stripe": "^8.193.0"
   },
   "devDependencies": {
+    "eslint-config-next": "12.3.1",
     "@types/body-scroll-lock": "^2.6.1",
     "@types/classnames": "^2.2.10",
     "@types/github-slugger": "^1.3.0",

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -6,6 +5,7 @@ import {
   InfiniteTablePropColumns,
   DataSourceProps,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 const groupBy: DataSourcePropGroupBy<Developer> = [
   {
@@ -20,11 +20,10 @@ const domProps = {
   style: { flex: 1 },
 };
 
-const groupRowsState: DataSourceProps<Developer>['groupRowsState'] =
-  {
-    expandedRows: [],
-    collapsedRows: true,
-  };
+const groupRowsState: DataSourceProps<Developer>['groupRowsState'] = {
+  expandedRows: [],
+  collapsedRows: true,
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
@@ -51,29 +50,28 @@ export default function App() {
         color: 'var(--infinite-cell-color)',
         flexFlow: 'column',
         background: 'var(--infinite-background)',
-      }}>
+      }}
+    >
       <div style={{ padding: 10 }}>
         <label>
           <input
             type="checkbox"
             checked={hideEmptyGroupColumns}
             onChange={() => {
-              setHideEmptyGroupColumns(
-                !hideEmptyGroupColumns
-              );
+              setHideEmptyGroupColumns(!hideEmptyGroupColumns);
             }}
           />
-          Hide Empty Group Columns (make sure all `Stack`
-          groups are collapsed to see it in action). Try to
-          expand the group column to see the new group
-          column being added on-the-fly.
+          Hide Empty Group Columns (make sure all `Stack` groups are collapsed
+          to see it in action). Try to expand the group column to see the new
+          group column being added on-the-fly.
         </label>
       </div>
       <DataSource<Developer>
         data={dataSource}
         primaryKey="id"
         defaultGroupRowsState={groupRowsState}
-        groupBy={groupBy}>
+        groupBy={groupBy}
+      >
         <InfiniteTable<Developer>
           domProps={domProps}
           hideEmptyGroupColumns={hideEmptyGroupColumns}
@@ -87,9 +85,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

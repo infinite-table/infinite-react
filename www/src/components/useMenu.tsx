@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {
   clearAllBodyScrollLocks,
   disableBodyScroll,
   enableBodyScroll,
 } from 'body-scroll-lock';
 import { useRouter } from 'next/router';
+import * as React from 'react';
 
 type SidebarNav = 'root' | 'docs' | 'reference';
 /**
@@ -56,14 +56,10 @@ export const useMenu = () => {
   };
 };
 
-export const MenuContext = React.createContext<
-  ReturnType<typeof useMenu>
->({} as ReturnType<typeof useMenu>);
+export const MenuContext = React.createContext<ReturnType<typeof useMenu>>(
+  {} as ReturnType<typeof useMenu>,
+);
 
-export function MenuProvider(props: {
-  children: React.ReactNode;
-}) {
-  return (
-    <MenuContext.Provider value={useMenu()} {...props} />
-  );
+export function MenuProvider(props: { children: React.ReactNode }) {
+  return <MenuContext.Provider value={useMenu()} {...props} />;
 }

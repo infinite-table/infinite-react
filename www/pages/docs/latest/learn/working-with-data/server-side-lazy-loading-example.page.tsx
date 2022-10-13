@@ -1,18 +1,16 @@
-import * as React from 'react';
-
 import {
   DataSource,
   DataSourcePropAggregationReducers,
   GroupRowsState,
   InfiniteTable,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
   DataSourcePivotBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -30,9 +28,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -58,10 +54,7 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: [],
 });
 
-const avgReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
   field: 'salary',
   reducer: (acc, sum) => {
@@ -72,14 +65,13 @@ const avgReducer: InfiniteTableColumnAggregator<
   },
 };
 
-const reducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: avgReducer,
-    age: {
-      ...avgReducer,
-      field: 'age',
-    },
-  };
+const reducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: avgReducer,
+  age: {
+    ...avgReducer,
+    field: 'age',
+  },
+};
 export default function App() {
   return (
     <>
@@ -88,7 +80,8 @@ export default function App() {
         defaultGroupRowsState={groupRowsState}
         groupBy={groupBy}
         aggregationReducers={reducers}
-        primaryKey="id">
+        primaryKey="id"
+      >
         <InfiniteTable<Developer> columns={columns} />
       </DataSource>
       {/* 

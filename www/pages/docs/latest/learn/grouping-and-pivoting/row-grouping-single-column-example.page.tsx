@@ -1,10 +1,11 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   DataSourcePropGroupBy,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+
 import { columns, Employee } from './columns';
 
 const groupBy: DataSourcePropGroupBy<Employee> = [
@@ -36,10 +37,7 @@ const groupColumn: InfiniteTableColumn<Employee> = {
 
 export default function App() {
   return (
-    <DataSource<Employee>
-      data={dataSource}
-      primaryKey="id"
-      groupBy={groupBy}>
+    <DataSource<Employee> data={dataSource} primaryKey="id" groupBy={groupBy}>
       <InfiniteTable<Employee>
         groupRenderStrategy="single-column"
         groupColumn={groupColumn}
@@ -51,9 +49,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees10k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees10k')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

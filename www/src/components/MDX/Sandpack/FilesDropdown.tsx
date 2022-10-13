@@ -1,8 +1,9 @@
-import * as React from 'react';
-import cn from 'classnames';
-import { IconChevron } from '../../Icon/IconChevron';
 import { useSandpack } from '@codesandbox/sandpack-react';
 import { Listbox } from '@headlessui/react';
+import cn from 'classnames';
+import * as React from 'react';
+
+import { IconChevron } from '../../Icon/IconChevron';
 
 const getFileName = (filePath: string): string => {
   const lastIndexOfSlash = filePath.lastIndexOf('/');

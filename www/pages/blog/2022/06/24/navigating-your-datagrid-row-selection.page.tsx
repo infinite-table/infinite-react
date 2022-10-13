@@ -22,9 +22,7 @@ type Developer = {
 };
 
 const dataSource: DataSourceData<Developer> = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql`
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -48,9 +46,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 export default function KeyboardNavigationForRows() {
   return (
     <>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           columns={columns}
           keyboardNavigation="row"

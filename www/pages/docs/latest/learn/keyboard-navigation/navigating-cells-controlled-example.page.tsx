@@ -24,7 +24,7 @@ type Developer = {
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
     'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`
+      `/developers1k-sql?`,
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
@@ -50,20 +50,19 @@ const columns: InfiniteTablePropColumns<Developer> = {
 const domProps = { style: { height: '90vh' } };
 
 export default function KeyboardNavigationForCells() {
-  const [activeCellIndex, setActiveCellIndex] =
-    React.useState<[number, number]>([2, 0]);
+  const [activeCellIndex, setActiveCellIndex] = React.useState<
+    [number, number]
+  >([2, 0]);
   return (
     <>
       <div
         style={{
           color: 'var(--infinite-cell-color)',
-        }}>
-        Current active cell: {activeCellIndex[0]},{' '}
-        {activeCellIndex[1]}.
+        }}
+      >
+        Current active cell: {activeCellIndex[0]}, {activeCellIndex[1]}.
       </div>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           activeCellIndex={activeCellIndex}
           onActiveCellIndexChange={setActiveCellIndex}

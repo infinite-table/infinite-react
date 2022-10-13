@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
 export type Employee = {

@@ -1,27 +1,21 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { data, Person } from './data';
 
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person>
-        rowHeight={50}
-        columns={columns}
-      />
+      <InfiniteTable<Person> rowHeight={50} columns={columns} />
     </DataSource>
   );
 }
 
-const columns: Map<
-  string,
-  InfiniteTableColumn<Person>
-> = new Map([
+const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
   [
     'id',
     {

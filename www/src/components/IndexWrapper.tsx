@@ -1,7 +1,10 @@
-import Head from 'next/head';
-
-import * as React from 'react';
-
+import {
+  fullWidthContainer,
+  minHeightFull,
+} from '@www/components/components.css';
+import { Footer } from '@www/components/Footer';
+import { Header } from '@www/components/Header';
+import { MainLayout } from '@www/layouts/MainLayout';
 import {
   backgroundColorBrand,
   backgroundColorBrandDark,
@@ -15,15 +18,9 @@ import {
   position,
   shadow,
 } from '@www/styles/utils.css';
+import Head from 'next/head';
+import * as React from 'react';
 
-import {
-  fullWidthContainer,
-  minHeightFull,
-} from '@www/components/components.css';
-
-import { Footer } from '@www/components/Footer';
-import { Header } from '@www/components/Header';
-import { MainLayout } from '@www/layouts/MainLayout';
 import { Seo } from './Seo';
 
 const ReactLogo = (
@@ -32,7 +29,8 @@ const ReactLogo = (
     alt=""
     height="5"
     width="20"
-    className={display.inlineBlock}></img>
+    className={display.inlineBlock}
+  ></img>
 );
 
 export default function IndexWrapper({
@@ -42,20 +40,18 @@ export default function IndexWrapper({
 }) {
   return (
     <MainLayout>
-      <div
-        className={`${fullWidthContainer} ${minHeightFull}  `}>
+      <div className={`${fullWidthContainer} ${minHeightFull}  `}>
         <Seo
           titleSuffix={false}
-          title="Infinite Table for React | the DataGrid component for large datasets">
-          <link
-            rel="icon"
-            type="image/svg+xml"
-            href="/favicon.svg"></link>
+          title="Infinite Table for React | the DataGrid component for large datasets"
+        >
+          <link rel="icon" type="image/svg+xml" href="/favicon.svg"></link>
         </Seo>
 
         <Header title="Infinite Table" />
         <main
-          className={`flex flex-col flex-1 justify-center  w-full items-center px-5 relative ${backgroundColorBrand} `}>
+          className={`flex flex-col flex-1 justify-center  w-full items-center px-5 relative ${backgroundColorBrand} `}
+        >
           <div
             className={[
               shadow.lg,
@@ -69,9 +65,9 @@ export default function IndexWrapper({
               borderRadius.md,
               zIndex['0'],
             ].join(' ')}
-            style={{ top: '-1.5rem', textAlign: 'center' }}>
-            EARLY ADOPTER version available soon for REACT{' '}
-            {ReactLogo}
+            style={{ top: '-1.5rem', textAlign: 'center' }}
+          >
+            EARLY ADOPTER version available soon for REACT {ReactLogo}
             <br />
             Officially launching in October 2022
           </div>

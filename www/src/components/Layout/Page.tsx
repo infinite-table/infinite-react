@@ -1,9 +1,10 @@
 import { MenuProvider } from '@www/components/useMenu';
 import * as React from 'react';
-import { Nav } from './Nav';
-import { RouteItem, SidebarContext } from './useRouteMeta';
-import { Sidebar } from './Sidebar';
+
 import { Footer } from './Footer';
+import { Nav } from './Nav';
+import { Sidebar } from './Sidebar';
+import { RouteItem, SidebarContext } from './useRouteMeta';
 interface PageProps {
   children: React.ReactNode;
   routeTree: RouteItem;
@@ -23,7 +24,8 @@ export function Page({ routeTree, children }: PageProps) {
             <div className="w-full min-w-0">
               <main
                 className="flex flex-1 self-stretch flex-col items-end"
-                style={{ justifyContent: 'space-around' }}>
+                style={{ justifyContent: 'space-around' }}
+              >
                 {children}
                 <Footer />
               </main>

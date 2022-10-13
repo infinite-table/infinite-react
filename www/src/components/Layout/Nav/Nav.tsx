@@ -1,15 +1,15 @@
-import * as React from 'react';
-import cn from 'classnames';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-
 import { IconClose } from '@www/components/Icon/IconClose';
 import { IconHamburger } from '@www/components/Icon/IconHamburger';
 import { MenuContext } from '@www/components/useMenu';
+import cn from 'classnames';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import * as React from 'react';
 
 import { Logo } from '../../Logo';
-import NavLink from './NavLink';
+
 import { inferSection } from './inferSection';
+import NavLink from './NavLink';
 
 declare global {
   interface Window {

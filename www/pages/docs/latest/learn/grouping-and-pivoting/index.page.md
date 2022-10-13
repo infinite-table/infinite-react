@@ -13,15 +13,14 @@ Read thorough documentation covering pivoting and aggregation.
 </YouWillLearnCard>
 </HeroCards>
 
-
 <Sandpack title="Simple row grouping">
 
 ```ts file=row-grouping-example.page.tsx
+
 ```
+
 ```ts file=columns.ts
+
 ```
+
 </Sandpack>
-
-
-
-

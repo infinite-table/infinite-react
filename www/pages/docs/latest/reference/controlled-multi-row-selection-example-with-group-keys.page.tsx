@@ -1,16 +1,4 @@
-import * as React from 'react';
-import {
-  useCallback,
-  useRef,
-  useEffect,
-  useState,
-} from 'react';
-
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   InfiniteTableProps,
   InfiniteTableApi,
@@ -18,6 +6,8 @@ import type {
   DataSourceProps,
   DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
@@ -29,8 +19,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
   stack: {
     field: 'stack',
-    renderGroupValue: ({ value }) =>
-      `Stack: ${value || ''}`,
+    renderGroupValue: ({ value }) => `Stack: ${value || ''}`,
   },
   age: { field: 'age' },
   id: { field: 'id' },
@@ -40,30 +29,27 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
   canDesign: {
     field: 'canDesign',
-    renderGroupValue: ({ value }) =>
-      `Can design: ${value || ''}`,
+    renderGroupValue: ({ value }) => `Can design: ${value || ''}`,
   },
 };
 
-const defaultGroupBy: DataSourceProps<Developer>['groupBy'] =
-  [
-    {
-      field: 'canDesign',
-    },
-    {
-      field: 'stack',
-    },
-    {
-      field: 'preferredLanguage',
-    },
-  ];
-
-const groupColumn: InfiniteTableProps<Developer>['groupColumn'] =
+const defaultGroupBy: DataSourceProps<Developer>['groupBy'] = [
   {
-    field: 'firstName',
-    renderSelectionCheckBox: true,
-    defaultWidth: 300,
-  };
+    field: 'canDesign',
+  },
+  {
+    field: 'stack',
+  },
+  {
+    field: 'preferredLanguage',
+  },
+];
+
+const groupColumn: InfiniteTableProps<Developer>['groupColumn'] = {
+  field: 'firstName',
+  renderSelectionCheckBox: true,
+  defaultWidth: 300,
+};
 
 const domProps = {
   style: {
@@ -73,9 +59,7 @@ const domProps = {
 };
 
 export default function App() {
-  const apiRef = useRef<InfiniteTableApi<Developer> | null>(
-    null
-  );
+  const apiRef = useRef<InfiniteTableApi<Developer> | null>(null);
   const [rowSelection, setRowSelection] =
     useState<DataSourcePropRowSelection_MultiRow>({
       selectedRows: [
@@ -90,22 +74,15 @@ export default function App() {
       defaultSelection: false,
     });
 
-  const [selectedIds, setSelectedIds] = useState<string[]>(
-    []
-  );
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const onReady = useCallback(
-    (api: InfiniteTableApi<Developer>) => {
-      apiRef.current = api;
+  const onReady = useCallback((api: InfiniteTableApi<Developer>) => {
+    apiRef.current = api;
 
-      setSelectedIds(
-        api.selectionApi.getSelectedPrimaryKeys(
-          rowSelection
-        ) as string[]
-      );
-    },
-    []
-  );
+    setSelectedIds(
+      api.selectionApi.getSelectedPrimaryKeys(rowSelection) as string[],
+    );
+  }, []);
 
   useEffect(() => {
     if (!apiRef.current) {
@@ -113,8 +90,8 @@ export default function App() {
     }
     setSelectedIds(
       apiRef.current.selectionApi.getSelectedPrimaryKeys(
-        rowSelection
-      ) as string[]
+        rowSelection,
+      ) as string[],
     );
   }, [rowSelection]);
   return (
@@ -126,11 +103,13 @@ export default function App() {
         color: 'var(--infinite-cell-color)',
         flexFlow: 'column',
         background: 'var(--infinite-background)',
-      }}>
+      }}
+    >
       <div
         style={{
           padding: 10,
-        }}>
+        }}
+      >
         Current row selection:
         <code
           style={{
@@ -138,11 +117,9 @@ export default function App() {
             height: 300,
             overflow: 'auto',
             border: '1px dashed currentColor',
-          }}>
-          <pre>
-            {' '}
-            {JSON.stringify(rowSelection, null, 2)}.
-          </pre>
+          }}
+        >
+          <pre> {JSON.stringify(rowSelection, null, 2)}.</pre>
         </code>
         Current selected ids: {selectedIds.join(', ')}
       </div>
@@ -153,7 +130,8 @@ export default function App() {
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         useGroupKeysForMultiRowSelection
-        primaryKey="id">
+        primaryKey="id"
+      >
         <InfiniteTable<Developer>
           onReady={onReady}
           columns={columns}
@@ -167,9 +145,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

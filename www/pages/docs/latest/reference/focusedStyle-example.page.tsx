@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { data, Person } from './data';
 
@@ -13,26 +13,16 @@ const focusedStyle = {
 export default function App() {
   return (
     <>
-      <button autoFocus>
-        Button before - to help with focus navigation
-      </button>
+      <button autoFocus>Button before - to help with focus navigation</button>
       <DataSource<Person> data={data} primaryKey="Id">
-        <InfiniteTable<Person>
-          focusedStyle={focusedStyle}
-          columns={columns}
-        />
+        <InfiniteTable<Person> focusedStyle={focusedStyle} columns={columns} />
       </DataSource>
-      <button>
-        Button after - to help with focus navigation
-      </button>
+      <button>Button after - to help with focus navigation</button>
     </>
   );
 }
 
-const columns: Record<
-  string,
-  InfiniteTableColumn<Person>
-> = {
+const columns: Record<string, InfiniteTableColumn<Person>> = {
   id: {
     field: 'Id',
     type: 'number',

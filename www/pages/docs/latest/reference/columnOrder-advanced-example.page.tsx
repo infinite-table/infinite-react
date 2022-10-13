@@ -1,9 +1,9 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
 export type Employee = {
@@ -62,9 +62,7 @@ export const columns: InfiniteTablePropColumns<Employee> = {
 };
 
 export default function App() {
-  const [columnOrder, setColumnOrder] = useState<
-    string[] | true
-  >([
+  const [columnOrder, setColumnOrder] = useState<string[] | true>([
     'firstName',
     'country',
     'team',
@@ -84,9 +82,8 @@ export default function App() {
           </code>
         </p>
         <p>
-          Note: if the column order contains columns that
-          don't exist in the `columns` definition, they will
-          be skipped.
+          Note: if the column order contains columns that don't exist in the
+          `columns` definition, they will be skipped.
         </p>
 
         <button
@@ -96,7 +93,8 @@ export default function App() {
           }}
           onClick={() => {
             setColumnOrder(['firstName', 'country']);
-          }}>
+          }}
+        >
           Click to only show "firstName" and "country".
         </button>
 
@@ -108,14 +106,13 @@ export default function App() {
           }}
           onClick={() => {
             setColumnOrder(true);
-          }}>
+          }}
+        >
           Click to reset column order.
         </button>
       </div>
 
-      <DataSource<Employee>
-        data={dataSource}
-        primaryKey="id">
+      <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           columns={columns}
           columnOrder={columnOrder}
@@ -128,9 +125,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

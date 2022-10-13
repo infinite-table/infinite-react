@@ -1,12 +1,10 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
   useInfiniteColumnCell,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { HTMLProps } from 'react';
 
 type Developer = {
@@ -25,16 +23,13 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
 
 function CustomCell(props: HTMLProps<HTMLElement>) {
-  const { value, data } =
-    useInfiniteColumnCell<Developer>();
+  const { value, data } = useInfiniteColumnCell<Developer>();
 
   let emoji = '🤷';
   switch (value) {
@@ -78,13 +73,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
 export default function ColumnRenderWithHooksExample() {
   return (
     <>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={200}
-        />
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={200} />
       </DataSource>
     </>
   );

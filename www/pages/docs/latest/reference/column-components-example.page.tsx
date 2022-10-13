@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -9,8 +7,8 @@ import {
   useInfiniteHeaderCell,
   InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -28,9 +26,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -38,8 +34,7 @@ const dataSource = () => {
 const DefaultHeaderComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
-  const { column, domRef, columnSortInfo } =
-    useInfiniteHeaderCell<Developer>();
+  const { column, domRef, columnSortInfo } = useInfiniteHeaderCell<Developer>();
 
   const style = {
     ...props.style,
@@ -72,8 +67,7 @@ const DefaultHeaderComponent: React.FunctionComponent<
 const StackComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
-  const { value, domRef } =
-    useInfiniteColumnCell<Developer>();
+  const { value, domRef } = useInfiniteColumnCell<Developer>();
 
   const isFrontEnd = value === 'frontend';
   const emoji = isFrontEnd ? '⚛️' : '💽';
@@ -89,15 +83,14 @@ const StackComponent: React.FunctionComponent<
   );
 };
 
-const columnTypes: InfiniteTablePropColumnTypes<Developer> =
-  {
-    default: {
-      // override all columns to use these components
-      components: {
-        HeaderCell: DefaultHeaderComponent,
-      },
+const columnTypes: InfiniteTablePropColumnTypes<Developer> = {
+  default: {
+    // override all columns to use these components
+    components: {
+      HeaderCell: DefaultHeaderComponent,
     },
-  };
+  },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id', defaultWidth: 80 },
@@ -120,13 +113,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
 export default function ColumnValueGetterExample() {
   return (
     <>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnTypes={columnTypes}
-        />
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
+        <InfiniteTable<Developer> columns={columns} columnTypes={columnTypes} />
       </DataSource>
     </>
   );

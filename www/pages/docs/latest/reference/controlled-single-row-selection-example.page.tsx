@@ -1,10 +1,6 @@
-import * as React from 'react';
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -27,16 +23,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default function App() {
-  const [rowSelection, setRowSelection] = useState<
-    number | null | string
-  >(3);
+  const [rowSelection, setRowSelection] = useState<number | null | string>(3);
   return (
     <>
       <p
         style={{
           color: 'var(--infinite-cell-color)',
           padding: 10,
-        }}>
+        }}
+      >
         Current row selection:
         <code style={{ display: 'inline-block' }}>
           <pre> {JSON.stringify(rowSelection)}.</pre>
@@ -47,20 +42,16 @@ export default function App() {
         data={dataSource}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
-        primaryKey="id">
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={150}
-        />
+        primaryKey="id"
+      >
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
       </DataSource>
     </>
   );
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

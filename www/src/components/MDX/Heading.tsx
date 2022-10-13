@@ -1,7 +1,7 @@
-import cn from 'classnames';
-import * as React from 'react';
 import { siteConfig } from '@www/siteConfig';
 import { forwardRefWithAs } from '@www/utils/forwardRefWithAs';
+import cn from 'classnames';
+import * as React from 'react';
 export interface HeadingProps {
   className?: string;
   isPageAnchor?: boolean;

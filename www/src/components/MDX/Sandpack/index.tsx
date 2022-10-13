@@ -1,13 +1,14 @@
-import * as React from 'react';
 import {
   SandpackProvider,
   SandpackSetup,
   SandpackFile,
 } from '@codesandbox/sandpack-react';
+import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
+import * as React from 'react';
+
+import { useInfiniteTemplate } from '../../useInfiniteTemplate';
 
 import { CustomPreset } from './CustomPreset';
-import { useInfiniteTemplate } from '../../useInfiniteTemplate';
-import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 
 const DEPS_VERSIONS: Record<string, string> = {
   '@infinite-table/infinite-react': process.env
@@ -31,8 +32,8 @@ type SandpackProps = {
 };
 
 function Sandpack(props: SandpackProps) {
-  let { children, setup, autorun = true, title } = props;
-  let [resetKey, setResetKey] = React.useState(0);
+  const { children, setup, autorun = true, title } = props;
+  const [resetKey, setResetKey] = React.useState(0);
 
   const isSandpackDescriptionElement = (el: React.ReactElement) =>
     el.props.mdxType === 'Description';

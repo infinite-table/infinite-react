@@ -1,4 +1,4 @@
-const { readdirSync } = require("fs");
+const { readdirSync } = require('fs');
 
 const getDirectories = (source: string) => {
   return readdirSync(source, { withFileTypes: true })
@@ -8,6 +8,6 @@ const getDirectories = (source: string) => {
 
 export function getVersionFolderNames(source: string) {
   return getDirectories(source).filter(
-    (name: string) => name.startsWith("v") || name === "latest"
+    (name: string) => name.startsWith('v') || name === 'latest',
   );
 }

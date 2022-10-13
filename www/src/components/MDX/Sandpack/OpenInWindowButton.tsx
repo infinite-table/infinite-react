@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { IconOpenInWindow } from '@www/components/Icon/IconOpenInWindow';
+import * as React from 'react';
 export interface OpenInWindowButtonProps {
   onClick?: () => void;
 }

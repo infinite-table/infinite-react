@@ -1,7 +1,6 @@
-import * as React from 'react';
-import Document, { Html, Head, Main, NextScript } from 'next/document';
-
 import { getSandpackCssText } from '@codesandbox/sandpack-react';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+import * as React from 'react';
 
 //@ts-ignore
 class MyDocument extends Document {

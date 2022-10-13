@@ -1,7 +1,5 @@
-import Head from 'next/head';
-
-import * as React from 'react';
-
+import { Cards } from '@www/components/Cards';
+import { GetAccessForm } from '@www/components/GetAccessForm';
 import {
   colorWhite,
   fontSize,
@@ -12,9 +10,9 @@ import {
   textAlign,
   display,
 } from '@www/styles/utils.css';
+import Head from 'next/head';
+import * as React from 'react';
 
-import { Cards } from '@www/components/Cards';
-import { GetAccessForm } from '@www/components/GetAccessForm';
 import IndexWrapper from './IndexWrapper';
 
 const ReactLogo = (
@@ -23,7 +21,8 @@ const ReactLogo = (
     alt=""
     height="5"
     width="20"
-    className={display.inlineBlock}></img>
+    className={display.inlineBlock}
+  ></img>
 );
 
 export function IndexPage() {
@@ -37,10 +36,11 @@ export function IndexPage() {
           paddingX[14],
           textAlign.center,
           colorWhite,
-        ].join(' ')}>
+        ].join(' ')}
+      >
         <p className={`${fontSize['2xl']}`}>
-          <b>Infinite Table</b> for React {ReactLogo} is a
-          UI component for data virtualization.
+          <b>Infinite Table</b> for React {ReactLogo} is a UI component for data
+          virtualization.
         </p>
         <p className={`${marginTop[6]} ${fontSize.xl}`}>
           Huge datasets are no longer a problem!

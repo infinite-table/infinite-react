@@ -1,7 +1,5 @@
-export function inferSection(
-  pathname: string
-): 'learn' | 'reference' | 'home' {
-  let [_, docs, v, sectionName] = pathname.split('/');
+export function inferSection(pathname: string): 'learn' | 'reference' | 'home' {
+  const [_, docs, v, sectionName] = pathname.split('/');
 
   // console.log({ sectionName, v, docs, _ });
   if (docs === 'blog') {

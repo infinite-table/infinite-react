@@ -25,7 +25,6 @@ For the root API, see the [Infinite Table API page](./api).
 
 </Prop>
 
-
 <Prop name="deselectGroupRow" type="(groupKeys: any[]) => void">
 
 > Deselects the group row that is identified by the given group keys. Only makes sense when the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>.
@@ -41,7 +40,6 @@ Most often, you don't need to use this imperative way of selecting group rows. S
 </Note>
 
 </Prop>
-
 
 <Prop name="deselectRow" type="(primaryKey: any, groupKeys?: any[]) => boolean">
 
@@ -61,9 +59,6 @@ Most often, you don't need to use this imperative way of deselecting rows. Simpl
 
 </Prop>
 
-
-
-
 <Prop name="deselectAll" type="() => void">
 
 > Deselects all the rows in the DataSource.
@@ -74,7 +69,8 @@ For selecting all rows, see related [selectAll](#selectAll).
 
 <Note>
 
-Most often, you don't need to use this imperative way of deselecting all rows. Simply update the <DPropLink name="rowSelection">DataSource.rowSelection</DPropLink> (when multiple row selection is enabled) to a value of 
+Most often, you don't need to use this imperative way of deselecting all rows. Simply update the <DPropLink name="rowSelection">DataSource.rowSelection</DPropLink> (when multiple row selection is enabled) to a value of
+
 ```tsx
 { defaultSelection: false, selectedRows: []}
 ```
@@ -83,17 +79,15 @@ Most often, you don't need to use this imperative way of deselecting all rows. S
 
 </Prop>
 
-
-
 <Prop name="getGroupRowSelectionState" type="(groupKeys: any[], rowSelection?: DataSourceRowSelection) => true|false|null">
 
 > Returns the state of a group row - only applicable when the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>
 
 The returned values can be:
 
- * `true` - the group row and all its children are selected, at any level of nesting
- * `false` - the group row and all its children are deselected, at any level of nesting
- * `null` - the group row has some (not all) children selected, at any level of nesting
+- `true` - the group row and all its children are selected, at any level of nesting
+- `false` - the group row and all its children are deselected, at any level of nesting
+- `null` - the group row has some (not all) children selected, at any level of nesting
 
 Baiscally, `true` means the group row and all children are selected, `false` means the group row is not selected and doesn't have any selected children, while `null` is the indeterminate state, where just some (but not all) of the children of the group are selected.
 
@@ -125,7 +119,6 @@ If you don't provide a value for the `rowSelection` and are calling this method 
 
 </Note>
 
-
 <Sandpack title="Using getSelectedPrimaryKeys in multi row checkbox selection with grouping" >
 
 <Description>
@@ -134,15 +127,13 @@ This example shows how you can use getSelectedPrimaryKeys with multiple row sele
 
 </Description>
 
-
 ```ts file=../controlled-multi-row-selection-example-with-group-keys.page.tsx
+
 ```
 
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="isRowSelected" type="(primaryKey: any, groupKeys?: any[]) => boolean">
 
@@ -157,7 +148,6 @@ Even if you don't pass them, the component will try to retrieve them from its in
 
 </Prop>
 
-
 <Prop name="isRowDeselected" type="(primaryKey: any, groupKeys?: any[]) => boolean">
 
 > Checks if a row specified by its primary key is deselected or not. Optionally provide the group keys, if you have access to them.
@@ -165,8 +155,6 @@ Even if you don't pass them, the component will try to retrieve them from its in
 See note from [isRowSelected](#isRowSelected)
 
 </Prop>
-
-
 
 <Prop name="selectAll" type="() => void">
 
@@ -178,7 +166,8 @@ For deselecting all rows, see related [deselectAll](#deselectAll).
 
 <Note>
 
-Most often, you don't need to use this imperative way of selecting rows. Simply update the <DPropLink name="rowSelection">DataSource.rowSelection</DPropLink> (when multiple row selection is enabled) to a value of 
+Most often, you don't need to use this imperative way of selecting rows. Simply update the <DPropLink name="rowSelection">DataSource.rowSelection</DPropLink> (when multiple row selection is enabled) to a value of
+
 ```tsx
 { defaultSelection: true, deselectedRows: []}
 ```
@@ -186,7 +175,6 @@ Most often, you don't need to use this imperative way of selecting rows. Simply 
 </Note>
 
 </Prop>
-
 
 <Prop name="selectGroupRow" type="(groupKeys: any[]) => void">
 
@@ -203,7 +191,6 @@ Most often, you don't need to use this imperative way of selecting group rows. S
 </Note>
 
 </Prop>
-
 
 <Prop name="selectRow" type="(primaryKey: any, groupKeys?: any[]) => boolean">
 
@@ -240,7 +227,6 @@ Most often, you don't need to use this imperative way of selecting group rows. S
 
 </Prop>
 
-
 <Prop name="toggleRowSelection" type="(primaryKey: any, groupKeys?: any[]) => boolean">
 
 > Toggles the selection of the specified row. Optionally provide the group keys, if you have access to them.
@@ -261,5 +247,4 @@ Most often, you don't need to use this imperative way of selecting rows. Simply 
 
 </Prop>
 
-</PropTable> 
-
+</PropTable>

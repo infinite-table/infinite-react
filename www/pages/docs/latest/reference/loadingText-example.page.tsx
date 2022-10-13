@@ -1,16 +1,13 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 export default function App() {
   return (
-    <DataSource<Employee>
-      loading
-      data={employees}
-      primaryKey="id">
+    <DataSource<Employee> loading data={employees} primaryKey="id">
       <InfiniteTable<Employee>
         loadingText="Please wait ..."
         columnDefaultWidth={130}
@@ -45,10 +42,7 @@ const employees: Employee[] = [
   },
 ];
 
-const columns: Map<
-  string,
-  InfiniteTableColumn<Employee>
-> = new Map([
+const columns: Map<string, InfiniteTableColumn<Employee>> = new Map([
   [
     'id',
     {

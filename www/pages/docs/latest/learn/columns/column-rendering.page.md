@@ -20,7 +20,7 @@ Note that it's a generic type, so when you use it, you have to bind it to your `
 
 When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local/transient state.
 
-This is important because `InfiniteTable` uses virtualization heavily, in both *column cells and column headers*, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+This is important because `InfiniteTable` uses virtualization heavily, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
 </Note>
 
 ## Change the value using `valueGetter`
@@ -79,7 +79,7 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 
 <DeepDive title="Column renderValue vs render">
 
-<PropLink name="columns.render"/> is the last function called in the rendering pipeline for a column cell, while <PropLink name="columns.renderValue"/> is called before render, towards the beginning of the [rendering pipeline  (read more about this below)](#rendering-pipeline).
+<PropLink name="columns.render"/> is the last function called in the rendering pipeline for a column cell, while <PropLink name="columns.renderValue"/> is called before render, towards the beginning of the [rendering pipeline (read more about this below)](#rendering-pipeline).
 
 Avoid overriding <PropLink name="columns.render"/> for special columns (like group columns) unless you know what you're doing. Special columns use the `render` function to render additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override this additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
 
@@ -94,7 +94,6 @@ However, there are easier ways to override the collapse/expand group icon, like 
 ```
 
 </Sandpack>
-
 
 Changing the group icon using `render`. The icon can also be changed using <PropLink name="columns.renderGroupIcon" />.
 
@@ -141,8 +140,7 @@ import {
 } from '@infinite-table/infintie-react';
 
 function CustomName() {
-  const { data, rowInfo } =
-    useInfiniteColumnCell<Employee>();
+  const { data, rowInfo } = useInfiniteColumnCell<Employee>();
 
   return (
     <>
@@ -205,33 +203,21 @@ For such scenarios, you can specify `column.components.HeaderCell` and `column.c
 ```tsx
 import { InfiniteTableColumn } from '@infinite-table/infintie-react';
 
-const ColumnCell = (
-  props: React.HTMLProps<HTMLDivElement>
-) => {
-  const { domRef, rowInfo } =
-    useInfiniteColumnCell<Developer>();
+const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
+  const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
 
   return (
-    <div
-      ref={domRef}
-      {...props}
-      style={{ ...props.style, color: 'red' }}>
+    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
       {props.children}
     </div>
   );
 };
 
-const HeaderCell = (
-  props: React.HTMLProps<HTMLDivElement>
-) => {
-  const { domRef, sortTool } =
-    useInfiniteHeaderCell<Developer>();
+const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
+  const { domRef, sortTool } = useInfiniteHeaderCell<Developer>();
 
   return (
-    <div
-      ref={domRef}
-      {...props}
-      style={{ ...props.style, color: 'red' }}>
+    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
       {sortTool}
       First name
     </div>
@@ -250,17 +236,13 @@ const nameColumn: InfiniteTableColumn<Developer> = {
 
 <Note>
 
-
 When using custom components, make sure you get `domRef` from the corresponding hook (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) and pass it on to the final `JSX.Element` that is the DOM root of the component.
-
 
 ```tsx
 // inside a component specified in column.components.ColumnCell
 const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
 
-return <div ref={domRef}>
-   ...
-</div>
+return <div ref={domRef}>...</div>;
 ```
 
 Also you have to make sure you spread all other `props` you receive in the component, as they are `HTMLProps` that need to end-up in the DOM (eg: `className` for theming and default styles, etc).
@@ -297,10 +279,10 @@ All the functions that have the word `render` in their name will be called with 
 
 The default <PropLink name="columns.render" /> function (the last one in the pipeline) ends up rendering a few things:
 
- * a `value`  - generally comes from the <PropLink name="columns.field">field</PropLink> the column is bound to
- * a `groupIcon` - for group columns
- * a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
- <!-- * a `menuIcon` - for all columns by default, unless they have <PropLink name="columns.renderMenuIcon">renderMenuIcon=false</PropLink> - this is the icon that opens the column menu -->
+- a `value` - generally comes from the <PropLink name="columns.field">field</PropLink> the column is bound to
+- a `groupIcon` - for group columns
+- a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
+<!-- * a `menuIcon` - for all columns by default, unless they have <PropLink name="columns.renderMenuIcon">renderMenuIcon=false</PropLink> - this is the icon that opens the column menu -->
 
 When the rendering process starts for a column cell, all the above end up in the `renderBag` object.
 
@@ -319,13 +301,21 @@ const column: InfiniteTableColumn<T> = {
   // the valueGetter can be useful when rows are nested objects
   // or you want to compose multiple values from the row
   valueGetter: ({ data }) => {
-    return data.person.salary * 10
+    return data.person.salary * 10;
   },
-  valueFormatter: ({ value, isGroupRow, data, field, rowInfo, rowSelected, rowActive })=> {
+  valueFormatter: ({
+    value,
+    isGroupRow,
+    data,
+    field,
+    rowInfo,
+    rowSelected,
+    rowActive,
+  }) => {
     // the value here is what the `valueFormatter` returned
-    return `USD ${value}`
-  }
-}
+    return `USD ${value}`;
+  },
+};
 ```
 
 After <PropLink name="columns.valueGetter">valueGetter</PropLink> and <PropLink name="columns.valueFormatter">valueFormatter</PropLink> are called, the resulting value is the actual value used for the cell. This value will also be assigned to `renderBag.value`
@@ -337,24 +327,23 @@ const column: InfiniteTableColumn<T> = {
   valueGetter: () => 'world',
   renderValue: ({ value, renderBag, rowInfo }) => {
     // at this stage, `value` is 'world' and `renderBag.value` has the same value, 'world'
-    return <b>{value}</b>
+    return <b>{value}</b>;
   },
 
   render: ({ value, renderBag, rowInfo }) => {
     // at this stage `value` is 'world'
     // but `renderBag.value` is <b>world</b>, as this was the value returned by `renderValue`
-    return <div>
-      Hello {renderBag.value}!
-    </div>
-  }
-}
+    return <div>Hello {renderBag.value}!</div>;
+  },
+};
 ```
 
 <Note>
 
-After the <PropLink name="columns.renderValue">renderValue</PropLink> function is called, the following are also called (if available): 
- - <PropLink name="columns.renderGroupValue">renderGroupValue</PropLink> - for group rows
- - <PropLink name="columns.renderLeafValue">renderLeafValue</PropLink> - for leaf rows
+After the <PropLink name="columns.renderValue">renderValue</PropLink> function is called, the following are also called (if available):
+
+- <PropLink name="columns.renderGroupValue">renderGroupValue</PropLink> - for group rows
+- <PropLink name="columns.renderLeafValue">renderLeafValue</PropLink> - for leaf rows
 
 You can think of them as an equivalent to <PropLink name="columns.renderValue">renderValue</PropLink>, but narrowed down to group/non-group rows.
 
@@ -369,17 +358,18 @@ In a similar way to `renderBag.value`, the `renderBag.groupIcon` is also piped t
 ```tsx {2,9}
 const column: InfiniteTableColumn<T> = {
   renderGroupIcon: ({ renderBag, toggleGroupRow }) => {
-    return <> [ {renderBag.groupIcon} ] </>
+    return <> [ {renderBag.groupIcon} ] </>;
   },
-  render: ({  renderBag })=> {
-    
-    return <>
-      {/* use the groupIcon from the renderBag */}
-      {renderBag.groupIcon}
-      {renderBag.value}
-    </>
-  }
-}
+  render: ({ renderBag }) => {
+    return (
+      <>
+        {/* use the groupIcon from the renderBag */}
+        {renderBag.groupIcon}
+        {renderBag.value}
+      </>
+    );
+  },
+};
 ```
 
 <Hint>
@@ -390,21 +380,20 @@ Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `tog
 
 </Hint>
 
-
 <!-- ### Rendering pipeline - `renderBag.sortIcon`
 
 Similarly to `renderBag.value`, the `renderBag.sortIcon` is also piped through to the <PropLink name="columns.render">render</PropLink> function.
 
-```tsx {2,10} 
+```tsx {2,10}
 const column: InfiniteTableColumn<T> = {
   renderSortIcon: ({ renderBag, column }) => {
     // you can use the column to get the sort direction
     return <> [ {renderBag.sortIcon} ] </>
   },
   render: ({  renderBag })=> {
-    
+
     return <>
-      
+
       {renderBag.sortIcon}
       {renderBag.menuIcon}
       {renderBag.value}
@@ -421,11 +410,9 @@ Also inside <PropLink name="columns.renderSortIcon" />, you have access to the c
 
 </Hint> -->
 
-
 ### Rendering pipeline - `renderBag.selectionCheckBox`
 
 Like with the previous properties of `renderBag`, you can customize the `selectionCheckBox` (used when multiple selection is configured) to be piped-through - for columns that specify <PropLink name="columns.renderSelectionCheckBox" />.
-
 
 ```tsx {2,25}
 const column: InfiniteTableColumn<T> = {
@@ -436,30 +423,33 @@ const column: InfiniteTableColumn<T> = {
     toggleCurrentRowSelection,
     toggleCurrentGroupRowSelection,
   }) => {
-    const toggle = isGroupRow? 
-      toggleCurrentGroupRowSelection:
-      toggleCurrentRowSelection
+    const toggle = isGroupRow
+      ? toggleCurrentGroupRowSelection
+      : toggleCurrentRowSelection;
 
     // you could return renderBag.groupIcon to have the default icon
 
-    const selection = rowSelected  === null 
-        ? '-' : // we're in a group row with indeterminate state if rowSelected === null
-        rowSelected 
-          ?'x':'o' 
+    const selection =
+      rowSelected === null
+        ? '-' // we're in a group row with indeterminate state if rowSelected === null
+        : rowSelected
+        ? 'x'
+        : 'o';
 
-    return <div onClick={toggle}> [ {selection} ] </div>
+    return <div onClick={toggle}> [ {selection} ] </div>;
   },
-  render: ({  renderBag })=> {
-    return <>
-      {/* use the selectionCheckBox from the renderBag */}
-      {renderBag.selectionCheckBox}
-      {renderBag.groupIcon}
-      {renderBag.value}
-    </>
-  }
-}
+  render: ({ renderBag }) => {
+    return (
+      <>
+        {/* use the selectionCheckBox from the renderBag */}
+        {renderBag.selectionCheckBox}
+        {renderBag.groupIcon}
+        {renderBag.value}
+      </>
+    );
+  },
+};
 ```
-
 
 <!-- ### Rendering pipeline - `renderBag.menuIcon`
 
@@ -475,13 +465,13 @@ const column: InfiniteTableColumn<T> = {
   }) => {
     if (column.type === 'number') {
       return false
-    } 
+    }
 
     return renderBag.menuIcon
   },
   render: ({  renderBag })=> {
     return <>
-      
+
       {renderBag.menuIcon}
       {renderBag.selectionCheckBox}
       {renderBag.sortIcon}
@@ -500,20 +490,17 @@ Also inside <PropLink name="columns.renderMenuIcon" />, you have access to the c
 
 </Hint> -->
 
-
 To recap, here is the full list of the functions in the rendering pipeline, in order of invocation:
 
-1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
-2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
+1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag` 2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
 
-3.<PropLink name="columns.renderGroupIcon" /> - can use all properties in `renderBag`
-4.<PropLink name="columns.renderSelectionCheckBox" /> - can use all properties in `renderBag`
+3.<PropLink name="columns.renderGroupIcon" /> - can use all properties in `renderBag` 4.<PropLink name="columns.renderSelectionCheckBox" /> - can use all properties in `renderBag`
+
 <!-- 5.<PropLink name="columns.renderMenuIcon" /> - can use all properties in `renderBag`
 6.<PropLink name="columns.renderSortIcon" /> - can use all properties in `renderBag` -->
-5.<PropLink name="columns.renderValue" /> - can use all properties in `renderBag`
-6.<PropLink name="columns.renderGroupValue" /> - can use all properties in `renderBag`
 
-7.<PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag`
-8.<PropLink name="columns.render" /> - can use all properties in `renderBag`
+5.<PropLink name="columns.renderValue" /> - can use all properties in `renderBag` 6.<PropLink name="columns.renderGroupValue" /> - can use all properties in `renderBag`
+
+7.<PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag` 8.<PropLink name="columns.render" /> - can use all properties in `renderBag`
 
 Additionally, the <PropLink name="columns.components.ColumnCell" /> custom component does have access to the `renderBag` via <HookLink name="useInfiniteColumnCell" />

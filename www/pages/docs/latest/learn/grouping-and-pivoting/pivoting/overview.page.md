@@ -6,7 +6,6 @@ An enteprise-level feature `InfiniteTable` provides is the pivoting functionalit
 
 Pivoting is first defined at the `DataSource` level, via the <PropLink name="pivotBy" /> prop. It's an array of objects, each with a `field` property bound (so `pivotBy[].field` is keyof `DATA_TYPE`) to the `DataSource`.
 
-
 <Note>
 
 Pivoting generates columns based on the pivoting values, so you have to pass those generated columns into the `<InfiniteTable />` component.
@@ -14,7 +13,6 @@ Pivoting generates columns based on the pivoting values, so you have to pass tho
 You do that by using a `function` as a direct child of the `DataSource`, and in that function you have access to the generated `pivotColumns` array. Likewise for `pivotColumnGroups`.
 
 </Note>
-
 
 For more pivoting examples, see [our pivoting demos](/docs/latest/learn/examples/dynamic-pivoting-example)
 
@@ -36,10 +34,10 @@ const groupBy = [{field: 'department'}, {field: 'country'}]
 <Sandpack title="Pivoting with avg aggregation">
 
 ```ts file=pivoting-example.page.tsx
+
 ```
 
 </Sandpack>
-
 
 ## Customizing Pivot Columns
 
@@ -68,12 +66,13 @@ const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
       defaultWidth: 500,
     },
   },
-}
+};
 ```
 
-<Sandpack title="Pivot columns inherit from original columns bound to the same field"> 
+<Sandpack title="Pivot columns inherit from original columns bound to the same field">
 
 ```ts file=pivot-column-inherit-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -81,14 +80,13 @@ const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
 Another way to do it is to specify <DataSourcePropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
 If you pass an object, it will be applied to all pivot columns in the column group generated for the `field` property.
 
-
 ```tsx
 const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
   { field: 'country' },
   { field: 'canDesign', column: { defaultWidth: 400 } },
 ];
 
-<DataSource pivotBy={pivotBy} />
+<DataSource pivotBy={pivotBy} />;
 ```
 
 In the above example, the `column.defaultWidth=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
@@ -96,17 +94,21 @@ In the above example, the `column.defaultWidth=400` will be applied to columns g
 ```tsx
 const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
   { field: 'country' },
-  { field: 'canDesign', column: ({ column }) => {
-    return {
-      header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Not a Designer',
-    }
-  }},
+  {
+    field: 'canDesign',
+    column: ({ column }) => {
+      return {
+        header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Not a Designer',
+      };
+    },
+  },
 ];
 ```
 
 <Sandpack title="Pivoting with customized pivot column">
 
 ```ts file=pivoting-customize-column-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -118,6 +120,7 @@ In <DPropLink name="pivotBy" nocode>pivot mode</DPropLink> you can configure bot
 <Sandpack title="Pivoting with customized position for totals and grand-total columns">
 
 ```ts file=../../../reference/pivot-grand-total-column-position-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -125,7 +128,6 @@ In <DPropLink name="pivotBy" nocode>pivot mode</DPropLink> you can configure bot
 <Note>
 
 **What are grand-total columns?**
-
 
 For each <DPropLink name="aggregationReducers" nocode>aggregation reducer</DPropLink> specified in the `DataSource`, you can have a total column - this is what <PropLink name="pivotGrandTotalColumnPosition" nocode>grand-total columns</PropLink> basically are.
 
@@ -136,26 +138,27 @@ For each <DPropLink name="aggregationReducers" nocode>aggregation reducer</DProp
 By default, pivoting is client side. However, if you specify <DataSourcePropLink name="lazyLoad" code>DataSource.lazyLoad</DataSourcePropLink> and provide a function that returns a promise for the <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> prop, the table will use server-pivoted data.
 
 The <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> function is expected to return a promise that resolves to an object with the following shape:
-  * `totalCount` - the total number of records in the group we're pivoting on
-  * `data` - an array of objects that describes child groups, each object has the following properties:
-    * `keys` - an array of the group keys (usually strings) that uniquely identifies the group, from the root to the current group
-    * `data` - an object that describes the common properties of the group 
-    * `aggregations` - an object that describes the aggregations for the current group
-    * `pivot` - the pivoted values and aggregations for each value. This object will have the following properties:
-      * `totals` - an object with a key for each aggregation. The value is the aggregated value for the respective aggregation reducer.
-      * `values` - an object keyed with the unique values for the pivot field. The values of those keys are objects with the same shape as the `pivot` top-level object, namely `totals` and `values`. 
+
+- `totalCount` - the total number of records in the group we're pivoting on
+- `data` - an array of objects that describes child groups, each object has the following properties:
+  - `keys` - an array of the group keys (usually strings) that uniquely identifies the group, from the root to the current group
+  - `data` - an object that describes the common properties of the group
+  - `aggregations` - an object that describes the aggregations for the current group
+  - `pivot` - the pivoted values and aggregations for each value. This object will have the following properties:
+    - `totals` - an object with a key for each aggregation. The value is the aggregated value for the respective aggregation reducer.
+    - `values` - an object keyed with the unique values for the pivot field. The values of those keys are objects with the same shape as the `pivot` top-level object, namely `totals` and `values`.
 
 In the example below, let's assume the following practical scenario, with the data-type being a `Developer{country, stack, preferredLanguage, canDesign, age, salary}`.
 
 ```tsx
 const groupBy = [
-  { field: "country" }, // possible values: any valid country
-  { field: "stack" } // possible values: "backend", "frontend", "full-stack"
-]
+  { field: 'country' }, // possible values: any valid country
+  { field: 'stack' }, // possible values: "backend", "frontend", "full-stack"
+];
 const pivotBy = [
-  { field: "preferredLanguage" }, // possible values: "TypeScript","JavaScript","Go"
-  { field: "canDesign" }, // possible values: "yes" or "no"
-]
+  { field: 'preferredLanguage' }, // possible values: "TypeScript","JavaScript","Go"
+  { field: 'canDesign' }, // possible values: "yes" or "no"
+];
 
 const aggregationReducers = {
   salary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
@@ -196,7 +199,7 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
         country: "Canada"
       },
       // the array of keys that uniquely identify this group, including all parent keys
-      keys: ["Canada"],  
+      keys: ["Canada"],
       pivot: {
         totals: {
           // for each aggregation id, have an entry
@@ -216,7 +219,7 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
                   salary: <SALARY_AGGREGATION_VALUE>,
                   age: <AGE_AGGREGATION_VALUE>,
                 }
-                
+
               }
             }
           }
@@ -236,10 +239,10 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
 }
 ```
 
-
 <Sandpack title="Server-side pivoting example">
 
 ```ts file=remote-pivoting-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -249,7 +252,6 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
 The <PropLink name="groupRenderStrategy" /> prop is applicable even to pivoted tables, but `groupRenderStrategy="inline"` is not supported in this case.
 
 </Note>
-
 
 ### Another pivoting example with batching
 
@@ -262,10 +264,10 @@ The example below also shows you how to customize the table rows while records a
 <Sandpack title="Server side pivoting with lazy loding batching">
 
 ```ts file=server-side-pivoting-with-lazy-load-batching-example.page.tsx
+
 ```
+
 </Sandpack>
-
-
 
 Here's another example, that assumes grouping by `country` and `city`, aggregations by `age` and `salary` (average values) and pivot by `preferredLanguage` and `canDesign` (a boolean property):
 
@@ -323,7 +325,6 @@ pivotBy: [{"field":"preferredLanguage"},{"field":"canDesign"}]
 If we were to scroll down, the next batch of data would have the same structure as the previous one, but with `lazyLoadStartIndex` set to 10 (if `lazyLoad.batchSize = 10`).
 
 Now let's expand the first group and see how the request/response would look like:
-
 
 ```tsx
 //request:
@@ -405,6 +406,7 @@ If `mappings` would be `{totals: "t", values: "v"}`, the response would look lik
   }
 
 ```
+
 More-over, you can also give aggregationReducers shorter keys to make the server response even more compact
 
 ```tsx

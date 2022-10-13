@@ -1,8 +1,4 @@
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -49,11 +45,9 @@ export default function LocalUncontrolledSingleSortingExample() {
         defaultSortInfo={{
           field: 'salary',
           dir: 1,
-        }}>
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnDefaultWidth={220}
-        />
+        }}
+      >
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
       </DataSource>
     </>
   );

@@ -22,9 +22,7 @@ type Developer = {
 };
 
 const dataSource: DataSourceData<Developer> = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql`
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -47,14 +45,16 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default function KeyboardNavigationForCells() {
-  const [activeCellIndex, setActiveCellIndex] =
-    React.useState<[number, number] | null>(null);
+  const [activeCellIndex, setActiveCellIndex] = React.useState<
+    [number, number] | null
+  >(null);
   return (
     <>
       <div
         style={{
           color: 'var(--infinite-cell-color)',
-        }}>
+        }}
+      >
         Current active cell:{' '}
         {activeCellIndex ? (
           <>
@@ -70,9 +70,7 @@ export default function KeyboardNavigationForCells() {
           </button>
         </div>
       </div>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           activeCellIndex={activeCellIndex}
           onActiveCellIndexChange={setActiveCellIndex}

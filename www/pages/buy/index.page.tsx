@@ -1,27 +1,24 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-
-import IndexWrapper from '@www/components/IndexWrapper';
 import { Elements } from '@stripe/react-stripe-js';
-
 import {
   Appearance,
   loadStripe,
   StripeElementsOptions,
 } from '@stripe/stripe-js';
-import CheckoutForm from './CheckoutForm';
+import IndexWrapper from '@www/components/IndexWrapper';
 import { colorVariables } from '@www/styles/utils.css';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+
+import CheckoutForm from './CheckoutForm';
 
 const primaryDark = require('../../colors')['primary'];
 
 const stripePromise = loadStripe(
   //@ts-ignore
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 );
 
-const root =
-  process.env.NEXT_PUBLIC_DOMAIN ||
-  'https://infinite-table.com';
+const root = process.env.NEXT_PUBLIC_DOMAIN || 'https://infinite-table.com';
 export default function BuyPage() {
   const [clientSecret, setClientSecret] = useState('');
 

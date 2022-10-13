@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -9,8 +7,8 @@ import {
   InfiniteTableColumnSizingOptions,
   InfiniteTablePropColumnSizing,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 import { useState } from 'react';
 
 type Developer = {
@@ -29,9 +27,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -63,10 +59,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
 };
 
-const columnGrous: Record<
-  string,
-  InfiniteTableColumnGroup
-> = {
+const columnGrous: Record<string, InfiniteTableColumnGroup> = {
   regionalInfo: {
     header: 'Regional Info',
   },
@@ -96,9 +89,7 @@ export default function ColumnValueGetterExample() {
           <pre>{JSON.stringify(columnSizing, null, 2)}</pre>
         </code>
       </p>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           columnSizing={columnSizing}
           onColumnSizingChange={setColumnSizing}

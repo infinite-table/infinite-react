@@ -1,6 +1,3 @@
-import * as React from 'react';
-// @ts-ignore
-import { flushSync } from 'react-dom';
 import {
   useSandpack,
   useActiveCode,
@@ -8,15 +5,18 @@ import {
   SandpackThemeProvider,
   SandpackLayout,
 } from '@codesandbox/sandpack-react';
+import { IconChevron } from '@www/components/Icon/IconChevron';
+import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
+import * as React from 'react';
+// @ts-ignore
+import { CSSProperties } from 'react';
+import { useState } from 'react';
+import { flushSync } from 'react-dom';
 import scrollIntoView from 'scroll-into-view-if-needed';
 
-import { IconChevron } from '@www/components/Icon/IconChevron';
 import { NavigationBar } from './NavigationBar';
 import { Preview } from './Preview';
 import { CustomTheme } from './Themes';
-import { CSSProperties } from 'react';
-import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
-import { useState } from 'react';
 
 export function CustomPreset({
   isSingleFile,
@@ -71,7 +71,9 @@ export function CustomPreset({
   // }, []);
 
   const { code } = useActiveCode();
-  let [isExpanded, setIsExpanded] = React.useState(false);
+  const [_isExpanded, setIsExpanded] = React.useState(false);
+
+  let isExpanded = _isExpanded;
 
   const { activeFile } = sandpack;
   const activePath = activeFile;

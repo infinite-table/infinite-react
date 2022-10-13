@@ -15,11 +15,10 @@ You don't have to specify an initial column order or any other callback props to
 
 If using the <PropLink name="defaultColumnOrder" code={false}>default uncontrolled column order</PropLink> is not enough, try using the controlled <PropLink name="columnOrder" /> prop, which gives you full control over the order of the columns - in this case, you have to update the column order as a result of user interaction, by specyfing <PropLink name="onColumnOrderChange" />.
 
-
-
 <Sandpack title="Column reordering via drag & drop with controlled `columnOrder`">
 
 ```tsx file=../../reference/columnOrder-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -40,8 +39,8 @@ The <PropLink name="columnOrder" /> array can contain any number of columns, eve
 In this example, <PropLink name="columnOrder" /> is used as a controlled property, also as a way of limiting the visible columns.
 </Description>
 
-
 ```tsx file=../../reference/columnOrder-advanced-example.page.tsx
+
 ```
 
 </Sandpack>
@@ -52,8 +51,6 @@ The <PropLink name="columnOrder" /> prop can either be an array of strings (colu
 
 </Note>
 
-
 For all of the above examples, <PropLink name="columnVisibility" /> will also be taken into account, as it is the last source of truth for the visibility of a column.
 
 Using <PropLink name="columnOrder" /> in combination with <PropLink name="columnVisibility" /> is very powerful - for example, you can have a specific column order even for columns which are not visible at a certain moment, so when they will be made visible, you'll know exactly where they will be displayed.
-

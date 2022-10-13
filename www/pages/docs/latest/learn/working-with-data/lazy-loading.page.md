@@ -6,11 +6,12 @@ With `InfiniteTable` you can lazily load data on demand - loading data is trigge
 
 We call this `"lazy loading"`, and it needs to be enabled by specifying the <DataSourcePropLink name="lazyLoad">DataSource.lazyLoad</DataSourcePropLink> prop.
 
-
 <Sandpack title="Lazy loading ungrouped and unpivoted data">
 
 ```ts file=simple-lazy-load-example.page.tsx
+
 ```
+
 </Sandpack>
 
 <Note>
@@ -29,18 +30,17 @@ For lazy loading to work, the <DataSourcePropLink name="data" /> function in the
   totalCount: 10000
 }
 ```
+
 The `DataSource.data` function will be called with an object with the following properties:
 
- * `sortInfo` - details about current sorting state
- * `pivotBy` - an array that describes the current pivot state
- * `aggregationReducers` - an object with the aggregation to apply to the data
- * `groupBy` - array that specifies the current grouping information
- * `groupKeys` - an array of the current group keys (if grouping is enabled). This uniquely identifies the current group.
+- `sortInfo` - details about current sorting state
+- `pivotBy` - an array that describes the current pivot state
+- `aggregationReducers` - an object with the aggregation to apply to the data
+- `groupBy` - array that specifies the current grouping information
+- `groupKeys` - an array of the current group keys (if grouping is enabled). This uniquely identifies the current group.
 
- * `lazyLoadStartIndex` - the index (in the total remote datasource) of the first record to be loaded
- * `lazyLoadBatchSize` - the number of records to be loaded in this batch
-
-
+- `lazyLoadStartIndex` - the index (in the total remote datasource) of the first record to be loaded
+- `lazyLoadBatchSize` - the number of records to be loaded in this batch
 
 <HeroCards>
 <YouWillLearnCard title="Server-side Grouping Rows" path="../grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading">
@@ -50,4 +50,3 @@ Find out about server-side grouping
 Find out about server-side pivoting
 </YouWillLearnCard>
 </HeroCards>
-

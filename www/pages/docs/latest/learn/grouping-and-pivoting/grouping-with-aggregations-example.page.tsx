@@ -1,10 +1,8 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
 } from '@infinite-table/infinite-react';
-
 import type {
   InfiniteTableColumn,
   InfiniteTablePropColumns,
@@ -12,6 +10,7 @@ import type {
   DataSourcePropAggregationReducers,
   DataSourceGroupBy,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -34,18 +33,17 @@ const avgReducer = {
   done: (value: number, arr: any[]) =>
     arr.length ? Math.floor(value / arr.length) : 0,
 };
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      field: 'salary',
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    field: 'salary',
 
-      ...avgReducer,
-    },
-    age: {
-      field: 'age',
-      ...avgReducer,
-    },
-  };
+    ...avgReducer,
+  },
+  age: {
+    field: 'age',
+    ...avgReducer,
+  },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
@@ -96,23 +94,23 @@ const defaultGroupRowsState = new GroupRowsState({
 });
 
 export default function App() {
-  const groupBy: DataSourceGroupBy<Developer>[] =
-    React.useMemo(
-      () => [
-        {
-          field: 'country',
-        },
-        { field: 'stack' },
-      ],
-      []
-    );
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'country',
+      },
+      { field: 'stack' },
+    ],
+    [],
+  );
   return (
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
       defaultGroupRowsState={defaultGroupRowsState}
       aggregationReducers={aggregationReducers}
-      groupBy={groupBy}>
+      groupBy={groupBy}
+    >
       <InfiniteTable<Developer>
         groupRenderStrategy="single-column"
         groupColumn={groupColumn}
@@ -124,9 +122,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

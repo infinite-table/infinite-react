@@ -10,19 +10,18 @@ permalink: index.html
 
 ## What is Infinite?
 
-Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
+Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so:
 
-* [🔃 sorting](/docs/latest/learn/working-with-data/sorting)
-* [💪 row grouping](/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-* [🏢 pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
-* [🧪 aggregations](/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
-* [🌪️ live pagination](/docs/latest/learn/working-with-data/live-pagination)
-* [🌴 lazy loading](/docs/latest/learn/working-with-data/lazy-loading)
-* [🧭 keyboard navigation](/docs/latest/learn/keyboard-navigation/navigating-cells)
-* [↔️ fixed and flexible columns](/docs/latest/learn/columns/fixed-and-flexible-size)
-* [🧩 column grouping](/docs/latest/learn/column-groups)
-* [🎨 theming](/docs/latest/learn/theming)
-
+- [🔃 sorting](/docs/latest/learn/working-with-data/sorting)
+- [💪 row grouping](/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+- [🏢 pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
+- [🧪 aggregations](/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
+- [🌪️ live pagination](/docs/latest/learn/working-with-data/live-pagination)
+- [🌴 lazy loading](/docs/latest/learn/working-with-data/lazy-loading)
+- [🧭 keyboard navigation](/docs/latest/learn/keyboard-navigation/navigating-cells)
+- [↔️ fixed and flexible columns](/docs/latest/learn/columns/fixed-and-flexible-size)
+- [🧩 column grouping](/docs/latest/learn/column-groups)
+- [🎨 theming](/docs/latest/learn/theming)
 
 ## Installation
 
@@ -58,7 +57,6 @@ Our bundle size is under `200kB` and we're keeping it small.
 
 Our releases are automated and we have end-to-end tests that ensure we're delivering to our standards. Real-browser tests help us move with confidence and continue to ship great features.
 
-
 <HeroCards>
 <YouWillLearnCard title="End-to-end tests" newTab path="https://github.com/infinite-table/infinite-react/tree/master/source/examples/src/pages/tests">
 
@@ -73,17 +71,15 @@ See our bundle size in BundlePhobia
 </YouWillLearnCard>
 </HeroCards>
 
-
 ## 🎨 Themable
 
 `Infinite Table` is fully customizable, via CSS variables. It ships with both a **light** and a **dark** theme - you have to import the CSS file from the package.
 
 ```ts
-import "@infinite-table/infinite-react/index.css"
+import '@infinite-table/infinite-react/index.css';
 
 // This file includes both the light and the dark themes.
 ```
-
 
 <HeroCards>
 <YouWillLearnCard title="Theming with CSS variables" path="/docs/latest/learn/theming#css-variables">

@@ -29,7 +29,7 @@ type Developer = {
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(
     'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`
+      `/developers1k-sql?`,
   )
     .then((r) => r.json())
     .then((data: Developer[]) => data);
@@ -59,9 +59,9 @@ const rgb = {
   g: 149,
   b: 215,
 };
-const defaultColor = `#${rgb.r.toString(
-  16
-)}${rgb.g.toString(16)}${rgb.b.toString(16)}`;
+const defaultColor = `#${rgb.r.toString(16)}${rgb.g.toString(
+  16,
+)}${rgb.b.toString(16)}`;
 
 export default function KeyboardNavigationForRows() {
   const [color, setColor] = useState({
@@ -76,16 +76,13 @@ export default function KeyboardNavigationForRows() {
         '--infinite-active-cell-border-color--b': color.b,
         // for the same of the example being more obvious,
         // make the opacity of the unfocused table same as the one used on focus
-        '--infinite-active-cell-background-alpha--table-unfocused':
-          '0.25', // but this defaults to 0.1
+        '--infinite-active-cell-background-alpha--table-unfocused': '0.25', // but this defaults to 0.1
       },
     } as HTMLProps<HTMLDivElement>;
   }, [color]);
 
   const onChange = useMemo(() => {
-    const onColorChange = (
-      event: ChangeEvent<HTMLInputElement>
-    ) => {
+    const onColorChange = (event: ChangeEvent<HTMLInputElement>) => {
       const color = event.target.value;
 
       const r = parseInt(color.substr(1, 2), 16);
@@ -106,17 +103,12 @@ export default function KeyboardNavigationForRows() {
       <div
         style={{
           color: 'var(--infinite-cell-color)',
-        }}>
+        }}
+      >
         Select color{' '}
-        <input
-          type="color"
-          onChange={onChange}
-          defaultValue={defaultColor}
-        />
+        <input type="color" onChange={onChange} defaultValue={defaultColor} />
       </div>
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           keyboardNavigation="row"
           defaultActiveRowIndex={7}

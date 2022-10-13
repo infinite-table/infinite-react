@@ -1,11 +1,12 @@
-import * as React from 'react';
 import { MDXProvider } from '@mdx-js/react';
 import { DocsPageFooter } from '@www/components/DocsFooter';
 import { MDXComponents } from '@www/components/MDX/MDXComponents';
-import { Seo } from '@www/components/Seo';
 import PageHeading from '@www/components/PageHeading';
-import { useRouteMeta } from './useRouteMeta';
+import { Seo } from '@www/components/Seo';
+import * as React from 'react';
+
 import { Toc } from './Toc';
+import { useRouteMeta } from './useRouteMeta';
 export interface MarkdownProps<Frontmatter> {
   meta: Frontmatter & { description?: string };
   children?: React.ReactNode;
@@ -26,7 +27,7 @@ export function MarkdownPage<
   const description = meta.description || route?.description || '';
 
   const propsAnchors = [];
-  let anchors: Array<{
+  const anchors: Array<{
     url: string;
     text: React.ReactNode;
     depth: number;
@@ -138,7 +139,7 @@ export function MarkdownPage<
   // <MaxWidth> wrappers. Keep reusing the same
   // wrapper as long as we can until we meet
   // a full-width section which interrupts it.
-  let fullWidthTypes = [
+  const fullWidthTypes = [
     'Sandpack',
     'APIAnatomy',
     'FullWidth',
@@ -149,7 +150,7 @@ export function MarkdownPage<
     'Recipes',
   ];
   let wrapQueue: React.ReactNode[] = [];
-  let finalChildren: React.ReactNode[] = [];
+  const finalChildren: React.ReactNode[] = [];
   function flushWrapper(key: string | number) {
     if (wrapQueue.length > 0) {
       finalChildren.push(<MaxWidth key={key}>{wrapQueue}</MaxWidth>);

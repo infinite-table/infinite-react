@@ -1,19 +1,14 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropRowStyle,
   InfiniteTableRowInfo,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
-import {
-  columns,
-  Employee,
-} from './rowStyle-example-columns';
+import { columns, Employee } from './rowStyle-example-columns';
 
-const rowStyle: InfiniteTablePropRowStyle<Employee> = (
-  param
-) => {
+const rowStyle: InfiniteTablePropRowStyle<Employee> = (param) => {
   const { rowInfo } = param;
   if (rowInfo.isGroupRow) {
     return;
@@ -33,18 +28,13 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = (
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee>
-        columns={columns}
-        rowStyle={rowStyle}
-      />
+      <InfiniteTable<Employee> columns={columns} rowStyle={rowStyle} />
     </DataSource>
   );
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

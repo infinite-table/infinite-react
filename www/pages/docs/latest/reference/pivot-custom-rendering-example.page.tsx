@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   InfiniteTable,
   DataSource,
@@ -9,8 +7,8 @@ import {
   DataSourcePropAggregationReducers,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
-
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -28,9 +26,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -58,9 +54,7 @@ const defaultPivotBy: DataSourcePivotBy<Developer>[] = [
     field: 'canDesign',
     column: {
       renderValue: ({ value }) => {
-        return (
-          <span style={{ color: 'tomato' }}>{value}</span>
-        );
+        return <span style={{ color: 'tomato' }}>{value}</span>;
       },
       // use piped rendering - the renderBag object
       // contains the renderBag.value as returned by the `renderValue` fn
@@ -73,38 +67,31 @@ const defaultPivotBy: DataSourcePivotBy<Developer>[] = [
       return {
         ...columnGroup,
         header:
-          columnGroup.pivotGroupKey === 'yes'
-            ? 'Designer'
-            : 'Non-designer',
+          columnGroup.pivotGroupKey === 'yes' ? 'Designer' : 'Non-designer',
       };
     },
   },
 ];
 
-const avgReducer: InfiniteTableColumnAggregator<
-  Developer,
-  any
-> = {
+const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
   initialValue: 0,
 
   reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) =>
-    Math.round(arr.length ? sum / arr.length : 0),
+  done: (sum, arr) => Math.round(arr.length ? sum / arr.length : 0),
 };
 
-const aggregations: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      ...avgReducer,
-      name: 'Salary (avg)',
-      field: 'salary',
-    },
-    age: {
-      ...avgReducer,
-      name: 'Age (avg)',
-      field: 'age',
-    },
-  };
+const aggregations: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    ...avgReducer,
+    name: 'Salary (avg)',
+    field: 'salary',
+  },
+  age: {
+    ...avgReducer,
+    name: 'Age (avg)',
+    field: 'age',
+  },
+};
 
 const groupColumn: InfiniteTableColumn<Developer> = {
   renderSelectionCheckBox: false,
@@ -118,7 +105,8 @@ export default function ColumnValueGetterExample() {
         defaultGroupBy={defaultGroupBy}
         defaultPivotBy={defaultPivotBy}
         aggregationReducers={aggregations}
-        data={dataSource}>
+        data={dataSource}
+      >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>

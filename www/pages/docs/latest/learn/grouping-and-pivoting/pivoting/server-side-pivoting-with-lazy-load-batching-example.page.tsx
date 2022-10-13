@@ -1,10 +1,8 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
 } from '@infinite-table/infinite-react';
-
 import type {
   DataSourceData,
   InfiniteTablePropColumns,
@@ -15,6 +13,7 @@ import type {
   InfiniteTablePropColumnPinning,
   InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -31,19 +30,18 @@ type Developer = {
   age: number;
 };
 
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    salary: {
-      name: 'Salary (avg)',
-      field: 'salary',
-      reducer: 'avg',
-    },
-    age: {
-      name: 'Age (avg)',
-      field: 'age',
-      reducer: 'avg',
-    },
-  };
+const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
+  salary: {
+    name: 'Salary (avg)',
+    field: 'salary',
+    reducer: 'avg',
+  },
+  age: {
+    name: 'Age (avg)',
+    field: 'age',
+    reducer: 'avg',
+  },
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
@@ -72,16 +70,14 @@ const groupRowsState = new GroupRowsState({
   collapsedRows: true,
 });
 
-const groupColumn: InfiniteTablePropGroupColumn<Developer> =
-  {
-    id: 'group-col',
-    // while loading, we can render a custom loading icon
-    renderGroupIcon: ({ renderBag: { groupIcon }, data }) =>
-      !data ? '🤷‍' : groupIcon,
-    // while we have no data, we can render a placeholder
-    renderValue: ({ data, value }) =>
-      !data ? ' Loading...' : value,
-  };
+const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
+  id: 'group-col',
+  // while loading, we can render a custom loading icon
+  renderGroupIcon: ({ renderBag: { groupIcon }, data }) =>
+    !data ? '🤷‍' : groupIcon,
+  // while we have no data, we can render a placeholder
+  renderValue: ({ data, value }) => (!data ? ' Loading...' : value),
+};
 
 const columnPinning: InfiniteTablePropColumnPinning = {
   'group-col': 'start',
@@ -99,46 +95,41 @@ const pivotColumnWithFormatter = ({
   };
 };
 export default function RemotePivotExample() {
-  const groupBy: DataSourceGroupBy<Developer>[] =
-    React.useMemo(
-      () => [
-        {
-          field: 'country',
-        },
-        { field: 'city' },
-      ],
-      []
-    );
-
-  const pivotBy: DataSourcePivotBy<Developer>[] =
-    React.useMemo(
-      () => [
-        {
-          field: 'preferredLanguage',
-          // for totals columns
-          column: pivotColumnWithFormatter,
-        },
-        {
-          field: 'canDesign',
-          columnGroup: ({ columnGroup }) => {
-            return {
-              ...columnGroup,
-              header:
-                columnGroup.pivotGroupKey === 'yes'
-                  ? 'Designer 💅'
-                  : 'Non-Designer 💻',
-            };
-          },
-          column: pivotColumnWithFormatter,
-        },
-      ],
-      []
-    );
-
-  const lazyLoad = React.useMemo(
-    () => ({ batchSize: 10 }),
-    []
+  const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'country',
+      },
+      { field: 'city' },
+    ],
+    [],
   );
+
+  const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
+    () => [
+      {
+        field: 'preferredLanguage',
+        // for totals columns
+        column: pivotColumnWithFormatter,
+      },
+      {
+        field: 'canDesign',
+        columnGroup: ({ columnGroup }) => {
+          return {
+            ...columnGroup,
+            header:
+              columnGroup.pivotGroupKey === 'yes'
+                ? 'Designer 💅'
+                : 'Non-Designer 💻',
+          };
+        },
+        column: pivotColumnWithFormatter,
+      },
+    ],
+    [],
+  );
+
+  const lazyLoad = React.useMemo(() => ({ batchSize: 10 }), []);
   return (
     <DataSource<Developer>
       primaryKey="id"
@@ -147,7 +138,8 @@ export default function RemotePivotExample() {
       pivotBy={pivotBy.length ? pivotBy : undefined}
       aggregationReducers={aggregationReducers}
       defaultGroupRowsState={groupRowsState}
-      lazyLoad={lazyLoad}>
+      lazyLoad={lazyLoad}
+    >
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>
@@ -188,17 +180,11 @@ const dataSource: DataSourceData<Developer> = ({
   const args = [
     ...startLimit,
     pivotBy
-      ? 'pivotBy=' +
-        JSON.stringify(
-          pivotBy.map((p) => ({ field: p.field }))
-        )
+      ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
     groupBy
-      ? 'groupBy=' +
-        JSON.stringify(
-          groupBy.map((p) => ({ field: p.field }))
-        )
+      ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,
     sortInfo
       ? 'sortInfo=' +
@@ -206,7 +192,7 @@ const dataSource: DataSourceData<Developer> = ({
           sortInfo.map((s) => ({
             field: s.field,
             dir: s.dir,
-          }))
+          })),
         )
       : null,
     aggregationReducers
@@ -216,15 +202,13 @@ const dataSource: DataSourceData<Developer> = ({
             field: aggregationReducers[key].field,
             id: key,
             name: aggregationReducers[key].reducer,
-          }))
+          })),
         )
       : null,
   ]
     .filter(Boolean)
     .join('&');
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL +
-      `/developers30k-sql?` +
-      args
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers30k-sql?` + args,
   ).then((r) => r.json());
 };

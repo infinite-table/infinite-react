@@ -26,7 +26,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install
-        run: npm ci --force && npm ci --force  --prefix source && npm ci --force  --prefix source/examples
+        run: npm ci --force
+        # run: npm ci --force && npm ci --force  --prefix source && npm ci --force  --prefix source/examples
       # - name: Linting
       #   run: npm run lint
       #   working-directory: source

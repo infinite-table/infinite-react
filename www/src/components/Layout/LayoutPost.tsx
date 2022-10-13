@@ -2,18 +2,19 @@ import { MDXProvider } from '@mdx-js/react';
 import recentPostsRouteTree from '@www/blogIndexRecent.json';
 import { DocsPageFooter } from '@www/components/DocsFooter';
 import { ExternalLink } from '@www/components/ExternalLink';
+import { Toc } from '@www/components/Layout/Toc';
 import { MDXComponents } from '@www/components/MDX/MDXComponents';
 import { Seo } from '@www/components/Seo';
-import { Toc } from '@www/components/Layout/Toc';
+import { getAuthor } from '@www/utils/getAuthor';
+import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
 import format from 'date-fns/format';
 import { useRouter } from 'next/router';
 import * as React from 'react';
-import { getAuthor } from '@www/utils/getAuthor';
-import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
+
+import { getSidebarHome } from './getSidebarHome';
 import { Page } from './Page';
 import { RouteItem, useRouteMeta } from './useRouteMeta';
 import { useTwitter } from './useTwitter';
-import { getSidebarHome } from './getSidebarHome';
 
 interface PageFrontmatter {
   id?: string;
@@ -73,6 +74,8 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
       depth: parseInt(child.props.mdxType.replace('h', ''), 0),
       text: child.props.children,
     }));
+
+  /* eslint-disable react-hooks/rules-of-hooks */
   useTwitter();
   return (
     <>

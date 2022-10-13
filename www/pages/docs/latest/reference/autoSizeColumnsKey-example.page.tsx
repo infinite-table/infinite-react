@@ -1,11 +1,6 @@
-import * as React from 'react';
-
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -23,9 +18,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -43,8 +36,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 export default function GroupByExample() {
   const [key, setKey] = React.useState(0);
-  const [includeHeader, setIncludeHeader] =
-    React.useState(false);
+  const [includeHeader, setIncludeHeader] = React.useState(false);
 
   const autoSizeColumnsKey = React.useMemo(() => {
     return {
@@ -58,7 +50,8 @@ export default function GroupByExample() {
         style={{
           color: 'var(--infinite-cell-color)',
           background: 'var(--infinite-background)',
-        }}>
+        }}
+      >
         <label>
           <input
             checked={includeHeader}
@@ -79,14 +72,13 @@ export default function GroupByExample() {
           }}
           onClick={() => {
             setKey((key) => key + 1);
-          }}>
+          }}
+        >
           Click to auto-size
         </button>
       </div>
 
-      <DataSource<Developer>
-        primaryKey="id"
-        data={dataSource}>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
           autoSizeColumnsKey={autoSizeColumnsKey}
           columns={columns}

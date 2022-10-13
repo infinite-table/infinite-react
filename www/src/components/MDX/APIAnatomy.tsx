@@ -1,6 +1,8 @@
-import * as React from 'react';
 import cn from 'classnames';
+import * as React from 'react';
+
 import tailwindConfig from '../../../tailwind.config';
+
 import CodeBlock from './CodeBlock';
 
 interface APIAnatomyProps {

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -6,6 +5,7 @@ import {
   InfiniteTablePropColumns,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 type Developer = {
   id: number;
@@ -23,9 +23,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers1k'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -46,9 +44,7 @@ const groupBy: DataSourcePropGroupBy<Developer> = [
     field: 'country',
     column: {
       header: 'Country group',
-      renderGroupValue: ({ value }) => (
-        <>Country: {value}</>
-      ),
+      renderGroupValue: ({ value }) => <>Country: {value}</>,
     },
   },
   { field: 'preferredLanguage' },
@@ -59,12 +55,9 @@ const groupColumn: InfiniteTableColumn<Developer> = {
     return (
       <div
         onClick={toggleCurrentGroupRow}
-        style={{ cursor: 'pointer', marginRight: 10 }}>
-        {rowInfo.isGroupRow
-          ? rowInfo.collapsed
-            ? '👇'
-            : '👉'
-          : ''}
+        style={{ cursor: 'pointer', marginRight: 10 }}
+      >
+        {rowInfo.isGroupRow ? (rowInfo.collapsed ? '👇' : '👉') : ''}
       </div>
     );
   },
@@ -72,14 +65,8 @@ const groupColumn: InfiniteTableColumn<Developer> = {
 
 export default function App() {
   return (
-    <DataSource<Developer>
-      data={dataSource}
-      primaryKey="id"
-      groupBy={groupBy}>
-      <InfiniteTable<Developer>
-        columns={columns}
-        groupColumn={groupColumn}
-      />
+    <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
+      <InfiniteTable<Developer> columns={columns} groupColumn={groupColumn} />
     </DataSource>
   );
 }

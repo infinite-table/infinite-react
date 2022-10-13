@@ -1,22 +1,20 @@
-import * as React from 'react';
-import cn from 'classnames';
-import { SidebarContext } from '@www/components/Layout/useRouteMeta';
-import { MenuContext } from '@www/components/useMenu';
-import { useMediaQuery } from '../useMediaQuery';
-import { SidebarRouteTree } from './SidebarRouteTree';
-import { Search } from '@www/components/Search';
 import { Button } from '@www/components/Button';
-import { MobileNav } from '../Nav/MobileNav';
 import { ExternalLink } from '@www/components/ExternalLink';
 import { IconOpenInWindow } from '@www/components/Icon/IconOpenInWindow';
+import { SidebarContext } from '@www/components/Layout/useRouteMeta';
+import { Search } from '@www/components/Search';
+import { MenuContext } from '@www/components/useMenu';
+import cn from 'classnames';
+import * as React from 'react';
+
+import { MobileNav } from '../Nav/MobileNav';
+import { useMediaQuery } from '../useMediaQuery';
+
+import { SidebarRouteTree } from './SidebarRouteTree';
 
 const SIDEBAR_BREAKPOINT = 1023;
 
-export function Sidebar({
-  isMobileOnly,
-}: {
-  isMobileOnly?: boolean;
-}) {
+export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
   const { menuRef, isOpen } = React.useContext(MenuContext);
   const isMobileSidebar = useMediaQuery(SIDEBAR_BREAKPOINT);
   let routeTree = React.useContext(SidebarContext);
@@ -29,7 +27,7 @@ export function Sidebar({
 
   function handleFeedback() {
     const nodes: any = document.querySelectorAll(
-      '#_hj_feedback_container button'
+      '#_hj_feedback_container button',
     );
     if (nodes.length > 0) {
       nodes[nodes.length - 1].click();
@@ -44,14 +42,10 @@ export function Sidebar({
       width="18"
       height="18"
       className="mr-2"
-      viewBox="0 0 24 24">
-      <g
-        fill="none"
-        fillRule="evenodd"
-        transform="translate(-444 -204)">
-        <g
-          fill="currentColor"
-          transform="translate(354.5 205)">
+      viewBox="0 0 24 24"
+    >
+      <g fill="none" fillRule="evenodd" transform="translate(-444 -204)">
+        <g fill="currentColor" transform="translate(354.5 205)">
           <path d="M102.75 14C102.75 14.6905 102.1905 15.25 101.5 15.25 100.8095 15.25 100.25 14.6905 100.25 14 100.25 13.3095 100.8095 12.75 101.5 12.75 102.1905 12.75 102.75 13.3095 102.75 14M101 5.25L101.5 11 102 5.25C102 5.25 102 4.75 101.5 4.75 101 4.75 101 5.25 101 5.25" />
           <path
             fillRule="nonzero"
@@ -70,23 +64,23 @@ export function Sidebar({
     <aside
       className={cn(
         `lg:flex-grow lg:flex flex-col w-full pt-4 pb-8 lg:pb-0 lg:max-w-xs fixed lg:sticky bg-wash dark:bg-wash-dark z-10`,
-        isOpen ? 'block z-40' : 'hidden lg:block'
+        isOpen ? 'block z-40' : 'hidden lg:block',
       )}
       aria-hidden={isHidden ? 'true' : 'false'}
       style={{
         top: 0,
         visibility: isHidden ? 'hidden' : undefined,
-      }}>
+      }}
+    >
       {/* <div className="px-5"> */}
       {/* <Search /> TODO uncomment search component */}
       {/* </div> */}
       <nav
         role="navigation"
         ref={menuRef}
-        style={
-          { '--bg-opacity': '.2' } as React.CSSProperties
-        } // Need to cast here because CSS vars aren't considered valid in TS types (cuz they could be anything)
-        className="w-full h-screen lg:h-auto flex-grow pr-0 lg:pr-5 pt-6 pb-44 lg:pb-0 lg:py-6 md:pt-4 lg:pt-4 overflow-y-scroll lg:overflow-y-auto scrolling-touch scrolling-gpu">
+        style={{ '--bg-opacity': '.2' } as React.CSSProperties} // Need to cast here because CSS vars aren't considered valid in TS types (cuz they could be anything)
+        className="w-full h-screen lg:h-auto flex-grow pr-0 lg:pr-5 pt-6 pb-44 lg:pb-0 lg:py-6 md:pt-4 lg:pt-4 overflow-y-scroll lg:overflow-y-auto scrolling-touch scrolling-gpu"
+      >
         {isMobileSidebar ? (
           <MobileNav />
         ) : (
@@ -97,31 +91,35 @@ export function Sidebar({
         <ExternalLink
           href="https://twitter.com/get_infinite"
           aria-label="InfiniteTable on Twitter"
-          className="hover:text-link dark:hover:text-link mb-5">
+          className="hover:text-link dark:hover:text-link mb-5"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             width="1.33em"
             height="1.33em"
-            fill="currentColor">
+            fill="currentColor"
+          >
             <path fill="none" d="M0 0h24v24H0z"></path>
             <path d="M22.162 5.656a8.384 8.384 0 0 1-2.402.658A4.196 4.196 0 0 0 21.6 4c-.82.488-1.719.83-2.656 1.015a4.182 4.182 0 0 0-7.126 3.814 11.874 11.874 0 0 1-8.62-4.37 4.168 4.168 0 0 0-.566 2.103c0 1.45.738 2.731 1.86 3.481a4.168 4.168 0 0 1-1.894-.523v.052a4.185 4.185 0 0 0 3.355 4.101 4.21 4.21 0 0 1-1.89.072A4.185 4.185 0 0 0 7.97 16.65a8.394 8.394 0 0 1-6.191 1.732 11.83 11.83 0 0 0 6.41 1.88c7.693 0 11.9-6.373 11.9-11.9 0-.18-.005-.362-.013-.54a8.496 8.496 0 0 0 2.087-2.165z"></path>
           </svg>
         </ExternalLink>
         <ExternalLink
           className="hover:text-link dark:hover:text-link mb-5"
-          href="https://github.com/infinite-table/infinite-react">
-          GitHub{' '}
-          <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
+          href="https://github.com/infinite-table/infinite-react"
+        >
+          GitHub <IconOpenInWindow className="inline mb-2 mr-1 mt-1 text-sm" />{' '}
         </ExternalLink>
         <Button
           as="div"
-          className="w-full text-center justify-center leading-relaxed">
+          className="w-full text-center justify-center leading-relaxed"
+        >
           Officially Launching in October 2022
         </Button>
         <Button
           className="w-full text-center justify-center"
-          onClick={handleFeedback}>
+          onClick={handleFeedback}
+        >
           {feedbackIcon} Feedback
         </Button>
       </div>

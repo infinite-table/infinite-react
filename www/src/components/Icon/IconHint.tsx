@@ -1,5 +1,5 @@
-import * as React from 'react';
 import cn from 'classnames';
+import * as React from 'react';
 
 export const IconHint = React.memo<JSX.IntrinsicElements['svg']>(
   function IconHint({ className }) {

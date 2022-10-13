@@ -1,17 +1,10 @@
-import * as React from 'react';
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
-
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import * as React from 'react';
 
 import { data, Person } from './data';
 
-const columns: Record<
-  string,
-  InfiniteTableColumn<Person>
-> = {
+const columns: Record<string, InfiniteTableColumn<Person>> = {
   id: {
     // specifies which field from the data source
     // should be rendered in this column

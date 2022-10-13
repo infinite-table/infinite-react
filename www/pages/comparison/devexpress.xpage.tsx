@@ -1,5 +1,6 @@
-import React from 'react';
 import Head from 'next/head';
+import React from 'react';
+
 import App from './devexpress.app';
 
 class Page extends React.Component {

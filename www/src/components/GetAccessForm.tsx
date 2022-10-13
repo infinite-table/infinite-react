@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   margin,
   display,
@@ -17,21 +16,13 @@ import {
   marginY,
   textAlign,
 } from '@www/styles/utils.css';
+import * as React from 'react';
 
-import {
-  width100,
-  email,
-  submitButton,
-} from './components.css';
+import { width100, email, submitButton } from './components.css';
 
 function encode(data: any) {
   return Object.keys(data)
-    .map(
-      (key) =>
-        encodeURIComponent(key) +
-        '=' +
-        encodeURIComponent(data[key])
-    )
+    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
     .join('&');
 }
 
@@ -54,9 +45,7 @@ export const GetAccessForm = () => {
     })
       .then(() => {
         setEmail('');
-        setThankyou(
-          "Thank you for your interest! We'll get in touch soon."
-        );
+        setThankyou("Thank you for your interest! We'll get in touch soon.");
       })
       .catch((error) => {});
   };
@@ -67,9 +56,11 @@ export const GetAccessForm = () => {
       data-netlify="true"
       data-netlify-honeypot="bot-field"
       className={`${margin[6]} ${width100} ${display.flex} ${flexDirection.column}`}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       <div
-        className={` ${display.flex} ${flexDirection.row} ${justifyContent.center}`}>
+        className={` ${display.flex} ${flexDirection.row} ${justifyContent.center}`}
+      >
         <input
           placeholder="john@email.com"
           style={{ width: '60%' }}
@@ -87,12 +78,14 @@ export const GetAccessForm = () => {
       </div>
 
       <div
-        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize['xl']} ${textAlign.center}`}>
+        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize['xl']} ${textAlign.center}`}
+      >
         {thankyou}
       </div>
       <button
         type="submit"
-        className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} ${backgroundColorBrandDark} ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}>
+        className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} ${backgroundColorBrandDark} ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
+      >
         Get Access
       </button>
     </form>

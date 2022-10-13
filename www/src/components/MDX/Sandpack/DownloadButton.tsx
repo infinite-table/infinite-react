@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { useSandpack } from '@codesandbox/sandpack-react';
-import { IconArrowSmall } from '../../Icon/IconArrowSmall';
-export interface DownloadButtonProps {}
+import * as React from 'react';
 
-export const DownloadButton: React.FC<DownloadButtonProps> = () => {
+import { IconArrowSmall } from '../../Icon/IconArrowSmall';
+
+export const DownloadButton: React.FC = () => {
   const { sandpack } = useSandpack();
   const [supported, setSupported] = React.useState(false);
   React.useEffect(() => {

@@ -23,7 +23,5 @@ export type Developer = {
   streetPrefix: string;
 };
 
-export type GroupByDeveloperType =
-  DataSourceGroupBy<Developer>[];
-export type PivotByDeveloperType =
-  DataSourcePivotBy<Developer>[];
+export type GroupByDeveloperType = DataSourceGroupBy<Developer>[];
+export type PivotByDeveloperType = DataSourcePivotBy<Developer>[];
