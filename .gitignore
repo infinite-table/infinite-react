@@ -80,6 +80,7 @@ node_modules
 
 .npmrc
 /source/examples/out
+/examples/out
 /source/out
 /www/out
 react-test

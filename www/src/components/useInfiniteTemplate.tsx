@@ -3,18 +3,14 @@
 import { SandpackFile } from '@codesandbox/sandpack-react';
 
 export interface TemplateConfig {
-  sandpackTemplate: 'react-ts';
+  sandpackTemplate: 'react';
   sandpackTemplateFiles: Record<string, SandpackFile>;
   validCustomFileNames: string[];
 }
 
 export const useInfiniteTemplate = (): TemplateConfig => {
-  const validCustomFileNames = [
-    'index.tsx',
-    'App.tsx',
-    'styles.css',
-  ];
-  const sandpackTemplate = 'react-ts';
+  const validCustomFileNames = ['index.tsx', 'App.tsx', 'styles.css'];
+  const sandpackTemplate = 'react';
   const sandpackTemplateFiles = getReactTemplateFiles();
 
   return {
@@ -23,10 +19,7 @@ export const useInfiniteTemplate = (): TemplateConfig => {
     sandpackTemplateFiles,
   };
 };
-const getReactTemplateFiles = (): Record<
-  string,
-  SandpackFile
-> => {
+const getReactTemplateFiles = (): Record<string, SandpackFile> => {
   return {
     '/src/App.tsx': {
       code: BASE_FILE_REACT_APP,
@@ -57,14 +50,15 @@ const BASE_FILE_REACT_APP = ``;
 // );
 const BASE_FILE_REACT_INDEX = `
 import * as React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import '@infinite-table/infinite-react/index.css';
 
 import App from './App';
 import './styles.css';
 
-render(<App />, document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
+root.render(<App />);
 
 `;
 // const BASE_FILE_REACT_STYLES = raw(

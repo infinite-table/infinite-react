@@ -1,3 +1,4 @@
+//@ts-nocheck - this file is not being used
 import * as React from 'react';
 
 import type { InfiniteTableRowProps } from './InfiniteTableRowTypes';

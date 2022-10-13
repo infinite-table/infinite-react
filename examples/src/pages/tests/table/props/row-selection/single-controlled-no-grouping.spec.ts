@@ -1,13 +1,15 @@
 import { test, expect } from '@testing';
 
-export default test.describe.parallel('Controlled Row Selection', () => {
+export default test.describe
+  .parallel('Controlled Row Selection', () => {
   test('should toggle correctly, even when no explicit selectionMode="single-row" is specified', async ({
     page,
     rowModel,
   }) => {
     await page.waitForInfinite();
 
-    let ids = await rowModel.getSelectedRowIdsForVisibleRows();
+    let ids =
+      await rowModel.getSelectedRowIdsForVisibleRows();
 
     expect(ids).toEqual(['3']);
 

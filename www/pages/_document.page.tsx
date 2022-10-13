@@ -1,10 +1,7 @@
 import * as React from 'react';
-import Document, {
-  Html,
-  Head,
-  Main,
-  NextScript,
-} from 'next/document';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+
+import { getSandpackCssText } from '@codesandbox/sandpack-react';
 
 //@ts-ignore
 class MyDocument extends Document {
@@ -12,7 +9,12 @@ class MyDocument extends Document {
     //  @todo specify language in HTML?
     return (
       <Html lang="en">
-        <Head />
+        <Head>
+          <style
+            dangerouslySetInnerHTML={{ __html: getSandpackCssText() }}
+            id="sandpack"
+          />
+        </Head>
         <body className="font-sans antialiased text-lg bg-wash dark:bg-wash-dark text-secondary dark:text-secondary-dark leading-base">
           <script
             dangerouslySetInnerHTML={{

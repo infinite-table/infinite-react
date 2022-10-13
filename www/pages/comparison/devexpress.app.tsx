@@ -3,18 +3,19 @@ import DataGrid, {
   Column,
   GroupPanel,
   Scrolling,
+  // @ts-ignore
 } from 'devextreme-react/data-grid';
 
 import { columns, COLUMN_WIDTH } from './columns';
 
-const url =
-  process.env.NEXT_PUBLIC_BASE_URL + '/developers10k';
+const url = process.env.NEXT_PUBLIC_BASE_URL + '/developers10k';
 
 let groupIndex = 0;
 
 class App extends React.Component {
   render() {
     return (
+      // @ts-ignore
       <DataGrid
         allowColumnResizing
         allowColumnReordering
@@ -25,16 +26,12 @@ class App extends React.Component {
         dataSource={url}
         keyExpr="id"
         showBorders={true}
-        columnWidth={COLUMN_WIDTH}>
+        columnWidth={COLUMN_WIDTH}
+      >
         <GroupPanel />
-        <Scrolling
-          mode="virtual"
-          columnRenderingMode="virtual"
-        />
+        <Scrolling mode="virtual" columnRenderingMode="virtual" />
         {columns.map((column, index) => {
-          const columnProps: React.ComponentProps<
-            typeof Column
-          > = {
+          const columnProps: React.ComponentProps<typeof Column> = {
             dataField: column.field,
             calculateCellValue: column.getValue,
             caption: column.header,

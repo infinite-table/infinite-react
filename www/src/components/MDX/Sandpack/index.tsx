@@ -12,8 +12,8 @@ import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 const DEPS_VERSIONS: Record<string, string> = {
   '@infinite-table/infinite-react': process.env
     .NEXT_PUBLIC_INFINITE_REACT_VERSION as string,
-  'react-query': '3.34.8',
-  'react-select': '5.2.2',
+  'react-query': '3.35.0',
+  'react-select': '5.4.0',
   'devextreme-react': '21.2.6',
   devextreme: '21.2.6',
   'ag-grid-community': '27.1.0',
@@ -34,30 +34,22 @@ function Sandpack(props: SandpackProps) {
   let { children, setup, autorun = true, title } = props;
   let [resetKey, setResetKey] = React.useState(0);
 
-  const isSandpackDescriptionElement = (
-    el: React.ReactElement
-  ) => el.props.mdxType === 'Description';
+  const isSandpackDescriptionElement = (el: React.ReactElement) =>
+    el.props.mdxType === 'Description';
 
   const sandpackChildren = React.Children.toArray(
-    children
+    //@ts-ignore
+    children,
   ) as React.ReactElement[];
   const codeSnippets = sandpackChildren.filter(
-    (el) => !isSandpackDescriptionElement(el)
+    (el) => !isSandpackDescriptionElement(el),
   );
-  const description = sandpackChildren.find(
-    isSandpackDescriptionElement
-  );
+  const description = sandpackChildren.find(isSandpackDescriptionElement);
 
-  const { sandpackTemplateFiles, validCustomFileNames } =
-    useInfiniteTemplate();
+  const { sandpackTemplateFiles, validCustomFileNames } = useInfiniteTemplate();
 
-  const getMetaTag = (
-    tag: string,
-    metaTags: string[]
-  ): string | undefined => {
-    const metaTag = metaTags?.find((metaTag) =>
-      metaTag.startsWith(`${tag}=`)
-    );
+  const getMetaTag = (tag: string, metaTags: string[]): string | undefined => {
+    const metaTag = metaTags?.find((metaTag) => metaTag.startsWith(`${tag}=`));
     if (!metaTag) {
       return;
     }
@@ -65,11 +57,12 @@ function Sandpack(props: SandpackProps) {
     return metaTagValue;
   };
 
+  let activeFilePath: string | null = null;
   const customFiles = codeSnippets.reduce(
     (
       result: Record<string, SandpackFile>,
       codeSnippet: React.ReactElement,
-      index
+      index,
     ) => {
       if (codeSnippet.props.mdxType !== 'pre') {
         return result;
@@ -86,15 +79,10 @@ function Sandpack(props: SandpackProps) {
       let fileName = getMetaTag('file', nodeMetaTags);
 
       if (!fileName) {
-        throw new Error(
-          `Code block is missing a filename: ${props.children}`
-        );
+        throw new Error(`Code block is missing a filename: ${props.children}`);
       }
 
-      if (
-        !validCustomFileNames.includes(fileName) &&
-        index === 0
-      ) {
+      if (!validCustomFileNames.includes(fileName) && index === 0) {
         fileName = 'App.tsx';
         // throw new Error(`Code block has an unsupported filename: ${fileName}`);
       }
@@ -103,14 +91,11 @@ function Sandpack(props: SandpackProps) {
         ? `/public/index.html`
         : `/src/${fileName}`; // path in the folder structure
       const fileActive = index === 0; //!!getMetaTag('active', nodeMetaTags) || inline;
-      const fileHidden = !!getMetaTag(
-        'hidden',
-        nodeMetaTags
-      );
+      const fileHidden = !!getMetaTag('hidden', nodeMetaTags);
 
       if (result[filePath]) {
         throw new Error(
-          `File ${filePath} was defined multiple times. Each file snippet should have a unique name`
+          `File ${filePath} was defined multiple times. Each file snippet should have a unique name`,
         );
       }
       result[filePath] = {
@@ -119,9 +104,13 @@ function Sandpack(props: SandpackProps) {
         active: fileActive,
       };
 
+      if (fileActive) {
+        activeFilePath = filePath;
+      }
+
       return result;
     },
-    {}
+    {},
   );
 
   const sandpackFiles: SandpackFiles = {
@@ -162,16 +151,19 @@ function Sandpack(props: SandpackProps) {
       <SandpackProvider
         key={key}
         template={'react-ts'}
+        files={sandpackFiles}
         customSetup={{
           ...setup,
-          files: sandpackFiles,
           dependencies,
           entry: '/src/index.tsx',
-          main: '/src/index.tsx',
         }}
-        autorun={autorun}
-        recompileMode={'delayed'}
-        recompileDelay={500}>
+        options={{
+          activeFile: activeFilePath!,
+          autorun,
+          recompileMode: 'delayed',
+          recompileDelay: 500,
+        }}
+      >
         <CustomPreset
           title={title}
           description={description}

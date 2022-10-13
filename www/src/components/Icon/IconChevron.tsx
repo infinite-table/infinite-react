@@ -5,11 +5,7 @@ export const IconChevron = React.memo<
   JSX.IntrinsicElements['svg'] & {
     displayDirection: 'up' | 'down' | 'left' | 'right';
   }
->(function IconChevron({
-  className,
-  displayDirection,
-  ...rest
-}) {
+>(function IconChevron({ className, displayDirection, ...rest }) {
   const classes = cn(
     {
       'transform rotate-0': displayDirection === 'down',
@@ -17,7 +13,7 @@ export const IconChevron = React.memo<
       'transform rotate-180': displayDirection === 'up',
       'transform -rotate-90': displayDirection === 'right',
     },
-    className
+    className,
   );
   return (
     <svg
@@ -25,11 +21,9 @@ export const IconChevron = React.memo<
       xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
-      viewBox="0 0 20 20">
-      <g
-        fill="none"
-        fillRule="evenodd"
-        transform="translate(-446 -398)">
+      viewBox="0 0 20 20"
+    >
+      <g fill="none" fillRule="evenodd" transform="translate(-446 -398)">
         <path
           fill="currentColor"
           fillRule="nonzero"

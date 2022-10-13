@@ -5,11 +5,7 @@ export const IconNavArrow = React.memo<
   JSX.IntrinsicElements['svg'] & {
     displayDirection: 'right' | 'down' | 'left';
   }
->(function IconNavArrow({
-  displayDirection = 'right',
-  className,
-  ...rest
-}) {
+>(function IconNavArrow({ displayDirection = 'right', className, ...rest }) {
   const classes = cn(
     'duration-100 ease-in transition',
     {
@@ -17,7 +13,7 @@ export const IconNavArrow = React.memo<
       'transform -rotate-90': displayDirection === 'right',
       'transform rotate-90': displayDirection === 'left',
     },
-    className
+    className,
   );
 
   return (
@@ -27,11 +23,9 @@ export const IconNavArrow = React.memo<
       height="20"
       viewBox="0 0 20 20"
       className={classes}
-      style={{ minWidth: 20, minHeight: 20 }}>
-      <g
-        fill="none"
-        fillRule="evenodd"
-        transform="translate(-446 -398)">
+      style={{ minWidth: 20, minHeight: 20 }}
+    >
+      <g fill="none" fillRule="evenodd" transform="translate(-446 -398)">
         <path
           fill="currentColor"
           fillRule="nonzero"

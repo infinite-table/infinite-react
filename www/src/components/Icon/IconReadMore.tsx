@@ -6,14 +6,15 @@ import * as React from 'react';
 import cn from 'classnames';
 
 export const IconReadMore = React.memo<JSX.IntrinsicElements['svg']>(
-  function IconHint({className}) {
+  function IconHint({ className }) {
     return (
       <svg
         className={cn('inline -mt-0.5', className)}
         height="24px"
         width="24px"
         viewBox="0 0 24 24"
-        fill="currentColor">
+        fill="currentColor"
+      >
         <g>
           <rect fill="none" height="24" width="24" />
         </g>
@@ -27,7 +28,7 @@ export const IconReadMore = React.memo<JSX.IntrinsicElements['svg']>(
         </g>
       </svg>
     );
-  }
+  },
 );
 
 IconReadMore.displayName = 'IconReadMore';

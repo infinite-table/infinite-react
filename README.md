@@ -23,7 +23,7 @@
 - [🏢 Enterprise-ready](#-enterprise-ready)
   - [🔒 Secure by default](#-secure-by-default)
   - [📦 Small bundle size](#-small-bundle-size)
-  - [🧪 Automated end-to-end tests](#%F0%9F%A7%AA-automated-end-to-end-tests)
+  - [🧪 Automated end-to-end tests](#-automated-end-to-end-tests)
 - [🎨 Themable](#-themable)
 - [🚀 Releases](#-releases)
 - [📑 License](#-license)

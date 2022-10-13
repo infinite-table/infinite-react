@@ -1,16 +1,11 @@
 import * as React from 'react';
 
-const addString = (
-  list: React.ReactNode[],
-  string: string
-) =>
-  list.push(
-    <span key={`${list.length}-${string}`}>{string}</span>
-  );
+const addString = (list: React.ReactNode[], string: string) =>
+  list.push(<span key={`${list.length}-${string}`}>{string}</span>);
 
 function toCommaSeparatedList<Item>(
   array: Item[],
-  renderCallback: (item: Item, index: number) => void
+  renderCallback: (item: Item, index: number) => void,
 ): Array<any> {
   if (!Array.isArray(array)) {
     array = [];
@@ -23,10 +18,7 @@ function toCommaSeparatedList<Item>(
 
   array.forEach((item, index) => {
     if (index === array.length - 1) {
-      addString(
-        list,
-        array.length === 2 ? ' and ' : ', and '
-      );
+      addString(list, array.length === 2 ? ' and ' : ', and ');
       list.push(renderCallback(item, index));
     } else if (index > 0) {
       addString(list, ', ');

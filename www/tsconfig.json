@@ -15,14 +15,11 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
+      "react": ["../node_modules/@types/react"],
+      "react-dom": ["../node_modules/react-dom"],
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
-
-      "@infinite-table/infinite-react": [
-        "../source/dist/index.d.ts"
-      ],
-      "react": ["../source/node_modules/@types/react"],
-      "react-dom": ["../source/node_modules/react-dom"]
+      "@infinite-table/infinite-react": ["../source/dist/index.d.ts"]
     },
     "reactNamespace": "React",
     "incremental": true

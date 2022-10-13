@@ -8,10 +8,7 @@ import {
 import cn from 'classnames';
 
 import { Error } from './Error';
-import {
-  computeViewportSize,
-  generateRandomId,
-} from './utils';
+import { computeViewportSize, generateRandomId } from './utils';
 import { CSSProperties } from 'react';
 
 type CustomPreviewProps = {
@@ -41,8 +38,9 @@ export function Preview({
 }: CustomPreviewProps) {
   const { sandpack, listen } = useSandpack();
   const [isReady, setIsReady] = React.useState(false);
-  const [iframeComputedHeight, setComputedAutoHeight] =
-    React.useState<number | null>(null);
+  const [iframeComputedHeight, setComputedAutoHeight] = React.useState<
+    number | null
+  >(null);
 
   let {
     error: rawError,
@@ -55,8 +53,7 @@ export function Preview({
 
   if (
     rawError &&
-    rawError.message ===
-      '_csbRefreshUtils.prelude is not a function'
+    rawError.message === '_csbRefreshUtils.prelude is not a function'
   ) {
     // Work around a noisy internal error.
     rawError = null;
@@ -65,9 +62,7 @@ export function Preview({
   const error = useDebounced(rawError);
 
   const clientId = React.useRef<string>(generateRandomId());
-  const iframeRef = React.useRef<HTMLIFrameElement | null>(
-    null
-  );
+  const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
 
   // SandpackPreview immediately registers the custom screens/components so the bundler does not render any of them
   // TODO: why are we doing this during render?
@@ -100,10 +95,7 @@ export function Preview({
     };
   }, []);
 
-  const viewportStyle = computeViewportSize(
-    'auto',
-    'portrait'
-  );
+  const viewportStyle = computeViewportSize('auto', 'portrait');
   const overrideStyle = error
     ? {
         // Don't collapse errors
@@ -148,14 +140,13 @@ export function Preview({
     style.maxHeight = style.height;
   }
   return (
-    <div
-      className={cn('sp-stack', className)}
-      style={style}>
+    <div className={cn('sp-stack', className)} style={style}>
       <div
         className={cn(
-          'p-0 sm:p-1 md:p-2 bg-card dark:bg-wash-dark h-full relative rounded-b-lg lg:rounded-b-none'
+          'p-0 sm:p-1 md:p-2 bg-card dark:bg-wash-dark h-full relative rounded-b-lg lg:rounded-b-none',
         )}
-        style={{ overflow }}>
+        style={{ overflow }}
+      >
         <div
           style={{
             padding: 'initial',
@@ -166,25 +157,22 @@ export function Preview({
               : undefined,
             top: isExpanded ? '2rem' : undefined,
             height: error ? '' : '100%',
-          }}>
+          }}
+        >
           <iframe
             ref={iframeRef}
             className="rounded-t-none bg-wash dark:bg-wash-dark shadow-md sm:rounded-lg w-full max-w-full"
             title="Sandbox Preview"
             style={{
               height: '100%', // AFL changed this
-              position: hideContent
-                ? 'absolute'
-                : undefined,
+              position: hideContent ? 'absolute' : undefined,
               // We can't *actually* hide content because that would
               // break calculating the computed height in the iframe
               // (which we're using for autosizing). This is noticeable
               // if you make a compiler error and then fix it with code
               // that expands the content. You want to measure that.
               opacity: hideContent ? 0 : 1,
-              pointerEvents: hideContent
-                ? 'none'
-                : undefined,
+              pointerEvents: hideContent ? 'none' : undefined,
               zIndex: isExpanded ? 'initial' : -1,
             }}
           />
@@ -197,11 +185,15 @@ export function Preview({
               // the errors can also expand the parent height.
               position: isExpanded ? 'sticky' : undefined,
               top: isExpanded ? '2rem' : '',
-            }}>
+            }}
+          >
             <Error error={error} />
           </div>
         )}
-        <LoadingOverlay clientId={clientId.current} />
+        <LoadingOverlay
+          clientId={clientId.current}
+          showOpenInCodeSandbox={false}
+        />
       </div>
     </div>
   );

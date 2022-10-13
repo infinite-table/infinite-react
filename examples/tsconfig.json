@@ -1,13 +1,9 @@
 {
   "extends": "../source/tsconfig.json",
   "exclude": ["node_modules"],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "../source/globals.d.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../source/globals.d.ts"],
   "compilerOptions": {
+    "typeRoots": ["node_modules/@types"],
     "strict": true,
     "alwaysStrict": true,
     "noImplicitReturns": true,
@@ -25,12 +21,8 @@
     "paths": {
       "react": ["../node_modules/@types/react"],
       "react-dom": ["../node_modules/react-dom"],
-      "@infinite-table/infinite-react/*": [
-        "../source/src/*"
-      ],
-      "@infinite-table/infinite-react": [
-        "../source/src/index"
-      ],
+      "@infinite-table/infinite-react/*": ["../source/src/*"],
+      "@infinite-table/infinite-react": ["../source/src/index"],
       "@src/*": ["../source/src/*"],
       "@examples/*": ["./src/*"],
       "@components/*": ["../source/src/components/*"],

@@ -56,6 +56,7 @@ async function retrieveAdvancedAlignable(
   target: AdvancedAlignable,
 ): Promise<RectangleCoords | null> {
   if (typeof target === 'function') {
+    //@ts-ignore
     target = target();
   }
 
@@ -69,6 +70,7 @@ async function retrieveAdvancedAlignable(
     target = target.getBoundingClientRect();
   }
 
+  //@ts-ignore
   return target ? Rectangle.from(target) : null;
 }
 
@@ -79,6 +81,7 @@ async function retrieveElement(
     null;
 
   if (typeof elementGetter === 'function') {
+    //@ts-ignore
     result = elementGetter();
   } else {
     result = elementGetter;

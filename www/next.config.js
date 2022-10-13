@@ -1,21 +1,16 @@
 const path = require('path');
-const {
-  createVanillaExtractPlugin,
-} = require('@vanilla-extract/next-plugin');
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
 const withVanillaExtract = createVanillaExtractPlugin();
 
 const withMDX = require('@next/mdx')({
   extension: /\.mdx$/,
 });
 
-const {
-  remarkPlugins,
-} = require('./plugins/markdownToHtml');
+const { remarkPlugins } = require('./plugins/markdownToHtml');
 
 const spawnSync = require('child_process').spawnSync;
 
-const exec = (cmd, args = []) =>
-  spawnSync(cmd, args, { stdio: 'pipe' });
+const exec = (cmd, args = []) => spawnSync(cmd, args, { stdio: 'pipe' });
 
 const result = exec('npm', [
   'show',
@@ -42,36 +37,33 @@ const nextConfig = withMDX({
   experimental: {
     plugins: true,
     // TODO: this doesn't work because https://github.com/vercel/next.js/issues/30714
-    // concurrentFeatures: true,
+    concurrentFeatures: true,
     scrollRestoration: true,
   },
 
   reactStrictMode: true,
   webpack(config, { dev, isServer, ...options }) {
     if (process.env.ANALYZE) {
-      const {
-        BundleAnalyzerPlugin,
-      } = require('webpack-bundle-analyzer');
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
       config.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'static',
           reportFilename: isServer
             ? '../analyze/server.html'
             : './analyze/client.html',
-        })
+        }),
       );
     }
     config.resolve.alias = {
       ...config.resolve.alias,
+      react: path.resolve(__dirname, '../node_modules/react'),
+      ['react-dom']: path.resolve(__dirname, '../node_modules/react-dom'),
       '@www': path.resolve('./src'),
       '@infinite-table/infinite-react': path.resolve(
-        '../source/dist/index.esm.js'
+        '../source/dist/index.esm.js',
       ),
-      '@infinite-table/infinite-react/index.css':
-        path.resolve('../source/dist/index.css'),
-      react: path.resolve('../source/node_modules/react'),
-      'react-dom': path.resolve(
-        '../source/node_modules/react-dom'
+      '@infinite-table/infinite-react/index.css': path.resolve(
+        '../source/dist/index.css',
       ),
     };
     // needed for bundling the ts-compiler for browser usage
@@ -108,9 +100,7 @@ const nextConfig = withMDX({
   },
 });
 const createNextPluginPreval = require('next-plugin-preval/config');
-const { IgnorePlugin } = require('webpack');
-const { redirect } = require('next/dist/server/api-utils');
+// const { IgnorePlugin } = require('webpack');
+// const { redirect } = require('next/dist/server/api-utils');
 const withNextPluginPreval = createNextPluginPreval();
-module.exports = withNextPluginPreval(
-  withVanillaExtract(nextConfig)
-);
+module.exports = withNextPluginPreval(withVanillaExtract(nextConfig));

@@ -60,8 +60,9 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
   mappedCallbacks?: ComponentMappedCallbacks<T_STATE>,
 ): ComponentStateGeneratedActions<T_STATE> {
   const state = getState();
+  //@ts-ignore
   return Object.keys(state).reduce((actions, stateKey) => {
-    const key = stateKey as keyof T_STATE;
+    const key = stateKey as any as keyof T_STATE;
 
     const setter = (value: T_STATE[typeof key]) => {
       const props = getProps();

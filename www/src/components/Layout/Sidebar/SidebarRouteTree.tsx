@@ -59,7 +59,8 @@ function CollapseWrapper({
         opacity: isExpanded ? 1 : 0.5,
         transition: `opacity ${duration}ms ease-in-out`,
         animation: `nav-fadein ${duration}ms ease-in-out`,
-      }}>
+      }}
+    >
       <div {...getCollapseProps()}>{children}</div>
     </div>
   );
@@ -78,9 +79,7 @@ export function SidebarRouteTree({
   const expandedPath = currentRoutes.reduce(
     (acc: string | undefined, curr: RouteItem) => {
       if (acc) return acc;
-      const breadcrumb = breadcrumbs.find(
-        (b) => b.path === curr.path
-      );
+      const breadcrumb = breadcrumbs.find((b) => b.path === curr.path);
       if (breadcrumb) {
         return curr.path;
       }
@@ -89,72 +88,66 @@ export function SidebarRouteTree({
       }
       return undefined;
     },
-    undefined
+    undefined,
   );
 
   const expanded = expandedPath;
   return (
     <ul>
-      {currentRoutes.map(
-        ({ path, title, routes, heading, transient }) => {
-          const pagePath =
-            path && removeFromLast(path, '.');
-          const selected = slug === pagePath && !transient;
+      {currentRoutes.map(({ path, title, routes, heading, transient }) => {
+        const pagePath = path && removeFromLast(path, '.');
+        const selected = slug === pagePath && !transient;
 
-          // if current route item has no path and children treat it as an API sidebar heading
-          if (!path || !pagePath || heading) {
-            return (
-              <SidebarRouteTree
-                level={level + 1}
-                isMobile={isMobile}
-                routeTree={{ title, routes }}
-              />
-            );
-          }
-
-          // if route has a path and child routes, treat it as an expandable sidebar item
-          if (routes) {
-            // console.log({ expanded, path });
-            const isExpanded =
-              isMobile || expanded === path;
-            return (
-              <li key={`${title}-${path}-${level}-heading`}>
-                <SidebarLink
-                  key={`${title}-${path}-${level}-link`}
-                  href={pagePath}
-                  selected={selected}
-                  level={level}
-                  title={title}
-                  isExpanded={isExpanded}
-                  isBreadcrumb={expandedPath === path}
-                  hideArrow={isMobile}
-                />
-                <CollapseWrapper
-                  duration={250}
-                  isExpanded={isExpanded}>
-                  <SidebarRouteTree
-                    isMobile={isMobile}
-                    routeTree={{ title, routes }}
-                    level={level + 1}
-                  />
-                </CollapseWrapper>
-              </li>
-            );
-          }
-
-          // if route has a path and no child routes, treat it as a sidebar link
+        // if current route item has no path and children treat it as an API sidebar heading
+        if (!path || !pagePath || heading) {
           return (
-            <li key={`${title}-${path}-${level}-link`}>
+            <SidebarRouteTree
+              level={level + 1}
+              isMobile={isMobile}
+              routeTree={{ title, routes }}
+            />
+          );
+        }
+
+        // if route has a path and child routes, treat it as an expandable sidebar item
+        if (routes) {
+          // console.log({ expanded, path });
+          const isExpanded = isMobile || expanded === path;
+          return (
+            <li key={`${title}-${path}-${level}-heading`}>
               <SidebarLink
+                key={`${title}-${path}-${level}-link`}
                 href={pagePath}
                 selected={selected}
                 level={level}
                 title={title}
+                isExpanded={isExpanded}
+                isBreadcrumb={expandedPath === path}
+                hideArrow={isMobile}
               />
+              <CollapseWrapper duration={250} isExpanded={isExpanded}>
+                <SidebarRouteTree
+                  isMobile={isMobile}
+                  routeTree={{ title, routes }}
+                  level={level + 1}
+                />
+              </CollapseWrapper>
             </li>
           );
         }
-      )}
+
+        // if route has a path and no child routes, treat it as a sidebar link
+        return (
+          <li key={`${title}-${path}-${level}-link`}>
+            <SidebarLink
+              href={pagePath}
+              selected={selected}
+              level={level}
+              title={title}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }

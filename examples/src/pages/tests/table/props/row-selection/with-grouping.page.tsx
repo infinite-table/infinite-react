@@ -32,8 +32,11 @@ type Developer = {
   age: number;
 };
 
+console.log(process.env.NEXT_PUBLIC_BASE_URL, '!!!');
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
+  return fetch(
+    process.env.NEXT_PUBLIC_BASE_URL + '/developers100'
+  )
     .then((r) => r.json())
     .then((data: Developer[]) => {
       return data;
@@ -62,7 +65,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
       return <>{renderBag.value}!!!</>;
     },
     style: ({ value }) => {
-      return value === 'Rust' ? { color: 'red' } : { color: 'magenta' };
+      return value === 'Rust'
+        ? { color: 'red' }
+        : { color: 'magenta' };
     },
   },
   stack: {
@@ -87,19 +92,20 @@ const groupBy = [
   },
 ];
 
-const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
-  field: 'firstName',
-  // align: 'end',
-  // renderValue: (arg) => {
-  //   const { groupByColumn, value } = arg;
+const groupColumn: InfiniteTablePropGroupColumn<Developer> =
+  {
+    field: 'firstName',
+    // align: 'end',
+    // renderValue: (arg) => {
+    //   const { groupByColumn, value } = arg;
 
-  //   if (!groupByColumn) {
-  //     return <>{value}</>;
-  //   }
+    //   if (!groupByColumn) {
+    //     return <>{value}</>;
+    //   }
 
-  //   return <>{groupByColumn.renderValue?.(arg) ?? arg.value}</>;
-  // },
-};
+    //   return <>{groupByColumn.renderValue?.(arg) ?? arg.value}</>;
+    // },
+  };
 
 export default function GroupByExample() {
   const [rowSelection, setRowSelection] =
@@ -107,11 +113,14 @@ export default function GroupByExample() {
       // deselectedRows: [['backend', 'TypeScript']],
       defaultSelection: false,
       selectedRows: [8],
-      deselectedRows: [['backend', 'TypeScript'], ['backend']],
+      deselectedRows: [
+        ['backend', 'TypeScript'],
+        ['backend'],
+      ],
     });
 
   const [currentGroupBy, setCurrentGroupBy] = useState(
-    groupBy as DataSourcePropGroupBy<Developer>,
+    groupBy as DataSourcePropGroupBy<Developer>
   );
   return (
     <>
@@ -124,15 +133,15 @@ export default function GroupByExample() {
       <button
         onClick={() => {
           setCurrentGroupBy([]);
-        }}
-      >
+        }}>
         ungroup
       </button>
       <button
         onClick={() => {
-          setCurrentGroupBy(groupBy as DataSourcePropGroupBy<Developer>);
-        }}
-      >
+          setCurrentGroupBy(
+            groupBy as DataSourcePropGroupBy<Developer>
+          );
+        }}>
         regroup
       </button>
       <DataSource<Developer>

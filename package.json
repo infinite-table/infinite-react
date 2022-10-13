@@ -6,14 +6,39 @@
   "main": "index.js",
   "scripts": {
     "docs": "npm start --prefix documentation",
-    "dev": "npm run --prefix source dev",
-    "test": "npm run --prefix source test",
-    "debug:test": "npm run --prefix source/examples play:test",
+    "dev": "npm-run-all --parallel www-serve:data examples-dev",
+    "test": "npm-run-all --parallel www-serve:data examples-test",
+    "test:watch": "npm-run-all --parallel www-serve:data examples-dev-no-output examples-test:watch",
+    "build:watch": "npm run --prefix source watch",
+    "build": "npm run --prefix source build",
+    "build:all": "npm-run-all build www-build",
+    "tsc": "npm-run-all source-tsc examples-tsc www-tsc",
+    "tscw": "npm-run-all --parallel source-tscw examples-tscw www-tscw",
+    "www": "npm-run-all --parallel www-serve:data www-dev",
+    "///": "///",
+    "//": "// the above scripts are the most important ones",
+    "////": "////",
+    "source-tsc": "npm run --prefix source tsc",
+    "source-tscw": "npm run --prefix source tscw",
+    "examples-tsc": "npm run --prefix examples tsc",
+    "examples-tscw": "npm run --prefix examples tscw",
+    "examples-dev": "npm run --prefix examples dev",
+    "examples-dev-no-output": "npm run --prefix examples dev-no-output",
+    "examples-test": "npm run --prefix examples test",
+    "examples-test:watch": "npm run --prefix examples test:watch",
+    "www-dev": "npm run --prefix www dev",
+    "www-build-dev": "npm run --prefix www build-dev",
+    "www-build": "npm run --prefix www build && echo SUCCESS",
+    "www-tsc": "npm run --prefix www tsc",
+    "www-tscw": "npm run --prefix www tscw",
+    "www-serve:data": "npm run --prefix www serve:data",
+    "debug:test": "npm run --prefix examples test:debug",
     "build-website": "npm i && npm --force --prefix source install && npm run --prefix source build && npm  --force --prefix www install && npm run --prefix www build",
     "release:canary-nobump": "npm run --prefix source release:canary-nobump",
     "release:nobump": "npm run --prefix source release:nobump",
     "doctoc": "doctoc README.md && doctoc source/LICENSE.md",
-    "serve:functions": "npx netlify functions:serve"
+    "serve:functions": "npx netlify functions:serve",
+    "postinstall": "patch-package"
   },
   "repository": {
     "type": "git",
@@ -25,8 +50,25 @@
   },
   "homepage": "https://github.com/infinite-table/react-table#readme",
   "devDependencies": {
-    "@typescript-eslint/parser": "^5.26.0",
+    "@types/estree": "^1.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
     "doctoc": "^2.0.0",
-    "prettier": "^2.6.2"
-  }
+    "eslint": "^8.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.6.2",
+    "prettier-eslint": "^13.0.0"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "workspaces": [
+    "source",
+    "www",
+    "examples"
+  ]
 }

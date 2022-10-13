@@ -66,15 +66,11 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
   const anchors = React.Children.toArray(children)
     .filter(
       (child: any) =>
-        child.props?.mdxType &&
-        ['h2', 'h3'].includes(child.props.mdxType)
+        child.props?.mdxType && ['h2', 'h3'].includes(child.props.mdxType),
     )
     .map((child: any) => ({
       url: '#' + child.props.id,
-      depth: parseInt(
-        child.props.mdxType.replace('h', ''),
-        0
-      ),
+      depth: parseInt(child.props.mdxType.replace('h', ''), 0),
       text: child.props.children,
     }));
   useTwitter();
@@ -83,7 +79,8 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
       <div className="w-full px-12">
         <div
           className="px-5 sm:px-12 h-full mx-auto relative overflow-x-hidden
-        lg:pt-0 pt-20 lg:pl-80 2xl:px-80 ">
+        lg:pt-0 pt-20 lg:pl-80 2xl:px-80 "
+        >
           <div className="max-w-4xl ml-0 2xl:mx-auto ">
             <Seo
               title={meta.title}
@@ -97,35 +94,27 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
               </h1>
               <p className="mb-6 text-sm dark:text-secondary-dark">
                 By{' '}
-                {toCommaSeparatedList(
-                  meta.author,
-                  (author) => {
-                    const url = getAuthor(author).url;
+                {toCommaSeparatedList(meta.author, (author) => {
+                  const url = getAuthor(author).url;
 
-                    return (
-                      <span key={url}>
-                        {getAuthor(author).name}
-                      </span>
-                    );
-                    // return (
-                    // <ExternalLink
-                    //   key={url}
-                    //   href={url}
-                    //   className="text-link dark:text-link-dark underline font-bold">
-                    //   {getAuthor(author).name}
-                    // </ExternalLink>
-                    // );
-                  }
-                )}
+                  return <span key={url}>{getAuthor(author).name}</span>;
+                  // return (
+                  // <ExternalLink
+                  //   key={url}
+                  //   href={url}
+                  //   className="text-link dark:text-link-dark underline font-bold">
+                  //   {getAuthor(author).name}
+                  // </ExternalLink>
+                  // );
+                })}
                 <span className="mx-2">·</span>
                 <span className="lead inline-flex text-gray-50">
                   <time dateTime={dateTime}>{date}</time>
                 </span>
               </p>
 
-              <MDXProvider components={MDXComponents}>
-                {children}
-              </MDXProvider>
+              {/* @ts-ignore */}
+              <MDXProvider components={MDXComponents}>{children}</MDXProvider>
             </div>
           </div>
 

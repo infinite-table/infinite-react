@@ -342,6 +342,14 @@ Overriden in the `dark` theme.
 --infinite-header-cell-icon-size
 ```
 
+### Header cell menu icon line width
+
+
+
+```css
+--infinite-header-cell-menu-icon-line-width
+```
+
 ### Header cell sort icon margin
 
 
@@ -584,6 +592,118 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ```css
 --infinite-selection-checkbox-margin-inline
+```
+
+### Menu background
+
+
+
+```css
+--infinite-menu-background
+```
+
+### Menu color
+
+
+
+```css
+--infinite-menu-color
+```
+
+### Menu padding
+
+
+
+```css
+--infinite-menu-padding
+```
+
+### Menu cell padding vertical
+
+
+
+```css
+--infinite-menu-cell-padding-vertical
+```
+
+### Menu cell padding horizontal
+
+
+
+```css
+--infinite-menu-cell-padding-horizontal
+```
+
+### Menu cell margin vertical
+
+
+
+```css
+--infinite-menu-cell-margin-vertical
+```
+
+### Menu item disabled background
+
+
+
+```css
+--infinite-menu-item-disabled-background
+```
+
+### Menu item active background
+
+
+
+```css
+--infinite-menu-item-active-background
+```
+
+### Menu item active opacity
+
+
+
+```css
+--infinite-menu-item-active-opacity
+```
+
+### Menu item pressed opacity
+
+
+
+```css
+--infinite-menu-item-pressed-opacity
+```
+
+### Menu item pressed background
+
+
+
+```css
+--infinite-menu-item-pressed-background
+```
+
+### Menu item disabled opacity
+
+
+
+```css
+--infinite-menu-item-disabled-opacity
+```
+
+### Menu border radius
+
+
+
+```css
+--infinite-menu-border-radius
+```
+
+### Menu shadow color
+
+
+
+```css
+--infinite-menu-shadow-color
 ```
 
 ### Row background

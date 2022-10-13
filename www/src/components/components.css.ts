@@ -1,8 +1,4 @@
-import {
-  composeStyles,
-  globalStyle,
-  style,
-} from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 
 import {
   centeredFlexColumn,
@@ -15,13 +11,13 @@ import {
 export const width100 = style({
   width: '100%',
 });
-export const footer = composeStyles(
+export const footer = style([
   centeredFlexRow,
   width100,
-  style({
+  {
     minHeight: 100,
-  })
-);
+  },
+]);
 
 globalStyle(`${footer} img`, {
   marginLeft: '0.5rem',
@@ -37,17 +33,14 @@ export const minHeightFull = style({
   minHeight: '100vh',
 });
 
-export const fullWidthContainer = composeStyles(
-  centeredFlexColumn,
-  width100
-);
-export const container = composeStyles(
+export const fullWidthContainer = style([centeredFlexColumn, width100]);
+export const container = style([
   paddingX['3'],
-  style({
+  {
     width: '100%',
     maxWidth: '90vw',
-  })
-);
+  },
+]);
 
 export const submitButton = style({
   selectors: {

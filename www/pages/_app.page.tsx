@@ -8,7 +8,7 @@ import '@docsearch/css';
 import './styles/fonts.css';
 import './styles/algolia.css';
 import './styles/sandpack.css';
-import '@codesandbox/sandpack-react/dist/index.css';
+// import '@codesandbox/sandpack-react/dist/index.css';
 
 // import '../../source/dist/index.css';
 
@@ -21,7 +21,7 @@ import { InfiniteTable } from '@infinite-table/infinite-react';
 InfiniteTable.defaultProps.licenseKey =
   process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
-const EmptyAppShell: React.FC = ({ children }) => {
+const EmptyAppShell: React.FC<React.PropsWithChildren> = ({ children }) => {
   // if (process.env.NODE_ENV === 'development') {
   //   if (!process.browser) {
   //     return null;
@@ -30,17 +30,12 @@ const EmptyAppShell: React.FC = ({ children }) => {
   return <>{children}</>;
 };
 
-export default function MyApp({
-  Component,
-  pageProps,
-}: AppProps) {
-  let AppShell =
-    (Component as any).appShell || EmptyAppShell;
+export default function MyApp({ Component, pageProps }: AppProps) {
+  let AppShell = (Component as any).appShell || EmptyAppShell;
   // In order to make sidebar scrolling between pages work as expected
   // we need to access the underlying MDX component.
   if ((Component as any).isMDXComponent) {
-    AppShell = (Component as any)({}).props.originalType
-      .appShell;
+    AppShell = (Component as any)({}).props.originalType.appShell;
   }
   React.useEffect(() => {
     // Monkey patch Google Tag Manager in development to just log to the console

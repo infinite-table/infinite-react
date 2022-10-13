@@ -5,11 +5,7 @@ import { IconGotcha } from '../Icon/IconGotcha';
 import { IconReadMore } from '../Icon/IconReadMore';
 import { IconHint } from '../Icon/IconHint';
 
-type CalloutVariants =
-  | 'gotcha'
-  | 'note'
-  | 'readMore'
-  | 'hint';
+type CalloutVariants = 'gotcha' | 'note' | 'readMore' | 'hint';
 
 interface ExpandableCalloutProps {
   children: React.ReactNode;
@@ -30,8 +26,7 @@ const variantMap = {
   gotcha: {
     title: 'Gotcha',
     Icon: IconGotcha,
-    containerClasses:
-      'bg-yellow-5 dark:bg-yellow-60 dark:bg-opacity-20',
+    containerClasses: 'bg-yellow-5 dark:bg-yellow-60 dark:bg-opacity-20',
     textColor: 'text-yellow-50 dark:text-yellow-40',
     overlayGradient:
       'linear-gradient(rgba(249, 247, 243, 0), rgba(249, 247, 243, 1)',
@@ -56,11 +51,7 @@ const variantMap = {
   },
 };
 
-function ExpandableCallout({
-  children,
-  type,
-  title,
-}: ExpandableCalloutProps) {
+function ExpandableCallout({ children, type, title }: ExpandableCalloutProps) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const variant = variantMap[type];
 
@@ -68,18 +59,12 @@ function ExpandableCallout({
     <div
       className={cn(
         'pt-8 pb-4 px-5 sm:px-8 my-8 relative rounded-none shadow-inner -mx-5 sm:mx-auto sm:rounded-lg',
-        variant.containerClasses
-      )}>
-      <h3
-        className={cn(
-          'mb-2 text-2xl font-bold',
-          variant.textColor
-        )}>
+        variant.containerClasses,
+      )}
+    >
+      <h3 className={cn('mb-2 text-2xl font-bold', variant.textColor)}>
         <variant.Icon
-          className={cn(
-            'inline mr-3 mb-1 text-lg',
-            variant.textColor
-          )}
+          className={cn('inline mr-3 mb-1 text-lg', variant.textColor)}
         />
         {title ?? variant.title}
       </h3>

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+//@ts-ignore
 import { AgGridReact } from 'ag-grid-react';
+//@ts-ignore
 import { ColDef } from 'ag-grid-community';
 
 import 'ag-grid-enterprise';
@@ -21,10 +23,8 @@ const columnDefs: ColDef[] = columns.map((column) => {
   }
 
   if (column.getValue) {
-    colDef.valueGetter = (params) => {
-      return params.data
-        ? column.getValue?.(params.data)
-        : null;
+    colDef.valueGetter = (params: any) => {
+      return params.data ? column.getValue?.(params.data) : null;
     };
   }
 
@@ -50,23 +50,21 @@ const autoGroupColumnDef = {
 };
 
 const getData = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/developers10k'
-  ).then((r) => r.json());
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10k').then((r) =>
+    r.json(),
+  );
 };
 
 const App = () => {
   const [rowData, setRowData] = React.useState(null);
 
-  const onGridReady = React.useCallback(async (params) => {
+  const onGridReady = React.useCallback(async (params: any) => {
     const data = await getData();
     setRowData(data);
   }, []);
 
   return (
-    <div
-      className="ag-theme-alpine"
-      style={{ height: 600, width: '100%' }}>
+    <div className="ag-theme-alpine" style={{ height: 600, width: '100%' }}>
       <AgGridReact
         groupDefaultExpanded={1}
         defaultColDef={defaultColDef}
@@ -74,7 +72,8 @@ const App = () => {
         rowData={rowData}
         rowHeight={ROW_HEIGHT}
         onGridReady={onGridReady}
-        columnDefs={columnDefs}></AgGridReact>
+        columnDefs={columnDefs}
+      ></AgGridReact>
     </div>
   );
 };

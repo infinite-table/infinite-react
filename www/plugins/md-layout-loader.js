@@ -23,14 +23,14 @@ module.exports = async function (src) {
   let dirs = path
     .dirname(path.relative('../pages/', this.resourcePath))
     .split(path.sep);
-  console.log('initial dirs', dirs);
+
   dirs = dirs.slice(3); // take off `..`, `www` and `pages`
-  console.log({
-    // pageParentDir,
-    data,
-    path: this.resourcePath,
-    dirs,
-  });
+  // console.log({
+  //   // pageParentDir,
+  //   data,
+  //   path: this.resourcePath,
+  //   dirs,
+  // });
   const layoutMap = {
     blog: 'Post',
     learn: 'Learn',
@@ -42,18 +42,14 @@ module.exports = async function (src) {
   if (dirs[0] === 'blog') {
     layout = 'Post';
   }
-  if (
-    dirs[0] === 'docs' &&
-    dirs[1] === 'latest' &&
-    dirs[2]
-  ) {
+  if (dirs[0] === 'docs' && dirs[1] === 'latest' && dirs[2]) {
     layout = layoutMap[dirs[2]] || layout;
   }
   layout = layout || 'Learn';
 
   const code =
     `import withLayout from '@www/components/Layout/Layout${toUpperFirst(
-      layout
+      layout,
     )}';
 
 export default withLayout(${JSON.stringify(data)})

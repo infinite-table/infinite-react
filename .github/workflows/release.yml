@@ -47,7 +47,7 @@ jobs:
           git config --local user.name "SHIP IT"
 
       - name: Install
-        run: npm ci --force && npm ci --force --prefix source && npm ci --force --prefix source/examples
+        run: npm ci --force
 
       # - name: Linting
       #   run: npm run lint
@@ -62,7 +62,6 @@ jobs:
 
       - name: Building
         run: npm run build
-        working-directory: source
 
       - name: copy .npmrc
         run: cp .npmrc source && cp .npmrc source/dist

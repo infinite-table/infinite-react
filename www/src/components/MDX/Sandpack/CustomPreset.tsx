@@ -6,6 +6,7 @@ import {
   useActiveCode,
   SandpackCodeEditor,
   SandpackThemeProvider,
+  SandpackLayout,
 } from '@codesandbox/sandpack-react';
 import scrollIntoView from 'scroll-into-view-if-needed';
 
@@ -35,14 +36,30 @@ export function CustomPreset({
 
   const { listen, sandpack } = useSandpack();
 
-  const [viewMode, setViewMode] = useState<
-    'code' | 'preview' | 'both'
-  >('both');
+  const [viewMode, setViewMode] = useState<'code' | 'preview' | 'both'>('both');
 
-  const showCode =
-    viewMode === 'code' || viewMode === 'both';
-  const showPreview =
-    viewMode === 'preview' || viewMode === 'both';
+  const previousViewModeRef = React.useRef(viewMode);
+
+  React.useEffect(() => {
+    const prevViewMode = previousViewModeRef.current;
+
+    if (prevViewMode === 'code') {
+      const rafId = requestAnimationFrame(() => {
+        sandpack.runSandpack();
+      });
+
+      return () => {
+        cancelAnimationFrame(rafId);
+      };
+    }
+  }, [viewMode]);
+
+  React.useEffect(() => {
+    previousViewModeRef.current = viewMode;
+  }, [viewMode]);
+
+  const showCode = viewMode === 'code' || viewMode === 'both';
+  const showPreview = viewMode === 'preview' || viewMode === 'both';
 
   // useEffect(() => {
   //   const unsubscribe = listen((msg) => {
@@ -56,25 +73,21 @@ export function CustomPreset({
   const { code } = useActiveCode();
   let [isExpanded, setIsExpanded] = React.useState(false);
 
-  const { activePath } = sandpack;
+  const { activeFile } = sandpack;
+  const activePath = activeFile;
   if (!lineCountRef.current[activePath]) {
-    lineCountRef.current[activePath] =
-      code.split('\n').length;
+    lineCountRef.current[activePath] = code.split('\n').length;
   }
   const lineCount = lineCountRef.current[activePath];
   let isExpandable = lineCount > 16 || isExpanded;
-  let editorHeight = isExpandable
-    ? lineCount * 24 + 24
-    : 'auto'; // shown lines * line height (24px)
+  let editorHeight = isExpandable ? lineCount * 24 + 24 : 'auto'; // shown lines * line height (24px)
 
   const titleBlock = title ? (
     <div
-      className={
-        'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg'
-      }>
+      className={'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg'}
+    >
       <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
-        <IconCodeBlock className="inline-flex mr-2 self-center" />{' '}
-        {title}
+        <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>
   ) : null;
@@ -102,7 +115,8 @@ export function CustomPreset({
     <div
       className={
         'leading-base bg-card dark:bg-card-dark w-full border-b border-border dark:border-gray-60'
-      }>
+      }
+    >
       <div className="sandpackDescription text-primary dark:text-primary-dark text-sm px-4 py-0.5 relative">
         {description}
       </div>
@@ -124,7 +138,8 @@ export function CustomPreset({
                 zIndex: 1000,
               } as CSSProperties)
             : undefined
-        }>
+        }
+      >
         {titleBlock}
         {!fullScreen && descriptionBlock}
         <NavigationBar
@@ -135,74 +150,75 @@ export function CustomPreset({
           onReset={onReset}
           onFullScreenToggle={setFullScreen}
         />
-        <SandpackThemeProvider theme={CustomTheme}>
+
+        {/* <SandpackThemeProvider theme={CustomTheme}> */}
+        <SandpackThemeProvider>
           <div
             ref={sandpack.lazyAnchorRef}
-            className="sp-layout rounded-t-none"
+            className=" rounded-t-none"
             style={{
               // Prevent it from collapsing below the initial (non-loaded) height.
               // There has to be some better way to do this...
               minHeight: 216,
-              height: fullScreen ? '100vh' : '',
-            }}>
-            {showCode ? (
-              <SandpackCodeEditor
-                customStyle={{
-                  height: getHeight(),
-                  maxHeight: isExpanded
-                    ? fullScreen
-                      ? getHeight()
-                      : ''
-                    : 406, //40px is navbar height
-                }}
-                showLineNumbers
-                showInlineErrors
-                showTabs={false}
-              />
-            ) : null}
-            {showPreview ? (
-              <Preview
-                isExpanded={isExpanded}
-                fullScreen={fullScreen}
-                className="order-last xl:order-2"
-                customStyle={{
-                  height: getHeight(),
-                  minHeight: getHeight(),
-                  maxHeight: isExpanded ? '' : 406,
-                }}
-              />
-            ) : null}
-            {isExpandable && (
-              <button
-                translate="yes"
-                className="flex text-base justify-between dark:border-card-dark bg-wash dark:bg-card-dark items-center z-10 rounded-t-none p-1 w-full order-2 xl:order-last border-b-1 relative top-0"
-                onClick={() => {
-                  const nextIsExpanded = !isExpanded;
-                  flushSync(() => {
-                    setIsExpanded(nextIsExpanded);
-                  });
-                  if (
-                    !nextIsExpanded &&
-                    containerRef.current !== null
-                  ) {
-                    scrollIntoView(containerRef.current, {
-                      scrollMode: 'if-needed',
-                      block: 'nearest',
-                      inline: 'nearest',
+              height: fullScreen ? '100vh' : 'auto',
+            }}
+          >
+            <SandpackLayout>
+              {showCode ? (
+                <SandpackCodeEditor
+                  style={{
+                    height: getHeight(),
+                    maxHeight: isExpanded
+                      ? fullScreen
+                        ? getHeight()
+                        : ''
+                      : 406, //40px is navbar height
+                  }}
+                  showLineNumbers
+                  showInlineErrors
+                  showTabs={false}
+                />
+              ) : null}
+              {showPreview ? (
+                <Preview
+                  isExpanded={isExpanded}
+                  fullScreen={fullScreen}
+                  className="order-last xl:order-2"
+                  customStyle={{
+                    height: getHeight(),
+                    minHeight: getHeight(),
+                    maxHeight: isExpanded ? '' : 406,
+                  }}
+                />
+              ) : null}
+              {isExpandable && (
+                <button
+                  translate="yes"
+                  className="flex text-base justify-between dark:border-card-dark bg-wash dark:bg-card-dark items-center z-10 rounded-t-none p-1 w-full order-2 xl:order-last border-b-1 relative top-0"
+                  onClick={() => {
+                    const nextIsExpanded = !isExpanded;
+                    flushSync(() => {
+                      setIsExpanded(nextIsExpanded);
                     });
-                  }
-                }}>
-                <span className="flex p-2 focus:outline-none text-primary dark:text-primary-dark">
-                  <IconChevron
-                    className="inline mr-1.5 text-xl"
-                    displayDirection={
-                      isExpanded ? 'up' : 'down'
+                    if (!nextIsExpanded && containerRef.current !== null) {
+                      scrollIntoView(containerRef.current, {
+                        scrollMode: 'if-needed',
+                        block: 'nearest',
+                        inline: 'nearest',
+                      });
                     }
-                  />
-                  {isExpanded ? 'Show less' : 'Show more'}
-                </span>
-              </button>
-            )}
+                  }}
+                >
+                  <span className="flex p-2 focus:outline-none text-primary dark:text-primary-dark">
+                    <IconChevron
+                      className="inline mr-1.5 text-xl"
+                      displayDirection={isExpanded ? 'up' : 'down'}
+                    />
+                    {isExpanded ? 'Show less' : 'Show more'}
+                  </span>
+                </button>
+              )}
+            </SandpackLayout>
           </div>
         </SandpackThemeProvider>
       </div>

@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
@@ -24,10 +21,7 @@ export type Employee = {
   email: string;
 };
 
-export const columns: Record<
-  string,
-  InfiniteTableColumn<Employee>
-> = {
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
@@ -66,18 +60,13 @@ export const columns: Record<
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee>
-        columns={columns}
-        columnDefaultWidth={200}
-      />
+      <InfiniteTable<Employee> columns={columns} columnDefaultWidth={200} />
     </DataSource>
   );
 }
 
 const dataSource = () => {
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + '/employees100'
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees100')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

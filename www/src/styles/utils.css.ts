@@ -1,5 +1,4 @@
 import {
-  composeStyles,
   createTheme,
   CSSProperties,
   style,
@@ -75,7 +74,7 @@ export const fontWeight = styleVariants(
     return {
       fontWeight: value as CSSProperties['fontWeight'],
     };
-  }
+  },
 );
 
 export const fontSizeScale = {
@@ -93,14 +92,11 @@ export const fontSizeScale = {
   '6xl': '4rem',
 };
 
-export const fontSize = styleVariants(
-  fontSizeScale,
-  (value) => {
-    return {
-      fontSize: value,
-    };
-  }
-);
+export const fontSize = styleVariants(fontSizeScale, (value) => {
+  return {
+    fontSize: value,
+  };
+});
 
 export const maxWidth = styleVariants(
   {
@@ -128,7 +124,7 @@ export const maxWidth = styleVariants(
     return {
       maxWidth: value,
     };
-  }
+  },
 );
 
 export const justifyContent = styleVariants(
@@ -139,7 +135,7 @@ export const justifyContent = styleVariants(
     return {
       justifyContent: 'center',
     };
-  }
+  },
 );
 
 export const alignSelf = styleVariants(
@@ -152,7 +148,7 @@ export const alignSelf = styleVariants(
     return {
       alignSelf: value as CSSProperties['alignSelf'],
     };
-  }
+  },
 );
 export const textAlign = styleVariants(
   {
@@ -165,7 +161,7 @@ export const textAlign = styleVariants(
     return {
       textAlign: value as CSSProperties['textAlign'],
     };
-  }
+  },
 );
 
 export const zIndexScale = {
@@ -180,14 +176,11 @@ export const zIndexScale = {
   auto: 'auto',
 };
 
-export const zIndex = styleVariants(
-  zIndexScale,
-  (value) => {
-    return {
-      zIndex: value as CSSProperties['zIndex'],
-    };
-  }
-);
+export const zIndex = styleVariants(zIndexScale, (value) => {
+  return {
+    zIndex: value as CSSProperties['zIndex'],
+  };
+});
 
 export const [light, vars] = createTheme(
   {
@@ -203,53 +196,38 @@ export const [light, vars] = createTheme(
     },
     space: spaceScale,
   },
-  'light'
+  'light',
 );
 
-export const padding = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      padding: space,
-    };
-  }
-);
+export const padding = styleVariants(spaceScale, (space) => {
+  return {
+    padding: space,
+  };
+});
 
-export const paddingLeft = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      paddingLeft: space,
-    };
-  }
-);
-export const paddingRight = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      paddingRight: space,
-    };
-  }
-);
+export const paddingLeft = styleVariants(spaceScale, (space) => {
+  return {
+    paddingLeft: space,
+  };
+});
+export const paddingRight = styleVariants(spaceScale, (space) => {
+  return {
+    paddingRight: space,
+  };
+});
 
-export const paddingY = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      padding: `${space} 0`,
-    };
-  }
-);
+export const paddingY = styleVariants(spaceScale, (space) => {
+  return {
+    padding: `${space} 0`,
+  };
+});
 
-export const paddingX = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      paddingLeft: `${space}`,
-      paddingRight: `${space}`,
-    };
-  }
-);
+export const paddingX = styleVariants(spaceScale, (space) => {
+  return {
+    paddingLeft: `${space}`,
+    paddingRight: `${space}`,
+  };
+});
 
 export const margin = styleVariants(spaceScale, (space) => {
   return {
@@ -257,60 +235,42 @@ export const margin = styleVariants(spaceScale, (space) => {
   };
 });
 
-export const marginX = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      marginLeft: `${space}`,
-      marginRight: `${space}`,
-    };
-  }
-);
+export const marginX = styleVariants(spaceScale, (space) => {
+  return {
+    marginLeft: `${space}`,
+    marginRight: `${space}`,
+  };
+});
 
-export const marginY = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      margin: `${space} 0`,
-    };
-  }
-);
+export const marginY = styleVariants(spaceScale, (space) => {
+  return {
+    margin: `${space} 0`,
+  };
+});
 
-export const marginBottom = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      marginBottom: space,
-    };
-  }
-);
+export const marginBottom = styleVariants(spaceScale, (space) => {
+  return {
+    marginBottom: space,
+  };
+});
 
-export const marginLeft = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      marginLeft: space,
-    };
-  }
-);
+export const marginLeft = styleVariants(spaceScale, (space) => {
+  return {
+    marginLeft: space,
+  };
+});
 
-export const marginRight = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      marginRight: space,
-    };
-  }
-);
+export const marginRight = styleVariants(spaceScale, (space) => {
+  return {
+    marginRight: space,
+  };
+});
 
-export const marginTop = styleVariants(
-  spaceScale,
-  (space) => {
-    return {
-      marginTop: space,
-    };
-  }
-);
+export const marginTop = styleVariants(spaceScale, (space) => {
+  return {
+    marginTop: space,
+  };
+});
 export const top = styleVariants(spaceScale, (space) => {
   return {
     top: space,
@@ -358,7 +318,7 @@ export const borderRadius = styleVariants(
     return {
       borderRadius: value as CSSProperties['borderRadius'],
     };
-  }
+  },
 );
 
 export const position = styleVariants(
@@ -372,7 +332,7 @@ export const position = styleVariants(
     return {
       position: value as CSSProperties['position'],
     };
-  }
+  },
 );
 
 export const display = styleVariants(
@@ -387,7 +347,7 @@ export const display = styleVariants(
     return {
       display: value as CSSProperties['display'],
     };
-  }
+  },
 );
 
 export const flexDirection = styleVariants(
@@ -399,10 +359,9 @@ export const flexDirection = styleVariants(
   },
   (value) => {
     return {
-      flexDirection:
-        value as CSSProperties['flexDirection'],
+      flexDirection: value as CSSProperties['flexDirection'],
     };
-  }
+  },
 );
 
 export const flexWrap = styleVariants(
@@ -415,34 +374,34 @@ export const flexWrap = styleVariants(
     return {
       flexWrap: value as CSSProperties['flexWrap'],
     };
-  }
+  },
 );
 
 export const centeredFlexProps = style({
   justifyContent: 'center',
   alignItems: 'center',
 });
-export const centeredFlexColumn = composeStyles(
+export const centeredFlexColumn = style(
   display.flex,
   flexDirection.column,
-  centeredFlexProps
+  centeredFlexProps,
 );
-export const centeredFlexRow = composeStyles(
+export const centeredFlexRow = style(
   display.flex,
   flexDirection.row,
-  centeredFlexProps
+  centeredFlexProps,
 );
 
 export const flex1 = style({
   flex: 1,
 });
 
-export const main = composeStyles(
+export const main = style(
   flexDirection.column,
   flex1,
   style({
     alignItems: 'center',
-  })
+  }),
 );
 
 export const shadow = styleVariants(
@@ -454,5 +413,5 @@ export const shadow = styleVariants(
     return {
       boxShadow: value,
     };
-  }
+  },
 );

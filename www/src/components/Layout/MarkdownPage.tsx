@@ -12,23 +12,18 @@ export interface MarkdownProps<Frontmatter> {
 }
 
 export function MaxWidth({ children }: { children: any }) {
-  return (
-    <div className="max-w-4xl ml-0 2xl:mx-auto">
-      {children}
-    </div>
-  );
+  return <div className="max-w-4xl ml-0 2xl:mx-auto">{children}</div>;
 }
 
 export function MarkdownPage<
   T extends { title: string; status?: string } = {
     title: string;
     status?: string;
-  }
+  },
 >({ children, meta }: MarkdownProps<T>) {
   const { route, nextRoute, prevRoute } = useRouteMeta();
   const title = meta.title || route?.title || '';
-  const description =
-    meta.description || route?.description || '';
+  const description = meta.description || route?.description || '';
 
   const propsAnchors = [];
   let anchors: Array<{
@@ -80,12 +75,10 @@ export function MarkdownPage<
       //     text: 'Recap',
       //   };
       // }
-      console.log(child.props.mdxType);
+
       if (child.props.mdxType === 'PropTable') {
         return React.Children.toArray(child.props.children)
-          .filter(
-            (child: any) => child.props.mdxType === 'Prop'
-          )
+          .filter((child: any) => child.props.mdxType === 'Prop')
           .map((child: any) => {
             return {
               url: '#' + child.props.name,
@@ -97,25 +90,19 @@ export function MarkdownPage<
 
       let text = child.props.children;
       if (child.props?.mdxType.startsWith('h')) {
-        const children = React.Children.toArray(
-          child.props.children
-        );
+        const children = React.Children.toArray(child.props.children);
         text = children
           .map((child) => {
             if (!child) {
               return null;
             }
-            if (
-              typeof child === 'string' ||
-              typeof child == 'number'
-            ) {
+            if (typeof child === 'string' || typeof child == 'number') {
               return child;
             }
             //@ts-ignore
             if (child.props?.mdxType) {
               //@ts-ignore
-              return typeof child.props.children ===
-                'string'
+              return typeof child.props.children === 'string'
                 ? //@ts-ignore
                   child.props.children
                 : //@ts-ignore
@@ -129,10 +116,7 @@ export function MarkdownPage<
         url: '#' + child.props.id,
         depth:
           (child.props?.mdxType &&
-            parseInt(
-              child.props.mdxType.replace('h', ''),
-              0
-            )) ??
+            parseInt(child.props.mdxType.replace('h', ''), 0)) ??
           0,
         text,
       };
@@ -146,13 +130,9 @@ export function MarkdownPage<
   }
 
   if (!route) {
-    console.error(
-      'This page was not added to one of the sidebar JSON files.'
-    );
+    console.error('This page was not added to one of the sidebar JSON files.');
   }
-  const isHomePage =
-    route?.path === '/docs/latest' ||
-    route?.path === '/docs';
+  const isHomePage = route?.path === '/docs/latest' || route?.path === '/docs';
 
   // Auto-wrap everything except a few types into
   // <MaxWidth> wrappers. Keep reusing the same
@@ -172,9 +152,7 @@ export function MarkdownPage<
   let finalChildren: React.ReactNode[] = [];
   function flushWrapper(key: string | number) {
     if (wrapQueue.length > 0) {
-      finalChildren.push(
-        <MaxWidth key={key}>{wrapQueue}</MaxWidth>
-      );
+      finalChildren.push(<MaxWidth key={key}>{wrapQueue}</MaxWidth>);
       wrapQueue = [];
     }
   }
@@ -200,11 +178,10 @@ export function MarkdownPage<
     <article className="h-full mx-auto relative w-full min-w-0">
       <div className="lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
         <Seo title={title} description={description} />
-        {!isHomePage && (
-          <PageHeading title={title} tags={route?.tags} />
-        )}
+        {!isHomePage && <PageHeading title={title} tags={route?.tags} />}
         <div className="px-5 sm:px-12">
           <div className="max-w-7xl mx-auto">
+            {/* @ts-ignore */}
             <MDXProvider components={MDXComponents}>
               {finalChildren}
             </MDXProvider>
@@ -217,9 +194,7 @@ export function MarkdownPage<
         </div>
       </div>
       <div className="w-full lg:max-w-xs hidden 2xl:block">
-        {!isHomePage && anchors.length > 0 && (
-          <Toc headings={anchors} />
-        )}
+        {!isHomePage && anchors.length > 0 && <Toc headings={anchors} />}
       </div>
     </article>
   );

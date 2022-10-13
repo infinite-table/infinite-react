@@ -167,7 +167,7 @@ Minimum column width can be controlled more granularly via <PropLink name="colum
 </Prop>
 
 
-<Prop name="columnOrder" type="string[]|true">>
+<Prop name="columnOrder" type="string[]|true">
 
 > Defines the order in which columns are displayed in the component
 

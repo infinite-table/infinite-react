@@ -21,12 +21,7 @@ interface PropProps {
   excerpt?: React.ReactNode;
 
   hidden?: boolean;
-  defaultValue?:
-    | string
-    | number
-    | boolean
-    | null
-    | undefined;
+  defaultValue?: string | number | boolean | null | undefined;
 }
 
 interface PropContent {
@@ -76,16 +71,12 @@ export const PropLink = ({
     theName = children as keyof InfiniteTableProps<any>;
   }
 
-  const href = `/docs/latest/reference#${
-    theName as string
-  }`;
+  const href = `/docs/latest/reference#${theName as string}`;
   if (nocode) {
     code = false;
   }
   let content = code ? (
-    <InlineCode isLink={false}>
-      {children ?? theName}
-    </InlineCode>
+    <InlineCode isLink={false}>{children ?? theName}</InlineCode>
   ) : (
     children ?? theName
   );
@@ -103,16 +94,12 @@ export const DataSourcePropLink = ({
   code?: boolean;
   nocode?: boolean;
 }) => {
-  const href = `/docs/latest/reference/datasource-props#${
-    name as string
-  }`;
+  const href = `/docs/latest/reference/datasource-props#${name as string}`;
   if (nocode) {
     code = false;
   }
   const content = code ? (
-    <InlineCode isLink={false}>
-      {children ?? name}
-    </InlineCode>
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
   ) : (
     children ?? name
   );
@@ -143,16 +130,12 @@ export const HookLink = ({
   code?: boolean;
   nocode?: boolean;
 }) => {
-  const href = `/docs/latest/reference/hooks#${
-    name as string
-  }`;
+  const href = `/docs/latest/reference/hooks#${name as string}`;
   if (nocode) {
     code = false;
   }
   const content = code ? (
-    <InlineCode isLink={false}>
-      {children ?? name}
-    </InlineCode>
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
   ) : (
     children ?? name
   );
@@ -170,14 +153,13 @@ const PropInlineCode = ({
 }) => {
   return (
     <div
-      title={
-        typeof children === 'string' ? children : undefined
-      }
+      title={typeof children === 'string' ? children : undefined}
       style={style}
       className={cn(
         'rounded-lg inline-block bg-gray-90 px-2 text-primary-dark dark:text-primary-dark font-mono text-code whitespace-pre max-w-full overflow-hidden overflow-ellipsis',
-        className
-      )}>
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -199,15 +181,12 @@ export function Prop({
 
   const [first, ...rest] = React.Children.toArray(children);
   const inlineExcerpt =
-    React.isValidElement(first) &&
-    first.props.mdxType === 'blockquote';
+    React.isValidElement(first) && first.props.mdxType === 'blockquote';
   if (inlineExcerpt) {
     excerpt = first.props.children;
   }
 
-  const content = React.Children.toArray(
-    inlineExcerpt ? rest : children
-  );
+  const content = React.Children.toArray(inlineExcerpt ? rest : children);
   const hasDetails = !!content.length;
 
   return (
@@ -215,8 +194,9 @@ export function Prop({
       className={cn(
         'my-4 rounded-lg shadow-inner relative',
 
-        'dark:bg-opacity-20 dark:bg-purple-60 bg-purple-5'
-      )}>
+        'dark:bg-opacity-20 dark:bg-purple-60 bg-purple-5',
+      )}
+    >
       <div className="p-8 flex flex-row">
         <div className="flex-1">
           <div className="flex flex-row w-full items-center flex-wrap">
@@ -240,9 +220,7 @@ export function Prop({
             {type ? (
               <>
                 <div className="flex flex-row justify-end flex-auto">
-                  <PropInlineCode
-                    className="ml-3 "
-                    style={{ maxWidth: '90%' }}>
+                  <PropInlineCode className="ml-3 " style={{ maxWidth: '90%' }}>
                     {type}
                   </PropInlineCode>
                 </div>
@@ -260,17 +238,12 @@ export function Prop({
             <Button
               active
               className={cn(
-                'bg-purple-50 border-purple-50 hover:bg-purple-40 focus:bg-purple-50 active:bg-purple-50'
+                'bg-purple-50 border-purple-50 hover:bg-purple-40 focus:bg-purple-50 active:bg-purple-50',
               )}
-              onClick={() =>
-                setIsExpanded((current) => !current)
-              }>
+              onClick={() => setIsExpanded((current) => !current)}
+            >
               <span className="mr-1">
-                <IconChevron
-                  displayDirection={
-                    isExpanded ? 'up' : 'down'
-                  }
-                />
+                <IconChevron displayDirection={isExpanded ? 'up' : 'down'} />
               </span>
               {isExpanded ? 'Hide Details' : 'Show Details'}
             </Button>
@@ -279,9 +252,8 @@ export function Prop({
       </div>
       {isExpanded && hasDetails ? (
         <div
-          className={cn(
-            'p-8 border-t dark:border-purple-60 border-purple-10 '
-          )}>
+          className={cn('p-8 border-t dark:border-purple-60 border-purple-10 ')}
+        >
           {content}
         </div>
       ) : null}
@@ -301,33 +273,27 @@ export function PropTable({
 
   const [filterText, doSetFilterText] = React.useState('');
 
-  const contents = React.Children.toArray(children).map(
-    (child) => {
-      if (!React.isValidElement(child)) return null;
+  const contents = React.Children.toArray(children).map((child) => {
+    if (!React.isValidElement(child)) return null;
 
-      if (child.props.mdxType === 'Prop') {
-        const name = child.props.name;
+    if (child.props.mdxType === 'Prop') {
+      const name = child.props.name;
 
-        let hidden = child.props.hidden;
+      let hidden = child.props.hidden;
 
-        if (!name) {
-          hidden = true;
-        }
-        if (
-          !hidden &&
-          filterText &&
-          !name.toLowerCase().includes(filterText)
-        ) {
-          hidden = true;
-        }
-        return React.cloneElement(child, {
-          hidden,
-        });
+      if (!name) {
+        hidden = true;
       }
-
-      return child;
+      if (!hidden && filterText && !name.toLowerCase().includes(filterText)) {
+        hidden = true;
+      }
+      return React.cloneElement(child, {
+        hidden,
+      });
     }
-  );
+
+    return child;
+  });
 
   const setFilterText = React.useMemo(() => {
     const debouncedFilter = debounce((text: string) => {
@@ -369,7 +335,8 @@ export function PropTable({
           //@ts-ignore
           onChange={onChange}
           //@ts-ignore
-          children={inputChildren}></StyledInput>
+          children={inputChildren}
+        ></StyledInput>
       </MaxWidth>
       {contents}
       {/* {children} */}

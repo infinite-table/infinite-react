@@ -37,14 +37,10 @@ const colors = [
 ];
 
 export function APIAnatomy({ children }: APIAnatomyProps) {
-  const [activeStep, setActiveStep] = React.useState<
-    number | null
-  >(null);
+  const [activeStep, setActiveStep] = React.useState<number | null>(null);
   const ref = React.useRef<HTMLDivElement>();
 
-  const { steps, code } = React.Children.toArray(
-    children
-  ).reduce(
+  const { steps, code } = React.Children.toArray(children).reduce(
     (acc: AnatomyContent, child) => {
       if (!React.isValidElement(child)) return acc;
       switch (child.props.mdxType) {
@@ -55,7 +51,7 @@ export function APIAnatomy({ children }: APIAnatomyProps) {
               activeStep,
               handleStepChange: setActiveStep,
               stepNumber: acc.steps.length + 1,
-            })
+            }),
           );
           break;
         case 'pre':
@@ -70,7 +66,7 @@ export function APIAnatomy({ children }: APIAnatomyProps) {
       }
       return acc;
     },
-    { steps: [], code: null }
+    { steps: [], code: null },
   );
 
   return (
@@ -107,14 +103,16 @@ export function AnatomyStep({
       className={cn(
         'border-l-4 rounded-lg px-5 pt-8 pb-2 bg-opacity-5 shadow-inner',
         color.border,
-        color.background
-      )}>
+        color.background,
+      )}
+    >
       <div className="relative flex items-center justify-between">
         <div
           className={cn(
             'inline align-middle text-center rounded-full w-5 h-5 absolute font-bold text-white text-code font-mono leading-tight -left-8',
-            color.background
-          )}>
+            color.background,
+          )}
+        >
           {stepNumber}
         </div>
         <div className="text-primary dark:text-primary-dark leading-3 font-bold">

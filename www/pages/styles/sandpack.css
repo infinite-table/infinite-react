@@ -1,6 +1,30 @@
 html .sp-wrapper {
+  --sp-font-size: 14px;
+
+  --sp-colors-surface1: #f8f9fb;
+  --sp-colors-surface2: #ebedf0;
+  --sp-colors-surface3: #e4e7eb;
+  --sp-colors-clickable: #737373;
+  --sp-colors-base: #323232;
+  --sp-colors-disabled: #c5c5c5;
+  --sp-colors-hover: #1f2933;
+  --sp-colors-accent: #2e7692;
+  --sp-colors-error: #ff453a;
+  --sp-colors-errorSurface: #ffeceb;
+  --sp-font-lineHeight: 20px;
+  --sp-syntax-color-plain: #1f2933;
+  --sp-syntax-color-comment: #a7b6c2;
+  --sp-syntax-fontStyle-comment: italic;
+  --sp-syntax-color-keyword: #1a56db;
+  --sp-syntax-color-tag: #1a56db;
+  --sp-syntax-color-punctuation: #394b59;
+  --sp-syntax-color-definition: #a23dad;
+  --sp-syntax-color-property: #2e7692;
+  --sp-syntax-color-static: #1a56db;
+  --sp-syntax-color-string: #1992d4;
+
   /* palette */
-  --sp-colors-fg-active: #24292e !important;
+  /* --sp-colors-fg-active: #24292e !important;
   --sp-colors-fg-default: #959da5 !important;
   --sp-colors-fg-inactive: #e4e7eb !important;
   --sp-colors-bg-active: #e4e7eb !important;
@@ -10,8 +34,11 @@ html .sp-wrapper {
   --sp-colors-accent: #c8c8fa !important;
   --sp-colors-bg-error: #ffcdca !important;
   --sp-colors-fg-error: #811e18 !important;
+
+  --sp-colors-surface1: var(--sp-colors-bg-default);
+   */
   /* syntax */
-  --theme-plain: #24292e;
+  /* --theme-plain: #24292e;
   --theme-comment: #6a737d;
   --theme-keyword: #d73a49;
   --theme-tag: #22863a;
@@ -19,21 +46,44 @@ html .sp-wrapper {
   --theme-definition: #6f42c1;
   --theme-property: #005cc5;
   --theme-static: #032f62;
-  --theme-string: #032f62;
+  --theme-string: #032f62; */
 }
 html.dark .sp-wrapper {
-  --sp-colors-fg-active: #ffffff !important;
+  --sp-colors-surface1: #101419;
+  --sp-colors-surface2: #444344;
+  --sp-colors-surface3: #484747;
+  --sp-colors-clickable: #939293;
+  --sp-colors-base: #c1c0c1;
+  --sp-colors-disabled: #444344;
+  --sp-colors-hover: #fcfcfa;
+  --sp-colors-accent: #ffd866;
+  --sp-colors-error: #ffcdca;
+  --sp-colors-errorSurface: #c24038;
+  --sp-font-lineHeight: 20px;
+  --sp-syntax-color-plain: rgb(252, 252, 250);
+  --sp-syntax-color-comment: #757575;
+  --sp-syntax-fontStyle-comment: italic;
+  --sp-syntax-color-keyword: rgb(255, 97, 136);
+  --sp-syntax-color-tag: rgb(120, 220, 232);
+  --sp-syntax-color-punctuation: rgb(147, 146, 147);
+  --sp-syntax-color-definition: rgb(169, 220, 118);
+  --sp-syntax-color-property: rgb(120, 220, 232);
+  --sp-syntax-fontStyle-property: italic;
+  --sp-syntax-color-static: rgb(171, 157, 242);
+  --sp-syntax-color-string: rgb(255, 216, 102);
+  /* --sp-colors-fg-active: #ffffff !important;
   --sp-colors-fg-default: #999999 !important;
   --sp-colors-fg-inactive: #343434 !important;
   --sp-colors-bg-active: #343434 !important;
-  --sp-colors-bg-default: #16181d !important;
+  --sp-colors-bg-default: #101419 !important;
   --sp-colors-bg-default-overlay: #16181d !important;
   --sp-colors-bg-input: #242424 !important;
   --sp-colors-accent: #6caedd !important;
   --sp-colors-bg-error: #ffcdca !important;
-  --sp-colors-fg-error: #811e18 !important;
+  --sp-colors-fg-error: #811e18 !important; */
+
   /* syntax */
-  --theme-plain: #ffffff;
+  /* --theme-plain: #ffffff;
   --theme-comment: #757575;
   --theme-keyword: #77b7d7;
   --theme-tag: #dfab5c;
@@ -41,9 +91,13 @@ html.dark .sp-wrapper {
   --theme-definition: #86d9ca;
   --theme-property: #77b7d7;
   --theme-static: #c64640;
-  --theme-string: #977cdc;
+  --theme-string: #977cdc; */
 }
 
+.sp-tabs-scrollable-container {
+  --sp-font-size: 17px;
+  font-size: var(--sp-font-size);
+}
 .sp-tabs,
 .sp-tab-button:hover {
   background: none !important;
@@ -66,6 +120,9 @@ html.dark .sp-tabs .sp-tab-button:hover {
   color: #149eca;
 }
 
+.sp-tabs {
+  border-bottom: none;
+}
 .sp-tabs .sp-tab-button[data-active='true'] {
   color: #087ea4;
   border-bottom: 2px solid #087ea4;
@@ -110,10 +167,18 @@ html.dark .sp-tabs .sp-tab-button[data-active='true'] {
 .sp-layout {
   border-bottom-left-radius: 0.5rem !important;
   border-bottom-right-radius: 0.5rem !important;
+  display: flex;
+}
+.sp-wrapper {
+  width: 100%;
 }
 .sp-stack {
-  height: initial !important;
-  width: fit-content !important;
+  /* height: initial !important; */
+  width: 100% !important;
+  flex: 1 1 0;
+}
+.sp-stack.sp-editor {
+  min-width: none;
 }
 .sp-cm {
   -webkit-text-size-adjust: none !important;

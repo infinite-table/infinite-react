@@ -1,12 +1,8 @@
 // next.config.js
 const path = require('path');
 const webpack = require('webpack');
-const examplesFolder = path.resolve(__dirname);
-const parentFolder = path.resolve(__dirname, '../');
 
-const {
-  createVanillaExtractPlugin,
-} = require('@vanilla-extract/next-plugin');
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
 const withVanillaExtract = createVanillaExtractPlugin();
 
 /**
@@ -21,17 +17,11 @@ const withParentFolder = (nextConfig = {}) => {
       // config.resolve.alias = config.resolve.alias || {};
       config.resolve.alias = {
         ...config.resolve.alias,
-        react: path.resolve(
-          __dirname,
-          '../node_modules/react'
-        ),
-        ['react-dom']: path.resolve(
-          __dirname,
-          '../node_modules/react-dom'
-        ),
+        react: path.resolve(__dirname, '../node_modules/react'),
+        ['react-dom']: path.resolve(__dirname, '../node_modules/react-dom'),
         '@infinite-table/infinite-react': path.resolve(
           __dirname,
-          '../source/src/'
+          '../source/src/',
         ),
         '@src': path.resolve(__dirname, '../src'),
         '@examples': path.resolve(__dirname, './src'),
@@ -39,11 +29,9 @@ const withParentFolder = (nextConfig = {}) => {
 
       const definePlugin = new webpack.DefinePlugin({
         __DEV__: JSON.stringify(true),
-        __VERSION__: JSON.stringify(
-          require('../package.json').version
-        ),
+        __VERSION__: JSON.stringify(require('../package.json').version),
         __VERSION_TIMESTAMP__: JSON.stringify(
-          require('../package.json').publishedAt || 0
+          require('../package.json').publishedAt || 0,
         ),
       });
 

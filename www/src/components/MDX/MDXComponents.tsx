@@ -27,10 +27,7 @@ import Sandpack from './Sandpack';
 import SimpleCallout from './SimpleCallout';
 import TerminalBlock from './TerminalBlock';
 import YouWillLearnCard from './YouWillLearnCard';
-import {
-  Challenges,
-  /*Hint, */ Solution,
-} from './Challenges';
+import { Challenges, /*Hint, */ Solution } from './Challenges';
 import { IconNavArrow } from '../Icon/IconNavArrow';
 import ButtonLink from '@www/components/ButtonLink';
 import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
@@ -39,9 +36,9 @@ const P = (p: JSX.IntrinsicElements['p']) => (
   <p className="whitespace-pre-wrap my-4" {...p} />
 );
 
-const Strong = (
-  strong: JSX.IntrinsicElements['strong']
-) => <strong className="font-bold" {...strong} />;
+const Strong = (strong: JSX.IntrinsicElements['strong']) => (
+  <strong className="font-bold" {...strong} />
+);
 
 const OL = (p: JSX.IntrinsicElements['ol']) => (
   <ol className="ml-6 my-3 list-decimal" {...p} />
@@ -64,9 +61,7 @@ const Gotcha = ({
   children: React.ReactNode;
   title?: React.ReactNode;
 }) => (
-  <ExpandableCallout
-    type="gotcha"
-    title={title || 'Gotcha'}>
+  <ExpandableCallout type="gotcha" title={title || 'Gotcha'}>
     {children}
   </ExpandableCallout>
 );
@@ -82,14 +77,8 @@ const Note = ({
   </ExpandableCallout>
 );
 
-const ReadMore = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => (
-  <ExpandableCallout type="readMore">
-    {children}
-  </ExpandableCallout>
+const ReadMore = ({ children }: { children: React.ReactNode }) => (
+  <ExpandableCallout type="readMore">{children}</ExpandableCallout>
 );
 
 const Blockquote = ({
@@ -100,7 +89,8 @@ const Blockquote = ({
     <>
       <blockquote
         className="mdx-blockquote py-4 px-8 my-8 shadow-inner bg-highlight dark:bg-highlight-dark bg-opacity-50 rounded-lg leading-6 flex relative"
-        {...props}>
+        {...props}
+      >
         <span className="block relative">{children}</span>
       </blockquote>
       {/* @ts-ignore */}
@@ -137,12 +127,10 @@ function LearnMore({
               className="mt-1"
               label="Read More"
               href={path}
-              type="primary">
+              type="primary"
+            >
               Read More
-              <IconNavArrow
-                displayDirection="right"
-                className="inline ml-1"
-              />
+              <IconNavArrow displayDirection="right" className="inline ml-1" />
             </ButtonLink>
           ) : null}
         </div>
@@ -158,7 +146,8 @@ function Math({ children }: { children: any }) {
       style={{
         fontFamily: 'STIXGeneral-Regular, Georgia, serif',
         fontSize: '1.2rem',
-      }}>
+      }}
+    >
       {children}
     </span>
   );
@@ -170,18 +159,15 @@ function MathI({ children }: { children: any }) {
       style={{
         fontFamily: 'STIXGeneral-Italic, Georgia, serif',
         fontSize: '1.2rem',
-      }}>
+      }}
+    >
       {children}
     </span>
   );
 }
 
 function YouWillLearn({ children }: { children: any }) {
-  return (
-    <SimpleCallout title="You will learn">
-      {children}
-    </SimpleCallout>
-  );
+  return <SimpleCallout title="You will learn">{children}</SimpleCallout>;
 }
 
 // TODO: typing.
@@ -201,9 +187,7 @@ function AuthorCredit({
       <cite>
         Illustrated by{' '}
         {authorLink ? (
-          <a
-            className="text-link dark:text-link-dark"
-            href={authorLink}>
+          <a className="text-link dark:text-link-dark" href={authorLink}>
             {author}
           </a>
         ) : (
@@ -232,23 +216,14 @@ function Illustration({
   return (
     <div className="my-16 mx-0 2xl:mx-auto max-w-4xl 2xl:max-w-6xl">
       <figure className="my-8 flex justify-center">
-        <img
-          src={src}
-          alt={alt}
-          style={{ maxHeight: 300 }}
-        />
+        <img src={src} alt={alt} style={{ maxHeight: 300 }} />
         {caption ? (
           <figcaption className="text-center leading-tight mt-4">
             {caption}
           </figcaption>
         ) : null}
       </figure>
-      {author ? (
-        <AuthorCredit
-          author={author}
-          authorLink={authorLink}
-        />
-      ) : null}
+      {author ? <AuthorCredit author={author} authorLink={authorLink} /> : null}
     </div>
   );
 }
@@ -267,16 +242,12 @@ function IllustrationBlock({
   children: any;
 }) {
   const imageInfos = React.Children.toArray(children).map(
-    (child: any) => child.props
+    (child: any) => child.props,
   );
   const images = imageInfos.map((info, index) => (
     <figure key={index}>
       <div className="flex-1 flex p-0 xl:px-6 justify-center items-center my-4">
-        <img
-          src={info.src}
-          alt={info.alt}
-          height={info.height}
-        />
+        <img src={info.src} alt={info.alt} height={info.height} />
       </div>
       {info.caption ? (
         <figcaption className="text-secondary dark:text-secondary-dark text-center leading-tight mt-4">
@@ -299,16 +270,9 @@ function IllustrationBlock({
           ))}
         </ol>
       ) : (
-        <div className="mdx-illustration-block">
-          {images}
-        </div>
+        <div className="mdx-illustration-block">{images}</div>
       )}
-      {author ? (
-        <AuthorCredit
-          author={author}
-          authorLink={authorLink}
-        />
-      ) : null}
+      {author ? <AuthorCredit author={author} authorLink={authorLink} /> : null}
       {/* @ts-ignore */}
       <style jsx global>{`
         .mdx-illustration-block {
@@ -350,8 +314,7 @@ function IllustrationBlock({
           transform: translateY(-50%);
           width: 60px;
           height: 49px;
-          background: center / contain no-repeat
-            url('/images/g_arrow.png');
+          background: center / contain no-repeat url('/images/g_arrow.png');
         }
         .mdx-illustration-block li:first-child:after {
           content: ' ';
@@ -372,8 +335,7 @@ function IllustrationBlock({
             top: 0;
             left: 50%;
             right: auto;
-            transform: translateX(-50%) translateY(-100%)
-              rotate(90deg);
+            transform: translateX(-50%) translateY(-100%) rotate(90deg);
           }
         }
       `}</style>
@@ -425,12 +387,7 @@ export const MDXComponents = {
     children: React.ReactNode;
     title: string;
     excerpt: string;
-  }) => (
-    <ExpandableExample
-      {...props}
-      type="ExpandableDescription"
-    />
-  ),
+  }) => <ExpandableExample {...props} type="ExpandableDescription" />,
   Gotcha,
   HomepageHero,
   HeroCards,
@@ -438,9 +395,7 @@ export const MDXComponents = {
   IllustrationBlock,
   Intro,
   IconOpenInWindow,
-  Description: (props: { children: React.ReactNode }) => (
-    <>{props.children}</>
-  ),
+  Description: (props: { children: React.ReactNode }) => <>{props.children}</>,
   LearnMore,
   Math,
   MathI,
