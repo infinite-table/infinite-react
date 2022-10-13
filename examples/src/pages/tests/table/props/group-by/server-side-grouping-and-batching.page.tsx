@@ -97,7 +97,7 @@ const columnPinning: InfiniteTablePropColumnPinning = {
 //   };
 // };
 
-console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS);
+console.log('env var for tests', process.env.NEXT_PUBLIC_BASE_URL);
 export default function RemotePivotExample() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
@@ -215,7 +215,7 @@ const dataSource: DataSourceData<Developer> = ({
     .filter(Boolean)
     .join('&');
   return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers30k-sql?` + args,
+    process.env.NEXT_PUBLIC_BASE_URL + `/developers30k-sql?` + args,
   ).then((r) => r.json());
   // .then((res) => {
   //   return new Promise((resolve) => {

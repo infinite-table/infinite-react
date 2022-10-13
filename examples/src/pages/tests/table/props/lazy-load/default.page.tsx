@@ -67,9 +67,7 @@ function getDataSource(size: string) {
       .filter(Boolean)
       .join('&');
     return fetch(
-      process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS +
-        `/developers${size}-sql?` +
-        args,
+      process.env.NEXT_PUBLIC_BASE_URL + `/developers${size}-sql?` + args,
     )
       .then((r) => r.json())
       .then(

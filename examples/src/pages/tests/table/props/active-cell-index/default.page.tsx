@@ -23,6 +23,7 @@ type Developer = {
   age: number;
 };
 
+console.log('env for base url ', process.env.NEXT_PUBLIC_BASE_URL);
 const dataSource: DataSourceData<Developer> = () => {
   return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql?`)
     .then((r) => r.json())

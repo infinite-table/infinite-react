@@ -12,7 +12,6 @@ jobs:
   run-tests:
     env:
       NEXT_PUBLIC_BASE_URL: http://infinite-table.com/.netlify/functions/json-server
-      NEXT_PUBLIC_BASE_URL_FOR_TESTS: http://infinite-table.com/.netlify/functions/json-server
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -35,9 +35,7 @@ const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
     .filter(Boolean)
     .join('&');
 
-  return fetch(
-    process.env.NEXT_PUBLIC_BASE_URL_FOR_TESTS + `/developers100-sql?` + args,
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql?` + args)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
