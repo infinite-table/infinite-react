@@ -1,4 +1,5 @@
 const debug = require('debug');
+
 const debugTable = debug(`InfiniteTable`);
 
 export interface LogFn {
