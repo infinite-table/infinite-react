@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Table', () => {
-  test.only('cell content is there', async ({ page, rowModel }) => {
+  test('cell content is there', async ({ page, rowModel }) => {
     await page.waitForInfinite();
 
     let count = await rowModel.getRenderedRowCount();

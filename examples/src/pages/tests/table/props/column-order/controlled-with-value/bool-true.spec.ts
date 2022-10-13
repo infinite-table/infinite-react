@@ -4,7 +4,7 @@ import { test, expect } from '@testing';
 import { columns } from '../columns';
 
 export default test.describe.parallel('Column order = true', () => {
-  test.only('should work', async ({ page, columnModel }) => {
+  test('should work', async ({ page, columnModel }) => {
     await page.waitForInfinite();
     let colIds = await columnModel.getVisibleColumnIds();
 
