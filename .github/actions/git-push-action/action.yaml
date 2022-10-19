@@ -1,5 +1,5 @@
-name: "GitHub Push"
-description: "Pushing to GitHub repository local changes"
+name: 'GitHub Push'
+description: 'Pushing to GitHub repository local changes'
 
 branding:
   icon: upload-cloud
@@ -9,24 +9,24 @@ inputs:
     description: 'Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}'
     required: true
   repository:
-    description: "Repository name to push. Default or empty value represents current github repository (${GITHUB_REPOSITORY})"
-    default: ""
+    description: 'Repository name to push. Default or empty value represents current github repository (${GITHUB_REPOSITORY})'
+    default: ''
     required: false
   branch:
-    description: "Destination branch to push changes"
+    description: 'Destination branch to push changes'
     required: false
-    default: "master"
+    default: 'master'
   force:
-    description: "Determines if force push is used"
+    description: 'Determines if force push is used'
     required: false
   directory:
-    description: "Directory to change to before pushing."
+    description: 'Directory to change to before pushing.'
     required: false
-    default: "."
+    default: '.'
   commit_message:
     required: false
-    default: "update"
+    default: 'update'
 
 runs:
-  using: "node12"
-  main: "start.js"
+  using: 'node16'
+  main: 'start.js'

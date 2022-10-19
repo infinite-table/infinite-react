@@ -3,12 +3,12 @@ description: 'Execute cmd in input'
 branding:
   icon: upload-cloud
   color: green
-  
+
 inputs:
   cmd_to_execute:
     description: 'Command to execute'
     required: true
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'start.js'
