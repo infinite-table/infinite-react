@@ -33,6 +33,8 @@ export default test.describe.parallel('Pivot', () => {
     // toggles show totals to true
     await page.click('button[data-name="toggle-show-totals"]');
 
+    await page.waitForTimeout(30);
+
     columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
@@ -46,7 +48,7 @@ export default test.describe.parallel('Pivot', () => {
     page,
     columnModel,
   }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(20);
     let columnIds = await columnModel.getVisibleColumnIds();
     let columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
@@ -67,6 +69,7 @@ export default test.describe.parallel('Pivot', () => {
 
     // toggles pivot for "canDesign" field
     await page.click('button[data-name="toggle-can-design"]');
+    await page.waitForTimeout(30);
 
     columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await columnModel.getVisibleColumnGroupIds();
@@ -91,6 +94,7 @@ export default test.describe.parallel('Pivot', () => {
     // toggles show totals to true
     await page.click('button[data-name="toggle-show-totals"]');
 
+    await page.waitForTimeout(30);
     columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 

@@ -2,7 +2,7 @@ import { test, expect } from '@testing';
 
 export default test.describe.parallel('Pivot and grouping edge cases', () => {
   test('expect columns to be correctly set', async ({ page, columnModel }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(20);
     let columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual(['id', 'firstName', 'age', 'salary', 'currency']);

@@ -9,7 +9,7 @@ export default test.describe.parallel('Pivot', () => {
     page,
     columnModel,
   }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(20);
     // grand total position: false
     let columnIds = await columnModel.getVisibleColumnIds();
 
@@ -25,6 +25,8 @@ export default test.describe.parallel('Pivot', () => {
 
     // grand total position: end
 
+    await page.waitForTimeout(20);
+
     columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual([
@@ -38,6 +40,7 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     await page.click('button');
+    await page.waitForTimeout(20);
 
     // grand total position: start
 
