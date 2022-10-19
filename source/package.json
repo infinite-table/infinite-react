@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/infinite-table/infinite-react/issues"
   },
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "index.js",
   "module": "index.esm.js",
   "typings": "index.d.ts",
@@ -48,8 +48,8 @@
     "/": "//",
     "/--- should not run locally ----": "//",
     "/--- as this is run via github actions CI ----": "//",
-    "registry-publish": "npm publish dist --access public",
-    "registry-publish-canary": "npm publish dist --access public --tag canary",
+    "registry-publish": "cd dist && npm publish --access public",
+    "registry-publish-canary": "cd dist && npm publish dist --access public --tag canary",
     "//": "// only used in the release.yml workflow",
     "release:canary-nobump": "npm run registry-publish-canary",
     "release:nobump": "npm run registry-publish",
