@@ -9,6 +9,7 @@ import { Renderable } from '../../types/Renderable';
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type { Size } from '../../types/Size';
 import { SubscriptionCallback } from '../../types/SubscriptionCallback';
+
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
