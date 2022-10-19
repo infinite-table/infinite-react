@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { join } from '../../../../utils/join';
 import { RawTable } from '../../../HeadlessTable/RawTable';
+
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,
