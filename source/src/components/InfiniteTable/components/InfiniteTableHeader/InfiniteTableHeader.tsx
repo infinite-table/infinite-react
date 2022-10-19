@@ -142,7 +142,6 @@ function InfiniteTableHeaderFn<T>(
       columnAndGroupTreeInfo,
       columnGroupsMaxDepth,
       showColumnFilters,
-      _,
     ],
   );
 
