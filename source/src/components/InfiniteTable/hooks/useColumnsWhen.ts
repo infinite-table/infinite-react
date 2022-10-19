@@ -1,6 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useLayoutEffect, useMemo } from 'react';
 
 import type { InfiniteTableColumn, InfiniteTableState } from '..';
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import type {
   DataSourceGroupBy,
   DataSourcePivotBy,
@@ -10,7 +11,12 @@ import type {
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
 import { interceptMap } from '../../hooks/useInterceptedMap';
-import { usePrevious } from '../../hooks/usePrevious';
+import { getGroupByMap } from '../state/getInitialState';
+import {
+  getColumnVisibilityForHideEmptyGroupColumns,
+  getGroupColumnsMapForComputedColumns,
+} from '../state/getColumnVisibilityForHideEmptyGroupColumns';
+
 import type {
   InfiniteTableComputedPivotFinalColumn,
   InfiniteTableGeneratedGroupColumn,
@@ -28,21 +34,10 @@ import {
   getSingleGroupColumn,
 } from '../utils/getColumnForGroupBy';
 
-import { useEffectWithRaf } from './useEffectWithRaf';
 import { ToggleGroupRowFn, useToggleGroupRow } from './useToggleGroupRow';
 
 function useGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
-  const groupByMap = useMemo(() => {
-    return groupBy.reduce((acc, groupBy, index) => {
-      acc.set(groupBy.field, {
-        groupBy,
-        groupIndex: index,
-      });
-      return acc;
-    }, new Map() as GroupByMap<T>);
-  }, [groupBy]);
-
-  return groupByMap;
+  return useMemo(() => getGroupByMap(groupBy), [groupBy]);
 }
 
 export function useColumnsWhen<T>() {
@@ -59,8 +54,6 @@ export function useColumnsWhen<T>() {
     },
   } = useComponentState<InfiniteTableState<T>>();
 
-  const groupByMap = useGroupByMap(groupBy);
-
   useEffect(() => {
     dataSourceActions.generateGroupRows = groupRenderStrategy !== 'inline';
   }, [groupRenderStrategy]);
@@ -75,6 +68,8 @@ export function useColumnsWhen<T>() {
         pivotGrandTotalColumnPosition;
     }
   }, [pivotGrandTotalColumnPosition]);
+
+  const groupByMap = useGroupByMap(groupBy);
 
   useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
@@ -286,6 +281,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
   const {
     componentState: {
       dataArray,
+      groupRowsIndexesInDataArray: groupRowsIndexesInDataArray,
       groupBy,
       groupRowsState,
       originalLazyGroupDataChangeDetect,
@@ -307,115 +303,32 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     },
   } = useComponentState<InfiniteTableState<T>>();
 
-  const prevHideEmptyGroupColumns = usePrevious(hideEmptyGroupColumns);
-
-  useEffectWithRaf(() => {
+  // implements hideEmptyGroupColumns
+  useLayoutEffect(() => {
     if (groupRenderStrategy !== 'multi-column') {
       return;
     }
     const currentState = getComponentState();
 
-    const computedGroupColumns: Map<
-      string,
-      InfiniteTableGeneratedGroupColumn<T>
-    > = new Map();
-
-    computedColumns.forEach(
-      (
-        column: InfiniteTableColumn<T> | InfiniteTableGeneratedGroupColumn<T>,
-        colId: string,
-      ) => {
-        if (
-          typeof (column as InfiniteTableGeneratedGroupColumn<T>)
-            .groupByField !== 'string'
-        ) {
-          return;
-        }
-        const { groupByField } = column as InfiniteTableGeneratedGroupColumn<T>;
-        const field = groupByField as keyof T;
-        const groupInfoForColumn = groupByMap.get(field);
-        if (!groupInfoForColumn) {
-          return;
-        }
-
-        computedGroupColumns.set(
-          colId,
-          column as InfiniteTableGeneratedGroupColumn<T>,
-        );
-      },
+    const computedGroupColumns = getGroupColumnsMapForComputedColumns(
+      computedColumns,
+      groupByMap,
     );
 
-    if (!hideEmptyGroupColumns) {
-      if (prevHideEmptyGroupColumns) {
-        let updated = false;
-        const columnVisibility = { ...currentState.columnVisibility };
+    const newColumnVisibility = getColumnVisibilityForHideEmptyGroupColumns({
+      computedGroupColumns,
+      columnVisibility: currentState.columnVisibility,
+      hideEmptyGroupColumns,
+      groupRowsIndexesInDataArray,
+      dataArray,
+      groupBy,
+      groupByMap,
+    });
 
-        computedGroupColumns.forEach(
-          (_column: InfiniteTableGeneratedGroupColumn<T>, colId: string) => {
-            if (columnVisibility[colId] === false) {
-              updated = true;
-              delete columnVisibility[colId];
-            }
-          },
-        );
-
-        if (updated) {
-          componentActions.columnVisibility = columnVisibility;
-        }
-      }
-      return;
-    }
-
-    const groupsLength = groupBy.length;
-
-    let expandedGroupsLevel = 0;
-
-    const len = dataArray.length;
-
-    for (let i = 0; i < len; i++) {
-      const rowInfo = dataArray[i];
-
-      if (!rowInfo.isGroupRow) {
-        continue;
-      }
-      expandedGroupsLevel = Math.max(
-        expandedGroupsLevel,
-        rowInfo.groupNesting! - 1,
-      );
-      if (expandedGroupsLevel === groupsLength - 1) {
-        break;
-      }
-    }
-
-    let updated = false;
-    const columnVisibility = { ...currentState.columnVisibility };
-
-    computedGroupColumns.forEach(
-      (column: InfiniteTableGeneratedGroupColumn<T>, colId: string) => {
-        const { groupByField } = column as InfiniteTableGeneratedGroupColumn<T>;
-        const field = groupByField as keyof T;
-        const groupInfoForColumn = groupByMap.get(field)!;
-        const index = groupInfoForColumn.groupIndex;
-
-        const shouldBeHidden =
-          index > expandedGroupsLevel && hideEmptyGroupColumns;
-
-        if (shouldBeHidden) {
-          if (columnVisibility[colId] !== false) {
-            updated = true;
-            columnVisibility[colId] = false;
-          }
-        } else {
-          if (columnVisibility.hasOwnProperty(colId)) {
-            updated = true;
-            delete columnVisibility[colId];
-          }
-        }
-      },
-    );
-
-    if (updated) {
-      componentActions.columnVisibility = columnVisibility;
+    if (
+      !shallowEqualObjects(currentState.columnVisibility, newColumnVisibility)
+    ) {
+      componentActions.columnVisibility = newColumnVisibility;
     }
   }, [
     getDataSourceState,
@@ -427,6 +340,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
 
     hideEmptyGroupColumns ? dataArray : null,
     hideEmptyGroupColumns ? groupRowsState : null,
+    hideEmptyGroupColumns ? groupRowsIndexesInDataArray : null,
     hideEmptyGroupColumns,
   ]);
 

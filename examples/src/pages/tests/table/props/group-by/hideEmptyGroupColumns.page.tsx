@@ -92,6 +92,7 @@ export default function GroupByExample() {
         onChange={() => {
           setHideEmptyGroupColumns(!hideEmptyGroupColumns);
         }}
+        style={{ color: 'magenta' }}
       >
         Hide empty group columns
         <input type="checkbox" checked={hideEmptyGroupColumns} />

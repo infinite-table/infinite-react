@@ -1,5 +1,9 @@
 import { createRef, KeyboardEvent, MouseEvent } from 'react';
-import { DataSourceGroupBy, DataSourceState } from '../../DataSource';
+import {
+  DataSourceGroupBy,
+  DataSourcePropGroupBy,
+  DataSourceState,
+} from '../../DataSource';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { CellPosition } from '../../types/CellPosition';
@@ -24,6 +28,7 @@ import {
   InfiniteTableSetupState,
   InfiniteTableDerivedState,
   InfiniteTableMappedState,
+  GroupByMap,
 } from '../types/InfiniteTableState';
 import { toMap } from '../utils/toMap';
 
@@ -296,6 +301,16 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.pinnedEndScrollListener.destroy();
   state.pinnedStartScrollListener.destroy();
 };
+
+export function getGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
+  return groupBy.reduce((acc, groupBy, index) => {
+    acc.set(groupBy.field, {
+      groupBy,
+      groupIndex: index,
+    });
+    return acc;
+  }, new Map() as GroupByMap<T>);
+}
 
 export const mapPropsToState = <T>(params: {
   props: InfiniteTableProps<T>;

@@ -132,6 +132,8 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnTypes,
   });
 
+  // console.log(computedVisibleColumns);
+
   const rowspan = useColumnRowspan(computedVisibleColumns);
   const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
   const scrollbars = useScrollbars<T>(brain);

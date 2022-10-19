@@ -371,6 +371,7 @@ export function concludeReducer<T>(params: {
 
       rowInfoDataArray = flattenResult.data;
 
+      state.groupRowsIndexesInDataArray = flattenResult.groupRowsIndexes;
       state.reducerResults = groupResult.reducerResults;
 
       const pivotGroupsAndCols = pivotBy
@@ -398,7 +399,7 @@ export function concludeReducer<T>(params: {
   } else {
     state.groupDeepMap = undefined;
     state.pivotColumns = undefined;
-
+    state.groupRowsIndexesInDataArray = undefined;
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
 

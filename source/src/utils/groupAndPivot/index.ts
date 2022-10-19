@@ -1035,7 +1035,7 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
 };
 export function enhancedFlatten<DataType, KeyType = any>(
   param: EnhancedFlattenParam<DataType, KeyType>,
-): { data: InfiniteTableRowInfo<DataType>[] } {
+): { data: InfiniteTableRowInfo<DataType>[]; groupRowsIndexes: number[] } {
   const {
     lazyLoad,
     groupResult,
@@ -1052,6 +1052,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const groupByStrings = groupBy.map((g) => g.field);
 
   const result: InfiniteTableRowInfo<DataType>[] = [];
+  const groupRowsIndexes: number[] = [];
 
   const parents: InfiniteTable_HasGrouping_RowInfoGroup<DataType>[] = [];
   const indexInParentGroups: number[] = [];
@@ -1125,6 +1126,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
       if (include) {
         result.push(enhancedGroupData);
+        groupRowsIndexes.push(result.length - 1);
       }
 
       enhancedGroupData.collapsedChildrenCount = 0;
@@ -1222,5 +1224,6 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
   return {
     data: result,
+    groupRowsIndexes,
   };
 }

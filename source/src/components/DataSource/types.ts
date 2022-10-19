@@ -225,6 +225,7 @@ export interface DataSourceSetupState<T> {
   lastGroupDataArray?: InfiniteTableRowInfo<T>[];
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
+  groupRowsIndexesInDataArray?: number[];
   reducerResults?: Record<string, AggregationReducerResult>;
   allRowsSelected: boolean;
   // selectedRowCount: number;
