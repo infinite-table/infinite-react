@@ -70,7 +70,6 @@ jobs:
 
       - name: Ship it
         uses: './.github/actions/execute-cmd'
-        working-directory: source
         with:
           cmd_to_execute: $WILL_RELEASE_CMD
 
