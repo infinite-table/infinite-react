@@ -1,5 +1,6 @@
 const fs = require('fs');
 const resolve = require('path').resolve;
+
 const sourcePackagePath = resolve(__dirname, '../package.json');
 
 const packageJSON = require(sourcePackagePath);
