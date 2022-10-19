@@ -1,19 +1,5 @@
-import { test, expect, Page } from '@testing';
+import { test, expect } from '@testing';
 import { Request } from '@playwright/test';
-
-import { getColumnCells } from '../../../testUtils';
-
-const getColumnContents = async (colId: string, { page }: { page: Page }) => {
-  const cells = await getColumnCells({ colId }, { page });
-
-  const result = await Promise.all(
-    cells.bodyCells.map(
-      async (cell: any) => await cell.evaluate((node: any) => node.innerText),
-    ),
-  );
-
-  return result;
-};
 
 export default test.describe.parallel(
   'Server-side grouped with agg and no pivot',
@@ -43,7 +29,7 @@ export default test.describe.parallel(
       // wait for Canada to be loaded as well, from the remote location
       await page.waitForRequest(condition);
       // also wait for node to be expanded
-      await page.waitForTimeout(20);
+      await page.waitForTimeout(40);
 
       const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
 

@@ -1,10 +1,17 @@
 import { Page } from '@playwright/test';
 import {
+  CellLocation,
+  ColLocation,
+  getCellNodeLocator,
+  getColumnGroupsIds,
   getColumnWidths,
   getHeaderCellForColumn,
   getHeaderColumnCells,
   getSelectedRowIds,
+  resizeHandle,
 } from '.';
+import { HeaderTestingModel } from './HeaderTestingModel';
+import { kebabCase } from './kebabCase';
 
 export class ColumnTestingModel {
   static get(page: Page) {
@@ -16,6 +23,17 @@ export class ColumnTestingModel {
   constructor(page: Page) {
     this.page = page;
   }
+
+  resizeColumn = async (colLocation: ColLocation, diff: number) => {
+    const headerModel = new HeaderTestingModel(this.page);
+    const colHeaderCell = headerModel.getHeaderCellLocator(colLocation);
+
+    const handle = await colHeaderCell.locator(
+      '.InfiniteHeaderCell_ResizeHandle',
+    );
+
+    await resizeHandle(diff, handle, this.page);
+  };
 
   async getColumnWidths(colIds?: string[]) {
     if (!colIds) {
@@ -30,6 +48,35 @@ export class ColumnTestingModel {
         return map;
       }, {} as Record<string, number>),
     };
+  }
+
+  getCellLocator(cellLocation: CellLocation) {
+    return getCellNodeLocator(cellLocation, { page: this.page });
+  }
+
+  async getCellComputedStyleProperty(
+    cellLocation: CellLocation,
+    styleName: string,
+  ) {
+    const cell = this.getCellLocator(cellLocation);
+
+    return cell.evaluate((node, propertyName) => {
+      const style = window
+        .getComputedStyle(node)
+        .getPropertyValue(propertyName);
+      return style;
+    }, kebabCase(styleName));
+  }
+
+  async getColumnWidth(colLocation: ColLocation) {
+    const cols = [colLocation];
+    const widths = await getColumnWidths(cols, { page: this.page });
+
+    return widths[0];
+  }
+
+  async getVisibleColumnGroupIds() {
+    return await getColumnGroupsIds({ page: this.page });
   }
 
   async getVisibleColumnIds() {

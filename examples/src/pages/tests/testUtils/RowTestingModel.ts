@@ -35,26 +35,33 @@ export class RowTestingModel {
     );
   }
 
-  async getTextForColumnCells({ colId, colIndex }: ColLocation) {
-    const { bodyCells } = await getColumnCells(
-      { colId, colIndex },
-      { page: this.page },
-    );
+  getGroupCellLocator(cellLocation: CellLocation) {
+    return getCellNodeLocator(cellLocation, { page: this.page });
+  }
+
+  async getTextForColumnCells(colLocation: ColLocation) {
+    const { bodyCells } = await getColumnCells(colLocation, {
+      page: this.page,
+    });
 
     return await Promise.all(
       bodyCells.map(async (cell) => await cell.textContent()),
     );
   }
 
-  getCellLocator({ colId, colIndex, rowIndex }: CellLocation) {
-    return getCellNodeLocator(
-      {
-        rowIndex,
-        colIndex: colIndex,
-        columnId: colId,
-      },
-      { page: this.page },
+  async getRowHeight(rowIndex: number) {
+    const locator = this.getCellLocator({
+      rowIndex,
+      colIndex: 0,
+    });
+
+    return await locator.evaluate(
+      (node) => node.getBoundingClientRect().height,
     );
+  }
+
+  getCellLocator(cellLocation: CellLocation) {
+    return getCellNodeLocator(cellLocation, { page: this.page });
   }
 
   async toggleGroupRow(rowIndex: number) {

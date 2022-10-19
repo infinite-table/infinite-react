@@ -13,7 +13,11 @@ export const wait = (timeout: number) => {
   });
 };
 
-const resizeHandle = async (diff: number, handle: Locator, page: Page) => {
+export const resizeHandle = async (
+  diff: number,
+  handle: Locator,
+  page: Page,
+) => {
   const box = (await handle.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
@@ -71,15 +75,11 @@ export const getCellNode = async (
 };
 
 export const getCellNodeLocator = (
-  {
-    columnId,
-    rowIndex,
-    colIndex,
-  }: { columnId?: string; colIndex?: number; rowIndex: number },
+  { colId, rowIndex, colIndex }: CellLocation,
   { page }: { page: Page },
 ) => {
-  const colSelector = columnId
-    ? `[data-column-id="${columnId}"]`
+  const colSelector = colId
+    ? `[data-column-id="${colId}"]`
     : `[data-col-index="${colIndex}"]`;
   return page.locator(
     `.InfiniteColumnCell[data-row-index="${rowIndex}"]${colSelector}`,
@@ -111,24 +111,24 @@ export const getFirstChild = (locator: Locator) => {
 };
 
 export const getHeaderCellWidthByColumnId = async (
-  colId: string,
+  colLocation: ColLocation,
   { page }: { page: Page },
 ): Promise<number> => {
-  const node = getHeaderCellForColumn({ colId }, { page });
+  const node = getHeaderCellForColumn(colLocation, { page });
 
-  const value = await node!.evaluate(
+  const value = await node.evaluate(
     (node) => node.getBoundingClientRect().width,
   );
   return value;
 };
 
 export const getColumnWidths = async (
-  colIds: string[],
+  colIds: ColLocation[],
   { page }: { page: Page },
 ) => {
   return await Promise.all(
-    colIds.map(async (id) => {
-      return await getHeaderCellWidthByColumnId(id, { page });
+    colIds.map(async (colLocation) => {
+      return await getHeaderCellWidthByColumnId(colLocation, { page });
     }),
   );
 };
@@ -252,23 +252,30 @@ export const getActiveRowIndicatorOffsetFromDOM = async ({
   });
 };
 
-export type ColLocation = {
+export type ColLocation =
+  | {
+      colIndex?: number;
+      colId?: string;
+    }
+  | string;
+export type CellLocation = {
   colIndex?: number;
   colId?: string;
-};
-export type CellLocation = ColLocation & {
   rowIndex: number;
 };
-const getColSelector = ({ colIndex, colId }: ColLocation) => {
-  const colSelector = colId
-    ? `[data-column-id="${colId}"]`
-    : `[data-col-index="${colIndex}"]`;
+const getColSelector = (colLocation: ColLocation) => {
+  if (typeof colLocation === 'string') {
+    colLocation = { colId: colLocation };
+  }
+  const colSelector = colLocation.colId
+    ? `[data-column-id="${colLocation.colId}"]`
+    : `[data-col-index="${colLocation.colIndex}"]`;
 
   return colSelector;
 };
 
 export const getColumnCells = async (
-  colLocation: { colIndex?: number; colId?: string },
+  colLocation: ColLocation,
   { page }: { page: Page },
 ) => {
   const colSelector = getColSelector(colLocation);
@@ -307,10 +314,7 @@ export const getCellText = async (
   },
   { page }: { page: Page },
 ) => {
-  const cell = getCellNodeLocator(
-    { columnId: colId, rowIndex, colIndex },
-    { page },
-  );
+  const cell = getCellNodeLocator({ colId, rowIndex, colIndex }, { page });
 
   return await cell!.evaluate((node) => (node as HTMLElement).innerText);
 };

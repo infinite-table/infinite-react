@@ -1,35 +1,38 @@
-import {
-  getColumnWidths,
-  resizeColumnById,
-} from '@examples/pages/tests/testUtils';
-
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Viewport reserved width', () => {
-  test('works correctly', async ({ page }) => {
+  test('works correctly', async ({ page, columnModel }) => {
     await page.waitForInfinite();
 
-    let widths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
+    let widths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
     expect(
       await page.evaluate(() => (window as any).viewportReservedWidth),
     ).toEqual(0);
 
-    await resizeColumnById('index', -50, { page });
-    await resizeColumnById('preferredLanguage', -150, { page });
-    await resizeColumnById('salary', -100, { page });
+    await columnModel.resizeColumn('index', -50);
+    await columnModel.resizeColumn('preferredLanguage', -150);
+    await columnModel.resizeColumn('salary', -100);
 
     expect(
       await page.evaluate(() => (window as any).viewportReservedWidth),
     ).toEqual(300);
 
-    let newWidths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
+    let newWidths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
     expect(newWidths).toEqual([
       widths[0] - 50,
@@ -44,10 +47,14 @@ export default test.describe.parallel('Viewport reserved width', () => {
       await page.evaluate(() => (window as any).viewportReservedWidth),
     ).toEqual(0);
 
-    newWidths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
+    newWidths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
     expect(newWidths).toEqual(widths);
   });

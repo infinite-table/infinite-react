@@ -1,19 +1,12 @@
-import {
-  getHeaderCellWidthByColumnId,
-  resizeColumnById,
-} from '@examples/pages/tests/testUtils';
-
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Column Resizing', () => {
-  test('works correctly', async ({ page }) => {
+  test('works correctly', async ({ page, columnModel }) => {
     await page.waitForInfinite();
 
-    await resizeColumnById('country', 50, { page });
+    await columnModel.resizeColumn({ colId: 'country' }, 50);
 
-    let size = await getHeaderCellWidthByColumnId('country', {
-      page,
-    });
+    let size = await columnModel.getColumnWidth('country');
 
     expect(size).toEqual(150);
 
@@ -23,16 +16,14 @@ export default test.describe.parallel('Column Resizing', () => {
 
     expect(resizeCalls).toEqual(1);
 
-    await resizeColumnById('country', 300, { page });
+    await columnModel.resizeColumn('country', 300);
 
     resizeCalls = await page.evaluate(
       () => (window as any).onColumnSizingChange.getCalls().length,
     );
     expect(resizeCalls).toEqual(2);
 
-    size = await getHeaderCellWidthByColumnId('country', {
-      page,
-    });
+    size = await columnModel.getColumnWidth('country');
 
     expect(size).toEqual(450);
 

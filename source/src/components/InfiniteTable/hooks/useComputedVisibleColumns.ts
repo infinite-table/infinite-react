@@ -29,6 +29,7 @@ type UseComputedVisibleColumnsParam<T> = {
   viewportReservedWidth?: number;
 
   resizableColumns: boolean | undefined;
+  scrollbarWidth: number | undefined;
 
   pinnedEndMaxWidth?: number;
   pinnedStartMaxWidth?: number;
@@ -93,6 +94,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   filterValue,
   columnOrder,
   columnPinning,
+  scrollbarWidth,
   columnTypes,
   pinnedEndMaxWidth,
   pinnedStartMaxWidth,
@@ -126,6 +128,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   } = useMemo(() => {
     return getComputedVisibleColumns({
       columns,
+      scrollbarWidth,
 
       bodySize,
       columnMinWidth,
@@ -165,6 +168,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnDefaultWidth,
 
     viewportReservedWidth,
+    scrollbarWidth,
 
     sortable,
     sortInfo,

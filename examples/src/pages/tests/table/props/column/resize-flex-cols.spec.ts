@@ -1,24 +1,28 @@
-import {
-  getColumnWidths,
-  resizeColumnById,
-} from '@examples/pages/tests/testUtils';
-
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Column Resizing', () => {
-  test('works correctly', async ({ page }) => {
+  test('works correctly', async ({ page, columnModel }) => {
     await page.waitForInfinite();
 
-    let widths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
-    await resizeColumnById('salary', -50, { page });
+    let widths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
-    let newWidths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
+    await columnModel.resizeColumn('salary', -50);
+
+    let newWidths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
     expect(newWidths).toEqual([
       widths[0],
@@ -69,28 +73,58 @@ export default test.describe.parallel('Column Resizing', () => {
    */
   test('works correctly even after the grid is resized and has flex cols', async ({
     page,
+    columnModel,
   }) => {
     await page.waitForInfinite();
-    let widths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
+    const initialWidth = await page.evaluate(
+      () => (window as any).initialWidth as number,
     );
-    await resizeColumnById('salary', -50, { page });
-    await resizeColumnById('salary', 50, { page });
+    let widths1 = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
+    await columnModel.resizeColumn('salary', -50);
+    await columnModel.resizeColumn('salary', 50);
 
-    // click 6 times to add 600px
+    await page.waitForTimeout(50);
+
+    let widths2 = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
+
+    const widths = widths1;
+
+    expect(widths1).toEqual(widths2);
 
     await Promise.all(
       [...new Array(6)].map(async () => {
         await page.click('button[data-name="inc"]');
-        await page.waitForTimeout(30);
+        await page.waitForTimeout(55);
       }),
     );
 
-    let newWidths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
+    const expectedGridWidth = initialWidth + 600;
+    const selectorToExpect = `[data-value="${expectedGridWidth}"]`;
+
+    await page.waitForSelector(selectorToExpect);
+
+    let newWidths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
     expect(newWidths).toEqual([
       widths[0] * 2,
@@ -99,12 +133,16 @@ export default test.describe.parallel('Column Resizing', () => {
       widths[3],
     ]);
 
-    await resizeColumnById('salary', -50, { page });
+    await columnModel.resizeColumn('salary', -50);
 
-    let finalWidths = await getColumnWidths(
-      ['index', 'preferredLanguage', 'salary', 'age'],
-      { page },
-    );
+    let finalWidths = (
+      await columnModel.getColumnWidths([
+        'index',
+        'preferredLanguage',
+        'salary',
+        'age',
+      ])
+    ).list;
 
     expect(finalWidths).toEqual([
       newWidths[0],

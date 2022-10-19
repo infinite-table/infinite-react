@@ -163,8 +163,8 @@ export class MatrixBrain extends Logger {
    */
   private fixedRowsEnd = 0;
 
-  constructor() {
-    super(`MatrixBrain`);
+  constructor(name?: string) {
+    super(`MatrixBrain${name ? `:${name}` : ''}`);
     this.reset();
   }
 

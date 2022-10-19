@@ -409,6 +409,10 @@ export interface InfiniteTableProps<T> {
   rowClassName?: InfiniteTablePropRowClassName<T>;
   columnHeaderHeight: number | string;
   domProps?: React.HTMLProps<HTMLDivElement>;
+  /**
+   * A unique identifier for the table instance. Will not be passed to the DOM.
+   */
+  id?: string;
   showZebraRows?: boolean;
   showHoverRows?: boolean;
   sortable?: boolean;

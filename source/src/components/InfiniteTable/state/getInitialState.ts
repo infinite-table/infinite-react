@@ -60,7 +60,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
    * because obviously the header will have different rowspans/colspans
    * (which are due to column groups) than the main grid viewport
    */
-  const headerBrain = new MatrixBrain();
+  const headerBrain = new MatrixBrain('header');
 
   // however, we sync the headerBrain with the main brain
   // on horizontal scrolling
@@ -146,6 +146,7 @@ export const forwardProps = <T>(
   return {
     scrollTopKey: 1,
     components: 1,
+    id: 1,
     loadingText: 1,
     pivotColumns: 1,
     groupColumn: 1,

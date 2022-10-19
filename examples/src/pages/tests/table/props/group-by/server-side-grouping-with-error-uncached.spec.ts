@@ -6,7 +6,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
     await page.waitForInfinite();
     const firstCell = getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 0,
       },
       { page },
@@ -15,7 +15,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
     const usaText = await firstCell.innerText();
     const canadaText = await getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 1,
       },
       { page },
@@ -23,7 +23,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
 
     const franceText = await getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 2,
       },
       { page },
@@ -36,7 +36,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
     // now expand USA - will expand correctly
     await getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 0,
       },
       { page },
@@ -46,14 +46,14 @@ export default test.describe.parallel('Server-side grouping with error', () => {
 
     const firstChild = await getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 1,
       },
       { page },
     ).innerText();
     const secondChild = await getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 2,
       },
       { page },
@@ -68,7 +68,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
 
     const canadaToggleIcon = getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 1,
       },
       { page },
@@ -78,7 +78,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
 
     const canadaCell = getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 1,
       },
       { page },

@@ -113,6 +113,8 @@ type GetComputedVisibleColumnsParam<T> = {
   columnCssEllipsis: boolean;
   columnHeaderCssEllipsis: boolean;
 
+  scrollbarWidth: number | undefined;
+
   filterValue?: DataSourcePropFilterValue<T>;
 
   sortable?: boolean;
@@ -171,6 +173,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnMinWidth,
   columnMaxWidth,
   columnDefaultWidth,
+  scrollbarWidth,
   columnCssEllipsis,
   columnHeaderCssEllipsis,
   pinnedStartMaxWidth,
@@ -324,7 +327,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
   const flexResult = computeFlex({
     availableSize: Math.max(
-      bodySize.width - (viewportReservedWidth ?? 0) - getScrollbarWidth(),
+      bodySize.width -
+        (viewportReservedWidth ?? 0) -
+        // see #scrollbarverticaltag
+        (scrollbarWidth ?? getScrollbarWidth()),
       0,
     ),
 

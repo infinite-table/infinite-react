@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useLayoutEffect, useMemo } from 'react';
 
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
@@ -51,7 +51,13 @@ export function RawTableFn(props: RawTableProps) {
     renderer.cellHoverClassNames = props.cellHoverClassNames || [];
   }, [renderer, props.cellHoverClassNames]);
 
-  useEffect(() => {
+  // we need to useLayoutEffect here instead of useEffect!
+  // as otherwise sometimes column headers might not be rendered correctly
+  //
+  // For example, for http://localhost:3000/tests/table/props/column/column-change
+  // sometimes firstName and salary are not displayed!!!! in the column header if `useEffect` is used
+
+  useLayoutEffect(() => {
     const renderRange = brain.getRenderRange();
 
     renderer.renderRange(renderRange, {

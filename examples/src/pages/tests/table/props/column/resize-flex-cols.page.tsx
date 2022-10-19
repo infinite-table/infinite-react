@@ -31,24 +31,32 @@ const columns: InfiniteTablePropColumns<Developer> = {
       return `${rowInfo.indexInAll}`;
     },
     defaultFlex: 1,
+    renderMenuIcon: false,
   },
   preferredLanguage: {
     field: 'preferredLanguage',
     header: 'This is my preferred language',
     defaultFlex: 3,
+    renderMenuIcon: false,
   },
   salary: {
     field: 'salary',
     type: 'number',
     defaultFlex: 2,
+    renderMenuIcon: false,
   },
-  age: { field: 'age', defaultWidth: 200 },
+  age: { field: 'age', defaultWidth: 200, renderMenuIcon: false },
 };
 
 const dataSource: DataSourceData<Developer> = ({}) => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers10k-sql`)
+  const url = process.env.NEXT_PUBLIC_BASE_URL + `/developers10-sql`;
+  console.log('fetching', url);
+  return fetch(url)
     .then((r) => r.json())
-    .then((data: Developer[]) => data);
+    .then((data: Developer[]) => {
+      console.log('got response from', url, 'of lenfth', data.length);
+      return data;
+    });
 };
 
 const sinon = require('sinon');
@@ -60,8 +68,9 @@ const onViewportReservedWidthChange = sinon.spy((_width: number) => {});
 (globalThis as any).onViewportReservedWidthChange =
   onViewportReservedWidthChange;
 
+const initialWidth = ((globalThis as any).initialWidth = 802);
 export default () => {
-  const [width, setWidth] = useState(802);
+  const [width, setWidth] = useState(initialWidth);
   return (
     <React.StrictMode>
       <>
@@ -71,6 +80,13 @@ export default () => {
         <button data-name="inc" onClick={() => setWidth((w) => w - 100)}>
           - 100px
         </button>
+        <label
+          style={{ color: 'magenta' }}
+          data-name="label"
+          data-value={width}
+        >
+          current width: {width}
+        </label>
         <DataSource<Developer> data={dataSource} primaryKey="id">
           <InfiniteTable<Developer>
             domProps={{

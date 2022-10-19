@@ -69,8 +69,18 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
       const state = getState();
       const currentValue = state[key];
       if (currentValue === value) {
-        // early exit, as no change detected
-        return;
+        // #samevaluecheckfailswhennotflushed
+        // early exit, as no change detected - this works if state updates are flushed, but could fail us when state updates are batched
+        // as we could discard a valid update, since the last/previous value could have not been flushed yet
+        // eg: in DataSource.useLoadData we set actions.loading = true, but this is not written to the state right away but is batched
+        // so if on the same tick we do actions.loading = false, this will be discarded, as the state is still loading: false as the above/previous actions was batched and hasn't been applied
+        //
+        // so in order to avoid the above scenario, simply allow same value updates to be applied
+        // return;
+        // we skip this return, as starting with React 18 we have batched updates
+        // so if we return we could be discarding a valid update, since the last/previous value could not have been flushed yet
+        // so this current value could be the same as the old value, but different from the value that was not yet flushed
+        // and therefore the current value to be set could be a valid new value
       }
 
       let notifyTheChange = true;
@@ -110,6 +120,7 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
       if (isControlled(stateKey as keyof T_PROPS, props) && !allowControlled) {
         return;
       }
+
       dispatch({
         payload: {
           updatedProps: null,

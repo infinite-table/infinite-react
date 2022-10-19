@@ -171,6 +171,20 @@ export const InfiniteTableComponent = React.memo(
 
     const { menuPortal } = useColumnMenu();
 
+    React.useEffect(() => {
+      if (
+        typeof (globalThis as any)
+          .__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY === 'function'
+      ) {
+        (
+          globalThis as any
+        ).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
+          componentState.id,
+          componentState.ready,
+        );
+      }
+    }, [componentState.ready]);
+
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
         {header ? (
@@ -260,6 +274,7 @@ function InfiniteTableContextProvider<T>() {
   if (__DEV__) {
     (globalThis as any).getState = getState;
     (globalThis as any).getComputed = getComputed;
+    (globalThis as any).componentActions = componentActions;
   }
 
   const { getState: getDataSourceState, componentActions: dataSourceActions } =

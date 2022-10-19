@@ -1,14 +1,14 @@
 import { test, expect } from '@testing';
 
-import { getColumnGroupsIds, getHeaderColumnIds } from '../../../testUtils';
-
 export default test.describe.parallel('Pivot', () => {
   test('should show totals columns when they are configured to be visible', async ({
     page,
+    columnModel,
   }) => {
     await page.waitForInfinite();
-    let columnIds = await getHeaderColumnIds({ page });
-    let columnGroupIds = await getColumnGroupsIds({ page });
+
+    let columnIds = await columnModel.getVisibleColumnIds();
+    let columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
@@ -21,8 +21,8 @@ export default test.describe.parallel('Pivot', () => {
     // toggles show totals to false
     await page.click('button');
 
-    columnIds = await getHeaderColumnIds({ page });
-    columnGroupIds = await getColumnGroupsIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
+    columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     expect(columnIds).toEqual(['group-by-country']);
     expect(columnGroupIds).toEqual([]);

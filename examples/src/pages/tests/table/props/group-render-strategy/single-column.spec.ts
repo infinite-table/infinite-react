@@ -13,7 +13,7 @@ export default test.describe.parallel(
 
       let groupCellNode = getFirstChild(
         getFirstChild(
-          getCellNodeLocator({ columnId: 'group-by', rowIndex: 0 }, { page }),
+          getCellNodeLocator({ colId: 'group-by', rowIndex: 0 }, { page }),
         ),
       );
 
@@ -29,7 +29,7 @@ export default test.describe.parallel(
       // first nesting
       groupCellNode = getFirstChild(
         getFirstChild(
-          getCellNodeLocator({ columnId: 'group-by', rowIndex: 1 }, { page }),
+          getCellNodeLocator({ colId: 'group-by', rowIndex: 1 }, { page }),
         ),
       );
 
@@ -45,7 +45,7 @@ export default test.describe.parallel(
       // second nesting
       groupCellNode = getFirstChild(
         getFirstChild(
-          getCellNodeLocator({ columnId: 'group-by', rowIndex: 2 }, { page }),
+          getCellNodeLocator({ colId: 'group-by', rowIndex: 2 }, { page }),
         ),
       );
 

@@ -52,6 +52,12 @@ export const test = base.extend<
 
     page.load = async () => {
       if (exists) {
+        await page.addInitScript({
+          content: `
+window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => {
+  window.INFINITE_GRID_READY = ready;
+};`,
+        });
         await page.goto(url);
       }
     };
@@ -62,6 +68,7 @@ export const test = base.extend<
 
     page.waitForInfinite = async () => {
       await page.load();
+      await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
       await page.waitForInfiniteSelector();
     };
 

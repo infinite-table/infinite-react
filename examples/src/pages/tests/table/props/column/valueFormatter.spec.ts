@@ -21,11 +21,12 @@ export default test.describe.parallel('Column valueFormatter', () => {
     let values = await rowModel.getTextForColumnCells(col);
 
     expect(values).toEqual(employees.map(mapFn));
+    await page.waitForTimeout(50);
 
     let loadMaskHidden = await isLoadMaskHidden(page);
     expect(loadMaskHidden).toBe(true);
 
-    headerModel.clickColumnHeader(col);
+    await headerModel.clickColumnHeader(col);
 
     loadMaskHidden = await isLoadMaskHidden(page);
     expect(loadMaskHidden).toBe(true);

@@ -1,14 +1,12 @@
 import { InfiniteTableApi } from '@src/components/InfiniteTable/types';
 import { test, expect } from '@testing';
 
-import { getHeaderColumnIds } from '../../../../testUtils';
-
 export default test.describe.parallel(
   'Column order controlled will never change',
   () => {
-    test('should change column order', async ({ page }) => {
+    test('should change column order', async ({ page, columnModel }) => {
       await page.waitForInfinite();
-      let colIds = await getHeaderColumnIds({ page });
+      let colIds = await columnModel.getVisibleColumnIds();
 
       expect(colIds).toEqual(['id', 'model', 'price']);
 
@@ -20,7 +18,7 @@ export default test.describe.parallel(
       });
 
       await page.waitForTimeout(20);
-      colIds = await getHeaderColumnIds({ page });
+      colIds = await columnModel.getVisibleColumnIds();
 
       expect(['make', 'model']).toEqual(colIds);
 
@@ -32,7 +30,7 @@ export default test.describe.parallel(
       });
 
       await page.waitForTimeout(20);
-      colIds = await getHeaderColumnIds({ page });
+      colIds = await columnModel.getVisibleColumnIds();
 
       expect(colIds).toEqual(['id', 'rating']);
 

@@ -94,6 +94,14 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     fieldsToColumn,
   } = useComputedVisibleColumns({
     columns,
+    // scrollbarWidth: scrollbars.vertical ? getScrollbarWidth() : 0,
+
+    // #scrollbarverticaltag
+    // we use the default scrollbar width - using it dynamically causes issues
+    // since we can have a scenario where there is no vertical scrollbar and a horizontal resize
+    // can cause a horizontal scrollbar which in turn causes a vertical scrollbar and the scenario
+    // can loop so it's safer for now to always reserve space for the scrollbar
+    scrollbarWidth: undefined,
     columnCssEllipsis: componentState.columnCssEllipsis,
     columnHeaderCssEllipsis: componentState.columnHeaderCssEllipsis,
     columnMinWidth: componentState.columnMinWidth,

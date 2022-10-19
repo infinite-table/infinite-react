@@ -24,8 +24,14 @@ export class HeaderTestingModel {
     return getHeaderCellForColumn(colLocation, { page: this.page });
   }
 
+  async getTextForHeaderCell(colLocation: ColLocation) {
+    const locator = this.getHeaderCellLocator(colLocation);
+
+    return await locator.evaluate((node) => (node as HTMLElement).innerText);
+  }
+
   async clickColumnHeader(colLocation: ColLocation) {
-    const cell = getHeaderCellForColumn(colLocation, { page: this.page });
+    const cell = this.getHeaderCellLocator(colLocation);
 
     await cell.click();
 

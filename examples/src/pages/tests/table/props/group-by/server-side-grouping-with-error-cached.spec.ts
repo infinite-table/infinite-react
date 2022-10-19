@@ -7,7 +7,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
 
     const canadaToggleIcon = getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 1,
       },
       { page },
@@ -17,7 +17,7 @@ export default test.describe.parallel('Server-side grouping with error', () => {
 
     const canadaCell = getCellNodeLocator(
       {
-        columnId: 'group-by',
+        colId: 'group-by',
         rowIndex: 1,
       },
       { page },

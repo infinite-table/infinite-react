@@ -337,7 +337,10 @@ export function loadData<T>(
         ? componentState.originalDataArray.concat(dataArray as any as T[])
         : (dataArray as any as T[]);
     }
+
     if (dataIsPromise && !componentState.lazyLoad) {
+      // if on the same raf as the actions.loading = true above
+      // this could fail if #samevaluecheckfailswhennotflushed is present
       actions.loading = false;
     }
   });
