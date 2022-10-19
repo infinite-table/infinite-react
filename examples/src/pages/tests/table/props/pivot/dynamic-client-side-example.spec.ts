@@ -9,6 +9,8 @@ export default test.describe.parallel('Pivot and grouping edge cases', () => {
 
     await page.click('input[name="grouped"]');
 
+    await page.waitForTimeout(50);
+
     columnIds = await columnModel.getVisibleColumnIds();
 
     //because no groups are set, the cols should still be the same
@@ -19,7 +21,7 @@ export default test.describe.parallel('Pivot and grouping edge cases', () => {
       window.setGroupBy([{ field: 'country' }]);
     });
 
-    await page.waitForTimeout(20);
+    await page.waitForTimeout(50);
 
     columnIds = await columnModel.getVisibleColumnIds();
 

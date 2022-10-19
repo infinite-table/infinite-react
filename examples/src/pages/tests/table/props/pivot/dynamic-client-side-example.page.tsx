@@ -109,11 +109,12 @@ export default function GroupByExample() {
         onClick={() => {
           setRefresh((refresh) => refresh + 1);
         }}
+        style={{ color: 'magenta' }}
       >
         refresh
       </button>
 
-      <label>
+      <label style={{ color: 'magenta' }}>
         Pivoted
         <input
           type="checkbox"
@@ -124,7 +125,7 @@ export default function GroupByExample() {
           }}
         ></input>
       </label>
-      <label>
+      <label style={{ color: 'magenta' }}>
         Grouped
         <input
           type="checkbox"
