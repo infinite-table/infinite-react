@@ -5,7 +5,7 @@ export default test.describe.parallel('Pivot', () => {
     page,
     columnModel,
   }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(50);
 
     let columnIds = await columnModel.getVisibleColumnIds();
     let columnGroupIds = await columnModel.getVisibleColumnGroupIds();

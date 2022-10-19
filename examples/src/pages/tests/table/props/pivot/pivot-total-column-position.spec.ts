@@ -1,7 +1,5 @@
 import { test, expect } from '@testing';
 
-import { getColumnGroupsIds } from '../../../testUtils';
-
 // TODO column group tests need to be improved, as not maintainable
 
 export default test.describe.parallel('Pivot', () => {
@@ -9,9 +7,10 @@ export default test.describe.parallel('Pivot', () => {
     page,
     columnModel,
   }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(50);
+
     let columnIds = await columnModel.getVisibleColumnIds();
-    let columnGroupIds = await getColumnGroupsIds({ page });
+    let columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     const expectedColumnIds = [
       'group-by-country',
@@ -35,7 +34,7 @@ export default test.describe.parallel('Pivot', () => {
     await page.click('button[data-name="toggle-show-totals"]');
 
     columnIds = await columnModel.getVisibleColumnIds();
-    columnGroupIds = await getColumnGroupsIds({ page });
+    columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     // show totals true in this case should only grand total columns be visible but not normal total columns
     // as show totals will cause totals columns be visible only when pivotBy.length > 1
@@ -49,7 +48,7 @@ export default test.describe.parallel('Pivot', () => {
   }) => {
     await page.waitForInfinite();
     let columnIds = await columnModel.getVisibleColumnIds();
-    let columnGroupIds = await getColumnGroupsIds({ page });
+    let columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
@@ -70,7 +69,7 @@ export default test.describe.parallel('Pivot', () => {
     await page.click('button[data-name="toggle-can-design"]');
 
     columnIds = await columnModel.getVisibleColumnIds();
-    columnGroupIds = await getColumnGroupsIds({ page });
+    columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
@@ -93,7 +92,7 @@ export default test.describe.parallel('Pivot', () => {
     await page.click('button[data-name="toggle-show-totals"]');
 
     columnIds = await columnModel.getVisibleColumnIds();
-    columnGroupIds = await getColumnGroupsIds({ page });
+    columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     expect(columnIds).toEqual([
       'group-by-country',

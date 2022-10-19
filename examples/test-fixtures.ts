@@ -21,7 +21,7 @@ export { expect };
 export type { Page, ElementHandle, Locator, Response };
 
 type TestExtras = {
-  waitForInfinite: () => Promise<void>;
+  waitForInfinite: (extraTimeout?: number) => Promise<void>;
   waitForInfiniteSelector: () => Promise<void>;
   load: () => Promise<void>;
 };
@@ -66,10 +66,14 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => 
       await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
     };
 
-    page.waitForInfinite = async () => {
+    page.waitForInfinite = async (extraTimeout?: number) => {
       await page.load();
       await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
       await page.waitForInfiniteSelector();
+
+      if (extraTimeout) {
+        await page.waitForTimeout(extraTimeout);
+      }
     };
 
     await use(page);
