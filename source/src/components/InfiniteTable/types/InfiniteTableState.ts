@@ -1,5 +1,4 @@
 import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
-
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
