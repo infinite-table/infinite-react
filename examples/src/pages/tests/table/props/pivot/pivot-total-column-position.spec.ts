@@ -1,15 +1,16 @@
 import { test, expect } from '@testing';
 
-import { getColumnGroupsIds, getHeaderColumnIds } from '../../../testUtils';
+import { getColumnGroupsIds } from '../../../testUtils';
 
 // TODO column group tests need to be improved, as not maintainable
 
 export default test.describe.parallel('Pivot', () => {
   test('totals columns not needed when pivotBy.length < 2', async ({
     page,
+    columnModel,
   }) => {
     await page.waitForInfinite();
-    let columnIds = await getHeaderColumnIds({ page });
+    let columnIds = await columnModel.getVisibleColumnIds();
     let columnGroupIds = await getColumnGroupsIds({ page });
 
     const expectedColumnIds = [
@@ -33,7 +34,7 @@ export default test.describe.parallel('Pivot', () => {
     // toggles show totals to true
     await page.click('button[data-name="toggle-show-totals"]');
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await getColumnGroupsIds({ page });
 
     // show totals true in this case should only grand total columns be visible but not normal total columns
@@ -44,9 +45,10 @@ export default test.describe.parallel('Pivot', () => {
 
   test('totals columns are displayed correctly when pivotBy.length > 1', async ({
     page,
+    columnModel,
   }) => {
     await page.waitForInfinite();
-    let columnIds = await getHeaderColumnIds({ page });
+    let columnIds = await columnModel.getVisibleColumnIds();
     let columnGroupIds = await getColumnGroupsIds({ page });
 
     expect(columnIds).toEqual([
@@ -67,7 +69,7 @@ export default test.describe.parallel('Pivot', () => {
     // toggles pivot for "canDesign" field
     await page.click('button[data-name="toggle-can-design"]');
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await getColumnGroupsIds({ page });
 
     expect(columnIds).toEqual([
@@ -90,7 +92,7 @@ export default test.describe.parallel('Pivot', () => {
     // toggles show totals to true
     await page.click('button[data-name="toggle-show-totals"]');
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await getColumnGroupsIds({ page });
 
     expect(columnIds).toEqual([

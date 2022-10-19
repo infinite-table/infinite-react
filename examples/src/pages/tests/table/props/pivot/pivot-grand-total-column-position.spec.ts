@@ -1,16 +1,17 @@
 import { test, expect } from '@testing';
 
-import { getCellNode, getHeaderColumnIds } from '../../../testUtils';
+import { getCellNode } from '../../../testUtils';
 
 import { developers } from './pivot-total-column-position-data';
 
 export default test.describe.parallel('Pivot', () => {
   test('grand totals columns are displayed in correct position', async ({
     page,
+    columnModel,
   }) => {
     await page.waitForInfinite();
     // grand total position: false
-    let columnIds = await getHeaderColumnIds({ page });
+    let columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
@@ -24,7 +25,7 @@ export default test.describe.parallel('Pivot', () => {
 
     // grand total position: end
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
@@ -40,7 +41,7 @@ export default test.describe.parallel('Pivot', () => {
 
     // grand total position: start
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual([
       'group-by-country',

@@ -1,18 +1,14 @@
 import { test, expect } from '@testing';
 
-import {
-  getColumnCells,
-  getColumnGroupsIds,
-  getHeaderColumnIds,
-} from '../../../testUtils';
-
 export default test.describe.parallel('Pivot', () => {
   test('showSeparatePivotColumnForSingleAggregation true then false should have correct behavior', async ({
     page,
+    columnModel,
+    headerModel,
   }) => {
     await page.waitForInfinite();
-    let columnIds = await getHeaderColumnIds({ page });
-    let columnGroupIds = await getColumnGroupsIds({ page });
+    let columnIds = await columnModel.getVisibleColumnIds();
+    let columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     const expectedColumnIds = [
       'group-by-country',
@@ -26,30 +22,24 @@ export default test.describe.parallel('Pivot', () => {
       'frontend,salary:frontend',
     ]);
 
-    const { headerCell: salaryBackend } = await getColumnCells(
-      { colId: 'salary:backend' },
-      {
-        page,
-      },
-    );
-
-    expect(await salaryBackend.innerText()).toEqual('Salary (avg)');
+    expect(
+      await headerModel.getTextForHeaderCell({
+        colId: 'salary:backend',
+      }),
+    ).toEqual('Salary (avg)');
 
     await page.click('button[data-name="toggle-show-separate"]');
 
-    columnIds = await getHeaderColumnIds({ page });
-    columnGroupIds = await getColumnGroupsIds({ page });
-
-    const { headerCell: salaryBackend2 } = await getColumnCells(
-      { colId: 'salary:backend' },
-      {
-        page,
-      },
-    );
+    columnIds = await columnModel.getVisibleColumnIds();
+    columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
     // when there is only 1 aggregation and there are no column groups because showSeparatePivotColumnForSingleAggregation is false
     // in this case, the pivot column should header should be the value of the aggregation - in this case: backend or frontend
-    expect(await salaryBackend2.innerText()).toEqual('backend');
+    expect(
+      await headerModel.getTextForHeaderCell({
+        colId: 'salary:backend',
+      }),
+    ).toEqual('backend');
 
     expect(columnIds).toEqual(expectedColumnIds);
     expect(columnGroupIds).toEqual([]);
@@ -57,11 +47,12 @@ export default test.describe.parallel('Pivot', () => {
 
   test('showSeparatePivotColumnForSingleAggregation true then false + another pivot level', async ({
     page,
+    columnModel,
   }) => {
     await page.waitForInfinite();
     await page.click('button[data-name="toggle-show-separate"]');
 
-    let columnIds = await getHeaderColumnIds({ page });
+    let columnIds = await columnModel.getVisibleColumnIds();
 
     const expectedColumnIds = [
       'group-by-country',
@@ -74,7 +65,7 @@ export default test.describe.parallel('Pivot', () => {
 
     await page.click('button[data-name="toggle-pivot-col"]');
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
@@ -88,7 +79,7 @@ export default test.describe.parallel('Pivot', () => {
 
     await page.click('button[data-name="toggle-total-col"]');
 
-    columnIds = await getHeaderColumnIds({ page });
+    columnIds = await columnModel.getVisibleColumnIds();
 
     expect(columnIds).toEqual([
       'group-by-country',
