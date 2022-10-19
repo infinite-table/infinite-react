@@ -11,5 +11,5 @@ inputs:
     description: the version to notify about. optional
 
 runs:
-  using: 'node12'
-  main: "out/index.js"
+  using: 'node16'
+  main: 'out/index.js'
