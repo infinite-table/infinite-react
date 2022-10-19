@@ -6,7 +6,7 @@ export default test.describe.parallel('Pivot', () => {
     columnModel,
     headerModel,
   }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(30);
     let columnIds = await columnModel.getVisibleColumnIds();
     let columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
@@ -30,6 +30,8 @@ export default test.describe.parallel('Pivot', () => {
 
     await page.click('button[data-name="toggle-show-separate"]');
 
+    await page.waitForTimeout(30);
+
     columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
@@ -49,7 +51,7 @@ export default test.describe.parallel('Pivot', () => {
     page,
     columnModel,
   }) => {
-    await page.waitForInfinite();
+    await page.waitForInfinite(30);
     await page.click('button[data-name="toggle-show-separate"]');
 
     let columnIds = await columnModel.getVisibleColumnIds();
@@ -64,6 +66,7 @@ export default test.describe.parallel('Pivot', () => {
     expect(columnIds).toEqual(expectedColumnIds);
 
     await page.click('button[data-name="toggle-pivot-col"]');
+    await page.waitForTimeout(30);
 
     columnIds = await columnModel.getVisibleColumnIds();
 
@@ -78,6 +81,7 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     await page.click('button[data-name="toggle-total-col"]');
+    await page.waitForTimeout(30);
 
     columnIds = await columnModel.getVisibleColumnIds();
 

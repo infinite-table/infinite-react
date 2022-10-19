@@ -4,7 +4,7 @@ import { test, expect } from '@testing';
 
 export default test.describe.parallel('Default active row index', () => {
   test('should determine scrolling to show the row', async ({ page }) => {
-    await page.waitForInfinite(40);
+    await page.waitForInfinite(100);
 
     const scrollPosition = await getScrollPosition({ page });
 
