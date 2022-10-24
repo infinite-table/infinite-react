@@ -462,5 +462,11 @@ export function concludeReducer<T>(params: {
     (globalThis as any).state = state;
   }
 
+  state.originalDataArrayChanged = originalDataArrayChanged;
+
+  if (originalDataArrayChanged) {
+    state.originalDataArrayChangedAt = now;
+  }
+
   return state;
 }

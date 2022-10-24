@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 
 import { multisort } from '../../utils/multisort';
 import {
@@ -80,6 +81,10 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
   }
 
   useLoadData();
+
+  useEffect(() => {
+    componentState.onDataArrayChange?.(componentState.originalDataArray);
+  }, [componentState.originalDataArrayChangedAt]);
 
   return (
     <DataSourceContext.Provider value={contextValue}>

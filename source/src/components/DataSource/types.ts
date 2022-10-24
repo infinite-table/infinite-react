@@ -114,6 +114,7 @@ export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
   isRowSelected: DataSourceProps<T>['isRowSelected'];
+  onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
 
   lazyLoad: DataSourceProps<T>['lazyLoad'];
   useGroupKeysForMultiRowSelection: NonUndefined<
@@ -207,6 +208,8 @@ export interface DataSourceSetupState<T> {
   indexer: Indexer<T, any>;
   unfilteredCount: number;
   filteredCount: number;
+  originalDataArrayChanged: boolean;
+  originalDataArrayChangedAt: number;
   lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
   pivotMappings?: DataSourceMappings;
   propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
@@ -361,6 +364,9 @@ export type DataSourceProps<T> = {
     | ((sortInfo: DataSourceSingleSortInfo<T>[]) => void);
 
   onDataParamsChange?: (dataParamsChange: DataSourceDataParams<T>) => void;
+  onDataArrayChange?: (
+    dataArray: DataSourceState<T>['originalDataArray'],
+  ) => void;
   livePagination?: boolean;
   livePaginationCursor?: DataSourcePropLivePaginationCursor<T>;
   onLivePaginationCursorChange?: (

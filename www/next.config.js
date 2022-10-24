@@ -34,6 +34,9 @@ const nextConfig = withMDX({
       },
     ];
   },
+  images: {
+    unoptimized: true,
+  },
   experimental: {
     plugins: true,
     // TODO: this doesn't work because https://github.com/vercel/next.js/issues/30714

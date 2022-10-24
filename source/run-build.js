@@ -21,6 +21,7 @@ async function processCss(css) {
 require('esbuild').build({
   entryPoints: ['src/index.tsx'],
   bundle: true,
+  minify: true,
   plugins: [vanillaExtractPlugin({ processCss, identifiers: 'short' })],
   define: {
     __DEV__: JSON.stringify(false),

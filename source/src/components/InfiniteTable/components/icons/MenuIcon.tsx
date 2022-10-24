@@ -12,6 +12,7 @@ type MenuIconProps = {
   style?: React.CSSProperties;
   className?: string;
   domProps?: React.HTMLAttributes<HTMLDivElement>;
+  reserveSpaceWhenHidden?: boolean;
 };
 
 const defaultLineStyle: React.CSSProperties = {
@@ -22,7 +23,7 @@ const defaultLineStyle: React.CSSProperties = {
 const lineClassName = `${InfiniteTableIconClassName}-menu`;
 
 export function MenuIcon(props: MenuIconProps) {
-  const { style, className, domProps } = props;
+  const { style, className, domProps, reserveSpaceWhenHidden } = props;
 
   const lineStyle = {
     ...defaultLineStyle,
@@ -34,10 +35,13 @@ export function MenuIcon(props: MenuIconProps) {
     <div
       {...domProps}
       style={style}
+      data-name="menu-icon"
       onPointerDown={(e) => e.stopPropagation()}
       className={join(
         className,
-        HeaderMenuIconCls,
+        HeaderMenuIconCls({
+          reserveSpaceWhenHidden,
+        }),
         InfiniteTableIconClassName,
         `${InfiniteTableIconClassName}-menu`,
       )}

@@ -49,15 +49,20 @@ const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id', defaultWidth: 80 },
   country: {
     field: 'country',
+    header: 'Your country of residence',
     renderValue: ({ data }) => 'Country: ' + data?.country,
+    align: 'center',
+    defaultWidth: 500,
   },
   firstName: {
     field: 'firstName',
     header: 'First Name',
+    align: 'end',
     defaultFlex: 1,
   },
   preferredLanguage: {
     field: 'currency',
+
     defaultFlex: 1,
   },
 };

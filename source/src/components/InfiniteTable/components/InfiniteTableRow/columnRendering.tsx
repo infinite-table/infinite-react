@@ -128,6 +128,7 @@ export function getColumnRenderParam<T>(options: {
     toggleRowSelection: imperativeApi.selectionApi.toggleRowSelection,
     toggleGroupRowSelection: imperativeApi.selectionApi.toggleGroupRowSelection,
     renderBag: {
+      all: null,
       value,
       selectionCheckBox: null,
       groupIcon: null,

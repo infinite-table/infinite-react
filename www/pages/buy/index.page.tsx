@@ -5,7 +5,8 @@ import {
   StripeElementsOptions,
 } from '@stripe/stripe-js';
 import IndexWrapper from '@www/components/IndexWrapper';
-import { colorVariables } from '@www/styles/utils.css';
+import { colorVariables } from '@www/styles/www-utils.css';
+
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 

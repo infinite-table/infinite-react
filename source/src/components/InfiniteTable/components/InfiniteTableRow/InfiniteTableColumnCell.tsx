@@ -308,16 +308,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
     renderParamRef.current = renderParam;
 
-    if (column.render) {
-      return (
-        <RenderCellHookComponent
-          render={column.render}
-          renderParam={renderParam}
-        />
-      );
-    }
-
-    return (
+    const all = (
       <>
         {column.align !== 'end' ? renderParam.renderBag.groupIcon : null}
         {column.align !== 'end'
@@ -331,6 +322,20 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         {column.align === 'end' ? renderParam.renderBag.groupIcon : null}
       </>
     );
+
+    if (column.render) {
+      return (
+        <RenderCellHookComponent
+          render={column.render}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag, all },
+          }}
+        />
+      );
+    }
+
+    return all;
   }, [
     column,
     hidden,
@@ -419,6 +424,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           zebra,
           rowActive,
           rowSelected,
+          align: column.align || 'start',
           groupRow: rowInfo.isGroupRow,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,
         },

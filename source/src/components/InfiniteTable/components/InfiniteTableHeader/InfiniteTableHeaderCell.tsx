@@ -27,7 +27,13 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
-import { cursor, flex, justifyContent, userSelect } from '../../utilities.css';
+import {
+  cssEllipsisClassName,
+  cursor,
+  flex,
+  justifyContent,
+  userSelect,
+} from '../../utilities.css';
 import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
@@ -159,15 +165,21 @@ export function InfiniteTableHeaderCell<T>(
 
   const alwaysShow = headerOptions.alwaysReserveSpaceForSortIcon;
 
+  const align = column.headerAlign || column.align || 'start';
+
   const sortIcon =
     column.computedSortable && (column.computedSorted || alwaysShow) ? (
       <SortIcon
         index={
           column.computedMultiSort ? column.computedSortIndex + 1 : undefined
         }
+        style={{
+          marginInlineStart: ThemeVars.spacing[2],
+          marginInlineEnd: ThemeVars.spacing[2],
+        }}
         className={`${InfiniteTableHeaderCellClassName}__sort-icon ${HeaderSortIconCls} ${HeaderSortIconRecipe(
           {
-            align: column.align || 'start',
+            align,
           },
         )}`}
         direction={
@@ -176,15 +188,24 @@ export function InfiniteTableHeaderCell<T>(
       />
     ) : null;
 
-  const align = column.align || 'start';
+  const headerCSSEllipsis =
+    column.headerCssEllipsis ?? column.cssEllipsis ?? true;
 
   const menuIcon = (
     <MenuIcon
-      style={{
-        [align === 'end'
-          ? 'marginInlineStart'
-          : 'marginInlineEnd']: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
-      }}
+      reserveSpaceWhenHidden={align === 'center'}
+      // reserveSpaceWhenHidden={true}
+      style={
+        align === 'end'
+          ? {
+              marginInlineStart: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
+              marginInlineEnd: ThemeVars.spacing[2],
+            }
+          : {
+              marginInlineEnd: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
+              marginInlineStart: ThemeVars.spacing[2],
+            }
+      }
       domProps={{
         onClick: (event) => {
           onColumnMenuClick({
@@ -209,18 +230,7 @@ export function InfiniteTableHeaderCell<T>(
     api,
     renderBag: {
       sortIcon,
-      menuIcon:
-        align === 'end' ? (
-          <>
-            {menuIcon}
-            {spacer}
-          </>
-        ) : (
-          <>
-            {spacer}
-            {menuIcon}
-          </>
-        ),
+      menuIcon,
       selectionCheckBox: null,
       header:
         column.header && typeof column.header !== 'function'
@@ -293,41 +303,48 @@ export function InfiniteTableHeaderCell<T>(
       );
     }
 
+    const theMenuIcon =
+      column.renderMenuIcon === false ? null : renderParam.renderBag.menuIcon;
+
+    const headerContent = headerCSSEllipsis ? (
+      <div className={cssEllipsisClassName}>{renderParam.renderBag.header}</div>
+    ) : (
+      renderParam.renderBag.header
+    );
+
+    const all = (
+      <>
+        {/* for align center, we push content to middle, except the menu icon
+    this spacer pushes from start */}
+        {align === 'center' ? spacer : null}
+        {renderParam.renderBag.selectionCheckBox}
+
+        {headerContent}
+
+        {renderParam.renderBag.sortIcon}
+        {/* for align center, we push content to middle, except the menu icon
+    this spacer pushes from end */}
+        {align === 'center' ? spacer : null}
+
+        {/* for align non center, we push menu icon at the end */}
+        {align !== 'center' ? spacer : null}
+        {theMenuIcon}
+      </>
+    );
+
     if (column.renderHeader) {
       return (
         <RenderHeaderCellHookComponent
           render={column.renderHeader}
-          renderParam={renderParam}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag, all },
+          }}
         />
       );
     }
 
-    const theMenuIcon =
-      column.renderMenuIcon === false ? null : align === 'end' ? (
-        <>
-          {renderParam.renderBag.menuIcon}
-          {spacer}
-        </>
-      ) : (
-        <>
-          {spacer}
-          {renderParam.renderBag.menuIcon}
-        </>
-      );
-
-    return (
-      <>
-        {align === 'end' ? theMenuIcon : null}
-        {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
-        {align === 'end' ? renderParam.renderBag.sortIcon : null}
-
-        {renderParam.renderBag.header}
-
-        {align !== 'end' ? renderParam.renderBag.sortIcon : null}
-        {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
-        {align !== 'end' ? theMenuIcon : null}
-      </>
-    );
+    return all;
   };
 
   const domRef = useRef<HTMLElement | null>(null);
@@ -403,6 +420,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const contentRecipeVariants: HeaderCellContentVariantsType = {
     filtered: column.computedFiltered,
+    align,
   };
 
   const setFilterValue = useCallback(
@@ -505,6 +523,7 @@ export function InfiniteTableHeaderCell<T>(
         cellType="header"
         column={column}
         data-name={`HeaderCell`}
+        data-header-align={align}
         data-column-id={column.id}
         // this is used by ReactHeadlessRenderer - look for #updatezindex
         data-z-index={zIndex}
@@ -513,7 +532,7 @@ export function InfiniteTableHeaderCell<T>(
         onPointerDown={onPointerDown}
         contentClassName={join(
           HeaderCellContentRecipe(contentRecipeVariants),
-          justifyContent[column.align ?? 'start'],
+          justifyContent[align],
         )}
         contentStyle={showColumnFilters ? { height: height / 2 } : undefined}
         className={join(
@@ -528,6 +547,7 @@ export function InfiniteTableHeaderCell<T>(
             HeaderCellRecipe,
             {
               dragging,
+              align,
               rowSelected: false,
               zebra: false,
               rowActive: false,
@@ -537,7 +557,7 @@ export function InfiniteTableHeaderCell<T>(
           ),
           CellCls,
         )}
-        cssEllipsis={column.headerCssEllipsis ?? column.cssEllipsis ?? true}
+        cssEllipsis={headerCSSEllipsis}
         afterChildren={
           <>
             {showColumnFilters ? (

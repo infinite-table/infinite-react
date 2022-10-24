@@ -45,10 +45,7 @@ module.exports = {
           '-apple-system',
           ...defaultTheme.fontFamily.sans,
         ],
-        mono: [
-          '"Source Code Pro"',
-          ...defaultTheme.fontFamily.mono,
-        ],
+        mono: ['"Source Code Pro"', ...defaultTheme.fontFamily.mono],
       },
       lineHeight: {
         base: '30px',

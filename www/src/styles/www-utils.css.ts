@@ -19,8 +19,10 @@ export const screenSizes = {
 export const colorVariables = {
   brand: BRAND_COLOR_DEFAULT,
   brandDark: BRAND_COLOR_DARK,
+  darkBg: '#0d1114',
   blue: 'blue',
   blue700: '#1c4fd8',
+  highlight: '#3bff7f',
   white: 'white',
   gray: '#eaeaea',
   errBackground: '#ffdcd5',
@@ -90,6 +92,7 @@ export const fontSizeScale = {
   '4xl': '2.25rem',
   '5xl': '3rem',
   '6xl': '4rem',
+  '7xl': '5rem',
 };
 
 export const fontSize = styleVariants(fontSizeScale, (value) => {
@@ -182,7 +185,7 @@ export const zIndex = styleVariants(zIndexScale, (value) => {
   };
 });
 
-export const [light, vars] = createTheme(
+export const [lightTheme, wwwVars] = createTheme(
   {
     color: colorVariables,
     font: {
@@ -195,6 +198,12 @@ export const [light, vars] = createTheme(
       },
     },
     space: spaceScale,
+    maxSiteWidth: '1200px',
+    header: {
+      height: '60px',
+      lineHeight: '58px',
+      color: 'rgb(238, 239, 252, 0.8)',
+    },
   },
   'light',
 );
@@ -277,29 +286,29 @@ export const top = styleVariants(spaceScale, (space) => {
   };
 });
 export const backgroundColorBrand = style({
-  background: vars.color.brand,
+  background: wwwVars.color.brand,
 });
 export const backgroundColorBlue700 = style({
-  background: vars.color.blue700,
+  background: wwwVars.color.blue700,
 });
 export const backgroundColorBrandDark = style({
-  background: vars.color.brandDark,
+  background: wwwVars.color.brandDark,
 });
 
 export const colorBrand = style({
-  color: vars.color.brand,
+  color: wwwVars.color.brand,
 });
 
 export const colorWhite = style({
-  color: vars.color.white,
+  color: wwwVars.color.white,
 });
 
 export const colorBrandDark = style({
-  color: vars.color.brandDark,
+  color: wwwVars.color.brandDark,
 });
 
 export const backgroundColorWhite = style({
-  background: vars.color.white,
+  background: wwwVars.color.white,
 });
 
 export const borderRadius = styleVariants(

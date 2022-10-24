@@ -53,6 +53,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   return {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
+    originalDataArrayChanged: false,
+    originalDataArrayChangedAt: 0,
     lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
@@ -139,6 +141,7 @@ export const forwardProps = <T>(
     sortMode: (sortMode) => sortMode ?? 'local',
 
     isRowSelected: 1,
+    onDataArrayChange: 1,
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,

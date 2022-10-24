@@ -49,7 +49,7 @@
     "/--- should not run locally ----": "//",
     "/--- as this is run via github actions CI ----": "//",
     "registry-publish": "cd dist && npm publish --access public",
-    "registry-publish-canary": "cd dist && npm publish dist --access public --tag canary",
+    "registry-publish-canary": "cd dist && npm publish --access public --tag canary",
     "//": "// only used in the release.yml workflow",
     "release:canary-nobump": "npm run registry-publish-canary",
     "release:nobump": "npm run registry-publish",

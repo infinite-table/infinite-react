@@ -1,6 +1,6 @@
 module.exports = {
   // Text colors
-  // primary: '#133048', // gray-90
+
   // 'primary-dark': '#0b6fcb', // gray-5
   primary: '#23272F', // gray-90
   'primary-dark': '#F6F7F9', // gray-5
@@ -13,12 +13,16 @@ module.exports = {
   'wash-dark': '#23272F', // gray-90
   card: '#F6F7F9', // gray-05
   'card-dark': '#343A46', // gray-80
-  highlight: '#E6F7FF', // blue-10
+  highlight: '#3bff7f', // blue-10
   'highlight-dark': 'rgba(88,175,223,.1)',
   border: '#EBECF0', // gray-10
   'border-dark': '#343A46', // gray-80
+  brand: '#0b6fcb', // gray-80
+  'brand-dark': '#133048', // gray-80
   'secondary-button': '#EBECF0', // gray-10
   'secondary-button-dark': '#404756', // gray-70
+  'dark-custom': '#0d1114',
+  'deep-dark': '#07131c',
 
   // Gray
   'gray-95': '#16181D',

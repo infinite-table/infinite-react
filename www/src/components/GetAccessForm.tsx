@@ -15,10 +15,16 @@ import {
   fontSize,
   marginY,
   textAlign,
-} from '@www/styles/utils.css';
+  wwwVars,
+} from '@www/styles/www-utils.css';
 import * as React from 'react';
 
-import { width100, email, submitButton } from './components.css';
+import {
+  width100,
+  email as emailCls,
+  submitButton,
+  SpotlightHorizontalBackgroundCls,
+} from './components.css';
 
 function encode(data: any) {
   return Object.keys(data)
@@ -55,7 +61,10 @@ export const GetAccessForm = () => {
       name="contact"
       data-netlify="true"
       data-netlify-honeypot="bot-field"
-      className={`${margin[6]} ${width100} ${display.flex} ${flexDirection.column}`}
+      style={{
+        maxWidth: wwwVars.maxSiteWidth,
+      }}
+      className={`${margin[6]} ${width100} ${display.flex} ${flexDirection.column} `}
       onSubmit={handleSubmit}
     >
       <div
@@ -72,9 +81,9 @@ export const GetAccessForm = () => {
             setThankyou('');
             setEmail(e.target.value);
           }}
-          className={` ${padding[3]} ${borderRadius.md} text-gray-80 dark:text-gray-30 dark:border-white dark:border dark:bg-gray-80 bg-secondary-button ${email} `}
+          className={`${emailCls} ${padding[3]} ${borderRadius.md} text-white focus:bg-gray-90 hover:bg-gray-90 border-white border bg-black `}
         />
-        <input hidden name="form-name" value={'contact'} />
+        <input hidden name="form-name" value={'contact'} readOnly />
       </div>
 
       <div
@@ -84,7 +93,7 @@ export const GetAccessForm = () => {
       </div>
       <button
         type="submit"
-        className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} ${backgroundColorBrandDark} ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
+        className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} bg-dark-custom ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
       >
         Get Access
       </button>

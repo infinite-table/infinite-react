@@ -160,6 +160,11 @@ export const HeaderCellRecipe = recipe({
   variants: {
     rowActive: { false: {}, true: {} },
     rowSelected: { false: {}, true: {}, null: {} },
+    align: {
+      start: {},
+      end: {},
+      center: {},
+    },
     zebra: {
       false: {},
       even: {},
@@ -265,19 +270,18 @@ export const HeaderCellRecipe = recipe({
   ],
 });
 
-export const HeaderMenuIconCls = style(
-  [
+export const HeaderMenuIconCls = recipe({
+  base: [
     position.relative,
     display.flex,
     flexFlow.column,
-
     justifyContent.spaceAround,
     visibility.hidden,
     {
       cursor: 'context-menu',
       paddingBlockStart: '2px',
       paddingBlockEnd: '2px',
-      width: ThemeVars.components.HeaderCell.iconSize,
+      minWidth: ThemeVars.components.HeaderCell.iconSize,
       height: ThemeVars.components.HeaderCell.iconSize,
       selectors: {
         '&:active': {
@@ -285,12 +289,20 @@ export const HeaderMenuIconCls = style(
         },
         [`${HeaderCellRecipe({})}:hover &`]: {
           visibility: 'visible',
+          display: 'flex',
         },
       },
     },
   ],
-  'MenuIconCls',
-);
+  variants: {
+    reserveSpaceWhenHidden: {
+      true: {},
+      false: {
+        display: 'none',
+      },
+    },
+  },
+});
 
 export type HeaderCellVariantsType = RecipeVariants<typeof HeaderCellRecipe>;
 
@@ -305,11 +317,21 @@ export const HeaderCellContentRecipe = recipe(
       display.flex,
       flexFlow.row,
       alignItems.center,
+      justifyContent.start,
     ],
     variants: {
       filtered: {
         false: {},
         true: {},
+      },
+      align: {
+        start: {},
+        end: {
+          flexDirection: 'row-reverse',
+        },
+        center: {
+          justifyContent: 'center',
+        },
       },
     },
   },

@@ -92,6 +92,11 @@ export const ColumnCellRecipe = recipe({
   ],
   variants: {
     dragging: { false: {}, true: {} },
+    align: {
+      start: {},
+      end: {},
+      center: {},
+    },
     rowActive: {
       false: {},
       true: {},

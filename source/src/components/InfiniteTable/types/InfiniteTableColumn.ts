@@ -53,6 +53,7 @@ export type InfiniteTableColumnHeaderParam<
   api: InfiniteTableApi<DATA_TYPE>;
 
   renderBag: {
+    all?: Renderable;
     header: string | number | Renderable;
     sortIcon?: Renderable;
     menuIcon?: Renderable;
@@ -63,6 +64,7 @@ export type InfiniteTableColumnHeaderParam<
 export type InfiniteTableColumnRenderBag = {
   value: string | number | Renderable;
   groupIcon?: Renderable;
+  all?: Renderable;
   selectionCheckBox?: Renderable;
 };
 export type InfiniteTableColumnRenderParamBase<
@@ -331,6 +333,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
     | { [k in keyof Partial<DATA_TYPE>]: true };
 
   align?: InfiniteTableColumnAlign;
+  headerAlign?: InfiniteTableColumnAlign;
   verticalAlign?: InfiniteTableColumnVerticalAlign;
   columnGroup?: string;
 
