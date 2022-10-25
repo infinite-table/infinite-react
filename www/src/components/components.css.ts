@@ -2,7 +2,6 @@ import { globalStyle, style } from '@vanilla-extract/css';
 import {
   centeredFlexColumn,
   centeredFlexRow,
-  maxWidth,
   paddingX,
   screenSizes,
   wwwVars,
@@ -10,6 +9,17 @@ import {
 
 export const width100 = style({
   width: '100%',
+});
+
+export const buttonPositionWithTransition = style({
+  position: 'relative',
+  bottom: 0,
+  transition: '0.2s bottom',
+  selectors: {
+    '&:active': {
+      bottom: 1,
+    },
+  },
 });
 export const footer = style([
   centeredFlexRow,
@@ -28,7 +38,7 @@ export const SpotlightHorizontalBackgroundCls = style([
 export const GradientTextBackground = style([
   {
     color: 'transparent',
-    backgroundImage: `linear-gradient(to right,${wwwVars.color.white} 30%,${wwwVars.color.brand}, ${wwwVars.color.brandDark}, ${wwwVars.color.brandDark})`,
+    backgroundImage: `linear-gradient(to right,${wwwVars.color.white} 10%,${wwwVars.color.brand}, ${wwwVars.color.brandDark}, ${wwwVars.color.brandDark})`,
     WebkitBackgroundClip: 'text',
   },
 ]);
@@ -36,7 +46,7 @@ export const GradientTextBackground = style([
 export const HighlightTextBackground = style([
   {
     color: 'transparent',
-    backgroundImage: `linear-gradient(to right,${wwwVars.color.highlight} 30%,${wwwVars.color.brandDark})`,
+    backgroundImage: `linear-gradient(to right,${wwwVars.color.glow} 60%,${wwwVars.color.glow})`,
     WebkitBackgroundClip: 'text',
   },
 ]);
@@ -44,8 +54,9 @@ export const HighlightTextBackground = style([
 export const HighlightBrandToLightBackground = style([
   {
     color: 'transparent',
+
     // backgroundImage: `linear-gradient(to right,${wwwVars.color.highlight} 30%,${wwwVars.color.brandDark})`,
-    backgroundImage: `linear-gradient(to right,${wwwVars.color.brand} 1%, ${wwwVars.color.white} 20%,${wwwVars.color.white})`,
+    backgroundImage: `linear-gradient(to right,${wwwVars.color.brand} 1%, ${wwwVars.color.white} 70%,${wwwVars.color.white})`,
     WebkitBackgroundClip: 'text',
   },
 ]);
@@ -88,13 +99,14 @@ export const HeroImageNormalCls = style([]);
 
 export const HeroImageCls = style([
   {
-    WebkitMaskImage: ` radial-gradient(100% 80% at center center, black, transparent);`,
+    WebkitMaskImage: `radial-gradient(100% 80% at center center, black, transparent);`,
     transform: `perspective(3050px)
     translate3d(0px, 0px, 250px)
     rotateX(27deg)
     scale(0.9, 0.9)`,
     borderRadius: 5,
     boxShadow: '0 70px 40px -20px rgba(0, 0, 0, 0.7)',
+    // boxShadow: `0 70px 40px -20px ${wwwVars.color.highlight}`,
     transition: '0.5s ease-in-out transform',
     '@media': {
       [`screen and (max-width: ${screenSizes['screen-xl']})`]: {

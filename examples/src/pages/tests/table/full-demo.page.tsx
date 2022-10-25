@@ -13,7 +13,9 @@ import type {
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useState } from 'react';
-import { InfiniteCheckBox } from '@infinite-table/infinite-react/components/InfiniteTable/components/CheckBox';
+import { components } from '@infinite-table/infinite-react';
+
+const { CheckBox } = components;
 
 type Developer = {
   id: number;
@@ -126,7 +128,7 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
       renderValue: ({ value }) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <InfiniteCheckBox
+            <CheckBox
               defaultChecked={value === null ? null : value === 'yes'}
               domProps={{
                 style: {

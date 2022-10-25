@@ -146,7 +146,7 @@ export const Header = (props: {
         </h1>
         {props.subtitle ? (
           <h2
-            className={`text-3xl leading-relaxed mt-20 text-center font-bold text-white justify-center opacity-70`}
+            className={`text-2xl leading-relaxed mt-20 text-center font-bold text-white justify-center opacity-70`}
             style={{
               zIndex: 2,
               maxWidth: '80%',

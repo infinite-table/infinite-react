@@ -57,7 +57,12 @@ export function BannerText(props: {
             data-text
             className="inline-block"
             key={typeof child === 'string' ? child : index + ''}
-            style={{ overflow: 'hidden', visibility: 'hidden', width: 0 }}
+            style={{
+              overflow: 'hidden',
+              visibility: 'hidden',
+              width: 0,
+              height: 0,
+            }}
           >
             <span>{child}</span>
           </div>

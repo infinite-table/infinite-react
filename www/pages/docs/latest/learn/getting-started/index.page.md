@@ -54,6 +54,32 @@ import {
 } from '@infinite-table/infinite-react';
 ```
 
+## Built for React from the ground-up
+
+`Infinite Table` is built specifically for React and is fully declarative and fully typed. When you use `Infinite Table`, it feels at-home in your React application - every prop has both a controlled and uncontrolled version so you get full control over every area of the component.
+
+
+<Sandpack>
+
+<Description>
+
+This is an example of how you might configure `InfiniteTable` in a real-world application and puts together several functionalities:
+ * grouping
+ * aggregation
+ * pinned columns
+ * sorting
+ * multiple selection
+ * custom cell rendering
+ 
+</Description>
+
+```ts file=full-demo.page.tsx
+
+```
+
+</Sandpack>
+
+
 ## Licensing
 
 You can use `@infinite-table/infinite-react` in 2 ways:

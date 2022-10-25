@@ -13,8 +13,11 @@ module.exports = {
   'wash-dark': '#23272F', // gray-90
   card: '#F6F7F9', // gray-05
   'card-dark': '#343A46', // gray-80
-  highlight: '#3bff7f', // blue-10
+  // highlight: '#e7e247', // blue-10
+  glow: '#3bff7f', // blue-10
+  highlight: '#E6F7FF', // blue-10
   'highlight-dark': 'rgba(88,175,223,.1)',
+  // 'highlight-dark': 'rgba(88,175,223,.1)',
   border: '#EBECF0', // gray-10
   'border-dark': '#343A46', // gray-80
   brand: '#0b6fcb', // gray-80
