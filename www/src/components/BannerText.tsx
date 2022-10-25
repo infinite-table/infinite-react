@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import * as React from 'react';
 import {
   BannerTextCurrentCls,
   BannerTextNextCls,
@@ -81,7 +81,7 @@ export function BannerText(props: {
           <div
             data-text
             className="inline-block"
-            key={typeof child === 'string' ? child : index + ''}
+            key={typeof child === 'string' ? child + ' ' + index : index + ''}
             style={{
               overflow: 'hidden',
               visibility: 'hidden',

@@ -2,7 +2,6 @@ import { globalStyle, style, keyframes } from '@vanilla-extract/css';
 import {
   centeredFlexColumn,
   centeredFlexRow,
-  maxWidth,
   paddingX,
   screenSizes,
   wwwVars,

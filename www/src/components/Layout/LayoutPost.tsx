@@ -1,7 +1,7 @@
 import { MDXProvider } from '@mdx-js/react';
-import recentPostsRouteTree from '@www/blogIndexRecent.json';
+
 import { DocsPageFooter } from '@www/components/DocsFooter';
-import { ExternalLink } from '@www/components/ExternalLink';
+
 import { Toc } from '@www/components/Layout/Toc';
 import { MDXComponents } from '@www/components/MDX/MDXComponents';
 import { Seo } from '@www/components/Seo';

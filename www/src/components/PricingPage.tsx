@@ -1,15 +1,11 @@
 import { Card, Cards } from '@www/components/Cards';
-import { GetAccessForm } from '@www/components/GetAccessForm';
+
 import { MainLayout } from '@www/layouts/MainLayout';
 
 import * as React from 'react';
-import {
-  GradientTextBackground,
-  HighlightTextBackground,
-} from './components.css';
-import { HeroHeader } from './Header';
+import { GradientTextBackground } from './components.css';
 
-import IndexWrapper, { HeroPicture, MainContent } from './IndexWrapper';
+import { HeroPicture, MainContent } from './IndexWrapper';
 
 export function PricingPage() {
   return (

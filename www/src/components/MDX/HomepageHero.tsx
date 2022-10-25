@@ -1,5 +1,5 @@
 import { Logo } from '@www/components/Logo';
-import YouWillLearnCard from '@www/components/MDX/YouWillLearnCard';
+
 import * as React from 'react';
 
 import HeroCards from './HeroCards';
@@ -13,9 +13,6 @@ function HomepageHero() {
           <h1 className="text-5xl mr-4 -mt-1 flex wrap font-bold leading-tight text-primary dark:text-primary-dark">
             Infinite Table Docs
           </h1>
-          <div className="inline-flex self-center px-2 mt-1 bg-highlight dark:bg-highlight-dark w-auto rounded text-link dark:text-link-dark uppercase font-bold tracking-wide text-base whitespace-nowrap">
-            Beta
-          </div>
         </div>
       </div>
       <HeroCards
