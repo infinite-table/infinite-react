@@ -58,9 +58,9 @@ const defaultTitle = (
   <>
     Built for{' '}
     <BannerText
-      contents={['React', 'speed']}
+      contents={['React', 'speed', 'React', 'speed']} // was intently duplicated
       timeout={8000}
-      className={'text-highlight'}
+      className={'text-glow'}
     />{' '}
     from the ground-up
   </>

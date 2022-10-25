@@ -5,6 +5,8 @@ import {
   styleVariants,
 } from '@vanilla-extract/css';
 
+const colors = require('../../colors');
+
 export const BRAND_COLOR_DEFAULT = '#0b6fcb';
 export const BRAND_COLOR_DARK = '#133048';
 
@@ -19,11 +21,13 @@ export const screenSizes = {
 export const colorVariables = {
   brand: BRAND_COLOR_DEFAULT,
   brandDark: BRAND_COLOR_DARK,
-  darkBg: '#0d1114',
+  black: colors.black,
+  darkBg: colors['dark-custom'],
   blue: 'blue',
   blue700: '#1c4fd8',
-  glow: '#3bff7f',
-  highlight: '#E6F7FF',
+  glow: colors.glow,
+  contentColor: colors['content-color'],
+  highlight: colors.highlight,
   white: 'white',
   gray: '#eaeaea',
   errBackground: '#ffdcd5',

@@ -13,11 +13,11 @@ function Breadcrumbs() {
             <div className="flex mb-3 mt-0.5 items-center" key={i}>
               <React.Fragment key={crumb.path}>
                 <Link href={crumb.path}>
-                  <a className="text-link dark:text-link-dark text-sm tracking-wide font-bold uppercase mr-1 hover:underline">
+                  <a className="text-link-dark text-sm tracking-wide font-bold uppercase mr-1 hover:underline">
                     {crumb.title}
                   </a>
                 </Link>
-                <span className="inline-block mr-1 text-link dark:text-link-dark text-lg">
+                <span className="inline-block mr-1 text-content-color text-lg">
                   <svg
                     width="20"
                     height="20"

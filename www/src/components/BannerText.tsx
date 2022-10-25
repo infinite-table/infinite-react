@@ -1,4 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import {
+  BannerTextCurrentCls,
+  BannerTextNextCls,
+  BannerTextPrevCls,
+} from './components.css';
 
 export function BannerText(props: {
   contents: React.ReactNode[];
@@ -11,6 +16,8 @@ export function BannerText(props: {
   const [index, setIndex] = React.useState(0);
   const [width, setWidth] = React.useState<string | number>('auto');
 
+  const [transitioning, setTransitioning] = React.useState(false);
+
   const [paused, setPaused] = React.useState(false);
 
   const pausedRef = React.useRef(paused);
@@ -22,6 +29,7 @@ export function BannerText(props: {
         // return;
       }
       setIndex((index + 1) % contents.length);
+      setTransitioning(true);
     }, timeout ?? 3000);
   }, [index, paused]);
 
@@ -39,18 +47,35 @@ export function BannerText(props: {
 
   const domRef = React.useRef<HTMLDivElement | null>(null);
 
+  const prevIndex = index - 1 < 0 ? contents.length - 1 : index - 1;
+
   return (
     <div
-      className={`inline-block text-left`}
+      className={`inline-flex flex-col text-left relative`}
       ref={domRef}
       style={{ width, lineHeight: 0 }}
       onClick={() => {
         setPaused((paused) => !paused);
       }}
     >
-      <span className={`${className} inline whitespace-nowrap`} style={style}>
-        {contents[index]}
-      </span>
+      {contents.map((text, i) => {
+        return (
+          <span
+            key={i}
+            className={`${className} inline-block whitespace-nowrap ${
+              i == prevIndex
+                ? BannerTextPrevCls
+                : i == index
+                ? BannerTextCurrentCls
+                : BannerTextNextCls
+            }`}
+            style={style}
+          >
+            {text}
+          </span>
+        );
+      })}
+
       {contents.map((child, index) => {
         return (
           <div

@@ -184,11 +184,11 @@ function AuthorCredit({
   authorLink: string;
 }) {
   return (
-    <p className="text-center text-secondary dark:text-secondary-dark text-base mt-2">
+    <p className="text-center text-secondary-dark text-base mt-2">
       <cite>
         Illustrated by{' '}
         {authorLink ? (
-          <a className="text-link dark:text-link-dark" href={authorLink}>
+          <a className="text-link-dark" href={authorLink}>
             {author}
           </a>
         ) : (
@@ -251,7 +251,7 @@ function IllustrationBlock({
         <img src={info.src} alt={info.alt} height={info.height} />
       </div>
       {info.caption ? (
-        <figcaption className="text-secondary dark:text-secondary-dark text-center leading-tight mt-4">
+        <figcaption className="text-secondary-dark text-center leading-tight mt-4">
           {info.caption}
         </figcaption>
       ) : null}

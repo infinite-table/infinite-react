@@ -48,7 +48,7 @@ html .sp-wrapper {
   --theme-static: #032f62;
   --theme-string: #032f62; */
 }
-html.dark .sp-wrapper {
+html .sp-wrapper {
   --sp-colors-surface1: #101419;
   --sp-colors-surface2: #444344;
   --sp-colors-surface3: #484747;
@@ -60,7 +60,7 @@ html.dark .sp-wrapper {
   --sp-colors-error: #ffcdca;
   --sp-colors-errorSurface: #c24038;
   --sp-font-lineHeight: 20px;
-  --sp-syntax-color-plain: rgb(252, 252, 250);
+  --sp-syntax-color-plain: rgba(235, 236, 240, 0.8);
   --sp-syntax-color-comment: #757575;
   --sp-syntax-fontStyle-comment: italic;
   --sp-syntax-color-keyword: rgb(255, 97, 136);

@@ -21,12 +21,10 @@ function YouWillLearnCard({
     <div
       className={`${
         inline ? 'inline-flex' : 'flex'
-      } flex-col h-full bg-card dark:bg-card-dark shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}
+      } flex-col h-full bg-dark-custom shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}
     >
       <div>
-        <h4 className="text-primary dark:text-primary-dark font-bold text-2xl leading-tight">
-          {title}
-        </h4>
+        <h4 className="font-bold text-2xl leading-tight">{title}</h4>
         <div className="my-4">{children}</div>
       </div>
       <div>

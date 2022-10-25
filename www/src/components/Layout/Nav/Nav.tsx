@@ -104,30 +104,26 @@ export default function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 items-center w-full flex lg:block justify-between bg-wash dark:bg-wash-dark pt-0 lg:pt-4 pr-5 lg:px-5 z-50">
+    <nav className="sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-4 pr-5 lg:px-5 z-50">
       <div className="xl:w-full xl:max-w-xs flex items-center">
         <button
           type="button"
           aria-label="Menu"
           onClick={toggleOpen}
           className={cn('flex lg:hidden items-center h-full px-4', {
-            'text-link dark:text-link-dark mr-0': isOpen,
+            'text-link-dark mr-0': isOpen,
           })}
         >
           {!isOpen ? <IconHamburger /> : <IconClose />}
         </button>
         <NextLink href="/">
-          <a className=" inline-flex text-l font-normal items-center text-primary dark:text-primary-dark py-1 pr-10 whitespace-nowrap">
-            <Logo className="text-sm mr-2 w-8 h-8 text-link dark:text-link-dark" />
+          <a className=" inline-flex text-l font-normal items-center text-primary-dark py-1 pr-10 whitespace-nowrap">
+            <Logo className="text-sm mr-2 w-8 h-8 text-link-dark" />
             Infinite Table <br />
           </a>
         </NextLink>
-        <div className="lg:w-full leading-loose hidden sm:flex flex-initial items-center h-auto pr-5 lg:pr-5 pt-0.5">
-          <div className="px-1 mb-px bg-highlight dark:bg-highlight-dark rounded text-link dark:text-link-dark uppercase font-bold tracking-wide text-xs whitespace-nowrap">
-            Beta
-          </div>
-        </div>
-        <div className="block dark:hidden">
+
+        {/* <div className="block dark:hidden">
           <button
             type="button"
             aria-label="Use Dark Mode"
@@ -150,7 +146,7 @@ export default function Nav() {
           >
             {lightIcon}
           </button>
-        </div>
+        </div> */}
       </div>
       <div className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b border-border dark:border-border-dark">
         <NavLink href="/docs" isActive={section === 'home'}>
@@ -178,30 +174,6 @@ export default function Nav() {
         >
           {feedbackIcon}
         </button>
-        <div className="block dark:hidden">
-          <button
-            type="button"
-            aria-label="Use Dark Mode"
-            onClick={() => {
-              window.__setPreferredTheme('dark');
-            }}
-            className="flex lg:hidden items-center p-1 h-full ml-4 lg:ml-6"
-          >
-            {darkIcon}
-          </button>
-        </div>
-        <div className="hidden dark:block">
-          <button
-            type="button"
-            aria-label="Use Light Mode"
-            onClick={() => {
-              window.__setPreferredTheme('light');
-            }}
-            className="flex lg:hidden items-center p-1 h-full ml-4 lg:ml-6"
-          >
-            {lightIcon}
-          </button>
-        </div>
       </div>
     </nav>
   );

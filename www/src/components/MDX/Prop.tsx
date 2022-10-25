@@ -54,7 +54,7 @@ const colors = [
   {
     hex: twColors['purple-40'],
     border: 'border-purple-40',
-    background: 'bg-purple-40',
+    background: 'bg-dark-custom',
   },
 ];
 
@@ -159,7 +159,7 @@ const PropInlineCode = ({
       title={typeof children === 'string' ? children : undefined}
       style={style}
       className={cn(
-        'rounded-lg inline-block bg-gray-90 px-2 text-primary-dark dark:text-primary-dark font-mono text-code whitespace-pre max-w-full overflow-hidden overflow-ellipsis',
+        'rounded-lg inline-block bg-gray-90 px-2 text-content-color font-mono text-code whitespace-pre max-w-full overflow-hidden overflow-ellipsis',
         className,
       )}
     >
@@ -197,14 +197,14 @@ export function Prop({
       className={cn(
         'my-4 rounded-lg shadow-inner relative',
 
-        'dark:bg-opacity-20 dark:bg-purple-60 bg-purple-5',
+        'bg-opacity-20 bg-secondary ',
       )}
     >
       <div className="p-8 flex flex-row">
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col w-full">
           <div className="flex flex-row w-full items-center flex-wrap">
             <H4 as="h2" id={name}>
-              <IconCodeBlock className="inline mr-2 dark:text-purple-30 text-purple-40" />
+              <IconCodeBlock className="inline mr-2 text-brand" />
               {name}
             </H4>
             {defaultValue !== undefined ? (
@@ -222,10 +222,11 @@ export function Prop({
 
             {type ? (
               <>
-                <div className="flex flex-row justify-end flex-auto">
-                  <PropInlineCode className="ml-3 " style={{ maxWidth: '90%' }}>
-                    {type}
-                  </PropInlineCode>
+                <div
+                  className="flex flex-row justify-start flex-auto "
+                  style={{ maxWidth: '90%' }}
+                >
+                  <PropInlineCode className="ml-3">{type}</PropInlineCode>
                 </div>
               </>
             ) : null}
@@ -240,9 +241,7 @@ export function Prop({
           {hasDetails ? (
             <Button
               active
-              className={cn(
-                'bg-purple-50 border-purple-50 hover:bg-purple-40 focus:bg-purple-50 active:bg-purple-50',
-              )}
+              className={cn('inline-block self-start')}
               onClick={() => setIsExpanded((current) => !current)}
             >
               <span className="mr-1">
@@ -254,11 +253,7 @@ export function Prop({
         </div>
       </div>
       {isExpanded && hasDetails ? (
-        <div
-          className={cn('p-8 border-t dark:border-purple-60 border-purple-10 ')}
-        >
-          {content}
-        </div>
+        <div className={cn('p-8 border-t border-deep-dark')}>{content}</div>
       ) : null}
     </div>
   );

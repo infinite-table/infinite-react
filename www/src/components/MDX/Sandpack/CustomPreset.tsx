@@ -85,10 +85,8 @@ export function CustomPreset({
   let editorHeight = isExpandable ? lineCount * 24 + 24 : 'auto'; // shown lines * line height (24px)
 
   const titleBlock = title ? (
-    <div
-      className={'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg'}
-    >
-      <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
+    <div className={'leading-base bg-dark-custom bg-opacity-50 w-full '}>
+      <div className="text-content-color flex text-sm px-4 py-0.5 relative">
         <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>
@@ -114,12 +112,8 @@ export function CustomPreset({
   };
 
   const descriptionBlock = description ? (
-    <div
-      className={
-        'leading-base bg-card dark:bg-card-dark w-full border-b border-border dark:border-gray-60'
-      }
-    >
-      <div className="sandpackDescription text-primary dark:text-primary-dark text-sm px-4 py-0.5 relative">
+    <div className={'leading-base w-full border-b border-gray-60'}>
+      <div className="sandpackDescription text-content-color text-sm px-4 py-0.5 relative">
         {description}
       </div>
     </div>
@@ -127,7 +121,7 @@ export function CustomPreset({
   return (
     <>
       <div
-        className="shadow-lg dark:shadow-lg-dark rounded-lg overflow-hidden"
+        className="shadow-lg-dark rounded-md overflow-hidden"
         ref={containerRef}
         style={
           fullScreen
@@ -157,7 +151,7 @@ export function CustomPreset({
         <SandpackThemeProvider>
           <div
             ref={sandpack.lazyAnchorRef}
-            className=" rounded-t-none"
+            className="rounded-t-none"
             style={{
               // Prevent it from collapsing below the initial (non-loaded) height.
               // There has to be some better way to do this...
@@ -196,7 +190,7 @@ export function CustomPreset({
               {isExpandable && (
                 <button
                   translate="yes"
-                  className="flex text-base justify-between dark:border-card-dark bg-wash dark:bg-card-dark items-center z-10 rounded-t-none p-1 w-full order-2 xl:order-last border-b-1 relative top-0"
+                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full order-2 xl:order-last  relative top-0"
                   onClick={() => {
                     const nextIsExpanded = !isExpanded;
                     flushSync(() => {
@@ -211,7 +205,7 @@ export function CustomPreset({
                     }
                   }}
                 >
-                  <span className="flex p-2 focus:outline-none text-primary dark:text-primary-dark">
+                  <span className="flex p-2 focus:outline-none text-content-color">
                     <IconChevron
                       className="inline mr-1.5 text-xl"
                       displayDirection={isExpanded ? 'up' : 'down'}

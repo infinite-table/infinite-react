@@ -50,21 +50,20 @@ export function SidebarLink({
         title={title}
         aria-current={selected ? 'page' : undefined}
         className={cn(
-          'p-2 pr-2 w-full rounded-none lg:rounded-r-lg text-left hover:bg-gray-5 dark:hover:bg-gray-80 relative flex items-center justify-between',
+          'p-2 pr-2 w-full rounded-none lg:rounded-r-lg text-left hover:bg-highlight-dark hover:opacity-90 relative flex items-center justify-between',
           {
             'my-6': heading,
-            'text-primary dark:text-primary-dark': heading && !isBreadcrumb,
+            'text-primary-dark': heading,
             'text-sm': level > 0,
             'pl-5': level === 0,
             'pl-7': level === 1,
             'pl-9': level === 2,
             'text-base font-bold': level === 0,
-            'dark:text-primary-dark text-primary ': level === 0 && !selected,
-            'text-base text-link dark:text-link-dark': level === 1 && selected,
-            'dark:text-primary-dark text-primary': heading,
-            'text-base text-secondary dark:text-secondary-dark':
-              !selected && !heading,
-            'text-base text-link dark:text-link-dark bg-highlight dark:bg-highlight-dark border-blue-40 hover:bg-highlight hover:text-link dark:hover:bg-highlight-dark dark:hover:text-link-dark':
+            'text-content-color ': level === 0 && !selected,
+            'text-base text-link-dark': level === 1 && selected,
+
+            'text-base text-content-color': !selected && !heading,
+            'text-base text-link-dark bg-highlight-dark border-blue-40  hover:text-link-dark':
               selected,
           },
         )}

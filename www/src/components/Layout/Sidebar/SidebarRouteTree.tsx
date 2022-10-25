@@ -95,7 +95,7 @@ export function SidebarRouteTree({
 
   const expanded = expandedPath;
   return (
-    <ul>
+    <ul className="bg-dark-custom  border-border-dark lg:bg-transparent">
       {currentRoutes.map(
         ({ path, title, routes, heading, transient }, index) => {
           const pagePath = path && removeFromLast(path, '.');

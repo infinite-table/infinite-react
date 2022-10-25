@@ -1,7 +1,8 @@
-import { globalStyle, style } from '@vanilla-extract/css';
+import { globalStyle, style, keyframes } from '@vanilla-extract/css';
 import {
   centeredFlexColumn,
   centeredFlexRow,
+  maxWidth,
   paddingX,
   screenSizes,
   wwwVars,
@@ -84,14 +85,51 @@ export const DotsBackgroundCls = style([
   {
     vars: {
       '--dot-size': '1px',
-      '--dot-color1': wwwVars.color.darkBg,
-      '--dot-color2': wwwVars.color.darkBg,
+      '--dot-color1': wwwVars.color.darkBg + '',
+      '--dot-color2': wwwVars.color.darkBg + '',
+      '--dot-black': wwwVars.color.black + '',
       '--dot-pattern-height': '750px',
     },
-    background: `linear-gradient(180deg,transparent 0,black var(--dot-pattern-height)),
+    background: `linear-gradient(180deg,transparent 0,${wwwVars.color.black} var(--dot-pattern-height)),
       fixed 0 0 /20px 20px radial-gradient(var(--dot-color1) var(--dot-size),transparent 0),
       fixed 10px 10px /20px 20px radial-gradient(var(--dot-color2) var(--dot-size),transparent 0
     )`,
+  },
+]);
+
+const fadeUp = keyframes({
+  '0%': { transform: 'translateY(0%)', opacity: 1 },
+  '100%': { transform: 'translateY(100%)', opacity: 0 },
+});
+export const BannerTextAnimationCls = style([
+  {
+    animation: `var(--animation-duration) ${fadeUp} 2650ms ease-in-out infinite`,
+  },
+]);
+
+const BannerTextCommon = style({
+  transition: 'opacity 0.3s, top 0.3s',
+  position: 'absolute',
+});
+export const BannerTextPrevCls = style([
+  BannerTextCommon,
+  {
+    opacity: 0,
+    top: '-30px',
+    pointerEvents: 'none',
+  },
+]);
+export const BannerTextCurrentCls = style([
+  BannerTextCommon,
+  { top: '0px', opacity: 1 },
+]);
+
+export const BannerTextNextCls = style([
+  BannerTextCommon,
+  {
+    opacity: 0,
+    top: '10px',
+    pointerEvents: 'none',
   },
 ]);
 
@@ -99,7 +137,7 @@ export const HeroImageNormalCls = style([]);
 
 export const HeroImageCls = style([
   {
-    WebkitMaskImage: `radial-gradient(100% 80% at center center, black, transparent);`,
+    WebkitMaskImage: `radial-gradient(100% 80% at center center, ${wwwVars.color.black}, transparent);`,
     transform: `perspective(3050px)
     translate3d(0px, 0px, 250px)
     rotateX(27deg)
@@ -184,14 +222,7 @@ globalStyle(`${title} a:active`, {
   textDecoration: 'underline',
 });
 
-export const grid = style({
-  '@media': {
-    'screen and (max-width: 600px)': {
-      width: '90%',
-      flexDirection: 'column',
-    },
-  },
-});
+export const grid = style({});
 
 export const card = style({
   flexBasis: '45%',
@@ -203,6 +234,11 @@ export const card = style({
   selectors: {
     '&:hover': {
       top: '-2px',
+    },
+  },
+  '@media': {
+    [`screen and (max-width: ${screenSizes['screen-sm']})`]: {
+      flexBasis: '95%',
     },
   },
 });

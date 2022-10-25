@@ -201,8 +201,6 @@ New virtualization engine implemented for better performance.
 
 - Implement initial support for [server-side pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting/overview)
 
-<!-- @milestone id="6" -->
-
 ## 0.1.0 🚀
 
 This release introduces several breaking changes:

@@ -63,7 +63,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
   return (
     <aside
       className={cn(
-        `lg:flex-grow lg:flex flex-col w-full pt-4 pb-8 lg:pb-0 lg:max-w-xs fixed lg:sticky bg-wash dark:bg-wash-dark z-10`,
+        `lg:flex-grow lg:flex flex-col w-full pb-8 lg:pb-0 lg:max-w-xs fixed lg:sticky z-10`,
         isOpen ? 'block z-40' : 'hidden lg:block',
       )}
       aria-hidden={isHidden ? 'true' : 'false'}
@@ -87,7 +87,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
           <SidebarRouteTree routeTree={routeTree} />
         )}
       </nav>
-      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-gradient-to-t from-wash dark:from-wash-dark">
+      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center">
         <ExternalLink
           href="https://twitter.com/get_infinite"
           aria-label="InfiniteTable on Twitter"

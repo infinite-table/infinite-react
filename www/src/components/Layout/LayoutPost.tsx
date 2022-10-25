@@ -80,10 +80,7 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
   return (
     <>
       <div className="w-full px-12">
-        <div
-          className="px-5 sm:px-12 h-full mx-auto relative overflow-x-hidden
-        lg:pt-0 pt-20 lg:pl-80 2xl:px-80 "
-        >
+        <div className="px-5 sm:px-12 h-full mx-auto relative overflow-x-hidden lg:pt-0 pt-20 lg:pl-80 2xl:px-80 ">
           <div className="max-w-4xl ml-0 2xl:mx-auto ">
             <Seo
               title={meta.title}
@@ -92,10 +89,10 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
               } | Infinite Table DataGrid for React`}
             />
             <div className=" ">
-              <h1 className="mb-6 pt-8 text-4xl md:text-5xl font-bold leading-snug tracking-tight text-primary dark:text-primary-dark">
+              <h1 className="mb-6 pt-8 text-4xl md:text-5xl font-bold leading-snug tracking-tight text-content-color">
                 {meta.title}
               </h1>
-              <p className="mb-6 text-sm dark:text-secondary-dark">
+              <p className="mb-6 text-sm text-content-color">
                 By{' '}
                 {toCommaSeparatedList(meta.author, (author) => {
                   const url = getAuthor(author).url;

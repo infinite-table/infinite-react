@@ -1,16 +1,33 @@
-import { Cards } from '@www/components/Cards';
+import { Card, Cards } from '@www/components/Cards';
 import { GetAccessForm } from '@www/components/GetAccessForm';
+import { MainLayout } from '@www/layouts/MainLayout';
 
 import * as React from 'react';
+import { HeroHeader } from './Header';
 
-import IndexWrapper from './IndexWrapper';
+import IndexWrapper, { HeroPicture, MainContent } from './IndexWrapper';
 
 export function PricingPage() {
   return (
-    <IndexWrapper title="Pricing page coming soon">
-      <Cards />
-
-      <GetAccessForm />
-    </IndexWrapper>
+    <MainLayout
+      title={
+        <>
+          <span className={``}>One Pricing</span> — Infinite Applications
+        </>
+      }
+    >
+      <HeroPicture />
+      <MainContent overline={false}>
+        <Cards title="" spotlight={false}>
+          <Card title="A licensing model that's easy to understand">
+            One license per developer - it's that easy!
+          </Card>
+          <Card title="Flexible team bundles">
+            We sell licenses in bundles, which are flexible to allow your team
+            to expand.
+          </Card>
+        </Cards>
+      </MainContent>
+    </MainLayout>
   );
 }

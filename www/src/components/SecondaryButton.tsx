@@ -14,8 +14,12 @@ export function SecondaryButton(props: SecondaryButtonProps) {
   const { children, className, style, href } = props;
   const Parent = href ? Link : React.Fragment;
   const Cmp = href ? 'a' : 'button';
+  const parentProps: any = {};
+  if (href) {
+    parentProps['href'] = href;
+  }
   return (
-    <Parent href={href!}>
+    <Parent {...parentProps}>
       <Cmp
         className={`text-white rounded-lg inline-block text-xl border border-gray-50 font-normal py-2 px-5 hover:bg-opacity-90 bg-dark-custom ${buttonPositionWithTransition} ${
           className || ''

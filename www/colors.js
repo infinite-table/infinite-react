@@ -2,10 +2,12 @@ module.exports = {
   // Text colors
 
   // 'primary-dark': '#0b6fcb', // gray-5
+  black: '#000000', // gray-90
   primary: '#23272F', // gray-90
   'primary-dark': '#F6F7F9', // gray-5
   secondary: '#404756', // gray-70
   'secondary-dark': '#EBECF0', // gray-10
+  'content-color': 'rgba(235, 236, 240, 0.8)',
   link: '#087EA4', // blue-50
   'link-dark': '#149ECA', // blue-40
   syntax: '#EBECF0', // gray-10

@@ -230,7 +230,7 @@ export default function App() {
       const style: InfiniteTableColumn<Developer>['style'] = ({ value }) => {
         const increase: number = Math.abs(max - min);
         const percentage = ((value - min) / increase) * 100;
-        let alpha = Number((percentage / 100).toPrecision(2)) - 0.2;
+        const alpha = Number((percentage / 100).toPrecision(2)) - 0.2;
 
         const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
 
@@ -239,7 +239,7 @@ export default function App() {
       cols.salary.render = ({ renderBag, value, rowInfo }) => {
         const increase: number = Math.abs(max - min);
         const percentage = ((value - min) / increase) * 100;
-        let alpha = Number((percentage / 100).toPrecision(2)) + 0.2;
+        const alpha = Number((percentage / 100).toPrecision(2)) + 0.2;
 
         const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
         return (

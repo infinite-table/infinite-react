@@ -37,11 +37,11 @@ function TerminalBlock({ level = 'info', children }: TerminalBlockProps) {
       translate="no"
     >
       <div className="bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg">
-        <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
+        <div className="text-primary-dark flex text-sm px-4 py-0.5 relative">
           <IconTerminal className="inline-flex mr-2 self-center" /> Terminal
         </div>
       </div>
-      <div className="px-8 pt-4 pb-6 text-primary-dark dark:text-primary-dark font-mono text-code whitespace-pre">
+      <div className="px-8 pt-4 pb-6 text-primary-dark font-mono text-code whitespace-pre">
         <LevelText type={level} />
         {message}
       </div>

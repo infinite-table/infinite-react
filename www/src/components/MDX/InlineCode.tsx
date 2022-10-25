@@ -11,10 +11,10 @@ function InlineCode({
   return (
     <code
       className={cn(
-        'inline text-code text-secondary dark:text-secondary-dark px-1 rounded-md no-underline',
+        'inline text-code text-content-color px-1 rounded-md no-underline',
         {
           'bg-gray-30 bg-opacity-10 py-px': !isLink,
-          'bg-highlight dark:bg-highlight-dark py-0': isLink,
+          'bg-highlight-dark py-0': isLink,
         },
       )}
       {...props}

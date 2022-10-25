@@ -57,7 +57,7 @@ export function NavigationBar({
   const activeViewModeClassName = 'text-wash bg-primary dark:text-primary-dark';
   return (
     <div
-      className={`bg-wash dark:bg-card-dark flex justify-between items-center relative z-10 border-b border-border dark:border-border-dark rounded-b-none ${
+      className={`bg-dark-custom flex justify-between items-center relative z-10 border-b border-border-dark rounded-b-none ${
         skipRound ? '' : 'rounded-t-lg'
       }`}
     >
@@ -71,11 +71,11 @@ export function NavigationBar({
         {showDownload && <DownloadButton />}
         {/* <OpenInWindowButton onClick={() => {}} /> */}
         <div
-          className="flex flex-row ma-2 relative mr-5 text-sm items-center dark:text-primary-dark text-secondary"
+          className="flex flex-row ma-2 relative mr-5 text-sm items-center text-content-color"
           style={{ width: 250 }}
         >
           View Mode
-          <div className=" ml-3 flex flex-row items-center border dark:border-secondary border-secondary-dark rounded flex-1 overflow-hidden">
+          <div className=" ml-3 flex flex-row items-center border border-secondary rounded-md flex-1 overflow-hidden">
             <button
               className={
                 viewModeButtonClassName +
