@@ -3,7 +3,10 @@ import { GetAccessForm } from '@www/components/GetAccessForm';
 import { MainLayout } from '@www/layouts/MainLayout';
 
 import * as React from 'react';
-import { HighlightTextBackground } from './components.css';
+import {
+  GradientTextBackground,
+  HighlightTextBackground,
+} from './components.css';
 import { HeroHeader } from './Header';
 
 import IndexWrapper, { HeroPicture, MainContent } from './IndexWrapper';
@@ -18,7 +21,7 @@ export function PricingPage() {
       }
       subtitle={
         <>
-          Coming <span className={HighlightTextBackground}>soon</span>
+          Coming <span className={GradientTextBackground}>soon</span>
         </>
       }
     >

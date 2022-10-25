@@ -39,7 +39,7 @@ export const SpotlightHorizontalBackgroundCls = style([
 export const GradientTextBackground = style([
   {
     color: 'transparent',
-    backgroundImage: `linear-gradient(to right,${wwwVars.color.white} 10%,${wwwVars.color.brand}, ${wwwVars.color.brandDark}, ${wwwVars.color.brandDark})`,
+    backgroundImage: `linear-gradient(to right,${wwwVars.color.glow} 70%, ${wwwVars.color.brandDark})`,
     WebkitBackgroundClip: 'text',
   },
 ]);
