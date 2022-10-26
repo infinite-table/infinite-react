@@ -36,7 +36,6 @@
     "@mdx-js/react": "^2.1.5",
     "@next/mdx": "^10.2.3",
     "@next/plugin-google-analytics": "^10.0.6",
-    "@stripe/react-stripe-js": "^1.6.0",
     "@stripe/stripe-js": "^1.22.0",
     "@vanilla-extract/babel-plugin": "^1.1.2",
     "@vanilla-extract/css": "^1.9.1",
