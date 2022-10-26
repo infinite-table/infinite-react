@@ -1,24 +1,15 @@
 import {
   DotsBackgroundCls,
-  HeroImageCls,
-  HeroImageNormalCls,
   SpotlightHorizontalBackgroundCls,
 } from '@www/components/components.css';
 import { MainLayout } from '@www/layouts/MainLayout';
 
-import Image from 'next/image';
 import * as React from 'react';
 
-import demoImage from '../../public/full-demo-image.png';
 import { OverlineCls } from './Header.css';
-
-import Link from 'next/link';
-import { wwwVars } from '@www/styles/www-utils.css';
-import { HighlightButton } from './HighlightButton';
+import { HeroPicture } from './HeroPicture';
 
 import { SecondaryButton } from './SecondaryButton';
-
-const debounce = require('debounce');
 
 // const TSLogo = (
 //   <svg
@@ -61,69 +52,21 @@ export function SpotlightBackground() {
   );
 }
 
-export const HeroPicture = () => {
-  const heroImageContainerRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    const heroImageContainer = heroImageContainerRef.current;
-    let hasPerspective = true;
-    const fn = debounce(() => {
-      const limit = window.innerWidth < 700 ? 150 : 200;
-      const shouldHavePerspective = window.scrollY < limit;
-
-      if (shouldHavePerspective != hasPerspective) {
-        hasPerspective = shouldHavePerspective;
-        heroImageContainer?.classList[shouldHavePerspective ? 'remove' : 'add'](
-          HeroImageNormalCls,
-        );
-      }
-    }, 50);
-    window.addEventListener('scroll', fn);
-
-    return () => {
-      window.removeEventListener('scroll', fn);
-    };
-  }, []);
-  return (
-    <Link href="/docs/latest/learn/getting-started/full-demo">
-      <a className="cursor-pointer outline-none relative my-20" tabIndex={-1}>
-        <div
-          ref={heroImageContainerRef}
-          className={`${HeroImageCls}`}
-          style={{ zIndex: 10 }}
-        >
-          <Image src={demoImage} />
-          <div className="absolute top-0 left-0 right-0 bottom-0 opacity-70 hover:opacity-90 bg-white hover:bg-white bg-opacity-0 hover:bg-opacity-10 z-10 cursor-pointer flex items-center justify-center"></div>
-        </div>
-
-        <div
-          className="absolute top-0 left-0 right-0 bottom-0 z-10 cursor-pointer flex items-center justify-center"
-          style={{ pointerEvents: 'none' }}
-        >
-          <HighlightButton>See live demo</HighlightButton>
-        </div>
-      </a>
-    </Link>
-  );
-};
-
-export function MainContent({
-  children,
-  overline = true,
-}: {
-  children?: React.ReactNode;
-  overline?: boolean;
-}) {
-  return (
-    <main
-      className={`flex flex-col flex-1 justify-center w-full items-center px-5 relative ${DotsBackgroundCls}  ${
-        overline ? OverlineCls : ''
-      }`}
-    >
-      {children}
-    </main>
-  );
-}
-
+const copy = (
+  <>
+    {' '}
+    <p>
+      InfiniteTable is React DataGrid component that helps display huge
+      datasets. For maximum performance, it uses virtualization extensively,
+      both for rows and columns.
+    </p>
+    <p>
+      It's completely customizable and packed with functionality. to and comes
+      packed with enterprise is only as good as its documentation. All our
+      examples are interactive and they cover all the existing functionalities.
+    </p>
+  </>
+);
 export default function IndexWrapper({
   children,
   title,
@@ -138,8 +81,8 @@ export default function IndexWrapper({
       <HeroPicture />
       <div className={['relative w-full flex flex-col items-center'].join(' ')}>
         <div className="w-1/2">
-          We believe a DataGrid component is only as good as its documentation.
-          All our examples are interactive and they cover all the existing
+          A DataGrid component is only as good as its documentation. All our
+          examples are interactive and they cover all the existing
           functionalities.
           <div className="mb-10 mt-10 justify-center lg:justify-end md:float-right block md:inline-block text-center">
             {/* <AccentButton href="/docs">
@@ -149,6 +92,7 @@ export default function IndexWrapper({
           </div>
         </div>
       </div>
+
       <MainContent>{children}</MainContent>
     </MainLayout>
   );

@@ -1,11 +1,10 @@
 import { Card, Cards } from '@www/components/Cards';
 
-import { MainLayout } from '@www/layouts/MainLayout';
+import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 
 import * as React from 'react';
 import { GradientTextBackground } from './components.css';
-
-import { HeroPicture, MainContent } from './IndexWrapper';
+import { HeroImage, HeroPicture } from './HeroPicture';
 
 export function PricingPage() {
   return (
@@ -21,7 +20,7 @@ export function PricingPage() {
         </>
       }
     >
-      <HeroPicture />
+      <div className="w-1/2 mt-20">{HeroImage}</div>
       <MainContent overline={false}>
         <Cards title="" spotlight={false}>
           <Card title="A licensing model that's easy to understand">

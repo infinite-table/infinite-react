@@ -3,14 +3,23 @@ import { ReactNode } from 'react';
 
 type HighlightButtonProps = {
   children: ReactNode;
+  glow?: boolean;
 };
+
+export function getHighlightShadowStyle({ glow }: { glow?: boolean } = {}) {
+  return {
+    boxShadow: `0px 0px 10px 1px ${
+      glow ? wwwVars.color.glow : wwwVars.color.highlight
+    }`,
+  };
+}
 export function HighlightButton(props: HighlightButtonProps) {
-  const { children } = props;
+  const { children, glow } = props;
   return (
     <button
       className="bg-brand-dark bg-opacity-90 shadow-xl shadow-highlight-100 rounded-lg inline-block text-xl font-black py-2 px-5 text-highlight"
       style={{
-        boxShadow: `0px 0px 10px 1px ${wwwVars.color.highlight}`,
+        ...getHighlightShadowStyle({ glow }),
       }}
     >
       {children}

@@ -17,7 +17,7 @@ export function AccentButton(props: AccentButtonProps) {
   return (
     <Parent href={href!}>
       <Cmp
-        className={`bg-highlight rounded-lg inline-block text-xl font-bold py-2 px-5 hover:bg-opacity-90 text-dark-custom ${buttonPositionWithTransition} ${
+        className={`bg-highlight rounded-lg inline-flex items-center text-xl font-bold py-2 px-5 hover:bg-opacity-90 text-dark-custom ${buttonPositionWithTransition} ${
           className || ''
         }`}
         style={{

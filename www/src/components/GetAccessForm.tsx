@@ -18,6 +18,7 @@ import {
   wwwVars,
 } from '@www/styles/www-utils.css';
 import * as React from 'react';
+import { CardsSubtitle, CardsTitle } from './Cards';
 
 import {
   width100,
@@ -57,46 +58,54 @@ export const GetAccessForm = () => {
   };
 
   return (
-    <form
-      name="contact"
-      data-netlify="true"
-      data-netlify-honeypot="bot-field"
-      style={{
-        maxWidth: wwwVars.maxSiteWidth,
-      }}
-      className={`${margin[6]} ${width100} ${display.flex} ${flexDirection.column} `}
-      onSubmit={handleSubmit}
-    >
-      <div
-        className={` ${display.flex} ${flexDirection.row} ${justifyContent.center}`}
-      >
-        <input
-          placeholder="john@email.com"
-          style={{ width: '60%' }}
-          value={email}
-          type="email"
-          name="email"
-          required
-          onChange={(e) => {
-            setThankyou('');
-            setEmail(e.target.value);
-          }}
-          className={`${emailCls} ${padding[3]} ${borderRadius.md} text-white focus:bg-gray-90 hover:bg-gray-90 border-white border bg-black `}
-        />
-        <input hidden name="form-name" value={'contact'} readOnly />
-      </div>
+    <>
+      <CardsTitle className="mt-20">Stay in the loop</CardsTitle>
 
-      <div
-        className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize['xl']} ${textAlign.center}`}
+      <CardsSubtitle className="mt-5 mb-12 w-1/2">
+        <p>Keep up-to-date with our releases and new functionalities.</p>
+        <p>We won't share your email with 3rd parties - you have our word!</p>
+      </CardsSubtitle>
+      <form
+        name="contact"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+        style={{
+          maxWidth: wwwVars.maxSiteWidth,
+        }}
+        className={`${margin[6]} ${width100} ${display.flex} ${flexDirection.column} `}
+        onSubmit={handleSubmit}
       >
-        {thankyou}
-      </div>
-      <button
-        type="submit"
-        className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} bg-dark-custom ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
-      >
-        Get Access
-      </button>
-    </form>
+        <div
+          className={` ${display.flex} ${flexDirection.row} ${justifyContent.center}`}
+        >
+          <input
+            placeholder="john@email.com"
+            style={{ width: '60%' }}
+            value={email}
+            type="email"
+            name="email"
+            required
+            onChange={(e) => {
+              setThankyou('');
+              setEmail(e.target.value);
+            }}
+            className={`${emailCls} ${padding[3]} ${borderRadius.md} text-white focus:bg-gray-90 hover:bg-gray-90 border-white border bg-black `}
+          />
+          <input hidden name="form-name" value={'contact'} readOnly />
+        </div>
+
+        <div
+          className={`${display.flex} ${flexDirection.row} ${justifyContent.center} ${colorWhite} ${marginY[6]} ${fontSize['xl']} ${textAlign.center}`}
+        >
+          {thankyou}
+        </div>
+        <button
+          type="submit"
+          className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} bg-dark-custom ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
+        >
+          Let's go
+        </button>
+      </form>
+    </>
   );
 };

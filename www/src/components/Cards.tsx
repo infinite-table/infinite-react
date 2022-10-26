@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import * as React from 'react';
 import { ReactNode } from 'react';
 
@@ -13,21 +14,23 @@ import { BannerText } from './BannerText';
 
 import { card, grid, SpotlightRadialBackgroundCls } from './components.css';
 
-const titleOpacity = 'opacity-70';
-const subtitleOpacity = 'opacity-60';
+const titleOpacity = 'opacity-80';
+const subtitleOpacity = 'opacity-70';
 
 export const Card = ({
   href,
   title,
   children,
   noBackground,
+  flexContent,
 }: {
+  flexContent?: boolean;
   href?: string;
   title: ReactNode;
   children: ReactNode;
   noBackground?: boolean;
 }) => {
-  let cls = `${card} p-8 py-10 rounded-sm hover:bg-opacity-90 hover:bg-deep-dark`;
+  let cls = `${card} p-8 py-10 rounded-sm hover:bg-opacity-90 hover:bg-deep-dark flex flex-col`;
 
   if (!noBackground) {
     cls += ` bg-opacity-60 bg-deep-dark`;
@@ -38,7 +41,11 @@ export const Card = ({
       <h3 className={titleOpacity}>
         {title} {href ? <>&rarr;</> : null}
       </h3>
-      <div className={`${subtitleOpacity} text-md leading-relaxed`}>
+      <div
+        className={`${subtitleOpacity} text-md flex-1 ${
+          flexContent ? 'inline-flex flex-col' : ''
+        } leading-relaxed`}
+      >
         {children}
       </div>
     </>
@@ -48,9 +55,9 @@ export const Card = ({
     return <div className={cls}>{content}</div>;
   }
   return (
-    <a href={href} className={cls}>
-      {content}
-    </a>
+    <Link href={href}>
+      <a className={cls}>{content}</a>
+    </Link>
   );
 };
 
@@ -86,13 +93,48 @@ const defaultChildren = (
   </>
 );
 
-const commonCls = `leading-relaxed text-center  text-white`;
+const commonCls = `leading-relaxed text-center`;
 
-export const CardsTitle = ({ children }: { children: ReactNode }) => {
+export const CardsTitle = ({
+  children,
+  className,
+  style,
+}: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) => {
   return (
-    <h3 className={`${commonCls} text-3xl font-bold ${titleOpacity}`}>
+    <h3
+      className={`${
+        className || ''
+      } ${commonCls} text-3xl font-bold ${titleOpacity}`}
+      style={style}
+    >
       {children}
     </h3>
+  );
+};
+
+export const CardsSubtitle = (props: {
+  children: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  as?:
+    | React.FunctionComponent<
+        { children?: ReactNode } & React.HTMLProps<HTMLDivElement>
+      >
+    | string;
+}) => {
+  const Cmp = props.as || 'h4';
+  const { children, className, style } = props;
+  return (
+    <Cmp
+      className={`${commonCls} text-xl ${subtitleOpacity} ${className || ''}`}
+      style={style}
+    >
+      {children}
+    </Cmp>
   );
 };
 export const Cards = ({
@@ -117,15 +159,9 @@ export const Cards = ({
         ></div>
       ) : null}
 
-      <h3 className={`${commonCls} text-3xl font-bold ${titleOpacity}`}>
-        {title ?? defaultTitle}
-      </h3>
+      <CardsTitle>{title ?? defaultTitle}</CardsTitle>
 
-      {subtitle ? (
-        <h4 className={`${commonCls} text-xl ${subtitleOpacity} `}>
-          {subtitle}
-        </h4>
-      ) : null}
+      {subtitle ? <CardsSubtitle as="h4">{subtitle}</CardsSubtitle> : null}
     </>
   );
   return (

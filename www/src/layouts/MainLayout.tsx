@@ -1,9 +1,11 @@
 import {
+  DotsBackgroundCls,
   fullWidthContainer,
   minHeightFull,
 } from '@www/components/components.css';
 import { Footer } from '@www/components/Footer';
 import { HeroHeader, MainNavBar } from '@www/components/Header';
+import { OverlineCls } from '@www/components/Header.css';
 import { Seo } from '@www/components/Seo';
 import { lightTheme, maxWidth, wwwVars } from '@www/styles/www-utils.css';
 import { ReactNode } from 'react';
@@ -23,7 +25,9 @@ export function MainLayout({
 }) {
   return (
     <div
-      className={`${className || ''} ${appClassName} ${lightTheme}  bg-black `}
+      className={`${
+        className || ''
+      } ${appClassName} ${lightTheme}  bg-black text-content-color `}
     >
       <div
         style={{
@@ -45,5 +49,23 @@ export function MainLayout({
         </div>
       </div>
     </div>
+  );
+}
+
+export function MainContent({
+  children,
+  overline = true,
+}: {
+  children?: React.ReactNode;
+  overline?: boolean;
+}) {
+  return (
+    <main
+      className={`flex flex-col flex-1 justify-center w-full items-center px-5 relative ${DotsBackgroundCls}  ${
+        overline ? OverlineCls : ''
+      }`}
+    >
+      {children}
+    </main>
   );
 }

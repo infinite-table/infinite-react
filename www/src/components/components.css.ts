@@ -242,9 +242,9 @@ export const card = style({
   },
 });
 
-globalStyle(`${card} a:hover`, {
-  textDecoration: 'underline',
-});
+// globalStyle(`${card} a:hover`, {
+//   textDecoration: 'underline',
+// });
 globalStyle(`${card}`, {
   transition:
     'color 0.35s ease, border-color 0.35s ease,background-color 0.35s ease, top 0.25s ease',
