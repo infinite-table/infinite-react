@@ -21,17 +21,21 @@ export const useInfiniteTemplate = (): TemplateConfig => {
 };
 const getReactTemplateFiles = (): Record<string, SandpackFile> => {
   return {
-    '/src/App.tsx': {
+    '/App.tsx': {
       code: BASE_FILE_REACT_APP,
       active: true,
     },
 
-    '/src/index.tsx': {
+    '/index.tsx': {
       code: BASE_FILE_REACT_INDEX,
       hidden: true,
     },
-    '/src/styles.css': {
+    '/styles.css': {
       code: BASE_FILE_REACT_STYLES,
+      hidden: true,
+    },
+    '/public/index.html': {
+      code: BASE_INDEX_HTML,
       hidden: true,
     },
   };
@@ -48,8 +52,21 @@ const BASE_FILE_REACT_APP = ``;
 // const BASE_FILE_REACT_INDEX = raw(
 //   `${BASE_PATH_REACT_PREFIX}/index.tsx`
 // );
+
+const BASE_INDEX_HTML = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root" class="infinite-dark"></div>
+  </body>
+</html>`;
 const BASE_FILE_REACT_INDEX = `
 import * as React from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import '@infinite-table/infinite-react/index.css';
@@ -58,7 +75,11 @@ import App from './App';
 import './styles.css';
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<App />);
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
 
 `;
 // const BASE_FILE_REACT_STYLES = raw(
@@ -95,15 +116,10 @@ body,
   overflow: hidden;
 }
 
-
 .Infinite {
   flex: 1;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background:rgb(35, 39, 47);
-  }
-}
-
-`;
+body {
+  background:rgb(35, 39, 47);
+}`;

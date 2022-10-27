@@ -84,11 +84,11 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
   const titleBlock = hasTitle ? (
     <div
       className={cn(
-        'leading-base bg-gray-90 dark:bg-gray-60 w-full rounded-t-lg',
+        'leading-base bg-dark-custom w-full rounded-t-lg',
         !noMargin && 'mt-8',
       )}
     >
-      <div className="text-primary-dark dark:text-primary-dark flex text-sm px-4 py-0.5 relative">
+      <div className="text-primary-dark flex text-sm px-4 py-0.5 relative">
         <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>
@@ -107,7 +107,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
             : {}
         }
         className={cn(
-          'rounded-lg h-full w-full overflow-x-auto flex items-center bg-wash dark:bg-gray-95 shadow-lg',
+          'rounded-lg h-full w-full overflow-x-auto flex items-center  shadow-lg',
           !noMargin && (hasTitle ? 'mb-8' : 'my-8'),
         )}
       >

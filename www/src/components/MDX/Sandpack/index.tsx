@@ -90,7 +90,7 @@ function Sandpack(props: SandpackProps) {
 
       const filePath = fileName.includes('index.html')
         ? `/public/index.html`
-        : `/src/${fileName}`; // path in the folder structure
+        : `/${fileName}`; // path in the folder structure
       const fileActive = index === 0; //!!getMetaTag('active', nodeMetaTags) || inline;
       const fileHidden = !!getMetaTag('hidden', nodeMetaTags);
 
@@ -147,17 +147,19 @@ function Sandpack(props: SandpackProps) {
     });
   }
 
+  const customSetup = {
+    ...setup,
+    dependencies,
+    entry: '/index.tsx',
+  };
+
   return (
     <div className="my-8" translate="no">
       <SandpackProvider
         key={key}
         template={'react-ts'}
         files={sandpackFiles}
-        customSetup={{
-          ...setup,
-          dependencies,
-          entry: '/src/index.tsx',
-        }}
+        customSetup={customSetup}
         options={{
           activeFile: activeFilePath!,
           autorun,

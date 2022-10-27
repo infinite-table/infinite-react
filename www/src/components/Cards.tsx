@@ -21,16 +21,26 @@ export const Card = ({
   href,
   title,
   children,
+  className,
+  style,
   noBackground,
+  noBackgroundOnHover,
   flexContent,
 }: {
   flexContent?: boolean;
   href?: string;
+  className?: string;
+  style?: React.CSSProperties;
   title: ReactNode;
   children: ReactNode;
   noBackground?: boolean;
+  noBackgroundOnHover?: boolean;
 }) => {
-  let cls = `${card} p-8 py-10 rounded-sm hover:bg-opacity-90 hover:bg-deep-dark flex flex-col`;
+  let cls = `${className || ''} ${card} p-8 py-10 rounded-sm  flex flex-col`;
+
+  if (!noBackgroundOnHover) {
+    cls += ` hover:bg-opacity-90 hover:bg-deep-dark `;
+  }
 
   if (!noBackground) {
     cls += ` bg-opacity-60 bg-deep-dark`;
@@ -52,11 +62,17 @@ export const Card = ({
   );
 
   if (!href) {
-    return <div className={cls}>{content}</div>;
+    return (
+      <div className={cls} style={style}>
+        {content}
+      </div>
+    );
   }
   return (
     <Link href={href}>
-      <a className={cls}>{content}</a>
+      <a className={cls} style={style}>
+        {content}
+      </a>
     </Link>
   );
 };

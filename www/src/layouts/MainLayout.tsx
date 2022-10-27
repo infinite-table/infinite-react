@@ -8,7 +8,7 @@ import { HeroHeader, MainNavBar } from '@www/components/Header';
 import { OverlineCls } from '@www/components/Header.css';
 import { Seo } from '@www/components/Seo';
 import { lightTheme, maxWidth, wwwVars } from '@www/styles/www-utils.css';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 import { appClassName } from './_app.css';
 
@@ -55,15 +55,24 @@ export function MainLayout({
 export function MainContent({
   children,
   overline = true,
+  dottedBg = true,
+  className,
+  style,
 }: {
   children?: React.ReactNode;
   overline?: boolean;
+  className?: string;
+  dottedBg?: boolean;
+  style?: CSSProperties;
 }) {
   return (
     <main
-      className={`flex flex-col flex-1 justify-center w-full items-center px-5 relative ${DotsBackgroundCls}  ${
-        overline ? OverlineCls : ''
-      }`}
+      style={style}
+      className={`${
+        className || ''
+      } flex flex-col flex-1 justify-center w-full items-center px-5 relative ${
+        dottedBg ? DotsBackgroundCls : ''
+      }  ${overline ? OverlineCls : ''}`}
     >
       {children}
     </main>

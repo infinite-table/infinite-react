@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 type HighlightButtonProps = {
   children: ReactNode;
   glow?: boolean;
+  className?: string;
 };
 
 export function getHighlightShadowStyle({ glow }: { glow?: boolean } = {}) {
@@ -14,10 +15,10 @@ export function getHighlightShadowStyle({ glow }: { glow?: boolean } = {}) {
   };
 }
 export function HighlightButton(props: HighlightButtonProps) {
-  const { children, glow } = props;
+  const { children, glow, className } = props;
   return (
     <button
-      className="bg-brand-dark bg-opacity-90 shadow-xl shadow-highlight-100 rounded-lg inline-block text-xl font-black py-2 px-5 text-highlight"
+      className={`${className} bg-brand-dark bg-opacity-90 shadow-xl shadow-highlight-100 rounded-lg inline-block text-xl font-black py-2 px-5 text-highlight`}
       style={{
         ...getHighlightShadowStyle({ glow }),
       }}

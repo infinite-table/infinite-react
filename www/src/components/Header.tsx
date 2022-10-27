@@ -132,6 +132,18 @@ export const MainNavBar = () => {
   );
 };
 
+export const getHeroHeaderTextStyling = () => {
+  return {
+    className:
+      'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black opacity-70',
+    style: {
+      letterSpacing: '-2.8px',
+
+      lineHeight: '1.25',
+    } as React.CSSProperties,
+  };
+};
+
 export const HeroHeader = (props: {
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -197,15 +209,13 @@ export const HeroHeader = (props: {
     <div className={['relative', width100, centeredFlexColumn].join(' ')}>
       <h1
         style={{
-          letterSpacing: '-2.8px',
+          ...getHeroHeaderTextStyling().style,
           zIndex: 1,
-          lineHeight: '1.25',
         }}
         className={[
-          title,
           marginTop[36],
-          textAlign.center,
-          'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black opacity-70',
+          getHeroHeaderTextStyling().className,
+          'text-center',
         ].join(' ')}
       >
         <div className="relative">

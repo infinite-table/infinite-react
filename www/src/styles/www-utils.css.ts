@@ -27,6 +27,7 @@ export const colorVariables = {
   blue700: '#1c4fd8',
   glow: colors.glow,
   contentColor: colors['content-color'],
+  specialBorderBolor: colors['special-border-color'] as string,
   highlight: colors.highlight,
   white: 'white',
   gray: '#eaeaea',
