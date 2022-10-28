@@ -7,7 +7,7 @@ import { Footer } from '@www/components/Footer';
 import { HeroHeader, MainNavBar } from '@www/components/Header';
 import { OverlineCls } from '@www/components/Header.css';
 import { Seo } from '@www/components/Seo';
-import { lightTheme, maxWidth, wwwVars } from '@www/styles/www-utils.css';
+import { wwwTheme, wwwVars } from '@www/styles/www-utils.css';
 import { CSSProperties, ReactNode } from 'react';
 
 import { appClassName } from './_app.css';
@@ -27,7 +27,7 @@ export function MainLayout({
     <div
       className={`${
         className || ''
-      } ${appClassName} ${lightTheme}  bg-black text-content-color `}
+      } ${appClassName} ${wwwTheme}  bg-black text-content-color `}
     >
       <div
         style={{

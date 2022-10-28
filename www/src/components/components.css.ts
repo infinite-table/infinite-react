@@ -56,7 +56,7 @@ export const HighlightBrandToLightBackground = style([
     color: 'transparent',
 
     // backgroundImage: `linear-gradient(to right,${wwwVars.color.highlight} 30%,${wwwVars.color.brandDark})`,
-    backgroundImage: `linear-gradient(to right,${wwwVars.color.brand} 1%, ${wwwVars.color.white} 70%,${wwwVars.color.white})`,
+    backgroundImage: `linear-gradient(to right,${wwwVars.color.glow} 1%, ${wwwVars.color.white} 80%,${wwwVars.color.white})`,
     WebkitBackgroundClip: 'text',
   },
 ]);

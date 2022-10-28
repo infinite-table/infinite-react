@@ -26,6 +26,7 @@ export const colorVariables = {
   blue: 'blue',
   blue700: '#1c4fd8',
   glow: colors.glow,
+  accent2: colors.accent2,
   contentColor: colors['content-color'],
   specialBorderBolor: colors['special-border-color'] as string,
   highlight: colors.highlight,
@@ -191,7 +192,7 @@ export const zIndex = styleVariants(zIndexScale, (value) => {
   };
 });
 
-export const [lightTheme, wwwVars] = createTheme(
+export const [wwwTheme, wwwVars] = createTheme(
   {
     color: colorVariables,
     font: {

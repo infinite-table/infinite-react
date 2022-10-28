@@ -32,7 +32,7 @@ function YouWillLearnCard({
           href={path}
           target={newTab ? '_blank' : '_self'}
           className="mt-1"
-          type="primary"
+          type="secondary"
           size="md"
           label={title}
         >

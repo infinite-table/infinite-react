@@ -26,6 +26,7 @@ import {
 } from './components.css';
 import { ExternalLink } from './ExternalLink';
 import { IceCls, NavBarCls, NavBarWrapCls } from './Header.css';
+import { InfiniteLogo } from './InfiniteLogo';
 
 export const TwitterLink = (
   <ExternalLink
@@ -75,8 +76,7 @@ export const NavBarContent = () => {
       style={{ flexWrap: 'wrap' }}
     >
       <li
-        className={`${itemCls} font-bold text-base md:text-xl`}
-        style={{ letterSpacing: '1px' }}
+        className={`${itemCls} font-black text-base md:text-xl tracking-tight`}
       >
         <Link href="/">
           <a
@@ -84,7 +84,15 @@ export const NavBarContent = () => {
             className="inline-flex items-center "
             style={{ width: 'max-content' }}
           >
-            <img
+            <InfiniteLogo
+              className="py-3 px-2"
+              color="light"
+              style={{
+                height: wwwVars.header.lineHeight,
+                maxWidth: 80,
+              }}
+            />
+            {/* <img
               style={{
                 height: wwwVars.header.lineHeight,
                 maxWidth: '90px',
@@ -92,7 +100,7 @@ export const NavBarContent = () => {
               className={`py-4 px-2`}
               src={'/logo-infinite.svg'}
               title="Infinite Table Logo"
-            />
+            /> */}
             <span className="whitespace-nowrap">Infinite Table</span>
           </a>
         </Link>
@@ -229,7 +237,10 @@ export const HeroHeader = (props: {
               zIndex: -1,
             }}
           />
-          <div className={`text-glow px-3 relative`}>{title}</div>
+
+          <div className={`${HighlightBrandToLightBackground} px-3 relative`}>
+            {title}
+          </div>
         </div>
       </h1>
       {subtitle ? (

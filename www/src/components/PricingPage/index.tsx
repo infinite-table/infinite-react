@@ -5,7 +5,10 @@ import { wwwVars } from '@www/styles/www-utils.css';
 
 import * as React from 'react';
 import { AccentButton } from '../AccentButton';
-import { GradientTextBackground } from '../components.css';
+import {
+  GradientTextBackground,
+  HighlightBrandToLightBackground,
+} from '../components.css';
 import { getHeroHeaderTextStyling, HeroHeader } from '../Header';
 import { OverlineCls } from '../Header.css';
 import {
@@ -191,7 +194,7 @@ export function PricingPage() {
         <>
           <p>
             Easy to understand pricing —{' '}
-            <span className={GradientTextBackground}>
+            <span className={HighlightBrandToLightBackground}>
               development licenses only.
             </span>
           </p>

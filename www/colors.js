@@ -17,8 +17,10 @@ module.exports = {
   'card-dark': '#343A46', // gray-80
   // highlight: '#e7e247', // blue-10
   glow: '#3bff7f', // blue-10
+  accent2: '#497AFF', // blue-10
   highlight: '#E6F7FF', // blue-10
   'highlight-dark': 'rgba(88,175,223,.1)',
+  'glow-dark': 'rgba(59, 255, 127,0.1)',
   // 'highlight-dark': 'rgba(88,175,223,.1)',
   border: '#EBECF0', // gray-10
   'border-dark': '#343A46', // gray-80

@@ -1,5 +1,6 @@
 import { IconClose } from '@www/components/Icon/IconClose';
 import { IconHamburger } from '@www/components/Icon/IconHamburger';
+import { InfiniteLogo } from '@www/components/InfiniteLogo';
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
 import NextLink from 'next/link';
@@ -117,9 +118,9 @@ export default function Nav() {
           {!isOpen ? <IconHamburger /> : <IconClose />}
         </button>
         <NextLink href="/">
-          <a className=" inline-flex text-l font-normal items-center text-primary-dark py-1 pr-10 whitespace-nowrap">
-            <Logo className="text-sm mr-2 w-8 h-8 text-link-dark" />
-            Infinite Table <br />
+          <a className=" inline-flex text-l items-center text-content-color  py-1 pr-10 whitespace-nowrap text-xl font-black  tracking-tight">
+            <InfiniteLogo color="light" className="   w-14 mr-2" />
+            <span className="whitespace-nowrap">Infinite Table</span>
           </a>
         </NextLink>
 
@@ -148,7 +149,7 @@ export default function Nav() {
           </button>
         </div> */}
       </div>
-      <div className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b border-border dark:border-border-dark">
+      <div className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b  dark:border-border-dark">
         <NavLink href="/docs" isActive={section === 'home'}>
           Home
         </NavLink>

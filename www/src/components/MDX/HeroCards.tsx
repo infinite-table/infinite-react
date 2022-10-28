@@ -1,4 +1,3 @@
-import { Logo } from '@www/components/Logo';
 import YouWillLearnCard from '@www/components/MDX/YouWillLearnCard';
 import * as React from 'react';
 
