@@ -16,11 +16,15 @@ export function MainLayout({
   children,
   className = '',
   title,
+  seoTitle,
+  seoDescription,
   subtitle,
 }: {
   children: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
+  seoTitle?: string;
+  seoDescription?: string;
   className?: string;
 }) {
   return (
@@ -38,7 +42,10 @@ export function MainLayout({
         <div className={`${fullWidthContainer} ${minHeightFull}  `}>
           <Seo
             titleSuffix={false}
-            title="Infinite Table for React | the DataGrid component for large datasets"
+            description={seoDescription}
+            title={`${
+              seoTitle || 'The DataGrid component for large datasets.'
+            }`}
           >
             <link rel="icon" type="image/svg+xml" href="/favicon.svg"></link>
           </Seo>

@@ -5,12 +5,10 @@ import {
   justifyContent,
   padding,
   borderRadius,
-  colorBrandDark,
   marginTop,
   marginBottom,
   colorWhite,
   shadow,
-  backgroundColorBrandDark,
   paddingX,
   fontSize,
   marginY,
@@ -20,12 +18,7 @@ import {
 import * as React from 'react';
 import { CardsSubtitle, CardsTitle } from './Cards';
 
-import {
-  width100,
-  email as emailCls,
-  submitButton,
-  SpotlightHorizontalBackgroundCls,
-} from './components.css';
+import { width100, email as emailCls, submitButton } from './components.css';
 
 function encode(data: any) {
   return Object.keys(data)

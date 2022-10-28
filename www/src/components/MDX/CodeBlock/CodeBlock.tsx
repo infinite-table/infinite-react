@@ -1,6 +1,6 @@
 import {
   ClasserProvider,
-  Sandpack,
+  // Sandpack,
   SandpackCodeViewer,
   SandpackProvider,
   SandpackThemeProvider,
@@ -12,9 +12,9 @@ import humanizeString from 'humanize-string';
 import rangeParser from 'parse-numeric-range';
 import * as React from 'react';
 
-import { CustomTheme } from '../Sandpack/Themes';
+// import { CustomTheme } from '../Sandpack/Themes';
 
-import styles from './CodeBlock.module.css';
+// import styles from './CodeBlock.module.css';
 
 interface InlineHiglight {
   step: number;
@@ -128,9 +128,11 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
           {/* <SandpackThemeProvider theme={CustomTheme}> */}
           <SandpackThemeProvider theme={'dark'}>
             <ClasserProvider
-              classes={{
-                'sp-cm': styles.codeViewer,
-              }}
+              classes={
+                {
+                  // 'sp-cm': styles.codeViewer,
+                }
+              }
             >
               <SandpackCodeViewer
                 ref={ref}

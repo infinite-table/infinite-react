@@ -185,6 +185,10 @@ export function PricingPage() {
 
   return (
     <MainLayout
+      seoTitle={
+        'Infinite Table DataGrid for React — One License — Infinite Applications.'
+      }
+      seoDescription="One License - Infinite Applications. Infinite Table is the modern DataGrid for building React apps with a straightforward licensing model."
       title={
         <>
           <span className={``}>One License</span> — Infinite Applications

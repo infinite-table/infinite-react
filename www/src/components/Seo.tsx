@@ -41,6 +41,13 @@ export const Seo = withRouter(
         <link rel="icon" type="image/svg+xml" href="/favicon.svg"></link>
 
         {/* OPEN GRAPH */}
+        <meta
+          property="og:image"
+          content="https://infinite-table.com/full-demo-image.png"
+        />
+
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="680" />
         <meta property="og:type" key="og:type" content="website" />
         <meta
           property="og:url"
@@ -56,7 +63,11 @@ export const Seo = withRouter(
           }`}
         />
         {title != null && (
-          <meta property="og:title" content={title} key="og:title" />
+          <meta
+            property="og:title"
+            content={title || 'Infinite Table for React'}
+            key="og:title"
+          />
         )}
         {description != null && (
           <meta

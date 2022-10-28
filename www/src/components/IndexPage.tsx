@@ -1,6 +1,7 @@
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
 import { GetAccessForm } from '@www/components/GetAccessForm';
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
+import Head from 'next/head';
 import Link from 'next/link';
 
 import * as React from 'react';
@@ -62,9 +63,13 @@ function NpmCmd() {
   );
 }
 export function IndexPage() {
+  const seoTitle =
+    'Infinite Table DataGrid for React — One Table — Infinite Applications.';
+  const seoDescription = `Infinite Table DataGrid for React — One Table — Infinite Applications. Infinite Table is the modern DataGrid for building React apps — faster.`;
   return (
-    <MainLayout>
+    <MainLayout seoTitle={seoTitle} seoDescription={seoDescription}>
       <HeroPicture />
+
       <div className="flex flex-col md:flex-row items-center md:items-stretch">
         <AccentButton href="/pricing">Buy a license</AccentButton>{' '}
         <div className="mx-6 my-2 flex items-center justify-center">or</div>{' '}

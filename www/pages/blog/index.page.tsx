@@ -23,7 +23,7 @@ export default function RecentPosts() {
             <div className="inline-flex items-center mb-8">
               <Seo
                 title="Blog"
-                description="Offical Infinite Table React news, announcements, and release notes."
+                description="Official Infinite Table React news, announcements, and release notes. Infinite Table is the modern DataGrid for building React apps — faster."
               />
               <Logo className="inline-block text-link dark:text-link-dark w-20 sm:w-28 mr-4  h-auto" />
               <h1 className="text-5xl font-bold text-primary dark:text-primary-dark ">
