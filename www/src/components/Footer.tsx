@@ -13,7 +13,7 @@ import { OverlineCls } from './Header.css';
 export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
   return (
     <footer
-      className={`${footer} ${alignSelf.flexEnd} ${width100} ${display.flex} ${centeredFlexColumn} ${shadow.lg} 'bg-black text-primary-dark ${OverlineCls} relative `}
+      className={`${footer} ${alignSelf.flexEnd} w-full flex flex-col items-center ${shadow.lg} 'bg-black text-content-color ${OverlineCls} relative `}
     >
       Copyright © {new Date().getFullYear()} Infinite Table
       {props.children}

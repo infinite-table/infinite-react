@@ -188,13 +188,11 @@ export const container = style([
 export const submitButton = style({
   selectors: {
     '&:hover': {
-      background: wwwVars.color.white,
+      background: wwwVars.color.contentColor,
       color: wwwVars.color.brandDark,
     },
   },
   alignSelf: 'center',
-  borderColor: wwwVars.color.white,
-  borderWidth: 2,
 });
 
 globalStyle(`${submitButton}`, {

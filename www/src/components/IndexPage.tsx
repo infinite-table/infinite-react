@@ -31,16 +31,16 @@ function NpmCmd() {
 
   return (
     <div
-      className={`relative inline-flex flex-row cursor-pointer items-center px-4 py-1 rounded-md`}
+      className={`relative inline-flex flex-row cursor-pointer items-center px-2 sm:px-4 py-1 rounded-md`}
       style={{ ...getHighlightShadowStyle() }}
     >
       <div
-        className={`font-mono whitespace-nowrap ${HighlightBrandToLightBackground}`}
+        className={`font-mono tracking-tighter whitespace-nowrap text-sm sm:text-base ${HighlightBrandToLightBackground}`}
       >
         npm i @infinite-table/infinite-react
       </div>
       <div
-        className={`p-2 ml-2 top-0 active:top-1 user-select-none`}
+        className={`p-1 sm:p-2 ml-2 top-0 active:top-1 user-select-none`}
         title="Copy to clipboard"
         onClick={onClick}
       >
@@ -65,12 +65,12 @@ export function IndexPage() {
   return (
     <MainLayout>
       <HeroPicture />
-      <div className="flex flex-col md:flex-row items-stretch">
+      <div className="flex flex-col md:flex-row items-center md:items-stretch">
         <AccentButton href="/pricing">Buy a license</AccentButton>{' '}
         <div className="mx-6 my-2 flex items-center justify-center">or</div>{' '}
         <NpmCmd />
       </div>
-      <div className="w-1/2 mt-10 opacity-50 text-base">
+      <div className="w-2/3 sm:w-1/2 mt-10 opacity-50 text-base">
         You can start using Infinite Table right away for free - the free
         version displays a license footer with a link back to our website.
         Buying a license removes the footer and gives you access to premium
@@ -82,7 +82,7 @@ export function IndexPage() {
         )}
       >
         <CardsSubtitle
-          className="w-1/2 text-xl mb-10"
+          className="w-2/3 sm:w-1/2 text-xl mb-10"
           style={{ textAlign: 'left' }}
         >
           <div className="mb-10 mt-10 justify-center lg:justify-end md:float-right block md:inline-block text-center">

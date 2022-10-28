@@ -61,7 +61,7 @@ export const GetAccessForm = () => {
     <>
       <CardsTitle className="mt-20">Stay in the loop</CardsTitle>
 
-      <CardsSubtitle className="mt-5 mb-12 w-1/2">
+      <CardsSubtitle className="mt-5 mb-12 w-2/3 sm:w-1/2">
         <p>Keep up-to-date with our releases and new functionalities.</p>
         <p>We won't share your email with 3rd parties - you have our word!</p>
       </CardsSubtitle>
@@ -101,7 +101,7 @@ export const GetAccessForm = () => {
         </div>
         <button
           type="submit"
-          className={`${submitButton} ${marginTop[6]} ${marginBottom[12]} ${colorWhite} ${shadow.md} bg-dark-custom ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
+          className={`${submitButton} ${marginTop[6]} ${marginBottom[12]}  ${shadow.md} text-content-color border-content-color border bg-dark-custom ${paddingX[8]} ${padding[3]} ${borderRadius.md} `}
         >
           Let's go
         </button>
