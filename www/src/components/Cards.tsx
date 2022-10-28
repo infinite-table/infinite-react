@@ -36,7 +36,9 @@ export const Card = ({
   noBackground?: boolean;
   noBackgroundOnHover?: boolean;
 }) => {
-  let cls = `${className || ''} ${card} p-8 py-10 rounded-sm  flex flex-col`;
+  let cls = `${
+    className || ''
+  } ${card} p-4 sm:p-4 md:p-8 py-10 rounded-sm  flex flex-col`;
 
   if (!noBackgroundOnHover) {
     cls += ` hover:bg-opacity-90 hover:bg-deep-dark `;

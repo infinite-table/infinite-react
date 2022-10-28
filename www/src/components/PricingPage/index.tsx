@@ -4,28 +4,18 @@ import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 import { wwwVars } from '@www/styles/www-utils.css';
 
 import * as React from 'react';
-import { AccentButton } from './AccentButton';
+import { AccentButton } from '../AccentButton';
+import { GradientTextBackground } from '../components.css';
+import { getHeroHeaderTextStyling, HeroHeader } from '../Header';
+import { OverlineCls } from '../Header.css';
 import {
-  GradientTextBackground,
-  HighlightBrandToLightBackground,
-  SpotlightHorizontalBackgroundCls,
-  SpotlightRadialBackgroundCls,
-} from './components.css';
-import { getHeroHeaderTextStyling, HeroHeader } from './Header';
-import { OverlineCls } from './Header.css';
-import { HeroImage, HeroPicture } from './HeroPicture';
-import { getHighlightShadowStyle, HighlightButton } from './HighlightButton';
-
-const BASE_PRICE = Number(process.env.NEXT_PUBLIC_LICENSE_PRICE || '395');
-const LICENSE_MAX = 19;
-const discounts = [
-  {
-    count: 3,
-    value: 5,
-  },
-  { count: 5, value: 10 },
-  { count: 10, value: 15 },
-];
+  BASE_PRICE,
+  discounts,
+  formatCurrency,
+  getFormattedPricePerDeveloper,
+  getPriceForCount,
+  LICENSE_MAX,
+} from './priceCalculator';
 
 const HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
 let initPaddleScript = HAS_PADDLE;
@@ -37,19 +27,8 @@ type PaddleType = {
 };
 declare var Paddle: PaddleType;
 
-function toFixed(v: number | string) {
-  return Number(Number(v).toFixed(2));
-}
-
-function formatCurrency(price: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(price);
-}
-
 function PriceSummary({ count }: { count: number }) {
-  const price = getPrice(count);
+  const price = getPriceForCount(count);
   const priceText = formatCurrency(price);
   return (
     <div
@@ -71,8 +50,7 @@ function PriceSummary({ count }: { count: number }) {
         <>
           Total: <span className="text-glow text-3xl ml-2">{priceText}</span>
           <p className="text-base font-normal">
-            {formatCurrency(Math.floor(toFixed(price / count)))} per developer /
-            year
+            {getFormattedPricePerDeveloper(count)} per developer / year
           </p>
         </>
       )}
@@ -80,34 +58,15 @@ function PriceSummary({ count }: { count: number }) {
   );
 }
 
-function getPrice(count: number): number {
-  const firstDiscount = discounts[0];
-
-  if (count < firstDiscount.count) {
-    return BASE_PRICE * count;
-  }
-  const len = discounts.length;
-
-  for (let i = len - 1; i >= 0; i--) {
-    const { value: discountValue, count: discountThreshold } = discounts[i];
-
-    if (count >= discountThreshold) {
-      return toFixed(count * BASE_PRICE * (1 - discountValue / 100));
-    }
-  }
-
-  return BASE_PRICE * count;
-}
-
 function DiscountsTable(props: { discounts: [string, string, string][] }) {
   return (
     <>
-      <table>
+      <table className="text-base sm:text-lg">
         <thead className="border-b border-special-border-color">
           <tr>
-            <th className="pl-10 w-full"># Licenses</th>
+            <th className="md:pl-10 w-full"># Licenses</th>
             <th>$</th>
-            <th className="text-right pl-5 pr-3">Discount</th>
+            <th className="text-right pl-5 pr-1 md:pr-3">Discount</th>
           </tr>
         </thead>
         <tbody>
@@ -115,9 +74,11 @@ function DiscountsTable(props: { discounts: [string, string, string][] }) {
             const [label, price, percentage] = discount;
             return (
               <tr key={i}>
-                <td className={`pt-3 pl-10`}>{label}</td>
+                <td className={`pt-3 md:pl-10 whitespace-nowrap`}>{label}</td>
                 <td className={`pt-3  whitespace-nowrap`}>{price}</td>
-                <td className={`pt-3 pr-3 whitespace-nowrap text-right`}>
+                <td
+                  className={`pt-3 pr-1 md:pr-3 whitespace-nowrap text-right font-bold`}
+                >
                   {percentage}
                 </td>
               </tr>
@@ -147,7 +108,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
           textShadow: `10px 10px 50px ${wwwVars.color.highlight}`,
         }}
       >
-        Team size
+        Team Size
       </div>
       <div
         className="flex flex-row w-full border border-special-border-color "
@@ -170,8 +131,8 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
           onChange={(e) => {
             setValue(clamp(e.target.valueAsNumber));
           }}
-          className="flex-1 text-xl text-dark-custom font-black text-center"
-          style={{ minWidth: 20 }}
+          className="p-2 flex-1 text-xl text-dark-custom font-black text-center"
+          style={{ minWidth: 20, width: 70 }}
         />
         <button
           onClick={() => {
@@ -223,15 +184,16 @@ export function PricingPage() {
     <MainLayout
       title={
         <>
-          <span className={``}>One Pricing</span> — Infinite Applications
+          <span className={``}>One License</span> — Infinite Applications
         </>
       }
       subtitle={
         <>
           <p>
-            Easy to understand licensing —{' '}
-            <span className={GradientTextBackground}>development licenses</span>{' '}
-            only
+            Easy to understand pricing —{' '}
+            <span className={GradientTextBackground}>
+              development licenses only.
+            </span>
           </p>
           <p>No deployment or application license needed.</p>
         </>
@@ -243,33 +205,40 @@ export function PricingPage() {
         style={{ justifyContent: 'flex-start' }}
       >
         <div className="checkout-container"></div>
-        <div className="w-full flex flex-row items-stretch mt-20 mx-auto justify-center">
+        <div className="w-full flex flex-col sm:flex-row items-stretch mt-20 mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
               title="Buy once, use everywhere"
-              className="border-b pr-20 border-special-border-color"
+              className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-xl rounded-b-none"
             >
               Your license is valid for all the apps your company is developing
             </Card>
 
             <Card
-              title="No deployment license"
-              className="border-b pr-20 border-special-border-color"
+              title="No hidden costs"
+              className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-none"
             >
-              There's no deployment license for your apps. It's that simple!
+              A single license is all that's required. There's no deployment or
+              distribution license for your apps. It's that simple!
             </Card>
 
-            <Card title="Per developer pricing" className="pr-20">
+            <Card
+              title="Per developer pricing"
+              className="sm:pr-20 md:pr-20 rounded-t-none rounded-xl"
+            >
               Use the calculator on the right to see the price for your whole
-              team. Buy one license seat for each developer working on your app
-              in a given year.
+              team. Buy one license seat for each front-end developer working on
+              your app in a given year.
             </Card>
           </div>
           <Card
             title=""
-            style={{}}
             noBackground
-            className={`shadow-lg bg-deep-dark bg-opacity-95 relative -left-10  z-20 w-1/2 rounded-lg text-content-color`}
+            style={{
+              // boxShadow: `2px 2px 10px 1px ${wwwVars.color.highlight}`,
+              boxShadow: ` 0 2px 6px -2px ${wwwVars.color.highlight}, 0 2px 4px -2px ${wwwVars.color.highlight}`,
+            }}
+            className={`shadow-lg bg-deep-dark bg-opacity-95 relative sm:-left-10  z-20 sm:w-1/2 rounded-xl text-content-color`}
           >
             <div className="text-right">
               <div
@@ -292,15 +261,31 @@ export function PricingPage() {
               <Card
                 noBackground
                 noBackgroundOnHover
-                title="Volume discounts"
+                title="Volume Discounts"
                 className=""
               >
                 <DiscountsTable
                   discounts={[
-                    ['Single developer', '$ 395', ' - '],
-                    ['3+ developers', '$ 375', '5%'],
-                    ['5+ developers', '$ 355', '10%'],
-                    ['10+ developers', '$ 395', '15%'],
+                    [
+                      'Single developer',
+                      getFormattedPricePerDeveloper(1),
+                      ' - ',
+                    ],
+                    [
+                      `${discounts[0].devCount}+ developers`,
+                      `$ ${discounts[0].perDeveloperPrice}`,
+                      `${discounts[0].discountValue}%`,
+                    ],
+                    [
+                      `${discounts[1].devCount}+ developers`,
+                      `$ ${discounts[1].perDeveloperPrice}`,
+                      `${discounts[1].discountValue}%`,
+                    ],
+                    [
+                      `${discounts[2].devCount}+ developers`,
+                      `$ ${discounts[2].perDeveloperPrice}`,
+                      `${discounts[2].discountValue}%`,
+                    ],
                   ]}
                 />
 
@@ -311,15 +296,17 @@ export function PricingPage() {
 
                   <PriceSummary count={count} />
                 </div>
-                {HAS_PADDLE ? (
+
+                <div className="text-center">
                   <AccentButton
-                    disabled={count >= 20}
+                    disabled={count >= 20 || !HAS_PADDLE}
                     className="mt-10"
                     onClick={onBuyClick}
                   >
-                    Buy
+                    <>Buy Infinite Table for React</>
+                    {!HAS_PADDLE ? <> - COMING SOON</> : null}
                   </AccentButton>
-                ) : null}
+                </div>
               </Card>
             </div>
           </Card>
@@ -334,13 +321,14 @@ export function PricingPage() {
               owner, the license start and end dates and also the developer
               count.
             </Card>
-            <Card title="App deployment">
-              Deploy your app with the license key you have been provided. The
-              license key will be valid for all the apps your team is
+            <Card title="Application deployment">
+              Deploy your application with the license key you have been
+              provided. The license key will be valid for{' '}
+              <span className={'text-glow'}>all the apps</span> your team is
               developing.
             </Card>
             <Card title="Access to versions">
-              Each version of Infinite Table has a release timetamp. When you
+              Each version of Infinite Table has a release timestamp. When you
               purchase a license, it gives you unlimited access to all Infinite
               Table versions published within a 1 year window from the date of
               purchase. If you don't renew your license, you will still be able
@@ -349,9 +337,25 @@ export function PricingPage() {
             </Card>
             <Card title="Free with license footer">
               If you don't have a license key, you can still use Infinite Table,
-              but it shows a license footer with a link back to our website.
+              but it displays a license footer with a link back to our website.
               Buying a license removes the footer and gives you access to
               premium support.
+            </Card>
+            <Card title="Premium Support">
+              If you have a license key, you can access premium support, either{' '}
+              <a href="mailto:admin@infinite-table.com" className=" text-glow ">
+                by email
+              </a>{' '}
+              or by raising a Zendesk ticket.
+            </Card>
+            <Card title="Supporting the developer community">
+              Infinite Table has been built on open-source software and we are
+              keen to give back by providing free licenses to qualifying
+              open-source projects. Please{' '}
+              <a href="mailto:admin@infinite-table.com" className=" text-glow ">
+                contact us
+              </a>{' '}
+              for details.
             </Card>
           </Cards>
           {/* <Cards title="" style={{ marginTop: 0 }}>

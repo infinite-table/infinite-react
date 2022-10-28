@@ -72,8 +72,9 @@ export function IndexPage() {
       </div>
       <div className="w-1/2 mt-10 opacity-50 text-base">
         You can start using Infinite Table right away for free - the free
-        version shows a license footer with a link back to our website. Buying a
-        license removes the footer and gives you access to premium support.
+        version displays a license footer with a link back to our website.
+        Buying a license removes the footer and gives you access to premium
+        support.
       </div>
       <div
         className={['mt-20 relative w-full flex flex-col items-center '].join(

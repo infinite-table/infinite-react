@@ -229,9 +229,7 @@ export const HeroHeader = (props: {
               zIndex: -1,
             }}
           />
-          <div className={`${HighlightBrandToLightBackground} px-3 relative`}>
-            {title}
-          </div>
+          <div className={`text-glow px-3 relative`}>{title}</div>
         </div>
       </h1>
       {subtitle ? (
