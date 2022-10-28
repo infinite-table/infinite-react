@@ -12,11 +12,11 @@ interface NavLinkProps {
 export default function NavLink({ href, children, isActive }: NavLinkProps) {
   const classes = cn(
     {
-      'border-link text-link-dark dark:border-link-dark font-bold': isActive,
+      'text-link-dark border-link font-bold': isActive,
       // 'border-glow text-glow  font-bold': isActive,
     },
     { 'border-transparent': !isActive },
-    'inline-flex w-full items-center border-b-2 justify-center text-base leading-9 px-3 py-0.5 hover:text-glow  whitespace-nowrap',
+    'inline-flex w-full items-center border-b-2 justify-center text-base leading-9 px-3 py-0.5 hover:text-link-dark  whitespace-nowrap',
   );
 
   if (href.startsWith('https://')) {
