@@ -81,7 +81,7 @@ We take security seriously and only have a total of 3 dependencies in our full d
 
 ### 📦 Small bundle size
 
-Our bundle size is under `200kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
+Our bundle size is under `250kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
 
 ### 🧪 Automated end-to-end tests
 
