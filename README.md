@@ -4,12 +4,15 @@
 <h1>
 <b>Infinite Table</b>
 </h1>
-<h3> huge datasets are no longer a problem</h3>
+<h3>One Table — Infinite Applications</h3>
   <a href="https://infinite-table.com">
     <img width="150px" height="170px" alt="InfiniteTable Logo" src="https://infinite-table.com/logo-infinite.svg">
   </a>
-
+<h4 style="margin-bottom: 20px;">Infinite Table is the modern DataGrid for building React apps — faster.</h4>
 </div>
+
+![Infinite Table for React configured with grouping, multi-selection, aggregations and custom styling.](./www/public/full-demo-image.png "Infinite Table demo")
+
 
 ## Table Of Contents
 
