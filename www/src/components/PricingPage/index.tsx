@@ -25,7 +25,7 @@ type PaddleType = {
   Checkout: { open: (arg: any) => void };
   Setup: (arg: any) => any;
 };
-declare var Paddle: PaddleType;
+declare const Paddle: PaddleType;
 
 function PriceSummary({ count }: { count: number }) {
   const price = getPriceForCount(count);
@@ -91,7 +91,7 @@ function DiscountsTable(props: { discounts: [string, string, string][] }) {
 }
 
 function TeamSize(props: { onCountChange: (count: number) => void }) {
-  let [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(1);
 
   const clamp = (v: number) => Math.max(1, Math.min(100, v));
   const boxClassName =

@@ -57,10 +57,6 @@ export function getPricePointInfo(count: number): PricePointInfo {
   };
 }
 
-function toFixed(v: number | string, precision: number = 2) {
-  return Number(Number(v).toFixed(precision));
-}
-
 export function formatCurrency(price: number) {
   return (
     '$ ' +

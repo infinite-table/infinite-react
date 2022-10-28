@@ -223,8 +223,9 @@ export function IndexPage() {
         <Cards title="Enterprise and Community Editions">
           <Card title="Enterprise Edition" flexContent>
             <p>
-              You get dedicated commercial support and all the enterprise
-              features mentioned above.
+              When you buy a license, you get{' '}
+              <span className="text-glow">dedicated commercial support</span>{' '}
+              and all the enterprise features mentioned above.
             </p>
             <div className="mt-10">
               Everything you'd expect from a modern DataGrid is built-in so you
@@ -240,10 +241,10 @@ export function IndexPage() {
           <Card title="Community Edition">
             <p>
               Contains all the functionality in the{' '}
-              <b className="font-black">Enterprise version</b>, but shows a{' '}
+              <b className="font-black">Enterprise version</b>, but displays a{' '}
               <b>license footer</b> with a{' '}
               <b className={HighlightTextBackground}>
-                Powered by Infinite Table
+                "Powered by Infinite Table"
               </b>{' '}
               link.
             </p>
