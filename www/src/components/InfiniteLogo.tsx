@@ -15,7 +15,7 @@ export function InfiniteLogo(
     ...props.style,
   };
 
-  let color: string = '';
+  let color = '';
   if (props.color === 'light') {
     color = wwwVars.color.contentColor as string;
   } else if (props.color === 'dark') {
