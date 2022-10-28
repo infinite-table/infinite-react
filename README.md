@@ -105,3 +105,5 @@ We release often - see [what each release contains hre](https://infinite-table.c
 ## 📑 License 
 
 Both Open and [Commercial License](https://github.com/infinite-table/react-table/blob/master/source/LICENSE.md)
+
+For commercial license and support, see our [Pricing page](https://infinite-table.com/pricing).

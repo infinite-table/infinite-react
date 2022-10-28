@@ -26,34 +26,32 @@ function ExpandableExample({
   return (
     <div
       className={cn('my-12 rounded-lg shadow-inner relative', {
-        'dark:bg-opacity-20 dark:bg-purple-60 bg-purple-5': isDeepDive,
-        'dark:bg-opacity-20 dark:bg-yellow-60 bg-yellow-5': isExample,
+        'bg-opacity-20 bg-purple-60': isDeepDive,
+        'bg-opacity-20 bg-yellow-60': isExample,
       })}
     >
       <div className="p-8">
         <h5
           className={cn('mb-4 uppercase font-bold flex items-center text-sm', {
-            'dark:text-purple-30 text-purple-50': isDeepDive,
-            'dark:text-yellow-30 text-yellow-60': isExample,
+            'text-purple-30 ': isDeepDive,
+            'text-yellow-30 ': isExample,
           })}
         >
           {isDeepDive && (
             <>
-              <IconDeepDive className="inline mr-2 dark:text-purple-30 text-purple-40" />
+              <IconDeepDive className="inline mr-2 text-purple-30" />
               Deep Dive
             </>
           )}
           {isExample && (
             <>
-              <IconCodeBlock className="inline mr-2 dark:text-yellow-30 text-yellow-50" />
+              <IconCodeBlock className="inline mr-2 text-yellow-30" />
               Example
             </>
           )}
         </h5>
         <div className="mb-4">
-          <h3 className="text-xl font-bold text-primary dark:text-primary-dark">
-            {title}
-          </h3>
+          <h3 className="text-xl font-bold text-primary-dark">{title}</h3>
           {excerpt && <div>{excerpt}</div>}
         </div>
         <Button
