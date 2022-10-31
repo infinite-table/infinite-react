@@ -77,7 +77,7 @@ export function MainContent({
       style={style}
       className={`${
         className || ''
-      } flex flex-col flex-1 justify-center w-full items-center px-5 relative ${
+      } flex flex-col flex-1 justify-center w-full items-center px-5 mb-10 relative ${
         dottedBg ? DotsBackgroundCls : ''
       }  ${overline ? OverlineCls : ''}`}
     >

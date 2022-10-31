@@ -192,6 +192,24 @@ export function PricingPage() {
       title={
         <>
           <span className={``}>One License</span> — Infinite Applications
+          {/* <span className={``}>1 License</span> ={' '}
+          <span className="relative">
+            <img
+              className="inline w-16 md:w-28"
+              src="/round-infinite-sign-green-glow.svg"
+            ></img>
+
+            <span
+              className="absolute text-xs md:text-lg tracking-wide text-glow  -bottom-3 sm:-bottom-4"
+              style={{
+                transform: 'translate3d(-50%, 0px, 0px)',
+                left: '50%',
+              }}
+            >
+              Infinite
+            </span>
+          </span>{' '}
+          Applications */}
         </>
       }
       subtitle={
@@ -212,7 +230,7 @@ export function PricingPage() {
         style={{ justifyContent: 'flex-start' }}
       >
         <div className="checkout-container"></div>
-        <div className="w-full flex flex-col sm:flex-row items-stretch mt-20 mx-auto justify-center">
+        <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
               title="Buy once, use everywhere"
