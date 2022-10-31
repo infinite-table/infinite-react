@@ -39,7 +39,7 @@ export const FullScreenButton: React.FC<FullScreenButtonProps> = (props) => {
   return (
     <button
       onClick={toggle}
-      className="text-sm text-primary dark:text-primary-dark inline-flex items-center hover:text-link duration-100 ease-in transition mx-1"
+      className="text-sm text-content-color inline-flex items-center hover:text-link duration-100 ease-in transition mx-1"
       title="FullScreen Sandpack"
       type="button"
     >

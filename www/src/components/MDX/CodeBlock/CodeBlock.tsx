@@ -48,7 +48,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
     const linesToHighlight = getHighlightLines(metastring);
     const highlightedLineConfig = linesToHighlight.map((line) => {
       return {
-        className: 'bg-github-highlight dark:bg-opacity-10',
+        className: 'bg-github-highlight bg-opacity-10',
         line,
       };
     });

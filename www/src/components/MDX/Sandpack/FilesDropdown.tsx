@@ -19,7 +19,7 @@ export function FilesDropdown() {
         {({ open }) => (
           <span
             className={cn(
-              'h-full py-2 px-1 mt-px -mb-px flex border-b-2 text-link dark:text-link-dark border-link dark:border-link-dark items-center text-md leading-tight truncate',
+              'h-full py-2 px-1 mt-px -mb-px flex border-b-2 text-link-dark border-link-dark items-center text-md leading-tight truncate',
             )}
             style={{ maxWidth: '160px' }}
           >
@@ -30,16 +30,14 @@ export function FilesDropdown() {
           </span>
         )}
       </Listbox.Button>
-      <Listbox.Options className="absolute mt-0.5 bg-card dark:bg-card-dark px-2 left-0 right-0 mx-0 rounded-b-lg border-1 border-border dark:border-border-dark rounded-sm shadow-md">
+      <Listbox.Options className="absolute mt-0.5 bg-card-dark px-2 left-0 right-0 mx-0 rounded-b-lg border-1 border-border-dark rounded-sm shadow-md">
         {visibleFiles.map((filePath: string) => (
           <Listbox.Option
             key={filePath}
             value={filePath}
             className={cn(
               'text-md mx-2 my-4 cursor-pointer',
-              filePath === activeFile
-                ? 'text-link dark:text-link-dark'
-                : 'dark:text-primary-dark',
+              filePath === activeFile ? 'text-link-dark' : 'text-primary-dark',
             )}
           >
             {getFileName(filePath)}

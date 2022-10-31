@@ -233,7 +233,7 @@ export function Prop({
           </div>
 
           <div className="mb-4">
-            {/* <h3 className="text-xl font-bold text-primary dark:text-primary-dark">
+            {/* <h3 className="text-xl font-bold text-primary-dark">
             {name}
           </h3> */}
             {excerpt && <div>{excerpt}</div>}

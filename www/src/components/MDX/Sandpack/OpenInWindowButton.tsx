@@ -10,7 +10,7 @@ export const OpenInWindowButton: React.FC<OpenInWindowButtonProps> = (
   return (
     <button
       onClick={props.onClick}
-      className="text-sm text-primary dark:text-primary-dark inline-flex items-center hover:text-link duration-100 ease-in transition mx-1"
+      className="text-sm text-primary-dark inline-flex items-center hover:text-link duration-100 ease-in transition mx-1"
       title="FullScreen Sandpack"
       type="button"
     >

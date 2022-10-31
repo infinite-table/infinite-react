@@ -18,35 +18,32 @@ const variantMap = {
   note: {
     title: 'Note',
     Icon: IconNote,
-    containerClasses:
-      'bg-green-5 dark:bg-green-60 dark:bg-opacity-20 text-primary dark:text-primary-dark text-lg',
-    textColor: 'text-green-60 dark:text-green-40',
+    containerClasses: 'bg-highlight-dark bg-opacity-1 text-lg',
+    textColor: 'text-green-60',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
   },
   gotcha: {
     title: 'Gotcha',
     Icon: IconGotcha,
-    containerClasses: 'bg-yellow-5 dark:bg-yellow-60 dark:bg-opacity-20',
-    textColor: 'text-yellow-50 dark:text-yellow-40',
+    containerClasses: 'bg-yellow-5 bg-yellow-60 bg-opacity-20',
+    textColor: 'text-yellow-40',
     overlayGradient:
       'linear-gradient(rgba(249, 247, 243, 0), rgba(249, 247, 243, 1)',
   },
   hint: {
     title: 'Hint',
     Icon: IconHint,
-    containerClasses:
-      'bg-green-10   dark:bg-green-50 text-primary dark:text-primary-dark dark:bg-opacity-40',
-    textColor: 'text-green-50 dark:text-green-30',
+    containerClasses: ' bg-green-50 bg-opacity-40',
+    textColor: 'text-green-30',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
   },
   readMore: {
     title: 'Find Out More',
     Icon: IconReadMore,
-    containerClasses:
-      'dark:bg-opacity-30 dark:bg-purple-30 bg-purple-50 bg-opacity-20 text-primary dark:text-primary-dark',
-    textColor: 'text-purple-70 dark:text-purple-20',
+    containerClasses: 'bg-opacity-30 bg-purple-30text-primary-dark',
+    textColor: 'text-purple-20',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
   },

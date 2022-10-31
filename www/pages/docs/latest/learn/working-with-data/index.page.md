@@ -9,7 +9,7 @@ We've decoupled our data handling from our rendering engine by providing two com
 
 The `<DataSource/>` component is responsible for the data the management layer. It is a generic TypeScript component that can be bound to an array of items of the generic type.
 
-```tsx
+```tsx 
 import { DataSource } from '@infinite-table/infinite-react';
 
 type Employee = {

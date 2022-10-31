@@ -143,7 +143,7 @@ export function Preview({
     <div className={cn('sp-stack', className)} style={style}>
       <div
         className={cn(
-          'p-0 sm:p-1 md:p-2 bg-card dark:bg-wash-dark h-full relative rounded-b-lg lg:rounded-b-none',
+          'p-0 sm:p-1 md:p-2 bg-wash-dark h-full relative rounded-b-lg lg:rounded-b-none',
         )}
         style={{ overflow }}
       >
@@ -161,7 +161,7 @@ export function Preview({
         >
           <iframe
             ref={iframeRef}
-            className="rounded-t-none bg-wash dark:bg-wash-dark shadow-md sm:rounded-lg w-full max-w-full"
+            className="rounded-t-none bg-wash-dark shadow-md sm:rounded-lg w-full max-w-full"
             title="Sandbox Preview"
             style={{
               height: '100%', // AFL changed this

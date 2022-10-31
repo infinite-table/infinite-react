@@ -52,9 +52,9 @@ export function NavigationBar({
   }, [openPaths.length, resizeHandler]);
 
   const viewModeButtonClassName =
-    'appearance-none flex flex-row justify-center items-center flex-nowrap whitespace-nowrap dark:text-primary-dark hover:text-wash hover:bg-primary hover:dark:text-wash-dark text-primary h-full flex-1 px-3';
+    'appearance-none flex flex-row justify-center items-center flex-nowrap whitespace-nowrap hover:text-wash hover:bg-primary text-content-color h-full flex-1 px-3';
 
-  const activeViewModeClassName = 'text-wash bg-primary dark:text-primary-dark';
+  const activeViewModeClassName = 'text-white bg-primary';
   return (
     <div
       className={`bg-dark-custom flex justify-between items-center relative z-10 border-b border-border-dark rounded-b-none ${

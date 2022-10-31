@@ -106,7 +106,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
     <div className="max-w-7xl mx-auto py-4 md:py-12">
       <div
         className={cn(
-          'border-gray-10 bg-card dark:bg-card-dark shadow-inner rounded-none -mx-5 sm:mx-auto sm:rounded-lg',
+          'border-gray-10 bg-card-dark shadow-inner rounded-none -mx-5 sm:mx-auto sm:rounded-lg',
         )}
       >
         <div ref={scrollAnchorRef} className="py-2 px-5 sm:px-8 pb-0 md:pb-0">
@@ -114,7 +114,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
             id={isRecipes ? 'recipes' : 'challenges'}
             className={cn(
               'text-3xl mb-2 leading-10 relative',
-              isRecipes ? 'text-purple-50 dark:text-purple-30' : 'text-link',
+              isRecipes ? 'text-purple-30' : 'text-link',
             )}
           >
             {isRecipes ? 'Try out some recipes' : 'Try out some challenges'}
@@ -130,11 +130,11 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
         </div>
         <div className="p-5 sm:py-8 sm:px-8">
           <div key={activeChallenge}>
-            <h3 className="text-xl text-primary dark:text-primary-dark mb-2">
+            <h3 className="text-xl text-primary-dark mb-2">
               <div className="font-bold block md:inline">
                 {isRecipes ? 'Recipe' : 'Challenge'} {currentChallenge?.order}{' '}
                 of {challenges.length}
-                <span className="text-primary dark:text-primary-dark">: </span>
+                <span className="text-primary-dark">: </span>
               </div>
               {currentChallenge?.name}
             </h3>
@@ -174,7 +174,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
                 className={cn(
                   isRecipes
                     ? 'bg-purple-50 border-purple-50 hover:bg-purple-50 focus:bg-purple-50 active:bg-purple-50'
-                    : 'bg-link dark:bg-link-dark',
+                    : 'bg-link-dark',
                 )}
                 onClick={() => {
                   setActiveChallenge(nextChallenge.id);
@@ -194,9 +194,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
 
           {showSolution && (
             <div className="mt-6">
-              <h3 className="text-2xl font-bold text-primary dark:text-primary-dark">
-                Solution
-              </h3>
+              <h3 className="text-2xl font-bold text-primary-dark">Solution</h3>
               {currentChallenge?.solution}
               <div className="flex justify-between items-center mt-4">
                 <Button onClick={() => setShowSolution(false)}>
@@ -204,9 +202,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
                 </Button>
                 {nextChallenge && (
                   <Button
-                    className={cn(
-                      isRecipes ? 'bg-purple-50' : 'bg-link dark:bg-link-dark',
-                    )}
+                    className={cn(isRecipes ? 'bg-purple-50' : 'bg-link-dark')}
                     onClick={() => {
                       setActiveChallenge(nextChallenge.id);
                       setShowSolution(false);

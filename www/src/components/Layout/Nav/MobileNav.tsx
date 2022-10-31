@@ -31,7 +31,7 @@ export function MobileNav() {
 
   return (
     <>
-      <div className="sticky mt-12 top-0 px-5  bg-black flex justify-end border-b border-border dark:border-border-dark items-center self-center w-full z-100">
+      <div className="sticky mt-12 top-0 px-5  bg-black flex justify-end border-b border-border-dark items-center self-center w-full z-100">
         <TabButton
           isActive={section === 'home'}
           onClick={() => setSection('home')}
@@ -68,8 +68,7 @@ function TabButton({
   const classes = cn(
     'inline-flex items-center w-full border-b-2 justify-center text-base leading-9 px-3 py-0.5 hover:text-link hover:gray-5',
     {
-      'text-link dark:text-link-dark dark:border-link-dark border-link font-bold':
-        isActive,
+      'text-link-dark border-link-dark font-bold': isActive,
       'border-transparent': !isActive,
     },
   );

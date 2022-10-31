@@ -27,7 +27,7 @@ export function Toc({
         maxWidth: 'inherit',
       }}
     >
-      <h2 className="mb-3 lg:mb-3 uppercase tracking-wide font-bold text-sm text-secondary dark:text-secondary-dark px-4 w-full">
+      <h2 className="mb-3 lg:mb-3 uppercase tracking-wide font-bold text-sm text-content-color px-4 w-full">
         On this page
       </h2>
       <div className="toc h-full overflow-y-auto pl-4">
@@ -44,9 +44,7 @@ export function Toc({
                   key={`heading-${h.url}-${i}`}
                   className={cx(
                     'text-sm px-2 py-1 rounded-l-lg',
-                    selectedIndex === i
-                      ? 'bg-highlight dark:bg-highlight-dark'
-                      : null,
+                    selectedIndex === i ? 'bg-highlight-dark' : null,
                     {
                       'pl-4': h?.depth === 3,
                       hidden: h.depth && h.depth > 3,
@@ -56,9 +54,9 @@ export function Toc({
                   <a
                     className={cx(
                       selectedIndex === i
-                        ? 'text-link dark:text-link-dark font-bold'
-                        : 'text-secondary dark:text-secondary-dark',
-                      'block hover:text-link dark:hover:text-link-dark',
+                        ? 'text-link-dark font-bold'
+                        : 'text-content-color',
+                      'block hover:text-link-dark',
                     )}
                     href={h.url}
                   >

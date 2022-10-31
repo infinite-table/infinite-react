@@ -72,8 +72,8 @@ function ExpandableExample({
       </div>
       <div
         className={cn('p-8 border-t', {
-          'dark:border-purple-60 border-purple-10 ': isDeepDive,
-          'dark:border-yellow-60 border-yellow-50': isExample,
+          'border-purple-60 ': isDeepDive,
+          'border-yellow-60': isExample,
           hidden: !isExpanded,
         })}
       >

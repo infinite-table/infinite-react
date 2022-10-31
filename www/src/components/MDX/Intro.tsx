@@ -5,11 +5,7 @@ export interface IntroProps {
 }
 
 function Intro({ children }: IntroProps) {
-  return (
-    <div className="text-xl text-primary dark:text-primary-dark leading-relaxed">
-      {children}
-    </div>
-  );
+  return <div className="text-xl leading-relaxed">{children}</div>;
 }
 
 Intro.displayName = 'Intro';

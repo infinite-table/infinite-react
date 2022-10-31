@@ -51,9 +51,7 @@ const UL = (p: JSX.IntrinsicElements['ul']) => (
   <ul className="ml-6 my-3 list-disc" {...p} />
 );
 
-const Divider = () => (
-  <hr className="my-6 block border-b border-border dark:border-border-dark" />
-);
+const Divider = () => <hr className="my-6 block border-b border-border-dark" />;
 
 const Gotcha = ({
   children,
@@ -89,7 +87,7 @@ const Blockquote = ({
   return (
     <>
       <blockquote
-        className="mdx-blockquote py-4 px-8 my-8 shadow-inner bg-highlight dark:bg-highlight-dark bg-opacity-50 rounded-lg leading-6 flex relative"
+        className="mdx-blockquote py-4 px-8 my-8 shadow-inner bg-highlight-dark bg-opacity-50 rounded-lg leading-6 flex relative"
         {...props}
       >
         <span className="block relative">{children}</span>
@@ -117,9 +115,9 @@ function LearnMore({
 }) {
   return (
     <>
-      <section className="p-8 mt-16 mb-16 flex flex-row shadow-inner justify-between items-center bg-card dark:bg-card-dark rounded-lg">
+      <section className="p-8 mt-16 mb-16 flex flex-row shadow-inner justify-between items-center bg-card-dark rounded-lg">
         <div className="flex-col">
-          <h2 className="text-primary dark:text-primary-dark font-bold text-2xl leading-tight">
+          <h2 className="text-primary-dark font-bold text-2xl leading-tight">
             Ready to learn this topic?
           </h2>
           {children}
@@ -136,7 +134,7 @@ function LearnMore({
           ) : null}
         </div>
       </section>
-      <hr className="border-border dark:border-border-dark mb-14" />
+      <hr className="border-border-dark mb-14" />
     </>
   );
 }

@@ -13,7 +13,7 @@ export const OpenInCodeSandboxButton = ({
     <UnstyledOpenInCodeSandboxButton
       title="Open in CodeSandbox"
       className={cn(
-        'text-sm text-primary dark:text-primary-dark inline-flex items-center hover:text-link duration-100 ease-in transition mx-1',
+        'text-sm text-content-color inline-flex items-center hover:text-link duration-100 ease-in transition mx-1',
         className,
       )}
     >

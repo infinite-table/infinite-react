@@ -124,7 +124,7 @@ export default function Nav() {
           </a>
         </NextLink>
 
-        {/* <div className="block dark:hidden">
+        {/* <div className="block ">
           <button
             type="button"
             aria-label="Use Dark Mode"
@@ -136,7 +136,7 @@ export default function Nav() {
             {darkIcon}
           </button>
         </div>
-        <div className="hidden dark:block">
+        <div className="hidden ">
           <button
             type="button"
             aria-label="Use Light Mode"
@@ -149,7 +149,7 @@ export default function Nav() {
           </button>
         </div> */}
       </div>
-      <div className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b  dark:border-border-dark">
+      <div className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b  border-border-dark">
         <NavLink href="/docs" isActive={section === 'home'}>
           Home
         </NavLink>

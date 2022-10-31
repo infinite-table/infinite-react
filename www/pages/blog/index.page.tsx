@@ -1,5 +1,6 @@
 import blogIndexRecentRouteTree from '@www/blogIndexRecent.json';
 import { ExternalLink } from '@www/components/ExternalLink';
+import { InfiniteLogo } from '@www/components/InfiniteLogo';
 import { getSidebarHome } from '@www/components/Layout/getSidebarHome';
 import { Page } from '@www/components/Layout/Page';
 import { RouteItem } from '@www/components/Layout/useRouteMeta';
@@ -25,8 +26,11 @@ export default function RecentPosts() {
                 title="Blog"
                 description="Official Infinite Table React news, announcements, and release notes. Infinite Table is the modern DataGrid for building React apps — faster."
               />
-              <Logo className="inline-block text-link dark:text-link-dark w-20 sm:w-28 mr-4  h-auto" />
-              <h1 className="text-5xl font-bold text-primary dark:text-primary-dark ">
+              <InfiniteLogo
+                className="inline-block text-link  w-20 sm:w-28 mr-4  h-auto"
+                color="light"
+              />
+              <h1 className="text-5xl font-bold  text-content-color ">
                 Infinite Blog
               </h1>
               {/* <a
@@ -36,14 +40,14 @@ export default function RecentPosts() {
                 RSS
               </a> */}
             </div>
-            <p className="text-primary dark:text-primary-dark text-xl text-primary dark:text-primary-dark leading-large">
+            <p className="text-content-color opacity-50 text-xl leading-large">
               News, announcements and release notes on Infinite Table.
             </p>
           </header>
           <div className="space-y-12 pb-40">
             {blogIndexRecentRouteTree.routes[0].routes.map((post) => (
               <div key={post.path}>
-                <h3 className="font-bold leading-8 text-primary dark:text-primary-dark text-2xl mb-2 hover:underline">
+                <h3 className="font-bold leading-8 text-content-color text-2xl mb-2 hover:underline">
                   <Link href={removeFromLast(post.path, '.')}>
                     <a>{post.title}</a>
                   </Link>
@@ -56,7 +60,7 @@ export default function RecentPosts() {
                 />
                 <div className="flex items-center mt-2">
                   <div>
-                    <p className="text-sm leading-5 dark:text-gray-400 text-gray-80">
+                    <p className="text-sm leading-5 ">
                       By{' '}
                       {toCommaSeparatedList(post.author, (author) => (
                         <ExternalLink
@@ -67,7 +71,7 @@ export default function RecentPosts() {
                         </ExternalLink>
                       ))}
                     </p>
-                    <div className="flex text-sm leading-5 dark:text-gray-400 ">
+                    <div className="flex text-sm leading-5  ">
                       <time dateTime={post.date}>
                         {format(parseISO(post.date), 'MMMM dd, yyyy')}
                       </time>

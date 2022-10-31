@@ -94,10 +94,10 @@ export function Navigation({
                 'py-2 mr-4 text-base border-b-4 duration-100 ease-in transition whitespace-nowrap overflow-ellipsis',
                 isRecipes &&
                   activeChallenge === id &&
-                  'text-purple-50 border-purple-50 hover:text-purple-50 dark:text-purple-30 dark:border-purple-30 dark:hover:text-purple-30',
+                  ' text-purple-30 border-purple-30 hover:text-purple-30',
                 !isRecipes &&
                   activeChallenge === id &&
-                  'text-link border-link hover:text-link dark:text-link-dark dark:border-link-dark dark:hover:text-link-dark',
+                  'text-link-dark border-link-dark hover:text-link-dark',
               )}
               onClick={() => handleSelectNav(id)}
               key={`button-${id}`}
@@ -112,9 +112,9 @@ export function Navigation({
         <button
           onClick={handleScrollLeft}
           className={cn(
-            'bg-secondary-button dark:bg-secondary-button-dark h-8 px-2 rounded-l border-gray-20 border-r',
+            'bg-secondary-button-dark h-8 px-2 rounded-l border-gray-20 border-r',
             {
-              'text-primary dark:text-primary-dark': canScrollLeft,
+              'text-primary-dark': canScrollLeft,
               'text-gray-30': !canScrollLeft,
             },
           )}
@@ -123,13 +123,10 @@ export function Navigation({
         </button>
         <button
           onClick={handleScrollRight}
-          className={cn(
-            'bg-secondary-button dark:bg-secondary-button-dark h-8 px-2 rounded-r-lg',
-            {
-              'text-primary dark:text-primary-dark': canScrollRight,
-              'text-gray-30': !canScrollRight,
-            },
-          )}
+          className={cn('bg-secondary-button-dark h-8 px-2 rounded-r-lg', {
+            'text-primary-dark': canScrollRight,
+            'text-gray-30': !canScrollRight,
+          })}
         >
           <IconChevron displayDirection="right" />
         </button>

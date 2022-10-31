@@ -13,7 +13,7 @@ function InlineCode({
       className={cn(
         'inline text-code text-content-color px-1 rounded-md no-underline',
         {
-          'bg-gray-30 bg-opacity-10 py-px': !isLink,
+          'bg-dark-custom py-px': !isLink,
           'bg-highlight-dark py-0': isLink,
         },
       )}

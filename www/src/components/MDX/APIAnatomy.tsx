@@ -117,9 +117,7 @@ export function AnatomyStep({
         >
           {stepNumber}
         </div>
-        <div className="text-primary dark:text-primary-dark leading-3 font-bold">
-          {title}
-        </div>
+        <div className="text-primary-dark leading-3 font-bold">{title}</div>
       </div>
       <div>{children}</div>
     </div>
