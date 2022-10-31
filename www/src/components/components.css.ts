@@ -222,7 +222,6 @@ globalStyle(`${title} a:active`, {
 export const grid = style({});
 
 export const card = style({
-  flexBasis: '45%',
   textAlign: 'left',
   textDecoration: 'none',
   position: 'relative',
@@ -231,11 +230,6 @@ export const card = style({
   selectors: {
     '&:hover': {
       top: '-2px',
-    },
-  },
-  '@media': {
-    [`screen and (max-width: ${screenSizes['screen-sm']})`]: {
-      flexBasis: '95%',
     },
   },
 });

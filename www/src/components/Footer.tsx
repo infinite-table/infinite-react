@@ -14,8 +14,7 @@ import { Footer as F } from './Layout/Footer';
 import { OverlineCls } from './Header.css';
 import { ExternalLink } from './ExternalLink';
 import Link from 'next/link';
-import { IconOpenInWindow } from './Icon/IconOpenInWindow';
-import { TwitterLink } from './Header';
+import { GithubLink, TwitterLink } from './Header';
 
 function FooterLink({
   href,
@@ -86,16 +85,17 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
           <div className="flex flex-col  items-start">
             <FooterLink isHeader={true}>Social</FooterLink>
 
-            <FooterLink href="https://github.com/infinite-table/infinite-react">
-              GitHub <IconOpenInWindow className="inline mb-1 ml-1 mr-1 mt-1" />{' '}
-            </FooterLink>
-            <TwitterLink className="hover:border-b hover:border-content-color text-base">
+            <GithubLink className="border-b border-transparent hover:border-b hover:border-content-color text-base">
+              GitHub{' '}
+            </GithubLink>
+            <TwitterLink className="border-b border-transparent  hover:border-content-color text-base">
               Twitter
             </TwitterLink>
           </div>
           <div className="flex flex-col items-start">
             <FooterLink isHeader={true}>Company</FooterLink>
             <FooterLink href="/privacy">Privacy Policy</FooterLink>
+            {/* <FooterLink href="/privacy">EULA</FooterLink> */}
             <FooterLink href="/terms-of-use">Terms of Use</FooterLink>
             <FooterLink href="mailto:admin@infinite-table.com">
               Email Us

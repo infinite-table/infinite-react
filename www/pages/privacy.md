@@ -1,3 +1,7 @@
+---
+layout: NoDocs
+title: Privacy Policy
+---
 *Last updated: 30 October 2022*
 
 *This document describes the policies and procedures we use at Infinite Table in relation to the collection, use and disclosure of your information when you use our products.*

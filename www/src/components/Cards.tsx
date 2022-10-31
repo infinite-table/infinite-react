@@ -38,7 +38,7 @@ export const Card = ({
 }) => {
   let cls = `${
     className || ''
-  } ${card} p-4 sm:p-4 md:p-8 py-10 rounded-sm  flex flex-col`;
+  } ${card} p-4 sm:p-4 md:p-8 py-10 rounded-sm flex flex-col`;
 
   if (!noBackgroundOnHover) {
     cls += ` hover:bg-opacity-90 hover:bg-deep-dark `;
@@ -200,16 +200,10 @@ export const CardsLayout = ({
   style?: React.CSSProperties;
 }) => {
   return (
-    <div className={`${marginTop[28]} relative w-full`} style={style}>
+    <div className={`mt-24 relative w-full`} style={style}>
       {before}
       <div style={{ margin: '0 auto' }} className="justify-center flex w-full">
-        <div
-          className={`${display.flex} ${grid} ${centeredFlexProps} ${flexWrap.wrap} ${maxWidth['5xl']} ${marginY[16]} w-full`}
-          style={{
-            gridGap: '2.5rem',
-            alignItems: 'stretch',
-          }}
-        >
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 my-20 w-full`}>
           {children}
         </div>
       </div>

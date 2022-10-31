@@ -91,3 +91,5 @@ react-test
 .netlify
 
 test-results
+
+/www/LICENSE.md

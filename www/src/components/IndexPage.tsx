@@ -32,16 +32,16 @@ function NpmCmd() {
 
   return (
     <div
-      className={`relative inline-flex flex-row cursor-pointer items-center px-2 sm:px-4 py-1 rounded-md`}
+      className={`relative inline-flex flex-row cursor-pointer items-center px-2 sm:px-2 md:px-3 py-1 rounded-md`}
       style={{ ...getHighlightShadowStyle() }}
     >
       <div
-        className={`font-mono tracking-tighter whitespace-nowrap text-sm sm:text-base ${HighlightBrandToLightBackground}`}
+        className={`font-mono tracking-tighter whitespace-nowrap text-sm md:text-base ${HighlightBrandToLightBackground}`}
       >
         npm i @infinite-table/infinite-react
       </div>
       <div
-        className={`p-1 sm:p-2 ml-2 top-0 active:top-1 user-select-none`}
+        className={`p-1 ml-1 top-0 active:top-1 user-select-none`}
         title="Copy to clipboard"
         onClick={onClick}
       >
@@ -70,7 +70,7 @@ export function IndexPage() {
     <MainLayout seoTitle={seoTitle} seoDescription={seoDescription}>
       <HeroPicture />
 
-      <div className="flex flex-col md:flex-row items-center md:items-stretch">
+      <div className="flex flex-col mt-20 md:flex-row items-center md:items-stretch">
         <AccentButton href="/pricing">Buy a license</AccentButton>{' '}
         <div className="mx-6 my-2 flex items-center justify-center">or</div>{' '}
         <NpmCmd />
@@ -94,7 +94,9 @@ export function IndexPage() {
             {/* <AccentButton href="/docs">
               Start Building <>&rarr;</>
             </AccentButton> */}
-            <SecondaryButton className="mx-5">Read the docs</SecondaryButton>
+            <SecondaryButton className="mx-5" href="/docs">
+              Read the docs
+            </SecondaryButton>
           </div>
           <p>A DataGrid component is only as good as its documentation.</p>
           <p>

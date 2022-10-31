@@ -6,14 +6,14 @@ import { Seo } from '@www/components/Seo';
 import * as React from 'react';
 
 import { Toc } from './Toc';
-import { useRouteMeta } from './useRouteMeta';
+import { RouteItem, useRouteMeta } from './useRouteMeta';
 export interface MarkdownProps<Frontmatter> {
   meta: Frontmatter & { description?: string };
   children?: React.ReactNode;
 }
 
 export function MaxWidth({ children }: { children: any }) {
-  return <div className="max-w-4xl ml-0 2xl:mx-auto">{children}</div>;
+  return <div className="max-w-7xl ml-0 2xl:mx-auto">{children}</div>;
 }
 
 export function MarkdownPage<
@@ -68,14 +68,6 @@ export function MarkdownPage<
           text: 'Recap',
         };
       }
-      // if (child.props.mdxType === 'h') {
-      //   debugger;
-      //   return {
-      //     url: '#recap',
-      //     depth: 0,
-      //     text: 'Recap',
-      //   };
-      // }
 
       if (child.props.mdxType === 'PropTable') {
         return React.Children.toArray(child.props.children)
@@ -176,27 +168,76 @@ export function MarkdownPage<
   flushWrapper('last');
 
   return (
+    <>
+      <MarkdownArticle
+        description={description}
+        title={title}
+        route={route}
+        nextRoute={nextRoute}
+        prevRoute={prevRoute}
+        isHomePage={isHomePage}
+        afterChildren={
+          <div className="w-full lg:max-w-xs hidden 2xl:block">
+            {!isHomePage && anchors.length > 0 && <Toc headings={anchors} />}
+          </div>
+        }
+      >
+        {finalChildren}
+      </MarkdownArticle>
+    </>
+  );
+}
+
+export function MarkdownArticle(props: {
+  title: string;
+  isHomePage: boolean;
+  description?: string;
+  route: RouteItem | undefined;
+  nextRoute: RouteItem | undefined;
+  prevRoute: RouteItem | undefined;
+  children?: React.ReactNode;
+  afterChildren?: React.ReactNode;
+  skipReserveSidebarSpace?: boolean;
+}) {
+  const {
+    title,
+    description,
+    route,
+    nextRoute,
+    prevRoute,
+    children,
+    isHomePage,
+    afterChildren,
+    skipReserveSidebarSpace,
+  } = props;
+  const showDocsFooter = route || nextRoute || prevRoute;
+
+  return (
     <article className="h-full mx-auto relative w-full min-w-0">
-      <div className="lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
+      <div
+        className={
+          skipReserveSidebarSpace
+            ? ''
+            : 'pt-20 lg:pt-0 pl-0 lg:pl-80 2xl:px-80 '
+        }
+      >
         <Seo title={title} description={description} />
         {!isHomePage && <PageHeading title={title} tags={route?.tags} />}
         <div className="px-5 sm:px-12">
           <div className="max-w-7xl mx-auto">
             {/* @ts-ignore */}
-            <MDXProvider components={MDXComponents}>
-              {finalChildren}
-            </MDXProvider>
+            <MDXProvider components={MDXComponents}>{children}</MDXProvider>
           </div>
-          <DocsPageFooter
-            route={route}
-            nextRoute={nextRoute}
-            prevRoute={prevRoute}
-          />
+          {showDocsFooter ? (
+            <DocsPageFooter
+              route={route}
+              nextRoute={nextRoute}
+              prevRoute={prevRoute}
+            />
+          ) : null}
         </div>
       </div>
-      <div className="w-full lg:max-w-xs hidden 2xl:block">
-        {!isHomePage && anchors.length > 0 && <Toc headings={anchors} />}
-      </div>
+      {afterChildren}
     </article>
   );
 }

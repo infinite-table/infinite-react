@@ -81,7 +81,7 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
     <>
       <div className="w-full px-12">
         <div className="px-5 sm:px-12 h-full mx-auto relative overflow-x-hidden lg:pt-0 pt-20 lg:pl-80 2xl:px-80 ">
-          <div className="max-w-4xl ml-0 2xl:mx-auto ">
+          <div className="ml-0 2xl:mx-auto ">
             <Seo
               title={meta.title}
               description={`${

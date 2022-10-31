@@ -1,4 +1,3 @@
-
 <div align="center">
 
 <h1>
@@ -6,12 +5,14 @@
 </h1>
 <h3>One Table — Infinite Applications</h3>
   <a href="https://infinite-table.com">
-    <img width="150px" height="170px" alt="InfiniteTable Logo" src="https://infinite-table.com/logo-infinite.svg">
+    <img width="150px" height="170px" alt="InfiniteTable Logo" src="https://infinite-table.com/logo-infinite.svg" />
   </a>
-<h4 style="margin-bottom: 20px;">Infinite Table is the modern DataGrid for building React apps — faster.</h4>
+<h4 >Infinite Table is the modern DataGrid for building React apps — faster.</h4>
+<br />
+<br />
 </div>
 
-![Infinite Table for React configured with grouping, multi-selection, aggregations and custom styling.](./www/public/full-demo-image.png "Infinite Table demo")
+![Infinite Table for React configured with grouping, multi-selection, aggregations and custom styling.](https://infinite-table.com/full-demo-image.png "Infinite Table demo")
 
 
 ## Table Of Contents

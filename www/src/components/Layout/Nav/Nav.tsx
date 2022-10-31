@@ -7,8 +7,6 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
-import { Logo } from '../../Logo';
-
 import { inferSection } from './inferSection';
 import NavLink from './NavLink';
 

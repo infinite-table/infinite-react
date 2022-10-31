@@ -1,3 +1,4 @@
+import { AccentButton } from '@www/components/AccentButton';
 import { Button } from '@www/components/Button';
 
 import { GithubLink, TwitterLink } from '@www/components/Header';
@@ -90,16 +91,20 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
       </nav>
       <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center">
         <div className="flex flex-row mb-5">
-          {<TwitterLink />}
+          <TwitterLink />
           <div className="ml-5"></div>
-          {GithubLink}
+          <GithubLink />
         </div>
-        <Button
-          as="div"
-          className="w-full text-center justify-center leading-relaxed"
+        <AccentButton
+          className="w-full text-center mb-2"
+          style={{
+            display: 'block',
+          }}
+          href="/pricing"
         >
-          Officially Launching in October 2022
-        </Button>
+          Get License
+        </AccentButton>
+
         <Button
           className="w-full text-center justify-center"
           onClick={handleFeedback}
