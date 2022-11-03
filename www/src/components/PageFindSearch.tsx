@@ -97,7 +97,7 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
         }
         initMap[id] = true;
 
-        console.log('init pagefind', id, document.querySelector('#' + id));
+        // console.log('init pagefind', id, document.querySelector('#' + id));
         // @ts-ignore
         new PagefindUI({
           element: `#${id}`,
