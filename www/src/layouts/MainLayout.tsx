@@ -55,7 +55,11 @@ export function MainLayout({
               seoTitle || 'The DataGrid component for large datasets.'
             }`}
           >
-            <link rel="icon" type="image/svg+xml" href="/favicon.svg"></link>
+            <link
+              rel="icon shortcut"
+              type="image/x-icon"
+              href="/favicon.ico"
+            ></link>
           </Seo>
           <MainNavBar />
           <HeroHeader title={title} subtitle={subtitle} />

@@ -38,7 +38,11 @@ export const Seo = withRouter(
         )}
         {/* <link rel="icon" type="image/x-icon" href={favicon} />
       <link rel="apple-touch-icon" href={favicon} />  @todo favicon */}
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg"></link>
+        <link
+          rel="icon shortcut"
+          type="image/x-icon"
+          href="/favicon.ico"
+        ></link>
 
         {/* OPEN GRAPH */}
         <meta
