@@ -70,11 +70,7 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
   }, [isShowing, alwaysShow]);
 
   React.useEffect(() => {
-    function waitFor(
-      fn: Function,
-      callback: VoidFunction,
-      timeout: number = 30,
-    ) {
+    function waitFor(fn: Function, callback: VoidFunction, timeout = 30) {
       if (!fn()) {
         setTimeout(function () {
           waitFor(fn, callback, timeout);
