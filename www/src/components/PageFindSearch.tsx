@@ -90,7 +90,7 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
         return !!window.PagefindUI;
       },
       function () {
-        let initialized = initMap[id];
+        const initialized = initMap[id];
 
         if (initialized) {
           return;
