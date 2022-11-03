@@ -19,7 +19,7 @@ export function FilesDropdown() {
         {({ open }) => (
           <span
             className={cn(
-              'h-full py-2 px-1 mt-px -mb-px flex border-b-2 text-link-dark border-link-dark items-center text-md leading-tight truncate',
+              'h-full py-2 px-1 mt-px -mb-px flex border-b-2 text-link border-link items-center text-md leading-tight truncate',
             )}
             style={{ maxWidth: '160px' }}
           >
@@ -37,7 +37,7 @@ export function FilesDropdown() {
             value={filePath}
             className={cn(
               'text-md mx-2 my-4 cursor-pointer',
-              filePath === activeFile ? 'text-link-dark' : 'text-primary-dark',
+              filePath === activeFile ? 'text-link' : 'text-primary-dark',
             )}
           >
             {getFileName(filePath)}

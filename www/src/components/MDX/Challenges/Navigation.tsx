@@ -97,7 +97,7 @@ export function Navigation({
                   ' text-purple-30 border-purple-30 hover:text-purple-30',
                 !isRecipes &&
                   activeChallenge === id &&
-                  'text-link-dark border-link-dark hover:text-link-dark',
+                  'text-link border-link hover:text-link',
               )}
               onClick={() => handleSelectNav(id)}
               key={`button-${id}`}

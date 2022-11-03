@@ -16,6 +16,7 @@ export default function withNoDocs(meta: PageFrontmatter) {
         prevRoute={undefined}
         route={undefined}
         isHomePage={true}
+        skipIndex
         skipReserveSidebarSpace={true}
         title={meta.title}
         description={meta.description}

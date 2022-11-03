@@ -4,6 +4,7 @@ import { Button } from '@www/components/Button';
 import { GithubLink, TwitterLink } from '@www/components/Header';
 
 import { SidebarContext } from '@www/components/Layout/useRouteMeta';
+import { PageFindSearch } from '@www/components/PageFindSearch';
 
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
@@ -74,14 +75,15 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
         visibility: isHidden ? 'hidden' : undefined,
       }}
     >
-      {/* <div className="px-5"> */}
-      {/* <Search /> TODO uncomment search component */}
-      {/* </div> */}
+      <div className="px-5 mt-12 lg:hidden"></div>
+      <div className="hidden lg:block py-6 px-5">
+        <PageFindSearch alwaysShow />
+      </div>
       <nav
         role="navigation"
         ref={menuRef}
         style={{ '--bg-opacity': '.2' } as React.CSSProperties} // Need to cast here because CSS vars aren't considered valid in TS types (cuz they could be anything)
-        className="w-full h-screen lg:h-auto flex-grow pr-0 lg:pr-5 pt-6 pb-44 lg:pb-0 lg:py-6 md:pt-4 lg:pt-4 overflow-y-scroll lg:overflow-y-auto scrolling-touch scrolling-gpu"
+        className="w-full h-screen lg:h-auto flex-grow pr-0 lg:pr-5 pb-44  lg:pb-6 overflow-y-scroll lg:overflow-y-auto scrolling-touch scrolling-gpu"
       >
         {isMobileSidebar ? (
           <MobileNav />
@@ -89,7 +91,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
           <SidebarRouteTree routeTree={routeTree} />
         )}
       </nav>
-      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center">
+      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-black">
         <div className="flex flex-row mb-5">
           <TwitterLink />
           <div className="ml-5"></div>

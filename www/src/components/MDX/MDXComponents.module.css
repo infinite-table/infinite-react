@@ -35,5 +35,5 @@
 }
 
 .markdown a {
-  @apply inline text-link-dark break-normal border-b border-link border-opacity-0 hover:border-opacity-100 duration-100 ease-in transition leading-normal;
+  @apply inline text-link break-normal border-b border-link border-opacity-0 hover:border-opacity-100 duration-100 ease-in transition leading-normal;
 }

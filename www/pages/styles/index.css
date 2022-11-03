@@ -53,7 +53,7 @@
   }
 
   a > code {
-    color: #087ea4 !important; /* blue-50 */
+    color: #149eca !important; /* blue-50 */
     text-decoration: none !important;
   }
 
@@ -101,10 +101,9 @@
     border-radius: 0.5rem;
     overflow: initial;
     color: currentColor;
-    @apply bg-highlight;
   }
-  .dark article table td,
-  .dark article table th {
+  article table td,
+  article table th {
     @apply text-primary-dark;
     @apply bg-highlight-dark;
   }
@@ -179,4 +178,37 @@
 #_hj_feedback_container > div {
   --hjFeedbackAccentColor: rgb(230, 247, 255) !important;
   --hjFeedbackAccentTextColor: rgb(73, 119, 171) !important;
+}
+
+.pagefind-ui__form,
+.pagefind-ui__drawer,
+.pagefind-ui__results-area {
+  background: black;
+}
+.pagefind-ui__results {
+  overflow: auto;
+  max-height: 80vh;
+}
+.pagefind-ui__search-input {
+  height: auto !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+.pagefind-ui__form::before {
+  top: 12px !important;
+}
+.pagefind-ui__drawer {
+  top: 40px;
+  position: absolute;
+  z-index: 1111;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+body {
+  --pagefind-ui-primary: #eeeeee;
+  --pagefind-ui-text: #eeeeee;
+  --pagefind-ui-background: #152028;
+  --pagefind-ui-border: #152028;
+  --pagefind-ui-tag: #152028;
+  --pagefind-ui-scale: 0.8;
 }

@@ -12,6 +12,7 @@ export default function EULAPage() {
   const seoDescription = `Infinite Table DataGrid for React — End User License Agreement`;
   return (
     <MainLayout
+      skipIndex
       seoTitle={seoTitle}
       seoDescription={seoDescription}
       subtitle="End User License Agreement"

@@ -1,6 +1,10 @@
+import { AccentButton } from '@www/components/AccentButton';
+import { LogoAndTitle } from '@www/components/Header';
 import { IconClose } from '@www/components/Icon/IconClose';
 import { IconHamburger } from '@www/components/Icon/IconHamburger';
 import { InfiniteLogo } from '@www/components/InfiniteLogo';
+import { PageFindSearch } from '@www/components/PageFindSearch';
+import { Search } from '@www/components/Search';
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
 import NextLink from 'next/link';
@@ -103,24 +107,19 @@ export default function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-4 pr-5 lg:px-5 z-50">
+    <nav className="sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-4 pr-2 lg:px-5 z-50">
       <div className="xl:w-full xl:max-w-xs flex items-center">
         <button
           type="button"
           aria-label="Menu"
           onClick={toggleOpen}
-          className={cn('flex lg:hidden items-center h-full px-4', {
-            'text-link-dark mr-0': isOpen,
+          className={cn('flex lg:hidden items-center h-full px-2', {
+            'text-link mr-0': isOpen,
           })}
         >
           {!isOpen ? <IconHamburger /> : <IconClose />}
         </button>
-        <NextLink href="/">
-          <a className=" inline-flex text-l items-center text-content-color  py-1 pr-10 whitespace-nowrap text-xl font-black  tracking-tight">
-            <InfiniteLogo color="light" className="   w-14 mr-2" />
-            <span className="whitespace-nowrap">Infinite Table</span>
-          </a>
-        </NextLink>
+        <LogoAndTitle color="light" />
 
         {/* <div className="block ">
           <button
@@ -164,15 +163,21 @@ export default function Nav() {
           Reference
         </NavLink>
       </div>
-      <div className="flex my-4 h-10 mx-0 w-full lg:hidden justify-end slg:max-w-sm">
-        {/* <Search /> */}
-        <button
-          type="button"
-          className="inline-flex lg:hidden items-center p-1 ml-4 lg:ml-6 relative top-px"
-          onClick={handleFeedback}
+      {/* this is hidden on large screens, since the Buy button is on sidebar for >= large  */}
+      <div className="flex items-center h-10 mx-0 w-full lg:hidden justify-end slg:max-w-sm">
+        <PageFindSearch />
+        <AccentButton size="small" className="ml-2 sm:hidden" href="/pricing">
+          {/* button for small mobile, so screen < sm */}
+          Get
+        </AccentButton>
+        <AccentButton
+          size="small"
+          className="ml-2 hidden sm:inline-flex"
+          href="/pricing"
         >
-          {feedbackIcon}
-        </button>
+          {/* button for >= small */}
+          Get License
+        </AccentButton>
       </div>
     </nav>
   );

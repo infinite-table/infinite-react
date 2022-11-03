@@ -60,10 +60,10 @@ export function SidebarLink({
             'pl-9': level === 2,
             'text-base font-bold': level === 0,
             'text-content-color ': level === 0 && !selected,
-            'text-base text-link-dark': level === 1 && selected,
+            'text-base text-link': level === 1 && selected,
 
             'text-base text-content-color': !selected && !heading,
-            'text-base text-link-dark bg-highlight-dark border-blue-40  hover:text-link-dark':
+            'text-base text-link bg-highlight-dark border-blue-40  hover:text-link':
               selected,
           },
         )}

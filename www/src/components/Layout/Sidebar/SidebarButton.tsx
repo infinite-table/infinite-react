@@ -31,7 +31,7 @@ export function SidebarButton({
           'p-2 pr-2 pl-5 w-full rounded-r-lg text-left hover:bg-gray-80 relative flex items-center justify-between',
           {
             'p-2 text-base': level > 1,
-            'text-link bg-highlight-dark text-base font-bold hover:bg-highlight hover:bg-highlight-dark hover:text-link-dark':
+            'text-link bg-highlight-dark text-base font-bold hover:bg-highlight hover:bg-highlight-dark hover:text-link':
               !heading && isBreadcrumb && !isExpanded,
             'p-4 my-6 text-2xl lg:my-auto lg:text-sm font-bold': heading,
             'p-2 hover:text-gray-70 text-base font-bold text-primary-dark':

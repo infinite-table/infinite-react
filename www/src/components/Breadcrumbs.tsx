@@ -13,7 +13,7 @@ function Breadcrumbs() {
             <div className="flex mb-3 mt-0.5 items-center" key={i}>
               <React.Fragment key={crumb.path}>
                 <Link href={crumb.path}>
-                  <a className="text-link-dark text-sm tracking-wide font-bold uppercase mr-1 hover:underline">
+                  <a className="text-link text-sm tracking-wide font-bold uppercase mr-1 hover:underline">
                     {crumb.title}
                   </a>
                 </Link>

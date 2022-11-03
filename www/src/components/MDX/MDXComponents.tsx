@@ -186,7 +186,7 @@ function AuthorCredit({
       <cite>
         Illustrated by{' '}
         {authorLink ? (
-          <a className="text-link-dark" href={authorLink}>
+          <a className="text-link" href={authorLink}>
             {author}
           </a>
         ) : (

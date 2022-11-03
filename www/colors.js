@@ -8,8 +8,8 @@ module.exports = {
   secondary: '#404756', // gray-70
   'secondary-dark': '#EBECF0', // gray-10
   'content-color': 'rgba(235, 236, 240, 0.8)',
-  link: '#087EA4', // blue-50
-  'link-dark': '#149ECA', // blue-40
+
+  link: '#149ECA',
   syntax: '#EBECF0', // gray-10
   wash: '#FFFFFF',
   'wash-dark': '#23272F', // gray-90
@@ -26,6 +26,7 @@ module.exports = {
   'border-dark': '#343A46', // gray-80
   brand: '#0b6fcb', // gray-80
   'brand-dark': '#133048', // gray-80
+  'brand-blue': '#497AFF',
   'secondary-button': '#EBECF0', // gray-10
   'secondary-button-dark': '#404756', // gray-70
   'dark-custom': '#0d1114',

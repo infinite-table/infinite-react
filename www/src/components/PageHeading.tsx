@@ -1,6 +1,7 @@
 import Breadcrumbs from '@www/components/Breadcrumbs';
 import Tag from '@www/components/Tag';
 import * as React from 'react';
+import { HighlightBrandToLightBackground } from './components.css';
 
 import { RouteTag } from './Layout/useRouteMeta';
 import { H1 } from './MDX/Heading';
@@ -19,10 +20,12 @@ function PageHeading({
   tags = [],
 }: PageHeadingProps) {
   return (
-    <div className="px-5 sm:px-12 pt-5">
+    <div className="px-4 sm:px-12 pt-5">
       <div className="max-w-7xl ml-0 2xl:mx-auto">
         {tags ? <Breadcrumbs /> : null}
-        <H1 className="mt-0 text-content-color -mx-.5">
+        <H1
+          className={`inline-block mt-0 -mx-.5 ${HighlightBrandToLightBackground}`}
+        >
           {title}
           {status ? <em>—{status}</em> : ''}
         </H1>

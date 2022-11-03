@@ -43,6 +43,7 @@ export const GradientTextBackground = style([
   },
 ]);
 
+const brandBlue = '#497AFF';
 export const HighlightTextBackground = style([
   {
     color: 'transparent',
@@ -56,7 +57,8 @@ export const HighlightBrandToLightBackground = style([
     color: 'transparent',
 
     // backgroundImage: `linear-gradient(to right,${wwwVars.color.highlight} 30%,${wwwVars.color.brandDark})`,
-    backgroundImage: `linear-gradient(to right,${wwwVars.color.glow} 1%, ${wwwVars.color.white} 80%,${wwwVars.color.white})`,
+    // backgroundImage: `linear-gradient(to right,${wwwVars.color.glow} 1%, ${wwwVars.color.white} 80%,${wwwVars.color.white})`,
+    backgroundImage: `linear-gradient(to right,${wwwVars.color.glow} 1%, ${brandBlue})`,
     WebkitBackgroundClip: 'text',
   },
 ]);

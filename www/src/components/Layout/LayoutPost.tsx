@@ -102,7 +102,7 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
                   // <ExternalLink
                   //   key={url}
                   //   href={url}
-                  //   className="text-link-dark underline font-bold">
+                  //   className="text-link underline font-bold">
                   //   {getAuthor(author).name}
                   // </ExternalLink>
                   // );

@@ -170,6 +170,7 @@ export function MarkdownPage<
   return (
     <>
       <MarkdownArticle
+        skipIndex={false}
         description={description}
         title={title}
         route={route}
@@ -192,6 +193,7 @@ export function MarkdownArticle(props: {
   title: string;
   isHomePage: boolean;
   description?: string;
+  skipIndex?: boolean;
   route: RouteItem | undefined;
   nextRoute: RouteItem | undefined;
   prevRoute: RouteItem | undefined;
@@ -209,11 +211,21 @@ export function MarkdownArticle(props: {
     isHomePage,
     afterChildren,
     skipReserveSidebarSpace,
+    skipIndex,
   } = props;
   const showDocsFooter = route || nextRoute || prevRoute;
 
+  const domProps: React.HTMLProps<HTMLDivElement> = {};
+
+  if (skipIndex) {
+    //@ts-ignore
+    domProps['data-pagefind-ignore'] = 'all';
+  } else {
+    //@ts-ignore
+    domProps['data-pagefind-body'] = '';
+  }
   return (
-    <article className="h-full mx-auto relative w-full min-w-0">
+    <article className="h-full mx-auto relative w-full min-w-0" {...domProps}>
       <div
         className={
           skipReserveSidebarSpace
@@ -223,7 +235,7 @@ export function MarkdownArticle(props: {
       >
         <Seo title={title} description={description} />
         {!isHomePage && <PageHeading title={title} tags={route?.tags} />}
-        <div className="px-5 sm:px-12">
+        <div className="px-4 sm:px-12">
           <div className="max-w-7xl mx-auto">
             {/* @ts-ignore */}
             <MDXProvider components={MDXComponents}>{children}</MDXProvider>

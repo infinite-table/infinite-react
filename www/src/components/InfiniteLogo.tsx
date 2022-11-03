@@ -1,12 +1,13 @@
 import { wwwVars } from '@www/styles/www-utils.css';
 import { CSSProperties } from 'react';
 
+export type InfiniteLogoColors = 'light' | 'dark' | 'gradient';
 export function InfiniteLogo(
   props: {
     className?: string;
 
     style?: CSSProperties;
-    color?: 'light' | 'dark' | 'gradient';
+    color?: InfiniteLogoColors;
   } = {
     color: 'light',
   },

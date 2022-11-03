@@ -18,7 +18,7 @@ import {
 } from './components.css';
 import { ExternalLink } from './ExternalLink';
 import { IceCls, NavBarCls, NavBarWrapCls } from './Header.css';
-import { InfiniteLogo } from './InfiniteLogo';
+import { InfiniteLogo, InfiniteLogoColors } from './InfiniteLogo';
 
 export function TwitterLink(props: {
   children?: ReactNode;
@@ -74,6 +74,26 @@ export function GithubLink(props: {
   );
 }
 
+export const LogoAndTitle = (props: { color?: InfiniteLogoColors }) => (
+  <Link href="/">
+    <a
+      data-logo
+      className={`inline-flex items-center font-black text-xl sm:text-4xl sm:mr-4`}
+      style={{ width: 'max-content' }}
+    >
+      <InfiniteLogo
+        className="py-5 px-1 sm:px-2 sm:py-3 max-w-min"
+        color={props.color}
+        style={{
+          height: wwwVars.header.lineHeight,
+        }}
+      />
+
+      <span className="whitespace-nowrap">Infinite Table</span>
+    </a>
+  </Link>
+);
+
 export const NavBarContent = () => {
   const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
   return (
@@ -82,34 +102,9 @@ export const NavBarContent = () => {
       style={{ flexWrap: 'wrap' }}
     >
       <li
-        className={`${itemCls} font-black text-base md:text-xl tracking-tight`}
+        className={`${itemCls} font-black text-xl sm:text-4xl md:text-4xl tracking-tight`}
       >
-        <Link href="/">
-          <a
-            data-logo
-            className="inline-flex items-center "
-            style={{ width: 'max-content' }}
-          >
-            <InfiniteLogo
-              className="py-3 px-2"
-              color="light"
-              style={{
-                height: wwwVars.header.lineHeight,
-                maxWidth: 80,
-              }}
-            />
-            {/* <img
-              style={{
-                height: wwwVars.header.lineHeight,
-                maxWidth: '90px',
-              }}
-              className={`py-4 px-2`}
-              src={'/logo-infinite.svg'}
-              title="Infinite Table Logo"
-            /> */}
-            <span className="whitespace-nowrap">Infinite Table</span>
-          </a>
-        </Link>
+        <LogoAndTitle color="light" />
       </li>
       <li
         className={`${itemCls} `}
@@ -181,19 +176,19 @@ export const HeroHeader = (props: {
         setFixedWidth
         contents={[
           <>
-            <span className={`${HighlightTextBackground}`}>declarative</span>
+            <span className={`text-glow`}>declarative</span>
           </>,
 
           <>
-            <span className={`${HighlightTextBackground}`}>modern</span>
+            <span className={`text-glow`}>modern</span>
           </>,
 
           <>
-            <span className={`${HighlightTextBackground}`}>lightweight</span>
+            <span className={`text-glow`}>lightweight</span>
             🪶
           </>,
           <>
-            <span className={`${HighlightTextBackground}`}>typed</span>
+            <span className={`text-glow`}>typed</span>
             {/* <svg
               className="inline mx-1"
               style={{ lineHeight: 0, display: 'inline' }}
@@ -212,13 +207,12 @@ export const HeroHeader = (props: {
             </svg> */}
           </>,
           <>
-            <span className={`${HighlightTextBackground}`}>extensible</span> 🏗
+            <span className={`text-glow`}>extensible</span> 🏗
           </>,
         ]}
       />
       <br />
-      DataGrid for building{' '}
-      <span className={HighlightTextBackground}>React</span> apps —{' '}
+      DataGrid for building <span className={'text-glow'}>React</span> apps —{' '}
       <b className={`font-black`}>faster</b>
     </>
   );

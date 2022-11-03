@@ -19,16 +19,24 @@ export function MainLayout({
   seoTitle,
   seoDescription,
   subtitle,
+  skipIndex,
 }: {
   children: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
+  skipIndex?: boolean;
   seoTitle?: string;
   seoDescription?: string;
   className?: string;
 }) {
+  const domProps = {};
+  if (skipIndex) {
+    // @ts-ignore
+    domProps['data-pagefind-ignore'] = 'all';
+  }
   return (
     <div
+      {...domProps}
       className={`${
         className || ''
       } ${appClassName} ${wwwTheme}  bg-black text-content-color `}

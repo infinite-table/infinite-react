@@ -12,6 +12,7 @@ export default function PrivacyPage() {
   return (
     <MainLayout
       seoTitle={seoTitle}
+      skipIndex
       seoDescription={seoDescription}
       subtitle="Privacy Policy"
     >

@@ -5,7 +5,9 @@
   "scripts": {
     "build-dev": "npm run update-versions && npm run source-build && npm run generate-lib-dts && npm run dev",
     "dev": "npm run copy-license && node scripts/generateBlogIndex.js && rm -fr .next && next dev -p 3001",
-    "build": "npm --prefix dataserver install && npm run update-versions && npm run generate-lib-dts && npm run update-css-vars-list && npm run copy-license && node scripts/generateBlogIndex.js && next build && next export",
+    "build": "npm --prefix dataserver install && npm run update-versions && npm run generate-lib-dts && npm run update-css-vars-list && npm run copy-license && node scripts/generateBlogIndex.js && next build && next export && npm run pagefind",
+    "pagefind": "rm -fr public/_pagefind && npx -y pagefind@latest --source \"out\"",
+    "pagefind-local": "npm run pagefind && cp -R out/_pagefind public",
     "update-css-vars-list": "node build/create-css-vars-list.js",
     "///": "/// copying the license file and also append --- layout: NoDocs --- at the beginning of the file",
     "copy-license": "echo \"---\nlayout: NoDocs\n---\n$(cat ../source/LICENSE.md)\" > LICENSE.md",

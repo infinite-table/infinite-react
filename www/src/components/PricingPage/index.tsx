@@ -192,21 +192,21 @@ export function PricingPage() {
       title={
         <>
           <span className={``}>One License</span> — Infinite Applications
-          {/* <span className={``}>1 License</span> ={' '}
-          <span className="relative">
+          {/* <span className={``}>One License</span> ={' '}
+          <span className="relative" style={{ top: -9 }}>
             <img
-              className="inline w-16 md:w-28"
+              className="inline w-16 md:w-24"
               src="/round-infinite-sign-green-glow.svg"
             ></img>
 
             <span
-              className="absolute text-xs md:text-lg tracking-wide text-glow  -bottom-3 sm:-bottom-4"
+              className="absolute text-xs  md:text-lg tracking-wide -bottom-3 sm:-bottom-4"
               style={{
-                transform: 'translate3d(-50%, 0px, 0px)',
+                transform: 'translate3d(-50%, -6px, 0px)',
                 left: '50%',
               }}
             >
-              Infinite
+              infinite
             </span>
           </span>{' '}
           Applications */}
@@ -291,11 +291,7 @@ export function PricingPage() {
               >
                 <DiscountsTable
                   discounts={[
-                    [
-                      'Single developer',
-                      getFormattedPricePerDeveloper(1),
-                      ' - ',
-                    ],
+                    ['1+ developer', getFormattedPricePerDeveloper(1), ' - '],
                     [
                       `${discounts[0].devCount}+ developers`,
                       `$ ${discounts[0].perDeveloperPrice}`,

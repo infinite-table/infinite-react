@@ -174,7 +174,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
                 className={cn(
                   isRecipes
                     ? 'bg-purple-50 border-purple-50 hover:bg-purple-50 focus:bg-purple-50 active:bg-purple-50'
-                    : 'bg-link-dark',
+                    : 'bg-link',
                 )}
                 onClick={() => {
                   setActiveChallenge(nextChallenge.id);
@@ -202,7 +202,7 @@ export function Challenges({ children, isRecipes }: ChallengesProps) {
                 </Button>
                 {nextChallenge && (
                   <Button
-                    className={cn(isRecipes ? 'bg-purple-50' : 'bg-link-dark')}
+                    className={cn(isRecipes ? 'bg-purple-50' : 'bg-link')}
                     onClick={() => {
                       setActiveChallenge(nextChallenge.id);
                       setShowSolution(false);

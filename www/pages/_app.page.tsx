@@ -4,9 +4,9 @@ import { AppProps } from 'next/app';
 // import { MainLayout } from '@www/layouts/MainLayout';
 
 import './styles/index.css';
-import '@docsearch/css';
+// import '@docsearch/css';
 import './styles/fonts.css';
-import './styles/algolia.css';
+// import './styles/algolia.css';
 import './styles/sandpack.css';
 // import '@codesandbox/sandpack-react/dist/index.css';
 

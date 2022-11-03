@@ -54,9 +54,9 @@ export function Toc({
                   <a
                     className={cx(
                       selectedIndex === i
-                        ? 'text-link-dark font-bold'
+                        ? 'text-link font-bold'
                         : 'text-content-color',
-                      'block hover:text-link-dark',
+                      'block hover:text-link',
                     )}
                     href={h.url}
                   >

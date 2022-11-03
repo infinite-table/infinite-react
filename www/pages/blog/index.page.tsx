@@ -19,7 +19,7 @@ export default function RecentPosts() {
   return (
     <>
       <div className="w-full lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
-        <div className="max-w-7xl px-5 sm:px-12 mx-auto w-full container pt-10 ">
+        <div className="max-w-7xl px-4 sm:px-12 mx-auto w-full container pt-10 ">
           <header className="pt-14 pb-8 ">
             <div className="inline-flex items-center mb-8">
               <Seo
