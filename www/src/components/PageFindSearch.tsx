@@ -67,7 +67,7 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
         }
       };
     }
-  }, [isShowing]);
+  }, [isShowing, alwaysShow]);
 
   React.useEffect(() => {
     function waitFor(
