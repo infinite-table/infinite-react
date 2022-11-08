@@ -6,7 +6,7 @@ function roundDownToTens(val: number) {
   return val - (val % 10);
 }
 export default test.describe.parallel('Column autosizing tests', () => {
-  test.only('expect autoSizeColumnsKey.columnsToResize to work', async ({
+  test('expect autoSizeColumnsKey.columnsToResize to work', async ({
     page,
   }) => {
     await page.waitForInfinite();
@@ -30,7 +30,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
     // expect(widths).toEqual([67, 127, 188, 800]);
-    expect(widths.map(roundDownToTens)).toEqual([70, 110, 170, 800]);
+    expect(widths.map(roundDownToTens)).toEqual([60, 110, 170, 800]);
   });
 
   test('expect autoSizeColumnsKey.columnsToSkip to work', async ({ page }) => {
@@ -78,6 +78,6 @@ export default test.describe.parallel('Column autosizing tests', () => {
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
     // expect(widths).toEqual([67, 127, 188, 133]);
-    expect(widths.map(roundDownToTens)).toEqual([70, 110, 170, 130]);
+    expect(widths.map(roundDownToTens)).toEqual([60, 110, 170, 130]);
   });
 });
