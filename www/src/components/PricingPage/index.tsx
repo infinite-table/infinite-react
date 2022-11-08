@@ -318,15 +318,29 @@ export function PricingPage() {
                   <PriceSummary count={count} />
                 </div>
 
-                <div className="text-center">
-                  <AccentButton
+                <div className="text-center mt-10">
+                  {/* <AccentButton
                     disabled={count >= 20 || !HAS_PADDLE}
                     className="mt-10"
                     onClick={onBuyClick}
                   >
                     <>Buy Infinite Table for React</>
                     {!HAS_PADDLE ? <> - COMING SOON</> : null}
-                  </AccentButton>
+                  </AccentButton> */}
+                  <span className="text-base">
+                    We're close to our v1 launch and will start accepting
+                    payments.
+                  </span>
+                  <br />
+                  <p className=" text-base">Until then</p>
+                  <span className=" text-xl">
+                    <a
+                      className="text-glow"
+                      href="mailto:admin@infinite-table.com?subject=Free 3 month license"
+                    >
+                      Get a free 3 month license
+                    </a>
+                  </span>
                 </div>
               </Card>
             </div>

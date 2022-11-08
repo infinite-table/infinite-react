@@ -51,7 +51,7 @@ const UL = (p: JSX.IntrinsicElements['ul']) => (
   <ul className="ml-6 my-3 list-disc" {...p} />
 );
 
-const Divider = () => <hr className="my-6 block border-b border-border-dark" />;
+const Divider = () => <hr className="my-6 block border-b" />;
 
 const Gotcha = ({
   children,

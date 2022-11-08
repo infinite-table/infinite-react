@@ -389,6 +389,23 @@ const ExampleHeaderComponent: React.FunctionComponent<
 
 </Prop>
 
+<Prop name="columns.contentFocusable" type="boolean|(params) => boolean">
+
+> Specifies if the column (or cell, if a function is used) renders content that will/should be focusable (via tab-navigation)
+
+
+<Sandpack title="Columns with cell content focusable">
+
+
+```ts file=column-contentFocusable-example.page.tsx
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
 <Prop name="columns.cssEllipsis" type="boolean" defaultValue={true}>
 
 > Specifies if the column should show ellipsis for content that is too long and does not fit the column width.

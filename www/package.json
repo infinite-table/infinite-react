@@ -11,6 +11,7 @@
     "update-css-vars-list": "node build/create-css-vars-list.js",
     "///": "/// copying the license file and also append --- layout: NoDocs --- at the beginning of the file",
     "copy-license": "echo \"---\nlayout: NoDocs\n---\n$(cat ../source/LICENSE.md)\" > LICENSE.md",
+    "watch-license": "npm run copy-license && chokidar ../source/LICENSE.md -c 'npm run copy-license'",
     "serve-build": "http-server -p 3000 out",
     "source-build": "npm run --prefix=.. build",
     "generate-lib-dts": "echo all-fine",
@@ -75,6 +76,7 @@
     "stripe": "^8.193.0"
   },
   "devDependencies": {
+    "chokidar-cli": "^3.0.0",
     "@types/body-scroll-lock": "^2.6.1",
     "@types/classnames": "^2.2.10",
     "@types/github-slugger": "^1.3.0",
