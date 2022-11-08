@@ -89,7 +89,9 @@ export const LogoAndTitle = (props: { color?: InfiniteLogoColors }) => (
         }}
       />
 
-      <span className="whitespace-nowrap">Infinite Table</span>
+      <span className="whitespace-nowrap text-content-color">
+        Infinite Table
+      </span>
     </a>
   </Link>
 );

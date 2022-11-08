@@ -327,18 +327,19 @@ export function PricingPage() {
                     <>Buy Infinite Table for React</>
                     {!HAS_PADDLE ? <> - COMING SOON</> : null}
                   </AccentButton> */}
-                  <span className="text-base">
-                    We're close to our v1 launch and will start accepting
-                    payments.
+                  <span className="text-sm">
+                    We are close to the official launch of Infinite Table and
+                    will start accepting payments. In the meantime we are happy
+                    to reward our first users with a
                   </span>
                   <br />
-                  <p className=" text-base">Until then</p>
+
                   <span className=" text-xl">
                     <a
                       className="text-glow"
                       href="mailto:admin@infinite-table.com?subject=Free 3 month license"
                     >
-                      Get a free 3 month license
+                      free 3 month license
                     </a>
                   </span>
                 </div>
