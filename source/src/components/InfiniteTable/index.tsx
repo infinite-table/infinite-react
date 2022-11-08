@@ -61,6 +61,7 @@ import { position, zIndex, top, left } from './utilities.css';
 import { toCSSVarName } from './utils/toCSSVarName';
 import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
+import { FocusDetect } from './components/FocusDetect';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -257,6 +258,7 @@ export const InfiniteTableComponent = React.memo(
         ) : null}
         <InfiniteTableFooter />
         {licenseValid ? null : <InfiniteTableLicenseFooter />}
+        <FocusDetect<T> />
       </div>
     );
   },

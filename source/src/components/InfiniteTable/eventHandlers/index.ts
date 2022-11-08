@@ -51,13 +51,6 @@ function handleDOMEvents<T>() {
         return;
       }
       const event = cellClickParam.event;
-      const virtualEvent = {
-        metaKey: event.metaKey,
-        ctrlKey: event.ctrlKey,
-        shiftKey: event.shiftKey,
-        key: '',
-        preventDefault: () => event.preventDefault(),
-      };
 
       onCellClick(
         {
@@ -65,7 +58,7 @@ function handleDOMEvents<T>() {
           rowIndex: cellClickParam.rowIndex,
           colIndex: cellClickParam.colIndex,
         },
-        virtualEvent,
+        { ...event, key: '' },
       );
     }
     const removeOnCellClick = context

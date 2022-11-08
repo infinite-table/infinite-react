@@ -12,6 +12,8 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 import { defaultFilterEditors } from '../components/FilterEditors';
+
+import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import { ThemeVars } from '../theme.css';
 import {
   InfiniteTableComputedColumn,
@@ -92,18 +94,31 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     (globalThis as any).renderer = renderer;
   }
 
+  const domRef = createRef<HTMLDivElement>();
+
   return {
     renderer,
     onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
     columnContextMenuVisibleForColumnId: null,
 
+    getDOMNodeForCell: (cellPosition: CellPosition) => {
+      if (!domRef.current) {
+        return null;
+      }
+
+      const selector = `.${InfiniteTableColumnCellClassName}[data-row-index="${cellPosition.rowIndex}"][data-col-index="${cellPosition.colIndex}"]`;
+
+      return domRef.current.querySelector(selector) || null;
+    },
+
     brain,
     headerBrain,
 
-    domRef: createRef(),
+    domRef,
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
+    focusDetectDOMRef: createRef(),
     activeCellIndicatorDOMRef: createRef(),
 
     onColumnMenuClick: buildSubscriptionCallback<{
@@ -157,6 +172,8 @@ export const forwardProps = <T>(
     groupColumn: 1,
     onReady: 1,
     domProps: 1,
+    onKeyDown: 1,
+    onCellClick: 1,
     focusedClassName: 1,
     focusedWithinClassName: 1,
     focusedStyle: 1,

@@ -6,7 +6,7 @@ function roundDownToTens(val: number) {
   return val - (val % 10);
 }
 export default test.describe.parallel('Column autosizing tests', () => {
-  test('expect autoSizeColumnsKey.columnsToResize to work', async ({
+  test.only('expect autoSizeColumnsKey.columnsToResize to work', async ({
     page,
   }) => {
     await page.waitForInfinite();
@@ -25,7 +25,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
 
     await page.click('button');
 
-    await page.waitForTimeout(20);
+    await page.waitForTimeout(50);
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 

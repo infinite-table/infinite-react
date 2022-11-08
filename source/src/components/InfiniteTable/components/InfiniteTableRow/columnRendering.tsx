@@ -1,30 +1,21 @@
-import { DataSourceState } from '../../../DataSource';
 import {
-  InfiniteTableApi,
   InfiniteTableColumn,
   InfiniteTableColumnRenderParam,
   InfiniteTableComputedColumn,
   InfiniteTableRowInfo,
-  InfiniteTableState,
 } from '../../types';
 import {
   InfiniteTableColumnValueFormatterParams,
   InfiniteTableColumnWithField,
 } from '../../types/InfiniteTableColumn';
-import { InfiniteTableActions } from '../../types/InfiniteTableState';
+
+import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
 function isColumnWithField<T>(
   c: InfiniteTableColumn<T>,
 ): c is InfiniteTableColumnWithField<T> & InfiniteTableColumn<T> {
   return typeof (c as InfiniteTableColumnWithField<T>).field === 'string';
 }
-
-export type InfiniteTableColumnRenderingContext<T> = {
-  getState: () => InfiniteTableState<T>;
-  getDataSourceState: () => DataSourceState<T>;
-  actions: InfiniteTableActions<T>;
-  api: InfiniteTableApi<T>;
-};
 
 export function getGroupByColumn<T>(options: {
   rowInfo: InfiniteTableRowInfo<T>;
@@ -262,3 +253,31 @@ export function getFormattedValueContextForCell<T>(options: {
     formattedValueContext,
   };
 }
+
+// export function isCellContentFocusable<T>(
+//   column: InfiniteTableComputedColumn<T>,
+//   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>,
+// ) {
+//   if (typeof column.contentFocusable === 'function') {
+//     return column.contentFocusable({
+//       ...formattedValueContext,
+//       column,
+//     });
+//   }
+
+//   return column.contentFocusable === true;
+// }
+
+// export function isCellEditable<T>(
+//   column: InfiniteTableComputedColumn<T>,
+//   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>,
+// ) {
+//   if (typeof column.editable === 'function') {
+//     return column.editable({
+//       ...formattedValueContext,
+//       column,
+//     });
+//   }
+
+//   return column.editable === true;
+// }

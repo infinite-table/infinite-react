@@ -24,10 +24,8 @@ import { objectValuesExcept } from '../../utils/objectValuesExcept';
 import { RenderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
-import {
-  getColumnRenderingParams,
-  InfiniteTableColumnRenderingContext,
-} from './columnRendering';
+import { getColumnRenderingParams } from './columnRendering';
+import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
 import {
   InfiniteTableCell,

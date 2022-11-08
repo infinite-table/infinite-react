@@ -25,6 +25,8 @@ export function handleRowNavigation<T>(
     end: [endRow],
   } = brain.getRenderRange();
 
+  const initialActiveRowIndex = activeRowIndex;
+
   const renderRowCount = endRow - startRow - 1;
 
   const min = 0;
@@ -82,9 +84,13 @@ export function handleRowNavigation<T>(
 
   Fn();
 
-  actions.activeRowIndex = activeRowIndex;
+  if (initialActiveRowIndex !== activeRowIndex) {
+    actions.activeRowIndex = activeRowIndex;
 
-  return true;
+    return true;
+  }
+
+  return false;
 }
 
 export function handleCellNavigation<T>(

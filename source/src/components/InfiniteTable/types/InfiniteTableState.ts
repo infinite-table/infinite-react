@@ -34,12 +34,14 @@ export type GroupByMap<T> = Map<
 
 export interface InfiniteTableSetupState<T> {
   renderer: ReactHeadlessTableRenderer;
+  getDOMNodeForCell: (cellPos: CellPosition) => HTMLElement | null;
   onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
   scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
+  focusDetectDOMRef: MutableRefObject<HTMLDivElement | null>;
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnMenuClick: SubscriptionCallback<{
@@ -80,6 +82,8 @@ export interface InfiniteTableMappedState<T> {
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   resizableColumns: InfiniteTableProps<T>['resizableColumns'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
+  onKeyDown: InfiniteTableProps<T>['onKeyDown'];
+  onCellClick: InfiniteTableProps<T>['onCellClick'];
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];

@@ -228,16 +228,16 @@ export default function App() {
     const cols = getColumns();
 
     if (cols.salary) {
-      const style: InfiniteTableColumn<Developer>['style'] = ({ value }) => {
-        const increase: number = Math.abs(max - min);
-        const percentage = ((value - min) / increase) * 100;
-        let alpha = Number((percentage / 100).toPrecision(2)) - 0.2;
+      // const style: InfiniteTableColumn<Developer>['style'] = ({ value }) => {
+      //   const increase: number = Math.abs(max - min);
+      //   const percentage = ((value - min) / increase) * 100;
+      //   let alpha = Number((percentage / 100).toPrecision(2)) - 0.2;
 
-        const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
+      //   const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
 
-        return { backgroundColor };
-      };
-      cols.salary.render = ({ renderBag, value, rowInfo }) => {
+      //   return { backgroundColor };
+      // };
+      cols.salary.render = ({ renderBag, value }) => {
         const increase: number = Math.abs(max - min);
         const percentage = ((value - min) / increase) * 100;
         let alpha = Number((percentage / 100).toPrecision(2)) + 0.2;

@@ -81,11 +81,13 @@ export function useDOMProps<T>(
 ) {
   const scrollbarWidth = getScrollbarWidth();
 
-  const { computed, componentState, componentActions } = useInfiniteTable<T>();
+  const { computed, componentState, componentActions, getState } =
+    useInfiniteTable<T>();
   const {
     focused,
     focusedWithin,
     domRef,
+    scrollerDOMRef,
     onBlurWithin,
     onFocusWithin,
     onSelfFocus,
@@ -204,7 +206,13 @@ export function useDOMProps<T>(
   const onFocus = (event: FocusEvent<HTMLDivElement>) => {
     initialDOMProps?.onFocus?.(event);
 
-    if (event.target === domRef.current) {
+    if (
+      event.target === domRef.current ||
+      event.target === scrollerDOMRef.current
+    ) {
+      if (getState().focused) {
+        return;
+      }
       setFocused(true);
       onSelfFocus?.(event);
 
@@ -212,18 +220,24 @@ export function useDOMProps<T>(
         setFocusedWithin(false);
         onBlurWithin?.(event);
       }
-    } else {
-      if (!focusedWithin) {
-        setFocusedWithin(true);
-        onFocusWithin?.(event);
-      }
+      return;
+    }
+    if (!focusedWithin) {
+      setFocusedWithin(true);
+      onFocusWithin?.(event);
     }
   };
 
   const onBlur = (event: FocusEvent<HTMLDivElement>) => {
     initialDOMProps?.onBlur?.(event);
 
-    if (event.target === domRef.current) {
+    if (
+      event.target === domRef.current ||
+      event.target === scrollerDOMRef.current
+    ) {
+      if (!getState().focused) {
+        return;
+      }
       setFocused(false);
       onSelfBlur?.(event);
 
@@ -231,18 +245,17 @@ export function useDOMProps<T>(
         setFocusedWithin(false);
         onBlurWithin?.(event);
       }
-    } else {
-      const contained = domRef.current?.contains((event as any).relatedTarget);
+      return;
+    }
+    const contained = domRef.current?.contains((event as any).relatedTarget);
 
-      if (!contained) {
-        setFocusedWithin(false);
-        onBlurWithin?.(event);
-      }
+    if (!contained) {
+      setFocusedWithin(false);
+      onBlurWithin?.(event);
     }
   };
 
   const domProps = {
-    tabIndex: 0,
     ...initialDOMProps,
     onFocus,
     onBlur,

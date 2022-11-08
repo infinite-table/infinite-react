@@ -3,6 +3,7 @@ import { handleKeyboardNavigation } from './keyboardNavigation';
 import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 import { handleKeyboardSelection } from './keyboardSelection';
 import { cloneRowSelection } from '../api/getSelectionApi';
+import { handleBrowserFocusChangeOnKeyboardNavigation } from './handleBrowserFocusChangeOnKeyboardNavigation';
 
 export function onKeyDown<T>(
   context: InfiniteTableKeyboardEventHandlerContext<T>,
@@ -19,7 +20,18 @@ export function onKeyDown<T>(
     event.preventDefault();
   }
 
-  if (handleKeyboardNavigation(keyboardHandlerContext, event)) {
+  if (
+    handleBrowserFocusChangeOnKeyboardNavigation(keyboardHandlerContext, event)
+  ) {
     event.preventDefault();
+  } else {
+    if (
+      !context.getState().focusedWithin &&
+      handleKeyboardNavigation(keyboardHandlerContext, event)
+    ) {
+      event.preventDefault();
+    }
   }
+
+  context.getState().onKeyDown?.(context, event);
 }

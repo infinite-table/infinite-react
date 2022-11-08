@@ -6,18 +6,17 @@ import {
   InfiniteTableKeyboardEventHandlerContext,
 } from './eventHandlerTypes';
 
+export type OnCellClickContext<T> =
+  InfiniteTableCellClickEventHandlerContext<T> &
+    InfiniteTableKeyboardEventHandlerContext<T>;
+
 export function onCellClick<T>(
-  context: InfiniteTableCellClickEventHandlerContext<T> &
-    InfiniteTableKeyboardEventHandlerContext<T>,
-  event: {
-    key: string;
-    metaKey: boolean;
-    ctrlKey: boolean;
-    shiftKey: boolean;
-    preventDefault: VoidFunction;
-  },
+  context: OnCellClickContext<T>,
+  event: React.MouseEvent<Element> & { key: string },
 ) {
   updateRowSelectionOnCellClick(context, event);
+
+  context.getState().onCellClick?.(context, event);
 }
 
 export function updateRowSelectionOnCellClick<T>(

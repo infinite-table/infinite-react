@@ -39,6 +39,9 @@ import { MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
 import { KeyOfNoSymbol } from './Utility';
 
+import { OnCellClickContext } from '../eventHandlers/onCellClick';
+import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
+
 export type LoadMaskProps = {
   visible: boolean;
   children: Renderable;
@@ -408,6 +411,36 @@ export interface InfiniteTableProps<T> {
   rowStyle?: InfiniteTablePropRowStyle<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
   columnHeaderHeight: number | string;
+
+  onKeyDown?: (
+    context: {
+      api: InfiniteTableEventHandlerContext<T>['api'];
+      getState: InfiniteTableEventHandlerContext<T>['getState'];
+      getDataSourceState: InfiniteTableEventHandlerContext<T>['getDataSourceState'];
+      actions: InfiniteTableEventHandlerContext<T>['actions'];
+    },
+    event: React.KeyboardEvent,
+  ) => void;
+
+  onCellClick?: (
+    context: {
+      rowIndex: OnCellClickContext<T>['rowIndex'];
+      colIndex: OnCellClickContext<T>['colIndex'];
+      api: OnCellClickContext<T>['api'];
+      getState: OnCellClickContext<T>['getState'];
+      getDataSourceState: OnCellClickContext<T>['getDataSourceState'];
+      actions: OnCellClickContext<T>['actions'];
+    },
+    event: React.MouseEvent,
+  ) => void;
+
+  /**
+   * Properties to be sent directly to the DOM element underlying InfiniteTable.
+   *
+   * Useful for passing a className or style and any other event handlers. For more context
+   * on some event handlers (eg: onKeyDown), you might want to use dedicated props that give you access
+   * to component state as well.
+   */
   domProps?: React.HTMLProps<HTMLDivElement>;
   /**
    * A unique identifier for the table instance. Will not be passed to the DOM.

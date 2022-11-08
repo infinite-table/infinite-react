@@ -202,6 +202,29 @@ export type InfiniteTableColumnHeaderRenderFunction<T> = (
   headerParams: InfiniteTableColumnHeaderParam<T>,
 ) => Renderable;
 
+export type InfiniteTableColumnContentFocusable<T> =
+  | boolean
+  | InfiniteTableColumnContentFocusableFn<T>;
+
+export type InfiniteTableColumnEditable<T> =
+  | boolean
+  | InfiniteTableColumnEditableFn<T>;
+
+export type InfiniteTableColumnContentFocusableFn<T> = (
+  params: InfiniteTableColumnContentFocusableParams<T>,
+) => boolean;
+
+export type InfiniteTableColumnEditableFn<T> = (
+  params: InfiniteTableColumnEditableParams<T>,
+) => boolean;
+
+export type InfiniteTableColumnContentFocusableParams<T> =
+  InfiniteTableColumnValueFormatterParams<T> & {
+    column: InfiniteTableComputedColumn<T>;
+  };
+export type InfiniteTableColumnEditableParams<T> =
+  InfiniteTableColumnContentFocusableParams<T>;
+
 export type InfiniteTableColumnWithField<T> = {
   field: keyof T;
 };
@@ -324,6 +347,9 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   sortable?: boolean;
   draggable?: boolean;
   resizable?: boolean;
+
+  contentFocusable?: InfiniteTableColumnContentFocusable<DATA_TYPE>;
+  editable?: InfiniteTableColumnEditable<DATA_TYPE>;
 
   comparer?: InfiniteTableColumnComparer<DATA_TYPE>;
   defaultHiddenWhenGroupedBy?:
