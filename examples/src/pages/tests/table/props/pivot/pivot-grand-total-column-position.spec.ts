@@ -40,7 +40,7 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     await page.click('button');
-    await page.waitForTimeout(20);
+    await page.waitForTimeout(50);
 
     // grand total position: start
 
