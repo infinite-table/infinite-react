@@ -1,0 +1,28 @@
+# Wrapper around https://github.com/actions/download-artifact which also extract the artifact from the TAR
+name: 'Download Tar Artifact'
+description: 'Download and extract a tar artifact that was previously uploaded in the workflow by the upload-tar-artifact action'
+
+inputs:
+  name:
+    description: 'Artifact name'
+    required: true
+    path:
+      description: 'Destination path'
+      required: true
+
+runs:
+  using: 'composite'
+
+  steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - run: tar -xvf artifact.tar
+      working-directory: ${{ inputs.path }}
+      shell: 'bash'
+
+    - run: rm artifact.tar
+      working-directory: ${{ inputs.path }}
+      shell: 'bash'

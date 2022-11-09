@@ -35,7 +35,6 @@ export default test.describe.parallel(
       colIds = await getHeaderColumnIds({ page });
 
       expect(colIds).toEqual(['make', 'model', 'price']);
-
       expect(await page.evaluate(() => (window as any).calls)).toEqual([
         { make: false, id: false },
         { id: false, year: false },
