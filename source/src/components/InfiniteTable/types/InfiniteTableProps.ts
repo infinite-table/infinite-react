@@ -108,6 +108,9 @@ export type InfiniteTableColumnType<T> = {
   align?: InfiniteTableColumn<T>['align'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
+  contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
+  editable?: InfiniteTableColumn<T>['editable'];
+
   columnGroup?: string;
 
   cssEllipsis?: boolean;

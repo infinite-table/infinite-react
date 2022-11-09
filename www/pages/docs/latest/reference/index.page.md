@@ -860,6 +860,14 @@ The `rowInfo` object contains information about grouping (if this row is a group
 
 </Prop>
 
+<Prop name="columns.sortable" type="boolean">
+
+> Specifies the sorting behavior for the current column. Overrides the global <PropLink name="sortable" /> prop.
+
+Use this column property in order to explicitly make the column sortable or not sortable. If not specified, the sortable prop from the column type (<PropLink name="columnTypes.sortable" />) will be used. If that is not specified either, the global <PropLink name="sortable" /> prop will be used.
+
+</Prop>
+
 <Prop name="columns.sortType" type="string" defaultValue="'string'">
 
 > Specifies the sort type for the column. See related <DataSourcePropLink name="sortTypes" />
@@ -1190,6 +1198,15 @@ This example starts with cell `[2,0]` already active.
 ```
 
 </Sandpack>
+
+</Prop>
+
+
+<Prop name="columnsTypes.sortable" type="boolean">
+
+> Specifies the sorting behavior for columns of this type.
+
+Overrides the global <PropLink name="sortable" /> prop, but is overriden by the column's own <PropLink name="columns.sortable">sortable</PropLink> property.
 
 </Prop>
 
@@ -1924,6 +1941,15 @@ Use this property to declaratively tell the `InfiniteTable` component to scroll 
 </Sandpack>
 
 </Prop>
+
+<Prop name="sortable" type="boolean" defaultValue={true}>
+
+> Specifies the sorting behavior for all columns. Can be overriden at column-level.
+
+This property controls the behavior for all columns that don't have <PropLink name="columns.sortable" /> explicitly specified (or at least specified in the column type at <PropLink name="columnTypes.sortable" />).
+
+</Prop>
+
 
 <Prop name="virtualizeColumns" type="boolean" defaultValue={true}>
 

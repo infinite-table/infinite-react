@@ -563,6 +563,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
       renderValue: colType.renderValue,
       render: colType.render,
       style: colType.style,
+      contentFocusable: colType.contentFocusable,
+      editable: colType.editable,
       renderMenuIcon: colType.renderMenuIcon,
       renderSortIcon: colType.renderSortIcon,
       renderSelectionCheckBox: colType.renderSelectionCheckBox,
