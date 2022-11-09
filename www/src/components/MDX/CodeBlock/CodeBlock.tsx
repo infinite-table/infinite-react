@@ -176,7 +176,7 @@ function getTitle(metastring: string): string {
 
   const [_, titleValue] = metaTag?.split(/=(.*)/) || [];
   if (titleValue) {
-    return humanizeString(titleValue);
+    return titleValue.replaceAll('_', ' ').replaceAll('-', ' ');
   }
 
   return '';

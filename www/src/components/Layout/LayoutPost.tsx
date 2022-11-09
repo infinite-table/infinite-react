@@ -19,6 +19,7 @@ import { useTwitter } from './useTwitter';
 interface PageFrontmatter {
   id?: string;
   title: string;
+  draft?: boolean;
   description?: string;
   author: string[];
   date?: string;
@@ -84,6 +85,7 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
           <div className="ml-0 2xl:mx-auto ">
             <Seo
               title={meta.title}
+              draft={meta.draft}
               description={`${
                 meta.description || meta.title
               } | Infinite Table DataGrid for React`}

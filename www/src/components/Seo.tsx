@@ -7,6 +7,7 @@ export interface SeoProps {
   description?: string;
   image?: string;
   titleSuffix?: boolean;
+  draft?: boolean;
   // jsonld?: JsonLDType | Array<JsonLDType>;
   children?: React.ReactNode;
 }
@@ -14,6 +15,7 @@ export interface SeoProps {
 export const Seo = withRouter(
   ({
     title,
+    draft,
     titleSuffix = true,
     description,
     router,
@@ -32,6 +34,7 @@ export const Seo = withRouter(
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
         />
 
+        {draft ? <meta name="robots" content="noindex" /> : null}
         {title != null && <title key="title">{title}</title>}
         {description != null && (
           <meta name="description" key="description" content={description} />
