@@ -60,7 +60,7 @@ const Gotcha = ({
   children: React.ReactNode;
   title?: React.ReactNode;
 }) => (
-  <ExpandableCallout type="gotcha" title={title || 'Gotcha'}>
+  <ExpandableCallout type="gotcha" title={title ?? 'Gotcha'}>
     {children}
   </ExpandableCallout>
 );
@@ -419,4 +419,36 @@ export const MDXComponents = {
   Challenges,
   Hint,
   Solution,
+  YTEmbed: ({ url }: { url: string }) => {
+    return (
+      <iframe
+        width="100%"
+        style={{
+          aspectRatio: '16/9',
+        }}
+        src={url}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    );
+  },
+
+  CodeSandboxEmbed: ({ src }: { src: string }) => {
+    return (
+      <iframe
+        src={src}
+        style={{
+          width: '100%',
+          height: 500,
+          border: 0,
+          borderRadius: 4,
+          overflow: 'hidden',
+        }}
+        allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+        sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+      ></iframe>
+    );
+  },
 };
