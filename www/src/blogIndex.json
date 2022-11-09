@@ -9,7 +9,7 @@
       "author": [
         "admin"
       ],
-      "excerpt": "<p>It all began with the <code>&#x3C;table /></code> component …</p>\n",
+      "excerpt": "<p>We’ve been working on finding better ways to display tabular data for more that 10 years now, and collectively we have 20+ years of experience working on this.</p>\n",
       "readingTime": "8 min read"
     },
     {
@@ -21,7 +21,7 @@
       "author": [
         "admin"
       ],
-      "excerpt": "<p>In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu. In addition to that, we’ve been working on a new design for our website and getting everything ready for the release.</p>\n",
+      "excerpt": "<p><em>In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.</em></p>\n",
       "readingTime": "2 min read"
     },
     {

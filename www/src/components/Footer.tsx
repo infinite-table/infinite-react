@@ -1,15 +1,10 @@
 import * as React from 'react';
 import cn from 'classnames';
 
-import {
-  display,
-  centeredFlexColumn,
-  shadow,
-  alignSelf,
-} from '../styles/www-utils.css';
+import { shadow, alignSelf } from '../styles/www-utils.css';
 
-import { footer, width100 } from './components.css';
-import { Footer as F } from './Layout/Footer';
+import { footer } from './components.css';
+
 // import { DocsPageFooter } from './DocsFooter';
 import { OverlineCls } from './Header.css';
 import { ExternalLink } from './ExternalLink';
