@@ -189,11 +189,11 @@ We were inspired 🙏 by AG Grid, seeing the breadth of features it offers and i
 
 <CodeSandboxEmbed src="https://codesandbox.io/embed/festive-chebyshev-6smcpz?fontsize=14&module=%2Findex.js&theme=dark" />
 
-In the code above, note AG Grid is exposing its [API](https://www.ag-grid.com/javascript-data-grid/grid-api/) on the `gridOptions` object. The API is huge and allow you to do pretty much anything you want with the grid - in an imperative way, which is what you're probably looking if you're not integrating with a library/framework like Angular or React.
+In the code above ([taken from AG Grid getting started page](https://www.ag-grid.com/javascript-data-grid/getting-started/#copy-in-application-code)), note AG Grid is exposing its [API](https://www.ag-grid.com/javascript-data-grid/grid-api/) on the `gridOptions` object. The API is huge and allow you to do pretty much anything you want with the grid - in an imperative way, which is what you're probably looking if you're not integrating with a library/framework like Angular or React.
 
 After vanilla JavaScript and Angular versions of AG Grid, a React version was finally released. It was a step in the right direction - to make AG Grid more declarative - though it was a thin wrapper around React, with all the renderers and API still being imperative and not feeling like the best fit inside a React app.
 
-A few years later, AG Grid finally released a `reactUI` [version](https://blog.ag-grid.com/react-ui-overview/), with tighter integration with React and a more declarative API ❤️.
+A few years later, AG Grid finally released a `reactUI` [version](https://blog.ag-grid.com/react-ui-overview/), with tighter integration with React and a more declarative API ❤️
 
 ### [React Table](https://react-table.tanstack.com/)
 
