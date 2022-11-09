@@ -21,13 +21,7 @@ export const buttonPositionWithTransition = style({
     },
   },
 });
-export const footer = style([
-  centeredFlexRow,
-  width100,
-  {
-    minHeight: 100,
-  },
-]);
+export const footer = style([centeredFlexRow, width100]);
 
 export const SpotlightHorizontalBackgroundCls = style([
   {

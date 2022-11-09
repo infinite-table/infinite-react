@@ -1,20 +1,34 @@
 {
   "routes": [
     {
+      "path": "/blog/2022/11/08/why-another-datagrid",
+      "date": "2022-11-08",
+      "title": "Why another DataGrid?",
+      "draft": true,
+      "description": "Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different",
+      "author": [
+        "admin"
+      ],
+      "excerpt": "<p>It all began with the <code>&#x3C;table /></code> component …</p>\n",
+      "readingTime": "8 min read"
+    },
+    {
       "path": "/blog/2022/11/01/infinite-table-monthly-update-october-2022",
       "date": "2022-11-01",
       "title": "Monthly Update - October 2022",
+      "draft": false,
       "description": "Infinite Table update for October 2022 - grid menus and new website",
       "author": [
         "admin"
       ],
       "excerpt": "<p>In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu. In addition to that, we’ve been working on a new design for our website and getting everything ready for the release.</p>\n",
-      "readingTime": "7 min read"
+      "readingTime": "2 min read"
     },
     {
       "path": "/blog/2022/09/01/infinite-table-monthly-update-august-2022",
       "date": "2022-09-01",
       "title": "Monthly Update - August 2022",
+      "draft": false,
       "description": "Infinite Table update for August 2022 - row selection, column rendering, group columns",
       "author": [
         "admin"
@@ -26,6 +40,7 @@
       "path": "/blog/2022/08/01/infinite-table-monthly-update-july-2022",
       "date": "2022-08-01",
       "title": "Monthly Update - July 2022",
+      "draft": false,
       "description": "Infinite Table update for July 2022",
       "author": [
         "admin"
@@ -37,6 +52,7 @@
       "path": "/blog/2022/06/24/navigating-your-datagrid",
       "date": "2022-06-24",
       "title": "DataGrid Keyboard Navigation",
+      "draft": false,
       "description": "DataGrid Keyboard Navigation",
       "author": [
         "admin"
@@ -48,6 +64,7 @@
       "path": "/blog/2022/06/15/infinite-launch-beta",
       "date": "2022-06-15",
       "title": "Infinite Table Beta Launch 🚀",
+      "draft": false,
       "description": "Infinite Table Beta Launch 🚀",
       "author": [
         "admin"
@@ -59,6 +76,7 @@
       "path": "/blog/2021/12/10/infinite-launch",
       "date": "2021-12-10",
       "title": "Infinite Table Alpha Launch 🚀",
+      "draft": false,
       "description": "Infinite Table Alpha Launch 🚀",
       "author": [
         "admin"

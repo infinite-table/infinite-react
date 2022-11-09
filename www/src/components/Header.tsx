@@ -74,7 +74,10 @@ export function GithubLink(props: {
   );
 }
 
-export const LogoAndTitle = (props: { color?: InfiniteLogoColors }) => (
+export const LogoAndTitle = (props: {
+  color?: InfiniteLogoColors;
+  title?: string;
+}) => (
   <Link href="/">
     <a
       data-logo
@@ -90,7 +93,7 @@ export const LogoAndTitle = (props: { color?: InfiniteLogoColors }) => (
       />
 
       <span className="whitespace-nowrap text-content-color">
-        Infinite Table
+        {props.title || 'Infinite Table'}
       </span>
     </a>
   </Link>

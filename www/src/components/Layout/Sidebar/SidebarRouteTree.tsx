@@ -94,13 +94,16 @@ export function SidebarRouteTree({
   );
 
   const expanded = expandedPath;
+
   return (
     <ul className="bg-dark-custom  border-border-dark lg:bg-transparent">
-      {currentRoutes.map(
-        ({ path, title, routes, heading, transient }, index) => {
+      {currentRoutes
+        .filter((route) => !route.draft)
+        .map(({ path, title, routes, heading, transient }, index) => {
           const pagePath = path && removeFromLast(path, '.');
           const selected = slug === pagePath && !transient;
 
+          console.log({ isMobile, path, pagePath, heading });
           // if current route item has no path and children treat it as an API sidebar heading
           if (!path || !pagePath || heading) {
             return (
@@ -117,6 +120,13 @@ export function SidebarRouteTree({
           if (routes) {
             // console.log({ expanded, path });
             const isExpanded = isMobile || expanded === path;
+            const content = (
+              <SidebarRouteTree
+                isMobile={isMobile}
+                routeTree={{ title, routes }}
+                level={level + 1}
+              />
+            );
             return (
               <li key={`${title}-${path}-${level}-heading`}>
                 <SidebarLink
@@ -129,13 +139,13 @@ export function SidebarRouteTree({
                   isBreadcrumb={expandedPath === path}
                   hideArrow={isMobile}
                 />
-                <CollapseWrapper duration={250} isExpanded={isExpanded}>
-                  <SidebarRouteTree
-                    isMobile={isMobile}
-                    routeTree={{ title, routes }}
-                    level={level + 1}
-                  />
-                </CollapseWrapper>
+                {isMobile ? (
+                  content
+                ) : (
+                  <CollapseWrapper duration={250} isExpanded={isExpanded}>
+                    {content}
+                  </CollapseWrapper>
+                )}
               </li>
             );
           }
@@ -151,8 +161,7 @@ export function SidebarRouteTree({
               />
             </li>
           );
-        },
-      )}
+        })}
     </ul>
   );
 }

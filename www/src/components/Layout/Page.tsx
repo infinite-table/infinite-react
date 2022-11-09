@@ -2,7 +2,7 @@ import { MenuProvider } from '@www/components/useMenu';
 import { wwwTheme } from '@www/styles/www-utils.css';
 import * as React from 'react';
 
-import { Footer } from './Footer';
+import { Footer } from '../Footer';
 import { Nav } from './Nav';
 import { Sidebar } from './Sidebar';
 import { RouteItem, SidebarContext } from './useRouteMeta';
@@ -16,7 +16,7 @@ export function Page({ routeTree, children }: PageProps) {
     <MenuProvider>
       <SidebarContext.Provider value={routeTree}>
         <div className={`h-auto lg:h-screen flex flex-row ${wwwTheme}`}>
-          <div className="no-bg-scrollbar h-auto lg:h-full lg:overflow-y-scroll fixed flex flex-row lg:flex-col py-0 top-0 left-0 right-0 lg:max-w-xs w-full shadow lg:shadow-none z-50">
+          <div className="no-bg-scrollbar bg-black h-auto lg:h-full lg:overflow-y-scroll fixed flex flex-row lg:flex-col py-0 top-0 left-0 right-0 lg:max-w-xs w-full shadow lg:shadow-none z-50">
             <Nav />
             <Sidebar />
           </div>
@@ -28,7 +28,7 @@ export function Page({ routeTree, children }: PageProps) {
                 style={{ justifyContent: 'space-around' }}
               >
                 {children}
-                <Footer />
+                <Footer className="lg:pl-80 2xl:px-80" />
               </main>
             </div>
           </div>

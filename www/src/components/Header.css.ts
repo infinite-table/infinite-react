@@ -1,5 +1,5 @@
-import { globalStyle, style } from '@vanilla-extract/css';
-import { display, maxWidth, padding, wwwVars } from '@www/styles/www-utils.css';
+import { style } from '@vanilla-extract/css';
+import { wwwVars } from '@www/styles/www-utils.css';
 import { SpotlightHorizontalBackgroundCls } from './components.css';
 
 export const NavBarWrapCls = style([

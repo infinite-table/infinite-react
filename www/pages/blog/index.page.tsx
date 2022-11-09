@@ -1,5 +1,6 @@
 import blogIndexRecentRouteTree from '@www/blogIndexRecent.json';
 import { ExternalLink } from '@www/components/ExternalLink';
+import { LogoAndTitle } from '@www/components/Header';
 import { InfiniteLogo } from '@www/components/InfiniteLogo';
 import { getSidebarHome } from '@www/components/Layout/getSidebarHome';
 import { Page } from '@www/components/Layout/Page';
@@ -20,17 +21,14 @@ export default function RecentPosts() {
     <>
       <div className="w-full lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
         <div className="max-w-7xl px-4 sm:px-12 mx-auto w-full container pt-10 ">
-          <header className="pt-14 pb-8 ">
+          <header className="lg:pt-10 pb-8 ">
             <div className="inline-flex items-center mb-8">
               <Seo
                 title="Blog"
                 description="Official Infinite Table React news, announcements, and release notes. Infinite Table is the modern DataGrid for building React apps — faster."
               />
-              <InfiniteLogo
-                className="inline-block text-link  w-20 sm:w-28 mr-4  h-auto"
-                color="light"
-              />
-              <h1 className="text-5xl font-bold  text-content-color ">
+              <InfiniteLogo color="gradient" />
+              <h1 className="ml-4 text-5xl font-black tracking-tighter  text-content-color ">
                 Infinite Blog
               </h1>
               {/* <a
@@ -40,48 +38,50 @@ export default function RecentPosts() {
                 RSS
               </a> */}
             </div>
-            <p className="text-content-color opacity-50 text-xl leading-large">
+            <p className="text-content-color opacity-70 text-xl leading-large">
               News, announcements and release notes on Infinite Table.
             </p>
           </header>
           <div className="space-y-12 pb-40">
-            {blogIndexRecentRouteTree.routes[0].routes.map((post) => (
-              <div key={post.path}>
-                <h3 className="font-bold leading-8 text-content-color text-2xl mb-2 hover:underline">
-                  <Link href={removeFromLast(post.path, '.')}>
-                    <a>{post.title}</a>
-                  </Link>
-                </h3>
-                <div
-                  className={styles.markdown + ' mb-0'}
-                  dangerouslySetInnerHTML={{
-                    __html: post.excerpt?.trim(),
-                  }}
-                />
-                <div className="flex items-center mt-2">
-                  <div>
-                    <p className="text-sm leading-5 ">
-                      By{' '}
-                      {toCommaSeparatedList(post.author, (author) => (
-                        <ExternalLink
-                          href={getAuthor(author).url}
-                          className="font-bold betterhover:hover:underline"
-                        >
-                          <span>{getAuthor(author).name}</span>
-                        </ExternalLink>
-                      ))}
-                    </p>
-                    <div className="flex text-sm leading-5  ">
-                      <time dateTime={post.date}>
-                        {format(parseISO(post.date), 'MMMM dd, yyyy')}
-                      </time>
-                      <span className="mx-1">·</span>
-                      <span>{post.readingTime}</span>
+            {blogIndexRecentRouteTree.routes[0].routes
+              .filter((post) => !post.draft)
+              .map((post) => (
+                <div key={post.path}>
+                  <h3 className="font-bold leading-8 text-content-color text-2xl mb-2 hover:underline">
+                    <Link href={removeFromLast(post.path, '.')}>
+                      <a>{post.title}</a>
+                    </Link>
+                  </h3>
+                  <div
+                    className={styles.markdown + ' mb-0'}
+                    dangerouslySetInnerHTML={{
+                      __html: post.excerpt?.trim(),
+                    }}
+                  />
+                  <div className="flex items-center mt-2">
+                    <div>
+                      <p className="text-sm leading-5 ">
+                        By{' '}
+                        {toCommaSeparatedList(post.author, (author) => (
+                          <ExternalLink
+                            href={getAuthor(author).url}
+                            className="font-bold betterhover:hover:underline"
+                          >
+                            <span>{getAuthor(author).name}</span>
+                          </ExternalLink>
+                        ))}
+                      </p>
+                      <div className="flex text-sm leading-5  ">
+                        <time dateTime={post.date}>
+                          {format(parseISO(post.date), 'MMMM dd, yyyy')}
+                        </time>
+                        <span className="mx-1">·</span>
+                        <span>{post.readingTime}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
             {/* <div className="text-center">
               <Link href="/blog/all">
                 <a className="px-4 py-1.5 hover:bg-opacity-80 text-center bg-link text-white  font-bold   transition duration-150 ease-in-out rounded-lg inline-flex items-center">

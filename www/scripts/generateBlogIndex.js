@@ -4,9 +4,7 @@ const fm = require('gray-matter');
 const globby = require('globby');
 const parseISO = require('date-fns/parseISO');
 const readingTime = require('reading-time');
-const {
-  markdownToHtml,
-} = require('../plugins/markdownToHtml');
+const { markdownToHtml } = require('../plugins/markdownToHtml');
 
 /**
  * This looks at the ./src/pages/blog directory and creates a route manifest that can be used
@@ -18,9 +16,7 @@ Promise.resolve()
   .then(async () => {
     const routes = [];
 
-    const blogPosts = await globby(
-      'pages/blog/**/*.page.md'
-    );
+    const blogPosts = await globby('pages/blog/**/*.page.md');
 
     for (let postpath of blogPosts) {
       const [year, month, day, title] = postpath
@@ -30,26 +26,20 @@ Promise.resolve()
       const rawStr = await fs.readFile(postpath, 'utf8');
       const { data, excerpt, content } = fm(rawStr, {
         excerpt: function firstLine(file, options) {
-          file.excerpt = file.content
-            .split('\n')
-            .slice(0, 2)
-            .join(' ');
+          file.excerpt = file.content.split('\n').slice(0, 2).join(' ');
         },
       });
-      if (data.draft) {
-        continue;
-      }
-      const rendered = await markdownToHtml(
-        excerpt.trimLeft().trim()
-      );
+      // if (data.draft) {
+      // continue;
+      // }
+      const rendered = await markdownToHtml(excerpt.trimLeft().trim());
 
       const route = {
         //remove the .page from end
-        path: postpath
-          .replace('pages', '')
-          .slice(0, -1 * '.page.md'.length),
+        path: postpath.replace('pages', '').slice(0, -1 * '.page.md'.length),
         date: [year, month, day].join('-'),
         title: data.title,
+        draft: data.draft ? true : false,
         description: data.description || data.title,
         author: data.author,
         excerpt: rendered,
@@ -59,7 +49,7 @@ Promise.resolve()
     }
 
     const sorted = routes.sort((post1, post2) =>
-      parseISO(post1.date) > parseISO(post2.date) ? -1 : 1
+      parseISO(post1.date) > parseISO(post2.date) ? -1 : 1,
     );
     const blogManifest = {
       routes: sorted,
@@ -77,14 +67,11 @@ Promise.resolve()
 
     await fs.writeFile(
       path.resolve(__dirname, '../src/blogIndex.json'),
-      JSON.stringify(blogManifest, null, 2)
+      JSON.stringify(blogManifest, null, 2),
     );
     await fs.writeFile(
-      path.resolve(
-        __dirname,
-        '../src/blogIndexRecent.json'
-      ),
-      JSON.stringify(blogRecentSidebar, null, 2)
+      path.resolve(__dirname, '../src/blogIndexRecent.json'),
+      JSON.stringify(blogRecentSidebar, null, 2),
     );
   })
   .catch(console.error);

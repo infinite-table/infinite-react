@@ -60,7 +60,11 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
   return (
     <>
       <footer
-        className={`${footer} ${alignSelf.flexEnd} w-full flex flex-col ${shadow.lg} 'bg-black text-content-color ${OverlineCls} relative py-10`}
+        className={`${props.className || ''} ${footer} ${
+          alignSelf.flexEnd
+        } w-full flex flex-col ${
+          shadow.lg
+        } bg-black text-content-color ${OverlineCls} relative py-10`}
       >
         {/* Copyright © {new Date().getFullYear()} Infinite Table */}
         <div className="flex flex-col sm:grid grid-cols-4 gap-8">
@@ -82,7 +86,7 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
             <FooterLink href="/docs/latest/reference/api">API</FooterLink>
           </div>
 
-          <div className="flex flex-col  items-start">
+          <div className="flex flex-col items-start">
             <FooterLink isHeader={true}>Social</FooterLink>
 
             <GithubLink className="border-b border-transparent hover:border-b hover:border-content-color text-base">

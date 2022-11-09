@@ -15,7 +15,6 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
     - [2.4](#24)
     - [2.5](#25)
     - [2.6](#26)
-    - [2.7](#27)
   - [3. Provision of Licensed Materials and Support Services](#3-provision-of-licensed-materials-and-support-services)
     - [3.1](#31)
     - [3.2](#32)
@@ -24,12 +23,10 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
     - [3.5](#35)
     - [3.6](#36)
     - [3.7](#37)
-    - [3.8](#38)
-  - [4. Trial and Special Usage Licence](#4-trial-and-special-usage-licence)
+  - [4. Special Usage Licence](#4-special-usage-licence)
     - [4.1](#41)
     - [4.2](#42)
     - [4.3](#43)
-    - [4.4](#44)
   - [5. Charges, invoicing and payment](#5-charges-invoicing-and-payment)
     - [5.1](#51)
     - [5.2](#52)
@@ -91,7 +88,6 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
   - [3. Software updating service](#3-software-updating-service)
     - [3.1](#31-1)
     - [3.2](#32-1)
-    - [3.3](#33-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -105,17 +101,13 @@ In these Terms, where the context so admits, the following words and expressions
 
 | Term | Meaning  |
 |-------------|-------------|
-| **Additional Quotation** |has the meaning set out in clause 2.1|
 | **Application** | any software, application or elements developed by or on behalf of the Licensee using the Software; |
 | **Bug** | means any error, defect or malfunction in the Software that: (a) causes the integrity of its data to be compromised or corrupted; (b) causes an unexpected error message or fatal error to occur while using the Software; (c) causes the Software to fail to conform to any applicable warranties, including those set out in clause 6.1;|
 | **Business Day**| means each day which is not a weekend day or public holiday in the country in which the Licensor is located |
 | **Confidential Information**| means all information (whether written, oral or in some other form) disclosed to or obtained by one party (whether directly or indirectly) from the other (whether before or after the Effective Date), including all information relating to that other's business, operations, systems, processes, products, trade secrets, know-how, contracts, finances, plans, strategies or current, former or prospective clients, customers, partners or suppliers (together with copies made of any of the foregoing) and which information is marked as being confidential or might reasonably be assumed to be confidential, but excluding information which: **(a)** is available to the public other than because of any breach of these Terms; **(b)** is, when it is supplied, already known to whoever it is disclosed to in circumstances in which they are not prevented from disclosing it to others; **(c)** is independently obtained by whoever it is disclosed to in circumstances in which they are not prevented from disclosing it to others; or **(d)** is trivial or obvious;|
-|**Control**| the power to direct the management and policies of an entity whether through the ownership of voting capital, by contract or otherwise;
 |**Data Protection Legislation**| all applicable legislation for the time being in force pertaining to data protection, data privacy, data retention and/or data security (including the General Data Protection Regulation (Regulation 2016/679) ("GDPR") the Privacy and Electronic Communication Directive (Directive 2002/58/EC) and national legislation implementing or supplementing such legislation in the United Kingdom and any applicable member state of the European Union, including the Data Protection Act 2018) and all associated codes of practice and other guidance issued by any applicable data protection authority;|
-|**Developer Licence**| means a licence of the Licensed Materials granted to the Licensee which permits the Licensee to develop, between them, one Application using the Licensed Materials in accordance with and subject to these Terms, provided that new versions and different editions of an Application shall be considered, for the purposes of the number of permitted Applications, to be the same as the original Application as long as they are in the same evolutionary line;|
-|**Distribution Licence**| a licence of the Licensed Materials granted to the Licensee in addition to the Developer Licence, which permits the Licensee to sub-licence the Licensed Materials in accordance with these Terms;|
+|**Developer Licence**| means a licence of the Licensed Materials granted to the Licensee which permits the Licensee to develop Applications using the Licensed Materials in accordance with and subject to these Terms|
 |**Documentation**| means the operating manuals, user instructions, technical literature and all other related materials in eye-readable form supplied to the Licensee by the Licensor (whether in online, electronic or printed form) for aiding the use and application of the Software;|
-|**Extra Usage**| the meaning set out in clause 2.1|
 |**Fees**| means the fees for the Services, as set out in the relevant Quotation|
 |**Insolvency Event**| means, in relation to a person (which includes an individual and a legal person, such as a limited company), any of the following events: **(a)** a meeting of creditors of that person being held or an arrangement or composition with or for the benefit of its creditors (including a voluntary arrangement as defined in the Insolvency Act 1986) being proposed by or in relation to that person; **(b)** a charge-holder, receiver, administrative receiver or other similar person taking possession of or being appointed over or any distress, execution or other process being levied or enforced (and not being discharged within seven days) on the whole or a material part of the assets of that person; **(c)** that person ceasing to carry on business or being deemed to be unable to pay its debts within the meaning of section 123 Insolvency Act 1986 (except that, for the purposes of this agreement, the reference to £750 in section 123(1) of that Act shall be construed as a reference to £10,000); **(d)** that person or its directors or the holder of a qualifying floating charge or any of its creditors giving notice of their intention to appoint, appointing or making an application to the court for the appointment of, an administrator; **(e)** a petition being advertised or a resolution being passed or an order being made for the administration or the winding-up, bankruptcy or dissolution of that person; or **(f)** the happening in relation to that person of an event analogous to any of the above in any jurisdiction in which it is incorporated or resident or in which it carries on business or has assets.|
 |**Intellectual Property Rights**| means patents, patentable rights, copyright, design rights, utility models, trade marks (whether or not any of the above are registered), trade names, rights in domain names, rights in inventions, rights in data, database rights and confidential information, and all other intellectual and industrial property and similar or analogous rights existing under the laws of any country and all pending applications for and right to apply for or register the same (present, future and contingent, and including all renewals, extensions, revivals and all accrued rights of action);|
@@ -138,10 +130,9 @@ In these Terms, where the context so admits, the following words and expressions
 |**Site**| means @infinite-table/infinite-react package on the public npm registry; or any UMD bundle with an "infinite-table" prefix|
 |**Software**| means the Infinite Table software made available by the Licensor|
 |**Source Code**| means the human-readable form of computer software, together with all documentation and comments relating thereto sufficient for a reasonably skilled computer programmer to understand, use, support and modify such computer software;|
-|**Special Usage Licence**| means a Developer Licence provided at no-cost on the terms set out in clause 4.2|
-|**Support Forum**| has the meaning given to it in paragraph 1 of the Support Schedule|
+|**Special Usage Licence**| means a Developer Licence provided at no-cost on the terms set out in clause 4.1|
 |**Support Release**| means a release of the Software which corrects faults, adds functionality or otherwise amends or upgrades the Software, but which does not constitute a New Version|
-|**Support Request**| means a request communicated by the Licensee to the Licensor via the Support Forum, to report a Bug and to request correction of the Bug, or to request some other support service or assistance;|
+|**Support Request**| means a request communicated by the Licensee to the Licensor to report a Bug or to request some other support service or assistance;|
 |**Support Services**|means the support services, to be provided by the Licensor in respect of the Software (including the provision of Updates), as set out in the Support Schedule; and|
 |**Update**| means any Support Release and/or New Version.|
 
@@ -166,17 +157,12 @@ In these Terms (including the introduction and schedules) unless the context oth
     
 ### 2.1
 
-  These Terms are framework terms further to which the parties may enter into a Licence Quotation in respect of Services to be provided by the Licensor to the Licensee. The parties may also, from time to time after the Licence Quotation enter into additional quotations (whether in online, electronic or printed form) in respect of:
-    
-(a) additional Developer Licences and/or Distribution Licences in excess of the terms set out in the Licence Quotation (together referred to as "Extra Usage"); or
-
-(b) a renewed period of Support Services,
-
-(each an "Additional Quotation").
+These Terms are framework terms further to which the parties may enter into a Licence Quotation in respect of Services to be provided by the Licensor to the Licensee. 
 
 ### 2.2
 
-Each such Licence Quotation and Additional Quotation (together referred to as "Quotations" and a reference to a "Quotation" shall refer to a Licence Quotation or Additional Quotation, as applicable), once agreed in accordance with clause 2.3, shall constitute a separate contract for the provision of the Services specified in such Quotation, incorporating these Terms.
+Each such Licence Quotation once agreed in accordance with clause 2.3, shall constitute a separate contract for the provision of the Services specified in such Quotation, incorporating these Terms.
+
 ### 2.3
 
 The Licensor will only provide Services to the Licensee further to a Quotation. No Quotation shall be binding on either party unless and until agreed by both parties.
@@ -186,81 +172,47 @@ The Licensor will only provide Services to the Licensee further to a Quotation. 
 All Quotations entered into with the Licensee will be subject to the terms set out in these Terms. No terms or conditions endorsed upon, delivered with or contained in any quotation, estimate, correspondence, acknowledgement or acceptance of order or any similar document issued by the Licensee shall form part of any contract between the Licensor and the Licensee.
 
 ### 2.5
-
-The purchase of Extra Usage will entitle the Licensee to the provision of extended Support Services for a period of 1 year from the relevant Quotation Effective Date (or such other period as expressly set out in any Quotation).
-
-### 2.6
 In the event of any conflict or inconsistency between the terms of these Terms and the terms of any Quotation, the terms of the relevant Quotation shall prevail only to the extent of any such conflict or inconsistency.
 
-### 2.7
-Requests for Licence Quotations and Additional Quotations must be made by email to admin@infinite-table.com
+### 2.6
+Requests for Licence Quotations must be made by email to admin@infinite-table.com
 
 ## 3. Provision of Licensed Materials and Support Services
 
 ### 3.1
-The Licensor shall make the Licensed Materials available in Source Code form at https://github.com/infinite-table/infinite-react on the first Quotation Effective Date by provision of an activation key and any login details required to access the Licensed Materials, subject to payment of the Fees.
+The Licensor shall make the Licensed Materials available in Source Code form at https://github.com/infinite-table/infinite-react on the first Quotation Effective Date by provision of an activation key required to access the Licensed Materials, subject to payment of the Fees.
 
 ### 3.2
-Subject to clauses 3.3 and 3.4 below, the Licensor grants to the Licensee a worldwide, perpetual, non-exclusive, non-transferable, non-sublicensable, royalty-free licence (in the form of an Application Developer Licence), commencing on the relevant Quotation Effective Date, to permit Licensee Developers to use the Licensed Materials (including taking all the actions permitted by clause 3.4 below) in accordance with these Terms, subject to the limit on the number of permitted Licensee Developers set out in the relevant Quotation. Members within the group of Licensee Developers can be replaced with alternative members as long as the number of concurrent Licensee Developers at any time does not exceed the limit set out in the relevant Quotation. For the purposes of this limit, each developer modifying JavaScript code as part of the creation of an Application's user interface or Modification of a user interface shall constitute a separate Licensee Developer. For example, if the Licensee has five developers working with JavaScript code on an Application, but only two developers directly working with the Software, all five developers will be counted as Licensee Developers.
+Subject to clause 3.3 below, the Licensor grants to the Licensee a worldwide, perpetual, non-exclusive, non-transferable, non-sublicensable, royalty-free licence (in the form of a Developer Licence), commencing on the relevant Quotation Effective Date, to permit Licensee Developers to use the Licensed Materials in accordance with these Terms, subject to the limit on the number of permitted Licensee Developers set out in the relevant Quotation. Members within the group of Licensee Developers can be replaced with alternative members as long as the number of concurrent Licensee Developers at any time does not exceed the limit set out in the relevant Quotation. For the purposes of this limit, each developer modifying JavaScript code as part of the creation of an Application's user interface or Modification of a user interface shall constitute a separate Licensee Developer. For example, if the Licensee has seven developers working with JavaScript code on an Application, but only three developers directly working with the Software, all seven developers will be counted as Licensee Developers.
 
-### 3.3
-Notwithstanding anything else in these Terms, if the relevant Quotation specifies that a Distribution Licence is being granted by the Licensor to the Licensee then:
-
-(a) subject to this clause 3.3, the licence granted in clause 3.2 shall be sub-licensable and subject to the limit on the number of permitted Production Environment(s) set out in the relevant Quotation;
-
-(b) subject to this clause 3.3 and clause 3.4, the Distribution Licence shall be subject to the same applicable licence restrictions as set out in these Terms; and
-
-(c) the Licensee shall ensure that the terms of any sub-licence are in writing and are substantially the same and as restrictive as the terms of these Terms (except that the sub-licensee shall not have the right to sub-licence its rights).
-
-### 3.4 
+### 3.3 
 The Licensee may use the Licensed Materials to install, load, launch, access, run, execute, operate, and archive the Licensed Materials for production, test, archival, emergency re-start and disaster recovery purposes and to develop and create derivative works from the Licensed Materials in the form of Applications, provided that:
 
-(a) unless the relevant Quotation specifies that a Distribution Licence is being granted by the Licensor to the Licensee, any Application created must be used for the Licensee's internal business purposes only and must not be licensed to third parties; and
+(a) the Licensee shall not permit any end user of any Application to use the Software independently of, or by or with any applications other than, the Application being used by that end user.
 
-(b) the Licensee shall not permit any end user of any Application to use the Software independently of, or by or with any applications other than, the Application being used by that end user.
+### 3.4
+In the event that the Licensee creates any Modifications to the Source Code to the Software, the Licensor shall not be obliged to provide the Support Services in relation to any such Modification(s) from the date on which any such Modification(s) take place.
 
 ### 3.5
-For the avoidance of doubt, the Licensee shall be permitted to create Modifications to the Source Code to the Software for the Licensee's use of the Software in accordance with these Terms. In the event that the Licensee creates any Modifications to the Source Code to the Software, the Licensor shall not be obliged to provide the Support Services in relation to any such Modification(s) from the date on which any such Modification(s) take place.
-
-### 3.6
 The Licensee shall not change or remove the copyright notice from any of the files included in the Licensed Materials.
 
-### 3.7
+### 3.6
 The Licensee shall not redistribute the Licensed Materials or any Modifications other than as expressly permitted by these Terms. For the avoidance of doubt, the Licensee shall not redistribute the Licensed Materials or any Modifications:
 
 (a) other than by including the Software or a portion of the Software within Application(s); and
 
 (b) as part of any Application that can be described as a development toolkit or library, an application builder, a website builder, a user interface designer, or any application that is intended for use by software, application, or website developers or designers, or has a similar purpose or functionality (as determined by the Licensor).
 
-### 3.8
-Subject to clause 3.5, the Licensor will provide the Support Services to the Licensee Developers in accordance with the Support Schedule for a period of 1 year from the relevant Quotation Effective Date, or for such other period as expressly set out in the relevant Quotation.
+### 3.7
+Subject to clause 3.3, the Licensor will provide the Support Services to the Licensee Developers in accordance with the Support Schedule for a period of 1 year from the relevant Quotation Effective Date, or for such other period as expressly set out in the relevant Quotation.
 
-## 4. Trial and Special Usage Licence
+## 4. Special Usage Licence
 
 ### 4.1
 
-Notwithstanding anything else in these Terms, a Trial Licence may be granted, at the Licensors discretion, so that:
-(a) clauses 3.1, 3.2, 3.3, 3.4 and 3.8 shall not apply (unless and until a Licence Quote is entered into between the parties), and the Licensor instead hereby grants the Licensee a revocable, non-exclusive, perpetual, non-transferable and non-sublicensable licence to install, load, launch, access, run, execute, operate, and archive the Licensed Materials (as made available on the Effective Date) solely for the Licensee's internal evaluation and review purposes to determine whether to enter into a paid licence of the Software and not for any other purpose
-
-(b) the Licensee shall be able to access the Licensed Materials in Source Code form at https://github.com/infinite-table/infinite-react on the Effective Date;
-
-(c) Clauses 13 and 14 shall not apply and these Terms shall commence on the Effective Date and shall continue:
-  (i) for a period of 60 days, consisting of a trial period of 30 days and a further period of 30 days during which the parties can agree to enter into a Licence Quotation, provided that the entering into of a Licence Quotation shall cause clauses 13 and 14 to apply; or
-  (ii) until terminated by either party,
-
-whichever is first;
-
-(d) Clauses 5, 6.1 and 9 shall not apply (unless and until a Licence Quotation is entered into between the parties);
-
-(e) the Licensee acknowledges that access to and/or use of any files or output created with the Software is entirely at the Licensee's own risk; and
-
-(f) notwithstanding anything else in these Terms, the Licensor shall only be required to provide the evaluation support services to the Licensee Developers as described in the Support Schedule.
-
-### 4.2
-
 Notwithstanding anything else in these Terms, a Special Usage Licence can be granted, purely at the Licensors discretion.
 
-### 4.3
+### 4.2
 
 Without prejudice likely recipients of a Special Usage Licence will include:
 
@@ -268,9 +220,9 @@ Without prejudice likely recipients of a Special Usage Licence will include:
 (b) Charities and Non-Governmental Organisations
 (c) Open Source Products
 
-### 4.4
+### 4.3
 
-Requests for Trial and Special Usage Licences must be made by email to admin@infinite-table.com
+Requests for Special Usage Licences must be made by email to admin@infinite-table.com
 
 ## 5. Charges, invoicing and payment
 
@@ -367,7 +319,7 @@ Neither party's liability:
 
 (b) for fraudulent misrepresentation or for any other fraudulent act or omission;
 
-(c) for breach of clauses 3.6, 3.7 and/or 11;
+(c) for breach of clauses 3.5, 3.6 and/or 11;
 
 (d) for breach of any indemnity contained in these Terms; or
 
@@ -455,7 +407,7 @@ These Terms shall commence on the Effective Date and shall, unless sooner termin
 
 ### 14.1
 
-The relevant Quotation is effective as of the later of the: (i) Effective Date; and (ii) effective date set out in the relevant Quotation ("Quotation Effective Date"). The relevant Quotation shall commence on the relevant Quotation Effective Date and shall, unless sooner terminated in accordance with its terms or these Terms, continue for a period of 12 months ("Quotation Initial Term") when it shall terminate automatically without notice unless, no later than 30 days before the end of the relevant Quotation Initial Term (or any Quotation Renewal Term agreed in accordance with this clause), the parties agree in writing (by entering into an Additional Quotation), that the terms of the relevant Quotation shall be extended for a period of 12 months from the effective date set out in the relevant Additional Quotation, unless the terms of the relevant Additional Quotation expressly state otherwise: ("Quotation Renewal Term)".
+The relevant Quotation is effective as of the later of the: (i) Effective Date; and (ii) effective date set out in the relevant Quotation ("Quotation Effective Date"). The relevant Quotation shall commence on the relevant Quotation Effective Date and shall, unless sooner terminated in accordance with its terms or these Terms, continue for a period of 12 months ("Quotation Initial Term") when it shall terminate automatically without notice unless, no later than 30 days before the end of the relevant Quotation Initial Term (or any Quotation Renewal Term agreed in accordance with this clause), the parties agree in writing that the terms of the relevant Quotation shall be extended for a period of 12 months from the effective date.
 
 ### 14.2
 Unless the relevant Quotation is further extended in accordance with this clause or terminated earlier in accordance with its terms or these Terms, the relevant Quotation shall terminate automatically without notice at the end of the relevant Quotation Renewal Term.
@@ -503,13 +455,7 @@ In the event that the Licensor consents to the Licensee sub-contracting performa
 
 ### 18.3
 
-All notices and consents relating to these Terms must be in writing. Notices must be sent to the address of the recipient set out in these Terms or otherwise notified by the relevant party in accordance with these Terms. Notices shall be sent by hand or by first class recorded delivery or registered post or other form of certified or registered mail (and sent by air mail if posted to or from a place outside the United Kingdom) and shall be treated as having been delivered:
-
-(a) if sent by hand, when delivered;
-
-(b) if sent by registered mail, two days after the date of posting (or, if sent by air mail, seven days after the date of posting); and
-
-(c) if sent by email, at 9.00am on the next Business Day following transmission.
+All notices and consents relating to these Terms must be sent by email.
 
 ### 18.4
 
@@ -588,15 +534,13 @@ Notwithstanding anything else in these Terms, the Licensor shall not be obliged 
 
 (a) in relation to any Bug to the extent that it is caused by the Licensee's misuse, misconfiguration, alteration or damage to the Software; the Licensee's failure to install an Update; or use of the Software in breach of these Terms;
 
-(b) in relation to more than 10 Support Requests during the relevant Quotation Initial Term or relevant Quotation Renewal Term per licence (i.e. per Application Developer Licence and/or Distribution Licence); and
-
-(c) on any public holiday day in the UK; and
+(b) on any public holiday day in the UK; and
 
 ## 2. Corrective maintenance
 
 (a) Upon receipt of a Support Request, the Licensor shall use its reasonable endeavours to commence corrective maintenance or otherwise resolve the Support Request by the end of the following Business Day.
 
-(b) Notwithstanding anything else in the Support Schedule, the Licensor shall only be required to resolve Support Requests: **(i)** which relate to the current release of the Software and previous releases that were released less than 12 months before the date of a Support Request; and **(ii)** if a New Version is not available which would otherwise resolve the Support Request, in which case the relevant Licensee Developer(s) may acquire such New Version.
+(b) Notwithstanding anything else in the Support Schedule, the Licensor shall only be required to resolve Support Requests which relate to the current release of the Software.
 
 ## 3. Software updating service
 
@@ -605,9 +549,5 @@ Notwithstanding anything else in these Terms, the Licensor shall not be obliged 
 The Licensor shall promptly make available to the Licensee Developers, as part of the Support Services, all Updates issued generally by the Licensor to its customers or to users of the Software.
 
 ### 3.2
-
-The Licensee Developers shall have the right, in their sole discretion, to acquire any Update and, at any time, to download, or require the Licensor to make available such Update for download in the then-existing Software or, if appropriate, to substitute any New Version for the then-existing version. Updates will, upon installation (or, in the case of substitution of a New Version, upon substitution) be deemed part of the Software, governed by and to be maintained in accordance with these Terms.
-
-### 3.3
 
 The Licensor shall promptly notify the Licensee Developers of all revisions, additions or updates to all Documentation which may be necessary as a result of the provision of any Update to enable proper use to be made of the Software by the Licensee Developers.

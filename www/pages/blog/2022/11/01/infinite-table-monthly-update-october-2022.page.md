@@ -3,18 +3,23 @@ title: "Monthly Update - October 2022"
 description: "Infinite Table update for October 2022 - grid menus and new website"
 author: [admin]
 ---
-In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu. In addition to that, we've been working on a new design for our website and getting everything ready for the release.
+
+*In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.*
+
+*In addition to that, we've been working on a new design for our website and getting everything ready for the release.*
 
 ## Summary 
 
-Some new functionalities we shipped include:
+Some new functionalities we added to InfiniteTable include:
 
  * column menus
- * add support for tab navigation
+ * support for tab navigation
  
 <Hint title="Get a free license">
 
-We redesigned our website in preparation for our **v1** release and publich launch. If you want to get a free 3-month license, email us at [admin@infinite-table.com](mailto:admin@infinite-table.com) while we're still working our way through to `1.0.0`
+We redesigned our website in preparation for our **v1** release and public launch. 
+
+To receive your free 3-month license, please email us at [admin@infinite-table.com](mailto:admin@infinite-table.com) while we're still working our way through to `1.0.0`
 
 
 </Hint>
