@@ -1402,7 +1402,7 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 </Prop>
 
-<Prop name="groupColumn" type="InfiniteTableColumn|({options, toggleGroupRow}) => InfiniteTableColumn">
+<Prop name="groupColumn" type="InfiniteTableColumn|(colInfo, toggleGroupRow) => InfiniteTableColumn">
 
 > Allows you to define a custom configuration for one or multiple group columns.
 
@@ -1410,12 +1410,12 @@ If this is an object and no explicit <PropLink name="groupRenderStrategy" /> is 
 
 If it's a function, it will be called with the following arguments:
 
-- `options` - an object with the following properties:
-- `options.groupCount` - the count of row groups
-- `options.groupBy` - the array of row groups, used by the `DataSource` to do the grouping
-- `options.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
-- `options.groupByForColumn` - the grouping object (one of the items in `options.groupBy`) corresponding to the current column.
-- `options.groupIndexForColumn` - the index of `options.groupByForColumn` in `options.groupBy` - corresponding to the current column.
+- `colInfo` - an object with the following properties:
+- `colInfo.groupCount` - the count of row groups
+- `colInfo.groupBy` - the array of row groups, used by the `DataSource` to do the grouping
+- `colInfo.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
+- `colInfo.groupByForColumn` - the grouping object (one of the items in `colInfo.groupBy`) corresponding to the current column.
+- `colInfo.groupIndexForColumn` - the index of `colInfo.groupByForColumn` in `colInfo.groupBy` - corresponding to the current column.
 - `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
 
 <Gotcha>
@@ -1423,6 +1423,28 @@ If it's a function, it will be called with the following arguments:
 You can still use <PropLink name="groupColumn" /> as a function with single column group render strategy, but in this case, you have to be explicit and specify <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>.
 
 </Gotcha>
+
+<Sandpack title="groupColumn used as an object">
+
+```ts file=group-column-custom-renderers-example.page.tsx
+
+```
+
+</Sandpack>
+
+<Sandpack title="groupColumn used as a function">
+
+<Description>
+
+This example shows how to use <PropLink name="groupColumn" /> as a function that allows you to customize all generated group columns in a single place.
+
+</Description>
+
+```ts file=group-column-custom-renderers-example.page.tsx
+
+```
+
+</Sandpack>
 
 </Prop>
 
