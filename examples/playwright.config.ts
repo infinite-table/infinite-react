@@ -13,9 +13,9 @@ const config: PlaywrightTestConfig = {
   maxFailures: process.env.CI ? 10 : undefined,
   timeout: process.env.CI ? 10000 : 5000,
 
-  // Limit the number of workers on CI, use 4 locally
   workers: 4,
   fullyParallel: true,
+  reporter: 'list',
 
   use: {
     trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',

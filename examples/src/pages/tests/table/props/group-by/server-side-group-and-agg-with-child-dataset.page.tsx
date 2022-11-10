@@ -172,7 +172,7 @@ const dataSource: DataSourceData<Developer> = ({
               };
             }
           });
-          console.log(data);
+          // console.log(data);
           resolve(data);
           // }, 1150);
         }),

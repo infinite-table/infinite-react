@@ -5,14 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "dev-no-output": "next dev &> /dev/null",
-    "build": "rimraf node_modules/@types/react && rimraf node_modules/react && next build && next export",
+    "build": "rimraf .next && rimraf node_modules/@types/react && rimraf node_modules/react && next build && next export",
     "start": "next start",
-    "test": "rimraf .next && npm run build && npm run run-test",
+    "test": "npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
     "start-server": "http-server -p 3000 out",
     "play:test": "playwright test",
     "test:debug": "PWDEBUG=console playwright test",
     "test:watch": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path}'",
+    "ci:test": "concurrently -s first --kill-others \"npm run start-server -- -s\" \"npm run play:test\"",
     "tsc": "tsc --project tsconfig.json",
     "tscw": "tsc --watch --project tsconfig.json"
   },

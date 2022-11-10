@@ -85,8 +85,6 @@ export default () => {
     );
   };
 
-  console.log(data);
-
   return (
     <React.StrictMode>
       <p>
