@@ -103,7 +103,6 @@ export function SidebarRouteTree({
           const pagePath = path && removeFromLast(path, '.');
           const selected = slug === pagePath && !transient;
 
-          console.log({ isMobile, path, pagePath, heading });
           // if current route item has no path and children treat it as an API sidebar heading
           if (!path || !pagePath || heading) {
             return (

@@ -74,7 +74,6 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 </Description>
 
 ```ts file=full-demo.page.tsx
-
 ```
 
 </Sandpack>

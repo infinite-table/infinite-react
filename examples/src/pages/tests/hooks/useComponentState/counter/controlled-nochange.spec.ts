@@ -26,6 +26,7 @@ export default test.describe.parallel('hooks.use - controlled value', () => {
     await page.click('#innerinc');
 
     calls = await getCalls({ page });
+
     expect(calls.length).toEqual(1);
     //@ts-ignore
     expect(calls[0].args).toEqual([11]);

@@ -8,14 +8,14 @@
         {
           "path": "/blog/2022/11/08/why-another-datagrid",
           "date": "2022-11-08",
-          "title": "Why another DataGrid?",
+          "title": "Why another React DataGrid?",
           "draft": true,
           "description": "Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different",
           "author": [
             "admin"
           ],
-          "excerpt": "<p>We’ve been working on finding better ways to display tabular data for more that 10 years now, and collectively we have 20+ years of experience working on this.</p>\n",
-          "readingTime": "8 min read"
+          "excerpt": "<p>We’ve been working on finding better ways to display tabular data for more that a decade now and collectively we have 25+ years of experience working on this.</p>\n",
+          "readingTime": "17 min read"
         },
         {
           "path": "/blog/2022/11/01/infinite-table-monthly-update-october-2022",

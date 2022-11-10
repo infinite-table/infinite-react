@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'www/**'
+    branches:
+      - master
   issues:
     types: [opened, edited, milestoned, closed]
   label:
@@ -19,6 +21,7 @@ concurrency:
 
 jobs:
   publish-docs:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     env:
@@ -35,6 +38,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            source/package-lock.json
+            www/package-lock.json
+            examples/package-lock.json
 
       - name: Install
         run: npm ci --force

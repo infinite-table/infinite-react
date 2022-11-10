@@ -16,6 +16,7 @@ export default test.describe('deepClone', () => {
     m.set('x', { x: new Map([[o, 111]]) });
     const source = ['a', { x: 'y' }, m];
     const target = deepClone(source);
+
     expect(target).toEqual(source);
 
     const clonedMap = target[2].get('x').x;

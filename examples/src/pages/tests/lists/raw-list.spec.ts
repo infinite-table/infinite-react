@@ -17,11 +17,11 @@ export default test.describe.parallel('RawList', () => {
         const COUNT_100 = 100;
         const ITEM_SIZE = 50;
         brain.update(COUNT_100, ITEM_SIZE);
-
         brain.setAvailableSize({
           height: 510,
           width: 100,
         });
+
         brain.setScrollPosition({
           scrollTop: 10,
           scrollLeft: 0,

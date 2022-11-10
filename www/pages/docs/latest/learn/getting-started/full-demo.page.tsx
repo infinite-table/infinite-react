@@ -31,6 +31,12 @@ type Developer = {
   age: number;
 };
 
+const showLogo =
+  typeof window === 'undefined'
+    ? true
+    : window.location.host.startsWith('localhost:') ||
+      window.location.host.startsWith('infinite-table.com');
+
 const avgReducer = {
   initialValue: 0,
   reducer: (acc: number, sum: number) => acc + sum,
@@ -299,21 +305,23 @@ export default function App() {
   };
   return (
     <>
-      <div style={{ display: 'flex' }}>
-        <Link href="/">
-          <img
-            src="/logo-infinite.svg"
-            width={50}
-            title="Infinite Logo"
-            style={{ marginRight: 20 }}
-          />
-          Go Back Home
-        </Link>
+      {showLogo ? (
+        <div style={{ display: 'flex' }}>
+          <Link href="/">
+            <img
+              src="https://infinite-table.com/logo-infinite.svg"
+              width={50}
+              title="Infinite Logo"
+              style={{ marginRight: 20 }}
+            />
+            Go Back Home
+          </Link>
 
-        <Link href="/docs/latest/learn/getting-started#built-for-react-from-the-ground-up">
-          View source
-        </Link>
-      </div>
+          <Link href="/docs/latest/learn/getting-started#built-for-react-from-the-ground-up">
+            View source
+          </Link>
+        </div>
+      ) : null}
       <DataSource<Developer>
         data={dataSource}
         primaryKey="id"

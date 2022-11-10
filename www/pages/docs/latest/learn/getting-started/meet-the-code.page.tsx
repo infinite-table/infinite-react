@@ -1,5 +1,9 @@
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
-import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+  InfiniteTableColumn,
+} from '@infinite-table/infinite-react';
+
 import * as React from 'react';
 
 type Person = {
@@ -9,10 +13,7 @@ type Person = {
 };
 
 export default function App() {
-  const columns: Record<
-    string,
-    InfiniteTableColumn<Person>
-  > = React.useMemo(() => {
+  const columns = React.useMemo(() => {
     return {
       id: {
         // specifies which field from the data source
@@ -27,7 +28,7 @@ export default function App() {
         field: 'FirstName',
       },
       age: { field: 'Age', type: 'number' },
-    };
+    } as Record<string, InfiniteTableColumn<Person>>;
   }, []);
 
   const data: Person[] = React.useMemo(

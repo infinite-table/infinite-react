@@ -1,0 +1,30 @@
+# Wrapper around https://github.com/actions/upload-artifact which also TARs the artifact
+name: 'Upload Tar Artifact'
+description: 'Compress files with tar prior to upload'
+
+inputs:
+  name:
+    description: 'Artifact name'
+    required: true
+  path:
+    description: A file, directory or wildcard pattern that describes what to upload.
+    required: true
+  retention-days:
+    description: Duration after which artifact will expire in days.
+    required: false
+    default: 1
+
+runs:
+  using: 'composite'
+
+  steps:
+    - run: tar -cvf artifact.tar ${{ inputs.path }}
+      shell: bash
+    - uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}
+        path: artifact.tar
+        retention-days: ${{ inputs.retention-days }}
+
+    - run: rm artifact.tar
+      shell: 'bash'

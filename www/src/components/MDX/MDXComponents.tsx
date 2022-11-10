@@ -427,11 +427,12 @@ export const MDXComponents = {
           aspectRatio: '16/9',
         }}
         src={url}
+        className="max-w-4xl m-auto"
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
-      ></iframe>
+      />
     );
   },
 
@@ -448,7 +449,7 @@ export const MDXComponents = {
         }}
         allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
         sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-      ></iframe>
+      />
     );
   },
 };

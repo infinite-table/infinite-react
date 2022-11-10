@@ -13,7 +13,8 @@ A clear and concise description of what the bug is.
 
 **Codesandbox demo**
 
-A link to a fully working https://codesandbox.io/ demo that reproduces the issue
+A link to a fully working https://codesandbox.io/ demo that reproduces the issue.
+You can use this [starter template](https://codesandbox.io/s/serverless-framework-gxs1fb?file=/App.tsx).
 
 **To Reproduce**
 

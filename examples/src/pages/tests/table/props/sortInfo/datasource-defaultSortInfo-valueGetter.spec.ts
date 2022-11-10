@@ -13,7 +13,6 @@ export default test.describe.parallel(
       expect(headerText).toEqual('Year\n1');
 
       let values = await rowModel.getTextForColumnCells({ colId: 'y' });
-
       // expect ascending order
       expect(values).toEqual(
         //@ts-ignore
