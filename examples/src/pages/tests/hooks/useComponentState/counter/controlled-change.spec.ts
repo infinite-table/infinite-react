@@ -22,7 +22,6 @@ export default test.describe.parallel('hooks.use - controlled sortInfo', () => {
     expect(calls.length).toEqual(0);
 
     await page.click('#outsideinc');
-
     calls = await getCalls({ page });
     expect(calls.length).toEqual(0);
     expect(await getValue({ page })).toEqual('11');

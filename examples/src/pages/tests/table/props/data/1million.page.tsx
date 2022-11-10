@@ -16,7 +16,7 @@ const data: Person[] = [...new Array(100_000)].map((_x, i) => {
     FirstName: `${i}`,
   };
 });
-console.log(data);
+// console.log(data);
 
 const domProps = {
   style: { height: '80vh' },

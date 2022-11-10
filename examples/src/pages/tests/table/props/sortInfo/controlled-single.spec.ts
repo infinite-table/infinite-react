@@ -37,7 +37,6 @@ export default test.describe.parallel('Table', () => {
 
     // now click the button to enable onSortInfoChange
     await page.locator('button').click();
-
     await headerModel.clickColumnHeader({ colId: 'CompanyName' });
 
     await page.waitForTimeout(20);

@@ -113,6 +113,7 @@ export default test.describe.parallel('Grouping', () => {
 
   test('should group and flatten in correct order', () => {
     const arr = [john, marrie, espania, bob, bill];
+
     const result = flatten(
       group(
         {

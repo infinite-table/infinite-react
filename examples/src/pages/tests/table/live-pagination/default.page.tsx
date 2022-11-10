@@ -43,7 +43,7 @@ type Employee = {
 };
 
 const dataSource = (params: DataSourceDataParams<Employee>) => {
-  console.log(params);
+  // console.log(params);
   return fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL!}/employees100?_limit=10&_start=${
       params.append ? params.originalDataArray.length : 0

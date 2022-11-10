@@ -1,9 +1,6 @@
 name: RELEASE
 
 on:
-  pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
@@ -14,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   release:
+    if: ${{ contains(github.event.head_commit.message, 'release version') }}
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
@@ -47,6 +45,12 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Build test app
+        run: npm run ci:test:build
+
+      - name: Running Playwright Tests
+        run: npm run ci:test:run
+
       # - name: Linting
       #   run: npm run lint
       #   working-directory: source
@@ -63,9 +67,6 @@ jobs:
 
       - name: copy .npmrc
         run: cp .npmrc source && cp .npmrc source/dist
-
-      - name: Run test suite
-        run: npm run test:ci
 
       - name: Ship it
         uses: './.github/actions/execute-cmd'
