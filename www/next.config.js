@@ -45,6 +45,9 @@ const nextConfig = withMDX({
   },
 
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config, { dev, isServer, ...options }) {
     if (process.env.ANALYZE) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
