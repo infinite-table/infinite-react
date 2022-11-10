@@ -52,7 +52,7 @@ Note that the <PropLink name="columns.valueGetter"/> is only called for non-grou
 
 <Note>
 
-The column value getter should not return JSX or other markup, because the value return by <PropLink name="columns.valueGetter"/> will be used when the column is sorted (when sorting is done client-side and not remotely). For more in-depth inforation on sorting see [the column sorting page](./column-sorting).
+The column value getter should not return JSX or other markup, because the value return by <PropLink name="columns.valueGetter"/> will be used when the column is sorted (when sorting is done client-side and not remotely). For more in-depth information on sorting see [the column sorting page](./column-sorting).
 
 </Note>
 
