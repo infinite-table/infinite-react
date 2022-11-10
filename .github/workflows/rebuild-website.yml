@@ -6,6 +6,8 @@ on:
       - 'www/**'
     branches:
       - master
+      - dev
+      - versionise-website
   issues:
     types: [opened, edited, milestoned, closed]
   label:
