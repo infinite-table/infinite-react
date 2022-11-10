@@ -34,8 +34,8 @@ type Developer = {
 const showLogo =
   typeof window === 'undefined'
     ? true
-    : location.host.startsWith('localhost:') ||
-      location.host.startsWith('infinite-table.com');
+    : window.location.host.startsWith('localhost:') ||
+      window.location.host.startsWith('infinite-table.com');
 
 const avgReducer = {
   initialValue: 0,
