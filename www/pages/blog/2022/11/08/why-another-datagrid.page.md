@@ -25,13 +25,15 @@ Rather, it's personal reflections on the long journey the Infinite Table team ha
 
 DataGrids have been around as long as any of us can remember.
 
+They are a vital tool which allows business users to visualise, edit and manage their data. 
+
 Back in the days before Tim Berners-Lee and his colleagues changed the world for ever (and for a a couple of decades after), "serious" computing was done on the desktop.
 
-Which meant that there was a plethora of great DataGrids available on the market from the likes of DevExpress, Telerik, Syncfusion, Infragistics and others.
+And this was facilitated by a plethora of great DataGrids from the likes of DevExpress, Telerik, Syncfusion, Infragistics, Kendo and others.
 
-These products defined the feature-set that users come to expect in a DataGrid - row grouping, formatting, multiple sorting, pivoting etc. 
+These products defined the feature-set that users came to expect in a DataGrid - row grouping, formatting, multiple sorting, pivoting etc. 
 
-And which any DataGrid worth its salt today needs to offer.
+And which any DataGrid worth its salt today needs to offer today.
 
 For 2 decades and more these DataGrid repeatedly proved their worth in multiple desktop formats - MFC, WinForms, WPF and others.
 
@@ -184,7 +186,11 @@ Also ExtJS tried to make things declarative and you could describe most of your 
 
 <Gotcha title="">
 
-It was while working on a project with ExtJS 3 and exploring everything it had to offer that we had the great idea 😅 that we should start writing a DataGrid component. We were digging deep into ExtJS source code, wrote a few plugins for it and then decided to take the challenge and build a brand new DataGrid 😱. It was supposed to take us just a few short months 😅...
+It was while working on a project with ExtJS 3 and exploring everything it had to offer that we had the great idea 😅 that we should start writing a DataGrid component. 
+
+We were digging deep into ExtJS source code, wrote a few plugins for it and then decided to take the challenge and build a brand new DataGrid 😱. 
+
+It was supposed to take us just a few short months 😅...
 
 </Gotcha>
 
@@ -235,9 +241,15 @@ While AG Grid was still not available for React, ther solutions popped up in the
 ### [React Table](https://tanstack.com/table/v8/)
 
 One such solution that got massive adoption from the community was [React Table](https://tanstack.com/table/v8/) - now rebranded as TanStack Table.
-It's growth began around 2018, around the time when headless UI components started to gain traction. React Table was one of the first popular headless UI components to be released - in the same category it's worth mentioning [Downshift](https://www.downshift-js.com/) (initially launched and popularized by [Kent C. Dodds](https://kentcdodds.com/)), which helped push headless UI components to the community.
 
-React Table is a great solution for people who want to build their own UI on top of it. Some of the benefits of headless UI approach you get from React Table are:
+
+It's growth began around 2018, around the time when headless UI components started to gain traction. 
+
+React Table was one of the first popular headless UI components to be released - in the same category it's worth mentioning [Downshift](https://www.downshift-js.com/) (initially launched and popularized by [Kent C. Dodds](https://kentcdodds.com/)), which helped push headless UI components to the community.
+
+React Table is a great solution for people who want to build their own UI on top of it. 
+
+Some of the benefits of headless UI approach you get from React Table are:
 * full control over markup and styles
 * supports all styling patterns (CSS, CSS-in-JS, UI libraries, etc)
 * smaller bundle-sizes.
@@ -250,7 +262,9 @@ However, we do think it's a great 💯 fit for some use-cases - we've used it ou
 
 Notice in the code above how you're responsible for creating the markup for the table, the headers, column groups,the cells, etc. You have TOTAL control over overy aspect of the component, but this means you have to own it!
 
-On the other end of the spectrum are AG Grid and Infinite Table, which are both full-featured DataGrids that offer most of the things out of the box. With Infinite Table, we're trying to strike a balance between the two extremes - offering a declarative API that is easy to use and get started with, while still giving you the flexibility to customize the UI and the behavior of the component, via both controlled and uncontrolled props.
+At the other end of the spectrum ias AG Grid a full-featured DataGrid that offers all this out of the box. 
+
+With Infinite Table, we're trying to strike a balance between the two extremes - offering a declarative API that is easy to use and get started with, while still giving you the flexibility to customize the UI and the behavior of the component, via both controlled and uncontrolled props.
 
 Let's take a look at an example of a similar UI, this time built with Infinite Table.
 
