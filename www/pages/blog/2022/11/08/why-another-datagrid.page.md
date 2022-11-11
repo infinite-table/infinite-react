@@ -27,7 +27,7 @@ DataGrids have been around as long as any of us can remember.
 
 They are a vital tool which allows business users to visualise, edit, manage and personalise their data.
 
-Back in the days before Tim Berners-Lee and his colleagues changed the world for ever (and for a couple of decades after), "serious" business applications lived on the desktop.
+Before Tim Berners-Lee and his colleagues changed the world for ever (and for a couple of decades after), "serious" business applications lived on the desktop.
 
 This was accompanied and facilitated by a plethora of great DataGrids from the likes of DevExpress, Telerik, Syncfusion, Infragistics and others.
 
@@ -206,7 +206,7 @@ We vividly remember [watching Pete Hunt talk about ReactJS and rethinking best p
 
 By the time the presentation was finished we knew we had to do something.
 
-This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of React. It was astonishing to us how easy it was to learn React at the time - only took us a few hours to fully grasp the mental model and start building reusable components.
+This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of React. It was astonishing to us how easy it was to learn React at the time - only taking a few hours to fully grasp the mental model and start building reusable components.
 
 <Gotcha title="The move to React">
 2013 was the year we switched trajectory and went full-React with all our new projects. We went back to the drawing board and started our first experiments with a DataGrid component in React. 
@@ -265,7 +265,7 @@ However, we do think it's a great 💯 fit for some use-cases - we've used it ou
 
 Notice in the code above how you're responsible for creating the markup for the table, the headers, column groups,the cells, etc. You have TOTAL control over overy aspect of the component, but this means you have to own it!
 
-At the other end of the spectrum ias AG Grid a full-featured DataGrid that offers all this out of the box. 
+At the other end of the spectrum is AG Grid a full-featured DataGrid that offers all this out of the box. 
 
 With Infinite Table, we're trying to strike a balance between these 2 very different approaches - by offering a declarative API that is easy to use and get started with, while still giving you the flexibility to customize the UI and the behavior of the component, via both controlled and uncontrolled props.
 
