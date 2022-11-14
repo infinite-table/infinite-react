@@ -18,7 +18,7 @@ async function processCss(css) {
   return result.css;
 }
 
-const OUT_FOLDER = 'dist';
+const OUT_FOLDER = process.env.INFINITE_OUT_FOLDER || 'dist';
 
 require('esbuild').build({
   entryPoints: ['src/index.tsx'],

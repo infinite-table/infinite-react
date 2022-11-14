@@ -10,6 +10,14 @@
     "react-datagrid",
     "react-infinite"
   ],
+  "config": {
+    "//": "// configures where the build artifacts will be placed - taken into account by the 'build' script and others",
+    "outdir": "dist"
+  },
+  "author": {
+    "name": "Infinite Table",
+    "email": "admin@infinite-table.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/infinite-table/infinite-react.git"
@@ -22,8 +30,11 @@
   "module": "index.esm.js",
   "typings": "index.d.ts",
   "scripts": {
-    "build": "rimraf dist && npm run tsc && npm run concat-dts && node ./build/buildPackageJson.js && npm run esbuild && npm run update-md && cp LICENSE.md ./dist && cp ../README.md ./dist",
-    "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\" \"npm run concat-dts-watch\"",
+    "build": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} npm-run-all -s rm-out-folder tsc generate-dts-file build-package-json esbuild update-md copy-license-and-readme",
+    "rm-out-folder": "rimraf $INFINITE_OUT_FOLDER",
+    "copy-license-and-readme": "cp LICENSE.md ./$INFINITE_OUT_FOLDER && cp ../README.md ./$INFINITE_OUT_FOLDER",
+    "build-package-json": "node ./build/buildPackageJson.js",
+    "watch": "npm run esbuild-esm && concurrently \"npm run tscw\" \"npm run esbuild-esm-watch\" \"npm run generate-dts-file-watch\"",
     "rollup-types": "rollup -c rollup.config.js",
     "update-md": "npm run --prefix .. doctoc",
     "esbuild": "npm run esbuild-esm && npm run esbuild-cjs",
@@ -37,11 +48,17 @@
     "test": "npm run --prefix=examples test ",
     "//-": " only build declaration files",
     "tsc": "tsc --project tsconfig.build.json",
-    "concat-dts": "tsup src/index.tsx --dts-only",
-    "concat-dts-watch": "tsup src/index.tsx --dts-only --watch",
-    "xxx - no longer used - bundle-types": "dts-bundle-generator --config bundler.config.js",
-    "tscw": "tsc --watch --project tsconfig.dev.json --outDir dist",
-    "xxx - no longer used - concat-dts": "node run-dts-concat.js",
+    "////*****": "////",
+    "generate-dts-file": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} npm-run-all -s tsup",
+    "// --": "should not be run standalone - instead, run 'npm run generate-dts-file'",
+    "tsup": "tsup src/index.tsx --dts-only --outDir=$INFINITE_OUT_FOLDER",
+    "////******": "////",
+    "////*************xxx": "////",
+    "generate-dts-file-watch": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} npm-run-all -s tsup-watch",
+    "// ---": "should not be run standalone - instead, run 'npm run generate-dts-file-watch'",
+    "tsup-watch": "tsup src/index.tsx --dts-only --watch --outDir=$INFINITE_OUT_FOLDER",
+    "////************xxx": "////",
+    "tscw": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} && tsc --watch --project tsconfig.dev.json --outDir $INFINITE_OUT_FOLDER",
     "typedoc": "typedoc",
     "lint": "tsdx lint src",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,scss,css,md}'",
@@ -101,6 +118,7 @@
     "esbuild": "^0.12.9",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.4.17",
     "prettier": "^2.5.0",
     "prettier-eslint": "^13.0.0",

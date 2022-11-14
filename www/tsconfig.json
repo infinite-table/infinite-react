@@ -19,6 +19,11 @@
       "react-dom": ["../node_modules/react-dom"],
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
+      "@infinite-table/infinite-react@prerelease": [
+        "../source/dts-prerelease/index.d.ts"
+      ],
+      "@infinite-table/infinite-react@v1": ["../source/dts-v1/index.d.ts"],
+      "@infinite-table/infinite-react@v2": ["../source/dts-v2/index.d.ts"],
       "@infinite-table/infinite-react": ["../source/dist/index.d.ts"]
     },
     "reactNamespace": "React",

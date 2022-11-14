@@ -6,7 +6,7 @@ import {
   GroupRowsState,
   DataSourceGroupBy,
   DataSourcePropAggregationReducers,
-} from '@infinite-table/infinite-react';
+} from '@infinite-table/infinite-react@prerelease';
 import * as React from 'react';
 
 type Developer = {

@@ -1,10 +1,13 @@
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+} from '@infinite-table/infinite-react@prerelease';
 import type {
   InfiniteTableProps,
   InfiniteTablePropColumns,
   DataSourceProps,
   DataSourcePropRowSelection_MultiRow,
-} from '@infinite-table/infinite-react';
+} from '@infinite-table/infinite-react@prerelease';
 import * as React from 'react';
 import { useState } from 'react';
 

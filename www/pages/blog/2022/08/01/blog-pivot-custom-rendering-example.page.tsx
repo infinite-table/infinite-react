@@ -6,8 +6,8 @@ import {
   InfiniteTableColumnAggregator,
   DataSourcePropAggregationReducers,
   InfiniteTableColumn,
-} from '@infinite-table/infinite-react';
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+} from '@infinite-table/infinite-react@prerelease';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react@prerelease';
 import * as React from 'react';
 
 type Developer = {
