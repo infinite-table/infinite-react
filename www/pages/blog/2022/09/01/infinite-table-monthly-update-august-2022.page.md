@@ -57,7 +57,7 @@ You can specify the selection via the <DPropLink name="rowSelection" /> (control
 </Description>
 
 
-```ts file=../../../../docs/latest/reference/controlled-multi-row-selection-example.page.tsx
+```ts file=blog-controlled-multi-row-selection-example.page.tsx
 ```
 
 </Sandpack>
@@ -168,7 +168,7 @@ In this example, the group column inherits the styling of the `country` column, 
 
 </Description>
 
-```ts file=../../../../docs/latest/learn/grouping-and-pivoting/row-grouping-example.page.tsx
+```ts file=blog-row-grouping-example.page.tsx
 ```
 
 </Sandpack>
@@ -213,7 +213,7 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 
 </Description>
 
-```ts file=../../../../docs/latest/reference/hide-columns-when-grouping-example.page.tsx
+```ts file=blog-hide-columns-when-grouping-example.page.tsx
 ```
 
 </Sandpack>
@@ -226,7 +226,7 @@ Group columns can now be bound to a field, by leveraging the (obviously ...) <Pr
 
 <Sandpack title="Group columns with field">
 
-```ts file=../../../../docs/latest/reference/group-column-bound-to-field-example.page.tsx
+```ts file=blog-group-column-bound-to-field-example.page.tsx
 ```
 
 </Sandpack>

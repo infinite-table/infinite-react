@@ -52,7 +52,7 @@ For resizable columns, hover the mouse between column headers to grab & drag the
 Hold SHIFT when grabbing in order to **share space on resize**.
 </Description>
 
-```ts file=../../../../docs/latest/reference/resizableColumns-example.page.tsx
+```ts file=blog-resizableColumns-example.page.tsx
 ```
 </Sandpack>
 
@@ -71,7 +71,7 @@ The default column order is the order in which columns appear in the columns obj
 
 <Sandpack title="Column order">
 
-```ts file=../../../../docs/latest/reference/columnOrder-advanced-example.page.tsx
+```ts file=blog-columnOrder-advanced-example.page.tsx
 ```
 
 </Sandpack>
@@ -81,7 +81,7 @@ The default column order is the order in which columns appear in the columns obj
 Both cell and row navigation is supported - use <PropLink name="keyboardNavigation" /> to configure it. By default, cell navigation is enabled.
 
 
-<Sandpack title="Keyboard navigation">
+<Sandpack title="Keyboard navigation" >
 
 <Description>
 
@@ -89,7 +89,7 @@ This example starts with cell `[2,0]` already active.
 
 </Description>
 
-```ts file=../../../../docs/latest/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+```ts file=blog-keyboard-navigating-cells-uncontrolled-example.page.tsx
 ```
 
 </Sandpack>
@@ -142,7 +142,7 @@ Note the `country` column is pinned at the start of the table but is also part o
 
 </Description>
 
-```ts file=../../../../docs/latest/reference/column-groups-with-pinning-example.page.tsx
+```ts file=blog-column-groups-with-pinning-example.page.tsx
 ```
 
 </Sandpack>
@@ -166,7 +166,7 @@ Pivot columns for the `canDesign` field are customized.
 
 </Description>
 
-```ts file=../../../../docs/latest/reference/pivot-custom-rendering-example.page.tsx
+```ts file=blog-pivot-custom-rendering-example.page.tsx
 ```
 
 </Sandpack>

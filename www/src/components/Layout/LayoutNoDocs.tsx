@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { MarkdownArticle, MarkdownPage, MarkdownProps } from './MarkdownPage';
+import { MarkdownArticle, MarkdownProps } from './MarkdownPage';
 
 interface PageFrontmatter {
   title: string;
