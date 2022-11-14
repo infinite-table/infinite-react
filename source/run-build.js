@@ -18,6 +18,8 @@ async function processCss(css) {
   return result.css;
 }
 
+const OUT_FOLDER = 'dist';
+
 require('esbuild').build({
   entryPoints: ['src/index.tsx'],
   bundle: true,
@@ -42,5 +44,5 @@ require('esbuild').build({
   format: format,
   bundle: true,
   platform: 'browser',
-  outfile: `dist/index${format === 'esm' ? '.esm' : ''}.js`,
+  outfile: `${OUT_FOLDER}/index${format === 'esm' ? '.esm' : ''}.js`,
 });

@@ -21,9 +21,12 @@ const result = exec('npm', [
 
 const versions = JSON.parse(result.stdout);
 
+const NEXT_PUBLIC_INFINITE_REACT_VERSION =
+  process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || versions.pop();
+
 const nextConfig = withMDX({
   env: {
-    NEXT_PUBLIC_INFINITE_REACT_VERSION: versions.pop(),
+    NEXT_PUBLIC_INFINITE_REACT_VERSION,
   },
   pageExtensions: ['page.tsx', 'page.mdx', 'page.md'],
   rewrites() {

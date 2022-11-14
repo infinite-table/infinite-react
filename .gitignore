@@ -66,6 +66,7 @@ typings/
 .next
 
 dist
+dist-old
 dist-deepmap
 .rts2_cache_cjs
 .rts2_cache_esm
