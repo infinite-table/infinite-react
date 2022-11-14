@@ -44,7 +44,7 @@ Row selection can be single or multiple, with or without a checkbox, with or wit
 
 You can specify the selection via the <DPropLink name="rowSelection" /> (controlled) or <DPropLink name="defaultRowSelection" /> (uncontrolled) props, and listen to changes via the <DPropLink name="onRowSelectionChange" /> callback prop.
 
-<Sandpack title="Multi row checkbox selection with grouping" >
+<CSEmbed id="infinite-table-multi-row-checkbox-selection-with-grouping-i9wi88" title="Multi row checkbox selection with grouping" >
 
 <Description>
 
@@ -57,10 +57,7 @@ You can specify the selection via the <DPropLink name="rowSelection" /> (control
 </Description>
 
 
-```ts file=blog-controlled-multi-row-selection-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 
 <YouWillLearnCard inline title="Find out more on row selection" path="/docs/latest/learn/selection/row-selection">
@@ -160,7 +157,7 @@ Here’s a list of Infinite Table functionalities that we enhanced in the last m
 Group columns now inherit configuration from the columns bound to the field they are grouped by - if such columns exist.
 
  
-<Sandpack title="Group column inherits style from related column">
+<CSEmbed id="infinite-table-group-column-inherits-style-from-related-column-v16qfg" title="Group column inherits style from related column">
 
 <Description>
 
@@ -168,10 +165,7 @@ In this example, the group column inherits the styling of the `country` column, 
 
 </Description>
 
-```ts file=blog-row-grouping-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 
 <Note>
@@ -203,7 +197,7 @@ Valid values for <PropLink name="columns.defaultHiddenWhenGroupedBy" /> are:
  * `{[k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
 
  
-<Sandpack title="Hide columns when grouping">
+<CSEmbed id="infinite-table-hide-columns-when-grouping-41o64x" title="Hide columns when grouping">
 
 <Description>
 
@@ -213,10 +207,7 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 
 </Description>
 
-```ts file=blog-hide-columns-when-grouping-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed >
 
 
 ### Group Columns Bound to a Field 
@@ -224,12 +215,10 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 Group columns can now be bound to a field, by leveraging the (obviously ...) <PropLink name="columns.field" /> property. This will make the group column render the value of that field for non-group rows.
 
 
-<Sandpack title="Group columns with field">
+<CSEmbed id="infinite-table-group-column-bound-to-field-6mjpzr" title="Group columns with field">
 
-```ts file=blog-group-column-bound-to-field-example.page.tsx
-```
 
-</Sandpack>
+</CSEmbed>
 
 In addition, you can now use <PropLink name="columns.renderGroupValue" /> and <PropLink name="columns.renderLeafValue" /> for configuring the rendered value for grouped vs non-grouped rows.
 

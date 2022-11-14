@@ -25,6 +25,7 @@ module.exports = {
   border: '#EBECF0', // gray-10
   'border-dark': '#343A46', // gray-80
   brand: '#0b6fcb', // gray-80
+  csdark: '#191919',
   'brand-dark': '#133048', // gray-80
   'brand-blue': '#497AFF',
   'secondary-button': '#EBECF0', // gray-10

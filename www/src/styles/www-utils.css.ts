@@ -23,6 +23,7 @@ export const colorVariables = {
   brandDark: BRAND_COLOR_DARK,
   black: colors.black,
   darkBg: colors['dark-custom'],
+  csdark: colors['csdark'],
   blue: 'blue',
   blue700: '#1c4fd8',
   glow: colors.glow,

@@ -261,7 +261,7 @@ This flexibility and total control come with a cost of needing more setup, more 
 
 However, we do think it's a great 💯 fit for some use-cases - we've used it ourselves successfully in some projects 🙏. But it's not for everyone, as in our experience, most teams today want to ship faster 🏎 and not spend time and mental energy on building their own UI.
 
-<CodeSandboxEmbed src="https://codesandbox.io/embed/github/tanstack/table/tree/main/examples/react/column-groups?fontsize=14&hidenavigation=1&module=%2Fsrc%2Fmain.tsx&theme=dark" />
+<CSEmbed src="https://codesandbox.io/embed/github/tanstack/table/tree/main/examples/react/column-groups?fontsize=14&hidenavigation=1&module=%2Fsrc%2Fmain.tsx&theme=dark" />
 
 Notice in the code above how you're responsible for creating the markup for the table, the headers, column groups,the cells, etc. You have TOTAL control over overy aspect of the component, but this means you have to own it!
 
@@ -271,7 +271,7 @@ With Infinite Table, we're trying to strike a balance between these 2 very diffe
 
 Let's take a look at an example of a similar UI, this time built with Infinite Table.
 
-<CodeSandboxEmbed src="https://codesandbox.io/embed/affectionate-matsumoto-o48no9?fontsize=14&hidenavigation=1&module=%2FApp.tsx&theme=dark" />
+<CSEmbed id="infinite-table-with-column-groups-2nn8zc" />
 
 ## Infinite Table
 

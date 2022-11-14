@@ -109,7 +109,5 @@ const nextConfig = withMDX({
   },
 });
 const createNextPluginPreval = require('next-plugin-preval/config');
-// const { IgnorePlugin } = require('webpack');
-// const { redirect } = require('next/dist/server/api-utils');
 const withNextPluginPreval = createNextPluginPreval();
 module.exports = withNextPluginPreval(withVanillaExtract(nextConfig));

@@ -44,7 +44,7 @@ Read more about how you can configure column resizing to fit your needs.
 </YouWillLearnCard>
 
 
-<Sandpack title="Resizable columns example">
+<CSEmbed id="infinite-table-resizable-columns-example-gq0fnv" title="Resizable columns example">
 
 <Description>
 For resizable columns, hover the mouse between column headers to grab & drag the resize handle.
@@ -52,9 +52,7 @@ For resizable columns, hover the mouse between column headers to grab & drag the
 Hold SHIFT when grabbing in order to **share space on resize**.
 </Description>
 
-```ts file=blog-resizableColumns-example.page.tsx
-```
-</Sandpack>
+</CSEmbed>
 
 A nice feature is support for SHIFT resizing - which will share space on resize between adjacent columns - try it in the example above.
 
@@ -69,19 +67,16 @@ Column order is a core functionality of `InfiniteTable` - read how you can lever
 
 The default column order is the order in which columns appear in the columns object, but you can specify a <PropLink name="defaultColumnOrder" /> or tightly control it via the controlled property <PropLink name="columnOrder" /> - use <PropLink name="onColumnOrderChange" /> to get notifications when columns are reordered by the user.
 
-<Sandpack title="Column order">
+<CSEmbed title="Column order" id="infinite-table-column-order-advanced-example-ro12mu">
 
-```ts file=blog-columnOrder-advanced-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 ### Keyboard Navigation
 
 Both cell and row navigation is supported - use <PropLink name="keyboardNavigation" /> to configure it. By default, cell navigation is enabled.
 
 
-<Sandpack title="Keyboard navigation" >
+<CSEmbed title="Keyboard navigation" id="infinite-table-keyboard-navigating-cells-uncontrolled-tvwkmq">
 
 <Description>
 
@@ -89,10 +84,7 @@ This example starts with cell `[2,0]` already active.
 
 </Description>
 
-```ts file=blog-keyboard-navigating-cells-uncontrolled-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 
 ## Updated Features
@@ -101,7 +93,7 @@ This example starts with cell `[2,0]` already active.
 
 Server side grouping has support for lazy loading - `InfiniteTable` will automatically load lazy rows that are configured as expanded.
 
-<Sandpack title="Lazy loaded rows are properly expanded">
+<CSEmbed id="infinite-table-lazy-grouping-with-expanded-rows-pkihtt" title="Lazy loaded rows are properly expanded">
 
 <Description>
 
@@ -109,10 +101,7 @@ In this example, `France` is specified as expanded, so as soon as it is rendered
 
 </Description>
 
-```ts file=lazy-grouping-with-expanded-rows.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 Another nice feature is the ability for a group node to also contain its direct children in the server response, which basically allows the backend to eagerly load data for certain groups.
 
@@ -134,7 +123,7 @@ Column groups is a powerful way to arrange columns to fit your business requirem
 
 </YouWillLearnCard>
 
-<Sandpack title="Column groups with pinning">
+<CSEmbed id="infinite-table-column-groups-with-pinning-ks16dp" title="Column groups with pinning">
 
 <Description>
 
@@ -142,10 +131,8 @@ Note the `country` column is pinned at the start of the table but is also part o
 
 </Description>
 
-```ts file=blog-column-groups-with-pinning-example.page.tsx
-```
 
-</Sandpack>
+</CSEmbed>
 
 
 ### Pivoting
@@ -158,7 +145,7 @@ Pivoting is probably our most advanced use-case. We offer full support for serve
 
 </YouWillLearnCard>
 
-<Sandpack title="Customized pivot columns">
+<CSEmbed id="infinite-table-custom-rendering-for-pivot-p2ern7" title="Customized pivot columns">
 
 <Description>
 
@@ -166,7 +153,4 @@ Pivot columns for the `canDesign` field are customized.
 
 </Description>
 
-```ts file=blog-pivot-custom-rendering-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
