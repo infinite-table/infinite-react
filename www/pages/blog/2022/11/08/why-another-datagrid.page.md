@@ -1,28 +1,50 @@
 ---
-title: "Why another React DataGrid?"
+title: "Why Another React DataGrid?"
 description: "Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different"
 draft: true
 author: [admin]
 ---
 
-We've been working on finding better ways to display tabular data for more that a decade now and collectively we have 25+ years of experience working on this.
+We've been working on finding better ways to display tabular data for over 2 decades now and collectively we have 35+ years of experience working on this.
 
-It all began with the `<table />` component - yeah, we've been around for quite some while, dealing with the same problem again and again. But this is what got us to where we are today.
+It all began on the desktop with a great range of DataGrids and then we moved to the web and the `<table />` component - yeah, we've been around for quite some while - all the while dealing with the same problems and requirements again and again. 
 
+This is the story of how we got to where we are today....
 
-## A (personal) history of DataGrids
+## A (personal) History of DataGrids
 
 <Note >
 
-This article is not meant to be a complete history of DataGrids. Rather, it's personal reflections on how we, the Infinite Table team, have experienced a long journey of using and building components for displaying tabular data, culminating in the creation of Infinite Table, the modern declarative DataGrid for React.
+This article is not meant to be a complete history of DataGrids. 
+
+Rather, it's personal reflections on the long journey the Infinite Table team have experienced while using and building components for displaying tabular data, culminating in Infinite Table, the modern declarative DataGrid for React.
 
 </Note>
 
-### Desktop components
+### Desktop Components
 
-### Using the `table` with `table-layout: fixed`
+DataGrids have been around as long as any of us can remember.
 
-Back in the days when the only way to show tabular data in the browser was to use the `<table />` component, it was this piece of code that made it perform well:
+They are a vital tool which allows business users to visualise, edit, manage and personalise their data.
+
+Before Tim Berners-Lee and his colleagues changed the world for ever (and for a couple of decades after), "serious" business applications lived on the desktop.
+
+This was accompanied and facilitated by a plethora of great DataGrids from the likes of DevExpress, Telerik, Syncfusion, Infragistics and others.
+
+These products defined the feature-set that users came to expect in a DataGrid - row grouping, formatting, multiple sorting, pivoting etc. 
+
+And which any DataGrid worth its salt today needs to offer today.
+
+For 2 decades and more these DataGrid repeatedly proved their worth in multiple changing desktop formats - MFC, WinForms, WPF and others.
+
+
+### Enter the Browser
+
+And then the browser came along and, in time, everything changed.
+
+While it really took until HTML5 to convince most power users to move from the desktop to the web, the need to display tabular data in the browser was there right from the start.
+
+Initially the only way to show tabular data in the browser was to use the `<table />` component, and it was this piece of code that made it happen:
 
 ```css
 table-layout: fixed;
@@ -162,13 +184,17 @@ Building on the legacy of YUI 3, the ExtJS added virtualization to make the Data
 
 Also ExtJS tried to make things declarative and you could describe most of your UI by nesting JavaScript objects into a root object. The idea was clever, but it was only applicable for the initial rendering and you had to write imperative code as soon as you wanted some changes after the initial render. 
 
-<Gotcha title="">
+<Gotcha title="What If...">
 
-It was while working on a project with ExtJS 3 and exploring everything it had to offer that we had the great idea 😅 that we should start writing a DataGrid component. We were digging deep into ExtJS source code, wrote a few plugins for it and then decided to take the challenge and build a brand new DataGrid 😱. It was supposed to take us just a few short months 😅...
+It was while working on a project with ExtJS 3 and exploring everything it had to offer that we had the great idea 😅 that we should start writing a DataGrid component. 
+
+We were digging deep into ExtJS source code, wrote a few plugins for it and then decided to take the challenge and build a brand new DataGrid 😱. 
+
+It was supposed to take us just a few short months 😅...
 
 </Gotcha>
 
-## Enter [React](https://reactjs.org/)
+## The [React](https://reactjs.org/) Revolution
 
 We were quite far in building the DataGrid component, with a dedicated templating engine under the hood (by the way, it was really good in comparison to similar solutions at that time), virtualization implemented and major functionalities finished ... when JSConf EU 2013 happened.
 
@@ -180,7 +206,7 @@ We vividly remember [watching Pete Hunt talk about ReactJS and rethinking best p
 
 By the time the presentation was finished we knew we had to do something.
 
-This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of React. It was astonishing to us how easy it was to learn React at the time - only took us a few hours to fully grasp the mental model and start building reusable components.
+This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of React. It was astonishing to us how easy it was to learn React at the time - only taking a few hours to fully grasp the mental model and start building reusable components.
 
 <Gotcha title="The move to React">
 2013 was the year we switched trajectory and went full-React with all our new projects. We went back to the drawing board and started our first experiments with a DataGrid component in React. 
@@ -190,26 +216,43 @@ While we were building the DataGrid in React we got side-tracked with other proj
 
 ### [AG Grid](https://www.ag-grid.com/)
 
-It was around this time, in 2015, that AG Grid was launched. We adopted it in all kind of projects while still trying to find time on the side to build our own DataGrid solution, the React way, with a fully declarative API.
+It was around this time, in 2015, that AG Grid was launched. 
 
-We were inspired 🙏 by AG Grid, seeing the breadth of features it offers and its expansive growth. It is a feat of engineering and shows how much the browser can be pushed by extensive use of virtualization - being able to render millions of rows and thousands of columns is no small feat. All this while keeping the performance similar as if it was rendering just a few rows and columns.
+And, wow, it was good - very good.
+
+We immediately adopted it in all kind of projects while still trying to find time on the side to build our own DataGrid solution, the React way, with a fully declarative API.
+
+We were inspired 🙏 by AG Grid, seeing the breadth of features it offers and its expansive growth. 
+
+It is a feat of engineering which illustrates just how much the browser can be pushed by extensive use of virtualization - being able to render millions of rows and thousands of columns is no small feat. 
+
+All this while keeping the performance similar as if it was rendering just a few rows and columns.
 
 <CodeSandboxEmbed src="https://codesandbox.io/embed/infallible-waterfall-csjcns?fontsize=14&module=%2Findex.js&theme=dark" />
 
-In the code above ([taken from AG Grid getting started page](https://www.ag-grid.com/javascript-data-grid/getting-started/#copy-in-application-code)), note AG Grid is exposing its [API](https://www.ag-grid.com/javascript-data-grid/grid-api/) on the `gridOptions` object. The API is huge and allow you to do pretty much anything you want with the grid - in an imperative way, which is what you're probably looking if you're not integrating with a library/framework like Angular or React.
+In the code above ([taken from AG Grid getting started page](https://www.ag-grid.com/javascript-data-grid/getting-started/#copy-in-application-code)), note that AG Grid is exposing its [API](https://www.ag-grid.com/javascript-data-grid/grid-api/) on the `gridOptions` object. 
 
-After vanilla JavaScript and Angular versions of AG Grid, a React version was finally released. It was a step in the right direction - to make AG Grid more declarative - though it was a thin wrapper around React, with all the renderers and API still being imperative and not feeling like the best fit inside a React app.
+The API is huge and allow you to do pretty much anything you want with the grid - in an imperative way, which is what you're probably looking for if you're not integrating with a library/framework like Angular or React.
+
+After vanilla JavaScript and Angular versions of AG Grid, a React version was finally released. 
+
+It was a step in the right direction - to make AG Grid more declarative - though it was a thin wrapper around React, with all the renderers and API still being imperative and not feeling like the best fit inside a React app.
 
 A few years later, AG Grid finally released a `reactUI` [version](https://blog.ag-grid.com/react-ui-overview/), with tighter integration with React and a more declarative API ❤️
 
-While AG Grid was still not available for React, ther solutions popped up in the community.
+All this time other solutions popped up in the React community.
 
 ### [React Table](https://tanstack.com/table/v8/)
 
 One such solution that got massive adoption from the community was [React Table](https://tanstack.com/table/v8/) - now rebranded as TanStack Table.
-It's growth began around 2018, around the time when headless UI components started to gain traction. React Table was one of the first popular headless UI components to be released - in the same category it's worth mentioning [Downshift](https://www.downshift-js.com/) (initially launched and popularized by [Kent C. Dodds](https://kentcdodds.com/)), which helped push headless UI components to the community.
 
-React Table is a great solution for people who want to build their own UI on top of it. Some of the benefits of headless UI approach you get from React Table are:
+It's growth began around 2018, around the time when headless UI components started to gain traction. 
+
+React Table was one of the first popular headless UI components to be released - in the same category it's worth mentioning [Downshift](https://www.downshift-js.com/) (initially launched and popularized by [Kent C. Dodds](https://kentcdodds.com/)), which helped push headless UI components to the community.
+
+React Table is a great solution for people who want to build their own UI on top of it. 
+
+Some of the benefits of headless UI approach you get from React Table are:
 * full control over markup and styles
 * supports all styling patterns (CSS, CSS-in-JS, UI libraries, etc)
 * smaller bundle-sizes.
@@ -222,7 +265,9 @@ However, we do think it's a great 💯 fit for some use-cases - we've used it ou
 
 Notice in the code above how you're responsible for creating the markup for the table, the headers, column groups,the cells, etc. You have TOTAL control over overy aspect of the component, but this means you have to own it!
 
-On the other end of the spectrum are AG Grid and Infinite Table, which are both full-featured DataGrids that offer most of the things out of the box. With Infinite Table, we're trying to strike a balance between the two extremes - offering a declarative API that is easy to use and get started with, while still giving you the flexibility to customize the UI and the behavior of the component, via both controlled and uncontrolled props.
+At the other end of the spectrum is AG Grid a full-featured DataGrid that offers all this out of the box. 
+
+With Infinite Table, we're trying to strike a balance between these 2 very different approaches - by offering a declarative API that is easy to use and get started with, while still giving you the flexibility to customize the UI and the behavior of the component, via both controlled and uncontrolled props.
 
 Let's take a look at an example of a similar UI, this time built with Infinite Table.
 
@@ -230,19 +275,23 @@ Let's take a look at an example of a similar UI, this time built with Infinite T
 
 ## Infinite Table
 
-We followed the DataGrid component space closely for more than 10 years now. During all those years we kept an eye on other components out there to get inspired. We got fresh ideas from various teams and projects - either enterprise or open source - either full-fledged or headless components like [react-table](https://tanstack.com/table/v8/).
+All this time we kept an eye on other components out there to get inspired. We got fresh ideas from various teams and projects - either enterprise or open source - either full-fledged or headless components like [react-table](https://tanstack.com/table/v8/).
 
-We've learned a lot from all these projects we've worked with and we've put all the best ideas in Infinite Table. Infinite is the fruit of years of iteration, experimentation, failures and sweat on a product that we've poured our hearts in over the course of so many years. We've agonized over all our APIs and design decisions in order to make Infinite Table the best DataGrid component out there. We're aware we're not there yet, but we're here to stay 👋 and keep getting better. We want to work closely with the community at large and get fresh ideas from other projects and teams. We can all be winners when we work together and respect each-other ❤️
+We've learned a lot from all these projects we've worked with and we've put all the best ideas in Infinite Table.
 
-It's amazing what happens when you focus on a problem for such a long time (yeah, we know 😱). We wanted to give up several times but kept pushing for over a decade. The result is a component that we're proud of and that's already been used in production by enterprise clients across many industries (more on that in a later blogpost).
+Infinite is the fruit of years of iteration, experimentation, failures and sweat on a product that we've poured our hearts in over the course of so many years. We've agonized over all our APIs and design decisions in order to make Infinite Table the best React DataGrid component out there.
+
+We're aware we're not there yet, but we're here to stay 👋 and keep getting better. We want to work closely with the community at large and get fresh ideas from other projects and teams. We can all be winners when we work together and respect each-other ❤️
+
+It's amazing what happens when you focus on a problem for such a long time (yeah, we know 😱). We wanted to give up several times but kept pushing for over a decade. The result is a component that we're proud of and is already starting to be used by enterprise clients across many industries (more on that in a later blogpost).
 
 Here are some of the key areas where we believe Infinite Table shines:
 
-### Ready to use
+### Ready to Use
 
 Infinite Table is ready to use out of the box - namely it's not headless. We target customers who want to ship — faster 🏎! We're aware you don't want to re-invent the wheel nor do you want to invest 6 months of your team to build a poor implementation of a DataGrid component that will be hard to maintain and will be a source of bugs and frustration. **You want to ship — and soon!**. If this is you and you are already using React then Infinite Table is written for you!
 
-### Feels like React - declarative API
+### Feels like React - Declarative API
 
 We want Infinite Table to feel at home in any React app. Everything about the DataGrid should be declarative - when you want to update the table, change a prop and the table will respond. No imperative API calls - we want you to be able to use Infinite Table in a way that feels natural to you and your team, so you can stay productive and use React everywhere in your frontend. 
 
@@ -299,7 +348,7 @@ function App() {
 
 Note in the code above that in order to update the column group for the `address` column, we simply change the `columnGroup` prop of the column and then we update the state of the component. The table will automatically re-render and update the column group for the `address` column. This is a fully declarative way to update the table. You don't need to call any imperative API to update it - change the props and the table will reflect the changes.
 
-### Fully controlled
+### Fully Controlled
 
 React introduced controlled components to the wider community and we've been using them for years. It's were the power of React lies - it gives the developer the flexibility to fully control (when needed) every input point of an app or component.
 
@@ -350,6 +399,8 @@ We've learned from our experience with other DataGrid components that the more f
 
 We're very excited to share our Infinite Table journey with you  ❤️ 🤩
 
-After years in the DataGrid space and working and agonizing on this component, we're happy to finally ship it 🛳 🚀. We're looking forward to [your feedback](https://github.com/infinite-table/infinite-react/issues) and suggestions.
+After years in the DataGrid space and working and agonizing on this component, we're happy to finally ship it 🛳 🚀. 
 
-We're here to stay and we're committed to improve Infinite Table and make it your go-to DataGrid component to help you ship — faster! All while staying true to the community!
+We're looking forward to receiving [your feedback](https://github.com/infinite-table/infinite-react/issues) and suggestions.
+
+We're here to stay and we're committed to improving Infinite Table and to make it your go-to React DataGrid component to help you ship — faster! All the while staying true to the community!

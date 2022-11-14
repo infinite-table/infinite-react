@@ -1,5 +1,4 @@
 <div align="center">
-
 <h1>
 <b>Infinite Table</b>
 </h1>
