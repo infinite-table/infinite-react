@@ -21,7 +21,7 @@ Rather, it's personal reflections on the long journey the Infinite Table team ha
 
 </Note>
 
-### Desktop Components
+## Desktop Components
 
 DataGrids have been around as long as any of us can remember.
 
@@ -38,7 +38,7 @@ And which any DataGrid worth its salt today needs to offer today.
 For 2 decades and more these DataGrid repeatedly proved their worth in multiple changing desktop formats - MFC, WinForms, WPF and others.
 
 
-### Enter the Browser
+## Enter the Browser
 
 And then the browser came along and, in time, everything changed.
 
@@ -56,9 +56,9 @@ However, it was not perfect, and rendering **large** datasets was still a **huge
 
 These shortcomings were obvious to developers dealing with massive datasets, so various groups and companies started coming up with solutions. One such solution came from Yahoo! as part of their larger widget library called `YUI` (it was back in the days when Y! was a big deal).
 
-### [YUI DataTable](https://clarle.github.io/yui3/yui/docs/datatable/)
+### YUI DataTable
 
-Enter YUI era - launched in 2006, the Yahoo! User Interface Library was a step forward in reusability and component architecture. With the release of YUI 3, it received a modernized set of components, and the [DataTable](https://clarle.github.io/yui3/yui/docs/datatable/) was probably the most advanced DataGrid solution out there. The component had a templating engine under the hood and allowed developers to customize some parts of the table. For its time, it was packed with functionality and was a great solution for many use-cases. 
+Enter YUI era - launched in 2006, the Yahoo! User Interface Library was a step forward in reusability and component architecture. With the release of YUI 3, it received a modernized set of components, and the [YUI DataTable](https://clarle.github.io/yui3/yui/docs/datatable/) was probably the most advanced DataGrid solution out there. The component had a templating engine under the hood and allowed developers to customize some parts of the table. For its time, it was packed with functionality and was a great solution for many use-cases. 
 
 It had a rich API, exposing lots of events, callbacks and methods for things like moving columns around, getting the data record for a given row, adding rows and columns, etc - all imperative code. The API was powerful and allowed developers to build complex solutions, but it was all stateful and imperative - something very normal for its epoch, but something we've learned to avoid in the last few years.
 
@@ -194,7 +194,7 @@ It was supposed to take us just a few short months 😅...
 
 </Gotcha>
 
-## The [React](https://reactjs.org/) Revolution
+## The React Revolution
 
 We were quite far in building the DataGrid component, with a dedicated templating engine under the hood (by the way, it was really good in comparison to similar solutions at that time), virtualization implemented and major functionalities finished ... when JSConf EU 2013 happened.
 
@@ -206,7 +206,7 @@ We vividly remember [watching Pete Hunt talk about ReactJS and rethinking best p
 
 By the time the presentation was finished we knew we had to do something.
 
-This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of React. It was astonishing to us how easy it was to learn React at the time - only taking a few hours to fully grasp the mental model and start building reusable components.
+This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of [React](https://reactjs.org/). It was astonishing to us how easy it was to learn React at the time - only taking a few hours to fully grasp the mental model and start building reusable components.
 
 <Gotcha title="The move to React">
 2013 was the year we switched trajectory and went full-React with all our new projects. We went back to the drawing board and started our first experiments with a DataGrid component in React. 
@@ -214,9 +214,9 @@ This declarative way of describing the UI got us hooked and we knew we had to **
 
 While we were building the DataGrid in React we got side-tracked with other projects but we saw the same pattern again and again - people trying to implement the grid component again and again, in various projects. Most of those attempts either failed terribly or at best they were good-enough for a simple use-case.
 
-### [AG Grid](https://www.ag-grid.com/)
+### AG Grid
 
-It was around this time, in 2015, that AG Grid was launched. 
+It was around this time, in 2015, that [AG Grid](https://www.ag-grid.com/) was launched. 
 
 And, wow, it was good - very good.
 
@@ -242,7 +242,7 @@ A few years later, AG Grid finally released a `reactUI` [version](https://blog.a
 
 All this time other solutions popped up in the React community.
 
-### [React Table](https://tanstack.com/table/v8/)
+### React Table
 
 One such solution that got massive adoption from the community was [React Table](https://tanstack.com/table/v8/) - now rebranded as TanStack Table.
 
