@@ -537,6 +537,17 @@ const DarkTheme = {
   [ThemeVars.components.Menu.shadowColor]: `rgba(255,255,255,0.25)`,
 };
 
+DarkTheme[ThemeVars.components.Menu.background] =
+  DarkTheme[ThemeVars.background];
+DarkTheme[ThemeVars.components.Menu.color] =
+  DarkTheme[ThemeVars.components.Cell.color];
+DarkTheme[ThemeVars.components.Menu.itemDisabledBackground] =
+  DarkTheme[ThemeVars.components.Menu.background];
+DarkTheme[ThemeVars.components.Menu.itemActiveBackground] =
+  DarkTheme[ThemeVars.components.Row.hoverBackground];
+DarkTheme[ThemeVars.components.Menu.itemPressedBackground] =
+  DarkTheme[ThemeVars.components.Row.hoverBackground];
+
 globalStyle(':root', {
   //@ts-ignore
   vars: LightTheme,
