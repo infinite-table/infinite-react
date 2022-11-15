@@ -6,6 +6,7 @@ on:
       - 'www/**'
     branches:
       - master
+      - dev
   issues:
     types: [opened, edited, milestoned, closed]
   label:

@@ -17,7 +17,7 @@ const sortOpenFirst = (issue1, issue2) => {
 async function fetchAllMilestoneIssues(
   milestone,
   status = 'all',
-  currentPage = 0
+  currentPage = 0,
 ) {
   const url = `https://api.github.com/repos/${repo}/issues?milestone=${milestone}&state=${status}&per_page=100`;
 
@@ -25,11 +25,7 @@ async function fetchAllMilestoneIssues(
 
   if (issues.length) {
     issues.push(
-      ...(await fetchAllMilestoneIssues(
-        milestone,
-        status,
-        currentPage + 1
-      ))
+      ...(await fetchAllMilestoneIssues(milestone, status, currentPage + 1)),
     );
   }
 
@@ -39,10 +35,11 @@ async function fetchAllMilestoneIssues(
 async function getMilestone(milestone, status = 'all') {
   const url = `https://api.github.com/repos/${repo}/issues?milestone=${milestone}&state=${status}`;
 
-  const issues = await fetchAllMilestoneIssues(
-    milestone,
-    status
-  );
+  const issues = await fetchAllMilestoneIssues(milestone, status);
+
+  if (!Array.isArray(issues)) {
+    console.warn(`Loading of issues for milestone ${milestone} has failed!`);
+  }
 
   return {
     milestone: await (
@@ -50,26 +47,28 @@ async function getMilestone(milestone, status = 'all') {
         `https://api.github.com/repos/${repo}/milestones/${milestone}`,
         {
           headers,
-        }
+        },
       )
     ).json(),
-    issues: issues
-      .map((issue) => {
-        const typeLabel = issue.labels.find((label) =>
-          label.name.startsWith('Type')
-        );
-        return {
-          title: issue.title,
-          state: issue.state,
-          type: typeLabel
-            ? typeLabel.name.slice('Type:'.length).trim()
-            : issue.labels[0]
-            ? issue.labels[0].name
-            : '',
-          url: issue.html_url,
-        };
-      })
-      .sort(sortOpenFirst),
+    issues: !Array.isArray(issues)
+      ? []
+      : issues
+          .map((issue) => {
+            const typeLabel = issue.labels.find((label) =>
+              label.name.startsWith('Type'),
+            );
+            return {
+              title: issue.title,
+              state: issue.state,
+              type: typeLabel
+                ? typeLabel.name.slice('Type:'.length).trim()
+                : issue.labels[0]
+                ? issue.labels[0].name
+                : '',
+              url: issue.html_url,
+            };
+          })
+          .sort(sortOpenFirst),
   };
 }
 
@@ -107,9 +106,7 @@ const remarkMilestonePlugin = function () {
 
     await Promise.all(
       tasks.map(async ([id, node, index, parent]) => {
-        const { issues, milestone } = await getMilestone(
-          id
-        );
+        const { issues, milestone } = await getMilestone(id);
 
         const content = [
           `<table>`,
@@ -120,19 +117,17 @@ const remarkMilestonePlugin = function () {
           // '--- | ---',
           ...issues.map(
             (issue) => `<tr><td>${issue.type}</td><td>
-              ${
-                issue.state === 'closed' ? '✅  ' : '🔲  '
-              } <a href="${
+              ${issue.state === 'closed' ? '✅  ' : '🔲  '} <a href="${
               issue.url
             }" className="ml-2" target="_blank" rel="noopener">${
               issue.title
-            }</a></td></tr>`
+            }</a></td></tr>`,
           ),
           '</table>',
         ].join('\n');
         const children = unified.parse(content).children;
         parent.children.splice(index, 1, ...children);
-      })
+      }),
     );
   };
 };

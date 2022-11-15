@@ -21,9 +21,12 @@ const result = exec('npm', [
 
 const versions = JSON.parse(result.stdout);
 
+const NEXT_PUBLIC_INFINITE_REACT_VERSION =
+  process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || versions.pop();
+
 const nextConfig = withMDX({
   env: {
-    NEXT_PUBLIC_INFINITE_REACT_VERSION: versions.pop(),
+    NEXT_PUBLIC_INFINITE_REACT_VERSION,
   },
   pageExtensions: ['page.tsx', 'page.mdx', 'page.md'],
   rewrites() {
@@ -45,6 +48,9 @@ const nextConfig = withMDX({
   },
 
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config, { dev, isServer, ...options }) {
     if (process.env.ANALYZE) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -103,7 +109,5 @@ const nextConfig = withMDX({
   },
 });
 const createNextPluginPreval = require('next-plugin-preval/config');
-// const { IgnorePlugin } = require('webpack');
-// const { redirect } = require('next/dist/server/api-utils');
 const withNextPluginPreval = createNextPluginPreval();
 module.exports = withNextPluginPreval(withVanillaExtract(nextConfig));

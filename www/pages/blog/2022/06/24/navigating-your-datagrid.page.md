@@ -22,34 +22,27 @@ Pro tip: when in cell navigation mode, you can use the **`Shift` key** to naviga
 In the example below, click a table cell and then use arrow keys to see keyboard navigation in action
 
 
-<Sandpack title="Keyboard navigation is enabled by default">
+<CSEmbed id="cell-keyboard-navigation-d3qrx1" title="Keyboard navigation is enabled by default">
 
 <Description>
 
 Click any cell in the grid and start navigating around using arrow keys.
 
 </Description>
-
-```tsx file=navigating-your-datagrid-keyboard-navigation-initial-example.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 
 Another nice feature of keyboard navigation for cells is that you can specify a default active cell - you do so by using `defaultActiveCell=[2,0]` - meaning the cell on row 2 and column 0 should be active initially.
 
-<Sandpack title="Default cell selection">
-
+<CSEmbed title="Default cell selection" id="infinite-table-default-cell-selection-ohx8e3">
 <Description>
 
 In this example, the cell at position `[1, 1]` (so second row and second column) is selected by default.
 
 </Description>
 
-```tsx file=navigating-your-datagrid-keyboard-navigation-with-default-active-cell.page.tsx
-```
+</CSEmbed>
 
-</Sandpack>
 
 ## Navigating table rows
 
@@ -57,7 +50,7 @@ Besides cell navigation, row navigation is also available. Switch to row navigat
 
 Having a default row set as active is also possible, via  <PropLink name="defaultActiveRowIndex">defaultActiveRowIndex={2}</PropLink> - this means the row at index `2` should be initially rendered as active.
 
-<Sandpack title="Keyboard navigation for rows with default selection">
+<CSEmbed id="infinite-table-keyboard-navigation-for-rows-with-default-selection-ve1nbk" title="Keyboard navigation for rows with default selection">
 
 <Description>
 
@@ -65,10 +58,7 @@ In this example, keyboard navigation for rows is enabled, with row at index 2 be
 
 </Description>
 
-```tsx file=navigating-your-datagrid-row-selection.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 ## Controlling active row/cell
 
@@ -79,12 +69,9 @@ In the controlled version, you have to use <PropLink name="onActiveCellIndexChan
 
 The example below demoes controlled cell navigation - initially starting with no active cell, and it updates the active cell as a result to user changes. This means you as a developer are responsible for updating the value when needed, as you no longer wish to leave this update to happen internally in the table. This makes controlled behavior excellent for advanced use-cases when you want to implement custom navigation logic.
 
-<Sandpack title="Controlled cell navigation">
+<CSEmbed id="infinite-table-controlled-cell-navigation-kjl4qx" title="Controlled cell navigation">
 
-```tsx file=navigating-your-datagrid-controlled-cell-navigation.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 ## Turning off keyboard navigation
 
@@ -114,12 +101,9 @@ to control border and background color of the active cell highlight element.
 
 See below a demo on how easy it is to customize the colors for the active element highlighter
 
-<Sandpack title="Theming keyboard navigation">
+<CSEmbed id="infinite-table-theming-keyboard-navigation-htukio" title="Theming keyboard navigation">
 
-```tsx file=navigating-your-datagrid-theming.page.tsx
-```
-
-</Sandpack>
+</CSEmbed>
 
 ## Enjoy
 

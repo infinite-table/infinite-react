@@ -42,7 +42,7 @@ We're aware good documentation is a must and are updating our documentation as w
 
 Infinite Table is ready to power your enterprise apps, as it supports advanced data fetching, filtering, sorting, grouping, pivoting, aggregations, live pagination, lazy loading - all of those with support for both client-side and server-side implementations.
 
-You can choose to leverage our built-in implementations in the browser or you can process your data on the server with full support from our-side.
+You can choose to leverage our built-in implementations in the browser, or you can process your data on the server with full support from our-side.
 
 ### 🔒 Secure by default
 
@@ -54,12 +54,12 @@ Our bundle size is under `200kB` and we're keeping it small.
 
 ### 🧪 Automated end-to-end tests
 
-Our releases are automated and we have end-to-end tests that ensure we're delivering to our standards. Real-browser tests help us move with confidence and continue to ship great features.
+Our releases are automated and, we have end-to-end tests that ensure we're delivering to our standards. Real-browser tests help us move with confidence and continue to ship great features.
 
 <HeroCards>
 <YouWillLearnCard title="End-to-end tests" newTab path="https://github.com/infinite-table/infinite-react/tree/master/source/examples/src/pages/tests">
 
-Check out our end-to-end tests in Github
+Check out our end-to-end tests in GitHub
 
 </YouWillLearnCard>
 

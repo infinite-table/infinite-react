@@ -1,6 +1,8 @@
 const fs = require('fs');
 const resolve = require('path').resolve;
 
+const OUT_FOLDER = process.env.INFINITE_OUT_FOLDER || 'dist';
+
 const sourcePackagePath = resolve(__dirname, '../package.json');
 
 const packageJSON = require(sourcePackagePath);
@@ -30,7 +32,7 @@ toDelete.forEach((key) => delete packageJSON[key]);
 packageJSON.publishedAt = Date.now();
 const content = JSON.stringify(packageJSON, null, 2);
 
-const path = resolve(__dirname, '../dist', 'package.json');
+const path = resolve(__dirname, '../' + OUT_FOLDER, 'package.json');
 fs.writeFile(path, content, 'utf8', (err) => {
   if (err) {
     console.error(err);

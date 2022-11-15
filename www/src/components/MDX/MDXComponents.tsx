@@ -1,5 +1,6 @@
 import ButtonLink from '@www/components/ButtonLink';
 import * as React from 'react';
+import { IconCodeBlock } from '../Icon/IconCodeBlock';
 
 import { IconNavArrow } from '../Icon/IconNavArrow';
 import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
@@ -356,6 +357,73 @@ const Hint = ({
   </ExpandableCallout>
 );
 
+const isSandpackDescriptionElement = (el: React.ReactElement) =>
+  el.props.mdxType === 'Description';
+
+function CodeSandboxEmbed({
+  src,
+  id,
+  children,
+  title,
+}: ({ src: string; id?: string } | { src?: string; id: string }) & {
+  children?: React.ReactNode;
+  title?: React.ReactNode;
+}) {
+  src =
+    src ||
+    `https://codesandbox.io/embed/${id}?fontsize=14&hidenavigation=1&module=%2FApp.tsx&theme=dark&editorsize=50`;
+
+  const theChildren = React.Children.toArray(
+    //@ts-ignore
+    children,
+  ) as React.ReactElement[];
+
+  const description = theChildren.find(isSandpackDescriptionElement);
+
+  const descriptionBlock = description ? (
+    <div
+      className={'leading-base w-full bg-black bg-opacity-20 border-gray-60'}
+    >
+      <div className="sandpackDescription text-content-color text-sm px-4 py-0.5 relative">
+        {description}
+      </div>
+    </div>
+  ) : null;
+
+  const frame = (
+    <iframe
+      src={src}
+      style={{
+        width: '100%',
+        height: 500,
+        border: 0,
+        borderRadius: 4,
+        overflow: 'hidden',
+      }}
+      allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+      sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+    />
+  );
+
+  const titleBlock = title ? (
+    <div className={'leading-base w-full '}>
+      <div className="text-content-color flex text-sm px-4 py-0.5 relative">
+        <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
+      </div>
+    </div>
+  ) : null;
+
+  return descriptionBlock || titleBlock ? (
+    <div className="bg-csdark rounded-lg">
+      {titleBlock}
+      {descriptionBlock}
+      {frame}
+    </div>
+  ) : (
+    frame
+  );
+}
+
 export const MDXComponents = {
   p: P,
   strong: Strong,
@@ -436,20 +504,6 @@ export const MDXComponents = {
     );
   },
 
-  CodeSandboxEmbed: ({ src }: { src: string }) => {
-    return (
-      <iframe
-        src={src}
-        style={{
-          width: '100%',
-          height: 500,
-          border: 0,
-          borderRadius: 4,
-          overflow: 'hidden',
-        }}
-        allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-        sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-      />
-    );
-  },
+  CodeSandboxEmbed,
+  CSEmbed: CodeSandboxEmbed,
 };

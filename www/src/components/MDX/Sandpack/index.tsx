@@ -11,8 +11,8 @@ import { useInfiniteTemplate } from '../../useInfiniteTemplate';
 import { CustomPreset } from './CustomPreset';
 
 const DEPS_VERSIONS: Record<string, string> = {
-  '@infinite-table/infinite-react': process.env
-    .NEXT_PUBLIC_INFINITE_REACT_VERSION as string,
+  '@infinite-table/infinite-react':
+    (process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION as string) || 'latest',
   'react-query': '3.35.0',
   'react-select': '5.4.0',
   'devextreme-react': '21.2.6',
@@ -23,9 +23,44 @@ const DEPS_VERSIONS: Record<string, string> = {
   '@progress/kendo-react-grid': '5.1.0',
 };
 
+const VERSION_MAPPING: Record<string, string> = {
+  prerelease: '0.x',
+  latest: 'latest',
+};
+
+const INFINITE_VERSION_DETECTOR = /\@infinite-table\/infinite-react(\@\w+)/g;
+/**
+ *
+ * Replaces custom version of infinite (needed for versioning blogposts)
+ * with the default name
+ */
+function replaceCustomVersions(str: string) {
+  return str.replaceAll(
+    INFINITE_VERSION_DETECTOR,
+    '@infinite-table/infinite-react',
+  );
+}
+
+function getInfiniteVersion(code: string) {
+  const matches = Array.from(code.matchAll(INFINITE_VERSION_DETECTOR)).map(
+    (m) => m[1],
+  );
+  const version = (matches[0] || '').replace('@', '');
+
+  if (version) {
+    if (version.startsWith('v')) {
+      return `${version.slice(1)}.x`;
+    }
+    return VERSION_MAPPING[version] || version;
+  }
+
+  return '';
+}
+
 type SandpackProps = {
   children: React.ReactChildren;
   deps?: string;
+  version?: string;
   title?: React.ReactNode;
   autorun?: boolean;
   setup?: SandpackSetup;
@@ -34,6 +69,8 @@ type SandpackProps = {
 function Sandpack(props: SandpackProps) {
   const { children, setup, autorun = true, title } = props;
   const [resetKey, setResetKey] = React.useState(0);
+
+  let modifiedInfiniteVersion: string | undefined;
 
   const isSandpackDescriptionElement = (el: React.ReactElement) =>
     el.props.mdxType === 'Description';
@@ -57,6 +94,25 @@ function Sandpack(props: SandpackProps) {
     const [, metaTagValue] = metaTag?.split(/=(.*)/);
     return metaTagValue;
   };
+
+  const dependencies: Record<string, string> = {
+    '@infinite-table/infinite-react':
+      props.version || DEPS_VERSIONS['@infinite-table/infinite-react'],
+  };
+
+  if (props.deps) {
+    const deps: string[] = props.deps.split(',');
+
+    deps.forEach((dep) => {
+      if (!DEPS_VERSIONS[dep]) {
+        console.warn(`Unknown dependency: ${dep}`);
+        return;
+      }
+      dependencies[dep] = DEPS_VERSIONS[dep];
+    });
+  }
+
+  let INFINITE_VERSION = dependencies['@infinite-table/infinite-react'];
 
   let activeFilePath: string | null = null;
   const customFiles = codeSnippets.reduce(
@@ -99,8 +155,15 @@ function Sandpack(props: SandpackProps) {
           `File ${filePath} was defined multiple times. Each file snippet should have a unique name`,
         );
       }
+      const initialCode = props.children as string;
+      const code = replaceCustomVersions(initialCode);
+
+      if (code != initialCode) {
+        modifiedInfiniteVersion =
+          modifiedInfiniteVersion || getInfiniteVersion(initialCode);
+      }
       result[filePath] = {
-        code: props.children as string,
+        code,
         hidden: fileHidden,
         active: fileActive,
       };
@@ -113,6 +176,10 @@ function Sandpack(props: SandpackProps) {
     },
     {},
   );
+
+  if (modifiedInfiniteVersion) {
+    dependencies['@infinite-table/infinite-react'] = modifiedInfiniteVersion;
+  }
 
   const sandpackFiles: SandpackFiles = {
     ...sandpackTemplateFiles,
@@ -128,23 +195,6 @@ function Sandpack(props: SandpackProps) {
         ...props,
         children: sandpackFiles,
       });
-  }
-
-  const dependencies: Record<string, string> = {
-    '@infinite-table/infinite-react':
-      DEPS_VERSIONS['@infinite-table/infinite-react'],
-  };
-
-  if (props.deps) {
-    const deps: string[] = props.deps.split(',');
-
-    deps.forEach((dep) => {
-      if (!DEPS_VERSIONS[dep]) {
-        console.warn(`Unknown dependency: ${dep}`);
-        return;
-      }
-      dependencies[dep] = DEPS_VERSIONS[dep];
-    });
   }
 
   const customSetup = {
