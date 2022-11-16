@@ -11,16 +11,16 @@ description: Developer Documentation for Infinite Table, your go-to React DataGr
 
 Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so:
 
-- [🔃 sorting](/docs/latest/learn/working-with-data/sorting)
-- [💪 row grouping](/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-- [🏢 pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
-- [🧪 aggregations](/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
-- [🌪️ live pagination](/docs/latest/learn/working-with-data/live-pagination)
-- [🌴 lazy loading](/docs/latest/learn/working-with-data/lazy-loading)
-- [🧭 keyboard navigation](/docs/latest/learn/keyboard-navigation/navigating-cells)
-- [↔️ fixed and flexible columns](/docs/latest/learn/columns/fixed-and-flexible-size)
-- [🧩 column grouping](/docs/latest/learn/column-groups)
-- [🎨 theming](/docs/latest/learn/theming)
+- [🔃 sorting](/docs/learn/working-with-data/sorting)
+- [💪 row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+- [🏢 pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
+- [🧪 aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
+- [🌪️ live pagination](/docs/learn/working-with-data/live-pagination)
+- [🌴 lazy loading](/docs/learn/working-with-data/lazy-loading)
+- [🧭 keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
+- [↔️ fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
+- [🧩 column grouping](/docs/learn/column-groups)
+- [🎨 theming](/docs/learn/theming)
 
 ## Installation
 
@@ -36,7 +36,7 @@ It's fully typed and offers you great developer experience to help you get up an
 
 ## 📄 Extensive documentation
 
-We're aware good documentation is a must and are updating our documentation as we add new features. Head to [our getting started](/docs/latest/learn/getting-started) guide to get up and running quickly.
+We're aware good documentation is a must and are updating our documentation as we add new features. Head to [our getting started](/docs/learn/getting-started) guide to get up and running quickly.
 
 ## 🏢 Enterprise-ready
 
@@ -81,7 +81,7 @@ import '@infinite-table/infinite-react/index.css';
 ```
 
 <HeroCards>
-<YouWillLearnCard title="Theming with CSS variables" path="/docs/latest/learn/theming#css-variables">
+<YouWillLearnCard title="Theming with CSS variables" path="/docs/learn/theming#css-variables">
 
 Read how to use themes and **CSS variables** to customize every aspect of Infinite Table.
 

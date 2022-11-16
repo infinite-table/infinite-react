@@ -66,10 +66,10 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
           <div className="flex flex-col items-start">
             <FooterLink isHeader={true}>Infinite Table</FooterLink>
 
-            <FooterLink href="/docs/latest/learn/getting-started">
+            <FooterLink href="/docs/learn/getting-started">
               Get Started
             </FooterLink>
-            {/* <FooterLink href="/docs/latest/learn/styling-rows">
+            {/* <FooterLink href="/docs/learn/styling-rows">
               Styling Rows
             </FooterLink> */}
 
@@ -77,8 +77,8 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
           </div>
           <div className="flex flex-col items-start">
             <FooterLink isHeader>API Reference</FooterLink>
-            <FooterLink href="/docs/latest/reference">Props</FooterLink>
-            <FooterLink href="/docs/latest/reference/api">API</FooterLink>
+            <FooterLink href="/docs/reference">Props</FooterLink>
+            <FooterLink href="/docs/reference/api">API</FooterLink>
           </div>
 
           <div className="flex flex-col items-start">

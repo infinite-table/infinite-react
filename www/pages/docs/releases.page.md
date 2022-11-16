@@ -203,7 +203,7 @@ New virtualization engine implemented for better performance.
 
 ## 0.2.0 🚀
 
-- Implement initial support for [server-side pivoting](/docs/latest/learn/grouping-and-pivoting/pivoting/overview)
+- Implement initial support for [server-side pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview)
 
 ## 0.1.0 🚀
 

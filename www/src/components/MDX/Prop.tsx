@@ -74,7 +74,7 @@ export const PropLink = ({
     theName = children as keyof InfiniteTableProps<any>;
   }
 
-  const href = `/docs/latest/reference#${theName as string}`;
+  const href = `/docs/reference#${theName as string}`;
   if (nocode) {
     code = false;
   }
@@ -97,7 +97,7 @@ export const DataSourcePropLink = ({
   code?: boolean;
   nocode?: boolean;
 }) => {
-  const href = `/docs/latest/reference/datasource-props#${name as string}`;
+  const href = `/docs/reference/datasource-props#${name as string}`;
   if (nocode) {
     code = false;
   }
@@ -116,7 +116,7 @@ export const LearnLink = ({
   name: string;
   children: React.ReactNode;
 }) => {
-  const href = `/docs/latest/learn/${name as string}`;
+  const href = `/docs/learn/${name as string}`;
 
   const content = children ?? name;
   return <Link href={href}>{content}</Link>;
@@ -133,7 +133,7 @@ export const HookLink = ({
   code?: boolean;
   nocode?: boolean;
 }) => {
-  const href = `/docs/latest/reference/hooks#${name as string}`;
+  const href = `/docs/reference/hooks#${name as string}`;
   if (nocode) {
     code = false;
   }
