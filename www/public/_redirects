@@ -1,0 +1,11 @@
+/docs/learn     /docs/latest/learn/getting-started
+/docs/latest/learn     /docs/latest/learn/getting-started
+/docs/latest/getting-started /docs/latest/learn/getting-started
+/docs/latest/sorting  /docs/latest/learn/working-with-data/sorting
+/docs/latest/styling-rows /docs/latest/learn/rows/styling-rows
+/docs/latest/learn/styling-rows /docs/latest/learn/rows/styling-rows
+/docs/latest/column-groups /docs/latest/learn/columns/column-grouping
+/docs/latest/learn/grouping-and-pivoting/pivoting /docs/latest/learn/grouping-and-pivoting/pivoting/overview
+/docs/latest/row-groups /docs/latest/learn/grouping-and-pivoting/grouping-rows
+/community/team /docs/community
+
