@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - 'www/**'
+    # paths-ignore:
+    #   - 'www/**'
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
