@@ -5,7 +5,7 @@ layout: Home
 
 ## 0.6.2 🚀
 
-@milestone id="59"
+@milestone id="60"
 
 ## 0.6.1 🚀
 
