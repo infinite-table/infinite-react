@@ -97,7 +97,7 @@ const defaultChildren = (
       Check out our in-depth documentation.
     </Card>
 
-    <Card title="🔎 Examples" href="/docs/latest/learn/getting-started">
+    <Card title="🔎 Examples" href="/docs/learn/getting-started">
       Discover practical examples to help you get started
     </Card>
 
@@ -105,7 +105,7 @@ const defaultChildren = (
       Read our articles to help you get the most of the Infinite Table
     </Card>
 
-    <Card title="🧪 API Reference" href="/docs/latest/reference">
+    <Card title="🧪 API Reference" href="/docs/reference">
       Thorough documentation for all API properties, with examples
     </Card>
   </>

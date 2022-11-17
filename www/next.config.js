@@ -21,6 +21,7 @@ const result = exec('npm', [
 
 const versions = JSON.parse(result.stdout);
 
+// TODO AFL: retrieve latest canary for NEXT, latest stable for master, NEXT_PUBLIC_INFINITE_REACT_VERSION for everything else
 const NEXT_PUBLIC_INFINITE_REACT_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || versions.pop();
 

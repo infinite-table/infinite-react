@@ -37,7 +37,7 @@ Multiple row selection will have 2 ways to select data:
 
 By default columns are now resizable. You can control this at column level via <PropLink name="columns.resizable">column.resizable</PropLink> or at grid level via <PropLink name="resizableColumns" />.
 
-<YouWillLearnCard inline title="Find out more on column resizing" path="/docs/latest/learn/columns/fixed-and-flexible-size">
+<YouWillLearnCard inline title="Find out more on column resizing" path="/docs/learn/columns/fixed-and-flexible-size">
 
 Read more about how you can configure column resizing to fit your needs.
 
@@ -59,7 +59,7 @@ A nice feature is support for SHIFT resizing - which will share space on resize 
 
 ### Column Reordering
 
-<YouWillLearnCard inline title="Read more on column order" path="/docs/latest/learn/columns/column-order">
+<YouWillLearnCard inline title="Read more on column order" path="/docs/learn/columns/column-order">
 
 Column order is a core functionality of `InfiniteTable` - read how you can leverage it in your app.
 
@@ -106,7 +106,7 @@ In this example, `France` is specified as expanded, so as soon as it is rendered
 Another nice feature is the ability for a group node to also contain its direct children in the server response, which basically allows the backend to eagerly load data for certain groups.
 
 
-<YouWillLearnCard inline title="More on lazy grouping" path="/docs/latest/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading">
+<YouWillLearnCard inline title="More on lazy grouping" path="/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading">
 
 Lazy grouping (with or without batching) is an advanced feature that allows you to integrate with huge datasets without loading them into the browser.
 
@@ -117,7 +117,7 @@ Lazy grouping (with or without batching) is an advanced feature that allows you 
 Column grouping was enhanced with support for pinned columns. Now you can use them in combination.
 
 
-<YouWillLearnCard inline title="More on column groups" path="/docs/latest/learn/columns/column-grouping">
+<YouWillLearnCard inline title="More on column groups" path="/docs/learn/columns/column-grouping">
 
 Column groups is a powerful way to arrange columns to fit your business requirements - read how easy it is to define them.
 
@@ -139,7 +139,7 @@ Note the `country` column is pinned at the start of the table but is also part o
 
 Pivot columns are now easier to style and benefit from piped rendering to allow maximum customization.
 
-<YouWillLearnCard inline title="Pivoting docs" path="/docs/latest/learn/grouping-and-pivoting/pivoting/overview">
+<YouWillLearnCard inline title="Pivoting docs" path="/docs/learn/grouping-and-pivoting/pivoting/overview">
 
 Pivoting is probably our most advanced use-case. We offer full support for server-side pivoting and aggregations.
 

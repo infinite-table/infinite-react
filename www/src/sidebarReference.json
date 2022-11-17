@@ -1,7 +1,7 @@
 {
   "title": "API Reference",
   "heading": true,
-  "path": "/docs/latest/reference",
+  "path": "/docs/reference",
   "routes": [
     {
       "heading": true,
@@ -10,24 +10,24 @@
       "routes": [
         {
           "title": "Infinite Table Props",
-          "path": "/docs/latest/reference"
+          "path": "/docs/reference"
         },
         {
           "title": "DataSource Props",
-          "path": "/docs/latest/reference/datasource-props"
+          "path": "/docs/reference/datasource-props"
         },
         {
           "title": "Infinite Table API",
-          "path": "/docs/latest/reference/api"
+          "path": "/docs/reference/api"
         },
         {
           "title": "Infinite Table Selection API",
-          "path": "/docs/latest/reference/selection-api"
+          "path": "/docs/reference/selection-api"
         },
 
         {
           "title": "Hooks",
-          "path": "/docs/latest/reference/hooks"
+          "path": "/docs/reference/hooks"
         }
       ]
     }

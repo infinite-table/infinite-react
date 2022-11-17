@@ -42,8 +42,8 @@ module.exports = async function (src) {
   if (dirs[0] === 'blog') {
     layout = 'Post';
   }
-  if (dirs[0] === 'docs' && dirs[1] === 'latest' && dirs[2]) {
-    layout = layoutMap[dirs[2]] || layout;
+  if (dirs[0] === 'docs' && dirs[1]) {
+    layout = layoutMap[dirs[1]] || layout;
   }
   layout = layout || 'Learn';
 

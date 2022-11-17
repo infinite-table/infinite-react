@@ -25,12 +25,12 @@ function HomepageHero() {
           {
             title: 'Learn Infinite Table',
             description: 'Learn & unleash the power of Infinite Table',
-            link: '/docs/latest/learn/getting-started',
+            link: '/docs/learn/getting-started',
           },
           {
             title: 'API Reference',
             description: 'Look up the component props',
-            link: '/docs/latest/reference',
+            link: '/docs/reference',
           },
         ]}
       />
