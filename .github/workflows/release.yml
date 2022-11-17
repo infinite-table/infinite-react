@@ -6,6 +6,7 @@ on:
       - master
     # paths-ignore:
     #   - 'www/**'
+
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
