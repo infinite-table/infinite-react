@@ -8,10 +8,12 @@ import { PageFindSearch } from '@www/components/PageFindSearch';
 
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
+import Link from 'next/link';
 import * as React from 'react';
 
 import { MobileNav } from '../Nav/MobileNav';
 import { useMediaQuery } from '../useMediaQuery';
+import { SidebarLink } from './SidebarLink';
 
 import { SidebarRouteTree } from './SidebarRouteTree';
 
@@ -107,12 +109,16 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
           Get License
         </AccentButton>
 
-        <Button
-          className="w-full text-center justify-center"
-          onClick={handleFeedback}
-        >
-          {feedbackIcon} Feedback
-        </Button>
+        <div className="w-full text-center justify-center flex flex-row border rounded-lg font-bold overflow-hidden">
+          <Link href="/blog">
+            <a className="pr-6 border-r py-2 flex-1 text-right hover:bg-highlight hover:text-dark-custom">
+              Blog
+            </a>
+          </Link>{' '}
+          <Link href="/releases">
+            <a className="pl-6 py-2  flex-1 text-left">Releases</a>
+          </Link>
+        </div>
       </div>
     </aside>
   );
