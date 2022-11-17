@@ -54,8 +54,14 @@ const columns: InfiniteTablePropColumns<Person> = {
   },
   lastName: {
     field: 'lastName',
-    header: 'Last Name',
+
     columnGroup: 'hello',
+    header: ({ insideColumnMenu }) => {
+      if (insideColumnMenu) {
+        return 'Last name in col';
+      }
+      return 'Last Name!!';
+    },
   },
   age: {
     field: 'age',
@@ -101,7 +107,6 @@ export default function App() {
           domProps={{
             style: {
               height: 400,
-              width: 400,
             },
           }}
           columnGroups={columnGroups}

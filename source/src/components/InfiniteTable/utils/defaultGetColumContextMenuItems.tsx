@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { DataSourceState } from '../../DataSource';
 import { MenuItemObject, MenuProps } from '../../Menu/MenuProps';
+import { Renderable } from '../../types/Renderable';
 import { InfiniteCheckBox } from '../components/CheckBox';
 import {
   InfiniteTableApi,
@@ -13,10 +15,12 @@ export function defaultGetColumContextMenuItems<T>(params: {
   column: InfiniteTableComputedColumn<T>;
   api: InfiniteTableApi<T>;
   getState: () => InfiniteTableState<T>;
+  getDataSourceState: () => DataSourceState<T>;
   getComputed: () => InfiniteTableComputedValues<T>;
+
   actions: InfiniteTableActions<T>;
 }): MenuProps['items'] {
-  const { column, getComputed, api } = params;
+  const { column, getComputed, api, getDataSourceState } = params;
 
   return [
     {
@@ -73,10 +77,38 @@ export function defaultGetColumContextMenuItems<T>(params: {
       menu: () => {
         const colItems: MenuItemObject[] = [];
 
-        getComputed().computedColumnsMapInInitialOrder.forEach((col, id) => {
+        const computed = getComputed();
+        const dataSourceState = getDataSourceState();
+        const { allRowsSelected, someRowsSelected, selectionMode } =
+          dataSourceState;
+
+        computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
+          let label: Renderable =
+            col.header && typeof col.header !== 'function'
+              ? col.header
+              : col.name || id || '';
+
+          if (typeof col.header === 'function') {
+            label =
+              col.header({
+                column: col,
+                insideColumnMenu: true,
+                dragging: false,
+                columnsMap: computed.computedColumnsMap,
+                columnSortInfo: col.computedSortInfo,
+                columnFilterValue: col.computedFilterValue,
+                allRowsSelected,
+                someRowsSelected,
+                selectionMode,
+                api,
+                renderBag: {
+                  header: label,
+                },
+              }) ?? null;
+          }
           colItems.push({
             key: id,
-            label: col.name || id || '',
+            label,
 
             check: (
               <InfiniteCheckBox

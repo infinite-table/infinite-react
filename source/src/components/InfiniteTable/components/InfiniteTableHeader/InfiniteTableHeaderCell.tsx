@@ -220,6 +220,7 @@ export function InfiniteTableHeaderCell<T>(
   const renderParam: InfiniteTableColumnHeaderParam<T> = {
     dragging,
     domRef: ref,
+    insideColumnMenu: false,
     column,
     columnsMap,
     columnSortInfo: sortInfo,

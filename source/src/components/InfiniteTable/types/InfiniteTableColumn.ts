@@ -41,7 +41,6 @@ export type InfiniteTableColumnHeaderParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
-  domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
   dragging: boolean;
   column: COL_TYPE;
   columnsMap: Map<string, COL_TYPE>;
@@ -59,7 +58,15 @@ export type InfiniteTableColumnHeaderParam<
     menuIcon?: Renderable;
     selectionCheckBox?: Renderable;
   };
-};
+} & (
+  | {
+      domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+      insideColumnMenu: false;
+    }
+  | {
+      insideColumnMenu: true;
+    }
+);
 
 export type InfiniteTableColumnRenderBag = {
   value: string | number | Renderable;
@@ -120,7 +127,10 @@ export type InfiniteTableGroupColumnRenderParams<
 export type InfiniteTableColumnCellContextType<DATA_TYPE> =
   InfiniteTableColumnRenderParam<DATA_TYPE> & {};
 export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
-  InfiniteTableColumnHeaderParam<DATA_TYPE> & {};
+  InfiniteTableColumnHeaderParam<DATA_TYPE> & {
+    domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+    insideColumnMenu: false;
+  };
 
 export type InfiniteTableGroupColumnRenderIconParam<
   DATA_TYPE,
