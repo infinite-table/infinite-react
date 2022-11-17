@@ -111,7 +111,7 @@ export function IndexPage() {
           subtitle="Fully declarative and fully typed DataGrid built with purpose for React"
           spotlight={false}
         >
-          <Card title="Fully declarative" href="/docs/latest/reference">
+          <Card title="Fully declarative" href="/docs/reference">
             Infinite Table is built with React in mind so it's fully declarative
             - everything can be controlled via the available{' '}
             <span className={HighlightTextBackground}>props</span>
@@ -125,10 +125,7 @@ export function IndexPage() {
             our releases can be trusted. This helps us keep the quality high and
             the bugs low.
           </Card>
-          <Card
-            title="Themable and customizable"
-            href="/docs/latest/learn/theming"
-          >
+          <Card title="Themable and customizable" href="/docs/learn/theming">
             Infinite Table is built with customization in mind. You can
             customize everything from the look and feel to the behavior. Theming
             uses CSS variables so you can have a custom theme in under 10 lines
@@ -141,7 +138,7 @@ export function IndexPage() {
           </Card>
           <Card
             title="Extensive documentation"
-            href="/docs/latest/learn/getting-started"
+            href="/docs/learn/getting-started"
           >
             All the available props are documented and all the examples are
             interactive. In addition, we have dedicated documentation pages for
@@ -176,7 +173,7 @@ export function IndexPage() {
           <Card
             noBackground
             title="🔃 Sorting"
-            href="/docs/latest/learn/working-with-data/sorting"
+            href="/docs/learn/working-with-data/sorting"
           >
             Single column and multiple column sorting, with both local and
             remote sorting capabilities.
@@ -185,7 +182,7 @@ export function IndexPage() {
           <Card
             noBackground
             title="💪 Row Grouping"
-            href="/docs/latest/learn/grouping-and-pivoting/grouping-rows"
+            href="/docs/learn/grouping-and-pivoting/grouping-rows"
           >
             Group rows by a single column or by multiple columns with ease.
             Integrates with lazy data-sources so it can handle even complex
@@ -195,7 +192,7 @@ export function IndexPage() {
           <Card
             noBackground
             title="🏢 Pivoting"
-            href="/docs/latest/learn/grouping-and-pivoting/pivoting/overview"
+            href="/docs/learn/grouping-and-pivoting/pivoting/overview"
           >
             Pivoting is a must-have for powerful data-visualizations. We make it
             easy to configure complex pivots.
@@ -203,7 +200,7 @@ export function IndexPage() {
           <Card
             noBackground
             title="🧪 Aggregations"
-            href="/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations"
+            href="/docs/learn/grouping-and-pivoting/grouping-rows#aggregations"
           >
             Group data by specified fields, either locally or remotely. Allows
             you to easily define custom aggregations.
@@ -212,16 +209,12 @@ export function IndexPage() {
           <Card
             noBackground
             title="🧩 Column Grouping"
-            href="/docs/latest/learn/column-groups"
+            href="/docs/learn/column-groups"
           >
             Define groups of columns to organise data in a more meaningful way.
           </Card>
 
-          <Card
-            noBackground
-            title="🎨 Theming"
-            href="/docs/latest/learn/theming"
-          >
+          <Card noBackground title="🎨 Theming" href="/docs/learn/theming">
             Powerful theming via CSS variables - implemented from the ground up,
             not as an afterthought.
           </Card>

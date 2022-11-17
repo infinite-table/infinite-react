@@ -151,15 +151,12 @@ export default function Nav() {
           Home
         </NavLink>
         <NavLink
-          href="/docs/latest/learn/getting-started"
+          href="/docs/learn/getting-started"
           isActive={section === 'learn'}
         >
           Learn
         </NavLink>
-        <NavLink
-          href="/docs/latest/reference"
-          isActive={section === 'reference'}
-        >
+        <NavLink href="/docs/reference" isActive={section === 'reference'}>
           Reference
         </NavLink>
       </div>

@@ -52,7 +52,7 @@ You can specify the selection via the <DPropLink name="rowSelection" /> (control
 
 * Go ahead and select some groups/rows and see the selection value adjust.
 
-* Example also shows how you can use the [InfiniteTableApi](/docs/latest/reference/api) to retrieve the actual ids of the selected rows.
+* Example also shows how you can use the [InfiniteTableApi](/docs/reference/api) to retrieve the actual ids of the selected rows.
 
 </Description>
 
@@ -60,7 +60,7 @@ You can specify the selection via the <DPropLink name="rowSelection" /> (control
 </CSEmbed>
 
 
-<YouWillLearnCard inline title="Find out more on row selection" path="/docs/latest/learn/selection/row-selection">
+<YouWillLearnCard inline title="Find out more on row selection" path="/docs/learn/selection/row-selection">
 
 Single vs multiple selection, grouped or ungrouped data, checkbox selection, lazy selection - read about all the possible combinations you can use to fit your needs.
 
@@ -106,7 +106,7 @@ const column: InfiniteTableColumn<T> = {
 ```
 
 
-<YouWillLearnCard  title="Find out more on column rendering" path="/docs/latest/learn/columns/column-rendering#rendering-pipeline">
+<YouWillLearnCard  title="Find out more on column rendering" path="/docs/learn/columns/column-rendering#rendering-pipeline">
 
 Read about how using the rendering pipeline helps your write less code.
 

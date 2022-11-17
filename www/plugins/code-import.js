@@ -9,9 +9,19 @@ const visit = require('unist-util-visit');
 const META_TAG_FILE = 'file';
 const META_TAG_AS = 'as';
 
-const FILE_PATH_PREFIX = '../src/code-snippets';
+const ROOT_DOCS_PAGES = path.resolve(__dirname, `../pages/docs`);
+const DOCS_ENV_VAR = '$DOCS';
 
 function codeImport(options = {}) {
+  const getFileAbsolutePath = (codeFileMeta, requestingDocsFile) => {
+    if (codeFileMeta.includes(DOCS_ENV_VAR)) {
+      const filePath = codeFileMeta.replace(`${DOCS_ENV_VAR}/`, '');
+      return path.resolve(ROOT_DOCS_PAGES, filePath);
+    } else {
+      return path.resolve(requestingDocsFile.dirname, codeFileMeta);
+    }
+  };
+
   return function transformer(tree, file) {
     const codes = [];
 
@@ -34,43 +44,40 @@ function codeImport(options = {}) {
       const nodeMeta = node.meta || '';
       const nodeMetaTags = nodeMeta.split(/\s+/);
       const fileMeta = nodeMetaTags.find((meta) =>
-        meta.startsWith(`${META_TAG_FILE}=`)
+        meta.startsWith(`${META_TAG_FILE}=`),
       );
       const asMeta = nodeMetaTags.find((meta) =>
-        meta.startsWith(`${META_TAG_AS}=`)
+        meta.startsWith(`${META_TAG_AS}=`),
       );
 
       if (!fileMeta) {
         continue;
       }
 
-      const [, fileName] = fileMeta.split(/=(.*)/);
-      const [, asFileName] = asMeta
-        ? asMeta.split(/=(.*)/)
-        : [];
-
-      const fileLocation = file.history[0];
-
-      const fileAbsolutePath = path.resolve(
-        fileLocation,
-        '../.',
-        fileName
-      );
-
-      if (!fs.existsSync(fileAbsolutePath)) {
+      if (fileMeta.includes('..')) {
         throw Error(
-          `Invalid file location for code snippet; no such file "${fileAbsolutePath}"`
+          `File ${file.basename} contains a relative path for a code snippet: ${fileMeta}! 
+          Use the ${DOCS_ENV_VAR} variable instead!`,
         );
       }
 
-      let fileContent = fs
-        .readFileSync(fileAbsolutePath, 'utf8')
-        .trim();
+      const [, fileName] = fileMeta.split(/=(.*)/);
+      const [, asFileName] = asMeta ? asMeta.split(/=(.*)/) : [];
+
+      const fileAbsolutePath = getFileAbsolutePath(fileName, file);
+
+      if (!fs.existsSync(fileAbsolutePath)) {
+        throw Error(
+          `Invalid file location for code snippet; no such file "${fileAbsolutePath}" (required by ${file.basename})`,
+        );
+      }
+
+      let fileContent = fs.readFileSync(fileAbsolutePath, 'utf8').trim();
 
       if (fileContent) {
         fileContent = fileContent.replace(
           /process.env\.NEXT_PUBLIC_BASE_URL/g,
-          `'${process.env.NEXT_PUBLIC_BASE_URL}'`
+          `'${process.env.NEXT_PUBLIC_BASE_URL}'`,
         );
       }
       if (asFileName) {

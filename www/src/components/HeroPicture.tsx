@@ -32,7 +32,7 @@ export const HeroPicture = () => {
     };
   }, []);
   return (
-    <Link href="/docs/latest/learn/getting-started/full-demo">
+    <Link href="/docs/learn/getting-started/full-demo">
       <a className="cursor-pointer outline-none relative" tabIndex={-1}>
         <div
           ref={heroImageContainerRef}

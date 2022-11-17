@@ -125,7 +125,7 @@ export function MarkdownPage<
   if (!route) {
     console.error('This page was not added to one of the sidebar JSON files.');
   }
-  const isHomePage = route?.path === '/docs/latest' || route?.path === '/docs';
+  const isHomePage = route?.path === '/docs';
 
   // Auto-wrap everything except a few types into
   // <MaxWidth> wrappers. Keep reusing the same

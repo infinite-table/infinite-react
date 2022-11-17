@@ -36,17 +36,12 @@ function extract(file, identifiers) {
       // Hide the method body when printing
       node.body = undefined;
     } else if (ts.isVariableStatement(node)) {
-      name =
-        node.declarationList.declarations[0].name.getText(
-          sourceFile
-        );
+      name = node.declarationList.declarations[0].name.getText(sourceFile);
     } else if (ts.isInterfaceDeclaration(node)) {
       name = node.name.text;
     }
 
-    const container = identifiers.includes(name)
-      ? foundNodes
-      : unfoundNodes;
+    const container = identifiers.includes(name) ? foundNodes : unfoundNodes;
     container.push([name, node]);
   });
 
@@ -54,11 +49,11 @@ function extract(file, identifiers) {
   if (!foundNodes.length) {
     console.log(
       `Could not find any of ${identifiers.join(
-        ', '
+        ', ',
       )} in ${file}, found: ${unfoundNodes
         .filter((f) => f[0])
         .map((f) => f[0])
-        .join(', ')}.`
+        .join(', ')}.`,
     );
     process.exitCode = 1;
     return;
@@ -68,15 +63,12 @@ function extract(file, identifiers) {
     const [_name, node] = f;
 
     return traverseThemeVars(
-      node.declarationList.declarations[0].initializer
-        .arguments[0],
-      cssVarsList
+      node.declarationList.declarations[0].initializer.arguments[0],
+      cssVarsList,
     );
   });
 
-  return cssVarsList.filter(
-    ({ name }) => !name.includes('dont-override')
-  );
+  return cssVarsList.filter(({ name }) => !name.includes('dont-override'));
 }
 
 function traverseThemeVars(node, list = []) {
@@ -86,9 +78,7 @@ function traverseThemeVars(node, list = []) {
     }
     if (prop.initializer.text) {
       const description =
-        prop.jsDoc && prop.jsDoc[0]
-          ? prop.jsDoc[0].comment
-          : '';
+        prop.jsDoc && prop.jsDoc[0] ? prop.jsDoc[0].comment : '';
 
       let cssVarName = prop.initializer.text;
       let ignore = false;
@@ -101,12 +91,8 @@ function traverseThemeVars(node, list = []) {
           };
         });
 
-        const aliasTag = tags.filter(
-          (tag) => tag.name === 'alias'
-        )[0];
-        if (
-          tags.filter((tag) => tag.name === 'ignore')[0]
-        ) {
+        const aliasTag = tags.filter((tag) => tag.name === 'alias')[0];
+        if (tags.filter((tag) => tag.name === 'ignore')[0]) {
           ignore = true;
         }
         if (aliasTag) {
@@ -132,14 +118,14 @@ const path = require('path');
 const vars = extract(
   path.resolve(
     __dirname,
-    '../../source/src/components/InfiniteTable/theme.css.ts'
+    '../../source/src/components/InfiniteTable/theme.css.ts',
   ),
-  ['ThemeVars']
+  ['ThemeVars'],
 );
 console.log(vars);
 const mdFilePath = path.resolve(
   __dirname,
-  '../pages/docs/latest/learn/theming/css-variables.page.md'
+  '../pages/docs/learn/theming/css-variables.page.md',
 );
 const mdFile = fs.readFileSync(mdFilePath, 'utf8');
 
@@ -160,7 +146,7 @@ const newContents = mdFile.replace(
 <!-- START VARS -->
 ${formattedVars.join('\n')}
 <!-- END VARS -->`;
-  }
+  },
 );
 
 fs.writeFileSync(mdFilePath, newContents);

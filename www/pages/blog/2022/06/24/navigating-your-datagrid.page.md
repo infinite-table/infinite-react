@@ -11,7 +11,7 @@ With version `0.3.6` Infinite Table added keyboard navigation to your favorite R
 
 By default, navigation is enabled for table cells - that means, as soon as the user clicks a cell, it becomes active and from that point on-wards, the user can use **arrow keys**, **page up/down** and **home/end** keys to navigate.
 
-Check out our [documentation for keyboard navigation](/docs/latest/learn/keyboard-navigation/navigating-cells) to see more demos and a complete reference guide.
+Check out our [documentation for keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells) to see more demos and a complete reference guide.
 
 <Note>
 
