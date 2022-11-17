@@ -7,7 +7,6 @@ import { PageFindSearch } from '@www/components/PageFindSearch';
 import { Search } from '@www/components/Search';
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
@@ -93,6 +92,8 @@ export default function Nav() {
   const { isOpen, toggleOpen } = React.useContext(MenuContext);
 
   const section = inferSection(pathname);
+
+  console.log({ section });
 
   function handleFeedback() {
     const nodes: any = document.querySelectorAll(
