@@ -1,6 +1,7 @@
 These terms and conditions ("Terms") are contracted between Infinite Table Ltd. ("Licensor") and the entity whose details are provided in the Licence Quotation ("Licensee").
 This is effective as of the date of acceptance of these Terms ("Effective Date").
 
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
