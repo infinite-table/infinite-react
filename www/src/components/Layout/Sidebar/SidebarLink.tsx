@@ -54,7 +54,7 @@ export function SidebarLink({
           {
             'my-6': heading,
             'text-primary-dark': heading,
-            'text-sm': level > 0,
+            'text-base': level > 0,
             'pl-5': level === 0,
             'pl-7': level === 1,
             'pl-9': level === 2,

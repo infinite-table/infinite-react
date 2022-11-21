@@ -56,7 +56,7 @@ function ExpandableCallout({ children, type, title }: ExpandableCalloutProps) {
   return (
     <div
       className={cn(
-        'pt-8 pb-4 px-5 sm:px-8 my-8 relative rounded-none shadow-inner -mx-5 sm:mx-auto sm:rounded-lg',
+        'pt-8 pb-4 px-5 sm:px-8 my-8 relative rounded-none shadow-inner  sm:mx-auto sm:rounded-lg',
         variant.containerClasses,
       )}
     >

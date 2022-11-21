@@ -1,11 +1,13 @@
 ---
 title: Releases
-layout: Home
+layout: Releases
 ---
 
 ## 0.6.2 🚀
 
 @milestone id="60"
+
+<!-- Read [more details](/docs/releases/v1) -->
 
 ## 0.6.1 🚀
 

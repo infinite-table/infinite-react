@@ -1,11 +1,10 @@
-import blogIndexRecentRouteTree from '@www/blogIndexRecent.json';
+import blogIndexRouteTree from '@www/blogIndex.json';
+import { HighlightBrandToLightBackground } from '@www/components/components.css';
 import { ExternalLink } from '@www/components/ExternalLink';
-import { LogoAndTitle } from '@www/components/Header';
 import { InfiniteLogo } from '@www/components/InfiniteLogo';
-import { getSidebarHome } from '@www/components/Layout/getSidebarHome';
 import { Page } from '@www/components/Layout/Page';
 import { RouteItem } from '@www/components/Layout/useRouteMeta';
-import { Logo } from '@www/components/Logo';
+
 import styles from '@www/components/MDX/MDXComponents.module.css';
 import { Seo } from '@www/components/Seo';
 import { getAuthor } from '@www/utils/getAuthor';
@@ -19,16 +18,18 @@ import * as React from 'react';
 export default function RecentPosts() {
   return (
     <>
-      <div className="w-full lg:pt-0 pt-20 pl-0 lg:pl-80 2xl:px-80 ">
-        <div className="max-w-7xl px-4 sm:px-12 mx-auto w-full container pt-10 ">
-          <header className="lg:pt-10 pb-8 ">
+      <div className="w-full lg:pt-0  pl-0 lg:pl-80 2xl:px-80 ">
+        <div className="max-w-7xl px-4 sm:px-12 mx-auto w-full container pt-4 ">
+          <header className=" pb-8 ">
             <div className="inline-flex items-center mb-8">
               <Seo
                 title="Blog"
                 description="Official Infinite Table React news, announcements, and release notes. Infinite Table is the modern DataGrid for building React apps — faster."
               />
-              <InfiniteLogo color="gradient" />
-              <h1 className="ml-4 text-5xl font-black tracking-tighter  text-content-color ">
+
+              <h1
+                className={`text-5xl py-4 font-black tracking-tighter text-content-color ${HighlightBrandToLightBackground}`}
+              >
                 Infinite Blog
               </h1>
               {/* <a
@@ -43,7 +44,7 @@ export default function RecentPosts() {
             </p>
           </header>
           <div className="space-y-12 pb-40">
-            {blogIndexRecentRouteTree.routes[0].routes
+            {blogIndexRouteTree.routes
               .filter((post) => !post.draft)
               .map((post) => (
                 <div key={post.path}>
@@ -101,5 +102,26 @@ export default function RecentPosts() {
 RecentPosts.displayName = 'Index';
 
 RecentPosts.appShell = function AppShell(props: { children: React.ReactNode }) {
-  return <Page routeTree={getSidebarHome() as RouteItem} {...props} />;
+  // console.log(blogIndexRecentRouteTree);
+  return (
+    <Page
+      blog
+      routeTree={
+        {
+          title: 'Blog',
+          heading: false,
+          path: '/blog',
+          routes: [
+            {
+              title: 'Blog',
+              heading: false,
+              path: '/blog',
+              routes: blogIndexRouteTree.routes,
+            },
+          ],
+        } as any as RouteItem
+      }
+      {...props}
+    />
+  );
 };

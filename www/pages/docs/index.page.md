@@ -1,6 +1,4 @@
 ---
-id: home
-layout: Home
 title: Getting started documentation and guides
 description: Developer Documentation for Infinite Table, your go-to React DataGrid component to handle huge amounts of data
 ---

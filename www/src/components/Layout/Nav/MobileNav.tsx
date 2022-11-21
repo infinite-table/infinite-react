@@ -5,12 +5,11 @@ import * as React from 'react';
 
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
-import { getSidebarHome } from '../getSidebarHome';
+import sidebarReleases from '../../../sidebarReleases.json';
+
 import { SidebarRouteTree } from '../Sidebar';
 
 import { inferSection } from './inferSection';
-
-const sidebarHome = getSidebarHome();
 
 export function MobileNav() {
   const { pathname } = useRouter();
@@ -18,14 +17,14 @@ export function MobileNav() {
 
   let tree = null;
   switch (section) {
-    case 'home':
-      tree = sidebarHome.routes![0];
-      break;
     case 'learn':
-      tree = sidebarLearn.routes[0];
+      tree = sidebarLearn.routes![0];
       break;
     case 'reference':
       tree = sidebarReference.routes[0];
+      break;
+    case 'releases':
+      tree = sidebarReleases.routes[0];
       break;
   }
 
@@ -38,12 +37,6 @@ export function MobileNav() {
         }}
       >
         <TabButton
-          isActive={section === 'home'}
-          onClick={() => setSection('home')}
-        >
-          Home
-        </TabButton>
-        <TabButton
           isActive={section === 'learn'}
           onClick={() => setSection('learn')}
         >
@@ -54,6 +47,12 @@ export function MobileNav() {
           onClick={() => setSection('reference')}
         >
           Reference
+        </TabButton>
+        <TabButton
+          isActive={section === 'releases'}
+          onClick={() => setSection('releases')}
+        >
+          Releases
         </TabButton>
       </div>
       <SidebarRouteTree routeTree={tree as RouteItem} isMobile={true} />

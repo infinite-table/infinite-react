@@ -8,25 +8,29 @@ import { PageFindSearch } from '@www/components/PageFindSearch';
 
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
-import Link from 'next/link';
 import * as React from 'react';
 
 import { MobileNav } from '../Nav/MobileNav';
 import { useMediaQuery } from '../useMediaQuery';
-import { SidebarLink } from './SidebarLink';
 
 import { SidebarRouteTree } from './SidebarRouteTree';
 
 const SIDEBAR_BREAKPOINT = 1023;
 
-export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
+export function Sidebar({
+  isMobileOnly,
+  blog,
+}: {
+  isMobileOnly?: boolean;
+  blog?: boolean;
+}) {
   const { menuRef, isOpen } = React.useContext(MenuContext);
   const isMobileSidebar = useMediaQuery(SIDEBAR_BREAKPOINT);
   let routeTree = React.useContext(SidebarContext);
   const isHidden = isMobileOnly && !isMobileSidebar;
 
   // HACK. Fix up the data structures instead.
-  if ((routeTree as any).routes.length === 1) {
+  if ((routeTree as any).routes.length === 1 && !blog) {
     routeTree = (routeTree as any).routes[0];
   }
 
@@ -65,6 +69,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
       </g>
     </svg>
   );
+
   return (
     <aside
       className={cn(
@@ -78,7 +83,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
       }}
     >
       <div className="px-5 mt-12 lg:hidden"></div>
-      <div className="hidden lg:block py-6 px-5">
+      <div className="hidden lg:block py-3 px-5">
         <PageFindSearch alwaysShow />
       </div>
       <nav
@@ -109,16 +114,24 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
           Get License
         </AccentButton>
 
-        <div className="w-full text-center justify-center flex flex-row border rounded-lg font-bold overflow-hidden">
-          <Link href="/blog">
+        {/* <div className="w-full text-center justify-center flex flex-row border rounded-lg font-bold overflow-hidden">
+          <Link href={pathname === '/blog' ? '/docs' : '/blog'}>
             <a className="pr-6 border-r py-2 flex-1 text-right hover:bg-highlight hover:text-dark-custom">
-              Blog
+              {pathname === '/blog' ? 'Docs' : 'Blog'}
             </a>
           </Link>{' '}
-          <Link href="/releases">
-            <a className="pl-6 py-2  flex-1 text-left">Releases</a>
+          <Link
+            href={
+              pathname.startsWith('/docs/releases')
+                ? '/docs/reference'
+                : '/docs/releases'
+            }
+          >
+            <a className="pl-6 py-2  flex-1 text-left">
+              {pathname.startsWith('/docs/releases') ? 'Reference' : 'Releases'}
+            </a>
           </Link>
-        </div>
+        </div> */}
       </div>
     </aside>
   );

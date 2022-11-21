@@ -5,7 +5,7 @@ const images = require('remark-images'); // Improved image syntax
 const unwrapImages = require('remark-unwrap-images'); // Removes <p> wrapper around images
 const smartyPants = require('./remark-smartypants'); // Cleans up typography
 const codeImport = require('./code-import'); // imports code snippets from external files
-const milestones = require('./remark-milestone'); // imports code snippets from external files
+const milestones = require('./remark-milestone'); // replaces @milestone tag with a milestone contents
 const html = require('remark-html');
 
 module.exports = {

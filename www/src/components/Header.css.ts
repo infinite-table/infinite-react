@@ -81,7 +81,6 @@ export const NavBarCls = style([
     right: 0,
     display: 'flex',
     flexFlow: 'row',
-    maxWidth: wwwVars.maxSiteWidth,
     width: '100%',
     alignItems: 'center',
     margin: '0 auto',

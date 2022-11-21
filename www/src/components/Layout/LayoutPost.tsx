@@ -1,4 +1,5 @@
 import { MDXProvider } from '@mdx-js/react';
+import blogIndexRouteTree from '@www/blogIndex.json';
 
 import { DocsPageFooter } from '@www/components/DocsFooter';
 
@@ -10,6 +11,7 @@ import toCommaSeparatedList from '@www/utils/toCommaSeparatedList';
 import format from 'date-fns/format';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import { HighlightBrandToLightBackground } from '../components.css';
 
 import { getSidebarHome } from './getSidebarHome';
 import { Page } from './Page';
@@ -80,8 +82,8 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
   useTwitter();
   return (
     <>
-      <div className="w-full px-12">
-        <div className="px-5 sm:px-12 h-full mx-auto relative overflow-x-hidden lg:pt-0 pt-20 lg:pl-80 2xl:px-80 ">
+      <div className="w-full px-4 sm:px-12">
+        <div className=" h-full mx-auto relative overflow-x-hidden lg:pt-0  lg:pl-80 2xl:px-80 ">
           <div className="ml-0 2xl:mx-auto 2xl:max-w-7xl">
             <Seo
               title={meta.title}
@@ -91,7 +93,9 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
               } | Infinite Table DataGrid for React`}
             />
             <div className=" ">
-              <h1 className="mb-6 pt-8 text-4xl md:text-5xl font-bold leading-snug tracking-tight text-content-color">
+              <h1
+                className={`mb-6 pt-8 text-4xl font-black md:text-5xl font-bold leading-snug tracking-tight text-content-color ${HighlightBrandToLightBackground}`}
+              >
                 {meta.title}
               </h1>
               <p className="mb-6 text-sm text-content-color">
@@ -137,7 +141,27 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
 function AppShell(props: { children: React.ReactNode }) {
   const routeTree = getSidebarHome() as RouteItem;
 
-  return <Page routeTree={routeTree} {...props} />;
+  return (
+    <Page
+      blog
+      routeTree={
+        {
+          title: 'Blog',
+          heading: false,
+          path: '/blog',
+          routes: [
+            {
+              title: 'Blog',
+              heading: false,
+              path: '/blog',
+              routes: blogIndexRouteTree.routes,
+            },
+          ],
+        } as any as RouteItem
+      }
+      {...props}
+    />
+  );
 }
 
 export default function withLayoutPost(meta: any) {

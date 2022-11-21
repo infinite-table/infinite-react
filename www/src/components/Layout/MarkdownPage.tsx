@@ -228,9 +228,7 @@ export function MarkdownArticle(props: {
     <article className="h-full mx-auto relative w-full min-w-0" {...domProps}>
       <div
         className={
-          skipReserveSidebarSpace
-            ? ''
-            : 'pt-20 lg:pt-0 pl-0 lg:pl-80 2xl:px-80 '
+          skipReserveSidebarSpace ? '' : 'lg:pt-0 pl-0 lg:pl-80 2xl:px-80 '
         }
       >
         <Seo title={title} description={description} />

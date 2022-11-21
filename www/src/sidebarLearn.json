@@ -1,12 +1,15 @@
 {
   "title": "Learn Infinite Table",
   "heading": true,
-  "path": "/docs/learn/getting-started",
   "routes": [
     {
       "heading": true,
       "path": "",
       "routes": [
+        {
+          "title": "Overview",
+          "path": "/docs"
+        },
         {
           "title": "Getting Started",
           "path": "/docs/learn/getting-started"

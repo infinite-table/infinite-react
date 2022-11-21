@@ -20,7 +20,7 @@ function PageHeading({
   tags = [],
 }: PageHeadingProps) {
   return (
-    <div className="px-4 sm:px-12 pt-5">
+    <div className="px-4 sm:px-12 pt-7">
       <div className="max-w-7xl ml-0 2xl:mx-auto">
         {tags ? <Breadcrumbs /> : null}
         <H1

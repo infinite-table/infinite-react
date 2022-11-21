@@ -77,7 +77,7 @@ export function SidebarRouteTree({
   const { pathname } = useRouter();
   const slug = pathname;
 
-  const currentRoutes = routeTree.routes as RouteItem[];
+  const currentRoutes = ((routeTree || {}).routes as RouteItem[]) || [];
   const expandedPath = currentRoutes.reduce(
     (acc: string | undefined, curr: RouteItem) => {
       if (acc) return acc;
@@ -101,6 +101,7 @@ export function SidebarRouteTree({
         .filter((route) => !route.draft)
         .map(({ path, title, routes, heading, transient }, index) => {
           const pagePath = path && removeFromLast(path, '.');
+
           const selected = slug === pagePath && !transient;
 
           // if current route item has no path and children treat it as an API sidebar heading

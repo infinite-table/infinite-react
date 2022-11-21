@@ -6,6 +6,7 @@ import { InfiniteLogo } from '@www/components/InfiniteLogo';
 import { PageFindSearch } from '@www/components/PageFindSearch';
 import { Search } from '@www/components/Search';
 import { MenuContext } from '@www/components/useMenu';
+import { wwwTheme, wwwVars } from '@www/styles/www-utils.css';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -93,8 +94,6 @@ export default function Nav() {
 
   const section = inferSection(pathname);
 
-  console.log({ section });
-
   function handleFeedback() {
     const nodes: any = document.querySelectorAll(
       '#_hj_feedback_container button',
@@ -108,19 +107,16 @@ export default function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-4 pr-2 lg:px-5 z-50">
+    <nav
+      className={`sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-4 pr-2 lg:px-5 z-50 `}
+    >
       <div className="xl:w-full xl:max-w-xs flex items-center">
-        <button
-          type="button"
-          aria-label="Menu"
-          onClick={toggleOpen}
-          className={cn('flex lg:hidden items-center h-full px-2', {
-            'text-link mr-0': isOpen,
-          })}
-        >
-          {!isOpen ? <IconHamburger /> : <IconClose />}
-        </button>
-        <LogoAndTitle color="light" />
+        {/* <div
+          style={{
+            height: wwwVars.header.lineHeight,
+          }}
+        /> */}
+        {/* <LogoAndTitle color="light" /> */}
 
         {/* <div className="block ">
           <button
@@ -147,10 +143,10 @@ export default function Nav() {
           </button>
         </div> */}
       </div>
-      <div className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b  border-border-dark">
-        <NavLink href="/docs" isActive={section === 'home'}>
-          Home
-        </NavLink>
+      <div
+        className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b border-border-dark"
+        style={{ marginTop: wwwVars.header.lineHeight }}
+      >
         <NavLink
           href="/docs/learn/getting-started"
           isActive={section === 'learn'}
@@ -160,23 +156,22 @@ export default function Nav() {
         <NavLink href="/docs/reference" isActive={section === 'reference'}>
           Reference
         </NavLink>
+        <NavLink href="/docs/releases" isActive={section === 'releases'}>
+          Releases
+        </NavLink>
       </div>
       {/* this is hidden on large screens, since the Buy button is on sidebar for >= large  */}
-      <div className="flex items-center h-10 mx-0 w-full lg:hidden justify-end slg:max-w-sm">
-        <PageFindSearch />
-        <AccentButton size="small" className="ml-2 sm:hidden" href="/pricing">
-          {/* button for small mobile, so screen < sm */}
-          Get
-        </AccentButton>
-        <AccentButton
-          size="small"
-          className="ml-2 hidden sm:inline-flex"
-          href="/pricing"
-        >
-          {/* button for >= small */}
+      {/* <div
+        className="flex items-center h-10 mx-0 w-full lg:hidden justify-end slg:max-w-sm pt-5"
+        style={{ marginTop: wwwVars.header.lineHeight }}
+      > */}
+      {/* <PageFindSearch /> */}
+
+      {/* <AccentButton size="small" className="ml-2 inline-flex" href="/pricing">
+          
           Get License
-        </AccentButton>
-      </div>
+        </AccentButton> */}
+      {/* </div> */}
     </nav>
   );
 }

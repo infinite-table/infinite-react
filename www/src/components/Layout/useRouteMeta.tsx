@@ -54,13 +54,13 @@ export function useRouteMeta(rootRoute?: RouteItem) {
   const routeTree = rootRoute || sidebarContext;
   const router = useRouter();
   const cleanedPath = router.pathname;
-  // console.lo
+
   if (cleanedPath === '/404') {
     return {
       breadcrumbs: [],
     };
   }
-  // console.log('routeTree', routeTree);
+
   const breadcrumbs = getBreadcrumbs(cleanedPath, routeTree);
   return {
     ...getRouteMeta(cleanedPath, routeTree),
@@ -78,7 +78,10 @@ function getRouteMeta(
 ): RouteMeta {
   const { routes } = currentRoute;
 
-  if (ctx.route && !ctx.nextRoute) {
+  if (currentRoute && currentRoute.path === '/docs') {
+    console.log(JSON.parse(JSON.stringify({ ctx, currentRoute })));
+  }
+  if (ctx.route && !ctx.nextRoute && !currentRoute.draft) {
     ctx.nextRoute = currentRoute;
   }
 
@@ -86,7 +89,7 @@ function getRouteMeta(
     ctx.route = currentRoute;
   }
 
-  if (!ctx.route) {
+  if (!ctx.route && !currentRoute.draft) {
     ctx.prevRoute = currentRoute;
   }
 

@@ -95,7 +95,7 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
             <FooterLink isHeader={true}>Company</FooterLink>
             <FooterLink href="/privacy">Privacy Policy</FooterLink>
             {/* <FooterLink href="/privacy">EULA</FooterLink> */}
-            <FooterLink href="/terms-of-use">Terms of Use</FooterLink>
+            <FooterLink href="/eula">License & Terms</FooterLink>
             <FooterLink href="mailto:admin@infinite-table.com">
               Email Us
             </FooterLink>

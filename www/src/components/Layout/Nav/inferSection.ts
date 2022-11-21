@@ -1,10 +1,8 @@
-export function inferSection(pathname: string): 'learn' | 'reference' | 'home' {
+export function inferSection(
+  pathname: string,
+): 'learn' | 'reference' | 'releases' {
   const [docs, v, sectionName] = pathname.split('/');
 
-  console.log({ sectionName, v, docs });
-  if (docs === 'blog') {
-    return 'home';
-  }
   if (docs === '404') {
     return 'learn';
   }
@@ -12,7 +10,9 @@ export function inferSection(pathname: string): 'learn' | 'reference' | 'home' {
     return 'learn';
   } else if (sectionName === 'reference') {
     return 'reference';
+  } else if (sectionName === 'releases') {
+    return 'releases';
   } else {
-    return 'home';
+    return 'learn';
   }
 }

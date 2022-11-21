@@ -6,6 +6,7 @@ import {
   marginTop,
   centeredFlexColumn,
   wwwVars,
+  wwwTheme,
 } from '../styles/www-utils.css';
 import { BannerText } from './BannerText';
 
@@ -81,7 +82,7 @@ export const LogoAndTitle = (props: {
   <Link href="/">
     <a
       data-logo
-      className={`inline-flex items-center font-black text-xl sm:text-4xl sm:mr-4`}
+      className={`inline-flex items-center font-black text-lg sm:text-4xl sm:mr-4`}
       style={{ width: 'max-content' }}
     >
       <InfiniteLogo
@@ -99,13 +100,23 @@ export const LogoAndTitle = (props: {
   </Link>
 );
 
-export const NavBarContent = () => {
+export const NavBarContent = ({
+  skipMaxWidth,
+  childrenBefore,
+}: {
+  skipMaxWidth?: boolean;
+  childrenBefore?: React.ReactNode;
+}) => {
   const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
   return (
     <ul
       className={`${NavBarCls} flex flex-row items-center `}
-      style={{ flexWrap: 'wrap' }}
+      style={{
+        flexWrap: 'wrap',
+        maxWidth: skipMaxWidth ? 'auto' : wwwVars.maxSiteWidth,
+      }}
     >
+      {childrenBefore}
       <li
         className={`${itemCls} font-black text-xl sm:text-4xl md:text-4xl tracking-tight`}
       >
@@ -142,10 +153,16 @@ export const NavBarContent = () => {
   );
 };
 
-export const MainNavBar = () => {
+export const MainNavBar = ({
+  skipMaxWidth,
+  children,
+}: {
+  skipMaxWidth?: boolean;
+  children?: React.ReactNode;
+}) => {
   return (
-    <nav className={`${NavBarWrapCls} bg-black`}>
-      <NavBarContent />
+    <nav className={`${NavBarWrapCls} ${wwwTheme} bg-black`}>
+      <NavBarContent skipMaxWidth={skipMaxWidth} childrenBefore={children} />
     </nav>
   );
 };
