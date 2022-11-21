@@ -1,7 +1,6 @@
 ---
 title: "Why Another React DataGrid?"
 description: "Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different"
-draft: true
 author: [admin]
 ---
 
