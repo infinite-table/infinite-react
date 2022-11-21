@@ -81,21 +81,23 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
             <FooterLink href="/docs/reference/api">API</FooterLink>
           </div>
 
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-start ">
             <FooterLink isHeader={true}>Social</FooterLink>
 
-            <GithubLink className="border-b border-transparent hover:border-b hover:border-content-color text-base">
+            <GithubLink className="items-center border-b border-transparent hover:border-b hover:border-content-color text-base">
               GitHub{' '}
             </GithubLink>
-            <TwitterLink className="border-b border-transparent  hover:border-content-color text-base">
+            <TwitterLink className="items-center border-b border-transparent  hover:border-content-color text-base">
               Twitter
             </TwitterLink>
+            <FooterLink href="/community">Community</FooterLink>
           </div>
           <div className="flex flex-col items-start">
             <FooterLink isHeader={true}>Company</FooterLink>
             <FooterLink href="/privacy">Privacy Policy</FooterLink>
             {/* <FooterLink href="/privacy">EULA</FooterLink> */}
             <FooterLink href="/eula">License & Terms</FooterLink>
+
             <FooterLink href="mailto:admin@infinite-table.com">
               Email Us
             </FooterLink>

@@ -1,6 +1,6 @@
 ---
 title: Community
-layout: Home
+
 ---
 
 <Intro>
@@ -19,4 +19,4 @@ Stack Overflow is a popular forum to ask code-level questions or if you're stuck
 
 ## News
 
-For the latest news about Infinite Table, [follow us on Twitter](https://twitter.com/inf-table).
+For the latest news about Infinite Table, [follow us on Twitter](https://twitter.com/get_infinite).
