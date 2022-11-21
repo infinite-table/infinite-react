@@ -3,6 +3,7 @@ title: "Why Another React DataGrid?"
 description: "Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different"
 author: [admin]
 ---
+
 We've been working on finding better ways to display tabular data for over 2 decades now and collectively we have 35+ years of experience working on this.
 
 It all began on the desktop with a great range of DataGrids and then we moved to the web and the `<table />` component - yeah, we've been around for quite some while - all the while dealing with the same problems and requirements again and again. 
