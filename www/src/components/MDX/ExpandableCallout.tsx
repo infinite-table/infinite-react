@@ -34,7 +34,7 @@ const variantMap = {
   hint: {
     title: 'Hint',
     Icon: IconHint,
-    containerClasses: ' bg-green-50 bg-opacity-40',
+    containerClasses: ' bg-green-60 bg-opacity-20 text-lg',
     textColor: 'text-green-30',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',

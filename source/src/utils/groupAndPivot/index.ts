@@ -426,9 +426,11 @@ function computeReducersFor<DataType>(
       }
       const currentValue = reducerResults[key];
 
-      const value = reducer.field
+      const value = reducer.getter
+        ? reducer.getter(data) ?? null
+        : reducer.field
         ? data[reducer.field]
-        : reducer.getter?.(data) ?? null;
+        : null;
 
       reducerResults[key] = reducer.reducer(
         currentValue,

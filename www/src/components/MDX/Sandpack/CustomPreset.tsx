@@ -84,15 +84,18 @@ export function CustomPreset({
   let isExpandable = lineCount > 16 || isExpanded;
   let editorHeight = isExpandable ? lineCount * 24 + 24 : 'auto'; // shown lines * line height (24px)
 
+  const [fullScreen, setFullScreen] = React.useState(false);
   const titleBlock = title ? (
-    <div className={'leading-base bg-dark-custom bg-opacity-50 w-full '}>
+    <div
+      className={`leading-base bg-dark-custom ${
+        fullScreen ? '' : 'bg-opacity-50'
+      } w-full `}
+    >
       <div className="text-content-color flex text-sm px-4 py-0.5 relative">
         <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>
   ) : null;
-
-  const [fullScreen, setFullScreen] = React.useState(false);
 
   if (fullScreen) {
     editorHeight = 'auto';

@@ -120,6 +120,10 @@
               "path": "/docs/learn/grouping-and-pivoting/grouping-rows"
             },
             {
+              "title": "Group aggregations",
+              "path": "/docs/learn/grouping-and-pivoting/group-aggregations"
+            },
+            {
               "title": "Pivoting",
               "transient": true,
               "path": "/docs/learn/grouping-and-pivoting/pivoting/overview",

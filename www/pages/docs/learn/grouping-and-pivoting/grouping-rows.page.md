@@ -361,6 +361,12 @@ If you want to prevent the user to expand the last level of group rows, you can 
 
 </Gotcha>
 
+<HeroCards>
+<YouWillLearnCard title="Aggregations" path="group-aggregations">
+Dive deeper into the aggregation reducers and how they work.
+</YouWillLearnCard>
+</HeroCards>
+
 ## Server side grouping with lazy loading
 
 Lazy loading becomes all the more useful when working with grouped data.
