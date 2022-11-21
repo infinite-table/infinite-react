@@ -125,9 +125,9 @@ Infinite Table is getting this a step further and splitting the data loading and
 
 This level of separation allows us to iterate more rapidly on new features and also makes testing 🧪 easier.
 
-### [ExtJS 3](https://docs.sencha.com/extjs/3.4.0/#!/api/Ext.grid.GridPanel)
+### ExtJS 3
 
-The next solution we've worked with was ExtJS version 3, which was built on the legacy of YUI 3. At the time, back in 2010, it was the most advanced DataGrid solution out there - used for some of the most complex applications in the enterprise world, from CMSs to ERP systems. 
+The next solution we've worked with was [ExtJS version 3](https://docs.sencha.com/extjs/3.4.0/#!/api/Ext.grid.GridPanel), which was built on the legacy of YUI 3. At the time, back in 2010, it was the most advanced DataGrid solution out there - used for some of the most complex applications in the enterprise world, from CMSs to ERP systems. 
 
 The ExtJS 3 DataGrid brought excellent product execution in a few areas:
  - the [documentation](https://docs.sencha.com/extjs/3.4.0/) was excellent for its time - very rich, easy to navigate and search, with useful examples. As a bonus, from the docs you had access to the source-code of all components, which was a nice addition.
