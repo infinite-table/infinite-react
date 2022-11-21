@@ -73,8 +73,7 @@ Under data protection laws your rights in relation to your personal data include
 * request access, correction, erasure, restriction or transfer of data
 * object to processing, or to movement of data and (where the lawful ground of processing is consent) to withdraw consent
 
-You can see more about your rights at the website of the [Information Commissioner’s Office](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/) 
-In order to exercise any of the rights set out above, get in touch with us at [admin@infinite-table.com](mailto:admin@infinite-table.com); we guarantee to respond to your request as quickly as possible.
+In order to exercise any of your rights, please get in touch with us at [admin@infinite-table.com](mailto:admin@infinite-table.com); we guarantee to respond to your request as quickly as possible.
 
 Infinite Table will not require you to pay a fee to access your personal data or to exercise any of the other rights relating to your data.
 
@@ -82,7 +81,7 @@ We may need to request specific information from you to help us confirm your ide
 
 We try to respond to all legitimate requests within one week. Occasionally it may take us longer if your request is particularly complex or you have made a number of requests. In this case, we will notify you.
 
-If you are not happy with any aspect of how we collect and use your data, we would ask you to get in touch with us so that we can try to resolve the issue for you. You also have the right to complain to the [Information Commissioner’s Office](https://www.ico.org.uk/) (ICO), the UK supervisory authority for data protection issues. 
+If you are not happy with any aspect of how we collect and use your data, we would ask you to get in touch with us so that we can try to resolve the issue for you.
 
 ### Third-Party Links
 The Infinite Table website includes links to third-party websites, plug-ins and applications. Clicking on those links or enabling those connections may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements. We advise you to be aware when you leave our website, and to read the privacy notice of every website you visit.

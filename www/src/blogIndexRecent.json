@@ -9,7 +9,7 @@
           "path": "/blog/2022/11/08/why-another-datagrid",
           "date": "2022-11-08",
           "title": "Why Another React DataGrid?",
-          "draft": true,
+          "draft": false,
           "description": "Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different",
           "author": [
             "admin"
