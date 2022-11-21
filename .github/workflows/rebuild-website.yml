@@ -7,10 +7,11 @@ on:
     branches:
       - master
       - dev
-  # issues:
-  #   types: [opened, edited, milestoned, closed]
-  # label:
-  #   types: [created, edited, deleted]
+  workflow_call:
+  issues:
+    types: [opened, edited, milestoned, closed]
+  label:
+    types: [created, edited, deleted]
   # workflow_run:
   #   # when the "RELEASE" workflow is completed successfully, we need to react and run this workflow
   #   workflows: [RELEASE]
@@ -22,7 +23,6 @@ concurrency:
 
 jobs:
   publish-website:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     env:

@@ -88,3 +88,8 @@ jobs:
       #   uses: "./.github/actions/send-version-to-slack"
       #   with:
       #     slack_webhook_notify: ${{ secrets.SLACK_WEBHOOK_NOTIFY }}
+  publish-docs-on-release:
+    needs: release
+    name: 'Rebuilds website'
+    uses: ./.github/workflows/rebuild-website.yml
+    secrets: inherit
