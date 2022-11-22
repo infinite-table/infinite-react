@@ -126,11 +126,11 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
       ? {
           right:
             computedPinned === 'start'
-              ? 0
+              ? null
               : ThemeVars.components.HeaderCell.resizeHandleWidth,
         }
       : computedPinned === 'end' && computedFirstInCategory
-      ? { right: 'none', left: 0 }
+      ? { right: null }
       : undefined;
 
   return (
