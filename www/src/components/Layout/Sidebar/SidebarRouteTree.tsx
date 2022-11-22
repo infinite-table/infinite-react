@@ -30,6 +30,11 @@ function CollapseWrapper({
     isExpanded,
     duration,
   });
+  const collapsedProps = getCollapseProps();
+
+  const [_x, setx] = React.useState(0);
+
+  const rerender = () => setx((x) => x + 1);
 
   // Disable pointer events while animating.
   const isExpandedRef = React.useRef(isExpanded);
@@ -41,6 +46,9 @@ function CollapseWrapper({
         return;
       }
       isExpandedRef.current = isExpanded;
+      if (isExpanded) {
+        transitioningRef.current = true;
+      }
       if (ref.current !== null) {
         const node: HTMLDivElement = ref.current;
         node.style.pointerEvents = 'none';
@@ -49,11 +57,25 @@ function CollapseWrapper({
         }
         timeoutRef.current = window.setTimeout(() => {
           node.style.pointerEvents = '';
+          if (isExpanded) {
+            (node.firstElementChild as HTMLElement)!.style.height = '';
+            // node.firstChild.style.he
+          }
         }, duration + 100);
       }
     });
   }
 
+  const transitioningRef = React.useRef(false);
+
+  const style: React.CSSProperties = { ...collapsedProps.style };
+  collapsedProps.onTransitionEnd = () => {
+    transitioningRef.current = false;
+    rerender();
+  };
+  if (isExpanded && !transitioningRef.current) {
+    delete style.height;
+  }
   return (
     <div
       ref={ref}
@@ -63,7 +85,9 @@ function CollapseWrapper({
         animation: `nav-fadein ${duration}ms ease-in-out`,
       }}
     >
-      <div {...getCollapseProps()}>{children}</div>
+      <div {...getCollapseProps()} style={style}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -142,7 +166,7 @@ export function SidebarRouteTree({
                 {isMobile ? (
                   content
                 ) : (
-                  <CollapseWrapper duration={250} isExpanded={isExpanded}>
+                  <CollapseWrapper duration={200} isExpanded={isExpanded}>
                     {content}
                   </CollapseWrapper>
                 )}

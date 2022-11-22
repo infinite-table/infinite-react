@@ -326,7 +326,7 @@ The <PropLink name="columns.sortable" /> property can be used to override the de
 
 ## Aggregations
 
-When grouping, you can also aggregate the values of the grouped rows. This is done via the <DataSourcePropLink name="aggregationReducers" code>DataSource.aggregationReducers=true</DataSourcePropLink> property. See the example below
+When grouping, you can also aggregate the values of the grouped rows. This is done via the <DataSourcePropLink name="aggregationReducers" code>DataSource.aggregationReducers</DataSourcePropLink> property. See the example below
 
 <Sandpack title="Grouping with aggregations">
 

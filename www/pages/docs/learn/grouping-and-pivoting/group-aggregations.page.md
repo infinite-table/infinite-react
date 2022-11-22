@@ -11,7 +11,7 @@ The aggregations are defined on the `<DataSource />` component and are easily av
 
 <Note>
 
-Throughout the docs, we might refer to aggregations as reducers - which, more technically, they are.
+Throughout the docs, we might refer to aggregations as reducers - which, more technically, they are, since they reduce an array of values (from a group) to a single value.
 
 </Note>
 
@@ -132,4 +132,122 @@ country: {
 
 ## Server-Side Aggregations
 
-Examples and docs coming soon. In the meanwhile, see [the grouping page docs on aggregations](grouping-rows#aggregations)
+Server-side aggregations are defined in the same way as client-side aggregations (except the `reducer` function is missing), but the aggregation values are computed by the server and returned as part of the data response.
+
+For computing the grouping and aggregations on the server, the backend needs to know the grouping and aggregation configuration. As such, Infinite Table will call the <DPropLink name="data" code={false}>DataSource data</DPropLink> function with an object that contains all the required info:
+
+ - `groupBy` - the array of grouping fields, as passed to the `<DataSource />` component.
+- `pivotBy` - the array of pivot fields, as passed to the `<DataSource />` component.
+ - `aggregationReducers` - the value of the <DPropLink name="aggregationReducers" /> prop, as configured on the `<DataSource />` component.
+ - `sortInfo` - the current <DPropLink name="sortInfo" code={false}>sorting information</DPropLink> for the data.
+
+For the lazy-loading use-case, there are other useful properties you can use from the object passed into the `data` function:
+
+ - `groupKeys: string[]` - the group keys for the current group - the `data` fn is generally called lazily when the user expands a group row. This info is useful for fetching the data for a specific group.
+- `lazyLoadStartIndex` - provided when batching is also enabled via the <DPropLink name="lazyLoad" /> prop. This is the index of the first item in the current batch.
+- `lazyLoadBatchSize` - also used when batching is enabled. This is the number of items in the current batch.
+
+Besides the above information, if filtering is used, a `fiterValue` is also made available.
+
+In order to showcase the server-side aggregations, let's build an example similar to the above one, but let's lazily load group data. 
+
+```tsx {2} title=DataSource_with_lazyLoad enabled
+<DataSource
+  lazyLoad
+  ...
+/>
+```
+
+As soon a grouping and aggregations are no longer computed on the client, your `data` function needs to send those configurations on the backend, so it needs to get a bit more complicated:
+
+```tsx title=Data_function_sending_configurations_to_the_backend
+const data = ({ groupBy, aggregationReducers, sortInfo, groupKeys }) => {  
+   // it's important to send the current group keys - for top level, this will be []
+  const args: string[] = [`groupKeys=${JSON.stringify(groupKeys)}`];
+
+  // turn the sorting info into an array
+  if (sortInfo && !Array.isArray(sortInfo)) {
+    sortInfo = [sortInfo];
+  }
+
+  if (sortInfo) {
+    // the backend expects the sort info to be an array of field,dir pairs
+    args.push(
+      'sortInfo=' +
+        JSON.stringify(
+          sortInfo.map((s) => ({
+            field: s.field,
+            dir: s.dir,
+          })),
+        ),
+    );
+  }
+
+  if (groupBy) {
+    // for grouping, send an array of objects with the `field` property
+    args.push(
+      'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field }))),
+    );
+  }
+
+  if (aggregationReducers) {
+    args.push(
+      'reducers=' +
+        JSON.stringify(
+          // by convention, we send an array of reducers, each with `field` `name`(= "avg") and `id`
+          // it's up to you to decide what the backend needs
+          Object.keys(aggregationReducers).map((key) => ({
+            field: aggregationReducers[key].field,
+            id: key,
+            name: aggregationReducers[key].reducer,
+          })),
+        ),
+    );
+  }
+
+  const url = BASE_URL + `/developers10k-sql?` + args.join('&');
+  return fetch(url).then(r=>r.json())
+}
+
+<DataSource
+  data={data}
+  lazyLoad
+  ...
+/>
+```
+
+When fetching without grouping (or with local grouping and aggregations), the `<DataSource />` component expects a flat array of data items coming from the server.
+
+However, when the grouping is happening server-side, the `<DataSource />` component expects a response that has the following shape: 
+
+ * `data` - the root array with grouping and aggregation info. Each item in the array should have the following:
+    - `keys` - an array of the keys for the current group - eg `['USA']` or `['USA', 'New York']`
+    - `data` - an object with all the common values for the group - eg `{ country: 'USA' }` or `{ country: 'USA', city: 'New York' }`
+    - `aggregations` - an object with the aggregation values for the group - eg `{ age: 30, salary: 120300 }`. The keys in this object should match the keys in the <DPropLink name="aggregationReducers" /> object.
+    - `pivot` - pivoting information for the current group - more on that on the dedicated [Pivoting page](./pivoting/overview).
+
+When the user is expanding the last level, in order to see the leaf rows, the shape of the response is expected to be the same as when there is no grouping - namely an array of data items or an object where the `data` property is an array of data items.
+
+Let's put all of this into a working example.
+
+<Sandpack>
+
+<Description>
+
+This showcases grouping and aggregations on the server - both the `age` and `salary` columns have an AVG aggregation defined.
+
+Grouping is done by the `country`, `city` and `stack` columns.
+
+</Description>
+
+```tsx file=grouping-and-aggregations-with-lazy-load-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+When the user is doing a sort on the table, the `<DataSource />` is fetched from scratch, but the expanded/collapsed state is preserved, and all the required groups that need to be re-fetched are reloaded as needed (if they are not eagerly included in the served data).
+
+</Note>
+

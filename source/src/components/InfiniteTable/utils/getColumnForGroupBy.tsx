@@ -102,9 +102,7 @@ export function getGroupColumnRender<T>({
           column.align === 'end' ? flexFlow.rowReverse : flexFlow.row,
           alignItems.center,
           groupRenderStrategy === 'single-column' ||
-            (groupRenderStrategy === 'multi-column' &&
-              !rowInfo.isGroupRow &&
-              selectionCheckBox)
+            (groupRenderStrategy === 'multi-column' && !rowInfo.isGroupRow)
             ? GroupRowExpanderCls({ align: column.align || 'start' })
             : null,
         )}
