@@ -41,6 +41,7 @@ import { KeyOfNoSymbol } from './Utility';
 
 import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
+import { MenuIconProps } from '../components/icons/MenuIcon';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -156,6 +157,14 @@ export type InfiniteTableComputedValuesGetter<T> =
 export type InfiniteTableActionsGetter<T> = () => InfiniteTableActions<T>;
 export type DataSourceStateGetter<T> = () => DataSourceState<T>;
 
+export type InfiniteTableColumnApi<_T> = {
+  showContextMenu: (target: EventTarget | HTMLElement) => void;
+  toggleContextMenu: (target: EventTarget | HTMLElement) => void;
+  hideContextMenu: () => void;
+  toggleSort: () => void;
+  clearSort: () => void;
+  setSort: (sort: SortDir | null) => void;
+};
 export type InfiniteTableApi<T> = {
   get selectionApi(): InfiniteTableSelectionApi;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
@@ -332,6 +341,7 @@ export type InfiniteTablePropComponents = {
   LoadMask?: React.FC<React.PropsWithChildren<LoadMaskProps>>;
   CheckBox?: React.FC<InfiniteCheckBoxProps>;
   Menu?: React.FC<React.PropsWithChildren<MenuProps>>;
+  MenuIcon?: React.FC<MenuIconProps>;
 };
 
 export type ScrollStopInfo = {

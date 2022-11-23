@@ -55,9 +55,9 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
   return (
     <>
       <footer
-        className={`${props.className || ''} ${footer} ${
-          alignSelf.flexEnd
-        } w-full flex flex-col ${
+        className={`${
+          props.className || ''
+        } justify-center items-center self-end w-full flex flex-col ${
           shadow.lg
         } bg-black text-content-color ${OverlineCls} relative py-10`}
       >

@@ -122,7 +122,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     activeCellIndicatorDOMRef: createRef(),
 
     onColumnMenuClick: buildSubscriptionCallback<{
-      target: HTMLElement;
+      target: HTMLElement | EventTarget;
       column: InfiniteTableComputedColumn<T>;
     }>(),
 

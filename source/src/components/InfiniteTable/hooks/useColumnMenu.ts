@@ -33,7 +33,7 @@ export function useColumnMenu<T>() {
         {
           constrainTo: domRef.current!,
           id: 'column-menu',
-          alignTo: target,
+          alignTo: target as HTMLElement,
           alignPosition: [
             ['TopLeft', 'BottomLeft'],
             ['TopRight', 'BottomRight'],
@@ -63,6 +63,8 @@ export function useColumnMenu<T>() {
           handleMouseDown,
         );
       };
+    } else {
+      clearAll();
     }
 
     return () => {};

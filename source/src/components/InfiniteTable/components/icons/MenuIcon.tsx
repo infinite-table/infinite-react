@@ -6,13 +6,14 @@ import { ThemeVars } from '../../theme.css';
 import { HeaderMenuIconCls } from '../InfiniteTableHeader/header.css';
 import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
 
-type MenuIconProps = {
+export type MenuIconProps = {
   lineWidth?: number;
   lineStyle?: React.CSSProperties;
   style?: React.CSSProperties;
   className?: string;
   domProps?: React.HTMLAttributes<HTMLDivElement>;
   reserveSpaceWhenHidden?: boolean;
+  children?: React.ReactNode;
 };
 
 const defaultLineStyle: React.CSSProperties = {
@@ -23,7 +24,8 @@ const defaultLineStyle: React.CSSProperties = {
 const lineClassName = `${InfiniteTableIconClassName}-menu`;
 
 export function MenuIcon(props: MenuIconProps) {
-  const { style, className, domProps, reserveSpaceWhenHidden } = props;
+  const { style, className, domProps, reserveSpaceWhenHidden, children } =
+    props;
 
   const lineStyle = {
     ...defaultLineStyle,
@@ -46,9 +48,13 @@ export function MenuIcon(props: MenuIconProps) {
         `${InfiniteTableIconClassName}-menu`,
       )}
     >
-      <div className={lineClassName} style={lineStyle}></div>
-      <div className={lineClassName} style={lineStyle}></div>
-      <div className={lineClassName} style={lineStyle}></div>
+      {children ?? (
+        <>
+          <div className={lineClassName} style={lineStyle}></div>
+          <div className={lineClassName} style={lineStyle}></div>
+          <div className={lineClassName} style={lineStyle}></div>
+        </>
+      )}
     </div>
   );
 }

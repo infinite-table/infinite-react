@@ -296,6 +296,7 @@ function InfiniteTableContextProvider<T>() {
     componentActions,
     componentState,
     computed,
+    dataSourceActions,
     getDataSourceState,
     getComputed,
     getState,

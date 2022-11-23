@@ -19,6 +19,7 @@ import type { Renderable } from '../../types/Renderable';
 import { InfiniteTableCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
 
 import {
+  InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnType,
 } from './InfiniteTableProps';
@@ -29,6 +30,7 @@ import type {
 } from './Utility';
 
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
+import { MenuIconProps } from '../components/icons/MenuIcon';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -50,7 +52,7 @@ export type InfiniteTableColumnHeaderParam<
   allRowsSelected: boolean;
   someRowsSelected: boolean;
   api: InfiniteTableApi<DATA_TYPE>;
-
+  columnApi: InfiniteTableColumnApi<DATA_TYPE>;
   renderBag: {
     all?: Renderable;
     header: string | number | Renderable;
@@ -419,6 +421,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   components?: {
     ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
     HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
+    MenuIcon?: React.FC<MenuIconProps>;
   };
 };
 

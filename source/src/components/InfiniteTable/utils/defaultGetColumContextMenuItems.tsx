@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { DataSourceState } from '../../DataSource';
+import { DataSourceComponentActions, DataSourceState } from '../../DataSource';
 import { MenuItemObject, MenuProps } from '../../Menu/MenuProps';
 import { Renderable } from '../../types/Renderable';
+import { getColumnApiForColumn } from '../api/getColumnApi';
 import { InfiniteCheckBox } from '../components/CheckBox';
 import {
   InfiniteTableApi,
@@ -21,9 +22,17 @@ export function defaultGetColumContextMenuItems<T>(
     getComputed: () => InfiniteTableComputedValues<T>;
 
     actions: InfiniteTableActions<T>;
+    dataSourceActions: DataSourceComponentActions<T>;
   },
 ): MenuProps['items'] {
-  const { column, getComputed, api, getDataSourceState } = params;
+  const {
+    column,
+    getComputed,
+    api,
+    getDataSourceState,
+    actions,
+    dataSourceActions,
+  } = params;
 
   return [
     {
@@ -86,6 +95,11 @@ export function defaultGetColumContextMenuItems<T>(
           dataSourceState;
 
         computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
+          const columnApi = getColumnApiForColumn(id, {
+            ...params,
+            componentActions: actions,
+            dataSourceActions,
+          })!;
           let label: Renderable =
             col.header && typeof col.header !== 'function'
               ? col.header
@@ -95,6 +109,7 @@ export function defaultGetColumContextMenuItems<T>(
             label =
               col.header({
                 column: col,
+                columnApi,
                 insideColumnMenu: true,
                 dragging: false,
                 columnsMap: computed.computedColumnsMap,

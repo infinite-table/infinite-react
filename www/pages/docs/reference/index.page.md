@@ -511,7 +511,7 @@ In this example, the group column is bound to the `firstName` field, so this fie
 
 </Prop>
 
-<Prop name="columns.header" type="React.ReactNode|({column, columnSortInfo})=>React.ReactNode">
+<Prop name="columns.header" type="React.ReactNode|({column, columnSortInfo, columnApi})=>React.ReactNode">
 
 > Specifies the column header. Can be a static value or a function that returns a React node.
 
@@ -634,6 +634,8 @@ If not specified, <PropLink name="columnMaxWidth" /> will be used (defaults to `
 
 </Prop>
 
+
+
 <Prop name="columns.minWidth" type="number">
 
 > Configures the minimum width for the column.
@@ -707,6 +709,39 @@ To understand how the rendering pipeline works, head over to the page on [Column
 <Sandpack title="Column with custom renderGroupIcon">
 
 ```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="columns.renderMenuIcon" type="boolean|({column, columnApi})=> ReactNode">
+
+> Allows customization of the context menu icon.
+
+Use this prop to customize the context icon for the current column. Specify `false` for no context menu icon.
+
+Use a function to render a custom icon. The function is called with an object that has the following properties:
+ - `column`
+ - `columnApi` - an API object for controlling the column programatically (toggle sort, toggle column context menu, etc)
+
+
+<Sandpack title="Custom menu icons and custom menu items">
+
+<Description>
+
+In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
+
+In addition, the `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
+
+</Description>
+
+```ts file=getColumnContextMenuItems-example.page.tsx
+
+```
+
+```ts file=data.ts
 
 ```
 
@@ -1395,6 +1430,35 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 ```
 
 ```ts file=data.ts
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="getColumnContextMenuItems" type="(items, context) => MenuItem[]">
+
+> Allows customization of the context menu items for a column.
+
+Use this function to customize the context menu for columns. The function is called with the following arguments:
+ - `items` - the default menu items for the column - you can return this array as is to use the default menu items (same as not providing this function prop) or you can customize the array or return a new one altogether.
+ - `context` - an object that gives you access to the column and the grid state
+    - `context.column: InfiniteTableComputedColumn<T>` - the current column for which the context menu is being shown
+    - `context.api` - a reference to the [api](./reference/api)
+
+
+<Sandpack title="getColumnContextMenuItems example - custom menu item and icon">
+
+<Description>
+
+In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
+
+In addition, the `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
+
+</Description>
+
+```ts file=getColumnContextMenuItems-example.page.tsx
 
 ```
 

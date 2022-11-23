@@ -45,7 +45,7 @@ export interface InfiniteTableSetupState<T> {
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnMenuClick: SubscriptionCallback<{
-    target: HTMLElement;
+    target: HTMLElement | EventTarget;
     column: InfiniteTableComputedColumn<T>;
   }>;
   columnContextMenuVisibleForColumnId: string | null;
