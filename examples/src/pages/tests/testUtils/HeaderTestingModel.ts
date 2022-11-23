@@ -57,6 +57,9 @@ export class HeaderTestingModel {
   }
 
   async openColumnMenu(colLocation: ColLocation) {
+    // click the body to make sure any open column menu gets closed
+    await this.page.click('body');
+
     await this.hoverOverColumn(colLocation);
 
     const headerCell = this.getHeaderCellLocator(colLocation);
