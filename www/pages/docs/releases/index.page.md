@@ -4,7 +4,6 @@ layout: Releases
 ---
 
 ## 0.6.4 🚀
-
 @milestone id="62"
 
 ## 0.6.3 🚀
