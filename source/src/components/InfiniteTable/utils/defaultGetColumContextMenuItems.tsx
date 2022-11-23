@@ -11,15 +11,18 @@ import {
 } from '../types';
 import { InfiniteTableActions } from '../types/InfiniteTableState';
 
-export function defaultGetColumContextMenuItems<T>(params: {
-  column: InfiniteTableComputedColumn<T>;
-  api: InfiniteTableApi<T>;
-  getState: () => InfiniteTableState<T>;
-  getDataSourceState: () => DataSourceState<T>;
-  getComputed: () => InfiniteTableComputedValues<T>;
+export function defaultGetColumContextMenuItems<T>(
+  _items: MenuProps['items'],
+  params: {
+    column: InfiniteTableComputedColumn<T>;
+    api: InfiniteTableApi<T>;
+    getState: () => InfiniteTableState<T>;
+    getDataSourceState: () => DataSourceState<T>;
+    getComputed: () => InfiniteTableComputedValues<T>;
 
-  actions: InfiniteTableActions<T>;
-}): MenuProps['items'] {
+    actions: InfiniteTableActions<T>;
+  },
+): MenuProps['items'] {
   const { column, getComputed, api, getDataSourceState } = params;
 
   return [

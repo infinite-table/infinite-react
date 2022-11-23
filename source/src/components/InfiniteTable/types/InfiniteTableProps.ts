@@ -512,14 +512,19 @@ export interface InfiniteTableProps<T> {
   scrollTopKey?: string | number;
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 
-  getColumContextMenuItems?: (params: {
+  getColumContextMenuItems?: InfiniteTablePropGetColumnContextMenuItems<T>;
+}
+
+export type InfiniteTablePropGetColumnContextMenuItems<T> = (
+  defaultItems: Exclude<MenuProps['items'], undefined>,
+  params: {
     column: InfiniteTableComputedColumn<T>;
     api: InfiniteTableApi<T>;
     getState: () => InfiniteTableState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;
     actions: InfiniteTableActions<T>;
-  }) => MenuProps['items'];
-}
+  },
+) => MenuProps['items'];
 
 export type InfiniteTablePropKeyboardNavigation = 'cell' | 'row' | false;
 export type InfiniteTablePropKeyboardSelection = boolean;

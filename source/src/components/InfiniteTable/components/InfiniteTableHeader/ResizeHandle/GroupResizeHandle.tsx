@@ -120,17 +120,17 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
     target.addEventListener('pointerup', onPointerUp);
   };
 
-  const style =
+  const style: CSSProperties | undefined =
     (computedPinned === false || computedPinned === 'start') &&
     computedLastInCategory
       ? {
           right:
             computedPinned === 'start'
-              ? null
+              ? undefined
               : ThemeVars.components.HeaderCell.resizeHandleWidth,
         }
       : computedPinned === 'end' && computedFirstInCategory
-      ? { right: null }
+      ? { right: undefined }
       : undefined;
 
   return (

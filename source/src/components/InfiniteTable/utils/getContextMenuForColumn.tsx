@@ -32,16 +32,20 @@ export function getContextMenuForColumn<T>(
     return null;
   }
 
-  const getItems = getColumContextMenuItems || defaultGetColumContextMenuItems;
-
-  const items = getItems({
+  const param = {
     column,
     api: imperativeApi,
     getState,
     getDataSourceState,
     getComputed,
     actions,
-  });
+  };
+
+  const defaultItems = defaultGetColumContextMenuItems([], param)!;
+
+  const items = getColumContextMenuItems
+    ? getColumContextMenuItems(defaultItems, param)
+    : defaultItems;
 
   const onRootMouseDown: EventListener = React.useCallback((event: Event) => {
     //@ts-ignore
@@ -54,6 +58,10 @@ export function getContextMenuForColumn<T>(
       onRootMouseDown,
     );
   };
+
+  if (!items || !items.length) {
+    return null;
+  }
 
   return (
     <MenuCmp

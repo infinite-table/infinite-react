@@ -1,16 +1,17 @@
 import { test, expect } from '@testing';
 
-import { getHeaderColumnIds } from '../../../testUtils';
-
-export default test.describe.parallel('RawList', () => {
-  test('should correctly render virtualized header', async ({ page }) => {
+export default test.describe.parallel('Header', () => {
+  test('should correctly render virtualized header', async ({
+    page,
+    columnModel,
+  }) => {
     await page.waitForInfinite();
-    let cols = await getHeaderColumnIds({ page });
+    let cols = await columnModel.getVisibleColumnIds();
 
     expect(cols).toEqual(['Id', 'FirstName', 'LastName', 'Age']);
     await page.click('button');
 
-    cols = await getHeaderColumnIds({ page });
+    cols = await columnModel.getVisibleColumnIds();
 
     expect(cols).toEqual([]);
   });
