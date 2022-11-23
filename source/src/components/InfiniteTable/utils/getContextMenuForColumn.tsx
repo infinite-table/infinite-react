@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
+
 import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
 import { InfiniteTableContextValue } from '../types';
