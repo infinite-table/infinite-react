@@ -143,7 +143,7 @@ For using group keys in the selection value, see related <DPropLink name="useGro
 
 > Information for sorting the data. This is an uncontrolled prop.
 
-For detailed explanations, see <DataSourcePropLink name="sortInfo" />
+For detailed explanations, see <DataSourcePropLink name="sortInfo" /> (controlled property).
 
 <Note>
 
@@ -333,6 +333,16 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 </Sandpack>
 </Prop>
 
+<Prop name="onSortInfoChange" type="(sortInfo | null) => void">
+
+> Called when sorting changes on the DataSource.
+
+The sorting can change either via a user interaction or by calling an API method (from the [root API](api) or the [Column API](column-api)).
+
+See related <DataSourcePropLink name="sortInfo" /> for controlled sorting and <DataSourcePropLink name="defaultSortInfo" /> for uncontrolled sorting.
+
+</Prop>
+
 <Prop name="rowSelection" type="string|number|null|object">
 
 > Describes the selected row(s) in the `DataSource`
@@ -453,7 +463,7 @@ Read more on row selection (`multi-row` and `single-row`) and cell selection.
 
 > Information for sorting the data. This is a controlled prop.
 
-Also see related <DataSourcePropLink name="defaultSortInfo" />, <DataSourcePropLink name="sortMode" />, <PropLink name="sortable" /> and <PropLink name="columns.sortable" />.
+Also see related <DataSourcePropLink name="defaultSortInfo" /> (uncontrolled version), <DataSourcePropLink name="sortMode" />, <PropLink name="sortable" /> and <PropLink name="columns.sortable" />.
 
 Sorting can be single (only one field/column can be sorted at a time) or multiple (multiple fields/columns can be sorted at the same time). Therefore, this property an be an array of objects or a single object (or null) - the shape of the objects (of type `DataSourceSingleSortInfo<T>`)is the following.
 

@@ -78,7 +78,7 @@ const getColumContextMenuItems: InfiniteTablePropGetColumnContextMenuItems<
   items.push({
     key: 'hello',
     label: 'Hello World',
-    onClick: () => {
+    onAction: () => {
       alert('Hello World from column ' + column.id);
     },
   });

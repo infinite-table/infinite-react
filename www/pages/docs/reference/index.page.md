@@ -525,6 +525,7 @@ If a function is provided, it will be called with an argument with the following
 
 - `column`
 - `columnSortInfo` - will allow you to render custom header based on the sort state of the column.
+- `columnApi` - [API](reference/column-api) for the current column. Can be useful if you customize the header and want to programatically trigger actions like sorting, show/hide column menu, etc.
 
 When we implement filtering, you'll also have access to the column filter.
 
@@ -555,6 +556,22 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 <Sandpack title="Column with custom header that uses useInfiniteHeaderCell">
 
 ```ts file=column-header-hooks-example.page.tsx
+
+```
+
+</Sandpack>
+
+<Sandpack title="Custom header with button to trigger the column context menu">
+
+<Description>
+
+The `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
+
+In addition, the currency and preferredLanguage columns have a custom context menu icon.
+
+</Description>
+
+```ts file=getColumnContextMenuItems-example.page.tsx
 
 ```
 
@@ -738,10 +755,6 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 </Description>
 
 ```ts file=getColumnContextMenuItems-example.page.tsx
-
-```
-
-```ts file=data.ts
 
 ```
 

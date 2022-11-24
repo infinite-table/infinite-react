@@ -16,6 +16,7 @@ When rendering the `InfiniteTable` component, you can get access to the [API](./
 ```
 
 For the root API, see the [Infinite Table API page](./api).
+For Ccolumn API, see the [Infinite Table Column API page](./column-api).
 
 <PropTable>
 

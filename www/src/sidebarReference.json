@@ -24,6 +24,10 @@
           "title": "Infinite Table Selection API",
           "path": "/docs/reference/selection-api"
         },
+        {
+          "title": "Infinite Table Column API",
+          "path": "/docs/reference/column-api"
+        },
 
         {
           "title": "Hooks",

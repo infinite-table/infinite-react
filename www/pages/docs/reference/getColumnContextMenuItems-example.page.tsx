@@ -93,19 +93,43 @@ const getColumContextMenuItems: InfiniteTablePropGetColumnContextMenuItems<
     items.splice(0, 0, {
       key: 'firstName',
       label: 'First name menu item',
-      onClick: () => {
+      onAction: () => {
         console.log('Hey there!');
       },
     });
   }
 
-  items.push({
-    key: 'hello',
-    label: 'Hello World',
-    onClick: () => {
-      alert('Hello World from column ' + column.id);
+  items.push(
+    {
+      key: 'hello',
+      label: 'Hello World',
+      onAction: () => {
+        alert('Hello World from column ' + column.id);
+      },
     },
-  });
+    {
+      key: 'translate',
+      label: 'Translate',
+      menu: {
+        items: [
+          {
+            key: 'translateToEnglish',
+            label: 'English',
+            onAction: () => {
+              console.log('Translate to English');
+            },
+          },
+          {
+            key: 'translateToFrench',
+            label: 'French',
+            onAction: () => {
+              console.log('Translate to French');
+            },
+          },
+        ],
+      },
+    },
+  );
   return items;
 };
 
