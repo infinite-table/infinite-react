@@ -88,9 +88,6 @@ export const LogoAndTitle = (props: {
       <InfiniteLogo
         className="py-5 px-1 sm:px-2 sm:py-3 max-w-min"
         color={props.color}
-        style={{
-          height: wwwVars.header.lineHeight,
-        }}
       />
 
       <span className="whitespace-nowrap text-content-color">

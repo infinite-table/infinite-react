@@ -14,6 +14,8 @@ export function InfiniteLogo(
 ) {
   const id = useId().replace('.', '-');
   const style: CSSProperties = {
+    width: 'auto',
+    height: wwwVars.header.lineHeight,
     ...props.style,
   };
 
