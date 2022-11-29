@@ -30,6 +30,7 @@ import {
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
+import { DataSourceCache } from './DataSourceCache';
 
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
@@ -44,6 +45,7 @@ export interface DataSourceDataParams<T> {
   groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
   filterValue?: DataSourcePropFilterValue<T>;
+  refetchKey?: DataSourceProps<T>['refetchKey'];
 
   groupRowsState?: DataSourcePropGroupRowsStateObject<any>;
 
@@ -113,6 +115,7 @@ export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
+  refetchKey: NonUndefined<DataSourceProps<T>['refetchKey']>;
   isRowSelected: DataSourceProps<T>['isRowSelected'];
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
 
@@ -206,6 +209,7 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 
 export interface DataSourceSetupState<T> {
   indexer: Indexer<T, any>;
+  cache?: DataSourceCache<T>;
   unfilteredCount: number;
   filteredCount: number;
   originalDataArrayChanged: boolean;
@@ -306,12 +310,34 @@ export type DataSourcePropIsRowSelected<T> = (
   selectionMode: 'multi-row',
 ) => boolean | null;
 
+export type DataSourceCRUDParam = {
+  flush?: boolean;
+};
+
+export interface DataSourceApi<T> {
+  getRowInfoArray: () => InfiniteTableRowInfo<T>[];
+  getDataByPrimaryKey(id: any): T | null;
+
+  updateData(data: Partial<T>, options?: DataSourceCRUDParam): void;
+  updateDataArray(data: Partial<T>[], options?: DataSourceCRUDParam): void;
+
+  removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam): void;
+  removeData(data: Partial<T>, options?: DataSourceCRUDParam): void;
+
+  removeDataArrayByPrimaryKeys(id: any[], options?: DataSourceCRUDParam): void;
+  removeDataArray(data: Partial<T>[], options?: DataSourceCRUDParam): void;
+
+  addData(data: T, options?: DataSourceCRUDParam): void;
+  addDataArray(data: T[], options?: DataSourceCRUDParam): void;
+}
+
 export type DataSourceProps<T> = {
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
   primaryKey: keyof T | ((data: T) => string);
   fields?: (keyof T)[];
+  refetchKey?: number | string | object;
 
   data: DataSourceData<T>;
 

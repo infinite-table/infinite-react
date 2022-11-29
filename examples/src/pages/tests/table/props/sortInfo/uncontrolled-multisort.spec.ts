@@ -1,5 +1,5 @@
 import { getFnCalls } from '@examples/pages/tests/testUtils/getFnCalls';
-import { DataSourceSingleSortInfo } from '@infinite-table/infinite-react/components/DataSource/types';
+import { DataSourceSingleSortInfo } from '@infinite-table/infinite-react';
 import { test, expect, ElementHandle, Page } from '@testing';
 
 import { getColumnCells } from '../../../testUtils';
