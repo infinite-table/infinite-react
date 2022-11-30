@@ -50,7 +50,7 @@ export const Seo = withRouter(function SeoCmp(
       {/* OPEN GRAPH */}
       <meta
         property="og:image"
-        content="https://infinite-table.com/full-demo-image.png"
+        content="https://infinite-table.com/og-image.png"
       />
 
       <meta property="og:image:width" content="1200" />
