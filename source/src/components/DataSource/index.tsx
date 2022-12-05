@@ -10,9 +10,13 @@ import { useLatest } from '../hooks/useLatest';
 
 import { getDataSourceContext } from './DataSourceContext';
 import { defaultFilterTypes } from './defaultFilterTypes';
+import { getDataSourceApi } from './getDataSourceApi';
 import { GroupRowsState } from './GroupRowsState';
 import { useLoadData } from './privateHooks/useLoadData';
-import { useDataSource } from './publicHooks/useDataSource';
+import {
+  useDataSource,
+  useDataSourceContextValue,
+} from './publicHooks/useDataSource';
 import { RowSelectionState } from './RowSelectionState';
 import {
   deriveStateFromProps,
@@ -36,11 +40,15 @@ type DataSourceChildren<T> =
 function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
   let { children } = props;
 
-  const computedValues = useDataSource<T>();
+  const { api, componentState } = useDataSourceContextValue<T>();
 
   if (typeof children === 'function') {
-    children = children(computedValues);
+    children = children(componentState);
   }
+
+  useEffect(() => {
+    componentState.onReady?.(api);
+  }, []);
 
   return <>{children}</>;
 }
@@ -69,22 +77,42 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
     useComponentState<DataSourceState<T>>();
 
   const getState = useLatest(componentState);
+
+  const [api] = React.useState(() => {
+    return getDataSourceApi({ getState, actions: componentActions });
+  });
   const contextValue: DataSourceContextValue<T> = {
     componentState,
     componentActions,
     getState,
+    api,
   };
 
   if (__DEV__) {
     (globalThis as any).getDataSourceState = getState;
     (globalThis as any).dataSourceActions = componentActions;
+    (globalThis as any).dataSourceApi = api;
   }
 
   useLoadData();
 
   useEffect(() => {
-    componentState.onDataArrayChange?.(componentState.originalDataArray);
-  }, [componentState.originalDataArrayChangedAt]);
+    componentState.onDataArrayChange?.(
+      componentState.originalDataArray,
+      componentState.originalDataArrayChangedInfo,
+    );
+
+    if (
+      componentState.onDataMutations &&
+      componentState.originalDataArrayChangedInfo.mutations
+    ) {
+      componentState.onDataMutations({
+        dataArray: componentState.originalDataArray,
+        mutations: componentState.originalDataArrayChangedInfo.mutations,
+        timestamp: componentState.originalDataArrayChangedInfo.timestamp,
+      });
+    }
+  }, [componentState.originalDataArrayChangedInfo]);
 
   return (
     <DataSourceContext.Provider value={contextValue}>

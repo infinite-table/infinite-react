@@ -56,6 +56,7 @@ export function useCellRendering<T>(
     componentState: dataSourceState,
     getState: getDataSourceState,
     componentActions: dataSourceActions,
+    api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
   const { dataArray } = dataSourceState;
@@ -141,7 +142,7 @@ export function useCellRendering<T>(
     const { onReady } = getState();
 
     if (onReady) {
-      onReady(imperativeApi);
+      onReady({ api: imperativeApi, dataSourceApi });
     }
   }, [ready]);
 

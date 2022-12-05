@@ -296,6 +296,14 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 </Prop>
 
+
+<Prop name="onReady" type="(dataSourceApi: DataSourceApi<DATA_TYPE>) => void">
+
+> The callback that is called when the `DataSource` is ready. The [`dataSourceApi`](/docs/reference/datasource-api) is passed as the first argument.
+
+
+</Prop>
+
 <Prop name="onRowSelectionChange" type="(rowSelection, selectionMode='single-row'|'multi-row') => void">
 
 > A function to be called when the <DPropLink name="rowSelection" /> changes.

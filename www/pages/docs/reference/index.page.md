@@ -1768,11 +1768,11 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 </Sandpack>
 </Prop>
 
-<Prop name="onReady" type="InfiniteTableApi<DATA_TYPE>">
+<Prop name="onReady" type="({api, dataSourceApi}) => void}">
 
 > Callback prop that is being called when the table is ready.
 
-This is called only once with the instance of `InfiniteTableApi<DATA_TYPE>`.
+This is called only once with an object that has an `api` property, which is an instance of [`InfiniteTableApi<DATA_TYPE>`](/docs/reference/api) and a `dataSourceApi` property, which is an instance of [`DataSourceApi<DATA_TYPE>`](/docs/reference/datasource-api).
 
 The `ready` state for the table means it has been layout out and has measured its available size for laying out the columns.
 

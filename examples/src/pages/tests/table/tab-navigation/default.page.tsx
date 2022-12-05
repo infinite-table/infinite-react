@@ -131,7 +131,7 @@ export default function ColumnValueGetterExample() {
           onSelfFocus={() => {
             // console.log('onSelfFocus');
           }}
-          onReady={(api) => {
+          onReady={({ api }) => {
             (globalThis as any).infiniteApi = api;
           }}
           // defaultActiveCellIndex={[0, 0]}

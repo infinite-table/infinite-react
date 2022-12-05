@@ -41,7 +41,7 @@ const App = () => {
           }}
           defaultColumnOrder={defaultColumnOrder}
           onColumnOrderChange={onColumnOrderChange}
-          onReady={(api: InfiniteTableApi<Car>) => {
+          onReady={({ api }: { api: InfiniteTableApi<Car> }) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

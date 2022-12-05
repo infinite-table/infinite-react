@@ -1,59 +1,120 @@
-type DataSourceCacheInfo<T> =
+export type DataSourceMutation<T> =
   | {
       type: 'delete';
       primaryKey: any;
     }
   | {
-      type: 'add';
-      primaryKey: any;
-      index?: number;
-      data: T;
-    }
-  | {
       type: 'update';
       primaryKey: any;
       data: Partial<T>;
+    }
+  | {
+      type: 'insert';
+      primaryKey: any;
+      position: 'before' | 'after';
+      data: T;
     };
-export class DataSourceCache<DataType, PrimaryKeyType = string> {
-  // a null value means the data item has been marked as deleted
 
-  primaryKeyToData: Map<string, DataSourceCacheInfo<DataType>> = new Map();
+export class DataSourceCache<DataType, PrimaryKeyType = string> {
+  private affectedFields: Set<keyof DataType> = new Set();
+  private allFieldsAffected: boolean = false;
+
+  private primaryKeyToData: Map<string, DataSourceMutation<DataType>[]> =
+    new Map();
+
+  static clone<DataType, PrimaryKeyType = string>(
+    cache: DataSourceCache<DataType, PrimaryKeyType>,
+    { light = false }: { light?: boolean } = {},
+  ): DataSourceCache<DataType, PrimaryKeyType> {
+    const clone = new DataSourceCache<DataType, PrimaryKeyType>();
+
+    clone.allFieldsAffected = cache.allFieldsAffected;
+    clone.affectedFields = new Set(cache.affectedFields);
+    clone.primaryKeyToData = light
+      ? cache.primaryKeyToData
+      : new Map<string, DataSourceMutation<DataType>[]>(cache.primaryKeyToData);
+
+    return clone;
+  }
+
+  getAffectedFields = (): true | Set<keyof DataType> => {
+    if (this.allFieldsAffected) {
+      return true;
+    }
+
+    return this.affectedFields;
+  };
 
   delete = (primaryKey: PrimaryKeyType) => {
-    this.primaryKeyToData.set(`${primaryKey}`, {
+    this.allFieldsAffected = true;
+    const pk = `${primaryKey}`;
+    const value = this.primaryKeyToData.get(pk) || [];
+    value.push({
       type: 'delete',
       primaryKey,
     });
+    this.primaryKeyToData.set(pk, value);
   };
 
-  add = (primaryKey: PrimaryKeyType, data: DataType, index?: number) => {
+  insert = (
+    primaryKey: PrimaryKeyType,
+    data: DataType,
+    position: 'before' | 'after',
+  ) => {
     const pk = `${primaryKey}`;
+    const value = this.primaryKeyToData.get(pk) || [];
 
-    this.primaryKeyToData.set(pk, {
-      type: 'add',
+    this.allFieldsAffected = true;
+
+    value.push({
+      type: 'insert',
       primaryKey,
       data,
-      index,
+      position,
     });
+    this.primaryKeyToData.set(pk, value);
   };
 
   update = (primaryKey: PrimaryKeyType, data: Partial<DataType>) => {
-    this.primaryKeyToData.set(`${primaryKey}`, {
+    if (!this.allFieldsAffected) {
+      const keys = Object.keys(data) as (keyof DataType)[];
+      keys.forEach((key) => this.affectedFields.add(key));
+    }
+
+    const pk = `${primaryKey}`;
+    const value = this.primaryKeyToData.get(pk) || [];
+
+    value.push({
       type: 'update',
       primaryKey,
       data,
     });
+    this.primaryKeyToData.set(`${primaryKey}`, value);
   };
 
   clear = () => {
+    this.allFieldsAffected = false;
+    this.affectedFields.clear();
     this.primaryKeyToData.clear();
   };
 
-  getInfo = (
+  isEmpty = () => {
+    return this.primaryKeyToData.size === 0;
+  };
+
+  removeInfo = (primaryKey: PrimaryKeyType) => {
+    this.primaryKeyToData.delete(`${primaryKey}`);
+  };
+
+  getMutationsForPrimaryKey = (
     primaryKey: PrimaryKeyType,
-  ): DataSourceCacheInfo<DataType> | undefined => {
+  ): DataSourceMutation<DataType>[] | undefined => {
     const data = this.primaryKeyToData.get(`${primaryKey}`);
 
     return data;
+  };
+
+  getMutations = () => {
+    return new Map(this.primaryKeyToData);
   };
 }
