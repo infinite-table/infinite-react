@@ -5,6 +5,7 @@ import {
   InfiniteTableRowInfoDataDiscriminator,
 } from '../../../utils/groupAndPivot';
 import {
+  DataSourceApi,
   DataSourceGroupBy,
   DataSourcePivotBy,
   DataSourcePropGroupBy,
@@ -179,6 +180,10 @@ export type InfiniteTableApi<T> = {
   get scrollTop(): number;
   set scrollTop(value: number);
 
+  getVerticalRenderRange: () => {
+    renderStartIndex: number;
+    renderEndIndex: number;
+  };
   toggleGroupRow: (groupKeys: any[]) => void;
   collapseGroupRow: (groupKeys: any[]) => boolean;
   expandGroupRow: (groupKeys: any[]) => boolean;
@@ -509,7 +514,13 @@ export interface InfiniteTableProps<T> {
 
   filterEditors?: InfiniteTablePropFilterEditors<T>;
 
-  onReady?: (api: InfiniteTableApi<T>) => void;
+  onReady?: ({
+    api,
+    dataSourceApi,
+  }: {
+    api: InfiniteTableApi<T>;
+    dataSourceApi: DataSourceApi<T>;
+  }) => void;
 
   rowProps?:
     | React.HTMLProps<HTMLDivElement>

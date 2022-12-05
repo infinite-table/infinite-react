@@ -5,13 +5,19 @@ layout: API
 
 When rendering the `InfiniteTable` component, you can get access to the API by getting it from the <PropLink name="onReady" /> callback prop.
 
-```tsx {3}
+```tsx {2}
+const onReady = (
+  {api, dataSourceApi}: {
+    api: InfiniteTableApi<DATA_TYPE>,
+    dataSourceApi: DataSourceApi<DATA_TYPE>
+  }) => {
+  // api is accessible here
+  // you may want to store a reference to it in a ref or somewhere in your app state
+}
+
 <InfiniteTable<DATA_TYPE>
   columns={[...]}
-  onReady={(api: InfiniteTableApi<DATA_TYPE>) => {
-    // api is accessible here
-    // you may want to store a reference to it in a ref or somewhere in your app state
-  }}
+  onReady={onReady}
 />
 ```
 

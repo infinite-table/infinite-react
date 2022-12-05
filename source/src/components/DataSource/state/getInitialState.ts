@@ -17,6 +17,7 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
 import { isControlledValue } from '../../utils/isControlledValue';
 import { RenderRange } from '../../VirtualBrain';
+
 import { defaultFilterTypes } from '../defaultFilterTypes';
 import { GroupRowsState } from '../GroupRowsState';
 import { Indexer } from '../Indexer';
@@ -53,8 +54,14 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   return {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
+    // TODO: cleanup cache on unmount
+    cache: undefined,
+
     originalDataArrayChanged: false,
-    originalDataArrayChangedAt: 0,
+    originalDataArrayChangedInfo: {
+      timestamp: 0,
+      mutations: undefined,
+    },
     lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
@@ -126,6 +133,7 @@ export const forwardProps = <T>(
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
+    refetchKey: (refetchKey) => refetchKey ?? '',
     filterFunction: 1,
     filterValue: 1,
     useGroupKeysForMultiRowSelection: (useGroupKeysForMultiRowSelection) =>
@@ -140,8 +148,10 @@ export const forwardProps = <T>(
     },
     sortMode: (sortMode) => sortMode ?? 'local',
 
+    onReady: 1,
     isRowSelected: 1,
     onDataArrayChange: 1,
+    onDataMutations: 1,
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,

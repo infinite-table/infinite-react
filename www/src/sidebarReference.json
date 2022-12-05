@@ -20,6 +20,11 @@
           "title": "Infinite Table API",
           "path": "/docs/reference/api"
         },
+
+        {
+          "title": "Data Source API",
+          "path": "/docs/reference/datasource-api"
+        },
         {
           "title": "Infinite Table Selection API",
           "path": "/docs/reference/selection-api"

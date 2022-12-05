@@ -9,6 +9,8 @@ import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { multisort } from '../../../utils/multisort';
 import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getSelectionApi';
+import { DataSourceCache, DataSourceMutation } from '../DataSourceCache';
+import { getCacheAffectedParts } from '../getDataSourceApi';
 import { RowSelectionState } from '../RowSelectionState';
 import type {
   DataSourceState,
@@ -145,6 +147,8 @@ export function concludeReducer<T>(params: {
 }) {
   const { state, previousState } = params;
 
+  const cacheAffectedParts = getCacheAffectedParts(state);
+
   const sortInfo = state.sortInfo;
   let shouldSort = !!sortInfo?.length && !state.controlledSort;
 
@@ -153,6 +157,7 @@ export function concludeReducer<T>(params: {
   }
 
   let originalDataArrayChanged = haveDepsChanged(previousState, state, [
+    'cache',
     'originalDataArray',
     'originalLazyGroupDataChangeDetect',
   ]);
@@ -177,12 +182,34 @@ export function concludeReducer<T>(params: {
     // also make sure onGroupRowsState is triggered to notify the action to consumers
   }
 
+  const cache = state.cache ? DataSourceCache.clone(state.cache) : undefined;
+  if (cache && !cache.isEmpty()) {
+    originalDataArrayChanged = true;
+  }
+
+  const toPrimaryKey = state.toPrimaryKey;
+
+  let mutations: Map<string, DataSourceMutation<T>[]> | undefined;
   const shouldIndex = originalDataArrayChanged;
   if (shouldIndex) {
     state.indexer.clear();
+
+    // why only when not lazyLoad?
     if (!state.lazyLoad) {
-      state.indexer.indexArray(state.originalDataArray, state.toPrimaryKey);
+      mutations = cache?.getMutations();
+
+      state.originalDataArray = state.indexer.indexArray(
+        state.originalDataArray,
+        {
+          toPrimaryKey,
+          cache: cache,
+        },
+      );
     }
+  }
+  if (cache) {
+    cache.clear();
+    state.cache = cache;
   }
 
   const { filterFunction, filterValue, filterTypes, operatorsByFilterType } =
@@ -209,7 +236,10 @@ export function concludeReducer<T>(params: {
     (filterChanged || !state.lastFilterDataArray);
 
   const shouldSortAgain =
-    shouldSort && (sortDepsChanged || !state.lastSortDataArray);
+    shouldSort &&
+    (sortDepsChanged ||
+      !state.lastSortDataArray ||
+      cacheAffectedParts.sortInfo);
 
   const groupBy = state.groupBy;
   const pivotBy = state.pivotBy;
@@ -237,14 +267,15 @@ export function concludeReducer<T>(params: {
     ]);
 
   const shouldGroupAgain =
-    (shouldGroup && (groupsDepsChanged || !state.lastGroupDataArray)) ||
+    (shouldGroup &&
+      (groupsDepsChanged ||
+        !state.lastGroupDataArray ||
+        cacheAffectedParts.groupBy)) ||
     selectionDepsChanged;
 
   const now = Date.now();
 
   let dataArray = state.originalDataArray;
-
-  const toPrimaryKey = state.toPrimaryKey;
 
   if (!shouldFilter) {
     state.unfilteredCount = dataArray.length;
@@ -340,6 +371,7 @@ export function concludeReducer<T>(params: {
               reducers: aggregationReducers,
               indexer: state.indexer,
               toPrimaryKey,
+              cache,
             },
             state.originalLazyGroupData,
           )
@@ -465,7 +497,10 @@ export function concludeReducer<T>(params: {
   state.originalDataArrayChanged = originalDataArrayChanged;
 
   if (originalDataArrayChanged) {
-    state.originalDataArrayChangedAt = now;
+    state.originalDataArrayChangedInfo = {
+      timestamp: now,
+      mutations,
+    };
   }
 
   return state;

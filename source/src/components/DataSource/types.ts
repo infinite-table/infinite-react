@@ -30,6 +30,7 @@ import {
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
+import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
 
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
@@ -44,6 +45,7 @@ export interface DataSourceDataParams<T> {
   groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
   filterValue?: DataSourcePropFilterValue<T>;
+  refetchKey?: DataSourceProps<T>['refetchKey'];
 
   groupRowsState?: DataSourcePropGroupRowsStateObject<any>;
 
@@ -113,8 +115,11 @@ export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 export interface DataSourceMappedState<T> {
   aggregationReducers?: DataSourceProps<T>['aggregationReducers'];
   livePagination: DataSourceProps<T>['livePagination'];
+  refetchKey: NonUndefined<DataSourceProps<T>['refetchKey']>;
   isRowSelected: DataSourceProps<T>['isRowSelected'];
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
+  onDataMutations: DataSourceProps<T>['onDataMutations'];
+  onReady: DataSourceProps<T>['onReady'];
 
   lazyLoad: DataSourceProps<T>['lazyLoad'];
   useGroupKeysForMultiRowSelection: NonUndefined<
@@ -206,10 +211,14 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 
 export interface DataSourceSetupState<T> {
   indexer: Indexer<T, any>;
+  cache?: DataSourceCache<T>;
   unfilteredCount: number;
   filteredCount: number;
   originalDataArrayChanged: boolean;
-  originalDataArrayChangedAt: number;
+  originalDataArrayChangedInfo: {
+    timestamp: number;
+    mutations?: Map<string, DataSourceMutation<T>[]>;
+  };
   lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
   pivotMappings?: DataSourceMappings;
   propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
@@ -306,12 +315,53 @@ export type DataSourcePropIsRowSelected<T> = (
   selectionMode: 'multi-row',
 ) => boolean | null;
 
+export type DataSourceCRUDParam = {
+  flush?: boolean;
+};
+
+export type DataSourceInsertParam = DataSourceCRUDParam &
+  (
+    | {
+        position: 'before' | 'after';
+        primaryKey: any;
+      }
+    | {
+        position: 'start' | 'end';
+      }
+  );
+
+export interface DataSourceApi<T> {
+  getRowInfoArray: () => InfiniteTableRowInfo<T>[];
+  getDataByPrimaryKey(id: any): T | undefined;
+
+  // TODO return promise - also for more than one call in the same batch
+  // it should return the same promise
+  updateData(data: Partial<T>, options?: DataSourceCRUDParam): void;
+  updateDataArray(data: Partial<T>[], options?: DataSourceCRUDParam): void;
+
+  removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam): void;
+  removeDataArrayByPrimaryKeys(id: any[], options?: DataSourceCRUDParam): void;
+
+  removeData(data: Partial<T>, options?: DataSourceCRUDParam): void;
+  removeDataArray(data: Partial<T>[], options?: DataSourceCRUDParam): void;
+
+  addData(data: T, options?: DataSourceCRUDParam): void;
+  addDataArray(data: T[], options?: DataSourceCRUDParam): void;
+
+  insertData(data: T, options: DataSourceInsertParam): void;
+  insertDataArray(data: T[], options: DataSourceInsertParam): void;
+}
+
 export type DataSourceProps<T> = {
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
   primaryKey: keyof T | ((data: T) => string);
   fields?: (keyof T)[];
+  refetchKey?: number | string | object;
+
+  // TODO move this on the DataSourceAPI? I think so
+  // updateDelay?: number;
 
   data: DataSourceData<T>;
 
@@ -337,6 +387,8 @@ export type DataSourceProps<T> = {
   loading?: boolean;
   defaultLoading?: boolean;
   onLoadingChange?: (loading: boolean) => void;
+
+  onReady?: (api: DataSourceApi<T>) => void;
 
   pivotBy?: DataSourcePropPivotBy<T>;
   defaultPivotBy?: DataSourcePropPivotBy<T>;
@@ -366,7 +418,19 @@ export type DataSourceProps<T> = {
   onDataParamsChange?: (dataParamsChange: DataSourceDataParams<T>) => void;
   onDataArrayChange?: (
     dataArray: DataSourceState<T>['originalDataArray'],
+    info: DataSourceState<T>['originalDataArrayChangedInfo'],
   ) => void;
+  onDataMutations?: ({
+    dataArray,
+    timestamp,
+    mutations,
+  }: {
+    dataArray: DataSourceState<T>['originalDataArray'];
+    timestamp: number;
+    mutations: NonUndefined<
+      DataSourceState<T>['originalDataArrayChangedInfo']['mutations']
+    >;
+  }) => void;
   livePagination?: boolean;
   livePaginationCursor?: DataSourcePropLivePaginationCursor<T>;
   onLivePaginationCursorChange?: (
@@ -532,6 +596,7 @@ export type DataSourceComponentActions<T> = ComponentStateActions<
 >;
 
 export interface DataSourceContextValue<T> {
+  api: DataSourceApi<T>;
   getState: () => DataSourceState<T>;
   componentState: DataSourceState<T>;
   componentActions: DataSourceComponentActions<T>;

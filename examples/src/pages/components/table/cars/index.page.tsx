@@ -130,7 +130,7 @@ function App() {
           columnOrder={columnOrder}
           columns={cols}
           rowProps={rowProps}
-          onReady={(api) => {
+          onReady={({ api }) => {
             (window as any).api = api;
           }}
         />

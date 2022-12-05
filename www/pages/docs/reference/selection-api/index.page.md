@@ -5,18 +5,21 @@ layout: API
 
 When rendering the `InfiniteTable` component, you can get access to the [API](./api/) by getting it from the <PropLink name="onReady" /> callback prop. You can retrieve the selection api by reading it from the `api.selectionApi` property.
 
-```tsx {3}
+```tsx {4}
+
+const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
+  // do something with it
+  api.selectionApi.selectGroupRow(['USA'])
+}
+
 <InfiniteTable<DATA_TYPE>
   columns={[...]}
-  onReady={(api: InfiniteTableApi<DATA_TYPE>) => {
-    // do something with it
-    api.selectionApi.selectGroupRow(['USA'])
-  }}
+  onReady={onReady}
 />
 ```
 
 For the root API, see the [Infinite Table API page](./api).
-For Ccolumn API, see the [Infinite Table Column API page](./column-api).
+For column API, see the [Infinite Table Column API page](./column-api).
 
 <PropTable>
 

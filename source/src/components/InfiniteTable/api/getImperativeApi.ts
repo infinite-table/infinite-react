@@ -35,6 +35,14 @@ export function getImperativeApi<T>(param: GetImperativeApiParam<T>) {
       return selectionApi;
     },
 
+    getVerticalRenderRange: () => {
+      const range = getState().brain.getRenderRange();
+      return {
+        renderStartIndex: range.start[0],
+        renderEndIndex: range.end[0],
+      };
+    },
+
     setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => {
       componentActions.columnOrder = columnOrder;
     },

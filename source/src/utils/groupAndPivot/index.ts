@@ -21,6 +21,7 @@ import { deepClone } from '../deepClone';
 import { DeepMap } from '../DeepMap';
 import { DEFAULT_TO_KEY } from './defaultToKey';
 import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
+import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -367,6 +368,7 @@ type LazyGroupParams<DataType> = {
   mappings?: DataSourceMappings;
   indexer: Indexer<DataType>;
   toPrimaryKey: (item: DataType) => any;
+  cache?: DataSourceCache<DataType>;
 };
 
 export type DataGroupResult<DataType, KeyType extends any> = {
@@ -458,6 +460,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
 
     indexer,
     toPrimaryKey,
+    cache,
     mappings,
   } = groupParams;
 
@@ -544,7 +547,10 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             }
           }
 
-          indexer.indexArray(dataArray as any as DataType[], toPrimaryKey);
+          indexer.indexArray(dataArray as any as DataType[], {
+            toPrimaryKey,
+            cache,
+          });
         }
         return next?.();
       }

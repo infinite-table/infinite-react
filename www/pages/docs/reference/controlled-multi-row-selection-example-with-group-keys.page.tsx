@@ -76,13 +76,16 @@ export default function App() {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const onReady = useCallback((api: InfiniteTableApi<Developer>) => {
-    apiRef.current = api;
+  const onReady = useCallback(
+    ({ api }: { api: InfiniteTableApi<Developer> }) => {
+      apiRef.current = api;
 
-    setSelectedIds(
-      api.selectionApi.getSelectedPrimaryKeys(rowSelection) as string[],
-    );
-  }, []);
+      setSelectedIds(
+        api.selectionApi.getSelectedPrimaryKeys(rowSelection) as string[],
+      );
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!apiRef.current) {
