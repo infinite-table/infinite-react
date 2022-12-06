@@ -2,14 +2,6 @@ import Link from 'next/link';
 import * as React from 'react';
 import { ReactNode } from 'react';
 
-import {
-  display,
-  centeredFlexProps,
-  flexWrap,
-  maxWidth,
-  marginY,
-  marginTop,
-} from '../styles/www-utils.css';
 import { BannerText } from './BannerText';
 
 import { card, grid, SpotlightRadialBackgroundCls } from './components.css';
@@ -26,9 +18,11 @@ export const Card = ({
   noBackground,
   noBackgroundOnHover,
   flexContent,
+  tag,
 }: {
   flexContent?: boolean;
   href?: string;
+  tag?: string;
   className?: string;
   style?: React.CSSProperties;
   title: ReactNode;
@@ -36,6 +30,7 @@ export const Card = ({
   noBackground?: boolean;
   noBackgroundOnHover?: boolean;
 }) => {
+  const Tag: string = tag || 'a';
   let cls = `${
     className || ''
   } ${card} p-4 sm:p-4 md:p-8 py-10 rounded-sm flex flex-col`;
@@ -48,10 +43,26 @@ export const Card = ({
     cls += ` bg-opacity-60 bg-deep-dark`;
   }
 
+  let header = (
+    <>
+      {title} {href && !href.startsWith('#') ? <>&rarr;</> : null}
+    </>
+  );
+
+  if (href && Tag != 'a') {
+    header = (
+      <Link href={href}>
+        <a>{header}</a>
+      </Link>
+    );
+  }
   const content = (
     <>
-      <h3 className={titleOpacity}>
-        {title} {href ? <>&rarr;</> : null}
+      <h3
+        className={titleOpacity}
+        id={href && href.startsWith('#') ? href.substring(1) : undefined}
+      >
+        {header}
       </h3>
       <div
         className={`${subtitleOpacity} text-md flex-1 ${
@@ -72,9 +83,10 @@ export const Card = ({
   }
   return (
     <Link href={href}>
-      <a className={cls} style={style}>
+      {/* @ts-ignore */}
+      <Tag className={cls} style={style}>
         {content}
-      </a>
+      </Tag>
     </Link>
   );
 };

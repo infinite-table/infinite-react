@@ -12,7 +12,17 @@
         },
         {
           "title": "Getting Started",
-          "path": "/docs/learn/getting-started"
+          "path": "/docs/learn/getting-started",
+          "routes": [
+            {
+              "path": "/docs/learn/getting-started/typescript-types",
+              "title": "TypeScript Types"
+            },
+            {
+              "path": "/docs/learn/getting-started/licensing",
+              "title": "Licensing"
+            }
+          ]
         },
         {
           "title": "Working with Data",

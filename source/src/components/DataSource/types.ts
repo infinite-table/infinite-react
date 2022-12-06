@@ -371,6 +371,7 @@ export type DataSourceProps<T> = {
   rowSelection?:
     | DataSourcePropRowSelection_MultiRow
     | DataSourcePropRowSelection_SingleRow;
+
   defaultRowSelection?:
     | DataSourcePropRowSelection_MultiRow
     | DataSourcePropRowSelection_SingleRow;

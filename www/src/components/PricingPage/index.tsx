@@ -233,6 +233,7 @@ export function PricingPage() {
         <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
+              href="#buy-once-use-everywhere"
               title="Buy once, use everywhere"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-xl rounded-b-none"
             >
@@ -240,6 +241,7 @@ export function PricingPage() {
             </Card>
 
             <Card
+              href="#no-hidden-costs"
               title="No hidden costs"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-none"
             >
@@ -248,6 +250,7 @@ export function PricingPage() {
             </Card>
 
             <Card
+              href="#per-developer-pricing"
               title="Per developer pricing"
               className="sm:pr-20 md:pr-20 rounded-t-none rounded-xl"
             >
@@ -349,7 +352,10 @@ export function PricingPage() {
         </div>
         <MainContent className="mt-40">
           <Cards title="How it works">
-            <Card title="Getting the License Key">
+            <Card
+              title="Getting the License Key"
+              href="#getting-the-license-key"
+            >
               Once you buy a license for your team, you'll receive the license
               key via email. Note it will be only one license key for your whole
               team (the license key will contain the developer count you
@@ -357,13 +363,13 @@ export function PricingPage() {
               owner, the license start and end dates and also the developer
               count.
             </Card>
-            <Card title="Application deployment">
+            <Card title="Application deployment" href="#application-deployment">
               Deploy your application with the license key you have been
               provided. The license key will be valid for{' '}
               <span className={'text-glow'}>all the apps</span> your team is
               developing.
             </Card>
-            <Card title="Access to versions">
+            <Card title="Access to versions" href="#access-to-versions">
               Each version of Infinite Table has a release timestamp. When you
               purchase a license, it gives you unlimited access to all Infinite
               Table versions published within a 1 year window from the date of
@@ -371,20 +377,27 @@ export function PricingPage() {
               to use the versions published within this timeframe without any
               warnings.
             </Card>
-            <Card title="Free with license footer">
+            <Card
+              title="Free with license footer"
+              href="#free-with-license-footer"
+            >
               If you don't have a license key, you can still use Infinite Table,
               but it displays a license footer with a link back to our website.
               Buying a license removes the footer and gives you access to
               premium support.
             </Card>
-            <Card title="Premium Support">
+            <Card title="Premium Support" href="#premium-support" tag="div">
               If you have a license key, you can access premium support, either{' '}
               <a href="mailto:admin@infinite-table.com" className=" text-glow ">
                 by email
               </a>{' '}
               or by raising a Zendesk ticket.
             </Card>
-            <Card title="Supporting the developer community">
+            <Card
+              title="Supporting the developer community"
+              href="#supporting-the-community"
+              tag="div"
+            >
               Infinite Table has been built on open-source software and we are
               keen to give back by providing free licenses to qualifying
               open-source projects. Please{' '}

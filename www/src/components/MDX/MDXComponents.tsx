@@ -1,5 +1,6 @@
 import ButtonLink from '@www/components/ButtonLink';
 import * as React from 'react';
+import { AccentButton } from '../AccentButton';
 import { IconCodeBlock } from '../Icon/IconCodeBlock';
 
 import { IconNavArrow } from '../Icon/IconNavArrow';
@@ -476,6 +477,7 @@ export const MDXComponents = {
   Prop,
   PropLink,
   LearnLink,
+  AccentButton,
   DataSourcePropLink,
   DPropLink: DataSourcePropLink,
   DApiLink,

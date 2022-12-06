@@ -9,7 +9,8 @@ It's built specifically for React from the ground up and with performance in min
 
 # Installation
 
-`Infinite Table` is available on the public npm registry - install it by running the following command:
+`Infinite Table` is available on the public [npm registry](https://www.npmjs.com/package/@infinite-table/infinite-react) - install it by running the following command:
+
 
 <TerminalBlock>
 npm i @infinite-table/infinite-react
@@ -18,6 +19,12 @@ npm i @infinite-table/infinite-react
 ## Meet the Code
 
 <Sandpack>
+
+<Description>
+
+This is an example to get you started with Infinite Table with minimal setup.
+
+</Description>
 
 ```ts file=meet-the-code.page.tsx
 
@@ -43,7 +50,7 @@ There are 2 components that you can use and import:
 - `InfiniteTable`
 - `DataSource`
 
-Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME><PROP_NAME>`, so here are a few examples to clarify the rule:
+Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME>Prop<PROP_NAME>`, so here are a few examples to clarify the rule:
 
 ```ts
 import {
@@ -53,6 +60,15 @@ import {
   // corresponding to the `groupBy` prop
 } from '@infinite-table/infinite-react';
 ```
+
+
+<HeroCards>
+<YouWillLearnCard title="Learn about our TypeScript typings" path="/docs/learn/getting-started/typescript-types">
+Read more about how to use our TypeScript types.
+</YouWillLearnCard>
+
+</HeroCards>
+
 
 ## Built for React from the ground-up
 
@@ -97,6 +113,15 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 ```
 
 </Sandpack>
+
+
+<HeroCards>
+<YouWillLearnCard title="More on Licensing" path="/docs/learn/getting-started/licensing">
+Read more about our licensing model and how you can use Infinite Table.
+</YouWillLearnCard>
+
+</HeroCards>
+
 
 ## About the Docs
 
