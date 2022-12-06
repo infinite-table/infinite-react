@@ -71,38 +71,7 @@ let STARTED = false;
 const ROWS_TO_UPDATE_PER_FRAME = 5;
 const UPDATE_INTERVAL_MS = 30;
 
-const randomlyUpdateData = ({
-  api,
-  dataSourceApi,
-}: {
-  api: InfiniteTableApi<Developer>;
-  dataSourceApi: DataSourceApi<Developer>;
-}) => {
-  // protect for React.StrictMode potentially calling this twice
-  if (STARTED) {
-    return;
-  }
-  STARTED = true;
-  setInterval(() => {
-    const { renderStartIndex, renderEndIndex } = api.getVerticalRenderRange();
-    const dataArray = dataSourceApi.getRowInfoArray();
-    const data = dataArray
-      .slice(renderStartIndex, renderEndIndex)
-      .map((x) => x.data as Developer);
-
-    for (let i = 0; i < ROWS_TO_UPDATE_PER_FRAME; i++) {
-      const row = data[getRandomInt(0, data.length - 1)];
-      if (row) {
-        updateRow(dataSourceApi, row);
-      }
-    }
-  }, UPDATE_INTERVAL_MS);
-};
-
 const columns: InfiniteTablePropColumns<Developer> = {
-  id: {
-    field: 'id',
-  },
   firstName: {
     field: 'firstName',
   },
@@ -148,12 +117,63 @@ const domProps = {
   },
 };
 export default () => {
+  let [running, setRunning] = React.useState(false);
+
+  const [apis, onReady] = React.useState<{
+    api: InfiniteTableApi<Developer>;
+    dataSourceApi: DataSourceApi<Developer>;
+  }>();
+
+  const intervalIdRef = React.useRef<any>();
+
+  React.useEffect(() => {
+    const { current: intervalId } = intervalIdRef;
+
+    if (!running || !apis) {
+      return clearInterval(intervalId);
+    }
+
+    intervalIdRef.current = setInterval(() => {
+      const { dataSourceApi, api } = apis!;
+      const { renderStartIndex, renderEndIndex } = api.getVerticalRenderRange();
+      const dataArray = dataSourceApi.getRowInfoArray();
+      const data = dataArray
+        .slice(renderStartIndex, renderEndIndex)
+        .map((x) => x.data as Developer);
+
+      for (let i = 0; i < ROWS_TO_UPDATE_PER_FRAME; i++) {
+        const row = data[getRandomInt(0, data.length - 1)];
+        if (row) {
+          updateRow(dataSourceApi, row);
+        }
+      }
+
+      return () => {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+      };
+    }, UPDATE_INTERVAL_MS);
+  }, [running, apis]);
+
   return (
     <React.StrictMode>
+      <button
+        style={{
+          border: '2px solid magenta',
+          display: 'inline-block',
+          background: running ? 'tomato' : 'white',
+          color: running ? 'white' : 'tomato',
+        }}
+        onClick={() => {
+          setRunning(!running);
+        }}
+      >
+        {running ? 'Stop' : 'Start'} updates
+      </button>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
           domProps={domProps}
-          onReady={randomlyUpdateData}
+          onReady={onReady}
           columnDefaultWidth={130}
           columnMinWidth={50}
           columns={columns}

@@ -112,6 +112,20 @@ We're intentionally not encouraging inserting at a specified `index`, as the ind
 
 For inserting an array of data, see the <DApiLink name="insertDataArray" /> method.
 
+<Sandpack title="Inserting data at various locations">
+
+<Description>
+
+Click any row in the table to make it the current active row, and then use the second button to add a new row after the active row.
+
+</Description>
+
+```ts file=insert-example.page.tsx
+```
+
+</Sandpack>
+
+
 </Prop>
 
 <Prop name="insertDataArray" type="(data: DATA_TYPE[], { position, primaryKey }) => Promise">
@@ -169,8 +183,6 @@ The update rate could be much higher, but we're keeping it at current levels to 
 ```
 
 </Sandpack>
-
-
 
 </Prop>
 

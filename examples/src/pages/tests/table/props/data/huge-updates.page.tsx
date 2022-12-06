@@ -33,7 +33,7 @@ const dataSource = () => {
 };
 
 export function getRandomInt(min: number, max: number) {
-  return min + Math.ceil(Math.random() * (max + 1));
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 const CURRENCIES = ['USD', 'CAD', 'EUR'];

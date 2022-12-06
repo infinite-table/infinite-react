@@ -29,6 +29,10 @@
             {
               "path": "/docs/learn/working-with-data/lazy-loading",
               "title": "Lazy Loading"
+            },
+            {
+              "path": "/docs/learn/working-with-data/updating-data-in-realtime",
+              "title": "Updating Data in Real-Time"
             }
           ]
         },
