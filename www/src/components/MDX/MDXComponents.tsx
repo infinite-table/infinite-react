@@ -27,6 +27,8 @@ import {
   LearnLink,
   DataSourcePropLink,
   HookLink,
+  DApiLink,
+  ApiLink,
 } from './Prop';
 import Recap from './Recap';
 import Sandpack from './Sandpack';
@@ -476,6 +478,8 @@ export const MDXComponents = {
   LearnLink,
   DataSourcePropLink,
   DPropLink: DataSourcePropLink,
+  DApiLink,
+  ApiLink,
   HookLink,
   PropTable,
   Recap,

@@ -7,7 +7,7 @@ module.exports = {
   'primary-dark': '#F6F7F9', // gray-5
   secondary: '#404756', // gray-70
   'secondary-dark': '#EBECF0', // gray-10
-  'content-color': 'rgba(235, 236, 240, 0.8)',
+  'content-color': 'rgba(235, 236, 240, 0.9)',
 
   link: '#149ECA',
   syntax: '#EBECF0', // gray-10

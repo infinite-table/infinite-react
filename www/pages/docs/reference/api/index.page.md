@@ -45,6 +45,14 @@ api.expandGroupRow(['USA', 'New York']); // expands the group with these keys
 
 </Prop>
 
+<Prop name="onReady" type="({ api, dataSourceApi }) => void">
+
+> Called when the table has been layed out and sized and is ready to be used.
+
+This callback prop will be called with an object containing the `api` (which is an instance of `InfiniteTableApi`) and [`dataSourceApi`](/docs/reference/datasource-api) objects.
+
+</Prop>
+
 <Prop name="scrollCellIntoView" type="(rowIndex: number; colIdOrIndex: string | number) => boolean">
 
 > Can be used to scroll a cell into the visible viewport

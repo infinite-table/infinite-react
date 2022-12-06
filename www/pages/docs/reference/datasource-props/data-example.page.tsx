@@ -1,7 +1,6 @@
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTableColumn,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';

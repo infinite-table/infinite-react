@@ -1,4 +1,7 @@
-import { InfiniteTableProps } from '@infinite-table/infinite-react';
+import {
+  DataSourceApi,
+  InfiniteTableProps,
+} from '@infinite-table/infinite-react';
 import cn from 'classnames';
 import { useRef } from 'react';
 import * as React from 'react';
@@ -98,6 +101,52 @@ export const DataSourcePropLink = ({
   nocode?: boolean;
 }) => {
   const href = `/docs/reference/datasource-props#${name as string}`;
+  if (nocode) {
+    code = false;
+  }
+  const content = code ? (
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
+  ) : (
+    children ?? name
+  );
+  return <Link href={href}>{content}</Link>;
+};
+
+export const DApiLink = ({
+  name,
+  children,
+  code = true,
+  nocode,
+}: {
+  name: keyof DataSourceApi<any>;
+  children?: React.ReactNode;
+  code?: boolean;
+  nocode?: boolean;
+}) => {
+  const href = `/docs/reference/datasource-api#${name as string}`;
+  if (nocode) {
+    code = false;
+  }
+  const content = code ? (
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
+  ) : (
+    children ?? name
+  );
+  return <Link href={href}>{content}</Link>;
+};
+
+export const ApiLink = ({
+  name,
+  children,
+  code = true,
+  nocode,
+}: {
+  name: keyof DataSourceApi<any>;
+  children?: React.ReactNode;
+  code?: boolean;
+  nocode?: boolean;
+}) => {
+  const href = `/docs/reference/api#${name as string}`;
   if (nocode) {
     code = false;
   }
