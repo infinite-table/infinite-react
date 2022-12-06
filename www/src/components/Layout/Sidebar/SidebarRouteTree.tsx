@@ -3,7 +3,7 @@ import { RouteItem } from 'components/Layout/useRouteMeta';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { useLayoutEffect } from 'react';
-import useCollapse from 'react-collapsed';
+import useCollapse from '@gaearon/react-collapsed';
 
 import { useRouteMeta } from '../useRouteMeta';
 
