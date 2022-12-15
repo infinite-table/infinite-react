@@ -10,6 +10,7 @@ import {
   HighlightBrandToLightBackground,
   HighlightTextBackground,
 } from './components.css';
+import { GetAccessFormConvertKit } from './GetAccessFormConvertKit';
 import { HeroPicture } from './HeroPicture';
 import { getHighlightShadowStyle, HighlightButton } from './HighlightButton';
 
@@ -338,7 +339,7 @@ export function IndexPage() {
           </Card>
         </Cards>
 
-        <GetAccessForm />
+        <GetAccessFormConvertKit />
       </MainContent>
     </MainLayout>
   );
