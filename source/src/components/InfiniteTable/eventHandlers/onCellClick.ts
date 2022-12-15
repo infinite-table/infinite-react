@@ -16,7 +16,25 @@ export function onCellClick<T>(
 ) {
   updateRowSelectionOnCellClick(context, event);
 
+  if (event.detail === 2) {
+    // double click
+    onCellDoubleClick(context, event);
+  }
+
   context.getState().onCellClick?.(context, event);
+}
+
+function onCellDoubleClick<T>(
+  context: OnCellClickContext<T>,
+  _event: React.MouseEvent<Element> & { key: string },
+) {
+  const computed = context.getComputed();
+  const column = computed.computedVisibleColumns[context.colIndex];
+
+  context.api.startEdit({
+    rowIndex: context.rowIndex,
+    columnId: column.id,
+  });
 }
 
 export function updateRowSelectionOnCellClick<T>(

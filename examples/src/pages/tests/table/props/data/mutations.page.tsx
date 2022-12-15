@@ -77,6 +77,12 @@ const data: Developer[] = [
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
+    // defaultWidth: 500,
+    // defaultFlex: 2
+    // defaultEditable: ({ column, value, data, }) => {
+    //   return Promise.resolve(true)
+    // }
+    // defaultEditable: false,
   },
   firstName: {
     field: 'firstName',
@@ -147,6 +153,26 @@ export default () => {
                 height: '100%',
               },
             }}
+            columnSizing={{
+              id: {
+                width: 500,
+              },
+            }}
+            // editable={true}
+            // columnEditable={() => {
+
+            // }}
+
+            // persistEdit={({ value, column, rowInfo, api, dataSourceApi}) => {
+            //   return fetch(...)
+            // }}
+            // onEditPersistSuccess={({ value, data, column, dataSourceApi}) => {
+            //   dataSourceApi?.updateData({data, [column.field]: value})
+            // }}
+            // onEditPersistError
+            columnSizing={{}}
+            columnPinning={{}}
+            onColumnSizingChange={(columnSizing) => {}}
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}

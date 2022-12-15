@@ -99,4 +99,12 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 ## Live Updates
 
-We'll come up with a more suitable API for updating only specific cells/rows in the table component.
+
+You can update your data in real-time by using our [DataSource API](/docs/reference/datasource-api). Read more about it in the dedicated section.
+
+<HeroCards>
+<YouWillLearnCard title="Live Updates" path="/docs/learn/working-with-data/updating-data-in-realtime">
+Read more about how to use our API to update your data in real-time
+</YouWillLearnCard>
+
+</HeroCards>

@@ -116,6 +116,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     headerBrain,
 
     domRef,
+    editingValueRef: createRef(),
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
     focusDetectDOMRef: createRef(),
@@ -154,6 +155,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     pinnedEndScrollListener: new ScrollListener(),
 
     columnsWhenInlineGroupRenderStrategy: undefined,
+    editingCell: null,
   };
 }
 
@@ -190,6 +192,8 @@ export const forwardProps = <T>(
 
     getColumContextMenuItems: 1,
     columnPinning: 1,
+    editable: 1,
+    columnDefaultEditable: 1,
 
     rowStyle: 1,
     rowProps: 1,
@@ -263,6 +267,16 @@ export const forwardProps = <T>(
 
     columnSizing: (columnSizing) => columnSizing || {},
     columnTypes: (columnTypes) => columnTypes || {},
+
+    onEditCancelled: 1,
+    onEditRejected: 1,
+    onEditAccepted: 1,
+
+    persistEdit: 1,
+    shouldAcceptEdit: 1,
+
+    onEditPersistError: 1,
+    onEditPersistSuccess: 1,
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),

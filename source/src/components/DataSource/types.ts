@@ -336,20 +336,29 @@ export interface DataSourceApi<T> {
 
   // TODO return promise - also for more than one call in the same batch
   // it should return the same promise
-  updateData(data: Partial<T>, options?: DataSourceCRUDParam): void;
-  updateDataArray(data: Partial<T>[], options?: DataSourceCRUDParam): void;
+  updateData(data: Partial<T>, options?: DataSourceCRUDParam): Promise<any>;
+  updateDataArray(
+    data: Partial<T>[],
+    options?: DataSourceCRUDParam,
+  ): Promise<any>;
 
-  removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam): void;
-  removeDataArrayByPrimaryKeys(id: any[], options?: DataSourceCRUDParam): void;
+  removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam): Promise<any>;
+  removeDataArrayByPrimaryKeys(
+    id: any[],
+    options?: DataSourceCRUDParam,
+  ): Promise<any>;
 
-  removeData(data: Partial<T>, options?: DataSourceCRUDParam): void;
-  removeDataArray(data: Partial<T>[], options?: DataSourceCRUDParam): void;
+  removeData(data: Partial<T>, options?: DataSourceCRUDParam): Promise<any>;
+  removeDataArray(
+    data: Partial<T>[],
+    options?: DataSourceCRUDParam,
+  ): Promise<any>;
 
-  addData(data: T, options?: DataSourceCRUDParam): void;
-  addDataArray(data: T[], options?: DataSourceCRUDParam): void;
+  addData(data: T, options?: DataSourceCRUDParam): Promise<any>;
+  addDataArray(data: T[], options?: DataSourceCRUDParam): Promise<any>;
 
-  insertData(data: T, options: DataSourceInsertParam): void;
-  insertDataArray(data: T[], options: DataSourceInsertParam): void;
+  insertData(data: T, options: DataSourceInsertParam): Promise<any>;
+  insertDataArray(data: T[], options: DataSourceInsertParam): Promise<any>;
 }
 
 export type DataSourceProps<T> = {

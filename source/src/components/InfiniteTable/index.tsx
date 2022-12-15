@@ -24,7 +24,10 @@ import { InfiniteTableFooter } from './components/InfiniteTableFooter';
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
-import { useInfiniteColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCell';
+import {
+  useInfiniteColumnCell,
+  useInfiniteColumnEditor,
+} from './components/InfiniteTableRow/InfiniteTableColumnCell';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMask';
 import { getImperativeApi } from './api/getImperativeApi';
@@ -62,6 +65,7 @@ import { toCSSVarName } from './utils/toCSSVarName';
 import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
 import { FocusDetect } from './components/FocusDetect';
+import { useEditingCallbackProps } from './hooks/useEditingCallbackProps';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -92,7 +96,7 @@ const InfiniteTableRoot = getComponentStateRoot({
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
     const context = useInfiniteTable<T>();
-    const { componentState, getComputed, computed, imperativeApi } = context;
+    const { state: componentState, getComputed, computed, api } = context;
     const {
       componentState: { loading, dataArray },
       getState: getDataSourceState,
@@ -123,8 +127,8 @@ export const InfiniteTableComponent = React.memo(
       onRenderUpdater,
     } = componentState;
 
-    useScrollToActiveRow(activeRowIndex, dataArray.length, imperativeApi);
-    useScrollToActiveCell(activeCellIndex, dataArray.length, imperativeApi);
+    useScrollToActiveRow(activeRowIndex, dataArray.length, api);
+    useScrollToActiveCell(activeCellIndex, dataArray.length, api);
     // useRowSelection();
 
     const { onKeyDown } = useDOMEventHandlers<T>();
@@ -134,7 +138,7 @@ export const InfiniteTableComponent = React.memo(
     const { scrollbars } = computed;
 
     const { renderCell } = useCellRendering({
-      imperativeApi,
+      imperativeApi: api,
       getComputed,
       domRef: componentState.domRef,
 
@@ -169,6 +173,8 @@ export const InfiniteTableComponent = React.memo(
     }, [scrollStopDelay]);
 
     useAutoSizeColumns();
+
+    useEditingCallbackProps<T>();
 
     const { menuPortal } = useColumnMenu();
 
@@ -279,28 +285,33 @@ function InfiniteTableContextProvider<T>() {
     (globalThis as any).componentActions = componentActions;
   }
 
-  const { getState: getDataSourceState, componentActions: dataSourceActions } =
-    useDataSourceContextValue<T>();
+  const {
+    getState: getDataSourceState,
+    componentActions: dataSourceActions,
+    api: dataSourceApi,
+  } = useDataSourceContextValue<T>();
 
   const [imperativeApi] = React.useState(() => {
     return getImperativeApi({
       getComputed,
       getState,
       getDataSourceState,
-      componentActions,
+      dataSourceApi,
+      actions: componentActions,
       dataSourceActions,
     });
   });
 
   const contextValue: InfiniteTableContextValue<T> = {
-    componentActions,
-    componentState,
+    actions: componentActions,
+    state: componentState,
     computed,
     dataSourceActions,
     getDataSourceState,
     getComputed,
     getState,
-    imperativeApi,
+    api: imperativeApi,
+    dataSourceApi,
   };
 
   useResizeObserver(
@@ -353,4 +364,8 @@ InfiniteTable.defaultProps = {
 
 export * from './types';
 
-export { useInfiniteColumnCell, useInfiniteHeaderCell };
+export {
+  useInfiniteColumnCell,
+  useInfiniteHeaderCell,
+  useInfiniteColumnEditor,
+};

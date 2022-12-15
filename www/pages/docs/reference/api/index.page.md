@@ -45,6 +45,14 @@ api.expandGroupRow(['USA', 'New York']); // expands the group with these keys
 
 </Prop>
 
+<Prop name="getVerticalRenderRange" type="() => { renderStartIndex, renderEndIndex }">
+
+> Returns the vertical render range of the table
+
+The vertical render range is the range of rows that are currently rendered in the table viewport.
+
+</Prop>
+
 <Prop name="onReady" type="({ api, dataSourceApi }) => void">
 
 > Called when the table has been layed out and sized and is ready to be used.

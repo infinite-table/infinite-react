@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { DataSourceComponentActions, DataSourceState } from '../../DataSource';
+import {
+  DataSourceApi,
+  DataSourceComponentActions,
+  DataSourceState,
+} from '../../DataSource';
 import { MenuItemObject, MenuProps } from '../../Menu/MenuProps';
 import { Renderable } from '../../types/Renderable';
 import { getColumnApiForColumn } from '../api/getColumnApi';
@@ -17,6 +21,7 @@ export function defaultGetColumContextMenuItems<T>(
   params: {
     column: InfiniteTableComputedColumn<T>;
     api: InfiniteTableApi<T>;
+    dataSourceApi: DataSourceApi<T>;
     getState: () => InfiniteTableState<T>;
     getDataSourceState: () => DataSourceState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;
@@ -30,6 +35,7 @@ export function defaultGetColumContextMenuItems<T>(
     getComputed,
     api,
     getDataSourceState,
+    dataSourceApi,
     actions,
     dataSourceActions,
   } = params;
@@ -97,8 +103,9 @@ export function defaultGetColumContextMenuItems<T>(
         computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
           const columnApi = getColumnApiForColumn(id, {
             ...params,
-            componentActions: actions,
+            actions,
             dataSourceActions,
+            dataSourceApi,
           })!;
           let label: Renderable =
             col.header && typeof col.header !== 'function'

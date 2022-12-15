@@ -43,9 +43,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'salary',
     type: 'number',
     render: ({ value }) => {
-      const { componentState } = useInfiniteTable();
+      const { state } = useInfiniteTable();
 
-      setBrain(componentState.brain);
+      setBrain(state.brain);
       return value;
     },
   },

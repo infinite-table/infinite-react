@@ -20,8 +20,9 @@ export function getContextMenuForColumn<T>(
     getDataSourceState,
 
     dataSourceActions,
-    imperativeApi,
-    componentActions: actions,
+    api,
+    dataSourceApi,
+    actions: actions,
   } = context;
 
   const { components, getColumContextMenuItems } = getState();
@@ -36,11 +37,12 @@ export function getContextMenuForColumn<T>(
 
   const param = {
     column,
-    api: imperativeApi,
+    api,
     getState,
     getDataSourceState,
     getComputed,
     actions,
+    dataSourceApi,
     dataSourceActions,
   };
 

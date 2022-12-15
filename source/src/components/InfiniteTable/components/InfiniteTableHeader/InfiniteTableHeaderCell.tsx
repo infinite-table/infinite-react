@@ -136,11 +136,11 @@ export function InfiniteTableHeaderCell<T>(
 
   const {
     computed: { showColumnFilters },
-    imperativeApi: api,
+    api,
     getComputed,
     getState,
-    componentActions,
-    componentState: {
+    actions,
+    state: {
       components,
       portalDOMRef,
       columnHeaderHeight,
@@ -150,6 +150,7 @@ export function InfiniteTableHeaderCell<T>(
   } = useInfiniteTable<T>();
 
   const {
+    api: dataSourceApi,
     componentActions: dataSourceActions,
     getState: getDataSourceState,
     componentState: { filterDelay, filterTypes },
@@ -227,8 +228,10 @@ export function InfiniteTableHeaderCell<T>(
   const menuIcon = <MenuIconCmp {...menuIconProps} />;
 
   const columnApi = getColumnApiForColumn(column, {
-    componentActions,
+    actions,
+    api,
     dataSourceActions,
+    dataSourceApi,
     getComputed,
     getDataSourceState,
     getState,

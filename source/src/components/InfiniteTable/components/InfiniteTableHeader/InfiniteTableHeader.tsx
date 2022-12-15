@@ -41,7 +41,7 @@ function InfiniteTableHeaderFn<T>(
 
   const {
     computed,
-    componentState: { headerBrain, headerOptions },
+    state: { headerBrain, headerOptions },
   } = useInfiniteTable<T>();
 
   const { computedColumnsMap, showColumnFilters } = computed;

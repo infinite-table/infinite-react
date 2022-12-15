@@ -1,16 +1,18 @@
 import { SortDir } from '../../../utils/multisort';
 
 import { InfiniteTableComputedColumn } from '../types';
-import { InfiniteTableColumnApi } from '../types/InfiniteTableProps';
+import {
+  InfiniteTableApi,
+  InfiniteTableColumnApi,
+} from '../types/InfiniteTableProps';
 
 import { GetImperativeApiParam } from './type';
-import { getImperativeApi } from './getImperativeApi';
 
 export function getColumnApiForColumn<T>(
   colOrColId: string | InfiniteTableComputedColumn<T>,
-  param: GetImperativeApiParam<T>,
+  param: GetImperativeApiParam<T> & { api: InfiniteTableApi<T> },
 ) {
-  const { getComputed, getState, componentActions } = param;
+  const { getComputed, getState, actions, api } = param;
 
   const column =
     typeof colOrColId === 'string'
@@ -20,8 +22,6 @@ export function getColumnApiForColumn<T>(
   if (!column) {
     return null;
   }
-
-  const api = getImperativeApi(param);
 
   const columnApi: InfiniteTableColumnApi<T> = {
     toggleContextMenu(target: EventTarget | HTMLElement) {
@@ -35,7 +35,7 @@ export function getColumnApiForColumn<T>(
       getState().onColumnMenuClick({ target, column });
     },
     hideContextMenu() {
-      componentActions.columnContextMenuVisibleForColumnId = null;
+      actions.columnContextMenuVisibleForColumnId = null;
     },
 
     toggleSort() {

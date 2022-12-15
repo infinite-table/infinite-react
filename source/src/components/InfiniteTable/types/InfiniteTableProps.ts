@@ -18,6 +18,7 @@ import { Renderable } from '../../types/Renderable';
 
 import type {
   InfiniteTableColumn,
+  InfiniteTableColumnEditableFn,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableComputedColumn,
@@ -98,6 +99,7 @@ export type InfiniteTableColumnType<T> = {
 
   defaultWidth?: number;
   defaultFlex?: number;
+  // TODO  also move this on the column
   defaultPinned?: InfiniteTableColumnPinnedValues;
   defaultFilterable?: boolean;
   defaultHiddenWhenGroupedBy?: InfiniteTableColumn<T>['defaultHiddenWhenGroupedBy'];
@@ -111,7 +113,7 @@ export type InfiniteTableColumnType<T> = {
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
   contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
-  editable?: InfiniteTableColumn<T>['editable'];
+  defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
 
   columnGroup?: string;
 
@@ -147,6 +149,7 @@ export type InfiniteTableColumnSizingOptions = {
   minWidth?: number;
   maxWidth?: number;
 };
+
 export type InfiniteTablePropColumnSizing = Record<
   string,
   InfiniteTableColumnSizingOptions
@@ -166,19 +169,73 @@ export type InfiniteTableColumnApi<_T> = {
   clearSort: () => void;
   setSort: (sort: SortDir | null) => void;
 };
-export type InfiniteTableApi<T> = {
+
+export type InfiniteTableApiStopEditParams =
+  | {
+      cancel: true;
+      reject?: never;
+      value?: never;
+    }
+  | {
+      reject: Error;
+      cancel?: never;
+      value?: never;
+    }
+  | {
+      value?: any;
+      cancel?: never;
+      reject?: never;
+    };
+
+export type InfiniteTableApiIsCellEditableParams = {
+  columnId: string;
+  rowIndex: number;
+};
+
+type InfiniteTableApiStopEditPromiseResolveType =
+  | {
+      cancel: true;
+      value: null;
+    }
+  | { reject: Error; value: any }
+  | boolean;
+
+export interface InfiniteTableApi<T> {
   get selectionApi(): InfiniteTableSelectionApi;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
-  x?: T;
+
+  clearEditInfo: () => void;
+
+  isEditorVisibleForCell(params: {
+    rowIndex: number;
+    columnId: string;
+  }): boolean;
 
   get scrollLeft(): number;
   set scrollLeft(value: number);
 
   get scrollTop(): number;
   set scrollTop(value: number);
+
+  isCellEditable: (
+    params: InfiniteTableApiIsCellEditableParams,
+  ) => Promise<boolean>;
+  startEdit: (params: InfiniteTableApiIsCellEditableParams) => Promise<boolean>;
+  stopEdit: (
+    params?: InfiniteTableApiStopEditParams,
+  ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  persistEdit: (params?: { value?: any }) => Promise<true | Error>;
+  rejectEdit: (
+    error: Error,
+  ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  confirmEdit: (
+    value?: any,
+  ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  cancelEdit: () => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  isEditInProgress: () => boolean;
 
   getVerticalRenderRange: () => {
     renderStartIndex: number;
@@ -228,7 +285,9 @@ export type InfiniteTableApi<T> = {
 
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
-};
+
+  focus: () => void;
+}
 export type InfiniteTablePropVirtualizeColumns<T> =
   | boolean
   | ((columns: InfiniteTableComputedColumn<T>[]) => boolean);
@@ -360,6 +419,12 @@ export type InfiniteTablePropFilterEditors<T> = Record<
   React.FC<InfiniteTableFilterEditorProps<T>>
 >;
 
+export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
+  column: InfiniteTableComputedColumn<T>;
+  api: InfiniteTableApi<T>;
+  dataSourceApi: DataSourceApi<T>;
+} & InfiniteTableRowInfoDataDiscriminator<T>;
+
 export type InfiniteTableFilterEditorProps<T extends any> = {
   filterType: string;
   operator: string;
@@ -368,6 +433,26 @@ export type InfiniteTableFilterEditorProps<T extends any> = {
   className: string;
   onChange: (value: T | undefined) => void;
 };
+export type InfiniteTablePropsEditable<T> =
+  | InfiniteTableColumnEditableFn<T>
+  | undefined;
+
+export type InfiniteTablePropOnEditAcceptedParams<T> =
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> & {
+    initialValue: any;
+  };
+
+export type InfiniteTablePropOnEditCancelledParams<T> =
+  InfiniteTablePropOnEditAcceptedParams<T>;
+
+export type InfiniteTablePropOnEditRejectedParams<T> =
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> & {
+    initialValue: any;
+    error: Error;
+  };
+
+export type InfiniteTablePropOnEditPersistParams<T> =
+  InfiniteTablePropOnEditAcceptedParams<T>;
 
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
@@ -384,6 +469,9 @@ export interface InfiniteTableProps<T> {
     InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
   >;
 
+  columnDefaultEditable?: boolean;
+  editable?: InfiniteTablePropsEditable<T>;
+
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition?: InfiniteTablePropPivotGrandTotalColumnPosition;
 
@@ -396,6 +484,27 @@ export interface InfiniteTableProps<T> {
 
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
+
+  shouldAcceptEdit?: (
+    params: InfiniteTablePropOnEditAcceptedParams<T>,
+  ) => boolean | Error | Promise<boolean | Error>;
+
+  onEditCancelled?: (params: InfiniteTablePropOnEditCancelledParams<T>) => void;
+
+  onEditAccepted?: (params: InfiniteTablePropOnEditAcceptedParams<T>) => void;
+
+  onEditRejected?: (params: InfiniteTablePropOnEditRejectedParams<T>) => void;
+
+  persistEdit?: (
+    params: InfiniteTablePropOnEditPersistParams<T>,
+  ) => any | Error | Promise<any | Error>;
+
+  onEditPersistSuccess?: (
+    params: InfiniteTablePropOnEditPersistParams<T>,
+  ) => void;
+  onEditPersistError?: (
+    params: InfiniteTablePropOnEditPersistParams<T> & { error: Error },
+  ) => void;
 
   // filterableColumns?: Record<string, boolean>;
 

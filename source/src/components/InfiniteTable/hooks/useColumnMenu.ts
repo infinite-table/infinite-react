@@ -5,7 +5,7 @@ import { useInfiniteTable } from './useInfiniteTable';
 
 export function useColumnMenu<T>() {
   const context = useInfiniteTable<T>();
-  const { getState, componentActions } = context;
+  const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
@@ -15,9 +15,9 @@ export function useColumnMenu<T>() {
   });
 
   useState(() => {
-    const { componentActions: actions, componentState } = context;
-    const { domRef } = componentState;
-    componentState.onColumnMenuClick.onChange((info) => {
+    const { actions: actions, state } = context;
+    const { domRef } = state;
+    state.onColumnMenuClick.onChange((info) => {
       if (!info) {
         return;
       }
@@ -25,7 +25,7 @@ export function useColumnMenu<T>() {
 
       function onHideIntent() {
         clearAll();
-        componentActions.columnContextMenuVisibleForColumnId = null;
+        actions.columnContextMenuVisibleForColumnId = null;
       }
 
       showOverlay(
@@ -53,7 +53,7 @@ export function useColumnMenu<T>() {
         // @ts-ignore
         if (event.__insideMenu !== true) {
           clearAll();
-          componentActions.columnContextMenuVisibleForColumnId = null;
+          actions.columnContextMenuVisibleForColumnId = null;
         }
       }
       document.documentElement.addEventListener('mousedown', handleMouseDown);

@@ -15,7 +15,7 @@ export function useColumnResizeHandle<T>(
     computed: { computedVisibleColumns },
     getState,
     getComputed,
-    componentActions,
+    actions,
   } = useInfiniteTable<T>();
   const computeResizeForDiff = useCallback(
     ({
@@ -126,9 +126,9 @@ export function useColumnResizeHandle<T>(
       });
 
       if (!shareSpaceOnResize) {
-        componentActions.viewportReservedWidth = reservedWidth;
+        actions.viewportReservedWidth = reservedWidth;
       }
-      componentActions.columnSizing = columnSizing;
+      actions.columnSizing = columnSizing;
     },
     [computeResizeForDiff],
   );

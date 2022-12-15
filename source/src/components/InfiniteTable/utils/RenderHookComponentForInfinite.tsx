@@ -31,6 +31,21 @@ export function RenderCellHookComponent<T, RENDER_FN extends Function>(
   );
 }
 
+export function CellEditorContextComponent<T>(props: {
+  children: React.ReactNode;
+  contextValue: InfiniteTableColumnCellContextType<T>;
+}) {
+  const ContextProvider =
+    InfiniteTableColumnCellContext.Provider as React.Provider<
+      InfiniteTableColumnCellContextType<T>
+    >;
+  return (
+    <ContextProvider value={props.contextValue}>
+      {props.children}
+    </ContextProvider>
+  );
+}
+
 export function RenderHeaderCellHookComponent<T, RENDER_FN extends Function>(
   props: RenderHookComponentProps<
     RENDER_FN,

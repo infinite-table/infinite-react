@@ -38,7 +38,7 @@ export class Rectangle extends PolyWithPoints {
   constructor(coordsAndSize: RectangleCoords) {
     super();
     if (!coordsAndSize) {
-      debugger;
+      // debugger;
     }
     this.top = coordsAndSize.top;
     this.left = coordsAndSize.left;

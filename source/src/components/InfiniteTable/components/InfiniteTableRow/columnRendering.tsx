@@ -2,12 +2,14 @@ import {
   InfiniteTableColumn,
   InfiniteTableColumnRenderParam,
   InfiniteTableComputedColumn,
+  InfiniteTableContextValue,
   InfiniteTableRowInfo,
 } from '../../types';
 import {
   InfiniteTableColumnValueFormatterParams,
   InfiniteTableColumnWithField,
 } from '../../types/InfiniteTableColumn';
+import { InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis } from '../../types/InfiniteTableProps';
 
 import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
@@ -37,6 +39,74 @@ export function getGroupByColumn<T>(options: {
   return groupByColumn;
 }
 
+export function getRowDiscriminatorParamForEditing<T>(
+  context: Omit<InfiniteTableContextValue<T>, 'state' | 'computed'> & {
+    rowIndex: number;
+    columnId: string;
+  },
+): InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> {
+  const {
+    getComputed,
+    getDataSourceState,
+    getState,
+    rowIndex,
+    columnId,
+    api,
+    dataSourceApi,
+  } = context;
+  const { dataArray } = getDataSourceState();
+
+  const rowInfo = dataArray[rowIndex];
+  const { isGroupRow } = rowInfo;
+  const column = getComputed().computedColumnsMap.get(columnId)!;
+
+  const { activeRowIndex, keyboardNavigation } = getState();
+  const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
+
+  const {
+    formattedValue: value,
+    formattedValueContext: { rawValue },
+  } = getFormattedValueContextForCell({
+    column,
+    rowInfo,
+    columnsMap: getComputed().computedColumnsMap,
+    context,
+  });
+
+  return isGroupRow
+    ? {
+        api,
+        dataSourceApi,
+        column,
+        isGroupRow: true,
+        data: rowInfo.data,
+        rowActive,
+        rowInfo,
+        rowSelected: rowInfo.rowSelected,
+        value,
+        rawValue,
+      }
+    : {
+        api,
+        dataSourceApi,
+        column: column,
+        isGroupRow: false,
+        data: rowInfo.data,
+        rowActive,
+        rowInfo,
+        rowSelected: rowInfo.rowSelected,
+        value,
+        rawValue,
+      };
+}
+
+export function getColumnValueToEdit<T>(options: {
+  column: InfiniteTableComputedColumn<T>;
+  rowInfo: InfiniteTableRowInfo<T>;
+}) {
+  return getRawValueForCell(options.column, options.rowInfo);
+}
+
 export function getColumnRenderingParams<T>(options: {
   column: InfiniteTableComputedColumn<T>;
   rowInfo: InfiniteTableRowInfo<T>;
@@ -44,19 +114,36 @@ export function getColumnRenderingParams<T>(options: {
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   context: InfiniteTableColumnRenderingContext<T>;
 }) {
-  const { column } = options;
+  const { column, context, rowInfo } = options;
   const groupByColumn = getGroupByColumn(options);
 
+  const { getState } = context;
+  const { editingCell } = getState();
   const formattedResult = getFormattedValueContextForCell({
     ...options,
     column: groupByColumn || column,
   });
   const { formattedValueContext } = formattedResult;
 
+  const inEdit = context.api.isEditorVisibleForCell({
+    columnId: column.id,
+    rowIndex: rowInfo.indexInAll,
+  });
+
   return {
+    inEdit,
     stylingParam: {
       column: options.column,
+      inEdit,
       ...formattedValueContext,
+      editError:
+        editingCell &&
+        editingCell.primaryKey === rowInfo.id &&
+        editingCell.columnId === column.id &&
+        !editingCell.active &&
+        editingCell.accepted instanceof Error
+          ? editingCell.accepted
+          : undefined,
     },
     formattedValueContext,
     renderFunctions: {
@@ -94,7 +181,8 @@ export function getColumnRenderParam<T>(options: {
     formattedValueContext,
   } = options;
   const { value } = formattedValueContext;
-  const { api: imperativeApi, getDataSourceState } = context;
+  const { api: imperativeApi, getDataSourceState, getState } = context;
+  const { editingCell } = getState();
 
   const { indexInAll: rowIndex } = rowInfo;
 
@@ -111,6 +199,14 @@ export function getColumnRenderParam<T>(options: {
     fieldsToColumn,
 
     ...formattedValueContext,
+    editError:
+      editingCell &&
+      editingCell.primaryKey === rowInfo.id &&
+      editingCell.columnId === column.id &&
+      !editingCell.active &&
+      editingCell.accepted instanceof Error
+        ? editingCell.accepted
+        : undefined,
     groupByColumn,
     selectionMode,
     api: imperativeApi,
@@ -211,6 +307,7 @@ export function getFormattedValueParamForCell<T>(
         rowSelected,
         rowActive,
         value,
+        rawValue: value,
         field: column.field,
       }
     : {
@@ -220,6 +317,7 @@ export function getFormattedValueParamForCell<T>(
         rowSelected,
         rowActive,
         value,
+        rawValue: value,
         field: column.field,
       };
 }

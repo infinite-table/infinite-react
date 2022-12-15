@@ -59,12 +59,12 @@ export const useColumnPointerEvents = ({
   const [proxyPosition, setProxyPosition] = useState<TopLeftOrNull>(null);
 
   const {
-    componentActions,
+    actions,
     computed,
     getComputed,
     getState,
-    imperativeApi,
-    componentState: { domRef: rootRef, brain, headerBrain },
+    api,
+    state: { domRef: rootRef, brain, headerBrain },
   } = useInfiniteTable();
 
   const onPointerDown = useCallback(
@@ -113,7 +113,7 @@ export const useColumnPointerEvents = ({
         computedVisibleColumnsMap,
         dragColumnHeaderTargetRect: targetRect,
         dragColumnId: columnId,
-        imperativeApi,
+        api,
         infiniteDOMNode: rootRef.current!,
         setProxyPosition,
         tableRect,
@@ -129,7 +129,7 @@ export const useColumnPointerEvents = ({
         const { columnPinning, columnOrder } = reorderDragResult;
 
         if (!equalPinning(getState().columnPinning, columnPinning)) {
-          componentActions.columnPinning = columnPinning;
+          actions.columnPinning = columnPinning;
         }
         const currentComputedColumnOrder = getComputed().computedColumnOrder;
 
@@ -147,7 +147,7 @@ export const useColumnPointerEvents = ({
           // as it would discard non visible columns from the column order
           // as the `columnOrder` variable only takes into account visible columns
           // so we have to adjust it to account for all columns
-          componentActions.columnOrder = adjustColumnOrderForAllColumns({
+          actions.columnOrder = adjustColumnOrderForAllColumns({
             newColumnOrder: columnOrder,
             visibleColumnOrder: getComputed().computedVisibleColumns.map(
               (c) => c.id,
@@ -174,7 +174,7 @@ export const useColumnPointerEvents = ({
             vertical: undefined,
           });
 
-          componentActions.columnReorderDragColumnId = dragColumn.id;
+          actions.columnReorderDragColumnId = dragColumn.id;
 
           setInfiniteColumnZIndex(
             dragColumnIndex,
@@ -236,7 +236,7 @@ export const useColumnPointerEvents = ({
           persistColumnOrder(reorderDragResult);
         }
 
-        componentActions.columnReorderDragColumnId = false;
+        actions.columnReorderDragColumnId = false;
       };
 
       target.addEventListener('pointermove', onPointerMove);

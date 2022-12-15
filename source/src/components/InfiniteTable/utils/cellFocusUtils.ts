@@ -49,15 +49,29 @@ export function isCellFocusable<T>(
   cellPos: CellPosition,
   context: ContentFocusableContext<T>,
 ): boolean {
-  const { getComputed, getDataSourceState } = context;
+  const { getComputed, getDataSourceState, getState, api, dataSourceApi } =
+    context;
+
+  const { editingCell } = getState();
 
   const { dataArray } = getDataSourceState();
 
   const { computedVisibleColumns, computedColumnsMap } = getComputed();
 
   const column = computedVisibleColumns[cellPos.colIndex];
+  if (!column) {
+    return false;
+  }
 
-  if (!column || !column.contentFocusable) {
+  if (
+    editingCell &&
+    editingCell.columnId === column.id &&
+    editingCell.rowIndex === cellPos.rowIndex
+  ) {
+    return true;
+  }
+
+  if (!column.contentFocusable) {
     return false;
   }
   if (column.contentFocusable === true) {
@@ -71,6 +85,8 @@ export function isCellFocusable<T>(
       columnsMap: computedColumnsMap,
       context,
     }).formattedValueContext,
+    api,
+    dataSourceApi,
   });
 }
 
@@ -79,37 +95,24 @@ export function getFollowingFocusableCell<T>(
   direction: 1 | -1,
   context: ContentFocusableContext<T>,
 ): CellPosition | null {
-  let nextCellPos: CellPosition | null = cellPos;
+  // let nextCellPos: CellPosition | null = cellPos;
 
-  while (
-    (nextCellPos = getFollowingCellPositionOptimized(
-      cellPos,
-      direction,
-      context,
-      (col) => {
+  const editingCell = context.getState().editingCell;
+  const nextCellPos = getFollowingCellPositionOptimized(
+    cellPos,
+    direction,
+    context,
+    {
+      isCellFocusable,
+      isColumnElligible: (col) => {
+        if (editingCell && editingCell.columnId === col.id) {
+          return true;
+        }
         return !!col.contentFocusable;
       },
-    ))
-  ) {
-    if (isCellFocusable(nextCellPos, context)) {
-      return nextCellPos;
-    }
-  }
-  return null;
-}
-
-function getFoundOrInsertIndex(arr: number[], value: number): number | null {
-  const index = binarySearch(arr, value, SORT_ASC);
-
-  if (index < 0) {
-    const res = ~index;
-
-    if (res === arr.length) {
-      return null;
-    }
-    return res;
-  }
-  return index;
+    },
+  );
+  return nextCellPos;
 }
 
 export function getFollowingCellPosition<T>(
@@ -142,6 +145,28 @@ export function getFollowingCellPosition<T>(
   return null;
 }
 
+function getNextCol(
+  colIndex: number,
+  direction: number,
+  validColIndexes: number[],
+) {
+  let index = binarySearch(validColIndexes, colIndex + direction, SORT_ASC);
+  if (index < 0) {
+    index = ~index;
+
+    if (direction > 0 && index >= validColIndexes.length) {
+      return null;
+    }
+    if (direction < 0 && index === 0) {
+      return null;
+    }
+  }
+
+  return validColIndexes[index] ?? null;
+}
+
+//@ts-ignore
+globalThis.getNextCol = getNextCol;
 /**
  * This function is different from the one above. The fn above just gets the next valid
  * cell position without considering other factors. This function is different as it runs the last `fn` argument
@@ -151,11 +176,18 @@ export function getFollowingCellPositionOptimized<T>(
   cellPos: CellPosition,
   direction: 1 | -1,
   context: ContentFocusableContext<T>,
-  fn: (column: InfiniteTableComputedColumn<T>) => boolean,
+  options: {
+    isColumnElligible: (col: InfiniteTableComputedColumn<T>) => boolean;
+    isCellFocusable: (
+      cellPos: CellPosition,
+      context: ContentFocusableContext<T>,
+    ) => boolean;
+  },
 ): CellPosition | null {
+  const { isColumnElligible, isCellFocusable } = options;
   const validColIndexes = context
     .getComputed()
-    .computedVisibleColumns.filter(fn)
+    .computedVisibleColumns.filter(isColumnElligible)
     .reduce((acc, col) => {
       acc.push(col.computedVisibleIndex);
       return acc;
@@ -165,44 +197,36 @@ export function getFollowingCellPositionOptimized<T>(
     return null;
   }
 
-  let { rowIndex, colIndex } = cellPos;
-
   const { getDataSourceState } = context;
 
   const { dataArray } = getDataSourceState();
 
-  let idx: number | null = getFoundOrInsertIndex(
-    validColIndexes,
-    colIndex + direction,
-  );
+  let rowIndex: number | null = cellPos.rowIndex;
+  let colIndex: number | null = cellPos.colIndex;
 
-  if (idx != null && direction === -1) {
-    idx -= 1;
+  while (rowIndex != null || colIndex != null) {
+    colIndex =
+      colIndex === null
+        ? validColIndexes[direction === -1 ? validColIndexes.length - 1 : 0]
+        : getNextCol(colIndex, direction, validColIndexes);
 
-    if (idx < 0) {
-      idx = null;
+    if (colIndex === null) {
+      // we have to move to next row
+      rowIndex += direction;
+
+      if (rowIndex < 0 || rowIndex >= dataArray.length) {
+        return null;
+      }
+      continue;
+    }
+
+    if (isCellFocusable({ colIndex, rowIndex }, context)) {
+      return {
+        colIndex,
+        rowIndex,
+      };
     }
   }
-
-  if (idx !== null) {
-    return { rowIndex, colIndex: validColIndexes[idx] };
-  }
-
-  rowIndex += direction;
-
-  if (rowIndex < 0 || rowIndex >= dataArray.length) {
-    return null;
-  }
-
-  colIndex =
-    direction === 1
-      ? validColIndexes[0]
-      : validColIndexes[validColIndexes.length - 1];
-
-  if (colIndex != null) {
-    return { rowIndex, colIndex };
-  }
-
   return null;
 }
 
@@ -250,6 +274,7 @@ export async function tryScrollToCell<T>(
         didScroll = api.scrollCellIntoView(rowIndex, colIndex, {
           offset: 30,
         });
+
         if (!didScroll && times < maxRetries) {
           tryScroll(times);
         }

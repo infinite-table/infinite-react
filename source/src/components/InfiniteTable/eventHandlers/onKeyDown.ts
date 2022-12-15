@@ -33,5 +33,29 @@ export function onKeyDown<T>(
     }
   }
 
+  if (event.key === 'Enter') {
+    const { activeCellIndex } = context.getState();
+    if (activeCellIndex) {
+      const [rowIndex, colIndex] = activeCellIndex;
+      const column = context.getComputed().computedVisibleColumns[colIndex];
+
+      if (column.computedEditable) {
+        context.api.startEdit({
+          rowIndex,
+          columnId: column.id,
+        });
+      }
+    }
+  }
+
+  if (context.api.isEditInProgress()) {
+    if (event.key === 'Escape') {
+      context.api.stopEdit({ cancel: true });
+    }
+    if (event.key === 'Tab') {
+      event.preventDefault();
+    }
+  }
+
   context.getState().onKeyDown?.(context, event);
 }

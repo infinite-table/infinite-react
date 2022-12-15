@@ -2,6 +2,7 @@ import {
   DataSourceState,
   DataSourceComponentActions,
   RowSelectionState,
+  DataSourceApi,
 } from '../../DataSource';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
 import {
@@ -45,6 +46,7 @@ export type InfiniteTableEventHandlerContext<T> = {
   getDataSourceState: () => DataSourceState<T>;
   dataSourceActions: DataSourceComponentActions<T>;
   api: InfiniteTableApi<T>;
+  dataSourceApi: DataSourceApi<T>;
 };
 
 export type InfiniteTableKeyboardEventHandlerContext<T> =

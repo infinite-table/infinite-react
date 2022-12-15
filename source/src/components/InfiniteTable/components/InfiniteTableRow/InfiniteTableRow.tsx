@@ -29,16 +29,16 @@ function InfiniteTableRowFn<T>(
   } = props;
   const tableContextValue = useInfiniteTable<T>();
 
-  const { componentState } = tableContextValue;
-  const { domRef: tableDOMRef } = componentState;
+  const { state } = tableContextValue;
+  const { domRef: tableDOMRef } = state;
 
-  const { groupRenderStrategy } = componentState;
+  const { groupRenderStrategy } = state;
 
   const { domProps } = useRowDOMProps(
     props,
-    componentState.rowProps,
-    componentState.rowStyle,
-    componentState.rowClassName,
+    state.rowProps,
+    state.rowStyle,
+    state.rowClassName,
     groupRenderStrategy,
     tableDOMRef,
   );

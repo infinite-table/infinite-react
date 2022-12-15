@@ -98,6 +98,14 @@ For adding at the beginning of the data source, see the <DApiLink name="insertDa
 
 </Prop>
 
+<Prop name="getRowInfoArray" type="() => InfiniteTableRowInfo[]">
+
+> Returns the current row info array.
+
+The row info array represents the current state of the DataSource. This array may contain more items than the actual data array fetched initially by the DataSource. This is because it includes group rows, when grouping is defined, as well as unfetched rows in some advanced scenarios.
+
+</Prop>
+
 
 <Prop name="insertData" type="(data: DATA_TYPE, { position, primaryKey }) => Promise">
 

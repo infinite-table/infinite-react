@@ -25,7 +25,7 @@ export function useColumnGroupResizeHandle<T>(
     computed: { computedVisibleColumns },
     getState,
     getComputed,
-    componentActions,
+    actions,
   } = useInfiniteTable<T>();
 
   const lastColumnInGroup = groupColumns[groupColumns.length - 1];
@@ -88,9 +88,9 @@ export function useColumnGroupResizeHandle<T>(
     (diff: number) => {
       const { columnSizing, reservedWidth } = computeResizeForDiff(diff);
 
-      componentActions.viewportReservedWidth = reservedWidth;
+      actions.viewportReservedWidth = reservedWidth;
 
-      componentActions.columnSizing = columnSizing;
+      actions.columnSizing = columnSizing;
     },
     [computeResizeForDiff],
   );

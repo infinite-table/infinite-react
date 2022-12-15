@@ -39,6 +39,7 @@ export interface InfiniteTableSetupState<T> {
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
+  editingValueRef: MutableRefObject<any | null>;
   scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   focusDetectDOMRef: MutableRefObject<HTMLDivElement | null>;
@@ -65,6 +66,31 @@ export interface InfiniteTableSetupState<T> {
   scrollPosition: ScrollPosition;
   pinnedStartScrollListener: ScrollListener;
   pinnedEndScrollListener: ScrollListener;
+
+  editingCell:
+    | {
+        active: true;
+        accepted: false;
+        columnId: string;
+        value: any;
+        persisted: false;
+        initialValue: any;
+        rowIndex: number;
+        primaryKey: any;
+      }
+    | null
+    | {
+        active: false;
+        columnId: string;
+        rowIndex: number;
+        value: any;
+        initialValue: any;
+        primaryKey?: any;
+        waiting: 'accept' | 'persist' | false;
+        accepted: boolean | Error;
+        persisted: boolean | Error;
+        cancelled?: boolean;
+      };
 }
 
 export type InfiniteTableColumnGroupWithDepth = InfiniteTableColumnGroup & {
@@ -102,6 +128,13 @@ export interface InfiniteTableMappedState<T> {
   onSelfBlur: InfiniteTableProps<T>['onSelfBlur'];
   onFocusWithin: InfiniteTableProps<T>['onFocusWithin'];
   onBlurWithin: InfiniteTableProps<T>['onBlurWithin'];
+  onEditCancelled: InfiniteTableProps<T>['onEditCancelled'];
+  onEditRejected: InfiniteTableProps<T>['onEditRejected'];
+  onEditAccepted: InfiniteTableProps<T>['onEditAccepted'];
+  shouldAcceptEdit: InfiniteTableProps<T>['shouldAcceptEdit'];
+  persistEdit: InfiniteTableProps<T>['persistEdit'];
+  onEditPersistSuccess: InfiniteTableProps<T>['onEditPersistSuccess'];
+  onEditPersistError: InfiniteTableProps<T>['onEditPersistError'];
 
   autoSizeColumnsKey: InfiniteTableProps<T>['autoSizeColumnsKey'];
 
@@ -123,6 +156,8 @@ export interface InfiniteTableMappedState<T> {
     InfiniteTableProps<T>['showSeparatePivotColumnForSingleAggregation']
   >;
   domProps: InfiniteTableProps<T>['domProps'];
+  editable: InfiniteTableProps<T>['editable'];
+  columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];

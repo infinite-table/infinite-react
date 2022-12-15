@@ -1,4 +1,4 @@
-import { CSSProperties, HTMLProps } from 'react';
+import React, { CSSProperties, HTMLProps } from 'react';
 
 import {
   AggregationReducer,
@@ -22,6 +22,7 @@ import {
   InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnType,
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis,
 } from './InfiniteTableProps';
 import type {
   DiscriminatedUnion,
@@ -31,6 +32,7 @@ import type {
 
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
 import { MenuIconProps } from '../components/icons/MenuIcon';
+import { NonUndefined } from '../../types/NonUndefined';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -90,6 +92,8 @@ export type InfiniteTableColumnRenderParamBase<
   rowActive: boolean;
 
   api: InfiniteTableApi<DATA_TYPE>;
+
+  editError?: Error;
 
   column: COL_TYPE;
   columnsMap: Map<string, COL_TYPE>;
@@ -228,15 +232,18 @@ export type InfiniteTableColumnContentFocusableFn<T> = (
 
 export type InfiniteTableColumnEditableFn<T> = (
   params: InfiniteTableColumnEditableParams<T>,
-) => boolean;
+) => boolean | Promise<boolean>;
 
 export type InfiniteTableColumnContentFocusableParams<T> =
-  InfiniteTableColumnValueFormatterParams<T> & {
-    column: InfiniteTableComputedColumn<T>;
-  };
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T>;
+
 export type InfiniteTableColumnEditableParams<T> =
   InfiniteTableColumnContentFocusableParams<T>;
 
+export type InfiniteTableColumnGetValueToPersistParams<T> =
+  InfiniteTableColumnEditableParams<T> & {
+    initialValue: any;
+  };
 export type InfiniteTableColumnWithField<T> = {
   field: keyof T;
 };
@@ -283,6 +290,8 @@ export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
 export type InfiniteTableColumnStyleFnParams<T> = {
   value: Renderable;
   column: InfiniteTableComputedColumn<T>;
+  inEdit: boolean;
+  editError: InfiniteTableColumnRenderParamBase<T>['editError'];
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 
 export type InfiniteTableColumnStyleFn<T> = (
@@ -361,7 +370,14 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   resizable?: boolean;
 
   contentFocusable?: InfiniteTableColumnContentFocusable<DATA_TYPE>;
-  editable?: InfiniteTableColumnEditable<DATA_TYPE>;
+  defaultEditable?: InfiniteTableColumnEditable<DATA_TYPE>;
+  getValueToEdit?: (
+    params: InfiniteTableColumnEditableParams<DATA_TYPE>,
+  ) => any | Promise<any>;
+
+  getValueToPersist?: (
+    params: InfiniteTableColumnGetValueToPersistParams<DATA_TYPE>,
+  ) => any | Promise<any>;
 
   comparer?: InfiniteTableColumnComparer<DATA_TYPE>;
   defaultHiddenWhenGroupedBy?:
@@ -506,6 +522,7 @@ type InfiniteTableComputedColumnBase<T> = {
   computedLastInCategory: boolean;
   computedFirst: boolean;
   computedLast: boolean;
+  computedEditable: NonUndefined<InfiniteTableColumn<T>['defaultEditable']>;
   toggleSort: () => void;
   colType: InfiniteTableColumnType<T>;
   id: string;

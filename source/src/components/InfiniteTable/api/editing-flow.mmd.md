@@ -17,7 +17,7 @@ graph TD;
 
     should_accept_edit--yes-->value_accepted
     should_accept_edit--no-->onEditRejected
-    value_accepted --column.getValueToPersist--> persist_value
+    value_accepted --"column.getValueToPersist(async)"--> persist_value
     persist_value--no--> default_persist
     persist_value--yes--> custom_persist
     

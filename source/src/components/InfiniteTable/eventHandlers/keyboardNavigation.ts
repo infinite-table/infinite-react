@@ -143,10 +143,24 @@ export function handleCellNavigation<T>(
       rowIndex = clamp(rowIndex - 1, minRow, maxRow);
     },
     ArrowLeft: () => {
-      colIndex = clamp(colIndex - 1, minCol, maxCol);
+      if (colIndex === minCol) {
+        if (rowIndex !== minRow) {
+          colIndex = maxCol;
+        }
+        KeyToFunction.ArrowUp();
+      } else {
+        colIndex = clamp(colIndex - 1, minCol, maxCol);
+      }
     },
     ArrowRight: () => {
-      colIndex = clamp(colIndex + 1, minCol, maxCol);
+      if (colIndex === maxCol) {
+        if (rowIndex !== maxRow) {
+          colIndex = minCol;
+        }
+        KeyToFunction.ArrowDown();
+      } else {
+        colIndex = clamp(colIndex + 1, minCol, maxCol);
+      }
     },
     Enter: () => {
       const rowInfo = dataArray[rowIndex];
