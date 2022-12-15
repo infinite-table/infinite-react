@@ -4,7 +4,6 @@ import { CardsSubtitle, CardsTitle } from './Cards';
 export function GetAccessFormConvertKit() {
   return (
     <>
-      {' '}
       <CardsTitle className="mt-20">Stay in the loop</CardsTitle>
       <CardsSubtitle className="mt-5 mb-12 w-2/3 sm:w-1/2">
         <p>Keep up-to-date with our releases and new functionalities.</p>
