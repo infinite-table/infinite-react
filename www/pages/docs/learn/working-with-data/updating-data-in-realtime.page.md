@@ -4,6 +4,7 @@ title: Updating Data in Real-Time
 
 Real-Time updates of data are possible via the [DataSource API](/docs/reference/datasource-api) as explained in the following sections of this page.
 
+
 ## Getting a reference to the DataSource API
 
 <Note>
