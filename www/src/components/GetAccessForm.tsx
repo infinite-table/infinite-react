@@ -40,6 +40,7 @@ export const GetAccessForm = () => {
       },
       body: encode({
         'form-name': 'contact',
+
         email,
       }),
     })
