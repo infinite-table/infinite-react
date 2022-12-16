@@ -2,7 +2,7 @@ import { test, expect, Page } from '@testing';
 
 import { employees } from './employees10';
 
-const timeout = 30;
+const timeout = 40;
 
 async function setGroupBy(
   groupBy: { field: string }[],

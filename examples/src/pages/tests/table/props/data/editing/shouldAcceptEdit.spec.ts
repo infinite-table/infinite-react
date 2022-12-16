@@ -67,7 +67,7 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
 
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(true);
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(120);
 
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(false);
 
@@ -111,7 +111,7 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
 
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(true);
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(120);
 
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(false);
 
