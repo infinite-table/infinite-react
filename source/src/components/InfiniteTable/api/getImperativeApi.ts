@@ -50,7 +50,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   persistEdit = async (arg?: { value?: any }): Promise<any | Error> => {
     arg = arg ?? {};
 
-    const { editingCell } = this.getState();
+    const { editingCell, editingValueRef } = this.getState();
 
     if (!editingCell) {
       return Promise.resolve(new Error('no edit in progress'));
@@ -82,6 +82,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     };
 
     let valueToPersist = value;
+
+    // clear value
+    editingValueRef.current = null;
 
     if (column.getValueToPersist) {
       valueToPersist = await column.getValueToPersist(params);
@@ -231,9 +234,6 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
     const value = params.value ?? editingValueRef.current;
 
-    // clear value
-    editingValueRef.current = null;
-
     if (!params.cancel && !params.reject) {
       // might be valid edit
 
@@ -241,6 +241,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
       this.actions.editingCell = {
         ...state.editingCell!,
+        value,
         active: false,
         waiting: 'accept',
       };

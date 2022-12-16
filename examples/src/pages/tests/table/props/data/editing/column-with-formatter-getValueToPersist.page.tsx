@@ -115,6 +115,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
     },
     valueFormatter: ({ value }) => `$ ${value}`,
     getValueToPersist: ({ value }) => {
+      if (value === '234') {
+        debugger;
+      }
       return parseInt(value, 10) * 2;
     },
   },
