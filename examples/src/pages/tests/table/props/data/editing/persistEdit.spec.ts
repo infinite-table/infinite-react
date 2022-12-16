@@ -25,7 +25,7 @@ export default test.describe.parallel('Inline Edit', () => {
     // at the 100ms mark, expect the editor to still be around
     await page.waitForTimeout(100);
 
-    // the editor should be readonly at this point
+    // the editor should be readonly at this point!
     await editModel.getCellEditor(cellEditable1).type('qqqqqq');
 
     await page.waitForTimeout(20);
