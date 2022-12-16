@@ -170,9 +170,7 @@ export default () => {
             //   dataSourceApi?.updateData({data, [column.field]: value})
             // }}
             // onEditPersistError
-            columnSizing={{}}
-            columnPinning={{}}
-            onColumnSizingChange={(columnSizing) => {}}
+
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}

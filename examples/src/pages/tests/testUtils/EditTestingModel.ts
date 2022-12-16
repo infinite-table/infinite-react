@@ -8,10 +8,10 @@ export class EditTestingModel {
     return new EditTestingModel(page);
   }
 
-  private page: Page;
+  // private page: Page;
 
   constructor(page: Page) {
-    this.page = page;
+    // this.page = page;
     this.colModel = new ColumnTestingModel(page);
   }
 

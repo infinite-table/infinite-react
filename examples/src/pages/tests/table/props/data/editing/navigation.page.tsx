@@ -155,20 +155,20 @@ export default () => {
               if (parseInt(value) < 0) {
                 return false;
               }
-              return new Promise((resolve, reject) => {
+              return new Promise((resolve) => {
                 setTimeout(() => {
                   resolve(true);
                 }, 500);
               });
             }}
             persistEdit={({ value, data, dataSourceApi }) => {
-              return new Promise((resolve, reject) => {
+              return new Promise((resolve) => {
                 setTimeout(() => {
                   resolve(dataSourceApi.updateData({ ...data, salary: value }));
                 }, 1000);
               });
             }}
-            onEditPersistError={({ error }) => {
+            onEditPersistError={({}) => {
               // console.log('err', error);
             }}
             onEditPersistSuccess={() => {
