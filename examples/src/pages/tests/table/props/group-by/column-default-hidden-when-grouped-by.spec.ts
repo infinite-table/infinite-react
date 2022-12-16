@@ -28,7 +28,7 @@ export default test.describe.parallel(
       );
 
       await setGroupBy([], { page });
-      await page.waitForTimeout(timeout);
+      await page.waitForTimeout(100);
 
       expect(await rowModel.getRenderedRowCount()).toEqual(employees.length);
 
