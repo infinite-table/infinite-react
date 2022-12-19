@@ -92,19 +92,29 @@ const nextConfig = withMDX({
 
     // Add our custom markdown loader in order to support frontmatter
     // and layout
-    config.module.rules.push({
-      test: /.mdx?$/, // load both .md and .mdx files
-      use: [
-        options.defaultLoaders.babel,
-        {
-          loader: '@mdx-js/loader',
-          options: {
-            remarkPlugins,
+    config.module.rules.push(
+      {
+        test: /.mdx?$/, // load both .md and .mdx files
+        use: [
+          options.defaultLoaders.babel,
+          {
+            loader: '@mdx-js/loader',
+            options: {
+              remarkPlugins,
+            },
           },
-        },
-        path.join(__dirname, './plugins/md-layout-loader'),
-      ],
-    });
+          path.join(__dirname, './plugins/md-layout-loader'),
+        ],
+      },
+      {
+        rules: [
+          {
+            test: /\.txt$/i,
+            use: 'raw-loader',
+          },
+        ],
+      },
+    );
 
     return config;
   },

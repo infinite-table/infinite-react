@@ -129,13 +129,16 @@ export const CardsTitle = ({
   children,
   className,
   style,
+  id,
 }: {
   children: ReactNode;
   className?: string;
+  id?: string;
   style?: React.CSSProperties;
 }) => {
   return (
     <h3
+      id={id}
       className={`${
         className || ''
       } ${commonCls} text-3xl font-bold ${titleOpacity}`}
