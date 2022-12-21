@@ -1,4 +1,4 @@
-These terms and conditions ("Terms") are contracted between Infinite Table Ltd. ("Licensor") and the entity whose details are provided in the License Quotation ("Licensee").
+These terms and conditions ("Terms") are contracted between Webreactor SRL. ("Licensor") and the entity whose details are provided in the License Quotation ("Licensee").
 This is effective as of the date of acceptance of these Terms ("Effective Date").
 
 

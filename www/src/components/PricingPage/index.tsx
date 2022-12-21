@@ -152,6 +152,8 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
   );
 }
 export function PricingPage() {
+  const [count, setCount] = React.useState(1);
+
   React.useEffect(() => {
     if (!initPaddleScript) {
       return;
@@ -170,7 +172,13 @@ export function PricingPage() {
   }, []);
 
   function onBuyClick() {
-    Paddle.Checkout.open({ product: 36608 });
+    // debugger;
+    Paddle.Checkout.open({
+      product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
+      allowQuantity: true,
+      quantity: count,
+      method: 'overlay',
+    });
     // Paddle.Checkout.open({
     //   method: 'inline',
     //   product: 36608, // Replace with your Product or Plan ID
@@ -182,8 +190,6 @@ export function PricingPage() {
     //     'width:100%; min-width:312px; background-color: transparent; border: none;', // Please ensure the minimum width is kept at or above 286px with checkout padding disabled, or 312px with checkout padding enabled. See "General" section under "Branded Inline Checkout" below for more information on checkout padding.
     // });
   }
-
-  const [count, setCount] = React.useState(1);
 
   return (
     <MainLayout
@@ -324,14 +330,14 @@ export function PricingPage() {
                 </div>
 
                 <div className="text-center mt-10">
-                  {/* <AccentButton
+                  {/*<AccentButton
                     disabled={count >= 20 || !HAS_PADDLE}
                     className="mt-10"
                     onClick={onBuyClick}
                   >
                     <>Buy Infinite Table for React</>
                     {!HAS_PADDLE ? <> - COMING SOON</> : null}
-                  </AccentButton> */}
+                </AccentButton>*/}
                   <span className="text-sm">
                     We are close to the official launch of Infinite Table and
                     will start accepting payments. In the meantime we are happy
