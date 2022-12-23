@@ -56,6 +56,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       return Promise.resolve(new Error('no edit in progress'));
     }
 
+    //await raf promise, so react can finish batching some state changes
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
     const column = this.getComputed().computedColumnsMap.get(
       editingCell.columnId,
     )!;
@@ -267,6 +270,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
             initialValue: editingCell!.initialValue,
           })
         : true;
+
+      //await raf promise, so react can finish batching some state changes
+      await new Promise((resolve) => requestAnimationFrame(resolve));
 
       return Promise.resolve(accept)
         .then((accepted) => {

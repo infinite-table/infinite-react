@@ -8,10 +8,10 @@ export class EditTestingModel {
     return new EditTestingModel(page);
   }
 
-  // private page: Page;
+  private page: Page;
 
   constructor(page: Page) {
-    // this.page = page;
+    this.page = page;
     this.colModel = new ColumnTestingModel(page);
   }
 
@@ -56,6 +56,8 @@ export class EditTestingModel {
     const editor = this.getCellEditor(cell);
 
     await editor.press('Enter');
+
+    await this.page.waitForTimeout(30);
   }
   async cancelEdit(cell: CellLocation) {
     const editor = this.getCellEditor(cell);
