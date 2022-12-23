@@ -5,11 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "dev-no-output": "next dev &> /dev/null",
-    "build": "rimraf .next && rimraf node_modules/@types/react && rimraf node_modules/react && next build && next export",
+    "build": "rimraf .next && rimraf node_modules/@types/react && rimraf node_modules/react && NODE_ENV=production next build && NODE_ENV=production next export",
     "start": "next start",
     "test": "npm run build && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
-    "start-server": "http-server -p 3000 out",
+    "start-server": "http-server -p 3000 out -c300000",
     "play:test": "playwright test",
     "xxxtest:debug": "PWDEBUG=console playwright test",
     "test:debug": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path} --debug'",

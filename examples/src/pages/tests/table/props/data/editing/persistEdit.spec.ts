@@ -19,8 +19,8 @@ export default test.describe.parallel('Inline Edit', () => {
       value: 'Infinity',
     });
 
-    await editModel.getCellEditor(cellEditable1).type('x'),
-      await editModel.confirmEdit(cellEditable1);
+    await editModel.getCellEditor(cellEditable1).type('x');
+    await editModel.confirmEdit(cellEditable1);
 
     // at the 100ms mark, expect the editor to still be around
     await page.waitForTimeout(100);
