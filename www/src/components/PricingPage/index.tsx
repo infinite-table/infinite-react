@@ -512,19 +512,22 @@ export function PricingPage() {
               href="#payment processing"
               tag="div"
             >
-              We use{' '}
-              <ExternalLink glow href="https://paddle.com">
-                Paddle
-              </ExternalLink>{' '}
-              – a leading payment provider with an excellent record and
-              reputation for managing payments safely and securely. It offers a
-              complete payments, tax, and subscriptions solution for SaaS.
+              <p>
+                We use{' '}
+                <ExternalLink glow href="https://paddle.com">
+                  Paddle
+                </ExternalLink>{' '}
+                – a leading payment provider with an excellent record and
+                reputation for managing payments safely and securely. It offers
+                a complete payments, tax, and subscriptions solution for SaaS.
+              </p>
+              <br />
               <p>
                 All payments are processed by Paddle and we do not have access
                 to your payment details.
               </p>
             </Card>
-            <Card
+            {/* <Card
               title="How many updates do you guarantee in each annual license period?"
               href="#updates"
             >
@@ -532,6 +535,21 @@ export function PricingPage() {
               response to user feedback and suggestions. We guarantee a minimum
               of 4 quarterly releases each year, but in practice it will be many
               more.
+            </Card> */}
+            <Card title="Do you provide refunds?" tag="div" href="#refunds">
+              <p>Yes, absolutely.</p>
+              <br />
+              <p>
+                If you purchased your Infinite Licence in error, please contact
+                us within 7 days of the sale, at{' '}
+                <a
+                  href="mailto:admin@infinite-table.com"
+                  className=" text-glow "
+                >
+                  admin@infinite-table.com
+                </a>{' '}
+                to request a refund.
+              </p>
             </Card>
           </Cards>
           {/* <Cards title="" style={{ marginTop: 0 }}>
