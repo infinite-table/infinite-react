@@ -1,5 +1,4 @@
 import { test, expect } from '@testing';
-
 export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
   test('should reject edit on id column immediately', async ({
     page,
