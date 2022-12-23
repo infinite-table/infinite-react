@@ -250,6 +250,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       };
 
       const { computedColumnsMap: columnsMap } = this.getComputed();
+
       const column = columnsMap.get(columnId);
 
       const shouldAcceptEdit =
