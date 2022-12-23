@@ -480,6 +480,7 @@ export interface InfiniteTableProps<T> {
   hideEmptyGroupColumns?: boolean;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
+
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
 
   pinnedStartMaxWidth?: number;
