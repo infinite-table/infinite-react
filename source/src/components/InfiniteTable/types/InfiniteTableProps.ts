@@ -485,9 +485,7 @@ export interface InfiniteTableProps<T> {
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
 
-  shouldAcceptEdit?: (
-    params: InfiniteTablePropOnEditAcceptedParams<T>,
-  ) => boolean | Error | Promise<boolean | Error>;
+  shouldAcceptEdit?: InfiniteTableColumn<T>['shouldAcceptEdit'];
 
   onEditCancelled?: (params: InfiniteTablePropOnEditCancelledParams<T>) => void;
 

@@ -22,6 +22,7 @@ import {
   InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnType,
+  InfiniteTablePropOnEditAcceptedParams,
   InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis,
 } from './InfiniteTableProps';
 import type {
@@ -368,6 +369,10 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   sortable?: boolean;
   draggable?: boolean;
   resizable?: boolean;
+
+  shouldAcceptEdit?: (
+    params: InfiniteTablePropOnEditAcceptedParams<DATA_TYPE>,
+  ) => boolean | Error | Promise<boolean | Error>;
 
   contentFocusable?: InfiniteTableColumnContentFocusable<DATA_TYPE>;
   defaultEditable?: InfiniteTableColumnEditable<DATA_TYPE>;

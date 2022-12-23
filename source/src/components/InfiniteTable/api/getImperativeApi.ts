@@ -246,9 +246,15 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         waiting: 'accept',
       };
 
+      const { computedColumnsMap: columnsMap } = this.getComputed();
+      const column = columnsMap.get(columnId);
+
+      const shouldAcceptEdit =
+        state.shouldAcceptEdit ?? column!.shouldAcceptEdit;
+
       // unless it's rejected at this stage
-      let accept = state.shouldAcceptEdit
-        ? state.shouldAcceptEdit({
+      let accept = shouldAcceptEdit
+        ? shouldAcceptEdit({
             ...getRowDiscriminatorParamForEditing({
               ...this.context,
               api: this,
