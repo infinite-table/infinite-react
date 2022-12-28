@@ -11,17 +11,21 @@ import { onKeyDown } from './onKeyDown';
 function useEventHandlersContext<T>() {
   const {
     getState,
-    componentActions: actions,
-    imperativeApi,
+    actions: actions,
+    api,
     getComputed,
   } = useInfiniteTable<T>();
-  const { getState: getDataSourceState, componentActions: dataSourceActions } =
-    useDataSourceContextValue<T>();
+  const {
+    getState: getDataSourceState,
+    componentActions: dataSourceActions,
+    api: dataSourceApi,
+  } = useDataSourceContextValue<T>();
 
   const context = useMemo(() => {
     const context: InfiniteTableEventHandlerContext<T> = {
       getComputed,
-      api: imperativeApi,
+      dataSourceApi,
+      api,
       getState,
       actions,
       getDataSourceState,
@@ -31,7 +35,15 @@ function useEventHandlersContext<T>() {
       },
     };
     return context;
-  }, [getState, actions, getDataSourceState, dataSourceActions]);
+  }, [
+    getState,
+    actions,
+    getDataSourceState,
+    dataSourceActions,
+    api,
+    dataSourceApi,
+    getComputed,
+  ]);
 
   return context;
 }

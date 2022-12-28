@@ -5,7 +5,6 @@ import {
 } from '@infinite-table/infinite-react';
 import type {
   DataSourcePropGroupBy,
-  InfiniteTableColumn,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';

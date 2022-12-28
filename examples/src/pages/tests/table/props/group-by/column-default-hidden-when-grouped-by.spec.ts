@@ -2,7 +2,7 @@ import { test, expect, Page } from '@testing';
 
 import { employees } from './employees10';
 
-const timeout = 30;
+const timeout = 40;
 
 async function setGroupBy(
   groupBy: { field: string }[],
@@ -28,7 +28,7 @@ export default test.describe.parallel(
       );
 
       await setGroupBy([], { page });
-      await page.waitForTimeout(timeout);
+      await page.waitForTimeout(100);
 
       expect(await rowModel.getRenderedRowCount()).toEqual(employees.length);
 

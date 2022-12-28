@@ -7,22 +7,22 @@ on:
     branches:
       - master
       - dev
+  workflow_call:
   issues:
     types: [opened, edited, milestoned, closed]
   label:
     types: [created, edited, deleted]
-  workflow_run:
-    # when the "RELEASE" workflow is completed successfully, we need to react and run this workflow
-    workflows: [RELEASE]
-    types: [completed]
+  # workflow_run:
+  #   # when the "RELEASE" workflow is completed successfully, we need to react and run this workflow
+  #   workflows: [RELEASE]
+  #   types: [completed]
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
-  publish-docs:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+  publish-website:
     runs-on: ubuntu-latest
 
     env:

@@ -7,7 +7,7 @@ export function getAuthor(author: string) {
     console.warn('Invalid author. Did you add it to authors.json??');
     return {
       name: 'Infinite Table Admin',
-      url: 'https://twitter.com/inf-table',
+      url: 'https://twitter.com/get_infinite',
     };
   }
   return person;

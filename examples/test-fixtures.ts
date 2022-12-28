@@ -1,4 +1,5 @@
 import { ColumnTestingModel } from '@examples/pages/tests/testUtils/ColumnTestingModel';
+import { EditTestingModel } from '@examples/pages/tests/testUtils/EditTestingModel';
 import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderTestingModel';
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import {
@@ -32,6 +33,7 @@ export const test = base.extend<
       page: Page & TestExtras;
       rowModel: RowTestingModel;
       headerModel: HeaderTestingModel;
+      editModel: EditTestingModel;
       columnModel: ColumnTestingModel;
     }
 >({
@@ -84,6 +86,9 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => 
   },
   headerModel: async ({ page }, use) => {
     await use(HeaderTestingModel.get(page));
+  },
+  editModel: async ({ page }, use) => {
+    await use(EditTestingModel.get(page));
   },
   columnModel: async ({ page }, use) => {
     await use(ColumnTestingModel.get(page));

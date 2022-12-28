@@ -29,7 +29,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   } = tableContextValue.computed;
 
   const {
-    componentState: {
+    state: {
       columnHeaderHeight,
       columnGroupsDepthsMap,
       columnGroupsMaxDepth,

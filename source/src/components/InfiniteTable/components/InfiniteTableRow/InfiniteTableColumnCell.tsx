@@ -21,7 +21,10 @@ import type {
 import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
-import { RenderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
+import {
+  CellEditorContextComponent,
+  RenderCellHookComponent,
+} from '../../utils/RenderHookComponentForInfinite';
 import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { getColumnRenderingParams } from './columnRendering';
@@ -35,6 +38,7 @@ import {
   InfiniteTableCellProps,
   InfiniteTableColumnCellProps,
 } from './InfiniteTableCellTypes';
+import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
 
 const { rootClassName } = internalProps;
 
@@ -136,9 +140,16 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const { rowSelected } = rowInfo;
 
-  const { getState, componentActions, imperativeApi } = useInfiniteTable<T>();
-  const { componentState: dataSourceState, getState: getDataSourceState } =
-    useDataSourceContextValue<T>();
+  const {
+    getState,
+    actions: componentActions,
+    api: imperativeApi,
+  } = useInfiniteTable<T>();
+  const {
+    componentState: dataSourceState,
+    getState: getDataSourceState,
+    api: dataSourceApi,
+  } = useDataSourceContextValue<T>();
 
   const { activeRowIndex, keyboardNavigation } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
@@ -148,7 +159,16 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     getDataSourceState,
     actions: componentActions,
     api: imperativeApi,
+    dataSourceApi,
   };
+
+  const colRenderingParams = getColumnRenderingParams({
+    column,
+    rowInfo,
+    columnsMap,
+    fieldsToColumn,
+    context: renderingContext,
+  });
 
   const {
     stylingParam,
@@ -156,13 +176,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     formattedValueContext,
     renderFunctions,
     groupByColumn,
-  } = getColumnRenderingParams({
-    column,
-    rowInfo,
-    columnsMap,
-    fieldsToColumn,
-    context: renderingContext,
-  });
+    inEdit,
+  } = colRenderingParams;
 
   const renderParam = renderParams as InfiniteTableColumnRenderParam<T>;
   const renderParamRef =
@@ -225,8 +240,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [rowInfo],
   );
 
+  const editor = inEdit ? (
+    <CellEditorContextComponent contextValue={renderParam}>
+      <InfiniteTableColumnEditor />
+    </CellEditorContextComponent>
+  ) : null;
   const renderChildren = useCallback(() => {
     if (hidden) {
+      return null;
+    }
+
+    if (inEdit) {
       return null;
     }
 
@@ -337,6 +361,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   }, [
     column,
     hidden,
+    inEdit,
     ...objectValuesExcept(renderParam, {
       renderBag: true,
     }),
@@ -410,6 +435,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     onMouseLeave,
     onMouseEnter,
     onClick,
+    afterChildren: editor,
     onMouseDown,
     cssEllipsis: column.cssEllipsis ?? true,
     className: join(
@@ -458,4 +484,46 @@ export function useInfiniteColumnCell<T>() {
   ) as InfiniteTableColumnCellContextType<T>;
 
   return result;
+}
+
+export function useInfiniteColumnEditor<T>() {
+  const {
+    api,
+    state: { editingValueRef, editingCell },
+  } = useInfiniteTable<T>();
+
+  const { column, rowInfo } = useInfiniteColumnCell();
+
+  const [initialValue] = React.useState(() => editingCell?.value);
+  const [currentValue, setCurrentValue] = React.useState(initialValue);
+
+  const readOnly = editingCell
+    ? !editingCell.active && !!editingCell.waiting
+    : false;
+
+  const setValue = React.useCallback((value: any) => {
+    editingValueRef.current = value;
+    setCurrentValue(value);
+  }, []);
+
+  React.useLayoutEffect(() => {
+    editingValueRef.current = initialValue;
+  }, []);
+
+  const confirmEdit = api.confirmEdit;
+  const cancelEdit = api.cancelEdit;
+  const rejectEdit = api.rejectEdit;
+
+  return {
+    api,
+    initialValue,
+    value: currentValue,
+    readOnly,
+    column,
+    rowInfo,
+    setValue,
+    confirmEdit,
+    cancelEdit,
+    rejectEdit,
+  };
 }

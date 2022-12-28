@@ -39,7 +39,7 @@ export function useCellRendering<T>(
 ): CellRenderingResult {
   const { computed, bodySize, imperativeApi } = param;
 
-  const { componentActions, componentState, getState } = useInfiniteTable<T>();
+  const { actions, state, getState } = useInfiniteTable<T>();
 
   const {
     computedPinnedStartColumns,
@@ -56,6 +56,7 @@ export function useCellRendering<T>(
     componentState: dataSourceState,
     getState: getDataSourceState,
     componentActions: dataSourceActions,
+    api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
   const { dataArray } = dataSourceState;
@@ -72,7 +73,7 @@ export function useCellRendering<T>(
     onScrollToBottom,
     scrollToBottomOffset,
     ready,
-  } = componentState;
+  } = state;
 
   const repaintId = dataSourceState.updatedAt;
 
@@ -132,7 +133,7 @@ export function useCellRendering<T>(
       return;
     }
 
-    componentActions.ready = true;
+    actions.ready = true;
   }, [!!bodySize.height]);
 
   useEffect(() => {
@@ -141,7 +142,7 @@ export function useCellRendering<T>(
     const { onReady } = getState();
 
     if (onReady) {
-      onReady(imperativeApi);
+      onReady({ api: imperativeApi, dataSourceApi });
     }
   }, [ready]);
 

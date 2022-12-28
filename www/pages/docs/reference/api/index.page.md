@@ -5,13 +5,19 @@ layout: API
 
 When rendering the `InfiniteTable` component, you can get access to the API by getting it from the <PropLink name="onReady" /> callback prop.
 
-```tsx {3}
+```tsx {2}
+const onReady = (
+  {api, dataSourceApi}: {
+    api: InfiniteTableApi<DATA_TYPE>,
+    dataSourceApi: DataSourceApi<DATA_TYPE>
+  }) => {
+  // api is accessible here
+  // you may want to store a reference to it in a ref or somewhere in your app state
+}
+
 <InfiniteTable<DATA_TYPE>
   columns={[...]}
-  onReady={(api: InfiniteTableApi<DATA_TYPE>) => {
-    // api is accessible here
-    // you may want to store a reference to it in a ref or somewhere in your app state
-  }}
+  onReady={onReady}
 />
 ```
 
@@ -36,6 +42,22 @@ api.collapseGroupRow(['USA', 'New York']); // collapses the group with these key
 ```tsx
 api.expandGroupRow(['USA', 'New York']); // expands the group with these keys
 ```
+
+</Prop>
+
+<Prop name="getVerticalRenderRange" type="() => { renderStartIndex, renderEndIndex }">
+
+> Returns the vertical render range of the table
+
+The vertical render range is the range of rows that are currently rendered in the table viewport.
+
+</Prop>
+
+<Prop name="onReady" type="({ api, dataSourceApi }) => void">
+
+> Called when the table has been layed out and sized and is ready to be used.
+
+This callback prop will be called with an object containing the `api` (which is an instance of `InfiniteTableApi`) and [`dataSourceApi`](/docs/reference/datasource-api) objects.
 
 </Prop>
 

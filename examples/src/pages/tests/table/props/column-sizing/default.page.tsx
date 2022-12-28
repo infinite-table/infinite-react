@@ -117,7 +117,7 @@ const App = () => {
               position: 'relative',
             },
           }}
-          onReady={(api: InfiniteTableApi<Employee>) => {
+          onReady={({ api }: { api: InfiniteTableApi<Employee> }) => {
             (globalThis as any).api = api;
           }}
           columnTypes={columnTypes}

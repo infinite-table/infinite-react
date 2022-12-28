@@ -116,7 +116,7 @@ export const BannerTextPrevCls = style([
 ]);
 export const BannerTextCurrentCls = style([
   BannerTextCommon,
-  { top: '0px', opacity: 1 },
+  { top: '0px', opacity: 1, position: 'relative' },
 ]);
 
 export const BannerTextNextCls = style([

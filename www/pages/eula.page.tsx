@@ -1,9 +1,7 @@
 import { MDXProvider } from '@mdx-js/react';
 import { MDXComponents } from '@www/components/MDX/MDXComponents';
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
-
 import License from '../LICENSE.md';
-
 import * as React from 'react';
 
 export default function EULAPage() {

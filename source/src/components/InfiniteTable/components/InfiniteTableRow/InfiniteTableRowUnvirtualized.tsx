@@ -26,7 +26,7 @@ function TableRowUnvirtualizedFn<T>(
 
   const tableContextValue = useInfiniteTable<T>();
 
-  const { componentState } = tableContextValue;
+  const { state: componentState } = tableContextValue;
   const { domRef: tableDOMRef } = componentState;
   const { domProps } = useRowDOMProps(
     props,

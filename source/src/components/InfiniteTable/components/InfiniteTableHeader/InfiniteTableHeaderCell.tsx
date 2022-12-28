@@ -15,6 +15,7 @@ import {
 } from '../../../DataSource/types';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { debounce } from '../../../utils/debounce';
+import { getColumnApiForColumn } from '../../api/getColumnApi';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
@@ -24,6 +25,7 @@ import { InfiniteTableFilterEditorProps } from '../../types';
 import type {
   InfiniteTableColumnHeaderParam,
   InfiniteTableColumnHeaderRenderFunction,
+  InfiniteTableColumnRenderParam,
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
@@ -38,7 +40,7 @@ import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentFo
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
-import { MenuIcon } from '../icons/MenuIcon';
+import { MenuIcon, MenuIconProps } from '../icons/MenuIcon';
 import { SortIcon } from '../icons/SortIcon';
 import {
   InfiniteTableCell,
@@ -134,15 +136,25 @@ export function InfiniteTableHeaderCell<T>(
 
   const {
     computed: { showColumnFilters },
-    imperativeApi: api,
-    componentState: {
+    api,
+    getComputed,
+    getState,
+    actions,
+    state: {
+      components,
       portalDOMRef,
       columnHeaderHeight,
       filterEditors,
       columnReorderDragColumnId,
-      onColumnMenuClick,
     },
   } = useInfiniteTable<T>();
+
+  const {
+    api: dataSourceApi,
+    componentActions: dataSourceActions,
+    getState: getDataSourceState,
+    componentState: { filterDelay, filterTypes },
+  } = useDataSourceContextValue<T>();
 
   const { allRowsSelected, someRowsSelected, selectionMode } =
     useDataSource<T>();
@@ -191,32 +203,39 @@ export function InfiniteTableHeaderCell<T>(
   const headerCSSEllipsis =
     column.headerCssEllipsis ?? column.cssEllipsis ?? true;
 
-  const menuIcon = (
-    <MenuIcon
-      reserveSpaceWhenHidden={align === 'center'}
-      // reserveSpaceWhenHidden={true}
-      style={
-        align === 'end'
-          ? {
-              marginInlineStart: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
-              marginInlineEnd: ThemeVars.spacing[2],
-            }
-          : {
-              marginInlineEnd: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
-              marginInlineStart: ThemeVars.spacing[2],
-            }
-      }
-      domProps={{
-        onClick: (event) => {
-          onColumnMenuClick({
-            target: event.target as HTMLElement,
-            column,
-          });
-        },
-      }}
-    />
-  );
+  const menuIconProps: MenuIconProps = {
+    reserveSpaceWhenHidden: align === 'center',
 
+    style:
+      align === 'end'
+        ? {
+            marginInlineStart: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
+            marginInlineEnd: ThemeVars.spacing[2],
+          }
+        : {
+            marginInlineEnd: `calc(${ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth} / 2)`,
+            marginInlineStart: ThemeVars.spacing[2],
+          },
+    domProps: {
+      onMouseDown: (event) => {
+        event.stopPropagation();
+        columnApi.toggleContextMenu(event.target);
+      },
+    },
+  };
+  const MenuIconCmp =
+    column.components?.MenuIcon || components?.MenuIcon || MenuIcon;
+  const menuIcon = <MenuIconCmp {...menuIconProps} />;
+
+  const columnApi = getColumnApiForColumn(column, {
+    actions,
+    api,
+    dataSourceActions,
+    dataSourceApi,
+    getComputed,
+    getDataSourceState,
+    getState,
+  })!;
   const renderParam: InfiniteTableColumnHeaderParam<T> = {
     dragging,
     domRef: ref,
@@ -229,6 +248,7 @@ export function InfiniteTableHeaderCell<T>(
     allRowsSelected,
     selectionMode,
     api,
+    columnApi,
     renderBag: {
       sortIcon,
       menuIcon,
@@ -256,7 +276,17 @@ export function InfiniteTableHeaderCell<T>(
     if (typeof column.renderMenuIcon === 'function') {
       renderParam.renderBag.menuIcon = (
         <RenderHeaderCellHookComponent
-          render={column.renderMenuIcon}
+          render={(param: InfiniteTableColumnRenderParam<T>) => {
+            if (typeof column.renderMenuIcon !== 'function') {
+              return null;
+            }
+            const result = column.renderMenuIcon(param);
+
+            if (result) {
+              return <MenuIconCmp {...menuIconProps}>{result}</MenuIconCmp>;
+            }
+            return null;
+          }}
           renderParam={renderParam}
         />
       );
@@ -349,12 +379,6 @@ export function InfiniteTableHeaderCell<T>(
   };
 
   const domRef = useRef<HTMLElement | null>(null);
-
-  const {
-    componentActions: dataSourceActions,
-    getState: getDataSourceState,
-    componentState: { filterDelay, filterTypes },
-  } = useDataSourceContextValue<T>();
 
   useEffect(() => {
     let clearOnResize: null | (() => void) = null;

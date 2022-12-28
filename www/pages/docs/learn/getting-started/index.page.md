@@ -9,7 +9,8 @@ It's built specifically for React from the ground up and with performance in min
 
 # Installation
 
-`Infinite Table` is available on the public npm registry - install it by running the following command:
+`Infinite Table` is available on the public [npm registry](https://www.npmjs.com/package/@infinite-table/infinite-react) - install it by running the following command:
+
 
 <TerminalBlock>
 npm i @infinite-table/infinite-react
@@ -18,6 +19,12 @@ npm i @infinite-table/infinite-react
 ## Meet the Code
 
 <Sandpack>
+
+<Description>
+
+This is an example to get you started with Infinite Table with minimal setup.
+
+</Description>
 
 ```ts file=meet-the-code.page.tsx
 
@@ -43,7 +50,7 @@ There are 2 components that you can use and import:
 - `InfiniteTable`
 - `DataSource`
 
-Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME><PROP_NAME>`, so here are a few examples to clarify the rule:
+Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME>Prop<PROP_NAME>`, so here are a few examples to clarify the rule:
 
 ```ts
 import {
@@ -53,6 +60,15 @@ import {
   // corresponding to the `groupBy` prop
 } from '@infinite-table/infinite-react';
 ```
+
+
+<HeroCards>
+<YouWillLearnCard title="Learn about our TypeScript typings" path="/docs/learn/getting-started/typescript-types">
+Read more about how to use our TypeScript types.
+</YouWillLearnCard>
+
+</HeroCards>
+
 
 ## Built for React from the ground-up
 
@@ -83,7 +99,7 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 
 You can use `@infinite-table/infinite-react` in 2 ways:
 
-- with a license - requests for licence quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the [Powered by Infinite Table](infinite-table.com) footer go away.
+- with a license - requests for license quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the [Powered by Infinite Table](infinite-table.com) footer go away.
 - without a license, but it will include a [Powered by Infinite Table](infinite-table.com) link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io) - which are used throughout this demo site. Check the demo below to see the license footer in action.
 
 <Sandpack title="Invalid License Demo">
@@ -97,6 +113,15 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 ```
 
 </Sandpack>
+
+
+<HeroCards>
+<YouWillLearnCard title="More on Licensing" path="/docs/learn/getting-started/licensing">
+Read more about our licensing model and how you can use Infinite Table.
+</YouWillLearnCard>
+
+</HeroCards>
+
 
 ## About the Docs
 

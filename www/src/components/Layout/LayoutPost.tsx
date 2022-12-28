@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 import { HighlightBrandToLightBackground } from '../components.css';
 
-import { getSidebarHome } from './getSidebarHome';
 import { Page } from './Page';
 import { RouteItem, useRouteMeta } from './useRouteMeta';
 import { useTwitter } from './useTwitter';
@@ -94,7 +93,7 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
             />
             <div className=" ">
               <h1
-                className={`mb-6 pt-8 text-4xl font-black md:text-5xl font-bold leading-snug tracking-tight text-content-color ${HighlightBrandToLightBackground}`}
+                className={`mb-6 pt-8 inline-block text-4xl font-black md:text-5xl leading-snug tracking-tight text-content-color ${HighlightBrandToLightBackground}`}
               >
                 {meta.title}
               </h1>
@@ -139,8 +138,6 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
 }
 
 function AppShell(props: { children: React.ReactNode }) {
-  const routeTree = getSidebarHome() as RouteItem;
-
   return (
     <Page
       blog

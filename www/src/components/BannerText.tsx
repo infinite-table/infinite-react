@@ -26,7 +26,7 @@ export function BannerText(props: {
   React.useLayoutEffect(() => {
     setTimeout(() => {
       if (pausedRef.current) {
-        // return;
+        return;
       }
       setIndex((index + 1) % contents.length);
       setTransitioning(true);

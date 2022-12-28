@@ -28,6 +28,8 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnVisibility,
     columnPinning,
     columnSizing,
+    editable,
+    columnDefaultEditable,
     columnTypes,
     brain,
     bodySize,
@@ -126,13 +128,13 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnVisibilityAssumeVisible: true,
 
     columnPinning,
+    editable,
+    columnDefaultEditable,
     filterValue,
 
     columnSizing,
     columnTypes,
   });
-
-  // console.log(computedVisibleColumns);
 
   const rowspan = useColumnRowspan(computedVisibleColumns);
   const columnSize = useColumnSizeFn<T>(computedVisibleColumns);

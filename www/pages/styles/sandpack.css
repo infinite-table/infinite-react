@@ -255,3 +255,6 @@ html.dark .sp-loading {
   padding-left: var(--sp-space-1) !important;
   padding-right: var(--sp-space-1) !important;
 }
+.cm-gutters {
+  background: var(--sp-colors-surface1) !important;
+}

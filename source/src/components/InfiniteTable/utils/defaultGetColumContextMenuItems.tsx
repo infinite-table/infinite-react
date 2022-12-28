@@ -1,7 +1,12 @@
 import * as React from 'react';
-import { DataSourceState } from '../../DataSource';
+import {
+  DataSourceApi,
+  DataSourceComponentActions,
+  DataSourceState,
+} from '../../DataSource';
 import { MenuItemObject, MenuProps } from '../../Menu/MenuProps';
 import { Renderable } from '../../types/Renderable';
+import { getColumnApiForColumn } from '../api/getColumnApi';
 import { InfiniteCheckBox } from '../components/CheckBox';
 import {
   InfiniteTableApi,
@@ -11,16 +16,29 @@ import {
 } from '../types';
 import { InfiniteTableActions } from '../types/InfiniteTableState';
 
-export function defaultGetColumContextMenuItems<T>(params: {
-  column: InfiniteTableComputedColumn<T>;
-  api: InfiniteTableApi<T>;
-  getState: () => InfiniteTableState<T>;
-  getDataSourceState: () => DataSourceState<T>;
-  getComputed: () => InfiniteTableComputedValues<T>;
+export function defaultGetColumContextMenuItems<T>(
+  _items: MenuProps['items'],
+  params: {
+    column: InfiniteTableComputedColumn<T>;
+    api: InfiniteTableApi<T>;
+    dataSourceApi: DataSourceApi<T>;
+    getState: () => InfiniteTableState<T>;
+    getDataSourceState: () => DataSourceState<T>;
+    getComputed: () => InfiniteTableComputedValues<T>;
 
-  actions: InfiniteTableActions<T>;
-}): MenuProps['items'] {
-  const { column, getComputed, api, getDataSourceState } = params;
+    actions: InfiniteTableActions<T>;
+    dataSourceActions: DataSourceComponentActions<T>;
+  },
+): MenuProps['items'] {
+  const {
+    column,
+    getComputed,
+    api,
+    getDataSourceState,
+    dataSourceApi,
+    actions,
+    dataSourceActions,
+  } = params;
 
   return [
     {
@@ -83,6 +101,12 @@ export function defaultGetColumContextMenuItems<T>(params: {
           dataSourceState;
 
         computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
+          const columnApi = getColumnApiForColumn(id, {
+            ...params,
+            actions,
+            dataSourceActions,
+            dataSourceApi,
+          })!;
           let label: Renderable =
             col.header && typeof col.header !== 'function'
               ? col.header
@@ -92,6 +116,7 @@ export function defaultGetColumContextMenuItems<T>(params: {
             label =
               col.header({
                 column: col,
+                columnApi,
                 insideColumnMenu: true,
                 dragging: false,
                 columnsMap: computed.computedColumnsMap,

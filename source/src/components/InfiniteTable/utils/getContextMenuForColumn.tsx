@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
+
 import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
 import { InfiniteTableContextValue } from '../types';
@@ -18,8 +19,10 @@ export function getContextMenuForColumn<T>(
     getState,
     getDataSourceState,
 
-    imperativeApi,
-    componentActions: actions,
+    dataSourceActions,
+    api,
+    dataSourceApi,
+    actions: actions,
   } = context;
 
   const { components, getColumContextMenuItems } = getState();
@@ -32,16 +35,22 @@ export function getContextMenuForColumn<T>(
     return null;
   }
 
-  const getItems = getColumContextMenuItems || defaultGetColumContextMenuItems;
-
-  const items = getItems({
+  const param = {
     column,
-    api: imperativeApi,
+    api,
     getState,
     getDataSourceState,
     getComputed,
     actions,
-  });
+    dataSourceApi,
+    dataSourceActions,
+  };
+
+  const defaultItems = defaultGetColumContextMenuItems([], param)!;
+
+  const items = getColumContextMenuItems
+    ? getColumContextMenuItems(defaultItems, param)
+    : defaultItems;
 
   const onRootMouseDown: EventListener = React.useCallback((event: Event) => {
     //@ts-ignore
@@ -54,6 +63,10 @@ export function getContextMenuForColumn<T>(
       onRootMouseDown,
     );
   };
+
+  if (!items || !items.length) {
+    return null;
+  }
 
   return (
     <MenuCmp

@@ -5,6 +5,7 @@ import {
   InfiniteTableRowInfoDataDiscriminator,
 } from '../../../utils/groupAndPivot';
 import {
+  DataSourceApi,
   DataSourceGroupBy,
   DataSourcePivotBy,
   DataSourcePropGroupBy,
@@ -17,6 +18,7 @@ import { Renderable } from '../../types/Renderable';
 
 import type {
   InfiniteTableColumn,
+  InfiniteTableColumnEditableFn,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableComputedColumn,
@@ -41,6 +43,7 @@ import { KeyOfNoSymbol } from './Utility';
 
 import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
+import { MenuIconProps } from '../components/icons/MenuIcon';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -96,6 +99,7 @@ export type InfiniteTableColumnType<T> = {
 
   defaultWidth?: number;
   defaultFlex?: number;
+  // TODO  also move this on the column
   defaultPinned?: InfiniteTableColumnPinnedValues;
   defaultFilterable?: boolean;
   defaultHiddenWhenGroupedBy?: InfiniteTableColumn<T>['defaultHiddenWhenGroupedBy'];
@@ -109,7 +113,7 @@ export type InfiniteTableColumnType<T> = {
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
   contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
-  editable?: InfiniteTableColumn<T>['editable'];
+  defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
 
   columnGroup?: string;
 
@@ -145,6 +149,7 @@ export type InfiniteTableColumnSizingOptions = {
   minWidth?: number;
   maxWidth?: number;
 };
+
 export type InfiniteTablePropColumnSizing = Record<
   string,
   InfiniteTableColumnSizingOptions
@@ -156,13 +161,58 @@ export type InfiniteTableComputedValuesGetter<T> =
 export type InfiniteTableActionsGetter<T> = () => InfiniteTableActions<T>;
 export type DataSourceStateGetter<T> = () => DataSourceState<T>;
 
-export type InfiniteTableApi<T> = {
+export type InfiniteTableColumnApi<_T> = {
+  showContextMenu: (target: EventTarget | HTMLElement) => void;
+  toggleContextMenu: (target: EventTarget | HTMLElement) => void;
+  hideContextMenu: () => void;
+  toggleSort: () => void;
+  clearSort: () => void;
+  setSort: (sort: SortDir | null) => void;
+};
+
+export type InfiniteTableApiStopEditParams =
+  | {
+      cancel: true;
+      reject?: never;
+      value?: never;
+    }
+  | {
+      reject: Error;
+      cancel?: never;
+      value?: never;
+    }
+  | {
+      value?: any;
+      cancel?: never;
+      reject?: never;
+    };
+
+export type InfiniteTableApiIsCellEditableParams = {
+  columnId: string;
+  rowIndex: number;
+};
+
+type InfiniteTableApiStopEditPromiseResolveType =
+  | {
+      cancel: true;
+      value: null;
+    }
+  | { reject: Error; value: any }
+  | boolean;
+
+export interface InfiniteTableApi<T> {
   get selectionApi(): InfiniteTableSelectionApi;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
-  x?: T;
+
+  clearEditInfo: () => void;
+
+  isEditorVisibleForCell(params: {
+    rowIndex: number;
+    columnId: string;
+  }): boolean;
 
   get scrollLeft(): number;
   set scrollLeft(value: number);
@@ -170,6 +220,27 @@ export type InfiniteTableApi<T> = {
   get scrollTop(): number;
   set scrollTop(value: number);
 
+  isCellEditable: (
+    params: InfiniteTableApiIsCellEditableParams,
+  ) => Promise<boolean>;
+  startEdit: (params: InfiniteTableApiIsCellEditableParams) => Promise<boolean>;
+  stopEdit: (
+    params?: InfiniteTableApiStopEditParams,
+  ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  persistEdit: (params?: { value?: any }) => Promise<true | Error>;
+  rejectEdit: (
+    error: Error,
+  ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  confirmEdit: (
+    value?: any,
+  ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  cancelEdit: () => Promise<InfiniteTableApiStopEditPromiseResolveType>;
+  isEditInProgress: () => boolean;
+
+  getVerticalRenderRange: () => {
+    renderStartIndex: number;
+    renderEndIndex: number;
+  };
   toggleGroupRow: (groupKeys: any[]) => void;
   collapseGroupRow: (groupKeys: any[]) => boolean;
   expandGroupRow: (groupKeys: any[]) => boolean;
@@ -214,7 +285,9 @@ export type InfiniteTableApi<T> = {
 
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
-};
+
+  focus: () => void;
+}
 export type InfiniteTablePropVirtualizeColumns<T> =
   | boolean
   | ((columns: InfiniteTableComputedColumn<T>[]) => boolean);
@@ -332,6 +405,7 @@ export type InfiniteTablePropComponents = {
   LoadMask?: React.FC<React.PropsWithChildren<LoadMaskProps>>;
   CheckBox?: React.FC<InfiniteCheckBoxProps>;
   Menu?: React.FC<React.PropsWithChildren<MenuProps>>;
+  MenuIcon?: React.FC<MenuIconProps>;
 };
 
 export type ScrollStopInfo = {
@@ -345,6 +419,12 @@ export type InfiniteTablePropFilterEditors<T> = Record<
   React.FC<InfiniteTableFilterEditorProps<T>>
 >;
 
+export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
+  column: InfiniteTableComputedColumn<T>;
+  api: InfiniteTableApi<T>;
+  dataSourceApi: DataSourceApi<T>;
+} & InfiniteTableRowInfoDataDiscriminator<T>;
+
 export type InfiniteTableFilterEditorProps<T extends any> = {
   filterType: string;
   operator: string;
@@ -353,6 +433,26 @@ export type InfiniteTableFilterEditorProps<T extends any> = {
   className: string;
   onChange: (value: T | undefined) => void;
 };
+export type InfiniteTablePropsEditable<T> =
+  | InfiniteTableColumnEditableFn<T>
+  | undefined;
+
+export type InfiniteTablePropOnEditAcceptedParams<T> =
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> & {
+    initialValue: any;
+  };
+
+export type InfiniteTablePropOnEditCancelledParams<T> =
+  InfiniteTablePropOnEditAcceptedParams<T>;
+
+export type InfiniteTablePropOnEditRejectedParams<T> =
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> & {
+    initialValue: any;
+    error: Error;
+  };
+
+export type InfiniteTablePropOnEditPersistParams<T> =
+  InfiniteTablePropOnEditAcceptedParams<T>;
 
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
@@ -369,6 +469,9 @@ export interface InfiniteTableProps<T> {
     InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
   >;
 
+  columnDefaultEditable?: boolean;
+  editable?: InfiniteTablePropsEditable<T>;
+
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition?: InfiniteTablePropPivotGrandTotalColumnPosition;
 
@@ -377,10 +480,30 @@ export interface InfiniteTableProps<T> {
   hideEmptyGroupColumns?: boolean;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
+
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
 
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
+
+  shouldAcceptEdit?: InfiniteTableColumn<T>['shouldAcceptEdit'];
+
+  onEditCancelled?: (params: InfiniteTablePropOnEditCancelledParams<T>) => void;
+
+  onEditAccepted?: (params: InfiniteTablePropOnEditAcceptedParams<T>) => void;
+
+  onEditRejected?: (params: InfiniteTablePropOnEditRejectedParams<T>) => void;
+
+  persistEdit?: (
+    params: InfiniteTablePropOnEditPersistParams<T>,
+  ) => any | Error | Promise<any | Error>;
+
+  onEditPersistSuccess?: (
+    params: InfiniteTablePropOnEditPersistParams<T>,
+  ) => void;
+  onEditPersistError?: (
+    params: InfiniteTablePropOnEditPersistParams<T> & { error: Error },
+  ) => void;
 
   // filterableColumns?: Record<string, boolean>;
 
@@ -499,7 +622,13 @@ export interface InfiniteTableProps<T> {
 
   filterEditors?: InfiniteTablePropFilterEditors<T>;
 
-  onReady?: (api: InfiniteTableApi<T>) => void;
+  onReady?: ({
+    api,
+    dataSourceApi,
+  }: {
+    api: InfiniteTableApi<T>;
+    dataSourceApi: DataSourceApi<T>;
+  }) => void;
 
   rowProps?:
     | React.HTMLProps<HTMLDivElement>
@@ -512,14 +641,19 @@ export interface InfiniteTableProps<T> {
   scrollTopKey?: string | number;
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 
-  getColumContextMenuItems?: (params: {
+  getColumContextMenuItems?: InfiniteTablePropGetColumnContextMenuItems<T>;
+}
+
+export type InfiniteTablePropGetColumnContextMenuItems<T> = (
+  defaultItems: Exclude<MenuProps['items'], undefined>,
+  params: {
     column: InfiniteTableComputedColumn<T>;
     api: InfiniteTableApi<T>;
     getState: () => InfiniteTableState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;
     actions: InfiniteTableActions<T>;
-  }) => MenuProps['items'];
-}
+  },
+) => MenuProps['items'];
 
 export type InfiniteTablePropKeyboardNavigation = 'cell' | 'row' | false;
 export type InfiniteTablePropKeyboardSelection = boolean;

@@ -16,12 +16,8 @@ const style: CSSProperties = {
 };
 
 export function FocusDetect<T>() {
-  const {
-    getState,
-    imperativeApi: api,
-    componentActions: actions,
-    getComputed,
-  } = useInfiniteTable<T>();
+  const { getState, api, actions, getComputed, dataSourceApi } =
+    useInfiniteTable<T>();
   const { getState: getDataSourceState } = useDataSourceContextValue<T>();
 
   const { focusDetectDOMRef } = getState();
@@ -36,6 +32,7 @@ export function FocusDetect<T>() {
       actions,
       api,
       getState,
+      dataSourceApi,
     };
 
     focusLastFocusableCell(context);

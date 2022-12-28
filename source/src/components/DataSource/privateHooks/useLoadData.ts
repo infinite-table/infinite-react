@@ -45,6 +45,7 @@ export function buildDataSourceDataParams<T>(
     append: false,
     originalDataArray: componentState.originalDataArray,
     sortInfo,
+    refetchKey: componentState.refetchKey,
     groupBy: componentState.groupBy,
     pivotBy: componentState.pivotBy,
     filterValue: componentState.filterValue,
@@ -357,6 +358,7 @@ export function useLoadData<T>() {
     data,
     dataArray,
     notifyScrollbarsChange,
+    refetchKey,
     sortInfo,
     groupBy,
     pivotBy,
@@ -414,7 +416,7 @@ export function useLoadData<T>() {
       if (!scrollbarsRef.current?.vertical) {
         // this line makes it so that when we have live pagination, with a livePaginationCursor,
         // if the data that was loaded does not fill the whole viewport, we need to keep requesting the new
-        // batch of data - so this assignment here does that - basically we're use dataArray.length as the cursor
+        // batch of data - so this assignment here does that - basically we're using dataArray.length as the cursor
         // #useDataArrayLengthAsCursor ref
 
         if (stateCursorId != null && dataArray.length) {
@@ -455,6 +457,7 @@ export function useLoadData<T>() {
     sortInfo,
     groupBy,
     pivotBy,
+    refetchKey,
     filterValue,
     cursorId: livePagination ? stateCursorId : null,
   };

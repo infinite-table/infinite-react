@@ -2,6 +2,7 @@ import { Card, Cards, CardsSubtitle, CardsTitle } from '@www/components/Cards';
 
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 import { wwwVars } from '@www/styles/www-utils.css';
+import Link from 'next/link';
 
 import * as React from 'react';
 import { AccentButton } from '../AccentButton';
@@ -9,6 +10,7 @@ import {
   GradientTextBackground,
   HighlightBrandToLightBackground,
 } from '../components.css';
+import { ExternalLink } from '../ExternalLink';
 import { getHeroHeaderTextStyling, HeroHeader } from '../Header';
 import { OverlineCls } from '../Header.css';
 import {
@@ -150,6 +152,8 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
   );
 }
 export function PricingPage() {
+  const [count, setCount] = React.useState(1);
+
   React.useEffect(() => {
     if (!initPaddleScript) {
       return;
@@ -168,7 +172,13 @@ export function PricingPage() {
   }, []);
 
   function onBuyClick() {
-    Paddle.Checkout.open({ product: 36608 });
+    // debugger;
+    Paddle.Checkout.open({
+      product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
+      allowQuantity: true,
+      quantity: count,
+      method: 'overlay',
+    });
     // Paddle.Checkout.open({
     //   method: 'inline',
     //   product: 36608, // Replace with your Product or Plan ID
@@ -180,8 +190,6 @@ export function PricingPage() {
     //     'width:100%; min-width:312px; background-color: transparent; border: none;', // Please ensure the minimum width is kept at or above 286px with checkout padding disabled, or 312px with checkout padding enabled. See "General" section under "Branded Inline Checkout" below for more information on checkout padding.
     // });
   }
-
-  const [count, setCount] = React.useState(1);
 
   return (
     <MainLayout
@@ -233,6 +241,7 @@ export function PricingPage() {
         <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
+              href="#buy-once-use-everywhere"
               title="Buy once, use everywhere"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-xl rounded-b-none"
             >
@@ -240,6 +249,7 @@ export function PricingPage() {
             </Card>
 
             <Card
+              href="#no-hidden-costs"
               title="No hidden costs"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-none"
             >
@@ -248,6 +258,7 @@ export function PricingPage() {
             </Card>
 
             <Card
+              href="#per-developer-pricing"
               title="Per developer pricing"
               className="sm:pr-20 md:pr-20 rounded-t-none rounded-xl"
             >
@@ -319,14 +330,14 @@ export function PricingPage() {
                 </div>
 
                 <div className="text-center mt-10">
-                  {/* <AccentButton
+                  {/*<AccentButton
                     disabled={count >= 20 || !HAS_PADDLE}
                     className="mt-10"
                     onClick={onBuyClick}
                   >
                     <>Buy Infinite Table for React</>
                     {!HAS_PADDLE ? <> - COMING SOON</> : null}
-                  </AccentButton> */}
+                </AccentButton>*/}
                   <span className="text-sm">
                     We are close to the official launch of Infinite Table and
                     will start accepting payments. In the meantime we are happy
@@ -349,7 +360,10 @@ export function PricingPage() {
         </div>
         <MainContent className="mt-40">
           <Cards title="How it works">
-            <Card title="Getting the License Key">
+            <Card
+              title="Getting the License Key"
+              href="#getting-the-license-key"
+            >
               Once you buy a license for your team, you'll receive the license
               key via email. Note it will be only one license key for your whole
               team (the license key will contain the developer count you
@@ -357,13 +371,13 @@ export function PricingPage() {
               owner, the license start and end dates and also the developer
               count.
             </Card>
-            <Card title="Application deployment">
+            <Card title="Application deployment" href="#application-deployment">
               Deploy your application with the license key you have been
               provided. The license key will be valid for{' '}
               <span className={'text-glow'}>all the apps</span> your team is
               developing.
             </Card>
-            <Card title="Access to versions">
+            <Card title="Access to versions" href="#access-to-versions">
               Each version of Infinite Table has a release timestamp. When you
               purchase a license, it gives you unlimited access to all Infinite
               Table versions published within a 1 year window from the date of
@@ -371,20 +385,36 @@ export function PricingPage() {
               to use the versions published within this timeframe without any
               warnings.
             </Card>
-            <Card title="Free with license footer">
+            <Card
+              title="Free with license footer"
+              href="#free-with-license-footer"
+            >
               If you don't have a license key, you can still use Infinite Table,
               but it displays a license footer with a link back to our website.
               Buying a license removes the footer and gives you access to
               premium support.
             </Card>
-            <Card title="Premium Support">
-              If you have a license key, you can access premium support, either{' '}
-              <a href="mailto:admin@infinite-table.com" className=" text-glow ">
-                by email
-              </a>{' '}
-              or by raising a Zendesk ticket.
+            <Card title="Premium Support" href="#premium-support" tag="div">
+              <>
+                If you have a license key, you can access premium support{' '}
+                <a
+                  href="mailto:admin@infinite-table.com"
+                  className=" text-glow "
+                >
+                  by email
+                </a>{' '}
+                (Zendesk coming soon). Please see the{' '}
+                <Link href="/eula#support-schedule">
+                  <a className="text-glow">Support Schedule in our License</a>
+                </Link>{' '}
+                for more details.
+              </>
             </Card>
-            <Card title="Supporting the developer community">
+            <Card
+              title="Supporting the developer community"
+              href="#supporting-the-community"
+              tag="div"
+            >
               Infinite Table has been built on open-source software and we are
               keen to give back by providing free licenses to qualifying
               open-source projects. Please{' '}
@@ -392,6 +422,134 @@ export function PricingPage() {
                 contact us
               </a>{' '}
               for details.
+            </Card>
+          </Cards>
+
+          <Cards
+            title={
+              <a id="faq" href="#faq">
+                Frequently Asked Questions
+              </a>
+            }
+          >
+            <Card
+              title="Team over 20 developers – what is the price?"
+              href="#team-over-20"
+              tag="div"
+            >
+              For teams of more than 20 developers we ask you to contact us at{' '}
+              <a href="mailto:admin@infinite-table.com" className=" text-glow ">
+                admin@infinite-table.com
+              </a>{' '}
+              in order to receive a personalised quotation.
+            </Card>
+            {/* <Card title="What happens if we do not renew?" href="#renewal">
+              Your current version of Infinite Table will continue to work fully
+              at the end of the licensed period. However you will not be
+              eligible for updates or support.
+            </Card> */}
+
+            {/* <Card
+              title="Do we receive Support with our license?"
+              href="#access-to-support"
+              tag="div"
+            >
+              Yes, an Infinite Table license includes comprehensive support.
+              Please see the Support Schedule in our{' '}
+              <Link href="/eula#support-schedule">
+                <a className="text-glow">License</a>
+              </Link>{' '}
+              for more details.
+            </Card> */}
+            <Card
+              title="Are there any additional costs?"
+              href="#no-additional-costs"
+            >
+              No, at Infinite Table we pride ourselves that the quoted cost is
+              the only one that you will be required to pay. There are no hidden
+              or additional costs.
+            </Card>
+            <Card
+              title="I am studying for my PhD and cannot afford your license – can you help me?"
+              href="#special-licenses"
+              tag="div"
+            >
+              Yes, Infinite Table offers a{' '}
+              <Link href="/eula#4-special-usage-license">
+                <a className="text-glow">Special Usage License</a>
+              </Link>{' '}
+              to be granted at our discretion. This is typically provided to:
+              <ul style={{ listStyleType: 'initial' }} className="ml-10">
+                <li>Students in full time education</li>
+                <li>Charities and NGOs</li>
+                <li>Open Source Products</li>
+              </ul>{' '}
+              Please get in touch if you think that you might be eligible for us
+              and we will be happy to discuss further.
+            </Card>
+            <Card
+              title="Is my personal data protected?"
+              href="#supporting-the-community"
+              tag="div"
+            >
+              Yes, Infinite Table supports full Data Protection and adheres to
+              the usual legal standards e.g. GDPR. See our{' '}
+              <Link href="/eula#12-data-protection">
+                <a className="text-glow">License</a>
+              </Link>{' '}
+              for more details.
+            </Card>
+            {/* <Card
+              title="Do I need a license to get rid of the footer?"
+              href="#license-footer"
+            >
+              Yes, the only way to remove the footer is to be in possession of a
+              valid Infinite Table license.
+            </Card> */}
+
+            <Card
+              title="Who processes the Payment?"
+              href="#payment processing"
+              tag="div"
+            >
+              <p>
+                We use{' '}
+                <ExternalLink glow href="https://paddle.com">
+                  Paddle
+                </ExternalLink>{' '}
+                – a leading payment provider with an excellent record and
+                reputation for managing payments safely and securely. It offers
+                a complete payments, tax, and subscriptions solution for SaaS.
+              </p>
+              <br />
+              <p>
+                All payments are processed by Paddle and we do not have access
+                to your payment details.
+              </p>
+            </Card>
+            {/* <Card
+              title="How many updates do you guarantee in each annual license period?"
+              href="#updates"
+            >
+              Infinite Table is continually being enhanced and improved in
+              response to user feedback and suggestions. We guarantee a minimum
+              of 4 quarterly releases each year, but in practice it will be many
+              more.
+            </Card> */}
+            <Card title="Do you provide refunds?" tag="div" href="#refunds">
+              <p>Yes, absolutely.</p>
+              <br />
+              <p>
+                If you purchased your Infinite Licence in error, please contact
+                us within 7 days of the sale, at{' '}
+                <a
+                  href="mailto:admin@infinite-table.com"
+                  className=" text-glow "
+                >
+                  admin@infinite-table.com
+                </a>{' '}
+                to request a refund.
+              </p>
             </Card>
           </Cards>
           {/* <Cards title="" style={{ marginTop: 0 }}>

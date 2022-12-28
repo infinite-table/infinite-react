@@ -7,18 +7,18 @@ description: Developer Documentation for Infinite Table, your go-to React DataGr
 
 ## What is Infinite?
 
-Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so:
+Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of your data by providing you the right tools to do so:
 
-- [🔃 sorting](/docs/learn/working-with-data/sorting)
-- [💪 row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-- [🏢 pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
-- [🧪 aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
-- [🌪️ live pagination](/docs/learn/working-with-data/live-pagination)
-- [🌴 lazy loading](/docs/learn/working-with-data/lazy-loading)
-- [🧭 keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
-- [↔️ fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
-- [🧩 column grouping](/docs/learn/column-groups)
-- [🎨 theming](/docs/learn/theming)
+- [<img src="/icons/50x50/sorting.svg" style={{display: 'inline-block'}} /> sorting](/docs/learn/working-with-data/sorting)
+- [<img src="/icons/50x50/row-grouping.svg" style={{display: 'inline-block'}} /> row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+- [<img src="/icons/50x50/pivoting.svg" style={{display: 'inline-block'}} /> pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
+- [<img src="/icons/50x50/aggregations.svg" style={{display: 'inline-block'}} /> aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
+- [<img src="/icons/50x50/live-pagination.svg" style={{display: 'inline-block'}} /> live pagination](/docs/learn/working-with-data/live-pagination)
+- [<img src="/icons/50x50/lazy-loading.svg" style={{display: 'inline-block'}} /> lazy loading](/docs/learn/working-with-data/lazy-loading)
+- [<img src="/icons/50x50/keyboard-navigation.svg" style={{display: 'inline-block'}} /> keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
+- [<img src="/icons/50x50/fixed-flex-cols.svg" style={{display: 'inline-block'}} /> fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
+- [<img src="/icons/50x50/column-grouping.svg" style={{display: 'inline-block'}} /> column grouping](/docs/learn/column-groups)
+- [<img src="/icons/50x50/theming.svg" style={{display: 'inline-block'}} /> theming](/docs/learn/theming)
 
 ## Installation
 
@@ -32,13 +32,21 @@ It's fully typed and offers you great developer experience to help you get up an
 
 > The TypeScript typings file is included in the npm package - you don't have to download an additional **@types** package.
 
+
+<HeroCards>
+<YouWillLearnCard title="Learn about our TypeScript typings" path="/docs/learn/getting-started/typescript-types">
+Read more about how to use our TypeScript types.
+</YouWillLearnCard>
+
+</HeroCards>
+
 ## 📄 Extensive documentation
 
 We're aware good documentation is a must and are updating our documentation as we add new features. Head to [our getting started](/docs/learn/getting-started) guide to get up and running quickly.
 
 ## 🏢 Enterprise-ready
 
-Infinite Table is ready to power your enterprise apps, as it supports advanced data fetching, filtering, sorting, grouping, pivoting, aggregations, live pagination, lazy loading - all of those with support for both client-side and server-side implementations.
+Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](/docs/learn/working-with-data#data-loading-strategies), [filtering](/docs/learn/filtering), [sorting](/docs/learn/working-with-data/sorting), [grouping](/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](/docs/learn/working-with-data/live-pagination), [lazy loading](/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
 
 You can choose to leverage our built-in implementations in the browser, or you can process your data on the server with full support from our-side.
 
@@ -48,7 +56,7 @@ We take security seriously and only have a total of 3 dependencies in our full d
 
 ### 📦 Small bundle size
 
-Our bundle size is under `200kB` and we're keeping it small.
+Our bundle size is under `250kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
 
 ### 🧪 Automated end-to-end tests
 

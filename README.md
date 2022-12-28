@@ -37,17 +37,28 @@
 
 `Infinite Table` is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
-* [🔃 sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
-* [💪 row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-* [🏢 pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
-* [🧪 aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
-* [🌪️ live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
-* [🌴 lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
-* [🧭 keyboard navigation for cells and rows](https://infinite-table.com/docs/latest/learn/keyboard-navigation/navigating-cells)
-* [↔️ fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
-* [🧩 column grouping](https://infinite-table.com/docs/latest/learn/column-groups)
-* [🗃 filtering](https://infinite-table.com/docs/latest/learn/filtering)
-* [🎨 theming](https://infinite-table.com/docs/latest/learn/theming)
+* [<img src="https://infinite-table.com/icons/sorting.svg" align="center" />
+ sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
+* [<img src="https://infinite-table.com/icons/row-grouping.svg" align="center" />
+ row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+* [<img src="https://infinite-table.com/icons/pivoting.svg" align="center" />
+ pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
+* [<img src="https://infinite-table.com/icons/aggregations.svg" align="center" />
+ aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
+* [<img src="https://infinite-table.com/icons/live-pagination.svg" align="center" />
+ live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
+* [<img src="https://infinite-table.com/icons/lazy-loading.svg" align="center" />
+ lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
+* [<img src="https://infinite-table.com/icons/keyboard-navigation.svg" align="center" />
+ keyboard navigation for cells and rows](https://infinite-table.com/docs/latest/learn/keyboard-navigation/navigating-cells)
+* [<img src="https://infinite-table.com/icons/fixed-flex-cols.svg" align="center" />
+ fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
+* [<img src="https://infinite-table.com/icons/column-grouping.svg" align="center" />
+ column grouping](https://infinite-table.com/docs/latest/learn/column-groups)
+* [<img src="https://infinite-table.com/icons/theming.svg" align="center" />
+ theming](https://infinite-table.com/docs/latest/learn/theming)
+
+<!-- * [🗃 filtering](https://infinite-table.com/docs/latest/learn/filtering) -->
 
 
 ## 📦 Installation
@@ -70,7 +81,7 @@ It's fully typed and offers you great developer experience to help you get up an
 
 ## 🏢 Enterprise-ready
 
-Infinite Table is ready to power your enterprise apps, as it supports advanced data fetching, filtering, sorting, grouping, pivoting, aggregations, live pagination, lazy loading - all of those with support for both client-side and server-side implementations.
+Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](https://infinite-table.com/docs/learn/working-with-data#data-loading-strategies), [filtering](https://infinite-table.com/docs/learn/filtering), [sorting](https://infinite-table.com/docs/learn/working-with-data/sorting), [grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](https://infinite-table.com/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](https://infinite-table.com/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](https://infinite-table.com/docs/learn/working-with-data/live-pagination), [lazy loading](https://infinite-table.com/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
 
 You can choose to leverage our built-in implementations in the browser or you can process your data on the server with full support from our-side.
 
@@ -99,10 +110,10 @@ This file includes both the light and the dark themes.
 
 ## 🚀 Releases
 
-We release often - see [what each release contains hre](https://infinite-table.com/docs/releases). Due to our automated releases which have integrated tests, we're confident that we're delivering the best possible experience to our users.
+We release often - see [what each release contains here](https://infinite-table.com/docs/releases). Due to our automated releases which have integrated tests, we're confident that we're delivering the best possible experience to our users.
 
 ## 📑 License 
 
-Both Open and [Commercial License](https://github.com/infinite-table/react-table/blob/master/source/LICENSE.md)
+Both Open and [Commercial License](https://infinite-table.com/eula)
 
 For commercial license and support, see our [Pricing page](https://infinite-table.com/pricing).

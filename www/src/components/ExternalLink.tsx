@@ -1,13 +1,21 @@
+import classNames from 'classnames';
 import * as React from 'react';
 
 export function ExternalLink({
   href,
   target,
   children,
+  glow,
   ...props
-}: JSX.IntrinsicElements['a']) {
+}: JSX.IntrinsicElements['a'] & { glow?: boolean }) {
   return (
-    <a href={href} target={target ?? '_blank'} rel="noopener" {...props}>
+    <a
+      href={href}
+      target={target ?? '_blank'}
+      rel="noopener"
+      {...props}
+      className={classNames(props.className || '', glow ? 'text-glow' : '')}
+    >
       {children}
     </a>
   );

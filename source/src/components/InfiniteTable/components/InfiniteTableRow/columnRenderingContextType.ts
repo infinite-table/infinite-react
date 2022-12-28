@@ -1,4 +1,4 @@
-import { DataSourceState } from '../../../DataSource';
+import { DataSourceApi, DataSourceState } from '../../../DataSource';
 import { InfiniteTableApi, InfiniteTableState } from '../../types';
 import { InfiniteTableActions } from '../../types/InfiniteTableState';
 
@@ -7,4 +7,5 @@ export type InfiniteTableColumnRenderingContext<T> = {
   getDataSourceState: () => DataSourceState<T>;
   actions: InfiniteTableActions<T>;
   api: InfiniteTableApi<T>;
+  dataSourceApi: DataSourceApi<T>;
 };

@@ -42,7 +42,7 @@ const App = () => {
           pinnedStartMaxWidth={500}
           pinnedEndMaxWidth={500}
           columnPinning={columnPinning}
-          onReady={(api: InfiniteTableApi<Car>) => {
+          onReady={({ api }: { api: InfiniteTableApi<Car> }) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={440}

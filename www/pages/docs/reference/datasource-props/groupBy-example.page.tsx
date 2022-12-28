@@ -17,7 +17,7 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
     field: 'country',
     column: {
       id: 'country-group',
-      renderValue: ({ value }) => <>Country: {value}</>,
+      renderValue: ({ data }) => <>Country: {data?.country}!</>,
     },
   },
 ];

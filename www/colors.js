@@ -7,7 +7,7 @@ module.exports = {
   'primary-dark': '#F6F7F9', // gray-5
   secondary: '#404756', // gray-70
   'secondary-dark': '#EBECF0', // gray-10
-  'content-color': 'rgba(235, 236, 240, 0.8)',
+  'content-color': 'rgba(235, 236, 240, 0.9)',
 
   link: '#149ECA',
   syntax: '#EBECF0', // gray-10
@@ -19,7 +19,7 @@ module.exports = {
   glow: '#3bff7f', // blue-10
   accent2: '#497AFF', // blue-10
   highlight: '#E6F7FF', // blue-10
-  'highlight-dark': 'rgba(88,175,223,.1)',
+  'highlight-dark': 'rgba(88,175,223,.15)',
   'glow-dark': 'rgba(59, 255, 127,0.1)',
   // 'highlight-dark': 'rgba(88,175,223,.1)',
   border: '#EBECF0', // gray-10

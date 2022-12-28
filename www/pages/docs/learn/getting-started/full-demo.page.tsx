@@ -307,7 +307,7 @@ export default function App() {
     <>
       {showLogo ? (
         <div style={{ display: 'flex' }}>
-          <Link href="/www/pages">
+          <Link href="https://infinite-table.com">
             <img
               src="https://infinite-table.com/logo-infinite.svg"
               width={50}

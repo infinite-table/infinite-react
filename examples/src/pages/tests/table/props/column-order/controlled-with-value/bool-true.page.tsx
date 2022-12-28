@@ -34,7 +34,7 @@ const App = () => {
           }}
           columnOrder={columnOrder}
           onColumnOrderChange={setColumnOrder}
-          onReady={(api: InfiniteTableApi<Car>) => {
+          onReady={({ api }: { api: InfiniteTableApi<Car> }) => {
             (globalThis as any).api = api;
           }}
           columnDefaultWidth={140}

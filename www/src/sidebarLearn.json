@@ -12,7 +12,17 @@
         },
         {
           "title": "Getting Started",
-          "path": "/docs/learn/getting-started"
+          "path": "/docs/learn/getting-started",
+          "routes": [
+            {
+              "path": "/docs/learn/getting-started/typescript-types",
+              "title": "TypeScript Types"
+            },
+            {
+              "path": "/docs/learn/getting-started/licensing",
+              "title": "Licensing"
+            }
+          ]
         },
         {
           "title": "Working with Data",
@@ -29,6 +39,15 @@
             {
               "path": "/docs/learn/working-with-data/lazy-loading",
               "title": "Lazy Loading"
+            },
+            {
+              "path": "/docs/learn/working-with-data/updating-data-in-realtime",
+              "title": "Updating Data in Real-Time"
+            },
+            {
+              "path": "/docs/learn/working-with-data/inline-editing",
+              "title": "Inline Editing",
+              "draft": true
             }
           ]
         },
@@ -59,6 +78,10 @@
             {
               "path": "/docs/learn/columns/column-grouping",
               "title": "Column Grouping"
+            },
+            {
+              "path": "/docs/learn/columns/column-menus",
+              "title": "Column Menus"
             }
           ]
         },
@@ -118,6 +141,10 @@
             {
               "title": "Grouping",
               "path": "/docs/learn/grouping-and-pivoting/grouping-rows"
+            },
+            {
+              "title": "Aggregations",
+              "path": "/docs/learn/grouping-and-pivoting/group-aggregations"
             },
             {
               "title": "Pivoting",

@@ -21,6 +21,7 @@ import { deepClone } from '../deepClone';
 import { DeepMap } from '../DeepMap';
 import { DEFAULT_TO_KEY } from './defaultToKey';
 import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
+import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -62,6 +63,7 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T> = {
     | InfiniteTable_HasGrouping_RowInfoNormal<T>;
   field?: keyof T;
   value: any;
+  rawValue: any;
   rowSelected: boolean | null;
 };
 
@@ -72,6 +74,7 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
   isGroupRow: true;
   field?: keyof T;
   value: any;
+  rawValue: any;
   rowSelected: boolean | null;
 };
 export type InfiniteTableRowInfoDataDiscriminator<T> =
@@ -367,6 +370,7 @@ type LazyGroupParams<DataType> = {
   mappings?: DataSourceMappings;
   indexer: Indexer<DataType>;
   toPrimaryKey: (item: DataType) => any;
+  cache?: DataSourceCache<DataType>;
 };
 
 export type DataGroupResult<DataType, KeyType extends any> = {
@@ -426,9 +430,11 @@ function computeReducersFor<DataType>(
       }
       const currentValue = reducerResults[key];
 
-      const value = reducer.field
+      const value = reducer.getter
+        ? reducer.getter(data) ?? null
+        : reducer.field
         ? data[reducer.field]
-        : reducer.getter?.(data) ?? null;
+        : null;
 
       reducerResults[key] = reducer.reducer(
         currentValue,
@@ -456,6 +462,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
 
     indexer,
     toPrimaryKey,
+    cache,
     mappings,
   } = groupParams;
 
@@ -542,7 +549,10 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             }
           }
 
-          indexer.indexArray(dataArray as any as DataType[], toPrimaryKey);
+          indexer.indexArray(dataArray as any as DataType[], {
+            toPrimaryKey,
+            cache,
+          });
         }
         return next?.();
       }

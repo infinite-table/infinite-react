@@ -12,6 +12,8 @@ import type {
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
+  InfiniteTableProps,
+  InfiniteTablePropsEditable,
 } from '../types/InfiniteTableProps';
 import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
 import { getComputedVisibleColumns } from '../utils/getComputedVisibleColumns';
@@ -43,6 +45,8 @@ type UseComputedVisibleColumnsParam<T> = {
 
   filterValue?: DataSourcePropFilterValue<T>;
 
+  editable: InfiniteTablePropsEditable<T>;
+  columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
   columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
@@ -94,6 +98,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
   filterValue,
   columnOrder,
   columnPinning,
+  editable,
+  columnDefaultEditable,
   scrollbarWidth,
   columnTypes,
   pinnedEndMaxWidth,
@@ -152,6 +158,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
       columnOrder,
 
       columnPinning,
+      columnDefaultEditable,
+      editable,
 
       columnSizing,
       columnTypes,
@@ -189,6 +197,8 @@ export const useComputedVisibleColumns = <T extends unknown>({
     columnTypes,
 
     columnPinning,
+    columnDefaultEditable,
+    editable,
 
     columnsRenderId,
   ]);

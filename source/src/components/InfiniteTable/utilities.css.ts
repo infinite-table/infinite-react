@@ -43,6 +43,10 @@ export const background = styleVariants({
   inherit: { background: 'inherit' },
 });
 
+export const outline = styleVariants({
+  none: { outline: 'none' },
+});
+
 export const transformTranslateZero = style({
   transform: 'translate3d(0,0,0)',
 });

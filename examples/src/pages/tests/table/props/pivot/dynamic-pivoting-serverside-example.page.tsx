@@ -165,7 +165,7 @@ const minReducer: InfiniteTableColumnAggregator<Developer, any> = {
 const getRowStyle: InfiniteTableProps<Developer>['rowStyle'] = ({ data }) => {
   if (data?.canDesign === 'yes') {
     return {
-      borderBottom: '1px dotted var(--infinite-row-color)',
+      borderBottom: '1px dotted var(--infinite-cell-color)',
     };
   }
 
@@ -250,7 +250,7 @@ const Settings: React.FunctionComponent<{
         zIndex: 3000,
         marginBottom: 10,
         display: 'grid',
-        color: 'var(--infinite-row-color)',
+        color: 'var(--infinite-cell-color)',
         background: 'var(--infinite-background)',
         gridTemplateColumns: '1fr 1fr',
         gridGap: 20,

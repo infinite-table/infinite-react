@@ -22,6 +22,8 @@ import type {
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
+  InfiniteTableProps,
+  InfiniteTablePropsEditable,
 } from '../types/InfiniteTableProps';
 
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
@@ -125,6 +127,8 @@ type GetComputedVisibleColumnsParam<T> = {
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
   columnPinning: InfiniteTablePropColumnPinning;
+  editable: InfiniteTablePropsEditable<T>;
+  columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -190,6 +194,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
   draggableColumns,
   columnOrder,
   columnPinning,
+  editable,
+  columnDefaultEditable,
   columnSizing,
   columnTypes,
   columnVisibility,
@@ -526,6 +532,13 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedFilterable =
       c.defaultFilterable ?? colType.defaultFilterable ?? true;
 
+    const computedEditable =
+      editable ??
+      c.defaultEditable ??
+      colType.defaultEditable ??
+      columnDefaultEditable ??
+      false;
+
     const computedDataType =
       c.dataType ||
       colType.dataType ||
@@ -564,7 +577,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       render: colType.render,
       style: colType.style,
       contentFocusable: colType.contentFocusable,
-      editable: colType.editable,
+
       renderMenuIcon: colType.renderMenuIcon,
       renderSortIcon: colType.renderSortIcon,
       renderSelectionCheckBox: colType.renderSelectionCheckBox,
@@ -585,6 +598,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedMaxWidth,
       computedFlex,
       computedDataType,
+      computedEditable,
       computedSortType,
       computedFilterType,
       cssEllipsis,

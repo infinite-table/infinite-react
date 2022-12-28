@@ -10,6 +10,7 @@ import {
   HighlightBrandToLightBackground,
   HighlightTextBackground,
 } from './components.css';
+import { GetAccessFormConvertKit } from './GetAccessFormConvertKit';
 import { HeroPicture } from './HeroPicture';
 import { getHighlightShadowStyle, HighlightButton } from './HighlightButton';
 
@@ -175,7 +176,12 @@ export function IndexPage() {
         >
           <Card
             noBackground
-            title="🔃 Sorting"
+            title={
+              <>
+                <img className="inline-block" src="/icons/50x50/sorting.svg" />{' '}
+                Sorting
+              </>
+            }
             href="/docs/learn/working-with-data/sorting"
           >
             Single column and multiple column sorting, with both local and
@@ -184,7 +190,15 @@ export function IndexPage() {
 
           <Card
             noBackground
-            title="💪 Row Grouping"
+            title={
+              <>
+                <img
+                  className="inline-block"
+                  src="/icons/50x50/row-grouping.svg"
+                />{' '}
+                Row Grouping
+              </>
+            }
             href="/docs/learn/grouping-and-pivoting/grouping-rows"
           >
             Group rows by a single column or by multiple columns with ease.
@@ -194,7 +208,12 @@ export function IndexPage() {
 
           <Card
             noBackground
-            title="🏢 Pivoting"
+            title={
+              <>
+                <img className="inline-block" src="/icons/50x50/pivoting.svg" />{' '}
+                Pivoting
+              </>
+            }
             href="/docs/learn/grouping-and-pivoting/pivoting/overview"
           >
             Pivoting is a must-have for powerful data-visualizations. We make it
@@ -202,7 +221,15 @@ export function IndexPage() {
           </Card>
           <Card
             noBackground
-            title="🧪 Aggregations"
+            title={
+              <>
+                <img
+                  className="inline-block"
+                  src="/icons/50x50/aggregations.svg"
+                />{' '}
+                Aggregations
+              </>
+            }
             href="/docs/learn/grouping-and-pivoting/grouping-rows#aggregations"
           >
             Group data by specified fields, either locally or remotely. Allows
@@ -211,13 +238,65 @@ export function IndexPage() {
 
           <Card
             noBackground
-            title="🧩 Column Grouping"
+            title={
+              <>
+                <img
+                  className="inline-block"
+                  src="/icons/50x50/column-grouping.svg"
+                />{' '}
+                Column Grouping
+              </>
+            }
             href="/docs/learn/column-groups"
           >
             Define groups of columns to organise data in a more meaningful way.
           </Card>
 
-          <Card noBackground title="🎨 Theming" href="/docs/learn/theming">
+          <Card
+            noBackground
+            title={
+              <>
+                <img
+                  className="inline-block"
+                  src="/icons/50x50/lazy-loading.svg"
+                />{' '}
+                Lazy Loading
+              </>
+            }
+            href="/docs/learn/working-with-data/lazy-loading"
+          >
+            Load data as needed for huge datasets and improve performance.
+            Combine eager and lazy loading and tailor the experience for your
+            app.
+          </Card>
+
+          <Card
+            noBackground
+            title={
+              <>
+                <img
+                  className="inline-block"
+                  src="/icons/50x50/keyboard-navigation.svg"
+                />{' '}
+                Keyboard Navigation
+              </>
+            }
+            href="/docs/learn/keyboard-navigation/navigating-cells"
+          >
+            Use the keyboard to navigate rows and cells, perform row and group
+            selections and more.
+          </Card>
+
+          <Card
+            noBackground
+            title={
+              <>
+                <img className="inline-block" src="/icons/50x50/theming.svg" />{' '}
+                Theming
+              </>
+            }
+            href="/docs/learn/theming"
+          >
             Powerful theming via CSS variables - implemented from the ground up,
             not as an afterthought.
           </Card>
@@ -264,7 +343,7 @@ export function IndexPage() {
           </Card>
         </Cards>
 
-        <GetAccessForm />
+        <GetAccessFormConvertKit />
       </MainContent>
     </MainLayout>
   );

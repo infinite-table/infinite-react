@@ -62,7 +62,7 @@ export type ReorderParams<T> = {
 
   initialMousePosition: MousePosition;
 
-  imperativeApi: InfiniteTableApi<T>;
+  api: InfiniteTableApi<T>;
 
   setProxyPosition: (position: TopLeftOrNull) => void;
   columnOffsetAtIndexCSSVar: string;
@@ -88,7 +88,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     dragColumnHeaderTargetRect,
     tableRect,
     setProxyPosition,
-    imperativeApi,
+    api: imperativeApi,
   } = params;
 
   // returns the total width of the pinned start columns

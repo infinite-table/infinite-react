@@ -12,91 +12,91 @@ export interface SeoProps {
   children?: React.ReactNode;
 }
 
-export const Seo = withRouter(
-  ({
+export const Seo = withRouter(function SeoCmp(
+  props: SeoProps & { router: Router },
+) {
+  let {
     title,
     draft,
     titleSuffix = true,
     description,
     router,
     children,
-  }: SeoProps & { router: Router }) => {
-    if (titleSuffix) {
-      title += ' | Infinite Table DataGrid for React';
-    }
-    description = description || title;
-    return (
-      <Head>
-        {/* DEFAULT */}
+  } = props;
 
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
-        />
+  if (titleSuffix && title) {
+    title += ' | Infinite Table DataGrid for React';
+  }
 
-        {draft ? <meta name="robots" content="noindex" /> : null}
-        {title != null && <title key="title">{title}</title>}
-        {description != null && (
-          <meta name="description" key="description" content={description} />
-        )}
-        {/* <link rel="icon" type="image/x-icon" href={favicon} />
+  description = description || title;
+  return (
+    <Head>
+      {/* DEFAULT */}
+
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+      />
+
+      {draft ? <meta name="robots" content="noindex" /> : null}
+      {title != null && <title key="title">{title}</title>}
+      {description != null && (
+        <meta name="description" key="description" content={description} />
+      )}
+      {/* <link rel="icon" type="image/x-icon" href={favicon} />
       <link rel="apple-touch-icon" href={favicon} />  @todo favicon */}
-        <link
-          rel="icon shortcut"
-          type="image/x-icon"
-          href="/favicon.ico"
-        ></link>
+      <link rel="icon shortcut" type="image/x-icon" href="/favicon.ico"></link>
 
-        {/* OPEN GRAPH */}
-        <meta
-          property="og:image"
-          content="https://infinite-table.com/full-demo-image.png"
-        />
+      {/* OPEN GRAPH */}
+      <meta
+        property="og:image"
+        content="https://infinite-table.com/og-image.png"
+      />
 
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="680" />
-        <meta property="og:type" key="og:type" content="website" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="680" />
+      <meta property="og:type" key="og:type" content="website" />
+      <meta
+        property="og:url"
+        key="og:url"
+        content={`https://infinite-table.com${
+          router.pathname === '/' ? '' : router.pathname
+        }`}
+      />
+      <link
+        rel="canonical"
+        href={`https://infinite-table.com${
+          router.pathname === '/' ? '' : router.pathname
+        }`}
+      />
+      {title != null && (
         <meta
-          property="og:url"
-          key="og:url"
-          content={`https://infinite-table.com${
-            router.pathname === '/' ? '' : router.pathname
-          }`}
+          property="og:title"
+          content={title || 'Infinite Table for React'}
+          key="og:title"
         />
-        <link
-          rel="canonical"
-          href={`https://infinite-table.com${
-            router.pathname === '/' ? '' : router.pathname
-          }`}
+      )}
+      {description != null && (
+        <meta
+          property="og:description"
+          key="og:description"
+          content={description}
         />
-        {title != null && (
-          <meta
-            property="og:title"
-            content={title || 'Infinite Table for React'}
-            key="og:title"
-          />
-        )}
-        {description != null && (
-          <meta
-            property="og:description"
-            key="og:description"
-            content={description}
-          />
-        )}
-        {/* 
+      )}
+      {/* 
       <meta
         property="og:image"
         key="og:image"
         content={`https://beta.reactjs.org${image}`}
       /> */}
 
-        {/* TWITTER */}
-        {/* <meta
+      {/* TWITTER */}
+      {/* <meta
         name="twitter:card"
         key="twitter:card"
         content="summary_large_image"
       /> */}
-        {/* <meta
+      {/* <meta
         name="twitter:site"
         key="twitter:site"
         content="@reactjs"
@@ -106,25 +106,24 @@ export const Seo = withRouter(
         key="twitter:creator"
         content="@reactjs"
       /> */}
-        {title != null && (
-          <meta name="twitter:title" key="twitter:title" content={title} />
-        )}
-        {description != null && (
-          <meta
-            name="twitter:description"
-            key="twitter:description"
-            content={description}
-          />
-        )}
+      {title != null && (
+        <meta name="twitter:title" key="twitter:title" content={title} />
+      )}
+      {description != null && (
+        <meta
+          name="twitter:description"
+          key="twitter:description"
+          content={description}
+        />
+      )}
 
-        {/* <meta
+      {/* <meta
         name="twitter:image"
         key="twitter:image"
         content={`https://beta.reactjs.org${image}`}
       /> */}
 
-        {children}
-      </Head>
-    );
-  },
-);
+      {children}
+    </Head>
+  );
+});

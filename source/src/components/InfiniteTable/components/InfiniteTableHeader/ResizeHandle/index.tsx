@@ -117,10 +117,10 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
     (computedPinned === false || computedPinned === 'start') &&
     computedLastInCategory
       ? {
-          right: computedPinned === 'start' ? 0 : 0, //ThemeVars.components.HeaderCell.resizeHandleWidth,
+          right: computedPinned === 'start' ? undefined : 0, //ThemeVars.components.HeaderCell.resizeHandleWidth,
         }
       : computedPinned === 'end' && computedFirstInCategory
-      ? { right: 'none', left: 0 }
+      ? { right: undefined }
       : undefined;
   return (
     <div

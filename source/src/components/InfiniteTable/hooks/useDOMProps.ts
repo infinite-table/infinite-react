@@ -81,8 +81,7 @@ export function useDOMProps<T>(
 ) {
   const scrollbarWidth = getScrollbarWidth();
 
-  const { computed, componentState, componentActions, getState } =
-    useInfiniteTable<T>();
+  const { computed, state, actions, getState } = useInfiniteTable<T>();
   const {
     focused,
     focusedWithin,
@@ -94,7 +93,7 @@ export function useDOMProps<T>(
     onSelfBlur,
     bodySize,
     activeCellIndex,
-  } = componentState;
+  } = state;
   const {
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
@@ -197,10 +196,10 @@ export function useDOMProps<T>(
   cssVars[bodyHeightCSSVar] = `${bodySize.height}px`;
 
   const setFocused = rafFn((focused: boolean) => {
-    componentActions.focused = focused;
+    actions.focused = focused;
   });
   const setFocusedWithin = rafFn((focused: boolean) => {
-    componentActions.focusedWithin = focused;
+    actions.focusedWithin = focused;
   });
 
   const onFocus = (event: FocusEvent<HTMLDivElement>) => {
@@ -275,11 +274,9 @@ export function useDOMProps<T>(
     focused ? `${InfiniteTableClassName}--focused` : null,
     focusedWithin ? `${InfiniteTableClassName}--focused-within` : null,
 
-    focused && componentState.focusedClassName
-      ? componentState.focusedClassName
-      : null,
-    focusedWithin && componentState.focusedWithinClassName
-      ? componentState.focusedWithinClassName
+    focused && state.focusedClassName ? state.focusedClassName : null,
+    focusedWithin && state.focusedWithinClassName
+      ? state.focusedWithinClassName
       : null,
     computed.computedPinnedStartOverflow
       ? `${InfiniteTableClassName}--has-pinned-start-overflow`
@@ -305,13 +302,13 @@ export function useDOMProps<T>(
     ...cssVars,
   };
   if (focused) {
-    if (componentState.focusedStyle) {
-      Object.assign(domProps.style, componentState.focusedStyle);
+    if (state.focusedStyle) {
+      Object.assign(domProps.style, state.focusedStyle);
     }
   }
   if (focusedWithin) {
-    if (componentState.focusedWithinStyle) {
-      Object.assign(domProps.style, componentState.focusedWithinStyle);
+    if (state.focusedWithinStyle) {
+      Object.assign(domProps.style, state.focusedWithinStyle);
     }
   }
 
