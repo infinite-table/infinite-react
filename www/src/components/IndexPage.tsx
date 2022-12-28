@@ -108,7 +108,7 @@ export function IndexPage() {
 
       <MainContent>
         <Cards
-          subtitle="Fully declarative and fully typed DataGrid built with purpose for React"
+          subtitle="Declarative, typed DataGrid built for React"
           spotlight={false}
         >
           <Card title="Fully declarative" href="/docs/reference">
@@ -120,12 +120,15 @@ export function IndexPage() {
             Written in TypeScript, it helps keep your codebase clean and avoid
             bugs while keeping you productive.
           </Card>
-          <Card title="Well tested and trusted">
+          <Card title="Fully tested and trusted">
             Our automated integration tests run against real browsers and ensure
             our releases can be trusted. This helps us keep the quality high and
             the bugs low.
           </Card>
-          <Card title="Themable and customizable" href="/docs/learn/theming">
+          <Card
+            title="Fully themable and customizable"
+            href="/docs/learn/theming"
+          >
             Infinite Table is built with customization in mind. You can
             customize everything from the look and feel to the behavior. Theming
             uses CSS variables so you can have a custom theme in under 10 lines
@@ -136,23 +139,21 @@ export function IndexPage() {
             both controlled and uncontrolled versions, so you get to choose
             whatever fits your use-case.
           </Card>
-          <Card
-            title="Extensive documentation"
-            href="/docs/learn/getting-started"
-          >
+          <Card title="Fully documented" href="/docs/learn/getting-started">
             All the available props are documented and all the examples are
             interactive. In addition, we have dedicated documentation pages for
             each major functionality to help you get started.
           </Card>
-          <Card title="Feature-rich">
-            Infinite Table comes packed with enterprise-grade features, such as
-            grouping, aggregations, pivoting, filtering, lazy loading, sorting a
-            lot more...
+          <Card title="Fully featured">
+            Infinite Table comes packed with enterprise-grade, rich, features,
+            such as grouping, aggregations, pivoting, filtering, lazy loading,
+            sorting and a lot more...
           </Card>{' '}
           <Card title="Fully virtualized">
             <p>
               Virtualization is used extensively, for both rows and columns, to
-              achieve maximum performance and handle huge data-sets with ease.
+              achieve maximum performance while handling huge data-sets with
+              ease.
             </p>
             {/* <p>
               Showing 10 columns vs 100 columns or 10 rows vs 100k rows should
@@ -163,7 +164,9 @@ export function IndexPage() {
 
         <Cards
           title={
-            <div className={``}>You're ready for building enterprise apps?</div>
+            <div className={``}>
+              Are you ready for building enterprise apps?
+            </div>
           }
           style={{
             //@ts-ignore
@@ -220,7 +223,7 @@ export function IndexPage() {
           </Card>
         </Cards>
 
-        <Cards title="Enterprise and Community Editions">
+        <Cards title="Infinite Table Editions">
           <Card title="Enterprise Edition" flexContent>
             <p>
               When you buy a license, you get{' '}
@@ -228,13 +231,14 @@ export function IndexPage() {
               and all the enterprise features mentioned above.
             </p>
             <div className="mt-10">
-              Everything you'd expect from a modern DataGrid is built-in so you
-              can start using it right-away in your application.
+              Contains everything that you expect from a modern DataGrid, and
+              all built-in, so you can start using it right-away in your
+              application.
             </div>
 
             <div className="flex-1"> </div>
             <div className="mt-10 text-right">
-              <AccentButton href="/pricing">Start Now</AccentButton>
+              <AccentButton href="/pricing">Start Using it Now</AccentButton>
             </div>
           </Card>
 
@@ -250,7 +254,7 @@ export function IndexPage() {
             </p>
 
             <div className="mt-10">
-              You can use this version <b>for free in any app</b>, as long as
+              You can use this version <b>for free in any app</b>, so long as
               the license footer is visible and contains the link back to our
               website.
             </div>
