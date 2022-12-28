@@ -370,13 +370,13 @@ export function PricingPage() {
               provide). The license key includes information like the license
               owner, start and end dates and the developer count.
             </Card>
-            <Card title="Application deployment" href="#application-deployment">
+            <Card title="Application Deployment" href="#application-deployment">
               Deploy your application with the license key you have been
               provided. The license key will be valid for{' '}
               <span className={'text-glow'}>all the apps</span> your team is
               developing.
             </Card>
-            <Card title="Access to versions" href="#access-to-versions">
+            <Card title="Access to Versions" href="#access-to-versions">
               Each version of Infinite Table has a release timestamp. When you
               purchase a license, it gives you unlimited access to all Infinite
               Table versions published within a 1 year window from the date of
@@ -385,7 +385,7 @@ export function PricingPage() {
               any warnings.
             </Card>
             <Card
-              title="Free with license footer"
+              title="Free with License Footer"
               href="#free-with-license-footer"
             >
               If you don't have a license key, you can still use Infinite Table,
@@ -410,7 +410,7 @@ export function PricingPage() {
               </>
             </Card>
             <Card
-              title="Supporting the developer community"
+              title="Supporting the Developer Community"
               href="#supporting-the-community"
               tag="div"
             >

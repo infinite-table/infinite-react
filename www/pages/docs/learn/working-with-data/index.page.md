@@ -7,7 +7,9 @@ We've decoupled our data handling from our rendering engine by providing two com
 - `<DataSource />` - our data-handling component
 - `<InfiniteTable />` - our virtualized component
 
-The `<DataSource/>` component is responsible for the data the management layer. It is a generic TypeScript component that can be bound to an array of items of the generic type.
+The `<DataSource/>` component is responsible for the data the management layer. 
+
+It is a generic TypeScript component that can be bound to an array of items of the generic type.
 
 ```tsx 
 import { DataSource } from '@infinite-table/infinite-react';
@@ -37,9 +39,9 @@ const employees: Employee[] = [
 
 In the snippet above, we see 3 important details:
 
-- the component is bound to the `Employee` type
-- we use a `primaryKey` property - here it is `id`, but since the bound type is `Employee`, `primaryKey` is `keyof Employee`
-- we pass the `employees` array as the `data` property.
+1. the component is bound to the `Employee` type
+2. we use a `primaryKey` property - here it is `id`, but since the bound type is `Employee`, `primaryKey` is `keyof Employee`
+3. we pass the `employees` array as the `data` property.
 
 The <DataSourcePropLink name="data" /> prop is probably the most important part, and it can be one of:
 
@@ -57,13 +59,17 @@ The <DataSourcePropLink name="data" /> prop is probably the most important part,
 
 ## Data Loading Strategies
 
-We're aware there are countless strategies for loading data - each with its own strengths. So we decided we should focus on building what we do best, namely building virtualized components.
+We're aware there are countless strategies for loading data - each with its own strengths.
 
-So we encourage you to use your preferred data-fetching library/solution and pass a dumb array of data to the `<DataSource/>` component. And while you're loading the data, you can always render a loading indicator - pass the <DataSourcePropLink name="loading" /> prop into the component (along with <PropLink name="loadingText" /> prop in the `<InfiniteTable />` component if you want to customize the message).
+So we decided we should focus on building what we do best, namely building virtualized components.
+
+And we encourage you to use your preferred data-fetching library/solution and pass a dumb array of data to the `<DataSource/>` component. 
+
+While you're loading the data, you can always render a loading indicator - pass the <DataSourcePropLink name="loading" /> prop into the component (along with <PropLink name="loadingText" /> prop in the `<InfiniteTable />` component if you want to customize the message).
 
 #### Using fetch
 
-For basic datasets, which have simple data requirements, using `fetch` is probably enough, so here's an example:
+For basic datasets, which have simple data requirements, using `fetch` is probably sufficient, so here is an example:
 
 <Sandpack title="Using fetch for remote data">
 
@@ -77,11 +83,13 @@ For basic datasets, which have simple data requirements, using `fetch` is probab
 
 </Sandpack>
 
-#### Refetching on change
+#### Re-fetching on change
+
+It's important to note you can re-fetch data by changing the reference you pass as the `data` prop to the `<DataSource/>` component. 
 
 <Note>
 
-It's important to note you can re-fetch data by changing the reference you pass as the `data` prop to the `<DataSource/>` component. Passing another `data` function, will cause the component to re-execute the function and thus load new data.
+Passing another `data` function, will cause the component to re-execute the function and thus load new data.
 
 </Note>
 
@@ -100,10 +108,10 @@ It's important to note you can re-fetch data by changing the reference you pass 
 ## Live Updates
 
 
-You can update your data in real-time by using our [DataSource API](/docs/reference/datasource-api). Read more about it in the dedicated section.
+You can update your data in real-time by using our [DataSource API](/docs/reference/datasource-api).
 
 <HeroCards>
-<YouWillLearnCard title="Live Updates" path="/docs/learn/working-with-data/updating-data-in-realtime">
+<YouWillLearnCard title="DataSource API" path="/docs/learn/working-with-data/updating-data-in-realtime">
 Read more about how to use our API to update your data in real-time
 </YouWillLearnCard>
 

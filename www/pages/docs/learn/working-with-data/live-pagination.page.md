@@ -3,7 +3,6 @@ title: Live Pagination
 description: Live Pagination DataSource documentation and examples for Infinite Table DataGrid
 ---
 
-### Live pagination
 
 `InfiniteTable` supports live pagination in its `DataSource` via the <DataSourcePropLink name="livePagination" /> prop together with <DataSourcePropLink name="livePaginationCursor" />
 
