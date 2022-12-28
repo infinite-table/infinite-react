@@ -7,7 +7,9 @@ description: Developer Documentation for Infinite Table, your go-to React DataGr
 
 ## What is Infinite?
 
-Infinite Table is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of your data by providing you the right tools to do so:
+Infinite Table is a React DataGrid component for displaying virtualized tabular data.
+
+It helps you display huge datasets and get the most out of your data by providing you the right tools to enjoy these features:
 
 - [<img src="/icons/50x50/sorting.svg" style={{display: 'inline-block'}} /> sorting](/docs/learn/working-with-data/sorting)
 - [<img src="/icons/50x50/row-grouping.svg" style={{display: 'inline-block'}} /> row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
@@ -22,15 +24,17 @@ Infinite Table is a React DataGrid component for displaying virtualized tabular 
 
 ## Installation
 
+Installation could not be more straightforward - just one npm command:
+
 <TerminalBlock>
 npm i @infinite-table/infinite-react
 </TerminalBlock>
 
 ## ❤️ TypeScript
 
-It's fully typed and offers you great developer experience to help you get up and running quickly
+Infinite Table is fully typed and offers you a great developer experience, to help you get up and running quickly.
 
-> The TypeScript typings file is included in the npm package - you don't have to download an additional **@types** package.
+> The TypeScript typings file is included in the npm package - you don't have to download an additional **@types** package
 
 
 <HeroCards>
@@ -56,11 +60,21 @@ We take security seriously and only have a total of 3 dependencies in our full d
 
 ### 📦 Small bundle size
 
-Our bundle size is under `250kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
+Our bundle size is under `250kB` and we're dedicated to [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
+
+<HeroCards>
+<YouWillLearnCard title="Small bundle" newTab path="https://bundlephobia.com/package/@infinite-table/infinite-react">
+
+See our bundle size in BundlePhobia
+
+</YouWillLearnCard>
+</HeroCards>
 
 ### 🧪 Automated end-to-end tests
 
-Our releases are automated and, we have end-to-end tests that ensure we're delivering to our standards. Real-browser tests help us move with confidence and continue to ship great features.
+Our releases are automated and, we have full end-to-end tests that ensure we're delivering to our standards.
+
+Real-browser tests help us move with confidence and continue to ship great features.
 
 <HeroCards>
 <YouWillLearnCard title="End-to-end tests" newTab path="https://github.com/infinite-table/infinite-react/tree/master/source/examples/src/pages/tests">
@@ -69,16 +83,13 @@ Check out our end-to-end tests in GitHub
 
 </YouWillLearnCard>
 
-<YouWillLearnCard title="Small bundle" newTab path="https://bundlephobia.com/package/@infinite-table/infinite-react">
-
-See our bundle size in BundlePhobia
-
-</YouWillLearnCard>
 </HeroCards>
 
 ## 🎨 Themable
 
-`Infinite Table` is fully customizable, via CSS variables. It ships with both a **light** and a **dark** theme - you have to import the CSS file from the package.
+`Infinite Table` is fully customizable, via CSS variables.
+
+It ships with both a **light** and a **dark** theme - all you have to do is import the CSS file from the package.
 
 ```ts
 import '@infinite-table/infinite-react/index.css';
@@ -89,7 +100,7 @@ import '@infinite-table/infinite-react/index.css';
 <HeroCards>
 <YouWillLearnCard title="Theming with CSS variables" path="/docs/learn/theming#css-variables">
 
-Read how to use themes and **CSS variables** to customize every aspect of Infinite Table.
+Read how to use themes and **CSS variables** to customize every aspect of Infinite Table
 
 </YouWillLearnCard>
 </HeroCards>

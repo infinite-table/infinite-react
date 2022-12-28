@@ -12,7 +12,7 @@ export function GetAccessFormConvertKit() {
         </CardsTitle>
       </a>
       <CardsSubtitle className="mt-5 mb-12 w-2/3 sm:w-1/2">
-        <p>Keep up-to-date with our releases and new functionalities.</p>
+        <p>Keep up-to-date with our releases and new functionalities</p>
         {/* <p>We won't share your email with 3rd parties - you have our word!</p> */}
       </CardsSubtitle>
       <div

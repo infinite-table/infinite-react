@@ -73,7 +73,7 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
               Styling Rows
             </FooterLink> */}
 
-            <FooterLink href="/pricing">Get a License</FooterLink>
+            <FooterLink href="/pricing">Buy a License</FooterLink>
           </div>
           <div className="flex flex-col items-start">
             <FooterLink isHeader>API Reference</FooterLink>

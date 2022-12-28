@@ -99,7 +99,7 @@ export function IndexPage() {
               Read the docs
             </SecondaryButton>
           </div>
-          <p>A DataGrid component is only as good as its documentation.</p>
+          <p>A DataGrid is only as good as its documentation.</p>
           <p>
             All our examples are interactive and they cover all the existing
             functionalities.
@@ -109,7 +109,7 @@ export function IndexPage() {
 
       <MainContent>
         <Cards
-          subtitle="Declarative, typed DataGrid built for React"
+          subtitle="Declarative, typed, DataGrid built for React"
           spotlight={false}
         >
           <Card title="Fully declarative" href="/docs/reference">

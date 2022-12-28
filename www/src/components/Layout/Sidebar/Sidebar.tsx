@@ -111,7 +111,7 @@ export function Sidebar({
           }}
           href="/pricing"
         >
-          Get License
+          Buy a License
         </AccentButton>
 
         {/* <div className="w-full text-center justify-center flex flex-row border rounded-lg font-bold overflow-hidden">

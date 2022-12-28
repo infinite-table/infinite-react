@@ -225,10 +225,10 @@ export function PricingPage() {
           <p>
             Easy to understand pricing —{' '}
             <span className={HighlightBrandToLightBackground}>
-              development licenses only.
+              development licenses only
             </span>
           </p>
-          <p>No deployment or application license needed.</p>
+          <p>No deployment or application licenses required</p>
         </>
       }
     >
@@ -241,8 +241,8 @@ export function PricingPage() {
         <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
-              href="#buy-once-use-everywhere"
-              title="Buy once, use everywhere"
+              href="#buy-once-use-always"
+              title="Buy Once, Use Always"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-xl rounded-b-none"
             >
               Your license is valid for all the apps your company is developing
@@ -250,16 +250,16 @@ export function PricingPage() {
 
             <Card
               href="#no-hidden-costs"
-              title="No hidden costs"
+              title="No Hidden Costs"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-none"
             >
-              A single license is all that's required. There's no deployment or
+              One license is all that's required. There's no deployment or
               distribution license for your apps. It's that simple!
             </Card>
 
             <Card
               href="#per-developer-pricing"
-              title="Per developer pricing"
+              title="Per-developer Pricing"
               className="sm:pr-20 md:pr-20 rounded-t-none rounded-xl"
             >
               Use the calculator on the right to see the price for your whole
@@ -359,7 +359,7 @@ export function PricingPage() {
           </Card>
         </div>
         <MainContent className="mt-40">
-          <Cards title="How it works">
+          <Cards title="How It works">
             <Card
               title="Getting the License Key"
               href="#getting-the-license-key"
@@ -368,8 +368,7 @@ export function PricingPage() {
               key via email. Note it will be only one license key for your whole
               team (the license key will contain the developer count you
               provide). The license key includes information like the license
-              owner, the license start and end dates and also the developer
-              count.
+              owner, start and end dates and the developer count.
             </Card>
             <Card title="Application deployment" href="#application-deployment">
               Deploy your application with the license key you have been
@@ -382,8 +381,8 @@ export function PricingPage() {
               purchase a license, it gives you unlimited access to all Infinite
               Table versions published within a 1 year window from the date of
               purchase. If you don't renew your license, you will still be able
-              to use the versions published within this timeframe without any
-              warnings.
+              fully to use the versions published within this timeframe without
+              any warnings.
             </Card>
             <Card
               title="Free with license footer"
@@ -403,9 +402,9 @@ export function PricingPage() {
                 >
                   by email
                 </a>{' '}
-                (Zendesk coming soon). Please see the{' '}
+                (Zendesk support is coming soon). Please see the{' '}
                 <Link href="/eula#support-schedule">
-                  <a className="text-glow">Support Schedule in our License</a>
+                  <a className="text-glow">Support Schedule</a>
                 </Link>{' '}
                 for more details.
               </>
@@ -421,7 +420,7 @@ export function PricingPage() {
               <a href="mailto:admin@infinite-table.com" className=" text-glow ">
                 contact us
               </a>{' '}
-              for details.
+              for more details.
             </Card>
           </Cards>
 
@@ -433,7 +432,7 @@ export function PricingPage() {
             }
           >
             <Card
-              title="Team over 20 developers – what is the price?"
+              title="Our team has over 20 developers – what is the price?"
               href="#team-over-20"
               tag="div"
             >
@@ -540,15 +539,15 @@ export function PricingPage() {
               <p>Yes, absolutely.</p>
               <br />
               <p>
-                If you purchased your Infinite Licence in error, please contact
-                us within 7 days of the sale, at{' '}
+                If you believe that you purchased your Infinite License in
+                error, please contact us within 7 days of the sale, at{' '}
                 <a
                   href="mailto:admin@infinite-table.com"
                   className=" text-glow "
                 >
                   admin@infinite-table.com
-                </a>{' '}
-                to request a refund.
+                </a>
+                , to request a refund.
               </p>
             </Card>
           </Cards>
