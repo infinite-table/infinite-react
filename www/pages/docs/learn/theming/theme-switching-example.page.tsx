@@ -22,7 +22,7 @@ export default function App() {
         style={{ marginTop: 'var(--infinite-space-4)' }}
         onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
       >
-        Switch theme
+        Switch Theme
       </button>
     </div>
   );

@@ -2,13 +2,13 @@
 title: Theming
 ---
 
-Infinite Table ships with a CSS file that you need to import in your codebase to make the component look as intended.
+`<InfiniteTable />` ships with a CSS file that you need to import in your codebase to make the component look as intended.
 
 ```ts
 import '@infinite-table/infinite-react/index.css';
 ```
 
-The above CSS file includes both the **`light`** and the **`dark`** theme.
+This file includes both the **`light`** and the **`dark`** themes.
 
 
 At runtime, the `light` or `dark` theme are applied based on the user OS settings for the [preferred color scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme). 

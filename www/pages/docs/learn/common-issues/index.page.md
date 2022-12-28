@@ -1,5 +1,5 @@
 ---
-title: Common issues
+title: Common Issues
 description: Avoid common pitfalls and issues when using the component. Learn how to use it properly to perform smooth and avoid jank.
 author: [admin]
 ---
@@ -54,7 +54,7 @@ const columns = {
 
 ## Issue: Performance degradation because props are new on every render
 
-Passing new props on every render to the `<InfiniteTable />` component or to the `<DataSource />` component can be a performance bottleneck.
+Passing new props on every render to the `<InfiniteTable />` component or to the `<DataSource />` component can be a performance bottleneck:
 
 ```ts
 <DataSource
@@ -63,7 +63,7 @@ Passing new props on every render to the `<InfiniteTable />` component or to the
 />
 ```
 
-instead pass the same reference when things do change - stored in state or any other place
+Instead pass the **same** reference when things do change - stored in state or any other place:
 
 ```ts
 const [groupBy, setGroupBy] = useState([{ field: 'country' }]);
@@ -73,7 +73,9 @@ const [groupBy, setGroupBy] = useState([{ field: 'country' }]);
 
 <Note>
 
-When in dev mode, you can set `localStorage.debug = "*"` in your localstorage to see potential issues logged to the console. For example, you might see:
+When in dev mode, you can set `localStorage.debug = "*"` in your localstorage to see potential issues logged to the console. 
+
+For example, you might see:
 
 `InfiniteTable:rerender Triggered by new values for the following props +1s columns`
 
@@ -81,6 +83,6 @@ When in dev mode, you can set `localStorage.debug = "*"` in your localstorage to
 
 ## Issue: State inside custom components rendered in cells is lost while scrolling
 
-When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local/transient state.
+When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local or transient state.
 
-This is important because `InfiniteTable` heavily uses virtualization, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+This is important because `InfiniteTable` makes heavey use of virtualization, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
