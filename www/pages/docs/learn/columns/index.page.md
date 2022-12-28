@@ -3,9 +3,15 @@ title: Working with Columns
 description: Define columns to configure your Infinite Table React DataGrid - fixed and flexible columns, resize, column groups and more
 ---
 
-Columns are a central feature in `InfiniteTable`. You define columns as a an object, with keys being column ids while values are the column definitions. and then use pass them in the `columns` prop in your `InfiniteTable` component.
+Columns are a central feature in `InfiniteTable`.
 
-The <PropLink name="columns" /> prop is typed as `Record<string, InfiniteTableColumn<DATA_TYPE>>` or `InfiniteTablePropColumns<DATA_TYPE>`, which is an alias for the former.
+You define columns as a an object, with keys being column ids while values are the column definitions.
+
+You then use them in the `columns` prop in your `InfiniteTable` component.
+
+The <PropLink name="columns" /> prop is typed either as
+- `Record<string, InfiniteTableColumn<DATA_TYPE>>`
+- or `InfiniteTablePropColumns<DATA_TYPE>`, which is an alias for the version above
 
 <Note title="Understanding column id">
 

@@ -83,6 +83,6 @@ For example, you might see:
 
 ## Issue: State inside custom components rendered in cells is lost while scrolling
 
-When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local or transient state.
+When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have any local or transient state.
 
 This is important because `InfiniteTable` makes heavey use of virtualization, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
