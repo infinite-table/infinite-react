@@ -100,18 +100,6 @@ In the same logic, keep in mind that by default columns are also virtualized (co
 
 </Prop>
 
-<Prop name="columnDefaultEditable" type="boolean">
-
-> Specifies whether columns are editable by default.
-
-To enable inline editing globally, you can use this boolean prop on the `InfiniteTable` component. It will enable the editing on all columns.
-
-Or you can be more specific and choose to make individual columns editable via the <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> prop.
-
-In addition to the props already in discussion, you can use the <PropLink name="editable" /> prop on the `InfiniteTable` component. This overrides all other properties and when it is defined, is the only source of truth for whether something is editable or not.
-
-</Prop>
-
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
@@ -435,31 +423,6 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 ```
 
 </Sandpack>
-
-</Prop>
-
-<Prop name="columns.defaultEditable" type="boolean|(param)=>boolean|Promise<boolean>">
-
-> Controls if the column is editable or not.
-
-This overrides the global <PropLink name="columnDefaultEditable" />.
-This is overridden by the <PropLink name="editable" /> prop.
-
-The value for this property can be either a `boolean` or a function.
-
-If it is a function, it will be called when an edit is triggered on the column. The function will be called with a single object that contains the following properties:
-
- * `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
- * `data` - the data object (of type `DATA_TYPE`) for the current row
- * `rowInfo` - the row info object that underlies the row
- * `column` - the current column on which editing is invoked
- * `api` - a reference to the [InfiniteTable API](/docs/reference/api)
- * `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
-
-The function can return a `boolean` value or a `Promise` that resolves to a `boolean` - this means you can asynchronously decide whether the cell is editable or not.
-
-Making <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> a function gives you the ability to granularly control which cells are editable or not (even within the same column, based on the cell value or other values you have access to).
 
 </Prop>
 
@@ -1425,31 +1388,6 @@ For applying a className when the focus is within the component, see <PropLink n
 ```
 
 </Sandpack>
-
-</Prop>
-
-<Prop name="editable" type="(param) => boolean | Promise<boolean>">
-
-> Controls whether columns are editable or not.
-
-This overrides both the global <PropLink name="columnDefaultEditable" /> prop and the column's own <PropLink name="columns.defaultEditable">defaultEditable</PropLink> property.
-
-
-This function prop will be called when an edit is triggered on the column. The function will be called with a single object that contains the following properties:
-
- * `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
- * `data` - the data object (of type `DATA_TYPE`) for the current row
- * `rowInfo` - the row info object that underlies the row
- * `column` - the current column on which editing is invoked
- * `api` - a reference to the [InfiniteTable API](/docs/reference/api)
- * `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
-
-<Note>
-
-The function can return a `boolean` value or a `Promise` that resolves to a `boolean` - this means you can asynchronously decide whether the cell is editable or not.
-
-</Note>
 
 </Prop>
 
