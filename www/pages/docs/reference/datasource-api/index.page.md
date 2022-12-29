@@ -1,5 +1,5 @@
 ---
-title: Infinite Table API
+title: DataSource API
 layout: API
 ---
 

@@ -1,7 +1,11 @@
 ---
-title: Infinite Hooks
+title: Infinite Table Hooks
 layout: API
 ---
+
+Infinite Table exposes a few custom hooks that can be used to customize the component and its behavior. Most of the hooks will be useful when you want to implement custom components for `InfiniteTable` - like custom cells, headers, cell editors, etc.
+
+See below for the full list of hooks exposed by `InfiniteTable`, each with examples and code snippets.
 
 <PropTable>
 

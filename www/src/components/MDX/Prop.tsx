@@ -246,7 +246,7 @@ export function Prop({
       className={cn(
         'my-4 rounded-lg shadow-inner relative',
 
-        'bg-opacity-20 bg-secondary ',
+        'bg-opacity-40 bg-secondary ',
       )}
     >
       <div className="p-8 flex flex-row">

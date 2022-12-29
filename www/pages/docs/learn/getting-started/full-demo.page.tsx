@@ -4,16 +4,15 @@ import {
   GroupRowsState,
   InfiniteTablePropColumnTypes,
   DataSourcePropRowSelection_MultiRow,
-} from '@infinite-table/infinite-react';
-import type {
   InfiniteTableColumn,
   InfiniteTableColumnRenderValueParam,
   DataSourcePropAggregationReducers,
   DataSourceGroupBy,
+  components,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useState } from 'react';
-import { components } from '@infinite-table/infinite-react';
+
 const { CheckBox } = components;
 
 type Developer = {

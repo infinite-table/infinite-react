@@ -9,8 +9,12 @@
 
       "routes": [
         {
-          "title": "Infinite Table Props",
+          "title": "Reference Overview",
           "path": "/docs/reference"
+        },
+        {
+          "title": "InfiniteTable Props",
+          "path": "/docs/reference/infinite-table-props"
         },
         {
           "title": "DataSource Props",
