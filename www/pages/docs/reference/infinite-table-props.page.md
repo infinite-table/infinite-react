@@ -1,5 +1,5 @@
 ---
-title: Infinite Table Reference
+title: Infinite Table Props
 layout: API
 ---
 
