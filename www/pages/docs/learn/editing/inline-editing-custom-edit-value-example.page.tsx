@@ -50,13 +50,11 @@ const dataSource: Developer[] = [
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id', defaultWidth: 80, defaultEditable: false },
 
-  firstName: {
-    field: 'firstName',
-    header: 'Name',
-  },
   salary: {
+    defaultWidth: 320,
     field: 'salary',
-    header: 'Salary',
+    header: 'Salary - edit accepts numbers only',
+    style: { color: 'tomato' },
     getValueToEdit: ({ value }) => {
       return parseInt(value.substr(4), 10);
     },
@@ -66,6 +64,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
     shouldAcceptEdit: ({ value }) => {
       return parseInt(value, 10) == value;
     },
+  },
+
+  firstName: {
+    field: 'firstName',
+    header: 'Name',
   },
   currency: {
     field: 'currency',
