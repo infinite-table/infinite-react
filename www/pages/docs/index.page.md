@@ -77,7 +77,7 @@ Our releases are automated and, we have full end-to-end tests that ensure we're 
 Real-browser tests help us move with confidence and continue to ship great features.
 
 <HeroCards>
-<YouWillLearnCard title="End-to-end tests" newTab path="https://github.com/infinite-table/infinite-react/tree/master/source/examples/src/pages/tests">
+<YouWillLearnCard title="End-to-end tests" newTab path="https://github.com/infinite-table/infinite-react/tree/master/examples/src/pages/tests">
 
 Check out our end-to-end tests in GitHub
 

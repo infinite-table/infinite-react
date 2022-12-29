@@ -95,7 +95,7 @@ Our bundle size is under `250kB` and we're [keeping it small](https://bundlephob
 
 ### 🧪 Automated end-to-end tests
 
-Our releases are automated and we have [end-to-end tests](https://github.com/infinite-table/infinite-react/tree/master/source/examples/src/pages/tests) that ensure we're delivering to our standards. Real-browser tests help us move with confidence and continue to ship great features.
+Our releases are automated and we have [end-to-end tests](https://github.com/infinite-table/infinite-react/tree/master/examples/src/pages/tests) that ensure we're delivering to our standards. Real-browser tests help us move with confidence and continue to ship great features.
 
 
 ## 🎨 Themable
