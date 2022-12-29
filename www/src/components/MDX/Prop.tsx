@@ -17,6 +17,7 @@ import { StyledInput } from '../StyledInput';
 import { H4 } from './Heading';
 import InlineCode from './InlineCode';
 import Link from './Link';
+import { wwwVars } from '@www/styles/www-utils.css';
 
 const debounce = require('debounce');
 
@@ -244,18 +245,20 @@ export function Prop({
   return (
     <div
       className={cn(
-        'my-4 rounded-lg shadow-inner relative',
+        'my-6 rounded-lg shadow-inner relative',
 
         'bg-opacity-40 bg-secondary ',
       )}
     >
       <div className="p-8 flex flex-row">
         <div className="flex-1 flex flex-col w-full">
-          <div className="flex flex-row w-full items-center flex-wrap">
-            <H4 as="h2" id={name}>
+          <div className="flex flex-row w-full items-center flex-wrap ">
+            {/* The pt and mt hack is for when there's anchor navigation, in order to accomodate for the fixed navbar and search field */}
+            <H4 as="h2" id={name} className="pt-[80px] mt-[-80px]">
               <IconCodeBlock className="inline mr-2 text-brand" />
               {name}
             </H4>
+
             {defaultValue !== undefined ? (
               <PropInlineCode className="sm:ml-4">
                 Default:{' '}
@@ -318,7 +321,32 @@ export function PropTable({
 }: PropTableProps) {
   const ref = React.useRef<HTMLDivElement>();
 
-  const [filterText, doSetFilterText] = React.useState('');
+  // const initialText = globalThis.location
+  //   ? globalThis.location.hash.slice(1)
+  //   : '';
+  const initialText = '';
+
+  const [filterText, doSetFilterText] = React.useState(initialText);
+
+  React.useLayoutEffect(() => {
+    const initialText = globalThis.location
+      ? globalThis.location.hash.slice(1).toLowerCase()
+      : '';
+    if (initialText) {
+      const [search, value] = initialText.split('=');
+
+      if (search === 'search' && value) {
+        doSetFilterText(value);
+        inputRef.current!.value = value;
+      }
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (filterText) {
+      window.location.hash = `search=${filterText}`;
+    }
+  }, [filterText]);
 
   const contents = React.Children.toArray(children).map((child) => {
     if (!React.isValidElement(child)) return null;
@@ -374,10 +402,16 @@ export function PropTable({
 
   return (
     <div className="my-4">
-      <MaxWidth>
+      <MaxWidth
+        className={`sticky`}
+        style={{
+          top: wwwVars.header.lineHeight,
+          zIndex: 1000,
+        }}
+      >
         <StyledInput
           ref={inputRef}
-          className="bg-transparent flex-1 py-2 outline-none"
+          className="bg-transparent flex-1 py-2 my-2 outline-none"
           defaultValue={filterText}
           //@ts-ignore
           onChange={onChange}

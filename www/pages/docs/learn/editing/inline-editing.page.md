@@ -109,3 +109,52 @@ Try editing the salary column - it has a custom getter for the edit value, which
 
 ## Finishing an Edit
 
+An edit is generally finished by user interaction - either the user confirms the edit by pressing the `Enter` key or cancels it by pressing the `Escape` key. 
+
+As soon as the edit is confirmed by the user, the `InfiniteTable` needs to decide whether the edit should be accepted or not.
+
+In order to decide (either synchronously or asynchronously) whether an edit should be accepted or not, you can use the global <PropLink name="shouldAcceptEdit"/> prop or the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> alternative.
+
+<Note>
+
+When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> are defined, all edits are accepted by default.
+
+</Note>
+
+<Note>
+
+Once an edit is accepted, the <PropLink name="onEditAccepted"/> callback prop is called, if defined.
+
+When an edit is rejected, the <PropLink name="onEditRejected"/> callback prop is called instead.
+
+The accept/reject status of an edit is decided by using the `shouldAcceptEdit` props described above. However an edit can also be cancelled by the user pressing the `Escape` key in the cell editor - to be notified of this, use the <PropLink name="onEditCancelled"/> callback prop.
+
+</Note>
+
+
+<Sandpack title="Using shouldAcceptEdit to decide whether a value is acceptable or not">
+
+<Description>
+
+In this example, the `salary` column is configured with a <PropLink name="columns.shouldAcceptEdit">shouldAcceptEdit</PropLink> function property that rejects non-numeric values.
+
+</Description>
+
+
+```ts file=inline-editing-custom-edit-value-example.page.tsx
+```
+
+</Sandpack>
+
+## Persisting an Edit
+
+By default, accepted edits are persisted to the `DataSource` via the <DApiLink name="updateData">DataSourceAPI.updateData</DApiLink> method.
+
+To change how you persist values (which might include persisting to remote locations), use the <PropLink name="persistEdit"/> function prop on the `InfiniteTable` component.
+
+<Note>
+
+The <PropLink name="persistEdit"/> function prop can return a `Promise` for async persistence. To signal that the persisting failed, reject the promise or resolve it with an `Error` object. 
+
+</Note>
+

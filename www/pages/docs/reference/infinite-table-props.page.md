@@ -1960,6 +1960,40 @@ See related <PropLink name="onViewportReservedWidthChange" />
 
 </Prop>
 
+
+<Prop name="onEditAccepted" type="({ value, initialValue, column }) => void">
+
+> Callback prop called when an edit is accepted
+
+In order to decide whether an edit should be accepted or not, you can use the global <PropLink name="shouldAcceptEdit"/> prop or the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> alternative.
+
+<Note>
+
+When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> are defined, all edits are accepted by default.
+
+</Note>
+
+See related <PropLink name="onEditRejected" /> callback prop.
+
+</Prop>
+
+<Prop name="onEditRejected" type="({ value, initialValue, column }) => void">
+
+> Callback prop called when an edit is accepted
+
+In order to decide whether an edit should be accepted or rejected, you can use the global <PropLink name="shouldAcceptEdit"/> prop or the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> alternative.
+
+<Note>
+
+When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> are defined, all edits are accepted by default.
+
+</Note>
+
+See related <PropLink name="onEditAccepted" /> callback prop.
+
+</Prop>
+
+
 <Prop name="onFocusWithin" type="(event)=> void">
 
 > Function that is called when the table receives focus within the component.
@@ -2032,6 +2066,34 @@ Resize a column to see `viewportReservedWidth` updated and then click the button
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="persistEdit" type="(params) => any|Error|Promise<any|Error>">
+
+> Custom function to persist an edit
+
+This allows edits that have been accepted (see <PropLink name="shouldAcceptEdit" />) to be persisted to a remote (or local) location.
+
+This function is called with an object that has the following properties:
+
+* `value` - the value that was accepted for the edit operation.
+* `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+ * `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+* `data` - the current data object
+* `rowInfo` - the row info object that underlies the row
+* `column` - the current column on which editing is invoked
+* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+
+
+<Note>
+
+This function can be synchronous or asynchronous. For synchronous persisting, return an `Error` if the persisting fails, or any other value if all went well.
+
+For asynchronous persisting, you have to return a `Promise`. If the persisting fails, resolve the promise with an `Error` object or reject the promise. If the persisting succeeded, resolve the promise with any non-error value.
+
+</Note>
 
 </Prop>
 

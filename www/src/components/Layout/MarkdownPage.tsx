@@ -12,8 +12,23 @@ export interface MarkdownProps<Frontmatter> {
   children?: React.ReactNode;
 }
 
-export function MaxWidth({ children }: { children: any }) {
-  return <div className="max-w-7xl ml-0 2xl:mx-auto">{children}</div>;
+export function MaxWidth({
+  children,
+  className,
+  style,
+}: {
+  children: any;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      className={`max-w-7xl ml-0 2xl:mx-auto ${className || ''}`}
+      style={style}
+    >
+      {children}
+    </div>
+  );
 }
 
 export function MarkdownPage<

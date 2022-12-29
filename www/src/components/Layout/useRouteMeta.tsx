@@ -78,9 +78,6 @@ function getRouteMeta(
 ): RouteMeta {
   const { routes } = currentRoute;
 
-  if (currentRoute && currentRoute.path === '/docs') {
-    console.log(JSON.parse(JSON.stringify({ ctx, currentRoute })));
-  }
   if (ctx.route && !ctx.nextRoute && !currentRoute.draft) {
     ctx.nextRoute = currentRoute;
   }

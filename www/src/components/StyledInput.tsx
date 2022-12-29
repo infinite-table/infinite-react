@@ -18,7 +18,7 @@ export const StyledInput = React.forwardRef(function StyledInput(
   return (
     <form
       style={props.style}
-      className={`text-gray-30 bg-gray-80 flex flex-row rounded-lg items-center betterhover:hover:bg-opacity-80 ${props.className}`}
+      className={`text-gray-30 bg-gray-80 flex flex-row rounded-lg items-center betterhover:hover:bg-opacity-95 ${props.className}`}
     >
       <label className="inline-block mx-2">
         {props.icon || (
