@@ -61,6 +61,25 @@ This callback prop will be called with an object containing the `api` (which is 
 
 </Prop>
 
+<Prop name="startEdit" type="({ rowIndex, columnId }) => Promise<boolean>">
+
+> Tries to start editing the cell specified by the given row index and column id.
+
+Returns a promise that resolves to `true` if editing was started, or `false` if editing was not started because the cell is not editable.
+
+See <PropLink name="columns.defaultEditable" /> for more details on how to configure a cell as editable.
+
+
+<Sandpack title="Starting an Edit via the API">
+
+
+```ts file=api-start-edit-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="scrollCellIntoView" type="(rowIndex: number; colIdOrIndex: string | number) => boolean">
 
 > Can be used to scroll a cell into the visible viewport

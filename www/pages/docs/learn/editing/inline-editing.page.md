@@ -61,11 +61,20 @@ The user can start editing by double-clicking on a cell or by pressing the `Ente
 
 To start editing programmatically, use the <ApiLink name="startEdit">startEdit({ columnId, rowIndex })</ApiLink> method.
 
+
+<Sandpack title="Starting an Edit via the API">
+
+
+```ts file=api-inline-editing-custom-edit-value-example.page.tsx
+```
+
+</Sandpack>
+
 Either way, be it user interaction or API call, those actions will trigger checks to see if the cell is editable - taking into account the <PropLink name="columnDefaultEditable"/>, <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> or <PropLink name="editable" /> props, as described in the paragraphs above. Only if the result is `true` will the cell editor be displayed.
 
 ## Customize Edit Value When Editing Starts
 
-When editing starts, the column editor is displayed with the value that was in the cell. This edit value can be customized via the <PropLink name="columns.getValueToEdit">column.getValueToEdit</PropLink> prop. This allows you to start editing with a different value than the one that is displayed in the cell - and even with a value fetched asynchronously.
+When editing starts, the column editor is displayed with the value that was in the cell. This (initial) edit value can be customized via the <PropLink name="columns.getValueToEdit">column.getValueToEdit</PropLink> prop. This allows you to start editing with a different value than the one that is displayed in the cell - and even with a value fetched asynchronously.
 
 ```tsx
 
@@ -97,3 +106,6 @@ Try editing the salary column - it has a custom getter for the edit value, which
 ```
 
 </Sandpack>
+
+## Finishing an Edit
+

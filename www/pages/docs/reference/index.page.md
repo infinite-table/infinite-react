@@ -22,7 +22,7 @@ See the full list of props available on the `DataSource` component.
 
 </HeroCards>
 
-## Component APIs
+## API objects
 
 In addition, both those components expose an `API` object that can be used to imperatively interact with them. This is useful for very advanced use cases - as most of the time interacting with the component via its props declaratively will be enough.
 
@@ -36,6 +36,18 @@ Explore the `InfiniteTable` API which allows advanced interactions with the comp
 <YouWillLearnCard title="DataSource API" path="/docs/reference/datasource-api">
 
 Jump into the `DataSource` API, which allows advanced interactions with the data source, like editing & inserting data, fetching data, refreshing and more.
+
+</YouWillLearnCard>
+
+<YouWillLearnCard title="Infinite Table Selection API" path="/docs/reference/selection-api">
+
+Read more about the Selection API and how you can use it to change row and group selection.
+
+</YouWillLearnCard>
+
+<YouWillLearnCard title="Infinite Table Column API" path="/docs/reference/column-api">
+
+Find out more about the Column API and how you can use it to change column state.
 
 </YouWillLearnCard>
 

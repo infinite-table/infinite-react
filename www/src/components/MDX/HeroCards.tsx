@@ -28,9 +28,14 @@ function HeroCards(props: HeroCardsProps) {
         </YouWillLearnCard>,
       ];
   return (
-    <section className="my-8 sm:my-10 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4">
-      <div className="flex flex-col justify-center">{children[0]}</div>
-      <div className="flex flex-col justify-center">{children[1]}</div>
+    <section className="my-8 sm:my-10 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8">
+      {children.map((child, index) => {
+        return (
+          <div key={index} className="flex flex-col justify-center">
+            {child}
+          </div>
+        );
+      })}
     </section>
   );
 }

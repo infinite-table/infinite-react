@@ -130,6 +130,9 @@ export type InfiniteTableColumnType<T> = {
   render?: InfiniteTableColumn<T>['render'];
   valueGetter?: InfiniteTableColumn<T>['valueGetter'];
   valueFormatter?: InfiniteTableColumn<T>['valueFormatter'];
+  getValueToEdit?: InfiniteTableColumn<T>['getValueToEdit'];
+  getValueToPersist?: InfiniteTableColumn<T>['getValueToPersist'];
+  shouldAcceptEdit?: InfiniteTableColumn<T>['shouldAcceptEdit'];
   style?: InfiniteTableColumn<T>['style'];
   headerStyle?: InfiniteTableColumn<T>['headerStyle'];
   headerClassName?: InfiniteTableColumn<T>['headerClassName'];

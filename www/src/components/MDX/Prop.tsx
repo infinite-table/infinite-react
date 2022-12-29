@@ -77,7 +77,7 @@ export const PropLink = ({
     theName = children as keyof InfiniteTableProps<any>;
   }
 
-  const href = `/docs/reference#${theName as string}`;
+  const href = `/docs/reference/infinite-table-props#${theName as string}`;
   if (nocode) {
     code = false;
   }

@@ -110,6 +110,20 @@ Or you can be more specific and choose to make individual columns editable via t
 
 In addition to the props already in discussion, you can use the <PropLink name="editable" /> prop on the `InfiniteTable` component. This overrides all other properties and when it is defined, is the only source of truth for whether something is editable or not.
 
+
+<Sandpack>
+
+<Description>
+
+All columns are configured to not be editable, except the `salary` column.
+
+</Description>
+
+```ts file=global-should-accept-edit-example.page.tsx
+```
+
+</Sandpack>
+
 </Prop>
 
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
@@ -461,6 +475,21 @@ The function can return a `boolean` value or a `Promise` that resolves to a `boo
 
 Making <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> a function gives you the ability to granularly control which cells are editable or not (even within the same column, based on the cell value or other values you have access to).
 
+
+<Sandpack>
+
+<Description>
+
+Only the `salary` column is editable.
+
+</Description>
+
+```ts file=global-should-accept-edit-example.page.tsx
+```
+
+</Sandpack>
+
+
 </Prop>
 
 <Prop name="columns.defaultFlex" type="number" >
@@ -542,6 +571,89 @@ In this example, the group column is bound to the `firstName` field, so this fie
 
 ```ts file=group-column-bound-to-field-example.page.tsx
 
+```
+
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="columns.getValueToEdit" type="(params) => any|Promise<any>">
+
+> Allows customizing the value that will be passed to the cell editor when it is displayed (when editing starts).
+
+
+The function is called with an object that has the following properties:
+
+* `value` - the value of the cell (the value that is displayed in the cell before editing starts). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+ * `rawValue` - the raw value of the cell, before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+* `data` - the current data object
+* `rowInfo` - the row info object that underlies the row
+* `column` - the current column on which editing is invoked
+* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+
+
+<Note>
+
+This function can be async. Return a `Promise` to wait for the value to be resolved and then passed to the cell editor.
+
+</Note>
+
+See related <PropLink name="columns.getValueToPersist" /> and <PropLink name="columns.shouldAcceptEdit" />.
+
+<Sandpack>
+
+<Description>
+
+In this example, the `salary` for each row includes the currency string.
+
+<p>When editing starts, we want to remove the currency string and only show the numeric value in the editor - we do this via <PropLink name="columns.getValueToEdit" />.</p>
+
+</Description>
+
+```ts file=inline-editing-custom-edit-value-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="columns.getValueToPersist" type="(params) => any|Promise<any>">
+
+> Allows customizing the value that will be persisted when an edit has been accepted.
+
+The function is called with an object that has the following properties:
+
+* `initialValue` - the initial value of the cell (the value that was displayed in the cell before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+* `value` - the current value that was accepted as an edit and which came from the cell editor.
+ * `rawValue` - the raw value of the cell, before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+* `data` - the current data object
+* `rowInfo` - the row info object that underlies the row
+* `column` - the current column on which editing is invoked
+* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+
+<Note>
+
+This function can be async. Return a `Promise` to wait for the value to be resolved and then persisted.
+
+</Note>
+
+See related <PropLink name="columns.getValueToEdit" /> and <PropLink name="columns.shouldAcceptEdit" />.
+
+<Sandpack>
+
+<Description>
+
+In this example, the `salary` for each row includes the currency string.
+
+<p>When an edit is accepted, we want the persisted value to include the currency string as well (like the original value did) - we do this via <PropLink name="columns.getValueToPersist" />.</p>
+
+</Description>
+
+```ts file=inline-editing-custom-edit-value-example.page.tsx
 ```
 
 </Sandpack>
@@ -939,6 +1051,43 @@ The `rowInfo` object contains information about grouping (if this row is a group
 
 ```ts file=column-rowspan-example.page.tsx
 
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="columns.shouldAcceptEdit" type="(params) => boolean|Error|Promise<boolean|Error>">
+
+> Function specified for the column, that determines whether to accept an edit or not.
+
+
+This function is called when the user wants to finish an edit. The function is used to decide whether an edit is accepted or rejected.
+
+<p>When the global <PropLink name="shouldAcceptEdit" /> prop is specified, this is no longer called, and instead the global one is called.</p>
+<p>If you define the global <PropLink name="shouldAcceptEdit" /> and still want to use the column-level function, you can call the column-level function from the global one.</p>
+
+The function is called with an object that has the following properties:
+
+* `value` - the value that the user wants to persist via the cell editor
+* `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+ * `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+* `data` - the current data object
+* `rowInfo` - the row info object that underlies the row
+* `column` - the current column on which editing is invoked
+* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+
+
+<Sandpack>
+
+<Description>
+
+Try editing the `salary` column. In the editor you can write whatever, but the column will only accept edits that are valid numbers.
+
+</Description>
+
+```ts file=inline-editing-custom-edit-value-example.page.tsx
 ```
 
 </Sandpack>
@@ -2081,6 +2230,42 @@ Resize a column to see `viewportReservedWidth` updated and then click the button
 
 ```ts file=viewportReservedWidth-example.page.tsx
 
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="shouldAcceptEdit" type="(params) => boolean|Error|Promise<boolean|Error>">
+
+> Function used to validate edits for all columns.
+
+
+This function is called when the user wants to finish an edit - it is used to decide whether an edit is accepted or rejected, for all columns. 
+
+<p>This overrides the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> prop.</p>
+<p>If you define the global <PropLink name="shouldAcceptEdit" /> and still want to use the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink>, you can call the column-level function from this global one.</p>
+
+The function is called with an object that has the following properties:
+
+* `value` - the value that the user wants to persist via the cell editor
+* `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+ * `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+* `data` - the current data object
+* `rowInfo` - the row info object that underlies the row
+* `column` - the current column on which editing is invoked
+* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+
+<Sandpack>
+
+<Description>
+
+Edit the `salary` column. Only valid numbers are persisted.
+
+</Description>
+
+```ts file=global-should-accept-edit-example.page.tsx
 ```
 
 </Sandpack>

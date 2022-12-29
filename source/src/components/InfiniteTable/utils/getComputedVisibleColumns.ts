@@ -586,6 +586,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
       headerClassName: colType.headerClassName,
 
       columnGroup: colType.columnGroup,
+      getValueToEdit: colType.getValueToEdit,
+      getValueToPersist: colType.getValueToPersist,
+      shouldAcceptEdit: colType.shouldAcceptEdit,
       field,
       ...c,
       components: {
