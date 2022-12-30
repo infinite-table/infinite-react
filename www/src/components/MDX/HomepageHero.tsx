@@ -23,8 +23,8 @@ function HomepageHero() {
       <HeroCards
         cards={[
           {
-            title: 'Learn Infinite Table',
-            description: 'Learn & unleash the power of Infinite Table',
+            title: 'Learn how to use Infinite Table',
+            description: 'Unleash the power of Infinite Table',
             link: '/docs/learn/getting-started',
           },
           {

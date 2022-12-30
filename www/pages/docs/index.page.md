@@ -5,7 +5,7 @@ description: Developer Documentation for Infinite Table, your go-to React DataGr
 
 <HomepageHero />
 
-## What is Infinite?
+## What is Infinite Table?
 
 Infinite Table is a React DataGrid component for displaying virtualized tabular data.
 
@@ -39,26 +39,26 @@ Infinite Table is fully typed and offers you a great developer experience, to he
 
 <HeroCards>
 <YouWillLearnCard title="Learn about our TypeScript typings" path="/docs/learn/getting-started/typescript-types">
-Read more about how to use our TypeScript types.
+Read more about how to use our TypeScript types
 </YouWillLearnCard>
 
 </HeroCards>
 
-## 📄 Extensive documentation
+## 📄 Extensive Documentation
 
 We're aware good documentation is a must and are updating our documentation as we add new features. Head to [our getting started](/docs/learn/getting-started) guide to get up and running quickly.
 
-## 🏢 Enterprise-ready
+## 🏢 Enterprise-Ready
 
 Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](/docs/learn/working-with-data#data-loading-strategies), [filtering](/docs/learn/filtering), [sorting](/docs/learn/working-with-data/sorting), [grouping](/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](/docs/learn/working-with-data/live-pagination), [lazy loading](/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
 
 You can choose to leverage our built-in implementations in the browser, or you can process your data on the server with full support from our-side.
 
-### 🔒 Secure by default
+### 🔒 Secure by Default
 
 We take security seriously and only have a total of 3 dependencies in our full dependency graph - and this number will only go down.
 
-### 📦 Small bundle size
+### 📦 Small Bundle Size
 
 Our bundle size is under `250kB` and we're dedicated to [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
 
@@ -70,7 +70,7 @@ See our bundle size in BundlePhobia
 </YouWillLearnCard>
 </HeroCards>
 
-### 🧪 Automated end-to-end tests
+### 🧪 Automated End-to-End Tests
 
 Our releases are automated and, we have full end-to-end tests that ensure we're delivering to our standards.
 
@@ -98,7 +98,7 @@ import '@infinite-table/infinite-react/index.css';
 ```
 
 <HeroCards>
-<YouWillLearnCard title="Theming with CSS variables" path="/docs/learn/theming#css-variables">
+<YouWillLearnCard title="Theming with CSS Variables" path="/docs/learn/theming#css-variables">
 
 Read how to use themes and **CSS variables** to customize every aspect of Infinite Table
 

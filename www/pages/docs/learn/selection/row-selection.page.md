@@ -3,9 +3,11 @@ title: Row Selection
 description: InfiniteTable DataGrid component supports single and multiple row selection, including checkbox column selection and lazy rows selection
 ---
 
-`InfiniteTable` offers support for both single and multiple row selection. Multiple row selection allows people to select rows just like they would in their MacOS Finder app, by clicking desired rows and using the cmd/shift keys as modifiers.
+`InfiniteTable` offers support for both single and multiple row selection. 
 
-The DataGrid also offers support for **checkbox selection**, which is another easy way of interacting with grid rows, especially when grouped/nested data is used.
+Multiple row selection allows people to select rows just like they would in their MacOS Finder app, by clicking desired rows and using the cmd/shift keys as modifiers.
+
+The DataGrid also offers support for **checkbox selection**, which is another easy way of interacting with grid rows, especially when grouped or nested data is used.
 
 Row selection (both single and multiple) is driven by the <DPropLink name="rowSelection" /> prop
 
@@ -15,11 +17,11 @@ Row selection is defined on the `DataSource` component, so that's where you spec
 
 </Note>
 
-<Note>
+<Hint>
 
 You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be derived from the value of your <DPropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
 
-</Note>
+</Hint>
 
 # Single Row Selection
 
@@ -161,7 +163,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 Any column can show a selection checkbox if <PropLink name="columns.renderSelectionCheckBox">column.renderSelectionCheckBox</PropLink> is set to `true`.
 
-Nothing stops you from even having multiple checkbox columns.
+There is nothing prevening you from providing multiple checkbox columns.
 
 </Note>
 
