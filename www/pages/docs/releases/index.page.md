@@ -5,7 +5,6 @@ layout: Releases
 
 ## 0.9.0 🚀
 @milestone id="67"
-
 ## 0.8.1 🚀
 @milestone id="66"
 
