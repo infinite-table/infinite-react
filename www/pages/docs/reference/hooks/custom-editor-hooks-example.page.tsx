@@ -71,13 +71,14 @@ const CustomEditor = () => {
         background: '#ad1',
         padding: 5,
         width: '100%',
+        height: '100%',
         position: 'absolute',
         left: 0,
         top: 0,
       }}
     >
       <input
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '100%' }}
         autoFocus
         ref={domRef}
         defaultValue={initialValue}
