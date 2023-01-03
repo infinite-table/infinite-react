@@ -44,7 +44,6 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
     };
 
     let text = await rowModel.getTextForCell(cellEditable1);
-
     expect(text).toBe('USDx');
 
     await editModel.startEdit({
