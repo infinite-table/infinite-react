@@ -62,7 +62,7 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
     // editor is still open, so the value is not actually rendered
     expect(await rowModel.getTextForCell(cellEditable1)).toBe('');
 
-    await page.waitForTimeout(60);
+    await page.waitForTimeout(40);
 
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(true);
 
