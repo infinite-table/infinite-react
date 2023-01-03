@@ -181,6 +181,14 @@
             {
               "title": "Inline Editing",
               "path": "/docs/learn/editing/inline-editing"
+            },
+            {
+              "title": "Editing Flow",
+              "path": "/docs/learn/editing/inline-edit-flow"
+            },
+            {
+              "title": "Custom Editor",
+              "path": "/docs/learn/editing/custom-editor"
             }
           ]
         },

@@ -442,6 +442,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   components?: {
     ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
     HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
+    editor?: React.FunctionComponent;
     MenuIcon?: React.FC<MenuIconProps>;
   };
 };

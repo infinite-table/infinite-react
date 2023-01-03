@@ -1,4 +1,29 @@
-```mermaid
+---
+title: Inline Editing Flow
+---
+
+Editing is described in great detail in the [Inline Editing](/docs/learn/editing/inline-editing) page - so make sure you read that first.
+
+This page is just a chart that describes the editing flow with the most important steps:
+
+* starting the edit - via the API or by user interaction (which triggers the API call)
+* checking if the cell is editable - async checks are also supported
+* retrieving the value to edit
+* stopping the edit - via API or by user interaction
+  * an edit can be cancelled - value discarded
+  * an edit can be rejected - value rejected with error
+  * an edit can be accepted - value accepted and passed to the persit layer
+* persisting the edit
+  * defaulting to updating data to the data source
+  * a custom persist function can be provided via <PropLink name="persistEdit" />
+* notifying the user of the result of the edit
+  * `onEditCancelled`
+  * `onEditRejected`
+  * `onEditAccepted` - after accepting the edit, either the persist success or error is called
+    * `onEditPersistSuccess`
+    * `onEditPersistError`
+
+```mmd
 graph TD;
     startEdit-->editable;
     editable--"yes"-->editable_yes;

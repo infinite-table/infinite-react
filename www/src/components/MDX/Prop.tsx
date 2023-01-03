@@ -328,23 +328,57 @@ export function PropTable({
 
   const [filterText, doSetFilterText] = React.useState(initialText);
 
+  const resetSearch = React.useCallback((value = '') => {
+    doSetFilterText(value);
+    inputRef.current!.value = value;
+  }, []);
+
   React.useLayoutEffect(() => {
     const initialText = globalThis.location
       ? globalThis.location.hash.slice(1).toLowerCase()
       : '';
+
     if (initialText) {
       const [search, value] = initialText.split('=');
 
       if (search === 'search' && value) {
-        doSetFilterText(value);
-        inputRef.current!.value = value;
+        resetSearch(value);
       }
     }
+
+    function onHashChange() {
+      const hash = globalThis.location
+        ? globalThis.location.hash.slice(1).toLowerCase()
+        : '';
+
+      console.log({ hash });
+      if (hash) {
+        const [search, value] = hash.split('=');
+
+        if (search && search === 'search') {
+          return resetSearch(value);
+        }
+      }
+      resetSearch('');
+    }
+
+    window.addEventListener('hashchange', onHashChange);
+    // for whatever reason, hashchange is not triggered when clicking on a link
+    // that goes to the same page, so we also listen to click events
+    // and run the same code - if nothing changed, it wont do anything
+    window.addEventListener('click', onHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('click', onHashChange);
+    };
   }, []);
 
   React.useEffect(() => {
     if (filterText) {
       window.location.hash = `search=${filterText}`;
+      // } else {
+      //   window.location.hash = '';
     }
   }, [filterText]);
 
@@ -384,6 +418,10 @@ export function PropTable({
     const value: string = (event.target as any).value || '';
 
     setFilterText(value.toLowerCase());
+
+    if (!value) {
+      window.location.hash = '';
+    }
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -392,8 +430,9 @@ export function PropTable({
       <IconClose
         className="mx-2 group-betterhover:hover:text-gray-70 hover:text-link cursor-pointer"
         onClick={() => {
-          doSetFilterText('');
-          inputRef.current!.value = '';
+          resetSearch('');
+
+          window.location.hash = '';
           inputRef.current!.focus();
         }}
       />

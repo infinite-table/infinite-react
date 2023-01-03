@@ -8,9 +8,12 @@ const codeImport = require('./code-import'); // imports code snippets from exter
 const milestones = require('./remark-milestone'); // replaces @milestone tag with a milestone contents
 const html = require('remark-html');
 
+const mdxMermaid = require('mdx-mermaid');
+
 module.exports = {
   remarkPlugins: [
     externalLinks,
+    mdxMermaid,
     milestones,
     customHeaders,
     images,
@@ -26,7 +29,9 @@ async function markdownToHtml(markdown) {
     .use(milestones)
     .use(codeImport)
     .use(externalLinks)
+    .use(mdxMermaid)
     .use(customHeaders)
+
     .use(images)
 
     .use(unwrapImages)

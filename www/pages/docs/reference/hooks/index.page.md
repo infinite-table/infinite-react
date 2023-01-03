@@ -46,6 +46,48 @@ You should not pass the `domRef` along when using the hook inside the
 
 </Prop>
 
+<Prop name="useInfiniteColumnEditor" >
+
+> Allows you to write a custom editor to be used for [inline editing](/docs/learn/editing/inline-editing).
+
+See related <PropLink name="columns.components.Editor" />
+
+The hook returns an object with the following properties:
+
+ * `initialValue` - the initial value for the editor.
+ * `value` - the current value for the editor. You can make this controlled - to achieve this, make sure that when the editor is changed, you call the `setValue` function with the new value.
+ * `setValue: (value) => void` - a function that can be used to update the `value` of the editor, as described above.
+ * `confirmEdit: (value?) => void` - call this to confirm the edit and close the editor. If you have called `setValue` while editing (meaning your editor was controlled), you don't have to pass any parameters to this function. - the last value of the editor will be used. If your editor is uncontrolled and you haven't called `setValue`, you need to call `confirmEdit` with the value that you want to confirm for the edit.
+ * `cancelEdit: () => void` - call this to cancel the edit and close the editor. Doesn't require any parameters.
+ * `rejectEdit: (error?) => void` - call this to reject the edit and close the editor. You can pass an `Error` object when calling this function to specify the reason for the rejection.
+ * `readOnly: boolean` - if the editor should be rendered as readonly (for example, while the edit is being confirmed or persisted asynchronously).
+
+Inside this hook, you can also use the <HookLink name="useInfiniteColumnCell" /> hook.
+
+<Note>
+
+When writing a custom editor, it's probably good to stop the propagation of the `KeyDown` event, so that the table doesn't react to the key presses (and do navigation and other stuff).
+
+</Note>
+
+
+<Sandpack title="Column with custom editor">
+
+<Description>
+
+Try editing the `salary` column - it has a custom editor
+
+</Description>
+
+```tsx file=custom-editor-hooks-example.page.tsx
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
 <Prop name="useInfiniteHeaderCell" >
 
 > Used inside <PropLink name="columns.header" /> or <PropLink name="column.components.HeaderCell" />

@@ -12,6 +12,9 @@ import humanizeString from 'humanize-string';
 import rangeParser from 'parse-numeric-range';
 import * as React from 'react';
 
+//@ts-ignore
+import { Mermaid as MermaidChart } from 'mdx-mermaid/Mermaid';
+
 // import { CustomTheme } from '../Sandpack/Themes';
 
 // import styles from './CodeBlock.module.css';
@@ -21,6 +24,22 @@ interface InlineHiglight {
   line: number;
   startColumn: number;
   endColumn: number;
+}
+
+function Mermaid({ chart }: { chart: string }) {
+  const [txt, setTxt] = React.useState('');
+
+  if (globalThis.window) {
+    React.useLayoutEffect(() => {
+      setTxt(chart);
+    }, []);
+  }
+
+  return txt ? (
+    <div className="w-full">
+      <MermaidChart chart={txt} />
+    </div>
+  ) : null;
 }
 
 const CodeBlock = React.forwardRef(function CodeBlockFn(
@@ -93,6 +112,45 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
       </div>
     </div>
   ) : null;
+
+  let el: JSX.Element | null = null;
+  if (language === 'mmd') {
+    el = <Mermaid chart={children.trimEnd()} />;
+  } else {
+    el = (
+      <SandpackProvider
+        template="react"
+        customSetup={{
+          entry: filename,
+        }}
+        options={{
+          activeFile: filename,
+        }}
+        files={{
+          [filename]: {
+            code: children.trimEnd(),
+          },
+        }}
+      >
+        {/* <SandpackThemeProvider theme={CustomTheme}> */}
+        <SandpackThemeProvider theme={'dark'}>
+          <ClasserProvider
+            classes={
+              {
+                // 'sp-cm': styles.codeViewer,
+              }
+            }
+          >
+            <SandpackCodeViewer
+              ref={ref}
+              showLineNumbers={false}
+              decorators={decorators}
+            />
+          </ClasserProvider>
+        </SandpackThemeProvider>
+      </SandpackProvider>
+    );
+  }
   return (
     <>
       {titleBlock}
@@ -111,37 +169,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
           !noMargin && (hasTitle ? 'mb-8' : 'my-8'),
         )}
       >
-        <SandpackProvider
-          template="react"
-          customSetup={{
-            entry: filename,
-          }}
-          options={{
-            activeFile: filename,
-          }}
-          files={{
-            [filename]: {
-              code: children.trimEnd(),
-            },
-          }}
-        >
-          {/* <SandpackThemeProvider theme={CustomTheme}> */}
-          <SandpackThemeProvider theme={'dark'}>
-            <ClasserProvider
-              classes={
-                {
-                  // 'sp-cm': styles.codeViewer,
-                }
-              }
-            >
-              <SandpackCodeViewer
-                ref={ref}
-                showLineNumbers={false}
-                decorators={decorators}
-              />
-            </ClasserProvider>
-          </SandpackThemeProvider>
-        </SandpackProvider>
+        {el}
       </div>
     </>
   );

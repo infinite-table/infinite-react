@@ -270,6 +270,7 @@ The column components object can have either of the two following properties:
 
 - <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
 - <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
+- <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when [inline editing](/docs/learn/editing/inline-editing) is enabled for the column.
 
 </Prop>
 
@@ -338,6 +339,73 @@ const ExampleCellComponent: React.FunctionComponent<
 
 ```tsx file=column-components-example.page.tsx
 
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="columns.components.Editor">
+
+> Specifies a custom React component to use for the editor, when [inline editing](/docs/learn/editing/inline-editing) is enabled for the column.
+
+The editor component should use the <HookLink name="useInfiniteColumnEditor"/> hook to have access to cell-related information and to confirm, cancel or reject the edit.
+
+Here's the implementation for our default editor
+
+```tsx
+export function InfiniteTableColumnEditor<T>() {
+  const { initialValue, setValue, confirmEdit, cancelEdit, readOnly } =
+    useInfiniteColumnEditor<T>();
+
+  const domRef = useRef<HTMLInputElement>();
+  const refCallback = React.useCallback((node: HTMLInputElement) => {
+    domRef.current = node;
+
+    if (node) {
+      node.focus();
+    }
+  }, []);
+
+  const onKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const { key } = event;
+    if (key === 'Enter' || key === 'Tab') {
+      confirmEdit();
+    } else if (key === 'Escape') {
+      cancelEdit();
+    } else {
+      event.stopPropagation();
+    }
+  }, []);
+
+  return (
+    <>
+      <input
+        readOnly={readOnly}
+        ref={refCallback}
+        onKeyDown={onKeyDown}
+        onBlur={() => confirmEdit()}
+        className={"..."}
+        type={'text'}
+        defaultValue={initialValue}
+        onChange={useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+          setValue(event.target.value);
+        }, [])}
+      />
+    </>
+  );
+}
+```
+
+<Sandpack title="Column with custom editor">
+
+<Description>
+
+Try editing the `salary` column - it has a custom editor
+
+</Description>
+
+```tsx file=$DOCS/reference/hooks/custom-editor-hooks-example.page.tsx
 ```
 
 </Sandpack>
@@ -1343,20 +1411,26 @@ By default, all columns have the `default` column type applied. So, if you defin
 
 The following properties are currently supported for defining a column type:
 
-- `align` - See <PropLink name="column.align" />
-- `cssEllipsis` - See <PropLink name="column.cssEllipsis" />
+- `align` - See <PropLink name="columns.align" />
+- `cssEllipsis` - See <PropLink name="columns.cssEllipsis" />
 - `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
 - `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
-- `header` - See <PropLink name="column.header" />
-- `headerCssEllipsis` - See <PropLink name="column.headerCssEllipsis" />
+- `header` - See <PropLink name="columns.header" />
+- `headerCssEllipsis` - See <PropLink name="columns.headerCssEllipsis" />
 - `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
 - `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
 - `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
-- `renderValue` - See <PropLink name="column.renderValue" />
-- `valueGetter` - See <PropLink name="column.valueGetter" />
-- `verticalAlign` - See <PropLink name="column.verticalAlign" />
-- `sortable` - See <PropLink name="column.sortable" />
-- `style` - See <PropLink name="column.style" />
+- `renderValue` - See <PropLink name="columns.renderValue" />
+- `valueGetter` - See <PropLink name="columns.valueGetter" />
+- `valueFormatter` - See <PropLink name="columns.valueFormatter" />
+- `verticalAlign` - See <PropLink name="columns.verticalAlign" />
+- `sortable` - See <PropLink name="columns.sortable" />
+- `style` - See <PropLink name="columns.style" />
+- `headerStyle` - See <PropLink name="columns.headerStyle" />
+- `components` - See <PropLink name="columns.components" />
+- `shouldAcceptEdit` - See <PropLink name="columns.shouldAcceptEdit" />
+- `getValueToPersist` - See <PropLink name="columns.getValueToPersist" />
+- `getValueToEdit` - See <PropLink name="columns.getValueToEdit" />
 
 <Note>
 When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.
@@ -1974,6 +2048,14 @@ When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level
 </Note>
 
 See related <PropLink name="onEditRejected" /> callback prop.
+
+</Prop>
+
+<Prop name="onEditPersistSuccess" type="({value, initialValue, column })=>void">
+
+> Callback prop called when an edit is persisted successfully
+
+
 
 </Prop>
 

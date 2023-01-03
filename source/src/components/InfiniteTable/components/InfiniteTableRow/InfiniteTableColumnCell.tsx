@@ -240,9 +240,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [rowInfo],
   );
 
+  const EditorComponent =
+    column.components?.editor ?? InfiniteTableColumnEditor;
+
   const editor = inEdit ? (
     <CellEditorContextComponent contextValue={renderParam}>
-      <InfiniteTableColumnEditor />
+      <EditorComponent />
     </CellEditorContextComponent>
   ) : null;
   const renderChildren = useCallback(() => {

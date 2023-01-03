@@ -1,6 +1,5 @@
 ---
 title: Inline Editing
-draft: true
 ---
 
 By default, inline editing is not enabled.
@@ -52,6 +51,16 @@ The <PropLink name="editable" /> prop allows you to centralize editing logic in 
 It has the same signature as the <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> function.
 
 </Note>
+
+
+
+<HeroCards>
+<YouWillLearnCard title="Editing Flow Chart" path="/docs/learn/editing/inline-edit-flow">
+A picture is worth a thousand words - see a chart for the editing flow.
+</YouWillLearnCard>
+
+</HeroCards>
+
 
 ## Start Editing
 
@@ -155,6 +164,8 @@ To change how you persist values (which might include persisting to remote locat
 <Note>
 
 The <PropLink name="persistEdit"/> function prop can return a `Promise` for async persistence. To signal that the persisting failed, reject the promise or resolve it with an `Error` object. 
+
+After persisting the edit, if all went well, the <PropLink name="onEditPersistSuccess" /> callback prop is called. If the persisting failed (was rejected), the <PropLink name="onEditPersistError" /> callback prop is called instead.
 
 </Note>
 
