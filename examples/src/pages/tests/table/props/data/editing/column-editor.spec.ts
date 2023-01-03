@@ -1,4 +1,5 @@
 import { test, expect } from '@testing';
+
 export default test.describe.parallel('Inline Edit', () => {
   test('should use custom editor when configured', async ({
     page,
