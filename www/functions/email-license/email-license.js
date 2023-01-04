@@ -5,25 +5,27 @@ const headers = {
   'Access-Control-Allow-Origin': '*', // Allow from anywhere
 };
 
+function getLicenseExpiryDate(licenseKey) {
+  return licenseKey
+    .split('|')
+    .filter((x) => x.startsWith('EndDate'))[0]
+    .split('=')[1];
+}
+
+async function getLicense(owner, count, ref) {
+  const {
+    getInfiniteTableLicense,
+  } = require('@adaptabletools/infinite-license/bin/infinite-init');
+
+  const licenseKey = await getInfiniteTableLicense(
+    ' -f -o=' + owner + ' -y=universal -c=' + count + (ref ? ' -r=' + ref : ''),
+  );
+  console.log('Airtable api key', process.env.AIRTABLE_API_KEY);
+  console.log('generated license key', licenseKey);
+  return licenseKey;
+}
+
 exports.handler = async function (event, context) {
-  async function getLicense(owner, count, ref) {
-    const {
-      getInfiniteTableLicense,
-    } = require('@adaptabletools/infinite-license/bin/infinite-init');
-
-    const licenseKey = await getInfiniteTableLicense(
-      '-f -o ' + owner + ' -y universal -c' + count + (ref ? ' -r ' + ref : ''),
-    );
-    return licenseKey;
-  }
-
-  function getLicenseExpiryDate(licenseKey) {
-    return licenseKey
-      .split('|')
-      .filter((x) => x.startsWith('EndDate'))[0]
-      .split('=')[1];
-  }
-
   const body = JSON.parse(event.body);
 
   if (!body.action || body.secret !== process.env.NEXT_PUBLIC_SECURITY_CHECK) {
@@ -43,6 +45,7 @@ exports.handler = async function (event, context) {
 
   try {
     LicenseKey = await getLicense(owner, count, ref);
+    console.log('got the license', LicenseKey);
   } catch (error) {
     console.error(error);
     return {
