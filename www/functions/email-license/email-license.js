@@ -1,11 +1,15 @@
 // const { resolve } = require('path');
 // const fs = require('fs');
 
+const headers = {
+  'Access-Control-Allow-Origin': '*', // Allow from anywhere
+};
+
 exports.handler = async function (event, context) {
   async function getLicense(owner, count, ref) {
     const {
       getInfiniteTableLicense,
-    } = require('@adaptabletools/infinite-license/bin/adaptable-init');
+    } = require('@adaptabletools/infinite-license/bin/infinite-init');
 
     const licenseKey = await getInfiniteTableLicense(
       '-o ' + owner + ' -y universal -c' + count + (ref ? ' -r ' + ref : ''),
@@ -25,12 +29,15 @@ exports.handler = async function (event, context) {
   if (!body.action || body.secret !== process.env.NEXT_PUBLIC_SECURITY_CHECK) {
     console.error('Invalid request');
     return {
+      headers,
       statusCode: 200,
       body: 'not found',
     };
   }
 
   const { owner, count, email, ref, action } = body;
+
+  console.log('got body', body);
 
   let LicenseKey = '';
 
@@ -44,10 +51,13 @@ exports.handler = async function (event, context) {
     };
   }
 
+  console.log('license', LicenseKey);
+
   if (action === 'save' || !email) {
     // we generated a license, and the command also stored it to airtable
     // so we can exit
     return {
+      headers,
       statusCode: 200,
       body: `License key was saved to airtable!`,
     };
@@ -63,6 +73,7 @@ exports.handler = async function (event, context) {
     date: ExpiryDate,
   };
   return {
+    headers,
     statusCode: 200,
     body: `All good: ${JSON.stringify(details)}`,
   };
