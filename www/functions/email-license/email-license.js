@@ -12,7 +12,7 @@ exports.handler = async function (event, context) {
     } = require('@adaptabletools/infinite-license/bin/infinite-init');
 
     const licenseKey = await getInfiniteTableLicense(
-      '-o ' + owner + ' -y universal -c' + count + (ref ? ' -r ' + ref : ''),
+      '-f -o ' + owner + ' -y universal -c' + count + (ref ? ' -r ' + ref : ''),
     );
     return licenseKey;
   }
