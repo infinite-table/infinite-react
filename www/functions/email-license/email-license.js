@@ -13,13 +13,19 @@ function getLicenseExpiryDate(licenseKey) {
     .split('=')[1];
 }
 
-async function getLicense(owner, count, ref) {
+async function getLicense({ owner, count, ref, startDate, endDate }) {
   const {
     getInfiniteTableLicense,
   } = require('@adaptabletools/infinite-license/bin/infinite-init');
 
   const licenseKey = await getInfiniteTableLicense(
-    ' -f -o=' + owner + ' -y=universal -c=' + count + (ref ? ' -r=' + ref : ''),
+    ' -f -o=' +
+      owner +
+      ' -y=universal -c=' +
+      count +
+      (ref ? ' -r=' + ref : '') +
+      (startDate ? ' -s=' + startDate : '') +
+      (endDate ? ' -e=' + endDate : ''),
   );
   console.log('Airtable api key', process.env.AIRTABLE_API_KEY);
   console.log('generated license key', licenseKey);
@@ -45,14 +51,14 @@ exports.handler = async function (event, context) {
     };
   }
 
-  const { owner, count, email, ref, action } = body;
+  const { owner, count, email, ref, action, startDate, endDate } = body;
 
   console.log('got body', body);
 
   let LicenseKey = '';
 
   try {
-    LicenseKey = await getLicense(owner, count, ref);
+    LicenseKey = await getLicense({ owner, count, ref, startDate, endDate });
     console.log('got the license', LicenseKey);
   } catch (error) {
     console.error(error);
