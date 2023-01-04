@@ -57,7 +57,7 @@ const CustomEditor = () => {
   const onKeyDown = useCallback((event: React.KeyboardEvent) => {
     const { key } = event;
     if (key === 'Enter' || key === 'Tab') {
-      confirmEdit(domRef.current?.value + 'ABC');
+      confirmEdit(domRef.current?.value);
     } else if (key === 'Escape') {
       cancelEdit();
     } else {

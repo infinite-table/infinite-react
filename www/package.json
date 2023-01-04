@@ -24,7 +24,8 @@
     "build-functions": "node build/functions/compile-json-server.js",
     "watch-functions": "npm run build-functions && node build/functions/compile-json-server.js --watch",
     "format": "prettier --write '{src,pages}/**/*.{js,jsx,ts,tsx,json,scss,css,md}'",
-    "lint": "next lint"
+    "lint": "next lint",
+    "install-license-generator": "cd functions/email-license && npm run install-license-generator"
   },
   "engines": {
     "node": ">=16.0.0"

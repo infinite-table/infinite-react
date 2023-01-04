@@ -17,6 +17,7 @@ module.exports = {
   'card-dark': '#343A46', // gray-80
   // highlight: '#e7e247', // blue-10
   glow: '#3bff7f', // blue-10
+  // this is the color used in the logo
   accent2: '#497AFF', // blue-10
   highlight: '#E6F7FF', // blue-10
   'highlight-dark': 'rgba(88,175,223,.15)',

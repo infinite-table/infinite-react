@@ -31,7 +31,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 The editor component should use the <HookLink name="useInfiniteColumnEditor"/> hook to have access to cell-related information and to confirm, cancel or reject the edit.
 
-```tsx {2} title=CustomEditor.tsx
+```tsx {3} title=CustomEditor.tsx
+import { useInfiniteColumnEditor } from '@infinite-table/infinite-react'
 const CustomEditor = () => {
   const { initialValue, confirmEdit, cancelEdit } = useInfiniteColumnEditor();
 
@@ -40,7 +41,7 @@ const CustomEditor = () => {
   const onKeyDown = useCallback((event: React.KeyboardEvent) => {
     const { key } = event;
     if (key === 'Enter' || key === 'Tab') {
-      confirmEdit(domRef.current?.value + 'ABC');
+      confirmEdit(domRef.current?.value );
     } else if (key === 'Escape') {
       cancelEdit();
     } else {

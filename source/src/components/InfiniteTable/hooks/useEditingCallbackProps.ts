@@ -77,7 +77,6 @@ function useFocusOnEditStop<T>() {
 
   useEffect(() => {
     if (!active && prevActive) {
-      console.log('focus!');
       context.api.focus();
     }
   }, [active, prevActive]);
