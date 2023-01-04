@@ -26,6 +26,13 @@ async function getLicense(owner, count, ref) {
 }
 
 exports.handler = async function (event, context) {
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+    };
+  }
+
   const body = JSON.parse(event.body);
 
   if (!body.action || body.secret !== process.env.NEXT_PUBLIC_SECURITY_CHECK) {
