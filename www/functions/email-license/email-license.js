@@ -3,6 +3,7 @@
 
 const headers = {
   'Access-Control-Allow-Origin': '*', // Allow from anywhere
+  'Access-Control-Allow-Headers': '*',
 };
 
 function getLicenseExpiryDate(licenseKey) {
