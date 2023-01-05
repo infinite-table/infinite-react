@@ -30,7 +30,11 @@ type PaddleType = {
 declare const Paddle: PaddleType;
 
 function PriceSummary({ count }: { count: number }) {
-  if (HAS_PADDLE && window.location.hash !== '#paddle') {
+  if (
+    HAS_PADDLE &&
+    typeof window !== 'undefined' &&
+    window.location.hash !== '#paddle'
+  ) {
     HAS_PADDLE = false;
   }
   const price = getPriceForCount(count);
