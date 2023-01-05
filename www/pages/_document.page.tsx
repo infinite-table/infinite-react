@@ -22,6 +22,11 @@ class MyDocument extends Document {
             src="/_pagefind/pagefind-ui.js"
             type="text/javascript"
           ></script>
+          <script
+            src="https://jean-genie-thirty.infinite-table.com/script.js"
+            data-site="GPFWXKHK"
+            defer
+          ></script>
         </body>
       </Html>
     );
