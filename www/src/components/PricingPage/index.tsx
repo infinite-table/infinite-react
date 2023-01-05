@@ -172,7 +172,8 @@ export function PricingPage() {
   }, []);
 
   function onBuyClick() {
-    // debugger;
+    window.fathom?.trackGoal('WTUQ6HYN', 0);
+    console.log({ quantity: count });
     Paddle.Checkout.open({
       product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
       allowQuantity: true,
@@ -330,14 +331,16 @@ export function PricingPage() {
                 </div>
 
                 <div className="text-center mt-10">
-                  {/*<AccentButton
-                    disabled={count >= 20 || !HAS_PADDLE}
-                    className="mt-10"
-                    onClick={onBuyClick}
-                  >
-                    <>Buy Infinite Table for React</>
-                    {!HAS_PADDLE ? <> - COMING SOON</> : null}
-                </AccentButton>*/}
+                  {!HAS_PADDLE ? null : (
+                    <AccentButton
+                      disabled={count >= 20 || !HAS_PADDLE}
+                      className="mt-10"
+                      onClick={onBuyClick}
+                    >
+                      <>Buy Infinite Table for React</>
+                      {!HAS_PADDLE ? <> - COMING SOON</> : null}
+                    </AccentButton>
+                  )}
                   <span className="text-sm">
                     We are close to the official launch of Infinite Table and
                     will start accepting payments. In the meantime we are happy
