@@ -6,10 +6,7 @@ import Link from 'next/link';
 
 import * as React from 'react';
 import { AccentButton } from '../AccentButton';
-import {
-  GradientTextBackground,
-  HighlightBrandToLightBackground,
-} from '../components.css';
+import { HighlightBrandToLightBackground } from '../components.css';
 import { ExternalLink } from '../ExternalLink';
 import { getHeroHeaderTextStyling, HeroHeader } from '../Header';
 import { OverlineCls } from '../Header.css';
@@ -161,7 +158,7 @@ export function PricingPage() {
     initPaddleScript = false;
     const paddleScript = document.createElement('script');
     paddleScript.onload = () => {
-      Paddle.Environment.set('sandbox');
+      // Paddle.Environment.set('sandbox');
       Paddle.Setup({
         vendor: Number(process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID),
       });
@@ -172,14 +169,31 @@ export function PricingPage() {
   }, []);
 
   function onBuyClick() {
+    //@ts-ignore
     window.fathom?.trackGoal('WTUQ6HYN', 0);
     console.log({ quantity: count });
-    Paddle.Checkout.open({
+
+    const overrideUrl =
+      count >= 10
+        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_10_LINK
+        : count >= 5
+        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_5_LINK
+        : count >= 3
+        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_3_LINK
+        : '';
+
+    const openParams = {
       product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
-      allowQuantity: true,
+      allowQuantity: false,
       quantity: count,
       method: 'overlay',
-    });
+    };
+
+    if (overrideUrl) {
+      //@ts-ignore
+      openParams.override = overrideUrl;
+    }
+    Paddle.Checkout.open(openParams);
     // Paddle.Checkout.open({
     //   method: 'inline',
     //   product: 36608, // Replace with your Product or Plan ID
