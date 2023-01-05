@@ -10,6 +10,7 @@ import { HighlightBrandToLightBackground } from '../components.css';
 import { ExternalLink } from '../ExternalLink';
 import { getHeroHeaderTextStyling, HeroHeader } from '../Header';
 import { OverlineCls } from '../Header.css';
+import { analytics, AnalyticsEvents } from './analytics';
 import {
   BASE_PRICE,
   discounts,
@@ -21,6 +22,8 @@ import {
 
 let HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
 let initPaddleScript = HAS_PADDLE;
+
+console.log('paddle vendor id', process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID);
 
 type PaddleType = {
   Environment: { set: (arg: any) => void };
@@ -176,9 +179,7 @@ export function PricingPage() {
   }, []);
 
   function onBuyClick() {
-    //@ts-ignore
-    window.fathom?.trackGoal('WTUQ6HYN', 0);
-    console.log({ quantity: count });
+    analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
 
     const discount =
       count >= 10
@@ -198,6 +199,23 @@ export function PricingPage() {
         : '';
 
     const openParams = {
+      eventCallback: (data: any) => {
+        if (data.event === 'Checkout.Complete') {
+          analytics(
+            AnalyticsEvents.checkoutComplete,
+            getPriceForCount(count) * 100,
+          );
+        }
+        if (data.event === 'Checkout.Error') {
+          analytics(AnalyticsEvents.checkoutError);
+        }
+        if (data.event === 'Checkout.Login') {
+          analytics(AnalyticsEvents.checkoutEmailProvided);
+        }
+        if (data.event === 'Checkout.Loaded') {
+          analytics(AnalyticsEvents.checkoutLoaded);
+        }
+      },
       product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
       allowQuantity: false,
       quantity: count,
