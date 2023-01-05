@@ -19,7 +19,7 @@ import {
   LICENSE_MAX,
 } from './priceCalculator';
 
-const HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
+let HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
 let initPaddleScript = HAS_PADDLE;
 
 type PaddleType = {
@@ -30,6 +30,9 @@ type PaddleType = {
 declare const Paddle: PaddleType;
 
 function PriceSummary({ count }: { count: number }) {
+  if (HAS_PADDLE && window.location.hash !== '#paddle') {
+    HAS_PADDLE = false;
+  }
   const price = getPriceForCount(count);
   const priceText = formatCurrency(price);
   return (
@@ -173,19 +176,36 @@ export function PricingPage() {
     window.fathom?.trackGoal('WTUQ6HYN', 0);
     console.log({ quantity: count });
 
+    const discount =
+      count >= 10
+        ? discounts[2].discountValue
+        : count >= 5
+        ? discounts[1].discountValue
+        : count >= 3
+        ? discounts[0].discountValue
+        : 0;
     const overrideUrl =
       count >= 10
-        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_10_LINK
+        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_10_LINK
         : count >= 5
-        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_5_LINK
+        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_5_LINK
         : count >= 3
-        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_3_LINK
+        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_3_LINK
         : '';
 
     const openParams = {
       product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
       allowQuantity: false,
       quantity: count,
+      title:
+        count === 1
+          ? `Infinite Table - 1 license`
+          : discount
+          ? `Infinite Table - ${count} licenses, ${discount}% off`
+          : `Infinite Table - ${count} licenses`,
+      message: !discount
+        ? `We will email you the license key shortly after the checkout. Thank you for trusting Infinite Table!`
+        : `You have ${discount}% discount when purchasing ${count} Infinite Table licenses.`,
       method: 'overlay',
     };
 
@@ -214,25 +234,7 @@ export function PricingPage() {
       seoDescription="One License - Infinite Applications. Infinite Table is the modern DataGrid for building React apps with a straightforward licensing model."
       title={
         <>
-          <span className={``}>One License</span> — Infinite Applications
-          {/* <span className={``}>One License</span> ={' '}
-          <span className="relative" style={{ top: -9 }}>
-            <img
-              className="inline w-16 md:w-24"
-              src="/round-infinite-sign-green-glow.svg"
-            ></img>
-
-            <span
-              className="absolute text-xs  md:text-lg tracking-wide -bottom-3 sm:-bottom-4"
-              style={{
-                transform: 'translate3d(-50%, -6px, 0px)',
-                left: '50%',
-              }}
-            >
-              infinite
-            </span>
-          </span>{' '}
-          Applications */}
+          <span>One License</span> — Infinite Applications
         </>
       }
       subtitle={
