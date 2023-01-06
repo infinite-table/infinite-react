@@ -36,7 +36,6 @@ function parseMultipartForm(event) {
     bb.write(event.body);
   });
 }
-
 async function getLicense({ owner, count, ref, startDate, endDate }) {
   const {
     getInfiniteTableLicense,
