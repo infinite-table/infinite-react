@@ -61,8 +61,10 @@ exports.handler = async function (event, context) {
     };
   }
 
+  console.log('webhook invoked');
   const fields = await parseMultipartForm(event);
 
+  console.log(fields);
   return {
     headers,
     statusCode: 200,
