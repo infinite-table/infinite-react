@@ -226,7 +226,11 @@ export function PricingPage() {
           ? `Infinite Table - ${count} licenses, ${discount}% off`
           : `Infinite Table - ${count} licenses`,
       message: !discount
-        ? `We will email you the license key shortly after the checkout. Thank you for trusting Infinite Table!`
+        ? count === 1
+          ? `Thank you for purchasing one Infinite Table license`
+          : `Thank you for purchasing ${
+              count === 2 ? 'two' : count
+            } Infinite Table licenses.`
         : `You have ${discount}% discount when purchasing ${count} Infinite Table licenses.`,
       method: 'overlay',
     };

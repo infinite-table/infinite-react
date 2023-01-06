@@ -1,0 +1,16 @@
+{
+  "name": "www-infinite-table-paddle-subscription",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "@adaptabletools/infinite-license": "*"
+  },
+  "scripts": {
+    "install-deps": "npm run setup-npmrc && npm i",
+    "setup-npmrc": "echo //registry.adaptabletools.com/:_authToken=${PRIVATE_NPM_TOKEN} >> .npmrc && echo @adaptabletools:registry=https://registry.adaptabletools.com >> .npmrc && echo .npmrc"
+  }
+}
