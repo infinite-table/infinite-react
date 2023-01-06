@@ -26,7 +26,12 @@ function parseMultipartForm(event) {
 
     // whenever busboy comes across a normal field ...
     bb.on('field', (fieldName, value) => {
+      console.log('field', fieldName, value);
       fields[fieldName] = value;
+    });
+    bb.on('error', (error) => {
+      console.log('err', error);
+      reject(error);
     });
 
     // once busboy is finished, we resolve the promise with the resulted fields.
@@ -34,6 +39,7 @@ function parseMultipartForm(event) {
       resolve(fields);
     });
     bb.write(event.body);
+    bb.end();
   });
 }
 async function getLicense({ owner, count, ref, startDate, endDate }) {
