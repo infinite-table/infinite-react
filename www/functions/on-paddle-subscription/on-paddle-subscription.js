@@ -33,7 +33,6 @@ function parseMultipartForm(event) {
     bb.on('finish', () => {
       resolve(fields);
     });
-
     bb.write(event.body);
   });
 }
