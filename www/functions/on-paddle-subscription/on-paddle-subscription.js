@@ -3,7 +3,7 @@ const headers = {
   'Access-Control-Allow-Headers': '*',
 };
 
-import * as Busboy from 'busboy';
+const busboy = require('busboy');
 
 function getLicenseExpiryDate(licenseKey) {
   return licenseKey
@@ -18,23 +18,23 @@ function parseMultipartForm(event) {
     const fields = {};
 
     // let's instantiate our busboy instance!
-    const busboy = new Busboy({
+    const bb = busboy({
       // it uses request headers
       // to extract the form boundary value (the ----WebKitFormBoundary thing)
       headers: event.headers,
     });
 
     // whenever busboy comes across a normal field ...
-    busboy.on('field', (fieldName, value) => {
+    bb.on('field', (fieldName, value) => {
       fields[fieldName] = value;
     });
 
     // once busboy is finished, we resolve the promise with the resulted fields.
-    busboy.on('finish', () => {
+    bb.on('finish', () => {
       resolve(fields);
     });
 
-    busboy.write(event.body);
+    bb.write(event.body);
   });
 }
 
