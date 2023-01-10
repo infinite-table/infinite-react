@@ -136,7 +136,7 @@ exports.handler = async function (event, context) {
   const ExpiryDate = getLicenseExpiryDate(LicenseKey);
 
   const response = await fetch(
-    `https://api.convertkit.com/v3/forms/${CONVERTKIT_FORM_ID}/subscribe`,
+    `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
     {
       method: 'POST',
       headers: {
