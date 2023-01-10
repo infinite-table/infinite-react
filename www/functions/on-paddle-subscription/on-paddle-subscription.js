@@ -4,6 +4,7 @@ const headers = {
 };
 
 const busboy = require('busboy');
+const fetch = require('node-fetch');
 
 function getLicenseExpiryDate(licenseKey) {
   return licenseKey

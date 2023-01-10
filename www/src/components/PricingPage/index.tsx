@@ -159,7 +159,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
   );
 }
 
-function getPaddleParams(details: LicenseFormDetails, onDone: VoidFunction) {
+function getPaddleParams(details: LicenseFormDetails) {
   const { count, email, owner } = details;
   const discount =
     count >= 10
@@ -179,26 +179,6 @@ function getPaddleParams(details: LicenseFormDetails, onDone: VoidFunction) {
       : '';
 
   const openParams = {
-    eventCallback: (data: any) => {
-      console.log('got event', data);
-      if (data.event === 'Checkout.Complete') {
-        analytics(
-          AnalyticsEvents.checkoutComplete,
-          getPriceForCount(count) * 100,
-        );
-        onDone();
-      }
-      if (data.event === 'Checkout.Error') {
-        analytics(AnalyticsEvents.checkoutError);
-        onDone();
-      }
-      if (data.event === 'Checkout.Login') {
-        analytics(AnalyticsEvents.checkoutEmailProvided);
-      }
-      if (data.event === 'Checkout.Loaded') {
-        analytics(AnalyticsEvents.checkoutLoaded);
-      }
-    },
     product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
     allowQuantity: false,
     quantity: count,
@@ -227,11 +207,11 @@ function getPaddleParams(details: LicenseFormDetails, onDone: VoidFunction) {
   return openParams;
 }
 
-function showPaddleOverlay(details: LicenseFormDetails, onDone: VoidFunction) {
+function showPaddleOverlay(details: LicenseFormDetails) {
   const { count } = details;
   analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
 
-  const params = getPaddleParams(details, onDone);
+  const params = getPaddleParams(details);
   //@ts-ignore
   params.method = 'overlay';
   Paddle.Checkout.open(params);
@@ -330,11 +310,7 @@ export function PricingPage() {
     });
 
   const setLicenseDetails = (details: LicenseFormDetails) => {
-    doSetLicenseDetails({
-      count: details.count,
-      email: details.email.trim(),
-      owner: details.owner.trim(),
-    });
+    doSetLicenseDetails(details);
 
     requestAnimationFrame(() => {
       if (validDetails() === true && error) {
@@ -342,6 +318,10 @@ export function PricingPage() {
       }
     });
   };
+
+  function resetLicenseDetails() {
+    setLicenseDetails({ count: 1, email: '', owner: '' });
+  }
 
   React.useEffect(() => {
     if (!initPaddleScript) {
@@ -353,6 +333,28 @@ export function PricingPage() {
       // Paddle.Environment.set('sandbox');
       Paddle.Setup({
         vendor: Number(process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID),
+        eventCallback: (data: any) => {
+          const count = licenseDetails.count;
+          console.log('got event', data);
+          if (data.event === 'Checkout.Complete') {
+            analytics(
+              AnalyticsEvents.checkoutComplete,
+              getPriceForCount(count) * 100,
+            );
+
+            resetLicenseDetails();
+          }
+          if (data.event === 'Checkout.Error') {
+            analytics(AnalyticsEvents.checkoutError);
+            resetLicenseDetails();
+          }
+          if (data.event === 'Checkout.Login') {
+            analytics(AnalyticsEvents.checkoutEmailProvided);
+          }
+          if (data.event === 'Checkout.Loaded') {
+            analytics(AnalyticsEvents.checkoutLoaded);
+          }
+        },
       });
     };
 
@@ -368,9 +370,7 @@ export function PricingPage() {
     }
     setError('');
     // setShowOverlay(true);
-    showPaddleOverlay(licenseDetails, () => {
-      setLicenseDetails({ count: 1, email: '', owner: '' });
-    });
+    showPaddleOverlay(licenseDetails);
   }
 
   function validDetails() {
