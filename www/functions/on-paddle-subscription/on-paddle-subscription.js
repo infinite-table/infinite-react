@@ -114,7 +114,7 @@ exports.handler = async function (event, context) {
   const { email, passthrough } = fields;
 
   console.log('passthrough is', passthrough);
-  const { owner, count } = passthrough;
+  const { owner, count } = JSON.parse(passthrough);
 
   console.log(fields);
   console.log({ owner, count });
