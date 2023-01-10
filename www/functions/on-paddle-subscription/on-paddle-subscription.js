@@ -4,7 +4,7 @@ const headers = {
 };
 
 const busboy = require('busboy');
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 function getLicenseExpiryDate(licenseKey) {
   return licenseKey
@@ -135,14 +135,10 @@ exports.handler = async function (event, context) {
 
   const ExpiryDate = getLicenseExpiryDate(LicenseKey);
 
-  const response = await fetch(
-    `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+  try {
+    await axios.post(
+      `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
+      {
         api_key: process.env.CONVERTKIT_API_KEY,
         email,
         // this is the ID of the "client" tag in ConvertKit
@@ -153,21 +149,19 @@ exports.handler = async function (event, context) {
           expiry_date: ExpiryDate,
           purchase_timestamp: new Date().toISOString(),
         },
-      }),
-    },
-  );
+      },
+    );
 
-  if (response.ok) {
     return {
       headers,
       statusCode: 200,
       body: JSON.stringify(fields),
     };
+  } catch (error) {
+    return {
+      headers,
+      statusCode: response.status,
+      body: response.statusText,
+    };
   }
-
-  return {
-    headers,
-    statusCode: response.status,
-    body: response.statusText,
-  };
 };

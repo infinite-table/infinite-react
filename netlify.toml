@@ -2,7 +2,7 @@
   directory = "www/functions"
   node_bundler = "esbuild"
   included_files = ["www/dataserver/data/**.json"]
-  external_node_modules = ["express", "serverless-http", "path", "cors", "body-parser", "json-server","fs","net","tls","request","xlsx","alasql","@adaptabletools/infinite-license","busboy"]
+  external_node_modules = ["express", "serverless-http", "path", "cors", "body-parser", "json-server","fs","net","tls","request","xlsx","alasql","@adaptabletools/infinite-license","busboy","axios"]
 
 [[headers]]
   for = "/*"
