@@ -137,7 +137,7 @@ exports.handler = async function (event, context) {
 
   try {
     console.log(
-      'posting to ',
+      'posting to: ',
       `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
     );
     const body = {
