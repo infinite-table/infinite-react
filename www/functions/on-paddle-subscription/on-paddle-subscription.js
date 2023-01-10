@@ -59,6 +59,39 @@ async function getLicense({ owner, count, ref, startDate, endDate }) {
   return licenseKey;
 }
 
+function getLicenseExpiryDate(licenseKey) {
+  return licenseKey
+    .split('|')
+    .filter((x) => x.startsWith('EndDate'))[0]
+    .split('=')[1];
+}
+
+function getLicenseStartDate(licenseKey) {
+  return licenseKey
+    .split('|')
+    .filter((x) => x.startsWith('StartDate'))[0]
+    .split('=')[1];
+}
+
+async function getLicense({ owner, count, ref, startDate, endDate }) {
+  const {
+    getInfiniteTableLicense,
+  } = require('@adaptabletools/infinite-license/bin/infinite-init');
+
+  const licenseKey = await getInfiniteTableLicense(
+    ' -f -o=' +
+      owner +
+      ' -y=universal -c=' +
+      count +
+      (ref ? ' -r=' + ref : '') +
+      (startDate ? ' -s=' + startDate : '') +
+      (endDate ? ' -e=' + endDate : ''),
+  );
+  console.log('Airtable api key', process.env.AIRTABLE_API_KEY);
+  console.log('generated license key', licenseKey);
+  return licenseKey;
+}
+
 exports.handler = async function (event, context) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -70,10 +103,69 @@ exports.handler = async function (event, context) {
   console.log('webhook invoked');
   const fields = await parseMultipartForm(event);
 
+  if (fields.alert_name !== 'payment_succeeded') {
+    return {
+      headers,
+      statusCode: 200,
+      body: `Not a payment_succeeded alert: ${fields.alert_name}`,
+    };
+  }
+
+  const { email, passthrough } = fields;
+
+  const { owner, count } = JSON.parse(passthrough);
+
   console.log(fields);
+  console.log({ owner, count });
+
+  let LicenseKey = '';
+
+  try {
+    LicenseKey = await getLicense({ owner, count });
+    console.log('got the license', LicenseKey);
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 200,
+      body: `License generation error: ${error}`,
+    };
+  }
+
+  const ExpiryDate = getLicenseExpiryDate(LicenseKey);
+
+  const response = await fetch(
+    `https://api.convertkit.com/v3/forms/${CONVERTKIT_FORM_ID}/subscribe`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        api_key: process.env.CONVERTKIT_API_KEY,
+        email,
+        // this is the ID of the "client" tag in ConvertKit
+        tags: [process.env.CONVERTKIT_TAG_ID],
+        fields: {
+          license_key: LicenseKey,
+          license_count: count,
+          expiry_date: ExpiryDate,
+          purchase_timestamp: new Date().toISOString(),
+        },
+      }),
+    },
+  );
+
+  if (response.ok) {
+    return {
+      headers,
+      statusCode: 200,
+      body: JSON.stringify(fields),
+    };
+  }
+
   return {
     headers,
-    statusCode: 200,
-    body: JSON.stringify(fields),
+    statusCode: response.status,
+    body: response.statusText,
   };
 };
