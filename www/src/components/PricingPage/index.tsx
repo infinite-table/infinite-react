@@ -159,7 +159,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
   );
 }
 
-function getPaddleParams(details: LicenseFormDetails) {
+function getPaddleParams(details: LicenseFormDetails, onDone: VoidFunction) {
   const { count, email, owner } = details;
   const discount =
     count >= 10
@@ -185,9 +185,11 @@ function getPaddleParams(details: LicenseFormDetails) {
           AnalyticsEvents.checkoutComplete,
           getPriceForCount(count) * 100,
         );
+        onDone();
       }
       if (data.event === 'Checkout.Error') {
         analytics(AnalyticsEvents.checkoutError);
+        onDone();
       }
       if (data.event === 'Checkout.Login') {
         analytics(AnalyticsEvents.checkoutEmailProvided);
@@ -224,32 +226,32 @@ function getPaddleParams(details: LicenseFormDetails) {
   return openParams;
 }
 
-function showPaddleOverlay(details: LicenseFormDetails) {
+function showPaddleOverlay(details: LicenseFormDetails, onDone: VoidFunction) {
   const { count } = details;
   analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
 
-  const params = getPaddleParams(details);
+  const params = getPaddleParams(details, onDone);
   //@ts-ignore
   params.method = 'overlay';
   Paddle.Checkout.open(params);
 }
 
-function showPaddleInline(details: LicenseFormDetails) {
-  const { count } = details;
-  analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
-  const params = getPaddleParams(details);
+// function showPaddleInline(details: LicenseFormDetails) {
+//   const { count } = details;
+//   analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
+//   const params = getPaddleParams(details);
 
-  //@ts-ignore
-  params.method = 'inline';
-  //@ts-ignore
-  params.frameTarget = 'paddle-container';
-  // params.frameTarget = 'checkout-container', // The className of your checkout <div>
-  // params.frameInitialHeight = 416;
-  // params.frameStyle =
-  // 'width:100%; min-width:312px; background-color: transparent; border: none;'; // Please ensure the minimum width is kept at or above 286px with checkout padding disabled, or 312px with checkout padding enabled. See "General" section under "Branded Inline Checkout" below for more information on checkout padding
+//   //@ts-ignore
+//   params.method = 'inline';
+//   //@ts-ignore
+//   params.frameTarget = 'paddle-container';
+//   // params.frameTarget = 'checkout-container', // The className of your checkout <div>
+//   // params.frameInitialHeight = 416;
+//   // params.frameStyle =
+//   // 'width:100%; min-width:312px; background-color: transparent; border: none;'; // Please ensure the minimum width is kept at or above 286px with checkout padding disabled, or 312px with checkout padding enabled. See "General" section under "Branded Inline Checkout" below for more information on checkout padding
 
-  Paddle.Checkout.open(params);
-}
+//   Paddle.Checkout.open(params);
+// }
 
 // function BuyOverlay(props: { onHide: () => void; count: number }) {
 //   const ref = React.useCallback((node: HTMLDivElement) => {
@@ -365,7 +367,9 @@ export function PricingPage() {
     }
     setError('');
     // setShowOverlay(true);
-    showPaddleOverlay(licenseDetails);
+    showPaddleOverlay(licenseDetails, () => {
+      setLicenseDetails({ count: 1, email: '', owner: '' });
+    });
   }
 
   function validDetails() {
