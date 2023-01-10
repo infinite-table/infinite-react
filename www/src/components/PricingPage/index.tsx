@@ -20,6 +20,9 @@ import {
   LICENSE_MAX,
 } from './priceCalculator';
 
+import axios from 'axios';
+
+(globalThis as any).axios = axios;
 let HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
 let initPaddleScript = HAS_PADDLE;
 

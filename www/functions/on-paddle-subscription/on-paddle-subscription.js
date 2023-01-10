@@ -136,20 +136,28 @@ exports.handler = async function (event, context) {
   const ExpiryDate = getLicenseExpiryDate(LicenseKey);
 
   try {
+    console.log(
+      'posting to ',
+      `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
+    );
+    const body = {
+      api_key: process.env.CONVERTKIT_API_KEY,
+      email,
+      // this is the ID of the "client" tag in ConvertKit
+      tags: [process.env.CONVERTKIT_TAG_ID],
+      fields: {
+        license_key: LicenseKey,
+        license_count: count,
+        expiry_date: ExpiryDate,
+        purchase_timestamp: new Date().toISOString(),
+      },
+    };
+
+    console.log('sending body', body);
+
     await axios.post(
       `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
-      {
-        api_key: process.env.CONVERTKIT_API_KEY,
-        email,
-        // this is the ID of the "client" tag in ConvertKit
-        tags: [process.env.CONVERTKIT_TAG_ID],
-        fields: {
-          license_key: LicenseKey,
-          license_count: count,
-          expiry_date: ExpiryDate,
-          purchase_timestamp: new Date().toISOString(),
-        },
-      },
+      body,
     );
 
     return {
@@ -158,10 +166,11 @@ exports.handler = async function (event, context) {
       body: JSON.stringify(fields),
     };
   } catch (error) {
+    console.log('got error', error);
     return {
       headers,
-      statusCode: response.status,
-      body: response.statusText,
+      statusCode: 200,
+      body: `ConvertKit error: ${error}`,
     };
   }
 };
