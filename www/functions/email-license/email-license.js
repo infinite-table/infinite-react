@@ -6,6 +6,8 @@ const headers = {
   'Access-Control-Allow-Headers': '*',
 };
 
+const axios = require('axios');
+
 function getLicenseExpiryDate(licenseKey) {
   return licenseKey
     .split('|')
@@ -89,6 +91,31 @@ exports.handler = async function (event, context) {
     ref,
     date: ExpiryDate,
   };
+
+  console.log(
+    'posting to: ',
+    `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
+  );
+  const postbody = {
+    api_key: process.env.CONVERTKIT_API_KEY,
+    email,
+    // this is the ID of the "client" tag in ConvertKit
+    tags: [process.env.CONVERTKIT_TAG_ID],
+    fields: {
+      license_key: LicenseKey,
+      license_count: count,
+      expiry_date: ExpiryDate,
+      purchase_timestamp: new Date().toISOString(),
+    },
+  };
+
+  console.log('sending to convertkit', postbody);
+
+  await axios.post(
+    `https://api.convertkit.com/v3/forms/${process.env.CONVERTKIT_FORM_ID}/subscribe`,
+    postbody,
+  );
+
   return {
     headers,
     statusCode: 200,
