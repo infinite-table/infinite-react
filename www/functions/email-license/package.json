@@ -10,7 +10,7 @@
     "@adaptabletools/infinite-license": "*"
   },
   "scripts": {
-    "install-deps": "npm run setup-npmrc &&  && npm i",
+    "install-deps": "npm run setup-npmrc && npm i",
     "setup-npmrc": "echo //registry.adaptabletools.com/:_authToken=${PRIVATE_NPM_TOKEN} >> .npmrc && echo @adaptabletools:registry=https://registry.adaptabletools.com >> .npmrc && echo .npmrc"
   }
 }
