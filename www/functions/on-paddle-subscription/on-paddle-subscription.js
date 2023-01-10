@@ -103,11 +103,11 @@ exports.handler = async function (event, context) {
   console.log('webhook invoked');
   const fields = await parseMultipartForm(event);
 
-  if (fields.alert_name !== 'payment_succeeded') {
+  if (fields.alert_name !== 'subscription_payment_succeeded') {
     return {
       headers,
       statusCode: 200,
-      body: `Not a payment_succeeded alert: ${fields.alert_name}`,
+      body: `Not a subscription_payment_succeeded alert: ${fields.alert_name}`,
     };
   }
 

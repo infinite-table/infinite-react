@@ -180,6 +180,7 @@ function getPaddleParams(details: LicenseFormDetails, onDone: VoidFunction) {
 
   const openParams = {
     eventCallback: (data: any) => {
+      console.log('got event', data);
       if (data.event === 'Checkout.Complete') {
         analytics(
           AnalyticsEvents.checkoutComplete,
