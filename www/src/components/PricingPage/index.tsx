@@ -1,4 +1,4 @@
-import { Card, Cards, CardsSubtitle, CardsTitle } from '@www/components/Cards';
+import { Card, Cards } from '@www/components/Cards';
 
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 import { wwwVars } from '@www/styles/www-utils.css';
@@ -53,7 +53,7 @@ function PriceSummary({ count }: { count: number }) {
         <p className="font-normal">
           For teams of <span className="font-black">{LICENSE_MAX + 1}+</span>{' '}
           developers, email{' '}
-          <a href="mailto:admin@infinite-table.com" className=" text-link ">
+          <a href="mailto:admin@infinite-table.com" className=" text-glow ">
             admin@infinite-table.com
           </a>{' '}
           to get a personalised price.
@@ -158,8 +158,187 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
     </div>
   );
 }
+
+function getPaddleParams(details: LicenseFormDetails) {
+  const { count, email, owner } = details;
+  const discount =
+    count >= 10
+      ? discounts[2].discountValue
+      : count >= 5
+      ? discounts[1].discountValue
+      : count >= 3
+      ? discounts[0].discountValue
+      : 0;
+  const overrideUrl =
+    count >= 10
+      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_10_LINK
+      : count >= 5
+      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_5_LINK
+      : count >= 3
+      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_3_LINK
+      : '';
+
+  const openParams = {
+    eventCallback: (data: any) => {
+      if (data.event === 'Checkout.Complete') {
+        analytics(
+          AnalyticsEvents.checkoutComplete,
+          getPriceForCount(count) * 100,
+        );
+      }
+      if (data.event === 'Checkout.Error') {
+        analytics(AnalyticsEvents.checkoutError);
+      }
+      if (data.event === 'Checkout.Login') {
+        analytics(AnalyticsEvents.checkoutEmailProvided);
+      }
+      if (data.event === 'Checkout.Loaded') {
+        analytics(AnalyticsEvents.checkoutLoaded);
+      }
+    },
+    product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
+    allowQuantity: false,
+    quantity: count,
+    email,
+    passthrough: JSON.stringify({ ...details, discount }),
+    title:
+      count === 1
+        ? `Infinite Table - 1 license`
+        : discount
+        ? `Infinite Table - ${count} licenses, ${discount}% off`
+        : `Infinite Table - ${count} licenses`,
+    message: !discount
+      ? count === 1
+        ? `Thank you for purchasing one Infinite Table license`
+        : `Thank you for purchasing ${
+            count === 2 ? 'two' : count
+          } Infinite Table licenses.`
+      : `You have ${discount}% discount when purchasing ${count} Infinite Table licenses.`,
+  };
+
+  if (overrideUrl) {
+    //@ts-ignore
+    openParams.override = overrideUrl;
+  }
+
+  return openParams;
+}
+
+function showPaddleOverlay(details: LicenseFormDetails) {
+  const { count } = details;
+  analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
+
+  const params = getPaddleParams(details);
+  //@ts-ignore
+  params.method = 'overlay';
+  Paddle.Checkout.open(params);
+}
+
+function showPaddleInline(details: LicenseFormDetails) {
+  const { count } = details;
+  analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
+  const params = getPaddleParams(details);
+
+  //@ts-ignore
+  params.method = 'inline';
+  //@ts-ignore
+  params.frameTarget = 'paddle-container';
+  // params.frameTarget = 'checkout-container', // The className of your checkout <div>
+  // params.frameInitialHeight = 416;
+  // params.frameStyle =
+  // 'width:100%; min-width:312px; background-color: transparent; border: none;'; // Please ensure the minimum width is kept at or above 286px with checkout padding disabled, or 312px with checkout padding enabled. See "General" section under "Branded Inline Checkout" below for more information on checkout padding
+
+  Paddle.Checkout.open(params);
+}
+
+// function BuyOverlay(props: { onHide: () => void; count: number }) {
+//   const ref = React.useCallback((node: HTMLDivElement) => {
+//     if (node) {
+//       node.focus();
+//       document.body.style.overflow = 'hidden';
+
+//       showPaddleInline({ count: props.count });
+//     } else {
+//       document.body.style.overflow = 'auto';
+//     }
+//   }, []);
+//   return (
+//     <div
+//       ref={ref}
+//       tabIndex={-1}
+//       style={{ inset: 0, height: '100%', zIndex: 1000 }}
+//       onKeyDown={(e) => {
+//         if (e.key === 'Escape') {
+//           props.onHide();
+//         }
+//       }}
+//     >
+//       <div
+//         style={{ inset: 0, height: '100%' }}
+//         className={`fixed w-full ${IceCls}`}
+//       />
+//       <div className="paddle-container bg-deep-dark w-10 h-10">hello</div>
+//     </div>
+//   );
+// }
+
+function FormField(props: {
+  label: string;
+  description?: string;
+  pattern?: string;
+  id?: string;
+  value: string;
+  required?: boolean;
+  type?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <label className="flex flex-col justify-start text-left whitespace-nowrap mt-5 mx-6 text-xl">
+      {props.label}
+      <input
+        id={props.id}
+        type={props.type || 'text'}
+        required={props.required}
+        pattern={props.pattern}
+        style={{
+          boxShadow: `1px 1px 10px 1px ${wwwVars.color.highlight}`,
+        }}
+        className=" mt-2 bg-white w-full p-2 ml-1 border-1 rounded-sm border-special-border-color  text-xl text-dark-custom font-black text-center"
+        value={props.value}
+        onChange={props.onChange}
+      />
+
+      <span className="whitespace-normal mt-2 text-sm">
+        {props.description}
+      </span>
+    </label>
+  );
+}
+
+type LicenseFormDetails = { email: string; owner: string; count: number };
 export function PricingPage() {
-  const [count, setCount] = React.useState(1);
+  const [error, setError] = React.useState('');
+
+  const [licenseDetails, doSetLicenseDetails] =
+    React.useState<LicenseFormDetails>({
+      email: '',
+      owner: '',
+      count: 1,
+    });
+
+  const setLicenseDetails = (details: LicenseFormDetails) => {
+    doSetLicenseDetails({
+      count: details.count,
+      email: details.email.trim(),
+      owner: details.owner.trim(),
+    });
+
+    requestAnimationFrame(() => {
+      if (validDetails() === true && error) {
+        setError('');
+      }
+    });
+  };
 
   React.useEffect(() => {
     if (!initPaddleScript) {
@@ -179,78 +358,44 @@ export function PricingPage() {
   }, []);
 
   function onBuyClick() {
-    analytics(AnalyticsEvents.clickBuy, getPriceForCount(count) * 100);
+    if (validDetails() !== true) {
+      setError(validDetails() as string);
 
-    const discount =
-      count >= 10
-        ? discounts[2].discountValue
-        : count >= 5
-        ? discounts[1].discountValue
-        : count >= 3
-        ? discounts[0].discountValue
-        : 0;
-    const overrideUrl =
-      count >= 10
-        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_10_LINK
-        : count >= 5
-        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_5_LINK
-        : count >= 3
-        ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_3_LINK
-        : '';
-
-    const openParams = {
-      eventCallback: (data: any) => {
-        if (data.event === 'Checkout.Complete') {
-          analytics(
-            AnalyticsEvents.checkoutComplete,
-            getPriceForCount(count) * 100,
-          );
-        }
-        if (data.event === 'Checkout.Error') {
-          analytics(AnalyticsEvents.checkoutError);
-        }
-        if (data.event === 'Checkout.Login') {
-          analytics(AnalyticsEvents.checkoutEmailProvided);
-        }
-        if (data.event === 'Checkout.Loaded') {
-          analytics(AnalyticsEvents.checkoutLoaded);
-        }
-      },
-      product: process.env.NEXT_PUBLIC_PADDLE_SUBSCRIPTION_PLAIN_ID,
-      allowQuantity: false,
-      quantity: count,
-      title:
-        count === 1
-          ? `Infinite Table - 1 license`
-          : discount
-          ? `Infinite Table - ${count} licenses, ${discount}% off`
-          : `Infinite Table - ${count} licenses`,
-      message: !discount
-        ? count === 1
-          ? `Thank you for purchasing one Infinite Table license`
-          : `Thank you for purchasing ${
-              count === 2 ? 'two' : count
-            } Infinite Table licenses.`
-        : `You have ${discount}% discount when purchasing ${count} Infinite Table licenses.`,
-      method: 'overlay',
-    };
-
-    if (overrideUrl) {
-      //@ts-ignore
-      openParams.override = overrideUrl;
+      return;
     }
-    Paddle.Checkout.open(openParams);
-    // Paddle.Checkout.open({
-    //   method: 'inline',
-    //   product: 36608, // Replace with your Product or Plan ID
-    //   allowQuantity: true,
-    //   disableLogout: true,
-    //   frameTarget: 'checkout-container', // The className of your checkout <div>
-    //   frameInitialHeight: 416,
-    //   frameStyle:
-    //     'width:100%; min-width:312px; background-color: transparent; border: none;', // Please ensure the minimum width is kept at or above 286px with checkout padding disabled, or 312px with checkout padding enabled. See "General" section under "Branded Inline Checkout" below for more information on checkout padding.
-    // });
+    setError('');
+    // setShowOverlay(true);
+    showPaddleOverlay(licenseDetails);
   }
+
+  function validDetails() {
+    if (!licenseDetails.owner) {
+      return 'Please provide an owner for the license';
+    }
+
+    if (licenseDetails.owner.length < 2) {
+      return 'The license owner should be at least 2 characters';
+    }
+
+    if (typeof window !== 'undefined' && (window as any).ownerField) {
+      if (!(window as any).ownerField.checkValidity()) {
+        return 'Please only use letters, numbers, spaces, underscores and dashes for the license owner';
+      }
+    }
+
+    if (!licenseDetails.email) {
+      return 'Please provide an email address';
+    }
+
+    if (typeof window !== 'undefined' && (window as any).emailField) {
+      if (!(window as any).emailField.checkValidity()) {
+        return 'Please provide a valid email address';
+      }
+    }
+    return true;
+  }
+
+  const buyDisabled = licenseDetails.count >= 20 || !HAS_PADDLE;
 
   return (
     <MainLayout
@@ -280,7 +425,13 @@ export function PricingPage() {
         overline={false}
         style={{ justifyContent: 'flex-start' }}
       >
-        <div className="checkout-container"></div>
+        {/* {showOverlay ? (
+          <BuyOverlay
+            count={licenseDetails.count}
+            onHide={() => setShowOverlay(false)}
+          />
+        ) : null} */}
+
         <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
@@ -367,38 +518,107 @@ export function PricingPage() {
                 <div
                   className={`justify-center items-center flex flex-col font-black pt-10 mt-10 ${OverlineCls} relative`}
                 >
-                  <TeamSize onCountChange={setCount} />
+                  <TeamSize
+                    onCountChange={(count) => {
+                      setLicenseDetails({
+                        ...licenseDetails,
+                        count,
+                      });
+                    }}
+                  />
 
-                  <PriceSummary count={count} />
+                  <PriceSummary count={licenseDetails.count} />
                 </div>
 
-                <div className="text-center mt-10">
+                <form
+                  className="text-center mt-5"
+                  onSubmit={(e) => e.preventDefault()}
+                >
                   {!HAS_PADDLE ? null : (
-                    <AccentButton
-                      disabled={count >= 20 || !HAS_PADDLE}
-                      className="mt-10"
-                      onClick={onBuyClick}
-                    >
-                      <>Buy Infinite Table for React</>
-                      {!HAS_PADDLE ? <> - COMING SOON</> : null}
-                    </AccentButton>
+                    <>
+                      <FormField
+                        required
+                        pattern="[\w\s-]+"
+                        label="License Owner"
+                        id="ownerField"
+                        description="The name of the company or person you are purchasing the license for."
+                        value={licenseDetails.owner}
+                        onChange={(e) => {
+                          setLicenseDetails({
+                            ...licenseDetails,
+                            owner: e.target.value,
+                          });
+                        }}
+                      />
+
+                      <FormField
+                        required
+                        type="email"
+                        id="emailField"
+                        label="Email Address"
+                        description="An email address where we can send you the license key and the invoice."
+                        value={licenseDetails.email}
+                        onChange={(e) => {
+                          setLicenseDetails({
+                            ...licenseDetails,
+                            email: e.target.value,
+                          });
+                        }}
+                      />
+
+                      <AccentButton
+                        glow={validDetails() === true && !error && !buyDisabled}
+                        disabled={buyDisabled}
+                        className="mt-10"
+                        onClick={onBuyClick}
+                      >
+                        <>Buy Infinite Table for React</>
+                        {!HAS_PADDLE ? <> - COMING SOON</> : null}
+                      </AccentButton>
+                    </>
                   )}
-                  <span className="text-sm">
-                    We are close to the official launch of Infinite Table and
-                    will start accepting payments. In the meantime we are happy
-                    to reward our first users with a
+
+                  {error ? (
+                    <div className="text-glow text-lg mt-2">{error}</div>
+                  ) : null}
+
+                  <span className="text-sm leading-relaxed text-left inline-block mt-6">
+                    {HAS_PADDLE ? (
+                      <>
+                        We're using{' '}
+                        <ExternalLink
+                          className="text-glow"
+                          href="https://paddle.com"
+                        >
+                          Paddle
+                        </ExternalLink>{' '}
+                        to process your payment.
+                        <br />
+                        After the payment is processed, you will receive an
+                        email with the invoice where you will be able to
+                        configure your invoice details.
+                        <br />
+                        In a separate email, you'll receive your license key.
+                      </>
+                    ) : (
+                      <>
+                        We are close to the official launch of Infinite Table
+                        and will start accepting payments. In the meantime we
+                        are happy to reward our first users with a
+                      </>
+                    )}
                   </span>
                   <br />
 
-                  <span className=" text-xl">
+                  {/* <span className="text-xl">
                     <a
                       className="text-glow"
                       href="mailto:admin@infinite-table.com?subject=Free 3 month license"
                     >
                       free 3 month license
                     </a>
-                  </span>
-                </div>
+                  </span> */}
+                </form>
               </Card>
             </div>
           </Card>
@@ -482,7 +702,7 @@ export function PricingPage() {
               tag="div"
             >
               For teams of more than 20 developers we ask you to contact us at{' '}
-              <a href="mailto:admin@infinite-table.com" className=" text-glow ">
+              <a href="mailto:admin@infinite-table.com" className="text-glow ">
                 admin@infinite-table.com
               </a>{' '}
               in order to receive a personalised quotation.

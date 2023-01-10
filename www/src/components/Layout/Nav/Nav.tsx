@@ -1,13 +1,5 @@
-import { AccentButton } from '@www/components/AccentButton';
-import { LogoAndTitle } from '@www/components/Header';
-import { IconClose } from '@www/components/Icon/IconClose';
-import { IconHamburger } from '@www/components/Icon/IconHamburger';
-import { InfiniteLogo } from '@www/components/InfiniteLogo';
-import { PageFindSearch } from '@www/components/PageFindSearch';
-import { Search } from '@www/components/Search';
 import { MenuContext } from '@www/components/useMenu';
-import { wwwTheme, wwwVars } from '@www/styles/www-utils.css';
-import cn from 'classnames';
+import { wwwVars } from '@www/styles/www-utils.css';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
