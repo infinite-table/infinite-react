@@ -164,7 +164,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
 }
 
 function getPaddleParams(details: LicenseFormDetails) {
-  const { count, email, owner } = details;
+  const { count, email } = details;
   const discount =
     count >= 10
       ? discounts[2].discountValue
