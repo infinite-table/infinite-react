@@ -29,7 +29,7 @@ async function markdownToHtml(markdown) {
     .use(milestones)
     .use(codeImport)
     .use(externalLinks)
-    .use(mdxMermaid)
+    // .use(mdxMermaid)
     .use(customHeaders)
 
     .use(images)

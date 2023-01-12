@@ -14,7 +14,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p>We’ve been working on finding better ways to display tabular data for over 2 decades now and collectively we have 35+ years of experience working on this.</p>\n",
+          "excerpt": "<p>We’ve been working on finding better ways to display tabular data for over 2 decades now and collectively we have 35+ years of experience working on this.</p>\n",
           "readingTime": "18 min read"
         },
         {
@@ -26,7 +26,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p><em>In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.</em></p>\n",
+          "excerpt": "<p><em>In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.</em></p>\n",
           "readingTime": "2 min read"
         },
         {
@@ -38,7 +38,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p>In August, we continued our work on preparing for our Autumn release,  focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.</p>\n",
+          "excerpt": "<p>In August, we continued our work on preparing for our Autumn release,  focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.</p>\n",
           "readingTime": "7 min read"
         },
         {
@@ -50,7 +50,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p>In July, we’ve been hard at work preparing for our Autumn release.</p>\n",
+          "excerpt": "<p>In July, we’ve been hard at work preparing for our Autumn release.</p>\n",
           "readingTime": "4 min read"
         },
         {
@@ -62,7 +62,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p>Using your keyboard to navigate around an app is crucial to moving fast and being productive.</p>\n",
+          "excerpt": "<p>Using your keyboard to navigate around an app is crucial to moving fast and being productive.</p>\n",
           "readingTime": "4 min read"
         },
         {
@@ -74,7 +74,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p>Today we are announcing the beta version (<code>0.3.12</code>) of <code>Infinite Table</code> ready to be used by early adopters.</p>\n",
+          "excerpt": "<p>Today we are announcing the beta version (<code>0.3.12</code>) of <code>Infinite Table</code> ready to be used by early adopters.</p>\n",
           "readingTime": "1 min read"
         },
         {
@@ -86,7 +86,7 @@
           "author": [
             "admin"
           ],
-          "excerpt": "import { Mermaid } from 'mdx-mermaid/lib/Mermaid';\n<p>Today we are announcing the alpha version (<code>0.0.7</code>) of <code>Infinite Table</code> ready to be used by early adopters - you can take it from npm</p>\n",
+          "excerpt": "<p>Today we are announcing the alpha version (<code>0.0.7</code>) of <code>Infinite Table</code> ready to be used by early adopters - you can take it from npm</p>\n",
           "readingTime": "1 min read"
         }
       ]
