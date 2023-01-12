@@ -5,7 +5,6 @@ const headers = {
   'Access-Control-Allow-Origin': '*', // Allow from anywhere
   'Access-Control-Allow-Headers': '*',
 };
-
 const axios = require('axios');
 
 function getLicenseExpiryDate(licenseKey) {
@@ -19,7 +18,6 @@ async function getLicense({ owner, count, ref, startDate, endDate }) {
   const {
     getInfiniteTableLicense,
   } = require('@adaptabletools/infinite-license/bin/infinite-init');
-
   const licenseKey = await getInfiniteTableLicense(
     ' -f -o=' +
       owner +
