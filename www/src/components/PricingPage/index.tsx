@@ -175,11 +175,11 @@ function getPaddleParams(details: LicenseFormDetails) {
       : 0;
   const overrideUrl =
     count >= 10
-      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_10_LINK
+      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_10_LINK
       : count >= 5
-      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_5_LINK
+      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_5_LINK
       : count >= 3
-      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_TEST_3_LINK
+      ? process.env.NEXT_PUBLIC_PADDLE_VOLUME_DISCOUNT_3_LINK
       : '';
 
   const openParams = {
