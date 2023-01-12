@@ -21,13 +21,10 @@ import {
   LICENSE_MAX,
 } from './priceCalculator';
 
-import axios from 'axios';
-
-(globalThis as any).axios = axios;
 let HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
 let initPaddleScript = HAS_PADDLE;
 
-console.log('paddle vendor id', process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID);
+// console.log('paddle vendor id', process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID);
 
 type PaddleType = {
   Environment: { set: (arg: any) => void };
@@ -37,13 +34,13 @@ type PaddleType = {
 declare const Paddle: PaddleType;
 
 function PriceSummary({ count }: { count: number }) {
-  if (
-    HAS_PADDLE &&
-    typeof window !== 'undefined' &&
-    window.location.hash !== '#paddle'
-  ) {
-    HAS_PADDLE = false;
-  }
+  // if (
+  //   HAS_PADDLE &&
+  //   typeof window !== 'undefined' &&
+  //   window.location.hash !== '#paddle'
+  // ) {
+  //   HAS_PADDLE = false;
+  // }
   const price = getPriceForCount(count);
   const priceText = formatCurrency(price);
   return (
