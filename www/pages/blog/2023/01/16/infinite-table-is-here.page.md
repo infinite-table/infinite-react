@@ -5,7 +5,7 @@ draft: true
 author: [admin]
 ---
 
-*Infinite Table is ready for prime time.*
+*Infinite Table React is ready for prime time.*
 
 *With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!*
 
@@ -14,7 +14,7 @@ author: [admin]
 
 1️⃣ seriously fast
 
-2️⃣ no empty/white rows while scrolling
+2️⃣ no empty or white rows while scrolling
 
 3️⃣ packed with features
 
@@ -24,7 +24,7 @@ author: [admin]
 
 </Note>
 
-We think you'll love it. 
+We think you'll love Infinite Table. 
 
 This is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid). 
 
@@ -34,7 +34,7 @@ And now it's finally here 🎉.
 
 #### React all the Way
 
-Infinite Table feels native to React, not as a after-thought, as we've built it with React in mind.
+Infinite Table feels native to React, not as a after-thought, but built with React fully in mind.
 
 It's declarative all the way and exposes everything as props, both controlled and uncontrolled.
 
@@ -47,14 +47,18 @@ If you don't like the default behavior of a prop, use the controlled version and
 
 #### Fully Controlled
 
-React introduced controlled components to the wider community and we've been using them for years. It's were the power of React lies - it gives the developer the flexibility to fully control (when needed) every input point of an app or component.
+React introduced controlled components to the wider community and we've been using them for years.
 
-All the props Infinite Table is exposing have both controlled and uncontrolled versions. This allows you to start using the component very quickly and without much effort, but also gives you the flexibility to fully control the component when needed, as your app grows and you need more control over the DataGrid.
+It's where the power of React lies - giving the developer the flexibility to fully control (when needed) every input point of an app or component.
+
+All the props which Infinite Table exposes, have both controlled and uncontrolled versions. This allows you to start using the component very quickly and without much effort, but also with the all-important flexibility to fully control the component when needed, as your app grows and you need more control over the DataGrid.
 
 
 #### TypeScript & Generic Components
 
-It's also built with TypeScript, so you get all the benefits of a great type system. In addition, the exposed components are exported as generic components, so you can specify the type of the data you're working with, for improved type safety.
+Infinite Table is also built with TypeScript, giving you all the benefits of a great type system.
+
+In addition, the exposed components are exported as generic components, so you can specify the type of the data you're working with, for improved type safety.
 
 
 ```tsx
@@ -77,13 +81,13 @@ const columns = {
 </DataSource>
 ```
 
-### Why use Infinite Table, continued
+### Why Use Infinite Table, cont.
 
 #### Fast - virtualization
 
-Infinite Table is fast by leveraging **virtualization both vertically** (for rows) **and horizontally** (for columns). 
+Infinite Table is fast by leveraging **virtualization** both **vertically** (for rows) and **horizontally** (for columns). 
 
-This means DOM nodes are created only for the visible cells thus reducing the number of DOM nodes and the memory strain and improving performance.
+This means DOM nodes are created only for the visible cells, thus reducing the number of DOM nodes and associated memory strain and improving performance.
 
 ####  No white space while scrolling - clever layout & rendering
 
@@ -125,8 +129,8 @@ We've implemented everything from scratch and only directly depend on 2 packages
 
 <Note>
 
-We've avoid external dependencies for 2 main reasons:
- - avoid security issues with dependencies (of dependencies of dependencies ... you know it) - remember left-pad?
+We've reduced external dependencies for 2 main reasons:
+ - avoid security issues with dependencies (or dependencies of dependencies...you know it) - remember left-pad?
  - keep the bundle size small
 
 </Note>
@@ -136,17 +140,19 @@ We've avoid external dependencies for 2 main reasons:
 When building a component of this scale, there are two major opposing forces: 
 
  * adding functionality
- * keeping the component (and the API) simple.
+ * keeping the component (and the API) simple
  
-We're trying to reconcile both with Infinite Table so we've built everything with composition in mind.
+We're continually trying to reconcile both with Infinite Table, so we've built everything with composition in mind.
 
 <Note>
 
-A practical example of composition is favoring function props instead of boolean flags or objects. Why implement a feature under a boolean flag or a static object when you can expose a functionality via a function prop? The function prop can be used to handle more cases than any boolean flag could ever handle!
+A practical example of composition is favouring function props instead of boolean flags or objects. Why implement a feature under a boolean flag or a static object when you can expose a functionality via a function prop? The function prop can be used to handle more cases than any boolean flag could ever handle!
 
 </Note>
 
-A good example of composability is the <PropLink name="groupColumn" /> prop - it can be a column object or a function. It control the columns that are generated for grouping:
+A good example of composability is the <PropLink name="groupColumn" /> prop which controls the columns that are generated for grouping.
+
+It can be either a column object or a function:
 
  * when it's a column object, it makes the table render a single column for grouping (as if <PropLink name="groupRenderStrategy" /> was set to `"single-column"`)
  * when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
@@ -177,13 +183,13 @@ We've learned from our experience with other DataGrid components that the more f
 
 ### Built for the community, available on NPM
 
-We're thrilled to share Infinite Table with the world. We wanted to make it very easy for everyone to get started with it, so you can start using right away with just an npm install
+We're thrilled to share Infinite Table with the world.
+
+We wanted to make it very easy for everyone to [get started](/docs/learn/getting-started) with it, so all you require is just an npm install:
 
 <TerminalBlock>
 npm i @infinite-table/infinite-react
 </TerminalBlock>
-
-After installing it, you're ready to [get started](/docs/learn/getting-started) and use it right away.
 
 The component will show a footer with a [Powered by Infinite Table](https://infinite-table.com) link displayed. However, all the functionalities are still available and fully working. So if you keep the link visible, you can use the component for free in any setup!
 
