@@ -91,7 +91,7 @@ function LayoutPost({ meta, children }: LayoutPostProps) {
                 meta.description || meta.title
               } | Infinite Table DataGrid for React`}
             />
-            <div className=" ">
+            <div className="leading-loose">
               <h1
                 className={`mb-6 pt-8 inline-block text-4xl font-black md:text-5xl leading-snug tracking-tight text-content-color ${HighlightBrandToLightBackground}`}
               >

@@ -287,7 +287,7 @@ Here are some of the key areas where we believe Infinite Table shines:
 
 ### Ready to Use
 
-Infinite Table is ready to use out of the box - namely it's not headless. We target customers who want to ship — faster 🏎! We're aware you don't want to re-invent the wheel nor do you want to invest 6 months of your team to build a poor implementation of a DataGrid component that will be hard to maintain and will be a source of bugs and frustration. **You want to ship — and soon!**. If this is you and you are already using React then Infinite Table is written for you!
+Infinite Table is ready to use out of the box - namely it's not headless. We target companies and individuals who want to ship — faster 🏎! We're aware you don't want to re-invent the wheel nor do you want to invest 6 months of your team to build a poor implementation of a DataGrid component that will be hard to maintain and will be a source of bugs and frustration. **You want to ship — and soon!**. If this is you and you are already using React then Infinite Table is written for you!
 
 ### Feels like React - Declarative API
 

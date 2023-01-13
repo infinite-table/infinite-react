@@ -6,6 +6,7 @@ interface YouWillLearnCardProps {
   title: string;
   path: string;
   inline?: boolean;
+  buttonLabel?: string;
   newTab?: boolean;
   children: React.ReactNode;
 }
@@ -16,6 +17,7 @@ function YouWillLearnCard({
   children,
   inline,
   newTab,
+  buttonLabel,
 }: YouWillLearnCardProps) {
   return (
     <div
@@ -36,7 +38,7 @@ function YouWillLearnCard({
           size="md"
           label={title}
         >
-          Read More
+          {buttonLabel ?? 'Read More'}
           <IconNavArrow displayDirection="right" className="inline ml-1" />
         </ButtonLink>
       </div>

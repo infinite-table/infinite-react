@@ -1,6 +1,18 @@
 {
   "routes": [
     {
+      "path": "/blog/2023/01/16/infinite-table-now-generally-available",
+      "date": "2023-01-16",
+      "title": "📣 Infinite Table is now generally available 🎉",
+      "draft": true,
+      "description": "Infinite Table update for October 2022 - grid menus and new website",
+      "author": [
+        "admin"
+      ],
+      "excerpt": "<p><em>Infinite Table is ready for prime time. With version 1.0.0 we’re releasing a DataGrid that’s feature packed and ready to be used in the wild!</em></p>\n",
+      "readingTime": "3 min read"
+    },
+    {
       "path": "/blog/2022/11/08/why-another-datagrid",
       "date": "2022-11-08",
       "title": "Why Another React DataGrid?",
