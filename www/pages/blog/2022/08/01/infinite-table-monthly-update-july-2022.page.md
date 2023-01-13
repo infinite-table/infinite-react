@@ -1,5 +1,5 @@
 ---
-title: "Monthly Update - Spring 2022"
+title: "Quarterly Update - Spring 2022"
 description: "Infinite Table update for Spring 2022"
 author: [admin]
 ---

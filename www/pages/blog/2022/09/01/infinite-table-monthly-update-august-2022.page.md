@@ -1,5 +1,5 @@
 ---
-title: "Monthly Update - Summer 2022"
+title: "Quarterly Update - Summer 2022"
 description: "Infinite Table update for Summper 2022 - row selection, column rendering, group columns"
 author: [admin]
 ---

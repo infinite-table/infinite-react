@@ -1,5 +1,5 @@
 ---
-title: "Monthly Update - Autumn 2022"
+title: "Quarterly Update - Autumn 2022"
 description: "Infinite Table update for Autumn 2022 - grid menus and new website"
 author: [admin]
 ---
