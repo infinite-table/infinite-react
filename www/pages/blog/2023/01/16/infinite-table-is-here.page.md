@@ -5,25 +5,30 @@ draft: true
 author: [admin]
 ---
 
-*Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!*
+*Infinite Table is ready for prime time. 
 
+With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!*
 
 
 <Note title="Why use Infinite Table?">
 
-* 1️⃣ it's fast
+1️⃣ it's fast
 
-* 2️⃣ no empty/white rows while scrolling
+2️⃣ no empty/white rows while scrolling
 
-* 3️⃣ it's packed with features
+3️⃣ it's packed with features
 
-* 4️⃣ built from the ground up for React
+4️⃣ built from the ground up for React
 
-* 5️⃣ clear, concise and easily composable props & API
+5️⃣ clear, concise and easily composable props & API
 
 </Note>
 
-We think you'll love it. We know this is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid). Now it's finally here 🎉.
+We think you'll love it. 
+
+We know this is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid). 
+
+And now it's finally here 🎉.
 
 ### Built from the ground up with React & TypeScript
 
