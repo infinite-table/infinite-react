@@ -1,10 +1,10 @@
 ---
-title: "Monthly Update - October 2022"
-description: "Infinite Table update for October 2022 - grid menus and new website"
+title: "Monthly Update - Autumn 2022"
+description: "Infinite Table update for Autumn 2022 - grid menus and new website"
 author: [admin]
 ---
 
-*In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.*
+*In the autumn our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.*
 
 *In addition to that, we've been working on a new design for our website and getting everything ready for the release.*
 

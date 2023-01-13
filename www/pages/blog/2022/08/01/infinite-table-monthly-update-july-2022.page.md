@@ -1,9 +1,9 @@
 ---
-title: "Monthly Update - July 2022"
-description: "Infinite Table update for July 2022"
+title: "Monthly Update - Spring 2022"
+description: "Infinite Table update for Spring 2022"
 author: [admin]
 ---
-In July, we've been hard at work preparing for our Autumn release.
+This spring, we've been hard at work preparing for our Autumn release.
 
 We have implemented a few new functionalities:
 
@@ -21,7 +21,7 @@ And we have updated some of the existing features:
 
 <Note title="Coming soon">
 
-At the end of July we started working on row and cell selection and we've made good progress on it.
+At the end of the spring, we started working on row and cell selection and we've made good progress on it.
 
 Row selection is already implemented for non-lazy group data and we're working on integrating it with lazy group data (e.g groups lazily loaded from the server). Of course, it will have integration with checkbox selection.
 

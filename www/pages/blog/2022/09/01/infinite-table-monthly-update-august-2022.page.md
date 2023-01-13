@@ -1,9 +1,9 @@
 ---
-title: "Monthly Update - August 2022"
-description: "Infinite Table update for August 2022 - row selection, column rendering, group columns"
+title: "Monthly Update - Summer 2022"
+description: "Infinite Table update for Summper 2022 - row selection, column rendering, group columns"
 author: [admin]
 ---
-In August, we continued our work on preparing for our Autumn release,  focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.
+Over the summer, we continued our work on preparing for our official release, focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.
 
 
 ## Summary 
@@ -36,7 +36,7 @@ Don't worry, the menus will be fully customizable, the menu items are fully repl
 
 ## New Features
 
-Here's what we shipped in the month of August:
+Here's what we shipped over the summer:
 
 ### Row Selection
 
