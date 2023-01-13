@@ -1,6 +1,6 @@
 ---
-title: "📣 Infinite Table is now generally available 🎉"
-description: "Infinite Table update for October 2022 - grid menus and new website"
+title: "📣 Infinite Table is here 🎉"
+description: "Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in enterprise-grade apps"
 draft: true
 author: [admin]
 ---
