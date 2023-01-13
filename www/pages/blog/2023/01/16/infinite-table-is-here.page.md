@@ -1,22 +1,22 @@
 ---
-title: "📣 Infinite Table is here 🎉"
+title: "📣 Infinite Table is Here 🎉"
 description: "Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in enterprise-grade apps"
 draft: true
 author: [admin]
 ---
 
-*Infinite Table is ready for prime time. 
+*Infinite Table is ready for prime time.*
 
-With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!*
+*With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!*
 
 
 <Note title="Why use Infinite Table?">
 
-1️⃣ it's fast
+1️⃣ seriously fast
 
 2️⃣ no empty/white rows while scrolling
 
-3️⃣ it's packed with features
+3️⃣ packed with features
 
 4️⃣ built from the ground up for React
 
@@ -26,15 +26,19 @@ With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to
 
 We think you'll love it. 
 
-We know this is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid). 
+This is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid). 
 
 And now it's finally here 🎉.
 
-### Built from the ground up with React & TypeScript
+### Built from the Ground Up with React & TypeScript
 
-#### React all the way
+#### React all the Way
 
-Infinite Table feels native to React, not as a after-thought, as we've built it with React in mind. It's declarative all the way and exposes everything as props, both controlled and uncontrolled. If you don't like the default behavior of a prop, use the controlled version and implement your own logic and handling - see for example the [following props related to column order](/docs/reference/infinite-table-props#search=columnorder):
+Infinite Table feels native to React, not as a after-thought, as we've built it with React in mind.
+
+It's declarative all the way and exposes everything as props, both controlled and uncontrolled.
+
+If you don't like the default behavior of a prop, use the controlled version and implement your own logic and handling - see for example the [following props related to column order](/docs/reference/infinite-table-props#search=columnorder):
 
 * <PropLink name="columnOrder" /> - controlled property for managing order of columns
 * <PropLink name="defaultColumnOrder" /> - uncontrolled version of the above
@@ -48,7 +52,7 @@ React introduced controlled components to the wider community and we've been usi
 All the props Infinite Table is exposing have both controlled and uncontrolled versions. This allows you to start using the component very quickly and without much effort, but also gives you the flexibility to fully control the component when needed, as your app grows and you need more control over the DataGrid.
 
 
-#### TypeScript & generic components
+#### TypeScript & Generic Components
 
 It's also built with TypeScript, so you get all the benefits of a great type system. In addition, the exposed components are exported as generic components, so you can specify the type of the data you're working with, for improved type safety.
 
@@ -77,11 +81,15 @@ const columns = {
 
 #### Fast - virtualization
 
-Infinite Table is fast by leveraging **virtualization both vertically** (for rows) **and horizontally** (for columns). This means DOM nodes are created only for the visible cells thus reducing the number of DOM nodes and the memory strain and improving performance.
+Infinite Table is fast by leveraging **virtualization both vertically** (for rows) **and horizontally** (for columns). 
+
+This means DOM nodes are created only for the visible cells thus reducing the number of DOM nodes and the memory strain and improving performance.
 
 ####  No white space while scrolling - clever layout & rendering
 
-In addition to virtualization, we use clever layout & rendering techniques to avoid white space while scrolling. When you scroll, the table will not show any empty rows or white space - no matter how fast you're scrolling!
+In addition to virtualization, we use clever layout & rendering techniques to avoid white space while scrolling.
+
+When you scroll, the table will not show any empty rows or white space - no matter how fast you're scrolling!
 
 <Note>
 
@@ -91,7 +99,7 @@ We've spent a lot of time and effort making sure no whitespace is visible while 
 
 </Note>
 
-### Batteries included
+### Batteries Included
 
 We want you to be productive immediately and stop worrying about the basics. Infinite Table comes with a lot of features out of the box, so you can focus on the important stuff.
 
@@ -111,19 +119,19 @@ It helps you display huge datasets and get the most out of your data by providin
 
 Infinite Table is built for companies and individuals who want to ship — faster 🏎!
 
-### (Almost) No external dependencies
+### (Almost) No External Dependencies
 
 We've implemented everything from scratch and only directly depend on 2 packages (we'll probably get rid of them as well in the future) - all our dependecy graph totals a mere 3 packages.
 
 <Note>
 
-We've done this for two main reasons:
+We've avoid external dependencies for 2 main reasons:
  - avoid security issues with dependencies (of dependencies of dependencies ... you know it) - remember left-pad?
  - keep the bundle size small
 
 </Note>
 
-### Composable API with small API surface
+### Composable API - with a small surface
 
 When building a component of this scale, there are two major opposing forces: 
 
