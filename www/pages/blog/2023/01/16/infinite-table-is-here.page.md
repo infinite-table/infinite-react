@@ -1,7 +1,6 @@
 ---
 title: "📣 Infinite Table is Here 🎉"
 description: "Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in enterprise-grade apps"
-draft: true
 author: [admin]
 ---
 
