@@ -178,7 +178,9 @@ vs
 />
 ```
 
-We've learned from our experience with other DataGrid components that the more features you add, the more complex your API becomes. So we tried to keep the API surface as small as possible, while still offering a rich set of declarative props as building blocks that can be composed to accomplish more complex functionalities.
+Our experience with other DataGrid components taught us that the more features you add, the more complex your API becomes.
+
+So we tried to keep the API surface as small as possible, while still offering a rich set of declarative props as building blocks that can be composed to accomplish more complex functionalities.
 
 
 ### Built for the community, available on NPM
