@@ -6,6 +6,7 @@ import {
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceApi,
+  DataSourceFilterValueItem,
   DataSourceGroupBy,
   DataSourcePivotBy,
   DataSourcePropGroupBy,
@@ -171,6 +172,8 @@ export type InfiniteTableColumnApi<_T> = {
   toggleSort: () => void;
   clearSort: () => void;
   setSort: (sort: SortDir | null) => void;
+  setFilter: (value: any) => void;
+  clearFilter: (value: any) => void;
 };
 
 export type InfiniteTableApiStopEditParams =
@@ -251,6 +254,13 @@ export interface InfiniteTableApi<T> {
   setSortInfoForColumn: (
     columnId: string,
     sortInfo: DataSourceSingleSortInfo<T> | null,
+  ) => void;
+
+  setColumnFilter: (columnId: string, filterValue: any) => void;
+  clearColumnFilter: (columnId: string) => void;
+  setFilterValueForColumn: (
+    columnId: string,
+    filterValue: DataSourceFilterValueItem<T>,
   ) => void;
 
   setPinningForColumn: (
@@ -405,10 +415,14 @@ export type InfiniteTablePropPivotColumn<
     ) => InfiniteTablePivotColumnBase<T>);
 
 export type InfiniteTablePropComponents = {
-  LoadMask?: React.FC<React.PropsWithChildren<LoadMaskProps>>;
-  CheckBox?: React.FC<InfiniteCheckBoxProps>;
-  Menu?: React.FC<React.PropsWithChildren<MenuProps>>;
-  MenuIcon?: React.FC<MenuIconProps>;
+  LoadMask?: (
+    props: LoadMaskProps & { children?: React.ReactNode | undefined },
+  ) => JSX.Element | null;
+  CheckBox?: (props: InfiniteCheckBoxProps) => JSX.Element | null;
+  Menu?: (
+    props: MenuProps & { children?: React.ReactNode | undefined },
+  ) => JSX.Element | null;
+  MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
 };
 
 export type ScrollStopInfo = {
@@ -417,25 +431,12 @@ export type ScrollStopInfo = {
   lastVisibleRowIndex: number;
 };
 
-export type InfiniteTablePropFilterEditors<T> = Record<
-  string,
-  React.FC<InfiniteTableFilterEditorProps<T>>
->;
-
 export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
   column: InfiniteTableComputedColumn<T>;
   api: InfiniteTableApi<T>;
   dataSourceApi: DataSourceApi<T>;
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 
-export type InfiniteTableFilterEditorProps<T extends any> = {
-  filterType: string;
-  operator: string;
-  ariaLabel: string;
-  filterValue: T;
-  className: string;
-  onChange: (value: T | undefined) => void;
-};
 export type InfiniteTablePropsEditable<T> =
   | InfiniteTableColumnEditableFn<T>
   | undefined;
@@ -622,8 +623,6 @@ export interface InfiniteTableProps<T> {
     columnOrder: InfiniteTablePropColumnOrderNormalized,
   ) => void;
   onRowHeightChange?: (rowHeight: number) => void;
-
-  filterEditors?: InfiniteTablePropFilterEditors<T>;
 
   onReady?: ({
     api,

@@ -10,23 +10,17 @@ import * as React from 'react';
 
 import { dataSource, Employee } from './custom-filter-type.data';
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-      filterType: 'country',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+    type: 'country',
+  },
+};
 
 const domProps: React.HTMLAttributes<HTMLDivElement> = {
   style: {

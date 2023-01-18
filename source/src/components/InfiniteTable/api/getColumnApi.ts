@@ -31,15 +31,25 @@ export function getColumnApiForColumn<T>(
         this.showContextMenu(target);
       }
     },
+
     showContextMenu(target: EventTarget | HTMLElement) {
       getState().onColumnMenuClick({ target, column });
     },
+
     hideContextMenu() {
       actions.columnContextMenuVisibleForColumnId = null;
     },
 
     toggleSort() {
       column.toggleSort();
+    },
+
+    setFilter(value: any) {
+      return api.setColumnFilter(column.id, value);
+    },
+
+    clearFilter() {
+      return api.clearColumnFilter(column.id);
     },
 
     setSort(sort: SortDir | null) {

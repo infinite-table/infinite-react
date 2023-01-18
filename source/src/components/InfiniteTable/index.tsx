@@ -66,6 +66,7 @@ import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
 import { FocusDetect } from './components/FocusDetect';
 import { useEditingCallbackProps } from './hooks/useEditingCallbackProps';
+import { useInfiniteColumnFilterEditor } from './components/InfiniteTableHeader/InfiniteTableColumnHeaderFilter';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -368,4 +369,5 @@ export {
   useInfiniteColumnCell,
   useInfiniteHeaderCell,
   useInfiniteColumnEditor,
+  useInfiniteColumnFilterEditor,
 };

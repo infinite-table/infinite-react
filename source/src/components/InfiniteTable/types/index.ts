@@ -28,8 +28,6 @@ import type {
   InfiniteTablePropRowStyle,
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
-  InfiniteTableFilterEditorProps,
-  InfiniteTablePropFilterEditors,
   InfiniteTablePropRowClassName,
   InfiniteTablePropColumns,
   InfiniteTableColumnsMap,
@@ -95,6 +93,4 @@ export type {
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
   InfiniteTableGroupColumnGetterOptions,
-  InfiniteTableFilterEditorProps,
-  InfiniteTablePropFilterEditors,
 };

@@ -270,7 +270,10 @@ The column components object can have either of the two following properties:
 
 - <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
 - <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
-- <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when [inline editing](/docs/learn/editing/inline-editing) is enabled for the column.
+
+- <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when inline editing is enabled for the column
+
+See [inline editing docs](/docs/learn/editing/inline-editing).
 
 </Prop>
 
@@ -517,6 +520,15 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="columns.dataType" type="string">
+
+> Specifies the type of the data for the column. For now, it's better to simply use <PropLink name="columns.type" />.
+
+If a column doesn't specify a <PropLink name="columns.sortType">sortType</PropLink>, the `dataType` will be used instead to determine the type of sorting to use. If neither `sortType` nor `dataType` are specified, the <PropLink name="columns.type">column.type</PropLink> will be used.
+
 
 </Prop>
 
@@ -1174,7 +1186,13 @@ Use this column property in order to explicitly make the column sortable or not 
 
 > Specifies the sort type for the column. See related <DataSourcePropLink name="sortTypes" />
 
-For local sorting, the sort order for a column is determined by the specified `sortType`. If no `sortType` is specified, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used as the `sortType`. If no `sortType` or `dataType` is specified, `"string"` is used.
+For local sorting, the sort order for a column is determined by the specified `sortType`.
+
+ - if no `sortType` is specified, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used as the `sortType`
+ - if no `sortType` or `dataType` is specified, it will default to the <PropLink name="columns.type"/> value (if an array, the first item will be used).
+ - if none of those are specified `"string"` is used
+
+The value of this prop (as specified, or as computed by the steps described above) should be a key from the <DataSourcePropLink name="sortTypes" /> object. 
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
@@ -1434,7 +1452,15 @@ The following properties are currently supported for defining a column type:
 
 <Note>
 When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.
+
+The only exception to this rule is the <PropLink name="columns.components">components</PropLink> property, which is merged from column types into the column.
 </Note>
+
+</Prop>
+
+<Prop name="columnTypes.components">
+
+> See related <PropLink name="columns.components" />.
 
 </Prop>
 

@@ -9,10 +9,7 @@ import {
   useDataSource,
   useDataSourceContextValue,
 } from '../../../DataSource/publicHooks/useDataSource';
-import {
-  DataSourceFilterValueItem,
-  DataSourcePropFilterTypes,
-} from '../../../DataSource/types';
+import { DataSourcePropFilterTypes } from '../../../DataSource/types';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { debounce } from '../../../utils/debounce';
 import { getColumnApiForColumn } from '../../api/getColumnApi';
@@ -21,7 +18,7 @@ import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InternalVars, ThemeVars } from '../../theme.css';
-import { InfiniteTableFilterEditorProps } from '../../types';
+
 import type {
   InfiniteTableColumnHeaderParam,
   InfiniteTableColumnHeaderRenderFunction,
@@ -144,7 +141,6 @@ export function InfiniteTableHeaderCell<T>(
       components,
       portalDOMRef,
       columnHeaderHeight,
-      filterEditors,
       columnReorderDragColumnId,
     },
   } = useInfiniteTable<T>();
@@ -448,73 +444,9 @@ export function InfiniteTableHeaderCell<T>(
     align,
   };
 
-  const setFilterValue = useCallback(
-    (filterValue: DataSourceFilterValueItem<T>) => {
-      const state = getDataSourceState();
-      let newFilterValue = state.filterValue ?? [];
-
-      let found = false;
-      newFilterValue = newFilterValue.map((currentFilterValue) => {
-        if (
-          (filterValue.id && currentFilterValue.id === filterValue.id) ||
-          (filterValue.field && currentFilterValue.field === column.field)
-        ) {
-          found = true;
-          return filterValue;
-        }
-
-        return currentFilterValue;
-      });
-
-      if (!found) {
-        newFilterValue.push(filterValue);
-      }
-
-      // we now filter away the empty filter values
-      newFilterValue = newFilterValue.filter((filterValue) => {
-        const filterType = filterTypes[filterValue.filterType];
-        if (
-          !filterType ||
-          filterType.emptyValues.has(filterValue.filterValue)
-        ) {
-          return false;
-        }
-        return true;
-      });
-
-      dataSourceActions.filterValue = newFilterValue;
-    },
-    [column, filterTypes],
-  );
-
   const debouncedOnFilterValueChange = React.useMemo(() => {
     const fn = (filterValue: any) => {
-      let newFilterValueForColumn: DataSourceFilterValueItem<T>;
-      if (column.computedFilterValue) {
-        newFilterValueForColumn = {
-          ...column.computedFilterValue,
-        };
-      } else {
-        const filterType = column.computedFilterType;
-        const filterValueForColumn: Partial<DataSourceFilterValueItem<T>> = {
-          filterType,
-          operator: filterTypes[filterType].defaultOperator,
-          filterValue,
-          valueGetter: column.valueGetter,
-        };
-        if (column.field) {
-          filterValueForColumn.field = column.field;
-        } else {
-          filterValueForColumn.id = column.id;
-        }
-
-        newFilterValueForColumn =
-          filterValueForColumn as DataSourceFilterValueItem<T>;
-      }
-
-      newFilterValueForColumn.filterValue = filterValue;
-
-      setFilterValue(newFilterValueForColumn);
+      api.setColumnFilter(column.id, filterValue);
     };
 
     if (filterDelay > 0) {
@@ -522,20 +454,13 @@ export function InfiniteTableHeaderCell<T>(
     }
 
     return fn;
-  }, [
-    filterDelay,
-    setFilterValue,
-    column.computedFilterValue,
-    column.id,
-    column.field,
-    column.computedFilterType,
-  ]);
+  }, [filterDelay, column.id]);
 
   const filterType = column.computedFilterType;
 
-  const FilterEditor = (filterEditors[filterType] ||
+  const FilterEditor = (column.components?.FilterEditor ||
     defaultFilterEditors[filterType] ||
-    StringFilterEditor) as React.FC<InfiniteTableFilterEditorProps<T>>;
+    StringFilterEditor) as () => JSX.Element | null;
 
   const resizeHandle = useColumnResizeHandle(column);
 

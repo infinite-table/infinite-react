@@ -440,10 +440,13 @@ export type InfiniteTableColumn<DATA_TYPE> = {
     | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   components?: {
-    ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
-    HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
-    editor?: React.FunctionComponent;
-    MenuIcon?: React.FC<MenuIconProps>;
+    ColumnCell?: (props: HTMLProps<HTMLDivElement>) => JSX.Element | null;
+    HeaderCell?: (props: HTMLProps<HTMLDivElement>) => JSX.Element | null;
+
+    Editor?: () => JSX.Element | null;
+    FilterEditor?: () => JSX.Element | null;
+
+    MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
   };
 };
 

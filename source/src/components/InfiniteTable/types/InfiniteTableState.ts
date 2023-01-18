@@ -146,8 +146,6 @@ export interface InfiniteTableMappedState<T> {
   onScrollStop: InfiniteTableProps<T>['onScrollStop'];
   scrollToBottomOffset: InfiniteTableProps<T>['scrollToBottomOffset'];
 
-  filterEditors: NonUndefined<InfiniteTableProps<T>['filterEditors']>;
-
   focusedClassName: InfiniteTableProps<T>['focusedClassName'];
   focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
   focusedStyle: InfiniteTableProps<T>['focusedStyle'];

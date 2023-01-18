@@ -1,7 +1,11 @@
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { SortDir } from '../../../utils/multisort';
-import { DataSourceSingleSortInfo, GroupRowsState } from '../../DataSource';
+import {
+  DataSourceFilterValueItem,
+  DataSourceSingleSortInfo,
+  GroupRowsState,
+} from '../../DataSource';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { loadData } from '../../DataSource/privateHooks/useLoadData';
 import {
@@ -494,6 +498,112 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     this.actions.columnPinning = columnPinning;
+  }
+
+  setColumnFilter(columnId: string, filterValue: any) {
+    const col = this.getComputed().computedColumnsMap.get(columnId);
+
+    if (!col) {
+      return;
+    }
+
+    const dataSourceState = this.getDataSourceState();
+    const { filterTypes } = dataSourceState;
+
+    let newFilterValueForColumn: DataSourceFilterValueItem<T>;
+    if (col.computedFilterValue) {
+      newFilterValueForColumn = {
+        ...col.computedFilterValue,
+      };
+    } else {
+      const filterType = col.computedFilterType;
+      const filterValueForColumn: Partial<DataSourceFilterValueItem<T>> = {
+        filterType,
+        operator: filterTypes[filterType].defaultOperator,
+        filterValue,
+        valueGetter: col.valueGetter,
+      };
+      if (col.field) {
+        filterValueForColumn.field = col.field;
+      } else {
+        filterValueForColumn.id = col.id;
+      }
+
+      newFilterValueForColumn =
+        filterValueForColumn as DataSourceFilterValueItem<T>;
+    }
+
+    newFilterValueForColumn.filterValue = filterValue;
+
+    this.setFilterValueForColumn(columnId, newFilterValueForColumn);
+  }
+
+  setFilterValueForColumn(
+    columnId: string,
+    filterValue: DataSourceFilterValueItem<T>,
+  ) {
+    const column = this.getComputed().computedColumnsMap.get(columnId);
+
+    if (!column) {
+      return;
+    }
+    const state = this.getDataSourceState();
+    const { filterTypes } = state;
+    let newFilterValue = state.filterValue ?? [];
+
+    let found = false;
+    newFilterValue = newFilterValue.map((currentFilterValue) => {
+      if (
+        (filterValue.id && currentFilterValue.id === filterValue.id) ||
+        (filterValue.field && currentFilterValue.field === column.field)
+      ) {
+        found = true;
+        return filterValue;
+      }
+
+      return currentFilterValue;
+    });
+
+    if (!found) {
+      newFilterValue.push(filterValue);
+    }
+
+    // we now filter away the empty filter values
+    newFilterValue = newFilterValue.filter((filterValue) => {
+      const filterType = filterTypes[filterValue.filterType];
+      if (!filterType || filterType.emptyValues.has(filterValue.filterValue)) {
+        return false;
+      }
+      return true;
+    });
+
+    this.dataSourceActions.filterValue = newFilterValue;
+  }
+
+  clearColumnFilter(columnId: string) {
+    const column = this.getComputed().computedColumnsMap.get(columnId);
+
+    if (!column) {
+      return;
+    }
+
+    const state = this.getDataSourceState();
+
+    let newFilterValue = state.filterValue ?? [];
+    let found = false;
+
+    newFilterValue = newFilterValue.filter((currentFilterValue) => {
+      if (currentFilterValue === column.computedFilterValue) {
+        found = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (found) {
+      this.dataSourceActions.filterValue = newFilterValue;
+    }
   }
 
   setSortInfoForColumn(

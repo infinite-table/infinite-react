@@ -11,7 +11,6 @@ import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
-import { defaultFilterEditors } from '../components/FilterEditors';
 
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import { ThemeVars } from '../theme.css';
@@ -22,7 +21,6 @@ import {
 } from '../types';
 import {
   InfiniteTableColumnsMap,
-  InfiniteTablePropFilterEditors,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
@@ -207,12 +205,6 @@ export const forwardProps = <T>(
     autoSizeColumnsKey: 1,
 
     scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 250,
-
-    filterEditors: (filterEditors) =>
-      ({
-        ...defaultFilterEditors,
-        ...filterEditors,
-      } as InfiniteTablePropFilterEditors<T>),
 
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
