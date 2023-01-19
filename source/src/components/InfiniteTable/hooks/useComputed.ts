@@ -30,6 +30,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnSizing,
     editable,
     columnDefaultEditable,
+    columnDefaultFilterable,
     columnTypes,
     brain,
     bodySize,
@@ -130,6 +131,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnPinning,
     editable,
     columnDefaultEditable,
+    columnDefaultFilterable,
     filterValue,
     filterTypes,
 

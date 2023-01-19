@@ -162,6 +162,7 @@ export interface InfiniteTableMappedState<T> {
   domProps: InfiniteTableProps<T>['domProps'];
   editable: InfiniteTableProps<T>['editable'];
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
+  columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];

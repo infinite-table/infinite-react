@@ -198,6 +198,7 @@ export const forwardProps = <T>(
     columnPinning: 1,
     editable: 1,
     columnDefaultEditable: 1,
+    columnDefaultFilterable: 1,
 
     rowStyle: 1,
     rowProps: 1,

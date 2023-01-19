@@ -75,16 +75,18 @@ const data: Developer[] = [
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
+    defaultFilterable: false,
   },
   firstName: {
     field: 'firstName',
   },
   age: {
+    defaultFilterable: true,
     field: 'age',
     type: 'custom-number',
   },
   stack: { field: 'stack' },
-  currency: { field: 'currency' },
+  currency: { field: 'currency', defaultFilterable: false },
 };
 
 export default () => {

@@ -132,6 +132,7 @@ type GetComputedVisibleColumnsParam<T> = {
   columnPinning: InfiniteTablePropColumnPinning;
   editable: InfiniteTablePropsEditable<T>;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
+  columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -200,6 +201,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnPinning,
   editable,
   columnDefaultEditable,
+  columnDefaultFilterable,
   columnSizing,
   columnTypes,
   columnVisibility,
@@ -534,7 +536,10 @@ export const getComputedVisibleColumns = <T extends unknown>({
       : null;
 
     const computedFilterable =
-      c.defaultFilterable ?? colType.defaultFilterable ?? true;
+      c.defaultFilterable ??
+      colType.defaultFilterable ??
+      columnDefaultFilterable ??
+      true;
 
     const computedEditable =
       editable ??

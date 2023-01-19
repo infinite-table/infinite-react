@@ -49,6 +49,7 @@ type UseComputedVisibleColumnsParam<T> = {
 
   editable: InfiniteTablePropsEditable<T>;
   columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
+  columnDefaultFilterable?: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
@@ -103,6 +104,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnPinning,
   editable,
   columnDefaultEditable,
+  columnDefaultFilterable,
   scrollbarWidth,
   columnTypes,
   pinnedEndMaxWidth,
@@ -163,6 +165,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
       columnPinning,
       columnDefaultEditable,
+      columnDefaultFilterable,
       editable,
 
       columnSizing,
@@ -203,6 +206,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
     columnPinning,
     columnDefaultEditable,
+    columnDefaultFilterable,
     editable,
 
     columnsRenderId,

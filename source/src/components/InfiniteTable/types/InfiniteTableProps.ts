@@ -480,6 +480,7 @@ export interface InfiniteTableProps<T> {
     InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
   >;
 
+  columnDefaultFilterable?: boolean;
   columnDefaultEditable?: boolean;
   editable?: InfiniteTablePropsEditable<T>;
 
