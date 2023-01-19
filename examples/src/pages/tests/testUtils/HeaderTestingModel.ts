@@ -67,8 +67,25 @@ export class HeaderTestingModel {
     await headerCell.locator('[data-name="menu-icon"]').click();
   }
 
+  async openFilterOperatorMenu(colLocation: ColLocation) {
+    // click the body to make sure any open column menu gets closed
+    await this.page.click('body');
+
+    await this.hoverOverColumn(colLocation);
+
+    const headerCell = this.getHeaderCellLocator(colLocation);
+
+    await headerCell.locator('[data-name="filter-operator"]').click();
+  }
+
   async clickColumnMenuItem(colLocation: ColLocation, key: string) {
     await this.openColumnMenu(colLocation);
+
+    await this.page.click(`[data-menu-item-key="${key}"]`);
+  }
+
+  async clickFilterOperatorMenuItem(colLocation: ColLocation, key: string) {
+    await this.openFilterOperatorMenu(colLocation);
 
     await this.page.click(`[data-menu-item-key="${key}"]`);
   }

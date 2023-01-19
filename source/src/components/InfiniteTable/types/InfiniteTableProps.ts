@@ -11,6 +11,7 @@ import {
   DataSourcePivotBy,
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
+  DataSourceProps,
   DataSourcePropSelectionMode,
   DataSourceSingleSortInfo,
   DataSourceState,
@@ -169,6 +170,11 @@ export type InfiniteTableColumnApi<_T> = {
   showContextMenu: (target: EventTarget | HTMLElement) => void;
   toggleContextMenu: (target: EventTarget | HTMLElement) => void;
   hideContextMenu: () => void;
+
+  showFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
+  toggleFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
+  hideFilterOperatorMenu: () => void;
+
   toggleSort: () => void;
   clearSort: () => void;
   setSort: (sort: SortDir | null) => void;
@@ -257,6 +263,7 @@ export interface InfiniteTableApi<T> {
   ) => void;
 
   setColumnFilter: (columnId: string, filterValue: any) => void;
+  setColumnFilterOperator: (columnId: string, operator: string) => void;
   clearColumnFilter: (columnId: string) => void;
   setFilterValueForColumn: (
     columnId: string,
@@ -644,12 +651,26 @@ export interface InfiniteTableProps<T> {
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 
   getColumContextMenuItems?: InfiniteTablePropGetColumnContextMenuItems<T>;
+  getFilterOperatorMenuItems?: InfiniteTablePropGetFilterOperatorMenuItems<T>;
 }
 
 export type InfiniteTablePropGetColumnContextMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,
   params: {
     column: InfiniteTableComputedColumn<T>;
+    api: InfiniteTableApi<T>;
+    getState: () => InfiniteTableState<T>;
+    getComputed: () => InfiniteTableComputedValues<T>;
+    actions: InfiniteTableActions<T>;
+  },
+) => MenuProps['items'];
+
+export type InfiniteTablePropGetFilterOperatorMenuItems<T> = (
+  defaultItems: Exclude<MenuProps['items'], undefined>,
+  params: {
+    column: InfiniteTableComputedColumn<T>;
+    filterTypes: DataSourceProps<T>['filterTypes'];
+    columnFilterValue: DataSourceFilterValueItem<T> | null;
     api: InfiniteTableApi<T>;
     getState: () => InfiniteTableState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;

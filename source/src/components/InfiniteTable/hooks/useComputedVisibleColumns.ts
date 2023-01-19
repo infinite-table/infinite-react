@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import type {
   DataSourcePropFilterValue,
+  DataSourceProps,
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
 import type { Size } from '../../types/Size';
@@ -44,6 +45,7 @@ type UseComputedVisibleColumnsParam<T> = {
   setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
 
   filterValue?: DataSourcePropFilterValue<T>;
+  filterTypes?: DataSourceProps<T>['filterTypes'];
 
   editable: InfiniteTablePropsEditable<T>;
   columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
@@ -96,6 +98,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   multiSort,
   setSortInfo,
   filterValue,
+  filterTypes,
   columnOrder,
   columnPinning,
   editable,
@@ -146,6 +149,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
       resizableColumns,
 
       filterValue,
+      filterTypes,
 
       sortable,
       sortInfo,
@@ -184,6 +188,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     multiSort,
 
     filterValue,
+    filterTypes,
 
     columnOrder,
     columnVisibility,

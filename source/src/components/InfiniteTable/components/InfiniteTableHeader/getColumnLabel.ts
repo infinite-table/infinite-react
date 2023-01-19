@@ -47,6 +47,7 @@ export function getColumnLabel<T>(
         columnsMap: computed.computedColumnsMap,
         columnSortInfo: col.computedSortInfo,
         columnFilterValue: col.computedFilterValue,
+        filtered: col.computedFiltered,
         allRowsSelected,
         someRowsSelected,
         selectionMode,

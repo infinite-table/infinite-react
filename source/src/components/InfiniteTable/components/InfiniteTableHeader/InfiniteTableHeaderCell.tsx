@@ -37,6 +37,7 @@ import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentFo
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
+import { FilterIcon } from '../icons/FilterIcon';
 import { MenuIcon, MenuIconProps } from '../icons/MenuIcon';
 import { SortIcon } from '../icons/SortIcon';
 import {
@@ -57,6 +58,7 @@ import {
 import {
   InfiniteTableColumnHeaderFilter,
   InfiniteTableColumnHeaderFilterEmpty,
+  InfiniteTableFilterOperator,
 } from './InfiniteTableColumnHeaderFilter';
 import { useColumnResizeHandle } from './useColumnResizeHandle';
 
@@ -126,6 +128,7 @@ export function getColumnFilterType<T>(
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 const spacer = <div className={flex['1']}></div>;
+
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
 ) {
@@ -196,6 +199,11 @@ export function InfiniteTableHeaderCell<T>(
       />
     ) : null;
 
+  const filterIcon =
+    column.computedFilterable && column.computedFiltered ? (
+      <FilterIcon />
+    ) : null;
+
   const headerCSSEllipsis =
     column.headerCssEllipsis ?? column.cssEllipsis ?? true;
 
@@ -240,6 +248,7 @@ export function InfiniteTableHeaderCell<T>(
     columnsMap,
     columnSortInfo: sortInfo,
     columnFilterValue: column.computedFilterValue,
+    filtered: column.computedFiltered,
     someRowsSelected,
     allRowsSelected,
     selectionMode,
@@ -247,6 +256,7 @@ export function InfiniteTableHeaderCell<T>(
     columnApi,
     renderBag: {
       sortIcon,
+      filterIcon,
       menuIcon,
       selectionCheckBox: null,
       header:
@@ -261,6 +271,18 @@ export function InfiniteTableHeaderCell<T>(
       renderParam.renderBag.sortIcon = (
         <RenderHeaderCellHookComponent
           render={column.renderSortIcon}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
+      );
+    }
+
+    if (column.renderFilterIcon) {
+      renderParam.renderBag.filterIcon = (
+        <RenderHeaderCellHookComponent
+          render={column.renderFilterIcon}
           renderParam={{
             ...renderParam,
             renderBag: { ...renderParam.renderBag },
@@ -349,6 +371,7 @@ export function InfiniteTableHeaderCell<T>(
         {headerContent}
 
         {renderParam.renderBag.sortIcon}
+        {renderParam.renderBag.filterIcon}
         {/* for align center, we push content to middle, except the menu icon
     this spacer pushes from end */}
         {align === 'center' ? spacer : null}
@@ -462,6 +485,8 @@ export function InfiniteTableHeaderCell<T>(
     defaultFilterEditors[filterType] ||
     StringFilterEditor) as () => JSX.Element | null;
 
+  const FilterOperator = column.components?.FilterOperator;
+
   const resizeHandle = useColumnResizeHandle(column);
 
   const zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
@@ -514,6 +539,7 @@ export function InfiniteTableHeaderCell<T>(
               column.computedFilterable ? (
                 <InfiniteTableColumnHeaderFilter
                   filterEditor={FilterEditor}
+                  filterOperator={FilterOperator ?? InfiniteTableFilterOperator}
                   filterTypes={filterTypes}
                   onChange={debouncedOnFilterValueChange}
                   columnFilterType={filterType}

@@ -12,12 +12,13 @@ function getFilterEditors(): Record<any, () => JSX.Element | null> {
 export const defaultFilterEditors = getFilterEditors();
 
 export function StringFilterEditor<T>() {
-  const { ariaLabel, value, setValue, className } =
+  const { ariaLabel, value, setValue, className, disabled } =
     useInfiniteColumnFilterEditor<T>();
   return (
     <input
-      aria-label={`Filter for ${ariaLabel}`}
+      aria-label={ariaLabel}
       type="text"
+      disabled={disabled}
       value={value as any as string}
       onChange={(event) => {
         setValue(event.target.value as any as T);
@@ -28,12 +29,13 @@ export function StringFilterEditor<T>() {
 }
 
 export function NumberFilterEditor<T>() {
-  const { ariaLabel, value, setValue, className } =
+  const { ariaLabel, value, setValue, className, disabled } =
     useInfiniteColumnFilterEditor<T>();
   return (
     <input
-      aria-label={`Filter for ${ariaLabel}`}
+      aria-label={ariaLabel}
       type="number"
+      disabled={disabled}
       value={value as any as number}
       onChange={(event) => {
         let value = event.target.value;

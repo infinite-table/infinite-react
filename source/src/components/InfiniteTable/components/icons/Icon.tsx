@@ -7,8 +7,14 @@ export type TableIconProps = {
 };
 
 export const Icon = (props: TableIconProps) => {
-  const size = props.size ?? `var(--ITableHeaderCell-icon-size)`;
-  const style = { flex: 'none', width: size, height: size, ...props.style };
+  const size = props.size ?? `var(--infinite-icon-size)`;
+  const style = {
+    flex: 'none',
+    width: size,
+    height: size,
+    fill: 'currentColor',
+    ...props.style,
+  };
   return (
     //@ts-ignore
     <svg viewBox="0 0 24 24" {...props} style={style}>

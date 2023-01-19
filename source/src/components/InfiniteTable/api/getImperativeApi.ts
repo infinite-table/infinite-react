@@ -538,6 +538,42 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);
   }
 
+  setColumnFilterOperator(columnId: string, newOperator: string) {
+    const col = this.getComputed().computedColumnsMap.get(columnId);
+
+    if (!col) {
+      return;
+    }
+
+    const dataSourceState = this.getDataSourceState();
+    const { filterTypes } = dataSourceState;
+
+    const filterType = col.computedFilterType;
+    const operator =
+      filterTypes[filterType].operators.find((op) => op.name === newOperator)
+        ?.name ?? filterTypes[filterType].defaultOperator;
+
+    let newFilterValueForColumn: DataSourceFilterValueItem<T>;
+    if (col.computedFilterValue) {
+      newFilterValueForColumn = {
+        ...col.computedFilterValue,
+        operator,
+      };
+    } else {
+      debugger;
+      newFilterValueForColumn = {
+        operator,
+        filterType: filterType,
+        [col.field ? 'field' : 'id']: col.field ?? col.id,
+
+        valueGetter: col.valueGetter,
+        filterValue: [...filterTypes[filterType].emptyValues.values()][0],
+      } as DataSourceFilterValueItem<T>;
+    }
+
+    this.setFilterValueForColumn(columnId, newFilterValueForColumn);
+  }
+
   setFilterValueForColumn(
     columnId: string,
     filterValue: DataSourceFilterValueItem<T>,
@@ -548,18 +584,22 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       return;
     }
     const state = this.getDataSourceState();
-    const { filterTypes } = state;
+
     let newFilterValue = state.filterValue ?? [];
 
     let found = false;
     newFilterValue = newFilterValue.map((currentFilterValue) => {
-      if (
-        (filterValue.id && currentFilterValue.id === filterValue.id) ||
-        (filterValue.field && currentFilterValue.field === column.field)
-      ) {
+      if (currentFilterValue === column.computedFilterValue) {
         found = true;
         return filterValue;
       }
+      // if (
+      //   (filterValue.id && currentFilterValue.id === filterValue.id) ||
+      //   (filterValue.field && currentFilterValue.field === column.field)
+      // ) {
+      //   found = true;
+      //   return filterValue;
+      // }
 
       return currentFilterValue;
     });
@@ -568,14 +608,17 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       newFilterValue.push(filterValue);
     }
 
-    // we now filter away the empty filter values
-    newFilterValue = newFilterValue.filter((filterValue) => {
-      const filterType = filterTypes[filterValue.filterType];
-      if (!filterType || filterType.emptyValues.has(filterValue.filterValue)) {
-        return false;
-      }
-      return true;
-    });
+    // we used to filter away the empty filter values
+    // but we should not, as changing an operator should be reflected in the filter
+    // even if the value is empty - for UI consistency
+
+    // newFilterValue = newFilterValue.filter((filterValue) => {
+    //   const filterType = filterTypes[filterValue.filterType];
+    //   if (!filterType || filterType.emptyValues.has(filterValue.filterValue)) {
+    //     return false;
+    //   }
+    //   return true;
+    // });
 
     this.dataSourceActions.filterValue = newFilterValue;
   }

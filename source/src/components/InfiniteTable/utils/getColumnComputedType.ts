@@ -4,9 +4,12 @@ import type {
   InfiniteTablePropColumnTypes,
 } from '../types/InfiniteTableProps';
 
-const emptyType: InfiniteTableColumnType<any> = Object.freeze({
-  filterType: 'string',
-});
+const emptyType: InfiniteTableColumnType<any> = Object.freeze({});
+
+const defaultFilterTypes: Record<string, InfiniteTableColumnType<any>> = {
+  string: emptyType,
+  number: {},
+};
 
 export function getColumnComputedType<T>(
   column: InfiniteTableColumn<T>,
@@ -22,7 +25,8 @@ export function getColumnComputedType<T>(
     return emptyType;
   }
   if (typeof column.type === 'string') {
-    const type = columnTypes[column.type] || emptyType;
+    const type =
+      columnTypes[column.type] || defaultFilterTypes[column.type] || emptyType;
 
     return type;
   }

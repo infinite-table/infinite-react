@@ -99,6 +99,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
     columnContextMenuVisibleForColumnId: null,
+    filterOperatorMenuVisibleForColumnId: null,
 
     getDOMNodeForCell: (cellPosition: CellPosition) => {
       if (!domRef.current) {
@@ -121,6 +122,11 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     activeCellIndicatorDOMRef: createRef(),
 
     onColumnMenuClick: buildSubscriptionCallback<{
+      target: HTMLElement | EventTarget;
+      column: InfiniteTableComputedColumn<T>;
+    }>(),
+
+    onFilterOperatorMenuClick: buildSubscriptionCallback<{
       target: HTMLElement | EventTarget;
       column: InfiniteTableComputedColumn<T>;
     }>(),
@@ -200,6 +206,7 @@ export const forwardProps = <T>(
     pinnedEndMaxWidth: 1,
     pivotColumn: 1,
     pivotColumnGroups: 1,
+    getFilterOperatorMenuItems: 1,
 
     onScrollbarsChange: 1,
     autoSizeColumnsKey: 1,
@@ -314,6 +321,7 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.onRowHeightCSSVarChange.destroy();
   state.onColumnHeaderHeightCSSVarChange.destroy();
   state.onColumnMenuClick.destroy();
+  state.onFilterOperatorMenuClick.destroy();
 
   state.domRef.current = null;
   state.scrollerDOMRef.current = null;

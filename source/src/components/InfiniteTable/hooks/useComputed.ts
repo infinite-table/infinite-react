@@ -56,7 +56,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       showSeparatePivotColumnForSingleAggregation;
   }, [showSeparatePivotColumnForSingleAggregation]);
 
-  const { multiSort, filterValue } = dataSourceState;
+  const { multiSort, filterValue, filterTypes } = dataSourceState;
 
   useColumnGroups<T>();
 
@@ -131,6 +131,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     editable,
     columnDefaultEditable,
     filterValue,
+    filterTypes,
 
     columnSizing,
     columnTypes,

@@ -32,6 +32,22 @@ export function getColumnApiForColumn<T>(
       }
     },
 
+    toggleFilterOperatorMenu(target: EventTarget | HTMLElement) {
+      if (getState().filterOperatorMenuVisibleForColumnId === column.id) {
+        this.hideFilterOperatorMenu();
+      } else {
+        this.showFilterOperatorMenu(target);
+      }
+    },
+
+    showFilterOperatorMenu(target: EventTarget | HTMLElement) {
+      getState().onFilterOperatorMenuClick({ target, column });
+    },
+
+    hideFilterOperatorMenu() {
+      actions.filterOperatorMenuVisibleForColumnId = null;
+    },
+
     showContextMenu(target: EventTarget | HTMLElement) {
       getState().onColumnMenuClick({ target, column });
     },

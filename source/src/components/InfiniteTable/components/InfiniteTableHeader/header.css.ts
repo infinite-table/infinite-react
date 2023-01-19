@@ -12,6 +12,7 @@ import {
   justifyContent,
   overflow,
   position,
+  top,
   visibility,
   width,
 } from '../../utilities.css';
@@ -25,6 +26,7 @@ import {
 export { CellCls, CellClsVariants };
 
 export const HeaderSortIconCls = style([position.relative], 'SortIconCls');
+export const HeaderFilterIconCls = style([position.relative], 'FilterIconCls');
 
 export const HeaderSortIconRecipe = recipe({
   variants: {
@@ -43,6 +45,17 @@ export const HeaderSortIconRecipe = recipe({
 });
 
 export const HeaderSortIconIndexCls = style({
+  lineHeight: 0,
+  fontSize: 10,
+  borderRadius: '50%',
+  padding: 1,
+  position: 'absolute',
+  transition: 'top 0.2s',
+  top: 0,
+  right: 2,
+});
+
+export const HeaderFilterIconIndexCls = style({
   lineHeight: 0,
   fontSize: 10,
   borderRadius: '50%',
@@ -376,5 +389,37 @@ export const HeaderFilterCls = style([
     borderTop: ThemeVars.components.Cell.border,
   },
 ]);
+
+export const HeaderFilterOperatorCls = style([
+  display.flex,
+  flexFlow.row,
+  alignItems.center,
+  position.relative,
+  {
+    paddingInline: ThemeVars.components.HeaderCell.filterOperatorPaddingX,
+    paddingBlock: ThemeVars.components.HeaderCell.filterOperatorPaddingY,
+
+    // borderTop: ThemeVars.components.Cell.border,
+  },
+]);
+
+export const HeaderFilterOperatorIconRecipe = recipe({
+  base: [position.relative, top[0], {}],
+  variants: {
+    disabled: {
+      true: {
+        opacity: ThemeVars.components.Menu.itemDisabledOpacity,
+        cursor: 'auto',
+      },
+      false: {
+        selectors: {
+          '&:active': {
+            top: '1px',
+          },
+        },
+      },
+    },
+  },
+});
 
 export const HeaderFilterEditorCls = style([width['100%'], height['100%']]);

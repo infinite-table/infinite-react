@@ -8,6 +8,7 @@ import { rootClassName } from '../../internalProps';
 
 export type InfiniteTableColumnHeaderFilterProps<T> = {
   filterEditor: () => JSX.Element | null;
+  filterOperator: () => JSX.Element | null;
   filterTypes: DataSourcePropFilterTypes<T>;
   columnFilterValue: DataSourceFilterValueItem<T> | null;
   columnLabel: Renderable;
@@ -17,6 +18,7 @@ export type InfiniteTableColumnHeaderFilterProps<T> = {
 };
 
 export const InfiniteTableColumnHeaderFilterClassName = `${rootClassName}HeaderCell__filter`;
+export const InfiniteTableColumnHeaderFilterOperatorClassName = `${rootClassName}HeaderCell__filterOperator`;
 
 export const InfiniteTableColumnHeaderFilterContext = React.createContext<
   InfiniteTableColumnHeaderFilterProps<any>

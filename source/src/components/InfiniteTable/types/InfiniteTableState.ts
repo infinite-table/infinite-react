@@ -49,7 +49,12 @@ export interface InfiniteTableSetupState<T> {
     target: HTMLElement | EventTarget;
     column: InfiniteTableComputedColumn<T>;
   }>;
+  onFilterOperatorMenuClick: SubscriptionCallback<{
+    target: HTMLElement | EventTarget;
+    column: InfiniteTableComputedColumn<T>;
+  }>;
   columnContextMenuVisibleForColumnId: string | null;
+  filterOperatorMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
   cellMouseDown: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
@@ -115,6 +120,7 @@ export interface InfiniteTableMappedState<T> {
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
   getColumContextMenuItems: InfiniteTableProps<T>['getColumContextMenuItems'];
+  getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
 
   columnPinning: InfiniteTablePropColumnPinning;
 

@@ -2,13 +2,20 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { SettingsIcon } from '../icons/SettingsIcon';
 
 import { getColumnLabel } from './getColumnLabel';
 
-import { HeaderFilterCls, HeaderFilterEditorCls } from './header.css';
+import {
+  HeaderFilterCls,
+  HeaderFilterEditorCls,
+  HeaderFilterOperatorCls,
+  HeaderFilterOperatorIconRecipe,
+} from './header.css';
 import {
   InfiniteTableColumnHeaderFilterClassName,
   InfiniteTableColumnHeaderFilterContext,
+  InfiniteTableColumnHeaderFilterOperatorClassName,
   InfiniteTableColumnHeaderFilterProps,
 } from './InfiniteTableColumnHeaderFilterContext';
 import { useInfiniteHeaderCell } from './InfiniteTableHeaderCell';
@@ -19,6 +26,7 @@ export function InfiniteTableColumnHeaderFilter<T>(
   props: InfiniteTableColumnHeaderFilterProps<T>,
 ) {
   const FilterEditor = props.filterEditor;
+  const FilterOperator = props.filterOperator;
 
   return (
     <div
@@ -28,8 +36,37 @@ export function InfiniteTableColumnHeaderFilter<T>(
       style={{ height: props.columnHeaderHeight }}
     >
       <InfiniteTableColumnHeaderFilterContext.Provider value={props}>
-        {FilterEditor ? <FilterEditor /> : null}
+        <FilterEditor />
+        <FilterOperator />
       </InfiniteTableColumnHeaderFilterContext.Provider>
+    </div>
+  );
+}
+
+export function InfiniteTableFilterOperator() {
+  const { columnApi, disabled } = useInfiniteColumnFilterEditor();
+  return (
+    <div
+      data-name="filter-operator"
+      data-disabled={disabled}
+      onMouseDown={(event) => {
+        event.stopPropagation();
+        if (disabled) {
+          return;
+        }
+        columnApi.toggleFilterOperatorMenu(event.target);
+      }}
+      className={`${InfiniteTableColumnHeaderFilterOperatorClassName} ${HeaderFilterOperatorCls} ${
+        disabled
+          ? `${InfiniteTableColumnHeaderFilterOperatorClassName}--disabled`
+          : ''
+      }`}
+    >
+      <SettingsIcon
+        className={`${HeaderFilterOperatorIconRecipe({
+          disabled,
+        })}`}
+      />
     </div>
   );
 }
@@ -105,6 +142,7 @@ export function useInfiniteColumnFilterEditor<T>() {
     columnApi,
     operator,
     value: theValue,
+    disabled: filterContextValue.columnFilterValue?.disabled,
     filterType,
     setValue: onInputChange,
     ariaLabel: `Filter for ${columnLabel}`,

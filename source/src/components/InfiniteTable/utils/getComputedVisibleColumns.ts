@@ -1,4 +1,6 @@
 import { err } from '../../../utils/debug';
+import { DataSourceProps } from '../../DataSource';
+import { defaultFilterTypes } from '../../DataSource/defaultFilterTypes';
 import type {
   DataSourceFilterValueItem,
   DataSourcePropFilterValue,
@@ -118,6 +120,7 @@ type GetComputedVisibleColumnsParam<T> = {
   scrollbarWidth: number | undefined;
 
   filterValue?: DataSourcePropFilterValue<T>;
+  filterTypes?: DataSourceProps<T>['filterTypes'];
 
   sortable?: boolean;
   multiSort: boolean;
@@ -187,6 +190,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   sortInfo,
   setSortInfo,
   multiSort,
+  filterTypes = defaultFilterTypes,
 
   viewportReservedWidth,
   resizableColumns,
@@ -428,6 +432,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedVisible = theComputedVisibleIndex != -1;
 
     const nextColumnId = visibleColumnOrder[theComputedVisibleIndex + 1];
+
     const colType = getColumnComputedType(c, columnTypes);
 
     const computedVisibleIndex = theComputedVisibleIndex;
@@ -528,7 +533,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
         : null
       : null;
 
-    const computedFiltered = computedFilterValue != null;
     const computedFilterable =
       c.defaultFilterable ?? colType.defaultFilterable ?? true;
 
@@ -544,9 +548,23 @@ export const getComputedVisibleColumns = <T extends unknown>({
       colType.dataType ||
       (Array.isArray(c.type) ? c.type[0] : c.type) ||
       'string';
+
     const computedSortType = c.sortType || colType.sortType || computedDataType;
     const computedFilterType =
       c.filterType || colType.filterType || computedDataType;
+
+    let computedFiltered = false;
+
+    if (computedFilterValue != null && !computedFilterValue.disabled) {
+      const foundFilterType = filterTypes[computedFilterType];
+
+      if (
+        foundFilterType &&
+        !foundFilterType.emptyValues.has(computedFilterValue.filterValue)
+      ) {
+        computedFiltered = true;
+      }
+    }
 
     const field = c.field ?? colType.field;
     const valueGetter = c.valueGetter ?? colType.valueGetter;

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useOverlay } from '../../hooks/useOverlay';
-import { getContextMenuForColumn } from '../utils/getContextMenuForColumn';
+import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
+
 import { useInfiniteTable } from './useInfiniteTable';
 
-export function useColumnMenu<T>() {
+export function useColumnFilterOperatorMenu<T>() {
   const context = useInfiniteTable<T>();
   const { getState, actions } = context;
   const {
@@ -17,7 +18,7 @@ export function useColumnMenu<T>() {
   useState(() => {
     const { actions: actions, state } = context;
     const { domRef } = state;
-    state.onColumnMenuClick.onChange((info) => {
+    state.onFilterOperatorMenuClick.onChange((info) => {
       if (!info) {
         return;
       }
@@ -25,14 +26,14 @@ export function useColumnMenu<T>() {
 
       function onHideIntent() {
         clearAll();
-        actions.columnContextMenuVisibleForColumnId = null;
+        actions.filterOperatorMenuVisibleForColumnId = null;
       }
 
       showOverlay(
-        () => getContextMenuForColumn(column.id, context, onHideIntent),
+        () => getFilterOperatorMenuForColumn(column.id, context, onHideIntent),
         {
           constrainTo: domRef.current!,
-          id: 'column-menu',
+          id: 'filter-operator-menu',
           alignTo: target as HTMLElement,
           alignPosition: [
             ['TopLeft', 'BottomLeft'],
@@ -41,20 +42,20 @@ export function useColumnMenu<T>() {
         },
       );
 
-      actions.filterOperatorMenuVisibleForColumnId = null;
-      actions.columnContextMenuVisibleForColumnId = column.id;
+      actions.columnContextMenuVisibleForColumnId = null;
+      actions.filterOperatorMenuVisibleForColumnId = column.id;
     });
   });
 
   useEffect(() => {
-    const { columnContextMenuVisibleForColumnId } = getState();
+    const { filterOperatorMenuVisibleForColumnId } = getState();
 
-    if (columnContextMenuVisibleForColumnId) {
+    if (filterOperatorMenuVisibleForColumnId) {
       function handleMouseDown(event: MouseEvent) {
         // @ts-ignore
         if (event.__insideMenu !== true) {
           clearAll();
-          actions.columnContextMenuVisibleForColumnId = null;
+          actions.filterOperatorMenuVisibleForColumnId = null;
         }
       }
       document.documentElement.addEventListener('mousedown', handleMouseDown);
@@ -69,7 +70,7 @@ export function useColumnMenu<T>() {
     }
 
     return () => {};
-  }, [getState().columnContextMenuVisibleForColumnId]);
+  }, [getState().filterOperatorMenuVisibleForColumnId]);
 
   return { menuPortal };
 }
