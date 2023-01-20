@@ -565,7 +565,8 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
       if (
         foundFilterType &&
-        !foundFilterType.emptyValues.has(computedFilterValue.filterValue)
+        (!foundFilterType.emptyValues ||
+          !foundFilterType.emptyValues.has(computedFilterValue.filterValue))
       ) {
         computedFiltered = true;
       }

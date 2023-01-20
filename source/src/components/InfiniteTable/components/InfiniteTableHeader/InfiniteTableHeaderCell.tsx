@@ -58,7 +58,7 @@ import {
 import {
   InfiniteTableColumnHeaderFilter,
   InfiniteTableColumnHeaderFilterEmpty,
-  InfiniteTableFilterOperator,
+  InfiniteTableFilterOperatorSwitch,
 } from './InfiniteTableColumnHeaderFilter';
 import { useColumnResizeHandle } from './useColumnResizeHandle';
 
@@ -199,10 +199,8 @@ export function InfiniteTableHeaderCell<T>(
       />
     ) : null;
 
-  const filterIcon =
-    column.computedFilterable && column.computedFiltered ? (
-      <FilterIcon />
-    ) : null;
+  const filtered = column.computedFilterable && column.computedFiltered;
+  const filterIcon = filtered ? <FilterIcon /> : null;
 
   const headerCSSEllipsis =
     column.headerCssEllipsis ?? column.cssEllipsis ?? true;
@@ -481,11 +479,22 @@ export function InfiniteTableHeaderCell<T>(
 
   const filterType = column.computedFilterType;
 
-  const FilterEditor = (column.components?.FilterEditor ||
+  const filterTypeOptions = filterTypes[filterType];
+  const currentOperator = filtered
+    ? column.computedFilterValue?.operator
+    : null;
+  const operator =
+    filtered && filterTypeOptions
+      ? filterTypeOptions.operators.find((op) => op.name === currentOperator)
+      : undefined;
+
+  const FilterEditor = (operator?.components?.FilterEditor ||
+    filterTypeOptions?.components?.FilterEditor ||
+    column.components?.FilterEditor ||
     defaultFilterEditors[filterType] ||
     StringFilterEditor) as () => JSX.Element | null;
 
-  const FilterOperator = column.components?.FilterOperator;
+  const FilterOperatorSwitch = column.components?.FilterOperatorSwitch;
 
   const resizeHandle = useColumnResizeHandle(column);
 
@@ -539,7 +548,10 @@ export function InfiniteTableHeaderCell<T>(
               column.computedFilterable ? (
                 <InfiniteTableColumnHeaderFilter
                   filterEditor={FilterEditor}
-                  filterOperator={FilterOperator ?? InfiniteTableFilterOperator}
+                  filterOperatorSwitch={
+                    FilterOperatorSwitch ?? InfiniteTableFilterOperatorSwitch
+                  }
+                  operator={operator}
                   filterTypes={filterTypes}
                   onChange={debouncedOnFilterValueChange}
                   columnFilterType={filterType}

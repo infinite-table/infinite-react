@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   InfiniteTable,
   InfiniteTablePropColumns,
+  useInfiniteColumnFilterEditor,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
@@ -16,7 +17,7 @@ type Developer = {
   stack: string;
   canDesign: 'yes' | 'no';
 
-  age: number;
+  salary: number;
 };
 
 const data: Developer[] = [
@@ -24,7 +25,7 @@ const data: Developer[] = [
     id: 1,
     firstName: 'John',
     lastName: 'Bob',
-    age: 20,
+    salary: 2000,
     canDesign: 'yes',
     currency: 'USD',
     preferredLanguage: 'JavaScript',
@@ -34,7 +35,7 @@ const data: Developer[] = [
     id: 2,
     firstName: 'Marry',
     lastName: 'Bob',
-    age: 35,
+    salary: 3500,
     canDesign: 'yes',
     currency: 'USD',
     preferredLanguage: 'JavaScript',
@@ -44,7 +45,7 @@ const data: Developer[] = [
     id: 3,
     firstName: 'Bill',
     lastName: 'Bobson',
-    age: 30,
+    salary: 3000,
     canDesign: 'no',
     currency: 'CAD',
     preferredLanguage: 'TypeScript',
@@ -54,7 +55,7 @@ const data: Developer[] = [
     id: 4,
     firstName: 'Mark',
     lastName: 'Twain',
-    age: 31,
+    salary: 1000,
     canDesign: 'yes',
     currency: 'CAD',
     preferredLanguage: 'Rust',
@@ -64,7 +65,7 @@ const data: Developer[] = [
     id: 5,
     firstName: 'Matthew',
     lastName: 'Hilson',
-    age: 29,
+    salary: 12900,
     canDesign: 'yes',
     currency: 'CAD',
     preferredLanguage: 'Go',
@@ -79,10 +80,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
   firstName: {
     field: 'firstName',
   },
-  age: {
+  salary: {
     defaultFilterable: true,
-    field: 'age',
-    type: 'custom-number',
+    field: 'salary',
+    type: 'number',
+    filterType: 'salary',
   },
   stack: { field: 'stack' },
   currency: { field: 'currency', defaultFilterable: false },
@@ -95,22 +97,30 @@ export default () => {
         <DataSource<Developer>
           data={data}
           primaryKey="id"
-          defaultFilterValue={[
-            {
-              field: 'age',
-              operator: 'gtx',
-              filterValue: 30,
-              filterType: 'custom-number',
-            },
-          ]}
+          defaultFilterValue={[]}
           filterDelay={0}
           filterTypes={{
-            'custom-number': {
-              defaultOperator: 'gtx',
-              emptyValues: new Set(['', null, undefined]),
+            salary: {
+              defaultOperator: '',
+              emptyValues: new Set([]),
+              components: {
+                FilterEditor: () => {
+                  const { operator, filtered } =
+                    useInfiniteColumnFilterEditor();
+                  return (
+                    <div data-operator="default-filter-type-editor">
+                      {filtered ? (
+                        <>Operator {operator?.name}</>
+                      ) : (
+                        'Not applied'
+                      )}
+                    </div>
+                  );
+                },
+              },
               operators: [
                 {
-                  name: 'gtx',
+                  name: 'low',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
                     if (
                       emptyValues.has(currentValue) ||
@@ -118,19 +128,28 @@ export default () => {
                     ) {
                       return true;
                     }
-                    return currentValue > filterValue;
+                    return currentValue <= 1000;
                   },
                 },
                 {
-                  name: 'ltx',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
-                    return currentValue < filterValue;
+                  name: 'medium',
+                  fn: ({ currentValue }) => {
+                    return currentValue > 1000 && currentValue < 10000;
+                  },
+
+                  components: {
+                    FilterEditor: () => (
+                      <div data-operator="medium">Medium</div>
+                    ),
+                  },
+                },
+                {
+                  name: 'high',
+                  fn: ({ currentValue }) => {
+                    return currentValue >= 10000;
+                  },
+                  components: {
+                    FilterEditor: () => <div data-operator="high">High</div>,
                   },
                 },
               ],

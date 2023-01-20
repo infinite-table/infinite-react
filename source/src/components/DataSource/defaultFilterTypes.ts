@@ -18,7 +18,7 @@ function getFilterTypes<T>() {
       operators: [
         {
           name: 'contains',
-          icon: ContainsOperatorIcon,
+          components: { Icon: ContainsOperatorIcon },
           label: 'Contains',
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
@@ -33,7 +33,7 @@ function getFilterTypes<T>() {
         },
         {
           label: 'Equals',
-          icon: EqualOperatorIcon,
+          components: { Icon: EqualOperatorIcon },
           name: 'eq',
           fn: ({ currentValue: value, filterValue, emptyValues }) => {
             if (emptyValues.has(value) || emptyValues.has(filterValue)) {
@@ -44,7 +44,7 @@ function getFilterTypes<T>() {
         },
         {
           name: 'startsWith',
-          icon: StartsWithOperatorIcon,
+          components: { Icon: StartsWithOperatorIcon },
           label: 'Starts With',
           fn: ({ currentValue: value, filterValue, emptyValues }) => {
             if (emptyValues.has(value) || emptyValues.has(filterValue)) {
@@ -55,7 +55,7 @@ function getFilterTypes<T>() {
         },
         {
           name: 'endsWith',
-          icon: EndsWithOperatorIcon,
+          components: { Icon: EndsWithOperatorIcon },
           label: 'Ends With',
           fn: ({ currentValue: value, filterValue, emptyValues }) => {
             if (emptyValues.has(value) || emptyValues.has(filterValue)) {
@@ -73,7 +73,7 @@ function getFilterTypes<T>() {
       operators: [
         {
           label: 'Equals',
-          icon: EqualOperatorIcon,
+          components: { Icon: EqualOperatorIcon },
           name: 'eq',
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
@@ -84,7 +84,7 @@ function getFilterTypes<T>() {
         },
         {
           label: 'Not Equals',
-          icon: NotEqualOperatorIcon,
+          components: { Icon: NotEqualOperatorIcon },
           name: 'neq',
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
@@ -96,7 +96,7 @@ function getFilterTypes<T>() {
         {
           name: 'gt',
           label: 'Greater Than',
-          icon: GTOperatorIcon,
+          components: { Icon: GTOperatorIcon },
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
               return true;
@@ -106,7 +106,7 @@ function getFilterTypes<T>() {
         },
         {
           name: 'gte',
-          icon: GTEOperatorIcon,
+          components: { Icon: GTEOperatorIcon },
           label: 'Greater Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
@@ -117,7 +117,7 @@ function getFilterTypes<T>() {
         },
         {
           name: 'lt',
-          icon: LTOperatorIcon,
+          components: { Icon: LTOperatorIcon },
           label: 'Less Than',
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
@@ -128,7 +128,7 @@ function getFilterTypes<T>() {
         },
         {
           name: 'lte',
-          icon: LTEOperatorIcon,
+          components: { Icon: LTEOperatorIcon },
           label: 'Less Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {

@@ -331,12 +331,12 @@ export function useOverlay(params: OverlayParams) {
     return contentForPortal;
   }, []);
 
+  const [_, updateContent] = useRerender();
+
   const portal = useOverlayPortal(
     getContentForPortal(),
     params.portalContainer,
   );
-
-  const [_, updateContent] = useRerender();
 
   const showOverlay = useCallback(
     (content: ReactNode | (() => ReactNode), params: OverlayShowParams) => {

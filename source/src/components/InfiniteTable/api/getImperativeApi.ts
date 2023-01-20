@@ -517,6 +517,11 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       };
     } else {
       const filterType = col.computedFilterType;
+
+      if (!filterTypes[filterType]) {
+        return;
+      }
+
       const filterValueForColumn: Partial<DataSourceFilterValueItem<T>> = {
         filterType,
         operator: filterTypes[filterType].defaultOperator,
@@ -560,7 +565,6 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         operator,
       };
     } else {
-      debugger;
       newFilterValueForColumn = {
         operator,
         filterType: filterType,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useOverlay } from '../../hooks/useOverlay';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
 
@@ -15,10 +15,11 @@ export function useColumnFilterOperatorMenu<T>() {
     portalContainer: false,
   });
 
-  useState(() => {
-    const { actions: actions, state } = context;
-    const { domRef } = state;
-    state.onFilterOperatorMenuClick.onChange((info) => {
+  useEffect(() => {
+    const { actions: actions, getState } = context;
+    const state = getState();
+
+    return state.onFilterOperatorMenuClick.onChange((info) => {
       if (!info) {
         return;
       }
@@ -32,7 +33,7 @@ export function useColumnFilterOperatorMenu<T>() {
       showOverlay(
         () => getFilterOperatorMenuForColumn(column.id, context, onHideIntent),
         {
-          constrainTo: domRef.current!,
+          constrainTo: getState().domRef.current!,
           id: 'filter-operator-menu',
           alignTo: target as HTMLElement,
           alignPosition: [
@@ -45,7 +46,7 @@ export function useColumnFilterOperatorMenu<T>() {
       actions.columnContextMenuVisibleForColumnId = null;
       actions.filterOperatorMenuVisibleForColumnId = column.id;
     });
-  });
+  }, []);
 
   useEffect(() => {
     const { filterOperatorMenuVisibleForColumnId } = getState();

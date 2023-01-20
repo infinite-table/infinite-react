@@ -449,7 +449,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
 
     Editor?: () => JSX.Element | null;
     FilterEditor?: () => JSX.Element | null;
-    FilterOperator?: () => JSX.Element | null;
+    FilterOperatorSwitch?: () => JSX.Element | null;
 
     MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
   };

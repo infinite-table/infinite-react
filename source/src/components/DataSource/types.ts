@@ -520,20 +520,30 @@ export type DataSourceFilterValueItem<T> = DiscriminatedUnion<
 };
 
 export type DataSourceFilterValueItemValueGetter<T> = (
-  param: DataSourceFilterFunctionParam<T>,
+  param: DataSourceFilterFunctionParam<T> & { field?: keyof T },
 ) => any;
 
 export type DataSourceFilterType<T> = {
   emptyValues: Set<any>;
   label?: string;
   defaultOperator: string;
+  valueGetter?: DataSourceFilterValueItemValueGetter<T>;
+  components?: {
+    FilterEditor?: () => JSX.Element | null;
+    FilterOperatorSwitch?: () => JSX.Element | null;
+  };
   operators: DataSourceFilterOperator<T>[];
 };
 
 export type DataSourceFilterOperator<T> = {
   name: string;
   label?: string;
-  icon?: (props: any) => JSX.Element | null;
+
+  components?: {
+    FilterEditor?: () => JSX.Element | null;
+    Icon?: (props: any) => JSX.Element | null;
+  };
+
   fn: DataSourceFilterOperatorFunction<T>;
 };
 
@@ -545,6 +555,7 @@ export type DataSourceFilterOperatorFunctionParam<T> = {
   currentValue: any;
   filterValue: any;
   emptyValues: Set<any>;
+  field?: keyof T;
 } & DataSourceFilterFunctionParam<T>;
 
 export type DataSourcePropLivePaginationCursor<T> =

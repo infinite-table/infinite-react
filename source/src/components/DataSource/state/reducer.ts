@@ -1,4 +1,4 @@
-import { DataSourceSetupState } from '..';
+import { DataSourceFilterValueItem, DataSourceSetupState } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import {
   InfiniteTableRowInfo,
@@ -95,6 +95,7 @@ function filterDataSource<T>(params: {
         index,
         dataArray: arr,
         primaryKey: toPrimaryKey(data, index),
+        field: undefined as keyof T | undefined,
       };
 
       for (let i = 0, len = filterValueArray.length; i < len; i++) {
@@ -105,7 +106,7 @@ function filterDataSource<T>(params: {
           filterValue,
           field,
           filterType: filterTypeKey,
-          valueGetter,
+          valueGetter: filterValueGetter,
           operator,
         } = currentFilterValue;
         const filterType = filterTypes[filterTypeKey];
@@ -118,14 +119,19 @@ function filterDataSource<T>(params: {
           continue;
         }
 
+        const valueGetter: DataSourceFilterValueItem<T>['valueGetter'] =
+          filterValueGetter || filterType.valueGetter;
         const getter =
-          valueGetter || (({ data }) => (field ? data[field] : data));
+          valueGetter || (({ data, field }) => (field ? data[field] : data));
 
-        const operatorFnParam = {
-          ...param,
-        } as DataSourceFilterOperatorFunctionParam<T>;
+        // this assignment is important
+        param.field = field;
+
+        const operatorFnParam =
+          param as DataSourceFilterOperatorFunctionParam<T>;
+
         operatorFnParam.filterValue = filterValue;
-        operatorFnParam.currentValue = getter(param);
+        operatorFnParam.currentValue = getter(operatorFnParam);
         operatorFnParam.emptyValues = filterType.emptyValues;
 
         if (!currentOperator.fn(operatorFnParam)) {

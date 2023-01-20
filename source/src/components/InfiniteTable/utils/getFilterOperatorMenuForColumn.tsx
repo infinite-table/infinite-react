@@ -3,8 +3,10 @@ import { useCallback } from 'react';
 
 import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
+import { ClearIcon } from '../components/icons/ClearIcon';
 
 import { DoneIcon } from '../components/icons/DoneIcon';
+import { FilterIcon } from '../components/icons/FilterIcon';
 
 import { InfiniteTableContextValue } from '../types';
 
@@ -62,13 +64,16 @@ export function getFilterOperatorMenuForColumn<T>(
       ? column.computedFilterValue.operator === key
       : key === columnFilterType.defaultOperator;
 
+    const IconCmp = operator.components?.Icon ?? FilterIcon;
+
     return {
       key,
-      label: operator.label ?? operator.name,
+      icon: <IconCmp />,
+      label: <>{operator.label ?? operator.name}</>,
       onAction: () => {
         api.setColumnFilterOperator(columnId, key);
       },
-      icon: checked ? <DoneIcon size={16} /> : null,
+      checked: checked ? <DoneIcon size={16} /> : null,
     };
   });
 
@@ -76,6 +81,7 @@ export function getFilterOperatorMenuForColumn<T>(
     {
       key: 'clear',
       label: 'Clear',
+      icon: <ClearIcon />,
       disabled: !column.computedFiltered,
       onAction: () => {
         api.clearColumnFilter(columnId);
@@ -108,9 +114,10 @@ export function getFilterOperatorMenuForColumn<T>(
       autoFocus
       columns={[
         {
-          name: 'label',
+          name: 'icon',
         },
-        { name: 'icon' },
+        { name: 'label' },
+        { name: 'checked' },
       ]}
       items={items}
       onShow={(state) => {

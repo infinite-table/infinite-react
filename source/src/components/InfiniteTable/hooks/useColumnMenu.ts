@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useOverlay } from '../../hooks/useOverlay';
 import { getContextMenuForColumn } from '../utils/getContextMenuForColumn';
 import { useInfiniteTable } from './useInfiniteTable';
@@ -14,10 +14,11 @@ export function useColumnMenu<T>() {
     portalContainer: false,
   });
 
-  useState(() => {
-    const { actions: actions, state } = context;
-    const { domRef } = state;
-    state.onColumnMenuClick.onChange((info) => {
+  useEffect(() => {
+    const { actions: actions, getState } = context;
+    const state = getState();
+
+    return state.onColumnMenuClick.onChange((info) => {
       if (!info) {
         return;
       }
@@ -31,7 +32,7 @@ export function useColumnMenu<T>() {
       showOverlay(
         () => getContextMenuForColumn(column.id, context, onHideIntent),
         {
-          constrainTo: domRef.current!,
+          constrainTo: getState().domRef.current!,
           id: 'column-menu',
           alignTo: target as HTMLElement,
           alignPosition: [
@@ -44,7 +45,7 @@ export function useColumnMenu<T>() {
       actions.filterOperatorMenuVisibleForColumnId = null;
       actions.columnContextMenuVisibleForColumnId = column.id;
     });
-  });
+  }, []);
 
   useEffect(() => {
     const { columnContextMenuVisibleForColumnId } = getState();

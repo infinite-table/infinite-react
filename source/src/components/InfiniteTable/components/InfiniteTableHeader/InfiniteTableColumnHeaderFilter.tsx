@@ -26,7 +26,7 @@ export function InfiniteTableColumnHeaderFilter<T>(
   props: InfiniteTableColumnHeaderFilterProps<T>,
 ) {
   const FilterEditor = props.filterEditor;
-  const FilterOperator = props.filterOperator;
+  const FilterOperatorSwitch = props.filterOperatorSwitch;
 
   return (
     <div
@@ -36,18 +36,21 @@ export function InfiniteTableColumnHeaderFilter<T>(
       style={{ height: props.columnHeaderHeight }}
     >
       <InfiniteTableColumnHeaderFilterContext.Provider value={props}>
-        <FilterOperator />
+        <FilterOperatorSwitch />
         <FilterEditor />
       </InfiniteTableColumnHeaderFilterContext.Provider>
     </div>
   );
 }
 
-export function InfiniteTableFilterOperator() {
-  const { columnApi, disabled, operatorConfig } =
-    useInfiniteColumnFilterEditor();
+export function InfiniteTableFilterOperatorSwitch() {
+  const {
+    columnApi,
+    disabled,
+    operator: operatorConfig,
+  } = useInfiniteColumnFilterEditor();
 
-  const Icon = operatorConfig?.icon ?? FilterIcon;
+  const Icon = operatorConfig?.components?.Icon ?? FilterIcon;
 
   return (
     <div
@@ -58,6 +61,7 @@ export function InfiniteTableFilterOperator() {
         if (disabled) {
           return;
         }
+
         columnApi.toggleFilterOperatorMenu(event.target);
       }}
       className={`${InfiniteTableColumnHeaderFilterOperatorClassName} ${HeaderFilterOperatorCls} ${
@@ -98,8 +102,12 @@ export function useInfiniteColumnFilterEditor<T>() {
     InfiniteTableColumnHeaderFilterContext,
   );
 
+  const { columnFilterType, filterTypes, columnFilterValue } =
+    filterContextValue;
+  const filterType = filterTypes[columnFilterType!];
+
   const [theValue, setTheValue] = useState(
-    filterContextValue.columnFilterValue?.filterValue ?? '',
+    columnFilterValue?.filterValue ?? '',
   );
 
   const onInputChange = React.useCallback(
@@ -111,49 +119,36 @@ export function useInfiniteColumnFilterEditor<T>() {
   );
 
   useEffect(() => {
-    if (filterContextValue.columnFilterValue) {
-      if (theValue !== filterContextValue.columnFilterValue.filterValue) {
-        setTheValue(filterContextValue.columnFilterValue.filterValue);
+    if (columnFilterValue) {
+      if (theValue !== columnFilterValue.filterValue) {
+        setTheValue(columnFilterValue.filterValue);
       }
     } else {
       //reset to empty value if no filter value defined
-      const currentFilterType =
-        filterContextValue.filterTypes[
-          filterContextValue.columnFilterType ?? 'string'
-        ];
 
-      if (currentFilterType) {
-        const emptyValue = [...currentFilterType.emptyValues][0];
+      if (filterType) {
+        const emptyValue = [...filterType.emptyValues][0];
         if (emptyValue !== theValue) {
           setTheValue(emptyValue);
         }
       }
     }
-  }, [filterContextValue.columnFilterValue?.filterValue]);
+  }, [columnFilterValue?.filterValue]);
 
-  const filterType = filterContextValue.columnFilterValue
-    ? filterContextValue.columnFilterValue.filterType
-    : filterContextValue.columnFilterType ?? 'string';
-
-  const operator = filterContextValue.columnFilterValue
-    ? filterContextValue.columnFilterValue.operator
-    : filterContextValue.filterTypes[filterType]
-    ? filterContextValue.filterTypes[filterType].defaultOperator
-    : filterContextValue.filterTypes.string.defaultOperator;
-
-  const operatorConfig = filterContextValue.filterTypes[
-    filterType
-  ].operators.find((op) => op.name === operator);
-
+  const operator = filterContextValue.operator;
+  const operatorName = operator?.name;
   return {
     api: context.api,
     column,
     columnApi,
+    operatorName,
     operator,
-    operatorConfig,
     value: theValue,
-    disabled: filterContextValue.columnFilterValue?.disabled,
+    disabled: columnFilterValue?.disabled,
     filterType,
+    filterTypes,
+    filterTypeKey: columnFilterType!,
+    filtered: column.computedFiltered,
     setValue: onInputChange,
     ariaLabel: `Filter for ${columnLabel}`,
     className: HeaderFilterEditorCls,
