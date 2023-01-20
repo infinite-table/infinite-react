@@ -91,10 +91,7 @@ export default function App() {
 }
 
 const dataSource = () => {
-  return fetch(
-    'https://infinite-table.com/.netlify/functions/json-server' +
-      '/employees1k',
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees1k')
     .then((r) => r.json())
     .then((data: Employee[]) => data);
 };

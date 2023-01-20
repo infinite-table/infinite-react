@@ -44,13 +44,9 @@ export function InfiniteTableColumnHeaderFilter<T>(
 }
 
 export function InfiniteTableFilterOperatorSwitch() {
-  const {
-    columnApi,
-    disabled,
-    operator: operatorConfig,
-  } = useInfiniteColumnFilterEditor();
+  const { columnApi, disabled, operator } = useInfiniteColumnFilterEditor();
 
-  const Icon = operatorConfig?.components?.Icon ?? FilterIcon;
+  const Icon = operator?.components?.Icon ?? FilterIcon;
 
   return (
     <div
@@ -140,6 +136,7 @@ export function useInfiniteColumnFilterEditor<T>() {
   return {
     api: context.api,
     column,
+    columnFilterValue,
     columnApi,
     operatorName,
     operator,

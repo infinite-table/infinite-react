@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {
-  DataSourceData,
   InfiniteTable,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
@@ -20,50 +19,76 @@ type Developer = {
   salary: number;
 };
 
-const data: DataSourceData<Developer> = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql?`)
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
+const data: Developer[] = [
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Bob',
+    salary: 2000,
+    canDesign: 'yes',
+    currency: 'USD',
+    preferredLanguage: 'JavaScript',
+    stack: 'frontend',
+  },
+  {
+    id: 2,
+    firstName: 'Marry',
+    lastName: 'Bob',
+    salary: 3500,
+    canDesign: 'yes',
+    currency: 'USD',
+    preferredLanguage: 'JavaScript',
+    stack: 'frontend',
+  },
+  {
+    id: 3,
+    firstName: 'Bill',
+    lastName: 'Bobson',
+    salary: 3000,
+    canDesign: 'no',
+    currency: 'CAD',
+    preferredLanguage: 'TypeScript',
+    stack: 'frontend',
+  },
+  {
+    id: 4,
+    firstName: 'Mark',
+    lastName: 'Twain',
+    salary: 1000,
+    canDesign: 'yes',
+    currency: 'CAD',
+    preferredLanguage: 'Rust',
+    stack: 'backend',
+  },
+  {
+    id: 5,
+    firstName: 'Matthew',
+    lastName: 'Hilson',
+    salary: 12900,
+    canDesign: 'yes',
+    currency: 'CAD',
+    preferredLanguage: 'Go',
+    stack: 'backend',
+  },
+];
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  id: {
-    field: 'id',
-    type: 'number',
-  },
-  firstName: {
-    field: 'firstName',
-  },
+  // id: {
+  //   field: 'id',
+  // },
+  // firstName: {
+  //   field: 'firstName',
+  // },
   salary: {
     defaultFilterable: true,
     field: 'salary',
     type: 'number',
     filterType: 'salary',
   },
-  stack: { field: 'stack' },
-  currency: { field: 'currency', defaultFilterable: false },
+  // stack: { field: 'stack' },
+  // currency: { field: 'currency', defaultFilterable: false },
 };
 
-function getIcon(icon: string) {
-  return () => (
-    <div
-      style={{
-        width: 20,
-        display: 'flex',
-        justifyContent: 'center',
-        flexFlow: 'row',
-      }}
-    >
-      {icon}
-    </div>
-  );
-}
-
-const domProps = {
-  style: {
-    height: '100%',
-  },
-};
 export default () => {
   return (
     <>
@@ -75,14 +100,14 @@ export default () => {
           filterDelay={0}
           filterTypes={{
             salary: {
-              defaultOperator: 'gt',
+              defaultOperator: '',
               emptyValues: new Set(['', null, undefined]),
               operators: [
                 {
                   name: 'gt',
                   label: 'Greater Than',
                   components: {
-                    Icon: getIcon('>'),
+                    Icon: () => <>{'>'}</>,
                   },
                   fn: ({ currentValue, filterValue, emptyValues }) => {
                     if (
@@ -97,7 +122,7 @@ export default () => {
                 {
                   name: 'gte',
                   components: {
-                    Icon: getIcon('>='),
+                    Icon: () => <>{'>='}</>,
                   },
                   label: 'Greater Than or Equal',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
@@ -113,7 +138,7 @@ export default () => {
                 {
                   name: 'lt',
                   components: {
-                    Icon: getIcon('<'),
+                    Icon: () => <>{'<'}</>,
                   },
                   label: 'Less Than',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
@@ -129,7 +154,7 @@ export default () => {
                 {
                   name: 'lte',
                   components: {
-                    Icon: getIcon('<='),
+                    Icon: () => <>{'<='}</>,
                   },
                   label: 'Less Than or Equal',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
@@ -147,7 +172,11 @@ export default () => {
           }}
         >
           <InfiniteTable<Developer>
-            domProps={domProps}
+            domProps={{
+              style: {
+                height: '100%',
+              },
+            }}
             columnDefaultWidth={150}
             columnMinWidth={50}
             columns={columns}

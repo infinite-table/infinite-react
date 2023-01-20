@@ -477,21 +477,22 @@ export function InfiniteTableHeaderCell<T>(
     return fn;
   }, [filterDelay, column.id]);
 
-  const filterType = column.computedFilterType;
+  const filterTypeKey = column.computedFilterType;
+  const filterType = filterTypes[filterTypeKey];
 
-  const filterTypeOptions = filterTypes[filterType];
-  const currentOperator = filtered
-    ? column.computedFilterValue?.operator
-    : null;
+  const operatorName = column.computedFilterable
+    ? column.computedFilterValue?.operator ?? filterType?.defaultOperator
+    : undefined;
+
   const operator =
-    filtered && filterTypeOptions
-      ? filterTypeOptions.operators.find((op) => op.name === currentOperator)
+    column.computedFilterable && filterType
+      ? filterType.operators.find((op) => op.name === operatorName)
       : undefined;
 
   const FilterEditor = (operator?.components?.FilterEditor ||
-    filterTypeOptions?.components?.FilterEditor ||
+    filterType?.components?.FilterEditor ||
     column.components?.FilterEditor ||
-    defaultFilterEditors[filterType] ||
+    defaultFilterEditors[filterTypeKey] ||
     StringFilterEditor) as () => JSX.Element | null;
 
   const FilterOperatorSwitch = column.components?.FilterOperatorSwitch;
@@ -554,7 +555,7 @@ export function InfiniteTableHeaderCell<T>(
                   operator={operator}
                   filterTypes={filterTypes}
                   onChange={debouncedOnFilterValueChange}
-                  columnFilterType={filterType}
+                  columnFilterType={filterTypeKey}
                   columnLabel={column.field || column.name || column.id}
                   columnFilterValue={column.computedFilterValue}
                   columnHeaderHeight={columnHeaderHeight}
