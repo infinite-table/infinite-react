@@ -28,6 +28,7 @@ import {
   InfiniteTablePropPivotTotalColumnPosition,
 } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
+
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
@@ -532,6 +533,7 @@ export type DataSourceFilterType<T> = {
 export type DataSourceFilterOperator<T> = {
   name: string;
   label?: string;
+  icon?: (props: any) => JSX.Element | null;
   fn: DataSourceFilterOperatorFunction<T>;
 };
 

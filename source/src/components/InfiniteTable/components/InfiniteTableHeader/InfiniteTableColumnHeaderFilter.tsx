@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { SettingsIcon } from '../icons/SettingsIcon';
+import { FilterIcon } from '../icons/FilterIcon';
 
 import { getColumnLabel } from './getColumnLabel';
 
@@ -36,15 +36,19 @@ export function InfiniteTableColumnHeaderFilter<T>(
       style={{ height: props.columnHeaderHeight }}
     >
       <InfiniteTableColumnHeaderFilterContext.Provider value={props}>
-        <FilterEditor />
         <FilterOperator />
+        <FilterEditor />
       </InfiniteTableColumnHeaderFilterContext.Provider>
     </div>
   );
 }
 
 export function InfiniteTableFilterOperator() {
-  const { columnApi, disabled } = useInfiniteColumnFilterEditor();
+  const { columnApi, disabled, operatorConfig } =
+    useInfiniteColumnFilterEditor();
+
+  const Icon = operatorConfig?.icon ?? FilterIcon;
+
   return (
     <div
       data-name="filter-operator"
@@ -62,7 +66,8 @@ export function InfiniteTableFilterOperator() {
           : ''
       }`}
     >
-      <SettingsIcon
+      <Icon
+        size={20}
         className={`${HeaderFilterOperatorIconRecipe({
           disabled,
         })}`}
@@ -136,11 +141,16 @@ export function useInfiniteColumnFilterEditor<T>() {
     ? filterContextValue.filterTypes[filterType].defaultOperator
     : filterContextValue.filterTypes.string.defaultOperator;
 
+  const operatorConfig = filterContextValue.filterTypes[
+    filterType
+  ].operators.find((op) => op.name === operator);
+
   return {
     api: context.api,
     column,
     columnApi,
     operator,
+    operatorConfig,
     value: theValue,
     disabled: filterContextValue.columnFilterValue?.disabled,
     filterType,

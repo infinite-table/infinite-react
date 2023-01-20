@@ -75,7 +75,7 @@ const data: Developer[] = [
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
-    defaultFilterable: false,
+    type: 'number',
   },
   firstName: {
     field: 'firstName',
