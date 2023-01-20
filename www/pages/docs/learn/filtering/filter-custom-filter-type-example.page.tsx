@@ -73,6 +73,7 @@ export default () => {
           primaryKey="id"
           defaultFilterValue={[]}
           filterDelay={0}
+          filterMode="local"
           filterTypes={{
             salary: {
               defaultOperator: 'gt',

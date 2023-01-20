@@ -478,8 +478,18 @@ export function useLoadData<T>() {
 
   useEffectWithChanges(
     (changes) => {
-      const appendWhenLivePagination =
-        Object.keys(changes).length === 1 && !!changes.cursorId;
+      const keys = Object.keys(changes);
+      let appendWhenLivePagination = false;
+
+      if (keys.length === 1) {
+        appendWhenLivePagination = !!changes.cursorId;
+
+        if (changes.filterValue && getComponentState().filterMode === 'local') {
+          // if filter value has changed and filter mode is local
+          // then we don't need to do a remote call
+          return;
+        }
+      }
 
       const componentState = getComponentState();
       if (typeof componentState.data === 'function') {

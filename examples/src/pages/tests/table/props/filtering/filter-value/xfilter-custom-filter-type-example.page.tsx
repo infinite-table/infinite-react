@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import {
+  DataSourceData,
   InfiniteTable,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
@@ -19,74 +20,37 @@ type Developer = {
   salary: number;
 };
 
-const data: Developer[] = [
-  {
-    id: 1,
-    firstName: 'John',
-    lastName: 'Bob',
-    salary: 2000,
-    canDesign: 'yes',
-    currency: 'USD',
-    preferredLanguage: 'JavaScript',
-    stack: 'frontend',
-  },
-  {
-    id: 2,
-    firstName: 'Marry',
-    lastName: 'Bob',
-    salary: 3500,
-    canDesign: 'yes',
-    currency: 'USD',
-    preferredLanguage: 'JavaScript',
-    stack: 'frontend',
-  },
-  {
-    id: 3,
-    firstName: 'Bill',
-    lastName: 'Bobson',
-    salary: 3000,
-    canDesign: 'no',
-    currency: 'CAD',
-    preferredLanguage: 'TypeScript',
-    stack: 'frontend',
-  },
-  {
-    id: 4,
-    firstName: 'Mark',
-    lastName: 'Twain',
-    salary: 1000,
-    canDesign: 'yes',
-    currency: 'CAD',
-    preferredLanguage: 'Rust',
-    stack: 'backend',
-  },
-  {
-    id: 5,
-    firstName: 'Matthew',
-    lastName: 'Hilson',
-    salary: 12900,
-    canDesign: 'yes',
-    currency: 'CAD',
-    preferredLanguage: 'Go',
-    stack: 'backend',
-  },
-];
+const data: DataSourceData<Developer> = ({ filterValue }) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_BASE_URL +
+      `/developers1k-sql?filterBy=${JSON.stringify(
+        filterValue?.map((x) => {
+          x.filterType = 'number';
+          //@ts-ignore
+          x.value = Number(x.filterValue);
+          return x;
+        }),
+      )}`,
+  )
+    .then((r) => r.json())
+    .then((data: Developer[]) => data);
+};
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  // id: {
-  //   field: 'id',
-  // },
-  // firstName: {
-  //   field: 'firstName',
-  // },
+  id: {
+    field: 'id',
+  },
+  firstName: {
+    field: 'firstName',
+  },
   salary: {
     defaultFilterable: true,
     field: 'salary',
     type: 'number',
     filterType: 'salary',
   },
-  // stack: { field: 'stack' },
-  // currency: { field: 'currency', defaultFilterable: false },
+  stack: { field: 'stack' },
+  currency: { field: 'currency', defaultFilterable: false },
 };
 
 export default () => {
@@ -98,9 +62,10 @@ export default () => {
           primaryKey="id"
           defaultFilterValue={[]}
           filterDelay={0}
+          filterMode="local"
           filterTypes={{
             salary: {
-              defaultOperator: '',
+              defaultOperator: 'gt',
               emptyValues: new Set(['', null, undefined]),
               operators: [
                 {
