@@ -25,6 +25,13 @@ const {
   developers: developers50k,
 } = require('../../dataserver/data/developers50k.json');
 
+const OPERATOR_ALIAS = {
+  gt: '>',
+  gte: '>=',
+  lt: '<',
+  lte: '<=',
+};
+
 const developers10 = developers.slice(0, 10);
 const developers100 = developers.slice(0, 100);
 const developers1k = developers.slice(0, 1000);
@@ -524,7 +531,10 @@ function buildSQL({
 
   if (Array.isArray(filterBy) && filterBy.length) {
     where = ` WHERE ${filterBy
-      .map((f) => `${f.field} = '${f.value}'`)
+      .map(
+        (f) =>
+          `${f.field} ${OPERATOR_ALIAS[f.operator] || f.operator} '${f.value}'`,
+      )
       .join(' AND ')}`;
   }
   if (Array.isArray(groupKeys) && groupKeys.length) {
