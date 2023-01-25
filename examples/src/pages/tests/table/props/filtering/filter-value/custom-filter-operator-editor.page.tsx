@@ -102,7 +102,7 @@ export default () => {
           filterTypes={{
             salary: {
               defaultOperator: '',
-              emptyValues: new Set([]),
+              emptyValues: [],
               components: {
                 FilterEditor: () => {
                   const { operator, filtered } =
@@ -123,8 +123,8 @@ export default () => {
                   name: 'low',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
                     if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
+                      emptyValues.includes(currentValue) ||
+                      emptyValues.includes(filterValue)
                     ) {
                       return true;
                     }
