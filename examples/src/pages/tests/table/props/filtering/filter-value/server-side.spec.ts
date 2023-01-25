@@ -1,7 +1,7 @@
 import { test, expect, Response } from '@testing';
 
 export default test.describe.parallel('Server side filtering', () => {
-  test('Filters correctly', async ({ page, rowModel }) => {
+  test('Filters correctly', async ({ page, rowModel, headerModel }) => {
     await page.waitForInfinite();
 
     expect(await rowModel.getRenderedRowCount()).toEqual(100);
@@ -42,5 +42,13 @@ export default test.describe.parallel('Server side filtering', () => {
     const values = await rowModel.getTextForColumnCells({ colId: 'country' });
 
     expect(values).toEqual(new Array(length).fill('United States'));
+
+    const headerCell = headerModel.getHeaderCellLocator({ colId: 'country' });
+
+    expect(
+      await headerCell
+        .locator('input[aria-label="Filter for country"]')
+        .inputValue(),
+    ).toBe('United States');
   });
 });

@@ -212,6 +212,8 @@ export interface InfiniteTableDerivedState<T> {
   computedColumns: Map<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];
 
+  showColumnFilters: NonUndefined<InfiniteTableProps<T>['showColumnFilters']>;
+
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']
   >;

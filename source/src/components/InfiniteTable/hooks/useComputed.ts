@@ -161,7 +161,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   return {
     multiRowSelector,
-    showColumnFilters: !!dataSourceState.filterValue,
+
     scrollbars,
     columnSize,
     rowspan,

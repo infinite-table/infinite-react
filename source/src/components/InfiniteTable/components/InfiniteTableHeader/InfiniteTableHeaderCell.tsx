@@ -135,12 +135,12 @@ export function InfiniteTableHeaderCell<T>(
   const column: InfiniteTableComputedColumn<T> = props.column;
 
   const {
-    computed: { showColumnFilters },
     api,
     getComputed,
     getState,
     actions,
     state: {
+      showColumnFilters,
       components,
       portalDOMRef,
       columnHeaderHeight,

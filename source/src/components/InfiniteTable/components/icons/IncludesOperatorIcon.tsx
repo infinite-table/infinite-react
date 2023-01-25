@@ -1,7 +1,7 @@
 import { Icon, TableIconProps } from './Icon';
 import * as React from 'react';
 
-export const ContainsOperatorIcon = (
+export const IncludesOperatorIcon = (
   props: Omit<TableIconProps, 'children'>,
 ) => {
   return (

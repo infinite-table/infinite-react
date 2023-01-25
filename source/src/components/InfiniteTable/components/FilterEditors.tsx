@@ -38,11 +38,9 @@ export function NumberFilterEditor<T>() {
       disabled={disabled}
       value={value as any as number}
       onChange={(event) => {
-        let value = event.target.value;
-        //@ts-ignore
-        if (!isNaN(value + '')) {
-          value = value + '';
-        }
+        let value = isNaN(event.target.valueAsNumber)
+          ? event.target.value
+          : event.target.valueAsNumber;
         setValue(value as any as T);
       }}
       className={className}

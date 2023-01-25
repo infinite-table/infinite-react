@@ -154,6 +154,32 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 </Sandpack>
 </Prop>
 
+<Prop name="columnHeaderHeight" type="number">
+
+> The height of the column header.
+
+This only refers to the height of the header label - so if you have another row in the column header, for filters, the filters will also have this height. Also, for column groups, each additional group will have this height.
+
+
+<Sandpack>
+
+<Description>
+
+The column header height is set to `60` pixels. The column filters will also pick up this height.
+
+</Description>
+
+```ts file=columnHeaderHeight-example.page.tsx
+
+```
+
+```ts file=data.ts
+
+```
+
+</Sandpack>
+</Prop>
+
 <Prop name="columnMaxWidth" type="number" defaultValue={2000}>
 
 > Specifies the maximum width for all columns.
@@ -762,6 +788,8 @@ When we implement filtering, you'll also have access to the column filter.
 
 For styling the column header, you can use <PropLink name="columns.headerStyle">headerStyle</PropLink> or <PropLink name="columns.headerClassName">headerClassName</PropLink>.
 
+For configuring the column header height, see the <PropLink name="columnHeaderHeight" /> prop.
+
 </Note>
 
 <Sandpack>
@@ -867,6 +895,8 @@ If defined as a function, it accepts an object as a parameter, which has the fol
 The `headerStyle` property can also be specified for <PropLink name="columnTypes.headerStyle">columnTypes</PropLink>.
 
 For styling with CSS, see <PropLink name="columns.headerClassName" />.
+
+For configuring the column header height, see the <PropLink name="columnHeaderHeight" /> prop.
 
 </Note>
 

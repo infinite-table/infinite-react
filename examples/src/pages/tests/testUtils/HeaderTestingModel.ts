@@ -89,4 +89,14 @@ export class HeaderTestingModel {
 
     await this.page.click(`[data-menu-item-key="${key}"]`);
   }
+
+  async filterColumn(colLocation: ColLocation, value: string) {
+    await this.getHeaderCellLocator(colLocation).locator('input').fill(value);
+  }
+
+  async clickToSortColumn(colLocation: ColLocation) {
+    await this.getHeaderCellLocator(colLocation)
+      .locator('.InfiniteCell_content')
+      .click();
+  }
 }

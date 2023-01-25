@@ -1,4 +1,4 @@
-import { ContainsOperatorIcon } from '../InfiniteTable/components/icons/ContainsOperatorIcon';
+import { IncludesOperatorIcon } from '../InfiniteTable/components/icons/IncludesOperatorIcon';
 import { EndsWithOperatorIcon } from '../InfiniteTable/components/icons/EndsWithOperatorIcon';
 import { EqualOperatorIcon } from '../InfiniteTable/components/icons/EqualOperatorIcon';
 import { GTEOperatorIcon } from '../InfiniteTable/components/icons/GTEOperatorIcon';
@@ -13,17 +13,14 @@ function getFilterTypes<T>() {
   const result: Record<string, DataSourceFilterType<T>> = {
     string: {
       label: 'Text',
-      emptyValues: new Set(['']),
-      defaultOperator: 'contains',
+      emptyValues: [''],
+      defaultOperator: 'includes',
       operators: [
         {
-          name: 'contains',
-          components: { Icon: ContainsOperatorIcon },
-          label: 'Contains',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          name: 'includes',
+          components: { Icon: IncludesOperatorIcon },
+          label: 'includes',
+          fn: ({ currentValue, filterValue }) => {
             return (
               typeof currentValue === 'string' &&
               typeof filterValue == 'string' &&
@@ -35,10 +32,7 @@ function getFilterTypes<T>() {
           label: 'Equals',
           components: { Icon: EqualOperatorIcon },
           name: 'eq',
-          fn: ({ currentValue: value, filterValue, emptyValues }) => {
-            if (emptyValues.has(value) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue: value, filterValue }) => {
             return typeof value === 'string' && value === filterValue;
           },
         },
@@ -46,10 +40,7 @@ function getFilterTypes<T>() {
           name: 'startsWith',
           components: { Icon: StartsWithOperatorIcon },
           label: 'Starts With',
-          fn: ({ currentValue: value, filterValue, emptyValues }) => {
-            if (emptyValues.has(value) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue: value, filterValue }) => {
             return value.startsWith(filterValue);
           },
         },
@@ -57,10 +48,7 @@ function getFilterTypes<T>() {
           name: 'endsWith',
           components: { Icon: EndsWithOperatorIcon },
           label: 'Ends With',
-          fn: ({ currentValue: value, filterValue, emptyValues }) => {
-            if (emptyValues.has(value) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue: value, filterValue }) => {
             return value.endsWith(filterValue);
           },
         },
@@ -68,17 +56,14 @@ function getFilterTypes<T>() {
     },
     number: {
       label: 'Number',
-      emptyValues: new Set(['', null, undefined]),
+      emptyValues: ['', null, undefined],
       defaultOperator: 'eq',
       operators: [
         {
           label: 'Equals',
           components: { Icon: EqualOperatorIcon },
           name: 'eq',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue, filterValue }) => {
             return currentValue == filterValue;
           },
         },
@@ -86,10 +71,7 @@ function getFilterTypes<T>() {
           label: 'Not Equals',
           components: { Icon: NotEqualOperatorIcon },
           name: 'neq',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue, filterValue }) => {
             return currentValue != filterValue;
           },
         },
@@ -98,7 +80,7 @@ function getFilterTypes<T>() {
           label: 'Greater Than',
           components: { Icon: GTOperatorIcon },
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue > filterValue;
@@ -109,7 +91,7 @@ function getFilterTypes<T>() {
           components: { Icon: GTEOperatorIcon },
           label: 'Greater Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue >= filterValue;
@@ -120,7 +102,7 @@ function getFilterTypes<T>() {
           components: { Icon: LTOperatorIcon },
           label: 'Less Than',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue < filterValue;
@@ -131,7 +113,7 @@ function getFilterTypes<T>() {
           components: { Icon: LTEOperatorIcon },
           label: 'Less Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue <= filterValue;

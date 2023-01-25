@@ -25,7 +25,6 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     computedPinnedEndColumns,
     computedVisibleColumns,
     columnSize,
-    showColumnFilters,
   } = tableContextValue.computed;
 
   const {
@@ -34,6 +33,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
       columnGroupsDepthsMap,
       columnGroupsMaxDepth,
       computedColumnGroups,
+      showColumnFilters,
     },
   } = tableContextValue;
 

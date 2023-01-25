@@ -380,13 +380,15 @@ export const HeaderGroupCls = style([
 export const HeaderFilterCls = style([
   display.flex,
   flexFlow.row,
-  alignItems.center,
+  alignItems.stretch,
   position.relative,
   {
     // paddingLeft: ThemeVars.components.HeaderCell.paddingX,
     // paddingRight: ThemeVars.components.HeaderCell.paddingY,
 
     borderTop: ThemeVars.components.Cell.border,
+
+    paddingBlock: ThemeVars.components.HeaderCell.filterEditorMarginY,
   },
 ]);
 
@@ -422,4 +424,12 @@ export const HeaderFilterOperatorIconRecipe = recipe({
   },
 });
 
-export const HeaderFilterEditorCls = style([width['100%'], height['100%']]);
+export const HeaderFilterEditorCls = style([
+  width['100%'],
+  height['100%'],
+  {
+    marginInline: ThemeVars.components.HeaderCell.filterEditorMarginX,
+    paddingInline: ThemeVars.components.HeaderCell.filterEditorPaddingX,
+    paddingBlock: ThemeVars.components.HeaderCell.filterEditorPaddingY,
+  },
+]);

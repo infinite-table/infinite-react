@@ -374,6 +374,7 @@ export const mapPropsToState = <T>(params: {
     state.columns;
 
   return {
+    showColumnFilters: props.showColumnFilters ?? !!parentState.filterValue,
     controlledColumnVisibility: !!props.columnVisibility,
     groupRenderStrategy,
     groupBy: groupBy,

@@ -170,7 +170,11 @@ export const ThemeVars = createGlobalThemeContract(
           'resize-handle-constrained-hover-background',
 
         filterOperatorPaddingX: 'filter-operator-padding-x',
+        filterEditorPaddingX: 'filter-editor-padding-x',
+        filterEditorMarginX: 'filter-editor-margin-x',
         filterOperatorPaddingY: 'filter-operator-padding-y',
+        filterEditorPaddingY: 'filter-editor-padding-y',
+        filterEditorMarginY: 'filter-editor-margin-y',
       },
       Cell: {
         padding: 'cell-padding',
@@ -404,9 +408,15 @@ const LoadMaskVars = {
 
 const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.filterOperatorPaddingX]:
+    ThemeVars.spacing['1'],
+  [ThemeVars.components.HeaderCell.filterEditorPaddingX]:
     ThemeVars.spacing['2'],
+  [ThemeVars.components.HeaderCell.filterEditorMarginX]: ThemeVars.spacing['1'],
   [ThemeVars.components.HeaderCell.filterOperatorPaddingY]:
     ThemeVars.spacing['0'],
+  [ThemeVars.components.HeaderCell.filterEditorPaddingY]:
+    ThemeVars.spacing['0'],
+  [ThemeVars.components.HeaderCell.filterEditorMarginY]: ThemeVars.spacing['1'],
   [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '16px',
   [ThemeVars.components.HeaderCell.resizeHandleWidth]: '2px',
   [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]: '#6bff6b',

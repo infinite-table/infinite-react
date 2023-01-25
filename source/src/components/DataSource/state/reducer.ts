@@ -22,6 +22,31 @@ import type {
   DataSourcePropFilterTypes,
 } from '../types';
 
+export function cleanupEmptyFilterValues<T>(
+  filterValue: DataSourceState<T>['filterValue'],
+
+  filterTypes: DataSourceState<T>['filterTypes'],
+) {
+  if (!filterValue) {
+    return filterValue;
+  }
+  // for remote filters, we don't want to include the values that are empty
+  return filterValue.filter((filterValue) => {
+    const filterType = filterTypes[filterValue.filterType];
+    if (!filterType) {
+      return false;
+    }
+
+    if (
+      filterType.emptyValues &&
+      filterType.emptyValues.includes(filterValue.filterValue)
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
+
 const haveDepsChanged = <StateType>(
   state1: StateType,
   state2: StateType,
@@ -71,12 +96,14 @@ function filterDataSource<T>(params: {
 }) {
   const {
     filterTypes,
-    filterValue: filterValueArray,
+
     operatorsByFilterType,
     filterFunction,
     toPrimaryKey,
   } = params;
+
   let { dataArray } = params;
+
   if (filterFunction) {
     dataArray = dataArray.filter((data, index, arr) =>
       filterFunction({
@@ -87,6 +114,9 @@ function filterDataSource<T>(params: {
       }),
     );
   }
+
+  const filterValueArray =
+    cleanupEmptyFilterValues(params.filterValue, filterTypes) || [];
 
   if (filterValueArray && filterValueArray.length) {
     return dataArray.filter((data, index, arr) => {

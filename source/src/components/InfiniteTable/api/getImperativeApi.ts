@@ -523,14 +523,18 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       }
 
       const filterValueForColumn: Partial<DataSourceFilterValueItem<T>> = {
-        filterType,
-        operator: filterTypes[filterType].defaultOperator,
-        filterValue,
+        filter: {
+          type: filterType,
+          value: filterValue,
+          operator: filterTypes[filterType].defaultOperator,
+        },
         valueGetter: col.valueGetter,
       };
       if (col.field) {
-        filterValueForColumn.field = col.field;
+        //@ts-ignore
+        filterValueForColumn.field = col.field!;
       } else {
+        //@ts-ignore
         filterValueForColumn.id = col.id;
       }
 
@@ -566,12 +570,14 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       };
     } else {
       newFilterValueForColumn = {
-        operator,
-        filterType: filterType,
+        filter: {
+          operator,
+          type: filterType,
+          value: [...filterTypes[filterType].emptyValues.values()][0],
+        },
         [col.field ? 'field' : 'id']: col.field ?? col.id,
 
         valueGetter: col.valueGetter,
-        filterValue: [...filterTypes[filterType].emptyValues.values()][0],
       } as DataSourceFilterValueItem<T>;
     }
 

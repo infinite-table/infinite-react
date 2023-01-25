@@ -531,10 +531,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     const computedFilterValue = computedVisible
       ? filterValueRecord[id] || c.field
-        ? filterValueRecord[c.field as string] || null
+        ? filterValueRecord[id] || filterValueRecord[c.field as string] || null
         : null
       : null;
-
     const computedFilterable =
       c.defaultFilterable ??
       colType.defaultFilterable ??
@@ -566,7 +565,9 @@ export const getComputedVisibleColumns = <T extends unknown>({
       if (
         foundFilterType &&
         (!foundFilterType.emptyValues ||
-          !foundFilterType.emptyValues.has(computedFilterValue.filterValue))
+          !foundFilterType.emptyValues.includes(
+            computedFilterValue.filterValue,
+          ))
       ) {
         computedFiltered = true;
       }

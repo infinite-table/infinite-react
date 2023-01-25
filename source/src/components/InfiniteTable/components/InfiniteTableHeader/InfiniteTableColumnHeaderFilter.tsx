@@ -103,7 +103,7 @@ export function useInfiniteColumnFilterEditor<T>() {
   const filterType = filterTypes[columnFilterType!];
 
   const [theValue, setTheValue] = useState(
-    columnFilterValue?.filterValue ?? '',
+    columnFilterValue?.filter.value ?? '',
   );
 
   const onInputChange = React.useCallback(
@@ -116,8 +116,8 @@ export function useInfiniteColumnFilterEditor<T>() {
 
   useEffect(() => {
     if (columnFilterValue) {
-      if (theValue !== columnFilterValue.filterValue) {
-        setTheValue(columnFilterValue.filterValue);
+      if (theValue !== columnFilterValue.filter.value) {
+        setTheValue(columnFilterValue.filter.value);
       }
     } else {
       //reset to empty value if no filter value defined
@@ -129,7 +129,7 @@ export function useInfiniteColumnFilterEditor<T>() {
         }
       }
     }
-  }, [columnFilterValue?.filterValue]);
+  }, [columnFilterValue?.filter.value]);
 
   const operator = filterContextValue.operator;
   const operatorName = operator?.name;

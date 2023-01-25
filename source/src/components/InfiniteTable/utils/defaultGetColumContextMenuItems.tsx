@@ -57,6 +57,17 @@ export function defaultGetColumContextMenuItems<T>(
         api.setSortingForColumn(column.id, null);
       },
     },
+    column.computedFilterable ? '-' : null,
+    column.computedFilterable
+      ? {
+          key: 'clear-filter',
+          label: 'Clear Filter',
+          disabled: !column.computedFiltered,
+          onAction: () => {
+            api.clearColumnFilter(column.id);
+          },
+        }
+      : null,
     '-',
     {
       key: 'pin-start',
@@ -122,5 +133,5 @@ export function defaultGetColumContextMenuItems<T>(
         };
       },
     },
-  ];
+  ].filter((x) => !!x);
 }

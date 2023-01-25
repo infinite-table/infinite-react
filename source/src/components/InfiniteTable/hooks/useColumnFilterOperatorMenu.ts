@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
+import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
 import { useOverlay } from '../../hooks/useOverlay';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
 
 import { useInfiniteTable } from './useInfiniteTable';
+
+const OFFSET = 10;
 
 export function useColumnFilterOperatorMenu<T>() {
   const context = useInfiniteTable<T>();
@@ -30,12 +33,25 @@ export function useColumnFilterOperatorMenu<T>() {
         actions.filterOperatorMenuVisibleForColumnId = null;
       }
 
+      let alignTo = (((target as HTMLElement)?.parentElement as HTMLElement) ||
+        target) as HTMLElement;
+
+      const rect = Rectangle.from(alignTo.getBoundingClientRect());
+
+      // shift and increase the rect so we get some offset for the alignment
+      rect.top -= OFFSET;
+      rect.left -= OFFSET;
+
+      rect.width += 2 * OFFSET;
+      rect.height += 2 * OFFSET;
+
       showOverlay(
         () => getFilterOperatorMenuForColumn(column.id, context, onHideIntent),
         {
           constrainTo: getState().domRef.current!,
           id: 'filter-operator-menu',
-          alignTo: target as HTMLElement,
+          alignTo: rect,
+
           alignPosition: [
             ['TopLeft', 'BottomLeft'],
             ['TopRight', 'BottomRight'],

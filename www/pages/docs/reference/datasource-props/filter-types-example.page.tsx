@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import {
-  DataSourceData,
   DataSource,
+  DataSourceData,
   InfiniteTable,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';

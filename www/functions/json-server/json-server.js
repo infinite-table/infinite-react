@@ -30,6 +30,21 @@ const OPERATOR_ALIAS = {
   gte: '>=',
   lt: '<',
   lte: '<=',
+  eq: ' = ',
+  neq: '!=',
+  startsWith: 'LIKE',
+  endsWith: 'LIKE',
+  contains: 'LIKE',
+  includes: 'LIKE',
+};
+
+const identity = (x) => x;
+
+const OPERATOR_MODIFIERS = {
+  contains: (value) => `'%${value}%'`,
+  startsWith: (value) => `'${value}%'`,
+  endsWith: (value) => `'%${value}'`,
+  eq: (value) => (typeof value === 'number' ? value : `'${value}'`),
 };
 
 const developers10 = developers.slice(0, 10);
@@ -189,6 +204,7 @@ function getSQLRoute(routeSuffix = '', size) {
     } catch (ex) {
       reducers = null;
     }
+
     try {
       filterBy = JSON.parse(query.filterBy);
     } catch (ex) {
@@ -263,6 +279,7 @@ function getResultSet({
   };
   let SQL = buildSQL(sqlParams);
 
+  console.log('SQL', SQL);
   let result = alasql(SQL);
 
   let totalCount = result.length;
@@ -417,7 +434,7 @@ function getResultSet({
     });
   }
 
-  // jsonResult.totalCountUnfiltered = size;
+  jsonResult.totalCountUnfiltered = size;
 
   return jsonResult;
 }
@@ -529,11 +546,14 @@ function buildSQL({
 
   let where = '';
 
+  console.log('filterBy', filterBy);
   if (Array.isArray(filterBy) && filterBy.length) {
     where = ` WHERE ${filterBy
       .map(
         (f) =>
-          `${f.field} ${OPERATOR_ALIAS[f.operator] || f.operator} '${f.value}'`,
+          `${f.field} ${OPERATOR_ALIAS[f.operator] || f.operator} ${(
+            OPERATOR_MODIFIERS[f.operator] || identity
+          )(f.value)}`,
       )
       .join(' AND ')}`;
   }

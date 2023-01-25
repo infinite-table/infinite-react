@@ -103,7 +103,6 @@ export type InfiniteTableColumnType<T> = {
   defaultFlex?: number;
   // TODO  also move this on the column
   defaultPinned?: InfiniteTableColumnPinnedValues;
-  defaultFilterable?: boolean;
   defaultHiddenWhenGroupedBy?: InfiniteTableColumn<T>['defaultHiddenWhenGroupedBy'];
 
   header?: InfiniteTableColumn<T>['header'];
@@ -116,6 +115,7 @@ export type InfiniteTableColumnType<T> = {
 
   contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
   defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
+  defaultFilterable?: InfiniteTableColumn<T>['defaultFilterable'];
 
   columnGroup?: string;
 
@@ -474,6 +474,8 @@ export interface InfiniteTableProps<T> {
 
   viewportReservedWidth?: number;
   onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;
+
+  showColumnFilters?: boolean;
 
   pivotColumn?: InfiniteTablePropPivotColumn<
     T,

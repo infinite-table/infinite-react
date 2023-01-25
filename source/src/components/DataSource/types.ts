@@ -513,6 +513,11 @@ export type DataSourceFilterValueItem<T> = DiscriminatedUnion<
   { id: string }
 > & {
   valueGetter?: DataSourceFilterValueItemValueGetter<T>;
+  filter: {
+    type: string;
+    operator: string;
+    value: any;
+  };
   filterValue: any;
   disabled?: boolean;
   filterType: string;
@@ -524,7 +529,7 @@ export type DataSourceFilterValueItemValueGetter<T> = (
 ) => any;
 
 export type DataSourceFilterType<T> = {
-  emptyValues: Set<any>;
+  emptyValues: any[];
   label?: string;
   defaultOperator: string;
   valueGetter?: DataSourceFilterValueItemValueGetter<T>;
@@ -554,7 +559,7 @@ export type DataSourceFilterOperatorFunction<T> = (
 export type DataSourceFilterOperatorFunctionParam<T> = {
   currentValue: any;
   filterValue: any;
-  emptyValues: Set<any>;
+  emptyValues: any[];
   field?: keyof T;
 } & DataSourceFilterFunctionParam<T>;
 
