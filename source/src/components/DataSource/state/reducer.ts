@@ -32,14 +32,14 @@ export function cleanupEmptyFilterValues<T>(
   }
   // for remote filters, we don't want to include the values that are empty
   return filterValue.filter((filterValue) => {
-    const filterType = filterTypes[filterValue.filterType];
+    const filterType = filterTypes[filterValue.filter.type];
     if (!filterType) {
       return false;
     }
 
     if (
       filterType.emptyValues &&
-      filterType.emptyValues.includes(filterValue.filterValue)
+      filterType.emptyValues.includes(filterValue.filter.value)
     ) {
       return false;
     }
@@ -133,11 +133,9 @@ function filterDataSource<T>(params: {
 
         const {
           disabled,
-          filterValue,
           field,
-          filterType: filterTypeKey,
           valueGetter: filterValueGetter,
-          operator,
+          filter: { type: filterTypeKey, value: filterValue, operator },
         } = currentFilterValue;
         const filterType = filterTypes[filterTypeKey];
         if (disabled || !filterType) {

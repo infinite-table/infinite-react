@@ -8,6 +8,10 @@ import { LTOperatorIcon } from '../InfiniteTable/components/icons/LTOperatorIcon
 import { NotEqualOperatorIcon } from '../InfiniteTable/components/icons/NotEqualOperatorIcon';
 import { StartsWithOperatorIcon } from '../InfiniteTable/components/icons/StartsWithOperatorIcon';
 import { DataSourceFilterType } from './types';
+import {
+  NumberFilterEditor,
+  StringFilterEditor,
+} from '../InfiniteTable/components/FilterEditors';
 
 function getFilterTypes<T>() {
   const result: Record<string, DataSourceFilterType<T>> = {
@@ -15,6 +19,9 @@ function getFilterTypes<T>() {
       label: 'Text',
       emptyValues: [''],
       defaultOperator: 'includes',
+      components: {
+        FilterEditor: StringFilterEditor,
+      },
       operators: [
         {
           name: 'includes',
@@ -58,6 +65,9 @@ function getFilterTypes<T>() {
       label: 'Number',
       emptyValues: ['', null, undefined],
       defaultOperator: 'eq',
+      components: {
+        FilterEditor: NumberFilterEditor,
+      },
       operators: [
         {
           label: 'Equals',

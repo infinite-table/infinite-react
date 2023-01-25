@@ -92,7 +92,7 @@ It's important to note you can re-fetch data by changing the reference you pass 
 </Prop>
 
 
-<Prop name="defaultFilterValue" type="{filterValue, filterType, operator, field, id}[]">
+<Prop name="defaultFilterValue" type="{field?, id?, filter: {type, operator, value}[]">
 
 > Uncontrolled prop used for filtering. Can be used for both [client-side](/docs/learn/filtering/filtering-client-side) and [server-side](/docs/learn/filtering/filtering-server-side) filtering.
 
@@ -263,12 +263,14 @@ Loads data from remote location but will only show rows that have `id > 100`.
 > Specifies the available types of filters for the columns.
 
 A filter type is a concept that defines how a certain type of data is to be filtered.
-A filter type will have
- - a `key` - the key used to define the filter in the object
- - a `label`,
- - a Set of values considered to be empty values - when any of these values is used in the filter, the filter will match all records.
- - an array of `operators`
- - a default operator.
+A filter type will have a key, used to define the filter in the `filterTypes` object, and also the following properties:
+ - `label`
+ - `emptyValues` - an array of values considered to be empty values - when any of these values is used in the filter, the filter will match all records.
+ - `operators` - an array of operator this filter type supports
+ - `defaultOperator` - the default operator for the filter type
+ - `components` - an object that describes the custom components to be used for the filter type
+    - `FilterEditor` - a custom filter editor component for this filter type
+    - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
 
 Let's imagine you have a `DataSource` with developers, each with a `salary` column, and for that column you want to allow `>`, `>=`, `<` and `<=` comparisons (operators).
 
@@ -285,10 +287,7 @@ const filterTypes = {
       {
         name: 'gt',
         label: 'Greater than',
-        fn: ({ currentValue, filterValue, emptyValues }) => {
-          if (emptyValues.includes(currentValue)) {
-            return true;
-          }
+        fn: ({ currentValue, filterValue }) => {
           return currentValue > filterValue;
         }
       },
@@ -314,7 +313,7 @@ const filterTypes = {
 Each operator for a certain filter type needs to at least have a `name` and `fn` defined. The `fn` property is a function that will be called when client-side filtering is enabled, with an object that has the following properties:
  - `currentValue` - the cell value of the current row for the column being filtered
  - `filterValue` - the value of the filter editor
- - `emptyValues` - the set of values considered to be empty values for the filter type
+ - `emptyValues` - the array of values considered to be empty values for the filter type
  - `data` - the current row data object - `typeof DATA_TYPE`
  - `index` - the index of the current row in the table - `number`
  - `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
@@ -375,19 +374,19 @@ The current implementation of the default filter types is the following:
 export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
     string: {
       label: 'Text',
-      emptyValues: new Set(['']),
+      emptyValues: [''],
       defaultOperator: 'includes',
+      components: {
+        FilterEditor: StringFilterEditor,
+      },
       operators: [
         {
           name: 'includes',
           components: {
             Icon: // custom icon as a React component ...
           },
-          label: 'Includes',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          label: 'includes',
+          fn: ({ currentValue, filterValue }) => {
             return (
               typeof currentValue === 'string' &&
               typeof filterValue == 'string' &&
@@ -401,10 +400,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
             Icon: // custom icon as a React component ...
           },
           name: 'eq',
-          fn: ({ currentValue: value, filterValue, emptyValues }) => {
-            if (emptyValues.has(value) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue: value, filterValue }) => {
             return typeof value === 'string' && value === filterValue;
           },
         },
@@ -414,10 +410,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
             Icon: // custom icon as a React component ...
           },
           label: 'Starts With',
-          fn: ({ currentValue: value, filterValue, emptyValues }) => {
-            if (emptyValues.has(value) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue: value, filterValue }) => {
             return value.startsWith(filterValue);
           },
         },
@@ -427,10 +420,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
             Icon: // custom icon as a React component ...
           },
           label: 'Ends With',
-          fn: ({ currentValue: value, filterValue, emptyValues }) => {
-            if (emptyValues.has(value) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue: value, filterValue }) => {
             return value.endsWith(filterValue);
           },
         },
@@ -438,8 +428,11 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
     },
     number: {
       label: 'Number',
-      emptyValues: new Set(['', null, undefined]),
+      emptyValues: ['', null, undefined],
       defaultOperator: 'eq',
+      components: {
+        FilterEditor: NumberFilterEditor,
+      },
       operators: [
         {
           label: 'Equals',
@@ -447,10 +440,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
             Icon: // custom icon as a React component ...
           },
           name: 'eq',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue, filterValue }) => {
             return currentValue == filterValue;
           },
         },
@@ -460,21 +450,18 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
             Icon: // custom icon as a React component ...
           },
           name: 'neq',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-              return true;
-            }
+          fn: ({ currentValue, filterValue }) => {
             return currentValue != filterValue;
           },
         },
         {
           name: 'gt',
+          label: 'Greater Than',
           components: {
             Icon: // custom icon as a React component ...
           },
-          label: 'Greater Than',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue > filterValue;
@@ -485,10 +472,9 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
           components: {
             Icon: // custom icon as a React component ...
           },
-          components: { Icon: GTEOperatorIcon },
           label: 'Greater Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue >= filterValue;
@@ -501,7 +487,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
           },
           label: 'Less Than',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue < filterValue;
@@ -514,22 +500,54 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
           },
           label: 'Less Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+            if (emptyValues.includes(currentValue)) {
               return true;
             }
             return currentValue <= filterValue;
           },
-        },
+        }
       ],
     },
   };
 ```
 
+</Prop>
+
+<Prop name="filterTypes.components.FilterEditor">
+
+> A custom React component to be used as an editor for the current filter type
+
+Every filter type can define the following `components`
+ - `FilterEditor` - a React component to be used as an editor for the current filter type
+ - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
+
+<Note>
+
+Filter type operators can override the `FilterEditor` component - they can specify the following components:
+  - `FilterEditor` - if specified, it overrides the `FilterEditor` of the filter type
+  - `Icon` - a React component to be used as an icon for the operator - displayed by the menu triggered when clicking on the `FilterOperatorSwitch` component
+
+</Note>
+
+<Sandpack title="Demo of a custom filter editor">
+
+<Description>
+
+The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
+
+The checkbox has indeterminate state, which will match all values in the data source.
+
+</Description>
+
+```ts file=$DOCS/reference/hooks/custom-filter-editor-hooks-example.page.tsx
+```
+
+</Sandpack>
 
 
 </Prop>
 
-<Prop name="filterValue" type="{filterValue, filterType, operator, field, id}[]">
+<Prop name="filterValue" type="{field?, id?, filter: {type, operator, value}[]">
 
 > Controlled prop used for filtering. Can be used for both [client-side](/docs/learn/filtering/filtering-client-side) and [server-side](/docs/learn/filtering/filtering-server-side) filtering.
 
@@ -540,11 +558,13 @@ If you want to show the column filter editors, you have to either specify this p
 
 The objects in this array have the following shape:
 
- * `filterValue` - the value to filter by
- * `filterType` - the current type of the filter (eg: `string`, `number` or another custom type you specify in the <DPropLink name="filterTypes">filterTypes</DPropLink> prop)
- * `operator` - the name of the operator being applied
+ * `filter` - an object describing the filter
+    * `filter.value` - the value to filter by
+    * `filter.type` - the current type of the filter (eg: `string`, `number` or another custom type you specify in the <DPropLink name="filterTypes">filterTypes</DPropLink> prop)
+    * `filter.operator` - the name of the operator being applied
  * `field` - the field being filtered - generally matched with a column. This is optional, as some columns can have no field.
   * `id` - the id of the column being filtered. This is optional - for columns bound to a field, the `field` should be used instead of the `id`.
+ * `disabled` - whether this filter is applied or not
 
 <Sandpack  title="Controlled filters with onFilterValueChange">
 
@@ -659,7 +679,7 @@ The function is called with an object that has the following properties:
 </Sandpack>
 </Prop>
 
-<Prop name="onFilterValueChange" type="({filterValue, filterType, operator, field, id}[]) => void">
+<Prop name="onFilterValueChange" type="({field?, id?, filter: {type, operator, value}[]) => void">
 
 > Callback prop called when the <DPropLink name="filterValue" /> changes.
 

@@ -36,7 +36,7 @@ import {
 import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
-import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
+import { StringFilterEditor } from '../FilterEditors';
 import { FilterIcon } from '../icons/FilterIcon';
 import { MenuIcon, MenuIconProps } from '../icons/MenuIcon';
 import { SortIcon } from '../icons/SortIcon';
@@ -99,7 +99,7 @@ export function getColumnFilterType<T>(
   filterTypes: DataSourcePropFilterTypes<T> = defaultFilterTypes,
 ) {
   let columnFilterType: string =
-    column.computedFilterValue?.filterType || column.filterType || '';
+    column.computedFilterValue?.filter.type || column.filterType || '';
 
   if (!columnFilterType) {
     let colFilterType = column.type;
@@ -481,7 +481,7 @@ export function InfiniteTableHeaderCell<T>(
   const filterType = filterTypes[filterTypeKey];
 
   const operatorName = column.computedFilterable
-    ? column.computedFilterValue?.operator ?? filterType?.defaultOperator
+    ? column.computedFilterValue?.filter.operator ?? filterType?.defaultOperator
     : undefined;
 
   const operator =
@@ -492,10 +492,11 @@ export function InfiniteTableHeaderCell<T>(
   const FilterEditor = (operator?.components?.FilterEditor ||
     filterType?.components?.FilterEditor ||
     column.components?.FilterEditor ||
-    defaultFilterEditors[filterTypeKey] ||
     StringFilterEditor) as () => JSX.Element | null;
 
-  const FilterOperatorSwitch = column.components?.FilterOperatorSwitch;
+  const FilterOperatorSwitch =
+    filterType?.components?.FilterOperatorSwitch ||
+    column.components?.FilterOperatorSwitch;
 
   const resizeHandle = useColumnResizeHandle(column);
 

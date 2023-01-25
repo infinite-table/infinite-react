@@ -98,23 +98,25 @@ export default () => {
           defaultFilterValue={[
             {
               field: 'age',
-              operator: 'gtx',
-              filterValue: 30,
-              filterType: 'custom-number',
+              filter: {
+                operator: 'gtx',
+                value: 30,
+                type: 'custom-number',
+              },
             },
           ]}
           filterDelay={0}
           filterTypes={{
             'custom-number': {
               defaultOperator: 'gtx',
-              emptyValues: new Set(['', null, undefined]),
+              emptyValues: ['', null, undefined],
               operators: [
                 {
                   name: 'gtx',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
                     if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
+                      emptyValues.includes(currentValue) ||
+                      emptyValues.includes(filterValue)
                     ) {
                       return true;
                     }
@@ -125,8 +127,8 @@ export default () => {
                   name: 'ltx',
                   fn: ({ currentValue, filterValue, emptyValues }) => {
                     if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
+                      emptyValues.includes(currentValue) ||
+                      emptyValues.includes(filterValue)
                     ) {
                       return true;
                     }

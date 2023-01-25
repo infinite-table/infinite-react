@@ -55,18 +55,20 @@ const domProps = {
 const defaultFilterValue: DataSourceProps<Developer>['filterValue'] = [
   {
     field: 'salary',
-    operator: 'gt',
-    filterValue: 50000,
-    filterType: 'number',
+    filter: {
+      operator: 'gt',
+      value: 50000,
+      type: 'number',
+    },
   },
 ];
 
 export default () => {
   return (
     <>
-    <p style={{ color: 'var(--infinite-cell-color)' }}>
-    By default, only showing records with salary > 50000 
-    </p>
+      <p style={{ color: 'var(--infinite-cell-color)' }}>
+        {`By default, only showing records with salary > 50000`}
+      </p>
       <React.StrictMode>
         <DataSource<Developer>
           data={data}

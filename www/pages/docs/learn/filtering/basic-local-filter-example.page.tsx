@@ -25,7 +25,10 @@ defaultFilterTypes.string.operators.push({
   name: 'Not includes',
   label: 'Not Includes',
   fn: ({ currentValue, filterValue, emptyValues }) => {
-    if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+    if (
+      emptyValues.includes(currentValue) ||
+      emptyValues.includes(filterValue)
+    ) {
       return true;
     }
     return (

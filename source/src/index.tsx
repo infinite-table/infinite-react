@@ -9,9 +9,16 @@ export * from './components/hooks/useOverlay';
 import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBox';
 import { LoadMask } from './components/InfiniteTable/components/LoadMask';
 
+import {
+  StringFilterEditor,
+  NumberFilterEditor,
+} from './components/InfiniteTable/components/FilterEditors';
+
 export const components = {
   CheckBox: InfiniteCheckBox,
   LoadMask,
+  StringFilterEditor,
+  NumberFilterEditor,
 };
 
 export { group, flatten } from './utils/groupAndPivot';
@@ -25,9 +32,4 @@ export { interceptMap } from './components/hooks/useInterceptedMap';
 
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';
 
-export {
-  defaultFilterEditors,
-  StringFilterEditor,
-  NumberFilterEditor,
-} from './components/InfiniteTable/components/FilterEditors';
 export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';

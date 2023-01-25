@@ -514,6 +514,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     if (col.computedFilterValue) {
       newFilterValueForColumn = {
         ...col.computedFilterValue,
+        filter: {
+          ...col.computedFilterValue.filter,
+        },
       };
     } else {
       const filterType = col.computedFilterType;
@@ -542,7 +545,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         filterValueForColumn as DataSourceFilterValueItem<T>;
     }
 
-    newFilterValueForColumn.filterValue = filterValue;
+    newFilterValueForColumn.filter.value = filterValue;
 
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);
   }
@@ -566,7 +569,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     if (col.computedFilterValue) {
       newFilterValueForColumn = {
         ...col.computedFilterValue,
-        operator,
+        filter: {
+          ...col.computedFilterValue.filter,
+          operator,
+        },
       };
     } else {
       newFilterValueForColumn = {
@@ -575,10 +581,15 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
           type: filterType,
           value: [...filterTypes[filterType].emptyValues.values()][0],
         },
-        [col.field ? 'field' : 'id']: col.field ?? col.id,
 
         valueGetter: col.valueGetter,
       } as DataSourceFilterValueItem<T>;
+
+      if (col.field) {
+        newFilterValueForColumn.field = col.field;
+      } else {
+        newFilterValueForColumn.id = col.id;
+      }
     }
 
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);

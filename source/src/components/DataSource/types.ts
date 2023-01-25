@@ -518,10 +518,8 @@ export type DataSourceFilterValueItem<T> = DiscriminatedUnion<
     operator: string;
     value: any;
   };
-  filterValue: any;
+
   disabled?: boolean;
-  filterType: string;
-  operator: string;
 };
 
 export type DataSourceFilterValueItemValueGetter<T> = (

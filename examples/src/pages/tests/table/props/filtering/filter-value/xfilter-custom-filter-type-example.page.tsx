@@ -25,10 +25,10 @@ const data: DataSourceData<Developer> = ({ filterValue }) => {
     process.env.NEXT_PUBLIC_BASE_URL +
       `/developers1k-sql?filterBy=${JSON.stringify(
         filterValue?.map((x) => {
-          x.filterType = 'number';
-          //@ts-ignore
-          x.value = Number(x.filterValue);
-          return x;
+          return {
+            filterType: x.filter.type || 'number',
+            value: Number(x.filter.value),
+          };
         }),
       )}`,
   )
@@ -66,7 +66,7 @@ export default () => {
           filterTypes={{
             salary: {
               defaultOperator: 'gt',
-              emptyValues: new Set(['', null, undefined]),
+              emptyValues: ['', null, undefined],
               operators: [
                 {
                   name: 'gt',
@@ -74,13 +74,7 @@ export default () => {
                   components: {
                     Icon: () => <>{'>'}</>,
                   },
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue > filterValue;
                   },
                 },
@@ -90,13 +84,7 @@ export default () => {
                     Icon: () => <>{'>='}</>,
                   },
                   label: 'Greater Than or Equal',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue >= filterValue;
                   },
                 },
@@ -106,13 +94,7 @@ export default () => {
                     Icon: () => <>{'<'}</>,
                   },
                   label: 'Less Than',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue < filterValue;
                   },
                 },
@@ -122,13 +104,7 @@ export default () => {
                     Icon: () => <>{'<='}</>,
                   },
                   label: 'Less Than or Equal',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue <= filterValue;
                   },
                 },

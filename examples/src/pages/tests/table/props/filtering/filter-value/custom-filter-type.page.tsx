@@ -3,12 +3,14 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropFilterTypes,
-  StringFilterEditor,
+  components,
 } from '@infinite-table/infinite-react';
 
 import * as React from 'react';
 
 import { dataSource, Employee } from './custom-filter-type.data';
+
+const { StringFilterEditor } = components;
 
 const columns = new Map<string, InfiniteTableColumn<Employee>>([
   [
@@ -45,13 +47,16 @@ const aliases: Record<string, string> = {
 const filterTypes: DataSourcePropFilterTypes<Employee> = {
   country: {
     label: 'Country',
-    emptyValues: new Set(['']),
+    emptyValues: [''],
     defaultOperator: 'same',
     operators: [
       {
         name: 'same',
         fn: ({ currentValue, filterValue, emptyValues }) => {
-          if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
+          if (
+            emptyValues.includes(currentValue) ||
+            emptyValues.includes(filterValue)
+          ) {
             return true;
           }
 

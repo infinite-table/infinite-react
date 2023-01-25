@@ -55,15 +55,20 @@ A filter type is basically a collection of operators available for a type of dat
 filterValue={[
   {
     field: 'firstName',
-    filterType: 'string',
-    operator: 'includes',
-    filterValue: 'John'
+    filter: {
+      type: 'string',
+      operator: 'includes',
+      value: 'John'
+    }
+    
   },
   {
     field: 'age',
-    filterType: 'number',
-    operator: 'gt',
-    filterValue: 30
+    filter: {
+      type: 'number',
+      operator: 'gt',
+      value: 30
+    }
   }
 ]}
 ```
@@ -82,10 +87,7 @@ operators: [
     name: 'includes',
     components: { Icon: /* a React Component */ },
     label: 'Includes',
-    fn: ({ currentValue, filterValue, emptyValues }) => {
-      if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-        return true;
-      }
+    fn: ({ currentValue, filterValue }) => {
       return (
         typeof currentValue === 'string' &&
         typeof filterValue == 'string' &&
@@ -105,7 +107,7 @@ For this, we override the `filterTypes` property of the `<DataSource />` compone
 const filterTypes = {
   salary: {
     defaultOperator: 'gt',
-    emptyValues: new Set(['', null, undefined]),
+    emptyValues: ['', null, undefined],
     operators: [ /*...*/ ]
   }
 }
@@ -169,7 +171,7 @@ When you specify new <DPropLink name="filterTypes"/>, the default filter types o
 
 
 
-## Using a filter delay
+## Using a Filter Delay
 
 In order to save some resources, filtering is batched by default. This is controlled by the <DPropLink name="filterDelay"/> prop, which, if not specified, defaults to `200` milliseconds. This means, any changes to the column filters, that happen inside a 200ms window (or the current value of <DPropLink name="filterDelay"/>), will be debounced and only the last value will be used to trigger a filter.
 
@@ -186,7 +188,7 @@ API calls to <ApiLink name="setColumnFilter"/> or <ApiLink name="clearColumnFilt
 </Note>
 
 
-## Using a filter function instead of the column filters
+## Using a Filter Function Instead of the Column Filters
 
 For client-side rendering, it's possible that instead of showing a column filter bar, you use a custom <DPropLink name="filterFunction" /> to filter the data.
 

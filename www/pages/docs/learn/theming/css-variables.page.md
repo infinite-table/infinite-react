@@ -216,6 +216,14 @@ Overriden in the `dark` theme.
 --infinite-background
 ```
 
+### Icon size
+
+
+
+```css
+--infinite-icon-size
+```
+
 ### Load mask padding
 
 The padding used for the content inside the LoadMask.
@@ -392,6 +400,54 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ```css
 --infinite-resize-handle-constrained-hover-background
+```
+
+### Filter operator padding x
+
+
+
+```css
+--infinite-filter-operator-padding-x
+```
+
+### Filter editor padding x
+
+
+
+```css
+--infinite-filter-editor-padding-x
+```
+
+### Filter editor margin x
+
+
+
+```css
+--infinite-filter-editor-margin-x
+```
+
+### Filter operator padding y
+
+
+
+```css
+--infinite-filter-operator-padding-y
+```
+
+### Filter editor padding y
+
+
+
+```css
+--infinite-filter-editor-padding-y
+```
+
+### Filter editor margin y
+
+
+
+```css
+--infinite-filter-editor-margin-y
 ```
 
 ### Cell padding

@@ -79,7 +79,7 @@ export default () => {
           filterTypes={{
             salary: {
               defaultOperator: 'gt',
-              emptyValues: new Set(['', null, undefined]),
+              emptyValues: ['', null, undefined],
               operators: [
                 {
                   name: 'gt',
@@ -87,13 +87,7 @@ export default () => {
                   components: {
                     Icon: getIcon('>'),
                   },
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue > filterValue;
                   },
                 },
@@ -103,13 +97,7 @@ export default () => {
                     Icon: getIcon('>='),
                   },
                   label: 'Greater Than or Equal',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue >= filterValue;
                   },
                 },
@@ -119,13 +107,7 @@ export default () => {
                     Icon: getIcon('<'),
                   },
                   label: 'Less Than',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue < filterValue;
                   },
                 },
@@ -135,13 +117,7 @@ export default () => {
                     Icon: getIcon('<='),
                   },
                   label: 'Less Than or Equal',
-                  fn: ({ currentValue, filterValue, emptyValues }) => {
-                    if (
-                      emptyValues.has(currentValue) ||
-                      emptyValues.has(filterValue)
-                    ) {
-                      return true;
-                    }
+                  fn: ({ currentValue, filterValue }) => {
                     return currentValue <= filterValue;
                   },
                 },

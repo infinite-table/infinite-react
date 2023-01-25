@@ -88,6 +88,42 @@ Try editing the `salary` column - it has a custom editor
 
 </Prop>
 
+<Prop name="useInfiniteColumnFilterEditor" type="() => ({ column, value, setValue, className, filtered,... })">
+
+> Used to write custom filter editors for columns.
+
+The return value of this hook is an object with the following properties:
+
+ * `value` - the value that should be passed to the filter editor
+ * `setValue(value)` - the functon you have to call to update the filtering for the current column
+ * `column` - the current column
+ * `operatorName`: `string` - the name of the operator currently being applied
+ * `className` - a CSS class name to apply to the filter editor, for default styling
+ * `filtered` - a boolean indicating whether the column is currently filtered or not
+ * `disabled` - a boolean indicating whether the filter editor should be rendered as disabled or not
+ * `filterTypeKey`: `string` - the key of the filter type
+ * `filterType` - the filter type object for the current column
+ * `filterTypes` - a reference to the <DPropLink name="filterTypes" /> object as configured in the `DataSource`
+
+
+
+<Sandpack title="Demo of a custom filter editor">
+
+<Description>
+
+The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
+
+The checkbox has indeterminate state, which will match all values in the data source.
+
+</Description>
+
+```ts file=custom-filter-editor-hooks-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="useInfiniteHeaderCell" >
 
 > Used inside <PropLink name="columns.header" /> or <PropLink name="column.components.HeaderCell" />

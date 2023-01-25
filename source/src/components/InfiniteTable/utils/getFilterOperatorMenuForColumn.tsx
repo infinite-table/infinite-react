@@ -61,7 +61,7 @@ export function getFilterOperatorMenuForColumn<T>(
   const operatorItems = columnFilterType.operators.map((operator) => {
     const key = operator.name;
     const checked = column.computedFilterValue
-      ? column.computedFilterValue.operator === key
+      ? column.computedFilterValue.filter.operator === key
       : key === columnFilterType.defaultOperator;
 
     const IconCmp = operator.components?.Icon ?? FilterIcon;

@@ -68,9 +68,11 @@ export default () => {
             {
               id: 'salary',
               valueGetter: ({ data }) => data.salary,
-              operator: 'gt',
-              filterValue: '',
-              filterType: 'number',
+              filter: {
+                operator: 'gt',
+                value: '',
+                type: 'number',
+              },
             },
           ]}
           filterDelay={0}

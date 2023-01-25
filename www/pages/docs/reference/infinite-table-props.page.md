@@ -970,6 +970,27 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 </Prop>
 
+<Prop name="columns.renderFilterIcon">
+
+> Customizes the rendering of the filter icon for the column.
+
+<Sandpack title="Custom filter icons for salary and name columns">
+
+<Description>
+
+The `salary` column will show a bolded label when filtered.
+
+The `firstName` column will show a custom filter icon when filtered.
+
+</Description>
+
+```ts file=$DOCS/learn/columns/column-filter-icon-example.page.tsx
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.renderGroupIcon" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
 
 > Customizes the rendering of the collapse/expand group icon for group rows.

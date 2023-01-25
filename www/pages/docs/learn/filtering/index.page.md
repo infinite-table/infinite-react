@@ -20,9 +20,11 @@ Based on the <PropLink name="columns.type" code={false}>column type</PropLink>, 
   defaultFilterValue={[
     {
       field: 'age',
-      operator: 'gt',
-      filterValue: 30,
-      filterType: 'number'
+      filter: {
+        operator: 'gt',
+        value: 30,
+        type: 'number'
+      }
     }
   ]}
 >
@@ -61,7 +63,7 @@ A filter type is a concept that defines how a certain type of data is to be filt
 A filter type will have
  - a `key` - the key used to define the filter in the <DPropLink name="filterTypes" /> object
  - a `label`,
- - a Set of values considered to be empty values - when any of these values is used in the filter, the filter will match all records.
+ - an array of values considered to be empty values - when any of these values is used in the filter, the filter will not be applied.
  - an array of `operators`
  - a default operator.
 
@@ -74,7 +76,7 @@ For this, you would define the following filter type:
 const filterTypes = {
   income: {
     label: 'Income', 
-    emptyValues: new Set(['', null, undefined]),
+    emptyValues: ['', null, undefined],
     defaultOperator: 'gt',
     operators: [
       {
@@ -109,7 +111,7 @@ const filterTypes = {
 Each operator for a certain filter type needs to at least have a `name` and `fn` defined. The `fn` property is a function that will be called when client-side filtering is enabled, with an object that has the following properties:
  - `currentValue` - the cell value of the current row for the column being filtered
  - `filterValue` - the value of the filter editor
- - `emptyValues` - the set of values considered to be empty values for the filter type
+ - `emptyValues` - the array of values considered to be empty values for the filter type
  - `data` - the current row data object - `typeof DATA_TYPE`
  - `index` - the index of the current row in the table - `number`
  - `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
@@ -164,9 +166,11 @@ defaultFilterValue={[
   {
     id: 'salary',
     valueGetter: ({ data }) => data.salary,
-    operator: 'gt',
-    filterValue: '',
-    filterType: 'number',
+    filter: {
+      operator: 'gt',
+      value: '',
+      type: 'number',
+    }
   },
 ]}
 ```
@@ -187,6 +191,24 @@ The `salary` column is not bound to a `field` - however, it can still be used fo
 </Sandpack>
 
 
+## Customizing the Filter Icon for Columns
+
+Columns can customize the filter icon by using the <PropLink name="columns.renderFilterIcon" /> property.
+
+<Sandpack title="Custom filter icons for salary and name columns">
+
+<Description>
+
+The `salary` column will show a bolded label when filtered.
+
+The `firstName` column will show a custom filter icon when filtered.
+
+</Description>
+
+```ts file=$DOCS/learn/columns/column-filter-icon-example.page.tsx
+```
+
+</Sandpack>
 
 <HeroCards>
 <YouWillLearnCard title="Client-side filtering" path="./filtering/filtering-client-side">

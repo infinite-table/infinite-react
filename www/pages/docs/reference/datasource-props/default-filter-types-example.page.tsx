@@ -24,10 +24,7 @@ type Developer = {
 defaultFilterTypes.string.operators.push({
   name: 'Not includes',
   label: 'Not Includes',
-  fn: ({ currentValue, filterValue, emptyValues }) => {
-    if (emptyValues.has(currentValue) || emptyValues.has(filterValue)) {
-      return true;
-    }
+  fn: ({ currentValue, filterValue }) => {
     return (
       typeof currentValue === 'string' &&
       typeof filterValue == 'string' &&

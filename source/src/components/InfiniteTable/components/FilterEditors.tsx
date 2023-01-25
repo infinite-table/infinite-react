@@ -2,20 +2,12 @@ import * as React from 'react';
 
 import { useInfiniteColumnFilterEditor } from './InfiniteTableHeader/InfiniteTableColumnHeaderFilter';
 
-function getFilterEditors(): Record<any, () => JSX.Element | null> {
-  return {
-    string: StringFilterEditor,
-    number: NumberFilterEditor,
-  };
-}
-
-export const defaultFilterEditors = getFilterEditors();
-
 export function StringFilterEditor<T>() {
   const { ariaLabel, value, setValue, className, disabled } =
     useInfiniteColumnFilterEditor<T>();
   return (
     <input
+      data-xxx
       aria-label={ariaLabel}
       type="text"
       disabled={disabled}
@@ -35,6 +27,7 @@ export function NumberFilterEditor<T>() {
     <input
       aria-label={ariaLabel}
       type="number"
+      data-yyy
       disabled={disabled}
       value={value as any as number}
       onChange={(event) => {

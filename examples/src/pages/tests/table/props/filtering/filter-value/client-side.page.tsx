@@ -93,9 +93,11 @@ export default function RowStyleDefault() {
           setFilterValue([
             {
               field: 'department',
-              filterType: 'string',
-              operator: 'eq',
-              filterValue: 'Management',
+              filter: {
+                type: 'string',
+                operator: 'eq',
+                value: 'Management',
+              },
             },
           ])
         }
@@ -113,10 +115,12 @@ export default function RowStyleDefault() {
               // so look for a solution
               // idea: rowInfo should contain both rawValue and formattedValue, and displayValue?
               // valueGetter: ({ data, rowInfo }) => data.department,
-              filterType: 'string',
-              operator: 'eq',
+              filter: {
+                type: 'string',
+                operator: 'eq',
 
-              filterValue: 'Marketing',
+                value: 'Marketing',
+              },
             },
           ])
         }

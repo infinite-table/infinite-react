@@ -57,9 +57,11 @@ export default () => {
   >([
     {
       field: 'salary',
-      operator: 'gt',
-      filterValue: 50000,
-      filterType: 'number',
+      filter: {
+        operator: 'gt',
+        value: 50000,
+        type: 'number',
+      },
     },
   ]);
 

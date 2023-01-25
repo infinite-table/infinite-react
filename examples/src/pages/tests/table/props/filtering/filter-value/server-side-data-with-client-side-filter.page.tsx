@@ -34,10 +34,10 @@ const dataSource: DataSourceData<Developer> = ({ filterValue, sortInfo }) => {
     filterValue
       ? 'filterBy=' +
         JSON.stringify(
-          filterValue.map((filter) => {
+          filterValue.map(({ field, filter }) => {
             return {
-              field: filter.field,
-              value: filter.filterValue,
+              field: field,
+              value: filter.value,
               operator: filter.operator,
             };
           }),
