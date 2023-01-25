@@ -2,7 +2,6 @@
 title: Releases
 layout: Releases
 ---
-
 ## 1.0.0 🚀
 @milestone id="68"
 
