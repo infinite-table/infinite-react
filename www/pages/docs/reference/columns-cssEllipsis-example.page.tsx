@@ -45,7 +45,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency', type: 'number' },
 };
 
-export default function GroupByExample() {
+export default function CssEllipsis() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>

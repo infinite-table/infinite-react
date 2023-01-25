@@ -110,7 +110,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   firstName: {
     field: 'firstName',
     components: {
-      editor: CustomEditor,
+      Editor: CustomEditor,
     },
   },
   age: {

@@ -66,6 +66,8 @@ import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
 import { FocusDetect } from './components/FocusDetect';
 import { useEditingCallbackProps } from './hooks/useEditingCallbackProps';
+import { useInfiniteColumnFilterEditor } from './components/InfiniteTableHeader/InfiniteTableColumnHeaderFilter';
+import { useColumnFilterOperatorMenu } from './hooks/useColumnFilterOperatorMenu';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -177,6 +179,8 @@ export const InfiniteTableComponent = React.memo(
     useEditingCallbackProps<T>();
 
     const { menuPortal } = useColumnMenu();
+    const { menuPortal: filterOperatorMenuPortal } =
+      useColumnFilterOperatorMenu();
 
     React.useEffect(() => {
       if (
@@ -249,6 +253,7 @@ export const InfiniteTableComponent = React.memo(
           )}
         >
           {menuPortal}
+          {filterOperatorMenuPortal}
         </div>
         {rowHeightCSSVar ? (
           <CSSVariableWatch
@@ -368,4 +373,5 @@ export {
   useInfiniteColumnCell,
   useInfiniteHeaderCell,
   useInfiniteColumnEditor,
+  useInfiniteColumnFilterEditor,
 };

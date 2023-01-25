@@ -11,7 +11,6 @@ import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
-import { defaultFilterEditors } from '../components/FilterEditors';
 
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import { ThemeVars } from '../theme.css';
@@ -22,7 +21,6 @@ import {
 } from '../types';
 import {
   InfiniteTableColumnsMap,
-  InfiniteTablePropFilterEditors,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
@@ -101,6 +99,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
     columnContextMenuVisibleForColumnId: null,
+    filterOperatorMenuVisibleForColumnId: null,
 
     getDOMNodeForCell: (cellPosition: CellPosition) => {
       if (!domRef.current) {
@@ -123,6 +122,11 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     activeCellIndicatorDOMRef: createRef(),
 
     onColumnMenuClick: buildSubscriptionCallback<{
+      target: HTMLElement | EventTarget;
+      column: InfiniteTableComputedColumn<T>;
+    }>(),
+
+    onFilterOperatorMenuClick: buildSubscriptionCallback<{
       target: HTMLElement | EventTarget;
       column: InfiniteTableComputedColumn<T>;
     }>(),
@@ -194,6 +198,7 @@ export const forwardProps = <T>(
     columnPinning: 1,
     editable: 1,
     columnDefaultEditable: 1,
+    columnDefaultFilterable: 1,
 
     rowStyle: 1,
     rowProps: 1,
@@ -202,17 +207,12 @@ export const forwardProps = <T>(
     pinnedEndMaxWidth: 1,
     pivotColumn: 1,
     pivotColumnGroups: 1,
+    getFilterOperatorMenuItems: 1,
 
     onScrollbarsChange: 1,
     autoSizeColumnsKey: 1,
 
     scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 250,
-
-    filterEditors: (filterEditors) =>
-      ({
-        ...defaultFilterEditors,
-        ...filterEditors,
-      } as InfiniteTablePropFilterEditors<T>),
 
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
@@ -322,6 +322,7 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.onRowHeightCSSVarChange.destroy();
   state.onColumnHeaderHeightCSSVarChange.destroy();
   state.onColumnMenuClick.destroy();
+  state.onFilterOperatorMenuClick.destroy();
 
   state.domRef.current = null;
   state.scrollerDOMRef.current = null;
@@ -373,6 +374,7 @@ export const mapPropsToState = <T>(params: {
     state.columns;
 
   return {
+    showColumnFilters: props.showColumnFilters ?? !!parentState.filterValue,
     controlledColumnVisibility: !!props.columnVisibility,
     groupRenderStrategy,
     groupBy: groupBy,

@@ -16,18 +16,36 @@ const express = require('express');
 const serverless = require('serverless-http');
 
 const jsonServer = require('json-server');
-const {
-  employees,
-} = require('../../dataserver/data/employees.json');
+const { employees } = require('../../dataserver/data/employees.json');
 const {
   employees: employees50k,
 } = require('../../dataserver/data/employees50k.json');
-const {
-  developers,
-} = require('../../dataserver/data/developers.json');
+const { developers } = require('../../dataserver/data/developers.json');
 const {
   developers: developers50k,
 } = require('../../dataserver/data/developers50k.json');
+
+const OPERATOR_ALIAS = {
+  gt: '>',
+  gte: '>=',
+  lt: '<',
+  lte: '<=',
+  eq: ' = ',
+  neq: '!=',
+  startsWith: 'LIKE',
+  endsWith: 'LIKE',
+  contains: 'LIKE',
+  includes: 'LIKE',
+};
+
+const identity = (x) => x;
+
+const OPERATOR_MODIFIERS = {
+  contains: (value) => `'%${value}%'`,
+  startsWith: (value) => `'${value}%'`,
+  endsWith: (value) => `'%${value}'`,
+  eq: (value) => (typeof value === 'number' ? value : `'${value}'`),
+};
 
 const developers10 = developers.slice(0, 10);
 const developers100 = developers.slice(0, 100);
@@ -86,11 +104,7 @@ const sqlRoutes = {
   '50k': 50_000,
 };
 
-alasql.aggr.CORRECT_AVERAGE = function (
-  value,
-  accumulator,
-  stage
-) {
+alasql.aggr.CORRECT_AVERAGE = function (value, accumulator, stage) {
   if (stage == 1) {
     // first call of aggregator - for first line
 
@@ -104,11 +118,7 @@ alasql.aggr.CORRECT_AVERAGE = function (
     return accumulator || 0;
   }
 };
-alasql.aggr.CORRECT_AVERAGE = function (
-  value,
-  accumulator,
-  stage
-) {
+alasql.aggr.CORRECT_AVERAGE = function (value, accumulator, stage) {
   if (stage == 1) {
     var newAccumulator = value != null ? [value] : [];
 
@@ -120,8 +130,7 @@ alasql.aggr.CORRECT_AVERAGE = function (
     return accumulator;
   } else if (stage == 3) {
     return accumulator.length
-      ? accumulator.reduce((a, b) => a + b) /
-          accumulator.length
+      ? accumulator.reduce((a, b) => a + b) / accumulator.length
       : 0;
   }
 };
@@ -136,7 +145,7 @@ const FNS = {
 Object.keys(sqlRoutes).forEach((name) => {
   app.use(
     `/.netlify/functions/json-server/developers${name}-sql`,
-    getSQLRoute(name, sqlRoutes[name])
+    getSQLRoute(name, sqlRoutes[name]),
   );
 });
 
@@ -195,6 +204,7 @@ function getSQLRoute(routeSuffix = '', size) {
     } catch (ex) {
       reducers = null;
     }
+
     try {
       filterBy = JSON.parse(query.filterBy);
     } catch (ex) {
@@ -247,22 +257,16 @@ function getResultSet({
     }
   }
 
-  const reducersByField = (reducers || []).reduce(
-    (acc, reducer) => {
-      acc[reducer.id || reducer.field] = reducer;
-      return acc;
-    },
-    {}
-  );
+  const reducersByField = (reducers || []).reduce((acc, reducer) => {
+    acc[reducer.id || reducer.field] = reducer;
+    return acc;
+  }, {});
 
   const pivotLength = pivotBy ? pivotBy.length : 0;
-  const groupByMapByField = (groupBy || []).reduce(
-    (acc, group) => {
-      acc[group.field] = group;
-      return acc;
-    },
-    {}
-  );
+  const groupByMapByField = (groupBy || []).reduce((acc, group) => {
+    acc[group.field] = group;
+    return acc;
+  }, {});
 
   const sqlParams = {
     groupBy,
@@ -275,14 +279,13 @@ function getResultSet({
   };
   let SQL = buildSQL(sqlParams);
 
+  console.log('SQL', SQL);
   let result = alasql(SQL);
 
   let totalCount = result.length;
 
   result =
-    limit != null
-      ? result.slice(start, start + limit)
-      : result.slice(start);
+    limit != null ? result.slice(start, start + limit) : result.slice(start);
 
   let jsonResult;
   if (
@@ -316,9 +319,7 @@ function getResultSet({
             : groupBy[0]
             ? groupBy[0].field
             : null;
-        const keys = keyField
-          ? [...groupKeys, x[keyField]]
-          : [...groupKeys];
+        const keys = keyField ? [...groupKeys, x[keyField]] : [...groupKeys];
 
         const countSQL = buildSQL({
           ...sqlParams,
@@ -332,10 +333,7 @@ function getResultSet({
         // console.log(x);
 
         Object.keys(x).forEach((k) => {
-          const theValue =
-            typeof x[k] === 'number'
-              ? Math.floor(x[k])
-              : x[k];
+          const theValue = typeof x[k] === 'number' ? Math.floor(x[k]) : x[k];
 
           let exit = false;
           if (reducersByField[k]) {
@@ -357,51 +355,41 @@ function getResultSet({
 
           const path = [];
 
-          const isLeafNode =
-            valueKeys.length === pivotLength;
+          const isLeafNode = valueKeys.length === pivotLength;
           if (isLeafNode) {
-            let leafContainer = valueKeys.reduce(
-              (acc, key, i) => {
-                const isLast = i === valueKeys.length - 1;
-                // const shouldHaveTotals =
-                //   i !== pivotLength - 1;
-                acc[key] =
-                  acc[key] ||
-                  (!isLast
-                    ? {
-                        [MAPPINGS.values]: {},
-                        [MAPPINGS.totals]: {},
-                      }
-                    : { [MAPPINGS.totals]: {} });
+            let leafContainer = valueKeys.reduce((acc, key, i) => {
+              const isLast = i === valueKeys.length - 1;
+              // const shouldHaveTotals =
+              //   i !== pivotLength - 1;
+              acc[key] =
+                acc[key] ||
+                (!isLast
+                  ? {
+                      [MAPPINGS.values]: {},
+                      [MAPPINGS.totals]: {},
+                    }
+                  : { [MAPPINGS.totals]: {} });
 
-                path.push(key);
+              path.push(key);
 
-                return acc[key][
-                  isLast ? MAPPINGS.totals : MAPPINGS.values
-                ];
-              },
-              pivot[MAPPINGS.values]
-            );
+              return acc[key][isLast ? MAPPINGS.totals : MAPPINGS.values];
+            }, pivot[MAPPINGS.values]);
 
             leafContainer[reducerKey] = theValue;
           } else {
-            let totalsContainer = valueKeys.reduce(
-              (acc, key, i) => {
-                const shouldHaveTotals =
-                  i !== pivotLength - 1;
-                acc[key] =
-                  acc[key] ||
-                  (shouldHaveTotals
-                    ? {
-                        [MAPPINGS.values]: {},
-                        [MAPPINGS.totals]: {},
-                      }
-                    : { [MAPPINGS.values]: {} });
+            let totalsContainer = valueKeys.reduce((acc, key, i) => {
+              const shouldHaveTotals = i !== pivotLength - 1;
+              acc[key] =
+                acc[key] ||
+                (shouldHaveTotals
+                  ? {
+                      [MAPPINGS.values]: {},
+                      [MAPPINGS.totals]: {},
+                    }
+                  : { [MAPPINGS.values]: {} });
 
-                return acc[key][MAPPINGS.totals];
-              },
-              pivot[MAPPINGS.values]
-            );
+              return acc[key][MAPPINGS.totals];
+            }, pivot[MAPPINGS.values]);
 
             totalsContainer[reducerKey] = theValue;
           }
@@ -421,19 +409,13 @@ function getResultSet({
   }
 
   if (expandedRows && expandedRows.length && groupKeys) {
-    const expandedKeys = expandedRows.reduce(
-      (acc, keys) => {
-        acc[JSON.stringify(keys)] = true;
-        return acc;
-      },
-      {}
-    );
+    const expandedKeys = expandedRows.reduce((acc, keys) => {
+      acc[JSON.stringify(keys)] = true;
+      return acc;
+    }, {});
 
     jsonResult.data.forEach((data) => {
-      if (
-        data.keys &&
-        expandedKeys[JSON.stringify(data.keys)]
-      ) {
+      if (data.keys && expandedKeys[JSON.stringify(data.keys)]) {
         // we should expand this
         data.dataset = getResultSet({
           groupKeys: data.keys,
@@ -452,7 +434,7 @@ function getResultSet({
     });
   }
 
-  // jsonResult.totalCountUnfiltered = size;
+  jsonResult.totalCountUnfiltered = size;
 
   return jsonResult;
 }
@@ -492,21 +474,16 @@ function generatePivotSQL(pivotWithValues, reducers = []) {
       const as =
         key
           .map((k) =>
-            `${k}`
-              .replace(/ /g, '')
-              .replace(/#/g, 'sharp')
-              .replace(/-/g, '')
+            `${k}`.replace(/ /g, '').replace(/#/g, 'sharp').replace(/-/g, ''),
           )
           .join(KEY_SEPARATOR) +
         KEY_SEPARATOR +
         (reducer.id || reducer.field);
 
       colsToSelect.push(
-        `${
-          FNS[reducer.name] || reducer.name
-        }(CASE WHEN ${condition} THEN ${
+        `${FNS[reducer.name] || reducer.name}(CASE WHEN ${condition} THEN ${
           reducer.field
-        } ELSE null END) as ${as}`
+        } ELSE null END) as ${as}`,
       );
     });
   });
@@ -531,33 +508,21 @@ function buildSQL({
   let selectAllCols = false;
 
   if (groupBy) {
-    colsToSelect = groupBy.map(
-      (col) => `${col.field} as ${col.field}`
-    );
-    const groupKeysLength = groupKeys
-      ? groupKeys.length
-      : 0;
+    colsToSelect = groupBy.map((col) => `${col.field} as ${col.field}`);
+    const groupKeysLength = groupKeys ? groupKeys.length : 0;
 
-    if (
-      groupKeysLength >= groupBy.length &&
-      groupBy.length
-    ) {
+    if (groupKeysLength >= groupBy.length && groupBy.length) {
       selectAllCols = true;
     } else {
       // limit the fields selected by grouping
-      colsToSelect.length = Math.min(
-        groupKeysLength + 1,
-        colsToSelect.length
-      );
+      colsToSelect.length = Math.min(groupKeysLength + 1, colsToSelect.length);
 
       if (pivotBy) {
         const pivotByWithValues = pivotBy.map((pivot) => {
           const sql = `select unique(${pivot.field}) as ${pivot.field} from ${tableName}`;
           return {
             field: pivot.field,
-            values: alasql(sql).map(
-              (row) => row[pivot.field]
-            ),
+            values: alasql(sql).map((row) => row[pivot.field]),
           };
         });
         // console.log(
@@ -567,27 +532,29 @@ function buildSQL({
         //   pivotBy
         // );
 
-        colsToSelect.push(
-          ...generatePivotSQL(pivotByWithValues, reducers)
-        );
+        colsToSelect.push(...generatePivotSQL(pivotByWithValues, reducers));
       }
     }
   }
 
   if (Array.isArray(reducers)) {
     reducers.forEach(({ field, name, id }) => {
-      colsToSelect.push(
-        `${name}(${field}) as ${id || field}`
-      );
+      colsToSelect.push(`${name}(${field}) as ${id || field}`);
     });
   }
   // console.log('colsToSelect', colsToSelect);
 
   let where = '';
 
+  console.log('filterBy', filterBy);
   if (Array.isArray(filterBy) && filterBy.length) {
     where = ` WHERE ${filterBy
-      .map((f) => `${f.field} = '${f.value}'`)
+      .map(
+        (f) =>
+          `${f.field} ${OPERATOR_ALIAS[f.operator] || f.operator} ${(
+            OPERATOR_MODIFIERS[f.operator] || identity
+          )(f.value)}`,
+      )
       .join(' AND ')}`;
   }
   if (Array.isArray(groupKeys) && groupKeys.length) {
@@ -595,20 +562,14 @@ function buildSQL({
     groupBy.forEach(({ field }, index) => {
       const groupKey = groupKeys[index];
       if (groupKey) {
-        whereConditionForGroups.push(
-          `${field} = '${groupKey}'`
-        );
+        whereConditionForGroups.push(`${field} = '${groupKey}'`);
       }
     });
 
     if (!where) {
-      where = ` WHERE ${whereConditionForGroups.join(
-        ' AND '
-      )}`;
+      where = ` WHERE ${whereConditionForGroups.join(' AND ')}`;
     } else {
-      where += ` AND ${whereConditionForGroups.join(
-        ' AND '
-      )}`;
+      where += ` AND ${whereConditionForGroups.join(' AND ')}`;
     }
   }
 
@@ -616,36 +577,24 @@ function buildSQL({
 
   // console.log('selectAllCols', selectAllCols);
   if (selectAllCols || justCount) {
-    colsToSelect = justCount
-      ? 'count("*") as __count'
-      : '*';
+    colsToSelect = justCount ? 'count("*") as __count' : '*';
   }
   let SQL = `SELECT ${colsToSelect}  FROM ${tableName} ${where}`;
 
   if (!justCount) {
     if (groupBy && groupBy.length && !selectAllCols) {
       SQL += ` GROUP BY ${groupBy
-        .slice(
-          0,
-          groupKeys ? groupKeys.length + 1 : groupBy.length
-        )
+        .slice(0, groupKeys ? groupKeys.length + 1 : groupBy.length)
         .map((g) => `${g.field}`)}`;
     }
 
-    if (
-      (sortInfo && sortInfo.length) ||
-      (groupBy && groupBy.length)
-    ) {
+    if ((sortInfo && sortInfo.length) || (groupBy && groupBy.length)) {
       SQL += ` ORDER BY ${
         sortInfo
-          ? sortInfo.map(
-              (s) =>
-                `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`
-            ) + (groupBy && groupBy.length ? ',' : '')
+          ? sortInfo.map((s) => `${s.field} ${s.dir === 1 ? 'ASC' : 'DESC'}`) +
+            (groupBy && groupBy.length ? ',' : '')
           : ''
-      } ${
-        groupBy ? groupBy.map((g) => `${g.field} ASC`) : ''
-      }`;
+      } ${groupBy ? groupBy.map((g) => `${g.field} ASC`) : ''}`;
     }
   }
 

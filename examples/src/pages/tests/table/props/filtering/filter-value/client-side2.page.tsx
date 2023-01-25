@@ -71,9 +71,11 @@ export default function RowStyleDefault() {
           setFilterValue([
             {
               field: 'department',
-              filterType: 'string',
-              operator: 'contains',
-              filterValue: 'Management',
+              filter: {
+                type: 'string',
+                operator: 'contains',
+                value: 'Management',
+              },
             },
           ])
         }
@@ -86,9 +88,11 @@ export default function RowStyleDefault() {
           setFilterValue([
             {
               field: 'department',
-              filterType: 'string',
-              operator: 'contains',
-              filterValue: 'Marketing',
+              filter: {
+                type: 'string',
+                operator: 'contains',
+                value: 'Marketing',
+              },
             },
           ])
         }
@@ -108,9 +112,11 @@ export default function RowStyleDefault() {
           defaultFilterValue={[
             {
               field: 'department',
-              filterType: 'string',
-              operator: 'contains',
-              filterValue: 'Marketing',
+              filter: {
+                type: 'string',
+                operator: 'contains',
+                value: 'Marketing',
+              },
             },
           ]}
         >

@@ -11,6 +11,7 @@ import { Scrollbars } from '../../InfiniteTable';
 import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { debounce } from '../../utils/debounce';
 import { RenderRange } from '../../VirtualBrain';
+import { cleanupEmptyFilterValues } from '../state/reducer';
 import {
   DataSourceDataParams,
   DataSourceData,
@@ -31,6 +32,15 @@ const getRafPromise = () =>
 const SKIP_DATA_CHANGES_KEYS = {
   originalDataArray: true,
   changes: true,
+};
+
+const DATA_CHANGES_COMPARE_FUNCTIONS: Record<
+  string,
+  (a: any, b: any) => boolean
+> = {
+  filterValue: (a: any, b: any) => {
+    return JSON.stringify(a) === JSON.stringify(b);
+  },
 };
 
 export function buildDataSourceDataParams<T>(
@@ -77,14 +87,16 @@ export function buildDataSourceDataParams<T>(
   }
 
   if (dataSourceParams.filterValue && dataSourceParams.filterValue.length) {
-    dataSourceParams.filterValue = dataSourceParams.filterValue.map((f) => {
-      const value = { ...f };
-      // delete it as it's not serializable
-      // and we want to make it easier for developers to send this filterValue
-      // as is on the server
-      delete value.valueGetter;
-      return value;
-    });
+    const newFilterValue = computeFilterValueForRemote(
+      dataSourceParams.filterValue,
+      {
+        filterMode: componentState.filterMode,
+        filterTypes: componentState.filterTypes,
+      },
+    );
+    if (newFilterValue && newFilterValue.length) {
+      dataSourceParams.filterValue = newFilterValue;
+    }
   }
 
   const changes: DataSourceDataParamsChanges<T> = {};
@@ -96,7 +108,13 @@ export function buildDataSourceDataParams<T>(
     //@ts-ignore
     if (dataSourceParams.hasOwnProperty(k) && !SKIP_DATA_CHANGES_KEYS[k]) {
       const key = k as keyof DataSourceDataParams<T>;
-      if (dataSourceParams[key] !== oldDataSourceParams[key]) {
+      const compareFn = DATA_CHANGES_COMPARE_FUNCTIONS[key];
+
+      const a = dataSourceParams[key];
+      const b = oldDataSourceParams[key];
+      const equals = compareFn ? compareFn(a, b) : a === b;
+
+      if (!equals) {
         //@ts-ignore
         changes[key] = true;
       }
@@ -347,6 +365,33 @@ export function loadData<T>(
   });
 }
 
+function computeFilterValueForRemote<T>(
+  filterValue: DataSourceState<T>['filterValue'],
+  {
+    filterTypes,
+    filterMode,
+  }: {
+    filterTypes: DataSourceState<T>['filterTypes'];
+    filterMode: DataSourceState<T>['filterMode'];
+  },
+) {
+  if (filterMode === 'local') {
+    return filterValue;
+  }
+
+  return (cleanupEmptyFilterValues(filterValue, filterTypes) || []).map(
+    (filterValue) => {
+      const value = { ...filterValue };
+      // delete it as it's not serializable
+      // and we want to make it easier for developers to send this filterValue
+      // as is on the server
+      delete value.valueGetter;
+
+      return value;
+    },
+  );
+}
+
 export function useLoadData<T>() {
   const {
     getComponentState,
@@ -363,8 +408,10 @@ export function useLoadData<T>() {
     groupBy,
     pivotBy,
     filterValue,
+    filterMode,
     livePagination,
     livePaginationCursor,
+    filterTypes,
     cursorId: stateCursorId,
   } = componentState;
 
@@ -453,12 +500,19 @@ export function useLoadData<T>() {
     }
   }, [scrollbars.vertical]);
 
+  const computedFilterValue = useMemo(() => {
+    return computeFilterValueForRemote(filterValue, {
+      filterTypes,
+      filterMode,
+    });
+  }, [filterValue, filterMode, filterTypes]);
+
   const depsObject = {
     sortInfo,
     groupBy,
     pivotBy,
     refetchKey,
-    filterValue,
+    filterValue: computedFilterValue,
     cursorId: livePagination ? stateCursorId : null,
   };
 
@@ -478,8 +532,18 @@ export function useLoadData<T>() {
 
   useEffectWithChanges(
     (changes) => {
-      const appendWhenLivePagination =
-        Object.keys(changes).length === 1 && !!changes.cursorId;
+      const keys = Object.keys(changes);
+      let appendWhenLivePagination = false;
+
+      if (keys.length === 1) {
+        appendWhenLivePagination = !!changes.cursorId;
+
+        if (changes.filterValue && getComponentState().filterMode === 'local') {
+          // if filter value has changed and filter mode is local
+          // then we don't need to do a remote call
+          return;
+        }
+      }
 
       const componentState = getComponentState();
       if (typeof componentState.data === 'function') {

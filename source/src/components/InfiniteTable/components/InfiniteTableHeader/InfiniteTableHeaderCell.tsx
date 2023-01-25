@@ -9,10 +9,7 @@ import {
   useDataSource,
   useDataSourceContextValue,
 } from '../../../DataSource/publicHooks/useDataSource';
-import {
-  DataSourceFilterValueItem,
-  DataSourcePropFilterTypes,
-} from '../../../DataSource/types';
+import { DataSourcePropFilterTypes } from '../../../DataSource/types';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { debounce } from '../../../utils/debounce';
 import { getColumnApiForColumn } from '../../api/getColumnApi';
@@ -21,7 +18,7 @@ import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InternalVars, ThemeVars } from '../../theme.css';
-import { InfiniteTableFilterEditorProps } from '../../types';
+
 import type {
   InfiniteTableColumnHeaderParam,
   InfiniteTableColumnHeaderRenderFunction,
@@ -39,7 +36,8 @@ import {
 import { RenderHeaderCellHookComponent } from '../../utils/RenderHookComponentForInfinite';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
-import { defaultFilterEditors, StringFilterEditor } from '../FilterEditors';
+import { StringFilterEditor } from '../FilterEditors';
+import { FilterIcon } from '../icons/FilterIcon';
 import { MenuIcon, MenuIconProps } from '../icons/MenuIcon';
 import { SortIcon } from '../icons/SortIcon';
 import {
@@ -60,6 +58,7 @@ import {
 import {
   InfiniteTableColumnHeaderFilter,
   InfiniteTableColumnHeaderFilterEmpty,
+  InfiniteTableFilterOperatorSwitch,
 } from './InfiniteTableColumnHeaderFilter';
 import { useColumnResizeHandle } from './useColumnResizeHandle';
 
@@ -100,7 +99,7 @@ export function getColumnFilterType<T>(
   filterTypes: DataSourcePropFilterTypes<T> = defaultFilterTypes,
 ) {
   let columnFilterType: string =
-    column.computedFilterValue?.filterType || column.filterType || '';
+    column.computedFilterValue?.filter.type || column.filterType || '';
 
   if (!columnFilterType) {
     let colFilterType = column.type;
@@ -129,22 +128,22 @@ export function getColumnFilterType<T>(
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 const spacer = <div className={flex['1']}></div>;
+
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
 
   const {
-    computed: { showColumnFilters },
     api,
     getComputed,
     getState,
     actions,
     state: {
+      showColumnFilters,
       components,
       portalDOMRef,
       columnHeaderHeight,
-      filterEditors,
       columnReorderDragColumnId,
     },
   } = useInfiniteTable<T>();
@@ -200,6 +199,9 @@ export function InfiniteTableHeaderCell<T>(
       />
     ) : null;
 
+  const filtered = column.computedFilterable && column.computedFiltered;
+  const filterIcon = filtered ? <FilterIcon /> : null;
+
   const headerCSSEllipsis =
     column.headerCssEllipsis ?? column.cssEllipsis ?? true;
 
@@ -244,6 +246,7 @@ export function InfiniteTableHeaderCell<T>(
     columnsMap,
     columnSortInfo: sortInfo,
     columnFilterValue: column.computedFilterValue,
+    filtered: column.computedFiltered,
     someRowsSelected,
     allRowsSelected,
     selectionMode,
@@ -251,6 +254,7 @@ export function InfiniteTableHeaderCell<T>(
     columnApi,
     renderBag: {
       sortIcon,
+      filterIcon,
       menuIcon,
       selectionCheckBox: null,
       header:
@@ -265,6 +269,18 @@ export function InfiniteTableHeaderCell<T>(
       renderParam.renderBag.sortIcon = (
         <RenderHeaderCellHookComponent
           render={column.renderSortIcon}
+          renderParam={{
+            ...renderParam,
+            renderBag: { ...renderParam.renderBag },
+          }}
+        />
+      );
+    }
+
+    if (column.renderFilterIcon) {
+      renderParam.renderBag.filterIcon = (
+        <RenderHeaderCellHookComponent
+          render={column.renderFilterIcon}
           renderParam={{
             ...renderParam,
             renderBag: { ...renderParam.renderBag },
@@ -353,6 +369,7 @@ export function InfiniteTableHeaderCell<T>(
         {headerContent}
 
         {renderParam.renderBag.sortIcon}
+        {renderParam.renderBag.filterIcon}
         {/* for align center, we push content to middle, except the menu icon
     this spacer pushes from end */}
         {align === 'center' ? spacer : null}
@@ -448,73 +465,9 @@ export function InfiniteTableHeaderCell<T>(
     align,
   };
 
-  const setFilterValue = useCallback(
-    (filterValue: DataSourceFilterValueItem<T>) => {
-      const state = getDataSourceState();
-      let newFilterValue = state.filterValue ?? [];
-
-      let found = false;
-      newFilterValue = newFilterValue.map((currentFilterValue) => {
-        if (
-          (filterValue.id && currentFilterValue.id === filterValue.id) ||
-          (filterValue.field && currentFilterValue.field === column.field)
-        ) {
-          found = true;
-          return filterValue;
-        }
-
-        return currentFilterValue;
-      });
-
-      if (!found) {
-        newFilterValue.push(filterValue);
-      }
-
-      // we now filter away the empty filter values
-      newFilterValue = newFilterValue.filter((filterValue) => {
-        const filterType = filterTypes[filterValue.filterType];
-        if (
-          !filterType ||
-          filterType.emptyValues.has(filterValue.filterValue)
-        ) {
-          return false;
-        }
-        return true;
-      });
-
-      dataSourceActions.filterValue = newFilterValue;
-    },
-    [column, filterTypes],
-  );
-
   const debouncedOnFilterValueChange = React.useMemo(() => {
     const fn = (filterValue: any) => {
-      let newFilterValueForColumn: DataSourceFilterValueItem<T>;
-      if (column.computedFilterValue) {
-        newFilterValueForColumn = {
-          ...column.computedFilterValue,
-        };
-      } else {
-        const filterType = column.computedFilterType;
-        const filterValueForColumn: Partial<DataSourceFilterValueItem<T>> = {
-          filterType,
-          operator: filterTypes[filterType].defaultOperator,
-          filterValue,
-          valueGetter: column.valueGetter,
-        };
-        if (column.field) {
-          filterValueForColumn.field = column.field;
-        } else {
-          filterValueForColumn.id = column.id;
-        }
-
-        newFilterValueForColumn =
-          filterValueForColumn as DataSourceFilterValueItem<T>;
-      }
-
-      newFilterValueForColumn.filterValue = filterValue;
-
-      setFilterValue(newFilterValueForColumn);
+      api.setColumnFilter(column.id, filterValue);
     };
 
     if (filterDelay > 0) {
@@ -522,20 +475,28 @@ export function InfiniteTableHeaderCell<T>(
     }
 
     return fn;
-  }, [
-    filterDelay,
-    setFilterValue,
-    column.computedFilterValue,
-    column.id,
-    column.field,
-    column.computedFilterType,
-  ]);
+  }, [filterDelay, column.id]);
 
-  const filterType = column.computedFilterType;
+  const filterTypeKey = column.computedFilterType;
+  const filterType = filterTypes[filterTypeKey];
 
-  const FilterEditor = (filterEditors[filterType] ||
-    defaultFilterEditors[filterType] ||
-    StringFilterEditor) as React.FC<InfiniteTableFilterEditorProps<T>>;
+  const operatorName = column.computedFilterable
+    ? column.computedFilterValue?.filter.operator ?? filterType?.defaultOperator
+    : undefined;
+
+  const operator =
+    column.computedFilterable && filterType
+      ? filterType.operators.find((op) => op.name === operatorName)
+      : undefined;
+
+  const FilterEditor = (operator?.components?.FilterEditor ||
+    filterType?.components?.FilterEditor ||
+    column.components?.FilterEditor ||
+    StringFilterEditor) as () => JSX.Element | null;
+
+  const FilterOperatorSwitch =
+    filterType?.components?.FilterOperatorSwitch ||
+    column.components?.FilterOperatorSwitch;
 
   const resizeHandle = useColumnResizeHandle(column);
 
@@ -589,9 +550,13 @@ export function InfiniteTableHeaderCell<T>(
               column.computedFilterable ? (
                 <InfiniteTableColumnHeaderFilter
                   filterEditor={FilterEditor}
+                  filterOperatorSwitch={
+                    FilterOperatorSwitch ?? InfiniteTableFilterOperatorSwitch
+                  }
+                  operator={operator}
                   filterTypes={filterTypes}
                   onChange={debouncedOnFilterValueChange}
-                  columnFilterType={filterType}
+                  columnFilterType={filterTypeKey}
                   columnLabel={column.field || column.name || column.id}
                   columnFilterValue={column.computedFilterValue}
                   columnHeaderHeight={columnHeaderHeight}

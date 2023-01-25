@@ -1,4 +1,6 @@
 import { err } from '../../../utils/debug';
+import { DataSourceProps } from '../../DataSource';
+import { defaultFilterTypes } from '../../DataSource/defaultFilterTypes';
 import type {
   DataSourceFilterValueItem,
   DataSourcePropFilterValue,
@@ -118,6 +120,7 @@ type GetComputedVisibleColumnsParam<T> = {
   scrollbarWidth: number | undefined;
 
   filterValue?: DataSourcePropFilterValue<T>;
+  filterTypes?: DataSourceProps<T>['filterTypes'];
 
   sortable?: boolean;
   multiSort: boolean;
@@ -129,6 +132,7 @@ type GetComputedVisibleColumnsParam<T> = {
   columnPinning: InfiniteTablePropColumnPinning;
   editable: InfiniteTablePropsEditable<T>;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
+  columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -187,6 +191,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   sortInfo,
   setSortInfo,
   multiSort,
+  filterTypes = defaultFilterTypes,
 
   viewportReservedWidth,
   resizableColumns,
@@ -196,6 +201,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnPinning,
   editable,
   columnDefaultEditable,
+  columnDefaultFilterable,
   columnSizing,
   columnTypes,
   columnVisibility,
@@ -428,6 +434,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedVisible = theComputedVisibleIndex != -1;
 
     const nextColumnId = visibleColumnOrder[theComputedVisibleIndex + 1];
+
     const colType = getColumnComputedType(c, columnTypes);
 
     const computedVisibleIndex = theComputedVisibleIndex;
@@ -524,13 +531,14 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     const computedFilterValue = computedVisible
       ? filterValueRecord[id] || c.field
-        ? filterValueRecord[c.field as string] || null
+        ? filterValueRecord[id] || filterValueRecord[c.field as string] || null
         : null
       : null;
-
-    const computedFiltered = computedFilterValue != null;
     const computedFilterable =
-      c.defaultFilterable ?? colType.defaultFilterable ?? true;
+      c.defaultFilterable ??
+      colType.defaultFilterable ??
+      columnDefaultFilterable ??
+      true;
 
     const computedEditable =
       editable ??
@@ -544,9 +552,26 @@ export const getComputedVisibleColumns = <T extends unknown>({
       colType.dataType ||
       (Array.isArray(c.type) ? c.type[0] : c.type) ||
       'string';
+
     const computedSortType = c.sortType || colType.sortType || computedDataType;
     const computedFilterType =
       c.filterType || colType.filterType || computedDataType;
+
+    let computedFiltered = false;
+
+    if (computedFilterValue != null && !computedFilterValue.disabled) {
+      const foundFilterType = filterTypes[computedFilterType];
+
+      if (
+        foundFilterType &&
+        (!foundFilterType.emptyValues ||
+          !foundFilterType.emptyValues.includes(
+            computedFilterValue.filter.value,
+          ))
+      ) {
+        computedFiltered = true;
+      }
+    }
 
     const field = c.field ?? colType.field;
     const valueGetter = c.valueGetter ?? colType.valueGetter;

@@ -94,6 +94,8 @@ export const ThemeVars = createGlobalThemeContract(
      */
     background: 'background',
 
+    iconSize: 'icon-size',
+
     components: {
       LoadMask: {
         /**
@@ -127,6 +129,7 @@ export const ThemeVars = createGlobalThemeContract(
          */
         columnHeaderHeight: columnHeaderHeightName,
       },
+
       HeaderCell: {
         /**
          * Background for header cells.
@@ -165,6 +168,13 @@ export const ThemeVars = createGlobalThemeContract(
          */
         resizeHandleConstrainedHoverBackground:
           'resize-handle-constrained-hover-background',
+
+        filterOperatorPaddingX: 'filter-operator-padding-x',
+        filterEditorPaddingX: 'filter-editor-padding-x',
+        filterEditorMarginX: 'filter-editor-margin-x',
+        filterOperatorPaddingY: 'filter-operator-padding-y',
+        filterEditorPaddingY: 'filter-editor-padding-y',
+        filterEditorMarginY: 'filter-editor-margin-y',
       },
       Cell: {
         padding: 'cell-padding',
@@ -397,7 +407,17 @@ const LoadMaskVars = {
 };
 
 const HeaderCellVars = {
-  [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '20px',
+  [ThemeVars.components.HeaderCell.filterOperatorPaddingX]:
+    ThemeVars.spacing['1'],
+  [ThemeVars.components.HeaderCell.filterEditorPaddingX]:
+    ThemeVars.spacing['2'],
+  [ThemeVars.components.HeaderCell.filterEditorMarginX]: ThemeVars.spacing['1'],
+  [ThemeVars.components.HeaderCell.filterOperatorPaddingY]:
+    ThemeVars.spacing['0'],
+  [ThemeVars.components.HeaderCell.filterEditorPaddingY]:
+    ThemeVars.spacing['0'],
+  [ThemeVars.components.HeaderCell.filterEditorMarginY]: ThemeVars.spacing['1'],
+  [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '16px',
   [ThemeVars.components.HeaderCell.resizeHandleWidth]: '2px',
   [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]: '#6bff6b',
   [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
@@ -481,6 +501,7 @@ const MenuVars = {
 };
 
 const LightTheme = {
+  [ThemeVars.iconSize]: '24px',
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
   [ThemeVars.spacing[2]]: '0.25rem' /* 4px when 1rem=16px */,
@@ -520,6 +541,7 @@ const LightTheme = {
 };
 
 const DarkTheme = {
+  [ThemeVars.iconSize]: '24px',
   [ThemeVars.background]: '#101419',
   [ThemeVars.components.Cell.border]: '1px solid #2a323d',
   [ThemeVars.components.Header.color]: '#c3c3c3',

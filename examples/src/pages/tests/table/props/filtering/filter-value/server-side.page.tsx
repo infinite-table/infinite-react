@@ -32,10 +32,11 @@ const dataSource: DataSourceData<Developer> = ({ filterValue, sortInfo }) => {
     filterValue
       ? 'filterBy=' +
         JSON.stringify(
-          filterValue.map((filter) => {
+          filterValue.map(({ filter, field }) => {
             return {
-              field: filter.field,
-              value: filter.filterValue,
+              field: field,
+              value: filter.value,
+              operator: filter.operator,
             };
           }),
         )
@@ -124,9 +125,11 @@ export default function ServerSideFiltering() {
           setFilterValue([
             {
               field: 'stack',
-              filterType: 'string',
-              operator: 'eq',
-              filterValue: 'frontend',
+              filter: {
+                type: 'string',
+                operator: 'eq',
+                value: 'frontend',
+              },
             },
           ])
         }
@@ -139,9 +142,11 @@ export default function ServerSideFiltering() {
           setFilterValue([
             {
               field: 'country',
-              filterType: 'string',
-              operator: 'eq',
-              filterValue: 'United States',
+              filter: {
+                type: 'string',
+                operator: 'eq',
+                value: 'United States',
+              },
             },
           ])
         }
@@ -156,6 +161,7 @@ export default function ServerSideFiltering() {
           filterValue={filterValue}
         >
           <InfiniteTable<Developer>
+            showColumnFilters
             domProps={domProps}
             columnDefaultWidth={150}
             columns={columns}

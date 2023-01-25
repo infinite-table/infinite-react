@@ -6,10 +6,12 @@ import {
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceApi,
+  DataSourceFilterValueItem,
   DataSourceGroupBy,
   DataSourcePivotBy,
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
+  DataSourceProps,
   DataSourcePropSelectionMode,
   DataSourceSingleSortInfo,
   DataSourceState,
@@ -101,7 +103,6 @@ export type InfiniteTableColumnType<T> = {
   defaultFlex?: number;
   // TODO  also move this on the column
   defaultPinned?: InfiniteTableColumnPinnedValues;
-  defaultFilterable?: boolean;
   defaultHiddenWhenGroupedBy?: InfiniteTableColumn<T>['defaultHiddenWhenGroupedBy'];
 
   header?: InfiniteTableColumn<T>['header'];
@@ -114,6 +115,7 @@ export type InfiniteTableColumnType<T> = {
 
   contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
   defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
+  defaultFilterable?: InfiniteTableColumn<T>['defaultFilterable'];
 
   columnGroup?: string;
 
@@ -168,9 +170,16 @@ export type InfiniteTableColumnApi<_T> = {
   showContextMenu: (target: EventTarget | HTMLElement) => void;
   toggleContextMenu: (target: EventTarget | HTMLElement) => void;
   hideContextMenu: () => void;
+
+  showFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
+  toggleFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
+  hideFilterOperatorMenu: () => void;
+
   toggleSort: () => void;
   clearSort: () => void;
   setSort: (sort: SortDir | null) => void;
+  setFilter: (value: any) => void;
+  clearFilter: (value: any) => void;
 };
 
 export type InfiniteTableApiStopEditParams =
@@ -251,6 +260,14 @@ export interface InfiniteTableApi<T> {
   setSortInfoForColumn: (
     columnId: string,
     sortInfo: DataSourceSingleSortInfo<T> | null,
+  ) => void;
+
+  setColumnFilter: (columnId: string, filterValue: any) => void;
+  setColumnFilterOperator: (columnId: string, operator: string) => void;
+  clearColumnFilter: (columnId: string) => void;
+  setFilterValueForColumn: (
+    columnId: string,
+    filterValue: DataSourceFilterValueItem<T>,
   ) => void;
 
   setPinningForColumn: (
@@ -405,10 +422,14 @@ export type InfiniteTablePropPivotColumn<
     ) => InfiniteTablePivotColumnBase<T>);
 
 export type InfiniteTablePropComponents = {
-  LoadMask?: React.FC<React.PropsWithChildren<LoadMaskProps>>;
-  CheckBox?: React.FC<InfiniteCheckBoxProps>;
-  Menu?: React.FC<React.PropsWithChildren<MenuProps>>;
-  MenuIcon?: React.FC<MenuIconProps>;
+  LoadMask?: (
+    props: LoadMaskProps & { children?: React.ReactNode | undefined },
+  ) => JSX.Element | null;
+  CheckBox?: (props: InfiniteCheckBoxProps) => JSX.Element | null;
+  Menu?: (
+    props: MenuProps & { children?: React.ReactNode | undefined },
+  ) => JSX.Element | null;
+  MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
 };
 
 export type ScrollStopInfo = {
@@ -417,25 +438,12 @@ export type ScrollStopInfo = {
   lastVisibleRowIndex: number;
 };
 
-export type InfiniteTablePropFilterEditors<T> = Record<
-  string,
-  React.FC<InfiniteTableFilterEditorProps<T>>
->;
-
 export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
   column: InfiniteTableComputedColumn<T>;
   api: InfiniteTableApi<T>;
   dataSourceApi: DataSourceApi<T>;
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 
-export type InfiniteTableFilterEditorProps<T extends any> = {
-  filterType: string;
-  operator: string;
-  ariaLabel: string;
-  filterValue: T;
-  className: string;
-  onChange: (value: T | undefined) => void;
-};
 export type InfiniteTablePropsEditable<T> =
   | InfiniteTableColumnEditableFn<T>
   | undefined;
@@ -467,11 +475,14 @@ export interface InfiniteTableProps<T> {
   viewportReservedWidth?: number;
   onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;
 
+  showColumnFilters?: boolean;
+
   pivotColumn?: InfiniteTablePropPivotColumn<
     T,
     InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
   >;
 
+  columnDefaultFilterable?: boolean;
   columnDefaultEditable?: boolean;
   editable?: InfiniteTablePropsEditable<T>;
 
@@ -623,8 +634,6 @@ export interface InfiniteTableProps<T> {
   ) => void;
   onRowHeightChange?: (rowHeight: number) => void;
 
-  filterEditors?: InfiniteTablePropFilterEditors<T>;
-
   onReady?: ({
     api,
     dataSourceApi,
@@ -645,12 +654,26 @@ export interface InfiniteTableProps<T> {
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 
   getColumContextMenuItems?: InfiniteTablePropGetColumnContextMenuItems<T>;
+  getFilterOperatorMenuItems?: InfiniteTablePropGetFilterOperatorMenuItems<T>;
 }
 
 export type InfiniteTablePropGetColumnContextMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,
   params: {
     column: InfiniteTableComputedColumn<T>;
+    api: InfiniteTableApi<T>;
+    getState: () => InfiniteTableState<T>;
+    getComputed: () => InfiniteTableComputedValues<T>;
+    actions: InfiniteTableActions<T>;
+  },
+) => MenuProps['items'];
+
+export type InfiniteTablePropGetFilterOperatorMenuItems<T> = (
+  defaultItems: Exclude<MenuProps['items'], undefined>,
+  params: {
+    column: InfiniteTableComputedColumn<T>;
+    filterTypes: DataSourceProps<T>['filterTypes'];
+    columnFilterValue: DataSourceFilterValueItem<T> | null;
     api: InfiniteTableApi<T>;
     getState: () => InfiniteTableState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;

@@ -6,16 +6,16 @@
       "heading": true,
       "routes": [
         {
-          "path": "/blog/2023/01/16/infinite-table-now-generally-available",
+          "path": "/blog/2023/01/16/infinite-table-is-here",
           "date": "2023-01-16",
-          "title": "📣 Infinite Table is now generally available 🎉",
-          "draft": true,
-          "description": "Infinite Table update for October 2022 - grid menus and new website",
+          "title": "📣 Infinite Table is Here 🎉",
+          "draft": false,
+          "description": "Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in enterprise-grade apps",
           "author": [
             "admin"
           ],
-          "excerpt": "<p><em>Infinite Table is ready for prime time. With version 1.0.0 we’re releasing a DataGrid that’s feature packed and ready to be used in the wild!</em></p>\n",
-          "readingTime": "3 min read"
+          "excerpt": "<p><em>Infinite Table React is ready for prime time.</em></p>\n",
+          "readingTime": "7 min read"
         },
         {
           "path": "/blog/2022/11/08/why-another-datagrid",
@@ -32,37 +32,37 @@
         {
           "path": "/blog/2022/11/01/infinite-table-monthly-update-october-2022",
           "date": "2022-11-01",
-          "title": "Monthly Update - October 2022",
+          "title": "Quarterly Update - Autumn 2022",
           "draft": false,
-          "description": "Infinite Table update for October 2022 - grid menus and new website",
+          "description": "Infinite Table update for Autumn 2022 - grid menus and new website",
           "author": [
             "admin"
           ],
-          "excerpt": "<p><em>In September and October our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.</em></p>\n",
+          "excerpt": "<p><em>In the autumn our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu.</em></p>\n",
           "readingTime": "2 min read"
         },
         {
           "path": "/blog/2022/09/01/infinite-table-monthly-update-august-2022",
           "date": "2022-09-01",
-          "title": "Monthly Update - August 2022",
+          "title": "Quarterly Update - Summer 2022",
           "draft": false,
-          "description": "Infinite Table update for August 2022 - row selection, column rendering, group columns",
+          "description": "Infinite Table update for Summper 2022 - row selection, column rendering, group columns",
           "author": [
             "admin"
           ],
-          "excerpt": "<p>In August, we continued our work on preparing for our Autumn release,  focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.</p>\n",
+          "excerpt": "<p>Over the summer, we continued our work on preparing for our official release, focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.</p>\n",
           "readingTime": "7 min read"
         },
         {
           "path": "/blog/2022/08/01/infinite-table-monthly-update-july-2022",
           "date": "2022-08-01",
-          "title": "Monthly Update - July 2022",
+          "title": "Quarterly Update - Spring 2022",
           "draft": false,
-          "description": "Infinite Table update for July 2022",
+          "description": "Infinite Table update for Spring 2022",
           "author": [
             "admin"
           ],
-          "excerpt": "<p>In July, we’ve been hard at work preparing for our Autumn release.</p>\n",
+          "excerpt": "<p>This spring, we’ve been hard at work preparing for our Autumn release.</p>\n",
           "readingTime": "4 min read"
         },
         {

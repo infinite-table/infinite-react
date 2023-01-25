@@ -1,4 +1,4 @@
-import { DataSourceSetupState } from '..';
+import { DataSourceFilterValueItem, DataSourceSetupState } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import {
   InfiniteTableRowInfo,
@@ -21,6 +21,31 @@ import type {
   DataSourceFilterOperatorFunctionParam,
   DataSourcePropFilterTypes,
 } from '../types';
+
+export function cleanupEmptyFilterValues<T>(
+  filterValue: DataSourceState<T>['filterValue'],
+
+  filterTypes: DataSourceState<T>['filterTypes'],
+) {
+  if (!filterValue) {
+    return filterValue;
+  }
+  // for remote filters, we don't want to include the values that are empty
+  return filterValue.filter((filterValue) => {
+    const filterType = filterTypes[filterValue.filter.type];
+    if (!filterType) {
+      return false;
+    }
+
+    if (
+      filterType.emptyValues &&
+      filterType.emptyValues.includes(filterValue.filter.value)
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
@@ -71,12 +96,14 @@ function filterDataSource<T>(params: {
 }) {
   const {
     filterTypes,
-    filterValue: filterValueArray,
+
     operatorsByFilterType,
     filterFunction,
     toPrimaryKey,
   } = params;
+
   let { dataArray } = params;
+
   if (filterFunction) {
     dataArray = dataArray.filter((data, index, arr) =>
       filterFunction({
@@ -88,6 +115,9 @@ function filterDataSource<T>(params: {
     );
   }
 
+  const filterValueArray =
+    cleanupEmptyFilterValues(params.filterValue, filterTypes) || [];
+
   if (filterValueArray && filterValueArray.length) {
     return dataArray.filter((data, index, arr) => {
       const param = {
@@ -95,6 +125,7 @@ function filterDataSource<T>(params: {
         index,
         dataArray: arr,
         primaryKey: toPrimaryKey(data, index),
+        field: undefined as keyof T | undefined,
       };
 
       for (let i = 0, len = filterValueArray.length; i < len; i++) {
@@ -102,11 +133,9 @@ function filterDataSource<T>(params: {
 
         const {
           disabled,
-          filterValue,
           field,
-          filterType: filterTypeKey,
-          valueGetter,
-          operator,
+          valueGetter: filterValueGetter,
+          filter: { type: filterTypeKey, value: filterValue, operator },
         } = currentFilterValue;
         const filterType = filterTypes[filterTypeKey];
         if (disabled || !filterType) {
@@ -118,14 +147,19 @@ function filterDataSource<T>(params: {
           continue;
         }
 
+        const valueGetter: DataSourceFilterValueItem<T>['valueGetter'] =
+          filterValueGetter || filterType.valueGetter;
         const getter =
-          valueGetter || (({ data }) => (field ? data[field] : data));
+          valueGetter || (({ data, field }) => (field ? data[field] : data));
 
-        const operatorFnParam = {
-          ...param,
-        } as DataSourceFilterOperatorFunctionParam<T>;
+        // this assignment is important
+        param.field = field;
+
+        const operatorFnParam =
+          param as DataSourceFilterOperatorFunctionParam<T>;
+
         operatorFnParam.filterValue = filterValue;
-        operatorFnParam.currentValue = getter(param);
+        operatorFnParam.currentValue = getter(operatorFnParam);
         operatorFnParam.emptyValues = filterType.emptyValues;
 
         if (!currentOperator.fn(operatorFnParam)) {

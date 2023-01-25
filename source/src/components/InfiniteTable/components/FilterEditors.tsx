@@ -1,52 +1,42 @@
 import * as React from 'react';
 
-import {
-  InfiniteTableFilterEditorProps,
-  InfiniteTablePropFilterEditors,
-} from '../types/InfiniteTableProps';
+import { useInfiniteColumnFilterEditor } from './InfiniteTableHeader/InfiniteTableColumnHeaderFilter';
 
-function getFilterEditors<T>(): InfiniteTablePropFilterEditors<T> {
-  return {
-    string: StringFilterEditor,
-    number: NumberFilterEditor,
-  };
-}
-
-export const defaultFilterEditors = getFilterEditors();
-
-export function StringFilterEditor<T>(
-  props: InfiniteTableFilterEditorProps<T>,
-) {
+export function StringFilterEditor<T>() {
+  const { ariaLabel, value, setValue, className, disabled } =
+    useInfiniteColumnFilterEditor<T>();
   return (
     <input
-      aria-label={`Filter for ${props.ariaLabel}`}
+      data-xxx
+      aria-label={ariaLabel}
       type="text"
-      value={props.filterValue as any as string}
+      disabled={disabled}
+      value={value as any as string}
       onChange={(event) => {
-        props.onChange(event.target.value as any as T);
+        setValue(event.target.value as any as T);
       }}
-      className={props.className}
+      className={className}
     />
   );
 }
 
-export function NumberFilterEditor<T>(
-  props: InfiniteTableFilterEditorProps<T>,
-) {
+export function NumberFilterEditor<T>() {
+  const { ariaLabel, value, setValue, className, disabled } =
+    useInfiniteColumnFilterEditor<T>();
   return (
     <input
-      aria-label={`Filter for ${props.ariaLabel}`}
+      aria-label={ariaLabel}
       type="number"
-      value={props.filterValue as any as number}
+      data-yyy
+      disabled={disabled}
+      value={value as any as number}
       onChange={(event) => {
-        let value = event.target.value;
-        //@ts-ignore
-        if (!isNaN(value + '')) {
-          value = value + '';
-        }
-        props.onChange(value as any as T);
+        let value = isNaN(event.target.valueAsNumber)
+          ? event.target.value
+          : event.target.valueAsNumber;
+        setValue(value as any as T);
       }}
-      className={props.className}
+      className={className}
     />
   );
 }

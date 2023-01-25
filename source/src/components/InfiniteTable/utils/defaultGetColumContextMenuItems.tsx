@@ -5,9 +5,9 @@ import {
   DataSourceState,
 } from '../../DataSource';
 import { MenuItemObject, MenuProps } from '../../Menu/MenuProps';
-import { Renderable } from '../../types/Renderable';
-import { getColumnApiForColumn } from '../api/getColumnApi';
+
 import { InfiniteCheckBox } from '../components/CheckBox';
+import { getColumnLabel } from '../components/InfiniteTableHeader/getColumnLabel';
 import {
   InfiniteTableApi,
   InfiniteTableComputedColumn,
@@ -30,15 +30,7 @@ export function defaultGetColumContextMenuItems<T>(
     dataSourceActions: DataSourceComponentActions<T>;
   },
 ): MenuProps['items'] {
-  const {
-    column,
-    getComputed,
-    api,
-    getDataSourceState,
-    dataSourceApi,
-    actions,
-    dataSourceActions,
-  } = params;
+  const { column, getComputed, api } = params;
 
   return [
     {
@@ -65,6 +57,17 @@ export function defaultGetColumContextMenuItems<T>(
         api.setSortingForColumn(column.id, null);
       },
     },
+    column.computedFilterable ? '-' : null,
+    column.computedFilterable
+      ? {
+          key: 'clear-filter',
+          label: 'Clear Filter',
+          disabled: !column.computedFiltered,
+          onAction: () => {
+            api.clearColumnFilter(column.id);
+          },
+        }
+      : null,
     '-',
     {
       key: 'pin-start',
@@ -96,41 +99,10 @@ export function defaultGetColumContextMenuItems<T>(
         const colItems: MenuItemObject[] = [];
 
         const computed = getComputed();
-        const dataSourceState = getDataSourceState();
-        const { allRowsSelected, someRowsSelected, selectionMode } =
-          dataSourceState;
 
         computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
-          const columnApi = getColumnApiForColumn(id, {
-            ...params,
-            actions,
-            dataSourceActions,
-            dataSourceApi,
-          })!;
-          let label: Renderable =
-            col.header && typeof col.header !== 'function'
-              ? col.header
-              : col.name || id || '';
+          const label = getColumnLabel(col, params);
 
-          if (typeof col.header === 'function') {
-            label =
-              col.header({
-                column: col,
-                columnApi,
-                insideColumnMenu: true,
-                dragging: false,
-                columnsMap: computed.computedColumnsMap,
-                columnSortInfo: col.computedSortInfo,
-                columnFilterValue: col.computedFilterValue,
-                allRowsSelected,
-                someRowsSelected,
-                selectionMode,
-                api,
-                renderBag: {
-                  header: label,
-                },
-              }) ?? null;
-          }
           colItems.push({
             key: id,
             label,
@@ -161,5 +133,5 @@ export function defaultGetColumContextMenuItems<T>(
         };
       },
     },
-  ];
+  ].filter((x) => !!x);
 }

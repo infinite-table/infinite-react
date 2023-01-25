@@ -49,7 +49,12 @@ export interface InfiniteTableSetupState<T> {
     target: HTMLElement | EventTarget;
     column: InfiniteTableComputedColumn<T>;
   }>;
+  onFilterOperatorMenuClick: SubscriptionCallback<{
+    target: HTMLElement | EventTarget;
+    column: InfiniteTableComputedColumn<T>;
+  }>;
   columnContextMenuVisibleForColumnId: string | null;
+  filterOperatorMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
   cellMouseDown: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
@@ -115,6 +120,7 @@ export interface InfiniteTableMappedState<T> {
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
   getColumContextMenuItems: InfiniteTableProps<T>['getColumContextMenuItems'];
+  getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
 
   columnPinning: InfiniteTablePropColumnPinning;
 
@@ -146,8 +152,6 @@ export interface InfiniteTableMappedState<T> {
   onScrollStop: InfiniteTableProps<T>['onScrollStop'];
   scrollToBottomOffset: InfiniteTableProps<T>['scrollToBottomOffset'];
 
-  filterEditors: NonUndefined<InfiniteTableProps<T>['filterEditors']>;
-
   focusedClassName: InfiniteTableProps<T>['focusedClassName'];
   focusedWithinClassName: InfiniteTableProps<T>['focusedWithinClassName'];
   focusedStyle: InfiniteTableProps<T>['focusedStyle'];
@@ -158,6 +162,7 @@ export interface InfiniteTableMappedState<T> {
   domProps: InfiniteTableProps<T>['domProps'];
   editable: InfiniteTableProps<T>['editable'];
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
+  columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
@@ -206,6 +211,8 @@ export interface InfiniteTableDerivedState<T> {
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Map<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];
+
+  showColumnFilters: NonUndefined<InfiniteTableProps<T>['showColumnFilters']>;
 
   groupRenderStrategy: NonUndefined<
     InfiniteTableProps<T>['groupRenderStrategy']

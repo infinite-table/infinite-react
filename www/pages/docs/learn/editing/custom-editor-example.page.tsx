@@ -94,7 +94,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   salary: {
     components: {
       // reference to the custom editor component
-      editor: CustomEditor,
+      Editor: CustomEditor,
     },
 
     defaultWidth: 320,

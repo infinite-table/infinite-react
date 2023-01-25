@@ -25,6 +25,12 @@ For API on row/group selection, see the [Selection API page](./selection-api).
 
 <PropTable>
 
+<Prop name="clearColumnFilter" type="(columnId: string) =>void">
+
+> Clears any filter for the specified column
+
+</Prop>
+
 <Prop name="collapseGroupRow" type="(groupKeys: any[]) => boolean">
 
 > Collapses the specified group row. Returns true if the group was expanded and is now being collapsed.
@@ -142,6 +148,15 @@ const scrollTop = api.scrollTop;
 > Getter for the [Selection API](./selection-api)
 
 </Prop>
+
+<Prop name="setColumnFilter" type="(columnId: string, value: any) =>void">
+
+> Sets a filter value for the specified column
+
+</Prop>
+
+
+
 
 <Prop name="setColumnOrder" type="(columnIds: string[] | true) => void">
 

@@ -30,6 +30,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnSizing,
     editable,
     columnDefaultEditable,
+    columnDefaultFilterable,
     columnTypes,
     brain,
     bodySize,
@@ -56,7 +57,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       showSeparatePivotColumnForSingleAggregation;
   }, [showSeparatePivotColumnForSingleAggregation]);
 
-  const { multiSort, filterValue } = dataSourceState;
+  const { multiSort, filterValue, filterTypes } = dataSourceState;
 
   useColumnGroups<T>();
 
@@ -130,7 +131,9 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnPinning,
     editable,
     columnDefaultEditable,
+    columnDefaultFilterable,
     filterValue,
+    filterTypes,
 
     columnSizing,
     columnTypes,
@@ -158,7 +161,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   return {
     multiRowSelector,
-    showColumnFilters: !!dataSourceState.filterValue,
+
     scrollbars,
     columnSize,
     rowspan,

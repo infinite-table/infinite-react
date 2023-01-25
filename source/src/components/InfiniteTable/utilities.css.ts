@@ -21,6 +21,7 @@ globalStyle(`${boxSizingBorderBox} *:after`, borderBox);
 export const position = styleVariants({
   relative: { position: 'relative' },
   absolute: { position: 'absolute' },
+  static: { position: 'static' },
   sticky: { position: 'sticky' },
   fixed: { position: 'fixed' },
 });

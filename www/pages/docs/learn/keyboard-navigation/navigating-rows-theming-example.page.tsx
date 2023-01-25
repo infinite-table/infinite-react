@@ -27,10 +27,7 @@ type Developer = {
 };
 
 const dataSource: DataSourceData<Developer> = () => {
-  return fetch(
-    'https://infinite-table.com/.netlify/functions/json-server' +
-      `/developers1k-sql?`,
-  )
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql?`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };

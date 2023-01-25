@@ -10,7 +10,7 @@ export interface InfiniteTableComputedValues<T> {
     horizontal: boolean;
   };
   multiRowSelector: MultiRowSelector;
-  showColumnFilters: boolean;
+
   renderSelectionCheckBox: boolean;
   rowspan?: MatrixBrainOptions['rowspan'];
   computedPinnedStartOverflow: boolean;

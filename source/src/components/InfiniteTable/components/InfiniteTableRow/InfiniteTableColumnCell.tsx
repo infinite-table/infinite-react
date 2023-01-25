@@ -241,7 +241,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   );
 
   const EditorComponent =
-    column.components?.editor ?? InfiniteTableColumnEditor;
+    column.components?.Editor ?? InfiniteTableColumnEditor;
 
   const editor = inEdit ? (
     <CellEditorContextComponent contextValue={renderParam}>

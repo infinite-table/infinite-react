@@ -91,6 +91,28 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Prop>
 
+
+<Prop name="defaultFilterValue" type="{field?, id?, filter: {type, operator, value}[]">
+
+> Uncontrolled prop used for filtering. Can be used for both [client-side](/docs/learn/filtering/filtering-client-side) and [server-side](/docs/learn/filtering/filtering-server-side) filtering.
+
+
+
+If you want to show the column filter editors, you have to either specify this property, or the controlled <DPropLink name="filterValue" /> - even if you have no initial filters. For no initial filters, use `defaultFilterValue=[]`.
+
+For the controlled version, and more details on the shape of the objects in the array, see <DPropLink name="filterValue" />.
+
+<Sandpack  title="Initial filtering applied via defaultFilterValue">
+
+```ts file=defaultFilterValue-example.page.tsx
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
 <Prop name="defaultRowSelection" type="string|number|null|object">
 
 > Describes the selected row(s) in the `DataSource`
@@ -183,6 +205,375 @@ sortTypes={{
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="filterDelay" type="number" defaultValue={200}>
+
+> The delay in milliseconds before the filter is applied. This is useful when you want to wait for the user to finish typing before applying the filter.
+
+
+This is especially useful in order to reduce the number of requests sent to the server, when <DPropLink name="filterMode">remote filtering</DPropLink> is used.
+
+If not specified, defaults to `200` milliseconds. This means, any changes to the column filters, that happen inside a 200ms window (or the current value of <DPropLink name="filterDelay"/>), will be debounced and only the last value will be sent to the server.
+
+<Note>
+
+If you want to prevent debouncing/batching filter values, you can set <DPropLink name="filterDelay"/> to `0`.
+
+</Note>
+
+
+</Prop>
+
+<Prop name="filterFunction" type="({ data, dataArray, index, primaryKey }) => boolean">
+
+> A function to be used for client-side filtering.
+
+Using this function will not show any special filtering UI for columns.
+
+
+<Sandpack title="Custom filterFunction example">
+
+<Description>
+
+Loads data from remote location but will only show rows that have `id > 100`.
+
+</Description>
+
+```ts file=custom-filter-function-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+<Prop name="filterMode" type="'local'|'remote'">
+
+> Explicitly configures where filtering will take place
+
+- `'local'` - filtering will be done on the client side
+- `'remote'` - filtering will be done on the server side - the <DPropLink name="data" /> function will be called with an object that includes the `filterValue` property, so it can be sent to the server
+
+</Prop>
+
+<Prop name="filterTypes" type="Record<string,{operators,emptyValues, defaultOperator}>">
+
+> Specifies the available types of filters for the columns.
+
+A filter type is a concept that defines how a certain type of data is to be filtered.
+A filter type will have a key, used to define the filter in the `filterTypes` object, and also the following properties:
+ - `label`
+ - `emptyValues` - an array of values considered to be empty values - when any of these values is used in the filter, the filter will match all records.
+ - `operators` - an array of operator this filter type supports
+ - `defaultOperator` - the default operator for the filter type
+ - `components` - an object that describes the custom components to be used for the filter type
+    - `FilterEditor` - a custom filter editor component for this filter type
+    - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
+
+Let's imagine you have a `DataSource` with developers, each with a `salary` column, and for that column you want to allow `>`, `>=`, `<` and `<=` comparisons (operators).
+
+For this, you would define the following filter type:
+
+```tsx
+
+const filterTypes = {
+  income: {
+    label: 'Income', 
+    emptyValues: ['', null, undefined],
+    defaultOperator: 'gt',
+    operators: [
+      {
+        name: 'gt',
+        label: 'Greater than',
+        fn: ({ currentValue, filterValue }) => {
+          return currentValue > filterValue;
+        }
+      },
+      {
+        name: 'gte',
+        //...
+      },
+      {
+        name: 'lt',
+        //...
+      },
+      {
+        name: 'lte',
+        //...
+      }
+    ]
+  }
+}
+```
+
+<Note>
+
+Each operator for a certain filter type needs to at least have a `name` and `fn` defined. The `fn` property is a function that will be called when client-side filtering is enabled, with an object that has the following properties:
+ - `currentValue` - the cell value of the current row for the column being filtered
+ - `filterValue` - the value of the filter editor
+ - `emptyValues` - the array of values considered to be empty values for the filter type
+ - `data` - the current row data object - `typeof DATA_TYPE`
+ - `index` - the index of the current row in the table - `number`
+ - `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
+ - `field?` - the field the current column is bound to (can be undefined if the column is not bound to a field)
+
+</Note>
+
+
+
+<Sandpack title="Custom filter type used for the salary column">
+
+<Description>
+
+The `salary` column has a custom filter type, with the following operators: `gt`, `gte`, `lt` and `lte`.
+
+</Description>
+
+```ts file=filter-types-example.page.tsx
+```
+
+</Sandpack>
+
+<Note>
+
+By default, the `string` and `number` filter types are available. You can import the default filter types like this:
+
+```ts
+import { defaultFilterTypes } from '@infinite-table/infinite-react';
+```
+
+If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
+
+
+<Sandpack title="Enhanced string filter type - new 'Not includes' operator">
+
+<Description>
+
+The `string` columns have a new `Not includes` operator.
+
+</Description>
+
+```ts file=default-filter-types-example.page.tsx
+```
+
+</Sandpack>
+
+</Note>
+
+<Note>
+
+When you specify new <DPropLink name="filterTypes"/>, the default filter types of `string` and `number` are still available - unless the new object contains those keys and overrides them explicitly.
+
+</Note>
+
+The current implementation of the default filter types is the following:
+
+```tsx
+export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
+    string: {
+      label: 'Text',
+      emptyValues: [''],
+      defaultOperator: 'includes',
+      components: {
+        FilterEditor: StringFilterEditor,
+      },
+      operators: [
+        {
+          name: 'includes',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          label: 'includes',
+          fn: ({ currentValue, filterValue }) => {
+            return (
+              typeof currentValue === 'string' &&
+              typeof filterValue == 'string' &&
+              currentValue.toLowerCase().includes(filterValue.toLowerCase())
+            );
+          },
+        },
+        {
+          label: 'Equals',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          name: 'eq',
+          fn: ({ currentValue: value, filterValue }) => {
+            return typeof value === 'string' && value === filterValue;
+          },
+        },
+        {
+          name: 'startsWith',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          label: 'Starts With',
+          fn: ({ currentValue: value, filterValue }) => {
+            return value.startsWith(filterValue);
+          },
+        },
+        {
+          name: 'endsWith',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          label: 'Ends With',
+          fn: ({ currentValue: value, filterValue }) => {
+            return value.endsWith(filterValue);
+          },
+        },
+      ],
+    },
+    number: {
+      label: 'Number',
+      emptyValues: ['', null, undefined],
+      defaultOperator: 'eq',
+      components: {
+        FilterEditor: NumberFilterEditor,
+      },
+      operators: [
+        {
+          label: 'Equals',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          name: 'eq',
+          fn: ({ currentValue, filterValue }) => {
+            return currentValue == filterValue;
+          },
+        },
+        {
+          label: 'Not Equals',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          name: 'neq',
+          fn: ({ currentValue, filterValue }) => {
+            return currentValue != filterValue;
+          },
+        },
+        {
+          name: 'gt',
+          label: 'Greater Than',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          fn: ({ currentValue, filterValue, emptyValues }) => {
+            if (emptyValues.includes(currentValue)) {
+              return true;
+            }
+            return currentValue > filterValue;
+          },
+        },
+        {
+          name: 'gte',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          label: 'Greater Than or Equal',
+          fn: ({ currentValue, filterValue, emptyValues }) => {
+            if (emptyValues.includes(currentValue)) {
+              return true;
+            }
+            return currentValue >= filterValue;
+          },
+        },
+        {
+          name: 'lt',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          label: 'Less Than',
+          fn: ({ currentValue, filterValue, emptyValues }) => {
+            if (emptyValues.includes(currentValue)) {
+              return true;
+            }
+            return currentValue < filterValue;
+          },
+        },
+        {
+          name: 'lte',
+          components: {
+            Icon: // custom icon as a React component ...
+          },
+          label: 'Less Than or Equal',
+          fn: ({ currentValue, filterValue, emptyValues }) => {
+            if (emptyValues.includes(currentValue)) {
+              return true;
+            }
+            return currentValue <= filterValue;
+          },
+        }
+      ],
+    },
+  };
+```
+
+</Prop>
+
+<Prop name="filterTypes.components.FilterEditor">
+
+> A custom React component to be used as an editor for the current filter type
+
+Every filter type can define the following `components`
+ - `FilterEditor` - a React component to be used as an editor for the current filter type
+ - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
+
+<Note>
+
+Filter type operators can override the `FilterEditor` component - they can specify the following components:
+  - `FilterEditor` - if specified, it overrides the `FilterEditor` of the filter type
+  - `Icon` - a React component to be used as an icon for the operator - displayed by the menu triggered when clicking on the `FilterOperatorSwitch` component
+
+</Note>
+
+<Sandpack title="Demo of a custom filter editor">
+
+<Description>
+
+The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
+
+The checkbox has indeterminate state, which will match all values in the data source.
+
+</Description>
+
+```ts file=$DOCS/reference/hooks/custom-filter-editor-hooks-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+<Prop name="filterValue" type="{field?, id?, filter: {type, operator, value}[]">
+
+> Controlled prop used for filtering. Can be used for both [client-side](/docs/learn/filtering/filtering-client-side) and [server-side](/docs/learn/filtering/filtering-server-side) filtering.
+
+For the uncontrolled version, see <DPropLink name="defaultFilterValue" />
+
+If you want to show the column filter editors, you have to either specify this property, or the uncontrolled <DPropLink name="defaultFilterValue" /> - even if you have no initial filters. For no initial filters, use `filterValue=[]`.
+
+
+The objects in this array have the following shape:
+
+ * `filter` - an object describing the filter
+    * `filter.value` - the value to filter by
+    * `filter.type` - the current type of the filter (eg: `string`, `number` or another custom type you specify in the <DPropLink name="filterTypes">filterTypes</DPropLink> prop)
+    * `filter.operator` - the name of the operator being applied
+ * `field` - the field being filtered - generally matched with a column. This is optional, as some columns can have no field.
+  * `id` - the id of the column being filtered. This is optional - for columns bound to a field, the `field` should be used instead of the `id`.
+ * `disabled` - whether this filter is applied or not
+
+<Sandpack  title="Controlled filters with onFilterValueChange">
+
+```ts file=onFilterValueChange-example.page.tsx
+
+```
+
+</Sandpack>
+
 
 </Prop>
 
@@ -286,6 +677,23 @@ The function is called with an object that has the following properties:
 ```
 
 </Sandpack>
+</Prop>
+
+<Prop name="onFilterValueChange" type="({field?, id?, filter: {type, operator, value}[]) => void">
+
+> Callback prop called when the <DPropLink name="filterValue" /> changes.
+
+This might not be called immediately, as there might be a <DPropLink name="filterDelay"/> set.
+
+
+<Sandpack  title="Controlled filters with onFilterValueChange">
+
+```ts file=onFilterValueChange-example.page.tsx
+
+```
+
+</Sandpack>
+
 </Prop>
 
 <Prop name="onLivePaginationCursorChange" type="(cursor)=> void">

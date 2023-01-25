@@ -31,15 +31,41 @@ export function getColumnApiForColumn<T>(
         this.showContextMenu(target);
       }
     },
+
+    toggleFilterOperatorMenu(target: EventTarget | HTMLElement) {
+      if (getState().filterOperatorMenuVisibleForColumnId === column.id) {
+        this.hideFilterOperatorMenu();
+      } else {
+        this.showFilterOperatorMenu(target);
+      }
+    },
+
+    showFilterOperatorMenu(target: EventTarget | HTMLElement) {
+      getState().onFilterOperatorMenuClick({ target, column });
+    },
+
+    hideFilterOperatorMenu() {
+      actions.filterOperatorMenuVisibleForColumnId = null;
+    },
+
     showContextMenu(target: EventTarget | HTMLElement) {
       getState().onColumnMenuClick({ target, column });
     },
+
     hideContextMenu() {
       actions.columnContextMenuVisibleForColumnId = null;
     },
 
     toggleSort() {
       column.toggleSort();
+    },
+
+    setFilter(value: any) {
+      return api.setColumnFilter(column.id, value);
+    },
+
+    clearFilter() {
+      return api.clearColumnFilter(column.id);
     },
 
     setSort(sort: SortDir | null) {

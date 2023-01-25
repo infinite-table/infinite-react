@@ -54,6 +54,7 @@ export type InfiniteTableColumnHeaderParam<
   selectionMode: DataSourcePropSelectionMode;
   allRowsSelected: boolean;
   someRowsSelected: boolean;
+  filtered: boolean;
   api: InfiniteTableApi<DATA_TYPE>;
   columnApi: InfiniteTableColumnApi<DATA_TYPE>;
   renderBag: {
@@ -61,6 +62,7 @@ export type InfiniteTableColumnHeaderParam<
     header: string | number | Renderable;
     sortIcon?: Renderable;
     menuIcon?: Renderable;
+    filterIcon?: Renderable;
     selectionCheckBox?: Renderable;
   };
 } & (
@@ -431,19 +433,25 @@ export type InfiniteTableColumn<DATA_TYPE> = {
 
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
   renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
+  renderFilterIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderSelectionCheckBox?:
     | boolean
     | InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderMenuIcon?: boolean | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+
   renderHeaderSelectionCheckBox?:
     | boolean
     | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   components?: {
-    ColumnCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
-    HeaderCell?: React.FunctionComponent<HTMLProps<HTMLDivElement>>;
-    editor?: React.FunctionComponent;
-    MenuIcon?: React.FC<MenuIconProps>;
+    ColumnCell?: (props: HTMLProps<HTMLDivElement>) => JSX.Element | null;
+    HeaderCell?: (props: HTMLProps<HTMLDivElement>) => JSX.Element | null;
+
+    Editor?: () => JSX.Element | null;
+    FilterEditor?: () => JSX.Element | null;
+    FilterOperatorSwitch?: () => JSX.Element | null;
+
+    MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
   };
 };
 
