@@ -1,6 +1,7 @@
 ---
 title: DataSource Props
 layout: API
+description: Props Reference page for your DataSource in Infinite Table - with complete examples
 ---
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.

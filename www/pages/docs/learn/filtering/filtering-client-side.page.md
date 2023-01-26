@@ -1,5 +1,6 @@
 ---
 title: Client-side Filtering
+description: Learn how to configure client-side filtering for your Infinite Table React DataGrid
 ---
 
 The most common way to use filtering in Infinite Table is by configuring filters for columns (this works both for client-side and server-side filtering).
@@ -51,7 +52,7 @@ The default filter types are `string` and `number` - read the next section to se
 
 A filter type is basically a collection of operators available for a type of data. Each operator needs a name and a function that will be used to filter the data, when that operator is applied.
 
-```tsx {4,10} title=Using_filter_types_for_filterValue
+```tsx {5,14} title=Using_filter_types_for_filterValue
 filterValue={[
   {
     field: 'firstName',

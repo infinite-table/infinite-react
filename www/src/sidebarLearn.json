@@ -172,8 +172,8 @@
               "path": "/docs/learn/filtering/filtering-server-side"
             },
             {
-              "title": "Writing Custom Filter Editors",
-              "path": "/docs/learn/filtering/writing-custom-filter-editors"
+              "title": "Providing a Custom Filter Editor",
+              "path": "/docs/learn/filtering/providing-a-custom-filter-editor"
             }
           ]
         },

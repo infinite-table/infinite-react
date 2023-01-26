@@ -1,5 +1,6 @@
 ---
 title: Custom Editor
+description: Writing a custom editor for a inline editing in Infinite Table for React
 ---
 
 For writing a custom editor, you can use the <HookLink name="useInfiniteColumnEditor" /> hook.

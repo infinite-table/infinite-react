@@ -1,5 +1,6 @@
 ---
 title: CSS Variables
+description: Reference list of CSS variables that can be used to style the Infinite Table for React
 ---
 
 Below you can find the complete list of CSS variables that can be used to style the component.

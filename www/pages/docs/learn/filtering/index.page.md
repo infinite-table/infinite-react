@@ -1,5 +1,6 @@
 ---
 title: Filtering
+description: Learn how to configure client-side and server-side filtering in Infinite Table for React
 ---
 
 Filtering allows you to limit the rows available in the table.
@@ -55,7 +56,19 @@ By default, all columns are filterable.
 
 If you want to make columns by default not filterable, use the <PropLink name="columnDefaultFilterable" /> prop and set it to `false`.
 
- You can specifically configure each column by using the <PropLink name="columns.defaultFilterable">defaultFilterable</PropLink> property - this overrides the global <PropLink name="columnDefaultFilterable" /> prop.
+You can specifically configure each column by using the <PropLink name="columns.defaultFilterable">defaultFilterable</PropLink> property - this overrides the global <PropLink name="columnDefaultFilterable" /> prop.
+
+## Defining a Filter Type for a Column
+
+Besides being filterable, a column can decide what type of filter it will display.
+
+Use the <PropLink name="columns.type" /> property to specify the type of filter the column will use. Using the `type` property also configures the data type of the column, which in turn determines the sort type.
+
+<Note>
+
+If the type of filter you want to show does not match the column <PropLink name="columns.type">type</PropLink>, you can specify the filter with the <PropLink name="columns.filterType">column.filterType</PropLink> property. Only use this when the type of the data differs from the type of the filter (eg: you have a numeric column, with a custom filter type).
+
+</Note>
 
 ## Understanding Filter Types
 

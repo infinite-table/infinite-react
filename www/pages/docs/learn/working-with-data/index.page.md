@@ -1,5 +1,6 @@
 ---
 title: Working with Data
+description: Learn how to visualise and manage your data in new ways with Infinite Table
 ---
 
 We've decoupled our data handling from our rendering engine by providing two components (as named exports) inside `@infinite-table/infinite-react` package:

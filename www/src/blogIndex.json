@@ -1,6 +1,18 @@
 {
   "routes": [
     {
+      "path": "/blog/2023/01/26/filtering-data-with-infinite-table-for-react",
+      "date": "2023-01-26",
+      "title": "Filtering Data with Infinite Table for React",
+      "draft": false,
+      "description": "Learn how to filter data both client-side and server-side with Infinite Table for React",
+      "author": [
+        "admin"
+      ],
+      "excerpt": "<p><em>We just shipped improved column filters that allow both client-side and server-side filtering in Infinite Table for React</em></p>\n",
+      "readingTime": "1 min read"
+    },
+    {
       "path": "/blog/2023/01/16/infinite-table-is-here",
       "date": "2023-01-16",
       "title": "📣 Infinite Table is Here 🎉",

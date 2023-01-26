@@ -10,6 +10,7 @@
 /docs/latest/row-groups /docs/learn/grouping-and-pivoting/grouping-rows
 /community/team /docs/community
 /docs/learn/column-groups /docs/learn/columns/column-grouping
+/docs/learn/filtering/writing-custom-filter-editors /docs/learn/filtering/providing-a-custom-filter-editor
 
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat

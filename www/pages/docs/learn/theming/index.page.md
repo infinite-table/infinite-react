@@ -1,5 +1,6 @@
 ---
 title: Theming
+description: Read our docs on the available themes and how you can customize the look and feel of InfiniteTable for React.
 ---
 
 `<InfiniteTable />` ships with a CSS file that you need to import in your codebase to make the component look as intended.

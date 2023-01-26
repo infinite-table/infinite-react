@@ -1,6 +1,7 @@
 ---
 title: Infinite Table Props
 layout: API
+description: Infinite Table Props Reference page with complete examples
 ---
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
@@ -683,6 +684,37 @@ In this example, the group column is bound to the `firstName` field, so this fie
 
 </Prop>
 
+<Prop name="columns.filterType" type="string">
+
+> Use this to configure the filter type for the column, when the `filterType` needs to be different from the column <PropLink name="columns.type">type</PropLink>.
+
+See related <PropLink name="columns.type" />
+
+<Note>
+
+If the type of filter you want to show does not match the column <PropLink name="columns.type">type</PropLink>, you can specify the filter with the <PropLink name="columns.filterType">column.filterType</PropLink> property. Only use this when the type of the data differs from the type of the filter (eg: you have a numeric column, with a custom filter type).
+
+</Note>
+
+<Sandpack title="Custom column filterType for the salary column">
+
+<Description>
+
+In this example, the `salary` column has `type="number"` and `filterType="salary"`.
+
+This means the sort order defined for `type="number"` will be used while displaying a custom type of filter.
+
+</Description>
+
+```ts file=column-filterType-example.page.tsx
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
 
 <Prop name="columns.getValueToEdit" type="(params) => any|Promise<any>">
 
@@ -1307,6 +1339,10 @@ When you want both the default type and another type to be applied, you can do s
 When you dont want the default type to be applied, use `type: null`.
 
 </Note>
+
+If a column is filterable and does not explicitly specify a <PropLink name="columns.filterType">filterType</PropLink>, the `type` will also be used as the filter type.
+
+If a column is sortable and does not explicitly specify a <PropLink name="columns.sortType">sortType</PropLink>, the `type` will also be used as the sort type.
 
 See the example below - `id` and `age` columns are `type='number'`.
 

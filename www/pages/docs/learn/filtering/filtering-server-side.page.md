@@ -1,5 +1,6 @@
 ---
 title: Server-side Filtering
+description: Learn how to integrate server-side filtering with your InfiniteTable React DataGrid
 ---
 
 If you're using a remote <DPropLink name="data" /> prop (a function that returns a `Promise`) on the `<DataSource />` component, the filtering will happen server-side by default.
