@@ -5,7 +5,7 @@ author: [admin]
 draft: true
 ---
 
-*We just shipped improved column filters that allow both client-side and server-side filtering with ease*
+*Today we shipped cutting-edge column filtering functionality, that enables intuitive client-side and server-side filtering*
 
 <Note title="Why use Infinite Table filters?">
 
@@ -21,11 +21,11 @@ draft: true
 
 </Note>
 
-Filters were one of the most requested features we were missing after our initial launch. 
+Filters were, by far, the most requested feature to add to Infinite Table after our initial launch. 
 
-We are happy to announce that with version `1.1.0` that was just released, Infinite Table for React introduces support for column filters, which work both client-side and server-side.
+The recently-released version `1.1.0` of Infinite Table for React introduces support for column filters, which work both client-side and server-side.
 
-In order to enable filtering - specify the <DPropLink name="defaultFilterValue"/> property on the `<DataSource />` component, as shown below.
+In order to enable filtering - specify the <DPropLink name="defaultFilterValue"/> property on the `<DataSource />` component, as shown below:
 
 ```tsx {4} title=Enabling_filters_on_the_DataSource
 <DataSource<Developer>
@@ -39,8 +39,9 @@ In order to enable filtering - specify the <DPropLink name="defaultFilterValue"/
 </DataSource>
 ```
 
-What this does is it configures the `<DataSource />` component with an empty array of filters, which columns will pick up and each will display a filter editor in the column header.
-Of course, you can define some initial filters
+This configures the `<DataSource />` component with an empty array of filters; columns will pick this up and each will display a filter editor in the column header.
+
+Of course, you can define some initial filters:
 
 ```tsx title=Initial_filters:_filter_by_age_greater_than_40
 defaultFilterValue={[
@@ -92,7 +93,7 @@ Even if your data is loaded from a remote source, using `filterMode="local"` wil
 
 ## Defining Filter Types and Custom Filter Editors
 
-Currently there are two filter types available in Infinite Table:
+Currently there are 2 filter types available in Infinite Table:
 
  - `string`
  - `number`
@@ -133,9 +134,11 @@ Read more about this [in the docs - how to provide a custom editor](/docs/learn/
 
 Maybe you don't want all your columns to be filterable.
 
-For controlling which columns are and which are not, use the <PropLink name="columns.defaultFilterable" /> - which overrides the global <PropLink name="columnDefaultFilterable" /> prop.
+For controlling which columns are filterable and which are not, use the <PropLink name="columns.defaultFilterable" /> property.
 
-Also, it's easy to customize the filter icon that is displayed in the column header.
+This overrides the global <PropLink name="columnDefaultFilterable" /> prop.
+
+We have also made it easy for you to customize the filter icon that is displayed in the column header.
 
 
 <CSEmbed title="Custom filter icons for firstName and salary columns" id="infinite-table-custom-filter-icon-jc7jr8" />
@@ -146,12 +149,15 @@ In the example above, the `salary` column is configured to render no filter icon
 
 ## Ready for Your Challenge!
 
-We've spent a lot of time thinkering with filters and we believe we've come up with something that's really powerful and customizable.
+We listened to your requests for advanced filtering.
+
+And we believe that we've come up with something that's really powerful and customizable.
+
 Now it's your turn to try it out and show us what you can build with it! 🚀
 
-If you have any questions, feel free to reach out to us on [Twitter](https://twitter.com/infinite_table) or in the GitHub [Discussions](https://github.com/infinite-table/infinite-react/discussions).
+If you have any questions, feel free to reach out to us on [Twitter](https://twitter.com/infinite_table) or in the [GitHub Discussions](https://github.com/infinite-table/infinite-react/discussions).
 
-Make sure you try it out and also read [our extensive docs on filtering](/docs/learn/filtering).
+Make sure you try out filtering in Infinite Table for yourself ([and consult our extensive docs](/docs/learn/filtering) if required).
 
 <HeroCards>
 <YouWillLearnCard title="Client-side filtering" path="./filtering/filtering-client-side">
