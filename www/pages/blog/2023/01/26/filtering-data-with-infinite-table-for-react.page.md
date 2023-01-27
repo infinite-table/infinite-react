@@ -2,7 +2,6 @@
 title: "Filtering Data with Infinite Table for React"
 description: "Learn how to filter data both client-side and server-side with Infinite Table for React"
 author: [admin]
-draft: true
 ---
 
 *Today we shipped cutting-edge column filtering functionality, that enables intuitive client-side and server-side filtering*
