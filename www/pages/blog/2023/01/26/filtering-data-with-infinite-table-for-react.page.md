@@ -104,7 +104,7 @@ Each filter type supports a number of operators and each operator has a name and
 <CSEmbed title="Custom filter type and filter editor for canDesign column" id="infinite-table-filters-with-custom-editor-and-filter-type-ptlq2v"/>
 
 
-The example above, besides showing how to define <DPropLink name="filterTypeS" code={false}>a custom filter type</DPropLink>, also shows how to define a custom filter editor.
+The example above, besides showing how to define <DPropLink name="filterTypes" code={false}>a custom filter type</DPropLink>, also shows how to define a custom filter editor.
 
 
 <Note title="Providing a Custom Filter Editor">
