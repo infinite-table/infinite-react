@@ -159,10 +159,10 @@ If you have any questions, feel free to reach out to us on [Twitter](https://twi
 Make sure you try out filtering in Infinite Table for yourself ([and consult our extensive docs](/docs/learn/filtering) if required).
 
 <HeroCards>
-<YouWillLearnCard title="Client-side filtering" path="./filtering/filtering-client-side">
+<YouWillLearnCard title="Client-side filtering" path="/docs/learn/filtering/filtering-client-side">
 Learn how to use filtering in the browser.
 </YouWillLearnCard>
-<YouWillLearnCard title="Server-side filtering" path="./filtering/filtering-server-side">
+<YouWillLearnCard title="Server-side filtering" path="/docs/learn/filtering/filtering-server-side">
 Figure out how to use filtering with server-side integration.
 </YouWillLearnCard>
 </HeroCards>
