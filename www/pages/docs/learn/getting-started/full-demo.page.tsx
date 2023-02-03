@@ -9,6 +9,7 @@ import {
   DataSourcePropAggregationReducers,
   DataSourceGroupBy,
   components,
+  DataSourcePropFilterValue,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -169,6 +170,7 @@ const groupColumn: InfiniteTableColumn<Developer> = {
   field: 'firstName',
   defaultWidth: 250,
   renderSelectionCheckBox: true,
+  defaultFilterable: false,
 
   // in this function we have access to collapsed info
   // and grouping info about the current row - see rowInfo.groupBy
@@ -225,6 +227,17 @@ const defaultRowSelection: DataSourcePropRowSelection_MultiRow = {
   deselectedRows: [['United States', 'frontend']],
   defaultSelection: false,
 };
+
+const defaultFilterValue: DataSourcePropFilterValue<Developer> = [
+  {
+    field: 'age',
+    filter: {
+      operator: 'gt',
+      type: 'number',
+      value: null,
+    },
+  },
+];
 
 export default function App() {
   const [{ min, max }, setMinMax] = useState({ min: 0, max: 0 });
@@ -324,6 +337,8 @@ export default function App() {
       <DataSource<Developer>
         data={dataSource}
         primaryKey="id"
+        defaultFilterValue={defaultFilterValue}
+        filterMode="local"
         useGroupKeysForMultiRowSelection
         defaultRowSelection={defaultRowSelection}
         defaultSortInfo={{
