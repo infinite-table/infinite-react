@@ -28,24 +28,19 @@ const dataSource = () => {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  stack: {
-    field: 'stack',
-    header: 'Stack',
-  },
   firstName: {
     field: 'firstName',
     header: 'Name',
+    defaultWidth: 120,
   },
   age: {
     field: 'age',
     header: 'Age',
-  },
-  hobby: {
-    field: 'hobby',
-    header: 'Hobby',
+    defaultWidth: 100,
   },
   preferredLanguage: {
     header: 'Language',
+    defaultWidth: 120,
     field: 'preferredLanguage',
   },
 };
