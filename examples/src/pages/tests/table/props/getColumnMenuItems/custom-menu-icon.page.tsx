@@ -72,7 +72,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
 };
 
-const getColumMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
+const getColumnMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
   items,
   { column },
 ) => {
@@ -98,7 +98,7 @@ export default function ColumnContextMenuItems() {
           }}
           columnHeaderHeight={70}
           columns={columns}
-          getContextMenuItems={getColumMenuItems}
+          getColumnMenuItems={getColumnMenuItems}
         />
       </DataSource>
     </>

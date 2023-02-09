@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Column Menus', () => {
-  test('', async ({ page, headerModel }) => {
+  test('works', async ({ page, headerModel }) => {
     await page.waitForInfinite();
 
     const box = page.locator(`[data-name="msg"]`);

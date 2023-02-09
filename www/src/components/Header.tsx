@@ -116,7 +116,7 @@ export const NavBarContent = ({
   };
 
   const activeCls = `text-glow`;
-  console.log(activePage);
+
   return (
     <ul
       className={`${NavBarCls} flex flex-row items-center `}

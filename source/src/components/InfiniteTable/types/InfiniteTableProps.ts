@@ -668,7 +668,7 @@ export interface InfiniteTableProps<T> {
   getCellContextMenuItems?: InfiniteTablePropGetCellContextMenuItems<T>;
   getContextMenuItems?: InfiniteTablePropGetContextMenuItems<T>;
 
-  getColumMenuItems?: InfiniteTablePropGetColumnMenuItems<T>;
+  getColumnMenuItems?: InfiniteTablePropGetColumnMenuItems<T>;
   getFilterOperatorMenuItems?: InfiniteTablePropGetFilterOperatorMenuItems<T>;
 }
 

@@ -91,7 +91,7 @@ export default function ColumnContextMenuItems() {
         <InfiniteTable<Developer>
           columnHeaderHeight={70}
           columns={columns}
-          getColumMenuItems={(items, { column }) => {
+          getColumnMenuItems={(items, { column }) => {
             if (column.id === 'firstName') {
               // you can adjust the default items for a specific column
               items.splice(0, 0, {

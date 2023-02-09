@@ -213,7 +213,7 @@ export const forwardProps = <T>(
     onScrollStop: 1,
     scrollToBottomOffset: 1,
 
-    getColumMenuItems: 1,
+    getColumnMenuItems: 1,
     getCellContextMenuItems: 1,
     getContextMenuItems: 1,
     columnPinning: 1,

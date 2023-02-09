@@ -7,10 +7,10 @@ All columns in the Infinite Table have a default menu, which can be customized o
 
 ## Customise the menu items
 
-To customize the column menu (for all columns, or for a specific column), use the <PropLink name="getColumMenuItems" /> prop. This function is called with an array of menu items (which are the default items) and it should the final array of menu items - so you can return the default items as is, or you can adjust the default items to fit your needs.
+To customize the column menu (for all columns, or for a specific column), use the <PropLink name="getColumnMenuItems" /> prop. This function is called with an array of menu items (which are the default items) and it should the final array of menu items - so you can return the default items as is, or you can adjust the default items to fit your needs.
 
 ```tsx title=customizing-column-menu
-function getColumMenuItems(items, { column }) {
+function getColumnMenuItems(items, { column }) {
 
   if (column.id === 'firstName') {
     // you can adjust the default items for a specific column
@@ -38,7 +38,7 @@ function getColumMenuItems(items, { column }) {
 
 <Note>
 
-<PropLink name="getColumMenuItems" /> can return an empty array, in which case, the column menu will not be shown - however, people will still be able to click the menu icon to trigger the column context menu.
+<PropLink name="getColumnMenuItems" /> can return an empty array, in which case, the column menu will not be shown - however, people will still be able to click the menu icon to trigger the column context menu.
 
 If you want to dynamically decide whether a column should show a menu or not, you can use the <PropLink name="columns.renderMenuIcon" /> prop.
 
@@ -56,21 +56,21 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```tsx file=$DOCS/reference/getColumMenuItems-example.page.tsx
+```tsx file=$DOCS/reference/getColumnMenuItems-example.page.tsx
 
 ```
 
 </Sandpack>
 
-As you can see in the demo above, you can use <PropLink name="getColumMenuItems" /> to return the default items (received as the first parameter to the function), or another totally different array. We chose to pass the default items to the function, so you can use them as a starting point and adjust them to your needs.
+As you can see in the demo above, you can use <PropLink name="getColumnMenuItems" /> to return the default items (received as the first parameter to the function), or another totally different array. We chose to pass the default items to the function, so you can use them as a starting point and adjust them to your needs.
 
-Each item in the array you return from <PropLink name="getColumMenuItems" /> should have a `key` and a `label` property. Additionally, you can specify an `onAction` function, which will be called when the user clicks the menu item.
+Each item in the array you return from <PropLink name="getColumnMenuItems" /> should have a `key` and a `label` property. Additionally, you can specify an `onAction` function, which will be called when the user clicks the menu item.
 
 It's also possible to create items with submenus. For this, specify a `menu` property in the item, with an `items` array. Each item in the `items` array should have a `key` and a `label` property, as you would expect.
 
 ```tsx {8} title=Menu_items_with_submenus
 
-function getColumMenuItems(items, { column }) {
+function getColumnMenuItems(items, { column }) {
 
   const items = [
     {

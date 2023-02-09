@@ -150,7 +150,7 @@ export interface InfiniteTableMappedState<T> {
 
   getContextMenuItems: InfiniteTableProps<T>['getContextMenuItems'];
   getCellContextMenuItems: InfiniteTableProps<T>['getCellContextMenuItems'];
-  getColumMenuItems: InfiniteTableProps<T>['getColumMenuItems'];
+  getColumnMenuItems: InfiniteTableProps<T>['getColumnMenuItems'];
   getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
 
   columnPinning: InfiniteTablePropColumnPinning;

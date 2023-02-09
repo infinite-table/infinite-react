@@ -4,7 +4,7 @@ import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
 import { getColumnApiForColumn } from '../api/getColumnApi';
 import { InfiniteTableContextValue } from '../types';
-import { defaultGetColumMenuItems } from './defaultGetColumMenuItems';
+import { defaultGetColumnMenuItems } from './defaultGetColumnMenuItems';
 
 export function getMenuForColumn<T>(
   columnId: string | null,
@@ -16,7 +16,7 @@ export function getMenuForColumn<T>(
   }
   const { getComputed, getState } = context;
 
-  const { components, getColumMenuItems } = getState();
+  const { components, getColumnMenuItems } = getState();
 
   const MenuCmp = components?.Menu ?? Menu;
 
@@ -32,10 +32,10 @@ export function getMenuForColumn<T>(
     ...context,
   };
 
-  const defaultItems = defaultGetColumMenuItems([], param)!;
+  const defaultItems = defaultGetColumnMenuItems([], param)!;
 
-  const items = getColumMenuItems
-    ? getColumMenuItems(defaultItems, param)
+  const items = getColumnMenuItems
+    ? getColumnMenuItems(defaultItems, param)
     : defaultItems;
 
   const onRootMouseDown: EventListener = (event: Event) => {

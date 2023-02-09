@@ -860,7 +860,7 @@ In addition, the currency and preferredLanguage columns have a custom context me
 
 </Description>
 
-```ts file=getColumMenuItems-example.page.tsx
+```ts file=getColumnMenuItems-example.page.tsx
 
 ```
 
@@ -1066,7 +1066,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```ts file=getColumMenuItems-example.page.tsx
+```ts file=getColumnMenuItems-example.page.tsx
 
 ```
 
@@ -1939,7 +1939,7 @@ If this function returns null, the default context menu of the browser will be s
 
 </Prop>
 
-<Prop name="getColumMenuItems" type="(items, context) => MenuItem[]">
+<Prop name="getColumnMenuItems" type="(items, context) => MenuItem[]">
 
 > Allows customization of the context menu items for a column.
 
@@ -1950,7 +1950,7 @@ Use this function to customize the context menu for columns. The function is cal
     - `context.api` - a reference to the [api](./reference/api)
 
 
-<Sandpack title="getColumMenuItems example - custom menu item and icon">
+<Sandpack title="getColumnMenuItems example - custom menu item and icon">
 
 <Description>
 
@@ -1960,7 +1960,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```ts file=getColumMenuItems-example.page.tsx
+```ts file=getColumnMenuItems-example.page.tsx
 
 ```
 

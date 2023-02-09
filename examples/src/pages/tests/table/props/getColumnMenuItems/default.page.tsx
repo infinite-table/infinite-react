@@ -89,7 +89,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default () => {
-  const getColumMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
+  const getColumnMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
     items,
     { column },
   ) => {
@@ -134,7 +134,7 @@ export default () => {
                 position: 'relative',
               },
             }}
-            getColumMenuItems={getColumMenuItems}
+            getColumnMenuItems={getColumnMenuItems}
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}
