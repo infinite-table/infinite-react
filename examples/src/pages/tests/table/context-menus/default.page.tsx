@@ -96,6 +96,9 @@ export default () => {
         {
           label: `Currency ${value}`,
           key: 'money',
+          onClick: () => {
+            // alert('clicked');
+          },
         },
         {
           label: `Currency ${value} - item 2`,
@@ -111,13 +114,21 @@ export default () => {
         label: `hi ${value}`,
         key: 'hi',
       },
+      {
+        label: `hi ${value} - item 2`,
+        key: 'hi2',
+      },
     ];
   };
 
   return (
     <>
       <React.StrictMode>
-        <DataSource<Developer> data={data} primaryKey="id">
+        <DataSource<Developer>
+          data={data}
+          primaryKey="id"
+          defaultFilterValue={[]}
+        >
           <InfiniteTable<Developer>
             domProps={{
               style: {

@@ -546,6 +546,15 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
       focus: () => {
         if (domRef.current) {
           domRef.current.focus();
+
+          setTimeout(() => {
+            // sometimes the above focus does not work
+            // so we try it again
+            if (domRef.current && domRef.current !== document.activeElement) {
+              domRef.current.focus();
+            }
+          }, 10);
+
           // for whatever reason
           // when doing arrow left navigation from a third level menu
           // to a second level and then to a root menu

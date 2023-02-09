@@ -235,7 +235,18 @@ export function handleKeyboardNavigation<T>(
   const { getState } = options;
   const state = getState();
 
-  const { activeRowIndex, activeCellIndex, keyboardNavigation } = state;
+  const {
+    activeRowIndex,
+    activeCellIndex,
+    keyboardNavigation,
+    cellContextMenuVisibleFor,
+    contextMenuVisibleFor,
+  } = state;
+
+  // if a context menu is visible, bail out, as we don't want to navigate while those are visible
+  if (cellContextMenuVisibleFor || contextMenuVisibleFor) {
+    return false;
+  }
 
   if (!validKeys[key]) {
     return false;

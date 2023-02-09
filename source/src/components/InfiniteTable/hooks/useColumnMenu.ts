@@ -39,6 +39,8 @@ export function useColumnMenu<T>() {
         ],
       });
 
+      actions.contextMenuVisibleFor = null;
+      actions.cellContextMenuVisibleFor = null;
       actions.filterOperatorMenuVisibleForColumnId = null;
       actions.columnMenuVisibleForColumnId = column.id;
     });

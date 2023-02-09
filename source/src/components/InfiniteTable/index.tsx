@@ -226,7 +226,6 @@ export const InfiniteTableComponent = React.memo(
       if (cell) {
         colIndex = Number(cell.dataset.colIndex);
         rowIndex = Number(cell.dataset.rowIndex);
-        console.log({ colIndex, rowIndex });
 
         columnId = context.getComputed().computedVisibleColumns[colIndex].id;
         rowId = context.dataSourceApi.getRowInfoArray()[rowIndex].id;

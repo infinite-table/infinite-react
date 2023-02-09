@@ -59,6 +59,8 @@ export function useColumnFilterOperatorMenu<T>() {
         },
       );
 
+      actions.contextMenuVisibleFor = null;
+      actions.cellContextMenuVisibleFor = null;
       actions.columnMenuVisibleForColumnId = null;
       actions.filterOperatorMenuVisibleForColumnId = column.id;
     });
