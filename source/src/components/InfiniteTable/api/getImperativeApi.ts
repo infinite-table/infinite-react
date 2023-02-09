@@ -10,7 +10,7 @@ import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { loadData } from '../../DataSource/privateHooks/useLoadData';
 import {
   getColumnValueToEdit,
-  getRowDiscriminatorParamForEditing,
+  getCellContext,
 } from '../components/InfiniteTableRow/columnRendering';
 import {
   InfiniteTableApi,
@@ -78,7 +78,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     const params = {
-      ...getRowDiscriminatorParamForEditing<T>({
+      ...getCellContext<T>({
         rowIndex: editingCell.rowIndex,
         columnId: editingCell.columnId,
         ...this.context,
@@ -167,7 +167,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
         if (column.getValueToEdit) {
           value = await column.getValueToEdit(
-            getRowDiscriminatorParamForEditing({
+            getCellContext({
               ...this.context,
               rowIndex,
               columnId,
@@ -263,7 +263,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       // unless it's rejected at this stage
       let accept = shouldAcceptEdit
         ? shouldAcceptEdit({
-            ...getRowDiscriminatorParamForEditing({
+            ...getCellContext({
               ...this.context,
               api: this,
               dataSourceApi: this.context.dataSourceApi,
@@ -368,7 +368,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     const result = column.computedEditable(
-      getRowDiscriminatorParamForEditing({
+      getCellContext({
         ...this.context,
         api: this,
         columnId,

@@ -1,5 +1,6 @@
 import { ReactNode } from '@mdx-js/react/lib';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 
 import {
@@ -105,6 +106,17 @@ export const NavBarContent = ({
   childrenBefore?: React.ReactNode;
 }) => {
   const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
+
+  const router = useRouter();
+
+  const activePage = {
+    pricing: router.asPath.startsWith('/pricing'),
+    docs: router.asPath.startsWith('/docs'),
+    blog: router.asPath.startsWith('/blog'),
+  };
+
+  const activeCls = `text-glow`;
+  console.log(activePage);
   return (
     <ul
       className={`${NavBarCls} flex flex-row items-center `}
@@ -123,17 +135,17 @@ export const NavBarContent = ({
         className={`${itemCls} `}
         style={{ flex: 1, margin: 0, marginLeft: 0 }}
       ></li>
-      <li className={`${itemCls} `}>
+      <li className={`${itemCls} ${activePage.pricing ? activeCls : ''} `}>
         <Link href="/pricing">
           <a>Pricing</a>
         </Link>
       </li>
-      <li className={`${itemCls} `}>
+      <li className={`${itemCls} ${activePage.docs ? activeCls : ''} `}>
         <Link href="/docs">
           <a>Docs</a>
         </Link>
       </li>
-      <li className={`${itemCls} `}>
+      <li className={`${itemCls} ${activePage.blog ? activeCls : ''} `}>
         <Link href="/blog">
           <a>Blog</a>
         </Link>

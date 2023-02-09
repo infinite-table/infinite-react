@@ -209,6 +209,17 @@ export const getScrollPosition = async ({ page }: { page: Page }) => {
   });
 };
 
+export const getMenuCellLocatorForKey = (
+  params: { rowKey: string | null; colName?: string },
+  { page }: { page: Page },
+) => {
+  const { rowKey, colName } = params;
+  return page.locator(
+    `[data-menu-item-key${rowKey ? `="${rowKey}"` : ''}]` +
+      (colName ? `[data-menu-col-name="${colName}"]` : ''),
+  );
+};
+
 export const getActiveCellIndicatorLocator = ({ page }: { page: Page }) => {
   return page.locator('[data-name="active-cell-indicator"]');
 };

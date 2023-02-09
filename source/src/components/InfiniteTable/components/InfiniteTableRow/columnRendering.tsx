@@ -1,3 +1,4 @@
+import { getColumnApiForColumn } from '../../api/getColumnApi';
 import {
   InfiniteTableColumn,
   InfiniteTableColumnRenderParam,
@@ -39,7 +40,7 @@ export function getGroupByColumn<T>(options: {
   return groupByColumn;
 }
 
-export function getRowDiscriminatorParamForEditing<T>(
+export function getCellContext<T>(
   context: Omit<InfiniteTableContextValue<T>, 'state' | 'computed'> & {
     rowIndex: number;
     columnId: string;
@@ -73,11 +74,14 @@ export function getRowDiscriminatorParamForEditing<T>(
     context,
   });
 
+  const columnApi = getColumnApiForColumn(column.id, context)!;
+
   return isGroupRow
     ? {
         api,
         dataSourceApi,
         column,
+        columnApi,
         isGroupRow: true,
         data: rowInfo.data,
         rowActive,
@@ -89,7 +93,8 @@ export function getRowDiscriminatorParamForEditing<T>(
     : {
         api,
         dataSourceApi,
-        column: column,
+        columnApi,
+        column,
         isGroupRow: false,
         data: rowInfo.data,
         rowActive,

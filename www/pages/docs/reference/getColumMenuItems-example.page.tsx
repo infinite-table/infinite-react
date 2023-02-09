@@ -1,10 +1,9 @@
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTableColumnGroup,
-  InfiniteTablePropGetColumnContextMenuItems,
+  InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+
 import * as React from 'react';
 
 type Developer = {
@@ -85,54 +84,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
 };
 
-const getColumContextMenuItems: InfiniteTablePropGetColumnContextMenuItems<
-  Developer
-> = (items, { column }) => {
-  if (column.id === 'firstName') {
-    // you can adjust the default items for a specific column
-    items.splice(0, 0, {
-      key: 'firstName',
-      label: 'First name menu item',
-      onAction: () => {
-        console.log('Hey there!');
-      },
-    });
-  }
-
-  items.push(
-    {
-      key: 'hello',
-      label: 'Hello World',
-      onAction: () => {
-        alert('Hello World from column ' + column.id);
-      },
-    },
-    {
-      key: 'translate',
-      label: 'Translate',
-      menu: {
-        items: [
-          {
-            key: 'translateToEnglish',
-            label: 'English',
-            onAction: () => {
-              console.log('Translate to English');
-            },
-          },
-          {
-            key: 'translateToFrench',
-            label: 'French',
-            onAction: () => {
-              console.log('Translate to French');
-            },
-          },
-        ],
-      },
-    },
-  );
-  return items;
-};
-
 export default function ColumnContextMenuItems() {
   return (
     <>
@@ -140,7 +91,51 @@ export default function ColumnContextMenuItems() {
         <InfiniteTable<Developer>
           columnHeaderHeight={70}
           columns={columns}
-          getColumContextMenuItems={getColumContextMenuItems}
+          getColumMenuItems={(items, { column }) => {
+            if (column.id === 'firstName') {
+              // you can adjust the default items for a specific column
+              items.splice(0, 0, {
+                key: 'firstName',
+                label: 'First name menu item',
+                onAction: () => {
+                  console.log('Hey there!');
+                },
+              });
+            }
+
+            items.push(
+              {
+                key: 'hello',
+                label: 'Hello World',
+                onAction: () => {
+                  alert('Hello World from column ' + column.id);
+                },
+              },
+              {
+                key: 'translate',
+                label: 'Translate',
+                menu: {
+                  items: [
+                    {
+                      key: 'translateToEnglish',
+                      label: 'English',
+                      onAction: () => {
+                        console.log('Translate to English');
+                      },
+                    },
+                    {
+                      key: 'translateToFrench',
+                      label: 'French',
+                      onAction: () => {
+                        console.log('Translate to French');
+                      },
+                    },
+                  ],
+                },
+              },
+            );
+            return items;
+          }}
         />
       </DataSource>
     </>

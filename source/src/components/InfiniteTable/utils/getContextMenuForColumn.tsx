@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 
 import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
 import { getColumnApiForColumn } from '../api/getColumnApi';
 import { InfiniteTableContextValue } from '../types';
-import { defaultGetColumContextMenuItems } from './defaultGetColumContextMenuItems';
+import { defaultGetColumMenuItems } from './defaultGetColumMenuItems';
 
-export function getContextMenuForColumn<T>(
+export function getMenuForColumn<T>(
   columnId: string | null,
   context: InfiniteTableContextValue<T>,
   onHideIntent?: VoidFunction,
@@ -17,7 +16,7 @@ export function getContextMenuForColumn<T>(
   }
   const { getComputed, getState } = context;
 
-  const { components, getColumContextMenuItems } = getState();
+  const { components, getColumMenuItems } = getState();
 
   const MenuCmp = components?.Menu ?? Menu;
 
@@ -33,16 +32,16 @@ export function getContextMenuForColumn<T>(
     ...context,
   };
 
-  const defaultItems = defaultGetColumContextMenuItems([], param)!;
+  const defaultItems = defaultGetColumMenuItems([], param)!;
 
-  const items = getColumContextMenuItems
-    ? getColumContextMenuItems(defaultItems, param)
+  const items = getColumMenuItems
+    ? getColumMenuItems(defaultItems, param)
     : defaultItems;
 
-  const onRootMouseDown: EventListener = React.useCallback((event: Event) => {
+  const onRootMouseDown: EventListener = (event: Event) => {
     //@ts-ignore
     event.__insideMenu = true;
-  }, []);
+  };
 
   const onHide = (state: MenuState) => {
     state.domRef.current?.parentNode?.removeEventListener(
@@ -66,10 +65,10 @@ export function getContextMenuForColumn<T>(
         );
       }}
       onHide={onHide}
-      onHideIntent={useCallback((state: MenuState) => {
+      onHideIntent={(state: MenuState) => {
         onHide(state);
         onHideIntent?.();
-      }, [])}
+      }}
     />
   );
 }

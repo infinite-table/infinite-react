@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 
 import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
@@ -38,10 +37,10 @@ export function getFilterOperatorMenuForColumn<T>(
     return null;
   }
 
-  const onRootMouseDown: EventListener = React.useCallback((event: Event) => {
+  const onRootMouseDown: EventListener = (event: Event) => {
     //@ts-ignore
     event.__insideMenu = true;
-  }, []);
+  };
 
   const onHide = (state: MenuState) => {
     state.domRef.current?.parentNode?.removeEventListener(
@@ -127,10 +126,10 @@ export function getFilterOperatorMenuForColumn<T>(
         );
       }}
       onHide={onHide}
-      onHideIntent={useCallback((state: MenuState) => {
+      onHideIntent={(state: MenuState) => {
         onHide(state);
         onHideIntent?.();
-      }, [])}
+      }}
     />
   );
 }

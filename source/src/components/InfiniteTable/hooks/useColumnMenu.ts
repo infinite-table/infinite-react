@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useOverlay } from '../../hooks/useOverlay';
-import { getContextMenuForColumn } from '../utils/getContextMenuForColumn';
+import { getMenuForColumn } from '../utils/getContextMenuForColumn';
 import { useInfiniteTable } from './useInfiniteTable';
 
 export function useColumnMenu<T>() {
@@ -26,36 +26,35 @@ export function useColumnMenu<T>() {
 
       function onHideIntent() {
         clearAll();
-        actions.columnContextMenuVisibleForColumnId = null;
+        actions.columnMenuVisibleForColumnId = null;
       }
 
-      showOverlay(
-        () => getContextMenuForColumn(column.id, context, onHideIntent),
-        {
-          constrainTo: getState().domRef.current!,
-          id: 'column-menu',
-          alignTo: target as HTMLElement,
-          alignPosition: [
-            ['TopLeft', 'BottomLeft'],
-            ['TopRight', 'BottomRight'],
-          ],
-        },
-      );
+      showOverlay(() => getMenuForColumn(column.id, context, onHideIntent), {
+        constrainTo: getState().domRef.current!,
+        id: 'column-menu',
+        alignTo: target as HTMLElement,
+        alignPosition: [
+          ['TopLeft', 'BottomLeft'],
+          ['TopRight', 'BottomRight'],
+        ],
+      });
 
       actions.filterOperatorMenuVisibleForColumnId = null;
-      actions.columnContextMenuVisibleForColumnId = column.id;
+      actions.columnMenuVisibleForColumnId = column.id;
     });
   }, []);
 
   useEffect(() => {
-    const { columnContextMenuVisibleForColumnId } = getState();
+    const {
+      columnMenuVisibleForColumnId: columnContextMenuVisibleForColumnId,
+    } = getState();
 
     if (columnContextMenuVisibleForColumnId) {
       function handleMouseDown(event: MouseEvent) {
         // @ts-ignore
         if (event.__insideMenu !== true) {
           clearAll();
-          actions.columnContextMenuVisibleForColumnId = null;
+          actions.columnMenuVisibleForColumnId = null;
         }
       }
       document.documentElement.addEventListener('mousedown', handleMouseDown);
@@ -70,7 +69,7 @@ export function useColumnMenu<T>() {
     }
 
     return () => {};
-  }, [getState().columnContextMenuVisibleForColumnId]);
+  }, [getState().columnMenuVisibleForColumnId]);
 
   return { menuPortal };
 }

@@ -650,7 +650,9 @@ function RuntimeItemRenderer(props: {
           style,
           //@ts-ignore
           'data-menu-column-id': `${item.parentMenuId}-col-${col.name}`,
+          'data-menu-col-name': `${col.name}`,
           'data-menu-row-id': `${item.parentMenuId}-row-${index}`,
+          'data-menu-row-index': `${index}`,
           'data-menu-item-key': `${item.key}`,
           className: join(
             MenuItemCls({

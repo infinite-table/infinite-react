@@ -59,7 +59,7 @@ export function useColumnFilterOperatorMenu<T>() {
         },
       );
 
-      actions.columnContextMenuVisibleForColumnId = null;
+      actions.columnMenuVisibleForColumnId = null;
       actions.filterOperatorMenuVisibleForColumnId = column.id;
     });
   }, []);

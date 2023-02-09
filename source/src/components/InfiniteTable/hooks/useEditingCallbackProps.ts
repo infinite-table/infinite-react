@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { usePrevious } from '../../hooks/usePrevious';
-import { getRowDiscriminatorParamForEditing } from '../components/InfiniteTableRow/columnRendering';
+import { getCellContext } from '../components/InfiniteTableRow/columnRendering';
 import { InfiniteTableContextValue } from '../types';
 
 import { useInfiniteTable } from './useInfiniteTable';
@@ -21,7 +21,7 @@ function useOnEditCancelled<T>() {
       const { onEditCancelled } = getState();
 
       onEditCancelled?.({
-        ...getRowDiscriminatorParamForEditing({
+        ...getCellContext({
           rowIndex,
           columnId,
           ...context,
@@ -52,7 +52,7 @@ function useOnEditRejected<T>() {
       const { onEditRejected } = getState();
 
       onEditRejected?.({
-        ...getRowDiscriminatorParamForEditing({
+        ...getCellContext({
           rowIndex,
           columnId,
           ...context,
@@ -102,7 +102,7 @@ function useOnEditAccepted<T>() {
 
       const { value, rowIndex, columnId, initialValue } = editingCell!;
       const editParams = {
-        ...getRowDiscriminatorParamForEditing<T>({
+        ...getCellContext<T>({
           rowIndex,
           columnId,
           ...context,
@@ -138,7 +138,7 @@ function useOnEditPersisted<T>() {
       const { rowIndex, columnId, value, initialValue } = editingCell;
 
       const params = {
-        ...getRowDiscriminatorParamForEditing<T>({
+        ...getCellContext<T>({
           rowIndex,
           columnId,
           ...context,

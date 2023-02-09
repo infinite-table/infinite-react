@@ -3,10 +3,9 @@ import * as React from 'react';
 import {
   InfiniteTable,
   InfiniteTablePropColumns,
-  InfiniteTablePropGetColumnMenuItems,
+  InfiniteTablePropGetCellContextMenuItems,
+  DataSource,
 } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
-import { useState } from 'react';
 
 type Developer = {
   id: number;
@@ -89,40 +88,35 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default () => {
-  const getColumMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
-    items,
-    { column },
-  ) => {
+  const getCellContextMenuItems: InfiniteTablePropGetCellContextMenuItems<
+    Developer
+  > = ({ column, value }) => {
     if (column.id === 'currency') {
+      return [
+        {
+          label: `Currency ${value}`,
+          key: 'money',
+        },
+        {
+          label: `Currency ${value} - item 2`,
+          key: 'money2',
+        },
+      ];
+    }
+    if (column.id === 'age') {
       return [];
     }
-    items.push({
-      key: 'hi',
-      label: 'Hello',
-      onClick: () => {
-        setMsg('hello ' + column.id);
+    return [
+      {
+        label: `hi ${value}`,
+        key: 'hi',
       },
-    });
-
-    if (column.id === 'age') {
-      items.push({
-        key: 'ageitem',
-        label: 'Age',
-        onClick: () => {
-          setMsg('age!');
-        },
-      });
-    }
-    return items;
+    ];
   };
 
-  const [msg, setMsg] = useState('');
   return (
     <>
       <React.StrictMode>
-        <div data-name="msg" style={{ color: 'magenta' }}>
-          {msg}
-        </div>
         <DataSource<Developer> data={data} primaryKey="id">
           <InfiniteTable<Developer>
             domProps={{
@@ -134,7 +128,7 @@ export default () => {
                 position: 'relative',
               },
             }}
-            getColumMenuItems={getColumMenuItems}
+            getCellContextMenuItems={getCellContextMenuItems}
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}

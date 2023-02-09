@@ -1,6 +1,7 @@
 import { ColumnTestingModel } from '@examples/pages/tests/testUtils/ColumnTestingModel';
 import { EditTestingModel } from '@examples/pages/tests/testUtils/EditTestingModel';
 import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderTestingModel';
+import { MenuTestingModel } from '@examples/pages/tests/testUtils/MenuTestingModel';
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import {
   test as base,
@@ -35,6 +36,7 @@ export const test = base.extend<
       headerModel: HeaderTestingModel;
       editModel: EditTestingModel;
       columnModel: ColumnTestingModel;
+      menuModel: MenuTestingModel;
     }
 >({
   //@ts-ignore
@@ -92,5 +94,8 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => 
   },
   columnModel: async ({ page }, use) => {
     await use(ColumnTestingModel.get(page));
+  },
+  menuModel: async ({ page }, use) => {
+    await use(MenuTestingModel.get(page));
   },
 });

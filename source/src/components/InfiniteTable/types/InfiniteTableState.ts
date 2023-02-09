@@ -1,4 +1,5 @@
 import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
+import { PointCoords } from '../../../utils/pageGeometry/Point';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
@@ -36,6 +37,17 @@ export type CellContextMenuLocation = {
   rowId: any;
   rowIndex: number;
   columnId: string;
+  colIndex: number;
+};
+
+export type CellContextMenuLocationWithEvent = CellContextMenuLocation & {
+  event: React.MouseEvent;
+  target: HTMLElement;
+};
+
+export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
+  event: React.MouseEvent;
+  target: HTMLElement;
 };
 
 export interface InfiniteTableSetupState<T> {
@@ -60,13 +72,17 @@ export interface InfiniteTableSetupState<T> {
     column: InfiniteTableComputedColumn<T>;
   }>;
 
-  onCellContextMenu: SubscriptionCallback<CellContextMenuLocation>;
-  onContextMenu: SubscriptionCallback<void>;
+  cellContextMenu: SubscriptionCallback<CellContextMenuLocationWithEvent>;
+  contextMenu: SubscriptionCallback<ContextMenuLocationWithEvent>;
 
   cellContextMenuVisibleFor: CellContextMenuLocation | null;
-  contextMenuVisibleFor: HTMLElement | null;
+  contextMenuVisibleFor:
+    | (Partial<CellContextMenuLocation> & {
+        point: PointCoords;
+      })
+    | null;
 
-  columnContextMenuVisibleForColumnId: string | null;
+  columnMenuVisibleForColumnId: string | null;
   filterOperatorMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
   cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
@@ -132,8 +148,9 @@ export interface InfiniteTableMappedState<T> {
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
+  getContextMenuItems: InfiniteTableProps<T>['getContextMenuItems'];
   getCellContextMenuItems: InfiniteTableProps<T>['getCellContextMenuItems'];
-  getColumContextMenuItems: InfiniteTableProps<T>['getColumContextMenuItems'];
+  getColumMenuItems: InfiniteTableProps<T>['getColumMenuItems'];
   getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
 
   columnPinning: InfiniteTablePropColumnPinning;
@@ -143,6 +160,9 @@ export interface InfiniteTableMappedState<T> {
   columns: InfiniteTableColumnsMap<T>;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   onReady: InfiniteTableProps<T>['onReady'];
+
+  onContextMenu: InfiniteTableProps<T>['onContextMenu'];
+  onCellContextMenu: InfiniteTableProps<T>['onCellContextMenu'];
 
   onSelfFocus: InfiniteTableProps<T>['onSelfFocus'];
   onSelfBlur: InfiniteTableProps<T>['onSelfBlur'];

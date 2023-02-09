@@ -35,6 +35,15 @@ export class Rectangle extends PolyWithPoints {
     return Rectangle.clone(rect);
   }
 
+  static fromPoint(point: PointCoords) {
+    return Rectangle.from({
+      top: point.top,
+      left: point.left,
+      width: 0,
+      height: 0,
+    });
+  }
+
   constructor(coordsAndSize: RectangleCoords) {
     super();
     if (!coordsAndSize) {

@@ -1,7 +1,7 @@
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTablePropGetColumnContextMenuItems,
+  InfiniteTablePropGetColumnMenuItems,
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
@@ -72,9 +72,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
 };
 
-const getColumContextMenuItems: InfiniteTablePropGetColumnContextMenuItems<
-  Developer
-> = (items, { column }) => {
+const getColumMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
+  items,
+  { column },
+) => {
   items.push({
     key: 'hello',
     label: 'Hello World',
@@ -97,7 +98,7 @@ export default function ColumnContextMenuItems() {
           }}
           columnHeaderHeight={70}
           columns={columns}
-          getColumContextMenuItems={getColumContextMenuItems}
+          getContextMenuItems={getColumMenuItems}
         />
       </DataSource>
     </>

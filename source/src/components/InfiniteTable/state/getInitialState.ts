@@ -29,7 +29,8 @@ import {
   InfiniteTableDerivedState,
   InfiniteTableMappedState,
   GroupByMap,
-  CellContextMenuLocation,
+  CellContextMenuLocationWithEvent,
+  ContextMenuLocationWithEvent,
 } from '../types/InfiniteTableState';
 import { toMap } from '../utils/toMap';
 
@@ -48,6 +49,14 @@ function createRenderer(brain: MatrixBrain) {
     renderer,
     onRenderUpdater,
   };
+}
+
+export function getCellSelector(cellPosition?: CellPosition) {
+  const selector = `.${InfiniteTableColumnCellClassName}[data-row-index${
+    cellPosition ? `="${cellPosition.rowIndex}"` : ''
+  }][data-col-index${cellPosition ? `="${cellPosition.colIndex}"` : ''}]`;
+
+  return selector;
 }
 /**
  * The computed state is independent from props and cannot
@@ -101,7 +110,8 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
 
     cellContextMenuVisibleFor: null,
-    columnContextMenuVisibleForColumnId: null,
+    contextMenuVisibleFor: null,
+    columnMenuVisibleForColumnId: null,
     filterOperatorMenuVisibleForColumnId: null,
 
     getDOMNodeForCell: (cellPosition: CellPosition) => {
@@ -109,7 +119,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
         return null;
       }
 
-      const selector = `.${InfiniteTableColumnCellClassName}[data-row-index="${cellPosition.rowIndex}"][data-col-index="${cellPosition.colIndex}"]`;
+      const selector = getCellSelector(cellPosition);
 
       return domRef.current.querySelector(selector) || null;
     },
@@ -129,7 +139,9 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
       column: InfiniteTableComputedColumn<T>;
     }>(),
 
-    onCellContextMenu: buildSubscriptionCallback<CellContextMenuLocation>(),
+    cellContextMenu:
+      buildSubscriptionCallback<CellContextMenuLocationWithEvent>(),
+    contextMenu: buildSubscriptionCallback<ContextMenuLocationWithEvent>(),
 
     onFilterOperatorMenuClick: buildSubscriptionCallback<{
       target: HTMLElement | EventTarget;
@@ -193,14 +205,17 @@ export const forwardProps = <T>(
     onFocusWithin: 1,
     onSelfBlur: 1,
     onBlurWithin: 1,
+    onContextMenu: 1,
+    onCellContextMenu: 1,
 
     onScrollToTop: 1,
     onScrollToBottom: 1,
     onScrollStop: 1,
     scrollToBottomOffset: 1,
 
-    getColumContextMenuItems: 1,
+    getColumMenuItems: 1,
     getCellContextMenuItems: 1,
+    getContextMenuItems: 1,
     columnPinning: 1,
     editable: 1,
     columnDefaultEditable: 1,

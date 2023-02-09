@@ -196,7 +196,17 @@
             }
           ]
         },
-
+        {
+          "title": "Context Menus",
+          "path": "/docs/learn/context-menus/using-context-menus",
+          "transient": true,
+          "routes": [
+            {
+              "path": "/docs/learn/context-menus/using-context-menus",
+              "title": "Using Context Menus"
+            }
+          ]
+        },
         {
           "title": "Theming",
           "path": "/docs/learn/theming",

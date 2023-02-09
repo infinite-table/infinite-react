@@ -35,18 +35,20 @@ import {
   InfiniteTablePropPivotTotalColumnPosition,
 } from './InfiniteTableState';
 
-import { InfiniteTableRowInfo, InfiniteTableState } from '.';
+import { InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
-import { MenuProps } from '../../Menu/MenuProps';
+import { MenuColumn, MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
 import { KeyOfNoSymbol } from './Utility';
 
-import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
 import { MenuIconProps } from '../components/icons/MenuIcon';
-import { InfiniteTablePublicContext } from './InfiniteTableContextValue';
+import {
+  InfiniteTableCellContext,
+  InfiniteTablePublicContext,
+} from './InfiniteTableContextValue';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -439,11 +441,15 @@ export type ScrollStopInfo = {
   lastVisibleRowIndex: number;
 };
 
-export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
+export type InfiniteTableRowInfoDataDiscriminatorWithColumn<T> = {
   column: InfiniteTableComputedColumn<T>;
+  columnApi: InfiniteTableColumnApi<T>;
+} & InfiniteTableRowInfoDataDiscriminator<T>;
+
+export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
   api: InfiniteTableApi<T>;
   dataSourceApi: DataSourceApi<T>;
-} & InfiniteTableRowInfoDataDiscriminator<T>;
+} & InfiniteTableRowInfoDataDiscriminatorWithColumn<T>;
 
 export type InfiniteTablePropsEditable<T> =
   | InfiniteTableColumnEditableFn<T>
@@ -553,30 +559,29 @@ export interface InfiniteTableProps<T> {
   columnHeaderHeight: number | string;
 
   onKeyDown?: (
-    context: {
-      api: InfiniteTableEventHandlerContext<T>['api'];
-      getState: InfiniteTableEventHandlerContext<T>['getState'];
-      getDataSourceState: InfiniteTableEventHandlerContext<T>['getDataSourceState'];
+    context: InfiniteTablePublicContext<T> & {
       actions: InfiniteTableEventHandlerContext<T>['actions'];
     },
     event: React.KeyboardEvent,
   ) => void;
 
   onCellClick?: (
-    context: InfiniteTablePublicContext<T> & {
-      rowIndex: OnCellClickContext<T>['rowIndex'];
-      colIndex: OnCellClickContext<T>['colIndex'];
-    },
+    context: InfiniteTablePublicContext<T> & InfiniteTableCellContext<T>,
     event: React.MouseEvent,
   ) => void;
 
   onContextMenu?: (
-    context: InfiniteTablePublicContext<T>,
+    context: InfiniteTablePublicContext<T> & {
+      event: React.MouseEvent;
+    } & Partial<InfiniteTableRowInfoDataDiscriminatorWithColumn<T>>,
     event: React.MouseEvent,
   ) => void;
 
   onCellContextMenu?: (
-    context: InfiniteTablePublicContext<T>,
+    context: InfiniteTablePublicContext<T> &
+      InfiniteTableRowInfoDataDiscriminatorWithColumn<T> & {
+        event: React.MouseEvent;
+      },
     event: React.MouseEvent,
   ) => void;
 
@@ -663,33 +668,39 @@ export interface InfiniteTableProps<T> {
   getCellContextMenuItems?: InfiniteTablePropGetCellContextMenuItems<T>;
   getContextMenuItems?: InfiniteTablePropGetContextMenuItems<T>;
 
-  getColumContextMenuItems?: InfiniteTablePropGetColumnContextMenuItems<T>;
+  getColumMenuItems?: InfiniteTablePropGetColumnMenuItems<T>;
   getFilterOperatorMenuItems?: InfiniteTablePropGetFilterOperatorMenuItems<T>;
 }
 
-export type InfiniteTablePropGetColumnContextMenuItems<T> = (
+export type InfiniteTablePropGetColumnMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,
   params: {
     column: InfiniteTableComputedColumn<T>;
     columnApi: InfiniteTableColumnApi<T>;
-    api: InfiniteTableApi<T>;
-    getState: () => InfiniteTableState<T>;
-    getDataSourceState: () => DataSourceState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;
-  },
-) => MenuProps['items'];
-
-export type InfiniteTablePropGetCellContextMenuItems<T> = (
-  info: InfiniteTableRowInfo<T> & { column: InfiniteTableComputedColumn<T> },
-  params: {
-    column: InfiniteTableComputedColumn<T>;
-    columnApi: InfiniteTableColumnApi<T>;
   } & InfiniteTablePublicContext<T>,
 ) => MenuProps['items'];
 
-export type InfiniteTablePropGetContextMenuItems<T> = (
+export type GetContextMenuItemsReturnType =
+  | MenuProps['items']
+  | null
+  | {
+      items: MenuProps['items'];
+      columns: MenuColumn[];
+    };
+export type InfiniteTablePropGetCellContextMenuItems<T> = (
+  info: InfiniteTableRowInfoDataDiscriminatorWithColumn<T> & {
+    event: React.MouseEvent;
+  },
   params: InfiniteTablePublicContext<T>,
-) => MenuProps['items'];
+) => GetContextMenuItemsReturnType;
+
+export type InfiniteTablePropGetContextMenuItems<T> = (
+  param: {
+    event: React.MouseEvent;
+  } & Partial<InfiniteTableRowInfoDataDiscriminatorWithColumn<T>>,
+  params: InfiniteTablePublicContext<T>,
+) => GetContextMenuItemsReturnType;
 
 export type InfiniteTablePropGetFilterOperatorMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,

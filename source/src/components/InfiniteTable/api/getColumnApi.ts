@@ -10,7 +10,9 @@ import { GetImperativeApiParam } from './type';
 
 export function getColumnApiForColumn<T>(
   colOrColId: string | InfiniteTableComputedColumn<T>,
-  param: GetImperativeApiParam<T> & { api: InfiniteTableApi<T> },
+  param: GetImperativeApiParam<T> & {
+    api: InfiniteTableApi<T>;
+  },
 ) {
   const { getComputed, getState, actions, api } = param;
 
@@ -25,7 +27,7 @@ export function getColumnApiForColumn<T>(
 
   const columnApi: InfiniteTableColumnApi<T> = {
     toggleContextMenu(target: EventTarget | HTMLElement) {
-      if (getState().columnContextMenuVisibleForColumnId === column.id) {
+      if (getState().columnMenuVisibleForColumnId === column.id) {
         this.hideContextMenu();
       } else {
         this.showContextMenu(target);
@@ -53,7 +55,7 @@ export function getColumnApiForColumn<T>(
     },
 
     hideContextMenu() {
-      actions.columnContextMenuVisibleForColumnId = null;
+      actions.columnMenuVisibleForColumnId = null;
     },
 
     toggleSort() {

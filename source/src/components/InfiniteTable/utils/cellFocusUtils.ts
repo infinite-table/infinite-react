@@ -14,6 +14,7 @@ import { InfiniteTableColumnRenderingContext } from '../components/InfiniteTable
 
 import { getFirstFocusableChildForNode } from './getFocusableChildrenForNode';
 import { waitForFunction } from './waitForFunction';
+import { getColumnApiForColumn } from '../api/getColumnApi';
 
 type ContentFocusableContext<T> = InfiniteTableColumnRenderingContext<T> & {
   getComputed: () => InfiniteTableComputedValues<T>;
@@ -77,6 +78,7 @@ export function isCellFocusable<T>(
   if (column.contentFocusable === true) {
     return true;
   }
+  const columnApi = getColumnApiForColumn(column.id, context)!;
   return column.contentFocusable({
     column,
     ...getFormattedValueContextForCell({
@@ -85,6 +87,7 @@ export function isCellFocusable<T>(
       columnsMap: computedColumnsMap,
       context,
     }).formattedValueContext,
+    columnApi,
     api,
     dataSourceApi,
   });

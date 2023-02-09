@@ -43,7 +43,7 @@ import type {
   InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTablePropHeaderOptions,
   InfiniteTablePropKeyboardNavigation,
-  InfiniteTablePropGetColumnContextMenuItems,
+  InfiniteTablePropGetColumnMenuItems,
   InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableColumnApi,
 } from './InfiniteTableProps';
@@ -80,7 +80,7 @@ export type {
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumnSizing,
   InfiniteTableColumnSizingOptions,
-  InfiniteTablePropGetColumnContextMenuItems,
+  InfiniteTablePropGetColumnMenuItems,
   InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableState,
   InfiniteTableAction,

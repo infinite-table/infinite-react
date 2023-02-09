@@ -16,7 +16,7 @@ import {
 } from '../types';
 import { InfiniteTableActions } from '../types/InfiniteTableState';
 
-export function defaultGetColumContextMenuItems<T>(
+export function defaultGetColumMenuItems<T>(
   _items: MenuProps['items'],
   params: {
     column: InfiniteTableComputedColumn<T>;

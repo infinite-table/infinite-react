@@ -20,6 +20,7 @@ It helps you display huge datasets and get the most out of your data by providin
 - [<img src="/icons/50x50/keyboard-navigation.svg" style={{display: 'inline-block'}} /> keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
 - [<img src="/icons/50x50/fixed-flex-cols.svg" style={{display: 'inline-block'}} /> fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
 - [<img src="/icons/50x50/column-grouping.svg" style={{display: 'inline-block'}} /> column grouping](/docs/learn/column-groups)
+- [<img src="/icons/50x50/filtering.svg" style={{display: 'inline-block'}} /> filtering](/docs/learn/filtering)
 - [<img src="/icons/50x50/theming.svg" style={{display: 'inline-block'}} /> theming](/docs/learn/theming)
 
 ## Installation

@@ -52,6 +52,7 @@ import {
   mapPropsToState,
   initSetupState,
   cleanupState,
+  getCellSelector,
 } from './state/getInitialState';
 import { columnHeaderHeightName } from './theme.css';
 
@@ -68,7 +69,15 @@ import { FocusDetect } from './components/FocusDetect';
 import { useEditingCallbackProps } from './hooks/useEditingCallbackProps';
 import { useInfiniteColumnFilterEditor } from './components/InfiniteTableHeader/InfiniteTableColumnHeaderFilter';
 import { useColumnFilterOperatorMenu } from './hooks/useColumnFilterOperatorMenu';
-import { useCellContextMenu } from './hooks/useCellContextMenu';
+import {
+  useCellContextMenu,
+  useTableContextMenu,
+} from './hooks/useContextMenu';
+import { selectParentUntil } from '../../utils/selectParent';
+import {
+  CellContextMenuLocationWithEvent,
+  ContextMenuLocationWithEvent,
+} from './types/InfiniteTableState';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -180,7 +189,8 @@ export const InfiniteTableComponent = React.memo(
     useEditingCallbackProps<T>();
 
     const { menuPortal } = useColumnMenu();
-    const { menuPortal: rowMenuPortal } = useCellContextMenu();
+    const { menuPortal: cellContextMenuPortal } = useCellContextMenu();
+    const { menuPortal: tableContextMenuPortal } = useTableContextMenu();
     const { menuPortal: filterOperatorMenuPortal } =
       useColumnFilterOperatorMenu();
 
@@ -198,6 +208,45 @@ export const InfiniteTableComponent = React.memo(
       }
     }, [componentState.ready]);
 
+    const onContextMenu = React.useCallback((event: React.MouseEvent) => {
+      const state = context.getState();
+      const target = event.target as HTMLElement;
+
+      const cell = selectParentUntil(
+        target,
+        getCellSelector(),
+        state.domRef.current,
+      );
+
+      let columnId: string | undefined;
+      let colIndex: number | undefined;
+      let rowId: string | undefined;
+      let rowIndex: number | undefined;
+
+      if (cell) {
+        colIndex = Number(cell.dataset.colIndex);
+        rowIndex = Number(cell.dataset.rowIndex);
+        console.log({ colIndex, rowIndex });
+
+        columnId = context.getComputed().computedVisibleColumns[colIndex].id;
+        rowId = context.dataSourceApi.getRowInfoArray()[rowIndex].id;
+      }
+
+      const param: ContextMenuLocationWithEvent = {
+        columnId,
+        colIndex,
+        rowId,
+        rowIndex,
+        event,
+        target: cell ?? (event.target as HTMLElement),
+      };
+
+      if (cell) {
+        state.cellContextMenu(param as CellContextMenuLocationWithEvent);
+      }
+      state.contextMenu(param);
+    }, []);
+
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
         {header ? (
@@ -208,7 +257,7 @@ export const InfiniteTableComponent = React.memo(
           />
         ) : null}
 
-        <InfiniteTableBody>
+        <InfiniteTableBody onContextMenu={onContextMenu}>
           <HeadlessTable
             tabIndex={0}
             activeRowIndex={
@@ -255,7 +304,8 @@ export const InfiniteTableComponent = React.memo(
           )}
         >
           {menuPortal}
-          {rowMenuPortal}
+          {cellContextMenuPortal}
+          {tableContextMenuPortal}
           {filterOperatorMenuPortal}
         </div>
         {rowHeightCSSVar ? (

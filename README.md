@@ -55,6 +55,8 @@
  fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
 * [<img src="https://infinite-table.com/icons/column-grouping.svg" align="center" />
  column grouping](https://infinite-table.com/docs/latest/learn/column-groups)
+* [<img src="https://infinite-table.com/icons/filtering.svg" align="center" />
+ filtering](https://infinite-table.com/docs/latest/learn/filtering)
 * [<img src="https://infinite-table.com/icons/theming.svg" align="center" />
  theming](https://infinite-table.com/docs/latest/learn/theming)
 

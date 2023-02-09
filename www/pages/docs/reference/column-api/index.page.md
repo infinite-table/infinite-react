@@ -62,7 +62,7 @@ The `preferredLanguage` column has a custom header that shows a button for trigg
 
 </Description>
 
-```ts file=$DOCS/reference/getColumnContextMenuItems-example.page.tsx
+```ts file=$DOCS/reference/getColumMenuItems-example.page.tsx
 
 ```
 

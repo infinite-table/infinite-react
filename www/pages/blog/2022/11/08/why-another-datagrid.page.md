@@ -261,7 +261,7 @@ However, we do think it's a great 💯 fit for some use-cases - we've used it ou
 
 <CSEmbed src="https://codesandbox.io/embed/github/tanstack/table/tree/main/examples/react/column-groups?fontsize=14&hidenavigation=1&module=%2Fsrc%2Fmain.tsx&theme=dark" />
 
-Notice in the code above how you're responsible for creating the markup for the table, the headers, column groups,the cells, etc. You have TOTAL control over overy aspect of the component, but this means you have to own it!
+Notice in the code above how you're responsible for creating the markup for the table, the headers, column groups,the cells, etc. You have TOTAL control over every aspect of the component, but this means you have to own it!
 
 At the other end of the spectrum is AG Grid a full-featured DataGrid that offers all this out of the box. 
 

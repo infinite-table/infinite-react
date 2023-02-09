@@ -3,10 +3,9 @@ import * as React from 'react';
 import {
   InfiniteTable,
   InfiniteTablePropColumns,
-  InfiniteTablePropGetColumnMenuItems,
+  DataSource,
 } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
-import { useState } from 'react';
+import { InfiniteTablePropGetContextMenuItems } from '@infinite-table/infinite-react/components/InfiniteTable/types/InfiniteTableProps';
 
 type Developer = {
   id: number;
@@ -89,40 +88,33 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default () => {
-  const getColumMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (
-    items,
-    { column },
-  ) => {
-    if (column.id === 'currency') {
-      return [];
-    }
-    items.push({
-      key: 'hi',
-      label: 'Hello',
-      onClick: () => {
-        setMsg('hello ' + column.id);
-      },
-    });
-
-    if (column.id === 'age') {
-      items.push({
-        key: 'ageitem',
-        label: 'Age',
-        onClick: () => {
-          setMsg('age!');
+  const getContextMenuItems: InfiniteTablePropGetContextMenuItems<
+    Developer
+  > = ({ column, value }) => {
+    if (!column) {
+      return [
+        {
+          label: `Generic menu item one`,
+          key: 'generic1',
         },
-      });
+        {
+          label: `Generic menu item two`,
+          key: 'generic2',
+        },
+      ];
     }
-    return items;
+
+    return [
+      {
+        label: `hi ${value}`,
+        key: `col:${column.id}`,
+      },
+    ];
   };
 
-  const [msg, setMsg] = useState('');
   return (
     <>
       <React.StrictMode>
-        <div data-name="msg" style={{ color: 'magenta' }}>
-          {msg}
-        </div>
         <DataSource<Developer> data={data} primaryKey="id">
           <InfiniteTable<Developer>
             domProps={{
@@ -134,10 +126,11 @@ export default () => {
                 position: 'relative',
               },
             }}
-            getColumMenuItems={getColumMenuItems}
+            getContextMenuItems={getContextMenuItems}
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}
+            onCellContextMenu={() => {}}
           />
         </DataSource>
       </React.StrictMode>

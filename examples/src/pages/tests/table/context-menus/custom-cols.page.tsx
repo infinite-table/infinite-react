@@ -88,20 +88,34 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default () => {
-  const getRowContextMenuItems: InfiniteTablePropGetCellContextMenuItems<
+  const getCellContextMenuItems: InfiniteTablePropGetCellContextMenuItems<
     Developer
-  > = ({ column }) => {
+  > = ({ column, value, rowInfo }) => {
     if (column.id === 'currency') {
-      return [
-        {
-          label: 'Hello',
-          key: 'hey',
-        },
-      ];
+      return {
+        columns: [{ name: 'id' }, { name: 'label' }, { name: 'cellValue' }],
+        items: [
+          {
+            id: `${rowInfo.id}`,
+            label: `Currency ${value}`,
+            key: 'money',
+            cellValue: value,
+          },
+          {
+            id: `${rowInfo.id}`,
+            label: `Currency ${value} - item 2`,
+            key: 'money2',
+            cellValue: value + '!',
+          },
+        ],
+      };
+    }
+    if (column.id === 'age') {
+      return [];
     }
     return [
       {
-        label: 'hi',
+        label: `hi ${value}`,
         key: 'hi',
       },
     ];
@@ -121,7 +135,7 @@ export default () => {
                 position: 'relative',
               },
             }}
-            getCellContextMenuItems={getRowContextMenuItems}
+            getCellContextMenuItems={getCellContextMenuItems}
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}

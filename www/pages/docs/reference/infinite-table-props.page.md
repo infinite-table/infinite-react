@@ -860,7 +860,7 @@ In addition, the currency and preferredLanguage columns have a custom context me
 
 </Description>
 
-```ts file=getColumnContextMenuItems-example.page.tsx
+```ts file=getColumMenuItems-example.page.tsx
 
 ```
 
@@ -1066,7 +1066,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```ts file=getColumnContextMenuItems-example.page.tsx
+```ts file=getColumMenuItems-example.page.tsx
 
 ```
 
@@ -1848,7 +1848,98 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 </Prop>
 
-<Prop name="getColumnContextMenuItems" type="(items, context) => MenuItem[]">
+
+<Prop name="getCellContextMenuItems" type="({data, column, rowInfo}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] }">
+
+> Customises the context menu items for a cell.
+
+If you want to customize the context menu even when the user clicks outside any cell, but inside the table body, use <PropLink name="getContextMenuItems" />.
+
+The `getCellContextMenuItems` function can return one of the following:
+
+ * `null` - no custom context menu will be displayed, the default context menu will be shown (default event behavior not prevented)
+ * `[]` - an empty array - no custom context menu will be displayed, but the default context menu is not shown - the default event behavior is prevented
+ * `Array<MenuItem>` - an array of menu items to be displayed in the context menu - each `MenuItem` should have:
+   * a unique `key` property,
+   * a `label` property with the value to display in the menu cell - it's called `label` because this is the name of the default column in the context menu
+   * an optional `onClick` callback function to handle the click event on the menu item.
+
+<Sandpack title="Using context menus">
+
+```ts file=cell-basic-context-menu-example.page.tsx
+
+```
+
+</Sandpack>
+
+
+In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
+
+```tsx
+
+const getCellContextMenuItems = () => {
+  return {
+    columns: [
+      { name: 'Label' },
+      { name: 'Icon' }
+    ],
+    items: [
+      {
+        label: 'Welcome',
+        icon: '👋',
+        key: 'hi',
+      },
+      {
+        label: 'Convert',
+        icon: '🔁',
+        key: 'convert',
+      }
+    ]
+  }
+}
+```
+
+
+<Sandpack title="Customising columns in the context menu">
+
+<Description>
+
+Right-click any cell in the table to see a context menu with multiple columns (`icon`, `label` and `description`).
+
+</Description>
+
+
+```ts file=cells-with-custom-columns-context-menu-example.page.tsx
+```
+
+</Sandpack>
+
+
+</Prop>
+
+
+<Prop name="getContextMenuItems" type="({event, data?, column?, rowInfo}, {api, dataSourceApi}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] }">
+
+> Customises the context menu items for the whole table.
+
+If you want to customize the context menu only when the user clicks inside a cell, use <PropLink name="getCellContextMenuItems" />, which is probably what you're looking for.
+
+The first argument this function is called with has the same shape as the one for <PropLink name="getCellContextMenuItems" /> but all cell-related properties could also be `undefined`. Also, the `event` is available as a property on this object.
+
+If this function returns null, the default context menu of the browser will be shown (default event behavior not prevented).
+
+
+<Sandpack title="Using context menus for the whole table">
+
+```ts file=table-basic-context-menu-example.page.tsx
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="getColumMenuItems" type="(items, context) => MenuItem[]">
 
 > Allows customization of the context menu items for a column.
 
@@ -1859,7 +1950,7 @@ Use this function to customize the context menu for columns. The function is cal
     - `context.api` - a reference to the [api](./reference/api)
 
 
-<Sandpack title="getColumnContextMenuItems example - custom menu item and icon">
+<Sandpack title="getColumMenuItems example - custom menu item and icon">
 
 <Description>
 
@@ -1869,7 +1960,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```ts file=getColumnContextMenuItems-example.page.tsx
+```ts file=getColumMenuItems-example.page.tsx
 
 ```
 
@@ -2121,6 +2212,24 @@ This callback is fired when a focusable element inside the component is blurred,
 
 </Sandpack>
 </Prop>
+
+<Prop name="onCellClick" type="({ colIndex, rowIndex, column, columnApi, api, dataSourceApi }, event) => void">
+
+> Callback function called when a cell has been clicked.
+
+The first argument of the function is an object that contains the following properties:
+
+ * `rowIndex: number` - the index of the row that was clicked.
+ * `colIndex: number` - the index of the column that was clicked. This index is the index in the array of visible columns.
+ * `column: InfiniteTableComputedColumn<DATA_TYPE>` - the column that has been clicked
+ * `columnApi: InfiniteTableColumnApi<DATA_TYPE>` - the [column API](/docs/reference/column-api)
+ * `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
+ * `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
+
+The second argument is the original browser click event.
+
+</Prop>
+
 <Prop name="onColumnOrderChange" type="(columnOrder: string[])=>void">
 
 > Called as a result of user changing the column order
@@ -2206,6 +2315,20 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 ```
 
 </Sandpack>
+</Prop>
+
+
+<Prop name="onKeyDown" type="({ api, dataSourceApi }, event) => void">
+
+> Callback function called when the `keydown` event occurs on the table.
+
+The first argument of the function is an object that contains the following properties:
+
+ * `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
+ * `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
+
+The second argument is the original browser `keydown` event.
+
 </Prop>
 
 <Prop name="onReady" type="({api, dataSourceApi}) => void}">
