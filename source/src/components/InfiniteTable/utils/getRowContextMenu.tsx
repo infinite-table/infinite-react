@@ -5,27 +5,32 @@ import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
 import { getColumnApiForColumn } from '../api/getColumnApi';
 import { InfiniteTableContextValue } from '../types';
-import { defaultGetColumContextMenuItems } from './defaultGetColumContextMenuItems';
 
-export function getContextMenuForColumn<T>(
+export function getRowContextMenu<T>(
+  rowId: any,
+  rowIndex: number,
   columnId: string | null,
   context: InfiniteTableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
-  if (columnId == null) {
+  if (columnId == null || rowId == null) {
     return null;
   }
-  const { getComputed, getState } = context;
+  const { getComputed, getState, getDataSourceState } = context;
 
-  const { components, getColumContextMenuItems } = getState();
+  const { components, getCellContextMenuItems } = getState();
 
   const MenuCmp = components?.Menu ?? Menu;
 
-  const column = getComputed().computedColumnsMap.get(columnId);
+  const { computedColumnsMap } = getComputed();
 
-  if (!column) {
+  const column = computedColumnsMap.get(columnId);
+
+  if (!column || !getCellContextMenuItems) {
     return null;
   }
+
+  const rowInfo = getDataSourceState().dataArray[rowIndex];
 
   const param = {
     column,
@@ -33,11 +38,7 @@ export function getContextMenuForColumn<T>(
     ...context,
   };
 
-  const defaultItems = defaultGetColumContextMenuItems([], param)!;
-
-  const items = getColumContextMenuItems
-    ? getColumContextMenuItems(defaultItems, param)
-    : defaultItems;
+  const items = getCellContextMenuItems({ ...rowInfo, column }, param);
 
   const onRootMouseDown: EventListener = React.useCallback((event: Event) => {
     //@ts-ignore

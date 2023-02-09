@@ -26,7 +26,7 @@ function getFilterTypes<T>() {
         {
           name: 'includes',
           components: { Icon: IncludesOperatorIcon },
-          label: 'includes',
+          label: 'Includes',
           fn: ({ currentValue, filterValue }) => {
             return (
               typeof currentValue === 'string' &&

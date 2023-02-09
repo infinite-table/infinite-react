@@ -44,6 +44,7 @@ import type {
   InfiniteTablePropHeaderOptions,
   InfiniteTablePropKeyboardNavigation,
   InfiniteTablePropGetColumnContextMenuItems,
+  InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableColumnApi,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
@@ -80,6 +81,7 @@ export type {
   InfiniteTablePropColumnSizing,
   InfiniteTableColumnSizingOptions,
   InfiniteTablePropGetColumnContextMenuItems,
+  InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableState,
   InfiniteTableAction,
   InfiniteTableProps,

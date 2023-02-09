@@ -35,7 +35,7 @@ import {
   InfiniteTablePropPivotTotalColumnPosition,
 } from './InfiniteTableState';
 
-import { InfiniteTableState } from '.';
+import { InfiniteTableRowInfo, InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
@@ -46,6 +46,7 @@ import { KeyOfNoSymbol } from './Utility';
 import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
 import { MenuIconProps } from '../components/icons/MenuIcon';
+import { InfiniteTablePublicContext } from './InfiniteTableContextValue';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -562,14 +563,20 @@ export interface InfiniteTableProps<T> {
   ) => void;
 
   onCellClick?: (
-    context: {
+    context: InfiniteTablePublicContext<T> & {
       rowIndex: OnCellClickContext<T>['rowIndex'];
       colIndex: OnCellClickContext<T>['colIndex'];
-      api: OnCellClickContext<T>['api'];
-      getState: OnCellClickContext<T>['getState'];
-      getDataSourceState: OnCellClickContext<T>['getDataSourceState'];
-      actions: OnCellClickContext<T>['actions'];
     },
+    event: React.MouseEvent,
+  ) => void;
+
+  onContextMenu?: (
+    context: InfiniteTablePublicContext<T>,
+    event: React.MouseEvent,
+  ) => void;
+
+  onCellContextMenu?: (
+    context: InfiniteTablePublicContext<T>,
     event: React.MouseEvent,
   ) => void;
 
@@ -653,6 +660,9 @@ export interface InfiniteTableProps<T> {
   scrollTopKey?: string | number;
   autoSizeColumnsKey?: InfiniteTablePropAutoSizeColumnsKey;
 
+  getCellContextMenuItems?: InfiniteTablePropGetCellContextMenuItems<T>;
+  getContextMenuItems?: InfiniteTablePropGetContextMenuItems<T>;
+
   getColumContextMenuItems?: InfiniteTablePropGetColumnContextMenuItems<T>;
   getFilterOperatorMenuItems?: InfiniteTablePropGetFilterOperatorMenuItems<T>;
 }
@@ -661,11 +671,24 @@ export type InfiniteTablePropGetColumnContextMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,
   params: {
     column: InfiniteTableComputedColumn<T>;
+    columnApi: InfiniteTableColumnApi<T>;
     api: InfiniteTableApi<T>;
     getState: () => InfiniteTableState<T>;
+    getDataSourceState: () => DataSourceState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;
-    actions: InfiniteTableActions<T>;
   },
+) => MenuProps['items'];
+
+export type InfiniteTablePropGetCellContextMenuItems<T> = (
+  info: InfiniteTableRowInfo<T> & { column: InfiniteTableComputedColumn<T> },
+  params: {
+    column: InfiniteTableComputedColumn<T>;
+    columnApi: InfiniteTableColumnApi<T>;
+  } & InfiniteTablePublicContext<T>,
+) => MenuProps['items'];
+
+export type InfiniteTablePropGetContextMenuItems<T> = (
+  params: InfiniteTablePublicContext<T>,
 ) => MenuProps['items'];
 
 export type InfiniteTablePropGetFilterOperatorMenuItems<T> = (

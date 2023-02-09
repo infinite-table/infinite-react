@@ -29,6 +29,7 @@ import {
   InfiniteTableDerivedState,
   InfiniteTableMappedState,
   GroupByMap,
+  CellContextMenuLocation,
 } from '../types/InfiniteTableState';
 import { toMap } from '../utils/toMap';
 
@@ -98,6 +99,8 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     renderer,
     onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
+
+    cellContextMenuVisibleFor: null,
     columnContextMenuVisibleForColumnId: null,
     filterOperatorMenuVisibleForColumnId: null,
 
@@ -125,6 +128,8 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
       target: HTMLElement | EventTarget;
       column: InfiniteTableComputedColumn<T>;
     }>(),
+
+    onCellContextMenu: buildSubscriptionCallback<CellContextMenuLocation>(),
 
     onFilterOperatorMenuClick: buildSubscriptionCallback<{
       target: HTMLElement | EventTarget;
@@ -195,6 +200,7 @@ export const forwardProps = <T>(
     scrollToBottomOffset: 1,
 
     getColumContextMenuItems: 1,
+    getCellContextMenuItems: 1,
     columnPinning: 1,
     editable: 1,
     columnDefaultEditable: 1,

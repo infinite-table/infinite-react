@@ -4,7 +4,7 @@
       "path": "/blog/2023/01/26/filtering-data-with-infinite-table-for-react",
       "date": "2023-01-26",
       "title": "Filtering Data with Infinite Table for React",
-      "draft": true,
+      "draft": false,
       "description": "Learn how to filter data both client-side and server-side with Infinite Table for React",
       "author": [
         "admin"

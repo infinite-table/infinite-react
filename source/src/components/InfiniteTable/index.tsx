@@ -68,6 +68,7 @@ import { FocusDetect } from './components/FocusDetect';
 import { useEditingCallbackProps } from './hooks/useEditingCallbackProps';
 import { useInfiniteColumnFilterEditor } from './components/InfiniteTableHeader/InfiniteTableColumnHeaderFilter';
 import { useColumnFilterOperatorMenu } from './hooks/useColumnFilterOperatorMenu';
+import { useCellContextMenu } from './hooks/useCellContextMenu';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -179,6 +180,7 @@ export const InfiniteTableComponent = React.memo(
     useEditingCallbackProps<T>();
 
     const { menuPortal } = useColumnMenu();
+    const { menuPortal: rowMenuPortal } = useCellContextMenu();
     const { menuPortal: filterOperatorMenuPortal } =
       useColumnFilterOperatorMenu();
 
@@ -253,6 +255,7 @@ export const InfiniteTableComponent = React.memo(
           )}
         >
           {menuPortal}
+          {rowMenuPortal}
           {filterOperatorMenuPortal}
         </div>
         {rowHeightCSSVar ? (

@@ -7,6 +7,8 @@ import {
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
 import {
   InfiniteTableApi,
+  InfiniteTableColumnApi,
+  InfiniteTableComputedColumn,
   InfiniteTableComputedValues,
   InfiniteTableState,
 } from '../types';
@@ -56,4 +58,6 @@ export type InfiniteTableCellClickEventHandlerContext<T> =
   InfiniteTableEventHandlerContext<T> & {
     rowIndex: number;
     colIndex: number;
+    column: InfiniteTableComputedColumn<T>;
+    columnApi: InfiniteTableColumnApi<T>;
   };

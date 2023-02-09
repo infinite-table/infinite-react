@@ -32,6 +32,12 @@ export type GroupByMap<T> = Map<
   { groupBy: DataSourceGroupBy<T>; groupIndex: number }
 >;
 
+export type CellContextMenuLocation = {
+  rowId: any;
+  rowIndex: number;
+  columnId: string;
+};
+
 export interface InfiniteTableSetupState<T> {
   renderer: ReactHeadlessTableRenderer;
   getDOMNodeForCell: (cellPos: CellPosition) => HTMLElement | null;
@@ -53,6 +59,13 @@ export interface InfiniteTableSetupState<T> {
     target: HTMLElement | EventTarget;
     column: InfiniteTableComputedColumn<T>;
   }>;
+
+  onCellContextMenu: SubscriptionCallback<CellContextMenuLocation>;
+  onContextMenu: SubscriptionCallback<void>;
+
+  cellContextMenuVisibleFor: CellContextMenuLocation | null;
+  contextMenuVisibleFor: HTMLElement | null;
+
   columnContextMenuVisibleForColumnId: string | null;
   filterOperatorMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
@@ -119,6 +132,7 @@ export interface InfiniteTableMappedState<T> {
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
+  getCellContextMenuItems: InfiniteTableProps<T>['getCellContextMenuItems'];
   getColumContextMenuItems: InfiniteTableProps<T>['getColumContextMenuItems'];
   getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
 

@@ -18,3 +18,10 @@ export interface InfiniteTableContextValue<T> {
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
 }
+
+export interface InfiniteTablePublicContext<T> {
+  api: InfiniteTableApi<T>;
+  dataSourceApi: DataSourceApi<T>;
+  getState: () => InfiniteTableState<T>;
+  getDataSourceState: () => DataSourceState<T>;
+}

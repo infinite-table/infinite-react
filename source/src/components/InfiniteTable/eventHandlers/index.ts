@@ -2,6 +2,7 @@ import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { CellPosition } from '../../types/CellPosition';
+import { getColumnApiForColumn } from '../api/getColumnApi';
 import { cloneRowSelection } from '../api/getSelectionApi';
 import { useInfiniteTable } from '../hooks/useInfiniteTable';
 import { InfiniteTableEventHandlerContext } from './eventHandlerTypes';
@@ -64,11 +65,17 @@ function handleDOMEvents<T>() {
       }
       const event = cellClickParam.event;
 
+      const column =
+        context.getComputed().computedVisibleColumns[cellClickParam.colIndex];
+      const columnApi = getColumnApiForColumn(column.id, context)!;
+
       onCellClick(
         {
           ...context,
           rowIndex: cellClickParam.rowIndex,
           colIndex: cellClickParam.colIndex,
+          column,
+          columnApi,
         },
         { ...event, key: '' },
       );
