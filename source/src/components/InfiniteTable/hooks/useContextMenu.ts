@@ -16,6 +16,10 @@ const ALIGN_POSITIONS: AlignPositionOptions['alignPosition'] = [
   ['TopRight', 'BottomRight'],
   ['BottomLeft', 'BottomLeft'],
   ['BottomRight', 'BottomRight'],
+  ['TopCenter', 'TopLeft'],
+  ['BottomCenter', 'TopLeft'],
+  ['CenterLeft', 'TopLeft'],
+  ['CenterRight', 'TopLeft'],
 ];
 
 export function useCellContextMenu<T>() {
