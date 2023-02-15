@@ -9,13 +9,13 @@
           "path": "/blog/2023/02/16/using-menus-in-infinite-table",
           "date": "2023-02-16",
           "title": "Using Menus in Infinite Table",
-          "draft": false,
+          "draft": true,
           "description": "Find out how to use menus in Infinite Table to customise the DataGrid to fit your needs: custom context menus, column menus and more.",
           "author": [
             "admin"
           ],
           "excerpt": "<p><em>With version 1.1.0, our DataGrid now includes support for context menus, which are fully configurable so you can create custom menus for any cell in the table.</em></p>\n",
-          "readingTime": "1 min read"
+          "readingTime": "7 min read"
         },
         {
           "path": "/blog/2023/01/26/filtering-data-with-infinite-table-for-react",
