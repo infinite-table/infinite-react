@@ -1,7 +1,6 @@
 ---
 title: "Using Menus in Infinite Table"
 description: "Find out how to use menus in Infinite Table to customise the DataGrid to fit your needs: custom context menus, column menus and more."
-draft: true
 author: [admin]
 ---
 
