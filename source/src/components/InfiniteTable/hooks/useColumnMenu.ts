@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useOverlay } from '../../hooks/useOverlay';
-import { getMenuForColumn } from '../utils/getContextMenuForColumn';
+import { getMenuForColumn } from '../utils/getMenuForColumn';
 import { useInfiniteTable } from './useInfiniteTable';
 
 export function useColumnMenu<T>() {

@@ -9,7 +9,7 @@ All columns in the Infinite Table have a default menu, which can be customized o
 
 To customize the column menu (for all columns, or for a specific column), use the <PropLink name="getColumnMenuItems" /> prop. This function is called with an array of menu items (which are the default items) and it should the final array of menu items - so you can return the default items as is, or you can adjust the default items to fit your needs.
 
-```tsx title=customizing-column-menu
+```tsx title=Customizing-column-menu
 function getColumnMenuItems(items, { column }) {
 
   if (column.id === 'firstName') {

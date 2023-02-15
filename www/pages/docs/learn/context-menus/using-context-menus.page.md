@@ -72,8 +72,8 @@ In addition, if you need to configure the context menu to have other columns rat
 const getCellContextMenuItems = () => {
   return {
     columns: [
-      { name: 'Label' },
-      { name: 'Icon' }
+      { name: 'label' },
+      { name: 'lcon' }
     ],
     items: [
       {
