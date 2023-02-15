@@ -7,7 +7,6 @@ author: [admin]
 
 *With version 1.1.0, our DataGrid now includes support for context menus, which are fully configurable so you can create custom menus for any cell in the table.*
 
-
 <Note title="Context menus in Infinite Table">
 
 1️⃣ are fully configurable
