@@ -19,6 +19,8 @@ author: [admin]
 
 </Note>
 
+## How it works
+
 In Infinite Table you can configure a context menu to be displayed when you right-click a cell by using the <PropLink name="getCellContextMenuItems" /> prop. Simply specify a function that returns an array of objects, each with `label` and `key` properties. Each object in the array is a row in the context menu - with the `label` being the displayed content and the `key` being a unique identifier for the menu row.
 
 ```tsx title=Configuring_a_context_menu
