@@ -10,6 +10,7 @@ const debug = dbg('CSSVariableWatch');
 type CSSVariableWatcherProps = {
   varName: string;
   onChange: (value: number) => void;
+  allowInts?: boolean;
 };
 
 const WRAPPER_STYLE: React.CSSProperties = {
@@ -30,7 +31,7 @@ export const useCSSVariableWatch = (
   const lastValueRef = useRef<number>(0);
   const onResize = React.useCallback(
     ({ height }: { height: number }) => {
-      if (height && height !== lastValueRef.current) {
+      if (height != null && height !== lastValueRef.current) {
         lastValueRef.current = height;
         params.onChange(height);
       }
@@ -55,13 +56,19 @@ export const useCSSVariableWatch = (
   }, []);
 };
 
-export const CSSVariableWatch = (props: CSSVariableWatcherProps) => {
+export const CSSNumericVariableWatch = (props: CSSVariableWatcherProps) => {
   const domRef = useRef<HTMLDivElement>(null);
 
   useCSSVariableWatch({
     ...props,
     ref: domRef,
   });
+
+  const height = props.varName.startsWith('var(')
+    ? props.varName
+    : `var(${props.varName})`;
+
+  const { allowInts = true } = props;
 
   return (
     <div
@@ -72,9 +79,7 @@ export const CSSVariableWatch = (props: CSSVariableWatcherProps) => {
       <div
         ref={domRef}
         style={{
-          height: props.varName.startsWith('var(')
-            ? props.varName
-            : `var(${props.varName})`,
+          height: allowInts ? `calc(1px * ${height})` : height, // we do multiplication in order to support integer (without px) values as well
         }}
       ></div>
     </div>

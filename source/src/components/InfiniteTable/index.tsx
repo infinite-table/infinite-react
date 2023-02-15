@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RefObject } from 'react';
 
 import { join } from '../../utils/join';
-import { CSSVariableWatch } from '../CSSVariableWatch';
+import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch';
 
 import {
   useDataSource,
@@ -308,13 +308,13 @@ export const InfiniteTableComponent = React.memo(
           {filterOperatorMenuPortal}
         </div>
         {rowHeightCSSVar ? (
-          <CSSVariableWatch
+          <CSSNumericVariableWatch
             varName={rowHeightCSSVar}
             onChange={onRowHeightCSSVarChange}
           />
         ) : null}
         {columnHeaderHeightCSSVar ? (
-          <CSSVariableWatch
+          <CSSNumericVariableWatch
             varName={columnHeaderHeightCSSVar}
             onChange={onColumnHeaderHeightCSSVarChange}
           />
