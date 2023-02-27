@@ -308,7 +308,6 @@ export interface InfiniteTableApi<T> {
 
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
-
   focus: () => void;
 }
 export type InfiniteTablePropVirtualizeColumns<T> =
