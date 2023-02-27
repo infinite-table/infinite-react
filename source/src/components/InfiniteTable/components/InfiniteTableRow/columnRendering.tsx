@@ -221,7 +221,8 @@ export function getColumnRenderParam<T>(options: {
     toggleGroupRowSelection: imperativeApi.selectionApi.toggleGroupRowSelection,
     renderBag: {
       all: null,
-      value,
+      value: typeof value === 'boolean' ? `${value}` : value,
+
       selectionCheckBox: null,
       groupIcon: null,
     },

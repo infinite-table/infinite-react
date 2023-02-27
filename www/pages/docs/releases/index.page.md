@@ -3,6 +3,9 @@ title: Releases
 layout: Releases
 ---
 
+## 1.2.2 🚀
+@milestone id="73"
+
 ## 1.2.1 🚀
 @milestone id="72"
 
