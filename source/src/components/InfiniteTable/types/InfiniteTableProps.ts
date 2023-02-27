@@ -325,11 +325,9 @@ export type InfiniteTableColumnsMap<
   ColumnType = InfiniteTableColumn<T>,
 > = Map<string, ColumnType>;
 
-export type InfiniteTablePropColumns<
-  T,
-  ColumnType = InfiniteTableColumn<T>,
-> = Record<string, ColumnType>;
-// | InfiniteTableColumnsMap<T, ColumnType>;
+export type InfiniteTablePropColumns<T, ColumnType = InfiniteTableColumn<T>> =
+  | Record<string, ColumnType>
+  | InfiniteTableColumnsMap<T, ColumnType>;
 
 export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
 
