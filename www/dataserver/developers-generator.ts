@@ -54,7 +54,7 @@ const languages = [
 ];
 
 const reposCount = [1, 5, 7, 10, 12, 24, 35];
-const followersCount = ['0-1k', '1k-10k', '10k-50k', '50k-100k', '100k +'];
+// const followersCount = ['0-1k', '1k-10k', '10k-50k', '50k-100k', '100k +'];
 const hobbies = ['photography', 'cooking', 'dancing', 'reading', 'sports'];
 const stacks = ['frontend', 'backend', 'full-stack'];
 const designerSkills = ['yes', 'no'];
@@ -184,7 +184,7 @@ export const generate = (size: number) => {
   });
 };
 
-export function write<T>(obj: any, file: string) {
+export function write(obj: any, file: string) {
   fs.writeFileSync(
     path.resolve(process.cwd(), file),
     JSON.stringify(obj, null, 2),

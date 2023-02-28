@@ -52,8 +52,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const domProps = { style: { height: '90vh' } };
-
 const rgb = {
   r: 77,
   g: 149,

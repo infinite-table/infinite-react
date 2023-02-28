@@ -59,6 +59,7 @@ export const test = base.extend<
         await page.addInitScript({
           content: `
 window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => {
+  
   window.INFINITE_GRID_READY = ready;
 };`,
         });

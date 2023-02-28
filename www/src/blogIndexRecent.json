@@ -9,7 +9,7 @@
           "path": "/blog/2023/02/16/using-menus-in-infinite-table",
           "date": "2023-02-16",
           "title": "Using Menus in Infinite Table",
-          "draft": true,
+          "draft": false,
           "description": "Find out how to use menus in Infinite Table to customise the DataGrid to fit your needs: custom context menus, column menus and more.",
           "author": [
             "admin"

@@ -1,7 +1,7 @@
 import blogIndexRouteTree from '@www/blogIndex.json';
 import { HighlightBrandToLightBackground } from '@www/components/components.css';
 import { ExternalLink } from '@www/components/ExternalLink';
-import { InfiniteLogo } from '@www/components/InfiniteLogo';
+
 import { Page } from '@www/components/Layout/Page';
 import { RouteItem } from '@www/components/Layout/useRouteMeta';
 
@@ -50,7 +50,7 @@ export default function RecentPosts() {
                 <div key={post.path}>
                   <h3 className="font-bold leading-8 text-content-color text-2xl mb-2 hover:underline">
                     <Link href={removeFromLast(post.path, '.')}>
-                      <a>{post.title}</a>
+                      {post.title}
                     </Link>
                   </h3>
                   <div

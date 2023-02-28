@@ -1,9 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  useSandpack,
-  LoadingOverlay,
-  RefreshButton,
-} from '@codesandbox/sandpack-react';
+import { useSandpack, LoadingOverlay } from '@codesandbox/sandpack-react';
 import cn from 'classnames';
 import * as React from 'react';
 import { CSSProperties } from 'react';
@@ -38,7 +34,7 @@ export function Preview({
 }: CustomPreviewProps) {
   const { sandpack, listen } = useSandpack();
   const [isReady, setIsReady] = React.useState(false);
-  const [iframeComputedHeight, setComputedAutoHeight] = React.useState<
+  const [_iframeComputedHeight, setComputedAutoHeight] = React.useState<
     number | null
   >(null);
 

@@ -8,7 +8,9 @@ import * as React from 'react';
 
 import { columns, Employee } from './rowStyle-example-columns';
 
-const rowStyle: InfiniteTablePropRowStyle<Employee> = (param) => {
+const rowStyle: InfiniteTablePropRowStyle<Employee> = (param: {
+  rowInfo: InfiniteTableRowInfo<Employee>;
+}) => {
   const { rowInfo } = param;
   if (rowInfo.isGroupRow) {
     return;
@@ -23,6 +25,7 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = (param) => {
   if (rowInfo.indexInAll % 10 === 0) {
     return { background: 'lightblue', color: 'black' };
   }
+  return undefined;
 };
 
 export default function App() {

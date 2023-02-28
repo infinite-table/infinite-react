@@ -1,8 +1,6 @@
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
-import { GetAccessForm } from '@www/components/GetAccessForm';
+
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
-import Head from 'next/head';
-import Link from 'next/link';
 
 import * as React from 'react';
 import { AccentButton } from './AccentButton';
@@ -12,7 +10,7 @@ import {
 } from './components.css';
 import { GetAccessFormConvertKit } from './GetAccessFormConvertKit';
 import { HeroPicture } from './HeroPicture';
-import { getHighlightShadowStyle, HighlightButton } from './HighlightButton';
+import { getHighlightShadowStyle } from './HighlightButton';
 
 import { SecondaryButton } from './SecondaryButton';
 

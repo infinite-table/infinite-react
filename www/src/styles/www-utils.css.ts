@@ -142,7 +142,7 @@ export const justifyContent = styleVariants(
   {
     center: 'center',
   },
-  (value) => {
+  () => {
     return {
       justifyContent: 'center',
     };

@@ -1,6 +1,6 @@
 const path = require('path');
-const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
-const withVanillaExtract = createVanillaExtractPlugin();
+
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin');
 
 const withMDX = require('@next/mdx')({
   extension: /\.mdx$/,
@@ -64,6 +64,8 @@ const nextConfig = withMDX({
         }),
       );
     }
+    config.plugins.push(new VanillaExtractPlugin());
+
     config.resolve.alias = {
       ...config.resolve.alias,
       react: path.resolve(__dirname, '../node_modules/react'),
@@ -76,20 +78,6 @@ const nextConfig = withMDX({
         '../source/dist/index.css',
       ),
     };
-    // needed for bundling the ts-compiler for browser usage
-    // config.resolve.alias['os'] = path.resolve(
-    //   './build/shims/os-shim.js'
-    // );
-    // config.resolve.alias['fs'] = path.resolve(
-    //   './node_modules/node-browserfs'
-    // );
-    // config.resolve.alias['perf_hooks'] = path.resolve(
-    //   './build/shims/perf_hooks.js'
-    // );
-    // config.resolve.alias['path'] = path.resolve(
-    //   './node_modules/path-browserify'
-    // );
-
     // Add our custom markdown loader in order to support frontmatter
     // and layout
     config.module.rules.push(
@@ -121,4 +109,4 @@ const nextConfig = withMDX({
 });
 const createNextPluginPreval = require('next-plugin-preval/config');
 const withNextPluginPreval = createNextPluginPreval();
-module.exports = withNextPluginPreval(withVanillaExtract(nextConfig));
+module.exports = withNextPluginPreval(nextConfig);

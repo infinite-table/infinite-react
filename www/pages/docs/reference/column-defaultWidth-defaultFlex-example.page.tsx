@@ -4,7 +4,6 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
-import { useState } from 'react';
 
 export const columns: Record<string, InfiniteTableColumn<Employee>> = {
   firstName: {

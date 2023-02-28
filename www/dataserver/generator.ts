@@ -6,13 +6,10 @@ const path = require('path');
 import listOfCountries from 'all-countries-and-cities-json/countries.json';
 import countriesWithCodes from './countries.json';
 
-const countriesWithCodesMap = countriesWithCodes.reduce(
-  (acc, c) => {
-    acc.set(c.name, c.code);
-    return acc;
-  },
-  new Map<string, string>()
-);
+const countriesWithCodesMap = countriesWithCodes.reduce((acc, c) => {
+  acc.set(c.name, c.code);
+  return acc;
+}, new Map<string, string>());
 
 type Country = {
   name: string;
@@ -29,19 +26,17 @@ const countries: Country[] = Object.keys(listOfCountries)
     // make the cities list shorter, so they repeat
     const citiesSize: number = getRandomFrom([4, 8, 10, 6]);
 
-    const citiesWithAddress = [...Array(citiesSize)].map(
-      () => {
-        const streetNameSize = getRandomFrom([2, 8, 4, 6]);
-        const streetNames = [...Array(streetNameSize)].map(
-          () => faker.address.streetName()
-        );
+    const citiesWithAddress = [...Array(citiesSize)].map(() => {
+      const streetNameSize = getRandomFrom([2, 8, 4, 6]);
+      const streetNames = [...Array(streetNameSize)].map(() =>
+        faker.address.streetName(),
+      );
 
-        return {
-          city: getRandomFrom(cities),
-          streetNames,
-        };
-      }
-    );
+      return {
+        city: getRandomFrom(cities),
+        streetNames,
+      };
+    });
     return {
       name: k,
       cities: citiesWithAddress,
@@ -70,23 +65,12 @@ function getRandomFrom<T>(array: T[]) {
 }
 
 const companySizes = [10, 100, 1000, 10_000];
-const ages = [
-  18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58,
-];
-const currencies = [
-  'USD',
-  'GBP',
-  'EUR',
-  'JPY',
-  'AUD',
-  'CHF',
-];
+const ages = [18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58];
+const currencies = ['USD', 'GBP', 'EUR', 'JPY', 'AUD', 'CHF'];
 
 const availableCompanies = [...Array(20)].map(() => {
   const companySize = getRandomFrom(companySizes);
-  const prevSize =
-    companySizes[companySizes.indexOf(companySize) - 1] ||
-    0;
+  const prevSize = companySizes[companySizes.indexOf(companySize) - 1] || 0;
 
   return {
     companyName: faker.company.companyName(),
@@ -175,22 +159,18 @@ function getDepartmentAndTeam() {
 }
 
 export const generate = (size: number) => {
-  const lastNames = [...Array(Math.floor(size / 5))].map(
-    () => faker.name.lastName()
+  const lastNames = [...Array(Math.floor(size / 5))].map(() =>
+    faker.name.lastName(),
   );
 
   return [...Array(size)].map((_, _index) => {
     const country = getRandomFrom(availableCountries);
 
     const city = countriesMapByName.get(country.country)
-      ? getRandomFrom(
-          countriesMapByName.get(country.country)?.cities ||
-            []
-        )
+      ? getRandomFrom(countriesMapByName.get(country.country)?.cities || [])
       : null;
     const streetName =
-      getRandomFrom(city?.streetNames || []) ??
-      faker.address.streetName;
+      getRandomFrom(city?.streetNames || []) ?? faker.address.streetName;
     const result: any = {
       id: _index,
       ...getRandomFrom(availableCompanies),
@@ -207,18 +187,15 @@ export const generate = (size: number) => {
       ...getDepartmentAndTeam(),
     };
 
-    result.email = faker.internet.email(
-      result.firstName,
-      result.lastName
-    );
+    result.email = faker.internet.email(result.firstName, result.lastName);
 
     return result;
   });
 };
 
-export function write<T>(obj: any, file: string) {
+export function write(obj: any, file: string) {
   fs.writeFileSync(
     path.resolve(process.cwd(), file),
-    JSON.stringify(obj, null, 2)
+    JSON.stringify(obj, null, 2),
   );
 }

@@ -16,7 +16,7 @@ export function BannerText(props: {
   const [index, setIndex] = React.useState(0);
   const [width, setWidth] = React.useState<string | number>('auto');
 
-  const [transitioning, setTransitioning] = React.useState(false);
+  const [_transitioning, setTransitioning] = React.useState(false);
 
   const [paused, setPaused] = React.useState(false);
 

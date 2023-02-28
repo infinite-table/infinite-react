@@ -82,6 +82,7 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
         </div>
       );
     }
+    return null;
   },
 };
 

@@ -27,7 +27,7 @@ export function Toc({
         maxWidth: 'inherit',
       }}
     >
-      <h2 className="mb-3 lg:mb-3 uppercase tracking-wide font-bold text-sm text-content-color px-4 w-full">
+      <h2 className="mt-14 mb-3 lg:mb-3 uppercase tracking-wide font-bold text-sm text-content-color px-4 w-full">
         On this page
       </h2>
       <div className="toc h-full overflow-y-auto pl-4">

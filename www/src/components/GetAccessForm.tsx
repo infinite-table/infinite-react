@@ -48,7 +48,7 @@ export const GetAccessForm = () => {
         setEmail('');
         setThankyou("Thank you for your interest! We'll get in touch soon.");
       })
-      .catch((error) => {});
+      .catch((_error) => {});
   };
 
   return (

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import cn from 'classnames';
 
-import { shadow, alignSelf } from '../styles/www-utils.css';
-
-import { footer } from './components.css';
+import { shadow } from '../styles/www-utils.css';
 
 // import { DocsPageFooter } from './DocsFooter';
 import { OverlineCls } from './Header.css';
@@ -45,8 +43,8 @@ function FooterLink({
 
   return (
     <div>
-      <Link href={href}>
-        <a className={classes}>{children}</a>
+      <Link href={href} className={classes}>
+        {children}
       </Link>
     </div>
   );

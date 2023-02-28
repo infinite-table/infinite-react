@@ -1,30 +1,16 @@
 {
+  "extends": "../tsconfig.root.json",
   "include": ["src/**/*", "globals.d.ts"],
   "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
+    "noEmit": false,
     "sourceMap": true,
-    "rootDir": "..",
-    "strict": true,
-    "noEmit": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
+    "rootDir": ".",
     "noImplicitThis": true,
     "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
     "resolveJsonModule": true,
-    "jsx": "react",
-    "esModuleInterop": true
+    "composite": true,
+    "incremental": true,
+    "jsx": "react"
   },
   "exclude": ["dist"]
 }

@@ -109,8 +109,6 @@ const buttonStyle = {
   background: 'var(--infinite-background)',
 };
 export default () => {
-  let [running, setRunning] = React.useState(false);
-
   const [apis, onReady] = React.useState<{
     api: InfiniteTableApi<Developer>;
     dataSourceApi: DataSourceApi<Developer>;

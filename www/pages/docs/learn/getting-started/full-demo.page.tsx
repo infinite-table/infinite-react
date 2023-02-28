@@ -110,14 +110,14 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
       field: 'age',
       header: 'Age',
       type: 'number',
-      defaultWidth: 80,
+      defaultWidth: 100,
       renderValue: ({ value }) => value,
     },
     salary: {
       header: 'Compensation',
       field: 'salary',
       type: 'number',
-      defaultWidth: 170,
+      defaultWidth: 210,
     },
     currency: { field: 'currency', header: 'Currency', defaultWidth: 100 },
     preferredLanguage: {
@@ -245,16 +245,7 @@ export default function App() {
     const cols = getColumns();
 
     if (cols.salary) {
-      const style: InfiniteTableColumn<Developer>['style'] = ({ value }) => {
-        const increase: number = Math.abs(max - min);
-        const percentage = ((value - min) / increase) * 100;
-        const alpha = Number((percentage / 100).toPrecision(2)) - 0.2;
-
-        const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
-
-        return { backgroundColor };
-      };
-      cols.salary.render = ({ renderBag, value, rowInfo }) => {
+      cols.salary.render = ({ renderBag, value }) => {
         const increase: number = Math.abs(max - min);
         const percentage = ((value - min) / increase) * 100;
         const alpha = Number((percentage / 100).toPrecision(2)) + 0.2;

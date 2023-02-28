@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import * as React from 'react';
 
 export interface IntroProps {
   children?: React.ReactNode;

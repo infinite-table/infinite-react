@@ -34,6 +34,7 @@ export const FullScreenButton: React.FC<FullScreenButtonProps> = (props) => {
         document.body.removeEventListener('keydown', onKeyDown);
       };
     }
+    return;
   }, [fullScreen]);
 
   return (

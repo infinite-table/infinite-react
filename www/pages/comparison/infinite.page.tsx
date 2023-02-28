@@ -4,7 +4,6 @@ import {
   GroupRowsState,
   InfiniteTableColumn,
   DataSourceGroupBy,
-  InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -65,7 +64,7 @@ const columnTypes = {
   },
 };
 
-const App: React.FunctionComponent = (props) => {
+const App: React.FunctionComponent = (_props) => {
   return (
     <div style={{ height: 600, display: 'flex' }}>
       <DataSource<Developer>

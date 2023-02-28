@@ -28,7 +28,7 @@ const dataSource = () => {
     .then((data: Developer[]) => data);
 };
 
-function CustomCell(props: HTMLProps<HTMLElement>) {
+function CustomCell(_props: HTMLProps<HTMLElement>) {
   const { value, data } = useInfiniteColumnCell<Developer>();
 
   let emoji = '🤷';

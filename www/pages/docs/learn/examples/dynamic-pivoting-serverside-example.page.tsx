@@ -179,6 +179,7 @@ export default function GroupByExample() {
               backgroundColor,
             };
           }
+          return {};
         },
       },
     }),

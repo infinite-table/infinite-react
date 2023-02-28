@@ -1,7 +1,7 @@
 export function inferSection(
   pathname: string,
 ): 'learn' | 'reference' | 'releases' {
-  const [docs, v, sectionName] = pathname.split('/');
+  const [docs, _v, sectionName] = pathname.split('/');
 
   if (docs === '404') {
     return 'learn';

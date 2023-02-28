@@ -1,53 +1,31 @@
 // next.config.js
-const path = require('path');
+
 const webpack = require('webpack');
 
-const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
-const withVanillaExtract = createVanillaExtractPlugin();
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin');
 
-/**
- * This is here to make nextjs compile the src folder, which is outside the examples folder
- */
+module.exports = {
+  webpack: (config) => {
+    const definePlugin = new webpack.DefinePlugin({
+      __DEV__: JSON.stringify(true),
+      __VERSION__: JSON.stringify(require('../package.json').version),
+      __VERSION_TIMESTAMP__: JSON.stringify(
+        require('../package.json').publishedAt || 0,
+      ),
+    });
 
-const withParentFolder = (nextConfig = {}) => {
-  return Object.assign({}, nextConfig, {
-    webpack(config, options) {
-      // needed in order to avoid 2 copies of react being included, which makes hooks not work
-      // config.resolve = config.resolve || {};
-      // config.resolve.alias = config.resolve.alias || {};
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        react: path.resolve(__dirname, '../node_modules/react'),
-        ['react-dom']: path.resolve(__dirname, '../node_modules/react-dom'),
-        '@infinite-table/infinite-react': path.resolve(
-          __dirname,
-          '../source/src/',
-        ),
-        '@src': path.resolve(__dirname, '../src'),
-        '@examples': path.resolve(__dirname, './src'),
-      };
+    config.plugins.push(definePlugin);
+    // for whatever reason, due to the monorepo setup
+    // we cannot use the vanilla-extract plugin for next
+    // so we're using the webpack plugin directly
+    config.plugins.push(new VanillaExtractPlugin());
 
-      const definePlugin = new webpack.DefinePlugin({
-        __DEV__: JSON.stringify(true),
-        __VERSION__: JSON.stringify(require('../package.json').version),
-        __VERSION_TIMESTAMP__: JSON.stringify(
-          require('../package.json').publishedAt || 0,
-        ),
-      });
-
-      config.plugins.push(definePlugin);
-
-      return config;
-    },
-  });
-};
-module.exports = withVanillaExtract({
-  ...withParentFolder(),
+    return config;
+  },
   pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
+  transpilePackages: ['@infinite-table/infinite-react'],
+  reactStrictMode: false, // in order to not break tests loading daa by double loading
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    externalDir: true,
-  },
-});
+};

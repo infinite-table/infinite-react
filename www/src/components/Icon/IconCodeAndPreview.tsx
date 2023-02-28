@@ -4,7 +4,7 @@ import { IconCode } from './IconCode';
 import { IconPreview } from './IconPreview';
 
 export const IconCodeAndPreview = React.memo<JSX.IntrinsicElements['svg']>(
-  function IconCodeAndPreview({ className }) {
+  function IconCodeAndPreview({}) {
     return (
       <div className="flex flex-row items-center">
         <IconCode /> <div className="inline-block px-1">+</div>

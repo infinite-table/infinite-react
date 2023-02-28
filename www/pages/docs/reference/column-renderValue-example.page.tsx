@@ -3,6 +3,7 @@ import {
   DataSource,
   DataSourceGroupBy,
   InfiniteTablePropGroupColumn,
+  InfiniteTableColumnRenderValueParam,
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
@@ -52,7 +53,9 @@ const defaultGroupBy: DataSourceGroupBy<Developer>[] = [{ field: 'stack' }];
 const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
   defaultWidth: 250,
 
-  renderValue: ({ rowInfo }) => {
+  renderValue: ({
+    rowInfo,
+  }: InfiniteTableColumnRenderValueParam<Developer>) => {
     if (rowInfo.isGroupRow) {
       return (
         <>
@@ -60,6 +63,7 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
         </>
       );
     }
+    return null;
   },
 };
 

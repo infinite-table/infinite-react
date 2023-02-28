@@ -6,7 +6,6 @@ import cn from 'classnames';
 import { useRef } from 'react';
 import * as React from 'react';
 
-import tailwindConfig from '../../../tailwind.config';
 import { Button } from '../Button';
 import { IconChevron } from '../Icon/IconChevron';
 import { IconClose } from '../Icon/IconClose';
@@ -30,37 +29,6 @@ interface PropProps {
   hidden?: boolean;
   defaultValue?: string | number | boolean | null | undefined;
 }
-
-interface PropContent {
-  name: string;
-  excerpt?: React.ReactNode;
-  content?: React.ReactNode;
-  // code: React.ReactNode;
-}
-
-const twColors = tailwindConfig.theme.extend.colors;
-const colors = [
-  {
-    hex: twColors['blue-40'],
-    border: 'border-blue-40',
-    background: 'bg-blue-40',
-  },
-  {
-    hex: twColors['yellow-40'],
-    border: 'border-yellow-40',
-    background: 'bg-yellow-40',
-  },
-  {
-    hex: twColors['green-50'],
-    border: 'border-green-50',
-    background: 'bg-green-50',
-  },
-  {
-    hex: twColors['purple-40'],
-    border: 'border-purple-40',
-    background: 'bg-dark-custom',
-  },
-];
 
 export const PropLink = ({
   name,
@@ -319,8 +287,6 @@ export function PropTable({
   // name,
   children,
 }: PropTableProps) {
-  const ref = React.useRef<HTMLDivElement>();
-
   // const initialText = globalThis.location
   //   ? globalThis.location.hash.slice(1)
   //   : '';

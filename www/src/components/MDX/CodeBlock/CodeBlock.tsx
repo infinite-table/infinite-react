@@ -8,7 +8,7 @@ import {
 import { CodeMirrorRef } from '@codesandbox/sandpack-react/dist/types/components/CodeEditor/CodeMirror';
 import { IconCodeBlock } from '@www/components/Icon/IconCodeBlock';
 import cn from 'classnames';
-import humanizeString from 'humanize-string';
+
 import rangeParser from 'parse-numeric-range';
 import * as React from 'react';
 

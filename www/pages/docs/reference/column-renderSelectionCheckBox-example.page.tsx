@@ -3,10 +3,8 @@ import type {
   InfiniteTableProps,
   InfiniteTablePropColumns,
   DataSourceProps,
-  DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
-import { useState } from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {

@@ -32,10 +32,15 @@ function ButtonLink({
     },
   );
   return (
-    <NextLink href={href as string}>
-      <a className={classes} {...props} aria-label={label} target={target}>
-        {children}
-      </a>
+    //@ts-ignore
+    <NextLink
+      href={href as string}
+      className={classes}
+      {...props}
+      aria-label={label}
+      target={target}
+    >
+      {children}
     </NextLink>
   );
 }

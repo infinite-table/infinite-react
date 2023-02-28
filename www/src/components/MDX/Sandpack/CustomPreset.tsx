@@ -16,7 +16,6 @@ import scrollIntoView from 'scroll-into-view-if-needed';
 
 import { NavigationBar } from './NavigationBar';
 import { Preview } from './Preview';
-import { CustomTheme } from './Themes';
 
 export function CustomPreset({
   isSingleFile,
@@ -34,7 +33,7 @@ export function CustomPreset({
   }>({});
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const { listen, sandpack } = useSandpack();
+  const { sandpack } = useSandpack();
 
   const [viewMode, setViewMode] = useState<'code' | 'preview' | 'both'>('both');
 
@@ -52,6 +51,7 @@ export function CustomPreset({
         cancelAnimationFrame(rafId);
       };
     }
+    return;
   }, [viewMode]);
 
   React.useEffect(() => {

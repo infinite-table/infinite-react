@@ -95,3 +95,5 @@ react-test
 test-results
 
 /www/LICENSE.md
+
+*.tsbuildinfo

@@ -1,8 +1,6 @@
-//@ts-nocheck
-import { HeadlessTable } from '@src/components/HeadlessTable';
-import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
-import { TableRenderCellFnParam } from '@src/components/HeadlessTable/ReactHeadlessTableRenderer';
-import { MatrixBrain } from '@src/components/VirtualBrain/MatrixBrain';
+import { HeadlessTableWithPinnedContainers } from '@infinite-table/infinite-react/src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
+import { TableRenderCellFnParam } from '@infinite-table/infinite-react/src/components/HeadlessTable/ReactHeadlessTableRenderer';
+import { MatrixBrain } from '@infinite-table/infinite-react/src/components/VirtualBrain/MatrixBrain';
 import * as React from 'react';
 import { useState } from 'react';
 
@@ -19,8 +17,7 @@ export default function App() {
       colFixed,
       onMouseEnter,
       onMouseLeave,
-      width,
-      height,
+
       domRef,
     } = param;
     return (
@@ -75,6 +72,7 @@ export default function App() {
       <div style={{ border: '2px solid red', padding: '10px' }}>
         <HeadlessTableWithPinnedContainers
           brain={brain}
+          //@ts-ignore
           rowHeight={40}
           colWidth={150}
           fixedColsStart={2}

@@ -207,7 +207,6 @@ function Illustration({
   alt,
   author,
   authorLink,
-  children,
 }: {
   caption: string;
   src: string;

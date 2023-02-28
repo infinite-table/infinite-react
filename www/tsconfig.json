@@ -1,18 +1,10 @@
 {
+  "extends": "../tsconfig.root.json",
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "jsx": "preserve",
+    "rootDir": ".",
     "baseUrl": "./",
     "paths": {
       "react": ["../node_modules/@types/react"],
@@ -20,9 +12,7 @@
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
       "@infinite-table/infinite-react": ["../source/dist/index.d.ts"]
-    },
-    "reactNamespace": "React",
-    "incremental": true
+    }
   },
   "include": [
     "next-env.d.ts",

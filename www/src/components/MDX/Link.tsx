@@ -38,11 +38,13 @@ function Link({
           {modifiedChildren}
         </a>
       ) : (
-        <NextLink href={href.replace('.html', '')}>
-          {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
-          <a className={cn(classes, className)} {...props}>
-            {modifiedChildren}
-          </a>
+        //@ts-ignore
+        <NextLink
+          href={href.replace('.html', '')}
+          className={cn(classes, className)}
+          {...props}
+        >
+          {modifiedChildren}
         </NextLink>
       )}
     </>

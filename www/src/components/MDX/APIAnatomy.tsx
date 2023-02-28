@@ -89,13 +89,7 @@ interface AnatomyStepProps {
   handleStepChange: (stepNumber: number) => void;
 }
 
-export function AnatomyStep({
-  title,
-  stepNumber,
-  children,
-  activeStep,
-  handleStepChange,
-}: AnatomyStepProps) {
+export function AnatomyStep({ title, stepNumber, children }: AnatomyStepProps) {
   const color = colors[stepNumber - 1];
   return (
     <div

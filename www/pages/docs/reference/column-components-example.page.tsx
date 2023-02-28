@@ -1,8 +1,6 @@
 import {
   InfiniteTable,
   DataSource,
-  DataSourceGroupBy,
-  InfiniteTablePropGroupColumn,
   useInfiniteColumnCell,
   useInfiniteHeaderCell,
   InfiniteTablePropColumnTypes,

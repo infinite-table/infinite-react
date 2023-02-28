@@ -66,8 +66,6 @@ const updateRow = (api: DataSourceApi<Developer>, data: Developer) => {
   api.updateData(newData);
 };
 
-let STARTED = false;
-
 const ROWS_TO_UPDATE_PER_FRAME = 5;
 const UPDATE_INTERVAL_MS = 30;
 

@@ -5,7 +5,7 @@ export const IconChevron = React.memo<
   JSX.IntrinsicElements['svg'] & {
     displayDirection: 'up' | 'down' | 'left' | 'right';
   }
->(function IconChevron({ className, displayDirection, ...rest }) {
+>(function IconChevron({ className, displayDirection }) {
   const classes = cn(
     {
       'transform rotate-0': displayDirection === 'down',

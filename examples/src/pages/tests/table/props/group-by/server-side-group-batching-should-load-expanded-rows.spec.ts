@@ -45,7 +45,7 @@ export default test.describe.parallel(
         { page },
       );
       const secondFrance = await getCellText(
-        { colId: 'country', rowIndex: 1 },
+        { colId: 'country', rowIndex: 2 },
         { page },
       );
 

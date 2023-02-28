@@ -1,5 +1,4 @@
 import { IconSearch } from '@www/components/Icon/IconSearch';
-import Script from 'next/script';
 
 import * as React from 'react';
 
@@ -67,6 +66,7 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
         }
       };
     }
+    return;
   }, [isShowing, alwaysShow]);
 
   React.useEffect(() => {

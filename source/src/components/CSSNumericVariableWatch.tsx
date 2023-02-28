@@ -68,7 +68,7 @@ export const CSSNumericVariableWatch = (props: CSSVariableWatcherProps) => {
     ? props.varName
     : `var(${props.varName})`;
 
-  const { allowInts = true } = props;
+  const { allowInts = false } = props;
 
   return (
     <div

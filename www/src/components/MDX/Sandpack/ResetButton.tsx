@@ -6,10 +6,7 @@ export interface ResetButtonProps {
   onReset: () => void;
 }
 
-export const ResetButton: React.FC<ResetButtonProps> = ({
-  clientId,
-  onReset,
-}) => {
+export const ResetButton: React.FC<ResetButtonProps> = ({ onReset }) => {
   return (
     <button
       className="text-sm text-content-color inline-flex items-center hover:text-link duration-100 ease-in transition mx-1"

@@ -6,7 +6,6 @@ import {
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
-type SidebarNav = 'root' | 'docs' | 'reference';
 /**
  * Menu toggle that enables body scroll locking (for
  * iOS Mobile and Tablet, Android, desktop Safari/Chrome/Firefox)

@@ -9,7 +9,7 @@ import * as React from 'react';
 import { AccentButton } from '../AccentButton';
 import { HighlightBrandToLightBackground } from '../components.css';
 import { ExternalLink } from '../ExternalLink';
-import { getHeroHeaderTextStyling, HeroHeader } from '../Header';
+import { getHeroHeaderTextStyling } from '../Header';
 import { OverlineCls } from '../Header.css';
 import { analytics, AnalyticsEvents } from './analytics';
 import {
@@ -674,8 +674,8 @@ export function PricingPage() {
                   by email
                 </a>{' '}
                 (Zendesk support is coming soon). Please see the{' '}
-                <Link href="/eula#support-schedule">
-                  <a className="text-glow">Support Schedule</a>
+                <Link href="/eula#support-schedule" className="text-glow">
+                  Support Schedule
                 </Link>{' '}
                 for more details.
               </>
@@ -745,8 +745,8 @@ export function PricingPage() {
               tag="div"
             >
               Yes, Infinite Table offers a{' '}
-              <Link href="/eula#4-special-usage-license">
-                <a className="text-glow">Special Usage License</a>
+              <Link href="/eula#4-special-usage-license" className="text-glow">
+                Special Usage License{' '}
               </Link>{' '}
               to be granted at our discretion. This is typically provided to:
               <ul style={{ listStyleType: 'initial' }} className="ml-10">
@@ -764,8 +764,8 @@ export function PricingPage() {
             >
               Yes, Infinite Table supports full Data Protection and adheres to
               the usual legal standards e.g. GDPR. See our{' '}
-              <Link href="/eula#12-data-protection">
-                <a className="text-glow">License</a>
+              <Link href="/eula#12-data-protection" className="text-glow">
+                License
               </Link>{' '}
               for more details.
             </Card>

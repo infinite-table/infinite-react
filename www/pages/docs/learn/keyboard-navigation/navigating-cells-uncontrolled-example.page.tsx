@@ -44,8 +44,6 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
-const domProps = { style: { height: '90vh' } };
-
 export default function KeyboardNavigationForCells() {
   return (
     <>

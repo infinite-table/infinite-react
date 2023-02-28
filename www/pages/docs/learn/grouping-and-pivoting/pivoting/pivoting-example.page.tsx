@@ -4,7 +4,6 @@ import {
   GroupRowsState,
 } from '@infinite-table/infinite-react';
 import type {
-  InfiniteTableColumn,
   InfiniteTableColumnAggregator,
   InfiniteTablePropColumns,
   DataSourcePropAggregationReducers,

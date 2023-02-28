@@ -26,7 +26,7 @@ export default test.describe.parallel(
       await page.waitForRequest(condition);
 
       const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
-
+      await page.waitForTimeout(500);
       const paramsForRequests = queryStrings.map((query) => {
         const searchParams = new URLSearchParams(query);
 
@@ -44,8 +44,9 @@ export default test.describe.parallel(
         { colId: 'country', rowIndex: 1 },
         { page },
       );
+
       const secondFrance = await getCellText(
-        { colId: 'country', rowIndex: 1 },
+        { colId: 'country', rowIndex: 2 },
         { page },
       );
 

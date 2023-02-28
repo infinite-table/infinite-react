@@ -27,7 +27,7 @@ export function SidebarLink({
   level,
   heading = false,
   isExpanded,
-  isBreadcrumb,
+  isBreadcrumb: _,
   hideArrow,
 }: SidebarLinkProps) {
   const ref = React.useRef<HTMLAnchorElement>(null);
@@ -44,42 +44,41 @@ export function SidebarLink({
   }, [ref, selected, isMobile]);
 
   return (
-    <Link href={href}>
-      <a
-        ref={ref}
-        title={title}
-        aria-current={selected ? 'page' : undefined}
-        className={cn(
-          'p-2 pr-2 w-full rounded-none lg:rounded-r-lg text-left hover:bg-highlight-dark hover:opacity-90 relative flex items-center justify-between',
-          {
-            'my-6': heading,
-            'text-primary-dark': heading,
-            'text-base': level > 0,
-            'pl-5': level === 0,
-            'pl-7': level === 1,
-            'pl-9': level === 2,
-            'text-base font-bold': level === 0,
-            'text-content-color ': level === 0 && !selected,
-            'text-base text-link': level === 1 && selected,
+    <Link
+      href={href}
+      ref={ref}
+      title={title}
+      aria-current={selected ? 'page' : undefined}
+      className={cn(
+        'p-2 pr-2 w-full rounded-none lg:rounded-r-lg text-left hover:bg-highlight-dark hover:opacity-90 relative flex items-center justify-between',
+        {
+          'my-6': heading,
+          'text-primary-dark': heading,
+          'text-base': level > 0,
+          'pl-5': level === 0,
+          'pl-7': level === 1,
+          'pl-9': level === 2,
+          'text-base font-bold': level === 0,
+          'text-content-color ': level === 0 && !selected,
+          'text-base text-link': level === 1 && selected,
 
-            'text-base text-content-color': !selected && !heading,
-            'text-base text-link bg-highlight-dark border-blue-40  hover:text-link':
-              selected,
-          },
-        )}
-      >
-        {title}
-        {isExpanded != null && !heading && !hideArrow && (
-          <span
-            className={cn('pr-1', {
-              'text-link': isExpanded,
-              'text-gray-30': !isExpanded,
-            })}
-          >
-            <IconNavArrow displayDirection={isExpanded ? 'down' : 'right'} />
-          </span>
-        )}
-      </a>
+          'text-base text-content-color': !selected && !heading,
+          'text-base text-link bg-highlight-dark border-blue-40  hover:text-link':
+            selected,
+        },
+      )}
+    >
+      {title}
+      {isExpanded != null && !heading && !hideArrow && (
+        <span
+          className={cn('pr-1', {
+            'text-link': isExpanded,
+            'text-gray-30': !isExpanded,
+          })}
+        >
+          <IconNavArrow displayDirection={isExpanded ? 'down' : 'right'} />
+        </span>
+      )}
     </Link>
   );
 }

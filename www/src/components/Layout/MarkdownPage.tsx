@@ -41,7 +41,6 @@ export function MarkdownPage<
   const title = meta.title || route?.title || '';
   const description = meta.description || route?.description || '';
 
-  const propsAnchors = [];
   const anchors: Array<{
     url: string;
     text: React.ReactNode;

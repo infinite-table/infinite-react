@@ -2,12 +2,9 @@ import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   DataSourceProps,
   InfiniteTableProps,
-  InfiniteTableApi,
   InfiniteTablePropColumns,
-  DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
-import { useCallback, useRef, useEffect, useState } from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {

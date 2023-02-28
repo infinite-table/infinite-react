@@ -19,7 +19,7 @@ export function SecondaryButton(props: SecondaryButtonProps) {
     parentProps['href'] = href;
   }
   return (
-    <Parent {...parentProps}>
+    <Parent {...parentProps} legacyBehavior>
       <Cmp
         className={`text-white rounded-lg inline-block text-xl border border-gray-50 font-normal py-2 px-5 hover:bg-opacity-90 bg-dark-custom ${buttonPositionWithTransition} ${
           className || ''

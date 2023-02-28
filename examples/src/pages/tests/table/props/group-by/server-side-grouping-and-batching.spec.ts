@@ -68,6 +68,7 @@ export default test.describe.parallel(
         'Indonesia',
         'Italy',
       ]);
+
       expect(responses).toEqual([
         'Argentina',
         'Australia',

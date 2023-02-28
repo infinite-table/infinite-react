@@ -112,8 +112,6 @@ function Sandpack(props: SandpackProps) {
     });
   }
 
-  let INFINITE_VERSION = dependencies['@infinite-table/infinite-react'];
-
   let activeFilePath: string | null = null;
   const customFiles = codeSnippets.reduce(
     (

@@ -1,33 +1,30 @@
 {
-  "extends": "../source/tsconfig.json",
+  "extends": "../tsconfig.root.json",
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../source/globals.d.ts"],
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../source/globals.d.ts"
+  ],
   "compilerOptions": {
     "typeRoots": ["node_modules/@types"],
     "strict": true,
-    "alwaysStrict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
     "jsx": "preserve",
-    "isolatedModules": true,
+
     "baseUrl": "./",
-    "rootDir": "../../",
+    "rootDir": "..",
     "paths": {
-      "react": ["../node_modules/@types/react"],
-      "react-dom": ["../node_modules/react-dom"],
-      "@infinite-table/infinite-react/*": ["../source/src/*"],
-      "@infinite-table/infinite-react": ["../source/src/index"],
       "@src/*": ["../source/src/*"],
+      "@infinite-table/infinite-react": ["../source/src"],
+      "@infinite-table/infinite-react/*": ["../source/src/*"],
+
       "@examples/*": ["./src/*"],
       "@components/*": ["../source/src/components/*"],
+      "mini-css-extract-plugin": ["../mini-css-extract-plugin"],
       "@testing": ["./test-fixtures"]
     },
     "incremental": true
-  }
+  },
+  "references": [{ "path": "../source" }]
 }

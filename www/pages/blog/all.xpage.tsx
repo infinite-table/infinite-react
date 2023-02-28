@@ -1,7 +1,7 @@
 import blogIndex from '@www/blogIndex.json';
 import blogIndexRecentRouteTree from '@www/blogIndexRecent.json';
 import { ExternalLink } from '@www/components/ExternalLink';
-import { IconRss } from '@www/components/Icon/IconRss';
+
 import { Page } from '@www/components/Layout/Page';
 import { getAuthor } from '@www/utils/getAuthor';
 import { removeFromLast } from '@www/utils/removeFromLast';

@@ -29,12 +29,6 @@ export const columns: InfiniteTablePropColumns<Employee> = {
   },
 };
 
-const columnSizing: InfiniteTablePropColumnSizing = {
-  country: { width: 100 },
-  city: { flex: 1, minWidth: 100 },
-  salary: { flex: 2, maxWidth: 500 },
-};
-
 export default function App() {
   const [columnSizing, setColumnSizing] =
     React.useState<InfiniteTablePropColumnSizing>({

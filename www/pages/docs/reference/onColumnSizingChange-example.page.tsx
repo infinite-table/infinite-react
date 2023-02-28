@@ -1,10 +1,7 @@
 import {
   InfiniteTable,
   DataSource,
-  DataSourceGroupBy,
-  InfiniteTablePropGroupColumn,
   InfiniteTableColumnGroup,
-  InfiniteTableColumnSizingOptions,
   InfiniteTablePropColumnSizing,
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';

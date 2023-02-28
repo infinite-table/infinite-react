@@ -32,7 +32,7 @@ export function AccentButton(props: AccentButtonProps) {
     parentProps.href = href;
   }
   return (
-    <Parent {...parentProps}>
+    <Parent {...parentProps} legacyBehavior>
       <Cmp
         disabled={disabled}
         onClick={props.onClick}

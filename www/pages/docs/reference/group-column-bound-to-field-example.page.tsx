@@ -3,7 +3,6 @@ import type {
   InfiniteTableProps,
   InfiniteTablePropColumns,
   DataSourceProps,
-  DataSourcePropRowSelection_MultiRow,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 

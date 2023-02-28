@@ -13,9 +13,7 @@ import { BannerText } from './BannerText';
 
 import {
   HighlightBrandToLightBackground,
-  HighlightTextBackground,
   SpotlightRadialBackgroundCls,
-  title,
   width100,
 } from './components.css';
 import { ExternalLink } from './ExternalLink';
@@ -80,21 +78,20 @@ export const LogoAndTitle = (props: {
   color?: InfiniteLogoColors;
   title?: string;
 }) => (
-  <Link href="/">
-    <a
-      data-logo
-      className={`inline-flex items-center font-black text-lg sm:text-4xl sm:mr-4`}
-      style={{ width: 'max-content' }}
-    >
-      <InfiniteLogo
-        className="py-5 px-1 sm:px-2 sm:py-3 max-w-min"
-        color={props.color}
-      />
+  <Link
+    href="/"
+    data-logo
+    className={`inline-flex items-center font-black text-lg sm:text-4xl sm:mr-4`}
+    style={{ width: 'max-content' }}
+  >
+    <InfiniteLogo
+      className="py-5 px-1 sm:px-2 sm:py-3 max-w-min"
+      color={props.color}
+    />
 
-      <span className="whitespace-nowrap text-content-color">
-        {props.title || 'Infinite Table'}
-      </span>
-    </a>
+    <span className="whitespace-nowrap text-content-color">
+      {props.title || 'Infinite Table'}
+    </span>
   </Link>
 );
 
@@ -136,19 +133,13 @@ export const NavBarContent = ({
         style={{ flex: 1, margin: 0, marginLeft: 0 }}
       ></li>
       <li className={`${itemCls} ${activePage.pricing ? activeCls : ''} `}>
-        <Link href="/pricing">
-          <a>Pricing</a>
-        </Link>
+        <Link href="/pricing">Pricing</Link>
       </li>
       <li className={`${itemCls} ${activePage.docs ? activeCls : ''} `}>
-        <Link href="/docs">
-          <a>Docs</a>
-        </Link>
+        <Link href="/docs">Docs</Link>
       </li>
       <li className={`${itemCls} ${activePage.blog ? activeCls : ''} `}>
-        <Link href="/blog">
-          <a>Blog</a>
-        </Link>
+        <Link href="/blog">Blog</Link>
       </li>
 
       <li className={`${itemCls} `}>

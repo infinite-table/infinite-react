@@ -99,9 +99,23 @@ Find out how to use column types to customize the appearance and behaviour of yo
 
 ## Column Order
 
-The implicit column order is the order in which columns have been defined in the <PropLink name="columns" /> Map. You can however control that explicitly by using the `columnOrder: string[]` prop.
+The implicit column order is the order in which columns have been defined in the <PropLink name="columns" /> object. You can however control that explicitly by using the `columnOrder: string[]` prop.
 
-The <PropLink name="columnOrder" /> prop is an array of strings, representing the column ids. A column id is the key of the column in the <PropLink name="columns" /> Map.
+```tsx
+
+const columnOrder = ['firstName','id','curency']
+
+const App = () => {
+  return <DataSource<DATA_TYPE> primaryKey={"id"} dataSource={...}>
+    <InfiniteTable<DATA_TYPE>
+      columnOrder={columnOrder}
+      onColumnOrderChange={(columnOrder: string[]) => {}}
+    />
+  </DataSource>
+}
+```
+
+The <PropLink name="columnOrder" /> prop is an array of strings, representing the column ids. A column id is the key of the column in the <PropLink name="columns" /> object.
 
 <Note>
 
@@ -110,7 +124,9 @@ The <PropLink name="columnOrder" /> array can contain identifiers that are not y
 </Note>
 
 <Note>
-<PropLink name="columnOrder" /> is a controlled prop. For uncontrolled version, see <PropLink name="defaultColumnOrder" />
+<PropLink name="columnOrder" /> is a controlled prop. For the uncontrolled version, see <PropLink name="defaultColumnOrder" />
+
+When using controlled <PropLink name="columnOrder" />, make sure you also update the order by using the <PropLink name="onColumnOrderChange" /> callback prop.
 </Note>
 
 <Sandpack title="Column Order demo, with firstName col displayed twice">
@@ -120,3 +136,11 @@ The <PropLink name="columnOrder" /> array can contain identifiers that are not y
 ```
 
 </Sandpack>
+
+<Note>
+
+By keeping the column order simple, namely an array of strings, ordering becomes much easier.
+
+The alternative would be to make `columns` an array, which most DataGrids do - and whenever they are reordered, a new `columns` array would be needed.
+
+</Note>

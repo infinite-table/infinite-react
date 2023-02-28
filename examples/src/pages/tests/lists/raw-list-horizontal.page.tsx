@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { RawList } from '@src/components/RawList';
-import { RenderItem } from '@src/components/RawList/types';
-import { VirtualBrain } from '@src/components/VirtualBrain';
+import { RawList } from '@infinite-table/infinite-react/src/components/RawList';
+import { RenderItem } from '@infinite-table/infinite-react/src/components/RawList/types';
+import { VirtualBrain } from '@infinite-table/infinite-react/src/components/VirtualBrain';
 
 const brain: VirtualBrain = new VirtualBrain({
   itemSize: () => {

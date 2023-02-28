@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 import { BannerText } from './BannerText';
 
-import { card, grid, SpotlightRadialBackgroundCls } from './components.css';
+import { card, SpotlightRadialBackgroundCls } from './components.css';
 
 const titleOpacity = 'opacity-80';
 const subtitleOpacity = 'opacity-70';
@@ -50,11 +50,7 @@ export const Card = ({
   );
 
   if (href && Tag != 'a') {
-    header = (
-      <Link href={href}>
-        <a>{header}</a>
-      </Link>
-    );
+    header = <Link href={href}>{header}</Link>;
   }
   const content = (
     <>
@@ -82,7 +78,7 @@ export const Card = ({
     );
   }
   return (
-    <Link href={href}>
+    <Link href={href} legacyBehavior>
       {/* @ts-ignore */}
       <Tag className={cls} style={style}>
         {content}

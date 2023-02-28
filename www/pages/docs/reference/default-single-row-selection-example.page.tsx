@@ -1,8 +1,5 @@
 import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
-import type {
-  DataSourcePropGroupBy,
-  InfiniteTablePropColumns,
-} from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
 const columns: InfiniteTablePropColumns<Developer> = {
