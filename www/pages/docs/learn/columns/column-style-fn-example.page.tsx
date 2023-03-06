@@ -26,22 +26,20 @@ const dataSource = () => {
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
-    style: {
-      background: 'gray',
-      color: 'white',
-    },
+    defaultWidth: 80,
   },
   firstName: { field: 'firstName' },
-  preferredLanguage: { field: 'preferredLanguage' },
+
   salary: {
     field: 'salary',
     type: 'number',
     style: ({ value }) => {
       return {
-        color: value && value > 100_000 ? 'red' : 'currentColor',
+        color: value && value > 100_000 ? 'red' : 'tomato',
       };
     },
   },
+  preferredLanguage: { field: 'preferredLanguage' },
   stack: { field: 'stack' },
   country: { field: 'country' },
   age: { field: 'age', type: 'number' },
@@ -49,7 +47,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency', type: 'number' },
 };
 
-export default function GroupByExample() {
+export default function App() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>

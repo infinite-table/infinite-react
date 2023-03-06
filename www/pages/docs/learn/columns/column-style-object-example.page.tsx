@@ -1,19 +1,24 @@
+import * as React from 'react';
+
 import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-import * as React from 'react';
-
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
-    field: 'id', // will be used as default label in column header
-    defaultWidth: 100,
+    field: 'id',
+    defaultWidth: 80,
   },
+
   name: {
-    header: 'First and Last Name', // custom column header label
-    valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
+    field: 'firstName',
+    header: 'Name',
+    style: {
+      color: 'red',
+      fontWeight: 'bold',
+    },
   },
 };
 

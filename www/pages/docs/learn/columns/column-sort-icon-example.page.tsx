@@ -43,7 +43,7 @@ const domProps = {
     minHeight: 300,
   },
 };
-export default function ColumnContextMenuItems() {
+export default function App() {
   return (
     <DataSource<Developer> primaryKey="id" data={dataSource}>
       <InfiniteTable<Developer> domProps={domProps} columns={columns} />

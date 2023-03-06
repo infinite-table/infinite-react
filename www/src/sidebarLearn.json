@@ -67,6 +67,10 @@
               "title": "Column Sizing"
             },
             {
+              "path": "/docs/learn/columns/cell-and-column-styling",
+              "title": "Column Styling"
+            },
+            {
               "path": "/docs/learn/columns/column-order",
               "title": "Column Order"
             },

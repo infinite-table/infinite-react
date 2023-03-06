@@ -289,6 +289,33 @@ The following properties are available:
 </Sandpack>
 </Prop>
 
+<Prop name="columns.className" type="string | (args) => string">
+
+> Controls styling via CSS classes for the column. Can be a `string` or a function returning a `string` (a valid className).
+
+If defined as a function, it accepts an object as a parameter, which has the following properties:
+
+- `column` - the current column where the className is being applied
+- `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
+- `rowInfo` - the information about the current row - see [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
+- `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
+
+<Note>
+
+The `className` property can also be specified for <PropLink name="columnTypes"/>
+
+</Note>
+
+<Sandpack>
+
+```ts file=column-className-function-example.page.tsx
+```
+```css file=coloring.module.css
+```
+
+</Sandpack>
+</Prop>
+
 <Prop name="columns.components">
 
 > Specifies custom React components to use for column cells or header
