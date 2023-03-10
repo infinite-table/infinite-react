@@ -337,7 +337,6 @@ export function concludeReducer<T>(params: {
   }
 
   state.filteredCount = dataArray.length;
-
   state.postFilterDataArray = dataArray;
 
   const shouldSortClientSide = shouldSort && state.sortMode === 'local';
