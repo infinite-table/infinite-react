@@ -184,7 +184,11 @@ export function concludeReducer<T>(params: {
   const cacheAffectedParts = getCacheAffectedParts(state);
 
   const sortInfo = state.sortInfo;
-  let shouldSort = !!sortInfo?.length && !state.controlledSort;
+  let shouldSort = !!sortInfo?.length
+    ? state.controlledSort
+      ? !!state.sortFunction
+      : true
+    : false;
 
   if (state.lazyLoad || state.livePagination) {
     shouldSort = false;
@@ -340,8 +344,11 @@ export function concludeReducer<T>(params: {
   if (shouldSortClientSide) {
     const prevKnownTypes = multisort.knownTypes;
     multisort.knownTypes = state.sortTypes;
+
+    const sortFn = state.sortFunction || multisort;
+
     dataArray = shouldSortAgain
-      ? multisort(sortInfo!, [...dataArray])
+      ? sortFn(sortInfo!, [...dataArray])
       : state.lastSortDataArray!;
 
     multisort.knownTypes = prevKnownTypes;

@@ -9,7 +9,10 @@ import {
   PivotBy,
 } from '../../utils/groupAndPivot';
 import { GroupBy } from '../../utils/groupAndPivot/types';
-import { MultisortInfo } from '../../utils/multisort';
+import {
+  MultisortInfo,
+  MultisortInfoAllowMultipleFields,
+} from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
   InfiniteTableColumn,
@@ -129,7 +132,8 @@ export interface DataSourceMappedState<T> {
 
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
   data: DataSourceProps<T>['data'];
-  sortMode: DataSourceProps<T>['sortMode'];
+  sortFunction: DataSourceProps<T>['sortFunction'];
+
   filterFunction: DataSourceProps<T>['filterFunction'];
   filterValue: DataSourceProps<T>['filterValue'];
   filterTypes: NonUndefined<DataSourceProps<T>['filterTypes']>;
@@ -316,6 +320,12 @@ export type DataSourcePropIsRowSelected<T> = (
   selectionMode: 'multi-row',
 ) => boolean | null;
 
+export type DataSourcePropSortFn<T> = (
+  sortInfo: MultisortInfoAllowMultipleFields<T>[],
+  array: T[],
+  get?: (item: any) => T,
+) => T[];
+
 export type DataSourceCRUDParam = {
   flush?: boolean;
 };
@@ -420,6 +430,7 @@ export type DataSourceProps<T> = {
 
   collapseGroupRowsOnDataFunctionChange?: boolean;
 
+  sortFunction?: DataSourcePropSortFn<T>;
   sortInfo?: DataSourceSortInfo<T>;
   defaultSortInfo?: DataSourceSortInfo<T>;
   onSortInfoChange?:
@@ -450,6 +461,7 @@ export type DataSourceProps<T> = {
 
   filterFunction?: DataSourcePropFilterFunction<T>;
 
+  // TODO in the future if sortMode='remote' and sortFn is defined, show a warning - same for filterMode/filterFunction
   sortMode?: 'local' | 'remote';
   filterMode?: 'local' | 'remote';
   filterValue?: DataSourcePropFilterValue<T>;
@@ -592,6 +604,7 @@ export type DataSourceDerivedState<T> = {
     Record<string, DataSourceFilterOperator<T>>
   >;
 
+  sortMode: NonUndefined<DataSourceProps<T>['sortMode']>;
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
   groupRowsState: GroupRowsState<T>;
   multiSort: boolean;

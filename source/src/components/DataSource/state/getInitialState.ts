@@ -146,8 +146,8 @@ export const forwardProps = <T>(
     sortTypes: (sortTypes) => {
       return { ...defaultSortTypes, ...sortTypes };
     },
-    sortMode: (sortMode) => sortMode ?? 'local',
 
+    sortFunction: 1,
     onReady: 1,
     isRowSelected: 1,
     onDataArrayChange: 1,
@@ -306,12 +306,12 @@ export function deriveStateFromProps<T extends any>(params: {
     controlledSort,
     controlledFilter,
 
+    sortMode: props.sortFunction ? 'local' : props.sortMode ?? 'local',
     filterMode:
-      props.filterMode ?? props.filterFunction != null
+      typeof props.filterFunction === 'function'
         ? 'local'
-        : typeof props.data === 'function'
-        ? 'remote'
-        : 'local',
+        : props.filterMode ??
+          (typeof props.data === 'function' ? 'remote' : 'local'),
 
     multiSort: Array.isArray(
       controlledSort ? props.sortInfo : props.defaultSortInfo,
