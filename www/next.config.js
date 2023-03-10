@@ -72,7 +72,7 @@ const nextConfig = withMDX({
       ['react-dom']: path.resolve(__dirname, '../node_modules/react-dom'),
       '@www': path.resolve('./src'),
       '@infinite-table/infinite-react': path.resolve(
-        '../source/dist/index.esm.js',
+        '../source/dist/index.mjs',
       ),
       '@infinite-table/infinite-react/index.css': path.resolve(
         '../source/dist/index.css',
