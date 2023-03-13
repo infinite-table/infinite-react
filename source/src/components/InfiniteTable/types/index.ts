@@ -12,6 +12,7 @@ import type {
   InfiniteTablePivotColumn,
   InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableColumnRenderFunctionForNormalRows,
+  InfiniteTableColumnValueFormatterParams,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -95,4 +96,5 @@ export type {
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
   InfiniteTableGroupColumnGetterOptions,
+  InfiniteTableColumnValueFormatterParams,
 };
