@@ -13,6 +13,7 @@
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
     "start-server": "http-server -p 3000 out -c300000",
     "play:test": "playwright test",
+    "play:test-ui": "playwright test --ui",
     "xxxtest:debug": "PWDEBUG=console playwright test",
     "test:debug": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path} --debug'",
     "test:watch": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path}'",
@@ -33,7 +34,7 @@
     "typescript": "4.6.2"
   },
   "devDependencies": {
-    "@playwright/test": "1.31.1",
+    "@playwright/test": "1.32.1",
     "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.172",
     "@vanilla-extract/webpack-plugin": "^2.2.0",
@@ -42,7 +43,7 @@
     "http-server": "^14.1.1",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
-    "playwright": "1.31.1",
+    "playwright": "1.32.1",
     "react-select": "^5.4.0",
     "rimraf": "^3.0.2",
     "tslib": "^2.1.0"
