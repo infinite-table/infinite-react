@@ -118,6 +118,7 @@ export default function App() {
           primaryKey="id"
           filterDelay={0}
           filterMode="local"
+          sortMode="remote"
           defaultFilterValue={[]}
         >
           <InfiniteTable<Developer>
