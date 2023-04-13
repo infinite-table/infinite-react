@@ -1487,7 +1487,7 @@ A column can either be flexible or fixed-width. For fixed columns, use <PropLink
 
 See [Using flexible column sizing](/docs/learn/columns/fixed-and-flexible-size#using-flexible-column-sizing) for more details on the flex algorithm.
 
-This can also be specified for all columns by specyfing <PropLink name="columnMinWidth" />.
+This can also be specified for all columns by specifying <PropLink name="columnMinWidth" />.
 
 <Sandpack title="Controlled column sizing with minWidth for column">
 
@@ -1504,7 +1504,7 @@ This can also be specified for all columns by specyfing <PropLink name="columnMi
 
 See [Using flexible column sizing](/docs/learn/columns/fixed-and-flexible-size#using-flexible-column-sizing) for more details on the flex algorithm.
 
-This can also be specified for all columns by specyfing <PropLink name="columnMaxWidth" />.
+This can also be specified for all columns by specifying <PropLink name="columnMaxWidth" />.
 
 <Sandpack title="Controlled column sizing with maxWidth for column">
 

@@ -18,7 +18,7 @@ const groupBy: DataSourcePropGroupBy<Developer> = [
 const columns: InfiniteTablePropColumns<Developer> = {
   country: {
     field: 'country',
-    // specyfing a style here for the column
+    // specifying a style here for the column
     // note: it will also be "picked up" by the group column
     // if you're grouping by the 'country' field
     style: {

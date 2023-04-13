@@ -13,7 +13,7 @@ Column ordering via drag & drop works by default.
 
 You don't have to specify an initial column order or any other callback props to update the column order. The default behavior of the component is to initially display all columns that are provided in the <PropLink name="columns" /> object (in the iteration order of the object keys).
 
-If using the <PropLink name="defaultColumnOrder" code={false}>default uncontrolled column order</PropLink> is not enough, try using the controlled <PropLink name="columnOrder" /> prop, which gives you full control over the order of the columns - in this case, you have to update the column order as a result of user interaction, by specyfing <PropLink name="onColumnOrderChange" />.
+If using the <PropLink name="defaultColumnOrder" code={false}>default uncontrolled column order</PropLink> is not enough, try using the controlled <PropLink name="columnOrder" /> prop, which gives you full control over the order of the columns - in this case, you have to update the column order as a result of user interaction, by specifying <PropLink name="onColumnOrderChange" />.
 
 <Sandpack title="Column reordering via drag & drop with controlled `columnOrder`">
 
