@@ -39,7 +39,7 @@ You should not pass the `domRef` along when using the hook inside the
 
 <Sandpack title="Column with render & useInfiniteColumnCell">
 
-```tsx file=$DOCS/reference/column-render-hooks-example.page.tsx
+```tsx file="$DOCS/reference/column-render-hooks-example.page.tsx"
 
 ```
 
@@ -80,7 +80,7 @@ Try editing the `salary` column - it has a custom editor
 
 </Description>
 
-```tsx file=custom-editor-hooks-example.page.tsx
+```tsx file="custom-editor-hooks-example.page.tsx"
 
 ```
 
@@ -118,7 +118,7 @@ The checkbox has indeterminate state, which will match all values in the data so
 
 </Description>
 
-```ts file=custom-filter-editor-hooks-example.page.tsx
+```ts file="custom-filter-editor-hooks-example.page.tsx"
 ```
 
 </Sandpack>
@@ -154,7 +154,7 @@ You should not pass the `domRef` along when using the hook inside the
 
 <Sandpack title="Column with custom header & useInfiniteHeaderCell">
 
-```tsx file=$DOCS/reference/column-header-hooks-example.page.tsx
+```tsx file="$DOCS/reference/column-header-hooks-example.page.tsx"
 
 ```
 

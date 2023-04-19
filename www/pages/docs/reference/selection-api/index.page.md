@@ -131,7 +131,7 @@ This example shows how you can use getSelectedPrimaryKeys with multiple row sele
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-multi-row-selection-example-with-group-keys.page.tsx
+```ts file="$DOCS/reference/controlled-multi-row-selection-example-with-group-keys.page.tsx"
 
 ```
 

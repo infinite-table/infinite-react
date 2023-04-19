@@ -5,7 +5,7 @@ description: Reference list of CSS variables that can be used to style the Infin
 
 Below you can find the complete list of CSS variables that can be used to style the component.
 
-<!-- START VARS -->
+-- START VARS --
 
 ### Accent color
 
@@ -901,4 +901,4 @@ Overriden in the `dark` theme.
 ```css
 --infinite-row-pointer-events-while-scrolling
 ```
-<!-- END VARS -->
+-- END VARS --

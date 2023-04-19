@@ -49,7 +49,7 @@ Also see the <DataSourcePropLink name="groupBy" code={false}>groupBy API referen
 
 <Sandpack title="Simple row grouping">
 
-```ts file=row-grouping-example.page.tsx
+```ts file="row-grouping-example.page.tsx"
 
 ```
 
@@ -87,11 +87,9 @@ Multiple grouping strategies are supported by, `InfiniteTable` DataGrid:
 
 - multi column mode - multiple group columns are generated, one for each specified group field
 - single column mode - a single group column is generated, even when there are multiple group fields
-<!-- * inline mode -->
 
 You can specify the rendering strategy explicitly by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column`. If you don't set it explicitly, it will choose the best default based on your configuration.
 
-<!-- or `inline`. -->
 
 ### Multiple groups columns
 
@@ -119,11 +117,11 @@ Let's see an example of how the component would render the table with the multi-
 
 <Sandpack title="Multi-column group render strategy">
 
-```ts file=row-grouping-multi-column-example.page.tsx
+```ts file="row-grouping-multi-column-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -133,11 +131,11 @@ For the `multi-column` strategy, you can use <PropLink name="hideEmptyGroupColum
 
 <Sandpack title="Hide Empty Group Columns">
 
-```ts file=$DOCS/reference/hideEmptyGroupColumns-example.page.tsx
+```ts file="$DOCS/reference/hideEmptyGroupColumns-example.page.tsx"
 
 ```
 
-```ts file=$DOCS/reference/employee-columns.ts as=employee-columns.ts
+```ts file="$DOCS/reference/employee-columns.ts as=employee-columns.ts"
 
 ```
 
@@ -163,11 +161,11 @@ By default the generated group column will "inherit" many of the properties (the
 
 <Sandpack title="Single-column group render strategy">
 
-```ts file=row-grouping-single-column-example.page.tsx
+```ts file="row-grouping-single-column-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -187,13 +185,6 @@ You can specify an `id` for the single <PropLink name="groupColumn" />. This is 
 
 </Gotcha>
 
-<!--
-
-### Inline group column
-
-When inline group rendering is used (<PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="inline"</PropLink>), the columns bound to the corresponding group by fields are used for rendering, so no group columns are generated. This way of rendering groups is only recommended when you're sure you have small groups (smaller than the number of rows visible in the viewport).
-
--->
 
 ## Customizing the group column
 
@@ -227,7 +218,7 @@ This makes the column display the value of the `field` in non-group/normal rows.
 
 <Sandpack title="Bind group column to a field">
 
-```ts file=$DOCS/reference/bind-group-column-to-field-example.page.tsx
+```ts file="$DOCS/reference/bind-group-column-to-field-example.page.tsx"
 
 ```
 
@@ -258,7 +249,7 @@ The group column is bound to the same `firstName` field, but specifies a differe
 
 </Description>
 
-```ts file=$DOCS/reference/group-column-custom-renderers-example.page.tsx
+```ts file="$DOCS/reference/group-column-custom-renderers-example.page.tsx"
 
 ```
 
@@ -294,7 +285,7 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 
 </Description>
 
-```ts file=$DOCS/reference/hide-columns-when-grouping-example.page.tsx
+```ts file="$DOCS/reference/hide-columns-when-grouping-example.page.tsx"
 
 ```
 
@@ -318,7 +309,7 @@ The <PropLink name="columns.sortable" /> property can be used to override the de
 
 <Sandpack title="Group column with initial descending sorting">
 
-```ts file=$DOCS/reference/group-column-sorted-initially-example.page.tsx
+```ts file="$DOCS/reference/group-column-sorted-initially-example.page.tsx"
 
 ```
 
@@ -330,7 +321,7 @@ When grouping, you can also aggregate the values of the grouped rows. This is do
 
 <Sandpack title="Grouping with aggregations">
 
-```ts file=grouping-with-aggregations-example.page.tsx
+```ts file="grouping-with-aggregations-example.page.tsx"
 
 ```
 
@@ -353,7 +344,7 @@ If you want to prevent the user to expand the last level of group rows, you can 
 
 <Sandpack title="Customized group expand on last group level">
 
-```ts file=grouping-with-aggregations-discard-expand-example.page.tsx
+```ts file="grouping-with-aggregations-discard-expand-example.page.tsx"
 
 ```
 
@@ -491,7 +482,7 @@ You know when to serve last-level rows, because in that case, the length of the 
 
 <Sandpack title="Server side grouping with lazy loding">
 
-```ts file=server-side-grouping-with-lazy-load-example.page.tsx
+```ts file="server-side-grouping-with-lazy-load-example.page.tsx"
 
 ```
 

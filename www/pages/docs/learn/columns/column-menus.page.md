@@ -9,7 +9,7 @@ All columns in the Infinite Table have a default menu, which can be customized o
 
 To customize the column menu (for all columns, or for a specific column), use the <PropLink name="getColumnMenuItems" /> prop. This function is called with an array of menu items (which are the default items) and it should the final array of menu items - so you can return the default items as is, or you can adjust the default items to fit your needs.
 
-```tsx title=Customizing-column-menu
+```tsx file="Customizing-column-menu"
 function getColumnMenuItems(items, { column }) {
 
   if (column.id === 'firstName') {
@@ -56,7 +56,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```tsx file=$DOCS/reference/getColumnMenuItems-example.page.tsx
+```tsx file="$DOCS/reference/getColumnMenuItems-example.page.tsx"
 
 ```
 
@@ -68,7 +68,7 @@ Each item in the array you return from <PropLink name="getColumnMenuItems" /> sh
 
 It's also possible to create items with submenus. For this, specify a `menu` property in the item, with an `items` array. Each item in the `items` array should have a `key` and a `label` property, as you would expect.
 
-```tsx {8} title=Menu_items_with_submenus
+```tsx {8} title="Menu_items_with_submenus"
 
 function getColumnMenuItems(items, { column }) {
 
@@ -108,7 +108,7 @@ function getColumnMenuItems(items, { column }) {
 
 To customize the menu icon, use the <PropLink name="columns.renderMenuIcon" /> prop. This prop can be a boolean or a function that returns a `ReactNode`.
 
-```tsx title=custom-menu-icon
+```tsx file="custom-menu-icon"
 const columns = {
   name: {
     field: 'firstName',

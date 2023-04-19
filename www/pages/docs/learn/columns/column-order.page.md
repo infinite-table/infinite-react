@@ -17,7 +17,7 @@ If using the <PropLink name="defaultColumnOrder" code={false}>default uncontroll
 
 <Sandpack title="Column reordering via drag & drop with controlled `columnOrder`">
 
-```tsx file=$DOCS/reference/columnOrder-example.page.tsx
+```tsx file="$DOCS/reference/columnOrder-example.page.tsx"
 
 ```
 
@@ -39,7 +39,7 @@ The <PropLink name="columnOrder" /> array can contain any number of columns, eve
 In this example, <PropLink name="columnOrder" /> is used as a controlled property, also as a way of limiting the visible columns.
 </Description>
 
-```tsx file=$DOCS/reference/columnOrder-advanced-example.page.tsx
+```tsx file="$DOCS/reference/columnOrder-advanced-example.page.tsx"
 
 ```
 

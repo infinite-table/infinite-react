@@ -14,7 +14,7 @@ Click on the table and use the arrow keys to navigate the rows.
 
 </Description>
 
-```ts file=navigating-rows-initial-example.page.tsx
+```ts file="navigating-rows-initial-example.page.tsx"
 
 ```
 
@@ -42,7 +42,7 @@ This example starts with row at index `2` already active.
 
 </Description>
 
-```ts file=navigating-rows-uncontrolled-example.page.tsx
+```ts file="navigating-rows-uncontrolled-example.page.tsx"
 
 ```
 
@@ -66,7 +66,7 @@ This example starts with row at index `2` already active and uses <PropLink name
 
 </Description>
 
-```ts file=navigating-rows-controlled-example.page.tsx
+```ts file="navigating-rows-controlled-example.page.tsx"
 
 ```
 
@@ -93,7 +93,7 @@ Press the `Enter` key on the active group row to toggle it. `ArrowLeft` will col
 
 </Description>
 
-```ts file=$DOCS/reference/keyboard-toggle-group-rows.page.tsx
+```ts file="$DOCS/reference/keyboard-toggle-group-rows.page.tsx"
 
 ```
 
@@ -113,7 +113,7 @@ Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would d
 
 </Description>
 
-```ts file=$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example-row-navigation.page.tsx
+```ts file="$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example-row-navigation.page.tsx"
 
 ```
 
@@ -179,7 +179,7 @@ Use the color picker to configured the desired color for the active row highligh
 
 </Description>
 
-```ts file=navigating-rows-theming-example.page.tsx
+```ts file="navigating-rows-theming-example.page.tsx"
 
 ```
 

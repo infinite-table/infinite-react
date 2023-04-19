@@ -18,7 +18,7 @@ All columns (except id) are editable.
 
 </Description>
 
-```ts file=inline-editing-example.page.tsx
+```ts file="inline-editing-example.page.tsx"
 ```
 
 </Sandpack>
@@ -75,7 +75,7 @@ To start editing programmatically, use the <ApiLink name="startEdit">startEdit({
 <Sandpack title="Starting an Edit via the API">
 
 
-```ts file=api-inline-editing-custom-edit-value-example.page.tsx
+```ts file="api-inline-editing-custom-edit-value-example.page.tsx"
 ```
 
 </Sandpack>
@@ -112,7 +112,7 @@ Try editing the salary column - it has a custom getter for the edit value, which
 
 </Description>
 
-```ts file=inline-editing-custom-edit-value-example.page.tsx
+```ts file="inline-editing-custom-edit-value-example.page.tsx"
 ```
 
 </Sandpack>
@@ -151,7 +151,7 @@ In this example, the `salary` column is configured with a <PropLink name="column
 </Description>
 
 
-```ts file=inline-editing-custom-edit-value-example.page.tsx
+```ts file="inline-editing-custom-edit-value-example.page.tsx"
 ```
 
 </Sandpack>

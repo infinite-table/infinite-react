@@ -2,6 +2,7 @@
 title: "Quarterly Update - Spring 2022"
 description: "Infinite Table update for Spring 2022"
 author: [admin]
+excerpt: "Infinite Table update for Spring 2022"
 ---
 This spring, we've been hard at work preparing for our Autumn release.
 

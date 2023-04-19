@@ -37,7 +37,7 @@ This example also does server-side (multiple) sorting.
 
 </Description>
 
-```ts file=server-side-example.page.tsx
+```ts file="server-side-example.page.tsx"
 ```
 
 </Sandpack>

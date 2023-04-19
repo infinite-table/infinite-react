@@ -50,7 +50,6 @@ layout: Releases
 
 @milestone id="60"
 
-<!-- Read [more details](/docs/releases/v1) -->
 
 ## 0.6.1 🚀
 

@@ -24,11 +24,11 @@ The `DataSourceAggregationReducer` type can have the following properties
 
 <Sandpack title="Aggregation demo - see `salary` column">
 
-```ts file=groupBy-example.page.tsx
+```ts file="groupBy-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -38,7 +38,7 @@ Aggregation reducers can be used in combination with grouping and pivoting. The 
 
 <Sandpack title="Aggregations used together with server-side pivoting">
 
-```ts file=$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx
+```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx"
 
 ```
 
@@ -48,7 +48,7 @@ Pivot columns generated for aggregations will inehrit from initial columns - the
 
 <Sandpack title="Pivot columns inherit from original columns bound to the same field">
 
-```ts file=$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx
+```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx"
 
 ```
 
@@ -66,7 +66,7 @@ Pivot columns generated for aggregations will inehrit from initial columns - the
 
 <Sandpack title="Data loading example with promise">
 
-```ts file=data-example.page.tsx
+```ts file="data-example.page.tsx"
 
 ```
 
@@ -80,11 +80,11 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 <Sandpack title="Re-fetching data">
 
-```ts file=$DOCS/learn/working-with-data/refetch-example.page.tsx
+```ts file="$DOCS/learn/working-with-data/refetch-example.page.tsx"
 
 ```
 
-```ts file=$DOCS/learn/working-with-data/columns.ts as=columns.ts
+```ts file="$DOCS/learn/working-with-data/columns.ts as=columns.ts"
 
 ```
 
@@ -105,7 +105,7 @@ For the controlled version, and more details on the shape of the objects in the 
 
 <Sandpack  title="Initial filtering applied via defaultFilterValue">
 
-```ts file=defaultFilterValue-example.page.tsx
+```ts file="defaultFilterValue-example.page.tsx"
 
 ```
 
@@ -154,7 +154,7 @@ For using group keys in the selection value, see related <DPropLink name="useGro
 
 <Sandpack  title="Uncontrolled, multiple row selection with checkbox column">
 
-```ts file=$DOCS/reference/uncontrolled-multiple-row-selection-example.page.tsx
+```ts file="$DOCS/reference/uncontrolled-multiple-row-selection-example.page.tsx"
 
 ```
 
@@ -193,7 +193,7 @@ sortTypes={{
 
 <Sandpack title="Local uncontrolled single sorting">
 
-```ts file=$DOCS/learn/working-with-data/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx
+```ts file="$DOCS/learn/working-with-data/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
 
 ```
 
@@ -201,7 +201,7 @@ sortTypes={{
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
-```ts file=./customSortType-with-uncontrolled-sortInfo-example.page.tsx
+```ts file="./customSortType-with-uncontrolled-sortInfo-example.page.tsx"
 
 ```
 
@@ -242,7 +242,7 @@ Loads data from remote location but will only show rows that have `id > 100`.
 
 </Description>
 
-```ts file=custom-filter-function-example.page.tsx
+```ts file="custom-filter-function-example.page.tsx"
 ```
 
 </Sandpack>
@@ -332,7 +332,7 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 
 </Description>
 
-```ts file=filter-types-example.page.tsx
+```ts file="filter-types-example.page.tsx"
 ```
 
 </Sandpack>
@@ -356,7 +356,7 @@ The `string` columns have a new `Not includes` operator.
 
 </Description>
 
-```ts file=default-filter-types-example.page.tsx
+```ts file="default-filter-types-example.page.tsx"
 ```
 
 </Sandpack>
@@ -540,7 +540,7 @@ The checkbox has indeterminate state, which will match all values in the data so
 
 </Description>
 
-```ts file=$DOCS/reference/hooks/custom-filter-editor-hooks-example.page.tsx
+```ts file="$DOCS/reference/hooks/custom-filter-editor-hooks-example.page.tsx"
 ```
 
 </Sandpack>
@@ -569,7 +569,7 @@ The objects in this array have the following shape:
 
 <Sandpack  title="Controlled filters with onFilterValueChange">
 
-```ts file=onFilterValueChange-example.page.tsx
+```ts file="onFilterValueChange-example.page.tsx"
 
 ```
 
@@ -584,7 +584,7 @@ The objects in this array have the following shape:
 
 <Sandpack title="Server-side pivoting with full lazy load">
 
-```ts file=$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx
+```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx"
 
 ```
 
@@ -603,11 +603,11 @@ Each item in the array can have the following properties:
 
 <Sandpack>
 
-```ts file=groupBy-example.page.tsx
+```ts file="groupBy-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -623,7 +623,7 @@ Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> 
 
 <Sandpack  title="Live pagination - with react-query" deps="react-query">
 
-```ts file=$DOCS/learn/working-with-data/live-pagination-example.page.tsx
+```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 
 ```
 
@@ -649,7 +649,7 @@ When this is a function, it is called with a parameter object that has the follo
 
 <Sandpack  title="Live pagination - with react-query" deps="react-query">
 
-```ts file=$DOCS/learn/working-with-data/live-pagination-example.page.tsx
+```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 
 ```
 
@@ -673,7 +673,7 @@ The function is called with an object that has the following properties:
 
 <Sandpack  title="Live pagination - with react-query" deps="react-query">
 
-```ts file=$DOCS/learn/working-with-data/live-pagination-example.page.tsx
+```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 
 ```
 
@@ -689,7 +689,7 @@ This might not be called immediately, as there might be a <DPropLink name="filte
 
 <Sandpack  title="Controlled filters with onFilterValueChange">
 
-```ts file=onFilterValueChange-example.page.tsx
+```ts file="onFilterValueChange-example.page.tsx"
 
 ```
 
@@ -725,7 +725,7 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-single-row-selection-example.page.tsx
+```ts file="$DOCS/reference/controlled-single-row-selection-example.page.tsx"
 
 ```
 
@@ -743,7 +743,7 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-multi-row-selection-example.page.tsx
+```ts file="$DOCS/reference/controlled-multi-row-selection-example.page.tsx"
 
 ```
 
@@ -804,7 +804,7 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-single-row-selection-example.page.tsx
+```ts file="$DOCS/reference/controlled-single-row-selection-example.page.tsx"
 
 ```
 
@@ -854,7 +854,7 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-multi-row-selection-example.page.tsx
+```ts file="$DOCS/reference/controlled-multi-row-selection-example.page.tsx"
 
 ```
 
@@ -901,7 +901,7 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 <Sandpack title="Remote + controlled multi sorting">
 
-```ts file=$DOCS/learn/working-with-data/remote-controlled-multi-sorting-example.page.tsx
+```ts file="$DOCS/learn/working-with-data/remote-controlled-multi-sorting-example.page.tsx"
 
 ```
 
@@ -946,7 +946,7 @@ You can add new sort types to the DataSource and InfiniteTable components by spe
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
-```ts file=./sortTypes-example.page.tsx
+```ts file="./sortTypes-example.page.tsx"
 
 ```
 
@@ -974,7 +974,7 @@ This example shows how you can use have row selection with group keys instead of
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-multi-row-selection-example-with-group-keys.page.tsx
+```ts file="$DOCS/reference/controlled-multi-row-selection-example-with-group-keys.page.tsx"
 
 ```
 

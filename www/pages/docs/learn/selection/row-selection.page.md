@@ -46,7 +46,7 @@ Single row selection example - click a row to see selection change. You can also
 
 </Description>
 
-```ts file=$DOCS/reference/default-single-row-selection-example.page.tsx
+```ts file="$DOCS/reference/default-single-row-selection-example.page.tsx"
 
 ```
 
@@ -76,7 +76,7 @@ This example uses <DPropLink name="onRowSelectionChange" /> callback prop to upd
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-single-row-selection-example.page.tsx
+```ts file="$DOCS/reference/controlled-single-row-selection-example.page.tsx"
 
 ```
 
@@ -106,7 +106,7 @@ Use your mouse to select multiple rows. Expect click and click + `cmd`/`ctrl`/`s
 
 </Description>
 
-```ts file=$DOCS/reference/default-selection-mode-multi-row-example.page.tsx
+```ts file="$DOCS/reference/default-selection-mode-multi-row-example.page.tsx"
 
 ```
 
@@ -124,7 +124,7 @@ Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would d
 
 </Description>
 
-```ts file=$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx
+```ts file="$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx"
 
 ```
 
@@ -175,7 +175,7 @@ Use the selection checkboxes to select rows. You can also use the spacebar key (
 
 </Description>
 
-```ts file=$DOCS/reference/default-checkbox-selection-multi-row-example.page.tsx
+```ts file="$DOCS/reference/default-checkbox-selection-multi-row-example.page.tsx"
 
 ```
 
@@ -293,7 +293,7 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </Description>
 
-```ts file=$DOCS/reference/controlled-multi-row-selection-example.page.tsx
+```ts file="$DOCS/reference/controlled-multi-row-selection-example.page.tsx"
 
 ```
 
@@ -319,7 +319,7 @@ Note in the example below that some of the group rows are partly selected, even 
 
 </Description>
 
-```ts file=$DOCS/reference/lazy-multi-row-selection-example.page.tsx
+```ts file="$DOCS/reference/lazy-multi-row-selection-example.page.tsx"
 
 ```
 

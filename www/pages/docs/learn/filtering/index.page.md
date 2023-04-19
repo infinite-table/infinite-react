@@ -15,7 +15,7 @@ You specify an uncontrolled <DPropLink name="defaultFilterValue" /> on the `<Dat
 
 Based on the <PropLink name="columns.type" code={false}>column type</PropLink>, the correct filter editor is displayed in the column header, along with the correct operator icon. In the UI, you can change the operator being used for the filter.
 
-```tsx title=Specifying_an_initial_filter_value_for_the_DataSource
+```tsx file="Specifying_an_initial_filter_value_for_the_DataSource"
 <DataSource<Developer>
   data={...}
   defaultFilterValue={[
@@ -142,7 +142,7 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 
 </Description>
 
-```ts file=filter-custom-filter-type-example.page.tsx
+```ts file="filter-custom-filter-type-example.page.tsx"
 ```
 
 </Sandpack>
@@ -198,7 +198,7 @@ The `salary` column is not bound to a `field` - however, it can still be used fo
 
 </Description>
 
-```ts file=filter-column-with-id-example.page.tsx
+```ts file="filter-column-with-id-example.page.tsx"
 ```
 
 </Sandpack>
@@ -218,7 +218,7 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </Description>
 
-```ts file=$DOCS/learn/columns/column-filter-icon-example.page.tsx
+```ts file="$DOCS/learn/columns/column-filter-icon-example.page.tsx"
 ```
 
 </Sandpack>

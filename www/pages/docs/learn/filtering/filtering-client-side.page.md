@@ -32,7 +32,7 @@ In addition, the `filterDelay` property is set to `0` for instant feedback.
 
 </Description>
 
-```ts file=basic-local-filter-example.page.tsx
+```ts file="basic-local-filter-example.page.tsx"
 ```
 
 </Sandpack>
@@ -52,7 +52,7 @@ The default filter types are `string` and `number` - read the next section to se
 
 A filter type is basically a collection of operators available for a type of data. Each operator needs a name and a function that will be used to filter the data, when that operator is applied.
 
-```tsx {5,14} title=Using_filter_types_for_filterValue
+```tsx {5,14} title="Using_filter_types_for_filterValue"
 filterValue={[
   {
     field: 'firstName',
@@ -133,7 +133,7 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 
 </Description>
 
-```ts file=filter-custom-filter-type-example.page.tsx
+```ts file="filter-custom-filter-type-example.page.tsx"
 ```
 
 </Sandpack>
@@ -158,7 +158,7 @@ The `string` columns have a new `Not includes` operator.
 
 </Description>
 
-```ts file=customised-default-filter-types-example.page.tsx
+```ts file="customised-default-filter-types-example.page.tsx"
 ```
 
 </Sandpack>
@@ -204,7 +204,7 @@ Loads data from remote location but will only show rows that have `id > 100`.
 
 </Description>
 
-```ts file=filter-function-example.page.tsx
+```ts file="filter-function-example.page.tsx"
 ```
 
 </Sandpack>

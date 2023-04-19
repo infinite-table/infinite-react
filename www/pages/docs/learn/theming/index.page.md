@@ -22,7 +22,7 @@ To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-
 
 
 
-```tsx title=explicitly-apply-light-theme-via-container-className
+```tsx file="explicitly-apply-light-theme-via-container-className"
 <div className="light">
   <DataSource {...dataSouceProps}>
     <InfiniteTable {...props} />
@@ -33,7 +33,7 @@ To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-
 
 If instead you specify a `dark` CSS className, the dark theme will be applied
 
-```tsx title=explicitly-apply-dark-theme-via-container-className
+```tsx file="explicitly-apply-dark-theme-via-container-className"
 <body className="dark">
   <div>
     <DataSource {...dataSouceProps}>
@@ -45,11 +45,11 @@ If instead you specify a `dark` CSS className, the dark theme will be applied
 
 <Sandpack title="Theme switching demo - default to light theme">
 
-```ts file=theme-switching-example.page.tsx
+```ts file="theme-switching-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 

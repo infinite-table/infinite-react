@@ -7,7 +7,7 @@ Rows can be styled by using the `rowStyle` and the `rowClassName` props
 - the <PropLink name="rowStyle" /> prop can be a style `object` or a `function` that returns a style `object` or `undefined`
 - the <PropLink name="rowClassName"/> prop can be a `string` (the name of a CSS class) or a `function` that returns a `string` or `undefined`
 
-```tsx title=Defining-a-rowStyle-function
+```tsx file="Defining-a-rowStyle-function"
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   data,
   rowInfo,
@@ -36,11 +36,11 @@ The <PropLink name="rowClassName" /> function prop has the same signature as the
 
 <Sandpack>
 
-```ts file=$DOCS/reference/rowStyle-example.page.tsx
+```ts file="$DOCS/reference/rowStyle-example.page.tsx"
 
 ```
 
-```ts file=$DOCS/reference/rowStyle-example-columns.ts as=rowStyle-example-columns.ts
+```ts file="$DOCS/reference/rowStyle-example-columns.ts as=rowStyle-example-columns.ts"
 
 ```
 

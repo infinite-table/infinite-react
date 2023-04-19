@@ -4,7 +4,7 @@
 <!-- 
 <Sandpack deps="devextreme-react,devextreme">
 
-```tsx file=devexpress.app.tsx
+```tsx file="devexpress.app.tsx"
 
 ```
 
@@ -12,7 +12,7 @@
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -22,11 +22,11 @@
 
 <Sandpack deps="ag-grid-community,ag-grid-react,ag-grid-enterprise">
 
-```tsx file=aggrid.page.tsx
+```tsx file="aggrid.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -36,11 +36,11 @@
 
 <Sandpack >
 
-```tsx file=infinite.page.tsx
+```tsx file="infinite.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 

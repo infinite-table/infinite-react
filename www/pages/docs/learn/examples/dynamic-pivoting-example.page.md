@@ -13,11 +13,11 @@ It also showcases different way of customizing columns based on dynamic conditio
 
 <Sandpack deps="react-select">
 
-```tsx file=dynamic-advanced-pivoting-example.page.tsx
+```tsx file="dynamic-advanced-pivoting-example.page.tsx"
 
 ```
 
-```tsx file=Settings.tsx
+```tsx file="Settings.tsx"
 
 ```
 
@@ -33,11 +33,11 @@ This example is very similar with the above one, but pivoting, grouping and aggr
 
 <Sandpack deps="react-select">
 
-```tsx file=dynamic-advanced-pivoting-example.page.tsx
+```tsx file="dynamic-advanced-pivoting-example.page.tsx"
 
 ```
 
-```tsx file=Settings.tsx
+```tsx file="Settings.tsx"
 
 ```
 

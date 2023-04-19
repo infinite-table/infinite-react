@@ -73,7 +73,7 @@ For inserting data at a specific position, see the <DApiLink name="insertData" /
 
 <Sandpack title="Using DataSourceApi.addData to update the DataSource">
 
-```ts file=addData-example.page.tsx
+```ts file="addData-example.page.tsx"
 ```
 
 </Sandpack>
@@ -128,7 +128,7 @@ Click any row in the table to make it the current active row, and then use the s
 
 </Description>
 
-```ts file=insert-example.page.tsx
+```ts file="insert-example.page.tsx"
 ```
 
 </Sandpack>
@@ -187,7 +187,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 </Description>
 
-```ts file=liveUpdates-example.page.tsx
+```ts file="liveUpdates-example.page.tsx"
 ```
 
 </Sandpack>

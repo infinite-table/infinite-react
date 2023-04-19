@@ -26,7 +26,7 @@ This is an example to get you started with Infinite Table with minimal setup.
 
 </Description>
 
-```ts file=meet-the-code.page.tsx
+```ts file="meet-the-code.page.tsx"
 
 ```
 
@@ -89,7 +89,7 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
  
 </Description>
 
-```ts file=full-demo.page.tsx
+```ts file="full-demo.page.tsx
 ```
 
 </Sandpack>
@@ -104,11 +104,11 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 
 <Sandpack title="Invalid License Demo">
 
-```ts file=invalid-license.page.tsx
+```ts file="invalid-license.page.tsx"
 
 ```
 
-```ts file=data.tsx
+```ts file="data.tsx"
 
 ```
 

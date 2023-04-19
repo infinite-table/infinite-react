@@ -36,7 +36,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 <Sandpack title="Simple table with both default and custom column headers">
 
-```ts file=column-header-example.page.tsx
+```ts file="column-header-example.page.tsx"
 ```
 
 </Sandpack>
@@ -91,7 +91,7 @@ For customizing the sort icon, use the <PropLink name="columns.renderSortIcon">c
 
 Inside that function you can either use the object passed as a parameter to get information about the sort state of the column
 
-```tsx {1} title=Customizing_the_column_sort_icon
+```tsx {1} title="Customizing_the_column_sort_icon"
 renderSortIcon({ columnSortInfo }) {
   if (!columnSortInfo) {
     return ' 🤷‍♂️';
@@ -102,7 +102,7 @@ renderSortIcon({ columnSortInfo }) {
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx {8} title=Customizing_the_column_sort_icon
+```tsx {8} title="Customizing_the_column_sort_icon"
 import {
   useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
@@ -120,7 +120,7 @@ renderSortIcon(){
 
 <Sandpack title="Custom sort icon for the name column">
 
-```ts file=column-sort-icon-example.page.tsx
+```ts file="column-sort-icon-example.page.tsx"
 ```
 
 </Sandpack>
@@ -133,7 +133,7 @@ For customizing the menu icon, use the <PropLink name="columns.renderMenuIcon">c
 
 Inside that function you can either use the object passed as a parameter to get information about the column
 
-```tsx {1} title=Customizing_the_menu_icon
+```tsx {1} title="Customizing_the_menu_icon"
 renderMenuIcon({ column }) {
   return `🔧 ${column.id}`;
 }
@@ -141,7 +141,7 @@ renderMenuIcon({ column }) {
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx {8} title=Customizing_the_menu_icon
+```tsx {8} title="Customizing_the_menu_icon"
 import {
   useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
@@ -164,7 +164,7 @@ Also, the id column has `renderMenuIcon: false` set, so it doesn't show a column
 
 </Description>
 
-```ts file=column-menu-icon-example.page.tsx
+```ts file="column-menu-icon-example.page.tsx"
 ```
 
 </Sandpack>
@@ -185,7 +185,7 @@ For customizing the filter icon, use the <PropLink name="columns.renderFilterIco
 
 Inside that function you can either use the object passed as a parameter to get information about the `filtered` state of the column
 
-```tsx {1} title=Customizing_the_filter_icon
+```tsx {1} title="Customizing_the_filter_icon"
 renderFilterIcon({ filtered }) {
   return filtered ? '🔍' : '';
 }
@@ -193,7 +193,7 @@ renderFilterIcon({ filtered }) {
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx {8} title=Customizing_the_menu_icon
+```tsx {8} title="Customizing_the_menu_icon"
 import {
   useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
@@ -224,7 +224,7 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </Description>
 
-```ts file=column-filter-icon-example.page.tsx
+```ts file="column-filter-icon-example.page.tsx"
 ```
 
 </Sandpack>
@@ -248,7 +248,7 @@ The group column, as well as the `stack` column display a custom selection check
 
 </Description>
 
-```ts file=column-header-selection-checkbox-example.page.tsx
+```ts file="column-header-selection-checkbox-example.page.tsx"
 ```
 
 </Sandpack>

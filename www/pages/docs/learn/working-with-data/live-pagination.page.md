@@ -25,7 +25,7 @@ Below you can see a live pagination demo implemented in combination with [react-
 
 <Sandpack title="Live pagination - with react-query" deps="react-query">
 
-```ts file=live-pagination-example.page.tsx
+```ts file="live-pagination-example.page.tsx"
 
 ```
 

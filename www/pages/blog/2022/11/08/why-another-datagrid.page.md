@@ -295,7 +295,7 @@ We want Infinite Table to feel at home in any React app. Everything about the Da
 
 Let's take for example how you would switch a column from a column group to another:
 
-```tsx title=Fully_declarative_way_to_update_columns {35}
+```tsx file="Fully_declarative_way_to_update_columns {35}"
 function getColumns() {
   return {
     firstName: {
@@ -369,7 +369,7 @@ A good example of composability is the <PropLink name="groupColumn" /> prop - it
  * when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
  
 
-```tsx title=Group_column_as_an_object
+```tsx file="Group_column_as_an_object"
 <InfiniteTable 
   //...
   groupColumn= {{
@@ -378,7 +378,7 @@ A good example of composability is the <PropLink name="groupColumn" /> prop - it
 />
 ```
 vs
-```tsx title=Group_column_as_a_function
+```tsx file="Group_column_as_a_function"
 <InfiniteTable 
   //...
   groupColumn={() => {

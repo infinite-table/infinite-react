@@ -7,7 +7,7 @@ description: Styling columns in the InfiniteTable React DataGrid via both style 
 
 The most straightforward way to style the cells in a column is to use the <PropLink name="columns.style">column.style</PropLink> property as an object.
 
-```ts title=Styling_a_column_in_the_DataGrid
+```ts file="Styling_a_column_in_the_DataGrid"
 
 const column = {
   firstName: {
@@ -21,7 +21,7 @@ const column = {
 
 <Sandpack title="Using column.style as an object">
 
-```tsx file=column-style-object-example.page.tsx
+```tsx file="column-style-object-example.page.tsx"
 
 ```
 
@@ -47,7 +47,7 @@ const columns = {
 ```
 <Sandpack title="Using column.style as a function">
 
-```tsx file=column-style-fn-example.page.tsx
+```tsx file="column-style-fn-example.page.tsx"
 ```
 
 </Sandpack>
@@ -69,7 +69,7 @@ Mirroring the behavior already described for the <PropLink name="columns.style">
 
 It can be used as a string or a function that returns a string.
 
-```ts title=Styling_a_column_using_column.className
+```ts file="Styling_a_column_using_column.className"
 const columns = {
   firstName: {
     className: 'first-name-column',
@@ -79,7 +79,7 @@ const columns = {
 
 <Sandpack title="Using column.className as an string">
 
-```tsx file=column-className-string-example.page.tsx
+```tsx file="column-className-string-example.page.tsx"
 ```
 ```css file=coloring.module.css
 ```
@@ -103,7 +103,7 @@ const columns = {
 
 <Sandpack title="Using column.className as a function">
 
-```tsx file=column-className-fn-example.page.tsx
+```tsx file="column-className-fn-example.page.tsx"
 ```
 ```css file=coloring.module.css
 ```

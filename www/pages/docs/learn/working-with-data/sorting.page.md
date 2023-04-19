@@ -48,7 +48,7 @@ This example shows initial sorting by `salary` in ascending order. Click the hea
 
 </Description>
 
-```ts file=local-uncontrolled-single-sorting-example-with-local-data.page.tsx
+```ts file="local-uncontrolled-single-sorting-example-with-local-data.page.tsx"
 
 ```
 
@@ -79,7 +79,7 @@ This table allows sorting multiple columns - initially the `country` column is s
 
 </Description>
 
-```ts file=local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx
+```ts file="local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx"
 
 ```
 
@@ -87,7 +87,7 @@ This table allows sorting multiple columns - initially the `country` column is s
 
 <Sandpack title="Remote + uncontrolled multi-sorting example">
 
-```ts file=remote-uncontrolled-multi-sorting-example.page.tsx
+```ts file="remote-uncontrolled-multi-sorting-example.page.tsx"
 
 ```
 
@@ -138,7 +138,7 @@ You can use <DataSourcePropLink name="onDataParamsChange" />, which is called wh
 
 <Sandpack title="Local uncontrolled sorting + local data">
 
-```ts file=local-uncontrolled-single-sorting-example-with-remote-data.page.tsx
+```ts file="local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
 
 ```
 
@@ -146,7 +146,7 @@ You can use <DataSourcePropLink name="onDataParamsChange" />, which is called wh
 
 <Sandpack title="Local uncontrolled sorting + remote data">
 
-```ts file=local-uncontrolled-single-sorting-example-with-remote-data.page.tsx
+```ts file="local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
 
 ```
 
@@ -164,7 +164,7 @@ For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">so
 
 <Sandpack title="Remote + controlled multi-sorting example">
 
-```ts file=remote-controlled-multi-sorting-example.page.tsx
+```ts file="remote-controlled-multi-sorting-example.page.tsx"
 
 ```
 
@@ -204,7 +204,7 @@ To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a colu
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
-```ts file=$DOCS/reference/datasource-props/sortTypes-example.page.tsx
+```ts file="$DOCS/reference/datasource-props/sortTypes-example.page.tsx"
 
 ```
 
