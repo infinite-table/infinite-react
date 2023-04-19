@@ -81,7 +81,7 @@ const columns = {
 
 ```tsx file="column-className-string-example.page.tsx"
 ```
-```css file=coloring.module.css
+```css file="coloring.module.css"
 ```
 
 </Sandpack>
@@ -105,7 +105,7 @@ const columns = {
 
 ```tsx file="column-className-fn-example.page.tsx"
 ```
-```css file=coloring.module.css
+```css file="coloring.module.css"
 ```
 
 </Sandpack>

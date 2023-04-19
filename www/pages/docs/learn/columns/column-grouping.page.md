@@ -48,7 +48,7 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 
 ```
 
-```tsx file=column-groups-data.ts
+```tsx file="column-groups-data.ts"
 
 ```
 

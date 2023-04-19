@@ -21,7 +21,7 @@ It also showcases different way of customizing columns based on dynamic conditio
 
 ```
 
-```tsx file=types.ts
+```tsx file="types.ts"
 
 ```
 
@@ -41,7 +41,7 @@ This example is very similar with the above one, but pivoting, grouping and aggr
 
 ```
 
-```tsx file=types.ts
+```tsx file="types.ts"
 
 ```
 
