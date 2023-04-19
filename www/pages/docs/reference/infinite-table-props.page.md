@@ -310,7 +310,7 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 
 ```ts file="column-className-function-example.page.tsx"
 ```
-```css file=coloring.module.css
+```css file="coloring.module.css"
 ```
 
 </Sandpack>
@@ -371,7 +371,7 @@ that is, the `props` that the component is rendered with (is called with) are `H
 
 In order to access the cell-related information, you don't use the props, but you call the <HookLink name="useInfiniteColumnCell"/> hook.
 
-```tsx {4,8}
+```tsx
 const ExampleCellComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
@@ -509,7 +509,7 @@ that is, the `props` that the component is rendered with (is called with) are `H
 
 In order to access the column header-related information, you don't use the props, but you call the <HookLink name="useInfiniteHeaderCell"/> hook.
 
-```tsx {4,8}
+```tsx
 const ExampleHeaderComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
