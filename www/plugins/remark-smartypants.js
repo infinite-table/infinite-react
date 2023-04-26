@@ -1,4 +1,4 @@
-const visit = require('unist-util-visit');
+const { visit } = require('unist-util-visit');
 const retext = require('retext');
 const smartypants = require('retext-smartypants');
 

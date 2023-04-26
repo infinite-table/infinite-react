@@ -405,6 +405,7 @@ export function useLoadData<T>() {
     notifyScrollbarsChange,
     refetchKey,
     sortInfo,
+    sortMode,
     groupBy,
     pivotBy,
     filterValue,
@@ -508,7 +509,8 @@ export function useLoadData<T>() {
   }, [filterValue, filterMode, filterTypes]);
 
   const depsObject = {
-    sortInfo,
+    sortInfo: sortMode === 'remote' ? sortInfo : null,
+    // sortInfo,
     groupBy,
     pivotBy,
     refetchKey,

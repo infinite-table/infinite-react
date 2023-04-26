@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import * as React from 'react';
 
 /**
@@ -49,81 +48,6 @@ export interface RouteMeta {
   breadcrumbs?: RouteItem[];
 }
 
-export function useRouteMeta(rootRoute?: RouteItem) {
-  const sidebarContext = React.useContext(SidebarContext);
-  const routeTree = rootRoute || sidebarContext;
-  const router = useRouter();
-  const cleanedPath = router.pathname;
-
-  if (cleanedPath === '/404') {
-    return {
-      breadcrumbs: [],
-    };
-  }
-
-  const breadcrumbs = getBreadcrumbs(cleanedPath, routeTree);
-  return {
-    ...getRouteMeta(cleanedPath, routeTree),
-    breadcrumbs: breadcrumbs.length > 0 ? breadcrumbs : [routeTree],
-  };
-}
-
-export const SidebarContext = React.createContext<RouteItem>({ title: 'root' });
-
-// Performs a depth-first search to find the current route and its previous/next route
-function getRouteMeta(
-  searchPath: string,
-  currentRoute: RouteItem,
-  ctx: RouteMeta = {},
-): RouteMeta {
-  const { routes } = currentRoute;
-
-  if (ctx.route && !ctx.nextRoute && !currentRoute.draft) {
-    ctx.nextRoute = currentRoute;
-  }
-
-  if (currentRoute.path === searchPath) {
-    ctx.route = currentRoute;
-  }
-
-  if (!ctx.route && !currentRoute.draft) {
-    ctx.prevRoute = currentRoute;
-  }
-
-  if (!routes) {
-    return ctx;
-  }
-
-  for (const route of routes) {
-    getRouteMeta(searchPath, route, ctx);
-  }
-
-  return ctx;
-}
-
-// iterates the route tree from the current route to find its ancestors for breadcrumbs
-function getBreadcrumbs(
-  path: string,
-  currentRoute: RouteItem,
-  breadcrumbs: RouteItem[] = [],
-): RouteItem[] {
-  if (currentRoute.path === path) {
-    return breadcrumbs;
-  }
-
-  if (!currentRoute.routes) {
-    return [];
-  }
-
-  for (const route of currentRoute.routes) {
-    const childRoute = getBreadcrumbs(path, route, [
-      ...breadcrumbs,
-      currentRoute,
-    ]);
-    if (childRoute?.length) {
-      return childRoute;
-    }
-  }
-
-  return [];
-}
+export const SidebarContext = React.createContext<RouteItem[]>([
+  { title: 'root' },
+]);

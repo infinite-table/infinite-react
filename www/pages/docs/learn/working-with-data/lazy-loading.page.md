@@ -8,7 +8,7 @@ We call this `"lazy loading"`, and it needs to be enabled by specifying the <Dat
 
 <Sandpack title="Lazy loading ungrouped and unpivoted data">
 
-```ts file=simple-lazy-load-example.page.tsx
+```ts file="simple-lazy-load-example.page.tsx"
 
 ```
 

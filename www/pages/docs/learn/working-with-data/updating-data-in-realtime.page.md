@@ -46,7 +46,7 @@ const onReady = ({ api, dataSourceApi }) => {
 
 To update the data of a row, you need to know the `primaryKey` for that row and use the <DApiLink name="updateData" /> method of the [DataSource API](/docs/reference/datasource-api).
 
-```tsx {1,3} title=Updating_a_single_row_using_dataSourceApi.updateData
+```tsx {1,3} title="Updating_a_single_row_using_dataSourceApi.updateData"
 dataSourceApi.updateData({
   // if the primaryKey is the "id" field, make sure to include it
   id: 1,
@@ -59,7 +59,7 @@ dataSourceApi.updateData({
 
 To update multiple rows, you need to pass the array of data items to the <DApiLink name="updateDataArray" /> method.
 
-```tsx {1,3,8} title=Updating_multiple_rows
+```tsx {1,3,8} title="Updating_multiple_rows"
 dataSourceApi.updateDataArray([
   {
     id: 1, // if the primaryKey is the "id" field, make sure to include it
@@ -86,7 +86,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 </Description>
 
-```ts file=realtime-updates-example.page.tsx
+```ts file="realtime-updates-example.page.tsx"
 ```
 
 </Sandpack>
@@ -107,7 +107,7 @@ All the methods for updating/inserting/deleting rows exposed via the [DataSource
 
 All the function calls made in the same raf return the same promise, which is resolved when the data is persisted to the `DataSource`
 
-```tsx title=Updates_made_on_the_same_raf_are_batched_together
+```tsx title="Updates_made_on_the_same_raf_are_batched_together"
 const promise1 = dataSourceApi.updateData({
   id: 1,
   name: 'Bob Blue'
@@ -126,7 +126,7 @@ promise1 === promise2 // true
 
 To insert a new row into the `DataSource`, you need to use the <DApiLink name="insertData" /> method. For inserting multiple rows at once, use the <DApiLink name="insertDataArray" /> method.
 
-```tsx title=Inserting_a_single_row
+```tsx title="Inserting_a_single_row"
 dataSourceApi.insertData({
   id: 10,
   name: 'Bob Blue',
@@ -176,7 +176,7 @@ Click any row in the table to make it the current active row, and then use the s
 
 </Description>
 
-```ts file=insert-example.page.tsx
+```ts file="insert-example.page.tsx"
 ```
 
 </Sandpack>

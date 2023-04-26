@@ -117,6 +117,7 @@ export default function App() {
           data={dataSource}
           primaryKey="id"
           defaultFilterValue={[]}
+          sortMode="remote"
         >
           <InfiniteTable<Developer>
             showColumnFilters

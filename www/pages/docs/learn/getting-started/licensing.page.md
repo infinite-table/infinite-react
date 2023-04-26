@@ -19,11 +19,11 @@ You can use it for free in any product, but make sure the footer is always visib
 
 <Sandpack title="Invalid License Demo">
 
-```ts file=invalid-license.page.tsx
+```ts file="invalid-license.page.tsx"
 
 ```
 
-```ts file=data.tsx
+```ts file="data.tsx"
 
 ```
 

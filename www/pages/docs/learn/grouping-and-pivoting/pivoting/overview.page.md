@@ -33,7 +33,7 @@ const groupBy = [{field: 'department'}, {field: 'country'}]
 
 <Sandpack title="Pivoting with avg aggregation">
 
-```ts file=pivoting-example.page.tsx
+```ts file="pivoting-example.page.tsx"
 
 ```
 
@@ -71,7 +71,7 @@ const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
 
 <Sandpack title="Pivot columns inherit from original columns bound to the same field">
 
-```ts file=pivot-column-inherit-example.page.tsx
+```ts file="pivot-column-inherit-example.page.tsx"
 
 ```
 
@@ -107,7 +107,7 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
 
 <Sandpack title="Pivoting with customized pivot column">
 
-```ts file=pivoting-customize-column-example.page.tsx
+```ts file="pivoting-customize-column-example.page.tsx"
 
 ```
 
@@ -119,7 +119,7 @@ In <DPropLink name="pivotBy" nocode>pivot mode</DPropLink> you can configure bot
 
 <Sandpack title="Pivoting with customized position for totals and grand-total columns">
 
-```ts file=$DOCS/reference/pivot-grand-total-column-position-example.page.tsx
+```ts file="$DOCS/reference/pivot-grand-total-column-position-example.page.tsx"
 
 ```
 
@@ -241,7 +241,7 @@ const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
 
 <Sandpack title="Server-side pivoting example">
 
-```ts file=remote-pivoting-example.page.tsx
+```ts file="remote-pivoting-example.page.tsx"
 
 ```
 
@@ -263,7 +263,7 @@ The example below also shows you how to customize the table rows while records a
 
 <Sandpack title="Server side pivoting with lazy loding batching">
 
-```ts file=server-side-pivoting-with-lazy-load-batching-example.page.tsx
+```ts file="server-side-pivoting-with-lazy-load-batching-example.page.tsx"
 
 ```
 

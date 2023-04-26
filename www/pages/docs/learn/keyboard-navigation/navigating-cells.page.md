@@ -13,7 +13,7 @@ Click on a cell in the table and use the arrow keys to navigate around.
 
 </Description>
 
-```ts file=navigating-cells-initial-example.page.tsx
+```ts file="navigating-cells-initial-example.page.tsx"
 
 ```
 
@@ -56,7 +56,7 @@ This example starts with cell `[2,0]` already active.
 
 </Description>
 
-```ts file=navigating-cells-uncontrolled-example.page.tsx
+```ts file="navigating-cells-uncontrolled-example.page.tsx"
 
 ```
 
@@ -80,7 +80,7 @@ This example starts with cell `[2,0]` already active and uses <PropLink name="on
 
 </Description>
 
-```ts file=navigating-cells-controlled-example.page.tsx
+```ts file="navigating-cells-controlled-example.page.tsx"
 
 ```
 
@@ -104,7 +104,7 @@ Press the `Enter` key on the active group row to toggle it.
 
 </Description>
 
-```ts file=$DOCS/reference/keyboard-toggle-group-rows-cell-nav.page.tsx
+```ts file="$DOCS/reference/keyboard-toggle-group-rows-cell-nav.page.tsx"
 
 ```
 
@@ -124,7 +124,7 @@ Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would d
 
 </Description>
 
-```ts file=$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx
+```ts file="$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx"
 
 ```
 
@@ -182,7 +182,7 @@ Use the color picker to configured the desired color for the active cell highlig
 
 </Description>
 
-```ts file=navigating-cells-theming-example.page.tsx
+```ts file="navigating-cells-theming-example.page.tsx"
 
 ```
 

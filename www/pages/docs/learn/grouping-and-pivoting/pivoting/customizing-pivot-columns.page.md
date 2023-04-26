@@ -1,3 +1,7 @@
+---
+title: Customizing Pivot Columns
+---
+
 There are a number of ways to customize the generated pivot columns and we'll cover each of them in this page
 
 ## Inheriting from initial columns
@@ -58,7 +62,7 @@ const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
 
 <Sandpack title="Pivot columns inherit from original columns bound to the same field">
 
-```ts file=pivot-column-inherit-example.page.tsx
+```ts file="pivot-column-inherit-example.page.tsx"
 
 ```
 

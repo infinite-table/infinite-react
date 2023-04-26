@@ -72,7 +72,7 @@ You should use `React.useCallback` / `React.useMemo` / `React.useState` to make 
 
 <Sandpack title="Basic Column Configuration">
 
-```ts file=basic-columns-example.page.tsx
+```ts file="basic-columns-example.page.tsx"
 
 ```
 
@@ -131,7 +131,7 @@ When using controlled <PropLink name="columnOrder" />, make sure you also update
 
 <Sandpack title="Column Order demo, with firstName col displayed twice">
 
-```tsx file=$DOCS/reference/columnOrder-example.page.tsx
+```tsx file="$DOCS/reference/columnOrder-example.page.tsx"
 
 ```
 

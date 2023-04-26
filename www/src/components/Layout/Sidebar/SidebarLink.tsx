@@ -50,20 +50,20 @@ export function SidebarLink({
       title={title}
       aria-current={selected ? 'page' : undefined}
       className={cn(
-        'p-2 pr-2 w-full rounded-none lg:rounded-r-lg text-left hover:bg-highlight-dark hover:opacity-90 relative flex items-center justify-between',
+        'p-2 pr-2 w-full rounded-none lg:rounded-r-lg text-left hover:bg-highlight-dark hover:opacity-90 relative flex items-center justify-between text-base/loose ',
         {
           'my-6': heading,
           'text-primary-dark': heading,
-          'text-base': level > 0,
+          'font-light': level > 0,
           'pl-5': level === 0,
           'pl-7': level === 1,
           'pl-9': level === 2,
-          'text-base font-bold': level === 0,
+          'font-bold': level === 0,
           'text-content-color ': level === 0 && !selected,
-          'text-base text-link': level === 1 && selected,
+          'text-link': level === 1 && selected,
 
-          'text-base text-content-color': !selected && !heading,
-          'text-base text-link bg-highlight-dark border-blue-40  hover:text-link':
+          'text-content-color': !selected && !heading,
+          'text-link bg-highlight-dark border-blue-40  hover:text-link':
             selected,
         },
       )}

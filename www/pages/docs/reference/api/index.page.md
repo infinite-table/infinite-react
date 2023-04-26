@@ -79,7 +79,7 @@ See <PropLink name="columns.defaultEditable" /> for more details on how to confi
 <Sandpack title="Starting an Edit via the API">
 
 
-```ts file=api-start-edit-example.page.tsx
+```ts file="api-start-edit-example.page.tsx"
 ```
 
 </Sandpack>

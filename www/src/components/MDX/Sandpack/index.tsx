@@ -1,3 +1,4 @@
+'use client';
 import {
   SandpackProvider,
   SandpackSetup,
@@ -68,6 +69,7 @@ type SandpackProps = {
 
 function Sandpack(props: SandpackProps) {
   const { children, setup, autorun = true, title } = props;
+  // console.log(props);
   const [resetKey, setResetKey] = React.useState(0);
 
   let modifiedInfiniteVersion: string | undefined;
@@ -75,6 +77,7 @@ function Sandpack(props: SandpackProps) {
   const isSandpackDescriptionElement = (el: React.ReactElement) =>
     el.props.mdxType === 'Description';
 
+  // console.log('children', React.Children.toArray(children));
   const sandpackChildren = React.Children.toArray(
     //@ts-ignore
     children,
@@ -85,15 +88,6 @@ function Sandpack(props: SandpackProps) {
   const description = sandpackChildren.find(isSandpackDescriptionElement);
 
   const { sandpackTemplateFiles, validCustomFileNames } = useInfiniteTemplate();
-
-  const getMetaTag = (tag: string, metaTags: string[]): string | undefined => {
-    const metaTag = metaTags?.find((metaTag) => metaTag.startsWith(`${tag}=`));
-    if (!metaTag) {
-      return;
-    }
-    const [, metaTagValue] = metaTag?.split(/=(.*)/);
-    return metaTagValue;
-  };
 
   const dependencies: Record<string, string> = {
     '@infinite-table/infinite-react':
@@ -113,25 +107,23 @@ function Sandpack(props: SandpackProps) {
   }
 
   let activeFilePath: string | null = null;
+
+  let index = -1;
   const customFiles = codeSnippets.reduce(
-    (
-      result: Record<string, SandpackFile>,
-      codeSnippet: React.ReactElement,
-      index,
-    ) => {
-      if (codeSnippet.props.mdxType !== 'pre') {
+    (result: Record<string, SandpackFile>, codeSnippet: React.ReactElement) => {
+      // if (codeSnippet.props.mdxType !== 'pre') {
+      //   return result;
+      // }
+
+      const { props } = codeSnippet.props.children;
+
+      //@ts-ignore
+      if (codeSnippet.type?.name === 'Description') {
         return result;
       }
-      const { props } = codeSnippet.props.children;
-      let metastring = props.metastring;
-      const inline = !metastring;
-      if (inline) {
-        metastring = `file=App.tsx`;
-      }
+      index++;
 
-      const nodeMetaTags = metastring?.split(/\s+/);
-
-      let fileName = getMetaTag('file', nodeMetaTags);
+      let fileName = props.file;
 
       if (!fileName) {
         throw new Error(`Code block is missing a filename: ${props.children}`);
@@ -145,8 +137,8 @@ function Sandpack(props: SandpackProps) {
       const filePath = fileName.includes('index.html')
         ? `/public/index.html`
         : `/${fileName}`; // path in the folder structure
-      const fileActive = index === 0; //!!getMetaTag('active', nodeMetaTags) || inline;
-      const fileHidden = !!getMetaTag('hidden', nodeMetaTags);
+      const fileActive = index === 0;
+      const fileHidden = props.hidden === 'true' || props.hidden === true;
 
       if (result[filePath]) {
         throw new Error(
@@ -154,6 +146,7 @@ function Sandpack(props: SandpackProps) {
         );
       }
       const initialCode = props.children as string;
+
       const code = replaceCustomVersions(initialCode);
 
       if (code != initialCode) {

@@ -6,7 +6,7 @@
  */
 
 const toString = require('mdast-util-to-string');
-const visit = require('unist-util-visit');
+const { visit } = require('unist-util-visit');
 const slugs = require('github-slugger')();
 
 function patch(context, key, value) {
@@ -28,20 +28,12 @@ module.exports = ({
     visit(tree, 'heading', (node) => {
       // Support custom-id syntax.
       const rawHeader = toString(node);
-      const match = /^.+(\s*\{#([a-z0-9\-_]+?)\}\s*)$/.exec(
-        rawHeader
-      );
-      const id = match
-        ? match[2]
-        : slugs.slug(rawHeader, maintainCase);
+      const match = /^.+(\s*\{#([a-z0-9\-_]+?)\}\s*)$/.exec(rawHeader);
+      const id = match ? match[2] : slugs.slug(rawHeader, maintainCase);
       if (match) {
         // Remove the custom ID part from the text node.
-        const lastNode =
-          node.children[node.children.length - 1];
-        lastNode.value = lastNode.value.replace(
-          match[1],
-          ''
-        );
+        const lastNode = node.children[node.children.length - 1];
+        lastNode.value = lastNode.value.replace(match[1], '');
       }
 
       const data = patch(node, 'data', {});

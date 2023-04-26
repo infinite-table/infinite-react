@@ -52,7 +52,7 @@ The <DataSourcePropLink name="data" /> prop is probably the most important part,
 
 <Sandpack title="Data loading example with promise">
 
-```ts file=basic-example.page.tsx
+```ts file="basic-example.page.tsx"
 
 ```
 
@@ -74,11 +74,11 @@ For basic datasets, which have simple data requirements, using `fetch` is probab
 
 <Sandpack title="Using fetch for remote data">
 
-```ts file=using-fetch-example.page.tsx
+```ts file="using-fetch-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 
@@ -96,11 +96,11 @@ Passing another `data` function, will cause the component to re-execute the func
 
 <Sandpack title="Re-fetching data">
 
-```ts file=refetch-example.page.tsx
+```ts file="refetch-example.page.tsx"
 
 ```
 
-```ts file=columns.ts
+```ts file="columns.ts"
 
 ```
 

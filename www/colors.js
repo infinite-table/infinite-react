@@ -95,7 +95,7 @@ module.exports = {
   // MISC
   'code-block': '#99a1b30f', // gray-30 @ 6%
   'gradient-blue': '#58C4DC', // Only used for the landing gradient for now.
-  github: {
-    highlight: '#fffbdd',
-  },
+  // github: {
+  //   highlight: '#fffbdd',
+  // },
 };

@@ -165,7 +165,7 @@ export const Settings: React.FunctionComponent<{
               )}
               onChange={(option) =>
                 onReducerKeyChange(
-                  (option as typeof reducerKeyOptions[0])
+                  (option as (typeof reducerKeyOptions)[0])
                     ?.value as ReducerOptions,
                 )
               }

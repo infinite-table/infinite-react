@@ -6,7 +6,7 @@ title: Row groups
 
 Specify row groups via the controlled `groupBy` (or uncontrolled `defaultGroupBy`) prop on the `DataSource`.
 
-```tsx title=defining-grouping
+```tsx title="defining-grouping"
 const groupBy = [{ field: 'country' }, { field: 'city' }];
 ```
 

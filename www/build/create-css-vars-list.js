@@ -140,12 +140,12 @@ ${name}
 \`\`\``;
 });
 const newContents = mdFile.replace(
-  /\n<!-- START VARS -->\n((.|\n)*?)\n<!-- END VARS -->/g,
+  /\n\{\/\* START VARS \*\/\}\n((.|\n)*?)\n\{\/\* END VARS \*\/\}/g,
   (_match, _css) => {
     return `
-<!-- START VARS -->
+{/* START VARS */}
 ${formattedVars.join('\n')}
-<!-- END VARS -->`;
+{/* END VARS */}`;
   },
 );
 

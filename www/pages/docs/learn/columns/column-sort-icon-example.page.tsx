@@ -16,7 +16,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     header: 'Name', // custom column header label
     valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
     renderSortIcon: () => {
-      const { columnSortInfo } = useInfiniteHeaderCell();
+      const { columnSortInfo } = useInfiniteHeaderCell(); // eslint-disable-line
       if (!columnSortInfo) {
         return ' 🤷‍♂️';
       }

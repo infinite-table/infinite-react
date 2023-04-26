@@ -1,10 +1,11 @@
+'use client';
 import Link from 'next/link';
 import * as React from 'react';
 import { ReactNode } from 'react';
 
 import { BannerText } from './BannerText';
 
-import { card, SpotlightRadialBackgroundCls } from './components.css';
+import cmpStyles from './components.module.css';
 
 const titleOpacity = 'opacity-80';
 const subtitleOpacity = 'opacity-70';
@@ -31,9 +32,9 @@ export const Card = ({
   noBackgroundOnHover?: boolean;
 }) => {
   const Tag: string = tag || 'a';
-  let cls = `${
-    className || ''
-  } ${card} p-4 sm:p-4 md:p-8 py-10 rounded-sm flex flex-col`;
+  let cls = `${className || ''} ${
+    cmpStyles.card
+  } p-4 sm:p-4 md:p-8 py-10 rounded-sm flex flex-col`;
 
   if (!noBackgroundOnHover) {
     cls += ` hover:bg-opacity-90 hover:bg-deep-dark `;
@@ -55,7 +56,7 @@ export const Card = ({
   const content = (
     <>
       <h3
-        className={titleOpacity}
+        className={`${titleOpacity} text-2xl font-light mb-4`}
         id={href && href.startsWith('#') ? href.substring(1) : undefined}
       >
         {header}
@@ -184,7 +185,7 @@ export const Cards = ({
       {spotlight ? (
         <div
           style={{ position: 'absolute', inset: 0 }}
-          className={`${SpotlightRadialBackgroundCls}`}
+          className={`${cmpStyles.SpotlightRadialBackgroundCls}`}
         ></div>
       ) : null}
 

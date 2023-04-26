@@ -7,7 +7,7 @@ Specify column groups via the controlled <PropLink name="columnGroups" /> (or un
 
 The value is an object, with keys being the group id and value being the group description.
 
-```tsx title=defining-column-groups
+```tsx title="defining-column-groups"
 const columnGroups: Record<string, InfiniteTableColumnGroup> = {
   'contact info': { header: 'Contact info' },
   // `street` column group belongs to the `address` columnGroup
@@ -21,7 +21,7 @@ const columnGroups: Record<string, InfiniteTableColumnGroup> = {
 
 A column group can have a parent column group, specified by the <PropLink name="columnGroups.columnGroup" /> property. The same goes for a column - columns can have <PropLink name="columns.columnGroup">columnGroup</PropLink> as well.
 
-```tsx title=defining-columns-with-groups
+```tsx title="defining-columns-with-groups"
 const columns: Record<string, InfiniteTableColumn<Person>> = {
   id: { field: 'id' },
 
@@ -44,11 +44,11 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 
 <Sandpack>
 
-```tsx file=column-groups-example.page.tsx
+```tsx file="column-groups-example.page.tsx"
 
 ```
 
-```tsx file=column-groups-data.ts
+```tsx file="column-groups-data.ts"
 
 ```
 

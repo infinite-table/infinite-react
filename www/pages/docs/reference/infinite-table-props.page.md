@@ -26,7 +26,7 @@ This example starts with cell `[2,0]` already active.
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx"
 
 ```
 
@@ -52,7 +52,7 @@ This example starts with row at index `2` already active.
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx"
 
 ```
 
@@ -79,7 +79,7 @@ When an object is used, the following properties are available:
 
 <Sandpack title="Auto-sizing columns">
 
-```tsx file=autoSizeColumnsKey-example.page.tsx
+```tsx file="autoSizeColumnsKey-example.page.tsx"
 
 ```
 
@@ -120,7 +120,7 @@ All columns are configured to not be editable, except the `salary` column.
 
 </Description>
 
-```ts file=global-should-accept-edit-example.page.tsx
+```ts file="global-should-accept-edit-example.page.tsx"
 ```
 
 </Sandpack>
@@ -144,11 +144,11 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 
 <Sandpack>
 
-```ts file=columnDefaultWidth-example.page.tsx
+```ts file="columnDefaultWidth-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -170,11 +170,11 @@ The column header height is set to `60` pixels. The column filters will also pic
 
 </Description>
 
-```ts file=columnHeaderHeight-example.page.tsx
+```ts file="columnHeaderHeight-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -191,7 +191,7 @@ Maximum column width can be controlled more granularly via <PropLink name="colum
 
 <Sandpack>
 
-```tsx file=columnMaxWidth-example.page.tsx
+```tsx file="columnMaxWidth-example.page.tsx"
 
 ```
 
@@ -209,7 +209,7 @@ Minimum column width can be controlled more granularly via <PropLink name="colum
 
 <Sandpack>
 
-```tsx file=columnMinWidth-example.page.tsx
+```tsx file="columnMinWidth-example.page.tsx"
 
 ```
 
@@ -237,7 +237,7 @@ Displaying the same column twice is a perfectly valid use case.
 
 <Sandpack title="Column order">
 
-```ts file=columnOrder-example.page.tsx
+```ts file="columnOrder-example.page.tsx"
 
 ```
 
@@ -247,7 +247,7 @@ This prop can either be an array of strings (column ids) or the boolean `true`. 
 
 <Sandpack title="Column order advanced example">
 
-```ts file=columnOrder-advanced-example.page.tsx
+```ts file="columnOrder-advanced-example.page.tsx"
 
 ```
 
@@ -278,11 +278,11 @@ The following properties are available:
 
 <Sandpack>
 
-```ts file=columns-example.page.tsx
+```ts file="columns-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -308,9 +308,9 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 
 <Sandpack>
 
-```ts file=column-className-function-example.page.tsx
+```ts file="column-className-function-example.page.tsx"
 ```
-```css file=coloring.module.css
+```css file="coloring.module.css"
 ```
 
 </Sandpack>
@@ -371,7 +371,7 @@ that is, the `props` that the component is rendered with (is called with) are `H
 
 In order to access the cell-related information, you don't use the props, but you call the <HookLink name="useInfiniteColumnCell"/> hook.
 
-```tsx {4,8}
+```tsx
 const ExampleCellComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
@@ -394,7 +394,7 @@ const ExampleCellComponent: React.FunctionComponent<
 
 <Sandpack title="Custom components">
 
-```tsx file=column-components-example.page.tsx
+```tsx file="column-components-example.page.tsx"
 
 ```
 
@@ -462,7 +462,7 @@ Try editing the `salary` column - it has a custom editor
 
 </Description>
 
-```tsx file=$DOCS/reference/hooks/custom-editor-hooks-example.page.tsx
+```tsx file="$DOCS/reference/hooks/custom-editor-hooks-example.page.tsx"
 ```
 
 </Sandpack>
@@ -509,7 +509,7 @@ that is, the `props` that the component is rendered with (is called with) are `H
 
 In order to access the column header-related information, you don't use the props, but you call the <HookLink name="useInfiniteHeaderCell"/> hook.
 
-```tsx {4,8}
+```tsx
 const ExampleHeaderComponent: React.FunctionComponent<
   React.HTMLProps<HTMLDivElement>
 > = (props) => {
@@ -532,7 +532,7 @@ const ExampleHeaderComponent: React.FunctionComponent<
 
 <Sandpack title="Custom components">
 
-```tsx file=column-components-example.page.tsx
+```tsx file="column-components-example.page.tsx"
 
 ```
 
@@ -548,7 +548,7 @@ const ExampleHeaderComponent: React.FunctionComponent<
 <Sandpack title="Columns with cell content focusable">
 
 
-```ts file=column-contentFocusable-example.page.tsx
+```ts file="column-contentFocusable-example.page.tsx"
 
 ```
 
@@ -569,7 +569,7 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 
 <Sandpack title="First name column(first) has cssEllipsis set to false">
 
-```ts file=columns-cssEllipsis-example.page.tsx
+```ts file="columns-cssEllipsis-example.page.tsx"
 
 ```
 
@@ -618,7 +618,7 @@ Only the `salary` column is editable.
 
 </Description>
 
-```ts file=global-should-accept-edit-example.page.tsx
+```ts file="global-should-accept-edit-example.page.tsx"
 ```
 
 </Sandpack>
@@ -654,7 +654,7 @@ The value for this property can be one of the following:
 
 <Sandpack>
 
-```ts file=columnDefaultHiddenWhenGroupedBy-example.page.tsx
+```ts file="columnDefaultHiddenWhenGroupedBy-example.page.tsx"
 
 ```
 
@@ -685,11 +685,11 @@ If no <PropLink name="columns.header" /> is specified, it will be used as the co
 
 <Sandpack>
 
-```ts file=columns-example.page.tsx
+```ts file="columns-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -703,7 +703,7 @@ Group columns can also be bound to a field, like in the snippet below.
 In this example, the group column is bound to the `firstName` field, so this field will be rendered in non-group rows for this column.
 </Description>
 
-```ts file=group-column-bound-to-field-example.page.tsx
+```ts file="group-column-bound-to-field-example.page.tsx"
 
 ```
 
@@ -733,7 +733,7 @@ This means the sort order defined for `type="number"` will be used while display
 
 </Description>
 
-```ts file=column-filterType-example.page.tsx
+```ts file="column-filterType-example.page.tsx"
 
 ```
 
@@ -777,7 +777,7 @@ In this example, the `salary` for each row includes the currency string.
 
 </Description>
 
-```ts file=inline-editing-custom-edit-value-example.page.tsx
+```ts file="inline-editing-custom-edit-value-example.page.tsx"
 ```
 
 </Sandpack>
@@ -818,7 +818,7 @@ In this example, the `salary` for each row includes the currency string.
 
 </Description>
 
-```ts file=inline-editing-custom-edit-value-example.page.tsx
+```ts file="inline-editing-custom-edit-value-example.page.tsx"
 ```
 
 </Sandpack>
@@ -853,11 +853,11 @@ For configuring the column header height, see the <PropLink name="columnHeaderHe
 
 <Sandpack>
 
-```ts file=columns-header-example.page.tsx
+```ts file="columns-header-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -871,7 +871,7 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 
 <Sandpack title="Column with custom header that uses useInfiniteHeaderCell">
 
-```ts file=column-header-hooks-example.page.tsx
+```ts file="column-header-hooks-example.page.tsx"
 
 ```
 
@@ -887,7 +887,7 @@ In addition, the currency and preferredLanguage columns have a custom context me
 
 </Description>
 
-```ts file=getColumnMenuItems-example.page.tsx
+```ts file="getColumnMenuItems-example.page.tsx"
 
 ```
 
@@ -930,7 +930,7 @@ For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
 
 <Sandpack title="Preferred Language column(second) has headerCssEllipsis set to false">
 
-```ts file=columns-cssEllipsis-example.page.tsx
+```ts file="columns-cssEllipsis-example.page.tsx"
 
 ```
 
@@ -1007,7 +1007,7 @@ The <PropLink name="columns.render">render</PropLink> and <PropLink name="column
 
 <Sandpack title="Column with custom render">
 
-```ts file=column-render-example.page.tsx
+```ts file="column-render-example.page.tsx"
 
 ```
 
@@ -1021,7 +1021,7 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 <Sandpack title="Column with custom render that uses useInfiniteColumnCell">
 
-```ts file=column-render-hooks-example.page.tsx
+```ts file="column-render-hooks-example.page.tsx"
 
 ```
 
@@ -1043,7 +1043,7 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </Description>
 
-```ts file=$DOCS/learn/columns/column-filter-icon-example.page.tsx
+```ts file="$DOCS/learn/columns/column-filter-icon-example.page.tsx"
 ```
 
 </Sandpack>
@@ -1064,7 +1064,7 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 <Sandpack title="Column with custom renderGroupIcon">
 
-```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+```tsx file="column-renderGroupValueAndRenderLeafValue-example.page.tsx"
 
 ```
 
@@ -1093,7 +1093,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```ts file=getColumnMenuItems-example.page.tsx
+```ts file="getColumnMenuItems-example.page.tsx"
 
 ```
 
@@ -1126,7 +1126,7 @@ To understand how the rendering pipeline works, head over to the page on [Column
 This example shows how you can use the default selection checkbox and decorate it.
 </Description>
 
-```tsx file=column-renderSelectionCheckBox-example.page.tsx
+```tsx file="column-renderSelectionCheckBox-example.page.tsx"
 
 ```
 
@@ -1151,7 +1151,7 @@ See related <PropLink name="columns.renderLeafValue" /> for customizing the valu
 
 <Sandpack title="Column with custom renderGroupValue">
 
-```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+```tsx file="column-renderGroupValueAndRenderLeafValue-example.page.tsx"
 
 ```
 
@@ -1167,7 +1167,7 @@ See related <PropLink name="columns.renderGroupValue" /> for customizing the val
 
 <Sandpack title="Column with custom renderLeafValue">
 
-```tsx file=column-renderGroupValueAndRenderLeafValue-example.page.tsx
+```tsx file="column-renderGroupValueAndRenderLeafValue-example.page.tsx"
 
 ```
 
@@ -1202,7 +1202,7 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 
 <Sandpack title="Column with custom renderValue">
 
-```tsx file=column-renderValue-example.page.tsx
+```tsx file="column-renderValue-example.page.tsx"
 
 ```
 
@@ -1239,7 +1239,7 @@ The `rowInfo` object contains information about grouping (if this row is a group
 
 <Sandpack>
 
-```ts file=column-rowspan-example.page.tsx
+```ts file="column-rowspan-example.page.tsx"
 
 ```
 
@@ -1277,7 +1277,7 @@ Try editing the `salary` column. In the editor you can write whatever, but the c
 
 </Description>
 
-```ts file=inline-editing-custom-edit-value-example.page.tsx
+```ts file="inline-editing-custom-edit-value-example.page.tsx"
 ```
 
 </Sandpack>
@@ -1306,7 +1306,7 @@ The value of this prop (as specified, or as computed by the steps described abov
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
-```ts file=./datasource-props/sortTypes-example.page.tsx
+```ts file="./datasource-props/sortTypes-example.page.tsx"
 
 ```
 
@@ -1333,7 +1333,7 @@ The `style` property can also be specified for <PropLink name="columnTypes"/>
 
 <Sandpack>
 
-```ts file=columns-style-example.page.tsx
+```ts file="columns-style-example.page.tsx"
 
 ```
 
@@ -1375,11 +1375,11 @@ See the example below - `id` and `age` columns are `type='number'`.
 
 <Sandpack>
 
-```ts file=columns-example.page.tsx
+```ts file="columns-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -1402,7 +1402,7 @@ If you want to further customize what's being rendered, see related <PropLink na
 
 <Sandpack title="Column with custom valueFormatter">
 
-```tsx file=column-valueFormatter-example.page.tsx
+```tsx file="column-valueFormatter-example.page.tsx"
 
 ```
 
@@ -1426,7 +1426,7 @@ If you want to further customize what's being rendered, see related <PropLink na
 
 <Sandpack title="Column with custom valueGetter">
 
-```tsx file=column-valueGetter-example.page.tsx
+```tsx file="column-valueGetter-example.page.tsx"
 
 ```
 
@@ -1449,7 +1449,7 @@ It is an object that maps column ids to column sizing options. The values in the
 
 <Sandpack title="Controlled column sizing">
 
-```tsx file=columnSizing-example.page.tsx
+```tsx file="columnSizing-example.page.tsx"
 
 ```
 
@@ -1473,7 +1473,7 @@ A column can either be flexible or fixed-width. For fixed columns, use <PropLink
 
 <Sandpack title="Controlled column sizing with flex columns">
 
-```tsx file=columnSizing-example.page.tsx
+```tsx file="columnSizing-example.page.tsx"
 
 ```
 
@@ -1491,7 +1491,7 @@ This can also be specified for all columns by specifying <PropLink name="columnM
 
 <Sandpack title="Controlled column sizing with minWidth for column">
 
-```tsx file=columnSizing-example.page.tsx
+```tsx file="columnSizing-example.page.tsx"
 
 ```
 
@@ -1508,7 +1508,7 @@ This can also be specified for all columns by specifying <PropLink name="columnM
 
 <Sandpack title="Controlled column sizing with maxWidth for column">
 
-```tsx file=columnSizing-example.page.tsx
+```tsx file="columnSizing-example.page.tsx"
 
 ```
 
@@ -1525,7 +1525,7 @@ A column can either be flexible or fixed. For flexible columns, use <PropLink na
 
 <Sandpack title="Controlled column sizing with fixed column">
 
-```tsx file=columnSizing-example.page.tsx
+```tsx file="columnSizing-example.page.tsx"
 
 ```
 
@@ -1641,7 +1641,7 @@ This example starts with cell `[2,0]` already active.
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx"
 
 ```
 
@@ -1673,7 +1673,7 @@ This example starts with row at index `2` already active.
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-rows-uncontrolled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-rows-uncontrolled-example.page.tsx"
 
 ```
 
@@ -1701,7 +1701,7 @@ See [Column Order](/docs/learn/columns/column-order) for more details on orderin
 
 <Sandpack title="Uncontrolled column order">
 
-```ts file=defaultColumnOrder-example.page.tsx
+```ts file="defaultColumnOrder-example.page.tsx"
 
 ```
 
@@ -1723,7 +1723,7 @@ It is an object that maps column ids to column sizing options. The values in the
 
 <Sandpack title="Uncontrolled column sizing">
 
-```tsx file=defaultColumnSizing-example.page.tsx
+```tsx file="defaultColumnSizing-example.page.tsx"
 
 ```
 
@@ -1779,11 +1779,11 @@ For applying a className when the focus is within the component, see <PropLink n
 
 <Sandpack>
 
-```ts file=domprops-example.page.tsx
+```ts file="domprops-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -1840,11 +1840,11 @@ For applying a className when the component root element is focused, see <PropLi
 
 <Sandpack title="focusedStyle example">
 
-```ts file=focusedStyle-example.page.tsx
+```ts file="focusedStyle-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -1863,11 +1863,11 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 <Sandpack title="focusedWithinStyle example - focus an input inside the table to see it in action">
 
-```ts file=focusedWithinStyle-example.page.tsx
+```ts file="focusedWithinStyle-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -1893,7 +1893,7 @@ The `getCellContextMenuItems` function can return one of the following:
 
 <Sandpack title="Using context menus">
 
-```ts file=cell-basic-context-menu-example.page.tsx
+```ts file="cell-basic-context-menu-example.page.tsx"
 
 ```
 
@@ -1936,7 +1936,7 @@ Right-click any cell in the table to see a context menu with multiple columns (`
 </Description>
 
 
-```ts file=cells-with-custom-columns-context-menu-example.page.tsx
+```ts file="cells-with-custom-columns-context-menu-example.page.tsx"
 ```
 
 </Sandpack>
@@ -1958,7 +1958,7 @@ If this function returns null, the default context menu of the browser will be s
 
 <Sandpack title="Using context menus for the whole table">
 
-```ts file=table-basic-context-menu-example.page.tsx
+```ts file="table-basic-context-menu-example.page.tsx"
 
 ```
 
@@ -1987,7 +1987,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </Description>
 
-```ts file=getColumnMenuItems-example.page.tsx
+```ts file="getColumnMenuItems-example.page.tsx"
 
 ```
 
@@ -2019,7 +2019,7 @@ You can still use <PropLink name="groupColumn" /> as a function with single colu
 
 <Sandpack title="groupColumn used as an object">
 
-```ts file=group-column-custom-renderers-example.page.tsx
+```ts file="group-column-custom-renderers-example.page.tsx"
 
 ```
 
@@ -2033,7 +2033,7 @@ This example shows how to use <PropLink name="groupColumn" /> as a function that
 
 </Description>
 
-```ts file=group-column-custom-renderers-example.page.tsx
+```ts file="group-column-custom-renderers-example.page.tsx"
 
 ```
 
@@ -2045,15 +2045,15 @@ This example shows how to use <PropLink name="groupColumn" /> as a function that
 
 > Determines how grouping is rendered - whether a single or multiple columns are generated.
 
-<!-- In case of inline, no group column is generated but the column corresponding to the group field is used. -->
+
 
 <Sandpack>
 
-```ts file=groupRenderStrategy-example.page.tsx
+```ts file="groupRenderStrategy-example.page.tsx"
 
 ```
 
-```ts file=employee-columns.ts
+```ts file="employee-columns.ts"
 
 ```
 
@@ -2072,7 +2072,7 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 
 </Description>
 
-```ts file=hideColumnWhenGrouped-example.page.tsx
+```ts file="hideColumnWhenGrouped-example.page.tsx"
 
 ```
 
@@ -2085,11 +2085,11 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 
 <Sandpack>
 
-```ts file=hideEmptyGroupColumns-example.page.tsx
+```ts file="hideEmptyGroupColumns-example.page.tsx"
 
 ```
 
-```ts file=employee-columns.ts
+```ts file="employee-columns.ts"
 
 ```
 
@@ -2117,7 +2117,7 @@ This example starts with cell `[2,0]` already active.
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx"
 
 ```
 
@@ -2131,7 +2131,7 @@ In this example the keyboard navigation is disabled.
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigation-disabled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigation-disabled-example.page.tsx"
 
 ```
 
@@ -2149,7 +2149,7 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 <Sandpack  title="Toggling keyboard navigation">
 
-```ts file=default-selection-mode-multi-row-keyboard-toggle-example.page.tsx
+```ts file="default-selection-mode-multi-row-keyboard-toggle-example.page.tsx"
 
 ```
 
@@ -2163,7 +2163,7 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 <Sandpack title="Customized loading text">
 
-```ts file=loadingText-example.page.tsx
+```ts file="loadingText-example.page.tsx"
 
 ```
 
@@ -2185,7 +2185,7 @@ This example uses `onActiveCellIndexChange` to react to changes in the `activeCe
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx"
 
 ```
 
@@ -2207,7 +2207,7 @@ This example uses `onActiveRowIndexChange` to react to changes in the `activeRow
 
 </Description>
 
-```ts file=$DOCS/learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx
+```ts file="$DOCS/learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx"
 
 ```
 
@@ -2229,11 +2229,11 @@ This callback is fired when a focusable element inside the component is blurred,
 
 <Sandpack title="Blur an input inside the table to see the callback fired">
 
-```ts file=onBlurWithin-example.page.tsx
+```ts file="onBlurWithin-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -2275,7 +2275,7 @@ See related <PropLink name="onViewportReservedWidthChange" />
 
 <Sandpack title="Controlled column sizing example with onColumnSizingChange">
 
-```ts file=onColumnSizingChange-example.page.tsx
+```ts file="onColumnSizingChange-example.page.tsx"
 
 ```
 
@@ -2333,11 +2333,11 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 
 <Sandpack title="Focus an input inside the table to see the callback fired">
 
-```ts file=onFocusWithin-example.page.tsx
+```ts file="onFocusWithin-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -2384,7 +2384,7 @@ If you want to scroll to the top of the table, you can use the <PropLink name="s
 
 <Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
 
-```ts file=$DOCS/learn/working-with-data/live-pagination-example.page.tsx
+```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 
 ```
 
@@ -2406,7 +2406,7 @@ When he user is performing a column resize (via drag & drop), <PropLink name="on
 Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
 </Description>
 
-```ts file=viewportReservedWidth-example.page.tsx
+```ts file="viewportReservedWidth-example.page.tsx"
 
 ```
 
@@ -2452,7 +2452,7 @@ For normal pivot total columns, see <PropLink name="pivotTotalColumnPosition"/>.
 
 <Sandpack title="Pivoting with pivotGrandTotalColumnPosition=start">
 
-```ts file=pivot-grand-total-column-position-example.page.tsx
+```ts file="pivot-grand-total-column-position-example.page.tsx"
 
 ```
 
@@ -2478,7 +2478,7 @@ In case there are no pivot fields, but <DataSourcePropLink name="pivotBy"/> is a
 
 <Sandpack title="Pivoting with pivotTotalColumnPosition=start">
 
-```ts file=pivot-total-column-position-example.page.tsx
+```ts file="pivot-total-column-position-example.page.tsx"
 
 ```
 
@@ -2500,7 +2500,7 @@ For resizable columns, hover the mouse between column headers to grab & drag the
 Hold SHIFT when grabbing in order to **share space on resize**.
 </Description>
 
-```ts file=resizableColumns-example.page.tsx
+```ts file="resizableColumns-example.page.tsx"
 
 ```
 
@@ -2514,11 +2514,11 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 <Sandpack title="rowHeight as number">
 
-```ts file=rowHeight-number-example.page.tsx
+```ts file="rowHeight-number-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -2526,11 +2526,11 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 <Sandpack title="rowHeight from CSS variable name">
 
-```ts file=rowHeight-cssvar-example.page.tsx
+```ts file="rowHeight-cssvar-example.page.tsx"
 
 ```
 
-```ts file=data.ts
+```ts file="data.ts"
 
 ```
 
@@ -2584,7 +2584,7 @@ You can either return a valid style object, or undefined.
 
 </AnatomyStep>
 
-```tsx [[1, 5, "data: Employee | null;"], [2,6,"rowInfo: InfiniteTableRowInfo<Employee>;"], [3,11,"{ background: 'tomato' };"]]
+```tsx
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   data,
   rowInfo,
@@ -2607,11 +2607,11 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 
 <Sandpack title="rowStyle example usage">
 
-```ts file=rowStyle-example.page.tsx
+```ts file="rowStyle-example.page.tsx"
 
 ```
 
-```ts file=rowStyle-example-columns.ts
+```ts file="rowStyle-example-columns.ts"
 
 ```
 
@@ -2635,7 +2635,7 @@ For reacting to column resizing, you need to listen to <PropLink name="onViewpor
 Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
 </Description>
 
-```ts file=viewportReservedWidth-example.page.tsx
+```ts file="viewportReservedWidth-example.page.tsx"
 
 ```
 
@@ -2672,7 +2672,7 @@ Edit the `salary` column. Only valid numbers are persisted.
 
 </Description>
 
-```ts file=global-should-accept-edit-example.page.tsx
+```ts file="global-should-accept-edit-example.page.tsx"
 ```
 
 </Sandpack>
@@ -2687,7 +2687,7 @@ Use this property to declaratively tell the `InfiniteTable` component to scroll 
 
 <Sandpack title="Declaratively scrolling to the top of the table">
 
-```ts file=scrollTopKey-example.page.tsx
+```ts file="scrollTopKey-example.page.tsx"
 
 ```
 

@@ -49,7 +49,11 @@ const variantMap = {
   },
 };
 
-function ExpandableCallout({ children, type, title }: ExpandableCalloutProps) {
+function ExpandableCallout({
+  children,
+  type = 'note',
+  title,
+}: ExpandableCalloutProps) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const variant = variantMap[type];
 
@@ -74,9 +78,5 @@ function ExpandableCallout({ children, type, title }: ExpandableCalloutProps) {
     </div>
   );
 }
-
-ExpandableCallout.defaultProps = {
-  type: 'note',
-};
 
 export default ExpandableCallout;

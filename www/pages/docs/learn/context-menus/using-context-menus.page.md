@@ -49,7 +49,7 @@ Right-click any cell in the table to see the custom context menu.
 </Description>
 
 
-```ts file=basic-cells-context-menu-example.page.tsx
+```ts file="basic-cells-context-menu-example.page.tsx"
 ```
 
 </Sandpack>
@@ -101,7 +101,7 @@ Right-click any cell in the table to see a context menu with multiple columns (`
 </Description>
 
 
-```ts file=custom-columns-context-menu-example.page.tsx
+```ts file="custom-columns-context-menu-example.page.tsx"
 ```
 
 </Sandpack>
@@ -128,7 +128,7 @@ Right-click outside cells in the table to see a context menu for the table body.
 </Description>
 
 
-```ts file=table-context-menu-example.page.tsx
+```ts file="table-context-menu-example.page.tsx"
 ```
 
 </Sandpack>

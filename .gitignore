@@ -94,6 +94,10 @@ react-test
 
 test-results
 
-/www/LICENSE.md
+/www/pages/eula.page.md
 
 *.tsbuildinfo
+
+.contentlayer
+
+/www/public/_pagefind

@@ -26,7 +26,7 @@ The recently-released version `1.1.0` of Infinite Table for React introduces sup
 
 In order to enable filtering - specify the <DPropLink name="defaultFilterValue"/> property on the `<DataSource />` component, as shown below:
 
-```tsx {4} title=Enabling_filters_on_the_DataSource
+```tsx {4} title="Enabling_filters_on_the_DataSource"
 <DataSource<Developer>
   data={/* ... */}
   primaryKey="id"
@@ -42,7 +42,7 @@ This configures the `<DataSource />` component with an empty array of filters; c
 
 Of course, you can define some initial filters:
 
-```tsx title=Initial_filters:_filter_by_age_greater_than_40
+```tsx title="Initial_filters:_filter_by_age_greater_than_40"
 defaultFilterValue={[
   {
     field: 'age',

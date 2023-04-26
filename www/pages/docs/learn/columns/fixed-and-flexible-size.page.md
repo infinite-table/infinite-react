@@ -124,7 +124,7 @@ This example has a `viewportReservedWidth` of `50px`.
 
  </Description>
 
-```tsx file=$DOCS/reference/viewportReservedWidth-example.page.tsx
+```tsx file="$DOCS/reference/viewportReservedWidth-example.page.tsx"
 
 ```
 
@@ -134,7 +134,7 @@ Take a look at the snippet below to see column sizing at work with flexible and 
 
 <Sandpack title="Using controlled columnSizing">
 
-```tsx file=$DOCS/reference/columnSizing-example.page.tsx
+```tsx file="$DOCS/reference/columnSizing-example.page.tsx"
 
 ```
 
@@ -241,7 +241,7 @@ The columns in the `Finance` group can be resized an extra `30px` (they have a `
 
 </Description>
 
-```tsx file=$DOCS/reference/column-groups-example.page.tsx
+```tsx file="$DOCS/reference/column-groups-example.page.tsx"
 
 ```
 
@@ -277,7 +277,7 @@ When an object is used, the following properties are available:
 
 <Sandpack title="Auto-sizing columns">
 
-```tsx file=$DOCS/reference/autoSizeColumnsKey-example.page.tsx
+```tsx file="$DOCS/reference/autoSizeColumnsKey-example.page.tsx"
 
 ```
 

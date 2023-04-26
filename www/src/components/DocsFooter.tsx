@@ -4,12 +4,17 @@ import NextLink from 'next/link';
 import * as React from 'react';
 
 import { IconNavArrow } from './Icon/IconNavArrow';
-import { RouteMeta } from './Layout/useRouteMeta';
 
-export type DocsPageFooterProps = Pick<
-  RouteMeta,
-  'route' | 'nextRoute' | 'prevRoute'
->;
+export type DocsPageRoute = {
+  path: string;
+  title: string;
+  heading?: boolean;
+};
+export type DocsPageFooterProps = {
+  route: DocsPageRoute;
+  nextRoute?: DocsPageRoute;
+  prevRoute?: DocsPageRoute;
+};
 
 function areEqual(prevProps: DocsPageFooterProps, props: DocsPageFooterProps) {
   return prevProps.route?.path === props.route?.path;

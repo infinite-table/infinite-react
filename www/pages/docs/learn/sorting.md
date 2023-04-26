@@ -4,14 +4,14 @@ Sorting is done by the `DataSource` component which controls the `data` of the v
 
 Sorting can be **single** or **multiple** - meaning it can operate on a single field in the datasource or on multiple fields. For single sorting, the `defaultSortInfo` (or controlled `sortInfo`) props should be an object (or null or undefined),
 
-```tsx title=uncontrolled-single-sorting
+```tsx title="uncontrolled-single-sorting"
 const defaultSortInfo = { dir: 1, field: 'NameOfFieldYouWantToSortBy' };
 <DataSource<T> defaultSortInfo={defaultSortInfo} />;
 ```
 
 while for multiple sorting, you need to specify an array.
 
-```tsx title=uncontrolled-multiple-sorting
+```tsx title="uncontrolled-multiple-sorting"
 const defaultSortInfo = [
   { dir: 1, field: 'NameOfFieldYouWantToSortBy' },
   { dir: -1, field: 'SecondField' },

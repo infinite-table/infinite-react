@@ -7,8 +7,6 @@ A natural next step when grouping data is **aggregating the grouped values**. We
 
 The aggregations are defined on the `<DataSource />` component and are easily available at render time. A client-side aggregation needs a reducer function that accumulates the values in the data array and computes the final result.
 
-
-
 <Note>
 
 Throughout the docs, we might refer to aggregations as reducers - which, more technically, they are, since they reduce an array of values (from a group) to a single value.
@@ -40,7 +38,7 @@ For more complex scenarios, the aggregation should have a `getter` function. If 
 
 Use this `getter` function to compute the value the current item in the array brings to the aggregation.
 
-```tsx title=Aggregation_custom_getter_function
+```tsx title="Aggregation_custom_getter_function"
 // useful for retrieving nested values
 
 getter: (dataItem: Developer) => data.salary.net
@@ -59,16 +57,16 @@ The completion `done` function is optional - if specified, will be after iterati
   - `data` - the grouped data array.
   This is useful for computing averages, for example:
 
-  ```tsx title=Done_function_for_avg_reducer
-    done: (acc, data) => acc / data.length
-  ```
+```tsx title="Done function for avg reducer"
+  done: (acc, data) => acc / data.length
+```
 
 
 ### Putting it all together
 
 Let's take a look at a simple example of aggregating two columns, one to display the avg and the other one should compute the sum of the salary column for grouped rows.
 
-```tsx title=Average_Aggregation
+```tsx title="Average Aggregation"
 import { DataSource, InfiniteTable } from '@infinite-table/infinite-react';
 
 const sum = (a: number, b: number) => a + b;
@@ -88,7 +86,6 @@ const reducers = {
   }
 }
 
-
 function App() {
   return <DataSource<Developer>
     aggregationReducers={reducers}
@@ -101,12 +98,12 @@ function App() {
 
 In the above example, note that aggregations are an object where the keys of the object are used to identify the aggregation and the values are the aggregation configuration objects, as described above.
 
-
 <Hint>
 
 At run-time, you have access to the aggregation reducer results inside group rows - you can use the `rowInfo.reducerResults` object to access those values. For the example above, you change how group rows are rendered for a certain column and display the aggregation results in a custom way:
 
-```tsx {9} title=Custom_group_row_rendering_for_the_country_column
+```tsx {9} title="Custom_group_row_rendering_for_the_country_column"
+
 country: {
   field: 'country',
 
@@ -124,7 +121,7 @@ country: {
 
 <Sandpack title="Sum and average aggregation example">
 
-```ts file=aggregations-simple-example.page.tsx
+```ts file="aggregations-simple-example.page.tsx"
 
 ```
 </Sandpack>
@@ -151,7 +148,7 @@ Besides the above information, if filtering is used, a `fiterValue` is also made
 
 In order to showcase the server-side aggregations, let's build an example similar to the above one, but let's lazily load group data. 
 
-```tsx {2} title=DataSource_with_lazyLoad enabled
+```tsx {2} title="DataSourcewith lazyLoad enabled"
 <DataSource
   lazyLoad
   ...
@@ -160,7 +157,7 @@ In order to showcase the server-side aggregations, let's build an example simila
 
 As soon a grouping and aggregations are no longer computed on the client, your `data` function needs to send those configurations on the backend, so it needs to get a bit more complicated:
 
-```tsx title=Data_function_sending_configurations_to_the_backend
+```tsx title="Data_function_sending_configurations_to_the_backend"
 const data = ({ groupBy, aggregationReducers, sortInfo, groupKeys }) => {  
    // it's important to send the current group keys - for top level, this will be []
   const args: string[] = [`groupKeys=${JSON.stringify(groupKeys)}`];
@@ -240,7 +237,7 @@ Grouping is done by the `country`, `city` and `stack` columns.
 
 </Description>
 
-```tsx file=grouping-and-aggregations-with-lazy-load-example.page.tsx
+```tsx file="grouping-and-aggregations-with-lazy-load-example.page.tsx"
 ```
 
 </Sandpack>

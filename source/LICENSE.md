@@ -1,15 +1,14 @@
 These terms and conditions ("Terms") are contracted between Webreactor SRL. ("Licensor") and the entity whose details are provided in the License Quotation ("Licensee").
 This is effective as of the date of acceptance of these Terms ("Effective Date").
 
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [TERMS AND CONDITIONS](#terms-and-conditions)
-  - [1.  Definitions and interpretation](#1--definitions-and-interpretation)
+  - [1. Definitions and interpretation](#1-definitions-and-interpretation)
     - [1.1 Definitions](#11-definitions)
     - [1.2 Interpretation](#12-interpretation)
-  - [2.  Basis of terms](#2--basis-of-terms)
+  - [2. Basis of terms](#2-basis-of-terms)
     - [2.1](#21)
     - [2.2](#22)
     - [2.3](#23)
@@ -32,14 +31,14 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
     - [5.1](#51)
     - [5.2](#52)
     - [5.3](#53)
-  - [6.  Warranties](#6--warranties)
+  - [6. Warranties](#6-warranties)
     - [6.1](#61)
     - [6.2](#62)
     - [6.3](#63)
     - [6.4](#64)
-  - [7.  Insurance](#7--insurance)
+  - [7. Insurance](#7-insurance)
     - [7.1](#71)
-  - [8.  Intellectual Property Rights](#8--intellectual-property-rights)
+  - [8. Intellectual Property Rights](#8-intellectual-property-rights)
     - [8.1](#81)
     - [8.2](#82)
     - [8.3](#83)
@@ -81,7 +80,7 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
     - [18.11](#1811)
     - [18.12](#1812)
 - [Support Schedule](#support-schedule)
-  - [1.  Scope of Support Services](#1--scope-of-support-services)
+  - [1. Scope of Support Services](#1-scope-of-support-services)
     - [1.1](#11)
     - [1.2](#12)
     - [1.3](#13)
@@ -94,69 +93,341 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
 
 # TERMS AND CONDITIONS
 
-## 1.  Definitions and interpretation
+## 1. Definitions and interpretation
 
 ### 1.1 Definitions
 
 In these Terms, where the context so admits, the following words and expressions shall have the following meanings:
 
-| Term                             | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Application**                  | any software, application or elements developed by or on behalf of the Licensee using the Software;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |  | **Bug** | means any error, defect or malfunction in the Software that: (a) causes the integrity of its data to be compromised or corrupted; (b) causes an unexpected error message or fatal error to occur while using the Software; (c) causes the Software to fail to conform to any applicable warranties, including those set out in clause 6.1; |
-| **Business Day**                 | means each day which is not a weekend day or public holiday in the country in which the Licensor is located                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| **Confidential Information**     | means all information (whether written, oral or in some other form) disclosed to or obtained by one party (whether directly or indirectly) from the other (whether before or after the Effective Date), including all information relating to that other's business, operations, systems, processes, products, trade secrets, know-how, contracts, finances, plans, strategies or current, former or prospective clients, customers, partners or suppliers (together with copies made of any of the foregoing) and which information is marked as being confidential or might reasonably be assumed to be confidential, but excluding information which: **(a)** is available to the public other than because of any breach of these Terms; **(b)** is, when it is supplied, already known to whoever it is disclosed to in circumstances in which they are not prevented from disclosing it to others; **(c)** is independently obtained by whoever it is disclosed to in circumstances in which they are not prevented from disclosing it to others; or **(d)** is trivial or obvious;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| **Data Protection Legislation**  | all applicable legislation for the time being in force pertaining to data protection, data privacy, data retention and/or data security (including the General Data Protection Regulation (Regulation 2016/679) ("GDPR") the Privacy and Electronic Communication Directive (Directive 2002/58/EC) and national legislation implementing or supplementing such legislation in the United Kingdom and any applicable member state of the European Union, including the Data Protection Act 2018) and all associated codes of practice and other guidance issued by any applicable data protection authority;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| **Developer License**            | means a license of the Licensed Materials granted to the Licensee which permits the Licensee to develop Applications using the Licensed Materials in accordance with and subject to these Terms                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| **Documentation**                | means the operating manuals, user instructions, technical literature and all other related materials in eye-readable form supplied to the Licensee by the Licensor (whether in online, electronic or printed form) for aiding the use and application of the Software;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Fees**                         | means the fees for the Services, as set out in the relevant Quotation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| **Insolvency Event**             | means, in relation to a person (which includes an individual and a legal person, such as a limited company), any of the following events: **(a)** a meeting of creditors of that person being held or an arrangement or composition with or for the benefit of its creditors (including a voluntary arrangement as defined in the Insolvency Act 1986) being proposed by or in relation to that person; **(b)** a charge-holder, receiver, administrative receiver or other similar person taking possession of or being appointed over or any distress, execution or other process being levied or enforced (and not being discharged within seven days) on the whole or a material part of the assets of that person; **(c)** that person ceasing to carry on business or being deemed to be unable to pay its debts within the meaning of section 123 Insolvency Act 1986 (except that, for the purposes of this agreement, the reference to £750 in section 123(1) of that Act shall be construed as a reference to £10,000); **(d)** that person or its directors or the holder of a qualifying floating charge or any of its creditors giving notice of their intention to appoint, appointing or making an application to the court for the appointment of, an administrator; **(e)** a petition being advertised or a resolution being passed or an order being made for the administration or the winding-up, bankruptcy or dissolution of that person; or **(f)** the happening in relation to that person of an event analogous to any of the above in any jurisdiction in which it is incorporated or resident or in which it carries on business or has assets. |
-| **Intellectual Property Rights** | means patents, patentable rights, copyright, design rights, utility models, trade marks (whether or not any of the above are registered), trade names, rights in domain names, rights in inventions, rights in data, database rights and confidential information, and all other intellectual and industrial property and similar or analogous rights existing under the laws of any country and all pending applications for and right to apply for or register the same (present, future and contingent, and including all renewals, extensions, revivals and all accrued rights of action);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| **License Quotation**            | means a written quotation (whether in online, electronic or printed form) agreed between the parties in relation to the Licensed Materials which shall be deemed to incorporate these Terms;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **Licensed Materials**           | means the Software and related Documentation;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| **Licensee Developers**          | means the Licensee's employees, workers and contractors who are authorised by the Licensee to, and qualified to, develop software products that include the Software;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| **Licensee Materials**           | means all intellectual property, works, products, documentation, information, data and other material of any kind (including computer software and firmware, designs and specifications) provided or made available by or on behalf of the Licensee in connection with these Terms;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| **Licensor Materials**           | means all intellectual property, works, products, documentation, information, data and other material of any kind (including computer software and firmware, designs and specifications) provided or made available by or on behalf of the Licensor in connection with these Terms, excluding the Licensed Materials;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| **Losses**                       | means all losses, liabilities, demands, claims, judgments, awards, damages, amounts payable in settlement, costs and expenses (including all legal and other professional fees, expenses and disbursements);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **Modification**                 | means: **(a)** any addition to or deletion from the contents of a file included in the Software or previous Modifications created by the Licensee; and/or **(b)** any new file that leverages any part of the Software or previous Modifications;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **New Version**                  | means any new version of the Software which from time to time is publicly marketed and offered for licensing by the Licensor in the course of its normal business, being a version which contains such significant differences from the previous versions as to be generally accepted in the marketplace as constituting a new product                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Our Website**                  | means https://infinite-table.com                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Proficiency**                  | has the meaning set out in clause 8.3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| **Quotation(s)**                 | has the meaning set out in clause 2.2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| **Quotation Effective Date**     | has the meaning set out in clause 14.1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Quotation Initial Term**       | has the meaning set out in clause 14.1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Quotation Renewal Term**       | has the meaning set out in clause 14.1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Production Environment**       | means a computer, server, collection of servers, data centre, cloud instance, container or similar where the Licensee's services and/or store are made available to the Licensee's customers                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **Services**                     | means the services (including the supply of Licensed Materials and Support Services), set out in the relevant Quotation, to be provided by the Licensor under such Quotation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **Site**                         | means @infinite-table/infinite-react package on the public npm registry; or any UMD bundle with an "infinite-table" prefix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| **Software**                     | means the Infinite Table software made available by the Licensor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Source Code**                  | means the human-readable form of computer software, together with all documentation and comments relating thereto sufficient for a reasonably skilled computer programmer to understand, use, support and modify such computer software;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| **Special Usage License**        | means a Developer License provided at no-cost on the terms set out in clause 4.1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Support Release**              | means a release of the Software which corrects faults, adds functionality or otherwise amends or upgrades the Software, but which does not constitute a New Version                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| **Support Request**              | means a request communicated by the Licensee to the Licensor to report a Bug or to request some other support service or assistance;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| **Support Services**             | means the support services, to be provided by the Licensor in respect of the Software (including the provision of Updates), as set out in the Support Schedule; and                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Application</strong></td>
+      <td>
+        any software, application or elements developed by or on behalf of the
+        Licensee using the Software;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Bug</strong></td>
+      <td>
+        means any error, defect or malfunction in the Software that: (a) causes
+        the integrity of its data to be compromised or corrupted; (b) causes an
+        unexpected error message or fatal error to occur while using the
+        Software; (c) causes the Software to fail to conform to any applicable
+        warranties, including those set out in clause 6.1
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Business Day</strong></td>
+      <td>
+        means each day which is not a weekend day or public holiday in the
+        country in which the Licensor is located
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Confidential Information</strong></td>
+      <td>
+        means all information (whether written, oral or in some other form)
+        disclosed to or obtained by one party (whether directly or indirectly)
+        from the other (whether before or after the Effective Date), including
+        all information relating to that other’s business, operations, systems,
+        processes, products, trade secrets, know-how, contracts, finances,
+        plans, strategies or current, former or prospective clients, customers,
+        partners or suppliers (together with copies made of any of the
+        foregoing) and which information is marked as being confidential or
+        might reasonably be assumed to be confidential, but excluding
+        information which: <strong>(a)</strong> is available
+        to the public other than because of any breach of these Terms;
+        <strong>(b)</strong> is, when it is supplied, already
+        known to whoever it is disclosed to in circumstances in which they are
+        not prevented from disclosing it to others;
+        <strong>(c)</strong> is independently obtained by
+        whoever it is disclosed to in circumstances in which they are not
+        prevented from disclosing it to others; or
+        <strong>(d)</strong> is trivial or obvious;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Data Protection Legislation</strong></td>
+      <td>
+        all applicable legislation for the time being in force pertaining to
+        data protection, data privacy, data retention and/or data security
+        (including the General Data Protection Regulation (Regulation 2016/679)
+        (“GDPR”) the Privacy and Electronic Communication Directive (Directive
+        2002/58/EC) and national legislation implementing or supplementing such
+        legislation in the United Kingdom and any applicable member state of the
+        European Union, including the Data Protection Act 2018) and all
+        associated codes of practice and other guidance issued by any applicable
+        data protection authority;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Developer License</strong></td>
+      <td>
+        means a license of the Licensed Materials granted to the Licensee which
+        permits the Licensee to develop Applications using the Licensed
+        Materials in accordance with and subject to these Terms
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Documentation</strong></td>
+      <td>
+        means the operating manuals, user instructions, technical literature and
+        all other related materials in eye-readable form supplied to the
+        Licensee by the Licensor (whether in online, electronic or printed form)
+        for aiding the use and application of the Software;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Fees</strong></td>
+      <td>
+        means the fees for the Services, as set out in the relevant Quotation
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Insolvency Event</strong></td>
+      <td>
+        means, in relation to a person (which includes an individual and a legal
+        person, such as a limited company), any of the following events:
+        <strong>(a)</strong> a meeting of creditors of that
+        person being held or an arrangement or composition with or for the
+        benefit of its creditors (including a voluntary arrangement as defined
+        in the Insolvency Act 1986) being proposed by or in relation to that
+        person; <strong>(b)</strong> a charge-holder,
+        receiver, administrative receiver or other similar person taking
+        possession of or being appointed over or any distress, execution or
+        other process being levied or enforced (and not being discharged within
+        seven days) on the whole or a material part of the assets of that
+        person; <strong>(c)</strong> that person ceasing to
+        carry on business or being deemed to be unable to pay its debts within
+        the meaning of section 123 Insolvency Act 1986 (except that, for the
+        purposes of this agreement, the reference to £750 in section 123(1) of
+        that Act shall be construed as a reference to £10,000);
+        <strong>(d)</strong> that person or its directors or
+        the holder of a qualifying floating charge or any of its creditors
+        giving notice of their intention to appoint, appointing or making an
+        application to the court for the appointment of, an administrator;
+        <strong>(e)</strong> a petition being advertised or a
+        resolution being passed or an order being made for the administration or
+        the winding-up, bankruptcy or dissolution of that person; or
+        <strong>(f)</strong> the happening in relation to that
+        person of an event analogous to any of the above in any jurisdiction in
+        which it is incorporated or resident or in which it carries on business
+        or has assets.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Intellectual Property Rights</strong></td>
+      <td>
+        means patents, patentable rights, copyright, design rights, utility
+        models, trade marks (whether or not any of the above are registered),
+        trade names, rights in domain names, rights in inventions, rights in
+        data, database rights and confidential information, and all other
+        intellectual and industrial property and similar or analogous rights
+        existing under the laws of any country and all pending applications for
+        and right to apply for or register the same (present, future and
+        contingent, and including all renewals, extensions, revivals and all
+        accrued rights of action);
+      </td>
+    </tr>
+    <tr>
+      <td><strong>License Quotation</strong></td>
+      <td>
+        means a written quotation (whether in online, electronic or printed
+        form) agreed between the parties in relation to the Licensed Materials
+        which shall be deemed to incorporate these Terms;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Licensed Materials</strong></td>
+      <td>means the Software and related Documentation;</td>
+    </tr>
+    <tr>
+      <td><strong>Licensee Developers</strong></td>
+      <td>
+        means the Licensee’s employees, workers and contractors who are
+        authorised by the Licensee to, and qualified to, develop software
+        products that include the Software;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Licensee Materials</strong></td>
+      <td>
+        means all intellectual property, works, products, documentation,
+        information, data and other material of any kind (including computer
+        software and firmware, designs and specifications) provided or made
+        available by or on behalf of the Licensee in connection with these
+        Terms;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Licensor Materials</strong></td>
+      <td>
+        means all intellectual property, works, products, documentation,
+        information, data and other material of any kind (including computer
+        software and firmware, designs and specifications) provided or made
+        available by or on behalf of the Licensor in connection with these
+        Terms, excluding the Licensed Materials;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Losses</strong></td>
+      <td>
+        means all losses, liabilities, demands, claims, judgments, awards,
+        damages, amounts payable in settlement, costs and expenses (including
+        all legal and other professional fees, expenses and disbursements);
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Modification</strong></td>
+      <td>
+        means: <strong>(a)</strong> any addition to or
+        deletion from the contents of a file included in the Software or
+        previous Modifications created by the Licensee; and/or
+        <strong>(b)</strong> any new file that leverages any
+        part of the Software or previous Modifications;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>New Version</strong></td>
+      <td>
+        means any new version of the Software which from time to time is
+        publicly marketed and offered for licensing by the Licensor in the
+        course of its normal business, being a version which contains such
+        significant differences from the previous versions as to be generally
+        accepted in the marketplace as constituting a new product
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Our Website</strong></td>
+      <td>
+        means
+        <a
+          href="https://infinite-table.com"
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+          class="inline text-link break-normal border-b border-link border-opacity-0 hover:border-opacity-100 duration-100 ease-in transition leading-normal"
+          >https://infinite-table.com</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Proficiency</strong></td>
+      <td>has the meaning set out in clause 8.3</td>
+    </tr>
+    <tr>
+      <td><strong>Quotation(s)</strong></td>
+      <td>has the meaning set out in clause 2.2</td>
+    </tr>
+    <tr>
+      <td><strong>Quotation Effective Date</strong></td>
+      <td>has the meaning set out in clause 14.1</td>
+    </tr>
+    <tr>
+      <td><strong>Quotation Initial Term</strong></td>
+      <td>has the meaning set out in clause 14.1</td>
+    </tr>
+    <tr>
+      <td><strong>Quotation Renewal Term</strong></td>
+      <td>has the meaning set out in clause 14.1</td>
+    </tr>
+    <tr>
+      <td><strong>Production Environment</strong></td>
+      <td>
+        means a computer, server, collection of servers, data centre, cloud
+        instance, container or similar where the Licensee’s services and/or
+        store are made available to the Licensee’s customers
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Services</strong></td>
+      <td>
+        means the services (including the supply of Licensed Materials and
+        Support Services), set out in the relevant Quotation, to be provided by
+        the Licensor under such Quotation
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Site</strong></td>
+      <td>
+        means @infinite-table/infinite-react package on the public npm registry;
+        or any UMD bundle with an “infinite-table” prefix
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Software</strong></td>
+      <td>means the Infinite Table software made available by the Licensor</td>
+    </tr>
+    <tr>
+      <td><strong>Source Code</strong></td>
+      <td>
+        means the human-readable form of computer software, together with all
+        documentation and comments relating thereto sufficient for a reasonably
+        skilled computer programmer to understand, use, support and modify such
+        computer software;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Special Usage License</strong></td>
+      <td>
+        means a Developer License provided at no-cost on the terms set out in
+        clause 4.1
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Support Release</strong></td>
+      <td>
+        means a release of the Software which corrects faults, adds
+        functionality or otherwise amends or upgrades the Software, but which
+        does not constitute a New Version
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Support Request</strong></td>
+      <td>
+        means a request communicated by the Licensee to the Licensor to report a
+        Bug or to request some other support service or assistance;
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Support Services</strong></td>
+      <td>
+        means the support services, to be provided by the Licensor in respect of
+        the Software (including the provision of Updates), as set out in the
+        Support Schedule; and
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 ### 1.2 Interpretation
 
 In these Terms (including the introduction and schedules) unless the context otherwise requires:
 
-  (a) reference to a person includes a legal person (such as a limited company) as well as a natural person;
+(a) reference to a person includes a legal person (such as a limited company) as well as a natural person;
 
-  (b) reference to these Terms includes the schedules and appendices and other documents attached to it or incorporated by reference into it (all as amended, added to or replaced from time to time);
-  
-  (c) references to clauses or schedules shall be to those in or to these Terms and references to paragraphs shall be to paragraphs of the schedules or annexes to the schedules (as the case may be);
+(b) reference to these Terms includes the schedules and appendices and other documents attached to it or incorporated by reference into it (all as amended, added to or replaced from time to time);
 
-  (d) clause headings are for convenience only and shall not affect the construction of these Terms;
-  
-  (e) reference to "including" or any similar terms in these Terms shall be treated as being by way of example and shall not limit the general applicability of any preceding words; and
+(c) references to clauses or schedules shall be to those in or to these Terms and references to paragraphs shall be to paragraphs of the schedules or annexes to the schedules (as the case may be);
 
-  (f) reference to any legislation shall be to that legislation as amended, extended or re-enacted from time to time and to any subordinate provision made under that legislation.
+(d) clause headings are for convenience only and shall not affect the construction of these Terms;
 
-## 2.  Basis of terms
-    
+(e) reference to "including" or any similar terms in these Terms shall be treated as being by way of example and shall not limit the general applicability of any preceding words; and
+
+(f) reference to any legislation shall be to that legislation as amended, extended or re-enacted from time to time and to any subordinate provision made under that legislation.
+
+## 2. Basis of terms
+
 ### 2.1
 
-These Terms are framework terms further to which the parties may enter into a License Quotation in respect of Services to be provided by the Licensor to the Licensee. 
+These Terms are framework terms further to which the parties may enter into a License Quotation in respect of Services to be provided by the Licensor to the Licensee.
 
 ### 2.2
 
@@ -171,31 +442,39 @@ The Licensor will only provide Services to the Licensee further to a Quotation. 
 All Quotations entered into with the Licensee will be subject to the terms set out in these Terms. No terms or conditions endorsed upon, delivered with or contained in any quotation, estimate, correspondence, acknowledgement or acceptance of order or any similar document issued by the Licensee shall form part of any contract between the Licensor and the Licensee.
 
 ### 2.5
+
 In the event of any conflict or inconsistency between the terms of these Terms and the terms of any Quotation, the terms of the relevant Quotation shall prevail only to the extent of any such conflict or inconsistency.
 
 ### 2.6
+
 Requests for License Quotations must be made by email to admin@infinite-table.com
 
 ## 3. Provision of Licensed Materials and Support Services
 
 ### 3.1
+
 The Licensor shall make the Licensed Materials available in Source Code form at https://github.com/infinite-table/infinite-react on the first Quotation Effective Date by provision of an activation key required to access the Licensed Materials, subject to payment of the Fees.
 
 ### 3.2
+
 Subject to clause 3.3 below, the Licensor grants to the Licensee a worldwide, perpetual, non-exclusive, non-transferable, non-sublicensable, royalty-free license (in the form of a Developer License), commencing on the relevant Quotation Effective Date, to permit Licensee Developers to use the Licensed Materials in accordance with these Terms, subject to the limit on the number of permitted Licensee Developers set out in the relevant Quotation. Members within the group of Licensee Developers can be replaced with alternative members as long as the number of concurrent Licensee Developers at any time does not exceed the limit set out in the relevant Quotation. For the purposes of this limit, each developer modifying JavaScript code as part of the creation of an Application's user interface or Modification of a user interface shall constitute a separate Licensee Developer. For example, if the Licensee has seven developers working with JavaScript code on an Application, but only three developers directly working with the Software, all seven developers will be counted as Licensee Developers.
 
-### 3.3 
+### 3.3
+
 The Licensee may use the Licensed Materials to install, load, launch, access, run, execute, operate, and archive the Licensed Materials for production, test, archival, emergency re-start and disaster recovery purposes and to develop and create derivative works from the Licensed Materials in the form of Applications, provided that:
 
 (a) the Licensee shall not permit any end user of any Application to use the Software independently of, or by or with any applications other than, the Application being used by that end user.
 
 ### 3.4
+
 In the event that the Licensee creates any Modifications to the Source Code to the Software, the Licensor shall not be obliged to provide the Support Services in relation to any such Modification(s) from the date on which any such Modification(s) take place.
 
 ### 3.5
+
 The Licensee shall not change or remove the copyright notice from any of the files included in the Licensed Materials.
 
 ### 3.6
+
 The Licensee shall not redistribute the Licensed Materials or any Modifications other than as expressly permitted by these Terms. For the avoidance of doubt, the Licensee shall not redistribute the Licensed Materials or any Modifications:
 
 (a) other than by including the Software or a portion of the Software within Application(s); and
@@ -203,6 +482,7 @@ The Licensee shall not redistribute the Licensed Materials or any Modifications 
 (b) as part of any Application that can be described as a development toolkit or library, an application builder, a website builder, a user interface designer, or any application that is intended for use by software, application, or website developers or designers, or has a similar purpose or functionality (as determined by the Licensor).
 
 ### 3.7
+
 Subject to clause 3.3, the Licensor will provide the Support Services to the Licensee Developers in accordance with the Support Schedule for a period of 1 year from the relevant Quotation Effective Date, or for such other period as expressly set out in the relevant Quotation.
 
 ## 4. Special Usage License
@@ -230,12 +510,14 @@ Requests for Special Usage Licenses must be made by email to admin@infinite-tabl
 The Fees will be invoiced by the Licensor annually in advance upon the relevant Quotation Effective Date. Unless otherwise agreed in writing between the parties, the Licensee must pay each valid invoice within 30 days of the date of the invoice.
 
 ### 5.2
+
 Unless otherwise expressly provided in these Terms, all amounts referred to in these Terms are exclusive of value added tax ("VAT") which, where chargeable by the Licensor, shall be payable by the Licensee at the rate and in the manner prescribed by law. All other taxes, duties, customs or similar charges shall be the responsibility of the Licensor.
 
 ### 5.3
 
 The Licensor will invoice, and the Licensee will pay invoices in the currency to be agreed between the parties and as set out in the relevant Quotation.
-## 6.  Warranties
+
+## 6. Warranties
 
 ### 6.1
 
@@ -267,13 +549,14 @@ The Licensor does not warrant that the operation of the Licensed Materials or th
 
 The Licensee's sole and exclusive remedy for a breach of the warranty in clause 6.1(e) shall be to require the Licensor to repair the affected portion of the Software to ensure that it complies with the Documentation.
 
-## 7.  Insurance
+## 7. Insurance
 
 ### 7.1
 
 Without prejudice to the Licensee's obligations and liabilities under these Terms, the Licensee shall effect and maintain in force for the duration of these Terms, with reputable and substantial insurers, such policies of insurance as are sufficient for a business of the Licensee's type and to cover all potential liability of the Licensee under these Terms, including professional indemnity insurance and public liability insurance. If coverage is written on a claims made basis, it shall be maintained by the Licensee for at least six years following the termination of these Terms. The Licensee shall, on the Licensor's request, produce both the insurance certificate giving details of cover and the receipt for the current year's premium in respect of each insurance.
-## 8.  Intellectual Property Rights
-  
+
+## 8. Intellectual Property Rights
+
 ### 8.1
 
 All Intellectual Property Rights in the Licensor Materials and Licensed Materials shall, at all times, be and remain the exclusive property of the Licensor or its third-party licensors. The Licensor grants the Licensee, for the term of these Terms, a limited, non-transferable, royalty-free, non-exclusive license to use the Licensor Materials for the Licensee's internal business purposes only in connection with the receipt of the Licensed Materials and Support Services in accordance with these Terms.
@@ -323,7 +606,7 @@ Neither party's liability:
 (d) for breach of any indemnity contained in these Terms; or
 
 (e) for any other liability which may not lawfully be excluded or limited;
-    is excluded or limited by these Terms, even if any other term of these Terms would otherwise suggest that this might be the case.
+is excluded or limited by these Terms, even if any other term of these Terms would otherwise suggest that this might be the case.
 
 ### 10.2
 
@@ -342,7 +625,7 @@ Subject to clause 10.1, neither party shall be liable for:
 however arising (whether from breach of contract, tort (including negligence), breach of statutory duty or otherwise), whether or not such loss was foreseeable or if the party which would otherwise be liable for such loss was advised of its possibility (and, for the purposes of this clause 10.2, the term "loss" includes a partial loss or reduction in value as well as a complete or total loss).
 
 ### 10.3
-    
+
 Subject to clauses 10.1 and 10.2, a party's total liability to the other party arising out of or relating to these Terms or its subject matter and to anything which it has done or not done in connection with the same (whether from breach of contract, tort (including negligence), breach of statutory duty or otherwise) shall be limited, in aggregate for all claims arising, to the greater of: (a) the total of all amounts payable (whether or not yet paid) by the Licensee under these Terms; and (b) $5,000. The total liability of a party for any specific event will not exceed the total aggregate liability for such party, as calculated above, less any sums payable for previous events giving rise to liability on the part of such party that have occurred prior to the date of the specific event.
 
 ## 11. Confidentiality
@@ -360,11 +643,11 @@ Each party shall:
 (d) promptly, upon request and, in any event, upon termination of these Terms(for whatever reason), return to the other party all materials (in whatever form) incorporating, embodying or recording any such Confidential Information in its possession or control and, if requested by the other party, certify in writing that it has done so.
 
 ### 11.2
-    
+
 Either party may disclose the other's Confidential Information to the extent required by law or by any court, tribunal, regulator or other authority with competent jurisdiction to order its disclosure (but only to the extent of such requirement), provided that, to the extent permitted by law, the party compelled to make such disclosure shall notify the other party of the disclosure in advance.
 
 ## 12. Data protection
-   
+
 ### 12.1
 
 Each party shall:
@@ -409,6 +692,7 @@ These Terms shall commence on the Effective Date and shall, unless sooner termin
 The relevant Quotation is effective as of the later of the: (i) Effective Date; and (ii) effective date set out in the relevant Quotation ("Quotation Effective Date"). The relevant Quotation shall commence on the relevant Quotation Effective Date and shall, unless sooner terminated in accordance with its terms or these Terms, continue for a period of 12 months ("Quotation Initial Term") when it shall terminate automatically without notice unless, no later than 30 days before the end of the relevant Quotation Initial Term (or any Quotation Renewal Term agreed in accordance with this clause), the parties agree in writing that the terms of the relevant Quotation shall be extended for a period of 12 months from the effective date.
 
 ### 14.2
+
 Unless the relevant Quotation is further extended in accordance with this clause or terminated earlier in accordance with its terms or these Terms, the relevant Quotation shall terminate automatically without notice at the end of the relevant Quotation Renewal Term.
 
 ## 15. Termination
@@ -424,16 +708,17 @@ Either party may terminate these Terms and/or any Quotation by giving the other 
 (c) the other suffers or undergoes an Insolvency Event and to the extent such termination is permitted under applicable law; or
 
 (d) the other is delayed in performing its obligations under these Terms under clause 17 for a period of 30 days or more.
-    
+
 For the purposes of this clause 15.1, in order for it to be possible to remedy a breach it must be possible to take steps so as to put the other party into the same position which (save as to the date) it would have been in if the breach had never occurred.
 
 ## 16. Consequences of termination
-  
+
 ### 16.1
 
 Termination of any Quotation will not have the effect of terminating the whole Terms or any other Quotation, but termination of these Terms will automatically terminate all Quotations.
 
 ### 16.2
+
 Termination of these Terms and/or any Quotation for any reason will not affect:
 
 (a) any accrued rights or liabilities which either party may have by the time termination takes effect; or
@@ -442,13 +727,14 @@ Termination of these Terms and/or any Quotation for any reason will not affect:
 ## 17. Force majeure
 
 Neither party will be liable to the other for any failure or delay in performing its obligations under these Terms which arises because of any circumstances which it cannot reasonably be expected to control (including any fire, flood, earthquake, elements of nature or acts of God, acts of war (whether or not war is declared), terrorism, riots, civil disorders, rebellions or revolutions, strikes, lock outs or other form of industrial action, provided that nothing shall affect the Licensee's obligation to make any payments due under these Terms. 18.
+
 ## 18. General
 
 ### 18.1
 
 Except as expressly permitted under these Terms, the Licensee may not sub-license or assign, sub-contract or delegate any or all of its rights or obligations under these Terms without the prior written consent of the Licensor. Licensed use of this Software within AdapTable is deemed perpetual.
 
-### 18.2 
+### 18.2
 
 In the event that the Licensor consents to the Licensee sub-contracting performance of its obligations, the Licensee will remain liable for performance of the relevant obligations and shall procure that the sub-contractor complies with all relevant provisions of these Terms applying to performance of the obligations concerned.
 
@@ -461,8 +747,8 @@ All notices and consents relating to these Terms must be sent by email.
 Unless the parties expressly agree otherwise in writing:
 
 (a) if a party:
-  (i) fails to exercise or delays exercising or only exercises partially any right or remedy provided under these Terms or by law; or
-  (ii) agrees not to exercise or to delay exercising any right or remedy provided under these Terms or by law;
+(i) fails to exercise or delays exercising or only exercises partially any right or remedy provided under these Terms or by law; or
+(ii) agrees not to exercise or to delay exercising any right or remedy provided under these Terms or by law;
 
 then that party shall not be deemed to have waived and shall not be precluded or restricted from further exercising that or any other right or remedy; and
 
@@ -513,7 +799,7 @@ These Terms are governed by English law. The parties submit to the exclusive jur
 
 # Support Schedule
 
-## 1.  Scope of Support Services
+## 1. Scope of Support Services
 
 ### 1.1
 

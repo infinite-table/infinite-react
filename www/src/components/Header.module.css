@@ -1,0 +1,117 @@
+/* import { style } from '@vanilla-extract/css';
+import { wwwVars } from '@www/styles/www-utils';
+import { SpotlightHorizontalBackgroundCls } from './components.css';
+
+
+
+export const UnderlineCls = style([
+  {
+    selectors: {
+      '&::before': {
+        content: '',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 1,
+        background: wwwVars.color.specialBorderBolor,
+      },
+    },
+  },
+]);
+
+export const OverlineCls = style([
+  {
+    selectors: {
+      '&::before': {
+        content: '',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 1,
+        background: wwwVars.color.specialBorderBolor,
+      },
+    },
+  },
+]);
+export const NavBarCls = style([
+  SpotlightHorizontalBackgroundCls,
+  UnderlineCls,
+  {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    display: 'flex',
+    flexFlow: 'row',
+    width: '100%',
+    alignItems: 'center',
+    margin: '0 auto',
+    // position: 'relative',
+
+    zIndex: 1,
+    lineHeight: wwwVars.header.lineHeight,
+    color: wwwVars.header.color,
+  },
+]); */
+
+.NavBarCls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: row;
+  width: 100%;
+  align-items: center;
+  margin: 0 auto;
+
+  z-index: 1;
+  line-height: 58px;
+  /* // see newvars */
+  color: rgb(238, 239, 252, 0.8);
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.2);
+}
+
+.UnderlineCls {
+}
+
+.UnderlineCls::before,
+.NavBarCls::before {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 1px;
+  /* background: hsla(0, 0%, 100%, 0.09); */
+}
+.UnderlineCls::before {
+  top: unset;
+}
+
+.IceCls {
+  position: fixed;
+  top: -10px;
+  left: 0px;
+  right: 0;
+
+  z-index: -1;
+  height: 58px;
+
+  margin: 0 auto;
+}
+.IceCls:before,
+.IceCls:after {
+  content: '';
+  position: absolute;
+  inset: -1px 0px -50%;
+  pointer-events: none;
+  user-select-none: none;
+}
+
+.IceCls:before {
+  backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(to bottom, black 58px, transparent);
+}

@@ -1,13 +1,11 @@
 import * as React from 'react';
 import cn from 'classnames';
 
-import { shadow } from '../styles/www-utils.css';
-
-// import { DocsPageFooter } from './DocsFooter';
-import { OverlineCls } from './Header.css';
+import cmpStyles from './components.module.css';
 import { ExternalLink } from './ExternalLink';
 import Link from 'next/link';
 import { GithubLink, TwitterLink } from './Header';
+import { shadow } from '@www/styles/www-utils';
 
 function FooterLink({
   href,
@@ -53,14 +51,17 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
   return (
     <>
       <footer
+        style={{
+          boxShadow: shadow.lg,
+        }}
         className={`${
           props.className || ''
-        } justify-center items-center self-end w-full flex flex-col ${
-          shadow.lg
-        } bg-black text-content-color ${OverlineCls} relative py-10`}
+        } justify-center items-center self-end w-full flex flex-col bg-black text-content-color ${
+          cmpStyles.OverlineCls
+        } relative py-10 ${cmpStyles.footer}`}
       >
         {/* Copyright © {new Date().getFullYear()} Infinite Table */}
-        <div className="flex flex-col sm:grid grid-cols-4 gap-8">
+        <div className="flex flex-col sm:grid grid-cols-4 gap-8 leading-large">
           <div className="flex flex-col items-start">
             <FooterLink isHeader={true}>Infinite Table</FooterLink>
 

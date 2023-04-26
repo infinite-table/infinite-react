@@ -44,7 +44,7 @@ Note that the <PropLink name="columns.valueGetter"/> is only called for non-grou
 
 <Sandpack title="Column with custom valueGetter">
 
-```tsx file=$DOCS/reference/column-valueGetter-example.page.tsx
+```tsx file="$DOCS/reference/column-valueGetter-example.page.tsx"
 
 ```
 
@@ -89,7 +89,7 @@ However, there are easier ways to override the collapse/expand group icon, like 
 
 <Sandpack title="Column with custom renderValue">
 
-```tsx file=$DOCS/reference/column-renderValue-example.page.tsx
+```tsx file="$DOCS/reference/column-renderValue-example.page.tsx"
 
 ```
 
@@ -105,7 +105,7 @@ This snippet shows overriding the group collapse/expand tool via the <PropLink n
 
 </Description>
 
-```tsx file=$DOCS/reference/column-render-example.page.tsx
+```tsx file="$DOCS/reference/column-render-example.page.tsx"
 
 ```
 
@@ -119,7 +119,7 @@ This snippet shows how you can override the group collapse/expand tool via the <
 
 </Description>
 
-```tsx file=$DOCS/reference/column-renderGroupIcon-example.page.tsx
+```tsx file="$DOCS/reference/column-renderGroupIcon-example.page.tsx"
 
 ```
 
@@ -157,7 +157,7 @@ const nameColumn: InfiniteTableColumn<Employee> = {
 
 <Sandpack title="Column with render & useInfiniteColumnCell">
 
-```tsx file=$DOCS/reference/column-render-hooks-example.page.tsx
+```tsx file="$DOCS/reference/column-render-hooks-example.page.tsx"
 
 ```
 
@@ -188,7 +188,7 @@ const nameColumn: InfiniteTableColumn<Employee> = {
 
 <Sandpack title="Column Header with render & useInfiniteHeaderCell">
 
-```tsx file=$DOCS/reference/column-header-hooks-example.page.tsx
+```tsx file="$DOCS/reference/column-header-hooks-example.page.tsx"
 
 ```
 
@@ -253,7 +253,7 @@ Both <PropLink name="columns.components.ColumnCell">components.ColumnCell</PropL
 
 <Sandpack title="Custom components">
 
-```tsx file=$DOCS/reference/column-components-example.page.tsx
+```tsx file="$DOCS/reference/column-components-example.page.tsx"
 
 ```
 
@@ -282,7 +282,7 @@ The default <PropLink name="columns.render" /> function (the last one in the pip
 - a `value` - generally comes from the <PropLink name="columns.field">field</PropLink> the column is bound to
 - a `groupIcon` - for group columns
 - a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
-<!-- * a `menuIcon` - for all columns by default, unless they have <PropLink name="columns.renderMenuIcon">renderMenuIcon=false</PropLink> - this is the icon that opens the column menu -->
+
 
 When the rendering process starts for a column cell, all the above end up in the `renderBag` object.
 
@@ -380,35 +380,6 @@ Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `tog
 
 </Hint>
 
-<!-- ### Rendering pipeline - `renderBag.sortIcon`
-
-Similarly to `renderBag.value`, the `renderBag.sortIcon` is also piped through to the <PropLink name="columns.render">render</PropLink> function.
-
-```tsx {2,10}
-const column: InfiniteTableColumn<T> = {
-  renderSortIcon: ({ renderBag, column }) => {
-    // you can use the column to get the sort direction
-    return <> [ {renderBag.sortIcon} ] </>
-  },
-  render: ({  renderBag })=> {
-
-    return <>
-
-      {renderBag.sortIcon}
-      {renderBag.menuIcon}
-      {renderBag.value}
-    </>
-  }
-}
-```
-
-<Hint>
-
-Inside <PropLink name="columns.renderSortIcon" />, you have access to `renderBag.sortIcon`, which is basically the default sort icon - so you can use that if you want, and build on that.
-
-Also inside <PropLink name="columns.renderSortIcon" />, you have access to the current `column` so you can know what sorting is currently applied to the column.
-
-</Hint> -->
 
 ### Rendering pipeline - `renderBag.selectionCheckBox`
 
@@ -451,56 +422,16 @@ const column: InfiniteTableColumn<T> = {
 };
 ```
 
-<!-- ### Rendering pipeline - `renderBag.menuIcon`
-
-Similarly to the previous properties of `renderBag`, you can customize the `menuIcon` for a column (when clicked, it shows the column menu) to be piped-through - for columns that specify <PropLink name="columns.renderMenuIcon" />.
-
-
-```tsx {2,16}
-const column: InfiniteTableColumn<T> = {
-  renderMenuIcon: ({
-    renderBag,
-    column,
-    columnsMap
-  }) => {
-    if (column.type === 'number') {
-      return false
-    }
-
-    return renderBag.menuIcon
-  },
-  render: ({  renderBag })=> {
-    return <>
-
-      {renderBag.menuIcon}
-      {renderBag.selectionCheckBox}
-      {renderBag.sortIcon}
-      {renderBag.value}
-    </>
-  }
-}
-```
-
-
-<Hint>
-
-Inside <PropLink name="columns.renderMenuIcon" />, you have access to `renderBag.menuIcon`, which is basically the default menu icon - so you can use that if you want or you can customize it.
-
-Also inside <PropLink name="columns.renderMenuIcon" />, you have access to the current `column` and all the information you need about it.
-
-</Hint> -->
 
 To recap, here is the full list of the functions in the rendering pipeline, in order of invocation:
 
-1.<PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag` 2.<PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
-
-3.<PropLink name="columns.renderGroupIcon" /> - can use all properties in `renderBag` 4.<PropLink name="columns.renderSelectionCheckBox" /> - can use all properties in `renderBag`
-
-<!-- 5.<PropLink name="columns.renderMenuIcon" /> - can use all properties in `renderBag`
-6.<PropLink name="columns.renderSortIcon" /> - can use all properties in `renderBag` -->
-
-5.<PropLink name="columns.renderValue" /> - can use all properties in `renderBag` 6.<PropLink name="columns.renderGroupValue" /> - can use all properties in `renderBag`
-
-7.<PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag` 8.<PropLink name="columns.render" /> - can use all properties in `renderBag`
+1. <PropLink name="columns.valueGetter" /> - doesn't have access to `renderBag`
+2. <PropLink name="columns.valueFormatter" /> - doesn't have access to `renderBag`
+3. <PropLink name="columns.renderGroupIcon" /> - can use all properties in `renderBag`
+4. <PropLink name="columns.renderSelectionCheckBox" /> - can use all properties in `renderBag`
+5. <PropLink name="columns.renderValue" /> - can use all properties in `renderBag`
+6. <PropLink name="columns.renderGroupValue" /> - can use all properties in `renderBag`
+7. <PropLink name="columns.renderLeafValue" /> - can use all properties in `renderBag`
+8. <PropLink name="columns.render" /> - can use all properties in `renderBag`
 
 Additionally, the <PropLink name="columns.components.ColumnCell" /> custom component does have access to the `renderBag` via <HookLink name="useInfiniteColumnCell" />

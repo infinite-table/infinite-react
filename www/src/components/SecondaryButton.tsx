@@ -1,8 +1,8 @@
-import { wwwVars } from '@www/styles/www-utils.css';
+import { newvars } from '@www/styles/www-utils';
 import Link, { LinkProps } from 'next/link';
 import * as React from 'react';
 import { CSSProperties, ReactNode } from 'react';
-import { buttonPositionWithTransition } from './components.css';
+import cmpStyles from './components.module.css';
 
 type SecondaryButtonProps = {
   children: ReactNode;
@@ -21,11 +21,11 @@ export function SecondaryButton(props: SecondaryButtonProps) {
   return (
     <Parent {...parentProps} legacyBehavior>
       <Cmp
-        className={`text-white rounded-lg inline-block text-xl border border-gray-50 font-normal py-2 px-5 hover:bg-opacity-90 bg-dark-custom ${buttonPositionWithTransition} ${
-          className || ''
-        }`}
+        className={`text-white rounded-lg inline-block text-xl border border-gray-50 font-normal py-2 px-5 hover:bg-opacity-90 bg-dark-custom ${
+          cmpStyles.buttonPositionWithTransition
+        } ${className || ''}`}
         style={{
-          boxShadow: `0px 0px 10px 1px ${wwwVars.color.darkBg}`,
+          boxShadow: `0px 0px 10px 1px ${newvars.color.darkCustom}`,
           ...style,
         }}
       >

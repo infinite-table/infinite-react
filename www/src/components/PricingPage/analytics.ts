@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-export function analytics(code: AnalyticsEvents, value: number = 0) {
+export function analytics(code: AnalyticsEvents, value = 0) {
   if (!window.fathom) {
     return;
   }
