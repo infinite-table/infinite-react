@@ -4,16 +4,16 @@ const customHeaders = require('./remark-header-custom-ids'); // Custom header id
 const images = require('remark-images'); // Improved image syntax
 const unwrapImages = require('remark-unwrap-images'); // Removes <p> wrapper around images
 const smartyPants = require('./remark-smartypants'); // Cleans up typography
-const codeImport = require('./code-import'); // imports code snippets from external files
+const codeImport = require('./code-import.mjs'); // imports code snippets from external files
 const milestones = require('./remark-milestone'); // replaces @milestone tag with a milestone contents
 const html = require('remark-html');
 
-const mdxMermaid = require('mdx-mermaid');
+// const mdxMermaid = require('mdx-mermaid');
 
 module.exports = {
   remarkPlugins: [
     externalLinks,
-    mdxMermaid,
+    // mdxMermaid,
     milestones,
     customHeaders,
     images,

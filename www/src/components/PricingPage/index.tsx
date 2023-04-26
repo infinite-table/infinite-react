@@ -1,16 +1,17 @@
+'use client';
 import { Card, Cards } from '@www/components/Cards';
 
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
-import { wwwVars } from '@www/styles/www-utils.css';
+
 import Link from 'next/link';
 
 import * as React from 'react';
 
 import { AccentButton } from '../AccentButton';
-import { HighlightBrandToLightBackground } from '../components.css';
+import cmpStyles from '@www/components/components.module.css';
 import { ExternalLink } from '../ExternalLink';
 import { getHeroHeaderTextStyling } from '../Header';
-import { OverlineCls } from '../Header.css';
+import headerStyles from '../Header.module.css';
 import { analytics, AnalyticsEvents } from './analytics';
 import {
   BASE_PRICE,
@@ -21,7 +22,7 @@ import {
   LICENSE_MAX,
 } from './priceCalculator';
 
-let HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
+const HAS_PADDLE = !!process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID;
 let initPaddleScript = HAS_PADDLE;
 
 // console.log('paddle vendor id', process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID);
@@ -47,7 +48,7 @@ function PriceSummary({ count }: { count: number }) {
     <div
       className={'text-xl mt-10 font-black text-center'}
       style={{
-        textShadow: `10px 10px 100px ${wwwVars.color.highlight}`,
+        textShadow: `10px 10px 100px var(--color-highlight)`,
       }}
     >
       {count > LICENSE_MAX ? (
@@ -118,7 +119,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
       <div
         className="mb-3 text-xl font-black"
         style={{
-          textShadow: `10px 10px 50px ${wwwVars.color.highlight}`,
+          textShadow: `10px 10px 50px var(--color-highlight)`,
         }}
       >
         Team Size
@@ -126,7 +127,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
       <div
         className="flex flex-row w-full border border-special-border-color "
         style={{
-          boxShadow: `1px 1px 10px 1px ${wwwVars.color.highlight}`,
+          boxShadow: `1px 1px 10px 1px var(--color-highlight)`,
         }}
       >
         <button
@@ -285,7 +286,7 @@ function FormField(props: {
         required={props.required}
         pattern={props.pattern}
         style={{
-          boxShadow: `1px 1px 10px 1px ${wwwVars.color.highlight}`,
+          boxShadow: `1px 1px 10px 1px var(--color-highlight)`,
         }}
         className=" mt-2 bg-white w-full p-2 ml-1 border-1 rounded-sm border-special-border-color  text-xl text-dark-custom font-black text-center"
         value={props.value}
@@ -418,7 +419,7 @@ export function PricingPage() {
         <>
           <p>
             Easy to understand pricing —{' '}
-            <span className={HighlightBrandToLightBackground}>
+            <span className={cmpStyles.HighlightBrandToLightBackground}>
               development licenses only
             </span>
           </p>
@@ -472,7 +473,7 @@ export function PricingPage() {
             noBackground
             style={{
               // boxShadow: `2px 2px 10px 1px ${wwwVars.color.highlight}`,
-              boxShadow: ` 0 2px 6px -2px ${wwwVars.color.highlight}, 0 2px 4px -2px ${wwwVars.color.highlight}`,
+              boxShadow: ` 0 2px 6px -2px var(--color-highlight), 0 2px 4px -2px var(--color-highlight)`,
             }}
             className={`shadow-lg bg-deep-dark bg-opacity-95 relative sm:-left-10  z-20 sm:w-1/2 rounded-xl text-content-color`}
           >
@@ -484,7 +485,7 @@ export function PricingPage() {
                 <p
                   className={'text-glow'}
                   style={{
-                    textShadow: `10px 10px 100px ${wwwVars.color.highlight}`,
+                    textShadow: `10px 10px 100px var(--color-highlight)`,
                   }}
                 >
                   $ {BASE_PRICE}
@@ -522,7 +523,7 @@ export function PricingPage() {
                 />
 
                 <div
-                  className={`justify-center items-center flex flex-col font-black pt-10 mt-10 ${OverlineCls} relative`}
+                  className={`justify-center items-center flex flex-col font-black pt-10 mt-10 ${headerStyles.OverlineCls} relative`}
                 >
                   <TeamSize
                     onCountChange={(count) => {

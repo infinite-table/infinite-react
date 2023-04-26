@@ -38,29 +38,29 @@
 `Infinite Table` is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
 * [<img src="https://infinite-table.com/icons/sorting.svg" align="center" />
- sorting](https://infinite-table.com/docs/latest/learn/working-with-data/sorting)
+ sorting](https://infinite-table.com/docs/learn/working-with-data/sorting)
 * [<img src="https://infinite-table.com/icons/row-grouping.svg" align="center" />
- row grouping](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+ row grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
 * [<img src="https://infinite-table.com/icons/pivoting.svg" align="center" />
- pivoting](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
+ pivoting](https://infinite-table.com/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
 * [<img src="https://infinite-table.com/icons/aggregations.svg" align="center" />
- aggregations](https://infinite-table.com/docs/latest/learn/grouping-and-pivoting/grouping-rows#aggregations)
+ aggregations](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
 * [<img src="https://infinite-table.com/icons/live-pagination.svg" align="center" />
- live pagination](https://infinite-table.com/docs/latest/learn/working-with-data/live-pagination)
+ live pagination](https://infinite-table.com/docs/learn/working-with-data/live-pagination)
 * [<img src="https://infinite-table.com/icons/lazy-loading.svg" align="center" />
- lazy loading](https://infinite-table.com/docs/latest/learn/working-with-data/lazy-loading)
+ lazy loading](https://infinite-table.com/docs/learn/working-with-data/lazy-loading)
 * [<img src="https://infinite-table.com/icons/keyboard-navigation.svg" align="center" />
- keyboard navigation for cells and rows](https://infinite-table.com/docs/latest/learn/keyboard-navigation/navigating-cells)
+ keyboard navigation for cells and rows](https://infinite-table.com/docs/learn/keyboard-navigation/navigating-cells)
 * [<img src="https://infinite-table.com/icons/fixed-flex-cols.svg" align="center" />
- fixed and flexible columns](https://infinite-table.com/docs/latest/learn/columns/fixed-and-flexible-size)
+ fixed and flexible columns](https://infinite-table.com/docs/learn/columns/fixed-and-flexible-size)
 * [<img src="https://infinite-table.com/icons/column-grouping.svg" align="center" />
- column grouping](https://infinite-table.com/docs/latest/learn/column-groups)
+ column grouping](https://infinite-table.com/docs/learn/column-groups)
 * [<img src="https://infinite-table.com/icons/filtering.svg" align="center" />
- filtering](https://infinite-table.com/docs/latest/learn/filtering)
+ filtering](https://infinite-table.com/docs/learn/filtering)
 * [<img src="https://infinite-table.com/icons/theming.svg" align="center" />
- theming](https://infinite-table.com/docs/latest/learn/theming)
+ theming](https://infinite-table.com/docs/learn/theming)
 
-<!-- * [🗃 filtering](https://infinite-table.com/docs/latest/learn/filtering) -->
+<!-- * [🗃 filtering](https://infinite-table.com/docs/learn/filtering) -->
 
 
 ## 📦 Installation

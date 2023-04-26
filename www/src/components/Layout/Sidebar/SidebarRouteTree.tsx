@@ -1,17 +1,17 @@
 import { removeFromLast } from '@www/utils/removeFromLast';
 import { RouteItem } from 'components/Layout/useRouteMeta';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import useCollapse from '@gaearon/react-collapsed';
 
-import { useRouteMeta } from '../useRouteMeta';
+// import { useRouteMeta } from '../useRouteMeta';
 
 import { SidebarLink } from './SidebarLink';
 
 interface SidebarRouteTreeProps {
   isMobile?: boolean;
-  routeTree: RouteItem;
+  routeTree: RouteItem[];
   level?: number;
 }
 
@@ -92,62 +92,58 @@ function CollapseWrapper({
   );
 }
 
+function isRouteExpanded(route: RouteItem, pathname: string) {
+  let expanded = !!(route.path && pathname.startsWith(route.path));
+
+  if (!expanded && route.routes) {
+    expanded = route.routes.some((r) => isRouteExpanded(r, pathname));
+  }
+
+  return expanded;
+}
 export function SidebarRouteTree({
   isMobile,
   routeTree,
   level = 0,
 }: SidebarRouteTreeProps) {
-  const { breadcrumbs } = useRouteMeta(routeTree);
-  const { pathname } = useRouter();
+  // const { breadcrumbs } = useRouteMeta(routeTree);
+  // console.log('breadcrumbs', breadcrumbs);
+  const pathname = usePathname() || '';
+
   const slug = pathname;
 
-  const currentRoutes = ((routeTree || {}).routes as RouteItem[]) || [];
-  const expandedPath = currentRoutes.reduce(
-    (acc: string | undefined, curr: RouteItem) => {
-      if (acc) return acc;
-      const breadcrumb = breadcrumbs.find((b) => b.path === curr.path);
-      if (breadcrumb) {
-        return curr.path;
-      }
-      if (curr.path === pathname) {
-        return pathname;
-      }
-      return undefined;
-    },
-    undefined,
-  );
-
-  const expanded = expandedPath;
+  const currentRoutes = routeTree ?? [];
 
   return (
     <ul className="bg-dark-custom  border-border-dark lg:bg-transparent">
       {currentRoutes
         .filter((route) => !route.draft)
-        .map(({ path, title, routes, heading, transient }, index) => {
+        .map((route) => {
+          const { path, title, routes, transient } = route;
           const pagePath = path && removeFromLast(path, '.');
 
           const selected = slug === pagePath && !transient;
 
           // if current route item has no path and children treat it as an API sidebar heading
-          if (!path || !pagePath || heading) {
-            return (
-              <SidebarRouteTree
-                key={`${index}-${level}`}
-                level={level + 1}
-                isMobile={isMobile}
-                routeTree={{ title, routes }}
-              />
-            );
-          }
+          // if (!path || !pagePath || heading) {
+          //   return (
+          //     <SidebarRouteTree
+          //       key={`${index}-${level}`}
+          //       level={level + 1}
+          //       isMobile={isMobile}
+          //       routeTree={{ title, routes }}
+          //     />
+          //   );
+          // }
 
           // if route has a path and child routes, treat it as an expandable sidebar item
           if (routes) {
             // console.log({ expanded, path });
-            const isExpanded = isMobile || expanded === path;
+            const isExpanded = isMobile || isRouteExpanded(route, pathname); //expanded === path;
             const content = (
               <SidebarRouteTree
                 isMobile={isMobile}
-                routeTree={{ title, routes }}
+                routeTree={routes}
                 level={level + 1}
               />
             );
@@ -155,12 +151,12 @@ export function SidebarRouteTree({
               <li key={`${title}-${path}-${level}-heading`}>
                 <SidebarLink
                   key={`${title}-${path}-${level}-link`}
-                  href={pagePath}
+                  href={pagePath || ''}
                   selected={selected}
                   level={level}
                   title={title}
                   isExpanded={isExpanded}
-                  isBreadcrumb={expandedPath === path}
+                  isBreadcrumb={false}
                   hideArrow={isMobile}
                 />
                 {isMobile ? (
@@ -178,7 +174,7 @@ export function SidebarRouteTree({
           return (
             <li key={`${title}-${path}-${level}-link`}>
               <SidebarLink
-                href={pagePath}
+                href={pagePath || ''}
                 selected={selected}
                 level={level}
                 title={title}

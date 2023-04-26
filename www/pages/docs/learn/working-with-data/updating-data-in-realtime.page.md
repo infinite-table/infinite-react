@@ -107,7 +107,7 @@ All the methods for updating/inserting/deleting rows exposed via the [DataSource
 
 All the function calls made in the same raf return the same promise, which is resolved when the data is persisted to the `DataSource`
 
-```tsx file="Updates_made_on_the_same_raf_are_batched_together"
+```tsx title="Updates_made_on_the_same_raf_are_batched_together"
 const promise1 = dataSourceApi.updateData({
   id: 1,
   name: 'Bob Blue'
@@ -126,7 +126,7 @@ promise1 === promise2 // true
 
 To insert a new row into the `DataSource`, you need to use the <DApiLink name="insertData" /> method. For inserting multiple rows at once, use the <DApiLink name="insertDataArray" /> method.
 
-```tsx file="Inserting_a_single_row"
+```tsx title="Inserting_a_single_row"
 dataSourceApi.insertData({
   id: 10,
   name: 'Bob Blue',

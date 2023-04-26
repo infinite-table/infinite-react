@@ -1,3 +1,4 @@
+'use client';
 import ButtonLink from '@www/components/ButtonLink';
 import * as React from 'react';
 import { AccentButton } from '../AccentButton';
@@ -7,6 +8,7 @@ import { IconNavArrow } from '../Icon/IconNavArrow';
 import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
 
 import { APIAnatomy, AnatomyStep } from './APIAnatomy';
+import { Blockquote } from './Blockquote';
 import { Challenges, /*Hint, */ Solution } from './Challenges';
 import CodeBlock from './CodeBlock';
 import { CodeDiagram } from './CodeDiagram';
@@ -83,31 +85,6 @@ const Note = ({
 const ReadMore = ({ children }: { children: React.ReactNode }) => (
   <ExpandableCallout type="readMore">{children}</ExpandableCallout>
 );
-
-const Blockquote = ({
-  children,
-  ...props
-}: JSX.IntrinsicElements['blockquote']) => {
-  return (
-    <>
-      <blockquote
-        className="mdx-blockquote py-4 px-8 my-8 shadow-inner bg-highlight-dark bg-opacity-50 rounded-lg leading-6 flex relative"
-        {...props}
-      >
-        <span className="block relative">{children}</span>
-      </blockquote>
-      {/* @ts-ignore */}
-      <style jsx global>{`
-        .mdx-blockquote > span > p:first-of-type {
-          margin-bottom: 0;
-        }
-        .mdx-blockquote > span > p:last-of-type {
-          margin-bottom: 1rem;
-        }
-      `}</style>
-    </>
-  );
-};
 
 function LearnMore({
   children,
@@ -440,9 +417,17 @@ export const MDXComponents = {
   inlineCode: InlineCode,
   hr: Divider,
   a: Link,
-  code: CodeBlock,
+  code: (props: any) => {
+    if (typeof props.children === 'string' && !props.children.includes('\n')) {
+      return <InlineCode {...props} />;
+    }
+
+    return <CodeBlock {...props} />;
+  },
   // The code block renders <pre> so we just want a div here.
-  pre: (p: JSX.IntrinsicElements['div']) => <div {...p} />,
+  pre: (p: JSX.IntrinsicElements['div']) => {
+    return <div {...p} />;
+  },
   // Scary: dynamic(() => import('./Scary')),
   APIAnatomy,
   AnatomyStep,

@@ -1,30 +1,31 @@
 import cn from 'classnames';
 import { RouteItem } from 'components/Layout/useRouteMeta';
-import { useRouter } from 'next/router';
-import * as React from 'react';
+import { usePathname } from 'next/navigation';
 
 import sidebarLearn from '../../../sidebarLearn.json';
 import sidebarReference from '../../../sidebarReference.json';
 import sidebarReleases from '../../../sidebarReleases.json';
 
+import * as React from 'react';
+
 import { SidebarRouteTree } from '../Sidebar';
 
 import { inferSection } from './inferSection';
 
-export function MobileNav() {
-  const { pathname } = useRouter();
+export function MobileNav(_props: { routeTree: RouteItem[] }) {
+  const pathname = usePathname() || '';
   const [section, setSection] = React.useState(() => inferSection(pathname));
 
-  let tree = null;
+  let tree = null; //props.routeTree;
   switch (section) {
     case 'learn':
-      tree = sidebarLearn.routes![0];
+      tree = sidebarLearn;
       break;
     case 'reference':
-      tree = sidebarReference.routes[0];
+      tree = sidebarReference;
       break;
     case 'releases':
-      tree = sidebarReleases.routes[0];
+      tree = sidebarReleases;
       break;
   }
 
@@ -55,7 +56,7 @@ export function MobileNav() {
           Releases
         </TabButton>
       </div>
-      <SidebarRouteTree routeTree={tree as RouteItem} isMobile={true} />
+      <SidebarRouteTree routeTree={tree} isMobile={true} />
     </>
   );
 }

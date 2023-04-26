@@ -5,7 +5,7 @@ interface ButtonProps {
   children: React.ReactNode;
   as?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  active: boolean;
+  active?: boolean;
   className?: string;
   style?: Record<string, string>;
 }
@@ -13,9 +13,9 @@ interface ButtonProps {
 export function Button({
   children,
   onClick,
-  active,
+  active = false,
   className,
-  style,
+  style = {},
   as,
 }: ButtonProps) {
   const Cmp = as || 'button';
@@ -43,10 +43,5 @@ export function Button({
     </Cmp>
   );
 }
-
-Button.defaultProps = {
-  active: false,
-  style: {},
-};
 
 export default Button;

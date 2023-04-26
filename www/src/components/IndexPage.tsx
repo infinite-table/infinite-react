@@ -1,13 +1,11 @@
+'use client';
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
 
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 
 import * as React from 'react';
 import { AccentButton } from './AccentButton';
-import {
-  HighlightBrandToLightBackground,
-  HighlightTextBackground,
-} from './components.css';
+import cmpStyles from './components.module.css';
 import { GetAccessFormConvertKit } from './GetAccessFormConvertKit';
 import { HeroPicture } from './HeroPicture';
 import { getHighlightShadowStyle } from './HighlightButton';
@@ -35,7 +33,7 @@ function NpmCmd() {
       style={{ ...getHighlightShadowStyle() }}
     >
       <div
-        className={`font-mono tracking-tighter whitespace-nowrap text-sm md:text-base ${HighlightBrandToLightBackground}`}
+        className={`font-mono tracking-tighter whitespace-nowrap text-sm md:text-base ${cmpStyles.HighlightBrandToLightBackground}`}
       >
         npm i @infinite-table/infinite-react
       </div>
@@ -69,16 +67,18 @@ export function IndexPage() {
     <MainLayout seoTitle={seoTitle} seoDescription={seoDescription}>
       <HeroPicture />
 
-      <div className="flex flex-col mt-20 md:flex-row items-center md:items-stretch">
-        <AccentButton href="/pricing">Buy a license</AccentButton>{' '}
-        <div className="mx-6 my-2 flex items-center justify-center">or</div>{' '}
-        <NpmCmd />
-      </div>
-      <div className="w-2/3 sm:w-1/2 mt-10 opacity-50 text-base">
-        You can start using Infinite Table right away for free - the free
-        version displays a license footer with a link back to our website.
-        Buying a license removes the footer and gives you access to premium
-        support.
+      <div className="flex items-center flex-col">
+        <div className="flex flex-col mt-20 md:flex-row items-center md:items-stretch">
+          <AccentButton href="/pricing">Buy a license</AccentButton>{' '}
+          <div className="mx-6 my-2 flex items-center justify-center">or</div>{' '}
+          <NpmCmd />
+        </div>
+        <div className="w-2/3 sm:w-1/2 mt-10 opacity-50 text-base">
+          You can start using Infinite Table right away for free - the free
+          version displays a license footer with a link back to our website.
+          Buying a license removes the footer and gives you access to premium
+          support.
+        </div>
       </div>
       <div
         className={['mt-20 relative w-full flex flex-col items-center '].join(
@@ -113,7 +113,7 @@ export function IndexPage() {
           <Card title="Fully declarative" href="/docs/reference">
             Infinite Table is built with React in mind so it's fully declarative
             - everything can be controlled via the available{' '}
-            <span className={HighlightTextBackground}>props</span>
+            <span className={cmpStyles.HighlightTextBackground}>props</span>
           </Card>{' '}
           <Card title="Fully typed">
             Written in TypeScript, it helps keep your codebase clean and avoid
@@ -324,7 +324,7 @@ export function IndexPage() {
               Contains all the functionality in the{' '}
               <b className="font-black">Enterprise version</b>, but displays a{' '}
               <b>license footer</b> with a{' '}
-              <b className={HighlightTextBackground}>
+              <b className={cmpStyles.HighlightTextBackground}>
                 "Powered by Infinite Table"
               </b>{' '}
               link.

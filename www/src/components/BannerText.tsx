@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  BannerTextCurrentCls,
-  BannerTextNextCls,
-  BannerTextPrevCls,
-} from './components.css';
+import cmpStyles from './components.module.css';
 
 export function BannerText(props: {
   contents: React.ReactNode[];
@@ -64,10 +60,10 @@ export function BannerText(props: {
             key={i}
             className={`${className} inline-block whitespace-nowrap ${
               i == prevIndex
-                ? BannerTextPrevCls
+                ? cmpStyles.BannerTextPrevCls
                 : i == index
-                ? BannerTextCurrentCls
-                : BannerTextNextCls
+                ? cmpStyles.BannerTextCurrentCls
+                : cmpStyles.BannerTextNextCls
             }`}
             style={style}
           >

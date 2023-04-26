@@ -22,7 +22,7 @@ author: [admin]
 
 In Infinite Table you can configure a context menu to be displayed when you right-click a cell by using the <PropLink name="getCellContextMenuItems" /> prop. Simply specify a function that returns an array of objects, each with `label` and `key` properties. Each object in the array is a row in the context menu - with the `label` being the displayed content and the `key` being a unique identifier for the menu row.
 
-```tsx file="Configuring_a_context_menu"
+```tsx title="Configuring_a_context_menu"
 const getCellContextMenuItems = ({ column, data, value }) => {
   if (column.id === 'currency') {
     return [
@@ -153,7 +153,7 @@ Besides context menus, the DataGrid also supports menus for columns, that allow 
 
 Just like context menus, the column menus can also be fully customised, by using the <PropLink name="getColumnMenuItems" /> prop.
 
-```tsx file="Customizing-column-menu"
+```tsx title="Customizing-column-menu"
 function getColumnMenuItems(items, { column }) {
 
   if (column.id === 'firstName') {

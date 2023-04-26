@@ -1,6 +1,5 @@
-import { wwwVars } from '@www/styles/www-utils.css';
-import { useRouter } from 'next/router';
-import * as React from 'react';
+import { newvars } from '@www/styles/www-utils';
+import { usePathname } from 'next/navigation';
 
 import { inferSection } from './inferSection';
 import NavLink from './NavLink';
@@ -56,9 +55,10 @@ export const lightIcon = (
 );
 
 export default function Nav() {
-  const { pathname } = useRouter();
+  // const { pathname } = useRouter();
+  const pathname = usePathname();
 
-  const section = inferSection(pathname);
+  const section = inferSection(pathname || '');
 
   return (
     <nav
@@ -99,7 +99,7 @@ export default function Nav() {
       </div>
       <div
         className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b border-border-dark"
-        style={{ marginTop: wwwVars.header.lineHeight }}
+        style={{ marginTop: newvars.header.lineHeight }}
       >
         <NavLink
           href="/docs/learn/getting-started"

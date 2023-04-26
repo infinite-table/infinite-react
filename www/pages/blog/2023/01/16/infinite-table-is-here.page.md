@@ -157,7 +157,7 @@ It can be either a column object or a function:
  * when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
  
 
-```tsx file="Group_column_as_an_object"
+```tsx title="Group_column_as_an_object"
 <InfiniteTable 
   //...
   groupColumn= {{
@@ -166,7 +166,7 @@ It can be either a column object or a function:
 />
 ```
 vs
-```tsx file="Group_column_as_a_function"
+```tsx title="Group_column_as_a_function"
 <InfiniteTable 
   //...
   groupColumn={() => {

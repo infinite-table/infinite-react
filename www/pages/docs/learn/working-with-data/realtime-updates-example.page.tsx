@@ -53,7 +53,7 @@ const updateRow = (api: DataSourceApi<Developer>, data: Developer) => {
   const newReposCount =
     initialData.reposCount + getRandomInt(-reposCountDelta, reposCountDelta);
 
-  let newData: Partial<Developer> = {
+  const newData: Partial<Developer> = {
     id: initialData.id,
     salary: newSalary,
     reposCount: newReposCount,
@@ -115,7 +115,7 @@ const domProps = {
   },
 };
 export default () => {
-  let [running, setRunning] = React.useState(false);
+  const [running, setRunning] = React.useState(false);
 
   const [apis, onReady] = React.useState<{
     api: InfiniteTableApi<Developer>;

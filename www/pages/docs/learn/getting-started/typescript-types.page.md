@@ -10,7 +10,7 @@ The 2 main components that you can need to use and import are:
 - `InfiniteTable`
 - `DataSource`
 
-```tsx file="Importing_InfiniteTable_and_DataSource"
+```tsx title="Importing_InfiniteTable_and_DataSource"
 import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 ```
 

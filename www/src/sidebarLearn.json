@@ -1,242 +1,232 @@
-{
-  "title": "Learn Infinite Table",
-  "heading": true,
-  "routes": [
-    {
-      "heading": true,
-      "path": "",
-      "routes": [
-        {
-          "title": "Overview",
-          "path": "/docs"
-        },
-        {
-          "title": "Getting Started",
-          "path": "/docs/learn/getting-started",
-          "routes": [
-            {
-              "path": "/docs/learn/getting-started/typescript-types",
-              "title": "TypeScript Types"
-            },
-            {
-              "path": "/docs/learn/getting-started/licensing",
-              "title": "Licensing"
-            }
-          ]
-        },
-        {
-          "title": "Working with Data",
-          "path": "/docs/learn/working-with-data",
-          "routes": [
-            {
-              "path": "/docs/learn/working-with-data/sorting",
-              "title": "Sorting"
-            },
-            {
-              "path": "/docs/learn/working-with-data/live-pagination",
-              "title": "Live Pagination"
-            },
-            {
-              "path": "/docs/learn/working-with-data/lazy-loading",
-              "title": "Lazy Loading"
-            },
-            {
-              "path": "/docs/learn/working-with-data/updating-data-in-realtime",
-              "title": "Updating Data in Real-Time"
-            }
-          ]
-        },
-        {
-          "title": "Working with Columns",
-          "path": "/docs/learn/columns",
-          "routes": [
-            {
-              "path": "/docs/learn/columns/column-rendering",
-              "title": "Column Rendering"
-            },
-            {
-              "path": "/docs/learn/columns/column-headers",
-              "title": "Column Headers"
-            },
-            {
-              "path": "/docs/learn/columns/column-types",
-              "title": "Column Types"
-            },
-            {
-              "path": "/docs/learn/columns/fixed-and-flexible-size",
-              "title": "Column Sizing"
-            },
-            {
-              "path": "/docs/learn/columns/cell-and-column-styling",
-              "title": "Column Styling"
-            },
-            {
-              "path": "/docs/learn/columns/column-order",
-              "title": "Column Order"
-            },
-            {
-              "path": "/docs/learn/columns/column-grouping",
-              "title": "Column Grouping"
-            },
-            {
-              "path": "/docs/learn/columns/column-menus",
-              "title": "Column Menus"
-            }
-          ]
-        },
-        {
-          "title": "Working with Rows",
-          "path": "/docs/learn/rows/styling-rows",
-          "transient": true,
-          "routes": [
-            {
-              "path": "/docs/learn/rows/styling-rows",
-              "title": "Styling Rows"
-            },
-            {
-              "path": "/docs/learn/rows/using-row-info",
-              "title": "Using Rows at Runtime"
-            },
-            {
-              "path": "/docs/learn/selection/row-selection#",
-              "title": "Selecting Rows"
-            }
-          ]
-        },
-        {
-          "title": "Selection",
-          "path": "/docs/learn/selection/row-selection",
-          "transient": true,
-          "routes": [
-            {
-              "path": "/docs/learn/selection/row-selection",
-              "title": "Row Selection"
-            },
-            {
-              "path": "/docs/learn/selection/cell-selection",
-              "title": "Cell Selection"
-            }
-          ]
-        },
-        {
-          "title": "Keyboard Navigation",
-          "path": "/docs/learn/keyboard-navigation/navigating-cells",
-          "transient": true,
-          "routes": [
-            {
-              "path": "/docs/learn/keyboard-navigation/navigating-cells",
-              "title": "Keyboard Navigation for Cells"
-            },
-            {
-              "path": "/docs/learn/keyboard-navigation/navigating-rows",
-              "title": "Keyboard Navigation for Rows"
-            }
-          ]
-        },
-        {
-          "title": "Grouping and Pivoting",
-          "path": "/docs/learn/grouping-and-pivoting",
-          "routes": [
-            {
-              "title": "Grouping",
-              "path": "/docs/learn/grouping-and-pivoting/grouping-rows"
-            },
-            {
-              "title": "Aggregations",
-              "path": "/docs/learn/grouping-and-pivoting/group-aggregations"
-            },
-            {
-              "title": "Pivoting",
-              "transient": true,
-              "path": "/docs/learn/grouping-and-pivoting/pivoting/overview",
-              "routes": [
-                {
-                  "title": "Overview",
-                  "path": "/docs/learn/grouping-and-pivoting/pivoting/overview"
-                },
-                {
-                  "title": "Customizing Pivot Columns",
-                  "path": "/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Filtering",
-          "path": "/docs/learn/filtering",
+[
+  {
+    "title": "Overview",
+    "path": "/docs"
+  },
+  {
+    "title": "Getting Started",
+    "path": "/docs/learn/getting-started",
+    "routes": [
+      {
+        "path": "/docs/learn/getting-started/typescript-types",
+        "title": "TypeScript Types"
+      },
+      {
+        "path": "/docs/learn/getting-started/licensing",
+        "title": "Licensing"
+      }
+    ]
+  },
+  {
+    "title": "Working with Data",
+    "path": "/docs/learn/working-with-data",
+    "routes": [
+      {
+        "path": "/docs/learn/working-with-data/sorting",
+        "title": "Sorting"
+      },
+      {
+        "path": "/docs/learn/working-with-data/live-pagination",
+        "title": "Live Pagination"
+      },
+      {
+        "path": "/docs/learn/working-with-data/lazy-loading",
+        "title": "Lazy Loading"
+      },
+      {
+        "path": "/docs/learn/working-with-data/updating-data-in-realtime",
+        "title": "Updating Data in Real-Time"
+      }
+    ]
+  },
+  {
+    "title": "Working with Columns",
+    "path": "/docs/learn/columns",
+    "routes": [
+      {
+        "path": "/docs/learn/columns/column-rendering",
+        "title": "Column Rendering"
+      },
+      {
+        "path": "/docs/learn/columns/column-headers",
+        "title": "Column Headers"
+      },
+      {
+        "path": "/docs/learn/columns/column-types",
+        "title": "Column Types"
+      },
+      {
+        "path": "/docs/learn/columns/fixed-and-flexible-size",
+        "title": "Column Sizing"
+      },
+      {
+        "path": "/docs/learn/columns/cell-and-column-styling",
+        "title": "Column Styling"
+      },
+      {
+        "path": "/docs/learn/columns/column-order",
+        "title": "Column Order"
+      },
+      {
+        "path": "/docs/learn/columns/column-grouping",
+        "title": "Column Grouping"
+      },
+      {
+        "path": "/docs/learn/columns/column-menus",
+        "title": "Column Menus"
+      }
+    ]
+  },
+  {
+    "title": "Working with Rows",
+    "path": "/docs/learn/rows/styling-rows",
+    "transient": true,
+    "routes": [
+      {
+        "path": "/docs/learn/rows/styling-rows",
+        "title": "Styling Rows"
+      },
+      {
+        "path": "/docs/learn/rows/using-row-info",
+        "title": "Using Rows at Runtime"
+      },
+      {
+        "path": "/docs/learn/selection/row-selection#",
+        "title": "Selecting Rows"
+      }
+    ]
+  },
+  {
+    "title": "Selection",
+    "path": "/docs/learn/selection/row-selection",
+    "transient": true,
+    "routes": [
+      {
+        "path": "/docs/learn/selection/row-selection",
+        "title": "Row Selection"
+      },
+      {
+        "path": "/docs/learn/selection/cell-selection",
+        "title": "Cell Selection"
+      }
+    ]
+  },
+  {
+    "title": "Keyboard Navigation",
+    "path": "/docs/learn/keyboard-navigation/navigating-cells",
+    "transient": true,
+    "routes": [
+      {
+        "path": "/docs/learn/keyboard-navigation/navigating-cells",
+        "title": "Keyboard Navigation for Cells"
+      },
+      {
+        "path": "/docs/learn/keyboard-navigation/navigating-rows",
+        "title": "Keyboard Navigation for Rows"
+      }
+    ]
+  },
+  {
+    "title": "Grouping and Pivoting",
+    "path": "/docs/learn/grouping-and-pivoting",
+    "routes": [
+      {
+        "title": "Grouping",
+        "path": "/docs/learn/grouping-and-pivoting/grouping-rows"
+      },
+      {
+        "title": "Aggregations",
+        "path": "/docs/learn/grouping-and-pivoting/group-aggregations"
+      },
+      {
+        "title": "Pivoting",
+        "transient": true,
+        "path": "/docs/learn/grouping-and-pivoting/pivoting/overview",
+        "routes": [
+          {
+            "title": "Overview",
+            "path": "/docs/learn/grouping-and-pivoting/pivoting/overview"
+          },
+          {
+            "title": "Customizing Pivot Columns",
+            "path": "/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Filtering",
+    "path": "/docs/learn/filtering",
 
-          "routes": [
-            {
-              "title": "Client-side Filtering",
-              "path": "/docs/learn/filtering/filtering-client-side"
-            },
-            {
-              "title": "Server-side Filtering",
-              "path": "/docs/learn/filtering/filtering-server-side"
-            },
-            {
-              "title": "Providing a Custom Filter Editor",
-              "path": "/docs/learn/filtering/providing-a-custom-filter-editor"
-            }
-          ]
-        },
-        {
-          "title": "Editing",
-          "path": "/docs/learn/editing/inline-editing",
-          "transient": true,
-          "routes": [
-            {
-              "title": "Inline Editing",
-              "path": "/docs/learn/editing/inline-editing"
-            },
-            {
-              "title": "Editing Flow",
-              "path": "/docs/learn/editing/inline-edit-flow"
-            },
-            {
-              "title": "Custom Editor",
-              "path": "/docs/learn/editing/custom-editor"
-            }
-          ]
-        },
-        {
-          "title": "Context Menus",
-          "path": "/docs/learn/context-menus/using-context-menus",
-          "transient": true,
-          "routes": [
-            {
-              "path": "/docs/learn/context-menus/using-context-menus",
-              "title": "Using Context Menus"
-            }
-          ]
-        },
-        {
-          "title": "Theming",
-          "path": "/docs/learn/theming",
-          "routes": [
-            {
-              "title": "CSS Variables",
-              "path": "/docs/learn/theming/css-variables"
-            }
-          ]
-        },
-        {
-          "title": "Common Issues",
-          "path": "/docs/learn/common-issues"
-        },
-        {
-          "title": "Examples",
-          "transient": true,
-          "path": "/docs/learn/examples/dynamic-pivoting-example",
-          "routes": [
-            {
-              "title": "Dynamic pivoting example",
-              "path": "/docs/learn/examples/dynamic-pivoting-example"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+    "routes": [
+      {
+        "title": "Client-side Filtering",
+        "path": "/docs/learn/filtering/filtering-client-side"
+      },
+      {
+        "title": "Server-side Filtering",
+        "path": "/docs/learn/filtering/filtering-server-side"
+      },
+      {
+        "title": "Providing a Custom Filter Editor",
+        "path": "/docs/learn/filtering/providing-a-custom-filter-editor"
+      }
+    ]
+  },
+  {
+    "title": "Editing",
+    "path": "/docs/learn/editing/inline-editing",
+    "transient": true,
+    "routes": [
+      {
+        "title": "Inline Editing",
+        "path": "/docs/learn/editing/inline-editing"
+      },
+      {
+        "title": "Editing Flow",
+        "path": "/docs/learn/editing/inline-edit-flow"
+      },
+      {
+        "title": "Custom Editor",
+        "path": "/docs/learn/editing/custom-editor"
+      }
+    ]
+  },
+  {
+    "title": "Context Menus",
+    "path": "/docs/learn/context-menus/using-context-menus",
+    "transient": true,
+    "routes": [
+      {
+        "path": "/docs/learn/context-menus/using-context-menus",
+        "title": "Using Context Menus"
+      }
+    ]
+  },
+  {
+    "title": "Theming",
+    "path": "/docs/learn/theming",
+    "routes": [
+      {
+        "title": "CSS Variables",
+        "path": "/docs/learn/theming/css-variables"
+      }
+    ]
+  },
+  {
+    "title": "Common Issues",
+    "path": "/docs/learn/common-issues"
+  },
+  {
+    "title": "Examples",
+    "transient": true,
+    "path": "/docs/learn/examples/dynamic-pivoting-example",
+    "routes": [
+      {
+        "title": "Dynamic pivoting example",
+        "path": "/docs/learn/examples/dynamic-pivoting-example"
+      }
+    ]
+  }
+]

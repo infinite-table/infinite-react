@@ -1,5 +1,5 @@
 ---
-title: Getting started documentation and guides
+title: Infinite Table Documentation
 description: Developer Documentation for Infinite Table, your go-to React DataGrid component to handle huge amounts of data
 ---
 

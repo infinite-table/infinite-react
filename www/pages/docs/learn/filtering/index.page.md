@@ -15,7 +15,7 @@ You specify an uncontrolled <DPropLink name="defaultFilterValue" /> on the `<Dat
 
 Based on the <PropLink name="columns.type" code={false}>column type</PropLink>, the correct filter editor is displayed in the column header, along with the correct operator icon. In the UI, you can change the operator being used for the filter.
 
-```tsx file="Specifying_an_initial_filter_value_for_the_DataSource"
+```tsx title="Specifying_an_initial_filter_value_for_the_DataSource"
 <DataSource<Developer>
   data={...}
   defaultFilterValue={[

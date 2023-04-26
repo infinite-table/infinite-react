@@ -1,13 +1,14 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import * as React from 'react';
 
 import demoImage from '../../public/full-demo-image.png';
-import { HeroImageCls, HeroImageNormalCls } from './components.css';
+import cmpStyles from './components.module.css';
 import { HighlightButton } from './HighlightButton';
 const debounce = require('debounce');
 
-export const HeroImage = <Image alt="hero image" src={demoImage} />;
+export const HeroImage = <Image priority alt="hero image" src={demoImage} />;
 
 export const HeroPicture = () => {
   const heroImageContainerRef = React.useRef<HTMLDivElement>(null);
@@ -21,7 +22,7 @@ export const HeroPicture = () => {
       if (shouldHavePerspective != hasPerspective) {
         hasPerspective = shouldHavePerspective;
         heroImageContainer?.classList[shouldHavePerspective ? 'remove' : 'add'](
-          HeroImageNormalCls,
+          cmpStyles.HeroImageNormalCls,
         );
       }
     }, 50);
@@ -33,13 +34,13 @@ export const HeroPicture = () => {
   }, []);
   return (
     <Link
-      href="/docs/learn/getting-started/full-demo"
+      href="/full-demo"
       className="cursor-pointer outline-none relative"
       tabIndex={-1}
     >
       <div
         ref={heroImageContainerRef}
-        className={`${HeroImageCls}`}
+        className={`${cmpStyles.HeroImageCls}`}
         style={{ zIndex: 10 }}
       >
         {HeroImage}

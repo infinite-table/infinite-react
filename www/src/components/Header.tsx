@@ -1,24 +1,21 @@
+'use client';
+import cn from 'classnames';
 import { ReactNode } from '@mdx-js/react/lib';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+
 import * as React from 'react';
 
-import {
-  marginTop,
-  centeredFlexColumn,
-  wwwVars,
-  wwwTheme,
-} from '../styles/www-utils.css';
+import { newvars } from '../styles/www-utils';
 import { BannerText } from './BannerText';
 
-import {
-  HighlightBrandToLightBackground,
-  SpotlightRadialBackgroundCls,
-  width100,
-} from './components.css';
+import cmpStyles from './components.module.css';
 import { ExternalLink } from './ExternalLink';
-import { IceCls, NavBarCls, NavBarWrapCls } from './Header.css';
+import headerStyles from './Header.module.css';
 import { InfiniteLogo, InfiniteLogoColors } from './InfiniteLogo';
+import { usePathname } from 'next/navigation';
+import { MenuContext } from './useMenu';
+import { IconHamburger } from './Icon/IconHamburger';
+import { IconClose } from './Icon/IconClose';
 
 export function TwitterLink(props: {
   children?: ReactNode;
@@ -96,33 +93,49 @@ export const LogoAndTitle = (props: {
 );
 
 export const NavBarContent = ({
-  skipMaxWidth,
   childrenBefore,
 }: {
-  skipMaxWidth?: boolean;
   childrenBefore?: React.ReactNode;
 }) => {
   const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
 
-  const router = useRouter();
+  const pathname = usePathname() || '';
 
   const activePage = {
-    pricing: router.asPath.startsWith('/pricing'),
-    docs: router.asPath.startsWith('/docs'),
-    blog: router.asPath.startsWith('/blog'),
+    pricing: pathname.startsWith('/pricing'),
+    docs: pathname.startsWith('/docs'),
+    blog: pathname.startsWith('/blog'),
   };
 
   const activeCls = `text-glow`;
 
+  const { toggleOpen, isOpen } = React.useContext(MenuContext);
+
+  const mobileNavButton = (
+    <button
+      type="button"
+      aria-label="Menu"
+      onClick={toggleOpen}
+      className={cn(
+        'flex lg:hidden items-center h-full pl-2 sm:pl-6 pr-0 sm:pr-2',
+        {
+          'text-link mr-0': isOpen,
+        },
+      )}
+    >
+      {!isOpen ? <IconHamburger /> : <IconClose />}
+    </button>
+  );
   return (
     <ul
-      className={`${NavBarCls} flex flex-row items-center `}
+      className={`${headerStyles.NavBarCls} ${cmpStyles.SpotlightHorizontalBackgroundCls} flex flex-row items-center `}
       style={{
         flexWrap: 'wrap',
-        maxWidth: skipMaxWidth ? 'auto' : wwwVars.maxSiteWidth,
+        maxWidth: 'var(--max-site-width,auto)',
       }}
     >
       {childrenBefore}
+      {mobileNavButton}
       <li
         className={`${itemCls} font-black text-xl sm:text-4xl md:text-4xl tracking-tight`}
       >
@@ -145,7 +158,7 @@ export const NavBarContent = ({
       <li className={`${itemCls} `}>
         <TwitterLink />
       </li>
-      <div className={IceCls} />
+      <div className={headerStyles.IceCls} />
       <li className={`${itemCls} whitespace-nowrap`}>
         <GithubLink />
       </li>
@@ -153,16 +166,16 @@ export const NavBarContent = ({
   );
 };
 
-export const MainNavBar = ({
-  skipMaxWidth,
-  children,
-}: {
-  skipMaxWidth?: boolean;
-  children?: React.ReactNode;
-}) => {
+export const MainNavBar = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <nav className={`${NavBarWrapCls} ${wwwTheme} bg-black`}>
-      <NavBarContent skipMaxWidth={skipMaxWidth} childrenBefore={children} />
+    <nav
+      style={{
+        height: newvars.header.height,
+        zIndex: 10000,
+      }}
+      className={`w-full  relative bg-black`}
+    >
+      <NavBarContent childrenBefore={children} />
     </nav>
   );
 };
@@ -186,7 +199,7 @@ export const HeroHeader = (props: {
 }) => {
   const title = props.title ?? (
     <>
-      <span className={``}>One Table</span> — Infinite Applications
+      <span>One Table</span> — Infinite Applications
     </>
   );
 
@@ -241,7 +254,9 @@ export const HeroHeader = (props: {
 
   return (
     <div
-      className={['relative  mb-20', width100, centeredFlexColumn].join(' ')}
+      className={[
+        'relative  mb-20 w-full flex flex-col items-center justify-center',
+      ].join(' ')}
     >
       <h1
         style={{
@@ -249,14 +264,14 @@ export const HeroHeader = (props: {
           zIndex: 1,
         }}
         className={[
-          marginTop[36],
+          'mt-52',
           getHeroHeaderTextStyling().className,
           'text-center',
         ].join(' ')}
       >
         <div className="relative">
           <div
-            className={`${SpotlightRadialBackgroundCls}`}
+            className={`${cmpStyles.SpotlightRadialBackgroundCls}`}
             style={{
               height: 500,
               top: '-50%',
@@ -266,14 +281,16 @@ export const HeroHeader = (props: {
             }}
           />
 
-          <div className={`${HighlightBrandToLightBackground} px-3 relative`}>
+          <div
+            className={`${cmpStyles.HighlightBrandToLightBackground} px-3 relative text-5xl md:text-6xl lg:text-7xl`}
+          >
             {title}
           </div>
         </div>
       </h1>
       {subtitle ? (
         <h2
-          className={`text-2xl leading-relaxed mt-20 text-center font-bold text-white justify-center opacity-70`}
+          className={`text-4xl leading-relaxed mt-20 text-center font-bold text-white justify-center opacity-70`}
           style={{
             zIndex: 2,
             maxWidth: '80%',

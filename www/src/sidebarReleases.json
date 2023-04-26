@@ -1,18 +1,6 @@
-{
-  "title": "Releases",
-  "heading": true,
-  "path": "/docs/releases",
-  "routes": [
-    {
-      "heading": true,
-      "path": "",
-      "routes": [
-        {
-          "title": "All Releases",
-          "path": "/docs/releases",
-          "xroutes": [{ "path": "/docs/releases/v1", "title": "Version 1" }]
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "title": "All Releases",
+    "path": "/docs/releases"
+  }
+]

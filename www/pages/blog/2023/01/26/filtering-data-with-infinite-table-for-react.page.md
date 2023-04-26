@@ -42,7 +42,7 @@ This configures the `<DataSource />` component with an empty array of filters; c
 
 Of course, you can define some initial filters:
 
-```tsx file="Initial_filters:_filter_by_age_greater_than_40"
+```tsx title="Initial_filters:_filter_by_age_greater_than_40"
 defaultFilterValue={[
   {
     field: 'age',

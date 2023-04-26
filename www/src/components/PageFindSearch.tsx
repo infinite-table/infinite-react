@@ -1,3 +1,4 @@
+'use client';
 import { IconSearch } from '@www/components/Icon/IconSearch';
 
 import * as React from 'react';
@@ -74,16 +75,20 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
       if (!fn()) {
         setTimeout(function () {
           waitFor(fn, callback, timeout);
-        }, timeout || 100);
+        }, timeout || 1000);
         return;
       }
       callback();
     }
+    // console.log('mounted!');
 
     waitFor(
       function () {
         // @ts-ignore
-        return !!window.PagefindUI;
+        const res = !!window.PagefindUI;
+
+        // console.log('check', res);
+        return res;
       },
       function () {
         const initialized = initMap[id];
@@ -92,6 +97,7 @@ export const PageFindSearch: React.FC<PageFindSearchProps> = (
           return;
         }
         initMap[id] = true;
+        // console.log('init!!!');
 
         // console.log('init pagefind', id, document.querySelector('#' + id));
         // @ts-ignore

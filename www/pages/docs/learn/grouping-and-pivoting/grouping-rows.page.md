@@ -135,7 +135,7 @@ For the `multi-column` strategy, you can use <PropLink name="hideEmptyGroupColum
 
 ```
 
-```ts file="$DOCS/reference/employee-columns.ts as=employee-columns.ts"
+```ts file="$DOCS/reference/employee-columns.ts" as="employee-columns.ts"
 
 ```
 

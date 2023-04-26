@@ -122,14 +122,16 @@ export default () => {
       <button
         style={buttonStyle}
         onClick={() => {
-          const dataSourceApi = apis?.dataSourceApi!;
-          dataSourceApi.insertData(
-            getRow(dataSourceApi.getRowInfoArray().length),
-            {
-              primaryKey: 0,
-              position: 'after',
-            },
-          );
+          if (apis) {
+            const dataSourceApi = apis.dataSourceApi!;
+            dataSourceApi.insertData(
+              getRow(dataSourceApi.getRowInfoArray().length),
+              {
+                primaryKey: 0,
+                position: 'after',
+              },
+            );
+          }
         }}
       >
         Add row after Rocky
@@ -138,14 +140,16 @@ export default () => {
         style={buttonStyle}
         disabled={!currentActivePrimaryKey}
         onClick={() => {
-          const dataSourceApi = apis?.dataSourceApi!;
-          dataSourceApi.insertData(
-            getRow(dataSourceApi.getRowInfoArray().length),
-            {
-              primaryKey: currentActivePrimaryKey,
-              position: 'after',
-            },
-          );
+          if (apis) {
+            const dataSourceApi = apis.dataSourceApi!;
+            dataSourceApi.insertData(
+              getRow(dataSourceApi.getRowInfoArray().length),
+              {
+                primaryKey: currentActivePrimaryKey,
+                position: 'after',
+              },
+            );
+          }
         }}
       >
         Add row after currently active row

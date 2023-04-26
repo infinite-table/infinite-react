@@ -16,22 +16,18 @@ import { SidebarRouteTree } from './SidebarRouteTree';
 
 const SIDEBAR_BREAKPOINT = 1023;
 
-export function Sidebar({
-  isMobileOnly,
-  blog,
-}: {
-  isMobileOnly?: boolean;
-  blog?: boolean;
-}) {
-  const { menuRef, isOpen } = React.useContext(MenuContext);
+export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
   const isMobileSidebar = useMediaQuery(SIDEBAR_BREAKPOINT);
-  let routeTree = React.useContext(SidebarContext);
+
+  const routeTree = React.useContext(SidebarContext);
   const isHidden = isMobileOnly && !isMobileSidebar;
 
   // HACK. Fix up the data structures instead.
-  if ((routeTree as any).routes.length === 1 && !blog) {
-    routeTree = (routeTree as any).routes[0];
-  }
+  // if ((routeTree as any).routes.length === 1 && !blog) {
+  //   routeTree = (routeTree as any).routes[0];
+  // }
+
+  const { menuRef, isOpen } = React.useContext(MenuContext);
 
   return (
     <aside
@@ -46,9 +42,7 @@ export function Sidebar({
       }}
     >
       <div className="px-5 mt-12 lg:hidden"></div>
-      <div className="hidden lg:block py-3 px-5">
-        <PageFindSearch alwaysShow />
-      </div>
+
       <nav
         role="navigation"
         ref={menuRef}
@@ -56,12 +50,16 @@ export function Sidebar({
         className="w-full h-screen lg:h-auto flex-grow pr-0 lg:pr-5 pb-44  lg:pb-6 overflow-y-scroll lg:overflow-y-auto scrolling-touch scrolling-gpu"
       >
         {isMobileSidebar ? (
-          <MobileNav />
+          <MobileNav routeTree={routeTree} />
         ) : (
           <SidebarRouteTree routeTree={routeTree} />
         )}
       </nav>
+
       <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-black">
+        <div className="hidden lg:block py-3 px-5">
+          <PageFindSearch alwaysShow />
+        </div>
         <div className="flex flex-row mb-5">
           <TwitterLink />
           <div className="ml-5"></div>

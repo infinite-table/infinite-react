@@ -16,6 +16,13 @@ const Heading = forwardRefWithAs<HeadingProps, 'div'>(function Heading(
   { as: Comp = 'div', className, children, id, isPageAnchor = true, ...props },
   ref,
 ) {
+  if (!id && typeof children === 'string') {
+    id = children
+      .toLowerCase()
+      .replaceAll('.', '')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9\-]+/g, '');
+  }
   return (
     <>
       <Comp id={id} {...props} ref={ref} className={cn('heading', className)}>
@@ -107,16 +114,18 @@ export const H2 = ({ className, ...props }: HeadingProps) => (
     {...props}
   />
 );
-export const H3 = ({ className, ...props }: HeadingProps) => (
-  <Heading
-    as="h3"
-    className={cn(
-      className,
-      'text-2xl leading-9 text-content-color font-bold my-6',
-    )}
-    {...props}
-  />
-);
+export const H3 = ({ className, ...props }: HeadingProps) => {
+  return (
+    <Heading
+      as="h3"
+      className={cn(
+        className,
+        'text-2xl leading-9 text-content-color font-bold my-6',
+      )}
+      {...props}
+    />
+  );
+};
 
 export const H4 = ({ className, ...props }: HeadingProps) => (
   <Heading

@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.root.json",
+
   "compilerOptions": {
+    "plugins": [{ "name": "next" }],
     "target": "es5",
     "allowJs": true,
     "jsx": "preserve",
@@ -11,8 +13,10 @@
       "react-dom": ["../node_modules/react-dom"],
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
-      "@infinite-table/infinite-react": ["../source/dist/index.d.ts"]
-    }
+      "@infinite-table/infinite-react": ["../source/dist"],
+      "contentlayer/generated": ["./.contentlayer/generated"]
+    },
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
@@ -20,7 +24,11 @@
     "**/*.ts",
     "**/*.tsx",
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    ".next/types/**/*.ts",
+    "-mdx-components.tsx",
+    ".contentlayer/generated",
+    "contentlayer.config.ts"
   ],
   "exclude": ["node_modules"]
 }

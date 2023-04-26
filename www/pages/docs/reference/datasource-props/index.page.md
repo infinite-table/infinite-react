@@ -84,7 +84,7 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 ```
 
-```ts file="$DOCS/learn/working-with-data/columns.ts as=columns.ts"
+```ts file="$DOCS/learn/working-with-data/columns.ts" as="columns.ts"
 
 ```
 

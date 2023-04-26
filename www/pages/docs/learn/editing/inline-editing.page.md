@@ -69,7 +69,7 @@ Editing can be started either by user interaction or programmatically via the [A
 
 The user can start editing by double-clicking on a cell or by pressing the `Enter` key while the cell is active (see [Keyboard Navigation for Cells](docs/learn/keyboard-navigation/navigating-cells)).
 
-To start editing programmatically, use the <ApiLink name="startEdit">startEdit({ columnId, rowIndex })</ApiLink> method.
+To start editing programmatically, use the <ApiLink name="startEdit">{`startEdit({ columnId, rowIndex })`}</ApiLink> method.
 
 
 <Sandpack title="Starting an Edit via the API">

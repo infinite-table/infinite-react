@@ -7,8 +7,7 @@ description: Styling columns in the InfiniteTable React DataGrid via both style 
 
 The most straightforward way to style the cells in a column is to use the <PropLink name="columns.style">column.style</PropLink> property as an object.
 
-```ts file="Styling_a_column_in_the_DataGrid"
-
+```ts title="Styling_a_column_in_the_DataGrid"
 const column = {
   firstName: {
     style: {
@@ -69,7 +68,7 @@ Mirroring the behavior already described for the <PropLink name="columns.style">
 
 It can be used as a string or a function that returns a string.
 
-```ts file="Styling_a_column_using_column.className"
+```ts title="Styling_a_column_using_column.className"
 const columns = {
   firstName: {
     className: 'first-name-column',

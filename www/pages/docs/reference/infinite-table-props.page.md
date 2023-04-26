@@ -2584,7 +2584,7 @@ You can either return a valid style object, or undefined.
 
 </AnatomyStep>
 
-```tsx [[1, 5, "data: Employee | null;"], [2,6,"rowInfo: InfiniteTableRowInfo<Employee>;"], [3,11,"{ background: 'tomato' };"]]
+```tsx
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   data,
   rowInfo,

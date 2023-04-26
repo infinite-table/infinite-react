@@ -3,7 +3,7 @@ import {
   disableBodyScroll,
   enableBodyScroll,
 } from 'body-scroll-lock';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 
 /**
@@ -14,8 +14,9 @@ import * as React from 'react';
  */
 export const useMenu = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const menuRef = React.useRef<HTMLElement>(null);
+
+  const pathname = usePathname();
 
   const showSidebar = React.useCallback(() => {
     setIsOpen(true);
@@ -44,7 +45,7 @@ export const useMenu = () => {
     return () => {
       clearAllBodyScrollLocks();
     };
-  }, [router.pathname, hideSidebar]);
+  }, [pathname, hideSidebar]);
 
   return {
     hideSidebar,

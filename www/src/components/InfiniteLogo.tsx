@@ -1,4 +1,4 @@
-import { wwwVars } from '@www/styles/www-utils.css';
+import { newvars } from '@www/styles/www-utils';
 import { CSSProperties, useId } from 'react';
 
 export type InfiniteLogoColors = 'light' | 'dark' | 'gradient';
@@ -15,15 +15,15 @@ export function InfiniteLogo(
   const id = useId().replace('.', '-');
   const style: CSSProperties = {
     width: 'auto',
-    height: wwwVars.header.lineHeight,
+    height: newvars.header.lineHeight,
     ...props.style,
   };
 
   let color = '';
   if (props.color === 'light') {
-    color = wwwVars.color.contentColor as string;
+    color = newvars.color.contentColor as string;
   } else if (props.color === 'dark') {
-    color = wwwVars.color.black as string;
+    color = newvars.color.black as string;
   }
 
   if (color) {

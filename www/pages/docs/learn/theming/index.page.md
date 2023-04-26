@@ -22,7 +22,7 @@ To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-
 
 
 
-```tsx file="explicitly-apply-light-theme-via-container-className"
+```tsx title="explicitly-apply-light-theme-via-container-className"
 <div className="light">
   <DataSource {...dataSouceProps}>
     <InfiniteTable {...props} />
@@ -33,7 +33,7 @@ To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-
 
 If instead you specify a `dark` CSS className, the dark theme will be applied
 
-```tsx file="explicitly-apply-dark-theme-via-container-className"
+```tsx title="explicitly-apply-dark-theme-via-container-className"
 <body className="dark">
   <div>
     <DataSource {...dataSouceProps}>
