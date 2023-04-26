@@ -125,7 +125,7 @@ const vars = extract(
 console.log(vars);
 const mdFilePath = path.resolve(
   __dirname,
-  '../pages/docs/learn/theming/css-variables.page.md',
+  '../content/docs/learn/theming/css-variables.page.md',
 );
 const mdFile = fs.readFileSync(mdFilePath, 'utf8');
 

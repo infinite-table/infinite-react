@@ -13,7 +13,7 @@ import rangeParser from 'parse-numeric-range';
 
 const dirname = path.resolve('..');
 
-const ROOT_DOCS_PAGES = path.resolve(dirname, `./www/pages/docs`);
+const ROOT_DOCS_PAGES = path.resolve(dirname, `./www/content/docs`);
 const DOCS_ENV_VAR = '$DOCS';
 
 const HIGHLIGHT_REGEX = /{([\d,-]+)}/;

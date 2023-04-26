@@ -9,6 +9,21 @@ const meta = {
   description: `Official Infinite Table React news, announcements, and release notes. Infinite Table is the modern DataGrid for building React apps — faster.`,
 };
 
+export async function generateStaticParams() {
+  const result = sortedPosts.map((post) => {
+    return {
+      blogpost: post.url
+        .split('/')
+        .slice(2) // to take out the first empty string and the '/blog' portion
+        .map((x) => x.trim())
+        .filter(Boolean),
+    };
+  });
+
+  console.log('result', result);
+  return result;
+}
+
 export const generateMetadata = async ({
   params,
 }: {

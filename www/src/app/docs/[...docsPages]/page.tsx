@@ -19,6 +19,21 @@ import { metadata as meta } from '../metadata';
 import { Metadata } from 'next';
 import { asMeta } from '@www/utils/asMeta';
 
+export async function generateStaticParams() {
+  const result = allDocsPages.map((page) => {
+    return {
+      docsPages: page.url
+        .split('/')
+        .slice(2) // to take out the first empty string and the '/docs' portion
+        .map((x) => x.trim())
+        .filter(Boolean),
+    };
+  });
+
+  console.log('result', result);
+  return result;
+}
+
 export const generateMetadata = async ({
   params,
 }: {

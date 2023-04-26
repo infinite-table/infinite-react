@@ -3,8 +3,8 @@ const path = require('path');
 // const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
 // const withVanillaExtract = createVanillaExtractPlugin();
 
-const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
-const withVanillaExtract = createVanillaExtractPlugin();
+// const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+// const withVanillaExtract = createVanillaExtractPlugin();
 // const { remarkPlugins } = require('./plugins/markdownToHtml');
 const withMDX = require('@next/mdx')({
   extension: /\.(md|mdx)$/,
@@ -45,6 +45,7 @@ const nextConfig = withMDX({
   //     },
   //   ];
   // },
+  output: 'export',
   experimental: {
     externalDir: true,
     appDir: true,
@@ -55,5 +56,5 @@ const nextConfig = withMDX({
 const { withContentlayer } = require('next-contentlayer');
 
 // module.exports = withContentlayer(withVanillaExtract(nextConfig));
-module.exports = withVanillaExtract(withContentlayer(nextConfig));
+module.exports = withContentlayer(nextConfig);
 // module.exports = nextConfig;

@@ -267,7 +267,7 @@ export function Prop({
             {/* The pt and mt hack is for when there's anchor navigation, in order to accomodate for the fixed navbar and search field */}
             <H4
               as="h2"
-              id={name.replaceAll('.', '-')}
+              id={(name || '').replaceAll('.', '-')}
               className="pt-[80px] mt-[-80px]"
             >
               <IconCodeBlock className="inline mr-2 text-brand" />

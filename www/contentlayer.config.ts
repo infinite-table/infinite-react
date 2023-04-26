@@ -186,7 +186,7 @@ export const Post = defineDocumentType(() => ({
 }));
 
 export default makeSource({
-  contentDirPath: 'pages',
+  contentDirPath: 'content',
   documentTypes: [Post, DocsPage, RootPage],
   mdx: {
     esbuildOptions: (options) => {
