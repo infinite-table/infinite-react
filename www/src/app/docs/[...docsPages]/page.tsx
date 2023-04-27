@@ -20,17 +20,19 @@ import { Metadata } from 'next';
 import { asMeta } from '@www/utils/asMeta';
 
 export async function generateStaticParams() {
-  const result = allDocsPages.map((page) => {
-    return {
-      docsPages: page.url
-        .split('/')
-        .slice(2) // to take out the first empty string and the '/docs' portion
-        .map((x) => x.trim())
-        .filter(Boolean),
-    };
-  });
+  const result = allDocsPages
+    .map((page) => {
+      return {
+        docsPages: page.url
+          .split('/')
+          .slice(2) // to take out the first empty string and the '/docs' portion
+          .map((x) => x.trim())
+          .filter(Boolean),
+      };
+    })
+    .filter((x) => x.docsPages.length > 0);
 
-  console.log('result', result);
+  // console.log('result', result);
   return result;
 }
 

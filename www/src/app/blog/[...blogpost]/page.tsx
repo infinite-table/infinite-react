@@ -10,17 +10,19 @@ const meta = {
 };
 
 export async function generateStaticParams() {
-  const result = sortedPosts.map((post) => {
-    return {
-      blogpost: post.url
-        .split('/')
-        .slice(2) // to take out the first empty string and the '/blog' portion
-        .map((x) => x.trim())
-        .filter(Boolean),
-    };
-  });
+  const result = sortedPosts
+    .map((post) => {
+      return {
+        blogpost: post.url
+          .split('/')
+          .slice(2) // to take out the first empty string and the '/blog' portion
+          .map((x) => x.trim())
+          .filter(Boolean),
+      };
+    })
+    .filter((x) => x.blogpost.length > 0);
 
-  console.log('result', result);
+  // console.log('result', result);
   return result;
 }
 

@@ -29,6 +29,7 @@
     "watch-functions": "npm run build-functions && node build/functions/compile-json-server.js --watch",
     "format": "prettier --write '{src,content}/**/*.{js,jsx,ts,tsx,json,scss,css,md}'",
     "lint": "next lint",
+    "start": "next start",
     "install-serverless-deps": "cd functions/email-license && npm run install-deps && cd ../on-paddle-subscription && npm run install-deps"
   },
   "engines": {

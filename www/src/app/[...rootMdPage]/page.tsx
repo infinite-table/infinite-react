@@ -7,17 +7,19 @@ import { asMeta } from '@www/utils/asMeta';
 import { allRootPages } from 'contentlayer/generated';
 
 export async function generateStaticParams() {
-  const result = allRootPages.map((page) => {
-    return {
-      rootMdPage: page.url
-        .split('/')
-        .slice(1) // to take out the first empty string
-        .map((x) => x.trim())
-        .filter(Boolean),
-    };
-  });
+  const result = allRootPages
+    .map((page) => {
+      return {
+        rootMdPage: page.url
+          .split('/')
+          .slice(1) // to take out the first empty string
+          .map((x) => x.trim())
+          .filter(Boolean),
+      };
+    })
+    .filter((x) => x.rootMdPage.length > 0 && x.rootMdPage[0] !== '404');
 
-  console.log('result', result);
+  // console.log('result', result);
   return result;
 }
 

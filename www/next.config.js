@@ -45,7 +45,7 @@ const nextConfig = withMDX({
   //     },
   //   ];
   // },
-  output: 'export',
+  // output: 'export',
   experimental: {
     externalDir: true,
     appDir: true,

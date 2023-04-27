@@ -5,8 +5,6 @@ import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import useCollapse from '@gaearon/react-collapsed';
 
-// import { useRouteMeta } from '../useRouteMeta';
-
 import { SidebarLink } from './SidebarLink';
 
 interface SidebarRouteTreeProps {
@@ -115,7 +113,11 @@ export function SidebarRouteTree({
   const currentRoutes = routeTree ?? [];
 
   return (
-    <ul className="bg-dark-custom  border-border-dark lg:bg-transparent">
+    <ul
+      className={`bg-dark-custom  border-border-dark lg:bg-transparent ${
+        level === 0 ? 'lg:pt-6' : ''
+      }`}
+    >
       {currentRoutes
         .filter((route) => !route.draft)
         .map((route) => {
