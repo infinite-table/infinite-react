@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
-import '../../content/styles/index.css';
-import '../../content/styles/fonts.css';
-import '../../content/styles/sandpack.css';
+import '../styles/index.css';
+import '../styles/fonts.css';
+import '../styles/sandpack.css';
 import '../styles/globals.css';
 import colors from '../../colors';
 

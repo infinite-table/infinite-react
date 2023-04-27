@@ -31,7 +31,7 @@ const versions = JSON.parse(result.stdout);
 const NEXT_PUBLIC_INFINITE_REACT_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || versions.pop();
 
-const nextConfig = withMDX({
+let nextConfig = withMDX({
   env: {
     NEXT_PUBLIC_INFINITE_REACT_VERSION,
     // NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -45,7 +45,8 @@ const nextConfig = withMDX({
   //     },
   //   ];
   // },
-  // output: 'export',
+  output: 'export',
+  // exportTrailingSlash: true,
   experimental: {
     externalDir: true,
     appDir: true,
@@ -55,6 +56,11 @@ const nextConfig = withMDX({
 });
 const { withContentlayer } = require('next-contentlayer');
 
-// module.exports = withContentlayer(withVanillaExtract(nextConfig));
-module.exports = withContentlayer(nextConfig);
+nextConfig = withContentlayer(nextConfig);
+// the redirects are added by the contentlayer plugin
+// as a way to force building the pages, but we don't want that
+// as we call the contentlayer CLI ourselves
+delete nextConfig.redirects;
+
+module.exports = nextConfig;
 // module.exports = nextConfig;

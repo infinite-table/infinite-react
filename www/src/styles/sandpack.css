@@ -164,12 +164,12 @@ html.dark .sp-tabs .sp-tab-button[data-active='true'] {
  *
  * If you know a better way to keep them from diverging, send a PR.
  */
-.sp-layout {
+html .sp-layout {
   border-bottom-left-radius: 0.5rem !important;
   border-bottom-right-radius: 0.5rem !important;
   display: flex;
 }
-.sp-wrapper {
+html .sp-wrapper {
   width: 100%;
 }
 .sp-stack {

@@ -32,7 +32,7 @@ export async function generateStaticParams() {
     })
     .filter((x) => x.docsPages.length > 0);
 
-  // console.log('result', result);
+  console.log('result', result);
   return result;
 }
 

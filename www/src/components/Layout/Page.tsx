@@ -19,7 +19,7 @@ export function Page({ routeTree, children, blog }: PageProps) {
   return (
     <>
       <SidebarContext.Provider value={routeTree}>
-        <div className={`h-auto  flex flex-row`}>
+        <div className={`h-auto  flex flex-row`} data-pagefind-body>
           {' '}
           {/*lg:min-h-screen*/}
           <div
