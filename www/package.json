@@ -10,6 +10,7 @@
     "contentlayer-build-on-snippets-change": "chokidar \"./content/docs/**/*.page.tsx\" -c 'npm run contentlayer-build -- --clearCache'",
     "next-dev": "rm -fr .next && next dev -p 3001",
     "build": "npm run copy-license && npm run contentlayer-build && npm --prefix dataserver install && npm run generate-lib-dts && npm run update-css-vars-list && next build && npm run pagefind",
+    "ci:build": "cd ../source && npm i && npm run build && cd ../www && npm run build",
     "pagefind": "pagefind --source \"out\"",
     "pagefind-local": "rimraf -fr public/_pagefind && npm run pagefind && cp -R out/_pagefind public",
     "update-css-vars-list": "node build/create-css-vars-list.js",
