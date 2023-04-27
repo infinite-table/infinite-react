@@ -8,6 +8,8 @@ import PageHeading from '@www/components/PageHeading';
 import { allDocsPages, type DocsPage } from 'contentlayer/generated';
 import { metadata as meta } from './metadata';
 import { asMeta } from '@www/utils/asMeta';
+import { getMarkdownHeadings } from '@www/utils/getMarkdownHeadings';
+import { Toc } from '@www/components/Layout/Toc';
 
 export const metadata = asMeta(meta);
 
@@ -17,6 +19,14 @@ export default function Docs() {
   const pageIndex = allDocsPages.findIndex((page) => page.url === path);
   const page = allDocsPages[pageIndex] as DocsPage;
 
+  const anchors = getMarkdownHeadings(page.body.raw);
+
+  const afterChildren =
+    anchors && anchors.length ? (
+      <div className="w-full lg:max-w-xs hidden 2xl:block">
+        <Toc headings={anchors} />
+      </div>
+    ) : null;
   return (
     <Page routeTree={sidebarLearn}>
       <CenterContent>
@@ -29,6 +39,7 @@ export default function Docs() {
           <div>No Docs Page found</div>
         )}
       </CenterContent>
+      {afterChildren}
     </Page>
   );
 }

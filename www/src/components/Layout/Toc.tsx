@@ -1,3 +1,4 @@
+'use client';
 import cx from 'classnames';
 import * as React from 'react';
 
@@ -5,18 +6,32 @@ import { useTocHighlight } from './useTocHighlight';
 
 export function Toc({
   headings,
+  noHighlight,
 }: {
+  noHighlight?: boolean;
   headings: Array<{
     url: string;
     text: React.ReactNode;
     depth: number;
   }>;
 }) {
+  // if (headings && headings.length > 0) {
+  //   headings = [
+  //     {
+  //       depth: 1,
+  //       text: 'Overview',
+  //       url: '#',
+  //     },
+  //     ...headings,
+  //   ];
+  // }
   const { currentIndex } = useTocHighlight();
   // TODO: We currently have a mismatch between the headings in the document
   // and the headings we find in MarkdownPage (i.e. we don't find Recap or Challenges).
   // Select the max TOC item we have here for now, but remove this after the fix.
-  const selectedIndex = Math.min(currentIndex, headings.length - 1);
+  const selectedIndex = noHighlight
+    ? -1
+    : Math.min(currentIndex, headings.length - 1);
   return (
     <nav
       role="navigation"

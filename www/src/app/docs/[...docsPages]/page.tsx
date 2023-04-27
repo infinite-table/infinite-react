@@ -17,6 +17,12 @@ import {
 import { metadata as meta } from '../metadata';
 import { Metadata } from 'next';
 import { asMeta } from '@www/utils/asMeta';
+import {
+  getMarkdownHeadings,
+  getPropHeadings,
+  TocHeading,
+} from '@www/utils/getMarkdownHeadings';
+import { Toc } from '@www/components/Layout/Toc';
 
 export async function generateStaticParams() {
   const result = allDocsPages
@@ -31,7 +37,7 @@ export async function generateStaticParams() {
     })
     .filter((x) => x.docsPages.length > 0);
 
-  console.log('result', result);
+  // console.log('result', result);
   return result;
 }
 
@@ -70,6 +76,7 @@ export default function DocsPage({
   const page = allDocsPages[pageIndex] ?? page404;
 
   let sidebar: RouteItem[] = sidebarLearn;
+  let anchors: TocHeading[] = [];
 
   if (path.startsWith('/docs/reference')) {
     sidebar = sidebarReference;
@@ -77,13 +84,25 @@ export default function DocsPage({
   if (path.startsWith('/docs/releases')) {
     sidebar = sidebarReleases;
   }
+  if (sidebar === sidebarReference) {
+    anchors = getPropHeadings(page.body.raw);
+  } else {
+    anchors = getMarkdownHeadings(page.body.raw);
+  }
 
+  const afterChildren =
+    anchors && anchors.length ? (
+      <div className="w-full lg:max-w-xs hidden 2xl:block">
+        <Toc headings={anchors} noHighlight={sidebar === sidebarReference} />
+      </div>
+    ) : null;
   return (
     <Page routeTree={sidebar}>
       <CenterContent>
         <PageHeading title={page.title}></PageHeading>
         <MDXContent>{page.body.code}</MDXContent>
       </CenterContent>
+      {afterChildren}
     </Page>
   );
 }

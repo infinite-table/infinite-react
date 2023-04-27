@@ -4,17 +4,28 @@ import { DocsPageFooter, DocsPageRoute } from '@www/components/DocsFooter';
 
 import cmpStyles from '@www/components/components.module.css';
 
-import { type Post } from 'contentlayer/generated';
 import { useTwitter } from '@www/components/Layout/useTwitter';
 
 import { MDXContent } from '@www/components/MDXContent';
+import type { TocHeading } from '@www/utils/getMarkdownHeadings';
+import { Toc } from '@www/components/Layout/Toc';
 
 export function BlogPost({
   post,
   nextRoute,
   prevRoute,
+  headings,
 }: {
-  post: Post;
+  headings: TocHeading[];
+  post: {
+    body: {
+      code: string;
+    };
+    title: string;
+    url: string;
+    date: string;
+    author: string;
+  };
   nextRoute?: DocsPageRoute;
   prevRoute?: DocsPageRoute;
 }) {
@@ -27,6 +38,8 @@ export function BlogPost({
 
   /* eslint-disable react-hooks/rules-of-hooks */
   useTwitter();
+
+  // getAnchors(post.body.code);
 
   return (
     <>
@@ -69,7 +82,7 @@ export function BlogPost({
         </div>
       </div>
       <div className="w-full lg:max-w-xs h-full hidden 2xl:block">
-        {/* <Toc headings={anchors} /> */}
+        <Toc headings={headings} />
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 import { siteConfig } from '@www/siteConfig';
 import { forwardRefWithAs } from '@www/utils/forwardRefWithAs';
+import { toHashUrl } from '@www/utils/toHashUrl';
 import cn from 'classnames';
 import * as React from 'react';
 export interface HeadingProps {
@@ -17,11 +18,7 @@ const Heading = forwardRefWithAs<HeadingProps, 'div'>(function Heading(
   ref,
 ) {
   if (!id && typeof children === 'string') {
-    id = children
-      .toLowerCase()
-      .replaceAll('.', '')
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9\-]+/g, '');
+    id = toHashUrl(children);
   }
   return (
     <>

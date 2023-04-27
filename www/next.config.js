@@ -45,6 +45,9 @@ let nextConfig = withMDX({
   //     },
   //   ];
   // },
+  images: {
+    unoptimized: true,
+  },
   output: 'export',
   // exportTrailingSlash: true,
   experimental: {
