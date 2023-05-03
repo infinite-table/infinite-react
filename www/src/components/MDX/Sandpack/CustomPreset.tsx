@@ -135,7 +135,7 @@ export function CustomPreset({
                 right: 0,
                 bottom: 0,
                 top: 0,
-                zIndex: 1000,
+                zIndex: 10000,
               } as CSSProperties)
             : undefined
         }

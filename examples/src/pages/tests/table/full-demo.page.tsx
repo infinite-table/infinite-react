@@ -305,7 +305,7 @@ export default function App() {
         licenseKey={process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY}
         domProps={{
           style: {
-            height: '680px',
+            minHeight: '680px',
             width: '1200px',
             margin: 5,
             // border: '1px solid gray',

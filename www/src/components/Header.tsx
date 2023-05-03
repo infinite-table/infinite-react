@@ -264,7 +264,7 @@ export const HeroHeader = (props: {
           zIndex: 1,
         }}
         className={[
-          'mt-52',
+          'mt-40 md:mt-52',
           getHeroHeaderTextStyling().className,
           'text-center',
         ].join(' ')}

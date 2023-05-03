@@ -240,6 +240,14 @@ const defaultFilterValue: DataSourcePropFilterValue<Developer> = [
   },
 ];
 
+const domProps = {
+  style: {
+    minHeight: '50vh',
+    height: 600,
+    margin: 5,
+  },
+};
+
 export default function App() {
   const [{ min, max }, setMinMax] = useState({ min: 0, max: 0 });
   const columns = React.useMemo(() => {
@@ -352,6 +360,7 @@ export default function App() {
           defaultColumnPinning={{
             'group-by': true,
           }}
+          domProps={domProps}
           defaultActiveRowIndex={0}
           groupColumn={groupColumn}
           licenseKey={process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY}
