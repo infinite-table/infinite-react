@@ -68,6 +68,8 @@ export const PropLink = ({
   return <Link href={href}>{content}</Link>;
 };
 
+PropLink.displayName = 'PropLink';
+
 export const DataSourcePropLink = ({
   name,
   children,
@@ -96,6 +98,8 @@ export const DataSourcePropLink = ({
   );
   return <Link href={href}>{content}</Link>;
 };
+
+DataSourcePropLink.displayName = 'DataSourcePropLink';
 
 export const DApiLink = ({
   name,
@@ -126,6 +130,8 @@ export const DApiLink = ({
   return <Link href={href}>{content}</Link>;
 };
 
+DApiLink.displayName = 'DApiLink';
+
 export const ApiLink = ({
   name,
   children,
@@ -154,6 +160,8 @@ export const ApiLink = ({
   );
   return <Link href={href}>{content}</Link>;
 };
+
+ApiLink.displayName = 'ApiLink';
 
 export const LearnLink = ({
   name,
@@ -196,6 +204,8 @@ export const HookLink = ({
   );
   return <Link href={href}>{content}</Link>;
 };
+
+HookLink.displayName = 'HookLink';
 
 const PropInlineCode = ({
   children,
@@ -413,7 +423,6 @@ export function PropTable({
   const childrenArray = React.Children.toArray(children);
 
   const lowerHash = hash.toLowerCase().replaceAll('-', '.');
-  console.log({ lowerHash });
 
   let highlightedName = '';
 
@@ -471,6 +480,7 @@ export function PropTable({
       setFilterText(value.toLowerCase());
 
       if (!value) {
+        console.log('clearing hash');
         window.location.hash = '';
       }
     },
@@ -494,6 +504,7 @@ export function PropTable({
         onClick={() => {
           resetSearch('');
 
+          console.log('clearing hash!!!');
           window.location.hash = '';
           inputRef.current!.focus();
         }}

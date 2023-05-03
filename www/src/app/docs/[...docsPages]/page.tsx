@@ -18,7 +18,7 @@ import { metadata as meta } from '../metadata';
 import { Metadata } from 'next';
 import { asMeta } from '@www/utils/asMeta';
 import {
-  getMarkdownHeadings,
+  getMarkdownHeadingsForPage,
   getPropHeadings,
   TocHeading,
 } from '@www/utils/getMarkdownHeadings';
@@ -87,7 +87,7 @@ export default function DocsPage({
   if (sidebar === sidebarReference) {
     anchors = getPropHeadings(page.body.raw);
   } else {
-    anchors = getMarkdownHeadings(page.body.raw);
+    anchors = getMarkdownHeadingsForPage(page.body.raw);
   }
 
   const afterChildren =

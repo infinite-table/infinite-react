@@ -35,7 +35,7 @@ export const HeroPicture = () => {
   return (
     <Link
       href="/full-demo"
-      className="cursor-pointer outline-none relative"
+      className="cursor-pointer outline-none relative flex items-center justify-center"
       tabIndex={-1}
     >
       <div
@@ -48,8 +48,12 @@ export const HeroPicture = () => {
       </div>
 
       <div
-        className="absolute top-0 left-0 right-0 bottom-0 z-10 cursor-pointer flex items-center justify-center"
-        style={{ pointerEvents: 'none' }}
+        className="absolute top-0 left-0 right-0 bottom-0 z-1000 cursor-pointer flex items-center justify-center"
+        style={{
+          pointerEvents: 'none',
+          // transform is needed for safari - for whatever reason, in safari, this layer is displayed under the image
+          transform: 'translate3d(0px,0px,1000px)',
+        }}
       >
         <HighlightButton>See live demo</HighlightButton>
       </div>

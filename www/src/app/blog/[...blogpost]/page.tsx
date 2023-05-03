@@ -1,5 +1,5 @@
 import { asMeta } from '@www/utils/asMeta';
-import { getMarkdownHeadings } from '@www/utils/getMarkdownHeadings';
+import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
 import { Metadata } from 'next';
 import { sortedPosts, type Post } from '../sortedPosts';
 import { BlogPost } from './BlogPost';
@@ -64,7 +64,7 @@ export default function BlogPostPage({
 
   return (
     <BlogPost
-      headings={getMarkdownHeadings(post.body.raw)}
+      headings={getMarkdownHeadingsForPage(post.body.raw)}
       post={{
         author: post.author,
         date: post.date,

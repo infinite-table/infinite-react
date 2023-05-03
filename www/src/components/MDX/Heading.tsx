@@ -1,8 +1,10 @@
 import { siteConfig } from '@www/siteConfig';
 import { forwardRefWithAs } from '@www/utils/forwardRefWithAs';
-import { toHashUrl } from '@www/utils/toHashUrl';
+
 import cn from 'classnames';
 import * as React from 'react';
+import { childToId } from './childToId';
+
 export interface HeadingProps {
   className?: string;
   isPageAnchor?: boolean;
@@ -13,12 +15,12 @@ export interface HeadingProps {
 
 const anchorClassName = siteConfig.headerIdConfig.className;
 
-const Heading = forwardRefWithAs<HeadingProps, 'div'>(function Heading(
+const Heading = forwardRefWithAs<HeadingProps, 'div'>(function HeadingCmp(
   { as: Comp = 'div', className, children, id, isPageAnchor = true, ...props },
   ref,
 ) {
-  if (!id && typeof children === 'string') {
-    id = toHashUrl(children);
+  if (!id) {
+    id = childToId(children);
   }
   return (
     <>

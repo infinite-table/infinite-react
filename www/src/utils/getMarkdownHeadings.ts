@@ -40,11 +40,26 @@ export function getPropHeadings(mdxString: string): TocHeading[] {
   }
   return anchors;
 }
+export function getMarkdownHeadingsForPage(mdxString: string): TocHeading[] {
+  let anchors = getMarkdownHeadings(mdxString);
+  if (anchors.length) {
+    anchors = [
+      {
+        depth: 1,
+        text: 'Overview',
+        url: '#',
+      },
+      ...anchors,
+    ];
+  }
+  return anchors;
+}
+
 export function getMarkdownHeadings(mdxString: string): TocHeading[] {
   const headings = mdxString.match(/^#+\s.+$/gm);
   const result = headings ? headings.map((heading) => heading.trim()) : [];
 
-  let anchors = result
+  const anchors = result
     .map((heading) => {
       const depth = heading.match(/^#+/gm);
       const text = heading.match(/[^#]*$/gm);
@@ -52,8 +67,34 @@ export function getMarkdownHeadings(mdxString: string): TocHeading[] {
         return null;
       }
 
+      const removeHTMLTags = (str: string) => {
+        // str.trim().replace(/<[^>]*>([^<]*)<\/[^>]*>|<[^>]*>/g, '$1');
+        const stringWithoutTags = str
+          .trim()
+          .replace(
+            /<[^>]*name="([^"]+)"[^>]*\/>|<[^>]*>([^<]*)<\/[^>]*>|<[^>]*>/g,
+            (_match, name, innerHTML) => {
+              if (name) {
+                return name;
+              } else {
+                return innerHTML;
+              }
+            },
+          );
+
+        return stringWithoutTags;
+      };
+
+      const removeBackticks = (str: string) => str.replace(/`/g, '');
+      const getNameAttributeFromSelfClosingTag = (tag: string) => {
+        const match = tag.match(/<[^>]*name="([^"]*)"[^>]*\/>/i);
+        return match ? match[1] : tag;
+      };
+
       const str = text
-        .map((x) => x.trim())
+        .map(removeHTMLTags)
+        .map(removeBackticks)
+        .map(getNameAttributeFromSelfClosingTag)
         .filter(Boolean)
         .join('');
 
@@ -65,15 +106,5 @@ export function getMarkdownHeadings(mdxString: string): TocHeading[] {
     })
     .filter(Boolean) as TocHeading[];
 
-  if (anchors.length) {
-    anchors = [
-      {
-        depth: 1,
-        text: 'Overview',
-        url: '#',
-      },
-      ...anchors,
-    ];
-  }
   return anchors;
 }
