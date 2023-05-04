@@ -51,6 +51,7 @@ export const HeroPicture = () => {
         className="absolute top-0 left-0 right-0 bottom-0 z-1000 cursor-pointer flex items-center justify-center"
         style={{
           pointerEvents: 'none',
+          zIndex: 100,
           // transform is needed for safari - for whatever reason, in safari, this layer is displayed under the image
           transform: 'translate3d(0px,0px,1000px)',
         }}
