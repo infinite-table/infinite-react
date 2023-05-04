@@ -11,17 +11,17 @@ Infinite Table is a React DataGrid component for displaying virtualized tabular 
 
 It helps you display huge datasets and get the most out of your data by providing you the right tools to enjoy these features:
 
-- [<img src="/icons/50x50/sorting.svg" style={{display: 'inline-block'}} /> sorting](/docs/learn/working-with-data/sorting)
-- [<img src="/icons/50x50/row-grouping.svg" style={{display: 'inline-block'}} /> row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
-- [<img src="/icons/50x50/pivoting.svg" style={{display: 'inline-block'}} /> pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
-- [<img src="/icons/50x50/aggregations.svg" style={{display: 'inline-block'}} /> aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
-- [<img src="/icons/50x50/live-pagination.svg" style={{display: 'inline-block'}} /> live pagination](/docs/learn/working-with-data/live-pagination)
-- [<img src="/icons/50x50/lazy-loading.svg" style={{display: 'inline-block'}} /> lazy loading](/docs/learn/working-with-data/lazy-loading)
-- [<img src="/icons/50x50/keyboard-navigation.svg" style={{display: 'inline-block'}} /> keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
-- [<img src="/icons/50x50/fixed-flex-cols.svg" style={{display: 'inline-block'}} /> fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
-- [<img src="/icons/50x50/column-grouping.svg" style={{display: 'inline-block'}} /> column grouping](/docs/learn/column-groups)
-- [<img src="/icons/50x50/filtering.svg" style={{display: 'inline-block'}} /> filtering](/docs/learn/filtering)
-- [<img src="/icons/50x50/theming.svg" style={{display: 'inline-block'}} /> theming](/docs/learn/theming)
+- [<img src="/icons/50x50/sorting.svg" height="50" width="50" style={{display: 'inline-block'}} /> sorting](/docs/learn/working-with-data/sorting)
+- [<img src="/icons/50x50/row-grouping.svg" height="50" width="50" style={{display: 'inline-block'}} /> row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
+- [<img src="/icons/50x50/pivoting.svg" height="50" width="50" style={{display: 'inline-block'}} /> pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
+- [<img src="/icons/50x50/aggregations.svg" height="50" width="50" style={{display: 'inline-block'}} /> aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
+- [<img src="/icons/50x50/live-pagination.svg" height="50" width="50" style={{display: 'inline-block'}} /> live pagination](/docs/learn/working-with-data/live-pagination)
+- [<img src="/icons/50x50/lazy-loading.svg" height="50" width="50" style={{display: 'inline-block'}} /> lazy loading](/docs/learn/working-with-data/lazy-loading)
+- [<img src="/icons/50x50/keyboard-navigation.svg" height="50" width="50" style={{display: 'inline-block'}} /> keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
+- [<img src="/icons/50x50/fixed-flex-cols.svg" height="50" width="50" style={{display: 'inline-block'}} /> fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
+- [<img src="/icons/50x50/column-grouping.svg" height="50" width="50" style={{display: 'inline-block'}} /> column grouping](/docs/learn/column-groups)
+- [<img src="/icons/50x50/filtering.svg" height="50" width="50" style={{display: 'inline-block'}} /> filtering](/docs/learn/filtering)
+- [<img src="/icons/50x50/theming.svg" height="50" width="50" style={{display: 'inline-block'}} /> theming](/docs/learn/theming)
 
 ## Installation
 
