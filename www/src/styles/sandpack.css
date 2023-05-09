@@ -217,6 +217,16 @@ html .sp-wrapper {
   border: 0px solid transparent !important;
   border-top-left-radius: 0px !important;
   border-top-right-radius: 0px !important;
+
+  border: 1px solid var(--sp-colors-surface2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  border-radius: var(--sp-border-radius);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--sp-colors-surface2);
+  gap: 1px;
 }
 html.dark .sp-layout > :not(:first-child) {
   border-color: #343a46;
