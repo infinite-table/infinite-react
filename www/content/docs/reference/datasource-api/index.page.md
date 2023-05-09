@@ -255,9 +255,4 @@ If you have an array of data objects, you can call <DApiLink name="removeDataArr
 </Prop>
 
 
-
-<Prop>
-</Prop>
-
-
 </PropTable>

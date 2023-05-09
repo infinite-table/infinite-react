@@ -18,11 +18,15 @@ import {
   InfiniteTablePropColumnVisibility,
 } from '../types';
 import {
+  ColumnCellValues,
+  InfiniteTableApiCellLocator,
   InfiniteTableApiIsCellEditableParams,
   InfiniteTableApiStopEditParams,
+  InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
   ScrollAdjustPosition,
 } from '../types/InfiniteTableProps';
+import { getColumnApiForColumn } from './getColumnApi';
 import { getSelectionApi, InfiniteTableSelectionApi } from './getSelectionApi';
 
 import { GetImperativeApiParam } from './type';
@@ -383,6 +387,25 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return result;
   };
 
+  getColumnApi = (
+    columnIdOrIndex: string | number,
+  ): InfiniteTableColumnApi<T> | null => {
+    const api = this;
+
+    return getColumnApiForColumn(columnIdOrIndex, {
+      ...this.context,
+      api,
+    });
+  };
+
+  getCellValues = (cellLocator: InfiniteTableApiCellLocator) => {
+    const { rowIndex, columnId: columnIdOrIndex } = cellLocator;
+    const columnApi = this.getColumnApi(columnIdOrIndex);
+
+    const id = this.context.dataSourceApi.getPrimaryKeyByIndex(rowIndex);
+    return columnApi?.getValuesByPrimaryKey(id) ?? null;
+  };
+
   getVerticalRenderRange = () => {
     const range = this.getState().brain.getRenderRange();
     return {
@@ -533,9 +556,12 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         },
         valueGetter: col.valueGetter,
       };
-      if (col.field) {
+
+      if (col.field || typeof col.groupByField === 'string') {
         //@ts-ignore
-        filterValueForColumn.field = col.field!;
+        filterValueForColumn.field = col.field! || col.groupByField; // we also use `col.groupByField`
+        // in order to allow group columns (when groupRenderStrategy=single)
+        // to have filters
       } else {
         //@ts-ignore
         filterValueForColumn.id = col.id;

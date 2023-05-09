@@ -2,7 +2,7 @@ import { RowSelectionState } from '@src/components/DataSource/RowSelectionState'
 import { MultiRowSelector } from '@src/components/InfiniteTable/utils/MultiRowSelector';
 
 import { test, expect } from '@playwright/test';
-import { buildRowSelectionState } from './RowSelectionState.spec';
+import { buildRowSelectionState } from './buildRowSelectionState';
 
 /**
  * The behavior for these tests has been first reproduced in Finder for MacOS

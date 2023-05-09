@@ -13,6 +13,7 @@ import { dbg } from '../../../utils/debug';
 
 import { proxyFn } from '../../../utils/proxyFnCall';
 import { toUpperFirst } from '../../../utils/toUpperFirst';
+import { UPDATED_VALUES } from '../../InfiniteTable/types/Utility';
 
 import { isControlled } from '../../utils/isControlled';
 import { useEffectOnce } from '../useEffectOnceWithProperUnmount';
@@ -139,15 +140,25 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
   }, {} as ComponentStateGeneratedActions<T_STATE>);
 }
 
-export type ForwardPropsToStateFnResult<TYPE_PROPS, TYPE_RESULT> = {
+export type ForwardPropsToStateFnResult<
+  TYPE_PROPS,
+  TYPE_RESULT,
+  COMPONENT_SETUP_STATE,
+> = {
   [propName in keyof TYPE_PROPS & keyof TYPE_RESULT]:
     | 1
-    | ((value: TYPE_PROPS[propName]) => TYPE_RESULT[propName]);
+    | ((
+        value: TYPE_PROPS[propName],
+        setupState: COMPONENT_SETUP_STATE,
+      ) => TYPE_RESULT[propName]);
 };
 
-function forwardProps<T_PROPS, T_RESULT>(
-  propsToForward: Partial<ForwardPropsToStateFnResult<T_PROPS, T_RESULT>>,
+function forwardProps<T_PROPS, T_RESULT, COMPONENT_SETUP_STATE>(
+  propsToForward: Partial<
+    ForwardPropsToStateFnResult<T_PROPS, T_RESULT, COMPONENT_SETUP_STATE>
+  >,
   props: T_PROPS,
+  setupState: COMPONENT_SETUP_STATE,
 ): T_RESULT {
   const mappedState = {} as T_RESULT;
   for (let k in propsToForward)
@@ -159,7 +170,7 @@ function forwardProps<T_PROPS, T_RESULT>(
 
       if (typeof forwardFn === 'function') {
         //@ts-ignore
-        propValue = forwardFn(propValue);
+        propValue = forwardFn(propValue, setupState);
       }
       //@ts-ignore
       mappedState[k as any as keyof T_RESULT] = propValue;
@@ -168,6 +179,7 @@ function forwardProps<T_PROPS, T_RESULT>(
   return mappedState;
 }
 
+type UPDATED_PROPS<T> = UPDATED_VALUES<T>;
 type ComponentStateRootConfig<
   T_PROPS,
   COMPONENT_MAPPED_STATE,
@@ -201,6 +213,24 @@ type ComponentStateRootConfig<
     actions: ComponentStateActions<
       COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
     >,
+    state: COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      Partial<COMPONENT_DERIVED_STATE>,
+  ) => void;
+  onPropsChange?: (
+    newPropValues: {
+      [k in keyof T_PROPS]?: {
+        newValue: T_PROPS[k];
+        oldValue: T_PROPS[k];
+      };
+    },
+    props: T_PROPS,
+    actions: ComponentStateActions<
+      COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
+    >,
+    state: COMPONENT_MAPPED_STATE &
+      COMPONENT_SETUP_STATE &
+      Partial<COMPONENT_DERIVED_STATE>,
   ) => void;
   mapPropsToState?: (params: {
     props: T_PROPS;
@@ -295,6 +325,7 @@ export function getComponentStateRoot<
         mappedState = forwardProps<T_PROPS, COMPONENT_MAPPED_STATE>(
           propsToForward,
           props,
+          initialSetupState,
         );
       }
 
@@ -452,13 +483,8 @@ export function getComponentStateRoot<
       const updatedPropsToState: Partial<T_PROPS> = {};
       let updatedPropsToStateCount = 0;
 
-      type UPDATED_PROPS = {
-        [key in keyof T_PROPS]?: {
-          newValue: T_PROPS[key];
-          oldValue: T_PROPS[key];
-        };
-      };
-      const rawUpdatedProps: UPDATED_PROPS = {};
+      const rawUpdatedProps: UPDATED_PROPS<T_PROPS> = {};
+      let rawUpdatedPropsCount = 0;
 
       for (var k in props) {
         const key = k as string as keyof T_PROPS;
@@ -472,6 +498,7 @@ export function getComponentStateRoot<
           continue;
         }
         rawUpdatedProps[key] = { newValue, oldValue };
+        rawUpdatedPropsCount++;
 
         if (isControlled(key, props) || isControlled(key, prevProps)) {
           if (propsToForward.hasOwnProperty(k)) {
@@ -525,9 +552,14 @@ export function getComponentStateRoot<
                 { name: prop, newValue, oldValue },
                 props,
                 actions,
+                state,
               );
             }
         }
+        if (config.onPropsChange && rawUpdatedPropsCount) {
+          config.onPropsChange(rawUpdatedProps, props, actions, state);
+        }
+
         // config.onPropChange?.(
         //   { name: key, oldValue, newValue },
 

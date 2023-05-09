@@ -1,6 +1,9 @@
 import {
   DataSourceComponentActions,
   DataSourceDataParams,
+  DataSourcePropRowInfoReducers,
+  DataSourceRawReducer,
+  DataSourceRowInfoReducer,
   RowSelectionState,
 } from '..';
 import { dbg } from '../../../utils/debug';
@@ -54,6 +57,9 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   return {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
+
+    idToIndexMap: new Map<any, number>(),
+
     // TODO: cleanup cache on unmount
     cache: undefined,
 
@@ -80,6 +86,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
       ['sortInfo', new WeakMap()],
     ]),
 
+    rowInfoReducerResults: undefined,
     pivotMappings: undefined,
 
     pivotColumns: undefined,
@@ -121,7 +128,8 @@ export const forwardProps = <T>(
   setupState: DataSourceSetupState<T>,
 ): ForwardPropsToStateFnResult<
   DataSourceProps<T>,
-  DataSourceMappedState<T>
+  DataSourceMappedState<T>,
+  DataSourceSetupState<T>
 > => {
   return {
     onDataParamsChange: (fn) =>
@@ -149,6 +157,24 @@ export const forwardProps = <T>(
 
     sortFunction: 1,
     onReady: 1,
+    rowInfoReducers: (reducers, state) => {
+      const idToIndexReducer: DataSourceRowInfoReducer<T> = {
+        initialValue: () => {
+          state.idToIndexMap.clear();
+        },
+        reducer: (state, rowInfo) => {
+          state.idToIndexMap.set(rowInfo.id, rowInfo.indexInAll);
+        },
+      };
+      return reducers
+        ? {
+            ...reducers,
+            __idToIndex: idToIndexReducer,
+          }
+        : {
+            __idToIndex: idToIndexReducer,
+          };
+    },
     isRowSelected: 1,
     onDataArrayChange: 1,
     onDataMutations: 1,

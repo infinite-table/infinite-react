@@ -1,4 +1,5 @@
 import { SortDir } from '../../../utils/multisort';
+import { getFormattedValueContextForCell } from '../components/InfiniteTableRow/columnRendering';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {
@@ -9,13 +10,16 @@ import {
 import { GetImperativeApiParam } from './type';
 
 export function getColumnApiForColumn<T>(
-  colOrColId: string | InfiniteTableComputedColumn<T>,
+  colOrColId: string | number | InfiniteTableComputedColumn<T>,
   param: GetImperativeApiParam<T> & {
     api: InfiniteTableApi<T>;
   },
 ) {
   const { getComputed, getState, actions, api } = param;
 
+  if (typeof colOrColId === 'number') {
+    colOrColId = getComputed().computedVisibleColumns[colOrColId];
+  }
   const column =
     typeof colOrColId === 'string'
       ? getComputed().computedColumnsMap.get(colOrColId)
@@ -26,6 +30,33 @@ export function getColumnApiForColumn<T>(
   }
 
   const columnApi: InfiniteTableColumnApi<T> = {
+    getValuesByPrimaryKey(id: any) {
+      const { dataSourceApi } = param;
+
+      const rowInfo = dataSourceApi.getRowInfoByIndex(id);
+
+      if (!rowInfo) {
+        return null;
+      }
+
+      const valueContext = getFormattedValueContextForCell({
+        column,
+        rowInfo,
+        columnsMap: getComputed().computedColumnsMap,
+        context: param,
+      });
+
+      return {
+        value: valueContext.formattedValueContext.value,
+        formattedValue: valueContext.formattedValue,
+        rawValue: valueContext.formattedValueContext.rawValue,
+      };
+    },
+
+    getValueByPrimaryKey(id: any) {
+      return columnApi.getValuesByPrimaryKey(id)?.value ?? null;
+    },
+
     toggleContextMenu(target: EventTarget | HTMLElement) {
       if (getState().columnMenuVisibleForColumnId === column.id) {
         this.hideContextMenu();

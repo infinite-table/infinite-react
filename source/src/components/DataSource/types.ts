@@ -124,6 +124,7 @@ export interface DataSourceMappedState<T> {
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
   onDataMutations: DataSourceProps<T>['onDataMutations'];
   onReady: DataSourceProps<T>['onReady'];
+  rowInfoReducers: DataSourceProps<T>['rowInfoReducers'];
 
   lazyLoad: DataSourceProps<T>['lazyLoad'];
   useGroupKeysForMultiRowSelection: NonUndefined<
@@ -149,6 +150,12 @@ export interface DataSourceMappedState<T> {
   >;
   sortInfo: DataSourceSingleSortInfo<T>[] | null;
 }
+
+export type DataSourceRawReducer<T, RESULT_TYPE> = {
+  initialValue?: RESULT_TYPE | (() => RESULT_TYPE);
+  reducer: (accumulator: any, value: T) => RESULT_TYPE;
+  done?: (accumulatedValue: RESULT_TYPE, array: T[]) => RESULT_TYPE;
+};
 
 export type DataSourceAggregationReducer<T, AggregationResultType> = {
   name?: string;
@@ -216,9 +223,11 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 
 export interface DataSourceSetupState<T> {
   indexer: Indexer<T, any>;
+  idToIndexMap: Map<any, number>;
   cache?: DataSourceCache<T>;
   unfilteredCount: number;
   filteredCount: number;
+  rowInfoReducerResults?: Record<string, any>;
   originalDataArrayChanged: boolean;
   originalDataArrayChangedInfo: {
     timestamp: number;
@@ -343,7 +352,11 @@ export type DataSourceInsertParam = DataSourceCRUDParam &
 
 export interface DataSourceApi<T> {
   getRowInfoArray: () => InfiniteTableRowInfo<T>[];
-  getDataByPrimaryKey(id: any): T | undefined;
+  getDataByPrimaryKey(id: any): T | null;
+  getRowInfoByIndex(index: number): InfiniteTableRowInfo<T> | null;
+  getRowInfoByPrimaryKey(id: any): InfiniteTableRowInfo<T> | null;
+  getIndexByPrimaryKey(id: any): number;
+  getPrimaryKeyByIndex(id: any): any;
 
   // TODO return promise - also for more than one call in the same batch
   // it should return the same promise
@@ -372,6 +385,16 @@ export interface DataSourceApi<T> {
   insertDataArray(data: T[], options: DataSourceInsertParam): Promise<any>;
 }
 
+export type DataSourcePropRowInfoReducers<T> = Record<
+  string,
+  DataSourceRowInfoReducer<T>
+>;
+
+export type DataSourceRowInfoReducer<T> = DataSourceRawReducer<
+  InfiniteTableRowInfo<T>,
+  any
+>;
+
 export type DataSourceProps<T> = {
   children:
     | React.ReactNode
@@ -379,6 +402,8 @@ export type DataSourceProps<T> = {
   primaryKey: keyof T | ((data: T) => string);
   fields?: (keyof T)[];
   refetchKey?: number | string | object;
+
+  rowInfoReducers?: DataSourcePropRowInfoReducers<T>;
 
   // TODO move this on the DataSourceAPI? I think so
   // updateDelay?: number;
@@ -648,11 +673,4 @@ export enum DataSourceActionType {
 export interface DataSourceAction<T> {
   type: DataSourceActionType;
   payload: T;
-}
-
-export interface DataSourceReducer<T> {
-  (
-    state: DataSourceState<T>,
-    action: DataSourceAction<any>,
-  ): DataSourceState<T>;
 }

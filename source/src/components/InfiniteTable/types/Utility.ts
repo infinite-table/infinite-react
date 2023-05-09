@@ -33,3 +33,12 @@ export type AllPropertiesOrNone<DATA_TYPE> =
   | { [KEY in keyof DATA_TYPE]?: never };
 
 export type KeyOfNoSymbol<T> = Exclude<keyof T, Symbol>;
+
+export type KeysOf<T> = T extends any ? Record<keyof T, any> : never;
+
+export type UPDATED_VALUES<T> = {
+  [key in keyof T]?: {
+    newValue: T[key];
+    oldValue: T[key];
+  };
+};

@@ -396,7 +396,9 @@ function initReducers<DataType>(
 
   for (const key in reducers)
     if (reducers.hasOwnProperty(key)) {
-      result[key] = reducers[key].initialValue;
+      const initialValue = reducers[key].initialValue;
+      result[key] =
+        typeof initialValue === 'function' ? initialValue() : initialValue;
     }
 
   return result;
@@ -907,7 +909,7 @@ export function flatten<DataType, KeyType extends any>(
 type GetEnhancedGroupDataOptions<DataType> = {
   lazyLoad: boolean;
   groupKeys: any[];
-  groupBy: (keyof DataType)[];
+  groupBy: GroupBy<DataType, any>[];
 
   error?: string;
   parents: InfiniteTable_HasGrouping_RowInfoGroup<DataType>[];
@@ -954,11 +956,20 @@ function getEnhancedGroupData<DataType>(
 
   let selfLoaded = true;
 
-  let theValue =
-    // if there is a value for the current groupBy in the data object, use it
-    (data != null ? data[groupBy[groupKeys.length - 1]] : null) ??
-    // otherwise just use the group key
-    groupKeys[groupKeys.length - 1];
+  let defaultValue = groupKeys[groupKeys.length - 1];
+  let theValue: any = defaultValue;
+
+  if (data != null) {
+    const currentGroupBy = groupBy[groupKeys.length - 1];
+
+    if (currentGroupBy && currentGroupBy.field) {
+      theValue = data[currentGroupBy.field];
+    }
+    if (currentGroupBy && currentGroupBy.toKey) {
+      theValue = currentGroupBy.toKey(theValue, data as DataType);
+    }
+    theValue = theValue ?? defaultValue;
+  }
 
   if (
     typeof theValue === 'string' &&
@@ -999,11 +1010,11 @@ function getEnhancedGroupData<DataType>(
       ? options.directChildrenLoadedCount
       : options.directChildrenCount,
     value: theValue,
-    rootGroupBy: groupBy,
-    groupBy:
-      groupNesting === groupBy.length
-        ? groupBy
-        : (groupBy.slice(0, groupNesting) as (keyof DataType)[]),
+    rootGroupBy: groupBy.map((g) => g.field),
+    groupBy: (groupNesting === groupBy.length
+      ? groupBy
+      : groupBy.slice(0, groupNesting)
+    ).map((g) => g.field),
     isGroupRow: true,
     pivotValuesMap: pivotDeepMap,
     groupNesting,
@@ -1039,6 +1050,8 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
   groupRowsState?: GroupRowsState;
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean | null;
 
+  withRowInfo?: (rowInfo: InfiniteTableRowInfo<DataType>) => void;
+
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
   rowSelectionState?: RowSelectionState;
   generateGroupRows: boolean;
@@ -1049,6 +1062,8 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const {
     lazyLoad,
     groupResult,
+
+    withRowInfo,
     toPrimaryKey,
     groupRowsState,
     isRowSelected,
@@ -1081,7 +1096,8 @@ export function enhancedFlatten<DataType, KeyType = any>(
         getEnhancedGroupData(
           {
             lazyLoad,
-            groupBy: groupByStrings,
+            // groupBy: groupByStrings,
+            groupBy,
             parents: Array.from(parents),
             reducers,
             indexInGroup,
@@ -1149,6 +1165,10 @@ export function enhancedFlatten<DataType, KeyType = any>(
       if (parent && enhancedGroupData.selfLoaded && lazyLoad) {
         parent.directChildrenLoadedCount += 1;
       }
+
+      if (withRowInfo) {
+        withRowInfo(enhancedGroupData);
+      }
       parents.push(enhancedGroupData);
 
       const continueWithChildren = true; //!collapsed || lazyLoad;
@@ -1201,6 +1221,10 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 };
               if (isRowSelected) {
                 rowInfo.rowSelected = isRowSelected(rowInfo);
+              }
+
+              if (withRowInfo) {
+                withRowInfo(rowInfo);
               }
 
               parents.forEach((parent, i) => {

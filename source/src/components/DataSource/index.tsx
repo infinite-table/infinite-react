@@ -129,6 +129,13 @@ function DataSource<T>(props: DataSourceProps<T>) {
   );
 }
 
+// TODO document this
+function useRowInfoReducers() {
+  const { rowInfoReducerResults } = useDataSource();
+
+  return rowInfoReducerResults;
+}
+
 export {
   useDataSource,
   DataSource,
@@ -136,6 +143,7 @@ export {
   RowSelectionState,
   multisort,
   defaultFilterTypes as filterTypes,
+  useRowInfoReducers,
 };
 
 export * from './types';

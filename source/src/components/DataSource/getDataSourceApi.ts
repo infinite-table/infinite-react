@@ -5,6 +5,7 @@ import {
   DataSourceState,
 } from '.';
 import { raf } from '../../utils/raf';
+import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 
 import { DataSourceInsertParam } from './types';
@@ -132,14 +133,30 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   getRowInfoArray() {
     return this.getState().dataArray;
   }
+  getRowInfoByIndex(index: number): InfiniteTableRowInfo<T> | null {
+    return this.getRowInfoArray()[index] ?? null;
+  }
+  getRowInfoByPrimaryKey(id: any): InfiniteTableRowInfo<T> | null {
+    const index = this.getIndexByPrimaryKey(id);
+    return this.getRowInfoByIndex(index);
+  }
+  getIndexByPrimaryKey(id: any) {
+    const map = this.getState().idToIndexMap;
+    return map.get(id) ?? -1;
+  }
+  getPrimaryKeyByIndex(id: any) {
+    const rowInfo = this.getRowInfoByIndex(id);
+
+    return rowInfo ? rowInfo.id : undefined;
+  }
 
   private getOriginalDataArray() {
     return this.getState().originalDataArray;
   }
 
-  getDataByPrimaryKey(id: any): T | undefined {
+  getDataByPrimaryKey(id: any): T | null {
     const { indexer } = this.getState();
-    return indexer.getDataForPrimaryKey(id);
+    return indexer.getDataForPrimaryKey(id) ?? null;
   }
 
   updateData(data: Partial<T>, options?: DataSourceCRUDParam) {

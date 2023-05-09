@@ -60,15 +60,15 @@ The <DataSourcePropLink name="data" /> prop is probably the most important part,
 
 ## Data Loading Strategies
 
-We're aware there are countless strategies for loading data - each with its own strengths.
+We're aware there are countless strategies for loading data - each with its own strengths. We decided we should focus on building what we do best, namely building virtualized components, so we encourage you to use your preferred data-fetching library/solution. This being said, we still provide you with the flexibility you need when using the `<DataSource/>`, so here's what you can use for the <DPropLink name="data" /> prop of the component:
 
-So we decided we should focus on building what we do best, namely building virtualized components.
-
-And we encourage you to use your preferred data-fetching library/solution and pass a dumb array of data to the `<DataSource/>` component. 
+ - an array of the bound type
+ - a Promise that resolves to an array of the bound type
+ - a function that returns any of the above
 
 While you're loading the data, you can always render a loading indicator - pass the <DataSourcePropLink name="loading" /> prop into the component (along with <PropLink name="loadingText" /> prop in the `<InfiniteTable />` component if you want to customize the message).
 
-#### Using fetch
+### Using fetch
 
 For basic datasets, which have simple data requirements, using `fetch` is probably sufficient, so here is an example:
 
@@ -90,7 +90,9 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 <Note>
 
-Passing another `data` function, will cause the component to re-execute the function and thus load new data.
+Passing another <DPropLink name="data"/> function, will cause the component to re-execute the function and thus load new data.
+
+Alternatively, you can use the <DPropLink name="refetchKey" /> prop to trigger a re-fetch - give it a new value (eg: use it as a counter, and increment it) and the component will re-fetch the data.
 
 </Note>
 
@@ -105,6 +107,7 @@ Passing another `data` function, will cause the component to re-execute the func
 ```
 
 </Sandpack>
+
 
 ## Live Updates
 

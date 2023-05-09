@@ -29,7 +29,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
     if (cache) {
       // because of React.StrictMode, we need to clone the array and return a copy
       // not very efficient for large arrays
-      // TODO seek to improve this
+      // TODO IMPORTANT seek to improve this
       arr = arr.concat();
     }
 

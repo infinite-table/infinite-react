@@ -21,6 +21,11 @@ import type {
   DataSourceFilterOperatorFunctionParam,
   DataSourcePropFilterTypes,
 } from '../types';
+import {
+  computeRowInfoReducersFor,
+  finishRowInfoReducersFor,
+  initRowInfoReducers,
+} from './initRowInfoReducers';
 
 export function cleanupEmptyFilterValues<T>(
   filterValue: DataSourceState<T>['filterValue'],
@@ -304,12 +309,17 @@ export function concludeReducer<T>(params: {
       'showSeparatePivotColumnForSingleAggregation',
     ]);
 
+  const rowInfoReducersChanged = haveDepsChanged(previousState, state, [
+    'rowInfoReducers',
+  ]);
+
   const shouldGroupAgain =
     (shouldGroup &&
       (groupsDepsChanged ||
         !state.lastGroupDataArray ||
         cacheAffectedParts.groupBy)) ||
-    selectionDepsChanged;
+    selectionDepsChanged ||
+    rowInfoReducersChanged;
 
   const now = Date.now();
 
@@ -396,6 +406,8 @@ export function concludeReducer<T>(params: {
       );
   }
 
+  const rowInfoReducers = state.rowInfoReducers!;
+
   if (shouldGroup) {
     if (shouldGroupAgain) {
       let aggregationReducers = state.aggregationReducers;
@@ -429,6 +441,21 @@ export function concludeReducer<T>(params: {
         rowSelectionState.getConfig = rowSelectionStateConfigGetter(state);
       }
 
+      const rowInfoReducerKeys = Object.keys(
+        rowInfoReducers || {},
+      ) as (keyof typeof rowInfoReducers)[];
+
+      const rowInfoReducerResults = initRowInfoReducers(
+        rowInfoReducers,
+      ) as Record<keyof typeof rowInfoReducers, any>;
+
+      const rowInfoReducersShape = {
+        reducers: rowInfoReducers,
+        results: rowInfoReducerResults,
+        reducerKeys: rowInfoReducerKeys,
+        rowInfo: {} as InfiniteTableRowInfo<T>,
+      };
+
       const flattenResult = enhancedFlatten({
         groupResult,
         lazyLoad: !!state.lazyLoad,
@@ -437,11 +464,24 @@ export function concludeReducer<T>(params: {
         isRowSelected,
         rowSelectionState,
 
+        withRowInfo: rowInfoReducerResults
+          ? (rowInfo) => {
+              rowInfoReducersShape.rowInfo = rowInfo;
+              computeRowInfoReducersFor(rowInfoReducersShape);
+            }
+          : undefined,
+
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
       });
 
       rowInfoDataArray = flattenResult.data;
+
+      state.rowInfoReducerResults = finishRowInfoReducersFor<T>({
+        reducers: rowInfoReducers,
+        results: rowInfoReducerResults,
+        array: rowInfoDataArray,
+      });
 
       state.groupRowsIndexesInDataArray = flattenResult.groupRowsIndexes;
       state.reducerResults = groupResult.reducerResults;
@@ -478,8 +518,24 @@ export function concludeReducer<T>(params: {
     if (
       arrayDifferentAfterSortStep ||
       groupsDepsChanged ||
-      selectionDepsChanged
+      selectionDepsChanged ||
+      rowInfoReducersChanged
     ) {
+      const rowInfoReducerKeys = Object.keys(
+        rowInfoReducers || {},
+      ) as (keyof typeof rowInfoReducers)[];
+
+      const rowInfoReducerResults = initRowInfoReducers(
+        rowInfoReducers,
+      ) as Record<keyof typeof rowInfoReducers, any>;
+
+      const rowInfoReducersShape = {
+        reducers: rowInfoReducers,
+        results: rowInfoReducerResults,
+        reducerKeys: rowInfoReducerKeys,
+        rowInfo: {} as InfiniteTableRowInfo<T>,
+      };
+
       rowInfoDataArray = dataArray.map((data, index) => {
         const rowInfo = toRowInfo(
           data,
@@ -488,7 +544,18 @@ export function concludeReducer<T>(params: {
           isRowSelected,
         );
 
+        if (rowInfoReducerResults) {
+          rowInfoReducersShape.rowInfo = rowInfo;
+          computeRowInfoReducersFor(rowInfoReducersShape);
+        }
+
         return rowInfo;
+      });
+
+      state.rowInfoReducerResults = finishRowInfoReducersFor<T>({
+        reducers: rowInfoReducers,
+        results: rowInfoReducerResults,
+        array: rowInfoDataArray,
       });
     }
   }

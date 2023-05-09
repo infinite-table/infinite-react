@@ -51,11 +51,11 @@ const employees: Employee[] = [
   },
 ];
 
-// simulate data-loading with a 500ms delay
+// simulate data-loading with a 1500ms delay
 const data = new Promise<Employee[]>((resolve) => {
   setTimeout(() => {
     resolve(employees);
-  }, 1000);
+  }, 1500);
 });
 
 export default function App() {

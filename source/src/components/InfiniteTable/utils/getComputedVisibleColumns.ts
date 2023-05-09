@@ -530,8 +530,15 @@ export const getComputedVisibleColumns = <T extends unknown>({
       cssEllipsis;
 
     const computedFilterValue = computedVisible
-      ? filterValueRecord[id] || c.field
-        ? filterValueRecord[id] || filterValueRecord[c.field as string] || null
+      ? filterValueRecord[id] ||
+        c.field ||
+        (c as InfiniteTableComputedColumn<T>).groupByField
+        ? filterValueRecord[id] ||
+          filterValueRecord[
+            (c.field ||
+              (c as InfiniteTableComputedColumn<T>).groupByField) as string
+          ] ||
+          null
         : null
       : null;
     const computedFilterable =

@@ -178,7 +178,7 @@ html .sp-wrapper {
   flex: 1 1 0;
 }
 .sp-stack.sp-editor {
-  min-width: none;
+  min-width: 350px;
 }
 .sp-cm {
   -webkit-text-size-adjust: none !important;

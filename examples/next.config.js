@@ -24,7 +24,7 @@ module.exports = {
   },
   pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
   transpilePackages: ['@infinite-table/infinite-react'],
-  reactStrictMode: false, // in order to not break tests loading daa by double loading
+  reactStrictMode: false, // in order to not break tests loading data by double loading
   eslint: {
     ignoreDuringBuilds: true,
   },

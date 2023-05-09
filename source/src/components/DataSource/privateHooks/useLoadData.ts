@@ -41,6 +41,9 @@ const DATA_CHANGES_COMPARE_FUNCTIONS: Record<
   filterValue: (a: any, b: any) => {
     return JSON.stringify(a) === JSON.stringify(b);
   },
+  groupRowsState: (a: any, b: any) => {
+    return JSON.stringify(a) === JSON.stringify(b);
+  },
 };
 
 export function buildDataSourceDataParams<T>(

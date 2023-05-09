@@ -14,7 +14,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 The `DataSourceAggregationReducer` type can have the following properties
 
-- `initialValue` - type `any`, mandatory for client-side aggregations
+- `initialValue` - type `any`, mandatory for client-side aggregations. It can be a function, in which case, it will be called to compute the initial value for the aggregation. Otherwise, the initial value will be used as is.
 - `field` - the field to aggregate on. Optional - if not specified, make sure you specify `getter`
 - `getter`: `(data:T)=> any` - a getter function, called with the current `data` object.
 - `reducer`: `string | (accumulator, value, data: T) => any` - either a string (for server-side aggregations) or a mandatory aggregation function for client-side aggregations.
@@ -659,7 +659,7 @@ When this is a function, it is called with a parameter object that has the follo
 
 <Prop name="onDataParamsChange" type="(dataParams: DataSourceDataParams<DATA_TYPE:>)=>void">
 
-> A function to be called when data-related props/state change.
+> A function to be called when data-related state changes.
 
 Can be used to implement <DataSourcePropLink name="livePagination" />
 
@@ -758,6 +758,29 @@ The sorting can change either via a user interaction or by calling an API method
 
 See related <DataSourcePropLink name="sortInfo" /> for controlled sorting and <DataSourcePropLink name="defaultSortInfo" /> for uncontrolled sorting.
 
+</Prop>
+
+<Prop name="refetchKey" type="string|number|object">
+
+> A value that can be used to trigger a re-fetch of the data.
+
+By updating the value of this prop (eg: you can use it as a counter, and increment it) the `<DataSource />` component reloads it's <DPropLink name="data" /> if it's defined as a function. More specifically, the `data` function is called again and the result will replace the current data.
+
+
+<Sandpack title="Re-fetching data via refetchKey updates" >
+
+<Description>
+
+This example shows how you can use the `refetchKey` to trigger reloading the data
+
+</Description>
+
+```ts file="refetchKey-example.page.tsx"
+
+```
+
+</Sandpack>
+ 
 </Prop>
 
 <Prop name="rowSelection" type="string|number|null|object">

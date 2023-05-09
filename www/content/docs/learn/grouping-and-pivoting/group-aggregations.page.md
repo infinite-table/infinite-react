@@ -22,6 +22,12 @@ When using client-side aggregation, each <DataSourcePropLink name="aggregationRe
 
 The `initialValue` is optional value to use as the initial (accumulator) value for the reducer function. You can think of aggregations as an "enhanced" version of [Array.reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce), so initial value should sound familiar.
 
+<Note>
+
+The `initialValue` can be a function - in this case it will be called to compute the initial value.
+
+</Note>
+
 ### A reducer function
 
 `reducer` is the function to call for each value in the (grouped) data array. It is called with the following arguments:

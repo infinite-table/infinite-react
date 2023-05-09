@@ -169,6 +169,11 @@ export type InfiniteTableComputedValuesGetter<T> =
 export type InfiniteTableActionsGetter<T> = () => InfiniteTableActions<T>;
 export type DataSourceStateGetter<T> = () => DataSourceState<T>;
 
+export type ColumnCellValues = {
+  value: any;
+  rawValue: any;
+  formattedValue: any;
+};
 export type InfiniteTableColumnApi<_T> = {
   showContextMenu: (target: EventTarget | HTMLElement) => void;
   toggleContextMenu: (target: EventTarget | HTMLElement) => void;
@@ -183,6 +188,10 @@ export type InfiniteTableColumnApi<_T> = {
   setSort: (sort: SortDir | null) => void;
   setFilter: (value: any) => void;
   clearFilter: (value: any) => void;
+
+  getValuesByPrimaryKey: (id: any) => null | ColumnCellValues;
+
+  getValueByPrimaryKey: (id: any) => any | null;
 };
 
 export type InfiniteTableApiStopEditParams =
@@ -202,7 +211,8 @@ export type InfiniteTableApiStopEditParams =
       reject?: never;
     };
 
-export type InfiniteTableApiIsCellEditableParams = {
+export type InfiniteTableApiIsCellEditableParams = InfiniteTableApiCellLocator;
+export type InfiniteTableApiCellLocator = {
   columnId: string;
   rowIndex: number;
 };
@@ -280,6 +290,8 @@ export interface InfiniteTableApi<T> {
 
   setSortingForColumn: (columnId: string, dir: SortDir | null) => void;
 
+  getColumnApi: (columnId: string) => InfiniteTableColumnApi<T> | null;
+
   setVisibilityForColumn: (columnId: string, visible: boolean) => void;
   getVisibleColumnsCount: () => number;
 
@@ -305,6 +317,10 @@ export interface InfiniteTableApi<T> {
       offset?: number;
     },
   ) => boolean;
+
+  getCellValues: (
+    cellLocator: InfiniteTableApiCellLocator,
+  ) => ColumnCellValues | null;
 
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;

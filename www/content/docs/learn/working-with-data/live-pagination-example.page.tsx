@@ -202,7 +202,6 @@ const Example = () => {
         // take the data from `data.pages`,
         // as returned from our react-query select function
 
-        sortInfo={dataParams?.sortInfo}
         data={data?.pages || emptyArray}
         loading={isFetchingNextPage}
         onDataParamsChange={onDataParamsChange}
