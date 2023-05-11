@@ -35,7 +35,8 @@ export function getInitialMenuState(): MenuSetupState {
 
 export const forwardProps = (): ForwardPropsToStateFnResult<
   MenuProps,
-  MenuMappedState
+  MenuMappedState,
+  MenuSetupState
 > => {
   return {
     parentMenuId: 1,

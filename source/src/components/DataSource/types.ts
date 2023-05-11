@@ -154,7 +154,10 @@ export interface DataSourceMappedState<T> {
 export type DataSourceRawReducer<T, RESULT_TYPE> = {
   initialValue?: RESULT_TYPE | (() => RESULT_TYPE);
   reducer: (accumulator: any, value: T) => RESULT_TYPE;
-  done?: (accumulatedValue: RESULT_TYPE, array: T[]) => RESULT_TYPE;
+  done?: (
+    accumulatedValue: RESULT_TYPE,
+    array: T[] /*, TODO also provide the rowInfo (can be undefined), if the agg is happening for a group row - */,
+  ) => RESULT_TYPE;
 };
 
 export type DataSourceAggregationReducer<T, AggregationResultType> = {

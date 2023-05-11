@@ -26,7 +26,8 @@ export type InfiniteCheckBoxMappedState = {
 
 function forwardProps(): ForwardPropsToStateFnResult<
   InfiniteCheckBoxProps,
-  InfiniteCheckBoxMappedState
+  InfiniteCheckBoxMappedState,
+  any
 > {
   return {
     checked: 1,

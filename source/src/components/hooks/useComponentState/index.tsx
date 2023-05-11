@@ -55,7 +55,7 @@ function getReducerGeneratedActions<T_STATE, T_PROPS>(
   dispatch: React.Dispatch<any>,
   getState: () => T_STATE,
   getProps: () => T_PROPS,
-  propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE>,
+  propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE, any>,
   allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
   interceptedActions?: ComponentInterceptedActions<T_STATE>,
   mappedCallbacks?: ComponentMappedCallbacks<T_STATE>,
@@ -195,7 +195,11 @@ type ComponentStateRootConfig<
 
   forwardProps?: (
     setupState: COMPONENT_SETUP_STATE,
-  ) => ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>;
+  ) => ForwardPropsToStateFnResult<
+    T_PROPS,
+    COMPONENT_MAPPED_STATE,
+    COMPONENT_SETUP_STATE
+  >;
   allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
   interceptActions?: ComponentInterceptedActions<
     COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
@@ -303,7 +307,13 @@ export function getComponentStateRoot<
     });
     const propsToStateSetRef = useRef<Set<string>>(new Set());
     const propsToForward = useMemo<
-      Partial<ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE>>
+      Partial<
+        ForwardPropsToStateFnResult<
+          T_PROPS,
+          COMPONENT_MAPPED_STATE,
+          COMPONENT_SETUP_STATE
+        >
+      >
     >(
       () => (config.forwardProps ? config.forwardProps(initialSetupState) : {}),
       [initialSetupState],
@@ -322,11 +332,11 @@ export function getComponentStateRoot<
       let mappedState = {} as COMPONENT_MAPPED_STATE;
 
       if (propsToForward) {
-        mappedState = forwardProps<T_PROPS, COMPONENT_MAPPED_STATE>(
-          propsToForward,
-          props,
-          initialSetupState,
-        );
+        mappedState = forwardProps<
+          T_PROPS,
+          COMPONENT_MAPPED_STATE,
+          COMPONENT_SETUP_STATE
+        >(propsToForward, props, initialSetupState);
       }
 
       const state = { ...initialSetupState, ...mappedState };
@@ -445,7 +455,11 @@ export function getComponentStateRoot<
         dispatch,
         getComponentState,
         getProps,
-        propsToForward as ForwardPropsToStateFnResult<T_PROPS, COMPONENT_STATE>,
+        propsToForward as ForwardPropsToStateFnResult<
+          T_PROPS,
+          COMPONENT_STATE,
+          COMPONENT_SETUP_STATE
+        >,
         allowedControlledPropOverrides,
         config.interceptActions,
         config.mappedCallbacks,

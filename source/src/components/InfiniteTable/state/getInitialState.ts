@@ -184,7 +184,8 @@ export const forwardProps = <T>(
   setupState: InfiniteTableSetupState<T>,
 ): ForwardPropsToStateFnResult<
   InfiniteTableProps<T>,
-  InfiniteTableMappedState<T>
+  InfiniteTableMappedState<T>,
+  InfiniteTableSetupState<T>
 > => {
   return {
     scrollTopKey: 1,

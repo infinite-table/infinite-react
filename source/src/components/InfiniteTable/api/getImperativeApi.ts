@@ -11,6 +11,7 @@ import { loadData } from '../../DataSource/privateHooks/useLoadData';
 import {
   getColumnValueToEdit,
   getCellContext,
+  getFormattedValueContextForCell,
 } from '../components/InfiniteTableRow/columnRendering';
 import {
   InfiniteTableApi,
@@ -18,7 +19,6 @@ import {
   InfiniteTablePropColumnVisibility,
 } from '../types';
 import {
-  ColumnCellValues,
   InfiniteTableApiCellLocator,
   InfiniteTableApiIsCellEditableParams,
   InfiniteTableApiStopEditParams,
@@ -135,11 +135,11 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return Promise.resolve(persisted);
   };
 
-  async startEdit(params: {
-    columnId: string;
-    rowIndex: number;
-  }): Promise<boolean> {
-    const { columnId, rowIndex } = params;
+  async startEdit(params: InfiniteTableApiCellLocator): Promise<boolean> {
+    const { columnId, rowIndex: index, primaryKey } = params;
+
+    const rowIndex =
+      index ?? this.context.dataSourceApi.getIndexByPrimaryKey(primaryKey);
 
     return this.isCellEditable({
       rowIndex: rowIndex,
@@ -352,7 +352,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   };
 
   isCellEditable = (params: InfiniteTableApiIsCellEditableParams) => {
-    const { rowIndex, columnId } = params;
+    const { rowIndex: index, primaryKey, columnId } = params;
+
+    const rowIndex =
+      index ?? this.context.dataSourceApi.getIndexByPrimaryKey(primaryKey);
 
     const { computedColumnsMap: columnsMap } = this.getComputed();
     const column = columnsMap.get(columnId);
@@ -390,20 +393,41 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   getColumnApi = (
     columnIdOrIndex: string | number,
   ): InfiniteTableColumnApi<T> | null => {
-    const api = this;
-
     return getColumnApiForColumn(columnIdOrIndex, {
       ...this.context,
-      api,
+      api: this,
     });
   };
 
   getCellValues = (cellLocator: InfiniteTableApiCellLocator) => {
-    const { rowIndex, columnId: columnIdOrIndex } = cellLocator;
-    const columnApi = this.getColumnApi(columnIdOrIndex);
+    const { rowIndex: index, primaryKey, columnId } = cellLocator;
 
-    const id = this.context.dataSourceApi.getPrimaryKeyByIndex(rowIndex);
-    return columnApi?.getValuesByPrimaryKey(id) ?? null;
+    const { dataSourceApi } = this.context;
+    const { computedColumnsMap } = this.getComputed();
+
+    const rowIndex = index ?? dataSourceApi.getIndexByPrimaryKey(primaryKey);
+
+    const column = computedColumnsMap.get(columnId);
+    const id = dataSourceApi.getPrimaryKeyByIndex(rowIndex);
+    const rowInfo = dataSourceApi.getRowInfoByIndex(id);
+
+    if (!rowInfo || !column) {
+      return null;
+    }
+
+    const self = this as InfiniteTableApi<T>;
+    const valueContext = getFormattedValueContextForCell({
+      column,
+      rowInfo,
+      columnsMap: computedColumnsMap,
+      context: { ...this.context, api: self },
+    });
+    return {
+      value: valueContext.formattedValueContext.value,
+      formattedValue: valueContext.formattedValue,
+      rawValue: valueContext.formattedValueContext.rawValue,
+    };
+    // return columnApi?.getValuesByPrimaryKey(id) ?? null;
   };
 
   getVerticalRenderRange = () => {

@@ -81,7 +81,6 @@ export default function GroupByExample() {
                 };
               },
               reducer: (acc, rowInfo) => {
-                console.log(rowInfo);
                 if (!rowInfo.isGroupRow) {
                   acc.value += rowInfo.data.age;
                   acc.count++;

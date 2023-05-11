@@ -1,5 +1,4 @@
 import { SortDir } from '../../../utils/multisort';
-import { getFormattedValueContextForCell } from '../components/InfiniteTableRow/columnRendering';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {
@@ -31,26 +30,10 @@ export function getColumnApiForColumn<T>(
 
   const columnApi: InfiniteTableColumnApi<T> = {
     getValuesByPrimaryKey(id: any) {
-      const { dataSourceApi } = param;
-
-      const rowInfo = dataSourceApi.getRowInfoByIndex(id);
-
-      if (!rowInfo) {
-        return null;
-      }
-
-      const valueContext = getFormattedValueContextForCell({
-        column,
-        rowInfo,
-        columnsMap: getComputed().computedColumnsMap,
-        context: param,
+      return param.api.getCellValues({
+        columnId: column.id,
+        primaryKey: id,
       });
-
-      return {
-        value: valueContext.formattedValueContext.value,
-        formattedValue: valueContext.formattedValue,
-        rawValue: valueContext.formattedValueContext.rawValue,
-      };
     },
 
     getValueByPrimaryKey(id: any) {

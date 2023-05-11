@@ -41,7 +41,7 @@ import { InfiniteCheckBoxProps } from '../components/CheckBox';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
 import { MenuColumn, MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
-import { KeyOfNoSymbol } from './Utility';
+import { KeyOfNoSymbol, XOR } from './Utility';
 
 import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
 import { MenuIconProps } from '../components/icons/MenuIcon';
@@ -214,8 +214,7 @@ export type InfiniteTableApiStopEditParams =
 export type InfiniteTableApiIsCellEditableParams = InfiniteTableApiCellLocator;
 export type InfiniteTableApiCellLocator = {
   columnId: string;
-  rowIndex: number;
-};
+} & XOR<{ rowIndex: number }, { primaryKey: any }>;
 
 type InfiniteTableApiStopEditPromiseResolveType =
   | {
