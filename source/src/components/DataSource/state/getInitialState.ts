@@ -160,7 +160,7 @@ export const forwardProps = <T>(
         initialValue: () => {
           state.idToIndexMap.clear();
         },
-        reducer: (state, rowInfo) => {
+        reducer: (_, rowInfo) => {
           state.idToIndexMap.set(rowInfo.id, rowInfo.indexInAll);
         },
       };
