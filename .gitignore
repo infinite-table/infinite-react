@@ -101,3 +101,4 @@ test-results
 .contentlayer
 
 /www/public/_pagefind
+tsconfig.tsbuildinfo
