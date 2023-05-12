@@ -29,15 +29,15 @@ export function getColumnApiForColumn<T>(
   }
 
   const columnApi: InfiniteTableColumnApi<T> = {
-    getValuesByPrimaryKey(id: any) {
+    getCellValuesByPrimaryKey(id: any) {
       return param.api.getCellValues({
         columnId: column.id,
         primaryKey: id,
       });
     },
 
-    getValueByPrimaryKey(id: any) {
-      return columnApi.getValuesByPrimaryKey(id)?.value ?? null;
+    getCellValueByPrimaryKey(id: any) {
+      return columnApi.getCellValuesByPrimaryKey(id)?.value ?? null;
     },
 
     toggleContextMenu(target: EventTarget | HTMLElement) {

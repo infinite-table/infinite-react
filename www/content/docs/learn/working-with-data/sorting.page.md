@@ -99,32 +99,63 @@ If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /
 
 </Note>
 
-## Controlled and Uncontrolled Sorting
+## Understanding sort mode
 
-- ** uncontrolled (embedded) sorting** - the `<DataSource />` sorts the data internally (when <DataSourcePropLink name="sortMode">sortMode=local</DataSourcePropLink>, which is the default), based on the <DataSourcePropLink name="defaultSortInfo" /> prop. As the user interacts with the table, <DataSourcePropLink name="onSortInfoChange" /> is being called with updated sort info and the `<DataSource />` continues to sort the data accordingly.
+Sorting can be done both locally in the browser and remotely on the server. For configuring where sorting is performed you need to specify the <DPropLink name="sortMode" code={false}>sort mode</DPropLink>. Possible values for <DPropLink name="sortMode"/> are `"local"` and `"remote"`.
 
+This allows you fine-grained control on how sorting is done, either in the client or on the server.
+
+### Uncontrolled sorting
+
+If you use uncontrolled sorting (namely you don't care about updating the <DPropLink name="sortInfo" /> yourself as a result of user interaction - via <DPropLink name="onSortInfoChange" />) - then by default, the <DPropLink name="sortMode" /> is `"local"` unless you specify otherwise.
+
+You can initially render the component with no sort state or you can specify a default sorting state, via the uncontrolled prop <DPropLink name="defaultSortInfo" />.
+
+```tsx
+// initially render the component with ascending sorting on `firstName` field
+// also, note this is an array, so multiple sorting will be enabled
+const defaultSortInfo = [{ field: 'firstName', dir: 1 }];
+
+<DataSource<Developer>
+  primaryKey="id"
+  data={data}
+  defaultSortInfo={defaultSortInfo}
+>
+  <InfiniteTable  />
+</DataSource>
+
+```
+
+If your data is remote and you want the sorting to happen on the backend, you can still use uncontrolled sorting, but you need to specify <DPropLink name="sortMode">sortMode="remote"</DPropLink>.
+
+Using remote sort mode will trigger a call to the <DPropLink name="data" /> function whenever sorting changes, so you can re-fetch the data from the backend, according to the new `sortInfo`.
+
+Whe `local` uncontrolled sorting is used, the `<DataSource />` sorts the data internally, based on the existing sorting information. To start with a specific `sortInfo`, use the <DataSourcePropLink name="defaultSortInfo" /> prop. As the user interacts with the table, <DataSourcePropLink name="onSortInfoChange" /> is being called with updated sort info and the `<DataSource />` continues to sort the data accordingly.
 
 <Note>
 
-The <DataSourcePropLink name="defaultSortInfo" /> prop is an uncontrolled prop, so it's all managed inside the `<DataSource />` component and you can't change it from the outside. If you need to control it from outside the component, use the <DataSourcePropLink name="sortInfo" code={false}>controlled sortInfo</DataSourcePropLink> prop.
+The <DataSourcePropLink name="defaultSortInfo" /> prop is an uncontrolled prop, so it's all managed inside the `<DataSource />` component and you can't change it from the outside. If you need to control it from outside the component, use the <DataSourcePropLink name="sortInfo" code={false}>controlled sortInfo</DataSourcePropLink> prop - read the next section for more details
 
 </Note>
 
-- ** controlled (outside) sorting** - the `<DataSource />` doesn't sort the data internally, but instead it expects the <DataSourcePropLink name="data" /> it is provided with to be already sorted. In this case you need to use the controlled <DataSourcePropLink name="sortInfo" /> prop and pass it to `<DataSource />` so it knows the current sort order, which is needed for displaying correct sort indicators on column headers and which should be the next sort order when the user interacts with the table.
+### Controlled Sorting
+
+When you use the controlled <DataSourcePropLink name="sortInfo" /> prop, by default the <DPropLink name="sortMode" /> is `"remote"`, unless you specify otherwise.
+
+Also, be aware that when the user interacts with the DataGrid when controlled sorting is configured, the <DPropLink name="sortInfo" /> prop will not update automatically - you need to listen to <DPropLink name="onSortInfoChange" /> and update the <DPropLink name="sortInfo" /> yourself.
+
+Just like with uncontrolled sorting, updating the controlled <DPropLink name="sortInfo" /> when `sortMode=remote`, will trigger a call to the <DPropLink name="data" /> function, so new sorted data can be re-fetched.
+
+<Note>
+
+When the controlled <DPropLink name="sortInfo" /> is combined with <DPropLink name="sortMode">sortMode="local"</DPropLink>, the `<DataSource />` will sort the data internally, on any changes of the sorting information.
+
+But remember it's your responsibility to update the <DPropLink name="sortInfo" /> prop when the user interacts with the DataGrid.
+
+</Note>
+
 
 Both controlled <DataSourcePropLink name="sortInfo" /> and uncontrolled <DataSourcePropLink name="defaultSortInfo" /> work in combination with <DataSourcePropLink name="onSortInfoChange" /> - use it to be notified when sorting changes, so you can react and update your app accordingly if needed.
-
-## Local and Remote Sorting
-
-Sorting can be done both locally in the browser and remotely on the server. For configuring where sorting is being performed, use the <DataSourcePropLink name="sortMode" /> prop - it can be either `local` or `remote` (defaults to `local`).
-
-<Note>
-
-Controlled sorting (via <DataSourcePropLink name="sortInfo" />) means sorting is done outside of the `<DataSource />` component, so it's up to you to sort the data.
-
-This is also the case for <DataSourcePropLink name="sortMode">sortMode=remote</DataSourcePropLink>, so the two are very similar.
-
-</Note>
 
 ### Local Sorting
 
@@ -196,6 +227,12 @@ Those are the two sort types supported by default.
 
 <Note>
 
+The functions specified in the <PropLink name="sortTypes" /> object need to always sort data in ascending order.
+</Note>
+
+
+<Note>
+
 A column can choose to use a specific <PropLink name="columns.sortType" />, in which case, for local sorting, the corresponding sort function will be used, or, it can simply specify a <PropLink name="columns.dataType">dataType</PropLink> and the `sortType` with the same name will be used (when no explicit <PropLink name="columns.sortType">sortType</PropLink> is defined).
 
 To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a column will be used as the <PropLink name="columns.sortType">sortType</PropLink> and <PropLink name="columns.filterType">filterType</PropLink>, when those are not explicitly specified.
@@ -212,7 +249,7 @@ To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a colu
 
 <Note>
 
-In this example, for the `"color"` column, we specified <PropLink name="columns.sortType">column.sortType="color"</PropLink> - we could have passed that as `column.dataType` instead, but if the grid had filtering, it wouldn't know what filters to use for "color" - so we used<PropLink name="columns.sortType">column.sortType</PropLink> to only change how the data is sorted.
+In this example, for the `"color"` column, we specified <PropLink name="columns.sortType">column.sortType="color"</PropLink> - we could have passed that as `column.dataType` instead, but if the grid had filtering, it wouldn't know what filters to use for "color" - so we used <PropLink name="columns.sortType">column.sortType</PropLink> to only change how the data is sorted.
 
 </Note>
 
@@ -238,3 +275,35 @@ sortTypes={{
 ```
 
 </Note>
+
+## Replacing the sort function
+
+While there are many ways to customise sorting, including the <DPropLink name="sortTypes" /> mentioned above, you might want to completely replace the sorting function used by the `<DataSource />` component.
+
+You can do this by configuring the <DPropLink name="sortFunction" /> prop.
+
+```tsx
+const sortFunction = (sortInfo, dataArray) => {
+  // sort the dataArray according to the sortInfo
+  // and return the sorted array
+  // return sortedDataArray;
+}
+<DataSource<T> sortFunction={sortFunction} />
+```
+
+The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.
+
+<Note>
+
+When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
+</Note>
+
+
+<Sandpack  title="Using a custom sortFunction">
+
+```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
+
+```
+
+
+</Sandpack>

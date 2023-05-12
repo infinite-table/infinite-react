@@ -2,6 +2,7 @@ import {
   InfiniteTable,
   DataSource,
   DataSourceSingleSortInfo,
+  multisort,
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
@@ -41,8 +42,22 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const defaultSortInfo: DataSourceSingleSortInfo<Developer> = {
-  field: 'salary',
+  field: 'stack',
   dir: 1,
+};
+
+const sortFunction = (
+  sortInfo: DataSourceSingleSortInfo<Developer>[],
+  arr: Developer[],
+) => {
+  // you call the default sorting
+  const result = multisort<Developer>(sortInfo, arr);
+
+  // and also apply your custom sorting
+  // result.sort((a, b) => {
+  // })
+
+  return result;
 };
 export default function LocalUncontrolledSingleSortingExample() {
   return (
@@ -51,6 +66,7 @@ export default function LocalUncontrolledSingleSortingExample() {
         primaryKey="id"
         data={dataSource}
         defaultSortInfo={defaultSortInfo}
+        sortFunction={sortFunction}
       >
         <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
       </DataSource>

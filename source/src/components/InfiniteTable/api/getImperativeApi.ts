@@ -399,6 +399,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     });
   };
 
+  getCellValue = (cellLocator: InfiniteTableApiCellLocator) => {
+    return this.getCellValues(cellLocator)?.value ?? null;
+  };
   getCellValues = (cellLocator: InfiniteTableApiCellLocator) => {
     const { rowIndex: index, primaryKey, columnId } = cellLocator;
 
@@ -427,7 +430,6 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       formattedValue: valueContext.formattedValue,
       rawValue: valueContext.formattedValueContext.rawValue,
     };
-    // return columnApi?.getValuesByPrimaryKey(id) ?? null;
   };
 
   getVerticalRenderRange = () => {

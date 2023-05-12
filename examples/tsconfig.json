@@ -25,6 +25,5 @@
       "@testing": ["./test-fixtures"]
     },
     "incremental": true
-  },
-  "references": [{ "path": "../source" }]
+  }
 }

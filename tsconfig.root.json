@@ -1,4 +1,5 @@
 {
+  "extends": "@tsconfig/recommended/tsconfig.json",
   "include": ["./source/globals.d.ts"],
   "compilerOptions": {
     "baseUrl": "./",
@@ -7,9 +8,6 @@
     "allowJs": false,
     "importHelpers": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
 
     "alwaysStrict": true,
     "skipLibCheck": true,

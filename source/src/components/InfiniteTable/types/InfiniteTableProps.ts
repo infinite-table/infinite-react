@@ -189,9 +189,9 @@ export type InfiniteTableColumnApi<_T> = {
   setFilter: (value: any) => void;
   clearFilter: (value: any) => void;
 
-  getValuesByPrimaryKey: (id: any) => null | ColumnCellValues;
+  getCellValuesByPrimaryKey: (id: any) => null | ColumnCellValues;
 
-  getValueByPrimaryKey: (id: any) => any | null;
+  getCellValueByPrimaryKey: (id: any) => any | null;
 };
 
 export type InfiniteTableApiStopEditParams =
@@ -320,6 +320,7 @@ export interface InfiniteTableApi<T> {
   getCellValues: (
     cellLocator: InfiniteTableApiCellLocator,
   ) => ColumnCellValues | null;
+  getCellValue: (cellLocator: InfiniteTableApiCellLocator) => any | null;
 
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;

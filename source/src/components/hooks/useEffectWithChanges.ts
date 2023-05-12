@@ -32,7 +32,10 @@ export function useEffectWithChanges<T>(
   useEffect(() => {
     const changes = changesRef.current;
 
-    const result = fn(changes, oldValues);
+    let result: void | (() => void) = undefined;
+    if (Object.keys(changes).length !== 0) {
+      result = fn(changes, oldValues);
+    }
 
     changesRef.current = {} as Record<keyof T, any>;
     oldValuesRef.current = {};

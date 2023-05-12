@@ -189,11 +189,8 @@ export function concludeReducer<T>(params: {
   const cacheAffectedParts = getCacheAffectedParts(state);
 
   const sortInfo = state.sortInfo;
-  let shouldSort = !!sortInfo?.length
-    ? state.controlledSort
-      ? !!state.sortFunction
-      : true
-    : false;
+  const sortMode = state.sortMode;
+  let shouldSort = !!sortInfo?.length ? sortMode === 'local' : false;
 
   if (state.lazyLoad || state.livePagination) {
     shouldSort = false;
@@ -349,8 +346,7 @@ export function concludeReducer<T>(params: {
   state.filteredCount = dataArray.length;
   state.postFilterDataArray = dataArray;
 
-  const shouldSortClientSide = shouldSort && state.sortMode === 'local';
-  if (shouldSortClientSide) {
+  if (shouldSort) {
     const prevKnownTypes = multisort.knownTypes;
     multisort.knownTypes = state.sortTypes;
 

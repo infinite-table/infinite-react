@@ -899,6 +899,57 @@ Read more on row selection (`multi-row` and `single-row`) and cell selection.
 
 </Prop>
 
+<Prop name="sortFunction" type="(sortInfo:DataSourceSingleSortInfo<T>[], arr: T[]) => T[]">
+
+> Custom sorting function to replace the `multisort` function used by default.
+
+The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.
+
+
+
+<Note>
+
+When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
+</Note>
+
+<Note>
+
+The `@infinite-table/infinite-react` package exports a `multisort` function - this is the default function used for local sorting.
+
+```ts
+import {
+  multisort,
+} from '@infinite-table/infinite-react';
+
+const arr: Developer[] = [/*...*/]
+const sortInfo = [
+  {
+    field: 'age',
+    dir: -1,
+  },
+  {
+    field: 'name',
+    dir: 1,
+  }
+]
+multisort(sortInfo, arr)
+```
+
+If you want to implement your own custom sort function, the `multisort` fn is a good starting point you can use.
+
+</Note>
+
+
+<Sandpack  title="Using a custom sortFunction">
+
+```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="sortInfo" type="DataSourceSingleSortInfo<T>|DataSourceSingleSortInfo<T>[]|null">
 
 > Information for sorting the data. This is a controlled prop.

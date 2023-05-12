@@ -38,6 +38,10 @@ const getReactTemplateFiles = (): Record<string, SandpackFile> => {
       code: BASE_INDEX_HTML,
       hidden: true,
     },
+    '/sandbox.config.json': {
+      code: `{ "infiniteLoopProtection": true }`,
+      hidden: true,
+    },
   };
 };
 

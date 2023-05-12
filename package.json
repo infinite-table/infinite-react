@@ -61,6 +61,7 @@
   },
   "homepage": "https://github.com/infinite-table/react-table#readme",
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.2",
     "@types/estree": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",

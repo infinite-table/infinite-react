@@ -330,7 +330,9 @@ export function deriveStateFromProps<T extends any>(params: {
     controlledSort,
     controlledFilter,
 
-    sortMode: props.sortFunction ? 'local' : props.sortMode ?? 'local',
+    sortMode: props.sortFunction
+      ? 'local'
+      : props.sortMode ?? (controlledSort ? 'remote' : 'local'),
     filterMode:
       typeof props.filterFunction === 'function'
         ? 'local'

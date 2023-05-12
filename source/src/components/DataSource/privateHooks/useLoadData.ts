@@ -513,7 +513,7 @@ export function useLoadData<T>() {
 
   const depsObject = {
     sortInfo: sortMode === 'remote' ? sortInfo : null,
-    // sortInfo,
+
     groupBy,
     pivotBy,
     refetchKey,
@@ -561,7 +561,7 @@ export function useLoadData<T>() {
   );
 
   // only for initial triggering `onDataParamsChange`
-  useEffectWithChanges((_changes, _prevValues) => {
+  useEffectWithChanges(() => {
     const componentState = getComponentState();
     if (initialRef.current) {
       initialRef.current = false;
