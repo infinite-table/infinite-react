@@ -2284,7 +2284,7 @@ See related <PropLink name="onViewportReservedWidthChange" />
 </Prop>
 
 
-<Prop name="onEditAccepted" type="({ value, initialValue, column, rowInfo }) => void">
+<Prop name="onEditAccepted" type="({value, initialValue, column, rowInfo, ...}) => void">
 
 > Callback prop called when an edit is accepted
 
@@ -2301,22 +2301,26 @@ This callback is called with a single object that has the following properties:
  - `value` - the value that was accepted for the edit operation.
  - `initialValue` - the initial value of the cell (the value before editing started)
  - `rowInfo` - of type <TypeLink name="InfiniteTableRowInfo" /> - the row info object that underlies the row
+ - `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+ - `dataSouceApi` - a reference to the [DataSource API](/docs/reference/datasource-api)
+ - `column` - the column on which the edit was performed
+ - `columnApi` - a reference to the [column API](/docs/reference/column-api)
 
 See related <PropLink name="onEditRejected" /> callback prop.
 
 </Prop>
 
-<Prop name="onEditPersistSuccess" type="({value, initialValue, column })=>void">
+<Prop name="onEditPersistSuccess" type="({value, initialValue, column, rowInfo, ...})=>void">
 
 > Callback prop called when an edit is persisted successfully
 
-
+Has the same signature as <PropLink name="onEditAccepted" />
 
 </Prop>
 
-<Prop name="onEditRejected" type="({ value, initialValue, column }) => void">
+<Prop name="onEditRejected" type="({ value, initialValue, column, rowInfo, ... }) => void">
 
-> Callback prop called when an edit is accepted
+> Callback prop called when an edit is rejected
 
 In order to decide whether an edit should be accepted or rejected, you can use the global <PropLink name="shouldAcceptEdit"/> prop or the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> alternative.
 
@@ -2326,7 +2330,7 @@ When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level
 
 </Note>
 
-See related <PropLink name="onEditAccepted" /> callback prop.
+This callback prop has almost the same signature as the <PropLink name="onEditAccepted" /> callback prop. The only difference is that the argument passed to the function also contains an `error` property, with a reference to the error that caused the edit to be rejected.
 
 </Prop>
 
