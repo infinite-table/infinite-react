@@ -13,6 +13,7 @@ import type {
   InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableColumnRenderFunctionForNormalRows,
   InfiniteTableColumnValueFormatterParams,
+  InfiniteTableColumnValueGetterParams,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -52,6 +53,7 @@ import type { InfiniteTableState } from './InfiniteTableState';
 
 export type {
   Scrollbars,
+  InfiniteTableColumnValueGetterParams,
   InfiniteTablePropHeaderOptions,
   InfiniteTablePropAutoSizeColumnsKey,
   InfiniteTableColumnAggregator,

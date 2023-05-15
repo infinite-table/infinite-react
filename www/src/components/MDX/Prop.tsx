@@ -132,6 +132,68 @@ export const DApiLink = ({
 
 DApiLink.displayName = 'DApiLink';
 
+export const TypeLink = ({
+  name,
+  children,
+  code = true,
+  nocode,
+}: {
+  name: keyof DataSourceApi<any>;
+  children?: React.ReactNode;
+  code?: boolean;
+  nocode?: boolean;
+}) => {
+  let path = '/docs/reference/infinite-table-types';
+  const pathname = usePathname();
+
+  if (pathname === path) {
+    path = ''; // we're on this page already
+  }
+  const href = `${path}#${name as string}`;
+  if (nocode) {
+    code = false;
+  }
+  const content = code ? (
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
+  ) : (
+    children ?? name
+  );
+  return <Link href={href}>{content}</Link>;
+};
+
+TypeLink.displayName = 'TypeLink';
+
+export const DTypeLink = ({
+  name,
+  children,
+  code = true,
+  nocode,
+}: {
+  name: keyof DataSourceApi<any>;
+  children?: React.ReactNode;
+  code?: boolean;
+  nocode?: boolean;
+}) => {
+  let path = '/docs/reference/data-source-types';
+  const pathname = usePathname();
+
+  if (pathname === path) {
+    path = ''; // we're on this page already
+  }
+  const href = `${path}#${name as string}`;
+  if (nocode) {
+    code = false;
+  }
+  const content = code ? (
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
+  ) : (
+    children ?? name
+  );
+  return <Link href={href}>{content}</Link>;
+};
+
+DTypeLink.displayName = 'DTypeLink';
+
 export const ApiLink = ({
   name,
   children,
@@ -338,11 +400,13 @@ export function Prop({
 
 type PropTableProps = {
   children: React.ReactNode;
+  sort?: boolean;
 };
 
 export function PropTable({
   // name,
   children,
+  sort,
 }: PropTableProps) {
   // const initialText = globalThis.location
   //   ? globalThis.location.hash.slice(1)
@@ -426,7 +490,7 @@ export function PropTable({
 
   let highlightedName = '';
 
-  const contents = childrenArray.map((child) => {
+  let contents = childrenArray.map((child) => {
     if (!React.isValidElement(child)) return null;
 
     if (child.props.name) {
@@ -455,6 +519,14 @@ export function PropTable({
 
     return child;
   });
+
+  if (sort) {
+    contents = contents.filter(Boolean).sort((a, b) => {
+      //@ts-ignore
+      if (!a?.props.name || !b?.props.name) return 0;
+      return (a as any).props.name.localeCompare((b as any).props.name);
+    });
+  }
 
   React.useEffect(() => {
     if (globalThis.document && hash && highlightedName) {

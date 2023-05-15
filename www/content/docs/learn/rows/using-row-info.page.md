@@ -2,9 +2,9 @@
 title: Using Rows at Runtime
 ---
 
-At runtime, the <PropLink name="columns.render" /> function and a <PropLink name="rowStyle">lot</PropLink> <PropLink name="rowClassName">of</PropLink> <PropLink name="columns.style">other</PropLink> functions use the `rowInfo` object to access the current row and use it to decide how to render the current cell or row.
+At runtime, the <PropLink name="columns.render" /> function and a <PropLink name="rowStyle">lot</PropLink> <PropLink name="rowClassName">of</PropLink> <PropLink name="columns.style">other</PropLink> functions use the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> object to access the current row and use it to decide how to render the current cell or row.
 
-The `rowInfo` object has a few variations, depending on the presence or absence of grouping
+The `rowInfo` object has a few variations, depending on the presence or absence of grouping. See <TypeLink name="InfiniteTableRowInfo" code={false}>type definition here</TypeLink>.
 
 <Note>
 
@@ -37,7 +37,7 @@ When there is <DataSourcePropLink name="groupBy">grouping</DataSourcePropLink> d
 - `dataSourceHasGrouping` - type: `true`
 - `isGroupRow` - type: `false`
 - `indexInAll` - like the above
-- `indexInGroup` - type: `number`. The index of the row in the its parent group.
+- `indexInGroup` - type: `number`. The index of the row in its parent group.
 - `groupKeys` - type: `any[]`, but usually it's actually `string[]`. For normal rows, the group keys will have all the keys starting from the topmost parent down to the last group row in the hierarchy (the direct parent of the current row).
 
 ```txt

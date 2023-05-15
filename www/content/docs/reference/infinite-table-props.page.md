@@ -2284,7 +2284,7 @@ See related <PropLink name="onViewportReservedWidthChange" />
 </Prop>
 
 
-<Prop name="onEditAccepted" type="({ value, initialValue, column }) => void">
+<Prop name="onEditAccepted" type="({ value, initialValue, column, rowInfo }) => void">
 
 > Callback prop called when an edit is accepted
 
@@ -2295,6 +2295,12 @@ In order to decide whether an edit should be accepted or not, you can use the gl
 When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> are defined, all edits are accepted by default.
 
 </Note>
+
+This callback is called with a single object that has the following properties:
+
+ - `value` - the value that was accepted for the edit operation.
+ - `initialValue` - the initial value of the cell (the value before editing started)
+ - `rowInfo` - of type <TypeLink name="InfiniteTableRowInfo" /> - the row info object that underlies the row
 
 See related <PropLink name="onEditRejected" /> callback prop.
 
@@ -2554,17 +2560,11 @@ The `rowStyle` prop can be either an object (typed as `React.CSSProperties`) or 
 
 ### `rowStyle` as a function
 
-<APIAnatomy>
-
-<AnatomyStep title="data can be null">
 
 When Infinite Table calls `rowStyle`, the `data` property can be null - this is the case for grouped rows.
 
-</AnatomyStep>
 
-<AnatomyStep title="rowInfo">
-
-The `rowInfo` object contains the following properties:
+The `rowInfo` object contains the following properties (see <TypeLink name="InfiniteTableRowInfo" >type definition here</TypeLink>):
 
 - `id` - the id of the current row
 - `data` - the data object
@@ -2576,13 +2576,10 @@ The `rowInfo` object contains the following properties:
 
 See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 
-</AnatomyStep>
-
-<AnatomyStep title="return value">
 
 You can either return a valid style object, or undefined.
 
-</AnatomyStep>
+
 
 ```tsx
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
@@ -2603,7 +2600,6 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 };
 ```
 
-</APIAnatomy>
 
 <Sandpack title="rowStyle example usage">
 

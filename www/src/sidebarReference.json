@@ -5,11 +5,23 @@
   },
   {
     "title": "InfiniteTable Props",
-    "path": "/docs/reference/infinite-table-props"
+    "path": "/docs/reference/infinite-table-props",
+    "routes": [
+      {
+        "path": "/docs/reference/infinite-table-types",
+        "title": "Type Definitions"
+      }
+    ]
   },
   {
     "title": "DataSource Props",
-    "path": "/docs/reference/datasource-props"
+    "path": "/docs/reference/datasource-props",
+    "routes": [
+      {
+        "path": "/docs/reference/data-source-types",
+        "title": "Type Definitions"
+      }
+    ]
   },
   {
     "title": "Infinite Table API",
