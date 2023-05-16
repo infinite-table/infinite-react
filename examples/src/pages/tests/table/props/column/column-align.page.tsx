@@ -3,9 +3,6 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  useInfiniteColumnCell,
-  useInfiniteHeaderCell,
-  InfiniteTablePropColumnTypes,
   DataSourceData,
 } from '@infinite-table/infinite-react';
 
