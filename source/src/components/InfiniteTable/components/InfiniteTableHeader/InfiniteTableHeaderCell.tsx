@@ -176,7 +176,16 @@ export function InfiniteTableHeaderCell<T>(
 
   const alwaysShow = headerOptions.alwaysReserveSpaceForSortIcon;
 
-  const align = column.headerAlign || column.align || 'start';
+  const alignFnOrValue = column.headerAlign ?? column.align;
+  const align =
+    (typeof alignFnOrValue === 'function'
+      ? alignFnOrValue({ isHeader: true, column })
+      : alignFnOrValue) ?? 'start';
+
+  const verticalAlign =
+    (typeof column.verticalAlign === 'function'
+      ? column.verticalAlign({ isHeader: true, column })
+      : column.verticalAlign) ?? 'center';
 
   const sortIcon =
     column.computedSortable && (column.computedSorted || alwaysShow) ? (
@@ -462,6 +471,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const contentRecipeVariants: HeaderCellContentVariantsType = {
     filtered: column.computedFiltered,
+    verticalAlign,
     align,
   };
 
@@ -534,9 +544,11 @@ export function InfiniteTableHeaderCell<T>(
             {
               dragging,
               align,
+              verticalAlign,
               rowSelected: false,
               zebra: false,
               rowActive: false,
+              groupCell: false,
               groupRow: false,
               rowExpanded: false,
             },

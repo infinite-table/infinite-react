@@ -94,10 +94,29 @@ export const ColumnCellRecipe = recipe({
     dragging: { false: {}, true: {} },
     align: {
       start: {},
-      end: {},
+      end: {
+        justifyContent: 'flex-end',
+      },
+      center: {},
+    },
+    verticalAlign: {
+      start: {
+        alignItems: 'flex-start',
+      },
+      end: {
+        alignItems: 'flex-end',
+      },
       center: {},
     },
     rowActive: {
+      false: {},
+      true: {},
+    },
+    groupRow: {
+      false: {},
+      true: {},
+    },
+    groupCell: {
       false: {},
       true: {},
     },
@@ -190,6 +209,17 @@ export const ColumnCellRecipe = recipe({
         lastInCategory: true,
       },
       style: ColumnCellVariantsObject.pinnedEndLastInCategory,
+    },
+    {
+      // only apply justify-content: center
+      // to cells which are not group cells
+      variants: {
+        align: 'center',
+        groupCell: false,
+      },
+      style: {
+        justifyContent: 'center',
+      },
     },
   ],
 });

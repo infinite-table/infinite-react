@@ -181,6 +181,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     inEdit,
   } = colRenderingParams;
 
+  const { align, verticalAlign } = renderParams;
+
   const renderParam = renderParams as InfiniteTableColumnRenderParam<T>;
   const renderParamRef =
     React.useRef<InfiniteTableColumnRenderParam<T>>(renderParam);
@@ -337,16 +339,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
     const all = (
       <>
-        {column.align !== 'end' ? renderParam.renderBag.groupIcon : null}
-        {column.align !== 'end'
-          ? renderParam.renderBag.selectionCheckBox
-          : null}
+        {align !== 'end' ? renderParam.renderBag.groupIcon : null}
+        {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
         {renderParam.renderBag.value}
 
-        {column.align === 'end'
-          ? renderParam.renderBag.selectionCheckBox
-          : null}
-        {column.align === 'end' ? renderParam.renderBag.groupIcon : null}
+        {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
+        {align === 'end' ? renderParam.renderBag.groupIcon : null}
       </>
     );
 
@@ -451,10 +449,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         {
           dragging: false,
           zebra,
+          align,
+          verticalAlign,
           rowActive,
           rowSelected,
-          align: column.align || 'start',
           groupRow: rowInfo.isGroupRow,
+          groupCell: rowInfo.isGroupRow ? !!column.groupByField : false,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,
         },
       ),

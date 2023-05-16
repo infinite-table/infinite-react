@@ -173,7 +173,20 @@ export const HeaderCellRecipe = recipe({
   variants: {
     rowActive: { false: {}, true: {} },
     rowSelected: { false: {}, true: {}, null: {} },
+    groupRow: {
+      false: {},
+      true: {},
+    },
+    groupCell: {
+      false: {},
+      true: {},
+    },
     align: {
+      start: {},
+      end: {},
+      center: {},
+    },
+    verticalAlign: {
       start: {},
       end: {},
       center: {},
@@ -336,6 +349,15 @@ export const HeaderCellContentRecipe = recipe(
       filtered: {
         false: {},
         true: {},
+      },
+      verticalAlign: {
+        start: {
+          alignItems: 'flex-start',
+        },
+        end: {
+          alignItems: 'flex-end',
+        },
+        center: {},
       },
       align: {
         start: {},

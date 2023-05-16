@@ -29,6 +29,7 @@ import type {
   DiscriminatedUnion,
   KeyOfNoSymbol,
   RequireAtLeastOne,
+  XOR,
 } from './Utility';
 
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
@@ -90,6 +91,8 @@ export type InfiniteTableColumnRenderParamBase<
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
 
+  align: InfiniteTableColumnAlignValues;
+  verticalAlign: InfiniteTableColumnVerticalAlignValues;
   renderBag: InfiniteTableColumnRenderBag;
   rowIndex: number;
   rowActive: boolean;
@@ -258,8 +261,8 @@ export type InfiniteTableColumnWithRenderValue<T> = {
   renderValue: InfiniteTableColumnRenderFunction<T>;
 };
 
-export type InfiniteTableColumnAlign = 'start' | 'center' | 'end';
-export type InfiniteTableColumnVerticalAlign = 'start' | 'center' | 'end';
+export type InfiniteTableColumnAlignValues = 'start' | 'center' | 'end';
+export type InfiniteTableColumnVerticalAlignValues = 'start' | 'center' | 'end';
 
 export type InfiniteTableColumnHeader<T> =
   | Renderable
@@ -317,6 +320,27 @@ export type InfiniteTableColumnStyle<T> =
   | CSSProperties
   | InfiniteTableColumnStyleFn<T>;
 
+export type InfiniteTableColumnAlign<T> =
+  | InfiniteTableColumnAlignValues
+  | InfiniteTableColumnAlignFn<T>;
+
+export type InfiniteTableColumnVerticalAlign<T> =
+  | InfiniteTableColumnVerticalAlignValues
+  | InfiniteTableColumnVerticalAlignFn<T>;
+
+export type InfiniteTableColumnAlignFn<T> = (
+  params: InfiniteTableColumnAlignFnParams<T>,
+) => InfiniteTableColumnAlignValues;
+
+export type InfiniteTableColumnAlignFnParams<T> = XOR<
+  { isHeader: true; column: InfiniteTableComputedColumn<T> },
+  InfiniteTableColumnStyleFnParams<T> & { isHeader: false }
+>;
+
+export type InfiniteTableColumnVerticalAlignFn<T> = (
+  params: InfiniteTableColumnAlignFnParams<T>,
+) => InfiniteTableColumnVerticalAlignValues;
+
 export type InfiniteTableColumnHeaderStyle<T> =
   | CSSProperties
   | InfiniteTableColumnHeaderStyleFn<T>;
@@ -368,6 +392,9 @@ export type InfiniteTableColumnSortableFn<T> = (context: {
  * Can be bound to a field which is a `keyof DATA_TYPE`.
  */
 export type InfiniteTableColumn<DATA_TYPE> = {
+  // TODO revisit this and use AllXOR with either field, valueGetter or both
+  field?: KeyOfNoSymbol<DATA_TYPE>;
+  valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
   sortable?: boolean;
   draggable?: boolean;
   resizable?: boolean;
@@ -393,9 +420,9 @@ export type InfiniteTableColumn<DATA_TYPE> = {
     | keyof DATA_TYPE
     | { [k in keyof Partial<DATA_TYPE>]: true };
 
-  align?: InfiniteTableColumnAlign;
-  headerAlign?: InfiniteTableColumnAlign;
-  verticalAlign?: InfiniteTableColumnVerticalAlign;
+  align?: InfiniteTableColumnAlign<DATA_TYPE>;
+  headerAlign?: InfiniteTableColumnAlign<DATA_TYPE>;
+  verticalAlign?: InfiniteTableColumnVerticalAlign<DATA_TYPE>;
   columnGroup?: string;
 
   header?: InfiniteTableColumnHeader<DATA_TYPE>;
@@ -416,12 +443,11 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   rowspan?: InfiniteTableColumnRowspanFn<DATA_TYPE>;
   // colspan?: InfiniteTableColumnColspanFn<T>;
 
-  field?: KeyOfNoSymbol<DATA_TYPE>;
   render?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderValue?: InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderGroupValue?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
   renderLeafValue?: InfiniteTableColumnRenderFunctionForNormalRows<DATA_TYPE>;
-  valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
+
   valueFormatter?: InfiniteTableColumnValueFormatter<DATA_TYPE, Renderable>;
 
   defaultWidth?: number;

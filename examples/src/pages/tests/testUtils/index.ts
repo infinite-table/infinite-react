@@ -25,6 +25,30 @@ export const resizeHandle = async (
   await page.mouse.up();
 };
 
+export const getLocatorComputedStylePropertyValue = async (params: {
+  handle: Locator;
+  page: Page;
+  propertyName: string;
+}) => {
+  const { page, handle, propertyName } = params;
+  const node = await handle.elementHandle();
+
+  return await page.evaluate(
+    //@ts-ignore
+    ({
+      node,
+      propertyName,
+    }: {
+      node: ElementHandle<HTMLElement>;
+      propertyName: string;
+    }) => {
+      //@ts-ignore
+      return getComputedStyle(node).getPropertyValue(propertyName);
+    },
+    { node, propertyName },
+  );
+};
+
 export const resizeColumnById = async (
   colId: string,
   diff: number,

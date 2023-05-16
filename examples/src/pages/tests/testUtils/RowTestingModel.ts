@@ -1,4 +1,4 @@
-import { ElementHandle, Page } from '@playwright/test';
+import { Page } from '@testing';
 
 import {
   CellLocation,
@@ -7,6 +7,7 @@ import {
   getCellNodeLocator,
   getCellText,
   getColumnCells,
+  getLocatorComputedStylePropertyValue,
   getSelectedRowIds,
   isNodeExpanded,
   isNodeGroupRow,
@@ -91,22 +92,12 @@ export class RowTestingModel {
     propertyName: string,
   ) {
     const cell = this.getCellLocator(cellLocation);
-    const node = await cell.elementHandle();
 
-    return await this.page.evaluate(
-      //@ts-ignore
-      ({
-        node,
-        propertyName,
-      }: {
-        node: ElementHandle<HTMLElement>;
-        propertyName: string;
-      }) => {
-        //@ts-ignore
-        return getComputedStyle(node).getPropertyValue(propertyName);
-      },
-      { node, propertyName },
-    );
+    return await getLocatorComputedStylePropertyValue({
+      handle: cell,
+      page: this.page,
+      propertyName,
+    });
   }
 
   async clickRow(rowIndex: number) {

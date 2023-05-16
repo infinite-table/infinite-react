@@ -1,6 +1,11 @@
-import { Page } from '@playwright/test';
-import { ColLocation, getHeaderCellForColumn } from '.';
+import { Page } from '@testing';
+import {
+  ColLocation,
+  getHeaderCellForColumn,
+  getLocatorComputedStylePropertyValue,
+} from '.';
 
+const CONTENT_SELECTOR = '.InfiniteCell_content';
 export class HeaderTestingModel {
   static get(page: Page) {
     return new HeaderTestingModel(page);
@@ -10,6 +15,37 @@ export class HeaderTestingModel {
 
   constructor(page: Page) {
     this.page = page;
+  }
+
+  async getColumnHeaderAlign(cellLocation: ColLocation) {
+    const cell = this.getHeaderCellLocator(cellLocation);
+
+    const align = await getLocatorComputedStylePropertyValue({
+      handle: cell.locator(CONTENT_SELECTOR),
+      page: this.page,
+      propertyName: 'justify-content',
+    });
+
+    return align === 'flex-start' || align === 'norma;'
+      ? 'start'
+      : align === 'flex-end'
+      ? 'end'
+      : 'center';
+  }
+  async getColumnHeaderVerticalAlign(cellLocation: ColLocation) {
+    const cell = this.getHeaderCellLocator(cellLocation);
+
+    const align = await getLocatorComputedStylePropertyValue({
+      handle: cell.locator(CONTENT_SELECTOR),
+      page: this.page,
+      propertyName: 'align-items',
+    });
+
+    return align === 'flex-start' || align === 'norma;'
+      ? 'start'
+      : align === 'flex-end'
+      ? 'end'
+      : 'center';
   }
 
   async clickSelectionCheckbox(colId: string) {
@@ -96,7 +132,7 @@ export class HeaderTestingModel {
 
   async clickToSortColumn(colLocation: ColLocation) {
     await this.getHeaderCellLocator(colLocation)
-      .locator('.InfiniteCell_content')
+      .locator(CONTENT_SELECTOR)
       .click();
   }
 }

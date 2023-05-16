@@ -7,7 +7,9 @@ import {
   InfiniteTableRowInfo,
 } from '../../types';
 import {
+  InfiniteTableColumnAlignValues,
   InfiniteTableColumnValueFormatterParams,
+  InfiniteTableColumnVerticalAlignValues,
   InfiniteTableColumnWithField,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis } from '../../types/InfiniteTableProps';
@@ -135,21 +137,33 @@ export function getColumnRenderingParams<T>(options: {
     rowIndex: rowInfo.indexInAll,
   });
 
+  const stylingParam = {
+    column: options.column,
+    inEdit,
+    ...formattedValueContext,
+    editError:
+      editingCell &&
+      editingCell.primaryKey === rowInfo.id &&
+      editingCell.columnId === column.id &&
+      !editingCell.active &&
+      editingCell.accepted instanceof Error
+        ? editingCell.accepted
+        : undefined,
+  };
+
+  const align =
+    typeof column.align === 'function'
+      ? column.align({ isHeader: false, ...stylingParam })
+      : column.align ?? 'start';
+
+  const verticalAlign =
+    typeof column.verticalAlign === 'function'
+      ? column.verticalAlign({ isHeader: false, ...stylingParam })
+      : column.verticalAlign ?? 'center';
+
   return {
     inEdit,
-    stylingParam: {
-      column: options.column,
-      inEdit,
-      ...formattedValueContext,
-      editError:
-        editingCell &&
-        editingCell.primaryKey === rowInfo.id &&
-        editingCell.columnId === column.id &&
-        !editingCell.active &&
-        editingCell.accepted instanceof Error
-          ? editingCell.accepted
-          : undefined,
-    },
+    stylingParam,
     formattedValueContext,
     renderFunctions: {
       renderGroupIcon: column.renderGroupIcon || groupByColumn?.renderGroupIcon,
@@ -161,7 +175,8 @@ export function getColumnRenderingParams<T>(options: {
     },
     renderParams: getColumnRenderParam({
       ...options,
-
+      align,
+      verticalAlign,
       formattedValueContext,
     }),
     groupByColumn,
@@ -170,6 +185,8 @@ export function getColumnRenderingParams<T>(options: {
 
 export function getColumnRenderParam<T>(options: {
   column: InfiniteTableComputedColumn<T>;
+  align: InfiniteTableColumnAlignValues;
+  verticalAlign: InfiniteTableColumnVerticalAlignValues;
   rowInfo: InfiniteTableRowInfo<T>;
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
@@ -181,6 +198,8 @@ export function getColumnRenderParam<T>(options: {
     column,
     context,
     rowInfo,
+    align,
+    verticalAlign,
     columnsMap,
     fieldsToColumn,
     formattedValueContext,
@@ -202,6 +221,8 @@ export function getColumnRenderParam<T>(options: {
     column,
     columnsMap,
     fieldsToColumn,
+    align,
+    verticalAlign,
 
     ...formattedValueContext,
     editError:

@@ -5,11 +5,7 @@ import { stripVar } from '../../../../utils/stripVar';
 
 import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
-import {
-  cssEllipsisClassName,
-  justifyContent,
-  overflow,
-} from '../../utilities.css';
+import { cssEllipsisClassName, overflow } from '../../utilities.css';
 import { ColumnCellCls } from '../cell.css';
 
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
@@ -29,6 +25,7 @@ function InfiniteTableCellFn<T>(
 ) {
   const {
     cssEllipsis = true,
+
     virtualized = true,
     skipColumnShifting = false,
 
@@ -72,7 +69,6 @@ function InfiniteTableCellFn<T>(
     className: join(
       domProps.className,
 
-      justifyContent[column.align ?? 'start'],
       InfiniteTableCellClassName,
       ColumnCellCls,
       // shifting

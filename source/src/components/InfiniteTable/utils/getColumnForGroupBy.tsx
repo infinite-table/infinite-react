@@ -12,6 +12,7 @@ import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
 import { Renderable } from '../../types/Renderable';
 import { ExpanderIcon } from '../components/icons/ExpanderIcon';
 import { LoadingIcon } from '../components/icons/LoadingIcon';
+import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
 import { ThemeVars } from '../theme.css';
@@ -55,7 +56,7 @@ export function getGroupColumnRender<T>({
   groupIndexForColumn: number;
 }) {
   return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
-    const { rowInfo, renderBag, column } = renderOptions;
+    const { rowInfo, renderBag, column, align } = renderOptions;
 
     // TODO continue here to take valueToRender from corrensponding groupByColumn
     // see http://localhost:3000/tests/table/props/row-selection/with-grouping
@@ -101,9 +102,10 @@ export function getGroupColumnRender<T>({
           display.flex,
           column.align === 'end' ? flexFlow.rowReverse : flexFlow.row,
           alignItems.center,
+          `${InfiniteTableColumnCellClassName}Expander`,
           groupRenderStrategy === 'single-column' ||
             (groupRenderStrategy === 'multi-column' && !rowInfo.isGroupRow)
-            ? GroupRowExpanderCls({ align: column.align || 'start' })
+            ? GroupRowExpanderCls({ align })
             : null,
         )}
       >

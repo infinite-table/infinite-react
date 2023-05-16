@@ -1,7 +1,10 @@
 import { ColumnCellVariantsType } from '../components/cell.css';
 import { HeaderCellVariantsType } from '../components/InfiniteTableHeader/header.css';
 import { InfiniteTableComputedColumn } from '../types';
-import { InfiniteTableColumnAlign } from '../types/InfiniteTableColumn';
+import {
+  InfiniteTableColumnAlignValues,
+  InfiniteTableColumnVerticalAlignValues,
+} from '../types/InfiniteTableColumn';
 
 export function useCellClassName<T>(
   column: InfiniteTableComputedColumn<T>,
@@ -9,9 +12,11 @@ export function useCellClassName<T>(
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
     groupRow: boolean;
+    groupCell: boolean;
     rowExpanded: boolean;
     rowActive: boolean;
-    align: InfiniteTableColumnAlign;
+    align: InfiniteTableColumnAlignValues;
+    verticalAlign: InfiniteTableColumnVerticalAlignValues;
     rowSelected: boolean | null;
     dragging: boolean;
     zebra: 'odd' | 'even' | false;
@@ -29,6 +34,9 @@ export function useCellClassName<T>(
     rowSelected: extraFlags.rowSelected ?? 'null',
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
+    groupRow: extraFlags.groupRow,
+    groupCell: extraFlags.groupCell,
+    verticalAlign: extraFlags.verticalAlign,
     align: extraFlags.align,
     zebra: extraFlags.zebra,
   };

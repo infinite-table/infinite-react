@@ -10,10 +10,14 @@ import {
   InfiniteTablePropRowClassName,
   InfiniteTablePropHeaderOptions,
 } from '../../types';
-import { InfiniteTableToggleGroupRowFn } from '../../types/InfiniteTableColumn';
+import {
+  InfiniteTableColumnAlignValues,
+  InfiniteTableToggleGroupRowFn,
+} from '../../types/InfiniteTableColumn';
 
 export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
+  align?: InfiniteTableColumnAlignValues;
 
   rowId?: any;
 
