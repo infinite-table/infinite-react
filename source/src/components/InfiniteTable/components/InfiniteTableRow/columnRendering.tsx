@@ -150,7 +150,6 @@ export function getColumnRenderingParams<T>(options: {
         ? editingCell.accepted
         : undefined,
   };
-
   const align =
     typeof column.align === 'function'
       ? column.align({ isHeader: false, ...stylingParam })
