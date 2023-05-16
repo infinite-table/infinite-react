@@ -601,7 +601,7 @@ Each item in the array can have the following properties:
 - field - `keyof DATA_TYPE`
 - column - config object for the group <PropLink name="column">column</PropLink>.
 
-See <DTypeLink name="DataSourcePropGroupBy" /> for the type definition.
+See <TypeLink name="DataSourcePropGroupBy" /> for the type definition.
 
 <Sandpack>
 

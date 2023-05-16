@@ -5,23 +5,11 @@
   },
   {
     "title": "InfiniteTable Props",
-    "path": "/docs/reference/infinite-table-props",
-    "routes": [
-      {
-        "path": "/docs/reference/infinite-table-types",
-        "title": "Type Definitions"
-      }
-    ]
+    "path": "/docs/reference/infinite-table-props"
   },
   {
     "title": "DataSource Props",
-    "path": "/docs/reference/datasource-props",
-    "routes": [
-      {
-        "path": "/docs/reference/data-source-types",
-        "title": "Type Definitions"
-      }
-    ]
+    "path": "/docs/reference/datasource-props"
   },
   {
     "title": "Infinite Table API",
@@ -40,7 +28,10 @@
     "title": "Infinite Table Column API",
     "path": "/docs/reference/column-api"
   },
-
+  {
+    "path": "/docs/reference/type-definitions",
+    "title": "Type Definitions"
+  },
   {
     "title": "Hooks",
     "path": "/docs/reference/hooks"

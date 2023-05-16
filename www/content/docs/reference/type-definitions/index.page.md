@@ -1,19 +1,54 @@
 ---
-title: Infinite Table Types
+title: Infinite Table Type Definitions
 description: TypeScript type definitions for Infinite Table
 ---
 
-These are types related to the `InfiniteTable` component, that you can import with named imports from the `@infinite-table/infinite-react` package.
 
-Additionally, there are other exported types, for example, related to the [DataSource component](/docs/reference/data-source-types)
+
+These are the public type definitions for `InfiniteTable` and related components, that you can import with named imports from the `@infinite-table/infinite-react` package.
 
 
 ```tsx title="Importing the type for rowInfo"
 
-import { InfiniteTableRowInfo } from '@infinite-table/infinite-react'
+import type { InfiniteTableRowInfo } from '@infinite-table/infinite-react'
 
 ```
-<PropTable>
+
+
+<Note title="Naming convention ⚠️">
+
+The types of all properties in the `InfiniteTable` and `DataSource` components respect the following naming convention: `<ComponentName>Prop<PropName>`
+
+So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="DataSourcePropGroupBy" />
+
+</Note>
+
+
+<PropTable searchPlaceholder="Type to filter type definitions">
+
+
+<Prop name="DataSourcePropGroupBy">
+
+> The type of the <DPropLink name="groupBy" /> prop. Basically this type is an array of <TypeLink name="DataSourceGroupBy" />.
+
+</Prop>
+
+<Prop name="DataSourceGroupBy">
+
+> The type for the objects in the <DPropLink name="groupBy" /> array. See related <TypeLink name="DataSourcePropGroupBy" />
+
+<Note>
+
+The type is generic, and the generic type parameter is the type of the data in the grid. In this documentation, either `DATA_TYPE` or `T` will be used to refer to the generic type parameter.
+
+</Note>
+
+These are the type properties:
+- `field` - `keyof DATA_TYPE`. The field to group by.
+- `column`: `Partial<InfiniteTableColumn>`
+- `toKey?`: `(value: any, data: DATA_TYPE) => any` - a function that can be used to decide the bucket where each data object from the data set will be placed. If not provided, the `field` value will be used.
+
+</Prop>
 
 <Prop name="InfiniteTableRowInfo">
 

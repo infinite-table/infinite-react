@@ -23,7 +23,7 @@ const onReady = (
 
 For API on row/group selection, see the [Selection API page](./selection-api).
 
-<PropTable>
+<PropTable sort searchPlaceholder="Type to filter API methods">
 
 <Prop name="clearColumnFilter" type="(columnId: string) =>void">
 
@@ -48,6 +48,52 @@ api.collapseGroupRow(['USA', 'New York']); // collapses the group with these key
 ```tsx
 api.expandGroupRow(['USA', 'New York']); // expands the group with these keys
 ```
+
+</Prop>
+
+<Prop name="getCellValue" type="({columnId, rowIndex?, primaryKey? }) => any">
+
+> Returns the value for the specified cell. The value is either the raw value (as retrieved via the `field` property of the column or by calling the column <PropLink name="columns.valueGetter">valueGetter</PropLink>) or the formatted value - if the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>.
+
+Call this function with an object that has a `columnId` and either a `rowIndex` or a `primaryKey` property.
+
+See related <ApiLink name="getCellValues" />.
+
+<Note>
+
+This function should not be called during a cell render (eg: in <PropLink name="columns.render"/>/<PropLink name="columns.renderValue"/> or other functions called during render).
+
+</Note>
+
+</Prop>
+
+<Prop name="getCellValues" type="({columnId, rowIndex?, primaryKey? }) => ({value, rawValue, formattedValue })">
+
+> Returns an object with raw and formatted values for the specified cell.
+
+Call this function with an object that has a `columnId` and either a `rowIndex` or a `primaryKey` property.
+
+The returned object has the following properties:
+
+ * `rawValue` - the raw value of the cell - as retrieved from the <PropLink name="columns.field"/> property of the column or by calling the column <PropLink name="columns.valueGetter">valueGetter</PropLink>
+ * `formattedValue` - the formatted value of the cell - if the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>, it's the value returned by the formatter, otherwise it's the same as the `rawValue`
+ * `value` - it's either `formattedValue` or `rawValue`. If the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>, it's the value returned by the formatter, otherwise it's the `rawValue`
+
+See related <ApiLink name="getCellValue" />.
+
+<Note>
+
+This function should not be called during a cell render (eg: in <PropLink name="columns.render"/>/<PropLink name="columns.renderValue"/> or other functions called during render).
+
+</Note>
+
+</Prop>
+
+<Prop name="getColumnApi" type="(colIdOrIndex: string|number) => InfiniteTableColumnAPI">
+
+> Returns [a column API object](/docs/reference/column-api) bound to the specified column
+
+The parameter can be either a column id or a column index (note this is not the index in all columns, but rather the index in current visible columns).
 
 </Prop>
 

@@ -8,7 +8,7 @@ When rendering the `InfiniteTable` component, you can get access to the Column A
 For the root API see the [API page](./api).
 For API on row/group selection, see the [Selection API page](./selection-api).
 
-<PropTable>
+<PropTable searchPlaceholder="Type to filter API methods">
 
 
 <Prop name="clearSort">

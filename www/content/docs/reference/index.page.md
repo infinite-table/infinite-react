@@ -66,3 +66,18 @@ Custom hooks allow you to use the `InfiniteTable` at full potential and customiz
 </YouWillLearnCard>
 
 </HeroCards>
+
+
+## Type Definitions
+
+Infinite Table exports quite a lot of TS type definitions. See the dedicated page for guides and explanations to help you use them effectively.
+
+<HeroCards>
+<YouWillLearnCard title="Type Definitions" path="/docs/reference/type-definitions">
+
+We export our type definitions in case you ever need them. In many cases, you won't need to import them explicitly, but you might find them useful in more advaced scenarios.
+
+</YouWillLearnCard>
+
+</HeroCards>
+

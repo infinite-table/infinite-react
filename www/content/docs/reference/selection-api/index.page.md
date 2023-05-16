@@ -21,7 +21,7 @@ const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
 For the root API, see the [Infinite Table API page](./api).
 For column API, see the [Infinite Table Column API page](./column-api).
 
-<PropTable>
+<PropTable searchPlaceholder="Type to filter API methods">
 
 <Prop name="allRowsSelected" type="boolean">
 

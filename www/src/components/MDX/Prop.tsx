@@ -143,7 +143,7 @@ export const TypeLink = ({
   code?: boolean;
   nocode?: boolean;
 }) => {
-  let path = '/docs/reference/infinite-table-types';
+  let path = '/docs/reference/type-definitions';
   const pathname = usePathname();
 
   if (pathname === path) {
@@ -162,37 +162,6 @@ export const TypeLink = ({
 };
 
 TypeLink.displayName = 'TypeLink';
-
-export const DTypeLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/data-source-types';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
-
-DTypeLink.displayName = 'DTypeLink';
 
 export const ApiLink = ({
   name,
@@ -401,12 +370,14 @@ export function Prop({
 type PropTableProps = {
   children: React.ReactNode;
   sort?: boolean;
+  searchPlaceholder?: string;
 };
 
 export function PropTable({
   // name,
   children,
   sort,
+  searchPlaceholder,
 }: PropTableProps) {
   // const initialText = globalThis.location
   //   ? globalThis.location.hash.slice(1)
@@ -595,6 +566,7 @@ export function PropTable({
       >
         <StyledInput
           ref={inputRef}
+          placeholder={searchPlaceholder}
           className="flex-1 py-2 my-2 outline-none"
           defaultValue={filterText}
           //@ts-ignore

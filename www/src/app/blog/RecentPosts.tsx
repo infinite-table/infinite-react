@@ -15,7 +15,7 @@ export default function RecentPosts({ posts }: { posts: Post[] }) {
         <header className=" pb-8 ">
           <div className="inline-flex items-center mb-8">
             <h1
-              className={`text-5xl py-4 font-black tracking-tighter text-content-color ${cmpStyles.HighlightBrandToLightBackground}`}
+              className={`text-5xl py-4 font-black tracking-tighter  ${cmpStyles.HighlightBrandToLightBackground}`}
             >
               Infinite Blog
             </h1>

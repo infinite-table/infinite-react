@@ -8,7 +8,7 @@ Infinite Table exposes a few custom hooks that can be used to customize the comp
 
 See below for the full list of hooks exposed by `InfiniteTable`, each with examples and code snippets.
 
-<PropTable>
+<PropTable sort searchPlaceholder="Type to filter hooks">
 
 <Prop name="useInfiniteColumnCell" >
 

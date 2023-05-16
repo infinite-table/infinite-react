@@ -28,7 +28,6 @@ import {
   PropTable,
   PropLink,
   TypeLink,
-  DTypeLink,
   LearnLink,
   DataSourcePropLink,
   HookLink,
@@ -463,7 +462,6 @@ export const MDXComponents = {
   Prop,
   PropLink,
   TypeLink,
-  DTypeLink,
   LearnLink,
   AccentButton,
   DataSourcePropLink,
@@ -481,7 +479,8 @@ export const MDXComponents = {
   Challenges,
   Hint,
   Solution,
-  YTEmbed: ({ url }: { url: string }) => {
+  YTEmbed: ({ url, code }: { url?: string; code?: string }) => {
+    url = url || `https://www.youtube.com/embed/${code}`;
     return (
       <iframe
         width="100%"

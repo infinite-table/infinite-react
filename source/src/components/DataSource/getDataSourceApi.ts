@@ -144,8 +144,8 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const map = this.getState().idToIndexMap;
     return map.get(id) ?? -1;
   }
-  getPrimaryKeyByIndex(id: any) {
-    const rowInfo = this.getRowInfoByIndex(id);
+  getPrimaryKeyByIndex(index: number) {
+    const rowInfo = this.getRowInfoByIndex(index);
 
     return rowInfo ? rowInfo.id : undefined;
   }

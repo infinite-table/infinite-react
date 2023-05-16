@@ -35,7 +35,8 @@ You can also get it from the `InfiniteTable` <PropLink name="onReady" /> callbac
 For API on row/group selection, see the [Selection API page](./selection-api).
 
 
-<PropTable>
+<PropTable sort searchPlaceholder="Type to filter API methods">
+
 
 
 <Prop name="addData" type="(data: DATA_TYPE) => Promise">
@@ -96,11 +97,63 @@ For adding at the beginning of the data source, see the <DApiLink name="insertDa
 
 > Retrieves the data object for the specified primary key.
 
+You can call this method to retrieve objects from the data source even when they have been filtered out via <DPropLink name="filterValue" /> or <DPropLink name="filterFunction" />, as long as they are present in the initial data.
+
+<Note>
+
+The alternative API method <DApiLink name="getRowInfoByPrimaryKey" /> can only be used to retrieve <TypeLink name="InfiniteTableRowInfo" code={false}>row info objects</TypeLink> of rows that are not filtered out - so only rows that match the filtering, if one is present.
+
+</Note>
+
+</Prop>
+
+<Prop name="getIndexByPrimaryKey" type="(id: any) => number">
+
+> Retrieves the index of a row by its primary key. If the row is not found, returns `-1`. See related <DApiLink name="getPrimaryKeyByIndex" />
+
+<Note>
+
+The primary key you pass in needs to exist in the current data set. If you pass in a primary key that has been filtered out or that's not in the data set, the method will return `-1`.
+
+</Note>
+
+</Prop>
+
+<Prop name="getPrimaryKeyByIndex" type="(index: number) => any | undefined ">
+
+> Retrieves the primary key of a row by its current index. If the row is not found, returns `undefined`. See related <DApiLink name="getIndexByPrimaryKey" />
+
+<Note>
+
+The index you pass in needs to be of an existing row, after all filtering is applied. If you pass in an non-existent index, the method will return `undefined`.
+
+</Note>
+
+</Prop>
+
+<Prop name="getRowInfoByIndex" type="(index: number) => InfiniteTableRowInfo<DATA_TYPE> | null">
+
+> Retrieves the <TypeLink name="InfiniteTableRowInfo" code={false}>row info object</TypeLink> for the row at the specified index. If none found, returns `null`. See related <DApiLink name="getRowInfoByPrimaryKey" />.
+
+</Prop>
+
+<Prop name="getRowInfoByPrimaryKey" type="(id: any) => InfiniteTableRowInfo<DATA_TYPE> | null">
+
+> Retrieves the <TypeLink name="InfiniteTableRowInfo" code={false}>row info object</TypeLink> for the row with the specified primary key. If none found, returns `null`.
+
+This method will only find row info objects for rows that are currently in the dataset and matching the filtering, if one is present. Can also be called for group rows.
+
+<Note>
+
+See related <DApiLink name="getDataByPrimaryKey" /> method, which retrieves the raw data object for the specified primary key, even if it has been filtered out.
+
+</Note>
+
 </Prop>
 
 <Prop name="getRowInfoArray" type="() => InfiniteTableRowInfo[]">
 
-> Returns the current row info array.
+> Returns the current row info array. See <TypeLink name="InfiniteTableRowInfo" code={false}>the type definition of the row info object</TypeLink>.
 
 The row info array represents the current state of the DataSource. This array may contain more items than the actual data array fetched initially by the DataSource. This is because it includes group rows, when grouping is defined, as well as unfetched rows in some advanced scenarios.
 
