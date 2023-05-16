@@ -249,7 +249,7 @@ export const forwardProps = <T>(
     columnCssEllipsis: (columnCssEllipsis) => columnCssEllipsis ?? true,
     draggableColumns: (draggableColumns) => draggableColumns ?? true,
     headerOptions: (headerOptions) => ({
-      alwaysReserveSpaceForSortIcon: false,
+      alwaysReserveSpaceForSortIcon: true,
       ...headerOptions,
     }),
 
