@@ -6,9 +6,12 @@ export function getGroupKeysForDataItem<DataType, KeyType = any>(
   groupBy: GroupBy<DataType, KeyType>[],
 ) {
   return groupBy.reduce((groupKeys, groupBy) => {
-    const { field: groupByProperty, toKey: groupToKey } = groupBy;
+    const { field: groupByProperty, valueGetter, toKey: groupToKey } = groupBy;
+    const value = groupByProperty
+      ? data[groupByProperty]
+      : valueGetter?.({ data, field: groupByProperty });
     const key: GroupKeyType<KeyType> = (groupToKey || DEFAULT_TO_KEY)(
-      data[groupByProperty],
+      value,
       data,
     );
 

@@ -634,6 +634,7 @@ export interface InfiniteTableProps<T> {
   columnCssEllipsis?: boolean;
   columnHeaderCssEllipsis?: boolean;
   columnDefaultWidth?: number;
+  columnDefaultFlex?: number;
   columnMinWidth?: number;
   columnMaxWidth?: number;
 

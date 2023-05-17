@@ -35,6 +35,7 @@ import type {
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
 import { MenuIconProps } from '../components/icons/MenuIcon';
 import { NonUndefined } from '../../types/NonUndefined';
+import { ValueGetterParams } from '../../../utils/groupAndPivot/types';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -351,10 +352,7 @@ export type InfiniteTableColumnHeaderClassName<T> =
   | string
   | InfiniteTableColumnHeaderClassNameFn<T>;
 
-export type InfiniteTableColumnValueGetterParams<T> = {
-  data: T;
-  field?: keyof T;
-};
+export type InfiniteTableColumnValueGetterParams<T> = ValueGetterParams<T>;
 
 export type InfiniteTableColumnValueFormatterParams<T> =
   InfiniteTableRowInfoDataDiscriminator<T>;

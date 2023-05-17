@@ -234,6 +234,8 @@ export const forwardProps = <T>(
     onScrollbarsChange: 1,
     autoSizeColumnsKey: 1,
 
+    columnDefaultFlex: 1,
+
     scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 250,
 
     viewportReservedWidth: (viewportReservedWidth) =>

@@ -208,6 +208,7 @@ export interface InfiniteTableMappedState<T> {
   columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
   columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
   columnDefaultWidth: NonUndefined<InfiniteTableProps<T>['columnDefaultWidth']>;
+  columnDefaultFlex: InfiniteTableProps<T>['columnDefaultFlex'];
   columnCssEllipsis: NonUndefined<InfiniteTableProps<T>['columnCssEllipsis']>;
 
   draggableColumns: NonUndefined<InfiniteTableProps<T>['draggableColumns']>;

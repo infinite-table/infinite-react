@@ -110,6 +110,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnMinWidth: componentState.columnMinWidth,
     columnMaxWidth: componentState.columnMaxWidth,
     columnDefaultWidth: componentState.columnDefaultWidth,
+    columnDefaultFlex: componentState.columnDefaultFlex,
     pinnedStartMaxWidth: componentState.pinnedStartMaxWidth,
     pinnedEndMaxWidth: componentState.pinnedEndMaxWidth,
     bodySize,

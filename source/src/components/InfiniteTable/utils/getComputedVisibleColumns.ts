@@ -111,6 +111,7 @@ type GetComputedVisibleColumnsParam<T> = {
   pinnedStartMaxWidth?: number;
   pinnedEndMaxWidth?: number;
   columnDefaultWidth?: number;
+  columnDefaultFlex?: number;
   viewportReservedWidth?: number;
   resizableColumns: boolean | undefined;
 
@@ -181,6 +182,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnMinWidth,
   columnMaxWidth,
   columnDefaultWidth,
+  columnDefaultFlex,
   scrollbarWidth,
   columnCssEllipsis,
   columnHeaderCssEllipsis,
@@ -316,17 +318,24 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     colSizing = assignNonNull(colTypeSizing, colSizing);
 
-    const colFlex: number | undefined = colSizing.flex ?? undefined;
+    let colFlex: number | undefined = colSizing.flex ?? undefined;
     const colMinWidth =
       colSizing.minWidth ?? column?.minWidth ?? columnMinWidth;
     const colMaxWidth =
       colSizing.maxWidth ?? column?.maxWidth ?? columnMaxWidth;
 
     let size =
-      colFlex != undefined ? undefined : colSizing.width ?? columnDefaultWidth;
+      colFlex != undefined
+        ? undefined
+        : colSizing.width ??
+          (columnDefaultFlex ? undefined : columnDefaultWidth);
 
     if (!size && colFlex == undefined) {
-      size = colMinWidth;
+      if (columnDefaultFlex) {
+        colFlex = columnDefaultFlex;
+      } else {
+        size = colMinWidth;
+      }
     }
 
     return {

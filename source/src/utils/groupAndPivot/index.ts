@@ -22,6 +22,7 @@ import { DeepMap } from '../DeepMap';
 import { DEFAULT_TO_KEY } from './defaultToKey';
 import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
 import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
+import { sharedValueGetterParamsFlyweightObject } from './sharedValueGetterParamsFlyweightObject';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -684,9 +685,21 @@ function processGroup<KeyType, DataType>(
       pivotIndex < pivotLength;
       pivotIndex++
     ) {
-      const { field: pivotField, toKey: pivotToKey } = pivot[pivotIndex];
+      const {
+        field: pivotField,
+        valueGetter: pivotValueGetter,
+        toKey: pivotToKey,
+      } = pivot[pivotIndex];
+
+      let pivotValue = pivotField ? item[pivotField] : null;
+
+      if (pivotValueGetter) {
+        sharedValueGetterParamsFlyweightObject.data = item;
+        sharedValueGetterParamsFlyweightObject.field = pivotField;
+        pivotValue = pivotValueGetter(sharedValueGetterParamsFlyweightObject);
+      }
       const pivotKey: GroupKeyType<KeyType> = (pivotToKey || defaultToKey)(
-        item[pivotField],
+        pivotValue,
         item,
       );
 
@@ -768,10 +781,22 @@ export function group<DataType, KeyType = any>(
 
     const commonData: Partial<DataType> = {};
     for (let groupByIndex = 0; groupByIndex < groupByLength; groupByIndex++) {
-      const { field: groupByProperty, toKey: groupToKey } =
-        groupBy[groupByIndex];
+      const {
+        field: groupByProperty,
+        valueGetter,
+        toKey: groupToKey,
+      } = groupBy[groupByIndex];
+
+      let value = groupByProperty ? item[groupByProperty] : null;
+
+      if (valueGetter) {
+        sharedValueGetterParamsFlyweightObject.data = item;
+        sharedValueGetterParamsFlyweightObject.field = groupByProperty;
+        value = valueGetter(sharedValueGetterParamsFlyweightObject);
+      }
+
       const key: GroupKeyType<KeyType> = (groupToKey || defaultToKey)(
-        item[groupByProperty],
+        value,
         item,
       );
 
