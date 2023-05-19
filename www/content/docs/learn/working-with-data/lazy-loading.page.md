@@ -43,10 +43,10 @@ The `DataSource.data` function will be called with an object with the following 
 - `lazyLoadBatchSize` - the number of records to be loaded in this batch
 
 <HeroCards>
-<YouWillLearnCard title="Server-side Grouping Rows" path="../grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading">
+<YouWillLearnCard title="Server-side Grouping Rows" path="/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading">
 Find out about server-side grouping
 </YouWillLearnCard>
-<YouWillLearnCard title="Pivoting" path="../grouping-and-pivoting/pivoting#server-side-pivoting">
+<YouWillLearnCard title="Pivoting" path="/docs/learn/grouping-and-pivoting/pivoting/overview#server-side-pivoting">
 Find out about server-side pivoting
 </YouWillLearnCard>
 </HeroCards>
