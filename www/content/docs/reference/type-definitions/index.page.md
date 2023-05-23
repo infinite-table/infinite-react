@@ -28,7 +28,9 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <Prop name="DataSourceSingleSortInfo" generic>
 
-> This is the base type for the <DPropLink name="sortInfo" /> prop.
+> Represents information on a specific sort. Contains info about the field to sort by, the sort direction, and the sort type.
+
+This is the referenced by the <DPropLink name="sortInfo" /> prop.
 
 Basically the <DPropLink name="sortInfo" /> prop can be either an array of <TypeLink name="DataSourceSingleSortInfo" /> objects, or a single <TypeLink name="DataSourceSingleSortInfo" /> object (or null).
 
@@ -37,11 +39,21 @@ These are the type properties:
  - `dir`: `1 | -1` - 1 means ascending sort order; -1 means descending sort order.
  - `field?`: `keyof DATA_TYPE` - the field to sort by.
  - `id?`: `string` - an id for the sort info. When a column is not bound to a `field`, use the column id as the `id` property of the sort info, if you need to specify a default sort order by that column. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
- - `type?`: `string` - the sort type to apply. See <DPropLink name="sortType" /> for more details. For example, you can use `"string"` or `"number"`
+ - `type?`: `string` - the sort type to apply. See <DPropLink name="sortType" /> for more details. For example, you can use `"string"` or `"number"` or `"date"`
 
 
 </Prop>
 
+<Prop name="DataSourcePropSortInfo" generic>
+
+> The type of the <DPropLink name="sortInfo" /> DataSource prop.
+
+Valid types for this prop are: 
+ * `null`
+ * <TypeLink name="DataSourceSingleSortInfo" />
+ * <TypeLink name="DataSourceSingleSortInfo" />[]
+
+</Prop>
 
 <Prop name="DataSourcePropGroupBy" generic>
 

@@ -180,7 +180,7 @@ export function IndexPage() {
                 Sorting
               </>
             }
-            href="/docs/learn/working-with-data/sorting"
+            href="/docs/learn/sorting"
           >
             Single column and multiple column sorting, with both local and
             remote sorting capabilities.

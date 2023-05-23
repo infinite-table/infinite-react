@@ -36,7 +36,7 @@ The sort information object has the following shape (see <TypeLink name="DataSou
 - `dir` - `1 | -1` - the direction of the sorting
 - `field?` - `keyof DATA_TYPE` - the field to sort by - optional.
 - `id?` - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
-- `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
+- `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"`, `"date"` - will be used for local sorting, to provide the proper comparison function.
 
 <Sandpack title="Local + uncontrolled single-sorting example">
 

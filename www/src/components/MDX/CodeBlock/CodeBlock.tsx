@@ -115,7 +115,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
         !noMargin && 'mt-8',
       )}
     >
-      <div className="text-primary-dark flex text-sm px-4 py-0.5 relative">
+      <div className="text-primary-dark flex text-base px-4 py-0.5 relative">
         <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>

@@ -364,7 +364,7 @@ function CodeSandboxEmbed({
     <div
       className={'leading-base w-full bg-black bg-opacity-20 border-gray-60'}
     >
-      <div className="sandpackDescription text-content-color text-sm px-4 py-0.5 relative">
+      <div className="sandpackDescription text-content-color text-base px-4 py-0.5 relative">
         {description}
       </div>
     </div>
@@ -387,7 +387,7 @@ function CodeSandboxEmbed({
 
   const titleBlock = title ? (
     <div className={'leading-base w-full '}>
-      <div className="text-content-color flex text-sm px-4 py-0.5 relative">
+      <div className="text-content-color flex text-base px-4 py-0.5 relative">
         <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>

@@ -11,7 +11,7 @@ Infinite Table is a React DataGrid component for displaying virtualized tabular 
 
 It helps you display huge datasets and get the most out of your data by providing you the right tools to enjoy these features:
 
-- [<img src="/icons/50x50/sorting.svg" height="50" width="50" style={{display: 'inline-block'}} /> sorting](/docs/learn/working-with-data/sorting)
+- [<img src="/icons/50x50/sorting.svg" height="50" width="50" style={{display: 'inline-block'}} /> sorting](/docs/learn/sorting/overview)
 - [<img src="/icons/50x50/row-grouping.svg" height="50" width="50" style={{display: 'inline-block'}} /> row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
 - [<img src="/icons/50x50/pivoting.svg" height="50" width="50" style={{display: 'inline-block'}} /> pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
 - [<img src="/icons/50x50/aggregations.svg" height="50" width="50" style={{display: 'inline-block'}} /> aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)
@@ -51,7 +51,7 @@ We're aware good documentation is a must and are updating our documentation as w
 
 ## 🏢 Enterprise-Ready
 
-Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](/docs/learn/working-with-data#data-loading-strategies), [filtering](/docs/learn/filtering), [sorting](/docs/learn/working-with-data/sorting), [grouping](/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](/docs/learn/working-with-data/live-pagination), [lazy loading](/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
+Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](/docs/learn/working-with-data#data-loading-strategies), [filtering](/docs/learn/filtering), [sorting](/docs/learn/sorting/overview), [grouping](/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](/docs/learn/working-with-data/live-pagination), [lazy loading](/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
 
 You can choose to leverage our built-in implementations in the browser, or you can process your data on the server with full support from our-side.
 

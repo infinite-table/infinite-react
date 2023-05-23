@@ -6,6 +6,7 @@ import { ExternalLink } from './ExternalLink';
 import Link from 'next/link';
 import { GithubLink, TwitterLink } from './Header';
 import { shadow } from '@www/styles/www-utils';
+import { usePathname } from 'next/navigation';
 
 function FooterLink({
   href,
@@ -48,6 +49,10 @@ function FooterLink({
   );
 }
 export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
+  const pathname = usePathname() || '';
+  const addLeftPadding =
+    pathname.startsWith('/docs') || pathname.startsWith('/blog');
+  const extraCls = addLeftPadding ? 'lg:pl-80 2xl:px-80 ' : '';
   return (
     <>
       <footer
@@ -56,7 +61,7 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
         }}
         className={`${
           props.className || ''
-        } justify-center items-center self-end w-full flex flex-col bg-black text-content-color ${
+        } ${extraCls} justify-center items-center self-end w-full flex flex-col bg-black text-content-color ${
           cmpStyles.OverlineCls
         } relative py-10 ${cmpStyles.footer}`}
       >

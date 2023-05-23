@@ -45,7 +45,6 @@ const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  preferredLanguage: { field: 'preferredLanguage' },
   salary: {
     field: 'salary',
     type: 'number',
@@ -53,6 +52,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   age: { field: 'age' },
   canDesign: { field: 'canDesign' },
   country: { field: 'country' },
+  preferredLanguage: { field: 'preferredLanguage' },
   firstName: { field: 'firstName' },
   stack: { field: 'stack' },
   id: { field: 'id' },
@@ -75,7 +75,7 @@ export default function RemoteUncontrolledMultiSortingExample() {
         ]}
         sortMode="remote"
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
+        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={120} />
       </DataSource>
     </>
   );

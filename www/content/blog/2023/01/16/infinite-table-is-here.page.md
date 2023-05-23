@@ -108,7 +108,7 @@ We want you to be productive immediately and stop worrying about the basics. Inf
 
 It helps you display huge datasets and get the most out of your data by providing you the right tools to enjoy these features:
 
-- [<img src="/icons/sorting.svg" style={{display: 'inline-block'}} /> sorting](/docs/learn/working-with-data/sorting)
+- [<img src="/icons/sorting.svg" style={{display: 'inline-block'}} /> sorting](/docs/learn/sorting/overview)
 - [<img src="/icons/row-grouping.svg" style={{display: 'inline-block'}} /> row grouping](/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
 - [<img src="/icons/pivoting.svg" style={{display: 'inline-block'}} /> pivoting](/docs/learn/grouping-and-pivoting/pivoting/overview) - both server-side and client-side
 - [<img src="/icons/aggregations.svg" style={{display: 'inline-block'}} /> aggregations](/docs/learn/grouping-and-pivoting/grouping-rows#aggregations)

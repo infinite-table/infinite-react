@@ -993,7 +993,7 @@ See related <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name=
 
 When set to `'local'`, the data is sorted locally (in the browser) after the data-source is loaded. When set to `'remote'`, the data should be sorted by the server (or by the data-source function that serves the data).
 
-See [the Sorting page](/docs/learn/working-with-data/sorting) for more details.
+See [the Sorting page](/docs/learn/sorting/overview) for more details.
 
 </Prop>
 
@@ -1005,6 +1005,7 @@ Currently there are two `sortTypes` available:
 
 - `"string"`
 - `"number"`
+- `"date"`
 
 Those values can be used for the <PropLink name="columns.sortType">column.sortType</PropLink> and <PropLink name="columns.sortType">column.dataType</PropLink> properties.
 
@@ -1013,6 +1014,7 @@ Those values can be used for the <PropLink name="columns.sortType">column.sortTy
 const sortTypes = {
   string: (a, b) => a.localeCompare(b),
   number: (a, b) => a - b,
+  date: (a, b) => a - b
 };
 ```
 

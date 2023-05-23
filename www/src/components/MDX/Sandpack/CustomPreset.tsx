@@ -92,7 +92,7 @@ export function CustomPreset({
         fullScreen ? '' : 'bg-opacity-50'
       } w-full `}
     >
-      <div className="text-content-color flex text-sm px-4 py-0.5 relative">
+      <div className="text-content-color flex text-base px-4 py-0.5 relative">
         <IconCodeBlock className="inline-flex mr-2 self-center" /> {title}
       </div>
     </div>
@@ -117,7 +117,7 @@ export function CustomPreset({
 
   const descriptionBlock = description ? (
     <div className={'leading-base w-full border-b border-gray-60'}>
-      <div className="sandpackDescription text-content-color text-sm px-4 py-0.5 relative">
+      <div className="sandpackDescription text-content-color text-base px-4 py-0.5 relative">
         {description}
       </div>
     </div>

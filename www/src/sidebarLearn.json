@@ -32,6 +32,10 @@
       {
         "path": "/docs/learn/working-with-data/updating-data-in-realtime",
         "title": "Updating Data in Real-Time"
+      },
+      {
+        "path": "/docs/learn/working-with-data/handling-dates",
+        "title": "Handling Dates"
       }
     ]
   },

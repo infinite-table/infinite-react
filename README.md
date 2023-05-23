@@ -38,7 +38,7 @@
 `Infinite Table` is a React DataGrid component for displaying virtualized tabular data. It helps you display huge datasets and get the most out of them by providing you the right tools to do so: 
 
 * [<img src="https://infinite-table.com/icons/sorting.svg" align="center" />
- sorting](https://infinite-table.com/docs/learn/working-with-data/sorting)
+ sorting](https://infinite-table.com/docs/learn/sorting)
 * [<img src="https://infinite-table.com/icons/row-grouping.svg" align="center" />
  row grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows) - both server-side and client-side
 * [<img src="https://infinite-table.com/icons/pivoting.svg" align="center" />
@@ -83,7 +83,7 @@ It's fully typed and offers you great developer experience to help you get up an
 
 ## 🏢 Enterprise-ready
 
-Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](https://infinite-table.com/docs/learn/working-with-data#data-loading-strategies), [filtering](https://infinite-table.com/docs/learn/filtering), [sorting](https://infinite-table.com/docs/learn/working-with-data/sorting), [grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](https://infinite-table.com/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](https://infinite-table.com/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](https://infinite-table.com/docs/learn/working-with-data/live-pagination), [lazy loading](https://infinite-table.com/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
+Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](https://infinite-table.com/docs/learn/working-with-data#data-loading-strategies), [filtering](https://infinite-table.com/docs/learn/filtering), [sorting](https://infinite-table.com/docs/learn/sorting), [grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](https://infinite-table.com/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](https://infinite-table.com/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](https://infinite-table.com/docs/learn/working-with-data/live-pagination), [lazy loading](https://infinite-table.com/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
 
 You can choose to leverage our built-in implementations in the browser or you can process your data on the server with full support from our-side.
 

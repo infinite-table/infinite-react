@@ -39,20 +39,20 @@ When `InfiniteTable` is configured with multiple sorting, this is the behavior y
 
 #### Scenario 1
 
-* user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - eg: `1`
+* user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - `1`
 * if user clicks the same column, the sort direction is reversed - sort index is preserved as `1`, but descending order is set.
 * user clicks the same column again - the column is removed from the sort.
 
 #### Scenario 2
 
-* user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - eg: `1`
+* user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - `1`
 * user clicks another column - the new column is added to the sort, with ascending order and sort index `2`. The initial clicked column is still the sorted, and that sort is applied first. For equal values on column `1`, the sort by column `2` is applied.
 * user clicks column `2` again - the sort direction is reversed for the second column. So now the sort order is `1` ascending, `2` descending.
 * user clicks column `2` again - the column is removed from the sort. The sorting now only contains the first column, in ascending order.
 
 ## Controlled and uncontrolled sorting
 
-As noted above, for multiple sorting, you need to specify an array of objects like
+As noted above, for multiple sorting, you need to specify an array of objects - see <TypeLink name="DataSourceSingleSortInfo" /> for more on the shape of those objects:
 
 ```ts
 // sort by age in descending order, then by `firstName` in ascending order

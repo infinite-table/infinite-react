@@ -337,11 +337,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
     renderParamRef.current = renderParam;
 
+    let valueToRender = renderParam.renderBag.value;
+
+    // add this in order to make date rendering work without any additional code
+    if (valueToRender instanceof Date) {
+      valueToRender = valueToRender.toLocaleDateString();
+    }
     const all = (
       <>
         {align !== 'end' ? renderParam.renderBag.groupIcon : null}
         {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
-        {renderParam.renderBag.value}
+        {valueToRender}
 
         {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
         {align === 'end' ? renderParam.renderBag.groupIcon : null}

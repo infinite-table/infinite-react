@@ -28,17 +28,19 @@ const dataSource: DataSourceData<Developer> = () => {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
-  preferredLanguage: { field: 'preferredLanguage' },
+  firstName: { field: 'firstName' },
+
   country: { field: 'country' },
   salary: {
     field: 'salary',
     type: 'number',
   },
   age: { field: 'age' },
-  canDesign: { field: 'canDesign' },
-  firstName: { field: 'firstName' },
-  stack: { field: 'stack' },
   id: { field: 'id' },
+  canDesign: { field: 'canDesign' },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+
   hobby: { field: 'hobby' },
   city: { field: 'city' },
   currency: { field: 'currency' },
@@ -61,7 +63,7 @@ export default function LocalUncontrolledMultiSortingExampleWithRemoteData() {
         <InfiniteTable<Developer>
           domProps={domProps}
           columns={columns}
-          columnDefaultWidth={220}
+          columnDefaultWidth={120}
         />
       </DataSource>
     </>
