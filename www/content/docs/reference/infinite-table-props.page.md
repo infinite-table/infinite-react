@@ -1347,7 +1347,9 @@ The `style` property can also be specified for <PropLink name="columnTypes"/>
 
 <Note>
 
-Specifying `type: "number"` for numeric columns will ensure correct number sorting function is used (when sorting is done client-side).
+Specifying `type: "number"` for numeric columns will ensure correct number sorting function is used (when sorting is done client-side). This happens because <DPropLink name="sortTypes" /> has a definition for the `number` sort type.
+
+For date columns (where the values in the columns are actual date objects) specify `type: "date"`.  [Read more about date columns here](/docs/learn/working-with-data/handling-dates#using-date-strings)
 
 </Note>
 

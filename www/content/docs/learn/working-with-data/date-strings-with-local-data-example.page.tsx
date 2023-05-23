@@ -1,9 +1,13 @@
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+  DataSourceSortInfo,
+} from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
 type Developer = {
-  birthDate: Date;
+  birthDate: string;
   id: number;
   firstName: string;
   country: string;
@@ -20,9 +24,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
   birthDate: {
     field: 'birthDate',
     header: 'Birth Date',
-    renderValue: ({ value }: { value: Date }) => {
-      return <b>{value.toISOString().split('T')[0]}</b>;
-    },
+    type: 'datestring',
+    defaultWidth: 150,
   },
   salary: {
     field: 'salary',
@@ -37,10 +40,28 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
+const sortTypes = {
+  datestring: (a: string, b: string) => {
+    return new Date(a).getTime() - new Date(b).getTime();
+  },
+};
+
+const defaultSortInfo: DataSourceSortInfo<Developer> = [
+  {
+    field: 'birthDate',
+    dir: -1,
+  },
+];
+
 export default function LocalUncontrolledSingleSortingExample() {
   return (
     <>
-      <DataSource<Developer> primaryKey="id" data={dataSource}>
+      <DataSource<Developer>
+        primaryKey="id"
+        data={dataSource}
+        sortTypes={sortTypes}
+        defaultSortInfo={defaultSortInfo}
+      >
         <InfiniteTable<Developer> columns={columns} columnDefaultWidth={120} />
       </DataSource>
     </>
@@ -53,7 +74,7 @@ const dataSource: Developer[] = [
     firstName: 'Nya',
     country: 'India',
     city: 'Unnao',
-    birthDate: new Date(1997, 0, 1),
+    birthDate: '1997-01-01',
     currency: 'JPY',
     preferredLanguage: 'TypeScript',
     salary: 60000,
@@ -65,7 +86,7 @@ const dataSource: Developer[] = [
     firstName: 'Axel',
     country: 'Mexico',
     city: 'Cuitlahuac',
-    birthDate: new Date(1993, 3, 10),
+    birthDate: '1993-04-10',
     currency: 'USD',
     preferredLanguage: 'TypeScript',
     salary: 100000,
@@ -77,7 +98,7 @@ const dataSource: Developer[] = [
     firstName: 'Gonzalo',
     country: 'United Arab Emirates',
     city: 'Fujairah',
-    birthDate: new Date(1997, 10, 30),
+    birthDate: '1997-11-30',
     currency: 'JPY',
     preferredLanguage: 'Go',
     salary: 120000,
@@ -89,7 +110,8 @@ const dataSource: Developer[] = [
     firstName: 'Sherwood',
     country: 'Mexico',
     city: 'Tlacolula de Matamoros',
-    birthDate: new Date(1990, 5, 20),
+
+    birthDate: '1990-06-20',
     currency: 'CHF',
     preferredLanguage: 'Rust',
     salary: 99000,
@@ -101,7 +123,8 @@ const dataSource: Developer[] = [
     firstName: 'Alexandre',
     country: 'France',
     city: 'Persan',
-    birthDate: new Date(1990, 3, 20),
+    // birthDate: new Date(1990, 3, 20),
+    birthDate: '1990-04-20',
     currency: 'EUR',
     preferredLanguage: 'Go',
     salary: 97000,
@@ -113,10 +136,9 @@ const dataSource: Developer[] = [
     firstName: 'Mariane',
     country: 'United States',
     city: 'Hays',
-    birthDate: new Date(2002, 3, 20),
+    birthDate: '2002-04-20',
     currency: 'EUR',
     preferredLanguage: 'TypeScript',
-
     salary: 58000,
     hobby: 'cooking',
     email: 'Mariane0@hotmail.com',
@@ -126,7 +148,7 @@ const dataSource: Developer[] = [
     firstName: 'Rosalind',
     country: 'Mexico',
     city: 'Nuevo Casas Grandes',
-    birthDate: new Date(1992, 11, 12),
+    birthDate: '1992-12-12',
     currency: 'AUD',
     preferredLanguage: 'JavaScript',
     salary: 198000,
@@ -138,7 +160,7 @@ const dataSource: Developer[] = [
     firstName: 'Lolita',
     country: 'Sweden',
     city: 'Delsbo',
-    birthDate: new Date(1990, 9, 5),
+    birthDate: '1990-10-05',
     currency: 'JPY',
     preferredLanguage: 'TypeScript',
     salary: 200000,
@@ -150,7 +172,7 @@ const dataSource: Developer[] = [
     firstName: 'Tre',
     country: 'Germany',
     city: 'Bad Camberg',
-    birthDate: new Date(1990, 9, 15),
+    birthDate: '1990-10-15',
     currency: 'GBP',
     preferredLanguage: 'TypeScript',
     salary: 200000,
@@ -162,7 +184,7 @@ const dataSource: Developer[] = [
     firstName: 'Lurline',
     country: 'Canada',
     city: 'Raymore',
-    birthDate: new Date(1990, 4, 18),
+    birthDate: '1990-05-18',
     currency: 'EUR',
     preferredLanguage: 'Rust',
     salary: 58000,
