@@ -1,8 +1,6 @@
 'use client';
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
-
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
-
 import * as React from 'react';
 import { AccentButton } from './AccentButton';
 import cmpStyles from './components.module.css';
