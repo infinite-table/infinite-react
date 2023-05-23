@@ -245,7 +245,7 @@ export function IndexPage() {
                 Column Grouping
               </>
             }
-            href="/docs/learn/column-groups"
+            href="/docs/learn/columns/column-grouping"
           >
             Define groups of columns to organise data in a more meaningful way.
           </Card>
