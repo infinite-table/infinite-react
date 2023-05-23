@@ -22,10 +22,6 @@
     "path": "/docs/learn/working-with-data",
     "routes": [
       {
-        "path": "/docs/learn/working-with-data/sorting",
-        "title": "Sorting"
-      },
-      {
         "path": "/docs/learn/working-with-data/live-pagination",
         "title": "Live Pagination"
       },
@@ -96,6 +92,7 @@
       }
     ]
   },
+
   {
     "title": "Selection",
     "path": "/docs/learn/selection/row-selection",
@@ -123,6 +120,25 @@
       {
         "path": "/docs/learn/keyboard-navigation/navigating-rows",
         "title": "Keyboard Navigation for Rows"
+      }
+    ]
+  },
+  {
+    "path": "/docs/learn/sorting/overview",
+    "title": "Sorting",
+    "transient": true,
+    "routes": [
+      {
+        "path": "/docs/learn/sorting/overview",
+        "title": "Overview"
+      },
+      {
+        "path": "/docs/learn/sorting/single-sorting",
+        "title": "Single Sorting"
+      },
+      {
+        "path": "/docs/learn/sorting/multiple-sorting",
+        "title": "Multiple Sorting"
       }
     ]
   },

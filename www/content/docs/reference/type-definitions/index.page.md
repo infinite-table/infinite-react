@@ -26,14 +26,30 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <PropTable searchPlaceholder="Type to filter type definitions">
 
+<Prop name="DataSourceSingleSortInfo" generic>
 
-<Prop name="DataSourcePropGroupBy">
+> This is the base type for the <DPropLink name="sortInfo" /> prop.
+
+Basically the <DPropLink name="sortInfo" /> prop can be either an array of <TypeLink name="DataSourceSingleSortInfo" /> objects, or a single <TypeLink name="DataSourceSingleSortInfo" /> object (or null).
+
+These are the type properties:
+
+ - `dir`: `1 | -1` - 1 means ascending sort order; -1 means descending sort order.
+ - `field?`: `keyof DATA_TYPE` - the field to sort by.
+ - `id?`: `string` - an id for the sort info. When a column is not bound to a `field`, use the column id as the `id` property of the sort info, if you need to specify a default sort order by that column. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
+ - `type?`: `string` - the sort type to apply. See <DPropLink name="sortType" /> for more details. For example, you can use `"string"` or `"number"`
+
+
+</Prop>
+
+
+<Prop name="DataSourcePropGroupBy" generic>
 
 > The type of the <DPropLink name="groupBy" /> prop. Basically this type is an array of <TypeLink name="DataSourceGroupBy" />.
 
 </Prop>
 
-<Prop name="DataSourceGroupBy">
+<Prop name="DataSourceGroupBy" generic>
 
 > The type for the objects in the <DPropLink name="groupBy" /> array. See related <TypeLink name="DataSourcePropGroupBy" />
 
@@ -50,7 +66,7 @@ These are the type properties:
 
 </Prop>
 
-<Prop name="InfiniteTableRowInfo">
+<Prop name="InfiniteTableRowInfo" generic>
 
 > Type for `rowInfo` object representing rows in the table. See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 

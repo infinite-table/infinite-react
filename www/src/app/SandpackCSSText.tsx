@@ -1,11 +1,18 @@
 'use client';
 import { getSandpackCssText } from '@codesandbox/sandpack-react';
+import { useServerInsertedHTML } from 'next/navigation';
 
-export function SandpackCSSText() {
-  return (
-    <style
-      dangerouslySetInnerHTML={{ __html: getSandpackCssText() }}
-      id="sandpack"
-    />
-  );
-}
+/**
+ * Ensures CSSinJS styles are loaded server side.
+ */
+export const SandpackCSSText = () => {
+  useServerInsertedHTML(() => {
+    return (
+      <style
+        dangerouslySetInnerHTML={{ __html: getSandpackCssText() }}
+        id="sandpack"
+      />
+    );
+  });
+  return null;
+};

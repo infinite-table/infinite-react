@@ -12,6 +12,7 @@
 /docs/learn/column-groups /docs/learn/columns/column-grouping
 /docs/learn/filtering/writing-custom-filter-editors /docs/learn/filtering/providing-a-custom-filter-editor
 /docs/learn/getting-started/full-demo /full-demo
+/docs/learn/working-with-data/sorting /docs/learn/sorting/overview
 
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat

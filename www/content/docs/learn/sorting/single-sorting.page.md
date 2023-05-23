@@ -1,50 +1,61 @@
 ---
-title: Sorting
-description: Docs and examples on sorting the DataSource for Infinite Table DataGrid
+title: Single Sorting
+description: Docs and examples on single-column sorting for Infinite Table DataGrid
 ---
 
-`InfiniteTable` comes with multiple sorting behaviours, which are described below.
+By default, the Infinite Table is sortable - clicking a column will sort the grid by that column. Clicking again will reverse the sort and a third click on the column removes the sort altogether.
 
-## Single and Multiple Sorting
-
-Both single and multiple sorting are supported via the <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" /> props.
-
-### Single Sorting
-
-For single sorting, <DataSourcePropLink name="sortInfo" /> (or the uncontrolled <DataSourcePropLink name="defaultSortInfo" />) should an object like
-
-```ts
-// sort by `firstName`, in ascending order
-sortInfo = { field: 'firstName', dir: 1 };
-```
-
-or you can use
-
-```ts
-// no sorting
-sortInfo = null;
-```
-
-for explicit no sorting.
+At any point, clicking another column header removes any existing column sort and performs a new sort by the clicked column.
 
 <Note>
 
-When you use controlled sorting via <DataSourcePropLink name="sortInfo" />, make sure you also listen to <DataSourcePropLink name="onSortInfoChange" /> for changes, to get notifications when sorting is changed by the user. Also, for controlled sorting, it's your responsibility to sort the data - read bellow in the [controlled and uncontrolled section](#controlled-and-uncontrolled-sorting).
+This is called single sorting - only one column can be sorted at a time.
+
+Technically, it's the `<DataSource />` that's being sorted, not the `<InfiniteTable />` component.
 
 </Note>
 
-The sort information object has the following shape:
 
-- `dir` - `1 | -1` - the direction of the sorting
-- `field?` - `keyof DATA_TYPE` - the field to sort by - optional.
-- `id?` - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
-- `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
+<Sandpack title="Default behavior is single sorting.">
+
+<Description>
+
+By default, clicking a column header sorts the column.
+
+</Description>
+
+```ts file="local-single-sorting-example-defaults-with-local-data.page.tsx"
+
+```
+
+
+</Sandpack>
+
+## Apply a default sort order
+
+You can specify a default sort order by using the <DataSourcePropLink name="defaultSortInfo" /> prop - specify an object like
+
+```ts
+// sort by `firstName`, in ascending order
+defaultSortInfo = { field: 'firstName', dir: 1 };
+```
+
+<Note>
+
+<DataSourcePropLink name="defaultSortInfo" /> is an uncontrolled property, so updating the sorting by clicking a column header does not require you to respond to user actions via the <DataSourcePropLink name="onSortInfoChange" />.
+
+Uncontrolled sorting is managed internally by the `<DataSource />` component, so you don't need to worry about it.
+
+For controlled sorting, make sure you use the <DataSourcePropLink name="sortInfo" /> prop and the <DataSourcePropLink name="onSortInfoChange" /> callback.
+
+</Note>
+
 
 <Sandpack title="Local + uncontrolled single-sorting example">
 
 <Description>
 
-This example shows initial sorting by `salary` in ascending order. Click the header of the `salary` column to sort in descending order and then click it again to unsort.
+The `age` column is sorted in ascending order.
 
 </Description>
 
@@ -53,6 +64,38 @@ This example shows initial sorting by `salary` in ascending order. Click the hea
 ```
 
 </Sandpack>
+
+## Controlled sorting
+
+For controlled, single sorting, use the <DataSourcePropLink name="sortInfo" /> as an object like this:
+
+```ts
+// sort by `firstName`, in ascending order
+sortInfo = { field: 'firstName', dir: 1 };
+```
+
+or you can specify `null` for explicit no sorting
+
+```ts
+// no sorting
+sortInfo = null;
+```
+
+<Note>
+
+When you use controlled sorting via <DataSourcePropLink name="sortInfo" />, make sure you also listen to <DataSourcePropLink name="onSortInfoChange" /> for changes, to get notifications when sorting is changed by the user. Also, for controlled sorting, it's your responsibility to sort the data - read bellow in the [controlled and uncontrolled section](#controlled-and-uncontrolled-sorting).
+
+</Note>
+
+## Describing the sort order
+
+To describe the sorting order, you have to use an object that has the following shape:
+
+- `dir` - `1 | -1` - the direction of the sorting
+- `field?` - `keyof DATA_TYPE` - the field to sort by - optional.
+- `id?` - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
+- `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"` - will be used for local sorting, to provide the proper comparison function.
+
 
 ### Multiple Sorting
 

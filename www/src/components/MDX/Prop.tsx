@@ -29,6 +29,7 @@ interface PropProps {
   type?: string;
   excerpt?: React.ReactNode;
 
+  generic?: boolean;
   hidden?: boolean;
   highlight?: boolean;
   defaultValue?: string | number | boolean | null | undefined;
@@ -265,6 +266,7 @@ export function Prop({
   children,
   name,
   defaultValue,
+  generic,
   hidden,
   highlight,
   excerpt,
@@ -313,6 +315,9 @@ export function Prop({
             >
               <IconCodeBlock className="inline mr-2 text-brand" />
               {name}
+              {generic ? (
+                <span className="italic opacity-40">{` <T>`}</span>
+              ) : null}
             </H4>
 
             {defaultValue !== undefined ? (

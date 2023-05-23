@@ -74,10 +74,11 @@ function Sandpack(props: SandpackProps) {
 
   let modifiedInfiniteVersion: string | undefined;
 
-  const isSandpackDescriptionElement = (el: React.ReactElement) =>
-    el.props.mdxType === 'Description';
+  const isSandpackDescriptionElement = (el: React.ReactElement) => {
+    //@ts-ignore
+    return el.type?.name === 'Description';
+  };
 
-  // console.log('children', React.Children.toArray(children));
   const sandpackChildren = React.Children.toArray(
     //@ts-ignore
     children,

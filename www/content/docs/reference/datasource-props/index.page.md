@@ -193,7 +193,7 @@ sortTypes={{
 
 <Sandpack title="Local uncontrolled single sorting">
 
-```ts file="$DOCS/learn/working-with-data/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
+```ts file="$DOCS/learn/sorting/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
 
 ```
 
@@ -977,7 +977,7 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 <Sandpack title="Remote + controlled multi sorting">
 
-```ts file="$DOCS/learn/working-with-data/remote-controlled-multi-sorting-example.page.tsx"
+```ts file="$DOCS/learn/sorting/remote-controlled-multi-sorting-example.page.tsx"
 
 ```
 
