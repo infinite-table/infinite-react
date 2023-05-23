@@ -308,7 +308,9 @@ export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
         if (field) {
           field = (Array.isArray(field) ? field : [field]) as (keyof T)[];
           sortInfoAffected = field.reduce((result: boolean, f) => {
-            return result || keys.has(f);
+            return result || typeof f !== 'function'
+              ? keys.has(f as keyof T)
+              : false;
           }, false);
           if (sortInfoAffected) {
             break;
@@ -322,7 +324,7 @@ export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
       groupByAffected = true;
     } else {
       for (const group of groupBy) {
-        if (keys.has(group.field)) {
+        if (group.field && keys.has(group.field)) {
           groupByAffected = true;
           break;
         }

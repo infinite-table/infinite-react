@@ -12,7 +12,10 @@ import {
   InfiniteTableColumnVerticalAlignValues,
   InfiniteTableColumnWithField,
 } from '../../types/InfiniteTableColumn';
-import { InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis } from '../../types/InfiniteTableProps';
+import {
+  InfiniteTablePropGroupRenderStrategy,
+  InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis,
+} from '../../types/InfiniteTableProps';
 
 import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
@@ -22,19 +25,40 @@ function isColumnWithField<T>(
   return typeof (c as InfiniteTableColumnWithField<T>).field === 'string';
 }
 
-export function getGroupByColumn<T>(options: {
+export function getGroupByColumnReference<T>(options: {
+  groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   rowInfo: InfiniteTableRowInfo<T>;
   column: InfiniteTableComputedColumn<T>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
 }) {
   const { column, rowInfo, fieldsToColumn } = options;
+
   let groupByColumn: InfiniteTableComputedColumn<T> | undefined = undefined;
-  if (column.groupByField) {
+  if (column.groupByForColumn) {
+    // for group rows, this logic retrieves the corresponding column
+    // that's used as a base for styling.
+    // eg: if we have groupBy: ['country', 'city']
+    // and the current group row is for country
+    // then the 'country' column will be returned
+    // if the current group row is for city
+    // then the 'city' column will be returned
+    // NOTE: not sure this approach is the bestm to vary the returned column for each group row
+    // but that's how it works for now
+
     if (rowInfo.isGroupRow) {
-      groupByColumn = fieldsToColumn.get(
-        rowInfo.groupBy[rowInfo.groupBy.length - 1],
-      );
-    } else if (column.field) {
+      const rowGroupBy = rowInfo.groupBy[rowInfo.groupBy.length - 1];
+
+      groupByColumn = rowGroupBy
+        ? fieldsToColumn.get(
+            rowGroupBy.field || (rowGroupBy.groupField as keyof T),
+          )
+        : undefined;
+    }
+
+    // also, if we're rendering a normal row, but the group column is bound
+    // to a field, then we return the other column that's bound to that field
+    // if one exists
+    if (!groupByColumn && column.field) {
       groupByColumn = fieldsToColumn.get(column.field);
     }
   }
@@ -122,13 +146,20 @@ export function getColumnRenderingParams<T>(options: {
   context: InfiniteTableColumnRenderingContext<T>;
 }) {
   const { column, context, rowInfo } = options;
-  const groupByColumn = getGroupByColumn(options);
+  const groupByColumnReference = getGroupByColumnReference({
+    rowInfo,
+    column,
+    fieldsToColumn: options.fieldsToColumn,
+    groupRenderStrategy: context.getState().groupRenderStrategy,
+  });
 
   const { getState } = context;
   const { editingCell } = getState();
+
   const formattedResult = getFormattedValueContextForCell({
     ...options,
-    column: groupByColumn || column,
+    // column: groupByColumnReference || column,
+    column,
   });
   const { formattedValueContext } = formattedResult;
 
@@ -165,12 +196,14 @@ export function getColumnRenderingParams<T>(options: {
     stylingParam,
     formattedValueContext,
     renderFunctions: {
-      renderGroupIcon: column.renderGroupIcon || groupByColumn?.renderGroupIcon,
+      renderGroupIcon:
+        column.renderGroupIcon || groupByColumnReference?.renderGroupIcon,
       renderSelectionCheckBox: column.renderSelectionCheckBox,
-      renderValue: column.renderValue || groupByColumn?.renderValue,
+      renderValue: column.renderValue || groupByColumnReference?.renderValue,
       renderGroupValue:
-        column.renderGroupValue || groupByColumn?.renderGroupValue,
-      renderLeafValue: column.renderLeafValue || groupByColumn?.renderLeafValue,
+        column.renderGroupValue || groupByColumnReference?.renderGroupValue,
+      renderLeafValue:
+        column.renderLeafValue || groupByColumnReference?.renderLeafValue,
     },
     renderParams: getColumnRenderParam({
       ...options,
@@ -178,7 +211,7 @@ export function getColumnRenderingParams<T>(options: {
       verticalAlign,
       formattedValueContext,
     }),
-    groupByColumn,
+    groupByColumnReference,
   };
 }
 
@@ -212,7 +245,12 @@ export function getColumnRenderParam<T>(options: {
   const dataSourceState = getDataSourceState();
   const { selectionMode } = dataSourceState;
 
-  const groupByColumn = getGroupByColumn({ rowInfo, column, fieldsToColumn });
+  const groupByColumn = getGroupByColumnReference({
+    rowInfo,
+    column,
+    fieldsToColumn,
+    groupRenderStrategy: context.getState().groupRenderStrategy,
+  });
 
   const toggleGroupRow = imperativeApi.toggleGroupRow;
 
@@ -299,7 +337,7 @@ export function getRawValueForCell<T>(
   const groupBy = dataSourceHasGrouping ? rowInfo.groupBy : undefined;
 
   let value =
-    isGroupRow && groupBy && column.groupByField
+    isGroupRow && groupBy && column.groupByForColumn
       ? rowInfo.value
       : isColumnWithField(column)
       ? data?.[column.field]

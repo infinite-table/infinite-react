@@ -240,10 +240,8 @@ export function getColumnForGroupBy<T>(
   }
 
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
-    header: `Group by ${groupByForColumn.field}`,
-    groupByField: groupByForColumn.field as string,
-
-    // renderSelectionCheckBox: true,
+    header: `Group by ${groupByForColumn.field || groupByForColumn.groupField}`,
+    groupByForColumn,
 
     render: getGroupColumnRender({
       groupIndexForColumn,
@@ -271,7 +269,6 @@ export function getColumnForGroupBy<T>(
       } as InfiniteTableGeneratedGroupColumn<T>;
     }
   }
-
   return generatedGroupColumn;
 }
 
@@ -293,7 +290,7 @@ export function getSingleGroupColumn<T>(
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     ...base,
     header: `Group`,
-    groupByField: options.groupBy.map((g) => g.field) as string[],
+    groupByForColumn: options.groupBy,
     renderSelectionCheckBox: options.selectionMode === 'multi-row',
 
     render: getGroupColumnRender({

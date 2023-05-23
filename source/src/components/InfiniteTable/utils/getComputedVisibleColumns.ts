@@ -1,3 +1,4 @@
+import { GroupBy } from '../../../utils/groupAndPivot/types';
 import { err } from '../../../utils/debug';
 import { DataSourceProps } from '../../DataSource';
 import { defaultFilterTypes } from '../../DataSource/defaultFilterTypes';
@@ -27,6 +28,7 @@ import type {
   InfiniteTableProps,
   InfiniteTablePropsEditable,
 } from '../types/InfiniteTableProps';
+import { notNullable } from '../types/Utility';
 
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { assignNonNull } from './assignFiltered';
@@ -142,7 +144,7 @@ type GetComputedVisibleColumnsParam<T> = {
 
 function isGroupColumnSortable<T>(
   column: InfiniteTableComputedColumn<T>,
-  columns: Map<string, InfiniteTableComputedColumn<T>>,
+  fieldsToColumns: Map<keyof T, InfiniteTableComputedColumn<T>>,
 ) {
   let sortableColumnOrType = column.sortable ?? column.colType.sortable;
 
@@ -154,24 +156,32 @@ function isGroupColumnSortable<T>(
     return false;
   }
 
-  let groupByField = column.groupByField || [];
-  if (groupByField != null && !Array.isArray(groupByField)) {
-    groupByField = [groupByField];
+  let groupByForColumn = column.groupByForColumn || [];
+
+  if (groupByForColumn != null && !Array.isArray(groupByForColumn)) {
+    groupByForColumn = [groupByForColumn];
   }
-  const fields = (groupByField || []).reduce((acc, field: string) => {
-    acc[field] = true;
-    return acc;
-  }, {} as Record<string, boolean>);
 
-  const groupColumns: InfiniteTableComputedColumn<T>[] = [];
-  columns.forEach((col) => {
-    if (col.field && fields[col.field as string]) {
-      groupColumns.push(col);
+  return (groupByForColumn || []).reduce((acc, groupBy) => {
+    if (!acc) {
+      return false;
     }
-  });
+    const field: string | undefined =
+      (groupBy.field as string) || groupBy.groupField;
 
-  return groupColumns.reduce((sortable, col) => {
-    return sortable && col.computedSortable === true;
+    let colSortable: boolean | undefined;
+
+    if (field) {
+      const foundCol = fieldsToColumns.get(field as keyof T);
+
+      if (foundCol) {
+        colSortable = foundCol.computedSortable;
+      }
+    }
+    if (colSortable === undefined && groupBy.valueGetter) {
+      colSortable = true;
+    }
+    return acc && !!colSortable;
   }, true as boolean);
 }
 
@@ -541,11 +551,11 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const computedFilterValue = computedVisible
       ? filterValueRecord[id] ||
         c.field ||
-        (c as InfiniteTableComputedColumn<T>).groupByField
+        (c as InfiniteTableComputedColumn<T>).groupByForColumn
         ? filterValueRecord[id] ||
           filterValueRecord[
             (c.field ||
-              (c as InfiniteTableComputedColumn<T>).groupByField) as string
+              (c as InfiniteTableComputedColumn<T>).groupByForColumn) as string
           ] ||
           null
         : null
@@ -596,7 +606,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
     if (
       sortableColumnOrType == null &&
-      !(c as InfiniteTableGeneratedGroupColumn<T>).groupByField
+      !(c as InfiniteTableGeneratedGroupColumn<T>).groupByForColumn
     ) {
       //not explicitly set, so if no field or valueGetter defined, we'll make this unsortable
       if (field == null && valueGetter == null) {
@@ -673,9 +683,30 @@ export const getComputedVisibleColumns = <T extends unknown>({
         const currentSortInfo = computedSortInfo;
         let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
 
-        const field = (result.groupByField ? result.groupByField : c.field) as
-          | keyof T
-          | (keyof T)[];
+        const groupByForColumn = result.groupByForColumn;
+
+        let field: DataSourceSingleSortInfo<T>['field'] | undefined = c.field;
+
+        const groupByForCol: GroupBy<T>[] = groupByForColumn
+          ? Array.isArray(groupByForColumn)
+            ? groupByForColumn
+            : [groupByForColumn]
+          : [];
+
+        const fieldArr = groupByForCol
+          .map((c) => {
+            return c.valueGetter
+              ? (item: T) => c.valueGetter({ data: item, field: c.field })
+              : c.field
+              ? (c.field as keyof T)
+              : undefined;
+          })
+          .filter(notNullable);
+
+        if (fieldArr.length) {
+          field = fieldArr;
+        }
+
         if (!currentSortInfo) {
           newColumnSortInfo = {
             dir: 1,
@@ -754,7 +785,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
       prevPinned = computedPinned;
     }
-    if (result.groupByField) {
+    if (result.groupByForColumn) {
       groupColumns.push(result);
     }
     computedColumnsMap.set(result.id, result);
@@ -762,7 +793,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     if (
       result.field &&
       // for now, do not include group columns
-      !result.groupByField &&
+      !result.groupByForColumn &&
       !fieldsToColumn.has(result.field)
     ) {
       fieldsToColumn.set(result.field, result);
@@ -770,7 +801,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   });
 
   groupColumns.forEach((col) => {
-    col.computedSortable = isGroupColumnSortable(col, computedColumnsMap);
+    col.computedSortable = isGroupColumnSortable(col, fieldsToColumn);
   });
 
   const computedColumnsMapInInitialOrder = new Map<

@@ -29,7 +29,7 @@ import type {
 } from './InfiniteTableProps';
 
 export type GroupByMap<T> = Map<
-  keyof T,
+  keyof T | string,
   { groupBy: DataSourceGroupBy<T>; groupIndex: number }
 >;
 

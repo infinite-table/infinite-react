@@ -104,10 +104,12 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
       const groupByForColumn = groupByMap.get(column.field!);
       if (groupByForColumn && groupRenderStrategy === 'inline') {
         const { groupIndex } = groupByForColumn;
-        const field = groupByForColumn.groupBy.field;
+
         base = {
-          groupByField: field as string,
-          field: field,
+          groupByForColumn: groupByForColumn.groupBy,
+          field: groupByForColumn.groupBy?.field,
+          valueGetter: groupByForColumn.groupBy?.valueGetter,
+
           valueFormatter: ({ rowInfo }) => {
             return rowInfo.isGroupRow
               ? rowInfo.groupKeys?.[groupIndex]
@@ -479,7 +481,8 @@ export function getColumnsWhenGrouping<T>(params: {
       );
 
       const groupColumnId =
-        generatedGroupColumn.id || `group-by-${groupByForColumn.field}`;
+        generatedGroupColumn.id ||
+        `group-by-${groupByForColumn.field || groupByForColumn.groupField}`;
 
       groupColumnIds.push(groupColumnId);
       computedColumns.set(groupColumnId, generatedGroupColumn);

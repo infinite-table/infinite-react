@@ -61,7 +61,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
     column,
   } = params;
 
-  if (rowInfo.isGroupRow && !column.groupByField) {
+  if (rowInfo.isGroupRow && !column.groupByForColumn) {
     return null;
   }
 
@@ -177,7 +177,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     renderParams,
     formattedValueContext,
     renderFunctions,
-    groupByColumn,
+    groupByColumnReference,
     inEdit,
   } = colRenderingParams;
 
@@ -382,8 +382,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   let colClassName: string | undefined = undefined;
 
-  if (groupByColumn?.className) {
-    colClassName = applyColumnClassName(groupByColumn.className, stylingParam);
+  if (groupByColumnReference?.className) {
+    colClassName = applyColumnClassName(
+      groupByColumnReference.className,
+      stylingParam,
+    );
   }
   if (column.className) {
     colClassName = join(
@@ -394,7 +397,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   let style: React.CSSProperties | undefined;
 
-  if (rowInfo.dataSourceHasGrouping && column.groupByField) {
+  if (rowInfo.dataSourceHasGrouping && column.groupByForColumn) {
     style = styleForGroupColumn({ rowInfo });
   }
 
@@ -405,8 +408,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         : { ...style, ...rowStyle };
   }
 
-  if (groupByColumn?.style) {
-    style = applyColumnStyle(style, groupByColumn.style, stylingParam);
+  if (groupByColumnReference?.style) {
+    style = applyColumnStyle(style, groupByColumnReference.style, stylingParam);
   }
   if (column.style) {
     style = applyColumnStyle(style, column.style, stylingParam);
@@ -454,7 +457,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           rowActive,
           rowSelected,
           groupRow: rowInfo.isGroupRow,
-          groupCell: rowInfo.isGroupRow ? !!column.groupByField : false,
+          groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,
         },
       ),

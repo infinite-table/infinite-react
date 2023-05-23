@@ -198,7 +198,11 @@ const createGroupColumn =
           const { groupIcon } = renderBag;
           if (rowInfo.isGroupRow) {
             const nextGroupBy = groupBy[rowInfo.groupBy?.length || 0];
-            const nextDataDefined = rowInfo.groupData?.[0][nextGroupBy.field];
+            const nextDataDefined =
+              rowInfo.groupData?.[0][
+                (nextGroupBy.field ||
+                  nextGroupBy.groupField) as any as keyof Transaction
+              ];
 
             return nextDataDefined ? groupIcon : null;
           }

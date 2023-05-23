@@ -19,16 +19,14 @@ export function getGroupColumnsMapForComputedColumns<T>(
       column: InfiniteTableColumn<T> | InfiniteTableGeneratedGroupColumn<T>,
       colId: string,
     ) => {
-      // go over all columns (ignore columns which are not group columns - also ignore the single group column)
-      if (
-        typeof (column as InfiniteTableGeneratedGroupColumn<T>).groupByField !==
-        'string'
-      ) {
+      // go over all columns (ignore columns which are not group columns - also the cols which are multi group columns)
+      const col = column as InfiniteTableGeneratedGroupColumn<T>;
+      if (!col.groupByForColumn || Array.isArray(col.groupByForColumn)) {
         return;
       }
-      const { groupByField } = column as InfiniteTableGeneratedGroupColumn<T>;
-      const field = groupByField as keyof T;
-      const groupInfoForColumn = groupByMap.get(field);
+      const { groupByForColumn } = col;
+      const field = groupByForColumn.field || groupByForColumn.groupField;
+      const groupInfoForColumn = field ? groupByMap.get(field) : null;
       if (!groupInfoForColumn) {
         return;
       }
@@ -103,8 +101,15 @@ export function getColumnVisibilityForHideEmptyGroupColumns<T>(params: {
 
   computedGroupColumns.forEach(
     (column: InfiniteTableGeneratedGroupColumn<T>, colId: string) => {
-      const { groupByField } = column as InfiniteTableGeneratedGroupColumn<T>;
-      const field = groupByField as keyof T;
+      const { groupByForColumn } =
+        column as InfiniteTableGeneratedGroupColumn<T>;
+      if (Array.isArray(groupByForColumn)) {
+        return;
+      }
+      const field = groupByForColumn.field || groupByForColumn.groupField;
+      if (!field) {
+        return;
+      }
       const groupInfoForColumn = groupByMap.get(field)!;
       const index = groupInfoForColumn.groupIndex;
 

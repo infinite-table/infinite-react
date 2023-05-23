@@ -35,7 +35,7 @@ import type {
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
 import { MenuIconProps } from '../components/icons/MenuIcon';
 import { NonUndefined } from '../../types/NonUndefined';
-import { ValueGetterParams } from '../../../utils/groupAndPivot/types';
+import { GroupBy, ValueGetterParams } from '../../../utils/groupAndPivot/types';
 
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
@@ -483,7 +483,7 @@ export type InfiniteTableGeneratedGroupColumn<T> = Omit<
   InfiniteTableColumn<T>,
   'sortable'
 > & {
-  groupByField: string | string[];
+  groupByForColumn: GroupBy<T> | GroupBy<T>[];
   id?: string;
 };
 

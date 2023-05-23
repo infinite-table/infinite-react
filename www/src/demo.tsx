@@ -184,9 +184,9 @@ const groupColumn: InfiniteTableColumn<Developer> = {
     }
     const groupBy = rowInfo.groupBy || [];
     const collapsed = rowInfo.collapsed;
-    const groupField = groupBy[groupBy.length - 1];
+    const currentGroupBy = groupBy[groupBy.length - 1];
 
-    if (groupField === 'age') {
+    if (currentGroupBy?.field === 'age') {
       return `🥳 ${value}${collapsed ? ' 🤷‍♂️' : ''}`;
     }
 

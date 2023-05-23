@@ -9,10 +9,7 @@ import {
   PivotBy,
 } from '../../utils/groupAndPivot';
 import { GroupBy } from '../../utils/groupAndPivot/types';
-import {
-  MultisortInfo,
-  MultisortInfoAllowMultipleFields,
-} from '../../utils/multisort';
+import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
   InfiniteTableColumn,
@@ -74,10 +71,10 @@ export type DataSourceDataParamsChanges<T> = Partial<
   >
 >;
 
-export type DataSourceSingleSortInfo<T> = Omit<MultisortInfo<T>, 'field'> & {
-  field?: keyof T | (keyof T)[];
-  id?: string;
-};
+export type DataSourceSingleSortInfo<T> =
+  MultisortInfoAllowMultipleFields<T> & {
+    id?: string;
+  };
 export type DataSourceGroupBy<T> = GroupBy<T, any>;
 export type DataSourcePivotBy<T> = PivotBy<T, any>;
 

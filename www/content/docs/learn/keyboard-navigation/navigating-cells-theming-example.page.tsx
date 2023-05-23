@@ -1,3 +1,5 @@
+import * as React from 'react';
+import { useState, useMemo, HTMLProps, ChangeEvent } from 'react';
 import {
   InfiniteTable,
   DataSource,
@@ -5,11 +7,6 @@ import {
   debounce,
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
-import * as React from 'react';
-import { useState } from 'react';
-import { useMemo } from 'react';
-import { HTMLProps } from 'react';
-import { ChangeEvent } from 'react';
 
 type Developer = {
   id: number;

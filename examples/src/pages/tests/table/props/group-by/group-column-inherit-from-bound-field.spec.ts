@@ -47,13 +47,14 @@ export default test.describe.parallel('Group column configuration', () => {
       ),
     ).toBe('24px');
 
-    const color1 = await rowModel.getCellComputedStylePropertyValue(
-      {
-        rowIndex: 1,
-        colId: 'preferredLanguage',
-      },
-      'color',
-    );
+    const color1_preferredLang =
+      await rowModel.getCellComputedStylePropertyValue(
+        {
+          rowIndex: 1,
+          colId: 'preferredLanguage',
+        },
+        'color',
+      );
 
     // but color should be inherited, as it's not overriden
     expect(
@@ -64,9 +65,9 @@ export default test.describe.parallel('Group column configuration', () => {
         },
         'color',
       ),
-    ).toBe(color1);
+    ).toBe(color1_preferredLang);
 
-    const color2 = await rowModel.getCellComputedStylePropertyValue(
+    const color2_firstName = await rowModel.getCellComputedStylePropertyValue(
       {
         rowIndex: 2,
         colId: 'firstName',
@@ -83,7 +84,7 @@ export default test.describe.parallel('Group column configuration', () => {
         },
         'color',
       ),
-    ).toBe(color2);
+    ).toBe(color2_firstName);
 
     // but line-through should not be, as it was overriden
     expect(
@@ -97,3 +98,7 @@ export default test.describe.parallel('Group column configuration', () => {
     ).toContain('line-through');
   });
 });
+
+const problem = <T>(a: T) => `${a}!`;
+
+console.log(problem<string>('a'));

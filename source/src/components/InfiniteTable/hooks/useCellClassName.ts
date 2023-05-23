@@ -27,7 +27,7 @@ export function useCellClassName<T>(
     filtered: column.computedFiltered,
     first: column.computedFirst,
     last: column.computedLast,
-    groupByField: !!column.groupByField,
+    groupByField: !!column.groupByForColumn,
     firstInCategory: column.computedFirstInCategory,
     lastInCategory: column.computedLastInCategory,
     pinned: column.computedPinned || false,
@@ -49,7 +49,7 @@ export function useCellClassName<T>(
     result.push(...baseClasses.map((c) => `${c}--first`));
   }
 
-  if (column.groupByField) {
+  if (column.groupByForColumn) {
     result.push(...baseClasses.map((c) => `${c}--group-column`));
   }
   if (column.computedLast) {

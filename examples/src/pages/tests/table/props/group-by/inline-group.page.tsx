@@ -91,8 +91,9 @@ export default function GroupByExample() {
                 }
                 const { groupBy, parents } = rowInfo;
 
-                const groupData =
-                  parents?.[groupBy?.indexOf('department') ?? -1] || rowInfo;
+                const indexOfDepartment =
+                  groupBy?.findIndex((g) => g.field === 'department') ?? -1;
+                const groupData = parents?.[indexOfDepartment] || rowInfo;
 
                 return `${groupData?.value} (${
                   groupData?.groupCount

@@ -96,7 +96,9 @@ const groupColumn: InfiniteTablePropGroupColumn<Developer> = {
       return <>{arg.value}</>;
     }
 
-    const groupColumn = columnsMap.get(groupByItem.field);
+    const groupColumn = groupByItem.field
+      ? columnsMap.get(groupByItem.field)
+      : null;
 
     // return <>{arg.value}</>;
     // const groupByCol = groupBy

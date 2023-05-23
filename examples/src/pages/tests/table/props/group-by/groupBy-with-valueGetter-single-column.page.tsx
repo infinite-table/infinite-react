@@ -13,13 +13,24 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
   name: {
     field: 'name',
   },
+  country: {
+    field: 'country',
+  },
   department: {
     field: 'department',
+    header: 'Department',
     style: {
       color: 'red',
     },
   },
-
+  age: {
+    field: 'age',
+    type: 'number',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
   team: {
     field: 'team',
   },
@@ -90,7 +101,10 @@ export default function App() {
               position: 'relative',
             },
           }}
-          // groupRenderStrategy="single-column"
+          groupColumn={{
+            field: 'department',
+          }}
+          groupRenderStrategy="single-column"
           columnDefaultWidth={250}
           columns={columns}
         />

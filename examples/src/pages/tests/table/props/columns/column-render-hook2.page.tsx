@@ -92,7 +92,7 @@ const GroupIconRenderer = ({
   rowInfo,
 }: {
   toggleCurrentGroupRow: Function;
-  rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<any>;
+  rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<Developer>;
 }) => {
   const handleToggle = React.useCallback(
     () => toggleCurrentGroupRow(),

@@ -360,10 +360,17 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
 
 export function getGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
   return groupBy.reduce((acc, groupBy, index) => {
-    acc.set(groupBy.field, {
+    const value = {
       groupBy,
       groupIndex: index,
-    });
+    };
+
+    if (groupBy.field) {
+      acc.set(groupBy.field, value);
+    } else if (groupBy.groupField) {
+      acc.set(groupBy.groupField, value);
+    }
+
     return acc;
   }, new Map() as GroupByMap<T>);
 }

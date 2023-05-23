@@ -31,7 +31,7 @@ export type MultisortInfoAllowMultipleFields<T> = Omit<
   MultisortInfo<T>,
   'field'
 > & {
-  field?: keyof T | (keyof T)[];
+  field?: keyof T | (keyof T | ((item: T) => any))[];
 };
 
 export interface MultisortFn<T> {
@@ -50,7 +50,17 @@ export const multisort = <T>(
     .map((sortInfo) => {
       if (Array.isArray(sortInfo.field)) {
         return sortInfo.field.map((field) => {
-          return { ...sortInfo, field } as MultisortInfo<T>;
+          if (typeof field === 'function') {
+            const result = {
+              ...sortInfo,
+              valueGetter: field,
+              field: undefined,
+            };
+            return result;
+          }
+
+          const result = { ...sortInfo, field };
+          return result;
         });
       }
 

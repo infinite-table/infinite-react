@@ -1,7 +1,7 @@
 import { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
 
-export const showLoadingIcon = (
-  rowInfo: InfiniteTableRowInfo<any>,
+export const showLoadingIcon = <T>(
+  rowInfo: InfiniteTableRowInfo<T>,
 ): boolean => {
   // display loading indicator when row data is not yet available
   // if (rowInfo?.data == undefined) {

@@ -89,15 +89,15 @@ export default test.describe.parallel('RowInfo grouped', () => {
     });
 
     expect(groupByForAllRows).toEqual([
-      ['country'], // "Italy" Group
-      ['country', 'city'], // "Italy Rome" Group
-      ['country', 'city'], // Italy > Rome > Giuseppe
-      ['country', 'city'], // Italy > Rome > Marco
-      ['country', 'city'], // "Italy Napoli" Group
-      ['country', 'city'], // Italy > Napoli > Luca
-      ['country'], // "USA" Group
-      ['country', 'city'], // "USA LA" Group
-      ['country', 'city'], // USA > LA > Bob
+      [{ field: 'country' }], // "Italy" Group
+      [{ field: 'country' }, { field: 'city' }], // "Italy Rome" Group
+      [{ field: 'country' }, { field: 'city' }], // Italy > Rome > Giuseppe
+      [{ field: 'country' }, { field: 'city' }], // Italy > Rome > Marco
+      [{ field: 'country' }, { field: 'city' }], // "Italy Napoli" Group
+      [{ field: 'country' }, { field: 'city' }], // Italy > Napoli > Luca
+      [{ field: 'country' }], // "USA" Group
+      [{ field: 'country' }, { field: 'city' }], // "USA LA" Group
+      [{ field: 'country' }, { field: 'city' }], // USA > LA > Bob
     ]);
   });
 

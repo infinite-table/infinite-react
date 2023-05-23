@@ -18,9 +18,7 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
   },
 ];
 
-const groupColumn: InfiniteTableGroupColumnFunction<Employee> = (options: {
-  groupByForColumn?: { field: keyof Employee };
-}) => {
+const groupColumn: InfiniteTableGroupColumnFunction<Employee> = (options) => {
   const field = options.groupByForColumn?.field;
   const groupColumn = {
     width: field === 'age' ? 160 : 250,

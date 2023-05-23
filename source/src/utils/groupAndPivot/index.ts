@@ -236,18 +236,18 @@ export type InfiniteTable_HasGrouping_RowInfoBase<T> = {
    *
    * Example: People grouped by country and city
    *
-   * Italy  - country         - groupKeys: ['country']
-   *    Rome - city           - groupKeys: ['country', 'city']
-   *      Marco    - person   - groupKeys: ['country', 'city']
-   *      Luca     - person   - groupKeys: ['country', 'city']
-   *      Giuseppe  - person  - groupKeys: ['country', 'city']
+   * Italy  - country         - groupBy: [{field: 'country'}]
+   *    Rome - city           - groupBy: [{field: 'country'}, {field: 'city'} ]
+   *      Marco    - person   - groupBy: [{field: 'country'}, {field: 'city'} ]
+   *      Luca     - person   - groupBy: [{field: 'country'}, {field: 'city'} ]
+   *      Giuseppe  - person  - groupBy: [{field: 'country'}, {field: 'city'} ]
    */
-  groupBy: (keyof T)[];
+  groupBy: GroupBy<T, any>[];
 
   /**
    * The groupBy value of the DataSource component, mapped to the groupBy.field
    */
-  rootGroupBy: (keyof T)[];
+  rootGroupBy: GroupBy<T, any>[];
 
   /**
    * Available on all rowInfo objects when the datasource is grouped.
@@ -783,6 +783,7 @@ export function group<DataType, KeyType = any>(
     for (let groupByIndex = 0; groupByIndex < groupByLength; groupByIndex++) {
       const {
         field: groupByProperty,
+        groupField,
         valueGetter,
         toKey: groupToKey,
       } = groupBy[groupByIndex];
@@ -800,8 +801,10 @@ export function group<DataType, KeyType = any>(
         item,
       );
 
-      commonData[groupByProperty] =
+      //@ts-ignore
+      commonData[groupByProperty || groupField] =
         key as any as DataType[KeyOfNoSymbol<DataType>];
+
       currentGroupKeys.push(key);
 
       if (!deepMap.has(currentGroupKeys)) {
@@ -1035,11 +1038,13 @@ function getEnhancedGroupData<DataType>(
       ? options.directChildrenLoadedCount
       : options.directChildrenCount,
     value: theValue,
-    rootGroupBy: groupBy.map((g) => g.field),
-    groupBy: (groupNesting === groupBy.length
-      ? groupBy
-      : groupBy.slice(0, groupNesting)
-    ).map((g) => g.field),
+    // rootGroupBy: groupBy.map((g) => g.field),
+    rootGroupBy: groupBy,
+    groupBy:
+      groupNesting === groupBy.length
+        ? groupBy
+        : groupBy.slice(0, groupNesting),
+    // ).map((g) => g.field),
     isGroupRow: true,
     pivotValuesMap: pivotDeepMap,
     groupNesting,
@@ -1099,7 +1104,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const { groupParams, deepMap, pivot } = groupResult;
   const { groupBy } = groupParams;
 
-  const groupByStrings = groupBy.map((g) => g.field);
+  // const groupByStrings = groupBy.map((g) => g.field);
 
   const result: InfiniteTableRowInfo<DataType>[] = [];
   const groupRowsIndexes: number[] = [];
@@ -1137,7 +1142,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
               lazyLoad,
             childrenAvailable: deepMapValue.childrenAvailable,
             directChildrenCount:
-              groupKeys.length === groupByStrings.length
+              groupKeys.length === groupBy.length
                 ? deepMapValue.items.length
                 : deepMap.getDirectChildrenSizeFor(groupKeys),
             directChildrenLoadedCount: 0,
@@ -1233,14 +1238,14 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   isGroupRow: false,
                   selfLoaded: !!item,
                   rowSelected: false,
-                  rootGroupBy: groupByStrings,
+                  rootGroupBy: groupBy,
                   collapsed,
                   groupKeys,
                   parents: Array.from(parents),
                   indexInParentGroups: [...indexInParentGroups, index],
                   indexInGroup: index,
                   indexInAll,
-                  groupBy: groupByStrings,
+                  groupBy: groupBy,
                   groupNesting: groupNesting + 1,
                   groupCount: enhancedGroupData.groupCount,
                 };

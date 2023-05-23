@@ -515,7 +515,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       dir,
     };
 
-    const field = (col.groupByField ? col.groupByField : col.field) as
+    const field = (col.groupByForColumn ? col.groupByForColumn : col.field) as
       | keyof T
       | (keyof T)[];
 
@@ -583,9 +583,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         valueGetter: col.valueGetter,
       };
 
-      if (col.field || typeof col.groupByField === 'string') {
+      if (col.field || typeof col.groupByForColumn === 'string') {
         //@ts-ignore
-        filterValueForColumn.field = col.field! || col.groupByField; // we also use `col.groupByField`
+        filterValueForColumn.field = col.field! || col.groupByForColumn; // we also use `col.groupByForColumn`
         // in order to allow group columns (when groupRenderStrategy=single)
         // to have filters
       } else {
