@@ -20,6 +20,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
   birthDate: {
     field: 'birthDate',
     header: 'Birth Date',
+    // we need to specify the type of the column as "date"
+    type: 'date',
     renderValue: ({ value }: { value: Date }) => {
       return <b>{value.toISOString().split('T')[0]}</b>;
     },
