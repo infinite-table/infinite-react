@@ -2,15 +2,44 @@
 title: Working with Data
 description: Learn how to visualise and manage your data in new ways with Infinite Table
 ---
+When working with data, you will mostly interact with the `<DataSource />` component, which is responsible for handling and managing the data and passing it down to the `<InfiniteTable />` component, which is the rendering engine for the DataGrid.
 
-We've decoupled our data handling from our rendering engine by providing two components (as named exports) inside `@infinite-table/infinite-react` package:
+So we provide those two components (as named exports) inside `@infinite-table/infinite-react` package:
 
 - `<DataSource />` - our data-handling component
 - `<InfiniteTable />` - our virtualized component
 
 The `<DataSource/>` component is responsible for the data the management layer. 
 
-It is a generic TypeScript component that can be bound to an array of items of the generic type.
+<Note>
+
+Probably the most important prop for the `<DataSource />` component is the <DPropLink name="idProperty" /> prop. It specifies the property of the data object that is used as a unique identifier for data rows/items.
+
+
+```tsx
+<DataSource<DATA_TYPE>
+  idProperty="id"
+  data={[]} // or a Promise or function returning a Promise.
+/>
+```
+
+</Note>
+
+The `<DataSource />` is a generic React TypeScript component that can be bound to an array of items of the generic type.
+
+<Note>
+
+In this documentation, we'll use `DATA_TYPE` when referring to the generic type. Rarely, we'll use `T`.
+
+```tsx
+<DataSource<DATA_TYPE>>
+  <InfiniteTable<DATA_TYPE> />
+</DataSource>
+```
+
+Most of our examples in these docs have a `Developer` or `Employee` TypeScript data type used as the generic type for the `<DataSource />` component.
+
+</Note>
 
 ```tsx 
 import { DataSource } from '@infinite-table/infinite-react';
@@ -44,11 +73,15 @@ In the snippet above, we see 3 important details:
 2. we use a `primaryKey` property - here it is `id`, but since the bound type is `Employee`, `primaryKey` is `keyof Employee`
 3. we pass the `employees` array as the `data` property.
 
-The <DataSourcePropLink name="data" /> prop is probably the most important part, and it can be one of:
+<Note>
 
-- an array of the bound type - here `Employee[]`
+The <DataSourcePropLink name="data" /> prop can be either:
+
+- an array of the bound generic type - here `Employee[]`
 - a Promise tha resolves to an array like the above
-- a function that returns an any of the above
+- a function that returns any of the above
+
+</Note>
 
 <Sandpack title="Data loading example with promise">
 
