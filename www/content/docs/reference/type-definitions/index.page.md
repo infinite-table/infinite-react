@@ -105,7 +105,7 @@ These are the type properties:
  - `renderBag`: See [column rendering](/docs/learn/columns/column-rendering#rendering-pipeline) for more details.
  - `toggleCurrentGroupRow`: `() => void` - a function that can be used to toggle the current row, if it's a group row.
  - `rootGroupBy`: <TypeLink name="DataSourceGroupBy" /> - the group by specified in the <DPropLink name="groupBy" /> prop of the `DataSource`.
- - `groupByForColumn`: available for group columns. When <PropLink name="groupRenderStrategy" /> is `"multi-column"`, this will be a single <TypeLink name="DataSourcePropGroupBy">, for each of the generated group columns. When <PropLink name="groupRenderStrategy" /> is `"single-column"`, this will be an array of <TypeLink name="DataSourcePropGroupBy"> objects - it will be available only in the single group column that will be generated. 
+ - `groupByForColumn`: available for group columns. When <PropLink name="groupRenderStrategy" /> is `"multi-column"`, this will be a single <TypeLink name="DataSourcePropGroupBy" />, for each of the generated group columns. When <PropLink name="groupRenderStrategy" /> is `"single-column"`, this will be an array of <TypeLink name="DataSourcePropGroupBy" /> objects - it will be available only in the single group column that will be generated. 
 
 
 </Prop>
