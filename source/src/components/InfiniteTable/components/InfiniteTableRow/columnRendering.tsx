@@ -1,7 +1,7 @@
 import { getColumnApiForColumn } from '../../api/getColumnApi';
 import {
   InfiniteTableColumn,
-  InfiniteTableColumnRenderParam,
+  InfiniteTableColumnCellContextType,
   InfiniteTableComputedColumn,
   InfiniteTableContextValue,
   InfiniteTableRowInfo,
@@ -254,7 +254,7 @@ export function getColumnRenderParam<T>(options: {
 
   const toggleGroupRow = imperativeApi.toggleGroupRow;
 
-  const renderParam: Omit<InfiniteTableColumnRenderParam<T>, 'domRef'> = {
+  const renderParam: Omit<InfiniteTableColumnCellContextType<T>, 'domRef'> = {
     column,
     columnsMap,
     fieldsToColumn,

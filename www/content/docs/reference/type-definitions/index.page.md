@@ -61,6 +61,55 @@ Valid types for this prop are:
 
 </Prop>
 
+<Prop name="InfiniteTableComputedColumn" generic>
+
+> This represents an enhanced column definition for a column. A computed column is basically a column with more information computed at runtime, based on everything Infinite Table can aggregate about it.
+
+This type also includes the properties of the `InfinteTableColumn` type: <PropLink name="columns.id" />, <PropLink name="columns.field" />, <PropLink name="columns.valueGetter" />, etc.
+
+Additional type properties:
+
+ - `id`: `string` - the id of the column. This is the same as the <PropLink name="columns.id" /> prop.
+ - `computedEditable`: `boolean| Function` - whether this column is ediable or not. See <PropLink name="columns.defaultEditable" /> for more details.
+ - `computedWidth`: `number` - the actual calculated width of the column (in pixels) that will be used for rendering. This is computed based on the <PropLink name="columns.defaultWidth" />,  <PropLink name="columns.defaultFlex" /> and other min/max constraints.
+ - `computedPinned`: `false | "start" | "end"`
+ - `computedSortInfo`: <TypeLink name="DataSourceSingleSortInfo" /> or null - the sort info for this column.
+ - `computedSorted`: `boolean` - whether this column is currently sorted or not.
+ - `computedSortedAsc`: `boolean` - whether this column is currently sorted ascending or not.
+ - `computedSortedDesc`: `boolean` - whether this column is currently sorted descending or not.
+ - `computedFiltered`: `boolean` - whether this column is currently filtered or not.
+ - ... and more (docs coming soon)
+
+
+</Prop>
+
+<Prop  name="InfiniteTableColumnCellContextType" generic>
+
+> The type for the parameter of <PropLink name="columns.renderValue"/> (and related rendering functions) and also for the object you get back when you call <HookLink name="useInfiniteColumnCell" />
+
+These are the type properties:
+
+ - `isGroupRow`: `boolean` - whether the current row is a group row or not.
+ - `data`: `DATA_TYPE` | `Partial<DATA_TYPE>` | `null` - the data object for the current row.
+  Because the DataSource can be grouped, the `data` object can be either the original data object, or a partial data object (containing the aggregated values - in case of a group row), or null. You can use `isGroupRow` to discriminate between these cases. If `isGroupRow` is `false`, then `data` is of type `DATA_TYPE`.
+ - `rowInfo`: <TypeLink name="InfiniteTableRowInfo" />. See that type for more details.
+ - `rawValue`: `string` | `number` | other - the raw value for the cell - as computed from the <PropLink name="columns.field" code={false}>column field</PropLink> or <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+ - `value`: `Renderable` - the current value to render for the cell. This is based on the `rawValue`, but if a <PropLink name="columns.valueFormatter" code={false}>column valueFormatter</PropLink> exists, it will be the result of that.
+ - `column`: <TypeLink name="InfiniteTableComputedColumn" /> - the (computed) column definition for the current cell.
+ - `columnsMap`: a map collection of <TypeLink name="InfiniteTableComputedColumn" /> objects, keyed by column id.
+ - `fieldsToColumn`: a map collection of <TypeLink name="InfiniteTableComputedColumn" /> objects, keyed by the column field. If a column is not bound to a field, it will not be included in this map.
+ - `align`: the computed value of the <PropLink name="columns.align">align</PropLink> prop for the current cell. This will be `"start"`, `"center"` or `"end"`.
+ - `api`: [`InfiniteTableApi`](/docs/reference/api) - the api object.
+ - `rowInfo`: <TypeLink name="InfiniteTableRowInfo" /> - the row info for the current row.
+ - `rowIndex`: `number` - the index of the current row.
+ - `renderBag`: See [column rendering](/docs/learn/columns/column-rendering#rendering-pipeline) for more details.
+ - `toggleCurrentGroupRow`: `() => void` - a function that can be used to toggle the current row, if it's a group row.
+ - `rootGroupBy`: <TypeLink name="DataSourceGroupBy" /> - the group by specified in the <DPropLink name="groupBy" /> prop of the `DataSource`.
+ - `groupByForColumn`: available for group columns. When <PropLink name="groupRenderStrategy" /> is `"multi-column"`, this will be a single <TypeLink name="DataSourcePropGroupBy">, for each of the generated group columns. When <PropLink name="groupRenderStrategy" /> is `"single-column"`, this will be an array of <TypeLink name="DataSourcePropGroupBy"> objects - it will be available only in the single group column that will be generated. 
+
+
+</Prop>
+
 <Prop  name="InfiniteColumnEditorContextType" generic>
 
 > The type for the object you get back when you call <HookLink name="useInfiniteColumnEditor" />

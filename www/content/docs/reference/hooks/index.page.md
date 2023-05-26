@@ -10,9 +10,9 @@ See below for the full list of hooks exposed by `InfiniteTable`, each with examp
 
 <PropTable sort searchPlaceholder="Type to filter hooks">
 
-<Prop name="useInfiniteColumnCell" >
+<Prop name="useInfiniteColumnCell" returnTypeLink="InfiniteColumnEditorContextType">
 
-> Used inside <PropLink name="columns.render" /> or <PropLink name="column.components.ColumnCell" />
+> Use it inside the <PropLink name="columns.render" /> or <PropLink name="column.components.ColumnCell" /> (or <PropLink name="columns.renderValue" code={false}>other</PropLink> rendering functions) to retrieve information about the cell that is being rendered.
 
 ```ts
 import { useInfiniteColumnCell } from '@infinite-table/infinite-react';
@@ -34,8 +34,8 @@ const CustomCellComponent = (props: React.HTMLProps<HTMLDivElement>) => {
 };
 ```
 
-You should not pass the `domRef` along when using the hook inside the
-<PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> function.
+You should not pass the `domRef` along when using the hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> function.
+
 
 <Sandpack title="Column with render & useInfiniteColumnCell">
 

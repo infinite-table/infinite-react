@@ -18,8 +18,8 @@ const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
 />
 ```
 
-For the root API, see the [Infinite Table API page](./api).
-For column API, see the [Infinite Table Column API page](./column-api).
+For the root API, see the [Infinite Table API page](/docs/reference/api).
+For column API, see the [Infinite Table Column API page](/docs/reference/column-api).
 
 <PropTable searchPlaceholder="Type to filter API methods">
 

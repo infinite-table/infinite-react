@@ -27,6 +27,8 @@ interface PropProps {
   children: React.ReactNode;
   name: string;
   type?: string;
+  returnType?: React.ReactNode;
+  returnTypeLink?: string;
   excerpt?: React.ReactNode;
 
   generic?: boolean;
@@ -140,7 +142,7 @@ export const TypeLink = ({
   code = true,
   nocode,
 }: {
-  name: keyof DataSourceApi<any>;
+  name: string;
   children?: React.ReactNode;
   code?: boolean;
   nocode?: boolean;
@@ -273,6 +275,8 @@ export function Prop({
   excerpt,
   onPropExpand,
   type,
+  returnType,
+  returnTypeLink,
 }: PropProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -311,7 +315,7 @@ export function Prop({
         <div className="flex-1 flex flex-col w-full">
           <div className="flex flex-row w-full items-center flex-wrap ">
             {/* The pt and mt hack is for when there's anchor navigation, in order to accomodate for the fixed navbar and search field */}
-            <H4 as="h2" id={theId} className="pt-[80px] mt-[-80px]">
+            <H4 as="h2" id={theId} className="pt-[80px] mt-[-80px] mb-0">
               <IconCodeBlock className="inline mr-2 text-brand" />
               {name}
               {generic ? (
@@ -339,6 +343,24 @@ export function Prop({
                   style={{ maxWidth: '90%' }}
                 >
                   <PropInlineCode className="ml-3">{type}</PropInlineCode>
+                </div>
+              </>
+            ) : null}
+
+            {returnType || returnTypeLink ? (
+              <>
+                <div
+                  className="flex flex-row justify-start flex-auto "
+                  style={{ maxWidth: '90%' }}
+                >
+                  <PropInlineCode className="ml-3">
+                    Return:{' '}
+                    {returnTypeLink ? (
+                      <TypeLink name={returnTypeLink} code={false} />
+                    ) : (
+                      returnType
+                    )}
+                  </PropInlineCode>
                 </div>
               </>
             ) : null}

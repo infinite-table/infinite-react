@@ -81,11 +81,36 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 
 <PropLink name="columns.render"/> is the last function called in the rendering pipeline for a column cell, while <PropLink name="columns.renderValue"/> is called before render, towards the beginning of the [rendering pipeline (read more about this below)](#rendering-pipeline).
 
-Avoid overriding <PropLink name="columns.render"/> for special columns (like group columns) unless you know what you're doing. Special columns use the `render` function to render additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override this additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
+Avoid over-writing <PropLink name="columns.render"/> for special columns (like group columns) unless you know what you're doing. Special columns use the `render` function to render additional content inside the column (eg: collapse/expand tool for group rows). The <PropLink name="columns.render"/> function allows you to override this additional content. So if you specify this function, it's up to you to render whatever content, including the collapse/expand tool.
 
 However, there are easier ways to override the collapse/expand group icon, like using <PropLink name="columns.renderGroupIcon"/>.
 
 </DeepDive>
+
+<Note>
+
+Inside the <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> functions (and other rendering functions), you can use the <HookLink name="useInfiniteColumnCell"/> hook to retrieve the same params that are passed to the render functions.
+
+This is especially useful when inside those functions you render a custom component that needs access to the same information.
+
+```tsx
+type Developer = { country: string; name: string; id: string}
+
+const CountryInfo = () => {
+  const { data, rowInfo, value } = useInfiniteColumnCell<Developer>()
+
+  return <div>Country: {value}</div>
+}
+
+const columns = {
+  country: {
+    field: 'country',
+    renderValue: () => <CountryInfo />
+  }
+}
+```
+
+</Note>
 
 <Sandpack title="Column with custom renderValue">
 

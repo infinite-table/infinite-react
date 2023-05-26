@@ -979,9 +979,9 @@ If not specified, <PropLink name="columnMinWidth" /> will be used (defaults to `
 
 </Prop>
 
-<Prop name="columns.render" type="({ value, data, rowInfo, column, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
+<Prop name="columns.render" type="(cellContext) => Renderable">
 
-> Customizes the rendering of the column.
+> Customizes the rendering of the column. The argument passed to the function is an object of type <TypeLink name="InfiniteTableColumnCellContextType" />
 
 See related <PropLink name="columns.renderValue" />, <PropLink name="columns.renderGroupValue" />
 
@@ -1050,9 +1050,9 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </Prop>
 
-<Prop name="columns.renderGroupIcon" type="({ data, rowInfo, column, renderBag, rowIndex, ... })">
+<Prop name="columns.renderGroupIcon" type="(cellContext) => Renderable">
 
-> Customizes the rendering of the collapse/expand group icon for group rows.
+> Customizes the rendering of the collapse/expand group icon for group rows. The argument passed to the function is an object of type <TypeLink name="InfiniteTableColumnCellContextType" />
 
 For actual content of group cells, see related <PropLink name="columns.renderGroupValue" />
 
@@ -1174,9 +1174,9 @@ See related <PropLink name="columns.renderGroupValue" /> for customizing the val
 </Sandpack>
 
 </Prop>
-<Prop name="columns.renderValue" type="({ value, data, rowInfo, column, renderBag, rowIndex, pivotBy, groupBy, toggleCurrentGroupRow}) => Renderable">
+<Prop name="columns.renderValue" type="(cellContext) => Renderable">
 
-> Customizes the rendering of the column content.
+> Customizes the rendering of the column content. The argument passed to the function is an object of type <TypeLink name="InfiniteTableColumnCellContextType" />
 
 See related <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />
 
@@ -1250,7 +1250,6 @@ The `rowInfo` object contains information about grouping (if this row is a group
 <Prop name="columns.shouldAcceptEdit" type="(params) => boolean|Error|Promise<boolean|Error>">
 
 > Function specified for the column, that determines whether to accept an edit or not.
-
 
 This function is called when the user wants to finish an edit. The function is used to decide whether an edit is accepted or rejected.
 

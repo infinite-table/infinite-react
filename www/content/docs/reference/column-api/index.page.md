@@ -5,8 +5,8 @@ layout: API
 
 When rendering the `InfiniteTable` component, you can get access to the Column API through various column render props (for example, the <PropLink name="columns.header" /> render prop).
 
-For the root API see the [API page](./api).
-For API on row/group selection, see the [Selection API page](./selection-api).
+For the root API see the [API page](/docs/reference/api).
+For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
 
 <PropTable searchPlaceholder="Type to filter API methods">
 

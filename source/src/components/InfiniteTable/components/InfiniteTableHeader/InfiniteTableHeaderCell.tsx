@@ -20,9 +20,9 @@ import { internalProps } from '../../internalProps';
 import { InternalVars, ThemeVars } from '../../theme.css';
 
 import type {
+  InfiniteTableColumnCellContextType,
   InfiniteTableColumnHeaderParam,
   InfiniteTableColumnHeaderRenderFunction,
-  InfiniteTableColumnRenderParam,
   InfiniteTableComputedColumn,
   InfiniteTableHeaderCellContextType,
 } from '../../types/InfiniteTableColumn';
@@ -301,7 +301,7 @@ export function InfiniteTableHeaderCell<T>(
     if (typeof column.renderMenuIcon === 'function') {
       renderParam.renderBag.menuIcon = (
         <RenderHeaderCellHookComponent
-          render={(param: InfiniteTableColumnRenderParam<T>) => {
+          render={(param: InfiniteTableColumnCellContextType<T>) => {
             if (typeof column.renderMenuIcon !== 'function') {
               return null;
             }

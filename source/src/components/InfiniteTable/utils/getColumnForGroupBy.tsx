@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { InfiniteTableColumnRenderParam } from '..';
+import { InfiniteTableColumnCellContextType } from '..';
 import {
   InfiniteTableRowInfo,
   InfiniteTable_HasGrouping_RowInfoGroup,
@@ -55,7 +55,7 @@ export function getGroupColumnRender<T>({
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   groupIndexForColumn: number;
 }) {
-  return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
+  return (renderOptions: InfiniteTableColumnCellContextType<T>) => {
     const { rowInfo, renderBag, column, align } = renderOptions;
 
     // TODO continue here to take valueToRender from corrensponding groupByColumn
@@ -130,7 +130,7 @@ export function getGroupColumnRenderGroupIcon<T>({
 
   initialRenderGroupIcon?: InfiniteTableColumn<T>['renderGroupIcon'];
 }) {
-  return (renderOptions: InfiniteTableColumnRenderParam<T>) => {
+  return (renderOptions: InfiniteTableColumnCellContextType<T>) => {
     const {
       rowInfo,
       value,

@@ -12,7 +12,6 @@ import { InternalVars } from '../../theme.css';
 import { InfiniteColumnEditorContextType } from '../../types';
 
 import type {
-  InfiniteTableColumnRenderParam,
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnClassName,
@@ -184,9 +183,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const { align, verticalAlign } = renderParams;
 
-  const renderParam = renderParams as InfiniteTableColumnRenderParam<T>;
+  const renderParam = renderParams as InfiniteTableColumnCellContextType<T>;
   const renderParamRef =
-    React.useRef<InfiniteTableColumnRenderParam<T>>(renderParam);
+    React.useRef<InfiniteTableColumnCellContextType<T>>(renderParam);
 
   const onClick = useCallback(
     (event: React.MouseEvent) => {

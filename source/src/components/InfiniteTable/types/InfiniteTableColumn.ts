@@ -122,11 +122,6 @@ export type InfiniteTableColumnRenderParamBase<
   rootGroupBy: DataSourceState<DATA_TYPE>['groupBy'];
   pivotBy?: DataSourceState<DATA_TYPE>['pivotBy'];
 };
-export type InfiniteTableColumnRenderParam<
-  DATA_TYPE,
-  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
-> = InfiniteTableColumnRenderParamBase<DATA_TYPE, COL_TYPE> &
-  InfiniteTableRowInfoDataDiscriminator<DATA_TYPE>;
 
 export type InfiniteTableGroupColumnRenderParams<
   DATA_TYPE,
@@ -137,8 +132,12 @@ export type InfiniteTableGroupColumnRenderParams<
   data: Partial<DATA_TYPE> | null;
 };
 
-export type InfiniteTableColumnCellContextType<DATA_TYPE> =
-  InfiniteTableColumnRenderParam<DATA_TYPE> & {};
+export type InfiniteTableColumnCellContextType<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = InfiniteTableColumnRenderParamBase<DATA_TYPE, COL_TYPE> &
+  InfiniteTableRowInfoDataDiscriminator<DATA_TYPE>;
+
 export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
   InfiniteTableColumnHeaderParam<DATA_TYPE> & {
     domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
@@ -156,7 +155,7 @@ export type InfiniteTableGroupColumnRenderIconParam<
 export type InfiniteTableColumnRenderValueParam<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
-> = InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>;
+> = InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE>;
 
 export type InfiniteTableColumnRowspanParam<
   DATA_TYPE,
@@ -189,7 +188,7 @@ export type InfiniteTableColumnRenderFunctionForGroupRows<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = (
-  renderParams: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
+  renderParams: InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE> & {
     isGroupRow: true;
   },
 ) => Renderable | null;
@@ -198,7 +197,7 @@ export type InfiniteTableColumnRenderFunctionForNormalRows<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = (
-  renderParams: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE> & {
+  renderParams: InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE> & {
     isGroupRow: false;
   },
 ) => Renderable | null;
@@ -206,7 +205,7 @@ export type InfiniteTableColumnRenderFunction<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = (
-  renderParams: InfiniteTableColumnRenderParam<DATA_TYPE, COL_TYPE>,
+  renderParams: InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE>,
 ) => Renderable | null;
 
 export type InfiniteTableGroupColumnRenderFunction<

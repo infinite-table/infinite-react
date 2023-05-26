@@ -21,7 +21,7 @@ const onReady = (
 />
 ```
 
-For API on row/group selection, see the [Selection API page](./selection-api).
+For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
 
 <PropTable sort searchPlaceholder="Type to filter API methods">
 

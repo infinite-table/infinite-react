@@ -6,7 +6,6 @@ import type {
   InfiniteTableColumn,
   InfiniteTableColumnComparer,
   InfiniteTableComputedColumn,
-  InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderValueParam,
   InfiniteTableColumnRowspanParam,
   InfiniteTablePivotColumn,
@@ -14,6 +13,7 @@ import type {
   InfiniteTableColumnRenderFunctionForNormalRows,
   InfiniteTableColumnValueFormatterParams,
   InfiniteTableColumnValueGetterParams,
+  InfiniteTableColumnCellContextType,
 } from './InfiniteTableColumn';
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
@@ -72,11 +72,11 @@ export type {
   InfiniteTablePropComponents,
   InfiniteTablePropColumnVisibility,
   InfiniteTablePropColumnPinning,
+  InfiniteTableColumnCellContextType,
   InfiniteTableColumnGroup,
   InfiniteTableColumn,
   InfiniteTableColumnComparer,
   InfiniteTableComputedColumn,
-  InfiniteTableColumnRenderParam,
   InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableColumnRenderFunctionForNormalRows,
   InfiniteTableColumnRenderValueParam,
