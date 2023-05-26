@@ -7,7 +7,7 @@ import {
   GroupRowsState,
   InfiniteTableGroupColumnFunction,
   InfiniteTableGroupColumnBase,
-  InfiniteTableColumnRenderParam,
+  InfiniteTableColumnCellContextType,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -68,7 +68,7 @@ const groupColumn: InfiniteTableGroupColumnFunction<Developer> = (arg) => {
   const column = {} as Partial<InfiniteTableGroupColumnBase<Developer>>;
 
   if (arg.groupIndexForColumn === arg.groupBy.length - 1) {
-    column.render = (param: InfiniteTableColumnRenderParam<Developer>) => {
+    column.render = (param: InfiniteTableColumnCellContextType<Developer>) => {
       const { value, rowInfo } = param;
       if (
         rowInfo.isGroupRow &&
