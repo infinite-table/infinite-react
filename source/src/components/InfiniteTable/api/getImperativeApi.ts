@@ -415,6 +415,14 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     const rowInfo = dataSourceApi.getRowInfoByIndex(id);
 
     if (!rowInfo || !column) {
+      if (!column) {
+        console.warn(`No column found with id: "${columnId}"`);
+      }
+      if (!rowInfo) {
+        console.warn(
+          `No row found with index: "${rowIndex}" or primary key: "${id}"`,
+        );
+      }
       return null;
     }
 

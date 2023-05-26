@@ -204,7 +204,12 @@ export const InfiniteTableComponent = React.memo(
         ).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
           componentState.id,
           componentState.ready,
+          context.api,
         );
+      }
+
+      if (__DEV__) {
+        (globalThis as any).infiniteApi = context.api;
       }
     }, [componentState.ready]);
 

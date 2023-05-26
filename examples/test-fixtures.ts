@@ -1,6 +1,7 @@
 import { ColumnTestingModel } from '@examples/pages/tests/testUtils/ColumnTestingModel';
 import { EditTestingModel } from '@examples/pages/tests/testUtils/EditTestingModel';
 import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderTestingModel';
+import { InfiniteTableApiModel } from '@examples/pages/tests/testUtils/InfiniteTableApiModel';
 import { MenuTestingModel } from '@examples/pages/tests/testUtils/MenuTestingModel';
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import {
@@ -37,6 +38,7 @@ export const test = base.extend<
       editModel: EditTestingModel;
       columnModel: ColumnTestingModel;
       menuModel: MenuTestingModel;
+      apiModel: InfiniteTableApiModel;
     }
 >({
   //@ts-ignore
@@ -58,9 +60,10 @@ export const test = base.extend<
       if (exists) {
         await page.addInitScript({
           content: `
-window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => {
+window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api) => {
   
   window.INFINITE_GRID_READY = ready;
+  window.INFINITE_GRID_API = api;
 };`,
         });
         await page.goto(url);
@@ -89,6 +92,9 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready) => 
   },
   headerModel: async ({ page }, use) => {
     await use(HeaderTestingModel.get(page));
+  },
+  apiModel: async ({ page }, use) => {
+    await use(InfiniteTableApiModel.get(page));
   },
   editModel: async ({ page }, use) => {
     await use(EditTestingModel.get(page));
