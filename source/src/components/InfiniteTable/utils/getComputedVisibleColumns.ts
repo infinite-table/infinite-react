@@ -619,6 +619,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
     const result: InfiniteTableComputedColumn<T> = {
       colType,
       align: colType.align,
+      headerAlign: colType.headerAlign,
       computedVisible,
       verticalAlign: colType.verticalAlign,
       defaultHiddenWhenGroupedBy: colType.defaultHiddenWhenGroupedBy,

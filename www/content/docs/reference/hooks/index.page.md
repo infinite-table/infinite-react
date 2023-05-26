@@ -49,21 +49,11 @@ You should not pass the `domRef` along when using the hook inside the
 
 <Prop name="useInfiniteColumnEditor" >
 
-> Allows you to write a custom editor to be used for [inline editing](/docs/learn/editing/inline-editing).
+> Allows you to write a custom editor to be used for [editing](/docs/learn/editing/overview). The hook returns an <TypeLink name="InfiniteColumnEditorContextType" /> object shape.
+
+Inside this hook, you can also call <HookLink name="useInfiniteColumnCell" /> to get access to the cell-related information.
 
 See related <PropLink name="columns.components.Editor" />
-
-The hook returns an object with the following properties:
-
- * `initialValue` - the initial value for the editor.
- * `value` - the current value for the editor. You can make this controlled - to achieve this, make sure that when the editor is changed, you call the `setValue` function with the new value.
- * `setValue: (value) => void` - a function that can be used to update the `value` of the editor, as described above.
- * `confirmEdit: (value?) => void` - call this to confirm the edit and close the editor. If you have called `setValue` while editing (meaning your editor was controlled), you don't have to pass any parameters to this function. - the last value of the editor will be used. If your editor is uncontrolled and you haven't called `setValue`, you need to call `confirmEdit` with the value that you want to confirm for the edit.
- * `cancelEdit: () => void` - call this to cancel the edit and close the editor. Doesn't require any parameters.
- * `rejectEdit: (error?) => void` - call this to reject the edit and close the editor. You can pass an `Error` object when calling this function to specify the reason for the rejection.
- * `readOnly: boolean` - if the editor should be rendered as readonly (for example, while the edit is being confirmed or persisted asynchronously).
-
-Inside this hook, you can also use the <HookLink name="useInfiniteColumnCell" /> hook.
 
 <Note>
 

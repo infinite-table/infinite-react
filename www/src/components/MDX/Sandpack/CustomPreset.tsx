@@ -23,12 +23,15 @@ export function CustomPreset({
   title,
   description,
   onReset,
+  defaultHeight,
 }: {
+  defaultHeight?: number;
   description?: React.ReactNode;
   title?: React.ReactNode;
   isSingleFile: boolean;
   onReset: () => void;
 }) {
+  const THE_HEIGHT = defaultHeight ?? 406;
   const lineCountRef = React.useRef<{
     [key: string]: number;
   }>({});
@@ -112,7 +115,7 @@ export function CustomPreset({
     if (!isExpandable) {
       return editorHeight;
     }
-    return isExpanded ? editorHeight : 406;
+    return isExpanded ? editorHeight : THE_HEIGHT;
   };
 
   const descriptionBlock = description ? (
@@ -172,7 +175,7 @@ export function CustomPreset({
                       ? fullScreen
                         ? getHeight()
                         : ''
-                      : 406, //40px is navbar height
+                      : THE_HEIGHT, //40px is navbar height
                   }}
                   showLineNumbers
                   showInlineErrors
@@ -187,7 +190,7 @@ export function CustomPreset({
                   customStyle={{
                     height: getHeight(),
                     minHeight: getHeight(),
-                    maxHeight: isExpanded ? '' : 406,
+                    maxHeight: isExpanded ? '' : THE_HEIGHT,
                   }}
                 />
               ) : null}

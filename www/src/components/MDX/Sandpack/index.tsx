@@ -22,6 +22,13 @@ const DEPS_VERSIONS: Record<string, string> = {
   'ag-grid-react': '27.1.0',
   'ag-grid-enterprise': '27.1.0',
   '@progress/kendo-react-grid': '5.1.0',
+
+  // for material date picker
+  '@emotion/react': 'latest',
+  '@emotion/styled': 'latest',
+  '@mui/material': 'latest',
+  '@mui/x-date-pickers': 'latest',
+  dayjs: 'latest',
 };
 
 const VERSION_MAPPING: Record<string, string> = {
@@ -64,11 +71,12 @@ type SandpackProps = {
   version?: string;
   title?: React.ReactNode;
   autorun?: boolean;
+  size: 'default' | 'md' | 'lg';
   setup?: SandpackSetup;
 };
 
 function Sandpack(props: SandpackProps) {
-  const { children, setup, autorun = true, title } = props;
+  const { children, setup, autorun = true, title, size } = props;
   // console.log(props);
   const [resetKey, setResetKey] = React.useState(0);
 
@@ -211,6 +219,9 @@ function Sandpack(props: SandpackProps) {
       >
         <CustomPreset
           title={title}
+          defaultHeight={
+            size === 'default' || !size ? undefined : size === 'md' ? 650 : 850
+          }
           description={description}
           isSingleFile={false}
           onReset={() => {

@@ -35,7 +35,7 @@ import {
   InfiniteTablePropPivotTotalColumnPosition,
 } from './InfiniteTableState';
 
-import { InfiniteTableState } from '.';
+import { InfiniteTableRowInfo, InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
 import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
@@ -114,6 +114,7 @@ export type InfiniteTableColumnType<T> = {
   sortable?: InfiniteTableColumn<T>['sortable'];
   resizable?: InfiniteTableColumn<T>['resizable'];
   align?: InfiniteTableColumn<T>['align'];
+  headerAlign?: InfiniteTableColumn<T>['headerAlign'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
   contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
@@ -754,3 +755,16 @@ export type Scrollbars = {
 };
 
 export type ScrollAdjustPosition = 'start' | 'end' | 'center';
+
+export type InfiniteColumnEditorContextType<T> = {
+  api: InfiniteTableApi<T>;
+  initialValue: any;
+  value: any;
+  readOnly: boolean;
+  column: InfiniteTableComputedColumn<T>;
+  rowInfo: InfiniteTableRowInfo<T>;
+  setValue: (value: any) => void;
+  confirmEdit: InfiniteTableApi<T>['confirmEdit'];
+  cancelEdit: InfiniteTableApi<T>['cancelEdit'];
+  rejectEdit: InfiniteTableApi<T>['rejectEdit'];
+};

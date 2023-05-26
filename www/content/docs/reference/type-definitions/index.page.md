@@ -61,6 +61,30 @@ Valid types for this prop are:
 
 </Prop>
 
+<Prop  name="InfiniteColumnEditorContextType" generic>
+
+> The type for the object you get back when you call <HookLink name="useInfiniteColumnEditor" />
+
+These are the type properties:
+
+ - `api`: [`InfiniteTableApi`](/docs/reference/api) - the api object.
+ - `initialValue`: `any` - the initial value for the editor.
+ - `value`: `any` - the current value for the editor. Initially will be the same as `initialValue`. If you use this value, then your editor is "controlled", so make sure that when the editor is changed, you call the `setValue` function with the new value.
+ - `setValue`: `(value: any) => void` - should be called to update the value in the cell editor. Calling this does not complete the edit.
+ - `confirmEdit`: a reference to <ApiLink name="confirmEdit"  code={false}>InfiniteTableApi.confirmEdit</ApiLink>. If you have called `setValue` while editing (meaning your editor was controlled), you don't have to pass any parameters to this function. - the last value of the editor will be used. If your editor is uncontrolled and you haven't called `setValue`, you need to call `confirmEdit` with the value that you want to confirm for the edit.
+ 
+ - `cancelEdit`: a reference to <ApiLink name="cancelEdit" code={false}>InfiniteTableApi.cancelEdit</ApiLink>. Call this to cancel the edit and close the editor. Doesn't require any parameters.
+ - `rejectEdit`: a reference to <ApiLink name="rejectEdit" code={false}>InfiniteTableApi.rejectEdit</ApiLink>. Call this to reject the edit and close the editor. You can pass an `Error` object when calling this function to specify the reason for the rejection.
+- `readOnly`: `boolean` - whether the cell is read-only or not.
+
+<Note>
+
+Inside the <HookLink name="useInfiniteColumnEditor" /> hook, you can still call <HookLink name="useInfiniteColumnCell" /> to get access to the cell-related information.
+
+</Note>
+
+</Prop>
+
 <Prop name="DataSourceGroupBy" generic>
 
 > The type for the objects in the <DPropLink name="groupBy" /> array. See related <TypeLink name="DataSourcePropGroupBy" />

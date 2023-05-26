@@ -25,7 +25,35 @@ For API on row/group selection, see the [Selection API page](./selection-api).
 
 <PropTable sort searchPlaceholder="Type to filter API methods">
 
-<Prop name="clearColumnFilter" type="(columnId: string) =>void">
+<Prop name="confirmEdit" type="(value?: any) => void">
+
+> Confirms the current edit operation and closes the editor.
+
+If the `value` parameter is provided, it will be used as the value the cell will be updated with. If the `value` parameter is not provided, the current value of the cell will be used.
+
+See related <ApiLink name="cancelEdit" /> and <ApiLink name="rejectEdit" />.
+
+</Prop>
+
+<Prop name="cancelEdit" type="() => void">
+
+> Cancels the current edit operation and closes the editor.
+
+See related <ApiLink name="confirmEdit" /> and <ApiLink name="rejectEdit" />.
+
+</Prop>
+
+<Prop name="rejectEdit" type="(error: Error) => void">
+
+> Rejects the current edit operation with the specified error and closes the editor.
+
+The error will later be available to the <PropLink name="columns.renderValue" /> callback prop, via the parameter of the function (also applicable for related functions that are called with same the same parameter).
+
+See related <ApiLink name="confirmEdit" /> and <ApiLink name="cancelEdit" />.
+
+</Prop>
+
+<Prop name="clearColumnFilter" type="(columnId: string) => void">
 
 > Clears any filter for the specified column
 

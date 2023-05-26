@@ -64,8 +64,14 @@ const CustomEditor = () => {
 };
 ```
 
+<Note>
 
-<Sandpack title="Using a custom editor">
+Inside any custom editor component, you can use the <HookLink name="useInfiniteColumnCell"/> hook to get access to the cell-related information.
+
+</Note>
+
+
+<Sandpack title="Using a custom editor" >
 
 <Description>
 
@@ -75,6 +81,25 @@ In this example, the `salary` column is configured with a custom editor componen
 
 
 ```ts file="custom-editor-example.page.tsx"
+```
+
+</Sandpack>
+
+
+## Using Custom Date Editors
+
+A common use-case is integrating date editors, so in the following example we'll use the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) component.
+
+<Sandpack size="lg" title="Using MUI X Date Picker for editing dates in the DataGrid" deps="@emotion/react,@emotion/styled,@mui/material,@mui/x-date-pickers,dayjs">
+
+<Description>
+
+This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** column to show the date picker.
+
+</Description>
+
+
+```ts file="date-editor-example.page.tsx"
 ```
 
 </Sandpack>

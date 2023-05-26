@@ -105,7 +105,7 @@ In the same logic, keep in mind that by default columns are also virtualized (co
 
 > Specifies whether columns are editable by default.
 
-To enable inline editing globally, you can use this boolean prop on the `InfiniteTable` component. It will enable the editing on all columns.
+To enable editing globally, you can use this boolean prop on the `InfiniteTable` component. It will enable the editing on all columns.
 
 Or you can be more specific and choose to make individual columns editable via the <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> prop.
 
@@ -325,9 +325,9 @@ The column components object can have either of the two following properties:
 - <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
 - <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
 
-- <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when inline editing is enabled for the column
+- <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when editing is enabled for the column
 
-See [inline editing docs](/docs/learn/editing/inline-editing).
+See [editing docs](/docs/learn/editing/overview).
 
 </Prop>
 
@@ -404,7 +404,7 @@ const ExampleCellComponent: React.FunctionComponent<
 
 <Prop name="columns.components.Editor">
 
-> Specifies a custom React component to use for the editor, when [inline editing](/docs/learn/editing/inline-editing) is enabled for the column.
+> Specifies a custom React component to use for the editor, when [editing](/docs/learn/editing/overview) is enabled for the column.
 
 The editor component should use the <HookLink name="useInfiniteColumnEditor"/> hook to have access to cell-related information and to confirm, cancel or reject the edit.
 
@@ -1537,7 +1537,7 @@ A column can either be flexible or fixed. For flexible columns, use <PropLink na
 
 <Prop name="columnTypes" type="Record<string,InfiniteTableColumnType>">
 
-> Specifies an object that maps column type ids to column types. Column types are used to apply the same configuration/properties to multiple columns.
+> Specifies an object that maps column type ids to column types. Column types are used to apply the same configuration/properties to multiple columns. See related <PropLink name="columns.type" />
 
 <Note>
 By default, all columns have the `default` column type applied. So, if you define the `default` column type, but don't specify any <PropLink name="columns.type">type</PropLink> for a column, the default column type properties will be applied to that column.
@@ -1546,31 +1546,53 @@ By default, all columns have the `default` column type applied. So, if you defin
 The following properties are currently supported for defining a column type:
 
 - `align` - See <PropLink name="columns.align" />
+- `components` - See <PropLink name="columns.components" />
 - `cssEllipsis` - See <PropLink name="columns.cssEllipsis" />
-- `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
+- `defaultEditable` - See <PropLink name="columns.defaultEditable" />
 - `defaultFlex` - default flex value (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultFlex" />
-- `header` - See <PropLink name="columns.header" />
+- `defaultWidth` - default width (uncontrolled) for the column(s) this column type will be applied to. See <PropLink name="column.defaultWidth" />
+- `getValueToEdit` - See <PropLink name="columns.getValueToEdit" />
+- `getValueToPersist` - See <PropLink name="columns.getValueToPersist" />
+- `headerAlign` - See <PropLink name="columns.headerAlign" />
 - `headerCssEllipsis` - See <PropLink name="columns.headerCssEllipsis" />
-- `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
+- `headerStyle` - See <PropLink name="columns.headerStyle" />
+- `header` - See <PropLink name="columns.header" />
 - `maxWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.maxWidth" />
-- `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
+- `minWidth` - minimum width for the column(s) this column type will be applied to. See <PropLink name="column.minWidth" />
+- `renderMenuIcon` - See <PropLink name="columns.renderMenuIcon" />
+- `renderSortIcon` - See <PropLink name="columns.renderSortIcon" />
 - `renderValue` - See <PropLink name="columns.renderValue" />
-- `valueGetter` - See <PropLink name="columns.valueGetter" />
-- `valueFormatter` - See <PropLink name="columns.valueFormatter" />
-- `verticalAlign` - See <PropLink name="columns.verticalAlign" />
+- `render` - render function for the column(s) this column type will be applied to. See <PropLink name="column.render" />
+- `shouldAcceptEdit` - See <PropLink name="columns.shouldAcceptEdit" />
 - `sortable` - See <PropLink name="columns.sortable" />
 - `style` - See <PropLink name="columns.style" />
-- `headerStyle` - See <PropLink name="columns.headerStyle" />
-- `components` - See <PropLink name="columns.components" />
-- `shouldAcceptEdit` - See <PropLink name="columns.shouldAcceptEdit" />
-- `getValueToPersist` - See <PropLink name="columns.getValueToPersist" />
-- `getValueToEdit` - See <PropLink name="columns.getValueToEdit" />
+- `valueFormatter` - See <PropLink name="columns.valueFormatter" />
+- `valueGetter` - See <PropLink name="columns.valueGetter" />
+- `verticalAlign` - See <PropLink name="columns.verticalAlign" />
 
 <Note>
 When any of the properties defined in a column type are also defined in a column (or in column sizing/pinning,etc), the later take precedence so the properties in column type are not applied.
 
 The only exception to this rule is the <PropLink name="columns.components">components</PropLink> property, which is merged from column types into the column.
 </Note>
+
+
+<Sandpack size="lg" title="Using MUI X Date Picker with custom 'date' type columns" deps="@emotion/react,@emotion/styled,@mui/material,@mui/x-date-pickers,dayjs">
+
+<Description>
+
+This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired**  columns to show the date picker.
+
+This example uses the <PropLink name="columnTypes" code={false}>column types</PropLink> to give each date column the same editor and styling.
+
+</Description>
+
+
+```ts file="$DOCS/learn/editing/column-types-date-editor-example.page.tsx"
+```
+
+</Sandpack>
+
 
 </Prop>
 

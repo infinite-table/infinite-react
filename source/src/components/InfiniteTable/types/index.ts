@@ -48,11 +48,13 @@ import type {
   InfiniteTablePropGetColumnMenuItems,
   InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableColumnApi,
+  InfiniteColumnEditorContextType,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
 export type {
   Scrollbars,
+  InfiniteColumnEditorContextType,
   InfiniteTableColumnValueGetterParams,
   InfiniteTablePropHeaderOptions,
   InfiniteTablePropAutoSizeColumnsKey,

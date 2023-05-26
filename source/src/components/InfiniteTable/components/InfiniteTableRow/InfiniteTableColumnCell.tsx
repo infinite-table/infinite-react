@@ -9,6 +9,7 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
+import { InfiniteColumnEditorContextType } from '../../types';
 
 import type {
   InfiniteTableColumnRenderParam,
@@ -500,13 +501,15 @@ export function useInfiniteColumnCell<T>() {
   return result;
 }
 
-export function useInfiniteColumnEditor<T>() {
+export function useInfiniteColumnEditor<
+  T,
+>(): InfiniteColumnEditorContextType<T> {
   const {
     api,
     state: { editingValueRef, editingCell },
   } = useInfiniteTable<T>();
 
-  const { column, rowInfo } = useInfiniteColumnCell();
+  const { column, rowInfo } = useInfiniteColumnCell<T>();
 
   const [initialValue] = React.useState(() => editingCell?.value);
   const [currentValue, setCurrentValue] = React.useState(initialValue);

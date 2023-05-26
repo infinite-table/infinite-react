@@ -196,12 +196,16 @@
   },
   {
     "title": "Editing",
-    "path": "/docs/learn/editing/inline-editing",
+    "path": "/docs/learn/editing/overview",
     "transient": true,
     "routes": [
       {
-        "title": "Inline Editing",
-        "path": "/docs/learn/editing/inline-editing"
+        "title": "Overview",
+        "path": "/docs/learn/editing/overview"
+      },
+      {
+        "title": "Using Column Editors",
+        "path": "/docs/learn/editing/column-editors"
       },
       {
         "title": "Editing Flow",

@@ -33,6 +33,7 @@ interface PropProps {
   hidden?: boolean;
   highlight?: boolean;
   defaultValue?: string | number | boolean | null | undefined;
+  onPropExpand?: (name: string, hash: string) => void;
 }
 
 export const PropLink = ({
@@ -270,6 +271,7 @@ export function Prop({
   hidden,
   highlight,
   excerpt,
+  onPropExpand,
   type,
 }: PropProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -292,6 +294,7 @@ export function Prop({
 
   const expanded = isExpanded && hasDetails;
 
+  const theId = (name || '').replaceAll('.', '-');
   return (
     <div
       className={cn(
@@ -308,11 +311,7 @@ export function Prop({
         <div className="flex-1 flex flex-col w-full">
           <div className="flex flex-row w-full items-center flex-wrap ">
             {/* The pt and mt hack is for when there's anchor navigation, in order to accomodate for the fixed navbar and search field */}
-            <H4
-              as="h2"
-              id={(name || '').replaceAll('.', '-')}
-              className="pt-[80px] mt-[-80px]"
-            >
+            <H4 as="h2" id={theId} className="pt-[80px] mt-[-80px]">
               <IconCodeBlock className="inline mr-2 text-brand" />
               {name}
               {generic ? (
@@ -355,7 +354,22 @@ export function Prop({
             <Button
               active
               className={cn('inline-block self-start')}
-              onClick={() => setIsExpanded((current) => !current)}
+              onClick={() =>
+                setIsExpanded((current) => {
+                  const expanded = !current;
+
+                  if (expanded) {
+                    if (window.history && window.history.pushState) {
+                      window.history.pushState(null, '', `#${theId}`);
+                    } else {
+                      window.location.hash = theId;
+                    }
+                    onPropExpand?.(name, theId);
+                  }
+
+                  return expanded;
+                })
+              }
             >
               <span className="mr-1">
                 <IconChevron displayDirection={isExpanded ? 'up' : 'down'} />
@@ -490,6 +504,9 @@ export function PropTable({
         //@ts-ignore
         hidden,
         highlight,
+        onPropExpand: (_name: string, hash: string) => {
+          setHash(hash);
+        },
       });
     }
 
@@ -552,7 +569,6 @@ export function PropTable({
         onClick={() => {
           resetSearch('');
 
-          console.log('clearing hash!!!');
           window.location.hash = '';
           inputRef.current!.focus();
         }}

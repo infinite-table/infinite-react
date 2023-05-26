@@ -23,6 +23,7 @@ import {
   TocHeading,
 } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
+import { redirect } from 'next/navigation';
 
 export async function generateStaticParams() {
   const result = allDocsPages
@@ -74,6 +75,12 @@ export default function DocsPage({
 
   const pageIndex = allDocsPages.findIndex((page) => page.url === path);
   const page = allDocsPages[pageIndex] ?? page404;
+
+  if (page && page.redirect_to) {
+    const redirect_to = page.redirect_to;
+
+    redirect(redirect_to);
+  }
 
   let sidebar: RouteItem[] = sidebarLearn;
   let anchors: TocHeading[] = [];

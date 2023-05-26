@@ -13,6 +13,7 @@
 /docs/learn/filtering/writing-custom-filter-editors /docs/learn/filtering/providing-a-custom-filter-editor
 /docs/learn/getting-started/full-demo /full-demo
 /docs/learn/working-with-data/sorting /docs/learn/sorting/overview
+/docs/learn/editing/inline-editing /docs/learn/editing/overview
 
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat

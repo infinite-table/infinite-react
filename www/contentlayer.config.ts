@@ -73,6 +73,9 @@ const pageFields: FieldDefs = {
     type: 'string',
     description: 'The metadata title of the post',
   },
+  redirect_to: {
+    type: 'string',
+  },
 };
 const pageComputedFields: ComputedFields<string> = {
   url: {
