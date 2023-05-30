@@ -4,11 +4,11 @@ import {
   DataSourcePropAggregationReducers,
   GroupRowsState,
   InfiniteTable,
-  InfiniteTableColumnRenderParam,
   InfiniteTableGroupColumnBase,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumn,
   InfiniteTableColumnRowspanParam,
+  InfiniteTableColumnCellContextType,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -214,7 +214,7 @@ const createGroupColumn =
 
     if (arg.groupByForColumn?.field === 'day') {
       return {
-        render(param: InfiniteTableColumnRenderParam<Transaction>) {
+        render(param: InfiniteTableColumnCellContextType<Transaction>) {
           const { value, rowInfo } = param;
           if (
             rowInfo.isGroupRow &&
