@@ -546,6 +546,9 @@ export interface InfiniteTableProps<T> {
 
   columnPinning?: InfiniteTablePropColumnPinning;
   defaultColumnPinning?: InfiniteTablePropColumnPinning;
+  onColumnPinningChange?: (
+    columnPinning: InfiniteTablePropColumnPinning,
+  ) => void;
 
   columnSizing?: InfiniteTablePropColumnSizing;
   defaultColumnSizing?: InfiniteTablePropColumnSizing;

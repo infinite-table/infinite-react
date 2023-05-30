@@ -24,10 +24,12 @@ const defaultColumnPinning: InfiniteTablePropColumnPinning = {
 (globalThis as any).calls = [];
 
 const App = () => {
-  const [columnPinning, _setColumnPinning] =
+  const [columnPinning, setColumnPinning] =
     useState<InfiniteTablePropColumnPinning>(defaultColumnPinning);
+
   return (
     <React.StrictMode>
+      <pre style={{ color: 'magenta' }}>{JSON.stringify(columnPinning)}</pre>
       <DataSource<Car> primaryKey="id" data={rowData}>
         <InfiniteTable<Car>
           domProps={{
@@ -42,6 +44,7 @@ const App = () => {
           pinnedStartMaxWidth={500}
           pinnedEndMaxWidth={500}
           columnPinning={columnPinning}
+          onColumnPinningChange={setColumnPinning}
           onReady={({ api }: { api: InfiniteTableApi<Car> }) => {
             (globalThis as any).api = api;
           }}
