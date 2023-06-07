@@ -337,7 +337,13 @@ export function getRawValueForCell<T>(
   const groupBy = dataSourceHasGrouping ? rowInfo.groupBy : undefined;
 
   let value =
-    isGroupRow && groupBy && column.groupByForColumn
+    isGroupRow &&
+    groupBy &&
+    column.groupByForColumn &&
+    // if this is a multi-group column we're good
+    (Array.isArray(column.groupByForColumn) ||
+      // or it has to be a group column for the current group row
+      column.groupByForColumn === groupBy[groupBy.length - 1])
       ? rowInfo.value
       : isColumnWithField(column)
       ? data?.[column.field]

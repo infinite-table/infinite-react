@@ -976,7 +976,10 @@ function getEnhancedGroupData<DataType>(
         const reducer = reducers[key];
 
         const field = reducer.field as keyof DataType;
-        if (field) {
+        if (field && data[field] == null) {
+          // we might have an aggregation for an already existing groupBy.field - in that case, data[field] is not null
+          // so we don't want to reassign it - see https://github.com/infinite-table/infinite-react/issues/170
+          // the fix for this issue was to add the if(data[field] == null) check
           data[field] = reducerResults[key] as any;
         }
       }

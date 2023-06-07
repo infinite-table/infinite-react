@@ -411,8 +411,8 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     const rowIndex = index ?? dataSourceApi.getIndexByPrimaryKey(primaryKey);
 
     const column = computedColumnsMap.get(columnId);
-    const id = dataSourceApi.getPrimaryKeyByIndex(rowIndex);
-    const rowInfo = dataSourceApi.getRowInfoByIndex(id);
+    const rowInfo = dataSourceApi.getRowInfoByIndex(rowIndex);
+    const id = rowInfo?.id;
 
     if (!rowInfo || !column) {
       if (!column) {
