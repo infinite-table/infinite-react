@@ -572,10 +572,10 @@ export interface InfiniteTableProps<T> {
 
   showSeparatePivotColumnForSingleAggregation?: boolean;
 
-  rowHeight: number | string;
+  rowHeight?: number | string;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
-  columnHeaderHeight: number | string;
+  columnHeaderHeight?: number | string;
 
   onKeyDown?: (
     context: InfiniteTablePublicContext<T> & {

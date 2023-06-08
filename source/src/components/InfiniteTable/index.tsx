@@ -205,6 +205,7 @@ export const InfiniteTableComponent = React.memo(
           componentState.id,
           componentState.ready,
           context.api,
+          context,
         );
       }
 
