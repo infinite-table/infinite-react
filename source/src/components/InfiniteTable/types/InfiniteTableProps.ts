@@ -563,7 +563,7 @@ export interface InfiniteTableProps<T> {
 
   onScrollbarsChange?: (scrollbars: Scrollbars) => void;
 
-  // TODO P1 clarify columnVisibility as object only
+  // TODO P1 clarify columnVisibility as object only!
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
