@@ -512,7 +512,7 @@ export interface InfiniteTableProps<T> {
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition?: InfiniteTablePropPivotGrandTotalColumnPosition;
 
-  groupColumn?: Partial<InfiniteTablePropGroupColumn<T>>;
+  groupColumn?: InfiniteTablePropGroupColumn<T>;
   groupRenderStrategy?: InfiniteTablePropGroupRenderStrategy;
   hideEmptyGroupColumns?: boolean;
 

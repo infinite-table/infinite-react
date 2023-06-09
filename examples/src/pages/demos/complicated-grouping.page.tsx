@@ -226,7 +226,7 @@ const createGroupColumn =
         },
       } as Partial<InfiniteTableGroupColumnBase<Transaction>>;
     }
-    return arg.groupByForColumn;
+    return arg.groupByForColumn || {};
   };
 
 const defaultGroupRowsState = new GroupRowsState({

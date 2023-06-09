@@ -293,11 +293,15 @@ export type ColLocation =
       colId?: string;
     }
   | string;
+
+export type RowLocation = {
+  rowIndex: number;
+};
 export type CellLocation = {
   colIndex?: number;
   colId?: string;
-  rowIndex: number;
-};
+} & RowLocation;
+
 const getColSelector = (colLocation: ColLocation) => {
   if (typeof colLocation === 'string') {
     colLocation = { colId: colLocation };

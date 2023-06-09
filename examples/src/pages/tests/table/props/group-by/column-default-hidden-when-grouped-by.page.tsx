@@ -99,14 +99,10 @@ export default function GroupByExample() {
               position: 'relative',
             },
           }}
-          groupColumn={({
-            groupByForColumn,
-          }: {
-            groupByForColumn: { field: keyof Employee };
-          }) => {
+          groupColumn={({ groupByForColumn }) => {
             return {
               defaultWidth: 200,
-              header: `Group by ${groupByForColumn.field}`,
+              header: `Group by ${groupByForColumn?.field}`,
             };
           }}
           columnDefaultWidth={100}

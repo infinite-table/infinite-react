@@ -599,13 +599,53 @@ The objects in this array have the following shape:
 Each item in the array can have the following properties:
 
 - field - `keyof DATA_TYPE`
-- column - config object for the group <PropLink name="column">column</PropLink>.
+- column - config object for the group <PropLink name="column">column</PropLink> - see <DPropLink name="groupBy.column" />.
+
+<Note>
+
+When using <PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="multi-column"</PropLink>, it can be very useful for each group to configure it's own column - use <DPropLink name="groupBy.column" /> for this.
+</Note>
 
 See <TypeLink name="DataSourcePropGroupBy" /> for the type definition.
 
 <Sandpack>
 
 ```ts file="groupBy-example.page.tsx"
+
+```
+
+```ts file="columns.ts"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="groupBy.column" type="Partial<InfiniteTableColumn<T>>">
+
+> An object that configures how the column for the current group should look like
+
+If <PropLink name="groupColumn"/> is specified, it overrides this property (the objects actually get merged, with `groupColumn` having higher priority and being merged last).
+
+<Note>
+
+If you are using a <PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="single-column"</PropLink>, then using  `groupBy.column` should not be used, as you could have many groups with conflicting column configuration. 
+
+In this case, use the <PropLink name="groupColumn"/> prop.
+
+</Note>
+
+
+<Sandpack>
+
+<Description>
+
+This example uses `groupBy.column` to configure the generated columns corresponding to each group.
+
+</Description>
+
+```ts file="groupBy-multi-with-column-example.page.tsx"
 
 ```
 

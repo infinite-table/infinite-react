@@ -4,6 +4,7 @@ import { HeaderTestingModel } from '@examples/pages/tests/testUtils/HeaderTestin
 import { InfiniteTableApiModel } from '@examples/pages/tests/testUtils/InfiniteTableApiModel';
 import { MenuTestingModel } from '@examples/pages/tests/testUtils/MenuTestingModel';
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
+import { TableTestingModel } from '@examples/pages/tests/testUtils/TableTestingModel';
 import {
   test as base,
   expect,
@@ -39,6 +40,7 @@ export const test = base.extend<
       columnModel: ColumnTestingModel;
       menuModel: MenuTestingModel;
       apiModel: InfiniteTableApiModel;
+      tableModel: TableTestingModel;
     }
 >({
   //@ts-ignore
@@ -101,6 +103,10 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
   },
   columnModel: async ({ page }, use) => {
     await use(ColumnTestingModel.get(page));
+  },
+
+  tableModel: async ({ page }, use) => {
+    await use(TableTestingModel.get(page));
   },
   menuModel: async ({ page }, use) => {
     await use(MenuTestingModel.get(page));

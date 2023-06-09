@@ -188,14 +188,10 @@ export default function GroupByExample() {
               position: 'relative',
             },
           }}
-          groupColumn={({
-            groupBy,
-          }: {
-            groupBy: DataSourceGroupBy<Employee>;
-          }) => {
+          groupColumn={({ groupByForColumn }) => {
             return {
               // width: 300,
-              header: `Group ${groupBy?.field}`,
+              header: `Group ${groupByForColumn?.field}`,
             };
           }}
           columnDefaultWidth={100}

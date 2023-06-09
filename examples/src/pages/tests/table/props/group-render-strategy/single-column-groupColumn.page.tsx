@@ -20,9 +20,17 @@ const domProps = {
 const groupBy: DataSourceGroupBy<Person>[] = [
   {
     field: 'department',
+    column: {
+      style: {
+        color: 'blue',
+      },
+    },
   },
   {
     field: 'team',
+  },
+  {
+    field: 'country',
   },
 ];
 
@@ -47,9 +55,26 @@ export default function GroupRenderStrategyInline() {
     <DataSource<Person> primaryKey="id" data={data} groupBy={groupBy}>
       <InfiniteTable<Person>
         domProps={domProps}
+        groupColumn={({}) => {
+          return {
+            header: 'The Group Column',
+            id: 'the-group',
+            style: ({ rowInfo }) => {
+              if (rowInfo.isGroupRow && rowInfo.groupNesting === 2) {
+                return {
+                  color: 'rgb(0, 255, 0)',
+                };
+              }
+
+              return {
+                color: 'red',
+              };
+            },
+          };
+        }}
         columns={columns}
-        columnDefaultWidth={280}
-        groupRenderStrategy={'multi-column'}
+        columnDefaultWidth={140}
+        groupRenderStrategy={'single-column'}
       ></InfiniteTable>
     </DataSource>
   );

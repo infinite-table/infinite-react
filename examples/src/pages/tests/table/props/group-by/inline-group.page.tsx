@@ -57,7 +57,7 @@ const reducers: DataSourcePropAggregationReducers<Person> = {
 // ];
 
 const groupColumn = {
-  width: 300,
+  defaultWidth: 300,
 };
 
 const groupRowsState = new GroupRowsState({

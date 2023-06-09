@@ -488,11 +488,6 @@ export function getColumnsWhenGrouping<T>(params: {
       computedColumns.set(groupColumnId, generatedGroupColumn);
     });
   } else if (groupRenderStrategy === 'single-column' && groupBy.length) {
-    // } else if (
-    //   (groupRenderStrategy === 'single-column' ||
-    //     groupRenderStrategy === 'single-column-extended') &&
-    //   groupBy.length
-    // ) {
     const singleGroupColumn = getSingleGroupColumn(
       {
         groupCount: groupBy.length,

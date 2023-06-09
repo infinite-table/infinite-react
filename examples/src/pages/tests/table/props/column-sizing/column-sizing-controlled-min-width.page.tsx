@@ -38,14 +38,19 @@ export default function App() {
 
   return (
     <>
-      <p>
+      <div>
         Current column sizing:{' '}
-        <code>
+        <code style={{ color: 'tomato' }}>
           <pre>{JSON.stringify(columnSizing, null, 2)}</pre>
         </code>
-      </p>
+      </div>
       <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
+          domProps={{
+            style: {
+              height: 600,
+            },
+          }}
           columns={columns}
           columnDefaultWidth={50}
           columnSizing={columnSizing}

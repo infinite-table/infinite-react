@@ -140,7 +140,7 @@ export default function GroupByExample() {
           }}
           groupColumn={{
             header: 'group col',
-            width: 200,
+            defaultWidth: 200,
             renderValue: ({ value }) => {
               return <>{value}!</>;
             },

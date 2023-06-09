@@ -228,16 +228,17 @@ export function getColumnForGroupBy<T>(
     options;
 
   let userDefinedGroupColumn: Partial<InfiniteTableColumn<T>> =
-    typeof groupColumnFromProps === 'function'
-      ? groupColumnFromProps(options, toggleGroupRow)
-      : { ...groupColumnFromProps };
+    groupByForColumn.column ? { ...groupByForColumn.column } : {};
+  // typeof groupColumnFromProps === 'function'
+  //   ? groupColumnFromProps(options, toggleGroupRow)
+  //   : { ...groupColumnFromProps };
 
-  if (groupByForColumn.column) {
-    userDefinedGroupColumn = {
-      ...userDefinedGroupColumn,
-      ...groupByForColumn.column,
-    };
-  }
+  // if (groupByForColumn.column) {
+  //   userDefinedGroupColumn = {
+  //     ...userDefinedGroupColumn,
+  //     ...groupByForColumn.column,
+  //   };
+  // }
 
   let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
     header: `Group by ${groupByForColumn.field || groupByForColumn.groupField}`,
@@ -297,7 +298,7 @@ export function getSingleGroupColumn<T>(
       groupIndexForColumn: 0,
       groupRenderStrategy: 'single-column',
     }),
-    ...groupColumnFromProps,
+    ...theGroupColumnFromProps,
     renderGroupIcon: getGroupColumnRenderGroupIcon({
       initialRenderGroupIcon: theGroupColumnFromProps?.renderGroupIcon,
       groupIndexForColumn: 0,

@@ -16,11 +16,18 @@ const groupBy: DataSourcePropGroupBy<Employee> = [
   {
     field: 'country',
     column: {
-      id: 'country-group',
-      renderValue: ({ data, isGroupRow, value }) =>
-        isGroupRow ? value : <>Country: {data?.country}!</>,
+      header: 'Country grouping',
       style: {
         color: 'tomato',
+      },
+    },
+  },
+  {
+    field: 'city',
+    column: {
+      field: 'firstName',
+      style: {
+        color: 'green',
       },
     },
   },

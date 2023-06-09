@@ -2020,7 +2020,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 <Prop name="groupColumn" type="InfiniteTableColumn|(colInfo, toggleGroupRow) => InfiniteTableColumn">
 
-> Allows you to define a custom configuration for one or multiple group columns.
+> Allows you to define a custom configuration for one or multiple group columns. When this prop is defined, it gets merged onto any values specified in the <DPropLink name="groupBy.column" /> property.
 
 If this is an object and no explicit <PropLink name="groupRenderStrategy" /> is specified, the component is rendered as if you had <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>.
 
@@ -2030,8 +2030,8 @@ If it's a function, it will be called with the following arguments:
 - `colInfo.groupCount` - the count of row groups
 - `colInfo.groupBy` - the array of row groups, used by the `DataSource` to do the grouping
 - `colInfo.groupRenderStrategy` - the current <PropLink name="groupRenderStrategy" code={false}>render strategy for groups</PropLink>.
-- `colInfo.groupByForColumn` - the grouping object (one of the items in `colInfo.groupBy`) corresponding to the current column.
-- `colInfo.groupIndexForColumn` - the index of `colInfo.groupByForColumn` in `colInfo.groupBy` - corresponding to the current column.
+- `colInfo.groupByForColumn` - the grouping object (one of the items in `colInfo.groupBy`) corresponding to the current column. Only defined when `groupRenderStrategy` is `multi-column`.
+- `colInfo.groupIndexForColumn` - the index of `colInfo.groupByForColumn` in `colInfo.groupBy` - corresponding to the current column. Only defined when `groupRenderStrategy` is `multi-column`.
 - `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
 
 <Gotcha>

@@ -40,7 +40,9 @@ export default defineConfig({
   external: ['react', 'react-dom'],
   /**
    * tsup is a LOT more aggresive than esbuild in terms of externalizing dependencies.
-   * This is a workaround to prevent it from not bundling the dependencies that need to be included in the bundle
+   * This is a workaround to prevent it from not bundling the dependencies that need to be included in the bundle.
+   * That is tsup was not including the dependencies that are used in the codebase, so we need to prevent this behavior and instead
+   * include all dependencies in the bundle.
    */
   noExternal: Object.keys(dependencies),
   onSuccess: async () => {
