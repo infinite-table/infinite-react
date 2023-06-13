@@ -89,8 +89,8 @@ export class TableTestingModel {
       clickHeader: async () => {
         await this.headerModel.clickColumnHeader(colLocation);
       },
-      clickToSort: async () => {
-        await this.headerModel.clickToSortColumn(colLocation);
+      clickToSort: async ({ ctrlKey } = { ctrlKey: false }) => {
+        await this.headerModel.clickToSortColumn(colLocation, { ctrlKey });
         return;
       },
       getValues: async () => {

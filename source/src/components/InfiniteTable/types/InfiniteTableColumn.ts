@@ -22,6 +22,7 @@ import {
   InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnType,
+  InfiniteTablePropMultiSortBehavior,
   InfiniteTablePropOnEditAcceptedParams,
   InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis,
 } from './InfiniteTableProps';
@@ -560,7 +561,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedFirst: boolean;
   computedLast: boolean;
   computedEditable: NonUndefined<InfiniteTableColumn<T>['defaultEditable']>;
-  toggleSort: () => void;
+  toggleSort: (params?: {
+    multiSortBehavior: InfiniteTablePropMultiSortBehavior;
+  }) => void;
   colType: InfiniteTableColumnType<T>;
   id: string;
 };

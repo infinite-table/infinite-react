@@ -24,6 +24,7 @@ import {
   InfiniteTableApiStopEditParams,
   InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
+  InfiniteTablePropMultiSortBehavior,
   ScrollAdjustPosition,
 } from '../types/InfiniteTableProps';
 import { getColumnApiForColumn } from './getColumnApi';
@@ -507,7 +508,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
   }
 
-  setSortingForColumn(columnId: string, dir: SortDir | null) {
+  setSortingForColumn(
+    columnId: string,
+    dir: SortDir | null,
+    options?: {
+      multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
+    },
+  ) {
     const col = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!col) {
@@ -515,7 +522,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     if (dir === null) {
-      this.setSortInfoForColumn(columnId, null);
+      this.setSortInfoForColumn(columnId, null, options);
       return;
     }
 
@@ -539,7 +546,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         col.valueGetter!({ data, field: col.field });
     }
 
-    this.setSortInfoForColumn(columnId, sortInfo);
+    this.setSortInfoForColumn(columnId, sortInfo, options);
   }
 
   setPinningForColumn(
@@ -733,6 +740,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   setSortInfoForColumn(
     columnId: string,
     columnSortInfo: DataSourceSingleSortInfo<T> | null,
+    options?: {
+      multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
+    },
   ) {
     const dataSourceState = this.getDataSourceState();
     const col = this.getComputed().computedColumnsMap.get(columnId);
@@ -774,23 +784,41 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       return;
     }
 
-    newSortInfo = newSortInfo.map((sortInfo) => {
-      if (sortInfo.id) {
-        if (sortInfo.id === columnId) {
-          return columnSortInfo;
-        }
-        return sortInfo;
-      }
-      if (sortInfo.field) {
-        if (sortInfo.field === colField) {
-          return columnSortInfo;
-        }
-        return sortInfo;
-      }
+    let matched = false;
 
-      return sortInfo;
-    });
-    this.dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
+    const multiSortBehavior =
+      options?.multiSortBehavior ?? this.getState().multiSortBehavior;
+
+    if (multiSortBehavior === 'replace') {
+      this.dataSourceActions.sortInfo = [columnSortInfo];
+    } else {
+      newSortInfo = newSortInfo.map((sortInfo) => {
+        if (matched) {
+          return sortInfo;
+        }
+        if (sortInfo.id) {
+          if (sortInfo.id === columnId) {
+            matched = true;
+            return columnSortInfo;
+          }
+          return sortInfo;
+        }
+        if (sortInfo.field) {
+          if (sortInfo.field === colField) {
+            matched = true;
+            return columnSortInfo;
+          }
+          return sortInfo;
+        }
+
+        return sortInfo;
+      });
+
+      if (!matched) {
+        newSortInfo.push(columnSortInfo);
+      }
+      this.dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
+    }
   }
 
   setVisibilityForColumn(columnId: string, visible: boolean) {

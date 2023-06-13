@@ -49,6 +49,7 @@ import type {
   InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableColumnApi,
   InfiniteColumnEditorContextType,
+  InfiniteTablePropMultiSortBehavior,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
@@ -85,6 +86,7 @@ export type {
   InfiniteTablePropColumnGroups,
   InfiniteTablePropColumnSizing,
   InfiniteTableColumnSizingOptions,
+  InfiniteTablePropMultiSortBehavior,
   InfiniteTablePropGetColumnMenuItems,
   InfiniteTablePropGetCellContextMenuItems,
   InfiniteTableState,

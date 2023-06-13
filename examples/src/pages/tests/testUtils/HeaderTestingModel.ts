@@ -130,9 +130,14 @@ export class HeaderTestingModel {
     await this.getHeaderCellLocator(colLocation).locator('input').fill(value);
   }
 
-  async clickToSortColumn(colLocation: ColLocation) {
+  async clickToSortColumn(
+    colLocation: ColLocation,
+    { ctrlKey } = { ctrlKey: false },
+  ) {
     await this.getHeaderCellLocator(colLocation)
       .locator(CONTENT_SELECTOR)
-      .click();
+      .click({
+        modifiers: ctrlKey ? ['Control', 'Meta'] : [],
+      });
   }
 }

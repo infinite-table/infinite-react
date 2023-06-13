@@ -205,10 +205,11 @@ In the example above, remote and controlled sorting are combined - because `sort
 
 By default, all columns are sorted as strings, even if they contain numeric values. To make numeric columns sort as numbers, you need to specify <PropLink name="columns.dataType" code={false}>a `dataType` for the column</PropLink>, or, <PropLink name="columns.sortType" code={false}>a column `sortType`</PropLink>.
 
-There are two `dataType` values that can be used:
+There are 3 `dataType` values that can be used:
 
 - `"string"`
 - `"number"`
+- `"date"`
 
 Each dataType has its own sorting function and its own filtering operators & functions.
 
@@ -218,14 +219,16 @@ Sorting works in combination with the <PropLink name="sortTypes" /> property, wh
 const sortTypes = {
   string: (a, b) => a.localeCompare(b),
   number: (a, b) => a - b,
+  date: (a, b) => a - b,
 };
 ```
 
-Those are the two sort types supported by default.
+Those are the three sort types supported by default.
 
 <Note>
 
 The functions specified in the <PropLink name="sortTypes" /> object need to always sort data in ascending order.
+
 </Note>
 
 

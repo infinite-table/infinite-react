@@ -64,7 +64,7 @@ export const useColumnPointerEvents = ({
     getComputed,
     getState,
     api,
-    state: { domRef: rootRef, brain, headerBrain },
+    state: { domRef: rootRef, brain, headerBrain, multiSortBehavior },
   } = useInfiniteTable();
 
   const onPointerDown = useCallback(
@@ -229,7 +229,12 @@ export const useColumnPointerEvents = ({
         setProxyPosition(null);
 
         if (!didDragAtLeastOnce && dragColumn.computedSortable) {
-          dragColumn.toggleSort();
+          dragColumn.toggleSort({
+            multiSortBehavior:
+              multiSortBehavior === 'replace' && (e.ctrlKey || e.metaKey)
+                ? 'append'
+                : multiSortBehavior,
+          });
         }
 
         if (reorderDragResult) {

@@ -302,6 +302,8 @@ export const forwardProps = <T>(
     onEditPersistError: 1,
     onEditPersistSuccess: 1,
 
+    multiSortBehavior: (multiSortBehavior) => multiSortBehavior ?? 'replace',
+
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),
     columnGroups: (columnGroups) =>

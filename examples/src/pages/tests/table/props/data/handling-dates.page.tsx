@@ -57,6 +57,7 @@ export default function LocalUncontrolledSingleSortingExample() {
         ]}
       >
         <InfiniteTable<Developer>
+          multiSortBehavior="append"
           columns={columns}
           columnDefaultWidth={160}
           domProps={{

@@ -25,6 +25,7 @@ import type {
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
+  InfiniteTablePropMultiSortBehavior,
   InfiniteTableProps,
   InfiniteTablePropsEditable,
 } from '../types/InfiniteTableProps';
@@ -680,7 +681,13 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedLastInCategory,
       computedFirst: theComputedVisibleIndex === 0,
       computedLast,
-      toggleSort: () => {
+      toggleSort: (
+        {
+          multiSortBehavior,
+        }: { multiSortBehavior: InfiniteTablePropMultiSortBehavior } = {
+          multiSortBehavior: 'replace',
+        },
+      ) => {
         const currentSortInfo = computedSortInfo;
         let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
 
@@ -740,21 +747,26 @@ export const getComputedVisibleColumns = <T extends unknown>({
 
         let finalSortInfo = sortInfo ? [...sortInfo] : [];
         if (multiSort) {
-          if (computedSortIndex === -1) {
-            // it should be added to the end
-            if (newColumnSortInfo) {
-              finalSortInfo.push(newColumnSortInfo);
+          if (multiSortBehavior === 'append') {
+            if (computedSortIndex === -1) {
+              // it should be added to the end
+              if (newColumnSortInfo) {
+                finalSortInfo.push(newColumnSortInfo);
+              }
+            } else {
+              // it's an existing sort - so should be updated
+              finalSortInfo = finalSortInfo
+                .map((info, index) => {
+                  if (index === computedSortIndex) {
+                    return newColumnSortInfo;
+                  }
+                  return info;
+                })
+                .filter((x) => x != null) as DataSourceSingleSortInfo<T>[];
             }
           } else {
-            // it's an existing sort - so should be updated
-            finalSortInfo = finalSortInfo
-              .map((info, index) => {
-                if (index === computedSortIndex) {
-                  return newColumnSortInfo;
-                }
-                return info;
-              })
-              .filter((x) => x != null) as DataSourceSingleSortInfo<T>[];
+            // should replace current sort
+            finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];
           }
         } else {
           finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];

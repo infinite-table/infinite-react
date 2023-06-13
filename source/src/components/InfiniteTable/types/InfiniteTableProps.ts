@@ -488,6 +488,7 @@ export type InfiniteTablePropOnEditRejectedParams<T> =
 export type InfiniteTablePropOnEditPersistParams<T> =
   InfiniteTablePropOnEditAcceptedParams<T>;
 
+export type InfiniteTablePropMultiSortBehavior = 'append' | 'replace';
 export interface InfiniteTableProps<T> {
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTableColumnsMap<T, InfiniteTablePivotColumn<T>>;
@@ -619,6 +620,7 @@ export interface InfiniteTableProps<T> {
   showZebraRows?: boolean;
   showHoverRows?: boolean;
   sortable?: boolean;
+  multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
 
   keyboardNavigation?: InfiniteTablePropKeyboardNavigation;
   keyboardSelection?: InfiniteTablePropKeyboardSelection;

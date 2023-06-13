@@ -4,6 +4,7 @@ import { InfiniteTableComputedColumn } from '../types';
 import {
   InfiniteTableApi,
   InfiniteTableColumnApi,
+  InfiniteTablePropMultiSortBehavior,
 } from '../types/InfiniteTableProps';
 
 import { GetImperativeApiParam } from './type';
@@ -72,8 +73,12 @@ export function getColumnApiForColumn<T>(
       actions.columnMenuVisibleForColumnId = null;
     },
 
-    toggleSort() {
-      column.toggleSort();
+    toggleSort(
+      params: { multiSortBehavior: InfiniteTablePropMultiSortBehavior } = {
+        multiSortBehavior: 'replace',
+      },
+    ) {
+      column.toggleSort(params);
     },
 
     setFilter(value: any) {
