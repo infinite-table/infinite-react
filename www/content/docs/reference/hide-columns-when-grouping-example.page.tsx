@@ -43,7 +43,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const groupColumn = {
-  field: 'firstName',
+  field: 'firstName' as keyof Developer,
 };
 
 export default function App() {
