@@ -1,4 +1,4 @@
-import { defineConfig, Format } from 'tsup';
+import { defineConfig, Format, Options } from 'tsup';
 
 // @ts-ignore
 import packageJSON from './package.json';
@@ -26,7 +26,9 @@ async function processCss(css) {
 // CHANGE HERE TO ADD ESM AS WELL
 const FORMATS: Format[] = ['cjs', 'esm'];
 
-export default defineConfig({
+const MINIFY = false;
+
+export const tsupConfig: Options = {
   entry: ['./src/index.tsx'],
 
   tsconfig: './tsconfig.build.json',
@@ -34,9 +36,9 @@ export default defineConfig({
   splitting: false,
   sourcemap: false,
   format: FORMATS,
-  minify: true,
+  minify: MINIFY,
   bundle: true,
-  clean: true,
+  clean: MINIFY,
   external: ['react', 'react-dom'],
   /**
    * tsup is a LOT more aggresive than esbuild in terms of externalizing dependencies.
@@ -100,4 +102,6 @@ export default defineConfig({
       processCss,
     }),
   ],
-});
+};
+
+export default defineConfig(tsupConfig);
