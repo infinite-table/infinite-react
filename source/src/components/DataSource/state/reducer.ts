@@ -348,7 +348,7 @@ export function concludeReducer<T>(params: {
 
   if (shouldSort) {
     const prevKnownTypes = multisort.knownTypes;
-    multisort.knownTypes = state.sortTypes;
+    multisort.knownTypes = { ...prevKnownTypes, ...state.sortTypes };
 
     const sortFn = state.sortFunction || multisort;
 

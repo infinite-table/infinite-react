@@ -5,6 +5,7 @@ export interface Order {
   OrderCost: number;
   ShipCountry: string;
   ShipVia: string;
+  ShipDate: Date;
 }
 
 export const orders = [
@@ -15,6 +16,7 @@ export const orders = [
     OrderCost: 950.5,
     ShipVia: 'Federal Shipping',
     ShipCountry: 'Canada',
+    ShipDate: new Date(2020, 10, 24),
   },
   {
     OrderId: 20,
@@ -24,6 +26,7 @@ export const orders = [
     OrderCost: 717.21,
     ShipVia: 'United Package',
     ShipCountry: 'Germany',
+    ShipDate: new Date(2023, 5, 24),
   },
   {
     OrderId: 2,
@@ -32,6 +35,7 @@ export const orders = [
     OrderCost: 1009.71,
     ShipVia: 'Speedy Express',
     ShipCountry: 'Finland',
+    ShipDate: new Date(2021, 3, 4),
   },
   {
     OrderId: 3,
@@ -40,5 +44,6 @@ export const orders = [
     OrderCost: 760.76,
     ShipVia: 'United Package',
     ShipCountry: 'France',
+    ShipDate: new Date(2020, 10, 2),
   },
 ];
