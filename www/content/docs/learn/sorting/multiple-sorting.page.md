@@ -19,7 +19,7 @@ By default, if you don't specify otherwise, the DataGrid is configured with sing
 
 <Note>
 
-An empty array means no sorting. However, it does specify that sorting is configured as multiple sorting.
+An empty array means no sorting. However, it does specify that sorting is configured as multiple sorting, so it's useful to set it to `[]`
 
 </Note>
 
@@ -29,6 +29,11 @@ An empty array means no sorting. However, it does specify that sorting is config
 <Description>
 
 Try clicking the `age` column and then the `firstName` column.
+
+If the multi-sort behavior is `replace`, clicking the second column will remove the sort from the first column.
+In order for the sorting to be additive, even if the behavior is `replace`, use the `Ctrl`/`Cmd` key while clicking the column header.
+
+If the multi-sort behavior is `append`, clicking the second column will add it to the sort.
 
 </Description>
 
@@ -45,8 +50,8 @@ Try clicking the `age` column and then the `firstName` column.
 
 When `InfiniteTable` is configured with multiple sorting there are two supported behaviors:
 
-* `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
 * `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
+* `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
 
 <Note>
 
@@ -55,8 +60,6 @@ The behavior of multiple sorting is configured via the <PropLink name="multiSort
 ❗️❗️❗️ The <PropLink name="multiSortBehavior" /> prop is defined on the `InfiniteTable` component, not on the `DataSource` component - as it's the `InfiniteTable` that handles user interaction, even though the `DataSource` does the actual sorting.
 
 </Note>
-
-### Multi sort behavior - `replace`
 
 ### Multi sort behavior - `append`
 
@@ -72,6 +75,18 @@ The behavior of multiple sorting is configured via the <PropLink name="multiSort
 * user clicks another column - the new column is added to the sort, with ascending order and sort index `2`. The initial clicked column is still the sorted, and that sort is applied first. For equal values on column `1`, the sort by column `2` is applied.
 * user clicks column `2` again - the sort direction is reversed for the second column. So now the sort order is `1` ascending, `2` descending.
 * user clicks column `2` again - the column is removed from the sort. The sorting now only contains the first column, in ascending order.
+
+
+### Multi sort behavior - `replace`
+
+<Note>
+
+This is the <PropLink code={false} name="multiSortBehavior">default behavior</PropLink> for multiple sorting.
+</Note>
+
+In the `replace` behavior, clicking a column header will remove any existing sorting and set that specific column as sorted.
+
+In order to add a new column to the sort, the user needs to hold the `Ctrl`/`Cmd` key while clicking a column header. Holding the `Ctrl`/`Cmd` key while clicking a column header results in the same behavior as the `append`.
 
 ## Controlled and uncontrolled sorting
 
@@ -106,7 +121,7 @@ In this case, make sure you update the <DPropLink name="sortInfo" />  prop as a 
 
 <Description>
 
-This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. Click the `salary` column to toggle the column sort to descending. Clicking it a second time will remove it from the sort altogether.
+This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. `Ctrl`/`Cmd` + click the `salary` column to toggle the column sort to descending. `Ctrl`/`Cmd` clicking it a second time will remove it from the sort altogether.
 
 </Description>
 

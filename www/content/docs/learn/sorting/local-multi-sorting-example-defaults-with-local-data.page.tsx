@@ -41,25 +41,35 @@ export default function LocalUncontrolledSingleSortingExample() {
   >('replace');
   return (
     <>
-      <select
+      <div
         style={{
-          margin: '10px 0',
-          display: 'inline-block',
           background: 'var(--infinite-background)',
           color: 'var(--infinite-cell-color)',
-          padding: 'var(--infinite-space-3)',
-        }}
-        value={multiSortBehavior}
-        onChange={(event) => {
-          const multiSortBehavior = event.target
-            .value as InfiniteTablePropMultiSortBehavior;
-
-          setMultiSortBehavior(multiSortBehavior);
+          display: 'flex',
+          flexDirection: 'row',
         }}
       >
-        <option value="replace">replace</option>
-        <option value="append">append</option>
-      </select>
+        <p style={{ padding: 10 }}>Select the multi-sort behavior</p>
+        <select
+          style={{
+            margin: '10px 0',
+            display: 'inline-block',
+            background: 'var(--infinite-background)',
+            color: 'var(--infinite-cell-color)',
+            padding: 'var(--infinite-space-3)',
+          }}
+          value={multiSortBehavior}
+          onChange={(event) => {
+            const multiSortBehavior = event.target
+              .value as InfiniteTablePropMultiSortBehavior;
+
+            setMultiSortBehavior(multiSortBehavior);
+          }}
+        >
+          <option value="replace">replace</option>
+          <option value="append">append</option>
+        </select>
+      </div>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}

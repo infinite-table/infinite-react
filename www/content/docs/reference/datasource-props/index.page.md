@@ -1031,9 +1031,12 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 See related <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" />.
 
+
 When set to `'local'`, the data is sorted locally (in the browser) after the data-source is loaded. When set to `'remote'`, the data should be sorted by the server (or by the data-source function that serves the data).
 
 See [the Sorting page](/docs/learn/sorting/overview) for more details.
+
+For configuring the sorting behavior when multiple sorting is enabled, see <PropLink name="multiSortBehavior" />.
 
 </Prop>
 

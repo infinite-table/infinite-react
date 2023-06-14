@@ -2194,6 +2194,36 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 </Prop>
 
+<Prop name="multiSortBehavior" type="'append'|'replace'" default="'replace'">
+
+> Specifies the behavior of the DataGrid when [multiple sorting](/docs/learn/sorting/multiple-sorting) is configured. Defaults to `'replace'`.
+
+When `InfiniteTable` is configured with multiple sorting there are two supported behaviors:
+
+* `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
+* `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
+
+<Sandpack>
+<Description>
+
+Try clicking the `age` column and then the `firstName` column.
+
+If the multi-sort behavior is `replace`, clicking the second column will remove the sort from the first column.
+In order for the sorting to be additive, even if the behavior is `replace`, use the `Ctrl`/`Cmd` key while clicking the column header.
+
+If the multi-sort behavior is `append`, clicking the second column will add it to the sort.
+
+</Description>
+
+```ts file="$DOCS/learn/sorting/local-multi-sorting-example-defaults-with-local-data.page.tsx"
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
 <Prop name="onActiveCellIndexChange" type="(activeCellIndex:[number,number])=>void">
 
 > Callback triggered by cell navigation. See the [Keyboard Navigation](/docs/learn/keyboard-navigation/navigating-cells) page for more details.
