@@ -1,4 +1,8 @@
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+import {
+  InfiniteTable,
+  DataSource,
+  InfiniteTablePropMultiSortBehavior,
+} from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -32,14 +36,40 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default function LocalUncontrolledSingleSortingExample() {
+  const [multiSortBehavior, setMultiSortBehavior] = React.useState<
+    'append' | 'replace'
+  >('replace');
   return (
     <>
+      <select
+        style={{
+          margin: '10px 0',
+          display: 'inline-block',
+          background: 'var(--infinite-background)',
+          color: 'var(--infinite-cell-color)',
+          padding: 'var(--infinite-space-3)',
+        }}
+        value={multiSortBehavior}
+        onChange={(event) => {
+          const multiSortBehavior = event.target
+            .value as InfiniteTablePropMultiSortBehavior;
+
+          setMultiSortBehavior(multiSortBehavior);
+        }}
+      >
+        <option value="replace">replace</option>
+        <option value="append">append</option>
+      </select>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         defaultSortInfo={[]}
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={120} />
+        <InfiniteTable<Developer>
+          columns={columns}
+          columnDefaultWidth={120}
+          multiSortBehavior={multiSortBehavior}
+        />
       </DataSource>
     </>
   );

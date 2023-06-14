@@ -17,6 +17,12 @@ By default, if you don't specify otherwise, the DataGrid is configured with sing
 </DataSource>
 ```
 
+<Note>
+
+An empty array means no sorting. However, it does specify that sorting is configured as multiple sorting.
+
+</Note>
+
 
 <Sandpack title="Configuring multiple sorting with uncontrolled behavior">
 
@@ -33,9 +39,26 @@ Try clicking the `age` column and then the `firstName` column.
 </Sandpack>
 
 
-## User interaction for multiple sorting
+## User interaction and multi sort behavior
 
-When `InfiniteTable` is configured with multiple sorting, this is the behavior you can expect:
+
+
+When `InfiniteTable` is configured with multiple sorting there are two supported behaviors:
+
+* `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
+* `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
+
+<Note>
+
+The behavior of multiple sorting is configured via the <PropLink name="multiSortBehavior" /> - the default value for this prop is `"replace"`.
+
+❗️❗️❗️ The <PropLink name="multiSortBehavior" /> prop is defined on the `InfiniteTable` component, not on the `DataSource` component - as it's the `InfiniteTable` that handles user interaction, even though the `DataSource` does the actual sorting.
+
+</Note>
+
+### Multi sort behavior - `replace`
+
+### Multi sort behavior - `append`
 
 #### Scenario 1
 

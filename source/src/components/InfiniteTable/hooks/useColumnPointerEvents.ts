@@ -64,7 +64,7 @@ export const useColumnPointerEvents = ({
     getComputed,
     getState,
     api,
-    state: { domRef: rootRef, brain, headerBrain, multiSortBehavior },
+    state: { domRef: rootRef },
   } = useInfiniteTable();
 
   const onPointerDown = useCallback(
@@ -74,6 +74,8 @@ export const useColumnPointerEvents = ({
         // early exit, so that (for example) checkbox selection works in the column header when clicking the checkbox
         return;
       }
+
+      const { brain } = getState();
       const {
         computedVisibleColumns,
         computedVisibleColumnsMap,
@@ -159,6 +161,7 @@ export const useColumnPointerEvents = ({
       }
 
       const onPointerMove = (e: PointerEvent) => {
+        const { headerBrain, brain } = getState();
         if (!didDragAtLeastOnce) {
           didDragAtLeastOnce = true;
           // TODO we can improve this - instead of making all cols visible
@@ -190,6 +193,7 @@ export const useColumnPointerEvents = ({
       };
 
       const onPointerUp = (e: PointerEvent) => {
+        const { multiSortBehavior } = getState();
         const target = domRef.current!;
         rootRef.current?.classList.remove(InfiniteClsShiftingColumns);
 
