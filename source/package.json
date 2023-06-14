@@ -36,7 +36,7 @@
     "watch": "npm run esbuild && npm run generate-dts-file && concurrently \"npm run esbuild-watch\" \"npm run generate-dts-file-watch\"",
     "rollup-types": "rollup -c rollup.config.js",
     "update-md": "npm run --prefix .. doctoc",
-    "esbuild": "tsup && tsup --config dev-bundle.tsup.config.ts",
+    "esbuild": "tsup --config dev-bundle.tsup.config.ts && tsup",
     "esbuild-watch": "tsup --watch",
     "esbuild-deepmap": "npm run esbuild-deepmap-esm && npm run esbuild-deepmap-cjs",
     "esbuild-deepmap-esm": "node run-build-deepmap.js esm",
