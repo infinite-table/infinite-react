@@ -361,13 +361,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     const { computedColumnsMap: columnsMap } = this.getComputed();
     const column = columnsMap.get(columnId);
 
-    if (!column || !column.computedEditable) {
+    if (!column || !column.computedEditable || column.groupByForColumn) {
       return Promise.resolve(false);
     }
 
     const rowInfo = this.getDataSourceState().dataArray[rowIndex];
 
-    if (!rowInfo) {
+    if (!rowInfo || rowInfo.isGroupRow) {
       return Promise.resolve(false);
     }
 

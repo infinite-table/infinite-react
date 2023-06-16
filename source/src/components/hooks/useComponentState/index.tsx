@@ -499,17 +499,27 @@ export function getComponentStateRoot<
 
       const rawUpdatedProps: UPDATED_PROPS<T_PROPS> = {};
       let rawUpdatedPropsCount = 0;
+      const allKeys = new Set([
+        ...Object.keys(currentProps),
+        ...Object.keys(prevProps),
+      ]);
 
-      for (var k in props) {
-        const key = k as string as keyof T_PROPS;
+      // for (var k in props) {
+
+      // before this we were trivially iterating over props
+      // but when values go undefined (are not passed), they are not in the props object
+      // so we can't detect a value going from defined to undefined
+      // so we have to iterate over both current and prev keys
+      allKeys.forEach((k) => {
+        const key = k as keyof T_PROPS;
         const oldValue = prevProps[key];
         const newValue = currentProps[key];
 
         if (key === 'children') {
-          continue;
+          return;
         }
         if (oldValue === newValue) {
-          continue;
+          return;
         }
         rawUpdatedProps[key] = { newValue, oldValue };
         rawUpdatedPropsCount++;
@@ -535,7 +545,7 @@ export function getComponentStateRoot<
             updatedPropsToStateCount++;
           }
         }
-      }
+      });
 
       if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
         debug(
