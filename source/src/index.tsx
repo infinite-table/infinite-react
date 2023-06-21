@@ -30,6 +30,8 @@ export {
 
 export { interceptMap } from './components/hooks/useInterceptedMap';
 
+export { DeepMap } from './utils/DeepMap';
+
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';
 
 export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';
