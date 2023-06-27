@@ -94,6 +94,17 @@ const App = () => {
             });
             return items;
           }}
+          getCellContextMenuItems={(_params, { api }) => {
+            return [
+              {
+                key: 'close',
+                label: 'Close',
+                onClick: () => {
+                  api.hideContextMenu();
+                },
+              },
+            ];
+          }}
         />
       </DataSource>
     </React.StrictMode>

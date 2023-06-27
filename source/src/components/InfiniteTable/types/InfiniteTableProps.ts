@@ -234,6 +234,8 @@ export interface InfiniteTableApi<T> {
 
   clearEditInfo: () => void;
 
+  hideContextMenu: () => void;
+
   isEditorVisibleForCell(params: {
     rowIndex: number;
     columnId: string;

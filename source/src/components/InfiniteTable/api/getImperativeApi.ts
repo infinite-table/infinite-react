@@ -56,6 +56,11 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.getState().scrollerDOMRef.current?.focus();
   }
 
+  hideContextMenu() {
+    this.actions.contextMenuVisibleFor = null;
+    this.actions.cellContextMenuVisibleFor = null;
+  }
+
   persistEdit = async (arg?: { value?: any }): Promise<any | Error> => {
     arg = arg ?? {};
 
