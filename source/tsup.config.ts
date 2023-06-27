@@ -38,7 +38,7 @@ export const tsupConfig: Options = {
   format: FORMATS,
   minify: MINIFY,
   bundle: true,
-  clean: MINIFY,
+  clean: false,
   external: ['react', 'react-dom'],
   /**
    * tsup is a LOT more aggresive than esbuild in terms of externalizing dependencies.

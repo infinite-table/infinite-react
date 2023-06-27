@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5555",
     "dev-no-output": "next dev &> /dev/null",
     "build": "rimraf .next && rimraf node_modules/@types/react && rimraf node_modules/react && NODE_ENV=production next build && NODE_ENV=production next export",
     "build-local": "NODE_ENV=production next build && NODE_ENV=production next export",

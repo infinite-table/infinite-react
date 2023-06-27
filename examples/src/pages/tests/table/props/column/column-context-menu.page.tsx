@@ -83,6 +83,17 @@ const App = () => {
           columnDefaultWidth={140}
           columnMinWidth={50}
           columns={columns}
+          getColumnMenuItems={(items, { columnApi }) => {
+            items.push('-');
+            items.push({
+              key: 'close',
+              label: 'Close',
+              onClick: () => {
+                columnApi.hideContextMenu();
+              },
+            });
+            return items;
+          }}
         />
       </DataSource>
     </React.StrictMode>
