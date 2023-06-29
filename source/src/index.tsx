@@ -13,6 +13,10 @@ import {
   StringFilterEditor,
   NumberFilterEditor,
 } from './components/InfiniteTable/components/FilterEditors';
+export {
+  MenuIcon,
+  type MenuIconProps,
+} from './components/InfiniteTable/components/icons/MenuIcon';
 
 export const components = {
   CheckBox: InfiniteCheckBox,

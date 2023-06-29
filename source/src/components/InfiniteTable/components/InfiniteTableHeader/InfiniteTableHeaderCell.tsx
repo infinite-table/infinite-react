@@ -20,7 +20,6 @@ import { internalProps } from '../../internalProps';
 import { InternalVars, ThemeVars } from '../../theme.css';
 
 import type {
-  InfiniteTableColumnCellContextType,
   InfiniteTableColumnHeaderParam,
   InfiniteTableColumnHeaderRenderFunction,
   InfiniteTableComputedColumn,
@@ -247,7 +246,8 @@ export function InfiniteTableHeaderCell<T>(
     getDataSourceState,
     getState,
   })!;
-  const renderParam: InfiniteTableColumnHeaderParam<T> = {
+
+  const initialRenderParam: InfiniteTableColumnHeaderParam<T> = {
     dragging,
     domRef: ref,
     insideColumnMenu: false,
@@ -272,15 +272,35 @@ export function InfiniteTableHeaderCell<T>(
           : column.name,
     },
   };
+  const renderParam = initialRenderParam;
 
   const renderChildren = () => {
+    // #header-rendering-pipeline-run-twice-fix
+    // if you uncomment this, all the rendering pipeline below
+    // will be flawed!!!
+    // for whatever reason, this renderChildren() fn is called twice
+    // probably because of React.StrictMode (it's called twice for the same outer closure run)
+    // so removing the following 4 lines would result
+    // in renderParam.renderBag.sortIcon/menuIcon/etc
+    // to be assigned twice, and the second time, it's assigned to the previous run's value
+    // and not to the default icon/value
+    const renderParam = {
+      ...initialRenderParam,
+      renderBag: { ...initialRenderParam.renderBag },
+    };
     if (column.renderSortIcon) {
       renderParam.renderBag.sortIcon = (
         <RenderHeaderCellHookComponent
           render={column.renderSortIcon}
           renderParam={{
             ...renderParam,
-            renderBag: { ...renderParam.renderBag },
+            renderBag: {
+              // if #header-rendering-pipeline-run-twice-fix would not be applied
+              // at the second run, renderParam.renderBag.sortIcon would have the value
+              // of the previous run, so a <RenderHeaderCellHookComponent> would be rendered
+              // which would make this render the sort icon twice
+              ...renderParam.renderBag,
+            },
           }}
         />
       );
@@ -301,7 +321,7 @@ export function InfiniteTableHeaderCell<T>(
     if (typeof column.renderMenuIcon === 'function') {
       renderParam.renderBag.menuIcon = (
         <RenderHeaderCellHookComponent
-          render={(param: InfiniteTableColumnCellContextType<T>) => {
+          render={(param: InfiniteTableHeaderCellContextType<T>) => {
             if (typeof column.renderMenuIcon !== 'function') {
               return null;
             }
@@ -312,7 +332,12 @@ export function InfiniteTableHeaderCell<T>(
             }
             return null;
           }}
-          renderParam={renderParam}
+          renderParam={{
+            ...renderParam,
+            renderBag: {
+              ...renderParam.renderBag,
+            },
+          }}
         />
       );
     }
@@ -322,10 +347,16 @@ export function InfiniteTableHeaderCell<T>(
       // when we have column.renderSelectionCheckBox defined as a function
       // as people might want to use the default value
       // and enhance it
+
       renderParam.renderBag.selectionCheckBox = (
         <RenderHeaderCellHookComponent
           render={defaultRenderSelectionCheckBox}
-          renderParam={renderParam}
+          renderParam={{
+            ...renderParam,
+            renderBag: {
+              ...renderParam.renderBag,
+            },
+          }}
         />
       );
 
@@ -340,7 +371,9 @@ export function InfiniteTableHeaderCell<T>(
             render={renderHeaderSelectionCheckBox}
             renderParam={{
               ...renderParam,
-              renderBag: { ...renderParam.renderBag },
+              renderBag: {
+                ...renderParam.renderBag,
+              },
             }}
           />
         );

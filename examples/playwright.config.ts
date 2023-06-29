@@ -29,7 +29,7 @@ const config: PlaywrightTestConfig = {
     //   slowMo: 500000, // uncomment this and also add headless: false, so you can easily debug
     // },
 
-    baseURL: 'http://localhost:3000/',
+    baseURL: 'http://localhost:5555/',
   },
   projects: [
     {

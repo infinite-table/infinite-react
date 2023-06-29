@@ -461,7 +461,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   renderSelectionCheckBox?:
     | boolean
     | InfiniteTableColumnRenderFunction<DATA_TYPE>;
-  renderMenuIcon?: boolean | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderMenuIcon?: boolean | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   renderHeaderSelectionCheckBox?:
     | boolean
