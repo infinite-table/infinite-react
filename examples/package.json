@@ -11,7 +11,7 @@
     "test": "npm run build && npm run run-test",
     "test-local": "npm run build-local && npm run run-test",
     "run-test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run play:test\"",
-    "start-server": "http-server -p 3000 out -c300000",
+    "start-server": "http-server -p 5555 out -c300000",
     "play:test": "playwright test",
     "play:test-ui": "playwright test --ui",
     "xxxtest:debug": "PWDEBUG=console playwright test",
