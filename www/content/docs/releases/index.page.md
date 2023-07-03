@@ -3,7 +3,7 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 1.3.16 🚀
+## 1.3.17 🚀
 
 @milestone id="85"
 

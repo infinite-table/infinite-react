@@ -32,6 +32,9 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
     style: {
       color: 'red',
     },
+    renderMenuIcon: ({ renderBag }) => {
+      return renderBag.menuIcon;
+    },
   },
 
   team: {

@@ -321,17 +321,7 @@ export function InfiniteTableHeaderCell<T>(
     if (typeof column.renderMenuIcon === 'function') {
       renderParam.renderBag.menuIcon = (
         <RenderHeaderCellHookComponent
-          render={(param: InfiniteTableHeaderCellContextType<T>) => {
-            if (typeof column.renderMenuIcon !== 'function') {
-              return null;
-            }
-            const result = column.renderMenuIcon(param);
-
-            if (result) {
-              return <MenuIconCmp {...menuIconProps}>{result}</MenuIconCmp>;
-            }
-            return null;
-          }}
+          render={column.renderMenuIcon}
           renderParam={{
             ...renderParam,
             renderBag: {
