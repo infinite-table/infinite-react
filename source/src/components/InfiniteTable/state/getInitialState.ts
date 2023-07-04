@@ -129,6 +129,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     headerBrain,
 
     domRef,
+    columnMenuTargetRef: createRef(),
     editingValueRef: createRef(),
     scrollerDOMRef: createRef(),
     portalDOMRef: createRef(),
@@ -352,6 +353,7 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.onFilterOperatorMenuClick.destroy();
 
   state.domRef.current = null;
+  state.columnMenuTargetRef.current = null;
   state.scrollerDOMRef.current = null;
   state.portalDOMRef.current = null;
 

@@ -115,7 +115,8 @@ export function defaultGetColumnMenuItems<T>(
                 }
                 checked={col.computedVisible}
                 onChange={(checked) => {
-                  api.setVisibilityForColumn(col.id, !!checked);
+                  const visible = !!checked;
+                  api.setVisibilityForColumn(col.id, visible);
                   requestAnimationFrame(() => {
                     // we do need this raf
                     // because in the realignment we need to access the new state/computed state

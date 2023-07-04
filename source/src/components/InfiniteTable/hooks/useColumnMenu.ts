@@ -34,6 +34,14 @@ function showMenuForColumn<T>(options: {
     target = getState().domRef.current!.querySelector(
       iconSelector,
     ) as HTMLElement;
+
+    if (!target) {
+      target = getState().columnMenuTargetRef.current ?? undefined;
+      // if not in DOM
+      if (!target?.parentElement) {
+        target = undefined;
+      }
+    }
   }
 
   if (!target) {
@@ -71,6 +79,8 @@ export function useColumnMenu<T>() {
       if (!info) {
         return;
       }
+      state.columnMenuTargetRef.current = info.target as HTMLElement;
+
       actions.contextMenuVisibleFor = null;
       actions.cellContextMenuVisibleFor = null;
       actions.filterOperatorMenuVisibleForColumnId = null;
@@ -81,11 +91,9 @@ export function useColumnMenu<T>() {
   const { columnMenuVisibleForColumnId, columnMenuVisibleKey } = getState();
 
   useEffect(() => {
-    const {
-      columnMenuVisibleForColumnId: columnContextMenuVisibleForColumnId,
-    } = getState();
+    const { columnMenuVisibleForColumnId, columnMenuTargetRef } = getState();
 
-    if (columnContextMenuVisibleForColumnId) {
+    if (columnMenuVisibleForColumnId) {
       function handleMouseDown(event: MouseEvent) {
         // @ts-ignore
         if (event.__insideMenu !== true) {
@@ -96,7 +104,7 @@ export function useColumnMenu<T>() {
       document.documentElement.addEventListener('mousedown', handleMouseDown);
 
       showMenuForColumn({
-        columnId: columnContextMenuVisibleForColumnId,
+        columnId: columnMenuVisibleForColumnId,
         context,
         clearAll,
         showOverlay,
@@ -109,6 +117,7 @@ export function useColumnMenu<T>() {
         );
       };
     } else {
+      columnMenuTargetRef.current = null;
       clearAll();
     }
 

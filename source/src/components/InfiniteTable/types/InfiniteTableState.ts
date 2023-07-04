@@ -83,6 +83,7 @@ export interface InfiniteTableSetupState<T> {
     | null;
 
   columnMenuVisibleForColumnId: string | null;
+  columnMenuTargetRef: MutableRefObject<HTMLElement | null>;
   columnMenuVisibleKey: string | number;
   filterOperatorMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
