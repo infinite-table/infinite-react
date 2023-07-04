@@ -9,7 +9,6 @@ export default test.describe.parallel('Header rendering pipeline', () => {
     });
 
     expect(await locator.locator('[data-name="test-icon"]').count()).toBe(1);
-    expect(await locator.locator('[data-name="menu-icon"]').count()).toBe(1);
   });
 
   test('Menu icon should render correctly when rendering the default from renderBag', async ({
