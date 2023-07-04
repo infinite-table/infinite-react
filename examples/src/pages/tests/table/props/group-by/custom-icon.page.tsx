@@ -3,15 +3,19 @@ import {
   InfiniteTable,
   DataSource,
   DataSourceGroupBy,
+  components,
 } from '@infinite-table/infinite-react';
+
 import * as React from 'react';
 
 import { data, Person } from './people';
 
+const { MenuIcon } = components;
+
 const columns: Record<string, InfiniteTableColumn<Person>> = {
   name: {
     field: 'name',
-    header: 'TEST USES THIS COLUMN',
+    header: 'NAME - TEST USES THIS COLUMN',
     renderMenuIcon: ({ renderBag }) => {
       return (
         <div
@@ -39,6 +43,9 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 
   team: {
     field: 'team',
+    renderMenuIcon: ({ renderBag }) => {
+      return <MenuIcon {...renderBag.menuIconProps} />;
+    },
   },
 };
 

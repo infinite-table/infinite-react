@@ -1,7 +1,56 @@
 import { useEffect } from 'react';
-import { useOverlay } from '../../hooks/useOverlay';
+import { ShowOverlayFn, useOverlay } from '../../hooks/useOverlay';
+import {
+  MenuIconDataAttributes,
+  MenuIconDataAttributesValues,
+} from '../components/icons/MenuIcon';
+import { InfiniteHeaderCellDataAttributes } from '../components/InfiniteTableHeader/InfiniteTableHeaderCell';
+import { InfiniteTableContextValue } from '../types';
 import { getMenuForColumn } from '../utils/getMenuForColumn';
 import { useInfiniteTable } from './useInfiniteTable';
+
+const menuIconSelector = `[${MenuIconDataAttributes['data-name']}="${MenuIconDataAttributesValues['data-name']}"]`;
+
+function showMenuForColumn<T>(options: {
+  columnId: string;
+  target?: HTMLElement;
+  context: InfiniteTableContextValue<T>;
+  clearAll: VoidFunction;
+  showOverlay: ShowOverlayFn;
+}) {
+  const { columnId, context, clearAll, showOverlay } = options;
+  const { getState, actions } = context;
+
+  function onHideIntent() {
+    clearAll();
+    actions.columnMenuVisibleForColumnId = null;
+  }
+
+  let target = options.target;
+
+  if (!target) {
+    const iconSelector = `[${InfiniteHeaderCellDataAttributes['data-column-id']}="${columnId}"] ${menuIconSelector}`;
+
+    target = getState().domRef.current!.querySelector(
+      iconSelector,
+    ) as HTMLElement;
+  }
+
+  if (!target) {
+    console.warn(`Cannot show column menu for column "${columnId}"`);
+    return;
+  }
+
+  showOverlay(() => getMenuForColumn(columnId, context, onHideIntent), {
+    constrainTo: getState().domRef.current!,
+    id: 'column-menu',
+    alignTo: target,
+    alignPosition: [
+      ['TopLeft', 'BottomLeft'],
+      ['TopRight', 'BottomRight'],
+    ],
+  });
+}
 
 export function useColumnMenu<T>() {
   const context = useInfiniteTable<T>();
@@ -22,29 +71,14 @@ export function useColumnMenu<T>() {
       if (!info) {
         return;
       }
-      const { target, column } = info;
-
-      function onHideIntent() {
-        clearAll();
-        actions.columnMenuVisibleForColumnId = null;
-      }
-
-      showOverlay(() => getMenuForColumn(column.id, context, onHideIntent), {
-        constrainTo: getState().domRef.current!,
-        id: 'column-menu',
-        alignTo: target as HTMLElement,
-        alignPosition: [
-          ['TopLeft', 'BottomLeft'],
-          ['TopRight', 'BottomRight'],
-        ],
-      });
-
       actions.contextMenuVisibleFor = null;
       actions.cellContextMenuVisibleFor = null;
       actions.filterOperatorMenuVisibleForColumnId = null;
-      actions.columnMenuVisibleForColumnId = column.id;
+      actions.columnMenuVisibleForColumnId = info.column.id;
     });
   }, []);
+
+  const { columnMenuVisibleForColumnId, columnMenuVisibleKey } = getState();
 
   useEffect(() => {
     const {
@@ -60,6 +94,14 @@ export function useColumnMenu<T>() {
         }
       }
       document.documentElement.addEventListener('mousedown', handleMouseDown);
+
+      showMenuForColumn({
+        columnId: columnContextMenuVisibleForColumnId,
+        context,
+        clearAll,
+        showOverlay,
+      });
+
       return () => {
         document.documentElement.removeEventListener(
           'mousedown',
@@ -71,7 +113,7 @@ export function useColumnMenu<T>() {
     }
 
     return () => {};
-  }, [getState().columnMenuVisibleForColumnId]);
+  }, [columnMenuVisibleForColumnId, columnMenuVisibleKey]);
 
   return { menuPortal };
 }

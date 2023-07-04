@@ -89,7 +89,11 @@ export class HeaderTestingModel {
 
     const count = await headerCell.locator('[data-name="menu-icon"]').count();
 
-    return count > 0;
+    return count === 1;
+  }
+
+  getColumnMenuLocator() {
+    return this.page.locator('.InfiniteMenu');
   }
 
   async openColumnMenu(colLocation: ColLocation) {
@@ -114,10 +118,24 @@ export class HeaderTestingModel {
     await headerCell.locator('[data-name="filter-operator"]').click();
   }
 
-  async clickColumnMenuItem(colLocation: ColLocation, key: string) {
-    await this.openColumnMenu(colLocation);
+  async clickColumnMenuItem(
+    colLocation: ColLocation,
+    key: string,
+    config?: {
+      selector?: string;
+      skipOpen?: boolean;
+    },
+  ) {
+    if (config?.skipOpen !== true) {
+      await this.openColumnMenu(colLocation);
+    }
 
-    await this.page.click(`[data-menu-item-key="${key}"]`);
+    let selector = `[data-menu-item-key="${key}"]`;
+
+    if (config?.selector) {
+      selector += ` ${config.selector}`;
+    }
+    await this.page.click(selector);
   }
 
   async clickFilterOperatorMenuItem(colLocation: ColLocation, key: string) {

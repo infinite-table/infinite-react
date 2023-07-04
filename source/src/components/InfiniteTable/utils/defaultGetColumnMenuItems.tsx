@@ -116,6 +116,12 @@ export function defaultGetColumnMenuItems<T>(
                 checked={col.computedVisible}
                 onChange={(checked) => {
                   api.setVisibilityForColumn(col.id, !!checked);
+                  requestAnimationFrame(() => {
+                    // we do need this raf
+                    // because in the realignment we need to access the new state/computed state
+                    // based on the new visibility
+                    api.realignColumnContextMenu();
+                  });
                 }}
               ></InfiniteCheckBox>
             ),

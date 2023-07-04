@@ -184,6 +184,8 @@ export type InfiniteTableColumnApi<_T> = {
   toggleFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
   hideFilterOperatorMenu: () => void;
 
+  isVisible: () => boolean;
+
   toggleSort: () => void;
   clearSort: () => void;
   setSort: (sort: SortDir | null) => void;
@@ -235,6 +237,10 @@ export interface InfiniteTableApi<T> {
   clearEditInfo: () => void;
 
   hideContextMenu: () => void;
+
+  realignColumnContextMenu: () => void;
+  getColumnOrder: () => string[];
+  getVisibleColumnOrder: () => string[];
 
   isEditorVisibleForCell(params: {
     rowIndex: number;

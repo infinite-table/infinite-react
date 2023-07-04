@@ -112,6 +112,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     cellContextMenuVisibleFor: null,
     contextMenuVisibleFor: null,
     columnMenuVisibleForColumnId: null,
+    columnMenuVisibleKey: 0,
     filterOperatorMenuVisibleForColumnId: null,
 
     getDOMNodeForCell: (cellPosition: CellPosition) => {

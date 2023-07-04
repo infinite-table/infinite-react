@@ -73,6 +73,10 @@ export function getColumnApiForColumn<T>(
       actions.columnMenuVisibleForColumnId = null;
     },
 
+    isVisible() {
+      return getComputed().computedVisibleColumnsMap.has(column.id);
+    },
+
     toggleSort(
       params: { multiSortBehavior: InfiniteTablePropMultiSortBehavior } = {
         multiSortBehavior: 'replace',

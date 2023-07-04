@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback, useContext, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { keyMirror } from '../../../../utils/keyMirror';
 
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
@@ -128,6 +129,11 @@ const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 const spacer = <div className={flex['1']}></div>;
 
+export const InfiniteHeaderCellDataAttributes = keyMirror({
+  'data-name': ``,
+  'data-header-align': '',
+  'data-column-id': '',
+});
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
 ) {
@@ -144,6 +150,7 @@ export function InfiniteTableHeaderCell<T>(
       portalDOMRef,
       columnHeaderHeight,
       columnReorderDragColumnId,
+      columnMenuVisibleForColumnId,
     },
   } = useInfiniteTable<T>();
 
@@ -215,6 +222,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const menuIconProps: MenuIconProps = {
     reserveSpaceWhenHidden: align === 'center',
+    menuVisible: columnMenuVisibleForColumnId === column.id,
 
     style:
       align === 'end'
@@ -265,6 +273,7 @@ export function InfiniteTableHeaderCell<T>(
       sortIcon,
       filterIcon,
       menuIcon,
+      menuIconProps,
       selectionCheckBox: null,
       header:
         column.header && typeof column.header !== 'function'
@@ -535,15 +544,22 @@ export function InfiniteTableHeaderCell<T>(
 
   const zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
   style.zIndex = zIndex;
+
+  const dataAttrs: {
+    [K in keyof typeof InfiniteHeaderCellDataAttributes]: string;
+  } = {
+    'data-column-id': column.id,
+    'data-header-align': align,
+    'data-name': 'HeaderCell',
+  };
+
   return (
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
         domRef={ref}
         cellType="header"
         column={column}
-        data-name={`HeaderCell`}
-        data-header-align={align}
-        data-column-id={column.id}
+        {...dataAttrs}
         // this is used by ReactHeadlessRenderer - look for #updatezindex
         data-z-index={zIndex}
         style={style}

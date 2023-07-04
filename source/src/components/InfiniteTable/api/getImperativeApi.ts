@@ -29,6 +29,7 @@ import {
 } from '../types/InfiniteTableProps';
 import { getColumnApiForColumn } from './getColumnApi';
 import { getSelectionApi, InfiniteTableSelectionApi } from './getSelectionApi';
+import { realignColumnContextMenu } from './realignColumnContextMenu';
 
 import { GetImperativeApiParam } from './type';
 
@@ -59,6 +60,26 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   hideContextMenu() {
     this.actions.contextMenuVisibleFor = null;
     this.actions.cellContextMenuVisibleFor = null;
+  }
+
+  realignColumnContextMenu() {
+    realignColumnContextMenu({
+      actions: this.actions,
+      getState: this.getState,
+      getComputed: this.getComputed,
+    });
+  }
+
+  getColumnOrder() {
+    return this.getComputed().computedColumnOrder;
+  }
+
+  getVisibleColumnOrder() {
+    const order = this.getColumnOrder();
+
+    const visibleColumns = this.getComputed().computedVisibleColumnsMap;
+
+    return order.filter((id) => visibleColumns.has(id));
   }
 
   persistEdit = async (arg?: { value?: any }): Promise<any | Error> => {

@@ -311,6 +311,11 @@ globalThis.allhandles = {};
 //@ts-ignore
 globalThis.thehandles = {};
 
+export type ShowOverlayFn = (
+  content: ReactNode | (() => ReactNode),
+  params: OverlayShowParams,
+) => VoidFunction | undefined;
+
 export function useOverlay(params: OverlayParams) {
   const rootParams = params;
 
@@ -338,7 +343,7 @@ export function useOverlay(params: OverlayParams) {
     params.portalContainer,
   );
 
-  const showOverlay = useCallback(
+  const showOverlay: ShowOverlayFn = useCallback(
     (content: ReactNode | (() => ReactNode), params: OverlayShowParams) => {
       const id =
         params.id || getIdForReactOnlyChild(content) || getChangeDetect();

@@ -65,6 +65,7 @@ export type InfiniteTableColumnHeaderParam<
     header: string | number | Renderable;
     sortIcon?: Renderable;
     menuIcon?: Renderable;
+    menuIconProps?: MenuIconProps;
     filterIcon?: Renderable;
     selectionCheckBox?: Renderable;
   };

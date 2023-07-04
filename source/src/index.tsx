@@ -13,14 +13,14 @@ import {
   StringFilterEditor,
   NumberFilterEditor,
 } from './components/InfiniteTable/components/FilterEditors';
-export {
-  MenuIcon,
-  type MenuIconProps,
-} from './components/InfiniteTable/components/icons/MenuIcon';
+
+import { MenuIcon } from './components/InfiniteTable/components/icons/MenuIcon';
+export { type MenuIconProps } from './components/InfiniteTable/components/icons/MenuIcon';
 
 export const components = {
   CheckBox: InfiniteCheckBox,
   LoadMask,
+  MenuIcon,
   StringFilterEditor,
   NumberFilterEditor,
 };

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { keyMirror } from '../../../../utils/keyMirror';
 
 import { join } from '../../../../utils/join';
 import { ThemeVars } from '../../theme.css';
@@ -13,6 +14,7 @@ export type MenuIconProps = {
   className?: string;
   domProps?: React.HTMLAttributes<HTMLDivElement>;
   reserveSpaceWhenHidden?: boolean;
+  menuVisible?: boolean;
   children?: React.ReactNode;
 };
 
@@ -23,9 +25,25 @@ const defaultLineStyle: React.CSSProperties = {
 
 const lineClassName = `${InfiniteTableIconClassName}-menu`;
 
+export const MenuIconDataAttributes = keyMirror({
+  'data-name': '',
+});
+
+export const MenuIconDataAttributesValues: {
+  [K in keyof typeof MenuIconDataAttributes]: string;
+} = {
+  [MenuIconDataAttributes['data-name']]: 'menu-icon',
+};
+
 export function MenuIcon(props: MenuIconProps) {
-  const { style, className, domProps, reserveSpaceWhenHidden, children } =
-    props;
+  const {
+    style,
+    className,
+    domProps,
+    reserveSpaceWhenHidden,
+    menuVisible,
+    children,
+  } = props;
 
   const lineStyle = {
     ...defaultLineStyle,
@@ -37,11 +55,12 @@ export function MenuIcon(props: MenuIconProps) {
     <div
       {...domProps}
       style={style}
-      data-name="menu-icon"
+      {...MenuIconDataAttributesValues}
       onPointerDown={(e) => e.stopPropagation()}
       className={join(
         className,
         HeaderMenuIconCls({
+          menuVisible,
           reserveSpaceWhenHidden,
         }),
         InfiniteTableIconClassName,

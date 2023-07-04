@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { CSSProperties, style } from '@vanilla-extract/css';
 import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 
 import { InfiniteClsRecipe } from '../../InfiniteCls.css';
@@ -296,6 +296,11 @@ export const HeaderCellRecipe = recipe({
   ],
 });
 
+const menuVisibleStyle: CSSProperties = {
+  visibility: 'visible',
+  display: 'flex',
+};
+
 export const HeaderMenuIconCls = recipe({
   base: [
     position.relative,
@@ -313,14 +318,14 @@ export const HeaderMenuIconCls = recipe({
         '&:active': {
           top: '1px',
         },
-        [`${HeaderCellRecipe({})}:hover &`]: {
-          visibility: 'visible',
-          display: 'flex',
-        },
+        [`${HeaderCellRecipe({})}:hover &`]: menuVisibleStyle,
       },
     },
   ],
   variants: {
+    menuVisible: {
+      true: menuVisibleStyle,
+    },
     reserveSpaceWhenHidden: {
       true: {},
       false: {
@@ -328,6 +333,15 @@ export const HeaderMenuIconCls = recipe({
       },
     },
   },
+  compoundVariants: [
+    {
+      variants: {
+        menuVisible: true,
+        reserveSpaceWhenHidden: false,
+      },
+      style: menuVisibleStyle,
+    },
+  ],
 });
 
 export type HeaderCellVariantsType = RecipeVariants<typeof HeaderCellRecipe>;
