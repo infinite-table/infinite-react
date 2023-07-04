@@ -17,7 +17,7 @@ export async function generateStaticParams() {
           .filter(Boolean),
       };
     })
-    .filter((x) => x.rootMdPage.length > 0 && x.rootMdPage[0] !== '404');
+    .filter((x) => x.rootMdPage.length > 0); // && x.rootMdPage[0] !== '404');
 
   // console.log('result', result);
   return result;
