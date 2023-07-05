@@ -75,6 +75,7 @@ const App = () => {
               position: 'relative',
             },
           }}
+          columnMenuRealignDelay={0}
           columnDefaultWidth={140}
           columnMinWidth={50}
           columns={columns}

@@ -667,6 +667,8 @@ export interface InfiniteTableProps<T> {
    * When a column is hidden by using the column menu, the column menu will stay open,
    * so it needs (generally) to be realigned to the correct location. This prop
    * configures the delay in milliseconds before the column menu is realigned.
+   *
+   * @default 50
    */
   columnMenuRealignDelay?: number;
 
