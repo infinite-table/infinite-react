@@ -96,6 +96,7 @@ export default function ColumnContextMenuItems() {
               height: 800,
             },
           }}
+          columnMenuRealignDelay={100}
           columns={columns}
           getColumnMenuItems={(items, { column }) => {
             if (column.id === 'firstName') {

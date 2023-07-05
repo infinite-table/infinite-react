@@ -62,12 +62,23 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.actions.cellContextMenuVisibleFor = null;
   }
 
-  realignColumnContextMenu() {
-    realignColumnContextMenu({
+  realignColumnContextMenu(callback?: VoidFunction) {
+    const param = {
       actions: this.actions,
       getState: this.getState,
       getComputed: this.getComputed,
-    });
+    };
+
+    const delay = this.getState().columnMenuRealignDelay;
+
+    if (!delay || delay < 0) {
+      realignColumnContextMenu(param);
+      callback?.();
+    }
+    setTimeout(() => {
+      realignColumnContextMenu(param);
+      callback?.();
+    }, delay);
   }
 
   getColumnOrder() {

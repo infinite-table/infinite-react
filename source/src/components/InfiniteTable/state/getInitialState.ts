@@ -238,6 +238,9 @@ export const forwardProps = <T>(
 
     columnDefaultFlex: 1,
 
+    columnMenuRealignDelay: (columnMenuRealignDelay) =>
+      columnMenuRealignDelay ?? 100,
+
     scrollStopDelay: (scrollStopDelay) => scrollStopDelay ?? 250,
 
     viewportReservedWidth: (viewportReservedWidth) =>

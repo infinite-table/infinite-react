@@ -663,6 +663,13 @@ export interface InfiniteTableProps<T> {
   onFocusWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
   onBlurWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
 
+  /**
+   * When a column is hidden by using the column menu, the column menu will stay open,
+   * so it needs (generally) to be realigned to the correct location. This prop
+   * configures the delay in milliseconds before the column menu is realigned.
+   */
+  columnMenuRealignDelay?: number;
+
   onScrollToTop?: () => void;
   onScrollToBottom?: () => void;
   scrollStopDelay?: number;

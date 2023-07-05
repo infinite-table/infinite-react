@@ -198,6 +198,9 @@ export interface InfiniteTableMappedState<T> {
   >;
   domProps: InfiniteTableProps<T>['domProps'];
   editable: InfiniteTableProps<T>['editable'];
+  columnMenuRealignDelay: NonUndefined<
+    InfiniteTableProps<T>['columnMenuRealignDelay']
+  >;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
