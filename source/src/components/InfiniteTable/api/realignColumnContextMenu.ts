@@ -27,7 +27,8 @@ export function realignColumnContextMenu<T = any>(param: {
 
   function tryCol(diff: number, sign: number) {
     const colId = order[index + diff * sign];
-    if (visibleCols.has(colId)) {
+    const col = visibleCols.get(colId);
+    if (col && col.renderMenuIcon !== false) {
       return colId;
     }
     return;

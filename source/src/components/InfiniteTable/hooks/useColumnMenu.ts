@@ -20,6 +20,7 @@ function showMenuForColumn<T>(options: {
 }) {
   const { columnId, context, clearAll, showOverlay } = options;
   const { getState, actions } = context;
+  const { columnMenuTargetRef, domRef } = getState();
 
   function onHideIntent() {
     clearAll();
@@ -29,19 +30,20 @@ function showMenuForColumn<T>(options: {
   let target = options.target;
 
   if (!target) {
+    target = columnMenuTargetRef.current ?? undefined;
+
+    if (target && !domRef.current!.contains(target)) {
+      // if not in DOM anymore, clear it
+      target = undefined;
+    }
+  }
+
+  if (!target) {
     const iconSelector = `[${InfiniteHeaderCellDataAttributes['data-column-id']}="${columnId}"] ${menuIconSelector}`;
 
     target = getState().domRef.current!.querySelector(
       iconSelector,
     ) as HTMLElement;
-
-    if (!target) {
-      target = getState().columnMenuTargetRef.current ?? undefined;
-      // if not in DOM
-      if (!target?.parentElement) {
-        target = undefined;
-      }
-    }
   }
 
   if (!target) {
@@ -49,8 +51,11 @@ function showMenuForColumn<T>(options: {
     return;
   }
 
+  // clear this so it won't become stale
+  columnMenuTargetRef.current = null;
+
   showOverlay(() => getMenuForColumn(columnId, context, onHideIntent), {
-    constrainTo: getState().domRef.current!,
+    constrainTo: domRef.current!,
     id: 'column-menu',
     alignTo: target,
     alignPosition: [
