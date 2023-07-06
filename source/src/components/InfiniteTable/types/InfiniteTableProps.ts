@@ -234,6 +234,8 @@ export interface InfiniteTableApi<T> {
     columnVisibility: InfiniteTablePropColumnVisibility,
   ) => void;
 
+  isDestroyed: () => boolean;
+
   clearEditInfo: () => void;
 
   hideContextMenu: () => void;

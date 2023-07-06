@@ -76,9 +76,16 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       callback?.();
     }
     setTimeout(() => {
+      if (this.isDestroyed()) {
+        return;
+      }
       realignColumnContextMenu(param);
       callback?.();
     }, delay);
+  }
+
+  isDestroyed() {
+    return !this.getState().domRef.current;
   }
 
   getColumnOrder() {
@@ -565,6 +572,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
     const sortInfo: DataSourceSingleSortInfo<T> = {
       dir,
+      id: columnId,
     };
 
     const field = (col.groupByForColumn ? col.groupByForColumn : col.field) as
@@ -584,6 +592,97 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     this.setSortInfoForColumn(columnId, sortInfo, options);
+  }
+
+  toggleSortingForColumn(options?: {
+    multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
+  }) {
+    const multiSortBehavior =
+      options?.multiSortBehavior ?? this.getState().multiSortBehavior;
+  }
+
+  setSortInfoForColumn(
+    columnId: string,
+    columnSortInfo: DataSourceSingleSortInfo<T> | null,
+    options?: {
+      multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
+    },
+  ) {
+    const dataSourceState = this.getDataSourceState();
+    const col = this.getComputed().computedColumnsMap.get(columnId);
+
+    if (!col) {
+      return;
+    }
+
+    if (!dataSourceState.multiSort) {
+      this.dataSourceActions.sortInfo = columnSortInfo
+        ? [columnSortInfo]
+        : null;
+      return;
+    }
+
+    const colField = col.field;
+
+    let newSortInfo = dataSourceState.sortInfo?.slice() ?? [];
+
+    if (columnSortInfo === null) {
+      // we need to filter out any existing sortInfo for this column
+      newSortInfo = newSortInfo.filter((sortInfo) => {
+        if (sortInfo.id) {
+          if (sortInfo.id === columnId) {
+            return false;
+          }
+          return true;
+        }
+        if (sortInfo.field) {
+          if (sortInfo.field === colField) {
+            return false;
+          }
+          return true;
+        }
+
+        return true;
+      });
+      this.dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
+      return;
+    }
+
+    let matched = false;
+
+    const multiSortBehavior =
+      options?.multiSortBehavior ?? this.getState().multiSortBehavior;
+
+    if (multiSortBehavior === 'replace') {
+      this.dataSourceActions.sortInfo = [columnSortInfo];
+    } else {
+      newSortInfo = newSortInfo.map((sortInfo) => {
+        if (matched) {
+          return sortInfo;
+        }
+        if (sortInfo.id) {
+          if (sortInfo.id === columnId) {
+            matched = true;
+            return columnSortInfo;
+          }
+          return sortInfo;
+        }
+        if (sortInfo.field) {
+          if (sortInfo.field === colField) {
+            matched = true;
+            return columnSortInfo;
+          }
+          return sortInfo;
+        }
+
+        return sortInfo;
+      });
+
+      if (!matched) {
+        newSortInfo.push(columnSortInfo);
+      }
+      this.dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
+    }
   }
 
   setPinningForColumn(
@@ -771,90 +870,6 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
     if (found) {
       this.dataSourceActions.filterValue = newFilterValue;
-    }
-  }
-
-  setSortInfoForColumn(
-    columnId: string,
-    columnSortInfo: DataSourceSingleSortInfo<T> | null,
-    options?: {
-      multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
-    },
-  ) {
-    const dataSourceState = this.getDataSourceState();
-    const col = this.getComputed().computedColumnsMap.get(columnId);
-
-    if (!col) {
-      return;
-    }
-
-    if (!dataSourceState.multiSort) {
-      this.dataSourceActions.sortInfo = columnSortInfo
-        ? [columnSortInfo]
-        : null;
-      return;
-    }
-
-    const colField = col.field;
-
-    let newSortInfo = dataSourceState.sortInfo?.slice() ?? [];
-
-    if (columnSortInfo === null) {
-      // we need to filter out any existing sortInfo for this column
-      newSortInfo = newSortInfo.filter((sortInfo) => {
-        if (sortInfo.id) {
-          if (sortInfo.id === columnId) {
-            return false;
-          }
-          return true;
-        }
-        if (sortInfo.field) {
-          if (sortInfo.field === colField) {
-            return false;
-          }
-          return true;
-        }
-
-        return true;
-      });
-      this.dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
-      return;
-    }
-
-    let matched = false;
-
-    const multiSortBehavior =
-      options?.multiSortBehavior ?? this.getState().multiSortBehavior;
-
-    if (multiSortBehavior === 'replace') {
-      this.dataSourceActions.sortInfo = [columnSortInfo];
-    } else {
-      newSortInfo = newSortInfo.map((sortInfo) => {
-        if (matched) {
-          return sortInfo;
-        }
-        if (sortInfo.id) {
-          if (sortInfo.id === columnId) {
-            matched = true;
-            return columnSortInfo;
-          }
-          return sortInfo;
-        }
-        if (sortInfo.field) {
-          if (sortInfo.field === colField) {
-            matched = true;
-            return columnSortInfo;
-          }
-          return sortInfo;
-        }
-
-        return sortInfo;
-      });
-
-      if (!matched) {
-        newSortInfo.push(columnSortInfo);
-      }
-      this.dataSourceActions.sortInfo = newSortInfo.length ? newSortInfo : null;
     }
   }
 
