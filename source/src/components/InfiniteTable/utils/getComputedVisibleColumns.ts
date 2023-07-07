@@ -1,4 +1,3 @@
-import { GroupBy } from '../../../utils/groupAndPivot/types';
 import { err } from '../../../utils/debug';
 import { DataSourceProps } from '../../DataSource';
 import { defaultFilterTypes } from '../../DataSource/defaultFilterTypes';
@@ -25,11 +24,9 @@ import type {
   InfiniteTablePropColumnSizing,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
-  InfiniteTablePropMultiSortBehavior,
   InfiniteTableProps,
   InfiniteTablePropsEditable,
 } from '../types/InfiniteTableProps';
-import { notNullable } from '../types/Utility';
 
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { assignNonNull } from './assignFiltered';
@@ -129,7 +126,6 @@ type GetComputedVisibleColumnsParam<T> = {
   sortable?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
-  setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
 
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
@@ -202,7 +198,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   filterValue,
   sortable,
   sortInfo,
-  setSortInfo,
+
   multiSort,
   filterTypes = defaultFilterTypes,
 
@@ -681,99 +677,6 @@ export const getComputedVisibleColumns = <T extends unknown>({
       computedLastInCategory,
       computedFirst: theComputedVisibleIndex === 0,
       computedLast,
-      toggleSort: (
-        {
-          multiSortBehavior,
-        }: { multiSortBehavior: InfiniteTablePropMultiSortBehavior } = {
-          multiSortBehavior: 'replace',
-        },
-      ) => {
-        const currentSortInfo = computedSortInfo;
-        let newColumnSortInfo: DataSourceSingleSortInfo<T> | null;
-
-        const groupByForColumn = result.groupByForColumn;
-
-        let field: DataSourceSingleSortInfo<T>['field'] | undefined = c.field;
-
-        const groupByForCol: GroupBy<T>[] = groupByForColumn
-          ? Array.isArray(groupByForColumn)
-            ? groupByForColumn
-            : [groupByForColumn]
-          : [];
-
-        const fieldArr = groupByForCol
-          .map((c) => {
-            return c.valueGetter
-              ? (item: T) => c.valueGetter({ data: item, field: c.field })
-              : c.field
-              ? (c.field as keyof T)
-              : undefined;
-          })
-          .filter(notNullable);
-
-        if (fieldArr.length) {
-          field = fieldArr;
-        }
-
-        if (!currentSortInfo) {
-          newColumnSortInfo = {
-            dir: 1,
-            id,
-            field,
-            type: computedSortType,
-          } as DataSourceSingleSortInfo<T>;
-        } else {
-          if (computedSortedDesc) {
-            newColumnSortInfo = null;
-          } else {
-            newColumnSortInfo = {
-              ...computedSortInfo,
-              dir: -1,
-            };
-          }
-        }
-
-        if (field && newColumnSortInfo && !newColumnSortInfo.field) {
-          newColumnSortInfo.field = field;
-        }
-        if (
-          c.valueGetter &&
-          newColumnSortInfo &&
-          !newColumnSortInfo.valueGetter
-        ) {
-          newColumnSortInfo.valueGetter = (data) =>
-            c.valueGetter!({ data, field: c.field });
-        }
-
-        let finalSortInfo = sortInfo ? [...sortInfo] : [];
-        if (multiSort) {
-          if (multiSortBehavior === 'append') {
-            if (computedSortIndex === -1) {
-              // it should be added to the end
-              if (newColumnSortInfo) {
-                finalSortInfo.push(newColumnSortInfo);
-              }
-            } else {
-              // it's an existing sort - so should be updated
-              finalSortInfo = finalSortInfo
-                .map((info, index) => {
-                  if (index === computedSortIndex) {
-                    return newColumnSortInfo;
-                  }
-                  return info;
-                })
-                .filter((x) => x != null) as DataSourceSingleSortInfo<T>[];
-            }
-          } else {
-            // should replace current sort
-            finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];
-          }
-        } else {
-          finalSortInfo = newColumnSortInfo ? [newColumnSortInfo] : [];
-        }
-
-        setSortInfo(finalSortInfo);
-      },
       id: id as string,
       header: c.header ?? colType.header ?? c.name ?? c.field,
     };

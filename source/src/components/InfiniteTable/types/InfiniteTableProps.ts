@@ -186,9 +186,13 @@ export type InfiniteTableColumnApi<_T> = {
 
   isVisible: () => boolean;
 
-  toggleSort: () => void;
+  getSortInfo: () => DataSourceSingleSortInfo<_T> | null;
+  getSortDir(): SortDir | null;
+
+  toggleSort: (options?: MultiSortBehaviorOptions) => void;
   clearSort: () => void;
-  setSort: (sort: SortDir | null) => void;
+  setSort: (sort: SortDir | null, options?: MultiSortBehaviorOptions) => void;
+
   setFilter: (value: any) => void;
   clearFilter: (value: any) => void;
 
@@ -226,6 +230,10 @@ type InfiniteTableApiStopEditPromiseResolveType =
     }
   | { reject: Error; value: any }
   | boolean;
+
+export type MultiSortBehaviorOptions = {
+  multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
+};
 
 export interface InfiniteTableApi<T> {
   get selectionApi(): InfiniteTableSelectionApi;
@@ -285,6 +293,16 @@ export interface InfiniteTableApi<T> {
     sortInfo: DataSourceSingleSortInfo<T> | null,
   ) => void;
 
+  getSortInfoForColumn: (
+    columnId: string,
+  ) => DataSourceSingleSortInfo<T> | null;
+  getSortTypeForColumn: (columnId: string) => string | null;
+
+  toggleSortingForColumn: (
+    columnId: string,
+    options?: MultiSortBehaviorOptions,
+  ) => void;
+
   setColumnFilter: (columnId: string, filterValue: any) => void;
   setColumnFilterOperator: (columnId: string, operator: string) => void;
   clearColumnFilter: (columnId: string) => void;
@@ -299,6 +317,7 @@ export interface InfiniteTableApi<T> {
   ) => void;
 
   setSortingForColumn: (columnId: string, dir: SortDir | null) => void;
+  getSortingForColumn: (columnId: string) => SortDir | null;
 
   getColumnApi: (columnId: string) => InfiniteTableColumnApi<T> | null;
 

@@ -17,13 +17,11 @@ export default test.describe.parallel('Sorting via column menu', () => {
 
     const calls = await getCalls({ page });
     expect(calls.length).toEqual(1);
-    expect(calls[0].args[0]).toEqual([
-      {
-        dir: 1,
-        field: 'ItemCount',
-        type: 'number',
-        id: 'itemCount',
-      },
-    ]);
+    expect(calls[0].args[0]).toEqual({
+      dir: 1,
+      field: 'ItemCount',
+      type: 'number',
+      id: 'itemCount',
+    });
   });
 });

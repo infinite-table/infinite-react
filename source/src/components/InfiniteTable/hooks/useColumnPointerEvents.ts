@@ -233,7 +233,7 @@ export const useColumnPointerEvents = ({
         setProxyPosition(null);
 
         if (!didDragAtLeastOnce && dragColumn.computedSortable) {
-          dragColumn.toggleSort({
+          api.toggleSortingForColumn(dragColumn.id, {
             multiSortBehavior:
               multiSortBehavior === 'replace' && (e.ctrlKey || e.metaKey)
                 ? 'append'

@@ -43,7 +43,6 @@ type UseComputedVisibleColumnsParam<T> = {
   draggableColumns?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
-  setSortInfo: (sortInfo: DataSourceSingleSortInfo<T>[]) => void;
 
   filterValue?: DataSourcePropFilterValue<T>;
   filterTypes?: DataSourceProps<T>['filterTypes'];
@@ -99,7 +98,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
   draggableColumns,
   sortInfo,
   multiSort,
-  setSortInfo,
   filterValue,
   filterTypes,
   columnOrder,
@@ -158,7 +156,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
       sortable,
       sortInfo,
-      setSortInfo,
       multiSort,
       pinnedEndMaxWidth,
       pinnedStartMaxWidth,
@@ -190,7 +187,6 @@ export const useComputedVisibleColumns = <T extends unknown>({
 
     sortable,
     sortInfo,
-    setSortInfo,
     multiSort,
 
     filterValue,
