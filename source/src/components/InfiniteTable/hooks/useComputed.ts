@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
-import type { DataSourceSingleSortInfo } from '../../DataSource/types';
 import { useComponentState } from '../../hooks/useComponentState';
 import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
 import { MultiRowSelector } from '../utils/MultiRowSelector';
@@ -63,17 +62,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   const { toggleGroupRow } = useColumnsWhen<T>();
 
-  const setSortInfo = useCallback(
-    (sortInfo: DataSourceSingleSortInfo<T>[]) => {
-      const newSortInfo = getDataSourceState().multiSort
-        ? sortInfo
-        : sortInfo[0] ?? null;
-      //@ts-ignore
-      dataSourceActions.sortInfo = newSortInfo;
-    },
-    [getDataSourceState],
-  );
-
   const columns = componentState.computedColumns;
 
   const {
@@ -122,7 +110,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     draggableColumns: componentState.draggableColumns,
     sortInfo: dataSourceState.sortInfo ?? undefined,
     multiSort,
-    setSortInfo,
 
     columnOrder,
 

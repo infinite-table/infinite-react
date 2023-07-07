@@ -383,6 +383,8 @@ export interface DataSourceApi<T> {
 
   insertData(data: T, options: DataSourceInsertParam): Promise<any>;
   insertDataArray(data: T[], options: DataSourceInsertParam): Promise<any>;
+
+  setSortInfo(sortInfo: null | DataSourceSingleSortInfo<T>[]): void;
 }
 
 export type DataSourcePropRowInfoReducers<T> = Record<

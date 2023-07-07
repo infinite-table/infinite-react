@@ -2,6 +2,7 @@ import {
   DataSourceApi,
   DataSourceComponentActions,
   DataSourceCRUDParam,
+  DataSourceSingleSortInfo,
   DataSourceState,
 } from '.';
 import { raf } from '../../utils/raf';
@@ -271,6 +272,26 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
+  }
+
+  setSortInfo(sortInfo: null | DataSourceSingleSortInfo<T>[]) {
+    const multiSort = this.getState().multiSort;
+
+    if (Array.isArray(sortInfo)) {
+      //@ts-ignore - ignore for now. The type of dataSourceState.sortInfo is either null or []
+      // but the signature of onSortInfoChange is different (info|info[]|null)
+      // we'll need to fix this later TODO
+      this.actions.sortInfo = sortInfo.length
+        ? multiSort
+          ? sortInfo
+          : sortInfo[0]
+        : null;
+      return;
+    }
+
+    //@ts-ignore
+    this.actions.sortInfo = sortInfo;
+    return;
   }
 }
 

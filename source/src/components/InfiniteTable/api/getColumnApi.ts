@@ -4,7 +4,7 @@ import { InfiniteTableComputedColumn } from '../types';
 import {
   InfiniteTableApi,
   InfiniteTableColumnApi,
-  InfiniteTablePropMultiSortBehavior,
+  MultiSortBehaviorOptions,
 } from '../types/InfiniteTableProps';
 
 import { GetImperativeApiParam } from './type';
@@ -78,11 +78,15 @@ export function getColumnApiForColumn<T>(
     },
 
     toggleSort(
-      params: { multiSortBehavior: InfiniteTablePropMultiSortBehavior } = {
+      params: MultiSortBehaviorOptions = {
         multiSortBehavior: 'replace',
       },
     ) {
-      column.toggleSort(params);
+      return api.toggleSortingForColumn(column.id, params);
+    },
+
+    getSortDir() {
+      return api.getSortingForColumn(column.id);
     },
 
     setFilter(value: any) {
@@ -91,6 +95,10 @@ export function getColumnApiForColumn<T>(
 
     clearFilter() {
       return api.clearColumnFilter(column.id);
+    },
+
+    getSortInfo() {
+      return api.getSortInfoForColumn(column.id);
     },
 
     setSort(sort: SortDir | null) {
