@@ -16,12 +16,12 @@ import type {
   InfiniteTableProps,
   InfiniteTablePropsEditable,
 } from '../types/InfiniteTableProps';
-import type { GetComputedVisibleColumnsResult } from '../utils/getComputedVisibleColumns';
-import { getComputedVisibleColumns } from '../utils/getComputedVisibleColumns';
+import type { GetComputedColumnsResult } from '../utils/getComputedColumns';
+import { getComputedColumns } from '../utils/getComputedColumns';
 
 import { useRerenderOnKeyChange } from './useRerenderOnKeyChange';
 
-type UseComputedVisibleColumnsParam<T> = {
+type UseComputedColumnsParam<T> = {
   columns: Map<string, InfiniteTableColumn<T>>;
 
   bodySize: Size;
@@ -60,32 +60,32 @@ type UseComputedVisibleColumnsParam<T> = {
 
 type UseComputedVisibleColumnsResult<T> = {
   renderSelectionCheckBox: boolean;
-  columns: UseComputedVisibleColumnsParam<T>['columns'];
-  fieldsToColumn: GetComputedVisibleColumnsResult<T>['fieldsToColumn'];
+  columns: UseComputedColumnsParam<T>['columns'];
+  fieldsToColumn: GetComputedColumnsResult<T>['fieldsToColumn'];
 
-  computedColumnsMap: GetComputedVisibleColumnsResult<T>['computedColumnsMap'];
-  computedColumnsMapInInitialOrder: GetComputedVisibleColumnsResult<T>['computedColumnsMapInInitialOrder'];
-  computedRemainingSpace: GetComputedVisibleColumnsResult<T>['computedRemainingSpace'];
-  computedUnpinnedOffset: GetComputedVisibleColumnsResult<T>['computedUnpinnedOffset'];
-  computedPinnedEndOffset: GetComputedVisibleColumnsResult<T>['computedPinnedEndOffset'];
+  computedColumnsMap: GetComputedColumnsResult<T>['computedColumnsMap'];
+  computedColumnsMapInInitialOrder: GetComputedColumnsResult<T>['computedColumnsMapInInitialOrder'];
+  computedRemainingSpace: GetComputedColumnsResult<T>['computedRemainingSpace'];
+  computedUnpinnedOffset: GetComputedColumnsResult<T>['computedUnpinnedOffset'];
+  computedPinnedEndOffset: GetComputedColumnsResult<T>['computedPinnedEndOffset'];
 
-  computedPinnedStartColumnsWidth: GetComputedVisibleColumnsResult<T>['computedPinnedStartColumnsWidth'];
-  computedPinnedEndColumnsWidth: GetComputedVisibleColumnsResult<T>['computedPinnedEndColumnsWidth'];
-  computedUnpinnedColumnsWidth: GetComputedVisibleColumnsResult<T>['computedUnpinnedColumnsWidth'];
+  computedPinnedStartColumnsWidth: GetComputedColumnsResult<T>['computedPinnedStartColumnsWidth'];
+  computedPinnedEndColumnsWidth: GetComputedColumnsResult<T>['computedPinnedEndColumnsWidth'];
+  computedUnpinnedColumnsWidth: GetComputedColumnsResult<T>['computedUnpinnedColumnsWidth'];
 
-  computedPinnedStartColumns: GetComputedVisibleColumnsResult<T>['computedPinnedStartColumns'];
-  computedPinnedEndColumns: GetComputedVisibleColumnsResult<T>['computedPinnedEndColumns'];
-  computedUnpinnedColumns: GetComputedVisibleColumnsResult<T>['computedUnpinnedColumns'];
+  computedPinnedStartColumns: GetComputedColumnsResult<T>['computedPinnedStartColumns'];
+  computedPinnedEndColumns: GetComputedColumnsResult<T>['computedPinnedEndColumns'];
+  computedUnpinnedColumns: GetComputedColumnsResult<T>['computedUnpinnedColumns'];
 
-  computedVisibleColumns: GetComputedVisibleColumnsResult<T>['computedVisibleColumns'];
-  computedVisibleColumnsMap: GetComputedVisibleColumnsResult<T>['computedVisibleColumnsMap'];
-  computedPinnedEndWidth: GetComputedVisibleColumnsResult<T>['computedPinnedEndWidth'];
-  computedPinnedStartWidth: GetComputedVisibleColumnsResult<T>['computedPinnedStartWidth'];
+  computedVisibleColumns: GetComputedColumnsResult<T>['computedVisibleColumns'];
+  computedVisibleColumnsMap: GetComputedColumnsResult<T>['computedVisibleColumnsMap'];
+  computedPinnedEndWidth: GetComputedColumnsResult<T>['computedPinnedEndWidth'];
+  computedPinnedStartWidth: GetComputedColumnsResult<T>['computedPinnedStartWidth'];
 
-  computedColumnOrder: GetComputedVisibleColumnsResult<T>['computedColumnOrder'];
+  computedColumnOrder: GetComputedColumnsResult<T>['computedColumnOrder'];
 };
 
-export const useComputedVisibleColumns = <T extends unknown>({
+export const useComputedColumns = <T extends unknown>({
   columns,
   bodySize,
   columnMinWidth,
@@ -114,7 +114,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
   columnVisibility,
   columnVisibilityAssumeVisible,
   columnSizing,
-}: UseComputedVisibleColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
+}: UseComputedColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
   const columnsRenderId = useRerenderOnKeyChange(columns);
 
   const {
@@ -137,7 +137,7 @@ export const useComputedVisibleColumns = <T extends unknown>({
     computedColumnsMapInInitialOrder,
     fieldsToColumn,
   } = useMemo(() => {
-    return getComputedVisibleColumns({
+    return getComputedColumns({
       columns,
       scrollbarWidth,
 

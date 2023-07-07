@@ -72,7 +72,7 @@ const getComputedPinned = (
   return computedPinned;
 };
 
-export type GetComputedVisibleColumnsResult<T> = {
+export type GetComputedColumnsResult<T> = {
   renderSelectionCheckBox: boolean;
   computedRemainingSpace: number;
   computedPinnedStartColumnsWidth: number;
@@ -182,7 +182,7 @@ function isGroupColumnSortable<T>(
   }, true as boolean);
 }
 
-export const getComputedVisibleColumns = <T extends unknown>({
+export const getComputedColumns = <T extends unknown>({
   columns,
 
   bodySize,
@@ -215,7 +215,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
   columnTypes,
   columnVisibility,
   columnVisibilityAssumeVisible,
-}: GetComputedVisibleColumnsParam<T>): GetComputedVisibleColumnsResult<T> => {
+}: GetComputedVisibleColumnsParam<T>): GetComputedColumnsResult<T> => {
   let computedOffset = 0;
 
   const filterValueRecord = (filterValue || []).reduce(
@@ -746,7 +746,7 @@ export const getComputedVisibleColumns = <T extends unknown>({
       ? Math.min(pinnedEndMaxWidth, computedPinnedEndColumnsWidth)
       : computedPinnedEndColumnsWidth;
 
-  const result: GetComputedVisibleColumnsResult<T> = {
+  const result: GetComputedColumnsResult<T> = {
     computedRemainingSpace:
       bodySize.width -
       (totalPinnedStartWidth + totalPinnedEndWidth + totalUnpinnedWidth),

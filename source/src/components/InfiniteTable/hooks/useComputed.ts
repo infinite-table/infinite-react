@@ -9,7 +9,7 @@ import { useColumnGroups } from './useColumnGroups';
 import { useColumnRowspan } from './useColumnRowspan';
 import { useColumnSizeFn } from './useColumnSizeFn';
 import { useColumnsWhen } from './useColumnsWhen';
-import { useComputedVisibleColumns } from './useComputedVisibleColumns';
+import { useComputedColumns } from './useComputedColumns';
 import { useScrollbars } from './useScrollbars';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
@@ -83,7 +83,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     computedColumnsMap,
     computedColumnsMapInInitialOrder,
     fieldsToColumn,
-  } = useComputedVisibleColumns({
+  } = useComputedColumns({
     columns,
     // scrollbarWidth: scrollbars.vertical ? getScrollbarWidth() : 0,
 
