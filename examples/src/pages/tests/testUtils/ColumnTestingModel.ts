@@ -4,6 +4,7 @@ import {
   ColLocation,
   getCellNodeLocator,
   getColumnGroupsIds,
+  getColumnGroupsLabels,
   getColumnWidths,
   getHeaderCellForColumn,
   getHeaderColumnCells,
@@ -77,6 +78,10 @@ export class ColumnTestingModel {
 
   async getVisibleColumnGroupIds() {
     return await getColumnGroupsIds({ page: this.page });
+  }
+
+  async getVisibleColumnGroupLabels() {
+    return await getColumnGroupsLabels({ page: this.page });
   }
 
   async getVisibleColumnIds() {

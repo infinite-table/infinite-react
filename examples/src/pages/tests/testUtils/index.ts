@@ -410,8 +410,21 @@ export async function getColumnGroupNodeForGroup(
   );
 }
 export async function getColumnGroupsIds({ page }: { page: Page }) {
-  return await page.$$eval(COL_GROUP_SELECTOR, (nodes) =>
-    [...nodes].map((node) => (node as HTMLElement).dataset.groupId),
+  const elements = await sortElements(page.locator(COL_GROUP_SELECTOR), 'col');
+
+  return await Promise.all(
+    elements.map(async (el) => {
+      return await el.evaluate((node) => (node as HTMLElement).dataset.groupId);
+    }),
+  );
+}
+export async function getColumnGroupsLabels({ page }: { page: Page }) {
+  const elements = await sortElements(page.locator(COL_GROUP_SELECTOR), 'col');
+
+  return await Promise.all(
+    elements.map(async (el) => {
+      return await el.evaluate((node) => (node as HTMLElement).innerText);
+    }),
   );
 }
 

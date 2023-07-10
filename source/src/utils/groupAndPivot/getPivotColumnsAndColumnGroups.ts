@@ -185,7 +185,7 @@ export function getPivotColumnsAndColumnGroups<
         columnGroups.set(
           parentColumnGroupId,
           prepareColumnGroup({
-            header: pivotGroupKey,
+            header: `${pivotGroupKey}`,
             columnGroup: columnGroupId,
             pivotBy,
             pivotGroupKeys: keys,
@@ -199,7 +199,7 @@ export function getPivotColumnsAndColumnGroups<
       // todo when !isSingleAggregationColumn add here pivot total column
       aggregationReducers.forEach((reducer, index) => {
         const header = isSingleAggregationColumn
-          ? keys[keys.length - 1]
+          ? `${keys[keys.length - 1]}`
           : reducer.name || reducer.id;
 
         const computedPivotColumn = prepareColumn({
@@ -270,7 +270,7 @@ export function getPivotColumnsAndColumnGroups<
         colGroupId,
         prepareColumnGroup({
           columnGroup: parentKeys.length ? parentKeys.join('/') : undefined,
-          header: keys[keys.length - 1],
+          header: `${keys[keys.length - 1]}`,
           pivotBy,
           pivotGroupKeys: keys,
           pivotIndex: keys.length - 1,
