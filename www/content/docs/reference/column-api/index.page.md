@@ -8,7 +8,7 @@ When rendering the `InfiniteTable` component, you can get access to the Column A
 For the root API see the [API page](/docs/reference/api).
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
 
-<PropTable searchPlaceholder="Type to filter API methods">
+<PropTable searchPlaceholder="Type to filter API methods" sort>
 
 
 <Prop name="clearSort">
@@ -38,6 +38,75 @@ To clear the sort, pass `null` as the argument. See related <PropLink name="clea
 Calling this will trigger <DPropLink name="onSortInfoChange" />.
 
 </Prop>
+
+
+
+<Prop name="toggleSort" type="(options?) => void">
+
+> Toggles the sorting for the current column. Aliased to <ApiLink name="toggleSortingForColumn" />.
+
+This is the same method the component uses internally when the user clicks a column header.
+
+If the column is not sorted, it gets sorted in ascending order.
+
+If the column is sorted in ascending order, it gets sorted in descending order.
+
+If the column is sorted in descending order, the sorting is cleared.
+
+<Note>
+
+The `options` is optional and can have the `multiSortBehavior` property, which can be either `append` or `replace`. See related <PropLink name="multiSortBehavior" /> prop. If not provided, the default behavior is used.
+
+</Note>
+
+See related <ColumnApiLink name="setSort" /> and <ColumnApiLink name="getSortingForColumn" />.
+
+</Prop>
+
+<Prop name="setSort" type="(dir: 1|-1|null) => void">
+
+> Sets the sorting for the current column.  Aliased to <ApiLink name="setSortingForColumn" />.
+
+The sort direction is specified by the `dir` parameter, which can be:
+ - `1` for ascending
+ - `-1` for descending
+ - `null` for clearing the sorting.
+
+
+See related <ColumnApiLink name="toggleSort" /> and <ColumnApiLink name="getSortDir" />.
+
+</Prop>
+
+<Prop name="getSortDir" type="()=> 1|-1|null">
+
+> Returns the sorting currently applied to the current column. Aliased to <ApiLink name="getSortingForColumn" />.
+
+The return value is:
+ - `1` for ascending
+ - `-1` for descending
+ - `null` for no sorting.
+
+ See related <ColumnApiLink name="toggleSortingForColumn" /> and <ColumnApiLink name="setSortingForColumn" />.
+
+</Prop>
+
+<Prop name="clearSort" type="() => void">
+
+> Clears the sorting for the current column.
+
+It is the same as calling <ColumnApiLink name="setSort" /> with `null` as the argument.
+
+</Prop>
+
+
+<Prop name="isSortable" type="()=> boolean">
+
+> Returns whether the current column is sortable.
+
+See related <PropLink name="columnDefaultSortable" />, <PropLink name="columns.defaultSortable" />, <PropLink name="columnTypes.defaultSortable" /> and <PropLink name="sortable" />
+
+</Prop>
+
 
 
 <Prop name="showContextMenu" type="() => void">

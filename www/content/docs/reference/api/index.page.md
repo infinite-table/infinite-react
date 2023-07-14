@@ -59,6 +59,56 @@ See related <ApiLink name="confirmEdit" /> and <ApiLink name="cancelEdit" />.
 
 </Prop>
 
+
+<Prop name="toggleSortingForColumn" type="(columnId: string, options?) => void">
+
+> Toggles the sorting for the specified column.
+
+This is the same method the component uses internally when the user clicks a column header.
+
+If the column is not sorted, it gets sorted in ascending order.
+
+If the column is sorted in ascending order, it gets sorted in descending order.
+
+If the column is sorted in descending order, the sorting is cleared.
+
+<Note>
+
+The `options` is optional and can have the `multiSortBehavior` property, which can be either `append` or `replace`. See related <PropLink name="multiSortBehavior" /> prop. If not provided, the default behavior is used.
+
+</Note>
+
+See related <ApiLink name="setSortingForColumn" /> and <ApiLink name="getSortingForColumn" />.
+
+</Prop>
+
+<Prop name="setSortingForColumn" type="(columnId: string, dir: 1|-1|null) => void">
+
+> Sets the sorting for the specified column.
+
+The sort direction is specified by the `dir` parameter, which can be:
+ - `1` for ascending
+ - `-1` for descending
+ - `null` for clearing the sorting.
+
+
+See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="getSortingForColumn" />.
+
+</Prop>
+
+<Prop name="getSortingForColumn" type="(columnId: string)=> 1|-1|null">
+
+> Returns the sorting currently applied to the specified column.
+
+The return value is:
+ - `1` for ascending
+ - `-1` for descending
+ - `null` for no sorting.
+
+ See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="setSortingForColumn" />.
+
+</Prop>
+
 <Prop name="collapseGroupRow" type="(groupKeys: any[]) => boolean">
 
 > Collapses the specified group row. Returns true if the group was expanded and is now being collapsed.

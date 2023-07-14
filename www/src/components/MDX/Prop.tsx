@@ -136,6 +136,37 @@ export const DApiLink = ({
 
 DApiLink.displayName = 'DApiLink';
 
+export const ColumnApiLink = ({
+  name,
+  children,
+  code = true,
+  nocode,
+}: {
+  name: keyof DataSourceApi<any>;
+  children?: React.ReactNode;
+  code?: boolean;
+  nocode?: boolean;
+}) => {
+  let path = '/docs/reference/column-api';
+  const pathname = usePathname();
+
+  if (pathname === path) {
+    path = ''; // we're on this page already
+  }
+  const href = `${path}#${name as string}`;
+  if (nocode) {
+    code = false;
+  }
+  const content = code ? (
+    <InlineCode isLink={false}>{children ?? name}</InlineCode>
+  ) : (
+    children ?? name
+  );
+  return <Link href={href}>{content}</Link>;
+};
+
+ColumnApiLink.displayName = 'ColumnApiLink';
+
 export const TypeLink = ({
   name,
   children,
