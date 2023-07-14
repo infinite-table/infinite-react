@@ -106,7 +106,7 @@ export default () => {
               position: 'before',
               primaryKey: 5,
             })
-            .then((result) => {
+            .then(() => {
               console.log(dataSourceApi?.getRowInfoArray());
             });
         }}
