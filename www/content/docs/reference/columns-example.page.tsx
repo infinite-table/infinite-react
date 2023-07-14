@@ -10,7 +10,7 @@ const columns: InfiniteTablePropColumns<Person> = {
   identifier: {
     field: 'Id',
     type: 'number',
-    sortable: true,
+    defaultSortable: true,
     defaultWidth: 80,
   },
   firstName: {

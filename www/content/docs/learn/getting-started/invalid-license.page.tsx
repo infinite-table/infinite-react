@@ -10,7 +10,6 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
     // should be rendered in this column
     field: 'Id',
     type: 'number',
-    sortable: true,
     defaultWidth: 80,
   },
   firstName: {

@@ -26,7 +26,7 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
   id: {
     field: 'Id',
     type: 'number',
-    sortable: true,
+    defaultSortable: true,
     defaultWidth: 80,
   },
   firstName: {
