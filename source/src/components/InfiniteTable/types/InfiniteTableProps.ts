@@ -502,10 +502,10 @@ export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
   dataSourceApi: DataSourceApi<T>;
 } & InfiniteTableRowInfoDataDiscriminatorWithColumn<T>;
 
-export type InfiniteTablePropsEditable<T> =
+export type InfiniteTablePropEditable<T> =
   | InfiniteTableColumnEditableFn<T>
   | undefined;
-export type InfiniteTablePropsSortable<T> =
+export type InfiniteTablePropSortable<T> =
   | InfiniteTableColumnSortable<T>
   | undefined;
 
@@ -558,12 +558,12 @@ export interface InfiniteTableProps<T> {
    * This overrides both the global `columnDefaultSortable` prop and the column's own `defaultSortable` prop.
    * When used, it's the ultimate source of truth for whether (and which) columns are sortable.
    */
-  sortable?: InfiniteTablePropsSortable<T>;
+  sortable?: InfiniteTablePropSortable<T>;
 
   /**
    * This overrides both the global `columnDefaultEditable` prop and the column's own `defaultEditable` prop.
    */
-  editable?: InfiniteTablePropsEditable<T>;
+  editable?: InfiniteTablePropEditable<T>;
 
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
   pivotGrandTotalColumnPosition?: InfiniteTablePropPivotGrandTotalColumnPosition;

@@ -14,8 +14,8 @@ import type {
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
-  InfiniteTablePropsEditable,
-  InfiniteTablePropsSortable,
+  InfiniteTablePropEditable,
+  InfiniteTablePropSortable,
 } from '../types/InfiniteTableProps';
 import type { GetComputedColumnsResult } from '../utils/getComputedColumns';
 import { getComputedColumns } from '../utils/getComputedColumns';
@@ -40,7 +40,7 @@ type UseComputedColumnsParam<T> = {
 
   columnDefaultWidth?: number;
   columnDefaultFlex?: number;
-  sortable?: InfiniteTablePropsSortable<T>;
+  sortable?: InfiniteTablePropSortable<T>;
   draggableColumns?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
@@ -48,7 +48,7 @@ type UseComputedColumnsParam<T> = {
   filterValue?: DataSourcePropFilterValue<T>;
   filterTypes?: DataSourceProps<T>['filterTypes'];
 
-  editable: InfiniteTablePropsEditable<T>;
+  editable: InfiniteTablePropEditable<T>;
   columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable?: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnDefaultSortable?: InfiniteTableProps<T>['columnDefaultSortable'];

@@ -8,7 +8,7 @@ import {
 import {
   InfiniteTableApi,
   InfiniteTableColumnApi,
-  InfiniteTablePropsSortable,
+  InfiniteTablePropSortable,
   MultiSortBehaviorOptions,
 } from '../types/InfiniteTableProps';
 import {
@@ -22,7 +22,7 @@ export function isGroupColumnSortable<T>(
   column: InfiniteTableComputedColumn<T>,
   options: {
     columnDefaultSortable?: boolean;
-    sortable?: InfiniteTablePropsSortable<T>;
+    sortable?: InfiniteTablePropSortable<T>;
 
     fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   },

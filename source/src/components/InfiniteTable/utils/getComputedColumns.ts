@@ -26,8 +26,8 @@ import type {
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
-  InfiniteTablePropsEditable,
-  InfiniteTablePropsSortable,
+  InfiniteTablePropEditable,
+  InfiniteTablePropSortable,
 } from '../types/InfiniteTableProps';
 
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
@@ -131,14 +131,14 @@ type GetComputedVisibleColumnsParam<T> = {
   filterValue?: DataSourcePropFilterValue<T>;
   filterTypes?: DataSourceProps<T>['filterTypes'];
 
-  sortable?: InfiniteTablePropsSortable<T>;
+  sortable?: InfiniteTablePropSortable<T>;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
 
   draggableColumns?: boolean;
   columnOrder: InfiniteTablePropColumnOrder;
   columnPinning: InfiniteTablePropColumnPinning;
-  editable: InfiniteTablePropsEditable<T>;
+  editable: InfiniteTablePropEditable<T>;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];

@@ -1,14 +1,17 @@
 ---
-title: "Infinite Table reaches version 2.0.0"
+title: "Infinite Table DataGrid for React reaches version 2.0.0"
 description: "With version 2.0.0 InfiniteTable DataGrid for React brings lots of fixes and enhancements including support for sorting group columns, better APIs, improved pivoting, smarter column menus and more."
 author: [admin]
 ---
 
-Version 2.0.0 is a release that allowed us to polish many areas of the component and consolidate its existing features and APIs.
+Version `2.0.0` is a release that allowed us to polish many areas of the component and consolidate its existing features and APIs.
+
+We hope this makes your experience with Infinite Table as your React DataGrid of choice even better.
 
 Though it doesn't add major new features, this version does improve the overall experience of using the component. In this article we're detailing the most important improvements this release brings.
 
-<Note title="Version 2.0.0 highlights">
+
+<Note title="Version 2.0.0 highlights 🎉">
 
  1️⃣ [better support for sorting group columns](#1-better-support-for-sorting-group-columns)
  2️⃣ [allows configuring the behavior when multiple sorting is enabled](#2-multi-sort-behavior)
@@ -36,7 +39,7 @@ This release enables you to make group columns sortable even when other columns 
   columnDefaultWidth={120}
 />
 ```
-<CSEmbed title="Sorting group columns is now possible" id="sorting-group-columns-g74gz6" />
+<CSEmbed title="Sorting group columns is now possible" id="sorting-group-columns-forked-gv5n3z" />
 
 ## 2️⃣ Multi sort behavior
 
