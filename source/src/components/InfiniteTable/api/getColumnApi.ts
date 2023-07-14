@@ -2,12 +2,90 @@ import { SortDir } from '../../../utils/multisort';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {
+  InfiniteTableColumnSortable,
+  InfiniteTableColumnSortableFn,
+} from '../types/InfiniteTableColumn';
+import {
   InfiniteTableApi,
   InfiniteTableColumnApi,
+  InfiniteTablePropsSortable,
   MultiSortBehaviorOptions,
 } from '../types/InfiniteTableProps';
+import {
+  DEFAULT_SORTABLE,
+  UNKNOWN_SORT_TYPE,
+} from '../utils/getComputedColumns';
 
 import { GetImperativeApiParam } from './type';
+
+export function isGroupColumnSortable<T>(
+  column: InfiniteTableComputedColumn<T>,
+  options: {
+    columnDefaultSortable?: boolean;
+    sortable?: InfiniteTablePropsSortable<T>;
+
+    fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
+  },
+): InfiniteTableColumnSortable<T> {
+  const { sortable, fieldsToColumn, columnDefaultSortable } = options;
+
+  if (sortable) {
+    return sortable;
+  }
+
+  let sortableColumnOrType =
+    column.defaultSortable ?? column.colType.defaultSortable;
+
+  if (sortableColumnOrType != null) {
+    return sortableColumnOrType;
+  }
+
+  const defaultSortable = columnDefaultSortable ?? DEFAULT_SORTABLE;
+  if (column.computedSortType !== UNKNOWN_SORT_TYPE && defaultSortable) {
+    return true;
+  }
+
+  const isSortable: InfiniteTableColumnSortableFn<T> = (params) => {
+    const { column, api } = params;
+
+    let groupByForColumn = column.groupByForColumn || [];
+
+    if (groupByForColumn != null && !Array.isArray(groupByForColumn)) {
+      groupByForColumn = [groupByForColumn];
+    }
+    return (groupByForColumn || []).reduce((acc, groupBy) => {
+      if (!acc) {
+        return false;
+      }
+      const field: string | undefined =
+        (groupBy.field as string) || groupBy.groupField;
+
+      let colSortable: boolean | undefined = undefined;
+
+      if (field) {
+        const foundCol = fieldsToColumn.get(field as keyof T);
+        const foundColApi = foundCol
+          ? api.getColumnApi(foundCol.id)
+          : undefined;
+        if (foundCol && foundColApi) {
+          colSortable = foundColApi.isSortable();
+        } else {
+          // we cannot sort the group column
+          // as we don't have info on one of the groupBy items
+          // eg: we can't know the sort type
+          colSortable = false;
+        }
+      }
+      if (colSortable === undefined && groupBy.valueGetter) {
+        colSortable = true;
+      }
+
+      return colSortable ?? columnDefaultSortable ?? DEFAULT_SORTABLE;
+    }, true as boolean);
+  };
+
+  return isSortable;
+}
 
 export function getColumnApiForColumn<T>(
   colOrColId: string | number | InfiniteTableComputedColumn<T>,
@@ -83,6 +161,19 @@ export function getColumnApiForColumn<T>(
       },
     ) {
       return api.toggleSortingForColumn(column.id, params);
+    },
+
+    isSortable() {
+      const { computedColumnsMap } = getComputed();
+
+      return typeof column.computedSortable === 'function'
+        ? column.computedSortable({
+            api,
+            columnApi,
+            column,
+            columns: computedColumnsMap,
+          })
+        : column.computedSortable;
     },
 
     getSortDir() {

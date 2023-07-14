@@ -101,10 +101,14 @@ export default () => {
     <>
       <button
         onClick={() => {
-          dataSourceApi!.insertDataArray([mark, afterMark], {
-            position: 'before',
-            primaryKey: 5,
-          });
+          dataSourceApi!
+            .insertDataArray([mark, afterMark], {
+              position: 'before',
+              primaryKey: 5,
+            })
+            .then((result) => {
+              console.log(dataSourceApi?.getRowInfoArray());
+            });
         }}
       >
         Add 2 items

@@ -96,6 +96,14 @@ export class HeaderTestingModel {
     return this.page.locator('.InfiniteMenu');
   }
 
+  async getMenuItems() {
+    const menuLocator = await this.getColumnMenuLocator();
+
+    return await menuLocator
+      .locator('[data-menu-col-name="label"]')
+      .allInnerTexts();
+  }
+
   async openColumnMenu(colLocation: ColLocation) {
     // click the body to make sure any open column menu gets closed
     await this.page.click('body');

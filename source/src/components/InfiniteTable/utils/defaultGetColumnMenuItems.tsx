@@ -10,6 +10,7 @@ import { InfiniteCheckBox } from '../components/CheckBox';
 import { getColumnLabel } from '../components/InfiniteTableHeader/getColumnLabel';
 import {
   InfiniteTableApi,
+  InfiniteTableColumnApi,
   InfiniteTableComputedColumn,
   InfiniteTableComputedValues,
   InfiniteTableState,
@@ -20,6 +21,7 @@ export function defaultGetColumnMenuItems<T>(
   _items: MenuProps['items'],
   params: {
     column: InfiniteTableComputedColumn<T>;
+    columnApi: InfiniteTableColumnApi<T>;
     api: InfiniteTableApi<T>;
     dataSourceApi: DataSourceApi<T>;
     getState: () => InfiniteTableState<T>;
@@ -30,34 +32,57 @@ export function defaultGetColumnMenuItems<T>(
     dataSourceActions: DataSourceComponentActions<T>;
   },
 ): MenuProps['items'] {
-  const { column, getComputed, api } = params;
+  const { columnApi, column, getComputed, api } = params;
+
+  const sortable = columnApi.isSortable();
+
+  const sortItems = sortable
+    ? [
+        {
+          key: 'sort-asc',
+          label: 'Sort Ascending',
+          disabled: column.computedSortedAsc,
+          onAction: () => {
+            api.setSortingForColumn(column.id, 1);
+          },
+        },
+        {
+          key: 'sort-desc',
+          label: 'Sort Descending',
+          disabled: column.computedSortedDesc,
+          onAction: () => {
+            api.setSortingForColumn(column.id, -1);
+          },
+        },
+        {
+          key: 'sort-none',
+          label: 'Unsort',
+          disabled: !column.computedSorted,
+          onAction: () => {
+            api.setSortingForColumn(column.id, null);
+          },
+        },
+        '-',
+      ]
+    : [];
+
+  const groupItems = column.groupByForColumn
+    ? [
+        {
+          key: 'collapse-all',
+          label: 'Collapse All',
+          onAction: () => {
+            api.collapseAllGroupRows();
+          },
+        },
+        '-',
+      ]
+    : [];
 
   return [
-    {
-      key: 'sort-asc',
-      label: 'Sort Ascending',
-      disabled: column.computedSortedAsc,
-      onAction: () => {
-        api.setSortingForColumn(column.id, 1);
-      },
-    },
-    {
-      key: 'sort-desc',
-      label: 'Sort Descending',
-      disabled: column.computedSortedDesc,
-      onAction: () => {
-        api.setSortingForColumn(column.id, -1);
-      },
-    },
-    {
-      key: 'sort-none',
-      label: 'Unsort',
-      disabled: !column.computedSorted,
-      onAction: () => {
-        api.setSortingForColumn(column.id, null);
-      },
-    },
-    column.computedFilterable ? '-' : null,
+    ...groupItems,
+    ...sortItems,
+
     column.computedFilterable
       ? {
           key: 'clear-filter',
@@ -68,7 +93,8 @@ export function defaultGetColumnMenuItems<T>(
           },
         }
       : null,
-    '-',
+    column.computedFilterable ? '-' : null,
+
     {
       key: 'pin-start',
       label: 'Pin to start',

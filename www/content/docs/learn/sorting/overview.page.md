@@ -52,6 +52,14 @@ This example shows initial sorting by `salary` in ascending order. Click the hea
 
 </Sandpack>
 
+<Note>
+
+By default, columns in the InfiniteTable DataGrid are sortable.
+
+If you want to disable column sorting for all columns, use <PropLink name="columnDefaultSortable">columnDefaultSortable=false</PropLink> and then you can turn it back on per-column, by setting <PropLink name="columns.sortable">column.defaultSortable=true</PropLink>.
+
+</Note>
+
 ### Multiple Sorting
 
 If you want to use [multiple sorting](/docs/learn/sorting/multiple-sorting), specify an array of objects like

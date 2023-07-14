@@ -52,6 +52,15 @@ export const columns = new Map<string, InfiniteTableColumn<Employee>>([
     },
   ],
   [
+    'age',
+    {
+      field: 'age',
+      type: 'number',
+      header: 'Age',
+      defaultWidth: 100,
+    },
+  ],
+  [
     'department',
     {
       field: 'department',

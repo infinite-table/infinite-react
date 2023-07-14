@@ -223,6 +223,7 @@ export const forwardProps = <T>(
     editable: 1,
     columnDefaultEditable: 1,
     columnDefaultFilterable: 1,
+    columnDefaultSortable: 1,
 
     rowStyle: 1,
     rowProps: 1,
@@ -263,7 +264,7 @@ export const forwardProps = <T>(
     showSeparatePivotColumnForSingleAggregation: (
       showSeparatePivotColumnForSingleAggregation,
     ) => showSeparatePivotColumnForSingleAggregation ?? false,
-    sortable: (sortable) => sortable ?? true,
+    sortable: 1,
     hideEmptyGroupColumns: (hideEmptyGroupColumns) =>
       hideEmptyGroupColumns ?? false,
 

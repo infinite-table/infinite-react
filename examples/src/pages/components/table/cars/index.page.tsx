@@ -13,7 +13,7 @@ const columns: Record<string, InfiniteTableColumn<CarSale>> = {
   'Group column': {
     type: 'number',
     header: 'Group',
-    sortable: false,
+    defaultSortable: false,
 
     render: ({ value, rowInfo }) => {
       return (

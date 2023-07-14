@@ -23,6 +23,7 @@ import type {
   InfiniteTableColumnEditableFn,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnRenderFunctionForGroupRows,
+  InfiniteTableColumnSortable,
   InfiniteTableComputedColumn,
   InfiniteTableComputedPivotFinalColumn,
   InfiniteTableDataTypeNames,
@@ -111,13 +112,15 @@ export type InfiniteTableColumnType<T> = {
   header?: InfiniteTableColumn<T>['header'];
   comparer?: InfiniteTableColumn<T>['comparer'];
   draggable?: InfiniteTableColumn<T>['draggable'];
-  sortable?: InfiniteTableColumn<T>['sortable'];
+
   resizable?: InfiniteTableColumn<T>['resizable'];
   align?: InfiniteTableColumn<T>['align'];
   headerAlign?: InfiniteTableColumn<T>['headerAlign'];
   verticalAlign?: InfiniteTableColumn<T>['verticalAlign'];
 
   contentFocusable?: InfiniteTableColumn<T>['contentFocusable'];
+
+  defaultSortable?: InfiniteTableColumn<T>['defaultSortable'];
   defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
   defaultFilterable?: InfiniteTableColumn<T>['defaultFilterable'];
 
@@ -185,6 +188,7 @@ export type InfiniteTableColumnApi<_T> = {
   hideFilterOperatorMenu: () => void;
 
   isVisible: () => boolean;
+  isSortable: () => boolean;
 
   getSortInfo: () => DataSourceSingleSortInfo<_T> | null;
   getSortDir(): SortDir | null;
@@ -284,6 +288,7 @@ export interface InfiniteTableApi<T> {
     renderStartIndex: number;
     renderEndIndex: number;
   };
+  collapseAllGroupRows: () => void;
   toggleGroupRow: (groupKeys: any[]) => void;
   collapseGroupRow: (groupKeys: any[]) => boolean;
   expandGroupRow: (groupKeys: any[]) => boolean;
@@ -296,7 +301,7 @@ export interface InfiniteTableApi<T> {
   getSortInfoForColumn: (
     columnId: string,
   ) => DataSourceSingleSortInfo<T> | null;
-  getSortTypeForColumn: (columnId: string) => string | null;
+  getSortTypeForColumn: (columnId: string) => string | string[] | null;
 
   toggleSortingForColumn: (
     columnId: string,
@@ -306,6 +311,7 @@ export interface InfiniteTableApi<T> {
   setColumnFilter: (columnId: string, filterValue: any) => void;
   setColumnFilterOperator: (columnId: string, operator: string) => void;
   clearColumnFilter: (columnId: string) => void;
+  isColumnSortable: (columnId: string) => boolean;
   setFilterValueForColumn: (
     columnId: string,
     filterValue: DataSourceFilterValueItem<T>,
@@ -499,6 +505,9 @@ export type InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> = {
 export type InfiniteTablePropsEditable<T> =
   | InfiniteTableColumnEditableFn<T>
   | undefined;
+export type InfiniteTablePropsSortable<T> =
+  | InfiniteTableColumnSortable<T>
+  | undefined;
 
 export type InfiniteTablePropOnEditAcceptedParams<T> =
   InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> & {
@@ -537,6 +546,23 @@ export interface InfiniteTableProps<T> {
 
   columnDefaultFilterable?: boolean;
   columnDefaultEditable?: boolean;
+
+  /**
+   * Default behavior for column sorting. Defaults to true.
+   *
+   * This is overriden by all other props that can control sorting behavior (`column.defaultSortable`, `columnType.defaultSortable`, `sortable`).
+   */
+  columnDefaultSortable?: boolean;
+
+  /**
+   * This overrides both the global `columnDefaultSortable` prop and the column's own `defaultSortable` prop.
+   * When used, it's the ultimate source of truth for whether (and which) columns are sortable.
+   */
+  sortable?: InfiniteTablePropsSortable<T>;
+
+  /**
+   * This overrides both the global `columnDefaultEditable` prop and the column's own `defaultEditable` prop.
+   */
   editable?: InfiniteTablePropsEditable<T>;
 
   pivotTotalColumnPosition?: InfiniteTablePropPivotTotalColumnPosition;
@@ -648,7 +674,7 @@ export interface InfiniteTableProps<T> {
   id?: string;
   showZebraRows?: boolean;
   showHoverRows?: boolean;
-  sortable?: boolean;
+
   multiSortBehavior?: InfiniteTablePropMultiSortBehavior;
 
   keyboardNavigation?: InfiniteTablePropKeyboardNavigation;

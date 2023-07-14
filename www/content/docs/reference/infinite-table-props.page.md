@@ -127,6 +127,48 @@ All columns are configured to not be editable, except the `salary` column.
 
 </Prop>
 
+<Prop name="columnDefaultSortable" type="boolean" defaultValue={true}>
+
+> Specifies whether columns are sortable by default.
+
+This property is overriden by (in this order) the following props:
+
+ - <PropLink name="columnTypes.defaultSortable" />
+ - <PropLink name="column.defaultSortable" />
+ - <PropLink name="sortable" />
+
+When specified, <PropLink name="sortable" /> overrides all other properties and is the only source of truth for whether something is sortable or not.
+
+<Note>
+
+This property does not apply for group columns, since for sorting, group columns generally depend on the columns they are grouping.
+
+In some cases, you can have group columns that group by fields that are not bound to actual columns, so for determining sorting for group columns, use one of the following props:
+
+- <PropLink name="columnTypes.defaultSortable" />
+- <PropLink name="column.defaultSortable" />
+- <PropLink name="sortable" />
+
+
+</Note>
+
+</Prop>
+
+<Prop name="sortable" type="boolean | ({column, columns, api, columnApi}) => boolean">
+
+> This prop is the ultimate source of truth on whether (and which) columns are sortable.
+
+This property overrides all the following props:
+
+ - <PropLink name="columnDefaultSortable" /> (this is the base value, overriden by all other props in this list, in this order)
+ - <PropLink name="columnTypes.defaultSortable" />
+ - <PropLink name="column.defaultSortable" />
+
+The <PropLink name="sortable" /> prop is designed to be used for highly advanced scenarios, where you need to have ultimate control over which columns are sortable and which are not - in this case, you will want to declare <PropLink name="sortable" /> as a function, which returns `true/false` for every column.
+
+</Prop>
+
+
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
 > Specifies the a default width for all columns.
@@ -1291,7 +1333,7 @@ Use this column property in order to explicitly make the column sortable or not 
 
 </Prop>
 
-<Prop name="columns.sortType" type="string" defaultValue="'string'">
+<Prop name="columns.sortType" type="string | string[]" defaultValue="'string'">
 
 > Specifies the sort type for the column. See related <DataSourcePropLink name="sortTypes" />
 
@@ -1310,6 +1352,11 @@ The value of this prop (as specified, or as computed by the steps described abov
 ```
 
 </Sandpack>
+
+<Note>
+
+For group columns (and more specifically, when <PropLink name="groupRenderStrategy"/> is `single-column`), the `sortType` should be a `string[]`, each item in the array corresponding to an item in <DPropLink name="groupBy" /> of the `<DataSource />`. This is especially useful when there are no corresponding columns for the `groupBy` fields. In this case, `InfiniteTable` can't know the type of sorting those fields will require, so you have to provide it yourself via the `column.sortType`.
+</Note>
 
 </Prop>
 
@@ -1606,6 +1653,16 @@ This example uses the <PropLink name="columnTypes" code={false}>column types</Pr
 > Specifies a default flex value for the column type. Will be overriden in any column that already specifies a `defaultFlex` property.
 
 See related <PropLink name="columnTypes.defaultWidth" />, <PropLink name="columns.defaultFlex" /> and <PropLink name="columns.defaultWidth" />
+
+</Prop>
+
+<Prop name="columnTypes.defaultSortable" type="boolean" >
+
+> Specifies whether columns of this type are sortable.
+
+This prop overrides the component-level <PropLink name="columnDefaultSortable" />.
+
+This prop is overriden by <PropLink name="columns.defaultSortable" /> and <PropLink name="sortable" />.
 
 </Prop>
 

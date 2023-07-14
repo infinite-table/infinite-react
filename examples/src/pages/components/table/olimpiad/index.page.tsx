@@ -16,7 +16,7 @@ const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
     {
       type: 'number',
       header: 'Group',
-      sortable: false,
+      defaultSortable: false,
 
       render: ({ value, rowInfo }) => {
         return (

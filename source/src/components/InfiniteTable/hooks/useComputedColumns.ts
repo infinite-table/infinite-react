@@ -15,6 +15,7 @@ import type {
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
   InfiniteTablePropsEditable,
+  InfiniteTablePropsSortable,
 } from '../types/InfiniteTableProps';
 import type { GetComputedColumnsResult } from '../utils/getComputedColumns';
 import { getComputedColumns } from '../utils/getComputedColumns';
@@ -39,7 +40,7 @@ type UseComputedColumnsParam<T> = {
 
   columnDefaultWidth?: number;
   columnDefaultFlex?: number;
-  sortable?: boolean;
+  sortable?: InfiniteTablePropsSortable<T>;
   draggableColumns?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
@@ -50,6 +51,7 @@ type UseComputedColumnsParam<T> = {
   editable: InfiniteTablePropsEditable<T>;
   columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable?: InfiniteTableProps<T>['columnDefaultFilterable'];
+  columnDefaultSortable?: InfiniteTableProps<T>['columnDefaultSortable'];
   columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
@@ -105,6 +107,7 @@ export const useComputedColumns = <T extends unknown>({
   editable,
   columnDefaultEditable,
   columnDefaultFilterable,
+  columnDefaultSortable,
   scrollbarWidth,
   columnTypes,
   pinnedEndMaxWidth,
@@ -166,6 +169,7 @@ export const useComputedColumns = <T extends unknown>({
       columnPinning,
       columnDefaultEditable,
       columnDefaultFilterable,
+      columnDefaultSortable,
       editable,
 
       columnSizing,

@@ -48,7 +48,7 @@ const ageColumn: InfiniteTableColumn<Person> = {
 const getColumns = () => {
   const columns: Record<string, InfiniteTableColumn<Person>> = {
     Age: ageColumn,
-    Id: { field: 'Id', type: 'number', sortable: true },
+    Id: { field: 'Id', type: 'number', defaultSortable: true },
     FirstName: {
       field: 'FirstName',
       header: 'First name',

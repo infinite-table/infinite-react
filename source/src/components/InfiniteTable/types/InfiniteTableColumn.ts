@@ -378,9 +378,15 @@ export type InfiniteTableColumnColspanFn<T> = (
 export type InfiniteTableColumnComparer<T> = (a: T, b: T) => number;
 
 export type InfiniteTableColumnSortableFn<T> = (context: {
+  api: InfiniteTableApi<T>;
+  columnApi: InfiniteTableColumnApi<T>;
   column: InfiniteTableComputedColumn<T>;
   columns: Map<string, InfiniteTableComputedColumn<T>>;
 }) => boolean;
+
+export type InfiniteTableColumnSortable<T> =
+  | boolean
+  | InfiniteTableColumnSortableFn<T>;
 
 /**
  * Defines a column in the table.
@@ -393,7 +399,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   // TODO revisit this and use AllXOR with either field, valueGetter or both
   field?: KeyOfNoSymbol<DATA_TYPE>;
   valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
-  sortable?: boolean;
+  defaultSortable?: InfiniteTableColumnSortable<DATA_TYPE>;
   draggable?: boolean;
   resizable?: boolean;
 
@@ -430,7 +436,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   headerCssEllipsis?: boolean;
   type?: InfiniteTableColumnTypeNames | InfiniteTableColumnTypeNames[] | null;
   dataType?: InfiniteTableDataTypeNames;
-  sortType?: string;
+  sortType?: string | string[];
   filterType?: string;
 
   style?: InfiniteTableColumnStyle<DATA_TYPE>;
@@ -481,7 +487,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
 
 export type InfiniteTableGeneratedGroupColumn<T> = Omit<
   InfiniteTableColumn<T>,
-  'sortable'
+  'defaultSortable'
 > & {
   groupByForColumn: GroupBy<T> | GroupBy<T>[];
   id?: string;
@@ -530,7 +536,7 @@ export type InfiniteTablePivotFinalColumnVariant<
 
 type InfiniteTableComputedColumnBase<T> = {
   computedFilterType: string;
-  computedSortType: string;
+  computedSortType: string | string[];
   computedDataType: string;
   computedWidth: number;
   computedFlex: number | null;
@@ -539,7 +545,6 @@ type InfiniteTableComputedColumnBase<T> = {
   computedOffset: number;
   computedPinningOffset: number;
   computedAbsoluteOffset: number;
-  computedSortable: boolean;
   computedSortInfo: DataSourceSingleSortInfo<T> | null;
   computedSorted: boolean;
   computedSortedAsc: boolean;
@@ -561,6 +566,7 @@ type InfiniteTableComputedColumnBase<T> = {
   computedFirst: boolean;
   computedLast: boolean;
   computedEditable: NonUndefined<InfiniteTableColumn<T>['defaultEditable']>;
+  computedSortable: NonUndefined<InfiniteTableColumn<T>['defaultSortable']>;
   colType: InfiniteTableColumnType<T>;
   id: string;
 };

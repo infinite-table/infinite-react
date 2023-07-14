@@ -3,9 +3,41 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 2.0.0 🚀
+
+This release, although a major one, does not introduce new major functionality, but rather improves on existing features and more specifically adds support for sorting group columns.
+
+#### Improved group column sorting
+
+Version `2.0.0` allows you to make group columns sortable, even when they are configured with `groupBy` fields that are not actually bound to columns.
+
+```tsx
+<DataSource<Person>
+  groupBy={[
+    // those fields are not bound to actual columns
+    {field: 'team'},
+    {field: 'age' }, 
+  ]}>
+  <InfiniteTable<Person>
+    groupColumn={{
+      sortType: ['string', 'number'], // <--- allows you to have
+      // the group column sortable
+    }}
+    ...
+/>
+```
+
+### Updated column sortable behavior
+
+We've also introduced a few new props and renamed `column.sortable` to <PropLink name="columns.defaultSortable" />.
+
+Also, the behavior for the <PropLink name="sortable" /> prop has changed. The new <PropLink name="columnDefaultSortable" /> is now what <PropLink name="sortable" /> used to be, while the <PropLink name="sortable" /> prop overrides any sorting flags and is the ultimate source of truth for column sorting. 
+
+@milestone id="90"
+
 ## 1.3.23 🚀
 
-@milestone id="88"
+@milestone id="89"
 
 ## 1.3.22 🚀
 

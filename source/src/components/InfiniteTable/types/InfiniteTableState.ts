@@ -203,6 +203,7 @@ export interface InfiniteTableMappedState<T> {
   >;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
+  columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
@@ -218,7 +219,7 @@ export interface InfiniteTableMappedState<T> {
   columnCssEllipsis: NonUndefined<InfiniteTableProps<T>['columnCssEllipsis']>;
 
   draggableColumns: NonUndefined<InfiniteTableProps<T>['draggableColumns']>;
-  sortable: NonUndefined<InfiniteTableProps<T>['sortable']>;
+  sortable: InfiniteTableProps<T>['sortable'];
   hideEmptyGroupColumns: NonUndefined<
     InfiniteTableProps<T>['hideEmptyGroupColumns']
   >;

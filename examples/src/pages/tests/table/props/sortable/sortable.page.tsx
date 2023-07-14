@@ -43,13 +43,13 @@ export default function SortablePage() {
             },
           }}
           columnDefaultWidth={100}
-          sortable={false}
+          columnDefaultSortable={false}
           virtualizeColumns={false}
           columns={{
             id: {
               field: 'Id',
               type: 'number',
-              sortable: true,
+              defaultSortable: true,
             },
             firstName: {
               field: 'FirstName',

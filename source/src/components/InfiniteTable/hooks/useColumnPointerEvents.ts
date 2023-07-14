@@ -67,6 +67,17 @@ export const useColumnPointerEvents = ({
     state: { domRef: rootRef },
   } = useInfiniteTable();
 
+  const defaultPointerDown = useCallback((e: React.PointerEvent) => {
+    const { multiSortBehavior } = getState();
+
+    api.toggleSortingForColumn(columnId, {
+      multiSortBehavior:
+        multiSortBehavior === 'replace' && (e.ctrlKey || e.metaKey)
+          ? 'append'
+          : multiSortBehavior,
+    });
+  }, []);
+
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
       //@ts-ignore
@@ -87,6 +98,7 @@ export const useColumnPointerEvents = ({
       const dragColumn = computedVisibleColumnsMap.get(columnId)!;
 
       if (!dragColumn.computedDraggable) {
+        defaultPointerDown(e);
         return;
       }
 
@@ -232,7 +244,10 @@ export const useColumnPointerEvents = ({
 
         setProxyPosition(null);
 
-        if (!didDragAtLeastOnce && dragColumn.computedSortable) {
+        const dragColumnSortable =
+          api.getColumnApi(dragColumn.id)?.isSortable() ?? false;
+
+        if (!didDragAtLeastOnce && dragColumnSortable) {
           api.toggleSortingForColumn(dragColumn.id, {
             multiSortBehavior:
               multiSortBehavior === 'replace' && (e.ctrlKey || e.metaKey)
@@ -260,7 +275,7 @@ export const useColumnPointerEvents = ({
     onPointerDown: computed.computedVisibleColumnsMap.get(columnId)
       ?.computedDraggable
       ? onPointerDown
-      : () => {},
+      : defaultPointerDown,
 
     proxyPosition,
   };

@@ -49,7 +49,7 @@ const columns1: InfiniteTablePropColumns<Person> = {
   identifier: {
     field: 'Id',
     type: 'number',
-    sortable: true,
+    defaultSortable: true,
     defaultWidth: 80,
   },
   firstName: {
@@ -63,7 +63,7 @@ const columns2: InfiniteTablePropColumns<Person> = {
     field: 'Id',
     header: 'Id2',
     type: 'number',
-    sortable: true,
+    defaultSortable: true,
     defaultWidth: 120,
     render: ({ value }) => <>{value}-2</>,
   },

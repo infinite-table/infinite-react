@@ -28,7 +28,7 @@ export const columns = new Map<string, InfiniteTableColumn<Employee>>([
     'country',
     {
       field: 'country',
-      sortable: true,
+      defaultSortable: true,
     },
   ],
   ['city', { field: 'city' }],

@@ -125,7 +125,14 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     this.pendingOperations.length = 0;
 
     if (this.pendingPromise && this.resolvePendingPromise) {
-      this.resolvePendingPromise(true);
+      const resolve = this.resolvePendingPromise;
+      // let's resolve the promise in the next frame
+      // so we give the DataSource reducer the chance to pick up the commited operations
+      // and recompute the dataSource array (the row infos)
+      // so the updated data is available when the promise is resolved
+      requestAnimationFrame(() => {
+        resolve(true);
+      });
       this.pendingPromise = null;
       this.resolvePendingPromise = null;
     }

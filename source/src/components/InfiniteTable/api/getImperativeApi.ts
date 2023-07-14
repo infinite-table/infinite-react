@@ -35,6 +35,7 @@ import { realignColumnContextMenu } from './realignColumnContextMenu';
 
 import { GetImperativeApiParam } from './type';
 import { notNullable } from '../types/Utility';
+import { UNKNOWN_SORT_TYPE } from '../utils/getComputedColumns';
 
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,
@@ -470,6 +471,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     });
   };
 
+  isColumnSortable = (columnId: string) => {
+    return this.getColumnApi(columnId)?.isSortable() ?? false;
+  };
+
   getCellValue = (cellLocator: InfiniteTableApiCellLocator) => {
     return this.getCellValues(cellLocator)?.value ?? null;
   };
@@ -522,6 +527,14 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   setColumnOrder = (columnOrder: InfiniteTablePropColumnOrder) => {
     this.actions.columnOrder = columnOrder;
   };
+
+  collapseAllGroupRows() {
+    const state = this.getDataSourceState();
+    const newState = new GroupRowsState(state.groupRowsState);
+    newState.collapseAll();
+
+    this.dataSourceActions.groupRowsState = newState;
+  }
 
   collapseGroupRow(groupKeys: any[]) {
     const state = this.getDataSourceState();
@@ -601,7 +614,8 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     dir: SortDir | null,
     options?: MultiSortBehaviorOptions,
   ) {
-    const c = this.getComputed().computedColumnsMap.get(columnId);
+    const { computedColumnsMap } = this.getComputed();
+    const c = computedColumnsMap.get(columnId);
 
     if (!c) {
       return;
@@ -651,7 +665,20 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       field = fieldArr;
     }
 
-    const computedSortType = c.computedSortType;
+    let computedSortType: string | string[] = c.computedSortType;
+
+    if (groupByForCol.length && computedSortType === UNKNOWN_SORT_TYPE) {
+      const sortTypeForGroupCols = groupByForCol.flatMap((groupBy) => {
+        const field = groupBy.field ?? groupBy.groupField;
+
+        const col = field ? computedColumnsMap.get(field as string) : null;
+        if (!col) {
+          return UNKNOWN_SORT_TYPE;
+        }
+        return col.computedSortType;
+      });
+      computedSortType = sortTypeForGroupCols;
+    }
 
     const newColumnSortInfo: DataSourceSingleSortInfo<T> = {
       dir,

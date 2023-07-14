@@ -9,6 +9,7 @@ import type {
 import { computeFlex } from '../../flexbox';
 import type { Size } from '../../types/Size';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
+import { isGroupColumnSortable } from '../api/getColumnApi';
 import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
@@ -26,11 +27,18 @@ import type {
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
   InfiniteTablePropsEditable,
+  InfiniteTablePropsSortable,
 } from '../types/InfiniteTableProps';
 
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
 import { assignNonNull } from './assignFiltered';
 import { getColumnComputedType } from './getColumnComputedType';
+
+export const DEFAULT_SORTABLE = true;
+export const DEFAULT_RESIZABLE = true;
+export const DEFAULT_DRAGGABLE = true;
+export const DEFAULT_DATA_TYPE = 'string';
+export const UNKNOWN_SORT_TYPE = 'unknown';
 
 const logError = err('getComputedVisibleColumns');
 
@@ -123,7 +131,7 @@ type GetComputedVisibleColumnsParam<T> = {
   filterValue?: DataSourcePropFilterValue<T>;
   filterTypes?: DataSourceProps<T>['filterTypes'];
 
-  sortable?: boolean;
+  sortable?: InfiniteTablePropsSortable<T>;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
 
@@ -133,54 +141,12 @@ type GetComputedVisibleColumnsParam<T> = {
   editable: InfiniteTablePropsEditable<T>;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
+  columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible: boolean;
 };
-
-function isGroupColumnSortable<T>(
-  column: InfiniteTableComputedColumn<T>,
-  fieldsToColumns: Map<keyof T, InfiniteTableComputedColumn<T>>,
-) {
-  let sortableColumnOrType = column.sortable ?? column.colType.sortable;
-
-  if (sortableColumnOrType != null) {
-    return sortableColumnOrType;
-  }
-
-  if (column.computedSortable === false) {
-    return false;
-  }
-
-  let groupByForColumn = column.groupByForColumn || [];
-
-  if (groupByForColumn != null && !Array.isArray(groupByForColumn)) {
-    groupByForColumn = [groupByForColumn];
-  }
-
-  return (groupByForColumn || []).reduce((acc, groupBy) => {
-    if (!acc) {
-      return false;
-    }
-    const field: string | undefined =
-      (groupBy.field as string) || groupBy.groupField;
-
-    let colSortable: boolean | undefined;
-
-    if (field) {
-      const foundCol = fieldsToColumns.get(field as keyof T);
-
-      if (foundCol) {
-        colSortable = foundCol.computedSortable;
-      }
-    }
-    if (colSortable === undefined && groupBy.valueGetter) {
-      colSortable = true;
-    }
-    return acc && !!colSortable;
-  }, true as boolean);
-}
 
 export const getComputedColumns = <T extends unknown>({
   columns,
@@ -211,6 +177,7 @@ export const getComputedColumns = <T extends unknown>({
   editable,
   columnDefaultEditable,
   columnDefaultFilterable,
+  columnDefaultSortable,
   columnSizing,
   columnTypes,
   columnVisibility,
@@ -574,7 +541,7 @@ export const getComputedColumns = <T extends unknown>({
       c.dataType ||
       colType.dataType ||
       (Array.isArray(c.type) ? c.type[0] : c.type) ||
-      'string';
+      DEFAULT_DATA_TYPE;
 
     const computedSortType = c.sortType || colType.sortType || computedDataType;
     const computedFilterType =
@@ -599,7 +566,7 @@ export const getComputedColumns = <T extends unknown>({
     const field = c.field ?? colType.field;
     const valueGetter = c.valueGetter ?? colType.valueGetter;
 
-    let sortableColumnOrType = c.sortable ?? colType.sortable;
+    let sortableColumnOrType = c.defaultSortable ?? colType.defaultSortable;
 
     if (
       sortableColumnOrType == null &&
@@ -611,7 +578,14 @@ export const getComputedColumns = <T extends unknown>({
       }
     }
 
-    let computedSortable = sortableColumnOrType ?? sortable ?? true;
+    let computedSortable =
+      sortable ??
+      sortableColumnOrType ??
+      columnDefaultSortable ??
+      DEFAULT_SORTABLE;
+
+    const computedResizable =
+      c.resizable ?? colType.resizable ?? resizableColumns ?? DEFAULT_RESIZABLE;
 
     const result: InfiniteTableComputedColumn<T> = {
       colType,
@@ -644,8 +618,7 @@ export const getComputedColumns = <T extends unknown>({
         ...colType.components,
         ...c.components,
       },
-      computedResizable:
-        c.resizable ?? colType.resizable ?? resizableColumns ?? true,
+      computedResizable,
       computedMinWidth,
       computedMaxWidth,
       computedFlex,
@@ -672,7 +645,7 @@ export const getComputedColumns = <T extends unknown>({
       computedSortedDesc,
       computedVisibleIndex,
       computedPinned,
-      computedDraggable: c.draggable ?? draggableColumns ?? true,
+      computedDraggable: c.draggable ?? draggableColumns ?? DEFAULT_DRAGGABLE,
       computedFirstInCategory,
       computedLastInCategory,
       computedFirst: theComputedVisibleIndex === 0,
@@ -702,6 +675,8 @@ export const getComputedColumns = <T extends unknown>({
       prevPinned = computedPinned;
     }
     if (result.groupByForColumn) {
+      result.computedSortType =
+        c.sortType || colType.sortType || UNKNOWN_SORT_TYPE;
       groupColumns.push(result);
     }
     computedColumnsMap.set(result.id, result);
@@ -717,7 +692,11 @@ export const getComputedColumns = <T extends unknown>({
   });
 
   groupColumns.forEach((col) => {
-    col.computedSortable = isGroupColumnSortable(col, fieldsToColumn);
+    col.computedSortable = isGroupColumnSortable(col, {
+      fieldsToColumn,
+      sortable,
+      columnDefaultSortable,
+    });
   });
 
   const computedColumnsMapInInitialOrder = new Map<

@@ -58,6 +58,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'firstName',
     header: 'First Name',
     align: 'end',
+    defaultSortable: false,
     defaultFlex: 1,
   },
   preferredLanguage: {

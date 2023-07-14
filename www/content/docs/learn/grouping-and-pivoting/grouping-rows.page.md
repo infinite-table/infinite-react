@@ -296,14 +296,19 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
 
 ```ts
-const sortInfo = [{ field: ['stack', 'age'], dir: 1, id: 'group-by' }];
+const sortInfo = [{
+  dir: 1,
+  id: 'group-by',
+  field: ['stack', 'age'],
+  type: ['string','number']
+}];
 ```
 
 <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
 
  <Note>
 
-The <PropLink name="columns.sortable" /> property can be used to override the default behavior.
+The <PropLink name="columnDefaultSortable" /> property can be used to override the default behavior.
 
  </Note>
 
@@ -314,6 +319,14 @@ The <PropLink name="columns.sortable" /> property can be used to override the de
 ```
 
 </Sandpack>
+
+<Note>
+
+When a group column is configured and the `groupBy` fields are not bound to actual columns in the table, the group column will not be sortable by default.
+
+If you want to make it sortable, you have to specify a <PropLink name="columns.sortType" /> array, of the same length as the `groupBy` array, that specifies the sort type for each group field.
+
+</Note>
 
 ## Aggregations
 

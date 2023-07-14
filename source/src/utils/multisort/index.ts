@@ -12,7 +12,7 @@ export type MultisortInfo<T> = {
    * for now 'string' and 'number' are known types, meaning they have
    * sort functions already implemented
    */
-  type?: string;
+  type?: string | string[];
 
   fn?: (a: any, b: any) => number;
 
@@ -49,17 +49,25 @@ export const multisort = <T>(
   const plainSortInfo = sortInfo
     .map((sortInfo) => {
       if (Array.isArray(sortInfo.field)) {
-        return sortInfo.field.map((field) => {
+        return sortInfo.field.map((field, index) => {
+          // the sort type will most likely also
+          // be an array of the same length
+          // so make sure to also get the associated sort type
+          let type = Array.isArray(sortInfo.type)
+            ? sortInfo.type[index] ?? sortInfo.type[0]
+            : sortInfo.type;
+
           if (typeof field === 'function') {
             const result = {
               ...sortInfo,
               valueGetter: field,
               field: undefined,
+              type,
             };
             return result;
           }
 
-          const result = { ...sortInfo, field };
+          const result = { ...sortInfo, type, field };
           return result;
         });
       }
@@ -91,7 +99,8 @@ const getSingleSortFunction = <T>(info: MultisortInfo<T>) => {
   let fn = info.fn;
 
   if (!fn && info.type) {
-    fn = multisort.knownTypes[info.type];
+    const type = Array.isArray(info.type) ? info.type[0] : info.type;
+    fn = multisort.knownTypes[type];
     if (!fn) {
       console.warn(
         `Unknown sort type "${info.type}" - please pass one of ${Object.keys(
@@ -113,7 +122,8 @@ const getSingleSortFunction = <T>(info: MultisortInfo<T>) => {
       ? second[field]
       : second;
 
-    return dir * fn!(a, b);
+    const result = fn!(a, b);
+    return result === 0 ? result : dir * result;
   };
 };
 

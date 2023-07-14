@@ -51,7 +51,7 @@ const columnTypes: InfiniteTablePropColumnTypes<Developer> = {
   },
   numeric: {
     defaultWidth: 255,
-    sortable: false,
+    defaultSortable: false,
     header: 'number col',
   },
 };

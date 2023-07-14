@@ -193,8 +193,19 @@ export function InfiniteTableHeaderCell<T>(
       ? column.verticalAlign({ isHeader: true, column })
       : column.verticalAlign) ?? 'center';
 
+  const columnApi = getColumnApiForColumn(column, {
+    actions,
+    api,
+    dataSourceActions,
+    dataSourceApi,
+    getComputed,
+    getDataSourceState,
+    getState,
+  })!;
+
+  const computedSortable = columnApi.isSortable();
   const sortIcon =
-    column.computedSortable && (column.computedSorted || alwaysShow) ? (
+    computedSortable && (column.computedSorted || alwaysShow) ? (
       <SortIcon
         index={
           column.computedMultiSort ? column.computedSortIndex + 1 : undefined
@@ -244,16 +255,6 @@ export function InfiniteTableHeaderCell<T>(
   const MenuIconCmp =
     column.components?.MenuIcon || components?.MenuIcon || MenuIcon;
   const menuIcon = <MenuIconCmp {...menuIconProps} />;
-
-  const columnApi = getColumnApiForColumn(column, {
-    actions,
-    api,
-    dataSourceActions,
-    dataSourceApi,
-    getComputed,
-    getDataSourceState,
-    getState,
-  })!;
 
   const initialRenderParam: InfiniteTableColumnHeaderParam<T> = {
     dragging,
@@ -589,7 +590,7 @@ export function InfiniteTableHeaderCell<T>(
         className={join(
           InfiniteTableHeaderCellClassName,
           userSelect.none,
-          column.computedSortable ? cursor.pointer : '',
+          computedSortable ? cursor.pointer : '',
           headerClassName,
 
           useCellClassName(
