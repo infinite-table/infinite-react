@@ -1,7 +1,12 @@
 import { asMeta } from '@www/utils/asMeta';
 import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
+
 import { Metadata } from 'next';
-import { sortedPosts, type Post } from '../sortedPosts';
+import {
+  sortedPosts,
+  sortedPostsIncludingDrafts,
+  type Post,
+} from '../sortedPosts';
 import { BlogPost } from './BlogPost';
 
 const suffix = '| Infinite Table DataGrid for React';
@@ -11,7 +16,7 @@ const meta = {
 };
 
 export async function generateStaticParams() {
-  const result = sortedPosts
+  const result = sortedPostsIncludingDrafts
     .map((post) => {
       return {
         blogpost: post.url
@@ -34,8 +39,10 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const path = `/blog/${params.blogpost.join('/')}`;
 
-  const postIndex = sortedPosts.findIndex((post) => post.url === path);
-  const post = sortedPosts[postIndex] as Post;
+  const postIndex = sortedPostsIncludingDrafts.findIndex(
+    (post) => post.url === path,
+  );
+  const post = sortedPostsIncludingDrafts[postIndex] as Post;
 
   const res = {
     title: (post?.title ? `${post?.title} ${suffix}` : null) ?? meta.title,
@@ -53,14 +60,20 @@ export default function BlogPostPage({
 }) {
   const path = `/blog/${params.blogpost.join('/')}`;
 
-  const postIndex = sortedPosts.findIndex((post) => post.url === path);
-  const post = sortedPosts[postIndex] as Post;
+  let arr = sortedPosts;
+  let postIndex = arr.findIndex((post) => post.url === path);
+
+  if (postIndex === -1) {
+    arr = sortedPostsIncludingDrafts;
+    postIndex = arr.findIndex((post) => post.url === path);
+  }
+  const post = arr[postIndex] as Post;
 
   // the prev post is older, so it's the next post in the array
-  const prevPost = sortedPosts[postIndex + 1];
+  const prevPost = arr[postIndex + 1];
 
   // the next post is more recent, so it's the previous post in the array
-  const nextPost = sortedPosts[postIndex - 1];
+  const nextPost = arr[postIndex - 1];
 
   return (
     <BlogPost
