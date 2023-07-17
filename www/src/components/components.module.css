@@ -106,7 +106,7 @@
 }
 
 .HighlightBrandToLightBackground {
-  color: transparent;
+  color: transparent !important;
 
   background-image: linear-gradient(
     to right,

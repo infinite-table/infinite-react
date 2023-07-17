@@ -55,7 +55,7 @@ export function BlogPost({
             /> TODO add this back */}
             <div className="leading-loose">
               <h1
-                className={`mb-6 pt-8 inline-block text-4xl font-black md:text-5xl leading-snug tracking-tight text-content-color ${cmpStyles.HighlightBrandToLightBackground}`}
+                className={`mb-6 pt-8 inline-block text-4xl font-black md:text-5xl leading-snug tracking-tight ${cmpStyles.HighlightBrandToLightBackground}`}
               >
                 {post.title}
               </h1>
