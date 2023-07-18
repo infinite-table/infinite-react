@@ -21,7 +21,9 @@ Though it doesn't add major new features, this version does improve the overall 
 
 </Note>
 
-<YTEmbed url="https://www.youtube.com/embed/rhoj66cpzym" />
+
+
+<YTEmbed url="https://www.youtube.com/embed/rhoj66cPzYM" />
 
 ## 1️⃣ Better support for sorting group columns
 
