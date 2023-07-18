@@ -21,6 +21,8 @@ Though it doesn't add major new features, this version does improve the overall 
 
 </Note>
 
+<YTEmbed url="https://www.youtube.com/embed/rhoj66cpzym" />
+
 ## 1️⃣ Better support for sorting group columns
 
 Before version `2.0.0`, group columns were sortable, but only if the configured `groupBy` fields were bound to actual columns.
