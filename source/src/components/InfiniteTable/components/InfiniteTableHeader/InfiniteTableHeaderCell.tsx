@@ -131,8 +131,11 @@ const spacer = <div className={flex['1']}></div>;
 
 export const InfiniteHeaderCellDataAttributes = keyMirror({
   'data-name': ``,
+  'data-field': ``,
   'data-header-align': '',
   'data-column-id': '',
+  'data-sort': '',
+  'data-sort-index': '',
 });
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
@@ -565,9 +568,16 @@ export function InfiniteTableHeaderCell<T>(
   const dataAttrs: {
     [K in keyof typeof InfiniteHeaderCellDataAttributes]: string;
   } = {
+    'data-field': `${column.field || ''}`,
     'data-column-id': column.id,
     'data-header-align': align,
     'data-name': 'HeaderCell',
+    'data-sort': column.computedSortedAsc
+      ? 'asc'
+      : column.computedSortedDesc
+      ? 'desc'
+      : 'none',
+    'data-sort-index': `${column.computedSortIndex ?? -1}`,
   };
 
   return (

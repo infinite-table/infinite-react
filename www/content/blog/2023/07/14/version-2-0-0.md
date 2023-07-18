@@ -52,7 +52,7 @@ We have introduced <PropLink name="multiSortBehavior" /> to allow you to configu
 <PropLink name="multiSortBehavior">multiSortBehavior="replace"</PropLink> is the new default behavior, and also a more natural one, so we recommend using it.
 
 
-<CSEmbed title="Click column headers to see multi sort behavior in action" id="spring-snowflake-mh6wpl" />
+<CSEmbed title="Click column headers to see multi sort behavior in action - try clicking 'preferredLanguage' and 'salary'" id="spring-snowflake-mh6wpl" />
 
 
 ## 3️⃣ Smarter column menus
