@@ -18,6 +18,7 @@ export default test.describe.parallel('Inline Edit', () => {
       value: 'Infinity',
     });
 
+    await page.waitForTimeout(100);
     await editModel.getCellEditor(cellEditable1).type('x');
     await editModel.confirmEdit(cellEditable1);
 
@@ -35,6 +36,7 @@ export default test.describe.parallel('Inline Edit', () => {
       value: 'test',
     });
 
+    await page.waitForTimeout(100);
     await editModel.confirmEdit(cellEditable2);
 
     // make sure this second column was using default editor

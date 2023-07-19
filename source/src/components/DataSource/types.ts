@@ -160,7 +160,7 @@ export type DataSourceRawReducer<T, RESULT_TYPE> = {
 export type DataSourceAggregationReducer<T, AggregationResultType> = {
   name?: string;
   field?: keyof T;
-  initialValue?: AggregationResultType;
+  initialValue?: AggregationResultType | (() => any);
   getter?: (data: T) => any;
   reducer:
     | string

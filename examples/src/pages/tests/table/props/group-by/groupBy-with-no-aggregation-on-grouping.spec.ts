@@ -42,13 +42,13 @@ export default test.describe
           columnId: 'department',
         });
       }),
-    ).toBe(4);
+    ).toBe('it');
     expect(
       await rowModel.getTextForCell({
         rowIndex: 0,
         colId: 'department',
       }),
-    ).toBe('4');
+    ).toBe('it');
 
     expect(
       await apiModel.evaluate((api) => {
@@ -57,7 +57,7 @@ export default test.describe
           columnId: 'team',
         });
       }),
-    ).toBe(4);
+    ).toBe(null);
     expect(
       await apiModel.evaluate((api) => {
         return api.getCellValue({
@@ -73,7 +73,7 @@ export default test.describe
           columnId: 'department',
         });
       }),
-    ).toBe(2);
+    ).toBe('it');
 
     expect(
       await apiModel.evaluate((api) => {
@@ -82,7 +82,7 @@ export default test.describe
           columnId: 'team',
         });
       }),
-    ).toBe(2);
+    ).toBe('backend');
 
     expect(
       await apiModel.evaluate((api) => {

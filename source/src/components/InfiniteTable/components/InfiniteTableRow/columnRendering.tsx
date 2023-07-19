@@ -349,6 +349,15 @@ export function getRawValueForCell<T>(
       ? data?.[column.field]
       : null;
 
+  if (
+    column.field &&
+    rowInfo.isGroupRow &&
+    rowInfo.reducerData &&
+    rowInfo.reducerData[column.field] != null
+  ) {
+    value = rowInfo.reducerData[column.field];
+  }
+
   if (column.valueGetter) {
     if (!rowInfo.isGroupRow && rowInfo.data) {
       value = column.valueGetter({ data: rowInfo.data, field: column.field });

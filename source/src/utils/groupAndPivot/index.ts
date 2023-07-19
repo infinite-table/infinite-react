@@ -104,6 +104,7 @@ export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
 export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   dataSourceHasGrouping: true;
   data: Partial<T> | null;
+  reducerData?: Partial<Record<keyof T, any>>;
   isGroupRow: true;
 
   /**
@@ -967,15 +968,20 @@ function getEnhancedGroupData<DataType>(
   } = deepMapValue;
 
   let data = commonData ?? (null as Partial<DataType> | null);
+  let reducerData: Partial<Record<keyof DataType, any>> | undefined;
 
   if (Object.keys(reducerResults).length > 0) {
     data = { ...commonData } as Partial<DataType>;
+    reducerData = {};
 
     for (const key in reducers)
       if (reducers.hasOwnProperty(key)) {
         const reducer = reducers[key];
 
         const field = reducer.field as keyof DataType;
+        if (field) {
+          reducerData[field] = reducerResults[key] as any;
+        }
         if (field && data[field] == null) {
           // we might have an aggregation for an already existing groupBy.field - in that case, data[field] is not null
           // so we don't want to reassign it - see https://github.com/infinite-table/infinite-react/issues/170
@@ -1012,6 +1018,7 @@ function getEnhancedGroupData<DataType>(
 
   const enhancedGroupData: InfiniteTable_HasGrouping_RowInfoGroup<DataType> = {
     data,
+    reducerData,
     groupCount: groupItems.length,
     groupData: groupItems,
     groupKeys,
