@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 2.0.2 🚀
+
+@milestone id="91"
+
 ## 2.0.0 🚀
 
 This release, although a major one, does not introduce new major functionality, but rather improves on existing features and more specifically adds support for sorting group columns.
