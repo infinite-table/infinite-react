@@ -2,16 +2,19 @@ export type DataSourceMutation<T> =
   | {
       type: 'delete';
       primaryKey: any;
+      originalData: T;
     }
   | {
       type: 'update';
       primaryKey: any;
       data: Partial<T>;
+      originalData: T;
     }
   | {
       type: 'insert';
       primaryKey: any;
       position: 'before' | 'after';
+      originalData: null;
       data: T;
     };
 
@@ -45,13 +48,14 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     return this.affectedFields;
   };
 
-  delete = (primaryKey: PrimaryKeyType) => {
+  delete = (primaryKey: PrimaryKeyType, originalData: DataType) => {
     this.allFieldsAffected = true;
     const pk = `${primaryKey}`;
     const value = this.primaryKeyToData.get(pk) || [];
     value.push({
       type: 'delete',
       primaryKey,
+      originalData,
     });
     this.primaryKeyToData.set(pk, value);
   };
@@ -71,11 +75,16 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       primaryKey,
       data,
       position,
+      originalData: null,
     });
     this.primaryKeyToData.set(pk, value);
   };
 
-  update = (primaryKey: PrimaryKeyType, data: Partial<DataType>) => {
+  update = (
+    primaryKey: PrimaryKeyType,
+    data: Partial<DataType>,
+    originalData: DataType,
+  ) => {
     if (!this.allFieldsAffected) {
       const keys = Object.keys(data) as (keyof DataType)[];
       keys.forEach((key) => this.affectedFields.add(key));
@@ -88,6 +97,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       type: 'update',
       primaryKey,
       data,
+      originalData,
     });
     this.primaryKeyToData.set(`${primaryKey}`, value);
   };

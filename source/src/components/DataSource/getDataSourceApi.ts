@@ -91,13 +91,20 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     operations.forEach((operation) => {
       switch (operation.type) {
         case 'update':
-          operation.array.forEach((d, index) => {
-            cache.update(operation.primaryKeys[index], d);
+          operation.array.forEach((data, index) => {
+            const key = operation.primaryKeys[index];
+            const rowInfo = this.getRowInfoByPrimaryKey(key);
+            if (rowInfo && !rowInfo.isGroupRow) {
+              cache.update(operation.primaryKeys[index], data, rowInfo.data);
+            }
           });
           break;
         case 'delete':
           operation.primaryKeys.forEach((key) => {
-            cache.delete(key);
+            const rowInfo = this.getRowInfoByPrimaryKey(key);
+            if (rowInfo && !rowInfo.isGroupRow) {
+              cache.delete(key, rowInfo.data);
+            }
           });
           break;
         case 'insert':

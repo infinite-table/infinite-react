@@ -107,6 +107,10 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
       componentState.originalDataArrayChangedInfo.mutations
     ) {
       componentState.onDataMutations({
+        primaryKeyField:
+          typeof componentState.primaryKey === 'string'
+            ? componentState.primaryKey
+            : undefined,
         dataArray: componentState.originalDataArray,
         mutations: componentState.originalDataArrayChangedInfo.mutations,
         timestamp: componentState.originalDataArrayChangedInfo.timestamp,

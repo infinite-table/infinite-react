@@ -401,7 +401,15 @@ export type DataSourceProps<T> = {
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
+  // TODO important #introduce-primaryKey-field-even-with-primaryKeyFn
+  // even when we have primaryKey as fn, it would be useful to specify a `primaryKeyField`
+  // so when we compute the primary key (via a fn), it can be assigned to the `primaryKeyField` field in
+  // each data object - eg this is useful when editing, see #introduce-primaryKey-field-even-with-primaryKeyFn
+
   primaryKey: keyof T | ((data: T) => string);
+  /**
+   * @deprecated for now
+   */
   fields?: (keyof T)[];
   refetchKey?: number | string | object;
 
@@ -473,7 +481,9 @@ export type DataSourceProps<T> = {
     dataArray,
     timestamp,
     mutations,
+    primaryKeyField,
   }: {
+    primaryKeyField: undefined | keyof T;
     dataArray: DataSourceState<T>['originalDataArray'];
     timestamp: number;
     mutations: NonUndefined<

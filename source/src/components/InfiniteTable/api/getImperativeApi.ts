@@ -181,10 +181,24 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         if (!params.column.field) {
           return value;
         }
-        return this.context.dataSourceApi.updateData({
-          ...params.data,
-          [params.column.field]: valueToPersist,
-        });
+        const primaryKey = this.getDataSourceState().primaryKey;
+        // TODO important see #introduce-primaryKey-field-even-with-primaryKeyFn
+
+        const newData =
+          params.data && typeof primaryKey === 'string'
+            ? ({
+                [primaryKey]: params.data[primaryKey],
+                [params.column.field]: valueToPersist,
+              } as Partial<T>)
+            : {
+                // #introduce-primaryKey-field-even-with-primaryKeyFn
+                // when we don't have a primaryKey as field, we need to spread everything, until
+                // we'll have `primaryKeyField`
+                ...params.data,
+                [params.column.field]: valueToPersist,
+              };
+
+        return this.context.dataSourceApi.updateData(newData);
       });
 
     let response;

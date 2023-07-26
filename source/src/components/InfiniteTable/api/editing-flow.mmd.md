@@ -46,7 +46,7 @@ graph TD;
 
     should_accept_edit{"shouldAcceptEdit?(async)"}
     value_accepted(["onEditAccepted()"])
-    persist_value{"props.persistValue defined?"}
+    persist_value{"props.persistEdit defined?"}
 
     default_persist["dataSourceApi.updateData(...)"]
     custom_persist["props.persistEdit(...) async"]
