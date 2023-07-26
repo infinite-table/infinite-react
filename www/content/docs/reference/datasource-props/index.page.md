@@ -673,6 +673,40 @@ Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> 
 
 </Prop>
 
+<Prop name="onDataMutations" type="({ mutations, dataArray, primaryKeyField }) => void">
+
+> Callback prop to be called when the data changes via the DataSource API.
+
+Called when any of the following methods have been called in the `DataSource` api
+
+ - <DApiLink name="updateData" />
+ - <DApiLink name="updateDataArray" />
+
+ - <DApiLink name="removeData" />
+ - <DApiLink name="removeDataArray" />
+
+ - <DApiLink name="removeDataByPrimaryKey" />
+ - <DApiLink name="removeDataArrayByPrimaryKeys" />
+
+ - <DApiLink name="insertData" />
+ - <DApiLink name="insertDataArray" />
+
+ - <DApiLink name="addData" />
+ - <DApiLink name="addDataArray" />
+
+This callback is called with an object that has the following properties:
+
+ - `primaryKeyField` - the field configured as the primary key for the `<DataSource />`
+ - `mutations` - a `Map` with mutations. The keys in the map are primary keys of the mutated data
+ 
+The values in the mutations are object descriptors of mutations, that have the following shape:
+
+ - `type`: `'insert'|'update'|'delete'`
+ - `originalData`: `DATA_TYPE | null` - the original data before the mutation. In case of `insert`, it will be `null`
+ - `data`: `Partial<DATA_TYPE>` - the updates to be performed on the data. In case of `delete`, it will be `undefined`. This is an object that will contain the primary key, and the updated values for the data (not necessarily the full object, except for `insert`, where it will be of type `DATA_TYPE`).
+
+</Prop>
+
 <Prop name="livePaginationCursor" type="string|number|((params) =>string|number)" defaulValue={undefined}>
 
 > A cursor value for live pagination. A good value for this is the id of the last item in the <DataSourcePropLink name="data" /> array. It can also be defined as a function

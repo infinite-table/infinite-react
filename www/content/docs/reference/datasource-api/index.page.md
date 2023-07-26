@@ -72,6 +72,8 @@ const promise3 = dataSourceApi.insertData({ ... }, { position: 'before', primary
 For adding an array of data, see the <DApiLink name="addDataArray" /> method.
 For inserting data at a specific position, see the <DApiLink name="insertData" /> method.
 
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 <Sandpack title="Using DataSourceApi.addData to update the DataSource">
 
 ```ts file="addData-example.page.tsx"
@@ -88,6 +90,8 @@ For inserting data at a specific position, see the <DApiLink name="insertData" /
 See related <DApiLink name="addData" /> method.
 
 For adding at the beginning of the data source, see the <DApiLink name="insertDataArray" /> method.
+
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
 </Prop>
 
@@ -173,6 +177,8 @@ We're intentionally not encouraging inserting at a specified `index`, as the ind
 
 For inserting an array of data, see the <DApiLink name="insertDataArray" /> method.
 
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 <Sandpack title="Inserting data at various locations">
 
 <Description>
@@ -201,6 +207,8 @@ Just like the <DApiLink name="insertData" /> method, the `position` can be one o
 
 All the data items passed to this method will be inserted (in the order in the array) at the specified position.
 
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 </Prop>
 
 
@@ -228,6 +236,8 @@ dataSourceApi.updateData({
 
 For updating an array of data, see the <DApiLink name="updateDataArray" /> method.
 
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 <Sandpack title="Live data updates with DataSourceApi.updateData">
 
 <Description>
@@ -253,6 +263,8 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 See related <DApiLink name="updateData" /> method.
 
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 </Prop>
 
 <Prop name="onReady" type="(api: DataSourceApi) => void">
@@ -273,6 +285,9 @@ For removing an array of data, see the <DApiLink name="removeDataArray" /> metho
 
 If you only want to remove by a primary key, you can call <DApiLink name="removeDataByPrimaryKey" /> instead.
 If you have an array of primary keys, you can call <DApiLink name="removeDataArrayByPrimaryKeys" /> instead.
+
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 </Prop>
 
 <Prop name="removeDataArray" type="(data: Partial<DATA_TYPE>[]) => Promise">
@@ -285,6 +300,9 @@ For removing only one item, see the <DApiLink name="removeData" /> method.
 
 If you only want to remove by a primary key, you can call <DApiLink name="removeDataByPrimaryKey" /> instead.
 If you have an array of primary keys, you can call <DApiLink name="removeDataArrayByPrimaryKeys" /> instead.
+
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 </Prop>
 
 <Prop name="removeDataArrayByPrimaryKeys" type="(primaryKeys: (string | number)[]) => Promise">
@@ -295,6 +313,9 @@ For removing only one data item, see the <DApiLink name="removeDataByPrimaryKey"
 
 If you have a data object, you can call <DApiLink name="removeData" /> instead.
 If you have an array of data objects, you can call <DApiLink name="removeDataArray" /> instead.
+
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
+
 </Prop>
 
 <Prop name="removeDataByPrimaryKey" type="(primaryKey: string | number) => Promise">
@@ -305,6 +326,8 @@ For removing an array of data, see the <DApiLink name="removeDataArrayByPrimaryK
 
 If you have a data object, you can call <DApiLink name="removeData" /> instead.
 If you have an array of data objects, you can call <DApiLink name="removeDataArray" /> instead.
+
+<DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 </Prop>
 
 
