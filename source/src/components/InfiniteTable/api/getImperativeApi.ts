@@ -174,6 +174,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     params.value = valueToPersist;
+    editingCell.value = valueToPersist;
 
     const persistEdit =
       this.getState().persistEdit ??

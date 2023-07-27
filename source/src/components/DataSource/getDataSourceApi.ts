@@ -27,10 +27,12 @@ type DataSourceOperation<T> =
       type: 'update';
       primaryKeys: any[];
       array: Partial<T>[];
+      metadata: any;
     }
   | {
       type: 'delete';
       primaryKeys: any[];
+      metadata: any;
     }
   | {
       type: 'insert';
@@ -39,6 +41,7 @@ type DataSourceOperation<T> =
       // here the primary key is the primary key of the item relative to which
       // the insert is being made - so before or after this primaryKey
       primaryKey: any;
+      metadata: any;
     };
 
 class DataSourceApiImpl<T> implements DataSourceApi<T> {
@@ -95,7 +98,12 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
             const key = operation.primaryKeys[index];
             const rowInfo = this.getRowInfoByPrimaryKey(key);
             if (rowInfo && !rowInfo.isGroupRow) {
-              cache.update(operation.primaryKeys[index], data, rowInfo.data);
+              cache.update(
+                operation.primaryKeys[index],
+                data,
+                rowInfo.data,
+                operation.metadata,
+              );
             }
           });
           break;
@@ -103,7 +111,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           operation.primaryKeys.forEach((key) => {
             const rowInfo = this.getRowInfoByPrimaryKey(key);
             if (rowInfo && !rowInfo.isGroupRow) {
-              cache.delete(key, rowInfo.data);
+              cache.delete(key, rowInfo.data, operation.metadata);
             }
           });
           break;
@@ -111,7 +119,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           let pk = operation.primaryKey;
           let position = operation.position;
           operation.array.forEach((data) => {
-            cache.insert(pk, data, position);
+            cache.insert(pk, data, position, operation.metadata);
 
             // in order to respect the order of the insertions, we need to
             // update the pk to the primary key of the last inserted item
@@ -184,6 +192,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       primaryKeys: data.map((d) => {
         return this.toPrimaryKey(d as T);
       }),
+      metadata: options?.metadata,
     });
 
     if (options?.flush) {
@@ -197,6 +206,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: [id],
+      metadata: options?.metadata,
     });
 
     if (options?.flush) {
@@ -208,6 +218,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: [this.toPrimaryKey(data)],
+      metadata: options?.metadata,
     });
 
     if (options?.flush) {
@@ -221,6 +232,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: ids,
+      metadata: options?.metadata,
     });
 
     if (options?.flush) {
@@ -233,6 +245,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: data.map(this.toPrimaryKey),
+      metadata: options?.metadata,
     });
 
     if (options?.flush) {
@@ -278,6 +291,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       type: 'insert',
       array: data,
       position,
+      metadata: options?.metadata,
       primaryKey: primaryKey!,
     });
 

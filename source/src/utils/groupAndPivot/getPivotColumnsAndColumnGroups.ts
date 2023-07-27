@@ -96,6 +96,18 @@ export function getPivotColumnsAndColumnGroups<
   ).map((key) => {
     return { ...reducers[key], id: key };
   });
+
+  if (!aggregationReducers.length) {
+    showSeparatePivotColumnForSingleAggregation = true;
+    pivotGrandTotalColumnPosition = false;
+    pivotTotalColumnPosition = false;
+    aggregationReducers.push({
+      id: '__empty-aggregation-reducer__',
+      name: '-',
+      initialValue: null,
+      reducer: () => null,
+    });
+  }
   const columns: InfiniteTableColumnsMap<
     DataType,
     InfiniteTablePivotColumn<DataType>

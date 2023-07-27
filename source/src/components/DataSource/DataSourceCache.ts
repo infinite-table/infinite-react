@@ -3,12 +3,14 @@ export type DataSourceMutation<T> =
       type: 'delete';
       primaryKey: any;
       originalData: T;
+      metadata: any;
     }
   | {
       type: 'update';
       primaryKey: any;
       data: Partial<T>;
       originalData: T;
+      metadata: any;
     }
   | {
       type: 'insert';
@@ -16,6 +18,7 @@ export type DataSourceMutation<T> =
       position: 'before' | 'after';
       originalData: null;
       data: T;
+      metadata: any;
     };
 
 export class DataSourceCache<DataType, PrimaryKeyType = string> {
@@ -48,7 +51,11 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     return this.affectedFields;
   };
 
-  delete = (primaryKey: PrimaryKeyType, originalData: DataType) => {
+  delete = (
+    primaryKey: PrimaryKeyType,
+    originalData: DataType,
+    metadata: any,
+  ) => {
     this.allFieldsAffected = true;
     const pk = `${primaryKey}`;
     const value = this.primaryKeyToData.get(pk) || [];
@@ -56,6 +63,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       type: 'delete',
       primaryKey,
       originalData,
+      metadata,
     });
     this.primaryKeyToData.set(pk, value);
   };
@@ -64,6 +72,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     primaryKey: PrimaryKeyType,
     data: DataType,
     position: 'before' | 'after',
+    metadata: any,
   ) => {
     const pk = `${primaryKey}`;
     const value = this.primaryKeyToData.get(pk) || [];
@@ -76,6 +85,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       data,
       position,
       originalData: null,
+      metadata,
     });
     this.primaryKeyToData.set(pk, value);
   };
@@ -84,6 +94,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     primaryKey: PrimaryKeyType,
     data: Partial<DataType>,
     originalData: DataType,
+    metadata: any,
   ) => {
     if (!this.allFieldsAffected) {
       const keys = Object.keys(data) as (keyof DataType)[];
@@ -98,6 +109,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       primaryKey,
       data,
       originalData,
+      metadata,
     });
     this.primaryKeyToData.set(`${primaryKey}`, value);
   };

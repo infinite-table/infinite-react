@@ -4,8 +4,23 @@ import {
   DataSourceApi,
   InfiniteTable,
   InfiniteTablePropColumns,
+  InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+
+const sinon = require('sinon');
+
+type NonUndefined<T> = T extends undefined ? never : T;
+
+const onEditPersistSuccess = sinon.spy(
+  (
+    _params: Parameters<
+      NonUndefined<InfiniteTableProps<any>['onEditPersistSuccess']>
+    >[0],
+  ) => {},
+);
+
+(globalThis as any).onEditPersistSuccess = onEditPersistSuccess;
 
 type Developer = {
   id: number;
@@ -92,7 +107,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultEditable: true,
     getValueToPersist: ({ value }) => {
-      return !isNaN(Number(value)) ? Number(value) : value;
+      const result = !isNaN(Number(value)) ? Number(value) * 10 : value;
+
+      return result;
     },
   },
 
@@ -157,10 +174,6 @@ export default () => {
           data={data}
           primaryKey="id"
           onReady={setDataSourceApi}
-          onDataMutations={({ mutations }) => {
-            console.log(mutations);
-            (globalThis as any).mutations = mutations;
-          }}
         >
           <InfiniteTable<Developer>
             domProps={{
@@ -173,6 +186,7 @@ export default () => {
                 width: 500,
               },
             }}
+            onEditPersistSuccess={onEditPersistSuccess}
             // editable={true}
             // columnEditable={() => {
 

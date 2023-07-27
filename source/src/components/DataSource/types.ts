@@ -337,6 +337,7 @@ export type DataSourcePropSortFn<T> = (
 
 export type DataSourceCRUDParam = {
   flush?: boolean;
+  metadata?: any;
 };
 
 export type DataSourceInsertParam = DataSourceCRUDParam &
