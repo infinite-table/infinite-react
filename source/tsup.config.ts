@@ -54,6 +54,7 @@ export const tsupConfig: Options = {
 
     const toDelete = [
       'devDependencies',
+      'dependencies',
       'husky',
       'prettier',
       'files',
