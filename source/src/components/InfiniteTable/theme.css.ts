@@ -198,63 +198,14 @@ export const ThemeVars = createGlobalThemeContract(
         color: 'cell-color',
 
         /**
-         * The RED component of the color used for the active cell when cell keyboard navigation is enabled.
-         *
-         * The easiest way to define the color of the active cell is to use these 3 variables:
-         *   `--infinite-active-cell-border-color--r`
-         *   `--infinite-active-cell-border-color--g`
-         *   `--infinite-active-cell-border-color--b`
-         * as they define both the border and the background color of the active cell and the active row.
-         *
-         * You can also specify the GREEN and BLUE components of the color using the next two css vars.
-         *
-         * The border color of the active cell is decomposed into multiple variables for convenience as by default
-         * the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
-         *
-         * If you don't want this, you can use `--infinite-active-cell-background` instead.
-         */
-        activeBorderColor_R: 'active-cell-border-color--r',
-
-        /**
-         * The GREEN component of the color used for the active cell when cell keyboard navigation is enabled.
-         *
-         * The easiest way to define the color of the active cell is to use these 3 variables:
-         *   `--infinite-active-cell-border-color--r`
-         *   `--infinite-active-cell-border-color--g`
-         *   `--infinite-active-cell-border-color--b`
-         * as they define both the border and the background color of the active cell and the active row.
-         *
-         * You can also specify the RED and BLUE components of the color using the next two css vars.
-         *
-         * The border color of the active cell is decomposed into multiple variables for convenience as by default
-         * the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
-         *
-         * If you don't want this, you can use `--infinite-active-cell-background` instead.
-         */
-        activeBorderColor_G: 'active-cell-border-color--g',
-
-        /**
-         * The BLUE component of the color used for the active cell when cell keyboard navigation is enabled.
-         *
-         * The easiest way to define the color of the active cell is to use these 3 variables:
-         *   `--infinite-active-cell-border-color--r`
-         *   `--infinite-active-cell-border-color--g`
-         *   `--infinite-active-cell-border-color--b`
-         * as they define both the border and the background color of the active cell and the active row.
-         *
-         * You can also specify the RED and GREEN components of the color using the next two css vars.
-         *
-         * The border color of the active cell is decomposed into multiple variables for convenience as by default
-         * the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
-         *
-         * If you don't want this, you can use `--infinite-active-cell-background` instead.
-         */
-        activeBorderColor_B: 'active-cell-border-color--b',
-
-        /**
          * The opacity of the background color for the active cell (when cell keyboard navigation is enabled).
+         * Eg: 0.25
          *
-         * The background color of the active cell is based on the value of the above 3 variables, but with the opacity specified by this variable.
+         * If `activeBackground` is not explicitly defined (this is the default), the background color of the active cell
+         * is the same as the border color (`activeBorderColor`), but with this modified opacity.
+         *
+         * If `activeBorderColor` is also not defined, the accent color will be used.
+         *
          * This is applied when the component has focus.
          */
         activeBackgroundAlpha: 'active-cell-background-alpha',
@@ -266,7 +217,10 @@ export const ThemeVars = createGlobalThemeContract(
           'active-cell-background-alpha--table-unfocused',
 
         /**
-         * The background color of the active cell defaults to the same color (with modified opacity, as explained above) as the border color.
+         * The background color of the active cell.
+         *
+         * If not specified, it will default to `activeBorderColor` with the opacity of `activeBackgroundAlpha`.
+         * If `activeBorderColor` is not specified, it will default to the accent color, with the same opacity as mentioned.
          *
          * However, specify this to explicitly override the default.
          */
@@ -419,7 +373,8 @@ const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.filterEditorMarginY]: ThemeVars.spacing['1'],
   [ThemeVars.components.HeaderCell.resizeHandleActiveAreaWidth]: '16px',
   [ThemeVars.components.HeaderCell.resizeHandleWidth]: '2px',
-  [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]: '#6bff6b',
+  [ThemeVars.components.HeaderCell.resizeHandleHoverBackground]:
+    ThemeVars.color.accent,
   [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
     ThemeVars.color.error,
   [ThemeVars.components.HeaderCell.background]: '#ededed',
@@ -456,9 +411,8 @@ const CellVars = {
 
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',
-  [ThemeVars.components.Cell.activeBorderColor_R]: '77',
-  [ThemeVars.components.Cell.activeBorderColor_G]: '149',
-  [ThemeVars.components.Cell.activeBorderColor_B]: '215',
+  // [ThemeVars.components.Cell.activeBorderColor]: '#4d95d7',
+  // [ThemeVars.components.Cell.activeBackground]: 'rgba(77, 149, 215, 0.25)',
 
   [ThemeVars.components.Cell.activeBackgroundAlpha]: '0.25',
   [ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused]: '0.1',
@@ -525,7 +479,7 @@ const LightTheme = {
 
   [ThemeVars.fontFamily]: 'inherit',
   [ThemeVars.color.color]: '#484848',
-  [ThemeVars.color.accent]: '#ff7043',
+  [ThemeVars.color.accent]: '#0284c7',
   [ThemeVars.color.error]: '#ff0000',
   [ThemeVars.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.background]: 'white',

@@ -32,13 +32,18 @@ export const ActiveCellIndicatorBaseCls = style(
           ThemeVars.components.Cell.activeBorderStyle
         } ${fallbackVar(
           ThemeVars.components.Cell.activeBorderColor,
-          `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
+          ThemeVars.color.accent,
         )}`,
       ),
 
       background: fallbackVar(
         ThemeVars.components.Cell.activeBackground,
-        `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${ThemeVars.components.Cell.activeBorderColor_G}, ${ThemeVars.components.Cell.activeBorderColor_B}, ${ThemeVars.components.Cell.activeBackgroundAlpha})`,
+        `color-mix(in srgb, ${fallbackVar(
+          ThemeVars.components.Cell.activeBorderColor,
+          ThemeVars.color.accent,
+        )}, transparent calc(100% - ${
+          ThemeVars.components.Cell.activeBackgroundAlpha
+        } * 100%))`,
       ),
     },
   ],

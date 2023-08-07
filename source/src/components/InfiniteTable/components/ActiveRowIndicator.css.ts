@@ -21,18 +21,21 @@ export const ActiveRowIndicatorBaseCls = style(
           ThemeVars.components.Cell.activeBorderStyle,
         )} ${fallbackVar(
           ThemeVars.components.Row.activeBorderColor,
-          `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
+          ThemeVars.components.Cell.activeBorderColor,
+          ThemeVars.color.accent,
         )}`,
       ),
       background: fallbackVar(
         ThemeVars.components.Row.activeBackground,
         ThemeVars.components.Cell.activeBackground,
-        `rgba(${ThemeVars.components.Cell.activeBorderColor_R}, ${
-          ThemeVars.components.Cell.activeBorderColor_G
-        }, ${ThemeVars.components.Cell.activeBorderColor_B}, ${fallbackVar(
+        `color-mix(in srgb, ${fallbackVar(
+          ThemeVars.components.Row.activeBorderColor,
+          ThemeVars.components.Cell.activeBorderColor,
+          ThemeVars.color.accent,
+        )}, transparent calc(100% - ${fallbackVar(
           ThemeVars.components.Row.activeBackgroundAlpha,
           ThemeVars.components.Cell.activeBackgroundAlpha,
-        )})`,
+        )} * 100%))`,
       ),
       vars: {
         [ThemeVars.components.Row.activeBorderStyle]: fallbackVar(

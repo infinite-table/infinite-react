@@ -42,7 +42,8 @@ const keyboardActiveItemBorder = fallbackVar(
     ThemeVars.components.Cell.activeBorderStyle,
   )} ${fallbackVar(
     ThemeVars.components.Row.activeBorderColor,
-    `rgb(${ThemeVars.components.Cell.activeBorderColor_R} ${ThemeVars.components.Cell.activeBorderColor_G} ${ThemeVars.components.Cell.activeBorderColor_B})`,
+    ThemeVars.components.Cell.activeBorderColor,
+    ThemeVars.color.accent,
   )}`,
 );
 export const MenuItemCls = recipe({
