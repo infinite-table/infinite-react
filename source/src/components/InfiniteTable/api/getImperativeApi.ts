@@ -115,17 +115,17 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return !this.getState().domRef.current;
   }
 
-  getColumnOrder() {
+  getColumnOrder = () => {
     return this.getComputed().computedColumnOrder;
-  }
+  };
 
-  getVisibleColumnOrder() {
+  getVisibleColumnOrder = () => {
     const order = this.getColumnOrder();
 
     const visibleColumns = this.getComputed().computedVisibleColumnsMap;
 
     return order.filter((id) => visibleColumns.has(id));
-  }
+  };
 
   persistEdit = async (arg?: { value?: any }): Promise<any | Error> => {
     arg = arg ?? {};
@@ -543,33 +543,33 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.actions.columnOrder = columnOrder;
   };
 
-  collapseAllGroupRows() {
+  collapseAllGroupRows = () => {
     const state = this.getDataSourceState();
     const newState = new GroupRowsState(state.groupRowsState);
     newState.collapseAll();
 
     this.dataSourceActions.groupRowsState = newState;
-  }
+  };
 
-  collapseGroupRow(groupKeys: any[]) {
+  collapseGroupRow = (groupKeys: any[]) => {
     const state = this.getDataSourceState();
     if (state.groupRowsState.isGroupRowExpanded(groupKeys)) {
       this.toggleGroupRow(groupKeys);
       return true;
     }
     return false;
-  }
+  };
 
-  expandGroupRow(groupKeys: any[]) {
+  expandGroupRow = (groupKeys: any[]) => {
     const state = this.getDataSourceState();
     if (state.groupRowsState.isGroupRowCollapsed(groupKeys)) {
       this.toggleGroupRow(groupKeys);
       return true;
     }
     return false;
-  }
+  };
 
-  toggleGroupRow(groupKeys: any[]) {
+  toggleGroupRow = (groupKeys: any[]) => {
     const state = this.getDataSourceState();
     const newState = new GroupRowsState(state.groupRowsState);
     newState.toggleGroupRow(groupKeys);
@@ -604,9 +604,12 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         }
       }
     }
-  }
+  };
 
-  toggleSortingForColumn(columnId: string, options?: MultiSortBehaviorOptions) {
+  toggleSortingForColumn = (
+    columnId: string,
+    options?: MultiSortBehaviorOptions,
+  ) => {
     const col = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!col) {
@@ -622,7 +625,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     this.setSortingForColumn(columnId, dir, options);
-  }
+  };
 
   setSortingForColumn(
     columnId: string,

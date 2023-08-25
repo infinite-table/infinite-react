@@ -65,7 +65,12 @@ export class TableTestingModel {
       getHeader: async () => {
         return await this.headerModel.getTextForHeaderCell(colLocation);
       },
-      getCellValue: async (rowLocation: RowLocation) => {
+      getCellValue: async (rowLocation: number | RowLocation) => {
+        if (typeof rowLocation === 'number') {
+          rowLocation = {
+            rowIndex: rowLocation,
+          };
+        }
         const cellLocation = getCellLocation(rowLocation);
         return await this.rowModel.getTextForCell(cellLocation);
       },

@@ -62,10 +62,11 @@ export const test = base.extend<
       if (exists) {
         await page.addInitScript({
           content: `
-window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api) => {
+window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api, context) => {
   
   window.INFINITE_GRID_READY = ready;
   window.INFINITE_GRID_API = api;
+  window.DATA_SOURCE_API = context.dataSourceApi
 };`,
         });
         await page.goto(url);
