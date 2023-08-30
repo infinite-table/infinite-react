@@ -173,9 +173,9 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return rowInfo ? rowInfo.id : undefined;
   }
 
-  private getOriginalDataArray() {
+  getOriginalDataArray = () => {
     return this.getState().originalDataArray;
-  }
+  };
 
   getDataByPrimaryKey(id: any): T | null {
     const { indexer } = this.getState();

@@ -290,6 +290,14 @@ If you have an array of primary keys, you can call <DApiLink name="removeDataArr
 
 </Prop>
 
+<Prop name="getOriginalDataArray" type="() => DATA_TYPE[]">
+
+> Returns the data array that was last loaded by the `DataSource`
+
+This is the array loaded by the `DataSource`, before any filtering, sorting or grouping is applied.
+
+</Prop>
+
 <Prop name="removeDataArray" type="(data: Partial<DATA_TYPE>[]) => Promise">
 
 > Removes the data items that match the given data objects.
