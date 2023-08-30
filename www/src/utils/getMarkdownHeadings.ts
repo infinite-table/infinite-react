@@ -18,6 +18,7 @@ export function getPropHeadings(mdxString: string): TocHeading[] {
 
       return name.trim() || '';
     })
+    .sort()
     .map((name) => {
       return {
         url: '#' + name,
