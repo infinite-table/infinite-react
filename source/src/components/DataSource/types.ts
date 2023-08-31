@@ -352,6 +352,7 @@ export type DataSourceInsertParam = DataSourceCRUDParam &
   );
 
 export interface DataSourceApi<T> {
+  getOriginalDataArray: () => T[];
   getRowInfoArray: () => InfiniteTableRowInfo<T>[];
   getDataByPrimaryKey(id: any): T | null;
   getRowInfoByIndex(index: number): InfiniteTableRowInfo<T> | null;
