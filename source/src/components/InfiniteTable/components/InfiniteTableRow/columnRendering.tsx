@@ -243,7 +243,7 @@ export function getColumnRenderParam<T>(options: {
   const { indexInAll: rowIndex } = rowInfo;
 
   const dataSourceState = getDataSourceState();
-  const { selectionMode } = dataSourceState;
+  const { selectionMode, cellSelection } = dataSourceState;
 
   const groupByColumn = getGroupByColumnReference({
     rowInfo,
@@ -254,12 +254,16 @@ export function getColumnRenderParam<T>(options: {
 
   const toggleGroupRow = imperativeApi.toggleGroupRow;
 
+  const cellSelected =
+    cellSelection?.isCellSelected(rowInfo.id, column.id) ?? false;
+
   const renderParam: Omit<InfiniteTableColumnCellContextType<T>, 'domRef'> = {
     column,
     columnsMap,
     fieldsToColumn,
     align,
     verticalAlign,
+    cellSelected,
 
     ...formattedValueContext,
     editError:

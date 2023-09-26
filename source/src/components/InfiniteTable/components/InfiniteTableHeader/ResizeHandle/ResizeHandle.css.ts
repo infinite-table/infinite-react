@@ -120,5 +120,38 @@ export const ResizeHandleDraggerClsRecipe = recipe({
         },
       },
     },
+    computedPinned: {
+      start: {},
+      end: {},
+      false: {},
+    },
+    computedFirstInCategory: {
+      true: {},
+      false: {},
+    },
+    computedLastInCategory: {
+      true: {},
+      false: {},
+    },
   },
+  compoundVariants: [
+    {
+      variants: {
+        computedPinned: 'start',
+        computedLastInCategory: true,
+      },
+      style: {
+        right: 0,
+      },
+    },
+    {
+      variants: {
+        computedPinned: 'end',
+        computedFirstInCategory: true,
+      },
+      style: {
+        right: 'unset',
+      },
+    },
+  ],
 });

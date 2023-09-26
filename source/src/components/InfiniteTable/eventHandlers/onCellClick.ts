@@ -10,11 +10,20 @@ export type OnCellClickContext<T> =
   InfiniteTableCellClickEventHandlerContext<T> &
     InfiniteTableKeyboardEventHandlerContext<T>;
 
+export type SimpleClickEvent = {
+  key: string;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  preventDefault: VoidFunction;
+};
+
 export function onCellClick<T>(
   context: OnCellClickContext<T>,
   event: React.MouseEvent<Element> & { key: string },
 ) {
   updateRowSelectionOnCellClick(context, event);
+  updateCellSelectionOnCellClick(context, event);
 
   if (event.detail === 2) {
     // double click
@@ -37,18 +46,30 @@ function onCellDoubleClick<T>(
   });
 }
 
+export function updateCellSelectionOnCellClick<T>(
+  context: InfiniteTableEventHandlerAbstractContext<T> & {
+    rowIndex: number;
+  },
+
+  _event: SimpleClickEvent,
+) {
+  const { getDataSourceState } = context;
+
+  // const { multiRowSelector, renderSelectionCheckBox } = getComputed();
+  const dataSourceState = getDataSourceState();
+
+  const { selectionMode } = dataSourceState;
+
+  if (selectionMode === 'single-cell') {
+  }
+}
+
 export function updateRowSelectionOnCellClick<T>(
   context: InfiniteTableEventHandlerAbstractContext<T> & {
     rowIndex: number;
   },
 
-  event: {
-    key: string;
-    metaKey: boolean;
-    ctrlKey: boolean;
-    shiftKey: boolean;
-    preventDefault: VoidFunction;
-  },
+  event: SimpleClickEvent,
 ) {
   const {
     rowIndex,

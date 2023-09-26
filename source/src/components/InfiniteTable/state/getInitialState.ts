@@ -226,8 +226,12 @@ export const forwardProps = <T>(
     columnDefaultSortable: 1,
 
     rowStyle: 1,
+    cellStyle: 1,
+
     rowProps: 1,
     rowClassName: 1,
+    cellClassName: 1,
+
     pinnedStartMaxWidth: 1,
     pinnedEndMaxWidth: 1,
     pivotColumn: 1,

@@ -1,4 +1,9 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import {
+  ComplexStyleRule,
+  fallbackVar,
+  style,
+  styleVariants,
+} from '@vanilla-extract/css';
 import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 
@@ -52,7 +57,6 @@ export const ColumnCellCls = style([
   {
     selectors: {
       [`${InfiniteClsShiftingColumns} &`]: {
-        // color: 'red',
         transition: `transform ${ThemeVars.components.Cell.reorderEffectDuration}`,
       },
     },
@@ -74,9 +78,13 @@ export const ColumnCellVariantsObject = {
   pinnedStart: {},
   pinnedEnd: {},
   unpinned: {},
-  pinnedStartLastInCategory: {},
+  pinnedStartLastInCategory: {
+    borderRight: `${ThemeVars.components.Cell.pinnedBorder}`,
+  },
   pinnedStartFirstInCategory: {},
-  pinnedEndFirstInCategory: {},
+  pinnedEndFirstInCategory: {
+    borderLeft: `${ThemeVars.components.Cell.pinnedBorder}`,
+  },
   pinnedEndLastInCategory: {},
 };
 
@@ -84,6 +92,98 @@ export const SelectionCheckboxCls = style({
   marginInline: ThemeVars.components.SelectionCheckBox.marginInline,
 });
 
+const CellSelectionIndicatorBase: ComplexStyleRule = {
+  position: 'absolute',
+  content: '',
+  inset: 0,
+
+  // expand the indicator to cover the cell borders left and right
+  left: `calc(0px - ${ThemeVars.components.Cell.borderWidth})`,
+  right: `calc(0px - ${ThemeVars.components.Cell.borderWidth})`,
+  pointerEvents: 'none',
+  background: fallbackVar(
+    ThemeVars.components.Cell.selectedBackground,
+    ThemeVars.components.Cell.activeBackground,
+    `color-mix(in srgb, ${fallbackVar(
+      ThemeVars.components.Cell.selectedBorderColor,
+      ThemeVars.components.Cell.activeBorderColor,
+      ThemeVars.components.Row.activeBorderColor,
+      ThemeVars.color.accent,
+    )}, transparent calc(100% - ${fallbackVar(
+      ThemeVars.components.Cell.selectedBackgroundAlpha,
+      ThemeVars.components.Cell.activeBackgroundAlpha,
+      ThemeVars.components.Row.activeBackgroundAlpha,
+    )} * 100%))`,
+  ),
+
+  borderWidth: `${fallbackVar(
+    ThemeVars.components.Cell.selectedBorderWidth,
+    ThemeVars.components.Cell.activeBorderWidth,
+    ThemeVars.components.Row.activeBorderWidth,
+    ThemeVars.components.Cell.borderWidth,
+  )}`,
+  borderStyle: `${fallbackVar(
+    ThemeVars.components.Cell.selectedBorderStyle,
+    ThemeVars.components.Cell.activeBorderStyle,
+  )}`,
+  border: fallbackVar(
+    ThemeVars.components.Cell.selectedBorder,
+    `${fallbackVar(
+      ThemeVars.components.Cell.selectedBorderWidth,
+      ThemeVars.components.Cell.activeBorderWidth,
+      ThemeVars.components.Row.activeBorderWidth,
+      ThemeVars.components.Cell.borderWidth,
+    )} ${fallbackVar(
+      ThemeVars.components.Cell.selectedBorderStyle,
+      ThemeVars.components.Cell.activeBorderStyle,
+      ThemeVars.components.Row.activeBorderStyle,
+    )} ${fallbackVar(
+      ThemeVars.components.Cell.selectedBorderColor,
+      ThemeVars.components.Cell.activeBorderColor,
+      ThemeVars.components.Row.activeBorderColor,
+      ThemeVars.color.accent,
+    )}`,
+  ),
+};
+export const ColumnCellSelectionIndicatorRecipe = recipe({
+  base: {
+    '::before': CellSelectionIndicatorBase,
+  },
+  variants: {
+    right: {
+      true: {},
+      false: {
+        '::before': {
+          borderRightWidth: 0,
+        },
+      },
+    },
+    left: {
+      true: {},
+      false: {
+        '::before': {
+          borderLeftWidth: 0,
+        },
+      },
+    },
+    top: {
+      true: {},
+      false: {
+        '::before': {
+          borderTopWidth: 0,
+        },
+      },
+    },
+    bottom: {
+      true: {},
+      false: {
+        '::before': {
+          borderBottomWidth: 0,
+        },
+      },
+    },
+  },
+});
 export const ColumnCellRecipe = recipe({
   base: [
     {
@@ -92,6 +192,7 @@ export const ColumnCellRecipe = recipe({
   ],
   variants: {
     dragging: { false: {}, true: {} },
+    cellSelected: { false: {}, true: {} },
     align: {
       start: {},
       end: {

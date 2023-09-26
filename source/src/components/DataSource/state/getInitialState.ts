@@ -1,6 +1,8 @@
 import {
   DataSourceComponentActions,
   DataSourceDataParams,
+  DataSourcePropOnCellSelectionChange_MultiCell,
+  DataSourcePropOnCellSelectionChange_SingleCell,
   DataSourceRowInfoReducer,
   RowSelectionState,
 } from '..';
@@ -18,6 +20,10 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';
 import { isControlledValue } from '../../utils/isControlledValue';
 import { RenderRange } from '../../VirtualBrain';
+import {
+  CellSelectionState,
+  CellSelectionStateObject,
+} from '../CellSelectionState';
 
 import { defaultFilterTypes } from '../defaultFilterTypes';
 import { GroupRowsState } from '../GroupRowsState';
@@ -257,6 +263,7 @@ export function deriveStateFromProps<T extends any>(params: {
   }
 
   let rowSelectionState: RowSelectionState | null | number | string = null;
+  let cellSelectionState: CellSelectionState | null = null;
 
   let currentRowSelection =
     props.rowSelection !== undefined
@@ -266,6 +273,15 @@ export function deriveStateFromProps<T extends any>(params: {
         ? props.defaultRowSelection
         : null
       : state.rowSelection;
+
+  let currentCellSelection =
+    props.cellSelection !== undefined
+      ? props.cellSelection
+      : state.cellSelection === undefined
+      ? props.defaultCellSelection !== undefined
+        ? props.defaultCellSelection
+        : null
+      : state.cellSelection || null;
 
   if (selectionMode !== false) {
     if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
@@ -290,6 +306,20 @@ export function deriveStateFromProps<T extends any>(params: {
             : new RowSelectionState(
                 currentRowSelection as RowSelectionStateObject,
                 rowSelectionStateConfigGetter(state),
+              );
+      }
+    }
+
+    if (selectionMode === 'single-cell' || selectionMode === 'multi-cell') {
+      if (currentCellSelection === null) {
+        cellSelectionState =
+          selectionMode === 'single-cell' ? null : new CellSelectionState();
+      } else {
+        cellSelectionState =
+          currentCellSelection instanceof CellSelectionState
+            ? currentCellSelection
+            : new CellSelectionState(
+                currentCellSelection as CellSelectionStateObject,
               );
       }
     }
@@ -322,8 +352,9 @@ export function deriveStateFromProps<T extends any>(params: {
   const result: DataSourceDerivedState<T> = {
     selectionMode,
     groupRowsState,
-    // for whatever reason I had to do this cast to appease TS
-    rowSelection: rowSelectionState as any as null,
+
+    rowSelection: rowSelectionState,
+    cellSelection: cellSelectionState,
 
     toPrimaryKey,
     operatorsByFilterType,
@@ -421,6 +452,28 @@ export function getMappedCallbacks<T>() {
           (rowSelection as RowSelectionState).getState(),
           'multi-row',
         ] as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>,
+      };
+    },
+    cellSelection: (
+      cellSelection,
+      state: DataSourceState<T>,
+    ): { callbackParams: any[] } => {
+      if (state.selectionMode === 'single-cell') {
+        return {
+          callbackParams: [
+            cellSelection instanceof CellSelectionState
+              ? cellSelection.getState().selectedCells
+              : null,
+            'single-cell',
+          ] as Parameters<DataSourcePropOnCellSelectionChange_SingleCell>,
+        };
+      }
+
+      return {
+        callbackParams: [
+          (cellSelection as CellSelectionState).getState(),
+          'multi-cell',
+        ] as Parameters<DataSourcePropOnCellSelectionChange_MultiCell>,
       };
     },
   } as DataSourceMappedCallbackParams<T>;

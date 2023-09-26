@@ -9,9 +9,11 @@ Multiple row selection allows people to select rows just like they would in thei
 
 The DataGrid also offers support for **checkbox selection**, which is another easy way of interacting with grid rows, especially when grouped or nested data is used.
 
-Row selection (both single and multiple) is driven by the <DPropLink name="rowSelection" /> prop
+Row selection (both single and multiple) is driven by the <DPropLink name="rowSelection" /> prop, which will contain **primary keys of the selected rows**.
 
 <Note>
+
+The value or values you specify for row selection are primary keys of the rows in the DataGrid.
 
 Row selection is defined on the `DataSource` component, so that's where you specify your <DPropLink name="rowSelection" /> prop (or the uncontrolled version of it, namely <DPropLink name="defaultRowSelection" /> and also the callback prop of <DPropLink name="onRowSelectionChange" />).
 
@@ -25,7 +27,7 @@ You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-ro
 
 # Single Row Selection
 
-This is the most basic row selection - in this case the <DPropLink name="rowSelection" /> prop (or the uncontrolled variant <DPropLink name="defaultRowSelection" />) will be a string or a number (or `null` for no selection).
+This is the most basic row selection - in this case the <DPropLink name="rowSelection" /> prop (or the uncontrolled variant <DPropLink name="defaultRowSelection" />) will be the primary key of the selected row (a string or a number or `null` for no selection).
 
 ```ts {4}
 <DataSource<DATA_TYPE>

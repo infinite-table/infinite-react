@@ -27,7 +27,6 @@ export const ActiveCellIndicatorBaseCls = style(
     {
       border: fallbackVar(
         ThemeVars.components.Cell.activeBorder,
-
         `${ThemeVars.components.Cell.activeBorderWidth} ${
           ThemeVars.components.Cell.activeBorderStyle
         } ${fallbackVar(

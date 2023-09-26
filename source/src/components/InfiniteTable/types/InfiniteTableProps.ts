@@ -80,12 +80,18 @@ export type InfiniteTableRowStyleFn<T> = (
 export type InfiniteTableRowClassNameFn<T> = (
   params: InfiniteTableRowStyleFnParams<T>,
 ) => string | undefined;
+export type InfiniteTableCellClassNameFn<T> =
+  InfiniteTableColumn<T>['className'];
 export type InfiniteTablePropRowStyle<T> =
   | React.CSSProperties
   | InfiniteTableRowStyleFn<T>;
+export type InfiniteTablePropCellStyle<T> = InfiniteTableColumn<T>['style'];
 export type InfiniteTablePropRowClassName<T> =
   | string
   | InfiniteTableRowClassNameFn<T>;
+export type InfiniteTablePropCellClassName<T> =
+  | string
+  | InfiniteTableCellClassNameFn<T>;
 
 export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
   AggregationReducer<T, AggregationResultType>,
@@ -630,6 +636,8 @@ export interface InfiniteTableProps<T> {
 
   rowHeight?: number | string;
   rowStyle?: InfiniteTablePropRowStyle<T>;
+  cellStyle?: InfiniteTablePropCellStyle<T>;
+  cellClassName?: InfiniteTablePropCellClassName<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
   columnHeaderHeight?: number | string;
 

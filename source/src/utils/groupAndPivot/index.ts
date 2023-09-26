@@ -92,7 +92,21 @@ export type InfiniteTable_RowInfoBase<_T> = {
   value?: any;
   indexInAll: number;
   rowSelected: boolean | null;
+  isCellSelected: (columnId: string) => boolean;
 };
+
+export type InfiniteTable_RowInfoCellSelection = {
+  isCellSelected: (columnId: string) => boolean;
+} & (
+  | {
+      selectedCells: true;
+      deselectedCells: Set<string>;
+    }
+  | {
+      selectedCells: Set<string>;
+      deselectedCells: true;
+    }
+);
 
 export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
   dataSourceHasGrouping: true;
@@ -386,6 +400,10 @@ export type DataGroupResult<DataType, KeyType extends any> = {
   topLevelPivotColumns?: DeepMap<GroupKeyType<KeyType>, boolean>;
   pivot?: PivotBy<DataType, KeyType>[];
 };
+
+function returnFalse() {
+  return false;
+}
 
 function initReducers<DataType>(
   reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>,
@@ -1029,6 +1047,7 @@ function getEnhancedGroupData<DataType>(
     id: `${groupKeys}`, //TODO improve this
     collapsed: false,
     dataSourceHasGrouping: true,
+    isCellSelected: returnFalse,
     selfLoaded,
     error: options.error,
 
@@ -1244,6 +1263,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 {
                   id: itemId,
                   data: item,
+                  isCellSelected: returnFalse,
                   dataSourceHasGrouping: true,
                   isGroupRow: false,
                   selfLoaded: !!item,

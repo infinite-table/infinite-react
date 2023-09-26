@@ -612,6 +612,7 @@ export function InfiniteTableHeaderCell<T>(
               align,
               verticalAlign,
               rowSelected: false,
+              cellSelected: false,
               zebra: false,
               rowActive: false,
               groupCell: false,

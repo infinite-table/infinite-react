@@ -25,7 +25,11 @@ import {
   CellEditorContextComponent,
   RenderCellHookComponent,
 } from '../../utils/RenderHookComponentForInfinite';
-import { ColumnCellRecipe, SelectionCheckboxCls } from '../cell.css';
+import {
+  ColumnCellRecipe,
+  ColumnCellSelectionIndicatorRecipe,
+  SelectionCheckboxCls,
+} from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { getColumnRenderingParams } from './columnRendering';
 import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
@@ -116,7 +120,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowStyle,
     rowClassName,
 
-    // getData,
+    getData,
+    cellStyle,
+    cellClassName,
+
     width,
     column,
     onMouseLeave,
@@ -143,6 +150,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     getState,
     actions: componentActions,
+    computed,
     api: imperativeApi,
   } = useInfiniteTable<T>();
   const {
@@ -221,7 +229,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [rowIndex, column.computedVisibleIndex, keyboardNavigation],
   );
 
-  const { selectionMode } = dataSourceState;
+  const { selectionMode, cellSelection } = dataSourceState;
+
+  const cellSelected = renderParam.cellSelected;
 
   renderParam.domRef = domRef;
 
@@ -394,6 +404,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       stylingParam,
     );
   }
+  if (cellClassName) {
+    colClassName = join(
+      colClassName,
+      applyColumnClassName(cellClassName, stylingParam),
+    );
+  }
   if (column.className) {
     colClassName = join(
       colClassName,
@@ -412,6 +428,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       typeof rowStyle === 'function'
         ? { ...style, ...rowStyle(rowPropsAndStyleArgs) }
         : { ...style, ...rowStyle };
+  }
+
+  if (cellStyle) {
+    style = applyColumnStyle(style, cellStyle, stylingParam);
   }
 
   if (groupByColumnReference?.style) {
@@ -435,6 +455,55 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const zebra = showZebraRows ? (odd ? 'odd' : 'even') : false;
 
+  let topSelectionBorder = false;
+  let leftSelectionBorder = false;
+  let rightSelectionBorder = false;
+  let bottomSelectionBorder = false;
+
+  if (cellSelection && cellSelected) {
+    const arr = getData();
+    const topRowInfo = arr[rowInfo.indexInAll - 1];
+    const bottomRowInfo = arr[rowInfo.indexInAll + 1];
+    const nextColumn =
+      computed.computedVisibleColumns[column.computedVisibleIndex + 1];
+    const prevColumn =
+      computed.computedVisibleColumns[column.computedVisibleIndex - 1];
+
+    topSelectionBorder = topRowInfo
+      ? !cellSelection.isCellSelected(topRowInfo.id, column.id)
+      : true;
+
+    if (column.computedPinned === 'end' && column.computedFirstInCategory) {
+      leftSelectionBorder = true;
+    } else {
+      leftSelectionBorder = prevColumn
+        ? !cellSelection.isCellSelected(rowInfo.id, prevColumn.id)
+        : true;
+    }
+
+    if (column.computedPinned === 'start' && column.computedLastInCategory) {
+      rightSelectionBorder = true;
+    } else {
+      rightSelectionBorder = nextColumn
+        ? !cellSelection.isCellSelected(rowInfo.id, nextColumn.id)
+        : true;
+    }
+    bottomSelectionBorder = bottomRowInfo
+      ? !cellSelection.isCellSelected(bottomRowInfo.id, column.id)
+      : true;
+  }
+
+  const cellSelectionBorders =
+    cellSelection && cellSelected
+      ? {
+          top: topSelectionBorder,
+          left: leftSelectionBorder,
+          right: rightSelectionBorder,
+          bottom: bottomSelectionBorder,
+        }
+      : null;
+
+  const afterChildren = editor;
   const cellProps: InfiniteTableCellProps<T> &
     React.HTMLAttributes<HTMLElement> = {
     domRef,
@@ -447,10 +516,13 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     onMouseLeave,
     onMouseEnter,
     onClick,
-    afterChildren: editor,
+    afterChildren,
     onMouseDown,
     cssEllipsis: column.cssEllipsis ?? true,
     className: join(
+      cellSelectionBorders
+        ? ColumnCellSelectionIndicatorRecipe(cellSelectionBorders)
+        : '',
       useCellClassName(
         column,
         [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
@@ -461,6 +533,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           align,
           verticalAlign,
           rowActive,
+          cellSelected,
           rowSelected,
           groupRow: rowInfo.isGroupRow,
           groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,

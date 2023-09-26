@@ -73,10 +73,6 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
       rerender();
     });
 
-    // const removeOnAvailableSizeChange = brain.onAvailableSizeChange(() => {
-    //   rerender();
-    // });
-
     return () => {
       removeOnRenderCountChange();
     };

@@ -205,8 +205,10 @@ export interface InfiniteTableMappedState<T> {
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
+  cellStyle: InfiniteTableProps<T>['cellStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
+  cellClassName: InfiniteTableProps<T>['cellClassName'];
   pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];

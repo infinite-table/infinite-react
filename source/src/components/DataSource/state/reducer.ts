@@ -1,3 +1,4 @@
+import { composeFunctions } from '../../../utils/composeFunctions';
 import { DataSourceFilterValueItem, DataSourceSetupState } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import {
@@ -9,6 +10,7 @@ import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { multisort } from '../../../utils/multisort';
 import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getSelectionApi';
+import { CellSelectionState } from '../CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from '../DataSourceCache';
 import { getCacheAffectedParts } from '../getDataSourceApi';
 import { RowSelectionState } from '../RowSelectionState';
@@ -69,11 +71,16 @@ const haveDepsChanged = <StateType>(
   return false;
 };
 
+function returnFalse() {
+  return false;
+}
+
 function toRowInfo<T>(
   data: T,
   id: any,
   index: number,
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<T>) => boolean | null,
+  cellSelectionState?: CellSelectionState,
 ): InfiniteTable_NoGrouping_RowInfoNormal<T> {
   const rowInfo: InfiniteTable_NoGrouping_RowInfoNormal<T> = {
     dataSourceHasGrouping: false,
@@ -83,9 +90,16 @@ function toRowInfo<T>(
     isGroupRow: false,
     selfLoaded: true,
     rowSelected: false,
+    isCellSelected: returnFalse,
   };
   if (isRowSelected) {
     rowInfo.rowSelected = isRowSelected(rowInfo);
+  }
+
+  if (cellSelectionState) {
+    rowInfo.isCellSelected = (colId: string) => {
+      return cellSelectionState!.isCellSelected(rowInfo.id, colId);
+    };
   }
 
   return rowInfo;
@@ -369,6 +383,10 @@ export function concludeReducer<T>(params: {
     state.rowSelection instanceof RowSelectionState
       ? state.rowSelection
       : undefined;
+  const cellSelectionState =
+    state.cellSelection instanceof CellSelectionState
+      ? state.cellSelection
+      : undefined;
 
   //@ts-ignore
   rowSelectionState?.xcache();
@@ -452,6 +470,29 @@ export function concludeReducer<T>(params: {
         rowInfo: {} as InfiniteTableRowInfo<T>,
       };
 
+      const withRowInfoForReducers = rowInfoReducerResults
+        ? (rowInfo: InfiniteTableRowInfo<T>) => {
+            rowInfoReducersShape.rowInfo = rowInfo;
+            computeRowInfoReducersFor(rowInfoReducersShape);
+          }
+        : undefined;
+
+      const withRowInfoForCellSelection = cellSelectionState
+        ? (rowInfo: InfiniteTableRowInfo<T>) => {
+            rowInfo.isCellSelected = (colId: string) => {
+              return cellSelectionState!.isCellSelected(rowInfo.id, colId);
+            };
+          }
+        : undefined;
+
+      const withRowInfo =
+        withRowInfoForReducers || withRowInfoForCellSelection
+          ? composeFunctions(
+              withRowInfoForReducers,
+              withRowInfoForCellSelection,
+            )
+          : undefined;
+
       const flattenResult = enhancedFlatten({
         groupResult,
         lazyLoad: !!state.lazyLoad,
@@ -460,12 +501,7 @@ export function concludeReducer<T>(params: {
         isRowSelected,
         rowSelectionState,
 
-        withRowInfo: rowInfoReducerResults
-          ? (rowInfo) => {
-              rowInfoReducersShape.rowInfo = rowInfo;
-              computeRowInfoReducersFor(rowInfoReducersShape);
-            }
-          : undefined,
+        withRowInfo,
 
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,
@@ -538,6 +574,7 @@ export function concludeReducer<T>(params: {
           data ? toPrimaryKey(data) : index,
           index,
           isRowSelected,
+          cellSelectionState,
         );
 
         if (rowInfoReducerResults) {

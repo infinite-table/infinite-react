@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   InfiniteTable,
   DataSource,
-  DataSourcePropRowSelection_MultiRow,
+  DataSourcePropCellSelection_MultiCell,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
@@ -28,7 +28,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers10')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -47,13 +47,25 @@ const columns: InfiniteTablePropColumns<Developer> = {
 const domProps = {
   style: {
     height: '80vh',
+    margin: 10,
   },
 };
 
 export default function GroupByExample() {
-  const [rowSelection, _setRowSelection] =
-    useState<DataSourcePropRowSelection_MultiRow>({
-      selectedRows: [2, 3],
+  const [cellSelection, _setCellSelection] =
+    useState<DataSourcePropCellSelection_MultiCell>({
+      selectedCells: [
+        // [2, 'firstName'],
+        ['*', 'firstName'],
+        // [7, 'preferredLanguage'],
+        // [3, 'id'],
+        [3, '*'],
+        [4, '*'],
+        [5, '*'],
+        [11, 'preferredLanguage'],
+        [15, 'stack'],
+      ],
+      // deselectedCells: [[3, 'stack']],
       defaultSelection: false,
     });
 
@@ -61,8 +73,8 @@ export default function GroupByExample() {
     <>
       <div>
         Selected{' '}
-        {rowSelection instanceof RowSelectionState
-          ? rowSelection.getSelectedCount()
+        {cellSelection instanceof RowSelectionState
+          ? cellSelection.getSelectedCount()
           : false}
       </div>
       <DataSource<Developer>
@@ -70,9 +82,16 @@ export default function GroupByExample() {
         data={dataSource}
         selectionMode="multi-cell"
         // defaultRowSelection={rowSelection}
-        defaultCellSelection={[]}
+        // xdefaultCellSelection={[]}
+        onCellSelectionChange={_setCellSelection}
+        defaultCellSelection={cellSelection}
       >
         <InfiniteTable<Developer>
+          columnPinning={
+            {
+              // firstName: 'start',
+            }
+          }
           domProps={domProps}
           columns={columns}
           keyboardSelection={true}
