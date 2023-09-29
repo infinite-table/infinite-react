@@ -7,7 +7,6 @@ import { toCSSVarName } from './utils/toCSSVarName';
 
 export const columnHeaderHeightName = 'column-header-height';
 export const InternalVars = createThemeContract({
-  currentColumnWidth: null,
   currentColumnTransformX: null,
   currentColumnTransformY: null,
 
@@ -196,6 +195,49 @@ export const ThemeVars = createGlobalThemeContract(
          * Overriden in `dark` theme.
          */
         color: 'cell-color',
+
+        /**
+         * The background for selected cells, when cell selection is enabled.
+         *
+         * If not specified, it will default to `var(--infinite-active-cell-background)`.
+         */
+        selectedBackground: 'selected-cell-background',
+
+        /**
+         * The opacity of the background color for the selected cell.
+         *
+         * If not specified, it will default to the value for `var(--infinite-active-cell-background-alpha)`
+         */
+        selectedBackgroundAlpha: 'selected-cell-background-alpha',
+
+        /**
+         * The opacity of the background color for the selected cell, when the table is unfocused.
+         * If not specified, it will default to `var(--infinite-active-cell-background-alpha--table-unfocused)`.
+         */
+        selectedBackgroundAlphaWhenTableUnfocused:
+          'selected-cell-background-alpha--table-unfocused',
+
+        /**
+         * The color for border of the selected cell (when cell selection is enabled).
+         *  Defaults to `var(--infinite-active-cell-border-color)`.
+         */
+        selectedBorderColor: 'selected-cell-border-color',
+
+        /**
+         * The width of the border for the selected cell. Defaults to `var(--infinite-active-cell-border-width)`.
+         */
+        selectedBorderWidth: 'selected-cell-border-width',
+
+        /**
+         * The style of the border for the selected cell (eg: 'solid', 'dashed', 'dotted') - defaults to 'dashed'.
+         * Defaults to `var(--infinite-active-cell-border-style)`.
+         */
+        selectedBorderStyle: 'selected-cell-border-style',
+
+        /**
+         * Specifies the border for the selected cell. Defaults to `var(--infinite-selected-cell-border-width) var(--infinite-selected-cell-border-style) var(--infinite-selected-cell-border-color)`.
+         */
+        selectedBorder: 'selected-cell-border',
 
         /**
          * The opacity of the background color for the active cell (when cell keyboard navigation is enabled).
@@ -409,6 +451,8 @@ const CellVars = {
   [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.components.Cell.reorderEffectDuration]: '.2s',
 
+  // [ThemeVars.components.Cell.selectedCellBorder]: '2px solid red',
+  [ThemeVars.components.Cell.selectedBorderStyle]: 'solid',
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',
   // [ThemeVars.components.Cell.activeBorderColor]: '#4d95d7',

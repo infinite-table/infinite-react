@@ -39,7 +39,7 @@ import {
 import { InfiniteTableRowInfo, InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
-import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
+import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
 import { MenuColumn, MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
 import { KeyOfNoSymbol, XOR } from './Utility';
@@ -50,6 +50,7 @@ import {
   InfiniteTableCellContext,
   InfiniteTablePublicContext,
 } from './InfiniteTableContextValue';
+import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -80,12 +81,18 @@ export type InfiniteTableRowStyleFn<T> = (
 export type InfiniteTableRowClassNameFn<T> = (
   params: InfiniteTableRowStyleFnParams<T>,
 ) => string | undefined;
+export type InfiniteTableCellClassNameFn<T> =
+  InfiniteTableColumn<T>['className'];
 export type InfiniteTablePropRowStyle<T> =
   | React.CSSProperties
   | InfiniteTableRowStyleFn<T>;
+export type InfiniteTablePropCellStyle<T> = InfiniteTableColumn<T>['style'];
 export type InfiniteTablePropRowClassName<T> =
   | string
   | InfiniteTableRowClassNameFn<T>;
+export type InfiniteTablePropCellClassName<T> =
+  | string
+  | InfiniteTableCellClassNameFn<T>;
 
 export type InfiniteTableColumnAggregator<T, AggregationResultType> = Omit<
   AggregationReducer<T, AggregationResultType>,
@@ -240,7 +247,8 @@ export type MultiSortBehaviorOptions = {
 };
 
 export interface InfiniteTableApi<T> {
-  get selectionApi(): InfiniteTableSelectionApi;
+  get rowSelectionApi(): InfiniteTableRowSelectionApi;
+  get cellSelectionApi(): InfiniteTableCellSelectionApi;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
@@ -630,6 +638,8 @@ export interface InfiniteTableProps<T> {
 
   rowHeight?: number | string;
   rowStyle?: InfiniteTablePropRowStyle<T>;
+  cellStyle?: InfiniteTablePropCellStyle<T>;
+  cellClassName?: InfiniteTablePropCellClassName<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
   columnHeaderHeight?: number | string;
 

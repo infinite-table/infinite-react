@@ -112,10 +112,14 @@ export type InfiniteTableColumnRenderParamBase<
   toggleCurrentGroupRowSelection: () => void;
   toggleCurrentRowSelection: () => void;
 
+  cellSelected: boolean;
   selectCurrentRow: () => void;
   selectRow: InfiniteTableSelectRowFn;
   deselectRow: InfiniteTableSelectRowFn;
   deselectCurrentRow: () => void;
+
+  selectCell: () => void;
+  deselectCell: () => void;
 
   toggleRowSelection: InfiniteTableSelectRowFn;
   toggleGroupRowSelection: InfiniteTableToggleGroupRowFn;

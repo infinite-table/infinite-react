@@ -19,6 +19,7 @@ export function useCellClassName<T>(
     verticalAlign: InfiniteTableColumnVerticalAlignValues;
     rowSelected: boolean | null;
     dragging: boolean;
+    cellSelected: boolean;
     zebra: 'odd' | 'even' | false;
   },
 ) {
@@ -31,6 +32,7 @@ export function useCellClassName<T>(
     firstInCategory: column.computedFirstInCategory,
     lastInCategory: column.computedLastInCategory,
     pinned: column.computedPinned || false,
+    cellSelected: extraFlags.cellSelected || false,
     rowSelected: extraFlags.rowSelected ?? 'null',
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
@@ -63,6 +65,9 @@ export function useCellClassName<T>(
   }
   if (extraFlags.rowSelected) {
     result.push(...baseClasses.map((c) => `${c}--row-selected`));
+  }
+  if (extraFlags.cellSelected) {
+    result.push(...baseClasses.map((c) => `${c}--cell-selected`));
   }
 
   if (extraFlags.groupRow) {

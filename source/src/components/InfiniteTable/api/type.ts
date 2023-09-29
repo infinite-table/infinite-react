@@ -14,3 +14,29 @@ export type GetImperativeApiParam<T> = {
   dataSourceActions: DataSourceComponentActions<T>;
   dataSourceApi: DataSourceApi<T>;
 };
+
+export type CellPositionOptions =
+  | {
+      rowIndex: number;
+      colIndex: number;
+      rowId?: never;
+      colId?: never;
+    }
+  | {
+      rowIndex?: never;
+      colIndex?: never;
+      rowId: any;
+      colId: string;
+    }
+  | {
+      rowIndex: number;
+      colIndex?: never;
+      rowId?: never;
+      colId: string;
+    }
+  | {
+      rowIndex?: never;
+      colIndex: number;
+      rowId: any;
+      colId?: never;
+    };

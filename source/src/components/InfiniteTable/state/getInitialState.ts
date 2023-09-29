@@ -6,7 +6,7 @@ import {
 } from '../../DataSource';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
-import { CellPosition } from '../../types/CellPosition';
+import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
@@ -51,7 +51,7 @@ function createRenderer(brain: MatrixBrain) {
   };
 }
 
-export function getCellSelector(cellPosition?: CellPosition) {
+export function getCellSelector(cellPosition?: CellPositionByIndex) {
   const selector = `.${InfiniteTableColumnCellClassName}[data-row-index${
     cellPosition ? `="${cellPosition.rowIndex}"` : ''
   }][data-col-index${cellPosition ? `="${cellPosition.colIndex}"` : ''}]`;
@@ -115,7 +115,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     columnMenuVisibleKey: 0,
     filterOperatorMenuVisibleForColumnId: null,
 
-    getDOMNodeForCell: (cellPosition: CellPosition) => {
+    getDOMNodeForCell: (cellPosition: CellPositionByIndex) => {
       if (!domRef.current) {
         return null;
       }
@@ -153,10 +153,10 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
     cellClick: buildSubscriptionCallback<
-      CellPosition & { event: MouseEvent }
+      CellPositionByIndex & { event: MouseEvent }
     >(),
     cellMouseDown: buildSubscriptionCallback<
-      CellPosition & { event: MouseEvent }
+      CellPositionByIndex & { event: MouseEvent }
     >(),
     keyDown: buildSubscriptionCallback<KeyboardEvent>(),
     bodySize: {
@@ -226,8 +226,12 @@ export const forwardProps = <T>(
     columnDefaultSortable: 1,
 
     rowStyle: 1,
+    cellStyle: 1,
+
     rowProps: 1,
     rowClassName: 1,
+    cellClassName: 1,
+
     pinnedStartMaxWidth: 1,
     pinnedEndMaxWidth: 1,
     pivotColumn: 1,

@@ -21,8 +21,12 @@
     "path": "/docs/reference/datasource-api"
   },
   {
-    "title": "Infinite Table Selection API",
-    "path": "/docs/reference/selection-api"
+    "title": "Infinite Table Cell Selection API",
+    "path": "/docs/reference/cell-selection-api"
+  },
+  {
+    "title": "Infinite Table Row Selection API",
+    "path": "/docs/reference/row-selection-api"
   },
   {
     "title": "Infinite Table Column API",

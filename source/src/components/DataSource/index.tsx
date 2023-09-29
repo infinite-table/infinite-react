@@ -18,6 +18,7 @@ import {
   useDataSourceContextValue,
 } from './publicHooks/useDataSource';
 import { RowSelectionState } from './RowSelectionState';
+import { CellSelectionState } from './CellSelectionState';
 import {
   deriveStateFromProps,
   forwardProps,
@@ -145,6 +146,7 @@ export {
   DataSource,
   GroupRowsState,
   RowSelectionState,
+  CellSelectionState,
   multisort,
   defaultFilterTypes as filterTypes,
   useRowInfoReducers,

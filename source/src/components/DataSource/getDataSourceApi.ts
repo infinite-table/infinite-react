@@ -8,6 +8,7 @@ import {
 import { raf } from '../../utils/raf';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
+import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
 
 import { DataSourceInsertParam } from './types';
 
@@ -58,9 +59,9 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   private pendingPromise: Promise<boolean> | null = null;
   private resolvePendingPromise: ((value: boolean) => void) | null = null;
 
-  toPrimaryKey(data: T): any {
+  toPrimaryKey = (data: T): any => {
     return this.getState().toPrimaryKey(data);
-  }
+  };
 
   batchOperation(operation: DataSourceOperation<T>) {
     if (!this.pendingPromise) {
@@ -153,39 +154,39 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
   }
 
-  getRowInfoArray() {
-    return this.getState().dataArray;
-  }
-  getRowInfoByIndex(index: number): InfiniteTableRowInfo<T> | null {
-    return this.getRowInfoArray()[index] ?? null;
-  }
-  getRowInfoByPrimaryKey(id: any): InfiniteTableRowInfo<T> | null {
+  getRowInfoArray = () => {
+    return getRowInfoArray(this.getState);
+  };
+  getRowInfoByIndex = (index: number): InfiniteTableRowInfo<T> | null => {
+    return getRowInfoAt(index, this.getState) ?? null;
+  };
+  getRowInfoByPrimaryKey = (id: any): InfiniteTableRowInfo<T> | null => {
     const index = this.getIndexByPrimaryKey(id);
     return this.getRowInfoByIndex(index);
-  }
-  getIndexByPrimaryKey(id: any) {
+  };
+  getIndexByPrimaryKey = (id: any) => {
     const map = this.getState().idToIndexMap;
     return map.get(id) ?? -1;
-  }
-  getPrimaryKeyByIndex(index: number) {
+  };
+  getPrimaryKeyByIndex = (index: number) => {
     const rowInfo = this.getRowInfoByIndex(index);
 
     return rowInfo ? rowInfo.id : undefined;
-  }
+  };
 
   getOriginalDataArray = () => {
     return this.getState().originalDataArray;
   };
 
-  getDataByPrimaryKey(id: any): T | null {
+  getDataByPrimaryKey = (id: any): T | null => {
     const { indexer } = this.getState();
     return indexer.getDataForPrimaryKey(id) ?? null;
-  }
+  };
 
-  updateData(data: Partial<T>, options?: DataSourceCRUDParam) {
+  updateData = (data: Partial<T>, options?: DataSourceCRUDParam) => {
     return this.updateDataArray([data], options);
-  }
-  updateDataArray(data: Partial<T>[], options?: DataSourceCRUDParam) {
+  };
+  updateDataArray = (data: Partial<T>[], options?: DataSourceCRUDParam) => {
     const result = this.batchOperation({
       type: 'update',
       array: data,
@@ -200,9 +201,9 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
-  }
+  };
 
-  removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam) {
+  removeDataByPrimaryKey = (id: any, options?: DataSourceCRUDParam) => {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: [id],
@@ -213,8 +214,8 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       this.commit();
     }
     return result;
-  }
-  removeData(data: T, options?: DataSourceCRUDParam) {
+  };
+  removeData = (data: T, options?: DataSourceCRUDParam) => {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: [this.toPrimaryKey(data)],
@@ -226,9 +227,12 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
-  }
+  };
 
-  removeDataArrayByPrimaryKeys(ids: any[], options?: DataSourceCRUDParam) {
+  removeDataArrayByPrimaryKeys = (
+    ids: any[],
+    options?: DataSourceCRUDParam,
+  ) => {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: ids,
@@ -240,8 +244,8 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
-  }
-  removeDataArray(data: T[], options?: DataSourceCRUDParam) {
+  };
+  removeDataArray = (data: T[], options?: DataSourceCRUDParam) => {
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: data.map(this.toPrimaryKey),
@@ -253,23 +257,23 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
-  }
+  };
 
-  addData(data: T, options?: DataSourceCRUDParam) {
+  addData = (data: T, options?: DataSourceCRUDParam) => {
     return this.addDataArray([data], options);
-  }
-  addDataArray(data: T[], options?: DataSourceCRUDParam) {
+  };
+  addDataArray = (data: T[], options?: DataSourceCRUDParam) => {
     return this.insertDataArray(data, {
       ...options,
       position: 'end',
     });
-  }
+  };
 
-  insertData(data: T, options: DataSourceInsertParam) {
+  insertData = (data: T, options: DataSourceInsertParam) => {
     return this.insertDataArray([data], options);
-  }
+  };
 
-  insertDataArray(data: T[], options: DataSourceInsertParam) {
+  insertDataArray = (data: T[], options: DataSourceInsertParam) => {
     let position: 'before' | 'after' = 'before';
     let primaryKey: any = undefined;
 
@@ -300,9 +304,9 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
-  }
+  };
 
-  setSortInfo(sortInfo: null | DataSourceSingleSortInfo<T>[]) {
+  setSortInfo = (sortInfo: null | DataSourceSingleSortInfo<T>[]) => {
     const multiSort = this.getState().multiSort;
 
     if (Array.isArray(sortInfo)) {
@@ -320,7 +324,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     //@ts-ignore
     this.actions.sortInfo = sortInfo;
     return;
-  }
+  };
 }
 
 export function getCacheAffectedParts<T>(state: DataSourceState<T>): {

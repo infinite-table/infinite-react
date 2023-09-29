@@ -31,6 +31,11 @@ import { NonUndefined } from '../types/NonUndefined';
 
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
+import {
+  CellSelectionState,
+  CellSelectionStateObject,
+  CellSelectionPosition,
+} from './CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
 
 import { GroupRowsState } from './GroupRowsState';
@@ -288,7 +293,13 @@ export type DataSourcePropRowSelection =
 export type DataSourcePropRowSelection_MultiRow = RowSelectionStateObject;
 export type DataSourcePropRowSelection_SingleRow = null | string | number;
 
-export type DataSourcePropCellSelection = any;
+export type DataSourcePropCellSelection_MultiCell = CellSelectionStateObject;
+export type DataSourcePropCellSelection_SingleCell =
+  null | CellSelectionPosition;
+
+export type DataSourcePropCellSelection =
+  | DataSourcePropCellSelection_MultiCell
+  | DataSourcePropCellSelection_SingleCell;
 
 export type DataSourcePropSelectionMode =
   | false
@@ -319,15 +330,32 @@ export type DataSourcePropOnRowSelectionChange_SingleRow = (
 export type DataSourcePropOnRowSelectionChange =
   | DataSourcePropOnRowSelectionChange_SingleRow
   | DataSourcePropOnRowSelectionChange_MultiRow;
-export type DataSourcePropOnCellSelectionChange = (
-  cellSelectionParams: any,
+
+export type DataSourcePropOnCellSelectionChange_MultiCell = (
+  cellSelection: DataSourcePropCellSelection_MultiCell,
+  selectionMode: 'multi-cell',
 ) => void;
+
+export type DataSourcePropOnCellSelectionChange_SingleCell = (
+  cellSelection: DataSourcePropCellSelection_SingleCell,
+  selectionMode: 'single-cell',
+) => void;
+
+export type DataSourcePropOnCellSelectionChange =
+  | DataSourcePropOnCellSelectionChange_MultiCell
+  | DataSourcePropOnCellSelectionChange_SingleCell;
 
 export type DataSourcePropIsRowSelected<T> = (
   rowInfo: InfiniteTableRowInfo<T>,
   rowSelectionState: RowSelectionState,
   selectionMode: 'multi-row',
 ) => boolean | null;
+
+// export type DataSourcePropIsCellSelected<T> = ( // TODO implement this
+//   rowInfo: InfiniteTableRowInfo<T>,
+//   cellSelectionState: any,
+//   selectionMode: 'multi-cell',
+// ) => boolean | null;
 
 export type DataSourcePropSortFn<T> = (
   sortInfo: MultisortInfoAllowMultipleFields<T>[],
@@ -433,11 +461,16 @@ export type DataSourceProps<T> = {
     | DataSourcePropRowSelection_MultiRow
     | DataSourcePropRowSelection_SingleRow;
 
-  cellSelection?: DataSourcePropCellSelection;
-  defaultCellSelection?: DataSourcePropCellSelection;
+  cellSelection?:
+    | DataSourcePropCellSelection_MultiCell
+    | DataSourcePropCellSelection_SingleCell;
+  defaultCellSelection?:
+    | DataSourcePropCellSelection_MultiCell
+    | DataSourcePropCellSelection_SingleCell;
   onCellSelectionChange?: DataSourcePropOnCellSelectionChange;
 
   isRowSelected?: DataSourcePropIsRowSelected<T>;
+  // TODO maybe implement isCellSelected?: DataSourcePropIsCellSelected<T>;
 
   lazyLoad?: boolean | { batchSize?: number };
 
@@ -526,9 +559,15 @@ export type DataSourceProps<T> = {
     }
   | {
       selectionMode?: 'single-cell';
+      cellSelection?: DataSourcePropCellSelection_SingleCell;
+      defaultCellSelection?: DataSourcePropCellSelection_SingleCell;
+      onCellSelectionChange?: DataSourcePropOnCellSelectionChange_SingleCell;
     }
   | {
       selectionMode?: 'multi-cell';
+      cellSelection?: DataSourcePropCellSelection_MultiCell;
+      defaultCellSelection?: DataSourcePropCellSelection_MultiCell;
+      onCellSelectionChange?: DataSourcePropOnCellSelectionChange_MultiCell;
     }
   | {
       selectionMode?: false;
@@ -652,6 +691,7 @@ export type DataSourceDerivedState<T> = {
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
   lazyLoadBatchSize?: number;
   rowSelection: RowSelectionState | null | number | string;
+  cellSelection: CellSelectionState | null;
   selectionMode: NonUndefined<DataSourceProps<T>['selectionMode']>;
 };
 // & (

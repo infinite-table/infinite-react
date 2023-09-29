@@ -14,6 +14,10 @@ import {
   InfiniteTableColumnAlignValues,
   InfiniteTableToggleGroupRowFn,
 } from '../../types/InfiniteTableColumn';
+import {
+  InfiniteTablePropCellClassName,
+  InfiniteTablePropCellStyle,
+} from '../../types/InfiniteTableProps';
 
 export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
@@ -62,6 +66,8 @@ export interface InfiniteTableColumnCellProps<T>
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndex: number;
   rowHeight: number;
+  cellStyle?: InfiniteTablePropCellStyle<T>;
+  cellClassName?: InfiniteTablePropCellClassName<T>;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
 }

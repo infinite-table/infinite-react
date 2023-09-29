@@ -40,10 +40,7 @@ import { useLicense } from './hooks/useLicense/useLicense';
 
 import { useScrollToActiveCell } from './hooks/useScrollToActiveCell';
 import { useScrollToActiveRow } from './hooks/useScrollToActiveRow';
-import {
-  PinnedEndIndicatorBorder,
-  PinnedStartIndicatorBorder,
-} from './InfiniteCls.css';
+
 import { getInfiniteTableContext } from './InfiniteTableContext';
 import { internalProps, rootClassName } from './internalProps';
 
@@ -290,14 +287,6 @@ export const InfiniteTableComponent = React.memo(
           <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
         </InfiniteTableBody>
 
-        <div
-          data-name="pinned-start-border"
-          className={PinnedStartIndicatorBorder}
-        />
-        <div
-          data-name="pinned-end-border"
-          className={PinnedEndIndicatorBorder}
-        />
         <div
           ref={portalDOMRef as RefObject<HTMLDivElement>}
           className={join(

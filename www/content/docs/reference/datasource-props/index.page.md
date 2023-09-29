@@ -961,16 +961,23 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </Prop>
 
-<Prop name="selectionMode" type="'single-row'|'multi-row'|false">
+<Prop name="selectionMode" type="'single-row'|'multi-row'|'multi-cell'|false">
 
 > Specifies the type of selection that should be enabled.
 
 <HeroCards>
-<YouWillLearnCard title="Selection Docs" path="../learn/selection/row-selection">
+<YouWillLearnCard title="Row Selection Docs" path="/docs/learn/selection/row-selection">
 
-Read more on row selection (`multi-row` and `single-row`) and cell selection.
+Read more on row selection (`multi-row` and `single-row`).
 
 </YouWillLearnCard>
+
+<YouWillLearnCard title="Cell Selection Docs" path="/docs/learn/selection/cell-selection">
+
+Read more on cell selection (`multi-cell` and `single-cell`).
+
+</YouWillLearnCard>
+
 </HeroCards>
 
 </Prop>

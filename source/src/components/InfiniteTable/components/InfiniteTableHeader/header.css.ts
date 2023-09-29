@@ -172,6 +172,7 @@ export const HeaderCellRecipe = recipe({
   ],
   variants: {
     rowActive: { false: {}, true: {} },
+    cellSelected: { false: {}, true: {} },
     rowSelected: { false: {}, true: {}, null: {} },
     groupRow: {
       false: {},

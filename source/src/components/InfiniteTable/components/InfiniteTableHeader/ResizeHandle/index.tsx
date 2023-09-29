@@ -138,6 +138,9 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
         style={style}
         className={ResizeHandleDraggerClsRecipe({
           constrained,
+          computedPinned,
+          computedFirstInCategory,
+          computedLastInCategory,
         })}
       />
     </div>
