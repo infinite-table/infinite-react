@@ -30,12 +30,19 @@ import {
   ScrollAdjustPosition,
 } from '../types/InfiniteTableProps';
 import { getColumnApiForColumn } from './getColumnApi';
-import { getSelectionApi, InfiniteTableSelectionApi } from './getSelectionApi';
+import {
+  getRowSelectionApi,
+  InfiniteTableRowSelectionApi,
+} from './getRowSelectionApi';
 import { realignColumnContextMenu } from './realignColumnContextMenu';
 
 import { GetImperativeApiParam } from './type';
 import { notNullable } from '../types/Utility';
 import { UNKNOWN_SORT_TYPE } from '../utils/getComputedColumns';
+import {
+  getCellSelectionApi,
+  InfiniteTableCellSelectionApi,
+} from './getCellSelectionApi';
 
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,
@@ -58,13 +65,19 @@ function isSortInfoForColumn<T>(
 
 class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   private context: GetImperativeApiParam<T>;
-  public selectionApi: InfiniteTableSelectionApi;
+  public rowSelectionApi: InfiniteTableRowSelectionApi;
+  public cellSelectionApi: InfiniteTableCellSelectionApi;
 
   constructor(context: GetImperativeApiParam<T>) {
     this.context = context;
-    this.selectionApi = getSelectionApi({
+    this.rowSelectionApi = getRowSelectionApi({
       dataSourceActions: context.dataSourceActions,
       getDataSourceState: context.getDataSourceState,
+    });
+    this.cellSelectionApi = getCellSelectionApi({
+      dataSourceActions: context.dataSourceActions,
+      getDataSourceState: context.getDataSourceState,
+      getComputed: context.getComputed,
     });
   }
 

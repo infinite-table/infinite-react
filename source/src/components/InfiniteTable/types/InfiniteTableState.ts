@@ -3,7 +3,7 @@ import { PointCoords } from '../../../utils/pageGeometry/Point';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
-import { CellPosition } from '../../types/CellPosition';
+import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import type { NonUndefined } from '../../types/NonUndefined';
 import { Renderable } from '../../types/Renderable';
 import type { ScrollPosition } from '../../types/ScrollPosition';
@@ -52,7 +52,7 @@ export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
 
 export interface InfiniteTableSetupState<T> {
   renderer: ReactHeadlessTableRenderer;
-  getDOMNodeForCell: (cellPos: CellPosition) => HTMLElement | null;
+  getDOMNodeForCell: (cellPos: CellPositionByIndex) => HTMLElement | null;
   onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
@@ -87,8 +87,10 @@ export interface InfiniteTableSetupState<T> {
   columnMenuVisibleKey: string | number;
   filterOperatorMenuVisibleForColumnId: string | null;
   onColumnHeaderHeightCSSVarChange: SubscriptionCallback<number>;
-  cellClick: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
-  cellMouseDown: SubscriptionCallback<CellPosition & { event: MouseEvent }>;
+  cellClick: SubscriptionCallback<CellPositionByIndex & { event: MouseEvent }>;
+  cellMouseDown: SubscriptionCallback<
+    CellPositionByIndex & { event: MouseEvent }
+  >;
   keyDown: SubscriptionCallback<KeyboardEvent>;
   columnsWhenGrouping?: InfiniteTableColumnsMap<T>;
   bodySize: Size;

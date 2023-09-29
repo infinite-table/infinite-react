@@ -39,7 +39,7 @@ import {
 import { InfiniteTableRowInfo, InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteCheckBoxProps } from '../components/CheckBox';
-import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
+import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
 import { MenuColumn, MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
 import { KeyOfNoSymbol, XOR } from './Utility';
@@ -50,6 +50,7 @@ import {
   InfiniteTableCellContext,
   InfiniteTablePublicContext,
 } from './InfiniteTableContextValue';
+import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -246,7 +247,8 @@ export type MultiSortBehaviorOptions = {
 };
 
 export interface InfiniteTableApi<T> {
-  get selectionApi(): InfiniteTableSelectionApi;
+  get rowSelectionApi(): InfiniteTableRowSelectionApi;
+  get cellSelectionApi(): InfiniteTableCellSelectionApi;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,

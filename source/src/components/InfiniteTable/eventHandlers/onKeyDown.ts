@@ -2,7 +2,7 @@ import type { KeyboardEvent } from 'react';
 import { handleKeyboardNavigation } from './keyboardNavigation';
 import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 import { handleKeyboardSelection } from './keyboardSelection';
-import { cloneRowSelection } from '../api/getSelectionApi';
+import { cloneRowSelection } from '../api/getRowSelectionApi';
 import { handleBrowserFocusChangeOnKeyboardNavigation } from './handleBrowserFocusChangeOnKeyboardNavigation';
 
 export function onKeyDown<T>(

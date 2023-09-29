@@ -83,7 +83,7 @@ export default function GroupByExample() {
         selectionMode="multi-cell"
         // defaultRowSelection={rowSelection}
         // xdefaultCellSelection={[]}
-        onCellSelectionChange={_setCellSelection}
+
         defaultCellSelection={cellSelection}
       >
         <InfiniteTable<Developer>

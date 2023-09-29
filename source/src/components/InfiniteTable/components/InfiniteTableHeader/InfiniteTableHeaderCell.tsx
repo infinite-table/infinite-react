@@ -76,9 +76,9 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnHeaderRenderFunc
       }}
       onChange={(selected) => {
         if (selected) {
-          api.selectionApi.selectAll();
+          api.rowSelectionApi.selectAll();
         } else {
-          api.selectionApi.deselectAll();
+          api.rowSelectionApi.deselectAll();
         }
       }}
       checked={selected}

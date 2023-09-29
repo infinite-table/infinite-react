@@ -1,16 +1,15 @@
 ---
-title: Infinite Table Selection API
+title: Infinite Table Row Selection API
 layout: API
-redirect_to: /docs/reference/row-selection-api
 ---
 
-When rendering the `InfiniteTable` component, you can get access to the [API](./api/) by getting it from the <PropLink name="onReady" /> callback prop. You can retrieve the selection api by reading it from the `api.selectionApi` property.
+You can retrieve the row selection api by reading it from the `api.rowSelectionApi` property.
 
 ```tsx {4}
 
 const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
   // do something with it
-  api.selectionApi.selectGroupRow(['USA'])
+  api.rowSelectionApi.selectGroupRow(['USA'])
 }
 
 <InfiniteTable<DATA_TYPE>
@@ -19,10 +18,11 @@ const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
 />
 ```
 
-For the root API, see the [Infinite Table API page](/docs/reference/api).
-For column API, see the [Infinite Table Column API page](/docs/reference/column-api).
+See the [Infinite Table API page](/docs/reference/api) for the main API.
+See the [Infinite Table Cell Selection API page](/docs/reference/cell-selecti-api) for the cell selection API.
+See the [Infinite Table Column API page](/docs/reference/column-api) for the column API.
 
-<PropTable searchPlaceholder="Type to filter API methods">
+<PropTable sort searchPlaceholder="Type to filter API methods">
 
 <Prop name="allRowsSelected" type="boolean">
 

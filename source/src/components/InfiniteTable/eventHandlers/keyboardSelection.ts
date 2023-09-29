@@ -61,7 +61,7 @@ export function handleKeyboardSelection<T>(
   }
 
   if (selectionMode === 'single-row' && key === ' ') {
-    imperativeApi.selectionApi.toggleRowSelection(rowInfo.id);
+    imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
     return true;
   }
 
@@ -83,9 +83,11 @@ export function handleKeyboardSelection<T>(
   if (key === ' ') {
     if (groupBy.length) {
       if (rowInfo.isGroupRow && rowInfo.groupKeys) {
-        imperativeApi.selectionApi.toggleGroupRowSelection(rowInfo.groupKeys);
+        imperativeApi.rowSelectionApi.toggleGroupRowSelection(
+          rowInfo.groupKeys,
+        );
       } else {
-        imperativeApi.selectionApi.toggleRowSelection(rowInfo.id);
+        imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
       }
       return true;
     } else {

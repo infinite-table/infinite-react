@@ -9,7 +9,7 @@ import {
 import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { multisort } from '../../../utils/multisort';
-import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getSelectionApi';
+import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getRowSelectionApi';
 import { CellSelectionState } from '../CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from '../DataSourceCache';
 import { getCacheAffectedParts } from '../getDataSourceApi';

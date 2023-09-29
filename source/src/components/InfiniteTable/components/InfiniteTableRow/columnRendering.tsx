@@ -277,10 +277,23 @@ export function getColumnRenderParam<T>(options: {
     groupByColumn,
     selectionMode,
     api: imperativeApi,
-    selectRow: imperativeApi.selectionApi.selectRow,
-    deselectRow: imperativeApi.selectionApi.deselectRow,
-    toggleRowSelection: imperativeApi.selectionApi.toggleRowSelection,
-    toggleGroupRowSelection: imperativeApi.selectionApi.toggleGroupRowSelection,
+    selectRow: imperativeApi.rowSelectionApi.selectRow,
+    deselectRow: imperativeApi.rowSelectionApi.deselectRow,
+    toggleRowSelection: imperativeApi.rowSelectionApi.toggleRowSelection,
+    toggleGroupRowSelection:
+      imperativeApi.rowSelectionApi.toggleGroupRowSelection,
+    selectCell: () => {
+      imperativeApi.cellSelectionApi.selectCell({
+        rowId: rowInfo.id,
+        colId: column.id,
+      });
+    },
+    deselectCell: () => {
+      imperativeApi.cellSelectionApi.deselectCell({
+        rowId: rowInfo.id,
+        colId: column.id,
+      });
+    },
     renderBag: {
       all: null,
       value: typeof value === 'boolean' ? `${value}` : value,
@@ -290,13 +303,13 @@ export function getColumnRenderParam<T>(options: {
     },
 
     selectCurrentRow: () => {
-      return imperativeApi.selectionApi.selectRow(
+      return imperativeApi.rowSelectionApi.selectRow(
         rowInfo.id,
         rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
       );
     },
     deselectCurrentRow: () => {
-      return imperativeApi.selectionApi.deselectRow(
+      return imperativeApi.rowSelectionApi.deselectRow(
         rowInfo.id,
         rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
       );
@@ -315,14 +328,14 @@ export function getColumnRenderParam<T>(options: {
       if (rowInfo.isGroupRow) {
         return;
       }
-      return imperativeApi.selectionApi.toggleRowSelection(rowInfo.id);
+      return imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
     },
 
     toggleCurrentGroupRowSelection: () => {
       if (!rowInfo.isGroupRow) {
         return;
       }
-      return imperativeApi.selectionApi.toggleGroupRowSelection(
+      return imperativeApi.rowSelectionApi.toggleGroupRowSelection(
         rowInfo.isGroupRow ? rowInfo.groupKeys : [],
       );
     },

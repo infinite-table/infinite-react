@@ -50,4 +50,89 @@ export default test.describe.parallel('CellSelectionState', () => {
     expect(state.isCellSelected('6', 'age')).toEqual(false);
     expect(state.isCellSelected('10', 'age')).toEqual(true);
   });
+
+  test('.selectCell should work with defaultSelection:true', () => {
+    const state = new CellSelectionState({
+      defaultSelection: true,
+      selectedCells: [[2, 'c2']],
+      deselectedCells: [
+        [1, 'c1'],
+        [1, 'c2'],
+        [2, '*'],
+      ],
+    });
+
+    expect(state.isCellSelected(1, 'c1')).toBe(false);
+    expect(state.isCellSelected(1, 'c3')).toBe(true);
+    expect(state.isCellSelected(2, 'c1')).toBe(false);
+    expect(state.isCellSelected(2, 'c2')).toBe(true);
+    expect(state.isCellSelected(2, 'c3')).toBe(false);
+
+    state.selectCell(1, 'c1');
+    expect(state.isCellSelected(1, 'c1')).toBe(true);
+
+    state.selectCell(2, 'c1');
+    expect(state.isCellSelected(2, 'c1')).toBe(true);
+    expect(state.isCellSelected(2, 'c3')).toBe(false);
+  });
+
+  test('.selectCell should work with defaultSelection:false', () => {
+    const state = new CellSelectionState({
+      defaultSelection: false,
+      selectedCells: [[2, 'c2']],
+      deselectedCells: [['*', 'c3']],
+    });
+
+    expect(state.isCellSelected(1, 'c1')).toBe(false);
+    expect(state.isCellSelected(2, 'c2')).toBe(true);
+    expect(state.isCellSelected(2, 'c3')).toBe(false);
+
+    state.selectCell(1, 'c1');
+    expect(state.isCellSelected(1, 'c1')).toBe(true);
+
+    state.selectCell(2, 'c3');
+    expect(state.isCellSelected(2, 'c3')).toBe(true);
+
+    state.selectCell(1, 'c3');
+    expect(state.isCellSelected(1, 'c3')).toBe(true);
+    state.deselectCell(1, 'c3');
+    expect(state.isCellSelected(1, 'c3')).toBe(false);
+  });
+
+  test('.deselectCell should work with defaultSelection:true', () => {
+    const state = new CellSelectionState({
+      defaultSelection: true,
+      deselectedCells: [[2, 'c2']],
+      selectedCells: [
+        [1, 'c1'],
+        [1, 'c2'],
+        [2, '*'],
+      ],
+    });
+
+    expect(state.isCellSelected(1, 'c1')).toBe(true);
+
+    state.deselectCell(1, 'c1');
+    expect(state.isCellSelected(1, 'c1')).toBe(false);
+
+    expect(state.isCellSelected(2, 'c1')).toBe(true);
+    state.deselectCell(2, 'c1');
+    expect(state.isCellSelected(2, 'c1')).toBe(false);
+  });
+
+  test('.deselectCell should work with defaultSelection:false', () => {
+    const state = new CellSelectionState({
+      defaultSelection: false,
+      deselectedCells: [[2, 'c2']],
+      selectedCells: [['*', 'c3']],
+    });
+
+    expect(state.isCellSelected(1, 'c1')).toBe(false);
+    expect(state.isCellSelected(1, 'c3')).toBe(true);
+
+    state.deselectCell(1, 'c3');
+
+    expect(state.isCellSelected(1, 'c3')).toBe(false);
+    expect(state.isCellSelected(2, 'c3')).toBe(true);
+  });
 });

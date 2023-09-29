@@ -14,7 +14,7 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
 import { InfiniteTableRowInfo, Scrollbars } from '../../InfiniteTable';
-import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getSelectionApi';
+import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getRowSelectionApi';
 import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { discardCallsWithEqualArg } from '../../utils/discardCallsWithEqualArg';

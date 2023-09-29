@@ -269,7 +269,7 @@ const scrollTop = api.scrollTop;
 
 <Prop name="selectionApi" type="InfiniteTableSelectionApi">
 
-> Getter for the [Selection API](./selection-api)
+> Getter for the [Selection API](/docs/reference/selection-api)
 
 </Prop>
 

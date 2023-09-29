@@ -1,4 +1,4 @@
-import type { CellPosition } from '../../types/CellPosition';
+import type { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import type {
   InfiniteTableApi,
   InfiniteTableComputedColumn,
@@ -25,11 +25,11 @@ const RETRIES = 10;
 const SORT_ASC = (a: number, b: number) => a - b;
 
 export function getFollowingContentFocusableCell<T>(
-  cellPos: CellPosition,
+  cellPos: CellPositionByIndex,
   direction: 1 | -1,
   context: ContentFocusableContext<T>,
-): CellPosition | null {
-  let currentCelPos: CellPosition | null = cellPos;
+): CellPositionByIndex | null {
+  let currentCelPos: CellPositionByIndex | null = cellPos;
 
   while (
     (currentCelPos = getFollowingCellPosition(
@@ -47,7 +47,7 @@ export function getFollowingContentFocusableCell<T>(
 }
 
 export function isCellFocusable<T>(
-  cellPos: CellPosition,
+  cellPos: CellPositionByIndex,
   context: ContentFocusableContext<T>,
 ): boolean {
   const { getComputed, getDataSourceState, getState, api, dataSourceApi } =
@@ -94,10 +94,10 @@ export function isCellFocusable<T>(
 }
 
 export function getFollowingFocusableCell<T>(
-  cellPos: CellPosition,
+  cellPos: CellPositionByIndex,
   direction: 1 | -1,
   context: ContentFocusableContext<T>,
-): CellPosition | null {
+): CellPositionByIndex | null {
   // let nextCellPos: CellPosition | null = cellPos;
 
   const editingCell = context.getState().editingCell;
@@ -119,10 +119,10 @@ export function getFollowingFocusableCell<T>(
 }
 
 export function getFollowingCellPosition<T>(
-  cellPos: CellPosition,
+  cellPos: CellPositionByIndex,
   direction: 1 | -1,
   context: ContentFocusableContext<T>,
-): CellPosition | null {
+): CellPositionByIndex | null {
   let { rowIndex, colIndex } = cellPos;
 
   const { getComputed, getDataSourceState } = context;
@@ -176,17 +176,17 @@ globalThis.getNextCol = getNextCol;
  * and only those cells that `fn` return true, can be considered as valid cells.
  */
 export function getFollowingCellPositionOptimized<T>(
-  cellPos: CellPosition,
+  cellPos: CellPositionByIndex,
   direction: 1 | -1,
   context: ContentFocusableContext<T>,
   options: {
     isColumnElligible: (col: InfiniteTableComputedColumn<T>) => boolean;
     isCellFocusable: (
-      cellPos: CellPosition,
+      cellPos: CellPositionByIndex,
       context: ContentFocusableContext<T>,
     ) => boolean;
   },
-): CellPosition | null {
+): CellPositionByIndex | null {
   const { isColumnElligible, isCellFocusable } = options;
   const validColIndexes = context
     .getComputed()

@@ -4,7 +4,8 @@ import {
   RowSelectionState,
   DataSourceApi,
 } from '../../DataSource';
-import { InfiniteTableSelectionApi } from '../api/getSelectionApi';
+import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
+import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
 import {
   InfiniteTableApi,
   InfiniteTableColumnApi,
@@ -28,13 +29,16 @@ export type InfiniteTableEventHandlerAbstractContext<T> = {
   ) => RowSelectionState<T>;
   getDataSourceState: () => {
     rowSelection: DataSourceState<T>['rowSelection'];
+    cellSelection: DataSourceState<T>['cellSelection'];
     groupBy: DataSourceState<T>['groupBy'];
     selectionMode: DataSourceState<T>['selectionMode'];
     dataArray: { id: string; isGroupRow: boolean; groupKeys?: any[] }[];
   };
   dataSourceActions: DataSourceComponentActions<T>;
+  dataSourceApi: DataSourceApi<T>;
   api: {
-    selectionApi: InfiniteTableSelectionApi;
+    rowSelectionApi: InfiniteTableRowSelectionApi;
+    cellSelectionApi: InfiniteTableCellSelectionApi;
   };
 };
 

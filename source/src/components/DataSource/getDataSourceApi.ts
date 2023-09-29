@@ -8,6 +8,7 @@ import {
 import { raf } from '../../utils/raf';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
+import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
 
 import { DataSourceInsertParam } from './types';
 
@@ -57,25 +58,6 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
   private pendingPromise: Promise<boolean> | null = null;
   private resolvePendingPromise: ((value: boolean) => void) | null = null;
-
-  isCellSelected = (
-    params:
-      | { rowIndex: number; colId: string; rowId: never }
-      | { rowId: string; colId: string; rowIndex: never },
-  ) => {
-    const { cellSelection } = this.getState();
-
-    if (!cellSelection) {
-      return false;
-    }
-
-    const rowId =
-      params.rowIndex != null
-        ? this.getPrimaryKeyByIndex(params.rowIndex)
-        : params.rowId;
-
-    return cellSelection.isCellSelected(rowId, params.colId);
-  };
 
   toPrimaryKey = (data: T): any => {
     return this.getState().toPrimaryKey(data);
@@ -173,10 +155,10 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   }
 
   getRowInfoArray = () => {
-    return this.getState().dataArray;
+    return getRowInfoArray(this.getState);
   };
   getRowInfoByIndex = (index: number): InfiniteTableRowInfo<T> | null => {
-    return this.getRowInfoArray()[index] ?? null;
+    return getRowInfoAt(index, this.getState) ?? null;
   };
   getRowInfoByPrimaryKey = (id: any): InfiniteTableRowInfo<T> | null => {
     const index = this.getIndexByPrimaryKey(id);

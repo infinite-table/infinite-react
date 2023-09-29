@@ -5,6 +5,12 @@ description: InfiniteTable DataGrid component supports single and multiple row s
 
 `InfiniteTable` offers support for both single and multiple row selection. 
 
+```tsx title="Configure the selection mode on the DataSource component"
+<DataSource selectionMode="single-row" />
+
+// can be "single-row", "multi-row", "multi-cell" or false
+```
+
 Multiple row selection allows people to select rows just like they would in their MacOS Finder app, by clicking desired rows and using the cmd/shift keys as modifiers.
 
 The DataGrid also offers support for **checkbox selection**, which is another easy way of interacting with grid rows, especially when grouped or nested data is used.

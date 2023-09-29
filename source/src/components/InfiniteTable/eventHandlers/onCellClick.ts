@@ -1,3 +1,4 @@
+import { CellSelectionState } from '../../DataSource/CellSelectionState';
 import { RowSelectionState } from '../../DataSource/RowSelectionState';
 
 import {
@@ -49,19 +50,53 @@ function onCellDoubleClick<T>(
 export function updateCellSelectionOnCellClick<T>(
   context: InfiniteTableEventHandlerAbstractContext<T> & {
     rowIndex: number;
+    colIndex: number;
   },
 
-  _event: SimpleClickEvent,
+  event: SimpleClickEvent,
 ) {
-  const { getDataSourceState } = context;
+  const {
+    getDataSourceState,
+    getComputed,
+    rowIndex,
+    colIndex,
+    dataSourceActions,
+  } = context;
 
   // const { multiRowSelector, renderSelectionCheckBox } = getComputed();
   const dataSourceState = getDataSourceState();
 
-  const { selectionMode } = dataSourceState;
+  const { selectionMode, cellSelection: existingCellSelection } =
+    dataSourceState;
 
-  if (selectionMode === 'single-cell') {
+  if (!existingCellSelection) {
+    return;
   }
+
+  if (selectionMode !== 'multi-cell') {
+    return;
+  }
+
+  const { multiCellSelector } = getComputed();
+
+  const cellSelection = new CellSelectionState(existingCellSelection);
+
+  multiCellSelector.cellSelectionState = cellSelection;
+
+  const position = {
+    rowIndex,
+    colIndex,
+  };
+
+  if (event.metaKey || event.ctrlKey) {
+    multiCellSelector.singleAddClick(position);
+  } else if (event.shiftKey) {
+    multiCellSelector.multiSelectClick(position);
+  } else {
+    multiCellSelector.resetClick(position);
+  }
+
+  dataSourceActions.cellSelection = cellSelection;
 }
 
 export function updateRowSelectionOnCellClick<T>(
@@ -123,9 +158,9 @@ export function updateRowSelectionOnCellClick<T>(
   } else if (selectionMode === 'single-row') {
     const id = dataArray[rowIndex].id;
     if (event.metaKey || event.ctrlKey) {
-      api.selectionApi.toggleRowSelection(id);
+      api.rowSelectionApi.toggleRowSelection(id);
     } else {
-      api.selectionApi.selectRow(id);
+      api.rowSelectionApi.selectRow(id);
     }
   }
   return false;

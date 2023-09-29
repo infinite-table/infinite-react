@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
+import { useLatest } from '../../hooks/useLatest';
 import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
+import { MultiCellSelector } from '../utils/MultiCellSelector';
 import { MultiRowSelector } from '../utils/MultiRowSelector';
 
 import { useColumnGroups } from './useColumnGroups';
@@ -20,6 +22,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     componentActions: dataSourceActions,
     componentState: dataSourceState,
     getState: getDataSourceState,
+    api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
   const {
@@ -148,8 +151,20 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     return multiRowSelector;
   });
 
+  const getComputedVisibleColumns = useLatest(computedVisibleColumns);
+
+  const [multiCellSelector] = useState(() => {
+    return new MultiCellSelector({
+      getPrimaryKeyByIndex: dataSourceApi.getPrimaryKeyByIndex,
+      getColumnIdByIndex: (colIndex: number) => {
+        return getComputedVisibleColumns()[colIndex]?.id || '';
+      },
+    });
+  });
+
   return {
     multiRowSelector,
+    multiCellSelector,
 
     scrollbars,
     columnSize,

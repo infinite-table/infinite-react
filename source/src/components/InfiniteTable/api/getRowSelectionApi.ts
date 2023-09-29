@@ -14,7 +14,7 @@ import {
 
 type ArrayOfIds = Pick<InfiniteTable_RowInfoBase<any>, 'id'>[];
 
-export type InfiniteTableSelectionApi = {
+export type InfiniteTableRowSelectionApi = {
   get allRowsSelected(): boolean;
   isRowSelected(pk: any, groupKeys?: any[]): boolean;
   isRowDeselected(pk: any, groupKeys?: any[]): boolean;
@@ -36,7 +36,7 @@ export type InfiniteTableSelectionApi = {
   deselectAll(): void;
 };
 
-export type GetSelectionApiParam<T> = {
+export type GetRowSelectionApiParam<T> = {
   getDataSourceState: () => DataSourceState<T>;
   dataSourceActions: {
     rowSelection: DataSourceComponentActions<T>['rowSelection'];
@@ -74,9 +74,9 @@ export function rowSelectionStateConfigGetter<T>(
   };
 }
 
-export function getSelectionApi<T>(
-  param: GetSelectionApiParam<T>,
-): InfiniteTableSelectionApi {
+export function getRowSelectionApi<T>(
+  param: GetRowSelectionApiParam<T>,
+): InfiniteTableRowSelectionApi {
   const {
     // getComputed,
     // getState,
@@ -85,7 +85,7 @@ export function getSelectionApi<T>(
     dataSourceActions,
   } = param;
 
-  const selectionApi = {
+  const rowSelectionApi = {
     get allRowsSelected() {
       return getDataSourceState().allRowsSelected;
     },
@@ -358,7 +358,7 @@ export function getSelectionApi<T>(
   };
 
   if (__DEV__) {
-    (globalThis as any).selectionApi = selectionApi;
+    (globalThis as any).rowSelectionApi = rowSelectionApi;
   }
-  return selectionApi;
+  return rowSelectionApi;
 }

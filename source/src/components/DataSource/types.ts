@@ -34,7 +34,7 @@ import { RenderRange } from '../VirtualBrain';
 import {
   CellSelectionState,
   CellSelectionStateObject,
-  CELL_SELECTION_DESCRIPTOR,
+  CellSelectionPosition,
 } from './CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
 
@@ -295,7 +295,7 @@ export type DataSourcePropRowSelection_SingleRow = null | string | number;
 
 export type DataSourcePropCellSelection_MultiCell = CellSelectionStateObject;
 export type DataSourcePropCellSelection_SingleCell =
-  null | CELL_SELECTION_DESCRIPTOR;
+  null | CellSelectionPosition;
 
 export type DataSourcePropCellSelection =
   | DataSourcePropCellSelection_MultiCell
@@ -407,12 +407,6 @@ export interface DataSourceApi<T> {
     data: Partial<T>[],
     options?: DataSourceCRUDParam,
   ): Promise<any>;
-
-  isCellSelected(
-    params:
-      | { rowIndex: number; colId: string }
-      | { rowId: string; colId: string },
-  ): boolean;
 
   addData(data: T, options?: DataSourceCRUDParam): Promise<any>;
   addDataArray(data: T[], options?: DataSourceCRUDParam): Promise<any>;

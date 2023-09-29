@@ -1,12 +1,13 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
-import { CellPosition } from '../../types/CellPosition';
+import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { getColumnApiForColumn } from '../api/getColumnApi';
-import { cloneRowSelection } from '../api/getSelectionApi';
+import { cloneRowSelection } from '../api/getRowSelectionApi';
 import { useInfiniteTable } from '../hooks/useInfiniteTable';
 import { InfiniteTableEventHandlerContext } from './eventHandlerTypes';
 import { onCellClick } from './onCellClick';
+import { onCellMouseDown } from './onCellMouseDown';
 import { onKeyDown } from './onKeyDown';
 
 function useEventHandlersContext<T>() {
@@ -58,7 +59,9 @@ function handleDOMEvents<T>() {
     });
 
     function cellClickHandler(
-      cellClickParam: (CellPosition & { event: MouseEvent<Element> }) | null,
+      cellClickParam:
+        | (CellPositionByIndex & { event: MouseEvent<Element> })
+        | null,
     ) {
       if (!cellClickParam) {
         return;
@@ -84,9 +87,32 @@ function handleDOMEvents<T>() {
       .getState()
       .cellClick.onChange(cellClickHandler);
 
+    function cellMouseDownHandler(
+      param: (CellPositionByIndex & { event: MouseEvent<Element> }) | null,
+    ) {
+      if (!param) {
+        return;
+      }
+
+      const { event, rowIndex, colIndex } = param;
+
+      const column = context.getComputed().computedVisibleColumns[colIndex];
+      const columnApi = getColumnApiForColumn(column.id, context)!;
+
+      onCellMouseDown(
+        { ...context, rowIndex, colIndex, column, columnApi },
+        event,
+      );
+    }
+
+    const removeOnCellMouseDown = context
+      .getState()
+      .cellMouseDown.onChange(cellMouseDownHandler);
+
     return () => {
       removeOnKeyDown();
       removeOnCellClick();
+      removeOnCellMouseDown();
     };
   }, []);
 }
