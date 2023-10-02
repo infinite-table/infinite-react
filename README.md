@@ -24,6 +24,7 @@
 - [❤️ TypeScript](#-typescript)
 - [🏢 Enterprise-ready](#-enterprise-ready)
   - [🔒 Secure by default](#-secure-by-default)
+  - [🚫 No dependencies](#-no-dependencies)
   - [📦 Small bundle size](#-small-bundle-size)
   - [🧪 Automated end-to-end tests](#-automated-end-to-end-tests)
 - [🎨 Themable](#-themable)
@@ -83,17 +84,21 @@ It's fully typed and offers you great developer experience to help you get up an
 
 ## 🏢 Enterprise-ready
 
-Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](https://infinite-table.com/docs/learn/working-with-data#data-loading-strategies), [filtering](https://infinite-table.com/docs/learn/filtering), [sorting](https://infinite-table.com/docs/learn/sorting/overview), [grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](https://infinite-table.com/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](https://infinite-table.com/docs/learn/grouping-and-pivoting/group-aggregations), [live pagination](https://infinite-table.com/docs/learn/working-with-data/live-pagination), [lazy loading](https://infinite-table.com/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
+Infinite Table is ready to power your enterprise apps, as it supports advanced [data fetching](https://infinite-table.com/docs/learn/working-with-data#data-loading-strategies), [filtering](https://infinite-table.com/docs/learn/filtering), [sorting](https://infinite-table.com/docs/learn/sorting/overview), [grouping](https://infinite-table.com/docs/learn/grouping-and-pivoting/grouping-rows), [pivoting](https://infinite-table.com/docs/learn/grouping-and-pivoting/pivoting/overview), [aggregations](https://infinite-table.com/docs/learn/grouping-and-pivoting/group-aggregations), [https://infinite-table.com/docs/learn/selection/row-selection](row & cell selection), [live pagination](https://infinite-table.com/docs/learn/working-with-data/live-pagination), [lazy loading](https://infinite-table.com/docs/learn/working-with-data/lazy-loading) - all of those with support for both client-side and server-side implementations.
 
 You can choose to leverage our built-in implementations in the browser or you can process your data on the server with full support from our-side.
 
 ### 🔒 Secure by default
 
-We take security seriously and only have a total of 3 dependencies in our full dependency graph - and this number will only go down.
+We take security seriously and we're not installing any dependencies. No extra fluff to slow down your code or make installs less secure.
+
+### 🚫 No dependencies
+
+We don't depend on any external package, so you can be sure that you're not introducing any security vulnerabilities in your app.
 
 ### 📦 Small bundle size
 
-Our bundle size is under `250kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
+Our bundle size is under `300kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
 
 ### 🧪 Automated end-to-end tests
 
