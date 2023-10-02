@@ -68,10 +68,16 @@ export class CellSelectionState {
     this.setCellSelected(rowId, colId, false);
   }
 
+  public selectColumn(colId: string) {
+    this.setCellSelected(this.wildcard, colId, true);
+  }
+  public deselectColumn(colId: string) {
+    this.setCellSelected(this.wildcard, colId, false);
+  }
+
   public setCellSelected(rowId: any, colId: string, selected: boolean) {
-    if (rowId === this.wildcard || colId === this.wildcard) {
-      throw 'Please dont use this private method to select cells with wildcard';
-    }
+    const wildcardRow = rowId === this.wildcard;
+    const wildcardColumn = colId === this.wildcard;
 
     const isSelected = this.isCellSelected(rowId, colId);
 
@@ -79,8 +85,76 @@ export class CellSelectionState {
       return;
     }
 
+    const clearKeys: [any, string][] = [];
+    if (wildcardRow) {
+      const deselectedRowsForColumn = this.deselectedColumnsToRows.get(colId);
+      const selectedRowsForColumn = this.selectedColumnsToRows.get(colId);
+
+      deselectedRowsForColumn?.forEach((rowId) => {
+        if (rowId === this.wildcard) {
+          return;
+        }
+
+        this.setCellInDeselection(rowId, colId, false);
+      });
+
+      // remove all rows for the specific column
+      // from the selection
+      // as we'll apply a wildcard selection
+      selectedRowsForColumn?.forEach((rowId) => {
+        if (rowId === this.wildcard) {
+          return;
+        }
+
+        this.setCellInSelection(rowId, colId, false);
+      });
+
+      [...this.cache.keys()].forEach((key) => {
+        const [rowId, c] = key as [any, string];
+
+        if (c === colId) {
+          clearKeys.push([rowId, colId]);
+        }
+      });
+    }
+
+    if (wildcardColumn) {
+      const deselectedColumnsForRow = this.deselectedRowsToColumns.get(colId);
+      const selectedColumnsForRow = this.selectedRowsToColumns.get(colId);
+
+      deselectedColumnsForRow?.forEach((colId) => {
+        if (colId === this.wildcard) {
+          return;
+        }
+
+        this.setCellInDeselection(rowId, colId, false);
+      });
+
+      // remove all rows for the specific column
+      // from the selection
+      // as we'll apply a wildcard selection
+      selectedColumnsForRow?.forEach((colId) => {
+        if (colId === this.wildcard) {
+          return;
+        }
+
+        this.setCellInSelection(rowId, colId, false);
+      });
+
+      [...this.cache.keys()].forEach((key) => {
+        const [row] = key as [any, string];
+
+        if (row === rowId) {
+          clearKeys.push([rowId, colId]);
+        }
+      });
+    }
+
     const cacheKey = [rowId, colId];
 
+    clearKeys.forEach((key) => {
+      this.cache.delete(key);
+    });
     this.cache.delete(cacheKey);
 
     if (selected) {

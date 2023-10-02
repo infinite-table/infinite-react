@@ -135,4 +135,49 @@ export default test.describe.parallel('CellSelectionState', () => {
     expect(state.isCellSelected(1, 'c3')).toBe(false);
     expect(state.isCellSelected(2, 'c3')).toBe(true);
   });
+
+  test('column selection should work with default selection true', () => {
+    const state = new CellSelectionState({
+      defaultSelection: true,
+      deselectedCells: [[2, 'c2']],
+      selectedCells: [],
+    });
+
+    expect(state.isCellSelected(1, 'c2')).toBe(true);
+    state.deselectColumn('c2');
+    expect(state.isCellSelected(1, 'c2')).toBe(false);
+    expect(state.isCellSelected(2, 'c2')).toBe(false);
+    expect(state.isCellSelected(3, 'c2')).toBe(false);
+
+    state.selectColumn('c2');
+    expect(state.isCellSelected(1, 'c2')).toBe(true);
+    expect(state.isCellSelected(2, 'c2')).toBe(true);
+    expect(state.isCellSelected(3, 'c2')).toBe(true);
+    expect(state.isCellSelected(4, 'c2')).toBe(true);
+    expect(state.isCellSelected(5, 'c2')).toBe(true);
+  });
+
+  test('column selection should work with default selection false', () => {
+    const state = new CellSelectionState({
+      defaultSelection: false,
+      deselectedCells: [[2, 'c2']],
+      selectedCells: [],
+    });
+
+    expect(state.isCellSelected(1, 'c2')).toBe(false);
+    expect(state.isCellSelected(2, 'c2')).toBe(false);
+    state.deselectColumn('c2');
+    expect(state.isCellSelected(1, 'c2')).toBe(false);
+    expect(state.isCellSelected(1, 'c2')).toBe(false);
+    expect(state.isCellSelected('*', 'c2')).toBe(false);
+    expect(state.isCellSelected(3, 'c2')).toBe(false);
+
+    state.selectColumn('c2');
+    expect(state.isCellSelected(1, 'c2')).toBe(true);
+    expect(state.isCellSelected(2, 'c2')).toBe(true);
+    expect(state.isCellSelected(3, 'c2')).toBe(true);
+    expect(state.isCellSelected('*', 'c2')).toBe(true);
+    expect(state.isCellSelected(4, 'c2')).toBe(true);
+    expect(state.isCellSelected(5, 'c2')).toBe(true);
+  });
 });

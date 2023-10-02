@@ -2,8 +2,8 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTableApi,
-  InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
 type Developer = {
@@ -58,14 +58,10 @@ export default function App() {
             border: '2px solid magenta',
           }}
           onClick={() => {
-            api?.cellSelectionApi.selectCell({
-              rowIndex: 1,
-              colIndex: 1,
-              clear: true,
-            });
+            api?.cellSelectionApi.clear();
           }}
         >
-          Clear & Select row 1, col 1
+          Clear
         </button>
         <button
           style={{
@@ -75,13 +71,19 @@ export default function App() {
             border: '2px solid magenta',
           }}
           onClick={() => {
-            api?.cellSelectionApi.selectCell({
-              rowIndex: 1,
-              colId: 'preferredLanguage',
-            });
+            api?.cellSelectionApi.selectRange(
+              {
+                rowId: 1,
+                colId: 'id',
+              },
+              {
+                rowIndex: 10,
+                colIndex: 3,
+              },
+            );
           }}
         >
-          Add row 1, col `preferredLanguage` to selection
+          Select range
         </button>
       </div>
 

@@ -37,6 +37,8 @@ export type InfiniteTableCellSelectionApi = {
   deselectAll(): void;
   clear(): void;
   selectAll(): void;
+  selectColumn(colId: string, options?: { clear?: boolean }): void;
+  deselectColumn(colId: string): void;
   selectRange(start: CellPositionOptions, end: CellPositionOptions): void;
   deselectRange(start: CellPositionOptions, end: CellPositionOptions): void;
 };
@@ -205,6 +207,30 @@ export function getCellSelectionApi<T>(
 
       const newCellSelection = new CellSelectionState(cellSelection);
       newCellSelection.deselectCell(pk, colId);
+      dataSourceActions.cellSelection = newCellSelection;
+    },
+
+    selectColumn: (colId: string, options?: { clear?: boolean }) => {
+      if (options?.clear) {
+        cellSelectionApi.deselectAll();
+      }
+      const cellSelection = getDataSourceState().cellSelection;
+      if (!cellSelection) {
+        return;
+      }
+
+      const newCellSelection = new CellSelectionState(cellSelection);
+      newCellSelection.selectColumn(colId);
+      dataSourceActions.cellSelection = newCellSelection;
+    },
+    deselectColumn: (colId: string) => {
+      const cellSelection = getDataSourceState().cellSelection;
+      if (!cellSelection) {
+        return;
+      }
+
+      const newCellSelection = new CellSelectionState(cellSelection);
+      newCellSelection.deselectColumn(colId);
       dataSourceActions.cellSelection = newCellSelection;
     },
   };

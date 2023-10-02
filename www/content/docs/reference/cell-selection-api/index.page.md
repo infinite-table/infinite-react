@@ -43,6 +43,14 @@ The accepted argument is an object with the following properties:
 
 You can identify the cell by any of the valid combinations of `rowIndex`/`rowId` and `colIndex`/`colId`.
 
+<Note>
+
+Using row and column indexes for selection is supported to make it easier to use the API, but in fact cells are selected by the `rowId/colId` combination.
+
+This is important to keep in mind, as when columns are reordered or rows are sorted/filtered - the selection will be bound to the `rowId/colId` - so cells that were selected as siblings before a column reorder might not be siblings after the reorder, but they will still be rendered as selected.
+
+</Note>
+
 </Prop>
 
 <Prop name="selectCell" type="({ rowIndex/rowId, colIndex/colId, clear?: boolean}) => void">
@@ -54,6 +62,19 @@ For the shape of the argument see related [isCellSelected](#isCellSelected).
 Additionally, you can pass a `clear` property to clear the selection before selecting the cell.
 
 Also see related [deselectCell](#deselectCell).
+
+In order to select a cell via mouse interaction, simply click the desired cell. Clicking a cell without any modifier keys will clear the selection and select the clicked cell.
+
+You can use `Cmd/Ctrl+Click` to add cells to the selection, or `Shift+Click` to select a range of cells.
+
+<Sandpack title="Selecting a cell via the Cell Selection API">
+
+
+```ts file="select-cell-example.page.tsx"
+```
+
+</Sandpack>
+
 
 </Prop>
 
@@ -95,6 +116,17 @@ See related [selectAll](#selectAll).
 
 The `start` and `end` arguments are objects of the same shape as the argument for [isCellSelected](#isCellSelected).
 
+In order to select a range via mouse interaction, use `Cmd/Ctrl+Click` and `Shift+Click` as you would in a spreadsheet application.
+
+Clicking a cell without holding the modifier keys will clear the selection and select the clicked cell.
+
+<Sandpack title="Selecting a range via the Cell Selection API">
+
+
+```ts file="select-range-example.page.tsx"
+```
+
+</Sandpack>
 
 <Note>
 
@@ -121,6 +153,15 @@ Don't worry if the `start` or `end` are not passed in the correct order - Infini
 </Note>
 
 For selecting a range see [selectRange](#selectRange).
+
+
+<Sandpack title="Deselecting a range via the Cell Selection API">
+
+
+```ts file="deselect-range-example.page.tsx"
+```
+
+</Sandpack>
 
 </Prop>
 
