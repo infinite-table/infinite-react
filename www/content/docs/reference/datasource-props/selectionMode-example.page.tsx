@@ -2,7 +2,6 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
-  InfiniteTableApi,
 } from '@infinite-table/infinite-react';
 
 import * as React from 'react';
@@ -44,8 +43,16 @@ export default function App() {
     'multi-cell' | 'multi-row'
   >('multi-cell');
 
-  const [api, setApi] = React.useState<InfiniteTableApi<Developer> | null>();
-
+  const currentColumns = React.useMemo(() => {
+    return {
+      ...columns,
+      id: {
+        field: 'id',
+        defaultWidth: 60,
+        renderSelectionCheckBox: true,
+      },
+    } as InfiniteTablePropColumns<Developer>;
+  }, [selectionMode]);
   return (
     <div
       style={{
@@ -58,19 +65,6 @@ export default function App() {
     >
       <p style={{ padding: 10 }}>Please select the selection mode</p>
       <div style={{ padding: 10, paddingTop: 0 }}>
-        <button
-          style={{
-            margin: 10,
-            padding: 10,
-            borderRadius: 5,
-            border: '2px solid magenta',
-          }}
-          onClick={() => {
-            api?.cellSelectionApi.selectColumn('firstName');
-          }}
-        >
-          Select "firstName" column
-        </button>
         <select
           style={{
             margin: '10px 0',
@@ -98,10 +92,7 @@ export default function App() {
         selectionMode={selectionMode}
       >
         <InfiniteTable<Developer>
-          onReady={({ api }) => {
-            setApi(api);
-          }}
-          columns={columns}
+          columns={currentColumns}
           columnDefaultWidth={100}
         />
       </DataSource>

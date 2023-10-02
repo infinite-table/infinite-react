@@ -165,3 +165,17 @@ This example shows how to use the <DPropLink name="onCellSelectionChange" /> cal
 
 ```
 </Sandpack>
+
+## Using the cell selection API
+
+The `<DataSource />` component also exposes a [cell selection API](/docs/reference/cell-selection-api), which you can use to select and deselect cells programmatically.
+
+
+
+<Sandpack title="Using the cell selection API to select a column" size="lg">
+
+```ts file="$DOCS/reference/datasource-props/controlled-cell-selection-with-api-example.page.tsx"
+
+```
+
+</Sandpack>

@@ -3,6 +3,7 @@ import {
   DataSource,
   InfiniteTablePropColumns,
   DataSourcePropCellSelection_MultiCell,
+  InfiniteTableApi,
 } from '@infinite-table/infinite-react';
 
 import * as React from 'react';
@@ -49,6 +50,8 @@ export default function App() {
       ],
     });
 
+  const [api, setApi] = React.useState<InfiniteTableApi<Developer> | null>();
+
   return (
     <div
       style={{
@@ -59,6 +62,19 @@ export default function App() {
         background: 'var(--infinite-background)',
       }}
     >
+      <button
+        style={{
+          margin: 10,
+          padding: 10,
+          borderRadius: 5,
+          border: '2px solid magenta',
+        }}
+        onClick={() => {
+          api?.cellSelectionApi.selectColumn('firstName');
+        }}
+      >
+        Select "firstName" column
+      </button>
       <div
         style={{
           maxHeight: 200,
@@ -77,7 +93,13 @@ export default function App() {
         onCellSelectionChange={setCellSelection}
         selectionMode="multi-cell"
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={100} />
+        <InfiniteTable<Developer>
+          columns={columns}
+          columnDefaultWidth={100}
+          onReady={({ api }) => {
+            setApi(api);
+          }}
+        />
       </DataSource>
     </div>
   );

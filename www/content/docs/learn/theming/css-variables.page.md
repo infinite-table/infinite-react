@@ -519,74 +519,79 @@ Overriden in `dark` theme.
 --infinite-cell-color
 ```
 
-### Active cell border color r
+### Selected cell background
 
-The RED component of the color used for the active cell when cell keyboard navigation is enabled.
+The background for selected cells, when cell selection is enabled.
 
-The easiest way to define the color of the active cell is to use these 3 variables:
-  `--infinite-active-cell-border-color--r`
-  `--infinite-active-cell-border-color--g`
-  `--infinite-active-cell-border-color--b`
-as they define both the border and the background color of the active cell and the active row.
-
-You can also specify the GREEN and BLUE components of the color using the next two css vars.
-
-The border color of the active cell is decomposed into multiple variables for convenience as by default
-the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
-
-If you don't want this, you can use `--infinite-active-cell-background` instead.
+If not specified, it will default to `var(--infinite-active-cell-background)`.
 
 ```css
---infinite-active-cell-border-color--r
+--infinite-selected-cell-background
 ```
 
-### Active cell border color g
+### Selected cell background alpha
 
-The GREEN component of the color used for the active cell when cell keyboard navigation is enabled.
+The opacity of the background color for the selected cell.
 
-The easiest way to define the color of the active cell is to use these 3 variables:
-  `--infinite-active-cell-border-color--r`
-  `--infinite-active-cell-border-color--g`
-  `--infinite-active-cell-border-color--b`
-as they define both the border and the background color of the active cell and the active row.
-
-You can also specify the RED and BLUE components of the color using the next two css vars.
-
-The border color of the active cell is decomposed into multiple variables for convenience as by default
-the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
-
-If you don't want this, you can use `--infinite-active-cell-background` instead.
+If not specified, it will default to the value for `var(--infinite-active-cell-background-alpha)`
 
 ```css
---infinite-active-cell-border-color--g
+--infinite-selected-cell-background-alpha
 ```
 
-### Active cell border color b
+### Selected cell background alpha table unfocused
 
-The BLUE component of the color used for the active cell when cell keyboard navigation is enabled.
-
-The easiest way to define the color of the active cell is to use these 3 variables:
-  `--infinite-active-cell-border-color--r`
-  `--infinite-active-cell-border-color--g`
-  `--infinite-active-cell-border-color--b`
-as they define both the border and the background color of the active cell and the active row.
-
-You can also specify the RED and GREEN components of the color using the next two css vars.
-
-The border color of the active cell is decomposed into multiple variables for convenience as by default
-the background of the active cell is the same color, but with the opacity specified by the value of `--infinie-active-cell-background-alpha`.
-
-If you don't want this, you can use `--infinite-active-cell-background` instead.
+The opacity of the background color for the selected cell, when the table is unfocused.
+If not specified, it will default to `var(--infinite-active-cell-background-alpha--table-unfocused)`.
 
 ```css
---infinite-active-cell-border-color--b
+--infinite-selected-cell-background-alpha--table-unfocused
+```
+
+### Selected cell border color
+
+The color for border of the selected cell (when cell selection is enabled).
+ Defaults to `var(--infinite-active-cell-border-color)`.
+
+```css
+--infinite-selected-cell-border-color
+```
+
+### Selected cell border width
+
+The width of the border for the selected cell. Defaults to `var(--infinite-active-cell-border-width)`.
+
+```css
+--infinite-selected-cell-border-width
+```
+
+### Selected cell border style
+
+The style of the border for the selected cell (eg: 'solid', 'dashed', 'dotted') - defaults to 'dashed'.
+Defaults to `var(--infinite-active-cell-border-style)`.
+
+```css
+--infinite-selected-cell-border-style
+```
+
+### Selected cell border
+
+Specifies the border for the selected cell. Defaults to `var(--infinite-selected-cell-border-width) var(--infinite-selected-cell-border-style) var(--infinite-selected-cell-border-color)`.
+
+```css
+--infinite-selected-cell-border
 ```
 
 ### Active cell background alpha
 
 The opacity of the background color for the active cell (when cell keyboard navigation is enabled).
+Eg: 0.25
 
-The background color of the active cell is based on the value of the above 3 variables, but with the opacity specified by this variable.
+If `activeBackground` is not explicitly defined (this is the default), the background color of the active cell
+is the same as the border color (`activeBorderColor`), but with this modified opacity.
+
+If `activeBorderColor` is also not defined, the accent color will be used.
+
 This is applied when the component has focus.
 
 ```css
@@ -603,7 +608,10 @@ Same as the above, but applied when the component does not have focus.
 
 ### Active cell background
 
-The background color of the active cell defaults to the same color (with modified opacity, as explained above) as the border color.
+The background color of the active cell.
+
+If not specified, it will default to `activeBorderColor` with the opacity of `activeBackgroundAlpha`.
+If `activeBorderColor` is not specified, it will default to the accent color, with the same opacity as mentioned.
 
 However, specify this to explicitly override the default.
 

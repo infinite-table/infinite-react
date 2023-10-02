@@ -34,6 +34,7 @@ import {
   HookLink,
   DApiLink,
   ApiLink,
+  CellApiLink,
 } from './Prop';
 import Recap from './Recap';
 import Sandpack from './Sandpack';
@@ -471,6 +472,7 @@ export const MDXComponents = {
   ApiLink,
   HookLink,
   ColumnApiLink,
+  CellApiLink,
   PropTable,
   Recap,
   Recipes,

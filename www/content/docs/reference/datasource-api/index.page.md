@@ -38,7 +38,6 @@ For API on row/group selection, see the [Selection API page](/docs/reference/sel
 <PropTable sort searchPlaceholder="Type to filter API methods">
 
 
-
 <Prop name="addData" type="(data: DATA_TYPE) => Promise">
 
 > Adds the specified data at the end of the data source.

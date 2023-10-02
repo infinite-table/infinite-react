@@ -827,7 +827,7 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 > A function to be called when the <DPropLink name="cellSelection" /> changes.
 
-<Sandpack  title="Controlled cell selection with onCellSelectionChange" size="lg>
+<Sandpack  title="Controlled cell selection with onCellSelectionChange" size="lg">
 
 <Description>
 
