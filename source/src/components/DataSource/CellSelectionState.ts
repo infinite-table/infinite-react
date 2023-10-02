@@ -309,6 +309,11 @@ export class CellSelectionState {
   }
 
   private setCellInSelection(rowId: any, colId: string, selected: boolean) {
+    if (rowId === this.wildcard && colId === this.wildcard) {
+      throw new Error(
+        'rowId and colId cannot be used as a wildcard at the same time!',
+      );
+    }
     // manage the rows to columns map for selection
     if (selected) {
       const selectedColsForRow =

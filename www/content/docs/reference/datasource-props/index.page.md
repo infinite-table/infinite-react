@@ -6,7 +6,41 @@ description: Props Reference page for your DataSource in Infinite Table - with c
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
 
-<PropTable>
+<PropTable sort searchPlaceholder="Type to filter DataSource Props">
+
+<Prop name="primaryKey" type="string | (data: DATA_TYPE) => string">
+
+> The name of the id/primary key property of an item in the <DPropLink name="data" /> array. The value of this property needs to be unique.
+
+This is probably one of the most important properties of the `<DataSource />` component, as it is used to identify items in the <DPropLink name="data" /> array.
+
+<Note>
+
+Unlike with other DataGrid components, with `InfiniteTable` you don't need to have a column mapped to the primary key field.
+
+The primary key is used internally by the component and is not displayed in the grid if you don't explicitly have a column bound to that field.
+
+</Note>
+
+If the primary key is not unique, Infinite Table DataGrid won't work properly.
+
+<Sandpack title="Simple demo of using primaryKey">
+
+```ts file="data-example.page.tsx"
+
+```
+
+</Sandpack>
+
+<Note>
+
+The primary key can be either a string (the name of a property in the data object), or a function that returns a string.
+
+Using functions (for more dynamic primary keys) is supported, but hasn't been tested extensively - so please report any issues you might encounter.
+
+</Note>
+
+</Prop>
 
 <Prop name="aggregationReducers" type="Record<string, DataSourceAggregationReducer>">
 
@@ -789,6 +823,27 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 </Prop>
 
+<Prop name="onCellSelectionChange" type="(cellSelection, selectionMode='multi-cell') => void">
+
+> A function to be called when the <DPropLink name="cellSelection" /> changes.
+
+<Sandpack  title="Controlled cell selection with onCellSelectionChange" size="lg>
+
+<Description>
+
+Use your mouse to select/deselect cells.
+
+</Description>
+
+```ts file="$DOCS/learn/selection/controlled-cell-selection-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+
 <Prop name="onRowSelectionChange" type="(rowSelection, selectionMode='single-row'|'multi-row') => void">
 
 > A function to be called when the <DPropLink name="rowSelection" /> changes.
@@ -979,6 +1034,14 @@ Read more on cell selection (`multi-cell` and `single-cell`).
 </YouWillLearnCard>
 
 </HeroCards>
+
+
+<Sandpack title="Choose your selection mode between multi cell or multi row">
+
+```ts file="selectionMode-example.page.tsx"
+```
+
+</Sandpack>
 
 </Prop>
 

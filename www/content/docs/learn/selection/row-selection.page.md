@@ -3,7 +3,7 @@ title: Row Selection
 description: InfiniteTable DataGrid component supports single and multiple row selection, including checkbox column selection and lazy rows selection
 ---
 
-`InfiniteTable` offers support for both single and multiple row selection. 
+`InfiniteTable` offers support for both single and multiple row selection. For selecting cells, see the [Cell Selection](/docs/learn/selection/cell-selection) page.
 
 ```tsx title="Configure the selection mode on the DataSource component"
 <DataSource selectionMode="single-row" />

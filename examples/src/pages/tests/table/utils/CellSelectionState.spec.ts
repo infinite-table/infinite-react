@@ -180,4 +180,40 @@ export default test.describe.parallel('CellSelectionState', () => {
     expect(state.isCellSelected(4, 'c2')).toBe(true);
     expect(state.isCellSelected(5, 'c2')).toBe(true);
   });
+
+  test('wildcards edge case with defaultSelection:true', () => {
+    const state = new CellSelectionState({
+      defaultSelection: true,
+      deselectedCells: [['*', 'c2']],
+      selectedCells: [['x', '*']],
+    });
+
+    try {
+      new CellSelectionState({
+        defaultSelection: true,
+        deselectedCells: [['*', 'c2']],
+        selectedCells: [['*', '*']],
+      });
+    } catch (ex) {
+      //@ts-ignore
+      expect(ex.message).toBe(
+        'rowId and colId cannot be used as a wildcard at the same time!',
+      );
+    }
+
+    expect(state.isCellSelected(1, 'c2')).toBe(false);
+    expect(state.isCellSelected(1, 'c3')).toBe(true);
+  });
+
+  test('wildcards edge case with defaultSelection:false', () => {
+    const state = new CellSelectionState({
+      defaultSelection: false,
+      deselectedCells: [['*', 'c2']],
+      selectedCells: [[3, '*']],
+    });
+
+    expect(state.isCellSelected(1, 'c2')).toBe(false);
+    expect(state.isCellSelected(2, 'c4')).toBe(false);
+    expect(state.isCellSelected(3, 'c4')).toBe(true);
+  });
 });
