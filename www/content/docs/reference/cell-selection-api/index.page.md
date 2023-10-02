@@ -3,9 +3,17 @@ title: Infinite Table Cell Selection API
 layout: API
 ---
 
+
+```tsx title="Configuring the selection mode to be 'multi-cell'"
+<DataSource selectionMode="multi-cell" />
+
+// can be "single-row", "multi-row", "multi-cell" or false
+```
+
+
 <Note>
 
-To enable cell selection, you need to specify `selectionMode="multi-cell"` on the `<DataSource />` component.
+To enable cell selection, you need to specify <DPropLink name="selectionMode">selectionMode="multi-cell"</DPropLink> on the `<DataSource />` component.
 
 </Note>
 

@@ -3,6 +3,19 @@ title: Infinite Table Row Selection API
 layout: API
 ---
 
+```tsx title="Configuring the selection mode to be 'multi-row'"
+<DataSource selectionMode="multi-row" />
+
+// can be "single-row", "multi-row", "multi-cell" or false
+```
+
+<Note>
+
+To enable multi-row selection, you need to specify <DPropLink name="selectionMode">selectionMode="multi-row"</DPropLink> on the `<DataSource />` component.
+
+</Note>
+
+
 You can retrieve the row selection api by reading it from the `api.rowSelectionApi` property.
 
 ```tsx {4}

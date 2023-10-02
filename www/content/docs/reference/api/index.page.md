@@ -267,11 +267,18 @@ const scrollTop = api.scrollTop;
 
 </Prop>
 
-<Prop name="selectionApi" type="InfiniteTableSelectionApi">
+<Prop name="rowSelectionApi" type="InfiniteTableRowSelectionApi">
 
-> Getter for the [Selection API](/docs/reference/selection-api)
+> Getter for the [Row Selection API](/docs/reference/row-selection-api)
 
 </Prop>
+
+<Prop name="cellSelectionApi" type="InfiniteTableCellSelectionApi">
+
+> Getter for the [Cell Selection API](/docs/reference/cell-selection-api)
+
+</Prop>
+
 
 <Prop name="setColumnFilter" type="(columnId: string, value: any) =>void">
 
