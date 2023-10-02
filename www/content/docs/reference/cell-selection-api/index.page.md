@@ -57,7 +57,7 @@ This is important to keep in mind, as when columns are reordered or rows are sor
 
 > Selects all cells in the specified column.
 
-<Sandpack title="Using `selectColumn` with controlled selection">
+<Sandpack title="Using `selectColumn` with controlled selection" size="lg">
 
 
 ```ts file="$DOCS/reference/datasource-props/controlled-cell-selection-with-api-example.page.tsx"
@@ -66,6 +66,7 @@ This is important to keep in mind, as when columns are reordered or rows are sor
 </Sandpack>
 
 </Prop>
+
 <Prop name="selectCell" type="({ rowIndex/rowId, colIndex/colId, clear?: boolean}) => void">
 
 > Selects the specified cell.
