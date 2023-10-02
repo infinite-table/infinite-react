@@ -81,7 +81,7 @@ export default function App() {
       apiRef.current = api;
 
       setSelectedIds(
-        api.selectionApi.getSelectedPrimaryKeys(rowSelection) as string[],
+        api.rowSelectionApi.getSelectedPrimaryKeys(rowSelection) as string[],
       );
     },
     [],
@@ -92,7 +92,7 @@ export default function App() {
       return;
     }
     setSelectedIds(
-      apiRef.current.selectionApi.getSelectedPrimaryKeys(
+      apiRef.current.rowSelectionApi.getSelectedPrimaryKeys(
         rowSelection,
       ) as string[],
     );
