@@ -77,8 +77,18 @@ Whe you're using cell selection with or without any default value (via the <DPro
 The <DPropLink name="cellSelection" /> prop is an object with the following shape:
 
  * `defaultSelection` - `boolean` - whether or not cells are selected by default.
- * `selectedCells`: `[rowId, colId][]` - an array of cells that should be selected (this is combined with `defaultSelection: false`)
- * `deselectedCells`: `[rowId, colId][]` - an array of cells that should be deselected (this is combined with `defaultSelection: true`)
+ * either:
+    * `selectedCells`: `[rowId, colId][]` - an array of cells that should be selected (this is combined with `defaultSelection: false`)
+ * or
+    * `deselectedCells`: `[rowId, colId][]` - an array of cells that should be deselected (this is combined with `defaultSelection: true`)
+
+<Note>
+
+When `defaultSelection` is `true`, you will only need to specify the `deselectedCells` prop.
+
+And when `defaultSelection` is `false`, you will only need to specify the `selectedCells` prop.
+
+</Note>
 
 In this way, you can either specify which cells should be selected or which cells should be deselected - and have a default that matches the most common case.
 
