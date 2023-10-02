@@ -12,8 +12,6 @@ To use multi-cell selection, you need to configure the `<DataSource />` componen
 // can be "single-row", "multi-row", "multi-cell" or false
 ```
 
-
-
 <Sandpack title="Multiple cell selection example">
 
 <Description>
@@ -166,13 +164,13 @@ This example shows how to use the <DPropLink name="onCellSelectionChange" /> cal
 ```
 </Sandpack>
 
-## Using the cell selection API
+## Using the Cell Selection API
 
-The `<DataSource />` component also exposes a [cell selection API](/docs/reference/cell-selection-api), which you can use to select and deselect cells programmatically.
+The `<DataSource />` component also exposes a [Cell Selection API](/docs/reference/cell-selection-api), which you can use to select and deselect cells programmatically.
 
 
 
-<Sandpack title="Using the cell selection API to select a column" size="lg">
+<Sandpack title="Using the CellSelectionAPI to select a column" size="lg">
 
 ```ts file="$DOCS/reference/datasource-props/controlled-cell-selection-with-api-example.page.tsx"
 
