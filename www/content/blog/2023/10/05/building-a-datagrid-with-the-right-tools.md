@@ -36,7 +36,7 @@ Being able to change a CSS custom property on a single DOM element and then reus
 The single tool that has made our life a lot easier working with CSS is [Vanilla Extract](https://vanilla-extract.style/). If you're developing a component library, you should definitely use it! Not so much for simple & static apps - there are other styling solutions that are easier to use, like [tailwindCSS](https://tailwindcss.com/). But for component libraries, **Vanilla Extract is amazing**!
 
 Did we mention it's amazing? 😅
-The fact that wou can use TypeScript with it, can use "Find All References", see where everything is used is a huge win. You're not writing readonly CSS anymore - because that tends to be the case with most CSS. People are afraid to change it or remove old CSS code, just in case those rules are still being used or referenced somehow. This way, CSS only grows with time, and this is a code smell.
+The fact that you can use TypeScript with it, can use "Find All References", see where everything is used is a huge win. You're not writing readonly CSS anymore - because that tends to be the case with most CSS. People are afraid to change it or remove old CSS code, just in case those rules are still being used or referenced somehow. This way, CSS only grows with time, and this is a code smell.
 
 With Vanilla Extract, you get to forget about that. You know what's being used and what's not.
 
