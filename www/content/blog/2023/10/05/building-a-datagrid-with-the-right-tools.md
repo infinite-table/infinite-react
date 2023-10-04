@@ -31,7 +31,7 @@ We're not short of [CSS variables that we expose - see the full list](/docs/lear
 Using them has been pivotal not only to the ease of theming, but also to the performance of the DataGrid.
 Being able to change a CSS custom property on a single DOM element and then reuse it across many elements that are children of the first one is a huge performance win. Our DataGrid performance would not be the same without CSS variables.
 
-### [Vanilla Extract](https://vanilla-extract.style/)
+### Vanilla Extract
 
 The single tool that has made our life a lot easier working with CSS is [Vanilla Extract](https://vanilla-extract.style/). If you're developing a component library, you should definitely use it! Not so much for simple & static apps - there are other styling solutions that are easier to use, like [tailwindCSS](https://tailwindcss.com/). But for component libraries, **Vanilla Extract is amazing**!
 
@@ -48,7 +48,7 @@ Other great features we use extensively are:
  - sharing CSS values with the TS codebase is a dream come true.
  - Vanilla Extract recipes - generating and applying CSS classes based on a combination of properties. It's enough that you have 2-3 properties, each with a few values, and managing their combinations can be a pain. Vanilla Extract recipes manage this in a very elegant way.
 
-## End-to-end testing with [Playwright](https://playwright.dev/) and [NextJS](https://nextjs.org/)
+## End-to-end testing with Playwright and NextJS
 
 Remember the days of Selenium? All those flaky tests, the slow execution, the hard to debug issues? They're gone!
 
