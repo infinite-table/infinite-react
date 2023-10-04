@@ -22,7 +22,7 @@ We knew we needed to implement it, but we wanted to do it right while keeping it
 
 In fact, we prepared some things in advance - namely <DPropLink name="selectionMode" /> was there, it just needed to accept a new value: `"multi-cell"`.
  
-```tsx title="Configuring sortType for group columns"
+```tsx title="Configuring multi-cell selection"
 <DataSource<Developer>
   selectionMode="multi-cell" // <--- THIS
   primaryKey="id"
