@@ -25,7 +25,7 @@ export default test.describe.parallel('Pivot', () => {
 
     // grand total position: end
 
-    await page.waitForTimeout(20);
+    await page.waitForTimeout(80);
 
     columnIds = await columnModel.getVisibleColumnIds();
 

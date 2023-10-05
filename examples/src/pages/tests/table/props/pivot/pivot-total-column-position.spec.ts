@@ -94,7 +94,7 @@ export default test.describe.parallel('Pivot', () => {
     // toggles show totals to true
     await page.click('button[data-name="toggle-show-totals"]');
 
-    await page.waitForTimeout(30);
+    await page.waitForTimeout(100);
     columnIds = await columnModel.getVisibleColumnIds();
     columnGroupIds = await columnModel.getVisibleColumnGroupIds();
 
