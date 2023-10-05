@@ -3,10 +3,27 @@ import {
   DataSourceState,
   CellSelectionState,
 } from '../../DataSource';
-import { getRowInfoAt } from '../../DataSource/dataSourceGetters';
+import { CellSelectionPosition } from '../../DataSource/CellSelectionState';
+import {
+  getRowInfoArray,
+  getRowInfoAt,
+} from '../../DataSource/dataSourceGetters';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
-import { InfiniteTableComputedValues } from '../types';
+import { InfiniteTableComputedValues, InfiniteTableRowInfo } from '../types';
 import { CellPositionOptions } from './type';
+
+function ensureSortedPerOrder<T>(arr: T[], sortPattern: T[]) {
+  const arrSet = new Set(arr);
+
+  return sortPattern
+    .map((item: T) => {
+      if (arrSet.has(item)) {
+        return item;
+      }
+      return null;
+    })
+    .filter((x: T | null) => x != null) as T[];
+}
 
 export function ensureMinMaxCellPositionByIndex(
   start: CellPositionByIndex,
@@ -41,6 +58,10 @@ export type InfiniteTableCellSelectionApi = {
   deselectColumn(colId: string): void;
   selectRange(start: CellPositionOptions, end: CellPositionOptions): void;
   deselectRange(start: CellPositionOptions, end: CellPositionOptions): void;
+  getAllCellSelectionPositions(): {
+    columnIds: string[];
+    positions: (CellSelectionPosition | null)[][];
+  };
 };
 
 export type GetCellSelectionApiParam<T> = {
@@ -74,6 +95,55 @@ export function getCellSelectionApi<T>(
   };
 
   const cellSelectionApi = {
+    getAllCellSelectionPositions: () => {
+      const dataArray = getRowInfoArray(getDataSourceState);
+
+      const { computedVisibleColumns } = getComputed();
+
+      const computedVisibleColumnsIds = computedVisibleColumns.map((x) => x.id);
+
+      const colsInSelection = new Set<string>();
+      const rowsInSelection: InfiniteTableRowInfo<T>[] = [];
+      const rowIdsInSelection = new Set<any>();
+
+      dataArray.filter((rowInfo) => {
+        computedVisibleColumns.forEach((col) => {
+          if (
+            cellSelectionApi.isCellSelected({
+              rowId: rowInfo.id,
+              colId: col.id,
+            })
+          ) {
+            if (!colsInSelection.has(col.id)) {
+              colsInSelection.add(col.id);
+            }
+            if (!rowIdsInSelection.has(rowInfo.id)) {
+              rowIdsInSelection.add(rowInfo.id);
+              rowsInSelection.push(rowInfo);
+            }
+          }
+        });
+      });
+
+      const columnIds = ensureSortedPerOrder(
+        Array.from(colsInSelection),
+        computedVisibleColumnsIds,
+      );
+
+      const positions = rowsInSelection.map((rowInfo) => {
+        return columnIds.map((colId) => {
+          if (cellSelectionApi.isCellSelected({ rowId: rowInfo.id, colId })) {
+            return [rowInfo.id, colId] as CellSelectionPosition;
+          }
+          return null;
+        });
+      });
+
+      return {
+        columnIds: columnIds,
+        positions,
+      };
+    },
     deselectAll: () => {
       const dataSourceState = getDataSourceState();
       const cellSelection = dataSourceState.cellSelection;
