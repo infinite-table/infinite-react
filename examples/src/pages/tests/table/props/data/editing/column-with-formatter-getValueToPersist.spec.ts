@@ -47,6 +47,7 @@ export default test.describe.parallel('Inline Edit', () => {
     await editModel.getCellEditor(cellEditable1).fill('234');
     await editModel.confirmEdit(cellEditable1);
 
+    await page.waitForTimeout(50);
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(false);
     expect(await rowModel.getTextForCell(cellEditable1)).toBe('$ 468');
   });
