@@ -105,7 +105,8 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
 
     if (
       componentState.onDataMutations &&
-      componentState.originalDataArrayChangedInfo.mutations
+      componentState.originalDataArrayChangedInfo.mutations &&
+      componentState.originalDataArrayChangedInfo.mutations.size
     ) {
       componentState.onDataMutations({
         primaryKeyField:

@@ -263,7 +263,7 @@ export function concludeReducer<T>(params: {
   }
   if (cache) {
     cache.clear();
-    state.cache = cache;
+    state.cache = undefined;
   }
 
   const { filterFunction, filterValue, filterTypes, operatorsByFilterType } =
@@ -639,7 +639,7 @@ export function concludeReducer<T>(params: {
   if (originalDataArrayChanged) {
     state.originalDataArrayChangedInfo = {
       timestamp: now,
-      mutations,
+      mutations: mutations?.size ? mutations : undefined,
     };
   }
 

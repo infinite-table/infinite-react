@@ -24,7 +24,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
   ) => {
     const { cache, toPrimaryKey } = options;
 
-    if (cache) {
+    if (cache && !cache.isEmpty()) {
       // because of React.StrictMode, we need to clone the array and return a copy
       // not very efficient for large arrays
       // TODO IMPORTANT seek to improve this
