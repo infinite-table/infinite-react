@@ -1,27 +1,25 @@
 import { DataSourceCache } from './DataSourceCache';
 
 export class Indexer<DataType, PrimaryKeyType = string> {
-  primaryKeyToData: Map<string, DataType> = new Map();
+  primaryKeyToData: Map<PrimaryKeyType, DataType> = new Map();
 
-  private add = (primaryKey: PrimaryKeyType | string, data: DataType) => {
-    this.primaryKeyToData.set(`${primaryKey}`, data);
+  private add = (primaryKey: PrimaryKeyType, data: DataType) => {
+    this.primaryKeyToData.set(primaryKey, data);
   };
 
   clear = () => {
     this.primaryKeyToData.clear();
   };
 
-  getDataForPrimaryKey = (
-    primaryKey: PrimaryKeyType | string,
-  ): DataType | undefined => {
-    return this.primaryKeyToData.get(`${primaryKey}`);
+  getDataForPrimaryKey = (primaryKey: PrimaryKeyType): DataType | undefined => {
+    return this.primaryKeyToData.get(primaryKey);
   };
 
   indexArray = (
     arr: DataType[],
     options: {
       toPrimaryKey: (data: DataType) => PrimaryKeyType;
-      cache?: DataSourceCache<DataType>;
+      cache?: DataSourceCache<DataType, PrimaryKeyType>;
     },
   ) => {
     const { cache, toPrimaryKey } = options;
@@ -39,7 +37,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
       if (item != null) {
         // we need this check because for lazy loading we have rows which are not loaded yet
 
-        const pk = `${toPrimaryKey(item)}`;
+        const pk = toPrimaryKey(item);
         const cacheInfo = cache?.getMutationsForPrimaryKey(pk);
 
         if (cacheInfo && cacheInfo.length) {
@@ -63,7 +61,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
             }
 
             if (info.type === 'insert') {
-              const insertPK = `${toPrimaryKey(info.data)}`;
+              const insertPK = toPrimaryKey(info.data);
               this.add(insertPK, info.data);
 
               if (info.position === 'before') {

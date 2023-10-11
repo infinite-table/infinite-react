@@ -25,8 +25,10 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
   private affectedFields: Set<keyof DataType> = new Set();
   private allFieldsAffected: boolean = false;
 
-  private primaryKeyToData: Map<string, DataSourceMutation<DataType>[]> =
-    new Map();
+  private primaryKeyToData: Map<
+    PrimaryKeyType,
+    DataSourceMutation<DataType>[]
+  > = new Map();
 
   static clone<DataType, PrimaryKeyType = string>(
     cache: DataSourceCache<DataType, PrimaryKeyType>,
@@ -38,7 +40,9 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     clone.affectedFields = new Set(cache.affectedFields);
     clone.primaryKeyToData = light
       ? cache.primaryKeyToData
-      : new Map<string, DataSourceMutation<DataType>[]>(cache.primaryKeyToData);
+      : new Map<PrimaryKeyType, DataSourceMutation<DataType>[]>(
+          cache.primaryKeyToData,
+        );
 
     return clone;
   }
@@ -57,7 +61,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     metadata: any,
   ) => {
     this.allFieldsAffected = true;
-    const pk = `${primaryKey}`;
+    const pk = primaryKey;
     const value = this.primaryKeyToData.get(pk) || [];
     value.push({
       type: 'delete',
@@ -74,7 +78,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     position: 'before' | 'after',
     metadata: any,
   ) => {
-    const pk = `${primaryKey}`;
+    const pk = primaryKey;
     const value = this.primaryKeyToData.get(pk) || [];
 
     this.allFieldsAffected = true;
@@ -101,7 +105,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       keys.forEach((key) => this.affectedFields.add(key));
     }
 
-    const pk = `${primaryKey}`;
+    const pk = primaryKey;
     const value = this.primaryKeyToData.get(pk) || [];
 
     value.push({
@@ -111,7 +115,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       originalData,
       metadata,
     });
-    this.primaryKeyToData.set(`${primaryKey}`, value);
+    this.primaryKeyToData.set(primaryKey, value);
   };
 
   clear = () => {
@@ -125,13 +129,13 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
   };
 
   removeInfo = (primaryKey: PrimaryKeyType) => {
-    this.primaryKeyToData.delete(`${primaryKey}`);
+    this.primaryKeyToData.delete(primaryKey);
   };
 
   getMutationsForPrimaryKey = (
     primaryKey: PrimaryKeyType,
   ): DataSourceMutation<DataType>[] | undefined => {
-    const data = this.primaryKeyToData.get(`${primaryKey}`);
+    const data = this.primaryKeyToData.get(primaryKey);
 
     return data;
   };
