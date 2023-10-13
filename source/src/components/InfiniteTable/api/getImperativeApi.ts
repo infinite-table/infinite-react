@@ -66,7 +66,7 @@ function isSortInfoForColumn<T>(
 class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   private context: GetImperativeApiParam<T>;
   public rowSelectionApi: InfiniteTableRowSelectionApi;
-  public cellSelectionApi: InfiniteTableCellSelectionApi;
+  public cellSelectionApi: InfiniteTableCellSelectionApi<T>;
 
   constructor(context: GetImperativeApiParam<T>) {
     this.context = context;

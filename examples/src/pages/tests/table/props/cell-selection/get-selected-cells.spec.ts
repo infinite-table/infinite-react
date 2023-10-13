@@ -18,4 +18,26 @@ export default test.describe
       ],
     });
   });
+
+  test('getMappedCellSelectionPositions', async ({ page, apiModel }) => {
+    await page.waitForInfinite();
+
+    const pos = await apiModel.evaluate((api) => {
+      return api.cellSelectionApi.getMappedCellSelectionPositions(
+        (rowInfo, colId) => {
+          return `/${rowInfo.id}-${colId}`;
+        },
+        'x',
+      );
+    });
+
+    expect(pos).toEqual({
+      columnIds: ['id', 'preferredLanguage', 'stack'],
+      positions: [
+        ['/2-id', 'x', 'x'],
+        ['x', 'x', '/5-stack'],
+        ['x', '/8-preferredLanguage', 'x'],
+      ],
+    });
+  });
 });

@@ -248,7 +248,7 @@ export type MultiSortBehaviorOptions = {
 
 export interface InfiniteTableApi<T> {
   get rowSelectionApi(): InfiniteTableRowSelectionApi;
-  get cellSelectionApi(): InfiniteTableCellSelectionApi;
+  get cellSelectionApi(): InfiniteTableCellSelectionApi<T>;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,

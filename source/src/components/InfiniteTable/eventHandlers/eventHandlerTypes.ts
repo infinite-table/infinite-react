@@ -38,7 +38,7 @@ export type InfiniteTableEventHandlerAbstractContext<T> = {
   dataSourceApi: DataSourceApi<T>;
   api: {
     rowSelectionApi: InfiniteTableRowSelectionApi;
-    cellSelectionApi: InfiniteTableCellSelectionApi;
+    cellSelectionApi: InfiniteTableCellSelectionApi<T>;
   };
 };
 
