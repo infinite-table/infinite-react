@@ -81,7 +81,7 @@ export default test.describe.parallel('Pivot', () => {
     ]);
 
     await page.click('button[data-name="toggle-total-col"]');
-    await page.waitForTimeout(30);
+    await page.waitForTimeout(80);
 
     columnIds = await columnModel.getVisibleColumnIds();
 
