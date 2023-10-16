@@ -263,6 +263,7 @@ export interface InfiniteTableApi<T> {
   realignColumnContextMenu: () => void;
   getColumnOrder: () => string[];
   getVisibleColumnOrder: () => string[];
+  getComputedColumnById: (colId: string) => InfiniteTableColumn<T> | undefined;
 
   isEditorVisibleForCell(params: {
     rowIndex: number;

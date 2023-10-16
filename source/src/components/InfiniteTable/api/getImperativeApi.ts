@@ -132,6 +132,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return this.getComputed().computedColumnOrder;
   };
 
+  getComputedColumnById = (columnId: string) => {
+    return this.getComputed().computedColumnsMap.get(columnId);
+  };
+
   getVisibleColumnOrder = () => {
     const order = this.getColumnOrder();
 
