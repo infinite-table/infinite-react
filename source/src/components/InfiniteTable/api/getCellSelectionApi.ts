@@ -62,7 +62,7 @@ export type InfiniteTableCellSelectionApi<T> = {
     columnIds: string[];
     positions: (CellSelectionPosition | null)[][];
   };
-  getMappedCellSelectionPositions<SELECTED_VALUE, EMPTY_VALUE>(
+  mapCellSelectionPositions<SELECTED_VALUE, EMPTY_VALUE>(
     fn: (rowInfo: InfiniteTableRowInfo<T>, colId: string) => SELECTED_VALUE,
     emptyValue: EMPTY_VALUE,
   ): {
@@ -222,7 +222,7 @@ class InfiniteTableCellSelectionApiImpl<T>
       return [rowInfo.id, colId] as CellSelectionPosition;
     }, null);
   };
-  getMappedCellSelectionPositions = <SELECTED_VALUE, EMPTY_VALUE>(
+  mapCellSelectionPositions = <SELECTED_VALUE, EMPTY_VALUE>(
     fn: (rowInfo: InfiniteTableRowInfo<T>, colId: string) => SELECTED_VALUE,
     emptyValue: EMPTY_VALUE,
   ) => {

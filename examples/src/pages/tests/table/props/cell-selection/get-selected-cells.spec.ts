@@ -23,7 +23,7 @@ export default test.describe
     await page.waitForInfinite();
 
     const pos = await apiModel.evaluate((api) => {
-      return api.cellSelectionApi.getMappedCellSelectionPositions(
+      return api.cellSelectionApi.mapCellSelectionPositions(
         (rowInfo, colId) => {
           return `/${rowInfo.id}-${colId}`;
         },
