@@ -78,6 +78,15 @@ export function getFilterOperatorMenuForColumn<T>(
 
   const firstItems = [
     {
+      key: 'close',
+      label: 'Close Menu',
+      icon: null,
+
+      onAction: () => {
+        api.hideFilterOperatorMenu();
+      },
+    },
+    {
       key: 'clear',
       label: 'Clear',
       icon: <ClearIcon />,

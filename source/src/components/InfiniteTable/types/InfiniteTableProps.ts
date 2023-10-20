@@ -259,6 +259,7 @@ export interface InfiniteTableApi<T> {
   clearEditInfo: () => void;
 
   hideContextMenu: () => void;
+  hideFilterOperatorMenu: () => void;
 
   realignColumnContextMenu: () => void;
   getColumnOrder: () => string[];

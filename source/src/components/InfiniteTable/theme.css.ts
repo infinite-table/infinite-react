@@ -174,6 +174,11 @@ export const ThemeVars = createGlobalThemeContract(
         filterOperatorPaddingY: 'filter-operator-padding-y',
         filterEditorPaddingY: 'filter-editor-padding-y',
         filterEditorMarginY: 'filter-editor-margin-y',
+        filterEditorBackground: 'filter-editor-background',
+        filterEditorBorder: 'filter-editor-border',
+        filterEditorFocusBorderColor: 'filter-editor-focus-border-color',
+        filterEditorBorderRadius: 'filter-editor-border-radius',
+        filterEditorColor: 'filter-editor-color',
       },
       Cell: {
         padding: 'cell-padding',
@@ -420,6 +425,15 @@ const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
     ThemeVars.color.error,
   [ThemeVars.components.HeaderCell.background]: '#ededed',
+  [ThemeVars.components.HeaderCell.filterEditorBackground]:
+    ThemeVars.components.Row.background,
+  [ThemeVars.components.HeaderCell
+    .filterEditorBorder]: `${ThemeVars.components.Cell.border}`,
+  [ThemeVars.components.HeaderCell.filterEditorFocusBorderColor]:
+    ThemeVars.color.accent,
+  [ThemeVars.components.HeaderCell.filterEditorColor]: `currentColor`,
+  [ThemeVars.components.HeaderCell.filterEditorBorderRadius]:
+    ThemeVars.borderRadius,
   [ThemeVars.components.HeaderCell.hoverBackground]: '#dfdfdf',
   [ThemeVars.components.HeaderCell.paddingX]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell.paddingY]: ThemeVars.spacing['3'],
@@ -555,6 +569,10 @@ const DarkTheme = {
   [ThemeVars.components.Cell.color]: '#c3c3c3',
   [ThemeVars.components.Menu.shadowColor]: `rgba(0,0,0,0.25)`,
   [ThemeVars.components.Menu.shadowColor]: `rgba(255,255,255,0.25)`,
+  [ThemeVars.components.HeaderCell
+    .filterEditorBorder]: `${ThemeVars.components.Cell.borderWidth} solid #646464`,
+  [ThemeVars.components.HeaderCell.filterEditorBackground]:
+    ThemeVars.components.Row.oddBackground,
 };
 
 DarkTheme[ThemeVars.components.Menu.background] =

@@ -140,7 +140,7 @@ export function getColumnApiForColumn<T>(
     },
 
     hideFilterOperatorMenu() {
-      actions.filterOperatorMenuVisibleForColumnId = null;
+      api.hideFilterOperatorMenu();
     },
 
     showContextMenu(target: EventTarget | HTMLElement) {

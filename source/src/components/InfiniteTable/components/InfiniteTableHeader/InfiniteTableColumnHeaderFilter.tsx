@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { join } from '../../../../utils/join';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
 import { FilterIcon } from '../icons/FilterIcon';
 
 import { getColumnLabel } from './getColumnLabel';
 
 import {
-  HeaderFilterCls,
+  HeaderFilterRecipe,
   HeaderFilterEditorCls,
   HeaderFilterOperatorCls,
   HeaderFilterOperatorIconRecipe,
@@ -20,19 +22,41 @@ import {
 } from './InfiniteTableColumnHeaderFilterContext';
 import { useInfiniteHeaderCell } from './InfiniteTableHeaderCell';
 
+const InfiniteTableColumnHeaderFilterInputClassName = `${InfiniteTableColumnHeaderFilterClassName}__input`;
+
 const stopPropagation = (e: React.PointerEvent<any>) => e.stopPropagation();
 
 export function InfiniteTableColumnHeaderFilter<T>(
   props: InfiniteTableColumnHeaderFilterProps<T>,
 ) {
+  const { filterOperatorMenuVisibleForColumnId } = useInfiniteTableState();
+  const { column } = useInfiniteHeaderCell();
+
   const FilterEditor = props.filterEditor;
   const FilterOperatorSwitch = props.filterOperatorSwitch;
+
+  const [focused, setFocused] = useState(false);
+  const onFocus = React.useCallback(() => {
+    setFocused(true);
+  }, []);
+
+  const onBlur = React.useCallback(() => {
+    setFocused(false);
+  }, []);
+
+  const active = filterOperatorMenuVisibleForColumnId === column.id || focused;
 
   return (
     <div
       onPointerUp={stopPropagation}
       onPointerDown={stopPropagation}
-      className={`${InfiniteTableColumnHeaderFilterClassName} ${HeaderFilterCls}`}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      className={`${InfiniteTableColumnHeaderFilterClassName} ${HeaderFilterRecipe(
+        {
+          active,
+        },
+      )}`}
       style={{ height: props.columnHeaderHeight }}
     >
       <InfiniteTableColumnHeaderFilterContext.Provider value={props}>
@@ -60,11 +84,13 @@ export function InfiniteTableFilterOperatorSwitch() {
 
         columnApi.toggleFilterOperatorMenu(event.target);
       }}
-      className={`${InfiniteTableColumnHeaderFilterOperatorClassName} ${HeaderFilterOperatorCls} ${
+      className={join(
+        InfiniteTableColumnHeaderFilterOperatorClassName,
+        HeaderFilterOperatorCls,
         disabled
           ? `${InfiniteTableColumnHeaderFilterOperatorClassName}--disabled`
-          : ''
-      }`}
+          : '',
+      )}
     >
       <Icon
         size={20}
@@ -81,7 +107,9 @@ export function InfiniteTableColumnHeaderFilterEmpty() {
     <div
       onPointerUp={stopPropagation}
       onPointerDown={stopPropagation}
-      className={`${InfiniteTableColumnHeaderFilterClassName} ${HeaderFilterCls}`}
+      className={`${InfiniteTableColumnHeaderFilterClassName} ${HeaderFilterRecipe(
+        { active: false },
+      )}`}
       style={{ height: '100%' }}
     />
   );
@@ -148,6 +176,6 @@ export function useInfiniteColumnFilterEditor<T>() {
     filtered: column.computedFiltered,
     setValue: onInputChange,
     ariaLabel: `Filter for ${columnLabel}`,
-    className: HeaderFilterEditorCls,
+    className: `${HeaderFilterEditorCls} ${InfiniteTableColumnHeaderFilterInputClassName}`,
   };
 }

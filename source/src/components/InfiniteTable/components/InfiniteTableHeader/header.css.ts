@@ -413,21 +413,24 @@ export const HeaderGroupCls = style([
     background: ThemeVars.components.HeaderCell.background,
   },
 ]);
-
-export const HeaderFilterCls = style([
-  display.flex,
-  flexFlow.row,
-  alignItems.stretch,
-  position.relative,
-  {
-    // paddingLeft: ThemeVars.components.HeaderCell.paddingX,
-    // paddingRight: ThemeVars.components.HeaderCell.paddingY,
-
-    borderTop: ThemeVars.components.Cell.border,
-
-    paddingBlock: ThemeVars.components.HeaderCell.filterEditorMarginY,
+export const HeaderFilterRecipe = recipe({
+  base: [
+    display.flex,
+    flexFlow.row,
+    alignItems.stretch,
+    position.relative,
+    {
+      borderTop: ThemeVars.components.Cell.border,
+      paddingBlock: ThemeVars.components.HeaderCell.filterEditorMarginY,
+    },
+  ],
+  variants: {
+    active: {
+      true: {},
+      false: {},
+    },
   },
-]);
+});
 
 export const HeaderFilterOperatorCls = style([
   display.flex,
@@ -437,8 +440,14 @@ export const HeaderFilterOperatorCls = style([
   {
     paddingInline: ThemeVars.components.HeaderCell.filterOperatorPaddingX,
     paddingBlock: ThemeVars.components.HeaderCell.filterOperatorPaddingY,
-
-    // borderTop: ThemeVars.components.Cell.border,
+    selectors: {
+      [`.${HeaderFilterRecipe.classNames.variants.active.true} &`]: {
+        color: ThemeVars.color.accent,
+      },
+      '&:active': {
+        top: '1px',
+      },
+    },
   },
 ]);
 
@@ -461,6 +470,11 @@ export const HeaderFilterOperatorIconRecipe = recipe({
   },
 });
 
+const HeaderFilterFocusedEditorStyle = {
+  outline: 'none',
+  borderColor: ThemeVars.components.HeaderCell.filterEditorFocusBorderColor,
+};
+
 export const HeaderFilterEditorCls = style([
   width['100%'],
   height['100%'],
@@ -468,5 +482,15 @@ export const HeaderFilterEditorCls = style([
     marginInline: ThemeVars.components.HeaderCell.filterEditorMarginX,
     paddingInline: ThemeVars.components.HeaderCell.filterEditorPaddingX,
     paddingBlock: ThemeVars.components.HeaderCell.filterEditorPaddingY,
+    background: ThemeVars.components.HeaderCell.filterEditorBackground,
+    color: ThemeVars.components.HeaderCell.filterEditorColor,
+    border: ThemeVars.components.HeaderCell.filterEditorBorder,
+    borderRadius: ThemeVars.components.HeaderCell.filterEditorBorderRadius,
+
+    selectors: {
+      '&:focus': HeaderFilterFocusedEditorStyle,
+      [`.${HeaderFilterRecipe.classNames.variants.active.true} &`]:
+        HeaderFilterFocusedEditorStyle,
+    },
   },
 ]);

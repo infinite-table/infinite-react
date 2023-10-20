@@ -102,6 +102,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.actions.cellContextMenuVisibleFor = null;
   }
 
+  hideFilterOperatorMenu = () => {
+    this.actions.filterOperatorMenuVisibleForColumnId = null;
+  };
+
   realignColumnContextMenu(callback?: VoidFunction) {
     const param = {
       actions: this.actions,
