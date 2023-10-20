@@ -27,6 +27,8 @@ export default test.describe.parallel('Inline Edit', () => {
 
     await editModel.confirmEdit(cellEditable1);
 
+    await page.waitForTimeout(50);
+
     expect(await editModel.isEditorOpen(cellEditable1)).toBe(false);
 
     let editAcceptedCalls = await page.evaluate(
