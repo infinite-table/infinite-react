@@ -1,10 +1,13 @@
 import * as React from 'react';
 
 import {
+  defaultFilterTypes,
   InfiniteTable,
   InfiniteTablePropColumns,
+  useInfiniteColumnFilterEditor,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
+import { useEffect } from 'react';
 
 type Developer = {
   id: number;
@@ -17,6 +20,8 @@ type Developer = {
   canDesign: 'yes' | 'no';
 
   age: number;
+
+  isActive: boolean;
 };
 
 const data: Developer[] = [
@@ -29,6 +34,7 @@ const data: Developer[] = [
     currency: 'USD',
     preferredLanguage: 'JavaScript',
     stack: 'frontend',
+    isActive: true,
   },
   {
     id: 2,
@@ -39,6 +45,7 @@ const data: Developer[] = [
     currency: 'USD',
     preferredLanguage: 'JavaScript',
     stack: 'frontend',
+    isActive: true,
   },
   {
     id: 3,
@@ -49,6 +56,7 @@ const data: Developer[] = [
     currency: 'CAD',
     preferredLanguage: 'TypeScript',
     stack: 'frontend',
+    isActive: false,
   },
   {
     id: 4,
@@ -59,6 +67,7 @@ const data: Developer[] = [
     currency: 'CAD',
     preferredLanguage: 'Rust',
     stack: 'backend',
+    isActive: true,
   },
   {
     id: 5,
@@ -69,6 +78,7 @@ const data: Developer[] = [
     currency: 'CAD',
     preferredLanguage: 'Go',
     stack: 'backend',
+    isActive: false,
   },
 ];
 
@@ -82,11 +92,18 @@ const columns: InfiniteTablePropColumns<Developer> = {
   age: {
     defaultFilterable: true,
     field: 'age',
-    type: 'custom-number',
+    // type: 'number',
+    filterType: 'custom-number',
   },
   stack: { field: 'stack' },
   currency: { field: 'currency', defaultFilterable: false },
+  isActive: {
+    field: 'isActive',
+    filterType: 'boolean',
+  },
 };
+
+delete defaultFilterTypes.string;
 
 export default () => {
   return (
@@ -95,12 +112,22 @@ export default () => {
         <DataSource<Developer>
           data={data}
           primaryKey="id"
-          defaultFilterValue={[
+          filterValue={[
             {
-              field: 'age',
+              // [age] > 30
+              id: 'age',
               filter: {
                 operator: 'gtx',
-                value: 30,
+                value: '30',
+                type: 'custom-number',
+              },
+            },
+            {
+              // [age] > 30
+              id: 'age', // derived from QL in stransient state
+              filter: {
+                operator: 'QL',
+                value: '[age] > 30', // pe viitor [age] > 30 AND [age] < 40
                 type: 'custom-number',
               },
             },
@@ -112,8 +139,23 @@ export default () => {
               emptyValues: ['', null, undefined],
               operators: [
                 {
-                  name: 'gtx',
+                  name: 'isPopular',
+                  components: {
+                    FilterEditor: () => {
+                      // get '30' from colTransientState
+                      return <></>;
+                    },
+                    Icon: () => {
+                      // derive '>' from colTransientState
+                      return <></>;
+                    },
+                  },
                   fn: ({ currentValue, filterValue, emptyValues }) => {
+                    // expression string
+                    // (alternative) predicateForm
+
+                    // return evaluateExpression('[age] > 30', currentValue);
+
                     if (
                       emptyValues.includes(currentValue) ||
                       emptyValues.includes(filterValue)
@@ -137,6 +179,32 @@ export default () => {
                 },
               ],
             },
+            boolean: {
+              label: 'Boolean',
+              emptyValues: [''],
+              defaultOperator: 'IS_TRUE',
+              components: {
+                FilterEditor: BooleanFilterEditor,
+              },
+              operators: [
+                {
+                  label: 'True',
+                  components: { Icon: IconTrue },
+                  name: 'IS_TRUE',
+                  fn: ({ currentValue }) => {
+                    return !!currentValue;
+                  },
+                },
+                {
+                  label: 'False',
+                  components: { Icon: IconFalse },
+                  name: 'IS_FALSE',
+                  fn: ({ currentValue }) => {
+                    return !currentValue;
+                  },
+                },
+              ],
+            },
           }}
         >
           <InfiniteTable<Developer>
@@ -154,3 +222,25 @@ export default () => {
     </>
   );
 };
+
+export const IconTrue = () => <>T</>;
+export const IconFalse = () => <>F</>;
+
+export function BooleanFilterEditor<DATA_TYPE = any>() {
+  const { operator, setValue, value, columnFilterValue } =
+    useInfiniteColumnFilterEditor<DATA_TYPE>();
+
+  useEffect(() => {
+    setValue('afl');
+  }, []);
+
+  if (operator?.name === 'IS_TRUE' || operator?.name === 'IS_FALSE') {
+    return (
+      <label style={{ justifyContent: 'center', width: '100%' }}>
+        {operator.label}
+      </label>
+    );
+  }
+
+  return <></>;
+}
