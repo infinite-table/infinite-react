@@ -243,8 +243,7 @@ export const IconTrue = () => <>T</>;
 export const IconFalse = () => <>F</>;
 
 export function BooleanFilterEditor<DATA_TYPE = any>() {
-  const { operator, setValue, value, columnFilterValue } =
-    useInfiniteColumnFilterEditor<DATA_TYPE>();
+  const { operator } = useInfiniteColumnFilterEditor<DATA_TYPE>();
 
   if (operator?.name === 'IS_TRUE' || operator?.name === 'IS_FALSE') {
     return (
