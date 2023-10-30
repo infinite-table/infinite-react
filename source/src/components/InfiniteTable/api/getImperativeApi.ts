@@ -882,15 +882,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         filterValueForColumn.field = col.field! || col.groupByForColumn; // we also use `col.groupByForColumn`
         // in order to allow group columns (when groupRenderStrategy=single)
         // to have filters
-      } else {
-        //@ts-ignore
-        filterValueForColumn.id = col.id;
       }
 
       newFilterValueForColumn =
         filterValueForColumn as DataSourceFilterValueItem<T>;
     }
 
+    newFilterValueForColumn.id = col.id;
     newFilterValueForColumn.filter.value = filterValue;
 
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);
@@ -907,9 +905,15 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     const { filterTypes } = dataSourceState;
 
     const filterType = col.computedFilterType;
-    const operator =
-      filterTypes[filterType].operators.find((op) => op.name === newOperator)
-        ?.name ?? filterTypes[filterType].defaultOperator;
+    const filterTypeOperators = filterTypes[filterType].operators;
+    const operator = (filterTypeOperators.find(
+      (op) => op.name === newOperator,
+    ) ??
+      filterTypeOperators.find(
+        (op) => op.name === filterTypes[filterType].defaultOperator,
+      ))!;
+
+    const operatorName = operator.name;
 
     let newFilterValueForColumn: DataSourceFilterValueItem<T>;
     if (col.computedFilterValue) {
@@ -917,15 +921,18 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         ...col.computedFilterValue,
         filter: {
           ...col.computedFilterValue.filter,
-          operator,
+          operator: operatorName,
         },
       };
     } else {
       newFilterValueForColumn = {
         filter: {
-          operator,
+          operator: operatorName,
           type: filterType,
-          value: [...filterTypes[filterType].emptyValues.values()][0],
+          value:
+            operator.defaultFilterValue !== undefined
+              ? operator.defaultFilterValue
+              : [...filterTypes[filterType].emptyValues.values()][0],
         },
 
         valueGetter: col.valueGetter,
@@ -933,10 +940,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
       if (col.field) {
         newFilterValueForColumn.field = col.field;
-      } else {
-        newFilterValueForColumn.id = col.id;
       }
     }
+
+    newFilterValueForColumn.id = col.id;
 
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);
   }

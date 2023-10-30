@@ -58,17 +58,17 @@ export default () => {
         <DataSource<Developer>
           data={data}
           primaryKey="id"
-          defaultFilterValue={
-            [
-              // {
-              //   id: 'salary',
-              //   valueGetter: ({ data }) => data.salary,
-              //   operator: 'gt',
-              //   filterValue: 400000,
-              //   filterType: 'number',
-              // },
-            ]
-          }
+          defaultFilterValue={[
+            {
+              field: 'salary',
+              valueGetter: ({ data }) => data.salary,
+              filter: {
+                operator: 'gt',
+                value: 400000,
+                type: 'number',
+              },
+            },
+          ]}
           filterDelay={0}
           filterMode="local"
         >

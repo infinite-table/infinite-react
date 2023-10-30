@@ -638,6 +638,7 @@ export type DataSourceFilterOperator<T> = {
   };
 
   fn: DataSourceFilterOperatorFunction<T>;
+  defaultFilterValue?: any;
 };
 
 export type DataSourceFilterOperatorFunction<T> = (
