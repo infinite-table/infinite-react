@@ -882,15 +882,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         filterValueForColumn.field = col.field! || col.groupByForColumn; // we also use `col.groupByForColumn`
         // in order to allow group columns (when groupRenderStrategy=single)
         // to have filters
-      } else {
-        //@ts-ignore
-        filterValueForColumn.id = col.id;
       }
 
       newFilterValueForColumn =
         filterValueForColumn as DataSourceFilterValueItem<T>;
     }
 
+    newFilterValueForColumn.id = col.id;
     newFilterValueForColumn.filter.value = filterValue;
 
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);
@@ -942,10 +940,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
       if (col.field) {
         newFilterValueForColumn.field = col.field;
-      } else {
-        newFilterValueForColumn.id = col.id;
       }
     }
+
+    newFilterValueForColumn.id = col.id;
 
     this.setFilterValueForColumn(columnId, newFilterValueForColumn);
   }
