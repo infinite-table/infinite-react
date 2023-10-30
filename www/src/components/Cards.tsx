@@ -50,6 +50,7 @@ export const Card = ({
     </>
   );
 
+  const pageSection = !!href && href.startsWith('#');
   if (href && Tag != 'a') {
     header = <Link href={href}>{header}</Link>;
   }
@@ -57,7 +58,11 @@ export const Card = ({
     <>
       <h3
         className={`${titleOpacity} text-2xl font-light mb-4`}
-        id={href && href.startsWith('#') ? href.substring(1) : undefined}
+        id={pageSection ? href.substring(1) : undefined}
+        style={{
+          marginTop: -30,
+          paddingTop: 30,
+        }}
       >
         {header}
       </h3>
@@ -76,6 +81,15 @@ export const Card = ({
       <div className={cls} style={style}>
         {content}
       </div>
+    );
+  }
+
+  if (pageSection) {
+    return (
+      <a href={href} className={cls} style={style}>
+        {/* @ts-ignore */}
+        {content}
+      </a>
     );
   }
   return (

@@ -442,6 +442,7 @@ export function PricingPage() {
         <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
           <div className="relative z-20 my-20 ">
             <Card
+              href="#buy-once-use-always"
               title="Buy Once, Use Always"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-xl rounded-b-none"
             >
@@ -449,6 +450,7 @@ export function PricingPage() {
             </Card>
 
             <Card
+              href="#no-hidden-costs"
               title="No Hidden Costs"
               className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-none"
             >
@@ -457,6 +459,7 @@ export function PricingPage() {
             </Card>
 
             <Card
+              href="#per-developer-pricing"
               title="Per-developer Pricing"
               className="sm:pr-20 md:pr-20 rounded-t-none rounded-xl"
             >
