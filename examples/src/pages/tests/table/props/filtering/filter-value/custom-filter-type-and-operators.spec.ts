@@ -28,7 +28,7 @@ export default test.describe
     await page.click('body');
     await page.waitForTimeout(50);
 
-    await headerModel.clickFilterOperatorMenuItem('age', 'clear');
+    await headerModel.clickFilterOperatorMenuItem('age', 'reset');
 
     expect(await rowModel.getRenderedRowCount()).toEqual(5);
   });
