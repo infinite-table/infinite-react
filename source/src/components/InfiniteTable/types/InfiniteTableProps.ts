@@ -322,7 +322,15 @@ export interface InfiniteTableApi<T> {
 
   setColumnFilter: (columnId: string, filterValue: any) => void;
   setColumnFilterOperator: (columnId: string, operator: string) => void;
+  /**
+   * Clears the filter for the given column to a default value. The column will still have a
+   * corresponding filterValue, though set to the empty filter value, so it's not considered filtered.
+   */
   clearColumnFilter: (columnId: string) => void;
+  /**
+   * Removes the filter for the column altogether. The column will no longer have a corresponding entry in the filterValue prop.
+   */
+  removeColumnFilter: (columnId: string) => void;
   isColumnSortable: (columnId: string) => boolean;
   setFilterValueForColumn: (
     columnId: string,

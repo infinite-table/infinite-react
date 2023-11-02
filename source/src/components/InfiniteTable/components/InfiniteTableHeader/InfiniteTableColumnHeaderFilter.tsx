@@ -142,6 +142,13 @@ export function useInfiniteColumnFilterEditor<T>() {
     [filterContextValue.onChange],
   );
 
+  const clearValue = React.useCallback(() => {
+    context.api.clearColumnFilter(column.id);
+  }, [column.id]);
+  const removeColumnFilter = React.useCallback(() => {
+    context.api.removeColumnFilter(column.id);
+  }, [column.id]);
+
   useEffect(() => {
     if (columnFilterValue) {
       if (theValue !== columnFilterValue.filter.value) {
@@ -175,6 +182,8 @@ export function useInfiniteColumnFilterEditor<T>() {
     filterTypeKey: columnFilterType!,
     filtered: column.computedFiltered,
     setValue: onInputChange,
+    clearValue,
+    removeColumnFilter,
     ariaLabel: `Filter for ${columnLabel}`,
     className: `${HeaderFilterEditorCls} ${InfiniteTableColumnHeaderFilterInputClassName}`,
   };

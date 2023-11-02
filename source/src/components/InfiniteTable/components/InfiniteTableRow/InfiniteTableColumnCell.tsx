@@ -66,7 +66,10 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   } = params;
 
   if (rowInfo.isGroupRow && !column.groupByForColumn) {
-    return null;
+    // we previously returned null here and didn't show a selection checkbox
+    // for group rows that were not group columns
+    // but we better show it and allow users to opt-out instead
+    // return null;
   }
 
   return (

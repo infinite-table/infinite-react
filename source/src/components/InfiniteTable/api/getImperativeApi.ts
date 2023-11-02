@@ -924,6 +924,11 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
           operator: operatorName,
         },
       };
+      // when we change the operator, if the operator has a default value configured
+      // make sure we force that default value on the filter
+      if (operator.defaultFilterValue !== undefined) {
+        newFilterValueForColumn.filter.value = operator.defaultFilterValue;
+      }
     } else {
       newFilterValueForColumn = {
         filter: {
@@ -982,22 +987,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       newFilterValue.push(filterValue);
     }
 
-    // we used to filter away the empty filter values
-    // but we should not, as changing an operator should be reflected in the filter
-    // even if the value is empty - for UI consistency
-
-    // newFilterValue = newFilterValue.filter((filterValue) => {
-    //   const filterType = filterTypes[filterValue.filterType];
-    //   if (!filterType || filterType.emptyValues.has(filterValue.filterValue)) {
-    //     return false;
-    //   }
-    //   return true;
-    // });
-
     this.dataSourceActions.filterValue = newFilterValue;
   }
 
-  clearColumnFilter(columnId: string) {
+  removeColumnFilter(columnId: string) {
     const column = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!column) {
@@ -1017,6 +1010,60 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
       return true;
     });
+
+    if (found) {
+      this.dataSourceActions.filterValue = newFilterValue;
+    }
+  }
+
+  clearColumnFilter(columnId: string) {
+    const column = this.getComputed().computedColumnsMap.get(columnId);
+
+    if (!column) {
+      return;
+    }
+
+    const state = this.getDataSourceState();
+
+    let newFilterValue = state.filterValue ?? [];
+    let found = false;
+
+    newFilterValue = newFilterValue
+      .map((currentFilterValue) => {
+        if (currentFilterValue === column.computedFilterValue) {
+          const filterTypeName = column.computedFilterValue.filter.type;
+          const operators = state.operatorsByFilterType[filterTypeName];
+          const filterType = state.filterTypes[filterTypeName];
+
+          found = true;
+
+          if (!filterType) {
+            return null;
+          }
+
+          const operatorName =
+            currentFilterValue.filter.operator ?? filterType?.defaultOperator;
+          const operator = operators[operatorName];
+
+          const value = // first try the default value of the operator
+            operator.defaultFilterValue ??
+            // then the first empty value
+            (filterType.emptyValues || [])[0] ??
+            undefined;
+
+          return {
+            ...currentFilterValue,
+            filter: {
+              ...currentFilterValue.filter,
+              operator: operatorName,
+              value,
+            },
+          };
+        }
+
+        return currentFilterValue;
+      })
+      .filter(notNullable);
 
     if (found) {
       this.dataSourceActions.filterValue = newFilterValue;

@@ -73,12 +73,26 @@ export function getGroupColumnRender<T>({
     // ) as InfiniteTable_HasGrouping_RowInfoGroup<T>;
     const groupRowInfo = rowInfo as InfiniteTable_HasGrouping_RowInfoGroup<T>;
 
+    const className = join(
+      display.flex,
+      column.align === 'end' ? flexFlow.rowReverse : flexFlow.row,
+      alignItems.center,
+      `${InfiniteTableColumnCellClassName}Expander`,
+      groupRenderStrategy === 'single-column' ||
+        (groupRenderStrategy === 'multi-column' &&
+          (!rowInfo.isGroupRow || selectionCheckBox))
+        ? GroupRowExpanderCls({ align })
+        : null,
+    );
+
     if (groupRenderStrategy === 'multi-column') {
       if (
         groupIndexForColumn + 1 !== groupRowInfo.groupNesting &&
         groupRowInfo.isGroupRow
       ) {
-        return null;
+        return selectionCheckBox ? (
+          <div className={className}>{selectionCheckBox}</div>
+        ) : null;
       }
     } else if (
       groupRenderStrategy === 'single-column' &&
@@ -97,18 +111,7 @@ export function getGroupColumnRender<T>({
     // }
 
     return (
-      <div
-        className={join(
-          display.flex,
-          column.align === 'end' ? flexFlow.rowReverse : flexFlow.row,
-          alignItems.center,
-          `${InfiniteTableColumnCellClassName}Expander`,
-          groupRenderStrategy === 'single-column' ||
-            (groupRenderStrategy === 'multi-column' && !rowInfo.isGroupRow)
-            ? GroupRowExpanderCls({ align })
-            : null,
-        )}
-      >
+      <div className={className}>
         {groupIcon}
         {selectionCheckBox}
 

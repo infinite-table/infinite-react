@@ -87,8 +87,8 @@ export function getFilterOperatorMenuForColumn<T>(
       },
     },
     {
-      key: 'clear',
-      label: 'Clear',
+      key: 'reset',
+      label: 'Reset',
       icon: <ClearIcon />,
       disabled: !column.computedFiltered,
       onAction: () => {
