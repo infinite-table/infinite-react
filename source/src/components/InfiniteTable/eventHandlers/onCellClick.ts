@@ -121,6 +121,8 @@ export function updateRowSelectionOnCellClick<T>(
   const { selectionMode, groupBy, dataArray } = dataSourceState;
 
   if (groupBy.length) {
+    // for now we don't support row selection via user clicks
+    // with grouping when there is no checkbox column
     return false;
   }
 
