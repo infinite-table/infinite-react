@@ -189,6 +189,10 @@
         "path": "/docs/learn/filtering/filtering-server-side"
       },
       {
+        "title": "Extending Existing Filters",
+        "path": "/docs/learn/filtering/extending-existing-filters"
+      },
+      {
         "title": "Providing a Custom Filter Editor",
         "path": "/docs/learn/filtering/providing-a-custom-filter-editor"
       }

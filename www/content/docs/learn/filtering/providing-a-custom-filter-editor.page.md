@@ -50,7 +50,7 @@ As an exercise, let's write a custom filter editor that shows a checkbox and use
 
 First step is to define the `bool` filter type:
 
-```tsx {6} title="Defining_the_bool_filter_type_with_one_emptyValue"
+```tsx {6} title="Defining the bool filter type with one emptyValue"
 filterTypes={{
   bool: {
     label: 'Boolean',
@@ -68,7 +68,7 @@ Note in the code above, we have `emptyValues: [null]` - so when the filter check
 
 Now it's time to define the operators - more exactly, just one operator, `eq`:
 
-```tsx {7} title="Defining_the_eq_operator"
+```tsx {7} title="Defining the eq operator"
 filterTypes={{
   bool: {
     defaultOperator: 'eq',
@@ -85,7 +85,7 @@ filterTypes={{
 ```
 The last part of the `bool` filter type will be to specify the `FilterEditor` component - this can be either specified as part of the filter type or as part of the operator definition (each operator can override the `components.FilterEditor`).
 
-```tsx {6} title="Specifying_the_FilterEditor_component"
+```tsx {6} title="Specifying the FilterEditor component"
 filterTypes={{
   bool: {
     defaultOperator: 'eq',

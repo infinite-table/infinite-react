@@ -51,15 +51,16 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultWidth: 100,
   },
-  salary: {
-    field: 'salary',
-    type: 'number',
-  },
 
   firstName: {
     field: 'firstName',
   },
   stack: { field: 'stack' },
+
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
   currency: { field: 'currency', defaultFilterable: false },
 };
 
