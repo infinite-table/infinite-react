@@ -1,5 +1,4 @@
-const debug = require('debug');
-
+import { debug } from './debugPackage';
 const debugTable = debug(`InfiniteTable`);
 
 export interface LogFn {
