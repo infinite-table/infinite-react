@@ -9,7 +9,6 @@ import {
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
-import { RowSelectionState } from '@infinite-table/infinite-react/components/DataSource/RowSelectionState';
 
 type Developer = {
   id: number;

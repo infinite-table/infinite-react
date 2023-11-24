@@ -1,6 +1,7 @@
 import { DeepMap } from './DeepMap';
 import { getGlobal } from './getGlobal';
 
+// colors take from the `debug` package on npm
 const colors = [
   '#0000CC',
   '#0000FF',
