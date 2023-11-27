@@ -2,7 +2,7 @@ import { DeepMap } from './DeepMap';
 import { getGlobal } from './getGlobal';
 
 // colors take from the `debug` package on npm
-const colors = [
+const COLORS = [
   '#0000CC',
   '#0000FF',
   '#0033CC',
@@ -81,57 +81,177 @@ const colors = [
   '#FFCC33',
 ];
 
-const usedColors = colors.map((_) => 0);
+const USED_COLORS_MAP = new WeakMap<string[], number[]>();
 
-const getNextColor = () => {
+USED_COLORS_MAP.set(
+  COLORS,
+  COLORS.map((_) => 0),
+);
+
+const getNextColor = (colors = COLORS) => {
+  let usedColors: number[] = [];
+
+  // whenever we have a new set of colors
+  // we need to have a new array for counting which colors are used
+  // this is the usedColors array
+  if (USED_COLORS_MAP.has(colors)) {
+    usedColors = USED_COLORS_MAP.get(colors)!;
+  } else {
+    usedColors = colors.map((_) => 0);
+    USED_COLORS_MAP.set(colors, usedColors);
+  }
+
   // get index of min value
   const index = usedColors.reduce(
     (iMin, x, i, arr) => (x < arr[iMin] ? i : iMin),
     0,
   );
-  usedColors[index]++;
-  return colors[index];
+  if (usedColors[index] != undefined) {
+    usedColors[index]++;
+  }
+  return colors[index] ?? colors[0] ?? COLORS[0];
 };
 
-type DebugLogger = {
+export type DebugLogger = {
   (...args: any[]): void;
   extend: (channelName: string) => DebugLogger;
   enabled: boolean;
   channel: string;
+  destroy: () => void;
   log: (...args: any[]) => void;
 };
 
 const CHANNEL_SEPARATOR = ':';
 const CHANNEL_WILDCARD = '*';
+const CHANNEL_NEGATION_CHAR = '-';
 const STORAGE_SEPARATOR = ',';
 const STORAGE_KEY = 'debug';
 
 const STORAGE_DIFF_KEY = 'diffdebug';
 const DEFAULT_LOG_DIFF = false;
 
-export function debug(channelName: string): any {
-  const loggers = new DeepMap<string, DebugLogger>();
+const loggers = new DeepMap<string, DebugLogger>();
 
-  const defaultLogger = console.log.bind(console);
+const enabledChannelsCache = new Map<string, boolean>();
 
-  const getStorageKeyValue = () =>
-    (getGlobal() && getGlobal().localStorage?.getItem(STORAGE_KEY)) ?? '';
-  const getDiffStorageKeyValue = () =>
-    (getGlobal() && getGlobal().localStorage?.getItem(STORAGE_DIFF_KEY)) ??
-    `${DEFAULT_LOG_DIFF}`;
+/**
+ * Returns if the specified channel is spefically targeted by the permission token.
+ * If the permission token does not contain the channel, it returns undefined.
+ *
+ * @param channel A specific channel like "a:b:c" - cannot contain wildcards
+ * @param permissionToken a permission token like "a:b:c" or "d:e:f" or "d:x:*" or "*" - the value can contain wildcards, but cannot have comma separated values
+ *
+ */
+function isChannelTargeted(channel: string, permissionToken: string) {
+  const parts = channel.split(CHANNEL_SEPARATOR);
+  const partsMap = new DeepMap<string, boolean>();
+  partsMap.set(parts, true);
 
-  let storageKeyValue = '';
+  const tokenParts = permissionToken.split(CHANNEL_SEPARATOR);
 
-  let logDiffs = DEFAULT_LOG_DIFF;
+  const hasWildcard = new Set(tokenParts).has(CHANNEL_WILDCARD);
 
-  function updateStorageKeyValue(value: string) {
-    logDiffs = getDiffStorageKeyValue() === 'true';
-    if (storageKeyValue === value) {
-      return;
-    }
-    storageKeyValue = value;
+  const storagePartsWithoutWildcard = hasWildcard
+    ? tokenParts.slice(0, tokenParts.indexOf(CHANNEL_WILDCARD))
+    : tokenParts;
+
+  if (
+    partsMap.getKeysStartingWith(storagePartsWithoutWildcard, hasWildcard)
+      .length > 0
+  ) {
+    return true;
+  }
+  return undefined;
+}
+
+/**
+ * Returns whether logging is enabled for a specific channel
+ *
+ * @param channel the name of a specific channel like "a:b:c" - cannot contain wildcards
+ * @param permissions we accept values like "a:b:c,d:e:f,d:x:*" - multiple values separated by a comma. can also contain wildcards
+ * @returns boolean
+ */
+export function isLoggingEnabled(
+  channel: string,
+  permissions: string,
+): boolean {
+  const cacheKey = `channel=${channel}_permissions=${permissions}`;
+
+  if (enabledChannelsCache.has(cacheKey)) {
+    return enabledChannelsCache.get(cacheKey)!;
   }
 
+  const permissionTokens = permissions.split(STORAGE_SEPARATOR);
+
+  function done(result: boolean) {
+    enabledChannelsCache.set(cacheKey, result);
+    return result;
+  }
+
+  const exactTokens: string[] = [];
+  const wildcardTokens: string[] = [];
+
+  permissionTokens.forEach((permissionToken) => {
+    if (permissionToken.includes(CHANNEL_WILDCARD)) {
+      wildcardTokens.push(permissionToken);
+    } else {
+      exactTokens.push(permissionToken);
+    }
+  });
+
+  for (let i = 0; i < exactTokens.length; i++) {
+    let exactToken = exactTokens[i];
+
+    const negative = exactToken.startsWith(CHANNEL_NEGATION_CHAR);
+
+    if (negative) {
+      exactToken = exactToken.substring(CHANNEL_NEGATION_CHAR.length);
+    }
+    if (isChannelTargeted(channel, exactToken)) {
+      return done(negative ? false : true);
+    }
+  }
+
+  for (let i = 0; i < wildcardTokens.length; i++) {
+    let permissionToken = wildcardTokens[i];
+
+    const negated = permissionToken.startsWith('-');
+
+    if (negated) {
+      permissionToken = permissionToken.substring(1);
+    }
+
+    if (isChannelTargeted(channel, permissionToken)) {
+      return done(negated ? false : true);
+    }
+  }
+
+  return done(false);
+}
+
+const getStorageKeyValue = () =>
+  debug.enable ??
+  (getGlobal() && getGlobal().localStorage?.getItem(STORAGE_KEY)) ??
+  '';
+
+const getDiffStorageKeyValue = () =>
+  debug.diffenable ??
+  (getGlobal() && getGlobal().localStorage?.getItem(STORAGE_DIFF_KEY)) ??
+  `${DEFAULT_LOG_DIFF}`;
+
+let storageKeyValue = '';
+let logDiffs = DEFAULT_LOG_DIFF;
+
+function updateStorageKeyValue(value: string) {
+  logDiffs = `${getDiffStorageKeyValue()}` == 'true';
+  if (storageKeyValue === value) {
+    return;
+  }
+  storageKeyValue = value;
+  enabledChannelsCache.clear();
+}
+
+function debugPackage(channelName: string): any {
   updateStorageKeyValue(getStorageKeyValue());
 
   typeof getGlobal() !== 'undefined' &&
@@ -140,63 +260,31 @@ export function debug(channelName: string): any {
       updateStorageKeyValue(getStorageKeyValue());
     });
 
-  function isLoggingEnabled(channel: string): boolean {
-    const parts = channel.split(CHANNEL_SEPARATOR);
-
-    const partsMap = new DeepMap<string, boolean>();
-    partsMap.set(parts, true);
-
-    const multipleStorageValues = storageKeyValue.split(STORAGE_SEPARATOR);
-
-    // we accept a storage value like "a:b:c,d:e:f" so we want
-    // to account for that here - multiple values separated by a comma
-    for (let i = 0; i < multipleStorageValues.length; i++) {
-      const storageValue = multipleStorageValues[i];
-
-      const storageValueParts = storageValue.split(CHANNEL_SEPARATOR);
-
-      const hasWildcard = new Set(storageValueParts).has(CHANNEL_WILDCARD);
-
-      const storagePartsWithoutWildcard = hasWildcard
-        ? storageValueParts.slice(
-            0,
-            storageValueParts.indexOf(CHANNEL_WILDCARD),
-          )
-        : storageValueParts;
-
-      if (
-        partsMap.getKeysStartingWith(storagePartsWithoutWildcard, hasWildcard)
-          .length > 0
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   function debugFactory(channelName: string, parentChannel?: string): any {
     const channel = parentChannel
       ? `${parentChannel}${CHANNEL_SEPARATOR}${channelName}`
       : channelName;
 
     const channelParts = channel.split(CHANNEL_SEPARATOR);
+
     if (loggers.has(channelParts)) {
       return loggers.get(channelParts);
     }
 
     const parentLogger = loggers.get(channelParts.slice(0, -1));
 
-    let logFn = parentLogger ? parentLogger.log : defaultLogger;
+    let logFn = parentLogger ? parentLogger.log : debug.log;
 
     let enabled: boolean | undefined;
     let lastMessageTimestamp: number = 0;
-    const isEnabled = () => enabled ?? isLoggingEnabled(channel);
-    const color = getNextColor();
+    const isEnabled = () =>
+      enabled ?? isLoggingEnabled(channel, storageKeyValue);
+
+    const color = getNextColor(debug.colors);
 
     const logger = Object.defineProperties(
       (...args: any[]) => {
-        if (isLoggingEnabled(channel)) {
+        if (isLoggingEnabled(channel, storageKeyValue)) {
           const now = Date.now();
 
           if (lastMessageTimestamp && logDiffs) {
@@ -228,6 +316,11 @@ export function debug(channelName: string): any {
             logFn = fn;
           },
         },
+        destroy: {
+          value: () => {
+            loggers.delete(channelParts);
+          },
+        },
       },
     ) as DebugLogger;
 
@@ -238,3 +331,28 @@ export function debug(channelName: string): any {
 
   return debugFactory(channelName);
 }
+
+const defaultLogger = console.log.bind(console);
+
+let GLOBAL_ENABLE: string | undefined = undefined;
+
+Object.defineProperty(debugPackage, 'enable', {
+  get: () => GLOBAL_ENABLE,
+  set: (value: string | undefined) => {
+    GLOBAL_ENABLE = value;
+    updateStorageKeyValue(getStorageKeyValue());
+  },
+});
+
+const debug = debugPackage as {
+  (channelName: string): DebugLogger;
+  colors: string[];
+  enable: string;
+  diffenable: string | boolean;
+  log: DebugLogger['log'];
+};
+
+debug.colors = COLORS;
+debug.log = defaultLogger;
+
+export { debug };

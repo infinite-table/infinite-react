@@ -2,7 +2,7 @@ import { debug } from './debugPackage';
 const debugTable = debug(`InfiniteTable`);
 
 export interface LogFn {
-  (...args: any[]): LogFn;
+  (...args: any[]): void;
   extend: (channelName: string) => LogFn;
 }
 export const dbg = (channelName: string): LogFn => {
