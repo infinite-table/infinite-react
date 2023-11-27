@@ -81,6 +81,7 @@ const COLORS = [
   '#FFCC33',
 ];
 
+const COLOR_SYMBOL = Symbol('color');
 const USED_COLORS_MAP = new WeakMap<string[], number[]>();
 
 USED_COLORS_MAP.set(
@@ -115,10 +116,11 @@ const getNextColor = (colors = COLORS) => {
 export type DebugLogger = {
   (...args: any[]): void;
   extend: (channelName: string) => DebugLogger;
+  color: (colorName: string, ...message: string[]) => [string, string];
   enabled: boolean;
   channel: string;
   destroy: () => void;
-  log: (...args: any[]) => void;
+  logFn: undefined | ((...args: any[]) => void);
 };
 
 const CHANNEL_SEPARATOR = ':';
@@ -273,7 +275,9 @@ function debugPackage(channelName: string): any {
 
     const parentLogger = loggers.get(channelParts.slice(0, -1));
 
-    let logFn = parentLogger ? parentLogger.log : debug.log;
+    const defaultLogFn =
+      (parentLogger ? parentLogger.logFn : debug.logFn) ?? defaultLogger;
+    let logFn = defaultLogFn;
 
     let enabled: boolean | undefined;
     let lastMessageTimestamp: number = 0;
@@ -294,13 +298,61 @@ function debugPackage(channelName: string): any {
           }
           lastMessageTimestamp = now;
 
-          // with colors
-          logFn(`%c[${channel}]`, `color: ${color}`, ...args);
+          const argsToLog: any[] = [];
+
+          let textWithColors: boolean | undefined = undefined;
+
+          args.forEach((arg) => {
+            if (arg[COLOR_SYMBOL]) {
+              if (textWithColors === undefined) {
+                textWithColors = true;
+              }
+              argsToLog.push(...arg);
+            } else {
+              if (typeof arg !== 'string' && typeof arg !== 'number') {
+                textWithColors = false;
+                return;
+              }
+              argsToLog.push(`${arg}%s`);
+            }
+          });
+
+          if (textWithColors) {
+            // args only have text
+            // and at least one of the arg has colors
+            const theArgs = [
+              `%c[${channel}]%c %s`,
+              `color: ${color}`,
+              '',
+              ...argsToLog,
+              '',
+            ];
+
+            logFn(...theArgs);
+          } else {
+            logFn(`%c[${channel}]`, `color: ${color}`, ...args);
+          }
         }
       },
       {
         channel: {
           value: channel,
+        },
+        color: {
+          value: (colorName: string, ...args: string[]) => {
+            const result = [
+              `%c${args.join(' ')}%c%s`,
+              `color: ${colorName}`,
+              '',
+            ];
+
+            result.toString = () => args.join(' ');
+
+            // @ts-ignore ignore
+            result[COLOR_SYMBOL] = true;
+
+            return result;
+          },
         },
         extend: {
           value: (nextChannel: string) => {
@@ -310,10 +362,11 @@ function debugPackage(channelName: string): any {
         enabled: {
           get: () => isEnabled(),
         },
-        log: {
+        logFn: {
+          configurable: false,
           get: () => logFn,
           set: (fn) => {
-            logFn = fn;
+            logFn = fn ?? defaultLogFn;
           },
         },
         destroy: {
@@ -349,10 +402,10 @@ const debug = debugPackage as {
   colors: string[];
   enable: string;
   diffenable: string | boolean;
-  log: DebugLogger['log'];
+  logFn: DebugLogger['logFn'];
 };
 
 debug.colors = COLORS;
-debug.log = defaultLogger;
+debug.logFn = defaultLogger;
 
 export { debug };

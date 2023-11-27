@@ -6,7 +6,7 @@ debug.colors = ['red', 'green', 'blue'];
 export default test.describe.parallel('debug', () => {
   test('should reuse the same color for same channel', () => {
     debug.enable = '*';
-    debug.log = (...x: string[]) => {
+    debug.logFn = (...x: string[]) => {
       args = x;
     };
     const logger1a = debug('channel1');
@@ -28,10 +28,46 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(['%c[channel1]', 'color: green', 'xyz']);
   });
 
+  test('should allow setting logFn for a channel', () => {
+    let args: string[] = [];
+    debug.enable = '*';
+    debug.logFn = (...x: string[]) => {
+      args = x;
+    };
+    const logger1 = debug('channel1');
+
+    logger1('testing');
+    expect(args).toEqual(['%c[channel1]', 'color: red', 'testing']);
+
+    let customLoggerArgs: string[] = [];
+    logger1.logFn = (...x: string[]) => {
+      args = ['1'];
+      customLoggerArgs = x;
+    };
+
+    logger1('second test');
+    expect(args).toEqual(['1']);
+    expect(customLoggerArgs).toEqual([
+      '%c[channel1]',
+      'color: red',
+      'second test',
+    ]);
+
+    logger1.logFn = undefined;
+
+    logger1('third test');
+    expect(args).toEqual(['%c[channel1]', 'color: red', 'third test']);
+    expect(customLoggerArgs).toEqual([
+      '%c[channel1]',
+      'color: red',
+      'second test',
+    ]);
+  });
+
   test('should only log for enabled channels', () => {
     let args: string[] = [];
     debug.enable = 'channel2,channel1:*';
-    debug.log = (...x: string[]) => {
+    debug.logFn = (...x: string[]) => {
       args = x;
     };
     const onea = debug('channel1:a');
@@ -41,6 +77,7 @@ export default test.describe.parallel('debug', () => {
 
     onea('1a');
     expect(args).toEqual(['%c[channel1:a]', 'color: red', '1a']);
+
     oneb('1b');
     expect(args).toEqual(['%c[channel1:b]', 'color: green', '1b']);
 
@@ -55,7 +92,7 @@ export default test.describe.parallel('debug', () => {
   test.skip('channel negation not working yet', () => {
     let args: string[] = [];
     debug.enable = 'channel1:*,-channel1:b';
-    debug.log = (...x: string[]) => {
+    debug.logFn = (...x: string[]) => {
       args = x;
     };
     const onea = debug('channel1:a');

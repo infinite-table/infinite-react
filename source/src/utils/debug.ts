@@ -8,7 +8,7 @@ export interface LogFn {
 export const dbg = (channelName: string): LogFn => {
   const result = debugTable.extend(channelName);
 
-  result.log = console.log.bind(console);
+  result.logFn = console.log.bind(console);
 
   return result;
 };
@@ -16,7 +16,7 @@ export const dbg = (channelName: string): LogFn => {
 export const err = (channelName: string): LogFn => {
   const result = debugTable.extend(`${channelName}:error`);
 
-  result.log = console.error.bind(console);
+  result.logFn = console.error.bind(console);
 
   return result;
 };
