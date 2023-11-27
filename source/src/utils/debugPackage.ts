@@ -202,7 +202,7 @@ export function debug(channelName: string): any {
           if (lastMessageTimestamp && logDiffs) {
             const diff = now - lastMessageTimestamp;
 
-            logFn(`%c+${diff}ms:`, `color: ${color}`);
+            logFn(`%c[${channel}]`, `color: ${color}`, `+${diff}ms:`);
           }
           lastMessageTimestamp = now;
 
