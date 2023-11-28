@@ -38,5 +38,4 @@ export { DeepMap } from './utils/DeepMap';
 export { debug, type DebugLogger } from './utils/debugPackage';
 
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';
-
 export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';
