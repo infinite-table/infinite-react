@@ -35,7 +35,7 @@ export {
 export { interceptMap } from './components/hooks/useInterceptedMap';
 
 export { DeepMap } from './utils/DeepMap';
-export { debug } from './utils/debugPackage';
+export { debug, type DebugLogger } from './utils/debugPackage';
 
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';
 
