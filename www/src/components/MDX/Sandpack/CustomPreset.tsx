@@ -203,7 +203,7 @@ export function CustomPreset({
               {isExpandable && (
                 <button
                   translate="yes"
-                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full order-2 xl:order-last  relative top-0"
+                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full order-last relative top-0"
                   onClick={() => {
                     const nextIsExpanded = !isExpanded;
                     flushSync(() => {
