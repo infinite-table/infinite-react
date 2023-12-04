@@ -18,6 +18,7 @@ import scrollIntoView from 'scroll-into-view-if-needed';
 import { NavigationBar } from './NavigationBar';
 import { Preview } from './Preview';
 
+const DEFAULT_MAX_HEIGHT = '90vh';
 export function CustomPreset({
   isSingleFile,
   title,
@@ -116,10 +117,11 @@ export function CustomPreset({
       const diff = 40 + (titleBlock ? 34 : 0); // 40 is navbar height
       return `calc(100vh - ${diff}px)`;
     }
+    const adjustedEditorHeight = `clamp(200px,${editorHeight}px, ${DEFAULT_MAX_HEIGHT})`;
     if (!isExpandable) {
-      return editorHeight;
+      return adjustedEditorHeight;
     }
-    return isExpanded ? editorHeight : THE_HEIGHT;
+    return isExpanded ? adjustedEditorHeight : THE_HEIGHT;
   };
 
   const descriptionBlock = description ? (
@@ -178,7 +180,7 @@ export function CustomPreset({
                     maxHeight: isExpanded
                       ? fullScreen
                         ? getHeight()
-                        : ''
+                        : DEFAULT_MAX_HEIGHT
                       : THE_HEIGHT, //40px is navbar height
                   }}
                   showLineNumbers
@@ -194,7 +196,7 @@ export function CustomPreset({
                   customStyle={{
                     height: getHeight(),
                     minHeight: getHeight(),
-                    maxHeight: isExpanded ? '' : THE_HEIGHT,
+                    maxHeight: isExpanded ? DEFAULT_MAX_HEIGHT : THE_HEIGHT,
                   }}
                 />
               ) : null}
