@@ -1,8 +1,8 @@
 ---
-title: Performance with Many Rows and Columns
+title: Changing the Data Source
 ---
 
-This example showcases a DataGrid with **10.000 rows** and **12 columns**.
+This example show how you can change the data source and the columns of the DataGrid.
 
 <HeroCards>
 <YouWillLearnCard title="Working with Data" path="/docs/learn/working-with-data">
@@ -18,13 +18,11 @@ See our page on using and configuring columns. It shows you how to use and custo
 
 <Description>
 
-DataGrid with 10k rows and 12 columns.
-
-Adding more columns will not affect performance, as the DataGrid uses virtualization for both rows and **columns**.
+In this demo you can toggle between 2 data sources and 2 sets of columns.
 
 </Description>
 
-```tsx file="many-rows-and-columns-example.page.tsx"
+```tsx file="change-datasource-example.page.tsx"
 
 ```
 </Sandpack>

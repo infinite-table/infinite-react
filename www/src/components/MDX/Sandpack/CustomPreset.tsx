@@ -24,7 +24,9 @@ export function CustomPreset({
   description,
   onReset,
   defaultHeight,
+  defaultViewMode,
 }: {
+  defaultViewMode?: 'code' | 'preview' | 'both';
   defaultHeight?: number;
   description?: React.ReactNode;
   title?: React.ReactNode;
@@ -39,7 +41,9 @@ export function CustomPreset({
 
   const { sandpack } = useSandpack();
 
-  const [viewMode, setViewMode] = useState<'code' | 'preview' | 'both'>('both');
+  const [viewMode, setViewMode] = useState<'code' | 'preview' | 'both'>(
+    defaultViewMode ?? 'both',
+  );
 
   const previousViewModeRef = React.useRef(viewMode);
 

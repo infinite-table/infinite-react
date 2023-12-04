@@ -12,7 +12,7 @@ Find out more about how to update data in real-time
 
 </HeroCards>
 
-<Sandpack size="md">
+<Sandpack size="md" viewMode="preview">
 
 <Description>
 

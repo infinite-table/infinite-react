@@ -249,11 +249,15 @@
   {
     "title": "Examples",
     "transient": true,
-    "path": "/docs/learn/examples/many-rows-and-columns",
+    "path": "/docs/learn/examples/performance-many-rows-and-columns",
     "routes": [
       {
         "title": "Performance demo - many rows and columns",
         "path": "/docs/learn/examples/performance-many-rows-and-columns"
+      },
+      {
+        "title": "Change the DataSource & Columns",
+        "path": "/docs/learn/examples/change-datasource"
       },
       {
         "title": "Live updates example",

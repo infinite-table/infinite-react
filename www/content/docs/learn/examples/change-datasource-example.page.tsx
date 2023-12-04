@@ -1,7 +1,7 @@
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTableColumn,
+  InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 import { useMemo, useState } from 'react';
 
@@ -24,7 +24,24 @@ export type Employee = {
   age: number;
   email: string;
 };
-export const columns: Record<string, InfiniteTableColumn<Employee>> = {
+
+type Developer = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  country: string;
+  city: string;
+  currency: string;
+  email: string;
+  preferredLanguage: string;
+  stack: string;
+  canDesign: 'yes' | 'no';
+  hobby: string;
+  salary: number;
+  age: number;
+};
+
+export const employeeColumns: InfiniteTablePropColumns<Employee> = {
   firstName: {
     field: 'firstName',
     header: 'First Name',
@@ -58,17 +75,40 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
     header: 'Company Size',
   },
   streetName: { field: 'streetName' },
-  streetNo: { field: 'streetNo' },
-  currency: { field: 'currency' },
+  streetNo: { field: 'streetNo', type: 'number' },
+  currency: {
+    field: 'currency',
+    type: 'number',
+  },
   email: { field: 'email' },
 };
 
-const getDataSourceFor = (size: string) => {
+const developerColumns: InfiniteTablePropColumns<Developer> = {
+  firstName: { field: 'firstName' },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: {
+    field: 'country',
+    // specifying a style here for the column
+    // note: it will also be "picked up" by the group column
+    // if you're grouping by the 'country' field
+    style: {
+      color: 'tomato',
+    },
+  },
+  canDesign: { field: 'canDesign' },
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
+};
+
+const getDataSourceFor = (name: 'employee' | 'developer', size: string) => {
   if (size === '0') {
     return () => Promise.resolve([]);
   }
   return () => {
-    return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/employees' + size)
+    return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/${name}s` + size)
       .then((r) => r.json())
       .then((data: Employee[]) => data);
   };
@@ -76,10 +116,12 @@ const getDataSourceFor = (size: string) => {
 
 export default function App() {
   const [dataSourceSize, setDataSourceSize] = useState<string>('10k');
+  const [type, setType] = useState<'employee' | 'developer'>('employee');
 
   const dataSource = useMemo(() => {
-    return getDataSourceFor(dataSourceSize);
-  }, [dataSourceSize]);
+    return getDataSourceFor(type, dataSourceSize);
+  }, [type, dataSourceSize]);
+
   return (
     <div
       style={{
@@ -89,7 +131,27 @@ export default function App() {
         flexFlow: 'column',
       }}
     >
-      <p style={{ padding: 10, marginBlock: 0 }}>
+      <p style={{ paddingInline: 10 }}>Please select datasource:</p>
+      <div style={{ paddingInline: 10 }}>
+        <select
+          style={{
+            display: 'inline-block',
+            background: 'var(--infinite-background)',
+            color: 'currentColor',
+            padding: 'var(--infinite-space-3)',
+          }}
+          value={type}
+          onChange={(event) => {
+            const type = event.target.value as 'employee' | 'developer';
+
+            setType(type);
+          }}
+        >
+          <option value="developer">Developers</option>
+          <option value="employee">Employees</option>
+        </select>
+      </div>
+      <p style={{ paddingInline: 10 }}>
         Please select the size of the datasource:
       </p>
       <div style={{ paddingInline: 10, marginBottom: 10 }}>
@@ -114,8 +176,11 @@ export default function App() {
           <option value="10k">10k items</option>
         </select>
       </div>
-      <DataSource<Employee> data={dataSource} primaryKey="id">
-        <InfiniteTable<Employee> columns={columns} columnDefaultWidth={150} />
+      <DataSource<any> data={dataSource} primaryKey="id">
+        <InfiniteTable<any>
+          columns={type === 'developer' ? developerColumns : employeeColumns}
+          columnDefaultWidth={150}
+        />
       </DataSource>
     </div>
   );

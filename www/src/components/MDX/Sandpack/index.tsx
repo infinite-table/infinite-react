@@ -71,6 +71,7 @@ type SandpackProps = {
   version?: string;
   title?: React.ReactNode;
   autorun?: boolean;
+  viewMode?: 'code' | 'preview' | 'both';
   size: 'default' | 'md' | 'lg';
   setup?: SandpackSetup;
 };
@@ -221,6 +222,13 @@ function Sandpack(props: SandpackProps) {
           title={title}
           defaultHeight={
             size === 'default' || !size ? undefined : size === 'md' ? 650 : 850
+          }
+          defaultViewMode={
+            props.viewMode === 'code'
+              ? 'code'
+              : props.viewMode === 'preview'
+              ? 'preview'
+              : 'both'
           }
           description={description}
           isSingleFile={false}

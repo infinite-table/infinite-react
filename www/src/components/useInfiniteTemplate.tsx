@@ -116,7 +116,6 @@ body,
 #root {
   display: flex;
   flex-flow: column;
-  padding: 5px;
   overflow: hidden;
 }
 
