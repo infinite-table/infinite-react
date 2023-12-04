@@ -192,7 +192,6 @@ export function CustomPreset({
                 <Preview
                   isExpanded={isExpanded}
                   fullScreen={fullScreen}
-                  className="order-last xl:order-2"
                   customStyle={{
                     height: getHeight(),
                     minHeight: getHeight(),
@@ -203,7 +202,7 @@ export function CustomPreset({
               {isExpandable && (
                 <button
                   translate="yes"
-                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full order-last relative top-0"
+                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full relative top-0"
                   onClick={() => {
                     const nextIsExpanded = !isExpanded;
                     flushSync(() => {
