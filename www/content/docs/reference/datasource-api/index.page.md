@@ -249,7 +249,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 </Description>
 
-```ts file="liveUpdates-example.page.tsx"
+```ts file="live-updates-example.page.tsx"
 ```
 
 </Sandpack>
