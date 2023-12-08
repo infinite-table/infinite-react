@@ -41,7 +41,7 @@ jobs:
       CONVERTKIT_TAG_ID: ${{ secrets.CONVERTKIT_TAG_ID }}
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
