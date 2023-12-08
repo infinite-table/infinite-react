@@ -6,7 +6,7 @@ import sidebarLearn from '@www/sidebarLearn.json';
 import { MDXContent } from '@www/components/MDXContent';
 import PageHeading from '@www/components/PageHeading';
 import { allDocsPages, type DocsPage } from 'contentlayer/generated';
-import { metadata as meta } from './metadata';
+import { metadata as meta } from '../../metadata';
 import { asMeta } from '@www/utils/asMeta';
 import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';

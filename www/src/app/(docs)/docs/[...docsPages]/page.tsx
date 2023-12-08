@@ -14,7 +14,7 @@ import {
   type DocsPage,
 } from 'contentlayer/generated';
 
-import { metadata as meta } from '../metadata';
+import { metadata as meta } from '../../../metadata';
 import { Metadata } from 'next';
 import { asMeta } from '@www/utils/asMeta';
 import {

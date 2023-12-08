@@ -15,7 +15,7 @@ import fm from 'gray-matter';
 
 import readingTime from 'reading-time';
 
-import unified from 'unified';
+import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 // import remarkMdxCodeMeta from 'remark-mdx-code-meta';

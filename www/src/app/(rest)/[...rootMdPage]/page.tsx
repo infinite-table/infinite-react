@@ -1,8 +1,8 @@
 import { MDXContent } from '@www/components/MDXContent';
 import { Metadata } from 'next';
-import { getCurrentPageForUrl } from './getCurrentPageForUrl';
+import { getCurrentPageForUrl } from '../getCurrentPageForUrl';
 
-import { metadata as meta } from '../docs/metadata';
+import { metadata as meta } from '../../metadata';
 import { asMeta } from '@www/utils/asMeta';
 import { allRootPages } from 'contentlayer/generated';
 
@@ -19,7 +19,6 @@ export async function generateStaticParams() {
     })
     .filter((x) => x.rootMdPage.length > 0); // && x.rootMdPage[0] !== '404');
 
-  // console.log('result', result);
   return result;
 }
 

@@ -451,6 +451,46 @@ The color of the column resize handle when it has reached a min/max constraint.
 --infinite-filter-editor-margin-y
 ```
 
+### Filter editor background
+
+
+
+```css
+--infinite-filter-editor-background
+```
+
+### Filter editor border
+
+
+
+```css
+--infinite-filter-editor-border
+```
+
+### Filter editor focus border color
+
+
+
+```css
+--infinite-filter-editor-focus-border-color
+```
+
+### Filter editor border radius
+
+
+
+```css
+--infinite-filter-editor-border-radius
+```
+
+### Filter editor color
+
+
+
+```css
+--infinite-filter-editor-color
+```
+
 ### Cell padding
 
 
