@@ -62,7 +62,7 @@ It had a rich API, exposing lots of events, callbacks and methods for things lik
 
 Here's some code showcasing the YUI DataTable
 
-```js title=YUI_DataTable_with_sorting {6}
+```js {6} title="YUI DataTable with sorting"
 var table = new Y.DataTable({
     columns: [
         { key: 'item', width: '125px' },
@@ -134,7 +134,7 @@ The ExtJS 3 DataGrid brought excellent product execution in a few areas:
  - it came together with a rich set of components for building complex UIs - grids, trees, combo-boxes, form inputs, menus, dialogs, etc. Powerful layout components were available, which allowed developers to build complex app layouts by composing components together - and everything felt like it was part of the same story, which it was.
  - enthusiastic community - the forums were very active and the community was writing lots of good plugins.
 
-```js title=ExtJS_3_DataGrid_code_snippet
+```js title="ExtJS 3 DataGrid code snippet"
 var grid = new Ext.grid.GridPanel({
   // data fetching abstracted in a "Store" component
   store: new Ext.data.Store({
@@ -295,7 +295,7 @@ We want Infinite Table to feel at home in any React app. Everything about the Da
 
 Let's take for example how you would switch a column from a column group to another:
 
-```tsx {35} title="Fully_declarative_way_to_update_columns"
+```tsx {35} title="Fully declarative way to update columns"
 function getColumns() {
   return {
     firstName: {
@@ -369,7 +369,7 @@ A good example of composability is the <PropLink name="groupColumn" /> prop - it
  * when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
  
 
-```tsx title="Group_column_as_an_object"
+```tsx title="Group column as an object"
 <InfiniteTable 
   //...
   groupColumn= {{
@@ -378,7 +378,7 @@ A good example of composability is the <PropLink name="groupColumn" /> prop - it
 />
 ```
 vs
-```tsx title="Group_column_as_a_function"
+```tsx title="Group column as a function"
 <InfiniteTable 
   //...
   groupColumn={() => {

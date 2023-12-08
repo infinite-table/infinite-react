@@ -114,7 +114,7 @@ const domProps = {
     height: '100%',
   },
 };
-export default () => {
+export default function App() {
   const [running, setRunning] = React.useState(false);
 
   const [apis, onReady] = React.useState<{
@@ -157,10 +157,12 @@ export default () => {
     <React.StrictMode>
       <button
         style={{
-          border: '2px solid magenta',
-          display: 'inline-block',
-          background: running ? 'tomato' : 'white',
-          color: running ? 'white' : 'tomato',
+          border: '2px solid var(--infinite-cell-color)',
+          borderRadius: 10,
+          padding: 10,
+          background: running ? 'tomato' : 'var(--infinite-background)',
+          color: running ? 'white' : 'var(--infinite-cell-color)',
+          margin: 10,
         }}
         onClick={() => {
           setRunning(!running);
@@ -179,4 +181,4 @@ export default () => {
       </DataSource>
     </React.StrictMode>
   );
-};
+}

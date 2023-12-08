@@ -18,13 +18,16 @@ import scrollIntoView from 'scroll-into-view-if-needed';
 import { NavigationBar } from './NavigationBar';
 import { Preview } from './Preview';
 
+const DEFAULT_MAX_HEIGHT = '90vh';
 export function CustomPreset({
   isSingleFile,
   title,
   description,
   onReset,
   defaultHeight,
+  defaultViewMode,
 }: {
+  defaultViewMode?: 'code' | 'preview' | 'both';
   defaultHeight?: number;
   description?: React.ReactNode;
   title?: React.ReactNode;
@@ -39,7 +42,9 @@ export function CustomPreset({
 
   const { sandpack } = useSandpack();
 
-  const [viewMode, setViewMode] = useState<'code' | 'preview' | 'both'>('both');
+  const [viewMode, setViewMode] = useState<'code' | 'preview' | 'both'>(
+    defaultViewMode ?? 'both',
+  );
 
   const previousViewModeRef = React.useRef(viewMode);
 
@@ -112,10 +117,11 @@ export function CustomPreset({
       const diff = 40 + (titleBlock ? 34 : 0); // 40 is navbar height
       return `calc(100vh - ${diff}px)`;
     }
+    const adjustedEditorHeight = `clamp(200px,${editorHeight}px, ${DEFAULT_MAX_HEIGHT})`;
     if (!isExpandable) {
-      return editorHeight;
+      return adjustedEditorHeight;
     }
-    return isExpanded ? editorHeight : THE_HEIGHT;
+    return isExpanded ? adjustedEditorHeight : THE_HEIGHT;
   };
 
   const descriptionBlock = description ? (
@@ -174,7 +180,7 @@ export function CustomPreset({
                     maxHeight: isExpanded
                       ? fullScreen
                         ? getHeight()
-                        : ''
+                        : DEFAULT_MAX_HEIGHT
                       : THE_HEIGHT, //40px is navbar height
                   }}
                   showLineNumbers
@@ -186,18 +192,17 @@ export function CustomPreset({
                 <Preview
                   isExpanded={isExpanded}
                   fullScreen={fullScreen}
-                  className="order-last xl:order-2"
                   customStyle={{
                     height: getHeight(),
                     minHeight: getHeight(),
-                    maxHeight: isExpanded ? '' : THE_HEIGHT,
+                    maxHeight: isExpanded ? DEFAULT_MAX_HEIGHT : THE_HEIGHT,
                   }}
                 />
               ) : null}
               {isExpandable && (
                 <button
                   translate="yes"
-                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full order-2 xl:order-last  relative top-0"
+                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full relative top-0"
                   onClick={() => {
                     const nextIsExpanded = !isExpanded;
                     flushSync(() => {

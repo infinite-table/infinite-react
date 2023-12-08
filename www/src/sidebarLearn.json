@@ -249,8 +249,20 @@
   {
     "title": "Examples",
     "transient": true,
-    "path": "/docs/learn/examples/dynamic-pivoting-example",
+    "path": "/docs/learn/examples/performance-many-rows-and-columns",
     "routes": [
+      {
+        "title": "Performance demo - many rows and columns",
+        "path": "/docs/learn/examples/performance-many-rows-and-columns"
+      },
+      {
+        "title": "Change the DataSource & Columns",
+        "path": "/docs/learn/examples/change-datasource"
+      },
+      {
+        "title": "Live updates example",
+        "path": "/docs/learn/examples/live-updates-example"
+      },
       {
         "title": "Dynamic pivoting example",
         "path": "/docs/learn/examples/dynamic-pivoting-example"

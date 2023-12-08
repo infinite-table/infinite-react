@@ -2,13 +2,13 @@ import {
   InfiniteTable,
   DataSource,
   GroupRowsState,
-  DataSourcePropAggregationReducers,
-  InfiniteTablePropColumnTypes,
-  DataSourceData,
 } from '@infinite-table/infinite-react';
 import type {
   InfiniteTablePropColumns,
   InfiniteTableProps,
+  DataSourcePropAggregationReducers,
+  InfiniteTablePropColumnTypes,
+  DataSourceData,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
