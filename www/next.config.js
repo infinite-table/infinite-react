@@ -6,11 +6,13 @@ const path = require('path');
 // const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
 // const withVanillaExtract = createVanillaExtractPlugin();
 // const { remarkPlugins } = require('./plugins/markdownToHtml');
-const withMDX = require('@next/mdx')({
-  extension: /\.(md|mdx)$/,
-  // remarkPlugins,
-  providerImportSource: '@mdx-js/react',
-});
+// const withMDX = require('@next/mdx')({
+//   extension: /\.(md|mdx)$/,
+//   // remarkPlugins,
+//   providerImportSource: '@mdx-js/react',
+// });
+
+const withMDX = require('@next/mdx')();
 
 // const withMDX = (x) => x;
 
@@ -52,7 +54,6 @@ let nextConfig = withMDX({
   // exportTrailingSlash: true,
   experimental: {
     externalDir: true,
-    appDir: true,
     // mdxRs: true,
   },
   // transpilePackages: ['@infinite-table/infinite-react'],

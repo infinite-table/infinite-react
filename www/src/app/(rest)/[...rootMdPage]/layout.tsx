@@ -1,5 +1,5 @@
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
-import { getCurrentPageForUrl } from './getCurrentPageForUrl';
+import { getCurrentPageForUrl } from '../getCurrentPageForUrl';
 
 export default function RootLayout({
   params: { rootMdPage },
