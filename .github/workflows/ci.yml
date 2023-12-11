@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.x ]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.x ]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -147,7 +147,7 @@ jobs:
       NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
     strategy:
       matrix:
-        node-version: [ 16.x ]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -196,6 +196,3 @@ jobs:
         run: npm run ci:test:run
         env:
           NEXT_PUBLIC_ADAPTABLE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_ADAPTABLE_LICENSE_KEY }}
-
-
-

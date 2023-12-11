@@ -74,7 +74,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
 
     const highlightedLineConfig = linesToHighlight.map((line) => {
       return {
-        className: 'bg-github-highlight bg-opacity-10',
+        className: 'bg-card bg-opacity-10',
         line: Number(line),
       };
     });

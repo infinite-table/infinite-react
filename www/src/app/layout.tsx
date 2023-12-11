@@ -45,7 +45,7 @@ export default function RootLayout({
         <link href="/_pagefind/pagefind-ui.css" rel="stylesheet" />
         <script src="/_pagefind/pagefind-ui.js" type="text/javascript"></script>
         <script
-          src="https://jean-genie-thirty.infinite-table.com/script.js"
+          src="https://cdn.usefathom.com/script.js"
           data-site="GPFWXKHK"
           defer
         ></script>
