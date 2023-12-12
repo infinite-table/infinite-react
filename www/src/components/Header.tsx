@@ -111,21 +111,22 @@ export const NavBarContent = ({
 
   const { toggleOpen, isOpen } = React.useContext(MenuContext);
 
-  const mobileNavButton = (
-    <button
-      type="button"
-      aria-label="Menu"
-      onClick={toggleOpen}
-      className={cn(
-        'flex lg:hidden items-center h-full pl-2 sm:pl-6 pr-0 sm:pr-2',
-        {
-          'text-link mr-0': isOpen,
-        },
-      )}
-    >
-      {!isOpen ? <IconHamburger /> : <IconClose />}
-    </button>
-  );
+  const mobileNavButton =
+    activePage.pricing || activePage.docs || activePage.blog ? (
+      <button
+        type="button"
+        aria-label="Menu"
+        onClick={toggleOpen}
+        className={cn(
+          'flex lg:hidden items-center h-full pl-2 sm:pl-6 pr-0 sm:pr-2',
+          {
+            'text-link mr-0': isOpen,
+          },
+        )}
+      >
+        {!isOpen ? <IconHamburger /> : <IconClose />}
+      </button>
+    ) : null;
   return (
     <ul
       className={`${headerStyles.NavBarCls} ${cmpStyles.SpotlightHorizontalBackgroundCls} flex flex-row items-center `}

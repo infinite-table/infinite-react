@@ -189,41 +189,25 @@
   --hjFeedbackAccentTextColor: rgb(73, 119, 171) !important;
 }
 
-.pagefind-ui__form,
-.pagefind-ui__drawer,
-.pagefind-ui__results-area {
-  background: black;
+.DocSearch-Container.DocSearch-Container {
+  z-index: 100000;
 }
-.pagefind-ui__results {
-  overflow: auto;
-  max-height: calc(50vh - 100px);
+.DocSearch-Modal {
+  z-index: 11111;
 }
-.pagefind-ui__drawer {
-  box-shadow: 0px -1px 5px 2px rgba(66, 153, 225, 0.5);
-  border-radius: 5px;
-  padding-bottom: 20px;
+
+.DocSearch-Button.DocSearch-Button {
+  width: 100%;
+  margin: 0px;
 }
-.pagefind-ui__search-input {
-  height: auto !important;
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  font-weight: 400 !important;
+.DocSearch-Button-Keys.DocSearch-Button-Keys {
+  display: flex;
 }
-.pagefind-ui__form::before {
-  top: 12px !important;
-}
-.pagefind-ui__drawer {
-  bottom: 40px;
-  position: absolute;
-  z-index: 1111;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-body {
-  --pagefind-ui-primary: #eeeeee;
-  --pagefind-ui-text: #eeeeee;
-  --pagefind-ui-background: #152028;
-  --pagefind-ui-border: #152028;
-  --pagefind-ui-tag: #152028;
-  --pagefind-ui-scale: 0.8;
+:root:root {
+  --docsearch-searchbox-background: rgb(52 58 70 / 1);
+  --docsearch-container-background: rgb(52 58 70 / 0.6);
+  --docsearch-primary-color: #149eca;
+  --docsearch-modal-background: #171a21; /*bg-secondary opacity 40%*/
+  --docsearch-footer-background: #23272f; /*bg-secondary opacity 40%*/
+  --docsearch-key-gradient: linear-gradient(-26.5deg, #404756, #23272f);
 }

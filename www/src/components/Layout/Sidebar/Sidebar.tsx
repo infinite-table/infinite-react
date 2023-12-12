@@ -1,9 +1,9 @@
+import { DocSearch } from '@docsearch/react';
 import { AccentButton } from '@www/components/AccentButton';
 
 import { GithubLink, TwitterLink } from '@www/components/Header';
 
 import { SidebarContext } from '@www/components/Layout/useRouteMeta';
-import { PageFindSearch } from '@www/components/PageFindSearch';
 
 import { MenuContext } from '@www/components/useMenu';
 import cn from 'classnames';
@@ -57,8 +57,12 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
       </nav>
 
       <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-black">
-        <div className="hidden lg:block py-3 px-5">
-          <PageFindSearch alwaysShow />
+        <div className="hidden lg:block py-3 px-5 w-full">
+          <DocSearch
+            appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
+            indexName="infinite-table"
+            apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!}
+          />
         </div>
         <div className="flex flex-row mb-5">
           <TwitterLink />

@@ -1,4 +1,6 @@
 import { CSSProperties } from 'react';
+
+import '@docsearch/css';
 import '../styles/index.css';
 import '../styles/fonts.css';
 import '../styles/sandpack.css';
@@ -32,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" style={vars}>
+    <html lang="en" style={vars} data-theme="dark">
       <head>
         <SandpackCSSText />
         <MetaProperties />
@@ -42,8 +44,6 @@ export default function RootLayout({
           <ClientLayout>{children}</ClientLayout>
         </div>
 
-        <link href="/_pagefind/pagefind-ui.css" rel="stylesheet" />
-        <script src="/_pagefind/pagefind-ui.js" type="text/javascript"></script>
         <script
           src="https://cdn.usefathom.com/script.js"
           data-site="GPFWXKHK"

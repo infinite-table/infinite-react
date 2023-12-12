@@ -10,7 +10,7 @@ You can immediately download and use [Infinite Table from the NPM registry](http
 
 <Note>
 
-When using Infinite Table for free, you have access to **all the features** of Infinite Table, but you will see a [Powered by Infinite Table](infinite-table.com) link in the table footer.
+When using Infinite Table for free, you have access to **all the features** of Infinite Table, but you will see a [Powered by Infinite Table](https://infinite-table.com) link in the table footer.
 
 </Note>
 

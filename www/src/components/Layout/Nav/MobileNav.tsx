@@ -11,9 +11,11 @@ import * as React from 'react';
 import { SidebarRouteTree } from '../Sidebar';
 
 import { inferSection } from './inferSection';
+import { DocSearch } from '@docsearch/react';
 
-export function MobileNav(_props: { routeTree: RouteItem[] }) {
+export function MobileNav(props: { routeTree: RouteItem[] }) {
   const pathname = usePathname() || '';
+  const isBlog = pathname.startsWith('/blog');
   const [section, setSection] = React.useState(() => inferSection(pathname));
 
   let tree = null; //props.routeTree;
@@ -29,32 +31,54 @@ export function MobileNav(_props: { routeTree: RouteItem[] }) {
       break;
   }
 
+  if (isBlog) {
+    tree = props.routeTree;
+  }
+
   return (
     <>
       <div
-        className="sticky mt-3 top-0 px-5  bg-black flex justify-end border-b border-border-dark items-center self-center w-full z-100"
+        className="sticky pt-3 top-0 px-5  bg-black flex justify-end border-b border-border-dark items-center self-center w-full z-100"
         style={{
           zIndex: 100,
         }}
       >
-        <TabButton
-          isActive={section === 'learn'}
-          onClick={() => setSection('learn')}
-        >
-          Learn
-        </TabButton>
-        <TabButton
-          isActive={section === 'reference'}
-          onClick={() => setSection('reference')}
-        >
-          Reference
-        </TabButton>
-        <TabButton
-          isActive={section === 'releases'}
-          onClick={() => setSection('releases')}
-        >
-          Releases
-        </TabButton>
+        {isBlog ? (
+          <>
+            <TabButton isActive onClick={() => {}}>
+              Blog
+            </TabButton>
+          </>
+        ) : (
+          <>
+            <TabButton
+              isActive={section === 'learn'}
+              onClick={() => setSection('learn')}
+            >
+              Learn
+            </TabButton>
+            <TabButton
+              isActive={section === 'reference'}
+              onClick={() => setSection('reference')}
+            >
+              Reference
+            </TabButton>
+            <TabButton
+              isActive={section === 'releases'}
+              onClick={() => setSection('releases')}
+            >
+              Releases
+            </TabButton>
+          </>
+        )}
+      </div>
+
+      <div className="MobileNavDocSearchWrapper py-2 px-2 bg-black flex flex-row">
+        <DocSearch
+          appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
+          indexName="infinite-table"
+          apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!}
+        />
       </div>
       <SidebarRouteTree routeTree={tree} isMobile={true} />
     </>

@@ -62,7 +62,7 @@ export default function Nav() {
 
   return (
     <nav
-      className={`sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-4 pr-2 lg:px-5 z-50 `}
+      className={`sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-2 pr-2 lg:px-5 z-50 `}
     >
       <div className="xl:w-full xl:max-w-xs flex items-center">
         {/* <div
@@ -119,7 +119,6 @@ export default function Nav() {
         className="flex items-center h-10 mx-0 w-full lg:hidden justify-end slg:max-w-sm pt-5"
         style={{ marginTop: wwwVars.header.lineHeight }}
       > */}
-      {/* <PageFindSearch /> */}
 
       {/* <AccentButton size="small" className="ml-2 inline-flex" href="/pricing">
           
