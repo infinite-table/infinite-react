@@ -113,8 +113,8 @@ const items: MenuItemDefinition[] = [
   {
     key: 'test',
     label: 'test',
-    onAction(key, x) {
-      console.log(key, x);
+    onAction({ key }) {
+      console.log(key);
     },
     // label: 'test',
   },

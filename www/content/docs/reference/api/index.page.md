@@ -43,6 +43,12 @@ See related <ApiLink name="confirmEdit" /> and <ApiLink name="rejectEdit" />.
 
 </Prop>
 
+<Prop name="hideContextMenu" type="() => void">
+
+> Hides the context menu that's currently displayed (if there's one).
+
+</Prop>
+
 <Prop name="rejectEdit" type="(error: Error) => void">
 
 > Rejects the current edit operation with the specified error and closes the editor.

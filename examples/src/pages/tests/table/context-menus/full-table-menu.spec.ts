@@ -6,6 +6,12 @@ export default test.describe.parallel('Table Context Menu', () => {
     columnModel,
     menuModel,
   }) => {
+    async function showGenericMenu() {
+      return await page.locator('.InfiniteBody').click({
+        button: 'right',
+      });
+    }
+
     await page.waitForInfinite();
 
     let locator = columnModel.getCellLocator({
@@ -31,14 +37,35 @@ export default test.describe.parallel('Table Context Menu', () => {
     expect(await menuModel.getTextForCell('col:firstName')).toBe('hi Marry');
     expect(await menuModel.isMenuOpen()).toBe(true);
 
-    await page.locator('.InfiniteBody').click({
-      button: 'right',
-    });
-
-    expect(await menuModel.getTextForCell('generic2')).toBe(
-      'Generic menu item two',
-    );
+    showGenericMenu();
 
     expect(await menuModel.isMenuOpen()).toBe(true);
+
+    const itemThatHides = page.getByText('Generic menu hides via api call');
+    await itemThatHides.click();
+    expect(await menuModel.isMenuOpen()).toBe(false);
+
+    await showGenericMenu();
+    expect(await menuModel.isMenuOpen()).toBe(true);
+
+    const autoHideItem = page.getByText('Generic menu item with item.autohide');
+    await autoHideItem.click();
+    expect(await menuModel.isMenuOpen()).toBe(false);
+
+    await showGenericMenu();
+    expect(await menuModel.isMenuOpen()).toBe(true);
+    const autoHideItem2 = page.getByText('Generic menu item hide via arg call');
+    await autoHideItem2.click();
+    expect(await menuModel.isMenuOpen()).toBe(false);
+
+    await showGenericMenu();
+    expect(await menuModel.isMenuOpen()).toBe(true);
+    const persistentItem = page.getByText('Generic menu item persistent');
+    await persistentItem.click();
+    expect(await menuModel.isMenuOpen()).toBe(true);
+
+    // click somewhere else to close menu
+    await page.click('body');
+    expect(await menuModel.isMenuOpen()).toBe(false);
   });
 });

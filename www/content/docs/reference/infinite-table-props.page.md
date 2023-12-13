@@ -1969,7 +1969,9 @@ The `getCellContextMenuItems` function can return one of the following:
  * `Array<MenuItem>` - an array of menu items to be displayed in the context menu - each `MenuItem` should have:
    * a unique `key` property,
    * a `label` property with the value to display in the menu cell - it's called `label` because this is the name of the default column in the context menu
-   * an optional `onClick` callback function to handle the click event on the menu item.
+   * an optional `onAction({ key, item, hideMenu: () => void })` callback function to handle the click action on the menu item.
+   * an optional `onClick(event)` callback function to handle the click event on the menu item.
+   * an optional `hideMenuOnAction: boolean` - if `true`, it will close the context menu when the menu item is clicked
 
 <Sandpack title="Using context menus">
 

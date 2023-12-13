@@ -44,6 +44,10 @@ export type MenuActions = ComponentStateActions<MenuState>;
 
 export type MenuApi = {
   focus: VoidFunction;
+  /**
+   * hides this and all parent menus
+   */
+  hideMenu: VoidFunction;
   getMenuId: () => string;
   getParentMenuId: () => string | undefined;
 };

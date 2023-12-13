@@ -68,7 +68,6 @@ The <PropLink name="getCellContextMenuItems" /> function can return one of the f
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
 ```tsx
-
 const getCellContextMenuItems = () => {
   return {
     columns: [
@@ -80,6 +79,10 @@ const getCellContextMenuItems = () => {
         label: 'Welcome',
         icon: '👋',
         key: 'hi',
+        onAction: () => {
+          // do something
+        },
+        hideMenuOnAction: true
       },
       {
         label: 'Convert',
@@ -132,3 +135,32 @@ Right-click outside cells in the table to see a context menu for the table body.
 ```
 
 </Sandpack>
+
+## Hiding the Context Menu
+
+To hide the context menu when you click a menu item, you can use the `hideMenuOnAction` property on the menu item.
+
+Alternatively, you can use the object passed in as a parameter to the `item.onAction` callback function to hide the menu:
+
+
+```tsx {12}
+const getCellContextMenuItems = () => {
+  return {
+    items: [
+      {
+        label: 'Hello',
+        key: 'hi',
+        onAction: ({ key, hideMenu }) => {
+          // do something
+          console.log('Hello')
+
+          // hide the menu
+          hideMenu()
+        }
+      }
+    ]
+  }
+}
+```
+
+The third option is to use the <ApiLink name="hideContextMenu" /> function in the [API](/docs/reference/api).

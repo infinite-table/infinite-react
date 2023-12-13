@@ -65,6 +65,12 @@ type MenuItemSubMenu = Omit<MenuProps, 'children' | 'items'> & {
   items: (MenuItemObject | MenuSeparator)[];
 };
 
+export type MenuItemActionContext = {
+  hideMenu: () => void;
+  key: string;
+  item: MenuItemObject;
+};
+
 export type MenuItemObject = {
   key: string;
   label: NonUndefined<MenuRenderable>;
@@ -75,7 +81,8 @@ export type MenuItemObject = {
   style?: CSSProperties;
   className?: string;
   onClick?: (event: React.MouseEvent) => void;
-  onAction?: (key: string, item: MenuItemObject) => void;
+  onAction?: (params: MenuItemActionContext) => void;
+  hideMenuOnAction?: boolean;
   [k: string]: any;
 };
 

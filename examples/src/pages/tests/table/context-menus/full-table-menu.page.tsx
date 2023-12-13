@@ -88,18 +88,60 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default () => {
-  const getContextMenuItems: InfiniteTablePropGetContextMenuItems<
-    Developer
-  > = ({ column, value }) => {
+  const getContextMenuItems: InfiniteTablePropGetContextMenuItems<Developer> = (
+    { column, value },
+    { api },
+  ) => {
     if (!column) {
       return [
         {
-          label: `Generic menu item one`,
+          label: `Generic menu item persistent`,
           key: 'generic1',
         },
         {
-          label: `Generic menu item two`,
+          label: `Generic menu item hide via arg call`,
+          key: 'generic-arg',
+          onAction: ({ hideMenu }) => {
+            hideMenu();
+          },
+        },
+        {
+          label: `Generic menu hides via api call`,
           key: 'generic2',
+          onAction: () => {
+            api.hideContextMenu();
+          },
+        },
+        {
+          label: `Generic menu item with item.autohide`,
+          key: 'generic3',
+          hideMenuOnAction: true,
+
+          menu: {
+            items: [
+              {
+                label: `Generic menu item with item.autohide - subitem`,
+                key: 'generic4',
+                hideMenuOnAction: true,
+
+                menu: {
+                  onHideIntent: () => {
+                    console.log('onHideIntent submenu for generic4');
+                  },
+                  onHide: () => {
+                    console.log('onHide submenu for generic4');
+                  },
+                  items: [
+                    {
+                      label: `Generic menu item with item.autohide - subitem - subitem`,
+                      key: 'generic5',
+                      hideMenuOnAction: true,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
         },
       ];
     }

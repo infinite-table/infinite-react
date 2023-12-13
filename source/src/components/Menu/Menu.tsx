@@ -39,6 +39,7 @@ function renderSubmenuForItem(
     api: MenuApi;
     parentMenuId: string;
     constrainTo: MenuState['constrainTo'];
+    onHideIntent: Exclude<MenuState['onHideIntent'], undefined>;
     setSubmenuApi: (api: MenuApi) => void;
     setActiveItemKey: (itemKey: string | null) => void;
     setKeyboardActiveItemKey: (itemKey: string | null) => void;
@@ -50,6 +51,7 @@ function renderSubmenuForItem(
     setActiveItemKey,
     setKeyboardActiveItemKey,
     constrainTo,
+    onHideIntent,
     api,
   } = config;
   const overlayId = `${parentMenuId}-submenu`;
@@ -74,6 +76,10 @@ function renderSubmenuForItem(
       onShow={(state, api) => {
         (itemMenu as MenuProps)?.onShow?.(state, api);
         setSubmenuApi(api);
+      }}
+      onHideIntent={(state) => {
+        (itemMenu as MenuProps)?.onHideIntent?.(state);
+        onHideIntent(state);
       }}
       onHide={(state) => {
         if (state.focused) {
@@ -269,6 +275,7 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
           setActiveItemKey,
           setKeyboardActiveItemKey,
           parentMenuId: menuId,
+          onHideIntent: hideAll,
           api,
         });
 
@@ -298,10 +305,18 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
       item.originalMenuItem.onClick(event);
     }
     if (item.originalMenuItem.onAction) {
-      item.originalMenuItem.onAction(item.key, item.originalMenuItem);
+      item.originalMenuItem.onAction({
+        key: item.key,
+        item: item.originalMenuItem,
+        hideMenu: hideAll,
+      });
     }
     if (onAction) {
       onAction(item.key, item.originalMenuItem);
+    }
+
+    if (item.originalMenuItem.hideMenuOnAction) {
+      hideAll();
     }
   };
 
@@ -541,8 +556,14 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
 
   const shouldSelectFirstItemOnFocus = useRef(true);
 
+  const hideAll = useCallback(() => {
+    const state = getState();
+    state.onHideIntent?.(state);
+  }, [getState]);
+
   const [api] = useState(() => {
     const result: MenuApi = {
+      hideMenu: hideAll,
       focus: () => {
         if (domRef.current) {
           domRef.current.focus();
