@@ -67,7 +67,7 @@
     "bump:patch:canary": "npm version prepatch --preid=canary",
     "////": "//",
     "bump:patch": "npm version patch",
-    "bump:minor": "npm version minor",
+    "bump:minor": "npm version minor --force",
     "bump:major": "npm version major"
   },
   "peerDependencies": {
