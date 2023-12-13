@@ -61,14 +61,14 @@
     "release:canary-nobump": "npm run registry-publish-canary",
     "release:nobump": "npm run registry-publish",
     "///": "//",
-    "bump:canary": "npm version prerelease --preid=canary",
-    "bump:major:canary": "npm version premajor --preid=canary",
-    "bump:minor:canary": "npm version preminor --preid=canary",
-    "bump:patch:canary": "npm version prepatch --preid=canary",
+    "bump:canary": "npm version prerelease --preid=canary --force",
+    "bump:major:canary": "npm version premajor --preid=canary --force",
+    "bump:minor:canary": "npm version preminor --preid=canary --force",
+    "bump:patch:canary": "npm version prepatch --preid=canary --force",
     "////": "//",
-    "bump:patch": "npm version patch",
+    "bump:patch": "npm version patch --force",
     "bump:minor": "npm version minor --force",
-    "bump:major": "npm version major"
+    "bump:major": "npm version major --force"
   },
   "peerDependencies": {
     "react": ">=16"
