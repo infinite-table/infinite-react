@@ -304,15 +304,16 @@ export function MenuComponent(props: { domProps: HTMLProps<HTMLDivElement> }) {
     if (item.originalMenuItem.onClick) {
       item.originalMenuItem.onClick(event);
     }
+    const onActionParam = {
+      key: item.key,
+      item: item.originalMenuItem,
+      hideMenu: hideAll,
+    };
     if (item.originalMenuItem.onAction) {
-      item.originalMenuItem.onAction({
-        key: item.key,
-        item: item.originalMenuItem,
-        hideMenu: hideAll,
-      });
+      item.originalMenuItem.onAction(onActionParam);
     }
     if (onAction) {
-      onAction(item.key, item.originalMenuItem);
+      onAction(onActionParam);
     }
 
     if (item.originalMenuItem.hideMenuOnAction) {

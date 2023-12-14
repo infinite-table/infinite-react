@@ -49,7 +49,7 @@ export type MenuProps = {
   onHideIntent?: (state: MenuState) => void;
   bubbleActionsFromSubmenus?: boolean;
   addSubmenuColumnIfNeeded?: boolean;
-  onAction?: (key: string, item: MenuItemObject) => void;
+  onAction?: (param: MenuItemActionContext) => void;
   parentMenuId?: string;
   parentMenuItemKey?: string;
   autoFocus?: boolean;
