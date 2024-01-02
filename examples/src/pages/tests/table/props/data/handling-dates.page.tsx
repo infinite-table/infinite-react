@@ -19,10 +19,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
   firstName: { field: 'firstName', header: 'First Name' },
   birthDate: {
     field: 'birthDate',
-    header: 'Birth Date',
-    renderValue: ({ value }: { value: Date }) => {
-      return value.toISOString().split('T')[0];
-    },
+    header: 'Birth Date as Date',
+    // renderValue: ({ value }: { value: Date }) => {
+    //   return value.toISOString().split('T')[0];
+    // },
     type: 'date',
   },
   salary: {
