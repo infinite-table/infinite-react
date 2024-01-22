@@ -1,4 +1,7 @@
+import { dbg } from '../../utils/debug';
 import { DeepMap } from '../../utils/DeepMap';
+
+const debug = dbg('CellSelectionState');
 
 export type CellSelectionPosition<
   ROW_PRIMARY_KEY_TYPE = any,
@@ -79,7 +82,7 @@ export class CellSelectionState {
     const wildcardRow = rowId === this.wildcard;
     const wildcardColumn = colId === this.wildcard;
 
-    const isSelected = this.isCellSelected(rowId, colId);
+    const isSelected = this.isCellSelected_Internal(rowId, colId);
 
     if (isSelected === selected) {
       return;
@@ -372,7 +375,76 @@ export class CellSelectionState {
     this.defaultSelection = stateObject.defaultSelection;
   }
 
+  /**
+   * Returns whether there is at least one selected cell in the row
+   *
+   * @param rowId the row id
+   * @param columnIds the columns currently available in the grid
+   * @returns boolean
+   */
+  public isCellSelectionInRow(rowId: any, columnIds: string[]): boolean {
+    if (this.defaultSelection) {
+      const cols = this.deselectedRowsToColumns.get(rowId);
+
+      if (cols) {
+        if (cols.has(this.wildcard)) {
+          // all the columns in this row are deselected
+          // so we need to check if there's one explicitly selected
+          const explicitlySelectedCols = this.selectedRowsToColumns.get(rowId);
+
+          return explicitlySelectedCols && explicitlySelectedCols.size > 0
+            ? columnIds.some((colId) => explicitlySelectedCols.has(colId))
+            : false;
+        }
+
+        // if not all columns are marked as deselected
+        // we can return true
+        return columnIds.some((colId) => !cols.has(colId));
+      }
+      return true;
+    }
+
+    // by default the cells are deselected
+
+    // so check the selected cols for this row
+    const cols = this.selectedRowsToColumns.get(rowId);
+    if (cols) {
+      if (cols.has(this.wildcard)) {
+        // all the columns in this row are selected via wildcard
+        // so we need to check if they are not all explicitly deselected
+        const explicitlyDeselectedCols =
+          this.deselectedRowsToColumns.get(rowId);
+
+        if (explicitlyDeselectedCols && explicitlyDeselectedCols.size > 0) {
+          const allDeselected = columnIds.every((colId) =>
+            explicitlyDeselectedCols.has(colId),
+          );
+          return !allDeselected;
+        }
+        return true;
+      }
+
+      // if at least one column is selected
+      // we can return true
+      return columnIds ? columnIds.some((colId) => cols.has(colId)) : false;
+    }
+    return false;
+  }
+
   public isCellSelected(rowId: any, colId: string): boolean {
+    if (rowId === this.wildcard || colId === this.wildcard) {
+      console.error(
+        `CellSelectionState.isCellSelected should not be called with wildcard`,
+      );
+      debug(
+        `CellSelectionState.isCellSelected should not be called with wildcard`,
+      );
+      return false;
+    }
+
+    return this.isCellSelected_Internal(rowId, colId);
+  }
+  private isCellSelected_Internal(rowId: any, colId: string): boolean {
     const cacheKey = [rowId, colId];
     const { cache } = this;
     const selected = cache.get(cacheKey);

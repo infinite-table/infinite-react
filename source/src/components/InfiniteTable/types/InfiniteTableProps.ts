@@ -72,14 +72,17 @@ export type InfiniteTablePropColumnPinning = Record<
   true | 'start' | 'end'
 >;
 
-export type InfiniteTableRowStyleFnParams<T> = {
+export type InfiniteTableRowStylingFnParams<T> = {
   rowIndex: number;
+  rowHasSelectedCells: boolean;
+  visibleColumnIds: string[];
+  allColumnIds: string[];
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 export type InfiniteTableRowStyleFn<T> = (
-  params: InfiniteTableRowStyleFnParams<T>,
+  params: InfiniteTableRowStylingFnParams<T>,
 ) => undefined | React.CSSProperties;
 export type InfiniteTableRowClassNameFn<T> = (
-  params: InfiniteTableRowStyleFnParams<T>,
+  params: InfiniteTableRowStylingFnParams<T>,
 ) => string | undefined;
 export type InfiniteTableCellClassNameFn<T> =
   InfiniteTableColumn<T>['className'];
@@ -765,7 +768,7 @@ export interface InfiniteTableProps<T> {
   rowProps?:
     | React.HTMLProps<HTMLDivElement>
     | ((
-        rowArgs: InfiniteTableRowStyleFnParams<T>,
+        rowArgs: InfiniteTableRowStylingFnParams<T>,
       ) => React.HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;

@@ -169,14 +169,14 @@ export default test.describe.parallel('CellSelectionState', () => {
     state.deselectColumn('c2');
     expect(state.isCellSelected(1, 'c2')).toBe(false);
     expect(state.isCellSelected(1, 'c2')).toBe(false);
-    expect(state.isCellSelected('*', 'c2')).toBe(false);
+
     expect(state.isCellSelected(3, 'c2')).toBe(false);
 
     state.selectColumn('c2');
     expect(state.isCellSelected(1, 'c2')).toBe(true);
     expect(state.isCellSelected(2, 'c2')).toBe(true);
     expect(state.isCellSelected(3, 'c2')).toBe(true);
-    expect(state.isCellSelected('*', 'c2')).toBe(true);
+
     expect(state.isCellSelected(4, 'c2')).toBe(true);
     expect(state.isCellSelected(5, 'c2')).toBe(true);
   });
@@ -215,5 +215,121 @@ export default test.describe.parallel('CellSelectionState', () => {
     expect(state.isCellSelected(1, 'c2')).toBe(false);
     expect(state.isCellSelected(2, 'c4')).toBe(false);
     expect(state.isCellSelected(3, 'c4')).toBe(true);
+  });
+
+  test('defaultSelection: true - isCellSelectionInRow should work fine - case 1', () => {
+    const state = new CellSelectionState({
+      defaultSelection: true,
+      deselectedCells: [
+        [0, 'firstName'],
+        [1, 'firstName'],
+        [1, 'age'],
+        [1, 'lastName'],
+        [5, 'lastName'],
+        [3, '*'],
+        [7, '*'],
+        [7, 'age'],
+      ],
+      selectedCells: [[3, 'age']],
+    });
+
+    const cols = ['firstName', 'lastName', 'age'];
+    expect(state.isCellSelectionInRow(0, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(1, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(7, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(3, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(5111, cols)).toBe(true);
+  });
+
+  test('defaultSelection: true - isCellSelectionInRow should work fine - case 2', () => {
+    const state = new CellSelectionState({
+      defaultSelection: true,
+      selectedCells: [
+        [0, 'firstName'],
+        [1, 'firstName'],
+        [1, 'age'],
+        [1, 'lastName'],
+        [5, 'lastName'],
+        [3, 'age'],
+        [7, '*'],
+        [7, 'age'],
+      ],
+      deselectedCells: [
+        [3, '*'],
+        [13, '*'],
+      ],
+    });
+
+    const cols = ['firstName', 'lastName', 'age'];
+    expect(state.isCellSelectionInRow(0, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(1, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(7, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(3, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(5111, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(13, cols)).toBe(false);
+  });
+
+  test('defaultSelection: false - isCellSelectionInRow should work fine - case 1', () => {
+    const state = new CellSelectionState({
+      defaultSelection: false,
+      deselectedCells: [
+        [0, 'firstName'],
+        [1, 'firstName'],
+        [1, 'age'],
+        [1, 'lastName'],
+        [5, 'lastName'],
+        [3, '*'],
+        [7, '*'],
+        [7, 'age'],
+        [8, 'age'],
+        [8, 'firstName'],
+      ],
+      selectedCells: [
+        [3, 'age'],
+        [8, '*'],
+        [13, '*'],
+      ],
+    });
+
+    const cols = ['firstName', 'lastName', 'age'];
+    expect(state.isCellSelectionInRow(0, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(1, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(7, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(3, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(5111, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(13, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(8, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(8, ['age', 'firstName'])).toBe(false);
+  });
+
+  test('defaultSelection: false - isCellSelectionInRow should work fine - case 2', () => {
+    const state = new CellSelectionState({
+      defaultSelection: false,
+      selectedCells: [
+        [0, 'firstName'],
+        [1, 'firstName'],
+        [1, 'age'],
+        [1, 'lastName'],
+        [5, 'lastName'],
+        [3, '*'],
+        [7, '*'],
+      ],
+      deselectedCells: [
+        [3, 'age'],
+        [13, '*'],
+        [7, 'age'],
+        [7, 'firstName'],
+        [7, 'lastName'],
+      ],
+    });
+
+    const cols = ['firstName', 'lastName', 'age'];
+    expect(state.isCellSelectionInRow(0, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(1, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(3, cols)).toBe(true);
+    expect(state.isCellSelectionInRow(5111, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(7, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(7, cols)).toBe(false);
+    expect(state.isCellSelectionInRow(7, [...cols, 'x'])).toBe(true);
   });
 });

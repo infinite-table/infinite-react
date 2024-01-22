@@ -141,11 +141,12 @@ export function getColumnValueToEdit<T>(options: {
 export function getColumnRenderingParams<T>(options: {
   column: InfiniteTableComputedColumn<T>;
   rowInfo: InfiniteTableRowInfo<T>;
+  visibleColumnsIds: string[];
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   context: InfiniteTableColumnRenderingContext<T>;
 }) {
-  const { column, context, rowInfo } = options;
+  const { column, context, rowInfo, visibleColumnsIds } = options;
   const groupByColumnReference = getGroupByColumnReference({
     rowInfo,
     column,
@@ -171,6 +172,7 @@ export function getColumnRenderingParams<T>(options: {
   const stylingParam = {
     column: options.column,
     inEdit,
+    rowHasSelectedCells: false,
     ...formattedValueContext,
     editError:
       editingCell &&
@@ -181,6 +183,14 @@ export function getColumnRenderingParams<T>(options: {
         ? editingCell.accepted
         : undefined,
   };
+  // we define it initially as false so TS doesn't complain
+  // and then make it a getter
+  // so it can be computed lazily - just when the user calls and needs this
+  Object.defineProperty(stylingParam, 'rowHasSelectedCells', {
+    get() {
+      return rowInfo.hasSelectedCells(visibleColumnsIds);
+    },
+  });
   const align =
     typeof column.align === 'function'
       ? column.align({ isHeader: false, ...stylingParam })
@@ -220,6 +230,7 @@ export function getColumnRenderParam<T>(options: {
   align: InfiniteTableColumnAlignValues;
   verticalAlign: InfiniteTableColumnVerticalAlignValues;
   rowInfo: InfiniteTableRowInfo<T>;
+  visibleColumnsIds: string[];
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
@@ -232,6 +243,7 @@ export function getColumnRenderParam<T>(options: {
     rowInfo,
     align,
     verticalAlign,
+    visibleColumnsIds,
     columnsMap,
     fieldsToColumn,
     formattedValueContext,
@@ -264,6 +276,8 @@ export function getColumnRenderParam<T>(options: {
     align,
     verticalAlign,
     cellSelected,
+
+    rowHasSelectedCells: false,
 
     ...formattedValueContext,
     editError:
@@ -342,6 +356,12 @@ export function getColumnRenderParam<T>(options: {
     rootGroupBy: dataSourceState.groupBy,
     pivotBy: dataSourceState.pivotBy,
   };
+
+  Object.defineProperty(renderParam, 'rowHasSelectedCells', {
+    get() {
+      return rowInfo.hasSelectedCells(visibleColumnsIds);
+    },
+  });
 
   return renderParam;
 }

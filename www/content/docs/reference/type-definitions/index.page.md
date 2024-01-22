@@ -24,7 +24,54 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 </Note>
 
 
-<PropTable searchPlaceholder="Type to filter type definitions">
+<PropTable searchPlaceholder="Type to filter type definitions" sort>
+
+<Prop name="InfiniteTableColumnStylingFnParams" generic>
+
+> Represents runtime information passed to many styling functions called when rendering the column cells
+
+This object is passed at runtime during the rendering of column cells.
+
+It is an object with the following properties:
+ - `column` - see <TypeLink name="InfiniteTableComputedColumn" /> for details
+ - `rowInfo` - see <TypeLink name="InfiniteTableRowInfo" /> for details
+ - `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
+ - `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
+ - `inEdit`: `boolean`
+ - `editError`: `Error`
+ - `rowSelected`: `boolean | null;`
+ - `rowActive`: `boolean | null`
+ - `rowHasSelectedCells`: `boolean` - if the current row has selected cells or not
+
+<Note>
+
+The following functions all have this as first argument:
+ - <PropLink name="columns.style" />
+ - <PropLink name="columns.className" />
+
+</Note>
+
+</Prop>
+<Prop name="InfiniteTableStylingFnParams" generic>
+
+> Represents runtime information passed to many styling functions called when rendering rows/cells
+
+This object is passed at runtime during the rendering of grid rows/cells.
+
+It is an object with the following properties:
+ - `rowInfo` - see <TypeLink name="InfiniteTableRowInfo" /> for details
+ - `rowIndex`: `number` - the index of the row
+ - `rowHasSelectedCells`: `boolean` - if the current row has selected cells or not
+
+<Note>
+
+The following functions all have this as first argument:
+ - <PropLink name="rowStyle" />
+ - <PropLink name="rowClassName" />
+ - <PropLink name="rowProps" />
+
+</Note>
+</Prop>
 
 <Prop name="DataSourceSingleSortInfo" generic>
 

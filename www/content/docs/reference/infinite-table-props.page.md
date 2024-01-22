@@ -331,16 +331,18 @@ The following properties are available:
 </Sandpack>
 </Prop>
 
-<Prop name="columns.className" type="string | (args) => string">
+<Prop name="columns.className" type="string | (param: InfiniteTableColumnStyleFnParams) => string">
 
 > Controls styling via CSS classes for the column. Can be a `string` or a function returning a `string` (a valid className).
 
-If defined as a function, it accepts an object as a parameter, which has the following properties:
+
+If defined as a function, it accepts an object as a parameter (of type <TypeLink name="InfiniteTableColumnStylingFnParams" />), which has the following properties:
 
 - `column` - the current column where the className is being applied
 - `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
 - `rowInfo` - the information about the current row - see [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 - `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
+- ... and more, see <TypeLink name="InfiniteTableColumnStylingFnParams" /> for details
 
 <Note>
 
@@ -1360,16 +1362,17 @@ For group columns (and more specifically, when <PropLink name="groupRenderStrate
 
 </Prop>
 
-<Prop name="columns.style" type="CSSProperties | (args) => CSSProperties">
+<Prop name="columns.style" type="CSSProperties | (param: InfiniteTableColumnStyleFnParams) => CSSProperties">
 
 > Controls styling for the column. Can be a style object or a function returning a style object.
 
-If defined as a function, it accepts an object as a parameter, which has the following properties:
+If defined as a function, it accepts an object as a parameter (of type <TypeLink name="InfiniteTableColumnStylingFnParams" />), which has the following properties:
 
 - `column` - the current column where the style is being applied
 - `data` - the data object for the current row. The type of this object is `DATA_TYPE | Partial<DATA_TYPE> | null`. For regular rows, it will be of type `DATA_TYPE`, while for group rows it will be `Partial<DATA_TYPE>`. For rows not yet loaded (because of batching being used), it will be `null`.
 - `rowInfo` - the information about the current row - see [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 - `value` - the underlying value of the current cell - will generally be `data[column.field]`, if the column is bound to a `field` property
+- ... and more, see <TypeLink name="InfiniteTableColumnStylingFnParams" /> for details
 
 <Note>
 
@@ -2660,22 +2663,25 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 </Prop>
 
-<Prop name="rowClassName" type="string|({data, rowInfo, rowIndex}) => string">
+<Prop name="rowClassName" type="string|(params:InfiniteTableStylingFnParams) => string">
 
 > Specifies the className to be applied to all rows or conditionally to certain rows.
 
-The `rowClassName` prop can be either a string or a function that returns a string. When used as a function, the parameters of the function are the same as the parameters of the <PropLink name="rowStyle" /> function.
+The `rowClassName` prop can be either a string or a function that returns a string. 
+
+When used as a function, it's called with a param of type <TypeLink name="InfiniteTableStylingFnParams" />, just like the <PropLink name="rowStyle" /> function.
 
 </Prop>
 
-<Prop name="rowStyle" type="CSSProperties|({data, rowInfo, rowIndex}) => CSSProperties">
+<Prop name="rowStyle" type="CSSProperties|(params:InfiniteTableStylingFnParams) => CSSProperties">
 
 > Specifies the style object to be applied to all rows or conditionally to certain rows.
 
-The `rowStyle` prop can be either an object (typed as `React.CSSProperties`) or a function
+The `rowStyle` prop can be either an object (typed as `React.CSSProperties`) or a function that is called with a param of type <TypeLink name="InfiniteTableStylingFnParams" />
 
 ### `rowStyle` as a function
 
+When `rowStyle` is a function, it's called with a param of type <TypeLink name="InfiniteTableStylingFnParams" />
 
 When Infinite Table calls `rowStyle`, the `data` property can be null - this is the case for grouped rows.
 

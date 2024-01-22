@@ -15,10 +15,10 @@ import type {
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnClassName,
-  InfiniteTableColumnStyleFnParams,
+  InfiniteTableColumnStylingFnParams,
   InfiniteTableColumnStyle,
 } from '../../types/InfiniteTableColumn';
-import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
+import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
 import {
@@ -96,7 +96,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
 
 function applyColumnClassName<T>(
   columnClassName: InfiniteTableColumnClassName<T>,
-  param: InfiniteTableColumnStyleFnParams<T>,
+  param: InfiniteTableColumnStylingFnParams<T>,
 ) {
   const colClassName: undefined | string = columnClassName
     ? typeof columnClassName === 'function'
@@ -110,7 +110,7 @@ function applyColumnClassName<T>(
 function applyColumnStyle<T>(
   existingStyle: React.CSSProperties | undefined,
   columnStyle: InfiniteTableColumnStyle<T>,
-  param: InfiniteTableColumnStyleFnParams<T>,
+  param: InfiniteTableColumnStylingFnParams<T>,
 ) {
   return typeof columnStyle === 'function'
     ? { ...existingStyle, ...columnStyle(param) }
@@ -175,10 +175,13 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     dataSourceApi,
   };
 
+  const visibleColumnsIds = computed.computedVisibleColumns.map((x) => x.id);
+
   const colRenderingParams = getColumnRenderingParams({
     column,
     rowInfo,
     columnsMap,
+    visibleColumnsIds,
     fieldsToColumn,
     context: renderingContext,
   });
@@ -389,10 +392,24 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     }),
   ]);
 
-  const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
+  const visibleColumnIds = computed.computedVisibleColumns.map((x) => x.id);
+  const allColumnIds = computed.computedColumnOrder;
+  const rowPropsAndStyleArgs: InfiniteTableRowStylingFnParams<T> = {
     ...formattedValueContext,
+    visibleColumnIds,
+    allColumnIds,
     rowIndex,
+    // we put it as false by default
+    rowHasSelectedCells: false,
   };
+
+  // and then make it a getter
+  // so it can be computed lazily - just when the user calls and needs this
+  Object.defineProperty(rowPropsAndStyleArgs, 'rowHasSelectedCells', {
+    get() {
+      return rowInfo.hasSelectedCells(visibleColumnIds);
+    },
+  });
 
   const rowComputedClassName =
     typeof rowClassName === 'function'

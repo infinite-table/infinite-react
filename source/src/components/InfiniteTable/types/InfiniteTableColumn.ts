@@ -112,6 +112,7 @@ export type InfiniteTableColumnRenderParamBase<
   toggleCurrentGroupRowSelection: () => void;
   toggleCurrentRowSelection: () => void;
 
+  rowHasSelectedCells: boolean;
   cellSelected: boolean;
   selectCurrentRow: () => void;
   selectRow: InfiniteTableSelectRowFn;
@@ -298,15 +299,16 @@ export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
   'render' | 'renderValue' | 'field' | 'valueGetter' | 'valueFormatter'
 >;
 
-export type InfiniteTableColumnStyleFnParams<T> = {
+export type InfiniteTableColumnStylingFnParams<T> = {
   value: Renderable;
   column: InfiniteTableComputedColumn<T>;
   inEdit: boolean;
+  rowHasSelectedCells: boolean;
   editError: InfiniteTableColumnRenderParamBase<T>['editError'];
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 
 export type InfiniteTableColumnStyleFn<T> = (
-  params: InfiniteTableColumnStyleFnParams<T>,
+  params: InfiniteTableColumnStylingFnParams<T>,
 ) => undefined | React.CSSProperties;
 
 export type InfiniteTableColumnHeaderClassNameFn<T> = (
@@ -318,7 +320,7 @@ export type InfiniteTableColumnHeaderStyleFn<T> = (
 ) => undefined | React.CSSProperties;
 
 export type InfiniteTableColumnClassNameFn<T> = (
-  params: InfiniteTableColumnStyleFnParams<T>,
+  params: InfiniteTableColumnStylingFnParams<T>,
 ) => undefined | string;
 
 export type InfiniteTableColumnStyle<T> =
@@ -339,7 +341,7 @@ export type InfiniteTableColumnAlignFn<T> = (
 
 export type InfiniteTableColumnAlignFnParams<T> = XOR<
   { isHeader: true; column: InfiniteTableComputedColumn<T> },
-  InfiniteTableColumnStyleFnParams<T> & { isHeader: false }
+  InfiniteTableColumnStylingFnParams<T> & { isHeader: false }
 >;
 
 export type InfiniteTableColumnVerticalAlignFn<T> = (

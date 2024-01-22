@@ -93,6 +93,7 @@ export type InfiniteTable_RowInfoBase<_T> = {
   indexInAll: number;
   rowSelected: boolean | null;
   isCellSelected: (columnId: string) => boolean;
+  hasSelectedCells: (columnIds: string[]) => boolean;
 };
 
 export type InfiniteTable_RowInfoCellSelection = {
@@ -1048,6 +1049,7 @@ function getEnhancedGroupData<DataType>(
     collapsed: false,
     dataSourceHasGrouping: true,
     isCellSelected: returnFalse,
+    hasSelectedCells: returnFalse,
     selfLoaded,
     error: options.error,
 
@@ -1264,6 +1266,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   id: itemId,
                   data: item,
                   isCellSelected: returnFalse,
+                  hasSelectedCells: returnFalse,
                   dataSourceHasGrouping: true,
                   isGroupRow: false,
                   selfLoaded: !!item,

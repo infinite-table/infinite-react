@@ -91,6 +91,7 @@ function toRowInfo<T>(
     selfLoaded: true,
     rowSelected: false,
     isCellSelected: returnFalse,
+    hasSelectedCells: returnFalse,
   };
   if (isRowSelected) {
     rowInfo.rowSelected = isRowSelected(rowInfo);
@@ -99,6 +100,9 @@ function toRowInfo<T>(
   if (cellSelectionState) {
     rowInfo.isCellSelected = (colId: string) => {
       return cellSelectionState!.isCellSelected(rowInfo.id, colId);
+    };
+    rowInfo.hasSelectedCells = (columnIds: string[]) => {
+      return cellSelectionState.isCellSelectionInRow(rowInfo.id, columnIds);
     };
   }
 
@@ -301,6 +305,7 @@ export function concludeReducer<T>(params: {
   const shouldGroup = groupBy.length > 0 || !!pivotBy;
   const selectionDepsChanged = haveDepsChanged(previousState, state, [
     'rowSelection',
+    'cellSelection',
     'isRowSelected',
     'originalLazyGroupDataChangeDetect',
   ]);

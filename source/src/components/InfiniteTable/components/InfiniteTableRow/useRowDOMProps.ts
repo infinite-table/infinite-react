@@ -10,7 +10,7 @@ import {
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { ThemeVars } from '../../theme.css';
-import { InfiniteTableRowStyleFnParams } from '../../types/InfiniteTableProps';
+import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
 import { InfiniteTableState } from '../../types/InfiniteTableState';
 
 import {
@@ -60,7 +60,7 @@ export function useRowDOMProps<T>(
     ? { data: rowInfo.data, rowInfo }
     : { data: rowInfo.data, rowInfo };
 
-  const rowPropsAndStyleArgs: InfiniteTableRowStyleFnParams<T> = {
+  const rowPropsAndStyleArgs: InfiniteTableRowStylingFnParams<T> = {
     ...rest,
     rowIndex,
   };
