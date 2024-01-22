@@ -240,9 +240,6 @@ function App() {
       <div onContextMenu={onContextMenu} data-context-menu>
         <Menu
           portalContainer={'#portal'}
-          onAction={(key, x) => {
-            console.log(key, x, 'menu');
-          }}
           items={items}
           style={{
             border: '3px solid magenta',
