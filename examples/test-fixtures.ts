@@ -27,6 +27,7 @@ export type { Page, ElementHandle, Locator, Response };
 type TestExtras = {
   waitForInfinite: (extraTimeout?: number) => Promise<void>;
   waitForInfiniteSelector: () => Promise<void>;
+  waitForInfiniteReady: (extraTimeout?: number) => Promise<void>;
   load: () => Promise<void>;
 };
 
@@ -81,6 +82,15 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
       await page.load();
       await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
       await page.waitForInfiniteSelector();
+
+      if (extraTimeout) {
+        await page.waitForTimeout(extraTimeout);
+      }
+    };
+
+    page.waitForInfiniteReady = async (extraTimeout?: number) => {
+      await page.load();
+      await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
 
       if (extraTimeout) {
         await page.waitForTimeout(extraTimeout);

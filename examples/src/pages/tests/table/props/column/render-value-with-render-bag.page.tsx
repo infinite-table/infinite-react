@@ -38,8 +38,6 @@ const columns = new Map<string, InfiniteTableColumn<Employee>>([
       field: 'firstName',
       header: 'First Name',
       renderValue: (params) => {
-        debugger;
-        // console.log('renderBag.value', params.renderBag.value);
         return <button data-name="target">x {params.renderBag.value}</button>;
       },
     },

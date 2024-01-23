@@ -360,6 +360,40 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 </Sandpack>
 </Prop>
 
+
+<Prop name="components">
+
+> Components to override the default ones used by the DataGrid.
+
+The following components can be overridden:
+
+ - `LoadMask` - see <PropLink name="components.LoadMask" />
+ - `CheckBox`
+ - `Menu`
+ - `MenuIcon`
+
+</Prop>
+
+<Prop name="components.LoadMask">
+
+> Allows customising the `LoadMask` displayed over the DataGrid when it's loading data.
+
+<Note>
+
+To better test this out, you can use the controlled <DPropLink name="loading" /> prop on the `<DataSource />`
+</Note>
+
+For more components that can be overriden, see <PropLink name="components" />
+
+<Sandpack title="Custom LoadMask component">
+
+```tsx file="load-mask-example.page.tsx"
+```
+
+</Sandpack>
+
+
+</Prop>
 <Prop name="columns.components">
 
 > Specifies custom React components to use for column cells or header
