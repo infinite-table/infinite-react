@@ -278,6 +278,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   // so let's only execute it once
   const renderChildren = useCallback(
     once(() => {
+      // seems like the "once" is not enough in certain cases
+      const renderParam = {
+        ...renderParams,
+        renderBag: {
+          ...renderParams.renderBag,
+        },
+      } as InfiniteTableColumnCellContextType<T>;
+
       if (hidden) {
         return null;
       }
