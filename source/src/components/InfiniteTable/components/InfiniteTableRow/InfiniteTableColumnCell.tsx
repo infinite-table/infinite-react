@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useCallback, useContext, useMemo } from 'react';
+import { once } from 'source/src/utils/DeepMap/once';
+// const once = (fn: Function) => fn;
 
 import { join } from '../../../../utils/join';
-// import { once } from '../../../../utils/DeepMap/once';
-// const once = (fn: Function) => fn;
 
 import { stripVar } from '../../../../utils/stripVar';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
@@ -275,45 +275,24 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     </CellEditorContextComponent>
   ) : null;
 
-  const renderChildren = useCallback(() => {
-    if (hidden) {
-      return null;
-    }
+  // for whatever reason (React!!!), this is called twice
+  // and since this function mutates the renderParam object
+  // we get unwanted side effects
+  // so let's only execute it once
+  const renderChildren = useCallback(
+    once(() => {
+      if (hidden) {
+        return null;
+      }
 
-    if (inEdit) {
-      return null;
-    }
+      if (inEdit) {
+        return null;
+      }
 
-    if (renderFunctions.renderGroupIcon) {
-      renderParam.renderBag.groupIcon = (
-        <RenderCellHookComponent
-          render={renderFunctions.renderGroupIcon}
-          renderParam={{
-            ...renderParam,
-            renderBag: { ...renderParam.renderBag },
-          }}
-        />
-      );
-    }
-    if (
-      renderFunctions.renderSelectionCheckBox &&
-      selectionMode == 'multi-row'
-    ) {
-      // make selectionCheckBox available in the render bag
-      // when we have column.renderSelectionCheckBox defined as a function
-      // as people might want to use the default value
-      // and enhance it
-      renderParam.renderBag.selectionCheckBox = (
-        <RenderCellHookComponent
-          render={defaultRenderSelectionCheckBox}
-          renderParam={renderParam}
-        />
-      );
-
-      if (renderFunctions.renderSelectionCheckBox !== true) {
-        renderParam.renderBag.selectionCheckBox = (
+      if (renderFunctions.renderGroupIcon) {
+        renderParam.renderBag.groupIcon = (
           <RenderCellHookComponent
-            render={renderFunctions.renderSelectionCheckBox}
+            render={renderFunctions.renderGroupIcon}
             renderParam={{
               ...renderParam,
               renderBag: { ...renderParam.renderBag },
@@ -321,91 +300,119 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           />
         );
       }
-    }
+      if (
+        renderFunctions.renderSelectionCheckBox &&
+        selectionMode == 'multi-row'
+      ) {
+        // make selectionCheckBox available in the render bag
+        // when we have column.renderSelectionCheckBox defined as a function
+        // as people might want to use the default value
+        // and enhance it
+        renderParam.renderBag.selectionCheckBox = (
+          <RenderCellHookComponent
+            render={defaultRenderSelectionCheckBox}
+            renderParam={renderParam}
+          />
+        );
 
-    if (renderFunctions.renderValue) {
-      renderParam.renderBag.value = (
-        <RenderCellHookComponent
-          render={renderFunctions.renderValue}
-          renderParam={{
-            ...renderParam,
-            renderBag: { ...renderParam.renderBag },
-          }}
-        />
+        if (renderFunctions.renderSelectionCheckBox !== true) {
+          renderParam.renderBag.selectionCheckBox = (
+            <RenderCellHookComponent
+              render={renderFunctions.renderSelectionCheckBox}
+              renderParam={{
+                ...renderParam,
+                renderBag: { ...renderParam.renderBag },
+              }}
+            />
+          );
+        }
+      }
+
+      if (renderFunctions.renderValue) {
+        renderParam.renderBag.value = (
+          <RenderCellHookComponent
+            render={renderFunctions.renderValue}
+            renderParam={{
+              ...renderParam,
+              renderBag: { ...renderParam.renderBag },
+            }}
+          />
+        );
+      }
+
+      if (rowInfo.isGroupRow && renderFunctions.renderGroupValue) {
+        renderParam.renderBag.value = (
+          <RenderCellHookComponent
+            render={renderFunctions.renderGroupValue}
+            renderParam={{
+              ...renderParam,
+              renderBag: { ...renderParam.renderBag },
+            }}
+          />
+        );
+      }
+      if (!rowInfo.isGroupRow && renderFunctions.renderLeafValue) {
+        renderParam.renderBag.value = (
+          <RenderCellHookComponent
+            render={renderFunctions.renderLeafValue}
+            renderParam={{
+              ...renderParam,
+              renderBag: { ...renderParam.renderBag },
+            }}
+          />
+        );
+      }
+
+      renderParamRef.current = renderParam;
+
+      let valueToRender = renderParam.renderBag.value;
+
+      // add this in order to make date rendering work without any additional code
+      if (valueToRender instanceof Date) {
+        valueToRender = valueToRender.toLocaleDateString();
+      }
+      const all = (
+        <>
+          {align !== 'end' ? renderParam.renderBag.groupIcon : null}
+          {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
+          {valueToRender}
+
+          {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
+          {align === 'end' ? renderParam.renderBag.groupIcon : null}
+        </>
       );
-    }
 
-    if (rowInfo.isGroupRow && renderFunctions.renderGroupValue) {
-      renderParam.renderBag.value = (
-        <RenderCellHookComponent
-          render={renderFunctions.renderGroupValue}
-          renderParam={{
-            ...renderParam,
-            renderBag: { ...renderParam.renderBag },
-          }}
-        />
-      );
-    }
-    if (!rowInfo.isGroupRow && renderFunctions.renderLeafValue) {
-      renderParam.renderBag.value = (
-        <RenderCellHookComponent
-          render={renderFunctions.renderLeafValue}
-          renderParam={{
-            ...renderParam,
-            renderBag: { ...renderParam.renderBag },
-          }}
-        />
-      );
-    }
+      if (column.render) {
+        return (
+          <RenderCellHookComponent
+            render={column.render}
+            renderParam={{
+              ...renderParam,
+              renderBag: { ...renderParam.renderBag, all },
+            }}
+          />
+        );
+      }
 
-    renderParamRef.current = renderParam;
-
-    let valueToRender = renderParam.renderBag.value;
-
-    // add this in order to make date rendering work without any additional code
-    if (valueToRender instanceof Date) {
-      valueToRender = valueToRender.toLocaleDateString();
-    }
-    const all = (
-      <>
-        {align !== 'end' ? renderParam.renderBag.groupIcon : null}
-        {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
-        {valueToRender}
-
-        {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
-        {align === 'end' ? renderParam.renderBag.groupIcon : null}
-      </>
-    );
-
-    if (column.render) {
-      return (
-        <RenderCellHookComponent
-          render={column.render}
-          renderParam={{
-            ...renderParam,
-            renderBag: { ...renderParam.renderBag, all },
-          }}
-        />
-      );
-    }
-
-    return all;
-  }, [
-    column,
-    hidden,
-    inEdit,
-    ...objectValuesExcept(renderParam, {
-      renderBag: true,
-      selectCell: true,
-      deselectCell: true,
-      selectCurrentRow: true,
-      deselectCurrentRow: true,
-      toggleCurrentGroupRow: true,
-      toggleCurrentRowSelection: true,
-      toggleCurrentGroupRowSelection: true,
-      rowHasSelectedCells: true,
+      return all;
     }),
-  ]);
+    [
+      column,
+      hidden,
+      inEdit,
+      ...objectValuesExcept(renderParam, {
+        renderBag: true,
+        selectCell: true,
+        deselectCell: true,
+        selectCurrentRow: true,
+        deselectCurrentRow: true,
+        toggleCurrentGroupRow: true,
+        toggleCurrentRowSelection: true,
+        toggleCurrentGroupRowSelection: true,
+        rowHasSelectedCells: true,
+      }),
+    ],
+  );
 
   const visibleColumnIds = computed.computedVisibleColumns.map((x) => x.id);
   const allColumnIds = computed.computedColumnOrder;
