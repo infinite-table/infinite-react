@@ -31,19 +31,6 @@ const dataSource = () => {
   return Promise.resolve(data);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-      renderValue: (params) => {
-        return <button data-name="target">x {params.renderBag.value}</button>;
-      },
-    },
-  ],
-]);
-
 const domProps: React.HTMLAttributes<HTMLDivElement> = {
   style: {
     margin: '5px',
@@ -54,8 +41,40 @@ const domProps: React.HTMLAttributes<HTMLDivElement> = {
 };
 
 export default function ColumnValueFormatter() {
+  const [state, setState] = React.useState(0);
+
+  const columns = new Map<string, InfiniteTableColumn<Employee>>([
+    [
+      'firstName',
+      {
+        field: 'firstName',
+        header: 'First Name',
+        renderValue: (params) => {
+          return <button data-name="target">x {params.renderBag.value}</button>;
+        },
+        // renderValue: (params) => {
+        //   return (
+        //     <>
+        //       <button>{params.renderBag.value}</button> - x - {state}
+        //     </>
+        //   );
+        // },
+        // render: (params) => {
+        //   return <>aha {params.renderBag.value}</>;
+        // },
+      },
+    ],
+  ]);
   return (
-    <React.StrictMode>
+    <>
+      <button
+        onClick={() => {
+          setState(state + 1);
+        }}
+      >
+        increment state
+      </button>
+      Current state: {state}
       <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
           domProps={domProps}
@@ -63,6 +82,6 @@ export default function ColumnValueFormatter() {
           columns={columns}
         />
       </DataSource>
-    </React.StrictMode>
+    </>
   );
 }

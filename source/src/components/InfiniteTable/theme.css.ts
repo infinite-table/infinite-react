@@ -1,6 +1,7 @@
 import {
   createGlobalThemeContract,
   createThemeContract,
+  fallbackVar,
   globalStyle,
 } from '@vanilla-extract/css';
 import { toCSSVarName } from './utils/toCSSVarName';
@@ -208,6 +209,8 @@ export const ThemeVars = createGlobalThemeContract(
          */
         selectedBackground: 'selected-cell-background',
 
+        selectedBackgroundDefault: 'selected-cell-background-default',
+
         /**
          * The opacity of the background color for the selected cell.
          *
@@ -272,6 +275,8 @@ export const ThemeVars = createGlobalThemeContract(
          * However, specify this to explicitly override the default.
          */
         activeBackground: 'active-cell-background',
+
+        activeBackgroundDefault: 'active-cell-background-default',
 
         /**
          * The color for border of the active cell (when cell keyboard navigation is enabled).
@@ -474,6 +479,31 @@ const CellVars = {
 
   [ThemeVars.components.Cell.activeBackgroundAlpha]: '0.25',
   [ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused]: '0.1',
+
+  [ThemeVars.components.Cell.selectedBackgroundDefault]: fallbackVar(
+    ThemeVars.components.Cell.selectedBackground,
+    ThemeVars.components.Cell.activeBackground,
+    `color-mix(in srgb, ${fallbackVar(
+      ThemeVars.components.Cell.selectedBorderColor,
+      ThemeVars.components.Cell.activeBorderColor,
+      ThemeVars.components.Row.activeBorderColor,
+      ThemeVars.color.accent,
+    )}, transparent calc(100% - ${fallbackVar(
+      ThemeVars.components.Cell.selectedBackgroundAlpha,
+      ThemeVars.components.Cell.activeBackgroundAlpha,
+      ThemeVars.components.Row.activeBackgroundAlpha,
+    )} * 100%))`,
+  ),
+
+  [ThemeVars.components.Cell.activeBackgroundDefault]: fallbackVar(
+    ThemeVars.components.Cell.activeBackground,
+    `color-mix(in srgb, ${fallbackVar(
+      ThemeVars.components.Cell.activeBorderColor,
+      ThemeVars.color.accent,
+    )}, transparent calc(100% - ${
+      ThemeVars.components.Cell.activeBackgroundAlpha
+    } * 100%))`,
+  ),
 };
 
 const SelectionCheckBoxVars = {

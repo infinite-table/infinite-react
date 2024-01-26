@@ -35,15 +35,7 @@ export const ActiveCellIndicatorBaseCls = style(
         )}`,
       ),
 
-      background: fallbackVar(
-        ThemeVars.components.Cell.activeBackground,
-        `color-mix(in srgb, ${fallbackVar(
-          ThemeVars.components.Cell.activeBorderColor,
-          ThemeVars.color.accent,
-        )}, transparent calc(100% - ${
-          ThemeVars.components.Cell.activeBackgroundAlpha
-        } * 100%))`,
-      ),
+      background: ThemeVars.components.Cell.activeBackgroundDefault,
     },
   ],
   'ActiveCellIndicator',

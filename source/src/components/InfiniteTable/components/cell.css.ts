@@ -101,20 +101,7 @@ const CellSelectionIndicatorBase: ComplexStyleRule = {
   left: `calc(0px - ${ThemeVars.components.Cell.borderWidth})`,
   right: `calc(0px - ${ThemeVars.components.Cell.borderWidth})`,
   pointerEvents: 'none',
-  background: fallbackVar(
-    ThemeVars.components.Cell.selectedBackground,
-    ThemeVars.components.Cell.activeBackground,
-    `color-mix(in srgb, ${fallbackVar(
-      ThemeVars.components.Cell.selectedBorderColor,
-      ThemeVars.components.Cell.activeBorderColor,
-      ThemeVars.components.Row.activeBorderColor,
-      ThemeVars.color.accent,
-    )}, transparent calc(100% - ${fallbackVar(
-      ThemeVars.components.Cell.selectedBackgroundAlpha,
-      ThemeVars.components.Cell.activeBackgroundAlpha,
-      ThemeVars.components.Row.activeBackgroundAlpha,
-    )} * 100%))`,
-  ),
+  background: ThemeVars.components.Cell.selectedBackgroundDefault,
 
   borderWidth: `${fallbackVar(
     ThemeVars.components.Cell.selectedBorderWidth,
