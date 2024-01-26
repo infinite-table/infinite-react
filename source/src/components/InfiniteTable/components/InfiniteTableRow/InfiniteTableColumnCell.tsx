@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useContext, useMemo } from 'react';
-import { once } from 'source/src/utils/DeepMap/once';
+import { once } from '../../../../utils/DeepMap/once';
 // const once = (fn: Function) => fn;
 
 import { join } from '../../../../utils/join';
