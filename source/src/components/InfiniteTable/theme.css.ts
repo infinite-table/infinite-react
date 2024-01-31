@@ -587,6 +587,8 @@ const DarkTheme = {
   [ThemeVars.background]: '#101419',
   [ThemeVars.components.Cell.border]: '1px solid #2a323d',
   [ThemeVars.components.Header.color]: '#c3c3c3',
+  [ThemeVars.components.LoadMask.textBackground]: ThemeVars.background,
+  [ThemeVars.components.LoadMask.color]: ThemeVars.components.Cell.color,
   [ThemeVars.components.HeaderCell.background]: '#1b2129',
   [ThemeVars.components.HeaderCell.hoverBackground]: '#222932',
   [ThemeVars.components.Header.background]:
