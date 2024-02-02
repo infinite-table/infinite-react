@@ -903,6 +903,20 @@ In this example, the `salary` for each row includes the currency string.
 
 </Prop>
 
+<Prop name="columns.renderHeader" type="(param: InfiniteTableColumnHeaderParam) => ReactNode">
+
+> A custom rendering function for the column header. Called with an object of type <TypeLink name="InfiniteTableColumnHeaderParam" />.
+
+It's the equivalent of <PropLink name="columns.renderValue" /> but for the <PropLink name="columns.header">column.header</PropLink>.
+
+It gives you access to the column, along with information about sorting, filtering, grouping, etc.
+
+It is called with a single argument, of type <TypeLink name="InfiniteTableColumnHeaderParam" />.
+
+
+</Prop>
+
+
 <Prop name="columns.header" type="React.ReactNode|({column, columnSortInfo, columnApi})=>React.ReactNode">
 
 > Specifies the column header. Can be a static value or a function that returns a React node.

@@ -24,6 +24,15 @@ type Developer = {
   streetPrefix: string;
 };
 
+const cols100 = [...new Array(138)].reduce((acc, item, index) => {
+  acc[`col${index}`] = {
+    field: 'firstName',
+    header: `col${index}`,
+    renderValue: ({ value }: any) => `${value} ${index}`,
+  };
+  return acc;
+}, {});
+
 const columns: InfiniteTablePropColumns<Developer> = {
   id: { field: 'id' },
   firstName: { field: 'firstName' },
@@ -47,6 +56,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   stack: { field: 'stack' },
   streetName: { field: 'streetName' },
   currency: { field: 'currency' },
+  ...cols100,
 };
 
 const dataSource = () => {
@@ -60,6 +70,7 @@ export default function DataTestPage() {
     <React.StrictMode>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
+          columnDefaultWidth={130}
           domProps={{
             style: {
               margin: '5px',
@@ -72,12 +83,9 @@ export default function DataTestPage() {
           //   age: 'start',
           //   canDesign: 'end',
           // }}
-          viewportReservedWidth={100}
-          columnTypes={{
-            default: {
-              defaultFlex: 1,
-            },
-          }}
+
+          virtualizeColumns={true}
+          virtualizeRows={true}
           columns={columns}
         />
       </DataSource>

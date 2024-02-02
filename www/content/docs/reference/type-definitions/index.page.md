@@ -26,6 +26,44 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <PropTable searchPlaceholder="Type to filter type definitions" sort>
 
+<Prop name="InfiniteTableColumnHeaderParam" generic>
+
+> Represents runtime information passed to rendering and styling functions called when rendering the column headers
+
+This object is passed to <PropLink name="headerClassName" />, <PropLink name="headerStyle" />, <PropLink name="header" /> and <PropLink name="renderHeader" /> functions.
+
+It is an object with the following properties:
+ - `column` - see <TypeLink name="InfiniteTableComputedColumn" /> for details
+ - `columnSortInfo` - the current sort info for the column.  it will be an object of type <TypeLink name="DataSourceSingleSortInfo" />  or `null`.
+ - `filtered: boolean` - if the column is currently filtered or not
+ - `api` - [`InfiniteTableApi`](/docs/reference/api) - the api object.
+ - `columnApi` - [`InfiniteTableColumnApi`](/docs/reference/column-api) - the column api object.
+ - `renderBag` - an object with various JSX values, the default elements rendered by the Infinite Table for the column header. It contains the following properties:
+   - `header` - the default column header text
+   - `sortIcon` - the default sort icon
+   - `menuIcon` - the default column menu icon
+   - `filterIcon` - the default column filter icon
+   - `selectionCheckBox` - the default column selection checkbox
+
+
+```tsx title="Example column.renderHeader function"
+const renderHeader = ({ renderBag }) => {
+  return (
+    <b style={{ display: "flex", color: "tomato", alignItems: "center" }}>
+      ({renderBag.header}) {renderBag.sortIcon}
+    </b>
+  );
+},
+const columns = {
+  salary: {
+    field: 'salary',
+    type: 'number',
+    renderHeader
+  }
+}
+```
+</Prop>
+
 <Prop name="InfiniteTableColumnStylingFnParams" generic>
 
 > Represents runtime information passed to many styling functions called when rendering the column cells
