@@ -158,7 +158,6 @@ export default function DataTestPage() {
             expandedRows: [1, 2],
             collapsedRows: true,
           }}
-          rowDetailHeight={400}
           rowDetailsCache={false}
           rowDetailRenderer={(
             rowInfo: InfiniteTableRowInfo<Developer>,

@@ -54,9 +54,37 @@ const citiesDataSource: DataSourceData<City> = () => {
 const detailDataSource: DataSourceData<Developer> = ({
   filterValue,
   sortInfo,
+  masterRowInfo,
 }) => {
+  console.log('masterRowInfo', masterRowInfo);
   if (sortInfo && !Array.isArray(sortInfo)) {
     sortInfo = [sortInfo];
+  }
+
+  if (!filterValue) {
+    filterValue = [];
+  }
+  if (masterRowInfo) {
+    // filter by master country and city
+    filterValue = [
+      {
+        field: 'city',
+        filter: {
+          operator: 'eq',
+          type: 'string',
+          value: masterRowInfo.data.name,
+        },
+      },
+      {
+        field: 'country',
+        filter: {
+          operator: 'eq',
+          type: 'string',
+          value: masterRowInfo.data.country,
+        },
+      },
+      ...filterValue,
+    ];
   }
   const args = [
     sortInfo
@@ -123,10 +151,10 @@ const domProps = {
   },
 };
 
-function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
+function renderDetail(_rowInfo: InfiniteTableRowInfo<City>) {
   return (
     <DataSource<Developer>
-      data={data}
+      data={detailDataSource}
       primaryKey="id"
       sortMode="remote"
       filterMode="remote"
@@ -163,7 +191,7 @@ export default () => {
           columnMinWidth={50}
           columns={masterColumns}
           rowDetailRenderer={renderDetail}
-          rowDetailHeight={400}
+          rowDetailHeight={300}
         />
       </DataSource>
     </>

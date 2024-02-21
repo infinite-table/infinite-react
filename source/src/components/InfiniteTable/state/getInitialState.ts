@@ -316,10 +316,11 @@ export const forwardProps = <T>(
       typeof rowHeight === 'number' || typeof rowHeight === 'function'
         ? rowHeight
         : 0,
-    rowDetailHeight: (rowHeight) =>
-      typeof rowHeight === 'number' || typeof rowHeight === 'function'
-        ? rowHeight
-        : 0,
+    rowDetailHeight: (rowDetailHeight) =>
+      typeof rowDetailHeight === 'number' ||
+      typeof rowDetailHeight === 'function'
+        ? rowDetailHeight
+        : 300,
     columnHeaderHeight: (columnHeaderHeight) =>
       typeof columnHeaderHeight === 'number' ? columnHeaderHeight : 30,
 
