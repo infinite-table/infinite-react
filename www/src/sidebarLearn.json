@@ -233,6 +233,16 @@
     ]
   },
   {
+    "title": "Master-Detail",
+    "path": "/docs/learn/master-detail/overview",
+    "routes": [
+      {
+        "title": "Overview",
+        "path": "/docs/learn/master-detail/overview"
+      }
+    ]
+  },
+  {
     "title": "Theming",
     "path": "/docs/learn/theming",
     "routes": [
