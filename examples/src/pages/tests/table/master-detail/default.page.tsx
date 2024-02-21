@@ -160,7 +160,7 @@ export default function DataTestPage() {
           rowDetailsCache={3}
           rowDetailRenderer={(
             rowInfo: InfiniteTableRowInfo<Developer>,
-            cache,
+            _cache,
           ) => {
             return (
               <div

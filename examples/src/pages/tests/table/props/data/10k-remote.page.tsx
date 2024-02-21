@@ -24,7 +24,7 @@ type Developer = {
   streetPrefix: string;
 };
 
-const cols100 = [...new Array(138)].reduce((acc, item, index) => {
+const cols100 = [...new Array(138)].reduce((acc, _item, index) => {
   acc[`col${index}`] = {
     field: 'firstName',
     header: `col${index}`,

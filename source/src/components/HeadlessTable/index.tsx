@@ -32,7 +32,7 @@ export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
   brain: MatrixBrain;
   debugId?: string;
-  activeCellRowHeight: number | ((rowIndex: number) => number);
+  activeCellRowHeight: number | ((rowIndex: number) => number) | undefined;
   renderCell: TableRenderCellFn;
   renderDetailRow?: TableRenderDetailRowFn;
   activeRowIndex?: number | null;

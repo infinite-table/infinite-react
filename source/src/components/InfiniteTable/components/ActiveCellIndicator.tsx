@@ -26,7 +26,7 @@ export type ActiveCellIndicatorInfo = {
 type ActiveCellIndicatorProps = {
   activeCellIndex?: [number, number] | null;
   brain: MatrixBrain;
-  rowHeight: number | ((rowIndex: number) => number);
+  rowHeight: number | ((rowIndex: number) => number) | undefined;
 };
 
 const ActiveStyle: CSSProperties = {
@@ -42,7 +42,7 @@ const ActiveStyle: CSSProperties = {
 const reposition = (
   brain: MatrixBrain,
   activeCellIndex: ActiveCellIndicatorProps['activeCellIndex'],
-  rowHeight: ActiveCellIndicatorProps['rowHeight'],
+  rowHeight: ActiveCellIndicatorProps['rowHeight'] | undefined,
   domRef: React.RefObject<HTMLDivElement>,
 ) => {
   if (activeCellIndex == null) {
@@ -50,8 +50,10 @@ const reposition = (
   }
 
   const rowIndex = activeCellIndex[0];
-  const activeCellRowHeight =
-    typeof rowHeight === 'function' ? rowHeight(rowIndex) : rowHeight;
+  const activeCellRowHeight: number =
+    typeof rowHeight === 'function'
+      ? rowHeight(rowIndex)
+      : rowHeight ?? brain.getRowHeight(rowIndex);
   const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
 
   const node = domRef.current!;
