@@ -26,6 +26,7 @@ export type ActiveCellIndicatorInfo = {
 type ActiveCellIndicatorProps = {
   activeCellIndex?: [number, number] | null;
   brain: MatrixBrain;
+  rowHeight: number | ((rowIndex: number) => number);
 };
 
 const ActiveStyle: CSSProperties = {
@@ -36,6 +37,32 @@ const ActiveStyle: CSSProperties = {
 
   width: InternalVars.activeCellColWidth,
   height: InternalVars.activeCellRowHeight,
+};
+
+const reposition = (
+  brain: MatrixBrain,
+  activeCellIndex: ActiveCellIndicatorProps['activeCellIndex'],
+  rowHeight: ActiveCellIndicatorProps['rowHeight'],
+  domRef: React.RefObject<HTMLDivElement>,
+) => {
+  if (activeCellIndex == null) {
+    return;
+  }
+
+  const rowIndex = activeCellIndex[0];
+  const activeCellRowHeight =
+    typeof rowHeight === 'function' ? rowHeight(rowIndex) : rowHeight;
+  const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
+
+  const node = domRef.current!;
+
+  setInfiniteVarsOnNode(
+    {
+      activeCellRowHeight: `${activeCellRowHeight}px`,
+      activeCellRowOffset: `${activeCellRowOffset}px`,
+    },
+    node,
+  );
 };
 
 const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
@@ -49,24 +76,8 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     brain.getRowCount() > props.activeCellIndex[0];
 
   useLayoutEffect(() => {
-    if (props.activeCellIndex == null) {
-      return;
-    }
-
-    const rowIndex = props.activeCellIndex[0];
-    const activeCellRowHeight = brain.getRowHeight(rowIndex);
-    const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
-
-    const node = domRef.current!;
-
-    setInfiniteVarsOnNode(
-      {
-        activeCellRowHeight: `${activeCellRowHeight}px`,
-        activeCellRowOffset: `${activeCellRowOffset}px`,
-      },
-      node,
-    );
-  }, [props.activeCellIndex]);
+    reposition(brain, props.activeCellIndex, props.rowHeight, domRef);
+  }, [props.activeCellIndex, props.rowHeight]);
 
   useEffect(() => {
     const removeOnRenderCountChange = brain.onRenderCountChange(() => {

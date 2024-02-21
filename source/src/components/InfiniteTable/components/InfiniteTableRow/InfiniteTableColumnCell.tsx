@@ -34,6 +34,7 @@ import {
   SelectionCheckboxCls,
 } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
+import { ExpanderIcon } from '../icons/ExpanderIcon';
 import { getColumnRenderingParams } from './columnRendering';
 import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
@@ -57,6 +58,21 @@ export const InfiniteTableColumnCellContext = React.createContext<
 
 export const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
 
+export const defaultRenderRowDetailsIcon: InfiniteTableColumnRenderFunction<
+  any
+> = (params) => {
+  const { toggleCurrentRowDetails, rowDetailState } = params;
+
+  return (
+    <ExpanderIcon
+      style={{
+        visibility: rowDetailState === false ? 'hidden' : 'visible',
+      }}
+      expanded={rowDetailState === 'expanded'}
+      onChange={toggleCurrentRowDetails}
+    />
+  );
+};
 export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   any
 > = (params) => {
@@ -130,6 +146,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     cellStyle,
     cellClassName,
 
+    rowDetailState: rowDetailsState,
+
     width,
     column,
     onMouseLeave,
@@ -183,6 +201,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const colRenderingParams = getColumnRenderingParams({
     column,
     rowInfo,
+    rowDetailState: rowDetailsState,
     columnsMap,
     visibleColumnsIds,
     fieldsToColumn,
@@ -328,6 +347,31 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         }
       }
 
+      if (renderFunctions.renderRowDetailsIcon) {
+        renderParam.renderBag.rowDetailsIcon = (
+          <RenderCellHookComponent
+            render={defaultRenderRowDetailsIcon}
+            renderParam={{
+              ...renderParam,
+              renderBag: {
+                ...renderParam.renderBag,
+              },
+            }}
+          />
+        );
+        if (typeof renderFunctions.renderRowDetailsIcon === 'function') {
+          renderParam.renderBag.rowDetailsIcon = (
+            <RenderCellHookComponent
+              render={renderFunctions.renderRowDetailsIcon}
+              renderParam={{
+                ...renderParam,
+                renderBag: { ...renderParam.renderBag },
+              }}
+            />
+          );
+        }
+      }
+
       if (renderFunctions.renderValue) {
         renderParam.renderBag.value = (
           <RenderCellHookComponent
@@ -374,10 +418,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       const all = (
         <>
           {align !== 'end' ? renderParam.renderBag.groupIcon : null}
+          {align !== 'end' ? renderParam.renderBag.rowDetailsIcon : null}
           {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
           {valueToRender}
 
           {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
+          {align === 'end' ? renderParam.renderBag.rowDetailsIcon : null}
           {align === 'end' ? renderParam.renderBag.groupIcon : null}
         </>
       );
@@ -400,6 +446,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       column,
       hidden,
       inEdit,
+      rowDetailsState,
       ...objectValuesExcept(renderParam, {
         renderBag: true,
         selectCell: true,
@@ -407,6 +454,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         selectCurrentRow: true,
         deselectCurrentRow: true,
         toggleCurrentGroupRow: true,
+        toggleCurrentRowDetails: true,
         toggleCurrentRowSelection: true,
         toggleCurrentGroupRowSelection: true,
         rowHasSelectedCells: true,

@@ -11,6 +11,7 @@ import { Scrollbars } from '../../InfiniteTable';
 import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { debounce } from '../../utils/debounce';
 import { RenderRange } from '../../VirtualBrain';
+import { useMasterDetailContext } from '../publicHooks/useDataSource';
 import { cleanupEmptyFilterValues } from '../state/reducer';
 import {
   DataSourceDataParams,
@@ -417,6 +418,7 @@ export function useLoadData<T>() {
     livePaginationCursor,
     filterTypes,
     cursorId: stateCursorId,
+    stateReadyAsDetails,
   } = componentState;
 
   const [scrollbars, setScrollbars] = useState<Scrollbars>({
@@ -525,9 +527,27 @@ export function useLoadData<T>() {
 
   useLazyLoadRange<T>();
 
+  const masterContext = useMasterDetailContext();
+
+  const isDetail = !!masterContext;
+  const isDetailRef = useRef(!!masterContext);
+  isDetailRef.current = isDetail;
+
+  const isDetailReady = isDetail
+    ? masterContext.shouldRestoreState
+      ? stateReadyAsDetails
+      : true
+    : true;
+  const isDetailReadyRef = useRef(isDetailReady);
+  isDetailReadyRef.current = isDetailReady;
+
   useEffectWithChanges(
     () => {
       const componentState = getComponentState();
+      if (isDetailRef.current && !isDetailReadyRef.current) {
+        return;
+      }
+
       if (typeof componentState.data !== 'function') {
         loadData(componentState.data, componentState, actions);
       }
@@ -548,6 +568,10 @@ export function useLoadData<T>() {
           // then we don't need to do a remote call
           return;
         }
+      }
+
+      if (isDetailRef.current && !isDetailReadyRef.current) {
+        return;
       }
 
       const componentState = getComponentState();

@@ -9,7 +9,7 @@ import { toCSSVarName } from './utils/toCSSVarName';
 export const columnHeaderHeightName = 'column-header-height';
 export const InternalVars = createThemeContract({
   currentColumnTransformX: null,
-  currentColumnTransformY: null,
+  y: null,
 
   activeCellRowOffset: null,
   activeCellRowHeight: null,
@@ -316,6 +316,11 @@ export const ThemeVars = createGlobalThemeContract(
         borderRadius: 'menu-border-radius',
         shadowColor: 'menu-shadow-color',
       },
+      RowDetails: {
+        background: 'rowdetails-background',
+        padding: 'rowdetails-padding',
+        gridHeight: 'rowdetails-grid-height',
+      },
       Row: {
         /**
          * Background color for rows. Defaults to [`--infinite-background`](#background).
@@ -513,6 +518,7 @@ const SelectionCheckBoxVars = {
 
 const RowVars = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
+
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
   [ThemeVars.components.Row.selectedBackground]: '#d1e9ff',
   [ThemeVars.components.Row.selectedHoverBackground]: '#add8ff',
@@ -520,6 +526,12 @@ const RowVars = {
   [ThemeVars.components.Row.groupRowColumnNesting]: '30px',
   [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
+};
+const RowDetailsVars = {
+  [ThemeVars.components.RowDetails.background]:
+    ThemeVars.components.Row.hoverBackground,
+  [ThemeVars.components.RowDetails.padding]: ThemeVars.spacing[2],
+  [ThemeVars.components.RowDetails.gridHeight]: '100%',
 };
 
 const MenuVars = {
@@ -575,6 +587,7 @@ const LightTheme = {
 
   ...SelectionCheckBoxVars,
   ...MenuVars,
+  ...RowDetailsVars,
   ...LoadMaskVars,
   ...HeaderCellVars,
   ...HeaderVars,

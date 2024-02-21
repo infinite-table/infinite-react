@@ -1,4 +1,5 @@
 import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
+import { RowSizeCache } from '../hooks/useComputedRowHeight';
 import { MultiCellSelector } from '../utils/MultiCellSelector';
 import { MultiRowSelector } from '../utils/MultiRowSelector';
 
@@ -12,6 +13,9 @@ export interface InfiniteTableComputedValues<T> {
   };
   multiRowSelector: MultiRowSelector;
   multiCellSelector: MultiCellSelector;
+
+  computedRowHeight: number | ((index: number) => number);
+  computedRowSizeCacheForDetails: RowSizeCache | undefined;
 
   renderSelectionCheckBox: boolean;
   rowspan?: MatrixBrainOptions['rowspan'];

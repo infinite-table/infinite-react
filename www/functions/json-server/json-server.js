@@ -42,6 +42,7 @@ const identity = (x) => x;
 
 const OPERATOR_MODIFIERS = {
   contains: (value) => `'%${value}%'`,
+  includes: (value) => `'%${value}%'`,
   startsWith: (value) => `'${value}%'`,
   endsWith: (value) => `'%${value}'`,
   eq: (value) => (typeof value === 'number' ? value : `'${value}'`),

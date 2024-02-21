@@ -1,5 +1,12 @@
 import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
+import { InfiniteTableRowInfo } from '.';
 import { PointCoords } from '../../../utils/pageGeometry/Point';
+import { RowDetailsCache } from '../../DataSource/RowDetailsCache';
+import { RowDetailsState } from '../../DataSource/RowDetailsState';
+import {
+  RowDetailsCacheEntry,
+  RowDetailsCacheKey,
+} from '../../DataSource/state/getInitialState';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
@@ -63,6 +70,7 @@ export interface InfiniteTableSetupState<T> {
   focusDetectDOMRef: MutableRefObject<HTMLDivElement | null>;
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
+  onRowDetailHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnMenuClick: SubscriptionCallback<{
     target: HTMLElement | EventTarget;
     column: InfiniteTableComputedColumn<T>;
@@ -142,13 +150,18 @@ export type InfiniteTablePropPivotGrandTotalColumnPosition =
 
 export interface InfiniteTableMappedState<T> {
   id: InfiniteTableProps<T>['id'];
+  debugId: InfiniteTableProps<T>['debugId'];
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
+  rowDetailRenderer: InfiniteTableProps<T>['rowDetailRenderer'];
   multiSortBehavior: NonUndefined<InfiniteTableProps<T>['multiSortBehavior']>;
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   resizableColumns: InfiniteTableProps<T>['resizableColumns'];
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
+
+  rowDetailsCache: RowDetailsCache<RowDetailsCacheKey, RowDetailsCacheEntry>;
+
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
@@ -236,7 +249,8 @@ export interface InfiniteTableMappedState<T> {
   showHoverRows: NonUndefined<InfiniteTableProps<T>['showHoverRows']>;
   header: NonUndefined<InfiniteTableProps<T>['header']>;
   virtualizeColumns: NonUndefined<InfiniteTableProps<T>['virtualizeColumns']>;
-  rowHeight: number;
+  rowHeight: number | ((rowInfo: InfiniteTableRowInfo<T>) => number);
+  rowDetailHeight: number | ((rowInfo: InfiniteTableRowInfo<T>) => number);
   columnHeaderHeight: number;
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -258,6 +272,15 @@ export interface InfiniteTableDerivedState<T> {
   computedColumns: Map<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];
 
+  rowDetailsState: RowDetailsState<T> | undefined;
+  isRowDetailsExpanded:
+    | InfiniteTableProps<T>['isRowDetailsExpanded']
+    | undefined;
+
+  isRowDetailsEnabled:
+    | NonUndefined<InfiniteTableProps<T>['isRowDetailsEnabled']>
+    | boolean;
+
   showColumnFilters: NonUndefined<InfiniteTableProps<T>['showColumnFilters']>;
 
   groupRenderStrategy: NonUndefined<
@@ -274,6 +297,7 @@ export interface InfiniteTableDerivedState<T> {
   computedColumnGroups: InfiniteTablePropColumnGroupsMap;
 
   rowHeightCSSVar: string;
+  rowDetailHeightCSSVar: string;
   columnHeaderHeightCSSVar: string;
   controlledColumnVisibility: boolean;
 }

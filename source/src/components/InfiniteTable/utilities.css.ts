@@ -34,6 +34,9 @@ export const fill = styleVariants({
 export const margin = styleVariants({
   none: { margin: 0 },
 });
+export const verticalAlign = styleVariants({
+  middle: { verticalAlign: 'middle' },
+});
 
 export const stroke = styleVariants({
   currentColor: { stroke: 'currentColor' },

@@ -1,5 +1,6 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
+import { RowDetailsRecipe } from './components/rowDetails.css';
 import { ThemeVars } from './theme.css';
 
 import {
@@ -21,6 +22,14 @@ export const InfiniteCls = style([
     minHeight: ThemeVars.minHeight,
   },
   boxSizingBorderBox,
+
+  {
+    selectors: {
+      [`${RowDetailsRecipe.classNames.base} &`]: {
+        height: [ThemeVars.components.RowDetails.gridHeight],
+      },
+    },
+  },
 ]);
 
 export const InfiniteClsScrolling = style(

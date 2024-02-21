@@ -10,12 +10,14 @@ import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
 import {
   ReactHeadlessTableRenderer,
   TableRenderCellFn,
+  TableRenderDetailRowFn,
 } from './ReactHeadlessTableRenderer';
 
 export type RawTableProps = {
   name?: string;
   brain: MatrixBrain;
   renderCell: TableRenderCellFn;
+  renderDetailRow?: TableRenderDetailRowFn;
   cellHoverClassNames?: string[];
   renderer?: ReactHeadlessTableRenderer;
   onRenderUpdater?: SubscriptionCallback<Renderable>;
@@ -36,7 +38,7 @@ function createRenderer(brain: MatrixBrain) {
   };
 }
 export function RawTableFn(props: RawTableProps) {
-  const { brain, renderCell } = props;
+  const { brain, renderCell, renderDetailRow } = props;
 
   const { renderer, onRenderUpdater } = useMemo(() => {
     return props.onRenderUpdater && props.renderer
@@ -56,7 +58,6 @@ export function RawTableFn(props: RawTableProps) {
   //
   // For example, for http://localhost:3000/tests/table/props/column/column-change
   // sometimes firstName and salary are not displayed!!!! in the column header if `useEffect` is used
-
   useLayoutEffect(() => {
     const renderRange = brain.getRenderRange();
 
@@ -64,8 +65,9 @@ export function RawTableFn(props: RawTableProps) {
       onRender: onRenderUpdater,
       force: true,
       renderCell,
+      renderDetailRow,
     });
-  }, [renderer, brain, renderCell, onRenderUpdater]);
+  }, [renderer, brain, renderCell, renderDetailRow, onRenderUpdater]);
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {
@@ -86,11 +88,12 @@ export function RawTableFn(props: RawTableProps) {
           onRenderUpdater(items);
         },
         renderCell,
+        renderDetailRow,
       });
     });
 
     return remove;
-  }, [renderCell]);
+  }, [renderCell, renderDetailRow]);
 
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }

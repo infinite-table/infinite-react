@@ -87,8 +87,21 @@ export function getCellContext<T>(
   const { isGroupRow } = rowInfo;
   const column = getComputed().computedColumnsMap.get(columnId)!;
 
-  const { activeRowIndex, keyboardNavigation } = getState();
+  const {
+    activeRowIndex,
+    keyboardNavigation,
+
+    isRowDetailsEnabled,
+  } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
+
+  const rowDetailState =
+    !isRowDetailsEnabled ||
+    (typeof isRowDetailsEnabled === 'function' && !isRowDetailsEnabled(rowInfo))
+      ? false
+      : api.rowDetailsApi.isRowDetailsExpanded(rowInfo.id)
+      ? 'expanded'
+      : 'collapsed';
 
   const {
     formattedValue: value,
@@ -96,6 +109,7 @@ export function getCellContext<T>(
   } = getFormattedValueContextForCell({
     column,
     rowInfo,
+    rowDetailState,
     columnsMap: getComputed().computedColumnsMap,
     context,
   });
@@ -109,6 +123,7 @@ export function getCellContext<T>(
         column,
         columnApi,
         isGroupRow: true,
+        rowDetailState: false,
         data: rowInfo.data,
         rowActive,
         rowInfo,
@@ -122,6 +137,7 @@ export function getCellContext<T>(
         columnApi,
         column,
         isGroupRow: false,
+        rowDetailState: rowDetailState,
         data: rowInfo.data,
         rowActive,
         rowInfo,
@@ -141,6 +157,7 @@ export function getColumnValueToEdit<T>(options: {
 export function getColumnRenderingParams<T>(options: {
   column: InfiniteTableComputedColumn<T>;
   rowInfo: InfiniteTableRowInfo<T>;
+  rowDetailState: 'expanded' | 'collapsed' | false;
   visibleColumnsIds: string[];
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
@@ -209,6 +226,7 @@ export function getColumnRenderingParams<T>(options: {
       renderGroupIcon:
         column.renderGroupIcon || groupByColumnReference?.renderGroupIcon,
       renderSelectionCheckBox: column.renderSelectionCheckBox,
+      renderRowDetailsIcon: column.renderRowDetailsIcon,
       renderValue: column.renderValue || groupByColumnReference?.renderValue,
       renderGroupValue:
         column.renderGroupValue || groupByColumnReference?.renderGroupValue,
@@ -291,6 +309,13 @@ export function getColumnRenderParam<T>(options: {
     groupByColumn,
     selectionMode,
     api: imperativeApi,
+
+    toggleCurrentRowDetails: () =>
+      imperativeApi.rowDetailsApi.toggleRowDetails(rowInfo.id),
+    toggleRowDetails: imperativeApi.rowDetailsApi.toggleRowDetails,
+    expandRowDetails: imperativeApi.rowDetailsApi.expandRowDetails,
+    collapseRowDetails: imperativeApi.rowDetailsApi.collapseRowDetails,
+
     selectRow: imperativeApi.rowSelectionApi.selectRow,
     deselectRow: imperativeApi.rowSelectionApi.deselectRow,
     toggleRowSelection: imperativeApi.rowSelectionApi.toggleRowSelection,
@@ -409,6 +434,7 @@ export function getFormattedValueParamForCell<T>(
   column: InfiniteTableComputedColumn<T>,
   rowInfo: InfiniteTableRowInfo<T>,
   context: InfiniteTableColumnRenderingContext<T>,
+  rowDetailState: 'expanded' | 'collapsed' | false,
 ) {
   const { rowSelected, indexInAll: rowIndex } = rowInfo;
   const { activeRowIndex, keyboardNavigation } = context.getState();
@@ -420,6 +446,7 @@ export function getFormattedValueParamForCell<T>(
         rowInfo,
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
+        rowDetailState: false as false | 'expanded' | 'collapsed',
         rowSelected,
         rowActive,
         value,
@@ -430,6 +457,7 @@ export function getFormattedValueParamForCell<T>(
         rowInfo,
         isGroupRow: rowInfo.isGroupRow,
         data: rowInfo.data,
+        rowDetailState,
         rowSelected,
         rowActive,
         value,
@@ -443,17 +471,19 @@ export function getFormattedValueContextForCell<T>(options: {
   rowInfo: InfiniteTableRowInfo<T>;
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   context: InfiniteTableColumnRenderingContext<T>;
+  rowDetailState: 'expanded' | 'collapsed' | false;
 }): {
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
   formattedValue: any;
 } {
-  const { column, rowInfo, context } = options;
+  const { column, rowInfo, context, rowDetailState } = options;
   const rawValue = getRawValueForCell(column, rowInfo);
   const formattedValueContext = getFormattedValueParamForCell(
     rawValue,
     column,
     rowInfo,
     context,
+    rowDetailState,
   );
 
   const formattedValue: any = column.valueFormatter

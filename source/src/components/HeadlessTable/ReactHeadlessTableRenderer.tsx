@@ -19,11 +19,13 @@ import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import {
   FixedPosition,
   getRenderRangeCellCount,
+  getRenderRangeRowCount,
   MatrixBrain,
   TableRenderRange,
 } from '../VirtualBrain/MatrixBrain';
 
 import { MappedCells } from './MappedCells';
+import { MappedVirtualRows } from './MappedVirtualRows';
 
 export type TableRenderCellFnParam = {
   domRef: RefCallback<HTMLElement>;
@@ -41,7 +43,20 @@ export type TableRenderCellFnParam = {
   onMouseEnter: VoidFunction;
   onMouseLeave: VoidFunction;
 };
+
+export type TableRenderDetailRowFnParam = {
+  domRef: RefCallback<HTMLElement>;
+  rowIndex: number;
+  hidden: boolean;
+  height: number;
+  rowFixed: FixedPosition;
+  onMouseEnter: VoidFunction;
+  onMouseLeave: VoidFunction;
+};
 export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
+export type TableRenderDetailRowFn = (
+  param: TableRenderDetailRowFnParam,
+) => Renderable;
 
 export type RenderableWithPosition = {
   renderable: Renderable;
@@ -50,7 +65,7 @@ export type RenderableWithPosition = {
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
-const currentColumnTransformY = stripVar(InternalVars.currentColumnTransformY);
+const currentTransformY = stripVar(InternalVars.y);
 
 const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
 const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
@@ -61,20 +76,26 @@ const columnOffsetAtIndexWhileReordering = stripVar(
 export class ReactHeadlessTableRenderer extends Logger {
   private brain: MatrixBrain;
 
+  public debugId: string = '';
+
   private destroyed = false;
   private scrolling = false;
 
   public cellHoverClassNames: string[] = [];
 
-  public name: string = '';
-
   private itemDOMElements: (HTMLElement | null)[] = [];
   private itemDOMRefs: RefCallback<HTMLElement>[] = [];
   private updaters: SubscriptionCallback<Renderable>[] = [];
 
+  private detailRowDOMElements: (HTMLElement | null)[] = [];
+  private detailRowDOMRefs: RefCallback<HTMLElement>[] = [];
+  private detailRowUpdaters: SubscriptionCallback<Renderable>[] = [];
+
   private mappedCells: MappedCells;
+  private mappedDetailRows: MappedVirtualRows;
 
   private items: Renderable[] = [];
+  private detailItems: Renderable[] = [];
 
   private currentHoveredRow = -1;
   private onDestroy: VoidFunction;
@@ -88,6 +109,26 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
     return this.infiniteNode!;
   }
+
+  setDetailTransform = (
+    element: HTMLElement,
+    _rowIndex: number,
+    {
+      y,
+      scrollTop,
+      scrollLeft,
+    }: { y: number; scrollTop?: boolean; scrollLeft?: number },
+  ) => {
+    element.style.setProperty(
+      currentTransformY,
+      scrollTop ? `calc( ${y}px + var(${scrollTopCSSVar}) )` : `${y}px`,
+    );
+
+    // this does not change, but we need for initial setup
+    element.style.transform = `translate3d(${
+      scrollLeft || 0
+    }px, var(${currentTransformY}), 0)`;
+  };
 
   setTransform = (
     element: HTMLElement,
@@ -115,13 +156,24 @@ export class ReactHeadlessTableRenderer extends Logger {
     //   columnOffsetX,
     //   scrollLeft ? `calc( ${x}px + var(${scrollLeftCSSVar}) )` : `${x}px`,
     // );
+
+    /**
+     * #row-css-vars-on-parent-node
+     * We wanted to set the transform Y of rows on the infiniteNode - so to have CSS vars
+     * like currentTransformY-0, currentTransformY-1, currentTransformY-2, etc - so one for each visible row
+     * and set the value of the transform in each of those CSS vars
+     *
+     * But it proves it's not as performant as setting it directly on the cell element
+     * so we will keep it for now on each cell
+     */
+
     element.style.setProperty(
-      currentColumnTransformY,
+      currentTransformY,
       scrollTop ? `calc( ${y}px + var(${scrollTopCSSVar}) )` : `${y}px`,
     );
 
     // this does not change, but we need for initial setup
-    element.style.transform = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), ${InternalVars.currentColumnTransformY}, 0)`;
+    element.style.transform = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), var(${currentTransformY}), 0)`;
 
     if (zIndex != null) {
       // TODO this would be needed if zIndex would not be managed in grid
@@ -132,8 +184,10 @@ export class ReactHeadlessTableRenderer extends Logger {
   constructor(brain: MatrixBrain) {
     super('ReactHeadlessTableRenderer');
     this.brain = brain;
+    this.debugId = brain.name;
 
     this.mappedCells = new MappedCells();
+    this.mappedDetailRows = new MappedVirtualRows();
 
     const removeOnScroll = brain.onScroll(this.adjustFixedElementsOnScroll);
     const removeOnSizeChange = brain.onAvailableSizeChange(() => {
@@ -509,11 +563,13 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     {
       renderCell,
+      renderDetailRow,
       force,
       onRender,
     }: {
       force?: boolean;
       renderCell: TableRenderCellFn;
+      renderDetailRow?: TableRenderDetailRowFn;
       onRender: (items: Renderable[]) => void;
     },
   ): Renderable[] => {
@@ -527,7 +583,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       this.debug(`Render range ${start}-${end}. Force ${force}`);
     }
 
-    const { mappedCells } = this;
+    const { mappedCells, mappedDetailRows } = this;
 
     const fixedRanges = this.getFixedRanges(range);
     const ranges = [range, ...fixedRanges];
@@ -558,6 +614,9 @@ export class ReactHeadlessTableRenderer extends Logger {
       (sum, range) => sum + getRenderRangeCellCount(range),
       0,
     );
+    const renderRowCount = renderDetailRow
+      ? ranges.reduce((sum, range) => sum + getRenderRangeRowCount(range), 0)
+      : 0;
 
     // renderCount += 4;
 
@@ -600,12 +659,50 @@ export class ReactHeadlessTableRenderer extends Logger {
       this.updaters.length = Math.min(this.updaters.length, renderCount);
       this.items.length = Math.min(this.items.length, renderCount);
     }
+    if (
+      renderDetailRow &&
+      this.detailRowDOMElements.length &&
+      this.detailRowDOMElements.length >= renderRowCount
+    ) {
+      mappedDetailRows.discardElementsStartingWith(
+        renderRowCount,
+        (elementIndex) => {
+          if (this.detailRowUpdaters[elementIndex]) {
+            this.detailRowUpdaters[elementIndex].destroy();
+          }
+          if (__DEV__) {
+            this.debug(`Discard detail row element ${elementIndex}`);
+          }
+        },
+      );
+      this.detailRowDOMElements.length = Math.min(
+        this.detailRowDOMElements.length,
+        renderRowCount,
+      );
+      this.detailRowDOMRefs.length = Math.min(
+        this.detailRowDOMRefs.length,
+        renderRowCount,
+      );
+      this.detailRowUpdaters.length = Math.min(
+        this.detailRowUpdaters.length,
+        renderRowCount,
+      );
+      this.detailItems.length = Math.min(
+        this.detailItems.length,
+        renderRowCount,
+      );
+    }
 
     // we only need to keep those that are outside all ranges
     // so we need to do an intersection of all those elements
     const elementsOutsideRanges: number[] = arrayIntersection(
       ...ranges.map(mappedCells.getElementsOutsideRenderRange),
     );
+    const detailElementsOutsideRanges: number[] = renderDetailRow
+      ? arrayIntersection(
+          ...ranges.map(mappedDetailRows.getElementsOutsideRenderRange),
+        )
+      : [];
 
     const elementsOutsideItemRange = elementsOutsideRanges.filter(
       (elementIndex) => {
@@ -629,6 +726,9 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (this.items.length > renderCount) {
       this.items.length = renderCount;
     }
+    if (renderDetailRow && this.detailItems.length > renderRowCount) {
+      this.detailItems.length = renderRowCount;
+    }
 
     // start from the last rendered, and render additional elements, until we have renderCount
     // this loop might not even execute the body once if all the elements are present
@@ -637,8 +737,15 @@ export class ReactHeadlessTableRenderer extends Logger {
       // push at start
       elementsOutsideItemRange.splice(0, 0, i);
     }
+    if (renderDetailRow) {
+      for (let i = this.detailItems.length; i < renderRowCount; i++) {
+        this.renderDetailElement(i);
+        detailElementsOutsideRanges.splice(0, 0, i);
+      }
+    }
 
     const visitedCells = new Map<string, boolean>();
+    const visitedRows = new Map<number, boolean>();
 
     ranges.forEach((range) => {
       const { start, end } = range;
@@ -704,6 +811,33 @@ export class ReactHeadlessTableRenderer extends Logger {
 
           this.renderCellAtElement(row, col, elementIndex, renderCell);
         }
+        if (!renderDetailRow) {
+          continue;
+        }
+        if (visitedRows.has(row)) {
+          continue;
+        }
+        visitedRows.set(row, true);
+        const rowRendered = mappedDetailRows.isRowRendered(row);
+
+        // for now we wont implement row spanning with detail rows
+        // so we can have simplified logic here
+
+        if (rowRendered && !force) {
+          continue;
+        }
+        const detailElementIndex = rowRendered
+          ? mappedDetailRows.getElementIndexForRow(row)
+          : detailElementsOutsideRanges.pop();
+        if (detailElementIndex == null) {
+          if (__DEV__) {
+            this.error(
+              `Cannot find detail element to render detail row ${row}`,
+            );
+          }
+          continue;
+        }
+        this.renderDetailRowAtElement(row, detailElementIndex, renderDetailRow);
       }
     });
 
@@ -747,7 +881,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     //   // only assign and do a render when
     //   // we have more items than last time
     //   // so we need to show new items
-    result = [...this.items];
+    result = [...this.items, ...this.detailItems];
 
     this.adjustFixedElementsOnScroll();
     if (onRender) {
@@ -782,6 +916,32 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.items[elementIndex] = item;
 
     return item;
+  }
+
+  private renderDetailElement(elementIndex: number) {
+    const domRef = (node: HTMLElement | null) => {
+      if (node) {
+        this.detailRowDOMElements[elementIndex] = node;
+        node.style.position = 'absolute';
+        node.style.left = '0px';
+        // node.style.top = '0px';
+        this.updateDetailElementPosition(elementIndex);
+      }
+    };
+    this.detailRowDOMRefs[elementIndex] = domRef;
+    this.detailRowUpdaters[elementIndex] =
+      buildSubscriptionCallback<Renderable>();
+
+    const detailItem = (
+      <AvoidReactDiff
+        key={`detail-${elementIndex}`}
+        name={`detail-${elementIndex}`}
+        updater={this.detailRowUpdaters[elementIndex]}
+      />
+    );
+    this.detailItems[elementIndex] = detailItem;
+
+    return detailItem;
   }
 
   getFixedRanges = (
@@ -994,6 +1154,65 @@ export class ReactHeadlessTableRenderer extends Logger {
     return covered ? [rowspanParent, colspanParent] : false;
   };
 
+  private renderDetailRowAtElement(
+    rowIndex: number,
+    detailElementIndex: number,
+    renderDetailRow: TableRenderDetailRowFn,
+  ) {
+    if (this.destroyed) {
+      return;
+    }
+
+    const covered = false;
+
+    const height = this.brain.getRowHeight(rowIndex);
+
+    // const { row: rowFixed, col: colFixed } = this.isCellFixed(rowIndex);
+
+    const rowFixed = this.brain.isRowFixedStart(rowIndex)
+      ? 'start'
+      : this.brain.isRowFixedEnd(rowIndex)
+      ? 'end'
+      : false;
+
+    const hidden = !!covered;
+
+    const renderedDetailNode = renderDetailRow({
+      rowIndex,
+      height,
+      rowFixed,
+      hidden,
+      onMouseEnter: () => {},
+      onMouseLeave: () => {},
+      domRef: this.detailRowDOMRefs[detailElementIndex],
+    });
+
+    const itemUpdater = this.detailRowUpdaters[detailElementIndex];
+
+    if (!itemUpdater) {
+      this.error(
+        `Cannot find detail item updater for item ${rowIndex} at this time... sorry.`,
+      );
+      return;
+    }
+
+    this.mappedDetailRows.renderRowAtElement(
+      rowIndex,
+      detailElementIndex,
+      renderedDetailNode,
+    );
+
+    if (__DEV__) {
+      this.debug(
+        `Render detail row ${rowIndex} at element ${detailElementIndex}`,
+      );
+    }
+
+    itemUpdater(renderedDetailNode);
+
+    this.updateDetailElementPosition(detailElementIndex);
+    return;
+  }
   private renderCellAtElement(
     rowIndex: number,
     colIndex: number,
@@ -1214,6 +1433,54 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
   };
 
+  private updateDetailElementPosition = (elementIndex: number) => {
+    if (this.destroyed) {
+      return;
+    }
+    const itemElement = this.detailRowDOMElements[elementIndex];
+    const rowIndex =
+      this.mappedDetailRows.getRenderedRowAtElement(elementIndex);
+
+    if (rowIndex == null) {
+      if (__DEV__) {
+        this.error(`Cannot find row for detail element ${elementIndex}`);
+      }
+      return;
+    }
+
+    const itemPosition = this.brain.getItemOffsetFor(rowIndex, 'vertical');
+
+    if (itemPosition == null) {
+      return;
+    }
+
+    const y = itemPosition;
+
+    if (itemElement) {
+      (itemElement.dataset as any).detailRowIndex = rowIndex;
+
+      if (ITEM_POSITION_WITH_TRANSFORM) {
+        this.setDetailTransform(itemElement, rowIndex, {
+          y,
+          scrollLeft: this.brain.getScrollPosition().scrollLeft,
+        });
+
+        itemElement.style.willChange = 'transform';
+        itemElement.style.backfaceVisibility = 'hidden';
+        // need to set it to auto
+        // in case some fixed cells are reused
+        // as the fixed cells had a zIndex
+
+        itemElement.style.zIndex = // #updatezindex - we need to allow elements use their own zIndex, so we
+          // resort to allowing them to have it as a data-z-index attribute
+          itemElement.dataset.zIndex || 'auto';
+        // } else {
+        //   itemElement.style.display = '';
+        //   itemElement.style.top = `${y}px`;
+      }
+    }
+  };
+
   private onScrollStart = () => {
     this.scrolling = true;
     // if (this.currentHoveredRow != -1) {
@@ -1232,13 +1499,35 @@ export class ReactHeadlessTableRenderer extends Logger {
   public adjustFixedElementsOnScroll = (
     scrollPosition: ScrollPosition = this.brain.getScrollPosition(),
   ) => {
-    const { mappedCells, brain, itemDOMElements } = this;
+    const { mappedCells, brain, itemDOMElements, detailRowDOMElements } = this;
 
     const cols = this.brain.getColCount();
     const rows = this.brain.getRowCount();
 
     const { fixedColsStart, fixedColsEnd, fixedRowsStart, fixedRowsEnd } =
       this.brain.getFixedCellInfo();
+
+    if (detailRowDOMElements.length) {
+      this.detailRowDOMElements.forEach((node, index) => {
+        if (!node) {
+          return;
+        }
+        const rowIndex = this.mappedDetailRows.getRenderedRowAtElement(index);
+
+        if (rowIndex != null) {
+          const y = this.brain.getItemOffsetFor(rowIndex, 'vertical');
+
+          if (y == null) {
+            return;
+          }
+
+          this.setDetailTransform(node, rowIndex, {
+            y,
+            scrollLeft: scrollPosition.scrollLeft,
+          });
+        }
+      });
+    }
 
     if (!fixedColsStart && !fixedColsEnd && !fixedRowsStart && !fixedRowsEnd) {
       return;
@@ -1504,6 +1793,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     (this as any).hoverRowUpdatesInProgress = null;
     (this as any).brain = null;
     (this as any).mappedCells = null;
+    (this as any).mappedDetailRows = null;
   };
 
   reset() {
@@ -1512,5 +1802,6 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.updaters = [];
     this.items = [];
     this.mappedCells.reset();
+    this.mappedDetailRows.reset();
   }
 }

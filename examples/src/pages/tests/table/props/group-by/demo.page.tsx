@@ -139,6 +139,10 @@ export default function GroupByExample() {
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
+        defaultGroupRowsState={{
+          expandedRows: [],
+          collapsedRows: true,
+        }}
         groupBy={groupBy}
         aggregationReducers={aggregationReducers}
       >

@@ -44,6 +44,11 @@ import {
   InfiniteTableCellSelectionApi,
 } from './getCellSelectionApi';
 
+import {
+  getRowDetailsApi,
+  InfiniteTableRowDetailsApi,
+} from './getRowDetailsApi';
+
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,
   col: { id: string; field?: string | number },
@@ -67,12 +72,18 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   private context: GetImperativeApiParam<T>;
   public rowSelectionApi: InfiniteTableRowSelectionApi;
   public cellSelectionApi: InfiniteTableCellSelectionApi<T>;
+  public rowDetailsApi: InfiniteTableRowDetailsApi;
 
   constructor(context: GetImperativeApiParam<T>) {
     this.context = context;
     this.rowSelectionApi = getRowSelectionApi({
       dataSourceActions: context.dataSourceActions,
       getDataSourceState: context.getDataSourceState,
+    });
+    this.rowDetailsApi = getRowDetailsApi({
+      getState: context.getState,
+      actions: context.actions,
+      dataSourceApi: context.dataSourceApi,
     });
     this.cellSelectionApi = getCellSelectionApi({
       dataSourceActions: context.dataSourceActions,
@@ -517,7 +528,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   getCellValues = (cellLocator: InfiniteTableApiCellLocator) => {
     const { rowIndex: index, primaryKey, columnId } = cellLocator;
 
-    const { dataSourceApi } = this.context;
+    const { dataSourceApi, getState } = this.context;
     const { computedColumnsMap } = this.getComputed();
 
     const rowIndex = index ?? dataSourceApi.getIndexByPrimaryKey(primaryKey);
@@ -539,11 +550,22 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     const self = this as InfiniteTableApi<T>;
+    const { isRowDetailsEnabled } = getState();
+    const rowDetailsState =
+      !isRowDetailsEnabled ||
+      (typeof isRowDetailsEnabled === 'function' &&
+        !isRowDetailsEnabled(rowInfo))
+        ? false
+        : this.rowDetailsApi.isRowDetailsExpanded(rowInfo.id)
+        ? 'expanded'
+        : 'collapsed';
+
     const valueContext = getFormattedValueContextForCell({
       column,
       rowInfo,
       columnsMap: computedColumnsMap,
       context: { ...this.context, api: self },
+      rowDetailState: rowDetailsState,
     });
     return {
       value: valueContext.formattedValueContext.value,

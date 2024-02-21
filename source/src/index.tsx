@@ -5,6 +5,7 @@ export * from './components/DataSource';
 export * from './components/Menu';
 export * from './components/Menu/MenuProps';
 export * from './components/hooks/useOverlay';
+export * from './components/hooks/useEffectWithChanges';
 
 import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBox';
 import { LoadMask } from './components/InfiniteTable/components/LoadMask';
@@ -35,6 +36,8 @@ export {
 export { interceptMap } from './components/hooks/useInterceptedMap';
 
 export { DeepMap } from './utils/DeepMap';
+export { FixedSizeSet } from './utils/FixedSizeSet';
+export { WeakFixedSizeSet } from './utils/WeakFixedSizeSet';
 export { debug, type DebugLogger } from './utils/debugPackage';
 
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';

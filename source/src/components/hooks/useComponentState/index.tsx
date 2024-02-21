@@ -189,7 +189,7 @@ type ComponentStateRootConfig<
   T_PARENT_STATE = {},
 > = {
   debugName?: string;
-  initSetupState?: () => COMPONENT_SETUP_STATE;
+  initSetupState?: (props: T_PROPS) => COMPONENT_SETUP_STATE;
 
   layoutEffect?: boolean;
 
@@ -302,7 +302,7 @@ export function getComponentStateRoot<
   ) {
     const [initialSetupState] = useState<COMPONENT_SETUP_STATE>(() => {
       return config.initSetupState
-        ? config.initSetupState()
+        ? config.initSetupState(props)
         : ({} as COMPONENT_SETUP_STATE);
     });
     const propsToStateSetRef = useRef<Set<string>>(new Set());
@@ -424,6 +424,10 @@ export function getComponentStateRoot<
         Object.assign(newState, stateFromProps);
       }
 
+      if (action.type === 'ASSIGN_STATE') {
+        Object.assign(newState, action.payload);
+      }
+
       const result = config.concludeReducer
         ? config.concludeReducer({
             previousState,
@@ -482,6 +486,18 @@ export function getComponentStateRoot<
         componentState: state,
         componentActions: actions,
         getComponentState,
+        replaceState: (newState: COMPONENT_STATE) => {
+          dispatch({
+            type: 'REPLACE_STATE',
+            payload: newState,
+          });
+        },
+        assignState: (newState: Partial<COMPONENT_STATE>) => {
+          dispatch({
+            type: 'ASSIGN_STATE',
+            payload: newState,
+          });
+        },
       }),
       [state, actions, getComponentState],
     );

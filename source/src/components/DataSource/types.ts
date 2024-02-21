@@ -11,6 +11,7 @@ import {
 import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
+export { RowDetailsCache } from './RowDetailsCache';
 import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
@@ -44,6 +45,7 @@ import {
   RowSelectionState,
   RowSelectionStateObject,
 } from './RowSelectionState';
+import { DataSourceStateRestoreForDetails } from './state/getInitialState';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -115,6 +117,11 @@ export type DataSourcePropGroupRowsStateObject<KeyType> = {
   collapsedRows: DataSourceGroupRowsList<KeyType>;
 };
 
+export type DataSourcePropRowDetailsStateObject<KeyType> = {
+  expandedRows: true | KeyType[];
+  collapsedRows: true | KeyType[];
+};
+
 export type DataSourcePropGroupBy<T> = DataSourceGroupBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
@@ -123,6 +130,8 @@ export interface DataSourceMappedState<T> {
   livePagination: DataSourceProps<T>['livePagination'];
   refetchKey: NonUndefined<DataSourceProps<T>['refetchKey']>;
   isRowSelected: DataSourceProps<T>['isRowSelected'];
+  debugId: DataSourceProps<T>['debugId'];
+
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
   onDataMutations: DataSourceProps<T>['onDataMutations'];
   onReady: DataSourceProps<T>['onReady'];
@@ -228,7 +237,13 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 
 export interface DataSourceSetupState<T> {
   indexer: Indexer<T, any>;
+  destroyedRef: React.MutableRefObject<boolean>;
   idToIndexMap: Map<any, number>;
+  detailDataSourcesStateToRestore: Map<
+    any,
+    Partial<DataSourceStateRestoreForDetails<any>>
+  >;
+  stateReadyAsDetails: boolean;
   cache?: DataSourceCache<T>;
   unfilteredCount: number;
   filteredCount: number;
@@ -247,6 +262,7 @@ export interface DataSourceSetupState<T> {
   originalLazyGroupDataChangeDetect: number | string;
   scrollStopDelayUpdatedByTable: number;
 
+  onCleanup: SubscriptionCallback<DataSourceState<T>>;
   notifyScrollbarsChange: SubscriptionCallback<Scrollbars>;
   notifyScrollStop: SubscriptionCallback<ScrollStopInfo>;
   notifyRenderRangeChange: SubscriptionCallback<RenderRange>;
@@ -428,6 +444,7 @@ export type DataSourceRowInfoReducer<T> = DataSourceRawReducer<
 >;
 
 export type DataSourceProps<T> = {
+  debugId?: string;
   children:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
@@ -686,6 +703,7 @@ export type DataSourceDerivedState<T> = {
   sortMode: NonUndefined<DataSourceProps<T>['sortMode']>;
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
   groupRowsState: GroupRowsState<T>;
+
   multiSort: boolean;
   controlledSort: boolean;
   controlledFilter: boolean;
@@ -717,8 +735,14 @@ export type DataSourceComponentActions<T> = ComponentStateActions<
 export interface DataSourceContextValue<T> {
   api: DataSourceApi<T>;
   getState: () => DataSourceState<T>;
+  assignState: (state: Partial<DataSourceState<T>>) => void;
   componentState: DataSourceState<T>;
   componentActions: DataSourceComponentActions<T>;
+}
+
+export interface DataSourceMasterDetailContextValue {
+  registerDetail: (detail: DataSourceContextValue<any>) => void;
+  shouldRestoreState: boolean;
 }
 
 export enum DataSourceActionType {
