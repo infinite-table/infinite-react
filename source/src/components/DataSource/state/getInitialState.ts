@@ -68,6 +68,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
 
     idToIndexMap: new Map<any, number>(),
 
+    getDataSourceMasterContextRef: { current: () => undefined },
+
     // TODO: cleanup cache on unmount
     cache: undefined,
     detailDataSourcesStateToRestore: new Map(),
@@ -498,10 +500,16 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
 > {
   return {
     sortInfo: (sortInfo, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state, {
-        sortInfo,
-        livePaginationCursor: null,
-      });
+      const getDataSourceMasterContext =
+        state.getDataSourceMasterContextRef.current;
+      const dataParams = buildDataSourceDataParams(
+        state,
+        {
+          sortInfo,
+          livePaginationCursor: null,
+        },
+        getDataSourceMasterContext(),
+      );
 
       actions.dataParams = dataParams;
 
@@ -515,10 +523,16 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       }
     },
     groupBy: (groupBy, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state, {
-        groupBy,
-        livePaginationCursor: null,
-      });
+      const getDataSourceMasterContext =
+        state.getDataSourceMasterContextRef.current;
+      const dataParams = buildDataSourceDataParams(
+        state,
+        {
+          groupBy,
+          livePaginationCursor: null,
+        },
+        getDataSourceMasterContext(),
+      );
 
       actions.dataParams = dataParams;
 
@@ -531,10 +545,16 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       }
     },
     pivotBy: (pivotBy, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state, {
-        pivotBy,
-        livePaginationCursor: null,
-      });
+      const getDataSourceMasterContext =
+        state.getDataSourceMasterContextRef.current;
+      const dataParams = buildDataSourceDataParams(
+        state,
+        {
+          pivotBy,
+          livePaginationCursor: null,
+        },
+        getDataSourceMasterContext(),
+      );
 
       actions.dataParams = dataParams;
 
@@ -547,10 +567,16 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       }
     },
     filterValue: (filterValue, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state, {
-        filterValue,
-        livePaginationCursor: null,
-      });
+      const getDataSourceMasterContext =
+        state.getDataSourceMasterContextRef.current;
+      const dataParams = buildDataSourceDataParams(
+        state,
+        {
+          filterValue,
+          livePaginationCursor: null,
+        },
+        getDataSourceMasterContext(),
+      );
 
       actions.dataParams = dataParams;
 
@@ -563,15 +589,27 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
       }
     },
     cursorId: (cursorId, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state, {
-        __cursorId: cursorId,
-      });
+      const getDataSourceMasterContext =
+        state.getDataSourceMasterContextRef.current;
+      const dataParams = buildDataSourceDataParams(
+        state,
+        {
+          __cursorId: cursorId,
+        },
+        getDataSourceMasterContext(),
+      );
       actions.dataParams = dataParams;
     },
     livePaginationCursor: (livePaginationCursor, { actions, state }) => {
-      const dataParams = buildDataSourceDataParams(state, {
-        livePaginationCursor,
-      });
+      const getDataSourceMasterContext =
+        state.getDataSourceMasterContextRef.current;
+      const dataParams = buildDataSourceDataParams(
+        state,
+        {
+          livePaginationCursor,
+        },
+        getDataSourceMasterContext(),
+      );
 
       actions.dataParams = dataParams;
     },
@@ -583,6 +621,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
           new Set<keyof DataSourceDataParams<T>>([
             'changes',
             'originalDataArray',
+            'masterRowInfo',
           ]),
         )
       ) {

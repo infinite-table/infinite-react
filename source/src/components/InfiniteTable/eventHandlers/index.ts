@@ -16,6 +16,7 @@ function useEventHandlersContext<T>() {
     actions: actions,
     api,
     getComputed,
+    getDataSourceMasterContext,
   } = useInfiniteTable<T>();
   const {
     getState: getDataSourceState,
@@ -26,6 +27,7 @@ function useEventHandlersContext<T>() {
   const context = useMemo(() => {
     const context: InfiniteTableEventHandlerContext<T> = {
       getComputed,
+      getDataSourceMasterContext,
       dataSourceApi,
       api,
       getState,

@@ -3,6 +3,7 @@ import {
   DataSourceComponentActions,
   RowSelectionState,
   DataSourceApi,
+  DataSourceMasterDetailContextValue,
 } from '../../DataSource';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
 import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
@@ -50,6 +51,9 @@ export type InfiniteTableEventHandlerContext<T> = {
     rowSelection: RowSelectionState<T>,
   ) => RowSelectionState<T>;
   getDataSourceState: () => DataSourceState<T>;
+  getDataSourceMasterContext: () =>
+    | DataSourceMasterDetailContextValue
+    | undefined;
   dataSourceActions: DataSourceComponentActions<T>;
   api: InfiniteTableApi<T>;
   dataSourceApi: DataSourceApi<T>;

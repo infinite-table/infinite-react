@@ -10,8 +10,11 @@ import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataS
 export type ToggleGroupRowFn = (groupKeys: any[]) => void;
 
 export function useToggleGroupRow<T>() {
-  const { getState: getDataSourceState, componentActions: dataSourceActions } =
-    useDataSourceContextValue<T>();
+  const {
+    getState: getDataSourceState,
+    componentActions: dataSourceActions,
+    getDataSourceMasterContext,
+  } = useDataSourceContextValue<T>();
 
   const toggleGroupRow = useCallback<ToggleGroupRowFn>((groupKeys: any[]) => {
     // todo this  is duplicated in imperative api
@@ -27,9 +30,15 @@ export function useToggleGroupRow<T>() {
 
       if (newState.isGroupRowExpanded(groupKeys)) {
         if (!currentData?.cache) {
-          loadData(state.data, state, dataSourceActions, {
-            groupKeys,
-          });
+          loadData(
+            state.data,
+            state,
+            dataSourceActions,
+            {
+              groupKeys,
+            },
+            getDataSourceMasterContext(),
+          );
         }
       } else {
         if (!currentData?.cache) {

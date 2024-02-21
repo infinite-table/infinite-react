@@ -624,9 +624,15 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
       if (newState.isGroupRowExpanded(groupKeys)) {
         if (!currentData?.cache) {
-          loadData(state.data, state, this.dataSourceActions, {
-            groupKeys,
-          });
+          loadData(
+            state.data,
+            state,
+            this.dataSourceActions,
+            {
+              groupKeys,
+            },
+            this.context.getDataSourceMasterContext(),
+          );
         }
       } else {
         if (!currentData?.cache) {

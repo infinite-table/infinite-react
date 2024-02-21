@@ -49,6 +49,7 @@ import { DataSourceStateRestoreForDetails } from './state/getInitialState';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
+  masterRowInfo?: InfiniteTableRowInfo<any>;
   sortInfo?: DataSourceSortInfo<T>;
   groupBy?: DataSourcePropGroupBy<T>;
   pivotBy?: DataSourcePropPivotBy<T>;
@@ -237,6 +238,9 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
 
 export interface DataSourceSetupState<T> {
   indexer: Indexer<T, any>;
+  getDataSourceMasterContextRef: React.MutableRefObject<
+    () => DataSourceMasterDetailContextValue | undefined
+  >;
   destroyedRef: React.MutableRefObject<boolean>;
   idToIndexMap: Map<any, number>;
   detailDataSourcesStateToRestore: Map<
@@ -736,6 +740,9 @@ export interface DataSourceContextValue<T> {
   api: DataSourceApi<T>;
   getState: () => DataSourceState<T>;
   assignState: (state: Partial<DataSourceState<T>>) => void;
+  getDataSourceMasterContext: () =>
+    | DataSourceMasterDetailContextValue
+    | undefined;
   componentState: DataSourceState<T>;
   componentActions: DataSourceComponentActions<T>;
 }
@@ -743,6 +750,7 @@ export interface DataSourceContextValue<T> {
 export interface DataSourceMasterDetailContextValue {
   registerDetail: (detail: DataSourceContextValue<any>) => void;
   shouldRestoreState: boolean;
+  masterRowInfo: InfiniteTableRowInfo<any>;
 }
 
 export enum DataSourceActionType {

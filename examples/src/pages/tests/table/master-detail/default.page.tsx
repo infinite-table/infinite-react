@@ -74,10 +74,12 @@ const dataSource = () => {
 const detailDataSource: DataSourceProps<Developer>['data'] = ({
   sortInfo,
   filterValue,
+  masterRowInfo,
 }) => {
   if (sortInfo && !Array.isArray(sortInfo)) {
     sortInfo = [sortInfo];
   }
+  console.log(masterRowInfo?.data, 'master');
 
   const args = [
     filterValue
@@ -157,7 +159,7 @@ export default function DataTestPage() {
             collapsedRows: true,
           }}
           rowDetailHeight={400}
-          rowDetailsCache={3}
+          rowDetailsCache={false}
           rowDetailRenderer={(
             rowInfo: InfiniteTableRowInfo<Developer>,
             _cache,
@@ -174,12 +176,19 @@ export default function DataTestPage() {
               >
                 <form style={{ padding: 20 }}>
                   <label>
-                    Name:
-                    <input />
+                    First name:
+                    <input
+                      name="first name"
+                      defaultValue={rowInfo.data?.firstName}
+                    />
                   </label>
                   <label>
-                    Name:
-                    <input />
+                    Age:
+                    <input
+                      name="last name"
+                      type="number"
+                      defaultValue={rowInfo.data?.age}
+                    />
                   </label>
                 </form>
                 <DataSource<Developer>

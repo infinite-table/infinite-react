@@ -359,6 +359,7 @@ function InfiniteTableContextProvider<T>() {
   const {
     getState: getDataSourceState,
     componentActions: dataSourceActions,
+    getDataSourceMasterContext,
     api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
@@ -367,6 +368,7 @@ function InfiniteTableContextProvider<T>() {
       getComputed,
       getState,
       getDataSourceState,
+      getDataSourceMasterContext,
       dataSourceApi,
       actions: componentActions,
       dataSourceActions,
@@ -378,6 +380,7 @@ function InfiniteTableContextProvider<T>() {
     state: componentState,
     computed,
     dataSourceActions,
+    getDataSourceMasterContext,
     getDataSourceState,
     getComputed,
     getState,

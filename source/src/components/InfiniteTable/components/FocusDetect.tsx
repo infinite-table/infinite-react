@@ -24,7 +24,8 @@ export function FocusDetect<T>() {
     dataSourceApi,
     dataSourceActions,
   } = useInfiniteTable<T>();
-  const { getState: getDataSourceState } = useDataSourceContextValue<T>();
+  const { getState: getDataSourceState, getDataSourceMasterContext } =
+    useDataSourceContextValue<T>();
 
   const { focusDetectDOMRef } = getState();
 
@@ -34,6 +35,7 @@ export function FocusDetect<T>() {
 
     const context = {
       getDataSourceState,
+      getDataSourceMasterContext,
       getComputed,
       actions,
       dataSourceActions,

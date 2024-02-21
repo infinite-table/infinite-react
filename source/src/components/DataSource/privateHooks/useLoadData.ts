@@ -1,12 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { LazyGroupDataItem, LazyRowInfoGroup } from '..';
+import {
+  DataSourceMasterDetailContextValue,
+  LazyGroupDataItem,
+  LazyRowInfoGroup,
+} from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { raf } from '../../../utils/raf';
 import { useComponentState } from '../../hooks/useComponentState';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
+import { useLatest } from '../../hooks/useLatest';
 import { Scrollbars } from '../../InfiniteTable';
 import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { debounce } from '../../utils/debounce';
@@ -50,6 +55,7 @@ const DATA_CHANGES_COMPARE_FUNCTIONS: Record<
 export function buildDataSourceDataParams<T>(
   componentState: DataSourceState<T>,
   overrides?: Partial<DataSourceDataParams<T>>,
+  masterContext?: DataSourceMasterDetailContextValue,
 ): DataSourceDataParams<T> {
   const sortInfo = componentState.multiSort
     ? componentState.sortInfo
@@ -65,6 +71,10 @@ export function buildDataSourceDataParams<T>(
     filterValue: componentState.filterValue,
     aggregationReducers: componentState.aggregationReducers,
   };
+
+  if (masterContext) {
+    dataSourceParams.masterRowInfo = masterContext.masterRowInfo;
+  }
 
   if (dataSourceParams.groupBy) {
     dataSourceParams.groupRowsState = componentState.groupRowsState.getState();
@@ -135,8 +145,13 @@ export function loadData<T>(
   componentState: DataSourceState<T>,
   actions: ComponentStateGeneratedActions<DataSourceState<T>>,
   overrides?: Partial<DataSourceDataParams<T>>,
+  masterContext?: DataSourceMasterDetailContextValue | undefined,
 ) {
-  const dataParams = buildDataSourceDataParams(componentState, overrides);
+  const dataParams = buildDataSourceDataParams(
+    componentState,
+    overrides,
+    masterContext,
+  );
   const append = dataParams.append;
 
   if (componentState.lazyLoad) {
@@ -396,6 +411,26 @@ function computeFilterValueForRemote<T>(
   );
 }
 
+function getDetailReady(
+  masterContext: DataSourceMasterDetailContextValue | undefined,
+  getDataSourceState: () => DataSourceState<any>,
+) {
+  const isDetail = !!masterContext;
+
+  const { stateReadyAsDetails } = getDataSourceState();
+
+  const isDetailReady = isDetail
+    ? masterContext.shouldRestoreState
+      ? stateReadyAsDetails
+      : true
+    : true;
+
+  return {
+    isDetail,
+    isDetailReady,
+  };
+}
+
 export function useLoadData<T>() {
   const {
     getComponentState,
@@ -418,7 +453,6 @@ export function useLoadData<T>() {
     livePaginationCursor,
     filterTypes,
     cursorId: stateCursorId,
-    stateReadyAsDetails,
   } = componentState;
 
   const [scrollbars, setScrollbars] = useState<Scrollbars>({
@@ -527,29 +561,30 @@ export function useLoadData<T>() {
 
   useLazyLoadRange<T>();
 
-  const masterContext = useMasterDetailContext();
-
-  const isDetail = !!masterContext;
-  const isDetailRef = useRef(!!masterContext);
-  isDetailRef.current = isDetail;
-
-  const isDetailReady = isDetail
-    ? masterContext.shouldRestoreState
-      ? stateReadyAsDetails
-      : true
-    : true;
-  const isDetailReadyRef = useRef(isDetailReady);
-  isDetailReadyRef.current = isDetailReady;
+  const getMasterContext = useLatest(useMasterDetailContext());
 
   useEffectWithChanges(
     () => {
       const componentState = getComponentState();
-      if (isDetailRef.current && !isDetailReadyRef.current) {
+
+      const masterContext = getMasterContext();
+
+      const { isDetail, isDetailReady } = getDetailReady(
+        masterContext,
+        getComponentState,
+      );
+      if (isDetail && !isDetailReady) {
         return;
       }
 
       if (typeof componentState.data !== 'function') {
-        loadData(componentState.data, componentState, actions);
+        loadData(
+          componentState.data,
+          componentState,
+          actions,
+          undefined,
+          masterContext,
+        );
       }
     },
     { data },
@@ -570,15 +605,27 @@ export function useLoadData<T>() {
         }
       }
 
-      if (isDetailRef.current && !isDetailReadyRef.current) {
+      const masterContext = getMasterContext();
+      const { isDetail, isDetailReady } = getDetailReady(
+        masterContext,
+        getComponentState,
+      );
+
+      if (isDetail && !isDetailReady) {
         return;
       }
 
       const componentState = getComponentState();
       if (typeof componentState.data === 'function') {
-        loadData(componentState.data, componentState, actions, {
-          append: appendWhenLivePagination,
-        });
+        loadData(
+          componentState.data,
+          componentState,
+          actions,
+          {
+            append: appendWhenLivePagination,
+          },
+          masterContext,
+        );
       }
     },
     { ...depsObject, data },
@@ -590,7 +637,11 @@ export function useLoadData<T>() {
     if (initialRef.current) {
       initialRef.current = false;
 
-      const dataParams = buildDataSourceDataParams(componentState);
+      const dataParams = buildDataSourceDataParams(
+        componentState,
+        undefined,
+        getMasterContext(),
+      );
       actions.dataParams = dataParams;
     }
   }, depsObject);

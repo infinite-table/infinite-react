@@ -4,6 +4,7 @@ import { InfiniteTableApi, InfiniteTableColumnApi } from './InfiniteTableProps';
 import {
   DataSourceApi,
   DataSourceComponentActions,
+  DataSourceMasterDetailContextValue,
   DataSourceState,
 } from '../../DataSource';
 import { OnCellClickContext } from '../eventHandlers/onCellClick';
@@ -19,6 +20,9 @@ export interface InfiniteTableContextValue<T> {
   getComputed: () => InfiniteTableComputedValues<T>;
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
+  getDataSourceMasterContext: () =>
+    | DataSourceMasterDetailContextValue
+    | undefined;
 }
 
 export interface InfiniteTablePublicContext<T> {

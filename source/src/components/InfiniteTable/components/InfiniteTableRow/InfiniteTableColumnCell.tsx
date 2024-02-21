@@ -176,6 +176,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     actions: componentActions,
     computed,
     api: imperativeApi,
+    getDataSourceMasterContext,
   } = useInfiniteTable<T>();
   const {
     componentState: dataSourceState,
@@ -190,6 +191,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const renderingContext: InfiniteTableColumnRenderingContext<T> = {
     getState,
     getDataSourceState,
+    getDataSourceMasterContext,
     actions: componentActions,
     dataSourceActions,
     api: imperativeApi,

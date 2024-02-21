@@ -85,9 +85,13 @@ function DataSourceCmp<T>({
   const DataSourceContext = getDataSourceContext<T>();
 
   const masterContext = useMasterDetailContext();
+  const getDataSourceMasterContext = useLatest(masterContext);
 
   const { componentState, componentActions, assignState } =
     useComponentState<DataSourceState<T>>();
+
+  componentState.getDataSourceMasterContextRef.current =
+    getDataSourceMasterContext;
 
   const getState = useLatest(componentState);
 
@@ -97,6 +101,7 @@ function DataSourceCmp<T>({
   const contextValue: DataSourceContextValue<T> = {
     componentState,
     componentActions,
+    getDataSourceMasterContext,
     getState,
     assignState,
     api,

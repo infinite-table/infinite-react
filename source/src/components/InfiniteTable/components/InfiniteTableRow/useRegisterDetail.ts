@@ -182,8 +182,10 @@ export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
       return {
         registerDetail,
         shouldRestoreState,
-      };
+      } as DataSourceMasterDetailContextValue;
     }, [rowInfo.id, currentRowCache]);
+
+  masterDetailContextValue.masterRowInfo = rowInfo as InfiniteTableRowInfo<any>;
 
   return { masterDetailContextValue, currentRowCache };
 }

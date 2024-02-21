@@ -2,6 +2,7 @@ import {
   DataSourceState,
   DataSourceComponentActions,
   DataSourceApi,
+  DataSourceMasterDetailContextValue,
 } from '../../DataSource';
 import { InfiniteTableComputedValues, InfiniteTableState } from '../types';
 import { InfiniteTableActions } from '../types/InfiniteTableState';
@@ -10,6 +11,9 @@ export type GetImperativeApiParam<T> = {
   getComputed: () => InfiniteTableComputedValues<T>;
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
+  getDataSourceMasterContext: () =>
+    | DataSourceMasterDetailContextValue
+    | undefined;
   actions: InfiniteTableActions<T>;
   dataSourceActions: DataSourceComponentActions<T>;
   dataSourceApi: DataSourceApi<T>;

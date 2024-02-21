@@ -155,6 +155,7 @@ export function InfiniteTableHeaderCell<T>(
       columnReorderDragColumnId,
       columnMenuVisibleForColumnId,
     },
+    getDataSourceMasterContext,
   } = useInfiniteTable<T>();
 
   const {
@@ -203,6 +204,7 @@ export function InfiniteTableHeaderCell<T>(
     dataSourceApi,
     getComputed,
     getDataSourceState,
+    getDataSourceMasterContext,
     getState,
   })!;
 

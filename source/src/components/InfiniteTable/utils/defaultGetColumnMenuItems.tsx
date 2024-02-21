@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   DataSourceApi,
   DataSourceComponentActions,
+  DataSourceMasterDetailContextValue,
   DataSourceState,
 } from '../../DataSource';
 import { MenuItemObject, MenuProps } from '../../Menu/MenuProps';
@@ -27,6 +28,9 @@ export function defaultGetColumnMenuItems<T>(
     getState: () => InfiniteTableState<T>;
     getDataSourceState: () => DataSourceState<T>;
     getComputed: () => InfiniteTableComputedValues<T>;
+    getDataSourceMasterContext: () =>
+      | DataSourceMasterDetailContextValue
+      | undefined;
 
     actions: InfiniteTableActions<T>;
     dataSourceActions: DataSourceComponentActions<T>;
