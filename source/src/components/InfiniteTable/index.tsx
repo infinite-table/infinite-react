@@ -7,6 +7,7 @@ import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch';
 import {
   useDataSource,
   useDataSourceContextValue,
+  useMasterDetailContext,
 } from '../DataSource/publicHooks/useDataSource';
 import { HeadlessTable } from '../HeadlessTable';
 
@@ -120,10 +121,13 @@ export const InfiniteTableComponent = React.memo(
       licenseKey,
       loadingText,
 
+      rowDetailRenderer,
       header,
       onRowHeightCSSVarChange,
+      onRowDetailHeightCSSVarChange,
       onColumnHeaderHeightCSSVarChange,
       rowHeightCSSVar,
+      rowDetailHeightCSSVar,
       columnHeaderHeightCSSVar,
       components,
       scrollStopDelay,
@@ -134,6 +138,7 @@ export const InfiniteTableComponent = React.memo(
       activeRowIndex,
       activeCellIndex,
       onRenderUpdater,
+      debugId,
     } = componentState;
 
     useScrollToActiveRow(activeRowIndex, dataArray.length, api);
@@ -144,9 +149,13 @@ export const InfiniteTableComponent = React.memo(
 
     const { bodySize } = componentState;
 
-    const { scrollbars } = computed;
+    const { scrollbars, computedRowHeight, computedRowSizeCacheForDetails } =
+      computed;
 
-    const { renderCell } = useCellRendering({
+    const activeCellRowHeight =
+      computedRowSizeCacheForDetails?.getRowHeight || computedRowHeight;
+
+    const { renderCell, renderDetailRow } = useCellRendering({
       imperativeApi: api,
       getComputed,
       domRef: componentState.domRef,
@@ -261,6 +270,7 @@ export const InfiniteTableComponent = React.memo(
 
         <InfiniteTableBody onContextMenu={onContextMenu}>
           <HeadlessTable
+            debugId={debugId}
             tabIndex={0}
             activeRowIndex={
               componentState.ready && keyboardNavigation === 'row'
@@ -279,7 +289,9 @@ export const InfiniteTableComponent = React.memo(
             renderer={renderer}
             onRenderUpdater={onRenderUpdater}
             brain={brain}
+            activeCellRowHeight={activeCellRowHeight}
             renderCell={renderCell}
+            renderDetailRow={rowDetailRenderer ? renderDetailRow : undefined}
             cellHoverClassNames={HOVERED_CLASS_NAMES}
             scrollerDOMRef={scrollerDOMRef}
           ></HeadlessTable>
@@ -308,6 +320,12 @@ export const InfiniteTableComponent = React.memo(
             onChange={onRowHeightCSSVarChange}
           />
         ) : null}
+        {rowDetailHeightCSSVar ? (
+          <CSSNumericVariableWatch
+            varName={rowDetailHeightCSSVar}
+            onChange={onRowDetailHeightCSSVarChange}
+          />
+        ) : null}
         {columnHeaderHeightCSSVar ? (
           <CSSNumericVariableWatch
             varName={columnHeaderHeightCSSVar}
@@ -331,7 +349,8 @@ function InfiniteTableContextProvider<T>() {
   const getComputed = useLatest(computed);
   const getState = useLatest(componentState);
 
-  if (__DEV__) {
+  const masterContext = useMasterDetailContext();
+  if (__DEV__ && !masterContext) {
     (globalThis as any).getState = getState;
     (globalThis as any).getComputed = getComputed;
     (globalThis as any).componentActions = componentActions;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 
 import { multisort } from '../../utils/multisort';
 import {
@@ -16,6 +16,7 @@ import { useLoadData } from './privateHooks/useLoadData';
 import {
   useDataSource,
   useDataSourceContextValue,
+  useMasterDetailContext,
 } from './publicHooks/useDataSource';
 import { RowSelectionState } from './RowSelectionState';
 import { CellSelectionState } from './CellSelectionState';
@@ -26,6 +27,7 @@ import {
   getInterceptActions,
   onPropChange,
   getMappedCallbacks,
+  cleanupDataSource,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
 import {
@@ -66,15 +68,25 @@ const DataSourceRoot = getComponentStateRoot({
   //@ts-ignore
   onPropChange,
   //@ts-ignore
+  cleanup: cleanupDataSource,
+  //@ts-ignore
   interceptActions: getInterceptActions(),
   //@ts-ignore
   mappedCallbacks: getMappedCallbacks(),
 });
 
-function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
+function DataSourceCmp<T>({
+  children,
+  isDetail,
+}: {
+  children: DataSourceChildren<T>;
+  isDetail: boolean;
+}) {
   const DataSourceContext = getDataSourceContext<T>();
 
-  const { componentState, componentActions } =
+  const masterContext = useMasterDetailContext();
+
+  const { componentState, componentActions, assignState } =
     useComponentState<DataSourceState<T>>();
 
   const getState = useLatest(componentState);
@@ -86,13 +98,35 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
     componentState,
     componentActions,
     getState,
+    assignState,
     api,
   };
 
-  if (__DEV__) {
+  useLayoutEffect(() => {
+    if (masterContext) {
+      masterContext.registerDetail(contextValue);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    return () => {
+      const state = getState();
+      state.onCleanup(state);
+    };
+  }, []);
+
+  if (__DEV__ && !isDetail) {
     (globalThis as any).getDataSourceState = getState;
     (globalThis as any).dataSourceActions = componentActions;
     (globalThis as any).dataSourceApi = api;
+  }
+  if (__DEV__ && componentState.debugId) {
+    (globalThis as any).dataSources = (globalThis as any).dataSources || {};
+    (globalThis as any)['dataSources'][componentState.debugId] = {
+      getState,
+      actions: componentActions,
+      api,
+    };
   }
 
   useLoadData();
@@ -128,9 +162,11 @@ function DataSourceCmp<T>({ children }: { children: DataSourceChildren<T> }) {
 }
 
 function DataSource<T>(props: DataSourceProps<T>) {
+  const masterContext = useMasterDetailContext();
+
   return (
     <DataSourceRoot {...props}>
-      <DataSourceCmp children={props.children} />
+      <DataSourceCmp children={props.children} isDetail={!!masterContext} />
     </DataSourceRoot>
   );
 }

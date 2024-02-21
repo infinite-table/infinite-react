@@ -2,8 +2,15 @@ import { createRef, KeyboardEvent, MouseEvent } from 'react';
 import {
   DataSourceGroupBy,
   DataSourcePropGroupBy,
+  DataSourcePropRowDetailsStateObject,
   DataSourceState,
 } from '../../DataSource';
+import { RowDetailsCache } from '../../DataSource/RowDetailsCache';
+import { RowDetailsState } from '../../DataSource/RowDetailsState';
+import {
+  RowDetailsCacheEntry,
+  RowDetailsCacheKey,
+} from '../../DataSource/state/getInitialState';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
@@ -62,13 +69,17 @@ export function getCellSelector(cellPosition?: CellPositionByIndex) {
  * The computed state is independent from props and cannot
  * be affected by props.
  */
-export function initSetupState<T>(): InfiniteTableSetupState<T> {
+export function initSetupState<T>({
+  debugId,
+}: {
+  debugId?: string;
+}): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTableColumnsMap<T> = new Map();
 
   /**
    * This is the main virtualization brain that powers the table
    */
-  const brain = new MatrixBrain();
+  const brain = new MatrixBrain(debugId);
 
   /**
    * The brain that virtualises the header is different from the main brain
@@ -151,6 +162,7 @@ export function initSetupState<T>(): InfiniteTableSetupState<T> {
     }>(),
 
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
+    onRowDetailHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
     cellClick: buildSubscriptionCallback<
       CellPositionByIndex & { event: MouseEvent }
@@ -190,6 +202,7 @@ export const forwardProps = <T>(
   InfiniteTableSetupState<T>
 > => {
   return {
+    debugId: 1,
     scrollTopKey: 1,
     components: 1,
     id: 1,
@@ -225,6 +238,8 @@ export const forwardProps = <T>(
     columnDefaultFilterable: 1,
     columnDefaultSortable: 1,
 
+    rowDetailRenderer: 1,
+
     rowStyle: 1,
     cellStyle: 1,
 
@@ -251,6 +266,12 @@ export const forwardProps = <T>(
     viewportReservedWidth: (viewportReservedWidth) =>
       viewportReservedWidth ?? 0,
     resizableColumns: (resizableColumns) => resizableColumns ?? true,
+
+    rowDetailsCache: (rowDetailsCache) => {
+      return new RowDetailsCache<RowDetailsCacheKey, RowDetailsCacheEntry>(
+        rowDetailsCache,
+      );
+    },
 
     hideColumnWhenGrouped: (hideColumnWhenGrouped) =>
       hideColumnWhenGrouped ?? false,
@@ -291,7 +312,14 @@ export const forwardProps = <T>(
     showHoverRows: (showHoverRows) => showHoverRows ?? true,
     virtualizeColumns: (virtualizeColumns) => virtualizeColumns ?? true,
 
-    rowHeight: (rowHeight) => (typeof rowHeight === 'number' ? rowHeight : 0),
+    rowHeight: (rowHeight) =>
+      typeof rowHeight === 'number' || typeof rowHeight === 'function'
+        ? rowHeight
+        : 0,
+    rowDetailHeight: (rowHeight) =>
+      typeof rowHeight === 'number' || typeof rowHeight === 'function'
+        ? rowHeight
+        : 0,
     columnHeaderHeight: (columnHeaderHeight) =>
       typeof columnHeaderHeight === 'number' ? columnHeaderHeight : 30,
 
@@ -365,8 +393,7 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.scrollerDOMRef.current = null;
   state.portalDOMRef.current = null;
 
-  state.onRowHeightCSSVarChange.destroy();
-  state.onColumnHeaderHeightCSSVarChange.destroy();
+  state.onRowDetailHeightCSSVarChange.destroy();
   state.pinnedEndScrollListener.destroy();
   state.pinnedStartScrollListener.destroy();
 };
@@ -387,6 +414,8 @@ export function getGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
     return acc;
   }, new Map() as GroupByMap<T>);
 }
+
+const weakMap = new WeakMap<any, any>();
 
 export const mapPropsToState = <T>(params: {
   props: InfiniteTableProps<T>;
@@ -412,12 +441,58 @@ export const mapPropsToState = <T>(params: {
     groupColumn: props.groupColumn,
   });
 
+  let rowDetailsState:
+    | RowDetailsState<any>
+    | DataSourcePropRowDetailsStateObject<T>
+    | undefined = undefined;
+
+  if (props.rowDetailRenderer) {
+    rowDetailsState =
+      props.rowDetailsState ||
+      state.rowDetailsState ||
+      props.defaultRowDetailsState;
+
+    if (rowDetailsState && !(rowDetailsState instanceof RowDetailsState)) {
+      rowDetailsState = new RowDetailsState(rowDetailsState);
+    }
+
+    rowDetailsState =
+      rowDetailsState ||
+      new RowDetailsState<any>({ expandedRows: [], collapsedRows: true });
+  }
+
   const computedColumns =
     state.columnsWhenGrouping ||
     state.columnsWhenInlineGroupRenderStrategy ||
     state.columns;
 
+  let isRowDetailsExpanded = rowDetailsState
+    ? props.isRowDetailsExpanded
+    : undefined;
+
+  if (!isRowDetailsExpanded && rowDetailsState) {
+    // we use a weakmap to get the same isRowDetailsExpanded for the same instance of rowDetailsState
+    isRowDetailsExpanded = weakMap.get(rowDetailsState);
+    if (!isRowDetailsExpanded) {
+      isRowDetailsExpanded = (rowInfo) => {
+        return (rowDetailsState as RowDetailsState).isRowDetailsExpanded(
+          rowInfo.id,
+        );
+      };
+      if (typeof rowDetailsState === 'object') {
+        weakMap.set(rowDetailsState, isRowDetailsExpanded);
+      }
+    }
+  }
+
+  const isRowDetailsEnabled = !props.rowDetailRenderer
+    ? false
+    : props.isRowDetailsEnabled || true;
+
   return {
+    rowDetailsState: rowDetailsState as RowDetailsState<any> | undefined,
+    isRowDetailsExpanded,
+    isRowDetailsEnabled,
     showColumnFilters: props.showColumnFilters ?? !!parentState.filterValue,
     controlledColumnVisibility: !!props.columnVisibility,
     groupRenderStrategy,
@@ -443,6 +518,8 @@ export const mapPropsToState = <T>(params: {
     computedColumnGroups,
 
     rowHeightCSSVar: typeof props.rowHeight === 'string' ? props.rowHeight : '',
+    rowDetailHeightCSSVar:
+      typeof props.rowDetailHeight === 'string' ? props.rowDetailHeight : '',
     columnHeaderHeightCSSVar:
       typeof props.columnHeaderHeight === 'string'
         ? props.columnHeaderHeight ||

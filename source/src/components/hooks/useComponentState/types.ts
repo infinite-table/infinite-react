@@ -2,6 +2,8 @@ export type ComponentStateContext<T_STATE, T_ACTIONS> = {
   getComponentState: () => T_STATE;
   componentState: T_STATE;
   componentActions: T_ACTIONS;
+  assignState: (state: Partial<T_STATE>) => void;
+  replaceState: (state: T_STATE) => void;
 };
 
 export type ComponentStateGeneratedActions<T_STATE> = {

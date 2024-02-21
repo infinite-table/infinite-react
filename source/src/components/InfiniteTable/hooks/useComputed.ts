@@ -12,6 +12,7 @@ import { useColumnRowspan } from './useColumnRowspan';
 import { useColumnSizeFn } from './useColumnSizeFn';
 import { useColumnsWhen } from './useColumnsWhen';
 import { useComputedColumns } from './useComputedColumns';
+import { useComputedRowHeight } from './useComputedRowHeight';
 import { useScrollbars } from './useScrollbars';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
@@ -34,6 +35,10 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnDefaultEditable,
     columnDefaultFilterable,
     columnTypes,
+    rowHeight,
+    rowDetailHeight,
+    isRowDetailsExpanded,
+    isRowDetailsEnabled,
     brain,
     bodySize,
     showSeparatePivotColumnForSingleAggregation,
@@ -43,6 +48,11 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     componentState.onRowHeightCSSVarChange.onChange((rowHeight) => {
       if (rowHeight) {
         componentActions.rowHeight = rowHeight;
+      }
+    });
+    componentState.onRowDetailHeightCSSVarChange.onChange((rowDetailHeight) => {
+      if (rowDetailHeight) {
+        componentActions.rowDetailHeight = rowDetailHeight;
       }
     });
     componentState.onColumnHeaderHeightCSSVarChange.onChange(
@@ -162,10 +172,20 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     });
   });
 
+  const { computedRowHeight, computedRowSizeCacheForDetails } =
+    useComputedRowHeight<T>({
+      rowDetailHeight,
+      rowHeight,
+      isRowDetailsExpanded,
+      isRowDetailsEnabled,
+      getDataSourceState,
+    });
+
   return {
     multiRowSelector,
     multiCellSelector,
-
+    computedRowSizeCacheForDetails,
+    computedRowHeight,
     scrollbars,
     columnSize,
     rowspan,

@@ -11,6 +11,7 @@ import {
   DataSourcePivotBy,
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
+  DataSourcePropRowDetailsStateObject,
   DataSourceProps,
   DataSourcePropSelectionMode,
   DataSourceSingleSortInfo,
@@ -51,6 +52,10 @@ import {
   InfiniteTablePublicContext,
 } from './InfiniteTableContextValue';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
+import { RowDetailsState } from '../../DataSource/RowDetailsState';
+import { InfiniteTableRowDetailsApi } from '../api/getRowDetailsApi';
+import { RowDetailsCacheStorageForCurrentRow } from '../../DataSource/RowDetailsCache';
+import { RowDetailsCacheEntry } from '../../DataSource/state/getInitialState';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -143,6 +148,7 @@ export type InfiniteTableColumnType<T> = {
   components?: InfiniteTableColumn<T>['components'];
   renderMenuIcon?: InfiniteTableColumn<T>['renderMenuIcon'];
   renderSortIcon?: InfiniteTableColumn<T>['renderSortIcon'];
+  renderRowDetailsIcon?: InfiniteTableColumn<T>['renderRowDetailsIcon'];
   renderSelectionCheckBox?: InfiniteTableColumn<T>['renderSelectionCheckBox'];
   renderHeaderSelectionCheckBox?: InfiniteTableColumn<T>['renderHeaderSelectionCheckBox'];
   renderValue?: InfiniteTableColumn<T>['renderValue'];
@@ -250,6 +256,7 @@ export type MultiSortBehaviorOptions = {
 };
 
 export interface InfiniteTableApi<T> {
+  get rowDetailsApi(): InfiniteTableRowDetailsApi;
   get rowSelectionApi(): InfiniteTableRowSelectionApi;
   get cellSelectionApi(): InfiniteTableCellSelectionApi<T>;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
@@ -551,6 +558,7 @@ export type InfiniteTablePropOnEditPersistParams<T> =
 
 export type InfiniteTablePropMultiSortBehavior = 'append' | 'replace';
 export interface InfiniteTableProps<T> {
+  debugId?: string;
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTableColumnsMap<T, InfiniteTablePivotColumn<T>>;
 
@@ -651,7 +659,28 @@ export interface InfiniteTableProps<T> {
 
   showSeparatePivotColumnForSingleAggregation?: boolean;
 
-  rowHeight?: number | string;
+  isRowDetailsExpanded?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
+  isRowDetailsEnabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
+
+  rowDetailsCache?: boolean | number;
+  rowDetailsState?: RowDetailsState | DataSourcePropRowDetailsStateObject<any>;
+  defaultRowDetailsState?:
+    | RowDetailsState
+    | DataSourcePropRowDetailsStateObject<any>;
+  onRowDetailsStateChange?: (rowDetailsState: RowDetailsState) => void;
+
+  // TODO implement this - see collapseGroupRowsOnDataFunctionChange for details
+  // collapseRowDetailsOnDataFunctionChange?: boolean;
+
+  rowHeight?: number | string | ((rowInfo: InfiniteTableRowInfo<T>) => number);
+  rowDetailHeight?:
+    | number
+    | string
+    | ((rowInfo: InfiniteTableRowInfo<T>) => number);
+  rowDetailRenderer?: (
+    rowInfo: InfiniteTableRowInfo<T>,
+    cache: RowDetailsCacheStorageForCurrentRow<RowDetailsCacheEntry>,
+  ) => Renderable;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   cellStyle?: InfiniteTablePropCellStyle<T>;
   cellClassName?: InfiniteTablePropCellClassName<T>;

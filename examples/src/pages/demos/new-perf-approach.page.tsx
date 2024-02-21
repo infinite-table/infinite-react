@@ -97,6 +97,7 @@ export default function App() {
           // fixedColsEnd={2}
           // fixedRowsStart={2}
           // fixedRowsEnd={2}
+          activeCellRowHeight={40}
           cols={1100}
           rows={5000}
           height={height}

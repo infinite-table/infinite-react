@@ -15,6 +15,7 @@ import type { Size } from '../types/Size';
 import type {
   ReactHeadlessTableRenderer,
   TableRenderCellFn,
+  TableRenderDetailRowFn,
 } from './ReactHeadlessTableRenderer';
 
 import { MatrixBrain, MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
@@ -30,7 +31,10 @@ import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndic
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
   brain: MatrixBrain;
+  debugId?: string;
+  activeCellRowHeight: number | ((rowIndex: number) => number) | undefined;
   renderCell: TableRenderCellFn;
+  renderDetailRow?: TableRenderDetailRowFn;
   activeRowIndex?: number | null;
   activeCellIndex?: [number, number] | null;
   scrollStopDelay?: number;
@@ -142,6 +146,8 @@ export function HeadlessTable(
     scrollerDOMRef,
     scrollStopDelay,
     renderCell,
+    renderDetailRow,
+    activeCellRowHeight,
     cellHoverClassNames,
     renderer,
     activeRowIndex,
@@ -218,10 +224,15 @@ export function HeadlessTable(
           renderer={renderer}
           onRenderUpdater={onRenderUpdater}
           renderCell={renderCell}
+          renderDetailRow={renderDetailRow}
           brain={brain}
           cellHoverClassNames={cellHoverClassNames}
         />
-        <ActiveCellIndicator brain={brain} activeCellIndex={activeCellIndex} />
+        <ActiveCellIndicator
+          brain={brain}
+          rowHeight={activeCellRowHeight}
+          activeCellIndex={activeCellIndex}
+        />
       </div>
       <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
 

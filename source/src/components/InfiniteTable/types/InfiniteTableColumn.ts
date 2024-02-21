@@ -40,6 +40,7 @@ import { GroupBy, ValueGetterParams } from '../../../utils/groupAndPivot/types';
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
+export type InfiniteTableToggleRowDetailsFn = (id: any) => void;
 export type InfiniteTableSelectRowFn = (id: any) => void;
 export type InfiniteTableIsRowSelectedFn = (id: any) => boolean;
 export type InfiniteTableIsGroupRowSelectedFn = (groupKeys: any[]) => boolean;
@@ -81,6 +82,7 @@ export type InfiniteTableColumnHeaderParam<
 export type InfiniteTableColumnRenderBag = {
   value: string | number | Renderable;
   groupIcon?: Renderable;
+  rowDetailsIcon?: Renderable;
   all?: Renderable;
   selectionCheckBox?: Renderable;
 };
@@ -111,6 +113,12 @@ export type InfiniteTableColumnRenderParamBase<
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   toggleCurrentGroupRowSelection: () => void;
   toggleCurrentRowSelection: () => void;
+
+  toggleCurrentRowDetails: () => void;
+
+  toggleRowDetails: InfiniteTableToggleRowDetailsFn;
+  expandRowDetails: InfiniteTableToggleRowDetailsFn;
+  collapseRowDetails: InfiniteTableToggleRowDetailsFn;
 
   rowHasSelectedCells: boolean;
   cellSelected: boolean;
@@ -468,6 +476,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   maxWidth?: number;
 
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
+  renderRowDetailsIcon?: boolean | InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderFilterIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderSelectionCheckBox?:

@@ -15,6 +15,7 @@ export function getDataSourceContext<T>(): React.Context<
   return (DSContext = React.createContext<DataSourceContextValue<T>>({
     api: null as any as DataSourceApi<T>,
     getState: () => null as any as DataSourceState<T>,
+    assignState: () => null as any as DataSourceState<T>,
     componentState: null as any as DataSourceState<T>,
     componentActions: null as any as DataSourceComponentActions<T>,
   }));

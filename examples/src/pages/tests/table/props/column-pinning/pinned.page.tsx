@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 const defaultColumnPinning: InfiniteTablePropColumnPinning = {
   make: 'start',
-  year: 'start',
+  year: 'end',
 };
 
 // const defaultColumnPinning: InfiniteTablePropColumnPinning = {
@@ -41,14 +41,14 @@ const App = () => {
               position: 'relative',
             },
           }}
-          pinnedStartMaxWidth={500}
-          pinnedEndMaxWidth={500}
+          pinnedStartMaxWidth={100}
+          pinnedEndMaxWidth={100}
           columnPinning={columnPinning}
           onColumnPinningChange={setColumnPinning}
           onReady={({ api }: { api: InfiniteTableApi<Car> }) => {
             (globalThis as any).api = api;
           }}
-          columnDefaultWidth={440}
+          columnDefaultWidth={280}
           columnMinWidth={50}
           columns={columns}
         />

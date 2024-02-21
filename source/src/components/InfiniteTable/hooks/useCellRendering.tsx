@@ -1,4 +1,4 @@
-import type { Ref } from 'react';
+import { Ref, useMemo } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import * as React from 'react';
 
@@ -6,6 +6,8 @@ import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataS
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,
+  TableRenderDetailRowFn,
+  TableRenderDetailRowFnParam,
 } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { useLatest } from '../../hooks/useLatest';
 import { useRerender } from '../../hooks/useRerender';
@@ -16,6 +18,7 @@ import type { InfiniteTableComputedValues, InfiniteTableApi } from '../types';
 
 import { useInfiniteTable } from './useInfiniteTable';
 import { useYourBrain } from './useYourBrain';
+import { InfiniteTableDetailRow } from '../components/InfiniteTableRow/InfiniteTableDetailRow';
 
 type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -30,6 +33,7 @@ type CellRenderingParam<T> = {
 
 type CellRenderingResult = {
   renderCell: TableRenderCellFn;
+  renderDetailRow: TableRenderDetailRowFn | undefined;
 };
 
 const SCROLL_BOTTOM_OFFSET = 1;
@@ -46,6 +50,8 @@ export function useCellRendering<T>(
     computedPinnedEndColumns,
     computedVisibleColumns,
     computedColumnsMap,
+    computedRowHeight,
+    computedRowSizeCacheForDetails,
     fieldsToColumn,
     rowspan,
     toggleGroupRow,
@@ -64,12 +70,18 @@ export function useCellRendering<T>(
   const getData = useLatest(dataArray);
   const {
     rowHeight,
+    rowDetailHeight,
+
     groupRenderStrategy,
     brain,
     showZebraRows,
+    rowDetailRenderer,
+    isRowDetailsExpanded,
+    isRowDetailsEnabled,
     cellClassName,
     cellStyle,
     rowStyle,
+    rowDetailsCache,
     rowClassName,
     onScrollToTop,
     onScrollToBottom,
@@ -79,13 +91,13 @@ export function useCellRendering<T>(
 
   const repaintId = dataSourceState.updatedAt;
 
-  useYourBrain({
+  useYourBrain<T>({
     columnSize,
     brain,
     computedPinnedStartColumns,
     computedPinnedEndColumns,
     computedVisibleColumns,
-    rowHeight,
+    computedRowHeight,
     dataArray,
     bodySize,
     rowspan,
@@ -175,6 +187,28 @@ export function useCellRendering<T>(
         return null;
       }
 
+      // it's important we pass the computed rowDetailHeight
+      // and not the initially provided one - as the computed one
+      // will be set on the rowInfo
+
+      const rowHeight = computedRowSizeCacheForDetails
+        ? computedRowSizeCacheForDetails.getRowHeight(rowIndex)
+        : heightWithRowspan;
+
+      let rowDetailState: false | 'collapsed' | 'expanded' = false;
+
+      if (
+        !isRowDetailsEnabled ||
+        (typeof isRowDetailsEnabled === 'function' &&
+          !isRowDetailsEnabled(rowInfo))
+      ) {
+        rowDetailState = false;
+      } else if (isRowDetailsExpanded) {
+        rowDetailState = isRowDetailsExpanded(rowInfo)
+          ? 'expanded'
+          : 'collapsed';
+      }
+
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
         virtualized: true,
@@ -184,7 +218,9 @@ export function useCellRendering<T>(
         rowInfo,
         hidden,
         toggleGroupRow,
-        rowHeight: heightWithRowspan,
+        rowHeight,
+        rowDetailState,
+
         onMouseEnter,
         onMouseLeave,
         domRef,
@@ -202,6 +238,10 @@ export function useCellRendering<T>(
     },
     [
       rowHeight,
+      rowDetailHeight,
+      computedRowSizeCacheForDetails,
+      computedRowHeight,
+      isRowDetailsExpanded,
       getData,
       computedVisibleColumns,
       computedColumnsMap,
@@ -217,8 +257,52 @@ export function useCellRendering<T>(
     ],
   );
 
+  const renderDetailRow = useMemo(() => {
+    if (!isRowDetailsExpanded) {
+      return undefined;
+    }
+
+    return (params: TableRenderDetailRowFnParam) => {
+      const { rowIndex, domRef } = params;
+
+      const dataArray = getData();
+      const rowInfo = dataArray[rowIndex];
+
+      if (
+        !rowInfo ||
+        !isRowDetailsExpanded(rowInfo) ||
+        !computedRowSizeCacheForDetails
+      ) {
+        return null;
+      }
+
+      const { rowDetailHeight, rowHeight } =
+        computedRowSizeCacheForDetails.getSize(rowIndex);
+
+      return (
+        <InfiniteTableDetailRow<T>
+          rowInfo={rowInfo}
+          rowDetailsCache={rowDetailsCache}
+          rowIndex={rowIndex}
+          domRef={domRef}
+          detailOffset={rowHeight}
+          rowDetailHeight={rowDetailHeight}
+          rowDetailRenderer={rowDetailRenderer!}
+        />
+      );
+    };
+  }, [
+    ready,
+    renderCell,
+    rowDetailRenderer,
+    rowDetailHeight,
+    isRowDetailsExpanded,
+    rowDetailsCache,
+  ]);
+
   return {
     renderCell,
+    renderDetailRow,
     // repaintId,
   };
 }

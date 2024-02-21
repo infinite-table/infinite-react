@@ -569,6 +569,14 @@ If not specified, it will default to `var(--infinite-active-cell-background)`.
 --infinite-selected-cell-background
 ```
 
+### Selected cell background default
+
+
+
+```css
+--infinite-selected-cell-background-default
+```
+
 ### Selected cell background alpha
 
 The opacity of the background color for the selected cell.
@@ -657,6 +665,14 @@ However, specify this to explicitly override the default.
 
 ```css
 --infinite-active-cell-background
+```
+
+### Active cell background default
+
+
+
+```css
+--infinite-active-cell-background-default
 ```
 
 ### Active cell border color
@@ -809,6 +825,30 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ```css
 --infinite-menu-shadow-color
+```
+
+### Rowdetails background
+
+
+
+```css
+--infinite-rowdetails-background
+```
+
+### Rowdetails padding
+
+
+
+```css
+--infinite-rowdetails-padding
+```
+
+### Rowdetails grid height
+
+
+
+```css
+--infinite-rowdetails-grid-height
 ```
 
 ### Row background

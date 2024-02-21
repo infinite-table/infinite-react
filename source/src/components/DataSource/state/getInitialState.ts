@@ -62,10 +62,16 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
 
+    destroyedRef: {
+      current: false,
+    },
+
     idToIndexMap: new Map<any, number>(),
 
     // TODO: cleanup cache on unmount
     cache: undefined,
+    detailDataSourcesStateToRestore: new Map(),
+    stateReadyAsDetails: false,
 
     originalDataArrayChanged: false,
     originalDataArrayChangedInfo: {
@@ -74,6 +80,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     },
     lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
+    onCleanup: buildSubscriptionCallback<DataSourceState<T>>(),
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
     notifyScrollStop: buildSubscriptionCallback<ScrollStopInfo>(),
     notifyRenderRangeChange: buildSubscriptionCallback<RenderRange>(),
@@ -128,6 +135,13 @@ function getCompareObjectForDataParams<T>(
 
   return obj;
 }
+
+const EMPTY_ARRAY: any[] = [];
+
+export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
+  state.destroyedRef.current = true;
+};
+
 export const forwardProps = <T>(
   setupState: DataSourceSetupState<T>,
 ): ForwardPropsToStateFnResult<
@@ -142,6 +156,7 @@ export const forwardProps = <T>(
         : undefined,
     lazyLoad: (lazyLoad) => !!lazyLoad,
     data: 1,
+    debugId: 1,
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
@@ -186,11 +201,10 @@ export const forwardProps = <T>(
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,
     ) => collapseGroupRowsOnDataFunctionChange ?? true,
-
     loading: (loading) => loading ?? false,
     sortInfo: (sortInfo) =>
       normalizeSortInfo(sortInfo, setupState.propsCache.get('sortInfo')),
-    groupBy: (groupBy) => groupBy ?? [],
+    groupBy: (groupBy) => groupBy ?? EMPTY_ARRAY,
   };
 };
 
@@ -582,5 +596,40 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
 
       return true;
     },
+  };
+}
+
+export type DataSourceStateRestoreForDetails<T> = {
+  originalDataArray: DataSourceState<T>['originalDataArray'] | undefined;
+  groupBy: DataSourceState<T>['groupBy'] | undefined;
+  groupRowsState: DataSourceState<T>['groupRowsState'] | undefined;
+  pivotBy: DataSourceState<T>['pivotBy'] | undefined;
+  sortInfo: DataSourceState<T>['sortInfo'] | undefined;
+  filterValue: DataSourceState<T>['filterValue'] | undefined;
+  livePaginationCursor: DataSourceState<T>['livePaginationCursor'] | undefined;
+};
+
+export type RowDetailsCacheKey = string | number;
+export type RowDetailsCacheEntry = {
+  all?: boolean;
+  groupBy?: boolean;
+  sortInfo?: boolean;
+  filterValue?: boolean;
+  data?: boolean;
+  livePaginationCursor?: boolean;
+  columnOrder?: boolean;
+};
+
+export function getDataSourceStateRestoreForDetails<T>(
+  state: DataSourceState<T>,
+): DataSourceStateRestoreForDetails<T> {
+  return {
+    originalDataArray: state.originalDataArray,
+    groupRowsState: state.groupRowsState,
+    groupBy: state.groupBy,
+    pivotBy: state.pivotBy,
+    sortInfo: state.sortInfo,
+    filterValue: state.filterValue,
+    livePaginationCursor: state.livePaginationCursor,
   };
 }

@@ -53,6 +53,7 @@ export interface InfiniteTableColumnCellProps<T>
     InfiniteTableCellProps<T>,
     'children' | 'cellType' | 'renderChildren'
   > {
+  rowDetailState: false | 'collapsed' | 'expanded';
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   onMouseEnter?: VoidFunction;

@@ -73,7 +73,7 @@ export default function App() {
         <HeadlessTableWithPinnedContainers
           brain={brain}
           //@ts-ignore
-          rowHeight={40}
+          computedRowHeight={40}
           colWidth={150}
           fixedColsStart={2}
           fixedColsEnd={2}

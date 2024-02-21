@@ -13,9 +13,10 @@ type UseYourBrainParam<T = any> = {
   computedVisibleColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
+  computedRowHeight: number | ((index: number) => number);
 
   dataArray: any[];
-  rowHeight: number;
+
   bodySize: Size;
   rowspan?: SpanFunction;
   colspan?: SpanFunction;
@@ -27,10 +28,12 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     computedPinnedEndColumns,
     computedPinnedStartColumns,
     computedVisibleColumns,
+    computedRowHeight,
     columnSize,
-    rowHeight,
     rowspan,
   } = param;
+
+  const rowHeight = computedRowHeight;
 
   useMatrixBrain(
     brain,

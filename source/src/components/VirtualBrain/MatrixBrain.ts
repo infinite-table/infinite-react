@@ -53,6 +53,16 @@ export const getRenderRangeCellCount = (range: TableRenderRange) => {
   return rowCount * colCount;
 };
 
+export const getRenderRangeRowCount = (range: TableRenderRange) => {
+  const { start, end } = range;
+  const [startRow] = start;
+  const [endRow] = end;
+
+  const rowCount = endRow - startRow;
+
+  return rowCount;
+};
+
 type WhichDirection = { horizontal?: boolean; vertical?: boolean };
 
 const ALL_DIRECTIONS: WhichDirection = { horizontal: true, vertical: true };
@@ -86,6 +96,7 @@ export type FnOnScrollStop = (
 export class MatrixBrain extends Logger {
   private scrolling = false;
   private width: MatrixBrainOptions['width'] = 0;
+  public name: string = '';
 
   private height: MatrixBrainOptions['height'] = 0;
 
@@ -164,7 +175,9 @@ export class MatrixBrain extends Logger {
   private fixedRowsEnd = 0;
 
   constructor(name?: string) {
-    super(`MatrixBrain${name ? `:${name}` : ''}`);
+    const logName = `MatrixBrain${name ? `:${name}` : ''}`;
+    super(logName);
+    this.name = logName;
     this.reset();
   }
 
@@ -577,6 +590,9 @@ export class MatrixBrain extends Logger {
 
     size -= this.getFixedSize(direction);
 
+    if (size <= 0) {
+      return 0;
+    }
     if (typeof itemSize === 'function') {
       const sizes = [];
       for (let i = 0; i < count; i++) {

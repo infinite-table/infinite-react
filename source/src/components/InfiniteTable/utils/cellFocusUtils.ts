@@ -53,7 +53,7 @@ export function isCellFocusable<T>(
   const { getComputed, getDataSourceState, getState, api, dataSourceApi } =
     context;
 
-  const { editingCell } = getState();
+  const { editingCell, isRowDetailsEnabled } = getState();
 
   const { dataArray } = getDataSourceState();
 
@@ -78,14 +78,24 @@ export function isCellFocusable<T>(
   if (column.contentFocusable === true) {
     return true;
   }
+  const rowInfo = dataArray[cellPos.rowIndex];
+  const rowDetailState =
+    !isRowDetailsEnabled ||
+    (typeof isRowDetailsEnabled === 'function' && !isRowDetailsEnabled(rowInfo))
+      ? false
+      : api.rowDetailsApi.isRowDetailsExpanded(rowInfo.id)
+      ? 'expanded'
+      : 'collapsed';
+
   const columnApi = getColumnApiForColumn(column.id, context)!;
   return column.contentFocusable({
     column,
     ...getFormattedValueContextForCell({
       column,
-      rowInfo: dataArray[cellPos.rowIndex],
+      rowInfo,
       columnsMap: computedColumnsMap,
       context,
+      rowDetailState,
     }).formattedValueContext,
     columnApi,
     api,

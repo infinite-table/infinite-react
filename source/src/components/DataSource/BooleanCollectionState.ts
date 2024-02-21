@@ -1,16 +1,11 @@
-export type BooleanCollectionStateKeys<KeyType extends string | number> =
-  | true
-  | Record<KeyType, true>;
+export type BooleanCollectionStateKeys<KeyType> = true | KeyType[];
 
-export type BooleanCollectionStateObject<KeyType extends string | number> = {
+export type BooleanCollectionStateObject<KeyType> = {
   positiveItems: BooleanCollectionStateKeys<KeyType>;
   negativeItems: BooleanCollectionStateKeys<KeyType>;
 };
 
-export abstract class BooleanCollectionState<
-  StateObject,
-  KeyType extends string | number = string,
-> {
+export abstract class BooleanCollectionState<StateObject, KeyType> {
   protected positiveMap?: Map<KeyType, true>;
   protected negativeMap?: Map<KeyType, true>;
 
@@ -87,10 +82,9 @@ export abstract class BooleanCollectionState<
       }
       this.negativeMap.clear();
 
-      for (let k in negativeItems) {
-        if (negativeItems.hasOwnProperty(k)) {
-          this.negativeMap.set(k, true);
-        }
+      // for (let k in negativeItems) {
+      for (let k of negativeItems) {
+        this.negativeMap.set(k, true);
       }
       if (this.positiveMap) {
         this.positiveMap.clear();
@@ -103,10 +97,9 @@ export abstract class BooleanCollectionState<
       }
       this.positiveMap.clear();
 
-      for (let k in positiveItems) {
-        if (positiveItems.hasOwnProperty(k)) {
-          this.positiveMap.set(k, true);
-        }
+      // for (let k in positiveItems) {
+      for (let k of positiveItems) {
+        this.positiveMap.set(k, true);
       }
 
       if (this.negativeMap) {
@@ -139,19 +132,18 @@ export abstract class BooleanCollectionState<
   protected makeAllNegative() {
     this.update({
       negativeItems: true,
-      positiveItems: {} as Record<KeyType, true>,
+      positiveItems: [],
     });
   }
 
   protected makeAllPositive() {
     this.update({
       positiveItems: true,
-      negativeItems: {} as Record<KeyType, true>,
+      negativeItems: [],
     });
   }
 
   protected isItemPositive(key: KeyType) {
-    key = `${key}` as KeyType;
     if (this.allPositive === true) {
       if (this.allNegative === true) {
         throw 'Cannot have both positiveItems and negativeItems be "true"';
@@ -168,7 +160,6 @@ export abstract class BooleanCollectionState<
   }
 
   protected setItemValue(key: KeyType, shouldMakePositive: boolean) {
-    key = `${key}` as KeyType;
     if (shouldMakePositive === this.isItemPositive(key)) {
       return;
     }
