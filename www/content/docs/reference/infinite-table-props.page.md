@@ -116,9 +116,7 @@ Some of the rows in the master DataGrid are expanded by default.
 ```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
 ```
 </Sandpack>
-
 </Prop>
-
 
 <Prop name="rowDetailHeight" type="number|CSSVar|(rowInfo)=>number" defaultValue={300}>
 
