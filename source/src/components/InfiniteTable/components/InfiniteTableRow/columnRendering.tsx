@@ -226,7 +226,7 @@ export function getColumnRenderingParams<T>(options: {
       renderGroupIcon:
         column.renderGroupIcon || groupByColumnReference?.renderGroupIcon,
       renderSelectionCheckBox: column.renderSelectionCheckBox,
-      renderRowDetailsIcon: column.renderRowDetailsIcon,
+      renderRowDetailIcon: column.renderRowDetailIcon,
       renderValue: column.renderValue || groupByColumnReference?.renderValue,
       renderGroupValue:
         column.renderGroupValue || groupByColumnReference?.renderGroupValue,

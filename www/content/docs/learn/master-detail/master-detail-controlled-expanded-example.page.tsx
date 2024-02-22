@@ -6,7 +6,7 @@ import {
   InfiniteTablePropColumns,
   DataSource,
   InfiniteTableRowInfo,
-  DataSourcePropRowDetailsStateObject,
+  RowDetailStateObject,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -35,7 +35,7 @@ const masterColumns: InfiniteTablePropColumns<City> = {
     field: 'id',
     header: 'ID',
     defaultWidth: 70,
-    renderRowDetailsIcon: true,
+    renderRowDetailIcon: true,
   },
   country: { field: 'country', header: 'Country' },
   city: { field: 'name', header: 'City', defaultFlex: 1 },
@@ -81,8 +81,8 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
 }
 
 export default () => {
-  const [rowDetailsState, setRowDetailsState] = React.useState<
-    DataSourcePropRowDetailsStateObject<any>
+  const [rowDetailState, setRowDetailState] = React.useState<
+    RowDetailStateObject<any>
   >({
     collapsedRows: true as const,
     expandedRows: [39, 54],
@@ -97,7 +97,7 @@ export default () => {
           background: 'var(--infinite-background)',
         }}
       >
-        <pre>Row details state: {JSON.stringify(rowDetailsState, null, 2)}</pre>
+        <pre>Row detail state: {JSON.stringify(rowDetailState, null, 2)}</pre>
       </code>
       <DataSource<City>
         data={citiesDataSource}
@@ -116,12 +116,12 @@ export default () => {
         <InfiniteTable<City>
           domProps={domProps}
           onReady={({ api }) => {
-            api.rowDetailsApi;
+            console.log(api.rowDetailApi);
           }}
           columnDefaultWidth={150}
-          rowDetailsState={rowDetailsState}
-          onRowDetailsStateChange={(rowDetailsState) => {
-            setRowDetailsState(rowDetailsState.getState());
+          rowDetailState={rowDetailState}
+          onRowDetailStateChange={(rowDetailState) => {
+            setRowDetailState(rowDetailState.getState());
           }}
           columnMinWidth={50}
           columns={masterColumns}

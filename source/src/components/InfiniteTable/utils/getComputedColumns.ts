@@ -603,7 +603,7 @@ export const getComputedColumns = <T extends unknown>({
 
       renderMenuIcon: colType.renderMenuIcon,
       renderSortIcon: colType.renderSortIcon,
-      renderRowDetailsIcon: colType.renderRowDetailsIcon,
+      renderRowDetailIcon: colType.renderRowDetailIcon,
       renderSelectionCheckBox: colType.renderSelectionCheckBox,
       renderHeaderSelectionCheckBox: colType.renderHeaderSelectionCheckBox,
       headerStyle: colType.headerStyle,

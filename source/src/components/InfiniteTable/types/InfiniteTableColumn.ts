@@ -476,7 +476,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   maxWidth?: number;
 
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
-  renderRowDetailsIcon?: boolean | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderRowDetailIcon?: boolean | InfiniteTableColumnRenderFunction<DATA_TYPE>;
   renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderFilterIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderSelectionCheckBox?:

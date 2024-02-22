@@ -34,7 +34,7 @@ const masterColumns: InfiniteTablePropColumns<City> = {
     field: 'id',
     header: 'ID',
     defaultWidth: 70,
-    renderRowDetailsIcon: true,
+    renderRowDetailIcon: true,
   },
   country: { field: 'country', header: 'Country' },
   city: { field: 'name', header: 'City', defaultFlex: 1 },
@@ -79,7 +79,7 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
   );
 }
 
-const defaultRowDetailsState = {
+const defaultRowDetailState = {
   collapsedRows: true as const,
   expandedRows: [39, 54],
 };
@@ -104,7 +104,7 @@ export default () => {
         <InfiniteTable<City>
           domProps={domProps}
           columnDefaultWidth={150}
-          defaultRowDetailsState={defaultRowDetailsState}
+          defaultRowDetailState={defaultRowDetailState}
           columnMinWidth={50}
           columns={masterColumns}
           rowDetailHeight={200}

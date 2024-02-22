@@ -52,7 +52,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     style: {
       color: 'red',
     },
-    renderRowDetailsIcon: true,
+    renderRowDetailIcon: true,
   },
 
   canDesign: { field: 'canDesign' },

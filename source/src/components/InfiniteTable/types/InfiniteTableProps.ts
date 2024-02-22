@@ -148,7 +148,7 @@ export type InfiniteTableColumnType<T> = {
   components?: InfiniteTableColumn<T>['components'];
   renderMenuIcon?: InfiniteTableColumn<T>['renderMenuIcon'];
   renderSortIcon?: InfiniteTableColumn<T>['renderSortIcon'];
-  renderRowDetailsIcon?: InfiniteTableColumn<T>['renderRowDetailsIcon'];
+  renderRowDetailIcon?: InfiniteTableColumn<T>['renderRowDetailIcon'];
   renderSelectionCheckBox?: InfiniteTableColumn<T>['renderSelectionCheckBox'];
   renderHeaderSelectionCheckBox?: InfiniteTableColumn<T>['renderHeaderSelectionCheckBox'];
   renderValue?: InfiniteTableColumn<T>['renderValue'];

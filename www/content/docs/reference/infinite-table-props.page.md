@@ -18,7 +18,7 @@ Using this function, you can render another DataGrid or any other custom content
 
 <Note>
 
-Make sure you have a column with the `renderRowDetailsIcon: true` flag set. <PropLink name="columns.renderRowDetailsIcon" /> on a column makes the column display the row details expand icon.
+Make sure you have a column with the `renderRowDetailIcon: true` flag set. <PropLink name="columns.renderRowDetailIcon" /> on a column makes the column display the row details expand icon.
 
 Without this flag, no column will have the expand icon, and the master-detail functionality will not work.
 
@@ -26,7 +26,7 @@ Without this flag, no column will have the expand icon, and the master-detail fu
 
 To configure the height of the row details section, use the <PropLink name="rowDetailHeight" /> prop.
 
-For rendering some row details as already expanded, see <PropLink name="defaultRowDetailsState" />.
+For rendering some row details as already expanded, see <PropLink name="defaultRowDetailState" />.
 
 <Sandpack title="Basic master detail DataGrid example" size="lg">
 
@@ -44,11 +44,11 @@ The details for each city shows a DataGrid with developers in that city.
 
 </Prop>
 
-<Prop name="defaultRowDetailsState" type="RowDetailsState">
+<Prop name="defaultRowDetailState" type="RowDetailState">
 
 > Specifies the default expanded/collapsed state of row details.
 
-For the controlled version, see <PropLink name="rowDetailsState" />.
+For the controlled version, see <PropLink name="rowDetailState" />.
 
 
 <Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
@@ -66,13 +66,13 @@ Some of the rows in the master DataGrid are expanded by default.
 </Prop>
 
 
-<Prop name="rowDetailsState" type="RowDetailsState">
+<Prop name="rowDetailState" type="RowDetailState">
 
 > Specifies the expanded/collapsed state of row details.
 
-For the uncontrolled version, see <PropLink name="defaultRowDetailsState" />.
+For the uncontrolled version, see <PropLink name="defaultRowDetailState" />.
 
-When you use this controlled property, make sure you pair it with the <PropLink name="onRowDetailsStateChange" /> callback to update it.
+When you use this controlled property, make sure you pair it with the <PropLink name="onRowDetailStateChange" /> callback to update it.
 
 <Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
 
@@ -89,21 +89,21 @@ Some of the rows in the master DataGrid are expanded by default.
 </Prop>
 
 
-<Prop name="onRowDetailsStateChange" type="(rowDetailsState: RowDetailsState) => void">
+<Prop name="onRowDetailStateChange" type="(rowDetailState: RowDetailState) => void">
 
 > Called when the expand/collapse state of row details changes.
 
-You can use this function prop to update the <PropLink name="rowDetailsState" /> prop or simply to listen to changes in the row details state.
+You can use this function prop to update the <PropLink name="rowDetailState" /> prop or simply to listen to changes in the row details state.
 
 <Note>
 
-This function is called with an instance of the <TypeLink name="RowDetailsState" />. If you want to get the object behind it, simply call `rowDetailsState.getState()`.
+This function is called with an instance of the <TypeLink name="RowDetailState" />. If you want to get the object behind it, simply call `rowDetailState.getState()`.
 
-Both the `RowDetailsState` instance and the state object (literal) are valid values you can pass to the <PropLink name="rowDetailsState" />.
+Both the `RowDetailState` instance and the state object (literal) are valid values you can pass to the <PropLink name="rowDetailState" />.
 
 </Note>
 
-See related <PropLink name="rowDetailsState" /> and <PropLink name="defaultRowDetailsState" />.
+See related <PropLink name="rowDetailState" /> and <PropLink name="defaultRowDetailState" />.
 
 <Sandpack title="Master detail DataGrid with listener to the row expand/collapse state change" size="lg">
 

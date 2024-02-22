@@ -34,7 +34,7 @@ const masterColumns: InfiniteTablePropColumns<City> = {
     field: 'id',
     header: 'ID',
     defaultWidth: 70,
-    renderRowDetailsIcon: true,
+    renderRowDetailIcon: true,
   },
   country: { field: 'country', header: 'Country' },
   city: { field: 'name', header: 'City', defaultFlex: 1 },

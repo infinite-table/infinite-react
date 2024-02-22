@@ -6,13 +6,13 @@ layout: API
 This API can be used when [master-detail](/docs/learn/master-detail/overview) is configured in the DataGrid.
 
 
-You can retrieve the row details api by reading it from the `api.rowDetailsApi` property.
+You can retrieve the row details api by reading it from the `api.rowDetailApi` property.
 
 ```tsx {4}
 
 const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
   // do something with it
-  api.rowDetailsApi.collapseAllDetails()
+  api.rowDetailApi.collapseAllDetails()
 }
 
 <InfiniteTable<DATA_TYPE>

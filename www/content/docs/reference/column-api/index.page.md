@@ -7,7 +7,7 @@ When rendering the `InfiniteTable` component, you can get access to the Column A
 
 For the root API see the [API page](/docs/reference/api).
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
-See the [Infinite Table Row Details API page](/docs/reference/row-details-api) for the row details API (when master-detail is configured).
+See the [Infinite Table Row Detail API page](/docs/reference/row-detail-api) for the row detail API (when master-detail is configured).
 
 <PropTable searchPlaceholder="Type to filter API methods" sort>
 

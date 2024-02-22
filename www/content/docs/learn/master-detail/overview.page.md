@@ -9,7 +9,7 @@ The React DataGrid that Infinite Table offers has native support for master-deta
 
 The single most important property for the master-detail DataGrid configuration is the <PropLink name="rowDetailRenderer" /> function prop. If the prop is specified, the DataGrid is considered master-detail.
 
-In addition, make sure you have a column with the `renderRowDetailsIcon: true` flag set. <PropLink name="columns.renderRowDetailsIcon" /> on a column makes the column display the row details expand icon.
+In addition, make sure you have a column with the `renderRowDetailIcon: true` flag set. <PropLink name="columns.renderRowDetailIcon" /> on a column makes the column display the row details expand icon.
 
 The row details in the DataGrid can contain another DataGrid or any other custom content.
 </Note>

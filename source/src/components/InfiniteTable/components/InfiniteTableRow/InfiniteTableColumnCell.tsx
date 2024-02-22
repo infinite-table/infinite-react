@@ -58,7 +58,7 @@ export const InfiniteTableColumnCellContext = React.createContext<
 
 export const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
 
-export const defaultRenderRowDetailsIcon: InfiniteTableColumnRenderFunction<
+export const defaultRenderRowDetailIcon: InfiniteTableColumnRenderFunction<
   any
 > = (params) => {
   const { toggleCurrentRowDetails, rowDetailState } = params;
@@ -349,10 +349,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         }
       }
 
-      if (renderFunctions.renderRowDetailsIcon) {
+      if (renderFunctions.renderRowDetailIcon) {
         renderParam.renderBag.rowDetailsIcon = (
           <RenderCellHookComponent
-            render={defaultRenderRowDetailsIcon}
+            render={defaultRenderRowDetailIcon}
             renderParam={{
               ...renderParam,
               renderBag: {
@@ -361,10 +361,10 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             }}
           />
         );
-        if (typeof renderFunctions.renderRowDetailsIcon === 'function') {
+        if (typeof renderFunctions.renderRowDetailIcon === 'function') {
           renderParam.renderBag.rowDetailsIcon = (
             <RenderCellHookComponent
-              render={renderFunctions.renderRowDetailsIcon}
+              render={renderFunctions.renderRowDetailIcon}
               renderParam={{
                 ...renderParam,
                 renderBag: { ...renderParam.renderBag },
