@@ -1,4 +1,4 @@
-import { RowDetailState } from '@src/components/DataSource/RowDetailsState';
+import { RowDetailState } from '@src/components/DataSource/RowDetailState';
 import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel('RowDetailsState', () => {
