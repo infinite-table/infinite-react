@@ -50,6 +50,7 @@ The details for each city shows a DataGrid with developers in that city.
 
 For the controlled version, see <PropLink name="rowDetailState" />.
 
+If <PropLink name="isRowDetailExpanded" /> is specified, it has the last word in deciding if a row detail is expanded or not, so it overrides the `defaultRowDetailState`.
 
 <Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
 
@@ -65,6 +66,36 @@ Some of the rows in the master DataGrid are expanded by default.
 
 </Prop>
 
+<Prop name="isRowDetailExpanded" type="(rowInfo: InfiniteTableRowInfo) => boolean">
+
+> This function ultimately decides if a row detail is expanded or not.
+
+This function is meant for very advanced scenarios. For common use-cases, you'll probably use <PropLink name="rowDetailState" /> and <PropLink name="defaultRowDetailState" />.
+
+If `isRowDetailExpanded` is specified, it overrides <PropLink name="rowDetailState" />/<PropLink name="defaultRowDetailState" />.
+
+</Prop>
+
+<Prop name="isRowDetailEnabled" type="(rowInfo: InfiniteTableRowInfo) => boolean">
+
+> Decides on a per-row basis if the row details are enabled or not.
+
+This is useful when you don't want to show the row detail for some rows.
+
+
+<Sandpack title="Master detail DataGrid with some row not having details" size="lg">
+
+<Description>
+
+All the odd rows don't have details.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-per-row-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
 
 <Prop name="rowDetailState" type="RowDetailState">
 
@@ -73,6 +104,8 @@ Some of the rows in the master DataGrid are expanded by default.
 For the uncontrolled version, see <PropLink name="defaultRowDetailState" />.
 
 When you use this controlled property, make sure you pair it with the <PropLink name="onRowDetailStateChange" /> callback to update it.
+
+If <PropLink name="isRowDetailExpanded" /> is specified, it has the final say in deciding if a row detail is expanded or not, so it overrides the `rowDetailState` and <PropLink name="defaultRowDetailState" />.
 
 <Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
 
