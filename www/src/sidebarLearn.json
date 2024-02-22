@@ -235,6 +235,7 @@
   {
     "title": "Master-Detail",
     "path": "/docs/learn/master-detail/overview",
+    "transient": true,
     "routes": [
       {
         "title": "Overview",

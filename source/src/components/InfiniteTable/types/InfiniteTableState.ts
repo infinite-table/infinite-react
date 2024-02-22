@@ -1,11 +1,11 @@
 import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
 import { InfiniteTableRowInfo } from '.';
 import { PointCoords } from '../../../utils/pageGeometry/Point';
-import { RowDetailsCache } from '../../DataSource/RowDetailsCache';
-import { RowDetailsState } from '../../DataSource/RowDetailsState';
+import { RowDetailCache } from '../../DataSource/RowDetailCache';
+import { RowDetailState } from '../../DataSource/RowDetailState';
 import {
-  RowDetailsCacheEntry,
-  RowDetailsCacheKey,
+  RowDetailCacheEntry,
+  RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
@@ -160,7 +160,7 @@ export interface InfiniteTableMappedState<T> {
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
 
-  rowDetailsCache: RowDetailsCache<RowDetailsCacheKey, RowDetailsCacheEntry>;
+  rowDetailCache: RowDetailCache<RowDetailCacheKey, RowDetailCacheEntry>;
 
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
 
@@ -272,13 +272,11 @@ export interface InfiniteTableDerivedState<T> {
   computedColumns: Map<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];
 
-  rowDetailsState: RowDetailsState<T> | undefined;
-  isRowDetailsExpanded:
-    | InfiniteTableProps<T>['isRowDetailsExpanded']
-    | undefined;
+  rowDetailState: RowDetailState<T> | undefined;
+  isRowDetailExpanded: InfiniteTableProps<T>['isRowDetailExpanded'] | undefined;
 
-  isRowDetailsEnabled:
-    | NonUndefined<InfiniteTableProps<T>['isRowDetailsEnabled']>
+  isRowDetailEnabled:
+    | NonUndefined<InfiniteTableProps<T>['isRowDetailEnabled']>
     | boolean;
 
   showColumnFilters: NonUndefined<InfiniteTableProps<T>['showColumnFilters']>;

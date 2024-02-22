@@ -11,7 +11,7 @@ import {
   DataSourcePivotBy,
   DataSourcePropGroupBy,
   DataSourcePropPivotBy,
-  DataSourcePropRowDetailsStateObject,
+  RowDetailStateObject,
   DataSourceProps,
   DataSourcePropSelectionMode,
   DataSourceSingleSortInfo,
@@ -52,10 +52,10 @@ import {
   InfiniteTablePublicContext,
 } from './InfiniteTableContextValue';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
-import { RowDetailsState } from '../../DataSource/RowDetailsState';
-import { InfiniteTableRowDetailsApi } from '../api/getRowDetailsApi';
-import { RowDetailsCacheStorageForCurrentRow } from '../../DataSource/RowDetailsCache';
-import { RowDetailsCacheEntry } from '../../DataSource/state/getInitialState';
+import { RowDetailState } from '../../DataSource/RowDetailState';
+import { InfiniteTableRowDetailApi } from '../api/getRowDetailApi';
+import { RowDetailCacheStorageForCurrentRow } from '../../DataSource/RowDetailCache';
+import { RowDetailCacheEntry } from '../../DataSource/state/getInitialState';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -256,7 +256,7 @@ export type MultiSortBehaviorOptions = {
 };
 
 export interface InfiniteTableApi<T> {
-  get rowDetailsApi(): InfiniteTableRowDetailsApi;
+  get rowDetailApi(): InfiniteTableRowDetailApi;
   get rowSelectionApi(): InfiniteTableRowSelectionApi;
   get cellSelectionApi(): InfiniteTableCellSelectionApi<T>;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
@@ -659,15 +659,13 @@ export interface InfiniteTableProps<T> {
 
   showSeparatePivotColumnForSingleAggregation?: boolean;
 
-  isRowDetailsExpanded?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
-  isRowDetailsEnabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
+  isRowDetailExpanded?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
+  isRowDetailEnabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
 
-  rowDetailsCache?: boolean | number;
-  rowDetailsState?: RowDetailsState | DataSourcePropRowDetailsStateObject<any>;
-  defaultRowDetailsState?:
-    | RowDetailsState
-    | DataSourcePropRowDetailsStateObject<any>;
-  onRowDetailsStateChange?: (rowDetailsState: RowDetailsState) => void;
+  rowDetailCache?: boolean | number;
+  rowDetailState?: RowDetailState | RowDetailStateObject<any>;
+  defaultRowDetailState?: RowDetailState | RowDetailStateObject<any>;
+  onRowDetailStateChange?: (rowDetailState: RowDetailState) => void;
 
   // TODO implement this - see collapseGroupRowsOnDataFunctionChange for details
   // collapseRowDetailsOnDataFunctionChange?: boolean;
@@ -679,7 +677,7 @@ export interface InfiniteTableProps<T> {
     | ((rowInfo: InfiniteTableRowInfo<T>) => number);
   rowDetailRenderer?: (
     rowInfo: InfiniteTableRowInfo<T>,
-    cache: RowDetailsCacheStorageForCurrentRow<RowDetailsCacheEntry>,
+    cache: RowDetailCacheStorageForCurrentRow<RowDetailCacheEntry>,
   ) => Renderable;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   cellStyle?: InfiniteTablePropCellStyle<T>;

@@ -146,7 +146,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     cellStyle,
     cellClassName,
 
-    rowDetailState: rowDetailsState,
+    rowDetailState,
 
     width,
     column,
@@ -203,7 +203,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const colRenderingParams = getColumnRenderingParams({
     column,
     rowInfo,
-    rowDetailState: rowDetailsState,
+    rowDetailState: rowDetailState,
     columnsMap,
     visibleColumnsIds,
     fieldsToColumn,
@@ -448,7 +448,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       column,
       hidden,
       inEdit,
-      rowDetailsState,
+      rowDetailState,
       ...objectValuesExcept(renderParam, {
         renderBag: true,
         selectCell: true,

@@ -44,10 +44,7 @@ import {
   InfiniteTableCellSelectionApi,
 } from './getCellSelectionApi';
 
-import {
-  getRowDetailsApi,
-  InfiniteTableRowDetailsApi,
-} from './getRowDetailsApi';
+import { getRowDetailApi, InfiniteTableRowDetailApi } from './getRowDetailApi';
 
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,
@@ -72,7 +69,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   private context: GetImperativeApiParam<T>;
   public rowSelectionApi: InfiniteTableRowSelectionApi;
   public cellSelectionApi: InfiniteTableCellSelectionApi<T>;
-  public rowDetailsApi: InfiniteTableRowDetailsApi;
+  public rowDetailApi: InfiniteTableRowDetailApi;
 
   constructor(context: GetImperativeApiParam<T>) {
     this.context = context;
@@ -80,7 +77,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       dataSourceActions: context.dataSourceActions,
       getDataSourceState: context.getDataSourceState,
     });
-    this.rowDetailsApi = getRowDetailsApi({
+    this.rowDetailApi = getRowDetailApi({
       getState: context.getState,
       actions: context.actions,
       dataSourceApi: context.dataSourceApi,
@@ -550,13 +547,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     const self = this as InfiniteTableApi<T>;
-    const { isRowDetailsEnabled } = getState();
-    const rowDetailsState =
+    const { isRowDetailEnabled: isRowDetailsEnabled } = getState();
+    const rowDetailState =
       !isRowDetailsEnabled ||
       (typeof isRowDetailsEnabled === 'function' &&
         !isRowDetailsEnabled(rowInfo))
         ? false
-        : this.rowDetailsApi.isRowDetailsExpanded(rowInfo.id)
+        : this.rowDetailApi.isRowDetailExpanded(rowInfo.id)
         ? 'expanded'
         : 'collapsed';
 
@@ -565,7 +562,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       rowInfo,
       columnsMap: computedColumnsMap,
       context: { ...this.context, api: self },
-      rowDetailState: rowDetailsState,
+      rowDetailState,
     });
     return {
       value: valueContext.formattedValueContext.value,

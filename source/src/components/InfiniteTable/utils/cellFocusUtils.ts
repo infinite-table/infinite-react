@@ -53,7 +53,7 @@ export function isCellFocusable<T>(
   const { getComputed, getDataSourceState, getState, api, dataSourceApi } =
     context;
 
-  const { editingCell, isRowDetailsEnabled } = getState();
+  const { editingCell, isRowDetailEnabled: isRowDetailsEnabled } = getState();
 
   const { dataArray } = getDataSourceState();
 
@@ -83,7 +83,7 @@ export function isCellFocusable<T>(
     !isRowDetailsEnabled ||
     (typeof isRowDetailsEnabled === 'function' && !isRowDetailsEnabled(rowInfo))
       ? false
-      : api.rowDetailsApi.isRowDetailsExpanded(rowInfo.id)
+      : api.rowDetailApi.isRowDetailExpanded(rowInfo.id)
       ? 'expanded'
       : 'collapsed';
 

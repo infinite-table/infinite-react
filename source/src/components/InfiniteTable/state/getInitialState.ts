@@ -2,14 +2,14 @@ import { createRef, KeyboardEvent, MouseEvent } from 'react';
 import {
   DataSourceGroupBy,
   DataSourcePropGroupBy,
-  DataSourcePropRowDetailsStateObject,
+  RowDetailStateObject,
   DataSourceState,
 } from '../../DataSource';
-import { RowDetailsCache } from '../../DataSource/RowDetailsCache';
-import { RowDetailsState } from '../../DataSource/RowDetailsState';
+import { RowDetailCache } from '../../DataSource/RowDetailCache';
+import { RowDetailState } from '../../DataSource/RowDetailState';
 import {
-  RowDetailsCacheEntry,
-  RowDetailsCacheKey,
+  RowDetailCacheEntry,
+  RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
 import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
@@ -267,9 +267,9 @@ export const forwardProps = <T>(
       viewportReservedWidth ?? 0,
     resizableColumns: (resizableColumns) => resizableColumns ?? true,
 
-    rowDetailsCache: (rowDetailsCache) => {
-      return new RowDetailsCache<RowDetailsCacheKey, RowDetailsCacheEntry>(
-        rowDetailsCache,
+    rowDetailCache: (rowDetailCache) => {
+      return new RowDetailCache<RowDetailCacheKey, RowDetailCacheEntry>(
+        rowDetailCache,
       );
     },
 
@@ -442,24 +442,24 @@ export const mapPropsToState = <T>(params: {
     groupColumn: props.groupColumn,
   });
 
-  let rowDetailsState:
-    | RowDetailsState<any>
-    | DataSourcePropRowDetailsStateObject<T>
+  let rowDetailState:
+    | RowDetailState<any>
+    | RowDetailStateObject<T>
     | undefined = undefined;
 
   if (props.rowDetailRenderer) {
-    rowDetailsState =
-      props.rowDetailsState ||
-      state.rowDetailsState ||
-      props.defaultRowDetailsState;
+    rowDetailState =
+      props.rowDetailState ||
+      state.rowDetailState ||
+      props.defaultRowDetailState;
 
-    if (rowDetailsState && !(rowDetailsState instanceof RowDetailsState)) {
-      rowDetailsState = new RowDetailsState(rowDetailsState);
+    if (rowDetailState && !(rowDetailState instanceof RowDetailState)) {
+      rowDetailState = new RowDetailState(rowDetailState);
     }
 
-    rowDetailsState =
-      rowDetailsState ||
-      new RowDetailsState<any>({ expandedRows: [], collapsedRows: true });
+    rowDetailState =
+      rowDetailState ||
+      new RowDetailState<any>({ expandedRows: [], collapsedRows: true });
   }
 
   const computedColumns =
@@ -467,33 +467,33 @@ export const mapPropsToState = <T>(params: {
     state.columnsWhenInlineGroupRenderStrategy ||
     state.columns;
 
-  let isRowDetailsExpanded = rowDetailsState
-    ? props.isRowDetailsExpanded
+  let isRowDetailExpanded = rowDetailState
+    ? props.isRowDetailExpanded
     : undefined;
 
-  if (!isRowDetailsExpanded && rowDetailsState) {
-    // we use a weakmap to get the same isRowDetailsExpanded for the same instance of rowDetailsState
-    isRowDetailsExpanded = weakMap.get(rowDetailsState);
-    if (!isRowDetailsExpanded) {
-      isRowDetailsExpanded = (rowInfo) => {
-        return (rowDetailsState as RowDetailsState).isRowDetailsExpanded(
+  if (!isRowDetailExpanded && rowDetailState) {
+    // we use a weakmap to get the same isRowDetailsExpanded for the same instance of rowDetailState
+    isRowDetailExpanded = weakMap.get(rowDetailState);
+    if (!isRowDetailExpanded) {
+      isRowDetailExpanded = (rowInfo) => {
+        return (rowDetailState as RowDetailState).isRowDetailsExpanded(
           rowInfo.id,
         );
       };
-      if (typeof rowDetailsState === 'object') {
-        weakMap.set(rowDetailsState, isRowDetailsExpanded);
+      if (typeof rowDetailState === 'object') {
+        weakMap.set(rowDetailState, isRowDetailExpanded);
       }
     }
   }
 
-  const isRowDetailsEnabled = !props.rowDetailRenderer
+  const isRowDetailEnabled = !props.rowDetailRenderer
     ? false
-    : props.isRowDetailsEnabled || true;
+    : props.isRowDetailEnabled || true;
 
   return {
-    rowDetailsState: rowDetailsState as RowDetailsState<any> | undefined,
-    isRowDetailsExpanded,
-    isRowDetailsEnabled,
+    rowDetailState: rowDetailState as RowDetailState<any> | undefined,
+    isRowDetailExpanded,
+    isRowDetailEnabled,
     showColumnFilters: props.showColumnFilters ?? !!parentState.filterValue,
     controlledColumnVisibility: !!props.columnVisibility,
     groupRenderStrategy,

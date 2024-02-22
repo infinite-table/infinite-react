@@ -6,6 +6,7 @@ import {
   InfiniteTablePropColumns,
   DataSource,
   InfiniteTableRowInfo,
+  DataSourcePropRowDetailsStateObject,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -80,8 +81,24 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
 }
 
 export default () => {
+  const [rowDetailsState, setRowDetailsState] = React.useState<
+    DataSourcePropRowDetailsStateObject<any>
+  >({
+    collapsedRows: true as const,
+    expandedRows: [39, 54],
+  });
+
   return (
     <>
+      <code
+        style={{
+          padding: 10,
+          color: 'var(--infinite-cell-color)',
+          background: 'var(--infinite-background)',
+        }}
+      >
+        <pre>Row details state: {JSON.stringify(rowDetailsState, null, 2)}</pre>
+      </code>
       <DataSource<City>
         data={citiesDataSource}
         primaryKey="id"
@@ -98,9 +115,17 @@ export default () => {
       >
         <InfiniteTable<City>
           domProps={domProps}
+          onReady={({ api }) => {
+            api.rowDetailsApi;
+          }}
           columnDefaultWidth={150}
+          rowDetailsState={rowDetailsState}
+          onRowDetailsStateChange={(rowDetailsState) => {
+            setRowDetailsState(rowDetailsState.getState());
+          }}
           columnMinWidth={50}
           columns={masterColumns}
+          rowDetailHeight={200}
           rowDetailRenderer={renderDetail}
         />
       </DataSource>

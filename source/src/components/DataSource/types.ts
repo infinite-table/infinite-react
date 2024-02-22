@@ -11,7 +11,7 @@ import {
 import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
-export { RowDetailsCache } from './RowDetailsCache';
+export { RowDetailCache } from './RowDetailCache';
 import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
@@ -41,11 +41,12 @@ import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
 
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
+export { RowDetailState } from './RowDetailState';
 import {
   RowSelectionState,
   RowSelectionStateObject,
 } from './RowSelectionState';
-import { DataSourceStateRestoreForDetails } from './state/getInitialState';
+import { DataSourceStateRestoreForDetail } from './state/getInitialState';
 
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
@@ -111,14 +112,14 @@ export type DataSourceData<T> =
       dataInfo: DataSourceDataParams<T>,
     ) => T[] | Promise<T[] | DataSourceRemoteData<T>>);
 
-export type DataSourceGroupRowsList<KeyType> = true | KeyType[][];
+export type DataSourceGroupRowsList<KeyType = any> = true | KeyType[][];
 
-export type DataSourcePropGroupRowsStateObject<KeyType> = {
+export type DataSourcePropGroupRowsStateObject<KeyType = any> = {
   expandedRows: DataSourceGroupRowsList<KeyType>;
   collapsedRows: DataSourceGroupRowsList<KeyType>;
 };
 
-export type DataSourcePropRowDetailsStateObject<KeyType> = {
+export type RowDetailStateObject<KeyType = any> = {
   expandedRows: true | KeyType[];
   collapsedRows: true | KeyType[];
 };
@@ -245,7 +246,7 @@ export interface DataSourceSetupState<T> {
   idToIndexMap: Map<any, number>;
   detailDataSourcesStateToRestore: Map<
     any,
-    Partial<DataSourceStateRestoreForDetails<any>>
+    Partial<DataSourceStateRestoreForDetail<any>>
   >;
   stateReadyAsDetails: boolean;
   cache?: DataSourceCache<T>;

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { RowDetailsCache } from '../../../../components/DataSource';
+import { RowDetailCache } from '../../../../components/DataSource';
 import { join } from '../../../../utils/join';
 
 import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../theme.css';
 import { InfiniteTableProps, InfiniteTableRowInfo } from '../../types';
-import { RowDetailsRecipe } from '../rowDetails.css';
+import { RowDetailRecipe } from '../rowDetail.css';
 
 import { getDataSourceMasterDetailContext } from '../../../../components/DataSource/DataSourceMasterDetailContext';
 
@@ -19,7 +19,7 @@ type InfiniteTableDetailRowProps<T> = {
   rowDetailHeight: number;
   detailOffset: number;
   rowDetailRenderer: NonUndefined<InfiniteTableProps<T>['rowDetailRenderer']>;
-  rowDetailsCache: RowDetailsCache;
+  rowDetailsCache: RowDetailCache;
 };
 
 const { rootClassName } = internalProps;
@@ -46,7 +46,7 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
     <DataSourceMasterDetailContext.Provider value={masterDetailContextValue}>
       <div
         ref={domRef}
-        className={join(InfiniteTableRowDetailsClassName, RowDetailsRecipe({}))}
+        className={join(InfiniteTableRowDetailsClassName, RowDetailRecipe({}))}
         style={{
           position: 'absolute',
           top: `${detailOffset}px`,

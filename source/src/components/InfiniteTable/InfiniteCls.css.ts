@@ -1,6 +1,6 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
-import { RowDetailsRecipe } from './components/rowDetails.css';
+import { RowDetailRecipe } from './components/rowDetail.css';
 import { ThemeVars } from './theme.css';
 
 import {
@@ -25,8 +25,8 @@ export const InfiniteCls = style([
 
   {
     selectors: {
-      [`${RowDetailsRecipe.classNames.base} &`]: {
-        height: [ThemeVars.components.RowDetails.gridHeight],
+      [`${RowDetailRecipe.classNames.base} &`]: {
+        height: [ThemeVars.components.RowDetail.gridHeight],
       },
     },
   },

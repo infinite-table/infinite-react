@@ -316,7 +316,7 @@ export const ThemeVars = createGlobalThemeContract(
         borderRadius: 'menu-border-radius',
         shadowColor: 'menu-shadow-color',
       },
-      RowDetails: {
+      RowDetail: {
         background: 'rowdetails-background',
         padding: 'rowdetails-padding',
         gridHeight: 'rowdetails-grid-height',
@@ -528,10 +528,10 @@ const RowVars = {
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };
 const RowDetailsVars = {
-  [ThemeVars.components.RowDetails.background]:
+  [ThemeVars.components.RowDetail.background]:
     ThemeVars.components.Row.hoverBackground,
-  [ThemeVars.components.RowDetails.padding]: ThemeVars.spacing[2],
-  [ThemeVars.components.RowDetails.gridHeight]: '100%',
+  [ThemeVars.components.RowDetail.padding]: ThemeVars.spacing[2],
+  [ThemeVars.components.RowDetail.gridHeight]: '100%',
 };
 
 const MenuVars = {

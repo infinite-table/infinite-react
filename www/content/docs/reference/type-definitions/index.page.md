@@ -26,6 +26,72 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <PropTable searchPlaceholder="Type to filter type definitions" sort>
 
+<Prop name="RowDetailsState">
+
+> Represents the collapse/expand state of row details - when [master-detail is configured](/docs/learn/master-detail/overview). Also see <PropLink name="rowDetailRenderer" /> for the most important property in the master-detail configuration.
+
+This class can be instantiated and the value passed to the <PropLink name="rowDetailsState" /> prop (or its uncontrolled variant, <PropLink name="defaultRowDetailsState" />).
+
+```tsx title="Passing an instance of RowDetailsState to the InfiniteTable"
+const rowDetailsState = new RowDetailsState({
+  collapsedRows: true,
+  expandedRows: [2,3,4],
+});
+
+<InfiniteTable<DATA_TYPE>
+  rowDetailsState={rowDetailsState}
+/>
+```
+```tsx title="Passing an object literal to the InfiniteTable"
+<InfiniteTable<DATA_TYPE>
+  rowDetailsState={{
+    collapsedRows: true,
+    expandedRows: [2,3,4],
+  }}
+/>
+```
+
+<Note>
+
+The instance is only useful if you want to interrogate the object, with methods like `areAllCollapsed()`, `areAllExpanded()`, `isRowDetailsExpanded(rowId)` and so on.
+
+When using the <PropLink name="onRowDetailsStateChange" /> callback, it's called with an instance of this class - if you want to use the object literal, make sure you call `rowDetailsState.getState()` to get the plain object.
+</Note>
+
+
+The <PropLink name="rowDetailsState"/> and <PropLink name="defaultRowDetailsState"/> accept both an object literal and an instance of this class.
+
+The object literal has the following properties:
+ - `collapsedRows`: `boolean | any[]` - if `true`, all row details are collapsed. If an array, it contains the row ids of the rows that are collapsed.
+ - `expandedRows`: `boolean | any[]` - if `true`, all row details are expanded. If an array, it contains the row ids of the rows that are expanded.
+
+You can create an instance using the object literal notation and you can get the object literal from the instance using the `getState` method:
+
+```tsx
+const rowDetailsState = new RowDetailsState({
+  collapsedRows: true,
+  expandedRows: [2,3,4],
+});
+const clone = new RowDetailsState(rowDetailsState);
+
+const state = rowDetailsState.getState();
+```
+
+You can mark rows as expanded/collapsed even after creating the instance:
+
+```tsx
+const rowDetailsState = new RowDetailsState({
+  collapsedRows: true,
+  expandedRows: [2,3,4],
+});
+rowDetailsState.expandRowDetails(5);
+rowDetailsState.collapseRowDetails(2);
+
+// now you can pass this instance back to the InfiniteTable component
+```
+
+</Prop>
+
 <Prop name="InfiniteTableColumnHeaderParam" generic>
 
 > Represents runtime information passed to rendering and styling functions called when rendering the column headers

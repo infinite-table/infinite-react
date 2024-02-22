@@ -638,7 +638,7 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
   };
 }
 
-export type DataSourceStateRestoreForDetails<T> = {
+export type DataSourceStateRestoreForDetail<T> = {
   originalDataArray: DataSourceState<T>['originalDataArray'] | undefined;
   groupBy: DataSourceState<T>['groupBy'] | undefined;
   groupRowsState: DataSourceState<T>['groupRowsState'] | undefined;
@@ -648,8 +648,8 @@ export type DataSourceStateRestoreForDetails<T> = {
   livePaginationCursor: DataSourceState<T>['livePaginationCursor'] | undefined;
 };
 
-export type RowDetailsCacheKey = string | number;
-export type RowDetailsCacheEntry = {
+export type RowDetailCacheKey = string | number;
+export type RowDetailCacheEntry = {
   all?: boolean;
   groupBy?: boolean;
   sortInfo?: boolean;
@@ -661,7 +661,7 @@ export type RowDetailsCacheEntry = {
 
 export function getDataSourceStateRestoreForDetails<T>(
   state: DataSourceState<T>,
-): DataSourceStateRestoreForDetails<T> {
+): DataSourceStateRestoreForDetail<T> {
   return {
     originalDataArray: state.originalDataArray,
     groupRowsState: state.groupRowsState,

@@ -3,21 +3,21 @@ import {
   DataSourceContextValue,
   DataSourceMasterDetailContextValue,
   DataSourceState,
-  RowDetailsCache,
+  RowDetailCache,
 } from '../../../../components/DataSource';
 import { useDataSourceContextValue } from '../../../../components/DataSource/publicHooks/useDataSource';
 import { useMemo, useRef } from 'react';
 
 import {
-  DataSourceStateRestoreForDetails,
+  DataSourceStateRestoreForDetail,
   getDataSourceStateRestoreForDetails,
-  RowDetailsCacheEntry,
+  RowDetailCacheEntry,
 } from '../../../../components/DataSource/state/getInitialState';
 import { InfiniteTableRowInfo } from '../../types';
 import { once } from '../../../../utils/DeepMap/once';
 
 type UseRegisterDetailProps<T> = {
-  rowDetailsCache: RowDetailsCache;
+  rowDetailsCache: RowDetailCache;
   rowInfo: InfiniteTableRowInfo<T>;
 };
 
@@ -36,7 +36,7 @@ function restoreDetailStateForRowId<T>(
     // to be what we have in the cache
     const currentCachedState = detailDataSourcesMap.get(
       rowId,
-    ) as DataSourceStateRestoreForDetails<any>;
+    ) as DataSourceStateRestoreForDetail<any>;
 
     detailContext.assignState(currentCachedState);
 
@@ -51,7 +51,7 @@ function updateDetailStateToRestoreForRowId<T>(
     detailState: DataSourceState<T>;
     masterActions: DataSourceComponentActions<T>;
     masterState: DataSourceState<T>;
-    cacheEntryForRow: RowDetailsCacheEntry;
+    cacheEntryForRow: RowDetailCacheEntry;
   },
 ) {
   const { detailState, masterState, masterActions, cacheEntryForRow } = options;
@@ -81,13 +81,13 @@ function updateDetailStateToRestoreForRowId<T>(
 
 function useCurrentRowCache(
   rowId: string | number,
-  rowDetailsCache: RowDetailsCache,
+  rowDetailsCache: RowDetailCache,
 ) {
   const cacheCalledByRowDetailRenderer = useRef(false);
   const currentRowCache = useMemo(() => {
     return {
       getRowId: () => rowId,
-      add: (value: RowDetailsCacheEntry) => {
+      add: (value: RowDetailCacheEntry) => {
         cacheCalledByRowDetailRenderer.current = true;
         rowDetailsCache.add(rowId, value);
       },

@@ -154,11 +154,11 @@ export default function DataTestPage() {
           debugId="root-infinite"
           columnDefaultWidth={130}
           rowHeight={50}
-          defaultRowDetailsState={{
+          defaultRowDetailState={{
             expandedRows: [1, 2],
             collapsedRows: true,
           }}
-          rowDetailsCache={false}
+          rowDetailCache={false}
           rowDetailRenderer={(
             rowInfo: InfiniteTableRowInfo<Developer>,
             _cache,

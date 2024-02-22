@@ -1,20 +1,16 @@
 import { BooleanCollectionState } from './BooleanCollectionState';
 
-import { DataSourcePropRowDetailsStateObject } from './types';
+import { RowDetailStateObject } from './types';
 
-export class RowDetailsState<KeyType = any> extends BooleanCollectionState<
-  DataSourcePropRowDetailsStateObject<KeyType>,
+export class RowDetailState<KeyType = any> extends BooleanCollectionState<
+  RowDetailStateObject<KeyType>,
   KeyType
 > {
-  constructor(
-    state:
-      | DataSourcePropRowDetailsStateObject<KeyType>
-      | RowDetailsState<KeyType>,
-  ) {
+  constructor(state: RowDetailStateObject<KeyType> | RowDetailState<KeyType>) {
     //@ts-ignore
     super(state);
   }
-  public getState(): DataSourcePropRowDetailsStateObject<KeyType> {
+  public getState(): RowDetailStateObject<KeyType> {
     const expandedRows = this.allPositive
       ? true
       : [...(this.positiveMap?.keys() ?? [])];
@@ -29,10 +25,10 @@ export class RowDetailsState<KeyType = any> extends BooleanCollectionState<
     };
   }
 
-  getPositiveFromState(state: DataSourcePropRowDetailsStateObject<KeyType>) {
+  getPositiveFromState(state: RowDetailStateObject<KeyType>) {
     return state.expandedRows;
   }
-  getNegativeFromState(state: DataSourcePropRowDetailsStateObject<KeyType>) {
+  getNegativeFromState(state: RowDetailStateObject<KeyType>) {
     return state.collapsedRows;
   }
 

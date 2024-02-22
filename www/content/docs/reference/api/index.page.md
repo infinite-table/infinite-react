@@ -23,6 +23,11 @@ const onReady = (
 
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
 
+See the [Infinite Table Cell Selection API page](/docs/reference/cell-selecti-api) for the cell selection API.
+See the [Infinite Table Column API page](/docs/reference/column-api) for the column API.
+See the [Infinite Table Row Details API page](/docs/reference/row-details-api) for the row details API (when master-detail is configured).
+
+
 <PropTable sort searchPlaceholder="Type to filter API methods">
 
 <Prop name="confirmEdit" type="(value?: any) => void">
@@ -279,6 +284,11 @@ const scrollTop = api.scrollTop;
 
 </Prop>
 
+<Prop name="rowDetailsApi" type="InfiniteTableRowDetailsApi">
+
+> Getter for the [Row Details API](/docs/reference/row-details-api)
+
+</Prop>
 <Prop name="cellSelectionApi" type="InfiniteTableCellSelectionApi">
 
 > Getter for the [Cell Selection API](/docs/reference/cell-selection-api)

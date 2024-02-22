@@ -1,25 +1,25 @@
 import { FixedSizeMap } from '../../utils/FixedSizeMap';
 
 import {
-  RowDetailsCacheEntry,
-  RowDetailsCacheKey,
+  RowDetailCacheEntry,
+  RowDetailCacheKey,
 } from './state/getInitialState';
 
-interface RowDetailsCacheStorage<_K, T> {
+interface RowDetailCacheStorage<_K, T> {
   add(key: any, value: T): void;
   get(key: any): T | undefined;
   delete(key: any): void;
   has(key: any): boolean;
 }
 
-export interface RowDetailsCacheStorageForCurrentRow<T = RowDetailsCacheEntry> {
+export interface RowDetailCacheStorageForCurrentRow<T = RowDetailCacheEntry> {
   add(value: T): void;
   get(): T | undefined;
   delete(): void;
   has(): boolean;
 }
 
-class RowDetailsNoCacheStorage<K, T> implements RowDetailsCacheStorage<K, T> {
+class RowDetailNoCacheStorage<K, T> implements RowDetailCacheStorage<K, T> {
   add(_key: any, _value: T): void {
     return;
   }
@@ -34,8 +34,8 @@ class RowDetailsNoCacheStorage<K, T> implements RowDetailsCacheStorage<K, T> {
   }
 }
 
-class RowDetailsFixedSizeCacheStorage<K, T>
-  implements RowDetailsCacheStorage<K, T>
+class RowDetailFixedSizeCacheStorage<K, T>
+  implements RowDetailCacheStorage<K, T>
 {
   private storage: FixedSizeMap<K, T>;
 
@@ -57,7 +57,7 @@ class RowDetailsFixedSizeCacheStorage<K, T>
   }
 }
 
-class RowDetailsFullCacheStorage<K, T> implements RowDetailsCacheStorage<K, T> {
+class RowDetailFullCacheStorage<K, T> implements RowDetailCacheStorage<K, T> {
   private storage: Map<K, T>;
 
   constructor() {
@@ -81,10 +81,10 @@ class RowDetailsFullCacheStorage<K, T> implements RowDetailsCacheStorage<K, T> {
 // let INSTANCE_COUNTER = 0;
 // globalThis.RowDetailsCacheInstances = [];
 
-export class RowDetailsCache<K = RowDetailsCacheKey, T = RowDetailsCacheEntry>
-  implements RowDetailsCacheStorage<K, T>
+export class RowDetailCache<K = RowDetailCacheKey, T = RowDetailCacheEntry>
+  implements RowDetailCacheStorage<K, T>
 {
-  private cacheStorage: RowDetailsCacheStorage<K, T>;
+  private cacheStorage: RowDetailCacheStorage<K, T>;
 
   // public instanceIndex: number = 0;
 
@@ -93,12 +93,12 @@ export class RowDetailsCache<K = RowDetailsCacheKey, T = RowDetailsCacheEntry>
     // globalThis.RowDetailsCacheInstances.push(this);
     this.cacheStorage =
       cache === false
-        ? new RowDetailsNoCacheStorage()
+        ? new RowDetailNoCacheStorage()
         : cache === true
-        ? new RowDetailsFullCacheStorage()
+        ? new RowDetailFullCacheStorage()
         : typeof cache === 'number'
-        ? new RowDetailsFixedSizeCacheStorage(cache)
-        : new RowDetailsFixedSizeCacheStorage(5);
+        ? new RowDetailFixedSizeCacheStorage(cache)
+        : new RowDetailFixedSizeCacheStorage(5);
   }
 
   add(key: K, value: T): void {

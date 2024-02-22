@@ -6,7 +6,141 @@ description: Infinite Table Props Reference page with complete examples
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
 
-<PropTable>
+<PropTable sort>
+
+<Prop name="rowDetailRenderer" type="(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => ReactNode">
+
+> When specified, it makes InfiniteTable be a master-detail DataGrid. For configuring the height of row details, see <PropLink name="rowDetailHeight" />
+
+This function is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> the user expands to see details for.
+
+Using this function, you can render another DataGrid or any other custom content.
+
+<Note>
+
+Make sure you have a column with the `renderRowDetailsIcon: true` flag set. <PropLink name="columns.renderRowDetailsIcon" /> on a column makes the column display the row details expand icon.
+
+Without this flag, no column will have the expand icon, and the master-detail functionality will not work.
+
+</Note>
+
+To configure the height of the row details section, use the <PropLink name="rowDetailHeight" /> prop.
+
+For rendering some row details as already expanded, see <PropLink name="defaultRowDetailsState" />.
+
+<Sandpack title="Basic master detail DataGrid example" size="lg">
+
+<Description>
+
+This example shows a master DataGrid with cities & countries.
+
+The details for each city shows a DataGrid with developers in that city.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
+<Prop name="defaultRowDetailsState" type="RowDetailsState">
+
+> Specifies the default expanded/collapsed state of row details.
+
+For the controlled version, see <PropLink name="rowDetailsState" />.
+
+
+<Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
+
+<Description>
+
+Some of the rows in the master DataGrid are expanded by default.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-default-expanded-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="rowDetailsState" type="RowDetailsState">
+
+> Specifies the expanded/collapsed state of row details.
+
+For the uncontrolled version, see <PropLink name="defaultRowDetailsState" />.
+
+When you use this controlled property, make sure you pair it with the <PropLink name="onRowDetailsStateChange" /> callback to update it.
+
+<Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
+
+<Description>
+
+Some of the rows in the master DataGrid are expanded by default.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="onRowDetailsStateChange" type="(rowDetailsState: RowDetailsState) => void">
+
+> Called when the expand/collapse state of row details changes.
+
+You can use this function prop to update the <PropLink name="rowDetailsState" /> prop or simply to listen to changes in the row details state.
+
+<Note>
+
+This function is called with an instance of the <TypeLink name="RowDetailsState" />. If you want to get the object behind it, simply call `rowDetailsState.getState()`.
+
+Both the `RowDetailsState` instance and the state object (literal) are valid values you can pass to the <PropLink name="rowDetailsState" />.
+
+</Note>
+
+See related <PropLink name="rowDetailsState" /> and <PropLink name="defaultRowDetailsState" />.
+
+<Sandpack title="Master detail DataGrid with listener to the row expand/collapse state change" size="lg">
+
+<Description>
+
+Some of the rows in the master DataGrid are expanded by default.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="rowDetailHeight" type="number|CSSVar|(rowInfo)=>number" defaultValue={300}>
+
+> Controls the height of the row details section, in master-detail DataGrids.
+
+The default value is `300` pixels.
+
+This can be a number, a string (the name of a CSS variable - eg `--detail-height`), or a function. When a function is defined, it's called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> object for the corresponding row.
+
+<Sandpack title="Master detail DataGrid with custom detail height" size="lg">
+
+<Description>
+
+In this example we configure the height of row details to be 200px.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-custom-detail-height-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
 
 <Prop name="activeCellIndex" type="[number,number] | null">
 

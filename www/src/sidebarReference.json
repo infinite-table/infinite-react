@@ -25,6 +25,10 @@
     "path": "/docs/reference/cell-selection-api"
   },
   {
+    "title": "Infinite Table Row Details API",
+    "path": "/docs/reference/row-details-api"
+  },
+  {
     "title": "Infinite Table Row Selection API",
     "path": "/docs/reference/row-selection-api"
   },

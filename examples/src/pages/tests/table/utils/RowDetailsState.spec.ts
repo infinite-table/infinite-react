@@ -1,9 +1,9 @@
-import { RowDetailsState } from '@src/components/DataSource/RowDetailsState';
+import { RowDetailState } from '@src/components/DataSource/RowDetailsState';
 import { test, expect } from '@playwright/test';
 
 export default test.describe.parallel('RowDetailsState', () => {
   test('should work correctly with default collapsed true', () => {
-    const state = new RowDetailsState({
+    const state = new RowDetailState({
       collapsedRows: true,
       expandedRows: [1, 11],
     });
@@ -15,7 +15,7 @@ export default test.describe.parallel('RowDetailsState', () => {
   });
 
   test('should work correctly with default expanded true', () => {
-    const state = new RowDetailsState({
+    const state = new RowDetailState({
       collapsedRows: ['1', 2],
       expandedRows: true,
     });

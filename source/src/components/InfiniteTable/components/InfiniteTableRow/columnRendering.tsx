@@ -91,7 +91,7 @@ export function getCellContext<T>(
     activeRowIndex,
     keyboardNavigation,
 
-    isRowDetailsEnabled,
+    isRowDetailEnabled: isRowDetailsEnabled,
   } = getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
 
@@ -99,7 +99,7 @@ export function getCellContext<T>(
     !isRowDetailsEnabled ||
     (typeof isRowDetailsEnabled === 'function' && !isRowDetailsEnabled(rowInfo))
       ? false
-      : api.rowDetailsApi.isRowDetailsExpanded(rowInfo.id)
+      : api.rowDetailApi.isRowDetailExpanded(rowInfo.id)
       ? 'expanded'
       : 'collapsed';
 
@@ -311,10 +311,10 @@ export function getColumnRenderParam<T>(options: {
     api: imperativeApi,
 
     toggleCurrentRowDetails: () =>
-      imperativeApi.rowDetailsApi.toggleRowDetails(rowInfo.id),
-    toggleRowDetails: imperativeApi.rowDetailsApi.toggleRowDetails,
-    expandRowDetails: imperativeApi.rowDetailsApi.expandRowDetails,
-    collapseRowDetails: imperativeApi.rowDetailsApi.collapseRowDetails,
+      imperativeApi.rowDetailApi.toggleRowDetail(rowInfo.id),
+    toggleRowDetails: imperativeApi.rowDetailApi.toggleRowDetail,
+    expandRowDetails: imperativeApi.rowDetailApi.expandRowDetail,
+    collapseRowDetails: imperativeApi.rowDetailApi.collapseRowDetail,
 
     selectRow: imperativeApi.rowSelectionApi.selectRow,
     deselectRow: imperativeApi.rowSelectionApi.deselectRow,

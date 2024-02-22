@@ -79,6 +79,11 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
   );
 }
 
+const defaultRowDetailsState = {
+  collapsedRows: true as const,
+  expandedRows: [39, 54],
+};
+
 export default () => {
   return (
     <>
@@ -99,8 +104,10 @@ export default () => {
         <InfiniteTable<City>
           domProps={domProps}
           columnDefaultWidth={150}
+          defaultRowDetailsState={defaultRowDetailsState}
           columnMinWidth={50}
           columns={masterColumns}
+          rowDetailHeight={200}
           rowDetailRenderer={renderDetail}
         />
       </DataSource>
