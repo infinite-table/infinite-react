@@ -28,5 +28,5 @@ inputs:
     default: 'update'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'start.js'
