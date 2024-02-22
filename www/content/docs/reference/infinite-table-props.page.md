@@ -10,7 +10,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <Prop name="rowDetailRenderer" type="(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => ReactNode">
 
-> When specified, it makes InfiniteTable be a master-detail DataGrid. For configuring the height of row details, see <PropLink name="rowDetailHeight" />
+> When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />
 
 This function is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> the user expands to see details for.
 
@@ -526,6 +526,27 @@ For more components that can be overriden, see <PropLink name="components" />
 
 </Sandpack>
 
+
+</Prop>
+<Prop name="columns.renderRowDetailIcon" type="boolean|(cellContext) => ReactNode">
+> Renders the row detail expand/collapse icon in the column cell. Only used when [master-detail](/docs/learn/master-detail/overview) is enabled.
+
+If this function is a prop, it can be rendered to customize the icon rendered for expanding/collapsing the row detail.
+
+See related <PropLink name="rowDetailRenderer" /> for configuring master-detail.
+
+
+<Sandpack title="Basic master detail DataGrid example" size="lg">
+
+<Description>
+
+This example shows a master DataGrid with the ID column configured to show the row detail expand icon.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-example.page.tsx"
+```
+</Sandpack>
 
 </Prop>
 <Prop name="columns.components">
@@ -1298,7 +1319,7 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Prop>
 
-<Prop name="columns.renderMenuIcon" type="boolean|({column, columnApi})=> ReactNode">
+<Prop name="columns.renderMenuIcon" type="boolean|(cellContext)=> ReactNode">
 
 > Allows customization of the context menu icon.
 
