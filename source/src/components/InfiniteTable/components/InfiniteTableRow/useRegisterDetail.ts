@@ -15,6 +15,7 @@ import {
 } from '../../../../components/DataSource/state/getInitialState';
 import { InfiniteTableRowInfo } from '../../types';
 import { once } from '../../../../utils/DeepMap/once';
+import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 type UseRegisterDetailProps<T> = {
   rowDetailsCache: RowDetailCache;
@@ -110,10 +111,12 @@ export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
     componentActions: masterActions,
   } = useDataSourceContextValue<T>();
 
+  const { getState: getMasterState } = useInfiniteTable<T>();
+
   const { currentRowCache, cacheCalledByRowDetailRenderer } =
     useCurrentRowCache(rowInfo.id, rowDetailsCache);
 
-  const masterDetailContextValue: DataSourceMasterDetailContextValue =
+  const masterDetailContextValue: DataSourceMasterDetailContextValue<T> =
     useMemo(() => {
       const shouldRestoreState =
         getMasterDataSourceState().detailDataSourcesStateToRestore.has(
@@ -182,10 +185,12 @@ export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
       return {
         registerDetail,
         shouldRestoreState,
-      } as DataSourceMasterDetailContextValue;
+      } as DataSourceMasterDetailContextValue<T>;
     }, [rowInfo.id, currentRowCache]);
 
-  masterDetailContextValue.masterRowInfo = rowInfo as InfiniteTableRowInfo<any>;
+  masterDetailContextValue.masterRowInfo = rowInfo;
+  masterDetailContextValue.getMasterDataSourceState = getMasterDataSourceState;
+  masterDetailContextValue.getMasterState = getMasterState;
 
   return { masterDetailContextValue, currentRowCache };
 }

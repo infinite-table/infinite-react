@@ -505,7 +505,11 @@ export type InfiniteTablePropPivotColumn<
       options: InfiniteTablePivotColumnGetterOptions<T, COL_TYPE>,
     ) => InfiniteTablePivotColumnBase<T>);
 
-export type InfiniteTablePropComponents = {
+export type RowDetailComponentProps<T = any> = {
+  rowInfo: InfiniteTableRowInfo<T>;
+  cache: RowDetailCacheStorageForCurrentRow<RowDetailCacheEntry>;
+};
+export type InfiniteTablePropComponents<T = any> = {
   LoadMask?: (
     props: LoadMaskProps & { children?: React.ReactNode | undefined },
   ) => JSX.Element | null;
@@ -514,6 +518,7 @@ export type InfiniteTablePropComponents = {
     props: MenuProps & { children?: React.ReactNode | undefined },
   ) => JSX.Element | null;
   MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
+  RowDetail?: (props: RowDetailComponentProps<T>) => JSX.Element | null;
 };
 
 export type ScrollStopInfo = {
@@ -563,7 +568,7 @@ export interface InfiniteTableProps<T> {
   pivotColumns?: InfiniteTableColumnsMap<T, InfiniteTablePivotColumn<T>>;
 
   loadingText?: Renderable;
-  components?: InfiniteTablePropComponents;
+  components?: InfiniteTablePropComponents<T>;
 
   viewportReservedWidth?: number;
   onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;

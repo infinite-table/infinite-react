@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
+import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSource';
 import { useOverlay } from '../../hooks/useOverlay';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
 
@@ -9,13 +10,16 @@ const OFFSET = 10;
 
 export function useColumnFilterOperatorMenu<T>() {
   const context = useInfiniteTable<T>();
+  const masterContext = useMasterDetailContext();
   const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: false,
+    portalContainer: masterContext
+      ? masterContext.getMasterState().portalDOMRef.current
+      : false,
   });
 
   useEffect(() => {

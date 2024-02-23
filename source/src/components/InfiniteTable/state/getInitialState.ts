@@ -42,6 +42,7 @@ import {
 import { toMap } from '../utils/toMap';
 
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
+import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
 
 function createRenderer(brain: MatrixBrain) {
   const renderer = new ReactHeadlessTableRenderer(brain);
@@ -237,8 +238,6 @@ export const forwardProps = <T>(
     columnDefaultEditable: 1,
     columnDefaultFilterable: 1,
     columnDefaultSortable: 1,
-
-    rowDetailRenderer: 1,
 
     rowStyle: 1,
     cellStyle: 1,
@@ -447,7 +446,20 @@ export const mapPropsToState = <T>(params: {
     | RowDetailStateObject<T>
     | undefined = undefined;
 
-  if (props.rowDetailRenderer) {
+  let rowDetailRenderer = props.rowDetailRenderer;
+
+  const RowDetailComponent = props.components?.RowDetail;
+  if (!rowDetailRenderer && RowDetailComponent) {
+    let rowDetailRendererFromComponent = weakMap.get(RowDetailComponent);
+
+    if (!rowDetailRendererFromComponent) {
+      rowDetailRendererFromComponent =
+        getRowDetailRendererFromComponent(RowDetailComponent);
+      weakMap.set(RowDetailComponent, rowDetailRendererFromComponent);
+    }
+    rowDetailRenderer = rowDetailRendererFromComponent;
+  }
+  if (rowDetailRenderer) {
     rowDetailState =
       props.rowDetailState ||
       state.rowDetailState ||
@@ -486,11 +498,12 @@ export const mapPropsToState = <T>(params: {
     }
   }
 
-  const isRowDetailEnabled = !props.rowDetailRenderer
+  const isRowDetailEnabled = !rowDetailRenderer
     ? false
     : props.isRowDetailEnabled || true;
 
   return {
+    rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,
     isRowDetailExpanded,
     isRowDetailEnabled,

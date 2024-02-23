@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSource';
 import { ShowOverlayFn, useOverlay } from '../../hooks/useOverlay';
 import {
   MenuIconDataAttributes,
@@ -67,13 +68,17 @@ function showMenuForColumn<T>(options: {
 
 export function useColumnMenu<T>() {
   const context = useInfiniteTable<T>();
+
+  const masterContext = useMasterDetailContext();
   const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: false,
+    portalContainer: masterContext
+      ? masterContext.getMasterState().portalDOMRef.current
+      : false,
   });
 
   useEffect(() => {

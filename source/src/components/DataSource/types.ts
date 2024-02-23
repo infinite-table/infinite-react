@@ -27,6 +27,7 @@ import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
+  InfiniteTableState,
 } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
 
@@ -742,16 +743,18 @@ export interface DataSourceContextValue<T> {
   getState: () => DataSourceState<T>;
   assignState: (state: Partial<DataSourceState<T>>) => void;
   getDataSourceMasterContext: () =>
-    | DataSourceMasterDetailContextValue
+    | DataSourceMasterDetailContextValue<any>
     | undefined;
   componentState: DataSourceState<T>;
   componentActions: DataSourceComponentActions<T>;
 }
 
-export interface DataSourceMasterDetailContextValue {
+export interface DataSourceMasterDetailContextValue<MASTER_TYPE = any> {
   registerDetail: (detail: DataSourceContextValue<any>) => void;
+  getMasterState: () => InfiniteTableState<MASTER_TYPE>;
+  getMasterDataSourceState: () => DataSourceState<MASTER_TYPE>;
   shouldRestoreState: boolean;
-  masterRowInfo: InfiniteTableRowInfo<any>;
+  masterRowInfo: InfiniteTableRowInfo<MASTER_TYPE>;
 }
 
 export enum DataSourceActionType {

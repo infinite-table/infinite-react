@@ -19,6 +19,7 @@ import type { InfiniteTableComputedValues, InfiniteTableApi } from '../types';
 import { useInfiniteTable } from './useInfiniteTable';
 import { useYourBrain } from './useYourBrain';
 import { InfiniteTableDetailRow } from '../components/InfiniteTableRow/InfiniteTableDetailRow';
+import { visibility } from '../utilities.css';
 
 type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -273,7 +274,11 @@ export function useCellRendering<T>(
         !isRowDetailsExpanded(rowInfo) ||
         !computedRowSizeCacheForDetails
       ) {
-        return null;
+        // normally we would have returned `null`
+        // but if we return null, the headless renderer will lose track
+        // of the HTMLElement, and then when we scroll down and want
+        // to reuse the HTMLElement, it will be gone, and the rendering will break
+        return <div ref={domRef} className={visibility.hidden} />;
       }
 
       const { rowDetailHeight, rowHeight } =

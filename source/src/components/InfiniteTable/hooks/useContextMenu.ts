@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { AlignPositionOptions } from '../../../utils/pageGeometry/alignment';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
+import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSource';
 import { useOverlay } from '../../hooks/useOverlay';
 import {
   getCellContextMenu,
@@ -24,13 +25,16 @@ const ALIGN_POSITIONS: AlignPositionOptions['alignPosition'] = [
 
 export function useCellContextMenu<T>() {
   const context = useInfiniteTable<T>();
+  const masterContext = useMasterDetailContext();
   const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: false,
+    portalContainer: masterContext
+      ? masterContext.getMasterState().portalDOMRef.current
+      : false,
   });
 
   useEffect(() => {
@@ -124,13 +128,16 @@ export function useCellContextMenu<T>() {
 
 export function useTableContextMenu<T>() {
   const context = useInfiniteTable<T>();
+  const masterContext = useMasterDetailContext();
   const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: false,
+    portalContainer: masterContext
+      ? masterContext.getMasterState().portalDOMRef.current
+      : false,
   });
 
   useEffect(() => {

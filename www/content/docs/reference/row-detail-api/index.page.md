@@ -32,11 +32,38 @@ See the [Infinite Table Column API page](/docs/reference/column-api) for the col
 
 > Collapses all row details.
 
+
+<Sandpack title="Master detail DataGrid with collapse all button" size="lg" viewMode="preview">
+
+<Description>
+
+Some of the rows in the master DataGrid are expanded by default.
+
+You can collapse them via the Row Detail API.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-api-example.page.tsx"
+```
+</Sandpack>
+
 </Prop>
 
 <Prop name="expandAllDetails" type="() => void">
 
 > Expands all row details.
+
+<Sandpack title="Master detail DataGrid with expand all button" size="lg" viewMode="preview">
+
+<Description>
+
+Click the `Expand All` button to expand all row details.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-api-example.page.tsx"
+```
+</Sandpack>
 
 </Prop>
 

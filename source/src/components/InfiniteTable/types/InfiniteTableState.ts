@@ -152,7 +152,6 @@ export interface InfiniteTableMappedState<T> {
   id: InfiniteTableProps<T>['id'];
   debugId: InfiniteTableProps<T>['debugId'];
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
-  rowDetailRenderer: InfiniteTableProps<T>['rowDetailRenderer'];
   multiSortBehavior: NonUndefined<InfiniteTableProps<T>['multiSortBehavior']>;
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
   resizableColumns: InfiniteTableProps<T>['resizableColumns'];
@@ -274,6 +273,8 @@ export interface InfiniteTableDerivedState<T> {
 
   rowDetailState: RowDetailState<T> | undefined;
   isRowDetailExpanded: InfiniteTableProps<T>['isRowDetailExpanded'] | undefined;
+
+  rowDetailRenderer?: InfiniteTableProps<T>['rowDetailRenderer'];
 
   isRowDetailEnabled:
     | NonUndefined<InfiniteTableProps<T>['isRowDetailEnabled']>

@@ -106,6 +106,8 @@ const InfiniteTableRoot = getComponentStateRoot({
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
     const context = useInfiniteTable<T>();
+
+    const masterContext = useMasterDetailContext();
     const { state: componentState, getComputed, computed, api } = context;
     const {
       componentState: { loading, dataArray },
@@ -224,6 +226,15 @@ export const InfiniteTableComponent = React.memo(
       const state = context.getState();
       const target = event.target as HTMLElement;
 
+      if (!masterContext && (event as any)._from_row_detail) {
+        // originating from detail grid.
+        return;
+      }
+
+      if (masterContext) {
+        (event as any)._from_row_detail = true;
+      }
+
       const cell = selectParentUntil(
         target,
         getCellSelector(),
@@ -258,6 +269,17 @@ export const InfiniteTableComponent = React.memo(
       state.contextMenu(param);
     }, []);
 
+    React.useEffect(() => {
+      // we can make this more elegant
+      // the main idea:
+      // if we are a detail grid, we want to use the master grid's portal
+      // so menus are rendered in the container of the top-most (master) grid - since we can
+      // have multiple levels of nesting
+      if (masterContext) {
+        portalDOMRef.current =
+          masterContext.getMasterState().portalDOMRef.current;
+      }
+    }, []);
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
         {header ? (
@@ -354,6 +376,7 @@ function InfiniteTableContextProvider<T>() {
     (globalThis as any).getState = getState;
     (globalThis as any).getComputed = getComputed;
     (globalThis as any).componentActions = componentActions;
+    (globalThis as any).masterBrain = componentState.brain;
   }
 
   const {

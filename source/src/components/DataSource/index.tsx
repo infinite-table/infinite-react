@@ -35,6 +35,7 @@ import {
   DataSourceContextValue,
   DataSourceState,
 } from './types';
+import { InfiniteTableRowInfo } from '../InfiniteTable';
 
 type DataSourceChildren<T> =
   | React.ReactNode
@@ -169,9 +170,19 @@ function DataSourceCmp<T>({
 function DataSource<T>(props: DataSourceProps<T>) {
   const masterContext = useMasterDetailContext();
 
+  const isDetail = !!masterContext;
+  // when we are in a detail DataSource, we want to have a key
+  // dependent on the master row info
+  // since we dont want to recycle and reuse the DataSource of a detail row
+  // for the DataSource of another detail row (for example, when you scroll the DataGrid
+  // while having more details expanded)
+  // so making sure the key is unique for each detail row is important
+  // and mandatory to ensure correctness
+  const key = isDetail ? masterContext.masterRowInfo.id : 'master';
+
   return (
-    <DataSourceRoot {...props}>
-      <DataSourceCmp children={props.children} isDetail={!!masterContext} />
+    <DataSourceRoot {...props} key={key}>
+      <DataSourceCmp children={props.children} isDetail={isDetail} />
     </DataSourceRoot>
   );
 }
@@ -183,6 +194,16 @@ function useRowInfoReducers() {
   return rowInfoReducerResults;
 }
 
+function useMasterRowInfo<T = any>(): InfiniteTableRowInfo<T> | undefined {
+  const context = useMasterDetailContext();
+
+  if (!context) {
+    return undefined;
+  }
+
+  return context.masterRowInfo as InfiniteTableRowInfo<T>;
+}
+
 export {
   useDataSource,
   DataSource,
@@ -192,6 +213,7 @@ export {
   multisort,
   defaultFilterTypes as filterTypes,
   useRowInfoReducers,
+  useMasterRowInfo,
 };
 
 export * from './types';
