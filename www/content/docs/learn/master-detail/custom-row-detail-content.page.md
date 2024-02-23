@@ -1,5 +1,5 @@
 ---
-title: Master Detail with custom row detail contents
+title: Master Detail with Custom Row Detail Contents
 description: Learn how to use master-detail to customise your row detail contents
 ---
 
