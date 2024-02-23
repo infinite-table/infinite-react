@@ -240,6 +240,14 @@
       {
         "title": "Overview",
         "path": "/docs/learn/master-detail/overview"
+      },
+      {
+        "title": "Rendering custom content",
+        "path": "/docs/learn/master-detail/custom-row-detail-content"
+      },
+      {
+        "title": "Collapsing and expanding row details",
+        "path": "/docs/learn/master-detail/collapsing-and-expanding-rows"
       }
     ]
   },

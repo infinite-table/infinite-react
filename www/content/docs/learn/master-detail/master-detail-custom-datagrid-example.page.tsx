@@ -6,7 +6,6 @@ import {
   InfiniteTablePropColumns,
   DataSource,
   InfiniteTableRowInfo,
-  RowDetailStateObject,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -63,44 +62,45 @@ const domProps = {
 };
 
 function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
-  console.log('rendering detail for master row', rowInfo.id);
   return (
-    <DataSource<Developer>
-      data={detailDataSource}
-      primaryKey="id"
-      sortMode="remote"
-      filterMode="remote"
+    <div
+      style={{
+        padding: 10,
+        color: 'var(--infinite-cell-color)',
+        background: 'var(--infinite-background)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
     >
-      <InfiniteTable<Developer>
-        columnDefaultWidth={150}
-        columnMinWidth={50}
-        columns={detailColumns}
-      />
-    </DataSource>
+      <h3>
+        Developers in {rowInfo.data?.name}, {rowInfo.data?.country}
+      </h3>
+
+      <DataSource<Developer>
+        data={detailDataSource}
+        primaryKey="id"
+        sortMode="remote"
+        filterMode="remote"
+      >
+        <InfiniteTable<Developer>
+          columnDefaultWidth={150}
+          columnMinWidth={50}
+          columns={detailColumns}
+        />
+      </DataSource>
+    </div>
   );
 }
 
-export default () => {
-  const [rowDetailState, setRowDetailState] = React.useState<
-    RowDetailStateObject<any>
-  >({
-    collapsedRows: true as const,
-    expandedRows: [39, 54],
-  });
+const defaultRowDetailState = {
+  collapsedRows: true as const,
+  expandedRows: [39, 54],
+};
 
+export default () => {
   return (
     <>
-      <code
-        style={{
-          padding: 10,
-          color: 'var(--infinite-cell-color)',
-          background: 'var(--infinite-background)',
-          maxHeight: 200,
-          overflow: 'auto',
-        }}
-      >
-        <pre>Row detail state: {JSON.stringify(rowDetailState, null, 2)}</pre>
-      </code>
       <DataSource<City>
         data={citiesDataSource}
         primaryKey="id"
@@ -117,17 +117,11 @@ export default () => {
       >
         <InfiniteTable<City>
           domProps={domProps}
-          onReady={({ api }) => {
-            console.log(api.rowDetailApi);
-          }}
           columnDefaultWidth={150}
-          rowDetailState={rowDetailState}
-          onRowDetailStateChange={(rowDetailState) => {
-            setRowDetailState(rowDetailState.getState());
-          }}
+          defaultRowDetailState={defaultRowDetailState}
           columnMinWidth={50}
           columns={masterColumns}
-          rowDetailHeight={200}
+          rowDetailHeight={320}
           rowDetailRenderer={renderDetail}
         />
       </DataSource>

@@ -7,6 +7,7 @@ import {
   DataSource,
   InfiniteTableRowInfo,
   RowDetailStateObject,
+  InfiniteTableApi,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -81,26 +82,56 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
 }
 
 export default () => {
-  const [rowDetailState, setRowDetailState] = React.useState<
-    RowDetailStateObject<any>
-  >({
-    collapsedRows: true as const,
-    expandedRows: [39, 54],
-  });
+  const [rowDetailState, setRowDetailState] =
+    React.useState<RowDetailStateObject>({
+      collapsedRows: true as const,
+      expandedRows: [39, 54],
+    });
+
+  const [api, setApi] = React.useState<InfiniteTableApi<City> | null>(null);
 
   return (
     <>
-      <code
+      <div
         style={{
-          padding: 10,
+          display: 'flex',
+          flexFlow: 'row',
           color: 'var(--infinite-cell-color)',
           background: 'var(--infinite-background)',
           maxHeight: 200,
           overflow: 'auto',
+          gap: 10,
         }}
       >
-        <pre>Row detail state: {JSON.stringify(rowDetailState, null, 2)}</pre>
-      </code>
+        <code style={{ paddingInline: 10 }}>
+          <pre>Row detail state: {JSON.stringify(rowDetailState, null, 2)}</pre>
+        </code>
+        <div
+          style={{
+            display: 'flex',
+            gap: 10,
+            padding: 10,
+            alignItems: 'flex-start',
+          }}
+        >
+          <button onClick={() => api?.rowDetailApi.expandAllDetails()}>
+            Expand All
+          </button>
+          <button
+            onClick={() => {
+              // we could use the api to collapse all details
+              // api?.rowDetailApi.collapseAllDetails();
+              // but we can also use the controlled prop
+              setRowDetailState({
+                collapsedRows: true,
+                expandedRows: [],
+              });
+            }}
+          >
+            Collapse All
+          </button>
+        </div>
+      </div>
       <DataSource<City>
         data={citiesDataSource}
         primaryKey="id"
@@ -118,7 +149,7 @@ export default () => {
         <InfiniteTable<City>
           domProps={domProps}
           onReady={({ api }) => {
-            console.log(api.rowDetailApi);
+            setApi(api);
           }}
           columnDefaultWidth={150}
           rowDetailState={rowDetailState}

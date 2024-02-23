@@ -40,35 +40,35 @@ See the [Infinite Table Column API page](/docs/reference/column-api) for the col
 
 </Prop>
 
-<Prop name="isRowDetailsCollapsed" type="(rowId: any)=> boolean">
+<Prop name="isRowDetailCollapsed" type="(rowId: any)=> boolean">
 
-> Checks if the row details are collapsed for the row with the specified primary key.
-
-</Prop>
-
-<Prop name="isRowDetailsExpanded" type="(rowId: any)=> boolean">
-
-> Checks if the row details are expanded for the row with the specified primary key.
+> Checks if the row detail is collapsed for the row with the specified primary key.
 
 </Prop>
 
+<Prop name="isRowDetailExpanded" type="(rowId: any)=> boolean">
 
-<Prop name="collapseRowDetails" type="(rowId: any) => void">
-
-> Collapses the details for the row with the specified primary key.
-
-</Prop>
-
-<Prop name="expandRowDetails" type="(rowId: any)=> boolean">
-
-> Expands the details for the row with the specified primary key.
+> Checks if the row detail is expanded for the row with the specified primary key.
 
 </Prop>
 
 
-<Prop name="toggleRowDetails" type="(rowId: any)=> boolean">
+<Prop name="collapseRowDetail" type="(rowId: any) => void">
 
-> Toggles the expand/collapse state of the row details, for the row with the specified primary key.
+> Collapses the detail for the row with the specified primary key.
+
+</Prop>
+
+<Prop name="expandRowDetail" type="(rowId: any)=> boolean">
+
+> Expands the detail for the row with the specified primary key.
+
+</Prop>
+
+
+<Prop name="toggleRowDetail" type="(rowId: any)=> boolean">
+
+> Toggles the expand/collapse state of the row detail, for the row with the specified primary key.
 
 </Prop>
 
