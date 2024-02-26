@@ -90,13 +90,21 @@ Pivot columns generated for aggregations will inehrit from initial columns - the
 
 </Prop>
 
-<Prop name="data" type="DATA_TYPE[]|Promise<DATA_TYPE[]|() => DATA_TYPE[]|Promise<DATA_TYPE[]>">
+<Prop name="data" type="DATA_TYPE[]|Promise<DATA_TYPE[]|(params:DataSourceDataParams) => DATA_TYPE[]|Promise<DATA_TYPE[]>">
 
-> Specifies the data the component is bound to. Can be one of the following:
+> Specifies the data the component is bound to.
+
+Can be one of the following:
 
 - an array of the bound type - eg: `Employee[]`
 - a Promise tha resolves to an array like the above
 - a function that returns an any of the above
+
+<Note>
+
+If the `data` prop is a function, it will be called with an object of type <TypeLink name="DataSourceDataParams" />. <TypeLink name="DataSourceDataParams" code={false}>Click to see more details.</TypeLink>
+
+</Note>
 
 <Sandpack title="Data loading example with promise">
 
@@ -656,6 +664,32 @@ See <TypeLink name="DataSourcePropGroupBy" /> for the type definition.
 
 </Prop>
 
+
+<Prop name="pivotBy" type="DataSourcePivotBy<DATA_TYPE>[]">
+
+> An array of objects with `field` properties that control how pivoting works. Pivoting is very often associated with aggregations, so see related <DPropLink name="aggregationReducers" /> for more details.
+
+Each item in the array can have the following properties:
+
+- field - `keyof DATA_TYPE`
+- column - config object or function for generated pivot columns.
+
+<Note>
+
+For more details on the type of the items in this array prop, see <TypeLink name="DataSourcePivotBy" />.
+
+</Note>
+
+<Sandpack title="Pivoting with customized pivot column">
+
+```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+ 
 <Prop name="groupBy.column" type="Partial<InfiniteTableColumn<T>>">
 
 > An object that configures how the column for the current group should look like

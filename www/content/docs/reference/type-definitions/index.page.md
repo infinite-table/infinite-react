@@ -92,6 +92,62 @@ rowDetailState.collapseRowDetails(2);
 
 </Prop>
 
+<Prop name="DataSourceDataParams" generic>
+
+> The type for the object passed into the <DPropLink name="data" /> function prop of the `DataSource` component.
+
+When the <DPropLink name="data" /> function is called, it will be called with an object of this type.
+
+The following properties are available on this object:
+
+ - `sortInfo?` - <TypeLink name="DataSourcePropSortInfo" /> - the current sort info for the grid.
+ - `groupBy?` - an array of <TypeLink name="DataSourceGroupBy" /> - the current group by for the grid.
+ - `pivotBy?` - an array of <TypeLink name="DataSourcePivotBy" /> - the current pivot by for the grid.
+ - `filterValue?` - an array of <TypeLink name="DataSourceFilterValueItem" /> - the current filter value for the grid.
+ - `masterRowInfo?` - <TypeLink name="InfiniteTableRowInfo" /> - only available if the DataSource is a detail DataSource - meaning there is a master DataGrid, and the DataSource is used to load the detail DataGrid.
+
+
+
+</Prop>
+
+<Prop name="DataSourceFilterValueItem">
+
+> The type for the items in the <DPropLink name="filterValue" /> array prop of the `DataSource` component.
+
+</Prop>
+
+<Prop name="DataSourcePivotBy" generic>
+
+> Describes a pivot value for the grid.
+
+This is the type for the items in the <DPropLink name="pivotBy" /> array prop of the `DataSource` component.
+
+The most important property in this type is the `field` - which will be `keyof DATA_TYPE` - the field to pivot by.
+
+Another important property in this type is the `column`. It will be used to configure the generated pivot columns:
+
+ - if it's an object literal, it will be applied to all generated columns
+ - if it's a function, it will be called for each generated column, and the return value will be used to configure the column.
+
+```tsx
+const pivotBy: DataSourcePivotBy<Developer>[] = [
+  { field: 'country' },
+  {
+    field: 'canDesign',
+    column: ({ column: pivotCol }) => {
+      const lastKey =
+        pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
+
+      return {
+        header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
+      };
+    },
+  },
+],
+```
+
+</Prop>
+
 <Prop name="InfiniteTableColumnHeaderParam" generic>
 
 > Represents runtime information passed to rendering and styling functions called when rendering the column headers

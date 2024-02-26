@@ -33,6 +33,26 @@ The detail DataGrid is configured with remote sorting.
 
 </Sandpack>
 
+## Loading the Detail DataSource
+
+When master-detail is configured and the row detail renders a DataGrid, the <DPropLink name="data" /> function for the detail `<DataSource />` will be called with the `masterRowInfo` as a property available in the object passed as argument.
+
+```tsx title="Loading the detail DataGrid data" {2}
+const detailDataFn: DataSourceData<Developer> = ({
+  masterRowInfo,
+  sortInfo,
+  ...
+}) => {
+  
+  return Promise.resolve([...])
+}
+
+<DataSource<Developer> data={detailDataFn}>
+  {...}
+</DataSource>
+```
+You can see the live example above for more details.
+
 ## Rendering a detail DataGrid
 
 Using the <PropLink name="rowDetailRenderer" /> prop, you can render any custom content for the row details.
