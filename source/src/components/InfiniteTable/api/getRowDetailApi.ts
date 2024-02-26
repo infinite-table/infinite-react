@@ -13,6 +13,8 @@ export type InfiniteTableRowDetailApi = {
 
   collapseAllDetails(): void;
   expandAllDetails(): void;
+
+  isRowDetailEnabledForRow(pk: any): boolean;
 };
 
 export type GetRowDetailApiParam<T> = {
@@ -59,6 +61,23 @@ export function getRowDetailApi<T>(
       const expanded = isRowDetailExpanded(rowInfo);
 
       return !expanded;
+    },
+    isRowDetailEnabledForRow(pk: any) {
+      const { isRowDetailEnabled } = getState();
+
+      if (!isRowDetailEnabled) {
+        return false;
+      }
+
+      if (typeof isRowDetailEnabled === 'function') {
+        const rowInfo = dataSourceApi.getRowInfoByPrimaryKey(pk);
+        if (!rowInfo) {
+          return false;
+        }
+        return isRowDetailEnabled(rowInfo);
+      }
+
+      return true;
     },
     isRowDetailExpanded(pk: any) {
       return !rowDetailApi.isRowDetailCollapsed(pk);

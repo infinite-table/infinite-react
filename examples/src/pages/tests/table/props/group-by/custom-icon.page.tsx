@@ -73,6 +73,7 @@ export default function App() {
               position: 'relative',
             },
           }}
+          defaultActiveRowIndex={0}
           columnDefaultWidth={250}
           columns={columns}
         />

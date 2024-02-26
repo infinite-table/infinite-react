@@ -43,6 +43,9 @@ export function handleRowNavigation<T>(
       if (rowInfo && rowInfo.isGroupRow) {
         return api.collapseGroupRow(rowInfo.groupKeys);
       }
+      if (rowInfo && api.rowDetailApi.isRowDetailEnabledForRow(rowInfo.id)) {
+        return api.rowDetailApi.collapseRowDetail(rowInfo.id);
+      }
       return false;
     },
     ArrowRight: () => {
@@ -50,13 +53,25 @@ export function handleRowNavigation<T>(
       if (rowInfo && rowInfo.isGroupRow) {
         return api.expandGroupRow(rowInfo.groupKeys);
       }
+      if (rowInfo && api.rowDetailApi.isRowDetailEnabledForRow(rowInfo.id)) {
+        return api.rowDetailApi.expandRowDetail(rowInfo.id);
+      }
       return false;
     },
     Enter: () => {
       const rowInfo = dataArray[activeRowIndex!];
+
       if (rowInfo && rowInfo.isGroupRow) {
         return api.toggleGroupRow(rowInfo.groupKeys);
       }
+      const hasRowDetail = api.rowDetailApi.isRowDetailEnabledForRow(
+        rowInfo.id,
+      );
+
+      if (hasRowDetail) {
+        return api.rowDetailApi.toggleRowDetail(rowInfo.id);
+      }
+
       return false;
     },
     PageDown: () => {
@@ -166,6 +181,9 @@ export function handleCellNavigation<T>(
       const rowInfo = dataArray[rowIndex];
       if (rowInfo && rowInfo.isGroupRow) {
         return api.toggleGroupRow(rowInfo.groupKeys);
+      }
+      if (rowInfo && api.rowDetailApi.isRowDetailEnabledForRow(rowInfo.id)) {
+        return api.rowDetailApi.toggleRowDetail(rowInfo.id);
       }
       return false;
     },
