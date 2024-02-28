@@ -248,6 +248,10 @@
       {
         "title": "Collapsing and expanding row details",
         "path": "/docs/learn/master-detail/collapsing-and-expanding-rows"
+      },
+      {
+        "title": "Caching the row details DataGrid",
+        "path": "/docs/learn/master-detail/caching-detail-datagrid"
       }
     ]
   },

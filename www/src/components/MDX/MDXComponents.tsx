@@ -340,21 +340,30 @@ const Hint = ({
   </ExpandableCallout>
 );
 
-const isSandpackDescriptionElement = (el: React.ReactElement) =>
-  el.props.mdxType === 'Description';
+const isSandpackDescriptionElement = (el: React.ReactElement) => {
+  //@ts-ignore
+  return el.type?.name === 'Description';
+};
 
+type SizeOption = 'default' | 'md' | 'lg';
 function CodeSandboxEmbed({
   src,
   id,
   children,
   title,
+  code,
+  size,
 }: ({ src: string; id?: string } | { src?: string; id: string }) & {
   children?: React.ReactNode;
   title?: React.ReactNode;
+  size?: SizeOption;
+  code?: false;
 }) {
   src =
     src ||
-    `https://codesandbox.io/embed/${id}?fontsize=14&hidenavigation=1&module=%2FApp.tsx&theme=dark&editorsize=50`;
+    `https://codesandbox.io/embed/${id}?fontsize=14&hidenavigation=1&module=%2FApp.tsx&theme=dark&editorsize=${
+      code === false ? 0 : 50
+    }`;
 
   const theChildren = React.Children.toArray(
     //@ts-ignore
@@ -373,12 +382,13 @@ function CodeSandboxEmbed({
     </div>
   ) : null;
 
+  const height = size === 'default' || !size ? 500 : size === 'md' ? 650 : 850;
   const frame = (
     <iframe
       src={src}
       style={{
         width: '100%',
-        height: 500,
+        height,
         border: 0,
         borderRadius: 4,
         overflow: 'hidden',

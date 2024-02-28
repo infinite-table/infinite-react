@@ -82,7 +82,6 @@ If `isRowDetailExpanded` is specified, it overrides <PropLink name="rowDetailSta
 
 This is useful when you don't want to show the row detail for some rows.
 
-
 <Sandpack title="Master detail DataGrid with some row not having details" size="lg">
 
 <Description>
@@ -149,6 +148,32 @@ Some of the rows in the master DataGrid are expanded by default.
 ```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
 ```
 </Sandpack>
+</Prop>
+
+<Prop name="rowDetailCache" type="boolean|number">
+> Controls the caching of detail DataGrids. By default, caching is disabled.
+
+It can be one of the following:
+ - `false` - caching is disabled - this is the default
+ - `true` - enables caching for all detail DataGrids
+ - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
+
+
+<Sandpack title="Master detail DataGrid with caching for 5 detail DataGrids" size="lg" viewMode="preview">
+
+<Description>
+
+This example will cache the last 5 detail DataGrids - meaning they won't reload when you expand them again.
+You can try collapsing a row and then expanding it again to see the caching in action - it won't reload the data.
+But when you open up a row that hasn't been opened before, it will load the data from the remote location.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-caching-with-default-expanded-example.page.tsx"
+```
+
+</Sandpack>
+
 </Prop>
 
 <Prop name="rowDetailHeight" type="number|CSSVar|(rowInfo)=>number" defaultValue={300}>
@@ -560,9 +585,10 @@ For more components that can be overriden, see <PropLink name="components" />
 
 </Prop>
 <Prop name="columns.renderRowDetailIcon" type="boolean|(cellContext) => ReactNode">
+
 > Renders the row detail expand/collapse icon in the column cell. Only used when [master-detail](/docs/learn/master-detail/overview) is enabled.
 
-If this function is a prop, it can be rendered to customize the icon rendered for expanding/collapsing the row detail.
+If this function is a prop, it can be used to customize the icon rendered for expanding/collapsing the row detail.
 
 See related <PropLink name="rowDetailRenderer" /> for configuring master-detail.
 

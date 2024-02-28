@@ -59,3 +59,15 @@ In this example, we have 3 levels of nesting:
 ```
 
 </Sandpack>
+
+## Understanding the lifecycle of the row detail component
+
+You have to keep in mind that the content you render in the row detail can be mounted and unmounted multiple times. Whenever the user expands the row detail, it gets mounted and rendered, but then it will be unmounted when the user scrolls the content out of view. This can happen very often.
+
+Also note that the content can be recycled - meaning the same component can be reused for different rows. If you don't want recycling to happen, make sure you use a unique key for the row detail content - you can use the `masterRowInfo.id` for that.
+
+<Note>
+
+In practice this means that it's best if your row detail content is using controlled state and avoids using local state.
+
+</Note>
