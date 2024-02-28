@@ -121,7 +121,7 @@ export function SidebarRouteTree({
       {currentRoutes
         .filter((route) => !route.draft)
         .map((route) => {
-          const { path, title, routes, transient } = route;
+          const { path, title, routes, transient, badge } = route;
           const pagePath = path && removeFromLast(path, '.');
 
           const selected = slug === pagePath && !transient;
@@ -156,6 +156,7 @@ export function SidebarRouteTree({
                   href={pagePath || ''}
                   selected={selected}
                   level={level}
+                  badge={badge}
                   title={title}
                   isExpanded={isExpanded}
                   isBreadcrumb={false}

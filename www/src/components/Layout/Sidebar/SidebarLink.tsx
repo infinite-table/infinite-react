@@ -12,6 +12,7 @@ interface SidebarLinkProps {
   href: string;
   selected?: boolean;
   title: string;
+  badge?: string;
   level: number;
   icon?: React.ReactNode;
   heading?: boolean;
@@ -24,6 +25,7 @@ export function SidebarLink({
   href,
   selected = false,
   title,
+  badge,
   level,
   heading = false,
   isExpanded,
@@ -68,7 +70,14 @@ export function SidebarLink({
         },
       )}
     >
-      {title}
+      <span className="relative">
+        {title}
+        {badge ? (
+          <span className="text-xs  uppercase ml-2  text-black font-extrabold bg-glow p-1 absolute rounded-md">
+            {badge}
+          </span>
+        ) : null}
+      </span>
       {isExpanded != null && !heading && !hideArrow && (
         <span
           className={cn('pr-1', {

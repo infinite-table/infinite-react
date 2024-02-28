@@ -236,6 +236,7 @@
     "title": "Master-Detail",
     "path": "/docs/learn/master-detail/overview",
     "transient": true,
+    "badge": "new",
     "routes": [
       {
         "title": "Overview",

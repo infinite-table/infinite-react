@@ -53,7 +53,8 @@ In this example, we have 3 levels of nesting:
  - The first level of detail shows developers in each city
  - The second level of detail shows custom data about each developer
 
-</Description>
+</Description>.
+
 
 ```ts file="master-detail-3-levels-example.page.tsx"
 ```
