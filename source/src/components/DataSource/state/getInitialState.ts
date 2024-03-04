@@ -226,6 +226,8 @@ function getLivePaginationCursorValue<T>(
   return livePaginationCursor;
 }
 
+const weakMap = new WeakMap<any, any>();
+
 export function deriveStateFromProps<T extends any>(params: {
   props: DataSourceProps<T>;
 
@@ -314,15 +316,20 @@ export function deriveStateFromProps<T extends any>(params: {
                 rowSelectionStateConfigGetter(state),
               );
       } else {
-        rowSelectionState =
-          selectionMode === 'single-row'
-            ? (currentRowSelection as string | number)
-            : currentRowSelection instanceof RowSelectionState
-            ? currentRowSelection
-            : new RowSelectionState(
-                currentRowSelection as RowSelectionStateObject,
-                rowSelectionStateConfigGetter(state),
-              );
+        if (selectionMode === 'single-row') {
+          rowSelectionState = currentRowSelection as string | number;
+        } else {
+          if (currentRowSelection instanceof RowSelectionState) {
+            rowSelectionState = currentRowSelection;
+          } else {
+            const instance = new RowSelectionState(
+              currentRowSelection as RowSelectionStateObject,
+              rowSelectionStateConfigGetter(state),
+            );
+
+            rowSelectionState = instance;
+          }
+        }
       }
     }
 
@@ -331,12 +338,18 @@ export function deriveStateFromProps<T extends any>(params: {
         cellSelectionState =
           selectionMode === 'single-cell' ? null : new CellSelectionState();
       } else {
-        cellSelectionState =
-          currentCellSelection instanceof CellSelectionState
-            ? currentCellSelection
-            : new CellSelectionState(
-                currentCellSelection as CellSelectionStateObject,
-              );
+        if (currentCellSelection instanceof CellSelectionState) {
+          cellSelectionState = currentCellSelection;
+        } else {
+          // reuse the instance if it's the same object
+          const instance =
+            weakMap.get(currentCellSelection) ??
+            new CellSelectionState(
+              currentCellSelection as CellSelectionStateObject,
+            );
+          weakMap.set(currentCellSelection, instance);
+          cellSelectionState = instance;
+        }
       }
     }
   }

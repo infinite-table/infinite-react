@@ -315,7 +315,9 @@ export type DataSourcePropRowSelection =
 export type DataSourcePropRowSelection_MultiRow = RowSelectionStateObject;
 export type DataSourcePropRowSelection_SingleRow = null | string | number;
 
-export type DataSourcePropCellSelection_MultiCell = CellSelectionStateObject;
+export type DataSourcePropCellSelection_MultiCell =
+  | CellSelectionStateObject
+  | CellSelectionState;
 export type DataSourcePropCellSelection_SingleCell =
   null | CellSelectionPosition;
 
