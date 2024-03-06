@@ -24,7 +24,7 @@ type InfiniteTableDetailRowProps<T> = {
 
 const { rootClassName } = internalProps;
 
-export const InfiniteTableRowDetailsClassName = `${rootClassName}ColumnCell`;
+export const InfiniteTableRowDetailsClassName = `${rootClassName}RowDetail`;
 
 function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
   const DataSourceMasterDetailContext = getDataSourceMasterDetailContext();

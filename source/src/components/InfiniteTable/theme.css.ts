@@ -317,9 +317,9 @@ export const ThemeVars = createGlobalThemeContract(
         shadowColor: 'menu-shadow-color',
       },
       RowDetail: {
-        background: 'rowdetails-background',
-        padding: 'rowdetails-padding',
-        gridHeight: 'rowdetails-grid-height',
+        background: 'rowdetail-background',
+        padding: 'rowdetail-padding',
+        gridHeight: 'rowdetail-grid-height',
       },
       Row: {
         /**
