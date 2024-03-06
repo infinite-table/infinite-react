@@ -181,9 +181,7 @@ export const InfiniteTableComponent = React.memo(
       return brain.onVerticalRenderRangeChange(onChange);
     }, [brain, scrollStopDelay]);
 
-    const licenseValid = useLicense(
-      licenseKey || masterContext?.getMasterState().licenseKey,
-    );
+    const licenseValid = useLicense(licenseKey);
 
     const domProps = useDOMProps<T>(componentState.domProps);
 

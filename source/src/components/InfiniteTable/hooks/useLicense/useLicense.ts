@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useMasterDetailContext } from '../../../DataSource/publicHooks/useDataSource';
 import { isValidLicense } from './decode';
 
 const SANDPACK_REGEX =
@@ -23,7 +24,13 @@ const isInsideSandbox = () => {
 const isInsidePlayground = isInsideSandbox() || isInsideSandpack();
 
 export const useLicense = (licenseKey: string = '') => {
+  const masterContext = useMasterDetailContext();
+  const isDetail = !!masterContext;
+
   const valid = useMemo(() => {
+    if (isDetail) {
+      return true;
+    }
     let valid = isValidLicense(licenseKey, {
       publishedAt: __VERSION_TIMESTAMP__,
       version: __VERSION__,
@@ -34,6 +41,6 @@ export const useLicense = (licenseKey: string = '') => {
     }
 
     return valid;
-  }, [licenseKey]);
+  }, [licenseKey, isDetail]);
   return valid;
 };
