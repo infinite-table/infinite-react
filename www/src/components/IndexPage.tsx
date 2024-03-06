@@ -2,6 +2,7 @@
 
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
+import { Post } from 'contentlayer/generated';
 import * as React from 'react';
 import { AccentButton } from './AccentButton';
 import cmpStyles from './components.module.css';
@@ -10,6 +11,9 @@ import { HeroPicture } from './HeroPicture';
 import { getHighlightShadowStyle } from './HighlightButton';
 
 import { SecondaryButton } from './SecondaryButton';
+
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
 
 function NpmCmd() {
   const [copyTimestamp, setCopyTimestamp] = React.useState(0);
@@ -58,14 +62,54 @@ function NpmCmd() {
     </div>
   );
 }
-export function IndexPage() {
+
+function HomepageBlogpostCard({ post }: { post: Post }) {
+  return (
+    <Card title={post.title} href={post.url}>
+      <div className="flex items-center mt-4">
+        <div>
+          <div className="flex text-sm leading-5  ">
+            <time dateTime={post.date}>
+              {format(parseISO(post.date), 'MMMM dd, yyyy')}
+            </time>
+            <span className="mx-1">·</span>
+            <span>{post.readingTime}</span>
+          </div>
+        </div>
+      </div>
+      <div
+        className="mt-8"
+        dangerouslySetInnerHTML={{
+          __html: post.excerpt || '',
+        }}
+      ></div>
+    </Card>
+  );
+}
+export function IndexPage({ posts }: { posts?: Post[] }) {
   const seoTitle =
     'Infinite Table DataGrid for React — One Table — Infinite Applications.';
   const seoDescription = `Infinite Table DataGrid for React — One Table — Infinite Applications. Infinite Table is the modern DataGrid for building React apps — faster.`;
+
+  posts = posts || [];
+
+  let postsContent = null;
+  if (posts.length > 0) {
+    const list = posts.map((post) => {
+      return <HomepageBlogpostCard key={post._id} post={post} />;
+    });
+
+    postsContent = (
+      <div>
+        {/* <Cards className="flex flex-row flex-wrap mb-20 gap-3">{list}</Cards> */}
+        <Cards title="Most Recent">{list}</Cards>
+      </div>
+    );
+  }
   return (
     <MainLayout seoTitle={seoTitle} seoDescription={seoDescription}>
       <HeroPicture />
-
+      {postsContent}
       <div className="flex items-center flex-col">
         <div className="flex flex-col mt-20 md:flex-row items-center md:items-stretch">
           <AccentButton href="/pricing">Buy a license</AccentButton>{' '}
@@ -103,7 +147,6 @@ export function IndexPage() {
           </p>
         </CardsSubtitle>
       </div>
-
       <MainContent>
         <Cards
           subtitle="Declarative, typed, DataGrid built for React"

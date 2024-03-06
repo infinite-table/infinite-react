@@ -1,6 +1,7 @@
 ---
 title: Setting up a master-detail DataGrid with Infinite Table for React
 author: admin
+hide_in_homepage: true
 ---
 
 We recently [announced the release of master-detail in the Infinite React DataGrid](/blog/2024/02/26/master-detail-now-available-in-react-datagrid), so we also made a video tutorial to follow along, if video is your preferred learning method.

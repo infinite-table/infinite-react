@@ -120,6 +120,11 @@ export const Post = defineDocumentType(() => ({
       type: 'string',
       description: 'The description of the post',
     },
+    hide_in_homepage: {
+      type: 'boolean',
+      description: 'Whether to hide the post in the homepage',
+    },
+
     author: {
       type: 'json',
 

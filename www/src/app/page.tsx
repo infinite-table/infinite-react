@@ -2,6 +2,7 @@
 // import { Inter } from 'next/font/google';
 import { IndexPage } from '@www/components/IndexPage';
 import { asMeta } from '@www/utils/asMeta';
+import { sortedPosts } from './blog/sortedPosts';
 
 const seoTitle =
   'Infinite Table DataGrid for React — One Table — Infinite Applications.';
@@ -20,5 +21,9 @@ export const metadata = asMeta({
 // }
 
 export default function Home() {
-  return <IndexPage />;
+  return (
+    <IndexPage
+      posts={sortedPosts.filter((post) => !post.hide_in_homepage).slice(0, 4)}
+    />
+  );
 }

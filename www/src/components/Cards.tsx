@@ -229,7 +229,7 @@ export const CardsLayout = ({
     <div className={`mt-24 relative w-full`} style={style}>
       {before}
       <div style={{ margin: '0 auto' }} className="justify-center flex w-full">
-        <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 my-20 w-full`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 my-16 w-full`}>
           {children}
         </div>
       </div>
