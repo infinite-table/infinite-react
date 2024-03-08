@@ -11,7 +11,6 @@ It's built specifically for React from the ground up and with performance in min
 
 `Infinite Table` is available on the public [npm registry](https://www.npmjs.com/package/@infinite-table/infinite-react) - install it by running the following command:
 
-
 <TerminalBlock>
 npm i @infinite-table/infinite-react
 </TerminalBlock>
@@ -61,7 +60,6 @@ import {
 } from '@infinite-table/infinite-react';
 ```
 
-
 <HeroCards>
 <YouWillLearnCard title="Learn about our TypeScript typings" path="/docs/learn/getting-started/typescript-types">
 Read more about how to use our TypeScript types.
@@ -69,31 +67,30 @@ Read more about how to use our TypeScript types.
 
 </HeroCards>
 
-
 ## Built for React from the ground-up
 
 `Infinite Table` is built specifically for React and is fully declarative and fully typed. When you use `Infinite Table`, it feels at-home in your React application - every prop has both a controlled and uncontrolled version so you get full control over every area of the component.
-
 
 <Sandpack>
 
 <Description>
 
 This is an example of how you might configure `InfiniteTable` in a real-world application and puts together several functionalities:
- * grouping
- * aggregation
- * pinned columns
- * sorting
- * multiple selection
- * custom cell rendering
- 
+
+- grouping
+- aggregation
+- pinned columns
+- sorting
+- multiple selection
+- custom cell rendering
+
 </Description>
 
 ```ts file="$DOCS/../../src/demo.tsx"
+
 ```
 
 </Sandpack>
-
 
 ## Licensing
 
@@ -114,14 +111,12 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 
 </Sandpack>
 
-
 <HeroCards>
 <YouWillLearnCard title="More on Licensing" path="/docs/learn/getting-started/licensing">
 Read more about our licensing model and how you can use Infinite Table.
 </YouWillLearnCard>
 
 </HeroCards>
-
 
 ## About the Docs
 

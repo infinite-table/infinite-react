@@ -2,16 +2,21 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
+
 ## 3.2.6
+
 @milestone id="115"
 
 ## 3.2.5
+
 @milestone id="114"
 
 ## 3.2.3
+
 @milestone id="112"
 
 ## 3.2.0
+
 @milestone id="111"
 
 ## 3.1.5
@@ -26,7 +31,6 @@ description: All releases | Infinite Table DataGrid for React
 
 @milestone id="106"
 
-
 ## 3.0.15
 
 @milestone id="105"
@@ -34,6 +38,7 @@ description: All releases | Infinite Table DataGrid for React
 ## 3.0.12
 
 @milestone id="104"
+
 ## 3.0.10
 
 @milestone id="102"
@@ -66,7 +71,6 @@ description: All releases | Infinite Table DataGrid for React
 
 @milestone id="95"
 
-
 ## 2.0.4 🚀
 
 @milestone id="93"
@@ -92,7 +96,7 @@ Version `2.0.0` allows you to make group columns sortable, even when they are co
   groupBy={[
     // those fields are not bound to actual columns
     {field: 'team'},
-    {field: 'age' }, 
+    {field: 'age' },
   ]}>
   <InfiniteTable<Person>
     groupColumn={{
@@ -107,7 +111,7 @@ Version `2.0.0` allows you to make group columns sortable, even when they are co
 
 We've also introduced a few new props and renamed `column.sortable` to <PropLink name="columns.defaultSortable" />.
 
-Also, the behavior for the <PropLink name="sortable" /> prop has changed. The new <PropLink name="columnDefaultSortable" /> is now what <PropLink name="sortable" /> used to be, while the <PropLink name="sortable" /> prop overrides any sorting flags and is the ultimate source of truth for column sorting. 
+Also, the behavior for the <PropLink name="sortable" /> prop has changed. The new <PropLink name="columnDefaultSortable" /> is now what <PropLink name="sortable" /> used to be, while the <PropLink name="sortable" /> prop overrides any sorting flags and is the ultimate source of truth for column sorting.
 
 @milestone id="90"
 
@@ -152,57 +156,75 @@ Also, the behavior for the <PropLink name="sortable" /> prop has changed. The ne
 @milestone id="80"
 
 ## 1.3.4 🚀
+
 @milestone id="79"
 
 ## 1.3.2 🚀
+
 @milestone id="78"
 
 ## 1.3.0 🚀
+
 @milestone id="77"
 
 ## 1.2.5 🚀
+
 @milestone id="76"
 
 ## 1.2.4 🚀
+
 @milestone id="75"
 
 ## 1.2.3 🚀
+
 @milestone id="74"
 
 ## 1.2.2 🚀
+
 @milestone id="73"
 
 ## 1.2.1 🚀
+
 @milestone id="72"
 
 ## 1.2.0 🚀
+
 @milestone id="71"
 
 ## 1.1.0 🚀
+
 @milestone id="70"
 
 ## 1.0.0 🚀
+
 @milestone id="69"
 
 ## 0.9.0 🚀
+
 @milestone id="67"
 
 ## 0.8.1 🚀
+
 @milestone id="66"
 
 ## 0.8.0 🚀
+
 @milestone id="65"
 
 ## 0.7.3 🚀
+
 @milestone id="64"
 
 ## 0.7.1 🚀
+
 @milestone id="64"
 
 ## 0.7.0 🚀
+
 @milestone id="63"
 
 ## 0.6.4 🚀
+
 @milestone id="62"
 
 ## 0.6.3 🚀
@@ -212,7 +234,6 @@ Also, the behavior for the <PropLink name="sortable" /> prop has changed. The ne
 ## 0.6.2 🚀
 
 @milestone id="60"
-
 
 ## 0.6.1 🚀
 

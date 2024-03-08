@@ -39,7 +39,9 @@ The details for each city shows a DataGrid with developers in that city.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -61,7 +63,9 @@ Some of the rows in the master DataGrid are expanded by default.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-default-expanded-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -91,7 +95,9 @@ All the odd rows don't have details.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-per-row-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -115,11 +121,12 @@ Some of the rows in the master DataGrid are expanded by default.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="onRowDetailStateChange" type="(rowDetailState: RowDetailState) => void">
 
@@ -146,7 +153,9 @@ Some of the rows in the master DataGrid are expanded by default.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
+
 ```
+
 </Sandpack>
 </Prop>
 
@@ -154,10 +163,10 @@ Some of the rows in the master DataGrid are expanded by default.
 > Controls the caching of detail DataGrids. By default, caching is disabled.
 
 It can be one of the following:
- - `false` - caching is disabled - this is the default
- - `true` - enables caching for all detail DataGrids
- - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
+- `false` - caching is disabled - this is the default
+- `true` - enables caching for all detail DataGrids
+- `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
 <Sandpack title="Master detail DataGrid with caching for 5 detail DataGrids" size="lg" viewMode="preview">
 
@@ -170,6 +179,7 @@ But when you open up a row that hasn't been opened before, it will load the data
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-caching-with-default-expanded-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -193,7 +203,9 @@ In this example we configure the height of row details to be 200px.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-custom-detail-height-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -301,7 +313,6 @@ Or you can be more specific and choose to make individual columns editable via t
 
 In addition to the props already in discussion, you can use the <PropLink name="editable" /> prop on the `InfiniteTable` component. This overrides all other properties and when it is defined, is the only source of truth for whether something is editable or not.
 
-
 <Sandpack>
 
 <Description>
@@ -311,6 +322,7 @@ All columns are configured to not be editable, except the `salary` column.
 </Description>
 
 ```ts file="global-should-accept-edit-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -323,9 +335,9 @@ All columns are configured to not be editable, except the `salary` column.
 
 This property is overriden by (in this order) the following props:
 
- - <PropLink name="columnTypes.defaultSortable" />
- - <PropLink name="column.defaultSortable" />
- - <PropLink name="sortable" />
+- <PropLink name="columnTypes.defaultSortable" />
+- <PropLink name="column.defaultSortable" />
+- <PropLink name="sortable" />
 
 When specified, <PropLink name="sortable" /> overrides all other properties and is the only source of truth for whether something is sortable or not.
 
@@ -339,7 +351,6 @@ In some cases, you can have group columns that group by fields that are not boun
 - <PropLink name="column.defaultSortable" />
 - <PropLink name="sortable" />
 
-
 </Note>
 
 </Prop>
@@ -350,14 +361,13 @@ In some cases, you can have group columns that group by fields that are not boun
 
 This property overrides all the following props:
 
- - <PropLink name="columnDefaultSortable" /> (this is the base value, overriden by all other props in this list, in this order)
- - <PropLink name="columnTypes.defaultSortable" />
- - <PropLink name="column.defaultSortable" />
+- <PropLink name="columnDefaultSortable" /> (this is the base value, overriden by all other props in this list, in this order)
+- <PropLink name="columnTypes.defaultSortable" />
+- <PropLink name="column.defaultSortable" />
 
 The <PropLink name="sortable" /> prop is designed to be used for highly advanced scenarios, where you need to have ultimate control over which columns are sortable and which are not - in this case, you will want to declare <PropLink name="sortable" /> as a function, which returns `true/false` for every column.
 
 </Prop>
-
 
 <Prop name="columnDefaultWidth" type="number" defaultValue={200}>
 
@@ -392,7 +402,6 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 > The height of the column header.
 
 This only refers to the height of the header label - so if you have another row in the column header, for filters, the filters will also have this height. Also, for column groups, each additional group will have this height.
-
 
 <Sandpack>
 
@@ -525,7 +534,6 @@ The following properties are available:
 
 > Controls styling via CSS classes for the column. Can be a `string` or a function returning a `string` (a valid className).
 
-
 If defined as a function, it accepts an object as a parameter (of type <TypeLink name="InfiniteTableColumnStylingFnParams" />), which has the following properties:
 
 - `column` - the current column where the className is being applied
@@ -543,13 +551,15 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 <Sandpack>
 
 ```ts file="column-className-function-example.page.tsx"
+
 ```
+
 ```css file="coloring.module.css"
+
 ```
 
 </Sandpack>
 </Prop>
-
 
 <Prop name="components">
 
@@ -557,10 +567,10 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 
 The following components can be overridden:
 
- - `LoadMask` - see <PropLink name="components.LoadMask" />
- - `CheckBox`
- - `Menu`
- - `MenuIcon`
+- `LoadMask` - see <PropLink name="components.LoadMask" />
+- `CheckBox`
+- `Menu`
+- `MenuIcon`
 
 </Prop>
 
@@ -578,10 +588,10 @@ For more components that can be overriden, see <PropLink name="components" />
 <Sandpack title="Custom LoadMask component">
 
 ```tsx file="load-mask-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 <Prop name="columns.renderRowDetailIcon" type="boolean|(cellContext) => ReactNode">
@@ -592,7 +602,6 @@ If this function is a prop, it can be used to customize the icon rendered for ex
 
 See related <PropLink name="rowDetailRenderer" /> for configuring master-detail.
 
-
 <Sandpack title="Basic master detail DataGrid example" size="lg">
 
 <Description>
@@ -602,7 +611,9 @@ This example shows a master DataGrid with the ID column configured to show the r
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -732,7 +743,7 @@ export function InfiniteTableColumnEditor<T>() {
         ref={refCallback}
         onKeyDown={onKeyDown}
         onBlur={() => confirmEdit()}
-        className={"..."}
+        className={'...'}
         type={'text'}
         defaultValue={initialValue}
         onChange={useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -753,6 +764,7 @@ Try editing the `salary` column - it has a custom editor
 </Description>
 
 ```tsx file="$DOCS/reference/hooks/custom-editor-hooks-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -834,16 +846,13 @@ const ExampleHeaderComponent: React.FunctionComponent<
 
 > Specifies if the column (or cell, if a function is used) renders content that will/should be focusable (via tab-navigation)
 
-
 <Sandpack title="Columns with cell content focusable">
-
 
 ```ts file="column-contentFocusable-example.page.tsx"
 
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -873,7 +882,6 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 
 If a column doesn't specify a <PropLink name="columns.sortType">sortType</PropLink>, the `dataType` will be used instead to determine the type of sorting to use. If neither `sortType` nor `dataType` are specified, the <PropLink name="columns.type">column.type</PropLink> will be used.
 
-
 </Prop>
 
 <Prop name="columns.defaultEditable" type="boolean|(param)=>boolean|Promise<boolean>">
@@ -887,18 +895,17 @@ The value for this property can be either a `boolean` or a function.
 
 If it is a function, it will be called when an edit is triggered on the column. The function will be called with a single object that contains the following properties:
 
- * `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
- * `data` - the data object (of type `DATA_TYPE`) for the current row
- * `rowInfo` - the row info object that underlies the row
- * `column` - the current column on which editing is invoked
- * `api` - a reference to the [InfiniteTable API](/docs/reference/api)
- * `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+- `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the data object (of type `DATA_TYPE`) for the current row
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 The function can return a `boolean` value or a `Promise` that resolves to a `boolean` - this means you can asynchronously decide whether the cell is editable or not.
 
 Making <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> a function gives you the ability to granularly control which cells are editable or not (even within the same column, based on the cell value or other values you have access to).
-
 
 <Sandpack>
 
@@ -909,10 +916,10 @@ Only the `salary` column is editable.
 </Description>
 
 ```ts file="global-should-accept-edit-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -1029,25 +1036,21 @@ This means the sort order defined for `type="number"` will be used while display
 
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="columns.getValueToEdit" type="(params) => any|Promise<any>">
 
 > Allows customizing the value that will be passed to the cell editor when it is displayed (when editing starts).
 
-
 The function is called with an object that has the following properties:
 
-* `value` - the value of the cell (the value that is displayed in the cell before editing starts). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the raw value of the cell, before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
-* `data` - the current data object
-* `rowInfo` - the row info object that underlies the row
-* `column` - the current column on which editing is invoked
-* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
-* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
-
+- `value` - the value of the cell (the value that is displayed in the cell before editing starts). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the raw value of the cell, before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the current data object
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 <Note>
 
@@ -1068,12 +1071,12 @@ In this example, the `salary` for each row includes the currency string.
 </Description>
 
 ```ts file="inline-editing-custom-edit-value-example.page.tsx"
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="columns.getValueToPersist" type="(params) => any|Promise<any>">
 
@@ -1081,14 +1084,14 @@ In this example, the `salary` for each row includes the currency string.
 
 The function is called with an object that has the following properties:
 
-* `initialValue` - the initial value of the cell (the value that was displayed in the cell before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
-* `value` - the current value that was accepted as an edit and which came from the cell editor.
- * `rawValue` - the raw value of the cell, before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
-* `data` - the current data object
-* `rowInfo` - the row info object that underlies the row
-* `column` - the current column on which editing is invoked
-* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
-* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+- `initialValue` - the initial value of the cell (the value that was displayed in the cell before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `value` - the current value that was accepted as an edit and which came from the cell editor.
+- `rawValue` - the raw value of the cell, before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the current data object
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 <Note>
 
@@ -1109,6 +1112,7 @@ In this example, the `salary` for each row includes the currency string.
 </Description>
 
 ```ts file="inline-editing-custom-edit-value-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -1125,9 +1129,7 @@ It gives you access to the column, along with information about sorting, filteri
 
 It is called with a single argument, of type <TypeLink name="InfiniteTableColumnHeaderParam" />.
 
-
 </Prop>
-
 
 <Prop name="columns.header" type="React.ReactNode|({column, columnSortInfo, columnApi})=>React.ReactNode">
 
@@ -1273,8 +1275,6 @@ If not specified, <PropLink name="columnMaxWidth" /> will be used (defaults to `
 
 </Prop>
 
-
-
 <Prop name="columns.minWidth" type="number">
 
 > Configures the minimum width for the column.
@@ -1348,6 +1348,7 @@ The `firstName` column will show a custom filter icon when filtered.
 </Description>
 
 ```ts file="$DOCS/learn/columns/column-filter-icon-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -1383,9 +1384,9 @@ To understand how the rendering pipeline works, head over to the page on [Column
 Use this prop to customize the context icon for the current column. Specify `false` for no context menu icon.
 
 Use a function to render a custom icon. The function is called with an object that has the following properties:
- - `column`
- - `columnApi` - an API object for controlling the column programatically (toggle sort, toggle column context menu, etc)
 
+- `column`
+- `columnApi` - an API object for controlling the column programatically (toggle sort, toggle column context menu, etc)
 
 <Sandpack title="Custom menu icons and custom menu items">
 
@@ -1562,15 +1563,14 @@ This function is called when the user wants to finish an edit. The function is u
 
 The function is called with an object that has the following properties:
 
-* `value` - the value that the user wants to persist via the cell editor
-* `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
-* `data` - the current data object
-* `rowInfo` - the row info object that underlies the row
-* `column` - the current column on which editing is invoked
-* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
-* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
-
+- `value` - the value that the user wants to persist via the cell editor
+- `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the current data object
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 <Sandpack>
 
@@ -1581,6 +1581,7 @@ Try editing the `salary` column. In the editor you can write whatever, but the c
 </Description>
 
 ```ts file="inline-editing-custom-edit-value-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -1601,11 +1602,11 @@ Use this column property in order to explicitly make the column sortable or not 
 
 For local sorting, the sort order for a column is determined by the specified `sortType`.
 
- - if no `sortType` is specified, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used as the `sortType`
- - if no `sortType` or `dataType` is specified, it will default to the <PropLink name="columns.type"/> value (if an array, the first item will be used).
- - if none of those are specified `"string"` is used
+- if no `sortType` is specified, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used as the `sortType`
+- if no `sortType` or `dataType` is specified, it will default to the <PropLink name="columns.type"/> value (if an array, the first item will be used).
+- if none of those are specified `"string"` is used
 
-The value of this prop (as specified, or as computed by the steps described above) should be a key from the <DataSourcePropLink name="sortTypes" /> object. 
+The value of this prop (as specified, or as computed by the steps described above) should be a key from the <DataSourcePropLink name="sortTypes" /> object.
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
@@ -1658,7 +1659,7 @@ The `style` property can also be specified for <PropLink name="columnTypes"/>
 
 Specifying `type: "number"` for numeric columns will ensure correct number sorting function is used (when sorting is done client-side). This happens because <DPropLink name="sortTypes" /> has a definition for the `number` sort type.
 
-For date columns (where the values in the columns are actual date objects) specify `type: "date"`.  [Read more about date columns here](/docs/learn/working-with-data/handling-dates#using-date-strings)
+For date columns (where the values in the columns are actual date objects) specify `type: "date"`. [Read more about date columns here](/docs/learn/working-with-data/handling-dates#using-date-strings)
 
 </Note>
 
@@ -1885,23 +1886,21 @@ When any of the properties defined in a column type are also defined in a column
 The only exception to this rule is the <PropLink name="columns.components">components</PropLink> property, which is merged from column types into the column.
 </Note>
 
-
 <Sandpack size="lg" title="Using MUI X Date Picker with custom 'date' type columns" deps="@emotion/react,@emotion/styled,@mui/material,@mui/x-date-pickers,dayjs">
 
 <Description>
 
-This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired**  columns to show the date picker.
+This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired** columns to show the date picker.
 
 This example uses the <PropLink name="columnTypes" code={false}>column types</PropLink> to give each date column the same editor and styling.
 
 </Description>
 
-
 ```ts file="$DOCS/learn/editing/column-types-date-editor-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -1991,7 +1990,6 @@ This example starts with cell `[2,0]` already active.
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="columnsTypes.sortable" type="boolean">
 
@@ -2140,16 +2138,15 @@ For applying a className when the focus is within the component, see <PropLink n
 
 This overrides both the global <PropLink name="columnDefaultEditable" /> prop and the column's own <PropLink name="columns.defaultEditable">defaultEditable</PropLink> property.
 
-
 This function prop will be called when an edit is triggered on the column. The function will be called with a single object that contains the following properties:
 
- * `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
- * `data` - the data object (of type `DATA_TYPE`) for the current row
- * `rowInfo` - the row info object that underlies the row
- * `column` - the current column on which editing is invoked
- * `api` - a reference to the [InfiniteTable API](/docs/reference/api)
- * `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+- `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the data object (of type `DATA_TYPE`) for the current row
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 <Note>
 
@@ -2218,7 +2215,6 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 </Prop>
 
-
 <Prop name="getCellContextMenuItems" type="({data, column, rowInfo}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] }">
 
 > Customises the context menu items for a cell.
@@ -2227,14 +2223,14 @@ If you want to customize the context menu even when the user clicks outside any 
 
 The `getCellContextMenuItems` function can return one of the following:
 
- * `null` - no custom context menu will be displayed, the default context menu will be shown (default event behavior not prevented)
- * `[]` - an empty array - no custom context menu will be displayed, but the default context menu is not shown - the default event behavior is prevented
- * `Array<MenuItem>` - an array of menu items to be displayed in the context menu - each `MenuItem` should have:
-   * a unique `key` property,
-   * a `label` property with the value to display in the menu cell - it's called `label` because this is the name of the default column in the context menu
-   * an optional `onAction({ key, item, hideMenu: () => void })` callback function to handle the click action on the menu item.
-   * an optional `onClick(event)` callback function to handle the click event on the menu item.
-   * an optional `hideMenuOnAction: boolean` - if `true`, it will close the context menu when the menu item is clicked
+- `null` - no custom context menu will be displayed, the default context menu will be shown (default event behavior not prevented)
+- `[]` - an empty array - no custom context menu will be displayed, but the default context menu is not shown - the default event behavior is prevented
+- `Array<MenuItem>` - an array of menu items to be displayed in the context menu - each `MenuItem` should have:
+  - a unique `key` property,
+  - a `label` property with the value to display in the menu cell - it's called `label` because this is the name of the default column in the context menu
+  - an optional `onAction({ key, item, hideMenu: () => void })` callback function to handle the click action on the menu item.
+  - an optional `onClick(event)` callback function to handle the click event on the menu item.
+  - an optional `hideMenuOnAction: boolean` - if `true`, it will close the context menu when the menu item is clicked
 
 <Sandpack title="Using context menus">
 
@@ -2244,17 +2240,12 @@ The `getCellContextMenuItems` function can return one of the following:
 
 </Sandpack>
 
-
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
 ```tsx
-
 const getCellContextMenuItems = () => {
   return {
-    columns: [
-      { name: 'Label' },
-      { name: 'Icon' }
-    ],
+    columns: [{ name: 'Label' }, { name: 'Icon' }],
     items: [
       {
         label: 'Welcome',
@@ -2265,12 +2256,11 @@ const getCellContextMenuItems = () => {
         label: 'Convert',
         icon: '🔁',
         key: 'convert',
-      }
-    ]
-  }
-}
+      },
+    ],
+  };
+};
 ```
-
 
 <Sandpack title="Customising columns in the context menu">
 
@@ -2280,15 +2270,13 @@ Right-click any cell in the table to see a context menu with multiple columns (`
 
 </Description>
 
-
 ```ts file="cells-with-custom-columns-context-menu-example.page.tsx"
+
 ```
 
 </Sandpack>
 
-
 </Prop>
-
 
 <Prop name="getContextMenuItems" type="({event, data?, column?, rowInfo}, {api, dataSourceApi}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] }">
 
@@ -2299,7 +2287,6 @@ If you want to customize the context menu only when the user clicks inside a cel
 The first argument this function is called with has the same shape as the one for <PropLink name="getCellContextMenuItems" /> but all cell-related properties could also be `undefined`. Also, the `event` is available as a property on this object.
 
 If this function returns null, the default context menu of the browser will be shown (default event behavior not prevented).
-
 
 <Sandpack title="Using context menus for the whole table">
 
@@ -2316,11 +2303,11 @@ If this function returns null, the default context menu of the browser will be s
 > Allows customization of the context menu items for a column.
 
 Use this function to customize the context menu for columns. The function is called with the following arguments:
- - `items` - the default menu items for the column - you can return this array as is to use the default menu items (same as not providing this function prop) or you can customize the array or return a new one altogether.
- - `context` - an object that gives you access to the column and the grid state
-    - `context.column: InfiniteTableComputedColumn<T>` - the current column for which the context menu is being shown
-    - `context.api` - a reference to the [api](./reference/api)
 
+- `items` - the default menu items for the column - you can return this array as is to use the default menu items (same as not providing this function prop) or you can customize the array or return a new one altogether.
+- `context` - an object that gives you access to the column and the grid state
+  - `context.column: InfiniteTableComputedColumn<T>` - the current column for which the context menu is being shown
+  - `context.api` - a reference to the [api](./reference/api)
 
 <Sandpack title="getColumnMenuItems example - custom menu item and icon">
 
@@ -2389,8 +2376,6 @@ This example shows how to use <PropLink name="groupColumn" /> as a function that
 <Prop name="groupRenderStrategy" type="'single-column'|'multi-column'">
 
 > Determines how grouping is rendered - whether a single or multiple columns are generated.
-
-
 
 <Sandpack>
 
@@ -2522,8 +2507,8 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 When `InfiniteTable` is configured with multiple sorting there are two supported behaviors:
 
-* `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
-* `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
+- `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
+- `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
 
 <Sandpack>
 <Description>
@@ -2542,7 +2527,6 @@ If the multi-sort behavior is `append`, clicking the second column will add it t
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -2621,12 +2605,12 @@ This callback is fired when a focusable element inside the component is blurred,
 
 The first argument of the function is an object that contains the following properties:
 
- * `rowIndex: number` - the index of the row that was clicked.
- * `colIndex: number` - the index of the column that was clicked. This index is the index in the array of visible columns.
- * `column: InfiniteTableComputedColumn<DATA_TYPE>` - the column that has been clicked
- * `columnApi: InfiniteTableColumnApi<DATA_TYPE>` - the [column API](/docs/reference/column-api)
- * `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
- * `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
+- `rowIndex: number` - the index of the row that was clicked.
+- `colIndex: number` - the index of the column that was clicked. This index is the index in the array of visible columns.
+- `column: InfiniteTableComputedColumn<DATA_TYPE>` - the column that has been clicked
+- `columnApi: InfiniteTableColumnApi<DATA_TYPE>` - the [column API](/docs/reference/column-api)
+- `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
+- `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
 
 The second argument is the original browser click event.
 
@@ -2658,7 +2642,6 @@ See related <PropLink name="onViewportReservedWidthChange" />
 
 </Prop>
 
-
 <Prop name="onEditAccepted" type="({value, initialValue, column, rowInfo, ...}) => void">
 
 > Callback prop called when an edit is accepted
@@ -2673,13 +2656,13 @@ When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level
 
 This callback is called with a single object that has the following properties:
 
- - `value` - the value that was accepted for the edit operation.
- - `initialValue` - the initial value of the cell (the value before editing started)
- - `rowInfo` - of type <TypeLink name="InfiniteTableRowInfo" /> - the row info object that underlies the row
- - `api` - a reference to the [InfiniteTable API](/docs/reference/api)
- - `dataSouceApi` - a reference to the [DataSource API](/docs/reference/datasource-api)
- - `column` - the column on which the edit was performed
- - `columnApi` - a reference to the [column API](/docs/reference/column-api)
+- `value` - the value that was accepted for the edit operation.
+- `initialValue` - the initial value of the cell (the value before editing started)
+- `rowInfo` - of type <TypeLink name="InfiniteTableRowInfo" /> - the row info object that underlies the row
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSouceApi` - a reference to the [DataSource API](/docs/reference/datasource-api)
+- `column` - the column on which the edit was performed
+- `columnApi` - a reference to the [column API](/docs/reference/column-api)
 
 See related <PropLink name="onEditRejected" /> callback prop.
 
@@ -2709,7 +2692,6 @@ This callback prop has almost the same signature as the <PropLink name="onEditAc
 
 </Prop>
 
-
 <Prop name="onFocusWithin" type="(event)=> void">
 
 > Function that is called when the table receives focus within the component.
@@ -2729,15 +2711,14 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 </Sandpack>
 </Prop>
 
-
 <Prop name="onKeyDown" type="({ api, dataSourceApi }, event) => void">
 
 > Callback function called when the `keydown` event occurs on the table.
 
 The first argument of the function is an object that contains the following properties:
 
- * `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
- * `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
+- `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
+- `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
 
 The second argument is the original browser `keydown` event.
 
@@ -2807,15 +2788,14 @@ This allows edits that have been accepted (see <PropLink name="shouldAcceptEdit"
 
 This function is called with an object that has the following properties:
 
-* `value` - the value that was accepted for the edit operation.
-* `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
-* `data` - the current data object
-* `rowInfo` - the row info object that underlies the row
-* `column` - the current column on which editing is invoked
-* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
-* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
-
+- `value` - the value that was accepted for the edit operation.
+- `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the current data object
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 <Note>
 
@@ -2927,7 +2907,7 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 > Specifies the className to be applied to all rows or conditionally to certain rows.
 
-The `rowClassName` prop can be either a string or a function that returns a string. 
+The `rowClassName` prop can be either a string or a function that returns a string.
 
 When used as a function, it's called with a param of type <TypeLink name="InfiniteTableStylingFnParams" />, just like the <PropLink name="rowStyle" /> function.
 
@@ -2945,7 +2925,6 @@ When `rowStyle` is a function, it's called with a param of type <TypeLink name="
 
 When Infinite Table calls `rowStyle`, the `data` property can be null - this is the case for grouped rows.
 
-
 The `rowInfo` object contains the following properties (see <TypeLink name="InfiniteTableRowInfo" >type definition here</TypeLink>):
 
 - `id` - the id of the current row
@@ -2958,10 +2937,7 @@ The `rowInfo` object contains the following properties (see <TypeLink name="Infi
 
 See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 
-
 You can either return a valid style object, or undefined.
-
-
 
 ```tsx
 const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
@@ -2981,7 +2957,6 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
   }
 };
 ```
-
 
 <Sandpack title="rowStyle example usage">
 
@@ -3025,22 +3000,21 @@ Resize a column to see `viewportReservedWidth` updated and then click the button
 
 > Function used to validate edits for all columns.
 
-
-This function is called when the user wants to finish an edit - it is used to decide whether an edit is accepted or rejected, for all columns. 
+This function is called when the user wants to finish an edit - it is used to decide whether an edit is accepted or rejected, for all columns.
 
 <p>This overrides the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink> prop.</p>
 <p>If you define the global <PropLink name="shouldAcceptEdit" /> and still want to use the column-level <PropLink name="columns.shouldAcceptEdit">column.shouldAcceptEdit</PropLink>, you can call the column-level function from this global one.</p>
 
 The function is called with an object that has the following properties:
 
-* `value` - the value that the user wants to persist via the cell editor
-* `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
-* `data` - the current data object
-* `rowInfo` - the row info object that underlies the row
-* `column` - the current column on which editing is invoked
-* `api` - a reference to the [InfiniteTable API](/docs/reference/api)
-* `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+- `value` - the value that the user wants to persist via the cell editor
+- `initialValue` - the initial value of the cell (the value that was displayed before editing started). This is the value resulting after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the initial value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the current data object
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 <Sandpack>
 
@@ -3051,6 +3025,7 @@ Edit the `salary` column. Only valid numbers are persisted.
 </Description>
 
 ```ts file="global-should-accept-edit-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -3080,7 +3055,6 @@ Use this property to declaratively tell the `InfiniteTable` component to scroll 
 This property controls the behavior for all columns that don't have <PropLink name="columns.sortable" /> explicitly specified (or at least specified in the column type at <PropLink name="columnTypes.sortable" />).
 
 </Prop>
-
 
 <Prop name="virtualizeColumns" type="boolean" defaultValue={true}>
 

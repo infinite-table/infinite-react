@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@vanilla-extract/css": "1.10.0",
+    "ag-charts-react": "^9.1.1",
     "chokidar-cli": "^3.0.0",
     "isomorphic-fetch": "^3.0.0",
     "next": "13.2.1",

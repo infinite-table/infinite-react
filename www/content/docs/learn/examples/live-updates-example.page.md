@@ -4,7 +4,6 @@ title: Live Updates Example
 
 This example shows how you can update the grid data in real-time.
 
-
 <HeroCards>
 <YouWillLearnCard title="Updating Data in Real-Time" path="/docs/learn/working-with-data/updating-data-in-realtime">
 Find out more about how to update data in real-time
@@ -27,6 +26,5 @@ The update rate could be much higher, but we're keeping it at current levels to 
 ```tsx file="$DOCS/learn/working-with-data/realtime-updates-example.page.tsx"
 
 ```
-
 
 </Sandpack>

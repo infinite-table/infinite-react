@@ -9,7 +9,6 @@ To enable editing globally, you can use the <PropLink name="columnDefaultEditabl
 
 Or you can be more specific and choose to make individual columns editable via the <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> prop. This overrides the global <PropLink name="columnDefaultEditable" />.
 
-
 <Sandpack title="Inline Editing in action">
 
 <Description>
@@ -19,11 +18,10 @@ All columns (except id) are editable.
 </Description>
 
 ```ts file="inline-editing-example.page.tsx"
+
 ```
 
 </Sandpack>
-
-
 
 <HeroCards>
 <YouWillLearnCard title="Column Editors" path="/docs/learn/editing/column-editors">
@@ -36,20 +34,19 @@ A picture is worth a thousand words - see a chart for the editing flow.
 
 </HeroCards>
 
-
 <Note>
 
 The <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> property can be either a `boolean` or a `function`.
 
 If it is a function, it will be called when an edit is triggered on the column. The function will be called with a single object that contains the following properties:
 
- * `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
- * `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
- * `data` - the data object (of type `DATA_TYPE`) for the current row
- * `rowInfo` - the row info object that underlies the row
- * `column` - the current column on which editing is invoked
- * `api` - a reference to the [InfiniteTable API](/docs/reference/api)
- * `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
+- `value` - the current value of the cell (the value currently displayed, so after <PropLink name="columns.valueFormatter" /> and <PropLink name="columns.renderValue" /> have been applied)
+- `rawValue` - the current value of the cell, but before any formatting and custom rendering has been applied. This is either the field value from the current data object, or the result of the column <PropLink name="columns.valueGetter">valueGetter</PropLink> function.
+- `data` - the data object (of type `DATA_TYPE`) for the current row
+- `rowInfo` - the row info object that underlies the row
+- `column` - the current column on which editing is invoked
+- `api` - a reference to the [InfiniteTable API](/docs/reference/api)
+- `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
 The function can return a boolean value or a Promise that resolves to a boolean value - this means you can asynchronously decide whether the cell is editable or not.
 
@@ -67,8 +64,6 @@ It has the same signature as the <PropLink name="columns.defaultEditable">column
 
 </Note>
 
-
-
 ## Start Editing
 
 Editing can be started either by user interaction or programmatically via the [API](/docs/reference/api).
@@ -77,11 +72,10 @@ The user can start editing by double-clicking on a cell or by pressing the `Ente
 
 To start editing programmatically, use the <ApiLink name="startEdit">{`startEdit({ columnId, rowIndex })`}</ApiLink> method.
 
-
 <Sandpack title="Starting an Edit via the API">
 
-
 ```ts file="api-inline-editing-custom-edit-value-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -93,22 +87,18 @@ Either way, be it user interaction or API call, those actions will trigger check
 When editing starts, the column editor is displayed with the value that was in the cell. This (initial) edit value can be customized via the <PropLink name="columns.getValueToEdit">column.getValueToEdit</PropLink> prop. This allows you to start editing with a different value than the one that is displayed in the cell - and even with a value fetched asynchronously.
 
 ```tsx
-
 const columns = {
   salary: {
     field: 'salary',
     // this can return a Promise
-    getValueToEdit: ({ value, data, rowInfo, column}) => {
+    getValueToEdit: ({ value, data, rowInfo, column }) => {
       // suppose the value is a string like '$1000'
       // but we want to start editing with the number 1000
       return value.replace('$', '');
-    }
-  }
-}
-
+    },
+  },
+};
 ```
-
-
 
 <Sandpack title="Inline Editing with custom getter for edit value">
 
@@ -119,13 +109,14 @@ Try editing the salary column - it has a custom getter for the edit value, which
 </Description>
 
 ```ts file="inline-editing-custom-edit-value-example.page.tsx"
+
 ```
 
 </Sandpack>
 
 ## Finishing an Edit
 
-An edit is generally finished by user interaction - either the user confirms the edit by pressing the `Enter` key or cancels it by pressing the `Escape` key. 
+An edit is generally finished by user interaction - either the user confirms the edit by pressing the `Enter` key or cancels it by pressing the `Escape` key.
 
 As soon as the edit is confirmed by the user, the `InfiniteTable` needs to decide whether the edit should be accepted or not.
 
@@ -147,7 +138,6 @@ The accept/reject status of an edit is decided by using the `shouldAcceptEdit` p
 
 </Note>
 
-
 <Sandpack title="Using shouldAcceptEdit to decide whether a value is acceptable or not">
 
 <Description>
@@ -156,8 +146,8 @@ In this example, the `salary` column is configured with a <PropLink name="column
 
 </Description>
 
-
 ```ts file="inline-editing-custom-edit-value-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -170,9 +160,8 @@ To change how you persist values (which might include persisting to remote locat
 
 <Note>
 
-The <PropLink name="persistEdit"/> function prop can return a `Promise` for async persistence. To signal that the persisting failed, reject the promise or resolve it with an `Error` object. 
+The <PropLink name="persistEdit"/> function prop can return a `Promise` for async persistence. To signal that the persisting failed, reject the promise or resolve it with an `Error` object.
 
 After persisting the edit, if all went well, the <PropLink name="onEditPersistSuccess" /> callback prop is called. If the persisting failed (was rejected), the <PropLink name="onEditPersistError" /> callback prop is called instead.
 
 </Note>
-

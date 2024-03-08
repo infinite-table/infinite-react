@@ -16,6 +16,8 @@ const DEPS_VERSIONS: Record<string, string> = {
     (process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION as string) || 'latest',
   'react-query': '3.35.0',
   'react-select': '5.4.0',
+  'ag-charts-react': '9.1.1',
+  'ag-charts-community': '9.1.1',
   'devextreme-react': '21.2.6',
   devextreme: '21.2.6',
   'ag-grid-community': '27.1.0',

@@ -13,19 +13,18 @@ You can explicitly configure server-side filtering by using <DPropLink name="fil
 
 When remote filtering is enabled, the <DPropLink name="data" /> function prop will be called with an object argument that includes the `filterValue` property, so the filters can be sent to the server for performing the correct filtering operations.
 
-
 <Note>
 
 Obviously the filtering can be combined with sorting, grouping, etc.
 
 It's up to the <DPropLink name="data" /> function prop to send the correct parameters to the server for remote operations.
 
-The returned JSON can include both 
-* a `totalCount` property (`number`) and
-* a `totalCountUnfiltered` property (also `number`) - to inform the `<DataSource />` of the size of the data, both with and without the applied filters.
+The returned JSON can include both
+
+- a `totalCount` property (`number`) and
+- a `totalCountUnfiltered` property (also `number`) - to inform the `<DataSource />` of the size of the data, both with and without the applied filters.
 
 </Note>
-
 
 <Sandpack title="Server-side filtering example">
 
@@ -38,10 +37,10 @@ This example also does server-side (multiple) sorting.
 </Description>
 
 ```ts file="server-side-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 <Note>
 

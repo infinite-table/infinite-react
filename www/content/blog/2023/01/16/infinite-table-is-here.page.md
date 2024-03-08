@@ -1,13 +1,12 @@
 ---
-title: "📣 Infinite Table is Here 🎉"
+title: '📣 Infinite Table is Here 🎉'
 description: "Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in enterprise-grade apps"
 author: [admin]
 ---
 
-*Infinite Table React is ready for prime time.*
+_Infinite Table React is ready for prime time._
 
-*With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!*
-
+_With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in the wild!_
 
 <Note title="Why use Infinite Table?">
 
@@ -23,9 +22,9 @@ author: [admin]
 
 </Note>
 
-We think you'll love Infinite Table. 
+We think you'll love Infinite Table.
 
-This is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid). 
+This is the DataGrid we would have loved to use more than 15 years ago when [we started working with tables in the browser](/blog/2022/11/08/why-another-datagrid).
 
 And now it's finally here 🎉.
 
@@ -39,10 +38,9 @@ It's declarative all the way and exposes everything as props, both controlled an
 
 If you don't like the default behavior of a prop, use the controlled version and implement your own logic and handling - see for example the [following props related to column order](/docs/reference/infinite-table-props#search=columnorder):
 
-* <PropLink name="columnOrder" /> - controlled property for managing order of columns
-* <PropLink name="defaultColumnOrder" /> - uncontrolled version of the above
-* <PropLink name="onColumnOrderChange" /> - callback prop for notifications and for updating controlled column order
-
+- <PropLink name="columnOrder" /> - controlled property for managing order of columns
+- <PropLink name="defaultColumnOrder" /> - uncontrolled version of the above
+- <PropLink name="onColumnOrderChange" /> - callback prop for notifications and for updating controlled column order
 
 #### Fully Controlled
 
@@ -52,13 +50,11 @@ It's where the power of React lies - giving the developer the flexibility to ful
 
 All the props which Infinite Table exposes, have both controlled and uncontrolled versions. This allows you to start using the component very quickly and without much effort, but also with the all-important flexibility to fully control the component when needed, as your app grows and you need more control over the DataGrid.
 
-
 #### TypeScript & Generic Components
 
 Infinite Table is also built with TypeScript, giving you all the benefits of a great type system.
 
 In addition, the exposed components are exported as generic components, so you can specify the type of the data you're working with, for improved type safety.
-
 
 ```tsx
 import { InfiniteTable, DataSource } from '@infinite-table/infinite-react'
@@ -84,11 +80,11 @@ const columns = {
 
 #### Fast - virtualization
 
-Infinite Table is fast by leveraging **virtualization** both **vertically** (for rows) and **horizontally** (for columns). 
+Infinite Table is fast by leveraging **virtualization** both **vertically** (for rows) and **horizontally** (for columns).
 
 This means DOM nodes are created only for the visible cells, thus reducing the number of DOM nodes and associated memory strain and improving performance.
 
-####  No white space while scrolling - clever layout & rendering
+#### No white space while scrolling - clever layout & rendering
 
 In addition to virtualization, we use clever layout & rendering techniques to avoid white space while scrolling.
 
@@ -129,18 +125,19 @@ We've implemented everything from scratch and only directly depend on 2 packages
 <Note>
 
 We've reduced external dependencies for 2 main reasons:
- - avoid security issues with dependencies (or dependencies of dependencies...you know it) - remember left-pad?
- - keep the bundle size small
+
+- avoid security issues with dependencies (or dependencies of dependencies...you know it) - remember left-pad?
+- keep the bundle size small
 
 </Note>
 
 ### Composable API - with a small surface
 
-When building a component of this scale, there are two major opposing forces: 
+When building a component of this scale, there are two major opposing forces:
 
- * adding functionality
- * keeping the component (and the API) simple
- 
+- adding functionality
+- keeping the component (and the API) simple
+
 We're continually trying to reconcile both with Infinite Table, so we've built everything with composition in mind.
 
 <Note>
@@ -153,21 +150,22 @@ A good example of composability is the <PropLink name="groupColumn" /> prop whic
 
 It can be either a column object or a function:
 
- * when it's a column object, it makes the table render a single column for grouping (as if <PropLink name="groupRenderStrategy" /> was set to `"single-column"`)
- * when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
- 
+- when it's a column object, it makes the table render a single column for grouping (as if <PropLink name="groupRenderStrategy" /> was set to `"single-column"`)
+- when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
 
 ```tsx title="Group_column_as_an_object"
-<InfiniteTable 
+<InfiniteTable
   //...
-  groupColumn= {{
-    header: 'Groups'
+  groupColumn={{
+    header: 'Groups',
   }}
 />
 ```
+
 vs
+
 ```tsx title="Group_column_as_a_function"
-<InfiniteTable 
+<InfiniteTable
   //...
   groupColumn={() => {
     // this allows you to affect all generated group columns in a single place
@@ -180,7 +178,6 @@ vs
 Our experience with other DataGrid components taught us that the more features you add, the more complex your API becomes.
 
 So we tried to keep the API surface as small as possible, while still offering a rich set of declarative props as building blocks that can be composed to accomplish more complex functionalities.
-
 
 ### Built for the community, available on NPM
 
@@ -196,7 +193,6 @@ The component will show a footer with a [Powered by Infinite Table](https://infi
 
 Although you can use Infinite Table for free, we encourage you to [purchase a license](/pricing) - buying a license will remove the footer link. This will help us keep delivering new features and improvements to the component and support you and your team going forward!
 
-
 <HeroCards>
 <YouWillLearnCard title="Start right now!" path="/docs/learn/getting-started">
 Get started with Infinite Table and learn how to use it in your project.
@@ -206,4 +202,3 @@ Get started with Infinite Table and learn how to use it in your project.
 Get Infinite Table for your project and team!
 </YouWillLearnCard>
 </HeroCards>
-

@@ -14,7 +14,6 @@ In addition, make sure you have a column with the `renderRowDetailIcon: true` fl
 The row detail in the DataGrid can contain another DataGrid or any other custom content.
 </Note>
 
-
 <Sandpack title="Basic master detail DataGrid example" size="lg">
 
 <Description>
@@ -43,7 +42,7 @@ const detailDataFn: DataSourceData<Developer> = ({
   sortInfo,
   ...
 }) => {
-  
+
   return Promise.resolve([...])
 }
 
@@ -51,6 +50,7 @@ const detailDataFn: DataSourceData<Developer> = ({
   {...}
 </DataSource>
 ```
+
 You can see the live example above for more details.
 
 ## Rendering a detail DataGrid
@@ -70,6 +70,7 @@ In this example, the row detail contains custom content, along with another Infi
 </Description>
 
 ```ts file="master-detail-custom-datagrid-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -90,10 +91,9 @@ The default value for the <PropLink name="rowDetailHeight" /> is `300` px.
 
 <PropLink name="rowDetailHeight" /> can be one of the following:
 
- - `number` - the height in pixels
- - `string` - the name of a CSS variable that configures the height - eg: `--master-detail-height`
- - `(rowInfo) => number` - a function that can return a different height for each row. The sole argument is the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink>.
-
+- `number` - the height in pixels
+- `string` - the name of a CSS variable that configures the height - eg: `--master-detail-height`
+- `(rowInfo) => number` - a function that can return a different height for each row. The sole argument is the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink>.
 
 <Sandpack title="Master detail DataGrid with custom height for row details" size="lg">
 

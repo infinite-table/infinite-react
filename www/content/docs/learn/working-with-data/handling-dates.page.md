@@ -15,7 +15,6 @@ This will ensure that the column is sorted correctly (as per the available <DPro
 
 </Note>
 
-
 <Sandpack title="Using date objects">
 
 <Description>
@@ -24,8 +23,8 @@ In this example, the `birthDate` column contains dates and we customized the way
 
 ```tsx
 const renderValue = ({ value }: { value: Date }) => {
-  return <b>{value.toISOString().split('T')[0]}</b>
-}
+  return <b>{value.toISOString().split('T')[0]}</b>;
+};
 ```
 
 If no custom `renderValue` was specified, the dates would have been formatted using the `Date.toLocaleDateString()`
@@ -38,7 +37,6 @@ If no custom `renderValue` was specified, the dates would have been formatted us
 </Sandpack>
 
 ## Using date strings
-
 
 <Note>
 
@@ -55,11 +53,9 @@ const sortTypes = {
     return new Date(a).getTime() - new Date(b).getTime();
   },
 };
-
 ```
 
 When then pass the <DPropLink name="sortTypes"/> to the `<DataSource />` component and configure our date column to be of type `"mydatestring"` (it should match the key you specified in your `sortTypes` definition).
-
 
 <Sandpack title="Using date strings">
 

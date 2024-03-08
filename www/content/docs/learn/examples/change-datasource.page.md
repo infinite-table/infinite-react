@@ -25,8 +25,8 @@ In this demo you can toggle between 2 data sources and 2 sets of columns.
 ```tsx file="change-datasource-example.page.tsx"
 
 ```
-</Sandpack>
 
+</Sandpack>
 
 <Note>
 

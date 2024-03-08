@@ -6,32 +6,30 @@ Real-Time updates of data are possible via the [DataSource API](/docs/reference/
 
 In this page we explain some of the complexities and features involved.
 
-
 ## Getting a reference to the DataSource API
 
 <Note>
 
 Data Updates are related to the `DataSource` component, therefore make sure you use the [DataSource API](/docs/reference/datasource-api) for this.
 
-You can get a reference to the [DataSource API](/docs/reference/datasource-api) 
+You can get a reference to the [DataSource API](/docs/reference/datasource-api)
 
- * either by using <DPropLink name="onReady" code={false}>the DataSource onReady</DPropLink> prop 
+- either by using <DPropLink name="onReady" code={false}>the DataSource onReady</DPropLink> prop
 
 ```tsx
-
 const onReady = (dataSourceApi) => {
   // do something with the dataSourceApi
-}
+};
 
-<DataSource onReady={onReady}/>
-
+<DataSource onReady={onReady} />;
 ```
- * or by using the <PropLink name="onReady" code={false}>InfiniteTable onReady</PropLink> prop.
+
+- or by using the <PropLink name="onReady" code={false}>InfiniteTable onReady</PropLink> prop.
 
 ```tsx
 const onReady = ({ api, dataSourceApi }) => {
-  // note for InfiniteTable.onReady, you get back an object 
-  // with both the InfiniteTable API (the `api` property) 
+  // note for InfiniteTable.onReady, you get back an object
+  // with both the InfiniteTable API (the `api` property)
   // and the DataSource API (the `dataSourceApi` property)
 }
 
@@ -87,10 +85,10 @@ The update rate could be much higher, but we're keeping it at current levels to 
 </Description>
 
 ```ts file="realtime-updates-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 <Note>
 
@@ -99,7 +97,6 @@ For updating multiple rows, use the <DApiLink name="updateDataArray" /> method.
 When updating a row, the data object you pass to the `updateData` method needs to at least include the <DPropLink name="primaryKey" /> field. Besides that field, it can include any number of properties you want to update for the specific row.
 
 </Note>
-
 
 ## Batching updates
 
@@ -110,16 +107,15 @@ All the function calls made in the same raf return the same promise, which is re
 ```tsx title="Updates_made_on_the_same_raf_are_batched_together"
 const promise1 = dataSourceApi.updateData({
   id: 1,
-  name: 'Bob Blue'
+  name: 'Bob Blue',
 });
 
 const promise2 = dataSourceApi.updateDataArray([
   { id: 2, name: 'Alice Green' },
-  { id: 3, name: 'John Red' }
+  { id: 3, name: 'John Red' },
 ]);
 
-promise1 === promise2 // true
-
+promise1 === promise2; // true
 ```
 
 ## Inserting Rows
@@ -127,33 +123,37 @@ promise1 === promise2 // true
 To insert a new row into the `DataSource`, you need to use the <DApiLink name="insertData" /> method. For inserting multiple rows at once, use the <DApiLink name="insertDataArray" /> method.
 
 ```tsx title="Inserting_a_single_row"
-dataSourceApi.insertData({
-  id: 10,
-  name: 'Bob Blue',
-  age: 35,
-  salary: 12_000,
-  stack: 'frontend'
-  //...
-}, {
-  position: 'before',
-  primaryKey: 2
-});
+dataSourceApi.insertData(
+  {
+    id: 10,
+    name: 'Bob Blue',
+    age: 35,
+    salary: 12_000,
+    stack: 'frontend',
+    //...
+  },
+  {
+    position: 'before',
+    primaryKey: 2,
+  },
+);
 ```
 
 When you insert new data, as a second parameter, you have to provide an object that specifies the insert `position`.
 
 Valid values for the insert `position` are:
-  
-* `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
+
+- `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
 
 ```tsx
 dataSourceApi.insertData({ ... }, { position: 'start'})
 // or insert multiple items via
 dataSourceApi.insertDataArray([{ ... }, { ... }], { position: 'start'})
 ```
-* `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
 
-```tsx  {5,10}
+- `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
+
+```tsx {5,10}
 dataSourceApi.insertData(
   { /* ... all data properties here */ },
   {
@@ -177,6 +177,7 @@ Click any row in the table to make it the current active row, and then use the s
 </Description>
 
 ```ts file="insert-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -191,9 +192,7 @@ To delete rows from the `DataSource` you either need to know the `primaryKey` fo
 
 All the following methods are available via the [DataSource API](/docs/reference/datasource-api):
 
- * <DApiLink name="removeData" />
- * <DApiLink name="removeDataArray" />
- * <DApiLink name="removeDataByPrimaryKey" />
- * <DApiLink name="removeDataArrayByPrimaryKeys" />
-
-
+- <DApiLink name="removeData" />
+- <DApiLink name="removeDataArray" />
+- <DApiLink name="removeDataByPrimaryKey" />
+- <DApiLink name="removeDataArrayByPrimaryKeys" />

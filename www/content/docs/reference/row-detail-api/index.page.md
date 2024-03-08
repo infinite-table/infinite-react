@@ -5,7 +5,6 @@ layout: API
 
 This API can be used when [master-detail](/docs/learn/master-detail/overview) is configured in the DataGrid.
 
-
 You can retrieve the row details api by reading it from the `api.rowDetailApi` property.
 
 ```tsx {4}
@@ -27,11 +26,9 @@ See the [Infinite Table Column API page](/docs/reference/column-api) for the col
 
 <PropTable sort searchPlaceholder="Type to filter API methods">
 
-
 <Prop name="collapseAllDetails" type="() => void">
 
 > Collapses all row details.
-
 
 <Sandpack title="Master detail DataGrid with collapse all button" size="lg" viewMode="preview">
 
@@ -44,7 +41,9 @@ You can collapse them via the Row Detail API.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-api-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -62,7 +61,9 @@ Click the `Expand All` button to expand all row details.
 </Description>
 
 ```ts file="$DOCS/learn/master-detail/master-detail-api-example.page.tsx"
+
 ```
+
 </Sandpack>
 
 </Prop>
@@ -79,7 +80,6 @@ Click the `Expand All` button to expand all row details.
 
 </Prop>
 
-
 <Prop name="collapseRowDetail" type="(rowId: any) => void">
 
 > Collapses the detail for the row with the specified primary key.
@@ -92,12 +92,10 @@ Click the `Expand All` button to expand all row details.
 
 </Prop>
 
-
 <Prop name="toggleRowDetail" type="(rowId: any)=> boolean">
 
 > Toggles the expand/collapse state of the row detail, for the row with the specified primary key.
 
 </Prop>
-
 
 </PropTable>

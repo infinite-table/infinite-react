@@ -5,7 +5,7 @@ description: Learn how to configure client-side filtering for your Infinite Tabl
 
 The most common way to use filtering in Infinite Table is by configuring filters for columns (this works both for client-side and server-side filtering).
 
- If the DataSource <DPropLink name="data" /> property is a function (and not an array or a `Promise`), then the filtering will happen server-side by default.
+If the DataSource <DPropLink name="data" /> property is a function (and not an array or a `Promise`), then the filtering will happen server-side by default.
 
 <Note>
 
@@ -13,8 +13,8 @@ To force client-side filtering, you can explicitly set the <DPropLink name="filt
 
 The possible values for this prop are:
 
- - `filterMode="local"` - filtering will happen client-side
- - `filterMode="remote"` - filtering will happen remotely and the <DPropLink name="filterValue" /> will be passed as a property to the parameter object sent to the <DPropLink name="data"/> function.
+- `filterMode="local"` - filtering will happen client-side
+- `filterMode="remote"` - filtering will happen remotely and the <DPropLink name="filterValue" /> will be passed as a property to the parameter object sent to the <DPropLink name="data"/> function.
 
 </Note>
 
@@ -33,6 +33,7 @@ In addition, the `filterDelay` property is set to `0` for instant feedback.
 </Description>
 
 ```ts file="basic-local-filter-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -44,7 +45,6 @@ If you still want filtering to be enabled with the default functionality of usin
 </Note>
 
 ## Using Filter Types
-
 
 As already documented in the [Understanding Filter Types](./#understanding-filter-types) section, you can specify the types of the filters the `<DataSource />` will support, by using the <DPropLink name="filterTypes" /> property.
 
@@ -61,7 +61,7 @@ filterValue={[
       operator: 'includes',
       value: 'John'
     }
-    
+
   },
   {
     field: 'age',
@@ -75,8 +75,9 @@ filterValue={[
 ```
 
 The above filter value specifies that there are 2 filters applied:
- * the `firstName` column applies a filter that will only match rows with `firstName` containining the string `John`
- * the `age` column has an additional filter, that will only match rows with `age` greater than `30`
+
+- the `firstName` column applies a filter that will only match rows with `firstName` containining the string `John`
+- the `age` column has an additional filter, that will only match rows with `age` greater than `30`
 
 If <DPropLink name="filterMode" /> is set to `local`, then the filtering will happen client-side, using the filtering functions specified by `includes` operator in the `string` filter type and the `gt` operator in the `number` filter type.
 
@@ -124,7 +125,6 @@ When you specify new <DPropLink name="filterTypes"/>, the default filter types o
 
 </Note>
 
-
 <Sandpack title="Client-side filtering in action with custom filter type">
 
 <Description>
@@ -134,12 +134,12 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 </Description>
 
 ```ts file="filter-custom-filter-type-example.page.tsx"
+
 ```
 
 </Sandpack>
 
 ### Customizing Default Filter Types
-
 
 By default, the `string` and `number` filter types are available. You can import the default filter types like this:
 
@@ -148,7 +148,6 @@ import { defaultFilterTypes } from '@infinite-table/infinite-react';
 ```
 
 If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
-
 
 <Sandpack title="Enhanced string filter type - new 'Not includes' operator">
 
@@ -159,18 +158,16 @@ The `string` columns have a new `Not includes` operator.
 </Description>
 
 ```ts file="customised-default-filter-types-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 <Note>
 
 When you specify new <DPropLink name="filterTypes"/>, the default filter types of `string` and `number` are still available - unless the new object contains those keys and override them explicitly.
 
 </Note>
-
-
 
 ## Using a Filter Delay
 
@@ -188,13 +185,11 @@ API calls to <ApiLink name="setColumnFilter"/> or <ApiLink name="clearColumnFilt
 
 </Note>
 
-
 ## Using a Filter Function Instead of the Column Filters
 
 For client-side rendering, it's possible that instead of showing a column filter bar, you use a custom <DPropLink name="filterFunction" /> to filter the data.
 
 In this case, the filtering will happen client-side ... of course 🤦‍♂️.
-
 
 <Sandpack title="Custom filterFunction example">
 
@@ -205,6 +200,7 @@ Loads data from remote location but will only show rows that have `id > 100`.
 </Description>
 
 ```ts file="filter-function-example.page.tsx"
+
 ```
 
 </Sandpack>

@@ -1,11 +1,9 @@
 ---
 title: End User License Agreement
 ---
+
 These terms and conditions ("Terms") are contracted between Webreactor SRL. ("Licensor") and the entity whose details are provided in the License Quotation ("Licensee").
 This is effective as of the date of acceptance of these Terms ("Effective Date").
-
-
-
 
 - [TERMS AND CONDITIONS](#terms-and-conditions)
   - [1. Definitions and interpretation](#1-definitions-and-interpretation)
@@ -91,8 +89,6 @@ This is effective as of the date of acceptance of these Terms ("Effective Date")
   - [3. Software updating service](#3-software-updating-service)
     - [3.1](#31-1)
     - [3.2](#32-1)
-
-
 
 # TERMS AND CONDITIONS
 
@@ -408,7 +404,6 @@ In these Terms, where the context so admits, the following words and expressions
     </tr>
   </tbody>
 </table>
-
 
 ### 1.2 Interpretation
 

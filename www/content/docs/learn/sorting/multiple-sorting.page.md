@@ -6,7 +6,6 @@ description: Docs and examples on applying multiple sorting to the DataSource fo
 By default, if you don't specify otherwise, the DataGrid is configured with single sorting. For multiple sorting, you need to specify the sorting information as an array:
 
 ```tsx
-
 <DataSource<Developer>
   primaryKey="id"
   data={data}
@@ -22,7 +21,6 @@ By default, if you don't specify otherwise, the DataGrid is configured with sing
 An empty array means no sorting. However, it does specify that sorting is configured as multiple sorting, so it's useful to set it to `[]`
 
 </Note>
-
 
 <Sandpack title="Configuring multiple sorting with uncontrolled behavior">
 
@@ -43,15 +41,12 @@ If the multi-sort behavior is `append`, clicking the second column will add it t
 
 </Sandpack>
 
-
 ## User interaction and multi sort behavior
-
-
 
 When `InfiniteTable` is configured with multiple sorting there are two supported behaviors:
 
-* `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
-* `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
+- `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
+- `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
 
 <Note>
 
@@ -65,17 +60,16 @@ The behavior of multiple sorting is configured via the <PropLink name="multiSort
 
 #### Scenario 1
 
-* user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - `1`
-* if user clicks the same column, the sort direction is reversed - sort index is preserved as `1`, but descending order is set.
-* user clicks the same column again - the column is removed from the sort.
+- user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - `1`
+- if user clicks the same column, the sort direction is reversed - sort index is preserved as `1`, but descending order is set.
+- user clicks the same column again - the column is removed from the sort.
 
 #### Scenario 2
 
-* user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - `1`
-* user clicks another column - the new column is added to the sort, with ascending order and sort index `2`. The initial clicked column is still the sorted, and that sort is applied first. For equal values on column `1`, the sort by column `2` is applied.
-* user clicks column `2` again - the sort direction is reversed for the second column. So now the sort order is `1` ascending, `2` descending.
-* user clicks column `2` again - the column is removed from the sort. The sorting now only contains the first column, in ascending order.
-
+- user clicks a column header to sort by that column - an ascending sort is added, and the column header will contain the sort index - `1`
+- user clicks another column - the new column is added to the sort, with ascending order and sort index `2`. The initial clicked column is still the sorted, and that sort is applied first. For equal values on column `1`, the sort by column `2` is applied.
+- user clicks column `2` again - the sort direction is reversed for the second column. So now the sort order is `1` ascending, `2` descending.
+- user clicks column `2` again - the column is removed from the sort. The sorting now only contains the first column, in ascending order.
 
 ### Multi sort behavior - `replace`
 
@@ -107,15 +101,13 @@ The simplest way to use multiple sorting is via the uncontrolled <DPropLink name
 
 This allows sorting by multiple fields (to which columns are bound) - you can specify however many you want - so when sorting two objects in the `DataSource`, the first `sortInfo` is used to compare the two, and then, on equal values, the next `sortInfo` is used and so on.
 
-
 <Note>
 
 If you want to change the sorting from code, after the component is mounted, you need to use the controlled <DPropLink name="sortInfo" /> prop.
 
-In this case, make sure you update the <DPropLink name="sortInfo" />  prop as a result of user interaction, by using the <DPropLink name="onSortInfoChange" /> callback.
+In this case, make sure you update the <DPropLink name="sortInfo" /> prop as a result of user interaction, by using the <DPropLink name="onSortInfoChange" /> callback.
 
 </Note>
-
 
 <Sandpack title="Local + uncontrolled multi-sorting example">
 
@@ -128,6 +120,7 @@ This table allows sorting multiple columns - initially the `country` column is s
 ```ts file="local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx"
 
 ```
+
 </Sandpack>
 
 <Sandpack title="Remote + uncontrolled multi-sorting example">

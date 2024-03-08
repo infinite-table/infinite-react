@@ -3,13 +3,11 @@ title: Infinite Table Cell Selection API
 layout: API
 ---
 
-
 ```tsx title="Configuring the selection mode to be 'multi-cell'"
 <DataSource selectionMode="multi-cell" />
 
 // can be "single-row", "multi-row", "multi-cell" or false
 ```
-
 
 <Note>
 
@@ -18,8 +16,6 @@ To enable cell selection, you need to specify <DPropLink name="selectionMode">se
 </Note>
 
 You can retrieve the cell selection api by reading it from the `api.cellSelectionApi` property.
-
-
 
 ```tsx {4}
 
@@ -46,8 +42,8 @@ See the [Infinite Table Column API page](/docs/reference/column-api) for the col
 
 The accepted argument is an object with the following properties:
 
- - `rowIndex` (the index of the row) or `rowId` (the id of the row)
- - `colIndex` (the index of the column) or `colId` (the id of the column)
+- `rowIndex` (the index of the row) or `rowId` (the id of the row)
+- `colIndex` (the index of the column) or `colId` (the id of the column)
 
 You can identify the cell by any of the valid combinations of `rowIndex`/`rowId` and `colIndex`/`colId`.
 
@@ -61,14 +57,30 @@ This is important to keep in mind, as when columns are reordered or rows are sor
 
 </Prop>
 
+<Prop name="mapCellSelectionPositions" type="(fn: (rowInfo, colId) => any, emptyValue)">
+
+> Maps the selected cells using the passed fn.
+
+This allows you to retrieve the values from the selected cells, by using a mapping function, so for each value (cell) in the selection, the passed `fn` is called, so you can return your own object with the values you need.
+
+<Sandpack title="Retrieving cell selection value by mapping over them" size="lg" deps="ag-charts-react,ag-charts-community">
+
+```ts file=cell-selection-mapping-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="selectColumn" type="(colId: string)=> void">
 
 > Selects all cells in the specified column.
 
 <Sandpack title="Using `selectColumn` with controlled selection" size="lg">
 
-
 ```ts file="$DOCS/reference/datasource-props/controlled-cell-selection-with-api-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -91,12 +103,11 @@ You can use `Cmd/Ctrl+Click` to add cells to the selection, or `Shift+Click` to 
 
 <Sandpack title="Selecting a cell via the Cell Selection API">
 
-
 ```ts file="select-cell-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -144,8 +155,8 @@ Clicking a cell without holding the modifier keys will clear the selection and s
 
 <Sandpack title="Selecting a range via the Cell Selection API">
 
-
 ```ts file="select-range-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -162,11 +173,9 @@ For deselecting a range see [deselectRange](#deselectRange).
 
 <Prop name="deselectRange" type="(start, end) => void">
 
-
 > Deselects the specified cell range.
 
 The `start` and `end` arguments are objects of the same shape as the argument for [isCellSelected](#isCellSelected).
-
 
 <Note>
 
@@ -176,16 +185,14 @@ Don't worry if the `start` or `end` are not passed in the correct order - Infini
 
 For selecting a range see [selectRange](#selectRange).
 
-
 <Sandpack title="Deselecting a range via the Cell Selection API">
 
-
 ```ts file="deselect-range-example.page.tsx"
+
 ```
 
 </Sandpack>
 
 </Prop>
-
 
 </PropTable>

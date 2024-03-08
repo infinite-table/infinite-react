@@ -5,13 +5,12 @@ description: Learn how to extend existing filters and filter types for your Infi
 
 By default `InfiniteTable` has the following default filter types:
 
- - `string`
- - `number`
+- `string`
+- `number`
 
 and each of them has a collection of operators that are supported - see <DPropLink name="filterTypes" /> for the respective list of supported operators.
 
 You may find those operators limiting - but it's easy to extend them and add new operators or even new filter types.
-
 
 ## Adding new operators to existing filter types
 
@@ -50,6 +49,7 @@ The `string` columns have a new `Not includes` operator.
 </Description>
 
 ```ts file="customised-default-filter-types-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -60,10 +60,8 @@ If the existing filter types are not enough, it's easy to add new ones.
 
 As already mentioned, you can either update the value of `defaultFilterTypes` or use the `filterTypes` prop of the `<DataSource />` component. Updating the value `defaultFilterTypes` will affect all your `InfiniteTable` DataGrid components.
 
-
 ```ts title="Adding a new filter type by updating defaultFilterTypes"
-
-import { defaultFilterTypes } from '@infinite-table/infinite-react';
+import { defaultFilterTypes } from '@infinite-table/infinite-react';
 
 defaultFilterTypes.bool = {
   defaultOperator: 'eq',
@@ -72,34 +70,30 @@ defaultFilterTypes.bool = {
     {
       name: 'eq',
       label: 'Equals',
-      fn: ({ currentValue, filterValue }) =>
-        currentValue === filterValue,
+      fn: ({ currentValue, filterValue }) => currentValue === filterValue,
     },
   ],
-}
+};
 ```
 
-
 ```ts title="Adding a new filter type by using the filterTypes prop"
-
-import { DataSource} from '@infinite-table/infinite-react';
+import { DataSource } from '@infinite-table/infinite-react';
 
 <DataSource
   filterTypes={{
     bool: {
-      defaultOperator: "eq",
+      defaultOperator: 'eq',
       emptyValues: [null],
       operators: [
         {
-          name: "eq",
-          label: "Equals",
+          name: 'eq',
+          label: 'Equals',
           fn: ({ currentValue, filterValue }) => currentValue === filterValue,
         },
       ],
     },
   }}
 />;
-
 ```
 
 <Note>
@@ -117,6 +111,7 @@ The `canDesign` column is using a custom `bool` filter type with a custom filter
 </Description>
 
 ```ts file="checkbox-filter-editor-example.page.tsx"
+
 ```
 
 </Sandpack>

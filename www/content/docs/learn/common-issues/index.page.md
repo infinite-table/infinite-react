@@ -28,7 +28,7 @@ const [groupBy, setGroupBy] = useState([{ field: 'country' }]);
 
 <Note>
 
-When in dev mode, you can set `localStorage.debug = "*"` in your localstorage to see potential issues logged to the console. 
+When in dev mode, you can set `localStorage.debug = "*"` in your localstorage to see potential issues logged to the console.
 
 For example, you might see:
 

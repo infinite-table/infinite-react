@@ -11,7 +11,6 @@ Things have evolved in the last few years, and the amount of goodies JS/CSS/HTML
 
 However, not everything is easier now than it was back in the browser-war days. Handling all kinds of devices, managing changing dependencies, configuring build tools, choosing the right styling approach, proper E2E testing, keeping a small bundle size, CI pipelines, etc. are all things that can (and will) go wrong if you don't have the right tools.
 
-
 ## TypeScript
 
 It's obvious today to just go with `TypeScript`, but a few years ago, it was not as obvious. We've been using TypeScript for quite a few years now, and we're very happy with it. We can never imagine going back to plain JS.
@@ -43,10 +42,11 @@ With Vanilla Extract, you get to forget about that. You know what's being used a
 Also, hashing class names to avoid collisions is nice - and something now very common in the modern JS ecosystem. It all started with CSS modules, and now it's everywhere, Vanilla Extract included.
 
 Other great features we use extensively are:
- - public facing CSS variables - their names are stable
- - private CSS variables - their names are hashed
- - sharing CSS values with the TS codebase is a dream come true.
- - Vanilla Extract recipes - generating and applying CSS classes based on a combination of properties. It's enough that you have 2-3 properties, each with a few values, and managing their combinations can be a pain. Vanilla Extract recipes manage this in a very elegant way.
+
+- public facing CSS variables - their names are stable
+- private CSS variables - their names are hashed
+- sharing CSS values with the TS codebase is a dream come true.
+- Vanilla Extract recipes - generating and applying CSS classes based on a combination of properties. It's enough that you have 2-3 properties, each with a few values, and managing their combinations can be a pain. Vanilla Extract recipes manage this in a very elegant way.
 
 ## End-to-end testing with Playwright and NextJS
 
@@ -68,7 +68,6 @@ We can't overstate how important it is to have a clear data flow through the Dat
 
 It's important to be able to tame all this complexity - otherwise it can slow down the development process and bring it to a halt, making it difficult to add new features or fix bugs. With our current model, even though the DataGrid grew in complexity and features, we never felt our velocity dropping! We enjoy that!
 
-
 ## No dependencies
 
 We're very proud of the fact that we have no dependencies in our DataGrid. When you install our package, you only install our package - and nothing else. Nothing that can go wrong due to version conflicts, missing dependencies, npm issues ([remember left-pad](https://www.davidhaney.io/npm-left-pad-have-we-forgotten-how-to-program/)?).
@@ -78,8 +77,9 @@ Yes, we still depend on packages in our dev process, but we're striving to keep 
 ## Separating concerns
 
 We've separated our DataGrid into 2 main parts:
- - the `<DataSource />` component - handles data loading and processing
- - the `<InfiniteTable />` component - handles the rendering
+
+- the `<DataSource />` component - handles data loading and processing
+- the `<InfiniteTable />` component - handles the rendering
 
 This was a brilliant idea! It's new? No! It's not our invention, but we're happy we decided to apply it.
 

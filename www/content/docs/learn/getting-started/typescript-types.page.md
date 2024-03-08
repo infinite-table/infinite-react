@@ -18,7 +18,7 @@ import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 In our TypeScript typings, those components are exported as generic components, so they need to be bound to the type of the data they are rendering.
 
-```tsx 
+```tsx
 type Developer = {
   id: number;
 
@@ -54,10 +54,8 @@ Both `InfiniteTable` and `DataSource` components have types provided for most of
 import type {
   InfiniteTablePropColumns,
   // corresponding to the `columns` prop
-
   DataSourcePropGroupBy,
   // corresponding to the `groupBy` prop
-
 } from '@infinite-table/infinite-react';
 ```
 
@@ -65,12 +63,13 @@ import type {
 
 Here are a few examples for types for the `DataSource` component:
 
- - `DataSourcePropGroupBy<DATA_TYPE>` - the type for <DPropLink name="groupBy">DataSource.groupBy</DPropLink>
+- `DataSourcePropGroupBy<DATA_TYPE>` - the type for <DPropLink name="groupBy">DataSource.groupBy</DPropLink>
+
 ```tsx
 import type { DataSourcePropGroupBy } from '@infinite-table/infinite-react';
 ```
 
- - `DataSourcePropAggregationReducers<DATA_TYPE>` - the type for <DPropLink name="aggregationReducers">DataSource.aggregationReducers</DPropLink>
+- `DataSourcePropAggregationReducers<DATA_TYPE>` - the type for <DPropLink name="aggregationReducers">DataSource.aggregationReducers</DPropLink>
 
 ```tsx
 import type { DataSourcePropAggregationReducers } from '@infinite-table/infinite-react';
@@ -82,9 +81,9 @@ Not all the `DataSource` props have types exported that follow this convention, 
 
 In this way you can access specific prop types by name
 
- - `DataSourceProps<DATA_TYPE>['groupBy']` - the type for <DPropLink name="groupBy">DataSource.groupBy</DPropLink>
- - `DataSourceProps<DATA_TYPE>['data']` - the type for <DPropLink name="data">DataSource.data</DPropLink>
- - etc
+- `DataSourceProps<DATA_TYPE>['groupBy']` - the type for <DPropLink name="groupBy">DataSource.groupBy</DPropLink>
+- `DataSourceProps<DATA_TYPE>['data']` - the type for <DPropLink name="data">DataSource.data</DPropLink>
+- etc
 
 </Note>
 
@@ -92,18 +91,17 @@ In this way you can access specific prop types by name
 
 Below you can find a few examples for types for the `InfiniteTable` component:
 
- - `InfiniteTablePropColumns<DATA_TYPE>` - the type for <PropLink name="columns">InfiniteTable.columns</PropLink>
+- `InfiniteTablePropColumns<DATA_TYPE>` - the type for <PropLink name="columns">InfiniteTable.columns</PropLink>
 
 ```tsx
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 ```
 
- - `InfiniteTablePropRowStyle<DATA_TYPE>` - the type for <PropLink name="rowStyle">InfiniteTable.rowStyle</PropLink>
+- `InfiniteTablePropRowStyle<DATA_TYPE>` - the type for <PropLink name="rowStyle">InfiniteTable.rowStyle</PropLink>
 
 ```tsx
 import type { InfiniteTablePropRowStyle } from '@infinite-table/infinite-react';
 ```
-
 
 - `InfiniteTablePropColumnGroups<DATA_TYPE>` - the type for <PropLink name="columnGroups">InfiniteTable.columnGroups</PropLink>
 
@@ -117,9 +115,9 @@ Not all the `InfiniteTable` props have types exported that follow this conventio
 
 In this way you can access specific prop types by name:
 
- - `InfiniteTableProps<DATA_TYPE>['columns']` - the type for <PropLink name="columns">InfiniteTable.columns</PropLink>
- - `InfiniteTableProps<DATA_TYPE>['columnSizing']` - the type for <PropLink name="columnSizing">InfiniteTable.columnSizing</PropLink>
- - etc
+- `InfiniteTableProps<DATA_TYPE>['columns']` - the type for <PropLink name="columns">InfiniteTable.columns</PropLink>
+- `InfiniteTableProps<DATA_TYPE>['columnSizing']` - the type for <PropLink name="columnSizing">InfiniteTable.columnSizing</PropLink>
+- etc
 
 </Note>
 

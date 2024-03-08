@@ -90,7 +90,6 @@ Multiple grouping strategies are supported by, `InfiniteTable` DataGrid:
 
 You can specify the rendering strategy explicitly by setting the <PropLink name="groupRenderStrategy" /> property to any of the following: `multi-column`, `single-column`. If you don't set it explicitly, it will choose the best default based on your configuration.
 
-
 ### Multiple groups columns
 
 When grouping by multiple fields, by default the component will render a group column for each group field
@@ -184,7 +183,6 @@ If <PropLink name="groupColumn" /> is specified to an object and no <PropLink na
 You can specify an `id` for the single <PropLink name="groupColumn" />. This is helpful if you want to size this column (via <PropLink name="columnSizing" />) or pin it (via <PropLink name="columnPinning" />) or configure it in other ways. If no `id` is specified, it will default to `"group-by"`.
 
 </Gotcha>
-
 
 ## Customizing the group column
 
@@ -296,12 +294,14 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
 
 ```ts
-const sortInfo = [{
-  dir: 1,
-  id: 'group-by',
-  field: ['stack', 'age'],
-  type: ['string','number']
-}];
+const sortInfo = [
+  {
+    dir: 1,
+    id: 'group-by',
+    field: ['stack', 'age'],
+    type: ['string', 'number'],
+  },
+];
 ```
 
 <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.

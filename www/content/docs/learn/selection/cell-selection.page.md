@@ -3,7 +3,6 @@ title: Cell Selection
 description: InfiniteTable DataGrid component supports single and multiple cell selection.
 ---
 
-
 To use multi-cell selection, you need to configure the `<DataSource />` component with `selectionMode="multi-cell"` - see <DPropLink name="selectionMode" /> for details. For selecting rows, see the [Row Selection](/docs/learn/selection/row-selection) page.
 
 ```tsx title="Configuring the selection mode"
@@ -27,7 +26,6 @@ Use `Shift+Click` to select a range of cells and `Cmd/Ctrl+Click` to add single 
 ```
 
 </Sandpack>
-
 
 ## Using default selection
 
@@ -56,7 +54,6 @@ Cell selection uses `[rowId, colId]` cell descriptors to identify cells to be ma
 
 </Note>
 
-
 <Sandpack title="Multiple cell selection with a default selection value">
 
 <Description>
@@ -68,6 +65,7 @@ By default some cells are already selected in the grid below, by using the <DPro
 ```ts file="./cell-selection-default-selection-example.page.tsx"
 
 ```
+
 </Sandpack>
 
 Whe you're using cell selection with or without any default value (via the <DPropLink name="defaultCellSelection" />), you're using an uncontrolled prop. This means that the selection state is managed by the `<DataSource />` component and not by you. If you want to control the selection state yourself, you can use the controlled <DPropLink name="cellSelection" /> prop instead - see [Using controlled selection](#using-controlled-selection) for details.
@@ -76,11 +74,11 @@ Whe you're using cell selection with or without any default value (via the <DPro
 
 The <DPropLink name="cellSelection" /> prop is an object with the following shape:
 
- * `defaultSelection` - `boolean` - whether or not cells are selected by default.
- * either:
-    * `selectedCells`: `[rowId, colId][]` - an array of cells that should be selected (this is combined with `defaultSelection: false`)
- * or
-    * `deselectedCells`: `[rowId, colId][]` - an array of cells that should be deselected (this is combined with `defaultSelection: true`)
+- `defaultSelection` - `boolean` - whether or not cells are selected by default.
+- either:
+  - `selectedCells`: `[rowId, colId][]` - an array of cells that should be selected (this is combined with `defaultSelection: false`)
+- or
+  - `deselectedCells`: `[rowId, colId][]` - an array of cells that should be deselected (this is combined with `defaultSelection: true`)
 
 <Note>
 
@@ -108,7 +106,7 @@ const defaultCellSelection = {
     ['id2', 'stack'],
     ['id0', 'firstName'],
   ],
-}
+};
 ```
 
 ```tsx title="Everything is selected, except a few cells"
@@ -119,7 +117,7 @@ const defaultCellSelection = {
     ['row3', 'stack'],
     ['row5', 'firstName'],
   ],
-}
+};
 ```
 
 ### Using wildcards for selection
@@ -131,9 +129,9 @@ const defaultCellSelection = {
   defaultSelection: false,
   selectedCells: [
     ['*', 'stack'],
-    ['row2','firstName']
+    ['row2', 'firstName'],
   ],
-}
+};
 ```
 
 ```tsx title="Selecting all cells in a row"
@@ -141,25 +139,21 @@ const defaultCellSelection = {
   defaultSelection: false,
   selectedCells: [
     ['row1', '*'],
-    ['row2','firstName']
+    ['row2', 'firstName'],
   ],
-}
+};
 ```
-
 
 ```tsx title="Selecting everything except a column"
 const defaultCellSelection = {
   defaultSelection: true,
-  deselectedCells: [
-    ['*', 'stack'],
-  ],
-}
+  deselectedCells: [['*', 'stack']],
+};
 ```
 
 ## Using controlled selection
 
 When using the controlled <DPropLink name="cellSelection" /> you have to update the value of the property yourself, by listening to the <DPropLink name="onCellSelectionChange" /> event.
-
 
 <Sandpack title="Using controlled cell selection" size="lg">
 
@@ -172,13 +166,12 @@ This example shows how to use the <DPropLink name="onCellSelectionChange" /> cal
 ```ts file="./controlled-cell-selection-example.page.tsx"
 
 ```
+
 </Sandpack>
 
 ## Using the Cell Selection API
 
 The `<DataSource />` component also exposes a [Cell Selection API](/docs/reference/cell-selection-api), which you can use to select and deselect cells programmatically.
-
-
 
 <Sandpack title="Using the CellSelectionAPI to select a column" size="lg">
 

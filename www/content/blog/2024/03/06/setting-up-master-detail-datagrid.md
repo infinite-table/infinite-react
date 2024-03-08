@@ -6,7 +6,6 @@ hide_in_homepage: true
 
 We recently [announced the release of master-detail in the Infinite React DataGrid](/blog/2024/02/26/master-detail-now-available-in-react-datagrid), so we also made a video tutorial to follow along, if video is your preferred learning method.
 
-
 This shows the very basics of configuring the Infinite React DataGrid with master-detail, and it's a great starting point for more advanced configurations.
 
 <YTEmbed code="5-T2tSEM96I" />

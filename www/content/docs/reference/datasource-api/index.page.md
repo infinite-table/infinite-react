@@ -7,7 +7,6 @@ When rendering the `DataSource` component, you can get access to the API by gett
 
 ```tsx {3}
 <DataSource<DATA_TYPE>
-  
   onReady={(api: DataSourceApi<DATA_TYPE>) => {
     // api is accessible here
     // you may want to store a reference to it in a ref or somewhere in your app state
@@ -16,7 +15,6 @@ When rendering the `DataSource` component, you can get access to the API by gett
 ```
 
 You can also get it from the `InfiniteTable` <PropLink name="onReady" /> callback prop:
-
 
 ```tsx {4}
 <InfiniteTable<DATA_TYPE>
@@ -34,9 +32,7 @@ You can also get it from the `InfiniteTable` <PropLink name="onReady" /> callbac
 
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
 
-
 <PropTable sort searchPlaceholder="Type to filter API methods">
-
 
 <Prop name="addData" type="(data: DATA_TYPE) => Promise">
 
@@ -55,7 +51,6 @@ If the component has <DPropLink name="sortInfo" code={false}>sorting</DPropLink>
 This method batches data updates and waits for a request animation frame until it persists the data to the `DataSource`. This means you can execute multiple calls to `addData` (or <DPropLink name="updateData"/>, <DPropLink name="removeData"/>, <DPropLink name="insertData"/>) in the same frame and they will be batched and persisted together.
 
 The return value is a `Promise` that resolves when the data has been added. When multiple `addData` (and friends) calls are executed in the same frame, the result of those calls is a reference to the same promise.
-
 
 ```ts
 const promise1 = dataSourceApi.add({ ... })
@@ -76,6 +71,7 @@ For inserting data at a specific position, see the <DApiLink name="insertData" /
 <Sandpack title="Using DataSourceApi.addData to update the DataSource">
 
 ```ts file="addData-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -93,8 +89,6 @@ For adding at the beginning of the data source, see the <DApiLink name="insertDa
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
 </Prop>
-
-
 
 <Prop name="getDataByPrimaryKey" type="(primaryKey: string | number) => DATA_TYPE | undefined">
 
@@ -162,15 +156,14 @@ The row info array represents the current state of the DataSource. This array ma
 
 </Prop>
 
-
 <Prop name="insertData" type="(data: DATA_TYPE, { position, primaryKey }) => Promise">
 
 > Inserts the given data at the specified position relative to the given primary key.
 
 The `position` can be one of the following:
 
-* `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
-* `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
+- `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
+- `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
 
 We're intentionally not encouraging inserting at a specified `index`, as the index of rows in the visible viewport can change as the user sorts, filters or groups the data.
 
@@ -187,10 +180,10 @@ Click any row in the table to make it the current active row, and then use the s
 </Description>
 
 ```ts file="insert-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -200,16 +193,14 @@ Click any row in the table to make it the current active row, and then use the s
 
 Just like the <DApiLink name="insertData" /> method, the `position` can be one of the following:
 
-* `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
-* `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
-
+- `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
+- `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
 
 All the data items passed to this method will be inserted (in the order in the array) at the specified position.
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
 </Prop>
-
 
 <Prop name="updateData" type="(data: Partial<DATA_TYPE>) => Promise">
 
@@ -221,7 +212,6 @@ The data object must have a primary key that matches the primary key of the data
 
 </Note>
 
-
 ```ts
 dataSourceApi.updateData({
   // if the primaryKey is the id, make sure to include it
@@ -229,8 +219,8 @@ dataSourceApi.updateData({
 
   // and then include any properties you want to update - in this case, the name and age
   name: 'John Doe',
-  age: 30
-})
+  age: 30,
+});
 ```
 
 For updating an array of data, see the <DApiLink name="updateDataArray" /> method.
@@ -250,6 +240,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 </Description>
 
 ```ts file="live-updates-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -336,6 +327,5 @@ If you have an array of data objects, you can call <DApiLink name="removeDataArr
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 </Prop>
-
 
 </PropTable>

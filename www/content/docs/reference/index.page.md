@@ -6,7 +6,6 @@ layout: API
 
 The Reference pages contain API documentation on every prop exposed in the `InfiniteTable` component and the related `DataSource` component.
 
-
 <HeroCards>
 <YouWillLearnCard title="Infinite Table Props" path="/docs/reference/infinite-table-props">
 
@@ -53,7 +52,6 @@ Find out more about the Column API and how you can use it to change column state
 
 </HeroCards>
 
-
 ## Hooks
 
 Infinite Table exposes a few custom hooks that can be used to customize the component and its behavior. Most of the hooks will be useful when you want to implement custom components for `InfiniteTable` - like custom cells, headers, cell editors, etc.
@@ -67,7 +65,6 @@ Custom hooks allow you to use the `InfiniteTable` at full potential and customiz
 
 </HeroCards>
 
-
 ## Type Definitions
 
 Infinite Table exports quite a lot of TS type definitions. See the dedicated page for guides and explanations to help you use them effectively.
@@ -80,4 +77,3 @@ We export our type definitions in case you ever need them. In many cases, you wo
 </YouWillLearnCard>
 
 </HeroCards>
-

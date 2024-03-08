@@ -127,9 +127,8 @@ const defaultSortInfo = [{ field: 'firstName', dir: 1 }];
   data={data}
   defaultSortInfo={defaultSortInfo}
 >
-  <InfiniteTable  />
-</DataSource>
-
+  <InfiniteTable />
+</DataSource>;
 ```
 
 If your data is remote and you want the sorting to happen on the backend, you can still use uncontrolled sorting, but you need to specify <DPropLink name="sortMode">sortMode="remote"</DPropLink>.
@@ -159,7 +158,6 @@ When the controlled <DPropLink name="sortInfo" /> is combined with <DPropLink na
 But remember it's your responsibility to update the <DPropLink name="sortInfo" /> prop when the user interacts with the DataGrid.
 
 </Note>
-
 
 Both controlled <DataSourcePropLink name="sortInfo" /> and uncontrolled <DataSourcePropLink name="defaultSortInfo" /> work in combination with <DataSourcePropLink name="onSortInfoChange" /> - use it to be notified when sorting changes, so you can react and update your app accordingly if needed.
 
@@ -239,7 +237,6 @@ The functions specified in the <PropLink name="sortTypes" /> object need to alwa
 
 </Note>
 
-
 <Note>
 
 A column can choose to use a specific <PropLink name="columns.sortType" />, in which case, for local sorting, the corresponding sort function will be used, or, it can simply specify a <PropLink name="columns.dataType">dataType</PropLink> and the `sortType` with the same name will be used (when no explicit <PropLink name="columns.sortType">sortType</PropLink> is defined).
@@ -296,8 +293,8 @@ const sortFunction = (sortInfo, dataArray) => {
   // sort the dataArray according to the sortInfo
   // and return the sorted array
   // return sortedDataArray;
-}
-<DataSource<T> sortFunction={sortFunction} />
+};
+<DataSource<T> sortFunction={sortFunction} />;
 ```
 
 The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.
@@ -307,12 +304,10 @@ The function specified in the <DPropLink name="sortFunction" /> prop is called w
 When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
 </Note>
 
-
 <Sandpack  title="Using a custom sortFunction">
 
 ```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
 
 ```
-
 
 </Sandpack>

@@ -13,7 +13,7 @@ The next snippet shows our implementation of the `number` filter editor:
 export function NumberFilterEditor<T>() {
   const { ariaLabel, value, setValue, className, disabled } =
     useInfiniteColumnFilterEditor<T>();
-    
+
   return (
     <input
       aria-label={ariaLabel}
@@ -41,7 +41,7 @@ If you want to import the `NumberFilterEditor`, you can do so with the following
 ```tsx
 import { components } from '@infinite-table/infinite-react';
 
-const { NumberFilterEditor, StringFilterEditor } = components
+const { NumberFilterEditor, StringFilterEditor } = components;
 ```
 
 </Note>
@@ -83,6 +83,7 @@ filterTypes={{
   },
 }}
 ```
+
 The last part of the `bool` filter type will be to specify the `FilterEditor` component - this can be either specified as part of the filter type or as part of the operator definition (each operator can override the `components.FilterEditor`).
 
 ```tsx {6} title="Specifying the FilterEditor component"
@@ -106,7 +107,6 @@ filterTypes={{
 }}
 ```
 
-
 Now it's time to write the actual `BoolFilterEditor` that the `bool` filter type is using:
 
 ```tsx {9} title="BoolFilterEditor"
@@ -118,7 +118,8 @@ import {
 const { CheckBox } = components;
 
 function BoolFilterEditor() {
-  const { value, setValue, className } = useInfiniteColumnFilterEditor<Developer>();
+  const { value, setValue, className } =
+    useInfiniteColumnFilterEditor<Developer>();
   return (
     <div className={className} style={{ textAlign: 'center' }}>
       <CheckBox
@@ -155,6 +156,7 @@ The `canDesign` column is using a custom `bool` filter type with a custom filter
 </Description>
 
 ```ts file="checkbox-filter-editor-example.page.tsx"
+
 ```
 
 </Sandpack>

@@ -27,8 +27,8 @@ Adding more columns will not affect performance, as the DataGrid uses virtualiza
 ```tsx file="many-rows-and-columns-example.page.tsx"
 
 ```
-</Sandpack>
 
+</Sandpack>
 
 <Note>
 

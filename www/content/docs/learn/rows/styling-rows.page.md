@@ -37,6 +37,7 @@ The <PropLink name="rowClassName" /> function prop has the same signature as the
 <Sandpack>
 
 ```ts file="$DOCS/reference/rowStyle-example.page.tsx"
+
 ```
 
 ```ts file="$DOCS/reference/rowStyle-example-columns.ts" as="rowStyle-example-columns.ts"

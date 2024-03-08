@@ -38,7 +38,6 @@ Click on a cell in the table and use the arrow keys to navigate around.
 
 <YTEmbed code="D4_jFYkfsUI" />
 
-
 Keyboard navigation is controlled by the <PropLink name="keyboardNavigation" /> prop, which can be either `"cell"`, `"row"` or `false`. Navigating table cells is the default behavior.
 
 ## Using a default active cell

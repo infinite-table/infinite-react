@@ -1,24 +1,25 @@
 ---
-title: "Quarterly Update - Spring 2022"
-description: "Infinite Table update for Spring 2022"
+title: 'Quarterly Update - Spring 2022'
+description: 'Infinite Table update for Spring 2022'
 author: [admin]
-excerpt: "Infinite Table update for Spring 2022"
+excerpt: 'Infinite Table update for Spring 2022'
 ---
+
 This spring, we've been hard at work preparing for our Autumn release.
 
 We have implemented a few new functionalities:
 
- * [column resizing](#column-resizing) is now available
- * [column reordering](#column-reordering) can be achieved via drag & drop
- * [keyboard navigation](#keyboard-navigation) with support for both row and cell navigation
+- [column resizing](#column-resizing) is now available
+- [column reordering](#column-reordering) can be achieved via drag & drop
+- [keyboard navigation](#keyboard-navigation) with support for both row and cell navigation
 
 And we have updated some of the existing features:
 
- * [lazy grouping](#lazy-grouping) 
-    - expands lazy loaded rows correctly and 
-    - also the server response can contain multiple levels of `children`, which basically allows the backend to send more data for groups you don't want to load lazily
- * [column groups](#column-grouping) are now improved with support for proportional column resizing
- * [pivot columns](#pivoting) are now easier to style and customize
+- [lazy grouping](#lazy-grouping)
+  - expands lazy loaded rows correctly and
+  - also the server response can contain multiple levels of `children`, which basically allows the backend to send more data for groups you don't want to load lazily
+- [column groups](#column-grouping) are now improved with support for proportional column resizing
+- [pivot columns](#pivoting) are now easier to style and customize
 
 <Note title="Coming soon">
 
@@ -27,8 +28,9 @@ At the end of the spring, we started working on row and cell selection and we've
 Row selection is already implemented for non-lazy group data and we're working on integrating it with lazy group data (e.g groups lazily loaded from the server). Of course, it will have integration with checkbox selection.
 
 Multiple row selection will have 2 ways to select data:
- - via mouse/keyboard interaction - we've emulated the behavior you're used to from your Finder in MacOS.
- - via checkbox - this is especially useful when the table is configured with grouping.
+
+- via mouse/keyboard interaction - we've emulated the behavior you're used to from your Finder in MacOS.
+- via checkbox - this is especially useful when the table is configured with grouping.
 
 </Note>
 
@@ -44,7 +46,6 @@ Read more about how you can configure column resizing to fit your needs.
 
 </YouWillLearnCard>
 
-
 <CSEmbed id="infinite-table-resizable-columns-example-gq0fnv" title="Resizable columns example">
 
 <Description>
@@ -56,7 +57,6 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 </CSEmbed>
 
 A nice feature is support for SHIFT resizing - which will share space on resize between adjacent columns - try it in the example above.
-
 
 ### Column Reordering
 
@@ -76,7 +76,6 @@ The default column order is the order in which columns appear in the columns obj
 
 Both cell and row navigation is supported - use <PropLink name="keyboardNavigation" /> to configure it. By default, cell navigation is enabled.
 
-
 <CSEmbed title="Keyboard navigation" id="infinite-table-keyboard-navigating-cells-uncontrolled-tvwkmq">
 
 <Description>
@@ -86,7 +85,6 @@ This example starts with cell `[2,0]` already active.
 </Description>
 
 </CSEmbed>
-
 
 ## Updated Features
 
@@ -106,7 +104,6 @@ In this example, `France` is specified as expanded, so as soon as it is rendered
 
 Another nice feature is the ability for a group node to also contain its direct children in the server response, which basically allows the backend to eagerly load data for certain groups.
 
-
 <YouWillLearnCard inline title="More on lazy grouping" path="/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading">
 
 Lazy grouping (with or without batching) is an advanced feature that allows you to integrate with huge datasets without loading them into the browser.
@@ -116,7 +113,6 @@ Lazy grouping (with or without batching) is an advanced feature that allows you 
 ### Column grouping
 
 Column grouping was enhanced with support for pinned columns. Now you can use them in combination.
-
 
 <YouWillLearnCard inline title="More on column groups" path="/docs/learn/columns/column-grouping">
 
@@ -132,9 +128,7 @@ Note the `country` column is pinned at the start of the table but is also part o
 
 </Description>
 
-
 </CSEmbed>
-
 
 ### Pivoting
 

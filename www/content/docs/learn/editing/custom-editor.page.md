@@ -33,7 +33,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 The editor component should use the <HookLink name="useInfiniteColumnEditor"/> hook to have access to cell-related information and to confirm, cancel or reject the edit.
 
 ```tsx {3} title="CustomEditor.tsx"
-import { useInfiniteColumnEditor } from '@infinite-table/infinite-react'
+import { useInfiniteColumnEditor } from '@infinite-table/infinite-react';
 const CustomEditor = () => {
   const { initialValue, confirmEdit, cancelEdit } = useInfiniteColumnEditor();
 
@@ -42,7 +42,7 @@ const CustomEditor = () => {
   const onKeyDown = useCallback((event: React.KeyboardEvent) => {
     const { key } = event;
     if (key === 'Enter' || key === 'Tab') {
-      confirmEdit(domRef.current?.value );
+      confirmEdit(domRef.current?.value);
     } else if (key === 'Escape') {
       cancelEdit();
     } else {
@@ -70,7 +70,6 @@ Inside any custom editor component, you can use the <HookLink name="useInfiniteC
 
 </Note>
 
-
 <Sandpack title="Using a custom editor" >
 
 <Description>
@@ -79,12 +78,11 @@ In this example, the `salary` column is configured with a custom editor componen
 
 </Description>
 
-
 ```ts file="custom-editor-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 ## Using Custom Date Editors
 
@@ -98,8 +96,8 @@ This is a basic example integrating with the [MUI X Date Picker](https://mui.com
 
 </Description>
 
-
 ```ts file="date-editor-example.page.tsx"
+
 ```
 
 </Sandpack>

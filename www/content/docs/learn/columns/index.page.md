@@ -10,6 +10,7 @@ You define columns as a an object, with keys being column ids while values are t
 You then use them in the `columns` prop in your `InfiniteTable` component.
 
 The <PropLink name="columns" /> prop is typed either as
+
 - `Record<string, InfiniteTableColumn<DATA_TYPE>>`
 - or `InfiniteTablePropColumns<DATA_TYPE>`, which is an alias for the version above
 
@@ -82,7 +83,6 @@ You should use `React.useCallback` / `React.useMemo` / `React.useState` to make 
 Find out how to render custom content inside columns or even take full control of column cells and header.
 </YouWillLearnCard>
 
-
 ## Column Types
 
 Column types allow you to customize column behavior and appearance for multiple columns at once. Most of the properties available for columns are also available for column types - for a full list, see <PropLink>columnTypes</PropLink> reference.
@@ -95,7 +95,6 @@ There are two special <PropLink code={false} name="columns.type">column types</P
 <YouWillLearnCard inline title="Learn more on Column Types" path="./columns/column-types">
 Find out how to use column types to customize the appearance and behaviour of your columns.
 </YouWillLearnCard>
-
 
 ## Column Order
 

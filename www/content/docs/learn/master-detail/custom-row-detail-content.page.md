@@ -27,10 +27,10 @@ In this example, the row detail contains custom content, along with another Infi
 </Description>
 
 ```ts file="master-detail-custom-datagrid-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 <Note>
 
@@ -49,14 +49,15 @@ The example below shows 3 levels of nesting - so a master DataGrid, a detail Dat
 <Description>
 
 In this example, we have 3 levels of nesting:
- - The master DataGrid shows cities/countries
- - The first level of detail shows developers in each city
- - The second level of detail shows custom data about each developer
+
+- The master DataGrid shows cities/countries
+- The first level of detail shows developers in each city
+- The second level of detail shows custom data about each developer
 
 </Description>
 
-
 ```ts file="master-detail-3-levels-example.page.tsx"
+
 ```
 
 </Sandpack>

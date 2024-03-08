@@ -14,8 +14,8 @@ const column = {
       color: 'red',
       fontWeight: 'bold',
     },
-  }
-}
+  },
+};
 ```
 
 <Sandpack title="Using column.style as an object">
@@ -27,7 +27,6 @@ const column = {
 </Sandpack>
 
 The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `React.CSSProperties`) or a function that returns an object (of the same type).
-
 
 Using functions for the <PropLink name="columns.style">column.style</PropLink> property allows you to style the cells based on the cell's value or other properties.
 
@@ -42,11 +41,13 @@ const columns = {
       };
     },
   },
-}
+};
 ```
+
 <Sandpack title="Using column.style as a function">
 
 ```tsx file="column-style-fn-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -73,18 +74,20 @@ const columns = {
   firstName: {
     className: 'first-name-column',
   },
-}
+};
 ```
 
 <Sandpack title="Using column.className as an string">
 
 ```tsx file="column-className-string-example.page.tsx"
+
 ```
+
 ```css file="coloring.module.css"
+
 ```
 
 </Sandpack>
-
 
 Using functions for the <PropLink name="columns.className">column.className</PropLink> property allows you to style the cells based on the cell's data/value/rowInfo etc.
 
@@ -103,8 +106,11 @@ const columns = {
 <Sandpack title="Using column.className as a function">
 
 ```tsx file="column-className-fn-example.page.tsx"
+
 ```
+
 ```css file="coloring.module.css"
+
 ```
 
 </Sandpack>

@@ -47,8 +47,8 @@ Whenever filters change, <DPropLink name="onFilterChange" /> will be called with
 
 The above snippet will show a `number` filter for the `age` column. There are two filter types available at this stage in Infinite Table:
 
- * `string` - with the following operators available: `contains`, `eq`, `startsWith` and `endsWith`
- * `number` - with the following operators available: `eq`,`neq`, `gt`, `gte`, `lt` and `lte`
+- `string` - with the following operators available: `contains`, `eq`, `startsWith` and `endsWith`
+- `number` - with the following operators available: `eq`,`neq`, `gt`, `gte`, `lt` and `lte`
 
 ## Defining Filterable Columns
 
@@ -74,21 +74,21 @@ If the type of filter you want to show does not match the column <PropLink name=
 
 A filter type is a concept that defines how a certain type of data is to be filtered.
 A filter type will have
- - a `key` - the key used to define the filter in the <DPropLink name="filterTypes" /> object
- - a `label`,
- - an array of values considered to be empty values - when any of these values is used in the filter, the filter will not be applied.
- - an array of `operators`
- - a default operator.
+
+- a `key` - the key used to define the filter in the <DPropLink name="filterTypes" /> object
+- a `label`,
+- an array of values considered to be empty values - when any of these values is used in the filter, the filter will not be applied.
+- an array of `operators`
+- a default operator.
 
 Let's imagine you have a `DataSource` with developers, each with a `salary` column, and for that column you want to allow `>`, `>=`, `<` and `<=` comparisons (operators).
 
 For this, you would define the following filter type:
 
 ```tsx
-
 const filterTypes = {
   income: {
-    label: 'Income', 
+    label: 'Income',
     emptyValues: ['', null, undefined],
     defaultOperator: 'gt',
     operators: [
@@ -100,7 +100,7 @@ const filterTypes = {
             return true;
           }
           return currentValue > filterValue;
-        }
+        },
       },
       {
         name: 'gte',
@@ -113,26 +113,25 @@ const filterTypes = {
       {
         name: 'lte',
         //...
-      }
-    ]
-  }
-}
+      },
+    ],
+  },
+};
 ```
 
 <Note>
 
 Each operator for a certain filter type needs to at least have a `name` and `fn` defined. The `fn` property is a function that will be called when client-side filtering is enabled, with an object that has the following properties:
- - `currentValue` - the cell value of the current row for the column being filtered
- - `filterValue` - the value of the filter editor
- - `emptyValues` - the array of values considered to be empty values for the filter type
- - `data` - the current row data object - `typeof DATA_TYPE`
- - `index` - the index of the current row in the table - `number`
- - `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
- - `field?` - the field the current column is bound to (can be undefined if the column is not bound to a field)
+
+- `currentValue` - the cell value of the current row for the column being filtered
+- `filterValue` - the value of the filter editor
+- `emptyValues` - the array of values considered to be empty values for the filter type
+- `data` - the current row data object - `typeof DATA_TYPE`
+- `index` - the index of the current row in the table - `number`
+- `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
+- `field?` - the field the current column is bound to (can be undefined if the column is not bound to a field)
 
 </Note>
-
-
 
 <Sandpack title="Client-side filtering in action with custom filter type">
 
@@ -143,10 +142,10 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 </Description>
 
 ```ts file="filter-custom-filter-type-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 ## Specifying the filter mode
 
@@ -154,9 +153,8 @@ As already mentioned, filtering can happen either client-side or server-side. If
 
 However, you can explicitly specify where the filtering should happen by setting the <DPropLink name="filterMode" /> property on the `<DataSource />` component - possible values are
 
- - `filterMode="local"` - filtering will happen client-side
- - `filterMode="remote"` - filtering will happen remotely and the <DPropLink name="filterValue" /> will be passed as a property to the parameter object sent to the <DPropLink name="data"/> function.
-
+- `filterMode="local"` - filtering will happen client-side
+- `filterMode="remote"` - filtering will happen remotely and the <DPropLink name="filterValue" /> will be passed as a property to the parameter object sent to the <DPropLink name="data"/> function.
 
 <Note title="Filter mode ⚠️">
 
@@ -199,10 +197,10 @@ The `salary` column is not bound to a `field` - however, it can still be used fo
 </Description>
 
 ```ts file="filter-column-with-id-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 ## Customizing the Filter Icon for Columns
 
@@ -219,6 +217,7 @@ The `firstName` column will show a custom filter icon when filtered.
 </Description>
 
 ```ts file="$DOCS/learn/columns/column-filter-icon-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -231,4 +230,3 @@ Learn how to use filtering in the browser.
 Figure out how to use filtering with server-side integration.
 </YouWillLearnCard>
 </HeroCards>
-

@@ -134,12 +134,9 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Prop>
 
-
 <Prop name="defaultFilterValue" type="{field?, id?, filter: {type, operator, value}[]">
 
 > Uncontrolled prop used for filtering. Can be used for both [client-side](/docs/learn/filtering/filtering-client-side) and [server-side](/docs/learn/filtering/filtering-server-side) filtering.
-
-
 
 If you want to show the column filter editors, you have to either specify this property, or the controlled <DPropLink name="filterValue" /> - even if you have no initial filters. For no initial filters, use `defaultFilterValue=[]`.
 
@@ -152,7 +149,6 @@ For the controlled version, and more details on the shape of the objects in the 
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -255,7 +251,6 @@ sortTypes={{
 
 > The delay in milliseconds before the filter is applied. This is useful when you want to wait for the user to finish typing before applying the filter.
 
-
 This is especially useful in order to reduce the number of requests sent to the server, when <DPropLink name="filterMode">remote filtering</DPropLink> is used.
 
 If not specified, defaults to `200` milliseconds. This means, any changes to the column filters, that happen inside a 200ms window (or the current value of <DPropLink name="filterDelay"/>), will be debounced and only the last value will be sent to the server.
@@ -266,7 +261,6 @@ If you want to prevent debouncing/batching filter values, you can set <DPropLink
 
 </Note>
 
-
 </Prop>
 
 <Prop name="filterFunction" type="({ data, dataArray, index, primaryKey }) => boolean">
@@ -274,7 +268,6 @@ If you want to prevent debouncing/batching filter values, you can set <DPropLink
 > A function to be used for client-side filtering.
 
 Using this function will not show any special filtering UI for columns.
-
 
 <Sandpack title="Custom filterFunction example">
 
@@ -285,10 +278,10 @@ Loads data from remote location but will only show rows that have `id > 100`.
 </Description>
 
 ```ts file="custom-filter-function-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -307,23 +300,23 @@ Loads data from remote location but will only show rows that have `id > 100`.
 
 A filter type is a concept that defines how a certain type of data is to be filtered.
 A filter type will have a key, used to define the filter in the `filterTypes` object, and also the following properties:
- - `label`
- - `emptyValues` - an array of values considered to be empty values - when any of these values is used in the filter, the filter will match all records.
- - `operators` - an array of operator this filter type supports
- - `defaultOperator` - the default operator for the filter type
- - `components` - an object that describes the custom components to be used for the filter type
-    - `FilterEditor` - a custom filter editor component for this filter type
-    - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
+
+- `label`
+- `emptyValues` - an array of values considered to be empty values - when any of these values is used in the filter, the filter will match all records.
+- `operators` - an array of operator this filter type supports
+- `defaultOperator` - the default operator for the filter type
+- `components` - an object that describes the custom components to be used for the filter type
+  - `FilterEditor` - a custom filter editor component for this filter type
+  - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
 
 Let's imagine you have a `DataSource` with developers, each with a `salary` column, and for that column you want to allow `>`, `>=`, `<` and `<=` comparisons (operators).
 
 For this, you would define the following filter type:
 
 ```tsx
-
 const filterTypes = {
   income: {
-    label: 'Income', 
+    label: 'Income',
     emptyValues: ['', null, undefined],
     defaultOperator: 'gt',
     operators: [
@@ -332,7 +325,7 @@ const filterTypes = {
         label: 'Greater than',
         fn: ({ currentValue, filterValue }) => {
           return currentValue > filterValue;
-        }
+        },
       },
       {
         name: 'gte',
@@ -345,26 +338,25 @@ const filterTypes = {
       {
         name: 'lte',
         //...
-      }
-    ]
-  }
-}
+      },
+    ],
+  },
+};
 ```
 
 <Note>
 
 Each operator for a certain filter type needs to at least have a `name` and `fn` defined. The `fn` property is a function that will be called when client-side filtering is enabled, with an object that has the following properties:
- - `currentValue` - the cell value of the current row for the column being filtered
- - `filterValue` - the value of the filter editor
- - `emptyValues` - the array of values considered to be empty values for the filter type
- - `data` - the current row data object - `typeof DATA_TYPE`
- - `index` - the index of the current row in the table - `number`
- - `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
- - `field?` - the field the current column is bound to (can be undefined if the column is not bound to a field)
+
+- `currentValue` - the cell value of the current row for the column being filtered
+- `filterValue` - the value of the filter editor
+- `emptyValues` - the array of values considered to be empty values for the filter type
+- `data` - the current row data object - `typeof DATA_TYPE`
+- `index` - the index of the current row in the table - `number`
+- `dataArray` - the array of all rows originally in the table - `typeof DATA_TYPE[]`
+- `field?` - the field the current column is bound to (can be undefined if the column is not bound to a field)
 
 </Note>
-
-
 
 <Sandpack title="Custom filter type used for the salary column">
 
@@ -375,6 +367,7 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 </Description>
 
 ```ts file="filter-types-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -389,7 +382,6 @@ import { defaultFilterTypes } from '@infinite-table/infinite-react';
 
 If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
 
-
 <Sandpack title="Enhanced string filter type - new 'Not includes' operator">
 
 <Description>
@@ -399,6 +391,7 @@ The `string` columns have a new `Not includes` operator.
 </Description>
 
 ```ts file="default-filter-types-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -561,14 +554,16 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
 > A custom React component to be used as an editor for the current filter type
 
 Every filter type can define the following `components`
- - `FilterEditor` - a React component to be used as an editor for the current filter type
- - `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
+
+- `FilterEditor` - a React component to be used as an editor for the current filter type
+- `FilterOperatorSwitch` - a custom component that is displayed at the left of the `FilterEditor` and can be used for switching between operators - only needed for very very advanced use-cases.
 
 <Note>
 
 Filter type operators can override the `FilterEditor` component - they can specify the following components:
-  - `FilterEditor` - if specified, it overrides the `FilterEditor` of the filter type
-  - `Icon` - a React component to be used as an icon for the operator - displayed by the menu triggered when clicking on the `FilterOperatorSwitch` component
+
+- `FilterEditor` - if specified, it overrides the `FilterEditor` of the filter type
+- `Icon` - a React component to be used as an icon for the operator - displayed by the menu triggered when clicking on the `FilterOperatorSwitch` component
 
 </Note>
 
@@ -583,10 +578,10 @@ The checkbox has indeterminate state, which will match all values in the data so
 </Description>
 
 ```ts file="$DOCS/reference/hooks/custom-filter-editor-hooks-example.page.tsx"
+
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -598,16 +593,15 @@ For the uncontrolled version, see <DPropLink name="defaultFilterValue" />
 
 If you want to show the column filter editors, you have to either specify this property, or the uncontrolled <DPropLink name="defaultFilterValue" /> - even if you have no initial filters. For no initial filters, use `filterValue=[]`.
 
-
 The objects in this array have the following shape:
 
- * `filter` - an object describing the filter
-    * `filter.value` - the value to filter by
-    * `filter.type` - the current type of the filter (eg: `string`, `number` or another custom type you specify in the <DPropLink name="filterTypes">filterTypes</DPropLink> prop)
-    * `filter.operator` - the name of the operator being applied
- * `field` - the field being filtered - generally matched with a column. This is optional, as some columns can have no field.
-  * `id` - the id of the column being filtered. This is optional - for columns bound to a field, the `field` should be used instead of the `id`.
- * `disabled` - whether this filter is applied or not
+- `filter` - an object describing the filter
+  - `filter.value` - the value to filter by
+  - `filter.type` - the current type of the filter (eg: `string`, `number` or another custom type you specify in the <DPropLink name="filterTypes">filterTypes</DPropLink> prop)
+  - `filter.operator` - the name of the operator being applied
+- `field` - the field being filtered - generally matched with a column. This is optional, as some columns can have no field.
+- `id` - the id of the column being filtered. This is optional - for columns bound to a field, the `field` should be used instead of the `id`.
+- `disabled` - whether this filter is applied or not
 
 <Sandpack  title="Controlled filters with onFilterValueChange">
 
@@ -616,7 +610,6 @@ The objects in this array have the following shape:
 ```
 
 </Sandpack>
-
 
 </Prop>
 
@@ -664,7 +657,6 @@ See <TypeLink name="DataSourcePropGroupBy" /> for the type definition.
 
 </Prop>
 
-
 <Prop name="pivotBy" type="DataSourcePivotBy<DATA_TYPE>[]">
 
 > An array of objects with `field` properties that control how pivoting works. Pivoting is very often associated with aggregations, so see related <DPropLink name="aggregationReducers" /> for more details.
@@ -698,12 +690,11 @@ If <PropLink name="groupColumn"/> is specified, it overrides this property (the 
 
 <Note>
 
-If you are using a <PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="single-column"</PropLink>, then using  `groupBy.column` should not be used, as you could have many groups with conflicting column configuration. 
+If you are using a <PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy="single-column"</PropLink>, then using `groupBy.column` should not be used, as you could have many groups with conflicting column configuration.
 
 In this case, use the <PropLink name="groupColumn"/> prop.
 
 </Note>
-
 
 <Sandpack>
 
@@ -747,31 +738,31 @@ Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> 
 
 Called when any of the following methods have been called in the `DataSource` api
 
- - <DApiLink name="updateData" />
- - <DApiLink name="updateDataArray" />
+- <DApiLink name="updateData" />
+- <DApiLink name="updateDataArray" />
 
- - <DApiLink name="removeData" />
- - <DApiLink name="removeDataArray" />
+- <DApiLink name="removeData" />
+- <DApiLink name="removeDataArray" />
 
- - <DApiLink name="removeDataByPrimaryKey" />
- - <DApiLink name="removeDataArrayByPrimaryKeys" />
+- <DApiLink name="removeDataByPrimaryKey" />
+- <DApiLink name="removeDataArrayByPrimaryKeys" />
 
- - <DApiLink name="insertData" />
- - <DApiLink name="insertDataArray" />
+- <DApiLink name="insertData" />
+- <DApiLink name="insertDataArray" />
 
- - <DApiLink name="addData" />
- - <DApiLink name="addDataArray" />
+- <DApiLink name="addData" />
+- <DApiLink name="addDataArray" />
 
 This callback is called with an object that has the following properties:
 
- - `primaryKeyField` - the field configured as the primary key for the `<DataSource />`
- - `mutations` - a `Map` with mutations. The keys in the map are primary keys of the mutated data
- 
+- `primaryKeyField` - the field configured as the primary key for the `<DataSource />`
+- `mutations` - a `Map` with mutations. The keys in the map are primary keys of the mutated data
+
 The values in the mutations are object descriptors of mutations, that have the following shape:
 
- - `type`: `'insert'|'update'|'delete'`
- - `originalData`: `DATA_TYPE | null` - the original data before the mutation. In case of `insert`, it will be `null`
- - `data`: `Partial<DATA_TYPE>` - the updates to be performed on the data. In case of `delete`, it will be `undefined`. This is an object that will contain the primary key, and the updated values for the data (not necessarily the full object, except for `insert`, where it will be of type `DATA_TYPE`).
+- `type`: `'insert'|'update'|'delete'`
+- `originalData`: `DATA_TYPE | null` - the original data before the mutation. In case of `insert`, it will be `null`
+- `data`: `Partial<DATA_TYPE>` - the updates to be performed on the data. In case of `delete`, it will be `undefined`. This is an object that will contain the primary key, and the updated values for the data (not necessarily the full object, except for `insert`, where it will be of type `DATA_TYPE`).
 
 </Prop>
 
@@ -830,7 +821,6 @@ The function is called with an object that has the following properties:
 
 This might not be called immediately, as there might be a <DPropLink name="filterDelay"/> set.
 
-
 <Sandpack  title="Controlled filters with onFilterValueChange">
 
 ```ts file="onFilterValueChange-example.page.tsx"
@@ -849,11 +839,9 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 </Prop>
 
-
 <Prop name="onReady" type="(dataSourceApi: DataSourceApi<DATA_TYPE>) => void">
 
 > The callback that is called when the `DataSource` is ready. The [`dataSourceApi`](/docs/reference/datasource-api) is passed as the first argument.
-
 
 </Prop>
 
@@ -876,7 +864,6 @@ Use your mouse to select/deselect cells.
 </Sandpack>
 
 </Prop>
-
 
 <Prop name="onRowSelectionChange" type="(rowSelection, selectionMode='single-row'|'multi-row') => void">
 
@@ -930,7 +917,6 @@ See related <DataSourcePropLink name="sortInfo" /> for controlled sorting and <D
 > A value that can be used to trigger a re-fetch of the data.
 
 By updating the value of this prop (eg: you can use it as a counter, and increment it) the `<DataSource />` component reloads it's <DPropLink name="data" /> if it's defined as a function. More specifically, the `data` function is called again and the result will replace the current data.
-
 
 <Sandpack title="Re-fetching data via refetchKey updates" >
 
@@ -1069,10 +1055,10 @@ Read more on cell selection (`multi-cell` and `single-cell`).
 
 </HeroCards>
 
-
 <Sandpack title="Choose your selection mode between multi cell or multi row">
 
 ```ts file="selectionMode-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -1085,8 +1071,6 @@ Read more on cell selection (`multi-cell` and `single-cell`).
 
 The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.
 
-
-
 <Note>
 
 When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
@@ -1097,11 +1081,11 @@ When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" 
 The `@infinite-table/infinite-react` package exports a `multisort` function - this is the default function used for local sorting.
 
 ```ts
-import {
-  multisort,
-} from '@infinite-table/infinite-react';
+import { multisort } from '@infinite-table/infinite-react';
 
-const arr: Developer[] = [/*...*/]
+const arr: Developer[] = [
+  /*...*/
+];
 const sortInfo = [
   {
     field: 'age',
@@ -1110,15 +1094,14 @@ const sortInfo = [
   {
     field: 'name',
     dir: 1,
-  }
-]
-multisort(sortInfo, arr)
+  },
+];
+multisort(sortInfo, arr);
 ```
 
 If you want to implement your own custom sort function, the `multisort` fn is a good starting point you can use.
 
 </Note>
-
 
 <Sandpack  title="Using a custom sortFunction">
 
@@ -1169,7 +1152,6 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 See related <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" />.
 
-
 When set to `'local'`, the data is sorted locally (in the browser) after the data-source is loaded. When set to `'remote'`, the data should be sorted by the server (or by the data-source function that serves the data).
 
 See [the Sorting page](/docs/learn/sorting/overview) for more details.
@@ -1195,7 +1177,7 @@ Those values can be used for the <PropLink name="columns.sortType">column.sortTy
 const sortTypes = {
   string: (a, b) => a.localeCompare(b),
   number: (a, b) => a - b,
-  date: (a, b) => a - b
+  date: (a, b) => a - b,
 };
 ```
 

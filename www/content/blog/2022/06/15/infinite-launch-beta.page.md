@@ -1,5 +1,5 @@
 ---
-title: "Infinite Table Beta Launch 🚀"
+title: 'Infinite Table Beta Launch 🚀'
 author: [admin]
 ---
 
@@ -7,12 +7,12 @@ Today we are announcing the beta version (`0.3.12`) of `Infinite Table` ready to
 
 ## What the version offers
 
- * improved performance
- * improved light and dark themes
- * keyboard navigation for cells and rows
- * support for custom sorting
- * support for custom column rendering
- * and lots more!
+- improved performance
+- improved light and dark themes
+- keyboard navigation for cells and rows
+- support for custom sorting
+- support for custom column rendering
+- and lots more!
 
 ### Future plans
 

@@ -11,16 +11,11 @@ import '@infinite-table/infinite-react/index.css';
 
 This file includes both the **`light`** and the **`dark`** themes.
 
-
-At runtime, the `light` or `dark` theme are applied based on the user OS settings for the [preferred color scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme). 
-
-
+At runtime, the `light` or `dark` theme are applied based on the user OS settings for the [preferred color scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme).
 
 To explicitly apply the light theme, apply the className `"light"` (or `"infinite-light"`) to any parent element of the `<InfiniteTable />` component.
 
 To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-dark"`) to any parent element of the `<InfiniteTable />` component.
-
-
 
 ```tsx title="explicitly-apply-light-theme-via-container-className"
 <div className="light">
@@ -29,7 +24,6 @@ To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-
   </DataSource>
 </div>
 ```
-
 
 If instead you specify a `dark` CSS className, the dark theme will be applied
 

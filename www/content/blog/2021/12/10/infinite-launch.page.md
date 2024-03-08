@@ -1,5 +1,5 @@
 ---
-title: "Infinite Table Alpha Launch 🚀"
+title: 'Infinite Table Alpha Launch 🚀'
 author: [admin]
 ---
 

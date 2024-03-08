@@ -36,8 +36,8 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
   region: { field: 'region', columnGroup: 'location' },
 
   email: { field: 'email', columnGroup: 'contact info' },
-  phone: { field: 'phone', columnGroup: 'contact info' }
-}
+  phone: { field: 'phone', columnGroup: 'contact info' },
+};
 ```
 
 ## Column groups in action

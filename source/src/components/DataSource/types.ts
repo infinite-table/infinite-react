@@ -12,6 +12,7 @@ import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 export { RowDetailCache } from './RowDetailCache';
+export type { CellSelectionStateObject } from './CellSelectionState';
 import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,

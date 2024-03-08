@@ -2,6 +2,7 @@
 title: Working with Data
 description: Learn how to visualise and manage your data in new ways with Infinite Table
 ---
+
 When working with data, you will mostly interact with the `<DataSource />` component, which is responsible for handling and managing the data and passing it down to the `<InfiniteTable />` component, which is the rendering engine for the DataGrid.
 
 So we provide those two components (as named exports) inside `@infinite-table/infinite-react` package:
@@ -9,12 +10,11 @@ So we provide those two components (as named exports) inside `@infinite-table/in
 - `<DataSource />` - our data-handling component
 - `<InfiniteTable />` - our virtualized component
 
-The `<DataSource/>` component is responsible for the data the management layer. 
+The `<DataSource/>` component is responsible for the data the management layer.
 
 <Note>
 
 Probably the most important prop for the `<DataSource />` component is the <DPropLink name="idProperty" /> prop. It specifies the property of the data object that is used as a unique identifier for data rows/items.
-
 
 ```tsx
 <DataSource<DATA_TYPE>
@@ -41,7 +41,7 @@ Most of our examples in these docs have a `Developer` or `Employee` TypeScript d
 
 </Note>
 
-```tsx 
+```tsx
 import { DataSource } from '@infinite-table/infinite-react';
 
 type Employee = {
@@ -95,9 +95,9 @@ The <DataSourcePropLink name="data" /> prop can be either:
 
 We're aware there are countless strategies for loading data - each with its own strengths. We decided we should focus on building what we do best, namely building virtualized components, so we encourage you to use your preferred data-fetching library/solution. This being said, we still provide you with the flexibility you need when using the `<DataSource/>`, so here's what you can use for the <DPropLink name="data" /> prop of the component:
 
- - an array of the bound type
- - a Promise that resolves to an array of the bound type
- - a function that returns any of the above
+- an array of the bound type
+- a Promise that resolves to an array of the bound type
+- a function that returns any of the above
 
 While you're loading the data, you can always render a loading indicator - pass the <DataSourcePropLink name="loading" /> prop into the component (along with <PropLink name="loadingText" /> prop in the `<InfiniteTable />` component if you want to customize the message).
 
@@ -119,7 +119,7 @@ For basic datasets, which have simple data requirements, using `fetch` is probab
 
 #### Re-fetching on change
 
-It's important to note you can re-fetch data by changing the reference you pass as the `data` prop to the `<DataSource/>` component. 
+It's important to note you can re-fetch data by changing the reference you pass as the `data` prop to the `<DataSource/>` component.
 
 <Note>
 
@@ -141,9 +141,7 @@ Alternatively, you can use the <DPropLink name="refetchKey" /> prop to trigger a
 
 </Sandpack>
 
-
 ## Live Updates
-
 
 You can update your data in real-time by using our [DataSource API](/docs/reference/datasource-api).
 

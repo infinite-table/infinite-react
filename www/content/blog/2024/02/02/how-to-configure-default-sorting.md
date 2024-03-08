@@ -29,7 +29,6 @@ For sorting to work properly for numeric columns, don't forget to specify `type:
 
 <CSEmbed id="default-sort-order-react-datagrid-54dzny" />
 
-
 <Note>
 
 When the <PropLink name="defaultSortInfo" /> is an array, the DataGrid will know you want to allow sorting by multiple columns.
@@ -49,7 +48,6 @@ However, you can also have remote sorting - for this scenario, make sure you use
 In this case, it's your responsability to send the `sortInfo` to your backend using the <DPropLink name="data" /> prop of the DataSource - your `data` function will be called by the DataGrid whenever sorting changes. The arguments the function is called with will include the sort information (along with other details like filtering, grouping, aggregations, etc).
 
 ```tsx
-
 const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
   if (sortInfo && !Array.isArray(sortInfo)) {
     sortInfo = [sortInfo];
@@ -72,7 +70,6 @@ const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
-
 ```
 
 </Note>
@@ -90,7 +87,6 @@ However, you might want to respond in other ways - for this, you can use <DPropL
 If you use the controlled <DPropLink name="sortInfo" /> instead of the uncontrolled <DPropLink name="defaultSortInfo" />, you will need to configure the <DPropLink name="onSortInfoChange" /> callback to respond to sorting changes and update the UI.
 
 </Note>
-
 
 ## Using the column sort info for rendering
 

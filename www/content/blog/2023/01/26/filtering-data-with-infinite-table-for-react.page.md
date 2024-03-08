@@ -1,10 +1,10 @@
 ---
-title: "Filtering Data with Infinite Table for React"
-description: "Learn how to filter data both client-side and server-side with Infinite Table for React"
+title: 'Filtering Data with Infinite Table for React'
+description: 'Learn how to filter data both client-side and server-side with Infinite Table for React'
 author: [admin]
 ---
 
-*Today we shipped cutting-edge column filtering functionality, that enables intuitive client-side and server-side filtering*
+_Today we shipped cutting-edge column filtering functionality, that enables intuitive client-side and server-side filtering_
 
 <Note title="Why use Infinite Table filters?">
 
@@ -20,21 +20,15 @@ author: [admin]
 
 </Note>
 
-Filters were, by far, the most requested feature to add to Infinite Table after our initial launch. 
+Filters were, by far, the most requested feature to add to Infinite Table after our initial launch.
 
 The recently-released version `1.1.0` of Infinite Table for React introduces support for column filters, which work both client-side and server-side.
 
 In order to enable filtering - specify the <DPropLink name="defaultFilterValue"/> property on the `<DataSource />` component, as shown below:
 
 ```tsx {4} title="Enabling_filters_on_the_DataSource"
-<DataSource<Developer>
-  data={/* ... */}
-  primaryKey="id"
-  defaultFilterValue={[]}
->
-  <InfiniteTable<Developer>
-    columns={columns}
-  />
+<DataSource<Developer> data={/* ... */} primaryKey="id" defaultFilterValue={[]}>
+  <InfiniteTable<Developer> columns={columns} />
 </DataSource>
 ```
 
@@ -50,21 +44,20 @@ defaultFilterValue={[
       type: 'number',
       operator: 'gt',
       value: 40
-    } 
+    }
   }
 ]}
 ```
+
 You can see how all of this looks like when we put it all together in the examples below.
 
 ## Local and Remote Filtering
-
 
 Because the `<DataSource />` <DPropLink name="data" /> prop is a function that returns a `Promise` with remote data, the filtering will happen server-side by default.
 
 <CSEmbed title="Server-side filtering 10k records" id="infinite-table-with-remote-filters-i8b4wx" />
 
 When using remote filtering, it's your responsability to send the DataSource <DPropLink name="filterValue"/> to the backend (you get this object as a parameter in your <DPropLink name="data"/> function). This value includes for each column the value in the filter editor, the column filter type and the operator in use. In this case, the frontend and the backend need to agree on the operator names and what each one means.
-
 
 <Note title="Data reloads when filters change">
 
@@ -74,15 +67,12 @@ Whenever filters change, when remote filtering is configured, the <DPropLink nam
 However, we can use the <DPropLink name="filterMode"/> to force client-side filtering:
 
 ```tsx
-<DataSource<Developer>
-  filterMode="local"
-  filterDelay={0}
-/>
+<DataSource<Developer> filterMode="local" filterDelay={0} />
 ```
+
 We also specify the <DPropLink name="filterDelay">filterDelay=0</DPropLink> in order to perform filtering immediately, without debouncing and batching filter changes, for a quicker response ⚡️ 🏎
 
 <CSEmbed title="Client-side filtering 10k records" id="infinite-table-with-client-side-filters-sqbdbu" />
-
 
 <Note title="Using local filtering">
 
@@ -94,8 +84,8 @@ Even if your data is loaded from a remote source, using `filterMode="local"` wil
 
 Currently there are 2 filter types available in Infinite Table:
 
- - `string`
- - `number`
+- `string`
+- `number`
 
 Conceptually, you can think of filter types similar to data types - generally if two columns will have the same data type, they will display the same filter.
 
@@ -103,23 +93,18 @@ Each filter type supports a number of operators and each operator has a name and
 
 <CSEmbed title="Custom filter type and filter editor for canDesign column" id="infinite-table-filters-with-custom-editor-and-filter-type-ptlq2v"/>
 
-
 The example above, besides showing how to define <DPropLink name="filterTypes" code={false}>a custom filter type</DPropLink>, also shows how to define a custom filter editor.
-
 
 <Note title="Providing a Custom Filter Editor">
 
 For defining a custom filter editor to be used in a filter type, we need to write a new React component that uses the <HookLink name="useInfiniteColumnFilterEditor" /> hook.
 
 ```tsx
-
-import { useInfiniteColumnFilterEditor } from '@infinite-table/infinite-react'
+import { useInfiniteColumnFilterEditor } from '@infinite-table/infinite-react';
 
 export function BoolFilterEditor() {
   const { value, setValue } = useInfiniteColumnFilterEditor<Developer>();
-  return <>
-    {/* ... */}
-  </>
+  return <>{/* ... */}</>;
 }
 ```
 
@@ -138,7 +123,6 @@ For controlling which columns are filterable and which are not, use the <PropLin
 This overrides the global <PropLink name="columnDefaultFilterable" /> prop.
 
 We have also made it easy for you to customize the filter icon that is displayed in the column header.
-
 
 <CSEmbed title="Custom filter icons for firstName and salary columns" id="infinite-table-custom-filter-icon-jc7jr8" />
 
@@ -166,4 +150,3 @@ Learn how to use filtering in the browser.
 Figure out how to use filtering with server-side integration.
 </YouWillLearnCard>
 </HeroCards>
-

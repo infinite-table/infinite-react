@@ -11,7 +11,6 @@ To customize the column menu (for all columns, or for a specific column), use th
 
 ```tsx title="Customizing-column-menu"
 function getColumnMenuItems(items, { column }) {
-
   if (column.id === 'firstName') {
     // you can adjust the default items for a specific column
     items.splice(0, 0, {
@@ -24,16 +23,15 @@ function getColumnMenuItems(items, { column }) {
   }
 
   // or for all columns
-   items.push({
+  items.push({
     key: 'hello',
     label: 'Hello World',
     onClick: () => {
       alert('Hello World from column ' + column.id);
     },
   });
-  return items
+  return items;
 }
-
 ```
 
 <Note>
@@ -44,9 +42,7 @@ If you want to dynamically decide whether a column should show a menu or not, yo
 
 </Note>
 
-
 <Sandpack title="Custom column menu items and custom menu icon">
-
 
 <Description>
 
@@ -69,15 +65,12 @@ Each item in the array you return from <PropLink name="getColumnMenuItems" /> sh
 It's also possible to create items with submenus. For this, specify a `menu` property in the item, with an `items` array. Each item in the `items` array should have a `key` and a `label` property, as you would expect.
 
 ```tsx {8} title="Menu_items_with_submenus"
-
 function getColumnMenuItems(items, { column }) {
-
   const items = [
     {
       key: 'translate',
       label: 'Translate',
       menu: {
-
         items: [
           {
             key: 'translateToEnglish',
@@ -94,14 +87,12 @@ function getColumnMenuItems(items, { column }) {
             },
           },
         ],
+      },
+    },
+  ];
 
-      }
-    }
-  ]
-
-  return items
+  return items;
 }
-
 ```
 
 ## Custom menu icon
@@ -116,9 +107,9 @@ const columns = {
   },
   salary: {
     field: 'salary',
-    renderMenuIcon: false
-  }
-}
+    renderMenuIcon: false,
+  },
+};
 ```
 
 <Note>

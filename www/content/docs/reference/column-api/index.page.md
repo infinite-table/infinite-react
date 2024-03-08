@@ -11,7 +11,6 @@ See the [Infinite Table Row Detail API page](/docs/reference/row-detail-api) for
 
 <PropTable searchPlaceholder="Type to filter API methods" sort>
 
-
 <Prop name="clearSort">
 
 > Clears the sorting for the current column.
@@ -40,8 +39,6 @@ Calling this will trigger <DPropLink name="onSortInfoChange" />.
 
 </Prop>
 
-
-
 <Prop name="toggleSort" type="(options?) => void">
 
 > Toggles the sorting for the current column. Aliased to <ApiLink name="toggleSortingForColumn" />.
@@ -66,13 +63,13 @@ See related <ColumnApiLink name="setSort" /> and <ColumnApiLink name="getSorting
 
 <Prop name="setSort" type="(dir: 1|-1|null) => void">
 
-> Sets the sorting for the current column.  Aliased to <ApiLink name="setSortingForColumn" />.
+> Sets the sorting for the current column. Aliased to <ApiLink name="setSortingForColumn" />.
 
 The sort direction is specified by the `dir` parameter, which can be:
- - `1` for ascending
- - `-1` for descending
- - `null` for clearing the sorting.
 
+- `1` for ascending
+- `-1` for descending
+- `null` for clearing the sorting.
 
 See related <ColumnApiLink name="toggleSort" /> and <ColumnApiLink name="getSortDir" />.
 
@@ -83,11 +80,12 @@ See related <ColumnApiLink name="toggleSort" /> and <ColumnApiLink name="getSort
 > Returns the sorting currently applied to the current column. Aliased to <ApiLink name="getSortingForColumn" />.
 
 The return value is:
- - `1` for ascending
- - `-1` for descending
- - `null` for no sorting.
 
- See related <ColumnApiLink name="toggleSortingForColumn" /> and <ColumnApiLink name="setSortingForColumn" />.
+- `1` for ascending
+- `-1` for descending
+- `null` for no sorting.
+
+See related <ColumnApiLink name="toggleSortingForColumn" /> and <ColumnApiLink name="setSortingForColumn" />.
 
 </Prop>
 
@@ -99,7 +97,6 @@ It is the same as calling <ColumnApiLink name="setSort" /> with `null` as the ar
 
 </Prop>
 
-
 <Prop name="isSortable" type="()=> boolean">
 
 > Returns whether the current column is sortable.
@@ -107,8 +104,6 @@ It is the same as calling <ColumnApiLink name="setSort" /> with `null` as the ar
 See related <PropLink name="columnDefaultSortable" />, <PropLink name="columns.defaultSortable" />, <PropLink name="columnTypes.defaultSortable" /> and <PropLink name="sortable" />
 
 </Prop>
-
-
 
 <Prop name="showContextMenu" type="() => void">
 
@@ -139,6 +134,5 @@ The `preferredLanguage` column has a custom header that shows a button for trigg
 </Sandpack>
 
 </Prop>
-
 
 </PropTable>

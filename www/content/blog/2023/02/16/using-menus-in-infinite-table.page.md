@@ -1,10 +1,10 @@
 ---
-title: "Using Menus in Infinite Table"
-description: "Find out how to use menus in Infinite Table to customise the DataGrid to fit your needs: custom context menus, column menus and more."
+title: 'Using Menus in Infinite Table'
+description: 'Find out how to use menus in Infinite Table to customise the DataGrid to fit your needs: custom context menus, column menus and more.'
 author: [admin]
 ---
 
-*With version 1.1.0, our DataGrid now includes support for context menus, which are fully configurable so you can create custom menus for any cell in the table.*
+_With version 1.1.0, our DataGrid now includes support for context menus, which are fully configurable so you can create custom menus for any cell in the table._
 
 <Note title="Context menus in Infinite Table">
 
@@ -30,8 +30,8 @@ const getCellContextMenuItems = ({ column, data, value }) => {
         label: `Convert ${value}`,
         key: 'currency-convert',
         onAction: (key, item) => {
-          alert('clicked ' + item.key)
-        }
+          alert('clicked ' + item.key);
+        },
       },
     ];
   }
@@ -53,19 +53,17 @@ const getCellContextMenuItems = ({ column, data, value }) => {
     getCellContextMenuItems={getCellContextMenuItems}
     columns={columns}
   />
-</DataSource>
-
+</DataSource>;
 ```
 
 In the <PropLink name="getCellContextMenuItems" /> function prop, you have access to all the information you need, in the first argument of the function:
 
- - `column` - the column on which the user right-clicked
- - `data` - the data object for the row the user right-clicked
- - `value` - the value of the cell on which the context menu has been triggered. This is generally `data[column.field]`, but it can be different if the column has a <PropLink name="columns.valueGetter" /> or <PropLink name="columns.valueFormatter" />
- - `rowInfo` - an object that contains more information about the row, like the `id` (the primary key) and the row index
- - `isGroupRow`
- - and more
-
+- `column` - the column on which the user right-clicked
+- `data` - the data object for the row the user right-clicked
+- `value` - the value of the cell on which the context menu has been triggered. This is generally `data[column.field]`, but it can be different if the column has a <PropLink name="columns.valueGetter" /> or <PropLink name="columns.valueFormatter" />
+- `rowInfo` - an object that contains more information about the row, like the `id` (the primary key) and the row index
+- `isGroupRow`
+- and more
 
 <Note>
 
@@ -75,14 +73,12 @@ If <PropLink name="getCellContextMenuItems" /> returns an empty array, the defau
 
 </Note>
 
-
 <Note title="Responding to user actions">
 
 Each item on the context menu can specify an `onAction` function, which will be called when the user clicks on the menu item. The function will receive the `key` and the `item` as arguments.
 
 In addition, since the menu items are returned from inside the `getCellContextMenuItems` function, the `onAction` callback has access to the same information as the `getCellContextMenuItems` function.
 </Note>
-
 
 <CSEmbed title="Context menu for all cells" id="cell-context-menus-ibtnn0" />
 
@@ -95,13 +91,9 @@ However, Infinite Table for React allows you to create more complex menus, with 
 In order to do this, use the same <PropLink name="getCellContextMenuItems"/> prop, but return an object, with `columns` and `items`
 
 ```tsx
-
 const getCellContextMenuItems = () => {
   return {
-    columns: [
-      { name: 'label' },
-      { name: 'lcon' }
-    ],
+    columns: [{ name: 'label' }, { name: 'lcon' }],
     items: [
       {
         label: 'Welcome',
@@ -112,10 +104,10 @@ const getCellContextMenuItems = () => {
         label: 'Convert',
         icon: '🔁',
         key: 'convert',
-      }
-    ]
-  }
-}
+      },
+    ],
+  };
+};
 ```
 
 <Note>
@@ -141,11 +133,9 @@ There are scenarios when you want to display a context menu even when you right-
 
 The signature of <PropLink name="getContextMenuItems" /> is almost identical with that of <PropLink name="getCellContextMenuItems"/>, with the exception that cell-related information can be undefined - if the user didn't right-click a cell, but somewhere else in the table body.
 
-
 <CSEmbed id="table-context-menus-0h2qzf" title="Context menus outside cells, for the table body"/>
 
 In the example above, if you click outside a cell, a menu with a single item will be displayed - `Add Item`. If you click on a cell, the menu will be different, and will show information about the clicked cell.
-
 
 ## Column menus
 
@@ -155,7 +145,6 @@ Just like context menus, the column menus can also be fully customised, by using
 
 ```tsx title="Customizing-column-menu"
 function getColumnMenuItems(items, { column }) {
-
   if (column.id === 'firstName') {
     // you can adjust the default items for a specific column
     items.splice(0, 0, {
@@ -168,14 +157,14 @@ function getColumnMenuItems(items, { column }) {
   }
 
   // or for all columns
-   items.push({
+  items.push({
     key: 'hello',
     label: 'Hello World',
     onClick: () => {
       alert('Hello World from column ' + column.id);
     },
   });
-  return items
+  return items;
 }
 ```
 
@@ -187,7 +176,6 @@ You can either modify this array and return it or you can return another totally
 
 </Note>
 
-
 <CSEmbed id="custom-column-menus-93jsyb" />
 
 As with context menus, positioning column menus is also smart - the menu will always try to fit inside the grid viewport, so it will align to the right or the left of the column, depending on the available space.
@@ -195,7 +183,6 @@ As with context menus, positioning column menus is also smart - the menu will al
 ## Conclusion
 
 In this article, we've explained just some of the scenarios that are now possible with Infinite Table for React, by using the new context and column menus.
-
 
 <HeroCards>
 <YouWillLearnCard title="Working with Context Menus" path="/docs/learn/context-menus/using-context-menus">
@@ -211,4 +198,3 @@ We hope you'll use these functionalities to build amazing DataGrids for your app
 If you find any issues or have any questions, please reach out to us on [Twitter](https://twitter.com/infinite_table) or in the [GitHub Discussions](https://github.com/infinite-table/infinite-react/discussions) or [issues](https://github.com/infinite-table/infinite-react/issues).
 
 We're happy to help and improve how you work with the component - we want to make it very easy and straight-forward to use it and are looking for ways to simplify our APIs to **achieve more with less**.
-

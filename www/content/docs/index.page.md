@@ -37,7 +37,6 @@ Infinite Table is fully typed and offers you a great developer experience, to he
 
 > The TypeScript typings file is included in the npm package - you don't have to download an additional **@types** package
 
-
 <HeroCards>
 <YouWillLearnCard title="Learn about our TypeScript typings" path="/docs/learn/getting-started/typescript-types">
 Read more about how to use our TypeScript types

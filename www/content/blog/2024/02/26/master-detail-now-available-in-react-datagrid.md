@@ -7,13 +7,12 @@ Today is a big day for the Infinite React DataGrid - we're excited to announce t
 
 With this addition, our DataGrid is now enterprise-ready! We know master-detail scenarios are needed in many business applications, and we're happy to provide this feature to our users starting today!
 
-
 <Note title="Master-detail highlights 🎉">
 
-  1️⃣ [support for multiple levels of master-detail & rendering custom content](#what-can-you-do-with-master-detail)
-  2️⃣ [configurable detail height](#configurable-detail-height)
-  3️⃣ [control over expand/collapse state](#configurable-expandcollapse-state)
-  4️⃣ [caching mechanism for detail DataGrids](#master-detail-caching)
+1️⃣ [support for multiple levels of master-detail & rendering custom content](#what-can-you-do-with-master-detail)
+2️⃣ [configurable detail height](#configurable-detail-height)
+3️⃣ [control over expand/collapse state](#configurable-expandcollapse-state)
+4️⃣ [caching mechanism for detail DataGrids](#master-detail-caching)
 
 </Note>
 
@@ -26,7 +25,6 @@ You can render basically anything in the detail row - it doesn't need to be anot
 In the detail `<DataSource />` component, you have access to the master row, so it will be very easy to load related data based on the master row the user expands.
 
 <CSEmbed id="tender-cdn-9cpznx" code={false} size="md" title="Basic master detail DataGrid example"/>
-
 
 ## Configurable detail height
 
@@ -58,14 +56,13 @@ For such cases we offer a caching mechanism that will keep the state of the deta
 
 <Note>
 
-
 To enable caching, use the <PropLink name="rowDetailCache" /> prop.
 
 It can be one of the following:
- - `false` - caching is disabled - this is the default
- - `true` - enables caching for all detail DataGrids
- - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
+- `false` - caching is disabled - this is the default
+- `true` - enables caching for all detail DataGrids
+- `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
 </Note>
 

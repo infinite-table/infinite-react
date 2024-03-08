@@ -21,7 +21,7 @@ type Developer = {
   firstName: string;
   lastName: string;
   age: number;
-}
+};
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id', // will be used as default label in column header
@@ -30,13 +30,14 @@ const columns: InfiniteTablePropColumns<Developer> = {
   name: {
     header: 'First and Last Name', // custom column header label
     valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
-  }
-}
+  },
+};
 ```
 
 <Sandpack title="Simple table with both default and custom column headers">
 
 ```ts file="column-header-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -70,12 +71,12 @@ It's a series of functions defined on the column that are called while rendering
 
 All of the functions that are part of the column header rendering pipeline are called with the same object as the first argument - the shape of this object is described in the previous section.
 
- * <PropLink name="columns.renderSortIcon">renderSortIcon</PropLink>
- * <PropLink name="columns.renderFilterIcon">renderFilterIcon</PropLink>
- * <PropLink name="columns.renderMenuIcon">renderMenuIcon</PropLink>
- * <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink>
- * <PropLink name="columns.renderHeaderSelectionCheckBox">renderHeaderSelectionCheckBox</PropLink>
- * <PropLink name="columns.header">header</PropLink>
+- <PropLink name="columns.renderSortIcon">renderSortIcon</PropLink>
+- <PropLink name="columns.renderFilterIcon">renderFilterIcon</PropLink>
+- <PropLink name="columns.renderMenuIcon">renderMenuIcon</PropLink>
+- <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink>
+- <PropLink name="columns.renderHeaderSelectionCheckBox">renderHeaderSelectionCheckBox</PropLink>
+- <PropLink name="columns.header">header</PropLink>
 
 If you want to customize any of the above, use the corresponding function.
 
@@ -121,13 +122,12 @@ renderSortIcon(){
 <Sandpack title="Custom sort icon for the name column">
 
 ```ts file="column-sort-icon-example.page.tsx"
+
 ```
 
 </Sandpack>
 
-
 ### Customizing the Menu Icon
-
 
 For customizing the menu icon, use the <PropLink name="columns.renderMenuIcon">column.renderMenuIcon</PropLink> function.
 
@@ -165,6 +165,7 @@ Also, the id column has `renderMenuIcon: false` set, so it doesn't show a column
 </Description>
 
 ```ts file="column-menu-icon-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -177,9 +178,7 @@ Also, see the <PropLink name="columns.renderMenuIcon">column.renderMenuIcon</Pro
 
 </Note>
 
-
 ### Customizing the Filter Icon
-
 
 For customizing the filter icon, use the <PropLink name="columns.renderFilterIcon">column.renderFilterIcon</PropLink> function.
 
@@ -225,12 +224,12 @@ The `firstName` column will show a custom filter icon when filtered.
 </Description>
 
 ```ts file="column-filter-icon-example.page.tsx"
+
 ```
 
 </Sandpack>
 
 ### Customizing the Selection Checkbox
-
 
 For customizing the selection checkbox in the column header, use the <PropLink name="columns.renderHeaderSelectionCheckBox">column.renderHeaderSelectionCheckBox</PropLink> function.
 
@@ -249,6 +248,7 @@ The group column, as well as the `stack` column display a custom selection check
 </Description>
 
 ```ts file="column-header-selection-checkbox-example.page.tsx"
+
 ```
 
 </Sandpack>

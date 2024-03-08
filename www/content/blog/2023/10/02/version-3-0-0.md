@@ -1,6 +1,6 @@
 ---
-title: "Infinite Table React DataGrid version 3.0.0 released"
-description: "InfiniteTable DataGrid for React version 3.0.0 brings many small fixes and enhancements, along with a major new feature: cell selection"
+title: 'Infinite Table React DataGrid version 3.0.0 released'
+description: 'InfiniteTable DataGrid for React version 3.0.0 brings many small fixes and enhancements, along with a major new feature: cell selection'
 author: [admin]
 ---
 
@@ -8,9 +8,9 @@ Version `3.0.0` is a release that brings a long awaited feature: cell selection.
 
 <Note title="Version 3.0.0 highlights 🎉">
 
-  1️⃣ [support for single and multiple cell selection](#1-support-for-single-and-multiple-cell-selection)
-  2️⃣ [cell selection using wildcards](#2-cell-selection-using-wildcards)
-  3️⃣ [cell selection API](#3-cell-selection-api)
+1️⃣ [support for single and multiple cell selection](#1-support-for-single-and-multiple-cell-selection)
+2️⃣ [cell selection using wildcards](#2-cell-selection-using-wildcards)
+3️⃣ [cell selection API](#3-cell-selection-api)
 
 </Note>
 
@@ -21,7 +21,7 @@ It's been a [long-requested feature to implement cell selection](https://github.
 We knew we needed to implement it, but we wanted to do it right while keeping it easy to understand.
 
 In fact, we prepared some things in advance - namely <DPropLink name="selectionMode" /> was there, it just needed to accept a new value: `"multi-cell"`.
- 
+
 ```tsx title="Configuring multi-cell selection"
 <DataSource<Developer>
   selectionMode="multi-cell" // <--- THIS
@@ -44,21 +44,22 @@ If you want to render the DataGrid with a default selection, you can use the <DP
 const defaultCellSelection = {
   defaultSelection: false,
   selectedCells: [
-    [3, "hobby"],
-    [4, "firstName"],
-    [4, "hobby"],
-    [4, "preferredLanguage"],
-    [4, "salary"]
-  ]
+    [3, 'hobby'],
+    [4, 'firstName'],
+    [4, 'hobby'],
+    [4, 'preferredLanguage'],
+    [4, 'salary'],
+  ],
 };
 ```
+
 The format for the uncontrolled <DPropLink name="defaultCellSelection" /> (and also for the controlled <DPropLink name="cellSelection" />) is an object with two properties:
 
- - `defaultSelection` - `boolean` - whether or not cells are selected by default.
- - and either
-    - `selectedCells` - `[string|number, string][]` - only needed when `defaultSelection` is `false`
- - or
-    - `deselectedCells` - `[string|number, string][]` - only needed when `defaultSelection` is `true`
+- `defaultSelection` - `boolean` - whether or not cells are selected by default.
+- and either
+  - `selectedCells` - `[string|number, string][]` - only needed when `defaultSelection` is `false`
+- or
+  - `deselectedCells` - `[string|number, string][]` - only needed when `defaultSelection` is `true`
 
 The value for `selectedCells` and `deselectedCells` should be an array of `[rowId, colId]` tuples.
 
@@ -103,20 +104,18 @@ In addition to managing cell selection declaratively, which we encourage, you ca
 
 We offer the following methods:
 
- - <CellApiLink name="selectCell" /> - selects a single cell, while allowing you to keep or to clear previous selection
- - <CellApiLink name="deselectCell" /> - deselects the specified cell
- - <CellApiLink name="selectColumn" /> - selects a whole column in the DataGrid
- - <CellApiLink name="deselectColumn" /> - deselects the specified column
- - <CellApiLink name="selectRange" /> - selects a range of cells
- - <CellApiLink name="deselectRange" /> - deselects the specified range of cells
- - <CellApiLink name="selectAll" /> - selects all cells in the DataGrid
- - <CellApiLink name="clear" /> - clears selection (deselects all cells in the DataGrid)
- - <CellApiLink name="isCellSelected" /> - checks if the specified cell is selected or not
-
+- <CellApiLink name="selectCell" /> - selects a single cell, while allowing you to keep or to clear previous selection
+- <CellApiLink name="deselectCell" /> - deselects the specified cell
+- <CellApiLink name="selectColumn" /> - selects a whole column in the DataGrid
+- <CellApiLink name="deselectColumn" /> - deselects the specified column
+- <CellApiLink name="selectRange" /> - selects a range of cells
+- <CellApiLink name="deselectRange" /> - deselects the specified range of cells
+- <CellApiLink name="selectAll" /> - selects all cells in the DataGrid
+- <CellApiLink name="clear" /> - clears selection (deselects all cells in the DataGrid)
+- <CellApiLink name="isCellSelected" /> - checks if the specified cell is selected or not
 
 ## Conclusion
 
-
-We'd love to hear your feedback - what do you think we've got right and what's missing. Please reach out to us via email at <a href="mailto:admin@infinite-table.com" className=" text-glow " > admin@infinite-table.com </a> or follow us [@get_infinite](https://twitter.com/get_infinite) to keep up-to-date with news about the product. 
+We'd love to hear your feedback - what do you think we've got right and what's missing. Please reach out to us via email at <a href="mailto:admin@infinite-table.com" className=" text-glow " > admin@infinite-table.com </a> or follow us [@get_infinite](https://twitter.com/get_infinite) to keep up-to-date with news about the product.
 
 Talk soon 🙌

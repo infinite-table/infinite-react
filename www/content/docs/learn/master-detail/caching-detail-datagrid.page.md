@@ -20,11 +20,10 @@ Other persisted parts of the state are the sorting, filtering and grouping infor
 To enable caching, use the <PropLink name="rowDetailCache" /> prop.
 
 It can be one of the following:
- - `false` - caching is disabled - this is the default
- - `true` - enables caching for all detail DataGrids
- - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
-
+- `false` - caching is disabled - this is the default
+- `true` - enables caching for all detail DataGrids
+- `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
 <Sandpack title="Master detail DataGrid with caching for 5 detail DataGrids" size="lg" viewMode="preview">
 
@@ -37,6 +36,7 @@ But when you open up a row that hasn't been opened before, it will load the data
 </Description>
 
 ```ts file=master-detail-caching-with-default-expanded-example.page.tsx
+
 ```
 
 </Sandpack>

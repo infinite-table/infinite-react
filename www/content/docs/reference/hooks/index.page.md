@@ -36,7 +36,6 @@ const CustomCellComponent = (props: React.HTMLProps<HTMLDivElement>) => {
 
 You should not pass the `domRef` along when using the hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> function.
 
-
 <Sandpack title="Column with render & useInfiniteColumnCell">
 
 ```tsx file="$DOCS/reference/column-render-hooks-example.page.tsx"
@@ -61,7 +60,6 @@ When writing a custom editor, it's probably good to stop the propagation of the 
 
 </Note>
 
-
 <Sandpack title="Column with custom editor">
 
 <Description>
@@ -76,7 +74,6 @@ Try editing the `salary` column - it has a custom editor
 
 </Sandpack>
 
-
 </Prop>
 
 <Prop name="useInfiniteColumnFilterEditor" type="() => ({ column, value, setValue, className, filtered,... })">
@@ -85,18 +82,16 @@ Try editing the `salary` column - it has a custom editor
 
 The return value of this hook is an object with the following properties:
 
- * `value` - the value that should be passed to the filter editor
- * `setValue(value)` - the functon you have to call to update the filtering for the current column
- * `column` - the current column
- * `operatorName`: `string` - the name of the operator currently being applied
- * `className` - a CSS class name to apply to the filter editor, for default styling
- * `filtered` - a boolean indicating whether the column is currently filtered or not
- * `disabled` - a boolean indicating whether the filter editor should be rendered as disabled or not
- * `filterTypeKey`: `string` - the key of the filter type
- * `filterType` - the filter type object for the current column
- * `filterTypes` - a reference to the <DPropLink name="filterTypes" /> object as configured in the `DataSource`
-
-
+- `value` - the value that should be passed to the filter editor
+- `setValue(value)` - the functon you have to call to update the filtering for the current column
+- `column` - the current column
+- `operatorName`: `string` - the name of the operator currently being applied
+- `className` - a CSS class name to apply to the filter editor, for default styling
+- `filtered` - a boolean indicating whether the column is currently filtered or not
+- `disabled` - a boolean indicating whether the filter editor should be rendered as disabled or not
+- `filterTypeKey`: `string` - the key of the filter type
+- `filterType` - the filter type object for the current column
+- `filterTypes` - a reference to the <DPropLink name="filterTypes" /> object as configured in the `DataSource`
 
 <Sandpack title="Demo of a custom filter editor">
 
@@ -109,6 +104,7 @@ The checkbox has indeterminate state, which will match all values in the data so
 </Description>
 
 ```ts file="custom-filter-editor-hooks-example.page.tsx"
+
 ```
 
 </Sandpack>

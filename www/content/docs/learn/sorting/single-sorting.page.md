@@ -15,7 +15,6 @@ Technically, it's the `<DataSource />` that's being sorted, not the `<InfiniteTa
 
 </Note>
 
-
 <Sandpack title="Default behavior is single sorting.">
 
 <Description>
@@ -27,7 +26,6 @@ By default, clicking a column header sorts the column.
 ```ts file="local-single-sorting-example-defaults-with-local-data.page.tsx"
 
 ```
-
 
 </Sandpack>
 
@@ -49,7 +47,6 @@ Uncontrolled sorting is managed internally by the `<DataSource />` component, so
 For controlled sorting, make sure you use the <DataSourcePropLink name="sortInfo" /> prop and the <DataSourcePropLink name="onSortInfoChange" /> callback.
 
 </Note>
-
 
 <Sandpack title="Local + uncontrolled single-sorting example">
 
@@ -95,7 +92,6 @@ To describe the sorting order, you have to use an object that has the following 
 - `field?` - `keyof DATA_TYPE` - the field to sort by - optional.
 - `id?` - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
 - `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"`, `"date"` - will be used for local sorting, to provide the proper comparison function.
-
 
 ### Multiple Sorting
 
@@ -164,9 +160,8 @@ const defaultSortInfo = [{ field: 'firstName', dir: 1 }];
   data={data}
   defaultSortInfo={defaultSortInfo}
 >
-  <InfiniteTable  />
-</DataSource>
-
+  <InfiniteTable />
+</DataSource>;
 ```
 
 If your data is remote and you want the sorting to happen on the backend, you can still use uncontrolled sorting, but you need to specify <DPropLink name="sortMode">sortMode="remote"</DPropLink>.
@@ -196,7 +191,6 @@ When the controlled <DPropLink name="sortInfo" /> is combined with <DPropLink na
 But remember it's your responsibility to update the <DPropLink name="sortInfo" /> prop when the user interacts with the DataGrid.
 
 </Note>
-
 
 Both controlled <DataSourcePropLink name="sortInfo" /> and uncontrolled <DataSourcePropLink name="defaultSortInfo" /> work in combination with <DataSourcePropLink name="onSortInfoChange" /> - use it to be notified when sorting changes, so you can react and update your app accordingly if needed.
 
@@ -273,7 +267,6 @@ Those are the two sort types supported by default.
 The functions specified in the <PropLink name="sortTypes" /> object need to always sort data in ascending order.
 </Note>
 
-
 <Note>
 
 A column can choose to use a specific <PropLink name="columns.sortType" />, in which case, for local sorting, the corresponding sort function will be used, or, it can simply specify a <PropLink name="columns.dataType">dataType</PropLink> and the `sortType` with the same name will be used (when no explicit <PropLink name="columns.sortType">sortType</PropLink> is defined).
@@ -330,8 +323,8 @@ const sortFunction = (sortInfo, dataArray) => {
   // sort the dataArray according to the sortInfo
   // and return the sorted array
   // return sortedDataArray;
-}
-<DataSource<T> sortFunction={sortFunction} />
+};
+<DataSource<T> sortFunction={sortFunction} />;
 ```
 
 The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.
@@ -341,12 +334,10 @@ The function specified in the <DPropLink name="sortFunction" /> prop is called w
 When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
 </Note>
 
-
 <Sandpack  title="Using a custom sortFunction">
 
 ```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
 
 ```
-
 
 </Sandpack>

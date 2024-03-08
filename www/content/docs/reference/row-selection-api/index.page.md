@@ -15,7 +15,6 @@ To enable multi-row selection, you need to specify <DPropLink name="selectionMod
 
 </Note>
 
-
 You can retrieve the row selection api by reading it from the `api.rowSelectionApi` property.
 
 ```tsx {4}

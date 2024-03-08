@@ -42,7 +42,6 @@ For the value of <PropLink name="loadingText" /> you can use JSX, not only strin
 
 <CSEmbed id="infinite-table-datagrid-custom-loading-text-yzqlsj" />
 
-
 ## Customising the loading component - the `LoadMask`
 
 In addition to the loading text, you can also customise the `LoadMask` component. This is the component that is displayed when the DataGrid is loading data. By default, it's a `<div />` with `width: 100%; height: 100%; zIndex: 1; display: flex` that contains the loading text.
@@ -68,21 +67,21 @@ function LoadMask() {
   return (
     <div
       style={{
-        width: "100%",
-        height: "100%",
+        width: '100%',
+        height: '100%',
         zIndex: 100,
-        background: "tomato",
+        background: 'tomato',
         opacity: 0.3,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       <div
         style={{
           padding: 20,
-          background: "white",
-          color: "black",
+          background: 'white',
+          color: 'black',
           borderRadius: 5,
         }}
       >
@@ -91,7 +90,6 @@ function LoadMask() {
     </div>
   );
 }
-
 ```
 
 <CSEmbed id="infinite-table-datagrid-custom-loading-text-forked-vpqps3" />

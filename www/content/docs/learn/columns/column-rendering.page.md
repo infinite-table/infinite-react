@@ -94,20 +94,20 @@ Inside the <PropLink name="columns.renderValue"/> and <PropLink name="columns.re
 This is especially useful when inside those functions you render a custom component that needs access to the same information.
 
 ```tsx
-type Developer = { country: string; name: string; id: string}
+type Developer = { country: string; name: string; id: string };
 
 const CountryInfo = () => {
-  const { data, rowInfo, value } = useInfiniteColumnCell<Developer>()
+  const { data, rowInfo, value } = useInfiniteColumnCell<Developer>();
 
-  return <div>Country: {value}</div>
-}
+  return <div>Country: {value}</div>;
+};
 
 const columns = {
   country: {
     field: 'country',
-    renderValue: () => <CountryInfo />
-  }
-}
+    renderValue: () => <CountryInfo />,
+  },
+};
 ```
 
 </Note>
@@ -308,7 +308,6 @@ The default <PropLink name="columns.render" /> function (the last one in the pip
 - a `groupIcon` - for group columns
 - a `selectionCheckBox` - for columns that have <PropLink name="columns.renderSelectionCheckBox" /> defined (combined with row selection)
 
-
 When the rendering process starts for a column cell, all the above end up in the `renderBag` object.
 
 ### Rendering pipeline - `renderBag.value`
@@ -405,7 +404,6 @@ Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `tog
 
 </Hint>
 
-
 ### Rendering pipeline - `renderBag.selectionCheckBox`
 
 Like with the previous properties of `renderBag`, you can customize the `selectionCheckBox` (used when multiple selection is configured) to be piped-through - for columns that specify <PropLink name="columns.renderSelectionCheckBox" />.
@@ -446,7 +444,6 @@ const column: InfiniteTableColumn<T> = {
   },
 };
 ```
-
 
 To recap, here is the full list of the functions in the rendering pipeline, in order of invocation:
 

@@ -16,12 +16,12 @@ const columns: InfiniteTablePropColumns<Developer> = {
       // don't forget to provide an implementation
       // for the BoolEditor component
       Editor: BoolEditor,
-    }
+    },
   },
   id: {
     field: 'id',
-  }
-}
+  },
+};
 ```
 
 <Note title="No built-in custom editors!">
@@ -29,13 +29,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
 For now, we're not shipping any extra editors with Infinite Table.
 
 There are a few reasons for that:
- * we want to keep our bundle size small
- * we're aware people have their own preferences - especially **select/combo boxes** and **date pickers** are very complex components on their own and there are many different popular alternatives many teams already use in their projects
+
+- we want to keep our bundle size small
+- we're aware people have their own preferences - especially **select/combo boxes** and **date pickers** are very complex components on their own and there are many different popular alternatives many teams already use in their projects
 
 So in this page and other parts of the docs, we'll use some popular alternatives, to show how to integrate them with Infinite Table.
 
 </Note>
-
 
 ## Using Date Editors
 
@@ -49,8 +49,8 @@ This is a basic example integrating with the [MUI X Date Picker](https://mui.com
 
 </Description>
 
-
 ```ts file="date-editor-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -65,14 +65,14 @@ After defining your generic column types, make sure you assign them to the colum
 
 <Description>
 
-This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired**  columns to show the date picker.
+This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired** columns to show the date picker.
 
 This example uses the <PropLink name="columnTypes" code={false}>column types</PropLink> to give each date column the same editor and styling.
 
 </Description>
 
-
 ```ts file="column-types-date-editor-example.page.tsx"
+
 ```
 
 </Sandpack>

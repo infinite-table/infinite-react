@@ -357,12 +357,12 @@ function CodeSandboxEmbed({
   children?: React.ReactNode;
   title?: React.ReactNode;
   size?: SizeOption;
-  code?: false;
+  code?: false | number;
 }) {
   src =
     src ||
     `https://codesandbox.io/embed/${id}?fontsize=14&hidenavigation=1&module=%2FApp.tsx&theme=dark&editorsize=${
-      code === false ? 0 : 50
+      code === false ? 0 : typeof code === 'number' ? code : 50
     }`;
 
   const theChildren = React.Children.toArray(

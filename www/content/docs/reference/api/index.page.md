@@ -27,7 +27,6 @@ See the [Infinite Table Cell Selection API page](/docs/reference/cell-selecti-ap
 See the [Infinite Table Column API page](/docs/reference/column-api) for the column API.
 See the [Infinite Table Row Details API page](/docs/reference/row-detail-api) for the row detail API (when master-detail is configured).
 
-
 <PropTable sort searchPlaceholder="Type to filter API methods">
 
 <Prop name="confirmEdit" type="(value?: any) => void">
@@ -70,7 +69,6 @@ See related <ApiLink name="confirmEdit" /> and <ApiLink name="cancelEdit" />.
 
 </Prop>
 
-
 <Prop name="toggleSortingForColumn" type="(columnId: string, options?) => void">
 
 > Toggles the sorting for the specified column.
@@ -98,10 +96,10 @@ See related <ApiLink name="setSortingForColumn" /> and <ApiLink name="getSorting
 > Sets the sorting for the specified column.
 
 The sort direction is specified by the `dir` parameter, which can be:
- - `1` for ascending
- - `-1` for descending
- - `null` for clearing the sorting.
 
+- `1` for ascending
+- `-1` for descending
+- `null` for clearing the sorting.
 
 See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="getSortingForColumn" />.
 
@@ -112,11 +110,12 @@ See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="getSort
 > Returns the sorting currently applied to the specified column.
 
 The return value is:
- - `1` for ascending
- - `-1` for descending
- - `null` for no sorting.
 
- See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="setSortingForColumn" />.
+- `1` for ascending
+- `-1` for descending
+- `null` for no sorting.
+
+See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="setSortingForColumn" />.
 
 </Prop>
 
@@ -164,9 +163,9 @@ Call this function with an object that has a `columnId` and either a `rowIndex` 
 
 The returned object has the following properties:
 
- * `rawValue` - the raw value of the cell - as retrieved from the <PropLink name="columns.field"/> property of the column or by calling the column <PropLink name="columns.valueGetter">valueGetter</PropLink>
- * `formattedValue` - the formatted value of the cell - if the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>, it's the value returned by the formatter, otherwise it's the same as the `rawValue`
- * `value` - it's either `formattedValue` or `rawValue`. If the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>, it's the value returned by the formatter, otherwise it's the `rawValue`
+- `rawValue` - the raw value of the cell - as retrieved from the <PropLink name="columns.field"/> property of the column or by calling the column <PropLink name="columns.valueGetter">valueGetter</PropLink>
+- `formattedValue` - the formatted value of the cell - if the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>, it's the value returned by the formatter, otherwise it's the same as the `rawValue`
+- `value` - it's either `formattedValue` or `rawValue`. If the column has a <PropLink name="columns.valueFormatter">valueFormatter</PropLink>, it's the value returned by the formatter, otherwise it's the `rawValue`
 
 See related <ApiLink name="getCellValue" />.
 
@@ -210,11 +209,10 @@ Returns a promise that resolves to `true` if editing was started, or `false` if 
 
 See <PropLink name="columns.defaultEditable" /> for more details on how to configure a cell as editable.
 
-
 <Sandpack title="Starting an Edit via the API">
 
-
 ```ts file="api-start-edit-example.page.tsx"
+
 ```
 
 </Sandpack>
@@ -295,15 +293,11 @@ const scrollTop = api.scrollTop;
 
 </Prop>
 
-
 <Prop name="setColumnFilter" type="(columnId: string, value: any) =>void">
 
 > Sets a filter value for the specified column
 
 </Prop>
-
-
-
 
 <Prop name="setColumnOrder" type="(columnIds: string[] | true) => void">
 
