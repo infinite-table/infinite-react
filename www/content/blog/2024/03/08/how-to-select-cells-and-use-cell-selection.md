@@ -1,9 +1,9 @@
 ---
-title: How to use single and multiple cell selection
+title: How to use multiple cell selection in the DataGrid
 author: admin
 ---
 
-This article will cover some popular cell-selection scenarios in Infinite React DataGrid.
+The article will cover some popular cell-selection scenarios in Infinite React DataGrid.
 
 ## Multiple cell selection
 
