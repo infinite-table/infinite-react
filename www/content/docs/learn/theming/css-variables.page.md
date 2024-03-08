@@ -5,8 +5,7 @@ description: Reference list of CSS variables that can be used to style the Infin
 
 Below you can find the complete list of CSS variables that can be used to style the component.
 
-{/_ START VARS _/}
-
+{/* START VARS */}
 ### Accent color
 
 Brand-specific accent color. This probably needs override to match your app.
@@ -16,6 +15,8 @@ Brand-specific accent color. This probably needs override to match your app.
 ```
 
 ### Error color
+
+
 
 ```css
 --infinite-error-color
@@ -31,11 +32,15 @@ The text color inside the component
 
 ### Space 0
 
+
+
 ```css
 --infinite-space-0
 ```
 
 ### Space 1
+
+
 
 ```css
 --infinite-space-1
@@ -43,11 +48,15 @@ The text color inside the component
 
 ### Space 2
 
+
+
 ```css
 --infinite-space-2
 ```
 
 ### Space 3
+
+
 
 ```css
 --infinite-space-3
@@ -55,11 +64,15 @@ The text color inside the component
 
 ### Space 4
 
+
+
 ```css
 --infinite-space-4
 ```
 
 ### Space 5
+
+
 
 ```css
 --infinite-space-5
@@ -67,11 +80,15 @@ The text color inside the component
 
 ### Space 6
 
+
+
 ```css
 --infinite-space-6
 ```
 
 ### Space 7
+
+
 
 ```css
 --infinite-space-7
@@ -79,11 +96,15 @@ The text color inside the component
 
 ### Space 8
 
+
+
 ```css
 --infinite-space-8
 ```
 
 ### Space 9
+
+
 
 ```css
 --infinite-space-9
@@ -91,11 +112,15 @@ The text color inside the component
 
 ### Space 10
 
+
+
 ```css
 --infinite-space-10
 ```
 
 ### Font size 0
+
+
 
 ```css
 --infinite-font-size-0
@@ -103,11 +128,15 @@ The text color inside the component
 
 ### Font size 1
 
+
+
 ```css
 --infinite-font-size-1
 ```
 
 ### Font size 2
+
+
 
 ```css
 --infinite-font-size-2
@@ -115,11 +144,15 @@ The text color inside the component
 
 ### Font size 3
 
+
+
 ```css
 --infinite-font-size-3
 ```
 
 ### Font size 4
+
+
 
 ```css
 --infinite-font-size-4
@@ -127,11 +160,15 @@ The text color inside the component
 
 ### Font size 5
 
+
+
 ```css
 --infinite-font-size-5
 ```
 
 ### Font size 6
+
+
 
 ```css
 --infinite-font-size-6
@@ -139,11 +176,15 @@ The text color inside the component
 
 ### Font size 7
 
+
+
 ```css
 --infinite-font-size-7
 ```
 
 ### Font family
+
+
 
 ```css
 --infinite-font-family
@@ -151,11 +192,15 @@ The text color inside the component
 
 ### Min height
 
+
+
 ```css
 --infinite-min-height
 ```
 
 ### Border radius
+
+
 
 ```css
 --infinite-border-radius
@@ -173,6 +218,8 @@ Overriden in the `dark` theme.
 
 ### Icon size
 
+
+
 ```css
 --infinite-icon-size
 ```
@@ -187,11 +234,15 @@ The padding used for the content inside the LoadMask.
 
 ### Load mask color
 
+
+
 ```css
 --infinite-load-mask-color
 ```
 
 ### Load mask text background
+
+
 
 ```css
 --infinite-load-mask-text-background
@@ -199,17 +250,23 @@ The padding used for the content inside the LoadMask.
 
 ### Load mask overlay background
 
+
+
 ```css
 --infinite-load-mask-overlay-background
 ```
 
 ### Load mask overlay opacity
 
+
+
 ```css
 --infinite-load-mask-overlay-opacity
 ```
 
 ### Load mask border radius
+
+
 
 ```css
 --infinite-load-mask-border-radius
@@ -255,11 +312,15 @@ Overriden in the `dark` theme.
 
 ### Header cell hover background
 
+
+
 ```css
 --infinite-header-cell-hover-background
 ```
 
 ### Header cell padding
+
+
 
 ```css
 --infinite-header-cell-padding
@@ -267,11 +328,15 @@ Overriden in the `dark` theme.
 
 ### Header cell padding x
 
+
+
 ```css
 --infinite-header-cell-padding-x
 ```
 
 ### Header cell padding y
+
+
 
 ```css
 --infinite-header-cell-padding-y
@@ -279,17 +344,23 @@ Overriden in the `dark` theme.
 
 ### Header cell icon size
 
+
+
 ```css
 --infinite-header-cell-icon-size
 ```
 
 ### Header cell menu icon line width
 
+
+
 ```css
 --infinite-header-cell-menu-icon-line-width
 ```
 
 ### Header cell sort icon margin
+
+
 
 ```css
 --infinite-header-cell-sort-icon-margin
@@ -333,11 +404,15 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Filter operator padding x
 
+
+
 ```css
 --infinite-filter-operator-padding-x
 ```
 
 ### Filter editor padding x
+
+
 
 ```css
 --infinite-filter-editor-padding-x
@@ -345,11 +420,15 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Filter editor margin x
 
+
+
 ```css
 --infinite-filter-editor-margin-x
 ```
 
 ### Filter operator padding y
+
+
 
 ```css
 --infinite-filter-operator-padding-y
@@ -357,11 +436,15 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Filter editor padding y
 
+
+
 ```css
 --infinite-filter-editor-padding-y
 ```
 
 ### Filter editor margin y
+
+
 
 ```css
 --infinite-filter-editor-margin-y
@@ -369,11 +452,15 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Filter editor background
 
+
+
 ```css
 --infinite-filter-editor-background
 ```
 
 ### Filter editor border
+
+
 
 ```css
 --infinite-filter-editor-border
@@ -381,11 +468,15 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Filter editor focus border color
 
+
+
 ```css
 --infinite-filter-editor-focus-border-color
 ```
 
 ### Filter editor border radius
+
+
 
 ```css
 --infinite-filter-editor-border-radius
@@ -393,17 +484,23 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Filter editor color
 
+
+
 ```css
 --infinite-filter-editor-color
 ```
 
 ### Cell padding
 
+
+
 ```css
 --infinite-cell-padding
 ```
 
 ### Cell border width
+
+
 
 ```css
 --infinite-cell-border-width
@@ -421,11 +518,15 @@ Overriden in the `dark` theme - eg: `1px solid #2a323d`
 
 ### Cell border invisible
 
+
+
 ```css
 --infinite-cell-border-invisible
 ```
 
 ### Cell border radius
+
+
 
 ```css
 --infinite-cell-border-radius
@@ -433,11 +534,15 @@ Overriden in the `dark` theme - eg: `1px solid #2a323d`
 
 ### Column reorder effect duration
 
+
+
 ```css
 --infinite-column-reorder-effect-duration
 ```
 
 ### Pinned cell border
+
+
 
 ```css
 --infinite-pinned-cell-border
@@ -465,6 +570,8 @@ If not specified, it will default to `var(--infinite-active-cell-background)`.
 
 ### Selected cell background default
 
+
+
 ```css
 --infinite-selected-cell-background-default
 ```
@@ -491,7 +598,7 @@ If not specified, it will default to `var(--infinite-active-cell-background-alph
 ### Selected cell border color
 
 The color for border of the selected cell (when cell selection is enabled).
-Defaults to `var(--infinite-active-cell-border-color)`.
+ Defaults to `var(--infinite-active-cell-border-color)`.
 
 ```css
 --infinite-selected-cell-border-color
@@ -561,6 +668,8 @@ However, specify this to explicitly override the default.
 
 ### Active cell background default
 
+
+
 ```css
 --infinite-active-cell-background-default
 ```
@@ -599,11 +708,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Selection checkbox margin inline
 
+
+
 ```css
 --infinite-selection-checkbox-margin-inline
 ```
 
 ### Menu background
+
+
 
 ```css
 --infinite-menu-background
@@ -611,11 +724,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu color
 
+
+
 ```css
 --infinite-menu-color
 ```
 
 ### Menu padding
+
+
 
 ```css
 --infinite-menu-padding
@@ -623,11 +740,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu cell padding vertical
 
+
+
 ```css
 --infinite-menu-cell-padding-vertical
 ```
 
 ### Menu cell padding horizontal
+
+
 
 ```css
 --infinite-menu-cell-padding-horizontal
@@ -635,11 +756,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu cell margin vertical
 
+
+
 ```css
 --infinite-menu-cell-margin-vertical
 ```
 
 ### Menu item disabled background
+
+
 
 ```css
 --infinite-menu-item-disabled-background
@@ -647,11 +772,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu item active background
 
+
+
 ```css
 --infinite-menu-item-active-background
 ```
 
 ### Menu item active opacity
+
+
 
 ```css
 --infinite-menu-item-active-opacity
@@ -659,11 +788,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu item pressed opacity
 
+
+
 ```css
 --infinite-menu-item-pressed-opacity
 ```
 
 ### Menu item pressed background
+
+
 
 ```css
 --infinite-menu-item-pressed-background
@@ -671,11 +804,15 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu item disabled opacity
 
+
+
 ```css
 --infinite-menu-item-disabled-opacity
 ```
 
 ### Menu border radius
+
+
 
 ```css
 --infinite-menu-border-radius
@@ -683,26 +820,34 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ### Menu shadow color
 
+
+
 ```css
 --infinite-menu-shadow-color
 ```
 
-### Rowdetails background
+### Rowdetail background
+
+
 
 ```css
---infinite-rowdetails-background
+--infinite-rowdetail-background
 ```
 
-### Rowdetails padding
+### Rowdetail padding
+
+
 
 ```css
---infinite-rowdetails-padding
+--infinite-rowdetail-padding
 ```
 
-### Rowdetails grid height
+### Rowdetail grid height
+
+
 
 ```css
---infinite-rowdetails-grid-height
+--infinite-rowdetail-grid-height
 ```
 
 ### Row background
@@ -726,6 +871,8 @@ Overriden in `dark` theme.
 ```
 
 ### Row selected background
+
+
 
 ```css
 --infinite-row-selected-background
@@ -812,11 +959,15 @@ Overriden in the `dark` theme.
 
 ### Row selected hover background
 
+
+
 ```css
 --infinite-row-selected-hover-background
 ```
 
 ### Group row background
+
+
 
 ```css
 --infinite-group-row-background
@@ -824,14 +975,16 @@ Overriden in the `dark` theme.
 
 ### Group row column nesting
 
+
+
 ```css
 --infinite-group-row-column-nesting
 ```
 
 ### Row pointer events while scrolling
 
+
+
 ```css
 --infinite-row-pointer-events-while-scrolling
-```
-
-{/_ END VARS _/}
+```{/* END VARS */}
