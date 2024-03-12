@@ -14,6 +14,11 @@ In addition, make sure you have a column with the `renderRowDetailIcon: true` fl
 The row detail in the DataGrid can contain another DataGrid or any other custom content.
 </Note>
 
+<Note>
+
+It's very imporant that the <PropLink name="rowDetailRenderer" /> function prop you pass into `<InfiniteTable />` is stable and doesn't change on every render. So make sure you pass a reference to the same function every time - except of course if you want the row detail to change based on some other state.
+</Note>
+
 <Sandpack title="Basic master detail DataGrid example" size="lg">
 
 <Description>
