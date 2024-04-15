@@ -40,7 +40,7 @@ export const HeroPicture = () => {
     >
       <div
         ref={heroImageContainerRef}
-        className={`${cmpStyles.HeroImageCls}`}
+        className={`${cmpStyles.HeroImageCls} flex items-center justify-center relative`}
         style={{ zIndex: 10 }}
       >
         {HeroImage}
