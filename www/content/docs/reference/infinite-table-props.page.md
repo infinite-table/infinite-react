@@ -3048,14 +3048,6 @@ Use this property to declaratively tell the `InfiniteTable` component to scroll 
 
 </Prop>
 
-<Prop name="sortable" type="boolean" defaultValue={true}>
-
-> Specifies the sorting behavior for all columns. Can be overriden at column-level.
-
-This property controls the behavior for all columns that don't have <PropLink name="columns.sortable" /> explicitly specified (or at least specified in the column type at <PropLink name="columnTypes.sortable" />).
-
-</Prop>
-
 <Prop name="virtualizeColumns" type="boolean" defaultValue={true}>
 
 > Configures whether columns are virtualized or not

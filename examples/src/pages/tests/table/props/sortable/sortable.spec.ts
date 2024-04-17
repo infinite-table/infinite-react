@@ -13,8 +13,6 @@ export default test.describe.parallel('Table', () => {
 
     await firstNameCol.clickToSort();
 
-    await page.waitForTimeout(10);
-
     expect(await firstNameCol.getValues()).toEqual(['Bob', 'Alice', 'Bill']);
   });
 

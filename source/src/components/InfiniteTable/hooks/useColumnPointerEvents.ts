@@ -68,6 +68,11 @@ export const useColumnPointerEvents = ({
   } = useInfiniteTable();
 
   const defaultPointerDown = useCallback((e: React.PointerEvent) => {
+    const computedCol = getComputed().computedVisibleColumnsMap.get(columnId);
+
+    if (!computedCol || !computedCol.computedSortable) {
+      return;
+    }
     const { multiSortBehavior } = getState();
 
     api.toggleSortingForColumn(columnId, {
