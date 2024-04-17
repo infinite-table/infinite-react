@@ -9,6 +9,8 @@ import codeMeta from './plugins/code-meta.mjs';
 import remarkMilestones from './plugins/remark-milestone.mjs';
 //@ts-ignore
 import remarkRemoveComments from 'remark-remove-comments';
+// //@ts-ignore
+// import remarkEmbedImages from 'remark-embed-images';
 // import removeHTMLComments from './plugins/remove-html-comments.mjs';
 
 import fm from 'gray-matter';
@@ -39,6 +41,7 @@ import rehypeStringify from 'rehype-stringify';
 
 async function excerptToHTML(excerpt: string) {
   const file = await unified()
+    // .use(remarkEmbedImages)
     .use(remarkParse)
     //@ts-ignore
     .use(remarkRehype)
