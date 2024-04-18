@@ -235,7 +235,7 @@ To make the setup easier, avoid using `index.page.tsx` pages in NextJS - give yo
 
 <Note>
 
-Check out our repo for this stage of the setup - [Step 3 - configuring the Playwright fixture and naming convention](03-configure-naming-convention).
+Check out our repo for this stage of the setup - [Step 3 - configuring the Playwright fixture and naming convention](https://github.com/infinite-table/testing-setup-nextjs-playwright/tree/03-configure-naming-convention).
 
 </Note>
 
