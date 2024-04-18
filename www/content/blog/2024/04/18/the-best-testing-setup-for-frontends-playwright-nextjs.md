@@ -1,7 +1,6 @@
 ---
 title: The best testing setup for frontends, with Playwright and NextJS
 author: admin
-draft: true
 ---
 
 We want to share with you the best testing setup we've experienced - and this includes using [Playwright](https://playwright.dev/) and [NextJS](https://nextjs.org/). It's a setup we've come up with for Infinite React DataGrid, which is a complex component, with lots of things to test, but this configuration has helped us ship with more confidence and speed.
@@ -358,7 +357,7 @@ This script first builds the NextJS static app and then runs the tests against i
 
 ## Configuring CI github actions 
 
-We're now ready to integrate our testing workflow into CI via Github actions.
+We're now ready to integrate our [testing workflow into CI via Github actions](https://playwright.dev/docs/ci-intro).
 
 Create a YAML file `.github/workflows/test.yml` in the root of your project with the following content.
 
