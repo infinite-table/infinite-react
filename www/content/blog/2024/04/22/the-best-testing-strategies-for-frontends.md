@@ -64,5 +64,3 @@ In our experience, the best testing strategy for modern frontends is a combinati
 Though we used shallow component testing in the past, we're not going back to it - mocking the DOM and the browser is no longer worth it when you can use a real browser with Playwright.
 
 We hope this article has been helpful in guiding you towards the best testing strategy for your frontend. If you have any questions or comments, feel free to reach out to us at [admin@infinite-table.com](mailto:admin@infinite-table.com). We're always happy to help! 
-
-```
