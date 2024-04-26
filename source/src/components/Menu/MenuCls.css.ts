@@ -1,6 +1,6 @@
 import { fallbackVar, style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
-import { ThemeVars } from '../InfiniteTable/theme.css';
+import { ThemeVars } from '../InfiniteTable/vars.css';
 import {
   alignItems,
   boxSizingBorderBox,

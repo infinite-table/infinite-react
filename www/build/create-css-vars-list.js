@@ -118,7 +118,7 @@ const path = require('path');
 const vars = extract(
   path.resolve(
     __dirname,
-    '../../source/src/components/InfiniteTable/theme.css.ts',
+    '../../source/src/components/InfiniteTable/vars.css.ts',
   ),
   ['ThemeVars'],
 );

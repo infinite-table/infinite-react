@@ -7,7 +7,7 @@ import {
 import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 import {
   alignItems,
   display,
@@ -25,8 +25,8 @@ export const columnAlignCellStyle = styleVariants({
 });
 
 export const CellBorderObject = {
-  borderLeft: `${ThemeVars.components.Cell.borderWidth} solid transparent`,
-  borderRight: `${ThemeVars.components.Cell.borderWidth} solid transparent`,
+  borderLeft: `${ThemeVars.components.Cell.borderLeft}`,
+  borderRight: `${ThemeVars.components.Cell.borderRight}`,
 };
 
 export const CellClsVariants = styleVariants({
@@ -197,6 +197,10 @@ export const ColumnCellRecipe = recipe({
       center: {},
     },
     rowActive: {
+      false: {},
+      true: {},
+    },
+    firstRow: {
       false: {},
       true: {},
     },

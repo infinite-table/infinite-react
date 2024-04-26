@@ -20,7 +20,7 @@ import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 import {
   InfiniteTableComputedColumn,
   InfiniteTableProps,

@@ -18,7 +18,8 @@ import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
-import { InternalVars, ThemeVars } from '../../theme.css';
+import { InternalVars } from '../../theme.css';
+import { ThemeVars } from '../../vars.css';
 
 import type {
   InfiniteTableColumnHeaderParam,

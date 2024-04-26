@@ -52,7 +52,7 @@ import {
   cleanupState,
   getCellSelector,
 } from './state/getInitialState';
-import { columnHeaderHeightName } from './theme.css';
+import { columnHeaderHeightName } from './vars.css';
 
 import type {
   InfiniteTableContextValue,

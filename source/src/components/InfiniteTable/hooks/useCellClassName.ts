@@ -12,6 +12,7 @@ export function useCellClassName<T>(
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
     groupRow: boolean;
+    firstRow: boolean;
     groupCell: boolean;
     rowExpanded: boolean;
     rowActive: boolean;
@@ -68,6 +69,9 @@ export function useCellClassName<T>(
   }
   if (extraFlags.cellSelected) {
     result.push(...baseClasses.map((c) => `${c}--cell-selected`));
+  }
+  if (extraFlags.firstRow) {
+    result.push(...baseClasses.map((c) => `${c}--first-row`));
   }
 
   if (extraFlags.groupRow) {

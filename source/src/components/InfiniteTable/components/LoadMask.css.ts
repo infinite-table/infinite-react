@@ -1,6 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css';
 
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 import { absoluteCover } from '../utilities.css';
 
 const LoadMaskBaseCls = style([

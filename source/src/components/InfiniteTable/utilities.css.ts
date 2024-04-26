@@ -5,7 +5,7 @@ import {
   styleVariants,
 } from '@vanilla-extract/css';
 
-import { ThemeVars } from './theme.css';
+import { ThemeVars } from './vars.css';
 
 const borderBox: CSSProperties = {
   boxSizing: 'border-box',

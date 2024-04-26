@@ -1,5 +1,5 @@
 import { recipe } from '@vanilla-extract/recipes';
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 
 export const RowDetailRecipe = recipe({
   base: {

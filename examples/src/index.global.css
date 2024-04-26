@@ -1,4 +1,6 @@
-@import '~normalize.css/normalize.css';
+@import 'tailwindcss';
+
+@import 'normalize.css/normalize.css';
 
 body {
   font-size: 16px;

@@ -627,6 +627,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           rowActive,
           cellSelected,
           rowSelected,
+          firstRow: rowInfo.indexInAll === 0,
           groupRow: rowInfo.isGroupRow,
           groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,

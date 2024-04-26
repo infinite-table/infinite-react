@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../index.global.css';
+
 import { InfiniteTable } from '@infinite-table/infinite-react';
 
 InfiniteTable.defaultProps.licenseKey =

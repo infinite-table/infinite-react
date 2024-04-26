@@ -39,14 +39,18 @@
     "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.172",
     "@vanilla-extract/webpack-plugin": "^2.2.0",
+    "autoprefixer": "^10.4.19",
     "babel-plugin-dev-expression": "^0.2.2",
     "concurrently": "^5.1.0",
     "http-server": "^14.1.1",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "playwright": "1.32.1",
+    "postcss": "^8.4.38",
     "react-select": "^5.4.0",
     "rimraf": "^3.0.2",
+    "@tailwindcss/postcss": "^4.0.0-alpha.14",
+    "tailwindcss": "^4.0.0-alpha.14",
     "tslib": "^2.1.0"
   }
 }

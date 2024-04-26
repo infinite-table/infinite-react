@@ -2,7 +2,7 @@ import { CSSProperties, style } from '@vanilla-extract/css';
 import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 
 import { InfiniteClsRecipe } from '../../InfiniteCls.css';
-import { ThemeVars } from '../../theme.css';
+import { ThemeVars } from '../../vars.css';
 import {
   alignItems,
   cssEllipsisClassName,

@@ -5,7 +5,7 @@ import { useInternalProps } from '../../hooks/useInternalProps';
 import { join } from '../../../../utils/join';
 
 import { decamelize } from '../../../utils/decamelize';
-import { ThemeVars } from '../../theme.css';
+import { ThemeVars } from '../../vars.css';
 import { FooterCls } from '../../InfiniteCls.css';
 import { raf } from '../../../../utils/raf';
 
