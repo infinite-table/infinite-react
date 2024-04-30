@@ -1,4 +1,4 @@
-name: RELEASE
+name: Run ESBuild
 
 on:
   push:
