@@ -2,7 +2,7 @@ import { globalStyle } from '@vanilla-extract/css';
 
 import { LightVars as LightTheme } from './vars-default-light.css';
 import { DarkVars as DarkTheme } from './vars-default-dark.css';
-import { defineTheme } from './defineTheme';
+import { defineTheme } from './defineTheme.css';
 
 defineTheme('default', {
   lightStyles: {

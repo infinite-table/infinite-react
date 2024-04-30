@@ -2,7 +2,7 @@ import { MinimalistLightVars } from './vars-minimalist-light.css';
 import { MinimalistDarkVars } from './vars-minimalist-dark.css';
 import { InfiniteTableHeaderCellClassName } from './components/InfiniteTableHeader/headerClassName';
 
-import { defineTheme } from './defineTheme';
+import { defineTheme } from './defineTheme.css';
 
 const minimalistStyles = {
   [`.${InfiniteTableHeaderCellClassName}`]: {
