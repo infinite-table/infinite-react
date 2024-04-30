@@ -4,7 +4,6 @@ export function getThemeModeCls(themeMode: 'light' | 'dark') {
 export function getThemeNameCls(themeName: string) {
   return `infinite-theme-name--${themeName}`;
 }
-
 export function getThemeGlobalSelectors(
   themeName: string,
   themeMode: 'light' | 'dark',
