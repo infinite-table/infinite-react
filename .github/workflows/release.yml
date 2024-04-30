@@ -59,9 +59,9 @@ jobs:
       - name: Update TOC in markdown files
         run: npm run doctoc
 
-      # - name: Bump version
-      #   working-directory: source
-      #   run: npm run bump:${WILL_RELEASE_VERSION}
+      - name: Bump version
+        working-directory: source
+        run: npm run bump:${WILL_RELEASE_VERSION}
 
       - name: Building
         run: npm run build
