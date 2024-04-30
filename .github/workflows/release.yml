@@ -49,8 +49,8 @@ jobs:
       - name: Build test app
         run: npm run ci:test:build
 
-      # - name: Running Playwright Tests
-      #   run: npm run ci:test:run
+      - name: Running Playwright Tests
+        run: npm run ci:test:run
 
       # - name: Linting
       #   run: npm run lint
@@ -69,27 +69,27 @@ jobs:
       - name: copy .npmrc
         run: cp .npmrc source && cp .npmrc source/dist
 
-      # - name: Ship it
-      #   uses: './.github/actions/execute-cmd'
-      #   with:
-      #     cmd_to_execute: $WILL_RELEASE_CMD
+      - name: Ship it
+        uses: './.github/actions/execute-cmd'
+        with:
+          cmd_to_execute: $WILL_RELEASE_CMD
 
       - run: git diff
       - run: cat package.json
         working-directory: source
 
-      # - name: Push changes
-      #   uses: './.github/actions/git-push-action'
-      #   with:
-      #     branch: master
-      #     github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
+      - name: Push changes
+        uses: './.github/actions/git-push-action'
+        with:
+          branch: master
+          github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
 
       # - name: Send version to slack
       #   uses: "./.github/actions/send-version-to-slack"
       #   with:
       #     slack_webhook_notify: ${{ secrets.SLACK_WEBHOOK_NOTIFY }}
-  # publish-docs-on-release:
-  #   needs: release
-  #   name: 'Rebuilds website'
-  #   uses: ./.github/workflows/rebuild-website.yml
-  #   secrets: inherit
+  publish-docs-on-release:
+    needs: release
+    name: 'Rebuilds website'
+    uses: ./.github/workflows/rebuild-website.yml
+    secrets: inherit
