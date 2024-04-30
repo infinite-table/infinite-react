@@ -15,7 +15,7 @@ import { LoadingIcon } from '../components/icons/LoadingIcon';
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 import {
   InfiniteTableColumn,
   InfiniteTableGeneratedGroupColumn,

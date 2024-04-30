@@ -5,7 +5,7 @@ import { useRerender } from '../../hooks/useRerender';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { internalProps } from '../internalProps';
-import { InternalVars } from '../theme.css';
+import { InternalVars } from '../internalVars.css';
 import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
 import { ActiveIndicatorWrapperCls } from './ActiveCellIndicator.css';
 import { ActiveRowIndicatorCls } from './ActiveRowIndicator.css';

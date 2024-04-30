@@ -5,7 +5,7 @@ import { Logger } from '../../utils/debug';
 import { arrayIntersection } from '../../utils/mathIntersection';
 import { raf } from '../../utils/raf';
 import { stripVar } from '../../utils/stripVar';
-import { InternalVars } from '../InfiniteTable/theme.css';
+import { InternalVars } from '../InfiniteTable/internalVars.css';
 import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   getParentInfiniteNode,

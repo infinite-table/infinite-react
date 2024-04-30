@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 import { cursor } from '../utilities.css';
 
 export const CheckBoxCls = style([

@@ -46,11 +46,12 @@ export function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
     items,
     parentMenuId,
 
-    addSubmenuColumnIfNeeded,
-    bubbleActionsFromSubmenus,
+    addSubmenuColumnIfNeeded = true,
+    bubbleActionsFromSubmenus = true,
+
     onShow,
     onHide,
-    wrapLabels,
+    wrapLabels = false,
     onAction,
     constrainTo,
     columns,
@@ -64,7 +65,12 @@ export function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
   } = props;
 
   const menu = (
-    <MenuRoot {...props}>
+    <MenuRoot
+      addSubmenuColumnIfNeeded={addSubmenuColumnIfNeeded}
+      bubbleActionsFromSubmenus={bubbleActionsFromSubmenus}
+      wrapLabels={wrapLabels}
+      {...props}
+    >
       <MenuContextProvider domProps={domProps} />
     </MenuRoot>
   );
@@ -74,15 +80,9 @@ export function Menu(props: MenuProps & HTMLProps<HTMLDivElement>) {
   }
   return menu;
 }
-
-const menuDefaultProps: MenuProps & { [propToIdentifyMenu]?: boolean } = {
-  addSubmenuColumnIfNeeded: true,
-  bubbleActionsFromSubmenus: true,
-  wrapLabels: false,
-  /**
-   * this is here because we want a simple way for `showOverlay` (which is returned by useOverlay hook)
-   * to inject the portal container into the menu
-   */
-  [propToIdentifyMenu]: true,
-};
-Menu.defaultProps = menuDefaultProps;
+// DON'T REMOVE THIS LINE
+/**
+ * this is here because we want a simple way for `showOverlay` (which is returned by useOverlay hook)
+ * to inject the portal container into the menu
+ */
+Menu[propToIdentifyMenu] = true;

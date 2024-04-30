@@ -2,7 +2,7 @@ import * as React from 'react';
 import { keyMirror } from '../../../../utils/keyMirror';
 
 import { join } from '../../../../utils/join';
-import { ThemeVars } from '../../theme.css';
+import { ThemeVars } from '../../vars.css';
 
 import { HeaderMenuIconCls } from '../InfiniteTableHeader/header.css';
 import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';

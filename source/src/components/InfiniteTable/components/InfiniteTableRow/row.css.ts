@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 
-import { ThemeVars } from '../../theme.css';
+import { ThemeVars } from '../../vars.css';
 
 const RowCls = style({
   willChange: 'transform',

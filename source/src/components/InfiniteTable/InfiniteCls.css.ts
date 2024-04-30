@@ -1,7 +1,9 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
+
+import './theming.css';
+import { ThemeVars } from './vars.css';
 import { RowDetailRecipe } from './components/rowDetail.css';
-import { ThemeVars } from './theme.css';
 
 import {
   boxSizingBorderBox,

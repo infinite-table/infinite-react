@@ -4,7 +4,7 @@ import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 
 import { internalProps } from '../../internalProps';
-import { InternalVars } from '../../theme.css';
+import { InternalVars } from '../../internalVars.css';
 import { cssEllipsisClassName, overflow } from '../../utilities.css';
 import { ColumnCellCls } from '../cell.css';
 

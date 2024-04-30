@@ -28,24 +28,14 @@ export default () => {
     <React.StrictMode>
       <div>
         <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
           onClick={() => {
             setCounter(counter + 1);
           }}
         >
           update counter
         </button>
-        <DataSource<Order>
-          data={orders}
-          primaryKey="OrderId"
-          fields={[
-            'OrderId',
-            'CompanyName',
-            'ItemCount',
-            'OrderCost',
-            'ShipCountry',
-            'ShipVia',
-          ]}
-        >
+        <DataSource<Order> data={orders} primaryKey="OrderId">
           <div>
             <InfiniteTable<Order>
               domProps={{

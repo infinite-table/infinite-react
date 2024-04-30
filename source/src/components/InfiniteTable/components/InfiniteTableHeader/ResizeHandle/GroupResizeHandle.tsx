@@ -11,7 +11,7 @@ import {
   ResizeHandleDraggerClsRecipe,
 } from './ResizeHandle.css';
 import type { MatrixBrain } from '../../../../VirtualBrain/MatrixBrain';
-import { ThemeVars } from '../../../theme.css';
+import { ThemeVars } from '../../../vars.css';
 
 type GroupResizeHandleProps<T> = {
   groupColumns: InfiniteTableComputedColumn<T>[];

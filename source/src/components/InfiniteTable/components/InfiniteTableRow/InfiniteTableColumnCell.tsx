@@ -11,7 +11,7 @@ import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDa
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
-import { InternalVars } from '../../theme.css';
+import { InternalVars } from '../../internalVars.css';
 import { InfiniteColumnEditorContextType } from '../../types';
 
 import type {
@@ -627,6 +627,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           rowActive,
           cellSelected,
           rowSelected,
+          firstRow: rowInfo.indexInAll === 0,
           groupRow: rowInfo.isGroupRow,
           groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,

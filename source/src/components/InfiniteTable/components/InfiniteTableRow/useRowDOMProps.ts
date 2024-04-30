@@ -9,7 +9,7 @@ import {
 
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
-import { ThemeVars } from '../../theme.css';
+import { ThemeVars } from '../../vars.css';
 import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
 import { InfiniteTableState } from '../../types/InfiniteTableState';
 

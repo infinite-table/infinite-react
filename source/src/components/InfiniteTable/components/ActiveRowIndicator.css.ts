@@ -1,6 +1,6 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 
-import { ThemeVars } from '../theme.css';
+import { ThemeVars } from '../vars.css';
 import { left, top, pointerEvents, position, width } from '../utilities.css';
 
 export const ActiveRowIndicatorBaseCls = style(

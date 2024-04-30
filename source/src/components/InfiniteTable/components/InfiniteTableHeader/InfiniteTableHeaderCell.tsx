@@ -17,8 +17,8 @@ import { getColumnApiForColumn } from '../../api/getColumnApi';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { internalProps } from '../../internalProps';
-import { InternalVars, ThemeVars } from '../../theme.css';
+import { InternalVars } from '../../internalVars.css';
+import { ThemeVars } from '../../vars.css';
 
 import type {
   InfiniteTableColumnHeaderParam,
@@ -90,9 +90,8 @@ export const InfiniteTableHeaderCellContext = React.createContext<
   InfiniteTableHeaderCellContextType<any>
 >(null as any as InfiniteTableHeaderCellContextType<any>);
 
-const { rootClassName } = internalProps;
-
-export const InfiniteTableHeaderCellClassName = `${rootClassName}HeaderCell`;
+import { InfiniteTableHeaderCellClassName } from './headerClassName';
+export { InfiniteTableHeaderCellClassName };
 
 export function getColumnFilterType<T>(
   column: InfiniteTableComputedColumn<T>,
@@ -617,6 +616,7 @@ export function InfiniteTableHeaderCell<T>(
               cellSelected: false,
               zebra: false,
               rowActive: false,
+              firstRow: true,
               groupCell: false,
               groupRow: false,
               rowExpanded: false,
