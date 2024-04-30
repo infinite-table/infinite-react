@@ -3,7 +3,7 @@ import { globalStyle, GlobalStyleRule } from '@vanilla-extract/css';
 import {
   getThemeGlobalSelector,
   getThemeNameCls,
-} from './getThemeGlobalSelectors';
+} from './getThemeGlobalSelectors.css';
 
 export function defineTheme(
   themeName: string,
