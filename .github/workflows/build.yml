@@ -1,19 +1,22 @@
-name: 'Run Esbuild'
+name: RELEASE
 
 on:
   push:
-    paths:
-      - 'source/src/**'
+    branches:
+      - master
+    # paths-ignore:
+    #   - 'www/**'
 
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
-
 jobs:
-  # Install & caches "fresh" node_modules
-  npm-install:
-    name: Install npm deps
+  release:
+    if: ${{ contains(github.event.head_commit.message, 'release version') }}
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
+
     strategy:
       matrix:
         node-version: [20.x]
@@ -24,56 +27,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: |
-            package-lock.json
-            source/package-lock.json
 
-      - name: Cache node_modules for root
-        id: cache-node-modules-root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node-modules-root-${{ github.run_id }}
-
-      - name: Cache node_modules for source
-        id: cache-node-modules-source
-        uses: actions/cache@v3
-        with:
-          path: source/node_modules
-          key: node-modules-source-${{ github.run_id }}
-      - name: Execute 'npm ci' in monorepo
+      - name: Install
         run: npm ci
 
-  esbuild:
-    needs: npm-install
-    name: Run esbuild
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Load cached node_modules for root
-        id: cache-node-modules-root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node-modules-root-${{ github.run_id }}
-
-      - name: Load cached node_modules for source
-        id: cache-node-modules-source
-        uses: actions/cache@v3
-        with:
-          path: source/node_modules
-          key: node-modules-source-${{ github.run_id }}
-
-      - name: Esbuild compile
-        run: npm run esbuild
-        working-directory: source
+      - name: Building
+        run: npm run build
