@@ -36,6 +36,7 @@ const HeaderCellVars = {
     .filterEditorBorder]: `${ThemeVars.components.Cell.border}`,
   [ThemeVars.components.HeaderCell.filterEditorFocusBorderColor]:
     ThemeVars.color.accent,
+  [ThemeVars.components.HeaderCell.border]: ThemeVars.components.Cell.border,
   [ThemeVars.components.HeaderCell.filterEditorColor]: `currentColor`,
   [ThemeVars.components.HeaderCell.filterEditorBorderRadius]:
     ThemeVars.borderRadius,

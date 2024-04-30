@@ -51,8 +51,12 @@ const infiniteProps: InfiniteTableProps<Order> = {
   columns,
   domProps,
   rowHeight: 53,
+  columnHeaderHeight: 53,
+
+  columnMinWidth: 100,
 };
 export default function Example() {
+  const [darkMode, setDarkMode] = React.useState(false);
   return (
     <div
       style={{
@@ -60,16 +64,26 @@ export default function Example() {
         display: 'flex',
         flexFlow: 'row',
       }}
-      className="infinite-theme-name--minimalist"
+      className={`infinite-theme-mode--${darkMode ? 'dark' : 'light'}`}
     >
-      <div style={containerStyle} className="infinite-theme-mode--dark">
+      <div>
+        <button
+          onClick={() => {
+            setDarkMode(!darkMode);
+          }}
+          className="text-white bg-red-400 rounded-md p-4"
+        >
+          toggle
+        </button>
+      </div>
+      <div style={containerStyle}>
         <DataSource<Order> primaryKey="OrderId" data={orders}>
           <InfiniteTable<Order> {...infiniteProps} />
         </DataSource>
       </div>
       <div
         style={{ ...containerStyle, background: 'white' }}
-        className="infinite-theme-mode--light"
+        className="infinite-theme-name--minimalist"
       >
         <DataSource<Order> primaryKey="OrderId" data={orders}>
           <InfiniteTable<Order> {...infiniteProps} />

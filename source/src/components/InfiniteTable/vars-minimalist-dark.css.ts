@@ -3,9 +3,7 @@ import { ThemeVars } from './vars.css';
 
 export const MinimalistDarkVars = {
   ...MinimalistLightVars,
-
   [ThemeVars.background]: '#1a1f2b',
-  // [ThemeVars.components.Row.border]: '#1a1f2b',
-
-  [ThemeVars.color.color]: '#EDF2F7', //--chakra-colors-gray-100
+  [ThemeVars.components.Cell.borderTop]: '1px solid #2D3748', // chakra gray 700
+  [ThemeVars.color.color]: '#EDF2F7',
 };

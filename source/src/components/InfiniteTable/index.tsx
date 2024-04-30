@@ -120,7 +120,6 @@ export const InfiniteTableComponent = React.memo(
       scrollerDOMRef,
       portalDOMRef,
 
-      licenseKey,
       loadingText,
 
       rowDetailRenderer,
@@ -142,6 +141,10 @@ export const InfiniteTableComponent = React.memo(
       onRenderUpdater,
       debugId,
     } = componentState;
+    let { licenseKey } = componentState;
+    if (!licenseKey && InfiniteTable.licenseKey) {
+      licenseKey = InfiniteTable.licenseKey;
+    }
 
     useScrollToActiveRow(activeRowIndex, dataArray.length, api);
     useScrollToActiveCell(activeCellIndex, dataArray.length, api);
@@ -442,10 +445,23 @@ function InfiniteTableContextProvider<T>() {
   );
 }
 
-export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
+const DEFAULT_ROW_HEIGHT = 40;
+const DEFAULT_COLUMN_HEADER_HEIGHT = toCSSVarName(columnHeaderHeightName);
+
+type InfiniteTableComponent = {
+  <T>(props: InfiniteTableProps<T>): React.JSX.Element;
+  licenseKey?: string;
+};
+const InfiniteTable: InfiniteTableComponent = function <T>(
+  props: InfiniteTableProps<T>,
+) {
   const table = (
     //@ts-ignore
-    <InfiniteTableRoot {...props}>
+    <InfiniteTableRoot
+      rowHeight={DEFAULT_ROW_HEIGHT}
+      columnHeaderHeight={DEFAULT_COLUMN_HEADER_HEIGHT}
+      {...props}
+    >
       <InfiniteTableContextProvider />
     </InfiniteTableRoot>
   );
@@ -453,11 +469,9 @@ export function InfiniteTable<T>(props: InfiniteTableProps<T>) {
     return <React.StrictMode>{table}</React.StrictMode>;
   }
   return table;
-}
-InfiniteTable.defaultProps = {
-  rowHeight: 40,
-  columnHeaderHeight: toCSSVarName(columnHeaderHeightName),
 };
+
+export { InfiniteTable };
 
 export * from './types';
 

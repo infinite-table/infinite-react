@@ -1,26 +1,24 @@
-import { globalStyle } from '@vanilla-extract/css';
-
 import { MinimalistLightVars } from './vars-minimalist-light.css';
 import { MinimalistDarkVars } from './vars-minimalist-dark.css';
+import { InfiniteTableHeaderCellClassName } from './components/InfiniteTableHeader/headerClassName';
 
-globalStyle(
-  [
-    '.infinite-theme-mode--light.infinite-theme-name--minimalist',
-    '.infinite-theme-mode--light .infinite-theme-name--minimalist',
-    '.infinite-theme-name--minimalist .infinite-theme-mode--light',
-  ].join(', '),
-  {
+import { defineTheme } from './defineTheme';
+
+const minimalistStyles = {
+  [`.${InfiniteTableHeaderCellClassName}`]: {
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    letterSpacing: '0.05em',
+  },
+};
+
+defineTheme('minimalist', {
+  lightStyles: {
     vars: MinimalistLightVars,
+    ...minimalistStyles,
   },
-);
-
-globalStyle(
-  [
-    '.infinite-theme-mode--dark.infinite-theme-name--minimalist',
-    '.infinite-theme-mode--dark .infinite-theme-name--minimalist',
-    '.infinite-theme-name--minimalist .infinite-theme-mode--dark',
-  ].join(', '),
-  {
+  darkStyles: {
     vars: MinimalistDarkVars,
+    ...minimalistStyles,
   },
-);
+});

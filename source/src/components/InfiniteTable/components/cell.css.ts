@@ -25,8 +25,8 @@ export const columnAlignCellStyle = styleVariants({
 });
 
 export const CellBorderObject = {
-  borderLeft: `${ThemeVars.components.Cell.borderLeft}`,
-  borderRight: `${ThemeVars.components.Cell.borderRight}`,
+  borderLeft: `${ThemeVars.components.Cell.borderLeft} solid transparent`,
+  borderRight: `${ThemeVars.components.Cell.borderRight} solid transparent`,
 };
 
 export const CellClsVariants = styleVariants({
@@ -200,10 +200,7 @@ export const ColumnCellRecipe = recipe({
       false: {},
       true: {},
     },
-    firstRow: {
-      false: {},
-      true: {},
-    },
+
     groupRow: {
       false: {},
       true: {},
@@ -249,6 +246,12 @@ export const ColumnCellRecipe = recipe({
     firstInCategory: {
       true: ColumnCellVariantsObject.firstInCategory,
       false: {},
+    },
+    firstRow: {
+      true: {},
+      false: {
+        borderTop: ThemeVars.components.Cell.borderTop,
+      },
     },
     lastInCategory: {
       true: ColumnCellVariantsObject.lastInCategory,

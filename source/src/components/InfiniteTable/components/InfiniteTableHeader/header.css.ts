@@ -160,9 +160,10 @@ export const HeaderCellRecipe = recipe({
   base: [
     {
       ...CellBorderObject,
+      borderLeft: `${ThemeVars.components.Cell.borderWidth} solid transparent`,
+      borderRight: ThemeVars.components.HeaderCell.borderRight,
       background: ThemeVars.components.HeaderCell.background,
       padding: 0,
-      borderRight: ThemeVars.components.Cell.border,
       ':hover': {
         background: ThemeVars.components.HeaderCell.hoverBackground,
       },
@@ -174,6 +175,11 @@ export const HeaderCellRecipe = recipe({
     rowActive: { false: {}, true: {} },
     cellSelected: { false: {}, true: {} },
     rowSelected: { false: {}, true: {}, null: {} },
+
+    firstRow: {
+      false: {},
+      true: {},
+    },
     groupRow: {
       false: {},
       true: {},

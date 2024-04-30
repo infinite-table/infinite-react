@@ -9,7 +9,7 @@ import {
   InfiniteClsHasPinnedStart,
   InfiniteClsRecipe,
 } from '../InfiniteCls.css';
-import { InternalVars } from '../theme.css';
+import { InternalVars } from '../internalVars.css';
 import { InfiniteTableComputedColumn } from '../types';
 import {
   getCSSVarNameForColOffset,

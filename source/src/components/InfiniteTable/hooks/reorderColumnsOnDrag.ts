@@ -2,7 +2,7 @@ import binarySearch from 'binary-search';
 import { stripVar } from '../../../utils/stripVar';
 
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
-import { InternalVars } from '../theme.css';
+import { InternalVars } from '../internalVars.css';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {

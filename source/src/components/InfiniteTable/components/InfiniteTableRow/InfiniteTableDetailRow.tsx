@@ -3,7 +3,7 @@ import { RowDetailCache } from '../../../../components/DataSource';
 import { join } from '../../../../utils/join';
 
 import { internalProps } from '../../internalProps';
-import { InternalVars } from '../../theme.css';
+import { InternalVars } from '../../internalVars.css';
 import { InfiniteTableProps, InfiniteTableRowInfo } from '../../types';
 import { RowDetailRecipe } from '../rowDetail.css';
 

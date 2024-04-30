@@ -93,6 +93,7 @@ export const ThemeVars = createGlobalThemeContract(
          */
         background: 'header-cell-background',
         hoverBackground: 'header-cell-hover-background',
+        border: 'header-cell-border',
         padding: 'header-cell-padding',
         paddingX: 'header-cell-padding-x',
         paddingY: 'header-cell-padding-y',
@@ -148,6 +149,7 @@ export const ThemeVars = createGlobalThemeContract(
         border: 'cell-border',
         borderLeft: 'cell-border-left',
         borderRight: 'cell-border-right',
+        borderTop: 'cell-border-top',
         borderInvisible: 'cell-border-invisible',
         borderRadius: 'cell-border-radius',
         reorderEffectDuration: 'column-reorder-effect-duration',

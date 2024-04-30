@@ -37,6 +37,7 @@ export function useCellClassName<T>(
     rowSelected: extraFlags.rowSelected ?? 'null',
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
+    firstRow: extraFlags.firstRow ?? false,
     groupRow: extraFlags.groupRow,
     groupCell: extraFlags.groupCell,
     verticalAlign: extraFlags.verticalAlign,

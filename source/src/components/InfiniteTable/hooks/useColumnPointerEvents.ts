@@ -11,7 +11,7 @@ import {
 } from '../utils/infiniteDOMUtils';
 
 import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
-import { InternalVars } from '../theme.css';
+import { InternalVars } from '../internalVars.css';
 import { stripVar } from '../../../utils/stripVar';
 import { getColumnZIndex } from './useDOMProps';
 import {

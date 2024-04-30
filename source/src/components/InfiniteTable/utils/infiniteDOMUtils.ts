@@ -2,7 +2,7 @@ import { selectParent } from '../../../utils/selectParent';
 import { stripVar } from '../../../utils/stripVar';
 import { ScrollPosition } from '../../types/ScrollPosition';
 import { internalProps } from '../internalProps';
-import { InternalVars } from '../theme.css';
+import { InternalVars } from '../internalVars.css';
 import { ThemeVars } from '../vars.css';
 import { InfiniteTableComputedColumn } from '../types';
 

@@ -141,7 +141,8 @@ const ReactResizeObserver = (props: ResizeObserverProps) => {
     [],
   );
 
-  const { notifyOnMount, earlyAttach } = props;
+  const notifyOnMount = props.notifyOnMount ?? true;
+  const earlyAttach = props.earlyAttach ?? false;
 
   const firstTime = useRef(true);
   const ref = useRef<HTMLDivElement>(null);
@@ -160,11 +161,6 @@ const ReactResizeObserver = (props: ResizeObserverProps) => {
   useResizeObserver(ref, onResize, { earlyAttach: earlyAttach || false });
 
   return <div ref={ref} style={style}></div>;
-};
-
-ReactResizeObserver.defaultProps = {
-  notifyOnMount: true,
-  earlyAttach: false,
 };
 
 export default ReactResizeObserver;

@@ -292,7 +292,10 @@ function injectPortalContainerAndConstrainInMenuChild(
     // here we could have tested for child.type === Menu,
     // but if we had done that, we could have had to import the `Menu` component
     // which in turns imports this, so we try to avoid that
-    if (React.isValidElement(child) && child.props[propToIdentifyMenu]) {
+    if (
+      React.isValidElement(child) &&
+      (child.type as any)[propToIdentifyMenu]
+    ) {
       const newProps: Partial<OverlayParams> = {};
       if (child.props.portalContainer === undefined) {
         newProps.portalContainer = portalContainer;

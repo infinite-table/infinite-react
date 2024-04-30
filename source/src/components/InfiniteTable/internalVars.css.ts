@@ -1,5 +1,4 @@
-import { createThemeContract, globalStyle } from '@vanilla-extract/css';
-
+import { createThemeContract } from '@vanilla-extract/css';
 export const InternalVars = createThemeContract({
   currentColumnTransformX: null,
   y: null,
@@ -41,29 +40,3 @@ export const InternalVars = createThemeContract({
   scrollLeft: null,
   scrollTop: null,
 });
-
-import { LightVars as LightTheme } from './vars-default-light.css';
-import { DarkVars as DarkTheme } from './vars-default-dark.css';
-
-globalStyle(':root', {
-  //@ts-ignore
-  vars: LightTheme,
-  '@media': {
-    '(prefers-color-scheme: dark)': {
-      vars: DarkTheme,
-    },
-  },
-});
-
-globalStyle(
-  '.light, .infinite-light, .infinite-theme-mode--light, .light:root, .infinite-light:root, .infinite-theme-mode--light:root',
-  {
-    //@ts-ignore
-    vars: LightTheme,
-  },
-);
-globalStyle('.dark, .infinite-dark, .infinite-theme-mode--dark', {
-  vars: DarkTheme,
-});
-
-import './theme-minimalist.css';

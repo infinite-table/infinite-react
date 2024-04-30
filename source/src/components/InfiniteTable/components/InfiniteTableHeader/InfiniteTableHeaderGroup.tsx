@@ -3,7 +3,7 @@ import * as React from 'react';
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { rootClassName } from '../../internalProps';
-import { InternalVars } from '../../theme.css';
+import { InternalVars } from '../../internalVars.css';
 import { cssEllipsisClassName } from '../../utilities.css';
 
 import { HeaderGroupCls } from './header.css';
