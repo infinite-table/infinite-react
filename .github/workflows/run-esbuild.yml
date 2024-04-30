@@ -28,5 +28,11 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Build test app
+        run: npm run ci:test:build
+
+      - name: Running Playwright Tests
+        run: npm run ci:test:run
+
       - name: Building
         run: npm run build
