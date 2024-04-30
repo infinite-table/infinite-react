@@ -7,9 +7,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
+
 jobs:
   release:
-    if: ${{ contains(github.event.head_commit.message, 'release version') }}
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
