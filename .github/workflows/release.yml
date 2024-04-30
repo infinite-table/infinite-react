@@ -46,8 +46,8 @@ jobs:
       - name: Install
         run: npm ci
 
-      # - name: Build test app
-      #   run: npm run ci:test:build
+      - name: Build test app
+        run: npm run ci:test:build
 
       # - name: Running Playwright Tests
       #   run: npm run ci:test:run
@@ -59,9 +59,9 @@ jobs:
       - name: Update TOC in markdown files
         run: npm run doctoc
 
-      # - name: Bump version
-      #   working-directory: source
-      #   run: npm run bump:${WILL_RELEASE_VERSION}
+      - name: Bump version
+        working-directory: source
+        run: npm run bump:${WILL_RELEASE_VERSION}
 
       - name: Building
         run: npm run build
@@ -78,11 +78,11 @@ jobs:
       - run: cat package.json
         working-directory: source
 
-      - name: Push changes
-        uses: './.github/actions/git-push-action'
-        with:
-          branch: master
-          github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
+      # - name: Push changes
+      #   uses: './.github/actions/git-push-action'
+      #   with:
+      #     branch: master
+      #     github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
 
       # - name: Send version to slack
       #   uses: "./.github/actions/send-version-to-slack"
