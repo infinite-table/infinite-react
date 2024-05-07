@@ -3,7 +3,6 @@ import {
   DataSource,
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
-import { useMemo, useState } from 'react';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 
 export type Employee = {
