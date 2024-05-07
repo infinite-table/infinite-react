@@ -1,7 +1,6 @@
 ---
 title: Sparklines Example
 ---
-
 This example shows how to use integrate a sparkline component in a DataGrid column.
 
 For this demo, we're using the [`react-sparklines`](https://www.npmjs.com/package/react-sparklines)  library.
