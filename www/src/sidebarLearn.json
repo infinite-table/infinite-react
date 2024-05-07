@@ -288,6 +288,10 @@
         "path": "/docs/learn/examples/live-updates-example"
       },
       {
+        "title": "Using sparklines example",
+        "path": "/docs/learn/examples/using-sparklines-example"
+      },
+      {
         "title": "Dynamic pivoting example",
         "path": "/docs/learn/examples/dynamic-pivoting-example"
       }

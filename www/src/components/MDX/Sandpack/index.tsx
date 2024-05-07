@@ -23,6 +23,7 @@ const DEPS_VERSIONS: Record<string, string> = {
   'ag-grid-community': '27.1.0',
   'ag-grid-react': '27.1.0',
   'ag-grid-enterprise': '27.1.0',
+  'react-sparklines': '1.7.0',
   '@progress/kendo-react-grid': '5.1.0',
 
   // for material date picker

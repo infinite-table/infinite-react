@@ -1518,6 +1518,14 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 In the `column.renderValue` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `renderValue` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `renderValue` function.
 
 </Note>
+
+<Sandpack title="Using a sparkline component" size="md" viewMode="preview" deps="react-sparklines">
+
+```tsx file="$DOCS/learn/examples/using-sparklines-example.page.tsx" 
+```
+
+</Sandpack>
+
 </Prop>
 
 <Prop name="columns.resizable" type="boolean">
