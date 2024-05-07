@@ -263,6 +263,7 @@ export const ThemeVars = createGlobalThemeContract(
       Menu: {
         background: 'menu-background',
         color: 'menu-color',
+        separatorColor: 'menu-separator-color',
         padding: 'menu-padding',
         cellPaddingVertical: 'menu-cell-padding-vertical',
         cellPaddingHorizontal: 'menu-cell-padding-horizontal',

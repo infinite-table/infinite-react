@@ -5,11 +5,11 @@ import { columns, Employee } from './columns';
 
 export default function App() {
   const [currentThemeMode, setThemeMode] = React.useState<'light' | 'dark'>(
-    'light',
+    'dark',
   );
   const [currentThemeName, setThemeName] = React.useState<
     'default' | 'minimalist'
-  >('default');
+  >('minimalist');
   return (
     <div
       className={`infinite-theme-mode--${currentThemeMode} infinite-theme-name--${currentThemeName}`}

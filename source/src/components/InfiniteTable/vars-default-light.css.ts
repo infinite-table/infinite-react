@@ -137,6 +137,7 @@ const RowDetailsVars = {
 const MenuVars = {
   [ThemeVars.components.Menu.background]: ThemeVars.background,
   [ThemeVars.components.Menu.color]: ThemeVars.components.Cell.color,
+  [ThemeVars.components.Menu.separatorColor]: 'currentColor',
   [ThemeVars.components.Menu.padding]: ThemeVars.spacing[3],
   [ThemeVars.components.Menu.cellPaddingVertical]: ThemeVars.spacing[3],
   [ThemeVars.components.Menu.cellPaddingHorizontal]: ThemeVars.spacing[3],
