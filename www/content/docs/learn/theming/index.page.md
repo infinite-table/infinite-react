@@ -9,26 +9,32 @@ description: Read our docs on the available themes and how you can customize the
 import '@infinite-table/infinite-react/index.css';
 ```
 
-This file includes both the **`light`** and the **`dark`** themes.
+This file includes the following themes:
+  - `default`
+  - `minimalist`
 
-At runtime, the `light` or `dark` theme are applied based on the user OS settings for the [preferred color scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme).
+Each of them in both the **`light`** and the **`dark`** modes.
 
-To explicitly apply the light theme, apply the className `"light"` (or `"infinite-light"`) to any parent element of the `<InfiniteTable />` component.
+## Theme mode - light or dark
 
-To explicitly apply the dark theme, apply the className `"dark"` (or `"infinite-dark"`) to any parent element of the `<InfiniteTable />` component.
+At runtime, the `light` or `dark` mode is applied based on the user OS settings for the [preferred color scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme).
 
-```tsx title="explicitly-apply-light-theme-via-container-className"
-<div className="light">
+To explicitly apply the light mode, apply the className `"infinite-theme-mode--light"` to any parent element of the `<InfiniteTable />` component.
+
+To explicitly apply the dark mode, apply the className `"infinite-theme-mode--dark"` to any parent element of the `<InfiniteTable />` component.
+
+```tsx title="Explicitly applying light mode via container className"
+<div className="infinite-theme-mode--light">
   <DataSource {...dataSouceProps}>
     <InfiniteTable {...props} />
   </DataSource>
 </div>
 ```
 
-If instead you specify a `dark` CSS className, the dark theme will be applied
+If instead you specify a `infinite-theme-mode--dark` CSS className, the dark mode will be applied
 
-```tsx title="explicitly-apply-dark-theme-via-container-className"
-<body className="dark">
+```tsx title="Explicitly applying dark theme via container className"
+<body className="infinite-theme-mode--dark">
   <div>
     <DataSource {...dataSouceProps}>
       <InfiniteTable {...props} />
@@ -37,7 +43,12 @@ If instead you specify a `dark` CSS className, the dark theme will be applied
 </body>
 ```
 
-<Sandpack title="Theme switching demo - default to light theme">
+<Sandpack title="Theme switching demo - defaults to light theme" size="md" viewMode="preview">
+
+<Description>
+
+Example configured with `default` theme and `light` mode by default.
+</Description>
 
 ```ts file="theme-switching-example.page.tsx"
 
@@ -51,6 +62,48 @@ If instead you specify a `dark` CSS className, the dark theme will be applied
 
 <Note>
 
-If you don't explicitly have a `light` or `dark` ancestor, `InfiniteTable` will use the browser/OS preference (via `@media (prefers-color-scheme: ...)`) to apply the dark or light theme.
+If you don't explicitly have a `infinite-theme-mode--light` or `infinite-theme-mode--dark` ancestor, `InfiniteTable` will use the browser/OS preference (via `@media (prefers-color-scheme: ...)`) to apply the dark or light theme.
 
 </Note>
+
+## Available themes
+
+### Default theme
+
+The `default` theme is applied when you don't specify any explicit theme by default.
+
+### Minimalist theme
+
+The `minimalist` theme is inspired from minimalistic designs and is a good choice if you want to keep the UI simple and clean.
+
+## Applying the theme
+
+To apply a theme, you have to set the className `"infinite-theme-name--THEME_NAME"` to any parent element of the `<InfiniteTable />` component.
+
+You will want to apply the theme name and theme mode classNames to the same element, so you'll end up with a className like `"infinite-theme-name--minimalist infinite-theme-mode--dark"`.
+
+```tsx title="Applying the minimalist theme with dark mode explicitly"
+<body className="infinite-theme-mode--dark infinite-theme-name--minimalist">
+  <DataSource {...dataSouceProps}>
+    <InfiniteTable {...props} />
+  </DataSource>
+</body>
+```
+
+
+
+<Sandpack title="Theme switching demo - defaults to minimalist theme in dark mode" size="md" viewMode="preview">
+
+<Description>
+
+Example configured with `minimalist` theme and `dark` mode by default.
+</Description>
+```ts file="theme-switching-minimalist-theme-default-example.page.tsx"
+
+```
+
+```ts file="columns.ts"
+
+```
+
+</Sandpack>

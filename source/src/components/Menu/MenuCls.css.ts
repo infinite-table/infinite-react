@@ -132,8 +132,10 @@ export const MenuItemCls = recipe({
 
 export const MenuSeparatorCls = style([
   {
-    borderTop: '1px solid currentColor',
+    borderTop: `1px solid ${ThemeVars.components.Menu.separatorColor}`,
     borderBottom: 0,
+    borderLeft: 0,
+    borderRight: 0,
     marginTop: `calc(${ThemeVars.components.Menu.cellPaddingVertical} / 2)`,
     marginBottom: `calc(${ThemeVars.components.Menu.cellPaddingVertical} / 2)`,
   },

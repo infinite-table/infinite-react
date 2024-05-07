@@ -55,7 +55,7 @@ const infiniteProps: InfiniteTableProps<Order> = {
   columnMinWidth: 100,
 };
 export default function Example() {
-  const [darkMode, setDarkMode] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(true);
   return (
     <div
       style={{
