@@ -39,7 +39,11 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
     field: 'bugFixes',
     header: 'Bug Fixes',
     defaultWidth: 300,
-    renderValue: ({ value }) => {
+    renderValue: ({ value, data }) => {
+      const color =
+        data?.department === 'IT' || data?.department === 'Management'
+          ? 'tomato'
+          : '#253e56';
       return (
         <Sparklines
           data={value}
@@ -48,7 +52,7 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
           }}
           height={30}
         >
-          <SparklinesLine color="#253e56" />
+          <SparklinesLine color={color} />
         </Sparklines>
       );
     },

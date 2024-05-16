@@ -38,6 +38,10 @@ const columns = {
 
 <Sandpack size="md" viewMode="preview" deps="react-sparklines" title="Using a sparkline component">
 
+<Description>
+This demo renders a sparkline and changes the color of the sparkline based on the `department` field in the row (red for IT or Management, blue for everything else).
+</Description>
+
 ```tsx file="./using-sparklines-example.page.tsx"
 
 ```
