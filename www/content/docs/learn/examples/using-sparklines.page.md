@@ -7,7 +7,7 @@ For this demo, we're using the [`react-sparklines`](https://www.npmjs.com/packag
 
 The most important part is the <PropLink name="columns.renderValue" /> property, which allows you to render a custom React component for the cell value.
 
-```tsx {11-23} title="Using column.renderValue to render a sparkline"
+```tsx {11-26} title="Using column.renderValue to render a sparkline"
 const columns = {
   // ... other columns
   id: {
@@ -18,7 +18,11 @@ const columns = {
     field: 'bugFixes',
     header: 'Bug Fixes',
     defaultWidth: 300,
-    renderValue: ({ value }) => {
+    renderValue: ({ value, data }) => {
+      const color =
+        data?.department === 'IT' || data?.department === 'Management'
+          ? 'tomato'
+          : '#253e56';
       return (
         <Sparklines
           data={value}
@@ -27,7 +31,7 @@ const columns = {
           }}
           height={30}
         >
-          <SparklinesLine color="#253e56" />
+          <SparklinesLine color={color} />
         </Sparklines>
       );
     },
