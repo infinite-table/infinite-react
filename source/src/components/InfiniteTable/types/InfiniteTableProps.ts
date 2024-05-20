@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { KeyboardEvent } from 'react';
 
 import {
   AggregationReducer,
@@ -45,7 +46,10 @@ import { MenuColumn, MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
 import { KeyOfNoSymbol, XOR } from './Utility';
 
-import { InfiniteTableEventHandlerContext } from '../eventHandlers/eventHandlerTypes';
+import {
+  InfiniteTableEventHandlerContext,
+  InfiniteTableKeyboardEventHandlerContext,
+} from '../eventHandlers/eventHandlerTypes';
 import { MenuIconProps } from '../components/icons/MenuIcon';
 import {
   InfiniteTableCellContext,
@@ -221,6 +225,11 @@ export type InfiniteTableColumnApi<_T> = {
   getCellValueByPrimaryKey: (id: any) => any | null;
 };
 
+export type InfiniteTableApiStartEditParams =
+  InfiniteTableApiIsCellEditableParams & {
+    value?: any;
+  };
+
 export type InfiniteTableApiStopEditParams =
   | {
       cancel: true;
@@ -292,7 +301,8 @@ export interface InfiniteTableApi<T> {
   isCellEditable: (
     params: InfiniteTableApiIsCellEditableParams,
   ) => Promise<boolean>;
-  startEdit: (params: InfiniteTableApiIsCellEditableParams) => Promise<boolean>;
+  getColumnAtIndex: (index: number) => InfiniteTableComputedColumn<T> | null;
+  startEdit: (params: InfiniteTableApiStartEditParams) => Promise<boolean>;
   stopEdit: (
     params?: InfiniteTableApiStopEditParams,
   ) => Promise<InfiniteTableApiStopEditPromiseResolveType>;
@@ -562,6 +572,21 @@ export type InfiniteTablePropOnEditPersistParams<T> =
   InfiniteTablePropOnEditAcceptedParams<T>;
 
 export type InfiniteTablePropMultiSortBehavior = 'append' | 'replace';
+export type InfiniteTablePropKeyboardShorcut = {
+  key: string | string[];
+  when?: (
+    context: InfiniteTableKeyboardEventHandlerContext<any>,
+  ) => boolean | Promise<boolean>;
+  handler: (
+    context: InfiniteTableKeyboardEventHandlerContext<any>,
+    event: KeyboardEvent,
+  ) =>
+    | void
+    | {
+        stopNext: boolean;
+      }
+    | Promise<any>;
+};
 export interface InfiniteTableProps<T> {
   debugId?: string;
   columns: InfiniteTablePropColumns<T>;
@@ -569,6 +594,8 @@ export interface InfiniteTableProps<T> {
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents<T>;
+
+  keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 
   viewportReservedWidth?: number;
   onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;

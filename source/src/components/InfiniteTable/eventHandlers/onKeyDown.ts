@@ -4,8 +4,9 @@ import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 import { handleKeyboardSelection } from './keyboardSelection';
 import { cloneRowSelection } from '../api/getRowSelectionApi';
 import { handleBrowserFocusChangeOnKeyboardNavigation } from './handleBrowserFocusChangeOnKeyboardNavigation';
+import { eventMatchesKeyboardShortcut } from '../../utils/hotkey';
 
-export function onKeyDown<T>(
+export async function onKeyDown<T>(
   context: InfiniteTableKeyboardEventHandlerContext<T>,
   event: KeyboardEvent<Element>,
 ) {
@@ -33,7 +34,7 @@ export function onKeyDown<T>(
     }
   }
 
-  if (event.key === 'Enter') {
+  if (event.key === 'Enter' && !context.api.isEditInProgress()) {
     const { activeCellIndex } = context.getState();
     if (activeCellIndex) {
       const [rowIndex, colIndex] = activeCellIndex;
@@ -58,4 +59,27 @@ export function onKeyDown<T>(
   }
 
   context.getState().onKeyDown?.(context, event);
+
+  const { keyboardShortcuts } = context.getState();
+
+  if (keyboardShortcuts) {
+    for await (const shortcut of keyboardShortcuts) {
+      if (!eventMatchesKeyboardShortcut(event, shortcut.key)) {
+        continue;
+      }
+
+      if (shortcut.when) {
+        const result = await shortcut.when(context);
+        if (!result) {
+          continue;
+        }
+      }
+
+      const res = await shortcut.handler(context, event);
+
+      if (res && res.stopNext) {
+        break;
+      }
+    }
+  }
 }

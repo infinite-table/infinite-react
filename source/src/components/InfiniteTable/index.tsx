@@ -76,6 +76,7 @@ import {
   CellContextMenuLocationWithEvent,
   ContextMenuLocationWithEvent,
 } from './types/InfiniteTableState';
+import { eventMatchesKeyboardShortcut } from '../utils/hotkey';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -480,4 +481,5 @@ export {
   useInfiniteHeaderCell,
   useInfiniteColumnEditor,
   useInfiniteColumnFilterEditor,
+  eventMatchesKeyboardShortcut,
 };

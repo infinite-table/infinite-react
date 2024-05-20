@@ -169,6 +169,7 @@ export interface InfiniteTableMappedState<T> {
   getCellContextMenuItems: InfiniteTableProps<T>['getCellContextMenuItems'];
   getColumnMenuItems: InfiniteTableProps<T>['getColumnMenuItems'];
   getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
+  keyboardShortcuts: InfiniteTableProps<T>['keyboardShortcuts'];
 
   columnPinning: InfiniteTablePropColumnPinning;
 
