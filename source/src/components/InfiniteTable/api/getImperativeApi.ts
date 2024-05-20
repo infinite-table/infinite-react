@@ -23,6 +23,7 @@ import {
 import {
   InfiniteTableApiCellLocator,
   InfiniteTableApiIsCellEditableParams,
+  InfiniteTableApiStartEditParams,
   InfiniteTableApiStopEditParams,
   InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
@@ -251,8 +252,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return Promise.resolve(persisted);
   };
 
-  async startEdit(params: InfiniteTableApiCellLocator): Promise<boolean> {
-    const { columnId, rowIndex: index, primaryKey } = params;
+  async startEdit(params: InfiniteTableApiStartEditParams): Promise<boolean> {
+    const {
+      columnId,
+      rowIndex: index,
+      primaryKey,
+      value: valueToSetInitially,
+    } = params;
 
     const rowIndex =
       index ?? this.context.dataSourceApi.getIndexByPrimaryKey(primaryKey);
@@ -269,19 +275,21 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         const column = columnsMap.get(columnId)!;
         const rowInfo = dataArray[rowIndex];
 
-        let value = getColumnValueToEdit({
-          column,
-          rowInfo,
-          // columnsMap,
-          // fieldsToColumn,
-          // context: {
-          //   actions: this.actions,
-          //   getState: this.getState,
-          //   getDataSourceState: this.getDataSourceState,
-          //   api: this,
-          //   dataSourceApi: this.context.dataSourceApi,
-          // },
-        });
+        let value =
+          valueToSetInitially ??
+          getColumnValueToEdit({
+            column,
+            rowInfo,
+            // columnsMap,
+            // fieldsToColumn,
+            // context: {
+            //   actions: this.actions,
+            //   getState: this.getState,
+            //   getDataSourceState: this.getDataSourceState,
+            //   api: this,
+            //   dataSourceApi: this.context.dataSourceApi,
+            // },
+          });
 
         const initialValue = value;
 
@@ -465,6 +473,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
   rejectEdit = (reason: Error) => {
     return this.stopEdit({ reject: reason });
+  };
+
+  getColumnAtIndex = (index: number) => {
+    return this.getComputed().computedVisibleColumns[index] ?? null;
   };
 
   isCellEditable = (params: InfiniteTableApiIsCellEditableParams) => {

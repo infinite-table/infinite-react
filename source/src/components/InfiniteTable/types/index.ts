@@ -50,11 +50,13 @@ import type {
   InfiniteTableColumnApi,
   InfiniteColumnEditorContextType,
   InfiniteTablePropMultiSortBehavior,
+  InfiniteTablePropKeyboardShorcut,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
 export type {
   Scrollbars,
+  InfiniteTablePropKeyboardShorcut,
   InfiniteColumnEditorContextType,
   InfiniteTableColumnValueGetterParams,
   InfiniteTablePropHeaderOptions,

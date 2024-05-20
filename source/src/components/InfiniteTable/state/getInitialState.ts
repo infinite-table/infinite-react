@@ -238,6 +238,7 @@ export const forwardProps = <T>(
     columnDefaultEditable: 1,
     columnDefaultFilterable: 1,
     columnDefaultSortable: 1,
+    keyboardShortcuts: 1,
 
     rowStyle: 1,
     cellStyle: 1,

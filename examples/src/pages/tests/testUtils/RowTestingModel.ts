@@ -113,6 +113,14 @@ export class RowTestingModel {
     return cell;
   }
 
+  async clickCell(cellLocation: CellLocation) {
+    const cell = this.getCellLocator(cellLocation);
+
+    await cell.click();
+
+    return cell;
+  }
+
   async getSelectedRowIdsForVisibleRows() {
     return await getSelectedRowIds({ page: this.page });
   }
