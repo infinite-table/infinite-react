@@ -6,6 +6,10 @@ const KeyModifierAliases: Record<string, KeyModifier> = {
   control: 'ctrl',
 };
 
+const KeyAliases: Record<string, string> = {
+  esc: 'escape',
+};
+
 const keyModifierChecker: Record<
   KeyModifier,
   (event: HotKeyEventDescriptor) => boolean
@@ -72,10 +76,13 @@ function eventMatchesSingleShortcut(
   const parts = keyDescriptor
     .split('+')
     .map((part) => part.toLowerCase().trim())
-    .map((part) => KeyModifierAliases[part] || part);
+    .map((part) => KeyModifierAliases[part] || KeyAliases[part] || part);
 
   const expectedModifiers = parts.filter((part) =>
     keyModifierSet.has(part as KeyModifier),
+  );
+  const nonModifierParts = parts.filter(
+    (part) => !keyModifierSet.has(part as KeyModifier),
   );
 
   const currentModifierMatches = keyModifierNames.reduce((acc, modifier) => {
@@ -99,16 +106,23 @@ function eventMatchesSingleShortcut(
     return false;
   }
 
-  return parts.reduce((acc: boolean, part: string) => {
+  if (!nonModifierParts.length) {
+    return false;
+  }
+
+  // we don't want to match the key if it's a modifier, as that should have been handled already
+  if (keyModifierSet.has(keyLowercase as KeyModifier)) {
+    return false;
+  }
+
+  return nonModifierParts.reduce((acc: boolean, part: string) => {
     if (!acc) {
       return false;
     }
 
-    if (keyModifierChecker[part as KeyModifier]) {
-      return keyModifierChecker[part as KeyModifier](event);
-    }
+    const res = part === '*' || keyLowercase === part;
 
-    return part === '*' || keyLowercase === part;
+    return res;
   }, true);
 }
 

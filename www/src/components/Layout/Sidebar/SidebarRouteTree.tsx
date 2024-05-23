@@ -178,6 +178,7 @@ export function SidebarRouteTree({
             <li key={`${title}-${path}-${level}-link`}>
               <SidebarLink
                 href={pagePath || ''}
+                badge={badge}
                 selected={selected}
                 level={level}
                 title={title}

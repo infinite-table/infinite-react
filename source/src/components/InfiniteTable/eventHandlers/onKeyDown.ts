@@ -75,9 +75,9 @@ export async function onKeyDown<T>(
         }
       }
 
-      const res = await shortcut.handler(context, event);
+      const maybeStopNext = await shortcut.handler(context, event);
 
-      if (res && res.stopNext) {
+      if (maybeStopNext && maybeStopNext.stopNext) {
         break;
       }
     }
