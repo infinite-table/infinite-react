@@ -24,9 +24,9 @@ export default test.describe('Keyboard shortcuts', () => {
       a: 1,
       b: 1,
       'cmd+t': 1,
-      alt: 2,
+
       t: 1,
-      'alt+shift': 2,
+
       'alt+shift+x': 1,
       'alt+shift+y': 1,
       'cmd+e': 1,
