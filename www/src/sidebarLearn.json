@@ -116,7 +116,7 @@
     "title": "Keyboard Navigation",
     "path": "/docs/learn/keyboard-navigation/navigating-cells",
     "transient": true,
-    "badge": "new",
+    // "badge": "new",
     "routes": [
       {
         "path": "/docs/learn/keyboard-navigation/navigating-cells",
@@ -125,12 +125,12 @@
       {
         "path": "/docs/learn/keyboard-navigation/navigating-rows",
         "title": "Keyboard Navigation for Rows"
-      },
-      {
-        "path": "/docs/learn/keyboard-navigation/keyboard-shortcuts",
-        "title": "Keyboard Shortcuts",
-        "badge": "new"
       }
+      // {
+      //   "path": "/docs/learn/keyboard-navigation/keyboard-shortcuts",
+      //   "title": "Keyboard Shortcuts",
+      //   "badge": "new"
+      // }
     ]
   },
   {
