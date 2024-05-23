@@ -3,6 +3,8 @@ title: Keyboard Shorcuts
 description: Infinite React DataGrid supports user-friendly keyboard shortcuts for executing custom actions.
 ---
 
+DOCS Coming Soon
+
 The React DataGrid supports defining keyboard shorcuts in a user-friendly way and attaching custom actions to them.
 
 A keyboard shortcut is defined as an object of the following shape:
