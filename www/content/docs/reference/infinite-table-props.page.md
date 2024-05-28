@@ -1853,6 +1853,74 @@ A column can either be flexible or fixed. For flexible columns, use <PropLink na
 
 </Prop>
 
+<Prop name="keyboardShortcuts" type="{key,handler,when}[]">
+
+> An array that specifies the keyboard shortcuts for the DataGrid.
+
+See the [Keyboard Shortcuts](/docs/learn/keyboard-navigation/keyboard-shortcuts) page for more details.
+
+<Sandpack>
+
+<Description>
+Click on a cell and use the keyboard to navigate.
+
+Press `Shift+Enter` to show an alert with the current active cell position.
+
+</Description>
+
+```ts file="$DOCS/reference/keyboard-shortcuts-initial-example.page.tsx"
+```
+</Sandpack>
+
+
+Infinite Table DataGrid comes with some predefined keyboard shorcuts.
+you can import from the `keyboardShortcuts` named export.
+```ts
+import { keyboardShortcuts } from '@infinite-table/infinite-react'
+```
+
+#### Instant Edit
+
+```ts {4,12}
+import {
+  DataSource,
+  InfiniteTable,
+  keyboardShortcuts
+} from '@infinite-table/infinite-react';
+
+ function App() {
+  return <DataSource<Developer> primaryKey="id" data={dataSource}>
+    <InfiniteTable<Developer>
+      columns={columns}
+      keyboardShortcuts={[
+        keyboardShortcuts.instantEdit
+      ]}
+    />
+  </DataSource>
+}
+```
+
+
+<Note>
+
+For now, the only predefined keyboard shorcut is `keyboardShortcuts.instantEdit`. This keyboard shorcut starts cell editing when any key is pressed on the active cell. This is the same behavior found in Excel/Google Sheets.
+
+</Note>
+
+<Sandpack>
+
+<Description>
+
+Click on a cell and then start typing to edit the cell.
+
+</Description>
+
+```ts file="$DOCS/reference/keyboard-shortcuts-instant-edit-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
 <Prop name="columnTypes" type="Record<string,InfiniteTableColumnType>">
 
 > Specifies an object that maps column type ids to column types. Column types are used to apply the same configuration/properties to multiple columns. See related <PropLink name="columns.type" />
