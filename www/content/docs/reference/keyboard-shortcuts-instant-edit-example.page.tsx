@@ -39,7 +39,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   canDesign: { field: 'canDesign' },
   firstName: { field: 'firstName' },
   stack: { field: 'stack' },
-  id: { field: 'id' },
+  id: { field: 'id', defaultEditable: false },
   hobby: { field: 'hobby' },
   city: { field: 'city' },
   currency: { field: 'currency' },
