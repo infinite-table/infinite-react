@@ -5,6 +5,12 @@ type KeyModifier = 'cmd' | 'alt' | 'ctrl' | 'shift';
 const KeyModifierAliases: Record<string, KeyModifier> = {
   control: 'ctrl',
 };
+const CmdOrCtrlAliases: Record<string, KeyModifier> = {
+  'control|cmd': 'ctrl',
+  'cmd|control': 'ctrl',
+  'ctrl|cmd': 'ctrl',
+  'cmd|ctrl': 'ctrl',
+};
 
 const KeyAliases: Record<string, string> = {
   esc: 'escape',
@@ -30,6 +36,8 @@ type HotKeyEventDescriptor = {
   ctrlKey: KeyboardEvent['ctrlKey'];
   shiftKey: KeyboardEvent['shiftKey'];
 };
+
+const allowedStarModifiers = new Set<KeyModifier>(['shift', 'alt']);
 
 export function eventMatchesKeyboardShortcut(
   event: HotKeyEventDescriptor,
@@ -73,22 +81,39 @@ function eventMatchesSingleShortcut(
   keyDescriptor: string,
 ) {
   const keyLowercase = event.key.toLowerCase();
-  const parts = keyDescriptor
+  const splitPartsLowercase = keyDescriptor
     .split('+')
-    .map((part) => part.toLowerCase().trim())
-    .map((part) => KeyModifierAliases[part] || KeyAliases[part] || part);
+    .map((part) => part.toLowerCase().trim());
+
+  const hasCmdOrCtrlAlias = splitPartsLowercase.find(
+    (part) => CmdOrCtrlAliases[part],
+  );
+
+  const parts = splitPartsLowercase.map(
+    (part) =>
+      KeyModifierAliases[part] ||
+      CmdOrCtrlAliases[part] ||
+      KeyAliases[part] ||
+      part,
+  );
 
   const expectedModifiers = parts.filter((part) =>
     keyModifierSet.has(part as KeyModifier),
   );
   const nonModifierParts = parts.filter(
     (part) => !keyModifierSet.has(part as KeyModifier),
-  );
+  ) as string[];
 
   const currentModifierMatches = keyModifierNames.reduce((acc, modifier) => {
     acc[modifier] = keyModifierChecker[modifier](event);
     return acc;
   }, {} as Record<KeyModifier, boolean>);
+
+  if (hasCmdOrCtrlAlias && currentModifierMatches.cmd) {
+    // replace cmd with ctrl
+    currentModifierMatches.cmd = false;
+    currentModifierMatches.ctrl = true;
+  }
 
   const currentModifierMatchesList = Object.keys(currentModifierMatches).filter(
     (key) => currentModifierMatches[key as KeyModifier],
@@ -102,8 +127,24 @@ function eventMatchesSingleShortcut(
     return false;
   }
 
-  if (expectedModifiers.length != currentModifierMatchesList.length) {
-    return false;
+  const hasStar = nonModifierParts.includes('*');
+
+  if (!hasStar) {
+    if (expectedModifiers.length != currentModifierMatchesList.length) {
+      return false;
+    }
+  } else {
+    if (currentModifierMatchesList.length < expectedModifiers.length) {
+      return false;
+    }
+
+    const nonAllowedModifiers = currentModifierMatchesList.filter(
+      (modifier) => !allowedStarModifiers.has(modifier as KeyModifier),
+    );
+
+    if (nonAllowedModifiers.length) {
+      return false;
+    }
   }
 
   if (!nonModifierParts.length) {
@@ -111,7 +152,11 @@ function eventMatchesSingleShortcut(
   }
 
   // we don't want to match the key if it's a modifier, as that should have been handled already
-  if (keyModifierSet.has(keyLowercase as KeyModifier)) {
+  if (
+    keyModifierSet.has(keyLowercase as KeyModifier) ||
+    keyLowercase === 'meta' ||
+    KeyModifierAliases[keyLowercase]
+  ) {
     return false;
   }
 
