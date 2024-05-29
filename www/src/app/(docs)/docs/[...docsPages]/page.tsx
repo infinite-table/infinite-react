@@ -106,7 +106,8 @@ export default function DocsPage({
   return (
     <Page routeTree={sidebar}>
       <CenterContent>
-        <PageHeading title={page.title}></PageHeading>
+        <PageHeading title={page.title} since={page.since}></PageHeading>
+
         <MDXContent>{page.body.code}</MDXContent>
       </CenterContent>
       {afterChildren}

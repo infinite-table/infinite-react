@@ -19,5 +19,15 @@ export default test.describe('Keyboard shortcuts', () => {
       'cmd+g': 1,
       'ctrl+g': 2,
     });
+
+    await page.keyboard.press('Control+Shift+Enter', options);
+    await page.keyboard.press('Meta+Shift+i', options);
+
+    expect(await getCombinations()).toEqual({
+      'cmd+g': 1,
+      'ctrl+g': 2,
+      'ctrl+shift+enter': 1,
+      'cmd+shift+i': 1,
+    });
   });
 });

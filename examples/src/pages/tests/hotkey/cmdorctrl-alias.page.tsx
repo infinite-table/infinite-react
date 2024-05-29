@@ -15,7 +15,10 @@ const fn = (e: React.KeyboardEvent) => {
 };
 function App() {
   React.useEffect(() => {
-    const callback = keyboardShortcutBinding(['cmd|ctrl+g'], fn);
+    const callback = keyboardShortcutBinding(
+      ['cmd|ctrl+g', 'ctrl|cmd+shift+enter', 'ctrl|cmd+shift+i'],
+      fn,
+    );
     //@ts-ignore
     document.documentElement.addEventListener('keydown', callback);
   }, []);

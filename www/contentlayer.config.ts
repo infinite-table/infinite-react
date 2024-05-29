@@ -68,6 +68,10 @@ const pageFields: FieldDefs = {
     type: 'string',
     description: 'The description of the post',
   },
+  since: {
+    type: 'string',
+    description: 'The version the feature was introduced',
+  },
   metaDescription: {
     type: 'string',
     description: 'The metadata description of the post',

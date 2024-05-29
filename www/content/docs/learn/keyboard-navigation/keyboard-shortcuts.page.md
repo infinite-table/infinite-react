@@ -1,6 +1,7 @@
 ---
 title: Keyboard Shorcuts
 description: Infinite React DataGrid supports user-friendly keyboard shortcuts for executing custom actions.
+since: 3.3.3
 ---
 
 The React DataGrid supports defining <PropLink name="keyboardShortcuts" code={false}>keyboard shorcuts</PropLink> for performing custom actions.
@@ -26,6 +27,14 @@ The `key` definition is what you're used to from VS Code and other applications 
 <Note>
 
 There's a special key `*` that matches any key. This can be useful when you want to define a keyboard shortcut that should be triggered on any key press.
+
+</Note>
+
+<Note>
+
+Another important key is the `Cmd|Ctrl` key, which matches both the `Cmd` key on Mac and the `Ctrl` key on Windows/Linux.
+
+Example combinations: `Cmd|Ctrl+Shift+Enter`, `Cmd|Ctrl+e`, `Cmd|Ctrl+Shift+i`.
 
 </Note>
 
