@@ -6,6 +6,7 @@ import {
   InfiniteTablePropColumns,
   DataSource,
   InfiniteTableRowInfo,
+  InfiniteTable_HasGrouping_RowInfoGroup,
 } from '@infinite-table/infinite-react';
 
 import { AgChartsReact } from 'ag-charts-react';
@@ -86,12 +87,13 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
          */}
         {(params) => {
           const { dataArray: rowInfoArray } = params;
-          const groups = rowInfoArray.filter((rowInfo) => rowInfo.isGroupRow);
+          const groups = rowInfoArray.filter(
+            (rowInfo) => rowInfo.isGroupRow,
+          ) as InfiniteTable_HasGrouping_RowInfoGroup<Developer>[];
           const groupData = groups.map((group) => {
             return {
               stack: group.data?.stack,
-              //@ts-ignore
-              avgSalary: group.reducerData.salary,
+              avgSalary: group.reducerData?.salary,
             };
           });
 
