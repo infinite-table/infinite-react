@@ -124,7 +124,7 @@ Not all rows in a DataGrid need to have details. To configure which rows have de
   columns={masterColumns}
   rowDetailHeight={500}
   rowDetailRenderer={renderDetail}
-  isRowDetailEnabled={(rowInfo) => rowInfo.data.firstName.contains('i')}
+  isRowDetailEnabled={(rowInfo) => rowInfo.data.cityName.contains('i')}
 />
 ```
 
