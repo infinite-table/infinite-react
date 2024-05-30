@@ -68,8 +68,6 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
       <DataSource<Developer>
         data={detailDataSource}
         primaryKey="id"
-        sortMode="remote"
-        filterMode="remote"
         groupBy={[{ field: 'stack' }]}
         aggregationReducers={{
           salary: {
@@ -102,7 +100,7 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
               options={{
                 autoSize: true,
                 title: {
-                  text: `Average Salary by Stack in ${rowInfo.data?.name}, ${rowInfo.data?.country}`,
+                  text: `Avg salary by stack in ${rowInfo.data?.name}, ${rowInfo.data?.country}`,
                 },
                 data: groupData,
                 series: [
