@@ -38,6 +38,18 @@ You'll probably want to configure the height of the row detail content. Use the 
 
 </Note>
 
+## Rendering a chart component as row detail
+
+
+<Sandpack title="Retrieving cell selection value by mapping over them" size="lg" deps="ag-charts-react,ag-charts-community">
+
+```ts file=master-detail-chart-detail-example.page.tsx"
+
+```
+
+</Sandpack>
+
+
 ## Multiple levels of nesting
 
 The master-detail configuration for the DataGrid can contain any level of nesting.

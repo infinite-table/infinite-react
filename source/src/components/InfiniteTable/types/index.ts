@@ -1,4 +1,8 @@
-import type { InfiniteTableRowInfo } from '../../../utils/groupAndPivot';
+import type {
+  InfiniteTableRowInfo,
+  InfiniteTable_HasGrouping_RowInfoGroup,
+  InfiniteTable_HasGrouping_RowInfoNormal,
+} from '../../../utils/groupAndPivot';
 
 import type { InfiniteTableAction } from './InfiniteTableAction';
 import type { InfiniteTableActionType } from './InfiniteTableActionType';
@@ -69,6 +73,8 @@ export type {
   InfiniteTablePropGroupColumn,
   InfiniteTableColumnsMap,
   InfiniteTableRowInfo,
+  InfiniteTable_HasGrouping_RowInfoGroup,
+  InfiniteTable_HasGrouping_RowInfoNormal,
   InfiniteTableGroupColumnFunction,
   InfiniteTableGroupColumnBase,
   InfiniteTablePropColumnOrder,

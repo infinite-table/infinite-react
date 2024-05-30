@@ -8,6 +8,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
+
 <Prop name="rowDetailRenderer" type="(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => ReactNode">
 
 > When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />
@@ -80,11 +81,14 @@ If `isRowDetailExpanded` is specified, it overrides <PropLink name="rowDetailSta
 
 </Prop>
 
-<Prop name="isRowDetailEnabled" type="(rowInfo: InfiniteTableRowInfo) => boolean">
+<Prop name="isRowDetailEnabled" type="(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => boolean">
 
-> Decides on a per-row basis if the row details are enabled or not.
+> Decides on a per-row basis if the row details are enabled or not. See [Master Detail](/docs/learn/master-detail/overview) for more information.
 
-This is useful when you don't want to show the row detail for some rows.
+This function is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> and should return a `boolean` value.
+
+
+It's useful when you don't want to show the row detail for some rows.
 
 <Sandpack title="Master detail DataGrid with some row not having details" size="lg">
 

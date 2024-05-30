@@ -78,7 +78,7 @@ The `minimalist` theme is inspired from minimalistic designs and is a good choic
 
 ## Applying the theme
 
-To apply a theme, you have to set the className `"infinite-theme-name--THEME_NAME"` to any parent element of the `<InfiniteTable />` component.
+To apply a theme, you have to set the className `"infinite-theme-name--THEME_NAME"` to any parent element of the `<InfiniteTable />` component (or even on the component itself).
 
 You will want to apply the theme name and theme mode classNames to the same element, so you'll end up with a className like `"infinite-theme-name--minimalist infinite-theme-mode--dark"`.
 

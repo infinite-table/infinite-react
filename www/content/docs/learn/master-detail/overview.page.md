@@ -113,3 +113,36 @@ This master-detail DataGrid is configured with a custom <PropLink name="rowDetai
 ```
 
 </Sandpack>
+
+
+## Conditional row details
+
+Not all rows in a DataGrid need to have details. To configure which rows have details, you can use the <PropLink name="isRowDetailEnabled" /> function prop.
+
+```tsx title="Using conditional row details" {5}
+<InfiniteTable<City>
+  columns={masterColumns}
+  rowDetailHeight={500}
+  rowDetailRenderer={renderDetail}
+  isRowDetailEnabled={(rowInfo) => rowInfo.data.firstName.contains('i')}
+/>
+```
+
+The <PropLink name="isRowDetailEnabled" /> function prop is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink> and is expected to return a boolean value.
+
+
+<Sandpack title="Master detail DataGrid with conditional details" size="lg">
+
+<Description>
+
+This example shows a master DataGrid with cities & countries.
+
+Not all rows have details - every other row is configured without details via the <PropLink name="isRowDetailEnabled" /> function prop.
+
+</Description>
+
+```ts file="master-detail-per-row-example.page.tsx"
+
+```
+
+</Sandpack>
