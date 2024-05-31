@@ -14,19 +14,27 @@ export default test.describe.parallel('Client side filterFunction', () => {
 
     expect(await getRowCount({ page })).toEqual(employees.length);
 
+    const unfiltered = page.getByLabel('unfiltered-count');
+    const expectedUnfilteredCount = `unfiltered count: ${employees.length}`;
+
+    expect(await unfiltered.textContent()).toEqual(expectedUnfilteredCount);
+
     await page.click('button[data-name="management"]');
     expect(await getRowCount({ page })).toEqual(
       employees.filter((data) => departmentManagementFilterFunction({ data }))
         .length,
     );
+    expect(await unfiltered.textContent()).toEqual(expectedUnfilteredCount);
 
     await page.click('button[data-name="marketing"]');
     expect(await getRowCount({ page })).toEqual(
       employees.filter((data) => departmentMarketingFilterFunction({ data }))
         .length,
     );
+    expect(await unfiltered.textContent()).toEqual(expectedUnfilteredCount);
 
     await page.click('button[data-name="none"]');
     expect(await getRowCount({ page })).toEqual(employees.length);
+    expect(await unfiltered.textContent()).toEqual(expectedUnfilteredCount);
   });
 });

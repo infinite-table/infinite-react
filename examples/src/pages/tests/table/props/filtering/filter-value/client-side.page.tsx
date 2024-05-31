@@ -3,6 +3,7 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropFilterValue,
+  useDataSource,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -76,6 +77,14 @@ const domProps: React.HTMLAttributes<HTMLDivElement> = {
   },
 };
 
+function UnfilterdCount() {
+  const { unfilteredCount } = useDataSource<Employee>();
+  return (
+    <p style={{ color: 'magenta' }} aria-label="unfiltered-count">
+      unfiltered count: {unfilteredCount}
+    </p>
+  );
+}
 export default function RowStyleDefault() {
   const [filterValue, setFilterValue] = useState<
     DataSourcePropFilterValue<Employee> | undefined
@@ -140,6 +149,7 @@ export default function RowStyleDefault() {
             columnDefaultWidth={150}
             columns={columns}
           />
+          <UnfilterdCount />
         </DataSource>
       </React.StrictMode>
     </>
