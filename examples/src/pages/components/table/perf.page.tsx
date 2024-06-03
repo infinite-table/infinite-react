@@ -13,9 +13,9 @@ interface DataItem {
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 const getColumns = (count: number) => {
-  const columns = new Map<string, InfiniteTableColumn<DataItem>>();
+  const columns: Record<string, InfiniteTableColumn<DataItem>> = {};
   let i = 0;
-  while (columns.size < count) {
+  while (Object.keys(columns).length < count) {
     const time = Math.floor(i / alphabet.length);
     const index = i % alphabet.length;
     const colName = alphabet[index] + (time + 1);
@@ -30,7 +30,7 @@ const getColumns = (count: number) => {
         );
       }).bind(null, i),
     };
-    columns.set(colName, column);
+    columns[colName] = column;
     i++;
   }
   return columns;
@@ -60,8 +60,9 @@ const App = () => {
   const dataSource = React.useMemo(() => {
     return Promise.resolve(
       [...Array(dataSourceCount)].map((_x, rowIndex) => {
-        const result = Array.from(columns.values()).reduce(
-          (acc: DataItem, col: InfiniteTableColumn<DataItem>) => {
+        const result = Object.keys(columns).reduce(
+          (acc: DataItem, key: string) => {
+            const col = columns[key] as InfiniteTableColumn<DataItem>;
             acc[col.field!] = `${col.field as string}-${rowIndex}`;
             return acc;
           },
@@ -70,7 +71,7 @@ const App = () => {
 
         result.id = `id-${rowIndex}`;
 
-        return result;
+        return result as DataItem;
       }),
     );
   }, [columns, dataSourceCount]);
@@ -239,14 +240,7 @@ const App = () => {
             {rowHeight}
           </p>
         </div>
-        <DataSource<DataItem>
-          data={dataSource}
-          primaryKey="id"
-          fields={[
-            'id',
-            ...Array.from(columns.values()).map((c) => c.field as string),
-          ]}
-        >
+        <DataSource<DataItem> data={dataSource} primaryKey="id">
           <InfiniteTable<DataItem>
             virtualizeColumns={true}
             domProps={{

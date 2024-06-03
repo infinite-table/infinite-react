@@ -7,22 +7,20 @@ import { DataSource } from '@infinite-table/infinite-react';
 import fetch from 'isomorphic-fetch';
 import * as React from 'react';
 
-export const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  ['id', { field: 'id' }],
-  [
-    'country',
-    {
-      field: 'country',
-    },
-  ],
-  ['city', { field: 'city' }],
-  ['team', { field: 'team' }],
-  ['department', { field: 'department' }],
-  ['firstName', { field: 'firstName' }],
-  ['lastName', { field: 'lastName' }],
-  ['salary', { field: 'salary' }],
-  ['age', { field: 'age' }],
-]);
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  id: { field: 'id' },
+
+  country: {
+    field: 'country',
+  },
+  city: { field: 'city' },
+  team: { field: 'team' },
+  department: { field: 'department' },
+  firstName: { field: 'firstName' },
+  lastName: { field: 'lastName' },
+  salary: { field: 'salary' },
+  age: { field: 'age' },
+};
 
 type Employee = {
   id: number;

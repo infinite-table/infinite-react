@@ -13,11 +13,12 @@ type Employee = {
 };
 
 // we're ready to define columns
-const columns = new Map<string, InfiniteTableColumn<Employee>>();
-
-// the key in the columns map will be used as the column id
-columns.set('first', { field: 'firstName' });
-// columns.set('last', { field: 'lastName' });
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  // the key in the columns map will be used as the column id
+  first: {
+    field: 'firstName',
+  },
+};
 
 (globalThis as any).columns = columns;
 // and add some data

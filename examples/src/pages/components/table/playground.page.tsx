@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import {
-  InfiniteTableColumn,
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 import orders from '../../../datasets/orders.json';
 
@@ -48,36 +44,28 @@ export default () => {
               }}
               columnDefaultWidth={200}
               columnMinWidth={100}
-              columns={
-                new Map(
-                  [
-                    {
-                      field: 'OrderId',
-                      type: 'number',
-                      render: ({ value }: { value: any }) => {
-                        return `${value} - ${counter}!`;
-                      },
-                    },
-                    {
-                      field: 'CompanyName',
-                      flex: 1,
-                      id: 'sss',
-                    },
-                    {
-                      field: 'ItemCount',
-                      type: 'number',
-                      flex: 2,
-                      align: 'center',
-                    },
-                    { field: 'OrderCost', type: 'number' },
-                    { field: 'ShipCountry' },
-                    { field: 'ShipVia' },
-                  ].map((c) => [
-                    c.id ?? c.field,
-                    c as InfiniteTableColumn<Order>,
-                  ]),
-                )
-              }
+              columns={{
+                OrderId: {
+                  field: 'OrderId',
+                  type: 'number',
+                  render: ({ value }: { value: any }) => {
+                    return `${value} - ${counter}!`;
+                  },
+                },
+                CompanyName: {
+                  field: 'CompanyName',
+                  defaultFlex: 1,
+                },
+                ItemCount: {
+                  field: 'ItemCount',
+                  type: 'number',
+                  defaultFlex: 2,
+                  align: 'center',
+                },
+                OrderCost: { field: 'OrderCost', type: 'number' },
+                ShipCountry: { field: 'ShipCountry' },
+                ShipVia: { field: 'ShipVia' },
+              }}
             />
           </div>
         </DataSource>

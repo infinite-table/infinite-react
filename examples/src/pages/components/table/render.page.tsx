@@ -67,18 +67,15 @@ const data: RenderTest[] = [...new Array(DATA_COUNT)].map((_, i) => {
   };
 });
 
-const columns = new Map(
-  Object.keys(data[0]).map((key) => {
-    return [
-      key,
-      {
-        field: key,
-        id: key,
-        header: ({ column }) => `${key} ${column.computedVisibleIndex}`,
-      } as InfiniteTableColumn<RenderTest>,
-    ];
-  }),
-);
+const columns = Object.keys(data[0]).reduce((acc, key) => {
+  acc[key] = {
+    field: key,
+    id: key,
+    header: ({ column }) => `${key} ${column.computedVisibleIndex}`,
+  } as InfiniteTableColumn<RenderTest>;
+
+  return acc;
+}, {} as Record<string, InfiniteTableColumn<RenderTest>>);
 
 export default () => {
   return (

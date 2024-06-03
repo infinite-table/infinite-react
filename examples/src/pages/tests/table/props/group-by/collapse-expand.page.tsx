@@ -38,106 +38,75 @@ const dataSource = () => {
   // });
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
 
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
+    columnGroup: 'location',
+    render: ({ value, rowInfo }) => {
+      if (!rowInfo.isGroupRow) {
+        return value;
+      }
+      const { isGroupRow, groupKeys } = rowInfo;
+      if (isGroupRow) {
+        return <>Group for {groupKeys?.join(',')}</>;
+      }
+      return <b>{value}x</b>;
+    },
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+    columnGroup: 'address',
+  },
+  streetName: {
+    field: 'streetName',
+    header: 'Street Name',
+    columnGroup: 'street',
+  },
+  streetNo: {
+    columnGroup: 'street',
+    field: 'streetNo',
+    header: 'Street Number',
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+    header: 'Age',
+  },
+  department: {
+    field: 'department',
+    header: 'Department',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    header: 'Salary',
 
-      columnGroup: 'location',
-      render: ({ value, rowInfo }) => {
-        if (!rowInfo.isGroupRow) {
-          return value;
-        }
-        const { isGroupRow, groupKeys } = rowInfo;
-        if (isGroupRow) {
-          return <>Group for {groupKeys?.join(',')}</>;
-        }
-        return <b>{value}x</b>;
-      },
+    render: ({ value, rowInfo }) => {
+      if (rowInfo.isGroupRow) {
+        return (
+          <>
+            Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+            <b>{rowInfo.reducerResults?.salary}</b>
+          </>
+        );
+      }
+      return <>{value}</>;
     },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-      columnGroup: 'address',
-    },
-  ],
-
-  [
-    'streetName',
-    {
-      field: 'streetName',
-      header: 'Street Name',
-      columnGroup: 'street',
-    },
-  ],
-  [
-    'streetNo',
-    {
-      columnGroup: 'street',
-      field: 'streetNo',
-      header: 'Street Number',
-    },
-  ],
-
-  [
-    'age',
-    {
-      field: 'age',
-      type: 'number',
-      header: 'Age',
-    },
-  ],
-  [
-    'department',
-    {
-      field: 'department',
-      header: 'Department',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      header: 'Salary',
-
-      render: ({ value, rowInfo }) => {
-        if (rowInfo.isGroupRow) {
-          return (
-            <>
-              Avg salary <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults?.salary}</b>
-            </>
-          );
-        }
-        return <>{value}</>;
-      },
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-      header: 'Team',
-    },
-  ],
-  ['company', { field: 'companyName', header: 'Company' }],
-  ['companySize', { field: 'companySize', header: 'Company Size' }],
-]);
+  },
+  team: {
+    field: 'team',
+    header: 'Team',
+  },
+  company: { field: 'companyName', header: 'Company' },
+  companySize: { field: 'companySize', header: 'Company Size' },
+};
 
 const columnGroups: InfiniteTablePropColumnGroups = new Map([
   ['address', { columnGroup: 'location', header: 'Address' }],

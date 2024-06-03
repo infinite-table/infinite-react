@@ -8,58 +8,50 @@ import {
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
-//@ts-ignore
+const columns: Record<string, InfiniteTableColumn<OlimpicWinner>> = {
+  'Group column': {
+    type: 'number',
+    header: 'Group',
+    defaultSortable: false,
 
-const columns = new Map<string, InfiniteTableColumn<OlimpicWinner>>([
-  [
-    'Group column',
-    {
-      type: 'number',
-      header: 'Group',
-      defaultSortable: false,
+    render: ({ value, rowInfo }) => {
+      return (
+        <div
+          style={{
+            paddingLeft: rowInfo.isGroupRow
+              ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
+                30
+              : 0,
+          }}
+        >
+          {rowInfo.isGroupRow
+            ? rowInfo.groupKeys
+              ? rowInfo.value
+              : value ?? null
+            : null}
+        </div>
+      );
+    },
+  },
+  name: { field: 'athlete' },
+  age: { field: 'age' },
 
-      render: ({ value, rowInfo }) => {
+  year: {
+    field: 'year',
+    render: ({ value, rowInfo }) => {
+      if (rowInfo.isGroupRow) {
+        console.log(rowInfo);
         return (
-          <div
-            style={{
-              paddingLeft: rowInfo.isGroupRow
-                ? ((rowInfo.groupNesting || 0) + (rowInfo.isGroupRow ? 0 : 1)) *
-                  30
-                : 0,
-            }}
-          >
-            {rowInfo.isGroupRow
-              ? rowInfo.groupKeys
-                ? rowInfo.value
-                : value ?? null
-              : null}
-          </div>
+          <>
+            Total <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
+            <b>{rowInfo.reducerResults![0]} gold medals</b>
+          </>
         );
-      },
+      }
+      return <>{value}</>;
     },
-  ],
-
-  ['name', { field: 'athlete' }],
-  ['age', { field: 'age' }],
-  [
-    'year',
-    {
-      field: 'year',
-      render: ({ value, rowInfo }) => {
-        if (rowInfo.isGroupRow) {
-          console.log(rowInfo);
-          return (
-            <>
-              Total <b>{rowInfo.groupKeys?.join(', ')}</b>:{' '}
-              <b>{rowInfo.reducerResults![0]} gold medals</b>
-            </>
-          );
-        }
-        return <>{value}</>;
-      },
-    },
-  ],
-]);
+  },
+};
 
 const sum = (a: number, b: number) => a + b;
 const sumAggregation: DataSourceAggregationReducer<OlimpicWinner, number> = {

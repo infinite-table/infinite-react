@@ -45,33 +45,26 @@ export const data = (): Promise<Person[]> =>
     },
   ]);
 
-const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
-  [
-    'identifier',
-    {
-      field: 'Id',
-      type: 'number',
-      sortable: true,
-      width: 80,
-    },
-  ],
-  [
-    'firstName',
-    {
-      field: 'FirstName',
-    },
-  ],
-  ['age', { field: 'Age', type: 'number' }],
-]);
-
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  identifier: {
+    field: 'Id',
+    type: 'number',
+    defaultSortable: true,
+    defaultWidth: 80,
+  },
+  firstName: {
+    field: 'FirstName',
+  },
+  age: { field: 'Age', type: 'number' },
+};
 const domProps = {
   style: { height: '80vh' },
 };
 
 export default function App() {
   const [cols, setCols] = React.useState<
-    Map<string, InfiniteTableColumn<Person>>
-  >(new Map<string, InfiniteTableColumn<Person>>());
+    Record<string, InfiniteTableColumn<Person>>
+  >({});
   // >(columns);
   React.useEffect(() => {
     setTimeout(() => {
