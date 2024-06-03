@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import {
-  InfiniteTableColumn,
-  InfiniteTable,
-} from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 interface Person {
   Id: number;
@@ -96,34 +92,30 @@ export default () => {
           onColumnSizingChange={(columnSizing) => {
             console.log(columnSizing);
           }}
-          columns={
-            new Map(
-              [
-                {
-                  field: 'Id',
-                  type: 'number',
-                  sortable: true,
-                },
-                {
-                  field: 'FirstName',
-                  header: 'First name - flex 1',
-                  defaultFlex: 1,
-                },
-                {
-                  field: 'LastName',
-                  header: 'flex 1 - maxWidth 200',
-                  maxWidth: 200,
-                  defaultFlex: 1,
-                },
-                {
-                  field: 'Address',
-                  header: `Address - flex ${addressFlex}`,
-                  defaultFlex: addressFlex,
-                },
-                { field: 'Age', type: 'number' },
-              ].map((c) => [c.field, c as InfiniteTableColumn<Person>]),
-            )
-          }
+          columns={{
+            Id: {
+              field: 'Id',
+              type: 'number',
+              defaultSortable: true,
+            },
+            firstName: {
+              field: 'FirstName',
+              header: 'First name - flex 1',
+              defaultFlex: 1,
+            },
+            lastName: {
+              field: 'LastName',
+              header: 'flex 1 - maxWidth 200',
+              maxWidth: 200,
+              defaultFlex: 1,
+            },
+            address: {
+              field: 'Address',
+              header: `Address - flex ${addressFlex}`,
+              defaultFlex: addressFlex,
+            },
+            age: { field: 'Age', type: 'number' },
+          }}
         />
       </DataSource>
     </React.StrictMode>

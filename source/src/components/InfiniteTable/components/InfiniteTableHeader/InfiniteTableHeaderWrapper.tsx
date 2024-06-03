@@ -38,7 +38,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   } = tableContextValue;
 
   const rows =
-    !computedColumnGroups || !computedColumnGroups.size
+    !computedColumnGroups || !Object.keys(computedColumnGroups).length
       ? 1
       : columnGroupsMaxDepth + 2;
 
@@ -52,7 +52,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   // });
 
   const columnAndGroupTreeInfo = React.useMemo(() => {
-    if (!computedColumnGroups || !computedColumnGroups.size) {
+    if (!computedColumnGroups || !Object.keys(computedColumnGroups).length) {
       return undefined;
     }
 

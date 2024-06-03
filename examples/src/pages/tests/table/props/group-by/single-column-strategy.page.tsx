@@ -94,11 +94,11 @@ const columns: Record<string, InfiniteTableColumn<Employee>> = {
   companySize: { field: 'companySize', header: 'Company Size' },
 };
 
-const columnGroups: InfiniteTablePropColumnGroups = new Map([
-  ['address', { columnGroup: 'location', header: 'Address' }],
-  ['street', { columnGroup: 'address', header: 'Street' }],
-  ['location', { header: 'Location' }],
-]);
+const columnGroups: InfiniteTablePropColumnGroups = {
+  address: { columnGroup: 'location', header: 'Address' },
+  street: { columnGroup: 'address', header: 'Street' },
+  location: { header: 'Location' },
+};
 
 const reducers: DataSourcePropAggregationReducers<Employee> = {
   salary: {

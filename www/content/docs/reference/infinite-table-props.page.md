@@ -515,10 +515,12 @@ The following properties are available:
 - <PropLink name="columns.field">field</PropLink>
 - <PropLink name="columns.defaultWidth">defaultWidth</PropLink>
 - <PropLink name="columns.defaultFlex">defaultFlex</PropLink>
-- render
-- renderValue
-- type
+- <PropLink name="columns.render">render</PropLink>
+- <PropLink name="columns.renderValue">renderValue</PropLink>
+- <PropLink name="columns.type">type</PropLink>
 - <PropLink name="columns.header">header</PropLink>
+- <PropLink name="columns.valueGetter">valueGetter</PropLink>
+- <PropLink name="columns.valueFormatter">valueFormatter</PropLink>
 - ...etc
 
 <Sandpack>

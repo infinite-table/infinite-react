@@ -43,28 +43,25 @@ const domProps: React.HTMLAttributes<HTMLDivElement> = {
 export default function ColumnValueFormatter() {
   const [state, setState] = React.useState(0);
 
-  const columns = new Map<string, InfiniteTableColumn<Employee>>([
-    [
-      'firstName',
-      {
-        field: 'firstName',
-        header: 'First Name',
-        renderValue: (params) => {
-          return <button data-name="target">x {params.renderBag.value}</button>;
-        },
-        // renderValue: (params) => {
-        //   return (
-        //     <>
-        //       <button>{params.renderBag.value}</button> - x - {state}
-        //     </>
-        //   );
-        // },
-        // render: (params) => {
-        //   return <>aha {params.renderBag.value}</>;
-        // },
+  const columns: Record<string, InfiniteTableColumn<Employee>> = {
+    firstName: {
+      field: 'firstName',
+      header: 'First Name',
+      renderValue: (params) => {
+        return <button data-name="target">x {params.renderBag.value}</button>;
       },
-    ],
-  ]);
+      // renderValue: (params) => {
+      //   return (
+      //     <>
+      //       <button>{params.renderBag.value}</button> - x - {state}
+      //     </>
+      //   );
+      // },
+      // render: (params) => {
+      //   return <>aha {params.renderBag.value}</>;
+      // },
+    },
+  };
   return (
     <>
       <button

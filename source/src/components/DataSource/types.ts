@@ -298,8 +298,8 @@ export interface DataSourceSetupState<T> {
   postFilterDataArray?: T[];
   postSortDataArray?: T[];
   postGroupDataArray?: InfiniteTableRowInfo<T>[];
-  pivotColumns?: Map<string, InfiniteTableColumn<T>>;
-  pivotColumnGroups?: Map<string, InfiniteTableColumnGroup>;
+  pivotColumns?: Record<string, InfiniteTableColumn<T>>;
+  pivotColumnGroups?: Record<string, InfiniteTableColumnGroup>;
 }
 
 export type DataSourcePropAggregationReducers<T> = Record<

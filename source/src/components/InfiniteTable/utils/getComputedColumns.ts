@@ -111,7 +111,7 @@ export type GetComputedColumnsResult<T> = {
 };
 
 type GetComputedVisibleColumnsParam<T> = {
-  columns: Map<string, InfiniteTableColumn<T>>;
+  columns: Record<string, InfiniteTableColumn<T>>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -201,12 +201,12 @@ export const getComputedColumns = <T extends unknown>({
   );
 
   const normalizedColumnOrder = adjustColumnOrderForPinning(
-    columnOrder === true ? [...columns.keys()] : columnOrder,
+    columnOrder === true ? Object.keys(columns) : columnOrder,
     columnPinning,
   );
 
   const visibleColumnOrder = normalizedColumnOrder.filter((colId) => {
-    const col = columns.get(colId);
+    const col = columns[colId];
     if (!col) {
       logError(
         `Column with id "${colId}" specified in columnOrder array cannot be found in the columns map.`,
@@ -227,7 +227,7 @@ export const getComputedColumns = <T extends unknown>({
 
   const visibleColumnsArray: InfiniteTableColumn<T>[] = visibleColumnOrder.map(
     (columnId, index) => {
-      const col = columns.get(columnId)!;
+      const col = columns[columnId]!;
 
       columnIdsToVisibleIndex.set(columnId, index);
 
@@ -260,7 +260,7 @@ export const getComputedColumns = <T extends unknown>({
   function getColSize(
     colId: string,
   ): RequireAtLeastOne<ColSizeOptions, 'flex' | 'size'> {
-    const column = columns.get(colId);
+    const column = columns[colId];
     const colType = getColumnComputedType(column!, columnTypes);
     const colTypeSizing: InfiniteTableColumnSizingOptions = {
       minWidth: colType?.minWidth,
@@ -393,7 +393,8 @@ export const getComputedColumns = <T extends unknown>({
 
   const columnIdsInitialColumnOrder: string[] = [];
 
-  columns.forEach((c, key) => {
+  Object.keys(columns).forEach((key) => {
+    const c = columns[key];
     columnIdsInitialColumnOrder.push(key);
     if (!orderedColumns.has(key)) {
       orderedColumns.set(key, c);

@@ -26,10 +26,10 @@ import {
 } from './InfiniteTableColumn';
 import type {
   InfiniteTableColumnGroup,
-  InfiniteTablePropColumnGroupsMap,
+  InfiniteTablePropColumnGroups,
   InfiniteTablePropColumnPinning,
+  InfiniteTablePropColumns,
   InfiniteTablePropColumnSizing,
-  InfiniteTableColumnsMap,
   InfiniteTablePropColumnTypes,
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
@@ -62,7 +62,7 @@ export interface InfiniteTableSetupState<T> {
   getDOMNodeForCell: (cellPos: CellPositionByIndex) => HTMLElement | null;
   onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
-  columnsWhenInlineGroupRenderStrategy?: Map<string, InfiniteTableColumn<T>>;
+  columnsWhenInlineGroupRenderStrategy?: Record<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
   editingValueRef: MutableRefObject<any | null>;
   scrollerDOMRef: MutableRefObject<HTMLDivElement | null>;
@@ -100,7 +100,7 @@ export interface InfiniteTableSetupState<T> {
     CellPositionByIndex & { event: MouseEvent }
   >;
   keyDown: SubscriptionCallback<KeyboardEvent>;
-  columnsWhenGrouping?: InfiniteTableColumnsMap<T>;
+  columnsWhenGrouping?: InfiniteTablePropColumns<T>;
   bodySize: Size;
   brain: MatrixBrain;
   headerBrain: MatrixBrain;
@@ -175,7 +175,7 @@ export interface InfiniteTableMappedState<T> {
 
   loadingText: InfiniteTableProps<T>['loadingText'];
   components: InfiniteTableProps<T>['components'];
-  columns: InfiniteTableColumnsMap<T>;
+  columns: InfiniteTablePropColumns<T>;
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   onReady: InfiniteTableProps<T>['onReady'];
 
@@ -227,7 +227,7 @@ export interface InfiniteTableMappedState<T> {
   pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
-  pivotColumnGroups: InfiniteTablePropColumnGroupsMap;
+  pivotColumnGroups: InfiniteTablePropColumnGroups;
 
   columnMinWidth: NonUndefined<InfiniteTableProps<T>['columnMinWidth']>;
   columnMaxWidth: NonUndefined<InfiniteTableProps<T>['columnMaxWidth']>;
@@ -257,7 +257,7 @@ export interface InfiniteTableMappedState<T> {
 
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
-  columnGroups: InfiniteTablePropColumnGroupsMap;
+  columnGroups: InfiniteTablePropColumnGroups;
   collapsedColumnGroups: NonUndefined<
     InfiniteTableProps<T>['collapsedColumnGroups']
   >;
@@ -269,7 +269,7 @@ export interface InfiniteTableMappedState<T> {
 
 export interface InfiniteTableDerivedState<T> {
   groupBy: DataSourceProps<T>['groupBy'];
-  computedColumns: Map<string, InfiniteTableColumn<T>>;
+  computedColumns: Record<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];
 
   rowDetailState: RowDetailState<T> | undefined;
@@ -294,7 +294,7 @@ export interface InfiniteTableDerivedState<T> {
 
   columnGroupsDepthsMap: InfiniteTableColumnGroupsDepthsMap;
   columnGroupsMaxDepth: number;
-  computedColumnGroups: InfiniteTablePropColumnGroupsMap;
+  computedColumnGroups: InfiniteTablePropColumnGroups;
 
   rowHeightCSSVar: string;
   rowDetailHeightCSSVar: string;

@@ -32,19 +32,16 @@ const dataSource = () => {
     });
 };
 
-export const columns = new Map<string, InfiniteTableColumn<Developer>>([
-  ['id', { field: 'id', type: 'numeric' }],
-  [
-    'country',
-    {
-      field: 'country',
-      type: null,
-    },
-  ],
-  ['city', { field: 'city' }],
-  ['salary', { field: 'salary', type: ['default', 'numeric'] }],
-]);
+export const columns: Record<string, InfiniteTableColumn<Developer>> = {
+  id: { field: 'id', type: 'numeric' },
 
+  country: {
+    field: 'country',
+    type: null,
+  },
+  city: { field: 'city' },
+  salary: { field: 'salary', type: ['default', 'numeric'] },
+};
 const columnTypes: InfiniteTablePropColumnTypes<Developer> = {
   default: {
     defaultWidth: 155,

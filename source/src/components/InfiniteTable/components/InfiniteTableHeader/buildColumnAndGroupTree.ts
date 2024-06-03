@@ -127,7 +127,7 @@ export function buildColumnAndGroupTree<T>(
     let prevGroupItem: ColGroupTreeItem<T> | undefined = colItem;
 
     while (groupId) {
-      const colGroup = columnGroups.get(groupId);
+      const colGroup = columnGroups[groupId];
 
       if (colGroup) {
         parentGroups.add(groupId);

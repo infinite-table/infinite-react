@@ -1,17 +1,18 @@
-import type { InfiniteTablePropColumnGroupsMap } from '../types/InfiniteTableProps';
+import type { InfiniteTablePropColumnGroups } from '../types/InfiniteTableProps';
 import type { InfiniteTableColumnGroupsDepthsMap } from '../types/InfiniteTableState';
 
 export function computeColumnGroupsDepths(
-  columnGroups: InfiniteTablePropColumnGroupsMap,
+  columnGroups: InfiniteTablePropColumnGroups,
 ): InfiniteTableColumnGroupsDepthsMap {
   const map = new Map();
 
-  columnGroups.forEach((colGroup, colGroupId) => {
+  Object.keys(columnGroups).forEach((colGroupId) => {
+    const colGroup = columnGroups[colGroupId];
     let parentGroupId = colGroup.columnGroup;
     let depth = 0;
 
     while (parentGroupId) {
-      const parent = columnGroups.get(parentGroupId);
+      const parent = columnGroups[parentGroupId];
 
       if (!parent) {
         if (__DEV__) {

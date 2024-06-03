@@ -20,10 +20,8 @@ import type {
 import type { GetComputedColumnsResult } from '../utils/getComputedColumns';
 import { getComputedColumns } from '../utils/getComputedColumns';
 
-import { useRerenderOnKeyChange } from './useRerenderOnKeyChange';
-
 type UseComputedColumnsParam<T> = {
-  columns: Map<string, InfiniteTableColumn<T>>;
+  columns: Record<string, InfiniteTableColumn<T>>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -118,7 +116,8 @@ export const useComputedColumns = <T extends unknown>({
   columnVisibilityAssumeVisible,
   columnSizing,
 }: UseComputedColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
-  const columnsRenderId = useRerenderOnKeyChange(columns);
+  // const columnsRenderId = useRerenderOnKeyChange(columns);
+  const columnsRenderId = 1;
 
   const {
     computedRemainingSpace,

@@ -31,26 +31,20 @@ const data: Person[] = [
   },
 ];
 
-const columns: Map<string, InfiniteTableColumn<Person>> = new Map([
-  [
-    'id',
-    {
-      // specifies which field from the data source
-      // should be rendered in this column
-      field: 'Id',
-      type: 'number',
-      sortable: true,
-      width: 100,
-    },
-  ],
-  [
-    'firstName',
-    {
-      field: 'FirstName',
-    },
-  ],
-  ['age', { field: 'Age', type: 'number' }],
-]);
+const columns: Record<string, InfiniteTableColumn<Person>> = {
+  id: {
+    // specifies which field from the data source
+    // should be rendered in this column
+    field: 'Id',
+    type: 'number',
+    defaultSortable: true,
+    defaultWidth: 100,
+  },
+  firstName: {
+    field: 'FirstName',
+  },
+  age: { field: 'Age', type: 'number' },
+};
 
 const domProps = {
   style: {
