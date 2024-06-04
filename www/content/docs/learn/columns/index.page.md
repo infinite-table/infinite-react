@@ -12,7 +12,7 @@ You then use them in the `columns` prop in your `InfiniteTable` component.
 The <PropLink name="columns" /> prop is typed either as
 
 - `Record<string, InfiniteTableColumn<DATA_TYPE>>`
-- or `InfiniteTablePropColumns<DATA_TYPE>`, which is an alias for the version above
+- or `InfiniteTablePropColumns<DATA_TYPE>`, which is an alias for the type above
 
 <Note title="Understanding column id">
 
