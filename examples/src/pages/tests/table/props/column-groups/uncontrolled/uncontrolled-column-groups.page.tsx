@@ -6,22 +6,25 @@ import { columns } from '../columns';
 import { rowData, Person } from '../rowData';
 
 const getColumnGroups = () => {
-  const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
-    ['contact info', { header: 'Contact info' }],
-    ['street', { header: 'street', columnGroup: 'address' }],
-    ['location', { header: 'location', columnGroup: 'address' }],
-    ['address', { header: 'Address' }],
-  ]);
+  const columnGroups: Record<string, InfiniteTableColumnGroup> = {
+    'contact info': { header: 'Contact info' },
+    street: { header: 'street', columnGroup: 'address' },
+    location: { header: 'location', columnGroup: 'address' },
+    address: { header: 'Address' },
+  };
 
   return columnGroups;
 };
 
-const columnGroups = getColumnGroups();
 const collapsedColumnGroups = new Map<string[], string>();
-(globalThis as any).columnGroups = columnGroups;
+
 (globalThis as any).collapsedColumnGroups = collapsedColumnGroups;
 
 const App = () => {
+  const [columnGroups, setColumnGroups] = React.useState(getColumnGroups());
+
+  (globalThis as any).columnGroups = columnGroups;
+  (globalThis as any).setColumnGroups = setColumnGroups;
   return (
     <React.StrictMode>
       <DataSource<Person> primaryKey="id" data={rowData}>

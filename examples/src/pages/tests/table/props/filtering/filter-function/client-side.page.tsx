@@ -18,59 +18,36 @@ const dataSource = () => {
   return Promise.resolve(employees);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-    },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-    },
-  ],
-
-  [
-    'age',
-    {
-      field: 'age',
-      type: 'number',
-      header: 'Age',
-    },
-  ],
-  [
-    'department',
-    {
-      field: 'department',
-      header: 'Department',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-    },
-  ],
-  [
-    'team',
-    {
-      field: 'team',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+    header: 'Age',
+  },
+  department: {
+    field: 'department',
+    header: 'Department',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
+  team: {
+    field: 'team',
+  },
+};
 
 const domProps: React.HTMLAttributes<HTMLDivElement> = {
   style: {

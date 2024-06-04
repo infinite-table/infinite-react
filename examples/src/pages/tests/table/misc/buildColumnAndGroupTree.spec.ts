@@ -64,11 +64,11 @@ type Person = {
 
 export default test.describe.parallel('buildColumnAndGroupTree', () => {
   test('should work correctly for groups that dont repeat twice', async () => {
-    const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
-      ['contact info', { header: 'Contact info' }],
-      ['street', { header: 'street', columnGroup: 'address' }],
-      ['address', { header: 'Address' }],
-    ]);
+    const columnGroups: Record<string, InfiniteTableColumnGroup> = {
+      'contact info': { header: 'Contact info' },
+      street: { header: 'street', columnGroup: 'address' },
+      address: { header: 'Address' },
+    };
     const columns: InfiniteTableComputedColumn<Person>[] = [
       getComputedColumn({
         field: 'id',
@@ -309,12 +309,12 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
   });
 
   test('should work correctly for groups that are repeated', () => {
-    const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
-      ['contact info', { header: 'Contact info' }],
-      ['street', { header: 'street', columnGroup: 'address' }],
-      ['location', { header: 'location', columnGroup: 'address' }],
-      ['address', { header: 'Address' }],
-    ]);
+    const columnGroups: Record<string, InfiniteTableColumnGroup> = {
+      'contact info': { header: 'Contact info' },
+      street: { header: 'street', columnGroup: 'address' },
+      location: { header: 'location', columnGroup: 'address' },
+      address: { header: 'Address' },
+    };
     const columns: InfiniteTableComputedColumn<Person>[] = [
       getComputedColumn({
         field: 'streetNo',
@@ -533,12 +533,12 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
   });
 
   test('should work correctly for groups that are repeated - case 2', () => {
-    const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
-      ['contact info', { header: 'Contact info' }],
-      ['street', { header: 'street', columnGroup: 'address' }],
-      ['location', { header: 'location', columnGroup: 'address' }],
-      ['address', { header: 'Address' }],
-    ]);
+    const columnGroups: Record<string, InfiniteTableColumnGroup> = {
+      'contact info': { header: 'Contact info' },
+      street: { header: 'street', columnGroup: 'address' },
+      location: { header: 'location', columnGroup: 'address' },
+      address: { header: 'Address' },
+    };
     const columns: InfiniteTableComputedColumn<Person>[] = [
       getComputedColumn({
         field: 'streetNo',
@@ -678,14 +678,14 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
       l: string;
       k: string;
     };
-    const columnGroups: Map<string, InfiniteTableColumnGroup> = new Map([
-      ['c', { header: 'c', columnGroup: 'b' }],
-      ['b', { header: 'b', columnGroup: 'a' }],
-      ['a', { header: 'a', columnGroup: 'x' }],
-      ['x', { header: 'x' }],
-      ['h', { header: 'h', columnGroup: 'g' }],
-      ['g', { header: 'g', columnGroup: 'x' }],
-    ]);
+    const columnGroups: Record<string, InfiniteTableColumnGroup> = {
+      c: { header: 'c', columnGroup: 'b' },
+      b: { header: 'b', columnGroup: 'a' },
+      a: { header: 'a', columnGroup: 'x' },
+      x: { header: 'x' },
+      h: { header: 'h', columnGroup: 'g' },
+      g: { header: 'g', columnGroup: 'x' },
+    };
     const columns: InfiniteTableComputedColumn<Alphabet>[] = [
       getComputedColumn({
         field: 'd',

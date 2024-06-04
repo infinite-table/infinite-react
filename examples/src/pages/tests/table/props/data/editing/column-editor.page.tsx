@@ -91,7 +91,7 @@ const CustomEditor = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ border: '2px solid red' }}>
       <input
         style={{ width: '100%' }}
         autoFocus

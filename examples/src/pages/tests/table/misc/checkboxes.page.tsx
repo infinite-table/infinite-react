@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import {
-  InfiniteTableColumn,
-  InfiniteTable,
-} from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 
 interface FakeData {
   id: number;
@@ -63,8 +59,13 @@ const initialData: FakeData[] = [
 export default () => {
   const [rowHeight] = React.useState(50);
   const [data, setData] = React.useState(initialData);
-  const renderRow = (data: FakeData): React.ReactElement => {
+  const renderRow = (
+    data: Partial<FakeData> | null,
+  ): React.ReactElement | null => {
     const item = data;
+    if (!item) {
+      return null;
+    }
     return (
       <div
         style={{ width: '180vw', border: '1px solid red' }}
@@ -108,26 +109,22 @@ export default () => {
           columnDefaultWidth={150}
           sortable={false}
           rowHeight={rowHeight}
-          columns={
-            new Map(
-              [
-                {
-                  field: 'id',
-                  type: 'number',
-                  sortable: true,
-                },
-                {
-                  field: 'text',
-                },
-                {
-                  field: 'checked',
-                  render: ({ data }: { data: FakeData }) => {
-                    return renderRow(data);
-                  },
-                },
-              ].map((c) => [c.field, c as InfiniteTableColumn<FakeData>]),
-            )
-          }
+          columns={{
+            id: {
+              field: 'id',
+              type: 'number',
+              defaultSortable: true,
+            },
+            text: {
+              field: 'text',
+            },
+            checked: {
+              field: 'checked',
+              render: ({ data }: { data: Partial<FakeData> | null }) => {
+                return renderRow(data);
+              },
+            },
+          }}
         />
       </DataSource>
     </React.StrictMode>

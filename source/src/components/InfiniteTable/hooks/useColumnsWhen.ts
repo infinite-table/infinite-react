@@ -10,11 +10,10 @@ import type {
 } from '../../DataSource';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
 import { useComponentState } from '../../hooks/useComponentState';
-import { interceptMap } from '../../hooks/useInterceptedMap';
 import { getGroupByMap } from '../state/getInitialState';
 import {
   getColumnVisibilityForHideEmptyGroupColumns,
-  getGroupColumnsMapForComputedColumns,
+  getGroupColumnsForComputedColumns,
 } from '../state/getColumnVisibilityForHideEmptyGroupColumns';
 
 import type {
@@ -88,18 +87,19 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
   } = useComponentState<InfiniteTableState<T>>();
 
   function computeColumnsWhenInlineGroupRenderStrategy(
-    columns: Map<string, InfiniteTableColumn<T>>,
+    columns: Record<string, InfiniteTableColumn<T>>,
     groupByMap: GroupByMap<T>,
     groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
     toggleGroupRow: ToggleGroupRowFn,
   ) {
-    const computedColumns = new Map<string, InfiniteTableColumn<T>>();
+    const computedColumns: Record<string, InfiniteTableColumn<T>> = {};
 
     if (groupRenderStrategy !== 'inline') {
       return;
     }
 
-    columns.forEach((column, id) => {
+    Object.keys(columns).forEach((id) => {
+      const column = columns[id];
       let base: Partial<InfiniteTableGeneratedGroupColumn<T>> = {};
       const groupByForColumn = groupByMap.get(column.field!);
       if (groupByForColumn && groupRenderStrategy === 'inline') {
@@ -166,10 +166,12 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
       }
       const clone = { ...base, ...column } as InfiniteTableColumn<T>;
 
-      computedColumns.set(id, clone);
+      computedColumns[id] = clone;
     });
 
-    return computedColumns.size === 0 ? undefined : computedColumns;
+    return Object.keys(computedColumns).length === 0
+      ? undefined
+      : computedColumns;
   }
 
   useEffect(() => {
@@ -184,12 +186,6 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
     };
 
     update();
-
-    return interceptMap(columns, {
-      set: update,
-      delete: update,
-      clear: update,
-    });
   }, [columns, groupByMap, groupRenderStrategy, toggleGroupRow]);
 }
 
@@ -258,11 +254,11 @@ function useColumnsWhenGrouping<T>() {
 
     update();
 
-    return interceptMap(columns, {
-      set: update,
-      delete: update,
-      clear: update,
-    });
+    // return interceptMap(columns, {
+    //   set: update,
+    //   delete: update,
+    //   clear: update,
+    // });
   }, [
     columns,
     groupBy,
@@ -312,7 +308,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     }
     const currentState = getComponentState();
 
-    const computedGroupColumns = getGroupColumnsMapForComputedColumns(
+    const computedGroupColumns = getGroupColumnsForComputedColumns(
       computedColumns,
       groupByMap,
     );
@@ -365,7 +361,8 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
     let newlyHiddenColumns = new Set<string>();
     let newlyDisplayedColumns = new Set<string>();
 
-    computedColumns.forEach((col, id) => {
+    Object.keys(computedColumns).forEach((id) => {
+      const col = computedColumns[id];
       if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped != null) {
         const hideWhenGrouped =
           (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||
@@ -427,7 +424,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
 }
 
 export function getColumnsWhenGrouping<T>(params: {
-  columns: Map<string, InfiniteTableColumn<T>>;
+  columns: Record<string, InfiniteTableColumn<T>>;
   groupBy: DataSourceGroupBy<T>[];
   selectionMode: DataSourcePropSelectionMode;
   pivotBy?: DataSourcePivotBy<T>[];
@@ -439,7 +436,7 @@ export function getColumnsWhenGrouping<T>(params: {
   pivotColumns: InfiniteTableProps<T>['pivotColumns'];
   pivotColumn: InfiniteTableProps<T>['pivotColumn'];
 }): {
-  columns: Map<string, InfiniteTableColumn<T>> | undefined;
+  columns: Record<string, InfiniteTableColumn<T>> | undefined;
   groupColumnIds: string[];
 } {
   const {
@@ -460,7 +457,7 @@ export function getColumnsWhenGrouping<T>(params: {
     return { columns: undefined, groupColumnIds: [] };
   }
 
-  const computedColumns = new Map<string, InfiniteTableColumn<T>>();
+  const computedColumns: Record<string, InfiniteTableColumn<T>> = {};
 
   const groupColumnIds: string[] = [];
 
@@ -485,7 +482,7 @@ export function getColumnsWhenGrouping<T>(params: {
         `group-by-${groupByForColumn.field || groupByForColumn.groupField}`;
 
       groupColumnIds.push(groupColumnId);
-      computedColumns.set(groupColumnId, generatedGroupColumn);
+      computedColumns[groupColumnId] = generatedGroupColumn;
     });
   } else if (groupRenderStrategy === 'single-column' && groupBy.length) {
     const singleGroupColumn = getSingleGroupColumn(
@@ -502,19 +499,21 @@ export function getColumnsWhenGrouping<T>(params: {
 
     const groupColumnId = singleGroupColumn.id || 'group-by';
     groupColumnIds.push(groupColumnId);
-    computedColumns.set(groupColumnId, singleGroupColumn);
+    computedColumns[groupColumnId] = singleGroupColumn;
   }
 
   if (pivotColumns) {
     const columnsByField: Partial<Record<keyof T, InfiniteTableColumn<T>>> = {};
 
-    columns.forEach((col) => {
+    Object.keys(columns).forEach((colId) => {
+      const col = columns[colId];
       if (col.field) {
         columnsByField[col.field] = col;
       }
     });
 
-    pivotColumns.forEach((col, key) => {
+    Object.keys(pivotColumns).forEach((key) => {
+      const col = pivotColumns[key];
       const isSimpleTotalColumn = col.pivotTotalColumn && col.columnGroup;
       const isGrandTotalColumn = col.pivotTotalColumn && !col.columnGroup;
 
@@ -553,7 +552,7 @@ export function getColumnsWhenGrouping<T>(params: {
       if (column.inheritFromColumn !== false) {
         const colToInheritFrom =
           typeof column.inheritFromColumn === 'string'
-            ? columns.get(column.inheritFromColumn)
+            ? columns[column.inheritFromColumn]
             : column.pivotAggregator?.field
             ? columnsByField[column.pivotAggregator?.field]
             : undefined;
@@ -565,16 +564,17 @@ export function getColumnsWhenGrouping<T>(params: {
           return column.renderValue!(renderOptions);
         };
       }
-      computedColumns.set(key, column);
+      computedColumns[key] = column;
     });
   } else {
-    columns.forEach((col, colId) => {
-      computedColumns.set(colId, col);
+    Object.keys(columns).forEach((colId) => {
+      const col = columns[colId];
+      computedColumns[colId] = col;
     });
   }
 
   return {
-    columns: computedColumns.size ? computedColumns : undefined,
+    columns: Object.keys(computedColumns).length ? computedColumns : undefined,
     groupColumnIds,
   };
 }

@@ -12,23 +12,17 @@ import { dataSource, Employee } from './custom-filter-type.data';
 
 const { StringFilterEditor } = components;
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-      filterType: 'country',
-    },
-  ],
-]);
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+    filterType: 'country',
+  },
+};
 
 const domProps: React.HTMLAttributes<HTMLDivElement> = {
   style: {

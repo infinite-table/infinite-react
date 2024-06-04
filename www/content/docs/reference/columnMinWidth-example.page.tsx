@@ -6,38 +6,25 @@ import {
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
-export const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-    },
-  ],
-  [
-    'country',
-    {
-      field: 'country',
-      header: 'Country',
-    },
-  ],
-
-  [
-    'city',
-    {
-      field: 'city',
-      header: 'City',
-    },
-  ],
-  [
-    'salary',
-    {
-      field: 'salary',
-      type: 'number',
-      header: 'Salary',
-    },
-  ],
-]);
+export const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+  },
+  country: {
+    field: 'country',
+    header: 'Country',
+  },
+  city: {
+    field: 'city',
+    header: 'City',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+    header: 'Salary',
+  },
+};
 
 const defaultColumnSizing: InfiniteTablePropColumnSizing = {
   city: { flex: 1 },

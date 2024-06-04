@@ -7,10 +7,7 @@ import {
   useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
 
-import type {
-  InfiniteTableColumn,
-  InfiniteTablePropColumns,
-} from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 type Developer = {
   id: number;
@@ -54,37 +51,32 @@ const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
   );
 };
 
-const columns: InfiniteTablePropColumns<Developer> = new Map<
-  string,
-  InfiniteTableColumn<Developer>
->([
-  ['id', { field: 'id' }],
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      render: () => {
-        const { data } = useInfiniteColumnCell<Developer>();
+const columns: InfiniteTablePropColumns<Developer> = {
+  id: { field: 'id' },
 
-        return <>{data?.firstName}!!!!!!</>;
-      },
+  firstName: {
+    field: 'firstName',
+    render: () => {
+      const { data } = useInfiniteColumnCell<Developer>();
 
-      components: {
-        ColumnCell,
-        HeaderCell,
-      },
+      return <>{data?.firstName}!!!!!!</>;
     },
-  ],
-  ['preferredLanguage', { field: 'preferredLanguage' }],
-  ['stack', { field: 'stack' }],
-  ['country', { field: 'country' }],
-  ['canDesign', { field: 'canDesign' }],
-  ['hobby', { field: 'hobby' }],
-  ['city', { field: 'city' }],
-  ['age', { field: 'age' }],
-  ['salary', { field: 'salary', type: 'number' }],
-  ['currency', { field: 'currency' }],
-]);
+
+    components: {
+      ColumnCell,
+      HeaderCell,
+    },
+  },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: { field: 'country' },
+  canDesign: { field: 'canDesign' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  age: { field: 'age' },
+  salary: { field: 'salary', type: 'number' },
+  currency: { field: 'currency' },
+};
 
 const domProps = {
   style: {

@@ -7,7 +7,6 @@ import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
 import { MultiCellSelector } from '../utils/MultiCellSelector';
 import { MultiRowSelector } from '../utils/MultiRowSelector';
 
-import { useColumnGroups } from './useColumnGroups';
 import { useColumnRowspan } from './useColumnRowspan';
 import { useColumnSizeFn } from './useColumnSizeFn';
 import { useColumnsWhen } from './useColumnsWhen';
@@ -70,8 +69,6 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   }, [showSeparatePivotColumnForSingleAggregation]);
 
   const { multiSort, filterValue, filterTypes } = dataSourceState;
-
-  useColumnGroups<T>();
 
   const { toggleGroupRow } = useColumnsWhen<T>();
 

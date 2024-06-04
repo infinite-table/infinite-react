@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
-
-import type {
-  InfiniteTableColumn,
-  InfiniteTablePropColumns,
+import {
+  InfiniteTable,
+  DataSource,
+  type InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -53,30 +52,25 @@ function Cmp({ value }: { value: string }) {
   );
 }
 
-const columns: InfiniteTablePropColumns<Developer> = new Map<
-  string,
-  InfiniteTableColumn<Developer>
->([
-  ['id', { field: 'id' }],
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      renderValue: ({ value }) => {
-        return <Cmp value={value as string} />;
-      },
+const columns: Record<string, InfiniteTableColumn<Developer>> = {
+  id: { field: 'id' },
+
+  firstName: {
+    field: 'firstName',
+    renderValue: ({ value }) => {
+      return <Cmp value={value as string} />;
     },
-  ],
-  ['preferredLanguage', { field: 'preferredLanguage' }],
-  ['stack', { field: 'stack' }],
-  ['country', { field: 'country' }],
-  ['canDesign', { field: 'canDesign' }],
-  ['hobby', { field: 'hobby' }],
-  ['city', { field: 'city' }],
-  ['age', { field: 'age' }],
-  ['salary', { field: 'salary', type: 'number' }],
-  ['currency', { field: 'currency' }],
-]);
+  },
+  preferredLanguage: { field: 'preferredLanguage' },
+  stack: { field: 'stack' },
+  country: { field: 'country' },
+  canDesign: { field: 'canDesign' },
+  hobby: { field: 'hobby' },
+  city: { field: 'city' },
+  age: { field: 'age' },
+  salary: { field: 'salary', type: 'number' },
+  currency: { field: 'currency' },
+};
 
 const domProps = {
   style: {

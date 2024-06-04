@@ -411,28 +411,17 @@ export type InfiniteTableInternalProps<T> = {
   ___t?: T;
 };
 
-export type InfiniteTableColumnsMap<
+export type InfiniteTablePropColumns<
   T,
   ColumnType = InfiniteTableColumn<T>,
-> = Map<string, ColumnType>;
-
-export type InfiniteTablePropColumns<T, ColumnType = InfiniteTableColumn<T>> =
-  | Record<string, ColumnType>
-  | InfiniteTableColumnsMap<T, ColumnType>;
+> = Record<string, ColumnType>;
 
 export type InfiniteTableColumns<T> = InfiniteTablePropColumns<T>;
 
-export type InfiniteTablePropColumnGroupsMap = Map<
+export type InfiniteTablePropColumnGroups = Record<
   string,
   InfiniteTableColumnGroup
 >;
-export type InfiniteTablePropColumnGroupsRecord = Record<
-  string,
-  InfiniteTableColumnGroup
->;
-export type InfiniteTablePropColumnGroups =
-  | InfiniteTablePropColumnGroupsRecord
-  | InfiniteTablePropColumnGroupsMap;
 
 /**
  * the keys is an array of strings: first string in the array is the column group id, next strings are the ids of all columns in the group
@@ -590,7 +579,7 @@ export type InfiniteTablePropKeyboardShorcut = {
 export interface InfiniteTableProps<T> {
   debugId?: string;
   columns: InfiniteTablePropColumns<T>;
-  pivotColumns?: InfiniteTableColumnsMap<T, InfiniteTablePivotColumn<T>>;
+  pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents<T>;

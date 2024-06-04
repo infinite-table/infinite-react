@@ -27,7 +27,7 @@ import {
   InfiniteTableState,
 } from '../types';
 import {
-  InfiniteTableColumnsMap,
+  InfiniteTablePropColumns,
   InfiniteTablePropGroupColumn,
   InfiniteTablePropGroupRenderStrategy,
 } from '../types/InfiniteTableProps';
@@ -39,7 +39,6 @@ import {
   CellContextMenuLocationWithEvent,
   ContextMenuLocationWithEvent,
 } from '../types/InfiniteTableState';
-import { toMap } from '../utils/toMap';
 
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
@@ -75,7 +74,7 @@ export function initSetupState<T>({
 }: {
   debugId?: string;
 }): InfiniteTableSetupState<T> {
-  const columnsGeneratedForGrouping: InfiniteTableColumnsMap<T> = new Map();
+  const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
 
   /**
    * This is the main virtualization brain that powers the table
@@ -196,7 +195,7 @@ export function initSetupState<T>({
 }
 
 export const forwardProps = <T>(
-  setupState: InfiniteTableSetupState<T>,
+  _setupState: InfiniteTableSetupState<T>,
 ): ForwardPropsToStateFnResult<
   InfiniteTableProps<T>,
   InfiniteTableMappedState<T>,
@@ -324,7 +323,7 @@ export const forwardProps = <T>(
     columnHeaderHeight: (columnHeaderHeight) =>
       typeof columnHeaderHeight === 'number' ? columnHeaderHeight : 30,
 
-    columns: (columns) => toMap(columns, setupState.propsCache.get('columns')),
+    columns: 1,
     columnVisibility: (columnVisibility) => columnVisibility ?? {},
     // TODO check if columnPinning works when the value for a pinned col is `true` instead of `"start"`
 
@@ -345,8 +344,7 @@ export const forwardProps = <T>(
 
     collapsedColumnGroups: (collapsedColumnGroups) =>
       collapsedColumnGroups ?? new Map(),
-    columnGroups: (columnGroups) =>
-      toMap(columnGroups, setupState.propsCache.get('columnGroups')),
+    columnGroups: 1,
   };
 };
 

@@ -31,25 +31,22 @@ const dataSource = () => {
   return Promise.resolve(data);
 };
 
-const columns = new Map<string, InfiniteTableColumn<Employee>>([
-  [
-    'firstName',
-    {
-      field: 'firstName',
-      header: 'First Name',
-      renderValue: ({ value }) => {
-        return <button>{value}</button>;
-      },
-      render: ({ renderBag }) => {
-        return (
-          <>
-            <p data-name="target">{renderBag.value}</p>
-          </>
-        );
-      },
+const columns: Record<string, InfiniteTableColumn<Employee>> = {
+  firstName: {
+    field: 'firstName',
+    header: 'First Name',
+    renderValue: ({ value }) => {
+      return <button>{value}</button>;
     },
-  ],
-]);
+    render: ({ renderBag }) => {
+      return (
+        <>
+          <p data-name="target">{renderBag.value}</p>
+        </>
+      );
+    },
+  },
+};
 
 const domProps: React.HTMLAttributes<HTMLDivElement> = {
   style: {
