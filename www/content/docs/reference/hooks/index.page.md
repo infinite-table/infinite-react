@@ -10,6 +10,29 @@ See below for the full list of hooks exposed by `InfiniteTable`, each with examp
 
 <PropTable sort searchPlaceholder="Type to filter hooks">
 
+<Prop name="useMasterRowInfo" returnTypeLink="InfiniteTableRowInfo">
+
+> Gives you access to the master row info in the current <PropLink name="columns.components.RowDetail" /> component.
+
+
+<Sandpack title="Basic master detail DataGrid example" size="lg">
+
+<Description>
+
+This example shows a master DataGrid with cities & countries.
+
+The details for each city shows a DataGrid with developers in that city.
+
+</Description>
+
+```ts file="$DOCS/learn/master-detail/master-detail-component-example.page.tsx"
+
+```
+
+</Sandpack>
+
+
+</Prop>
 <Prop name="useInfiniteColumnCell" returnTypeLink="InfiniteColumnEditorContextType">
 
 > Use it inside the <PropLink name="columns.render" /> or <PropLink name="column.components.ColumnCell" /> (or <PropLink name="columns.renderValue" code={false}>other</PropLink> rendering functions) to retrieve information about the cell that is being rendered.

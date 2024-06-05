@@ -37,6 +37,11 @@ The detail DataGrid is configured with remote sorting.
 
 </Sandpack>
 
+
+If you want to use a component instead of the <PropLink name="rowDetailRenderer" /> function, you can use the <PropLink name="columns.components.RowDetail" /> property. This works similarly and makes the DataGrid be considered master-detail. Inside the component, you can use the <HookLink name="useMasterRowInfo" /> hook to get the master row information.
+
+
+
 ## Loading the Detail DataSource
 
 When master-detail is configured and the row detail renders a DataGrid, the <DPropLink name="data" /> function for the detail `<DataSource />` will be called with the `masterRowInfo` as a property available in the object passed as argument.
