@@ -14,14 +14,24 @@ The `<DataSource />` in InfiniteTable is very powerful and does all the data pro
 In practice, this means that you can use the `<DataSource />` to process your data and then simply pass that to a charting library like `ag-charts-react`.
 
 ```tsx
+const detailGroupBy: DataSourcePropGroupBy<Developer> = [{ field: "stack" }];
+const detailAggregationReducers: DataSourcePropAggregationReducers<Developer> =
+  {
+    salary: {
+      field: "salary",
+      initialValue: 0,
+      reducer: (acc, value) => acc + value,
+      done: (value, arr) => Math.round(arr.length ? value / arr.length : 0),
+    },
+  };
 
 function RowDetail() {
   const rowInfo = useMasterRowInfo<City>()!;
-
   const [showChart, setShowChart] = React.useState(rowInfo.id % 2 == 1);
+
   return (
     <div style={{...}}>
-      <button onClick={() => setShowChart((showChart) => !showChart)} >
+      <button onClick={() => setShowChart((showChart) => !showChart)}>
         Click to see {showChart ? "grid" : "chart"}
       </button>
 
@@ -32,15 +42,8 @@ function RowDetail() {
       <DataSource<Developer>
         data={detailDataSource}
         primaryKey="id"
-        groupBy={[{ field: "stack" }]}
-        aggregationReducers={{
-          salary: {
-            field: "salary",
-            initialValue: 0,
-            reducer: (acc, value) => acc + value,
-            done: (value, arr) => Math.round(arr.length ? value / arr.length : 0),
-          },
-        }}
+        groupBy={detailGroupBy}
+        aggregationReducers={detailAggregationReducers}
       >
         {/**
          * Notice here we're not rendering an InfiniteTable component

@@ -49,6 +49,12 @@ You'll probably want to configure the height of the row detail content. Use the 
 
 </Sandpack>
 
+<Note>
+
+In the above example, please note that on every render (after the detail component is mounted), we pass the same `dataSource`, `groupBy` and `aggregationReducers` props to the `<DataSource />` component. The references for all those objects are stable. We don't want to pass new references on every render, as that would cause the `<DataSource />` to reload and reprocess the data.
+
+</Note>
+
 
 ## Multiple levels of nesting
 

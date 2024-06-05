@@ -7,6 +7,8 @@ import {
   DataSource,
   InfiniteTableRowInfo,
   InfiniteTable_HasGrouping_RowInfoGroup,
+  DataSourcePropGroupBy,
+  DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
 import { AgChartsReact } from 'ag-charts-react';
@@ -50,6 +52,19 @@ const domProps = {
 };
 
 function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
+  const [groupBy] = React.useState<DataSourcePropGroupBy<Developer>>([
+    { field: 'stack' },
+  ]);
+  const [aggregationReducers] = React.useState<
+    DataSourcePropAggregationReducers<Developer>
+  >({
+    salary: {
+      field: 'salary',
+      initialValue: 0,
+      reducer: (acc, value) => acc + value,
+      done: (value, arr) => Math.round(arr.length ? value / arr.length : 0),
+    },
+  });
   return (
     <div
       style={{
@@ -68,16 +83,8 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
       <DataSource<Developer>
         data={detailDataSource}
         primaryKey="id"
-        groupBy={[{ field: 'stack' }]}
-        aggregationReducers={{
-          salary: {
-            field: 'salary',
-            initialValue: 0,
-            reducer: (acc, value) => acc + value,
-            done: (value, arr) =>
-              Math.round(arr.length ? value / arr.length : 0),
-          },
-        }}
+        groupBy={groupBy}
+        aggregationReducers={aggregationReducers}
       >
         {/**
          * Notice here we're not rendering an InfiniteTable component
