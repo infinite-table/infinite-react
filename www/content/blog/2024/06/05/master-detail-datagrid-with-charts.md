@@ -2,7 +2,6 @@
 title: Master Detail React DataGrid with Charts
 author: admin
 ---
-
 In this demo, we show you how easy it is to leverage the master-detail support in our React DataGrid in order to toggle between a table and a chart view in the row detail.
 
 
