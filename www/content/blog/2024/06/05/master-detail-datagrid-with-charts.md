@@ -7,7 +7,7 @@ In this demo, we show you how easy it is to leverage the master-detail support i
 
 <CSEmbed id="master-detail-with-charts-gg7h4f" code={false} size="lg" title="It's very easy to change between an InfiniteTable or a chart in the row detail"/>
 
-In the <PropLink name="columns.components.RowDetail" code={false}>RowDetail</PropLink> component, we render a `<DataSource />`, which in turn will render either an `<InfiniteTable />` component or a chart.
+In the <PropLink name="components.RowDetail" code={false}>RowDetail</PropLink> component, we render a `<DataSource />`, which in turn will render either an `<InfiniteTable />` component or a chart.
 
 The `<DataSource />` in InfiniteTable is very powerful and does all the data processing the grid needs. All the row grouping, sorting, filtering, aggregations, pivoting are done in the `<DataSource />` - so you can use it standalone, or with InfiniteTable - it's totally up to you.
 

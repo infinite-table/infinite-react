@@ -12,7 +12,7 @@ See below for the full list of hooks exposed by `InfiniteTable`, each with examp
 
 <Prop name="useMasterRowInfo" returnTypeLink="InfiniteTableRowInfo">
 
-> Gives you access to the master row info in the current <PropLink name="columns.components.RowDetail" /> component.
+> Gives you access to the master row info in the current <PropLink name="components.RowDetail" code={false} >RowDetail</PropLink> component.
 
 
 <Sandpack title="Basic master detail DataGrid example" size="lg">

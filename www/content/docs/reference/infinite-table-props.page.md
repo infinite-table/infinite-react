@@ -8,7 +8,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
-<Prop name="columns.components.RowDetail">
+<Prop name="components.RowDetail">
 
 > Component to use for rendering the row details section in the master-detail DataGrid. When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />
 
@@ -35,9 +35,9 @@ The details for each city shows a DataGrid with developers in that city.
 
 <Prop name="rowDetailRenderer" type="(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => ReactNode">
 
-> When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />
+> When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />. See related <PropLink name="components.RowDetail" />.
 
-It's an alternative to using <PropLink name="columns.components.RowDetail" />.
+It's an alternative to using <PropLink name="components.RowDetail" />.
 
 This function is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> the user expands to see details for.
 
