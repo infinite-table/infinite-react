@@ -224,6 +224,10 @@
       {
         "title": "Custom Editor",
         "path": "/docs/learn/editing/custom-editor"
+      },
+      {
+        "title": "Excel-like Editing",
+        "path": "/docs/learn/editing/excel-like-editing"
       }
     ]
   },
