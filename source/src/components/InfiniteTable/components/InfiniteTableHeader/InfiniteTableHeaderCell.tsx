@@ -173,7 +173,7 @@ export function InfiniteTableHeaderCell<T>(
 
   const sortInfo = column.computedSortInfo;
 
-  let header = column.header;
+  const header = column.header;
 
   const ref = useCallback(
     (node: HTMLElement | null) => {
