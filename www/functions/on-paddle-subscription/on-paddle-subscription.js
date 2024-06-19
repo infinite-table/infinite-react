@@ -67,9 +67,9 @@ async function getLicense({ owner, count, ref, startDate, endDate }) {
   ].filter(Boolean);
 
   console.log('key string', keyString);
-
-  const licenseKey = await getInfiniteTableLicense(keyString);
   console.log('Airtable api key', process.env.AIRTABLE_API_KEY);
+  const licenseKey = await getInfiniteTableLicense(keyString);
+
   console.log('generated license key', licenseKey);
   return licenseKey;
 }
