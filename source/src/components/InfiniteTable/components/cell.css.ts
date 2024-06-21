@@ -25,8 +25,8 @@ export const columnAlignCellStyle = styleVariants({
 });
 
 export const CellBorderObject = {
-  borderLeft: `${ThemeVars.components.Cell.borderLeft} solid transparent`,
-  borderRight: `${ThemeVars.components.Cell.borderRight} solid transparent`,
+  borderLeft: `${ThemeVars.components.Cell.borderLeft}`,
+  borderRight: `${ThemeVars.components.Cell.borderRight}`,
 };
 
 export const CellClsVariants = styleVariants({

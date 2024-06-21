@@ -89,6 +89,7 @@ import { HScrollSyncContent } from './components/HScrollSyncContent';
 import { useGridScroll } from './hooks/useGridScroll';
 import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
 
+
 export const InfiniteTableClassName = internalProps.rootClassName;
 
 const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
