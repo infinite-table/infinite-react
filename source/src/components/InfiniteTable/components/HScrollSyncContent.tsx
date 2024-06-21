@@ -1,6 +1,5 @@
 import { HTMLAttributes, RefObject, useRef } from 'react';
 import * as React from 'react';
-
 import { join } from '../../../utils/join';
 import { useGridScroll } from '../hooks/useGridScroll';
 import { ThemeVars } from '../vars.css';
