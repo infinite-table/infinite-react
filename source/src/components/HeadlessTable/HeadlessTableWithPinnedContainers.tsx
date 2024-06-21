@@ -16,7 +16,10 @@ import { getScrollbarWidth } from '../utils/getScrollbarWidth';
 import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
-import { VirtualScrollContainer } from '../VirtualScrollContainer';
+import {
+  VirtualScrollContainer,
+  VirtualScrollContainerChildToScrollCls,
+} from '../VirtualScrollContainer';
 import { RawTable } from './RawTable';
 import { TableRenderCellFnParam } from './ReactHeadlessTableRenderer';
 
@@ -113,7 +116,9 @@ export function HeadlessTableWithPinnedContainersFn(
         onContainerScroll={onContainerScroll}
         ref={props.scrollerDOMRef as RefObject<HTMLDivElement>}
       >
-        <div className={display.flex}>
+        <div
+          className={join(display.flex, VirtualScrollContainerChildToScrollCls)}
+        >
           <div
             ref={domRef}
             className={scrollTransformTargetCls}

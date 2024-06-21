@@ -57,9 +57,9 @@ function Cmp() {
       <InfiniteTable.HScrollSyncContent width="column">
         <div style={{ display: 'flex', flexFlow: 'row' }}>
           {columns.map((col) => {
-            console.log(col);
             return (
               <div
+                key={col.id}
                 style={{
                   width: col.cssVarForWidth,
                   // width: col.width,

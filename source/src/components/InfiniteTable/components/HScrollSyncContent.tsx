@@ -13,43 +13,44 @@ export function HScrollSyncContent(
     scrollable?: boolean;
   },
 ) {
+  const { width, maxWidth, minWidth, scrollable, ...domProps } = props;
   const domRef = useRef<HTMLDivElement>(null);
 
   useGridScroll(
     (scrollPos) => {
-      if (domRef.current && props.scrollable !== false) {
+      if (domRef.current && scrollable !== false) {
         domRef.current.style.transform = `translate3d(${-scrollPos.scrollLeft}px, 0px, 0px)`;
       }
     },
-    [props.scrollable],
+    [scrollable],
   );
 
-  const style = { ...props.style };
+  const style = { ...domProps.style };
 
-  if (props.width === 'column') {
+  if (width === 'column') {
     style.width = ThemeVars.runtime.totalVisibleColumnsWidth;
-  } else if (props.width === 'viewport') {
+  } else if (width === 'viewport') {
     style.width = ThemeVars.runtime.bodyWidth;
   }
-  if (props.minWidth === 'column') {
+  if (minWidth === 'column') {
     style.minWidth = ThemeVars.runtime.totalVisibleColumnsWidth;
-  } else if (props.minWidth === 'viewport') {
+  } else if (minWidth === 'viewport') {
     style.minWidth = ThemeVars.runtime.bodyWidth;
   }
-  if (props.maxWidth === 'column') {
+  if (maxWidth === 'column') {
     style.maxWidth = ThemeVars.runtime.totalVisibleColumnsWidth;
-  } else if (props.maxWidth === 'viewport') {
+  } else if (maxWidth === 'viewport') {
     style.maxWidth = ThemeVars.runtime.bodyWidth;
   }
 
   return (
     <div
       ref={domRef}
-      {...props}
-      className={join(props.className, HScrollSyncContentCls)}
+      {...domProps}
+      className={join(domProps.className, HScrollSyncContentCls)}
       style={style}
     >
-      {props.children}
+      {domProps.children}
     </div>
   );
 }

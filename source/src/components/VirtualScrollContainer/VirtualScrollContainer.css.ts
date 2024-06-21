@@ -1,4 +1,4 @@
-import { globalStyle, style } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css';
 import { boxSizingBorderBox } from '../InfiniteTable/utilities.css';
 
 export const VirtualScrollContainerCls = style([
@@ -18,7 +18,15 @@ export const VirtualScrollContainerCls = style([
   },
 ]);
 
-globalStyle(`${VirtualScrollContainerCls} > :first-child`, {
+// OLD: this was used before, but the perf of this CSS selector
+// is not good. so we prefer to use the data-name attribute selector below
+// globalStyle(`${VirtualScrollContainerCls} > :first-child`, {
+//   position: 'sticky',
+//   top: 0,
+//   left: 0,
+// });
+
+export const VirtualScrollContainerChildToScrollCls = style({
   position: 'sticky',
   top: 0,
   left: 0,

@@ -5,7 +5,10 @@ import { useOnScroll } from '../hooks/useOnScroll';
 
 import { getScrollableClassName, Scrollable } from './getScrollableClassName';
 import type { Renderable } from '../types/Renderable';
-import { VirtualScrollContainerCls } from './VirtualScrollContainer.css';
+import {
+  VirtualScrollContainerChildToScrollCls,
+  VirtualScrollContainerCls,
+} from './VirtualScrollContainer.css';
 import { join } from '../../utils/join';
 
 export type { Scrollable };
@@ -25,6 +28,7 @@ export interface VirtualScrollContainerProps {
     scrollLeft: number;
   }) => void;
 }
+export { VirtualScrollContainerChildToScrollCls };
 
 export const VirtualScrollContainer = React.forwardRef(
   function VirtualScrollContainer(

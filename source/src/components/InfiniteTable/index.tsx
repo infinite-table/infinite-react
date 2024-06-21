@@ -20,7 +20,6 @@ import { useResizeObserver } from '../ResizeObserver';
 
 import { debounce } from '../utils/debounce';
 
-import { InfiniteTableBody as InfiniteTableBodyComponent } from './components/InfiniteTableBody';
 import { InfiniteTableFooter } from './components/InfiniteTableFooter';
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
@@ -60,7 +59,14 @@ import type {
   InfiniteTableProps,
   InfiniteTableState,
 } from './types';
-import { position, zIndex, top, left } from './utilities.css';
+import {
+  position,
+  zIndex,
+  top,
+  left,
+  flex,
+  transformTranslateZero,
+} from './utilities.css';
 import { toCSSVarName } from './utils/toCSSVarName';
 import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
@@ -82,6 +88,7 @@ import { Renderable } from '../types/Renderable';
 import { HScrollSyncContent } from './components/HScrollSyncContent';
 import { useGridScroll } from './hooks/useGridScroll';
 import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
+import { useInternalProps } from './hooks/useInternalProps';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -123,6 +130,24 @@ function InfiniteTableHeader<T>() {
       scrollbars={scrollbars}
     />
   ) : null;
+}
+
+function InfiniteTableBodyContainer(
+  props: React.HTMLAttributes<HTMLDivElement>,
+) {
+  const { rootClassName } = useInternalProps();
+  return (
+    <div
+      {...props}
+      className={join(
+        `${rootClassName}Body`,
+        position.relative,
+        flex['1'],
+        transformTranslateZero,
+        props.className,
+      )}
+    />
+  );
 }
 function InfiniteTableBody<T>() {
   const context = useInfiniteTable<T>();
@@ -214,7 +239,7 @@ function InfiniteTableBody<T>() {
   });
 
   return (
-    <InfiniteTableBodyComponent onContextMenu={onContextMenu}>
+    <InfiniteTableBodyContainer onContextMenu={onContextMenu}>
       <HeadlessTable
         debugId={debugId}
         tabIndex={0}
@@ -243,7 +268,7 @@ function InfiniteTableBody<T>() {
       ></HeadlessTable>
 
       <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
-    </InfiniteTableBodyComponent>
+    </InfiniteTableBodyContainer>
   );
 }
 
