@@ -88,7 +88,7 @@ import { Renderable } from '../types/Renderable';
 import { HScrollSyncContent } from './components/HScrollSyncContent';
 import { useGridScroll } from './hooks/useGridScroll';
 import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
-import { useInternalProps } from './hooks/useInternalProps';
+
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 

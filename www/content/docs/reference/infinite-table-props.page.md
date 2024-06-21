@@ -33,6 +33,36 @@ The details for each city shows a DataGrid with developers in that city.
 
 </Prop>
 
+<Prop name="headerOptions" type="{alwaysReserveSpaceForSortIcon: boolean}" >
+
+> Various header configurations for the DataGrid.
+
+For now, it has the following properties:
+
+ - <PropLink name="headerOptions.alwaysReserveSpaceForSortIcon" />
+
+<Sandpack>
+
+```tsx file="sortIcon-reserve-space-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
+<Prop name="headerOptions.alwaysReserveSpaceForSortIcon" type="boolean" defaultValue={true}>
+
+> Whether to reserve space in the column header for the sort icon or not.
+
+When this is set to `true`, the space for the sort icon is always reserved, even if the column is not currently sorted.
+
+<Sandpack>
+
+```tsx file="sortIcon-reserve-space-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
 <Prop name="rowDetailRenderer" type="(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => ReactNode">
 
 > When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />. See related <PropLink name="components.RowDetail" />.

@@ -48,3 +48,34 @@ Click on a cell and then start typing to edit the cell.
 To confirm the editing, press the `Enter` key.
 
 </Note>
+
+## Simulating formulas with `column.valueGetter`
+
+You can use the <PropLink name="columns.valueGetter" /> property to simulate formulas in your cells.
+
+For example, you might want to have a column that multiplies or divides a value by a constant.
+
+```ts {6}
+const columns = {
+  salary: {
+    field: 'salary'
+  },
+  salaryK: {
+    valueGetter: ({data}) => data.salary / 1000
+  }
+}
+```
+
+
+<Sandpack>
+
+<Description>
+
+Edit the `salary` column and see the `Salary (thousands)` col update.
+
+</Description>
+
+```ts file="$DOCS/reference/keyboard-shortcuts-instant-edit-with-valuegetter-example.page.tsx"
+```
+
+</Sandpack>

@@ -1,10 +1,10 @@
+const axios = require('axios');
+const busboy = require('busboy');
+
 const headers = {
   'Access-Control-Allow-Origin': '*', // Allow from anywhere
   'Access-Control-Allow-Headers': '*',
 };
-
-const busboy = require('busboy');
-const axios = require('axios');
 
 function getLicenseExpiryDate(licenseKey) {
   return licenseKey
@@ -43,52 +43,33 @@ function parseMultipartForm(event) {
     bb.end();
   });
 }
-async function getLicense({ owner, count, ref, startDate, endDate }) {
-  const {
-    getInfiniteTableLicense,
-  } = require('@adaptabletools/infinite-license/bin/infinite-init');
 
-  const licenseKey = await getInfiniteTableLicense(
-    ' -f -o=' +
-      owner +
-      ' -y=universal -c=' +
-      count +
-      (ref ? ' -r=' + ref : '') +
-      (startDate ? ' -s=' + startDate : '') +
-      (endDate ? ' -e=' + endDate : ''),
-  );
-  return licenseKey;
-}
-
-function getLicenseExpiryDate(licenseKey) {
-  return licenseKey
-    .split('|')
-    .filter((x) => x.startsWith('EndDate'))[0]
-    .split('=')[1];
-}
-
-function getLicenseStartDate(licenseKey) {
-  return licenseKey
-    .split('|')
-    .filter((x) => x.startsWith('StartDate'))[0]
-    .split('=')[1];
-}
+// function getLicenseStartDate(licenseKey) {
+//   return licenseKey
+//     .split('|')
+//     .filter((x) => x.startsWith('StartDate'))[0]
+//     .split('=')[1];
+// }
 
 async function getLicense({ owner, count, ref, startDate, endDate }) {
   const {
     getInfiniteTableLicense,
   } = require('@adaptabletools/infinite-license/bin/infinite-init');
 
-  const licenseKey = await getInfiniteTableLicense(
-    ' -f -o=' +
-      owner +
-      ' -y=universal -c=' +
-      count +
-      (ref ? ' -r=' + ref : '') +
-      (startDate ? ' -s=' + startDate : '') +
-      (endDate ? ' -e=' + endDate : ''),
-  );
+  const keyString = [
+    '-f',
+    '-o=' + owner,
+    '-y=universal',
+    '--count=' + count,
+    ref ? '-r=' + ref : '',
+    startDate ? '-s=' + startDate : '',
+    endDate ? '-e=' + endDate : '',
+  ].filter(Boolean);
+
+  console.log('key string', keyString);
   console.log('Airtable api key', process.env.AIRTABLE_API_KEY);
+  const licenseKey = await getInfiniteTableLicense(keyString);
+
   console.log('generated license key', licenseKey);
   return licenseKey;
 }
