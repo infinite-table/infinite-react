@@ -47,7 +47,11 @@ export function HScrollSyncContent(
     <div
       ref={domRef}
       {...domProps}
-      className={join(domProps.className, HScrollSyncContentCls)}
+      className={
+        domProps.className
+          ? join(domProps.className, HScrollSyncContentCls)
+          : HScrollSyncContentCls
+      }
       style={style}
     >
       {domProps.children}

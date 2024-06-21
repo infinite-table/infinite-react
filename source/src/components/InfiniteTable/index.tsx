@@ -132,20 +132,24 @@ function InfiniteTableHeader<T>() {
   ) : null;
 }
 
+const InfiniteTableBodyCls = join(
+  `${rootClassName}Body`,
+  position.relative,
+  flex['1'],
+  transformTranslateZero,
+);
+
 function InfiniteTableBodyContainer(
   props: React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { rootClassName } = useInternalProps();
   return (
     <div
       {...props}
-      className={join(
-        `${rootClassName}Body`,
-        position.relative,
-        flex['1'],
-        transformTranslateZero,
-        props.className,
-      )}
+      className={
+        props.className
+          ? join(InfiniteTableBodyCls, props.className)
+          : InfiniteTableBodyCls
+      }
     />
   );
 }

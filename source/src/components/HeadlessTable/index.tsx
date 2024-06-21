@@ -142,6 +142,11 @@ export function useMatrixBrain(
     colspan: brainOptions.colspan,
   });
 }
+
+const CHILD_TO_SCROLL_CLS = join(
+  scrollTransformTargetCls,
+  VirtualScrollContainerChildToScrollCls,
+);
 export function HeadlessTable(
   props: HeadlessTableProps & React.HTMLProps<HTMLDivElement>,
 ) {
@@ -221,10 +226,7 @@ export function HeadlessTable(
     >
       <div
         ref={domRef}
-        className={join(
-          scrollTransformTargetCls,
-          VirtualScrollContainerChildToScrollCls,
-        )}
+        className={CHILD_TO_SCROLL_CLS}
         data-name="scroll-transform-target"
       >
         <RawTable

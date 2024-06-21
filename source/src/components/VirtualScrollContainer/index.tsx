@@ -48,6 +48,8 @@ export const VirtualScrollContainer = React.forwardRef(
 
     useOnScroll(domRef as RefObject<HTMLDivElement>, onContainerScroll);
 
+    //TODO: in __DEV__ mode, on useEffect, check if first child has VirtualScrollContainerChildToScrollCls cls
+
     return (
       <div
         ref={domRef}

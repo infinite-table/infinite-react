@@ -36,6 +36,11 @@ const measureSizeStyle: React.CSSProperties = {
   pointerEvents: 'none',
   zIndex: -1_000,
 };
+
+const CHILD_TO_SCROLL_CLS = join(
+  display.flex,
+  VirtualScrollContainerChildToScrollCls,
+);
 export function HeadlessTableWithPinnedContainersFn(
   props: HeadlessTableWithPinnedContainersProps,
 ) {
@@ -116,9 +121,7 @@ export function HeadlessTableWithPinnedContainersFn(
         onContainerScroll={onContainerScroll}
         ref={props.scrollerDOMRef as RefObject<HTMLDivElement>}
       >
-        <div
-          className={join(display.flex, VirtualScrollContainerChildToScrollCls)}
-        >
+        <div className={CHILD_TO_SCROLL_CLS}>
           <div
             ref={domRef}
             className={scrollTransformTargetCls}
