@@ -5,7 +5,6 @@ import {
   InfiniteTable,
   InfiniteTablePropColumns,
   DataSource,
-  InfiniteTableRowInfo,
   RowDetailStateObject,
   useMasterRowInfo,
 } from '@infinite-table/infinite-react';
