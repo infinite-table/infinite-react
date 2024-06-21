@@ -158,7 +158,7 @@ Some of the rows in the master DataGrid are expanded by default.
 
 </Prop>
 
-<Prop name="onRowDetailStateChange" type="(rowDetailState: RowDetailState) => void">
+<Prop name="onRowDetailStateChange" type="(rowDetailState: RowDetailState, {expandRow, collapseRow}) => void">
 
 > Called when the expand/collapse state of row details changes.
 
@@ -169,6 +169,17 @@ You can use this function prop to update the <PropLink name="rowDetailState" /> 
 This function is called with an instance of the <TypeLink name="RowDetailState" />. If you want to get the object behind it, simply call `rowDetailState.getState()`.
 
 Both the `RowDetailState` instance and the state object (literal) are valid values you can pass to the <PropLink name="rowDetailState" />.
+
+</Note>
+
+<Note>
+
+The second parameter of this function is an object with `expandRow` and `collapseRow` properties, which contain the primary key of either the last expanded or the last collapsed row.
+
+For example, if the user is expanding row `3`, the object will be `{expandRow: 3, collapseRow: null}`.
+Next, if the user collapses row `5`, the object will be `{expandRow: null, collapseRow: 5}`.
+
+This makes it easy for you to know which action was taken and on which row.
 
 </Note>
 

@@ -152,6 +152,14 @@ export class TableTestingModel {
         );
       },
 
+      clickDetailIcon: async () => {
+        const cellLocator = this.rowModel.getCellLocator(cellLocation);
+
+        const icon = cellLocator.locator('[data-name="expander-icon"]');
+
+        await icon.click();
+      },
+
       getColumnValues: async () => {
         return await this.rowModel.getTextForColumnCells({
           ...cellLocation,

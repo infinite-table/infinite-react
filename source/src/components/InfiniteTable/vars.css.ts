@@ -51,6 +51,12 @@ export const ThemeVars = createGlobalThemeContract(
 
     iconSize: 'icon-size',
 
+    runtime: {
+      bodyWidth: 'runtime-body-content-width',
+      totalVisibleColumnsWidth: 'runtime-total-visible-columns-width',
+      visibleColumnsCount: 'runtime-visible-columns-count',
+    },
+
     components: {
       LoadMask: {
         /**

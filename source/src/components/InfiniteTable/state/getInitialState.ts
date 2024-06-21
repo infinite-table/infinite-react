@@ -119,6 +119,8 @@ export function initSetupState<T>({
     renderer,
     onRenderUpdater,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
+    lastRowToCollapseRef: { current: null },
+    lastRowToExpandRef: { current: null },
 
     cellContextMenuVisibleFor: null,
     contextMenuVisibleFor: null,
@@ -415,6 +417,25 @@ export function getGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
 }
 
 const weakMap = new WeakMap<any, any>();
+
+export function getMappedCallbacks<T>() {
+  return {
+    rowDetailState: (
+      rowDetailState: RowDetailState<any>,
+      state: InfiniteTableState<T>,
+    ) => {
+      return {
+        callbackParams: [
+          rowDetailState,
+          {
+            expandRow: state.lastRowToExpandRef.current,
+            collapseRow: state.lastRowToCollapseRef.current,
+          },
+        ],
+      };
+    },
+  };
+}
 
 export const mapPropsToState = <T>(params: {
   props: InfiniteTableProps<T>;

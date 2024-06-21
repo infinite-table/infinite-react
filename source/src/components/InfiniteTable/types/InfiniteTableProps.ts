@@ -580,6 +580,7 @@ export interface InfiniteTableProps<T> {
   debugId?: string;
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
+  children?: React.JSX.Element | React.JSX.Element[] | React.ReactNode;
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents<T>;
@@ -686,7 +687,13 @@ export interface InfiniteTableProps<T> {
   rowDetailCache?: boolean | number;
   rowDetailState?: RowDetailState | RowDetailStateObject<any>;
   defaultRowDetailState?: RowDetailState | RowDetailStateObject<any>;
-  onRowDetailStateChange?: (rowDetailState: RowDetailState) => void;
+  onRowDetailStateChange?: (
+    rowDetailState: RowDetailState,
+    {
+      expandRow,
+      collapseRow,
+    }: { expandRow: any | null; collapseRow: any | null },
+  ) => void;
 
   // TODO implement this - see collapseGroupRowsOnDataFunctionChange for details
   // collapseRowDetailsOnDataFunctionChange?: boolean;
@@ -696,6 +703,7 @@ export interface InfiniteTableProps<T> {
     | number
     | string
     | ((rowInfo: InfiniteTableRowInfo<T>) => number);
+  // TODO implement #rowDetailWidth with options for min/max/actual viewport width
   rowDetailRenderer?: (
     rowInfo: InfiniteTableRowInfo<T>,
     cache: RowDetailCacheStorageForCurrentRow<RowDetailCacheEntry>,

@@ -59,6 +59,8 @@ export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
 
 export interface InfiniteTableSetupState<T> {
   renderer: ReactHeadlessTableRenderer;
+  lastRowToExpandRef: MutableRefObject<any | null>;
+  lastRowToCollapseRef: MutableRefObject<any | null>;
   getDOMNodeForCell: (cellPos: CellPositionByIndex) => HTMLElement | null;
   onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;

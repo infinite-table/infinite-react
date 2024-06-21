@@ -83,7 +83,8 @@ export function getRowDetailApi<T>(
       return !rowDetailApi.isRowDetailCollapsed(pk);
     },
     collapseRowDetail(pk: any) {
-      const currentState = getState().rowDetailState;
+      const componentState = getState();
+      const currentState = componentState.rowDetailState;
       if (!currentState) {
         console.error(
           `Cannot collapse row details via rowDetailState, as no props.rowDetailState is provided.`,
@@ -92,10 +93,13 @@ export function getRowDetailApi<T>(
       }
       const state = new RowDetailState<T>(currentState);
       state.collapseRowDetails(pk);
+      componentState.lastRowToExpandRef.current = null;
+      componentState.lastRowToCollapseRef.current = pk;
       actions.rowDetailState = state;
     },
     expandRowDetail(pk: any) {
-      const currentState = getState().rowDetailState;
+      const componentState = getState();
+      const currentState = componentState.rowDetailState;
       if (!currentState) {
         console.error(
           `Cannot expand row details via rowDetailState, as no props.rowDetailState is provided.`,
@@ -104,6 +108,9 @@ export function getRowDetailApi<T>(
       }
       const state = new RowDetailState<T>(currentState);
       state.expandRowDetails(pk);
+
+      componentState.lastRowToCollapseRef.current = null;
+      componentState.lastRowToExpandRef.current = pk;
       actions.rowDetailState = state;
     },
     toggleRowDetail(pk: any) {

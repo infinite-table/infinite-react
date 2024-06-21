@@ -648,8 +648,8 @@ export type DataSourceFilterType<T> = {
   defaultOperator: string;
   valueGetter?: DataSourceFilterValueItemValueGetter<T>;
   components?: {
-    FilterEditor?: () => JSX.Element | null;
-    FilterOperatorSwitch?: () => JSX.Element | null;
+    FilterEditor?: () => React.JSX.Element | null;
+    FilterOperatorSwitch?: () => React.JSX.Element | null;
   };
   operators: DataSourceFilterOperator<T>[];
 };
@@ -659,8 +659,8 @@ export type DataSourceFilterOperator<T> = {
   label?: string;
 
   components?: {
-    FilterEditor?: () => JSX.Element | null;
-    Icon?: (props: any) => JSX.Element | null;
+    FilterEditor?: () => React.JSX.Element | null;
+    Icon?: (props: any) => React.JSX.Element | null;
   };
 
   fn: DataSourceFilterOperatorFunction<T>;

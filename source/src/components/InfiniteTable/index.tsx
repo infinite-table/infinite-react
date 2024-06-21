@@ -20,7 +20,7 @@ import { useResizeObserver } from '../ResizeObserver';
 
 import { debounce } from '../utils/debounce';
 
-import { InfiniteTableBody } from './components/InfiniteTableBody';
+import { InfiniteTableBody as InfiniteTableBodyComponent } from './components/InfiniteTableBody';
 import { InfiniteTableFooter } from './components/InfiniteTableFooter';
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
@@ -47,6 +47,7 @@ import { internalProps, rootClassName } from './internalProps';
 
 import {
   forwardProps,
+  getMappedCallbacks,
   mapPropsToState,
   initSetupState,
   cleanupState,
@@ -77,6 +78,10 @@ import {
   ContextMenuLocationWithEvent,
 } from './types/InfiniteTableState';
 import { eventMatchesKeyboardShortcut } from '../utils/hotkey';
+import { Renderable } from '../types/Renderable';
+import { HScrollSyncContent } from './components/HScrollSyncContent';
+import { useGridScroll } from './hooks/useGridScroll';
+import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -96,10 +101,151 @@ const InfiniteTableRoot = getComponentStateRoot({
     rowHeight: true,
     columnHeaderHeight: true,
   } as Record<keyof InfiniteTableProps<any>, true>,
+
+  //@ts-ignore
+  mappedCallbacks: getMappedCallbacks(),
   // @ts-ignore
   getParentState: () => useDataSource(),
   debugName: 'InfiniteTable',
 });
+
+function InfiniteTableHeader<T>() {
+  const context = useInfiniteTable<T>();
+
+  const { state: componentState, getComputed } = context;
+  const { header, brain, headerBrain } = componentState;
+  const { scrollbars } = getComputed();
+
+  return header ? (
+    <TableHeaderWrapper
+      bodyBrain={brain}
+      headerBrain={headerBrain}
+      scrollbars={scrollbars}
+    />
+  ) : null;
+}
+function InfiniteTableBody<T>() {
+  const context = useInfiniteTable<T>();
+
+  const masterContext = useMasterDetailContext();
+  const { state: componentState, getComputed, api } = context;
+  const {
+    renderer,
+    onRenderUpdater,
+    debugId,
+    keyboardNavigation,
+    activeRowIndex,
+    loadingText,
+    scrollStopDelay,
+    brain,
+    scrollerDOMRef,
+    components,
+    bodySize,
+    activeCellIndex,
+    rowDetailRenderer,
+  } = componentState;
+
+  const LoadMaskCmp = components?.LoadMask ?? LoadMask;
+
+  const computed = getComputed();
+  const { computedRowHeight, computedRowSizeCacheForDetails } = computed;
+
+  const activeCellRowHeight =
+    computedRowSizeCacheForDetails?.getRowHeight || computedRowHeight;
+
+  const {
+    componentState: { loading },
+  } = useDataSourceContextValue<T>();
+
+  const onContextMenu = React.useCallback((event: React.MouseEvent) => {
+    const state = context.getState();
+    const target = event.target as HTMLElement;
+
+    if (!masterContext && (event as any)._from_row_detail) {
+      // originating from detail grid.
+      return;
+    }
+
+    if (masterContext) {
+      (event as any)._from_row_detail = true;
+    }
+
+    const cell = selectParentUntil(
+      target,
+      getCellSelector(),
+      state.domRef.current,
+    );
+
+    let columnId: string | undefined;
+    let colIndex: number | undefined;
+    let rowId: string | undefined;
+    let rowIndex: number | undefined;
+
+    if (cell) {
+      colIndex = Number(cell.dataset.colIndex);
+      rowIndex = Number(cell.dataset.rowIndex);
+
+      columnId = context.getComputed().computedVisibleColumns[colIndex].id;
+      rowId = context.dataSourceApi.getRowInfoArray()[rowIndex].id;
+    }
+
+    const param: ContextMenuLocationWithEvent = {
+      columnId,
+      colIndex,
+      rowId,
+      rowIndex,
+      event,
+      target: cell ?? (event.target as HTMLElement),
+    };
+
+    if (cell) {
+      state.cellContextMenu(param as CellContextMenuLocationWithEvent);
+    }
+    state.contextMenu(param);
+  }, []);
+
+  const { renderCell, renderDetailRow } = useCellRendering({
+    imperativeApi: api,
+    getComputed,
+    domRef: componentState.domRef,
+
+    bodySize,
+    computed,
+  });
+
+  return (
+    <InfiniteTableBodyComponent onContextMenu={onContextMenu}>
+      <HeadlessTable
+        debugId={debugId}
+        tabIndex={0}
+        activeRowIndex={
+          componentState.ready && keyboardNavigation === 'row'
+            ? activeRowIndex
+            : null
+        }
+        activeCellIndex={
+          componentState.ready &&
+          keyboardNavigation === 'cell' &&
+          // we want to hide the active cell indicator while column reodering is happening
+          !componentState.columnReorderDragColumnId
+            ? activeCellIndex
+            : null
+        }
+        scrollStopDelay={scrollStopDelay}
+        renderer={renderer}
+        onRenderUpdater={onRenderUpdater}
+        brain={brain}
+        activeCellRowHeight={activeCellRowHeight}
+        renderCell={renderCell}
+        renderDetailRow={rowDetailRenderer ? renderDetailRow : undefined}
+        cellHoverClassNames={HOVERED_CLASS_NAMES}
+        scrollerDOMRef={scrollerDOMRef}
+      ></HeadlessTable>
+
+      <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
+    </InfiniteTableBodyComponent>
+  );
+}
 
 // const InfiniteTableFactory = <T extends unknown>(
 //   _cfg: InfiniteTableFactoryConfig = {},
@@ -109,38 +255,28 @@ export const InfiniteTableComponent = React.memo(
     const context = useInfiniteTable<T>();
 
     const masterContext = useMasterDetailContext();
-    const { state: componentState, getComputed, computed, api } = context;
+    const { state: componentState, api, children: initialChildren } = context;
     const {
-      componentState: { loading, dataArray },
+      componentState: { dataArray },
       getState: getDataSourceState,
       componentActions: dataSourceActions,
     } = useDataSourceContextValue<T>();
 
     const {
       domRef,
-      scrollerDOMRef,
       portalDOMRef,
 
-      loadingText,
-
-      rowDetailRenderer,
-      header,
       onRowHeightCSSVarChange,
       onRowDetailHeightCSSVarChange,
       onColumnHeaderHeightCSSVarChange,
       rowHeightCSSVar,
       rowDetailHeightCSSVar,
       columnHeaderHeightCSSVar,
-      components,
+
       scrollStopDelay,
       brain,
-      headerBrain,
-      renderer,
-      keyboardNavigation,
       activeRowIndex,
       activeCellIndex,
-      onRenderUpdater,
-      debugId,
     } = componentState;
     let { licenseKey } = componentState;
     if (!licenseKey && InfiniteTable.licenseKey) {
@@ -152,23 +288,6 @@ export const InfiniteTableComponent = React.memo(
     // useRowSelection();
 
     const { onKeyDown } = useDOMEventHandlers<T>();
-
-    const { bodySize } = componentState;
-
-    const { scrollbars, computedRowHeight, computedRowSizeCacheForDetails } =
-      computed;
-
-    const activeCellRowHeight =
-      computedRowSizeCacheForDetails?.getRowHeight || computedRowHeight;
-
-    const { renderCell, renderDetailRow } = useCellRendering({
-      imperativeApi: api,
-      getComputed,
-      domRef: componentState.domRef,
-
-      bodySize,
-      computed,
-    });
 
     React.useEffect(() => {
       const dataSourceState = getDataSourceState();
@@ -188,8 +307,6 @@ export const InfiniteTableComponent = React.memo(
     const licenseValid = useLicense(licenseKey);
 
     const domProps = useDOMProps<T>(componentState.domProps);
-
-    const LoadMaskCmp = components?.LoadMask ?? LoadMask;
 
     React.useEffect(() => {
       brain.setScrollStopDelay(scrollStopDelay);
@@ -226,53 +343,6 @@ export const InfiniteTableComponent = React.memo(
       }
     }, [componentState.ready]);
 
-    const onContextMenu = React.useCallback((event: React.MouseEvent) => {
-      const state = context.getState();
-      const target = event.target as HTMLElement;
-
-      if (!masterContext && (event as any)._from_row_detail) {
-        // originating from detail grid.
-        return;
-      }
-
-      if (masterContext) {
-        (event as any)._from_row_detail = true;
-      }
-
-      const cell = selectParentUntil(
-        target,
-        getCellSelector(),
-        state.domRef.current,
-      );
-
-      let columnId: string | undefined;
-      let colIndex: number | undefined;
-      let rowId: string | undefined;
-      let rowIndex: number | undefined;
-
-      if (cell) {
-        colIndex = Number(cell.dataset.colIndex);
-        rowIndex = Number(cell.dataset.rowIndex);
-
-        columnId = context.getComputed().computedVisibleColumns[colIndex].id;
-        rowId = context.dataSourceApi.getRowInfoArray()[rowIndex].id;
-      }
-
-      const param: ContextMenuLocationWithEvent = {
-        columnId,
-        colIndex,
-        rowId,
-        rowIndex,
-        event,
-        target: cell ?? (event.target as HTMLElement),
-      };
-
-      if (cell) {
-        state.cellContextMenu(param as CellContextMenuLocationWithEvent);
-      }
-      state.contextMenu(param);
-    }, []);
-
     React.useEffect(() => {
       // we can make this more elegant
       // the main idea:
@@ -284,47 +354,17 @@ export const InfiniteTableComponent = React.memo(
           masterContext.getMasterState().portalDOMRef.current;
       }
     }, []);
+
+    const children = initialChildren ?? (
+      <>
+        <InfiniteTableHeader />
+        <InfiniteTableBody />
+      </>
+    );
+
     return (
       <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
-        {header ? (
-          <TableHeaderWrapper
-            bodyBrain={brain}
-            headerBrain={headerBrain}
-            scrollbars={scrollbars}
-          />
-        ) : null}
-
-        <InfiniteTableBody onContextMenu={onContextMenu}>
-          <HeadlessTable
-            debugId={debugId}
-            tabIndex={0}
-            activeRowIndex={
-              componentState.ready && keyboardNavigation === 'row'
-                ? activeRowIndex
-                : null
-            }
-            activeCellIndex={
-              componentState.ready &&
-              keyboardNavigation === 'cell' &&
-              // we want to hide the active cell indicator while column reodering is happening
-              !componentState.columnReorderDragColumnId
-                ? activeCellIndex
-                : null
-            }
-            scrollStopDelay={scrollStopDelay}
-            renderer={renderer}
-            onRenderUpdater={onRenderUpdater}
-            brain={brain}
-            activeCellRowHeight={activeCellRowHeight}
-            renderCell={renderCell}
-            renderDetailRow={rowDetailRenderer ? renderDetailRow : undefined}
-            cellHoverClassNames={HOVERED_CLASS_NAMES}
-            scrollerDOMRef={scrollerDOMRef}
-          ></HeadlessTable>
-
-          <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>
-        </InfiniteTableBody>
-
+        {children}
         <div
           ref={portalDOMRef as RefObject<HTMLDivElement>}
           className={join(
@@ -358,14 +398,17 @@ export const InfiniteTableComponent = React.memo(
             onChange={onColumnHeaderHeightCSSVarChange}
           />
         ) : null}
-        <InfiniteTableFooter />
         {licenseValid ? null : <InfiniteTableLicenseFooter />}
         <FocusDetect<T> />
       </div>
     );
   },
 );
-function InfiniteTableContextProvider<T>() {
+function InfiniteTableContextProvider<T>({
+  children,
+}: {
+  children?: Renderable;
+}) {
   const { componentActions, componentState } =
     useComponentState<InfiniteTableState<T>>();
 
@@ -413,6 +456,7 @@ function InfiniteTableContextProvider<T>() {
     getState,
     api: imperativeApi,
     dataSourceApi,
+    children,
   };
 
   useResizeObserver(
@@ -452,6 +496,10 @@ const DEFAULT_COLUMN_HEADER_HEIGHT = toCSSVarName(columnHeaderHeightName);
 type InfiniteTableComponent = {
   <T>(props: InfiniteTableProps<T>): React.JSX.Element;
   licenseKey?: string;
+  Header: () => React.JSX.Element | null;
+  Body: () => React.JSX.Element | null;
+  Footer: () => React.JSX.Element | null;
+  HScrollSyncContent: typeof HScrollSyncContent;
 };
 const InfiniteTable: InfiniteTableComponent = function <T>(
   props: InfiniteTableProps<T>,
@@ -463,7 +511,7 @@ const InfiniteTable: InfiniteTableComponent = function <T>(
       columnHeaderHeight={DEFAULT_COLUMN_HEADER_HEIGHT}
       {...props}
     >
-      <InfiniteTableContextProvider />
+      <InfiniteTableContextProvider children={props.children} />
     </InfiniteTableRoot>
   );
   if (__DEV__) {
@@ -471,6 +519,11 @@ const InfiniteTable: InfiniteTableComponent = function <T>(
   }
   return table;
 };
+
+InfiniteTable.Header = InfiniteTableHeader;
+InfiniteTable.Body = InfiniteTableBody;
+InfiniteTable.HScrollSyncContent = HScrollSyncContent;
+InfiniteTable.Footer = () => <InfiniteTableFooter />;
 
 export { InfiniteTable };
 
@@ -482,4 +535,6 @@ export {
   useInfiniteColumnEditor,
   useInfiniteColumnFilterEditor,
   eventMatchesKeyboardShortcut,
+  useGridScroll,
+  useVisibleColumnSizes,
 };
