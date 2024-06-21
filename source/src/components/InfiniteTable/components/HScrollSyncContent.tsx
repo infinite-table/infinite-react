@@ -1,4 +1,4 @@
-import { HTMLAttributes, useRef } from 'react';
+import { HTMLAttributes, RefObject, useRef } from 'react';
 import { join } from '../../../utils/join';
 import { useGridScroll } from '../hooks/useGridScroll';
 import { ThemeVars } from '../vars.css';
@@ -53,7 +53,7 @@ export function HScrollSyncContent(
   );
 }
 
-export function useHScrollSync(ref: React.RefObject<HTMLDivElement>) {
+export function useHScrollSync(ref: RefObject<HTMLDivElement>) {
   useGridScroll((scrollPos) => {
     if (ref.current) {
       ref.current.style.transform = `translate3d(${-scrollPos.scrollLeft}px, 0px, 0px)`;
