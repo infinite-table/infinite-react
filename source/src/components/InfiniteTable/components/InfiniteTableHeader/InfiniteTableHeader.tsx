@@ -18,8 +18,6 @@ import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
 
-// import { transformTranslateZero } from '../../utilities.css';
-
 const { rootClassName } = internalProps;
 
 export const TableHeaderClassName = `${rootClassName}Header`;

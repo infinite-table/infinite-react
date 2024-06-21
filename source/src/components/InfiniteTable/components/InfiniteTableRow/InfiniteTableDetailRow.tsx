@@ -51,6 +51,7 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
           position: 'absolute',
           top: `${detailOffset}px`,
           left: 0,
+          // TODO see #rowDetailWidth
           width: `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`,
           height: rowDetailHeight,
         }}

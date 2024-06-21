@@ -5,7 +5,10 @@ import type { VirtualListProps } from './types';
 
 import { join } from '../../utils/join';
 import { SpacePlaceholder } from './SpacePlaceholder';
-import { VirtualScrollContainer } from '../VirtualScrollContainer';
+import {
+  VirtualScrollContainer,
+  VirtualScrollContainerChildToScrollCls,
+} from '../VirtualScrollContainer';
 import { useRerender } from '../hooks/useRerender';
 
 import { dbg } from '../../utils/debug';
@@ -120,7 +123,10 @@ export const VirtualList = (
         >
           <div
             ref={domRef}
-            className={scrollTransformTargetCls}
+            className={join(
+              scrollTransformTargetCls,
+              VirtualScrollContainerChildToScrollCls,
+            )}
             data-name="scroll-transform-target"
           >
             <RawList

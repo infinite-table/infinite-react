@@ -11,6 +11,7 @@ import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 
 export interface InfiniteTableContextValue<T> {
+  children?: React.ReactNode;
   api: InfiniteTableApi<T>;
   dataSourceApi: DataSourceApi<T>;
   state: InfiniteTableState<T>;

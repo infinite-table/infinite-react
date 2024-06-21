@@ -16,7 +16,26 @@ import {
   getCSSVarNameForColWidth,
 } from '../utils/infiniteDOMUtils';
 import { rafFn } from '../utils/rafFn';
+import { ThemeVars } from '../vars.css';
 import { useInfiniteTable } from './useInfiniteTable';
+
+const publicRuntimeVars: Record<
+  keyof typeof ThemeVars.runtime,
+  {
+    name: string;
+    value: string;
+  }
+> = {
+  bodyWidth: { name: stripVar(ThemeVars.runtime.bodyWidth), value: '' },
+  totalVisibleColumnsWidth: {
+    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidth),
+    value: '',
+  },
+  visibleColumnsCount: {
+    name: stripVar(ThemeVars.runtime.visibleColumnsCount),
+    value: '',
+  },
+};
 
 const scrollbarWidthHorizontal = stripVar(
   InternalVars.scrollbarWidthHorizontal,
@@ -100,6 +119,7 @@ export function useDOMProps<T>(
     computedPinnedStartColumns,
     computedPinnedEndColumns,
     computedVisibleColumns,
+    computedUnpinnedColumnsWidth,
     scrollbars,
   } = computed;
 
@@ -143,6 +163,22 @@ export function useDOMProps<T>(
     },
     {},
   );
+
+  //@ts-ignore
+  cssVars[
+    publicRuntimeVars.bodyWidth.name
+  ] = `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`;
+
+  //@ts-ignore
+  cssVars[publicRuntimeVars.totalVisibleColumnsWidth.name] = `${
+    computedPinnedStartColumnsWidth +
+    computedPinnedEndColumnsWidth +
+    computedUnpinnedColumnsWidth
+  }px`;
+
+  //@ts-ignore
+  cssVars[publicRuntimeVars.visibleColumnsCount.name] =
+    computedVisibleColumns.length;
 
   if (activeCellIndex != null) {
     //@ts-ignore

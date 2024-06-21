@@ -1,4 +1,7 @@
-import { VirtualScrollContainer } from '@src/components/VirtualScrollContainer';
+import {
+  VirtualScrollContainer,
+  VirtualScrollContainerChildToScrollCls,
+} from '@src/components/VirtualScrollContainer';
 import * as React from 'react';
 import { useState } from 'react';
 
@@ -31,6 +34,8 @@ const App = () => {
           }}
         >
           <div
+            className={VirtualScrollContainerChildToScrollCls}
+            data-name="scroll-transform-target"
             style={{
               padding: 20,
               border: '10px solid blue',

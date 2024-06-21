@@ -21,12 +21,16 @@ import type {
 import { MatrixBrain, MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
 import { scrollTransformTargetCls } from '../VirtualList/VirtualList.css';
-import { VirtualScrollContainer } from '../VirtualScrollContainer';
+import {
+  VirtualScrollContainer,
+  VirtualScrollContainerChildToScrollCls,
+} from '../VirtualScrollContainer';
 import { RawTable } from './RawTable';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { Renderable } from '../types/Renderable';
 import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicator';
 import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicator';
+import { join } from '../../utils/join';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
@@ -138,6 +142,11 @@ export function useMatrixBrain(
     colspan: brainOptions.colspan,
   });
 }
+
+const CHILD_TO_SCROLL_CLS = join(
+  scrollTransformTargetCls,
+  VirtualScrollContainerChildToScrollCls,
+);
 export function HeadlessTable(
   props: HeadlessTableProps & React.HTMLProps<HTMLDivElement>,
 ) {
@@ -217,7 +226,7 @@ export function HeadlessTable(
     >
       <div
         ref={domRef}
-        className={scrollTransformTargetCls}
+        className={CHILD_TO_SCROLL_CLS}
         data-name="scroll-transform-target"
       >
         <RawTable

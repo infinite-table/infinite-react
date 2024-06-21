@@ -183,3 +183,27 @@ return (
 If you prefer the more imperative approach, you can still use the [Row Detail API](/docs/reference/row-detail-api) to <RowDetailApiLink name="expandRowDetail">expand</RowDetailApiLink> or <RowDetailApiLink name="collapseRowDetail">collapse</RowDetailApiLink> details for rows.
 
 </Note>
+
+
+## Single row expand
+
+Using the controlled <PropLink name="rowDetailState" /> prop is very powerful - it allows you to configure the expand state to only allow one row to be expanded at a time, if that's something you need.
+
+This means that if any other row(s) are expanded and you expand a new row, the previously expanded rows will all be collapsed.
+
+
+<Sandpack title="Master detail only one row expanded at a time" size="lg" viewMode="preview">
+
+<Description>
+
+In this demo we allow only one row to be expanded at any given time.
+
+We use the controlled <PropLink name="rowDetailState" /> prop to manage the state of the row details and update it by using <PropLink name="onRowDetailStateChange" />.
+
+</Description>
+
+```ts file=master-detail-one-expanded-row-example.page.tsx
+
+```
+
+</Sandpack>
