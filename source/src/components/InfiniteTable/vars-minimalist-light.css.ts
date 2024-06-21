@@ -14,4 +14,9 @@ export const MinimalistLightVars = {
   [ThemeVars.components.Cell.borderRadius]: '0',
   [ThemeVars.components.Header.background]: 'none',
   [ThemeVars.components.HeaderCell.background]: 'none',
+  [ThemeVars.components.HeaderCell.background]: 'none',
+  [ThemeVars.components.Cell.borderLeft]: 'none',
+  [ThemeVars.components.Cell.borderRight]: 'none',
+  [ThemeVars.components.Cell.borderWidth]: '0px',
+  [ThemeVars.components.ActiveCellIndicator.inset]: '2px 1px 1px 1px',
 };

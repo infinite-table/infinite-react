@@ -144,6 +144,9 @@ export const ThemeVars = createGlobalThemeContract(
         filterEditorBorderRadius: 'filter-editor-border-radius',
         filterEditorColor: 'filter-editor-color',
       },
+      ActiveCellIndicator: {
+        inset: 'active-cell-indicator-inset',
+      },
       Cell: {
         padding: 'cell-padding',
         borderWidth: 'cell-border-width',

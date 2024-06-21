@@ -76,7 +76,11 @@ export default function Example() {
         </button>
       </div>
       <div style={containerStyle}>
-        <DataSource<Order> primaryKey="OrderId" data={orders}>
+        <DataSource<Order>
+          primaryKey="OrderId"
+          data={orders}
+          selectionMode="multi-cell"
+        >
           <InfiniteTable<Order> {...infiniteProps} />
         </DataSource>
       </div>
@@ -84,7 +88,11 @@ export default function Example() {
         style={{ ...containerStyle, background: 'white' }}
         className="infinite-theme-name--minimalist"
       >
-        <DataSource<Order> primaryKey="OrderId" data={orders}>
+        <DataSource<Order>
+          primaryKey="OrderId"
+          data={orders}
+          selectionMode="multi-cell"
+        >
           <InfiniteTable<Order> {...infiniteProps} />
         </DataSource>
       </div>

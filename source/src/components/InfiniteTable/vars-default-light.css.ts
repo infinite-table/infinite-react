@@ -57,6 +57,11 @@ const HeaderVars = {
   [ThemeVars.components.Header.columnHeaderHeight]: '30px',
 };
 
+const ActiveCellIndicatorVars = {
+  [ThemeVars.components.ActiveCellIndicator.inset]:
+    ThemeVars.components.Cell.borderWidth,
+};
+
 const CellVars = {
   [ThemeVars.components.Cell.color]: 'currentColor',
   [ThemeVars.components.Cell.borderWidth]: '1px',
@@ -192,6 +197,7 @@ export const LightVars = {
   ...LoadMaskVars,
   ...HeaderCellVars,
   ...HeaderVars,
+  ...ActiveCellIndicatorVars,
   ...CellVars,
   ...RowVars,
 };

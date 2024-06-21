@@ -29,16 +29,6 @@ type ActiveCellIndicatorProps = {
   rowHeight: number | ((rowIndex: number) => number) | undefined;
 };
 
-const ActiveStyle: CSSProperties = {
-  [stripVar(InternalVars.activeCellOffsetX)]: InternalVars.activeCellColOffset,
-  [stripVar(InternalVars.activeCellOffsetY)]: InternalVars.activeCellRowOffset,
-
-  transform: `translate3d(${InternalVars.activeCellOffsetX}, ${InternalVars.activeCellOffsetY}, 0px)`,
-
-  width: InternalVars.activeCellColWidth,
-  height: InternalVars.activeCellRowHeight,
-};
-
 const reposition = (
   brain: MatrixBrain,
   activeCellIndex: ActiveCellIndicatorProps['activeCellIndex'],
@@ -95,6 +85,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     // #correct-scroll-size this wrapper is here in order to make the indicator not take up space in the scroll container - to reproduce: remove this and click on a row, you will see that if you scroll at the bottom, there is extra space
     <div
       className={ActiveIndicatorWrapperCls}
+      ref={domRef}
       data-name="active-cell"
       style={
         active
@@ -107,14 +98,12 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
       }
     >
       <div
-        ref={domRef}
         data-name="active-cell-indicator"
         className={`${baseCls} ${
           active
             ? ActiveCellIndicatorCls.visible
             : ActiveCellIndicatorCls.hidden
         }`}
-        style={active ? ActiveStyle : undefined}
       ></div>
     </div>
   );
