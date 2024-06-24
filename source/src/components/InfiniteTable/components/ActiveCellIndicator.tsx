@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useRef, CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { stripVar } from '../../../utils/stripVar';
 import { useRerender } from '../../hooks/useRerender';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
