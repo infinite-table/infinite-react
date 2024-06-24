@@ -255,18 +255,14 @@ export const getActiveCellIndicatorOffsetFromDOM = async ({
   const indicatorNode = getActiveCellIndicatorLocator({ page });
 
   return await indicatorNode.evaluate((node) => {
-    const [xVar, yVar] = node.style.transform
-      .split('translate3d(')[1]
+    const [_1, _2, _3, _4, xPos, yPos] = getComputedStyle(node)
+      .transform.split('matrix(')[1]
+      .split(')')[0]
       .split(',')
-      .map((x) => x.trim());
+      .map((x) => x.trim())
+      .map(Number);
 
-    function stripVar(cssVariableWithVarString: string) {
-      return cssVariableWithVarString.slice(4, -1);
-    }
-    return [
-      getComputedStyle(node).getPropertyValue(stripVar(xVar)),
-      getComputedStyle(node).getPropertyValue(stripVar(yVar)),
-    ];
+    return [xPos, yPos];
   });
 };
 

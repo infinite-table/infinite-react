@@ -25,6 +25,6 @@ export default test.describe.parallel('Default keyboard navigation', () => {
 
     // 800 to the left (4 columns)
     // 200 vertical offset, since the row 80 is selected, so 5* rowheight40 = 200
-    expect(offset).toEqual(['800px', ROW_HEIGHT * ROW_INDEX + 'px']);
+    expect(offset).toEqual([800, ROW_HEIGHT * ROW_INDEX]);
   });
 });

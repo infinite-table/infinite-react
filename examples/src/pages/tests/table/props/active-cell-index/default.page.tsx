@@ -56,9 +56,9 @@ export default function KeyboardNavigationForRows() {
     // b: 0,
   });
 
-  const defaultColor = `#${color.r.toString(16)}${color.g.toString(
-    16,
-  )}${color.b.toString(16)}`;
+  const defaultColor = `#${color.r.toString(16)}${color.g
+    .toString(16)
+    .padEnd(2, '0')}${color.b.toString(16)}`;
 
   const domProps = useMemo(() => {
     return {
