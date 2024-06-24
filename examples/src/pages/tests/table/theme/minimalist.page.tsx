@@ -4,6 +4,7 @@ import {
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+
 import * as React from 'react';
 import orders from '../../../../datasets/orders.json';
 
