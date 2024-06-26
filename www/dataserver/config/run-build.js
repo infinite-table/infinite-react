@@ -1,27 +1,27 @@
 // TODO use a command line helper for this
 const format = process.argv[2];
-const watch = process.argv[3] === "--watch";
+const watch = process.argv[3] === '--watch';
 
 if (!format || !(format in { esm: true, cjs: true })) {
-  throw "Invalid format supplied";
+  throw 'Invalid format supplied';
 }
 
-require("esbuild")
+require('esbuild')
   .build({
-    entryPoints: ["./cli.ts"],
+    entryPoints: ['./cli.ts', './add-dates.ts'],
     bundle: true,
     watch: watch
       ? {
           onRebuild(error, result) {
-            if (error) console.error("watch build failed:", error);
-            else console.log("watch build succeeded:", result);
+            if (error) console.error('watch build failed:', error);
+            else console.log('watch build succeeded:', result);
           },
         }
       : null,
-    external: ["commander", "faker"],
+    external: ['commander', 'faker'],
     format: format,
     bundle: true,
-    platform: "node",
+    platform: 'node',
 
     outdir: `./bin`,
   })

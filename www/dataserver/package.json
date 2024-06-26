@@ -13,7 +13,8 @@
     "gen-employees50k": "node bin/cli.js -c 50000 -o ./data/employees50k.json -n employees",
     "gen-developers": "node bin/cli.js -c 10000 -o ./data/developers.json -n developers",
     "gen-developers50k": "node bin/cli.js -c 50000 -o ./data/developers50k.json -n developers",
-    "gen": "npm run gen-employees && npm run gen-employees50k && npm run gen-developers && npm run gen-developers50k"
+    "gen": "npm run gen-employees && npm run gen-employees50k && npm run gen-developers && npm run gen-developers50k",
+    "add-dates": "node bin/add-dates.js --file ./data/employees.json && node bin/add-dates.js --file ./data/employees50k.json && node bin/add-dates.js --file ./data/developers.json && node bin/add-dates.js --file ./data/developers50k.json"
   },
   "author": "",
   "license": "ISC",

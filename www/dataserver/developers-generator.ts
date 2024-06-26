@@ -117,6 +117,22 @@ function getRandomFrom<T>(array: T[]) {
   return array[getRandomInt(0, array.length - 1)];
 }
 
+export function getRandomDate(
+  yearsBackMax: number,
+  yearsBackMin: number,
+  asTimestamp = false,
+) {
+  const now = new Date();
+  const year =
+    now.getFullYear() - getRandomInt(yearsBackMin * -1, yearsBackMax * -1);
+  const month = getRandomInt(0, 11);
+  const day = getRandomInt(1, 28);
+
+  const date = new Date(year, month, day);
+
+  return asTimestamp ? date.getTime() : date.toISOString().split('T')[0];
+}
+
 const companySizes = [10, 100, 1000, 10_000];
 const ages = [18, 18, 24, 20, 26, 29, 35, 38, 40, 46, 50, 52, 58];
 const currencies = ['USD', 'GBP', 'EUR', 'JPY', 'AUD', 'CHF'];
@@ -170,6 +186,8 @@ export const generate = (size: number) => {
       streetNo: faker.datatype.number(1000),
       age: getRandomFrom(ages),
       currency: getRandomFrom(currencies),
+      birthDate: getRandomDate(-50, -20),
+      hireDate: getRandomDate(-5, -1, true),
       preferredLanguage: getRandomFrom(languages),
       reposCount: getRandomFrom(reposCount),
       stack: getRandomFrom(stacks),

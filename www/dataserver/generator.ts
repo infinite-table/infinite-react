@@ -5,6 +5,7 @@ const path = require('path');
 
 import listOfCountries from 'all-countries-and-cities-json/countries.json';
 import countriesWithCodes from './countries.json';
+import { getRandomDate } from './developers-generator';
 
 const countriesWithCodesMap = countriesWithCodes.reduce((acc, c) => {
   acc.set(c.name, c.code);
@@ -179,6 +180,8 @@ export const generate = (size: number) => {
       ...country,
       city: city?.city,
       streetName,
+      birthDate: getRandomDate(-50, -20),
+      hireDate: getRandomDate(-5, -1, true),
       streetPrefix: faker.address.streetSuffix(),
       streetNo: faker.datatype.number(1000),
       age: getRandomFrom(ages),
@@ -194,8 +197,12 @@ export const generate = (size: number) => {
 };
 
 export function write(obj: any, file: string) {
-  fs.writeFileSync(
-    path.resolve(process.cwd(), file),
-    JSON.stringify(obj, null, 2),
-  );
+  const filePath = path.resolve(process.cwd(), file);
+
+  const current = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+  if (current.developers) {
+    current.developers.map;
+  }
+  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2));
 }

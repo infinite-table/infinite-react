@@ -19,7 +19,7 @@
 
 - how to keep error info?
   - per row: unnecessary overhead as most errors will be per row batch
-  - er batch: how to keep it in sync with the individual rows?
+  - per batch: how to keep it in sync with the individual rows?
 
 # Retry/refetch info
 

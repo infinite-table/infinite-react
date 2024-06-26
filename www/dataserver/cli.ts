@@ -11,18 +11,14 @@ function validateCount(value: string) {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
-    throw new commander.InvalidArgumentError(
-      'Not a number.'
-    );
+    throw new commander.InvalidArgumentError('Not a number.');
   }
   return parsedValue;
 }
 
 function validateOutfile(value: string) {
   if (!value) {
-    throw new commander.InvalidArgumentError(
-      'Not a valid outfile name.'
-    );
+    throw new commander.InvalidArgumentError('Not a valid outfile name.');
   }
 
   return value.endsWith('.json') ? value : `${value}.json`;
@@ -31,19 +27,12 @@ function init() {
   const program = new Command();
 
   program
-    .requiredOption(
-      '-n, --name <string>',
-      'collection name'
-    )
-    .requiredOption(
-      '-o, --outfile <string>',
-      'output file',
-      validateOutfile
-    )
+    .requiredOption('-n, --name <string>', 'collection name')
+    .requiredOption('-o, --outfile <string>', 'output file', validateOutfile)
     .requiredOption(
       '-c, --count <type>',
       'count/size of the data to generate',
-      validateCount
+      validateCount,
     );
 
   program.parse(process.argv);
@@ -51,16 +40,15 @@ function init() {
   log('');
   log(options);
 
-  const genFn =
-    options.name === 'developers' ? generateDevs : generate;
+  const genFn = options.name === 'developers' ? generateDevs : generate;
 
   write(
     { [options.name]: genFn(options.count as number) },
-    options.outfile as string
+    options.outfile as string,
   );
   write(
     { [options.name]: genFn(options.count as number) },
-    options.outfile as string
+    options.outfile as string,
   );
 }
 
