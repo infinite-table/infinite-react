@@ -445,6 +445,7 @@ export function useLoadData<T>() {
     refetchKey,
     sortInfo,
     sortMode,
+    groupMode,
     groupBy,
     pivotBy,
     filterValue,
@@ -549,8 +550,7 @@ export function useLoadData<T>() {
 
   const depsObject = {
     sortInfo: sortMode === 'remote' ? sortInfo : null,
-
-    groupBy,
+    groupBy: groupMode === 'remote' ? groupBy : null,
     pivotBy,
     refetchKey,
     filterValue: computedFilterValue,

@@ -562,6 +562,7 @@ export type DataSourceProps<T> = {
   // TODO in the future if sortMode='remote' and sortFn is defined, show a warning - same for filterMode/filterFunction
   sortMode?: 'local' | 'remote';
   filterMode?: 'local' | 'remote';
+  groupMode?: 'local' | 'remote';
   filterValue?: DataSourcePropFilterValue<T>;
   defaultFilterValue?: DataSourcePropFilterValue<T>;
   onFilterValueChange?: (filterValue: DataSourcePropFilterValue<T>) => void;
@@ -711,6 +712,7 @@ export type DataSourceDerivedState<T> = {
 
   sortMode: NonUndefined<DataSourceProps<T>['sortMode']>;
   filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
+  groupMode: NonUndefined<DataSourceProps<T>['groupMode']>;
   groupRowsState: GroupRowsState<T>;
 
   multiSort: boolean;
