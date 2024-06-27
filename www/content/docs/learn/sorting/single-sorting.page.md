@@ -140,13 +140,13 @@ If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /
 
 ## Understanding sort mode
 
-Sorting can be done both locally in the browser and remotely on the server. For configuring where sorting is performed you need to specify the <DPropLink name="sortMode" code={false}>sort mode</DPropLink>. Possible values for <DPropLink name="sortMode"/> are `"local"` and `"remote"`.
+Sorting can be done both locally in the browser and remotely on the server. For configuring where sorting is performed you need to specify the <DPropLink name="shouldReloadData.sortInfo" ></DPropLink>. Possible values for <DPropLink name="shouldReloadData.sortInfo"/> are `false` (for local sorting) and `true` (for remote sorting).
 
 This allows you fine-grained control on how sorting is done, either in the client or on the server.
 
 ### Uncontrolled sorting
 
-If you use uncontrolled sorting (namely you don't care about updating the <DPropLink name="sortInfo" /> yourself as a result of user interaction - via <DPropLink name="onSortInfoChange" />) - then by default, the <DPropLink name="sortMode" /> is `"local"` unless you specify otherwise.
+If you use uncontrolled sorting (namely you don't care about updating the <DPropLink name="sortInfo" /> yourself as a result of user interaction - via <DPropLink name="onSortInfoChange" />) - then by default, the <DPropLink name="shouldReloadData.sortInfo" /> is `false` (so local sorting) unless you specify otherwise.
 
 You can initially render the component with no sort state or you can specify a default sorting state, via the uncontrolled prop <DPropLink name="defaultSortInfo" />.
 
@@ -164,7 +164,7 @@ const defaultSortInfo = [{ field: 'firstName', dir: 1 }];
 </DataSource>;
 ```
 
-If your data is remote and you want the sorting to happen on the backend, you can still use uncontrolled sorting, but you need to specify <DPropLink name="sortMode">sortMode="remote"</DPropLink>.
+If your data is remote and you want the sorting to happen on the backend, you can still use uncontrolled sorting, but you need to specify <DPropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DPropLink>.
 
 Using remote sort mode will trigger a call to the <DPropLink name="data" /> function whenever sorting changes, so you can re-fetch the data from the backend, according to the new `sortInfo`.
 
@@ -178,15 +178,15 @@ The <DataSourcePropLink name="defaultSortInfo" /> prop is an uncontrolled prop, 
 
 ### Controlled Sorting
 
-When you use the controlled <DataSourcePropLink name="sortInfo" /> prop, by default the <DPropLink name="sortMode" /> is `"remote"`, unless you specify otherwise.
+When you use the controlled <DataSourcePropLink name="sortInfo" /> prop, by default the <DPropLink name="shouldReloadData.sortInfo" /> is `true` (remote sorting), unless you specify otherwise.
 
 Also, be aware that when the user interacts with the DataGrid when controlled sorting is configured, the <DPropLink name="sortInfo" /> prop will not update automatically - you need to listen to <DPropLink name="onSortInfoChange" /> and update the <DPropLink name="sortInfo" /> yourself.
 
-Just like with uncontrolled sorting, updating the controlled <DPropLink name="sortInfo" /> when `sortMode=remote`, will trigger a call to the <DPropLink name="data" /> function, so new sorted data can be re-fetched.
+Just like with uncontrolled sorting, updating the controlled <DPropLink name="sortInfo" /> when `shouldReloadData.sortInfo=true`, will trigger a call to the <DPropLink name="data" /> function, so new sorted data can be re-fetched.
 
 <Note>
 
-When the controlled <DPropLink name="sortInfo" /> is combined with <DPropLink name="sortMode">sortMode="local"</DPropLink>, the `<DataSource />` will sort the data internally, on any changes of the sorting information.
+When the controlled <DPropLink name="sortInfo" /> is combined with <DPropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=false</DPropLink>, the `<DataSource />` will sort the data internally, on any changes of the sorting information.
 
 But remember it's your responsibility to update the <DPropLink name="sortInfo" /> prop when the user interacts with the DataGrid.
 
@@ -226,7 +226,7 @@ Sorting remotely makes a lot of sense when using a function as your <DataSourceP
 
 <Note>
 
-For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">sortMode="remote"</DataSourcePropLink> - if you don't, the data will also be sorted locally in the browser (which most of the times will be harmless, but it means wasted CPU cycles).
+For remote sorting, make sure you specify <DataSourcePropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DataSourcePropLink> - if you don't, the data will also be sorted locally in the browser (which most of the times will be harmless, but it means wasted CPU cycles).
 
 </Note>
 
@@ -238,7 +238,7 @@ For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">so
 
 </Sandpack>
 
-In the example above, remote and controlled sorting are combined - because `sortMode="remote"` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
+In the example above, remote and controlled sorting are combined - because `shouldReloadData.sortInfo=true` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
 
 ## Custom Sort Functions with `sortTypes`
 
@@ -331,7 +331,7 @@ The function specified in the <DPropLink name="sortFunction" /> prop is called w
 
 <Note>
 
-When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
+When <DPropLink name="sortFunction" /> is specified, <DPropLink name="shouldReloadData.sortInfo" /> will be forced to `false`, as the sorting is done in the browser.
 </Note>
 
 <Sandpack  title="Using a custom sortFunction">

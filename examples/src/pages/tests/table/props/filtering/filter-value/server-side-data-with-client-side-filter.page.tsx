@@ -117,8 +117,10 @@ export default function App() {
           data={dataSource}
           primaryKey="id"
           filterDelay={0}
-          filterMode="local"
-          sortMode="remote"
+          shouldReloadData={{
+            filterValue: false,
+            sortInfo: true,
+          }}
           defaultFilterValue={[]}
         >
           <InfiniteTable<Developer>

@@ -70,7 +70,9 @@ export default () => {
             },
           ]}
           filterDelay={0}
-          filterMode="local"
+          shouldReloadData={{
+            filterValue: false,
+          }}
         >
           <InfiniteTable<Developer>
             domProps={domProps}

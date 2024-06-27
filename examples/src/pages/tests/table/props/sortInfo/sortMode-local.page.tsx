@@ -71,7 +71,13 @@ const dataSource = () => {
 export default function DataTestPage() {
   return (
     <>
-      <DataSource<CarSale> data={dataSource} primaryKey="id" sortMode="local">
+      <DataSource<CarSale>
+        data={dataSource}
+        primaryKey="id"
+        shouldReloadData={{
+          sortInfo: false,
+        }}
+      >
         <InfiniteTable<CarSale> domProps={domProps} columns={columns} />
       </DataSource>
     </>

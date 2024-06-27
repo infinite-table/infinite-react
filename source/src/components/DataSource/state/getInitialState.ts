@@ -1,3 +1,5 @@
+import { type DebugLogger } from '../../../utils/debugPackage';
+import { warnOnce } from '../../../utils/logger';
 import {
   DataSourceComponentActions,
   DataSourceDataParams,
@@ -45,6 +47,8 @@ import {
 } from '../types';
 
 import { normalizeSortInfo } from './normalizeSortInfo';
+
+const DataSourceLogger = dbg('DataSource') as DebugLogger;
 
 export const defaultCursorId = Symbol('cursorId');
 
@@ -378,28 +382,93 @@ export function deriveStateFromProps<T extends any>(params: {
           },
     );
 
+  const { shouldReloadData = {} } = props;
+  const propsGroupMode =
+    props.groupMode ??
+    (shouldReloadData.groupBy != null
+      ? shouldReloadData.groupBy
+        ? 'remote'
+        : 'local'
+      : undefined);
+  const propsSortMode =
+    props.sortMode ?? shouldReloadData.sortInfo != null
+      ? shouldReloadData.sortInfo
+        ? 'remote'
+        : 'local'
+      : undefined;
+  const propsFilterMode =
+    props.filterMode ?? shouldReloadData.filterValue != null
+      ? shouldReloadData.filterValue
+        ? 'remote'
+        : 'local'
+      : undefined;
+
+  if (props.groupMode) {
+    warnOnce(
+      `"groupMode" prop is deprecated for the <DataSource />, use "shouldReloadData.groupBy: true|false" instead`,
+      'groupMode deprecated',
+      DataSourceLogger,
+    );
+  }
+  if (props.sortMode) {
+    warnOnce(
+      `"sortMode" prop is deprecated for the <DataSource />, use "shouldReloadData.sortInfo: true|false" instead`,
+      'sortMode deprecated',
+      DataSourceLogger,
+    );
+  }
+
+  if (props.filterMode) {
+    warnOnce(
+      `"filterMode" prop is deprecated for the <DataSource />, use "shouldReloadData.filterValue: true|false" instead`,
+      'filterMode deprecated',
+      DataSourceLogger,
+    );
+  }
+
+  const groupMode =
+    typeof props.data === 'function' ? propsGroupMode ?? 'local' : 'local';
+
+  const sortMode = props.sortFunction
+    ? 'local'
+    : propsSortMode ?? (controlledSort ? 'remote' : 'local');
+  const filterMode =
+    typeof props.filterFunction === 'function'
+      ? 'local'
+      : propsFilterMode ??
+        (typeof props.data === 'function' ? 'remote' : 'local');
+
+  const pivotMode = shouldReloadData.pivotBy ? 'remote' : 'local';
+
   const result: DataSourceDerivedState<T> = {
     selectionMode,
     groupRowsState,
 
+    shouldReloadData: {
+      // #sortMode_vs_shouldReloadData.sortInfo
+      // we reconstruct this object
+      // and don't default to the computed filterMode, sortMode, groupMode and pivotMode
+      // as computed above
+      // since we want a subtle difference between the computed sortMode and shouldReloadData.sortInfo (for example)
+      // difference: sortMode will be local when sortFunction is provided, however, the user may want to reload data when sortInfo changes
+      // and thus the data will be refetched, but will be sorted locally
+      filterValue:
+        props.shouldReloadData?.filterValue ?? filterMode === 'remote',
+      sortInfo: props.shouldReloadData?.sortInfo ?? sortMode === 'remote',
+      groupBy: props.shouldReloadData?.groupBy ?? groupMode === 'remote',
+      pivotBy: props.shouldReloadData?.pivotBy ?? pivotMode === 'remote',
+    },
     rowSelection: rowSelectionState,
     cellSelection: cellSelectionState,
+    groupMode,
+    sortMode,
+    filterMode,
+    pivotMode,
 
     toPrimaryKey,
     operatorsByFilterType,
     controlledSort,
     controlledFilter,
-
-    groupMode:
-      typeof props.data === 'function' ? props.groupMode ?? 'local' : 'local',
-    sortMode: props.sortFunction
-      ? 'local'
-      : props.sortMode ?? (controlledSort ? 'remote' : 'local'),
-    filterMode:
-      typeof props.filterFunction === 'function'
-        ? 'local'
-        : props.filterMode ??
-          (typeof props.data === 'function' ? 'remote' : 'local'),
 
     multiSort: Array.isArray(
       controlledSort ? props.sortInfo : props.defaultSortInfo,

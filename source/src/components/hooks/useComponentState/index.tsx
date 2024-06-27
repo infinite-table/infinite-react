@@ -39,8 +39,6 @@ export const notifyChange = (
   }
 };
 
-const debug = dbg('rerender');
-
 let ComponentContext: any;
 
 export function getComponentStateContext<T>(): React.Context<T> {
@@ -564,7 +562,11 @@ export function getComponentStateRoot<
       });
 
       if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
-        debug(
+        const logger = config.debugName
+          ? dbg(`${config.debugName}:rerender`)
+          : dbg('rerender');
+
+        logger(
           'Triggered by new values for the following props',
           ...[
             ...Object.keys(newMappedState ?? {}),

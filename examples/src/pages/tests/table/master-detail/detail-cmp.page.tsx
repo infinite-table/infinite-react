@@ -75,8 +75,10 @@ function RowDetail() {
     <DataSource<Developer>
       data={detailDataSource}
       primaryKey="id"
-      sortMode="remote"
-      filterMode="remote"
+      shouldReloadData={{
+        sortInfo: true,
+        filterValue: true,
+      }}
       defaultFilterValue={[]}
     >
       <InfiniteTable<Developer>
@@ -189,7 +191,9 @@ export default () => {
         defaultFilterValue={[]}
         data={citiesDataSource}
         primaryKey="id"
-        filterMode="local"
+        shouldReloadData={{
+          filterValue: false,
+        }}
         defaultSortInfo={[
           {
             field: 'country',

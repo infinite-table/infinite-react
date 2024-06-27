@@ -285,9 +285,19 @@ Loads data from remote location but will only show rows that have `id > 100`.
 
 </Prop>
 
-<Prop name="filterMode" type="'local'|'remote'">
+<Prop name="shouldReloadData.filterValue" type="boolean">
 
-> Explicitly configures where filtering will take place
+> Explicitly configures where filtering will take place and if changes in the <DataSourcePropLink name="filterValue" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
+ Replaces the deprecated <DPropLink name="filterMode" />
+
+- `false` (the default) - filtering will be done on the client side and the <DPropLink name="data" /> function will not be invoked again.
+- `true` - filtering will be done on the server side - the <DPropLink name="data" /> function will be called with an object that includes the `filterValue` property, so it can be sent to the server
+
+</Prop>
+
+<Prop name="filterMode" type="'local'|'remote'" deprecated>
+
+> Explicitly configures where filtering will take place. Update to use the <DPropLink name="shouldReloadData.filterValue" /> prop.
 
 - `'local'` - filtering will be done on the client side
 - `'remote'` - filtering will be done on the server side - the <DPropLink name="data" /> function will be called with an object that includes the `filterValue` property, so it can be sent to the server
@@ -1073,7 +1083,7 @@ The function specified in the <DPropLink name="sortFunction" /> prop is called w
 
 <Note>
 
-When <DPropLink name="sortFunction" /> is specified, <DPropLink name="sortMode" /> will be forced to `"local"`, as the sorting is done in the browser.
+When <DPropLink name="sortFunction" /> is specified, <DPropLink name="shouldReloadData.sortInfo" /> will be forced to `false`, as the sorting is done in the browser.
 </Note>
 
 <Note>
@@ -1117,7 +1127,7 @@ If you want to implement your own custom sort function, the `multisort` fn is a 
 
 > Information for sorting the data. This is a controlled prop.
 
-Also see related <DataSourcePropLink name="defaultSortInfo" /> (uncontrolled version), <DataSourcePropLink name="sortMode" />, <PropLink name="sortable" /> and <PropLink name="columns.sortable" />.
+Also see related <DataSourcePropLink name="defaultSortInfo" /> (uncontrolled version), <DataSourcePropLink name="shouldReloadData.sortInfo" />, <PropLink name="sortable" /> and <PropLink name="columns.sortable" />.
 
 Sorting can be single (only one field/column can be sorted at a time) or multiple (multiple fields/columns can be sorted at the same time). Therefore, this property an be an array of objects or a single object (or null) - the shape of the objects (of type `DataSourceSingleSortInfo<T>`)is the following.
 
@@ -1146,11 +1156,39 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 </Prop>
 
-<Prop name="sortMode" type="'local'|'remote'">
 
-> Specifies where the sorting should be done.
+
+<Prop name="shouldReloadData.sortInfo" type="boolean">
+
+> Specifies if changes in the <DataSourcePropLink name="sortInfo" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function. Replaces the deprecated <DPropLink name="sortMode" />.
 
 See related <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" />.
+
+When set to `false` (the default), the data is sorted locally (in the browser) after the data-source is loaded. When set to `true`, the data should be sorted by the server (or by the data-source function that serves the data).
+
+See [the Sorting page](/docs/learn/sorting/overview) for more details.
+
+For configuring the sorting behavior when multiple sorting is enabled, see <PropLink name="multiSortBehavior" />.
+
+</Prop>
+
+<Prop name="shouldReloadData" type="{ sortInfo, groupBy, filterValue, pivotBy }">
+
+> Specifies which changes in the data-related props should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
+
+See <DPropLink name="shouldReloadData.sortInfo" />.
+See <DPropLink name="shouldReloadData.groupBy" />.
+See <DPropLink name="shouldReloadData.filterValue" />.
+See <DPropLink name="shouldReloadData.pivotBy" />.
+
+</Prop>
+
+
+<Prop name="sortMode" type="'local'|'remote'" deprecated>
+
+> Specifies where the sorting should be done. Use <DPropLink name="shouldReloadData.sortInfo" /> instead.
+
+See related <DPropLink name="sortInfo" /> and <DPropLink name="defaultSortInfo" />.
 
 When set to `'local'`, the data is sorted locally (in the browser) after the data-source is loaded. When set to `'remote'`, the data should be sorted by the server (or by the data-source function that serves the data).
 

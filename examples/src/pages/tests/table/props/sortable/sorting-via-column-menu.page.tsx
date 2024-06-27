@@ -58,7 +58,9 @@ export default function App() {
           { field: 'country', dir: -1 },
           { field: 'salary', dir: 1 },
         ]}
-        sortMode="local"
+        shouldReloadData={{
+          sortInfo: false,
+        }}
       >
         <InfiniteTable<Developer>
           domProps={domProps}

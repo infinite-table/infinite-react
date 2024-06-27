@@ -71,13 +71,17 @@ export default function RemoteControlledMultiSortingExample() {
       dir: -1,
     },
   ]);
+
+  const shouldReloadData = {
+    sortInfo: true,
+  };
   return (
     <>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}
         sortInfo={sortInfo}
-        sortMode="remote"
+        shouldReloadData={shouldReloadData}
         onSortInfoChange={setSortInfo}
       >
         <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />

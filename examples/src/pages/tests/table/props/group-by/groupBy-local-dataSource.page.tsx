@@ -143,12 +143,7 @@ export default function DataTestPage() {
       >
         toggle group
       </button>
-      <DataSource<CarSale>
-        data={dataSource}
-        primaryKey="id"
-        groupMode="local"
-        groupBy={groupBy}
-      >
+      <DataSource<CarSale> data={dataSource} primaryKey="id" groupBy={groupBy}>
         <InfiniteTable<CarSale> domProps={domProps} columns={columns} />
       </DataSource>
     </>

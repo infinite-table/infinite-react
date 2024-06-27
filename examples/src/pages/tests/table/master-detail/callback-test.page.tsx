@@ -169,8 +169,10 @@ function RowDetail() {
       <DataSource<Developer>
         debugId={`datasource-detail-${rowInfo.id}`}
         data={detailDataSource}
-        sortMode="remote"
-        filterMode="remote"
+        shouldReloadData={{
+          sortInfo: true,
+          filterValue: true,
+        }}
         primaryKey="id"
         defaultGroupBy={[
           {

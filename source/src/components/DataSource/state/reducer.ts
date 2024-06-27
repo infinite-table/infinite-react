@@ -207,6 +207,7 @@ export function concludeReducer<T>(params: {
   const cacheAffectedParts = getCacheAffectedParts(state);
 
   const sortInfo = state.sortInfo;
+  // #sortMode_vs_shouldReloadData.sortInfo
   const sortMode = state.sortMode;
   let shouldSort = !!sortInfo?.length ? sortMode === 'local' : false;
 

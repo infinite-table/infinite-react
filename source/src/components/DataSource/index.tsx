@@ -58,6 +58,7 @@ function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
 }
 
 const DataSourceRoot = getComponentStateRoot({
+  debugName: 'DataSource',
   //@ts-ignore
   initSetupState,
   //@ts-ignore

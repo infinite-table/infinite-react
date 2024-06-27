@@ -69,8 +69,10 @@ function renderDetail() {
     <DataSource<Developer>
       data={detailDataSource}
       primaryKey="id"
-      sortMode="remote"
-      filterMode="remote"
+      shouldReloadData={{
+        sortInfo: true,
+        filterValue: true,
+      }}
     >
       <InfiniteTable<Developer>
         columnDefaultWidth={150}

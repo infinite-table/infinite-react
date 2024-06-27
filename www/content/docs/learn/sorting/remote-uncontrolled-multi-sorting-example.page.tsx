@@ -61,6 +61,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
+const shouldReloadData = {
+  sortInfo: true,
+};
 export default function RemoteUncontrolledMultiSortingExample() {
   return (
     <>
@@ -73,7 +76,7 @@ export default function RemoteUncontrolledMultiSortingExample() {
             dir: -1,
           },
         ]}
-        sortMode="remote"
+        shouldReloadData={shouldReloadData}
       >
         <InfiniteTable<Developer> columns={columns} columnDefaultWidth={120} />
       </DataSource>

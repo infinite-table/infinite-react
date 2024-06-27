@@ -32,6 +32,7 @@ interface PropProps {
   excerpt?: React.ReactNode;
 
   generic?: boolean;
+  deprecated?: boolean;
   hidden?: boolean;
   highlight?: boolean;
   defaultValue?: string | number | boolean | null | undefined;
@@ -369,6 +370,7 @@ export function Prop({
   onPropExpand,
   type,
   returnType,
+  deprecated,
   returnTypeLink,
 }: PropProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -408,11 +410,22 @@ export function Prop({
         <div className="flex-1 flex flex-col w-full">
           <div className="flex flex-row w-full items-center flex-wrap ">
             {/* The pt and mt hack is for when there's anchor navigation, in order to accomodate for the fixed navbar and search field */}
-            <H4 as="h2" id={theId} className="pt-[80px] mt-[-80px] mb-0">
+            <H4
+              as="h2"
+              id={theId}
+              className={`pt-[80px] mt-[-80px] mb-0 relative ${
+                deprecated ? 'line-through' : ''
+              }`}
+            >
               <IconCodeBlock className="inline mr-2 text-brand" />
               {name}
               {generic ? (
                 <span className="italic opacity-40">{` <T>`}</span>
+              ) : null}
+              {deprecated ? (
+                <span className="text-xs ml-3 absolute top-16 -left-4 bg-red-400 text-dark-custom p-1 leading-none rounded">
+                  deprecated
+                </span>
               ) : null}
             </H4>
 

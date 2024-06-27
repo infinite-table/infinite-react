@@ -95,6 +95,10 @@ const defaultSortInfo: DataSourcePropSortInfo<Developer> = [
 
 const defaultFilterValue: DataSourcePropFilterValue<Developer> = [];
 
+const shouldReloadData = {
+  sortInfo: true,
+};
+
 export default () => {
   return (
     <>
@@ -104,7 +108,7 @@ export default () => {
           primaryKey="id"
           defaultFilterValue={defaultFilterValue}
           defaultSortInfo={defaultSortInfo}
-          sortMode="remote"
+          shouldReloadData={shouldReloadData}
         >
           <InfiniteTable<Developer>
             domProps={domProps}

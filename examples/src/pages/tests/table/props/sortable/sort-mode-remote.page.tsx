@@ -114,7 +114,9 @@ export default () => {
           refetchKey={refetchKey}
           data={dataSource}
           primaryKey="id"
-          sortMode="remote"
+          shouldReloadData={{
+            sortInfo: true,
+          }}
         >
           <InfiniteTable<Developer>
             columns={columns}

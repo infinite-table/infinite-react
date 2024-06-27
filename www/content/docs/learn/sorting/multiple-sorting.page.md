@@ -143,7 +143,7 @@ Sorting remotely makes a lot of sense when using a function as your <DataSourceP
 
 <Note>
 
-For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">sortMode="remote"</DataSourcePropLink> - if you don't, the data will also be sorted locally in the browser (which most of the times will be harmless, but it means wasted CPU cycles).
+For remote sorting, make sure you specify <DataSourcePropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DataSourcePropLink> - if you don't, the data will also be sorted locally in the browser (which most of the times will be harmless, but it means wasted CPU cycles).
 
 </Note>
 
@@ -155,4 +155,4 @@ For remote sorting, make sure you specify <DataSourcePropLink name="sortMode">so
 
 </Sandpack>
 
-In the example above, remote and controlled sorting are combined - because `sortMode="remote"` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
+In the example above, remote and controlled sorting are combined - because `shouldReloadData.sortInfo=true` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.

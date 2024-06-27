@@ -193,8 +193,10 @@ export default function DataTestPage() {
                 <DataSource<Developer>
                   debugId={`datasource-detail-${rowInfo.id}`}
                   data={detailDataSource}
-                  sortMode="remote"
-                  filterMode="remote"
+                  shouldReloadData={{
+                    filterValue: true,
+                    sortInfo: true,
+                  }}
                   primaryKey="id"
                   defaultGroupBy={[
                     {

@@ -135,7 +135,9 @@ export default function SortInfoChanges() {
         <DataSource<Developer>
           data={dataSource}
           primaryKey="id"
-          sortMode={sortMode}
+          shouldReloadData={{
+            sortInfo: sortMode === 'remote',
+          }}
           onSortInfoChange={setSortInfo}
           sortInfo={sortInfo}
         >

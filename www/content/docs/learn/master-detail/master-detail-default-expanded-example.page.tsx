@@ -60,6 +60,10 @@ const domProps = {
     height: '100%',
   },
 };
+const shouldReloadData = {
+  sortInfo: true,
+  filterValue: true,
+};
 
 function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
   console.log('rendering detail for master row', rowInfo.id);
@@ -67,8 +71,7 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
     <DataSource<Developer>
       data={detailDataSource}
       primaryKey="id"
-      sortMode="remote"
-      filterMode="remote"
+      shouldReloadData={shouldReloadData}
     >
       <InfiniteTable<Developer>
         columnDefaultWidth={150}

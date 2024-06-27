@@ -44,7 +44,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
   city: { field: 'city' },
   currency: { field: 'currency' },
 };
-
+const shouldReloadData = {
+  sortInfo: false,
+};
 export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
   return (
     <>
@@ -52,7 +54,7 @@ export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
         primaryKey="id"
         data={dataSource}
         defaultSortInfo={{ field: 'salary', dir: -1 }}
-        sortMode="local"
+        shouldReloadData={shouldReloadData}
       >
         <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
       </DataSource>

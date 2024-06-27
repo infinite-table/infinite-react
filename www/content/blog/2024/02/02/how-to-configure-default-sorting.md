@@ -39,9 +39,9 @@ See our page on [multiple sorting](/docs/learn/sorting/multiple-sorting) for mor
 
 ## Local vs remote sorting
 
-The above example uses local sorting. If you don't explicitly specify a <PropLink name="sortMode" /> prop on the DataGrid, the sorting will be done locally, in the browser.
+The above example uses local sorting. If you don't explicitly specify a that changes in the <PropLink name="sortInfo" /> should trigger a reload (via the <PropLink name="shouldReloadData.sortInfo" /> prop), the sorting will be done locally, in the browser.
 
-However, you can also have remote sorting - for this scenario, make sure you use <PropLink name="sortMode">sortMode="remote"</PropLink>.
+However, you can also have remote sorting - for this scenario, make sure you use <PropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</PropLink>.
 
 <Note>
 

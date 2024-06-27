@@ -444,8 +444,7 @@ export function useLoadData<T>() {
     notifyScrollbarsChange,
     refetchKey,
     sortInfo,
-    sortMode,
-    groupMode,
+    shouldReloadData,
     groupBy,
     pivotBy,
     filterValue,
@@ -549,11 +548,12 @@ export function useLoadData<T>() {
   }, [filterValue, filterMode, filterTypes]);
 
   const depsObject = {
-    sortInfo: sortMode === 'remote' ? sortInfo : null,
-    groupBy: groupMode === 'remote' ? groupBy : null,
-    pivotBy,
+    // #sortMode_vs_shouldReloadData.sortInfo
+    sortInfo: shouldReloadData.sortInfo ? sortInfo : null,
+    groupBy: shouldReloadData.groupBy ? groupBy : null,
+    pivotBy: shouldReloadData.pivotBy ? pivotBy : null,
     refetchKey,
-    filterValue: computedFilterValue,
+    filterValue: shouldReloadData.filterValue ? computedFilterValue : null,
     cursorId: livePagination ? stateCursorId : null,
   };
 

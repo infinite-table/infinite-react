@@ -47,7 +47,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const domProps = { style: { height: '90vh' } };
-
+const shouldReloadData = {
+  sortInfo: false,
+};
 export default function LocalUncontrolledMultiSortingExampleWithRemoteData() {
   return (
     <>
@@ -58,7 +60,7 @@ export default function LocalUncontrolledMultiSortingExampleWithRemoteData() {
           { field: 'country', dir: -1 },
           { field: 'salary', dir: 1 },
         ]}
-        sortMode="local"
+        shouldReloadData={shouldReloadData}
       >
         <InfiniteTable<Developer>
           domProps={domProps}

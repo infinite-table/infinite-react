@@ -452,6 +452,21 @@ export type DataSourceRowInfoReducer<T> = DataSourceRawReducer<
   any
 >;
 
+export type DataSourcePropShouldReloadDataObject<T> = {
+  [key in keyof Pick<
+    DataSourceDataParams<T>,
+    'sortInfo' | 'pivotBy' | 'groupBy' | 'filterValue'
+  >]: boolean;
+};
+// export type DataSourcePropShouldReloadDataFn<T> = (options: {
+//   oldDataParams: DataSourceDataParams<T>;
+//   newDataParams: DataSourceDataParams<T>;
+//   changes: DataSourceDataParamsChanges<T>;
+// }) => boolean;
+export type DataSourcePropShouldReloadData<T> =
+  DataSourcePropShouldReloadDataObject<T>;
+// | DataSourcePropShouldReloadDataFn<T>;
+
 export type DataSourceProps<T> = {
   debugId?: string;
   children:
@@ -559,10 +574,23 @@ export type DataSourceProps<T> = {
 
   filterFunction?: DataSourcePropFilterFunction<T>;
 
-  // TODO in the future if sortMode='remote' and sortFn is defined, show a warning - same for filterMode/filterFunction
+  /**
+   * @deprecated Use shouldReloadData.sortInfo instead
+   */
   sortMode?: 'local' | 'remote';
+  /**
+   * @deprecated Use shouldReloadData.filterValue instead
+   */
   filterMode?: 'local' | 'remote';
+
+  /**
+   * @deprecated Use shouldReloadData.groupBy instead
+   */
   groupMode?: 'local' | 'remote';
+
+  // TODO in the future if shouldReloadData.sortInfo== true and sortFn is defined, show a warning - same for filterMode/filterFunction
+  shouldReloadData?: DataSourcePropShouldReloadData<T>;
+
   filterValue?: DataSourcePropFilterValue<T>;
   defaultFilterValue?: DataSourcePropFilterValue<T>;
   onFilterValueChange?: (filterValue: DataSourcePropFilterValue<T>) => void;
@@ -710,9 +738,11 @@ export type DataSourceDerivedState<T> = {
     Record<string, DataSourceFilterOperator<T>>
   >;
 
-  sortMode: NonUndefined<DataSourceProps<T>['sortMode']>;
-  filterMode: NonUndefined<DataSourceProps<T>['filterMode']>;
-  groupMode: NonUndefined<DataSourceProps<T>['groupMode']>;
+  sortMode: 'local' | 'remote';
+  filterMode: 'local' | 'remote';
+  groupMode: 'local' | 'remote';
+  pivotMode: 'local' | 'remote';
+  shouldReloadData: NonUndefined<Required<DataSourcePropShouldReloadData<T>>>;
   groupRowsState: GroupRowsState<T>;
 
   multiSort: boolean;

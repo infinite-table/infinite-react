@@ -127,7 +127,9 @@ export default function DataTestPage() {
       <DataSource<CarSale>
         data={dataSource}
         primaryKey="id"
-        sortMode="remote"
+        shouldReloadData={{
+          sortInfo: true,
+        }}
         onSortInfoChange={setSortInfo}
         sortInfo={sortInfo}
       >

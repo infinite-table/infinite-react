@@ -72,7 +72,9 @@ export default function RowStyleDefault() {
           primaryKey="id"
           defaultFilterValue={[]}
           filterTypes={filterTypes}
-          filterMode="local"
+          shouldReloadData={{
+            filterValue: false,
+          }}
           filterDelay={0}
         >
           <InfiniteTable<Employee>

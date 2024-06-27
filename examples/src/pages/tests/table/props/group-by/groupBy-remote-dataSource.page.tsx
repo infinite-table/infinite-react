@@ -146,7 +146,9 @@ export default function DataTestPage() {
       <DataSource<CarSale>
         data={dataSource}
         primaryKey="id"
-        groupMode="remote"
+        shouldReloadData={{
+          groupBy: true,
+        }}
         groupBy={groupBy}
       >
         <InfiniteTable<CarSale> domProps={domProps} columns={columns} />

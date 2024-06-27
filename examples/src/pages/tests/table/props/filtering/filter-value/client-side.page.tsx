@@ -117,7 +117,9 @@ export default function RowStyleDefault() {
         <DataSource<Employee>
           data={dataSource}
           primaryKey="id"
-          filterMode="local"
+          shouldReloadData={{
+            filterValue: false,
+          }}
           filterValue={filterValue}
         >
           <InfiniteTable<Employee>
