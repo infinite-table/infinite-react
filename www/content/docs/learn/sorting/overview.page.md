@@ -109,7 +109,7 @@ If you use uncontrolled sorting via <DataSourcePropLink name="defaultSortInfo" /
 
 Sorting can be done both locally in the browser and remotely on the server. When you want sorting to be performed remotely on the server, a change on the <DPropLink name="sortInfo" /> should trigger a reload of the datasource. In order to achieve this, you need to specify <DPropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DPropLink>.
 
-Possible values for <DPropLink name="shouldReloadData.sortInfo"/> are `false` (sorting will be performed locally and won't trigger a reload of the <DPropLink name="data"> source) and `true` (sorting will be performed remotely and will trigger a reload of the data).
+Possible values for <DPropLink name="shouldReloadData.sortInfo"/> are `false` (sorting will be performed locally and won't trigger a reload of the <DPropLink name="data" /> source) and `true` (sorting will be performed remotely and will trigger a reload of the data).
 
 This allows you fine-grained control on how sorting is done, either in the client or on the server.
 

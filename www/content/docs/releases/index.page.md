@@ -5,7 +5,10 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 4.2.0
 
-@milestone id="121"
+Replace `sortMode` with [https://infinite-table.com/docs/reference/datasource-props#shouldReloadData.sortInfo]
+Replace `groupMode` with [https://infinite-table.com/docs/reference/datasource-props#shouldReloadData.groupBy]
+
+@milestone id="122"
 
 ## 4.1.0
 
