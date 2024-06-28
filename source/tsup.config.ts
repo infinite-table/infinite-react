@@ -26,7 +26,7 @@ async function processCss(css) {
 // CHANGE HERE TO ADD ESM AS WELL
 const FORMATS: Format[] = ['cjs', 'esm'];
 
-const MINIFY = true;
+const MINIFY = false; //true;
 
 export const tsupConfig: Options = {
   entry: ['./src/index.tsx'],
