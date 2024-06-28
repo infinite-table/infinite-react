@@ -141,10 +141,16 @@ const enabledChannelsCache = new Map<string, boolean>();
  * If the permission token does not contain the channel, it returns undefined.
  *
  * @param channel A specific channel like "a:b:c" - cannot contain wildcards
- * @param permissionToken a permission token like "a:b:c" or "d:e:f" or "d:x:*" or "*" - the value can contain wildcards, but cannot have comma separated values
+ * @param permissionToken a permission token like "a:b:c" or "d:e:f" or "d:x:*" or "d:*:f" or "*" - the value can contain wildcards, but cannot have comma separated values
  *
  */
-function isChannelTargeted(channel: string, permissionToken: string) {
+function isChannelTargeted(
+  channel: string,
+  permissionToken: string,
+): boolean | undefined {
+  if (channel === permissionToken) {
+    return true;
+  }
   const parts = channel.split(CHANNEL_SEPARATOR);
   const partsMap = new DeepMap<string, boolean>();
   partsMap.set(parts, true);
@@ -153,14 +159,32 @@ function isChannelTargeted(channel: string, permissionToken: string) {
 
   const hasWildcard = new Set(tokenParts).has(CHANNEL_WILDCARD);
 
+  const indexOfToken = tokenParts.indexOf(CHANNEL_WILDCARD);
   const storagePartsWithoutWildcard = hasWildcard
-    ? tokenParts.slice(0, tokenParts.indexOf(CHANNEL_WILDCARD))
+    ? tokenParts.slice(0, indexOfToken)
     : tokenParts;
 
   if (
     partsMap.getKeysStartingWith(storagePartsWithoutWildcard, hasWildcard)
       .length > 0
   ) {
+    const remainingParts = tokenParts.slice(indexOfToken + 1);
+    if (remainingParts.length) {
+      // there are some remaining parts after the wildcard token in the permission token
+      // so we need to check for that
+      // we do that by replacing the current token with the actual part that was matched
+
+      const tokenWithOnePartReplaced = tokenParts
+        .map((part, index) => {
+          if (index === indexOfToken) {
+            return parts[index];
+          }
+          return part;
+        })
+        .join(CHANNEL_SEPARATOR);
+      return isChannelTargeted(channel, tokenWithOnePartReplaced);
+    }
+
     return true;
   }
   return undefined;

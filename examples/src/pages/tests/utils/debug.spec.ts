@@ -64,6 +64,34 @@ export default test.describe.parallel('debug', () => {
     ]);
   });
 
+  test.only('should allow * use in the middle', () => {
+    let args: string[] = [];
+    debug.enable = 'channel1:*:x';
+    debug.logFn = (...x: string[]) => {
+      args = x;
+    };
+    const oneax = debug('channel1:a:x');
+    const onebx = debug('channel1:b:x');
+    const oneaz = debug('channel1:a:z');
+    const onecx = debug('channel1:c:x');
+
+    oneax('1ax');
+    expect(args).toEqual(['%c[channel1:a:x]', 'color: red', '1ax']);
+
+    onebx('1bx');
+    expect(args).toEqual(['%c[channel1:b:x]', 'color: green', '1bx']);
+
+    oneaz('1az');
+    // expect no changes, since z is not enabled
+    expect(args).toEqual(['%c[channel1:b:x]', 'color: green', '1bx']);
+
+    oneaz('1az');
+    // expect no changes, since z is not enabled
+    expect(args).toEqual(['%c[channel1:b:x]', 'color: green', '1bx']);
+
+    onecx('1cx');
+    expect(args).toEqual(['%c[channel1:c:x]', 'color: red', '1cx']);
+  });
   test('should only log for enabled channels', () => {
     let args: string[] = [];
     debug.enable = 'channel2,channel1:*';
