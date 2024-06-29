@@ -39,7 +39,7 @@ export default test.describe.parallel('debug', () => {
     const logger1 = debug('channel1');
 
     logger1('testing');
-    expect(args).toEqual(['%c[channel1]', 'color: blue', 'testing']);
+    expect(args).toEqual(['%c[channel1]', 'color: red', 'testing']);
 
     let customLoggerArgs: string[] = [];
     logger1.logFn = (...x: string[]) => {
@@ -51,17 +51,17 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(['1']);
     expect(customLoggerArgs).toEqual([
       '%c[channel1]',
-      'color: blue',
+      'color: red',
       'second test',
     ]);
 
     logger1.logFn = undefined;
 
     logger1('third test');
-    expect(args).toEqual(['%c[channel1]', 'color: blue', 'third test']);
+    expect(args).toEqual(['%c[channel1]', 'color: red', 'third test']);
     expect(customLoggerArgs).toEqual([
       '%c[channel1]',
-      'color: blue',
+      'color: red',
       'second test',
     ]);
   });
@@ -83,11 +83,11 @@ export default test.describe.parallel('debug', () => {
     const oneabz = debug('channel1:a:b:z');
 
     oneax('1ax');
-    expect(args).toEqual(['%c[channel1:a:x]', 'color: red', '1ax']);
+    expect(args).toEqual(['%c[channel1:a:x]', 'color: green', '1ax']);
 
     onebx('1bx');
     expect(args).toEqual(
-      (prevArgs = ['%c[channel1:b:x]', 'color: green', '1bx']),
+      (prevArgs = ['%c[channel1:b:x]', 'color: blue', '1bx']),
     );
 
     oneaz('1az');
@@ -99,11 +99,11 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(prevArgs);
 
     onecx('1cx');
-    expect(args).toEqual(['%c[channel1:c:x]', 'color: red', '1cx']);
+    expect(args).toEqual(['%c[channel1:c:x]', 'color: green', '1cx']);
 
     oneabx('1abx');
     expect(args).toEqual(
-      (prevArgs = ['%c[channel1:a:b:x]', 'color: green', '1abx']),
+      (prevArgs = ['%c[channel1:a:b:x]', 'color: blue', '1abx']),
     );
 
     oneabz('1abz');
@@ -149,7 +149,7 @@ export default test.describe.parallel('debug', () => {
     const oneb = debug('channel1:b');
 
     onea('1a');
-    expect(args).toEqual((prevArgs = ['%c[channel1:a]', 'color: green', '1a']));
+    expect(args).toEqual((prevArgs = ['%c[channel1:a]', 'color: red', '1a']));
 
     oneb('1b');
     // not logged

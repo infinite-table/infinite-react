@@ -84,10 +84,10 @@ const COLORS = [
 const COLOR_SYMBOL = Symbol('color');
 const USED_COLORS_MAP = new WeakMap<string[], number[]>();
 
-function initUsedColors() {
+function initUsedColors(colors = COLORS) {
   USED_COLORS_MAP.set(
-    COLORS,
-    COLORS.map((_) => 0),
+    colors,
+    colors.map((_) => 0),
   );
 }
 
@@ -421,6 +421,7 @@ debug.logFn = defaultLogger;
 
 debug.destroyAll = () => {
   initUsedColors();
+  initUsedColors(debug.colors);
   loggers.clear();
   enabledChannelsCache.clear();
 };
