@@ -84,10 +84,14 @@ const COLORS = [
 const COLOR_SYMBOL = Symbol('color');
 const USED_COLORS_MAP = new WeakMap<string[], number[]>();
 
-USED_COLORS_MAP.set(
-  COLORS,
-  COLORS.map((_) => 0),
-);
+function initUsedColors() {
+  USED_COLORS_MAP.set(
+    COLORS,
+    COLORS.map((_) => 0),
+  );
+}
+
+initUsedColors();
 
 const getNextColor = (colors = COLORS) => {
   let usedColors: number[] = [];
@@ -144,13 +148,7 @@ const enabledChannelsCache = new Map<string, boolean>();
  * @param permissionToken a permission token like "a:b:c" or "d:e:f" or "d:x:*" or "d:*:f" or "*" - the value can contain wildcards, but cannot have comma separated values
  *
  */
-function isChannelTargeted(
-  channel: string,
-  permissionToken: string,
-): boolean | undefined {
-  if (channel === permissionToken) {
-    return true;
-  }
+function isChannelTargeted(channel: string, permissionToken: string) {
   const parts = channel.split(CHANNEL_SEPARATOR);
   const partsMap = new DeepMap<string, boolean>();
   partsMap.set(parts, true);
@@ -170,19 +168,7 @@ function isChannelTargeted(
   ) {
     const remainingParts = tokenParts.slice(indexOfToken + 1);
     if (remainingParts.length) {
-      // there are some remaining parts after the wildcard token in the permission token
-      // so we need to check for that
-      // we do that by replacing the current token with the actual part that was matched
-
-      const tokenWithOnePartReplaced = tokenParts
-        .map((part, index) => {
-          if (index === indexOfToken) {
-            return parts[index];
-          }
-          return part;
-        })
-        .join(CHANNEL_SEPARATOR);
-      return isChannelTargeted(channel, tokenWithOnePartReplaced);
+      return channel.endsWith(remainingParts.join(CHANNEL_SEPARATOR));
     }
 
     return true;
@@ -427,9 +413,16 @@ const debug = debugPackage as {
   enable: string;
   diffenable: string | boolean;
   logFn: DebugLogger['logFn'];
+  destroyAll: () => void;
 };
 
 debug.colors = COLORS;
 debug.logFn = defaultLogger;
+
+debug.destroyAll = () => {
+  initUsedColors();
+  loggers.clear();
+  enabledChannelsCache.clear();
+};
 
 export { debug };

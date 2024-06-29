@@ -5,6 +5,7 @@ debug.colors = ['red', 'green', 'blue'];
 
 export default test.describe.parallel('debug', () => {
   test('should reuse the same color for same channel', () => {
+    debug.destroyAll();
     debug.enable = '*';
     debug.logFn = (...x: string[]) => {
       args = x;
@@ -30,6 +31,7 @@ export default test.describe.parallel('debug', () => {
 
   test('should allow setting logFn for a channel', () => {
     let args: string[] = [];
+    debug.destroyAll();
     debug.enable = '*';
     debug.logFn = (...x: string[]) => {
       args = x;
@@ -37,7 +39,7 @@ export default test.describe.parallel('debug', () => {
     const logger1 = debug('channel1');
 
     logger1('testing');
-    expect(args).toEqual(['%c[channel1]', 'color: red', 'testing']);
+    expect(args).toEqual(['%c[channel1]', 'color: blue', 'testing']);
 
     let customLoggerArgs: string[] = [];
     logger1.logFn = (...x: string[]) => {
@@ -49,51 +51,69 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(['1']);
     expect(customLoggerArgs).toEqual([
       '%c[channel1]',
-      'color: red',
+      'color: blue',
       'second test',
     ]);
 
     logger1.logFn = undefined;
 
     logger1('third test');
-    expect(args).toEqual(['%c[channel1]', 'color: red', 'third test']);
+    expect(args).toEqual(['%c[channel1]', 'color: blue', 'third test']);
     expect(customLoggerArgs).toEqual([
       '%c[channel1]',
-      'color: red',
+      'color: blue',
       'second test',
     ]);
   });
 
-  test.only('should allow * use in the middle', () => {
+  test('should allow * use in the middle of the token', () => {
     let args: string[] = [];
+    let prevArgs: string[] = [];
     debug.enable = 'channel1:*:x';
     debug.logFn = (...x: string[]) => {
       args = x;
     };
     const oneax = debug('channel1:a:x');
     const onebx = debug('channel1:b:x');
+
     const oneaz = debug('channel1:a:z');
     const onecx = debug('channel1:c:x');
+
+    const oneabx = debug('channel1:a:b:x');
+    const oneabz = debug('channel1:a:b:z');
 
     oneax('1ax');
     expect(args).toEqual(['%c[channel1:a:x]', 'color: red', '1ax']);
 
     onebx('1bx');
-    expect(args).toEqual(['%c[channel1:b:x]', 'color: green', '1bx']);
+    expect(args).toEqual(
+      (prevArgs = ['%c[channel1:b:x]', 'color: green', '1bx']),
+    );
 
     oneaz('1az');
     // expect no changes, since z is not enabled
-    expect(args).toEqual(['%c[channel1:b:x]', 'color: green', '1bx']);
+    expect(args).toEqual(prevArgs);
 
     oneaz('1az');
     // expect no changes, since z is not enabled
-    expect(args).toEqual(['%c[channel1:b:x]', 'color: green', '1bx']);
+    expect(args).toEqual(prevArgs);
 
     onecx('1cx');
     expect(args).toEqual(['%c[channel1:c:x]', 'color: red', '1cx']);
+
+    oneabx('1abx');
+    expect(args).toEqual(
+      (prevArgs = ['%c[channel1:a:b:x]', 'color: green', '1abx']),
+    );
+
+    oneabz('1abz');
+    // expect no change
+    expect(args).toEqual(prevArgs);
   });
+
   test('should only log for enabled channels', () => {
     let args: string[] = [];
+    debug.destroyAll();
     debug.enable = 'channel2,channel1:*';
     debug.logFn = (...x: string[]) => {
       args = x;
@@ -117,8 +137,10 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(['%c[channel2]', 'color: blue', '2']);
   });
 
-  test.skip('channel negation not working yet', () => {
+  test('channel negation working', () => {
     let args: string[] = [];
+    let prevArgs: string[] = [];
+    debug.destroyAll();
     debug.enable = 'channel1:*,-channel1:b';
     debug.logFn = (...x: string[]) => {
       args = x;
@@ -127,10 +149,11 @@ export default test.describe.parallel('debug', () => {
     const oneb = debug('channel1:b');
 
     onea('1a');
-    expect(args).toEqual(['%c[channel1:a]', 'color: red', '1a']);
+    expect(args).toEqual((prevArgs = ['%c[channel1:a]', 'color: green', '1a']));
+
     oneb('1b');
     // not logged
-    expect(args).toEqual(['%c[channel1:a]', 'color: red', '1a']);
+    expect(args).toEqual(prevArgs);
   });
 
   test('isLoggingEnabled', () => {
@@ -178,5 +201,16 @@ export default test.describe.parallel('debug', () => {
     expect(isLoggingEnabled('channel1:b:c', 'channel1:*,-channel1:b:c')).toBe(
       false,
     );
+  });
+
+  test('isLoggingEnabled - test for wildcard use', () => {
+    const permissions = 'channel1:*:b';
+    expect(isLoggingEnabled('channel1', permissions)).toBe(false);
+    expect(isLoggingEnabled('channel1:b', permissions)).toBe(true);
+    expect(isLoggingEnabled('channel1:b', `${permissions},-channel1:b`)).toBe(
+      false,
+    );
+    expect(isLoggingEnabled('channel1:x:b', permissions)).toBe(true);
+    expect(isLoggingEnabled('channel1:x', permissions)).toBe(false);
   });
 });
