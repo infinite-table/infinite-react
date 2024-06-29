@@ -69,6 +69,7 @@ export default test.describe.parallel('debug', () => {
   test('should allow * use in the middle of the token', () => {
     let args: string[] = [];
     let prevArgs: string[] = [];
+    debug.destroyAll();
     debug.enable = 'channel1:*:x';
     debug.logFn = (...x: string[]) => {
       args = x;
@@ -83,11 +84,11 @@ export default test.describe.parallel('debug', () => {
     const oneabz = debug('channel1:a:b:z');
 
     oneax('1ax');
-    expect(args).toEqual(['%c[channel1:a:x]', 'color: green', '1ax']);
+    expect(args).toEqual(['%c[channel1:a:x]', 'color: red', '1ax']);
 
     onebx('1bx');
     expect(args).toEqual(
-      (prevArgs = ['%c[channel1:b:x]', 'color: blue', '1bx']),
+      (prevArgs = ['%c[channel1:b:x]', 'color: green', '1bx']),
     );
 
     oneaz('1az');
@@ -99,11 +100,11 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(prevArgs);
 
     onecx('1cx');
-    expect(args).toEqual(['%c[channel1:c:x]', 'color: green', '1cx']);
+    expect(args).toEqual(['%c[channel1:c:x]', 'color: red', '1cx']);
 
     oneabx('1abx');
     expect(args).toEqual(
-      (prevArgs = ['%c[channel1:a:b:x]', 'color: blue', '1abx']),
+      (prevArgs = ['%c[channel1:a:b:x]', 'color: green', '1abx']),
     );
 
     oneabz('1abz');
