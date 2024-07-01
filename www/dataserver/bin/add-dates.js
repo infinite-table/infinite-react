@@ -84660,7 +84660,6 @@ var availableCountries = countries.map((c) => {
 
 // add-dates.ts
 var import_commander = __toModule(require("commander"));
-var import_commander2 = __toModule(require("commander"));
 var fs2 = require("fs");
 var path2 = require("path");
 var log = console.log;

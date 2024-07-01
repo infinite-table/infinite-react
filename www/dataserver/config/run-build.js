@@ -8,7 +8,7 @@ if (!format || !(format in { esm: true, cjs: true })) {
 
 require('esbuild')
   .build({
-    entryPoints: ['./cli.ts', './add-dates.ts'],
+    entryPoints: ['./cli.ts', './add-dates.ts', './add-monthly-bonus'],
     bundle: true,
     watch: watch
       ? {

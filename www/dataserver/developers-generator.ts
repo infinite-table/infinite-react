@@ -109,11 +109,11 @@ export type Employee = {
   countryCode: string;
 };
 
-function getRandomInt(min: number, max: number) {
+export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getRandomFrom<T>(array: T[]) {
+export function getRandomFrom<T>(array: T[]) {
   return array[getRandomInt(0, array.length - 1)];
 }
 
