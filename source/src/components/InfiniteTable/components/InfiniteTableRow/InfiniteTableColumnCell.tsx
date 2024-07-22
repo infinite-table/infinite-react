@@ -6,7 +6,7 @@ import { once } from '../../../../utils/DeepMap/once';
 import { join } from '../../../../utils/join';
 
 import { stripVar } from '../../../../utils/stripVar';
-import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSourceState';
 
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';

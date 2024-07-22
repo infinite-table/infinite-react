@@ -5,7 +5,7 @@ import {
   DataSourceState,
   RowDetailCache,
 } from '../../../../components/DataSource';
-import { useDataSourceContextValue } from '../../../../components/DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../../../components/DataSource/publicHooks/useDataSourceState';
 import { useMemo, useRef } from 'react';
 
 import {

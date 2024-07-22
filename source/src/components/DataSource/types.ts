@@ -469,7 +469,7 @@ export type DataSourcePropShouldReloadData<T> =
 
 export type DataSourceProps<T> = {
   debugId?: string;
-  children:
+  children?:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
   // TODO important #introduce-primaryKey-field-even-with-primaryKeyFn
@@ -628,7 +628,9 @@ export type DataSourceProps<T> = {
       selectionMode?: false;
     }
 );
-
+export type DataSourcePropsWithChildren<T> = DataSourceProps<T> & {
+  children: NonUndefined<DataSourceProps<T>['children']>;
+};
 export type DataSourcePropSortTypes = Record<
   string,
   (first: any, second: any) => number

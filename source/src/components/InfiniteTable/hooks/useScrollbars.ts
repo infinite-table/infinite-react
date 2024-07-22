@@ -1,7 +1,7 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
-import { useComponentState } from '../../hooks/useComponentState';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
+import { useManagedComponentState } from '../../hooks/useComponentState';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableState, Scrollbars } from '../types';
 
@@ -12,7 +12,7 @@ const INITIAL_SCROLLBARS: Scrollbars = {
 
 export function useScrollbars<T>(brain: MatrixBrain) {
   const { getComponentState: getInfiniteTableState } =
-    useComponentState<InfiniteTableState<T>>();
+    useManagedComponentState<InfiniteTableState<T>>();
   const { getState: getDataSourceState } = useDataSourceContextValue<T>();
 
   const [scrollbars, setScrollbars] = useState(INITIAL_SCROLLBARS);

@@ -137,6 +137,9 @@ export class TableTestingModel {
           styleName,
         );
       },
+      getValue: async () => {
+        return await this.rowModel.getTextForCell(cellLocation);
+      },
       getRowValues: async () => {
         const rowLocator: RowLocation = cellLocation;
         const colIds = await this.columnModel.getVisibleColumnIds();
@@ -158,6 +161,10 @@ export class TableTestingModel {
         const icon = cellLocator.locator('[data-name="expander-icon"]');
 
         await icon.click();
+      },
+
+      withColumn: () => {
+        return this.withColumn(cellLocation);
       },
 
       getColumnValues: async () => {

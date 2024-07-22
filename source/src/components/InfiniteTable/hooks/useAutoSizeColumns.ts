@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import { getGlobal } from '../../../utils/getGlobal';
-import { useComponentState } from '../../hooks/useComponentState';
+import { useManagedComponentState } from '../../hooks/useComponentState';
 import { useLatest } from '../../hooks/useLatest';
 import { InfiniteTableHeaderCellClassName } from '../components/InfiniteTableHeader/InfiniteTableHeaderCell';
 import {
@@ -117,7 +117,7 @@ export function useAutoSizeColumns<T>() {
     getComponentState,
     componentActions,
     componentState: { domRef, ready, autoSizeColumnsKey, brain },
-  } = useComponentState<InfiniteTableState<T>>();
+  } = useManagedComponentState<InfiniteTableState<T>>();
 
   const [refreshId, setRefreshId] = useState(0);
 

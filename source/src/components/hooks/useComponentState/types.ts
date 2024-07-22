@@ -1,4 +1,4 @@
-export type ComponentStateContext<T_STATE, T_ACTIONS> = {
+export type ManagedComponentStateContextValue<T_STATE, T_ACTIONS> = {
   getComponentState: () => T_STATE;
   componentState: T_STATE;
   componentActions: T_ACTIONS;

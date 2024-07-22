@@ -1,6 +1,6 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { getColumnApiForColumn } from '../api/getColumnApi';
 import { cloneRowSelection } from '../api/getRowSelectionApi';

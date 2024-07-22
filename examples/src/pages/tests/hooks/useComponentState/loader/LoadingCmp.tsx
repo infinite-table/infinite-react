@@ -1,6 +1,6 @@
 import {
-  getComponentStateRoot,
-  useComponentState,
+  buildManagedComponent,
+  useManagedComponentState,
 } from '@src/components/hooks/useComponentState';
 
 export type LoadingCmpProps = {
@@ -14,7 +14,7 @@ type LoadingCmpState = {
 };
 export const LoadingBaseCmp = () => {
   const { componentState: state, componentActions: actions } =
-    useComponentState<LoadingCmpState>();
+    useManagedComponentState<LoadingCmpState>();
 
   return (
     <div>
@@ -31,7 +31,7 @@ export const LoadingBaseCmp = () => {
   );
 };
 
-const LoadingRoot = getComponentStateRoot({
+const { ManagedComponentContextProvider: LoadingRoot } = buildManagedComponent({
   forwardProps: () => {
     return {
       loading: (loading) => loading ?? false,

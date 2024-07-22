@@ -5,15 +5,15 @@ import { join } from '../../utils/join';
 import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch';
 
 import {
-  useDataSource,
+  useDataSourceState,
   useDataSourceContextValue,
   useMasterDetailContext,
-} from '../DataSource/publicHooks/useDataSource';
+} from '../DataSource/publicHooks/useDataSourceState';
 import { HeadlessTable } from '../HeadlessTable';
 
 import {
-  getComponentStateRoot,
-  useComponentState,
+  buildManagedComponent,
+  useManagedComponentState,
 } from '../hooks/useComponentState';
 import { useLatest } from '../hooks/useLatest';
 import { useResizeObserver } from '../ResizeObserver';
@@ -93,27 +93,28 @@ export const InfiniteTableClassName = internalProps.rootClassName;
 
 const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
 
-const InfiniteTableRoot = getComponentStateRoot({
-  // @ts-ignore
-  initSetupState,
-  // @ts-ignore
-  forwardProps,
-  // @ts-ignore
-  mapPropsToState,
-  // @ts-ignore
-  cleanup: cleanupState,
-  // @ts-ignore
-  allowedControlledPropOverrides: {
-    rowHeight: true,
-    columnHeaderHeight: true,
-  } as Record<keyof InfiniteTableProps<any>, true>,
+const { ManagedComponentContextProvider: InfiniteTableRoot } =
+  buildManagedComponent({
+    // @ts-ignore
+    initSetupState,
+    // @ts-ignore
+    forwardProps,
+    // @ts-ignore
+    mapPropsToState,
+    // @ts-ignore
+    cleanup: cleanupState,
+    // @ts-ignore
+    allowedControlledPropOverrides: {
+      rowHeight: true,
+      columnHeaderHeight: true,
+    } as Record<keyof InfiniteTableProps<any>, true>,
 
-  //@ts-ignore
-  mappedCallbacks: getMappedCallbacks(),
-  // @ts-ignore
-  getParentState: () => useDataSource(),
-  debugName: 'InfiniteTable',
-});
+    //@ts-ignore
+    mappedCallbacks: getMappedCallbacks(),
+    // @ts-ignore
+    getParentState: () => useDataSourceState(),
+    debugName: 'InfiniteTable',
+  });
 
 function InfiniteTableHeader<T>() {
   const context = useInfiniteTable<T>();
@@ -438,7 +439,7 @@ function InfiniteTableContextProvider<T>({
   children?: Renderable;
 }) {
   const { componentActions, componentState } =
-    useComponentState<InfiniteTableState<T>>();
+    useManagedComponentState<InfiniteTableState<T>>();
 
   const { scrollerDOMRef, scrollTopKey } = componentState;
 

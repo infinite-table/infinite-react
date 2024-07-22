@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CSSProperties, useCallback } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { useInfiniteTable } from '../hooks/useInfiniteTable';
 
 import { focusLastFocusableCell } from '../utils/cellFocusUtils';

@@ -26,9 +26,11 @@ export type { Page, ElementHandle, Locator, Response };
 
 type TestExtras = {
   waitForInfinite: (extraTimeout?: number) => Promise<void>;
+  waitForInfiniteHeader: (extraTimeout?: number) => Promise<void>;
   waitForInfiniteSelector: () => Promise<void>;
   waitForInfiniteReady: (extraTimeout?: number) => Promise<void>;
   load: () => Promise<void>;
+  getGlobalValue: (name: string) => Promise<any>;
 };
 
 export const test = base.extend<
@@ -77,11 +79,24 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
     page.waitForInfiniteSelector = async () => {
       await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
     };
+    page.waitForInfiniteHeaderSelector = async () => {
+      await page.waitForSelector('.InfiniteHeaderCell[data-column-id]');
+    };
 
     page.waitForInfinite = async (extraTimeout?: number) => {
       await page.load();
       await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
       await page.waitForInfiniteSelector();
+
+      if (extraTimeout) {
+        await page.waitForTimeout(extraTimeout);
+      }
+    };
+
+    page.waitForInfiniteHeader = async (extraTimeout?: number) => {
+      await page.load();
+      await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
+      await page.waitForInfiniteHeaderSelector();
 
       if (extraTimeout) {
         await page.waitForTimeout(extraTimeout);
@@ -95,6 +110,19 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
       if (extraTimeout) {
         await page.waitForTimeout(extraTimeout);
       }
+    };
+
+    page.getGlobalValue = async (name: string) => {
+      return page.evaluate((name: string) => {
+        let current = window as any;
+        const names = name.split('.');
+
+        names.forEach((n) => {
+          current = current[n];
+        });
+
+        return current;
+      }, name);
     };
 
     await use(page);

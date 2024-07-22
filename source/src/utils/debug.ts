@@ -5,7 +5,7 @@ export interface LogFn {
   (...args: any[]): void;
   extend: (channelName: string) => LogFn;
 }
-export const dbg = (channelName: string): LogFn => {
+export const dbg = (channelName: string) => {
   const result = debugTable.extend(channelName);
 
   result.logFn = console.log.bind(console);
@@ -13,7 +13,7 @@ export const dbg = (channelName: string): LogFn => {
   return result;
 };
 
-export const err = (channelName: string): LogFn => {
+export const err = (channelName: string) => {
   const result = debugTable.extend(`${channelName}:error`);
 
   result.logFn = console.error.bind(console);

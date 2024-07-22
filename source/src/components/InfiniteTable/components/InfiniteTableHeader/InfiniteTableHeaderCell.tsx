@@ -7,9 +7,9 @@ import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { defaultFilterTypes } from '../../../DataSource/defaultFilterTypes';
 import {
-  useDataSource,
+  useDataSourceState,
   useDataSourceContextValue,
-} from '../../../DataSource/publicHooks/useDataSource';
+} from '../../../DataSource/publicHooks/useDataSourceState';
 import { DataSourcePropFilterTypes } from '../../../DataSource/types';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { debounce } from '../../../utils/debounce';
@@ -165,7 +165,7 @@ export function InfiniteTableHeaderCell<T>(
   } = useDataSourceContextValue<T>();
 
   const { allRowsSelected, someRowsSelected, selectionMode } =
-    useDataSource<T>();
+    useDataSourceState<T>();
 
   const dragging = columnReorderDragColumnId === column.id;
 

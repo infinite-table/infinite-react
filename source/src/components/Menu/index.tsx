@@ -2,8 +2,8 @@ import * as React from 'react';
 import { HTMLProps } from 'react';
 
 import {
-  getComponentStateRoot,
-  useComponentState,
+  buildManagedComponent,
+  useManagedComponentState,
 } from '../hooks/useComponentState';
 import { useLatest } from '../hooks/useLatest';
 import {
@@ -17,7 +17,7 @@ import { MenuProps } from './MenuProps';
 import { MenuState } from './MenuState';
 import { propToIdentifyMenu } from './propToIdentifyMenu';
 
-const MenuRoot = getComponentStateRoot({
+const { ManagedComponentContextProvider: MenuRoot } = buildManagedComponent({
   initSetupState: getInitialMenuState,
   forwardProps,
   // @ts-ignore
@@ -26,7 +26,8 @@ const MenuRoot = getComponentStateRoot({
 });
 
 function MenuContextProvider(props: { domProps: HTMLProps<HTMLDivElement> }) {
-  const { componentActions, componentState } = useComponentState<MenuState>();
+  const { componentActions, componentState } =
+    useManagedComponentState<MenuState>();
 
   const getState = useLatest(componentState);
 

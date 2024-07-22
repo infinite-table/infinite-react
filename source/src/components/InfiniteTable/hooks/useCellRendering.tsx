@@ -2,7 +2,7 @@ import { Ref, useMemo } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import * as React from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,

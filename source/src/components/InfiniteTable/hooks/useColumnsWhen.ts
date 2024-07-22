@@ -8,8 +8,8 @@ import type {
   DataSourcePropGroupBy,
   DataSourcePropSelectionMode,
 } from '../../DataSource';
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
-import { useComponentState } from '../../hooks/useComponentState';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
+import { useManagedComponentState } from '../../hooks/useComponentState';
 import { getGroupByMap } from '../state/getInitialState';
 import {
   getColumnVisibilityForHideEmptyGroupColumns,
@@ -51,7 +51,7 @@ export function useColumnsWhen<T>() {
       pivotTotalColumnPosition,
       pivotGrandTotalColumnPosition,
     },
-  } = useComponentState<InfiniteTableState<T>>();
+  } = useManagedComponentState<InfiniteTableState<T>>();
 
   useEffect(() => {
     dataSourceActions.generateGroupRows = groupRenderStrategy !== 'inline';
@@ -84,7 +84,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
   const {
     componentActions,
     componentState: { columns, groupRenderStrategy },
-  } = useComponentState<InfiniteTableState<T>>();
+  } = useManagedComponentState<InfiniteTableState<T>>();
 
   function computeColumnsWhenInlineGroupRenderStrategy(
     columns: Record<string, InfiniteTableColumn<T>>,
@@ -207,7 +207,7 @@ function useColumnsWhenGrouping<T>() {
       pivotGrandTotalColumnPosition,
     },
     getComponentState,
-  } = useComponentState<InfiniteTableState<T>>();
+  } = useManagedComponentState<InfiniteTableState<T>>();
 
   const toggleGroupRow = useToggleGroupRow();
 
@@ -299,7 +299,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
 
       groupRenderStrategy,
     },
-  } = useComponentState<InfiniteTableState<T>>();
+  } = useManagedComponentState<InfiniteTableState<T>>();
 
   // implements hideEmptyGroupColumns
   useLayoutEffect(() => {
