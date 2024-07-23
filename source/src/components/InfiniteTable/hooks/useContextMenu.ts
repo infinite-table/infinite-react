@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { AlignPositionOptions } from '../../../utils/pageGeometry/alignment';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSource';
+import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
 import { useOverlay } from '../../hooks/useOverlay';
 import {
   getCellContextMenu,

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useMasterDetailContext } from '../../../DataSource/publicHooks/useDataSource';
+import { useMasterDetailContext } from '../../../DataSource/publicHooks/useDataSourceState';
 import { isValidLicense } from './decode';
 
 const SANDPACK_REGEX =

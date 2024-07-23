@@ -1,22 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
+import type {
+  DataSourceComponentActions,
+  DataSourceLivePaginationCursorValue,
   DataSourceMasterDetailContextValue,
+  DataSourcePropFilterValue,
+  DataSourcePropGroupBy,
+  DataSourcePropPivotBy,
+  DataSourceSingleSortInfo,
   LazyGroupDataItem,
   LazyRowInfoGroup,
 } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { raf } from '../../../utils/raf';
-import { useComponentState } from '../../hooks/useComponentState';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
 import { useLatest } from '../../hooks/useLatest';
 import { Scrollbars } from '../../InfiniteTable';
 import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { debounce } from '../../utils/debounce';
-import { RenderRange } from '../../VirtualBrain';
-import { useMasterDetailContext } from '../publicHooks/useDataSource';
+import type { RenderRange } from '../../VirtualBrain';
+import { useMasterDetailContext } from '../publicHooks/useDataSourceState';
 import { cleanupEmptyFilterValues } from '../state/reducer';
 import {
   DataSourceDataParams,
@@ -52,10 +57,33 @@ const DATA_CHANGES_COMPARE_FUNCTIONS: Record<
   },
 };
 
+type DataSourceStateForDataParams<T> = Pick<
+  DataSourceState<T>,
+  | 'multiSort'
+  | 'sortInfo'
+  | 'originalDataArray'
+  | 'refetchKey'
+  | 'groupBy'
+  | 'pivotBy'
+  | 'filterValue'
+  | 'aggregationReducers'
+  | 'livePagination'
+  | 'livePaginationCursor'
+  | 'cursorId'
+  | 'lazyLoad'
+  | 'lazyLoadBatchSize'
+  | 'groupRowsState'
+  | 'dataParams'
+  | 'filterMode'
+  | 'filterTypes'
+>;
+
 export function buildDataSourceDataParams<T>(
-  componentState: DataSourceState<T>,
+  componentState: DataSourceStateForDataParams<T>,
   overrides?: Partial<DataSourceDataParams<T>>,
-  masterContext?: DataSourceMasterDetailContextValue,
+  masterContext?: {
+    masterRowInfo: DataSourceMasterDetailContextValue['masterRowInfo'];
+  },
 ): DataSourceDataParams<T> {
   const sortInfo = componentState.multiSort
     ? componentState.sortInfo
@@ -211,7 +239,10 @@ export function loadData<T>(
     //@ts-ignore
     typeof data === 'object' && typeof data.then === 'function';
 
-  if (dataIsPromise && !componentState.lazyLoad) {
+  if (
+    dataIsPromise &&
+    (!componentState.lazyLoad || (componentState.lazyLoad && !append))
+  ) {
     actions.loading = true;
   }
 
@@ -376,7 +407,10 @@ export function loadData<T>(
         : (dataArray as any as T[]);
     }
 
-    if (dataIsPromise && !componentState.lazyLoad) {
+    if (
+      dataIsPromise &&
+      (!componentState.lazyLoad || (componentState.lazyLoad && !append))
+    ) {
       // if on the same raf as the actions.loading = true above
       // this could fail if #samevaluecheckfailswhennotflushed is present
       actions.loading = false;
@@ -431,12 +465,17 @@ function getDetailReady(
   };
 }
 
-export function useLoadData<T>() {
+type LoadDataOptions<T> = {
+  componentActions: DataSourceComponentActions<T>;
+  componentState: DataSourceState<T>;
+  getComponentState: () => DataSourceState<T>;
+};
+export function useLoadData<T>(options: LoadDataOptions<T>) {
   const {
     getComponentState,
     componentActions: actions,
     componentState,
-  } = useComponentState<DataSourceState<T>>();
+  } = options;
 
   const {
     data,
@@ -559,14 +598,21 @@ export function useLoadData<T>() {
 
   const initialRef = useRef(true);
 
-  useLazyLoadRange<T>();
+  useLazyLoadRange<T>(options, {
+    sortInfo,
+    groupBy,
+    pivotBy,
+    filterValue,
+    refetchKey,
+    cursorId: livePagination ? stateCursorId : null,
+  });
 
   const getMasterContext = useLatest(useMasterDetailContext());
 
+  const dataChangeTimestampsRef = useRef<number[]>([]);
   useEffectWithChanges(
     () => {
       const componentState = getComponentState();
-
       const masterContext = getMasterContext();
 
       const { isDetail, isDetailReady } = getDetailReady(
@@ -575,6 +621,24 @@ export function useLoadData<T>() {
       );
       if (isDetail && !isDetailReady) {
         return;
+      }
+
+      const now = Date.now();
+      const timestamps = dataChangeTimestampsRef.current;
+
+      if (timestamps.length >= 10) {
+        timestamps.splice(0, 1);
+      }
+      timestamps.push(now);
+
+      const timeDiff = now - timestamps[0];
+
+      if (timeDiff < 200 && timestamps.length >= 10) {
+        console.warn(
+          `The "data" prop of your DataSource seems to be updating too frequently.
+Make sure you don't pass a new reference on every render. ERROR_CODE = DS001
+See http://infinite-table.com/docs/reference/error-codes#DS001 for more info.`,
+        );
       }
 
       if (typeof componentState.data !== 'function') {
@@ -647,12 +711,23 @@ export function useLoadData<T>() {
   }, depsObject);
 }
 
-function useLazyLoadRange<T>() {
+type LazyLoadDeps<T> = Partial<{
+  sortInfo: DataSourceSingleSortInfo<T>[] | null;
+  groupBy: DataSourcePropGroupBy<T> | null;
+  pivotBy: DataSourcePropPivotBy<T> | null;
+  filterValue: DataSourcePropFilterValue<T> | null;
+  cursorId: symbol | DataSourceLivePaginationCursorValue;
+  refetchKey: string | number | object;
+}>;
+function useLazyLoadRange<T>(
+  options: LoadDataOptions<T>,
+  dependencies: LazyLoadDeps<T>,
+) {
   const {
     getComponentState,
     componentActions: actions,
     componentState,
-  } = useComponentState<DataSourceState<T>>();
+  } = options;
 
   useEffect(() => {
     actions.lazyLoadCacheOfLoadedBatches = new DeepMap<string, true>();
@@ -676,6 +751,7 @@ function useLazyLoadRange<T>() {
 
   const loadRange = (
     renderRange?: RenderRange | null,
+    options?: { dismissLoadedRows?: boolean },
     cache: DeepMap<string, true> = getComponentState()
       .lazyLoadCacheOfLoadedBatches,
   ) => {
@@ -713,6 +789,7 @@ function useLazyLoadRange<T>() {
         lazyLoadBatchSize,
         componentState,
         componentActions: actions,
+        dismissLoadedRows: options?.dismissLoadedRows ?? false,
       },
       cache,
     );
@@ -726,14 +803,38 @@ function useLazyLoadRange<T>() {
   useEffectWithChanges(
     (changes) => {
       if (lazyLoad) {
-        // when there is changes in lazily loaded data or group row state
-        // we need to trigger another loadRange immediately,
-
         if (
-          changes.originalLazyGroupDataChangeDetect ||
-          changes.groupRowsState
+          changes.sortInfo ||
+          changes.filterValue ||
+          changes.groupBy ||
+          changes.pivotBy ||
+          changes.refetchKey ||
+          changes.cursorId
         ) {
-          loadRange(notifyRenderRangeChange.get());
+          // clear the cache of loaded batches
+          // as the changes in sorting/filtering/grouping/pivoting
+          // need to reload new data, but they won't if we don't clear the cache
+          getComponentState().lazyLoadCacheOfLoadedBatches.clear();
+
+          // it's crucial to also clear the originalLazyGroupData
+          // as otherwise, previously loaded data will be kept in memory
+          // eg - from another sort/group configuration
+          // see #make-sure-old-lazy-data-is-cleared
+          getComponentState().originalLazyGroupData.clear();
+          //
+          loadRange(notifyRenderRangeChange.get(), {
+            dismissLoadedRows: true,
+          });
+        } else {
+          // when there is changes in lazily loaded data or group row state
+          // we need to trigger another loadRange immediately,
+
+          if (
+            changes.originalLazyGroupDataChangeDetect ||
+            changes.groupRowsState
+          ) {
+            loadRange(notifyRenderRangeChange.get());
+          }
         }
         // even before waiting for the render range change, as that will only
         // happen on user scroll or table viewport resize
@@ -749,6 +850,12 @@ function useLazyLoadRange<T>() {
       return;
     },
     {
+      sortInfo: dependencies.sortInfo,
+      filterValue: dependencies.filterValue,
+      groupBy: dependencies.groupBy,
+      pivotBy: dependencies.pivotBy,
+      refetchKey: dependencies.refetchKey,
+      cursorId: dependencies.cursorId,
       lazyLoadBatchSize,
       lazyLoad,
       originalLazyGroupDataChangeDetect,
@@ -770,6 +877,7 @@ function lazyLoadRange<T>(
     lazyLoadBatchSize: number | undefined;
     componentState: DataSourceState<T>;
     componentActions: ComponentStateGeneratedActions<DataSourceState<T>>;
+    dismissLoadedRows?: boolean;
   },
   cache?: DeepMap<string, true>,
 ) {
@@ -779,28 +887,35 @@ function lazyLoadRange<T>(
     lazyLoadBatchSize,
     componentState,
     componentActions,
+    dismissLoadedRows,
   } = options;
 
   const { dataArray } = componentState;
-  const isRowLoaded = (index: number) => {
-    const rowInfo = dataArray[index];
 
-    // if (
-    //   rowInfo.isGroupRow &&
-    //   rowInfo.dataSourceHasGrouping &&
-    //   !rowInfo.collapsed && rowInfo.childrenAvailable
-    // ) {
-    //   return rowInfo.childrenAvailable;
-    // }
+  const isRowLoaded = dismissLoadedRows
+    ? () => false
+    : (index: number) => {
+        const rowInfo = dataArray[index];
 
-    return rowInfo.data != null;
-  };
+        // if (
+        //   rowInfo.isGroupRow &&
+        //   rowInfo.dataSourceHasGrouping &&
+        //   !rowInfo.collapsed && rowInfo.childrenAvailable
+        // ) {
+        //   return rowInfo.childrenAvailable;
+        // }
+
+        return rowInfo.data != null;
+      };
 
   type FnCall = {
     lazyLoadStartIndex: number;
     lazyLoadBatchSize: number | undefined;
     groupKeys: any[];
+    append: boolean;
   };
+
+  const append = !dismissLoadedRows;
 
   const perGroupFnCalls = new DeepMap<any, Record<any, FnCall>>();
 
@@ -846,6 +961,7 @@ function lazyLoadRange<T>(
         lazyLoadStartIndex: 0,
         lazyLoadBatchSize,
         groupKeys: rowInfo.groupKeys,
+        append,
       };
       const cacheKeys = rowInfo.groupKeys;
       let cachedFnCalls = perGroupFnCalls.get(cacheKeys);
@@ -889,6 +1005,7 @@ function lazyLoadRange<T>(
         lazyLoadStartIndex: batchStartIndexInGroup,
         lazyLoadBatchSize,
         groupKeys: theGroupKeys,
+        append,
       };
 
       if (!cachedFnCalls[batchStartRowId]) {

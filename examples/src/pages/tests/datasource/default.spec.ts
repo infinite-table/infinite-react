@@ -1,20 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@testing';
 
 export default test.describe.parallel('DataSource', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(`tests/datasource/default`);
-  });
+  test('should show loading for 2 seconds', async ({ page }) => {
+    await page.load();
+    const container = page.getByLabel('container');
 
-  test.skip('should show loading for 2 seconds', async ({ page }) => {
-    await expect(await page.content()).toContain('loading');
+    await expect(await container.textContent()).toContain('loading');
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(20);
 
-    await expect(await page.content()).toContain('loading');
+    await expect(await container.textContent()).toContain('loading');
 
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(200);
 
-    await expect(await page.content()).toContain('bob');
-    await expect(await page.content()).toContain('bill');
+    await expect(await container.textContent()).toContain('bob');
+    await expect(await container.textContent()).toContain('bill');
   });
 });

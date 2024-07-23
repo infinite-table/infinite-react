@@ -5,7 +5,7 @@ import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { GroupRowsState } from '../../DataSource';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { loadData } from '../../DataSource/privateHooks/useLoadData';
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 
 export type ToggleGroupRowFn = (groupKeys: any[]) => void;
 

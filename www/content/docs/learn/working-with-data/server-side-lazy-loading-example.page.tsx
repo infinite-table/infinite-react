@@ -83,17 +83,6 @@ export default function App() {
       >
         <InfiniteTable<Developer> columns={columns} />
       </DataSource>
-      {/* 
-      <DataSource<Developer>
-        data={dataSource}
-        groupBy={groupBy}
-        defaultGroupRowsState={groupRowsState}
-        primaryKey="id">
-        <InfiniteTable<Developer>
-          columns={columns}
-          columnAggregations={columnAggregations}
-        />
-      </DataSource> */}
     </>
   );
 }

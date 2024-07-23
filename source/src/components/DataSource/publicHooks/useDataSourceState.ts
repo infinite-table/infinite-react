@@ -6,7 +6,7 @@ import { getDataSourceContext } from '../DataSourceContext';
 import { DataSourceMasterDetailContextValue, DataSourceState } from '..';
 import { getDataSourceMasterDetailContext } from '../DataSourceMasterDetailContext';
 
-export function useDataSource<T>(): DataSourceState<T> {
+export function useDataSourceState<T>(): DataSourceState<T> {
   const DataSourceContext = getDataSourceContext<T>();
   const contextValue = React.useContext(DataSourceContext);
 

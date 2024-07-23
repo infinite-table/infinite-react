@@ -43,5 +43,9 @@
   {
     "title": "Hooks",
     "path": "/docs/reference/hooks"
+  },
+  {
+    "title": "Error Codes",
+    "path": "/docs/reference/error-codes"
   }
 ]

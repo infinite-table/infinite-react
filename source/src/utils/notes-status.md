@@ -1,3 +1,7 @@
+ - scroll to by id
+ - make sure (add example) we can eagerly load a certain child row (leaf or not) in lazyload: true and grouped scenario - with 1 request
+ - for live pagination - make sure we don't need totalCount. we're at the end when the server returns less than the requested page size
+
 # Row status:
 
 1. inspired by react-query?

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableComputedColumn } from '../types';
 

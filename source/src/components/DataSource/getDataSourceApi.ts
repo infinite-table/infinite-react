@@ -285,10 +285,12 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
       if (options.position === 'start') {
         position = 'before';
-        primaryKey = this.toPrimaryKey(arr[0]);
+        primaryKey = !arr.length ? undefined : this.toPrimaryKey(arr[0]);
       } else {
         position = 'after';
-        primaryKey = this.toPrimaryKey(arr[arr.length - 1]);
+        primaryKey = !arr.length
+          ? undefined
+          : this.toPrimaryKey(arr[arr.length - 1]);
       }
     }
     const result = this.batchOperation({

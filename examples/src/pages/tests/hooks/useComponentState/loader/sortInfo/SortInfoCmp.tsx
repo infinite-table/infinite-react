@@ -3,8 +3,8 @@ import {
   DataSourceSortInfo,
 } from '@infinite-table/infinite-react';
 import {
-  getComponentStateRoot,
-  useComponentState,
+  buildManagedComponent,
+  useManagedComponentState,
 } from '@src/components/hooks/useComponentState';
 
 type Person = {
@@ -28,25 +28,27 @@ function normalizeSortInfo(
   return Array.isArray(sortInfo) ? sortInfo : [sortInfo];
 }
 
-const SortInfoRoot = getComponentStateRoot({
-  forwardProps: () => {
-    return {
-      sortInfo: (sortInfo: DataSourceSortInfo<Person>) =>
-        normalizeSortInfo(
-          sortInfo ?? [
-            {
-              dir: 1,
-              field: 'name',
-            },
-          ],
-        ),
-    };
+const { ManagedComponentContextProvider: SortInfoRoot } = buildManagedComponent(
+  {
+    forwardProps: () => {
+      return {
+        sortInfo: (sortInfo: DataSourceSortInfo<Person>) =>
+          normalizeSortInfo(
+            sortInfo ?? [
+              {
+                dir: 1,
+                field: 'name',
+              },
+            ],
+          ),
+      };
+    },
   },
-});
+);
 
 export const SortInfoComponent = () => {
   const { componentState: state, componentActions: actions } =
-    useComponentState<SortInfoState>();
+    useManagedComponentState<SortInfoState>();
 
   return (
     <div>

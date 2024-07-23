@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { DataSource, useDataSource } from '@infinite-table/infinite-react';
+import { DataSource, useDataSourceState } from '@infinite-table/infinite-react';
 
 interface Person {
   name: string;
@@ -14,12 +14,12 @@ const persons: Person[] = [
 ];
 
 const Cmp = () => {
-  const ds = useDataSource<Person>();
+  const ds = useDataSourceState<Person>();
 
   const { dataArray, loading } = ds;
 
   return (
-    <div>
+    <div aria-label="container" style={{ color: 'tomato' }}>
       {loading ? 'loading' : null}
       {loading ? null : JSON.stringify(dataArray)}
     </div>

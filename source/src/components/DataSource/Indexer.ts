@@ -31,54 +31,78 @@ export class Indexer<DataType, PrimaryKeyType = string> {
       arr = arr.concat();
     }
 
-    for (let i = 0; i < arr.length; i++) {
-      let item = arr[i];
-      let deleted = false;
-      if (item != null) {
-        // we need this check because for lazy loading we have rows which are not loaded yet
+    if (!arr.length && cache) {
+      const cacheInfo = [...cache.getMutations().values()].flatMap((x) => x);
 
-        const pk = toPrimaryKey(item);
-        const cacheInfo = cache?.getMutationsForPrimaryKey(pk);
+      if (cacheInfo && cacheInfo.length) {
+        // we had inserts when the array was empty
+        for (
+          let cacheIndex = 0, cacheLength = cacheInfo.length;
+          cacheIndex < cacheLength;
+          cacheIndex++
+        ) {
+          const info = cacheInfo[cacheIndex];
 
-        if (cacheInfo && cacheInfo.length) {
-          for (
-            let cacheIndex = 0, cacheLength = cacheInfo.length;
-            cacheIndex < cacheLength;
-            cacheIndex++
-          ) {
-            const info = cacheInfo[cacheIndex];
+          if (info.type === 'insert') {
+            const insertPK = toPrimaryKey(info.data);
+            this.add(insertPK, info.data);
 
-            if (info.type === 'delete' && !deleted) {
-              this.primaryKeyToData.delete(pk);
-              deleted = true;
-              arr.splice(i, 1);
-            }
+            // just add them at the end
+            arr.push(info.data);
+          }
+        }
+        cache?.removeInfo(undefined as any as PrimaryKeyType);
+      }
+    } else {
+      for (let i = 0; i < arr.length; i++) {
+        let item = arr[i];
+        let deleted = false;
+        if (item != null) {
+          // we need this check because for lazy loading we have rows which are not loaded yet
 
-            if (info.type === 'update' && !deleted) {
-              item = { ...item, ...info.data };
-              // we probably don't need to recompute the pk as part of the update, as it should stay the same?
-              arr[i] = item;
-            }
+          const pk = toPrimaryKey(item);
+          const cacheInfo = cache?.getMutationsForPrimaryKey(pk);
 
-            if (info.type === 'insert') {
-              const insertPK = toPrimaryKey(info.data);
-              this.add(insertPK, info.data);
+          if (cacheInfo && cacheInfo.length) {
+            for (
+              let cacheIndex = 0, cacheLength = cacheInfo.length;
+              cacheIndex < cacheLength;
+              cacheIndex++
+            ) {
+              const info = cacheInfo[cacheIndex];
 
-              if (info.position === 'before') {
-                arr.splice(i, 0, info.data);
-                // we intentionally decrement here
-                // so on next loop, we can have elements inserted based on the position
-                // of this newly inserted element
-                i--;
-              } else {
-                arr.splice(i + 1, 0, info.data);
+              if (info.type === 'delete' && !deleted) {
+                this.primaryKeyToData.delete(pk);
+                deleted = true;
+                arr.splice(i, 1);
+              }
+
+              if (info.type === 'update' && !deleted) {
+                item = { ...item, ...info.data };
+                // we probably don't need to recompute the pk as part of the update, as it should stay the same?
+                arr[i] = item;
+              }
+
+              if (info.type === 'insert') {
+                const insertPK = toPrimaryKey(info.data);
+                this.add(insertPK, info.data);
+
+                if (info.position === 'before') {
+                  arr.splice(i, 0, info.data);
+                  // we intentionally decrement here
+                  // so on next loop, we can have elements inserted based on the position
+                  // of this newly inserted element
+                  i--;
+                } else {
+                  arr.splice(i + 1, 0, info.data);
+                }
               }
             }
+            cache?.removeInfo(pk);
           }
-          cache?.removeInfo(pk);
-        }
-        if (!deleted) {
-          this.add(pk, item);
+          if (!deleted) {
+            this.add(pk, item);
+          }
         }
       }
     }

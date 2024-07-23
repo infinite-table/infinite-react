@@ -3,11 +3,11 @@ import * as React from 'react';
 import {
   DataSource,
   DataSourceData,
-  useDataSource,
+  useDataSourceState,
 } from '@infinite-table/infinite-react';
 
 const Cmp = () => {
-  const ds = useDataSource<Developer>();
+  const ds = useDataSourceState<Developer>();
 
   const { dataArray, loading } = ds;
 

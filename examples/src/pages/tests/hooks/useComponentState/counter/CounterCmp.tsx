@@ -1,6 +1,6 @@
 import {
-  getComponentStateRoot,
-  useComponentState,
+  buildManagedComponent,
+  useManagedComponentState,
 } from '@src/components/hooks/useComponentState';
 
 import { Ref, useRef } from 'react';
@@ -37,23 +37,24 @@ function forwardProps() {
   };
 }
 
-const CounterComponentStateRoot = getComponentStateRoot({
-  initSetupState,
-  forwardProps,
+const { ManagedComponentContextProvider: CounterComponentStateRoot } =
+  buildManagedComponent({
+    initSetupState,
+    forwardProps,
 
-  //@ts-ignore
-  mapPropsToState: ({ state }: { state: CounterState }) => {
-    return {
-      derivedValue: state.value * 10,
-    };
-  },
-});
+    //@ts-ignore
+    mapPropsToState: ({ state }: { state: CounterState }) => {
+      return {
+        derivedValue: state.value * 10,
+      };
+    },
+  });
 
 (globalThis as any).refs = [];
 const TheActualCounter = React.memo(function TheActualCounter() {
   const renderCountRef = useRef(0);
   const { componentState: state, componentActions: actions } =
-    useComponentState<CounterState>();
+    useManagedComponentState<CounterState>();
 
   console.log(state.ref);
   (globalThis as any).refs.push(state.ref);

@@ -3,8 +3,8 @@ import { useEffect, useRef } from 'react';
 import { join } from '../../../utils/join';
 import {
   ForwardPropsToStateFnResult,
-  getComponentStateRoot,
-  useComponentState,
+  buildManagedComponent,
+  useManagedComponentState,
 } from '../../hooks/useComponentState';
 import { NonUndefined } from '../../types/NonUndefined';
 import { CheckBoxCls } from './CheckBox.css';
@@ -38,29 +38,30 @@ function forwardProps(): ForwardPropsToStateFnResult<
 
 export interface InfiniteCheckBoxState extends InfiniteCheckBoxMappedState {}
 
-const InfiniteCheckBoxRoot = getComponentStateRoot({
-  // @ts-ignore
-  forwardProps,
-  // @ts-ignore
-  // mapPropsToState,
-  // @ts-ignore
-  // cleanup: cleanupState,
-  // @ts-ignore,
-  mappedCallbacks: {
-    checked: (checked) => {
-      return {
-        callbackName: 'onChange',
-        callbackParams: [checked],
-      };
+const { ManagedComponentContextProvider: InfiniteCheckBoxRoot } =
+  buildManagedComponent({
+    // @ts-ignore
+    forwardProps,
+    // @ts-ignore
+    // mapPropsToState,
+    // @ts-ignore
+    // cleanup: cleanupState,
+    // @ts-ignore,
+    mappedCallbacks: {
+      checked: (checked) => {
+        return {
+          callbackName: 'onChange',
+          callbackParams: [checked],
+        };
+      },
     },
-  },
 
-  debugName: 'InfiniteCheckBox',
-});
+    debugName: 'InfiniteCheckBox',
+  });
 
 function InfiniteCheckBoxComponent() {
   const { componentState, componentActions } =
-    useComponentState<InfiniteCheckBoxState>();
+    useManagedComponentState<InfiniteCheckBoxState>();
 
   const { checked, domProps, disabled } = componentState;
 

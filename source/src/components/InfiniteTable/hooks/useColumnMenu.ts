@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSource';
+import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
 import { ShowOverlayFn, useOverlay } from '../../hooks/useOverlay';
 import {
   MenuIconDataAttributes,

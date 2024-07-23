@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSource';
-import { useComponentState } from '../../hooks/useComponentState';
+import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
+import { useManagedComponentState } from '../../hooks/useComponentState';
 import { useLatest } from '../../hooks/useLatest';
 import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
 import { MultiCellSelector } from '../utils/MultiCellSelector';
@@ -16,7 +16,7 @@ import { useScrollbars } from './useScrollbars';
 
 export function useComputed<T>(): InfiniteTableComputedValues<T> {
   const { componentActions, componentState } =
-    useComponentState<InfiniteTableState<T>>();
+    useManagedComponentState<InfiniteTableState<T>>();
 
   const {
     componentActions: dataSourceActions,

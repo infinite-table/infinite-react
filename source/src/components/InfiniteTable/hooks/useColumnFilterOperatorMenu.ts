@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSource';
+import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
 import { useOverlay } from '../../hooks/useOverlay';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
 

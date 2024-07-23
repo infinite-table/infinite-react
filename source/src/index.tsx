@@ -2,6 +2,9 @@ export { debounce } from './components/utils/debounce';
 export * from './components/InfiniteTable';
 
 export * from './components/DataSource';
+export { useDataSourceInternal } from './components/DataSource/privateHooks/useDataSource';
+
+export * from './components/DataSource/DataLoader/DataClient';
 export * from './components/Menu';
 export * from './components/Menu/MenuProps';
 export * from './components/hooks/useOverlay';
@@ -30,8 +33,8 @@ export const components = {
 export { group, flatten } from './utils/groupAndPivot';
 
 export {
-  useComponentState,
-  getComponentStateRoot,
+  useManagedComponentState as useComponentState,
+  buildManagedComponent as getComponentStateRoot,
 } from './components/hooks/useComponentState';
 
 export { interceptMap } from './components/hooks/useInterceptedMap';

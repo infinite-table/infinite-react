@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }: any) {
     <div
       className="__next infinite-dark"
       //@ts-ignore ignore
-      style={{ '--it-row-height': '3rem' }}
+      style={{ '--it-row-height': '3rem', color: 'var(--infinite-cell-color)' }}
     >
       <Component {...pageProps} />
     </div>

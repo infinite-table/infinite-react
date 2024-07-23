@@ -221,16 +221,16 @@ export function concludeReducer<T>(params: {
     'originalLazyGroupDataChangeDetect',
   ]);
 
-  const dataSourceChange = previousState && state.data !== previousState.data;
-  let lazyLoadGroupDataChange =
-    state.lazyLoad &&
-    previousState &&
-    (previousState.groupBy !== state.groupBy ||
-      previousState.sortInfo !== state.sortInfo);
+  // const dataSourceChange = previousState && state.data !== previousState.data;
+  const lazyLoadGroupDataChange = false; // this is now handled by the useLoadData hook
+  //   state.lazyLoad &&
+  //   previousState &&
+  //   (previousState.groupBy !== state.groupBy ||
+  //     previousState.sortInfo !== state.sortInfo);
 
-  if (dataSourceChange) {
-    lazyLoadGroupDataChange = true;
-  }
+  // if (dataSourceChange) {
+  //   lazyLoadGroupDataChange = true;
+  // }
 
   if (lazyLoadGroupDataChange) {
     state.originalLazyGroupData = new DeepMap<string, LazyRowInfoGroup<T>>();

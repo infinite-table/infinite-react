@@ -23,7 +23,7 @@ import {
   ComponentInterceptedActions,
   ComponentMappedCallbacks,
   ComponentStateActions,
-  ComponentStateContext,
+  ManagedComponentStateContextValue,
   ComponentStateGeneratedActions,
 } from './types';
 
@@ -275,7 +275,7 @@ type ComponentStateRootConfig<
   ) => void | ((value: any, oldValue: any) => any);
 };
 
-export function getComponentStateRoot<
+export function buildManagedComponent<
   T_PROPS,
   COMPONENT_MAPPED_STATE extends object,
   COMPONENT_SETUP_STATE extends object = {},
@@ -295,9 +295,7 @@ export function getComponentStateRoot<
   /**
    * since config is passed outside the cmp, we can skip it inside useMemo deps list
    */
-  return React.memo(function ComponentStateRoot(
-    props: T_PROPS & { children: React.ReactNode },
-  ) {
+  function useManagedComponent(props: T_PROPS) {
     const [initialSetupState] = useState<COMPONENT_SETUP_STATE>(() => {
       return config.initSetupState
         ? config.initSetupState(props)
@@ -476,7 +474,7 @@ export function getComponentStateRoot<
 
     const Context =
       getComponentStateContext<
-        ComponentStateContext<COMPONENT_STATE, ACTIONS_TYPE>
+        ManagedComponentStateContextValue<COMPONENT_STATE, ACTIONS_TYPE>
       >();
 
     const contextValue = useMemo(
@@ -620,17 +618,30 @@ export function getComponentStateRoot<
       };
     });
 
+    return { contextValue, ContextComponent: Context };
+  }
+
+  const ManagedComponentContextProvider = React.memo(function CSR(
+    props: T_PROPS & { children: React.ReactNode },
+  ) {
+    const { contextValue, ContextComponent } = useManagedComponent(props);
     return (
-      <Context.Provider value={contextValue}>{props.children}</Context.Provider>
+      <ContextComponent.Provider value={contextValue}>
+        {props.children}
+      </ContextComponent.Provider>
     );
   });
+  return {
+    ManagedComponentContextProvider,
+    useManagedComponent,
+  };
 }
 
-export function useComponentState<COMPONENT_STATE>() {
+export function useManagedComponentState<COMPONENT_STATE>() {
   type ACTIONS_TYPE = ComponentStateActions<COMPONENT_STATE>;
   const Context =
     getComponentStateContext<
-      ComponentStateContext<COMPONENT_STATE, ACTIONS_TYPE>
+      ManagedComponentStateContextValue<COMPONENT_STATE, ACTIONS_TYPE>
     >();
   return React.useContext(Context);
 }
