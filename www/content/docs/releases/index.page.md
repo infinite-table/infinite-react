@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 4.3.0
+
+Fix major lazy loading bugs and issues
+
 ## 4.2.0
 
 Replace `sortMode` with [shouldReloadData.sortInfo](https://infinite-table.com/docs/reference/datasource-props#shouldReloadData.sortInfo]
