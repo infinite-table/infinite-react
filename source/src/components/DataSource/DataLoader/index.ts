@@ -45,7 +45,7 @@ export class DataLoader<
   }
 
   load = (
-    params: DataLoader.Params<
+    _params: DataLoader.Params<
       T_DATA_TYPE,
       T_FILTER_VALUE,
       T_GROUP_BY_INFO,

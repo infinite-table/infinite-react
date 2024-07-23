@@ -18,6 +18,7 @@ it('should work', () => {
 it('query result from cache', async () => {
   const client = new DataClient({
     name: 'client',
+    cache: true,
   });
 
   await client
@@ -45,6 +46,7 @@ it('query result from cache', async () => {
 it('query result from cache2', async () => {
   const client = new DataClient({
     name: 'client2',
+    cache: true,
   });
 
   // dont await
@@ -100,6 +102,7 @@ it('query result from cache2', async () => {
 it('query result from cache3', async () => {
   const client = new DataClient({
     name: 'client3',
+    cache: true,
   });
 
   // wait for this before moving on
@@ -155,6 +158,7 @@ describe('DataClient', () => {
   it('query result from cache4', async () => {
     const client = new DataClient({
       name: 'client4',
+      cache: true,
     });
 
     client
