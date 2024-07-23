@@ -31,10 +31,8 @@ export class Indexer<DataType, PrimaryKeyType = string> {
       arr = arr.concat();
     }
 
-    if (!arr.length) {
-      const cacheInfo = cache?.getMutationsForPrimaryKey(
-        undefined as any as PrimaryKeyType,
-      );
+    if (!arr.length && cache) {
+      const cacheInfo = [...cache.getMutations().values()].flatMap((x) => x);
 
       if (cacheInfo && cacheInfo.length) {
         // we had inserts when the array was empty
@@ -49,6 +47,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
             const insertPK = toPrimaryKey(info.data);
             this.add(insertPK, info.data);
 
+            // just add them at the end
             arr.push(info.data);
           }
         }
