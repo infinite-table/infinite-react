@@ -5,7 +5,7 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 4.3.0
 
-Fix major lazy loading bugs and issues
+Fix major lazy loading bugs and issues.
 
 ## 4.2.0
 

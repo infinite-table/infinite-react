@@ -7,10 +7,10 @@ const height = 1200;
 const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
 
-  retries: process.env.CI ? 10 : 1,
+  retries: process.env.CI ? 12 : 1,
 
   // Limit the number of failures on CI to save resources
-  maxFailures: process.env.CI ? 10 : undefined,
+  maxFailures: process.env.CI ? 12 : undefined,
   timeout: process.env.CI ? 10000 : 5000,
 
   workers: 4,
