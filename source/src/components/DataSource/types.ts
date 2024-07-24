@@ -628,8 +628,11 @@ export type DataSourceProps<T> = {
       selectionMode?: false;
     }
 );
+/**
+ * @deprecated Use DataSourceProps<T> instead
+ */
 export type DataSourcePropsWithChildren<T> = DataSourceProps<T> & {
-  children: NonUndefined<DataSourceProps<T>['children']>;
+  // children: NonUndefined<DataSourceProps<T>['children']>;
 };
 export type DataSourcePropSortTypes = Record<
   string,

@@ -23,10 +23,11 @@ import {
   cleanupDataSource,
 } from './state/getInitialState';
 import { concludeReducer } from './state/reducer';
-import { DataSourcePropsWithChildren } from './types';
+
 import { InfiniteTableRowInfo } from '../InfiniteTable';
 // import { DataSourceCmp } from './DataSourceCmp';
 import { useDataSourceInternal } from './privateHooks/useDataSource';
+import { DataSourceProps } from './types';
 
 const {
   // ManagedComponentContextProvider: ManagedDataSourceContextProvider,
@@ -51,10 +52,10 @@ const {
   mappedCallbacks: getMappedCallbacks(),
 });
 
-function DataSource<T>(props: DataSourcePropsWithChildren<T>) {
+function DataSource<T>(props: DataSourceProps<T>) {
   const { DataSource: DataSourceComponent } = useDataSourceInternal<T>(props);
 
-  return <DataSourceComponent>{props.children}</DataSourceComponent>;
+  return <DataSourceComponent>{props.children ?? null}</DataSourceComponent>;
 }
 // function DataSource<T>(props: DataSourceProps<T>) {
 //   const masterContext = useMasterDetailContext();
