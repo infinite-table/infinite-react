@@ -74,7 +74,7 @@ export default () => {
             }}
             columnMinWidth={50}
             columnDefaultWidth={350}
-            onScrollStop={(scrollInfo) => {
+            onScrollStop={(scrollInfo: ScrollStopInfo) => {
               console.log(scrollInfo);
               onScrollStop(scrollInfo);
             }}

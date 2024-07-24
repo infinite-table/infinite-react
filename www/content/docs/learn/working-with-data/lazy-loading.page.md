@@ -31,7 +31,7 @@ For lazy loading to work, the <DataSourcePropLink name="data" /> function in the
 }
 ```
 
-The `DataSource.data` function will be called with an object with the following properties:
+The <DPropLink name="data">DataSource.data</DPropLink> function will be called with an object with the following properties:
 
 - `sortInfo` - details about current sorting state
 - `pivotBy` - an array that describes the current pivot state
@@ -75,5 +75,13 @@ When the user stops scrolling, after <PropLink name="scrollStopDelay" /> millise
 <Note>
 
 Batching also happens for groups - when a group is expanded, the DataGrid will fetch the first batch of data in the expanded group and then fetch additional batches as the user scrolls down. When scrolling goes beyound the group, the DataGrid is smart enough to request a batch of data from sibling groups.
+
+</Note>
+
+<Note>
+
+Lazy loading when grouping is enabled needs data for non-leaf rows to be in another format (as opposed to the format used for non-grouped data or for the non-grouped scenario). See example above for details.
+
+For more docs on this, read [Server side grouping with lazy loading](/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading).
 
 </Note>

@@ -2903,17 +2903,41 @@ It will never be called again after the component is ready.
 
 </Prop>
 
-<Prop name="onScrollStop" type="()=>void">
+<Prop name="onScrollStop" type="({renderRange, viewportSize, scrollTop, scrollLeft})=>void">
 
 > Triggered when the user has stopped scrolling (after <PropLink name="scrollStopDelay" /> milliseconds).
 
 This is called when the user stops scrolling for a period of time - as configured by <PropLink name="scrollStopDelay" /> (milliseconds).
 
+The function is called with an object that has the following properties:
+ - `renderRange` - the render range of the viewport. This is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
+ So if you want to get the start and end indexes, you can do
+ ```ts
+ const [startRow, startCol] = renderRange.start;
+ const [endRow, endCol] = renderRange.end;
+ ```
+
+ - `viewportSize` - the size of the viewport - `{width, height}`
+ - `scrollTop` - the scrollTop position of the viewport - `number`
+ - `scrollLeft` - the scrollLeft position of the viewport - `number`
+
+
+Also see <PropLink name="onScrollToTop" /> and <PropLink name="onScrollToBottom" />.
+
+<Sandpack title="onScrollStop is called with viewport info - scroll the grid and see the console" >
+
+```ts file="./onScrollStop-example.page.tsx"
+
+```
+
+</Sandpack>
 </Prop>
 
 <Prop name="onScrollToBottom" type="()=>void">
 
-> Triggered when the user has scrolled to the bottom of the component
+> Triggered when the user has scrolled to the bottom of the component. Also see <PropLink name="onScrollToTop" /> and <PropLink name="onScrollStop" />.
+
+Also see <PropLink name="onScrollToTop" /> and <PropLink name="onScrollStop" />.
 
 As an example usage, we're demoing live pagination, done in combination with the [react-query](https://react-query.tanstack.com/) library.
 
