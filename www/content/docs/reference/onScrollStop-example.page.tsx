@@ -3,6 +3,7 @@ import {
   DataSource,
   InfiniteTableProps,
 } from '@infinite-table/infinite-react';
+
 import type {
   InfiniteTablePropColumns,
   ScrollStopInfo,
