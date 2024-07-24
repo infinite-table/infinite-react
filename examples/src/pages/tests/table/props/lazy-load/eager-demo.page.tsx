@@ -21,19 +21,17 @@ const dataPerKey: Record<string, any> = {
     {
       data: { country: 'USA' },
       keys: ['USA'],
-      totalChildrenCount: 2,
     },
     {
       data: { country: 'Germany' },
       keys: ['Germany'],
-      totalChildrenCount: 2,
     },
   ],
   USA: [
     {
       data: { stack: 'frontend', country: 'USA' },
       keys: ['USA', 'frontend'],
-      totalChildrenCount: 2,
+
       dataset: {
         cache: true,
         data: [
@@ -46,12 +44,22 @@ const dataPerKey: Record<string, any> = {
     {
       data: { stack: 'backend', country: 'USA' },
       keys: ['USA', 'backend'],
-      totalChildrenCount: 2,
     },
     {
       data: { stack: 'fullstack', country: 'USA' },
       keys: ['USA', 'fullstack'],
     },
+  ],
+  Germany: [
+    {
+      data: { stack: 'fullstack', country: 'Germany' },
+      keys: ['Germany', 'fullstack'],
+    },
+  ],
+  'Germany,fullstack': [
+    { id: 9, firstName: 'Johanna', country: 'Germany', stack: 'fullstack' },
+    { id: 10, firstName: 'Dietrich', country: 'Germany', stack: 'fullstack' },
+    { id: 11, firstName: 'Dobrich', country: 'Germany', stack: 'fullstack' },
   ],
   'USA,frontend': [
     { id: 1, firstName: 'John', country: 'USA', stack: 'frontend' },
@@ -62,6 +70,17 @@ const dataPerKey: Record<string, any> = {
     { id: 4, firstName: 'Bill', country: 'USA', stack: 'backend' },
     { id: 5, firstName: 'James', country: 'USA', stack: 'backend' },
   ],
+  'USA,fullstack': [
+    { id: 6, firstName: 'Mark', country: 'USA', stack: 'fullstack' },
+    { id: 7, firstName: 'Robby', country: 'USA', stack: 'fullstack' },
+    { id: 8, firstName: 'Maryann', country: 'USA', stack: 'fullstack' },
+  ],
+};
+
+dataPerKey[''][0].dataset = {
+  data: dataPerKey['USA'],
+  totalCount: dataPerKey['USA'].length,
+  cache: true,
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -72,7 +91,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const groupRowsState = new GroupRowsState({
-  expandedRows: [],
+  expandedRows: [['USA'], ['USA', 'frontend']],
   collapsedRows: true,
 });
 
@@ -110,16 +129,24 @@ export default function BaseExample() {
   );
 }
 
-const dataSource: DataSourceData<Developer> = ({ groupKeys }) => {
-  console.log('groupKeys', groupKeys);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const data = dataPerKey[(groupKeys || []).join(',')];
+const sinon = require('sinon');
+const dataSource: DataSourceData<Developer> = sinon.spy(
+  ({ groupKeys }: { groupKeys: string[] }) => {
+    console.log('resolve data for groupKeys', groupKeys);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const data = dataPerKey[(groupKeys || []).join(',')];
 
-      resolve({
-        data,
-        totalCount: data.length,
-      });
-    }, 100);
-  });
-};
+        const response = {
+          data,
+          totalCount: data.length,
+        };
+
+        console.log('response', response);
+        resolve(response);
+      }, 10);
+    });
+  },
+);
+
+(globalThis as any).dataSource = dataSource;
