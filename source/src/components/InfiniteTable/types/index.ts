@@ -22,6 +22,7 @@ import type {
 import type { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import type { InfiniteTableContextValue } from './InfiniteTableContextValue';
 import type {
+  ScrollStopInfo,
   InfiniteTableProps,
   InfiniteTableApi,
   InfiniteTablePropColumnOrder,
@@ -109,4 +110,5 @@ export type {
   InfiniteTableRowClassNameFn,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumnValueFormatterParams,
+  ScrollStopInfo,
 };

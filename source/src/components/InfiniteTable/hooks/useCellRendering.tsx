@@ -86,6 +86,7 @@ export function useCellRendering<T>(
     rowClassName,
     onScrollToTop,
     onScrollToBottom,
+    onScrollStop,
     scrollToBottomOffset,
     ready,
   } = state;
@@ -114,7 +115,7 @@ export function useCellRendering<T>(
 
   useEffect(() => {
     return brain.onScrollStop((scrollPosition) => {
-      const { scrollTop } = scrollPosition;
+      const { scrollTop, scrollLeft } = scrollPosition;
       if (scrollTop === 0) {
         onScrollToTop?.();
       }
@@ -140,8 +141,22 @@ export function useCellRendering<T>(
                 dataArray.length;
         }
       }
+
+      if (onScrollStop) {
+        const range = brain.getRenderRange();
+        onScrollStop({
+          scrollTop,
+          scrollLeft,
+          renderRange: range,
+          viewportSize: getState().bodySize,
+          firstVisibleRowIndex: range.start[0],
+          lastVisibleRowIndex: range.end[0],
+          firstVisibleColIndex: range.start[1],
+          lastVisibleColIndex: range.end[1],
+        });
+      }
     });
-  }, [brain, onScrollToTop, onScrollToBottom]);
+  }, [brain, onScrollToTop, onScrollToBottom, onScrollStop]);
 
   useEffect(() => {
     if (!bodySize.height) {

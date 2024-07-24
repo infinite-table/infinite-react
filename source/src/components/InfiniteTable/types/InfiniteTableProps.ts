@@ -60,6 +60,8 @@ import { RowDetailState } from '../../DataSource/RowDetailState';
 import { InfiniteTableRowDetailApi } from '../api/getRowDetailApi';
 import { RowDetailCacheStorageForCurrentRow } from '../../DataSource/RowDetailCache';
 import { RowDetailCacheEntry } from '../../DataSource/state/getInitialState';
+import { Size } from '../../types/Size';
+import { TableRenderRange } from '../../VirtualBrain/MatrixBrain';
 
 export type LoadMaskProps = {
   visible: boolean;
@@ -522,8 +524,13 @@ export type InfiniteTablePropComponents<T = any> = {
 
 export type ScrollStopInfo = {
   scrollTop: number;
+  scrollLeft: number;
+  viewportSize: Size;
+  renderRange: TableRenderRange;
   firstVisibleRowIndex: number;
   lastVisibleRowIndex: number;
+  firstVisibleColIndex: number;
+  lastVisibleColIndex: number;
 };
 
 export type InfiniteTableRowInfoDataDiscriminatorWithColumn<T> = {
