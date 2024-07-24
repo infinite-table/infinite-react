@@ -3,6 +3,7 @@ import {
   DataSource,
   DataSourceData,
   InfiniteTablePropColumns,
+  DataSourceProps,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useMemo } from 'react';
@@ -23,8 +24,22 @@ type Developer = {
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
+  country: { field: 'country', header: 'Country' },
   id: { field: 'id', header: 'ID', defaultWidth: 100 },
-  salary: { field: 'salary', header: 'Salary' },
+  salary: {
+    field: 'salary',
+    header: 'Salary',
+    renderValue: ({ value, rowInfo }) => {
+      if (rowInfo.isGroupRow) {
+        return (
+          <>
+            Avg: <b>{value}</b>
+          </>
+        );
+      }
+      return value;
+    },
+  },
   age: { field: 'age', header: 'Age' },
   firstName: { field: 'firstName', header: 'First Name' },
   preferredLanguage: {
@@ -32,12 +47,28 @@ const columns: InfiniteTablePropColumns<Developer> = {
     header: 'Preferred Language',
   },
   lastName: { field: 'lastName', header: 'Last Name' },
-  country: { field: 'country', header: 'Country' },
+
   city: { field: 'city', header: 'City' },
   currency: { field: 'currency', header: 'Currency' },
   stack: { field: 'stack', header: 'Stack' },
   canDesign: { field: 'canDesign', header: 'Can Design' },
   hobby: { field: 'hobby', header: 'Hobby' },
+};
+
+const groupBy: DataSourceProps<Developer>['groupBy'] = [
+  {
+    field: 'country',
+  },
+  {
+    field: 'stack',
+  },
+];
+
+const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
+  salary: {
+    field: 'salary',
+    reducer: 'avg',
+  },
 };
 
 export default function App() {
@@ -46,9 +77,19 @@ export default function App() {
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
+      groupBy={groupBy}
       lazyLoad={lazyLoad}
+      aggregationReducers={aggregationReducers}
     >
-      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={130} />
+      <InfiniteTable<Developer>
+        columns={columns}
+        columnDefaultWidth={130}
+        groupColumn={{
+          id: 'group-col',
+          defaultSortable: false,
+        }}
+        groupRenderStrategy="single-column"
+      />
     </DataSource>
   );
 }
@@ -60,6 +101,7 @@ const dataSource: DataSourceData<Developer> = ({
 
   lazyLoadStartIndex,
   lazyLoadBatchSize,
+  groupRowsState,
   groupKeys = [],
   sortInfo,
 }) => {
@@ -78,6 +120,7 @@ const dataSource: DataSourceData<Developer> = ({
       ? 'pivotBy=' + JSON.stringify(pivotBy.map((p) => ({ field: p.field })))
       : null,
     `groupKeys=${JSON.stringify(groupKeys)}`,
+    `prefetchGroupKeys=${JSON.stringify(groupRowsState?.expandedRows || [])}`,
     groupBy
       ? 'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field })))
       : null,

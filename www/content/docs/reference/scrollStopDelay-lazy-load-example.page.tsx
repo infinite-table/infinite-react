@@ -48,7 +48,11 @@ export default function App() {
       primaryKey="id"
       lazyLoad={lazyLoad}
     >
-      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={130} />
+      <InfiniteTable<Developer>
+        columns={columns}
+        columnDefaultWidth={130}
+        scrollStopDelay={50}
+      />
     </DataSource>
   );
 }

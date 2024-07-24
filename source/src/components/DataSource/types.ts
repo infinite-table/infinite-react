@@ -536,7 +536,7 @@ export type DataSourceProps<T> = {
   groupRowsState?: GroupRowsState | DataSourcePropGroupRowsStateObject<any>;
   defaultGroupRowsState?:
     | GroupRowsState
-    | DataSourcePropGroupRowsStateObject<keyof T>;
+    | DataSourcePropGroupRowsStateObject<any>;
   onGroupRowsStateChange?: (groupRowsState: GroupRowsState) => void;
 
   collapseGroupRowsOnDataFunctionChange?: boolean;

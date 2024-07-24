@@ -16,7 +16,7 @@ We call this `"lazy loading"`, and it needs to be enabled by specifying the <Dat
 
 <Note>
 
-The <DataSourcePropLink name="lazyLoad">DataSource.lazyLoad</DataSourcePropLink> prop can be either a boolean or an object with a `batchSize: number` property. If `batchSize` is not specified, it will load all records from the current row group (makes sense for grouped and/or pivoted data). For ungrouped and unpivoted data, make sure you `batchSize` to a conveninent number.
+The <DataSourcePropLink name="lazyLoad">DataSource.lazyLoad</DataSourcePropLink> prop can be either a boolean or an object with a `batchSize: number` property. If `batchSize` is not specified, it will load all records from the current row group (makes sense for grouped and/or pivoted data). For ungrouped and unpivoted data, make sure you set `batchSize` to a conveninent number.
 
 Simply specifying `lazyLoad=true` makes more sense for grouped (or/and pivoted) data, where you want to load all records from the current level at once. If you want configure it this way, new data will only be requested when a group row is expanded.
 
@@ -50,3 +50,30 @@ Find out about server-side grouping
 Find out about server-side pivoting
 </YouWillLearnCard>
 </HeroCards>
+
+## How lazy loading fetches data
+
+When lazy loading is enabled, and the <DPropLink name="sortInfo" />  changes (eg: user clicks on a column header), the DataGrid will discard current data and call the <DPropLink name="data" /> function prop again, to fetch the new data. The same happens when the <DPropLink name="filterValue" /> or <DPropLink name="groupBy" /> changes. This is done automatically by the component, and you don't need to do anything.
+
+<Sandpack title="Lazy loading grouped data" viewMode="preview">
+
+<Description>
+
+This demo lazily loads grouped data as the user scrolls down. Expand some groups to see the lazy loading in action.
+
+When the user stops scrolling, after <PropLink name="scrollStopDelay" /> milliseconds, the DataGrid will fetch the next batch of data from the server.
+
+</Description>
+
+```ts file="grouped-lazy-load-example.page.tsx"
+
+```
+
+</Sandpack>
+
+
+<Note>
+
+Batching also happens for groups - when a group is expanded, the DataGrid will fetch the first batch of data in the expanded group and then fetch additional batches as the user scrolls down. When scrolling goes beyound the group, the DataGrid is smart enough to request a batch of data from sibling groups.
+
+</Note>

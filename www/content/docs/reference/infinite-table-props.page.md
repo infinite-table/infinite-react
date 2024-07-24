@@ -33,6 +33,24 @@ The details for each city shows a DataGrid with developers in that city.
 
 </Prop>
 
+<Prop name="scrollStopDelay" type="number" defaultValue={250}>
+
+> The delay in milliseconds that the DataGrid waits until it considers scrolling to be stopped. Also used when lazy loading is to fetch the next batch of data.
+
+This also determines when the <PropLink name="onScrollStop" /> callback prop is called.
+
+<Sandpack title="Scroll stop delay for lazy loading">
+
+```ts file="scrollStopDelay-lazy-load-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+
+
 <Prop name="headerOptions" type="{alwaysReserveSpaceForSortIcon: boolean}" >
 
 > Various header configurations for the DataGrid.
@@ -2882,6 +2900,14 @@ This is called only once with an object that has an `api` property, which is an 
 The `ready` state for the table means it has been layout out and has measured its available size for laying out the columns.
 
 It will never be called again after the component is ready.
+
+</Prop>
+
+<Prop name="onScrollStop" type="()=>void">
+
+> Triggered when the user has stopped scrolling (after <PropLink name="scrollStopDelay" /> milliseconds).
+
+This is called when the user stops scrolling for a period of time - as configured by <PropLink name="scrollStopDelay" /> (milliseconds).
 
 </Prop>
 
