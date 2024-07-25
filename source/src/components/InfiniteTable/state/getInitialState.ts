@@ -226,6 +226,8 @@ export const forwardProps = <T>(
     onContextMenu: 1,
     onCellContextMenu: 1,
 
+    onRenderRangeChange: 1,
+
     onScrollToTop: 1,
     onScrollToBottom: 1,
     onScrollStop: 1,

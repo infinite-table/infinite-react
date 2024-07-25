@@ -813,6 +813,8 @@ export interface InfiniteTableProps<T> {
   onScrollStop?: (param: ScrollStopInfo) => void;
   scrollToBottomOffset?: number;
 
+  onRenderRangeChange?: (range: TableRenderRange) => void;
+
   defaultColumnOrder?: InfiniteTablePropColumnOrder;
   columnOrder?: InfiniteTablePropColumnOrder;
   onColumnOrderChange?: (

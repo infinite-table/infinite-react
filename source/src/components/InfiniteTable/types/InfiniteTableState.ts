@@ -200,6 +200,9 @@ export interface InfiniteTableMappedState<T> {
 
   activeRowIndex: InfiniteTableProps<T>['activeRowIndex'];
   activeCellIndex: InfiniteTableProps<T>['activeCellIndex'];
+
+  onRenderRangeChange: InfiniteTableProps<T>['onRenderRangeChange'];
+
   scrollStopDelay: NonUndefined<InfiniteTableProps<T>['scrollStopDelay']>;
   onScrollToTop: InfiniteTableProps<T>['onScrollToTop'];
   onScrollToBottom: InfiniteTableProps<T>['onScrollToBottom'];

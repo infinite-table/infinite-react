@@ -114,6 +114,12 @@ export function useCellRendering<T>(
   }, [brain]);
 
   useEffect(() => {
+    return brain.onRenderRangeChange((range) => {
+      getState().onRenderRangeChange?.(range);
+    });
+  }, [brain]);
+
+  useEffect(() => {
     return brain.onScrollStop((scrollPosition) => {
       const { scrollTop, scrollLeft } = scrollPosition;
       if (scrollTop === 0) {

@@ -2903,6 +2903,54 @@ It will never be called again after the component is ready.
 
 </Prop>
 
+<Prop name="onRenderRangeChange" type="(range)=>void">
+> Called whenever the render range changes, that is, additional rows or columns come into view.
+
+The first (and only) argument is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
+
+ So if you want to get the start and end indexes, you can do
+
+ ```ts
+ const [startRow, startCol] = renderRange.start;
+ const [endRow, endCol] = renderRange.end;
+ ```
+
+<Note>
+
+This callback is not debounced or throttled, so it can be called multiple times in a short period of time, especially while scrolling. Make sure your function is fast, or attach a debounced function, in order to avoid performance issues.
+
+```tsx
+import {
+  debounce,
+  InfiniteTable,
+  DataSource
+} from '@infinite-table/infinite-react';
+
+function App() {
+  const onRenderRangeChange = useMemo(() => {
+    return debounce((range) => {
+      console.log(range.start, range.end);
+    }, {wait: 100});
+  }, []);
+
+  return <DataSource<Developer>
+    primaryKey="id"
+    data={/*data*/}
+  >
+    <InfiniteTable<Developer>
+      onRenderRangeChange={onRenderRangeChange}
+      columns={/*columns*/}
+    />
+  </DataSource>
+}
+```
+</Note>
+
+Unlike <PropLink name="onScrollStop" />, this function is also called when the DataGrid is resized and also when initially rendered.
+
+</Prop>
+
+
 <Prop name="onScrollStop" type="({renderRange, viewportSize, scrollTop, scrollLeft})=>void">
 
 > Triggered when the user has stopped scrolling (after <PropLink name="scrollStopDelay" /> milliseconds).
@@ -2922,7 +2970,7 @@ The function is called with an object that has the following properties:
  - `scrollLeft` - the scrollLeft position of the viewport - `number`
 
 
-Also see <PropLink name="onScrollToTop" /> and <PropLink name="onScrollToBottom" />.
+Also see <PropLink name="onScrollToTop" />, <PropLink name="onScrollToBottom" /> and <PropLink name="onRenderRangeChange" />.
 
 <Sandpack title="onScrollStop is called with viewport info - scroll the grid and see the console" >
 
