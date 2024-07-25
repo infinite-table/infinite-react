@@ -11,10 +11,11 @@ import {
 
 export const columns: Record<string, InfiniteTableColumn<DataItem>> = {};
 
-const COLUMN_COUNT = 1000;
+const COLUMN_COUNT = 500;
 const GENERATED_VALUE_MAX = 10000;
 const INITIAL_ROW_COUNT = 10000;
 const UPDATE_INTERVAL_MS = 100;
+const RENDER_RANGE_CHANGE_DEBOUNCE_MS = 50;
 
 Array.from({ length: COLUMN_COUNT }, (_, i) => {
   columns[`col${i}`] = {
@@ -104,7 +105,7 @@ const Example = () => {
   });
 
   const onRenderRangeChange = React.useMemo(() => {
-    return debounce(setRenderRange, { wait: 200 });
+    return debounce(setRenderRange, { wait: RENDER_RANGE_CHANGE_DEBOUNCE_MS });
   }, []);
 
   React.useEffect(() => {

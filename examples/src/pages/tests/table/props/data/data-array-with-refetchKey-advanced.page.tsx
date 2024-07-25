@@ -7,7 +7,6 @@ import {
   DataSourceApi,
 } from '@infinite-table/infinite-react';
 import { CarSale } from '@examples/datasets/CarSale';
-import { data } from '../group-by/pivotData';
 
 const carsales: CarSale[] = [
   {
