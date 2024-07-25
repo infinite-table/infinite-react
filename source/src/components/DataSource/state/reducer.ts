@@ -215,11 +215,19 @@ export function concludeReducer<T>(params: {
     shouldSort = false;
   }
 
+  const refetchKeyChanged = haveDepsChanged(previousState, state, [
+    'refetchKey',
+  ]);
+
   let originalDataArrayChanged = haveDepsChanged(previousState, state, [
     'cache',
     'originalDataArray',
     'originalLazyGroupDataChangeDetect',
   ]);
+
+  if (Array.isArray(state.data) && refetchKeyChanged) {
+    originalDataArrayChanged = true;
+  }
 
   // const dataSourceChange = previousState && state.data !== previousState.data;
   const lazyLoadGroupDataChange = false; // this is now handled by the useLoadData hook

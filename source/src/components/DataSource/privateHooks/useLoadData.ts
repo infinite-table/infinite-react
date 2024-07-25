@@ -667,6 +667,19 @@ See http://infinite-table.com/docs/reference/error-codes#DS001 for more info.`,
           // then we don't need to do a remote call
           return;
         }
+
+        const originalData = getComponentState().data;
+        if (Array.isArray(originalData) && changes.refetchKey) {
+          // the data is an array, but the refetchKey has changed
+          // so let's assign originalDataArray to the data array
+
+          // this is needed here - we have a test for this #data-array-with-refetchKey-advanced
+          // because it's needed in a edge case that's not easy to reproduce
+
+          //@ts-ignore ignore
+          actions.originalDataArray = originalData;
+          return;
+        }
       }
 
       const masterContext = getMasterContext();

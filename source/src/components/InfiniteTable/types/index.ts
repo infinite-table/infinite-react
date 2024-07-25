@@ -3,6 +3,7 @@ import type {
   InfiniteTable_HasGrouping_RowInfoGroup,
   InfiniteTable_HasGrouping_RowInfoNormal,
 } from '../../../utils/groupAndPivot';
+import { TableRenderRange } from '../../VirtualBrain/MatrixBrain';
 
 import type { InfiniteTableAction } from './InfiniteTableAction';
 import type { InfiniteTableActionType } from './InfiniteTableActionType';
@@ -111,4 +112,5 @@ export type {
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumnValueFormatterParams,
   ScrollStopInfo,
+  TableRenderRange,
 };
