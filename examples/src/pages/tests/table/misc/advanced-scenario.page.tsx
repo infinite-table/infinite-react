@@ -11,6 +11,9 @@ import {
 
 export const columns: Record<string, InfiniteTableColumn<DataItem>> = {};
 
+/**
+ * YOU CAN ADJUST THESE VALUES TO TEST DIFFERENT SCENARIOS
+ */
 const COLUMN_COUNT = 500;
 const GENERATED_VALUE_MAX = 10000;
 const INITIAL_ROW_COUNT = 10000;

@@ -5,6 +5,7 @@ export default test.describe.parallel('onRenderRangeChange', () => {
   test('should correctly be called', async ({ page, apiModel }) => {
     await page.waitForInfinite();
 
+    await page.waitForTimeout(100);
     let calls = await getFnCalls('onRenderRangeChange', { page });
     expect(calls.length).toEqual(1);
 
