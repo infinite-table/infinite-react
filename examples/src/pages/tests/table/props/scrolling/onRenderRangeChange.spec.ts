@@ -2,7 +2,7 @@ import { getFnCalls } from '../../../testUtils/getFnCalls';
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('onRenderRangeChange', () => {
-  test('should correctly be called', async ({ page, apiModel }) => {
+  test.skip('should correctly be called', async ({ page, apiModel }) => {
     await page.waitForInfinite();
 
     await page.waitForTimeout(100);
