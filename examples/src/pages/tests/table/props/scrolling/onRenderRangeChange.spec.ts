@@ -11,7 +11,7 @@ export default test.describe.parallel('onRenderRangeChange', () => {
     await apiModel.evaluate((api) => {
       return api.scrollRowIntoView(100);
     });
-    await page.waitForTimeout(50);
+    await page.waitForTimeout(100);
 
     calls = await getFnCalls('onRenderRangeChange', { page });
     expect(calls.length).toEqual(2);
