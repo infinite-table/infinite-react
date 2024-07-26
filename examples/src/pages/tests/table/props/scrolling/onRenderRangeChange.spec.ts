@@ -5,26 +5,30 @@ export default test.describe.parallel('onRenderRangeChange', () => {
   test('should correctly be called', async ({ page, apiModel }) => {
     await page.waitForInfinite();
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(50);
     let calls = await getFnCalls('onRenderRangeChange', { page });
-    expect(calls.length).toEqual(1);
+    let initial = calls.length;
+    expect(initial).toBe(1 || 2);
 
     await apiModel.evaluate((api) => {
       return api.scrollRowIntoView(100);
     });
-    await page.waitForTimeout(100);
 
-    calls = await getFnCalls('onRenderRangeChange', { page });
-    expect(calls.length).toEqual(2);
+    await page.waitForFunction(
+      (expectedCount) =>
+        (window as any).onRenderRangeChange.getCalls().length === expectedCount,
+      initial + 1,
+    );
 
     await page.setViewportSize({
       width: 500,
       height: 500,
     });
 
-    await page.waitForTimeout(100);
-
-    calls = await getFnCalls('onRenderRangeChange', { page });
-    expect(calls.length).toEqual(3);
+    await page.waitForFunction(
+      (expectedCount) =>
+        (window as any).onRenderRangeChange.getCalls().length === expectedCount,
+      initial + 2,
+    );
   });
 });

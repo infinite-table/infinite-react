@@ -66,7 +66,7 @@ export default () => {
         console.log(range);
         onRenderRangeChange(range);
       },
-      { wait: 30 },
+      { wait: 20 },
     );
   }, []);
   return (
