@@ -8,7 +8,8 @@ export default test.describe.parallel('onRenderRangeChange', () => {
     await page.waitForTimeout(50);
     let calls = await getFnCalls('onRenderRangeChange', { page });
     let initial = calls.length;
-    expect(initial).toBe(1 || 2);
+
+    expect(initial == 1 || initial == 2).toBe(true);
 
     await apiModel.evaluate((api) => {
       return api.scrollRowIntoView(100);

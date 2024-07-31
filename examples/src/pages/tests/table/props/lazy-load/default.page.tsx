@@ -110,61 +110,7 @@ const domProps = { style: { height: '90vh' } };
 //   collapsedRows: true,
 // });
 
-export default function RemotePivotExample() {
-  // const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
-  //   () => [
-  //     {
-  //       field: 'country',
-  //     },
-  //     { field: 'stack' },
-  //   ],
-  //   [],
-  // );
-
-  // const pivotBy: DataSourcePivotBy<Developer>[] = React.useMemo(
-  //   () => [
-  //     { field: 'preferredLanguage' },
-  //     // {
-  //     //   field: 'country',
-  //     //   columnGroup: ({ columnGroup }) => {
-  //     //     return {
-  //     //       header: `Country${
-  //     //         columnGroup.pivotTotalColumnGroup ? ' total' : ''
-  //     //       }: ${columnGroup.pivotGroupKey}`,
-  //     //     };
-  //     //   },
-  //     // },
-  //     // {
-  //     //   field: 'canDesign',
-  //     //   // column: ({ column: pivotCol }) => {
-  //     //   //   const lastKey = pivotCol.pivotGroupKey;
-
-  //     //   //   return {
-  //     //   //     defaultWidth: 500,
-  //     //   //     header:
-  //     //   //       (lastKey === 'yes' ? '💅 Designer ' : '💻 Non-designer ') +
-  //     //   //       pivotCol.pivotAggregator.id,
-  //     //   //   };
-  //     //   // },
-  //     //   // columnGroup: ({ columnGroup: pivotCol }) => {
-  //     //   //   const lastKey = pivotCol.pivotGroupKey;
-
-  //     //   //   return {
-  //     //   //     header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-  //     //   //   };
-  //     //   // },
-  //     // },
-  //     {
-  //       field: 'canDesign',
-
-  //       column: ({ column }) => ({
-  //         header: column.header + '!',
-  //       }),
-  //     },
-  //   ],
-  //   [],
-  // );
-
+export default function App() {
   const [size, setSize] = React.useState('1k');
   const dataSource = React.useMemo(() => {
     return getDataSource(size);
