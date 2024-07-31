@@ -209,11 +209,12 @@ export function HeadlessTable(
   );
 
   useEffect(() => {
-    const removeOnRenderCount = brain.onRenderCountChange(() => {
+    const update = () => {
       setTotalScrollSize(brain.getTotalSize());
-    });
+    };
+    const removeOnRenderCount = brain.onRenderCountChange(update);
 
-    setTotalScrollSize(brain.getTotalSize());
+    update();
 
     return removeOnRenderCount;
   }, [brain]);
