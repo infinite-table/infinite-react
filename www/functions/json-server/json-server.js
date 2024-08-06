@@ -51,6 +51,14 @@ const OPERATOR_MODIFIERS = {
 const developers10 = developers.slice(0, 10);
 const developers100 = developers.slice(0, 100);
 const developers1k = developers.slice(0, 1000);
+const developers2k = developers.slice(0, 2000);
+const developers3k = developers.slice(0, 3000);
+const developers4k = developers.slice(0, 4000);
+const developers5k = developers.slice(0, 5000);
+const developers6k = developers.slice(0, 6000);
+const developers7k = developers.slice(0, 7000);
+const developers8k = developers.slice(0, 8000);
+const developers9k = developers.slice(0, 9000);
 const developers10k = developers;
 const developers20k = developers50k.slice(0, 20000);
 const developers30k = developers50k.slice(0, 30000);
@@ -61,6 +69,14 @@ const router = jsonServer.router({
   employees10: employees.slice(0, 10),
   employees100: employees.slice(0, 100),
   employees1k: employees.slice(0, 1000),
+  employees2k: employees.slice(0, 2000),
+  employees3k: employees.slice(0, 3000),
+  employees4k: employees.slice(0, 4000),
+  employees5k: employees.slice(0, 5000),
+  employees6k: employees.slice(0, 6000),
+  employees7k: employees.slice(0, 7000),
+  employees8k: employees.slice(0, 8000),
+  employees9k: employees.slice(0, 9000),
   employees10k: employees,
   employees20k: employees50k.slice(0, 20000),
   employees30k: employees50k.slice(0, 30000),
@@ -70,6 +86,14 @@ const router = jsonServer.router({
   developers10,
   developers100,
   developers1k,
+  developers2k,
+  developers3k,
+  developers4k,
+  developers5k,
+  developers6k,
+  developers7k,
+  developers8k,
+  developers9k,
   developers10k,
   developers20k,
   developers30k,
@@ -88,6 +112,14 @@ alasql.tables.developers = { data: developers };
 alasql.tables.developers10 = { data: developers10 };
 alasql.tables.developers100 = { data: developers100 };
 alasql.tables.developers1k = { data: developers1k };
+alasql.tables.developers2k = { data: developers2k };
+alasql.tables.developers3k = { data: developers3k };
+alasql.tables.developers4k = { data: developers4k };
+alasql.tables.developers5k = { data: developers5k };
+alasql.tables.developers6k = { data: developers6k };
+alasql.tables.developers7k = { data: developers7k };
+alasql.tables.developers8k = { data: developers8k };
+alasql.tables.developers9k = { data: developers9k };
 alasql.tables.developers10k = { data: developers10k };
 alasql.tables.developers20k = { data: developers20k };
 alasql.tables.developers30k = { data: developers30k };
@@ -98,6 +130,14 @@ const sqlRoutes = {
   10: 10,
   100: 100,
   '1k': 1_000,
+  '2k': 2_000,
+  '3k': 3_000,
+  '4k': 4_000,
+  '5k': 5_000,
+  '6k': 6_000,
+  '7k': 7_000,
+  '8k': 8_000,
+  '9k': 9_000,
   '10k': 10_000,
   '20k': 20_000,
   '30k': 30_000,
