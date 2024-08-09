@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { DeepMap } from '../../utils/DeepMap';
-
 import {
   AggregationReducerResult,
   DeepMapGroupValueType,
@@ -11,8 +10,6 @@ import {
 import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
-export { RowDetailCache } from './RowDetailCache';
-export type { CellSelectionStateObject } from './CellSelectionState';
 import {
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
@@ -31,25 +28,25 @@ import {
   InfiniteTableState,
 } from '../InfiniteTable/types/InfiniteTableState';
 import { NonUndefined } from '../types/NonUndefined';
-
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
+
 import {
   CellSelectionState,
   CellSelectionStateObject,
   CellSelectionPosition,
 } from './CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
-
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
-export { RowDetailState } from './RowDetailState';
 import {
   RowSelectionState,
   RowSelectionStateObject,
 } from './RowSelectionState';
 import { DataSourceStateRestoreForDetail } from './state/getInitialState';
-
+export { RowDetailState } from './RowDetailState';
+export { RowDetailCache } from './RowDetailCache';
+export type { CellSelectionStateObject } from './CellSelectionState';
 export interface DataSourceDataParams<T> {
   originalDataArray: T[];
   masterRowInfo?: InfiniteTableRowInfo<any>;
