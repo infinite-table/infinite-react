@@ -210,7 +210,9 @@ export const ColumnCellRecipe = recipe({
       true: {},
     },
     zebra: {
-      false: {},
+      false: {
+        background: ThemeVars.components.Row.background,
+      },
       even: {
         background: ThemeVars.components.Row.background,
       },

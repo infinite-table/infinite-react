@@ -172,6 +172,7 @@ function InfiniteTableBody<T>() {
     bodySize,
     activeCellIndex,
     rowDetailRenderer,
+    showHoverRows,
   } = componentState;
 
   const LoadMaskCmp = components?.LoadMask ?? LoadMask;
@@ -267,7 +268,7 @@ function InfiniteTableBody<T>() {
         activeCellRowHeight={activeCellRowHeight}
         renderCell={renderCell}
         renderDetailRow={rowDetailRenderer ? renderDetailRow : undefined}
-        cellHoverClassNames={HOVERED_CLASS_NAMES}
+        cellHoverClassNames={showHoverRows ? HOVERED_CLASS_NAMES : undefined}
         scrollerDOMRef={scrollerDOMRef}
       ></HeadlessTable>
 

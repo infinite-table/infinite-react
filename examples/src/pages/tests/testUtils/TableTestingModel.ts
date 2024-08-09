@@ -137,6 +137,11 @@ export class TableTestingModel {
           styleName,
         );
       },
+
+      getLocator: () => {
+        return this.rowModel.getCellLocator(cellLocation);
+      },
+
       getValue: async () => {
         return await this.rowModel.getTextForCell(cellLocation);
       },
