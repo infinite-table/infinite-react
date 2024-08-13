@@ -151,8 +151,11 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   const [multiRowSelector] = useState(() => {
     const multiRowSelector = new MultiRowSelector({
-      getIdForIndex: (index: number) =>
-        getDataSourceState().dataArray[index].id,
+      getIdForIndex: (index: number) => {
+        const dataItem = getDataSourceState().dataArray[index];
+
+        return dataItem?.id ?? -1;
+      },
     });
 
     return multiRowSelector;
