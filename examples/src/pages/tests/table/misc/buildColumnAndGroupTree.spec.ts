@@ -117,7 +117,7 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
         index: 7,
       }),
     ];
-    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
+    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups, {});
     /****
      *
      *  ------------------------------------------------------------------------------
@@ -365,7 +365,7 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
         index: 7,
       }),
     ];
-    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
+    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups, {});
     /****
      *
      *
@@ -589,7 +589,7 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
         index: 7,
       }),
     ];
-    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
+    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups, {});
     /****
      *
      *
@@ -718,7 +718,7 @@ export default test.describe.parallel('buildColumnAndGroupTree', () => {
         index: 4,
       }),
     ];
-    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups);
+    const columnGroupsDepthsMap = computeColumnGroupsDepths(columnGroups, {});
 
     /****
      *
