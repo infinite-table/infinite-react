@@ -975,6 +975,27 @@ If a column doesn't specify a <PropLink name="columns.sortType">sortType</PropLi
 
 </Prop>
 
+<Prop name="columns.defaultDraggable" type="boolean">
+
+> Specifies whether the column is draggable by default (for reordering columns).
+
+This property overrides the global <PropLink name="columnDefaultDraggable" />.
+</Prop>
+
+<Prop name="draggableColumns" type="boolean">
+
+> Specifies whether columns are draggable (for reordering columns).
+
+This property overrides the global <PropLink name="columnDefaultDraggable" /> and the column-level <PropLink name="columns.defaultDraggable" />.
+</Prop>
+
+<Prop name="columnDefaultDraggable" type="boolean">
+
+> Specifies whether columns are draggable by default (for reordering columns).
+
+This is overriden by <PropLink name="columns.defaultDraggable" /> and <PropLink name="draggableColumns" />.
+</Prop>
+
 <Prop name="columns.defaultEditable" type="boolean|(param)=>boolean|Promise<boolean>">
 
 > Controls if the column is editable or not.
@@ -1024,6 +1045,22 @@ If you want more control on sizing, use controlled <PropLink name="columnSizing"
 </Note>
 
 See related <PropLink name="columns.defaultWidth" />
+
+</Prop>
+
+<Prop name="columnGroupVisibility" type="Record<string, boolean>">
+
+> Controls the visibility of column groups. By default, column groups are visible.
+
+```tsx
+<InfiniteTable<DATA_TYPE>
+  columnGroupVisibility={{
+    'country': false,
+    'city': true,
+  }}
+  columns={{...}}
+/>
+```
 
 </Prop>
 

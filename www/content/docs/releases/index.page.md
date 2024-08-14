@@ -3,6 +3,14 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 4.3.7
+
+@milestone id="124"
+
+## 4.3.2
+
+@milestone id="123"
+
 ## 4.3.0
 
 Fix major lazy loading bugs and issues.
