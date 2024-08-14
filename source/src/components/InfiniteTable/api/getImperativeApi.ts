@@ -595,6 +595,19 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.actions.columnOrder = columnOrder;
   };
 
+  setVisibilityForColumnGroup = (columnGroupId: string, visible: boolean) => {
+    const columnGroupVisibility = {
+      ...this.getState().columnGroupVisibility,
+    };
+
+    if (visible) {
+      delete columnGroupVisibility[columnGroupId];
+    } else {
+      columnGroupVisibility[columnGroupId] = false;
+    }
+    this.actions.columnGroupVisibility = columnGroupVisibility;
+  };
+
   collapseAllGroupRows = () => {
     const state = this.getDataSourceState();
     const newState = new GroupRowsState(state.groupRowsState);

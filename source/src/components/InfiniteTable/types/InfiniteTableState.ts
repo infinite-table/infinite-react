@@ -243,7 +243,8 @@ export interface InfiniteTableMappedState<T> {
   columnDefaultFlex: InfiniteTableProps<T>['columnDefaultFlex'];
   columnCssEllipsis: NonUndefined<InfiniteTableProps<T>['columnCssEllipsis']>;
 
-  draggableColumns: NonUndefined<InfiniteTableProps<T>['draggableColumns']>;
+  draggableColumns: InfiniteTableProps<T>['draggableColumns'];
+  columnDefaultDraggable: InfiniteTableProps<T>['columnDefaultDraggable'];
   sortable: InfiniteTableProps<T>['sortable'];
   hideEmptyGroupColumns: NonUndefined<
     InfiniteTableProps<T>['hideEmptyGroupColumns']

@@ -39,6 +39,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'salary',
     columnGroup: 'finance',
     maxWidth: 130,
+    defaultDraggable: false,
+    defaultSortable: false,
   },
 
   id: { field: 'id', defaultWidth: 80 },
@@ -118,13 +120,16 @@ export default function ColumnValueGetterExample() {
 
             'preferredLanguage',
           ]}
-          draggableColumnsRestrictTo={'group'}
-          columnGroupVisibility={
+          draggableColumns
+          defaultColumnGroupVisibility={
             {
               // personalInfo: false,
               // regionalInfo: false,
             }
           }
+          onColumnGroupVisibilityChange={(columnGroupVisibility) => {
+            console.log(columnGroupVisibility);
+          }}
           columnGroups={columnGroups}
           columns={columns}
           columnDefaultWidth={100}

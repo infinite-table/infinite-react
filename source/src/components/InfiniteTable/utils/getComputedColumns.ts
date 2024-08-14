@@ -142,6 +142,7 @@ type GetComputedVisibleColumnsParam<T> = {
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
+  columnDefaultDraggable: InfiniteTableProps<T>['columnDefaultDraggable'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -172,6 +173,7 @@ export const getComputedColumns = <T extends unknown>({
   resizableColumns,
 
   draggableColumns,
+  columnDefaultDraggable,
   columnOrder,
   columnPinning,
   editable,
@@ -647,7 +649,11 @@ export const getComputedColumns = <T extends unknown>({
       computedSortedDesc,
       computedVisibleIndex,
       computedPinned,
-      computedDraggable: c.draggable ?? draggableColumns ?? DEFAULT_DRAGGABLE,
+      computedDraggable:
+        draggableColumns ??
+        c.defaultDraggable ??
+        columnDefaultDraggable ??
+        DEFAULT_DRAGGABLE,
       computedFirstInCategory,
       computedLastInCategory,
       computedFirst: theComputedVisibleIndex === 0,

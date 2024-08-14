@@ -133,7 +133,7 @@ export type InfiniteTableColumnType<T> = {
 
   header?: InfiniteTableColumn<T>['header'];
   comparer?: InfiniteTableColumn<T>['comparer'];
-  draggable?: InfiniteTableColumn<T>['draggable'];
+  draggable?: InfiniteTableColumn<T>['defaultDraggable'];
 
   resizable?: InfiniteTableColumn<T>['resizable'];
   align?: InfiniteTableColumn<T>['align'];
@@ -371,6 +371,10 @@ export interface InfiniteTableApi<T> {
   getColumnApi: (columnId: string) => InfiniteTableColumnApi<T> | null;
 
   setVisibilityForColumn: (columnId: string, visible: boolean) => void;
+  setVisibilityForColumnGroup: (
+    columnGroupId: string,
+    visible: boolean,
+  ) => void;
   getVisibleColumnsCount: () => number;
 
   scrollRowIntoView: (
@@ -635,6 +639,7 @@ export interface InfiniteTableProps<T> {
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
   columnGroupVisibility?: InfiniteTablePropColumnGroupVisibility;
+  defaultColumnGroupVisibility?: InfiniteTablePropColumnGroupVisibility;
 
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
 
@@ -684,6 +689,10 @@ export interface InfiniteTableProps<T> {
   // TODO P1 clarify columnVisibility as object only!
   onColumnVisibilityChange?: (
     columnVisibility: InfiniteTablePropColumnVisibility,
+  ) => void;
+
+  onColumnGroupVisibilityChange?: (
+    columnGroupVisibility: InfiniteTablePropColumnGroupVisibility,
   ) => void;
   columnTypes?: InfiniteTablePropColumnTypes<T>;
   // columnVisibilityAssumeVisible?: boolean;
@@ -775,6 +784,17 @@ export interface InfiniteTableProps<T> {
   onActiveCellIndexChange?: (activeCellIndex: [number, number]) => void;
   activeCellIndex?: [number, number] | null;
   defaultActiveCellIndex?: [number, number] | null;
+  /**
+   * Whether the columns are draggable by default.
+   *
+   * This is the prop that has the lowest priority - it's overridden by column.defaultDraggable and ultimately by draggableColumns
+   */
+  columnDefaultDraggable?: boolean;
+  /**
+   * Whether the columns are draggable by default.
+   *
+   * This is the prop that has the highest priority - overrides columnDefaultDraggable and column.defaultDraggable
+   */
   draggableColumns?: boolean;
   draggableColumnsRestrictTo?: false | 'group';
   header?: boolean;

@@ -40,6 +40,7 @@ type UseComputedColumnsParam<T> = {
   columnDefaultFlex?: number;
   sortable?: InfiniteTablePropSortable<T>;
   draggableColumns?: boolean;
+  columnDefaultDraggable?: boolean;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
 
@@ -96,6 +97,7 @@ export const useComputedColumns = <T extends unknown>({
   columnCssEllipsis,
   columnHeaderCssEllipsis,
   draggableColumns,
+  columnDefaultDraggable,
   sortInfo,
   multiSort,
   filterValue,
@@ -163,6 +165,7 @@ export const useComputedColumns = <T extends unknown>({
       pinnedStartMaxWidth,
 
       draggableColumns,
+      columnDefaultDraggable,
       columnOrder,
 
       columnPinning,
@@ -198,6 +201,8 @@ export const useComputedColumns = <T extends unknown>({
     columnOrder,
     columnVisibility,
     columnVisibilityAssumeVisible,
+    columnDefaultDraggable,
+    draggableColumns,
     resizableColumns,
 
     pinnedEndMaxWidth,

@@ -414,7 +414,14 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   field?: KeyOfNoSymbol<DATA_TYPE>;
   valueGetter?: InfiniteTableColumnValueGetter<DATA_TYPE>;
   defaultSortable?: InfiniteTableColumnSortable<DATA_TYPE>;
-  draggable?: boolean;
+  /**
+   * Whether the column is draggable by default.
+   *
+   * This prop overrides the top-level columnDefaultDraggable prop, but is
+   * overridden by the top-level draggableColumns prop.
+   */
+  defaultDraggable?: boolean;
+
   resizable?: boolean;
 
   shouldAcceptEdit?: (
