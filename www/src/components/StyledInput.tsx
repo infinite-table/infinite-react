@@ -9,6 +9,7 @@ type StyledInputProps = Partial<
     icon?: React.ReactNode;
     style?: React.CSSProperties;
     onChange: HTMLProps<HTMLInputElement>['onChange'];
+    autoFocus?: boolean;
   }
 >;
 export const StyledInput = React.forwardRef(function StyledInput(
@@ -33,6 +34,7 @@ export const StyledInput = React.forwardRef(function StyledInput(
         placeholder={props.placeholder || 'Type to filter props'}
         onChange={props.onChange}
         defaultValue={props.defaultValue}
+        autoFocus={props.autoFocus}
         value={props.value}
         className="bg-transparent flex-1 py-2 outline-none"
       />

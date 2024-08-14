@@ -520,19 +520,16 @@ type PropTableProps = {
   searchPlaceholder?: string;
 };
 
+const initialFilterText = '';
+
 export function PropTable({
   // name,
   children,
   sort,
   searchPlaceholder,
 }: PropTableProps) {
-  // const initialText = globalThis.location
-  //   ? globalThis.location.hash.slice(1)
-  //   : '';
-  const initialText = '';
-
-  const [filterText, doSetFilterText] = React.useState(initialText);
-  const [hash, setHash] = React.useState(initialText);
+  const [filterText, doSetFilterText] = React.useState(initialFilterText);
+  const [hash, setHash] = React.useState(initialFilterText);
 
   const resetSearch = React.useCallback((value = '') => {
     doSetFilterText(value);
@@ -552,15 +549,18 @@ export function PropTable({
       }
     }
 
-    const onHashChange = debounce(function () {
+    const onHashChange = debounce(function (event: null | HashChangeEvent) {
       const currentLocation = globalThis.location;
 
       setHash(currentLocation ? currentLocation.hash.slice(1) : '');
 
+      if (globalThis.document.activeElement === inputRef.current) {
+        return;
+      }
+
       const hash = currentLocation
         ? currentLocation.hash.slice(1).toLowerCase()
         : '';
-      console.log('hash changed', hash);
 
       if (hash) {
         // if (currentLocation.pathname !== initialPathname) {
@@ -577,10 +577,10 @@ export function PropTable({
         //   return;
         // }
 
-        const [search, value] = hash.split('=');
+        const [propName, propValue] = hash.split('=');
 
-        if (search && search === 'search') {
-          return resetSearch(value);
+        if (propName && propName === 'search') {
+          return resetSearch(propValue);
         }
       }
 
@@ -589,7 +589,7 @@ export function PropTable({
 
     window.addEventListener('hashchange', onHashChange);
 
-    onHashChange();
+    // onHashChange(null);
 
     return () => {
       window.removeEventListener('hashchange', onHashChange);
@@ -607,6 +607,8 @@ export function PropTable({
   const lowerHash = hash.toLowerCase().replaceAll('-', '.');
 
   let highlightedName = '';
+
+  let visibleCount = 0;
 
   let contents = childrenArray.map((child) => {
     if (!React.isValidElement(child)) return null;
@@ -627,6 +629,9 @@ export function PropTable({
       }
       if (!hidden && filterText && !lowerName.includes(filterText)) {
         hidden = true;
+      }
+      if (!hidden) {
+        visibleCount++;
       }
       return React.cloneElement(child, {
         //@ts-ignore
@@ -715,6 +720,7 @@ export function PropTable({
       >
         <StyledInput
           ref={inputRef}
+          autoFocus
           placeholder={searchPlaceholder}
           className="flex-1 py-2 my-2 outline-none"
           defaultValue={filterText}
@@ -725,8 +731,20 @@ export function PropTable({
           {inputChildren}
         </StyledInput>
       </MaxWidth>
+
       {contents}
-      {/* {children} */}
+      {!visibleCount ? (
+        <div>
+          <div className="my-4">No props matching your search</div>
+          <Button
+            active
+            className={cn('inline-block self-start')}
+            onClick={() => resetSearch()}
+          >
+            Clear Search and Show All
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
