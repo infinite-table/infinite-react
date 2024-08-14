@@ -164,6 +164,9 @@ export interface InfiniteTableMappedState<T> {
   rowDetailCache: RowDetailCache<RowDetailCacheKey, RowDetailCacheEntry>;
 
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
+  draggableColumnsRestrictTo: NonUndefined<
+    InfiniteTableProps<T>['draggableColumnsRestrictTo']
+  >;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
 
@@ -259,6 +262,10 @@ export interface InfiniteTableMappedState<T> {
   columnHeaderHeight: number;
   licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
   columnVisibility: InfiniteTablePropColumnVisibility;
+
+  columnGroupVisibility: NonUndefined<
+    InfiniteTableProps<T>['columnGroupVisibility']
+  >;
 
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;

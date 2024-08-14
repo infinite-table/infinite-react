@@ -91,7 +91,7 @@ export const useColumnPointerEvents = ({
         return;
       }
 
-      const { brain } = getState();
+      const { brain, draggableColumnsRestrictTo } = getState();
       const {
         computedVisibleColumns,
         computedVisibleColumnsMap,
@@ -123,6 +123,7 @@ export const useColumnPointerEvents = ({
 
       const dragger = reorderColumnsOnDrag({
         brain,
+        draggableColumnsRestrictTo,
         columnOffsetAtIndexCSSVar: columnOffsetAtIndex,
         columnWidthAtIndexCSSVar: columnWidthAtIndex,
         computedPinnedEndColumns,

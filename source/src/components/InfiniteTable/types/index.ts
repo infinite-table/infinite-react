@@ -56,6 +56,7 @@ import type {
   InfiniteColumnEditorContextType,
   InfiniteTablePropMultiSortBehavior,
   InfiniteTablePropKeyboardShorcut,
+  InfiniteTablePropColumnGroupVisibility,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
@@ -80,6 +81,7 @@ export type {
   InfiniteTablePropColumnOrder,
   InfiniteTablePropComponents,
   InfiniteTablePropColumnVisibility,
+  InfiniteTablePropColumnGroupVisibility,
   InfiniteTablePropColumnPinning,
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnGroup,

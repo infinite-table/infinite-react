@@ -43,6 +43,8 @@ import {
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
 
+const EMPTY_OBJECT = {};
+
 function createRenderer(brain: MatrixBrain) {
   const renderer = new ReactHeadlessTableRenderer(brain);
   const onRenderUpdater = buildSubscriptionCallback<Renderable>();
@@ -65,6 +67,7 @@ export function getCellSelector(cellPosition?: CellPositionByIndex) {
 
   return selector;
 }
+
 /**
  * The computed state is independent from props and cannot
  * be affected by props.
@@ -261,6 +264,9 @@ export const forwardProps = <T>(
 
     columnDefaultFlex: 1,
 
+    draggableColumnsRestrictTo: (draggableColumnsRestrictTo) =>
+      draggableColumnsRestrictTo ?? false,
+
     columnMenuRealignDelay: (columnMenuRealignDelay) =>
       columnMenuRealignDelay ?? 50,
 
@@ -328,7 +334,9 @@ export const forwardProps = <T>(
       typeof columnHeaderHeight === 'number' ? columnHeaderHeight : 30,
 
     columns: 1,
-    columnVisibility: (columnVisibility) => columnVisibility ?? {},
+    columnVisibility: (columnVisibility) => columnVisibility ?? EMPTY_OBJECT,
+    columnGroupVisibility: (columnGroupVisibility) =>
+      columnGroupVisibility ?? EMPTY_OBJECT,
     // TODO check if columnPinning works when the value for a pinned col is `true` instead of `"start"`
 
     columnSizing: (columnSizing) => columnSizing || {},
@@ -451,9 +459,14 @@ export const mapPropsToState = <T>(params: {
 
   const columnGroupsDepthsMap =
     (state.columnGroups && state.columnGroups != oldState?.columnGroups) ||
+    (state.columnGroups &&
+      state.columnGroupVisibility != oldState?.columnGroupVisibility) ||
     (state.pivotColumnGroups &&
       state.pivotColumnGroups != oldState?.pivotColumnGroups)
-      ? computeColumnGroupsDepths(computedColumnGroups)
+      ? computeColumnGroupsDepths(
+          computedColumnGroups,
+          state.columnGroupVisibility,
+        )
       : state.columnGroupsDepthsMap;
 
   const groupBy = parentState?.groupBy;
@@ -549,7 +562,9 @@ export const mapPropsToState = <T>(params: {
     columnGroupsDepthsMap,
     columnGroupsMaxDepth:
       columnGroupsDepthsMap != state.columnGroupsDepthsMap
-        ? Math.max(...columnGroupsDepthsMap.values(), 0)
+        ? // was 0, but after implementing columnGroupVisibility
+          // it can be -1, to denote that no column group is visible
+          Math.max(...columnGroupsDepthsMap.values(), -1)
         : state.columnGroupsMaxDepth,
     computedColumnGroups,
 

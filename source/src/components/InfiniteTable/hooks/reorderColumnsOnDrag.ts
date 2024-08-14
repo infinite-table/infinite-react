@@ -1,5 +1,6 @@
 import binarySearch from 'binary-search';
 import { stripVar } from '../../../utils/stripVar';
+import { NonUndefined } from '../../types/NonUndefined';
 
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { InternalVars } from '../internalVars.css';
@@ -8,6 +9,7 @@ import { InfiniteTableComputedColumn } from '../types';
 import {
   InfiniteTableApi,
   InfiniteTablePropColumnPinning,
+  InfiniteTableProps,
 } from '../types/InfiniteTableProps';
 import {
   clearInfiniteColumnReorderDuration,
@@ -35,6 +37,11 @@ type ColumnBreakpoint = {
   breakpoint: number;
 };
 
+type GetBreakPointsOptions<T> = {
+  dragColumn: InfiniteTableComputedColumn<T>;
+  restrictToParentGroup: boolean;
+};
+
 export type ReorderDragResult = {
   columnPinning: InfiniteTablePropColumnPinning;
   columnOrder: string[];
@@ -45,6 +52,10 @@ export type ReorderParams<T> = {
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
+
+  draggableColumnsRestrictTo: NonUndefined<
+    InfiniteTableProps<T>['draggableColumnsRestrictTo']
+  >;
 
   computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
 
@@ -86,6 +97,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     infiniteDOMNode,
     brain,
     dragColumnHeaderTargetRect,
+    draggableColumnsRestrictTo,
     tableRect,
     setProxyPosition,
     api: imperativeApi,
@@ -134,8 +146,13 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     );
   }
 
-  const getBreakPoints = <T>(columns: InfiniteTableComputedColumn<T>[]) => {
-    const breakpoints: ColumnBreakpoint[] = [];
+  const getBreakPoints = <T>(
+    columns: InfiniteTableComputedColumn<T>[],
+    options: GetBreakPointsOptions<T>,
+  ) => {
+    const { restrictToParentGroup, dragColumn } = options;
+
+    let breakpoints: ColumnBreakpoint[] = [];
 
     columns.forEach((c) => {
       const b = {
@@ -163,6 +180,36 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
       //   });
       // }
     });
+
+    if (restrictToParentGroup) {
+      const dragColIndex = dragColumn.computedVisibleIndex;
+
+      // TODO this can be improved
+
+      function checkAllowedColumnsInDirection(
+        colIndex: number,
+        dir: 1 | -1,
+        disallowedTargets: Set<string>,
+      ) {
+        const col = columns[colIndex];
+        if (!col) {
+          return;
+        }
+
+        if (col.columnGroup !== dragColumn.columnGroup) {
+          disallowedTargets.add(col.id);
+        }
+        checkAllowedColumnsInDirection(colIndex + dir, dir, disallowedTargets);
+      }
+
+      const disallowedTargets = new Set<string>();
+      checkAllowedColumnsInDirection(dragColIndex - 1, -1, disallowedTargets);
+      checkAllowedColumnsInDirection(dragColIndex + 1, 1, disallowedTargets);
+
+      breakpoints = breakpoints.filter((b) => {
+        return !disallowedTargets.has(b.columnId);
+      });
+    }
 
     return breakpoints;
   };
@@ -420,7 +467,10 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
         },
       });
 
-      const breakpoints = getBreakPoints(computedVisibleColumns);
+      const breakpoints = getBreakPoints(computedVisibleColumns, {
+        dragColumn,
+        restrictToParentGroup: draggableColumnsRestrictTo === 'group',
+      });
 
       let currentPos =
         dir === -1

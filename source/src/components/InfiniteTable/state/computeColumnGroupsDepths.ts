@@ -3,13 +3,22 @@ import type { InfiniteTableColumnGroupsDepthsMap } from '../types/InfiniteTableS
 
 export function computeColumnGroupsDepths(
   columnGroups: InfiniteTablePropColumnGroups,
+  columnGroupVisibility: Record<string, boolean>,
 ): InfiniteTableColumnGroupsDepthsMap {
   const map = new Map();
+
+  function isVisible(colGroupId: string) {
+    return columnGroupVisibility[colGroupId] !== false;
+  }
 
   Object.keys(columnGroups).forEach((colGroupId) => {
     const colGroup = columnGroups[colGroupId];
     let parentGroupId = colGroup.columnGroup;
     let depth = 0;
+
+    if (!isVisible(colGroupId)) {
+      depth = -1;
+    }
 
     while (parentGroupId) {
       const parent = columnGroups[parentGroupId];
@@ -20,7 +29,9 @@ export function computeColumnGroupsDepths(
         }
         break;
       }
-      depth++;
+      if (isVisible(parentGroupId)) {
+        depth++;
+      }
       parentGroupId = parent.columnGroup;
     }
     map.set(colGroupId, depth);

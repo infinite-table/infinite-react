@@ -39,6 +39,7 @@ function InfiniteTableHeaderFn<T>(
 
   const {
     computed,
+    getState,
     state: { headerBrain, headerOptions, showColumnFilters },
   } = useInfiniteTable<T>();
 
@@ -105,8 +106,10 @@ function InfiniteTableHeaderFn<T>(
           computedWidth: colGroupItem.computedWidth,
           groupOffset: colGroupItem.groupOffset,
         };
+        const visible =
+          getState().columnGroupVisibility[colGroupItem.id] !== false;
 
-        return (
+        return visible ? (
           <InfiniteTableHeaderGroup
             bodyBrain={bodyBrain}
             columnGroupsMaxDepth={columnGroupsMaxDepth}
@@ -116,7 +119,7 @@ function InfiniteTableHeaderFn<T>(
             height={height}
             columnGroup={computedColumnGroup}
           />
-        );
+        ) : null;
       }
 
       return (

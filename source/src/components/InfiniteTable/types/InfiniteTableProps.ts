@@ -75,6 +75,7 @@ export type InfiniteTablePropColumnOrder =
   | true;
 
 export type InfiniteTablePropColumnVisibility = Record<string, false>;
+export type InfiniteTablePropColumnGroupVisibility = Record<string, boolean>;
 
 export type InfiniteTableColumnPinnedValues = false | 'start' | 'end';
 
@@ -633,6 +634,7 @@ export interface InfiniteTableProps<T> {
   hideEmptyGroupColumns?: boolean;
 
   columnVisibility?: InfiniteTablePropColumnVisibility;
+  columnGroupVisibility?: InfiniteTablePropColumnGroupVisibility;
 
   defaultColumnVisibility?: InfiniteTablePropColumnVisibility;
 
@@ -774,6 +776,7 @@ export interface InfiniteTableProps<T> {
   activeCellIndex?: [number, number] | null;
   defaultActiveCellIndex?: [number, number] | null;
   draggableColumns?: boolean;
+  draggableColumnsRestrictTo?: false | 'group';
   header?: boolean;
   headerOptions?: InfiniteTablePropHeaderOptions;
   focusedClassName?: string;
