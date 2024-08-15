@@ -549,7 +549,7 @@ export function PropTable({
       }
     }
 
-    const onHashChange = debounce(function (event: null | HashChangeEvent) {
+    const onHashChange = debounce(function (_event: null | HashChangeEvent) {
       const currentLocation = globalThis.location;
 
       setHash(currentLocation ? currentLocation.hash.slice(1) : '');
