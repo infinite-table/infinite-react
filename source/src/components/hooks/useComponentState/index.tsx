@@ -292,6 +292,7 @@ export function buildManagedComponent<
     T_PARENT_STATE
   >,
 ) {
+  const useParentStateFn = config.getParentState || (() => null);
   /**
    * since config is passed outside the cmp, we can skip it inside useMemo deps list
    */
@@ -319,7 +320,7 @@ export function buildManagedComponent<
       COMPONENT_DERIVED_STATE &
       COMPONENT_SETUP_STATE;
 
-    const parentState = config.getParentState?.() ?? null;
+    const parentState = useParentStateFn();
     const getParentState = useLatest(parentState);
 
     function initStateOnce() {
@@ -382,6 +383,7 @@ export function buildManagedComponent<
       }
 
       const parentState = getParentState?.() ?? null;
+
       const mappedState: Partial<COMPONENT_MAPPED_STATE> | null =
         action.payload.mappedState;
       const updatedProps: Partial<T_PROPS> | null =
@@ -500,6 +502,9 @@ export function buildManagedComponent<
 
     const prevProps = usePrevious(props);
 
+    const skipTriggerParentStateChangeRef = useRef(false);
+    skipTriggerParentStateChangeRef.current = false;
+
     const effectFn = config.layoutEffect ? useLayoutEffect : useEffect;
     effectFn(() => {
       const currentProps = props;
@@ -582,6 +587,7 @@ export function buildManagedComponent<
 
         // const newState = theReducer(state, action);
 
+        skipTriggerParentStateChangeRef.current = true;
         dispatch(action);
 
         if (config.onPropChange) {
@@ -611,6 +617,15 @@ export function buildManagedComponent<
         // });
       }
     });
+
+    effectFn(() => {
+      if (parentState != null && !skipTriggerParentStateChangeRef.current) {
+        dispatch({
+          type: 'PARENT_STATE_CHANGE',
+          payload: {},
+        });
+      }
+    }, [parentState]);
 
     useEffectOnce(() => {
       return () => {

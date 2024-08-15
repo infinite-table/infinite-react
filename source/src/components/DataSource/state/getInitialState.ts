@@ -200,6 +200,7 @@ export const forwardProps = <T>(
             __idToIndex: idToIndexReducer,
           };
     },
+    batchOperationDelay: 1,
     isRowSelected: 1,
     onDataArrayChange: 1,
     onDataMutations: 1,

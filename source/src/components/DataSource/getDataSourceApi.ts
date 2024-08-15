@@ -50,6 +50,10 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
   private getState: () => DataSourceState<T>;
   private actions: DataSourceComponentActions<T>;
+  //@ts-ignore
+  private batchOperationRafId: number = 0;
+  //@ts-ignore
+  private batchOperationTimeoutId: any = 0;
 
   constructor(param: GetDataSourceApiParam<T>) {
     this.getState = param.getState;
@@ -68,9 +72,20 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       this.pendingPromise = new Promise((resolve) => {
         this.resolvePendingPromise = resolve;
       });
-      raf(() => {
-        this.commit();
-      });
+
+      const delay = Math.max(0, this.getState().batchOperationDelay ?? 0);
+
+      if (delay === 0) {
+        this.batchOperationRafId = raf(() => {
+          this.commit();
+        });
+      } else {
+        this.batchOperationTimeoutId = setTimeout(() => {
+          this.batchOperationRafId = raf(() => {
+            this.commit();
+          });
+        }, delay);
+      }
     }
     this.pendingOperations.push(operation);
 
