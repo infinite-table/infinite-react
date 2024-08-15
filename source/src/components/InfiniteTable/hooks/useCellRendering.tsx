@@ -88,6 +88,9 @@ export function useCellRendering<T>(
     onScrollToBottom,
     onScrollStop,
     scrollToBottomOffset,
+    wrapRowsHorizontally,
+    wrapRowsHorizontallyPerPageCount,
+    wrapRowsHorizontallyPageCount,
     ready,
   } = state;
 
@@ -103,6 +106,9 @@ export function useCellRendering<T>(
     dataArray,
     bodySize,
     rowspan,
+    wrapRowsHorizontally,
+    wrapRowsHorizontallyPerPageCount,
+    wrapRowsHorizontallyPageCount,
   });
 
   const scrollTopMaxRef = useRef<number>(0);
@@ -191,8 +197,6 @@ export function useCellRendering<T>(
   const renderCell: TableRenderCellFn = useCallback(
     (params: TableRenderCellFnParam) => {
       const {
-        rowIndex,
-        colIndex,
         heightWithRowspan,
         domRef,
         hidden,
@@ -200,6 +204,22 @@ export function useCellRendering<T>(
         onMouseLeave,
         onMouseEnter,
       } = params;
+
+      let { rowIndex, colIndex } = params;
+
+      // const {
+      //   wrapRowsHorizontally,
+      //   wrapRowsHorizontallyPageCount,
+      //   wrapRowsHorizontallyPerPageCount,
+      // } = getState();
+
+      // if (wrapRowsHorizontally && colIndex >= computedVisibleColumns.length) {
+      //   wrapRowsPageIndex = Math.floor(
+      //     colIndex / wrapRowsHorizontallyPageCount,
+      //   );
+      //   colIndex = colIndex % computedVisibleColumns.length;
+      //   rowIndex = rowIndex % wrapRowsHorizontallyPerPageCount;
+      // }
 
       const dataArray = getData();
       const rowInfo = dataArray[rowIndex];
@@ -233,6 +253,7 @@ export function useCellRendering<T>(
 
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
+        // wrapRowsPageIndex,
         virtualized: true,
         showZebraRows,
         groupRenderStrategy,
@@ -276,6 +297,9 @@ export function useCellRendering<T>(
       rowClassName,
       cellClassName,
       cellStyle,
+      // wrapRowsHorizontally,
+      // wrapRowsHorizontallyPerPageCount,
+      // wrapRowsHorizontallyPageCount,
     ],
   );
 

@@ -167,13 +167,25 @@ export class ReactHeadlessTableRenderer extends Logger {
      * so we will keep it for now on each cell
      */
 
-    element.style.setProperty(
-      currentTransformY,
-      scrollTop ? `calc( ${y}px + var(${scrollTopCSSVar}) )` : `${y}px`,
-    );
+    const currentTransformYValue = scrollTop
+      ? `calc( ${y}px + var(${scrollTopCSSVar}) )`
+      : `${y}px`;
+    //@ts-ignore
+    if (element.__currentTransformY !== currentTransformYValue) {
+      //@ts-ignore
+      element.__currentTransformY = currentTransformYValue;
+      element.style.setProperty(currentTransformY, currentTransformYValue);
+    }
+
+    const transformValue = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), var(${currentTransformY}), 0)`;
 
     // this does not change, but we need for initial setup
-    element.style.transform = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), var(${currentTransformY}), 0)`;
+    //@ts-ignore
+    if (element.__transformValue !== transformValue) {
+      //@ts-ignore
+      element.__transformValue = transformValue;
+      element.style.transform = transformValue;
+    }
 
     if (zIndex != null) {
       // TODO this would be needed if zIndex would not be managed in grid
@@ -1420,11 +1432,19 @@ export class ReactHeadlessTableRenderer extends Logger {
         const hidden = options
           ? options.hidden
           : !!this.isCellCovered(rowIndex, colIndex);
-        itemElement.style.zIndex = hidden
+
+        const zIndex = hidden
           ? '-1'
           : // #updatezindex - we need to allow elements use their own zIndex, so we
             // resort to allowing them to have it as a data-z-index attribute
             itemElement.dataset.zIndex || 'auto';
+
+        //@ts-ignore
+        if (itemElement.__zIndex !== zIndex) {
+          //@ts-ignore
+          itemElement.__zIndex = zIndex;
+          itemElement.style.zIndex = zIndex;
+        }
       } else {
         itemElement.style.display = '';
         itemElement.style.left = `${x}px`;

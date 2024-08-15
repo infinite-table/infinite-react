@@ -41,6 +41,9 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     brain,
     bodySize,
     showSeparatePivotColumnForSingleAggregation,
+    wrapRowsHorizontallyPerPageCount,
+    wrapRowsHorizontallyPageCount,
+    rowHeightForWrapRows,
   } = componentState;
 
   useState(() => {
@@ -112,7 +115,12 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     columnDefaultSortable: componentState.columnDefaultSortable,
     pinnedStartMaxWidth: componentState.pinnedStartMaxWidth,
     pinnedEndMaxWidth: componentState.pinnedEndMaxWidth,
+    wrapRowsHorizontally: componentState.wrapRowsHorizontally,
+    wrapRowsHorizontallyPageCount,
+    wrapRowsHorizontallyPerPageCount,
     bodySize,
+
+    rowHeightForWrapRows,
 
     viewportReservedWidth: componentState.viewportReservedWidth,
     resizableColumns: componentState.resizableColumns,
@@ -139,7 +147,10 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
   });
 
   const rowspan = useColumnRowspan(computedVisibleColumns);
-  const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
+  const columnSize = useColumnSizeFn<T>(computedVisibleColumns, {
+    wrapRowsHorizontally: componentState.wrapRowsHorizontally,
+    wrapRowsHorizontallyPageCount: componentState.wrapRowsHorizontallyPageCount,
+  });
   const scrollbars = useScrollbars<T>(brain);
 
   const computedPinnedStartOverflow = computedPinnedStartWidth

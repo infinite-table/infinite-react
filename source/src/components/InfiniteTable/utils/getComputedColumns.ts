@@ -131,6 +131,11 @@ type GetComputedVisibleColumnsParam<T> = {
   filterValue?: DataSourcePropFilterValue<T>;
   filterTypes?: DataSourceProps<T>['filterTypes'];
 
+  rowHeightForWrapRows: number | null;
+  wrapRowsHorizontally: boolean;
+  wrapRowsHorizontallyPageCount: number;
+  wrapRowsHorizontallyPerPageCount: number;
+
   sortable?: InfiniteTablePropSortable<T>;
   multiSort: boolean;
   sortInfo?: DataSourceSingleSortInfo<T>[];
@@ -182,7 +187,9 @@ export const getComputedColumns = <T extends unknown>({
   columnTypes,
   columnVisibility,
   columnVisibilityAssumeVisible,
-}: GetComputedVisibleColumnsParam<T>): GetComputedColumnsResult<T> => {
+}: // wrapRowsHorizontallyPageCount,
+// wrapRowsHorizontallyPerPageCount,
+GetComputedVisibleColumnsParam<T>): GetComputedColumnsResult<T> => {
   let computedOffset = 0;
 
   const filterValueRecord = (filterValue || []).reduce(

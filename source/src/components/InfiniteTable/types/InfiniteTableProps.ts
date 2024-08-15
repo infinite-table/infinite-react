@@ -688,6 +688,13 @@ export interface InfiniteTableProps<T> {
 
   showSeparatePivotColumnForSingleAggregation?: boolean;
 
+  wrapRowsHorizontally?: boolean;
+
+  onWrapRowsHorizontallyPageCountChange?: (options: {
+    pageCount: number;
+    pageSize: number;
+  }) => void;
+
   isRowDetailExpanded?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
   isRowDetailEnabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
 
