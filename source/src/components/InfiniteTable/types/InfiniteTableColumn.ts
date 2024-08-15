@@ -550,6 +550,7 @@ export type InfiniteTablePivotFinalColumnVariant<
 // };
 
 type InfiniteTableComputedColumnBase<T> = {
+  computedReferenceColumn?: InfiniteTableComputedColumn<T>;
   computedFilterType: string;
   computedSortType: string | string[];
   computedDataType: string;

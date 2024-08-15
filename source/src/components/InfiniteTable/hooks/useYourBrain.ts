@@ -16,6 +16,9 @@ type UseYourBrainParam<T = any> = {
   computedRowHeight: number | ((index: number) => number);
 
   dataArray: any[];
+  wrapRowsHorizontally: boolean;
+  wrapRowsHorizontallyPerPageCount: number;
+  wrapRowsHorizontallyPageCount: number;
 
   bodySize: Size;
   rowspan?: SpanFunction;
@@ -31,9 +34,24 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
     computedRowHeight,
     columnSize,
     rowspan,
+
+    wrapRowsHorizontally,
+    wrapRowsHorizontallyPerPageCount,
+    // wrapRowsHorizontallyPageCount,
   } = param;
 
   const rowHeight = computedRowHeight;
+
+  const rows = wrapRowsHorizontally
+    ? wrapRowsHorizontallyPerPageCount
+    : // dataArray.length
+      dataArray.length;
+
+  let cols = computedVisibleColumns.length;
+
+  if (wrapRowsHorizontally) {
+    // cols *= wrapRowsHorizontallyPageCount;
+  }
 
   useMatrixBrain(
     brain,
@@ -44,8 +62,9 @@ export function useYourBrain<T = any>(param: UseYourBrainParam<T>) {
       // since it's updated by HeadlessTable, to account also for scrollbar sizes
       // height: bodySize.height,
       // width: bodySize.width,
-      rows: dataArray.length,
-      cols: computedVisibleColumns.length,
+      // rows: dataArray.length,
+      rows,
+      cols,
       rowspan,
     },
     {

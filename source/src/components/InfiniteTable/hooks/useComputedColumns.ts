@@ -33,6 +33,11 @@ type UseComputedColumnsParam<T> = {
   resizableColumns: boolean | undefined;
   scrollbarWidth: number | undefined;
 
+  wrapRowsHorizontally: boolean;
+  rowHeightForWrapRows: number | null;
+  wrapRowsHorizontallyPageCount: number;
+  wrapRowsHorizontallyPerPageCount: number;
+
   pinnedEndMaxWidth?: number;
   pinnedStartMaxWidth?: number;
 
@@ -115,6 +120,10 @@ export const useComputedColumns = <T extends unknown>({
   columnVisibility,
   columnVisibilityAssumeVisible,
   columnSizing,
+  wrapRowsHorizontally,
+  rowHeightForWrapRows,
+  wrapRowsHorizontallyPageCount,
+  wrapRowsHorizontallyPerPageCount,
 }: UseComputedColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
   // const columnsRenderId = useRerenderOnKeyChange(columns);
   const columnsRenderId = 1;
@@ -171,6 +180,11 @@ export const useComputedColumns = <T extends unknown>({
       columnDefaultSortable,
       editable,
 
+      wrapRowsHorizontally,
+      rowHeightForWrapRows,
+      wrapRowsHorizontallyPageCount,
+      wrapRowsHorizontallyPerPageCount,
+
       columnSizing,
       columnTypes,
 
@@ -181,6 +195,7 @@ export const useComputedColumns = <T extends unknown>({
     columns,
 
     bodySize.width,
+
     columnMinWidth,
     columnMaxWidth,
     columnDefaultWidth,
@@ -210,6 +225,12 @@ export const useComputedColumns = <T extends unknown>({
     columnDefaultEditable,
     columnDefaultFilterable,
     editable,
+
+    wrapRowsHorizontally,
+    wrapRowsHorizontally ? bodySize.height : 0,
+    wrapRowsHorizontallyPageCount,
+    wrapRowsHorizontallyPerPageCount,
+    rowHeightForWrapRows,
 
     columnsRenderId,
   ]);

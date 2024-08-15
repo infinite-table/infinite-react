@@ -112,7 +112,7 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
     //@ts-ignore
     mappedCallbacks: getMappedCallbacks(),
     // @ts-ignore
-    getParentState: () => useDataSourceState(),
+    getParentState: useDataSourceState,
     debugName: 'InfiniteTable',
   });
 
@@ -157,7 +157,7 @@ function InfiniteTableBody<T>() {
   const context = useInfiniteTable<T>();
 
   const masterContext = useMasterDetailContext();
-  const { state: componentState, getComputed, api } = context;
+  const { state: componentState, getComputed, api, getState } = context;
   const {
     renderer,
     onRenderUpdater,
@@ -241,6 +241,24 @@ function InfiniteTableBody<T>() {
     bodySize,
     computed,
   });
+
+  React.useEffect(() => {
+    const {
+      onWrapRowsHorizontallyPageCountChange,
+      wrapRowsHorizontallyPageCount: pageCount,
+      wrapRowsHorizontallyPerPageCount: pageSize,
+    } = getState();
+
+    if (onWrapRowsHorizontallyPageCountChange) {
+      const options = {
+        pageCount,
+        pageSize,
+      };
+      console.log(options);
+
+      onWrapRowsHorizontallyPageCountChange(options);
+    }
+  }, [componentState.wrapRowsHorizontallyPageCount]);
 
   return (
     <InfiniteTableBodyContainer onContextMenu={onContextMenu}>

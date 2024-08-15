@@ -242,6 +242,9 @@ export const forwardProps = <T>(
     columnDefaultFilterable: 1,
     columnDefaultSortable: 1,
     keyboardShortcuts: 1,
+    onWrapRowsHorizontallyPageCountChange: 1,
+    wrapRowsHorizontally: (wrapRowsHorizontally) =>
+      wrapRowsHorizontally ?? false,
 
     rowStyle: 1,
     cellStyle: 1,
@@ -524,7 +527,25 @@ export const mapPropsToState = <T>(params: {
     ? false
     : props.isRowDetailEnabled || true;
 
+  const rowHeightForWrapRows =
+    props.wrapRowsHorizontally &&
+    typeof props.rowHeight === 'number' &&
+    props.rowHeight > 0
+      ? props.rowHeight
+      : null;
+
+  const wrapRowsHorizontallyPerPageCount = rowHeightForWrapRows
+    ? Math.floor(state.bodySize.height / rowHeightForWrapRows)
+    : 0;
+
+  const wrapRowsHorizontallyPageCount = wrapRowsHorizontallyPerPageCount
+    ? Math.ceil(parentState.dataArray.length / wrapRowsHorizontallyPerPageCount)
+    : 0;
+
   return {
+    rowHeightForWrapRows,
+    wrapRowsHorizontallyPageCount,
+    wrapRowsHorizontallyPerPageCount,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,
     isRowDetailExpanded,

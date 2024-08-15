@@ -164,8 +164,12 @@ export interface InfiniteTableMappedState<T> {
   rowDetailCache: RowDetailCache<RowDetailCacheKey, RowDetailCacheEntry>;
 
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;
+  wrapRowsHorizontally: NonUndefined<
+    InfiniteTableProps<T>['wrapRowsHorizontally']
+  >;
 
   onScrollbarsChange: InfiniteTableProps<T>['onScrollbarsChange'];
+  onWrapRowsHorizontallyPageCountChange: InfiniteTableProps<T>['onWrapRowsHorizontallyPageCountChange'];
 
   getContextMenuItems: InfiniteTableProps<T>['getContextMenuItems'];
   getCellContextMenuItems: InfiniteTableProps<T>['getCellContextMenuItems'];
@@ -305,6 +309,10 @@ export interface InfiniteTableDerivedState<T> {
   rowDetailHeightCSSVar: string;
   columnHeaderHeightCSSVar: string;
   controlledColumnVisibility: boolean;
+
+  wrapRowsHorizontallyPageCount: number;
+  wrapRowsHorizontallyPerPageCount: number;
+  rowHeightForWrapRows: number | null;
 }
 
 export type InfiniteTableActions<T> = ComponentStateActions<
