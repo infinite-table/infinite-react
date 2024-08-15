@@ -105,7 +105,7 @@ function InfiniteTableCellFn<T>(
       ? column.components?.ColumnCell
       : column.components?.HeaderCell;
   if (RenderComponent) {
-    return <RenderComponent {...finalDOMProps} />;
+    return <RenderComponent {...finalDOMProps} ref={domRef} />;
   }
   return <div {...finalDOMProps} ref={domRef} />;
 }

@@ -133,6 +133,8 @@ export interface DataSourceMappedState<T> {
   isRowSelected: DataSourceProps<T>['isRowSelected'];
   debugId: DataSourceProps<T>['debugId'];
 
+  batchOperationDelay: DataSourceProps<T>['batchOperationDelay'];
+
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
   onDataMutations: DataSourceProps<T>['onDataMutations'];
   onReady: DataSourceProps<T>['onReady'];
@@ -480,6 +482,8 @@ export type DataSourceProps<T> = {
    */
   fields?: (keyof T)[];
   refetchKey?: number | string | object;
+
+  batchOperationDelay?: number;
 
   rowInfoReducers?: DataSourcePropRowInfoReducers<T>;
 
