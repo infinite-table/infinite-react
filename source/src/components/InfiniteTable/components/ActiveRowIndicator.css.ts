@@ -6,7 +6,7 @@ import { left, top, pointerEvents, position, width } from '../utilities.css';
 export const ActiveRowIndicatorBaseCls = style(
   [
     pointerEvents.none,
-    position.sticky,
+    position.absolute,
     width['100%'],
     top['0'],
     left['0'],

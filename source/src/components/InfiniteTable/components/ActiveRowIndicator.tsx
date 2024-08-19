@@ -84,7 +84,7 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
           active ? ActiveRowIndicatorCls.visible : ActiveRowIndicatorCls.hidden
         }`}
         style={active ? ActiveStyle : undefined}
-      ></div>
+      />
     </div>
   );
 };

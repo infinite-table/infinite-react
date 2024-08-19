@@ -233,6 +233,10 @@ export const getScrollPosition = async ({ page }: { page: Page }) => {
   });
 };
 
+export const getScrollerLocator = async ({ page }: { page: Page }) => {
+  return page.locator('.InfiniteBody > :first-child');
+};
+
 export const getMenuCellLocatorForKey = (
   params: { rowKey: string | null; colName?: string },
   { page }: { page: Page },
