@@ -55,6 +55,7 @@ export const ThemeVars = createGlobalThemeContract(
       bodyWidth: 'runtime-body-content-width',
       totalVisibleColumnsWidth: 'runtime-total-visible-columns-width',
       visibleColumnsCount: 'runtime-visible-columns-count',
+      browserScrollbarWidth: 'runtime-browser-scrollbar-width',
     },
 
     components: {

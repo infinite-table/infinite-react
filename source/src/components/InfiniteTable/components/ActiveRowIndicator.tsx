@@ -7,6 +7,7 @@ import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { internalProps } from '../internalProps';
 import { InternalVars } from '../internalVars.css';
 import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
+import { ThemeVars } from '../vars.css';
 import { ActiveIndicatorWrapperCls } from './ActiveCellIndicator.css';
 import { ActiveRowIndicatorCls } from './ActiveRowIndicator.css';
 
@@ -25,6 +26,7 @@ const ActiveStyle: CSSProperties = {
     InternalVars.activeCellOffsetY
   } + var(${stripVar(InternalVars.scrollTopForActiveRow)}, 0px)), 0px)`,
   height: InternalVars.activeCellRowHeight,
+  maxWidth: ThemeVars.runtime.totalVisibleColumnsWidth,
 };
 
 const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
