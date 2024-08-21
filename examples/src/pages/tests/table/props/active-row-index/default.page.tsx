@@ -55,6 +55,7 @@ export default function KeyboardNavigationForRows() {
         defaultActiveRowIndex={99}
         keyboardNavigation="row"
         domProps={{
+          autoFocus: true,
           style: {
             height: 800,
           },

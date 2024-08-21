@@ -165,6 +165,8 @@ export function HeadlessTable(
     ...domProps
   } = props;
 
+  const { autoFocus } = domProps;
+
   const domRef = useRef<HTMLDivElement>(null);
 
   const [scrollSize, setTotalScrollSize] = useState({
@@ -182,6 +184,9 @@ export function HeadlessTable(
     const node = domRef.current?.parentNode as HTMLElement;
     if (!node) {
       return;
+    }
+    if (autoFocus && document.activeElement !== node) {
+      node.focus();
     }
     const onResize = () => {
       // it's not enough to read the size from onResize
