@@ -41,6 +41,7 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
     });
 
     await cell.clickDetailIcon();
+    await page.waitForTimeout(50);
 
     CALL_COUNT = 2;
     dataSourceCalls = await getCalls({ page });
