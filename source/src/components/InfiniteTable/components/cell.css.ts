@@ -209,6 +209,24 @@ export const ColumnCellRecipe = recipe({
       false: {},
       true: {},
     },
+    rowDisabled: {
+      false: {},
+      true: {
+        opacity: ThemeVars.components.Row.disabledOpacity,
+        vars: {
+          [ThemeVars.components.Row.background]:
+            ThemeVars.components.Row.disabledBackground,
+          [ThemeVars.components.Row.oddBackground]:
+            ThemeVars.components.Row.oddDisabledBackground,
+          [ThemeVars.components.Row.hoverBackground]:
+            ThemeVars.components.Row.disabledBackground,
+          [ThemeVars.components.Row.activeBackground]:
+            ThemeVars.components.Row.background,
+          [ThemeVars.components.Row.selectedHoverBackground]:
+            ThemeVars.components.Row.selectedDisabledBackground,
+        },
+      },
+    },
     zebra: {
       false: {
         background: ThemeVars.components.Row.background,
@@ -316,6 +334,18 @@ export const ColumnCellRecipe = recipe({
       },
       style: {
         justifyContent: 'center',
+      },
+    },
+    {
+      variants: {
+        rowDisabled: true,
+        zebra: 'odd',
+      },
+      style: {
+        vars: {
+          [ThemeVars.components.Row.hoverBackground]:
+            ThemeVars.components.Row.oddDisabledBackground,
+        },
       },
     },
   ],

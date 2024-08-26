@@ -94,6 +94,7 @@ export type InfiniteTable_RowInfoBase<_T> = {
   value?: any;
   indexInAll: number;
   rowSelected: boolean | null;
+  rowDisabled: boolean;
   isCellSelected: (columnId: string) => boolean;
   hasSelectedCells: (columnIds: string[]) => boolean;
 };
@@ -1050,6 +1051,7 @@ function getEnhancedGroupData<DataType>(
     id: `${groupKeys}`, //TODO improve this
     collapsed: false,
     dataSourceHasGrouping: true,
+    rowDisabled: false,
     isCellSelected: returnFalse,
     hasSelectedCells: returnFalse,
     selfLoaded,
@@ -1112,6 +1114,7 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean | null;
+  isRowDisabled?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean;
 
   withRowInfo?: (rowInfo: InfiniteTableRowInfo<DataType>) => void;
 
@@ -1129,6 +1132,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
     withRowInfo,
     toPrimaryKey,
     groupRowsState,
+    isRowDisabled,
     isRowSelected,
     rowSelectionState,
     generateGroupRows,
@@ -1194,6 +1198,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
           enhancedGroupData.deselectedChildredCount =
             selectionCount.deselectedCount;
         }
+      }
+      if (isRowDisabled) {
+        enhancedGroupData.rowDisabled = isRowDisabled(enhancedGroupData);
       }
 
       const parent = parents[parents.length - 1];
@@ -1273,6 +1280,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   isGroupRow: false,
                   selfLoaded: !!item,
                   rowSelected: false,
+                  rowDisabled: false,
                   rootGroupBy: groupBy,
                   collapsed,
                   groupKeys,
@@ -1286,6 +1294,9 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 };
               if (isRowSelected) {
                 rowInfo.rowSelected = isRowSelected(rowInfo);
+              }
+              if (isRowDisabled) {
+                rowInfo.rowDisabled = isRowDisabled(rowInfo);
               }
 
               if (withRowInfo) {

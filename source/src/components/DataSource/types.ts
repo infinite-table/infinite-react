@@ -39,6 +39,7 @@ import {
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
+import { RowDisabledState } from './RowDisabledState';
 import {
   RowSelectionState,
   RowSelectionStateObject,
@@ -123,6 +124,16 @@ export type RowDetailStateObject<KeyType = any> = {
   collapsedRows: true | KeyType[];
 };
 
+export type RowDisabledStateObject<KeyType = any> =
+  | {
+      enabledRows: true;
+      disabledRows: KeyType[];
+    }
+  | {
+      disabledRows: true;
+      enabledRows: KeyType[];
+    };
+
 export type DataSourcePropGroupBy<T> = DataSourceGroupBy<T>[];
 export type DataSourcePropPivotBy<T> = DataSourcePivotBy<T>[];
 
@@ -131,6 +142,7 @@ export interface DataSourceMappedState<T> {
   livePagination: DataSourceProps<T>['livePagination'];
   refetchKey: NonUndefined<DataSourceProps<T>['refetchKey']>;
   isRowSelected: DataSourceProps<T>['isRowSelected'];
+  isRowDisabled: DataSourceProps<T>['isRowDisabled'];
   debugId: DataSourceProps<T>['debugId'];
 
   batchOperationDelay: DataSourceProps<T>['batchOperationDelay'];
@@ -163,6 +175,8 @@ export interface DataSourceMappedState<T> {
     DataSourceProps<T>['collapseGroupRowsOnDataFunctionChange']
   >;
   sortInfo: DataSourceSingleSortInfo<T>[] | null;
+
+  rowDisabledState: RowDisabledState<T> | null;
 }
 
 export type DataSourceRawReducer<T, RESULT_TYPE> = {
@@ -511,6 +525,10 @@ export type DataSourceProps<T> = {
     | DataSourcePropCellSelection_SingleCell;
   onCellSelectionChange?: DataSourcePropOnCellSelectionChange;
 
+  rowDisabledState?: RowDisabledState | RowDisabledStateObject<any>;
+  defaultRowDisabledState?: RowDisabledState | RowDisabledStateObject<any>;
+  isRowDisabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
+
   isRowSelected?: DataSourcePropIsRowSelected<T>;
   // TODO maybe implement isCellSelected?: DataSourcePropIsCellSelected<T>;
 
@@ -757,6 +775,8 @@ export type DataSourceDerivedState<T> = {
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
   lazyLoadBatchSize?: number;
   rowSelection: RowSelectionState | null | number | string;
+  isRowDisabled: DataSourceProps<T>['isRowDisabled'];
+
   cellSelection: CellSelectionState | null;
   selectionMode: NonUndefined<DataSourceProps<T>['selectionMode']>;
 };

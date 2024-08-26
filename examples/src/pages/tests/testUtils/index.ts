@@ -112,12 +112,18 @@ export const getCellNodeLocator = (
 
 export const isNodeExpanded = async (node: Locator) => {
   return await node.evaluate((n) =>
-    n.classList.contains('.InfiniteColumnCell--group-row-expanded'),
+    n.classList.contains('InfiniteColumnCell--group-row-expanded'),
   );
 };
 export const isNodeGroupRow = async (node: Locator) => {
   return await node.evaluate((n) =>
-    n.classList.contains('.InfiniteColumnCell--group-row'),
+    n.classList.contains('InfiniteColumnCell--group-row'),
+  );
+};
+
+export const isRowDisabled = async (node: Locator) => {
+  return await node.evaluate((n) =>
+    n.classList.contains('InfiniteColumnCell--disabled'),
   );
 };
 

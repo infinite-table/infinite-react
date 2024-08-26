@@ -80,6 +80,7 @@ function toRowInfo<T>(
   id: any,
   index: number,
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<T>) => boolean | null,
+  isRowDisabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean,
   cellSelectionState?: CellSelectionState,
 ): InfiniteTable_NoGrouping_RowInfoNormal<T> {
   const rowInfo: InfiniteTable_NoGrouping_RowInfoNormal<T> = {
@@ -90,11 +91,15 @@ function toRowInfo<T>(
     isGroupRow: false,
     selfLoaded: true,
     rowSelected: false,
+    rowDisabled: false,
     isCellSelected: returnFalse,
     hasSelectedCells: returnFalse,
   };
   if (isRowSelected) {
     rowInfo.rowSelected = isRowSelected(rowInfo);
+  }
+  if (isRowDisabled) {
+    rowInfo.rowDisabled = isRowDisabled(rowInfo);
   }
 
   if (cellSelectionState) {
@@ -425,6 +430,7 @@ export function concludeReducer<T>(params: {
         }
       : undefined;
 
+  const isRowDisabled = state.isRowDisabled || returnFalse;
   if (state.isRowSelected && state.selectionMode === 'multi-row') {
     isRowSelected = (rowInfo) =>
       state.isRowSelected!(
@@ -588,6 +594,7 @@ export function concludeReducer<T>(params: {
           data ? toPrimaryKey(data) : index,
           index,
           isRowSelected,
+          isRowDisabled,
           cellSelectionState,
         );
 
