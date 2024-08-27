@@ -81,6 +81,7 @@
     "title": "Working with Rows",
     "path": "/docs/learn/rows/styling-rows",
     "transient": true,
+    "badge": "new",
     "routes": [
       {
         "path": "/docs/learn/rows/styling-rows",
@@ -92,7 +93,8 @@
       },
       {
         "path": "/docs/learn/rows/disabled-rows",
-        "title": "Disabled Rows"
+        "title": "Disabled Rows",
+        "badge": "new"
       },
       {
         "path": "/docs/learn/selection/row-selection#",
@@ -120,7 +122,7 @@
     "title": "Keyboard Navigation",
     "path": "/docs/learn/keyboard-navigation/navigating-cells",
     "transient": true,
-    "badge": "new",
+
     "routes": [
       {
         "path": "/docs/learn/keyboard-navigation/navigating-cells",
@@ -132,8 +134,7 @@
       },
       {
         "path": "/docs/learn/keyboard-navigation/keyboard-shortcuts",
-        "title": "Keyboard Shortcuts",
-        "badge": "new"
+        "title": "Keyboard Shortcuts"
       }
     ]
   },
@@ -250,7 +251,7 @@
     "title": "Master-Detail",
     "path": "/docs/learn/master-detail/overview",
     "transient": true,
-    "badge": "new",
+
     "routes": [
       {
         "title": "Overview",
