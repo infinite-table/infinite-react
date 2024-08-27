@@ -91,6 +91,10 @@
         "title": "Using Rows at Runtime"
       },
       {
+        "path": "/docs/learn/rows/disabled-rows",
+        "title": "Disabled Rows"
+      },
+      {
         "path": "/docs/learn/selection/row-selection#",
         "title": "Selecting Rows"
       }

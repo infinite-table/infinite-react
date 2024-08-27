@@ -42,6 +42,160 @@ Using functions (for more dynamic primary keys) is supported, but hasn't been te
 
 </Prop>
 
+<Prop name="isRowDisabled" type="(rowInfo: InfiniteTableRowInfo<T>) => boolean">
+
+> This function ultimately decides the disabled state of a row. It overrides both <DPropLink name="defaultRowDisabledState" />/<DPropLink name="rowDisabledState" /> props.
+
+It's called with a single argument - the <TypeLink name="InfiniteTableRowInfo">row info object</TypeLink> for the row in question.
+
+It should return `true` if the row is disabled, and `false` otherwise.
+
+<Note>
+
+When this prop is used, <DPropLink name="onRowDisabledStateChange" /> will not be called.
+
+</Note>
+
+</Prop>
+
+
+<Prop name="defaultRowDisabledState" type="{enabledRows,disabledRows}">
+
+> The uncontrolled prop for managing row enabled/disabled state. For the controlled version see <DPropLink name="rowDisabledState" />. For listening to row disabled state changes, see <DPropLink name="onRowDisabledStateChange" />.
+
+The value for this prop is an object with two properties:
+
+- `enabledRows` - either `true` or an array of row ids that are enabled. When `true` is passed, `disabledRows` should be an array of row ids that are disabled.
+- `disabledRows` - either `true` or an array of row ids that are disabled. When `true` is passed, `enabledRows` should be an array of row ids that are enabled.
+
+<Note>
+
+The values in the `enabledRows`/`disabledRows` arrays are row ids, and not indexes.
+
+</Note>
+
+
+<Note>
+
+This prop can be overriden by using the <DPropLink name="isRowDisabled" /> prop.
+
+</Note>
+
+Here's an example of how to use the `defaultRowDisabledState` prop:
+
+<Sandpack title="Using uncontrolled row disabled state">
+
+<Description>
+
+Rows with ids `1`, `3`, `4` and `5` are disabled.
+
+</Description>
+
+```ts file="defaultRowDisabledState-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="rowDisabledState" type="{enabledRows,disabledRows}">
+
+> Manages row enabled/disabled state. For the uncontrolled version see <DPropLink name="defaultRowDisabledState" />. For listening to row disabled state changes, see <DPropLink name="onRowDisabledStateChange" />.
+
+The value for this prop is an object with two properties:
+
+- `enabledRows` - either `true` or an array of row ids that are enabled. When `true` is passed, `disabledRows` should be an array of row ids that are disabled.
+- `disabledRows` - either `true` or an array of row ids that are disabled. When `true` is passed, `enabledRows` should be an array of row ids that are enabled.
+
+<Note>
+When using this controlled prop, you will need to update the `rowDisabledState` prop by using the <DPropLink name="onRowDisabledStateChange" /> callback.
+</Note>
+
+<Note>
+
+This prop can be overriden by using the <DPropLink name="isRowDisabled" /> prop.
+
+</Note>
+
+<Sandpack title="Using controlled row disabled state">
+
+<Description>
+
+Rows with ids `1`, `3`, `4` and `5` are disabled initially.
+
+Right click rows and use the context menu to enable/disable rows.
+
+</Description>
+
+```ts file="rowDisabledState-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+
+
+
+<Prop name="onRowDisabledStateChange" type="(rowDisabledState) => void">
+
+> Called when the row disabled state changes.
+
+It's called with just 1 argument (`rowDisabledState`), which is an instance of the `RowDisabledState` class. To get a literal object that represents the row disabled state, call the `rowDisabledState.getState()` method.
+
+```tsx {3,19}
+import {
+  DataSource,
+  RowDisabledStateObject,
+} from '@infinite-table/infinite-react';
+function App() {
+  const [rowDisabledState, setRowDisabledState] = React.useState<
+    RowDisabledStateObject<number>
+  >({
+    enabledRows: true,
+    disabledRows: [1, 3, 4, 5],
+  });
+  return (
+    <>
+      <DataSource<Developer>
+        data={data}
+        primaryKey="id"
+        rowDisabledState={rowDisabledState}
+        onRowDisabledStateChange={(rowState) => {
+          setRowDisabledState(rowState.getState());
+        }}
+      />
+    </>
+  );
+}
+```
+
+<Note>
+When using the controlled <DPropLink name="rowDisabledState" /> prop, you will need to update the `rowDisabledState` by using this callback.
+</Note>
+
+<Sandpack title="Using the onRowDisabledStateChange callback to update row disabled state">
+
+<Description>
+
+Rows with ids `1`, `3`, `4` and `5` are disabled initially.
+
+Right click rows and use the context menu to enable/disable rows.
+
+</Description>
+
+```ts file="rowDisabledState-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+
+
 <Prop name="aggregationReducers" type="Record<string, DataSourceAggregationReducer>">
 
 > Specifies the functions to use for aggregating data. The object is a map where the keys are ids for aggregations and values are object of the shape described below.
