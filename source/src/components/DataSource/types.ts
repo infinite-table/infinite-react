@@ -453,6 +453,18 @@ export interface DataSourceApi<T> {
   insertDataArray(data: T[], options: DataSourceInsertParam): Promise<any>;
 
   setSortInfo(sortInfo: null | DataSourceSingleSortInfo<T>[]): void;
+
+  isRowDisabledAt: (rowIndex: number) => boolean;
+  isRowDisabled: (primaryKey: any) => boolean;
+
+  setRowEnabledAt: (rowIndex: number, enabled: boolean) => void;
+  setRowEnabled: (primaryKey: any, enabled: boolean) => void;
+
+  enableAllRows: () => void;
+  disableAllRows: () => void;
+
+  areAllRowsEnabled: () => boolean;
+  areAllRowsDisabled: () => boolean;
 }
 
 export type DataSourcePropRowInfoReducers<T> = Record<
@@ -527,6 +539,8 @@ export type DataSourceProps<T> = {
 
   rowDisabledState?: RowDisabledState | RowDisabledStateObject<any>;
   defaultRowDisabledState?: RowDisabledState | RowDisabledStateObject<any>;
+  onRowDisabledStateChange?: (rowDisabledState: RowDisabledState) => void;
+
   isRowDisabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
 
   isRowSelected?: DataSourcePropIsRowSelected<T>;

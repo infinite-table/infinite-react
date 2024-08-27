@@ -56,8 +56,8 @@ export class RowDisabledState<KeyType = any> extends BooleanCollectionState<
     return !this.isRowEnabled(key);
   }
 
-  public setRowEnabled(key: KeyType, shouldExpand: boolean) {
-    return this.setItemValue(key, shouldExpand);
+  public setRowEnabled(key: KeyType, enabled: boolean) {
+    return this.setItemValue(key, enabled);
   }
 
   public disableRow(key: KeyType) {

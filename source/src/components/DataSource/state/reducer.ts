@@ -317,6 +317,12 @@ export function concludeReducer<T>(params: {
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length > 0 || !!pivotBy;
+
+  const rowDisabledStateDepsChanged = haveDepsChanged(previousState, state, [
+    'rowDisabledState',
+    'isRowDisabled',
+  ]);
+
   const selectionDepsChanged = haveDepsChanged(previousState, state, [
     'rowSelection',
     'cellSelection',
@@ -349,6 +355,7 @@ export function concludeReducer<T>(params: {
         !state.lastGroupDataArray ||
         cacheAffectedParts.groupBy)) ||
     selectionDepsChanged ||
+    rowDisabledStateDepsChanged ||
     rowInfoReducersChanged;
 
   const now = Date.now();
@@ -571,6 +578,7 @@ export function concludeReducer<T>(params: {
       arrayDifferentAfterSortStep ||
       groupsDepsChanged ||
       selectionDepsChanged ||
+      rowDisabledStateDepsChanged ||
       rowInfoReducersChanged
     ) {
       const rowInfoReducerKeys = Object.keys(

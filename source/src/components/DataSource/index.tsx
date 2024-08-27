@@ -28,6 +28,7 @@ import { InfiniteTableRowInfo } from '../InfiniteTable';
 // import { DataSourceCmp } from './DataSourceCmp';
 import { useDataSourceInternal } from './privateHooks/useDataSource';
 import { DataSourceProps } from './types';
+import { RowDisabledState } from './RowDisabledState';
 
 const {
   // ManagedComponentContextProvider: ManagedDataSourceContextProvider,
@@ -102,6 +103,7 @@ export {
   GroupRowsState,
   RowSelectionState,
   CellSelectionState,
+  RowDisabledState,
   multisort,
   defaultFilterTypes as filterTypes,
   useRowInfoReducers,

@@ -9,7 +9,7 @@ import { raf } from '../../utils/raf';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
-
+import { RowDisabledState } from './RowDisabledState';
 import { DataSourceInsertParam } from './types';
 
 type GetDataSourceApiParam<T> = {
@@ -341,6 +341,86 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     //@ts-ignore
     this.actions.sortInfo = sortInfo;
     return;
+  };
+
+  isRowDisabledAt = (rowIndex: number) => {
+    const rowInfo = this.getRowInfoByIndex(rowIndex);
+
+    return rowInfo?.rowDisabled ?? false;
+  };
+
+  isRowDisabled = (primaryKey: any) => {
+    const rowInfo = this.getRowInfoByPrimaryKey(primaryKey);
+
+    return rowInfo?.rowDisabled ?? false;
+  };
+
+  setRowEnabledAt = (rowIndex: number, enabled: boolean) => {
+    const currentRowDisabledState = this.getState().rowDisabledState;
+
+    const rowDisabledState = currentRowDisabledState
+      ? new RowDisabledState<T>(currentRowDisabledState)
+      : new RowDisabledState<T>({
+          enabledRows: true,
+          disabledRows: [],
+        });
+
+    const rowInfo = this.getRowInfoByIndex(rowIndex);
+    if (!rowInfo) {
+      return;
+    }
+    rowDisabledState.setRowEnabled(rowInfo.id, enabled);
+
+    this.actions.rowDisabledState = rowDisabledState;
+  };
+
+  setRowEnabled = (primaryKey: any, enabled: boolean) => {
+    const rowInfo = this.getRowInfoByPrimaryKey(primaryKey);
+    if (!rowInfo) {
+      return;
+    }
+    this.setRowEnabledAt(rowInfo.indexInAll, enabled);
+  };
+
+  enableAllRows = () => {
+    const currentRowDisabledState = this.getState().rowDisabledState;
+
+    if (!currentRowDisabledState) {
+      this.actions.rowDisabledState = new RowDisabledState<T>({
+        enabledRows: true,
+        disabledRows: [],
+      });
+      return;
+    }
+
+    const rowDisabledState = new RowDisabledState(currentRowDisabledState);
+    rowDisabledState.enableAll();
+    this.actions.rowDisabledState = rowDisabledState;
+  };
+  disableAllRows = () => {
+    const currentRowDisabledState = this.getState().rowDisabledState;
+
+    if (!currentRowDisabledState) {
+      this.actions.rowDisabledState = new RowDisabledState<T>({
+        disabledRows: true,
+        enabledRows: [],
+      });
+      return;
+    }
+
+    const rowDisabledState = new RowDisabledState(currentRowDisabledState);
+    rowDisabledState.disableAll();
+    this.actions.rowDisabledState = rowDisabledState;
+  };
+
+  areAllRowsEnabled = () => {
+    const rowDisabledState = this.getState().rowDisabledState;
+    return rowDisabledState ? rowDisabledState.areAllEnabled() : true;
+  };
+
+  areAllRowsDisabled = () => {
+    const rowDisabledState = this.getState().rowDisabledState;
+    return rowDisabledState ? rowDisabledState.areAllDisabled() : false;
   };
 }
 
