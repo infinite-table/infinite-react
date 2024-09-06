@@ -39,12 +39,13 @@ const reposition = (
     return;
   }
 
-  const rowIndex = activeCellIndex[0];
+  const [rowIndex] = activeCellIndex;
   const activeCellRowHeight: number =
     typeof rowHeight === 'function'
       ? rowHeight(rowIndex)
       : rowHeight ?? brain.getRowHeight(rowIndex);
   const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
+  // const activeCellRowOffset = brain.getCellOffset(rowIndex, colIndex).y;
 
   const node = domRef.current!;
 

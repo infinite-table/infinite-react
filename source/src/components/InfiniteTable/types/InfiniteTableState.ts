@@ -161,6 +161,8 @@ export interface InfiniteTableMappedState<T> {
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
 
+  wrapRowsHorizontally: InfiniteTableProps<T>['wrapRowsHorizontally'];
+
   rowDetailCache: RowDetailCache<RowDetailCacheKey, RowDetailCacheEntry>;
 
   headerOptions: NonUndefined<InfiniteTableProps<T>['headerOptions']>;

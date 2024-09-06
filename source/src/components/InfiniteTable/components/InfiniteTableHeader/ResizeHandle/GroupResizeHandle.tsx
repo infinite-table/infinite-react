@@ -93,7 +93,7 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
           height: currentSize.height,
         };
 
-        props.brain.setAvailableSize(newSize);
+        props.brain.update(newSize);
         initialMove = false;
       }
 

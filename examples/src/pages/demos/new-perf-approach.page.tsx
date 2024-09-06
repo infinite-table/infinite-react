@@ -65,8 +65,8 @@ export default function App() {
     brain.update({
       rowHeight: 40,
       colWidth: 150,
-      width,
-      height,
+      width: width,
+      height: height,
       rows: 1500,
       cols: 4,
     });

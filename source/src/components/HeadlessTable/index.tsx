@@ -34,6 +34,7 @@ import { join } from '../../utils/join';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
+  wrapRowsHorizontally?: boolean;
   brain: MatrixBrain;
   debugId?: string;
   activeCellRowHeight: number | ((rowIndex: number) => number) | undefined;
@@ -162,6 +163,7 @@ export function HeadlessTable(
     activeRowIndex,
     activeCellIndex,
     onRenderUpdater,
+    wrapRowsHorizontally,
     ...domProps
   } = props;
 
@@ -197,7 +199,7 @@ export function HeadlessTable(
     const remove = setupResizeObserver(node, onResize, { debounce: 50 });
 
     return remove;
-  }, []);
+  }, [wrapRowsHorizontally]);
 
   const onContainerScroll = useCallback(
     (scrollPos: ScrollPosition) => {
@@ -210,10 +212,10 @@ export function HeadlessTable(
 
   useEffect(() => {
     const removeOnRenderCount = brain.onRenderCountChange(() => {
-      setTotalScrollSize(brain.getTotalSize());
+      setTotalScrollSize(brain.getVirtualizedContentSize());
     });
 
-    setTotalScrollSize(brain.getTotalSize());
+    setTotalScrollSize(brain.getVirtualizedContentSize());
 
     return removeOnRenderCount;
   }, [brain]);
@@ -237,13 +239,17 @@ export function HeadlessTable(
           brain={brain}
           cellHoverClassNames={cellHoverClassNames}
         />
-        <ActiveCellIndicator
-          brain={brain}
-          rowHeight={activeCellRowHeight}
-          activeCellIndex={activeCellIndex}
-        />
+        {activeCellIndex != null ? (
+          <ActiveCellIndicator
+            brain={brain}
+            rowHeight={activeCellRowHeight}
+            activeCellIndex={activeCellIndex}
+          />
+        ) : null}
       </div>
-      <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
+      {activeRowIndex != null ? (
+        <ActiveRowIndicator brain={brain} activeRowIndex={activeRowIndex} />
+      ) : null}
 
       <SpacePlaceholder
         width={scrollSize.width}

@@ -173,6 +173,7 @@ function InfiniteTableBody<T>() {
     activeCellIndex,
     rowDetailRenderer,
     showHoverRows,
+    wrapRowsHorizontally,
   } = componentState;
 
   const LoadMaskCmp = components?.LoadMask ?? LoadMask;
@@ -263,6 +264,7 @@ function InfiniteTableBody<T>() {
         }
         scrollStopDelay={scrollStopDelay}
         renderer={renderer}
+        wrapRowsHorizontally={wrapRowsHorizontally}
         onRenderUpdater={onRenderUpdater}
         brain={brain}
         activeCellRowHeight={activeCellRowHeight}

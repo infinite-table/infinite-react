@@ -63,35 +63,35 @@ export type RenderableWithPosition = {
   position: 'start' | 'end' | null;
 };
 
-const ITEM_POSITION_WITH_TRANSFORM = true;
+export const ITEM_POSITION_WITH_TRANSFORM = true;
 
-const currentTransformY = stripVar(InternalVars.y);
+export const currentTransformY = stripVar(InternalVars.y);
 
-const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
-const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
-const columnOffsetAtIndexWhileReordering = stripVar(
+export const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
+export const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
 
 export class ReactHeadlessTableRenderer extends Logger {
-  private brain: MatrixBrain;
+  protected brain: MatrixBrain;
 
   public debugId: string = '';
 
-  private destroyed = false;
+  protected destroyed = false;
   private scrolling = false;
 
   public cellHoverClassNames: string[] = [];
 
   private itemDOMElements: (HTMLElement | null)[] = [];
-  private itemDOMRefs: RefCallback<HTMLElement>[] = [];
-  private updaters: SubscriptionCallback<Renderable>[] = [];
+  protected itemDOMRefs: RefCallback<HTMLElement>[] = [];
+  protected updaters: SubscriptionCallback<Renderable>[] = [];
 
   private detailRowDOMElements: (HTMLElement | null)[] = [];
   private detailRowDOMRefs: RefCallback<HTMLElement>[] = [];
   private detailRowUpdaters: SubscriptionCallback<Renderable>[] = [];
 
-  private mappedCells: MappedCells;
+  protected mappedCells: MappedCells;
   private mappedDetailRows: MappedVirtualRows;
 
   private items: Renderable[] = [];
@@ -200,6 +200,8 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     this.mappedCells = new MappedCells();
     this.mappedDetailRows = new MappedVirtualRows();
+
+    this.renderRange = this.renderRange.bind(this);
 
     const removeOnScroll = brain.onScroll(this.adjustFixedElementsOnScroll);
     const removeOnSizeChange = brain.onAvailableSizeChange(() => {
@@ -570,7 +572,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  renderRange = (
+  renderRange(
     range: TableRenderRange,
 
     {
@@ -584,7 +586,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       renderDetailRow?: TableRenderDetailRowFn;
       onRender: (items: Renderable[]) => void;
     },
-  ): Renderable[] => {
+  ): Renderable[] {
     if (this.destroyed) {
       return [];
     }
@@ -903,7 +905,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     // }
 
     return result;
-  };
+  }
 
   private renderElement(elementIndex: number) {
     const domRef = (node: HTMLElement | null) => {
@@ -1106,7 +1108,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     return arr;
   };
 
-  private isCellFixed = (
+  protected isCellFixed = (
     rowIndex: number,
     colIndex: number,
   ): { row: FixedPosition; col: FixedPosition } => {
@@ -1154,7 +1156,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     };
   };
 
-  private isCellCovered = (rowIndex: number, colIndex: number) => {
+  protected isCellCovered = (rowIndex: number, colIndex: number) => {
     const rowspanParent = this.brain.getRowspanParent(rowIndex, colIndex);
     const colspanParent = this.brain.getColspanParent(rowIndex, colIndex);
 
@@ -1225,7 +1227,15 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.updateDetailElementPosition(detailElementIndex);
     return;
   }
-  private renderCellAtElement(
+
+  protected getCellRealCoordinates(rowIndex: number, colIndex: number) {
+    return {
+      rowIndex,
+      colIndex,
+    };
+  }
+
+  protected renderCellAtElement(
     rowIndex: number,
     colIndex: number,
     elementIndex: number,
@@ -1260,9 +1270,12 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const hidden = !!covered;
 
+    const { rowIndex: renderRowIndex, colIndex: renderColIndex } =
+      this.getCellRealCoordinates(rowIndex, colIndex);
+
     const renderedNode = renderCell({
-      rowIndex,
-      colIndex,
+      rowIndex: renderRowIndex,
+      colIndex: renderColIndex,
       height,
       width,
       rowspan,
@@ -1286,8 +1299,6 @@ export class ReactHeadlessTableRenderer extends Logger {
       return;
     }
 
-    // console.log('render row', rowIndex);
-
     this.mappedCells.renderCellAtElement(
       rowIndex,
       colIndex,
@@ -1308,7 +1319,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     return;
   }
 
-  private onMouseEnter = (rowIndex: number) => {
+  protected onMouseEnter = (rowIndex: number) => {
     this.currentHoveredRow = rowIndex;
 
     if (this.scrolling) {
@@ -1329,7 +1340,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private onMouseLeave = (rowIndex: number) => {
+  protected onMouseLeave = (rowIndex: number) => {
     if (this.currentHoveredRow != -1 && this.currentHoveredRow === rowIndex) {
       this.removeHoverClass(rowIndex);
     }
@@ -1352,7 +1363,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private updateHoverClassNamesForRow = (rowIndex: number) => {
+  protected updateHoverClassNamesForRow = (rowIndex: number) => {
     if (this.scrolling) {
       return;
     }
@@ -1384,7 +1395,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private updateElementPosition = (
+  protected updateElementPosition = (
     elementIndex: number,
     options?: { hidden: boolean; rowspan: number; colspan: number },
   ) => {
@@ -1417,9 +1428,10 @@ export class ReactHeadlessTableRenderer extends Logger {
       // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
       // (itemElement.dataset as any).elementIndex = elementIndex;
-      (itemElement.dataset as any).rowIndex = rowIndex;
+      const realCoords = this.getCellRealCoordinates(rowIndex, colIndex);
+      (itemElement.dataset as any).rowIndex = realCoords.rowIndex;
 
-      (itemElement.dataset as any).colIndex = colIndex;
+      (itemElement.dataset as any).colIndex = realCoords.colIndex;
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
         this.setTransform(itemElement, rowIndex, colIndex, { x, y }, null);

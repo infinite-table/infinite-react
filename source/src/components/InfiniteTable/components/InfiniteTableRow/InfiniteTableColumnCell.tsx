@@ -142,6 +142,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowStyle,
     rowClassName,
 
+    rowIndexInPage,
+
     getData,
     cellStyle,
     cellClassName,
@@ -543,7 +545,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   );
 
   const odd =
-    (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
+    rowIndexInPage != null
+      ? rowIndexInPage % 2 === 1
+      : (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
 
   const zebra = showZebraRows ? (odd ? 'odd' : 'even') : false;
 

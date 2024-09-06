@@ -42,11 +42,30 @@ import {
 
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
+import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
+import { HorizontalLayoutTableRenderer } from '../../HeadlessTable/HorizontalLayoutTableRenderer';
 
 const EMPTY_OBJECT = {};
 
 function createRenderer(brain: MatrixBrain) {
   const renderer = new ReactHeadlessTableRenderer(brain);
+  const onRenderUpdater = buildSubscriptionCallback<Renderable>();
+
+  brain.onDestroy(() => {
+    renderer.destroy();
+    onRenderUpdater.destroy();
+  });
+
+  return {
+    renderer,
+    onRenderUpdater,
+  };
+}
+
+function createHorizontalRenderer(brain: MatrixBrain) {
+  const renderer = new HorizontalLayoutTableRenderer(
+    brain as HorizontalLayoutMatrixBrain,
+  );
   const onRenderUpdater = buildSubscriptionCallback<Renderable>();
 
   brain.onDestroy(() => {
@@ -74,15 +93,19 @@ export function getCellSelector(cellPosition?: CellPositionByIndex) {
  */
 export function initSetupState<T>({
   debugId,
+  wrapRowsHorizontally,
 }: {
   debugId?: string;
+  wrapRowsHorizontally?: boolean;
 }): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
 
   /**
    * This is the main virtualization brain that powers the table
    */
-  const brain = new MatrixBrain(debugId);
+  const brain = !wrapRowsHorizontally
+    ? new MatrixBrain(debugId)
+    : new HorizontalLayoutMatrixBrain(debugId);
 
   /**
    * The brain that virtualises the header is different from the main brain
@@ -94,10 +117,10 @@ export function initSetupState<T>({
   // however, we sync the headerBrain with the main brain
   // on horizontal scrolling
   brain.onScroll((scrollPosition) => {
-    headerBrain.setScrollPosition({
-      scrollLeft: scrollPosition.scrollLeft,
-      scrollTop: 0,
-    });
+    // headerBrain.setScrollPosition({
+    //   scrollLeft: scrollPosition.scrollLeft,
+    //   scrollTop: 0,
+    // });
   });
 
   if (__DEV__) {
@@ -105,11 +128,13 @@ export function initSetupState<T>({
     (globalThis as any).headerBrain = headerBrain;
   }
 
-  const { renderer, onRenderUpdater } = createRenderer(brain);
+  const { renderer, onRenderUpdater } = !wrapRowsHorizontally
+    ? createRenderer(brain)
+    : createHorizontalRenderer(brain);
 
   // and on width changes
   brain.onAvailableSizeChange((size) => {
-    headerBrain.setAvailableSize({ width: size.width });
+    headerBrain.update({ width: size.width });
   });
 
   if (__DEV__) {
@@ -228,6 +253,8 @@ export const forwardProps = <T>(
     onBlurWithin: 1,
     onContextMenu: 1,
     onCellContextMenu: 1,
+
+    wrapRowsHorizontally: 1,
 
     onRenderRangeChange: 1,
 

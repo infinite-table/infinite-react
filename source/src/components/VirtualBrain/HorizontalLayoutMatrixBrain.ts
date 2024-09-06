@@ -1,0 +1,335 @@
+import {
+  ALL_DIRECTIONS,
+  IBrain,
+  ItemSizeFunction,
+  WhichDirection,
+} from './IBrain';
+
+import { MatrixBrain, MatrixBrainOptions } from './MatrixBrain';
+
+/**
+ *
+ * A Horizontal layout brain is a variation of the matrix brain.
+ *
+ * It's a matrix brain that will only have rows that fit in the viewport
+ * while repeating the columns multiple times.
+ * Basically all rows outside the viewport are wrapped and brought horizontally,
+ * after the initial column set.
+ *
+ * Say we have 4 cols and 24 rows, and the viewport can only fit 10 rows without vertical scrollbar.
+ *
+ * This means the first 10 rows are displayed as is,
+ * then the next 10 rows are wrapped horizontally, thus creating another 4 columns
+ * (identical to the first ones)
+ * and then the last 4 rows are wrapped again, thus another 4 cols are created.
+ *
+ * So we have a total of 24 rows and 12 columns - although physically, there are only 10 rows.
+ *
+ * It's still a matrix, so the matrix brain should work its way and the algorithm is the same
+ * after we enforce the correct number of physical rows and columns (10 and 24 respectively
+ * in the example above).
+ *
+ *
+ * Let's take another, more simple example,
+ *
+ *   col0|col1|col2   col0'|col1'|col2'|
+ *  +----+----+----++------+-----+-----|
+ * 0| 0,0| 0,1|0,2 ||  3,0 | 3,1 | 3,2 |
+ * 1| 1,0| 1,1|1,2 ||  4,0 | 4,1 | 4,2 |
+ * 2| 2,0| 2,1|2,2 ||  5,0 | 5,1 | 5,2 |
+ *  +----+----+----||-------------------
+ *
+ *
+ * Now imagine that we have scrolling and only col1 to col1' are in the viewport
+ *
+ * this gives us the following render range:
+ *   rows 0 to 2, with col1 and col2
+ *   rows 3 to 4, with col0' and col1'
+ *
+ * so if we were to unwrap and put those rows vertically,
+ * we won't have a contiguous render range like we do for the normal matrix brain.
+ *
+ * I mean we still have a valid matrix brain range, which would be
+ * rows 0 to 2 and col1 to col1', so start:[0,1], end: [3,5]
+ * but this is in the normal matrix, but when we unwrap, it's no longer continuous
+ * but rather we have two render ranges:
+ * start: [0,1], end: [3,3] so
+ *  |col1|col2
+ *  +----+----+
+ * 0| 0,1|0,2 |
+ * 1| 1,1|1,2 |
+ * 2| 2,1|2,2 |
+ *  +----+----+----|
+ * start: [3,0], end: [6,3] so
+ *   col0'|col1'|
+ *  +-----+-----+
+ * 3| 3,0 | 3,1 |
+ * 4| 4,0 | 4,1 |
+ * 5| 5,0 | 5,1 |
+ *  +-----+-----+
+ *
+ *
+ * SO: we need a way to translate a cell position from MATRIX RANGE to HORIZONTAL LAYOUT RANGE.
+ *
+ * This is what
+ *  - getMatrixCoordinatesForHorizontalLayoutPosition and
+ *  - getHorizontalLayoutPositionFromMatrixCoordinates
+ * do!
+ *
+ */
+
+export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
+  public visiblePageCount = 0;
+  private _rowsPerPage = 0;
+
+  private totalPageCount: number = 0;
+  public pageWidth: number = 0;
+
+  public initialCols = 0;
+  public initialRows = 0;
+  private initialColWidth: MatrixBrainOptions['colWidth'] = 0;
+  protected colWidth: ItemSizeFunction = () => 10;
+
+  constructor(name?: string) {
+    super(`HorizontalLayout${name ? `:${name}` : ''}`);
+  }
+
+  getRowIndexInPage(rowIndex: number) {
+    return this.rowsPerPage ? rowIndex % this.rowsPerPage : rowIndex;
+  }
+
+  set rowsPerPage(rowsPerPage: number) {
+    if (rowsPerPage != this._rowsPerPage) {
+      this._rowsPerPage = rowsPerPage;
+    }
+  }
+
+  get rowsPerPage() {
+    return this._rowsPerPage;
+  }
+
+  public getMatrixCoordinatesForHorizontalLayoutPosition(pos: {
+    rowIndex: number;
+    colIndex: number;
+  }) {
+    let rowIndex = pos.rowIndex;
+    let colIndex = pos.colIndex;
+    if (pos.rowIndex >= this.rowsPerPage && this.rowsPerPage > 0) {
+      rowIndex = pos.rowIndex % this.rowsPerPage;
+
+      const pageIndex = Math.floor(pos.rowIndex / this.rowsPerPage);
+      colIndex = pageIndex * this.initialCols + colIndex;
+    }
+
+    return {
+      rowIndex,
+      colIndex,
+    };
+  }
+
+  public getHorizontalLayoutPositionFromMatrixCoordinates(pos: {
+    rowIndex: number;
+    colIndex: number;
+  }) {
+    let rowIndex = pos.rowIndex;
+    let colIndex = pos.colIndex;
+
+    if (pos.colIndex >= this.initialCols && this.initialCols > 0) {
+      const pageIndex = Math.floor(pos.colIndex / this.initialCols);
+
+      colIndex = pos.colIndex - pageIndex * this.initialCols;
+      rowIndex = this.rowsPerPage * pageIndex + pos.rowIndex;
+    }
+    return {
+      colIndex,
+      rowIndex,
+    };
+  }
+
+  public xgetCellOffset = (rowIndex: number, colIndex: number) => {
+    let { x, y } = super.getCellOffset(rowIndex, colIndex);
+    const rowHeight = this.rowHeight;
+    if (typeof rowHeight !== 'number') {
+      throw new Error('rowHeight must be a number');
+    }
+    if (rowIndex >= this.rowsPerPage && this.rowsPerPage > 0) {
+      const rowIndexInPage = rowIndex % this.rowsPerPage;
+
+      y = rowIndexInPage * rowHeight;
+
+      const pageIndex = Math.floor(rowIndex / this.rowsPerPage);
+      const pageOffset = pageIndex ? pageIndex * this.pageWidth : 0;
+
+      x += pageOffset;
+    }
+
+    if (rowIndex === 4 && colIndex === 0) {
+      console.log(
+        'cell offset row' + rowIndex + '-col' + colIndex,
+        { rowIndex: rowIndex, colIndex: colIndex },
+        { x, y },
+      );
+    }
+    return { x, y };
+  };
+
+  public update(options: Partial<MatrixBrainOptions>) {
+    const {
+      rows,
+      cols,
+      rowHeight,
+      colWidth,
+      width: availableWidth,
+      height: availableHeight,
+    } = options;
+
+    const widthDefined = typeof availableWidth === 'number';
+    const heightDefined = typeof availableHeight === 'number';
+
+    const widthChanged = widthDefined && availableWidth !== this.availableWidth;
+    const heightChanged =
+      heightDefined && availableHeight !== this.availableHeight;
+
+    if (widthChanged) {
+      this.availableWidth = availableWidth;
+      this.availableRenderWidth = availableWidth;
+    }
+    if (heightChanged) {
+      this.availableHeight = availableHeight;
+      this.availableRenderHeight = availableHeight;
+    }
+
+    if (widthChanged || heightChanged) {
+      this.notifyAvailableSizeChange();
+    }
+
+    const rowsDefined = typeof rows === 'number';
+    const colsDefined = typeof cols === 'number';
+
+    const rowsChanged = rowsDefined && rows !== this.initialRows;
+    const colsChanged = colsDefined && cols !== this.initialCols;
+
+    if (rowsDefined && rowsChanged) {
+      this.initialRows = rows;
+      this.rows = rows;
+      console.log('rows defined', rows);
+    }
+    if (colsDefined && colsChanged) {
+      this.initialCols = cols;
+      this.cols = cols;
+    }
+
+    const rowHeightDefined = rowHeight != null;
+    const colWidthDefined = colWidth != null;
+
+    const rowHeightChanged = rowHeightDefined && rowHeight !== this.rowHeight;
+    const colWidthChanged =
+      colWidthDefined && colWidth !== this.initialColWidth;
+
+    if (rowHeightDefined) {
+      this.rowHeight = rowHeight;
+    }
+    if (colWidthDefined) {
+      this.initialColWidth = colWidth;
+      this.colWidth = this.getColWidth;
+    }
+
+    if (__DEV__) {
+      if (widthChanged) {
+        this.debug(
+          'New available width %d (size is %d,%d)',
+          this.availableWidth,
+          this.availableWidth,
+          this.availableHeight,
+        );
+      }
+      if (heightChanged) {
+        this.debug(
+          'New available height %d (size is %d,%d)',
+          this.availableHeight,
+          this.availableWidth,
+          this.availableHeight,
+        );
+      }
+
+      if (rowsChanged) {
+        this.debug('New rows count: %d', this.rows);
+      }
+      if (colsChanged) {
+        this.debug('New cols count: %d', this.cols);
+      }
+      if (rowHeightChanged) {
+        this.debug('New row size', this.rowHeight);
+      }
+      if (colWidthChanged) {
+        this.debug('New col size', this.colWidth);
+      }
+    }
+
+    const horizontalChange = colsChanged || colWidthChanged || widthChanged;
+    const verticalChange = rowsChanged || rowHeightChanged || heightChanged;
+
+    if (horizontalChange || verticalChange) {
+      this.updateRenderCount({
+        horizontal: horizontalChange,
+        vertical: verticalChange,
+      });
+    }
+  }
+
+  getColWidth = (colIndex: number) => {
+    if (typeof this.initialColWidth === 'number') {
+      return this.initialColWidth;
+    }
+
+    return this.initialColWidth(colIndex % this.initialCols);
+  };
+  doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
+    if (typeof this.rowHeight !== 'number') {
+      throw new Error('rowHeight must be a number');
+    }
+
+    // determine the width of a column-set (or page)
+
+    let pageWidth = 0;
+    for (let i = 0; i < this.initialCols; i++) {
+      pageWidth += this.getColWidth(i);
+    }
+    this.pageWidth = pageWidth;
+
+    // based on the page width, determine the number of rows per page
+    this.rowsPerPage = Math.floor(this.availableHeight / this.rowHeight);
+
+    this.totalPageCount = this.rowsPerPage
+      ? Math.ceil(this.initialRows / this.rowsPerPage)
+      : 0;
+    this.visiblePageCount = this.totalPageCount
+      ? Math.max(Math.ceil(this.availableWidth / this.pageWidth), 1)
+      : 1;
+
+    this.availableRenderHeight =
+      this.visiblePageCount * this.rowsPerPage * this.rowHeight;
+
+    console.log(
+      'visiblePageCount',
+      this.visiblePageCount,
+      'initialCols',
+      this.initialCols,
+    );
+    this.cols = this.totalPageCount * this.initialCols;
+    this.rows = this.rowsPerPage;
+
+    super.doUpdateRenderCount(which);
+  }
+
+  getVirtualizedContentSizeFor(direction: 'horizontal' | 'vertical') {
+    if (direction === 'vertical') {
+      if (typeof this.rowHeight !== 'number') {
+        throw new Error('rowHeight must be a number');
+      }
+      return this.rowHeight * this.rowsPerPage;
+    }
+
+    return this.pageWidth * this.totalPageCount;
+  }
+}

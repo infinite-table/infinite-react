@@ -217,7 +217,7 @@ export const useColumnPointerEvents = ({
 
         dragger.stop();
 
-        brain.setAvailableSize({
+        brain.update({
           ...initialAvailableSize,
         });
 

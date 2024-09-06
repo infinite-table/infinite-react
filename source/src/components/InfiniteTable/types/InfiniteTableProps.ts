@@ -597,6 +597,8 @@ export interface InfiniteTableProps<T> {
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents<T>;
 
+  wrapRowsHorizontally?: boolean;
+
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 
   viewportReservedWidth?: number;
