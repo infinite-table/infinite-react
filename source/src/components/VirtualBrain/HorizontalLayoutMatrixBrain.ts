@@ -2,10 +2,15 @@ import {
   ALL_DIRECTIONS,
   IBrain,
   ItemSizeFunction,
+  TableRenderRange,
   WhichDirection,
 } from './IBrain';
 
-import { MatrixBrain, MatrixBrainOptions } from './MatrixBrain';
+import {
+  MatrixBrain,
+  MatrixBrainOptions,
+  RenderRangeType,
+} from './MatrixBrain';
 
 /**
  *
@@ -94,6 +99,142 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     super(`HorizontalLayout${name ? `:${name}` : ''}`);
   }
 
+  getRenderRange = () => {
+    return {
+      start: [
+        this.verticalRenderRange.startIndex,
+        this.horizontalRenderRange.startIndex,
+      ],
+      end: [
+        this.verticalRenderRange.endIndex,
+        this.horizontalRenderRange.endIndex,
+      ],
+    } as TableRenderRange;
+  };
+
+  convertHorizontalRenderRangeToVerticalRenderRange(
+    renderRange: TableRenderRange,
+  ): TableRenderRange {
+    const { start, end } = renderRange;
+
+    const [startRowIndex, startColIndex] = start;
+    const [endRowIndex, endColIndex] = end;
+
+    const startCoords = this.getHorizontalLayoutPositionFromMatrixCoordinates({
+      rowIndex: startRowIndex,
+      colIndex: startColIndex,
+    });
+    const endCoords = this.getHorizontalLayoutPositionFromMatrixCoordinates({
+      rowIndex: endRowIndex,
+      colIndex: endColIndex,
+    });
+
+    const startPageIndex = Math.floor(startColIndex / this.initialCols);
+    const endPageIndex = Math.floor(endColIndex / this.initialCols);
+
+    let startCol = 0;
+    let endCol = this.initialCols;
+    if (startPageIndex === endPageIndex) {
+      startCol = startCoords.colIndex;
+      endCol = endCoords.colIndex;
+    }
+    // this.getP
+    // const startCol = startCoords.colIndex < endCoords.colIndex ?
+    return {
+      start: [startCoords.rowIndex, startCol],
+      end: [endCoords.rowIndex, endCol],
+    };
+  }
+
+  // TODO CONTINUE_HERE remove this
+  public x_getCellOffset = (rowIndex: number, colIndex: number) => {
+    let { x, y } = super.getCellOffset(rowIndex, colIndex);
+    const rowHeight = this.rowHeight;
+    if (typeof rowHeight !== 'number') {
+      throw new Error('rowHeight must be a number');
+    }
+    if (rowIndex >= this.rowsPerPage && this.rowsPerPage > 0) {
+      const rowIndexInPage = rowIndex % this.rowsPerPage;
+
+      y = rowIndexInPage * rowHeight;
+
+      const pageIndex = Math.floor(rowIndex / this.rowsPerPage);
+      const pageOffset = pageIndex ? pageIndex * this.pageWidth : 0;
+
+      x += pageOffset;
+    }
+
+    return { x, y };
+  };
+
+  x_setRenderRange = (options: {
+    horizontal: RenderRangeType;
+    vertical: RenderRangeType;
+    extraCells?: [number, number][];
+  }) => {
+    const newRange: TableRenderRange = {
+      start: [options.vertical.startIndex, options.horizontal.startIndex],
+      end: [options.vertical.endIndex, options.horizontal.endIndex],
+    };
+    // TODO CONTINUE_HERE we currently overwrote this
+    // but this overriding is not optimal
+    // since if a row from another segment has the last column rendered
+    // then when we unwrap rows, we assume all cols of that row are rendered,
+    // which is not ideal
+
+    // the other solution means we go with the normal matrix render
+    // but for the last segment, there will be cells in the render range
+    // that do not actually exist - so we need to subtract that from the render range
+    // or pass a union of ranges
+    const convertedRange =
+      this.convertHorizontalRenderRangeToVerticalRenderRange(newRange);
+
+    console.log(
+      'convert',
+      JSON.stringify(newRange),
+      'to',
+      JSON.stringify(convertedRange),
+    );
+    const horizontal: RenderRangeType = {
+      startIndex: convertedRange.start[1],
+      endIndex: convertedRange.end[1],
+    };
+    const vertical: RenderRangeType = {
+      startIndex: convertedRange.start[0],
+      endIndex: convertedRange.end[0],
+    };
+
+    let horizontalChange = false;
+    if (
+      horizontal.startIndex !== this.horizontalRenderRange.startIndex ||
+      horizontal.endIndex !== this.horizontalRenderRange.endIndex
+    ) {
+      this.horizontalRenderRange = horizontal;
+      horizontalChange = true;
+    }
+
+    let verticalChange = false;
+    if (
+      vertical.startIndex !== this.verticalRenderRange.startIndex ||
+      vertical.endIndex !== this.verticalRenderRange.endIndex
+    ) {
+      this.verticalRenderRange = vertical;
+      verticalChange = true;
+    }
+
+    this.extraSpanCells = options.extraCells || [];
+
+    if (horizontalChange || verticalChange) {
+      this.notifyRenderRangeChange();
+    }
+    if (verticalChange) {
+      this.notifyVerticalRenderRangeChange();
+    }
+    if (horizontalChange) {
+      this.notifyHorizontalRenderRangeChange();
+    }
+  };
+
   getRowIndexInPage(rowIndex: number) {
     return this.rowsPerPage ? rowIndex % this.rowsPerPage : rowIndex;
   }
@@ -141,37 +282,10 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
       rowIndex = this.rowsPerPage * pageIndex + pos.rowIndex;
     }
     return {
-      colIndex,
-      rowIndex,
+      colIndex: Math.min(colIndex, this.initialCols),
+      rowIndex: Math.min(rowIndex, this.initialRows),
     };
   }
-
-  public xgetCellOffset = (rowIndex: number, colIndex: number) => {
-    let { x, y } = super.getCellOffset(rowIndex, colIndex);
-    const rowHeight = this.rowHeight;
-    if (typeof rowHeight !== 'number') {
-      throw new Error('rowHeight must be a number');
-    }
-    if (rowIndex >= this.rowsPerPage && this.rowsPerPage > 0) {
-      const rowIndexInPage = rowIndex % this.rowsPerPage;
-
-      y = rowIndexInPage * rowHeight;
-
-      const pageIndex = Math.floor(rowIndex / this.rowsPerPage);
-      const pageOffset = pageIndex ? pageIndex * this.pageWidth : 0;
-
-      x += pageOffset;
-    }
-
-    if (rowIndex === 4 && colIndex === 0) {
-      console.log(
-        'cell offset row' + rowIndex + '-col' + colIndex,
-        { rowIndex: rowIndex, colIndex: colIndex },
-        { x, y },
-      );
-    }
-    return { x, y };
-  };
 
   public update(options: Partial<MatrixBrainOptions>) {
     const {
