@@ -340,7 +340,7 @@ function debugPackage(channelName: string): any {
 
             logFn(...theArgs);
           } else {
-            logFn(`%c[${channel}]`, `color: ${color}`, ...args);
+            logFn(`%c[${channel}]%c %s`, `color: ${color}`, '', ...args);
           }
         }
       },
