@@ -40,7 +40,7 @@ export default function App() {
       </b>
     );
   };
-  const [brain] = React.useState(() => new MatrixBrain());
+  const [brain] = React.useState(() => new MatrixBrain('test'));
 
   (globalThis as any).brain = brain;
 

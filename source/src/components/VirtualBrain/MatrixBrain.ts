@@ -23,7 +23,7 @@ export type SpanFunction = ({
   colIndex: number;
 }) => number;
 
-type RenderRangeType = {
+export type RenderRangeType = {
   startIndex: number;
   endIndex: number;
 };
@@ -116,6 +116,7 @@ export class MatrixBrain extends Logger implements IBrain {
   private scrolling = false;
   protected availableWidth: MatrixBrainOptions['width'] = 0;
   protected availableRenderWidth: number = 0;
+  public isHorizontalLayoutBrain = false;
   public name: string = '';
 
   protected availableHeight: MatrixBrainOptions['height'] = 0;
@@ -148,14 +149,17 @@ export class MatrixBrain extends Logger implements IBrain {
   private horizontalRenderCount?: number = undefined;
   private verticalRenderCount?: number = undefined;
 
-  private horizontalRenderRange: RenderRangeType = {
+  protected horizontalRenderRange: RenderRangeType = {
     startIndex: 0,
     endIndex: 0,
   };
 
-  private verticalRenderRange: RenderRangeType = { startIndex: 0, endIndex: 0 };
+  protected verticalRenderRange: RenderRangeType = {
+    startIndex: 0,
+    endIndex: 0,
+  };
 
-  private extraSpanCells: [number, number][] = [];
+  protected extraSpanCells: [number, number][] = [];
 
   private scrollPosition: ScrollPosition = { scrollLeft: 0, scrollTop: 0 };
 
@@ -195,10 +199,10 @@ export class MatrixBrain extends Logger implements IBrain {
    */
   private fixedRowsEnd = 0;
 
-  constructor(name?: string) {
+  constructor(name: string) {
     const logName = `MatrixBrain${name ? `:${name}` : ''}`;
     super(logName);
-    this.name = logName;
+    this.name = name || 'MatrixBrain';
 
     this.update = this.update.bind(this);
 
@@ -396,7 +400,19 @@ export class MatrixBrain extends Logger implements IBrain {
 
   protected doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
     if (!this.availableWidth || !this.availableHeight) {
-      this.setRenderCount({ horizontal: 0, vertical: 0 });
+      const count: Parameters<typeof this.setRenderCount>[0] = {
+        horizontal: undefined,
+        vertical: undefined,
+      };
+
+      if (!this.availableWidth) {
+        count.horizontal = 0;
+      }
+      if (!this.availableHeight) {
+        count.vertical = 0;
+      }
+
+      this.setRenderCount(count);
     }
 
     this.setRenderCount(this.computeRenderCount(which));
@@ -524,7 +540,7 @@ export class MatrixBrain extends Logger implements IBrain {
       });
     });
   }
-  private notifyVerticalRenderRangeChange = () => {
+  protected notifyVerticalRenderRangeChange = () => {
     if (this.destroyed) {
       return;
     }
@@ -544,7 +560,7 @@ export class MatrixBrain extends Logger implements IBrain {
       });
     });
   };
-  private notifyHorizontalRenderRangeChange = () => {
+  protected notifyHorizontalRenderRangeChange = () => {
     if (this.destroyed) {
       return;
     }
@@ -1141,6 +1157,10 @@ export class MatrixBrain extends Logger implements IBrain {
     };
   }
 
+  getInitialRowHeight() {
+    return this.rowHeight;
+  }
+
   public getItemOffsetFor(
     itemIndex: number,
     direction: 'horizontal' | 'vertical',
@@ -1434,6 +1454,10 @@ export class MatrixBrain extends Logger implements IBrain {
 
   getRowIndexInPage(rowIndex: number) {
     return rowIndex;
+  }
+
+  getPageIndexForRow(_rowIndex: number) {
+    return 0;
   }
 
   getVirtualizedContentSize() {

@@ -11,10 +11,9 @@ import {
   RowDetailCacheEntry,
   RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
-import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
+
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
-import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
@@ -43,41 +42,9 @@ import {
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
 import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
-import { HorizontalLayoutTableRenderer } from '../../HeadlessTable/HorizontalLayoutTableRenderer';
+import { createRenderer } from '../../HeadlessTable/createRenderer';
 
 const EMPTY_OBJECT = {};
-
-function createRenderer(brain: MatrixBrain) {
-  const renderer = new ReactHeadlessTableRenderer(brain);
-  const onRenderUpdater = buildSubscriptionCallback<Renderable>();
-
-  brain.onDestroy(() => {
-    renderer.destroy();
-    onRenderUpdater.destroy();
-  });
-
-  return {
-    renderer,
-    onRenderUpdater,
-  };
-}
-
-function createHorizontalRenderer(brain: MatrixBrain) {
-  const renderer = new HorizontalLayoutTableRenderer(
-    brain as HorizontalLayoutMatrixBrain,
-  );
-  const onRenderUpdater = buildSubscriptionCallback<Renderable>();
-
-  brain.onDestroy(() => {
-    renderer.destroy();
-    onRenderUpdater.destroy();
-  });
-
-  return {
-    renderer,
-    onRenderUpdater,
-  };
-}
 
 export function getCellSelector(cellPosition?: CellPositionByIndex) {
   const selector = `.${InfiniteTableColumnCellClassName}[data-row-index${
@@ -95,7 +62,7 @@ export function initSetupState<T>({
   debugId,
   wrapRowsHorizontally,
 }: {
-  debugId?: string;
+  debugId: string;
   wrapRowsHorizontally?: boolean;
 }): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
@@ -105,22 +72,29 @@ export function initSetupState<T>({
    */
   const brain = !wrapRowsHorizontally
     ? new MatrixBrain(debugId)
-    : new HorizontalLayoutMatrixBrain(debugId);
+    : new HorizontalLayoutMatrixBrain(debugId, {
+        isHeader: false,
+      });
 
   /**
    * The brain that virtualises the header is different from the main brain
    * because obviously the header will have different rowspans/colspans
    * (which are due to column groups) than the main grid viewport
    */
-  const headerBrain = new MatrixBrain('header');
+  const headerBrain = !wrapRowsHorizontally
+    ? new MatrixBrain('header')
+    : new HorizontalLayoutMatrixBrain('header', {
+        isHeader: true,
+        masterBrain: brain as HorizontalLayoutMatrixBrain,
+      });
 
   // however, we sync the headerBrain with the main brain
   // on horizontal scrolling
   brain.onScroll((scrollPosition) => {
-    // headerBrain.setScrollPosition({
-    //   scrollLeft: scrollPosition.scrollLeft,
-    //   scrollTop: 0,
-    // });
+    headerBrain.setScrollPosition({
+      scrollLeft: scrollPosition.scrollLeft,
+      scrollTop: 0,
+    });
   });
 
   if (__DEV__) {
@@ -128,9 +102,7 @@ export function initSetupState<T>({
     (globalThis as any).headerBrain = headerBrain;
   }
 
-  const { renderer, onRenderUpdater } = !wrapRowsHorizontally
-    ? createRenderer(brain)
-    : createHorizontalRenderer(brain);
+  const { renderer, onRenderUpdater } = createRenderer(brain);
 
   // and on width changes
   brain.onAvailableSizeChange((size) => {

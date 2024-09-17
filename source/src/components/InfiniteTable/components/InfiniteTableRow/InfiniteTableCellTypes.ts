@@ -66,6 +66,7 @@ export interface InfiniteTableColumnCellProps<T>
   getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndexInPage: number | null;
+  pageIndex: number | null;
   rowIndex: number;
   rowHeight: number;
   cellStyle?: InfiniteTablePropCellStyle<T>;

@@ -2,15 +2,10 @@ import {
   ALL_DIRECTIONS,
   IBrain,
   ItemSizeFunction,
-  TableRenderRange,
   WhichDirection,
 } from './IBrain';
 
-import {
-  MatrixBrain,
-  MatrixBrainOptions,
-  RenderRangeType,
-} from './MatrixBrain';
+import { MatrixBrain, MatrixBrainOptions } from './MatrixBrain';
 
 /**
  *
@@ -83,11 +78,17 @@ import {
  *
  */
 
+type HorizontalLayoutMatrixBrainOptions = {
+  isHeader: boolean;
+  masterBrain?: HorizontalLayoutMatrixBrain;
+};
+
 export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
   public visiblePageCount = 0;
+  public isHorizontalLayoutBrain = true;
   private _rowsPerPage = 0;
 
-  private totalPageCount: number = 0;
+  private _totalPageCount: number = 0;
   public pageWidth: number = 0;
 
   public initialCols = 0;
@@ -95,145 +96,12 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
   private initialColWidth: MatrixBrainOptions['colWidth'] = 0;
   protected colWidth: ItemSizeFunction = () => 10;
 
-  constructor(name?: string) {
+  private options: HorizontalLayoutMatrixBrainOptions;
+
+  constructor(name: string, opts: HorizontalLayoutMatrixBrainOptions) {
     super(`HorizontalLayout${name ? `:${name}` : ''}`);
+    this.options = opts;
   }
-
-  getRenderRange = () => {
-    return {
-      start: [
-        this.verticalRenderRange.startIndex,
-        this.horizontalRenderRange.startIndex,
-      ],
-      end: [
-        this.verticalRenderRange.endIndex,
-        this.horizontalRenderRange.endIndex,
-      ],
-    } as TableRenderRange;
-  };
-
-  convertHorizontalRenderRangeToVerticalRenderRange(
-    renderRange: TableRenderRange,
-  ): TableRenderRange {
-    const { start, end } = renderRange;
-
-    const [startRowIndex, startColIndex] = start;
-    const [endRowIndex, endColIndex] = end;
-
-    const startCoords = this.getHorizontalLayoutPositionFromMatrixCoordinates({
-      rowIndex: startRowIndex,
-      colIndex: startColIndex,
-    });
-    const endCoords = this.getHorizontalLayoutPositionFromMatrixCoordinates({
-      rowIndex: endRowIndex,
-      colIndex: endColIndex,
-    });
-
-    const startPageIndex = Math.floor(startColIndex / this.initialCols);
-    const endPageIndex = Math.floor(endColIndex / this.initialCols);
-
-    let startCol = 0;
-    let endCol = this.initialCols;
-    if (startPageIndex === endPageIndex) {
-      startCol = startCoords.colIndex;
-      endCol = endCoords.colIndex;
-    }
-    // this.getP
-    // const startCol = startCoords.colIndex < endCoords.colIndex ?
-    return {
-      start: [startCoords.rowIndex, startCol],
-      end: [endCoords.rowIndex, endCol],
-    };
-  }
-
-  // TODO CONTINUE_HERE remove this
-  public x_getCellOffset = (rowIndex: number, colIndex: number) => {
-    let { x, y } = super.getCellOffset(rowIndex, colIndex);
-    const rowHeight = this.rowHeight;
-    if (typeof rowHeight !== 'number') {
-      throw new Error('rowHeight must be a number');
-    }
-    if (rowIndex >= this.rowsPerPage && this.rowsPerPage > 0) {
-      const rowIndexInPage = rowIndex % this.rowsPerPage;
-
-      y = rowIndexInPage * rowHeight;
-
-      const pageIndex = Math.floor(rowIndex / this.rowsPerPage);
-      const pageOffset = pageIndex ? pageIndex * this.pageWidth : 0;
-
-      x += pageOffset;
-    }
-
-    return { x, y };
-  };
-
-  x_setRenderRange = (options: {
-    horizontal: RenderRangeType;
-    vertical: RenderRangeType;
-    extraCells?: [number, number][];
-  }) => {
-    const newRange: TableRenderRange = {
-      start: [options.vertical.startIndex, options.horizontal.startIndex],
-      end: [options.vertical.endIndex, options.horizontal.endIndex],
-    };
-    // TODO CONTINUE_HERE we currently overwrote this
-    // but this overriding is not optimal
-    // since if a row from another segment has the last column rendered
-    // then when we unwrap rows, we assume all cols of that row are rendered,
-    // which is not ideal
-
-    // the other solution means we go with the normal matrix render
-    // but for the last segment, there will be cells in the render range
-    // that do not actually exist - so we need to subtract that from the render range
-    // or pass a union of ranges
-    const convertedRange =
-      this.convertHorizontalRenderRangeToVerticalRenderRange(newRange);
-
-    console.log(
-      'convert',
-      JSON.stringify(newRange),
-      'to',
-      JSON.stringify(convertedRange),
-    );
-    const horizontal: RenderRangeType = {
-      startIndex: convertedRange.start[1],
-      endIndex: convertedRange.end[1],
-    };
-    const vertical: RenderRangeType = {
-      startIndex: convertedRange.start[0],
-      endIndex: convertedRange.end[0],
-    };
-
-    let horizontalChange = false;
-    if (
-      horizontal.startIndex !== this.horizontalRenderRange.startIndex ||
-      horizontal.endIndex !== this.horizontalRenderRange.endIndex
-    ) {
-      this.horizontalRenderRange = horizontal;
-      horizontalChange = true;
-    }
-
-    let verticalChange = false;
-    if (
-      vertical.startIndex !== this.verticalRenderRange.startIndex ||
-      vertical.endIndex !== this.verticalRenderRange.endIndex
-    ) {
-      this.verticalRenderRange = vertical;
-      verticalChange = true;
-    }
-
-    this.extraSpanCells = options.extraCells || [];
-
-    if (horizontalChange || verticalChange) {
-      this.notifyRenderRangeChange();
-    }
-    if (verticalChange) {
-      this.notifyVerticalRenderRangeChange();
-    }
-    if (horizontalChange) {
-      this.notifyHorizontalRenderRangeChange();
-    }
-  };
 
   getRowIndexInPage(rowIndex: number) {
     return this.rowsPerPage ? rowIndex % this.rowsPerPage : rowIndex;
@@ -247,6 +115,12 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
 
   get rowsPerPage() {
     return this._rowsPerPage;
+  }
+
+  getPageIndexForRow(rowIndex: number) {
+    const pageIndex = Math.floor(rowIndex / this.rowsPerPage);
+
+    return pageIndex;
   }
 
   public getMatrixCoordinatesForHorizontalLayoutPosition(pos: {
@@ -283,7 +157,9 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     }
     return {
       colIndex: Math.min(colIndex, this.initialCols),
-      rowIndex: Math.min(rowIndex, this.initialRows),
+      rowIndex: this.options.isHeader
+        ? rowIndex
+        : Math.min(rowIndex, this.initialRows),
     };
   }
 
@@ -326,7 +202,6 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     if (rowsDefined && rowsChanged) {
       this.initialRows = rows;
       this.rows = rows;
-      console.log('rows defined', rows);
     }
     if (colsDefined && colsChanged) {
       this.initialCols = cols;
@@ -398,10 +273,30 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
 
     return this.initialColWidth(colIndex % this.initialCols);
   };
-  doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
+
+  getInitialRowHeight() {
     if (typeof this.rowHeight !== 'number') {
-      throw new Error('rowHeight must be a number');
+      return this.getRowHeight(0);
     }
+
+    return this.rowHeight;
+  }
+
+  get totalPageCount(): number {
+    return this.options.masterBrain
+      ? this.options.masterBrain.totalPageCount
+      : this._totalPageCount;
+  }
+
+  set totalPageCount(value: number) {
+    if (this.options.masterBrain) {
+      return;
+    }
+    this._totalPageCount = value;
+  }
+
+  doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
+    const rowHeight = this.getInitialRowHeight();
 
     // determine the width of a column-set (or page)
 
@@ -412,24 +307,22 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     this.pageWidth = pageWidth;
 
     // based on the page width, determine the number of rows per page
-    this.rowsPerPage = Math.floor(this.availableHeight / this.rowHeight);
+    this.rowsPerPage = Math.floor(this.availableHeight / rowHeight);
 
-    this.totalPageCount = this.rowsPerPage
-      ? Math.ceil(this.initialRows / this.rowsPerPage)
-      : 0;
-    this.visiblePageCount = this.totalPageCount
-      ? Math.max(Math.ceil(this.availableWidth / this.pageWidth), 1)
-      : 1;
+    if (!this.options.masterBrain) {
+      this.totalPageCount = this.rowsPerPage
+        ? Math.ceil(this.initialRows / this.rowsPerPage)
+        : 0;
+    }
+
+    this.visiblePageCount =
+      this.totalPageCount && this.pageWidth
+        ? Math.max(Math.ceil(this.availableWidth / this.pageWidth), 1)
+        : 1;
 
     this.availableRenderHeight =
-      this.visiblePageCount * this.rowsPerPage * this.rowHeight;
+      this.visiblePageCount * this.rowsPerPage * rowHeight;
 
-    console.log(
-      'visiblePageCount',
-      this.visiblePageCount,
-      'initialCols',
-      this.initialCols,
-    );
     this.cols = this.totalPageCount * this.initialCols;
     this.rows = this.rowsPerPage;
 
@@ -438,10 +331,8 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
 
   getVirtualizedContentSizeFor(direction: 'horizontal' | 'vertical') {
     if (direction === 'vertical') {
-      if (typeof this.rowHeight !== 'number') {
-        throw new Error('rowHeight must be a number');
-      }
-      return this.rowHeight * this.rowsPerPage;
+      const rowHeight = this.getInitialRowHeight();
+      return rowHeight * this.rowsPerPage;
     }
 
     return this.pageWidth * this.totalPageCount;

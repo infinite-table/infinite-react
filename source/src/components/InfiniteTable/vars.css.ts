@@ -53,7 +53,8 @@ export const ThemeVars = createGlobalThemeContract(
 
     runtime: {
       bodyWidth: 'runtime-body-content-width',
-      totalVisibleColumnsWidth: 'runtime-total-visible-columns-width',
+      totalVisibleColumnsWidthValue: 'runtime-total-visible-columns-width',
+      totalVisibleColumnsWidthVar: 'runtime-total-visible-columns-width-var',
       visibleColumnsCount: 'runtime-visible-columns-count',
     },
 

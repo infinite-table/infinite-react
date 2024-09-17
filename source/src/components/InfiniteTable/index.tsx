@@ -120,11 +120,12 @@ function InfiniteTableHeader<T>() {
   const context = useInfiniteTable<T>();
 
   const { state: componentState, getComputed } = context;
-  const { header, brain, headerBrain } = componentState;
+  const { header, brain, headerBrain, wrapRowsHorizontally } = componentState;
   const { scrollbars } = getComputed();
 
   return header ? (
     <TableHeaderWrapper
+      wrapRowsHorizontally={!!wrapRowsHorizontally}
       bodyBrain={brain}
       headerBrain={headerBrain}
       scrollbars={scrollbars}

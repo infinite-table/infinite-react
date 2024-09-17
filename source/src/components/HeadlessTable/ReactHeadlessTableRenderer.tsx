@@ -193,10 +193,11 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
   };
 
-  constructor(brain: MatrixBrain) {
-    super('ReactHeadlessTableRenderer');
+  constructor(brain: MatrixBrain, debugId?: string) {
+    debugId = debugId || 'ReactHeadlessTableRenderer';
+    super(debugId);
     this.brain = brain;
-    this.debugId = brain.name;
+    this.debugId = debugId;
 
     this.mappedCells = new MappedCells();
     this.mappedDetailRows = new MappedVirtualRows();
@@ -1306,13 +1307,6 @@ export class ReactHeadlessTableRenderer extends Logger {
       renderedNode,
     );
 
-    if (__DEV__) {
-      this.debug(
-        `Render cell ${rowIndex},${colIndex} at element ${elementIndex}`,
-      );
-    }
-
-    // console.log('update', rowIndex, colIndex, renderedNode);
     itemUpdater(renderedNode);
 
     this.updateElementPosition(elementIndex, { hidden, rowspan, colspan });

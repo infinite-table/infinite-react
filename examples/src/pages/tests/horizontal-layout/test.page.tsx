@@ -25,7 +25,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 const domProps = {
   // style: { height: 420 /*30px header, 420 body*/, width: 230 },
-  style: { height: '50vh' /*30px header, 420 body*/, width: '50vw' },
+  style: { height: '50vh' /*30px header, 420 body*/, width: '30vw' },
 };
 
 const data = Array.from({ length: 10 }, (_, i) => ({
@@ -55,10 +55,10 @@ export default function App() {
           wrapRowsHorizontally={wrapRowsHorizontally}
           rowHeight={50}
           domProps={domProps}
-          header={false}
+          header={true}
           columnHeaderHeight={30}
           columns={columns}
-          columnDefaultWidth={100}
+          columnDefaultWidth={200}
           onCellClick={({ rowIndex, colIndex }) => {
             console.log('clicked', rowIndex, colIndex);
           }}

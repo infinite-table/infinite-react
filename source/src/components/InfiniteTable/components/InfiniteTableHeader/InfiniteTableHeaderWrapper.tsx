@@ -14,6 +14,7 @@ export type TableHeaderWrapperProps = {
   headerBrain: MatrixBrain;
   bodyBrain: MatrixBrain;
   scrollbars: Scrollbars;
+  wrapRowsHorizontally: boolean;
 };
 export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   const { headerBrain, bodyBrain, scrollbars } = props;
@@ -175,7 +176,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
     <div
       className={HeaderWrapperCls}
       style={{
-        height: height,
+        height,
       }}
     >
       {header}

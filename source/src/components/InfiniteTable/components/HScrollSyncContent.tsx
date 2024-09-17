@@ -28,17 +28,17 @@ export function HScrollSyncContent(
   const style = { ...domProps.style };
 
   if (width === 'column') {
-    style.width = ThemeVars.runtime.totalVisibleColumnsWidth;
+    style.width = ThemeVars.runtime.totalVisibleColumnsWidthValue;
   } else if (width === 'viewport') {
     style.width = ThemeVars.runtime.bodyWidth;
   }
   if (minWidth === 'column') {
-    style.minWidth = ThemeVars.runtime.totalVisibleColumnsWidth;
+    style.minWidth = ThemeVars.runtime.totalVisibleColumnsWidthValue;
   } else if (minWidth === 'viewport') {
     style.minWidth = ThemeVars.runtime.bodyWidth;
   }
   if (maxWidth === 'column') {
-    style.maxWidth = ThemeVars.runtime.totalVisibleColumnsWidth;
+    style.maxWidth = ThemeVars.runtime.totalVisibleColumnsWidthValue;
   } else if (maxWidth === 'viewport') {
     style.maxWidth = ThemeVars.runtime.bodyWidth;
   }

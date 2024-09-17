@@ -236,12 +236,17 @@ export function useCellRendering<T>(
         ? brain.getRowIndexInPage(rowIndex)
         : null;
 
+      const pageIndex = wrapRowsHorizontally
+        ? brain.getPageIndexForRow(rowIndex)
+        : null;
+
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
         virtualized: true,
         showZebraRows,
         groupRenderStrategy,
         rowIndexInPage,
+        pageIndex,
         rowIndex,
         rowInfo,
         hidden,

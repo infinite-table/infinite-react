@@ -27,8 +27,12 @@ const publicRuntimeVars: Record<
   }
 > = {
   bodyWidth: { name: stripVar(ThemeVars.runtime.bodyWidth), value: '' },
-  totalVisibleColumnsWidth: {
-    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidth),
+  totalVisibleColumnsWidthValue: {
+    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidthValue),
+    value: '',
+  },
+  totalVisibleColumnsWidthVar: {
+    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidthVar),
     value: '',
   },
   visibleColumnsCount: {
@@ -170,11 +174,20 @@ export function useDOMProps<T>(
   ] = `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`;
 
   //@ts-ignore
-  cssVars[publicRuntimeVars.totalVisibleColumnsWidth.name] = `${
+  cssVars[publicRuntimeVars.totalVisibleColumnsWidthValue.name] = `${
     computedPinnedStartColumnsWidth +
     computedPinnedEndColumnsWidth +
     computedUnpinnedColumnsWidth
   }px`;
+
+  //@ts-ignore
+  cssVars[
+    publicRuntimeVars.totalVisibleColumnsWidthVar.name
+  ] = `calc(${computedVisibleColumns
+    .map((_col, index) => {
+      return `var(${columnWidthAtIndex}-${index})`;
+    })
+    .join(' + ')})`;
 
   //@ts-ignore
   cssVars[publicRuntimeVars.visibleColumnsCount.name] =

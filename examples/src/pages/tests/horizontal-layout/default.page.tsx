@@ -27,7 +27,8 @@ export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const domProps = { style: { height: '30vh', width: 900 } };
+const domProps = { style: { height: '30vh', width: '90vw' } };
+// const domProps = { style: { height: '30vh', width: 300 } };
 
 // dataSource.length = 12;
 

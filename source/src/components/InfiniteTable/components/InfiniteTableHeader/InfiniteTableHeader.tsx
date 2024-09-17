@@ -144,6 +144,7 @@ function InfiniteTableHeaderFn<T>(
       columnAndGroupTreeInfo,
       columnGroupsMaxDepth,
       showColumnFilters,
+      headerBrain,
     ],
   );
 
