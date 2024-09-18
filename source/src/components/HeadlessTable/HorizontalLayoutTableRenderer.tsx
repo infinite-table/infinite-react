@@ -24,6 +24,37 @@ export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
     });
   }
 
+  isCellRenderedAndMappedCorrectly(row: number, col: number) {
+    const rendered = this.mappedCells.isCellRendered(row, col);
+
+    if (!rendered) {
+      return {
+        rendered,
+        mapped: false,
+      };
+    }
+
+    const cellAdditionalInfo = this.mappedCells.getCellAdditionalInfo(row, col);
+
+    if (!cellAdditionalInfo) {
+      return {
+        rendered,
+        mapped: false,
+      };
+    }
+
+    const info = this.getCellRealCoordinates(row, col);
+
+    const mapped =
+      info.colIndex === cellAdditionalInfo!.renderColIndex &&
+      info.rowIndex === cellAdditionalInfo!.renderRowIndex;
+
+    return {
+      rendered,
+      mapped,
+    };
+  }
+
   setTransform = (
     element: HTMLElement,
     rowIndex: number,

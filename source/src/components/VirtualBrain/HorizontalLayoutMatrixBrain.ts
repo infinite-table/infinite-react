@@ -1,3 +1,4 @@
+import { raf } from '../../utils/raf';
 import {
   ALL_DIRECTIONS,
   IBrain,
@@ -101,6 +102,12 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
   constructor(name: string, opts: HorizontalLayoutMatrixBrainOptions) {
     super(`HorizontalLayout${name ? `:${name}` : ''}`);
     this.options = opts;
+
+    if (this.options.masterBrain) {
+      this.options.masterBrain.onTotalPageCountChange(() => {
+        this.updateRenderCount({ horizontal: true, vertical: true });
+      });
+    }
   }
 
   getRowIndexInPage(rowIndex: number) {
@@ -255,8 +262,18 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
       }
     }
 
-    const horizontalChange = colsChanged || colWidthChanged || widthChanged;
     const verticalChange = rowsChanged || rowHeightChanged || heightChanged;
+    const horizontalChange =
+      colsChanged ||
+      colWidthChanged ||
+      widthChanged ||
+      /** when something changes vertically,
+       * it needs to trigger horizontal change as well since
+       * the number of "virtual" columns needs to be adjusted
+       *
+       * THIS IS VERY IMPORTANT TO HAVE HERE
+       */
+      verticalChange;
 
     if (horizontalChange || verticalChange) {
       this.updateRenderCount({
@@ -309,10 +326,17 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     // based on the page width, determine the number of rows per page
     this.rowsPerPage = Math.floor(this.availableHeight / rowHeight);
 
+    let shouldNotifyTotalPageCountChange = false;
+
     if (!this.options.masterBrain) {
+      const prevTotalPageCount = this.totalPageCount;
       this.totalPageCount = this.rowsPerPage
         ? Math.ceil(this.initialRows / this.rowsPerPage)
         : 0;
+
+      if (prevTotalPageCount != this.totalPageCount) {
+        shouldNotifyTotalPageCountChange = true;
+      }
     }
 
     this.visiblePageCount =
@@ -327,6 +351,49 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     this.rows = this.rowsPerPage;
 
     super.doUpdateRenderCount(which);
+
+    if (shouldNotifyTotalPageCountChange) {
+      this.notifyTotalPageCountChange();
+    }
+  }
+  private onTotalPageCountChangeFns: Set<(totalPageCount: number) => void> =
+    new Set();
+
+  private notifyTotalPageCountChange() {
+    if (this.destroyed) {
+      return;
+    }
+    const fns = this.onTotalPageCountChangeFns;
+
+    fns.forEach((fn) => {
+      raf(() => {
+        if (this.destroyed) {
+          return;
+        }
+        // #check-for-presence - see above note
+        if (fns.has(fn)) {
+          fn(this.totalPageCount);
+        }
+      });
+    });
+  }
+
+  protected onTotalPageCountChange = (fn: (x: number) => void) => {
+    this.onTotalPageCountChangeFns.add(fn);
+
+    return () => {
+      this.onTotalPageCountChangeFns.delete(fn);
+    };
+  };
+
+  destroy() {
+    if (this.destroyed) {
+      return;
+    }
+    super.destroy();
+
+    this.options.masterBrain = undefined;
+    this.onTotalPageCountChangeFns.clear();
   }
 
   getVirtualizedContentSizeFor(direction: 'horizontal' | 'vertical') {

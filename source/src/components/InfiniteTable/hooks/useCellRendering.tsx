@@ -232,7 +232,7 @@ export function useCellRendering<T>(
           : 'collapsed';
       }
 
-      const rowIndexInPage = wrapRowsHorizontally
+      const rowIndexInHorizontalLayoutPage = wrapRowsHorizontally
         ? brain.getRowIndexInPage(rowIndex)
         : null;
 
@@ -245,7 +245,7 @@ export function useCellRendering<T>(
         virtualized: true,
         showZebraRows,
         groupRenderStrategy,
-        rowIndexInPage,
+        rowIndexInHorizontalLayoutPage,
         pageIndex,
         rowIndex,
         rowInfo,

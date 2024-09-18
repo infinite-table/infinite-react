@@ -3,10 +3,10 @@ import { getGlobal } from './getGlobal';
 
 // colors take from the `debug` package on npm
 const COLORS = [
-  '#0000CC',
-  '#0000FF',
-  '#0033CC',
-  '#0033FF',
+  // '#0000CC',
+  // '#0000FF',
+  // '#0033CC',
+  // '#0033FF',
   '#0066CC',
   '#0066FF',
   '#0099CC',

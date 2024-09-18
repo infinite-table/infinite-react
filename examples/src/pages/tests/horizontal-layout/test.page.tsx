@@ -9,26 +9,51 @@ import { useState } from 'react';
 
 type Developer = {
   id: number;
+
+  firstName: string;
+  lastName: string;
+
+  currency: string;
+  country: string;
   preferredLanguage: string;
+  stack: string;
+  canDesign: 'yes' | 'no';
+
   age: number;
   salary: number;
 };
+
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
     type: 'number',
   },
-  preferredLanguage: { field: 'preferredLanguage' },
-  // age: { field: 'age' },
-  // salary: { field: 'salary' },
+  canDesign: {
+    field: 'canDesign',
+  },
+  salary: {
+    field: 'salary',
+    type: 'number',
+  },
+  firstName: {
+    field: 'firstName',
+  },
+  age: {
+    field: 'age',
+    type: 'number',
+  },
+
+  stack: { field: 'stack', renderMenuIcon: false },
+  currency: { field: 'currency' },
+  country: { field: 'country' },
 };
 
 const domProps = {
   // style: { height: 420 /*30px header, 420 body*/, width: 230 },
-  style: { height: '50vh' /*30px header, 420 body*/, width: '30vw' },
+  style: { height: '50vh' /*30px header, 420 body*/, width: '80vw' },
 };
 
-const data = Array.from({ length: 10 }, (_, i) => ({
+const data = Array.from({ length: 1000 }, (_, i) => ({
   id: i,
   preferredLanguage: `Lang ${i}`,
   age: i * 10,

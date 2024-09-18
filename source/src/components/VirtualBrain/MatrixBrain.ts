@@ -173,7 +173,7 @@ export class MatrixBrain extends Logger implements IBrain {
     new Set();
 
   private onDestroyFns: VoidFn[] = [];
-  private destroyed = false;
+  protected destroyed = false;
   private onRenderCountChangeFns: Set<FnOnRenderCountChange> = new Set();
   private onAvailableSizeChangeFns: Set<OnAvailableSizeChange> = new Set();
   private onScrollStartFns: VoidFunction[] = [];
@@ -205,6 +205,7 @@ export class MatrixBrain extends Logger implements IBrain {
     this.name = name || 'MatrixBrain';
 
     this.update = this.update.bind(this);
+    this.destroy = this.destroy.bind(this);
 
     this.getCellOffset = this.getCellOffset.bind(this);
 
@@ -413,6 +414,7 @@ export class MatrixBrain extends Logger implements IBrain {
       }
 
       this.setRenderCount(count);
+      return;
     }
 
     this.setRenderCount(this.computeRenderCount(which));
@@ -1649,7 +1651,7 @@ export class MatrixBrain extends Logger implements IBrain {
     }
   }
 
-  destroy = () => {
+  destroy() {
     if (this.destroyed) {
       return;
     }
@@ -1664,9 +1666,9 @@ export class MatrixBrain extends Logger implements IBrain {
     this.onScrollFns = [];
     this.onScrollStartFns = [];
     this.onScrollStopFns = [];
-    this.onRenderCountChangeFns = new Set();
-    this.onRenderRangeChangeFns = new Set();
-    this.onVerticalRenderRangeChangeFns = new Set();
-    this.onHorizontalRenderRangeChangeFns = new Set();
-  };
+    this.onRenderCountChangeFns.clear();
+    this.onRenderRangeChangeFns.clear();
+    this.onVerticalRenderRangeChangeFns.clear();
+    this.onHorizontalRenderRangeChangeFns.clear();
+  }
 }

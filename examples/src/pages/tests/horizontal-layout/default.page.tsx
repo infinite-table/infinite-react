@@ -13,6 +13,11 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'id',
     type: 'number',
     /*xdefaultWidth: 80,*/ renderValue: ({ value }) => value - 1,
+    style: (options) => {
+      return {
+        // background : options.rowInfo.
+      };
+    },
   },
   preferredLanguage: { field: 'preferredLanguage' /*xdefaultWidth: 110 */ },
   // age: { field: 'age' /*xdefaultWidth: 70 */ },

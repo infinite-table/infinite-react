@@ -91,7 +91,10 @@ export class ReactHeadlessTableRenderer extends Logger {
   private detailRowDOMRefs: RefCallback<HTMLElement>[] = [];
   private detailRowUpdaters: SubscriptionCallback<Renderable>[] = [];
 
-  protected mappedCells: MappedCells;
+  protected mappedCells: MappedCells<{
+    renderRowIndex: number;
+    renderColIndex: number;
+  }>;
   private mappedDetailRows: MappedVirtualRows;
 
   private items: Renderable[] = [];
@@ -199,7 +202,12 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.brain = brain;
     this.debugId = debugId;
 
-    this.mappedCells = new MappedCells();
+    this.mappedCells = new MappedCells<{
+      renderRowIndex: number;
+      renderColIndex: number;
+    }>({
+      withCellAdditionalInfo: brain.isHorizontalLayoutBrain,
+    });
     this.mappedDetailRows = new MappedVirtualRows();
 
     this.renderRange = this.renderRange.bind(this);
@@ -573,6 +581,14 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
+  isCellRenderedAndMappedCorrectly(row: number, col: number) {
+    const rendered = this.mappedCells.isCellRendered(row, col);
+    return {
+      rendered,
+      mapped: rendered,
+    };
+  }
+
   renderRange(
     range: TableRenderRange,
 
@@ -774,7 +790,8 @@ export class ReactHeadlessTableRenderer extends Logger {
             continue;
           }
           visitedCells.set(key, true);
-          const cellRendered = mappedCells.isCellRendered(row, col);
+          const { rendered: cellRendered, mapped: cellMappedCorrectly } =
+            this.isCellRenderedAndMappedCorrectly(row, col);
 
           // for cells that belong to the first row of the render range
           // or to the first column of the render range
@@ -806,7 +823,7 @@ export class ReactHeadlessTableRenderer extends Logger {
             }
           }
 
-          if (cellRendered && !force) {
+          if (cellRendered && !force && cellMappedCorrectly) {
             continue;
           }
 
@@ -857,8 +874,12 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
 
     extraCells.forEach(([rowIndex, colIndex]) => {
-      if (mappedCells.isCellRendered(rowIndex, colIndex)) {
-        if (force) {
+      const { rendered, mapped } = this.isCellRenderedAndMappedCorrectly(
+        rowIndex,
+        colIndex,
+      );
+      if (rendered) {
+        if (force || !mapped) {
           const elementIndex = mappedCells.getElementIndexForCell(
             rowIndex,
             colIndex,
@@ -1300,11 +1321,19 @@ export class ReactHeadlessTableRenderer extends Logger {
       return;
     }
 
+    const cellAdditionalInfo = this.brain.isHorizontalLayoutBrain
+      ? {
+          renderRowIndex,
+          renderColIndex,
+        }
+      : undefined;
+
     this.mappedCells.renderCellAtElement(
       rowIndex,
       colIndex,
       elementIndex,
       renderedNode,
+      cellAdditionalInfo,
     );
 
     itemUpdater(renderedNode);

@@ -310,6 +310,7 @@ export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
 export type InfiniteTableColumnStylingFnParams<T> = {
   value: Renderable;
   column: InfiniteTableComputedColumn<T>;
+  // rowIndexInHorizontalLayoutPage: null | number;
   inEdit: boolean;
   rowHasSelectedCells: boolean;
   editError: InfiniteTableColumnRenderParamBase<T>['editError'];
