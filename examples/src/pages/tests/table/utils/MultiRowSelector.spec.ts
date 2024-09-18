@@ -30,6 +30,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
+      isRowDisabledAt: (_index) => false,
     });
     selector.rowSelectionState = rowSelection;
 
@@ -91,6 +92,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
+      isRowDisabledAt: (_index) => false,
     });
     selector.rowSelectionState = rowSelection;
 
@@ -143,6 +145,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
+      isRowDisabledAt: (_index) => false,
     });
 
     selector.rowSelectionState = rowSelection;
@@ -211,6 +214,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
+      isRowDisabledAt: (_index) => false,
     });
 
     selector.rowSelectionState = rowSelection;
@@ -270,6 +274,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
+      isRowDisabledAt: (_index) => false,
     });
     selector.rowSelectionState = rowSelection;
 
@@ -343,6 +348,7 @@ export default test.describe.parallel('MultiRowSelector', () => {
 
     const selector = new MultiRowSelector({
       getIdForIndex: (index) => `${index}`,
+      isRowDisabledAt: (_index) => false,
     });
 
     selector.rowSelectionState = rowSelection;

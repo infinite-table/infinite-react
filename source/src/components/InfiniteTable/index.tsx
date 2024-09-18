@@ -175,6 +175,7 @@ function InfiniteTableBody<T>() {
     rowDetailRenderer,
     showHoverRows,
     wrapRowsHorizontally,
+    domProps,
   } = componentState;
 
   const LoadMaskCmp = components?.LoadMask ?? LoadMask;
@@ -245,11 +246,14 @@ function InfiniteTableBody<T>() {
     computed,
   });
 
+  const { autoFocus, tabIndex } = domProps ?? {};
+
   return (
     <InfiniteTableBodyContainer onContextMenu={onContextMenu}>
       <HeadlessTable
         debugId={debugId}
-        tabIndex={0}
+        tabIndex={tabIndex ?? 0}
+        autoFocus={autoFocus ?? undefined}
         activeRowIndex={
           componentState.ready && keyboardNavigation === 'row'
             ? activeRowIndex
@@ -339,7 +343,16 @@ export const InfiniteTableComponent = React.memo(
 
     const licenseValid = useLicense(licenseKey);
 
-    const domProps = useDOMProps<T>(componentState.domProps);
+    const {
+      // remove autoFocus and tabIndex from the domProps
+      // that will be spread on the root DOM element
+      // as they are meant for the scroller element
+      autoFocus: _,
+      tabIndex: __,
+      ...initialDOMProps
+    } = componentState.domProps ?? {};
+
+    const domProps = useDOMProps<T>(initialDOMProps);
 
     React.useEffect(() => {
       brain.setScrollStopDelay(scrollStopDelay);

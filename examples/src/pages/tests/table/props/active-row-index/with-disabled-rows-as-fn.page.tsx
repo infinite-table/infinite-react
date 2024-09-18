@@ -2,10 +2,11 @@ import {
   InfiniteTable,
   DataSource,
   DataSourceData,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
+import { useState } from 'react';
 
 type Developer = {
   id: number;
@@ -25,13 +26,14 @@ type Developer = {
 };
 
 const dataSource: DataSourceData<Developer> = ({}) => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100-sql`)
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers10-sql`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: { field: 'preferredLanguage' },
+  id: { field: 'id' },
   country: { field: 'country' },
   salary: {
     field: 'salary',
@@ -41,27 +43,37 @@ const columns: InfiniteTablePropColumns<Developer> = {
   canDesign: { field: 'canDesign' },
   firstName: { field: 'firstName' },
   stack: { field: 'stack' },
-  id: { field: 'id' },
+
   hobby: { field: 'hobby' },
   city: { field: 'city' },
   currency: { field: 'currency' },
 };
 
 export default function KeyboardNavigationForRows() {
+  const [activeRowIndex, setActiveRowIndex] = useState(0);
+
+  (globalThis as any).activeRowIndex = activeRowIndex;
   return (
-    <DataSource<Developer> primaryKey="id" data={dataSource}>
+    <DataSource<Developer>
+      primaryKey="id"
+      data={dataSource}
+      selectionMode="multi-row"
+      isRowDisabled={(rowInfo) =>
+        rowInfo.indexInAll === 3 ||
+        rowInfo.indexInAll === 5 ||
+        rowInfo.indexInAll === 6
+      }
+    >
       <InfiniteTable<Developer>
         columns={columns}
-        defaultActiveRowIndex={99}
+        activeRowIndex={activeRowIndex}
+        onActiveRowIndexChange={setActiveRowIndex}
         keyboardNavigation="row"
         domProps={{
           autoFocus: true,
           style: {
             height: 800,
           },
-        }}
-        columnPinning={{
-          stack: true,
         }}
       />
     </DataSource>

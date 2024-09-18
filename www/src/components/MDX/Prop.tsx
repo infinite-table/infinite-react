@@ -537,9 +537,8 @@ export function PropTable({
   }, []);
 
   React.useLayoutEffect(() => {
-    const initialText = globalThis.location
-      ? globalThis.location.hash.slice(1).toLowerCase()
-      : '';
+    const hash = globalThis.location ? globalThis.location.hash.slice(1) : '';
+    const initialText = hash ? hash.toLowerCase() : '';
 
     if (initialText) {
       const [search, value] = initialText.split('=');
@@ -547,6 +546,7 @@ export function PropTable({
       if (search === 'search' && value) {
         resetSearch(value);
       }
+      setHash(hash);
     }
 
     const onHashChange = debounce(function (_event: null | HashChangeEvent) {
@@ -632,6 +632,13 @@ export function PropTable({
       }
       if (!hidden) {
         visibleCount++;
+      }
+      if (highlight) {
+        console.log({
+          highlight,
+          lowerName,
+          lowerHash,
+        });
       }
       return React.cloneElement(child, {
         //@ts-ignore

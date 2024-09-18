@@ -105,7 +105,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
             ? ActiveCellIndicatorCls.visible
             : ActiveCellIndicatorCls.hidden
         }`}
-      ></div>
+      />
     </div>
   );
 };

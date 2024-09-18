@@ -125,6 +125,11 @@ const RowVars = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
 
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
+  [ThemeVars.components.Row.disabledOpacity]: '0.5',
+  [ThemeVars.components.Row.disabledBackground]: '#eeeeee',
+  [ThemeVars.components.Row.oddDisabledBackground]: '#f9f9f9',
+  [ThemeVars.components.Row.selectedDisabledBackground]:
+    ThemeVars.components.Row.selectedBackground,
   [ThemeVars.components.Row.selectedBackground]: '#d1e9ff',
   [ThemeVars.components.Row.selectedHoverBackground]: '#add8ff',
   [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',

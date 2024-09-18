@@ -2449,7 +2449,7 @@ In addition, if you need to configure the context menu to have other columns rat
 ```tsx
 const getCellContextMenuItems = () => {
   return {
-    columns: [{ name: 'Label' }, { name: 'Icon' }],
+    columns: [{ name: 'label' }, { name: 'icon' }],
     items: [
       {
         label: 'Welcome',

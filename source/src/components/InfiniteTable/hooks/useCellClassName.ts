@@ -16,6 +16,7 @@ export function useCellClassName<T>(
     groupCell: boolean;
     rowExpanded: boolean;
     rowActive: boolean;
+    rowDisabled: boolean;
     align: InfiniteTableColumnAlignValues;
     verticalAlign: InfiniteTableColumnVerticalAlignValues;
     rowSelected: boolean | null;
@@ -38,6 +39,7 @@ export function useCellClassName<T>(
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
     firstRow: extraFlags.firstRow ?? false,
+    rowDisabled: extraFlags.rowDisabled,
     groupRow: extraFlags.groupRow,
     groupCell: extraFlags.groupCell,
     verticalAlign: extraFlags.verticalAlign,
@@ -73,6 +75,10 @@ export function useCellClassName<T>(
   }
   if (extraFlags.firstRow) {
     result.push(...baseClasses.map((c) => `${c}--first-row`));
+  }
+
+  if (extraFlags.rowDisabled) {
+    result.push(...baseClasses.map((c) => `${c}--disabled`));
   }
 
   if (extraFlags.groupRow) {

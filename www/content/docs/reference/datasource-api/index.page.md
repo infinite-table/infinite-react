@@ -34,6 +34,82 @@ For API on row/group selection, see the [Selection API page](/docs/reference/sel
 
 <PropTable sort searchPlaceholder="Type to filter API methods">
 
+<Prop name="isRowDisabledAt" type="(rowIndex: number) => boolean">
+
+> Returns `true` if the row at the specified index is disabled, `false` otherwise.
+
+See the <DPropLink name="rowDisabledState" /> prop for more information.
+
+For checking if a row is disabled by its primary key, see the <DApiLink name="isRowDisabled" /> method.
+
+For changing the enable/disable state for the row, see the <DApiLink name="setRowEnabledAt" />.
+
+<Sandpack title="Changing the enable/disable state for a row">
+
+```ts file="../datasource-props/rowDisabledState-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="isRowDisabled" type="(primaryKey: any) => boolean">
+
+> Returns `true` if the row with the specified primary key is disabled, `false` otherwise.
+
+See the <DPropLink name="rowDisabledState" /> prop for more information.
+
+For checking if a row is disabled by its index, see the <DApiLink name="isRowDisabledAt" /> method.
+
+For changing the enable/disable state for the row, see the <DApiLink name="setRowEnabled" />.
+
+<Sandpack title="Changing the enable/disable state for a row">
+
+```ts file="../datasource-props/rowDisabledState-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="setRowEnabled" type="(primaryKey: any, enabled: boolean) => void">
+
+> Sets the enable/disable state for the row with the specified primary key.
+
+See the <DPropLink name="rowDisabledState" /> prop for more information.
+
+For setting the enable/disable state for a row by its index, see the <DApiLink name="setRowEnabledAt" /> method.
+
+<Sandpack title="Changing the enable/disable state for a row">
+
+```ts file="../datasource-props/rowDisabledState-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="setRowEnabledAt" type="(rowIndex: number, enabled: boolean) => void">
+
+> Sets the enable/disable state for the row at the specified index.
+
+See the <DPropLink name="rowDisabledState" /> prop for more information.
+
+For setting the enable/disable state for a row by its primary key, see the <DApiLink name="setRowEnabled" /> method.
+
+<Sandpack title="Changing the enable/disable state for a row">
+
+```ts file="../datasource-props/rowDisabledState-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+
 <Prop name="addData" type="(data: DATA_TYPE) => Promise">
 
 > Adds the specified data at the end of the data source.

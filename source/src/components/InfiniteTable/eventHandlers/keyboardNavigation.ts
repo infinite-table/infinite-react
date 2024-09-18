@@ -1,6 +1,31 @@
 import { clamp } from '../../utils/clamp';
 import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 
+function getNextEnabledRowIndex<T>(
+  getDataSourceState: InfiniteTableKeyboardEventHandlerContext<T>['getDataSourceState'],
+  activeRowIndex: number,
+  direction: 1 | -1,
+): number {
+  const dataArray = getDataSourceState().dataArray;
+
+  const min = 0;
+  const max = dataArray.length - 1;
+
+  let i = activeRowIndex;
+
+  do {
+    i += direction;
+    const rowInfo = dataArray[i];
+    if (!rowInfo) {
+      return i < min ? min : max;
+    }
+    if (!rowInfo.rowDisabled) {
+      return i;
+    }
+  } while (i >= min && i <= max);
+
+  return clamp(i, min, max);
+}
 export function handleRowNavigation<T>(
   options: InfiniteTableKeyboardEventHandlerContext<T>,
   event: {
@@ -33,10 +58,18 @@ export function handleRowNavigation<T>(
   const max = arrLength - 1;
   const KeyToFunction = {
     ArrowDown: () => {
-      activeRowIndex = clamp(activeRowIndex! + 1, min, max);
+      activeRowIndex = getNextEnabledRowIndex(
+        getDataSourceState,
+        activeRowIndex!,
+        1,
+      );
     },
     ArrowUp: () => {
-      activeRowIndex = clamp(activeRowIndex! - 1, min, max);
+      activeRowIndex = getNextEnabledRowIndex(
+        getDataSourceState,
+        activeRowIndex!,
+        -1,
+      );
     },
     ArrowLeft: () => {
       const rowInfo = dataArray[activeRowIndex!];
