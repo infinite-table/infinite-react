@@ -92,6 +92,9 @@ export type InfiniteTableColumnRenderParamBase<
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
 
+  rowIndexInHorizontalLayoutPage: null | number;
+  horizontalLayoutPageIndex: null | number;
+
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
 
@@ -310,7 +313,8 @@ export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
 export type InfiniteTableColumnStylingFnParams<T> = {
   value: Renderable;
   column: InfiniteTableComputedColumn<T>;
-  // rowIndexInHorizontalLayoutPage: null | number;
+  rowIndexInHorizontalLayoutPage: null | number;
+  horizontalLayoutPageIndex: null | number;
   inEdit: boolean;
   rowHasSelectedCells: boolean;
   editError: InfiniteTableColumnRenderParamBase<T>['editError'];

@@ -143,7 +143,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowClassName,
 
     rowIndexInHorizontalLayoutPage,
-
+    horizontalLayoutPageIndex,
     getData,
     cellStyle,
     cellClassName,
@@ -201,8 +201,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   };
 
   const visibleColumnsIds = computed.computedVisibleColumns.map((x) => x.id);
-
   const colRenderingParams = getColumnRenderingParams({
+    horizontalLayoutPageIndex,
+    rowIndexInHorizontalLayoutPage,
     column,
     rowInfo,
     rowDetailState: rowDetailState,

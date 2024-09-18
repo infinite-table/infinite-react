@@ -25,7 +25,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 50;
     const COLS = 2;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,
@@ -78,7 +78,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 50;
     const COLS = 2;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,
@@ -120,7 +120,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 50;
     const COLS = 2;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,
@@ -180,7 +180,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,
@@ -210,7 +210,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 30;
     const COLS = 2;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,
@@ -237,7 +237,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,
@@ -319,7 +319,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new HorizontalLayoutMatrixBrain();
+    const brain = new HorizontalLayoutMatrixBrain('test', { isHeader: false });
 
     brain.update({
       colWidth: COL_SIZE,

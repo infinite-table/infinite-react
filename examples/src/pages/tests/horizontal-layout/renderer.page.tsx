@@ -10,7 +10,9 @@ import { useResizeObserver } from '@src/components/ResizeObserver';
 
 export default function App() {
   const [brain] = useState(() => {
-    return new HorizontalLayoutMatrixBrain('horizontal-layout');
+    return new HorizontalLayoutMatrixBrain('horizontal-layout', {
+      isHeader: false,
+    });
   });
 
   const scrollContentRef = React.useRef<HTMLDivElement>(null);

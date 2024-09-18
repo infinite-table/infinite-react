@@ -156,6 +156,8 @@ export function getColumnValueToEdit<T>(options: {
 
 export function getColumnRenderingParams<T>(options: {
   column: InfiniteTableComputedColumn<T>;
+  rowIndexInHorizontalLayoutPage: number | null;
+  horizontalLayoutPageIndex: number | null;
   rowInfo: InfiniteTableRowInfo<T>;
   rowDetailState: 'expanded' | 'collapsed' | false;
   visibleColumnsIds: string[];
@@ -187,6 +189,8 @@ export function getColumnRenderingParams<T>(options: {
   });
 
   const stylingParam = {
+    rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
+    horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
     column: options.column,
     inEdit,
     rowHasSelectedCells: false,
@@ -244,6 +248,8 @@ export function getColumnRenderingParams<T>(options: {
 }
 
 export function getColumnRenderParam<T>(options: {
+  rowIndexInHorizontalLayoutPage: number | null;
+  horizontalLayoutPageIndex: number | null;
   column: InfiniteTableComputedColumn<T>;
   align: InfiniteTableColumnAlignValues;
   verticalAlign: InfiniteTableColumnVerticalAlignValues;
@@ -296,6 +302,8 @@ export function getColumnRenderParam<T>(options: {
     cellSelected,
 
     rowHasSelectedCells: false,
+    horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
+    rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
 
     ...formattedValueContext,
     editError:

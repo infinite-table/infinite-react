@@ -13,7 +13,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'id',
     type: 'number',
     /*xdefaultWidth: 80,*/ renderValue: ({ value }) => value - 1,
-    style: (options) => {
+    style: (_options) => {
       return {
         // background : options.rowInfo.
       };

@@ -236,7 +236,7 @@ export function useCellRendering<T>(
         ? brain.getRowIndexInPage(rowIndex)
         : null;
 
-      const pageIndex = wrapRowsHorizontally
+      const horizontalLayoutPageIndex = wrapRowsHorizontally
         ? brain.getPageIndexForRow(rowIndex)
         : null;
 
@@ -246,7 +246,8 @@ export function useCellRendering<T>(
         showZebraRows,
         groupRenderStrategy,
         rowIndexInHorizontalLayoutPage,
-        pageIndex,
+        horizontalLayoutPageIndex,
+
         rowIndex,
         rowInfo,
         hidden,

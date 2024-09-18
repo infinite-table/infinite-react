@@ -414,7 +414,8 @@ export class MatrixBrain extends Logger implements IBrain {
       }
 
       this.setRenderCount(count);
-      return;
+      // DON'T uncomment the return
+      // return
     }
 
     this.setRenderCount(this.computeRenderCount(which));
