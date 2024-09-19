@@ -126,6 +126,12 @@ export function updateRowSelectionOnCellClick<T>(
     return false;
   }
 
+  const rowInfo = dataArray[rowIndex];
+
+  if (rowInfo?.rowDisabled) {
+    return false;
+  }
+
   if (selectionMode === 'multi-row') {
     if (renderSelectionCheckBox && !event.key) {
       // we should not click-select when we have a checkbox column

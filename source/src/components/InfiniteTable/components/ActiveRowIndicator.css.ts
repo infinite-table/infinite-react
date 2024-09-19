@@ -1,16 +1,16 @@
 import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../vars.css';
-import { left, top, pointerEvents, position, width } from '../utilities.css';
+import { left, top, pointerEvents, position } from '../utilities.css';
 
 export const ActiveRowIndicatorBaseCls = style(
   [
     pointerEvents.none,
-    position.sticky,
-    width['100%'],
+    position.absolute,
     top['0'],
     left['0'],
     {
+      right: ThemeVars.runtime.browserScrollbarWidth,
       border: fallbackVar(
         ThemeVars.components.Row.activeBorder,
         `${fallbackVar(

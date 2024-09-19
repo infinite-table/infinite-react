@@ -198,6 +198,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     dataSourceApi,
   };
 
+  const rowDisabled = rowInfo.rowDisabled;
+
   const visibleColumnsIds = computed.computedVisibleColumns.map((x) => x.id);
 
   const colRenderingParams = getColumnRenderingParams({
@@ -249,14 +251,16 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       });
 
       if (keyboardNavigation === 'row') {
-        componentActions.activeRowIndex = rowIndex;
+        if (!rowDisabled) {
+          componentActions.activeRowIndex = rowIndex;
+        }
         return;
       }
       if (keyboardNavigation === 'cell') {
         componentActions.activeCellIndex = [rowIndex, colIndex];
       }
     },
-    [rowIndex, column.computedVisibleIndex, keyboardNavigation],
+    [rowIndex, rowDisabled, column.computedVisibleIndex, keyboardNavigation],
   );
 
   const { selectionMode, cellSelection } = dataSourceState;
@@ -624,6 +628,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           zebra,
           align,
           verticalAlign,
+          rowDisabled,
           rowActive,
           cellSelected,
           rowSelected,

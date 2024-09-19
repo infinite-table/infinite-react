@@ -22,6 +22,7 @@ export interface VirtualScrollContainerProps {
 
   scrollable?: Scrollable;
   tabIndex?: number;
+  autoFocus?: boolean;
 
   onContainerScroll?: (scrollPos: {
     scrollTop: number;
@@ -42,6 +43,7 @@ export const VirtualScrollContainer = React.forwardRef(
       className,
       tabIndex,
       style,
+      autoFocus,
     } = props;
 
     const domRef = ref ?? useRef<HTMLDivElement | null>(null);
@@ -54,6 +56,7 @@ export const VirtualScrollContainer = React.forwardRef(
       <div
         ref={domRef}
         style={style}
+        autoFocus={autoFocus}
         tabIndex={tabIndex}
         className={join(
           className,

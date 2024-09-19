@@ -16,6 +16,10 @@ export const DarkVars = {
   [ThemeVars.components.Row.selectedHoverBackground]: '#0b243a',
   [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row.oddBackground]: '#242a31',
+
+  [ThemeVars.components.Row.disabledBackground]: '#292a2c',
+  [ThemeVars.components.Row.oddDisabledBackground]: '#2d2e30',
+
   [ThemeVars.components.Cell.color]: '#c3c3c3',
   [ThemeVars.components.Menu.shadowColor]: `rgba(0,0,0,0.25)`,
   [ThemeVars.components.Menu.shadowColor]: `rgba(255,255,255,0.25)`,

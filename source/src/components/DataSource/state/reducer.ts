@@ -80,6 +80,7 @@ function toRowInfo<T>(
   id: any,
   index: number,
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<T>) => boolean | null,
+  isRowDisabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean,
   cellSelectionState?: CellSelectionState,
 ): InfiniteTable_NoGrouping_RowInfoNormal<T> {
   const rowInfo: InfiniteTable_NoGrouping_RowInfoNormal<T> = {
@@ -90,11 +91,15 @@ function toRowInfo<T>(
     isGroupRow: false,
     selfLoaded: true,
     rowSelected: false,
+    rowDisabled: false,
     isCellSelected: returnFalse,
     hasSelectedCells: returnFalse,
   };
   if (isRowSelected) {
     rowInfo.rowSelected = isRowSelected(rowInfo);
+  }
+  if (isRowDisabled) {
+    rowInfo.rowDisabled = isRowDisabled(rowInfo);
   }
 
   if (cellSelectionState) {
@@ -312,6 +317,12 @@ export function concludeReducer<T>(params: {
   const pivotBy = state.pivotBy;
 
   const shouldGroup = groupBy.length > 0 || !!pivotBy;
+
+  const rowDisabledStateDepsChanged = haveDepsChanged(previousState, state, [
+    'rowDisabledState',
+    'isRowDisabled',
+  ]);
+
   const selectionDepsChanged = haveDepsChanged(previousState, state, [
     'rowSelection',
     'cellSelection',
@@ -344,6 +355,7 @@ export function concludeReducer<T>(params: {
         !state.lastGroupDataArray ||
         cacheAffectedParts.groupBy)) ||
     selectionDepsChanged ||
+    rowDisabledStateDepsChanged ||
     rowInfoReducersChanged;
 
   const now = Date.now();
@@ -425,6 +437,7 @@ export function concludeReducer<T>(params: {
         }
       : undefined;
 
+  const isRowDisabled = state.isRowDisabled || returnFalse;
   if (state.isRowSelected && state.selectionMode === 'multi-row') {
     isRowSelected = (rowInfo) =>
       state.isRowSelected!(
@@ -565,6 +578,7 @@ export function concludeReducer<T>(params: {
       arrayDifferentAfterSortStep ||
       groupsDepsChanged ||
       selectionDepsChanged ||
+      rowDisabledStateDepsChanged ||
       rowInfoReducersChanged
     ) {
       const rowInfoReducerKeys = Object.keys(
@@ -588,6 +602,7 @@ export function concludeReducer<T>(params: {
           data ? toPrimaryKey(data) : index,
           index,
           isRowSelected,
+          isRowDisabled,
           cellSelectionState,
         );
 

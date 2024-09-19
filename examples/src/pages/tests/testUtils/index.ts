@@ -112,12 +112,18 @@ export const getCellNodeLocator = (
 
 export const isNodeExpanded = async (node: Locator) => {
   return await node.evaluate((n) =>
-    n.classList.contains('.InfiniteColumnCell--group-row-expanded'),
+    n.classList.contains('InfiniteColumnCell--group-row-expanded'),
   );
 };
 export const isNodeGroupRow = async (node: Locator) => {
   return await node.evaluate((n) =>
-    n.classList.contains('.InfiniteColumnCell--group-row'),
+    n.classList.contains('InfiniteColumnCell--group-row'),
+  );
+};
+
+export const isRowDisabled = async (node: Locator) => {
+  return await node.evaluate((n) =>
+    n.classList.contains('InfiniteColumnCell--disabled'),
   );
 };
 
@@ -231,6 +237,10 @@ export const getScrollPosition = async ({ page }: { page: Page }) => {
       scrollTop: node.scrollTop,
     };
   });
+};
+
+export const getScrollerLocator = async ({ page }: { page: Page }) => {
+  return page.locator('.InfiniteBody > :first-child');
 };
 
 export const getMenuCellLocatorForKey = (

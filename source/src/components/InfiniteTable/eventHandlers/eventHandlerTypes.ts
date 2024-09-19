@@ -33,7 +33,12 @@ export type InfiniteTableEventHandlerAbstractContext<T> = {
     cellSelection: DataSourceState<T>['cellSelection'];
     groupBy: DataSourceState<T>['groupBy'];
     selectionMode: DataSourceState<T>['selectionMode'];
-    dataArray: { id: string; isGroupRow: boolean; groupKeys?: any[] }[];
+    dataArray: {
+      id: string;
+      isGroupRow: boolean;
+      groupKeys?: any[];
+      rowDisabled: boolean;
+    }[];
   };
   dataSourceActions: DataSourceComponentActions<T>;
   dataSourceApi: DataSourceApi<T>;

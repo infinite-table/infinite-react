@@ -2,6 +2,7 @@ import { RowSelectionState } from '../../DataSource/RowSelectionState';
 
 export type MultiRowSelectorOptions = {
   getIdForIndex: (index: number) => string | number;
+  isRowDisabledAt: (index: number) => boolean;
 };
 
 function ensureMinMax(start: number, end: number) {
@@ -10,6 +11,7 @@ function ensureMinMax(start: number, end: number) {
 
 export class MultiRowSelector {
   getIdForIndex: MultiRowSelectorOptions['getIdForIndex'];
+  isRowDisabledAt: MultiRowSelectorOptions['isRowDisabledAt'];
 
   multiSelectStartIndex: number = 0;
   multiSelectEndIndex?: number;
@@ -18,6 +20,7 @@ export class MultiRowSelector {
 
   constructor(options: MultiRowSelectorOptions) {
     this.getIdForIndex = options.getIdForIndex;
+    this.isRowDisabledAt = options.isRowDisabledAt;
   }
 
   set rowSelectionState(rowSelectionState: RowSelectionState) {
@@ -35,7 +38,9 @@ export class MultiRowSelector {
 
     for (let i = start; i <= end; i++) {
       const id = this.getIdForIndex(i);
-
+      if (this.isRowDisabledAt(i)) {
+        continue;
+      }
       rowSelectionState.selectRow(id);
     }
   }
@@ -46,6 +51,10 @@ export class MultiRowSelector {
 
     for (let i = start; i <= end; i++) {
       const id = this.getIdForIndex(i);
+
+      if (this.isRowDisabledAt(i)) {
+        continue;
+      }
 
       rowSelectionState.deselectRow(id);
     }

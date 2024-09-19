@@ -11,6 +11,7 @@ import {
   getSelectedRowIds,
   isNodeExpanded,
   isNodeGroupRow,
+  isRowDisabled,
   toggleGroupRow,
 } from '.';
 
@@ -85,6 +86,15 @@ export class RowTestingModel {
     });
 
     return await isNodeGroupRow(node);
+  }
+
+  async isRowDisabled(rowIndex: number) {
+    const node = this.getCellLocator({
+      rowIndex,
+      colIndex: 0,
+    });
+
+    return await isRowDisabled(node);
   }
 
   async getCellComputedStylePropertyValue(

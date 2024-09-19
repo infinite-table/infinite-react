@@ -35,6 +35,10 @@ const publicRuntimeVars: Record<
     name: stripVar(ThemeVars.runtime.visibleColumnsCount),
     value: '',
   },
+  browserScrollbarWidth: {
+    name: stripVar(ThemeVars.runtime.browserScrollbarWidth),
+    value: '',
+  },
 };
 
 const scrollbarWidthHorizontal = stripVar(
@@ -163,6 +167,15 @@ export function useDOMProps<T>(
     },
     {},
   );
+
+  // we need this if here - if it's not here, for whatever reason,
+  // the scrollbarWidth is not updated correctly on re-renders (as it comes 0 initially when server-side rendered in nextjs for example)
+  if (bodySize.width) {
+    //@ts-ignore
+    cssVars[
+      publicRuntimeVars.browserScrollbarWidth.name
+    ] = `${getScrollbarWidth()}px`;
+  }
 
   //@ts-ignore
   cssVars[

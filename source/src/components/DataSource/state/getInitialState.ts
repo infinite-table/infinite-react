@@ -6,6 +6,7 @@ import {
   DataSourcePropOnCellSelectionChange_MultiCell,
   DataSourcePropOnCellSelectionChange_SingleCell,
   DataSourceRowInfoReducer,
+  RowDisabledStateObject,
   RowSelectionState,
 } from '..';
 import { dbg } from '../../../utils/debug';
@@ -47,6 +48,7 @@ import {
 } from '../types';
 
 import { normalizeSortInfo } from './normalizeSortInfo';
+import { RowDisabledState } from '../RowDisabledState';
 
 const DataSourceLogger = dbg('DataSource') as DebugLogger;
 
@@ -101,6 +103,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
 
     propsCache: new Map<keyof DataSourceProps<T>, WeakMap<any, any>>([
       ['sortInfo', new WeakMap()],
+      ['rowDisabledState', new WeakMap()],
     ]),
 
     rowInfoReducerResults: undefined,
@@ -202,6 +205,35 @@ export const forwardProps = <T>(
     },
     batchOperationDelay: 1,
     isRowSelected: 1,
+    isRowDisabled: 1,
+    rowDisabledState: (
+      rowDisabledState:
+        | RowDisabledState<T>
+        | RowDisabledStateObject<T>
+        | undefined,
+    ) => {
+      if (!rowDisabledState) {
+        return null;
+      }
+      if (rowDisabledState instanceof RowDisabledState) {
+        return rowDisabledState;
+      }
+
+      const wMap = setupState.propsCache.get('rowDisabledState') ?? weakMap;
+
+      let cachedRowDisabledState = wMap.get(
+        rowDisabledState,
+      ) as RowDisabledState<T>;
+
+      if (!cachedRowDisabledState) {
+        cachedRowDisabledState = new RowDisabledState<T>(rowDisabledState);
+        wMap.set(rowDisabledState, cachedRowDisabledState);
+      }
+
+      rowDisabledState = cachedRowDisabledState;
+
+      return rowDisabledState ?? null;
+    },
     onDataArrayChange: 1,
     onDataMutations: 1,
     aggregationReducers: 1,
@@ -441,6 +473,22 @@ export function deriveStateFromProps<T extends any>(params: {
 
   const pivotMode = shouldReloadData.pivotBy ? 'remote' : 'local';
 
+  const rowDisabledState = state.rowDisabledState;
+
+  let isRowDisabled = props.isRowDisabled;
+
+  if (!isRowDisabled && rowDisabledState) {
+    const cachedIsRowDisabled = weakMap.get(rowDisabledState);
+    if (cachedIsRowDisabled) {
+      isRowDisabled = cachedIsRowDisabled;
+    } else {
+      isRowDisabled = (rowInfo) => {
+        return rowDisabledState.isRowDisabled(rowInfo.id);
+      };
+      weakMap.set(rowDisabledState, isRowDisabled);
+    }
+  }
+
   const result: DataSourceDerivedState<T> = {
     selectionMode,
     groupRowsState,
@@ -459,6 +507,7 @@ export function deriveStateFromProps<T extends any>(params: {
       groupBy: props.shouldReloadData?.groupBy ?? groupMode === 'remote',
       pivotBy: props.shouldReloadData?.pivotBy ?? pivotMode === 'remote',
     },
+    isRowDisabled,
     rowSelection: rowSelectionState,
     cellSelection: cellSelectionState,
     groupMode,

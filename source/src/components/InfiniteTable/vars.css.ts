@@ -55,6 +55,7 @@ export const ThemeVars = createGlobalThemeContract(
       bodyWidth: 'runtime-body-content-width',
       totalVisibleColumnsWidth: 'runtime-total-visible-columns-width',
       visibleColumnsCount: 'runtime-visible-columns-count',
+      browserScrollbarWidth: 'runtime-browser-scrollbar-width',
     },
 
     components: {
@@ -306,7 +307,22 @@ export const ThemeVars = createGlobalThemeContract(
          */
         oddBackground: 'row-odd-background',
 
+        /*
+         * Background color for disabled rows. For setting the background of disabled odd rows, use [`--infinite-row-odd-disabled-background`](#row-odd-disabled-background).
+         *
+         */
+        disabledBackground: 'row-disabled-background',
+        /**
+         * Background color for disabled rows. For setting the background of disabled even rows, use [`--infinite-row-disabled-background`](#row-disabled-background).
+         */
+        oddDisabledBackground: 'row-odd-disabled-background',
+
         selectedBackground: 'row-selected-background',
+
+        /**
+         * Opacity for disabled rows. Defaults to 0.5
+         */
+        disabledOpacity: 'row-disabled-opacity',
 
         /**
          * The background color of the active row. Defaults to the value of `var(--infinite-active-cell-background)`.
@@ -364,6 +380,7 @@ export const ThemeVars = createGlobalThemeContract(
          */
         hoverBackground: 'row-hover-background',
         selectedHoverBackground: 'row-selected-hover-background',
+        selectedDisabledBackground: 'row-selected-disabled-background',
         groupRowBackground: 'group-row-background',
         groupRowColumnNesting: 'group-row-column-nesting',
         groupNesting: 'dont-override-group-row-nesting-length',
