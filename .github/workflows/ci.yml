@@ -5,6 +5,7 @@ on:
     paths:
       - 'source/src/**'
       - 'examples/src/**/*.spec.ts'
+      - 'examples/src/**/*.page.tsx'
 
 concurrency:
   group: ${{ github.workflow }}
