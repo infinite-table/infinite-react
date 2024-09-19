@@ -162,10 +162,21 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
     fieldsToColumn,
 
-    domRef,
+    domRef: initialDomRef,
     hidden,
     showZebraRows,
   } = props;
+
+  const htmlElementRef = React.useRef<HTMLElement | null>(null);
+  const domRef = useCallback(
+    (node: HTMLElement | null) => {
+      htmlElementRef.current = node;
+      if (initialDomRef) {
+        initialDomRef(node);
+      }
+    },
+    [initialDomRef],
+  );
 
   if (!column) {
     return <div ref={domRef}>no column</div>;
@@ -271,6 +282,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const cellSelected = renderParam.cellSelected;
 
   renderParam.domRef = domRef;
+  renderParam.htmlElementRef = htmlElementRef;
 
   renderParam.selectCell = useCallback(renderParam.selectCell, [rowInfo]);
   renderParam.deselectCell = useCallback(renderParam.deselectCell, [rowInfo]);

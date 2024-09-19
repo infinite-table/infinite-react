@@ -92,6 +92,7 @@ export type InfiniteTableColumnRenderParamBase<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+  htmlElementRef: React.MutableRefObject<HTMLElement | null>;
 
   rowIndexInHorizontalLayoutPage: null | number;
   horizontalLayoutPageIndex: null | number;

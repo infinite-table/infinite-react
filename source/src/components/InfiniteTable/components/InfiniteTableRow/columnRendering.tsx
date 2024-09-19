@@ -293,7 +293,10 @@ export function getColumnRenderParam<T>(options: {
   const cellSelected =
     cellSelection?.isCellSelected(rowInfo.id, column.id) ?? false;
 
-  const renderParam: Omit<InfiniteTableColumnCellContextType<T>, 'domRef'> = {
+  const renderParam: Omit<
+    InfiniteTableColumnCellContextType<T>,
+    'domRef' | 'htmlElementRef'
+  > = {
     column,
     columnsMap,
     fieldsToColumn,

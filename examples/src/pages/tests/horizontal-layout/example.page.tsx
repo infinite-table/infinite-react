@@ -5,6 +5,7 @@ import {
   InfiniteTable,
   InfiniteTableColumn,
   InfiniteTablePropColumns,
+  useInfiniteColumnCell,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
@@ -45,14 +46,112 @@ const style: InfiniteTableColumn<any>['style'] = (
 
 const header: InfiniteTableColumn<Developer>['header'] = ({
   horizontalLayoutPageIndex,
+
   column,
 }) => {
   return (
     <b>
-      {column.field} - {horizontalLayoutPageIndex}
+      {column.field} - {horizontalLayoutPageIndex}{' '}
+      {column.computedSortedAsc
+        ? '📈'
+        : column.computedSortedDesc
+        ? '📉'
+        : '👀'}
     </b>
   );
 };
+
+// const FlashingColumnCell = React.forwardRef(
+//   (props: React.HTMLProps<HTMLDivElement>, ref: React.Ref<HTMLDivElement>) => {
+//     const { domRef, value, column, rowInfo } =
+//       useInfiniteColumnCell<Developer>();
+
+//     const flashBackground = 'blue';
+//     const [flash, setFlash] = React.useState(false);
+
+//     const rowId = rowInfo.id;
+//     const columnId = column.id;
+//     const prevValueRef = React.useRef({
+//       columnId,
+//       rowId,
+//       value,
+//     });
+
+//     console.log(
+//       'render',
+//       // props.children?.props?.children?[1].props?.children.props.children[3]
+//     );
+
+//     React.useEffect(() => {
+//       const prev = prevValueRef.current;
+//       if (
+//         prev.value !== value &&
+//         prev.rowId === rowId &&
+//         prev.columnId === columnId
+//       ) {
+//         console.log('value changed', value, 'prev', prev.value);
+//         setFlash(true);
+//         setTimeout(() => {
+//           setFlash(false);
+//         }, 500);
+//       }
+
+//       console.log('value', value);
+//       prevValueRef.current = {
+//         columnId: column.id,
+//         rowId: rowInfo.id,
+//         value,
+//       };
+//     }, [value, columnId, rowId]);
+
+//     React.useEffect(() => {
+//       console.log('mount');
+//     }, []);
+
+//     return (
+//       <div
+//         ref={domRef}
+//         {...props}
+//         style={{
+//           ...props.style,
+//           background: flash ? flashBackground : props.style?.background,
+//         }}
+//       >
+//         {props.children}
+//       </div>
+//     );
+//   },
+// );
+
+// const Flashing = (props: { value: any }) => {
+//   const value = props.value;
+
+//   const prevValueRef = React.useRef(value);
+//   const { htmlElementRef } = useInfiniteColumnCell();
+//   const flash = () => {
+//     if (!htmlElementRef.current) {
+//       return;
+//     }
+
+//     htmlElementRef.current!.style.backgroundColor = 'red';
+//     setTimeout(() => {
+//       htmlElementRef.current!.style.backgroundColor = '';
+//     }, 500);
+//   };
+
+//   React.useEffect(() => {
+//     if (prevValueRef.current !== value) {
+//       flash();
+//     }
+//     prevValueRef.current = value;
+//   }, [value]);
+
+//   React.useEffect(() => {
+//     flash();
+//   }, []);
+
+//   return <div>{props.value}</div>;
+// };
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
@@ -75,6 +174,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
     columnGroup: 'colgroup',
     style,
     header,
+    // renderValue: ({ value }) => {
+    //   console.log('renderValue', value);
+    //   return value;
+    //   // return <Flashing value={value} />;
+    // },
+    components: {
+      // ColumnCell: FlashingColumnCell,
+      // ColumnCell: FlashingColumnCell,
+    },
   },
   firstName: {
     field: 'firstName',
@@ -149,6 +257,7 @@ export default () => {
     return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
       .then((r) => r.json())
       .then((data) => {
+        // data.length = 2;
         return data;
         // return new Promise((resolve) => {
         //   setTimeout(() => {
