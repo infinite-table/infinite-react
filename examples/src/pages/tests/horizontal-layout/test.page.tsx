@@ -62,7 +62,7 @@ const data = Array.from({ length: 50 }, (_, i) => ({
   lastName: `Doe ${i}`,
   currency: `USD ${i}`,
   country: `USA ${i}`,
-  canDesign: i % 2 === 0 ? 'yes' : 'no',
+  canDesign: i % 2 === 0 ? ('yes' as const) : ('no' as const),
   stack: i % 2 === 0 ? 'frontend' : 'backend',
 }));
 
@@ -77,7 +77,7 @@ export default function App() {
       >
         toggle
       </button>
-      <input />
+      <input type="text" defaultValue="" />
       <DataSource<Developer>
         primaryKey="id"
         data={data}
