@@ -5,7 +5,6 @@ import {
   InfiniteTable,
   InfiniteTableColumn,
   InfiniteTablePropColumns,
-  useInfiniteColumnCell,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
@@ -25,11 +24,11 @@ type Developer = {
   salary: number;
 };
 
-const COLORS = [
-  `rgb(237,28,36, 15%)`,
-  `rgb(132,60,17, 15%)`,
-  `rgb(50,14,5, 15%)`,
-];
+// const COLORS = [
+//   `rgb(237,28,36, 15%)`,
+//   `rgb(132,60,17, 15%)`,
+//   `rgb(50,14,5, 15%)`,
+// ];
 
 const style: InfiniteTableColumn<any>['style'] = (
   {
@@ -206,52 +205,52 @@ const columns: InfiniteTablePropColumns<Developer> = {
   country: { field: 'country', style, columnGroup: 'colgroup' },
 };
 
-const render: InfiniteTableColumn<Developer>['render'] = ({
-  rowIndexInHorizontalLayoutPage,
-  rowInfo,
-  renderBag,
-}) => {
-  if (rowInfo.isGroupRow) {
-    return (
-      <>
-        {renderBag.groupIcon}
-        {renderBag.value}
-      </>
-    );
-  }
-  if (rowIndexInHorizontalLayoutPage === 0) {
-    return (
-      <>
-        {renderBag.groupIcon}
-        {renderBag.value}
-      </>
-    );
-  }
-  return null;
-};
+// const render: InfiniteTableColumn<Developer>['render'] = ({
+//   rowIndexInHorizontalLayoutPage,
+//   rowInfo,
+//   renderBag,
+// }) => {
+//   if (rowInfo.isGroupRow) {
+//     return (
+//       <>
+//         {renderBag.groupIcon}
+//         {renderBag.value}
+//       </>
+//     );
+//   }
+//   if (rowIndexInHorizontalLayoutPage === 0) {
+//     return (
+//       <>
+//         {renderBag.groupIcon}
+//         {renderBag.value}
+//       </>
+//     );
+//   }
+//   return null;
+// };
 
-const renderValue: InfiniteTableColumn<Developer>['renderValue'] = ({
-  value,
-  rowInfo,
-  column,
-  rowIndexInHorizontalLayoutPage,
-}) => {
-  if (rowInfo.isGroupRow) {
-    return value;
-  }
-  if (!rowInfo.dataSourceHasGrouping) {
-    return null;
-  }
-  const groupKeys = rowInfo.groupKeys;
-  if (
-    rowIndexInHorizontalLayoutPage == null ||
-    rowIndexInHorizontalLayoutPage > groupKeys.length
-  ) {
-    return null;
-  }
+// const renderValue: InfiniteTableColumn<Developer>['renderValue'] = ({
+//   value,
+//   rowInfo,
+//   column,
+//   rowIndexInHorizontalLayoutPage,
+// }) => {
+//   if (rowInfo.isGroupRow) {
+//     return value;
+//   }
+//   if (!rowInfo.dataSourceHasGrouping) {
+//     return null;
+//   }
+//   const groupKeys = rowInfo.groupKeys;
+//   if (
+//     rowIndexInHorizontalLayoutPage == null ||
+//     rowIndexInHorizontalLayoutPage > groupKeys.length
+//   ) {
+//     return null;
+//   }
 
-  return `(${groupKeys[column.computedVisibleIndex]})`;
-};
+//   return `(${groupKeys[column.computedVisibleIndex]})`;
+// };
 export default () => {
   const dataSource = React.useCallback(() => {
     return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
