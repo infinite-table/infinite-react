@@ -12,8 +12,83 @@ concurrency:
 
 jobs:
   # Install & caches "fresh" node_modules
-  npm-install:
-    name: Install npm deps
+  # npm-install:
+  # name: Install npm deps
+  # runs-on: ubuntu-latest
+  # strategy:
+  #   matrix:
+  #     node-version: [20.x]
+
+  # steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Use Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
+  #       cache: 'npm'
+  #       cache-dependency-path: |
+  #         package-lock.json
+  #         source/package-lock.json
+  #         examples/package-lock.json
+  #         www/package-lock.json
+
+  #   - name: Cache node_modules for root
+  #     id: cache-node-modules-root
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: node_modules
+  #       key: node-modules-root-${{ github.run_id }}
+
+  #   - name: Cache node_modules for source
+  #     id: cache-node-modules-source
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: source/node_modules
+  #       key: node-modules-source-${{ github.run_id }}
+
+  #   - name: Cache node_modules for examples
+  #     id: cache-node-modules-examples
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: examples/node_modules
+  #       key: node-modules-examples-${{ github.run_id }}
+
+  #   - name: Cache node_modules for www
+  #     id: cache-node-modules-www
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: www/node_modules
+  #       key: node-modules-www-${{ github.run_id }}
+
+  #   - name: Cache node_modules for www/dataserver
+  #     id: cache-node-modules-www-dataserver
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: www/dataserver/node_modules
+  #       key: node-modules-www-dataserver-${{ github.run_id }}
+
+  #   - name: Execute 'npm ci' in monorepo
+  #     run: npm ci
+
+  #   - name: Execute 'npm i' in www/dataserver
+  #     run: npm run www-dataserver:install
+
+  #   - name: Get installed Playwright version
+  #     id: playwright-version
+  #     run: echo "::set-output name=version::$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')"
+  #     working-directory: examples
+
+  #   - name: Cache browser binaries for Playwright
+  #     id: playwright-cache
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: '~/.cache/ms-playwright'
+  #       key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+
+  # Compiles all TS files in the monorepo
+  ts-check:
+    # needs: npm-install
+    name: Compile source code
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,47 +100,64 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: |
-            package-lock.json
-            source/package-lock.json
-            examples/package-lock.json
-            www/package-lock.json
 
-      - name: Cache node_modules for root
-        id: cache-node-modules-root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node-modules-root-${{ github.run_id }}
+      - name: Execute 'npm ci' in monorepo
+        run: npm ci
 
-      - name: Cache node_modules for source
-        id: cache-node-modules-source
-        uses: actions/cache@v3
-        with:
-          path: source/node_modules
-          key: node-modules-source-${{ github.run_id }}
+      # - name: Load cached node_modules for root
+      #   id: cache-node-modules-root
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: node_modules
+      #     key: node-modules-root-${{ github.run_id }}
 
-      - name: Cache node_modules for examples
-        id: cache-node-modules-examples
-        uses: actions/cache@v3
-        with:
-          path: examples/node_modules
-          key: node-modules-examples-${{ github.run_id }}
+      # - name: Load cached node_modules for source
+      #   id: cache-node-modules-source
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: source/node_modules
+      #     key: node-modules-source-${{ github.run_id }}
 
-      - name: Cache node_modules for www
-        id: cache-node-modules-www
-        uses: actions/cache@v3
-        with:
-          path: www/node_modules
-          key: node-modules-www-${{ github.run_id }}
+      # - name: Load cached node_modules for examples
+      #   id: cache-node-modules-examples
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: examples/node_modules
+      #     key: node-modules-examples-${{ github.run_id }}
 
-      - name: Cache node_modules for www/dataserver
-        id: cache-node-modules-www-dataserver
-        uses: actions/cache@v3
+      # - name: Load cached node_modules for www
+      #   id: cache-node-modules-www
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: www/node_modules
+      #     key: node-modules-www-${{ github.run_id }}
+
+      # - name: Load cached node_modules for www/dataserver
+      #   id: cache-node-modules-www-dataserver
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: www/dataserver/node_modules
+      #     key: node-modules-www-dataserver-${{ github.run_id }}
+
+      - name: Compile source code in monorepo
+        run: npm run ci:ts-check
+
+  run-tests:
+    # needs: npm-install
+    name: Run tests
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          path: www/dataserver/node_modules
-          key: node-modules-www-dataserver-${{ github.run_id }}
+          node-version: ${{ matrix.node-version }}
 
       - name: Execute 'npm ci' in monorepo
         run: npm ci
@@ -85,109 +177,38 @@ jobs:
           path: '~/.cache/ms-playwright'
           key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
 
-  # Compiles all TS files in the monorepo
-  ts-check:
-    needs: npm-install
-    name: Compile source code
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
+      # - name: Load cached node_modules for root
+      #   id: cache-node-modules-root
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: node_modules
+      #     key: node-modules-root-${{ github.run_id }}
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
+      # - name: Load cached node_modules for source
+      #   id: cache-node-modules-source
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: source/node_modules
+      #     key: node-modules-source-${{ github.run_id }}
 
-      - name: Load cached node_modules for root
-        id: cache-node-modules-root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node-modules-root-${{ github.run_id }}
+      # - name: Load cached node_modules for examples
+      #   id: cache-node-modules-examples
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: examples/node_modules
+      #     key: node-modules-examples-${{ github.run_id }}
 
-      - name: Load cached node_modules for source
-        id: cache-node-modules-source
-        uses: actions/cache@v3
-        with:
-          path: source/node_modules
-          key: node-modules-source-${{ github.run_id }}
+      # - name: Get installed Playwright version
+      #   id: playwright-version
+      #   run: echo "::set-output name=version::$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')"
+      #   working-directory: examples
 
-      - name: Load cached node_modules for examples
-        id: cache-node-modules-examples
-        uses: actions/cache@v3
-        with:
-          path: examples/node_modules
-          key: node-modules-examples-${{ github.run_id }}
-
-      - name: Load cached node_modules for www
-        id: cache-node-modules-www
-        uses: actions/cache@v3
-        with:
-          path: www/node_modules
-          key: node-modules-www-${{ github.run_id }}
-
-      - name: Load cached node_modules for www/dataserver
-        id: cache-node-modules-www-dataserver
-        uses: actions/cache@v3
-        with:
-          path: www/dataserver/node_modules
-          key: node-modules-www-dataserver-${{ github.run_id }}
-
-      - name: Compile source code in monorepo
-        run: npm run ci:ts-check
-
-  run-tests:
-    needs: npm-install
-    name: Run tests
-    runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
-    strategy:
-      matrix:
-        node-version: [20.x]
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Load cached node_modules for root
-        id: cache-node-modules-root
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: node-modules-root-${{ github.run_id }}
-
-      - name: Load cached node_modules for source
-        id: cache-node-modules-source
-        uses: actions/cache@v3
-        with:
-          path: source/node_modules
-          key: node-modules-source-${{ github.run_id }}
-
-      - name: Load cached node_modules for examples
-        id: cache-node-modules-examples
-        uses: actions/cache@v3
-        with:
-          path: examples/node_modules
-          key: node-modules-examples-${{ github.run_id }}
-
-      - name: Get installed Playwright version
-        id: playwright-version
-        run: echo "::set-output name=version::$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')"
-        working-directory: examples
-
-      - name: Load cached browser binaries for Playwright
-        id: playwright-cache
-        uses: actions/cache@v3
-        with:
-          path: '~/.cache/ms-playwright'
-          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+      # - name: Load cached browser binaries for Playwright
+      #   id: playwright-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: '~/.cache/ms-playwright'
+      #     key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
 
       - name: Build test app
         run: npm run ci:test:build
