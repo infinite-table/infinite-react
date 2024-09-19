@@ -261,6 +261,7 @@ export function InfiniteTableHeaderCell<T>(
   const menuIcon = <MenuIconCmp {...menuIconProps} />;
 
   const initialRenderParam: InfiniteTableColumnHeaderParam<T> = {
+    horizontalLayoutPageIndex: props.horizontalLayoutPageIndex,
     dragging,
     domRef: ref,
     insideColumnMenu: false,
@@ -561,7 +562,9 @@ export function InfiniteTableHeaderCell<T>(
     filterType?.components?.FilterOperatorSwitch ||
     column.components?.FilterOperatorSwitch;
 
-  const resizeHandle = useColumnResizeHandle(column);
+  const resizeHandle = useColumnResizeHandle(column, {
+    horizontalLayoutPageIndex: props.horizontalLayoutPageIndex,
+  });
 
   const zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
   style.zIndex = zIndex;
@@ -585,6 +588,7 @@ export function InfiniteTableHeaderCell<T>(
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
         domRef={ref}
+        horizontalLayoutPageIndex={props.horizontalLayoutPageIndex}
         cellType="header"
         column={column}
         {...dataAttrs}
@@ -631,6 +635,7 @@ export function InfiniteTableHeaderCell<T>(
             {showColumnFilters ? (
               column.computedFilterable ? (
                 <InfiniteTableColumnHeaderFilter
+                  horizontalLayoutPageIndex={props.horizontalLayoutPageIndex}
                   filterEditor={FilterEditor}
                   filterOperatorSwitch={
                     FilterOperatorSwitch ?? InfiniteTableFilterOperatorSwitch

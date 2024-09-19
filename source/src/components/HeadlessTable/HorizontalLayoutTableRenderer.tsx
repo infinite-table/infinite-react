@@ -1,3 +1,4 @@
+import { ThemeVars } from '../InfiniteTable/vars.css';
 import { HorizontalLayoutMatrixBrain } from '../VirtualBrain/HorizontalLayoutMatrixBrain';
 import {
   columnOffsetAtIndex,
@@ -77,8 +78,8 @@ export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
     const pageIndex = Math.floor(
       horizontalLayoutCoords.rowIndex / this.brain.rowsPerPage,
     );
-    const pageWidth = `${this.brain.pageWidth}px`;
-    const pageOffset = pageIndex ? `calc(${pageIndex} * ${pageWidth})` : '0px';
+    const pageWidth = ThemeVars.runtime.totalVisibleColumnsWidthVar;
+    const pageOffset = pageIndex ? `calc(${pageWidth} * ${pageIndex})` : '0px';
 
     const columnOffsetX = `${columnOffsetAtIndex}-${horizontalLayoutCoords.colIndex}`;
     const columnOffsetXWhileReordering = `${columnOffsetAtIndexWhileReordering}-${horizontalLayoutCoords.colIndex}`;

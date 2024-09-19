@@ -153,6 +153,12 @@ export class MappedCells<T_ADDITIONAL_CELL_INFO = any> extends Logger {
     return this.cellToElementIndex.getValuesStartingWith([rowIndex]);
   };
 
+  getAdditionalInfoForRowIndex = (
+    rowIndex: number,
+  ): T_ADDITIONAL_CELL_INFO[] => {
+    return this.cellAdditionalInfo.getValuesStartingWith([rowIndex]);
+  };
+
   getRenderedNodeAtElement = (elementIndex: number): Renderable | null => {
     return this.renderedElements[elementIndex] || null;
   };

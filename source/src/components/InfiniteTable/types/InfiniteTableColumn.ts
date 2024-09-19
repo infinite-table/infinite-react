@@ -55,6 +55,7 @@ export type InfiniteTableColumnHeaderParam<
   columnSortInfo: DataSourceSingleSortInfo<DATA_TYPE> | null;
   columnFilterValue: DataSourceFilterValueItem<DATA_TYPE> | null;
   selectionMode: DataSourcePropSelectionMode;
+  horizontalLayoutPageIndex: null | number;
   allRowsSelected: boolean;
   someRowsSelected: boolean;
   filtered: boolean;

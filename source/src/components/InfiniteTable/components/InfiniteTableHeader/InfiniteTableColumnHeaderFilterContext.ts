@@ -8,6 +8,7 @@ import { Renderable } from '../../../types/Renderable';
 import { rootClassName } from '../../internalProps';
 
 export type InfiniteTableColumnHeaderFilterProps<T> = {
+  horizontalLayoutPageIndex: null | number;
   filterEditor: () => JSX.Element | null;
   filterOperatorSwitch: () => JSX.Element | null;
   filterTypes: DataSourcePropFilterTypes<T>;

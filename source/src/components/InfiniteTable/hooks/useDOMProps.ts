@@ -211,10 +211,20 @@ export function useDOMProps<T>(
     cssVars[activeCellColWidth] = `var(${getCSSVarNameForColWidth(
       activeCellIndex[1],
     )})`;
-    //@ts-ignore
-    cssVars[activeCellColOffset] = `var(${getCSSVarNameForColOffset(
+    const defaultActiveCellColOffset = `var(${getCSSVarNameForColOffset(
       activeCellIndex[1],
     )})`;
+    if (state.brain.isHorizontalLayoutBrain) {
+      const pageIndex = state.brain.getPageIndexForRow(activeCellIndex[0]);
+
+      //@ts-ignore
+      cssVars[activeCellColOffset] = pageIndex
+        ? `calc( ${ThemeVars.runtime.totalVisibleColumnsWidthVar} * ${pageIndex} + ${defaultActiveCellColOffset})`
+        : defaultActiveCellColOffset;
+    } else {
+      //@ts-ignore
+      cssVars[activeCellColOffset] = defaultActiveCellColOffset;
+    }
   }
 
   //@ts-ignore

@@ -23,6 +23,8 @@ export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
   align?: InfiniteTableColumnAlignValues;
 
+  horizontalLayoutPageIndex: number | null;
+
   rowId?: any;
 
   renderChildren: () => Renderable;

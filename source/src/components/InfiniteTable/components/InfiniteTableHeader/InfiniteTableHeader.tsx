@@ -91,6 +91,9 @@ function InfiniteTableHeaderFn<T>(
       if (!column || hidden) {
         return null;
       }
+      const horizontalLayoutPageIndex = headerBrain.isHorizontalLayoutBrain
+        ? headerBrain.getPageIndexForRow(rowIndex)
+        : null;
       const colGroupItem = columnAndGroupTreeInfo
         ? columnAndGroupTreeInfo.pathsToCells.get([rowIndex, colIndex])
         : null;
@@ -111,6 +114,7 @@ function InfiniteTableHeaderFn<T>(
 
         return visible ? (
           <InfiniteTableHeaderGroup
+            horizontalLayoutPageIndex={horizontalLayoutPageIndex}
             bodyBrain={bodyBrain}
             columnGroupsMaxDepth={columnGroupsMaxDepth}
             domRef={domRef}
@@ -126,6 +130,7 @@ function InfiniteTableHeaderFn<T>(
         <InfiniteTableHeaderCell<T>
           domRef={domRef}
           column={column}
+          horizontalLayoutPageIndex={horizontalLayoutPageIndex}
           headerOptions={headerOptions}
           width={widthWithColspan}
           height={heightWithRowspan}

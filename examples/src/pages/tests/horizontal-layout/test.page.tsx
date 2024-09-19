@@ -35,17 +35,17 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'salary',
     type: 'number',
   },
-  firstName: {
-    field: 'firstName',
-  },
-  age: {
-    field: 'age',
-    type: 'number',
-  },
+  // firstName: {
+  //   field: 'firstName',
+  // },
+  // age: {
+  //   field: 'age',
+  //   type: 'number',
+  // },
 
-  stack: { field: 'stack', renderMenuIcon: false },
-  currency: { field: 'currency' },
-  country: { field: 'country' },
+  // stack: { field: 'stack', renderMenuIcon: false },
+  // currency: { field: 'currency' },
+  // country: { field: 'country' },
 };
 
 const domProps = {
@@ -53,11 +53,17 @@ const domProps = {
   style: { height: '50vh' /*30px header, 420 body*/, width: '80vw' },
 };
 
-const data = Array.from({ length: 1000 }, (_, i) => ({
+const data = Array.from({ length: 50 }, (_, i) => ({
   id: i,
   preferredLanguage: `Lang ${i}`,
   age: i * 10,
   salary: i * 1000,
+  firstName: `John ${i}`,
+  lastName: `Doe ${i}`,
+  currency: `USD ${i}`,
+  country: `USA ${i}`,
+  canDesign: i % 2 === 0 ? 'yes' : 'no',
+  stack: i % 2 === 0 ? 'frontend' : 'backend',
 }));
 
 export default function App() {
@@ -71,6 +77,7 @@ export default function App() {
       >
         toggle
       </button>
+      <input />
       <DataSource<Developer>
         primaryKey="id"
         data={data}

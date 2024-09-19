@@ -612,6 +612,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     column,
     width,
     rowId: rowInfo.id,
+    horizontalLayoutPageIndex,
 
     style: memoizedStyle,
     onMouseLeave,

@@ -87,7 +87,6 @@ type HorizontalLayoutMatrixBrainOptions = {
 export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
   public visiblePageCount = 0;
   public isHorizontalLayoutBrain = true;
-  private _rowsPerPage = 0;
 
   private _totalPageCount: number = 0;
   public pageWidth: number = 0;
@@ -114,14 +113,12 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     return this.rowsPerPage ? rowIndex % this.rowsPerPage : rowIndex;
   }
 
-  set rowsPerPage(rowsPerPage: number) {
-    if (rowsPerPage != this._rowsPerPage) {
-      this._rowsPerPage = rowsPerPage;
-    }
+  getInitialCols() {
+    return this.initialCols;
   }
 
-  get rowsPerPage() {
-    return this._rowsPerPage;
+  getInitialRows() {
+    return this.initialRows;
   }
 
   getPageIndexForRow(rowIndex: number) {
@@ -347,7 +344,10 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     this.availableRenderHeight =
       this.visiblePageCount * this.rowsPerPage * rowHeight;
 
-    this.cols = this.totalPageCount * this.initialCols;
+    this.cols = Math.max(
+      this.totalPageCount * this.initialCols,
+      this.initialCols,
+    );
     this.rows = this.rowsPerPage;
 
     super.doUpdateRenderCount(which);
@@ -385,6 +385,10 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
       this.onTotalPageCountChangeFns.delete(fn);
     };
   };
+
+  public getVirtualColIndex(colIndex: number, opts?: { pageIndex: number }) {
+    return this.initialCols * (opts?.pageIndex ?? 0) + colIndex;
+  }
 
   destroy() {
     if (this.destroyed) {

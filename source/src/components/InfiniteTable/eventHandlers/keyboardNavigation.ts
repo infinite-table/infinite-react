@@ -195,7 +195,16 @@ export function handleCellNavigation<T>(
         if (rowIndex !== minRow) {
           colIndex = maxCol;
         }
-        KeyToFunction.ArrowUp();
+        if (brain.isHorizontalLayoutBrain) {
+          const rowsPerPage = brain.rowsPerPage;
+          if (rowIndex - rowsPerPage >= minRow) {
+            rowIndex = rowIndex - rowsPerPage;
+          } else {
+            KeyToFunction.ArrowUp();
+          }
+        } else {
+          KeyToFunction.ArrowUp();
+        }
       } else {
         colIndex = clamp(colIndex - 1, minCol, maxCol);
       }
@@ -205,7 +214,16 @@ export function handleCellNavigation<T>(
         if (rowIndex !== maxRow) {
           colIndex = minCol;
         }
-        KeyToFunction.ArrowDown();
+        if (brain.isHorizontalLayoutBrain) {
+          const rowsPerPage = brain.rowsPerPage;
+          if (rowIndex + rowsPerPage <= maxRow) {
+            rowIndex = rowIndex + rowsPerPage;
+          } else {
+            KeyToFunction.ArrowDown();
+          }
+        } else {
+          KeyToFunction.ArrowDown();
+        }
       } else {
         colIndex = clamp(colIndex + 1, minCol, maxCol);
       }

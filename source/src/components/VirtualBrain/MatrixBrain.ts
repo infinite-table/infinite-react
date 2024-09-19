@@ -125,6 +125,21 @@ export class MatrixBrain extends Logger implements IBrain {
   protected cols: MatrixBrainOptions['cols'] = 0;
   protected rows: MatrixBrainOptions['rows'] = 0;
 
+  /**
+   * This is only here for easier accessing in the renderer, when the horizontal layout is enabled.
+   * In this way, the API is the same for both brains, so we don't have to cast the brain type in the renderer.
+   */
+  set rowsPerPage(rowsPerPage: number) {
+    if (rowsPerPage != this._rowsPerPage) {
+      this._rowsPerPage = rowsPerPage;
+    }
+  }
+
+  get rowsPerPage() {
+    return this._rowsPerPage;
+  }
+  protected _rowsPerPage = 0;
+
   protected rowHeight: MatrixBrainOptions['rowHeight'] = 0;
   protected colWidth: MatrixBrainOptions['colWidth'] = 0;
 
@@ -245,6 +260,10 @@ export class MatrixBrain extends Logger implements IBrain {
     this.scrollStopDelay = scrollStopDelay;
   };
 
+  public getVirtualColIndex(colIndex: number, _opts?: { pageIndex: number }) {
+    return colIndex;
+  }
+
   public getRowCount = () => {
     return this.rows;
   };
@@ -295,6 +314,7 @@ export class MatrixBrain extends Logger implements IBrain {
 
     if (rowsDefined) {
       this.rows = rows;
+      this.rowsPerPage = rows;
     }
     if (colsDefined) {
       this.cols = cols;
@@ -387,7 +407,56 @@ export class MatrixBrain extends Logger implements IBrain {
     }
   }
 
-  protected updateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
+  /**
+   *
+   * @param options.left - if true, extends the left side with the amount of current visible columns, otherwise with the specified number
+   * @param options.right - if true, extends the right side with the amount of current visible columns, otherwise with the specified number
+   */
+  public extendRenderRange(options: {
+    left?: number | boolean;
+    right?: number | boolean;
+  }) {
+    const leftAmount =
+      typeof options.left === 'number'
+        ? options.left
+        : options.left === true
+        ? this.getInitialCols()
+        : 0;
+    const rightAmount =
+      typeof options.right === 'number'
+        ? options.right
+        : options.right === true
+        ? this.getInitialCols()
+        : 0;
+
+    const currentRenderCount = this.horizontalRenderCount;
+
+    const restore = () => {
+      this.setRenderCount({
+        horizontal: currentRenderCount,
+        vertical: undefined,
+      });
+    };
+
+    const { start, end } = this.getRenderRange();
+    const [startRow, startCol] = start;
+    const [endRow, endCol] = end;
+
+    this.setRenderRange({
+      horizontal: {
+        startIndex: Math.max(0, startCol - leftAmount),
+        endIndex: Math.min(this.cols, endCol + rightAmount),
+      },
+      vertical: {
+        startIndex: startRow,
+        endIndex: endRow,
+      },
+    });
+
+    return restore;
+  }
+
+  public updateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
     // if (this._updateRenderCountRafId) {
     //   cancelAnimationFrame(this._updateRenderCountRafId);
     // }
@@ -1162,6 +1231,14 @@ export class MatrixBrain extends Logger implements IBrain {
 
   getInitialRowHeight() {
     return this.rowHeight;
+  }
+
+  getInitialCols() {
+    return this.cols;
+  }
+
+  getInitialRows() {
+    return this.rows;
   }
 
   public getItemOffsetFor(

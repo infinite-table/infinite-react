@@ -73,6 +73,10 @@ export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
 
+export type HorizontalLayoutColVisibilityOptions = {
+  horizontalLayoutPageIndex?: number;
+};
+
 export class ReactHeadlessTableRenderer extends Logger {
   protected brain: MatrixBrain;
 
@@ -329,16 +333,29 @@ export class ReactHeadlessTableRenderer extends Logger {
     config: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
-    } = { offset: 0 },
+    } & HorizontalLayoutColVisibilityOptions = { offset: 0 },
   ): ScrollPosition | null => {
     if (this.destroyed) {
       return null;
     }
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
+    const horizLayoutOptions =
+      config.horizontalLayoutPageIndex != null
+        ? { horizontalLayoutPageIndex: config.horizontalLayoutPageIndex }
+        : undefined;
     let { scrollAdjustPosition, offset = 0 } = config;
-    if (this.isColumnFullyVisible(colIndex) && !scrollAdjustPosition) {
+    if (
+      this.isColumnFullyVisible(colIndex, undefined, horizLayoutOptions) &&
+      !scrollAdjustPosition
+    ) {
       return scrollPosition;
+    }
+
+    if (horizLayoutOptions) {
+      colIndex =
+        brain.getInitialCols() * horizLayoutOptions.horizontalLayoutPageIndex +
+        colIndex;
     }
 
     const colOffset = brain.getItemOffsetFor(colIndex, 'horizontal');
@@ -442,6 +459,11 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (!this.isRowRendered(rowIndex)) {
       return false;
     }
+    const pageIndex = this.brain.getPageIndexForRow(rowIndex);
+    rowIndex =
+      pageIndex && this.brain.rowsPerPage
+        ? rowIndex % this.brain.rowsPerPage
+        : rowIndex;
 
     const { brain } = this;
 
@@ -487,28 +509,58 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   public isRowRendered = (rowIndex: number) => {
-    const elements = this.mappedCells.getElementsForRowIndex(rowIndex);
+    if (!this.brain.isHorizontalLayoutBrain) {
+      const elements = this.mappedCells.getElementsForRowIndex(rowIndex);
 
-    return elements.length > 0;
+      return elements.length > 0;
+    }
+
+    const initialRowIndex = rowIndex;
+
+    rowIndex = this.brain.rowsPerPage
+      ? rowIndex % this.brain.rowsPerPage
+      : rowIndex;
+
+    return (
+      this.mappedCells
+        .getAdditionalInfoForRowIndex(rowIndex)
+        .filter((info) => info.renderRowIndex === initialRowIndex).length > 0
+    );
   };
 
   public isCellVisible = (rowIndex: number, colIndex: number) => {
     return this.isRowVisible(rowIndex) && this.isColumnVisible(colIndex);
   };
 
-  public isCellFullyVisible = (rowIndex: number, colIndex: number) => {
-    return this.isRowFullyVisible(rowIndex) && this.isColumnVisible(colIndex);
-  };
-
-  public isColumnFullyVisible = (colIndex: number, offsetMargin = 2) => {
-    return this.isColumnVisible(
-      colIndex,
-      this.brain.getColWidth(colIndex) - offsetMargin,
+  public isCellFullyVisible = (
+    rowIndex: number,
+    colIndex: number,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    return (
+      this.isRowFullyVisible(rowIndex) &&
+      this.isColumnVisible(colIndex, undefined, opts)
     );
   };
 
-  public isColumnVisible = (colIndex: number, offsetMargin = 10) => {
-    if (!this.isColumnRendered(colIndex)) {
+  public isColumnFullyVisible = (
+    colIndex: number,
+    offsetMargin = 2,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    return this.isColumnVisible(
+      colIndex,
+      this.brain.getColWidth(colIndex) - offsetMargin,
+      opts,
+    );
+  };
+
+  public isColumnVisible = (
+    colIndex: number,
+    offsetMargin = 10,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    if (!this.isColumnRendered(colIndex, opts)) {
       return false;
     }
 
@@ -516,6 +568,11 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     if (brain.isColFixed(colIndex)) {
       return true;
+    }
+    if (opts && opts.horizontalLayoutPageIndex != null) {
+      colIndex = brain.getVirtualColIndex(colIndex, {
+        pageIndex: opts.horizontalLayoutPageIndex,
+      });
     }
 
     const {
@@ -558,16 +615,33 @@ export class ReactHeadlessTableRenderer extends Logger {
     return true;
   };
 
-  public isCellRendered = (rowIndex: number, colIndex: number) => {
-    return this.isRowRendered(rowIndex) && this.isColumnRendered(colIndex);
+  public isCellRendered = (
+    rowIndex: number,
+    colIndex: number,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    return (
+      this.isRowRendered(rowIndex) && this.isColumnRendered(colIndex, opts)
+    );
   };
 
-  public isColumnRendered = (colIndex: number) => {
+  public isColumnRendered = (
+    colIndex: number,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
     const {
       start: [startRow],
     } = this.brain.getRenderRange();
 
-    return this.mappedCells.getRenderedNodeForCell(startRow, colIndex) !== null;
+    if (opts?.horizontalLayoutPageIndex != null) {
+      const colsCount = this.brain.getInitialCols();
+
+      colIndex = colsCount * opts.horizontalLayoutPageIndex + colIndex;
+    }
+    const nodeRendered =
+      this.mappedCells.getRenderedNodeForCell(startRow, colIndex) !== null;
+
+    return nodeRendered;
   };
 
   getExtraSpanCellsForRange = (range: TableRenderRange) => {

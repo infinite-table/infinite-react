@@ -40,6 +40,7 @@ export function getColumnLabel<T>(
     })!;
     label =
       col.header({
+        horizontalLayoutPageIndex: null,
         column: col,
         columnApi,
         insideColumnMenu: true,

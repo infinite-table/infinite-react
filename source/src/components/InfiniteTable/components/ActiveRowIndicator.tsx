@@ -26,7 +26,7 @@ const ActiveStyle: CSSProperties = {
     InternalVars.activeCellOffsetY
   } + var(${stripVar(InternalVars.scrollTopForActiveRow)}, 0px)), 0px)`,
   height: InternalVars.activeCellRowHeight,
-  maxWidth: ThemeVars.runtime.totalVisibleColumnsWidth,
+  maxWidth: ThemeVars.runtime.totalVisibleColumnsWidthVar,
 };
 
 const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {

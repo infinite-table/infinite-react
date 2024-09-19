@@ -23,11 +23,12 @@ export function InfiniteTableHeaderGroup<T>(
   const { columnGroup, height, columns, bodyBrain, columnGroupsMaxDepth } =
     props;
 
-  let { header } = columnGroup;
+  let { header, style: userStyle } = columnGroup;
 
   if (header instanceof Function) {
     header = header({
       columnGroup,
+      horizontalLayoutPageIndex: props.horizontalLayoutPageIndex,
     });
   }
 
@@ -57,12 +58,24 @@ export function InfiniteTableHeaderGroup<T>(
     firstColumn.computedVisibleIndex
   }) + ${columnGroupsMaxDepth - columnGroup.depth})`;
 
+  let style =
+    typeof userStyle === 'function'
+      ? userStyle({
+          columnGroup,
+          horizontalLayoutPageIndex: props.horizontalLayoutPageIndex,
+        })
+      : userStyle;
+  style = style && typeof style === 'object' ? style : {};
+
+  style.width = width;
+  style.height = height;
+
   return (
     <div
       ref={props.domRef}
       data-group-id={columnGroup.uniqueGroupId}
       className={join(HeaderGroupCls, TableHeaderGroupClassName)}
-      style={{ width, height }}
+      style={style}
       data-z-index={zIndex}
     >
       <div

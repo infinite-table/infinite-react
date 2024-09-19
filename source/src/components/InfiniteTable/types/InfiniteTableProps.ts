@@ -439,14 +439,20 @@ export type InfiniteTablePropCollapsedColumnGroups = Map<string[], string>;
 
 export type InfiniteTableColumnGroupHeaderRenderParams = {
   columnGroup: InfiniteTableComputedColumnGroup;
+  horizontalLayoutPageIndex: number | null;
 };
 export type InfiniteTableColumnGroupHeaderRenderFunction = (
   params: InfiniteTableColumnGroupHeaderRenderParams,
 ) => Renderable;
 
+export type InfiniteTableColumnGroupStyleFunction = (
+  params: InfiniteTableColumnGroupHeaderRenderParams,
+) => React.CSSProperties;
+
 export type InfiniteTableColumnGroup = {
   columnGroup?: string;
   header?: Renderable | InfiniteTableColumnGroupHeaderRenderFunction;
+  style?: React.CSSProperties | InfiniteTableColumnGroupStyleFunction;
 };
 export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   id: string;

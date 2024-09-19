@@ -46,6 +46,7 @@ import {
 } from './getCellSelectionApi';
 
 import { getRowDetailApi, InfiniteTableRowDetailApi } from './getRowDetailApi';
+import { HorizontalLayoutColVisibilityOptions } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,
@@ -1200,7 +1201,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     config: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
-    } = { offset: 0 },
+    } & HorizontalLayoutColVisibilityOptions = { offset: 0 },
   ) {
     const state = this.getState();
     const computed = this.getComputed();
@@ -1253,6 +1254,15 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
         return false;
       }
       colIndex = computedColumn.computedVisibleIndex;
+    }
+
+    if (state.brain.isHorizontalLayoutBrain) {
+      config = config || {};
+
+      const pageIndex = state.brain.getPageIndexForRow(rowIndex);
+      (
+        config as HorizontalLayoutColVisibilityOptions
+      ).horizontalLayoutPageIndex = pageIndex || 0;
     }
 
     const scrollPositionForCol =

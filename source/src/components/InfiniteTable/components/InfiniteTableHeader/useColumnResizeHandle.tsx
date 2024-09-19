@@ -10,6 +10,9 @@ import { ResizeHandle } from './ResizeHandle';
 
 export function useColumnResizeHandle<T>(
   column: InfiniteTableComputedColumn<T>,
+  opts: {
+    horizontalLayoutPageIndex: number | null;
+  },
 ) {
   const {
     computed: { computedVisibleColumns },
@@ -135,6 +138,7 @@ export function useColumnResizeHandle<T>(
 
   const resizeHandle = column.computedResizable ? (
     <ResizeHandle
+      horizontalLayoutPageIndex={opts.horizontalLayoutPageIndex}
       columns={computedVisibleColumns}
       columnIndex={column.computedVisibleIndex}
       computeResize={computeResizeForDiff}

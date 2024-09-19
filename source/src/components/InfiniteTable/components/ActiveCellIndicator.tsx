@@ -39,13 +39,17 @@ const reposition = (
     return;
   }
 
-  const [rowIndex] = activeCellIndex;
+  let [rowIndex] = activeCellIndex;
+
+  if (brain.isHorizontalLayoutBrain && brain.rowsPerPage) {
+    rowIndex = rowIndex % brain.rowsPerPage;
+  }
+
   const activeCellRowHeight: number =
     typeof rowHeight === 'function'
       ? rowHeight(rowIndex)
       : rowHeight ?? brain.getRowHeight(rowIndex);
   const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
-  // const activeCellRowOffset = brain.getCellOffset(rowIndex, colIndex).y;
 
   const node = domRef.current!;
 
@@ -66,7 +70,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
 
   const active =
     props.activeCellIndex != null &&
-    brain.getRowCount() > props.activeCellIndex[0];
+    brain.getInitialRows() > props.activeCellIndex[0];
 
   useLayoutEffect(() => {
     reposition(brain, props.activeCellIndex, props.rowHeight, domRef);

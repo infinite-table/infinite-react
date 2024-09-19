@@ -24,11 +24,11 @@ type Developer = {
   salary: number;
 };
 
-// const _COLORS = [
-//   `rgb(237,28,36, 15%)`,
-//   `rgb(55,126,184, 15%)`,
-//   `rgb(70,203,118, 15%)`,
-// ];
+const COLORS = [
+  `rgb(237,28,36, 15%)`,
+  `rgb(132,60,17, 15%)`,
+  `rgb(50,14,5, 15%)`,
+];
 
 const style: InfiniteTableColumn<any>['style'] = (
   {
@@ -43,42 +43,59 @@ const style: InfiniteTableColumn<any>['style'] = (
   };
 };
 
+const header: InfiniteTableColumn<Developer>['header'] = ({
+  horizontalLayoutPageIndex,
+  column,
+}) => {
+  return (
+    <b>
+      {column.field} - {horizontalLayoutPageIndex}
+    </b>
+  );
+};
+
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
     type: 'number',
+    defaultEditable: false,
+    columnGroup: 'colgroup',
+    header,
     style,
-    renderValue: ({ value, rowInfo, rowIndexInHorizontalLayoutPage }) => {
-      return (
-        <>
-          ID: {value}, index {rowInfo.indexInAll} inde xin page{' '}
-          {rowIndexInHorizontalLayoutPage}
-        </>
-      );
-    },
   },
   canDesign: {
     field: 'canDesign',
+    columnGroup: 'colgroup',
     style,
+    header,
   },
   salary: {
     field: 'salary',
     type: 'number',
+    columnGroup: 'colgroup',
     style,
+    header,
   },
   firstName: {
     field: 'firstName',
+    columnGroup: 'colgroup',
     style,
   },
   age: {
     field: 'age',
     type: 'number',
+    columnGroup: 'colgroup',
     style,
   },
 
-  stack: { field: 'stack', renderMenuIcon: false, style },
-  currency: { field: 'currency', style },
-  country: { field: 'country', style },
+  stack: {
+    field: 'stack',
+    renderMenuIcon: false,
+    style,
+    columnGroup: 'colgroup',
+  },
+  currency: { field: 'currency', style, columnGroup: 'colgroup' },
+  country: { field: 'country', style, columnGroup: 'colgroup' },
 };
 
 const render: InfiniteTableColumn<Developer>['render'] = ({
@@ -143,8 +160,33 @@ export default () => {
 
   const [dataSourceApi, setDataSourceApi] =
     React.useState<DataSourceApi<Developer> | null>(null);
+
+  const [cols, setCols] = React.useState(columns);
   return (
     <>
+      {Object.keys(columns).map((colId) => {
+        return (
+          <label key={colId}>
+            <input
+              type="checkbox"
+              checked={!!cols[colId]}
+              onChange={(e) => {
+                setCols((cols) => {
+                  const newCols = { ...cols };
+                  const checked = e.target.checked;
+                  if (checked) {
+                    newCols[colId] = columns[colId];
+                  } else {
+                    delete newCols[colId];
+                  }
+                  return newCols;
+                });
+              }}
+            />
+            {colId}
+          </label>
+        );
+      })}
       <button
         onClick={() => {
           dataSourceApi?.updateData({
@@ -161,31 +203,30 @@ export default () => {
         <DataSource<Developer>
           onReady={setDataSourceApi}
           data={dataSource}
+          shouldReloadData={{
+            filterValue: false,
+          }}
+          defaultFilterValue={[]}
           primaryKey="id"
-          defaultGroupBy={[
-            {
-              field: 'currency',
-              column: {
-                // defaultWidth: 150,
-                // style,
-                render,
-                renderValue,
-              },
-            },
-            {
-              field: 'stack',
-              column: {
-                style,
-                render,
-                renderValue,
-              },
-            },
-          ]}
         >
           <InfiniteTable<Developer>
-            columns={columns}
+            columns={cols}
+            // xcolumnGroups={{
+            //   colgroup: {
+            //     header: ({ horizontalLayoutPageIndex }) => {
+            //       return <>Group {horizontalLayoutPageIndex}</>;
+            //     },
+            //     style: ({ horizontalLayoutPageIndex }) => {
+            //       return {
+            //         background:
+            //           COLORS[horizontalLayoutPageIndex! % COLORS.length],
+            //       };
+            //     },
+            //   },
+            // }}
             wrapRowsHorizontally={true}
             columnDefaultWidth={120}
+            columnDefaultEditable
             domProps={{
               style: {
                 minHeight: '70vh',
