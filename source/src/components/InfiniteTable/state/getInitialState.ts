@@ -54,19 +54,7 @@ export function getCellSelector(cellPosition?: CellPositionByIndex) {
   return selector;
 }
 
-/**
- * The computed state is independent from props and cannot
- * be affected by props.
- */
-export function initSetupState<T>({
-  debugId,
-  wrapRowsHorizontally,
-}: {
-  debugId: string;
-  wrapRowsHorizontally?: boolean;
-}): InfiniteTableSetupState<T> {
-  const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
-
+export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
   /**
    * This is the main virtualization brain that powers the table
    */
@@ -109,9 +97,26 @@ export function initSetupState<T>({
     headerBrain.update({ width: size.width });
   });
 
-  if (__DEV__) {
-    (globalThis as any).renderer = renderer;
-  }
+  return { brain, headerBrain, renderer, onRenderUpdater };
+}
+
+/**
+ * The computed state is independent from props and cannot
+ * be affected by props.
+ */
+export function initSetupState<T>({
+  debugId,
+  wrapRowsHorizontally,
+}: {
+  debugId: string;
+  wrapRowsHorizontally?: boolean;
+}): InfiniteTableSetupState<T> {
+  const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
+
+  const { brain, headerBrain, renderer, onRenderUpdater } = createBrains(
+    debugId,
+    !!wrapRowsHorizontally,
+  );
 
   const domRef = createRef<HTMLDivElement>();
 
@@ -226,8 +231,6 @@ export const forwardProps = <T>(
     onContextMenu: 1,
     onCellContextMenu: 1,
 
-    wrapRowsHorizontally: 1,
-
     onRenderRangeChange: 1,
 
     onScrollToTop: 1,
@@ -260,6 +263,8 @@ export const forwardProps = <T>(
 
     onScrollbarsChange: 1,
     autoSizeColumnsKey: 1,
+
+    wrapRowsHorizontally: 1,
 
     columnDefaultFlex: 1,
 

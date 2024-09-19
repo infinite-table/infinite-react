@@ -89,6 +89,9 @@ import { HScrollSyncContent } from './components/HScrollSyncContent';
 import { useGridScroll } from './hooks/useGridScroll';
 import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
 
+import { DEBUG_NAME } from './InfiniteDebugName';
+import { useToggleWrapRowsHorizontally } from './hooks/useToggleWrapRowsHorizontally';
+
 export const InfiniteTableClassName = internalProps.rootClassName;
 
 const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
@@ -113,7 +116,7 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
     mappedCallbacks: getMappedCallbacks(),
     // @ts-ignore
     getParentState: () => useDataSourceState(),
-    debugName: 'InfiniteTable',
+    debugName: DEBUG_NAME,
   });
 
 function InfiniteTableHeader<T>() {
@@ -247,6 +250,8 @@ function InfiniteTableBody<T>() {
   });
 
   const { autoFocus, tabIndex } = domProps ?? {};
+
+  useToggleWrapRowsHorizontally();
 
   return (
     <InfiniteTableBodyContainer onContextMenu={onContextMenu}>

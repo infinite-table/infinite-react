@@ -79,7 +79,7 @@ export function RawTableFn(props: RawTableProps) {
     });
 
     return remove;
-  }, [renderCell, renderDetailRow]);
+  }, [renderCell, renderDetailRow, brain, onRenderUpdater]);
 
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }

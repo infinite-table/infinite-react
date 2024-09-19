@@ -204,15 +204,17 @@ export function HeadlessTable(
     const remove = setupResizeObserver(node, onResize, { debounce: 50 });
 
     return remove;
-  }, [wrapRowsHorizontally]);
+  }, [wrapRowsHorizontally, brain]);
+
+  const updateDOMTransform = useCallback((scrollPos: ScrollPosition) => {
+    domRef.current!.style.transform = `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`;
+  }, []);
 
   const onContainerScroll = useCallback(
     (scrollPos: ScrollPosition) => {
-      brain.setScrollPosition(scrollPos, (scrollPos) => {
-        domRef.current!.style.transform = `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`;
-      });
+      brain.setScrollPosition(scrollPos, updateDOMTransform);
     },
-    [brain],
+    [brain, updateDOMTransform],
   );
 
   useEffect(() => {
@@ -221,6 +223,11 @@ export function HeadlessTable(
     });
 
     setTotalScrollSize(brain.getVirtualizedContentSize());
+
+    // useful when the brain is changed - when toggling the value of wrapRowsHorizontally
+    updateDOMTransform(
+      brain.getScrollPosition() || { scrollLeft: 0, scrollTop: 0 },
+    );
 
     return removeOnRenderCount;
   }, [brain]);

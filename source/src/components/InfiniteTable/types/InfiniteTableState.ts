@@ -58,11 +58,14 @@ export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
 };
 
 export interface InfiniteTableSetupState<T> {
+  brain: MatrixBrain;
+  headerBrain: MatrixBrain;
   renderer: ReactHeadlessTableRenderer;
+  onRenderUpdater: SubscriptionCallback<Renderable>;
+
   lastRowToExpandRef: MutableRefObject<any | null>;
   lastRowToCollapseRef: MutableRefObject<any | null>;
   getDOMNodeForCell: (cellPos: CellPositionByIndex) => HTMLElement | null;
-  onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Record<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
@@ -104,8 +107,7 @@ export interface InfiniteTableSetupState<T> {
   keyDown: SubscriptionCallback<KeyboardEvent>;
   columnsWhenGrouping?: InfiniteTablePropColumns<T>;
   bodySize: Size;
-  brain: MatrixBrain;
-  headerBrain: MatrixBrain;
+
   focused: boolean;
   ready: boolean;
   columnReorderDragColumnId: false | string;

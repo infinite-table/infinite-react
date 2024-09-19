@@ -162,6 +162,7 @@ export default () => {
     React.useState<DataSourceApi<Developer> | null>(null);
 
   const [cols, setCols] = React.useState(columns);
+  const [wrapRowsHorizontally, setWrapRowsHorizontally] = React.useState(true);
   return (
     <>
       {Object.keys(columns).map((colId) => {
@@ -189,6 +190,13 @@ export default () => {
       })}
       <button
         onClick={() => {
+          setWrapRowsHorizontally((x) => !x);
+        }}
+      >
+        toggle
+      </button>
+      <button
+        onClick={() => {
           dataSourceApi?.updateData({
             id: 16,
             salary: 10,
@@ -206,7 +214,7 @@ export default () => {
           shouldReloadData={{
             filterValue: false,
           }}
-          defaultFilterValue={[]}
+          // defaultFilterValue={[]}
           primaryKey="id"
         >
           <InfiniteTable<Developer>
@@ -224,12 +232,13 @@ export default () => {
             //     },
             //   },
             // }}
-            wrapRowsHorizontally={true}
+            wrapRowsHorizontally={wrapRowsHorizontally}
             columnDefaultWidth={120}
             columnDefaultEditable
             domProps={{
               style: {
                 minHeight: '70vh',
+                // width: '90vw',
               },
             }}
           />

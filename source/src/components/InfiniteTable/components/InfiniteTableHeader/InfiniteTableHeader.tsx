@@ -45,19 +45,24 @@ function InfiniteTableHeaderFn<T>(
 
   const { computedColumnsMap } = computed;
 
-  useEffect(() => {
-    const onScroll = (scrollPosition: ScrollPosition) => {
-      if (domRef.current) {
-        domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
-      }
-    };
+  const domRef = useRef<HTMLDivElement | null>(null);
 
-    const removeOnScroll = brain.onScroll(onScroll);
+  const updateDOMTransform = useCallback((scrollPosition: ScrollPosition) => {
+    if (domRef.current) {
+      domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
+    }
+  }, []);
+
+  useEffect(() => {
+    const removeOnScroll = brain.onScroll(updateDOMTransform);
+
+    // useful when the brain is changed - when toggling the value of wrapRowsHorizontally
+    updateDOMTransform(
+      brain.getScrollPosition() || { scrollLeft: 0, scrollTop: 0 },
+    );
 
     return removeOnScroll;
   }, [brain]);
-
-  const domRef = useRef<HTMLDivElement | null>(null);
 
   const headerCls = HeaderClsRecipe({
     overflow: false,
