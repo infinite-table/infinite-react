@@ -1170,29 +1170,60 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     rowIndex: number,
     config: {
       scrollAdjustPosition?: ScrollAdjustPosition;
+      columnId?: string;
       offset?: number;
     } = { offset: 0 },
   ) {
     const state = this.getState();
+    const computed = this.getComputed();
+    const currentScrollPosition = state.brain.getScrollPosition();
+
+    let columnId = config.columnId;
+    let colIndex = undefined;
+
+    if (
+      !columnId &&
+      state.brain.isHorizontalLayoutBrain &&
+      computed.computedVisibleColumns.length > 0
+    ) {
+      columnId =
+        computed.computedVisibleColumns[
+          Math.ceil(computed.computedVisibleColumns.length / 2)
+        ].id;
+
+      colIndex =
+        computed.computedVisibleColumnsMap.get(columnId)?.computedVisibleIndex;
+    }
 
     const scrollPosition = state.renderer.getScrollPositionForScrollRowIntoView(
       rowIndex,
-      config,
+      { ...config, colIndex },
     );
 
     if (!scrollPosition) {
       return false;
     }
-    const currentScrollPosition = state.brain.getScrollPosition();
 
     const scrollTopMax = state.brain.scrollTopMax;
 
-    if (scrollPosition.scrollTop > scrollTopMax + (config.offset || 0)) {
+    const scrollLeftChanged =
+      scrollPosition.scrollLeft !== currentScrollPosition.scrollLeft;
+
+    const scrollTopValid =
+      scrollPosition.scrollTop <= scrollTopMax + (config.offset || 0);
+
+    if (!scrollTopValid && !scrollLeftChanged) {
       return false;
     }
 
-    if (scrollPosition.scrollTop !== currentScrollPosition.scrollTop) {
+    if (
+      scrollTopValid &&
+      scrollPosition.scrollTop !== currentScrollPosition.scrollTop
+    ) {
       state.scrollerDOMRef.current!.scrollTop = scrollPosition.scrollTop;
+    }
+    if (scrollLeftChanged) {
+      state.scrollerDOMRef.current!.scrollLeft = scrollPosition.scrollLeft;
     }
     return true;
   }

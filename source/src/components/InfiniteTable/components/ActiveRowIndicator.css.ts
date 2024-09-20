@@ -1,7 +1,8 @@
-import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
+import { fallbackVar, style } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../vars.css';
 import { left, top, pointerEvents, position } from '../utilities.css';
+import { recipe } from '@vanilla-extract/recipes';
 
 export const ActiveRowIndicatorBaseCls = style(
   [
@@ -10,7 +11,7 @@ export const ActiveRowIndicatorBaseCls = style(
     top['0'],
     left['0'],
     {
-      right: ThemeVars.runtime.browserScrollbarWidth,
+      right: 0, //ThemeVars.runtime.browserScrollbarWidth,
       border: fallbackVar(
         ThemeVars.components.Row.activeBorder,
         `${fallbackVar(
@@ -48,12 +49,16 @@ export const ActiveRowIndicatorBaseCls = style(
   'ActiveRowIndicator',
 );
 
-export const ActiveRowIndicatorCls = styleVariants({
-  visible: [
-    ActiveRowIndicatorBaseCls,
-    {
-      display: 'block',
+export const ActiveRowIndicatorRecipe = recipe({
+  base: [ActiveRowIndicatorBaseCls],
+  variants: {
+    active: {
+      true: {
+        display: 'block',
+      },
+      false: {
+        display: 'none',
+      },
     },
-  ],
-  hidden: [ActiveRowIndicatorBaseCls, { display: 'none' }],
+  },
 });

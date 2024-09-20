@@ -73,6 +73,15 @@ export function handleRowNavigation<T>(
     },
     ArrowLeft: () => {
       const rowInfo = dataArray[activeRowIndex!];
+      if (brain.isHorizontalLayoutBrain) {
+        const rowsPerPage = brain.rowsPerPage;
+        if (activeRowIndex! - rowsPerPage >= min) {
+          activeRowIndex = activeRowIndex! - rowsPerPage;
+        } else {
+          KeyToFunction.ArrowUp();
+        }
+        return;
+      }
       if (rowInfo && rowInfo.isGroupRow) {
         return api.collapseGroupRow(rowInfo.groupKeys);
       }
@@ -83,6 +92,16 @@ export function handleRowNavigation<T>(
     },
     ArrowRight: () => {
       const rowInfo = dataArray[activeRowIndex!];
+
+      if (brain.isHorizontalLayoutBrain) {
+        const rowsPerPage = brain.rowsPerPage;
+        if (activeRowIndex! + rowsPerPage <= max) {
+          activeRowIndex = activeRowIndex! + rowsPerPage;
+        } else {
+          KeyToFunction.ArrowDown();
+        }
+        return;
+      }
       if (rowInfo && rowInfo.isGroupRow) {
         return api.expandGroupRow(rowInfo.groupKeys);
       }

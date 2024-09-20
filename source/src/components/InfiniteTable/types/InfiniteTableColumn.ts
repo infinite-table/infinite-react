@@ -243,6 +243,13 @@ export type InfiniteTableColumnHeaderRenderFunction<T> = (
   headerParams: InfiniteTableColumnHeaderParam<T>,
 ) => Renderable;
 
+export type InfiniteTableColumnOrHeaderRenderFunction<T> = (
+  params:
+    | (InfiniteTableColumnCellContextType<T> & {
+        rowInfo: InfiniteTableRowInfo<T>;
+      })
+    | (InfiniteTableColumnHeaderParam<T> & { rowInfo: null }),
+) => ReturnType<InfiniteTableColumnRenderFunction<T>>;
 export type InfiniteTableColumnContentFocusable<T> =
   | boolean
   | InfiniteTableColumnContentFocusableFn<T>;
@@ -495,7 +502,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   renderFilterIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderSelectionCheckBox?:
     | boolean
-    | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+    | InfiniteTableColumnOrHeaderRenderFunction<DATA_TYPE>;
   renderMenuIcon?: boolean | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   renderHeaderSelectionCheckBox?:

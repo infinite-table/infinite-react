@@ -158,6 +158,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultEditable: false,
     columnGroup: 'colgroup',
+    renderSelectionCheckBox: true,
     header,
     style,
   },
@@ -167,42 +168,42 @@ const columns: InfiniteTablePropColumns<Developer> = {
     style,
     header,
   },
-  salary: {
-    field: 'salary',
-    type: 'number',
-    columnGroup: 'colgroup',
-    style,
-    header,
-    // renderValue: ({ value }) => {
-    //   console.log('renderValue', value);
-    //   return value;
-    //   // return <Flashing value={value} />;
-    // },
-    components: {
-      // ColumnCell: FlashingColumnCell,
-      // ColumnCell: FlashingColumnCell,
-    },
-  },
-  firstName: {
-    field: 'firstName',
-    columnGroup: 'colgroup',
-    style,
-  },
-  age: {
-    field: 'age',
-    type: 'number',
-    columnGroup: 'colgroup',
-    style,
-  },
+  // salary: {
+  //   field: 'salary',
+  //   type: 'number',
+  //   columnGroup: 'colgroup',
+  //   style,
+  //   header,
+  //   // renderValue: ({ value }) => {
+  //   //   console.log('renderValue', value);
+  //   //   return value;
+  //   //   // return <Flashing value={value} />;
+  //   // },
+  //   components: {
+  //     // ColumnCell: FlashingColumnCell,
+  //     // ColumnCell: FlashingColumnCell,
+  //   },
+  // },
+  // firstName: {
+  //   field: 'firstName',
+  //   columnGroup: 'colgroup',
+  //   style,
+  // },
+  // age: {
+  //   field: 'age',
+  //   type: 'number',
+  //   columnGroup: 'colgroup',
+  //   style,
+  // },
 
-  stack: {
-    field: 'stack',
-    renderMenuIcon: false,
-    style,
-    columnGroup: 'colgroup',
-  },
-  currency: { field: 'currency', style, columnGroup: 'colgroup' },
-  country: { field: 'country', style, columnGroup: 'colgroup' },
+  // stack: {
+  //   field: 'stack',
+  //   renderMenuIcon: false,
+  //   style,
+  //   columnGroup: 'colgroup',
+  // },
+  // currency: { field: 'currency', style, columnGroup: 'colgroup' },
+  // country: { field: 'country', style, columnGroup: 'colgroup' },
 };
 
 // const render: InfiniteTableColumn<Developer>['render'] = ({
@@ -251,9 +252,32 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 //   return `(${groupKeys[column.computedVisibleIndex]})`;
 // };
+
+const defaultGroupColumn: InfiniteTableColumn<Developer> = {
+  renderSelectionCheckBox: (params) => {
+    const { rowInfo, column } = params;
+
+    if (!rowInfo) {
+      return null;
+    }
+
+    if (rowInfo.isGroupRow) {
+      const currentGroupBy = rowInfo.groupBy[rowInfo.groupBy.length - 1];
+
+      if (
+        column.groupByForColumn &&
+        !Array.isArray(column.groupByForColumn) &&
+        currentGroupBy.field === column.groupByForColumn.field
+      ) {
+        return params.renderBag.selectionCheckBox;
+      }
+    }
+    return null;
+  },
+};
 export default () => {
   const dataSource = React.useCallback(() => {
-    return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
+    return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
       .then((r) => r.json())
       .then((data) => {
         // data.length = 2;
@@ -322,7 +346,15 @@ export default () => {
           shouldReloadData={{
             filterValue: false,
           }}
+          defaultRowSelection={{
+            defaultSelection: false,
+            selectedRows: [],
+          }}
           // defaultFilterValue={[]}
+          defaultGroupBy={[
+            { field: 'country', column: { ...defaultGroupColumn } },
+            { field: 'currency', column: { ...defaultGroupColumn } },
+          ]}
           primaryKey="id"
         >
           <InfiniteTable<Developer>
@@ -341,8 +373,10 @@ export default () => {
             //   },
             // }}
             wrapRowsHorizontally={wrapRowsHorizontally}
-            columnDefaultWidth={120}
+            columnDefaultWidth={200}
             columnDefaultEditable
+            defaultActiveRowIndex={168}
+            keyboardNavigation="row"
             domProps={{
               style: {
                 minHeight: '70vh',

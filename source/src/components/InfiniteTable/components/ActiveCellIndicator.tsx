@@ -74,7 +74,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
 
   useLayoutEffect(() => {
     reposition(brain, props.activeCellIndex, props.rowHeight, domRef);
-  }, [props.activeCellIndex, props.rowHeight]);
+  }, [props.activeCellIndex, props.rowHeight, brain]);
 
   useEffect(() => {
     const removeOnRenderCountChange = brain.onRenderCountChange(() => {

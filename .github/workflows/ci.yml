@@ -105,6 +105,9 @@ jobs:
       - name: Execute 'npm ci' in monorepo
         run: npm ci
 
+      - name: Execute 'npm i' in www/dataserver
+        run: npm run www-dataserver:install
+
       # - name: Load cached node_modules for root
       #   id: cache-node-modules-root
       #   uses: actions/cache@v3

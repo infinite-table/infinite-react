@@ -268,6 +268,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     config: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
+      colIndex?: number;
     } = { offset: 0 },
   ): ScrollPosition | null => {
     if (this.destroyed) {
@@ -275,6 +276,10 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
+
+    // only needed for horizontal layout
+    let scrollLeft = scrollPosition.scrollLeft;
+
     let { scrollAdjustPosition, offset = 0 } = config;
     if (this.isRowFullyVisible(rowIndex) && !scrollAdjustPosition) {
       return scrollPosition;
@@ -322,8 +327,24 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollTop += rowOffset - bottom + offset + fixedEndRowsHeight;
     }
 
+    if (this.brain.isHorizontalLayoutBrain) {
+      const colIndex =
+        config.colIndex! ?? Math.ceil(this.brain.getInitialCols() / 2);
+
+      const colScrollPosition = this.getScrollPositionForScrollColumnIntoView(
+        colIndex,
+        {
+          ...config,
+          horizontalLayoutPageIndex: this.brain.getPageIndexForRow(rowIndex),
+        },
+      );
+      if (colScrollPosition) {
+        scrollLeft = colScrollPosition.scrollLeft;
+      }
+    }
+
     return {
-      ...scrollPosition,
+      scrollLeft,
       scrollTop,
     };
   };
