@@ -24,6 +24,10 @@ export class Indexer<DataType, PrimaryKeyType = string> {
   ) => {
     const { cache, toPrimaryKey } = options;
 
+    if (cache && cache.shouldResetDataSource()) {
+      this.clear();
+      arr = [];
+    }
     if (cache && !cache.isEmpty()) {
       // because of React.StrictMode, we need to clone the array and return a copy
       // not very efficient for large arrays
@@ -32,7 +36,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
     }
 
     if (!arr.length && cache) {
-      const cacheInfo = [...cache.getMutations().values()].flatMap((x) => x);
+      const cacheInfo = cache.getMutationsArray();
 
       if (cacheInfo && cacheInfo.length) {
         // we had inserts when the array was empty

@@ -21,14 +21,17 @@ export type DataSourceMutation<T> =
       metadata: any;
     };
 
+export type DataSourceMutationMap<PrimaryKeyType, DataType> = Map<
+  PrimaryKeyType,
+  DataSourceMutation<DataType>[]
+>;
 export class DataSourceCache<DataType, PrimaryKeyType = string> {
   private affectedFields: Set<keyof DataType> = new Set();
   private allFieldsAffected: boolean = false;
+  private containsResetDataSourceMutation: boolean = false;
 
-  private primaryKeyToData: Map<
-    PrimaryKeyType,
-    DataSourceMutation<DataType>[]
-  > = new Map();
+  private primaryKeyToData: DataSourceMutationMap<PrimaryKeyType, DataType> =
+    new Map();
 
   static clone<DataType, PrimaryKeyType = string>(
     cache: DataSourceCache<DataType, PrimaryKeyType>,
@@ -37,6 +40,9 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     const clone = new DataSourceCache<DataType, PrimaryKeyType>();
 
     clone.allFieldsAffected = cache.allFieldsAffected;
+    clone.containsResetDataSourceMutation =
+      cache.containsResetDataSourceMutation;
+
     clone.affectedFields = new Set(cache.affectedFields);
     clone.primaryKeyToData = light
       ? cache.primaryKeyToData
@@ -118,14 +124,27 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     this.primaryKeyToData.set(primaryKey, value);
   };
 
+  resetDataSource = () => {
+    this.clear();
+    this.allFieldsAffected = true;
+    this.containsResetDataSourceMutation = true;
+  };
+
+  shouldResetDataSource = () => {
+    return this.containsResetDataSourceMutation;
+  };
+
   clear = () => {
+    this.containsResetDataSourceMutation = false;
     this.allFieldsAffected = false;
     this.affectedFields.clear();
     this.primaryKeyToData.clear();
   };
 
   isEmpty = () => {
-    return this.primaryKeyToData.size === 0;
+    return (
+      this.primaryKeyToData.size === 0 && !this.containsResetDataSourceMutation
+    );
   };
 
   removeInfo = (primaryKey: PrimaryKeyType) => {
@@ -140,7 +159,15 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     return data;
   };
 
+  getMutationsCount = () => {
+    return this.primaryKeyToData.size;
+  };
+
   getMutations = () => {
     return new Map(this.primaryKeyToData);
+  };
+
+  getMutationsArray = () => {
+    return Array.from(this.primaryKeyToData.values()).flat();
   };
 }

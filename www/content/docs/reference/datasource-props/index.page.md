@@ -417,6 +417,29 @@ If you want to prevent debouncing/batching filter values, you can set <DPropLink
 
 </Prop>
 
+<Prop name="batchOperationDelay" type="number">
+
+> The delay in milliseconds to wait before mutations are applied. This is useful to batch multiple mutations together.
+
+If not specified, a `requestAnimationFrame` will be used to batch mutations.
+
+The following mutative operations are batched:
+ 
+ - <DApiLink name="addData" />
+ - <DApiLink name="addDataArray" />
+ - <DApiLink name="insertData" />
+ - <DApiLink name="insertDataArray" />
+ - <DApiLink name="updateData" />
+ - <DApiLink name="updateDataArray" />
+ - <DApiLink name="removeData" />
+ - <DApiLink name="removeDataArray" />
+ - <DApiLink name="removeDataByPrimaryKey" />
+ - <DApiLink name="removeDataArrayByPrimaryKeys" />
+ - <DApiLink name="replaceAllData" />
+ - <DApiLink name="clearAllData" />
+
+</Prop>
+
 <Prop name="filterFunction" type="({ data, dataArray, index, primaryKey }) => boolean">
 
 > A function to be used for client-side filtering.
