@@ -150,7 +150,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           });
           break;
         case 'replace-all':
-          cache.resetDataSource();
+          cache.resetDataSource(operation.metadata);
           break;
       }
     });

@@ -19,7 +19,14 @@ export type DataSourceMutation<T> =
       originalData: null;
       data: T;
       metadata: any;
+    }
+  | {
+      type: 'clear-all';
+      primaryKey: undefined;
+      metadata: any;
     };
+
+const CLEAR_SYMBOL = Symbol('CLEAR');
 
 export type DataSourceMutationMap<PrimaryKeyType, DataType> = Map<
   PrimaryKeyType,
@@ -28,7 +35,6 @@ export type DataSourceMutationMap<PrimaryKeyType, DataType> = Map<
 export class DataSourceCache<DataType, PrimaryKeyType = string> {
   private affectedFields: Set<keyof DataType> = new Set();
   private allFieldsAffected: boolean = false;
-  private containsResetDataSourceMutation: boolean = false;
 
   private primaryKeyToData: DataSourceMutationMap<PrimaryKeyType, DataType> =
     new Map();
@@ -40,8 +46,6 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     const clone = new DataSourceCache<DataType, PrimaryKeyType>();
 
     clone.allFieldsAffected = cache.allFieldsAffected;
-    clone.containsResetDataSourceMutation =
-      cache.containsResetDataSourceMutation;
 
     clone.affectedFields = new Set(cache.affectedFields);
     clone.primaryKeyToData = light
@@ -124,27 +128,33 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     this.primaryKeyToData.set(primaryKey, value);
   };
 
-  resetDataSource = () => {
+  resetDataSource = (metadata: any) => {
     this.clear();
     this.allFieldsAffected = true;
-    this.containsResetDataSourceMutation = true;
+
+    const pk = CLEAR_SYMBOL as any as PrimaryKeyType;
+    const value = this.primaryKeyToData.get(pk) || [];
+
+    value.push({
+      type: 'clear-all',
+      primaryKey: undefined,
+      metadata,
+    });
+    this.primaryKeyToData.set(pk, value);
   };
 
   shouldResetDataSource = () => {
-    return this.containsResetDataSourceMutation;
+    return this.primaryKeyToData.has(CLEAR_SYMBOL as any as PrimaryKeyType);
   };
 
   clear = () => {
-    this.containsResetDataSourceMutation = false;
     this.allFieldsAffected = false;
     this.affectedFields.clear();
     this.primaryKeyToData.clear();
   };
 
   isEmpty = () => {
-    return (
-      this.primaryKeyToData.size === 0 && !this.containsResetDataSourceMutation
-    );
+    return this.primaryKeyToData.size === 0;
   };
 
   removeInfo = (primaryKey: PrimaryKeyType) => {
