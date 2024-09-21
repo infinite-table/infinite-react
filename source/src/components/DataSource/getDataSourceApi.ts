@@ -159,11 +159,16 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     this.actions.cache = cache;
   }
 
+  flush() {
+    return this.commit();
+  }
+
   commit() {
     this.commitOperations(this.pendingOperations);
     this.pendingOperations.length = 0;
 
-    if (this.pendingPromise && this.resolvePendingPromise) {
+    const pendingPromise = this.pendingPromise;
+    if (pendingPromise && this.resolvePendingPromise) {
       const resolve = this.resolvePendingPromise;
       // let's resolve the promise in the next frame
       // so we give the DataSource reducer the chance to pick up the commited operations
@@ -175,6 +180,8 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       this.pendingPromise = null;
       this.resolvePendingPromise = null;
     }
+
+    return pendingPromise || Promise.resolve(true);
   }
 
   getRowInfoArray = () => {

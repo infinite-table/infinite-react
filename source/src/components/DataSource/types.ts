@@ -434,6 +434,8 @@ export interface DataSourceApi<T> {
     options?: DataSourceCRUDParam,
   ): Promise<any>;
 
+  flush(): Promise<any>;
+
   removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam): Promise<any>;
   removeDataArrayByPrimaryKeys(
     id: any[],
