@@ -328,6 +328,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       if (inEdit) {
         return null;
       }
+      renderParamRef.current = renderParam;
 
       if (renderFunctions.renderGroupIcon) {
         renderParam.renderBag.groupIcon = (
@@ -617,6 +618,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       : null;
 
   const afterChildren = editor;
+  const theChildren = renderChildren();
   const cellProps: InfiniteTableCellProps<T> &
     React.HTMLAttributes<HTMLElement> = {
     domRef,
@@ -659,7 +661,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       colClassName,
       rowComputedClassName,
     ),
-    renderChildren,
+    renderChildren: useCallback(() => theChildren, [renderChildren]),
   };
 
   const ContextProvider =
