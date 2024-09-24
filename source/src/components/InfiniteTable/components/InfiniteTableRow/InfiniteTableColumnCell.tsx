@@ -213,6 +213,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const rowDisabled = rowInfo.rowDisabled;
 
+  // const flashOnUpdate = column.computedFlashOnUpdate;
   const visibleColumnsIds = computed.computedVisibleColumns.map((x) => x.id);
   const colRenderingParams = getColumnRenderingParams({
     horizontalLayoutPageIndex,
