@@ -273,6 +273,10 @@ export const ColumnCellRecipe = recipe({
         borderTop: ThemeVars.components.Cell.borderTop,
       },
     },
+    firstRowInHorizontalLayoutPage: {
+      true: {},
+      false: {},
+    },
     lastInCategory: {
       true: ColumnCellVariantsObject.lastInCategory,
       false: {},
@@ -297,6 +301,15 @@ export const ColumnCellRecipe = recipe({
   },
 
   compoundVariants: [
+    {
+      variants: {
+        firstRowInHorizontalLayoutPage: true,
+        firstRow: false,
+      },
+      style: {
+        borderTop: 'none',
+      },
+    },
     {
       variants: {
         pinned: 'start',

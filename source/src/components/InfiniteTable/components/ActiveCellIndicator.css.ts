@@ -1,4 +1,5 @@
-import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
+import { fallbackVar, style } from '@vanilla-extract/css';
+import { recipe } from '@vanilla-extract/recipes';
 
 import { ThemeVars } from '../vars.css';
 import {
@@ -51,7 +52,12 @@ export const ActiveCellIndicatorBaseCls = style(
   'ActiveCellIndicator',
 );
 
-export const ActiveCellIndicatorCls = styleVariants({
-  visible: [ActiveCellIndicatorBaseCls, { display: 'block' }],
-  hidden: [ActiveCellIndicatorBaseCls, { display: 'none' }],
+export const ActiveCellIndicatorRecipe = recipe({
+  base: [ActiveCellIndicatorBaseCls],
+  variants: {
+    visible: {
+      true: { display: 'block' },
+      false: { display: 'none' },
+    },
+  },
 });

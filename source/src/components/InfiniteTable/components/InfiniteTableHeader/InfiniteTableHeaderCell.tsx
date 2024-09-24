@@ -622,6 +622,7 @@ export function InfiniteTableHeaderCell<T>(
               zebra: false,
               rowActive: false,
               firstRow: true,
+              firstRowInHorizontalLayoutPage: true,
               groupCell: false,
               groupRow: false,
               rowExpanded: false,

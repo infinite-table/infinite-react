@@ -653,6 +653,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           cellSelected,
           rowSelected,
           firstRow: rowInfo.indexInAll === 0,
+          firstRowInHorizontalLayoutPage: rowIndexInHorizontalLayoutPage === 0,
           groupRow: rowInfo.isGroupRow,
           groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,

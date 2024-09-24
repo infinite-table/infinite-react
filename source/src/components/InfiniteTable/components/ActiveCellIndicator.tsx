@@ -8,7 +8,7 @@ import { internalProps } from '../internalProps';
 import { InternalVars } from '../internalVars.css';
 import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
 import {
-  ActiveCellIndicatorCls,
+  ActiveCellIndicatorRecipe,
   ActiveIndicatorWrapperCls,
 } from './ActiveCellIndicator.css';
 
@@ -104,11 +104,9 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     >
       <div
         data-name="active-cell-indicator"
-        className={`${baseCls} ${
-          active
-            ? ActiveCellIndicatorCls.visible
-            : ActiveCellIndicatorCls.hidden
-        }`}
+        className={`${baseCls} ${ActiveCellIndicatorRecipe({
+          visible: active,
+        })}`}
       />
     </div>
   );

@@ -181,6 +181,10 @@ export const HeaderCellRecipe = recipe({
       false: {},
       true: {},
     },
+    firstRowInHorizontalLayoutPage: {
+      false: {},
+      true: {},
+    },
     groupRow: {
       false: {},
       true: {},
