@@ -3,6 +3,7 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 5.0.0-canary.1
 ## 4.4.1
 
 ## 4.4.0
