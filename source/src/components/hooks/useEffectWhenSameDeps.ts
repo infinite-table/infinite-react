@@ -22,12 +22,9 @@ export const useEffectWhenSameDeps = (
   const callbackRef = useRef(callback);
   callbackRef.current = callback;
 
-  if (sameDeps) {
-    isInitialRef.current = false;
-  }
-
   useEffect(() => {
     if (isInitialRef.current) {
+      isInitialRef.current = false;
       return;
     }
     return callbackRef.current();

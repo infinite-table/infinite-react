@@ -1,4 +1,4 @@
-import { useEffectWhenSameDeps } from '@infinite-table/infinite-react/components/hooks/useEffectWhenSameDeps';
+import { useEffectWhenSameDeps } from '@infinite-table/infinite-react';
 import { useState } from 'react';
 
 (globalThis as any).effectCalls = 0;
