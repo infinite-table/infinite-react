@@ -176,11 +176,7 @@ export function getColumnRenderingParams<T>(options: {
   const { getState } = context;
   const { editingCell } = getState();
 
-  const formattedResult = getFormattedValueContextForCell({
-    ...options,
-    // column: groupByColumnReference || column,
-    column,
-  });
+  const formattedResult = getFormattedValueContextForCell(options);
   const { formattedValueContext } = formattedResult;
 
   const inEdit = context.api.isEditorVisibleForCell({
@@ -238,7 +234,18 @@ export function getColumnRenderingParams<T>(options: {
         column.renderLeafValue || groupByColumnReference?.renderLeafValue,
     },
     renderParams: getColumnRenderParam({
-      ...options,
+      // prefer this over spreading the options object
+      // for better performance
+      rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
+      horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
+      column: options.column,
+      rowInfo: options.rowInfo,
+      visibleColumnsIds: options.visibleColumnsIds,
+      columnsMap: options.columnsMap,
+      fieldsToColumn: options.fieldsToColumn,
+      context: options.context,
+
+      // override the following:
       align,
       verticalAlign,
       formattedValueContext,
