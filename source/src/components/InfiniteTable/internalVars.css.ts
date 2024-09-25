@@ -3,6 +3,9 @@ export const InternalVars = createThemeContract({
   currentColumnTransformX: null,
   y: null,
 
+  currentFlashingBackground: null,
+  currentFlashingDuration: null,
+
   activeCellRowOffset: null,
   activeCellRowOffsetX: null,
   activeCellRowHeight: null,

@@ -52,7 +52,7 @@ import {
   cleanupState,
   getCellSelector,
 } from './state/getInitialState';
-import { columnHeaderHeightName } from './vars.css';
+import { columnHeaderHeightName, ThemeVars } from './vars.css';
 
 import type {
   InfiniteTableContextValue,
@@ -309,6 +309,7 @@ export const InfiniteTableComponent = React.memo(
       portalDOMRef,
 
       onRowHeightCSSVarChange,
+      onFlashingDurationCSSVarChange,
       onRowDetailHeightCSSVarChange,
       onColumnHeaderHeightCSSVarChange,
       rowHeightCSSVar,
@@ -433,18 +434,29 @@ export const InfiniteTableComponent = React.memo(
         </div>
         {rowHeightCSSVar ? (
           <CSSNumericVariableWatch
+            key={'row-height'}
             varName={rowHeightCSSVar}
             onChange={onRowHeightCSSVarChange}
           />
         ) : null}
+
+        <CSSNumericVariableWatch
+          key={'flashing-duration'}
+          allowInts
+          varName={ThemeVars.components.Cell.flashingDuration}
+          onChange={onFlashingDurationCSSVarChange}
+        />
+
         {rowDetailHeightCSSVar ? (
           <CSSNumericVariableWatch
+            key={'row-detail-height'}
             varName={rowDetailHeightCSSVar}
             onChange={onRowDetailHeightCSSVarChange}
           />
         ) : null}
         {columnHeaderHeightCSSVar ? (
           <CSSNumericVariableWatch
+            key={'column-header-height'}
             varName={columnHeaderHeightCSSVar}
             onChange={onColumnHeaderHeightCSSVarChange}
           />

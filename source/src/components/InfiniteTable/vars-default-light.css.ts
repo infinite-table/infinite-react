@@ -65,6 +65,10 @@ const ActiveCellIndicatorVars = {
 const CellVars = {
   [ThemeVars.components.Cell.color]: 'currentColor',
   [ThemeVars.components.Cell.borderWidth]: '1px',
+  [ThemeVars.components.Cell.flashingOverlayZIndex]: -1,
+  [ThemeVars.components.Cell.flashingBackground]: ThemeVars.color.accent,
+  [ThemeVars.components.Cell.flashingUpBackground]: ThemeVars.color.success,
+  [ThemeVars.components.Cell.flashingDownBackground]: ThemeVars.color.error,
   [ThemeVars.components.Cell
     .padding]: `${ThemeVars.spacing[2]} ${ThemeVars.spacing[3]}`,
   [ThemeVars.components.Cell
@@ -191,6 +195,7 @@ export const LightVars = {
   [ThemeVars.fontFamily]: 'inherit',
   [ThemeVars.color.color]: '#484848',
   [ThemeVars.color.accent]: '#0284c7',
+  [ThemeVars.color.success]: '#7aff7a',
   [ThemeVars.color.error]: '#ff0000',
   [ThemeVars.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.background]: 'white',

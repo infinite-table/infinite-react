@@ -74,6 +74,8 @@ export interface InfiniteTableSetupState<T> {
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   focusDetectDOMRef: MutableRefObject<HTMLDivElement | null>;
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
+  onFlashingDurationCSSVarChange: SubscriptionCallback<number>;
+  flashingDurationCSSVarValue: number | null;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onRowDetailHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnMenuClick: SubscriptionCallback<{

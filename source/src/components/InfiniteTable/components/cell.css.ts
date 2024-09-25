@@ -1,6 +1,7 @@
 import {
   ComplexStyleRule,
   fallbackVar,
+  keyframes,
   style,
   styleVariants,
 } from '@vanilla-extract/css';
@@ -17,6 +18,7 @@ import {
   whiteSpace,
   willChange,
 } from '../utilities.css';
+import { InternalVars } from '../internalVars.css';
 
 export const columnAlignCellStyle = styleVariants({
   center: { justifyContent: 'center' },
@@ -132,6 +134,70 @@ const CellSelectionIndicatorBase: ComplexStyleRule = {
     )}`,
   ),
 };
+
+export const FlashingColumnCellRecipe = recipe({
+  base: {
+    '::after': {
+      position: 'absolute',
+      content: '',
+      inset: 0,
+      zIndex: ThemeVars.components.Cell.flashingOverlayZIndex,
+
+      // expand the indicator to cover the cell borders left and right
+      left: `calc(0px - ${ThemeVars.components.Cell.borderWidth})`,
+      right: `calc(0px - ${ThemeVars.components.Cell.borderWidth})`,
+      pointerEvents: 'none',
+
+      animationName: fallbackVar(
+        ThemeVars.components.Cell.flashingAnimationName,
+        keyframes({
+          '0%': { opacity: 0 },
+          '25%': { opacity: 1 },
+
+          '75%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        }),
+      ),
+
+      animationDuration: `calc(1ms * ${fallbackVar(
+        InternalVars.currentFlashingDuration,
+        ThemeVars.components.Cell.flashingDuration,
+      )})`,
+
+      background: fallbackVar(
+        InternalVars.currentFlashingBackground,
+        ThemeVars.components.Cell.flashingBackground,
+      ),
+    },
+  },
+  variants: {
+    direction: {
+      up: {
+        vars: {
+          [InternalVars.currentFlashingBackground]: fallbackVar(
+            ThemeVars.components.Cell.flashingUpBackground,
+            ThemeVars.components.Cell.flashingBackground,
+          ),
+        },
+      },
+      down: {
+        vars: {
+          [InternalVars.currentFlashingBackground]: fallbackVar(
+            ThemeVars.components.Cell.flashingDownBackground,
+            ThemeVars.components.Cell.flashingBackground,
+          ),
+        },
+      },
+      neutral: {
+        vars: {
+          [InternalVars.currentFlashingBackground]:
+            ThemeVars.components.Cell.flashingBackground,
+        },
+      },
+    },
+  },
+});
+
 export const ColumnCellSelectionIndicatorRecipe = recipe({
   base: {
     '::before': CellSelectionIndicatorBase,

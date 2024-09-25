@@ -168,6 +168,8 @@ export function initSetupState<T>({
       column: InfiniteTableComputedColumn<T>;
     }>(),
 
+    flashingDurationCSSVarValue: null,
+    onFlashingDurationCSSVarChange: buildSubscriptionCallback<number>(),
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onRowDetailHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
@@ -399,6 +401,7 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.renderer.destroy();
   state.onRenderUpdater.destroy();
 
+  state.onFlashingDurationCSSVarChange.destroy();
   state.onRowHeightCSSVarChange.destroy();
   state.onColumnHeaderHeightCSSVarChange.destroy();
   state.onColumnMenuClick.destroy();

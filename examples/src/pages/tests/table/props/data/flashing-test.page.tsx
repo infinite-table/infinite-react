@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {
+  FlashingColumnCell,
   InfiniteTable,
   InfiniteTablePropColumns,
-  useInfiniteColumnCell,
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
@@ -39,58 +39,6 @@ const dataSource: Developer[] = [
     reposCount: 100,
   },
 ];
-
-const FlashingColumnCell = React.forwardRef(
-  (props: React.HTMLProps<HTMLDivElement>, _ref: React.Ref<HTMLDivElement>) => {
-    const { domRef, value, column, rowInfo } =
-      useInfiniteColumnCell<Developer>();
-
-    const flashBackground = 'blue';
-    const [flash, setFlash] = React.useState(false);
-
-    const rowId = rowInfo.id;
-    const columnId = column.id;
-
-    const prevValueRef = React.useRef({
-      columnId,
-      rowId,
-      value,
-    });
-
-    React.useEffect(() => {
-      const prev = prevValueRef.current;
-      if (
-        prev.value !== value &&
-        prev.rowId === rowId &&
-        prev.columnId === columnId
-      ) {
-        setFlash(true);
-        setTimeout(() => {
-          setFlash(false);
-        }, 100);
-      }
-
-      prevValueRef.current = {
-        columnId: column.id,
-        rowId: rowInfo.id,
-        value,
-      };
-    }, [value, columnId, rowId]);
-
-    return (
-      <div
-        ref={domRef}
-        {...props}
-        style={{
-          ...props.style,
-          background: flash ? flashBackground : props.style?.background,
-        }}
-      >
-        {props.children}-{value}
-      </div>
-    );
-  },
-);
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {

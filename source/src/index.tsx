@@ -46,4 +46,13 @@ export { debug, type DebugLogger } from './utils/debugPackage';
 
 export { useEffectWithChanges } from './components/hooks/useEffectWithChanges';
 
+export { useEffectWhenSameDeps } from './components/hooks/useEffectWhenSameDeps';
+export { useEffectWhen } from './components/hooks/useEffectWhen';
+export { usePrevious } from './components/hooks/usePrevious';
+
 export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';
+
+export {
+  createFlashingColumnCellComponent,
+  FlashingColumnCell,
+} from './components/InfiniteTable/components/InfiniteTableRow/FlashingColumnCell';

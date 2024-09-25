@@ -10,6 +10,7 @@ export const ThemeVars = createGlobalThemeContract(
        * Brand-specific accent color. This probably needs override to match your app.
        */
       accent: 'accent-color',
+      success: 'success-color',
       error: 'error-color',
       /**
        * The text color inside the component
@@ -150,6 +151,12 @@ export const ThemeVars = createGlobalThemeContract(
         inset: 'active-cell-indicator-inset',
       },
       Cell: {
+        flashingDuration: 'flashing-duration',
+        flashingAnimationName: 'flashing-animation-name',
+        flashingOverlayZIndex: 'flashing-overlay-z-index',
+        flashingBackground: 'flashing-background',
+        flashingUpBackground: 'flashing-up-background',
+        flashingDownBackground: 'flashing-down-background',
         padding: 'cell-padding',
         borderWidth: 'cell-border-width',
         /**
