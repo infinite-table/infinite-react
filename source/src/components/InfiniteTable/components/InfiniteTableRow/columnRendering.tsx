@@ -184,22 +184,27 @@ export function getColumnRenderingParams<T>(options: {
     rowIndex: rowInfo.indexInAll,
   });
 
-  const stylingParam = {
-    rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
-    horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
-    column: options.column,
-    inEdit,
-    rowHasSelectedCells: false,
-    ...formattedValueContext,
-    editError:
-      editingCell &&
-      editingCell.primaryKey === rowInfo.id &&
-      editingCell.columnId === column.id &&
-      !editingCell.active &&
-      editingCell.accepted instanceof Error
-        ? editingCell.accepted
-        : undefined,
-  };
+  const stylingParam = Object.assign(
+    {
+      rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
+      horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
+      column: options.column,
+      inEdit,
+      rowHasSelectedCells: false,
+    },
+    formattedValueContext,
+    {
+      editError:
+        editingCell &&
+        editingCell.primaryKey === rowInfo.id &&
+        editingCell.columnId === column.id &&
+        !editingCell.active &&
+        editingCell.accepted instanceof Error
+          ? editingCell.accepted
+          : undefined,
+    },
+  );
+
   // we define it initially as false so TS doesn't complain
   // and then make it a getter
   // so it can be computed lazily - just when the user calls and needs this
