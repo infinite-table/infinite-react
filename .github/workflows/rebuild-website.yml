@@ -72,7 +72,7 @@ jobs:
           token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
           repository: infinite-table/infinite-www-dist
           path: infinite-www-dist
-          ref: ${{ github.ref_name}}
+          ref: master
 
       - name: Copy netlify.toml
         run: cp ./netlify.toml ./infinite-www-dist
