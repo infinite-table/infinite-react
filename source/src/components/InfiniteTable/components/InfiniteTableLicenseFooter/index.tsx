@@ -7,7 +7,6 @@ import { join } from '../../../../utils/join';
 import { decamelize } from '../../../utils/decamelize';
 import { ThemeVars } from '../../vars.css';
 import { FooterCls } from '../../InfiniteCls.css';
-import { raf } from '../../../../utils/raf';
 
 const defaultStyle: React.CSSProperties = {
   padding: ThemeVars.spacing[2],
@@ -65,7 +64,7 @@ export const InfiniteTableLicenseFooter = React.forwardRef(
 
     useEffect(() => {
       const forceStyle = () => {
-        raf(() => {
+        setTimeout(() => {
           enforceStyle(domRef.current, defaultStyle);
           enforceStyle(
             domRef.current?.firstElementChild as HTMLElement | null,

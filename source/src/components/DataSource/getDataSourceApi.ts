@@ -5,7 +5,6 @@ import {
   DataSourceSingleSortInfo,
   DataSourceState,
 } from '.';
-import { raf } from '../../utils/raf';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
@@ -56,7 +55,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   private getState: () => DataSourceState<T>;
   private actions: DataSourceComponentActions<T>;
   //@ts-ignore
-  private batchOperationRafId: number = 0;
+  private batchOperationRafId: any = 0;
   //@ts-ignore
   private batchOperationTimeoutId: any = 0;
 
@@ -81,12 +80,12 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       const delay = Math.max(0, this.getState().batchOperationDelay ?? 0);
 
       if (delay === 0) {
-        this.batchOperationRafId = raf(() => {
+        this.batchOperationRafId = setTimeout(() => {
           this.commit();
         });
       } else {
         this.batchOperationTimeoutId = setTimeout(() => {
-          this.batchOperationRafId = raf(() => {
+          this.batchOperationRafId = setTimeout(() => {
             this.commit();
           });
         }, delay);
