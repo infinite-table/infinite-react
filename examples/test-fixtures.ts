@@ -5,6 +5,7 @@ import { InfiniteTableApiModel } from '@examples/pages/tests/testUtils/InfiniteT
 import { MenuTestingModel } from '@examples/pages/tests/testUtils/MenuTestingModel';
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import { TableTestingModel } from '@examples/pages/tests/testUtils/TableTestingModel';
+import { TracingModel } from '@examples/pages/tests/testUtils/TracingModel';
 import {
   test as base,
   expect,
@@ -14,6 +15,7 @@ import {
   Page,
   ElementHandle,
   Locator,
+  TestInfo,
 } from '@playwright/test';
 
 const fs = require('fs');
@@ -33,6 +35,22 @@ type TestExtras = {
   getGlobalValue: (name: string) => Promise<any>;
 };
 
+function getFileInfoFromTestInfo(testInfo: TestInfo) {
+  const [_, __, ...rest] = testInfo.titlePath[0].split(pathSep);
+
+  const fileName = rest.join(pathSep).replace('.spec.ts', '');
+  const filePath = path.resolve(__dirname, 'src/pages', fileName + '.page.tsx');
+
+  const exists = fs.existsSync(filePath);
+
+  return {
+    exists,
+    filePath,
+    fileName,
+    filePathNoExt: filePath.replace('.page.tsx', ''),
+  };
+}
+
 export const test = base.extend<
   PlaywrightTestArgs &
     PlaywrightTestOptions & {
@@ -44,18 +62,24 @@ export const test = base.extend<
       menuModel: MenuTestingModel;
       apiModel: InfiniteTableApiModel;
       tableModel: TableTestingModel;
+      tracingModel: TracingModel;
     }
 >({
+  tracingModel: async ({ page, browser }, use, testInfo) => {
+    const { filePathNoExt } = getFileInfoFromTestInfo(testInfo);
+
+    await use(
+      TracingModel.get({
+        page,
+        title: testInfo.title,
+        filePathNoExt,
+        browser,
+      }),
+    );
+  },
   //@ts-ignore
   page: async ({ baseURL, page }, use, testInfo) => {
-    const [_, __, ...rest] = testInfo.titlePath[0].split(pathSep);
-
-    const fileName = rest.join(pathSep).replace('.spec.ts', '');
-    const filePath = path.resolve(
-      __dirname,
-      'src/pages',
-      fileName + '.page.tsx',
-    );
+    const { fileName, filePath } = getFileInfoFromTestInfo(testInfo);
 
     const url = `${baseURL}${fileName}`;
 

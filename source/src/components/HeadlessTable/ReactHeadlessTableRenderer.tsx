@@ -705,6 +705,8 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const { start, end } = range;
 
+    const horizontalLayout = this.brain.isHorizontalLayoutBrain;
+
     if (__DEV__) {
       this.debug(`Render range ${start}-${end}. Force ${force}`);
     }
@@ -924,6 +926,12 @@ export class ReactHeadlessTableRenderer extends Logger {
 
           const elementIndex = cellRendered
             ? mappedCells.getElementIndexForCell(row, col)
+            : // TODO when horizontal layout, just do elementsOutsideItemRange.pop()
+            horizontalLayout
+            ? mappedCells.getElementFromListForRow(
+                elementsOutsideItemRange,
+                row,
+              )
             : mappedCells.getElementFromListForColumn(
                 elementsOutsideItemRange,
                 col,

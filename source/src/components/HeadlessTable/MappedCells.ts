@@ -73,6 +73,27 @@ export class MappedCells<T_ADDITIONAL_CELL_INFO = any> extends Logger {
     return elementsOutsideItemRange.pop();
   };
 
+  getElementFromListForRow = (
+    elementsOutsideItemRange: number[],
+    rowIndex: number,
+  ): number | undefined => {
+    const { elementIndexToCell } = this;
+    const last = elementsOutsideItemRange.length - 1;
+    for (let i = last; i >= 0; i--) {
+      const elementIndex = elementsOutsideItemRange[i];
+
+      const cell = elementIndexToCell[elementIndex];
+      if (cell && cell[0] === rowIndex) {
+        if (i === last) {
+          return elementsOutsideItemRange.pop();
+        }
+        elementsOutsideItemRange.splice(i, 1);
+        return elementIndex;
+      }
+    }
+    return elementsOutsideItemRange.pop();
+  };
+
   init() {
     this.elementIndexToCell = [];
     this.cellToElementIndex = new DeepMap();

@@ -295,9 +295,11 @@ export interface InfiniteTableApi<T> {
     columnId: string;
   }): boolean;
 
+  get scrollLeftMax(): number;
   get scrollLeft(): number;
   set scrollLeft(value: number);
 
+  get scrollTopMax(): number;
   get scrollTop(): number;
   set scrollTop(value: number);
 
