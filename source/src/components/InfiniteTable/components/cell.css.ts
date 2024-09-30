@@ -241,6 +241,10 @@ export const ColumnCellRecipe = recipe({
   base: [
     {
       color: ThemeVars.components.Cell.color,
+      // contain: 'strict', // DONT APPLY _STRICT_ AS IT breaks rendering cell selection
+      // and possibly other things as well
+
+      // contain: 'size layout style',
     },
   ],
   variants: {

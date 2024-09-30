@@ -21,7 +21,7 @@ const getColumns = (count: number) => {
     const colName = alphabet[index] + (time + 1);
     const column: InfiniteTableColumn<DataItem> = {
       field: colName,
-      defaultWidth: COL_DEFAULT_WIDTH - index,
+      // defaultWidth: Math.max(COL_DEFAULT_WIDTH + index, 40),
       render: ((i: number, { rowIndex, column }: any) => {
         // console.log('render', { rowIndex, columnName: column.id });
         return (
@@ -38,7 +38,7 @@ const getColumns = (count: number) => {
 };
 
 const App = () => {
-  const [columnCount, setColumnCount] = React.useState(100);
+  const [columnCount, setColumnCount] = React.useState(150);
   const [rowHeight, setRowHeight] = React.useState(40);
   const [height, setHeight] = React.useState<number | string | null>(null);
   const columns = React.useMemo(() => {

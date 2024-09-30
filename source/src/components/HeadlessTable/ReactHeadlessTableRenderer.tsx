@@ -104,7 +104,9 @@ export class ReactHeadlessTableRenderer extends Logger {
   private items: Renderable[] = [];
   private detailItems: Renderable[] = [];
 
-  private currentHoveredRow = -1;
+  private lastEnteredRow = -1;
+  private lastExitedRow = -1;
+
   private onDestroy: VoidFunction;
 
   private hoverRowUpdatesInProgress: Map<number, boolean> = new Map();
@@ -1446,12 +1448,15 @@ export class ReactHeadlessTableRenderer extends Logger {
   }
 
   protected onMouseEnter = (rowIndex: number) => {
-    this.currentHoveredRow = rowIndex;
+    this.lastEnteredRow = rowIndex;
+    this.lastExitedRow = -1;
 
     if (this.scrolling) {
       return;
     }
-    this.addHoverClass(rowIndex);
+    if (rowIndex != -1) {
+      this.addHoverClass(rowIndex);
+    }
   };
 
   private addHoverClass = (rowIndex: number) => {
@@ -1467,14 +1472,14 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   protected onMouseLeave = (rowIndex: number) => {
-    if (this.currentHoveredRow != -1 && this.currentHoveredRow === rowIndex) {
-      this.removeHoverClass(rowIndex);
-    }
-    this.currentHoveredRow = -1;
+    this.lastExitedRow = rowIndex;
+    this.lastEnteredRow = -1;
     if (this.scrolling) {
       return;
     }
-    this.removeHoverClass(rowIndex);
+    if (rowIndex != -1) {
+      this.removeHoverClass(rowIndex);
+    }
   };
 
   private removeHoverClass = (rowIndex: number) => {
@@ -1503,8 +1508,8 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.hoverRowUpdatesInProgress.set(rowIndex, true);
 
     const checkHoverClass = () => {
-      if (this.currentHoveredRow != -1 && !this.scrolling) {
-        if (this.currentHoveredRow === rowIndex) {
+      if (!this.scrolling && this.lastEnteredRow != -1) {
+        if (this.lastEnteredRow === rowIndex) {
           this.addHoverClass(rowIndex);
         } else {
           this.removeHoverClass(rowIndex);
@@ -1641,16 +1646,20 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private onScrollStart = () => {
     this.scrolling = true;
-    // if (this.currentHoveredRow != -1) {
-    //   this.removeHoverClass(this.currentHoveredRow);
-    // }
+
+    if (this.lastEnteredRow != -1) {
+      this.removeHoverClass(this.lastEnteredRow);
+    }
   };
 
   private onScrollStop = () => {
     this.scrolling = false;
 
-    if (this.currentHoveredRow != -1) {
-      this.addHoverClass(this.currentHoveredRow);
+    if (this.lastEnteredRow != -1) {
+      this.addHoverClass(this.lastEnteredRow);
+    }
+    if (this.lastExitedRow != -1) {
+      this.removeHoverClass(this.lastExitedRow);
     }
   };
 

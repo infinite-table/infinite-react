@@ -1,16 +1,12 @@
 import { test } from '@testing';
 
 export default test.describe.parallel('Tracing', () => {
-  test.skip('horizontal-scrolling', async ({
-    page,
-    apiModel,
-    tracingModel,
-  }) => {
+  test('horizontal-scrolling', async ({ page, apiModel, tracingModel }) => {
     await page.waitForInfinite();
 
     const stop = await tracingModel.start();
     await apiModel.evaluate((api) => {
-      api.scrollTop = 1000;
+      api.scrollLeft = 1000;
     });
     const scrollLeftMax = await apiModel.evaluate((api) => {
       return api.scrollLeftMax;

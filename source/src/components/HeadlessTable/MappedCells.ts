@@ -75,9 +75,12 @@ export class MappedCells<T_ADDITIONAL_CELL_INFO = any> extends Logger {
 
   getElementFromListForRow = (
     elementsOutsideItemRange: number[],
-    rowIndex: number,
+    _rowIndex: number,
   ): number | undefined => {
-    const { elementIndexToCell } = this;
+    // from profiling and tracing, seems like this is better
+    // than searching for an element in the same row
+    return elementsOutsideItemRange.pop();
+    /*
     const last = elementsOutsideItemRange.length - 1;
     for (let i = last; i >= 0; i--) {
       const elementIndex = elementsOutsideItemRange[i];
@@ -87,11 +90,13 @@ export class MappedCells<T_ADDITIONAL_CELL_INFO = any> extends Logger {
         if (i === last) {
           return elementsOutsideItemRange.pop();
         }
+        console.log('found ', elementIndex, 'at index', i, 'for row', rowIndex);
         elementsOutsideItemRange.splice(i, 1);
         return elementIndex;
       }
     }
     return elementsOutsideItemRange.pop();
+    */
   };
 
   init() {

@@ -1149,6 +1149,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   };
   getDataSourceState = () => this.context.getDataSourceState();
 
+  get scrollContainer() {
+    return this.getState().scrollerDOMRef.current!;
+  }
+
   get scrollLeftMax() {
     const scrollLeftMax = this.getState().brain.scrollLeftMax;
     return scrollLeftMax;

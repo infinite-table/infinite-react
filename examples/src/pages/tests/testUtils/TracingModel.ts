@@ -41,7 +41,7 @@ export class TracingModel {
       path: tracePath,
     });
 
-    return () => this.stop();
+    return async () => this.stop();
   }
 
   async stop() {

@@ -271,6 +271,7 @@ export interface InfiniteTableApi<T> {
   get rowDetailApi(): InfiniteTableRowDetailApi;
   get rowSelectionApi(): InfiniteTableRowSelectionApi;
   get cellSelectionApi(): InfiniteTableCellSelectionApi<T>;
+  get scrollContainer(): HTMLElement;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
