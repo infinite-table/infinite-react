@@ -133,6 +133,10 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     if (b.columnIndex === dragColumnIndex) {
       return true;
     }
+    if (horizontalLayoutPageIndex != null) {
+      // for horizontal layout, consider all columns visible for now
+      return true;
+    }
     const col = computedVisibleColumns[b.columnIndex];
 
     if (col.computedPinned) {
@@ -146,11 +150,12 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
         ? pageWidth * horizontalLayoutPageIndex
         : 0);
 
-    return (
+    const visible =
       colOffset >= scrollLeft + getCurrentPinnedWidth('start') &&
-      colOffset + col.computedWidth <
-        scrollLeft + tableRect.width - getCurrentPinnedWidth('end')
-    );
+      colOffset + col.computedWidth <=
+        scrollLeft + tableRect.width - getCurrentPinnedWidth('end');
+
+    return visible;
   }
 
   const getBreakPoints = <T>(
