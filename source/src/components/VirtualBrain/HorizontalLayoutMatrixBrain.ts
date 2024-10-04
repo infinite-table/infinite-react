@@ -309,6 +309,10 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     this._totalPageCount = value;
   }
 
+  getPageWidth() {
+    return this.pageWidth;
+  }
+
   doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
     const rowHeight = this.getInitialRowHeight();
 

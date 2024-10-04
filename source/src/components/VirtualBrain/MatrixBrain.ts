@@ -125,6 +125,8 @@ export class MatrixBrain extends Logger implements IBrain {
   protected cols: MatrixBrainOptions['cols'] = 0;
   protected rows: MatrixBrainOptions['rows'] = 0;
 
+  protected alwaysRenderedColumns: Set<number> = new Set();
+
   /**
    * This is only here for easier accessing in the renderer, when the horizontal layout is enabled.
    * In this way, the API is the same for both brains, so we don't have to cast the brain type in the renderer.
@@ -432,10 +434,13 @@ export class MatrixBrain extends Logger implements IBrain {
     const currentRenderCount = this.horizontalRenderCount;
 
     const restore = () => {
-      this.setRenderCount({
-        horizontal: currentRenderCount,
-        vertical: undefined,
-      });
+      this.setRenderCount(
+        {
+          horizontal: currentRenderCount,
+          vertical: undefined,
+        },
+        true,
+      );
     };
 
     const { start, end } = this.getRenderRange();
@@ -948,13 +953,16 @@ export class MatrixBrain extends Logger implements IBrain {
     return result;
   };
 
-  setRenderCount = ({
-    horizontal,
-    vertical,
-  }: {
-    horizontal: number | undefined;
-    vertical: number | undefined;
-  }) => {
+  setRenderCount = (
+    {
+      horizontal,
+      vertical,
+    }: {
+      horizontal: number | undefined;
+      vertical: number | undefined;
+    },
+    force?: boolean,
+  ) => {
     if (horizontal === undefined) {
       horizontal = this.horizontalRenderCount;
     }
@@ -964,7 +972,7 @@ export class MatrixBrain extends Logger implements IBrain {
     const horizontalSame = horizontal === this.horizontalRenderCount;
     const verticalSame = vertical === this.verticalRenderCount;
 
-    if (horizontalSame && verticalSame) {
+    if (horizontalSame && verticalSame && !force) {
       return;
     }
 
@@ -972,8 +980,8 @@ export class MatrixBrain extends Logger implements IBrain {
     this.verticalRenderCount = vertical;
 
     this.updateRenderRange({
-      horizontal: !horizontalSame,
-      vertical: !verticalSame,
+      horizontal: force ? true : !horizontalSame,
+      vertical: force ? true : !verticalSame,
     });
 
     this.notifyRenderCountChange();
@@ -1581,6 +1589,18 @@ export class MatrixBrain extends Logger implements IBrain {
     return result;
   }
 
+  keepColumnRendered = (colIndex: number) => {
+    this.alwaysRenderedColumns.add(colIndex);
+
+    return () => {
+      this.alwaysRenderedColumns.delete(colIndex);
+    };
+  };
+
+  getAlwaysRenderedColumns = () => {
+    return Array.from(this.alwaysRenderedColumns);
+  };
+
   setRenderRange = ({
     horizontal,
     vertical,
@@ -1739,6 +1759,7 @@ export class MatrixBrain extends Logger implements IBrain {
 
     this.rowspanParent.clear();
     this.colspanParent.clear();
+    this.alwaysRenderedColumns.clear();
     this.destroyed = true;
     this.onDestroyFns = [];
     this.onScrollFns = [];

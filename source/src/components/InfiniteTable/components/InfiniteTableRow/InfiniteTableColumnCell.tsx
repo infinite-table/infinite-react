@@ -198,7 +198,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     componentActions: dataSourceActions,
   } = useDataSourceContextValue<T>();
 
-  const { activeRowIndex, keyboardNavigation } = getState();
+  const { activeRowIndex, keyboardNavigation, columnReorderInPageIndex } =
+    getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
 
   const renderingContext: InfiniteTableColumnRenderingContext<T> = {
@@ -617,6 +618,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         }
       : null;
 
+  const insideDisabledDraggingPage =
+    columnReorderInPageIndex != null
+      ? horizontalLayoutPageIndex !== columnReorderInPageIndex
+      : false;
+
   const afterChildren = editor;
   const theChildren = renderChildren();
   const cellProps: InfiniteTableCellProps<T> &
@@ -645,6 +651,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         ColumnCellRecipe,
         {
           dragging: false,
+          insideDisabledDraggingPage,
           zebra,
           align,
           verticalAlign,

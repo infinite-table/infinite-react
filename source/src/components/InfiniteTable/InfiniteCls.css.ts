@@ -54,6 +54,10 @@ const activeCellBorderVarsForUnfocusedState = {
 };
 export const InfiniteClsRecipe = recipe({
   variants: {
+    horizontalLayout: {
+      true: {},
+      false: {},
+    },
     focused: {
       true: {},
       false: {},

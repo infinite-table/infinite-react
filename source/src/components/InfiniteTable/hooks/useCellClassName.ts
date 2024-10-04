@@ -11,6 +11,7 @@ export function useCellClassName<T>(
   baseClasses: string[],
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
+    insideDisabledDraggingPage: boolean;
     groupRow: boolean;
     firstRow: boolean;
     firstRowInHorizontalLayoutPage: boolean;
@@ -39,6 +40,7 @@ export function useCellClassName<T>(
     rowSelected: extraFlags.rowSelected ?? 'null',
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
+    insideDisabledDraggingPage: extraFlags.insideDisabledDraggingPage,
     firstRow: extraFlags.firstRow ?? false,
     firstRowInHorizontalLayoutPage:
       extraFlags.firstRowInHorizontalLayoutPage ?? false,

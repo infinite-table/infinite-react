@@ -42,9 +42,8 @@ export function setInfiniteVarOnNode(
   node: HTMLElement | null,
 ) {
   if (node) {
-    const prop = InternalVars[varName as keyof typeof InternalVars]
-      ? stripVar(InternalVars[varName as keyof typeof InternalVars])
-      : varName;
+    const name = varName as keyof typeof InternalVars;
+    const prop = InternalVars[name] ? stripVar(InternalVars[name]) : varName;
 
     node.style.setProperty(prop, `${varValue}`);
   }
@@ -67,12 +66,13 @@ export function setInfiniteVarsOnNode(
 ) {
   if (node) {
     for (var varName in vars) {
-      node.style.setProperty(
-        InternalVars[varName as keyof typeof InternalVars]
-          ? stripVar(InternalVars[varName as keyof typeof InternalVars])
-          : varName,
-        `${vars[varName as keyof typeof InternalVars]}`,
-      );
+      const propName = InternalVars[varName as keyof typeof InternalVars]
+        ? stripVar(InternalVars[varName as keyof typeof InternalVars])
+        : varName;
+
+      const propValue = `${vars[varName as keyof typeof InternalVars]}`;
+
+      node.style.setProperty(propName, propValue);
     }
   }
 }
@@ -169,11 +169,73 @@ export function restoreInfiniteColumnReorderDuration(
   );
 }
 
+type InternalVarUtilsType = {
+  columnWidths: {
+    get: (index: number) => string;
+    getVarName: (index: number) => string;
+    varName: {
+      get: (index: number) => string;
+    };
+    set: (
+      index: number,
+      value: string | number,
+      node: HTMLElement | null,
+    ) => void;
+  };
+
+  columnOffsets: {
+    get: (index: number) => string;
+    getVarName: (index: number) => string;
+    varName: {
+      get: (index: number) => string;
+    };
+    set: (
+      index: number,
+      value: string | number,
+      node: HTMLElement | null,
+    ) => void;
+  };
+};
+
+export const InternalVarUtils: InternalVarUtilsType = {
+  columnWidths: {
+    get(index: number) {
+      return `var(${this.getVarName(index)})`;
+    },
+    getVarName(index: number) {
+      return this.varName.get(index);
+    },
+    varName: {
+      get(index: number) {
+        return `${columnWidthAtIndex}-${index}`;
+      },
+    },
+    set(index: number, value: string | number, node: HTMLElement | null) {
+      value = typeof value === 'number' ? value + 'px' : value;
+      setInfiniteVarOnRoot(this.varName.get(index), value, node);
+    },
+  },
+  columnOffsets: {
+    get(index: number) {
+      return `var(${this.getVarName(index)})`;
+    },
+    getVarName(index: number) {
+      return this.varName.get(index);
+    },
+    varName: {
+      get(index: number) {
+        return `${columnOffsetAtIndex}-${index}`;
+      },
+    },
+    set(index: number, value: string | number, node: HTMLElement | null) {
+      value = typeof value === 'number' ? value + 'px' : value;
+      setInfiniteVarOnRoot(this.varName.get(index), value, node);
+    },
+  },
+};
+
 export function getCSSVarNameForColWidth(colIndex: number) {
   return `${columnWidthAtIndex}-${colIndex}`;
-}
-export function getCSSVarNameForColOffset(colIndex: number) {
-  return `${columnOffsetAtIndex}-${colIndex}`;
 }
 
 export function setInfiniteScrollPosition(

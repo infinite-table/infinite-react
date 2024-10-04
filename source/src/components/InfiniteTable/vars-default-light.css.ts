@@ -66,6 +66,8 @@ const CellVars = {
   [ThemeVars.components.Cell.color]: 'currentColor',
   [ThemeVars.components.Cell.borderWidth]: '1px',
   [ThemeVars.components.Cell.flashingOverlayZIndex]: -1,
+  [ThemeVars.components.Cell
+    .horizontalLayoutColumnReorderDisabledPageOpacity]: 0.3,
   [ThemeVars.components.Cell.flashingBackground]: ThemeVars.color.accent,
   [ThemeVars.components.Cell.flashingUpBackground]: ThemeVars.color.success,
   [ThemeVars.components.Cell.flashingDownBackground]: ThemeVars.color.error,

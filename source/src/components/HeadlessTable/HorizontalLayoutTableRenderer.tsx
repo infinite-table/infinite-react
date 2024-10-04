@@ -1,7 +1,7 @@
+import { InternalVarUtils } from '../InfiniteTable/utils/infiniteDOMUtils';
 import { ThemeVars } from '../InfiniteTable/vars.css';
 import { HorizontalLayoutMatrixBrain } from '../VirtualBrain/HorizontalLayoutMatrixBrain';
 import {
-  columnOffsetAtIndex,
   columnOffsetAtIndexWhileReordering,
   currentTransformY,
   ReactHeadlessTableRenderer,
@@ -81,7 +81,9 @@ export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
     const pageWidth = ThemeVars.runtime.totalVisibleColumnsWidthVar;
     const pageOffset = pageIndex ? `calc(${pageWidth} * ${pageIndex})` : '0px';
 
-    const columnOffsetX = `${columnOffsetAtIndex}-${horizontalLayoutCoords.colIndex}`;
+    const columnOffsetX = InternalVarUtils.columnOffsets.get(
+      horizontalLayoutCoords.colIndex,
+    );
     const columnOffsetXWhileReordering = `${columnOffsetAtIndexWhileReordering}-${horizontalLayoutCoords.colIndex}`;
 
     const currentTransformYValue = `${y}px`;
@@ -93,11 +95,12 @@ export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
       element.style.setProperty(currentTransformY, currentTransformYValue);
     }
 
-    const xOffset = `calc(var(${columnOffsetX}) + ${pageOffset})`;
-    const transformX = `var(${columnOffsetXWhileReordering}, ${xOffset})`;
+    const xOffset = `calc(var(${columnOffsetXWhileReordering}, ${columnOffsetX}) + ${pageOffset})`;
+    // const transformX = `var(${columnOffsetXWhileReordering}, ${xOffset})`;
+    // const transformXIncludeReordering = `calc(var(${columnOffsetXWhileReordering}, ${xOffset}) + var(${pageOffset}))`;
     const transformY = `var(${currentTransformY})`;
 
-    const transformValue = `translate3d(${transformX}, ${transformY}, 0px)`;
+    const transformValue = `translate3d(${xOffset}, ${transformY}, 0px)`;
 
     //@ts-ignore
     if (element.__transformValue !== transformValue) {

@@ -21,9 +21,8 @@ import {
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { InfiniteTablePropColumnPinning } from '../types';
 import adjustColumnOrderForAllColumns from './adjustColumnOrderForAllColumns';
+import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
 
-const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
-const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
 
 type TopLeft = {
@@ -52,9 +51,11 @@ const equalPinning = (
 export const useColumnPointerEvents = ({
   columnId,
   domRef,
+  horizontalLayoutPageIndex,
 }: {
   columnId: string;
   domRef: React.MutableRefObject<HTMLElement | null>;
+  horizontalLayoutPageIndex: number | null;
 }) => {
   const [proxyPosition, setProxyPosition] = useState<TopLeftOrNull>(null);
 
@@ -115,6 +116,15 @@ export const useColumnPointerEvents = ({
       const initialAvailableSize = brain.getAvailableSize();
 
       const dragColumnIndex = dragColumn.computedVisibleIndex;
+      const dragColumnIndexInHorizontalLayout = brain.getVirtualColIndex(
+        dragColumn.computedVisibleIndex,
+        {
+          pageIndex: horizontalLayoutPageIndex || 0,
+        },
+      );
+      const pageWidth = brain.isHorizontalLayoutBrain
+        ? (brain as HorizontalLayoutMatrixBrain).getPageWidth()
+        : null;
 
       let initialCursor: React.CSSProperties['cursor'] =
         target.style.cursor ?? 'auto';
@@ -123,9 +133,9 @@ export const useColumnPointerEvents = ({
 
       const dragger = reorderColumnsOnDrag({
         brain,
+        horizontalLayoutPageIndex,
+        pageWidth,
         draggableColumnsRestrictTo,
-        columnOffsetAtIndexCSSVar: columnOffsetAtIndex,
-        columnWidthAtIndexCSSVar: columnWidthAtIndex,
         computedPinnedEndColumns,
         computedPinnedStartColumns,
         computedUnpinnedColumns,
@@ -144,6 +154,9 @@ export const useColumnPointerEvents = ({
       });
 
       let reorderDragResult: ReorderDragResult | null = null;
+
+      let discardAlwaysRenderedColumn: VoidFunction | undefined;
+      let restoreRenderRange: VoidFunction | undefined;
 
       function persistColumnOrder(reorderDragResult: ReorderDragResult) {
         const { columnPinning, columnOrder } = reorderDragResult;
@@ -186,16 +199,40 @@ export const useColumnPointerEvents = ({
           // by increasing the render count
           // we could have a method that says: keep this column rendered (the current column)
           // even if the scrolling changes horizontally
-          brain.setRenderCount({
-            horizontal: computedVisibleColumns.length,
-            vertical: undefined,
-          });
-          headerBrain.setRenderCount({
-            horizontal: computedVisibleColumns.length,
-            vertical: undefined,
-          });
+
+          const discardForBody = brain.keepColumnRendered(
+            dragColumnIndexInHorizontalLayout,
+          );
+          const discardForHeader = headerBrain.keepColumnRendered(
+            dragColumnIndexInHorizontalLayout,
+          );
+
+          if (brain.isHorizontalLayoutBrain) {
+            const extendBy = true;
+            const restoreBodyRange = brain.extendRenderRange({
+              left: extendBy,
+              right: extendBy,
+            });
+            const restoreHeaderRange = headerBrain.extendRenderRange({
+              left: extendBy,
+              right: extendBy,
+            });
+            restoreRenderRange = () => {
+              restoreBodyRange();
+              restoreHeaderRange();
+            };
+          }
+
+          discardAlwaysRenderedColumn = () => {
+            discardForBody();
+            discardForHeader();
+          };
 
           actions.columnReorderDragColumnId = dragColumn.id;
+
+          if (horizontalLayoutPageIndex != null) {
+            actions.columnReorderInPageIndex = horizontalLayoutPageIndex;
+          }
 
           setInfiniteColumnZIndex(
             dragColumnIndex,
@@ -220,6 +257,8 @@ export const useColumnPointerEvents = ({
         brain.update({
           ...initialAvailableSize,
         });
+        discardAlwaysRenderedColumn?.();
+        restoreRenderRange?.();
 
         computedVisibleColumns.forEach((col) => {
           clearInfiniteColumnReorderDuration(
@@ -267,6 +306,9 @@ export const useColumnPointerEvents = ({
         }
 
         actions.columnReorderDragColumnId = false;
+        if (horizontalLayoutPageIndex != null) {
+          actions.columnReorderInPageIndex = null;
+        }
       };
 
       target.addEventListener('pointermove', onPointerMove);
@@ -274,7 +316,7 @@ export const useColumnPointerEvents = ({
 
       target.setPointerCapture(e.pointerId);
     },
-    [columnId],
+    [columnId, horizontalLayoutPageIndex],
   );
 
   return {

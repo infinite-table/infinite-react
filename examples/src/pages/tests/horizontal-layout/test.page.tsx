@@ -27,13 +27,16 @@ const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
     type: 'number',
+    defaultWidth: 100,
   },
   canDesign: {
     field: 'canDesign',
+    defaultWidth: 200,
   },
   salary: {
     field: 'salary',
     type: 'number',
+    defaultWidth: 300,
   },
   // firstName: {
   //   field: 'firstName',
@@ -53,7 +56,7 @@ const domProps = {
   style: { height: '50vh' /*30px header, 420 body*/, width: '80vw' },
 };
 
-const data = Array.from({ length: 50 }, (_, i) => ({
+const data = Array.from({ length: 100 }, (_, i) => ({
   id: i,
   preferredLanguage: `Lang ${i}`,
   age: i * 10,

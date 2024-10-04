@@ -212,6 +212,15 @@ export const HeaderCellRecipe = recipe({
       true: {},
       false: {},
     },
+    insideDisabledDraggingPage: {
+      true: {
+        opacity:
+          ThemeVars.components.Cell
+            .horizontalLayoutColumnReorderDisabledPageOpacity,
+      },
+
+      false: {},
+    },
 
     first: {
       true: ColumnCellVariantsObject.first,

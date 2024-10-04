@@ -249,6 +249,14 @@ export const ColumnCellRecipe = recipe({
   ],
   variants: {
     dragging: { false: {}, true: {} },
+    insideDisabledDraggingPage: {
+      true: {
+        opacity:
+          ThemeVars.components.Cell
+            .horizontalLayoutColumnReorderDisabledPageOpacity,
+      },
+      false: {},
+    },
     cellSelected: { false: {}, true: {} },
     align: {
       start: {},

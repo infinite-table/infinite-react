@@ -189,6 +189,7 @@ export function initSetupState<T>({
       scrollLeft: 0,
     },
     columnReorderDragColumnId: false,
+    columnReorderInPageIndex: null,
     ready: false,
     focused: false,
     focusedWithin: false,

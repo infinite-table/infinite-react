@@ -172,6 +172,8 @@ export const ThemeVars = createGlobalThemeContract(
         borderRadius: 'cell-border-radius',
         reorderEffectDuration: 'column-reorder-effect-duration',
         pinnedBorder: 'pinned-cell-border',
+        horizontalLayoutColumnReorderDisabledPageOpacity:
+          'horizontal-layout-column-reorder-disabled-page-opacity',
 
         /**
          * Text color inside rows. Defaults to `currentColor`

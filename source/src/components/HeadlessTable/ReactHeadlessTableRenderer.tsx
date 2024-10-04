@@ -9,6 +9,7 @@ import { InternalVars } from '../InfiniteTable/internalVars.css';
 import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   getParentInfiniteNode,
+  InternalVarUtils,
   setInfiniteScrollPosition,
 } from '../InfiniteTable/utils/infiniteDOMUtils';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
@@ -154,7 +155,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     }: { x: number; y: number; scrollLeft?: boolean; scrollTop?: boolean },
     zIndex: number | 'auto' | undefined | null,
   ) => {
-    const columnOffsetX = `${columnOffsetAtIndex}-${colIndex}`;
+    const columnOffsetX = InternalVarUtils.columnOffsets.get(colIndex);
     const columnOffsetXWhileReordering = `${columnOffsetAtIndexWhileReordering}-${colIndex}`;
     // const columnZIndex = `${columnZIndexAtIndex}-${colIndex}`;
 
@@ -186,7 +187,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       element.style.setProperty(currentTransformY, currentTransformYValue);
     }
 
-    const transformValue = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), var(${currentTransformY}), 0)`;
+    const transformValue = `translate3d(var(${columnOffsetXWhileReordering}, ${columnOffsetX}), var(${currentTransformY}), 0)`;
 
     // this does not change, but we need for initial setup
     //@ts-ignore
@@ -717,6 +718,24 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const fixedRanges = this.getFixedRanges(range);
     const ranges = [range, ...fixedRanges];
+
+    const alwaysRenderedColumns = this.brain.getAlwaysRenderedColumns();
+
+    if (alwaysRenderedColumns.length > 0) {
+      const startCol = range.start[1];
+      const endCol = range.end[1];
+
+      alwaysRenderedColumns.forEach((colIndex) => {
+        const colInRange = startCol <= colIndex && colIndex < endCol;
+
+        if (!colInRange) {
+          ranges.push({
+            start: [range.start[0], colIndex],
+            end: [range.end[0], colIndex + 1],
+          });
+        }
+      });
+    }
 
     const extraCellsMap = new Map<string, boolean>();
     const extraCells = ranges.map(this.getExtraSpanCellsForRange).flat();
