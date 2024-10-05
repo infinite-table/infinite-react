@@ -166,6 +166,15 @@ export class MatrixBrain extends Logger implements IBrain {
   private horizontalRenderCount?: number = undefined;
   private verticalRenderCount?: number = undefined;
 
+  private horizontalExtendRangeBy: { start: number; end: number } = {
+    start: 0,
+    end: 0,
+  };
+  private verticalExtendRangeBy: { start: number; end: number } = {
+    start: 0,
+    end: 0,
+  };
+
   protected horizontalRenderRange: RenderRangeType = {
     startIndex: 0,
     endIndex: 0,
@@ -415,48 +424,50 @@ export class MatrixBrain extends Logger implements IBrain {
    * @param options.right - if true, extends the right side with the amount of current visible columns, otherwise with the specified number
    */
   public extendRenderRange(options: {
-    left?: number | boolean;
-    right?: number | boolean;
+    start?: number | boolean;
+    end?: number | boolean;
+    direction: 'horizontal' | 'vertical';
   }) {
-    const leftAmount =
-      typeof options.left === 'number'
-        ? options.left
-        : options.left === true
-        ? this.getInitialCols()
+    const { direction } = options;
+    const horizontal = direction === 'horizontal';
+    const extendValueWhenTrue = horizontal
+      ? this.horizontalRenderCount || this.getInitialCols()
+      : this.verticalRenderCount || this.getInitialRows();
+
+    const startAmount =
+      typeof options.start === 'number'
+        ? options.start
+        : options.start === true
+        ? extendValueWhenTrue
         : 0;
-    const rightAmount =
-      typeof options.right === 'number'
-        ? options.right
-        : options.right === true
-        ? this.getInitialCols()
+    const endAmount =
+      typeof options.end === 'number'
+        ? options.end
+        : options.end === true
+        ? extendValueWhenTrue
         : 0;
 
-    const currentRenderCount = this.horizontalRenderCount;
+    if (horizontal) {
+      this.horizontalExtendRangeBy = {
+        start: startAmount,
+        end: endAmount,
+      };
+    } else {
+      this.verticalExtendRangeBy = {
+        start: startAmount,
+        end: endAmount,
+      };
+    }
+
+    this.updateRenderRange({ horizontal: horizontal, vertical: !horizontal });
 
     const restore = () => {
-      this.setRenderCount(
-        {
-          horizontal: currentRenderCount,
-          vertical: undefined,
-        },
-        true,
-      );
+      this.extendRenderRange({
+        start: 0,
+        end: 0,
+        direction,
+      });
     };
-
-    const { start, end } = this.getRenderRange();
-    const [startRow, startCol] = start;
-    const [endRow, endCol] = end;
-
-    this.setRenderRange({
-      horizontal: {
-        startIndex: Math.max(0, startCol - leftAmount),
-        endIndex: Math.min(this.cols, endCol + rightAmount),
-      },
-      vertical: {
-        startIndex: startRow,
-        endIndex: endRow,
-      },
-    });
 
     return restore;
   }
@@ -670,12 +681,12 @@ export class MatrixBrain extends Logger implements IBrain {
     }
   }
 
-  private computeDirectionalRenderCount = (
+  protected computeDirectionalRenderCount(
     direction: 'horizontal' | 'vertical',
     itemSize: number | ItemSizeFunction,
     count: number,
     theRenderSize: Size,
-  ) => {
+  ) {
     let renderCount = 0;
 
     let size =
@@ -709,7 +720,7 @@ export class MatrixBrain extends Logger implements IBrain {
     renderCount = Math.min(count, renderCount);
 
     return renderCount;
-  };
+  }
 
   getFixedSize(direction: 'horizontal' | 'vertical') {
     return direction === 'horizontal'
@@ -953,16 +964,13 @@ export class MatrixBrain extends Logger implements IBrain {
     return result;
   };
 
-  setRenderCount = (
-    {
-      horizontal,
-      vertical,
-    }: {
-      horizontal: number | undefined;
-      vertical: number | undefined;
-    },
-    force?: boolean,
-  ) => {
+  setRenderCount = ({
+    horizontal,
+    vertical,
+  }: {
+    horizontal: number | undefined;
+    vertical: number | undefined;
+  }) => {
     if (horizontal === undefined) {
       horizontal = this.horizontalRenderCount;
     }
@@ -972,7 +980,7 @@ export class MatrixBrain extends Logger implements IBrain {
     const horizontalSame = horizontal === this.horizontalRenderCount;
     const verticalSame = vertical === this.verticalRenderCount;
 
-    if (horizontalSame && verticalSame && !force) {
+    if (horizontalSame && verticalSame) {
       return;
     }
 
@@ -980,8 +988,8 @@ export class MatrixBrain extends Logger implements IBrain {
     this.verticalRenderCount = vertical;
 
     this.updateRenderRange({
-      horizontal: force ? true : !horizontalSame,
-      vertical: force ? true : !verticalSame,
+      horizontal: !horizontalSame,
+      vertical: !verticalSame,
     });
 
     this.notifyRenderCountChange();
@@ -1127,7 +1135,7 @@ export class MatrixBrain extends Logger implements IBrain {
   };
 
   computeDirectionalRenderRange = (direction: 'horizontal' | 'vertical') => {
-    const renderCount =
+    let renderCount =
       direction === 'horizontal'
         ? this.horizontalRenderCount
         : this.verticalRenderCount;
@@ -1152,7 +1160,21 @@ export class MatrixBrain extends Logger implements IBrain {
 
     scrollPositionForDirection += this.getFixedStartSize(direction);
 
+    const extendBy =
+      direction === 'horizontal'
+        ? this.horizontalExtendRangeBy
+        : this.verticalExtendRangeBy;
+
     let startIndex = this.getItemAt(scrollPositionForDirection, direction);
+
+    if (extendBy.start) {
+      startIndex = Math.max(0, startIndex - extendBy.start);
+      renderCount += extendBy.start;
+    }
+
+    if (extendBy.end) {
+      renderCount += extendBy.end;
+    }
 
     let endIndex = startIndex + renderCount;
 
@@ -1226,8 +1248,6 @@ export class MatrixBrain extends Logger implements IBrain {
     }
 
     return ~searchResult - 1;
-
-    return 0;
   };
 
   public getCellOffset(rowIndex: number, colIndex: number) {
@@ -1760,6 +1780,8 @@ export class MatrixBrain extends Logger implements IBrain {
     this.rowspanParent.clear();
     this.colspanParent.clear();
     this.alwaysRenderedColumns.clear();
+    this.horizontalExtendRangeBy = { start: 0, end: 0 };
+    this.verticalExtendRangeBy = { start: 0, end: 0 };
     this.destroyed = true;
     this.onDestroyFns = [];
     this.onScrollFns = [];

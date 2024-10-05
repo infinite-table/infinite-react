@@ -1,8 +1,10 @@
 import { raf } from '../../utils/raf';
+import { Size } from '../types/Size';
 import {
   ALL_DIRECTIONS,
   IBrain,
   ItemSizeFunction,
+  SORT_ASC,
   WhichDirection,
 } from './IBrain';
 
@@ -107,6 +109,63 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
         this.updateRenderCount({ horizontal: true, vertical: true });
       });
     }
+  }
+
+  protected computeDirectionalRenderCount(
+    direction: 'horizontal' | 'vertical',
+    itemSize: number | ItemSizeFunction,
+    count: number,
+    theRenderSize: Size,
+  ) {
+    if (direction === 'vertical') {
+      return super.computeDirectionalRenderCount(
+        direction,
+        itemSize,
+        count,
+        theRenderSize,
+      );
+    }
+    let renderCount = 0;
+
+    let size = theRenderSize.width;
+
+    size -= this.getFixedSize('horizontal');
+
+    if (size <= 0) {
+      return 0;
+    }
+
+    if (typeof itemSize === 'number') {
+      renderCount = (itemSize ? Math.ceil(size / itemSize) : 0) + 1;
+      renderCount = Math.min(count, renderCount);
+      return renderCount;
+    }
+
+    const pagesInView = Math.floor(size / this.pageWidth);
+
+    renderCount += pagesInView * this.initialCols;
+
+    const remainingSize = size - pagesInView * this.pageWidth;
+
+    const sizes = [];
+    for (let i = 0; i < this.initialCols; i++) {
+      sizes.push(this.getItemSize(i, direction));
+    }
+    sizes.sort(SORT_ASC);
+
+    let sum = 0;
+    for (let i = 0; i < this.initialCols; i++) {
+      sum += sizes[i];
+
+      renderCount++;
+      if (sum > remainingSize) {
+        break;
+      }
+    }
+    renderCount += 1;
+    renderCount = Math.min(count, renderCount);
+
+    return renderCount;
   }
 
   getRowIndexInPage(rowIndex: number) {

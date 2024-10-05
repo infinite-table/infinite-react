@@ -72,12 +72,14 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
 
     if (brain.isHorizontalLayoutBrain) {
       const restoreBodyRange = brain.extendRenderRange({
-        left: true,
-        right: true,
+        start: true,
+        end: true,
+        direction: 'horizontal',
       });
       const restoreHeaderRange = headerBrain.extendRenderRange({
-        left: true,
-        right: true,
+        start: true,
+        end: true,
+        direction: 'horizontal',
       });
       restoreRenderRange = () => {
         restoreBodyRange();

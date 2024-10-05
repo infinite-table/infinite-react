@@ -210,12 +210,14 @@ export const useColumnPointerEvents = ({
           if (brain.isHorizontalLayoutBrain) {
             const extendBy = true;
             const restoreBodyRange = brain.extendRenderRange({
-              left: extendBy,
-              right: extendBy,
+              start: extendBy,
+              end: extendBy,
+              direction: 'horizontal',
             });
             const restoreHeaderRange = headerBrain.extendRenderRange({
-              left: extendBy,
-              right: extendBy,
+              start: extendBy,
+              end: extendBy,
+              direction: 'horizontal',
             });
             restoreRenderRange = () => {
               restoreBodyRange();
