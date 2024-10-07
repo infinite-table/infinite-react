@@ -11,8 +11,10 @@ import {
   InfiniteTablePropColumnPinning,
   InfiniteTableProps,
 } from '../types/InfiniteTableProps';
+import { CSSCalc } from '../utils/CSSCalc';
 import {
   clearInfiniteColumnReorderDuration,
+  InternalVarUtils,
   restoreInfiniteColumnReorderDuration,
   setInfiniteColumnOffsetWhileReordering,
   setInfiniteVarOnRoot,
@@ -33,8 +35,8 @@ type MousePosition = {
 
 type ColumnBreakpoint = {
   columnId: string;
-  index: number;
-  breakpoint: number;
+  columnIndex: number;
+  offsetX: number;
 };
 
 type GetBreakPointsOptions<T> = {
@@ -52,6 +54,8 @@ export type ReorderParams<T> = {
   computedPinnedStartColumns: InfiniteTableComputedColumn<T>[];
   computedPinnedEndColumns: InfiniteTableComputedColumn<T>[];
   computedUnpinnedColumns: InfiniteTableComputedColumn<T>[];
+  horizontalLayoutPageIndex: number | null;
+  pageWidth: number | null;
 
   draggableColumnsRestrictTo: NonUndefined<
     InfiniteTableProps<T>['draggableColumnsRestrictTo']
@@ -76,8 +80,6 @@ export type ReorderParams<T> = {
   api: InfiniteTableApi<T>;
 
   setProxyPosition: (position: TopLeftOrNull) => void;
-  columnOffsetAtIndexCSSVar: string;
-  columnWidthAtIndexCSSVar: string;
 };
 
 const PROXY_OFFSET = 10;
@@ -87,8 +89,6 @@ const pinnedStartWidthCSSVar = stripVar(InternalVars.pinnedStartWidth);
 
 export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
   const {
-    columnOffsetAtIndexCSSVar,
-    columnWidthAtIndexCSSVar,
     computedVisibleColumns,
     computedVisibleColumnsMap,
     computedPinnedEndColumns,
@@ -101,6 +101,8 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     tableRect,
     setProxyPosition,
     api: imperativeApi,
+    horizontalLayoutPageIndex,
+    pageWidth,
   } = params;
 
   // returns the total width of the pinned start columns
@@ -128,22 +130,32 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
   }
 
   function isColumnVisible(b: ColumnBreakpoint) {
-    if (b.index === dragColumnIndex) {
+    if (b.columnIndex === dragColumnIndex) {
       return true;
     }
-    const col = computedVisibleColumns[b.index];
+    if (horizontalLayoutPageIndex != null) {
+      // for horizontal layout, consider all columns visible for now
+      return true;
+    }
+    const col = computedVisibleColumns[b.columnIndex];
 
     if (col.computedPinned) {
       return true;
     }
 
     const scrollLeft = brain.getScrollPosition().scrollLeft;
+    const colOffset =
+      col.computedOffset +
+      (horizontalLayoutPageIndex != null && pageWidth != null
+        ? pageWidth * horizontalLayoutPageIndex
+        : 0);
 
-    return (
-      col.computedOffset >= scrollLeft + getCurrentPinnedWidth('start') &&
-      col.computedOffset + col.computedWidth <
-        scrollLeft + tableRect.width - getCurrentPinnedWidth('end')
-    );
+    const visible =
+      colOffset >= scrollLeft + getCurrentPinnedWidth('start') &&
+      colOffset + col.computedWidth <=
+        scrollLeft + tableRect.width - getCurrentPinnedWidth('end');
+
+    return visible;
   }
 
   const getBreakPoints = <T>(
@@ -155,12 +167,17 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     let breakpoints: ColumnBreakpoint[] = [];
 
     columns.forEach((c) => {
-      const b = {
+      if (c.computedVisibleIndex === dragColumnIndex) {
+        // the current column is the drag column,
+        // and we don't need a breakpoint for it
+        // the breakpoints of all the other columns will be enough
+        return;
+      }
+
+      const b: ColumnBreakpoint = {
         columnId: c.id,
-        index: c.computedVisibleIndex,
-        breakpoint:
-          // tableRect.left +
-          c.computedOffset + Math.round(c.computedWidth / 2),
+        columnIndex: c.computedVisibleIndex,
+        offsetX: c.computedOffset + Math.round(c.computedWidth / 2),
       };
 
       if (isColumnVisible(b)) {
@@ -344,7 +361,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
   }
 
   function updateDropIndex(newDropIndex: number) {
-    if (newDropIndex === currentDropIndex) {
+    if (newDropIndex == null || newDropIndex === currentDropIndex) {
       return;
     }
 
@@ -409,27 +426,34 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
         newPosition = isDragColumn
           ? // this is the column we're dragging to the left
             // so we place it exactly at the offset of the currentDropIndex
-            `var(${columnOffsetAtIndexCSSVar}-${currentDropIndex})`
+            InternalVarUtils.columnOffsets.get(currentDropIndex)
           : isOutsideCol
           ? // this col should have the initial pos, so we're good
-            `var(${columnOffsetAtIndexCSSVar}-${colIndex})`
+            InternalVarUtils.columnOffsets.get(colIndex)
           : // place it at the default offset + the width of the drag column
             // as these are columns situated between the dragindex and the dropindex
-            `calc( var(${columnOffsetAtIndexCSSVar}-${colIndex}) + var(${columnWidthAtIndexCSSVar}-${dragColumnIndex}) )`;
+            CSSCalc.add(
+              InternalVarUtils.columnOffsets.get(colIndex),
+              InternalVarUtils.columnWidths.get(dragColumnIndex),
+            ).done();
 
         // newColumnIndexes.push(colCurrentIndex);
       } else {
         newPosition = isOutsideCol
           ? // this is the default value for a column
-            `var(${columnOffsetAtIndexCSSVar}-${colIndex})`
+            InternalVarUtils.columnOffsets.get(colIndex)
           : isDragColumn
           ? // this is the column we're dragging to the right
-            `calc( var(${columnOffsetAtIndexCSSVar}-${
-              currentDropIndex - 1
-            }) + var(${columnWidthAtIndexCSSVar}-${
-              currentDropIndex - 1
-            }) - var(${columnWidthAtIndexCSSVar}-${dragColumnIndex}) )`
-          : `calc( var(${columnOffsetAtIndexCSSVar}-${colIndex}) - var(${columnWidthAtIndexCSSVar}-${dragColumnIndex}) )`;
+            CSSCalc.add(
+              InternalVarUtils.columnOffsets.get(currentDropIndex - 1),
+              InternalVarUtils.columnWidths.get(currentDropIndex - 1),
+            )
+              .minus(InternalVarUtils.columnWidths.get(dragColumnIndex))
+              .done()
+          : CSSCalc.minus(
+              InternalVarUtils.columnOffsets.get(colIndex),
+              InternalVarUtils.columnWidths.get(dragColumnIndex),
+            ).done();
       }
 
       setInfiniteColumnOffsetWhileReordering(
@@ -477,28 +501,34 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
           ? dragColumn.computedOffset + diffX
           : dragColumn.computedOffset + dragColumn.computedWidth + diffX;
 
-      let idx = binarySearch<{ breakpoint: number }, number>(
+      let idx = binarySearch<{ offsetX: number }, number>(
         breakpoints,
         currentPos,
-        ({ breakpoint }, value) => {
-          return breakpoint < value ? -1 : breakpoint > value ? 1 : 0;
+        ({ offsetX }, value) => {
+          return offsetX < value ? -1 : offsetX > value ? 1 : 0;
         },
       );
       if (idx < 0) {
         idx = ~idx;
       }
 
-      idx = breakpoints[idx]
-        ? breakpoints[idx].index
-        : breakpoints[breakpoints.length - 1].index + 1;
-
-      if (idx != null && idx !== currentDropIndex) {
-        if (dir === 1 && currentDropIndex === dragColumnIndex + 1) {
-          idx = dragColumnIndex;
+      if (!breakpoints.length) {
+        if (computedVisibleColumns.length > 1) {
+          console.error('No breakpoints available, something is wrong!');
         }
-
-        updateDropIndex(idx);
+        idx = 0;
+      } else {
+        idx = breakpoints[idx]
+          ? breakpoints[idx].columnIndex
+          : breakpoints[breakpoints.length - 1].columnIndex + 1;
       }
+      // the drag column has 2 valid positionswhen it doesn't change the order - either before itself or after itself
+      // which is basically the same position, but let's normalise to only have one of them
+      if (idx === dragColumnIndex + 1) {
+        idx = dragColumnIndex;
+      }
+
+      updateDropIndex(idx);
 
       const columnPinning: InfiniteTablePropColumnPinning = {};
 

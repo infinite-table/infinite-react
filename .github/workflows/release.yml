@@ -82,7 +82,7 @@ jobs:
       - name: Push changes
         uses: './.github/actions/git-push-action'
         with:
-          branch: master
+          branch: ${{ github.ref_name }}
           github_token: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
 
       # - name: Send version to slack

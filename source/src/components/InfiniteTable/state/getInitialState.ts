@@ -11,10 +11,9 @@ import {
   RowDetailCacheEntry,
   RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
-import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
+
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
-import { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
@@ -42,23 +41,10 @@ import {
 
 import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
+import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
+import { createRenderer } from '../../HeadlessTable/createRenderer';
 
 const EMPTY_OBJECT = {};
-
-function createRenderer(brain: MatrixBrain) {
-  const renderer = new ReactHeadlessTableRenderer(brain);
-  const onRenderUpdater = buildSubscriptionCallback<Renderable>();
-
-  brain.onDestroy(() => {
-    renderer.destroy();
-    onRenderUpdater.destroy();
-  });
-
-  return {
-    renderer,
-    onRenderUpdater,
-  };
-}
 
 export function getCellSelector(cellPosition?: CellPositionByIndex) {
   const selector = `.${InfiniteTableColumnCellClassName}[data-row-index${
@@ -68,28 +54,27 @@ export function getCellSelector(cellPosition?: CellPositionByIndex) {
   return selector;
 }
 
-/**
- * The computed state is independent from props and cannot
- * be affected by props.
- */
-export function initSetupState<T>({
-  debugId,
-}: {
-  debugId?: string;
-}): InfiniteTableSetupState<T> {
-  const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
-
+export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
   /**
    * This is the main virtualization brain that powers the table
    */
-  const brain = new MatrixBrain(debugId);
+  const brain = !wrapRowsHorizontally
+    ? new MatrixBrain(debugId)
+    : new HorizontalLayoutMatrixBrain(debugId, {
+        isHeader: false,
+      });
 
   /**
    * The brain that virtualises the header is different from the main brain
    * because obviously the header will have different rowspans/colspans
    * (which are due to column groups) than the main grid viewport
    */
-  const headerBrain = new MatrixBrain('header');
+  const headerBrain = !wrapRowsHorizontally
+    ? new MatrixBrain('header')
+    : new HorizontalLayoutMatrixBrain('header', {
+        isHeader: true,
+        masterBrain: brain as HorizontalLayoutMatrixBrain,
+      });
 
   // however, we sync the headerBrain with the main brain
   // on horizontal scrolling
@@ -109,12 +94,29 @@ export function initSetupState<T>({
 
   // and on width changes
   brain.onAvailableSizeChange((size) => {
-    headerBrain.setAvailableSize({ width: size.width });
+    headerBrain.update({ width: size.width });
   });
 
-  if (__DEV__) {
-    (globalThis as any).renderer = renderer;
-  }
+  return { brain, headerBrain, renderer, onRenderUpdater };
+}
+
+/**
+ * The computed state is independent from props and cannot
+ * be affected by props.
+ */
+export function initSetupState<T>({
+  debugId,
+  wrapRowsHorizontally,
+}: {
+  debugId: string;
+  wrapRowsHorizontally?: boolean;
+}): InfiniteTableSetupState<T> {
+  const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
+
+  const { brain, headerBrain, renderer, onRenderUpdater } = createBrains(
+    debugId,
+    !!wrapRowsHorizontally,
+  );
 
   const domRef = createRef<HTMLDivElement>();
 
@@ -166,6 +168,8 @@ export function initSetupState<T>({
       column: InfiniteTableComputedColumn<T>;
     }>(),
 
+    flashingDurationCSSVarValue: null,
+    onFlashingDurationCSSVarChange: buildSubscriptionCallback<number>(),
     onRowHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onRowDetailHeightCSSVarChange: buildSubscriptionCallback<number>(),
     onColumnHeaderHeightCSSVarChange: buildSubscriptionCallback<number>(),
@@ -185,6 +189,7 @@ export function initSetupState<T>({
       scrollLeft: 0,
     },
     columnReorderDragColumnId: false,
+    columnReorderInPageIndex: null,
     ready: false,
     focused: false,
     focusedWithin: false,
@@ -261,6 +266,8 @@ export const forwardProps = <T>(
 
     onScrollbarsChange: 1,
     autoSizeColumnsKey: 1,
+
+    wrapRowsHorizontally: 1,
 
     columnDefaultFlex: 1,
 
@@ -395,6 +402,7 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.renderer.destroy();
   state.onRenderUpdater.destroy();
 
+  state.onFlashingDurationCSSVarChange.destroy();
   state.onRowHeightCSSVarChange.destroy();
   state.onColumnHeaderHeightCSSVarChange.destroy();
   state.onColumnMenuClick.destroy();

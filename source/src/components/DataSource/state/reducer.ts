@@ -269,7 +269,6 @@ export function concludeReducer<T>(params: {
     // why only when not lazyLoad?
     if (!state.lazyLoad) {
       mutations = cache?.getMutations();
-
       state.originalDataArray = state.indexer.indexArray(
         state.originalDataArray,
         {

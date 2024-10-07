@@ -9,6 +9,7 @@ import { InternalVars } from '../InfiniteTable/internalVars.css';
 import { ScrollAdjustPosition } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   getParentInfiniteNode,
+  InternalVarUtils,
   setInfiniteScrollPosition,
 } from '../InfiniteTable/utils/infiniteDOMUtils';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
@@ -63,41 +64,50 @@ export type RenderableWithPosition = {
   position: 'start' | 'end' | null;
 };
 
-const ITEM_POSITION_WITH_TRANSFORM = true;
+export const ITEM_POSITION_WITH_TRANSFORM = true;
 
-const currentTransformY = stripVar(InternalVars.y);
+export const currentTransformY = stripVar(InternalVars.y);
 
-const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
-const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
-const columnOffsetAtIndexWhileReordering = stripVar(
+export const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
+export const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
+export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
 
+export type HorizontalLayoutColVisibilityOptions = {
+  horizontalLayoutPageIndex?: number;
+};
+
 export class ReactHeadlessTableRenderer extends Logger {
-  private brain: MatrixBrain;
+  protected brain: MatrixBrain;
 
   public debugId: string = '';
 
-  private destroyed = false;
+  protected destroyed = false;
   private scrolling = false;
 
   public cellHoverClassNames: string[] = [];
 
   private itemDOMElements: (HTMLElement | null)[] = [];
-  private itemDOMRefs: RefCallback<HTMLElement>[] = [];
-  private updaters: SubscriptionCallback<Renderable>[] = [];
+  protected itemDOMRefs: RefCallback<HTMLElement>[] = [];
+  protected updaters: SubscriptionCallback<Renderable>[] = [];
 
   private detailRowDOMElements: (HTMLElement | null)[] = [];
   private detailRowDOMRefs: RefCallback<HTMLElement>[] = [];
   private detailRowUpdaters: SubscriptionCallback<Renderable>[] = [];
 
-  private mappedCells: MappedCells;
+  protected mappedCells: MappedCells<{
+    renderRowIndex: number;
+    renderColIndex: number;
+  }>;
   private mappedDetailRows: MappedVirtualRows;
 
   private items: Renderable[] = [];
   private detailItems: Renderable[] = [];
 
-  private currentHoveredRow = -1;
+  private lastEnteredRow = -1;
+  private lastExitedRow = -1;
+
   private onDestroy: VoidFunction;
 
   private hoverRowUpdatesInProgress: Map<number, boolean> = new Map();
@@ -145,7 +155,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     }: { x: number; y: number; scrollLeft?: boolean; scrollTop?: boolean },
     zIndex: number | 'auto' | undefined | null,
   ) => {
-    const columnOffsetX = `${columnOffsetAtIndex}-${colIndex}`;
+    const columnOffsetX = InternalVarUtils.columnOffsets.get(colIndex);
     const columnOffsetXWhileReordering = `${columnOffsetAtIndexWhileReordering}-${colIndex}`;
     // const columnZIndex = `${columnZIndexAtIndex}-${colIndex}`;
 
@@ -177,7 +187,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       element.style.setProperty(currentTransformY, currentTransformYValue);
     }
 
-    const transformValue = `translate3d(var(${columnOffsetXWhileReordering}, var(${columnOffsetX})), var(${currentTransformY}), 0)`;
+    const transformValue = `translate3d(var(${columnOffsetXWhileReordering}, ${columnOffsetX}), var(${currentTransformY}), 0)`;
 
     // this does not change, but we need for initial setup
     //@ts-ignore
@@ -193,13 +203,21 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
   };
 
-  constructor(brain: MatrixBrain) {
-    super('ReactHeadlessTableRenderer');
+  constructor(brain: MatrixBrain, debugId?: string) {
+    debugId = debugId || 'ReactHeadlessTableRenderer';
+    super(debugId);
     this.brain = brain;
-    this.debugId = brain.name;
+    this.debugId = debugId;
 
-    this.mappedCells = new MappedCells();
+    this.mappedCells = new MappedCells<{
+      renderRowIndex: number;
+      renderColIndex: number;
+    }>({
+      withCellAdditionalInfo: brain.isHorizontalLayoutBrain,
+    });
     this.mappedDetailRows = new MappedVirtualRows();
+
+    this.renderRange = this.renderRange.bind(this);
 
     const removeOnScroll = brain.onScroll(this.adjustFixedElementsOnScroll);
     const removeOnSizeChange = brain.onAvailableSizeChange(() => {
@@ -253,6 +271,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     config: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
+      colIndex?: number;
     } = { offset: 0 },
   ): ScrollPosition | null => {
     if (this.destroyed) {
@@ -260,6 +279,10 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
+
+    // only needed for horizontal layout
+    let scrollLeft = scrollPosition.scrollLeft;
+
     let { scrollAdjustPosition, offset = 0 } = config;
     if (this.isRowFullyVisible(rowIndex) && !scrollAdjustPosition) {
       return scrollPosition;
@@ -307,8 +330,24 @@ export class ReactHeadlessTableRenderer extends Logger {
       scrollTop += rowOffset - bottom + offset + fixedEndRowsHeight;
     }
 
+    if (this.brain.isHorizontalLayoutBrain) {
+      const colIndex =
+        config.colIndex! ?? Math.ceil(this.brain.getInitialCols() / 2);
+
+      const colScrollPosition = this.getScrollPositionForScrollColumnIntoView(
+        colIndex,
+        {
+          ...config,
+          horizontalLayoutPageIndex: this.brain.getPageIndexForRow(rowIndex),
+        },
+      );
+      if (colScrollPosition) {
+        scrollLeft = colScrollPosition.scrollLeft;
+      }
+    }
+
     return {
-      ...scrollPosition,
+      scrollLeft,
       scrollTop,
     };
   };
@@ -318,16 +357,29 @@ export class ReactHeadlessTableRenderer extends Logger {
     config: {
       scrollAdjustPosition?: ScrollAdjustPosition;
       offset?: number;
-    } = { offset: 0 },
+    } & HorizontalLayoutColVisibilityOptions = { offset: 0 },
   ): ScrollPosition | null => {
     if (this.destroyed) {
       return null;
     }
     const { brain } = this;
     const scrollPosition = brain.getScrollPosition();
+    const horizLayoutOptions =
+      config.horizontalLayoutPageIndex != null
+        ? { horizontalLayoutPageIndex: config.horizontalLayoutPageIndex }
+        : undefined;
     let { scrollAdjustPosition, offset = 0 } = config;
-    if (this.isColumnFullyVisible(colIndex) && !scrollAdjustPosition) {
+    if (
+      this.isColumnFullyVisible(colIndex, undefined, horizLayoutOptions) &&
+      !scrollAdjustPosition
+    ) {
       return scrollPosition;
+    }
+
+    if (horizLayoutOptions) {
+      colIndex =
+        brain.getInitialCols() * horizLayoutOptions.horizontalLayoutPageIndex +
+        colIndex;
     }
 
     const colOffset = brain.getItemOffsetFor(colIndex, 'horizontal');
@@ -431,6 +483,11 @@ export class ReactHeadlessTableRenderer extends Logger {
     if (!this.isRowRendered(rowIndex)) {
       return false;
     }
+    const pageIndex = this.brain.getPageIndexForRow(rowIndex);
+    rowIndex =
+      pageIndex && this.brain.rowsPerPage
+        ? rowIndex % this.brain.rowsPerPage
+        : rowIndex;
 
     const { brain } = this;
 
@@ -476,28 +533,58 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   public isRowRendered = (rowIndex: number) => {
-    const elements = this.mappedCells.getElementsForRowIndex(rowIndex);
+    if (!this.brain.isHorizontalLayoutBrain) {
+      const elements = this.mappedCells.getElementsForRowIndex(rowIndex);
 
-    return elements.length > 0;
+      return elements.length > 0;
+    }
+
+    const initialRowIndex = rowIndex;
+
+    rowIndex = this.brain.rowsPerPage
+      ? rowIndex % this.brain.rowsPerPage
+      : rowIndex;
+
+    return (
+      this.mappedCells
+        .getAdditionalInfoForRowIndex(rowIndex)
+        .filter((info) => info.renderRowIndex === initialRowIndex).length > 0
+    );
   };
 
   public isCellVisible = (rowIndex: number, colIndex: number) => {
     return this.isRowVisible(rowIndex) && this.isColumnVisible(colIndex);
   };
 
-  public isCellFullyVisible = (rowIndex: number, colIndex: number) => {
-    return this.isRowFullyVisible(rowIndex) && this.isColumnVisible(colIndex);
-  };
-
-  public isColumnFullyVisible = (colIndex: number, offsetMargin = 2) => {
-    return this.isColumnVisible(
-      colIndex,
-      this.brain.getColWidth(colIndex) - offsetMargin,
+  public isCellFullyVisible = (
+    rowIndex: number,
+    colIndex: number,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    return (
+      this.isRowFullyVisible(rowIndex) &&
+      this.isColumnVisible(colIndex, undefined, opts)
     );
   };
 
-  public isColumnVisible = (colIndex: number, offsetMargin = 10) => {
-    if (!this.isColumnRendered(colIndex)) {
+  public isColumnFullyVisible = (
+    colIndex: number,
+    offsetMargin = 2,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    return this.isColumnVisible(
+      colIndex,
+      this.brain.getColWidth(colIndex) - offsetMargin,
+      opts,
+    );
+  };
+
+  public isColumnVisible = (
+    colIndex: number,
+    offsetMargin = 10,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    if (!this.isColumnRendered(colIndex, opts)) {
       return false;
     }
 
@@ -505,6 +592,11 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     if (brain.isColFixed(colIndex)) {
       return true;
+    }
+    if (opts && opts.horizontalLayoutPageIndex != null) {
+      colIndex = brain.getVirtualColIndex(colIndex, {
+        pageIndex: opts.horizontalLayoutPageIndex,
+      });
     }
 
     const {
@@ -547,16 +639,33 @@ export class ReactHeadlessTableRenderer extends Logger {
     return true;
   };
 
-  public isCellRendered = (rowIndex: number, colIndex: number) => {
-    return this.isRowRendered(rowIndex) && this.isColumnRendered(colIndex);
+  public isCellRendered = (
+    rowIndex: number,
+    colIndex: number,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
+    return (
+      this.isRowRendered(rowIndex) && this.isColumnRendered(colIndex, opts)
+    );
   };
 
-  public isColumnRendered = (colIndex: number) => {
+  public isColumnRendered = (
+    colIndex: number,
+    opts?: HorizontalLayoutColVisibilityOptions,
+  ) => {
     const {
       start: [startRow],
     } = this.brain.getRenderRange();
 
-    return this.mappedCells.getRenderedNodeForCell(startRow, colIndex) !== null;
+    if (opts?.horizontalLayoutPageIndex != null) {
+      const colsCount = this.brain.getInitialCols();
+
+      colIndex = colsCount * opts.horizontalLayoutPageIndex + colIndex;
+    }
+    const nodeRendered =
+      this.mappedCells.getRenderedNodeForCell(startRow, colIndex) !== null;
+
+    return nodeRendered;
   };
 
   getExtraSpanCellsForRange = (range: TableRenderRange) => {
@@ -570,7 +679,15 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  renderRange = (
+  isCellRenderedAndMappedCorrectly(row: number, col: number) {
+    const rendered = this.mappedCells.isCellRendered(row, col);
+    return {
+      rendered,
+      mapped: rendered,
+    };
+  }
+
+  renderRange(
     range: TableRenderRange,
 
     {
@@ -584,12 +701,14 @@ export class ReactHeadlessTableRenderer extends Logger {
       renderDetailRow?: TableRenderDetailRowFn;
       onRender: (items: Renderable[]) => void;
     },
-  ): Renderable[] => {
+  ): Renderable[] {
     if (this.destroyed) {
       return [];
     }
 
     const { start, end } = range;
+
+    const horizontalLayout = this.brain.isHorizontalLayoutBrain;
 
     if (__DEV__) {
       this.debug(`Render range ${start}-${end}. Force ${force}`);
@@ -599,6 +718,24 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const fixedRanges = this.getFixedRanges(range);
     const ranges = [range, ...fixedRanges];
+
+    const alwaysRenderedColumns = this.brain.getAlwaysRenderedColumns();
+
+    if (alwaysRenderedColumns.length > 0) {
+      const startCol = range.start[1];
+      const endCol = range.end[1];
+
+      alwaysRenderedColumns.forEach((colIndex) => {
+        const colInRange = startCol <= colIndex && colIndex < endCol;
+
+        if (!colInRange) {
+          ranges.push({
+            start: [range.start[0], colIndex],
+            end: [range.end[0], colIndex + 1],
+          });
+        }
+      });
+    }
 
     const extraCellsMap = new Map<string, boolean>();
     const extraCells = ranges.map(this.getExtraSpanCellsForRange).flat();
@@ -771,7 +908,8 @@ export class ReactHeadlessTableRenderer extends Logger {
             continue;
           }
           visitedCells.set(key, true);
-          const cellRendered = mappedCells.isCellRendered(row, col);
+          const { rendered: cellRendered, mapped: cellMappedCorrectly } =
+            this.isCellRenderedAndMappedCorrectly(row, col);
 
           // for cells that belong to the first row of the render range
           // or to the first column of the render range
@@ -803,12 +941,18 @@ export class ReactHeadlessTableRenderer extends Logger {
             }
           }
 
-          if (cellRendered && !force) {
+          if (cellRendered && !force && cellMappedCorrectly) {
             continue;
           }
 
           const elementIndex = cellRendered
             ? mappedCells.getElementIndexForCell(row, col)
+            : // TODO when horizontal layout, just do elementsOutsideItemRange.pop()
+            horizontalLayout
+            ? mappedCells.getElementFromListForRow(
+                elementsOutsideItemRange,
+                row,
+              )
             : mappedCells.getElementFromListForColumn(
                 elementsOutsideItemRange,
                 col,
@@ -854,8 +998,12 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
 
     extraCells.forEach(([rowIndex, colIndex]) => {
-      if (mappedCells.isCellRendered(rowIndex, colIndex)) {
-        if (force) {
+      const { rendered, mapped } = this.isCellRenderedAndMappedCorrectly(
+        rowIndex,
+        colIndex,
+      );
+      if (rendered) {
+        if (force || !mapped) {
           const elementIndex = mappedCells.getElementIndexForCell(
             rowIndex,
             colIndex,
@@ -903,7 +1051,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     // }
 
     return result;
-  };
+  }
 
   private renderElement(elementIndex: number) {
     const domRef = (node: HTMLElement | null) => {
@@ -1106,7 +1254,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     return arr;
   };
 
-  private isCellFixed = (
+  protected isCellFixed = (
     rowIndex: number,
     colIndex: number,
   ): { row: FixedPosition; col: FixedPosition } => {
@@ -1154,7 +1302,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     };
   };
 
-  private isCellCovered = (rowIndex: number, colIndex: number) => {
+  protected isCellCovered = (rowIndex: number, colIndex: number) => {
     const rowspanParent = this.brain.getRowspanParent(rowIndex, colIndex);
     const colspanParent = this.brain.getColspanParent(rowIndex, colIndex);
 
@@ -1225,7 +1373,15 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.updateDetailElementPosition(detailElementIndex);
     return;
   }
-  private renderCellAtElement(
+
+  protected getCellRealCoordinates(rowIndex: number, colIndex: number) {
+    return {
+      rowIndex,
+      colIndex,
+    };
+  }
+
+  protected renderCellAtElement(
     rowIndex: number,
     colIndex: number,
     elementIndex: number,
@@ -1260,9 +1416,12 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     const hidden = !!covered;
 
+    const { rowIndex: renderRowIndex, colIndex: renderColIndex } =
+      this.getCellRealCoordinates(rowIndex, colIndex);
+
     const renderedNode = renderCell({
-      rowIndex,
-      colIndex,
+      rowIndex: renderRowIndex,
+      colIndex: renderColIndex,
       height,
       width,
       rowspan,
@@ -1286,35 +1445,37 @@ export class ReactHeadlessTableRenderer extends Logger {
       return;
     }
 
-    // console.log('render row', rowIndex);
+    const cellAdditionalInfo = this.brain.isHorizontalLayoutBrain
+      ? {
+          renderRowIndex,
+          renderColIndex,
+        }
+      : undefined;
 
     this.mappedCells.renderCellAtElement(
       rowIndex,
       colIndex,
       elementIndex,
       renderedNode,
+      cellAdditionalInfo,
     );
 
-    if (__DEV__) {
-      this.debug(
-        `Render cell ${rowIndex},${colIndex} at element ${elementIndex}`,
-      );
-    }
-
-    // console.log('update', rowIndex, colIndex, renderedNode);
     itemUpdater(renderedNode);
 
     this.updateElementPosition(elementIndex, { hidden, rowspan, colspan });
     return;
   }
 
-  private onMouseEnter = (rowIndex: number) => {
-    this.currentHoveredRow = rowIndex;
+  protected onMouseEnter = (rowIndex: number) => {
+    this.lastEnteredRow = rowIndex;
+    this.lastExitedRow = -1;
 
     if (this.scrolling) {
       return;
     }
-    this.addHoverClass(rowIndex);
+    if (rowIndex != -1) {
+      this.addHoverClass(rowIndex);
+    }
   };
 
   private addHoverClass = (rowIndex: number) => {
@@ -1329,15 +1490,15 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private onMouseLeave = (rowIndex: number) => {
-    if (this.currentHoveredRow != -1 && this.currentHoveredRow === rowIndex) {
-      this.removeHoverClass(rowIndex);
-    }
-    this.currentHoveredRow = -1;
+  protected onMouseLeave = (rowIndex: number) => {
+    this.lastExitedRow = rowIndex;
+    this.lastEnteredRow = -1;
     if (this.scrolling) {
       return;
     }
-    this.removeHoverClass(rowIndex);
+    if (rowIndex != -1) {
+      this.removeHoverClass(rowIndex);
+    }
   };
 
   private removeHoverClass = (rowIndex: number) => {
@@ -1352,7 +1513,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private updateHoverClassNamesForRow = (rowIndex: number) => {
+  protected updateHoverClassNamesForRow = (rowIndex: number) => {
     if (this.scrolling) {
       return;
     }
@@ -1366,8 +1527,8 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.hoverRowUpdatesInProgress.set(rowIndex, true);
 
     const checkHoverClass = () => {
-      if (this.currentHoveredRow != -1 && !this.scrolling) {
-        if (this.currentHoveredRow === rowIndex) {
+      if (!this.scrolling && this.lastEnteredRow != -1) {
+        if (this.lastEnteredRow === rowIndex) {
           this.addHoverClass(rowIndex);
         } else {
           this.removeHoverClass(rowIndex);
@@ -1384,7 +1545,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     });
   };
 
-  private updateElementPosition = (
+  protected updateElementPosition = (
     elementIndex: number,
     options?: { hidden: boolean; rowspan: number; colspan: number },
   ) => {
@@ -1417,9 +1578,10 @@ export class ReactHeadlessTableRenderer extends Logger {
       // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
       // (itemElement.dataset as any).elementIndex = elementIndex;
-      (itemElement.dataset as any).rowIndex = rowIndex;
+      const realCoords = this.getCellRealCoordinates(rowIndex, colIndex);
+      (itemElement.dataset as any).rowIndex = realCoords.rowIndex;
 
-      (itemElement.dataset as any).colIndex = colIndex;
+      (itemElement.dataset as any).colIndex = realCoords.colIndex;
 
       if (ITEM_POSITION_WITH_TRANSFORM) {
         this.setTransform(itemElement, rowIndex, colIndex, { x, y }, null);
@@ -1503,16 +1665,20 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private onScrollStart = () => {
     this.scrolling = true;
-    // if (this.currentHoveredRow != -1) {
-    //   this.removeHoverClass(this.currentHoveredRow);
-    // }
+
+    if (this.lastEnteredRow != -1) {
+      this.removeHoverClass(this.lastEnteredRow);
+    }
   };
 
   private onScrollStop = () => {
     this.scrolling = false;
 
-    if (this.currentHoveredRow != -1) {
-      this.addHoverClass(this.currentHoveredRow);
+    if (this.lastEnteredRow != -1) {
+      this.addHoverClass(this.lastEnteredRow);
+    }
+    if (this.lastExitedRow != -1) {
+      this.removeHoverClass(this.lastExitedRow);
     }
   };
 

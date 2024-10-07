@@ -52,7 +52,7 @@ import {
   cleanupState,
   getCellSelector,
 } from './state/getInitialState';
-import { columnHeaderHeightName } from './vars.css';
+import { columnHeaderHeightName, ThemeVars } from './vars.css';
 
 import type {
   InfiniteTableContextValue,
@@ -89,6 +89,9 @@ import { HScrollSyncContent } from './components/HScrollSyncContent';
 import { useGridScroll } from './hooks/useGridScroll';
 import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
 
+import { DEBUG_NAME } from './InfiniteDebugName';
+import { useToggleWrapRowsHorizontally } from './hooks/useToggleWrapRowsHorizontally';
+
 export const InfiniteTableClassName = internalProps.rootClassName;
 
 const HOVERED_CLASS_NAMES = [RowHoverCls, 'InfiniteColumnCell--hovered'];
@@ -113,18 +116,19 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
     mappedCallbacks: getMappedCallbacks(),
     // @ts-ignore
     getParentState: () => useDataSourceState(),
-    debugName: 'InfiniteTable',
+    debugName: DEBUG_NAME,
   });
 
 function InfiniteTableHeader<T>() {
   const context = useInfiniteTable<T>();
 
   const { state: componentState, getComputed } = context;
-  const { header, brain, headerBrain } = componentState;
+  const { header, brain, headerBrain, wrapRowsHorizontally } = componentState;
   const { scrollbars } = getComputed();
 
   return header ? (
     <TableHeaderWrapper
+      wrapRowsHorizontally={!!wrapRowsHorizontally}
       bodyBrain={brain}
       headerBrain={headerBrain}
       scrollbars={scrollbars}
@@ -173,6 +177,7 @@ function InfiniteTableBody<T>() {
     activeCellIndex,
     rowDetailRenderer,
     showHoverRows,
+    wrapRowsHorizontally,
     domProps,
   } = componentState;
 
@@ -246,6 +251,8 @@ function InfiniteTableBody<T>() {
 
   const { autoFocus, tabIndex } = domProps ?? {};
 
+  useToggleWrapRowsHorizontally();
+
   return (
     <InfiniteTableBodyContainer onContextMenu={onContextMenu}>
       <HeadlessTable
@@ -267,6 +274,7 @@ function InfiniteTableBody<T>() {
         }
         scrollStopDelay={scrollStopDelay}
         renderer={renderer}
+        wrapRowsHorizontally={wrapRowsHorizontally}
         onRenderUpdater={onRenderUpdater}
         brain={brain}
         activeCellRowHeight={activeCellRowHeight}
@@ -301,6 +309,7 @@ export const InfiniteTableComponent = React.memo(
       portalDOMRef,
 
       onRowHeightCSSVarChange,
+      onFlashingDurationCSSVarChange,
       onRowDetailHeightCSSVarChange,
       onColumnHeaderHeightCSSVarChange,
       rowHeightCSSVar,
@@ -425,18 +434,29 @@ export const InfiniteTableComponent = React.memo(
         </div>
         {rowHeightCSSVar ? (
           <CSSNumericVariableWatch
+            key={'row-height'}
             varName={rowHeightCSSVar}
             onChange={onRowHeightCSSVarChange}
           />
         ) : null}
+
+        <CSSNumericVariableWatch
+          key={'flashing-duration'}
+          allowInts
+          varName={ThemeVars.components.Cell.flashingDuration}
+          onChange={onFlashingDurationCSSVarChange}
+        />
+
         {rowDetailHeightCSSVar ? (
           <CSSNumericVariableWatch
+            key={'row-detail-height'}
             varName={rowDetailHeightCSSVar}
             onChange={onRowDetailHeightCSSVarChange}
           />
         ) : null}
         {columnHeaderHeightCSSVar ? (
           <CSSNumericVariableWatch
+            key={'column-header-height'}
             varName={columnHeaderHeightCSSVar}
             onChange={onColumnHeaderHeightCSSVarChange}
           />

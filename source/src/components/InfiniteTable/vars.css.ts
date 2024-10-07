@@ -10,6 +10,7 @@ export const ThemeVars = createGlobalThemeContract(
        * Brand-specific accent color. This probably needs override to match your app.
        */
       accent: 'accent-color',
+      success: 'success-color',
       error: 'error-color',
       /**
        * The text color inside the component
@@ -53,7 +54,8 @@ export const ThemeVars = createGlobalThemeContract(
 
     runtime: {
       bodyWidth: 'runtime-body-content-width',
-      totalVisibleColumnsWidth: 'runtime-total-visible-columns-width',
+      totalVisibleColumnsWidthValue: 'runtime-total-visible-columns-width',
+      totalVisibleColumnsWidthVar: 'runtime-total-visible-columns-width-var',
       visibleColumnsCount: 'runtime-visible-columns-count',
       browserScrollbarWidth: 'runtime-browser-scrollbar-width',
     },
@@ -149,6 +151,12 @@ export const ThemeVars = createGlobalThemeContract(
         inset: 'active-cell-indicator-inset',
       },
       Cell: {
+        flashingDuration: 'flashing-duration',
+        flashingAnimationName: 'flashing-animation-name',
+        flashingOverlayZIndex: 'flashing-overlay-z-index',
+        flashingBackground: 'flashing-background',
+        flashingUpBackground: 'flashing-up-background',
+        flashingDownBackground: 'flashing-down-background',
         padding: 'cell-padding',
         borderWidth: 'cell-border-width',
         /**
@@ -164,6 +172,8 @@ export const ThemeVars = createGlobalThemeContract(
         borderRadius: 'cell-border-radius',
         reorderEffectDuration: 'column-reorder-effect-duration',
         pinnedBorder: 'pinned-cell-border',
+        horizontalLayoutColumnReorderDisabledPageOpacity:
+          'horizontal-layout-column-reorder-disabled-page-opacity',
 
         /**
          * Text color inside rows. Defaults to `currentColor`

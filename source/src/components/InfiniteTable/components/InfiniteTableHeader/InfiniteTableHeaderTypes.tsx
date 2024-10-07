@@ -15,6 +15,7 @@ export type InfiniteTableHeaderProps<T> = {
 };
 
 export type InfiniteTableHeaderGroupProps<T> = {
+  horizontalLayoutPageIndex: number | null;
   bodyBrain: MatrixBrain;
   columns: InfiniteTableComputedColumn<T>[];
   columnGroup: InfiniteTableComputedColumnGroup;

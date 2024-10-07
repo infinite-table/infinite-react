@@ -49,6 +49,14 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
         componentActions.rowHeight = rowHeight;
       }
     });
+    componentState.onFlashingDurationCSSVarChange.onChange(
+      (flashingDuration) => {
+        const num = flashingDuration ? flashingDuration * 1 : null;
+        if (num != null && !isNaN(num)) {
+          componentActions.flashingDurationCSSVarValue = num;
+        }
+      },
+    );
     componentState.onRowDetailHeightCSSVarChange.onChange((rowDetailHeight) => {
       if (rowDetailHeight) {
         componentActions.rowDetailHeight = rowDetailHeight;

@@ -142,6 +142,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowStyle,
     rowClassName,
 
+    rowIndexInHorizontalLayoutPage,
+    horizontalLayoutPageIndex,
     getData,
     cellStyle,
     cellClassName,
@@ -160,10 +162,21 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
     fieldsToColumn,
 
-    domRef,
+    domRef: initialDomRef,
     hidden,
     showZebraRows,
   } = props;
+
+  const htmlElementRef = React.useRef<HTMLElement | null>(null);
+  const domRef = useCallback(
+    (node: HTMLElement | null) => {
+      htmlElementRef.current = node;
+      if (initialDomRef) {
+        initialDomRef(node);
+      }
+    },
+    [initialDomRef],
+  );
 
   if (!column) {
     return <div ref={domRef}>no column</div>;
@@ -185,7 +198,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     componentActions: dataSourceActions,
   } = useDataSourceContextValue<T>();
 
-  const { activeRowIndex, keyboardNavigation } = getState();
+  const { activeRowIndex, keyboardNavigation, columnReorderInPageIndex } =
+    getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
 
   const renderingContext: InfiniteTableColumnRenderingContext<T> = {
@@ -201,8 +215,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const rowDisabled = rowInfo.rowDisabled;
 
   const visibleColumnsIds = computed.computedVisibleColumns.map((x) => x.id);
-
   const colRenderingParams = getColumnRenderingParams({
+    horizontalLayoutPageIndex,
+    rowIndexInHorizontalLayoutPage,
     column,
     rowInfo,
     rowDetailState: rowDetailState,
@@ -268,6 +283,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const cellSelected = renderParam.cellSelected;
 
   renderParam.domRef = domRef;
+  renderParam.htmlElementRef = htmlElementRef;
 
   renderParam.selectCell = useCallback(renderParam.selectCell, [rowInfo]);
   renderParam.deselectCell = useCallback(renderParam.deselectCell, [rowInfo]);
@@ -313,6 +329,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       if (inEdit) {
         return null;
       }
+      renderParamRef.current = renderParam;
 
       if (renderFunctions.renderGroupIcon) {
         renderParam.renderBag.groupIcon = (
@@ -547,7 +564,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   );
 
   const odd =
-    (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
+    rowIndexInHorizontalLayoutPage != null
+      ? rowIndexInHorizontalLayoutPage % 2 === 1
+      : (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
 
   const zebra = showZebraRows ? (odd ? 'odd' : 'even') : false;
 
@@ -599,7 +618,13 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         }
       : null;
 
+  const insideDisabledDraggingPage =
+    columnReorderInPageIndex != null
+      ? horizontalLayoutPageIndex !== columnReorderInPageIndex
+      : false;
+
   const afterChildren = editor;
+  const theChildren = renderChildren();
   const cellProps: InfiniteTableCellProps<T> &
     React.HTMLAttributes<HTMLElement> = {
     domRef,
@@ -607,6 +632,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     column,
     width,
     rowId: rowInfo.id,
+    horizontalLayoutPageIndex,
 
     style: memoizedStyle,
     onMouseLeave,
@@ -625,6 +651,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         ColumnCellRecipe,
         {
           dragging: false,
+          insideDisabledDraggingPage,
           zebra,
           align,
           verticalAlign,
@@ -633,6 +660,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           cellSelected,
           rowSelected,
           firstRow: rowInfo.indexInAll === 0,
+          firstRowInHorizontalLayoutPage: rowIndexInHorizontalLayoutPage === 0,
           groupRow: rowInfo.isGroupRow,
           groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,
           rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,
@@ -641,7 +669,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       colClassName,
       rowComputedClassName,
     ),
-    renderChildren,
+    renderChildren: useCallback(() => theChildren, [renderChildren]),
   };
 
   const ContextProvider =

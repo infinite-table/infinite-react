@@ -8,7 +8,7 @@ import { internalProps } from '../internalProps';
 import { InternalVars } from '../internalVars.css';
 import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
 import {
-  ActiveCellIndicatorCls,
+  ActiveCellIndicatorRecipe,
   ActiveIndicatorWrapperCls,
 } from './ActiveCellIndicator.css';
 
@@ -39,7 +39,12 @@ const reposition = (
     return;
   }
 
-  const rowIndex = activeCellIndex[0];
+  let [rowIndex] = activeCellIndex;
+
+  if (brain.isHorizontalLayoutBrain && brain.rowsPerPage) {
+    rowIndex = rowIndex % brain.rowsPerPage;
+  }
+
   const activeCellRowHeight: number =
     typeof rowHeight === 'function'
       ? rowHeight(rowIndex)
@@ -65,11 +70,11 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
 
   const active =
     props.activeCellIndex != null &&
-    brain.getRowCount() > props.activeCellIndex[0];
+    brain.getInitialRows() > props.activeCellIndex[0];
 
   useLayoutEffect(() => {
     reposition(brain, props.activeCellIndex, props.rowHeight, domRef);
-  }, [props.activeCellIndex, props.rowHeight]);
+  }, [props.activeCellIndex, props.rowHeight, brain]);
 
   useEffect(() => {
     const removeOnRenderCountChange = brain.onRenderCountChange(() => {
@@ -99,11 +104,9 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
     >
       <div
         data-name="active-cell-indicator"
-        className={`${baseCls} ${
-          active
-            ? ActiveCellIndicatorCls.visible
-            : ActiveCellIndicatorCls.hidden
-        }`}
+        className={`${baseCls} ${ActiveCellIndicatorRecipe({
+          visible: active,
+        })}`}
       />
     </div>
   );

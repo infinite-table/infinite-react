@@ -73,6 +73,15 @@ export function handleRowNavigation<T>(
     },
     ArrowLeft: () => {
       const rowInfo = dataArray[activeRowIndex!];
+      if (brain.isHorizontalLayoutBrain) {
+        const rowsPerPage = brain.rowsPerPage;
+        if (activeRowIndex! - rowsPerPage >= min) {
+          activeRowIndex = activeRowIndex! - rowsPerPage;
+        } else {
+          KeyToFunction.ArrowUp();
+        }
+        return;
+      }
       if (rowInfo && rowInfo.isGroupRow) {
         return api.collapseGroupRow(rowInfo.groupKeys);
       }
@@ -83,6 +92,16 @@ export function handleRowNavigation<T>(
     },
     ArrowRight: () => {
       const rowInfo = dataArray[activeRowIndex!];
+
+      if (brain.isHorizontalLayoutBrain) {
+        const rowsPerPage = brain.rowsPerPage;
+        if (activeRowIndex! + rowsPerPage <= max) {
+          activeRowIndex = activeRowIndex! + rowsPerPage;
+        } else {
+          KeyToFunction.ArrowDown();
+        }
+        return;
+      }
       if (rowInfo && rowInfo.isGroupRow) {
         return api.expandGroupRow(rowInfo.groupKeys);
       }
@@ -195,7 +214,16 @@ export function handleCellNavigation<T>(
         if (rowIndex !== minRow) {
           colIndex = maxCol;
         }
-        KeyToFunction.ArrowUp();
+        if (brain.isHorizontalLayoutBrain) {
+          const rowsPerPage = brain.rowsPerPage;
+          if (rowIndex - rowsPerPage >= minRow) {
+            rowIndex = rowIndex - rowsPerPage;
+          } else {
+            KeyToFunction.ArrowUp();
+          }
+        } else {
+          KeyToFunction.ArrowUp();
+        }
       } else {
         colIndex = clamp(colIndex - 1, minCol, maxCol);
       }
@@ -205,7 +233,16 @@ export function handleCellNavigation<T>(
         if (rowIndex !== maxRow) {
           colIndex = minCol;
         }
-        KeyToFunction.ArrowDown();
+        if (brain.isHorizontalLayoutBrain) {
+          const rowsPerPage = brain.rowsPerPage;
+          if (rowIndex + rowsPerPage <= maxRow) {
+            rowIndex = rowIndex + rowsPerPage;
+          } else {
+            KeyToFunction.ArrowDown();
+          }
+        } else {
+          KeyToFunction.ArrowDown();
+        }
       } else {
         colIndex = clamp(colIndex + 1, minCol, maxCol);
       }

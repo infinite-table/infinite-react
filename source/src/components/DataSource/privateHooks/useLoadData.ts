@@ -1054,7 +1054,7 @@ function lazyLoadRange<T>(
     ] = [componentState.data, componentState, componentActions, fnCall];
 
     // TODO make this whole function testable, so we can properly test multiple calls are not issued for the same batch (in the same group)
-
+    // TODO should replace raf with setTimeout
     return promise.then(() => getRafPromise()).then(() => loadData(...args));
   }, initialPromise);
 }

@@ -181,6 +181,10 @@ export const HeaderCellRecipe = recipe({
       false: {},
       true: {},
     },
+    firstRowInHorizontalLayoutPage: {
+      false: {},
+      true: {},
+    },
     groupRow: {
       false: {},
       true: {},
@@ -206,6 +210,15 @@ export const HeaderCellRecipe = recipe({
     },
     dragging: {
       true: {},
+      false: {},
+    },
+    insideDisabledDraggingPage: {
+      true: {
+        opacity:
+          ThemeVars.components.Cell
+            .horizontalLayoutColumnReorderDisabledPageOpacity,
+      },
+
       false: {},
     },
 

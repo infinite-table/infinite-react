@@ -271,6 +271,7 @@ export interface InfiniteTableApi<T> {
   get rowDetailApi(): InfiniteTableRowDetailApi;
   get rowSelectionApi(): InfiniteTableRowSelectionApi;
   get cellSelectionApi(): InfiniteTableCellSelectionApi<T>;
+  get scrollContainer(): HTMLElement;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (
     columnVisibility: InfiniteTablePropColumnVisibility,
@@ -295,9 +296,11 @@ export interface InfiniteTableApi<T> {
     columnId: string;
   }): boolean;
 
+  get scrollLeftMax(): number;
   get scrollLeft(): number;
   set scrollLeft(value: number);
 
+  get scrollTopMax(): number;
   get scrollTop(): number;
   set scrollTop(value: number);
 
@@ -439,14 +442,20 @@ export type InfiniteTablePropCollapsedColumnGroups = Map<string[], string>;
 
 export type InfiniteTableColumnGroupHeaderRenderParams = {
   columnGroup: InfiniteTableComputedColumnGroup;
+  horizontalLayoutPageIndex: number | null;
 };
 export type InfiniteTableColumnGroupHeaderRenderFunction = (
   params: InfiniteTableColumnGroupHeaderRenderParams,
 ) => Renderable;
 
+export type InfiniteTableColumnGroupStyleFunction = (
+  params: InfiniteTableColumnGroupHeaderRenderParams,
+) => React.CSSProperties;
+
 export type InfiniteTableColumnGroup = {
   columnGroup?: string;
   header?: Renderable | InfiniteTableColumnGroupHeaderRenderFunction;
+  style?: React.CSSProperties | InfiniteTableColumnGroupStyleFunction;
 };
 export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   id: string;
@@ -596,6 +605,8 @@ export interface InfiniteTableProps<T> {
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents<T>;
+
+  wrapRowsHorizontally?: boolean;
 
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 

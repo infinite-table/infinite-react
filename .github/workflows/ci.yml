@@ -5,6 +5,7 @@ on:
     paths:
       - 'source/src/**'
       - 'examples/src/**/*.spec.ts'
+      - 'examples/src/**/*.page.tsx'
 
 concurrency:
   group: ${{ github.workflow }}
@@ -103,6 +104,9 @@ jobs:
 
       - name: Execute 'npm ci' in monorepo
         run: npm ci
+
+      - name: Execute 'npm i' in www/dataserver
+        run: npm run www-dataserver:install
 
       # - name: Load cached node_modules for root
       #   id: cache-node-modules-root

@@ -26,7 +26,7 @@ export default test.describe.parallel('MatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new MatrixBrain();
+    const brain = new MatrixBrain('test');
 
     brain.update({
       colWidth: COL_SIZE,
@@ -86,7 +86,7 @@ export default test.describe.parallel('MatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new MatrixBrain();
+    const brain = new MatrixBrain('test');
 
     brain.update({
       colWidth: COL_SIZE,
@@ -118,7 +118,7 @@ export default test.describe.parallel('MatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new MatrixBrain();
+    const brain = new MatrixBrain('test');
 
     brain.update({
       colWidth: COL_SIZE,
@@ -136,7 +136,7 @@ export default test.describe.parallel('MatrixBrain', () => {
     brain.onRenderRangeChange(onRenderRangeChange);
     brain.onScroll(onScroll);
 
-    brain.setAvailableSize({
+    brain.update({
       width: WIDTH + 100,
       height: HEIGHT + 100,
     });
@@ -200,7 +200,7 @@ export default test.describe.parallel('MatrixBrain', () => {
     const ROWS = 20;
     const COLS = 7;
 
-    const brain = new MatrixBrain();
+    const brain = new MatrixBrain('test');
 
     brain.update({
       colWidth: COL_SIZE,

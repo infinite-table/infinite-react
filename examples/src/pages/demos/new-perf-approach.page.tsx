@@ -40,7 +40,7 @@ export default function App() {
       </b>
     );
   };
-  const [brain] = React.useState(() => new MatrixBrain());
+  const [brain] = React.useState(() => new MatrixBrain('test'));
 
   (globalThis as any).brain = brain;
 
@@ -65,8 +65,8 @@ export default function App() {
     brain.update({
       rowHeight: 40,
       colWidth: 150,
-      width,
-      height,
+      width: width,
+      height: height,
       rows: 1500,
       cols: 4,
     });

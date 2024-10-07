@@ -3,8 +3,7 @@ import { RefObject } from 'react';
 import { InfiniteTableComputedColumn } from '../../../types';
 import {
   addToInfiniteColumnOffset,
-  setInfiniteColumnOffset,
-  setInfiniteColumnWidth,
+  InternalVarUtils,
 } from '../../../utils/infiniteDOMUtils';
 
 export function getColumnResizer<T>(
@@ -24,7 +23,7 @@ export function getColumnResizer<T>(
   return {
     resize(diff: number) {
       // set the new width for the current column
-      setInfiniteColumnWidth(
+      InternalVarUtils.columnWidths.set(
         colIndex,
         column.computedWidth + diff,
         domRef.current,
@@ -38,7 +37,7 @@ export function getColumnResizer<T>(
         if (!nextColumn) {
           return;
         }
-        setInfiniteColumnWidth(
+        InternalVarUtils.columnWidths.set(
           nextColIndex,
           nextColumn.computedWidth - diff,
           domRef.current,
@@ -47,7 +46,7 @@ export function getColumnResizer<T>(
         if (nextColumn.computedPinned === 'start') {
           addToInfiniteColumnOffset(nextColumn, diff, domRef.current);
         } else {
-          setInfiniteColumnOffset(
+          InternalVarUtils.columnOffsets.set(
             nextColIndex,
             nextColumn.computedOffset + diff,
             domRef.current,
@@ -79,7 +78,11 @@ export function getColumnResizer<T>(
           if (col.computedPinned === 'end') {
             continue;
           }
-          setInfiniteColumnOffset(i, col.computedOffset + diff, domRef.current);
+          InternalVarUtils.columnOffsets.set(
+            i,
+            col.computedOffset + diff,
+            domRef.current,
+          );
         }
         return;
       }
@@ -90,7 +93,11 @@ export function getColumnResizer<T>(
         if (col.computedPinned) {
           continue;
         }
-        setInfiniteColumnOffset(i, col.computedOffset + diff, domRef.current);
+        InternalVarUtils.columnOffsets.set(
+          i,
+          col.computedOffset + diff,
+          domRef.current,
+        );
       }
     },
   };
@@ -137,14 +144,14 @@ export function getColumnGroupResizer<T>(
         const column = columns[colIndex];
         const newWidth = column.computedWidth + diff;
 
-        setInfiniteColumnWidth(colIndex, newWidth, node);
+        InternalVarUtils.columnWidths.set(colIndex, newWidth, node);
 
         if (column.computedPinned === 'end') {
           return;
         }
 
         if (offset) {
-          setInfiniteColumnOffset(colIndex, offset, node);
+          InternalVarUtils.columnOffsets.set(colIndex, offset, node);
         }
         offset += newWidth;
       });
@@ -159,7 +166,11 @@ export function getColumnGroupResizer<T>(
         if (col.computedPinned === 'end') {
           continue;
         }
-        setInfiniteColumnOffset(i, col.computedOffset + diffSum, node);
+        InternalVarUtils.columnOffsets.set(
+          i,
+          col.computedOffset + diffSum,
+          node,
+        );
       }
     },
   };

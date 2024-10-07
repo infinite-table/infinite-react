@@ -44,6 +44,7 @@ function InfiniteTableCellFn<T>(
     cellType,
     cssPosition: _cssPosition,
     renderChildren,
+    horizontalLayoutPageIndex,
     ...domProps
   } = props;
 

@@ -4,8 +4,17 @@ import { Logger } from '../../utils/debug';
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
 import type { Size } from '../types/Size';
 import type { VoidFn } from '../types/VoidFn';
+import type {
+  IBrain,
+  TableRenderRange,
+  FixedPosition,
+  WhichDirection,
+  ItemSizeFunction,
+} from './IBrain';
 
-export type FixedPosition = false | 'start' | 'end';
+import { SORT_ASC, ALL_DIRECTIONS } from './IBrain';
+
+export type { FixedPosition };
 export type SpanFunction = ({
   rowIndex,
   colIndex,
@@ -14,12 +23,10 @@ export type SpanFunction = ({
   colIndex: number;
 }) => number;
 
-type RenderRangeType = {
+export type RenderRangeType = {
   startIndex: number;
   endIndex: number;
 };
-
-type ItemSizeFunction = (index: number) => number;
 
 export type MatrixBrainOptions = {
   width: number;
@@ -35,12 +42,7 @@ export type MatrixBrainOptions = {
   colspan?: SpanFunction;
 };
 
-export type TableRenderRange = {
-  start: [number, number];
-  end: [number, number];
-  rowFixed?: FixedPosition;
-  colFixed?: FixedPosition;
-};
+export type { TableRenderRange };
 
 export const getRenderRangeCellCount = (range: TableRenderRange) => {
   const { start, end } = range;
@@ -62,11 +64,6 @@ export const getRenderRangeRowCount = (range: TableRenderRange) => {
 
   return rowCount;
 };
-
-type WhichDirection = { horizontal?: boolean; vertical?: boolean };
-
-const ALL_DIRECTIONS: WhichDirection = { horizontal: true, vertical: true };
-const SORT_ASC = (a: number, b: number) => a - b;
 
 const raf =
   typeof window !== 'undefined'
@@ -93,18 +90,60 @@ export type FnOnScrollStop = (
   range: TableRenderRange,
 ) => void;
 
-export class MatrixBrain extends Logger {
+export type ShouldUpdateRenderCountOptions = {
+  horizontalChange: boolean;
+
+  colsChanged: boolean;
+  colWidthChanged: boolean;
+  widthChanged: boolean;
+  colspanChanged: boolean;
+
+  verticalChange: boolean;
+
+  rowsChanged: boolean;
+  rowHeightChanged: boolean;
+  heightChanged: boolean;
+  rowspanChanged: boolean;
+};
+
+function defaultShouldUpdateRenderCount(
+  options: ShouldUpdateRenderCountOptions,
+) {
+  return options.horizontalChange || options.verticalChange;
+}
+
+export class MatrixBrain extends Logger implements IBrain {
   private scrolling = false;
-  private width: MatrixBrainOptions['width'] = 0;
+  protected availableWidth: MatrixBrainOptions['width'] = 0;
+  protected availableRenderWidth: number = 0;
+  public isHorizontalLayoutBrain = false;
   public name: string = '';
 
-  private height: MatrixBrainOptions['height'] = 0;
+  protected availableHeight: MatrixBrainOptions['height'] = 0;
+  protected availableRenderHeight: number = 0;
 
-  private cols: MatrixBrainOptions['cols'] = 0;
-  private rows: MatrixBrainOptions['rows'] = 0;
+  protected cols: MatrixBrainOptions['cols'] = 0;
+  protected rows: MatrixBrainOptions['rows'] = 0;
 
-  private rowHeight: MatrixBrainOptions['rowHeight'] = 0;
-  private colWidth: MatrixBrainOptions['colWidth'] = 0;
+  protected alwaysRenderedColumns: Set<number> = new Set();
+
+  /**
+   * This is only here for easier accessing in the renderer, when the horizontal layout is enabled.
+   * In this way, the API is the same for both brains, so we don't have to cast the brain type in the renderer.
+   */
+  set rowsPerPage(rowsPerPage: number) {
+    if (rowsPerPage != this._rowsPerPage) {
+      this._rowsPerPage = rowsPerPage;
+    }
+  }
+
+  get rowsPerPage() {
+    return this._rowsPerPage;
+  }
+  protected _rowsPerPage = 0;
+
+  protected rowHeight: MatrixBrainOptions['rowHeight'] = 0;
+  protected colWidth: MatrixBrainOptions['colWidth'] = 0;
 
   private rowspan: MatrixBrainOptions['rowspan'];
   private colspan: MatrixBrainOptions['colspan'];
@@ -112,29 +151,41 @@ export class MatrixBrain extends Logger {
   private rowspanParent!: Map<number, number[]>;
   private rowspanValue!: Map<number, number[]>;
 
-  private rowHeightCache!: number[];
-  private rowOffsetCache!: number[];
+  protected rowHeightCache!: number[];
+  protected rowOffsetCache!: number[];
 
   private verticalTotalSize = 0;
 
   private colspanParent!: Map<number, number[]>;
   private colspanValue!: Map<number, number[]>;
 
-  private colWidthCache!: number[];
-  private colOffsetCache!: number[];
+  protected colWidthCache!: number[];
+  protected colOffsetCache!: number[];
   private horizontalTotalSize = 0;
 
   private horizontalRenderCount?: number = undefined;
   private verticalRenderCount?: number = undefined;
 
-  private horizontalRenderRange: RenderRangeType = {
+  private horizontalExtendRangeBy: { start: number; end: number } = {
+    start: 0,
+    end: 0,
+  };
+  private verticalExtendRangeBy: { start: number; end: number } = {
+    start: 0,
+    end: 0,
+  };
+
+  protected horizontalRenderRange: RenderRangeType = {
     startIndex: 0,
     endIndex: 0,
   };
 
-  private verticalRenderRange: RenderRangeType = { startIndex: 0, endIndex: 0 };
+  protected verticalRenderRange: RenderRangeType = {
+    startIndex: 0,
+    endIndex: 0,
+  };
 
-  private extraSpanCells: [number, number][] = [];
+  protected extraSpanCells: [number, number][] = [];
 
   private scrollPosition: ScrollPosition = { scrollLeft: 0, scrollTop: 0 };
 
@@ -148,7 +199,7 @@ export class MatrixBrain extends Logger {
     new Set();
 
   private onDestroyFns: VoidFn[] = [];
-  private destroyed = false;
+  protected destroyed = false;
   private onRenderCountChangeFns: Set<FnOnRenderCountChange> = new Set();
   private onAvailableSizeChangeFns: Set<OnAvailableSizeChange> = new Set();
   private onScrollStartFns: VoidFunction[] = [];
@@ -174,10 +225,16 @@ export class MatrixBrain extends Logger {
    */
   private fixedRowsEnd = 0;
 
-  constructor(name?: string) {
+  constructor(name: string) {
     const logName = `MatrixBrain${name ? `:${name}` : ''}`;
     super(logName);
-    this.name = logName;
+    this.name = name || 'MatrixBrain';
+
+    this.update = this.update.bind(this);
+    this.destroy = this.destroy.bind(this);
+
+    this.getCellOffset = this.getCellOffset.bind(this);
+
     this.reset();
   }
 
@@ -214,6 +271,10 @@ export class MatrixBrain extends Logger {
     this.scrollStopDelay = scrollStopDelay;
   };
 
+  public getVirtualColIndex(colIndex: number, _opts?: { pageIndex: number }) {
+    return colIndex;
+  }
+
   public getRowCount = () => {
     return this.rows;
   };
@@ -221,16 +282,40 @@ export class MatrixBrain extends Logger {
     return this.cols;
   };
 
-  public update = (options: Partial<MatrixBrainOptions>) => {
-    const { rows, cols, rowHeight, colWidth, width, height } = options;
+  public update(
+    options: Partial<MatrixBrainOptions>,
+    shouldUpdateRenderCount?: (
+      options: ShouldUpdateRenderCountOptions,
+    ) => boolean,
+  ) {
+    const {
+      rows,
+      cols,
+      rowHeight,
+      colWidth,
+      width: availableWidth,
+      height: availableHeight,
+    } = options;
 
-    const widthDefined = typeof width === 'number';
-    const heightDefined = typeof height === 'number';
+    const widthDefined = typeof availableWidth === 'number';
+    const heightDefined = typeof availableHeight === 'number';
 
-    const widthChanged = widthDefined && width !== this.width;
-    const heightChanged = heightDefined && height !== this.height;
+    const widthChanged = widthDefined && availableWidth !== this.availableWidth;
+    const heightChanged =
+      heightDefined && availableHeight !== this.availableHeight;
 
-    this.setAvailableSize({ width, height }, { skipUpdateRenderCount: true });
+    if (widthChanged) {
+      this.availableWidth = availableWidth;
+      this.availableRenderWidth = availableWidth;
+    }
+    if (heightChanged) {
+      this.availableHeight = availableHeight;
+      this.availableRenderHeight = availableHeight;
+    }
+
+    if (widthChanged || heightChanged) {
+      this.notifyAvailableSizeChange();
+    }
 
     const rowsDefined = typeof rows === 'number';
     const colsDefined = typeof cols === 'number';
@@ -240,6 +325,7 @@ export class MatrixBrain extends Logger {
 
     if (rowsDefined) {
       this.rows = rows;
+      this.rowsPerPage = rows;
     }
     if (colsDefined) {
       this.cols = cols;
@@ -262,17 +348,17 @@ export class MatrixBrain extends Logger {
       if (widthChanged) {
         this.debug(
           'New available width %d (size is %d,%d)',
-          this.width,
-          this.width,
-          this.height,
+          this.availableWidth,
+          this.availableWidth,
+          this.availableHeight,
         );
       }
       if (heightChanged) {
         this.debug(
           'New available height %d (size is %d,%d)',
-          this.height,
-          this.width,
-          this.height,
+          this.availableHeight,
+          this.availableWidth,
+          this.availableHeight,
         );
       }
 
@@ -308,82 +394,85 @@ export class MatrixBrain extends Logger {
     const verticalChange =
       rowsChanged || rowHeightChanged || heightChanged || rowspanChanged;
 
-    if (horizontalChange || verticalChange) {
+    const shouldUpdateFn =
+      shouldUpdateRenderCount || defaultShouldUpdateRenderCount;
+
+    if (
+      shouldUpdateFn({
+        horizontalChange,
+        verticalChange,
+        colsChanged,
+        colWidthChanged,
+        widthChanged,
+        colspanChanged,
+        rowsChanged,
+        rowHeightChanged,
+        heightChanged,
+        rowspanChanged,
+      })
+    ) {
       this.updateRenderCount({
         horizontal: horizontalChange,
         vertical: verticalChange,
       });
     }
-  };
+  }
 
-  public setRowAndColumnSizes({
-    rowHeight,
-    colWidth,
-  }: {
-    rowHeight: number | ItemSizeFunction;
-    colWidth: number | ItemSizeFunction;
+  /**
+   *
+   * @param options.left - if true, extends the left side with the amount of current visible columns, otherwise with the specified number
+   * @param options.right - if true, extends the right side with the amount of current visible columns, otherwise with the specified number
+   */
+  public extendRenderRange(options: {
+    start?: number | boolean;
+    end?: number | boolean;
+    direction: 'horizontal' | 'vertical';
   }) {
-    const horizontalSame = colWidth === this.colWidth;
-    const verticalSame = rowHeight === this.rowHeight;
+    const { direction } = options;
+    const horizontal = direction === 'horizontal';
+    const extendValueWhenTrue = horizontal
+      ? this.horizontalRenderCount || this.getInitialCols()
+      : this.verticalRenderCount || this.getInitialRows();
 
-    this.rowHeight = rowHeight;
-    this.colWidth = colWidth;
+    const startAmount =
+      typeof options.start === 'number'
+        ? options.start
+        : options.start === true
+        ? extendValueWhenTrue
+        : 0;
+    const endAmount =
+      typeof options.end === 'number'
+        ? options.end
+        : options.end === true
+        ? extendValueWhenTrue
+        : 0;
 
-    this.updateRenderCount({
-      horizontal: !horizontalSame,
-      vertical: !verticalSame,
-    });
+    if (horizontal) {
+      this.horizontalExtendRangeBy = {
+        start: startAmount,
+        end: endAmount,
+      };
+    } else {
+      this.verticalExtendRangeBy = {
+        start: startAmount,
+        end: endAmount,
+      };
+    }
+
+    this.updateRenderRange({ horizontal: horizontal, vertical: !horizontal });
+
+    const restore = () => {
+      this.extendRenderRange({
+        start: 0,
+        end: 0,
+        direction,
+      });
+    };
+
+    return restore;
   }
 
-  public setRowsAndCols = ({ rows, cols }: { rows: number; cols: number }) => {
-    const rowsSame = rows === this.rows;
-    const colsSame = cols === this.cols;
-
-    this.rows = rows;
-    this.cols = cols;
-
-    this.updateRenderCount({
-      horizontal: !colsSame,
-      vertical: !rowsSame,
-    });
-  };
-
-  public setAvailableSize(
-    size: Partial<Size>,
-    config?: { skipUpdateRenderCount?: boolean },
-  ) {
-    let { width, height } = size;
-
-    width = width ?? this.width;
-    height = height ?? this.height;
-
-    const widthSame = width === this.width;
-    const heightSame = height === this.height;
-
-    if (widthSame && heightSame) {
-      return;
-    }
-    this.width = width;
-    this.height = height;
-
-    if (__DEV__) {
-      this.debug(
-        'New available size: width %d, height %d',
-        this.width,
-        this.height,
-      );
-    }
-
-    this.notifyAvailableSizeChange();
-
-    if (config && config.skipUpdateRenderCount) {
-      return;
-    }
-
-    this.updateRenderCount({ horizontal: !widthSame, vertical: !heightSame });
-  }
-
-  updateRenderCount = (which: WhichDirection = ALL_DIRECTIONS) => {
+  public updateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
     // if (this._updateRenderCountRafId) {
     //   cancelAnimationFrame(this._updateRenderCountRafId);
     // }
@@ -393,23 +482,37 @@ export class MatrixBrain extends Logger {
 
     //   delete this._updateRenderCountRafId;
     // });
-  };
+  }
 
-  private doUpdateRenderCount = (which: WhichDirection = ALL_DIRECTIONS) => {
-    if (!this.width || !this.height) {
-      this.setRenderCount({ horizontal: 0, vertical: 0 });
+  protected doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
+    if (!this.availableWidth || !this.availableHeight) {
+      const count: Parameters<typeof this.setRenderCount>[0] = {
+        horizontal: undefined,
+        vertical: undefined,
+      };
+
+      if (!this.availableWidth) {
+        count.horizontal = 0;
+      }
+      if (!this.availableHeight) {
+        count.vertical = 0;
+      }
+
+      this.setRenderCount(count);
+      // DON'T uncomment the return
+      // return
     }
 
     this.setRenderCount(this.computeRenderCount(which));
-  };
+  }
 
   get scrollTopMax() {
-    const totalSize = this.getTotalSize();
-    return totalSize.height - this.height;
+    const totalSize = this.getVirtualizedContentSize();
+    return totalSize.height - this.availableHeight;
   }
   get scrollLeftMax() {
-    const totalSize = this.getTotalSize();
-    return totalSize.width - this.width;
+    const totalSize = this.getVirtualizedContentSize();
+    return totalSize.width - this.availableWidth;
   }
 
   private setScrolling = (scrolling: boolean) => {
@@ -458,10 +561,10 @@ export class MatrixBrain extends Logger {
     }
   };
 
-  public setScrollPosition = (
+  public setScrollPosition(
     scrollPosition: ScrollPosition,
     callback?: (scrollPos: ScrollPosition) => void,
-  ) => {
+  ) {
     this.setScrolling(true);
     const changeHorizontal =
       scrollPosition.scrollLeft !== this.scrollPosition.scrollLeft;
@@ -479,9 +582,9 @@ export class MatrixBrain extends Logger {
 
       this.notifyScrollChange();
     }
-  };
+  }
 
-  private notifyAvailableSizeChange = () => {
+  protected notifyAvailableSizeChange = () => {
     if (this.destroyed) {
       return;
     }
@@ -505,7 +608,7 @@ export class MatrixBrain extends Logger {
     });
   };
 
-  private notifyRenderRangeChange = () => {
+  protected notifyRenderRangeChange() {
     if (this.destroyed) {
       return;
     }
@@ -524,8 +627,8 @@ export class MatrixBrain extends Logger {
         }
       });
     });
-  };
-  private notifyVerticalRenderRangeChange = () => {
+  }
+  protected notifyVerticalRenderRangeChange = () => {
     if (this.destroyed) {
       return;
     }
@@ -545,7 +648,7 @@ export class MatrixBrain extends Logger {
       });
     });
   };
-  private notifyHorizontalRenderRangeChange = () => {
+  protected notifyHorizontalRenderRangeChange = () => {
     if (this.destroyed) {
       return;
     }
@@ -578,15 +681,16 @@ export class MatrixBrain extends Logger {
     }
   }
 
-  private computeDirectionalRenderCount = (
+  protected computeDirectionalRenderCount(
     direction: 'horizontal' | 'vertical',
     itemSize: number | ItemSizeFunction,
     count: number,
-    theSize: Size,
-  ) => {
+    theRenderSize: Size,
+  ) {
     let renderCount = 0;
 
-    let size = direction === 'horizontal' ? theSize.width : theSize.height;
+    let size =
+      direction === 'horizontal' ? theRenderSize.width : theRenderSize.height;
 
     size -= this.getFixedSize(direction);
 
@@ -616,7 +720,7 @@ export class MatrixBrain extends Logger {
     renderCount = Math.min(count, renderCount);
 
     return renderCount;
-  };
+  }
 
   getFixedSize(direction: 'horizontal' | 'vertical') {
     return direction === 'horizontal'
@@ -842,7 +946,7 @@ export class MatrixBrain extends Logger {
         'horizontal',
         this.colWidth,
         this.cols,
-        this.getAvailableSize(),
+        this.getAvailableRenderSize(),
       );
     }
     if (recomputeVertical) {
@@ -850,7 +954,7 @@ export class MatrixBrain extends Logger {
         'vertical',
         this.rowHeight,
         this.rows,
-        this.getAvailableSize(),
+        this.getAvailableRenderSize(),
       );
     }
     const result = {
@@ -1031,7 +1135,7 @@ export class MatrixBrain extends Logger {
   };
 
   computeDirectionalRenderRange = (direction: 'horizontal' | 'vertical') => {
-    const renderCount =
+    let renderCount =
       direction === 'horizontal'
         ? this.horizontalRenderCount
         : this.verticalRenderCount;
@@ -1056,7 +1160,21 @@ export class MatrixBrain extends Logger {
 
     scrollPositionForDirection += this.getFixedStartSize(direction);
 
+    const extendBy =
+      direction === 'horizontal'
+        ? this.horizontalExtendRangeBy
+        : this.verticalExtendRangeBy;
+
     let startIndex = this.getItemAt(scrollPositionForDirection, direction);
+
+    if (extendBy.start) {
+      startIndex = Math.max(0, startIndex - extendBy.start);
+      renderCount += extendBy.start;
+    }
+
+    if (extendBy.end) {
+      renderCount += extendBy.end;
+    }
 
     let endIndex = startIndex + renderCount;
 
@@ -1130,21 +1248,31 @@ export class MatrixBrain extends Logger {
     }
 
     return ~searchResult - 1;
-
-    return 0;
   };
 
-  public getCellOffset = (rowIndex: number, colIndex: number) => {
+  public getCellOffset(rowIndex: number, colIndex: number) {
     return {
       x: this.getItemOffsetFor(colIndex, 'horizontal'),
       y: this.getItemOffsetFor(rowIndex, 'vertical'),
     };
-  };
+  }
 
-  public getItemOffsetFor = (
+  getInitialRowHeight() {
+    return this.rowHeight;
+  }
+
+  getInitialCols() {
+    return this.cols;
+  }
+
+  getInitialRows() {
+    return this.rows;
+  }
+
+  public getItemOffsetFor(
     itemIndex: number,
     direction: 'horizontal' | 'vertical',
-  ): number => {
+  ): number {
     const itemSize =
       direction === 'horizontal' ? this.colWidth : this.rowHeight;
     if (typeof itemSize !== 'function') {
@@ -1168,9 +1296,9 @@ export class MatrixBrain extends Logger {
       result = itemOffsetCache[itemIndex];
     }
     return result;
-  };
+  }
 
-  private computeCacheFor = (
+  protected computeCacheFor = (
     itemIndex: number,
     direction: 'horizontal' | 'vertical',
   ) => {
@@ -1432,14 +1560,22 @@ export class MatrixBrain extends Logger {
     return cachedSize;
   };
 
-  getTotalSize = () => {
-    return {
-      height: this.getTotalSizeFor('vertical'),
-      width: this.getTotalSizeFor('horizontal'),
-    };
-  };
+  getRowIndexInPage(rowIndex: number) {
+    return rowIndex;
+  }
 
-  public getTotalSizeFor = (direction: 'horizontal' | 'vertical') => {
+  getPageIndexForRow(_rowIndex: number) {
+    return 0;
+  }
+
+  getVirtualizedContentSize() {
+    return {
+      height: this.getVirtualizedContentSizeFor('vertical'),
+      width: this.getVirtualizedContentSizeFor('horizontal'),
+    };
+  }
+
+  public getVirtualizedContentSizeFor(direction: 'horizontal' | 'vertical') {
     const count = direction === 'horizontal' ? this.cols : this.rows;
     const itemSize =
       direction === 'horizontal' ? this.colWidth : this.rowHeight;
@@ -1471,6 +1607,18 @@ export class MatrixBrain extends Logger {
     }
 
     return result;
+  }
+
+  keepColumnRendered = (colIndex: number) => {
+    this.alwaysRenderedColumns.add(colIndex);
+
+    return () => {
+      this.alwaysRenderedColumns.delete(colIndex);
+    };
+  };
+
+  getAlwaysRenderedColumns = () => {
+    return Array.from(this.alwaysRenderedColumns);
   };
 
   setRenderRange = ({
@@ -1602,8 +1750,15 @@ export class MatrixBrain extends Logger {
 
   public getAvailableSize = () => {
     return {
-      width: this.width,
-      height: this.height,
+      width: this.availableWidth,
+      height: this.availableHeight,
+    };
+  };
+
+  protected getAvailableRenderSize = () => {
+    return {
+      width: this.availableRenderWidth ?? this.availableWidth,
+      height: this.availableRenderHeight ?? this.availableHeight,
     };
   };
 
@@ -1614,7 +1769,7 @@ export class MatrixBrain extends Logger {
     }
   }
 
-  destroy = () => {
+  destroy() {
     if (this.destroyed) {
       return;
     }
@@ -1624,14 +1779,17 @@ export class MatrixBrain extends Logger {
 
     this.rowspanParent.clear();
     this.colspanParent.clear();
+    this.alwaysRenderedColumns.clear();
+    this.horizontalExtendRangeBy = { start: 0, end: 0 };
+    this.verticalExtendRangeBy = { start: 0, end: 0 };
     this.destroyed = true;
     this.onDestroyFns = [];
     this.onScrollFns = [];
     this.onScrollStartFns = [];
     this.onScrollStopFns = [];
-    this.onRenderCountChangeFns = new Set();
-    this.onRenderRangeChangeFns = new Set();
-    this.onVerticalRenderRangeChangeFns = new Set();
-    this.onHorizontalRenderRangeChangeFns = new Set();
-  };
+    this.onRenderCountChangeFns.clear();
+    this.onRenderRangeChangeFns.clear();
+    this.onVerticalRenderRangeChangeFns.clear();
+    this.onHorizontalRenderRangeChangeFns.clear();
+  }
 }

@@ -23,6 +23,8 @@ export type InfiniteTableBaseCellProps<T> = {
   column: InfiniteTableComputedColumn<T>;
   align?: InfiniteTableColumnAlignValues;
 
+  horizontalLayoutPageIndex: number | null;
+
   rowId?: any;
 
   renderChildren: () => Renderable;
@@ -65,6 +67,8 @@ export interface InfiniteTableColumnCellProps<T>
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
+  rowIndexInHorizontalLayoutPage: number | null;
+  horizontalLayoutPageIndex: number | null;
   rowIndex: number;
   rowHeight: number;
   cellStyle?: InfiniteTablePropCellStyle<T>;

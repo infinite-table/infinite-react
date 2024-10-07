@@ -3,13 +3,18 @@ export const InternalVars = createThemeContract({
   currentColumnTransformX: null,
   y: null,
 
+  currentFlashingBackground: null,
+  currentFlashingDuration: null,
+
   activeCellRowOffset: null,
+  activeCellRowOffsetX: null,
   activeCellRowHeight: null,
 
   activeCellOffsetX: null,
   activeCellOffsetY: null,
 
   scrollTopForActiveRow: null,
+  scrollLeftForActiveRowWhenHorizontalLayout: null,
   // this will be set to `${columnWidthAtIndex}-${the index of the column on which the active cell is}`
   activeCellColWidth: null,
 

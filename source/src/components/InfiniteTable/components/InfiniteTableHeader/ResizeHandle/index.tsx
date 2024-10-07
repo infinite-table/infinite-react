@@ -10,8 +10,10 @@ import {
   ResizeHandleDraggerClsRecipe,
   ResizeHandleRecipeCls,
 } from './ResizeHandle.css';
+import { useInfiniteTable } from '../../../hooks/useInfiniteTable';
 
 type ResizeHandleProps<T> = {
+  horizontalLayoutPageIndex: number | null;
   columnIndex: number;
   columns: InfiniteTableComputedColumn<T>[];
 
@@ -41,12 +43,16 @@ const { rootClassName } = internalProps;
 export const InfiniteTableHeaderCellResizeHandleCls = `${rootClassName}HeaderCell_ResizeHandle`;
 
 function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
+  const {
+    state: { brain, headerBrain },
+  } = useInfiniteTable();
   const domRef = useRef<HTMLDivElement>(null);
   const [constrained, setConstrained] = useState(false);
   const constrainedRef = useRef<boolean>(constrained);
   constrainedRef.current = constrained;
 
   const col = props.columns[props.columnIndex];
+  const horizontalLayoutPageIndex = props.horizontalLayoutPageIndex;
 
   if (!col) {
     return null;
@@ -55,6 +61,7 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
   const computedFirstInCategory = col.computedFirstInCategory;
   const computedLastInCategory = col.computedLastInCategory;
 
+  let restoreRenderRange: () => void = () => {};
   const onPointerDown = (e: PointerEvent) => {
     e.stopPropagation();
 
@@ -62,6 +69,23 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
     const pointerId = e.pointerId;
     const initialX = e.clientX;
     const target = e.target as HTMLElement;
+
+    if (brain.isHorizontalLayoutBrain) {
+      const restoreBodyRange = brain.extendRenderRange({
+        start: true,
+        end: true,
+        direction: 'horizontal',
+      });
+      const restoreHeaderRange = headerBrain.extendRenderRange({
+        start: true,
+        end: true,
+        direction: 'horizontal',
+      });
+      restoreRenderRange = () => {
+        restoreBodyRange();
+        restoreHeaderRange();
+      };
+    }
 
     target.setPointerCapture(pointerId);
 
@@ -71,7 +95,13 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
       domRef,
     });
 
-    const resizeDiff = (diff: number) => {
+    const resizeDiff = (diff: number, { done }: { done?: boolean } = {}) => {
+      if (horizontalLayoutPageIndex) {
+        diff = diff / (horizontalLayoutPageIndex + 1);
+        if (done) {
+          diff = Math.round(diff);
+        }
+      }
       if (computedPinned === 'end') {
         diff *= -1;
       }
@@ -102,7 +132,9 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
       target.removeEventListener('pointerup', onPointerUp);
 
       const diff = Math.round(e.clientX - initialX);
-      const adjustedDiff = resizeDiff(diff);
+      const adjustedDiff = resizeDiff(diff, { done: true });
+
+      restoreRenderRange();
 
       props.onResize({ diff: adjustedDiff, shareSpaceOnResize });
     };

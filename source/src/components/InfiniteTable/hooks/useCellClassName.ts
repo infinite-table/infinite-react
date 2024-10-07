@@ -11,8 +11,10 @@ export function useCellClassName<T>(
   baseClasses: string[],
   variants: (x: ColumnCellVariantsType | HeaderCellVariantsType) => string,
   extraFlags: {
+    insideDisabledDraggingPage: boolean;
     groupRow: boolean;
     firstRow: boolean;
+    firstRowInHorizontalLayoutPage: boolean;
     groupCell: boolean;
     rowExpanded: boolean;
     rowActive: boolean;
@@ -38,7 +40,10 @@ export function useCellClassName<T>(
     rowSelected: extraFlags.rowSelected ?? 'null',
     rowActive: extraFlags.rowActive,
     dragging: extraFlags.dragging,
+    insideDisabledDraggingPage: extraFlags.insideDisabledDraggingPage,
     firstRow: extraFlags.firstRow ?? false,
+    firstRowInHorizontalLayoutPage:
+      extraFlags.firstRowInHorizontalLayoutPage ?? false,
     rowDisabled: extraFlags.rowDisabled,
     groupRow: extraFlags.groupRow,
     groupCell: extraFlags.groupCell,
@@ -75,6 +80,11 @@ export function useCellClassName<T>(
   }
   if (extraFlags.firstRow) {
     result.push(...baseClasses.map((c) => `${c}--first-row`));
+  }
+  if (extraFlags.firstRowInHorizontalLayoutPage) {
+    result.push(
+      ...baseClasses.map((c) => `${c}--first-row-in-horizontal-layout-page`),
+    );
   }
 
   if (extraFlags.rowDisabled) {

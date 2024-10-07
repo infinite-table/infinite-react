@@ -45,19 +45,24 @@ function InfiniteTableHeaderFn<T>(
 
   const { computedColumnsMap } = computed;
 
-  useEffect(() => {
-    const onScroll = (scrollPosition: ScrollPosition) => {
-      if (domRef.current) {
-        domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
-      }
-    };
+  const domRef = useRef<HTMLDivElement | null>(null);
 
-    const removeOnScroll = brain.onScroll(onScroll);
+  const updateDOMTransform = useCallback((scrollPosition: ScrollPosition) => {
+    if (domRef.current) {
+      domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
+    }
+  }, []);
+
+  useEffect(() => {
+    const removeOnScroll = brain.onScroll(updateDOMTransform);
+
+    // useful when the brain is changed - when toggling the value of wrapRowsHorizontally
+    updateDOMTransform(
+      brain.getScrollPosition() || { scrollLeft: 0, scrollTop: 0 },
+    );
 
     return removeOnScroll;
   }, [brain]);
-
-  const domRef = useRef<HTMLDivElement | null>(null);
 
   const headerCls = HeaderClsRecipe({
     overflow: false,
@@ -91,6 +96,9 @@ function InfiniteTableHeaderFn<T>(
       if (!column || hidden) {
         return null;
       }
+      const horizontalLayoutPageIndex = headerBrain.isHorizontalLayoutBrain
+        ? headerBrain.getPageIndexForRow(rowIndex)
+        : null;
       const colGroupItem = columnAndGroupTreeInfo
         ? columnAndGroupTreeInfo.pathsToCells.get([rowIndex, colIndex])
         : null;
@@ -111,6 +119,7 @@ function InfiniteTableHeaderFn<T>(
 
         return visible ? (
           <InfiniteTableHeaderGroup
+            horizontalLayoutPageIndex={horizontalLayoutPageIndex}
             bodyBrain={bodyBrain}
             columnGroupsMaxDepth={columnGroupsMaxDepth}
             domRef={domRef}
@@ -126,6 +135,7 @@ function InfiniteTableHeaderFn<T>(
         <InfiniteTableHeaderCell<T>
           domRef={domRef}
           column={column}
+          horizontalLayoutPageIndex={horizontalLayoutPageIndex}
           headerOptions={headerOptions}
           width={widthWithColspan}
           height={heightWithRowspan}
@@ -144,6 +154,7 @@ function InfiniteTableHeaderFn<T>(
       columnAndGroupTreeInfo,
       columnGroupsMaxDepth,
       showColumnFilters,
+      headerBrain,
     ],
   );
 

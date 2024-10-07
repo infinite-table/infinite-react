@@ -547,7 +547,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
   rootData.visitDepthFirst(
     (lazyGroupRowInfo: LazyRowInfoGroup<DataType>, keys, _index, next) => {
       const [_rootKey, ...currentGroupKeys] = keys;
-      const dataArray = lazyGroupRowInfo.children;
+      let dataArray = lazyGroupRowInfo.children;
 
       const current = deepMap.get(currentGroupKeys as KeyType[]);
       if (current) {
@@ -575,10 +575,12 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             }
           }
 
-          indexer.indexArray(dataArray as any as DataType[], {
+          const res = indexer.indexArray(dataArray as any as DataType[], {
             toPrimaryKey,
             cache,
           });
+          //@ts-ignore
+          dataArray = res;
         }
         return next?.();
       }

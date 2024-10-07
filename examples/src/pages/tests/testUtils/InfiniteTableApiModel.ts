@@ -12,12 +12,18 @@ export class InfiniteTableApiModel {
   constructor(page: Page) {
     this.page = page;
   }
-  async evaluate(evaluateFn: (api: InfiniteTableApi<any>) => void) {
-    return this.page.evaluate((evaluateFn) => {
-      const api = (window as any).INFINITE_GRID_API as InfiniteTableApi<any>;
-      const fn = eval(evaluateFn);
-      return fn(api);
-    }, evaluateFn.toString());
+  async evaluate<T = any>(
+    evaluateFn: (api: InfiniteTableApi<any>, ...args: any[]) => T,
+    ...args: any[]
+  ) {
+    return this.page.evaluate(
+      ([evaluateFn, ...args]) => {
+        const api = (window as any).INFINITE_GRID_API as InfiniteTableApi<any>;
+        const fn = eval(evaluateFn);
+        return fn(api, ...args) as T;
+      },
+      [evaluateFn.toString(), ...args],
+    );
   }
 
   async evaluateDataSource(

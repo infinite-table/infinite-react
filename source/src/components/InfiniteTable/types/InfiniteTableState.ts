@@ -58,11 +58,14 @@ export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
 };
 
 export interface InfiniteTableSetupState<T> {
+  brain: MatrixBrain;
+  headerBrain: MatrixBrain;
   renderer: ReactHeadlessTableRenderer;
+  onRenderUpdater: SubscriptionCallback<Renderable>;
+
   lastRowToExpandRef: MutableRefObject<any | null>;
   lastRowToCollapseRef: MutableRefObject<any | null>;
   getDOMNodeForCell: (cellPos: CellPositionByIndex) => HTMLElement | null;
-  onRenderUpdater: SubscriptionCallback<Renderable>;
   propsCache: Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>;
   columnsWhenInlineGroupRenderStrategy?: Record<string, InfiniteTableColumn<T>>;
   domRef: MutableRefObject<HTMLDivElement | null>;
@@ -71,6 +74,8 @@ export interface InfiniteTableSetupState<T> {
   portalDOMRef: MutableRefObject<HTMLDivElement | null>;
   focusDetectDOMRef: MutableRefObject<HTMLDivElement | null>;
   activeCellIndicatorDOMRef: MutableRefObject<HTMLDivElement | null>;
+  onFlashingDurationCSSVarChange: SubscriptionCallback<number>;
+  flashingDurationCSSVarValue: number | null;
   onRowHeightCSSVarChange: SubscriptionCallback<number>;
   onRowDetailHeightCSSVarChange: SubscriptionCallback<number>;
   onColumnMenuClick: SubscriptionCallback<{
@@ -104,11 +109,11 @@ export interface InfiniteTableSetupState<T> {
   keyDown: SubscriptionCallback<KeyboardEvent>;
   columnsWhenGrouping?: InfiniteTablePropColumns<T>;
   bodySize: Size;
-  brain: MatrixBrain;
-  headerBrain: MatrixBrain;
+
   focused: boolean;
   ready: boolean;
   columnReorderDragColumnId: false | string;
+  columnReorderInPageIndex: number | null;
   columnVisibilityForGrouping: Record<string, false>;
   focusedWithin: boolean;
   scrollPosition: ScrollPosition;
@@ -160,6 +165,8 @@ export interface InfiniteTableMappedState<T> {
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
+
+  wrapRowsHorizontally: InfiniteTableProps<T>['wrapRowsHorizontally'];
 
   rowDetailCache: RowDetailCache<RowDetailCacheKey, RowDetailCacheEntry>;
 

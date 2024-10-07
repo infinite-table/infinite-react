@@ -153,6 +153,7 @@ export function InfiniteTableHeaderCell<T>(
       columnHeaderHeight,
       columnReorderDragColumnId,
       columnMenuVisibleForColumnId,
+      columnReorderInPageIndex,
     },
     getDataSourceMasterContext,
   } = useInfiniteTable<T>();
@@ -167,8 +168,13 @@ export function InfiniteTableHeaderCell<T>(
   const { allRowsSelected, someRowsSelected, selectionMode } =
     useDataSourceState<T>();
 
+  const horizontalLayoutPageIndex = props.horizontalLayoutPageIndex;
   const dragging = columnReorderDragColumnId === column.id;
 
+  const insideDisabledDraggingPage =
+    columnReorderInPageIndex != null
+      ? horizontalLayoutPageIndex !== columnReorderInPageIndex
+      : false;
   const { onResize, height, width, headerOptions, columnsMap } = props;
 
   const sortInfo = column.computedSortInfo;
@@ -261,6 +267,7 @@ export function InfiniteTableHeaderCell<T>(
   const menuIcon = <MenuIconCmp {...menuIconProps} />;
 
   const initialRenderParam: InfiniteTableColumnHeaderParam<T> = {
+    horizontalLayoutPageIndex,
     dragging,
     domRef: ref,
     insideColumnMenu: false,
@@ -492,6 +499,7 @@ export function InfiniteTableHeaderCell<T>(
   const { onPointerDown, proxyPosition } = useColumnPointerEvents({
     columnId: column.id,
     domRef,
+    horizontalLayoutPageIndex,
   });
 
   let draggingProxy = null;
@@ -561,7 +569,9 @@ export function InfiniteTableHeaderCell<T>(
     filterType?.components?.FilterOperatorSwitch ||
     column.components?.FilterOperatorSwitch;
 
-  const resizeHandle = useColumnResizeHandle(column);
+  const resizeHandle = useColumnResizeHandle(column, {
+    horizontalLayoutPageIndex,
+  });
 
   const zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
   style.zIndex = zIndex;
@@ -585,6 +595,7 @@ export function InfiniteTableHeaderCell<T>(
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
         domRef={ref}
+        horizontalLayoutPageIndex={props.horizontalLayoutPageIndex}
         cellType="header"
         column={column}
         {...dataAttrs}
@@ -610,6 +621,7 @@ export function InfiniteTableHeaderCell<T>(
             HeaderCellRecipe,
             {
               dragging,
+              insideDisabledDraggingPage,
               align,
               verticalAlign,
               rowSelected: false,
@@ -618,6 +630,7 @@ export function InfiniteTableHeaderCell<T>(
               zebra: false,
               rowActive: false,
               firstRow: true,
+              firstRowInHorizontalLayoutPage: true,
               groupCell: false,
               groupRow: false,
               rowExpanded: false,
@@ -631,6 +644,7 @@ export function InfiniteTableHeaderCell<T>(
             {showColumnFilters ? (
               column.computedFilterable ? (
                 <InfiniteTableColumnHeaderFilter
+                  horizontalLayoutPageIndex={horizontalLayoutPageIndex}
                   filterEditor={FilterEditor}
                   filterOperatorSwitch={
                     FilterOperatorSwitch ?? InfiniteTableFilterOperatorSwitch

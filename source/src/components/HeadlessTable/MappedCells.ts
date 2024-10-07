@@ -14,7 +14,7 @@ import { TableRenderRange } from '../VirtualBrain/MatrixBrain';
  * This class has tests - see tests/mapped-cells.spec.ts
  */
 
-export class MappedCells extends Logger {
+export class MappedCells<T_ADDITIONAL_CELL_INFO = any> extends Logger {
   /**
    * This is the mapping from element index to cell info.
    * The index in the array is the element index while the value at the position is an array where
@@ -29,14 +29,21 @@ export class MappedCells extends Logger {
    */
   private cellToElementIndex!: DeepMap<number, number>;
 
+  private cellAdditionalInfo!: DeepMap<number, T_ADDITIONAL_CELL_INFO>;
+
   /**
    * Keeps the JSX of rendered elements in memory, so we can possibly reuse it later.
    */
   private renderedElements!: Renderable[];
 
-  constructor() {
+  private withCellAdditionalInfo: boolean = false;
+
+  constructor(opts?: { withCellAdditionalInfo: boolean }) {
     super(`MappedCells`);
     this.init();
+    if (opts?.withCellAdditionalInfo) {
+      this.withCellAdditionalInfo = opts.withCellAdditionalInfo;
+    }
 
     // if (__DEV__) {
     //   (globalThis as any).mappedCells = this;
@@ -66,9 +73,36 @@ export class MappedCells extends Logger {
     return elementsOutsideItemRange.pop();
   };
 
+  getElementFromListForRow = (
+    elementsOutsideItemRange: number[],
+    _rowIndex: number,
+  ): number | undefined => {
+    // from profiling and tracing, seems like this is better
+    // than searching for an element in the same row
+    return elementsOutsideItemRange.pop();
+    /*
+    const last = elementsOutsideItemRange.length - 1;
+    for (let i = last; i >= 0; i--) {
+      const elementIndex = elementsOutsideItemRange[i];
+
+      const cell = elementIndexToCell[elementIndex];
+      if (cell && cell[0] === rowIndex) {
+        if (i === last) {
+          return elementsOutsideItemRange.pop();
+        }
+        console.log('found ', elementIndex, 'at index', i, 'for row', rowIndex);
+        elementsOutsideItemRange.splice(i, 1);
+        return elementIndex;
+      }
+    }
+    return elementsOutsideItemRange.pop();
+    */
+  };
+
   init() {
     this.elementIndexToCell = [];
     this.cellToElementIndex = new DeepMap();
+    this.cellAdditionalInfo = new DeepMap();
     this.renderedElements = [];
   }
 
@@ -79,6 +113,7 @@ export class MappedCells extends Logger {
   destroy() {
     this.elementIndexToCell = [];
     this.cellToElementIndex.clear();
+    this.cellAdditionalInfo.clear();
     this.renderedElements = [];
   }
 
@@ -129,12 +164,25 @@ export class MappedCells extends Logger {
     return this.cellToElementIndex.has([rowIndex, columnIndex]);
   };
 
+  getCellAdditionalInfo = (
+    rowIndex: number,
+    columnIndex: number,
+  ): T_ADDITIONAL_CELL_INFO | undefined => {
+    return this.cellAdditionalInfo.get([rowIndex, columnIndex]);
+  };
+
   isElementRendered = (elementIndex: number): boolean => {
     return !!this.elementIndexToCell[elementIndex];
   };
 
   getElementsForRowIndex = (rowIndex: number): number[] => {
     return this.cellToElementIndex.getValuesStartingWith([rowIndex]);
+  };
+
+  getAdditionalInfoForRowIndex = (
+    rowIndex: number,
+  ): T_ADDITIONAL_CELL_INFO[] => {
+    return this.cellAdditionalInfo.getValuesStartingWith([rowIndex]);
   };
 
   getRenderedNodeAtElement = (elementIndex: number): Renderable | null => {
@@ -172,7 +220,8 @@ export class MappedCells extends Logger {
     rowIndex: number,
     colIndex: number,
     elementIndex: number,
-    renderNode?: Renderable,
+    renderNode: Renderable | undefined,
+    cellAdditionalInfo?: T_ADDITIONAL_CELL_INFO,
   ) => {
     if (__DEV__) {
       this.debug(
@@ -184,7 +233,11 @@ export class MappedCells extends Logger {
 
     const currentCell = this.elementIndexToCell[elementIndex];
     if (currentCell) {
-      this.cellToElementIndex.delete([currentCell[0], currentCell[1]]);
+      const currentCellKey = [currentCell[0], currentCell[1]];
+      this.cellToElementIndex.delete(currentCellKey);
+      if (this.withCellAdditionalInfo) {
+        this.cellAdditionalInfo.delete(currentCellKey);
+      }
     }
     if (renderNode) {
       this.renderedElements[elementIndex] = renderNode;
@@ -192,6 +245,9 @@ export class MappedCells extends Logger {
 
     this.elementIndexToCell[elementIndex] = [rowIndex, colIndex];
     this.cellToElementIndex.set(key, elementIndex);
+    if (this.withCellAdditionalInfo && cellAdditionalInfo !== undefined) {
+      this.cellAdditionalInfo.set(key, cellAdditionalInfo);
+    }
   };
 
   discardCell = (rowIndex: number, colIndex: number) => {
@@ -202,6 +258,9 @@ export class MappedCells extends Logger {
       this.renderedElements[elementIndex] = null;
       this.elementIndexToCell[elementIndex] = null;
       this.cellToElementIndex.delete(key);
+      if (this.withCellAdditionalInfo) {
+        this.cellAdditionalInfo.delete(key);
+      }
     }
   };
 
@@ -213,6 +272,9 @@ export class MappedCells extends Logger {
       this.renderedElements[elementIndex] = null;
       this.elementIndexToCell[elementIndex] = null;
       this.cellToElementIndex.delete(key);
+      if (this.withCellAdditionalInfo) {
+        this.cellAdditionalInfo.delete(key);
+      }
 
       return cell;
     }

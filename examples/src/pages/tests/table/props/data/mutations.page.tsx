@@ -152,6 +152,14 @@ export default () => {
         Update id=2 to age=100
       </button>
 
+      <button
+        onClick={() => {
+          dataSourceApi!.clearAllData();
+        }}
+      >
+        Clear all data
+      </button>
+
       <React.StrictMode>
         <DataSource<Developer>
           data={data}

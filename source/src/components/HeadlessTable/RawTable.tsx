@@ -4,8 +4,8 @@ import { useEffect, useLayoutEffect, useMemo } from 'react';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
-import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
+import { createRenderer } from './createRenderer';
 
 import {
   ReactHeadlessTableRenderer,
@@ -23,20 +23,6 @@ export type RawTableProps = {
   onRenderUpdater?: SubscriptionCallback<Renderable>;
 };
 
-function createRenderer(brain: MatrixBrain) {
-  const renderer = new ReactHeadlessTableRenderer(brain);
-  const onRenderUpdater = buildSubscriptionCallback<Renderable>();
-
-  brain.onDestroy(() => {
-    renderer.destroy();
-    onRenderUpdater.destroy();
-  });
-
-  return {
-    renderer,
-    onRenderUpdater,
-  };
-}
 export function RawTableFn(props: RawTableProps) {
   const { brain, renderCell, renderDetailRow } = props;
 
@@ -93,7 +79,7 @@ export function RawTableFn(props: RawTableProps) {
     });
 
     return remove;
-  }, [renderCell, renderDetailRow]);
+  }, [renderCell, renderDetailRow, brain, onRenderUpdater]);
 
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }

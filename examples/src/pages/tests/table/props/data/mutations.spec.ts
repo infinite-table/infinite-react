@@ -147,4 +147,73 @@ export default test.describe.parallel('Mutations simple test', () => {
       ],
     );
   });
+
+  test('api.replaceAllData works correctly', async ({ page, rowModel }) => {
+    await page.waitForInfinite();
+
+    expect(await rowModel.getRenderedRowCount()).toBe(5);
+
+    await page.getByText('Clear all data').click();
+    await page.evaluate(() => new Promise(requestAnimationFrame));
+
+    expect(
+      await page.evaluate(() => Array.from((window as any).mutations.values())),
+    ).toEqual([
+      [
+        {
+          metadata: undefined,
+          primaryKey: undefined,
+          type: 'clear-all',
+        },
+      ],
+    ]);
+
+    expect(await rowModel.getRenderedRowCount()).toBe(0);
+
+    await page.getByText('Add 2 items').click();
+    await page.evaluate(() => new Promise(requestAnimationFrame));
+
+    expect(await rowModel.getRenderedRowCount()).toBe(2);
+
+    expect(
+      await page.evaluate(() => Array.from((window as any).mutations.values())),
+    ).toEqual([
+      [
+        {
+          position: 'after',
+          primaryKey: undefined,
+          originalData: null,
+          type: 'insert',
+          data: {
+            id: 6,
+            firstName: 'Mark',
+            lastName: 'Berg',
+            age: 39,
+            canDesign: 'no',
+            currency: 'USD',
+            preferredLanguage: 'Go',
+            stack: 'frontend',
+          },
+        },
+      ],
+      [
+        {
+          position: 'before',
+          primaryKey: 6,
+          type: 'insert',
+          originalData: null,
+          data: {
+            id: 7,
+            firstName: 'Before Mark',
+            lastName: 'Before',
+            age: 39,
+            canDesign: 'no',
+            currency: 'USD',
+            preferredLanguage: 'Go',
+            stack: 'frontend',
+          },
+        },
+      ],
+    ]);
+  });
 });

@@ -109,6 +109,25 @@ For setting the enable/disable state for a row by its primary key, see the <DApi
 
 </Prop>
 
+<Prop name="replaceAllData" type="(data: DATA_TYPE[], options?: DataSourceCRUDParam) => Promise">
+
+> Replaces all data in the DataSource with the provided data.
+
+Clears the current data array in the `<DataSource />` and replaces it with the provided data.
+
+When calling this, if there are pending data mutations, they will be discarded.
+
+See related <DApiLink name="clearAllData" /> method.
+
+</Prop>
+
+<Prop name="clearAllData" type="() => Promise">
+
+> Clears all data in the DataSource.
+
+See related <DApiLink name="replaceAllData" /> method.
+
+</Prop>
 
 <Prop name="addData" type="(data: DATA_TYPE) => Promise">
 

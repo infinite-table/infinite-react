@@ -5,7 +5,6 @@ import {
   DataSourceSingleSortInfo,
   DataSourceState,
 } from '.';
-import { raf } from '../../utils/raf';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
@@ -43,6 +42,11 @@ type DataSourceOperation<T> =
       // the insert is being made - so before or after this primaryKey
       primaryKey: any;
       metadata: any;
+    }
+  | {
+      type: 'replace-all';
+      array: T[];
+      metadata: any;
     };
 
 class DataSourceApiImpl<T> implements DataSourceApi<T> {
@@ -51,7 +55,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   private getState: () => DataSourceState<T>;
   private actions: DataSourceComponentActions<T>;
   //@ts-ignore
-  private batchOperationRafId: number = 0;
+  private batchOperationRafId: any = 0;
   //@ts-ignore
   private batchOperationTimeoutId: any = 0;
 
@@ -76,24 +80,24 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       const delay = Math.max(0, this.getState().batchOperationDelay ?? 0);
 
       if (delay === 0) {
-        this.batchOperationRafId = raf(() => {
+        this.batchOperationRafId = setTimeout(() => {
           this.commit();
         });
       } else {
         this.batchOperationTimeoutId = setTimeout(() => {
-          this.batchOperationRafId = raf(() => {
+          this.batchOperationRafId = setTimeout(() => {
             this.commit();
           });
         }, delay);
       }
     }
+    if (operation.type === 'replace-all') {
+      this.pendingOperations.length = 0;
+    }
+
     this.pendingOperations.push(operation);
 
     return this.pendingPromise;
-  }
-
-  batchOperations(operations: DataSourceOperation<T>[]) {
-    this.pendingOperations.push(...operations);
   }
 
   private commitOperations(operations: DataSourceOperation<T>[]) {
@@ -144,6 +148,9 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
             position = 'after';
           });
           break;
+        case 'replace-all':
+          cache.resetDataSource(operation.metadata);
+          break;
       }
     });
 
@@ -151,11 +158,16 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     this.actions.cache = cache;
   }
 
+  flush() {
+    return this.commit();
+  }
+
   commit() {
     this.commitOperations(this.pendingOperations);
     this.pendingOperations.length = 0;
 
-    if (this.pendingPromise && this.resolvePendingPromise) {
+    const pendingPromise = this.pendingPromise;
+    if (pendingPromise && this.resolvePendingPromise) {
       const resolve = this.resolvePendingPromise;
       // let's resolve the promise in the next frame
       // so we give the DataSource reducer the chance to pick up the commited operations
@@ -167,6 +179,8 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       this.pendingPromise = null;
       this.resolvePendingPromise = null;
     }
+
+    return pendingPromise || Promise.resolve(true);
   }
 
   getRowInfoArray = () => {
@@ -196,6 +210,35 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   getDataByPrimaryKey = (id: any): T | null => {
     const { indexer } = this.getState();
     return indexer.getDataForPrimaryKey(id) ?? null;
+  };
+
+  /**
+   * Replaces all data in the DataSource with the provided data.
+   * @param data - The new data to replace the existing data with.
+   * @param options - Additional options for the operation.
+   * @param options.flush - If true, the mutations will be flushed immediately.
+   * @param options.metadata - Additional metadata for the operation.
+   * @returns A promise that resolves when the operation is complete.
+   */
+  replaceAllData = (data: T[], options?: DataSourceCRUDParam) => {
+    this.batchOperation({
+      type: 'replace-all',
+      array: data,
+      metadata: options?.metadata,
+    });
+
+    return this.addDataArray(data, options);
+  };
+
+  /**
+   * Clears all data in the DataSource.
+   * @param options - Additional options for the operation.
+   * @param options.flush - If true, the mutations will be flushed immediately.
+   * @param options.metadata - Additional metadata for the operation.
+   * @returns A promise that resolves when the operation is complete.
+   */
+  clearAllData = (options?: DataSourceCRUDParam) => {
+    return this.replaceAllData([], options);
   };
 
   updateData = (data: Partial<T>, options?: DataSourceCRUDParam) => {

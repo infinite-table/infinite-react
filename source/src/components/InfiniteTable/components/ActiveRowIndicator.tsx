@@ -2,6 +2,7 @@ import * as React from 'react';
 import { CSSProperties, useEffect, useLayoutEffect, useRef } from 'react';
 import { stripVar } from '../../../utils/stripVar';
 import { useRerender } from '../../hooks/useRerender';
+import { ScrollPosition } from '../../types/ScrollPosition';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 
 import { internalProps } from '../internalProps';
@@ -9,7 +10,7 @@ import { InternalVars } from '../internalVars.css';
 import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
 import { ThemeVars } from '../vars.css';
 import { ActiveIndicatorWrapperCls } from './ActiveCellIndicator.css';
-import { ActiveRowIndicatorCls } from './ActiveRowIndicator.css';
+import { ActiveRowIndicatorRecipe } from './ActiveRowIndicator.css';
 
 const { rootClassName } = internalProps;
 const baseCls = `${rootClassName}-ActiveRowIndicator`;
@@ -19,14 +20,18 @@ type ActiveRowIndicatorProps = {
   brain: MatrixBrain;
 };
 
+const transformX = `calc(${InternalVars.activeCellRowOffsetX} + var(${stripVar(
+  InternalVars.scrollLeftForActiveRowWhenHorizontalLayout,
+)}, 0px))`;
+
 const ActiveStyle: CSSProperties = {
   [stripVar(InternalVars.activeCellOffsetY)]: InternalVars.activeCellRowOffset,
 
-  transform: `translate3d(0px, calc( ${
+  transform: `translate3d(${transformX}, calc( ${
     InternalVars.activeCellOffsetY
   } + var(${stripVar(InternalVars.scrollTopForActiveRow)}, 0px)), 0px)`,
   height: InternalVars.activeCellRowHeight,
-  maxWidth: ThemeVars.runtime.totalVisibleColumnsWidth,
+  maxWidth: ThemeVars.runtime.totalVisibleColumnsWidthVar,
 };
 
 const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
@@ -35,7 +40,8 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
   const domRef = useRef<HTMLDivElement>(null);
 
   const active =
-    props.activeRowIndex != null && brain.getRowCount() > props.activeRowIndex;
+    props.activeRowIndex != null &&
+    brain.getInitialRows() > props.activeRowIndex;
 
   const [_rerenderId, rerender] = useRerender();
 
@@ -44,7 +50,16 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
       return;
     }
 
-    const rowIndex = props.activeRowIndex;
+    let activeCellRowOffsetX = '0px';
+    let rowIndex = props.activeRowIndex;
+
+    if (brain.isHorizontalLayoutBrain && brain.rowsPerPage) {
+      const pageIndex = brain.getPageIndexForRow(rowIndex);
+      if (pageIndex > 0) {
+        activeCellRowOffsetX = `calc(${ThemeVars.runtime.totalVisibleColumnsWidthVar} * ${pageIndex})`;
+      }
+      rowIndex = rowIndex % brain.rowsPerPage;
+    }
     const activeCellRowHeight = brain.getRowHeight(rowIndex);
     const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
 
@@ -53,20 +68,25 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
     const vars = {
       activeCellRowHeight: `${activeCellRowHeight}px`,
       activeCellRowOffset: `${activeCellRowOffset}px`,
+      activeCellRowOffsetX,
     };
 
     setInfiniteVarsOnNode(vars, node);
-  }, [props.activeRowIndex]);
+  }, [props.activeRowIndex, brain]);
 
   useEffect(() => {
-    const removeOnScroll = brain.onScroll((scrollPosition) => {
+    const updateVars = (scrollPosition: ScrollPosition) => {
       setInfiniteVarsOnNode(
         {
           scrollTopForActiveRow: `${-scrollPosition.scrollTop}px`,
+          scrollLeftForActiveRowWhenHorizontalLayout: `${-scrollPosition.scrollLeft}px`,
         },
         domRef.current!,
       );
-    });
+    };
+
+    updateVars(brain.getScrollPosition());
+    const removeOnScroll = brain.onScroll(updateVars);
 
     const removeOnRenderCountChange = brain.onRenderCountChange(rerender);
 
@@ -82,9 +102,9 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
       <div
         ref={domRef}
         data-name="active-row-indicator"
-        className={`${baseCls} ${
-          active ? ActiveRowIndicatorCls.visible : ActiveRowIndicatorCls.hidden
-        }`}
+        className={`${baseCls} ${ActiveRowIndicatorRecipe({
+          active,
+        })}`}
         style={active ? ActiveStyle : undefined}
       />
     </div>

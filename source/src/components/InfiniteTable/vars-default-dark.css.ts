@@ -3,6 +3,7 @@ import { ThemeVars } from './vars.css';
 export const DarkVars = {
   [ThemeVars.iconSize]: '24px',
   [ThemeVars.background]: '#101419',
+  [ThemeVars.color.success]: '#008700',
   [ThemeVars.components.Cell.border]: '1px solid #2a323d',
   [ThemeVars.components.Header.color]: '#c3c3c3',
   [ThemeVars.components.LoadMask.textBackground]: ThemeVars.background,

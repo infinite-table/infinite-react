@@ -8,24 +8,24 @@ export default test.describe.parallel('MappedCells', () => {
   test('renderCellAtElement should work fine', async ({}) => {
     const cells = new MappedCells();
 
-    cells.renderCellAtElement(0, 0, 0);
-    cells.renderCellAtElement(0, 1, 1);
-    cells.renderCellAtElement(0, 2, 2);
+    cells.renderCellAtElement(0, 0, 0, undefined);
+    cells.renderCellAtElement(0, 1, 1, undefined);
+    cells.renderCellAtElement(0, 2, 2, undefined);
 
     expect(cells.isCellRendered(0, 2)).toBe(true);
     expect(cells.isCellRendered(1, 1)).toBe(false);
 
-    cells.renderCellAtElement(0, 3, 2);
+    cells.renderCellAtElement(0, 3, 2, undefined);
     expect(cells.isCellRendered(0, 2)).toBe(false);
   });
 
   test('discardElement should work fine', async () => {
     const cells = new MappedCells();
 
-    cells.renderCellAtElement(0, 0, 0);
-    cells.renderCellAtElement(1, 1, 1);
-    cells.renderCellAtElement(2, 2, 2);
-    cells.renderCellAtElement(3, 3, 3);
+    cells.renderCellAtElement(0, 0, 0, undefined);
+    cells.renderCellAtElement(1, 1, 1, undefined);
+    cells.renderCellAtElement(2, 2, 2, undefined);
+    cells.renderCellAtElement(3, 3, 3, undefined);
 
     cells.discardElement(1);
     expect(cells.isCellRendered(1, 1)).toBe(false);
@@ -34,10 +34,10 @@ export default test.describe.parallel('MappedCells', () => {
   test('discardCell should work fine', async () => {
     const cells = new MappedCells();
 
-    cells.renderCellAtElement(0, 0, 0);
-    cells.renderCellAtElement(1, 1, 1);
-    cells.renderCellAtElement(2, 2, 2);
-    cells.renderCellAtElement(3, 3, 3);
+    cells.renderCellAtElement(0, 0, 0, undefined);
+    cells.renderCellAtElement(1, 1, 1, undefined);
+    cells.renderCellAtElement(2, 2, 2, undefined);
+    cells.renderCellAtElement(3, 3, 3, undefined);
 
     cells.discardCell(1, 2);
     expect(cells.isCellRendered(1, 1)).toBe(true);
@@ -45,18 +45,18 @@ export default test.describe.parallel('MappedCells', () => {
     expect(cells.isCellRendered(1, 1)).toBe(false);
 
     expect(cells.isCellRendered(3, 3)).toBe(true);
-    cells.renderCellAtElement(4, 3, 3);
+    cells.renderCellAtElement(4, 3, 3, undefined);
     expect(cells.isCellRendered(3, 3)).toBe(false);
   });
   test('discardElementsStartingWith should work fine', async ({}) => {
     const cells = new MappedCells();
 
-    cells.renderCellAtElement(0, 0, 0);
-    cells.renderCellAtElement(0, 1, 1);
-    cells.renderCellAtElement(0, 2, 2);
-    cells.renderCellAtElement(1, 0, 3);
-    cells.renderCellAtElement(1, 1, 4);
-    cells.renderCellAtElement(1, 2, 5);
+    cells.renderCellAtElement(0, 0, 0, undefined);
+    cells.renderCellAtElement(0, 1, 1, undefined);
+    cells.renderCellAtElement(0, 2, 2, undefined);
+    cells.renderCellAtElement(1, 0, 3, undefined);
+    cells.renderCellAtElement(1, 1, 4, undefined);
+    cells.renderCellAtElement(1, 2, 5, undefined);
 
     cells.discardElementsStartingWith(3);
 
@@ -73,17 +73,17 @@ export default test.describe.parallel('MappedCells', () => {
   test('getElementsOutsideRenderRange should work fine', async ({}) => {
     const cells = new MappedCells();
 
-    cells.renderCellAtElement(0, 0, 0);
-    cells.renderCellAtElement(0, 1, 1);
-    cells.renderCellAtElement(0, 2, 2);
-    cells.renderCellAtElement(1, 0, 3);
-    cells.renderCellAtElement(1, 1, 4);
-    cells.renderCellAtElement(1, 2, 5);
-    cells.renderCellAtElement(4, 0, 6);
-    cells.renderCellAtElement(5, 1, 7);
-    cells.renderCellAtElement(5, 2, 8);
-    cells.renderCellAtElement(6, 1, 9);
-    cells.renderCellAtElement(6, 2, 10);
+    cells.renderCellAtElement(0, 0, 0, undefined);
+    cells.renderCellAtElement(0, 1, 1, undefined);
+    cells.renderCellAtElement(0, 2, 2, undefined);
+    cells.renderCellAtElement(1, 0, 3, undefined);
+    cells.renderCellAtElement(1, 1, 4, undefined);
+    cells.renderCellAtElement(1, 2, 5, undefined);
+    cells.renderCellAtElement(4, 0, 6, undefined);
+    cells.renderCellAtElement(5, 1, 7, undefined);
+    cells.renderCellAtElement(5, 2, 8, undefined);
+    cells.renderCellAtElement(6, 1, 9, undefined);
+    cells.renderCellAtElement(6, 2, 10, undefined);
 
     const elements = cells.getElementsOutsideRenderRange({
       start: [1, 1],

@@ -156,6 +156,8 @@ export function getColumnValueToEdit<T>(options: {
 
 export function getColumnRenderingParams<T>(options: {
   column: InfiniteTableComputedColumn<T>;
+  rowIndexInHorizontalLayoutPage: number | null;
+  horizontalLayoutPageIndex: number | null;
   rowInfo: InfiniteTableRowInfo<T>;
   rowDetailState: 'expanded' | 'collapsed' | false;
   visibleColumnsIds: string[];
@@ -174,11 +176,7 @@ export function getColumnRenderingParams<T>(options: {
   const { getState } = context;
   const { editingCell } = getState();
 
-  const formattedResult = getFormattedValueContextForCell({
-    ...options,
-    // column: groupByColumnReference || column,
-    column,
-  });
+  const formattedResult = getFormattedValueContextForCell(options);
   const { formattedValueContext } = formattedResult;
 
   const inEdit = context.api.isEditorVisibleForCell({
@@ -186,20 +184,27 @@ export function getColumnRenderingParams<T>(options: {
     rowIndex: rowInfo.indexInAll,
   });
 
-  const stylingParam = {
-    column: options.column,
-    inEdit,
-    rowHasSelectedCells: false,
-    ...formattedValueContext,
-    editError:
-      editingCell &&
-      editingCell.primaryKey === rowInfo.id &&
-      editingCell.columnId === column.id &&
-      !editingCell.active &&
-      editingCell.accepted instanceof Error
-        ? editingCell.accepted
-        : undefined,
-  };
+  const stylingParam = Object.assign(
+    {
+      rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
+      horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
+      column: options.column,
+      inEdit,
+      rowHasSelectedCells: false,
+    },
+    formattedValueContext,
+    {
+      editError:
+        editingCell &&
+        editingCell.primaryKey === rowInfo.id &&
+        editingCell.columnId === column.id &&
+        !editingCell.active &&
+        editingCell.accepted instanceof Error
+          ? editingCell.accepted
+          : undefined,
+    },
+  );
+
   // we define it initially as false so TS doesn't complain
   // and then make it a getter
   // so it can be computed lazily - just when the user calls and needs this
@@ -234,7 +239,18 @@ export function getColumnRenderingParams<T>(options: {
         column.renderLeafValue || groupByColumnReference?.renderLeafValue,
     },
     renderParams: getColumnRenderParam({
-      ...options,
+      // prefer this over spreading the options object
+      // for better performance
+      rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
+      horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
+      column: options.column,
+      rowInfo: options.rowInfo,
+      visibleColumnsIds: options.visibleColumnsIds,
+      columnsMap: options.columnsMap,
+      fieldsToColumn: options.fieldsToColumn,
+      context: options.context,
+
+      // override the following:
       align,
       verticalAlign,
       formattedValueContext,
@@ -244,6 +260,8 @@ export function getColumnRenderingParams<T>(options: {
 }
 
 export function getColumnRenderParam<T>(options: {
+  rowIndexInHorizontalLayoutPage: number | null;
+  horizontalLayoutPageIndex: number | null;
   column: InfiniteTableComputedColumn<T>;
   align: InfiniteTableColumnAlignValues;
   verticalAlign: InfiniteTableColumnVerticalAlignValues;
@@ -287,7 +305,10 @@ export function getColumnRenderParam<T>(options: {
   const cellSelected =
     cellSelection?.isCellSelected(rowInfo.id, column.id) ?? false;
 
-  const renderParam: Omit<InfiniteTableColumnCellContextType<T>, 'domRef'> = {
+  const renderParam: Omit<
+    InfiniteTableColumnCellContextType<T>,
+    'domRef' | 'htmlElementRef'
+  > = {
     column,
     columnsMap,
     fieldsToColumn,
@@ -296,6 +317,8 @@ export function getColumnRenderParam<T>(options: {
     cellSelected,
 
     rowHasSelectedCells: false,
+    horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
+    rowIndexInHorizontalLayoutPage: options.rowIndexInHorizontalLayoutPage,
 
     ...formattedValueContext,
     editError:

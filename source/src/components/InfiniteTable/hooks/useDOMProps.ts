@@ -11,10 +11,7 @@ import {
 } from '../InfiniteCls.css';
 import { InternalVars } from '../internalVars.css';
 import { InfiniteTableComputedColumn } from '../types';
-import {
-  getCSSVarNameForColOffset,
-  getCSSVarNameForColWidth,
-} from '../utils/infiniteDOMUtils';
+import { InternalVarUtils } from '../utils/infiniteDOMUtils';
 import { rafFn } from '../utils/rafFn';
 import { ThemeVars } from '../vars.css';
 import { useInfiniteTable } from './useInfiniteTable';
@@ -27,8 +24,12 @@ const publicRuntimeVars: Record<
   }
 > = {
   bodyWidth: { name: stripVar(ThemeVars.runtime.bodyWidth), value: '' },
-  totalVisibleColumnsWidth: {
-    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidth),
+  totalVisibleColumnsWidthValue: {
+    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidthValue),
+    value: '',
+  },
+  totalVisibleColumnsWidthVar: {
+    name: stripVar(ThemeVars.runtime.totalVisibleColumnsWidthVar),
     value: '',
   },
   visibleColumnsCount: {
@@ -47,7 +48,6 @@ const scrollbarWidthHorizontal = stripVar(
 const scrollbarWidthVertical = stripVar(InternalVars.scrollbarWidthVertical);
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
-const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 const scrollLeftCSSVar = stripVar(InternalVars.scrollLeft);
 // const columnReorderEffectDurationAtIndex = stripVar(
@@ -116,6 +116,7 @@ export function useDOMProps<T>(
     onSelfBlur,
     bodySize,
     activeCellIndex,
+    wrapRowsHorizontally,
   } = state;
   const {
     computedPinnedStartColumnsWidth,
@@ -133,10 +134,11 @@ export function useDOMProps<T>(
       const index = col.computedVisibleIndex;
 
       //@ts-ignore
-      vars[`${columnWidthAtIndex}-${index}`] = col.computedWidth + 'px';
+      vars[InternalVarUtils.columnWidths.varName.get(index)] =
+        col.computedWidth + 'px';
 
       //@ts-ignore
-      vars[`${columnOffsetAtIndex}-${index}`] =
+      vars[InternalVarUtils.columnOffsets.varName.get(index)] =
         col.computedPinned === 'start'
           ? `calc( ${col.computedOffset}px + var(${scrollLeftCSSVar}) )`
           : col.computedPinned === 'end'
@@ -144,8 +146,8 @@ export function useDOMProps<T>(
             `calc( var(${pinnedEndOffsetCSSVar}) ${
               prevPinnedEndCols.length ? '+' : ''
             } ${prevPinnedEndCols
-              .map(
-                (c) => `var(${columnWidthAtIndex}-${c.computedVisibleIndex})`,
+              .map((c) =>
+                InternalVarUtils.columnWidths.get(c.computedVisibleIndex),
               )
               .join(' + ')} + var(${scrollLeftCSSVar}) )`
           : `${col.computedOffset}px`;
@@ -183,11 +185,20 @@ export function useDOMProps<T>(
   ] = `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`;
 
   //@ts-ignore
-  cssVars[publicRuntimeVars.totalVisibleColumnsWidth.name] = `${
+  cssVars[publicRuntimeVars.totalVisibleColumnsWidthValue.name] = `${
     computedPinnedStartColumnsWidth +
     computedPinnedEndColumnsWidth +
     computedUnpinnedColumnsWidth
   }px`;
+
+  //@ts-ignore
+  cssVars[
+    publicRuntimeVars.totalVisibleColumnsWidthVar.name
+  ] = `calc(${computedVisibleColumns
+    .map((_col, index) => {
+      return `var(${columnWidthAtIndex}-${index})`;
+    })
+    .join(' + ')})`;
 
   //@ts-ignore
   cssVars[publicRuntimeVars.visibleColumnsCount.name] =
@@ -195,13 +206,23 @@ export function useDOMProps<T>(
 
   if (activeCellIndex != null) {
     //@ts-ignore
-    cssVars[activeCellColWidth] = `var(${getCSSVarNameForColWidth(
+    cssVars[activeCellColWidth] = InternalVarUtils.columnWidths.get(
       activeCellIndex[1],
-    )})`;
-    //@ts-ignore
-    cssVars[activeCellColOffset] = `var(${getCSSVarNameForColOffset(
+    );
+    const defaultActiveCellColOffset = InternalVarUtils.columnOffsets.get(
       activeCellIndex[1],
-    )})`;
+    );
+    if (state.brain.isHorizontalLayoutBrain) {
+      const pageIndex = state.brain.getPageIndexForRow(activeCellIndex[0]);
+
+      //@ts-ignore
+      cssVars[activeCellColOffset] = pageIndex
+        ? `calc( ${ThemeVars.runtime.totalVisibleColumnsWidthVar} * ${pageIndex} + ${defaultActiveCellColOffset})`
+        : defaultActiveCellColOffset;
+    } else {
+      //@ts-ignore
+      cssVars[activeCellColOffset] = defaultActiveCellColOffset;
+    }
   }
 
   //@ts-ignore
@@ -219,7 +240,7 @@ export function useDOMProps<T>(
   cssVars[pinnedStartWidthCSSVar] =
     `calc( ` +
     computedPinnedStartColumns
-      .map((c) => `var(${getCSSVarNameForColWidth(c.computedVisibleIndex)})`)
+      .map((c) => InternalVarUtils.columnWidths.get(c.computedVisibleIndex))
       .join(' + ') +
     ')';
 
@@ -227,7 +248,7 @@ export function useDOMProps<T>(
   cssVars[pinnedEndWidthCSSVar] =
     `calc( ` +
     computedPinnedEndColumns
-      .map((c) => `var(${getCSSVarNameForColWidth(c.computedVisibleIndex)})`)
+      .map((c) => InternalVarUtils.columnWidths.get(c.computedVisibleIndex))
       .join(' + ') +
     ')';
   //@ts-ignore
@@ -313,6 +334,9 @@ export function useDOMProps<T>(
     InfiniteTableClassName,
     InfiniteCls,
 
+    wrapRowsHorizontally
+      ? `${InfiniteTableClassName}--horizontal-layout`
+      : null,
     domProps?.className,
     computedPinnedStartColumnsWidth
       ? `${InfiniteTableClassName}--has-pinned-start ${InfiniteClsHasPinnedStart}`
@@ -335,6 +359,7 @@ export function useDOMProps<T>(
       : null,
 
     InfiniteClsRecipe({
+      horizontalLayout: !!wrapRowsHorizontally,
       hasPinnedStart: !!computedPinnedStartColumnsWidth,
       hasPinnedEnd: !!computedPinnedEndColumnsWidth,
       // hasPinnedStartOverflow: !!computed.computedPinnedStartOverflow,

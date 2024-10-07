@@ -85,10 +85,10 @@ export function HeadlessTableWithPinnedContainersFn(
 
   useEffect(() => {
     const removeOnRenderCount = brain.onRenderCountChange(() => {
-      setTotalScrollSize(brain.getTotalSize());
+      setTotalScrollSize(brain.getVirtualizedContentSize());
     });
 
-    setTotalScrollSize(brain.getTotalSize());
+    setTotalScrollSize(brain.getVirtualizedContentSize());
 
     return () => {
       removeOnRenderCount();

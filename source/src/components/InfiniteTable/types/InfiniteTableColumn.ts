@@ -55,6 +55,7 @@ export type InfiniteTableColumnHeaderParam<
   columnSortInfo: DataSourceSingleSortInfo<DATA_TYPE> | null;
   columnFilterValue: DataSourceFilterValueItem<DATA_TYPE> | null;
   selectionMode: DataSourcePropSelectionMode;
+  horizontalLayoutPageIndex: null | number;
   allRowsSelected: boolean;
   someRowsSelected: boolean;
   filtered: boolean;
@@ -91,6 +92,10 @@ export type InfiniteTableColumnRenderParamBase<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+  htmlElementRef: React.MutableRefObject<HTMLElement | null>;
+
+  rowIndexInHorizontalLayoutPage: null | number;
+  horizontalLayoutPageIndex: null | number;
 
   // TODO type this to be the type of DATA_TYPE[column.field] if possible
   value: string | number | Renderable;
@@ -238,6 +243,13 @@ export type InfiniteTableColumnHeaderRenderFunction<T> = (
   headerParams: InfiniteTableColumnHeaderParam<T>,
 ) => Renderable;
 
+export type InfiniteTableColumnOrHeaderRenderFunction<T> = (
+  params:
+    | (InfiniteTableColumnCellContextType<T> & {
+        rowInfo: InfiniteTableRowInfo<T>;
+      })
+    | (InfiniteTableColumnHeaderParam<T> & { rowInfo: null }),
+) => ReturnType<InfiniteTableColumnRenderFunction<T>>;
 export type InfiniteTableColumnContentFocusable<T> =
   | boolean
   | InfiniteTableColumnContentFocusableFn<T>;
@@ -310,6 +322,8 @@ export type InfiniteTableColumnWithRenderDescriptor<T> = RequireAtLeastOne<
 export type InfiniteTableColumnStylingFnParams<T> = {
   value: Renderable;
   column: InfiniteTableComputedColumn<T>;
+  rowIndexInHorizontalLayoutPage: null | number;
+  horizontalLayoutPageIndex: null | number;
   inEdit: boolean;
   rowHasSelectedCells: boolean;
   editError: InfiniteTableColumnRenderParamBase<T>['editError'];
@@ -488,7 +502,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   renderFilterIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderSelectionCheckBox?:
     | boolean
-    | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+    | InfiniteTableColumnOrHeaderRenderFunction<DATA_TYPE>;
   renderMenuIcon?: boolean | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   renderHeaderSelectionCheckBox?:

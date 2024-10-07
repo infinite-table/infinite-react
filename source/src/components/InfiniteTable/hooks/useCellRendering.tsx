@@ -88,6 +88,7 @@ export function useCellRendering<T>(
     onScrollToBottom,
     onScrollStop,
     scrollToBottomOffset,
+    wrapRowsHorizontally,
     ready,
   } = state;
 
@@ -231,11 +232,22 @@ export function useCellRendering<T>(
           : 'collapsed';
       }
 
+      const rowIndexInHorizontalLayoutPage = wrapRowsHorizontally
+        ? brain.getRowIndexInPage(rowIndex)
+        : null;
+
+      const horizontalLayoutPageIndex = wrapRowsHorizontally
+        ? brain.getPageIndexForRow(rowIndex)
+        : null;
+
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
         virtualized: true,
         showZebraRows,
         groupRenderStrategy,
+        rowIndexInHorizontalLayoutPage,
+        horizontalLayoutPageIndex,
+
         rowIndex,
         rowInfo,
         hidden,
@@ -269,8 +281,10 @@ export function useCellRendering<T>(
       computedColumnsMap,
       fieldsToColumn,
       groupRenderStrategy,
+      wrapRowsHorizontally,
       toggleGroupRow,
       showZebraRows,
+      brain,
       repaintId,
       rowStyle,
       rowClassName,
