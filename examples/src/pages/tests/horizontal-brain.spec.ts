@@ -133,7 +133,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
 
     const initialRange = {
       start: [0, 0],
-      end: [8, 4],
+      end: [8, 5],
     };
     expect(brain.getRenderRange()).toEqual(initialRange);
 
@@ -197,7 +197,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
     });
 
     expect(brain.getRenderRange()).toEqual({
-      start: [0, 2],
+      start: [0, 1],
       end: [8, 6],
     });
   });
@@ -223,7 +223,7 @@ export default test.describe.parallel('HorizontalLayoutMatrixBrain', () => {
 
     expect(brain.getRenderRange()).toEqual({
       start: [0, 0],
-      end: [7, 9],
+      end: [7, 10],
     });
   });
 

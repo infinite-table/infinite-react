@@ -1,10 +1,10 @@
 import { raf } from '../../utils/raf';
 import { Size } from '../types/Size';
+import { getGreatestCountVisibleInSize } from './getGreatestCountVisibleInSize';
 import {
   ALL_DIRECTIONS,
   IBrain,
   ItemSizeFunction,
-  SORT_ASC,
   WhichDirection,
 } from './IBrain';
 
@@ -117,7 +117,7 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     count: number,
     theRenderSize: Size,
   ) {
-    if (direction === 'vertical') {
+    if (direction === 'vertical' || typeof itemSize === 'number') {
       return super.computeDirectionalRenderCount(
         direction,
         itemSize,
@@ -126,20 +126,7 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
       );
     }
     let renderCount = 0;
-
     let size = theRenderSize.width;
-
-    size -= this.getFixedSize('horizontal');
-
-    if (size <= 0) {
-      return 0;
-    }
-
-    if (typeof itemSize === 'number') {
-      renderCount = (itemSize ? Math.ceil(size / itemSize) : 0) + 1;
-      renderCount = Math.min(count, renderCount);
-      return renderCount;
-    }
 
     const pagesInView = Math.floor(size / this.pageWidth);
 
@@ -151,18 +138,8 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     for (let i = 0; i < this.initialCols; i++) {
       sizes.push(this.getItemSize(i, direction));
     }
-    sizes.sort(SORT_ASC);
 
-    let sum = 0;
-    for (let i = 0; i < this.initialCols; i++) {
-      sum += sizes[i];
-
-      renderCount++;
-      if (sum > remainingSize) {
-        break;
-      }
-    }
-    renderCount += 1;
+    renderCount += getGreatestCountVisibleInSize(remainingSize, sizes);
     renderCount = Math.min(count, renderCount);
 
     return renderCount;

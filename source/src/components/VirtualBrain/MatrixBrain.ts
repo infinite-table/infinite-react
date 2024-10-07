@@ -4,6 +4,7 @@ import { Logger } from '../../utils/debug';
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
 import type { Size } from '../types/Size';
 import type { VoidFn } from '../types/VoidFn';
+import { getGreatestCountVisibleInSize } from './getGreatestCountVisibleInSize';
 import type {
   IBrain,
   TableRenderRange,
@@ -13,6 +14,11 @@ import type {
 } from './IBrain';
 
 import { SORT_ASC, ALL_DIRECTIONS } from './IBrain';
+
+const DEFAULT_EXTEND_BY = {
+  start: 0,
+  end: 0,
+};
 
 export type { FixedPosition };
 export type SpanFunction = ({
@@ -114,6 +120,8 @@ function defaultShouldUpdateRenderCount(
 
 export class MatrixBrain extends Logger implements IBrain {
   private scrolling = false;
+  protected RENDER_COUNT_SAFETY_MARGIN_START = 1;
+  protected RENDER_COUNT_SAFETY_MARGIN_END = 1;
   protected availableWidth: MatrixBrainOptions['width'] = 0;
   protected availableRenderWidth: number = 0;
   public isHorizontalLayoutBrain = false;
@@ -166,14 +174,10 @@ export class MatrixBrain extends Logger implements IBrain {
   private horizontalRenderCount?: number = undefined;
   private verticalRenderCount?: number = undefined;
 
-  private horizontalExtendRangeBy: { start: number; end: number } = {
-    start: 0,
-    end: 0,
-  };
-  private verticalExtendRangeBy: { start: number; end: number } = {
-    start: 0,
-    end: 0,
-  };
+  private horizontalExtendRangeBy: { start: number; end: number } =
+    DEFAULT_EXTEND_BY;
+  private verticalExtendRangeBy: { start: number; end: number } =
+    DEFAULT_EXTEND_BY;
 
   protected horizontalRenderRange: RenderRangeType = {
     startIndex: 0,
@@ -702,17 +706,7 @@ export class MatrixBrain extends Logger implements IBrain {
       for (let i = 0; i < count; i++) {
         sizes.push(this.getItemSize(i, direction));
       }
-      sizes.sort(SORT_ASC);
-      let sum = 0;
-      for (let i = 0; i < count; i++) {
-        sum += sizes[i];
-
-        renderCount++;
-        if (sum > size) {
-          break;
-        }
-      }
-      renderCount += 1;
+      renderCount = getGreatestCountVisibleInSize(size, sizes);
     } else {
       renderCount = (itemSize ? Math.ceil(size / itemSize) : 0) + 1;
     }
@@ -1135,6 +1129,9 @@ export class MatrixBrain extends Logger implements IBrain {
   };
 
   computeDirectionalRenderRange = (direction: 'horizontal' | 'vertical') => {
+    const itemSize =
+      direction === 'horizontal' ? this.colWidth : this.rowHeight;
+
     let renderCount =
       direction === 'horizontal'
         ? this.horizontalRenderCount
@@ -1160,6 +1157,8 @@ export class MatrixBrain extends Logger implements IBrain {
 
     scrollPositionForDirection += this.getFixedStartSize(direction);
 
+    const isItemSizeConstant = typeof itemSize !== 'function';
+
     const extendBy =
       direction === 'horizontal'
         ? this.horizontalExtendRangeBy
@@ -1167,13 +1166,23 @@ export class MatrixBrain extends Logger implements IBrain {
 
     let startIndex = this.getItemAt(scrollPositionForDirection, direction);
 
-    if (extendBy.start) {
-      startIndex = Math.max(0, startIndex - extendBy.start);
-      renderCount += extendBy.start;
+    let extendByStart = extendBy.start || 0;
+    let extendByEnd = extendBy.end || 0;
+
+    if (!isItemSizeConstant) {
+      // add 1 before and after to ensure no flickering
+
+      extendByStart += this.RENDER_COUNT_SAFETY_MARGIN_START;
+      extendByEnd += this.RENDER_COUNT_SAFETY_MARGIN_END;
     }
 
-    if (extendBy.end) {
-      renderCount += extendBy.end;
+    if (extendByStart) {
+      startIndex = Math.max(0, startIndex - extendByStart);
+      renderCount += extendByStart;
+    }
+
+    if (extendByEnd) {
+      renderCount += extendByEnd;
     }
 
     let endIndex = startIndex + renderCount;
@@ -1780,8 +1789,8 @@ export class MatrixBrain extends Logger implements IBrain {
     this.rowspanParent.clear();
     this.colspanParent.clear();
     this.alwaysRenderedColumns.clear();
-    this.horizontalExtendRangeBy = { start: 0, end: 0 };
-    this.verticalExtendRangeBy = { start: 0, end: 0 };
+    this.horizontalExtendRangeBy = DEFAULT_EXTEND_BY;
+    this.verticalExtendRangeBy = DEFAULT_EXTEND_BY;
     this.destroyed = true;
     this.onDestroyFns = [];
     this.onScrollFns = [];
