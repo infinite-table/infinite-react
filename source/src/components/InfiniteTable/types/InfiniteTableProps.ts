@@ -23,6 +23,7 @@ import { Renderable } from '../../types/Renderable';
 import type {
   InfiniteTableColumn,
   InfiniteTableColumnEditableFn,
+  InfiniteTableColumnFlashOnUpdate,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumnRenderFunctionForGroupRows,
   InfiniteTableColumnSortable,
@@ -145,6 +146,7 @@ export type InfiniteTableColumnType<T> = {
   defaultSortable?: InfiniteTableColumn<T>['defaultSortable'];
   defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
   defaultFilterable?: InfiniteTableColumn<T>['defaultFilterable'];
+  defaultFlashOnUpdate?: InfiniteTableColumn<T>['defaultFlashOnUpdate'];
 
   columnGroup?: string;
 
@@ -564,6 +566,10 @@ export type InfiniteTablePropSortable<T> =
   | InfiniteTableColumnSortable<T>
   | undefined;
 
+export type InfiniteTablePropFlashOnUpdate<T> =
+  | InfiniteTableColumnFlashOnUpdate<T>
+  | undefined;
+
 export type InfiniteTablePropOnEditAcceptedParams<T> =
   InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis<T> & {
     initialValue: any;
@@ -620,8 +626,17 @@ export interface InfiniteTableProps<T> {
     InfiniteTableColumn<T> & InfiniteTablePivotFinalColumn<T>
   >;
 
+  /**
+   * Default behavior for column filtering. Defaults to true.
+   *
+   * This is overriden by all other props that can control filtering behavior (`column.defaultFilterable`, `columnType.defaultFilterable`, `filterable`).
+   */
   columnDefaultFilterable?: boolean;
+
   columnDefaultEditable?: boolean;
+  columnDefaultFlashOnUpdate?: boolean;
+
+  flashOnUpdate?: InfiniteTablePropFlashOnUpdate<T>;
 
   /**
    * Default behavior for column sorting. Defaults to true.

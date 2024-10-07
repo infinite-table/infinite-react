@@ -416,6 +416,22 @@ export type InfiniteTableColumnSortable<T> =
   | boolean
   | InfiniteTableColumnSortableFn<T>;
 
+export type InfiniteTableColumnFlashOptions<_T> = {
+  onlyForApiUpdates?: boolean;
+};
+export type InfiniteTableColumnFlashOnUpdate<T> =
+  | boolean
+  | InfiniteTableColumnFlashOptions<T>
+  | InfiniteTableColumnFlashOnUpdateFn<T>;
+
+export type InfiniteTableColumnFlashOnUpdateParams<T> =
+  InfiniteTableColumnContentFocusableParams<T> & {
+    oldValue: any;
+  };
+
+export type InfiniteTableColumnFlashOnUpdateFn<T> = (
+  params: InfiniteTableColumnFlashOnUpdateParams<T>,
+) => boolean | InfiniteTableColumnFlashOptions<T>;
 /**
  * Defines a column in the table.
  *
@@ -453,6 +469,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   ) => any | Promise<any>;
 
   comparer?: InfiniteTableColumnComparer<DATA_TYPE>;
+  defaultFlashOnUpdate?: InfiniteTableColumnFlashOnUpdate<DATA_TYPE>;
   defaultHiddenWhenGroupedBy?:
     | '*'
     | true
@@ -602,6 +619,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedFirst: boolean;
   computedLast: boolean;
   computedEditable: NonUndefined<InfiniteTableColumn<T>['defaultEditable']>;
+  computedFlashOnUpdate: NonUndefined<
+    InfiniteTableColumn<T>['defaultFlashOnUpdate']
+  >;
   computedSortable: NonUndefined<InfiniteTableColumn<T>['defaultSortable']>;
   colType: InfiniteTableColumnType<T>;
   id: string;

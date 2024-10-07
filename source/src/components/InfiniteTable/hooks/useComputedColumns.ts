@@ -16,6 +16,7 @@ import type {
   InfiniteTableProps,
   InfiniteTablePropEditable,
   InfiniteTablePropSortable,
+  InfiniteTablePropFlashOnUpdate,
 } from '../types/InfiniteTableProps';
 import type { GetComputedColumnsResult } from '../utils/getComputedColumns';
 import { getComputedColumns } from '../utils/getComputedColumns';
@@ -39,6 +40,7 @@ type UseComputedColumnsParam<T> = {
   columnDefaultWidth?: number;
   columnDefaultFlex?: number;
   sortable?: InfiniteTablePropSortable<T>;
+  flashOnUpdate?: InfiniteTablePropFlashOnUpdate<T>;
   draggableColumns?: boolean;
   columnDefaultDraggable?: boolean;
   multiSort: boolean;
@@ -51,6 +53,7 @@ type UseComputedColumnsParam<T> = {
   columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable?: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnDefaultSortable?: InfiniteTableProps<T>['columnDefaultSortable'];
+  columnDefaultFlashOnUpdate?: InfiniteTableProps<T>['columnDefaultFlashOnUpdate'];
   columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
@@ -105,9 +108,11 @@ export const useComputedColumns = <T extends unknown>({
   columnOrder,
   columnPinning,
   editable,
+  flashOnUpdate,
   columnDefaultEditable,
   columnDefaultFilterable,
   columnDefaultSortable,
+  columnDefaultFlashOnUpdate,
   scrollbarWidth,
   columnTypes,
   pinnedEndMaxWidth,
@@ -149,6 +154,7 @@ export const useComputedColumns = <T extends unknown>({
       columnMinWidth,
       columnMaxWidth,
       columnDefaultWidth,
+      columnDefaultFlashOnUpdate,
       columnDefaultFlex,
       columnCssEllipsis,
       columnHeaderCssEllipsis,
@@ -173,7 +179,7 @@ export const useComputedColumns = <T extends unknown>({
       columnDefaultFilterable,
       columnDefaultSortable,
       editable,
-
+      flashOnUpdate,
       columnSizing,
       columnTypes,
 

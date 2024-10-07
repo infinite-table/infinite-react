@@ -28,6 +28,7 @@ import type {
   InfiniteTableProps,
   InfiniteTablePropEditable,
   InfiniteTablePropSortable,
+  InfiniteTablePropFlashOnUpdate,
 } from '../types/InfiniteTableProps';
 
 import { adjustColumnOrderForPinning } from './adjustColumnOrderForPinning';
@@ -139,10 +140,12 @@ type GetComputedVisibleColumnsParam<T> = {
   columnOrder: InfiniteTablePropColumnOrder;
   columnPinning: InfiniteTablePropColumnPinning;
   editable: InfiniteTablePropEditable<T>;
+  flashOnUpdate: InfiniteTablePropFlashOnUpdate<T>;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   columnDefaultDraggable: InfiniteTableProps<T>['columnDefaultDraggable'];
+  columnDefaultFlashOnUpdate: InfiniteTableProps<T>['columnDefaultFlashOnUpdate'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
@@ -178,6 +181,8 @@ export const getComputedColumns = <T extends unknown>({
   columnPinning,
   editable,
   columnDefaultEditable,
+  flashOnUpdate,
+  columnDefaultFlashOnUpdate,
   columnDefaultFilterable,
   columnDefaultSortable,
   columnSizing,
@@ -540,6 +545,13 @@ export const getComputedColumns = <T extends unknown>({
       columnDefaultEditable ??
       false;
 
+    const computedFlashOnUpdate =
+      flashOnUpdate ??
+      c.defaultFlashOnUpdate ??
+      colType.defaultFlashOnUpdate ??
+      columnDefaultFlashOnUpdate ??
+      false;
+
     const computedDataType =
       c.dataType ||
       colType.dataType ||
@@ -628,6 +640,7 @@ export const getComputedColumns = <T extends unknown>({
       computedFlex,
       computedDataType,
       computedEditable,
+      computedFlashOnUpdate,
       computedSortType,
       computedFilterType,
       cssEllipsis,
