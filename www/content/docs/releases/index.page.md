@@ -3,8 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 5.0.0-canary.6
-## 5.0.0-canary.4
+## 5.0.0
+
+Add support for horizontal layout.
+
 ## 4.4.1
 
 ## 4.4.0
