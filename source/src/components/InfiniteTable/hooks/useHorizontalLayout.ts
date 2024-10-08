@@ -21,33 +21,42 @@ export function useHorizontalLayout() {
         repeatWrappedGroupRows: currentRepeatWrappedGroupRows,
       } = getDataSourceState();
 
+      let changes = false;
+
       const rowsPerPage = (brain as HorizontalLayoutMatrixBrain).rowsPerPage;
       const newRowsPerPage = groupBy && groupBy.length > 0 ? rowsPerPage : null;
 
       if (currentRowsPerPage != newRowsPerPage) {
         dataSourceActions.rowsPerPage = newRowsPerPage;
+        changes = true;
       }
 
       if (currentRepeatWrappedGroupRows != !!repeatWrappedGroupRows) {
         dataSourceActions.repeatWrappedGroupRows = !!repeatWrappedGroupRows;
+        changes = true;
       }
+
+      return changes;
     };
 
     onVerticalRenderRangeChange();
 
     let timeoutId: any;
     const off = brain.onVerticalRenderRangeChange(() => {
-      onVerticalRenderRangeChange();
-      timeoutId = setTimeout(() => {
-        // unfortunately, we need to force a rerender of the body
-        // because by the time the render range changes, the DataSource has not finished recomputing
-        // the artificial group rows, so we need to trigger this re-render
-        actions.forceBodyRerenderTimestamp = Date.now();
-      });
+      if (onVerticalRenderRangeChange()) {
+        timeoutId = setTimeout(() => {
+          // unfortunately, we need to force a rerender of the body
+          // because by the time the render range changes, the DataSource has not finished recomputing
+          // the artificial group rows, so we need to trigger this re-render
+          actions.forceBodyRerenderTimestamp = Date.now();
+        });
+      }
     });
 
     return () => {
-      clearTimeout(timeoutId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       off();
     };
   }, [brain, wrapRowsHorizontally, groupBy, repeatWrappedGroupRows]);
