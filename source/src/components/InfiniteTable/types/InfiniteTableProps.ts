@@ -610,6 +610,8 @@ export interface InfiniteTableProps<T> {
 
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 
+  repeatWrappedGroupRows?: boolean;
+
   viewportReservedWidth?: number;
   onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;
 

@@ -63,6 +63,8 @@ export interface InfiniteTableSetupState<T> {
   renderer: ReactHeadlessTableRenderer;
   onRenderUpdater: SubscriptionCallback<Renderable>;
 
+  forceBodyRerenderTimestamp: number;
+
   lastRowToExpandRef: MutableRefObject<any | null>;
   lastRowToCollapseRef: MutableRefObject<any | null>;
   getDOMNodeForCell: (cellPos: CellPositionByIndex) => HTMLElement | null;
@@ -165,6 +167,8 @@ export interface InfiniteTableMappedState<T> {
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
+
+  repeatWrappedGroupRows: InfiniteTableProps<T>['repeatWrappedGroupRows'];
 
   wrapRowsHorizontally: InfiniteTableProps<T>['wrapRowsHorizontally'];
 

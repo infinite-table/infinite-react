@@ -201,6 +201,7 @@ export function initSetupState<T>({
 
     columnsWhenInlineGroupRenderStrategy: undefined,
     editingCell: null,
+    forceBodyRerenderTimestamp: 0,
   };
 }
 
@@ -257,6 +258,8 @@ export const forwardProps = <T>(
     rowProps: 1,
     rowClassName: 1,
     cellClassName: 1,
+
+    repeatWrappedGroupRows: 1,
 
     pinnedStartMaxWidth: 1,
     pinnedEndMaxWidth: 1,

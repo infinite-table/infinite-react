@@ -257,6 +257,11 @@ export interface DataSourceSetupState<T> {
   getDataSourceMasterContextRef: React.MutableRefObject<
     () => DataSourceMasterDetailContextValue | undefined
   >;
+  repeatWrappedGroupRows: boolean;
+  /**
+   * This is just used for horizontal layout and when repeatWrappedGroupRows is TRUE!!!
+   */
+  rowsPerPage: number | null;
   destroyedRef: React.MutableRefObject<boolean>;
   idToIndexMap: Map<any, number>;
   detailDataSourcesStateToRestore: Map<

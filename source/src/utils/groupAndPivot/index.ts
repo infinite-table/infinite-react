@@ -125,6 +125,8 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   reducerData?: Partial<Record<keyof T, any>>;
   isGroupRow: true;
 
+  duplicateOf?: InfiniteTable_HasGrouping_RowInfoGroup<T>['id'];
+
   /**
    * This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting,
    * in the order in which they are visible in the table
@@ -1091,6 +1093,19 @@ function getEnhancedGroupData<DataType>(
   return enhancedGroupData;
 }
 
+function toDuplicateRow<DataType>(
+  parent: InfiniteTable_HasGrouping_RowInfoGroup<DataType>,
+  indexInAll: number,
+  currentPage: number,
+) {
+  return {
+    ...parent,
+    id: `duplicate_row_on_page_${currentPage}_for__${parent.id}`,
+    indexInAll,
+    duplicateOf: parent.id,
+  };
+}
+
 function completeReducers<DataType>(
   reducers: Record<string, DataSourceAggregationReducer<DataType, any>>,
   reducerResults: Record<string, AggregationReducerResult>,
@@ -1113,6 +1128,8 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
   lazyLoad: boolean;
 
   groupResult: DataGroupResult<DataType, KeyType>;
+  rowsPerPage?: number | null;
+  repeatWrappedGroupRows?: boolean;
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean | null;
@@ -1130,6 +1147,8 @@ export function enhancedFlatten<DataType, KeyType = any>(
   const {
     lazyLoad,
     groupResult,
+    rowsPerPage,
+    repeatWrappedGroupRows,
 
     withRowInfo,
     toPrimaryKey,
@@ -1223,6 +1242,20 @@ export function enhancedFlatten<DataType, KeyType = any>(
       }
 
       if (include) {
+        if (repeatWrappedGroupRows && rowsPerPage != null && rowsPerPage > 0) {
+          const indexInAll = enhancedGroupData.indexInAll;
+          const currentParents = enhancedGroupData.parents;
+
+          if (currentParents.length > 0 && indexInAll % rowsPerPage === 0) {
+            const currentPage = indexInAll / rowsPerPage;
+
+            // this is not a top-level group, so we can insert duplicate parents
+            currentParents.forEach((parent, i) => {
+              result.push(toDuplicateRow(parent, indexInAll + i, currentPage));
+            });
+            enhancedGroupData.indexInAll += currentParents.length;
+          }
+        }
         result.push(enhancedGroupData);
         groupRowsIndexes.push(result.length - 1);
       }
@@ -1248,7 +1281,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
       if (continueWithChildren) {
         if (!next) {
           if (!pivot) {
-            const startIndex = result.length;
+            let startIndex = result.length;
 
             // using items.map would have been easier
             // but we have sparse arrays, and if the last items are sparse
@@ -1259,16 +1292,42 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
             // this is a use-case we have when there is server-side batching
 
-            // we prefer index assignment, see we have to increment the length
+            // we prefer index assignment, so we have to increment the length
             // of the result array
             // by the number of items we want to add
             // this is in order to make the whole loop a tiny bit faster
             if (!collapsed) {
               result.length += items.length;
             }
+
+            let extraArtificialGroupRows = 0;
+
             for (let index = 0, len = items.length; index < len; index++) {
               const item = items[index];
-              const indexInAll = startIndex + index;
+
+              if (
+                !collapsed &&
+                repeatWrappedGroupRows &&
+                rowsPerPage != null &&
+                rowsPerPage > 0
+              ) {
+                const currentInsertIndex =
+                  startIndex + index + extraArtificialGroupRows;
+
+                if (currentInsertIndex % rowsPerPage === 0) {
+                  const currentPage = currentInsertIndex / rowsPerPage;
+
+                  result.length += parents.length;
+                  // for each group, we want to repeat it
+                  parents.forEach((parent) => {
+                    const i = startIndex + index + extraArtificialGroupRows;
+                    result[i] = toDuplicateRow(parent, i, currentPage);
+                    extraArtificialGroupRows++;
+                  });
+                }
+              }
+              const indexInAll = startIndex + index + extraArtificialGroupRows;
+
               const itemId = item
                 ? toPrimaryKey(item, indexInAll)
                 : `${groupKeys}-${index}`;
@@ -1321,7 +1380,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
 
               if (!collapsed) {
                 // we prefer index assignment, see above
-                result[startIndex + index] = rowInfo;
+                result[startIndex + index + extraArtificialGroupRows] = rowInfo;
               }
             }
           }

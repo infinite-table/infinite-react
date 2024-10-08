@@ -68,6 +68,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
 
+    repeatWrappedGroupRows: false,
+
     destroyedRef: {
       current: false,
     },
@@ -86,6 +88,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
       timestamp: 0,
       mutations: undefined,
     },
+    rowsPerPage: null,
     lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
     dataParams: undefined,
     onCleanup: buildSubscriptionCallback<DataSourceState<T>>(),

@@ -21,10 +21,11 @@ export type RawTableProps = {
   cellHoverClassNames?: string[];
   renderer?: ReactHeadlessTableRenderer;
   onRenderUpdater?: SubscriptionCallback<Renderable>;
+  forceRerenderTimestamp?: number;
 };
 
 export function RawTableFn(props: RawTableProps) {
-  const { brain, renderCell, renderDetailRow } = props;
+  const { brain, renderCell, renderDetailRow, forceRerenderTimestamp } = props;
 
   const { renderer, onRenderUpdater } = useMemo(() => {
     return props.onRenderUpdater && props.renderer
@@ -53,7 +54,14 @@ export function RawTableFn(props: RawTableProps) {
       renderCell,
       renderDetailRow,
     });
-  }, [renderer, brain, renderCell, renderDetailRow, onRenderUpdater]);
+  }, [
+    renderer,
+    brain,
+    renderCell,
+    renderDetailRow,
+    onRenderUpdater,
+    forceRerenderTimestamp,
+  ]);
 
   useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {

@@ -91,6 +91,7 @@ import { useVisibleColumnSizes } from './hooks/useVisibleColumnSizes';
 
 import { DEBUG_NAME } from './InfiniteDebugName';
 import { useToggleWrapRowsHorizontally } from './hooks/useToggleWrapRowsHorizontally';
+import { useHorizontalLayout } from './hooks/useHorizontalLayout';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -256,6 +257,7 @@ function InfiniteTableBody<T>() {
   return (
     <InfiniteTableBodyContainer onContextMenu={onContextMenu}>
       <HeadlessTable
+        forceRerenderTimestamp={componentState.forceBodyRerenderTimestamp}
         debugId={debugId}
         tabIndex={tabIndex ?? 0}
         autoFocus={autoFocus ?? undefined}
@@ -366,6 +368,8 @@ export const InfiniteTableComponent = React.memo(
     }, [scrollStopDelay]);
 
     useAutoSizeColumns();
+
+    useHorizontalLayout();
 
     useEditingCallbackProps<T>();
 
@@ -570,6 +574,7 @@ const InfiniteTable: InfiniteTableComponent = function <T>(
   const table = (
     //@ts-ignore
     <InfiniteTableRoot
+      repeatWrappedGroupRows={!!props.wrapRowsHorizontally}
       rowHeight={DEFAULT_ROW_HEIGHT}
       columnHeaderHeight={DEFAULT_COLUMN_HEADER_HEIGHT}
       {...props}

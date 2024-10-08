@@ -36,6 +36,7 @@ export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
   wrapRowsHorizontally?: boolean;
   brain: MatrixBrain;
+  forceRerenderTimestamp?: number;
   debugId?: string;
   activeCellRowHeight: number | ((rowIndex: number) => number) | undefined;
   renderCell: TableRenderCellFn;
@@ -164,6 +165,7 @@ export function HeadlessTable(
     activeCellIndex,
     onRenderUpdater,
     wrapRowsHorizontally,
+    forceRerenderTimestamp,
     ...domProps
   } = props;
 
@@ -244,6 +246,7 @@ export function HeadlessTable(
         data-name="scroll-transform-target"
       >
         <RawTable
+          forceRerenderTimestamp={forceRerenderTimestamp}
           renderer={renderer}
           onRenderUpdater={onRenderUpdater}
           renderCell={renderCell}

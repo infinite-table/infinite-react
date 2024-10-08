@@ -342,6 +342,8 @@ export function concludeReducer<T>(params: {
       'pivotTotalColumnPosition',
       'pivotGrandTotalColumnPosition',
       'showSeparatePivotColumnForSingleAggregation',
+      'repeatWrappedGroupRows',
+      'rowsPerPage',
     ]);
 
   const rowInfoReducersChanged = haveDepsChanged(previousState, state, [
@@ -528,6 +530,10 @@ export function concludeReducer<T>(params: {
         rowSelectionState,
 
         withRowInfo,
+
+        repeatWrappedGroupRows:
+          state.repeatWrappedGroupRows && state.rowsPerPage != null,
+        rowsPerPage: state.rowsPerPage,
 
         groupRowsState: state.groupRowsState,
         generateGroupRows: state.generateGroupRows,

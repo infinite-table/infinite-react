@@ -20,6 +20,10 @@ const DEFAULT_EXTEND_BY = {
   end: 0,
 };
 
+const immediateCallback = (fn: Function) => {
+  fn();
+};
+
 export type { FixedPosition };
 export type SpanFunction = ({
   rowIndex,
@@ -612,7 +616,7 @@ export class MatrixBrain extends Logger implements IBrain {
     });
   };
 
-  protected notifyRenderRangeChange() {
+  protected notifyRenderRangeChange(immediate: boolean = false) {
     if (this.destroyed) {
       return;
     }
@@ -620,8 +624,10 @@ export class MatrixBrain extends Logger implements IBrain {
 
     const range = this.getRenderRange();
 
+    const callback = immediate ? immediateCallback : raf;
+
     fns.forEach((fn) => {
-      raf(() => {
+      callback(() => {
         if (this.destroyed) {
           return;
         }
@@ -632,7 +638,7 @@ export class MatrixBrain extends Logger implements IBrain {
       });
     });
   }
-  protected notifyVerticalRenderRangeChange = () => {
+  protected notifyVerticalRenderRangeChange = (immediate: boolean = false) => {
     if (this.destroyed) {
       return;
     }
@@ -640,8 +646,10 @@ export class MatrixBrain extends Logger implements IBrain {
 
     const range = this.verticalRenderRange;
 
+    const callback = immediate ? immediateCallback : raf;
+
     fns.forEach((fn) => {
-      raf(() => {
+      callback(() => {
         if (this.destroyed) {
           return;
         }
@@ -652,7 +660,9 @@ export class MatrixBrain extends Logger implements IBrain {
       });
     });
   };
-  protected notifyHorizontalRenderRangeChange = () => {
+  protected notifyHorizontalRenderRangeChange = (
+    immediate: boolean = false,
+  ) => {
     if (this.destroyed) {
       return;
     }
@@ -660,8 +670,10 @@ export class MatrixBrain extends Logger implements IBrain {
 
     const range = this.horizontalRenderRange;
 
+    const callback = immediate ? immediateCallback : raf;
+
     fns.forEach((fn) => {
-      raf(() => {
+      callback(() => {
         if (this.destroyed) {
           return;
         }
