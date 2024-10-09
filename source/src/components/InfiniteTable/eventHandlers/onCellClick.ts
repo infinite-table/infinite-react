@@ -57,6 +57,7 @@ export function updateCellSelectionOnCellClick<T>(
 ) {
   const {
     getDataSourceState,
+    getState,
     getComputed,
     rowIndex,
     colIndex,
@@ -77,7 +78,10 @@ export function updateCellSelectionOnCellClick<T>(
     return;
   }
 
-  const { multiCellSelector } = getComputed();
+  const { multiCellSelector, computedVisibleColumns } = getComputed();
+  const { brain } = getState();
+  const { rowsPerPage } = brain;
+  const columnsPerSet = computedVisibleColumns.length;
 
   const cellSelection = new CellSelectionState(existingCellSelection);
 
@@ -91,7 +95,19 @@ export function updateCellSelectionOnCellClick<T>(
   if (event.metaKey || event.ctrlKey) {
     multiCellSelector.singleAddClick(position);
   } else if (event.shiftKey) {
-    multiCellSelector.multiSelectClick(position);
+    const horizontalLayout = !!getState().wrapRowsHorizontally;
+    multiCellSelector.multiSelectClick(
+      position,
+      horizontalLayout
+        ? {
+            horizontalLayout,
+            rowsPerPage,
+            columnsPerSet,
+          }
+        : {
+            horizontalLayout,
+          },
+    );
   } else {
     multiCellSelector.resetClick(position);
   }

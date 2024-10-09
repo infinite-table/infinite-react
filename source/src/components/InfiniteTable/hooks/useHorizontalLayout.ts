@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
 
 import { useInfiniteTable } from './useInfiniteTable';
 
@@ -23,8 +22,9 @@ export function useHorizontalLayout() {
 
       let changes = false;
 
-      const rowsPerPage = (brain as HorizontalLayoutMatrixBrain).rowsPerPage;
-      const newRowsPerPage = groupBy && groupBy.length > 0 ? rowsPerPage : null;
+      const rowsPerPage = brain.rowsPerPage;
+      const newRowsPerPage =
+        groupBy && groupBy.length > 0 && rowsPerPage > 0 ? rowsPerPage : null;
 
       if (currentRowsPerPage != newRowsPerPage) {
         dataSourceActions.rowsPerPage = newRowsPerPage;

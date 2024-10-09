@@ -8,7 +8,7 @@ import {
   getRowInfoArray,
   getRowInfoAt,
 } from '../../DataSource/dataSourceGetters';
-import { CellPositionByIndex } from '../../types/CellPositionByIndex';
+import { ensureMinMaxCellPositionByIndex } from '../../types/CellPositionByIndex';
 import { InfiniteTableComputedValues, InfiniteTableRowInfo } from '../types';
 import { CellPositionOptions } from './type';
 
@@ -25,28 +25,6 @@ function ensureSortedPerOrder<T>(arr: T[], sortPattern: T[]) {
     .filter((x: T | null) => x != null) as T[];
 }
 
-export function ensureMinMaxCellPositionByIndex(
-  start: CellPositionByIndex,
-  end: CellPositionByIndex,
-) {
-  let { rowIndex: startRowIndex, colIndex: startColIndex } = start;
-  let { rowIndex: endRowIndex, colIndex: endColIndex } = end;
-
-  const [colStart, colEnd] =
-    startColIndex > endColIndex
-      ? [endColIndex, startColIndex]
-      : [startColIndex, endColIndex];
-
-  const [rowStart, rowEnd] =
-    startRowIndex > endRowIndex
-      ? [endRowIndex, startRowIndex]
-      : [startRowIndex, endRowIndex];
-
-  return [
-    { rowIndex: rowStart, colIndex: colStart },
-    { rowIndex: rowEnd, colIndex: colEnd },
-  ];
-}
 export type InfiniteTableCellSelectionApi<T> = {
   isCellSelected(cellPosition: CellPositionOptions): boolean;
   selectCell(cellPosition: CellPositionOptions & { clear?: boolean }): void;

@@ -2,8 +2,13 @@ import {
   CellSelectionPosition,
   CellSelectionState,
 } from '../../DataSource/CellSelectionState';
-import { CellPositionByIndex } from '../../types/CellPositionByIndex';
-import { ensureMinMaxCellPositionByIndex } from '../api/getCellSelectionApi';
+import {
+  CellPositionByIndex,
+  ensureMinMaxCellPositionByIndex,
+  getPositionsArrayForRangeInHorizontaLLayout,
+  isSamePage,
+  MultiSelectRangeOptions,
+} from '../../types/CellPositionByIndex';
 
 export type MultiCellSelectorOptions = {
   getPrimaryKeyByIndex: (rowIndex: number) => string | number;
@@ -92,7 +97,10 @@ export class MultiCellSelector {
     }
   }
 
-  multiSelectClick(position: CellPositionByIndex) {
+  multiSelectClick(
+    position: CellPositionByIndex,
+    options: MultiSelectRangeOptions,
+  ) {
     if (!this.multiSelectStartPosition) {
       return;
     }
@@ -107,9 +115,10 @@ export class MultiCellSelector {
       this.deselectRange(
         this.multiSelectStartPosition,
         this.multiSelectEndPosition,
+        options,
       );
     }
-    this.selectRange(this.multiSelectStartPosition, position);
+    this.selectRange(this.multiSelectStartPosition, position, options);
 
     this.multiSelectEndPosition = position;
   }
@@ -118,7 +127,38 @@ export class MultiCellSelector {
     startPosition: CellPositionByIndex,
     endPosition: CellPositionByIndex,
     selected: boolean,
+    options: MultiSelectRangeOptions,
   ) {
+    if (
+      options.horizontalLayout &&
+      !isSamePage(startPosition, endPosition, options)
+    ) {
+      const positions = getPositionsArrayForRangeInHorizontaLLayout(
+        startPosition,
+        endPosition,
+        {
+          rowsPerPage: options.rowsPerPage,
+          columnsPerSet: options.columnsPerSet,
+        },
+      );
+
+      positions.forEach((position) => {
+        const selectionPosition = this.getCellSelectionPosition({
+          rowIndex: position.rowIndex,
+          colIndex: position.colIndex,
+        });
+        if (!selectionPosition) {
+          // selection position not valid
+          return;
+        }
+        if (selected) {
+          this.cellSelectionState.selectCell(...selectionPosition);
+        } else {
+          this.cellSelectionState.deselectCell(...selectionPosition);
+        }
+      });
+      return;
+    }
     const [start, end] = ensureMinMaxCellPositionByIndex(
       startPosition,
       endPosition,
@@ -153,14 +193,16 @@ export class MultiCellSelector {
   deselectRange(
     startPosition: CellPositionByIndex,
     endPosition: CellPositionByIndex,
+    options: MultiSelectRangeOptions,
   ) {
-    this.setRangeSelected(startPosition, endPosition, false);
+    this.setRangeSelected(startPosition, endPosition, false, options);
   }
 
   selectRange(
     startPosition: CellPositionByIndex,
     endPosition: CellPositionByIndex,
+    options: MultiSelectRangeOptions,
   ) {
-    this.setRangeSelected(startPosition, endPosition, true);
+    this.setRangeSelected(startPosition, endPosition, true, options);
   }
 }

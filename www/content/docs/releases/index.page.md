@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 5.0.1
+
+@milestone id="127"
+
 ## 5.0.0
 
 Add support for horizontal layout.

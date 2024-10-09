@@ -19,10 +19,12 @@ import { InfiniteTableActions } from '../types/InfiniteTableState';
 export type InfiniteTableEventHandlerAbstractContext<T> = {
   getComputed: () => InfiniteTableComputedValues<T>;
   getState: () => {
+    wrapRowsHorizontally: InfiniteTableState<T>['wrapRowsHorizontally'];
     activeRowIndex: InfiniteTableState<T>['activeRowIndex'];
     activeCellIndex: InfiniteTableState<T>['activeCellIndex'];
     keyboardNavigation: InfiniteTableState<T>['keyboardNavigation'];
     keyboardSelection: InfiniteTableState<T>['keyboardSelection'];
+    brain: InfiniteTableState<T>['brain'];
   };
   actions: InfiniteTableActions<T>;
   cloneRowSelection: (
