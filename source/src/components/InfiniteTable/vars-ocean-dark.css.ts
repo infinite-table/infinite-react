@@ -8,6 +8,8 @@ export const OceanDarkVars = {
   [ThemeVars.background]: '#032c4f',
   [ThemeVars.components.Menu.separatorColor]: borderColor,
   [ThemeVars.color.color]: '#96a0aa',
+  [ThemeVars.color.success]: '#176417',
+  [ThemeVars.color.error]: '#5e1414',
   [ThemeVars.components.Cell.borderTop]: `1px solid ${borderColor}`,
   [ThemeVars.components.HeaderCell.background]: '#04233d',
   [ThemeVars.components.HeaderCell.hoverBackground]: '#021f35',

@@ -1,7 +1,8 @@
 import { ThemeVars } from './vars.css';
-
+import { CommonThemeVars } from './vars-common.css';
 const borderColor = '#EDF2F7'; // chakra gray 100
 export const MinimalistLightVars = {
+  ...CommonThemeVars,
   [ThemeVars.background]: 'white',
   [ThemeVars.color.color]: '#2D3748', // chakra gray 700
   [ThemeVars.components.Row.background]: 'transparent',

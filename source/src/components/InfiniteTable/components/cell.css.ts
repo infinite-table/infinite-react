@@ -158,6 +158,7 @@ export const FlashingColumnCellRecipe = recipe({
           '100%': { opacity: 0 },
         }),
       ),
+      animationFillMode: 'forwards',
 
       animationDuration: `calc(1ms * ${fallbackVar(
         InternalVars.currentFlashingDuration,

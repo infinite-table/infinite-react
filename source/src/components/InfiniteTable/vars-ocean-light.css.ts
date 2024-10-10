@@ -1,12 +1,17 @@
+import { CommonThemeVars } from './vars-common.css';
 import { ThemeVars } from './vars.css';
 const borderColor = `color-mix(in srgb, transparent, ${ThemeVars.color.color} 10%)`;
 
 export const OceanLightVars = {
+  ...CommonThemeVars,
   // TODO we need to implement ocean light theme
   [ThemeVars.color.accent]: '#8b5cf6',
 
   [ThemeVars.background]: '#d1e8fc',
   [ThemeVars.color.color]: '#04233d',
+  [ThemeVars.color.success]: '#64ce64',
+  [ThemeVars.color.error]: '#fc6565',
+
   [ThemeVars.components.HeaderCell.background]: '#7dd3fc', // tw sky
   [ThemeVars.components.HeaderCell.hoverBackground]: '#38bdf8',
 

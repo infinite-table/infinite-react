@@ -29,6 +29,20 @@ const defaultRender: FlashingCellOptions['render'] = ({ children }) => {
 
 export const DEFAULT_FLASH_DURATION = 1000;
 
+type FlashDirection = 'up' | 'down' | 'neutral';
+
+const INTERNAL_FLASH_CLS_FOR_DIRECTION: Record<FlashDirection, string[]> = {
+  up: FlashingColumnCellRecipe({
+    direction: 'up',
+  }).split(' '),
+  down: FlashingColumnCellRecipe({
+    direction: 'down',
+  }).split(' '),
+  neutral: FlashingColumnCellRecipe({
+    direction: 'neutral',
+  }).split(' '),
+};
+
 export const createFlashingColumnCellComponent = (
   options: FlashingCellOptions = {},
 ) => {
@@ -70,6 +84,7 @@ export const createFlashingColumnCellComponent = (
       initialRef.current = false;
 
       const flashTimeoutIdRef = React.useRef<any>();
+      const flashDirectionRef = React.useRef<FlashDirection | undefined>();
       const fadeTimeoutIdRef = React.useRef<any>();
 
       useEffectWhen(
@@ -77,67 +92,67 @@ export const createFlashingColumnCellComponent = (
           if (value === oldValueRef.current) {
             return;
           }
-          if (flashTimeoutIdRef.current) {
-            clearTimeout(flashTimeoutIdRef.current);
-          }
-          if (fadeTimeoutIdRef.current) {
-            clearTimeout(fadeTimeoutIdRef.current);
-          }
 
-          const el = htmlElementRef.current;
+          const clear = () => {
+            const el = htmlElementRef.current;
+
+            if (flashTimeoutIdRef.current) {
+              clearTimeout(flashTimeoutIdRef.current);
+              flashTimeoutIdRef.current = undefined;
+            }
+            if (fadeTimeoutIdRef.current) {
+              clearTimeout(fadeTimeoutIdRef.current);
+              fadeTimeoutIdRef.current = undefined;
+            }
+
+            if (flashDirectionRef.current && el) {
+              const flashDirection = flashDirectionRef.current;
+
+              const internalflashCls =
+                INTERNAL_FLASH_CLS_FOR_DIRECTION[flashDirection];
+
+              el.classList.remove(
+                ...(flashClassName
+                  ? [flashClassName, ...internalflashCls]
+                  : internalflashCls),
+              );
+              el.style.removeProperty(currentFlashingDurationVar);
+
+              flashDirectionRef.current = undefined;
+            }
+          };
 
           oldValueRef.current = value;
 
+          const el = htmlElementRef.current;
           if (!el) {
             return;
           }
 
-          const flashDirection =
+          clear();
+
+          const flashDirection: FlashDirection =
             typeof value === 'number'
               ? value > oldValue
                 ? 'up'
                 : 'down'
               : 'neutral';
 
-          const internalflashCls = FlashingColumnCellRecipe({
-            direction: flashDirection,
-          }).split(' ');
+          const internalflashCls =
+            INTERNAL_FLASH_CLS_FOR_DIRECTION[flashDirection];
 
           el.style.setProperty(currentFlashingDurationVar, `${duration}`);
-          if (flashClassName) {
-            el.classList.add(flashClassName);
-          }
 
-          el.classList.add(...internalflashCls);
+          el.classList.add(
+            ...(flashClassName
+              ? [flashClassName, ...internalflashCls]
+              : internalflashCls),
+          );
 
-          flashTimeoutIdRef.current = setTimeout(() => {
-            flashTimeoutIdRef.current = undefined;
+          flashDirectionRef.current = flashDirection;
+          flashTimeoutIdRef.current = setTimeout(clear, duration);
 
-            if (flashClassName) {
-              el.classList.remove(flashClassName);
-            }
-            el.classList.remove(...internalflashCls);
-            el.style.removeProperty(currentFlashingDurationVar);
-            // if (!fadeDuration || !fadeClassName) {
-            //   return;
-            // }
-
-            // el.classList.add(fadeClassName);
-
-            // fadeTimeoutIdRef.current = setTimeout(() => {
-            //   el.classList.remove(fadeClassName);
-            //   fadeTimeoutIdRef.current = undefined;
-            // }, fadeDuration);
-          }, duration);
-
-          return () => {
-            if (flashTimeoutIdRef.current) {
-              clearTimeout(flashTimeoutIdRef.current);
-            }
-            if (fadeTimeoutIdRef.current) {
-              clearTimeout(fadeTimeoutIdRef.current);
-            }
-          };
+          return clear;
         },
         {
           same: [columnId, rowId],
