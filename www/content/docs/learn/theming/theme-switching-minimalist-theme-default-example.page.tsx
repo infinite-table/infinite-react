@@ -3,13 +3,14 @@ import * as React from 'react';
 
 import { columns, Employee } from './columns';
 
+type ThemeName = 'default' | 'minimalist' | 'ocean' | 'balsam';
+
 export default function App() {
   const [currentThemeMode, setThemeMode] = React.useState<'light' | 'dark'>(
     'dark',
   );
-  const [currentThemeName, setThemeName] = React.useState<
-    'default' | 'minimalist'
-  >('minimalist');
+  const [currentThemeName, setThemeName] =
+    React.useState<ThemeName>('minimalist');
   return (
     <div
       className={`infinite-theme-mode--${currentThemeMode} infinite-theme-name--${currentThemeName}`}
@@ -29,20 +30,27 @@ export default function App() {
         Current settings: <b>{currentThemeName}</b> theme,{' '}
         <b>{currentThemeMode}</b> mode.
       </div>
-      <div style={{ display: 'flex', flexFlow: 'row', gap: 10, padding: 10 }}>
-        <button
-          style={{ marginTop: 'var(--infinite-space-4)' }}
-          onClick={() =>
-            setThemeName(
-              currentThemeName === 'default' ? 'minimalist' : 'default',
-            )
-          }
+      <div
+        style={{
+          display: 'flex',
+          flexFlow: 'row',
+          alignItems: 'center',
+          gap: 10,
+          padding: 10,
+        }}
+      >
+        Select theme
+        <select
+          title="Select theme"
+          value={currentThemeName}
+          onChange={(e) => setThemeName(e.target.value as ThemeName)}
         >
-          Switch to {currentThemeName === 'default' ? 'minimalist' : 'default'}{' '}
-          theme.
-        </button>
+          <option value="ocean">Ocean</option>
+          <option value="balsam">Balsam</option>
+          <option value="minimalist">Minimalist</option>
+          <option value="default">Default</option>
+        </select>
         <button
-          style={{ marginTop: 'var(--infinite-space-4)' }}
           onClick={() =>
             setThemeMode(currentThemeMode === 'dark' ? 'light' : 'dark')
           }

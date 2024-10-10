@@ -76,7 +76,7 @@ export default function Example() {
           }}
           className="text-white bg-red-400 rounded-md p-4"
         >
-          toggle
+          Enable {darkMode ? 'light' : 'dark'} mode
         </button>
       </div>
       <div style={containerStyle}>

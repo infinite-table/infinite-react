@@ -59,7 +59,7 @@ const infiniteProps: InfiniteTableProps<Order> = {
   columnMinWidth: 100,
 };
 export default function Example() {
-  const [darkMode, setDarkMode] = React.useState(true);
+  const [darkMode, setDarkMode] = React.useState(false);
   return (
     <div
       style={{
@@ -76,7 +76,7 @@ export default function Example() {
           }}
           className="text-white bg-red-400 rounded-md p-4"
         >
-          toggle
+          Enable {darkMode ? 'light' : 'dark'} mode
         </button>
       </div>
       <div style={containerStyle}>

@@ -12,6 +12,8 @@ import '@infinite-table/infinite-react/index.css';
 This file includes the following themes:
   - `default`
   - `minimalist`
+  - `ocean`
+  - `balsam`
 
 Each of them in both the **`light`** and the **`dark`** modes.
 

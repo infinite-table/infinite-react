@@ -8,6 +8,39 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
+<Prop name="wrapRowsHorizontally" type="boolean" defaultValue={false}>
+
+> Whether to wrap rows horizontally or not. Horizontal Layout is a very different approach to the normal grid layout and only useful in very advanced scenarios.
+
+When this is set to `true`, rows will be wrapped horizontally to fit the container.
+
+When horizontal layout is enabled, rows will wrap and the existing columns will be repeated for each row-wrapping section - we will call them  column sets.
+
+So for example when the DataGrid is configured with 3 columns and the DataSource has 25 rows, but only 10 rows fit in the vertical viewport, you will end up with 3 column-sets: the first with 10 rows, the second with the next 10 rows, and the third with the remaining 5 rows. The same columns are repeated for each column-set.
+
+<Sandpack title="Horizontal Layout example">
+
+```tsx file="horizontal-layout-example.page.tsx"
+```
+
+</Sandpack>
+
+<Note>
+
+In the column rendering functions (both for header and cell rendering), you will have access to the `horizontalLayoutPageIndex` property. This is the index of the current horizontal layout page (the current column-set). `horizontalLayoutPageIndex` can either be `null`, when horizontal layout is disabled, or a number >= 0, when horizontal layout is enabled.
+
+</Note>
+
+
+<Sandpack title="Horizontal Layout example with column set index in header">
+
+```tsx file="horizontal-layout-with-column-set-index-in-header-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="components.RowDetail">
 
 > Component to use for rendering the row details section in the master-detail DataGrid. When specified, it makes InfiniteTable be a [master-detail DataGrid](/docs/learn/master-detail/overview). For configuring the height of row details, see <PropLink name="rowDetailHeight" />
