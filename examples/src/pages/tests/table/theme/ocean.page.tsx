@@ -84,6 +84,7 @@ export default function Example() {
           primaryKey="OrderId"
           data={orders.slice(0, 10)}
           selectionMode="multi-row"
+          defaultGroupBy={[{ field: 'ShipCountry' }]}
           defaultRowSelection={{
             defaultSelection: false,
             selectedRows: [],
@@ -99,6 +100,7 @@ export default function Example() {
         <DataSource<Order>
           primaryKey="OrderId"
           data={orders.slice(0, 10)}
+          defaultGroupBy={[{ field: 'ShipCountry' }]}
           selectionMode="multi-row"
           defaultRowSelection={{
             defaultSelection: false,
