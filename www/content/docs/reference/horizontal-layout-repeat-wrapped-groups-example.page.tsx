@@ -1,3 +1,4 @@
+import '@infinite-table/infinite-react/index.css';
 import {
   InfiniteTable,
   DataSource,
@@ -39,6 +40,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   firstName: { field: 'firstName', header: 'First Name' },
   separator: {
     valueGetter: () => null,
+    resizable: false,
     defaultWidth: 10,
     style: {
       background: 'var(--infinite-background)',

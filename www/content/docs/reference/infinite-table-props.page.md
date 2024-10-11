@@ -8,7 +8,11 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
-<Prop name="repeatWrappedGroupRows" type="boolean" defaultValue={false}>
+<Prop name="repeatWrappedGroupRows" type="boolean" defaultValue={true}>
+
+> When enabled, and <PropLink name="wrapRowsHorizontally" /> is also enabled, if there is <DPropLink name="groupBy" code={false}>grouping configured</DPropLink>, the group rows will be repeated at the top of each column set if the group starts in the previous column set.
+
+See related <PropLink name="wrapRowsHorizontally" />.
 
 <Sandpack title="Horizontal Layout with repeated wrapped group rows">
 
