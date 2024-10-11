@@ -27,7 +27,15 @@ const result = exec('npm', [
   '--json',
 ]);
 
-const versions = JSON.parse(result.stdout);
+let versions = JSON.parse(result.stdout);
+
+const allowCanaries =
+  process.env.NEXT_PUBLIC_INFINITE_ALLOW_CANARY_IN_DOCS === 'true' ||
+  process.env.NEXT_PUBLIC_INFINITE_ALLOW_CANARY_IN_DOCS === true;
+
+versions = allowCanaries
+  ? versions
+  : versions.filter((v) => !v.includes('canary'));
 
 // TODO AFL: retrieve latest canary for NEXT, latest stable for master, NEXT_PUBLIC_INFINITE_REACT_VERSION for everything else
 const NEXT_PUBLIC_INFINITE_REACT_VERSION =

@@ -1,9 +1,11 @@
+import '@infinite-table/infinite-react/index.css';
 import {
   InfiniteTable,
   DataSource,
   DataSourceSortInfo,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+
 import * as React from 'react';
 
 type Developer = {

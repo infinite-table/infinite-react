@@ -1,5 +1,10 @@
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
-import type { InfiniteTableColumn } from '@infinite-table/infinite-react';
+import '@infinite-table/infinite-react/index.css';
+import {
+  InfiniteTable,
+  DataSource,
+  type InfiniteTableColumn,
+} from '@infinite-table/infinite-react';
+
 import * as React from 'react';
 
 import { data, Person } from './data';

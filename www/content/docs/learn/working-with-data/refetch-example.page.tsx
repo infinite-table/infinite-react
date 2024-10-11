@@ -1,3 +1,4 @@
+import '@infinite-table/infinite-react/index.css';
 import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import * as React from 'react';
 

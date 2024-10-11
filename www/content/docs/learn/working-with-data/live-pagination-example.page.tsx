@@ -1,3 +1,4 @@
+import '@infinite-table/infinite-react/index.css';
 import {
   InfiniteTable,
   InfiniteTableColumn,

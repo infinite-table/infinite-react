@@ -8,11 +8,27 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
+<Prop name="repeatWrappedGroupRows" type="boolean" defaultValue={false}>
+
+<Sandpack title="Horizontal Layout with repeated wrapped group rows">
+
+```tsx file="horizontal-layout-repeat-wrapped-groups-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="wrapRowsHorizontally" type="boolean" defaultValue={false}>
 
 > Whether to wrap rows horizontally or not. Horizontal Layout is a very different approach to the normal grid layout and only useful in very advanced scenarios.
 
 When this is set to `true`, rows will be wrapped horizontally to fit the container.
+
+<Note>
+
+When horizontal layout is enabled in combination with grouping, you can also use the <PropLink name="repeatWrappedGroupRows" /> property to repeat the group rows at the top of each column set - if the group starts in the previous column set.
+</Note>
 
 When horizontal layout is enabled, rows will wrap and the existing columns will be repeated for each row-wrapping section - we will call them  column sets.
 

@@ -1,12 +1,12 @@
 import * as React from 'react';
-
+import '@infinite-table/infinite-react/index.css';
 import {
   DataSourceApi,
   InfiniteTable,
   InfiniteTableApi,
   InfiniteTablePropColumns,
+  DataSource,
 } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
 
 type Developer = {
   id: number;

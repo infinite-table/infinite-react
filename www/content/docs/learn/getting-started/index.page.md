@@ -31,6 +31,16 @@ This is an example to get you started with Infinite Table with minimal setup.
 
 </Sandpack>
 
+
+<Note>
+
+Don't forget to import the CSS to see the component in action!
+
+```tsx 
+import '@infinite-table/infinite-react/index.css';
+```
+</Note>
+
 ## Using the Components
 
 In the code snippet above, you notice we're using 2 components:

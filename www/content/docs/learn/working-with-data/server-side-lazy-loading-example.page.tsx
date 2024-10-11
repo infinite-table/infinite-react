@@ -1,11 +1,12 @@
+import '@infinite-table/infinite-react/index.css';
 import {
   DataSource,
-  DataSourcePropAggregationReducers,
   GroupRowsState,
   InfiniteTable,
 } from '@infinite-table/infinite-react';
 import type {
   InfiniteTableColumnAggregator,
+  DataSourcePropAggregationReducers,
   InfiniteTablePropColumns,
   DataSourceGroupBy,
 } from '@infinite-table/infinite-react';
