@@ -139,7 +139,24 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
       sizes.push(this.getItemSize(i, direction));
     }
 
-    renderCount += getGreatestCountVisibleInSize(remainingSize, sizes);
+    /**
+     * Here we pass the sizes two times, because of the following:
+     *
+     * imagine a columnSet fits in the viewport once. When the user scrolls horizontally
+     * he can have the columnSet in the middle of the viewport, and an additional 100px to the left
+     * and an additional 100px to the right.
+     *
+     * So some of the last columns in the column set will be visible to the left
+     * and some will be visible to the right.
+     *
+     * This means that if some of the smallest columns are at the end and some at the beginning
+     * we need to account for that - so not only continous columns in the sizes array, but continuos
+     * columns in the concatenated array of sizes + sizes
+     */
+    renderCount += getGreatestCountVisibleInSize(
+      remainingSize,
+      sizes.concat(sizes),
+    );
     renderCount = Math.min(count, renderCount);
 
     return renderCount;
