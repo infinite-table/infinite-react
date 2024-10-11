@@ -160,6 +160,7 @@ export type InfiniteTablePropPivotGrandTotalColumnPosition =
 export interface InfiniteTableMappedState<T> {
   id: InfiniteTableProps<T>['id'];
   debugId: InfiniteTableProps<T>['debugId'];
+  debugMode: NonUndefined<InfiniteTableProps<T>['debugMode']>;
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
   multiSortBehavior: NonUndefined<InfiniteTableProps<T>['multiSortBehavior']>;
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];

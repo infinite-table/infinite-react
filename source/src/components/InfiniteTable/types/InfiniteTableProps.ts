@@ -597,6 +597,9 @@ export type InfiniteTablePropKeyboardShorcut = {
       }
     | Promise<any>;
 };
+
+export type InfiniteTablePropDebugMode = boolean;
+
 export interface InfiniteTableProps<T> {
   debugId?: string;
   columns: InfiniteTablePropColumns<T>;
@@ -607,6 +610,8 @@ export interface InfiniteTableProps<T> {
   components?: InfiniteTablePropComponents<T>;
 
   wrapRowsHorizontally?: boolean;
+
+  debugMode?: InfiniteTablePropDebugMode;
 
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 

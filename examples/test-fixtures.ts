@@ -31,6 +31,7 @@ type TestExtras = {
   waitForInfiniteHeader: (extraTimeout?: number) => Promise<void>;
   waitForInfiniteSelector: () => Promise<void>;
   waitForInfiniteReady: (extraTimeout?: number) => Promise<void>;
+  waitForRaf: () => Promise<void>;
   load: () => Promise<void>;
   getGlobalValue: (name: string) => Promise<any>;
 };
@@ -134,6 +135,12 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
       if (extraTimeout) {
         await page.waitForTimeout(extraTimeout);
       }
+    };
+
+    page.waitForRaf = async () => {
+      await page.evaluate(() => {
+        return new Promise((resolve) => requestAnimationFrame(resolve));
+      });
     };
 
     page.getGlobalValue = async (name: string) => {

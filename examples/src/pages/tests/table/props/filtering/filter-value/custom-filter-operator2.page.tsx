@@ -76,22 +76,30 @@ import { defaultFilterTypes } from '@infinite-table/infinite-react';
 
 console.log(defaultFilterTypes);
 
-const includesOperator = defaultFilterTypes.string.operators.find(
-  (op) => op.name === 'includes',
-);
+if (defaultFilterTypes.string?.operators) {
+  defaultFilterTypes.string.operators = [
+    ...defaultFilterTypes.string.operators,
+  ];
 
-includesOperator!.fn = ({ currentValue, filterValue }) => {
-  if (filterValue && filterValue.startsWith('-')) {
-    return !currentValue
-      .toLowerCase()
-      .includes(filterValue.slice(1).toLowerCase());
-  }
-  return (
-    typeof currentValue === 'string' &&
-    typeof filterValue == 'string' &&
-    currentValue.toLowerCase().includes(filterValue.toLowerCase())
+  const includesOperator = defaultFilterTypes.string.operators.find(
+    (op) => op.name === 'includes',
   );
-};
+
+  if (includesOperator) {
+    includesOperator.fn = ({ currentValue, filterValue }) => {
+      if (filterValue && filterValue.startsWith('-')) {
+        return !currentValue
+          .toLowerCase()
+          .includes(filterValue.slice(1).toLowerCase());
+      }
+      return (
+        typeof currentValue === 'string' &&
+        typeof filterValue == 'string' &&
+        currentValue.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    };
+  }
+}
 
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {

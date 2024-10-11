@@ -222,6 +222,7 @@ export const forwardProps = <T>(
     groupColumn: 1,
     onReady: 1,
     domProps: 1,
+    debugMode: 1,
     onKeyDown: 1,
     onCellClick: 1,
     focusedClassName: 1,

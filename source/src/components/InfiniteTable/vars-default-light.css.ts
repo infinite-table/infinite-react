@@ -1,5 +1,5 @@
 import { fallbackVar } from '@vanilla-extract/css';
-import { ThemeVars } from './vars.css';
+import { CSS_LOADED_VALUE, ThemeVars } from './vars.css';
 // declare here vars that default to other vars
 const LoadMaskVars = {
   [ThemeVars.components.LoadMask.textBackground]: 'rgba(255,255,255,0.8)',
@@ -172,6 +172,7 @@ const MenuVars = {
 };
 
 export const LightVars = {
+  [ThemeVars.loaded]: CSS_LOADED_VALUE,
   [ThemeVars.iconSize]: '24px',
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
