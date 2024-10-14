@@ -79,6 +79,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
                 this.primaryKeyToData.delete(pk);
                 deleted = true;
                 arr.splice(i, 1);
+                i--;
               }
 
               if (info.type === 'update' && !deleted) {
