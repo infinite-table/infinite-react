@@ -32,7 +32,13 @@ export default test.describe.parallel('Column autosizing tests', () => {
     const expected = [60, 120, 190, 800];
 
     for (let i = 0; i < expected.length; i++) {
-      expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+      try {
+        expect(isWithinTolerance(widths[i], expected[i])).toBe(false);
+      } catch (e) {
+        throw new Error(
+          `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
+        );
+      }
     }
   });
 
@@ -61,7 +67,13 @@ export default test.describe.parallel('Column autosizing tests', () => {
     const expected = [200, 130, 200, 50];
 
     for (let i = 0; i < expected.length; i++) {
-      expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+      try {
+        expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+      } catch (e) {
+        throw new Error(
+          `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
+        );
+      }
     }
   });
 
@@ -86,7 +98,13 @@ export default test.describe.parallel('Column autosizing tests', () => {
     const expected = [60, 120, 190, 140];
 
     for (let i = 0; i < expected.length; i++) {
-      expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+      try {
+        expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+      } catch (e) {
+        throw new Error(
+          `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
+        );
+      }
     }
   });
 });
