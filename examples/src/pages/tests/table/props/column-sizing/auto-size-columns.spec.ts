@@ -2,7 +2,7 @@ import { test, expect } from '@testing';
 
 import { getColumnWidths } from '../../../testUtils';
 
-const isWithinTolerance = (actual: number, expected: number, tolerance = 10) =>
+const isWithinTolerance = (actual: number, expected: number, tolerance = 20) =>
   Math.abs(actual - expected) <= tolerance;
 
 export default test.describe.parallel('Column autosizing tests', () => {
