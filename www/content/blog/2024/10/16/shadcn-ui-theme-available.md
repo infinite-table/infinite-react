@@ -12,7 +12,7 @@ So we built one! It's simply called `shadcn`. For it to work, you'll need to mak
 ```tsx
 import '@infinite-table/infinite-react/index.css';
 
-<div className="infinite-theme-name--shadcn infinite-theme-mode--dark dark">
+<div className="infinite-theme-name--shadcn dark">
   <DataSource  {...}>
     <InfiniteTable {...} />
   </DataSource>
