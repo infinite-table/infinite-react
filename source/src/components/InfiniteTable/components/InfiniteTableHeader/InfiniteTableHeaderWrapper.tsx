@@ -8,6 +8,7 @@ import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 import { buildColumnAndGroupTree } from './buildColumnAndGroupTree';
 import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
+import { InfiniteTableHeaderWrapperClassName } from './headerClassName';
 import { InfiniteTableHeader } from './InfiniteTableHeader';
 
 export type TableHeaderWrapperProps = {
@@ -174,7 +175,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
 
   return (
     <div
-      className={HeaderWrapperCls}
+      className={`${InfiniteTableHeaderWrapperClassName} ${HeaderWrapperCls}`}
       style={{
         height,
       }}

@@ -32,6 +32,7 @@ When this is set to `true`, rows will be wrapped horizontally to fit the contain
 <Note>
 
 When horizontal layout is enabled in combination with grouping, you can also use the <PropLink name="repeatWrappedGroupRows" /> property to repeat the group rows at the top of each column set - if the group starts in the previous column set.
+
 </Note>
 
 When horizontal layout is enabled, rows will wrap and the existing columns will be repeated for each row-wrapping section - we will call them  column sets.
@@ -48,6 +49,12 @@ So for example when the DataGrid is configured with 3 columns and the DataSource
 <Note>
 
 In the column rendering functions (both for header and cell rendering), you will have access to the `horizontalLayoutPageIndex` property. This is the index of the current horizontal layout page (the current column-set). `horizontalLayoutPageIndex` can either be `null`, when horizontal layout is disabled, or a number >= 0, when horizontal layout is enabled.
+
+</Note>
+
+<Note>
+
+When using horizontal layout, columns can't be configured to have a flexible width. So don't specify <PropLink name="columns.defaultFlex" /> for any column when horizontal layout is enabled.
 
 </Note>
 

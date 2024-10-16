@@ -82,6 +82,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
     deselectCurrentRow,
     toggleCurrentGroupRowSelection,
     column,
+    api,
   } = params;
 
   if (rowInfo.isGroupRow && !column.groupByForColumn) {
@@ -90,9 +91,12 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
     // but we better show it and allow users to opt-out instead
     // return null;
   }
+  const { components } = api.getState();
+
+  const CheckBoxCmp = components?.CheckBox || InfiniteCheckBox;
 
   return (
-    <InfiniteCheckBox
+    <CheckBoxCmp
       domProps={{
         className: SelectionCheckboxCls,
       }}

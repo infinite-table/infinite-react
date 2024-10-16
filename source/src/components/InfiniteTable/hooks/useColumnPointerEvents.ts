@@ -87,7 +87,8 @@ export const useColumnPointerEvents = ({
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
       //@ts-ignore
-      if (e.target?.tagName === 'INPUT') {
+      const tagName = e.target?.tagName;
+      if (tagName === 'INPUT' || tagName === 'BUTTON') {
         // early exit, so that (for example) checkbox selection works in the column header when clicking the checkbox
         return;
       }

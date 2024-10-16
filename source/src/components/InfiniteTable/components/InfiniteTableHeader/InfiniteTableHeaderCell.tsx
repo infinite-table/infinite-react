@@ -68,9 +68,11 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnHeaderRenderFunc
   const { allRowsSelected, someRowsSelected, api } = params;
 
   const selected = allRowsSelected ? true : someRowsSelected ? null : false;
+  const { components } = api.getState();
+  const CheckBoxCmp = components?.CheckBox || InfiniteCheckBox;
 
   return (
-    <InfiniteCheckBox
+    <CheckBoxCmp
       domProps={{
         className: SelectionCheckboxCls,
       }}

@@ -4,7 +4,6 @@ const borderColor = `color-mix(in srgb, transparent, ${ThemeVars.color.color} 10
 
 export const OceanLightVars = {
   ...CommonThemeVars,
-  // TODO we need to implement ocean light theme
   [ThemeVars.color.accent]: '#8b5cf6',
 
   [ThemeVars.background]: '#d1e8fc',

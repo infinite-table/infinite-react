@@ -16,6 +16,7 @@
     "rootDir": "..",
     "paths": {
       "@src/*": ["../source/src/*"],
+      "@/*": ["./src/*"],
       "@infinite-table/infinite-react": ["../source/src"],
       "@infinite-table/infinite-react/*": ["../source/src/*"],
 
