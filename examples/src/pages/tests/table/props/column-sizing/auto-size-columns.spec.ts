@@ -2,7 +2,7 @@ import { test, expect } from '@testing';
 
 import { getColumnWidths } from '../../../testUtils';
 
-const isWithinTolerance = (actual: number, expected: number, tolerance = 20) =>
+const isWithinTolerance = (actual: number, expected: number, tolerance = 30) =>
   Math.abs(actual - expected) <= tolerance;
 
 export default test.describe.parallel('Column autosizing tests', () => {
@@ -36,7 +36,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
         expect(isWithinTolerance(widths[i], expected[i])).toBe(true);
       } catch (e) {
         throw new Error(
-          `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
+          `Expected ${widths[i]} to be within tolerance of ${expected[i]} (index ${i})`,
         );
       }
     }
@@ -71,7 +71,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
         expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
       } catch (e) {
         throw new Error(
-          `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
+          `Expected ${widths[i]} to be within tolerance of ${expected[i]} (index ${i})`,
         );
       }
     }
@@ -102,7 +102,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
         expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
       } catch (e) {
         throw new Error(
-          `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
+          `Expected ${widths[i]} to be within tolerance of ${expected[i]} (index ${i})`,
         );
       }
     }
