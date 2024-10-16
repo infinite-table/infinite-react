@@ -1,5 +1,4 @@
 import { ShadcnLightVars } from './vars-shadcn-light.css';
-import { ShadcnDarkVars } from './vars-shadcn-dark.css';
 
 import { defineTheme } from './defineTheme.css';
 
@@ -18,10 +17,6 @@ const shadcnStyles = {
 defineTheme('shadcn', {
   lightStyles: {
     vars: ShadcnLightVars,
-    ...shadcnStyles,
-  },
-  darkStyles: {
-    vars: ShadcnDarkVars,
     ...shadcnStyles,
   },
 });

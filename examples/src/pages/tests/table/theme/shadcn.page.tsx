@@ -107,7 +107,7 @@ export default function Example() {
       </div>
       <div
         style={{ ...containerStyle, background: 'white' }}
-        className="infinite-theme-name--shadcn infinite-theme-mode--dark dark"
+        className="infinite-theme-name--shadcn dark"
       >
         <DataSource<Order>
           primaryKey="OrderId"
