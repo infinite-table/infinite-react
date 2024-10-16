@@ -33,7 +33,7 @@ export default test.describe.parallel('Column autosizing tests', () => {
 
     for (let i = 0; i < expected.length; i++) {
       try {
-        expect(isWithinTolerance(widths[i], expected[i])).toBe(false);
+        expect(isWithinTolerance(widths[i], expected[i])).toBe(true);
       } catch (e) {
         throw new Error(
           `Expected ${expected[i]} to be within tolerance of ${widths[i]} (index ${i})`,
