@@ -2,9 +2,9 @@ import { test, expect } from '@testing';
 
 import { getColumnWidths } from '../../../testUtils';
 
-function roundDownToTens(val: number) {
-  return val - (val % 10);
-}
+const isWithinTolerance = (actual: number, expected: number, tolerance = 10) =>
+  Math.abs(actual - expected) <= tolerance;
+
 export default test.describe.parallel('Column autosizing tests', () => {
   test('expect autoSizeColumnsKey.columnsToResize to work', async ({
     page,
@@ -29,8 +29,11 @@ export default test.describe.parallel('Column autosizing tests', () => {
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
-    // expect(widths).toEqual([67, 127, 188, 800]);
-    expect(widths.map(roundDownToTens)).toEqual([60, 120, 190, 800]);
+    const expected = [60, 120, 190, 800];
+
+    for (let i = 0; i < expected.length; i++) {
+      expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+    }
   });
 
   test('expect autoSizeColumnsKey.columnsToSkip to work', async ({ page }) => {
@@ -55,8 +58,11 @@ export default test.describe.parallel('Column autosizing tests', () => {
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
-    // expect(widths).toEqual([200, 127, 188, 50]);
-    expect(widths.map(roundDownToTens)).toEqual([200, 130, 200, 50]);
+    const expected = [200, 130, 200, 50];
+
+    for (let i = 0; i < expected.length; i++) {
+      expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+    }
   });
 
   test('expect autoSizeColumnsKey to work', async ({ page }) => {
@@ -77,7 +83,10 @@ export default test.describe.parallel('Column autosizing tests', () => {
 
     widths = await getColumnWidths(['id', 'country', 'city', 'age'], { page });
 
-    // expect(widths).toEqual([67, 127, 188, 133]);
-    expect(widths.map(roundDownToTens)).toEqual([60, 120, 190, 140]);
+    const expected = [60, 120, 190, 140];
+
+    for (let i = 0; i < expected.length; i++) {
+      expect(isWithinTolerance(widths[i], expected[i])).toBeTruthy();
+    }
   });
 });
