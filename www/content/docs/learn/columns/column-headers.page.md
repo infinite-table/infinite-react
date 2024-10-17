@@ -241,7 +241,25 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </Sandpack>
 
+#### Changing the display of filters
 
+Infinite Table allows very deep cusstomization of the column header, including the filters.
+
+For example, you might not want to display the column filters under the column header, but rather in a separate menu popover.
+
+This section shows how to do that. You can use <PropLink name="showColumnFilters">showColumnFilters=false</PropLink> to hide the filters from under the column header.
+
+Next, you can use the <PropLink name="columns.renderHeader">column.renderHeader</PropLink> function to render a custom filter icon that opens a filter popover when clicked.
+
+You don't need to re-implement the filter editor, you have acces to it via the `renderBag.filterEditor` property. The code below shows how to do this.
+
+<Sandpack title="Custom display of column filters">
+
+```ts file="custom-column-filter-display-example.page.tsx"
+
+```
+
+</Sandpack>
 
 ### Customizing the Selection Checkbox
 
