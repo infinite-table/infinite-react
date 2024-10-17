@@ -175,6 +175,12 @@ export default () => {
           data={data}
           primaryKey="id"
           defaultFilterValue={[]}
+          shouldReloadData={{
+            filterValue: false,
+            sortInfo: false,
+            groupBy: false,
+            pivotBy: false,
+          }}
         >
           <InfiniteTable<Developer>
             showColumnFilters={false}
