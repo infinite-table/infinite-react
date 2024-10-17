@@ -2215,6 +2215,54 @@ See docs at <PropLink name="columns.headerClassName" />.
 
 </Prop>
 
+<Prop name="columns.align" type="'start' | 'center' | 'end'">
+
+> Controls the alignment of text in column cells and also the alignment of the column header. To only apply alignment to the column header, use <PropLink name="columns.headerAlign" />. For vertical alignment, see <PropLink name="columns.verticalAlign" />.
+
+<Sandpack title="Column align example">
+
+```tsx file="column-align-example.page.tsx"
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
+
+
+<Prop name="columns.verticalAlign" type="'start' | 'center' | 'end'">
+
+> Controls the vertical alignment of text in column cells. For horizontal alignment, see <PropLink name="columns.align" />.
+
+<Sandpack title="Column vertical align example">
+
+```tsx file="column-vertical-align-example.page.tsx"
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
+
+<Prop name="columns.headerAlign" type="'start' | 'center' | 'end'">
+
+> Controls the alignment of the column header. See related <PropLink name="columns.align" />.
+
+<Sandpack title="Column header align example">
+
+```tsx file="column-header-align-example.page.tsx"
+
+```
+
+</Sandpack>
+
+
+</Prop>
+
 <Prop name="columnTypes.headerStyle" type="CSSProperties | (args) => CSSProperties">
 
 > Controls styling for the column header for columns with this column type. Can be a style object or a function returning a style object.
