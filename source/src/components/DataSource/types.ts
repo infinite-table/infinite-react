@@ -499,7 +499,8 @@ export type DataSourcePropShouldReloadDataObject<T> = {
 //   changes: DataSourceDataParamsChanges<T>;
 // }) => boolean;
 export type DataSourcePropShouldReloadData<T> =
-  DataSourcePropShouldReloadDataObject<T>;
+  | DataSourcePropShouldReloadDataObject<T>
+  | boolean;
 // | DataSourcePropShouldReloadDataFn<T>;
 
 export type DataSourceProps<T> = {
@@ -790,7 +791,9 @@ export type DataSourceDerivedState<T> = {
   filterMode: 'local' | 'remote';
   groupMode: 'local' | 'remote';
   pivotMode: 'local' | 'remote';
-  shouldReloadData: NonUndefined<Required<DataSourcePropShouldReloadData<T>>>;
+  shouldReloadData: NonUndefined<
+    Required<DataSourcePropShouldReloadDataObject<T>>
+  >;
   groupRowsState: GroupRowsState<T>;
 
   multiSort: boolean;

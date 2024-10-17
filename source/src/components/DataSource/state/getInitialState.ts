@@ -5,6 +5,8 @@ import {
   DataSourceDataParams,
   DataSourcePropOnCellSelectionChange_MultiCell,
   DataSourcePropOnCellSelectionChange_SingleCell,
+  DataSourcePropShouldReloadData,
+  DataSourcePropShouldReloadDataObject,
   DataSourceRowInfoReducer,
   RowDisabledStateObject,
   RowSelectionState,
@@ -268,6 +270,36 @@ function getLivePaginationCursorValue<T>(
 
 const weakMap = new WeakMap<any, any>();
 
+function toShouldReloadObject<T>(
+  shouldReloadData: DataSourcePropShouldReloadData<T>,
+): DataSourcePropShouldReloadDataObject<T> {
+  if (typeof shouldReloadData === 'boolean') {
+    return {
+      filterValue: shouldReloadData,
+      sortInfo: shouldReloadData,
+      groupBy: shouldReloadData,
+      pivotBy: shouldReloadData,
+    };
+  }
+
+  const result: DataSourcePropShouldReloadDataObject<T> = {};
+
+  if (shouldReloadData.filterValue != null) {
+    result.filterValue = shouldReloadData.filterValue;
+  }
+  if (shouldReloadData.sortInfo != null) {
+    result.sortInfo = shouldReloadData.sortInfo;
+  }
+  if (shouldReloadData.groupBy != null) {
+    result.groupBy = shouldReloadData.groupBy;
+  }
+  if (shouldReloadData.pivotBy != null) {
+    result.pivotBy = shouldReloadData.pivotBy;
+  }
+
+  return result;
+}
+
 export function deriveStateFromProps<T extends any>(params: {
   props: DataSourceProps<T>;
 
@@ -418,7 +450,7 @@ export function deriveStateFromProps<T extends any>(params: {
           },
     );
 
-  const { shouldReloadData = {} } = props;
+  const shouldReloadData = toShouldReloadObject(props.shouldReloadData || {});
   const propsGroupMode =
     props.groupMode ??
     (shouldReloadData.groupBy != null
@@ -504,11 +536,10 @@ export function deriveStateFromProps<T extends any>(params: {
       // since we want a subtle difference between the computed sortMode and shouldReloadData.sortInfo (for example)
       // difference: sortMode will be local when sortFunction is provided, however, the user may want to reload data when sortInfo changes
       // and thus the data will be refetched, but will be sorted locally
-      filterValue:
-        props.shouldReloadData?.filterValue ?? filterMode === 'remote',
-      sortInfo: props.shouldReloadData?.sortInfo ?? sortMode === 'remote',
-      groupBy: props.shouldReloadData?.groupBy ?? groupMode === 'remote',
-      pivotBy: props.shouldReloadData?.pivotBy ?? pivotMode === 'remote',
+      filterValue: shouldReloadData?.filterValue ?? filterMode === 'remote',
+      sortInfo: shouldReloadData?.sortInfo ?? sortMode === 'remote',
+      groupBy: shouldReloadData?.groupBy ?? groupMode === 'remote',
+      pivotBy: shouldReloadData?.pivotBy ?? pivotMode === 'remote',
     },
     isRowDisabled,
     rowSelection: rowSelectionState,
