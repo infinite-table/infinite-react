@@ -65,10 +65,7 @@ function ColumnFilterMenuIcon() {
 
     alignNode(domRef.current, {
       alignTo: alignToRef.current,
-      alignPosition: [
-        ['TopRight', 'BottomRight'],
-        ['TopRight', 'BottomRight'],
-      ],
+      alignPosition: [['TopRight', 'BottomRight']],
     });
   });
 
