@@ -4,6 +4,7 @@ import { join } from '../../../../utils/join';
 
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
+import { height } from '../../utilities.css';
 import { FilterIcon } from '../icons/FilterIcon';
 
 import { getColumnLabel } from './getColumnLabel';
@@ -109,8 +110,7 @@ export function InfiniteTableColumnHeaderFilterEmpty() {
       onPointerDown={stopPropagation}
       className={`${InfiniteTableColumnHeaderFilterClassName} ${HeaderFilterRecipe(
         { active: false },
-      )}`}
-      style={{ height: '100%' }}
+      )} ${height['50%']}`}
     />
   );
 }

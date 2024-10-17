@@ -57,6 +57,7 @@ import type {
   InfiniteTablePropMultiSortBehavior,
   InfiniteTablePropKeyboardShorcut,
   InfiniteTablePropColumnGroupVisibility,
+  InfiniteTablePropGetContextMenuItems,
 } from './InfiniteTableProps';
 import type { InfiniteTableState } from './InfiniteTableState';
 
@@ -115,4 +116,5 @@ export type {
   InfiniteTableColumnValueFormatterParams,
   ScrollStopInfo,
   TableRenderRange,
+  InfiniteTablePropGetContextMenuItems,
 };

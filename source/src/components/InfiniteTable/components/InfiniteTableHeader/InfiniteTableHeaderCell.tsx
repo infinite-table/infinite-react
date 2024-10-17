@@ -268,10 +268,13 @@ export function InfiniteTableHeaderCell<T>(
     column.components?.MenuIcon || components?.MenuIcon || MenuIcon;
   const menuIcon = <MenuIconCmp {...menuIconProps} />;
 
+  const domRef = useRef<HTMLElement | null>(null);
+
   const initialRenderParam: InfiniteTableColumnHeaderParam<T> = {
     horizontalLayoutPageIndex,
     dragging,
     domRef: ref,
+    htmlElementRef: domRef,
     insideColumnMenu: false,
     column,
     columnsMap,
@@ -466,8 +469,6 @@ export function InfiniteTableHeaderCell<T>(
     return all;
   };
 
-  const domRef = useRef<HTMLElement | null>(null);
-
   useEffect(() => {
     let clearOnResize: null | (() => void) = null;
     const node = domRef.current;
@@ -593,6 +594,27 @@ export function InfiniteTableHeaderCell<T>(
     'data-sort-index': `${column.computedSortIndex ?? -1}`,
   };
 
+  const columnFilterEditor = column.computedFilterable ? (
+    <InfiniteTableColumnHeaderFilter
+      horizontalLayoutPageIndex={horizontalLayoutPageIndex}
+      filterEditor={FilterEditor}
+      filterOperatorSwitch={
+        FilterOperatorSwitch ?? InfiniteTableFilterOperatorSwitch
+      }
+      operator={operator}
+      filterTypes={filterTypes}
+      onChange={debouncedOnFilterValueChange}
+      columnFilterType={filterTypeKey}
+      columnLabel={column.field || column.name || column.id}
+      columnFilterValue={column.computedFilterValue}
+      columnHeaderHeight={columnHeaderHeight}
+    />
+  ) : (
+    <InfiniteTableColumnHeaderFilterEmpty />
+  );
+
+  renderParam.renderBag.filterEditor = columnFilterEditor;
+
   return (
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
@@ -643,26 +665,7 @@ export function InfiniteTableHeaderCell<T>(
         cssEllipsis={headerCSSEllipsis}
         afterChildren={
           <>
-            {showColumnFilters ? (
-              column.computedFilterable ? (
-                <InfiniteTableColumnHeaderFilter
-                  horizontalLayoutPageIndex={horizontalLayoutPageIndex}
-                  filterEditor={FilterEditor}
-                  filterOperatorSwitch={
-                    FilterOperatorSwitch ?? InfiniteTableFilterOperatorSwitch
-                  }
-                  operator={operator}
-                  filterTypes={filterTypes}
-                  onChange={debouncedOnFilterValueChange}
-                  columnFilterType={filterTypeKey}
-                  columnLabel={column.field || column.name || column.id}
-                  columnFilterValue={column.computedFilterValue}
-                  columnHeaderHeight={columnHeaderHeight}
-                />
-              ) : (
-                <InfiniteTableColumnHeaderFilterEmpty />
-              )
-            ) : null}
+            {showColumnFilters ? columnFilterEditor : null}
             {resizeHandle}
           </>
         }

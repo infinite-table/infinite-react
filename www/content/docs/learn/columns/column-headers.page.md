@@ -86,6 +86,18 @@ This function is called with the same object as the first argument, but it also 
 
 So if you specify a custom <PropLink name="columns.renderHeader">renderHeader</PropLink> function, it's up to you to use the results of the previous functions in the pipeline, in order to fully take control of the column header.
 
+#### Available properties on the renderBag
+
+The `renderBag` object contains the following properties available to the render functions of the column header:
+
+- `header` - the label of the column header.
+- `sortIcon` - the default sort icon
+- `filterIcon` - the filter icon - displayed when the current column is used in filtering
+- `filterEditor` - the current filter editor
+- `menuIcon` - the menu icon that can be clicked to open the column menu
+- `selectionCheckBox` - the selection check box - displays the current selection status and controls the selection for all rows.
+- `all` - all of the above combined together in a `React.Fragment`.
+
 ### Customizing the Sort Icon
 
 For customizing the sort icon, use the <PropLink name="columns.renderSortIcon">column.renderSortIcon</PropLink> function.
@@ -228,6 +240,8 @@ The `firstName` column will show a custom filter icon when filtered.
 ```
 
 </Sandpack>
+
+
 
 ### Customizing the Selection Checkbox
 

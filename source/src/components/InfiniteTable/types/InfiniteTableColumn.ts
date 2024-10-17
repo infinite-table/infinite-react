@@ -68,11 +68,13 @@ export type InfiniteTableColumnHeaderParam<
     menuIcon?: Renderable;
     menuIconProps?: MenuIconProps;
     filterIcon?: Renderable;
+    filterEditor?: Renderable;
     selectionCheckBox?: Renderable;
   };
 } & (
   | {
       domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+      htmlElementRef: React.MutableRefObject<HTMLElement | null>;
       insideColumnMenu: false;
     }
   | {
@@ -160,6 +162,7 @@ export type InfiniteTableColumnCellContextType<
 export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
   InfiniteTableColumnHeaderParam<DATA_TYPE> & {
     domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
+    htmlElementRef: React.MutableRefObject<HTMLElement | null>;
     insideColumnMenu: false;
   };
 

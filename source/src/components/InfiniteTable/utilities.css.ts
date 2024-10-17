@@ -105,6 +105,7 @@ export const userSelect = styleVariants({
 
 export const height = styleVariants({
   '100%': { height: '100%' },
+  '50%': { height: '50%' },
   '0': { height: '0' },
 });
 export const width = styleVariants({

@@ -118,7 +118,7 @@ function OverlayContent(
   useEffect(() => {
     return props.realign.onChange((handle) => {
       if (nodeRef.current && handle) {
-        alignOverlayNode(nodeRef.current, handle);
+        alignNode(nodeRef.current, handle);
       }
     });
   }, [props.realign]);
@@ -128,7 +128,7 @@ function OverlayContent(
       style={{ position: 'absolute', top: 0, left: 0 }}
       ref={useCallback((node: HTMLDivElement) => {
         if (node) {
-          alignOverlayNode(node, props);
+          alignNode(node, props);
           // const rect = alignOverlayNode(node, props);
           // const realignEvent = new CustomEvent('realign', {
           //   bubbles: true,
@@ -147,7 +147,7 @@ function OverlayContent(
   );
 }
 
-async function alignOverlayNode(
+export async function alignNode(
   node: HTMLDivElement,
   params: OverlayShowParams,
 ) {
@@ -314,10 +314,15 @@ globalThis.allhandles = {};
 //@ts-ignore
 globalThis.thehandles = {};
 
+export type UpdateOverlayContentFn = (
+  content: ReactNode | (() => ReactNode),
+  options?: { skipRealign?: boolean },
+) => void;
+
 export type ShowOverlayFn = (
   content: ReactNode | (() => ReactNode),
   params: OverlayShowParams,
-) => VoidFunction | undefined;
+) => UpdateOverlayContentFn;
 
 export function useOverlay(params: OverlayParams) {
   const rootParams = params;
@@ -354,22 +359,46 @@ export function useOverlay(params: OverlayParams) {
 
       let handle = handles.get(key);
 
-      const childrenFn = () => {
-        const children = typeof content === 'function' ? content() : content;
+      const getChildrenFnForContent = (
+        content: ReactNode | (() => ReactNode),
+      ) => {
+        return () => {
+          const children = typeof content === 'function' ? content() : content;
 
-        return injectPortalContainerAndConstrainInMenuChild(
-          children,
-          rootParams.portalContainer,
-          params.constrainTo ?? rootParams.constrainTo,
-        );
+          return injectPortalContainerAndConstrainInMenuChild(
+            children,
+            rootParams.portalContainer,
+            params.constrainTo ?? rootParams.constrainTo,
+          );
+        };
+      };
+
+      const childrenFn = getChildrenFnForContent(content);
+
+      const updateOverlay: UpdateOverlayContentFn = (
+        overlayContent,
+        options,
+      ) => {
+        if (!handle) {
+          return;
+        }
+        const childrenFn = getChildrenFnForContent(overlayContent);
+
+        Object.assign(handle, { children: childrenFn });
+        updateContent();
+        const skipRealign = !!options?.skipRealign;
+        const shouldRealign = !skipRealign;
+
+        if (shouldRealign) {
+          setHandleToRealign(handle.key);
+          setRealignTimestamp(Date.now());
+        }
       };
 
       if (handle) {
-        Object.assign(handle, params, { children: childrenFn });
-        updateContent();
-        setHandleToRealign(handle.key);
-        setRealignTimestamp(Date.now());
-        return;
+        Object.assign(handle, params);
+        updateOverlay(content);
+        return updateOverlay;
       }
 
       handle = {
@@ -385,7 +414,7 @@ export function useOverlay(params: OverlayParams) {
 
       updateContent();
 
-      return () => updateContent();
+      return updateOverlay;
     },
     [handles, rootParams.portalContainer, updateContent],
   );

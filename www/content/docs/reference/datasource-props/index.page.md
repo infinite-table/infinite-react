@@ -304,6 +304,12 @@ For the controlled version, and more details on the shape of the objects in the 
 
 </Sandpack>
 
+<Note>
+
+You can control the visibility of the column filters by using the <PropLink name="showColumnFilters" /> prop.
+
+</Note>
+
 </Prop>
 
 <Prop name="defaultRowSelection" type="string|number|null|object">
@@ -797,6 +803,12 @@ The objects in this array have the following shape:
 ```
 
 </Sandpack>
+
+<Note>
+
+You can control the visibility of the column filters by using the <PropLink name="showColumnFilters" /> prop.
+
+</Note>
 
 </Prop>
 

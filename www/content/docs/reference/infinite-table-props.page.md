@@ -181,6 +181,21 @@ The details for each city shows a DataGrid with developers in that city.
 
 </Prop>
 
+<Prop name="showColumnFilters" type="boolean" defaultValue={true}>
+
+> Whether to show the column filters or not (only applicable when the `<DataSource>` is configured with filtering - either with <DPropLink name="defaultFilterValue" /> or <DPropLink name="filterValue" />).
+
+When the `<DataSource>` is configured with <DPropLink name="defaultFilterValue" />, the column filters will be shown by default. Specify this prop as `false` to hide the column filters.
+
+<Sandpack title="Controling the visibility of column filters">
+
+```tsx file="column-filters-visibility-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="defaultRowDetailState" type="RowDetailState">
 
 > Specifies the default expanded/collapsed state of row details.

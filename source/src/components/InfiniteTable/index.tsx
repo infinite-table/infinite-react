@@ -93,6 +93,7 @@ import { DEBUG_NAME } from './InfiniteDebugName';
 import { useToggleWrapRowsHorizontally } from './hooks/useToggleWrapRowsHorizontally';
 import { useHorizontalLayout } from './hooks/useHorizontalLayout';
 import { useDebugMode } from './hooks/useDebugMode';
+import { useInfinitePortalContainer } from './hooks/useInfinitePortalContainer';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -605,6 +606,7 @@ export {
   useInfiniteHeaderCell,
   useInfiniteColumnEditor,
   useInfiniteColumnFilterEditor,
+  useInfinitePortalContainer,
   eventMatchesKeyboardShortcut,
   useGridScroll,
   useVisibleColumnSizes,
