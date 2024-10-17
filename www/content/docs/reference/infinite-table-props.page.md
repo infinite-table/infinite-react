@@ -2219,6 +2219,8 @@ See docs at <PropLink name="columns.headerClassName" />.
 
 > Controls the alignment of text in column cells and also the alignment of the column header. To only apply alignment to the column header, use <PropLink name="columns.headerAlign" />. For vertical alignment, see <PropLink name="columns.verticalAlign" />.
 
+For css ellipsis, see <PropLink name="columns.cssEllipsis" />.
+
 <Sandpack title="Column align example">
 
 ```tsx file="column-align-example.page.tsx"
@@ -2250,7 +2252,7 @@ See docs at <PropLink name="columns.headerClassName" />.
 
 <Prop name="columns.headerAlign" type="'start' | 'center' | 'end'">
 
-> Controls the alignment of the column header. See related <PropLink name="columns.align" />.
+> Controls the alignment of the column header. See related <PropLink name="columns.align" /> and <PropLink name="columns.headerCssEllipsis" />.
 
 <Sandpack title="Column header align example">
 
