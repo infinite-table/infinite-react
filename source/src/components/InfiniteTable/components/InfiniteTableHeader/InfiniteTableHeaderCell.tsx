@@ -65,10 +65,10 @@ import { useColumnResizeHandle } from './useColumnResizeHandle';
 export const defaultRenderSelectionCheckBox: InfiniteTableColumnHeaderRenderFunction<
   any
 > = (params) => {
-  const { allRowsSelected, someRowsSelected, api } = params;
+  const { allRowsSelected, someRowsSelected, api, dataSourceApi } = params;
 
   const selected = allRowsSelected ? true : someRowsSelected ? null : false;
-  const { components } = api.getState();
+  const { components, isTree } = api.getState();
   const CheckBoxCmp = components?.CheckBox || InfiniteCheckBox;
 
   return (
@@ -77,6 +77,15 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnHeaderRenderFunc
         className: SelectionCheckboxCls,
       }}
       onChange={(selected) => {
+        if (isTree) {
+          if (selected) {
+            dataSourceApi.treeApi.selectAll();
+          } else {
+            dataSourceApi.treeApi.deselectAll();
+          }
+          return;
+        }
+
         if (selected) {
           api.rowSelectionApi.selectAll();
         } else {
@@ -285,6 +294,7 @@ export function InfiniteTableHeaderCell<T>(
     allRowsSelected,
     selectionMode,
     api,
+    dataSourceApi,
     columnApi,
     renderBag: {
       sortIcon,
@@ -655,6 +665,7 @@ export function InfiniteTableHeaderCell<T>(
               rowActive: false,
               firstRow: true,
               firstRowInHorizontalLayoutPage: true,
+              treeNode: false,
               groupCell: false,
               groupRow: false,
               rowExpanded: false,

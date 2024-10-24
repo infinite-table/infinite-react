@@ -1,5 +1,6 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
+import { cloneTreeSelection } from '../../DataSource/getTreeApi';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { getColumnApiForColumn } from '../api/getColumnApi';
@@ -34,6 +35,9 @@ function useEventHandlersContext<T>() {
       actions,
       getDataSourceState,
       dataSourceActions,
+      cloneTreeSelection: (treeSelection) => {
+        return cloneTreeSelection<T>(treeSelection, getDataSourceState);
+      },
       cloneRowSelection: (rowSelection) => {
         return cloneRowSelection<T>(rowSelection, getDataSourceState);
       },

@@ -7,7 +7,7 @@
       "name": "Debug PW tests",
       "cwd": "${workspaceFolder}/examples",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run-script", "play:test"]
+      "runtimeArgs": ["run-script", "test:watch"]
     }
   ]
 }

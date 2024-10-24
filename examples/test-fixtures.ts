@@ -6,6 +6,7 @@ import { MenuTestingModel } from '@examples/pages/tests/testUtils/MenuTestingMod
 import { RowTestingModel } from '@examples/pages/tests/testUtils/RowTestingModel';
 import { TableTestingModel } from '@examples/pages/tests/testUtils/TableTestingModel';
 import { TracingModel } from '@examples/pages/tests/testUtils/TracingModel';
+import { TreeTestingModel } from '@examples/pages/tests/testUtils/TreeTestingModel';
 import {
   test as base,
   expect,
@@ -57,6 +58,7 @@ export const test = base.extend<
     PlaywrightTestOptions & {
       page: Page & TestExtras;
       rowModel: RowTestingModel;
+      treeModel: TreeTestingModel;
       headerModel: HeaderTestingModel;
       editModel: EditTestingModel;
       columnModel: ColumnTestingModel;
@@ -170,6 +172,9 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
   },
   editModel: async ({ page }, use) => {
     await use(EditTestingModel.get(page));
+  },
+  treeModel: async ({ page }, use) => {
+    await use(TreeTestingModel.get(page));
   },
   columnModel: async ({ page }, use) => {
     await use(ColumnTestingModel.get(page));

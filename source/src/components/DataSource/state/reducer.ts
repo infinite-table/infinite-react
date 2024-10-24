@@ -4,9 +4,15 @@ import { DeepMap } from '../../../utils/DeepMap';
 import {
   InfiniteTableRowInfo,
   InfiniteTable_NoGrouping_RowInfoNormal,
+  InfiniteTable_Tree_RowInfoNode,
   lazyGroup,
 } from '../../../utils/groupAndPivot';
-import { enhancedFlatten, group } from '../../../utils/groupAndPivot';
+import {
+  enhancedFlatten,
+  group,
+  tree,
+  enhancedTreeFlatten,
+} from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
 import { multisort } from '../../../utils/multisort';
 import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getRowSelectionApi';
@@ -28,6 +34,8 @@ import {
   finishRowInfoReducersFor,
   initRowInfoReducers,
 } from './initRowInfoReducers';
+import { TreeExpandState } from '../TreeExpandState';
+import { getTreeSelectionState } from './getInitialState';
 
 export function cleanupEmptyFilterValues<T>(
   filterValue: DataSourceState<T>['filterValue'],
@@ -85,6 +93,7 @@ function toRowInfo<T>(
 ): InfiniteTable_NoGrouping_RowInfoNormal<T> {
   const rowInfo: InfiniteTable_NoGrouping_RowInfoNormal<T> = {
     dataSourceHasGrouping: false,
+    isTreeNode: false,
     data,
     id,
     indexInAll: index,
@@ -314,8 +323,10 @@ export function concludeReducer<T>(params: {
 
   const groupBy = state.groupBy;
   const pivotBy = state.pivotBy;
+  const isTree = state.isTree;
 
-  const shouldGroup = groupBy.length > 0 || !!pivotBy;
+  const shouldGroup = !isTree && (groupBy.length > 0 || !!pivotBy);
+  const shouldTree = isTree;
 
   const rowDisabledStateDepsChanged = haveDepsChanged(previousState, state, [
     'rowDisabledState',
@@ -326,6 +337,13 @@ export function concludeReducer<T>(params: {
     'rowSelection',
     'cellSelection',
     'isRowSelected',
+    'originalLazyGroupDataChangeDetect',
+  ]);
+
+  const treeSelectionDepsChanged = haveDepsChanged(previousState, state, [
+    'treeSelection',
+    'cellSelection',
+    'isNodeSelected',
     'originalLazyGroupDataChangeDetect',
   ]);
   const groupsDepsChanged =
@@ -346,6 +364,19 @@ export function concludeReducer<T>(params: {
       'rowsPerPage',
     ]);
 
+  const treeDepsChanged =
+    originalDataArrayChanged ||
+    sortDepsChanged ||
+    haveDepsChanged(previousState, state, [
+      'originalLazyGroupData',
+      'originalLazyGroupDataChangeDetect',
+      'treeExpandState',
+      'isNodeExpanded',
+      'aggregationReducers',
+      'repeatWrappedGroupRows',
+      'rowsPerPage',
+    ]);
+
   const rowInfoReducersChanged = haveDepsChanged(previousState, state, [
     'rowInfoReducers',
   ]);
@@ -356,6 +387,15 @@ export function concludeReducer<T>(params: {
         !state.lastGroupDataArray ||
         cacheAffectedParts.groupBy)) ||
     selectionDepsChanged ||
+    rowDisabledStateDepsChanged ||
+    rowInfoReducersChanged;
+
+  const shouldTreeAgain =
+    (shouldTree &&
+      (treeDepsChanged ||
+        cacheAffectedParts.tree ||
+        !state.lastTreeDataArray)) ||
+    treeSelectionDepsChanged ||
     rowDisabledStateDepsChanged ||
     rowInfoReducersChanged;
 
@@ -410,6 +450,11 @@ export function concludeReducer<T>(params: {
     state.rowSelection instanceof RowSelectionState
       ? state.rowSelection
       : undefined;
+
+  const treeExpandState =
+    state.treeExpandState instanceof TreeExpandState
+      ? state.treeExpandState
+      : undefined;
   const cellSelectionState =
     state.cellSelection instanceof CellSelectionState
       ? state.cellSelection
@@ -446,6 +491,24 @@ export function concludeReducer<T>(params: {
         rowSelectionState as RowSelectionState,
         state.selectionMode as 'multi-row',
       );
+  }
+
+  let isNodeExpanded:
+    | ((rowInfo: InfiniteTableRowInfo<T>) => boolean)
+    | undefined = (rowInfo: InfiniteTableRowInfo<T>) => {
+    if (rowInfo.isTreeNode && rowInfo.isParentNode) {
+      return treeExpandState!.isNodeExpanded(rowInfo.nodePath);
+    }
+
+    return false;
+  };
+
+  if (state.isNodeExpanded) {
+    isNodeExpanded = (rowInfo) =>
+      rowInfo.isTreeNode && rowInfo.isParentNode
+        ? state.isNodeExpanded!(rowInfo, treeExpandState as TreeExpandState) ||
+          false
+        : false;
   }
 
   const rowInfoReducers = state.rowInfoReducers!;
@@ -572,6 +635,127 @@ export function concludeReducer<T>(params: {
 
     state.lastGroupDataArray = rowInfoDataArray;
     state.groupedAt = now;
+  } else if (shouldTree) {
+    if (shouldTreeAgain) {
+      let aggregationReducers = state.aggregationReducers;
+      const nodesKey = state.nodesKey;
+
+      const getNodeChildren = (node: T) => {
+        return node[nodesKey as keyof T] as any as T[] | null;
+      };
+      const isLeafNode = (node: T) => {
+        return node[nodesKey as keyof T] === undefined;
+      };
+
+      const treeParams = {
+        isLeafNode,
+        getNodeChildren,
+        toKey: toPrimaryKey,
+        reducers: aggregationReducers,
+      };
+
+      const treeResult = tree(treeParams, dataArray);
+
+      state.treeDeepMap = treeResult.deepMap;
+      state.treePaths = treeResult.treePaths;
+
+      const treeSelectionState =
+        state.selectionMode === 'multi-row'
+          ? getTreeSelectionState(
+              state.treeSelection,
+              state.selectionMode,
+              state,
+            )
+          : undefined;
+
+      state.treeSelectionState = treeSelectionState;
+
+      const rowInfoReducerKeys = Object.keys(
+        rowInfoReducers || {},
+      ) as (keyof typeof rowInfoReducers)[];
+
+      const rowInfoReducerResults = initRowInfoReducers(
+        rowInfoReducers,
+      ) as Record<keyof typeof rowInfoReducers, any>;
+
+      const rowInfoReducersShape = {
+        reducers: rowInfoReducers,
+        results: rowInfoReducerResults,
+        reducerKeys: rowInfoReducerKeys,
+        rowInfo: {} as InfiniteTableRowInfo<T>,
+      };
+
+      const withRowInfoForReducers = rowInfoReducerResults
+        ? (rowInfo: InfiniteTableRowInfo<T>) => {
+            rowInfoReducersShape.rowInfo = rowInfo;
+            computeRowInfoReducersFor(rowInfoReducersShape);
+          }
+        : undefined;
+
+      const withRowInfoForCellSelection = cellSelectionState
+        ? (rowInfo: InfiniteTableRowInfo<T>) => {
+            rowInfo.isCellSelected = (colId: string) => {
+              return cellSelectionState!.isCellSelected(rowInfo.id, colId);
+            };
+          }
+        : undefined;
+
+      const withRowInfo =
+        withRowInfoForReducers || withRowInfoForCellSelection
+          ? composeFunctions(
+              withRowInfoForReducers,
+              withRowInfoForCellSelection,
+            )
+          : undefined;
+
+      let isNodeSelected:
+        | ((rowInfo: InfiniteTable_Tree_RowInfoNode<T>) => boolean | null)
+        | undefined =
+        state.selectionMode === 'single-row'
+          ? (rowInfo) => {
+              return rowInfo.id === state.treeSelection;
+            }
+          : state.selectionMode === 'multi-row'
+          ? (rowInfo) => {
+              return treeSelectionState!.isNodeSelected(rowInfo.nodePath);
+            }
+          : undefined;
+
+      const flattenResult = enhancedTreeFlatten({
+        treeResult,
+        treeParams,
+        dataArray,
+
+        reducers: aggregationReducers,
+        toPrimaryKey,
+        isNodeSelected,
+        isNodeExpanded,
+        treeSelectionState,
+
+        withRowInfo,
+
+        repeatWrappedGroupRows:
+          state.repeatWrappedGroupRows && state.rowsPerPage != null,
+        rowsPerPage: state.rowsPerPage,
+      });
+
+      rowInfoDataArray = flattenResult.data;
+
+      state.rowInfoReducerResults = finishRowInfoReducersFor<T>({
+        reducers: rowInfoReducers,
+        results: rowInfoReducerResults,
+        array: rowInfoDataArray,
+      });
+
+      state.reducerResults = treeResult.reducerResults;
+
+      state.totalLeafNodesCount =
+        treeResult.deepMap.get([])?.totalLeafNodesCount ?? 0;
+      state.treeAt = now;
+    } else {
+      rowInfoDataArray = state.lastTreeDataArray!;
+    }
+    state.lastTreeDataArray = rowInfoDataArray;
   } else {
     state.groupDeepMap = undefined;
     state.pivotColumns = undefined;
@@ -642,6 +826,9 @@ export function concludeReducer<T>(params: {
       let someRowsSelected = false;
 
       state.dataArray.forEach((rowInfo) => {
+        if (rowInfo.isTreeNode) {
+          return;
+        }
         if (rowInfo.isGroupRow && rowInfo.groupKeys.length === 1) {
           const { rowSelected } = rowInfo;
           if (rowSelected !== true) {
@@ -655,9 +842,15 @@ export function concludeReducer<T>(params: {
       state.allRowsSelected = allRowsSelected;
       state.someRowsSelected = someRowsSelected;
     } else {
-      const dataArrayCount = state.filteredCount;
-      const selectedRowCount =
-        (state.rowSelection as RowSelectionState)!.getSelectedCount();
+      const dataArrayCount = state.isTree
+        ? state.totalLeafNodesCount
+        : state.filteredCount;
+
+      const selectedRowCount = state.isTree
+        ? state.treeSelectionState
+          ? state.treeSelectionState.getSelectedCount()
+          : 0
+        : (state.rowSelection as RowSelectionState)!.getSelectedCount();
 
       state.allRowsSelected = dataArrayCount === selectedRowCount;
       state.someRowsSelected = selectedRowCount > 0;

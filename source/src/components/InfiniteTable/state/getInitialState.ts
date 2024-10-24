@@ -551,6 +551,7 @@ export const mapPropsToState = <T>(params: {
     : props.isRowDetailEnabled || true;
 
   return {
+    isTree: parentState.isTree,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,
     isRowDetailExpanded,

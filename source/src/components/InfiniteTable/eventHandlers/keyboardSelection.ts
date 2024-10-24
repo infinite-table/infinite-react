@@ -1,4 +1,5 @@
 import { RowSelectionState } from '../../DataSource';
+import { TreeSelectionState } from '../../DataSource/TreeSelectionState';
 import { InfiniteTableEventHandlerAbstractContext } from './eventHandlerTypes';
 import { updateRowSelectionOnCellClick } from './onCellClick';
 
@@ -23,7 +24,9 @@ export function handleKeyboardSelection<T>(
     getDataSourceState,
     dataSourceActions,
     api: imperativeApi,
+    dataSourceApi,
     cloneRowSelection,
+    cloneTreeSelection,
   } = context;
   const { key, ctrlKey, metaKey } = keyboardEvent;
 
@@ -41,7 +44,13 @@ export function handleKeyboardSelection<T>(
     keyboardSelection,
   } = state;
 
-  const { selectionMode, groupBy, rowSelection } = dataSourceState;
+  const {
+    selectionMode,
+    groupBy,
+    rowSelection,
+    treeSelectionState: treeSelection,
+    isTree,
+  } = dataSourceState;
 
   if (keyboardSelection === false) {
     return false;
@@ -70,6 +79,15 @@ export function handleKeyboardSelection<T>(
   }
 
   if (key === 'a' && (ctrlKey || metaKey)) {
+    if (isTree && treeSelection) {
+      const treeSelectionState = cloneTreeSelection(
+        treeSelection as TreeSelectionState,
+      );
+
+      treeSelectionState.selectAll();
+      dataSourceActions.treeSelection = treeSelectionState;
+      return true;
+    }
     const rowSelectionState = cloneRowSelection(
       rowSelection as RowSelectionState<T>,
     );
@@ -90,6 +108,11 @@ export function handleKeyboardSelection<T>(
         imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
       }
       return true;
+    } else if (isTree) {
+      if (rowInfo.isTreeNode && rowInfo.nodePath) {
+        dataSourceApi.treeApi.toggleNodeSelection(rowInfo.nodePath);
+        return true;
+      }
     } else {
       // no grouping, but space should be treated like a mouse click
 

@@ -340,7 +340,7 @@ export function getRowSelectionApi<T>(
 
       if (state.lazyLoad) {
         console.error(
-          `getSelectedPrimaryKeys  should not be called for lazy-loaded datasources as it wont return reliable results`,
+          `getSelectedPrimaryKeys should not be called for lazy-loaded datasources as it wont return reliable results`,
         );
       }
 

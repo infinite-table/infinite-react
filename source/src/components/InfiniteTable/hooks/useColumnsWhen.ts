@@ -83,7 +83,7 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
 
   const {
     componentActions,
-    componentState: { columns, groupRenderStrategy },
+    componentState: { columns, groupRenderStrategy, isTree },
   } = useManagedComponentState<InfiniteTableState<T>>();
 
   function computeColumnsWhenInlineGroupRenderStrategy(
@@ -116,6 +116,9 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
               : rowInfo.value;
           },
           rowspan: ({ rowInfo, dataArray }) => {
+            if (rowInfo.isTreeNode) {
+              return 1;
+            }
             if (!rowInfo.isGroupRow) {
               return 1;
             }
@@ -176,13 +179,14 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
 
   useEffect(() => {
     const update = () => {
-      componentActions.columnsWhenInlineGroupRenderStrategy =
-        computeColumnsWhenInlineGroupRenderStrategy(
-          columns,
-          groupByMap,
-          groupRenderStrategy,
-          toggleGroupRow,
-        );
+      componentActions.columnsWhenInlineGroupRenderStrategy = isTree
+        ? undefined
+        : computeColumnsWhenInlineGroupRenderStrategy(
+            columns,
+            groupByMap,
+            groupRenderStrategy,
+            toggleGroupRow,
+          );
     };
 
     update();
@@ -279,7 +283,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
   const {
     componentState: {
       dataArray,
-      groupRowsIndexesInDataArray: groupRowsIndexesInDataArray,
+      groupRowsIndexesInDataArray,
       groupBy,
       groupRowsState,
       originalLazyGroupDataChangeDetect,

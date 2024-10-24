@@ -43,6 +43,7 @@ export function getColumnLabel<T>(
         horizontalLayoutPageIndex: null,
         column: col,
         columnApi,
+        dataSourceApi,
         insideColumnMenu: true,
         dragging: false,
         columnsMap: computed.computedColumnsMap,

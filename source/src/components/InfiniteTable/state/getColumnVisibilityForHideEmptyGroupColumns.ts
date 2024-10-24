@@ -81,6 +81,10 @@ export function getColumnVisibilityForHideEmptyGroupColumns<T>(params: {
     const groupRowIndex = groupRowsIndexesInDataArray[i];
     const rowInfo = dataArray[groupRowIndex];
 
+    if (rowInfo.isTreeNode) {
+      continue;
+    }
+
     if (!rowInfo.isGroupRow) {
       continue;
     }

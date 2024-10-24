@@ -4,11 +4,14 @@ import {
   AggregationReducer,
   InfiniteTableRowInfo,
   InfiniteTableRowInfoDataDiscriminator,
+  InfiniteTableRowInfoDataDiscriminator_LeafNode,
+  InfiniteTableRowInfoDataDiscriminator_ParentNode,
   InfiniteTable_HasGrouping_RowInfoGroup,
   PivotBy,
 } from '../../../utils/groupAndPivot';
 import type {
   ColumnTypeWithInherit,
+  DataSourceApi,
   DataSourceFilterValueItem,
   DataSourcePivotBy,
   DataSourcePropSelectionMode,
@@ -40,6 +43,7 @@ import { GroupBy, ValueGetterParams } from '../../../utils/groupAndPivot/types';
 export type { DiscriminatedUnion, RequireAtLeastOne };
 
 export type InfiniteTableToggleGroupRowFn = (groupKeys: any[]) => void;
+export type InfiniteTableToggleTreeNodeFn = (nodePath: any[]) => void;
 export type InfiniteTableToggleRowDetailsFn = (id: any) => void;
 export type InfiniteTableSelectRowFn = (id: any) => void;
 export type InfiniteTableIsRowSelectedFn = (id: any) => boolean;
@@ -60,6 +64,7 @@ export type InfiniteTableColumnHeaderParam<
   someRowsSelected: boolean;
   filtered: boolean;
   api: InfiniteTableApi<DATA_TYPE>;
+  dataSourceApi: DataSourceApi<DATA_TYPE>;
   columnApi: InfiniteTableColumnApi<DATA_TYPE>;
   renderBag: {
     all?: Renderable;
@@ -85,6 +90,7 @@ export type InfiniteTableColumnHeaderParam<
 export type InfiniteTableColumnRenderBag = {
   value: string | number | Renderable;
   groupIcon?: Renderable;
+  treeIcon?: Renderable;
   rowDetailsIcon?: Renderable;
   all?: Renderable;
   selectionCheckBox?: Renderable;
@@ -109,7 +115,7 @@ export type InfiniteTableColumnRenderParamBase<
   rowActive: boolean;
 
   api: InfiniteTableApi<DATA_TYPE>;
-
+  dataSourceApi: DataSourceApi<DATA_TYPE>;
   editError?: Error;
 
   column: COL_TYPE;
@@ -117,7 +123,14 @@ export type InfiniteTableColumnRenderParamBase<
   fieldsToColumn: Map<keyof DATA_TYPE, COL_TYPE>;
   groupByColumn?: InfiniteTableComputedColumn<DATA_TYPE>;
   toggleCurrentGroupRow: () => void;
+  toggleCurrentTreeNode: () => void;
+  expandTreeNode: InfiniteTableToggleTreeNodeFn;
+  collapseTreeNode: InfiniteTableToggleTreeNodeFn;
+
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
+  toggleTreeNode: InfiniteTableToggleTreeNodeFn;
+
+  toggleCurrentTreeNodeSelection: () => void;
   toggleCurrentGroupRowSelection: () => void;
   toggleCurrentRowSelection: () => void;
 
@@ -139,6 +152,11 @@ export type InfiniteTableColumnRenderParamBase<
 
   toggleRowSelection: InfiniteTableSelectRowFn;
   toggleGroupRowSelection: InfiniteTableToggleGroupRowFn;
+
+  toggleTreeNodeSelection: InfiniteTableToggleTreeNodeFn;
+  selectTreeNode: InfiniteTableToggleTreeNodeFn;
+  deselectTreeNode: InfiniteTableToggleTreeNodeFn;
+
   selectionMode: DataSourcePropSelectionMode | undefined;
   rootGroupBy: DataSourceState<DATA_TYPE>['groupBy'];
   pivotBy?: DataSourceState<DATA_TYPE>['pivotBy'];
@@ -215,6 +233,37 @@ export type InfiniteTableColumnRenderFunctionForGroupRows<
   },
 ) => Renderable | null;
 
+export type InfiniteTableColumnRenderFunctionForParentNode<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = (
+  renderParams: InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE> & {
+    isTreeNode: true;
+    isParentNode: true;
+  },
+) => Renderable | null;
+
+export type InfiniteTableColumnRenderFunctionForLeafNode<
+  DATA_TYPE,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = (
+  renderParams: InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE> & {
+    isTreeNode: true;
+    isParentNode: false;
+  },
+) => Renderable | null;
+
+export type InfiniteTableColumnRenderFunctionForNode<
+  DATA_TYPE,
+  EXTRA_NODE_PARAMS = Partial<
+    | InfiniteTableRowInfoDataDiscriminator_ParentNode<DATA_TYPE>
+    | InfiniteTableRowInfoDataDiscriminator_LeafNode<DATA_TYPE>
+  >,
+  COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
+> = (
+  renderParams: InfiniteTableColumnCellContextType<DATA_TYPE, COL_TYPE> &
+    EXTRA_NODE_PARAMS,
+) => Renderable | null;
 export type InfiniteTableColumnRenderFunctionForNormalRows<
   DATA_TYPE,
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
@@ -501,6 +550,33 @@ export type InfiniteTableColumn<DATA_TYPE> = {
 
   renderGroupIcon?: InfiniteTableColumnRenderFunctionForGroupRows<DATA_TYPE>;
   renderRowDetailIcon?: boolean | InfiniteTableColumnRenderFunction<DATA_TYPE>;
+  renderTreeIcon?:
+    | boolean
+    | InfiniteTableColumnRenderFunctionForNode<
+        DATA_TYPE,
+        {
+          isTreeNode: true;
+          isParentNode: boolean;
+          isGroupRow: false;
+          nodeExpanded: boolean;
+        }
+      >;
+  renderTreeIconForParentNode?: InfiniteTableColumnRenderFunctionForParentNode<
+    DATA_TYPE,
+    {
+      isTreeNode: true;
+      isGroupRow: true;
+      isParentNode: true;
+    }
+  >;
+  renderTreeIconForLeafNode?: InfiniteTableColumnRenderFunctionForLeafNode<
+    DATA_TYPE,
+    {
+      isTreeNode: true;
+      isGroupRow: false;
+      isLeafNode: true;
+    }
+  >;
   renderSortIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderFilterIcon?: InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
   renderSelectionCheckBox?:

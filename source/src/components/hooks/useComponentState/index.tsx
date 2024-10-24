@@ -193,6 +193,7 @@ type ComponentStateRootConfig<
 
   forwardProps?: (
     setupState: COMPONENT_SETUP_STATE,
+    props: T_PROPS,
   ) => ForwardPropsToStateFnResult<
     T_PROPS,
     COMPONENT_MAPPED_STATE,
@@ -312,7 +313,10 @@ export function buildManagedComponent<
         >
       >
     >(
-      () => (config.forwardProps ? config.forwardProps(initialSetupState) : {}),
+      () =>
+        config.forwardProps
+          ? config.forwardProps(initialSetupState, props)
+          : {},
       [initialSetupState],
     );
 
@@ -389,7 +393,7 @@ export function buildManagedComponent<
       const updatedProps: Partial<T_PROPS> | null =
         action.payload.updatedPropsToState;
 
-      const newState: COMPONENT_STATE = Object.assign({}, previousState);
+      const newState: COMPONENT_STATE = { ...previousState };
 
       if (mappedState) {
         Object.assign(newState, mappedState);

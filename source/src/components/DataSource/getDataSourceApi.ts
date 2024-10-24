@@ -8,6 +8,7 @@ import {
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
+import { getTreeApi, TreeApi } from './getTreeApi';
 import { RowDisabledState } from './RowDisabledState';
 import { DataSourceInsertParam } from './types';
 
@@ -52,6 +53,8 @@ type DataSourceOperation<T> =
 class DataSourceApiImpl<T> implements DataSourceApi<T> {
   private pendingOperations: DataSourceOperation<T>[] = [];
 
+  public treeApi: TreeApi<T>;
+
   private getState: () => DataSourceState<T>;
   private actions: DataSourceComponentActions<T>;
   //@ts-ignore
@@ -62,6 +65,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   constructor(param: GetDataSourceApiParam<T>) {
     this.getState = param.getState;
     this.actions = param.actions;
+    this.treeApi = getTreeApi(param);
   }
 
   private pendingPromise: Promise<boolean> | null = null;
@@ -470,6 +474,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
   sortInfo: boolean;
   groupBy: boolean;
+  tree: boolean;
   filterValue: boolean;
   aggregationReducers: boolean;
 } {
@@ -478,6 +483,7 @@ export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
     return {
       sortInfo: false,
       groupBy: false,
+      tree: false,
       filterValue: false,
       aggregationReducers: false,
     };
@@ -485,12 +491,20 @@ export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
 
   let sortInfoAffected = false;
   let groupByAffected = false;
+  let treeAffected = false;
   let filterAffected = false;
   let aggregationsAffected = false;
 
   const keys = cache.getAffectedFields();
 
-  const { sortInfo, groupBy, filterValue, aggregationReducers } = state;
+  const {
+    sortInfo,
+    groupBy,
+    filterValue,
+    aggregationReducers,
+    nodesKey,
+    isTree,
+  } = state;
 
   if (sortInfo && sortInfo.length) {
     if (keys === true) {
@@ -522,6 +536,14 @@ export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
           break;
         }
       }
+    }
+  }
+
+  if (isTree) {
+    if (keys === true) {
+      treeAffected = true;
+    } else {
+      treeAffected = keys.has(nodesKey as keyof T);
     }
   }
 
@@ -568,5 +590,6 @@ export function getCacheAffectedParts<T>(state: DataSourceState<T>): {
     groupBy: groupByAffected,
     filterValue: filterAffected,
     aggregationReducers: aggregationsAffected,
+    tree: treeAffected,
   };
 }
