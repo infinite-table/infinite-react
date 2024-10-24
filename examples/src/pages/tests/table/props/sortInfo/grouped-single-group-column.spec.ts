@@ -54,7 +54,7 @@ export default test.describe.parallel('Sorting group column', () => {
     await page.waitForInfinite();
 
     expect(await getRowGroupNesting(0, page)).toBe('0px');
-    expect(await getRowGroupNesting(1, page)).toBe('30px');
+    expect(await getRowGroupNesting(1, page)).toBe('24px');
   });
   test('sorting group column via column header click should work', async ({
     page,

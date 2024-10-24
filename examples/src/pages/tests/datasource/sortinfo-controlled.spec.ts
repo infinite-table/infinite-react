@@ -19,8 +19,10 @@ export default test.describe.parallel('DataSource', () => {
         data: persons[0],
         id: persons[0].id,
         indexInAll: 0,
+
         rowSelected: false,
         rowDisabled: false,
+        isTreeNode: false,
         isGroupRow: false,
         selfLoaded: true,
         dataSourceHasGrouping: false,
@@ -31,6 +33,7 @@ export default test.describe.parallel('DataSource', () => {
         indexInAll: 1,
         rowSelected: false,
         rowDisabled: false,
+        isTreeNode: false,
         isGroupRow: false,
         selfLoaded: true,
         dataSourceHasGrouping: false,
@@ -59,6 +62,7 @@ export default test.describe.parallel('DataSource', () => {
         rowDisabled: false,
         // indexInGroup: 0,
         isGroupRow: false,
+        isTreeNode: false,
         selfLoaded: true,
       },
       {
@@ -70,6 +74,7 @@ export default test.describe.parallel('DataSource', () => {
         // indexInGroup: 1,
         id: persons[1].id,
         isGroupRow: false,
+        isTreeNode: false,
         selfLoaded: true,
       },
     ]);

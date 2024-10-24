@@ -15,7 +15,7 @@ const data = sinon.spy(() => {
 export default () => {
   const { state } = useDataSourceInternal({
     data,
-    primaryKey: 'id',
+    primaryKey: (d: any) => d.id,
   });
   (globalThis as any).dataSourceState = state;
   return <div>hello</div>;

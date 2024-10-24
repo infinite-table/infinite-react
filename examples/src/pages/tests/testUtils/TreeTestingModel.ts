@@ -7,7 +7,6 @@ import {
   toggleGroupRow,
   toggleRowSelection,
 } from '.';
-import { ColumnTestingModel } from './ColumnTestingModel';
 import { RowTestingModel } from './RowTestingModel';
 
 export class TreeTestingModel {
