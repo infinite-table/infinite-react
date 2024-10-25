@@ -64,8 +64,9 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
   constructor(param: GetDataSourceApiParam<T>) {
     this.getState = param.getState;
+    this.getState().__apiRef.current = this;
     this.actions = param.actions;
-    this.treeApi = getTreeApi(param);
+    this.treeApi = getTreeApi({ ...param, dataSourceApi: this });
   }
 
   private pendingPromise: Promise<boolean> | null = null;

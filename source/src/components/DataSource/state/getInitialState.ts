@@ -6,9 +6,12 @@ import {
   DataSourcePropOnCellSelectionChange_MultiCell,
   DataSourcePropOnCellSelectionChange_SingleCell,
   DataSourcePropOnRowSelectionChange_SingleRow,
+  DataSourcePropOnTreeSelectionChange_MultiNode,
+  DataSourcePropOnTreeSelectionChange_SingleNode,
   DataSourcePropShouldReloadData,
   DataSourcePropShouldReloadDataObject,
   DataSourcePropTreeSelection,
+  DataSourcePropTreeSelection_SingleNode,
   DataSourceRowInfoReducer,
   RowDisabledStateObject,
   RowSelectionState,
@@ -59,6 +62,7 @@ import {
   TreeSelectionStateObject,
 } from '../TreeSelectionState';
 import { treeSelectionStateConfigGetter } from '../getTreeApi';
+import { NonUndefined } from '../../types/NonUndefined';
 
 const DataSourceLogger = dbg('DataSource') as DebugLogger;
 
@@ -78,11 +82,20 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
     totalLeafNodesCount: 0,
+    __apiRef: { current: null },
 
     repeatWrappedGroupRows: false,
 
     destroyedRef: {
       current: false,
+    },
+
+    lastSelectionUpdatedNodePathRef: { current: null },
+    lastExpandStateInfoRef: {
+      current: {
+        state: 'collapsed',
+        nodePath: null,
+      },
     },
 
     idToIndexMap: new Map<any, number>(),
@@ -166,6 +179,12 @@ const EMPTY_ARRAY: any[] = [];
 export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   state.destroyedRef.current = true;
 
+  state.__apiRef.current = null;
+  state.lastSelectionUpdatedNodePathRef.current = null;
+  state.lastExpandStateInfoRef.current = {
+    state: 'collapsed',
+    nodePath: null,
+  };
   state.treeExpandState?.destroy();
   state.treePaths?.clear();
   state.pathToIndexDeepMap?.clear();
@@ -191,6 +210,8 @@ export const forwardProps = <T>(
     data: 1,
     debugId: 1,
     nodesKey: 1,
+    isNodeExpanded: 1,
+    isNodeCollapsed: 1,
     pivotBy: 1,
     primaryKey: 1,
     livePagination: 1,
@@ -250,7 +271,9 @@ export const forwardProps = <T>(
 
       return result;
     },
-    isNodeExpanded: 1,
+
+    onNodeCollapse: 1,
+    onNodeExpand: 1,
     batchOperationDelay: 1,
     isRowSelected: 1,
     isNodeSelected: 1,
@@ -345,8 +368,8 @@ function toShouldReloadObject<T>(
 }
 
 const treeSelectionStateDefaultObject: TreeSelectionStateObject = {
-  selectedNodes: [],
-  deselectedNodes: [],
+  selectedPaths: [],
+  deselectedPaths: [],
   defaultSelection: false,
 };
 
@@ -530,10 +553,11 @@ export function deriveStateFromProps<T extends any>(params: {
       ? (data: T) => primaryKeyDescriptor(data)
       : (data: T) => data[primaryKeyDescriptor];
 
+  const treeProps = props as TreeDataSourceProps<T>;
   let treeExpandState =
-    props.treeExpandState ||
+    treeProps.treeExpandState ||
     state.treeExpandState ||
-    props.defaultTreeExpandState;
+    treeProps.defaultTreeExpandState;
 
   if (treeExpandState && !(treeExpandState instanceof TreeExpandState)) {
     const instance: TreeExpandState =
@@ -760,6 +784,54 @@ export function getMappedCallbacks<T>() {
           (rowSelection as RowSelectionState).getState(),
           'multi-row',
         ] as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>,
+      };
+    },
+
+    treeSelection: (
+      treeSelection,
+      state: DataSourceState<T>,
+    ): { callbackParams: any[] } => {
+      if (state.selectionMode === 'single-row') {
+        const callbackParams: Parameters<DataSourcePropOnTreeSelectionChange_SingleNode> =
+          [
+            treeSelection as DataSourcePropTreeSelection_SingleNode,
+            { selectionMode: 'single-row' },
+          ];
+
+        return {
+          callbackParams,
+        };
+      }
+      const callbackParams: Parameters<DataSourcePropOnTreeSelectionChange_MultiNode> =
+        [
+          (treeSelection as TreeSelectionState).getState(),
+          {
+            selectionMode: 'multi-row',
+            lastUpdatedNodePath: state.lastSelectionUpdatedNodePathRef.current,
+            dataSourceApi: state.__apiRef.current!,
+          },
+        ];
+      return {
+        callbackParams,
+      };
+    },
+    treeExpandState: (
+      treeExpandState,
+      state: DataSourceState<T>,
+    ): { callbackParams: any[] } => {
+      const callbackParams: Parameters<
+        NonUndefined<TreeDataSourceProps<T>['onTreeExpandStateChange']>
+      > = [
+        (treeExpandState as TreeExpandState<T>).getState(),
+        {
+          nodeState: state.lastExpandStateInfoRef.current.state,
+          nodePath: state.lastExpandStateInfoRef.current.nodePath,
+          dataSourceApi: state.__apiRef.current!,
+        },
+      ];
+
+      return {
+        callbackParams,
       };
     },
     cellSelection: (

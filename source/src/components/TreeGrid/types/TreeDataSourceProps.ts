@@ -1,22 +1,55 @@
 import {
+  DataSourceApi,
+  DataSourceCallback_BaseParam,
   DataSourcePropCellSelection_MultiCell,
   DataSourcePropCellSelection_SingleCell,
   DataSourcePropIsNodeExpanded,
+  DataSourcePropIsNodeSelected,
   DataSourcePropOnCellSelectionChange_MultiCell,
   DataSourcePropOnCellSelectionChange_SingleCell,
   DataSourcePropOnTreeSelectionChange_MultiNode,
   DataSourcePropOnTreeSelectionChange_SingleNode,
   DataSourceProps,
+  DataSourcePropTreeSelection,
   DataSourcePropTreeSelection_MultiNode,
   DataSourcePropTreeSelection_SingleNode,
+  TreeExpandStateValue,
 } from '../../DataSource';
-import { NodePath } from '../../DataSource/TreeExpandState';
+import {
+  NodePath,
+  TreeExpandStateObject,
+} from '../../DataSource/TreeExpandState';
 
+type OnNodeStateChangeParam = DataSourceCallback_BaseParam<any> & {};
 type TreeDataSourceOnlyProps<T> = {
   nodesKey?: string;
-  isNodeExpanded?: DataSourcePropIsNodeExpanded<T>;
-  onNodeExpand?: (node: NodePath) => void;
-  onNodeCollapse?: (node: NodePath) => void;
+
+  treeSelection?: DataSourcePropTreeSelection;
+
+  defaultTreeSelection?: DataSourcePropTreeSelection;
+
+  treeExpandState?: TreeExpandStateValue;
+  defaultTreeExpandState?: TreeExpandStateValue;
+  onTreeExpandStateChange?: (
+    treeExpandState: TreeExpandStateObject<any>,
+    params: {
+      dataSourceApi: DataSourceApi<T>;
+      nodePath: NodePath | null;
+      nodeState: 'collapsed' | 'expanded';
+    },
+  ) => void;
+
+  isNodeSelected?: DataSourcePropIsNodeSelected<T>;
+
+  /**
+   * Called when a node is expanded. Not called when treeApi.expandAll is called.
+   */
+  onNodeExpand?: (node: NodePath, param: OnNodeStateChangeParam) => void;
+
+  /**
+   * Called when a node is collapsed. Not called when treeApi.collapseAll is called.
+   */
+  onNodeCollapse?: (node: NodePath, param: OnNodeStateChangeParam) => void;
 } & (
   | {
       selectionMode?: 'multi-row';
@@ -45,7 +78,17 @@ type TreeDataSourceOnlyProps<T> = {
   | {
       selectionMode?: false;
     }
-);
+) &
+  (
+    | {
+        isNodeCollapsed?: DataSourcePropIsNodeExpanded<T>;
+        isNodeExpanded?: never;
+      }
+    | {
+        isNodeExpanded?: DataSourcePropIsNodeExpanded<T>;
+        isNodeCollapsed?: never;
+      }
+  );
 
 export type DataSourcePropsNotAvailableInTreeDataSource = keyof Pick<
   DataSourceProps<any>,
@@ -64,7 +107,6 @@ export type DataSourcePropsNotAvailableInTreeDataSource = keyof Pick<
   | 'pivotBy'
   | 'defaultPivotBy'
   | 'selectionMode'
-  | 'treeSelection'
   | 'rowSelection'
   | 'defaultRowSelection'
 >;

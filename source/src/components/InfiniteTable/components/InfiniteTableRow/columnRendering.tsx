@@ -548,6 +548,7 @@ export function getFormattedValueParamForCell<T>(
         rowInfo,
         isGroupRow: true,
         isTreeNode: false,
+        isParentNode: false,
         data: rowInfo.data,
         rowDetailState: false as false | 'expanded' | 'collapsed',
         rowSelected,

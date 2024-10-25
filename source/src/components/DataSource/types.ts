@@ -6,6 +6,7 @@ import {
   DeepMapGroupValueType,
   DeepMapTreeValueType,
   GroupKeyType,
+  InfiniteTablePropRepeatWrappedGroupRows,
   InfiniteTable_Tree_RowInfoLeafNode,
   InfiniteTable_Tree_RowInfoParentNode,
   PivotBy,
@@ -52,6 +53,7 @@ import {
 } from './RowSelectionState';
 import { DataSourceStateRestoreForDetail } from './state/getInitialState';
 import {
+  NodePath,
   TreeExpandState,
   TreeExpandStateMode,
   TreeExpandStateObject,
@@ -157,14 +159,20 @@ export interface DataSourceMappedState<T> {
   livePagination: DataSourceProps<T>['livePagination'];
   refetchKey: NonUndefined<DataSourceProps<T>['refetchKey']>;
   isRowSelected: DataSourceProps<T>['isRowSelected'];
-  isNodeSelected: DataSourceProps<T>['isNodeSelected'];
+  isNodeSelected: TreeDataSourceProps<T>['isNodeSelected'];
+
+  isNodeExpanded: TreeDataSourceProps<T>['isNodeExpanded'];
+  isNodeCollapsed: TreeDataSourceProps<T>['isNodeCollapsed'];
+
+  onNodeCollapse: TreeDataSourceProps<T>['onNodeCollapse'];
+  onNodeExpand: TreeDataSourceProps<T>['onNodeExpand'];
   isRowDisabled: DataSourceProps<T>['isRowDisabled'];
-  isNodeExpanded: DataSourceProps<T>['isNodeExpanded'];
+
   debugId: DataSourceProps<T>['debugId'];
 
   nodesKey: NonUndefined<TreeDataSourceProps<T>['nodesKey']>;
 
-  treeSelection: DataSourceProps<T>['treeSelection'];
+  treeSelection: TreeDataSourceProps<T>['treeSelection'];
   batchOperationDelay: DataSourceProps<T>['batchOperationDelay'];
 
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
@@ -277,7 +285,13 @@ export interface DataSourceSetupState<T> {
   getDataSourceMasterContextRef: React.MutableRefObject<
     () => DataSourceMasterDetailContextValue | undefined
   >;
-  repeatWrappedGroupRows: boolean;
+  __apiRef: React.MutableRefObject<DataSourceApi<T> | null>;
+  lastSelectionUpdatedNodePathRef: React.MutableRefObject<NodePath | null>;
+  lastExpandStateInfoRef: React.MutableRefObject<{
+    state: 'collapsed' | 'expanded';
+    nodePath: NodePath | null;
+  }>;
+  repeatWrappedGroupRows: InfiniteTablePropRepeatWrappedGroupRows<T>;
   /**
    * This is just used for horizontal layout and when repeatWrappedGroupRows is TRUE!!!
    */
@@ -359,9 +373,10 @@ export type DataSourcePropRowSelection =
   | DataSourcePropRowSelection_SingleRow;
 
 export type DataSourcePropRowSelection_MultiRow = RowSelectionStateObject;
-export type DataSourcePropTreeSelection_MultiNode =
-  | TreeSelectionStateObject
-  | TreeSelectionState;
+
+export type TreeSelectionValue = TreeSelectionStateObject | TreeSelectionState;
+
+export type DataSourcePropTreeSelection_MultiNode = TreeSelectionValue;
 
 export type DataSourcePropRowSelection_SingleRow = null | string | number;
 export type DataSourcePropTreeSelection_SingleNode = null | string | number;
@@ -402,9 +417,13 @@ export type DataSourcePropOnRowSelectionChange_MultiRow = (
   selectionMode: 'multi-row',
 ) => void;
 
-export type DataSourcePropOnTreeSelectionChange_MultiNode = (
-  treeSelection: DataSourcePropTreeSelection_MultiNode,
-  selectionMode: 'multi-row',
+export type DataSourcePropOnTreeSelectionChange_MultiNode<T = any> = (
+  treeSelection: TreeSelectionStateObject,
+  params: {
+    selectionMode: 'multi-row';
+    lastUpdatedNodePath: NodePath | null;
+    dataSourceApi: DataSourceApi<T>;
+  },
 ) => void;
 export type DataSourcePropOnRowSelectionChange_SingleRow = (
   rowSelection: DataSourcePropRowSelection_SingleRow,
@@ -412,8 +431,8 @@ export type DataSourcePropOnRowSelectionChange_SingleRow = (
 ) => void;
 
 export type DataSourcePropOnTreeSelectionChange_SingleNode = (
-  rowSelection: DataSourcePropTreeSelection_SingleNode,
-  selectionMode: 'single-row',
+  treeSelection: DataSourcePropTreeSelection_SingleNode,
+  params: { selectionMode: 'single-row' },
 ) => void;
 
 export type DataSourcePropOnRowSelectionChange =
@@ -454,7 +473,6 @@ export type DataSourcePropIsNodeSelected<T> = (
 
 export type DataSourcePropIsNodeExpanded<T> = (
   rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,
-  treeExpandState: TreeExpandState,
 ) => boolean;
 
 // export type DataSourcePropIsCellSelected<T> = ( // TODO implement this
@@ -568,6 +586,7 @@ export type DataSourcePropShouldReloadData<T> =
   | boolean;
 // | DataSourcePropShouldReloadDataFn<T>;
 
+export type TreeExpandStateValue = TreeExpandState | TreeExpandStateObject<any>;
 export type DataSourceProps<T> = {
   nodesKey?: never;
   debugId?: string;
@@ -600,10 +619,6 @@ export type DataSourceProps<T> = {
 
   rowSelection?: DataSourcePropRowSelection;
 
-  treeSelection?: DataSourcePropTreeSelection;
-
-  defaultTreeSelection?: DataSourcePropTreeSelection;
-
   defaultRowSelection?: DataSourcePropRowSelection;
 
   cellSelection?:
@@ -620,9 +635,8 @@ export type DataSourceProps<T> = {
 
   isRowDisabled?: (rowInfo: InfiniteTableRowInfo<T>) => boolean;
 
-  isNodeExpanded?: DataSourcePropIsNodeExpanded<T>;
   isRowSelected?: DataSourcePropIsRowSelected<T>;
-  isNodeSelected?: DataSourcePropIsNodeSelected<T>;
+
   // TODO maybe implement isCellSelected?: DataSourcePropIsCellSelected<T>;
 
   lazyLoad?: boolean | { batchSize?: number };
@@ -644,10 +658,6 @@ export type DataSourceProps<T> = {
   groupBy?: DataSourcePropGroupBy<T>;
   defaultGroupBy?: DataSourcePropGroupBy<T>;
   onGroupByChange?: (groupBy: DataSourcePropGroupBy<T>) => void;
-
-  treeExpandState?: TreeExpandState | TreeExpandStateObject<any>;
-  defaultTreeExpandState?: TreeExpandState | TreeExpandStateObject<any>;
-  onTreeExpandStateChange?: (treeExpandState: TreeExpandState) => void;
 
   groupRowsState?: GroupRowsState | DataSourcePropGroupRowsStateObject<any>;
   defaultGroupRowsState?:
@@ -851,6 +861,10 @@ export interface DataSourceState<T>
     DataSourceDerivedState<T>,
     DataSourceMappedState<T> {}
 
+export type DataSourceCallback_BaseParam<T> = {
+  dataSourceApi: DataSourceApi<T>;
+};
+
 export type DataSourceDerivedState<T> = {
   isTree: boolean;
   // TODO pass as second arg the index
@@ -928,3 +942,5 @@ export interface DataSourceAction<T> {
   type: DataSourceActionType;
   payload: T;
 }
+
+export { TreeExpandState };

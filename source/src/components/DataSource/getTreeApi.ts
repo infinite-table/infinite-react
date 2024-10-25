@@ -1,4 +1,4 @@
-import { DataSourceComponentActions } from '.';
+import { DataSourceApi, DataSourceComponentActions } from '.';
 
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { getRowInfoAt } from './dataSourceGetters';
@@ -48,16 +48,16 @@ type TreeSelectionApi = {
   toggleNodeSelection(nodePath: NodePath): void;
 
   selectAll(): void;
+  expandAll(): void;
+  collapseAll(): void;
   deselectAll(): void;
 };
 export type TreeApi<T> = TreeExpandStateApi<T> & TreeSelectionApi;
 
 export type GetTreeApiParam<T> = {
   getState: () => DataSourceState<T>;
-  actions: {
-    treeExpandState: DataSourceComponentActions<T>['treeExpandState'];
-    treeSelection: DataSourceComponentActions<T>['treeSelection'];
-  };
+  dataSourceApi: DataSourceApi<T>;
+  actions: DataSourceComponentActions<T>;
 };
 
 export function treeSelectionStateConfigGetter<T>(
@@ -77,7 +77,7 @@ export function treeSelectionStateConfigGetter<T>(
 }
 
 export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
-  const { getState, actions } = param;
+  const { getState, actions, dataSourceApi } = param;
 
   const setNodeSelection = (nodePath: NodePath, selected: boolean) => {
     const { treeSelectionState: treeSelection, selectionMode } = getState();
@@ -102,7 +102,14 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
     );
 
     treeSelectionState.setNodeSelection(nodePath, selected);
+    getState().lastSelectionUpdatedNodePathRef.current = nodePath;
     actions.treeSelection = treeSelectionState;
+  };
+
+  const getCallbackParam = (_nodePath: NodePath) => {
+    return {
+      dataSourceApi,
+    };
   };
 
   const api = {
@@ -110,27 +117,96 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
       return getState().allRowsSelected;
     },
     isNodeExpanded(nodePath: any[]) {
-      return getState().treeExpandState.isNodeExpanded(nodePath);
+      const state = getState();
+      const { isNodeExpanded, isNodeCollapsed, treeExpandState } = state;
+
+      const rowInfo = this.getRowInfoByPath(nodePath);
+
+      if (rowInfo) {
+        if (!rowInfo.isTreeNode || !rowInfo.isParentNode) {
+          return false;
+        }
+        if (isNodeCollapsed) {
+          return !isNodeExpanded!(rowInfo);
+        }
+        if (isNodeExpanded) {
+          return isNodeExpanded!(rowInfo);
+        }
+      }
+
+      return treeExpandState.isNodeExpanded(nodePath);
+    },
+
+    expandAll() {
+      const treeExpandState = new TreeExpandState<T>({
+        defaultExpanded: true,
+        collapsedPaths: [],
+      });
+
+      getState().lastExpandStateInfoRef.current = {
+        state: 'expanded',
+        nodePath: null,
+      };
+      actions.treeExpandState = treeExpandState;
+    },
+
+    collapseAll() {
+      const treeExpandState = new TreeExpandState<T>({
+        defaultExpanded: false,
+        expandedPaths: [],
+      });
+
+      getState().lastExpandStateInfoRef.current = {
+        state: 'collapsed',
+        nodePath: null,
+      };
+      actions.treeExpandState = treeExpandState;
     },
 
     expandNode(nodePath: any[]) {
       const state = getState();
       const treeExpandState = new TreeExpandState<T>(state.treeExpandState);
       treeExpandState.expandNode(nodePath);
+
+      getState().lastExpandStateInfoRef.current = {
+        state: 'expanded',
+        nodePath,
+      };
       actions.treeExpandState = treeExpandState;
+
+      state.onNodeExpand?.(nodePath, getCallbackParam(nodePath));
     },
     collapseNode(nodePath: any[]) {
       const state = getState();
       const treeExpandState = new TreeExpandState<T>(state.treeExpandState);
       treeExpandState.collapseNode(nodePath);
+
+      getState().lastExpandStateInfoRef.current = {
+        state: 'collapsed',
+        nodePath,
+      };
       actions.treeExpandState = treeExpandState;
+
+      state.onNodeCollapse?.(nodePath, getCallbackParam(nodePath));
     },
+
     toggleNode(nodePath: any[]) {
       const state = getState();
       const treeExpandState = new TreeExpandState<T>(state.treeExpandState);
-      treeExpandState.setNodeExpanded(nodePath, !api.isNodeExpanded(nodePath));
+      const newExpanded = !api.isNodeExpanded(nodePath);
+      treeExpandState.setNodeExpanded(nodePath, newExpanded);
 
+      getState().lastExpandStateInfoRef.current = {
+        state: newExpanded ? 'expanded' : 'collapsed',
+        nodePath,
+      };
       actions.treeExpandState = treeExpandState;
+
+      if (newExpanded) {
+        state.onNodeExpand?.(nodePath, getCallbackParam(nodePath));
+      } else {
+        state.onNodeCollapse?.(nodePath, getCallbackParam(nodePath));
+      }
     },
 
     getNodeDataByPath(nodePath: any[]) {
@@ -168,6 +244,8 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
       );
 
       treeSelectionState.selectAll();
+
+      getState().lastSelectionUpdatedNodePathRef.current = null;
       actions.treeSelection = treeSelectionState;
     },
 
@@ -187,6 +265,7 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
       );
 
       treeSelectionState.deselectAll();
+      getState().lastSelectionUpdatedNodePathRef.current = null;
       actions.treeSelection = treeSelectionState;
     },
     isNodeSelected(nodePath: NodePath) {
@@ -195,6 +274,7 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
       if (selectionMode === 'single-row') {
         const pk = nodePath[nodePath.length - 1];
         if (Array.isArray(treeSelection)) {
+          // @ts-ignore
           return treeSelection.join(',') === nodePath.join(',');
         }
         return (treeSelection as any) === pk;

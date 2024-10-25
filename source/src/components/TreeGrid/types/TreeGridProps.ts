@@ -1,3 +1,4 @@
+import { TreeSelectionState } from '../../DataSource/TreeSelectionState';
 import { InfiniteTableProps } from '../../InfiniteTable/types/InfiniteTableProps';
 
 export type TreeGridOnlyProps<_T> = {};
@@ -28,3 +29,5 @@ export type TreeGridProps<T> = Omit<
   InfiniteTablePropsNotAvailableInTreeGrid
 > &
   TreeGridOnlyProps<T>;
+
+export { TreeSelectionState };

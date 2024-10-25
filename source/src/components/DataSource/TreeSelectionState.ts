@@ -5,19 +5,19 @@ export type NodePath = any[];
 
 export type TreeSelectionStateObject =
   | {
-      selectedNodes: NodePath;
-      deselectedNodes: NodePath;
+      selectedPaths: NodePath;
+      deselectedPaths: NodePath;
       defaultSelection: boolean;
     }
   | {
       defaultSelection: true;
-      deselectedNodes: NodePath;
-      selectedNodes?: NodePath;
+      deselectedPaths: NodePath;
+      selectedPaths?: NodePath;
     }
   | {
       defaultSelection: false;
-      selectedNodes: NodePath;
-      deselectedNodes?: NodePath;
+      selectedPaths: NodePath;
+      deselectedPaths?: NodePath;
     };
 
 export type TreeSelectionStateConfig<_T = any> = {
@@ -37,8 +37,8 @@ type NodeSelectionState = {
 const shortestToLongest = (a: NodePath, b: NodePath) => a.length - b.length;
 
 export class TreeSelectionState<T = any> {
-  selectedNodes: NodePath[] | null = null;
-  deselectedNodes: NodePath[] | null = null;
+  selectedPaths: NodePath[] | null = null;
+  deselectedPaths: NodePath[] | null = null;
 
   defaultSelection: boolean = false;
   selectionMap: DeepMap<NodePath, boolean> = new DeepMap();
@@ -101,17 +101,17 @@ export class TreeSelectionState<T = any> {
   }
 
   update(stateObject: TreeSelectionStateObject) {
-    this.selectedNodes = stateObject.selectedNodes || null;
-    this.deselectedNodes = stateObject.deselectedNodes || null;
+    this.selectedPaths = stateObject.selectedPaths || null;
+    this.deselectedPaths = stateObject.deselectedPaths || null;
 
-    const { selectionMap, selectedNodes, deselectedNodes } = this;
+    const { selectionMap, selectedPaths, deselectedPaths } = this;
 
     selectionMap.clear();
 
-    selectedNodes?.forEach((nodePath) =>
+    selectedPaths?.forEach((nodePath) =>
       this.setSelectionForPath(nodePath, true),
     );
-    deselectedNodes?.forEach((nodePath) =>
+    deselectedPaths?.forEach((nodePath) =>
       this.setSelectionForPath(nodePath, false),
     );
 
@@ -125,36 +125,36 @@ export class TreeSelectionState<T = any> {
   }
 
   public getState(): TreeSelectionStateObject {
-    const selectedNodes: NodePath[] = [];
-    const deselectedNodes: NodePath[] = [];
+    const selectedPaths: NodePath[] = [];
+    const deselectedPaths: NodePath[] = [];
     this.selectionMap.topDownEntries().forEach(([path, value]) => {
       if (value) {
-        selectedNodes.push(path);
+        selectedPaths.push(path);
       } else {
-        deselectedNodes.push(path);
+        deselectedPaths.push(path);
       }
     });
 
     return {
       defaultSelection: this.defaultSelection,
-      selectedNodes,
-      deselectedNodes,
+      selectedPaths,
+      deselectedPaths,
     };
   }
 
   public deselectAll() {
     this.update({
       defaultSelection: false,
-      selectedNodes: [],
-      deselectedNodes: [],
+      selectedPaths: [],
+      deselectedPaths: [],
     });
   }
 
   public selectAll() {
     this.update({
       defaultSelection: true,
-      deselectedNodes: [],
-      selectedNodes: [],
+      deselectedPaths: [],
+      selectedPaths: [],
     });
   }
 

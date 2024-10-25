@@ -1442,18 +1442,22 @@ function completeReducers<DataType>(
   return reducerResults;
 }
 
+export type InfiniteTablePropRepeatWrappedGroupRows<T> =
+  | boolean
+  | ((rowInfo: InfiniteTableRowInfo<T>) => boolean);
+
 export type EnhancedTreeFlattenParam<DataType, KeyType = any> = {
   dataArray: DataType[];
   treeResult: DataTreeResult<DataType, KeyType>;
   treeParams: TreeParams<DataType, KeyType>;
   rowsPerPage?: number | null;
-  repeatWrappedGroupRows?: boolean;
+  repeatWrappedGroupRows?: InfiniteTablePropRepeatWrappedGroupRows<DataType>;
   toPrimaryKey: (data: DataType, index: number) => any;
 
   withRowInfo?: (rowInfo: InfiniteTableRowInfo<DataType>) => void;
 
   isNodeExpanded?: (
-    rowInfo: InfiniteTable_Tree_RowInfoNode<DataType>,
+    rowInfo: InfiniteTable_Tree_RowInfoParentNode<DataType>,
   ) => boolean;
   isNodeSelected?: (
     rowInfo: InfiniteTable_Tree_RowInfoNode<DataType>,
@@ -1483,6 +1487,8 @@ function flattenTreeNodes<DataType>(
     withRowInfo,
     isNodeExpanded,
     treeSelectionState,
+    repeatWrappedGroupRows,
+    rowsPerPage,
   } = params;
   const { deepMap } = treeResult;
 
@@ -1498,8 +1504,6 @@ function flattenTreeNodes<DataType>(
     const key = toPrimaryKey(item, i);
     const nodePath = [...parentPath, key];
     const isLeaf = isLeafNode(item);
-
-    const indexInAll = result.length;
 
     if (isLeaf) {
       const rowInfo: InfiniteTable_Tree_RowInfoLeafNode<DataType> = {
@@ -1534,16 +1538,42 @@ function flattenTreeNodes<DataType>(
         withRowInfo(rowInfo);
       }
 
+      const currentPage =
+        repeatWrappedGroupRows &&
+        rowsPerPage != null &&
+        rowsPerPage > 0 &&
+        rowInfo.indexInAll % rowsPerPage === 0
+          ? rowInfo.indexInAll / rowsPerPage
+          : null;
+
       for (let j = 0, len = parents.length; j < len; j++) {
         const parent = parents[j];
         if (!parentExpanded) {
           parent.collapsedLeafNodesCount += 1;
         }
         parent.deepRowInfoArray.push(rowInfo);
+
+        if (currentPage != null && parentExpanded) {
+          if (
+            typeof repeatWrappedGroupRows === 'function' &&
+            repeatWrappedGroupRows(parent) !== true
+          ) {
+            continue;
+          }
+
+          const duplicateRowInfo = toDuplicateRow(
+            parent,
+            rowInfo.indexInAll,
+            currentPage,
+          );
+
+          result[duplicateRowInfo.indexInAll] = duplicateRowInfo;
+          rowInfo.indexInAll++;
+        }
       }
 
       if (parentExpanded) {
-        result[indexInAll] = rowInfo;
+        result[rowInfo.indexInAll] = rowInfo;
       }
       continue;
     }
@@ -1558,7 +1588,7 @@ function flattenTreeNodes<DataType>(
       nodePath,
       id: key,
       data: item,
-      indexInAll,
+      indexInAll: result.length,
       indexInParent: i,
       indexInParentNodes: [...indexInParentNodes, i],
       totalLeafNodesCount,
@@ -1606,8 +1636,39 @@ function flattenTreeNodes<DataType>(
     }
     rowInfo.nodeExpanded = expanded;
 
+    if (
+      expanded &&
+      parentExpanded &&
+      repeatWrappedGroupRows &&
+      rowsPerPage != null &&
+      rowsPerPage > 0
+    ) {
+      const indexInAll = rowInfo.indexInAll;
+      const currentParents = rowInfo.parentNodes;
+
+      if (currentParents.length > 0 && indexInAll % rowsPerPage === 0) {
+        const currentPage = indexInAll / rowsPerPage;
+
+        let insertCount = 0;
+        // this is not a top-level node, so we can insert duplicate parents
+        currentParents.forEach((parent) => {
+          if (
+            typeof repeatWrappedGroupRows === 'function' &&
+            repeatWrappedGroupRows(parent) !== true
+          ) {
+            return;
+          }
+          result.push(
+            toDuplicateRow(parent, indexInAll + insertCount, currentPage),
+          );
+          insertCount++;
+          rowInfo.indexInAll++;
+        });
+      }
+    }
+
     if (parentExpanded) {
-      result[indexInAll] = rowInfo;
+      result[rowInfo.indexInAll] = rowInfo;
     }
 
     const children = getNodeChildren(item);
@@ -1644,7 +1705,7 @@ export type EnhancedFlattenParam<DataType, KeyType = any> = {
 
   groupResult: DataGroupResult<DataType, KeyType>;
   rowsPerPage?: number | null;
-  repeatWrappedGroupRows?: boolean;
+  repeatWrappedGroupRows?: InfiniteTablePropRepeatWrappedGroupRows<DataType>;
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean | null;
@@ -1764,11 +1825,21 @@ export function enhancedFlatten<DataType, KeyType = any>(
           if (currentParents.length > 0 && indexInAll % rowsPerPage === 0) {
             const currentPage = indexInAll / rowsPerPage;
 
+            let insertCount = 0;
             // this is not a top-level group, so we can insert duplicate parents
-            currentParents.forEach((parent, i) => {
-              result.push(toDuplicateRow(parent, indexInAll + i, currentPage));
+            currentParents.forEach((parent) => {
+              if (
+                typeof repeatWrappedGroupRows === 'function' &&
+                repeatWrappedGroupRows(parent) !== true
+              ) {
+                return;
+              }
+              result.push(
+                toDuplicateRow(parent, indexInAll + insertCount, currentPage),
+              );
+              insertCount++;
+              enhancedGroupData.indexInAll++;
             });
-            enhancedGroupData.indexInAll += currentParents.length;
           }
         }
         result.push(enhancedGroupData);
@@ -1832,12 +1903,18 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 if (currentInsertIndex % rowsPerPage === 0) {
                   const currentPage = currentInsertIndex / rowsPerPage;
 
-                  result.length += parents.length;
                   // for each group, we want to repeat it
                   parents.forEach((parent) => {
+                    if (
+                      typeof repeatWrappedGroupRows === 'function' &&
+                      repeatWrappedGroupRows(parent) !== true
+                    ) {
+                      return;
+                    }
                     const i = startIndex + index + extraArtificialGroupRows;
                     result[i] = toDuplicateRow(parent, i, currentPage);
                     extraArtificialGroupRows++;
+                    result.length++;
                   });
                 }
               }

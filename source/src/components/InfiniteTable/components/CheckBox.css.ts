@@ -6,6 +6,7 @@ export const CheckBoxCls = style([
   cursor.pointer,
   {
     accentColor: ThemeVars.color.accent,
+    verticalAlign: 'middle',
     selectors: {
       '&[disabled]': {
         opacity: 0.7,

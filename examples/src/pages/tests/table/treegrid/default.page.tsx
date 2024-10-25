@@ -35,7 +35,7 @@ export default function DataTestPage() {
         selectionMode="multi-row"
         defaultTreeSelection={{
           defaultSelection: false,
-          selectedNodes: [
+          selectedPaths: [
             ['1', '4', '5'],
             ['1', '3'],
           ],

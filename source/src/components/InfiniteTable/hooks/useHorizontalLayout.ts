@@ -6,7 +6,7 @@ export function useHorizontalLayout() {
   const { getState, actions, dataSourceActions, getDataSourceState } =
     useInfiniteTable();
 
-  const { groupBy } = getDataSourceState();
+  const { groupBy, isTree } = getDataSourceState();
   const { brain, wrapRowsHorizontally, repeatWrappedGroupRows } = getState();
 
   useEffect(() => {
@@ -24,15 +24,18 @@ export function useHorizontalLayout() {
 
       const rowsPerPage = brain.rowsPerPage;
       const newRowsPerPage =
-        groupBy && groupBy.length > 0 && rowsPerPage > 0 ? rowsPerPage : null;
+        ((groupBy && groupBy.length > 0) || isTree) && rowsPerPage > 0
+          ? rowsPerPage
+          : null;
 
       if (currentRowsPerPage != newRowsPerPage) {
         dataSourceActions.rowsPerPage = newRowsPerPage;
         changes = true;
       }
 
-      if (currentRepeatWrappedGroupRows != !!repeatWrappedGroupRows) {
-        dataSourceActions.repeatWrappedGroupRows = !!repeatWrappedGroupRows;
+      if (currentRepeatWrappedGroupRows != repeatWrappedGroupRows) {
+        dataSourceActions.repeatWrappedGroupRows =
+          repeatWrappedGroupRows ?? false;
         changes = true;
       }
 
@@ -59,5 +62,5 @@ export function useHorizontalLayout() {
       }
       off();
     };
-  }, [brain, wrapRowsHorizontally, groupBy, repeatWrappedGroupRows]);
+  }, [brain, wrapRowsHorizontally, groupBy, isTree, repeatWrappedGroupRows]);
 }

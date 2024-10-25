@@ -5,6 +5,7 @@ import {
   InfiniteTableRowInfo,
   InfiniteTable_NoGrouping_RowInfoNormal,
   InfiniteTable_Tree_RowInfoNode,
+  InfiniteTable_Tree_RowInfoParentNode,
   lazyGroup,
 } from '../../../utils/groupAndPivot';
 import {
@@ -372,6 +373,7 @@ export function concludeReducer<T>(params: {
       'originalLazyGroupDataChangeDetect',
       'treeExpandState',
       'isNodeExpanded',
+      'isNodeCollapsed',
       'aggregationReducers',
       'repeatWrappedGroupRows',
       'rowsPerPage',
@@ -494,21 +496,22 @@ export function concludeReducer<T>(params: {
   }
 
   let isNodeExpanded:
-    | ((rowInfo: InfiniteTableRowInfo<T>) => boolean)
-    | undefined = (rowInfo: InfiniteTableRowInfo<T>) => {
-    if (rowInfo.isTreeNode && rowInfo.isParentNode) {
+    | ((rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>) => boolean)
+    | undefined = state.isNodeExpanded;
+
+  if (state.isNodeCollapsed) {
+    isNodeExpanded = (rowInfo) => !state.isNodeExpanded!(rowInfo);
+  }
+
+  if (!isNodeExpanded) {
+    const defaultIsRowExpanded = (rowInfo: InfiniteTableRowInfo<T>) => {
+      if (!rowInfo.isTreeNode || !rowInfo.isParentNode) {
+        return false;
+      }
       return treeExpandState!.isNodeExpanded(rowInfo.nodePath);
-    }
+    };
 
-    return false;
-  };
-
-  if (state.isNodeExpanded) {
-    isNodeExpanded = (rowInfo) =>
-      rowInfo.isTreeNode && rowInfo.isParentNode
-        ? state.isNodeExpanded!(rowInfo, treeExpandState as TreeExpandState) ||
-          false
-        : false;
+    isNodeExpanded = defaultIsRowExpanded;
   }
 
   const rowInfoReducers = state.rowInfoReducers!;
@@ -595,7 +598,7 @@ export function concludeReducer<T>(params: {
         withRowInfo,
 
         repeatWrappedGroupRows:
-          state.repeatWrappedGroupRows && state.rowsPerPage != null,
+          state.rowsPerPage != null ? state.repeatWrappedGroupRows : false,
         rowsPerPage: state.rowsPerPage,
 
         groupRowsState: state.groupRowsState,
@@ -721,6 +724,9 @@ export function concludeReducer<T>(params: {
             }
           : undefined;
 
+      const repeatWrappedGroupRows =
+        state.rowsPerPage != null ? state.repeatWrappedGroupRows : false;
+
       const flattenResult = enhancedTreeFlatten({
         treeResult,
         treeParams,
@@ -734,8 +740,7 @@ export function concludeReducer<T>(params: {
 
         withRowInfo,
 
-        repeatWrappedGroupRows:
-          state.repeatWrappedGroupRows && state.rowsPerPage != null,
+        repeatWrappedGroupRows,
         rowsPerPage: state.rowsPerPage,
       });
 
