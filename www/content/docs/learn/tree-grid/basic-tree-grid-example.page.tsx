@@ -77,7 +77,16 @@ const dataSource = () => {
       name: 'Desktop',
       sizeInKB: 1000,
       type: 'folder',
-      children: [],
+      children: [
+        {
+          id: '20',
+          name: 'unknown.txt',
+          sizeInKB: 100,
+          type: 'file',
+          extension: 'txt',
+          mimeType: 'text/plain',
+        },
+      ],
     },
     {
       id: '3',
@@ -87,7 +96,7 @@ const dataSource = () => {
       children: [
         {
           id: '30',
-          name: 'Music',
+          name: 'Music - empty',
           sizeInKB: 0,
           type: 'folder',
           children: [],
