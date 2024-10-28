@@ -293,6 +293,7 @@ export interface InfiniteTableMappedState<T> {
 }
 
 export interface InfiniteTableDerivedState<T> {
+  isTree: boolean;
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Record<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];

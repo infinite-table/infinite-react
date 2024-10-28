@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback, useContext, useMemo } from 'react';
 import { once } from '../../../../utils/DeepMap/once';
+import { InfiniteTable_Tree_RowInfoBase } from '../../../../utils/groupAndPivot';
 // const once = (fn: Function) => fn;
 
 import { join } from '../../../../utils/join';
@@ -20,6 +21,7 @@ import type {
   InfiniteTableColumnClassName,
   InfiniteTableColumnStylingFnParams,
   InfiniteTableColumnStyle,
+  InfiniteTableColumn,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
@@ -28,6 +30,7 @@ import {
   CellEditorContextComponent,
   RenderCellHookComponent,
 } from '../../utils/RenderHookComponentForInfinite';
+import { ThemeVars } from '../../vars.css';
 import {
   ColumnCellRecipe,
   ColumnCellSelectionIndicatorRecipe,
@@ -47,10 +50,25 @@ import {
   InfiniteTableColumnCellProps,
 } from './InfiniteTableCellTypes';
 import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
+import { TreeColumnCellExpanderCls } from './row.css';
 
 const { rootClassName } = internalProps;
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
+
+export function styleForTreeColumn<T>({
+  rowInfo,
+}: {
+  rowInfo: InfiniteTable_Tree_RowInfoBase<T>;
+}) {
+  return {
+    [stripVar(ThemeVars.components.Row.groupNesting)]: rowInfo.isTreeNode
+      ? rowInfo.isParentNode
+        ? rowInfo.treeNesting
+        : rowInfo.treeNesting + 1
+      : 0,
+  };
+}
 
 export const InfiniteTableColumnCellContext = React.createContext<
   InfiniteTableColumnCellContextType<any>
@@ -73,6 +91,24 @@ export const defaultRenderRowDetailIcon: InfiniteTableColumnRenderFunction<
     />
   );
 };
+
+const EXPANDER_STYLE: React.CSSProperties = {
+  display: 'inline-block',
+  visibility: 'visible',
+};
+
+export const defaultRenderTreeIcon: InfiniteTableColumn<any>['renderTreeIcon'] =
+  (params) => {
+    const { toggleCurrentTreeNode, nodeExpanded } = params;
+
+    return (
+      <ExpanderIcon
+        style={EXPANDER_STYLE}
+        expanded={nodeExpanded}
+        onChange={toggleCurrentTreeNode}
+      />
+    );
+  };
 export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   any
 > = (params) => {
@@ -82,6 +118,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
     deselectCurrentRow,
     toggleCurrentGroupRowSelection,
     column,
+    dataSourceApi,
     api,
   } = params;
 
@@ -101,6 +138,13 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
         className: SelectionCheckboxCls,
       }}
       onChange={(selected) => {
+        if (rowInfo.isTreeNode) {
+          dataSourceApi.treeApi.setNodeSelection(
+            rowInfo.nodePath,
+            selected ?? false,
+          );
+          return;
+        }
         if (rowInfo.isGroupRow) {
           toggleCurrentGroupRowSelection();
           return;
@@ -289,6 +333,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   renderParam.domRef = domRef;
   renderParam.htmlElementRef = htmlElementRef;
 
+  renderParam.toggleCurrentTreeNode = useCallback(
+    renderParam.toggleCurrentTreeNode,
+    [rowInfo],
+  );
+
   renderParam.selectCell = useCallback(renderParam.selectCell, [rowInfo]);
   renderParam.deselectCell = useCallback(renderParam.deselectCell, [rowInfo]);
 
@@ -308,6 +357,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   );
   renderParam.toggleCurrentGroupRowSelection = useCallback(
     renderParam.toggleCurrentGroupRowSelection,
+    [rowInfo],
+  );
+
+  renderParam.toggleCurrentTreeNodeSelection = useCallback(
+    renderParam.toggleCurrentTreeNodeSelection,
     [rowInfo],
   );
 
@@ -365,6 +419,40 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           renderParam.renderBag.selectionCheckBox = (
             <RenderCellHookComponent
               render={renderFunctions.renderSelectionCheckBox}
+              renderParam={{
+                ...renderParam,
+                renderBag: { ...renderParam.renderBag },
+              }}
+            />
+          );
+        }
+      }
+
+      if (rowInfo.isTreeNode) {
+        const { isParentNode } = rowInfo;
+        let fn: Function | boolean | undefined = undefined;
+
+        const renderForNodeOrLeaf = isParentNode
+          ? renderFunctions.renderTreeIconForParentNode
+          : renderFunctions.renderTreeIconForLeafNode;
+
+        fn =
+          renderForNodeOrLeaf ||
+          // for parents, fallback to the renderTreeIcon as well
+          (isParentNode ? renderFunctions.renderTreeIcon : undefined);
+
+        if (fn === true) {
+          fn = defaultRenderTreeIcon;
+        }
+
+        if (!fn) {
+          fn = undefined;
+        }
+
+        if (fn) {
+          renderParam.renderBag.treeIcon = (
+            <RenderCellHookComponent
+              render={fn as Function}
               renderParam={{
                 ...renderParam,
                 renderBag: { ...renderParam.renderBag },
@@ -444,6 +532,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       }
       const all = (
         <>
+          {align !== 'end' ? renderParam.renderBag.treeIcon : null}
           {align !== 'end' ? renderParam.renderBag.groupIcon : null}
           {align !== 'end' ? renderParam.renderBag.rowDetailsIcon : null}
           {align !== 'end' ? renderParam.renderBag.selectionCheckBox : null}
@@ -452,6 +541,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           {align === 'end' ? renderParam.renderBag.selectionCheckBox : null}
           {align === 'end' ? renderParam.renderBag.rowDetailsIcon : null}
           {align === 'end' ? renderParam.renderBag.groupIcon : null}
+          {align === 'end' ? renderParam.renderBag.treeIcon : null}
         </>
       );
 
@@ -484,6 +574,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         toggleCurrentRowDetails: true,
         toggleCurrentRowSelection: true,
         toggleCurrentGroupRowSelection: true,
+        toggleCurrentTreeNodeSelection: true,
+        toggleCurrentTreeNode: true,
         rowHasSelectedCells: true,
       }),
     ],
@@ -507,6 +599,12 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       return rowInfo.hasSelectedCells(visibleColumnIds);
     },
   });
+
+  const columnIsTree =
+    rowInfo.isTreeNode &&
+    (column.renderTreeIcon ||
+      column.renderTreeIconForLeafNode ||
+      column.renderTreeIconForParentNode);
 
   const rowComputedClassName =
     typeof rowClassName === 'function'
@@ -534,10 +632,23 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     );
   }
 
+  if (columnIsTree) {
+    colClassName = join(
+      colClassName,
+      TreeColumnCellExpanderCls({
+        align,
+      }),
+    );
+  }
+
   let style: React.CSSProperties | undefined;
 
   if (rowInfo.dataSourceHasGrouping && column.groupByForColumn) {
     style = styleForGroupColumn({ rowInfo });
+  }
+
+  if (columnIsTree) {
+    style = styleForTreeColumn({ rowInfo });
   }
 
   if (rowStyle) {
@@ -663,6 +774,11 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
           rowActive,
           cellSelected,
           rowSelected,
+          treeNode: rowInfo.isTreeNode
+            ? rowInfo.isParentNode
+              ? 'parent'
+              : 'leaf'
+            : false,
           firstRow: rowInfo.indexInAll === 0,
           firstRowInHorizontalLayoutPage: rowIndexInHorizontalLayoutPage === 0,
           groupRow: rowInfo.isGroupRow,

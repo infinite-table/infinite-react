@@ -4,6 +4,7 @@ import type { KeyboardEvent } from 'react';
 import {
   AggregationReducer,
   InfiniteTableRowInfoDataDiscriminator,
+  InfiniteTablePropRepeatWrappedGroupRows,
 } from '../../../utils/groupAndPivot';
 import {
   DataSourceApi,
@@ -615,7 +616,7 @@ export interface InfiniteTableProps<T> {
 
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 
-  repeatWrappedGroupRows?: boolean;
+  repeatWrappedGroupRows?: InfiniteTablePropRepeatWrappedGroupRows<T>;
 
   viewportReservedWidth?: number;
   onViewportReservedWidthChange?: (viewportReservedWidth: number) => void;

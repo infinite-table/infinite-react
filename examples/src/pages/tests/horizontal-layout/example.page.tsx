@@ -203,7 +203,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   //   columnGroup: 'colgroup',
   // },
   // currency: { field: 'currency', style, columnGroup: 'colgroup' },
-  // country: { field: 'country', style, columnGroup: 'colgroup' },
+  country: { field: 'country' },
 };
 
 // const render: InfiniteTableColumn<Developer>['render'] = ({
@@ -296,7 +296,7 @@ export default () => {
   const [cols, setCols] = React.useState(columns);
   const [wrapRowsHorizontally, setWrapRowsHorizontally] = React.useState(true);
   return (
-    <>
+    <div className="bg-black flex flex-col gap-2">
       {Object.keys(columns).map((colId) => {
         return (
           <label key={colId}>
@@ -321,6 +321,7 @@ export default () => {
         );
       })}
       <button
+        className="bg-white text-black"
         onClick={() => {
           setWrapRowsHorizontally((x) => !x);
         }}
@@ -328,6 +329,7 @@ export default () => {
         toggle
       </button>
       <button
+        className="bg-white text-black"
         onClick={() => {
           dataSourceApi?.updateData({
             id: 16,
@@ -373,9 +375,18 @@ export default () => {
             //   },
             // }}
             wrapRowsHorizontally={wrapRowsHorizontally}
+            repeatWrappedGroupRows={(rowInfo) => {
+              if (!rowInfo.isGroupRow) {
+                return false;
+              }
+              // return true;
+              const res = rowInfo.groupNesting === 2;
+
+              return res;
+            }}
             columnDefaultWidth={200}
             columnDefaultEditable
-            defaultActiveRowIndex={168}
+            // defaultActiveRowIndex={168}
             keyboardNavigation="row"
             domProps={{
               style: {
@@ -386,6 +397,6 @@ export default () => {
           />
         </DataSource>
       </React.StrictMode>
-    </>
+    </div>
   );
 };

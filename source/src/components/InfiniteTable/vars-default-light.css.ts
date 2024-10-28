@@ -139,7 +139,7 @@ const RowVars = {
   [ThemeVars.components.Row.selectedBackground]: '#d1e9ff',
   [ThemeVars.components.Row.selectedHoverBackground]: '#add8ff',
   [ThemeVars.components.Row.groupRowBackground]: '#cbc5c5',
-  [ThemeVars.components.Row.groupRowColumnNesting]: '30px',
+  [ThemeVars.components.Row.groupRowColumnNesting]: '24px', // for best alignment, this should be the size of the group/tree icon
   [ThemeVars.components.Row.hoverBackground]: '#dbdbdb',
   [ThemeVars.components.Row.pointerEventsWhileScrolling]: 'auto',
 };

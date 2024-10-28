@@ -29,3 +29,19 @@ export const GroupRowExpanderCls = recipe({
     },
   },
 });
+
+export const TreeColumnCellExpanderCls = recipe({
+  variants: {
+    align: {
+      start: {
+        paddingInlineStart: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+      },
+      center: {
+        paddingInlineStart: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+      },
+      end: {
+        paddingInlineEnd: `calc(${ThemeVars.components.Row.groupNesting} * ${ThemeVars.components.Row.groupRowColumnNesting})`,
+      },
+    },
+  },
+});

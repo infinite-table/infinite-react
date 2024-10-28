@@ -181,6 +181,11 @@ export const HeaderCellRecipe = recipe({
       false: {},
       true: {},
     },
+    treeNode: {
+      parent: {},
+      leaf: {},
+      false: {},
+    },
     firstRowInHorizontalLayoutPage: {
       false: {},
       true: {},

@@ -13,6 +13,7 @@ export function useCellClassName<T>(
   extraFlags: {
     insideDisabledDraggingPage: boolean;
     groupRow: boolean;
+    treeNode: 'parent' | 'leaf' | false;
     firstRow: boolean;
     firstRowInHorizontalLayoutPage: boolean;
     groupCell: boolean;
@@ -47,6 +48,7 @@ export function useCellClassName<T>(
     rowDisabled: extraFlags.rowDisabled,
     groupRow: extraFlags.groupRow,
     groupCell: extraFlags.groupCell,
+    treeNode: extraFlags.treeNode,
     verticalAlign: extraFlags.verticalAlign,
     align: extraFlags.align,
     zebra: extraFlags.zebra,
@@ -89,6 +91,14 @@ export function useCellClassName<T>(
 
   if (extraFlags.rowDisabled) {
     result.push(...baseClasses.map((c) => `${c}--disabled`));
+  }
+
+  if (extraFlags.treeNode) {
+    result.push(
+      ...baseClasses.map(
+        (c) => `${c}--tree-node ${c}-tree-${extraFlags.treeNode}-node`,
+      ),
+    );
   }
 
   if (extraFlags.groupRow) {

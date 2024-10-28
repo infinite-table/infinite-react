@@ -32,7 +32,7 @@ export function handleRowNavigation<T>(
     key: string;
   },
 ) {
-  const { getState, getDataSourceState, actions, api } = options;
+  const { getState, getDataSourceState, actions, api, dataSourceApi } = options;
   const { key } = event;
   const dataArray = getDataSourceState().dataArray;
   const arrLength = dataArray.length;
@@ -116,6 +116,10 @@ export function handleRowNavigation<T>(
       if (rowInfo && rowInfo.isGroupRow) {
         return api.toggleGroupRow(rowInfo.groupKeys);
       }
+
+      if (rowInfo && rowInfo.isTreeNode && rowInfo.isParentNode) {
+        return dataSourceApi.treeApi.toggleNode(rowInfo.nodePath);
+      }
       const hasRowDetail = api.rowDetailApi.isRowDetailEnabledForRow(
         rowInfo.id,
       );
@@ -170,6 +174,7 @@ export function handleCellNavigation<T>(
     getState,
     getComputed,
     getDataSourceState,
+    dataSourceApi,
     actions,
   } = options;
   const { key, shiftKey } = event;
@@ -251,6 +256,10 @@ export function handleCellNavigation<T>(
       const rowInfo = dataArray[rowIndex];
       if (rowInfo && rowInfo.isGroupRow) {
         return api.toggleGroupRow(rowInfo.groupKeys);
+      }
+
+      if (rowInfo && rowInfo.isTreeNode && rowInfo.isParentNode) {
+        return dataSourceApi.treeApi.toggleNode(rowInfo.nodePath);
       }
       if (rowInfo && api.rowDetailApi.isRowDetailEnabledForRow(rowInfo.id)) {
         return api.rowDetailApi.toggleRowDetail(rowInfo.id);

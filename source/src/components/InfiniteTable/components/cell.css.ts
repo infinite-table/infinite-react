@@ -259,6 +259,11 @@ export const ColumnCellRecipe = recipe({
       false: {},
     },
     cellSelected: { false: {}, true: {} },
+    treeNode: {
+      parent: {},
+      leaf: {},
+      false: {},
+    },
     align: {
       start: {},
       end: {

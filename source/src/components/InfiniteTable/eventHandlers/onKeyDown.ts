@@ -5,6 +5,7 @@ import { handleKeyboardSelection } from './keyboardSelection';
 import { cloneRowSelection } from '../api/getRowSelectionApi';
 import { handleBrowserFocusChangeOnKeyboardNavigation } from './handleBrowserFocusChangeOnKeyboardNavigation';
 import { eventMatchesKeyboardShortcut } from '../../utils/hotkey';
+import { cloneTreeSelection } from '../../DataSource/getTreeApi';
 
 export async function onKeyDown<T>(
   context: InfiniteTableKeyboardEventHandlerContext<T>,
@@ -14,6 +15,9 @@ export async function onKeyDown<T>(
     ...context,
     cloneRowSelection: (rowSelection) => {
       return cloneRowSelection<T>(rowSelection, context.getDataSourceState);
+    },
+    cloneTreeSelection: (treeSelection) => {
+      return cloneTreeSelection<T>(treeSelection, context.getDataSourceState);
     },
   };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { multisort } from '../../utils/multisort';
+import { multisort, multisortNested } from '../../utils/multisort';
 import { buildManagedComponent } from '../hooks/useComponentState';
 
 import { defaultFilterTypes } from './defaultFilterTypes';
@@ -58,26 +58,6 @@ function DataSource<T>(props: DataSourceProps<T>) {
 
   return <DataSourceComponent>{props.children ?? null}</DataSourceComponent>;
 }
-// function DataSource<T>(props: DataSourceProps<T>) {
-//   const masterContext = useMasterDetailContext();
-
-//   const isDetail = !!masterContext;
-//   // when we are in a detail DataSource, we want to have a key
-//   // dependent on the master row info
-//   // since we dont want to recycle and reuse the DataSource of a detail row
-//   // for the DataSource of another detail row (for example, when you scroll the DataGrid
-//   // while having more details expanded)
-//   // so making sure the key is unique for each detail row is important
-//   // and mandatory to ensure correctness
-//   const key = isDetail ? masterContext.masterRowInfo.id : 'master';
-
-//   return (
-//     <ManagedDataSourceContextProvider {...props} key={key}>
-//       <DataSourceCmp children={props.children} isDetail={isDetail} />
-//     </ManagedDataSourceContextProvider>
-//   );
-// }
-// console.log(_DataSource);
 
 // TODO document this
 function useRowInfoReducers() {
@@ -105,6 +85,7 @@ export {
   CellSelectionState,
   RowDisabledState,
   multisort,
+  multisortNested,
   defaultFilterTypes as filterTypes,
   useRowInfoReducers,
   useMasterRowInfo,

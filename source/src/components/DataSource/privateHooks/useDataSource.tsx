@@ -19,8 +19,8 @@ import { getDataSourceApi } from '../getDataSourceApi';
 import { useLoadData } from './useLoadData';
 import { useMasterDetailContext } from '../publicHooks/useDataSourceState';
 
-export function useDataSourceInternal<T>(
-  props: Omit<DataSourceProps<T>, 'children'>,
+export function useDataSourceInternal<T, PROPS_TYPE = DataSourceProps<T>>(
+  props: Omit<PROPS_TYPE, 'children'>,
 ) {
   const masterContext = useMasterDetailContext();
   const getDataSourceMasterContext = useLatest(masterContext);
@@ -68,8 +68,7 @@ export function useDataSourceInternal<T>(
   const DataSourceContext = getDataSourceContext<T>();
 
   const DataSource = useCallback(
-    ({ children }: { children: DataSourceChildren<T> }) => {
-      // console.log('new datasource');
+    ({ children }: { children: DataSourceChildren<T>; nodesKey?: string }) => {
       if (typeof children === 'function') {
         children = children(getState());
       }
@@ -138,6 +137,20 @@ export function useDataSourceInternal<T>(
             : undefined,
         dataArray: componentState.originalDataArray,
         mutations: componentState.originalDataArrayChangedInfo.mutations,
+        timestamp: componentState.originalDataArrayChangedInfo.timestamp,
+      });
+    }
+
+    if (
+      componentState.onTreeDataMutations &&
+      componentState.originalDataArrayChangedInfo.treeMutations &&
+      componentState.originalDataArrayChangedInfo.treeMutations.size
+    ) {
+      componentState.onTreeDataMutations({
+        nodesKey: componentState.nodesKey ? componentState.nodesKey : undefined,
+        dataArray: componentState.originalDataArray,
+        treeMutations:
+          componentState.originalDataArrayChangedInfo.treeMutations,
         timestamp: componentState.originalDataArrayChangedInfo.timestamp,
       });
     }

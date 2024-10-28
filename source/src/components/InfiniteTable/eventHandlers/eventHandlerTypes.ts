@@ -5,6 +5,7 @@ import {
   DataSourceApi,
   DataSourceMasterDetailContextValue,
 } from '../../DataSource';
+import { TreeSelectionState } from '../../DataSource/TreeSelectionState';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
 import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
 import {
@@ -30,14 +31,21 @@ export type InfiniteTableEventHandlerAbstractContext<T> = {
   cloneRowSelection: (
     rowSelection: RowSelectionState<T>,
   ) => RowSelectionState<T>;
+  cloneTreeSelection: (
+    treeSelection: TreeSelectionState<T>,
+  ) => TreeSelectionState<T>;
   getDataSourceState: () => {
     rowSelection: DataSourceState<T>['rowSelection'];
+    treeSelectionState?: DataSourceState<T>['treeSelection'];
     cellSelection: DataSourceState<T>['cellSelection'];
     groupBy: DataSourceState<T>['groupBy'];
     selectionMode: DataSourceState<T>['selectionMode'];
+    isTree: DataSourceState<T>['isTree'];
     dataArray: {
       id: string;
       isGroupRow: boolean;
+      isTreeNode: boolean;
+      nodePath?: any[];
       groupKeys?: any[];
       rowDisabled: boolean;
     }[];
@@ -57,6 +65,9 @@ export type InfiniteTableEventHandlerContext<T> = {
   cloneRowSelection: (
     rowSelection: RowSelectionState<T>,
   ) => RowSelectionState<T>;
+  cloneTreeSelection: (
+    treeSelection: TreeSelectionState<T>,
+  ) => TreeSelectionState<T>;
   getDataSourceState: () => DataSourceState<T>;
   getDataSourceMasterContext: () =>
     | DataSourceMasterDetailContextValue

@@ -5,8 +5,13 @@ import {
   DataSourceDataParams,
   DataSourcePropOnCellSelectionChange_MultiCell,
   DataSourcePropOnCellSelectionChange_SingleCell,
+  DataSourcePropOnRowSelectionChange_SingleRow,
+  DataSourcePropOnTreeSelectionChange_MultiNode,
+  DataSourcePropOnTreeSelectionChange_SingleNode,
   DataSourcePropShouldReloadData,
   DataSourcePropShouldReloadDataObject,
+  DataSourcePropTreeSelection,
+  DataSourcePropTreeSelection_SingleNode,
   DataSourceRowInfoReducer,
   RowDisabledStateObject,
   RowSelectionState,
@@ -45,12 +50,19 @@ import {
   LazyRowInfoGroup,
   DataSourceFilterOperator,
   DataSourcePropOnRowSelectionChange_MultiRow,
-  DataSourcePropOnRowSelectionChange_SingleRow,
   DataSourcePropSelectionMode,
 } from '../types';
 
 import { normalizeSortInfo } from './normalizeSortInfo';
 import { RowDisabledState } from '../RowDisabledState';
+import { TreeDataSourceProps } from '../../TreeGrid/types/TreeDataSourceProps';
+import { NodePath, TreeExpandState } from '../TreeExpandState';
+import {
+  TreeSelectionState,
+  TreeSelectionStateObject,
+} from '../TreeSelectionState';
+import { treeSelectionStateConfigGetter } from '../getTreeApi';
+import { NonUndefined } from '../../types/NonUndefined';
 
 const DataSourceLogger = dbg('DataSource') as DebugLogger;
 
@@ -69,6 +81,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   return {
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
+    totalLeafNodesCount: 0,
+    __apiRef: { current: null },
 
     repeatWrappedGroupRows: false,
 
@@ -76,7 +90,17 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
       current: false,
     },
 
+    lastSelectionUpdatedNodePathRef: { current: null },
+    lastExpandStateInfoRef: {
+      current: {
+        state: 'collapsed',
+        nodePath: null,
+      },
+    },
+
     idToIndexMap: new Map<any, number>(),
+    idToPathMap: new Map<any, NodePath>(),
+    pathToIndexDeepMap: new DeepMap<any, number>(),
 
     getDataSourceMasterContextRef: { current: () => undefined },
 
@@ -123,6 +147,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     updatedAt: now,
     groupedAt: 0,
     sortedAt: 0,
+    treeAt: 0,
     filteredAt: 0,
     reducedAt: now,
     generateGroupRows: true,
@@ -154,12 +179,28 @@ const EMPTY_ARRAY: any[] = [];
 
 export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   state.destroyedRef.current = true;
+
+  state.__apiRef.current = null;
+  state.lastSelectionUpdatedNodePathRef.current = null;
+  state.lastExpandStateInfoRef.current = {
+    state: 'collapsed',
+    nodePath: null,
+  };
+  state.treeExpandState?.destroy();
+  state.treePaths?.clear();
+  state.pathToIndexDeepMap?.clear();
+  state.rowDisabledState?.destroy();
+  state.groupRowsState?.destroy();
+  state.treeSelectionState?.destroy();
+  state.idToPathMap.clear();
+  state.idToIndexMap.clear();
 };
 
 export const forwardProps = <T>(
   setupState: DataSourceSetupState<T>,
+  props: DataSourceProps<T> & TreeDataSourceProps<T>,
 ): ForwardPropsToStateFnResult<
-  DataSourceProps<T>,
+  DataSourceProps<T> & TreeDataSourceProps<T>,
   DataSourceMappedState<T>,
   DataSourceSetupState<T>
 > => {
@@ -171,9 +212,14 @@ export const forwardProps = <T>(
     lazyLoad: (lazyLoad) => !!lazyLoad,
     data: 1,
     debugId: 1,
+    nodesKey: 1,
+    isNodeExpanded: 1,
+    isNodeCollapsed: 1,
     pivotBy: 1,
     primaryKey: 1,
+    debugMode: 1,
     livePagination: 1,
+    treeSelection: 1,
     refetchKey: (refetchKey) => refetchKey ?? '',
     filterFunction: 1,
     filterValue: 1,
@@ -196,10 +242,18 @@ export const forwardProps = <T>(
           state.idToIndexMap.clear();
         },
         reducer: (_, rowInfo) => {
+          if (
+            props.debugMode &&
+            !props.nodesKey &&
+            state.idToIndexMap.has(rowInfo.id)
+          ) {
+            console.warn(`Duplicate id found in data source: ${rowInfo.id}`);
+          }
           state.idToIndexMap.set(rowInfo.id, rowInfo.indexInAll);
         },
       };
-      return reducers
+
+      const result = reducers
         ? {
             ...reducers,
             __idToIndex: idToIndexReducer,
@@ -207,9 +261,45 @@ export const forwardProps = <T>(
         : {
             __idToIndex: idToIndexReducer,
           };
+
+      if (props.nodesKey) {
+        const pathToIndexReducer: DataSourceRowInfoReducer<T> = {
+          initialValue: () => {
+            state.idToPathMap.clear();
+            state.pathToIndexDeepMap.clear();
+          },
+          reducer: (_, rowInfo) => {
+            if (rowInfo.isTreeNode) {
+              state.idToPathMap.set(rowInfo.id, rowInfo.nodePath);
+              if (
+                props.debugMode &&
+                state.pathToIndexDeepMap.has(rowInfo.nodePath)
+              ) {
+                console.warn(
+                  `Duplicate node path found in data source (debugId: ${
+                    props.debugId || 'none'
+                  }): ${rowInfo.nodePath}`,
+                );
+              }
+              state.pathToIndexDeepMap.set(
+                rowInfo.nodePath,
+                rowInfo.indexInAll,
+              );
+            }
+          },
+        };
+        //@ts-ignore ignore
+        result.__pathToIndex = pathToIndexReducer;
+      }
+
+      return result;
     },
+
+    onNodeCollapse: 1,
+    onNodeExpand: 1,
     batchOperationDelay: 1,
     isRowSelected: 1,
+    isNodeSelected: 1,
     isRowDisabled: 1,
     rowDisabledState: (
       rowDisabledState:
@@ -241,6 +331,7 @@ export const forwardProps = <T>(
     },
     onDataArrayChange: 1,
     onDataMutations: 1,
+    onTreeDataMutations: 1,
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,
@@ -300,6 +391,56 @@ function toShouldReloadObject<T>(
   return result;
 }
 
+const treeSelectionStateDefaultObject: TreeSelectionStateObject = {
+  selectedPaths: [],
+  deselectedPaths: [],
+  defaultSelection: false,
+};
+
+export function getTreeSelectionState<T>(
+  currentTreeSelection: DataSourcePropTreeSelection | undefined,
+  selectionMode: DataSourcePropSelectionMode,
+  state: DataSourceState<T>,
+) {
+  if (selectionMode != 'multi-row') {
+    throw new Error(
+      `TreeSelectionState is only supported for multi-row selection. Your current selection mode is "${selectionMode}". See https://infinite-table.com/docs/reference/datasource-props#selectionMode for details. \n\n\n`,
+    );
+  }
+
+  const config = treeSelectionStateConfigGetter(state);
+
+  if (currentTreeSelection instanceof TreeSelectionState) {
+    currentTreeSelection.setConfigFn(config);
+    return currentTreeSelection;
+  }
+
+  if (
+    currentTreeSelection === null ||
+    currentTreeSelection === undefined ||
+    typeof currentTreeSelection != 'object'
+  ) {
+    currentTreeSelection = undefined;
+  }
+
+  const treeSelectionStateObject =
+    (currentTreeSelection as TreeSelectionStateObject | null) ??
+    treeSelectionStateDefaultObject;
+
+  let instance: TreeSelectionState = weakMap.get(treeSelectionStateObject);
+
+  if (instance) {
+    instance.setConfigFn(config);
+  }
+
+  instance =
+    instance ?? new TreeSelectionState(treeSelectionStateObject, config);
+
+  weakMap.set(treeSelectionStateObject, instance);
+
+  return instance;
+}
+
 export function deriveStateFromProps<T extends any>(params: {
   props: DataSourceProps<T>;
 
@@ -307,6 +448,8 @@ export function deriveStateFromProps<T extends any>(params: {
   oldState: DataSourceState<T> | null;
 }): DataSourceDerivedState<T> {
   const { props, state, oldState } = params;
+
+  const isTree = !!state.nodesKey;
 
   const controlledSort = isControlledValue(props.sortInfo);
   const controlledFilter = isControlledValue(props.filterValue);
@@ -373,33 +516,35 @@ export function deriveStateFromProps<T extends any>(params: {
         : null
       : state.cellSelection || null;
 
-  if (selectionMode !== false) {
-    if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
-      if (currentRowSelection === null) {
-        rowSelectionState =
-          selectionMode === 'single-row'
-            ? null
-            : new RowSelectionState(
-                {
-                  selectedRows: [],
-                  deselectedRows: [],
-                  defaultSelection: false,
-                },
+  if (!isTree) {
+    if (selectionMode !== false) {
+      if (selectionMode === 'single-row' || selectionMode === 'multi-row') {
+        if (currentRowSelection === null) {
+          rowSelectionState =
+            selectionMode === 'single-row'
+              ? null
+              : new RowSelectionState(
+                  {
+                    selectedRows: [],
+                    deselectedRows: [],
+                    defaultSelection: false,
+                  },
+                  rowSelectionStateConfigGetter(state),
+                );
+        } else {
+          if (selectionMode === 'single-row') {
+            rowSelectionState = currentRowSelection as string | number;
+          } else {
+            if (currentRowSelection instanceof RowSelectionState) {
+              rowSelectionState = currentRowSelection;
+            } else {
+              const instance = new RowSelectionState(
+                currentRowSelection as RowSelectionStateObject,
                 rowSelectionStateConfigGetter(state),
               );
-      } else {
-        if (selectionMode === 'single-row') {
-          rowSelectionState = currentRowSelection as string | number;
-        } else {
-          if (currentRowSelection instanceof RowSelectionState) {
-            rowSelectionState = currentRowSelection;
-          } else {
-            const instance = new RowSelectionState(
-              currentRowSelection as RowSelectionStateObject,
-              rowSelectionStateConfigGetter(state),
-            );
 
-            rowSelectionState = instance;
+              rowSelectionState = instance;
+            }
           }
         }
       }
@@ -432,11 +577,35 @@ export function deriveStateFromProps<T extends any>(params: {
       ? (data: T) => primaryKeyDescriptor(data)
       : (data: T) => data[primaryKeyDescriptor];
 
+  const treeProps = props as TreeDataSourceProps<T>;
+  let treeExpandState =
+    treeProps.treeExpandState ||
+    state.treeExpandState ||
+    treeProps.defaultTreeExpandState;
+
+  if (treeExpandState && !(treeExpandState instanceof TreeExpandState)) {
+    const instance: TreeExpandState =
+      weakMap.get(treeExpandState) ?? new TreeExpandState(treeExpandState);
+
+    weakMap.set(treeExpandState, instance);
+    treeExpandState = instance;
+  }
+
+  treeExpandState =
+    treeExpandState ||
+    new TreeExpandState({
+      defaultExpanded: true,
+      collapsedPaths: [],
+    });
+
   let groupRowsState =
     props.groupRowsState || state.groupRowsState || props.defaultGroupRowsState;
 
   if (groupRowsState && !(groupRowsState instanceof GroupRowsState)) {
-    groupRowsState = new GroupRowsState(groupRowsState);
+    const instance =
+      weakMap.get(groupRowsState) ?? new GroupRowsState(groupRowsState);
+    weakMap.set(groupRowsState, instance);
+    groupRowsState = instance;
   }
 
   groupRowsState =
@@ -525,8 +694,11 @@ export function deriveStateFromProps<T extends any>(params: {
   }
 
   const result: DataSourceDerivedState<T> = {
+    isTree,
     selectionMode,
-    groupRowsState,
+    groupRowsState: groupRowsState as GroupRowsState,
+    treeExpandState,
+    treeExpandMode: treeExpandState.mode,
 
     shouldReloadData: {
       // #sortMode_vs_shouldReloadData.sortInfo
@@ -636,6 +808,54 @@ export function getMappedCallbacks<T>() {
           (rowSelection as RowSelectionState).getState(),
           'multi-row',
         ] as Parameters<DataSourcePropOnRowSelectionChange_MultiRow>,
+      };
+    },
+
+    treeSelection: (
+      treeSelection,
+      state: DataSourceState<T>,
+    ): { callbackParams: any[] } => {
+      if (state.selectionMode === 'single-row') {
+        const callbackParams: Parameters<DataSourcePropOnTreeSelectionChange_SingleNode> =
+          [
+            treeSelection as DataSourcePropTreeSelection_SingleNode,
+            { selectionMode: 'single-row' },
+          ];
+
+        return {
+          callbackParams,
+        };
+      }
+      const callbackParams: Parameters<DataSourcePropOnTreeSelectionChange_MultiNode> =
+        [
+          (treeSelection as TreeSelectionState).getState(),
+          {
+            selectionMode: 'multi-row',
+            lastUpdatedNodePath: state.lastSelectionUpdatedNodePathRef.current,
+            dataSourceApi: state.__apiRef.current!,
+          },
+        ];
+      return {
+        callbackParams,
+      };
+    },
+    treeExpandState: (
+      treeExpandState,
+      state: DataSourceState<T>,
+    ): { callbackParams: any[] } => {
+      const callbackParams: Parameters<
+        NonUndefined<TreeDataSourceProps<T>['onTreeExpandStateChange']>
+      > = [
+        (treeExpandState as TreeExpandState<T>).getState(),
+        {
+          nodeState: state.lastExpandStateInfoRef.current.state,
+          nodePath: state.lastExpandStateInfoRef.current.nodePath,
+          dataSourceApi: state.__apiRef.current!,
+        },
+      ];
+
+      return {
+        callbackParams,
       };
     },
     cellSelection: (

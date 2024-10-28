@@ -121,6 +121,22 @@ export const isNodeGroupRow = async (node: Locator) => {
   );
 };
 
+export const isNodeTreeNode = async (node: Locator) => {
+  return await node.evaluate((n) =>
+    n.classList.contains('InfiniteColumnCell--tree-node'),
+  );
+};
+export const isNodeTreeLeafNode = async (node: Locator) => {
+  return await node.evaluate((n) =>
+    n.classList.contains('InfiniteColumnCell--tree-leaf-node'),
+  );
+};
+export const isNodeTreeParentNode = async (node: Locator) => {
+  return await node.evaluate((n) =>
+    n.classList.contains('InfiniteColumnCell--tree-parent-node'),
+  );
+};
+
 export const isRowDisabled = async (node: Locator) => {
   return await node.evaluate((n) =>
     n.classList.contains('InfiniteColumnCell--disabled'),
@@ -345,6 +361,17 @@ export const toggleGroupRow = async (
     { page },
   );
   await locator.locator('[data-name="expander-icon"]').click();
+};
+
+export const toggleRowSelection = async (
+  { rowIndex, colIndex }: { rowIndex: number; colIndex?: number },
+  { page }: { page: Page },
+) => {
+  const locator = getCellNodeLocator(
+    { rowIndex, colIndex: colIndex || 0 },
+    { page },
+  );
+  await locator.locator('input[type="checkbox"]').click();
 };
 
 export const getCellText = async (

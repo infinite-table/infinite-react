@@ -5,58 +5,56 @@ import {
   getFirstChild,
 } from '@examples/pages/tests/testUtils';
 
-export default test.describe.parallel(
-  'Group render strategy: Single Column',
-  () => {
-    test('Nested group padding is there', async ({ page }) => {
-      await page.waitForInfinite();
+export default test.describe
+  .parallel('Group render strategy: Single Column', () => {
+  test('Nested group padding is there', async ({ page }) => {
+    await page.waitForInfinite();
 
-      let groupCellNode = getFirstChild(
-        getFirstChild(
-          getCellNodeLocator({ colId: 'group-by', rowIndex: 0 }, { page }),
-        ),
-      );
+    let groupCellNode = getFirstChild(
+      getFirstChild(
+        getCellNodeLocator({ colId: 'group-by', rowIndex: 0 }, { page }),
+      ),
+    );
 
-      let groupCellNodeElemHandle = await groupCellNode.elementHandle();
-      let paddingLeft = await getComputedStyleProperty(
-        groupCellNodeElemHandle!,
-        'paddingLeft',
-        { page },
-      );
+    let groupCellNodeElemHandle = await groupCellNode.elementHandle();
+    let paddingLeft = await getComputedStyleProperty(
+      groupCellNodeElemHandle!,
+      'paddingLeft',
+      { page },
+    );
 
-      expect(paddingLeft).toEqual('0px');
+    expect(paddingLeft).toEqual('0px');
 
-      // first nesting
-      groupCellNode = getFirstChild(
-        getFirstChild(
-          getCellNodeLocator({ colId: 'group-by', rowIndex: 1 }, { page }),
-        ),
-      );
+    // first nesting
+    groupCellNode = getFirstChild(
+      getFirstChild(
+        getCellNodeLocator({ colId: 'group-by', rowIndex: 1 }, { page }),
+      ),
+    );
 
-      groupCellNodeElemHandle = await groupCellNode.elementHandle();
-      paddingLeft = await getComputedStyleProperty(
-        groupCellNodeElemHandle!,
-        'paddingLeft',
-        { page },
-      );
+    groupCellNodeElemHandle = await groupCellNode.elementHandle();
+    paddingLeft = await getComputedStyleProperty(
+      groupCellNodeElemHandle!,
+      'paddingLeft',
+      { page },
+    );
 
-      expect(paddingLeft).toEqual('30px');
+    expect(paddingLeft).toEqual('24px');
 
-      // second nesting
-      groupCellNode = getFirstChild(
-        getFirstChild(
-          getCellNodeLocator({ colId: 'group-by', rowIndex: 2 }, { page }),
-        ),
-      );
+    // second nesting
+    groupCellNode = getFirstChild(
+      getFirstChild(
+        getCellNodeLocator({ colId: 'group-by', rowIndex: 2 }, { page }),
+      ),
+    );
 
-      groupCellNodeElemHandle = await groupCellNode.elementHandle();
-      paddingLeft = await getComputedStyleProperty(
-        groupCellNodeElemHandle!,
-        'paddingLeft',
-        { page },
-      );
+    groupCellNodeElemHandle = await groupCellNode.elementHandle();
+    paddingLeft = await getComputedStyleProperty(
+      groupCellNodeElemHandle!,
+      'paddingLeft',
+      { page },
+    );
 
-      expect(paddingLeft).toEqual('60px');
-    });
-  },
-);
+    expect(paddingLeft).toEqual('48px');
+  });
+});

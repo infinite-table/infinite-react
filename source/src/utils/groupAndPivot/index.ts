@@ -23,6 +23,7 @@ import { DEFAULT_TO_KEY } from './defaultToKey';
 import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
 import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
 import { sharedValueGetterParamsFlyweightObject } from './sharedValueGetterParamsFlyweightObject';
+import { TreeSelectionState } from '../../components/DataSource/TreeSelectionState';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -53,16 +54,131 @@ export type AggregationReducerResult<AggregationResultType extends any = any> =
 export type InfiniteTableRowInfo<T> =
   | InfiniteTable_HasGrouping_RowInfoNormal<T>
   | InfiniteTable_HasGrouping_RowInfoGroup<T>
-  | InfiniteTable_NoGrouping_RowInfoNormal<T>;
+  | InfiniteTable_NoGrouping_RowInfoNormal<T>
+  | InfiniteTable_Tree_RowInfoLeafNode<T>
+  | InfiniteTable_Tree_RowInfoParentNode<T>;
+
+export type InfiniteTable_Tree_RowInfoLeafNode<T> = {
+  dataSourceHasGrouping: false;
+  isTreeNode: true;
+  isParentNode: false;
+  isGroupRow: false;
+
+  data: T;
+} & InfiniteTable_RowInfoBase<T> &
+  InfiniteTable_Tree_RowInfoBase<T>;
+
+export type InfiniteTable_Tree_RowInfoBase<T> = {
+  isTreeNode: true;
+  isParentNode: boolean;
+  indexInParent: number;
+
+  nodePath: any[];
+
+  parentNodes: InfiniteTable_Tree_RowInfoParentNode<T>[];
+
+  /**
+   * Available when using a tree data, this will be set for both parent and leaf nodes
+   * Italy  - country         - indexInParentGroups: [0]
+   *    Rome - city           - indexInParentGroups: [0,0]
+   *      Marco    - person   - indexInParentGroups: [0,0,0]
+   *      Luca     - person   - indexInParentGroups: [0,0,1]
+   *      Giuseppe  - person  - indexInParentGroups: [0,0,2]
+   * USA - country            - indexInParentGroups: [1]
+   *    LA - city             - indexInParentGroups: [1,0]
+   *      Bob  - person       - indexInParentGroups: [1,0,2]
+   */
+  indexInParentNodes: number[];
+
+  /**
+   * how many leaf nodes are under the current parent node.
+   * if this node is a leaf node, it will be 0,
+   * if this is a parent node, this will be the count of all the leaf nodes under this parent node (including the ones
+   * not visible due to collapsing).
+   */
+  totalLeafNodesCount: number;
+
+  /**
+   * The count of all leaf nodes (normal ) inside the parent node that are not being visible
+   * due to collapsing (either the current node is collapsed or any of its direct children)
+   */
+  collapsedLeafNodesCount: number;
+
+  // collapsedParentNodesCount: number;
+
+  treeNesting: number;
+
+  selfLoaded: boolean;
+};
+
+export type InfiniteTable_Tree_RowInfoNode<T> =
+  | InfiniteTable_Tree_RowInfoLeafNode<T>
+  | InfiniteTable_Tree_RowInfoParentNode<T>;
+export type InfiniteTable_Tree_RowInfoParentNode<T> = {
+  dataSourceHasGrouping: false;
+
+  isParentNode: true;
+  isGroupRow: false;
+
+  nodeExpanded: boolean;
+  selfExpanded: boolean;
+
+  data: T;
+
+  selectedLeafNodesCount: number;
+
+  /**
+   * This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting,
+   * in the order in which they are visible in the table
+   */
+  deepRowInfoArray: InfiniteTable_Tree_RowInfoNode<T>[];
+
+  deselectedLeafNodesCount: number;
+
+  duplicateOf?: InfiniteTable_Tree_RowInfoParentNode<T>['id'];
+} & InfiniteTable_RowInfoBase<T> &
+  InfiniteTable_Tree_RowInfoBase<T>;
 
 export type InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T> = {
   data: T;
   isGroupRow: false;
+  isTreeNode: false;
+  isParentNode: false;
   rowActive: boolean;
   rowDetailState: false | 'expanded' | 'collapsed';
   rowInfo:
     | InfiniteTable_NoGrouping_RowInfoNormal<T>
     | InfiniteTable_HasGrouping_RowInfoNormal<T>;
+  field?: keyof T;
+  value: any;
+  rawValue: any;
+  rowSelected: boolean | null;
+};
+
+export type InfiniteTableRowInfoDataDiscriminator_ParentNode<T> = {
+  data: T;
+  isGroupRow: false;
+  isTreeNode: true;
+  isParentNode: true;
+  nodeExpanded: boolean;
+  rowActive: boolean;
+  rowDetailState: false | 'expanded' | 'collapsed';
+  rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>;
+  field?: keyof T;
+  value: any;
+  rawValue: any;
+  rowSelected: boolean | null;
+};
+
+export type InfiniteTableRowInfoDataDiscriminator_LeafNode<T> = {
+  data: T;
+  isGroupRow: false;
+  isTreeNode: true;
+  isParentNode: false;
+  nodeExpanded: boolean;
+  rowActive: boolean;
+  rowDetailState: false | 'expanded' | 'collapsed';
+  rowInfo: InfiniteTable_Tree_RowInfoLeafNode<T>;
   field?: keyof T;
   value: any;
   rawValue: any;
@@ -75,6 +191,7 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
   rowInfo: InfiniteTable_HasGrouping_RowInfoGroup<T>;
   rowDetailState: false | 'expanded' | 'collapsed';
   isGroupRow: true;
+  isTreeNode: false;
   field?: keyof T;
   value: any;
   rawValue: any;
@@ -82,8 +199,12 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
 };
 export type InfiniteTableRowInfoDataDiscriminator<T> =
   | InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T>
-  | InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T>;
+  | InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T>
+  | InfiniteTableRowInfoDataDiscriminator_Node<T>;
 
+export type InfiniteTableRowInfoDataDiscriminator_Node<T> =
+  | InfiniteTableRowInfoDataDiscriminator_ParentNode<T>
+  | InfiniteTableRowInfoDataDiscriminator_LeafNode<T>;
 /**
  * This is the base row info for all scenarios - things every
  * rowInfo is guaranteed to have (be it group or normal row, or dataSource with or without grouping)
@@ -114,6 +235,7 @@ export type InfiniteTable_RowInfoCellSelection = {
 
 export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
   dataSourceHasGrouping: true;
+  isTreeNode: false;
   data: T;
   isGroupRow: false;
 } & InfiniteTable_HasGrouping_RowInfoBase<T> &
@@ -121,6 +243,7 @@ export type InfiniteTable_HasGrouping_RowInfoNormal<T> = {
 
 export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
   dataSourceHasGrouping: true;
+  isTreeNode: false;
   data: Partial<T> | null;
   reducerData?: Partial<Record<keyof T, any>>;
   isGroupRow: true;
@@ -223,6 +346,7 @@ export type InfiniteTable_HasGrouping_RowInfoGroup<T> = {
 
 export type InfiniteTable_NoGrouping_RowInfoNormal<T> = {
   dataSourceHasGrouping: false;
+  isTreeNode: false;
   data: T;
   isGroupRow: false;
   selfLoaded: boolean;
@@ -327,6 +451,7 @@ export type InfiniteTable_HasGrouping_RowInfoBase<T> = {
 };
 
 export type GroupKeyType<T extends any = any> = T; //string | number | symbol | null | undefined;
+export type TreeKeyType<T extends any = any> = T; //string | number | symbol | null | undefined;
 
 type PivotReducerResults<T = any> = Record<string, AggregationReducerResult<T>>;
 
@@ -340,6 +465,25 @@ export type PivotValuesDeepMap<DataType, KeyType> = DeepMap<
   PivotGroupValueType<DataType, KeyType>
 >;
 
+export type DeepMapTreeValueType<DataType, _KeyType> = {
+  items: DataType[];
+
+  node: DataType | null;
+  reducerResults: Record<string, AggregationReducerResult>;
+  cache: boolean;
+  childrenLoading: boolean;
+  childrenAvailable: boolean;
+
+  treeNesting: number;
+
+  totalLeafNodesCount: number;
+  leavesAvailableCount: number;
+
+  isTree: true;
+  isGroupBy: false;
+
+  error?: string;
+};
 export type DeepMapGroupValueType<DataType, KeyType> = {
   /**
    * These are leaf items. This array may be empty when there is batched lazy loading
@@ -351,6 +495,8 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
   totalChildrenCount?: number;
   cache: boolean;
   error?: string;
+  isTree: false;
+  isGroupBy: true;
   reducerResults: Record<string, AggregationReducerResult>;
   pivotDeepMap?: DeepMap<
     GroupKeyType<KeyType>,
@@ -380,6 +526,14 @@ export type PivotBy<DataType, KeyType> = Omit<
       >);
 };
 
+export type TreeParams<DataType, _KeyType> = {
+  isLeafNode: (item: DataType) => boolean;
+  getNodeChildren: (item: DataType) => null | DataType[];
+  toKey: (item: DataType) => any;
+
+  reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
+};
+
 type GroupParams<DataType, KeyType> = {
   groupBy: GroupBy<DataType, KeyType>[];
   defaultToKey?: (value: any, item: DataType) => GroupKeyType<KeyType>;
@@ -405,6 +559,17 @@ export type DataGroupResult<DataType, KeyType extends any> = {
   reducerResults?: Record<string, AggregationReducerResult>;
   topLevelPivotColumns?: DeepMap<GroupKeyType<KeyType>, boolean>;
   pivot?: PivotBy<DataType, KeyType>[];
+};
+
+export type DataTreeResult<DataType, KeyType extends any> = {
+  deepMap: DeepMap<
+    TreeKeyType<KeyType>,
+    DeepMapTreeValueType<DataType, KeyType>
+  >;
+  treePaths: DeepMap<TreeKeyType<KeyType>, true>;
+  treeParams: TreeParams<DataType, KeyType>;
+  initialData: DataType[];
+  reducerResults?: Record<string, AggregationReducerResult>;
 };
 
 function returnFalse() {
@@ -580,6 +745,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           const res = indexer.indexArray(dataArray as any as DataType[], {
             toPrimaryKey,
             cache,
+            nodesKey: undefined,
           });
           //@ts-ignore
           dataArray = res;
@@ -596,6 +762,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
             cache: false,
             childrenLoading: false,
             childrenAvailable: false,
+            isTree: false,
+            isGroupBy: true,
           };
 
           deepMap.set(
@@ -626,6 +794,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           commonData: dataObject,
           totalChildrenCount: dataArray[i].totalChildrenCount,
           reducerResults: dataArray[i].aggregations || {},
+          isTree: false,
+          isGroupBy: true,
         };
 
         deepMap.set(currentGroupKeys as KeyType[], deepMapGroupValue);
@@ -756,6 +926,151 @@ function processGroup<KeyType, DataType>(
   }
 }
 
+function processTreeNode<DataType, KeyType>(
+  treeParams: TreeParams<DataType, KeyType>,
+  deepMap: DeepMap<
+    TreeKeyType<KeyType>,
+    DeepMapTreeValueType<DataType, KeyType>
+  >,
+  treePaths: DeepMap<TreeKeyType<KeyType>, true>,
+  parentPath: KeyType[],
+  item: DataType,
+  itemIndex: number,
+  reducers: TreeParams<DataType, KeyType>['reducers'],
+  initialReducerValue: Record<string, AggregationReducerResult>,
+) {
+  const { isLeafNode, getNodeChildren, toKey } = treeParams;
+
+  const id = toKey(item);
+  const nodePath = [...parentPath, id];
+  const isLeaf = isLeafNode(item);
+
+  treePaths.set(nodePath, true);
+  if (isLeaf) {
+    for (let i = 0, len = parentPath.length; i <= len; i++) {
+      const currentPath = parentPath.slice(0, i);
+      const currentTreeValue = deepMap.get(currentPath)!;
+
+      const { reducerResults, items: currentLeafItems } = currentTreeValue;
+
+      currentLeafItems.push(item);
+
+      currentTreeValue.leavesAvailableCount++;
+      currentTreeValue.totalLeafNodesCount++;
+      if (reducers) {
+        computeReducersFor<DataType>(
+          item,
+          itemIndex,
+          reducers,
+          reducerResults,
+          currentPath,
+        );
+      }
+    }
+
+    return;
+  }
+  const reducerResults = deepClone(initialReducerValue);
+
+  const items: DataType[] = [];
+  deepMap.set(nodePath, {
+    items,
+    isTree: true,
+    isGroupBy: false,
+    node: item,
+    reducerResults,
+    cache: false,
+    childrenLoading: false,
+    childrenAvailable: true,
+    totalLeafNodesCount: 0,
+    leavesAvailableCount: 0,
+    treeNesting: parentPath.length,
+  });
+
+  const children = getNodeChildren(item);
+  if (!children || !Array.isArray(children)) {
+    return;
+  }
+
+  for (let i = 0, len = children.length; i < len; i++) {
+    const child = children[i];
+
+    processTreeNode(
+      treeParams,
+      deepMap,
+      treePaths,
+      nodePath,
+      child,
+      i,
+      reducers,
+      initialReducerValue,
+    );
+  }
+
+  if (reducers) {
+    // complete the reducers for the current node
+    // as all leaf nodes have been processed
+    completeReducers(reducers, reducerResults, items);
+  }
+}
+
+export function tree<DataType, KeyType = any>(
+  treeParams: TreeParams<DataType, KeyType>,
+  data: DataType[],
+): DataTreeResult<DataType, KeyType> {
+  const { reducers } = treeParams;
+
+  const initialReducerValue = initReducers<DataType>(reducers);
+  const globalReducerResults = deepClone(initialReducerValue);
+
+  const deepMap = new DeepMap<
+    TreeKeyType<KeyType>,
+    DeepMapTreeValueType<DataType, KeyType>
+  >();
+  const treePaths = new DeepMap<TreeKeyType<KeyType>, true>();
+
+  deepMap.set([], {
+    items: [],
+    isTree: true,
+    isGroupBy: false,
+    reducerResults: globalReducerResults,
+    cache: false,
+    childrenLoading: false,
+    childrenAvailable: true,
+    totalLeafNodesCount: 0,
+    leavesAvailableCount: 0,
+    node: null,
+    treeNesting: -1,
+  });
+
+  for (let i = 0, len = data.length; i < len; i++) {
+    processTreeNode(
+      treeParams,
+      deepMap,
+      treePaths,
+      [],
+      data[i],
+      i,
+      reducers,
+      initialReducerValue,
+    );
+  }
+
+  if (reducers) {
+    completeReducers(reducers, globalReducerResults, data);
+  }
+
+  const result: DataTreeResult<DataType, KeyType> = {
+    deepMap,
+    treeParams,
+    treePaths,
+    initialData: data,
+    reducerResults: globalReducerResults,
+  };
+
+  return result;
+}
+
 export function group<DataType, KeyType = any>(
   groupParams: GroupParams<DataType, KeyType>,
   data: DataType[],
@@ -788,6 +1103,8 @@ export function group<DataType, KeyType = any>(
   if (!groupByLength) {
     const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
       items: [],
+      isTree: false,
+      isGroupBy: true,
       cache: false,
       childrenLoading: false,
       childrenAvailable: false,
@@ -837,6 +1154,8 @@ export function group<DataType, KeyType = any>(
       if (!deepMap.has(currentGroupKeys)) {
         const deepMapGroupValue: DeepMapGroupValueType<DataType, KeyType> = {
           items: [],
+          isTree: false,
+          isGroupBy: true,
           cache: false,
           commonData: { ...commonData },
           childrenLoading: false,
@@ -920,9 +1239,7 @@ export function group<DataType, KeyType = any>(
         next?.();
       },
     );
-  }
 
-  if (reducers) {
     completeReducers(reducers, globalReducerResults, data);
   }
 
@@ -1049,6 +1366,7 @@ function getEnhancedGroupData<DataType>(
     groupData: groupItems,
     groupKeys,
 
+    isTreeNode: false,
     rowSelected: false,
     selectedChildredCount: 0,
     deselectedChildredCount: 0,
@@ -1094,7 +1412,9 @@ function getEnhancedGroupData<DataType>(
 }
 
 function toDuplicateRow<DataType>(
-  parent: InfiniteTable_HasGrouping_RowInfoGroup<DataType>,
+  parent:
+    | InfiniteTable_HasGrouping_RowInfoGroup<DataType>
+    | InfiniteTable_Tree_RowInfoParentNode<DataType>,
   indexInAll: number,
   currentPage: number,
 ) {
@@ -1124,12 +1444,270 @@ function completeReducers<DataType>(
   return reducerResults;
 }
 
+export type InfiniteTablePropRepeatWrappedGroupRows<T> =
+  | boolean
+  | ((rowInfo: InfiniteTableRowInfo<T>) => boolean);
+
+export type EnhancedTreeFlattenParam<DataType, KeyType = any> = {
+  dataArray: DataType[];
+  treeResult: DataTreeResult<DataType, KeyType>;
+  treeParams: TreeParams<DataType, KeyType>;
+  rowsPerPage?: number | null;
+  repeatWrappedGroupRows?: InfiniteTablePropRepeatWrappedGroupRows<DataType>;
+  toPrimaryKey: (data: DataType, index: number) => any;
+
+  withRowInfo?: (rowInfo: InfiniteTableRowInfo<DataType>) => void;
+
+  isNodeExpanded?: (
+    rowInfo: InfiniteTable_Tree_RowInfoParentNode<DataType>,
+  ) => boolean;
+  isNodeSelected?: (
+    rowInfo: InfiniteTable_Tree_RowInfoNode<DataType>,
+  ) => boolean | null;
+  isRowDisabled?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean;
+
+  reducers?: Record<string, DataSourceAggregationReducer<DataType, any>>;
+  treeSelectionState?: TreeSelectionState;
+};
+
+function flattenTreeNodes<DataType>(
+  dataArray: DataType[],
+  parentPath: any[],
+  parents: InfiniteTable_Tree_RowInfoParentNode<DataType>[],
+  indexInParentNodes: number[],
+  params: EnhancedTreeFlattenParam<DataType, any>,
+  result: InfiniteTableRowInfo<DataType>[],
+) {
+  const treeNesting = parentPath.length;
+
+  const { isLeafNode, getNodeChildren } = params.treeParams;
+  const {
+    toPrimaryKey,
+    treeResult,
+    isRowDisabled,
+    isNodeSelected,
+    withRowInfo,
+    isNodeExpanded,
+    treeSelectionState,
+    repeatWrappedGroupRows,
+    rowsPerPage,
+  } = params;
+  const { deepMap } = treeResult;
+
+  const len = dataArray.length;
+
+  const currentParent = parents[parents.length - 1];
+
+  const parentExpanded = currentParent ? currentParent.nodeExpanded : true;
+
+  for (let i = 0; i < len; i++) {
+    const item = dataArray[i];
+
+    const key = toPrimaryKey(item, i);
+    const nodePath = [...parentPath, key];
+    const isLeaf = isLeafNode(item);
+
+    if (isLeaf) {
+      const rowInfo: InfiniteTable_Tree_RowInfoLeafNode<DataType> = {
+        id: key,
+        nodePath,
+        isGroupRow: false,
+
+        data: item,
+        treeNesting,
+        totalLeafNodesCount: 0,
+        collapsedLeafNodesCount: 0,
+        isTreeNode: true,
+        isParentNode: false,
+        selfLoaded: true,
+        rowSelected: false,
+        rowDisabled: false,
+        isCellSelected: returnFalse,
+        hasSelectedCells: returnFalse,
+        dataSourceHasGrouping: false,
+        parentNodes: Array.from(parents),
+        indexInParentNodes: [...indexInParentNodes, i],
+        indexInParent: i,
+        indexInAll: parentExpanded ? result.length : -1,
+      };
+      if (isNodeSelected) {
+        rowInfo.rowSelected = isNodeSelected(rowInfo);
+      }
+      if (isRowDisabled) {
+        rowInfo.rowDisabled = isRowDisabled(rowInfo);
+      }
+      if (withRowInfo) {
+        withRowInfo(rowInfo);
+      }
+
+      const currentPage =
+        repeatWrappedGroupRows &&
+        rowsPerPage != null &&
+        rowsPerPage > 0 &&
+        rowInfo.indexInAll % rowsPerPage === 0
+          ? rowInfo.indexInAll / rowsPerPage
+          : null;
+
+      for (let j = 0, len = parents.length; j < len; j++) {
+        const parent = parents[j];
+        if (!parentExpanded) {
+          parent.collapsedLeafNodesCount += 1;
+        }
+        parent.deepRowInfoArray.push(rowInfo);
+
+        if (currentPage != null && parentExpanded) {
+          if (
+            typeof repeatWrappedGroupRows === 'function' &&
+            repeatWrappedGroupRows(parent) !== true
+          ) {
+            continue;
+          }
+
+          const duplicateRowInfo = toDuplicateRow(
+            parent,
+            rowInfo.indexInAll,
+            currentPage,
+          );
+
+          result[duplicateRowInfo.indexInAll] = duplicateRowInfo;
+          rowInfo.indexInAll++;
+        }
+      }
+
+      if (parentExpanded) {
+        result[rowInfo.indexInAll] = rowInfo;
+      }
+      continue;
+    }
+
+    const deepMapValue = deepMap.get(nodePath);
+    const totalLeafNodesCount = deepMapValue?.totalLeafNodesCount ?? 0;
+
+    const rowInfo: InfiniteTable_Tree_RowInfoParentNode<DataType> = {
+      dataSourceHasGrouping: false,
+      nodeExpanded: false,
+      selfExpanded: false,
+      nodePath,
+      id: key,
+      data: item,
+      indexInAll: result.length,
+      indexInParent: i,
+      indexInParentNodes: [...indexInParentNodes, i],
+      totalLeafNodesCount,
+      treeNesting,
+      selfLoaded: true,
+      isParentNode: true,
+      isTreeNode: true,
+      isGroupRow: false,
+      deepRowInfoArray: [],
+      parentNodes: Array.from(parents),
+      collapsedLeafNodesCount: 0,
+      rowSelected: false,
+      rowDisabled: false,
+      isCellSelected: returnFalse,
+      hasSelectedCells: returnFalse,
+      selectedLeafNodesCount: 0,
+      deselectedLeafNodesCount: 0,
+      // selectedLeafNodesCount: 0,
+      // deselectedLeafNodesCount: 0,
+    };
+
+    if (isNodeSelected) {
+      rowInfo.rowSelected = isNodeSelected(rowInfo);
+
+      if (treeSelectionState) {
+        const selectionCount = treeSelectionState.getSelectionCountFor(
+          rowInfo.nodePath,
+        );
+        rowInfo.selectedLeafNodesCount = selectionCount.selectedCount;
+        rowInfo.deselectedLeafNodesCount = selectionCount.deselectedCount;
+      }
+    }
+    if (isRowDisabled) {
+      rowInfo.rowDisabled = isRowDisabled(rowInfo);
+    }
+    if (withRowInfo) {
+      withRowInfo(rowInfo);
+    }
+    let expanded = true;
+    if (isNodeExpanded) {
+      rowInfo.selfExpanded = expanded = isNodeExpanded(rowInfo);
+    }
+    if (!parentExpanded) {
+      expanded = false;
+    }
+    rowInfo.nodeExpanded = expanded;
+
+    if (
+      expanded &&
+      parentExpanded &&
+      repeatWrappedGroupRows &&
+      rowsPerPage != null &&
+      rowsPerPage > 0
+    ) {
+      const indexInAll = rowInfo.indexInAll;
+      const currentParents = rowInfo.parentNodes;
+
+      if (currentParents.length > 0 && indexInAll % rowsPerPage === 0) {
+        const currentPage = indexInAll / rowsPerPage;
+
+        let insertCount = 0;
+        // this is not a top-level node, so we can insert duplicate parents
+        currentParents.forEach((parent) => {
+          if (
+            typeof repeatWrappedGroupRows === 'function' &&
+            repeatWrappedGroupRows(parent) !== true
+          ) {
+            return;
+          }
+          result.push(
+            toDuplicateRow(parent, indexInAll + insertCount, currentPage),
+          );
+          insertCount++;
+          rowInfo.indexInAll++;
+        });
+      }
+    }
+
+    if (parentExpanded) {
+      result[rowInfo.indexInAll] = rowInfo;
+    }
+
+    const children = getNodeChildren(item);
+
+    if (Array.isArray(children)) {
+      flattenTreeNodes(
+        children,
+        nodePath,
+        [...parents, rowInfo],
+        rowInfo.indexInParentNodes,
+        params,
+        result,
+      );
+    }
+  }
+
+  return result;
+}
+
+export function enhancedTreeFlatten<DataType, KeyType = any>(
+  param: EnhancedTreeFlattenParam<DataType, KeyType>,
+): { data: InfiniteTableRowInfo<DataType>[] } {
+  const { dataArray } = param;
+
+  const result: InfiniteTableRowInfo<DataType>[] = [];
+
+  flattenTreeNodes(dataArray, [], [], [], param, result);
+
+  return { data: result };
+}
+
 export type EnhancedFlattenParam<DataType, KeyType = any> = {
   lazyLoad: boolean;
 
   groupResult: DataGroupResult<DataType, KeyType>;
   rowsPerPage?: number | null;
-  repeatWrappedGroupRows?: boolean;
+  repeatWrappedGroupRows?: InfiniteTablePropRepeatWrappedGroupRows<DataType>;
   toPrimaryKey: (data: DataType, index: number) => any;
   groupRowsState?: GroupRowsState;
   isRowSelected?: (rowInfo: InfiniteTableRowInfo<DataType>) => boolean | null;
@@ -1249,11 +1827,21 @@ export function enhancedFlatten<DataType, KeyType = any>(
           if (currentParents.length > 0 && indexInAll % rowsPerPage === 0) {
             const currentPage = indexInAll / rowsPerPage;
 
+            let insertCount = 0;
             // this is not a top-level group, so we can insert duplicate parents
-            currentParents.forEach((parent, i) => {
-              result.push(toDuplicateRow(parent, indexInAll + i, currentPage));
+            currentParents.forEach((parent) => {
+              if (
+                typeof repeatWrappedGroupRows === 'function' &&
+                repeatWrappedGroupRows(parent) !== true
+              ) {
+                return;
+              }
+              result.push(
+                toDuplicateRow(parent, indexInAll + insertCount, currentPage),
+              );
+              insertCount++;
+              enhancedGroupData.indexInAll++;
             });
-            enhancedGroupData.indexInAll += currentParents.length;
           }
         }
         result.push(enhancedGroupData);
@@ -1317,12 +1905,18 @@ export function enhancedFlatten<DataType, KeyType = any>(
                 if (currentInsertIndex % rowsPerPage === 0) {
                   const currentPage = currentInsertIndex / rowsPerPage;
 
-                  result.length += parents.length;
                   // for each group, we want to repeat it
                   parents.forEach((parent) => {
+                    if (
+                      typeof repeatWrappedGroupRows === 'function' &&
+                      repeatWrappedGroupRows(parent) !== true
+                    ) {
+                      return;
+                    }
                     const i = startIndex + index + extraArtificialGroupRows;
                     result[i] = toDuplicateRow(parent, i, currentPage);
                     extraArtificialGroupRows++;
+                    result.length++;
                   });
                 }
               }
@@ -1338,6 +1932,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
                   isCellSelected: returnFalse,
                   hasSelectedCells: returnFalse,
                   dataSourceHasGrouping: true,
+                  isTreeNode: false,
                   isGroupRow: false,
                   selfLoaded: !!item,
                   rowSelected: false,

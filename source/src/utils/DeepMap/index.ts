@@ -67,6 +67,24 @@ export class DeepMap<KeyType, ValueType> {
     return result;
   }
 
+  getEntriesStartingWith(
+    keys: KeyType[],
+    excludeSelf?: boolean,
+    depthLimit?: number,
+  ): [KeyType[], ValueType][] {
+    const result: [KeyType[], ValueType][] = [];
+    this.getStartingWith(
+      keys,
+      (keys, value) => {
+        result.push([keys, value]);
+      },
+      excludeSelf,
+      depthLimit,
+    );
+
+    return result;
+  }
+
   getKeysStartingWith(
     keys: KeyType[],
     excludeSelf?: boolean,

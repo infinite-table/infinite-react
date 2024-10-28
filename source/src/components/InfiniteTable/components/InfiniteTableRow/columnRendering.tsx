@@ -1,3 +1,7 @@
+import {
+  InfiniteTableRowInfoDataDiscriminator,
+  InfiniteTable_Tree_RowInfoBase,
+} from '../../../../utils/groupAndPivot';
 import { getColumnApiForColumn } from '../../api/getColumnApi';
 import {
   InfiniteTableColumn,
@@ -84,7 +88,7 @@ export function getCellContext<T>(
   const { dataArray } = getDataSourceState();
 
   const rowInfo = dataArray[rowIndex];
-  const { isGroupRow } = rowInfo;
+  const { isGroupRow, isTreeNode } = rowInfo;
   const column = getComputed().computedColumnsMap.get(columnId)!;
 
   const {
@@ -122,7 +126,9 @@ export function getCellContext<T>(
         dataSourceApi,
         column,
         columnApi,
+        isParentNode: false,
         isGroupRow: true,
+        isTreeNode: false,
         rowDetailState: false,
         data: rowInfo.data,
         rowActive,
@@ -131,11 +137,49 @@ export function getCellContext<T>(
         value,
         rawValue,
       }
+    : isTreeNode
+    ? rowInfo.isParentNode
+      ? {
+          api,
+          dataSourceApi,
+          columnApi,
+          column,
+          nodeExpanded: rowInfo.nodeExpanded,
+          isTreeNode: true,
+          isGroupRow: false,
+          isParentNode: true,
+          rowDetailState: rowDetailState,
+          data: rowInfo.data,
+          rowActive,
+          rowInfo,
+          rowSelected: rowInfo.rowSelected,
+          value,
+          rawValue,
+        }
+      : {
+          api,
+          dataSourceApi,
+          columnApi,
+          column,
+          nodeExpanded: false,
+          isTreeNode: true,
+          isGroupRow: false,
+          isParentNode: false,
+          rowDetailState: rowDetailState,
+          data: rowInfo.data,
+          rowActive,
+          rowInfo,
+          rowSelected: rowInfo.rowSelected,
+          value,
+          rawValue,
+        }
     : {
         api,
         dataSourceApi,
         columnApi,
         column,
+        isTreeNode: false,
+        isParentNode: false,
         isGroupRow: false,
         rowDetailState: rowDetailState,
         data: rowInfo.data,
@@ -232,6 +276,9 @@ export function getColumnRenderingParams<T>(options: {
         column.renderGroupIcon || groupByColumnReference?.renderGroupIcon,
       renderSelectionCheckBox: column.renderSelectionCheckBox,
       renderRowDetailIcon: column.renderRowDetailIcon,
+      renderTreeIcon: column.renderTreeIcon,
+      renderTreeIconForParentNode: column.renderTreeIconForParentNode,
+      renderTreeIconForLeafNode: column.renderTreeIconForLeafNode,
       renderValue: column.renderValue || groupByColumnReference?.renderValue,
       renderGroupValue:
         column.renderGroupValue || groupByColumnReference?.renderGroupValue,
@@ -285,7 +332,12 @@ export function getColumnRenderParam<T>(options: {
     formattedValueContext,
   } = options;
   const { value } = formattedValueContext;
-  const { api: imperativeApi, getDataSourceState, getState } = context;
+  const {
+    api: imperativeApi,
+    getDataSourceState,
+    getState,
+    dataSourceApi,
+  } = context;
   const { editingCell } = getState();
 
   const { indexInAll: rowIndex } = rowInfo;
@@ -332,12 +384,33 @@ export function getColumnRenderParam<T>(options: {
     groupByColumn,
     selectionMode,
     api: imperativeApi,
+    dataSourceApi,
 
     toggleCurrentRowDetails: () =>
       imperativeApi.rowDetailApi.toggleRowDetail(rowInfo.id),
     toggleRowDetails: imperativeApi.rowDetailApi.toggleRowDetail,
     expandRowDetails: imperativeApi.rowDetailApi.expandRowDetail,
     collapseRowDetails: imperativeApi.rowDetailApi.collapseRowDetail,
+
+    toggleCurrentTreeNode: () => {
+      dataSourceApi.treeApi.toggleNode(
+        (rowInfo as InfiniteTable_Tree_RowInfoBase<T>).nodePath,
+      );
+    },
+    toggleTreeNode: dataSourceApi.treeApi.toggleNode,
+    expandTreeNode: dataSourceApi.treeApi.expandNode,
+    collapseTreeNode: dataSourceApi.treeApi.collapseNode,
+
+    selectTreeNode: dataSourceApi.treeApi.selectNode,
+    deselectTreeNode: dataSourceApi.treeApi.deselectNode,
+    toggleTreeNodeSelection: dataSourceApi.treeApi.toggleNodeSelection,
+
+    toggleCurrentTreeNodeSelection: () => {
+      if (!rowInfo.isTreeNode) {
+        return;
+      }
+      dataSourceApi.treeApi.toggleNodeSelection(rowInfo.nodePath);
+    },
 
     selectRow: imperativeApi.rowSelectionApi.selectRow,
     deselectRow: imperativeApi.rowSelectionApi.deselectRow,
@@ -365,12 +438,18 @@ export function getColumnRenderParam<T>(options: {
     },
 
     selectCurrentRow: () => {
+      if (rowInfo.isTreeNode) {
+        return;
+      }
       return imperativeApi.rowSelectionApi.selectRow(
         rowInfo.id,
         rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
       );
     },
     deselectCurrentRow: () => {
+      if (rowInfo.isTreeNode) {
+        return;
+      }
       return imperativeApi.rowSelectionApi.deselectRow(
         rowInfo.id,
         rowInfo.dataSourceHasGrouping ? rowInfo.groupKeys : undefined,
@@ -387,7 +466,7 @@ export function getColumnRenderParam<T>(options: {
     },
 
     toggleCurrentRowSelection: () => {
-      if (rowInfo.isGroupRow) {
+      if (rowInfo.isGroupRow || rowInfo.isTreeNode) {
         return;
       }
       return imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
@@ -458,16 +537,18 @@ export function getFormattedValueParamForCell<T>(
   rowInfo: InfiniteTableRowInfo<T>,
   context: InfiniteTableColumnRenderingContext<T>,
   rowDetailState: 'expanded' | 'collapsed' | false,
-) {
+): InfiniteTableRowInfoDataDiscriminator<T> {
   const { rowSelected, indexInAll: rowIndex } = rowInfo;
   const { activeRowIndex, keyboardNavigation } = context.getState();
   const rowActive = rowIndex === activeRowIndex && keyboardNavigation === 'row';
 
-  // TS hack to discriminate between the grouped vs non-grouped rows
+  // TS hack to discriminate between the grouped vs non-grouped rows vs tree nodes
   return rowInfo.isGroupRow
     ? {
         rowInfo,
-        isGroupRow: rowInfo.isGroupRow,
+        isGroupRow: true,
+        isTreeNode: false,
+        isParentNode: false,
         data: rowInfo.data,
         rowDetailState: false as false | 'expanded' | 'collapsed',
         rowSelected,
@@ -476,9 +557,41 @@ export function getFormattedValueParamForCell<T>(
         rawValue: value,
         field: column.field,
       }
+    : rowInfo.isTreeNode
+    ? rowInfo.isParentNode
+      ? {
+          rowInfo,
+          isGroupRow: false,
+          isTreeNode: true,
+          isParentNode: true,
+          nodeExpanded: rowInfo.nodeExpanded,
+          data: rowInfo.data,
+          rowDetailState,
+          rowSelected,
+          rowActive,
+          value,
+          rawValue: value,
+          field: column.field,
+        }
+      : {
+          rowInfo,
+          isGroupRow: false,
+          isTreeNode: true,
+          isParentNode: false,
+          nodeExpanded: false,
+          data: rowInfo.data,
+          rowDetailState,
+          rowSelected,
+          rowActive,
+          value,
+          rawValue: value,
+          field: column.field,
+        }
     : {
         rowInfo,
-        isGroupRow: rowInfo.isGroupRow,
+        isGroupRow: false,
+        isTreeNode: false,
+        isParentNode: false,
         data: rowInfo.data,
         rowDetailState,
         rowSelected,
