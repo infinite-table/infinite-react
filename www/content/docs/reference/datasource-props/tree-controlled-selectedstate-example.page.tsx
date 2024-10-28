@@ -1,5 +1,4 @@
 import {
-  DataSourceApi,
   InfiniteTableColumn,
   TreeDataSource,
   TreeGrid,
@@ -18,62 +17,58 @@ type FileSystemNode = {
 };
 
 const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
-  name: {
-    field: 'name',
-    header: 'Name',
-    renderTreeIcon: true,
-    renderSelectionCheckBox: true,
-  },
+  name: { field: 'name', header: 'Name', renderTreeIcon: true },
   type: { field: 'type', header: 'Type' },
   extension: { field: 'extension', header: 'Extension' },
   mimeType: { field: 'mimeType', header: 'Mime Type' },
   size: { field: 'sizeInKB', type: 'number', header: 'Size (KB)' },
 };
 
-const defaultTreeSelection: TreeSelectionValue = {
-  defaultSelection: true,
-  deselectedPaths: [
-    ['1', '10'],
-    ['3', '31'],
-  ],
-  selectedPaths: [['3']],
-};
-
 export default function App() {
-  const [dataSourceApi, setDataSourceApi] =
-    useState<DataSourceApi<FileSystemNode> | null>();
+  const [treeSelection, setTreeSelection] = useState<TreeSelectionValue>({
+    defaultSelection: false,
+    selectedPaths: [['1', '10'], ['3']],
+  });
 
   return (
     <>
       <TreeDataSource
-        onReady={setDataSourceApi}
         nodesKey="children"
         primaryKey="id"
         data={dataSource}
-        defaultTreeSelection={defaultTreeSelection}
+        treeSelection={treeSelection}
+        onTreeSelectionChange={setTreeSelection}
       >
         <div
           style={{
             color: 'var(--infinite-cell-color)',
-            padding: 10,
-            display: 'flex',
-            gap: 10,
+            padding: '10px',
           }}
         >
           <button
             onClick={() => {
-              dataSourceApi!.treeApi.selectAll();
-            }}
-          >
-            Select all
-          </button>
-          <button
-            onClick={() => {
-              dataSourceApi!.treeApi.deselectAll();
+              setTreeSelection({
+                defaultSelection: false,
+                selectedPaths: [],
+              });
             }}
           >
             Deselect all
           </button>
+          <button
+            onClick={() => {
+              setTreeSelection({
+                defaultSelection: true,
+                deselectedPaths: [],
+              });
+            }}
+          >
+            Select all all
+          </button>
+          <div>
+            Current tree selection:
+            <pre>{JSON.stringify(treeSelection, null, 2)}</pre>
+          </div>
         </div>
 
         <TreeGrid columns={columns} />
@@ -146,7 +141,7 @@ const dataSource = () => {
       children: [
         {
           id: '30',
-          name: 'Music - empty',
+          name: 'Music',
           sizeInKB: 0,
           type: 'folder',
           children: [],

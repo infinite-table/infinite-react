@@ -19,10 +19,40 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <PropTable searchPlaceholder="Type to filter type definitions" sort>
 
+<Prop name="TreeSelectionValue">
+
+> Represents the selection state of the tree nodes. See <DPropLink name="treeSelection" /> for more details.
+
+```ts
+import type { TreeSelectionValue } from '@infinite-table/infinite-react';
+```
+
+The selection value is an object with the following properties:
+
+- `defaultSelection`: `boolean` - whether the tree nodes are selected by default or not.
+- `selectedPaths?`: `NodePath[]` - the paths of the selected nodes. Mandatory if `defaultSelection` is `false`.
+- `deselectedPaths`: `NodePath[]` - the paths of the deselected nodes. Mandatory if `defaultSelection` is `true`.
+
+```tsx title="Example of tree selection value"
+const treeSelection: TreeSelectionValue = {
+  defaultSelection: false,
+  selectedPaths: [['1'], ['2', '20']],
+  deselectedPaths: [['1','10']],
+};
+// node ['1'] will be selected but indeterminate
+// since ['1','10'] is in the deselectedPaths
+// node ['2','20'] will be fully selected
+```
+
+</Prop>
 
 <Prop name="TreeExpandStateValue">
 
 > Represents the expand/collapse state of the tree nodes. See <DPropLink name="treeExpandState" /> for more details.
+
+```ts
+import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
+```
 
 You can specify the expand/collapse state of the tree nodes in two ways:
 

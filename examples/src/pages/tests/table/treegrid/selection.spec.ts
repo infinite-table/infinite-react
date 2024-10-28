@@ -6,11 +6,10 @@ export default test.describe('TreeSelectionProp', () => {
   }) => {
     await page.waitForInfinite();
 
-    const checkboxes = await page.$$('.InfiniteBody input[type="checkbox"]');
-    expect(checkboxes.length).toBe(7);
+    async function getCheckboxes() {
+      let checkboxes = await page.$$('.InfiniteBody input[type="checkbox"]');
 
-    expect(
-      await Promise.all(
+      return await Promise.all(
         checkboxes.map(
           async (checkbox) =>
             await checkbox.evaluate((el) =>
@@ -19,7 +18,38 @@ export default test.describe('TreeSelectionProp', () => {
                 : (el as HTMLInputElement).checked,
             ),
         ),
-      ),
-    ).toEqual([null, true, false, false, true, true, true]);
+      );
+    }
+
+    let checkboxes = await getCheckboxes();
+    expect(checkboxes.length).toBe(7);
+
+    const headerCheckbox = await page.locator(
+      '.InfiniteHeader input[type="checkbox"]',
+    );
+    expect(
+      await headerCheckbox?.evaluate((el) => {
+        return {
+          checked: (el as HTMLInputElement).checked,
+          indeterminate: (el as HTMLInputElement).indeterminate,
+        };
+      }),
+    ).toEqual({ checked: false, indeterminate: true });
+
+    expect(checkboxes).toEqual([null, true, false, false, true, true, true]);
+
+    await page.click('button:text("Select all")');
+
+    checkboxes = await getCheckboxes();
+    expect(checkboxes).toEqual([true, true, true, true, true, true, true]);
+
+    expect(
+      await headerCheckbox?.evaluate((el) => {
+        return {
+          checked: (el as HTMLInputElement).checked,
+          indeterminate: (el as HTMLInputElement).indeterminate,
+        };
+      }),
+    ).toEqual({ checked: true, indeterminate: false });
   });
 });

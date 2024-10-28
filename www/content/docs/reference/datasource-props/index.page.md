@@ -270,8 +270,57 @@ Right click rows and use the context menu to enable/disable rows.
 
 </Prop>
 
+<Prop name="treeSelection" type="TreeSelectionValue">
+
+> Determines what nodes are selected and deselected. For the uncontrolled version see <DPropLink name="defaultTreeSelection" />.
+
+The value of this prop determines if a node is selected or not.
+
+See <TypeLink name="TreeSelectionValue" /> for details on the shape of this object.
 
 
+<Sandpack title="Using controlled tree selection">
+
+```ts file="tree-controlled-selectedstate-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="onTreeSelectionChange" type="(treeSelection: TreeSelectionValue) => void">
+
+> Called when the tree selection changes. See <DPropLink name="treeSelection" />.
+
+<Sandpack title="Reacting to tree selection changes">
+
+```ts file="tree-controlled-selectedstate-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="defaultTreeSelection" type="TreeSelectionValue">
+
+> Determines what nodes are selected and deselected. For the controlled version see <DPropLink name="treeSelection" />.
+
+The value of this prop determines if a node is selected or not.
+
+See <TypeLink name="TreeSelectionValue" /> for details on the shape of this object.
+
+
+<Sandpack title="Using uncontrolled tree selection">
+
+```ts file="tree-uncontrolled-selectedstate-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
 
 <Prop name="onRowDisabledStateChange" type="(rowDisabledState) => void">
 

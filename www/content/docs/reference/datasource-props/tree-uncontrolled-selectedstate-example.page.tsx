@@ -18,31 +18,19 @@ type FileSystemNode = {
 };
 
 const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
-  name: {
-    field: 'name',
-    header: 'Name',
-    renderTreeIcon: true,
-    renderSelectionCheckBox: true,
-  },
+  name: { field: 'name', header: 'Name', renderTreeIcon: true },
   type: { field: 'type', header: 'Type' },
   extension: { field: 'extension', header: 'Extension' },
   mimeType: { field: 'mimeType', header: 'Mime Type' },
   size: { field: 'sizeInKB', type: 'number', header: 'Size (KB)' },
 };
-
 const defaultTreeSelection: TreeSelectionValue = {
-  defaultSelection: true,
-  deselectedPaths: [
-    ['1', '10'],
-    ['3', '31'],
-  ],
-  selectedPaths: [['3']],
+  defaultSelection: false,
+  selectedPaths: [['1', '10'], ['3']],
 };
-
 export default function App() {
   const [dataSourceApi, setDataSourceApi] =
-    useState<DataSourceApi<FileSystemNode> | null>();
-
+    useState<DataSourceApi<FileSystemNode> | null>(null);
   return (
     <>
       <TreeDataSource
@@ -55,24 +43,22 @@ export default function App() {
         <div
           style={{
             color: 'var(--infinite-cell-color)',
-            padding: 10,
-            display: 'flex',
-            gap: 10,
+            padding: '10px',
           }}
         >
-          <button
-            onClick={() => {
-              dataSourceApi!.treeApi.selectAll();
-            }}
-          >
-            Select all
-          </button>
           <button
             onClick={() => {
               dataSourceApi!.treeApi.deselectAll();
             }}
           >
             Deselect all
+          </button>
+          <button
+            onClick={() => {
+              dataSourceApi!.treeApi.selectAll();
+            }}
+          >
+            Select all
           </button>
         </div>
 
@@ -146,7 +132,7 @@ const dataSource = () => {
       children: [
         {
           id: '30',
-          name: 'Music - empty',
+          name: 'Music',
           sizeInKB: 0,
           type: 'folder',
           children: [],

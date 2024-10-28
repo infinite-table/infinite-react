@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import {
+  DataSourceApi,
   InfiniteTableColumn,
   TreeDataSource,
   TreeGrid,
@@ -82,9 +83,15 @@ const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
 };
 
 export default function DataTestPage() {
+  const [dataSourceApi, setDataSourceApi] =
+    React.useState<DataSourceApi<FileSystemNode> | null>(null);
   return (
     <React.StrictMode>
+      <button onClick={() => dataSourceApi!.treeApi.selectAll()}>
+        Select all
+      </button>
       <TreeDataSource<FileSystemNode>
+        onReady={setDataSourceApi}
         data={nodes}
         primaryKey="id"
         nodesKey="children"
