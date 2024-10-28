@@ -279,7 +279,7 @@ The value of this prop determines if a node is selected or not.
 See <TypeLink name="TreeSelectionValue" /> for details on the shape of this object.
 
 
-<Sandpack title="Using controlled tree selection">
+<Sandpack title="Using controlled tree selection" size="lg">
 
 ```ts file="tree-controlled-selectedstate-example.page.tsx"
 
@@ -293,7 +293,7 @@ See <TypeLink name="TreeSelectionValue" /> for details on the shape of this obje
 
 > Called when the tree selection changes. See <DPropLink name="treeSelection" />.
 
-<Sandpack title="Reacting to tree selection changes">
+<Sandpack title="Reacting to tree selection changes" size="lg">
 
 ```ts file="tree-controlled-selectedstate-example.page.tsx"
 
@@ -312,7 +312,7 @@ The value of this prop determines if a node is selected or not.
 See <TypeLink name="TreeSelectionValue" /> for details on the shape of this object.
 
 
-<Sandpack title="Using uncontrolled tree selection">
+<Sandpack title="Using uncontrolled tree selection" size="lg">
 
 ```ts file="tree-uncontrolled-selectedstate-example.page.tsx"
 

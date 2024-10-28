@@ -15,7 +15,7 @@ When using <DPropLink name="defaultTreeSelection" /> or its controlled counterpa
 
 <Note>
 
-If you enable selection, don't forget to specify which column should render a selection checkbox, by using <PropLink name="columns.renderSelectionCheckbox">renderSelectionCheckbox=true</PropLink>.
+If you enable selection, don't forget to specify which column should render a selection checkbox, by using <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox=true</PropLink>.
 
 </Note>
 

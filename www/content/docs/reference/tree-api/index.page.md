@@ -37,6 +37,36 @@ For updating tree nodes, see the following methods:
 
 </Prop>
 
+<Prop name="selectAll" type="() => void">
+
+> Selects all the nodes in the tree. See related <TreeApiLink name="deselectAll" /> prop.
+
+This works if the tree has selection enabled. See [tree selection](/docs/learn/tree-grid/tree-selection) for more details.
+
+<Sandpack title="Selecting all nodes via Tree API" size="lg">
+
+```tsx file="tree-selectall-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="deselectAll" type="() => void">
+
+> Deselects all the nodes in the tree. See related <TreeApiLink name="selectAll" /> prop.
+
+
+This works if the tree has selection enabled. See [tree selection](/docs/learn/tree-grid/tree-selection) for more details.
+
+<Sandpack title="Deselecting all nodes via Tree API" size="lg">
+
+```tsx file="tree-selectall-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
 
 <Prop name="collapseAll" type="() => void">
 
