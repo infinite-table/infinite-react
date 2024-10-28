@@ -15,7 +15,7 @@ import {
   enhancedTreeFlatten,
 } from '../../../utils/groupAndPivot';
 import { getPivotColumnsAndColumnGroups } from '../../../utils/groupAndPivot/getPivotColumnsAndColumnGroups';
-import { multisort } from '../../../utils/multisort';
+import { multisort, multisortNested } from '../../../utils/multisort';
 import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getRowSelectionApi';
 import { CellSelectionState } from '../CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from '../DataSourceCache';
@@ -270,8 +270,21 @@ export function concludeReducer<T>(params: {
   }
 
   const toPrimaryKey = state.toPrimaryKey;
+  const nodesKey = state.nodesKey;
+
+  const getNodeChildren = nodesKey
+    ? (node: T) => {
+        return node[nodesKey as keyof T] as any as T[] | null;
+      }
+    : undefined;
+  const isLeafNode = nodesKey
+    ? (node: T) => {
+        return node[nodesKey as keyof T] === undefined;
+      }
+    : undefined;
 
   let mutations: Map<string, DataSourceMutation<T>[]> | undefined;
+  let treeMutations: DeepMap<any, DataSourceMutation<T>[]> | undefined;
   const shouldIndex = originalDataArrayChanged;
   if (shouldIndex) {
     state.indexer.clear();
@@ -279,11 +292,15 @@ export function concludeReducer<T>(params: {
     // why only when not lazyLoad?
     if (!state.lazyLoad) {
       mutations = cache?.getMutations();
+      treeMutations = cache?.getTreeMutations();
       state.originalDataArray = state.indexer.indexArray(
         state.originalDataArray,
         {
           toPrimaryKey,
-          cache: cache,
+          cache,
+          getNodeChildren,
+          isLeafNode,
+          nodesKey,
         },
       );
     }
@@ -433,11 +450,25 @@ export function concludeReducer<T>(params: {
     const prevKnownTypes = multisort.knownTypes;
     multisort.knownTypes = { ...prevKnownTypes, ...state.sortTypes };
 
-    const sortFn = state.sortFunction || multisort;
-
-    dataArray = shouldSortAgain
-      ? sortFn(sortInfo!, [...dataArray])
-      : state.lastSortDataArray!;
+    if (shouldSortAgain) {
+      if (state.sortFunction) {
+        dataArray = state.sortFunction(sortInfo!, [...dataArray]);
+      } else {
+        if (isTree) {
+          dataArray = multisortNested(sortInfo!, dataArray, {
+            inplace: false,
+            isLeafNode: isLeafNode!,
+            getNodeChildren: getNodeChildren!,
+            toKey: toPrimaryKey,
+            nodesKey: nodesKey!,
+          });
+        } else {
+          dataArray = multisort(sortInfo!, [...dataArray]);
+        }
+      }
+    } else {
+      dataArray = state.lastSortDataArray!;
+    }
 
     multisort.knownTypes = prevKnownTypes;
 
@@ -641,18 +672,10 @@ export function concludeReducer<T>(params: {
   } else if (shouldTree) {
     if (shouldTreeAgain) {
       let aggregationReducers = state.aggregationReducers;
-      const nodesKey = state.nodesKey;
-
-      const getNodeChildren = (node: T) => {
-        return node[nodesKey as keyof T] as any as T[] | null;
-      };
-      const isLeafNode = (node: T) => {
-        return node[nodesKey as keyof T] === undefined;
-      };
 
       const treeParams = {
-        isLeafNode,
-        getNodeChildren,
+        isLeafNode: isLeafNode!,
+        getNodeChildren: getNodeChildren!,
         toKey: toPrimaryKey,
         reducers: aggregationReducers,
       };
@@ -872,6 +895,7 @@ export function concludeReducer<T>(params: {
     state.originalDataArrayChangedInfo = {
       timestamp: now,
       mutations: mutations?.size ? mutations : undefined,
+      treeMutations: treeMutations?.size ? treeMutations : undefined,
     };
   }
 

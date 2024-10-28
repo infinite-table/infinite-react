@@ -26,7 +26,10 @@ import {
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumnVariant,
 } from '../InfiniteTable/types/InfiniteTableColumn';
-import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
+import {
+  InfiniteTablePropDebugMode,
+  ScrollStopInfo,
+} from '../InfiniteTable/types/InfiniteTableProps';
 import {
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
@@ -169,6 +172,7 @@ export interface DataSourceMappedState<T> {
   isRowDisabled: DataSourceProps<T>['isRowDisabled'];
 
   debugId: DataSourceProps<T>['debugId'];
+  debugMode: DataSourceProps<T>['debugMode'];
 
   nodesKey: NonUndefined<TreeDataSourceProps<T>['nodesKey']>;
 
@@ -177,6 +181,7 @@ export interface DataSourceMappedState<T> {
 
   onDataArrayChange: DataSourceProps<T>['onDataArrayChange'];
   onDataMutations: DataSourceProps<T>['onDataMutations'];
+  onTreeDataMutations: TreeDataSourceProps<T>['onTreeDataMutations'];
   onReady: DataSourceProps<T>['onReady'];
   rowInfoReducers: DataSourceProps<T>['rowInfoReducers'];
 
@@ -299,6 +304,7 @@ export interface DataSourceSetupState<T> {
   totalLeafNodesCount: number;
   destroyedRef: React.MutableRefObject<boolean>;
   idToIndexMap: Map<any, number>;
+  idToPathMap: Map<any, NodePath>;
   pathToIndexDeepMap: DeepMap<any, number>;
   detailDataSourcesStateToRestore: Map<
     any,
@@ -314,6 +320,7 @@ export interface DataSourceSetupState<T> {
   originalDataArrayChangedInfo: {
     timestamp: number;
     mutations?: Map<string, DataSourceMutation<T>[]>;
+    treeMutations?: DeepMap<any, DataSourceMutation<T>[]>;
   };
   lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
   pivotMappings?: DataSourceMappings;
@@ -336,7 +343,7 @@ export interface DataSourceSetupState<T> {
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   treeDeepMap?: DeepMap<TreeKeyType, DeepMapTreeValueType<T, any>>;
-  treePaths?: DeepMap<TreeKeyType, true>;
+  treePaths?: DeepMap<TreeKeyType, any>;
   groupRowsIndexesInDataArray?: number[];
   reducerResults?: Record<string, AggregationReducerResult>;
   allRowsSelected: boolean;
@@ -492,14 +499,27 @@ export type DataSourceCRUDParam = {
   metadata?: any;
 };
 
+export type DataSourceUpdateParam = DataSourceCRUDParam & {};
+
 export type DataSourceInsertParam = DataSourceCRUDParam &
   (
     | {
         position: 'before' | 'after';
         primaryKey: any;
+        nodePath?: never;
+      }
+    | {
+        position: 'before' | 'after';
+        primaryKey?: never;
+        nodePath: NodePath;
       }
     | {
         position: 'start' | 'end';
+        nodePath?: never;
+      }
+    | {
+        position: 'start' | 'end';
+        nodePath: NodePath;
       }
   );
 
@@ -507,24 +527,41 @@ export interface DataSourceApi<T> {
   getOriginalDataArray: () => T[];
   getRowInfoArray: () => InfiniteTableRowInfo<T>[];
   getDataByPrimaryKey(id: any): T | null;
+  getDataByNodePath(nodePath: NodePath): T | null;
   getRowInfoByIndex(index: number): InfiniteTableRowInfo<T> | null;
   getRowInfoByPrimaryKey(id: any): InfiniteTableRowInfo<T> | null;
+  getRowInfoByNodePath(nodePath: NodePath): InfiniteTableRowInfo<T> | null;
   getIndexByPrimaryKey(id: any): number;
+  getIndexByNodePath(nodePath: NodePath): number;
   getPrimaryKeyByIndex(id: any): any;
+  getNodePathById(id: any): NodePath | null;
 
   get treeApi(): TreeApi<T>;
 
   // TODO return promise - also for more than one call in the same batch
   // it should return the same promise
   updateData(data: Partial<T>, options?: DataSourceCRUDParam): Promise<any>;
+  updateDataByNodePath(
+    data: Partial<T>,
+    nodePath: NodePath,
+    options?: DataSourceUpdateParam,
+  ): Promise<any>;
   updateDataArray(
     data: Partial<T>[],
     options?: DataSourceCRUDParam,
   ): Promise<any>;
-
+  updateDataArrayByNodePath(
+    data: Partial<T>[],
+    nodePaths: NodePath[],
+    options?: DataSourceUpdateParam,
+  ): Promise<any>;
   flush(): Promise<any>;
 
   removeDataByPrimaryKey(id: any, options?: DataSourceCRUDParam): Promise<any>;
+  removeDataByNodePath(
+    nodePath: NodePath,
+    options?: DataSourceCRUDParam,
+  ): Promise<any>;
   removeDataArrayByPrimaryKeys(
     id: any[],
     options?: DataSourceCRUDParam,
@@ -590,6 +627,7 @@ export type TreeExpandStateValue = TreeExpandState | TreeExpandStateObject<any>;
 export type DataSourceProps<T> = {
   nodesKey?: never;
   debugId?: string;
+  debugMode?: InfiniteTablePropDebugMode;
   children?:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);

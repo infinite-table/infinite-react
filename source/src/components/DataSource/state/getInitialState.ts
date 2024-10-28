@@ -56,7 +56,7 @@ import {
 import { normalizeSortInfo } from './normalizeSortInfo';
 import { RowDisabledState } from '../RowDisabledState';
 import { TreeDataSourceProps } from '../../TreeGrid/types/TreeDataSourceProps';
-import { TreeExpandState } from '../TreeExpandState';
+import { NodePath, TreeExpandState } from '../TreeExpandState';
 import {
   TreeSelectionState,
   TreeSelectionStateObject,
@@ -99,6 +99,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     },
 
     idToIndexMap: new Map<any, number>(),
+    idToPathMap: new Map<any, NodePath>(),
     pathToIndexDeepMap: new DeepMap<any, number>(),
 
     getDataSourceMasterContextRef: { current: () => undefined },
@@ -191,6 +192,8 @@ export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   state.rowDisabledState?.destroy();
   state.groupRowsState?.destroy();
   state.treeSelectionState?.destroy();
+  state.idToPathMap.clear();
+  state.idToIndexMap.clear();
 };
 
 export const forwardProps = <T>(
@@ -214,6 +217,7 @@ export const forwardProps = <T>(
     isNodeCollapsed: 1,
     pivotBy: 1,
     primaryKey: 1,
+    debugMode: 1,
     livePagination: 1,
     treeSelection: 1,
     refetchKey: (refetchKey) => refetchKey ?? '',
@@ -238,6 +242,13 @@ export const forwardProps = <T>(
           state.idToIndexMap.clear();
         },
         reducer: (_, rowInfo) => {
+          if (
+            props.debugMode &&
+            !props.nodesKey &&
+            state.idToIndexMap.has(rowInfo.id)
+          ) {
+            console.warn(`Duplicate id found in data source: ${rowInfo.id}`);
+          }
           state.idToIndexMap.set(rowInfo.id, rowInfo.indexInAll);
         },
       };
@@ -254,10 +265,22 @@ export const forwardProps = <T>(
       if (props.nodesKey) {
         const pathToIndexReducer: DataSourceRowInfoReducer<T> = {
           initialValue: () => {
+            state.idToPathMap.clear();
             state.pathToIndexDeepMap.clear();
           },
           reducer: (_, rowInfo) => {
             if (rowInfo.isTreeNode) {
+              state.idToPathMap.set(rowInfo.id, rowInfo.nodePath);
+              if (
+                props.debugMode &&
+                state.pathToIndexDeepMap.has(rowInfo.nodePath)
+              ) {
+                console.warn(
+                  `Duplicate node path found in data source (debugId: ${
+                    props.debugId || 'none'
+                  }): ${rowInfo.nodePath}`,
+                );
+              }
               state.pathToIndexDeepMap.set(
                 rowInfo.nodePath,
                 rowInfo.indexInAll,
@@ -308,6 +331,7 @@ export const forwardProps = <T>(
     },
     onDataArrayChange: 1,
     onDataMutations: 1,
+    onTreeDataMutations: 1,
     aggregationReducers: 1,
     collapseGroupRowsOnDataFunctionChange: (
       collapseGroupRowsOnDataFunctionChange,

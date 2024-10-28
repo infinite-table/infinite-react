@@ -13,12 +13,14 @@ import {
   DataSourcePropTreeSelection,
   DataSourcePropTreeSelection_MultiNode,
   DataSourcePropTreeSelection_SingleNode,
+  DataSourceState,
   TreeExpandStateValue,
 } from '../../DataSource';
 import {
   NodePath,
   TreeExpandStateObject,
 } from '../../DataSource/TreeExpandState';
+import { NonUndefined } from '../../types/NonUndefined';
 
 type OnNodeStateChangeParam = DataSourceCallback_BaseParam<any> & {};
 type TreeDataSourceOnlyProps<T> = {
@@ -38,6 +40,20 @@ type TreeDataSourceOnlyProps<T> = {
       nodeState: 'collapsed' | 'expanded';
     },
   ) => void;
+
+  onTreeDataMutations?: ({
+    dataArray,
+    timestamp,
+    treeMutations,
+    nodesKey,
+  }: {
+    nodesKey: keyof T | any;
+    dataArray: DataSourceState<T>['originalDataArray'];
+    timestamp: number;
+    treeMutations: NonUndefined<
+      DataSourceState<T>['originalDataArrayChangedInfo']['treeMutations']
+    >;
+  }) => void;
 
   isNodeSelected?: DataSourcePropIsNodeSelected<T>;
 

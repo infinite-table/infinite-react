@@ -526,7 +526,7 @@ export type PivotBy<DataType, KeyType> = Omit<
       >);
 };
 
-type TreeParams<DataType, _KeyType> = {
+export type TreeParams<DataType, _KeyType> = {
   isLeafNode: (item: DataType) => boolean;
   getNodeChildren: (item: DataType) => null | DataType[];
   toKey: (item: DataType) => any;
@@ -745,6 +745,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           const res = indexer.indexArray(dataArray as any as DataType[], {
             toPrimaryKey,
             cache,
+            nodesKey: undefined,
           });
           //@ts-ignore
           dataArray = res;
@@ -940,7 +941,8 @@ function processTreeNode<DataType, KeyType>(
 ) {
   const { isLeafNode, getNodeChildren, toKey } = treeParams;
 
-  const nodePath = [...parentPath, toKey(item)];
+  const id = toKey(item);
+  const nodePath = [...parentPath, id];
   const isLeaf = isLeafNode(item);
 
   treePaths.set(nodePath, true);
@@ -1526,7 +1528,7 @@ function flattenTreeNodes<DataType>(
         parentNodes: Array.from(parents),
         indexInParentNodes: [...indexInParentNodes, i],
         indexInParent: i,
-        indexInAll: result.length,
+        indexInAll: parentExpanded ? result.length : -1,
       };
       if (isNodeSelected) {
         rowInfo.rowSelected = isNodeSelected(rowInfo);

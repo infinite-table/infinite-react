@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { multisort } from '../../utils/multisort';
+import { multisort, multisortNested } from '../../utils/multisort';
 import { buildManagedComponent } from '../hooks/useComponentState';
 
 import { defaultFilterTypes } from './defaultFilterTypes';
@@ -85,6 +85,7 @@ export {
   CellSelectionState,
   RowDisabledState,
   multisort,
+  multisortNested,
   defaultFilterTypes as filterTypes,
   useRowInfoReducers,
   useMasterRowInfo,

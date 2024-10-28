@@ -381,7 +381,7 @@ export default () => {
               }
               // return true;
               const res = rowInfo.groupNesting === 2;
-              console.log('repeatWrappedGroupRows', res);
+
               return res;
             }}
             columnDefaultWidth={200}

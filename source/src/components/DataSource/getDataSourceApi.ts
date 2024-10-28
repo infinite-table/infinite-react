@@ -4,12 +4,14 @@ import {
   DataSourceCRUDParam,
   DataSourceSingleSortInfo,
   DataSourceState,
+  DataSourceUpdateParam,
 } from '.';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
 import { getTreeApi, TreeApi } from './getTreeApi';
 import { RowDisabledState } from './RowDisabledState';
+import { NodePath } from './TreeExpandState';
 import { DataSourceInsertParam } from './types';
 
 type GetDataSourceApiParam<T> = {
@@ -27,12 +29,27 @@ type DataSourceOperation<T> =
   | {
       type: 'update';
       primaryKeys: any[];
+      nodePaths?: never;
+      array: Partial<T>[];
+      metadata: any;
+    }
+  | {
+      type: 'update';
+      primaryKeys?: never;
+      nodePaths: NodePath[];
       array: Partial<T>[];
       metadata: any;
     }
   | {
       type: 'delete';
       primaryKeys: any[];
+      nodePaths?: never;
+      metadata: any;
+    }
+  | {
+      type: 'delete';
+      primaryKeys?: never;
+      nodePaths: NodePath[];
       metadata: any;
     }
   | {
@@ -42,6 +59,17 @@ type DataSourceOperation<T> =
       // here the primary key is the primary key of the item relative to which
       // the insert is being made - so before or after this primaryKey
       primaryKey: any;
+      nodePath?: never;
+      metadata: any;
+    }
+  | {
+      type: 'insert';
+      array: T[];
+      position: 'before' | 'after';
+      // here the primary key is the primary key of the item relative to which
+      // the insert is being made - so before or after this primaryKey
+      primaryKey?: never;
+      nodePath: NodePath;
       metadata: any;
     }
   | {
@@ -120,38 +148,85 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       switch (operation.type) {
         case 'update':
           operation.array.forEach((data, index) => {
-            const key = operation.primaryKeys[index];
-            const rowInfo = this.getRowInfoByPrimaryKey(key);
-            if (rowInfo && !rowInfo.isGroupRow) {
-              cache.update(
-                operation.primaryKeys[index],
-                data,
-                rowInfo.data,
-                operation.metadata,
+            if (operation.primaryKeys) {
+              const key = operation.primaryKeys[index];
+              const rowInfo = this.getRowInfoByPrimaryKey(key);
+              if (rowInfo && !rowInfo.isGroupRow) {
+                cache.update(
+                  operation.primaryKeys[index],
+                  data,
+                  rowInfo.data,
+                  operation.metadata,
+                );
+              }
+            } else if (operation.nodePaths) {
+              const rowInfo = this.getRowInfoByNodePath(
+                operation.nodePaths[index],
               );
+              if (rowInfo && !rowInfo.isGroupRow) {
+                cache.updateNodePath(
+                  operation.nodePaths[index],
+                  data,
+                  rowInfo.data,
+                  operation.metadata,
+                );
+              }
             }
           });
           break;
         case 'delete':
-          operation.primaryKeys.forEach((key) => {
-            const rowInfo = this.getRowInfoByPrimaryKey(key);
-            if (rowInfo && !rowInfo.isGroupRow) {
-              cache.delete(key, rowInfo.data, operation.metadata);
-            }
-          });
+          if (operation.primaryKeys) {
+            operation.primaryKeys.forEach((key) => {
+              const rowInfo = this.getRowInfoByPrimaryKey(key);
+              if (rowInfo && !rowInfo.isGroupRow) {
+                cache.delete(key, rowInfo.data, operation.metadata);
+              }
+            });
+          } else if (operation.nodePaths) {
+            operation.nodePaths.forEach((nodePath) => {
+              const rowInfo = this.getRowInfoByNodePath(nodePath);
+              if (rowInfo && !rowInfo.isGroupRow) {
+                cache.deleteNodePath(
+                  nodePath,
+                  rowInfo.data,
+                  operation.metadata,
+                );
+              }
+            });
+          }
           break;
         case 'insert':
           let pk = operation.primaryKey;
           let position = operation.position;
-          operation.array.forEach((data) => {
-            cache.insert(pk, data, position, operation.metadata);
+          let nodePath = operation.nodePath;
 
-            // in order to respect the order of the insertions, we need to
-            // update the pk to the primary key of the last inserted item
-            pk = this.toPrimaryKey(data);
-            // and we need to change the position to 'after' for the next
-            position = 'after';
-          });
+          if (pk !== undefined) {
+            operation.array.forEach((data) => {
+              cache.insert(pk, data, position, operation.metadata);
+
+              // in order to respect the order of the insertions, we need to
+              // update the pk to the primary key of the last inserted item
+              pk = this.toPrimaryKey(data);
+              // and we need to change the position to 'after' for the next
+              position = 'after';
+            });
+          } else if (nodePath) {
+            operation.array.forEach((data) => {
+              cache.insertNodePath(
+                nodePath!,
+                data,
+                position,
+                operation.metadata,
+              );
+              // in order to respect the order of the insertions, we need to
+              // update the nodePath to the nodePath of the last inserted item
+              pk = this.toPrimaryKey(data);
+              nodePath!.pop();
+              nodePath!.push(pk);
+              // and we need to change the position to 'after' for the next
+              position = 'after';
+            });
+          }
           break;
         case 'replace-all':
           cache.resetDataSource(operation.metadata);
@@ -198,9 +273,25 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const index = this.getIndexByPrimaryKey(id);
     return this.getRowInfoByIndex(index);
   };
+
+  getRowInfoByNodePath = (
+    nodePath: NodePath,
+  ): InfiniteTableRowInfo<T> | null => {
+    const index = this.getIndexByNodePath(nodePath);
+    return this.getRowInfoByIndex(index);
+  };
+
   getIndexByPrimaryKey = (id: any) => {
     const map = this.getState().idToIndexMap;
     return map.get(id) ?? -1;
+  };
+  getIndexByNodePath = (nodePath: NodePath) => {
+    const map = this.getState().pathToIndexDeepMap;
+    return map.get(nodePath) ?? -1;
+  };
+  getNodePathById = (id: any): NodePath | null => {
+    const map = this.getState().idToPathMap;
+    return map.get(id) ?? null;
   };
   getPrimaryKeyByIndex = (index: number) => {
     const rowInfo = this.getRowInfoByIndex(index);
@@ -215,6 +306,11 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   getDataByPrimaryKey = (id: any): T | null => {
     const { indexer } = this.getState();
     return indexer.getDataForPrimaryKey(id) ?? null;
+  };
+
+  getDataByNodePath = (nodePath: NodePath): T | null => {
+    const { indexer } = this.getState();
+    return indexer.getDataForNodePath(nodePath) ?? null;
   };
 
   /**
@@ -246,16 +342,63 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return this.replaceAllData([], options);
   };
 
-  updateData = (data: Partial<T>, options?: DataSourceCRUDParam) => {
+  updateData = (data: Partial<T>, options?: DataSourceUpdateParam) => {
     return this.updateDataArray([data], options);
   };
   updateDataArray = (data: Partial<T>[], options?: DataSourceCRUDParam) => {
+    const isTree = this.getState().isTree;
+    let primaryKeys: any[] | undefined = !isTree
+      ? data.map((d) => {
+          return this.toPrimaryKey(d as T);
+        })
+      : undefined;
+
+    const nodePaths = isTree
+      ? data.map((d) => {
+          return this.getNodePathById(this.toPrimaryKey(d as T)) || [];
+        })
+      : null;
+
+    const result = primaryKeys
+      ? this.batchOperation({
+          type: 'update',
+          array: data,
+          primaryKeys: data.map((d) => {
+            return this.toPrimaryKey(d as T);
+          }),
+          metadata: options?.metadata,
+        })
+      : this.batchOperation({
+          type: 'update',
+          array: data,
+          nodePaths: nodePaths || [],
+          metadata: options?.metadata,
+        });
+
+    if (options?.flush) {
+      this.commit();
+    }
+
+    return result;
+  };
+
+  updateDataByNodePath = (
+    data: Partial<T>,
+    nodePath: NodePath,
+    options?: DataSourceUpdateParam,
+  ) => {
+    return this.updateDataArrayByNodePath([data], [nodePath], options);
+  };
+
+  updateDataArrayByNodePath = (
+    data: Partial<T>[],
+    nodePaths: NodePath[],
+    options?: DataSourceUpdateParam,
+  ) => {
     const result = this.batchOperation({
       type: 'update',
       array: data,
-      primaryKeys: data.map((d) => {
-        return this.toPrimaryKey(d as T);
-      }),
+      nodePaths: nodePaths,
       metadata: options?.metadata,
     });
 
@@ -278,12 +421,44 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
     return result;
   };
-  removeData = (data: T, options?: DataSourceCRUDParam) => {
+  removeDataByNodePath = (
+    nodePath: NodePath,
+    options?: DataSourceCRUDParam,
+  ) => {
     const result = this.batchOperation({
       type: 'delete',
-      primaryKeys: [this.toPrimaryKey(data)],
+      nodePaths: [nodePath],
       metadata: options?.metadata,
     });
+
+    if (options?.flush) {
+      this.commit();
+    }
+    return result;
+  };
+
+  removeData = (data: T, options?: DataSourceCRUDParam) => {
+    const isTree = this.getState().isTree;
+    let primaryKeys: any[] | undefined = !isTree
+      ? [this.toPrimaryKey(data)]
+      : undefined;
+    const nodePath = isTree
+      ? this.getNodePathById(this.toPrimaryKey(data))
+      : null;
+    let nodePaths: NodePath[] | undefined =
+      isTree && nodePath ? [nodePath] : undefined;
+
+    const result = primaryKeys
+      ? this.batchOperation({
+          type: 'delete',
+          primaryKeys,
+          metadata: options?.metadata,
+        })
+      : this.batchOperation({
+          type: 'delete',
+          nodePaths: nodePaths || [],
+          metadata: options?.metadata,
+        });
 
     if (options?.flush) {
       this.commit();
@@ -309,11 +484,25 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return result;
   };
   removeDataArray = (data: T[], options?: DataSourceCRUDParam) => {
-    const result = this.batchOperation({
-      type: 'delete',
-      primaryKeys: data.map(this.toPrimaryKey),
-      metadata: options?.metadata,
-    });
+    const isTree = this.getState().isTree;
+
+    const nodePaths = isTree
+      ? data.map((d) => {
+          return this.getNodePathById(this.toPrimaryKey(d)) || [];
+        })
+      : null;
+    const primaryKeys = !isTree ? data.map(this.toPrimaryKey) : undefined;
+    const result = isTree
+      ? this.batchOperation({
+          type: 'delete',
+          nodePaths: nodePaths || [],
+          metadata: options?.metadata,
+        })
+      : this.batchOperation({
+          type: 'delete',
+          primaryKeys: primaryKeys || [],
+          metadata: options?.metadata,
+        });
 
     if (options?.flush) {
       this.commit();
@@ -339,6 +528,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   insertDataArray = (data: T[], options: DataSourceInsertParam) => {
     let position: 'before' | 'after' = 'before';
     let primaryKey: any = undefined;
+    let nodePath: NodePath | undefined = options.nodePath;
 
     if (options.position === 'before' || options.position === 'after') {
       position = options.position;
@@ -356,13 +546,25 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           : this.toPrimaryKey(arr[arr.length - 1]);
       }
     }
-    const result = this.batchOperation({
-      type: 'insert',
-      array: data,
-      position,
-      metadata: options?.metadata,
-      primaryKey: primaryKey!,
-    });
+
+    const isTree = this.getState().isTree;
+
+    const result = isTree
+      ? this.batchOperation({
+          type: 'insert',
+          array: data,
+          position,
+          metadata: options?.metadata,
+          nodePath: this.getNodePathById(primaryKey) || [],
+        })
+      : this.batchOperation({
+          type: 'insert',
+          array: data,
+          position,
+          metadata: options?.metadata,
+          primaryKey,
+          nodePath,
+        });
 
     if (options?.flush) {
       this.commit();

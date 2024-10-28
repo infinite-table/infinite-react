@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { toTreeDataArray } from '../../utils/groupAndPivot/treeUtils';
 import { useDataSourceInternal } from '../DataSource/privateHooks/useDataSource';
 import { TreeDataSourceProps } from './types/TreeDataSourceProps';
 
@@ -16,3 +17,5 @@ function TreeDataSource<T>(props: TreeDataSourceProps<T>) {
 }
 
 export { TreeDataSource };
+
+export { toTreeDataArray };

@@ -1,4 +1,8 @@
-import { DataSourceApi, DataSourceComponentActions } from '.';
+import {
+  DataSourceApi,
+  DataSourceComponentActions,
+  DataSourceCRUDParam,
+} from '.';
 
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { getRowInfoAt } from './dataSourceGetters';
@@ -38,7 +42,7 @@ export function cloneTreeSelection<T>(
   );
 }
 
-type TreeSelectionApi = {
+type TreeSelectionApi<T> = {
   get allRowsSelected(): boolean;
   isNodeSelected(nodePath: NodePath): boolean | null;
 
@@ -47,12 +51,23 @@ type TreeSelectionApi = {
   deselectNode(nodePath: NodePath): void;
   toggleNodeSelection(nodePath: NodePath): void;
 
+  getRowInfoByNodePath(nodePath: NodePath): InfiniteTableRowInfo<T> | null;
+  getIndexByNodePath(nodePath: NodePath): number;
+  getDataByNodePath(nodePath: NodePath): T | null;
+
   selectAll(): void;
   expandAll(): void;
   collapseAll(): void;
   deselectAll(): void;
+
+  updateDataByNodePath(
+    data: Partial<T>,
+    nodePath: NodePath,
+
+    options?: DataSourceCRUDParam,
+  ): void;
 };
-export type TreeApi<T> = TreeExpandStateApi<T> & TreeSelectionApi;
+export type TreeApi<T> = TreeExpandStateApi<T> & TreeSelectionApi<T>;
 
 export type GetTreeApiParam<T> = {
   getState: () => DataSourceState<T>;
@@ -71,7 +86,6 @@ export function treeSelectionStateConfigGetter<T>(
 
     return {
       treeDeepMap: state.treeDeepMap!,
-      treePaths: state.treePaths!,
     };
   };
 }
@@ -307,6 +321,26 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
       } else {
         this.selectNode(nodePath);
       }
+    },
+
+    getDataByNodePath(nodePath: NodePath): T | null {
+      return dataSourceApi.getDataByNodePath(nodePath);
+    },
+
+    updateDataByNodePath(
+      data: Partial<T>,
+      nodePath: NodePath,
+      options?: DataSourceCRUDParam,
+    ) {
+      return dataSourceApi.updateDataByNodePath(data, nodePath, options);
+    },
+
+    getRowInfoByNodePath(nodePath: NodePath) {
+      return dataSourceApi.getRowInfoByNodePath(nodePath);
+    },
+
+    getIndexByNodePath(nodePath: NodePath) {
+      return dataSourceApi.getIndexByNodePath(nodePath);
     },
   };
   return api;

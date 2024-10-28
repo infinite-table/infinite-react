@@ -1,3 +1,4 @@
+import { treeTraverse } from '../groupAndPivot/treeUtils';
 import TYPES from './sortTypes';
 
 export type SortDir = 1 | -1;
@@ -41,11 +42,9 @@ export interface MultisortFn<T> {
   };
 }
 
-export const multisort = <T>(
+function toPlainSortInfo<T>(
   sortInfo: MultisortInfoAllowMultipleFields<T>[],
-  array: T[],
-  get?: (item: any) => T,
-): T[] => {
+): MultisortInfo<T>[] {
   const plainSortInfo = sortInfo
     .map((sortInfo) => {
       if (Array.isArray(sortInfo.field)) {
@@ -76,7 +75,96 @@ export const multisort = <T>(
     })
     .flat();
 
-  array.sort(getMultisortFunction<T>(plainSortInfo, get));
+  return plainSortInfo;
+}
+
+export const multisort = <T>(
+  sortInfo: MultisortInfoAllowMultipleFields<T>[],
+  array: T[],
+  options?: { get?: (item: any) => T } | ((item: any) => T),
+): T[] => {
+  const get = typeof options === 'function' ? options : options?.get;
+  array.sort(getMultisortFunction<T>(toPlainSortInfo(sortInfo), get));
+
+  return array;
+};
+
+export type NestedMultiSortOptions<T> = {
+  get?: (item: any) => T;
+  nodesKey: string;
+  isLeafNode?: (item: T) => boolean;
+  getNodeChildren?: (item: T) => null | T[];
+  toKey: (item: T) => any;
+  depthFirst?: boolean;
+  inplace?: boolean;
+};
+export const multisortNested = <T>(
+  sortInfo: MultisortInfoAllowMultipleFields<T>[],
+  array: T[],
+  options: NestedMultiSortOptions<T>,
+): T[] => {
+  const sortFn = getMultisortFunction<T>(
+    toPlainSortInfo(sortInfo),
+    options.get,
+  );
+
+  const depthFirst = options.depthFirst ?? false;
+  const inplace = options.inplace ?? false;
+
+  if (!depthFirst) {
+    if (inplace) {
+      array.sort(sortFn);
+    } else {
+      array = [...array].sort(sortFn);
+    }
+  }
+
+  const { nodesKey, toKey } = options;
+
+  const getNodeChildren = (node: T) => {
+    return node[nodesKey as keyof T] as any as T[] | null;
+  };
+
+  const isLeafNode = (node: T) => {
+    return node[nodesKey as keyof T] === undefined;
+  };
+
+  treeTraverse(
+    {
+      isLeafNode: options.isLeafNode ?? isLeafNode,
+      getNodeChildren: options.getNodeChildren ?? getNodeChildren,
+      toKey,
+    },
+    {
+      onParentNode: (item, next, children) => {
+        if (depthFirst) {
+          next();
+        }
+
+        if (Array.isArray(children)) {
+          const res = inplace
+            ? children.sort(sortFn)
+            : [...children].sort(sortFn);
+
+          //@ts-ignore
+          item[nodesKey] = res;
+        }
+
+        if (!depthFirst) {
+          next();
+        }
+      },
+    },
+    array,
+  );
+
+  if (depthFirst) {
+    if (inplace) {
+      array.sort(sortFn);
+    } else {
+      array = [...array].sort(sortFn);
+    }
+  }
 
   return array;
 };

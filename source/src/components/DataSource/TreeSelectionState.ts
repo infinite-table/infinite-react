@@ -22,8 +22,6 @@ export type TreeSelectionStateObject =
 
 export type TreeSelectionStateConfig<_T = any> = {
   treeDeepMap: DeepMap<any, DeepMapTreeValueType<any, any>>;
-
-  treePaths: DeepMap<any, true>;
 };
 
 export type GetTreeSelectionStateConfig<T> = () => TreeSelectionStateConfig<T>;
@@ -49,10 +47,6 @@ export class TreeSelectionState<T = any> {
 
   getTreeDeepMap() {
     return this.getConfig().treeDeepMap;
-  }
-
-  getAllTreePaths() {
-    return this.getConfig().treePaths;
   }
 
   isLeafNode(nodePath: NodePath) {

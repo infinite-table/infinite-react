@@ -140,6 +140,20 @@ export function useDataSourceInternal<T, PROPS_TYPE = DataSourceProps<T>>(
         timestamp: componentState.originalDataArrayChangedInfo.timestamp,
       });
     }
+
+    if (
+      componentState.onTreeDataMutations &&
+      componentState.originalDataArrayChangedInfo.treeMutations &&
+      componentState.originalDataArrayChangedInfo.treeMutations.size
+    ) {
+      componentState.onTreeDataMutations({
+        nodesKey: componentState.nodesKey ? componentState.nodesKey : undefined,
+        dataArray: componentState.originalDataArray,
+        treeMutations:
+          componentState.originalDataArrayChangedInfo.treeMutations,
+        timestamp: componentState.originalDataArrayChangedInfo.timestamp,
+      });
+    }
   }, [componentState.originalDataArrayChangedInfo]);
 
   useEffect(() => {
