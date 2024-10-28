@@ -19,6 +19,55 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <PropTable searchPlaceholder="Type to filter type definitions" sort>
 
+
+<Prop name="TreeExpandStateValue">
+
+> Represents the expand/collapse state of the tree nodes. See <DPropLink name="treeExpandState" /> for more details.
+
+You can specify the expand/collapse state of the tree nodes in two ways:
+
+1. With node paths (recommended)
+
+When using node paths, the object should have the following properties:
+
+- `defaultExpanded`: `boolean` - whether the tree nodes are expanded by default or not.
+- `collapsedPaths`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
+- `expandedPaths`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
+
+```tsx title="Example of treeExpandState with node paths"
+const treeExpandState = {
+  defaultExpanded: true,
+  collapsedPaths: [
+    ['1', '10'],
+    ['2', '20'],
+    ['5']
+  ],
+  expandedPaths: [
+    ['1', '4'],
+    ['5','nested node in 5'],
+  ],
+};
+```
+
+2. With node ids
+
+When using node ids, the object should have the following properties:
+
+- `defaultExpanded`: `boolean` - whether the tree nodes are expanded by default or not.
+- `collapsedIds`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
+- `expandedIds`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
+
+
+```tsx title="Example of treeExpandState with node ids"
+const treeExpandState = {
+  defaultExpanded: true,
+  collapsedIds: ['1', '2', '5'],
+  expandedIds: ['10', '20', 'nested node in 5'],
+};
+```
+
+</Prop>
+
 <Prop name="RowDetailState">
 
 > Represents the collapse/expand state of row details - when [master-detail is configured](/docs/learn/master-detail/overview). Also see <PropLink name="rowDetailRenderer" /> for the most important property in the master-detail configuration.
@@ -377,6 +426,13 @@ export type InfiniteTableRowInfo<T> =
 
    // dataSourceHasGrouping = true, isGroupRow = true
   | InfiniteTable_HasGrouping_RowInfoGroup<T>
+
+  // tree scenarios - leaf node
+  | InfiniteTable_Tree_RowInfoLeafNode<T>
+
+  // tree scenarios - parent node
+  | InfiniteTable_Tree_RowInfoParentNode<T>;
+
 ```
 
 The common properties of the type (in all discriminated cases) are:
@@ -394,6 +450,7 @@ Additional properties to the ones already mentioned above:
 
 - `data` - the data for the underlying row, of type `DATA_TYPE`.
 - `isGroupRow` - `false`
+- `isTreeNode` - `false`
 - `dataSourceHasGrouping` - `false`
 - `selfLoaded` - `boolean` - useful when lazy loading is configured.
 
@@ -406,6 +463,7 @@ Additional properties this type exposes:
 - `data` - the data for the underlying row, of type `DATA_TYPE`.
 - `dataSourceHasGrouping` - `true`
 - `isGroupRow` - `false`
+- `isTreeNode` - `false`
 - `indexInGroup` - type: `number`. The index of the row in its parent group.
 - `groupKeys` - type: `any[]`, but usually it's actually `string[]`. For normal rows, the group keys will have all the keys starting from the topmost parent down to the last group row in the hierarchy (the direct parent of the current row).
 - `groupBy` - type `(keyof T)[]`. Has the same structure as groupKeys, but it will contain the fields used to group the rows.
@@ -425,13 +483,44 @@ Additional properties this type exposes:
 
 - `data` - the data for the underlying row, of type `Partial<DATA_TYPE> | null`. If there are [aggregations configured](/docs/learn/grouping-and-pivoting/group-aggregations), then `data` will be an object that contains those aggregated values (so the shape of the object will be `Partial<DATA_TYPE>`). When no aggregations, `data` will be `null`
 - `dataSourceHasGrouping` - `true`
-- `isGroupRow` - `false`
+- `isGroupRow` - `true`
+- `isTreeNode` - `false`
 - `error` - type: `string?`. If there was an error while loading the group (when the group row is expanded), this will contain the error message. If the group row was loaded with the `cache: true` flag sent in the server response, the error will remain on the `rowInfo` object even when you collapse the group row, otherwise, if `cache: true` was not present, the `error` property will be removed on collapse.
 - `indexInGroup` - type: `number`. The index of the row in the its parent group.
 - `deepRowInfoArray` - an array of `rowInfo` objects. This array contains all the (uncollapsed, so visible) row infos under this group, at any level of nesting, in the order in which they are visible in the table.
 - `reducerResults` - type `Record<string, AggregationReducerResult>`. The result of the <DataSourcePropLink name="aggregationReducers">aggregation reducers</DataSourcePropLink> for each field in the <DataSourcePropLink name="aggregationReducers" /> prop.
 - `groupCount` - type: `number`. The count of leaf rows that the current group (in this case, the parent group) contains
 - `groupData` - type: `DATA_TYPE[]`. The array of the data of all leaf nodes (normal nodes) that are inside this group.
+
+### InfiniteTable_Tree_RowInfoBase
+
+The base type for row nodes when using the `<TreeDataSource />` component.
+
+- `nodePath`: `any[]` - the path for the current row info
+- `isTreeNode`: `true`
+- `isParentNode`: `boolean`
+- `indexInParent`: `number`
+- `treeNesting`: `number` - the nesting level of the current node.
+
+### InfiniteTable_Tree_RowInfoParentNode
+
+The type used for parent nodes in tree scenarios.
+
+In addition to the properties already available via `InfiniteTable_Tree_RowInfoBase`,  it adds the following properties:
+
+- `isParentNode` - `true`
+- `isTreeNode` - `true`
+- `totalLeafNodesCount` - `number`
+- `collapsedLeafNodesCount` - `number`
+
+### InfiniteTable_Tree_RowInfoLeafNode
+
+The type used for leaf nodes in tree scenarios.
+
+In addition to the properties already available via `InfiniteTable_Tree_RowInfoBase`,  it adds the following properties:
+
+- `isParentNode` - `false`
+- `isTreeNode` - `true`
 
 </Prop>
 

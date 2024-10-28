@@ -760,6 +760,27 @@ For more components that can be overriden, see <PropLink name="components" />
 </Sandpack>
 
 </Prop>
+<Prop name="columns.renderTreeIcon" type="boolean|(cellContext) => ReactNode">
+
+> Renders the tree expand/collapse icon in the column cells. If you want default behavior, specify `true` and the default icon will be used.
+
+To render a custom icon, specify a function that returns a React node. The `cellContext` object param will contain all the information about the current cell.
+
+With the default value of `true`, an icon will be rendered only for parent nodes. If you want to render an icon for all nodes, specify a function (and differentiate between parent and leaf nodes), and it will be called regardless of whether the node is a parent or a leaf.
+
+
+You can also use <PropLink name="columns.renderTreeIconForParentNode" /> to specify to customize the tree icon rendering for parent nodes or <PropLink name="columns.renderTreeIconForLeafNode" /> to customize the tree icon rendering for leaf nodes.
+
+<Sandpack title="Specifying a column to used as the tree icon">
+
+```ts file="treegrid-rendericon-default-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="columns.renderRowDetailIcon" type="boolean|(cellContext) => ReactNode">
 
 > Renders the row detail expand/collapse icon in the column cell. Only used when [master-detail](/docs/learn/master-detail/overview) is enabled.

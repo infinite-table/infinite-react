@@ -10,7 +10,7 @@ function TreeDataSource<T>(props: TreeDataSourceProps<T>) {
   >(props);
 
   return (
-    <DataSourceComponent nodesKey={props.nodesKey || 'nodes'}>
+    <DataSourceComponent nodesKey={props.nodesKey || 'children'}>
       {props.children ?? null}
     </DataSourceComponent>
   );

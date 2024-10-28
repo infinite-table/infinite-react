@@ -42,6 +42,41 @@ Using functions (for more dynamic primary keys) is supported, but hasn't been te
 
 </Prop>
 
+<Prop name="treeExpandState" type="TreeExpandStateValue">
+
+> Specifies the expand/collapse state of the tree nodes. See <TypeLink name="TreeExpandStateValue" /> for the shape of this object. For the uncontrolled version, see <DPropLink name="defaultTreeExpandState" />.
+
+If no `treeExpandState` prop is specified, the tree will be rendered as fully expanded by default.
+
+When using the controlled version, make sure to update the `treeExpandState` prop by using the <DPropLink name="onTreeExpandStateChange" /> callback.
+
+<Sandpack title="Using controlled tree expand state" size="large">
+
+```ts file="tree-controlled-expandstate-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="defaultTreeExpandState" type="TreeExpandStateValue">
+
+> Specifies the expand/collapse state of the tree nodes. See <TypeLink name="TreeExpandStateValue" /> for the shape of this object. For the controlled version, see <DPropLink name="treeExpandState" />.
+
+
+
+<Sandpack title="Using uncontrolled tree expand state" size="large">
+
+```ts file="tree-uncontrolled-expandstate-example.page.tsx"
+
+```
+
+</Sandpack>
+</Prop>
+
+
+
 <Prop name="isRowDisabled" type="(rowInfo: InfiniteTableRowInfo<T>) => boolean">
 
 > This function ultimately decides the disabled state of a row. It overrides both <DPropLink name="defaultRowDisabledState" />/<DPropLink name="rowDisabledState" /> props.

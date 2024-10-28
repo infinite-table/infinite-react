@@ -272,6 +272,18 @@
     ]
   },
   {
+    "title": "Tree Data",
+    "path": "/docs/learn/tree-grid/overview",
+    "transient": true,
+    "badge": "new",
+    "routes": [
+      {
+        "title": "Overview",
+        "path": "/docs/learn/tree-grid/overview"
+      }
+    ]
+  },
+  {
     "title": "Theming",
     "path": "/docs/learn/theming",
     "routes": [
