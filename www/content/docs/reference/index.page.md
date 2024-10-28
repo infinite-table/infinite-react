@@ -50,6 +50,11 @@ Find out more about the Column API and how you can use it to change column state
 
 </YouWillLearnCard>
 
+<YouWillLearnCard title="DataSource Tree API" path="/docs/reference/tree-api">
+
+Jump into the `Tree` API, which allows advanced interactions with the tree data source - collapse/expand nodes, node updates and more.
+
+</YouWillLearnCard>
 </HeroCards>
 
 ## Hooks

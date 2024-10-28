@@ -303,6 +303,14 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return this.getState().originalDataArray;
   };
 
+  getDataByIndex = (index: number): T | null => {
+    const rowInfo = this.getRowInfoByIndex(index);
+    if (!rowInfo) {
+      return null;
+    }
+    return rowInfo.data as T;
+  };
+
   getDataByPrimaryKey = (id: any): T | null => {
     const { indexer } = this.getState();
     return indexer.getDataForPrimaryKey(id) ?? null;

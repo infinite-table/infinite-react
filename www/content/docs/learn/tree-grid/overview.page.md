@@ -168,3 +168,10 @@ So you can combine the expanded/collapsed paths to achieve very complex tree lay
 ## Working with horizontal layout
 
 The <PropLink name="wrapRowsHorizontally" /> prop can be used to enable horizontal layout, just like non-tree DataGrids.
+
+<Sandpack title="TreeGrid with horizontal layout" >
+
+```tsx file="tree-grid-horizontal-layout-example.page.tsx"
+```
+
+</Sandpack>

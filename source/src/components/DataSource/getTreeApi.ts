@@ -1,8 +1,4 @@
-import {
-  DataSourceApi,
-  DataSourceComponentActions,
-  DataSourceCRUDParam,
-} from '.';
+import { DataSourceApi, DataSourceComponentActions } from '.';
 
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { getRowInfoAt } from './dataSourceGetters';
@@ -42,7 +38,7 @@ export function cloneTreeSelection<T>(
   );
 }
 
-type TreeSelectionApi<T> = {
+type TreeSelectionApi<_T = any> = {
   get allRowsSelected(): boolean;
   isNodeSelected(nodePath: NodePath): boolean | null;
 
@@ -51,21 +47,10 @@ type TreeSelectionApi<T> = {
   deselectNode(nodePath: NodePath): void;
   toggleNodeSelection(nodePath: NodePath): void;
 
-  getRowInfoByNodePath(nodePath: NodePath): InfiniteTableRowInfo<T> | null;
-  getIndexByNodePath(nodePath: NodePath): number;
-  getDataByNodePath(nodePath: NodePath): T | null;
-
   selectAll(): void;
   expandAll(): void;
   collapseAll(): void;
   deselectAll(): void;
-
-  updateDataByNodePath(
-    data: Partial<T>,
-    nodePath: NodePath,
-
-    options?: DataSourceCRUDParam,
-  ): void;
 };
 export type TreeApi<T> = TreeExpandStateApi<T> & TreeSelectionApi<T>;
 
@@ -126,7 +111,7 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
     };
   };
 
-  const api = {
+  const api: TreeApi<T> = {
     get allRowsSelected() {
       return getState().allRowsSelected;
     },
@@ -321,26 +306,6 @@ export function getTreeApi<T>(param: GetTreeApiParam<T>): TreeApi<T> {
       } else {
         this.selectNode(nodePath);
       }
-    },
-
-    getDataByNodePath(nodePath: NodePath): T | null {
-      return dataSourceApi.getDataByNodePath(nodePath);
-    },
-
-    updateDataByNodePath(
-      data: Partial<T>,
-      nodePath: NodePath,
-      options?: DataSourceCRUDParam,
-    ) {
-      return dataSourceApi.updateDataByNodePath(data, nodePath, options);
-    },
-
-    getRowInfoByNodePath(nodePath: NodePath) {
-      return dataSourceApi.getRowInfoByNodePath(nodePath);
-    },
-
-    getIndexByNodePath(nodePath: NodePath) {
-      return dataSourceApi.getIndexByNodePath(nodePath);
     },
   };
   return api;

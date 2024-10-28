@@ -528,6 +528,7 @@ export interface DataSourceApi<T> {
   getRowInfoArray: () => InfiniteTableRowInfo<T>[];
   getDataByPrimaryKey(id: any): T | null;
   getDataByNodePath(nodePath: NodePath): T | null;
+  getDataByIndex(index: number): T | null;
   getRowInfoByIndex(index: number): InfiniteTableRowInfo<T> | null;
   getRowInfoByPrimaryKey(id: any): InfiniteTableRowInfo<T> | null;
   getRowInfoByNodePath(nodePath: NodePath): InfiniteTableRowInfo<T> | null;

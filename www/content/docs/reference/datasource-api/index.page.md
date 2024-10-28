@@ -91,6 +91,13 @@ For setting the enable/disable state for a row by its index, see the <DApiLink n
 
 </Prop>
 
+<Prop name="treeApi" type="TreeApi<DATA_TYPE>">
+
+> A reference to the [Tree API](/docs/reference/tree-api).
+
+When using the `<TreeDataSource />` component, this property will be available on the `DataSourceApi` instance.
+
+</Prop>
 <Prop name="setRowEnabledAt" type="(rowIndex: number, enabled: boolean) => void">
 
 > Sets the enable/disable state for the row at the specified index.
@@ -297,9 +304,62 @@ All the data items passed to this method will be inserted (in the order in the a
 
 </Prop>
 
+
+<Prop name="updateDataByNodePath" type="(data: Partial<DATA_TYPE>, nodePath: NodePath) => Promise">
+
+> Updates the data for the node specified by the node path.
+
+<Note>
+
+If the primary keys in your `<TreeDataSource />` are unique globally (not just within the same node), you can still use the <DPropLink name="updateData" /> method.
+
+</Note>
+
+
+```tsx title="Updating a tree node by path"
+dataSourceApi.updateDataByNodePath({
+  fileName: 'New Name',
+  sizeInKB: 1000,
+}, ['1', '10']);
+```
+
+<Sandpack title="Updating a tree node by path" size="lg">
+
+```ts file="tree-updateDataByPath-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="removeDataByNodePath" type="(nodePath: NodePath) => Promise">
+
+> Removes the node specified by the specified node path.
+
+<Note>
+
+If the primary keys in your `<TreeDataSource />` are unique globally (not just within the same node), you can still use the <DPropLink name="removeDataByPrimaryKey" /> method.
+
+</Note>
+
+
+```tsx title="Removing a tree node by path"
+dataSourceApi.removeDataByNodePath(['1', '10']);
+```
+
+<Sandpack title="Removing a tree node by path" size="lg">
+
+```ts file="tree-removeDataByNodePath-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="updateData" type="(data: Partial<DATA_TYPE>) => Promise">
 
-> Updates the data item to match the given data object.
+> Updates the data item to match the given data object. For updating tree nodes by path, see the <DApiLink name="updateDataByNodePath" /> method.
 
 <Note>
 
@@ -317,6 +377,13 @@ dataSourceApi.updateData({
   age: 30,
 });
 ```
+
+<Sandpack title="Updating a row">
+
+```ts file="simple-updateData-example.page.tsx"
+```
+
+</Sandpack>
 
 For updating an array of data, see the <DApiLink name="updateDataArray" /> method.
 

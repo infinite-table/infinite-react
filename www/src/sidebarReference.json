@@ -37,6 +37,10 @@
     "path": "/docs/reference/column-api"
   },
   {
+    "title": "Tree API",
+    "path": "/docs/reference/tree-api"
+  },
+  {
     "path": "/docs/reference/type-definitions",
     "title": "Type Definitions"
   },
