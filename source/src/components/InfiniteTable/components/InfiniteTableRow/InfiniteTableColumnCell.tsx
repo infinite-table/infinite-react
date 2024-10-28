@@ -439,14 +439,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
         fn =
           renderForNodeOrLeaf ||
           // for parents, fallback to the renderTreeIcon as well
-          (isParentNode ? renderFunctions.renderTreeIcon : undefined);
+          typeof renderFunctions.renderTreeIcon === 'function'
+            ? renderFunctions.renderTreeIcon
+            : isParentNode && renderFunctions.renderTreeIcon === true
+            ? defaultRenderTreeIcon
+            : undefined;
 
         if (fn === true) {
           fn = defaultRenderTreeIcon;
-        }
-
-        if (!fn) {
-          fn = undefined;
         }
 
         if (fn) {

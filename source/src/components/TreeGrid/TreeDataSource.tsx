@@ -7,13 +7,9 @@ function TreeDataSource<T>(props: TreeDataSourceProps<T>) {
   const { DataSource: DataSourceComponent } = useDataSourceInternal<
     T,
     TreeDataSourceProps<T>
-  >(props);
+  >({ nodesKey: 'children', ...props });
 
-  return (
-    <DataSourceComponent nodesKey={props.nodesKey || 'children'}>
-      {props.children ?? null}
-    </DataSourceComponent>
-  );
+  return <DataSourceComponent>{props.children ?? null}</DataSourceComponent>;
 }
 
 export { TreeDataSource };

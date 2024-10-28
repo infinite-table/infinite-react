@@ -293,6 +293,10 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const map = this.getState().idToPathMap;
     return map.get(id) ?? null;
   };
+  getNodePathByIndex = (index: number): NodePath | null => {
+    const rowInfo = this.getRowInfoByIndex(index);
+    return rowInfo && rowInfo.isTreeNode ? rowInfo.nodePath : null;
+  };
   getPrimaryKeyByIndex = (index: number) => {
     const rowInfo = this.getRowInfoByIndex(index);
 

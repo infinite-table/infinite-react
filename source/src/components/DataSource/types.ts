@@ -536,7 +536,7 @@ export interface DataSourceApi<T> {
   getIndexByNodePath(nodePath: NodePath): number;
   getPrimaryKeyByIndex(id: any): any;
   getNodePathById(id: any): NodePath | null;
-
+  getNodePathByIndex(index: number): NodePath | null;
   get treeApi(): TreeApi<T>;
 
   // TODO return promise - also for more than one call in the same batch
