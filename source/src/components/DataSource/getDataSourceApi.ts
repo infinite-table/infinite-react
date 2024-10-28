@@ -200,17 +200,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           let position = operation.position;
           let nodePath = operation.nodePath;
 
-          if (pk !== undefined) {
-            operation.array.forEach((data) => {
-              cache.insert(pk, data, position, operation.metadata);
-
-              // in order to respect the order of the insertions, we need to
-              // update the pk to the primary key of the last inserted item
-              pk = this.toPrimaryKey(data);
-              // and we need to change the position to 'after' for the next
-              position = 'after';
-            });
-          } else if (nodePath) {
+          if (nodePath) {
             operation.array.forEach((data) => {
               cache.insertNodePath(
                 nodePath!,
@@ -223,6 +213,16 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
               pk = this.toPrimaryKey(data);
               nodePath!.pop();
               nodePath!.push(pk);
+              // and we need to change the position to 'after' for the next
+              position = 'after';
+            });
+          } else {
+            operation.array.forEach((data) => {
+              cache.insert(pk, data, position, operation.metadata);
+
+              // in order to respect the order of the insertions, we need to
+              // update the pk to the primary key of the last inserted item
+              pk = this.toPrimaryKey(data);
               // and we need to change the position to 'after' for the next
               position = 'after';
             });
