@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {
-  DataSourceApi,
   InfiniteTableColumn,
   TreeDataSource,
   TreeGrid,
@@ -56,14 +55,11 @@ const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
   size: { field: 'size', type: 'number' },
 };
 
-export default function DataTestPage() {
-  const [dataSourceApi, setDataSourceApi] =
-    React.useState<DataSourceApi<FileSystemNode> | null>(null);
+export default function App() {
   return (
     <React.StrictMode>
       <div className="flex flex-col gap-2 bg-black justify-start p-10">
         <TreeDataSource<FileSystemNode>
-          onReady={setDataSourceApi}
           data={nodes}
           debugMode
           primaryKey="id"
