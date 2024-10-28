@@ -36,7 +36,7 @@ Throughout the docs for the TreeGrid, we will use an example data source that il
 
 When referring to rows in the TreeGrid, we'll prefer to use the term `"node"` instead of "row". So whenever you see `"node"` in the docs, you should know that it refers to a TreeGrid configuration of Infinite Table.
 
-Also in the context of the TreeGrid, we'll use the term `"node path"` instead of row id. The `"node path"` is the array with the ids of all the parent nodes leading up to the current node.
+Also in the context of the TreeGrid, we'll use the term `"node path"` instead of row id. The `"node path"` is the array with the ids of all the parent nodes leading down to the current node. The node path includes the id of the current node.
 
 ```tsx {2} title="Node path vs row id"
 const data = [

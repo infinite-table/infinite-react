@@ -1,9 +1,10 @@
 import {
+  DataSourceApi,
   InfiniteTableColumn,
   TreeDataSource,
   TreeGrid,
 } from '@infinite-table/infinite-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 type FileSystemNode = {
   id: string;
@@ -15,8 +16,8 @@ type FileSystemNode = {
   children?: FileSystemNode[];
 };
 
-const allColumns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
-  name: { field: 'name', header: 'Name' },
+const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
+  name: { field: 'name', header: 'Name', renderTreeIcon: true },
   type: { field: 'type', header: 'Type' },
   extension: { field: 'extension', header: 'Extension' },
   mimeType: { field: 'mimeType', header: 'Mime Type' },
@@ -24,41 +25,66 @@ const allColumns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
 };
 
 export default function App() {
-  const [treeIcon, setTreeIcon] = useState<string>('name');
+  const [dataSourceApi, setDataSourceApi] =
+    useState<DataSourceApi<FileSystemNode> | null>();
 
-  const columns = useMemo(() => {
-    const cols = { ...allColumns };
+  const [activeRowIndex, setActiveRowIndex] = useState<number>(0);
 
-    cols[treeIcon] = {
-      ...cols[treeIcon],
-      renderTreeIcon: true,
-    };
-
-    return cols;
-  }, [treeIcon]);
   return (
     <>
-      <TreeDataSource nodesKey="children" primaryKey="id" data={dataSource}>
+      <TreeDataSource
+        onReady={setDataSourceApi}
+        nodesKey="children"
+        primaryKey="id"
+        data={dataSource}
+        defaultTreeExpandState={{
+          defaultExpanded: true,
+          collapsedPaths: [['1', '10'], ['3']],
+        }}
+      >
         <div
           style={{
             color: 'var(--infinite-cell-color)',
             padding: '10px',
           }}
         >
-          <p>Select the tree column</p>
-          <select
-            value={treeIcon}
-            onChange={(e) => setTreeIcon(e.target.value)}
-            title="Select column to use for the tree icon"
+          <button
+            onClick={() => {
+              const rowInfo = dataSourceApi!.getRowInfoByIndex(activeRowIndex);
+              if (!rowInfo || !rowInfo.isTreeNode || !rowInfo.isParentNode) {
+                return;
+              }
+              if (dataSourceApi!.treeApi.isNodeExpanded(rowInfo.nodePath)) {
+                dataSourceApi!.treeApi.collapseNode(rowInfo.nodePath);
+              } else {
+                dataSourceApi!.treeApi.expandNode(rowInfo.nodePath);
+              }
+            }}
           >
-            {Object.keys(allColumns).map((key) => (
-              <option value={key}>{key}</option>
-            ))}
-            <option value="none">No tree column</option>
-          </select>
+            Toggle current node
+          </button>
+          <button
+            onClick={() => {
+              dataSourceApi!.treeApi.expandAll();
+            }}
+          >
+            Expand all
+          </button>
+          <button
+            onClick={() => {
+              dataSourceApi!.treeApi.collapseAll();
+            }}
+          >
+            Collapse all
+          </button>
         </div>
 
-        <TreeGrid columns={columns} />
+        <TreeGrid
+          columns={columns}
+          keyboardNavigation="row"
+          activeRowIndex={activeRowIndex}
+          onActiveRowIndexChange={setActiveRowIndex}
+        />
       </TreeDataSource>
     </>
   );
@@ -111,7 +137,16 @@ const dataSource = () => {
       name: 'Desktop',
       sizeInKB: 1000,
       type: 'folder',
-      children: [],
+      children: [
+        {
+          id: '20',
+          name: 'unknown.txt',
+          extension: 'txt',
+          mimeType: 'text/plain',
+          sizeInKB: 100,
+          type: 'file',
+        },
+      ],
     },
     {
       id: '3',
@@ -121,7 +156,7 @@ const dataSource = () => {
       children: [
         {
           id: '30',
-          name: 'Music',
+          name: 'Music - empty',
           sizeInKB: 0,
           type: 'folder',
           children: [],

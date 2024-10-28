@@ -280,6 +280,18 @@
       {
         "title": "Overview",
         "path": "/docs/learn/tree-grid/overview"
+      },
+      {
+        "title": "Tree Column",
+        "path": "/docs/learn/tree-grid/tree-column"
+      },
+      {
+        "title": "Managing the tree expand/collapse state",
+        "path": "/docs/learn/tree-grid/tree-expand-and-collpapse-state"
+      },
+      {
+        "title": "Tree Selection",
+        "path": "/docs/learn/tree-grid/tree-selection"
       }
     ]
   },

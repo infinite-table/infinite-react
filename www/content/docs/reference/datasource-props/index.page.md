@@ -60,6 +60,105 @@ When using the controlled version, make sure to update the `treeExpandState` pro
 
 </Prop>
 
+<Prop name="onTreeExpandStateChange" type="(treeExpandState: TreeExpandStateValue, {dataSourceApi,nodePath, nodeState}) => void">
+
+> Called when the tree expand state changes.
+
+When the user interacts with the tree (by expanding or collapsing a node), this callback is called with the new tree state.
+
+The first parameter is the new tree state, and the second parameter is an object with the following properties:
+
+- `dataSourceApi` - the <TypeLink name="DataSourceApi">DataSource API</TypeLink> instance
+- `nodePath` - the path of the node that changed state. If the state was produced by an <TreeApiLink name="expandAll" /> or <TreeApiLink name="collapseAll" /> call, this will be `null`.
+- `nodeState` - the new state of the node (`"collapsed"` or `"expanded"`)
+
+
+<Sandpack title="Using the onTreeExpandStateChange callback">
+
+```ts file="tree-controlled-expandstate-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="onNodeExpand" type="(nodePath: NodePath, {dataSourceApi}) => void">
+
+> Called when a node is expanded. See related <DPropLink name="onNodeCollapse" /> and <DPropLink name="onTreeExpandStateChange" /> props.
+
+
+<Note>
+
+The <DPropLink name="onNodeExpand" /> and <DPropLink name="onNodeCollapse" /> callbacks are called when a node is expanded or collapsed, respectively - either via user interaction or by an API call. However, they will not be called when the <TreeApiLink name="expandAll" /> or <TreeApiLink name="collapseAll" /> methods are called.
+
+</Note>
+
+</Prop>
+
+<Prop name="onNodeCollapse" type="(nodePath: NodePath, {dataSourceApi}) => void">
+
+> Called when a node is collapsed. See related <DPropLink name="onNodeExpand" /> and <DPropLink name="onTreeExpandStateChange" /> props.
+
+
+<Note>
+
+The <DPropLink name="onNodeExpand" /> and <DPropLink name="onNodeCollapse" /> callbacks are called when a node is expanded or collapsed, respectively - either via user interaction or by an API call. However, they will not be called when the <TreeApiLink name="expandAll" /> or <TreeApiLink name="collapseAll" /> methods are called.
+
+</Note>
+
+</Prop>
+
+<Prop name="nodesKey" type="string" default="children">
+
+> The name of the property in the data object that contains the child nodes for each tree node.
+
+Only available when you're using the `<TreeDataSource />` component.
+
+If not specified, it defaults to `"children"`.
+
+<Note>
+
+Each node gets a `nodePath` property, which is the array with the ids of all the parent nodes leading down to the current node. The node path includes the id of the current node
+
+</Note>
+
+
+```tsx {2} title="Node path vs row id"
+const data = [
+  { id: '1', name: 'Documents',                // path: ['1']
+    children: [
+      { id: '10', name: 'Private',             // path: ['1', '10']
+        children: [
+          { id: '100', name: 'Report.docx' },  // path: ['1', '10', '100'] 
+          { id: '101', name: 'Vacation.docx' },// path: ['1', '10', '101']
+        ],
+      },
+    ]
+  },
+  {
+    id: '2',
+    name: 'Downloads',                        // path: ['2']
+    children: [
+      {
+        id: '20',
+        name: 'cat.jpg',                      // path: ['2', '20']
+      },
+    ],
+  },
+];
+```
+
+<Sandpack title="Using a custom nodesKey prop">
+
+```ts file="tree-nodesKey-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="defaultTreeExpandState" type="TreeExpandStateValue">
 
 > Specifies the expand/collapse state of the tree nodes. See <TypeLink name="TreeExpandStateValue" /> for the shape of this object. For the controlled version, see <DPropLink name="treeExpandState" />.

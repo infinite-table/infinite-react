@@ -192,7 +192,20 @@ For adding at the beginning of the data source, see the <DApiLink name="insertDa
 
 </Prop>
 
-<Prop name="getDataByPrimaryKey" type="(primaryKey: string | number) => DATA_TYPE | undefined">
+<Prop name="getDataByNodePath" type="(nodePath: NodePath) => DATA_TYPE | null">
+
+> Retrieves the data object for the specified node path.
+
+<Sandpack title="Retrieving data by node path">
+
+```tsx file="tree-getDataByNodePath-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="getDataByPrimaryKey" type="(primaryKey: string | number) => DATA_TYPE | null">
 
 > Retrieves the data object for the specified primary key.
 
@@ -207,7 +220,6 @@ The alternative API method <DApiLink name="getRowInfoByPrimaryKey" /> can only b
 </Prop>
 
 <Prop name="getIndexByPrimaryKey" type="(id: any) => number">
-
 > Retrieves the index of a row by its primary key. If the row is not found, returns `-1`. See related <DApiLink name="getPrimaryKeyByIndex" />
 
 <Note>
@@ -224,9 +236,43 @@ The primary key you pass in needs to exist in the current data set. If you pass 
 
 <Note>
 
-The index you pass in needs to be of an existing row, after all filtering is applied. If you pass in an non-existent index, the method will return `undefined`.
+The index needs to be of an existing row, after all filtering is applied. If you pass in an non-existent index, the method will return `undefined`.
 
 </Note>
+
+</Prop>
+
+
+<Prop name="getDataByNodePath" type="(nodePath: any[]) => DATA_TYPE | null">
+
+> Retrieves the data object for the node with the specified path. If the node is not found, returns `null`. See related <DApiLink name="getDataByIndex" />. See related <DApiLink name="getRowInfoByNodePath" />.
+
+<Note>
+
+The node path needs to be of an existing node. If you pass in a non-existent (or filtered out) node path, the method will return `null`.
+
+</Note>
+
+<Sandpack title="Retrieving data by node path">
+
+```tsx file="tree-getDataByNodePath-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="getRowInfoByNodePath" type="(nodePath: any[]) => InfiniteTableRowInfo<DATA_TYPE> | null">
+
+> Retrieves the <TypeLink name="InfiniteTableRowInfo" code={false}>row info object</TypeLink> for the node with the specified path. If the node is not found, returns `null`. See related <DApiLink name="getDataByNodePath" />.
+
+<Note>
+
+The node path needs to be of an existing node. If you pass in a non-existent (or filtered out) node path, the method will return `null`.
+
+</Note>
+
 
 </Prop>
 

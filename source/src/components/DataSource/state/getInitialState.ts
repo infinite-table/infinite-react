@@ -469,6 +469,8 @@ export function deriveStateFromProps<T extends any>(params: {
     return acc;
   }, {} as Record<string, Record<string, DataSourceFilterOperator<T>>>);
 
+  const treeProps = props as TreeDataSourceProps<T>;
+
   let selectionMode: DataSourcePropSelectionMode | undefined =
     props.selectionMode;
 
@@ -491,6 +493,17 @@ export function deriveStateFromProps<T extends any>(params: {
           selectionMode = 'single-row';
         }
       }
+
+      if (!selectionMode) {
+        const treeSelectionProp =
+          treeProps.treeSelection ?? treeProps.defaultTreeSelection;
+
+        if (treeSelectionProp !== undefined) {
+          selectionMode =
+            typeof treeSelectionProp === 'object' ? 'multi-row' : 'single-row';
+        }
+      }
+
       selectionMode = selectionMode ?? false;
     }
   }
@@ -577,7 +590,6 @@ export function deriveStateFromProps<T extends any>(params: {
       ? (data: T) => primaryKeyDescriptor(data)
       : (data: T) => data[primaryKeyDescriptor];
 
-  const treeProps = props as TreeDataSourceProps<T>;
   let treeExpandState =
     treeProps.treeExpandState ||
     state.treeExpandState ||

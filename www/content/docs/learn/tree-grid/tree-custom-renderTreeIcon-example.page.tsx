@@ -31,7 +31,19 @@ export default function App() {
 
     cols[treeIcon] = {
       ...cols[treeIcon],
-      renderTreeIcon: true,
+      renderTreeIcon: ({ rowInfo, toggleCurrentTreeNode }) => (
+        <div
+          onClick={toggleCurrentTreeNode}
+          style={{
+            width: 24,
+            fontSize: 12,
+            display: 'inline-block',
+            cursor: 'pointer',
+          }}
+        >
+          {rowInfo.isParentNode ? (rowInfo.nodeExpanded ? '👇' : '👉') : '🔴'}
+        </div>
+      ),
     };
 
     return cols;
@@ -54,7 +66,7 @@ export default function App() {
             {Object.keys(allColumns).map((key) => (
               <option value={key}>{key}</option>
             ))}
-            <option value="none">No tree column</option>
+            <option value="no">No tree column</option>
           </select>
         </div>
 
@@ -111,7 +123,16 @@ const dataSource = () => {
       name: 'Desktop',
       sizeInKB: 1000,
       type: 'folder',
-      children: [],
+      children: [
+        {
+          id: '20',
+          name: 'unknown.txt',
+          sizeInKB: 108,
+          type: 'file',
+          extension: 'txt',
+          mimeType: 'text/plain',
+        },
+      ],
     },
     {
       id: '3',

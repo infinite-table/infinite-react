@@ -2,6 +2,7 @@ import {
   DataSourceApi,
   InfiniteTableColumn,
   TreeDataSource,
+  TreeExpandStateValue,
   TreeGrid,
 } from '@infinite-table/infinite-react';
 import { useState } from 'react';
@@ -24,6 +25,11 @@ const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
   size: { field: 'sizeInKB', type: 'number', header: 'Size (KB)' },
 };
 
+const defaultTreeExpandState: TreeExpandStateValue = {
+  defaultExpanded: true,
+  collapsedPaths: [['1', '10'], ['3']],
+};
+
 export default function App() {
   const [dataSourceApi, setDataSourceApi] =
     useState<DataSourceApi<FileSystemNode> | null>();
@@ -35,10 +41,7 @@ export default function App() {
         nodesKey="children"
         primaryKey="id"
         data={dataSource}
-        defaultTreeExpandState={{
-          defaultExpanded: true,
-          collapsedPaths: [['1', '10'], ['3']],
-        }}
+        defaultTreeExpandState={defaultTreeExpandState}
       >
         <div
           style={{

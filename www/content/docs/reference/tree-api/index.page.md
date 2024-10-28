@@ -52,4 +52,57 @@ For updating tree nodes, see the following methods:
 
 </Prop>
 
+<Prop name="isNodeExpanded" type="(nodePath: NodePath) => boolean">
+
+> Returns `true` if the node is expanded, `false` otherwise.
+
+<Sandpack title="Checking if a node is expanded" size="lg">
+
+```tsx file="tree-toggleNodeExpandState-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="toggleNode" type="(nodePath: NodePath) => void">
+
+> Toggles the node with the give node path.
+
+If the node at the given path is expanded, it will be collapsed and vice versa.
+
+See related <TreeApiLink name="expandNode" /> and <TreeApiLink name="collapseNode" /> methods.
+
+</Prop>
+
+<Prop name="expandNode" type="(nodePath: NodePath) => void">
+
+> Expands the node with the given node path. See related <TreeApiLink name="collapseNode" /> and <TreeApiLink name="toggleNode" /> methods.
+
+Expands the node. Does not affect other child nodes.
+
+<Sandpack title="Expanding a node" size="lg">
+
+```tsx file="tree-toggleNodeExpandState-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="collapseNode" type="(nodePath: NodePath) => void">
+
+> Collapses the node with the given node path. See related <TreeApiLink name="expandNode" /> and <TreeApiLink name="toggleNode" /> methods.
+
+Collapses the node. Does not affect other child nodes.
+
+<Sandpack title="Collapsing a node" size="lg">
+
+```tsx file="tree-toggleNodeExpandState-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
 </PropTable>

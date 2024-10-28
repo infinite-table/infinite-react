@@ -3,7 +3,6 @@ import {
   TreeDataSource,
   TreeGrid,
 } from '@infinite-table/infinite-react';
-import { useMemo, useState } from 'react';
 
 type FileSystemNode = {
   id: string;
@@ -12,11 +11,11 @@ type FileSystemNode = {
   extension?: string;
   mimeType?: string;
   sizeInKB: number;
-  children?: FileSystemNode[];
+  nodes?: FileSystemNode[];
 };
 
-const allColumns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
-  name: { field: 'name', header: 'Name' },
+const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
+  name: { field: 'name', header: 'Name', renderTreeIcon: true },
   type: { field: 'type', header: 'Type' },
   extension: { field: 'extension', header: 'Extension' },
   mimeType: { field: 'mimeType', header: 'Mime Type' },
@@ -24,40 +23,9 @@ const allColumns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
 };
 
 export default function App() {
-  const [treeIcon, setTreeIcon] = useState<string>('name');
-
-  const columns = useMemo(() => {
-    const cols = { ...allColumns };
-
-    cols[treeIcon] = {
-      ...cols[treeIcon],
-      renderTreeIcon: true,
-    };
-
-    return cols;
-  }, [treeIcon]);
   return (
     <>
-      <TreeDataSource nodesKey="children" primaryKey="id" data={dataSource}>
-        <div
-          style={{
-            color: 'var(--infinite-cell-color)',
-            padding: '10px',
-          }}
-        >
-          <p>Select the tree column</p>
-          <select
-            value={treeIcon}
-            onChange={(e) => setTreeIcon(e.target.value)}
-            title="Select column to use for the tree icon"
-          >
-            {Object.keys(allColumns).map((key) => (
-              <option value={key}>{key}</option>
-            ))}
-            <option value="none">No tree column</option>
-          </select>
-        </div>
-
+      <TreeDataSource nodesKey="nodes" primaryKey="id" data={dataSource}>
         <TreeGrid columns={columns} />
       </TreeDataSource>
     </>
@@ -71,13 +39,13 @@ const dataSource = () => {
       name: 'Documents',
       sizeInKB: 1200,
       type: 'folder',
-      children: [
+      nodes: [
         {
           id: '10',
           name: 'Private',
           sizeInKB: 100,
           type: 'folder',
-          children: [
+          nodes: [
             {
               id: '100',
               name: 'Report.docx',
@@ -111,27 +79,34 @@ const dataSource = () => {
       name: 'Desktop',
       sizeInKB: 1000,
       type: 'folder',
-      children: [],
+      nodes: [
+        {
+          id: '20',
+          name: 'unknown.txt',
+          sizeInKB: 100,
+          type: 'file',
+        },
+      ],
     },
     {
       id: '3',
       name: 'Media',
       sizeInKB: 1000,
       type: 'folder',
-      children: [
+      nodes: [
         {
           id: '30',
           name: 'Music',
           sizeInKB: 0,
           type: 'folder',
-          children: [],
+          nodes: [],
         },
         {
           id: '31',
           name: 'Videos',
           sizeInKB: 5400,
           type: 'folder',
-          children: [
+          nodes: [
             {
               id: '310',
               name: 'Vacation.mp4',
