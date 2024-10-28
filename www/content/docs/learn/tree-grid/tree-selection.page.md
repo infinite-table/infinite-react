@@ -19,6 +19,29 @@ If you enable selection, don't forget to specify which column should render a se
 
 </Note>
 
+```tsx title="Example of tree selection value with default selection set to false"
+import type { TreeSelectionValue } from '@infinite-table/infinite-react';
+
+// Default selection is false, with some selected node paths: ['1'] and ['2', '20']
+// however, node ['1', '10'] is deselected
+const treeSelectioDefaultDeselected: TreeSelectionValue = {
+  defaultSelection: false,
+  selectedPaths: [['1'], ['2', '20']],
+  deselectedPaths: [['1', '10']],
+};
+
+```
+
+```tsx title="Example of tree selection value with default selection set to true"
+// Default selection is true, with some deselected node paths: ['2'] and ['3']
+// however, inside ['3'], we have a selected node ['3','30','301']
+const treeSelectionDefaultSelected: TreeSelectionValue = {
+  defaultSelection: true,
+  deselectedPaths: [['2'], ['3']],
+  selectedPaths: [['3','30','301']],
+};
+```
+
 <Sandpack title="Using default tree selection" size="lg">
 
 ```tsx file="tree-default-selection-example.page.tsx"
