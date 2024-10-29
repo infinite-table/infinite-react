@@ -33,6 +33,8 @@ export default function App() {
   const [dataSourceApi, setDataSourceApi] =
     useState<DataSourceApi<FileSystemNode> | null>();
 
+  const [activeRowIndex, setActiveRowIndex] = useState<number>(0);
+
   return (
     <>
       <TreeDataSource
@@ -48,26 +50,60 @@ export default function App() {
         <div
           style={{
             color: 'var(--infinite-cell-color)',
-            padding: '10px',
+            padding: 5,
+            gap: 5,
           }}
         >
           <button
             onClick={() => {
-              dataSourceApi!.treeApi.selectAll();
+              const nodePath =
+                dataSourceApi!.getNodePathByIndex(activeRowIndex);
+
+              if (!nodePath) {
+                return;
+              }
+
+              dataSourceApi!.treeApi.selectNode(nodePath);
             }}
           >
-            Select all
+            Select current active row
           </button>
           <button
             onClick={() => {
-              dataSourceApi!.treeApi.deselectAll();
+              const nodePath =
+                dataSourceApi!.getNodePathByIndex(activeRowIndex);
+
+              if (!nodePath) {
+                return;
+              }
+
+              dataSourceApi!.treeApi.deselectNode(nodePath);
             }}
           >
-            Deselect all
+            Deselect current active row
+          </button>
+          <button
+            onClick={() => {
+              const nodePath =
+                dataSourceApi!.getNodePathByIndex(activeRowIndex);
+
+              if (!nodePath) {
+                return;
+              }
+
+              dataSourceApi!.treeApi.toggleNodeSelection(nodePath);
+            }}
+          >
+            Toggle active row selection
           </button>
         </div>
 
-        <TreeGrid columns={columns} />
+        <TreeGrid
+          columns={columns}
+          keyboardNavigation="row"
+          activeRowIndex={activeRowIndex}
+          onActiveRowIndexChange={setActiveRowIndex}
+        />
       </TreeDataSource>
     </>
   );

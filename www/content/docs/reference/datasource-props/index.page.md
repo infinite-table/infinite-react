@@ -289,7 +289,7 @@ See <TypeLink name="TreeSelectionValue" /> for details on the shape of this obje
 
 </Prop>
 
-<Prop name="onTreeSelectionChange" type="(treeSelection: TreeSelectionValue) => void">
+<Prop name="onTreeSelectionChange" type="(treeSelection: TreeSelectionValue, context) => void">
 
 > Called when the tree selection changes. See <DPropLink name="treeSelection" />.
 
@@ -300,6 +300,14 @@ See <TypeLink name="TreeSelectionValue" /> for details on the shape of this obje
 ```
 
 </Sandpack>
+
+When using `multi-row` <DPropLink name="selectionMode" />, the signature of this callback is:
+
+ - `treeSelection` - the new <TypeLink name="TreeSelectionValue">tree selection state</TypeLink>
+ - `context` - an object with the following properties:
+   - `selectionMode` - will be `"multi-row"`
+   - `lastUpdatedNodePath` - the path of the node that was last updated (either via user action or api call). Will be `null` of the action that triggered this callback was <TreeApiLink name="selectAll" /> or <TreeApiLink name="deselectAll" />.
+   - `dataSourceApi` - the [DataSource API](/docs/reference/datasource-api) instance
 
 </Prop>
 

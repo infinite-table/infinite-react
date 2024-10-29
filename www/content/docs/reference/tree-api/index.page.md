@@ -52,6 +52,47 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 
 </Prop>
 
+<Prop name="selectNode" type="(nodePath: NodePath) => void">
+
+> Selects the node with the given node path. See related <TreeApiLink name="deselectNode" /> and <TreeApiLink name="toggleNodeSelection" /> methods.
+
+
+<Sandpack title="Selecting a node via Tree API" size="lg">
+
+```tsx file="tree-selectnode-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="deselectNode" type="(nodePath: NodePath) => void">
+
+> Deselects the node with the given node path. See related <TreeApiLink name="selectNode" /> and <TreeApiLink name="toggleNodeSelection" /> methods.
+
+<Sandpack title="Deselecting a node via Tree API" size="lg">
+
+```tsx file="tree-selectnode-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+
+<Prop name="toggleNodeSelection" type="(nodePath: NodePath) => void">
+
+> Toggles the selection state of the node with the given node path. See related <TreeApiLink name="selectNode" /> and <TreeApiLink name="deselectNode" /> methods.
+
+<Sandpack title="Toggling a node's selection state via Tree API" size="lg">
+
+```tsx file="tree-selectnode-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="deselectAll" type="() => void">
 
 > Deselects all the nodes in the tree. See related <TreeApiLink name="selectAll" /> prop.
@@ -81,6 +122,7 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 </Sandpack>
 
 </Prop>
+
 
 <Prop name="isNodeExpanded" type="(nodePath: NodePath) => boolean">
 

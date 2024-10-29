@@ -48,3 +48,48 @@ const treeSelectionDefaultSelected: TreeSelectionValue = {
 ```
 
 </Sandpack>
+
+
+When using <DPropLink name="defaultTreeSelection" code={false}>uncontrolled tree selection</DPropLink>, the `<TreeDataSource />` will manage the selection state internally, and will update it as a result of user actions. If you want to change the selection, you can use [the Tree API](/docs/reference/tree-api) to do so: <TreeApiLink name="selectNode"  />, <TreeApiLink name="deselectNode" />, <TreeApiLink name="selectAll" />, <TreeApiLink name="deselectAll" />, etc.
+
+## Reacting to user actions
+
+To listen to selection changes, you can use the <DPropLink name="onTreeSelectionChange" /> callback.
+
+This callback is called both when the user interacts with the grid, and when you use the [Tree API](/docs/reference/tree-api) to change the selection.
+
+
+## Using controlled tree selection
+
+When using the controlled <DPropLink name="treeSelection" /> prop, you have to make sure you update the tree selection via <DPropLink name="onTreeSelectionChange" />.
+
+Controlled tree selection also gives you a more declarative way to manage the selection state.
+You no longer have to call [Tree API](/docs/reference/tree-api) methods to change the selection. Simply pass a new tree selection state object to the <DPropLink name="treeSelection" /> prop and the tree grid will be updated accordingly.
+
+For example, if you want to select all nodes, set the <DPropLink name="treeSelection" /> prop to:
+
+```tsx title="Tree selection value to show all nodes as selected"
+{
+  defaultSelection: true,
+  deselectedPaths: [],
+}
+```
+
+For deselecting all nodes, the value should be:
+
+```tsx title="All nodes as deselected"
+{
+  defaultSelection: false,
+  selectedPaths: [],
+}
+```
+
+Using controlled tree selection also gives you an easy way to restore a previously saved tree selection at any point in time.
+
+<Sandpack title="Using controlled tree selection" size="lg">
+
+```tsx file="tree-controlled-selection-example.page.tsx"
+```
+
+</Sandpack>
+

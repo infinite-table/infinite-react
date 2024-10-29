@@ -18,7 +18,12 @@ type FileSystemNode = {
 };
 
 const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
-  name: { field: 'name', header: 'Name', renderTreeIcon: true },
+  name: {
+    field: 'name',
+    header: 'Name',
+    renderTreeIcon: true,
+    renderSelectionCheckBox: true,
+  },
   type: { field: 'type', header: 'Type' },
   extension: { field: 'extension', header: 'Extension' },
   mimeType: { field: 'mimeType', header: 'Mime Type' },
