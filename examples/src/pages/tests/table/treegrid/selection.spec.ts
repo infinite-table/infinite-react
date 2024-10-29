@@ -1,27 +1,45 @@
-import { test, expect } from '@testing';
+import { test, expect, Page } from '@testing';
+
+async function getCheckboxes(page: Page) {
+  let checkboxes = await page.$$('.InfiniteBody input[type="checkbox"]');
+
+  return await Promise.all(
+    checkboxes.map(
+      async (checkbox) =>
+        await checkbox.evaluate((el) =>
+          (el as HTMLInputElement).indeterminate
+            ? null
+            : (el as HTMLInputElement).checked,
+        ),
+    ),
+  );
+}
 
 export default test.describe('TreeSelectionProp', () => {
+  test('select via spacebar works', async ({ rowModel, page }) => {
+    await page.waitForInfinite();
+
+    await rowModel.clickRow(0);
+
+    await page.keyboard.press('Space');
+
+    expect(await getCheckboxes(page)).toEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
   test('when defined, makes selectionMode default to multi-row', async ({
     page,
   }) => {
     await page.waitForInfinite();
 
-    async function getCheckboxes() {
-      let checkboxes = await page.$$('.InfiniteBody input[type="checkbox"]');
-
-      return await Promise.all(
-        checkboxes.map(
-          async (checkbox) =>
-            await checkbox.evaluate((el) =>
-              (el as HTMLInputElement).indeterminate
-                ? null
-                : (el as HTMLInputElement).checked,
-            ),
-        ),
-      );
-    }
-
-    let checkboxes = await getCheckboxes();
+    let checkboxes = await getCheckboxes(page);
     expect(checkboxes.length).toBe(7);
 
     const headerCheckbox = await page.locator(
@@ -40,7 +58,7 @@ export default test.describe('TreeSelectionProp', () => {
 
     await page.click('button:text("Select all")');
 
-    checkboxes = await getCheckboxes();
+    checkboxes = await getCheckboxes(page);
     expect(checkboxes).toEqual([true, true, true, true, true, true, true]);
 
     expect(

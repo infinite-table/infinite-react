@@ -292,25 +292,29 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     this.actions.treeSelection = treeSelectionState;
   }
   isNodeSelected(nodePath: NodePath) {
-    const { treeSelection, selectionMode } = this.getState();
+    const {
+      treeSelectionState,
+      treeSelection: singleTreeSelection,
+      selectionMode,
+    } = this.getState();
 
     if (selectionMode === 'single-row') {
       const pk = nodePath[nodePath.length - 1];
-      if (Array.isArray(treeSelection)) {
+      if (Array.isArray(singleTreeSelection)) {
         // @ts-ignore
         return treeSelection.join(',') === nodePath.join(',');
       }
-      return (treeSelection as any) === pk;
+      return (singleTreeSelection as any) === pk;
     }
 
     if (selectionMode !== 'multi-row') {
       throw 'Selection mode is not multi-row or single-row';
     }
-    if (!(treeSelection instanceof TreeSelectionState)) {
+    if (!(treeSelectionState instanceof TreeSelectionState)) {
       throw 'Invalid tree selection';
     }
 
-    return treeSelection.isNodeSelected(nodePath);
+    return treeSelectionState.isNodeSelected(nodePath);
   }
 
   selectNode(nodePath: NodePath) {
