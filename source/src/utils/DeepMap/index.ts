@@ -85,6 +85,77 @@ export class DeepMap<KeyType, ValueType> {
     return result;
   }
 
+  getUnnestedKeysStartingWith(
+    keys: KeyType[],
+    excludeSelf?: boolean,
+    depthLimit?: number,
+  ): KeyType[][] {
+    const pairs: (Pair<KeyType, ValueType> & { keys: KeyType[] })[] = [];
+
+    const fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => void = (
+      pair,
+    ) => {
+      pairs.push(pair);
+    };
+
+    let currentMap = this.map;
+    let pair: Pair<KeyType, ValueType> | undefined;
+    let stop = false;
+
+    if (keys.length) {
+      for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+
+        pair = currentMap.get(key);
+
+        if (!pair || !pair.map) {
+          stop = true;
+          if (i === len - 1) {
+            // if on the last key
+            // we want to allow the if clause below to run and check if the value on the last
+            // pair is present
+            stop = true;
+            break;
+          } else {
+            return [];
+          }
+        }
+
+        currentMap = pair.map;
+      }
+    } else {
+      if (!excludeSelf) {
+        const hasEmptyKey = currentMap.has(this.emptyKey);
+        if (hasEmptyKey) {
+          return [[]];
+        }
+      }
+    }
+
+    if (pair && pair.value !== undefined) {
+      if (!excludeSelf) {
+        fn({ ...pair, keys });
+        stop = true;
+      }
+    }
+    if (stop) {
+      return pairs.sort(SORT_ASC_REVISION).map((pair) => pair.keys);
+    }
+
+    this.visitWithNext(
+      keys,
+      (_value, keys, _i, _next, pair) => {
+        fn({ ...pair, keys });
+        // don't call next to go deeper
+      },
+      currentMap,
+      depthLimit,
+      excludeSelf,
+    );
+
+    return pairs.sort(SORT_ASC_REVISION).map((pair) => pair.keys);
+  }
+
   getKeysStartingWith(
     keys: KeyType[],
     excludeSelf?: boolean,
@@ -443,7 +514,8 @@ export class DeepMap<KeyType, ValueType> {
       value: ValueType,
       keys: KeyType[],
       indexInGroup: number,
-      next?: VoidFn,
+      next: VoidFn | undefined,
+      pair: Pair<KeyType, ValueType>,
     ) => void,
     currentMap: Map<KeyType, Pair<KeyType, ValueType>> = this.map,
     depthLimit?: number,
@@ -488,7 +560,7 @@ export class DeepMap<KeyType, ValueType> {
         : undefined;
 
       if (pair.hasOwnProperty('value')) {
-        fn(pair.value!, keys, i, next);
+        fn(pair.value!, keys, i, next, pair);
         i++;
       } else {
         next?.();

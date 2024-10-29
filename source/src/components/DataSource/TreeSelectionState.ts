@@ -192,7 +192,8 @@ export class TreeSelectionState<T = any> {
     const { selectionMap } = this;
 
     const childPaths = selectionMap
-      .getKeysStartingWith(nodePath, true)
+      // todo this could be replaced with a .hasKeysUnder call (to be implemented in the deep map later)
+      .getUnnestedKeysStartingWith(nodePath, true)
       .sort(shortestToLongest);
 
     if (!childPaths.length) {

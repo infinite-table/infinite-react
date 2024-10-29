@@ -472,6 +472,64 @@ export default test.describe('DeepMap', () => {
     ]);
   });
 
+  test('getUnnestedKeysStartingWith should work correctly - 1', () => {
+    let map = new DeepMap<string | number, boolean>();
+
+    map.set(['3', '31'], true);
+    map.set(['1'], true);
+    map.set(['1', '10'], true);
+    map.set(['3'], true);
+
+    expect(map.getUnnestedKeysStartingWith([], true)).toEqual([['1'], ['3']]);
+    expect(map.getKeysStartingWith([], true)).toEqual([
+      ['3'],
+      ['3', '31'],
+      ['1'],
+      ['1', '10'],
+    ]);
+
+    map = new DeepMap<string | number, boolean>();
+
+    map.set(['3', '31'], true);
+
+    map.set(['1', '10'], true);
+    map.set(['3'], true);
+    map.set(['1'], true);
+
+    expect(map.getUnnestedKeysStartingWith([], true)).toEqual([['3'], ['1']]);
+  });
+
+  test.only('getUnnestedKeysStartingWith should work correctly - 2', () => {
+    let map = new DeepMap<string | number, boolean>();
+
+    map.set(['3', '31', '300'], true);
+
+    map.set(['1', '10'], true);
+    map.set(['3', '30'], true);
+    map.set(['3', '31', '400'], true);
+    map.set(['3', '31', '400', '200'], true);
+    map.set(['1'], true);
+    map.set(['1', '100'], true);
+
+    const expected = [
+      ['3', '31', '300'],
+      ['3', '30'],
+      ['3', '31', '400'],
+      ['1'],
+    ];
+    expect(map.getUnnestedKeysStartingWith([], true)).toEqual(expected);
+
+    map.set([], true);
+
+    expect(map.getUnnestedKeysStartingWith([])).toEqual([[]]);
+    expect(map.getUnnestedKeysStartingWith([], true)).toEqual(expected);
+    expect(map.getUnnestedKeysStartingWith([], true, 1)).toEqual([['1']]);
+    expect(map.getUnnestedKeysStartingWith([], true, 2)).toEqual([
+      ['3', '30'],
+      ['1'],
+    ]);
+  });
+
   test('visit depth first, with index', () => {
     const map = new DeepMap<string | number, number>();
 
