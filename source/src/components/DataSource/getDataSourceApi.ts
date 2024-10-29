@@ -9,7 +9,7 @@ import {
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
 import { getRowInfoAt, getRowInfoArray } from './dataSourceGetters';
-import { getTreeApi, TreeApi } from './getTreeApi';
+import { TreeApi, TreeApiImpl } from './TreeApi';
 import { RowDisabledState } from './RowDisabledState';
 import { NodePath } from './TreeExpandState';
 import { DataSourceInsertParam } from './types';
@@ -94,7 +94,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     this.getState = param.getState;
     this.getState().__apiRef.current = this;
     this.actions = param.actions;
-    this.treeApi = getTreeApi({ ...param, dataSourceApi: this });
+    this.treeApi = new TreeApiImpl({ ...param, dataSourceApi: this });
   }
 
   private pendingPromise: Promise<boolean> | null = null;

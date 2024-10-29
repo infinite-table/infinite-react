@@ -21,6 +21,14 @@ const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
   name: {
     field: 'name',
     header: 'Name',
+    defaultWidth: 500,
+    renderValue: ({ value, rowInfo }) => {
+      return (
+        <>
+          {rowInfo.id} - {value}
+        </>
+      );
+    },
     renderTreeIcon: true,
     renderSelectionCheckBox: true,
   },
@@ -32,10 +40,7 @@ const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
 
 const defaultTreeSelection: TreeSelectionValue = {
   defaultSelection: true,
-  deselectedPaths: [
-    ['1', '10'],
-    ['3', '31'],
-  ],
+  deselectedPaths: [['1', '10']],
   selectedPaths: [['3']],
 };
 
@@ -76,7 +81,7 @@ export default function App() {
           </button>
         </div>
 
-        <TreeGrid columns={columns} />
+        <TreeGrid columns={columns} domProps={{ style: { height: '100%' } }} />
       </TreeDataSource>
     </>
   );
@@ -144,6 +149,13 @@ const dataSource = () => {
       sizeInKB: 1000,
       type: 'folder',
       children: [
+        {
+          id: '30',
+          name: 'Music - empty',
+          sizeInKB: 0,
+          type: 'folder',
+          children: [],
+        },
         {
           id: '31',
           name: 'Videos',

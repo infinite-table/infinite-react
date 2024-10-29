@@ -25,6 +25,13 @@ export const ExpanderIconClsVariants = recipe({
       end: {},
       start: {},
     },
+    disabled: {
+      true: {
+        cursor: 'auto',
+        opacity: 0.4,
+      },
+      false: {},
+    },
   },
   compoundVariants: [
     {

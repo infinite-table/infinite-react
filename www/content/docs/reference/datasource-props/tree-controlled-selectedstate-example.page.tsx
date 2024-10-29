@@ -140,13 +140,6 @@ const dataSource = () => {
       type: 'folder',
       children: [
         {
-          id: '30',
-          name: 'Music',
-          sizeInKB: 0,
-          type: 'folder',
-          children: [],
-        },
-        {
           id: '31',
           name: 'Videos',
           sizeInKB: 5400,

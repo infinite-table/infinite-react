@@ -38,6 +38,12 @@ import {
 import { TreeExpandState } from '../TreeExpandState';
 import { getTreeSelectionState } from './getInitialState';
 
+export const isNodeExpandable = <T = any>(
+  rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,
+) => {
+  return rowInfo.totalLeafNodesCount > 0;
+};
+
 export function cleanupEmptyFilterValues<T>(
   filterValue: DataSourceState<T>['filterValue'],
 
@@ -759,6 +765,7 @@ export function concludeReducer<T>(params: {
         toPrimaryKey,
         isNodeSelected,
         isNodeExpanded,
+        isNodeExpandable,
         treeSelectionState,
 
         withRowInfo,

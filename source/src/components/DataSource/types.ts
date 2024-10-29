@@ -46,7 +46,7 @@ import {
   CellSelectionPosition,
 } from './CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
-import { TreeApi } from './getTreeApi';
+import { TreeApi } from './TreeApi';
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
 import { RowDisabledState } from './RowDisabledState';

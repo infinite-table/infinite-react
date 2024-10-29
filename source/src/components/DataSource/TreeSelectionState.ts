@@ -215,9 +215,8 @@ export class TreeSelectionState<T = any> {
 
       // there are no explicit selection or deselection for any child
       // so we have to go to the parent to determine the selection state
-      const res = leafCount
-        ? this.getNodeBooleanSelectionStateFromParent(nodePath)
-        : false;
+
+      const res = this.getNodeBooleanSelectionStateFromParent(nodePath);
 
       return this.cacheIt(nodePath, {
         selected: res,

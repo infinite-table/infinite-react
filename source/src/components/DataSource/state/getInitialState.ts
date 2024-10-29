@@ -61,7 +61,7 @@ import {
   TreeSelectionState,
   TreeSelectionStateObject,
 } from '../TreeSelectionState';
-import { treeSelectionStateConfigGetter } from '../getTreeApi';
+import { treeSelectionStateConfigGetter } from '../TreeApi';
 import { NonUndefined } from '../../types/NonUndefined';
 
 const DataSourceLogger = dbg('DataSource') as DebugLogger;

@@ -8,6 +8,7 @@ import { join } from '../../../../utils/join';
 
 import { stripVar } from '../../../../utils/stripVar';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSourceState';
+import { isNodeExpandable } from '../../../DataSource/state/reducer';
 
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
@@ -99,10 +100,15 @@ const EXPANDER_STYLE: React.CSSProperties = {
 
 export const defaultRenderTreeIcon: InfiniteTableColumn<any>['renderTreeIcon'] =
   (params) => {
-    const { toggleCurrentTreeNode, nodeExpanded } = params;
+    const { rowInfo, toggleCurrentTreeNode, nodeExpanded } = params;
 
     return (
       <ExpanderIcon
+        disabled={
+          rowInfo.isTreeNode &&
+          rowInfo.isParentNode &&
+          !isNodeExpandable(rowInfo)
+        }
         style={EXPANDER_STYLE}
         expanded={nodeExpanded}
         onChange={toggleCurrentTreeNode}
@@ -137,6 +143,13 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
       domProps={{
         className: SelectionCheckboxCls,
       }}
+      disabled={
+        rowInfo.isTreeNode
+          ? rowInfo.isParentNode
+            ? !isNodeExpandable(rowInfo)
+            : false
+          : false
+      }
       onChange={(selected) => {
         if (rowInfo.isTreeNode) {
           dataSourceApi.treeApi.setNodeSelection(

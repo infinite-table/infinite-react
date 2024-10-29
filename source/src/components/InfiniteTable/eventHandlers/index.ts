@@ -1,6 +1,6 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
-import { cloneTreeSelection } from '../../DataSource/getTreeApi';
+import { cloneTreeSelection } from '../../DataSource/TreeApi';
 import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { getColumnApiForColumn } from '../api/getColumnApi';
