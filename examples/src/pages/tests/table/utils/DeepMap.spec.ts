@@ -499,7 +499,7 @@ export default test.describe('DeepMap', () => {
     expect(map.getUnnestedKeysStartingWith([], true)).toEqual([['3'], ['1']]);
   });
 
-  test.only('getUnnestedKeysStartingWith should work correctly - 2', () => {
+  test('getUnnestedKeysStartingWith should work correctly - 2', () => {
     let map = new DeepMap<string | number, boolean>();
 
     map.set(['3', '31', '300'], true);
