@@ -552,8 +552,10 @@ export interface DataSourceApi<T> {
     options?: DataSourceCRUDParam,
   ): Promise<any>;
   updateDataArrayByNodePath(
-    data: Partial<T>[],
-    nodePaths: NodePath[],
+    updateInfo: {
+      data: Partial<T>;
+      nodePath: NodePath;
+    }[],
     options?: DataSourceUpdateParam,
   ): Promise<any>;
   flush(): Promise<any>;

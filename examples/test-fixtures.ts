@@ -63,6 +63,7 @@ export const test = base.extend<
       editModel: EditTestingModel;
       columnModel: ColumnTestingModel;
       menuModel: MenuTestingModel;
+
       apiModel: InfiniteTableApiModel;
       tableModel: TableTestingModel;
       tracingModel: TracingModel;

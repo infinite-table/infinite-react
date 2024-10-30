@@ -59,9 +59,11 @@ export class Indexer<DataType, PrimaryKeyType = string> {
     }
 
     if (!arr.length && cache) {
-      const cacheInfo = cache.getMutationsArray();
-
-      if (cacheInfo && cacheInfo.length) {
+      if (!cache.isEmpty()) {
+        const cacheInfo = [
+          ...cache.getMutationsArray(),
+          ...cache.getTreeMutationsArray(),
+        ];
         // we had inserts when the array was empty
         for (
           let cacheIndex = 0, cacheLength = cacheInfo.length;

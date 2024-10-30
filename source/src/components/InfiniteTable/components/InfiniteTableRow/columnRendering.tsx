@@ -435,6 +435,7 @@ export function getColumnRenderParam<T>(options: {
 
       selectionCheckBox: null,
       groupIcon: null,
+      treeIcon: null,
     },
 
     selectCurrentRow: () => {

@@ -399,14 +399,32 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     nodePath: NodePath,
     options?: DataSourceUpdateParam,
   ) => {
-    return this.updateDataArrayByNodePath([data], [nodePath], options);
+    return this.updateDataArrayByNodePath(
+      [
+        {
+          data,
+          nodePath,
+        },
+      ],
+      options,
+    );
   };
 
   updateDataArrayByNodePath = (
-    data: Partial<T>[],
-    nodePaths: NodePath[],
+    updateInfo: {
+      data: Partial<T>;
+      nodePath: NodePath;
+    }[],
     options?: DataSourceUpdateParam,
   ) => {
+    const data: Partial<T>[] = [];
+    const nodePaths: NodePath[] = [];
+
+    updateInfo.forEach((info) => {
+      data.push(info.data);
+      nodePaths.push(info.nodePath);
+    });
+
     const result = this.batchOperation({
       type: 'update',
       array: data,

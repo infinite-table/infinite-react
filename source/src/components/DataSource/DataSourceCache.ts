@@ -297,4 +297,7 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
   getMutationsArray = () => {
     return Array.from(this.primaryKeyToData.values()).flat();
   };
+  getTreeMutationsArray = () => {
+    return Array.from(this.nodePathToData.values()).flat();
+  };
 }

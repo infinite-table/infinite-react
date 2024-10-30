@@ -460,6 +460,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
         if (fn === true) {
           fn = defaultRenderTreeIcon;
+        } else if (fn) {
+          // make selectionCheckBox available in the render bag
+          // when we have column.renderSelectionCheckBox defined as a function
+          // as people might want to use the default value
+          // and enhance it
+          renderParam.renderBag.treeIcon = (
+            <RenderCellHookComponent
+              render={defaultRenderTreeIcon as Function}
+              renderParam={renderParam}
+            />
+          );
         }
 
         if (fn) {
