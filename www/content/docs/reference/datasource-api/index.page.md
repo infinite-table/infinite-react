@@ -350,6 +350,33 @@ All the data items passed to this method will be inserted (in the order in the a
 
 </Prop>
 
+<Prop name="updateDataArrayByNodePath" type="({data, nodePath}[]) => Promise">
+
+> Updates the data for the nodes specified by the node paths.
+
+The first parameter should be an array of objects, where each object has a `data` property (the data to update) and a `nodePath` property (the path of the node to update).
+
+
+```tsx title="Updating an aray of tree nodes"
+dataSourceApi.updateDataArrayByNodePath([
+  {
+    data: {
+      fileName: 'Vacation.pdf',
+      sizeInKB: 1000,
+    },
+    nodePath: ['1', '10'],
+  },
+  {
+    data: {
+      fileName: 'Report.docx',
+      sizeInKB: 2000,
+    },
+    nodePath: ['1', '11'],
+  },
+]);
+```
+
+</Prop>
 
 <Prop name="updateDataByNodePath" type="(data: Partial<DATA_TYPE>, nodePath: NodePath) => Promise">
 
