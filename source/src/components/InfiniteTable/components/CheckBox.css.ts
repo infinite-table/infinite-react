@@ -10,6 +10,7 @@ export const CheckBoxCls = style([
     selectors: {
       '&[disabled]': {
         opacity: 0.7,
+        cursor: 'auto',
       },
     },
   },

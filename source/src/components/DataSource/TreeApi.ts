@@ -26,14 +26,16 @@ export function cloneTreeSelection<T>(
   );
 }
 
+type ForceOptions = { force?: boolean };
+
 export type TreeExpandStateApi<T> = {
   isNodeExpanded(nodePath: any[]): boolean;
   isNodeReadOnly(nodePath: any[]): boolean;
 
-  expandNode(nodePath: any[]): void;
-  collapseNode(nodePath: any[]): void;
+  expandNode(nodePath: any[], options?: ForceOptions): void;
+  collapseNode(nodePath: any[], options?: ForceOptions): void;
 
-  toggleNode(nodePath: any[]): void;
+  toggleNode(nodePath: any[], options?: ForceOptions): void;
 
   getNodeDataByPath(nodePath: any[]): T | null;
   getRowInfoByPath(nodePath: any[]): InfiniteTableRowInfo<T> | null;
@@ -43,10 +45,14 @@ type TreeSelectionApi<_T = any> = {
   get allRowsSelected(): boolean;
   isNodeSelected(nodePath: NodePath): boolean | null;
 
-  selectNode(nodePath: NodePath): void;
-  setNodeSelection(nodePath: NodePath, selected: boolean): void;
-  deselectNode(nodePath: NodePath): void;
-  toggleNodeSelection(nodePath: NodePath): void;
+  selectNode(nodePath: NodePath, options?: ForceOptions): void;
+  setNodeSelection(
+    nodePath: NodePath,
+    selected: boolean,
+    options?: ForceOptions,
+  ): void;
+  deselectNode(nodePath: NodePath, options?: ForceOptions): void;
+  toggleNodeSelection(nodePath: NodePath, options?: ForceOptions): void;
 
   selectAll(): void;
   expandAll(): void;
@@ -260,9 +266,9 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     return rowInfo ? (rowInfo.data as T) : null;
   }
   getRowInfoByPath(nodePath: any[]) {
-    const { pathToIndexDeepMap } = this.getState();
+    const { pathToIndexMap } = this.getState();
 
-    const index = pathToIndexDeepMap.get(nodePath);
+    const index = pathToIndexMap.get(nodePath);
     if (index !== undefined) {
       return getRowInfoAt(index, this.getState);
     }

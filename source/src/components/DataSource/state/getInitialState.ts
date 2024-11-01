@@ -117,7 +117,7 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
 
     idToIndexMap: new Map<any, number>(),
     idToPathMap: new Map<any, NodePath>(),
-    pathToIndexDeepMap: new DeepMap<any, number>(),
+    pathToIndexMap: new DeepMap<any, number>(),
 
     getDataSourceMasterContextRef: { current: () => undefined },
 
@@ -205,7 +205,7 @@ export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   };
   state.treeExpandState?.destroy();
   state.treePaths?.clear();
-  state.pathToIndexDeepMap?.clear();
+  state.pathToIndexMap?.clear();
   state.rowDisabledState?.destroy();
   state.groupRowsState?.destroy();
   state.treeSelectionState?.destroy();
@@ -285,14 +285,14 @@ export const forwardProps = <T>(
         const pathToIndexReducer: DataSourceRowInfoReducer<T> = {
           initialValue: () => {
             state.idToPathMap.clear();
-            state.pathToIndexDeepMap.clear();
+            state.pathToIndexMap.clear();
           },
           reducer: (_, rowInfo) => {
             if (rowInfo.isTreeNode) {
               state.idToPathMap.set(rowInfo.id, rowInfo.nodePath);
               if (
                 props.debugMode &&
-                state.pathToIndexDeepMap.has(rowInfo.nodePath)
+                state.pathToIndexMap.has(rowInfo.nodePath)
               ) {
                 console.warn(
                   `Duplicate node path found in data source (debugId: ${
@@ -300,10 +300,7 @@ export const forwardProps = <T>(
                   }): ${rowInfo.nodePath}`,
                 );
               }
-              state.pathToIndexDeepMap.set(
-                rowInfo.nodePath,
-                rowInfo.indexInAll,
-              );
+              state.pathToIndexMap.set(rowInfo.nodePath, rowInfo.indexInAll);
             }
           },
         };

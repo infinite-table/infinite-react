@@ -307,7 +307,7 @@ export interface DataSourceSetupState<T> {
   destroyedRef: React.MutableRefObject<boolean>;
   idToIndexMap: Map<any, number>;
   idToPathMap: Map<any, NodePath>;
-  pathToIndexDeepMap: DeepMap<any, number>;
+  pathToIndexMap: DeepMap<any, number>;
   detailDataSourcesStateToRestore: Map<
     any,
     Partial<DataSourceStateRestoreForDetail<any>>
@@ -345,7 +345,7 @@ export interface DataSourceSetupState<T> {
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   treeDeepMap?: DeepMap<TreeKeyType, DeepMapTreeValueType<T, any>>;
-  treePaths?: DeepMap<TreeKeyType, any>;
+  treePaths?: DeepMap<TreeKeyType, true>;
   groupRowsIndexesInDataArray?: number[];
   reducerResults?: Record<string, AggregationReducerResult>;
   allRowsSelected: boolean;

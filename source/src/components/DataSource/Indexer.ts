@@ -102,7 +102,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
             const pk = toPrimaryKey(item);
             const nodePath = isTree ? [...parentPath, pk] : undefined;
 
-            let isTreeModeForNode = isTree && nodePath;
+            let isTreeModeForNode = isTree && !!nodePath;
             let cacheInfo = isTreeModeForNode
               ? cache?.getMutationsForNodePath(nodePath!)
               : cache?.getMutationsForPrimaryKey(pk);
