@@ -2,8 +2,6 @@ import * as React from 'react';
 
 import { TreeDataSource, TreeGrid } from '@infinite-table/infinite-react';
 import {
-  InfiniteTablePropRowStyle,
-  InfiniteTableRowInfo,
   DataSourceApi,
   type InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
