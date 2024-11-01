@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { join } from '../../../../utils/join';
 import { HeaderFilterIconIndexCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
+import { InfiniteIconClassName } from './InfiniteIconClassName';
 import { FilterIconCls } from './FilterIcon.css';
 
 type FilterIconProps = {
@@ -69,9 +69,9 @@ export function FilterIcon(props: FilterIconProps) {
       style={{ ...style, width: size }}
       className={join(
         className,
-        InfiniteTableIconClassName,
+        InfiniteIconClassName,
         FilterIconCls,
-        `${InfiniteTableIconClassName}-sort`,
+        `${InfiniteIconClassName}-filter`,
       )}
     >
       {showIndex ? (

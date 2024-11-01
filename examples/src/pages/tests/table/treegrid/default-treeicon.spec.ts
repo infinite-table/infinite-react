@@ -5,7 +5,7 @@ export default test.describe('Default tree icon', () => {
     await page.waitForInfinite();
 
     async function getInfo() {
-      const icons = await page.$$('[data-name="expander-icon"]');
+      const icons = await page.$$('[data-name="expand-collapse-icon"]');
 
       return Promise.all(
         icons.map(async (icon) => {

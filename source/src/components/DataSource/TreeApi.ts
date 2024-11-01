@@ -2,7 +2,6 @@ import { DataSourceApi, DataSourceComponentActions } from '.';
 
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { getRowInfoAt } from './dataSourceGetters';
-import { isNodeExpandable } from './state/reducer';
 import { NodePath, TreeExpandState } from './TreeExpandState';
 import {
   GetTreeSelectionStateConfig,
@@ -29,7 +28,7 @@ export function cloneTreeSelection<T>(
 
 export type TreeExpandStateApi<T> = {
   isNodeExpanded(nodePath: any[]): boolean;
-  isNodeExpandable(nodePath: any[]): boolean;
+  isNodeReadOnly(nodePath: any[]): boolean;
 
   expandNode(nodePath: any[]): void;
   collapseNode(nodePath: any[]): void;
@@ -89,9 +88,17 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     this.dataSourceApi = param.dataSourceApi;
   }
 
-  setNodeSelection = (nodePath: NodePath, selected: boolean) => {
+  setNodeSelection = (
+    nodePath: NodePath,
+    selected: boolean,
+    options?: { force?: boolean },
+  ) => {
     const { treeSelectionState: treeSelection, selectionMode } =
       this.getState();
+
+    if (!this.isNodeSelectable(nodePath) && !options?.force) {
+      return;
+    }
 
     if (selectionMode === 'single-row') {
       this.actions.treeSelection = selected
@@ -119,11 +126,21 @@ export class TreeApiImpl<T> implements TreeApi<T> {
   get allRowsSelected() {
     return this.getState().allRowsSelected;
   }
-  isNodeExpandable(nodePath: any[]) {
+  isNodeReadOnly(nodePath: any[]) {
     const rowInfo = this.getRowInfoByPath(nodePath);
-    return rowInfo && rowInfo.isTreeNode && rowInfo.isParentNode
-      ? isNodeExpandable(rowInfo)
+    const isNodeReadOnly = this.getState().isNodeReadOnly;
+    return rowInfo &&
+      rowInfo.isTreeNode &&
+      rowInfo.isParentNode &&
+      isNodeReadOnly
+      ? isNodeReadOnly(rowInfo)
       : false;
+  }
+  isNodeSelectable(nodePath: any[]) {
+    const rowInfo = this.getRowInfoByPath(nodePath);
+    const isNodeSelectable = this.getState().isNodeSelectable;
+
+    return rowInfo && rowInfo.isTreeNode ? isNodeSelectable(rowInfo) : false;
   }
   isNodeExpanded(nodePath: any[]) {
     const state = this.getState();
@@ -172,8 +189,8 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     this.actions.treeExpandState = treeExpandState;
   }
 
-  expandNode(nodePath: any[]) {
-    if (!this.isNodeExpandable(nodePath)) {
+  expandNode(nodePath: any[], options?: { force?: boolean }) {
+    if (this.isNodeReadOnly(nodePath) && !options?.force) {
       return;
     }
     const state = this.getState();
@@ -193,7 +210,10 @@ export class TreeApiImpl<T> implements TreeApi<T> {
       dataSourceApi: this.dataSourceApi,
     };
   };
-  collapseNode(nodePath: any[]) {
+  collapseNode(nodePath: any[], options?: { force?: boolean }) {
+    if (this.isNodeReadOnly(nodePath) && !options?.force) {
+      return;
+    }
     const state = this.getState();
     const treeExpandState = new TreeExpandState<T>(state.treeExpandState);
     treeExpandState.collapseNode(nodePath);
@@ -207,12 +227,12 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     state.onNodeCollapse?.(nodePath, this.getCallbackParam(nodePath));
   }
 
-  toggleNode(nodePath: any[]) {
+  toggleNode(nodePath: any[], options?: { force?: boolean }) {
     const state = this.getState();
     const treeExpandState = new TreeExpandState<T>(state.treeExpandState);
     const newExpanded = !this.isNodeExpanded(nodePath);
 
-    if (!this.isNodeExpandable(nodePath)) {
+    if (this.isNodeReadOnly(nodePath) && !options?.force) {
       return;
     }
     treeExpandState.setNodeExpanded(nodePath, newExpanded);
@@ -317,19 +337,19 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     return treeSelectionState.isNodeSelected(nodePath);
   }
 
-  selectNode(nodePath: NodePath) {
-    this.setNodeSelection(nodePath, true);
+  selectNode(nodePath: NodePath, options?: { force?: boolean }) {
+    this.setNodeSelection(nodePath, true, options);
   }
 
-  deselectNode(nodePath: NodePath) {
-    this.setNodeSelection(nodePath, false);
+  deselectNode(nodePath: NodePath, options?: { force?: boolean }) {
+    this.setNodeSelection(nodePath, false, options);
   }
 
-  toggleNodeSelection(nodePath: NodePath) {
+  toggleNodeSelection(nodePath: NodePath, options?: { force?: boolean }) {
     if (this.isNodeSelected(nodePath)) {
-      this.deselectNode(nodePath);
+      this.deselectNode(nodePath, options);
     } else {
-      this.selectNode(nodePath);
+      this.selectNode(nodePath, options);
     }
   }
 }

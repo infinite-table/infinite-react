@@ -4,6 +4,8 @@ import {
   DataSourcePropCellSelection_MultiCell,
   DataSourcePropCellSelection_SingleCell,
   DataSourcePropIsNodeExpanded,
+  DataSourcePropIsNodeReadOnly,
+  DataSourcePropIsNodeSelectable,
   DataSourcePropIsNodeSelected,
   DataSourcePropOnCellSelectionChange_MultiCell,
   DataSourcePropOnCellSelectionChange_SingleCell,
@@ -56,6 +58,8 @@ type TreeDataSourceOnlyProps<T> = {
   }) => void;
 
   isNodeSelected?: DataSourcePropIsNodeSelected<T>;
+  isNodeSelectable?: DataSourcePropIsNodeSelectable<T>;
+  isNodeReadOnly?: DataSourcePropIsNodeReadOnly<T>;
 
   /**
    * Called when a node is expanded. Not called when treeApi.expandAll is called.

@@ -23,7 +23,11 @@ import { raf } from '../../../utils/raf';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
-import { InfiniteTableRowInfo, Scrollbars } from '../../InfiniteTable';
+import {
+  InfiniteTableRowInfo,
+  InfiniteTable_Tree_RowInfoParentNode,
+  Scrollbars,
+} from '../../InfiniteTable';
 import { rowSelectionStateConfigGetter } from '../../InfiniteTable/api/getRowSelectionApi';
 import { ScrollStopInfo } from '../../InfiniteTable/types/InfiniteTableProps';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
@@ -63,10 +67,23 @@ import {
 } from '../TreeSelectionState';
 import { treeSelectionStateConfigGetter } from '../TreeApi';
 import { NonUndefined } from '../../types/NonUndefined';
+import { InfiniteTable_Tree_RowInfoNode } from '../../../utils/groupAndPivot';
 
 const DataSourceLogger = dbg('DataSource') as DebugLogger;
 
 export const defaultCursorId = Symbol('cursorId');
+
+export const isNodeReadOnly = <T = any>(
+  rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,
+) => {
+  return rowInfo.totalLeafNodesCount === 0;
+};
+
+export const isNodeSelectable = <T = any>(
+  rowInfo: InfiniteTable_Tree_RowInfoNode<T>,
+) => {
+  return rowInfo.isParentNode ? !isNodeReadOnly(rowInfo) : true;
+};
 
 export function initSetupState<T>(): DataSourceSetupState<T> {
   const now = Date.now();
@@ -210,6 +227,8 @@ export const forwardProps = <T>(
         ? discardCallsWithEqualArg(fn, 100, getCompareObjectForDataParams)
         : undefined,
     lazyLoad: (lazyLoad) => !!lazyLoad,
+    isNodeReadOnly: (isReadOnly) => isReadOnly ?? isNodeReadOnly,
+    isNodeSelectable: (isSelectable) => isSelectable ?? isNodeSelectable,
     data: 1,
     debugId: 1,
     nodesKey: 1,

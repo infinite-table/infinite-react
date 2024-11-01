@@ -2,6 +2,9 @@ import type {
   InfiniteTableRowInfo,
   InfiniteTable_HasGrouping_RowInfoGroup,
   InfiniteTable_HasGrouping_RowInfoNormal,
+  InfiniteTable_Tree_RowInfoLeafNode,
+  InfiniteTable_Tree_RowInfoNode,
+  InfiniteTable_Tree_RowInfoParentNode,
 } from '../../../utils/groupAndPivot';
 import { TableRenderRange } from '../../VirtualBrain/MatrixBrain';
 
@@ -75,6 +78,9 @@ export type {
   InfiniteTablePropColumns,
   InfiniteTablePropGroupColumn,
   InfiniteTableRowInfo,
+  InfiniteTable_Tree_RowInfoParentNode,
+  InfiniteTable_Tree_RowInfoLeafNode,
+  InfiniteTable_Tree_RowInfoNode,
   InfiniteTable_HasGrouping_RowInfoGroup,
   InfiniteTable_HasGrouping_RowInfoNormal,
   InfiniteTableGroupColumnFunction,

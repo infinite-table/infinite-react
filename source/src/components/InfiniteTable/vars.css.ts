@@ -283,6 +283,9 @@ export const ThemeVars = createGlobalThemeContract(
       SelectionCheckBox: {
         marginInline: 'selection-checkbox-margin-inline',
       },
+      ExpandCollapseIcon: {
+        color: 'expand-collapse-icon-color',
+      },
       Menu: {
         background: 'menu-background',
         color: 'menu-color',

@@ -8,7 +8,7 @@ async function getRowGroupNesting(rowIndex: number, page: Page) {
   const cell = getCellNodeLocator({ colIndex: 0, rowIndex }, { page });
 
   return await cell
-    .locator('svg[data-name="expander-icon"]')
+    .locator('svg[data-name="expand-collapse-icon"]')
     .evaluate(
       (node) => getComputedStyle(node.parentElement!).paddingInlineStart,
     );

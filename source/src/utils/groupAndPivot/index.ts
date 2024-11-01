@@ -1461,9 +1461,6 @@ export type EnhancedTreeFlattenParam<DataType, KeyType = any> = {
   isNodeExpanded?: (
     rowInfo: InfiniteTable_Tree_RowInfoParentNode<DataType>,
   ) => boolean;
-  isNodeExpandable?: (
-    rowInfo: InfiniteTable_Tree_RowInfoParentNode<DataType>,
-  ) => boolean;
   isNodeSelected?: (
     rowInfo: InfiniteTable_Tree_RowInfoNode<DataType>,
   ) => boolean | null;
@@ -1491,7 +1488,6 @@ function flattenTreeNodes<DataType>(
     isNodeSelected,
     withRowInfo,
     isNodeExpanded,
-    isNodeExpandable,
     treeSelectionState,
     repeatWrappedGroupRows,
     rowsPerPage,
@@ -1634,9 +1630,7 @@ function flattenTreeNodes<DataType>(
       withRowInfo(rowInfo);
     }
     let expanded = true;
-    if (isNodeExpandable && !isNodeExpandable(rowInfo)) {
-      expanded = false;
-    } else if (isNodeExpanded) {
+    if (isNodeExpanded) {
       rowInfo.selfExpanded = expanded = isNodeExpanded(rowInfo);
     }
     if (!parentExpanded) {

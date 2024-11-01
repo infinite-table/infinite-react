@@ -287,11 +287,15 @@
       },
       {
         "title": "Tree Expand & Collapse State",
-        "path": "/docs/learn/tree-grid/tree-expand-and-collpapse-state"
+        "path": "/docs/learn/tree-grid/tree-expand-and-collapse-state"
       },
       {
         "title": "Tree Selection",
         "path": "/docs/learn/tree-grid/tree-selection"
+      },
+      {
+        "title": "Tree Icon Rendering",
+        "path": "/docs/learn/tree-grid/tree-icon-rendering"
       }
     ]
   },
