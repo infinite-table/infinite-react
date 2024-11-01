@@ -66,7 +66,7 @@ export function useCellRendering<T>(
     api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
-  const { dataArray } = dataSourceState;
+  const { dataArray, isNodeReadOnly } = dataSourceState;
 
   const getData = useLatest(dataArray);
   const {
@@ -286,6 +286,7 @@ export function useCellRendering<T>(
       showZebraRows,
       brain,
       repaintId,
+      isNodeReadOnly,
       rowStyle,
       rowClassName,
       cellClassName,

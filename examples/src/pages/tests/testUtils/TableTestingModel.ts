@@ -130,6 +130,12 @@ export class TableTestingModel {
   }
 
   withCell(cellLocation: CellLocation) {
+    const getTreeIcon = () => {
+      return this.rowModel
+        .getCellLocator(cellLocation)
+        .locator('[data-name="expand-collapse-icon"]');
+    };
+
     return {
       getComputedStyleProperty: async (styleName: string) => {
         return await this.columnModel.getCellComputedStyleProperty(
@@ -138,11 +144,18 @@ export class TableTestingModel {
         );
       },
 
-      isTreeIconExpanded: async () => {
-        const cellLocator = this.rowModel.getCellLocator(cellLocation);
+      getTreeIcon: () => {
+        return getTreeIcon();
+      },
 
-        const icon = cellLocator.locator('[data-name="expand-collapse-icon"]');
+      isTreeIconExpanded: async () => {
+        const icon = getTreeIcon();
         return (await icon.getAttribute('data-state')) === 'expanded';
+      },
+
+      isTreeIconDisabled: async () => {
+        const icon = getTreeIcon();
+        return (await icon.getAttribute('data-disabled')) === 'true';
       },
 
       getLocator: () => {

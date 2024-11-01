@@ -335,7 +335,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [rowIndex, rowDisabled, column.computedVisibleIndex, keyboardNavigation],
   );
 
-  const { selectionMode, cellSelection } = dataSourceState;
+  const { selectionMode, cellSelection, isNodeReadOnly } = dataSourceState;
 
   const cellSelected = renderParam.cellSelected;
 
@@ -585,6 +585,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       hidden,
       inEdit,
       rowDetailState,
+      column.renderTreeIcon || column.renderTreeIconForParentNode
+        ? isNodeReadOnly
+        : false,
       ...objectValuesExcept(renderParam, {
         renderBag: true,
         selectCell: true,
