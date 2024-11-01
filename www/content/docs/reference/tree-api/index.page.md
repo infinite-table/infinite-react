@@ -137,7 +137,7 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 
 </Prop>
 
-<Prop name="toggleNode" type="(nodePath: NodePath) => void">
+<Prop name="toggleNode" type="(nodePath: NodePath, options?: {force?: boolean}) => void">
 
 > Toggles the node with the give node path.
 
@@ -147,7 +147,7 @@ See related <TreeApiLink name="expandNode" /> and <TreeApiLink name="collapseNod
 
 </Prop>
 
-<Prop name="expandNode" type="(nodePath: NodePath) => void">
+<Prop name="expandNode" type="(nodePath: NodePath, options?: {force?: boolean}) => void">
 
 > Expands the node with the given node path. See related <TreeApiLink name="collapseNode" /> and <TreeApiLink name="toggleNode" /> methods.
 
@@ -160,9 +160,14 @@ Expands the node. Does not affect other child nodes.
 
 </Sandpack>
 
+<Note>
+
+If `options.force` is `true`, the node will be expanded even if <DPropLink name="isNodeReadOnly" /> is `true` for the given node.
+
+</Note>
 </Prop>
 
-<Prop name="collapseNode" type="(nodePath: NodePath) => void">
+<Prop name="collapseNode" type="(nodePath: NodePath, options?: {force?: boolean}) => void">
 
 > Collapses the node with the given node path. See related <TreeApiLink name="expandNode" /> and <TreeApiLink name="toggleNode" /> methods.
 
@@ -175,6 +180,11 @@ Collapses the node. Does not affect other child nodes.
 
 </Sandpack>
 
+<Note>
+
+If `options.force` is `true`, the node will be collapsed even if <DPropLink name="isNodeReadOnly" /> is `true` for the given node.
+
+</Note>
 </Prop>
 
 </PropTable>

@@ -488,6 +488,7 @@ export type DataSourcePropIsNodeSelectable<T> = (
 
 export type DataSourcePropIsNodeExpanded<T> = (
   rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,
+  treeExpandState: TreeExpandState,
 ) => boolean;
 
 // export type DataSourcePropIsCellSelected<T> = ( // TODO implement this

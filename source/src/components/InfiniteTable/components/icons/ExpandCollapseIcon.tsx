@@ -41,9 +41,12 @@ export function ExpandCollapseIcon(props: ExpandCollapseIconProps) {
       setExpanded(props.expanded);
     }
   }, [props.expanded]);
+
+  const currentState = expanded ? 'expanded' : 'collapsed';
   return (
     <svg
       data-name="expand-collapse-icon"
+      data-state={currentState}
       xmlns="http://www.w3.org/2000/svg"
       height={`${size}px`}
       viewBox="0 0 24 24"
@@ -60,7 +63,7 @@ export function ExpandCollapseIcon(props: ExpandCollapseIconProps) {
         }),
         `${InfiniteIconClassName}`,
         `${THIS_ICON}`,
-        `${THIS_ICON}--${expanded ? 'expanded' : 'collapsed'}`,
+        `${THIS_ICON}--${currentState}`,
         `${THIS_ICON}--${direction === 'end' ? 'end' : 'start'}`,
         disabled ? `${THIS_ICON}--disabled` : '',
       )}

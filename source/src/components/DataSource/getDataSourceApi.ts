@@ -178,18 +178,18 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
         case 'delete':
           if (operation.primaryKeys) {
             operation.primaryKeys.forEach((key) => {
-              const rowInfo = this.getRowInfoByPrimaryKey(key);
-              if (rowInfo && !rowInfo.isGroupRow) {
-                cache.delete(key, rowInfo.data, operation.metadata);
+              const originalData = this.getDataByPrimaryKey(key);
+              if (originalData) {
+                cache.delete(key, originalData, operation.metadata);
               }
             });
           } else if (operation.nodePaths) {
             operation.nodePaths.forEach((nodePath) => {
-              const rowInfo = this.getRowInfoByNodePath(nodePath);
-              if (rowInfo && !rowInfo.isGroupRow) {
+              const originalData = this.getDataByNodePath(nodePath);
+              if (originalData) {
                 cache.deleteNodePath(
                   nodePath,
-                  rowInfo.data,
+                  originalData,
                   operation.metadata,
                 );
               }

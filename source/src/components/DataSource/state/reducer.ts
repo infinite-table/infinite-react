@@ -528,17 +528,22 @@ export function concludeReducer<T>(params: {
 
   let isNodeExpanded:
     | ((rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>) => boolean)
-    | undefined = state.isNodeExpanded;
+    | undefined;
+
+  if (state.isNodeExpanded) {
+    isNodeExpanded = (rowInfo) =>
+      state.isNodeExpanded!(rowInfo, treeExpandState!);
+  }
 
   if (state.isNodeCollapsed) {
-    isNodeExpanded = (rowInfo) => !state.isNodeExpanded!(rowInfo);
+    isNodeExpanded = (rowInfo) =>
+      !state.isNodeExpanded!(rowInfo, treeExpandState!);
   }
 
   if (!isNodeExpanded) {
-    const defaultIsRowExpanded = (rowInfo: InfiniteTableRowInfo<T>) => {
-      if (!rowInfo.isTreeNode || !rowInfo.isParentNode) {
-        return false;
-      }
+    const defaultIsRowExpanded = (
+      rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,
+    ) => {
       return treeExpandState!.isNodeExpanded(rowInfo.nodePath);
     };
 

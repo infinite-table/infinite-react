@@ -138,6 +138,13 @@ export class TableTestingModel {
         );
       },
 
+      isTreeIconExpanded: async () => {
+        const cellLocator = this.rowModel.getCellLocator(cellLocation);
+
+        const icon = cellLocator.locator('[data-name="expand-collapse-icon"]');
+        return (await icon.getAttribute('data-state')) === 'expanded';
+      },
+
       getLocator: () => {
         return this.rowModel.getCellLocator(cellLocation);
       },

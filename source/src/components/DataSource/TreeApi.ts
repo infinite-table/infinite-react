@@ -159,10 +159,10 @@ export class TreeApiImpl<T> implements TreeApi<T> {
         return false;
       }
       if (isNodeCollapsed) {
-        return !isNodeExpanded!(rowInfo);
+        return !isNodeExpanded!(rowInfo, treeExpandState);
       }
       if (isNodeExpanded) {
-        return isNodeExpanded!(rowInfo);
+        return isNodeExpanded!(rowInfo, treeExpandState);
       }
     }
 

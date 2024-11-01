@@ -96,6 +96,61 @@ The <DPropLink name="onNodeExpand" /> and <DPropLink name="onNodeCollapse" /> ca
 
 </Prop>
 
+<Prop name="isNodeExpanded" type="(rowInfo: InfiniteTable_Tree_RowInfoParentNode<DATA_TYPE>, treeExpandState: TreeExpandState) => boolean">
+
+> Decides if the current (non-leaf) node is expanded. 
+
+The inverse prop, <DPropLink name="isNodeCollapsed" /> is also available. Only one of these props can be specified.
+
+<Note>
+
+If this prop is specified, <DPropLink name="treeSelectionState" /> is ignored.
+
+</Note>
+
+</Prop>
+
+<Prop name="isNodeCollapsed" type="(rowInfo: InfiniteTable_Tree_RowInfoParentNode<DATA_TYPE>, treeExpandState: TreeExpandState) => boolean">
+
+> Decides if the current (non-leaf) node is collapsed. See related <DPropLink name="treeExpandState" /> prop.
+
+The inverse prop, <DPropLink name="isNodeExpanded" /> is also available. Only one of these props can be specified.
+
+<Note>
+
+If this prop is specified, <DPropLink name="treeSelectionState" /> is ignored.
+
+</Note>
+
+</Prop>
+
+<Prop name="isNodeReadOnly" type="(rowInfo: InfiniteTable_Tree_RowInfoParentNode<DATA_TYPE>) => boolean">
+
+> Decides if the current (non-leaf) node can be expanded or collapsed and if the tree icon is disabled.
+
+By default, parent nodes with `children: []` are read-only, meaning they won't respond to expand/collapse clicks.
+
+However, if you specify a custom `isNodeReadOnly` function, you can change this behavior.
+
+<Note>
+
+When a node is read-only, the <TreeApiLink name="expandNode" /> and <TreeApiLink name="collapseNode" /> methods need the `options.force` flag to be set to `true` in order to override the read-only restriction.
+
+However, <TreeApiLink name="expandAll" /> and <TreeApiLink name="collapseAll" /> will work regardless of the `isNodeReadOnly` setting.
+
+For full control over the expand/collapse state of read-only nodes, you can use the <DPropLink name="isNodeExpanded" />/<DPropLink name="isNodeCollapsed" /> props.
+
+</Note>
+
+<Sandpack title="Using a custom isNodeReadOnly function">
+
+```ts file="tree-isNodeReadOnly-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
 <Prop name="onNodeCollapse" type="(nodePath: NodePath, {dataSourceApi}) => void">
 
 > Called when a node is collapsed. See related <DPropLink name="onNodeExpand" /> and <DPropLink name="onTreeExpandStateChange" /> props.
