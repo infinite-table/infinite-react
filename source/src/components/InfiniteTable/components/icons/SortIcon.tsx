@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { join } from '../../../../utils/join';
 import { HeaderSortIconIndexCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
+import { InfiniteIconClassName } from './InfiniteIconClassName';
 import { SortIconCls } from './SortIcon.css';
 
 type SortIconProps = {
@@ -91,9 +91,9 @@ export function SortIcon(props: SortIconProps) {
       style={{ ...style, width: size }}
       className={join(
         className,
-        InfiniteTableIconClassName,
+        InfiniteIconClassName,
         SortIconCls,
-        `${InfiniteTableIconClassName}-sort`,
+        `${InfiniteIconClassName}-sort`,
       )}
     >
       {showIndex ? (

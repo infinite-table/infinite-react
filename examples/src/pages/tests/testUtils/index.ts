@@ -360,7 +360,7 @@ export const toggleGroupRow = async (
     { rowIndex, colIndex: colIndex || 0 },
     { page },
   );
-  await locator.locator('[data-name="expander-icon"]').click();
+  await locator.locator('[data-name="expand-collapse-icon"]').click();
 };
 
 export const toggleRowSelection = async (

@@ -10,7 +10,7 @@ import { stripVar } from '../../../utils/stripVar';
 import { DataSourceGroupBy } from '../../DataSource';
 import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
 import { Renderable } from '../../types/Renderable';
-import { ExpanderIcon } from '../components/icons/ExpanderIcon';
+import { ExpandCollapseIcon } from '../components/icons/ExpandCollapseIcon';
 import { LoadingIcon } from '../components/icons/LoadingIcon';
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
@@ -192,7 +192,7 @@ export function getGroupColumnRenderGroupIcon<T>({
       icon = <LoadingIcon />;
     } else if (showExpanderIcon) {
       const defaultIcon = (
-        <ExpanderIcon
+        <ExpandCollapseIcon
           expanded={!collapsed}
           direction={column.align === 'end' ? 'end' : 'start'}
           onChange={() => {

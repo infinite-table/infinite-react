@@ -150,24 +150,25 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           operation.array.forEach((data, index) => {
             if (operation.primaryKeys) {
               const key = operation.primaryKeys[index];
-              const rowInfo = this.getRowInfoByPrimaryKey(key);
-              if (rowInfo && !rowInfo.isGroupRow) {
+              const originalData = this.getDataByPrimaryKey(key);
+              if (originalData) {
                 cache.update(
                   operation.primaryKeys[index],
                   data,
-                  rowInfo.data,
+                  originalData,
                   operation.metadata,
                 );
               }
             } else if (operation.nodePaths) {
-              const rowInfo = this.getRowInfoByNodePath(
+              const originalData = this.getDataByNodePath(
                 operation.nodePaths[index],
               );
-              if (rowInfo && !rowInfo.isGroupRow) {
+
+              if (originalData) {
                 cache.updateNodePath(
                   operation.nodePaths[index],
                   data,
-                  rowInfo.data,
+                  originalData,
                   operation.metadata,
                 );
               }
@@ -286,7 +287,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return map.get(id) ?? -1;
   };
   getIndexByNodePath = (nodePath: NodePath) => {
-    const map = this.getState().pathToIndexDeepMap;
+    const map = this.getState().pathToIndexMap;
     return map.get(nodePath) ?? -1;
   };
   getNodePathById = (id: any): NodePath | null => {
@@ -440,6 +441,11 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   };
 
   removeDataByPrimaryKey = (id: any, options?: DataSourceCRUDParam) => {
+    const isTree = this.getState().isTree;
+    if (isTree) {
+      return this.removeDataByNodePath(this.getNodePathById(id) || [], options);
+    }
+
     const result = this.batchOperation({
       type: 'delete',
       primaryKeys: [id],
@@ -501,11 +507,25 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     ids: any[],
     options?: DataSourceCRUDParam,
   ) => {
-    const result = this.batchOperation({
-      type: 'delete',
-      primaryKeys: ids,
-      metadata: options?.metadata,
-    });
+    const isTree = this.getState().isTree;
+
+    const nodePaths = isTree
+      ? ids.map((id) => {
+          return this.getNodePathById(id) || [];
+        })
+      : null;
+
+    const result = isTree
+      ? this.batchOperation({
+          type: 'delete',
+          nodePaths: nodePaths || [],
+          metadata: options?.metadata,
+        })
+      : this.batchOperation({
+          type: 'delete',
+          primaryKeys: ids,
+          metadata: options?.metadata,
+        });
 
     if (options?.flush) {
       this.commit();

@@ -7,7 +7,7 @@ import {
   DeepMapTreeValueType,
   GroupKeyType,
   InfiniteTablePropRepeatWrappedGroupRows,
-  InfiniteTable_Tree_RowInfoLeafNode,
+  InfiniteTable_Tree_RowInfoNode,
   InfiniteTable_Tree_RowInfoParentNode,
   PivotBy,
   TreeKeyType,
@@ -166,6 +166,8 @@ export interface DataSourceMappedState<T> {
 
   isNodeExpanded: TreeDataSourceProps<T>['isNodeExpanded'];
   isNodeCollapsed: TreeDataSourceProps<T>['isNodeCollapsed'];
+  isNodeReadOnly: NonUndefined<TreeDataSourceProps<T>['isNodeReadOnly']>;
+  isNodeSelectable: NonUndefined<TreeDataSourceProps<T>['isNodeSelectable']>;
 
   onNodeCollapse: TreeDataSourceProps<T>['onNodeCollapse'];
   onNodeExpand: TreeDataSourceProps<T>['onNodeExpand'];
@@ -305,7 +307,7 @@ export interface DataSourceSetupState<T> {
   destroyedRef: React.MutableRefObject<boolean>;
   idToIndexMap: Map<any, number>;
   idToPathMap: Map<any, NodePath>;
-  pathToIndexDeepMap: DeepMap<any, number>;
+  pathToIndexMap: DeepMap<any, number>;
   detailDataSourcesStateToRestore: Map<
     any,
     Partial<DataSourceStateRestoreForDetail<any>>
@@ -343,7 +345,7 @@ export interface DataSourceSetupState<T> {
   dataArray: InfiniteTableRowInfo<T>[];
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   treeDeepMap?: DeepMap<TreeKeyType, DeepMapTreeValueType<T, any>>;
-  treePaths?: DeepMap<TreeKeyType, any>;
+  treePaths?: DeepMap<TreeKeyType, true>;
   groupRowsIndexesInDataArray?: number[];
   reducerResults?: Record<string, AggregationReducerResult>;
   allRowsSelected: boolean;
@@ -470,13 +472,19 @@ export type DataSourcePropIsRowSelected<T> = (
   selectionMode: 'multi-row',
 ) => boolean | null;
 
+export type DataSourcePropIsNodeReadOnly<T> = (
+  rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,
+) => boolean;
+
 export type DataSourcePropIsNodeSelected<T> = (
-  rowInfo:
-    | InfiniteTable_Tree_RowInfoParentNode<T>
-    | InfiniteTable_Tree_RowInfoLeafNode<T>,
+  rowInfo: InfiniteTable_Tree_RowInfoNode<T>,
   treeSelectionState: TreeSelectionState,
   selectionMode: 'multi-row',
 ) => boolean | null;
+
+export type DataSourcePropIsNodeSelectable<T> = (
+  rowInfo: InfiniteTable_Tree_RowInfoNode<T>,
+) => boolean;
 
 export type DataSourcePropIsNodeExpanded<T> = (
   rowInfo: InfiniteTable_Tree_RowInfoParentNode<T>,

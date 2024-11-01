@@ -127,6 +127,10 @@ const SelectionCheckBoxVars = {
     .marginInline]: `${ThemeVars.spacing[2]}`,
 };
 
+const ExpandCollapseIconVars = {
+  [ThemeVars.components.ExpandCollapseIcon.color]: ThemeVars.color.accent,
+};
+
 const RowVars = {
   [ThemeVars.components.Row.background]: ThemeVars.background,
 
@@ -213,4 +217,5 @@ export const LightVars = {
   ...ActiveCellIndicatorVars,
   ...CellVars,
   ...RowVars,
+  ...ExpandCollapseIconVars,
 };

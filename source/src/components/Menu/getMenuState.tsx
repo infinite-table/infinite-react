@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getChangeDetect } from '../DataSource/privateHooks/getChangeDetect';
 import { ForwardPropsToStateFnResult } from '../hooks/useComponentState';
-import { ExpanderIcon } from '../InfiniteTable/components/icons/ExpanderIcon';
+import { ExpandCollapseIcon } from '../InfiniteTable/components/icons/ExpandCollapseIcon';
 import {
   childrenToRuntimeItems,
   toRuntimeItem,
@@ -97,7 +97,7 @@ export const deriveStateFromProps = (params: {
         render: ({ domProps, item }) => {
           return item.menu ? (
             <div {...domProps}>
-              <ExpanderIcon expanded={false} />
+              <ExpandCollapseIcon expanded={false} />
             </div>
           ) : (
             <div {...domProps} />

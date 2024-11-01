@@ -5,7 +5,7 @@ import { join } from '../../../../utils/join';
 import { ThemeVars } from '../../vars.css';
 
 import { HeaderMenuIconCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
+import { InfiniteIconClassName } from './InfiniteIconClassName';
 
 export type MenuIconProps = {
   lineWidth?: number;
@@ -23,7 +23,7 @@ const defaultLineStyle: React.CSSProperties = {
   pointerEvents: 'none',
 };
 
-const lineClassName = `${InfiniteTableIconClassName}-menu`;
+const lineClassName = `${InfiniteIconClassName}-menu`;
 
 export const MenuIconDataAttributes = keyMirror({
   'data-name': '',
@@ -63,8 +63,8 @@ export function MenuIcon(props: MenuIconProps) {
           menuVisible,
           reserveSpaceWhenHidden,
         }),
-        InfiniteTableIconClassName,
-        `${InfiniteTableIconClassName}-menu`,
+        InfiniteIconClassName,
+        `${InfiniteIconClassName}-menu`,
       )}
     >
       {children ?? (

@@ -5,7 +5,7 @@ export default test.describe('RenderBagtree icon', () => {
     await page.waitForInfinite();
 
     async function getInfo() {
-      const leafIcons = await page.$$('[data-name="expander-icon"]');
+      const leafIcons = await page.$$('[data-name="expand-collapse-icon"]');
 
       return Promise.all(
         leafIcons.map(async (icon) => {

@@ -163,7 +163,7 @@ export class TableTestingModel {
       clickDetailIcon: async () => {
         const cellLocator = this.rowModel.getCellLocator(cellLocation);
 
-        const icon = cellLocator.locator('[data-name="expander-icon"]');
+        const icon = cellLocator.locator('[data-name="expand-collapse-icon"]');
 
         await icon.click();
       },

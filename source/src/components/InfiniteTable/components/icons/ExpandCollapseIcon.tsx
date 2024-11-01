@@ -3,10 +3,13 @@ import { useState } from 'react';
 
 import { join } from '../../../../utils/join';
 import { isControlled } from '../../../utils/isControlled';
-import { ExpanderIconCls, ExpanderIconClsVariants } from './ExpanderIcon.css';
-import { InfiniteTableIconClassName } from './InfiniteTableIconClassName';
+import {
+  ExpanderIconCls,
+  ExpanderIconClsVariants,
+} from './ExpandCollapseIcon.css';
+import { InfiniteIconClassName } from './InfiniteIconClassName';
 
-type ExpanderIconProps = {
+type ExpandCollapseIconProps = {
   size?: number;
   expanded?: boolean;
   defaultExpanded?: boolean;
@@ -17,7 +20,9 @@ type ExpanderIconProps = {
   direction?: 'end' | 'start';
 };
 
-export function ExpanderIcon(props: ExpanderIconProps) {
+const THIS_ICON = `${InfiniteIconClassName}-expand-collapse`;
+
+export function ExpandCollapseIcon(props: ExpandCollapseIconProps) {
   const { size = 24, direction = 'start', disabled = false } = props;
 
   const [expanded, setExpanded] = useState(
@@ -38,7 +43,7 @@ export function ExpanderIcon(props: ExpanderIconProps) {
   }, [props.expanded]);
   return (
     <svg
-      data-name="expander-icon"
+      data-name="expand-collapse-icon"
       xmlns="http://www.w3.org/2000/svg"
       height={`${size}px`}
       viewBox="0 0 24 24"
@@ -53,11 +58,11 @@ export function ExpanderIcon(props: ExpanderIconProps) {
           expanded,
           disabled,
         }),
-        `${InfiniteTableIconClassName}`,
-        `${InfiniteTableIconClassName}-expander`,
-        `InfiniteIcon-expander--${expanded ? 'expanded' : 'collapsed'}`,
-        `InfiniteIcon-expander--${direction === 'end' ? 'end' : 'start'}`,
-        disabled ? `InfiniteIcon-expander--disabled` : '',
+        `${InfiniteIconClassName}`,
+        `${THIS_ICON}`,
+        `${THIS_ICON}--${expanded ? 'expanded' : 'collapsed'}`,
+        `${THIS_ICON}--${direction === 'end' ? 'end' : 'start'}`,
+        disabled ? `${THIS_ICON}--disabled` : '',
       )}
     >
       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />

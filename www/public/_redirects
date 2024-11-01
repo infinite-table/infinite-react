@@ -16,7 +16,7 @@
 /docs/learn/editing/inline-editing /docs/learn/editing/overview
 
 /docs/reference/selection-api /docs/reference/row-selection-api
-
+/docs/learn/tree-grid/tree-expand-and-collpapse-state /docs/learn/tree-grid/tree-expand-and-collapse-state
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat
 

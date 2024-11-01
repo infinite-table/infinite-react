@@ -766,6 +766,12 @@ For more components that can be overriden, see <PropLink name="components" />
 
 To render a custom icon, specify a function that returns a React node. The `cellContext` object param will contain all the information about the current cell.
 
+<Note>
+
+The `cellContext` object contains a `toggleCurrentTreeNode` function property, which can be used to toggle the node state when clicked.
+
+</Note>
+
 With the default value of `true`, an icon will be rendered only for parent nodes. If you want to render an icon for all nodes, specify a function (and differentiate between parent and leaf nodes), and it will be called regardless of whether the node is a parent or a leaf.
 
 
@@ -778,6 +784,21 @@ You can also use <PropLink name="columns.renderTreeIconForParentNode" /> to spec
 ```
 
 </Sandpack>
+
+
+<Sandpack title="Rendering a custom tree icon for both parent and leaf nodes" >
+
+<Description>
+
+This example renders a custom tree icon and uses the `toggleCurrentTreeNode` function to toggle the node state when Clicked. `toggleCurrentTreeNode` is a property of the `cellContext` argument passed to the `renderTreeIcon` function.
+
+</Description>
+
+```tsx file="tree-icon-custom-example-with-toggle.page.tsx"
+```
+
+</Sandpack>
+
 
 </Prop>
 

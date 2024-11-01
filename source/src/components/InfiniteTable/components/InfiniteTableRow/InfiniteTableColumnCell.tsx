@@ -8,7 +8,6 @@ import { join } from '../../../../utils/join';
 
 import { stripVar } from '../../../../utils/stripVar';
 import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSourceState';
-import { isNodeExpandable } from '../../../DataSource/state/reducer';
 
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
@@ -38,7 +37,7 @@ import {
   SelectionCheckboxCls,
 } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
-import { ExpanderIcon } from '../icons/ExpanderIcon';
+import { ExpandCollapseIcon } from '../icons/ExpandCollapseIcon';
 import { getColumnRenderingParams } from './columnRendering';
 import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
@@ -83,7 +82,7 @@ export const defaultRenderRowDetailIcon: InfiniteTableColumnRenderFunction<
   const { toggleCurrentRowDetails, rowDetailState } = params;
 
   return (
-    <ExpanderIcon
+    <ExpandCollapseIcon
       style={{
         visibility: rowDetailState === false ? 'hidden' : 'visible',
       }}
@@ -100,14 +99,16 @@ const EXPANDER_STYLE: React.CSSProperties = {
 
 export const defaultRenderTreeIcon: InfiniteTableColumn<any>['renderTreeIcon'] =
   (params) => {
-    const { rowInfo, toggleCurrentTreeNode, nodeExpanded } = params;
+    const { rowInfo, toggleCurrentTreeNode, nodeExpanded, api } = params;
+
+    const isNodeReadOnly = api.getDataSourceState().isNodeReadOnly;
 
     return (
-      <ExpanderIcon
+      <ExpandCollapseIcon
         disabled={
-          rowInfo.isTreeNode &&
-          rowInfo.isParentNode &&
-          !isNodeExpandable(rowInfo)
+          rowInfo.isTreeNode && rowInfo.isParentNode
+            ? isNodeReadOnly(rowInfo)
+            : false
         }
         style={EXPANDER_STYLE}
         expanded={nodeExpanded}
@@ -136,6 +137,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   }
   const { components } = api.getState();
 
+  const isNodeSelectable = api.getDataSourceState().isNodeSelectable;
   const CheckBoxCmp = components?.CheckBox || InfiniteCheckBox;
 
   return (
@@ -143,13 +145,7 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
       domProps={{
         className: SelectionCheckboxCls,
       }}
-      disabled={
-        rowInfo.isTreeNode
-          ? rowInfo.isParentNode
-            ? !isNodeExpandable(rowInfo)
-            : false
-          : false
-      }
+      disabled={rowInfo.isTreeNode ? !isNodeSelectable(rowInfo) : false}
       onChange={(selected) => {
         if (rowInfo.isTreeNode) {
           dataSourceApi.treeApi.setNodeSelection(

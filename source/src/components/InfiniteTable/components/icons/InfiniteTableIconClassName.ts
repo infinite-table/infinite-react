@@ -1,1 +1,0 @@
-export const InfiniteTableIconClassName = 'InfiniteTableIcon';

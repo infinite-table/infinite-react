@@ -17,7 +17,7 @@ export default test.describe.parallel('hideEmptyGroupColumns', () => {
       'department',
     ]);
 
-    await page.click(`[data-name="expander-icon"]`);
+    await page.click(`[data-name="expand-collapse-icon"]`);
 
     await page.waitForTimeout(50);
     ids = await columnModel.getVisibleColumnIds();
@@ -45,7 +45,7 @@ export default test.describe.parallel('hideEmptyGroupColumns', () => {
       'department',
     ]);
 
-    await page.click(`[data-name="expander-icon"]`);
+    await page.click(`[data-name="expand-collapse-icon"]`);
 
     await page.waitForTimeout(50);
     ids = await columnModel.getVisibleColumnIds();
