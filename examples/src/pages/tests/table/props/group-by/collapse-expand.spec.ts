@@ -8,7 +8,9 @@ export default test.describe.parallel('Table', () => {
 
     expect(count).toEqual(12);
 
-    const expanderIcon = await page.$('.InfiniteIcon-expander--expanded');
+    const expanderIcon = await page.$(
+      '.InfiniteIcon-expand-collapse--expanded',
+    );
 
     // collapse Cuba
     await expanderIcon!.click();
