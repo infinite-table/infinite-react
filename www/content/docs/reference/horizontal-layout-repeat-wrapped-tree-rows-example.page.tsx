@@ -3,7 +3,6 @@ import {
   TreeDataSource,
   TreeGrid,
 } from '@infinite-table/infinite-react';
-import { CSSProperties } from 'react';
 
 type FileSystemNode = {
   id: string;
