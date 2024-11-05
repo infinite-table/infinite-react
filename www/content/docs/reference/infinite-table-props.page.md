@@ -8,15 +8,28 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
-<Prop name="repeatWrappedGroupRows" type="boolean" defaultValue={true}>
+<Prop name="repeatWrappedGroupRows" type="boolean|(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => boolean" defaultValue={true}>
 
-> When enabled, and <PropLink name="wrapRowsHorizontally" /> is also enabled, if there is <DPropLink name="groupBy" code={false}>grouping configured</DPropLink>, the group rows will be repeated at the top of each column set if the group starts in the previous column set.
+> When enabled, and <PropLink name="wrapRowsHorizontally" /> is also enabled, if there is <DPropLink name="groupBy" code={false}>grouping configured</DPropLink> or if you're using tree data, the group/tree rows will be repeated at the top of each column set if the group/parent starts in the previous column set.
 
 See related <PropLink name="wrapRowsHorizontally" />.
 
 <Sandpack title="Horizontal Layout with repeated wrapped group rows">
 
 ```tsx file="horizontal-layout-repeat-wrapped-groups-example.page.tsx"
+```
+
+</Sandpack>
+
+<Sandpack title="Tree with horizontal Layout and repeated wrapped tree rows">
+
+<Description>
+
+In this example, parent nodes are repeated conditionally: only top-level parent nodes are repeated when wrapping happens.
+
+</Description>
+
+```tsx file="horizontal-layout-repeat-wrapped-tree-rows-example.page.tsx"
 ```
 
 </Sandpack>
