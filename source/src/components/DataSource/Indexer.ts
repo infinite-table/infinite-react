@@ -3,6 +3,15 @@ import { TreeParams } from '../../utils/groupAndPivot';
 import { DataSourceCache } from './DataSourceCache';
 import { NodePath } from './TreeExpandState';
 
+type IndexerOptions<DataType, PrimaryKeyType> = {
+  toPrimaryKey: (data: DataType) => PrimaryKeyType;
+  cache?: DataSourceCache<DataType, PrimaryKeyType>;
+
+  getNodeChildren?: TreeParams<DataType, PrimaryKeyType>['getNodeChildren'];
+  isLeafNode?: TreeParams<DataType, PrimaryKeyType>['isLeafNode'];
+  nodesKey: string | undefined;
+};
+
 export class Indexer<DataType, PrimaryKeyType = string> {
   primaryKeyToData: Map<PrimaryKeyType, DataType> = new Map();
   nodePathsToData: DeepMap<PrimaryKeyType, DataType> = new DeepMap();
@@ -11,9 +20,28 @@ export class Indexer<DataType, PrimaryKeyType = string> {
     this.primaryKeyToData.set(primaryKey, data);
   };
 
-  private addNodePath = (nodePath: NodePath, data: DataType) => {
+  private addNodePath = (
+    nodePath: NodePath,
+    data: DataType,
+    options: IndexerOptions<DataType, PrimaryKeyType>,
+  ) => {
     this.nodePathsToData.set(nodePath, data);
     this.add(nodePath[nodePath.length - 1], data);
+
+    const children = options.getNodeChildren
+      ? options.getNodeChildren(data)
+      : options.nodesKey
+      ? //@ts-ignore
+        data[options.nodesKey]
+      : null;
+
+    if (children && Array.isArray(children)) {
+      for (let i = 0, len = children.length; i < len; i++) {
+        const child = children[i];
+        const childPath = [...nodePath, options.toPrimaryKey(child)];
+        this.addNodePath(childPath, child, options);
+      }
+    }
   };
 
   clear = () => {
@@ -30,14 +58,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
 
   indexArray = (
     arr: DataType[],
-    options: {
-      toPrimaryKey: (data: DataType) => PrimaryKeyType;
-      cache?: DataSourceCache<DataType, PrimaryKeyType>;
-
-      getNodeChildren?: TreeParams<DataType, PrimaryKeyType>['getNodeChildren'];
-      isLeafNode?: TreeParams<DataType, PrimaryKeyType>['isLeafNode'];
-      nodesKey: string | undefined;
-    },
+    options: IndexerOptions<DataType, PrimaryKeyType>,
   ) => {
     const { cache, toPrimaryKey, getNodeChildren, isLeafNode, nodesKey } =
       options;
@@ -75,7 +96,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
           if (info.type === 'insert') {
             const insertPK = toPrimaryKey(info.data);
             if (isTree) {
-              this.addNodePath([insertPK], info.data);
+              this.addNodePath([insertPK], info.data, options);
             } else {
               this.add(insertPK, info.data);
             }
@@ -144,7 +165,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
                   const insertPK = toPrimaryKey(info.data);
                   if (isTreeModeForNode) {
                     const currentPath = [...parentPath, insertPK];
-                    this.addNodePath(currentPath, info.data);
+                    this.addNodePath(currentPath, info.data, options);
                   } else {
                     this.add(insertPK, info.data);
                   }
@@ -183,7 +204,7 @@ export class Indexer<DataType, PrimaryKeyType = string> {
 
                   parentPath.pop();
                 }
-                this.addNodePath(nodePath!, item);
+                this.addNodePath(nodePath!, item, options);
               } else {
                 this.add(pk, item);
               }

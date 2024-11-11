@@ -324,7 +324,18 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
   getDataByNodePath = (nodePath: NodePath): T | null => {
     const { indexer } = this.getState();
-    return indexer.getDataForNodePath(nodePath) ?? null;
+    const data = indexer.getDataForNodePath(nodePath);
+
+    if (!data) {
+      console.warn(
+        `getDataByNodePath: no data found for nodePath: "${nodePath.join(
+          ' / ',
+        )}"`,
+      );
+      return null;
+    }
+
+    return data;
   };
 
   /**
@@ -410,6 +421,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const nodesKey = this.getState().nodesKey as keyof T;
     const dataChildren = data[nodesKey] as any as T[] | undefined | null;
 
+    debugger;
     const children =
       typeof childrenOrFn === 'function'
         ? childrenOrFn(dataChildren, data)

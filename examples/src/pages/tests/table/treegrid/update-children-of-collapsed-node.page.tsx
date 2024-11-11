@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import { TreeDataSource, TreeGrid } from '@infinite-table/infinite-react';
 import {
+  TreeDataSource,
+  TreeGrid,
   DataSourceApi,
   type InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
@@ -100,6 +101,22 @@ export default function App() {
     }, ['1', '3']);
   };
 
+  const set = async () => {
+    if (!dataSourceApi) {
+      return;
+    }
+
+    dataSourceApi.updateChildrenByNodePath(() => {
+      return [
+        {
+          name: 'untitled.txt',
+          type: 'file',
+          id: '18',
+        },
+      ];
+    }, ['1', '2']);
+  };
+
   return (
     <>
       <button type="button" onClick={update}>
@@ -107,6 +124,9 @@ export default function App() {
       </button>
       <button type="button" onClick={remove}>
         remove
+      </button>
+      <button type="button" onClick={set}>
+        set
       </button>
       <TreeDataSource<FileSystemNode>
         onReady={setDataSourceApi}
