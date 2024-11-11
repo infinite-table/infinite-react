@@ -532,6 +532,11 @@ export type DataSourceInsertParam = DataSourceCRUDParam &
       }
   );
 
+export type UpdateChildrenFn<T> = (
+  dataChildren: T[] | undefined | null,
+  data: T,
+) => T[] | undefined | null;
+
 export interface DataSourceApi<T> {
   getOriginalDataArray: () => T[];
   getRowInfoArray: () => InfiniteTableRowInfo<T>[];
@@ -556,6 +561,13 @@ export interface DataSourceApi<T> {
     nodePath: NodePath,
     options?: DataSourceUpdateParam,
   ): Promise<any>;
+
+  updateChildrenByNodePath(
+    childrenOrFn: T[] | undefined | null | UpdateChildrenFn<T>,
+    nodePath: NodePath,
+    options?: DataSourceUpdateParam,
+  ): Promise<any>;
+
   updateDataArray(
     data: Partial<T>[],
     options?: DataSourceCRUDParam,

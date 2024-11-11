@@ -5,6 +5,7 @@ import {
   DataSourceSingleSortInfo,
   DataSourceState,
   DataSourceUpdateParam,
+  UpdateChildrenFn,
 } from '.';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
@@ -393,6 +394,35 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     }
 
     return result;
+  };
+
+  updateChildrenByNodePath = (
+    childrenOrFn: T[] | undefined | null | UpdateChildrenFn<T>,
+    nodePath: NodePath,
+    options?: DataSourceUpdateParam,
+  ) => {
+    const data = this.getDataByNodePath(nodePath);
+
+    if (data == null) {
+      return Promise.resolve(null);
+    }
+
+    const nodesKey = this.getState().nodesKey as keyof T;
+    const dataChildren = data[nodesKey] as any as T[] | undefined | null;
+
+    const children =
+      typeof childrenOrFn === 'function'
+        ? childrenOrFn(dataChildren, data)
+        : childrenOrFn;
+
+    return this.updateDataByNodePath(
+      {
+        ...data,
+        [nodesKey]: children,
+      },
+      nodePath,
+      options,
+    );
   };
 
   updateDataByNodePath = (
