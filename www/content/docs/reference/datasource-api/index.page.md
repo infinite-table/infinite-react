@@ -378,6 +378,39 @@ dataSourceApi.updateDataArrayByNodePath([
 
 </Prop>
 
+<Prop name="updateChildrenByNodePath" type="(children: DATA_TYPE[] | any | (children, data) => DATA_TYPE[] | any, nodePath: NodePath) => Promise">
+
+> Updates the children of the node specified by the node path.
+
+The first parameter can be an array (or `null` or `undefined`) or a function that returns an array (or `null` or `undefined`).
+
+The second parameter is the node path.
+
+When a function is passed as the first parameter, it will be called with the children of the node. The return value will be used as the new children of the node. This gives you an opportunity to update the children based on the current children state.
+
+```tsx title="Updating the children of a tree node"
+dataSourceApi.updateChildrenByNodePath(
+  (currentChildren) => {
+    return [
+      ...(currentChildren || []),
+      {
+        name: 'untitled.txt',
+        id: '8',
+      },
+    ];
+  },
+  ['1', '3'],
+);
+```
+
+<Note>
+
+When using a function, it will be called with the current children of the node (1st parameter) and also with the node data object (2nd parameter).
+
+</Note>
+
+</Prop>
+
 <Prop name="updateDataByNodePath" type="(data: Partial<DATA_TYPE>, nodePath: NodePath) => Promise">
 
 > Updates the data for the node specified by the node path.
