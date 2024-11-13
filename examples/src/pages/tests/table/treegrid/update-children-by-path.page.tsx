@@ -82,6 +82,31 @@ export default function App() {
           >
             Add more data
           </button>
+
+          <button
+            onClick={() => {
+              if (!dataSourceApi) {
+                return;
+              }
+              dataSourceApi.insertData(
+                {
+                  id: '777',
+                  name: 'inserted',
+                  type: 'folder',
+                  children: [
+                    {
+                      id: '7777',
+                      name: 'child of inserted',
+                      type: 'file',
+                    },
+                  ],
+                },
+                { position: 'after', primaryKey: '12' },
+              );
+            }}
+          >
+            click last
+          </button>
         </div>
       </div>
       <TreeDataSource

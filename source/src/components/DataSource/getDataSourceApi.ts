@@ -421,7 +421,6 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     const nodesKey = this.getState().nodesKey as keyof T;
     const dataChildren = data[nodesKey] as any as T[] | undefined | null;
 
-    debugger;
     const children =
       typeof childrenOrFn === 'function'
         ? childrenOrFn(dataChildren, data)

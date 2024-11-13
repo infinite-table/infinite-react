@@ -16,6 +16,41 @@ export class Indexer<DataType, PrimaryKeyType = string> {
   primaryKeyToData: Map<PrimaryKeyType, DataType> = new Map();
   nodePathsToData: DeepMap<PrimaryKeyType, DataType> = new DeepMap();
 
+  private removeNodePath = (
+    nodePath: NodePath,
+    options?: IndexerOptions<DataType, PrimaryKeyType>,
+  ) => {
+    this.nodePathsToData.delete(nodePath);
+    this.remove(nodePath[nodePath.length - 1]);
+
+    if (!options) {
+      return;
+    }
+
+    const data = this.nodePathsToData.get(nodePath);
+
+    if (data) {
+      const children = options.getNodeChildren
+        ? options.getNodeChildren(data)
+        : options.nodesKey
+        ? //@ts-ignore
+          data[options.nodesKey]
+        : null;
+
+      if (children && Array.isArray(children)) {
+        for (let i = 0, len = children.length; i < len; i++) {
+          const child = children[i];
+          const childPath = [...nodePath, options.toPrimaryKey(child)];
+          this.removeNodePath(childPath, options);
+        }
+      }
+    }
+  };
+
+  private remove = (primaryKey: PrimaryKeyType) => {
+    this.primaryKeyToData.delete(primaryKey);
+  };
+
   private add = (primaryKey: PrimaryKeyType, data: DataType) => {
     this.primaryKeyToData.set(primaryKey, data);
   };
@@ -23,10 +58,23 @@ export class Indexer<DataType, PrimaryKeyType = string> {
   private addNodePath = (
     nodePath: NodePath,
     data: DataType,
-    options: IndexerOptions<DataType, PrimaryKeyType>,
+    options?: IndexerOptions<DataType, PrimaryKeyType>,
   ) => {
+    if (__DEV__) {
+      if (this.nodePathsToData.has(nodePath)) {
+        console.warn(
+          `There is a problem! The node at path [${nodePath.join(
+            '/',
+          )}] is already in the indexer! You're doing too much work!`,
+        );
+      }
+    }
     this.nodePathsToData.set(nodePath, data);
     this.add(nodePath[nodePath.length - 1], data);
+
+    if (!options) {
+      return;
+    }
 
     const children = options.getNodeChildren
       ? options.getNodeChildren(data)
@@ -128,14 +176,6 @@ export class Indexer<DataType, PrimaryKeyType = string> {
               ? cache?.getMutationsForNodePath(nodePath!)
               : cache?.getMutationsForPrimaryKey(pk);
 
-            // if (
-            //   isTreeModeForNode &&
-            //   !cacheInfo &&
-            //   (cacheInfo = cache?.getMutationsForPrimaryKey(pk))
-            // ) {
-            //   isTreeModeForNode = false;
-            // }
-
             if (cacheInfo && cacheInfo.length) {
               for (
                 let cacheIndex = 0, cacheLength = cacheInfo.length;
@@ -146,9 +186,9 @@ export class Indexer<DataType, PrimaryKeyType = string> {
 
                 if (info.type === 'delete' && !deleted) {
                   if (isTreeModeForNode) {
-                    this.nodePathsToData.delete(nodePath!);
+                    this.removeNodePath(nodePath!, options);
                   } else {
-                    this.primaryKeyToData.delete(pk);
+                    this.remove(pk);
                   }
                   deleted = true;
                   arr.splice(i, 1);
@@ -162,13 +202,15 @@ export class Indexer<DataType, PrimaryKeyType = string> {
                 }
 
                 if (info.type === 'insert') {
-                  const insertPK = toPrimaryKey(info.data);
-                  if (isTreeModeForNode) {
-                    const currentPath = [...parentPath, insertPK];
-                    this.addNodePath(currentPath, info.data, options);
-                  } else {
-                    this.add(insertPK, info.data);
-                  }
+                  // there's no need for this this.add/this.addNodePath at this point
+                  // since it's anyways done below
+                  // const insertPK = toPrimaryKey(info.data);
+                  // if (isTreeModeForNode) {
+                  //   const currentPath = [...parentPath, insertPK];
+                  //   this.addNodePath(currentPath, info.data);
+                  // } else {
+                  //   this.add(insertPK, info.data);
+                  // }
 
                   if (info.position === 'before') {
                     arr.splice(i, 0, info.data);
@@ -189,6 +231,8 @@ export class Indexer<DataType, PrimaryKeyType = string> {
             }
             if (!deleted) {
               if (isTreeModeForNode) {
+                this.addNodePath(nodePath!, item);
+
                 const isLeaf = isLeafNode!(item);
                 let children = isLeaf ? null : getNodeChildren!(item);
 
@@ -204,7 +248,6 @@ export class Indexer<DataType, PrimaryKeyType = string> {
 
                   parentPath.pop();
                 }
-                this.addNodePath(nodePath!, item, options);
               } else {
                 this.add(pk, item);
               }
