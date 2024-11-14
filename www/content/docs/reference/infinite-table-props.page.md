@@ -849,6 +849,8 @@ The column components object can have either of the two following properties:
 
 - <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when editing is enabled for the column
 
+- <PropLink name="columns.components.FilterOperatorSwitch">FilterOperatorSwitch</PropLink> - a React component to use for the filter operator switch - clicking the operator pops up a menu with the available operators for that column filter.
+
 See [editing docs](/docs/learn/editing/overview).
 
 </Prop>
