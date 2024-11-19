@@ -855,14 +855,22 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
       }
     }
 
-    const result = this.batchOperation({
-      type: 'insert',
-      array: data,
-      position,
-      metadata: options?.metadata,
-      nodePath: this.getNodePathById(primaryKey) || [],
-      primaryKey,
-    });
+    const result = isTree
+      ? this.batchOperation({
+          type: 'insert',
+          array: data,
+          position,
+          metadata: options?.metadata,
+          nodePath: this.getNodePathById(primaryKey) || [],
+        })
+      : this.batchOperation({
+          type: 'insert',
+          array: data,
+          position,
+          metadata: options?.metadata,
+          primaryKey,
+          nodePath,
+        });
 
     if (options?.flush) {
       this.commit();
