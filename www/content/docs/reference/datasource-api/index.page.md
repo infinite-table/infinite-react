@@ -433,6 +433,18 @@ As a third parameter, you can pass in an options object, which supports the `wai
 
 </Prop>
 
+<Prop name="waitForNodePath" type="(nodePath: NodePath, options?: { timeout?: number }) => Promise<boolean>">
+
+> Returns a promise that tells if the node path exists.
+
+Calling this method will give you a promise that will tell you if the node path exists or not.
+
+If the `DataSource` can find the node path either immediately or before the specified timeout expires, the promise will resolve to `true`, otherwise it will resolve to `false`.
+
+If no `timeout` is specified, it will default to `1000`ms.
+
+</Prop>
+
 <Prop name="updateDataByNodePath" type="(data: Partial<DATA_TYPE>, nodePath: NodePath, options?) => Promise">
 
 > Updates the data for the node specified by the node path.
