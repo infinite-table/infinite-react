@@ -6,6 +6,7 @@ import {
   DataSourceState,
   DataSourceUpdateParam,
   UpdateChildrenFn,
+  WaitForNodeOptions,
 } from '.';
 import { InfiniteTableRowInfo } from '../InfiniteTable/types';
 import { DataSourceCache } from './DataSourceCache';
@@ -14,6 +15,8 @@ import { TreeApi, TreeApiImpl } from './TreeApi';
 import { RowDisabledState } from './RowDisabledState';
 import { NodePath } from './TreeExpandState';
 import { DataSourceInsertParam } from './types';
+
+const DEFAULT_NODE_PATH_WAIT_TIMEOUT = 1000;
 
 type GetDataSourceApiParam<T> = {
   getState: () => DataSourceState<T>;
@@ -38,7 +41,7 @@ type DataSourceOperation<T> =
       type: 'update';
       primaryKeys?: never;
       nodePaths: NodePath[];
-      array: Partial<T>[];
+      array: (Partial<T> | UpdateChildrenFn<T>)[];
       metadata: any;
     }
   | {
@@ -105,6 +108,10 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return this.getState().toPrimaryKey(data);
   };
 
+  getPendingOperationPromise(): Promise<boolean> | null {
+    return this.pendingPromise;
+  }
+
   batchOperation(operation: DataSourceOperation<T>) {
     if (!this.pendingPromise) {
       this.pendingPromise = new Promise((resolve) => {
@@ -141,9 +148,11 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
     const currentCache = this.getState().cache;
 
+    const { isTree, nodesKey } = this.getState();
+
     let cache = currentCache
       ? DataSourceCache.clone(currentCache, { light: true })
-      : new DataSourceCache<T>();
+      : new DataSourceCache<T>({ nodesKey: isTree ? nodesKey : undefined });
 
     operations.forEach((operation) => {
       switch (operation.type) {
@@ -155,7 +164,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
               if (originalData) {
                 cache.update(
                   operation.primaryKeys[index],
-                  data,
+                  data as Partial<T>,
                   originalData,
                   operation.metadata,
                 );
@@ -166,12 +175,21 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
               );
 
               if (originalData) {
-                cache.updateNodePath(
-                  operation.nodePaths[index],
-                  data,
-                  originalData,
-                  operation.metadata,
-                );
+                if (typeof data === 'function') {
+                  cache.updateChildren(
+                    operation.nodePaths[index],
+                    data,
+                    originalData,
+                    operation.metadata,
+                  );
+                } else {
+                  cache.updateNodePath(
+                    operation.nodePaths[index],
+                    data,
+                    originalData,
+                    operation.metadata,
+                  );
+                }
               }
             }
           });
@@ -205,7 +223,7 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
           if (nodePath) {
             operation.array.forEach((data) => {
               cache.insertNodePath(
-                nodePath!,
+                [...nodePath!],
                 data,
                 position,
                 operation.metadata,
@@ -242,6 +260,54 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
   flush() {
     return this.commit();
+  }
+
+  waitForNodePath(
+    nodePath: NodePath,
+    options?: { timeout?: number },
+  ): Promise<boolean> {
+    const state = this.getState();
+
+    if (this.isNodePathAvailable(nodePath)) {
+      return Promise.resolve(true);
+    }
+
+    const timeout = options?.timeout ?? DEFAULT_NODE_PATH_WAIT_TIMEOUT;
+
+    const result = state.waitForNodePathPromises.get(nodePath);
+
+    if (result) {
+      return result.promise;
+    }
+
+    const timestamp = Date.now();
+    let resolve: (value: boolean) => void = () => {};
+
+    const promise = new Promise<boolean>((res) => {
+      let resolved: boolean | undefined;
+      let timeoutId: any;
+
+      resolve = (value: boolean) => {
+        clearTimeout(timeoutId);
+        resolved = value;
+        state.waitForNodePathPromises.delete(nodePath);
+        res(value);
+      };
+
+      timeoutId = setTimeout(() => {
+        if (resolved === undefined) {
+          resolve(false);
+        }
+      }, timeout);
+    });
+
+    state.waitForNodePathPromises.set(nodePath, {
+      timestamp,
+      promise,
+      resolve,
+    });
+
+    return promise;
   }
 
   commit() {
@@ -322,16 +388,22 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return indexer.getDataForPrimaryKey(id) ?? null;
   };
 
+  isNodePathAvailable = (nodePath: NodePath): boolean => {
+    return this.getState().indexer.getDataForNodePath(nodePath) !== undefined;
+  };
+
   getDataByNodePath = (nodePath: NodePath): T | null => {
     const { indexer } = this.getState();
     const data = indexer.getDataForNodePath(nodePath);
 
     if (!data) {
-      console.warn(
-        `getDataByNodePath: no data found for nodePath: "${nodePath.join(
-          ' / ',
-        )}"`,
-      );
+      if (__DEV__) {
+        console.warn(
+          `getDataByNodePath: no data found for nodePath: "${nodePath.join(
+            ' / ',
+          )}"`,
+        );
+      }
       return null;
     }
 
@@ -407,31 +479,87 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return result;
   };
 
+  private withWaitForNode = <X = boolean>(
+    nodePath: NodePath,
+    fn: (opts: {
+      error?: string | true | Error;
+      resolved: boolean | undefined;
+    }) => X | Promise<X>,
+    options?: WaitForNodeOptions,
+  ): Promise<X> => {
+    const waitForNode = options?.waitForNode ?? true;
+
+    if (waitForNode === true || typeof waitForNode === 'number') {
+      let timeout =
+        waitForNode === true ? DEFAULT_NODE_PATH_WAIT_TIMEOUT : waitForNode;
+
+      if (!isNaN(timeout)) {
+        timeout = DEFAULT_NODE_PATH_WAIT_TIMEOUT;
+      }
+
+      return this.waitForNodePath(nodePath, { timeout }).then((okay) => {
+        if (!okay) {
+          const error = `Cannot find node path "${nodePath.join(
+            '/',
+          )}" (we waited for it ${timeout}ms)`;
+          console.error(error);
+
+          return fn({
+            error,
+            resolved: false,
+          });
+        }
+
+        return fn({
+          resolved: true,
+        });
+      });
+    }
+
+    const result = fn({
+      resolved: undefined,
+    });
+
+    return result instanceof Promise ? result : Promise.resolve(result);
+  };
+
   updateChildrenByNodePath = (
     childrenOrFn: T[] | undefined | null | UpdateChildrenFn<T>,
     nodePath: NodePath,
     options?: DataSourceUpdateParam,
   ) => {
-    const data = this.getDataByNodePath(nodePath);
-
-    if (data == null) {
-      return Promise.resolve(null);
-    }
-
-    const nodesKey = this.getState().nodesKey as keyof T;
-    const dataChildren = data[nodesKey] as any as T[] | undefined | null;
-
-    const children =
-      typeof childrenOrFn === 'function'
-        ? childrenOrFn(dataChildren, data)
-        : childrenOrFn;
-
-    return this.updateDataByNodePath(
-      {
-        ...data,
-        [nodesKey]: children,
-      },
+    return this.withWaitForNode(
       nodePath,
+      ({ error }) => {
+        if (error) {
+          return false;
+        }
+
+        return this.updateChildrenByNodePath_Internal(
+          childrenOrFn,
+          nodePath,
+          options,
+        );
+      },
+      options,
+    );
+  };
+
+  private updateChildrenByNodePath_Internal = (
+    childrenOrFn: T[] | undefined | null | UpdateChildrenFn<T>,
+    nodePath: NodePath,
+    options?: DataSourceUpdateParam,
+  ) => {
+    const children =
+      typeof childrenOrFn === 'function' ? childrenOrFn : () => childrenOrFn;
+
+    return this.updateDataArrayByNodePath_Internal(
+      [
+        {
+          nodePath,
+          children,
+        },
+      ],
       options,
     );
   };
@@ -441,7 +569,29 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     nodePath: NodePath,
     options?: DataSourceUpdateParam,
   ) => {
-    return this.updateDataArrayByNodePath(
+    if (!this.isNodePathAvailable(nodePath)) {
+      return this.withWaitForNode(
+        nodePath,
+        ({ error }) => {
+          if (error) {
+            return false;
+          }
+
+          return this.updateDataArrayByNodePath_Internal(
+            [
+              {
+                data,
+                nodePath,
+              },
+            ],
+            options,
+          );
+        },
+        options,
+      );
+    }
+
+    return this.updateDataArrayByNodePath_Internal(
       [
         {
           data,
@@ -453,17 +603,68 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   };
 
   updateDataArrayByNodePath = (
-    updateInfo: {
-      data: Partial<T>;
+    updateInfo: ({
       nodePath: NodePath;
-    }[],
+    } & (
+      | {
+          data: Partial<T>;
+          children?: never;
+        }
+      | {
+          data?: never;
+          children: UpdateChildrenFn<T>;
+        }
+    ))[],
     options?: DataSourceUpdateParam,
   ) => {
-    const data: Partial<T>[] = [];
+    if (
+      options &&
+      typeof options.waitForNode !== 'undefined' &&
+      !options.waitForNode
+    ) {
+      return this.updateDataArrayByNodePath_Internal(updateInfo, options);
+    }
+
+    const allNodePaths = updateInfo.map((info) => info.nodePath);
+
+    const promiseWithAll = Promise.allSettled(
+      allNodePaths.map((nodePath) => {
+        return this.withWaitForNode(nodePath, ({ error }) => !error, options);
+      }),
+    );
+
+    return promiseWithAll.then((allGood) => {
+      if (!allGood.every(Boolean)) {
+        return false;
+      }
+      return this.updateDataArrayByNodePath_Internal(updateInfo, options);
+    });
+  };
+
+  updateDataArrayByNodePath_Internal = (
+    updateInfo: ({
+      nodePath: NodePath;
+    } & (
+      | {
+          data: Partial<T>;
+          children?: never;
+        }
+      | {
+          data?: never;
+          children: UpdateChildrenFn<T>;
+        }
+    ))[],
+    options?: DataSourceUpdateParam,
+  ) => {
+    const data: (Partial<T> | UpdateChildrenFn<T>)[] = [];
     const nodePaths: NodePath[] = [];
 
     updateInfo.forEach((info) => {
-      data.push(info.data);
+      if (info.data) {
+        data.push(info.data);
+      } else if (info.children) {
+        data.push(info.children);
+      }
       nodePaths.push(info.nodePath);
     });
 
@@ -502,46 +703,18 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     nodePath: NodePath,
     options?: DataSourceCRUDParam,
   ) => {
-    const result = this.batchOperation({
-      type: 'delete',
-      nodePaths: [nodePath],
-      metadata: options?.metadata,
-    });
-
-    if (options?.flush) {
-      this.commit();
-    }
-    return result;
+    return this.batchDeleteNodePaths([nodePath], options);
   };
 
   removeData = (data: T, options?: DataSourceCRUDParam) => {
     const isTree = this.getState().isTree;
-    let primaryKeys: any[] | undefined = !isTree
-      ? [this.toPrimaryKey(data)]
-      : undefined;
-    const nodePath = isTree
-      ? this.getNodePathById(this.toPrimaryKey(data))
-      : null;
-    let nodePaths: NodePath[] | undefined =
-      isTree && nodePath ? [nodePath] : undefined;
 
-    const result = primaryKeys
-      ? this.batchOperation({
-          type: 'delete',
-          primaryKeys,
-          metadata: options?.metadata,
-        })
-      : this.batchOperation({
-          type: 'delete',
-          nodePaths: nodePaths || [],
-          metadata: options?.metadata,
-        });
-
-    if (options?.flush) {
-      this.commit();
+    if (isTree) {
+      const nodePath = this.getNodePathById(this.toPrimaryKey(data));
+      return this.removeDataByNodePath(nodePath!, options);
     }
 
-    return result;
+    return this.batchDeletePrimaryKeys([this.toPrimaryKey(data)], options);
   };
 
   removeDataArrayByPrimaryKeys = (
@@ -550,23 +723,40 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   ) => {
     const isTree = this.getState().isTree;
 
-    const nodePaths = isTree
-      ? ids.map((id) => {
-          return this.getNodePathById(id) || [];
-        })
-      : null;
+    if (isTree) {
+      const nodePaths = ids.map((id) => this.getNodePathById(id) || []);
+      return this.batchDeleteNodePaths(nodePaths!, options);
+    }
 
-    const result = isTree
-      ? this.batchOperation({
-          type: 'delete',
-          nodePaths: nodePaths || [],
-          metadata: options?.metadata,
-        })
-      : this.batchOperation({
-          type: 'delete',
-          primaryKeys: ids,
-          metadata: options?.metadata,
-        });
+    return this.batchDeletePrimaryKeys(ids, options);
+  };
+
+  private batchDeleteNodePaths = (
+    nodePaths: NodePath[],
+    options?: DataSourceCRUDParam,
+  ) => {
+    const result = this.batchOperation({
+      type: 'delete',
+      nodePaths: nodePaths || [],
+      metadata: options?.metadata,
+    });
+
+    if (options?.flush) {
+      this.commit();
+    }
+
+    return result;
+  };
+
+  private batchDeletePrimaryKeys = (
+    primaryKeys: any[],
+    options?: DataSourceCRUDParam,
+  ) => {
+    const result = this.batchOperation({
+      type: 'delete',
+      primaryKeys,
+      metadata: options?.metadata,
+    });
 
     if (options?.flush) {
       this.commit();
@@ -577,29 +767,17 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   removeDataArray = (data: T[], options?: DataSourceCRUDParam) => {
     const isTree = this.getState().isTree;
 
-    const nodePaths = isTree
-      ? data.map((d) => {
-          return this.getNodePathById(this.toPrimaryKey(d)) || [];
-        })
-      : null;
-    const primaryKeys = !isTree ? data.map(this.toPrimaryKey) : undefined;
-    const result = isTree
-      ? this.batchOperation({
-          type: 'delete',
-          nodePaths: nodePaths || [],
-          metadata: options?.metadata,
-        })
-      : this.batchOperation({
-          type: 'delete',
-          primaryKeys: primaryKeys || [],
-          metadata: options?.metadata,
-        });
+    if (isTree) {
+      const nodePaths = data.map((d) => {
+        return this.getNodePathById(this.toPrimaryKey(d)) || [];
+      });
 
-    if (options?.flush) {
-      this.commit();
+      return this.batchDeleteNodePaths(nodePaths, options);
     }
 
-    return result;
+    const primaryKeys = data.map(this.toPrimaryKey);
+
+    return this.batchDeletePrimaryKeys(primaryKeys, options);
   };
 
   addData = (data: T, options?: DataSourceCRUDParam) => {
@@ -617,9 +795,40 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
   };
 
   insertDataArray = (data: T[], options: DataSourceInsertParam) => {
+    const isTree = this.getState().isTree;
+
     let position: 'before' | 'after' = 'before';
     let primaryKey: any = undefined;
     let nodePath: NodePath | undefined = options.nodePath;
+
+    if (isTree && nodePath?.length) {
+      return this.withWaitForNode(
+        nodePath,
+        ({ error }) => {
+          if (error) {
+            return false;
+          }
+
+          if (options.position === 'before' || options.position === 'after') {
+            return this.batchTreeInsert(
+              data,
+              options.position,
+              nodePath!,
+              options,
+            );
+          }
+
+          const newChildren: UpdateChildrenFn<T> = (childrenOfNode) => {
+            return options.position === 'start'
+              ? [...data, ...(childrenOfNode || [])]
+              : [...(childrenOfNode || []), ...data];
+          };
+
+          return this.updateChildrenByNodePath(newChildren, nodePath!, options);
+        },
+        options,
+      );
+    }
 
     if (options.position === 'before' || options.position === 'after') {
       position = options.position;
@@ -629,33 +838,77 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
 
       if (options.position === 'start') {
         position = 'before';
-        primaryKey = !arr.length ? undefined : this.toPrimaryKey(arr[0]);
+
+        if (!arr.length) {
+          primaryKey = undefined;
+        } else {
+          primaryKey = this.toPrimaryKey(arr[0]);
+        }
       } else {
         position = 'after';
-        primaryKey = !arr.length
-          ? undefined
-          : this.toPrimaryKey(arr[arr.length - 1]);
+
+        if (!arr.length) {
+          primaryKey = undefined;
+        } else {
+          primaryKey = this.toPrimaryKey(arr[arr.length - 1]);
+        }
       }
     }
 
-    const isTree = this.getState().isTree;
+    const result = this.batchOperation({
+      type: 'insert',
+      array: data,
+      position,
+      metadata: options?.metadata,
+      nodePath: this.getNodePathById(primaryKey) || [],
+      primaryKey,
+    });
 
-    const result = isTree
-      ? this.batchOperation({
-          type: 'insert',
-          array: data,
-          position,
-          metadata: options?.metadata,
-          nodePath: this.getNodePathById(primaryKey) || [],
-        })
-      : this.batchOperation({
-          type: 'insert',
-          array: data,
-          position,
-          metadata: options?.metadata,
-          primaryKey,
-          nodePath,
-        });
+    if (options?.flush) {
+      this.commit();
+    }
+
+    return result;
+  };
+
+  private batchTreeInsert = (
+    data: T[],
+    position: 'before' | 'after',
+    nodePath: NodePath,
+    options: DataSourceInsertParam,
+  ) => {
+    if (nodePath.length && !this.isNodePathAvailable(nodePath)) {
+      return this.withWaitForNode(
+        nodePath,
+        ({ error }) => {
+          if (error) {
+            return false;
+          }
+          const result = this.batchOperation({
+            type: 'insert',
+            array: data,
+            position,
+            metadata: options?.metadata,
+            nodePath,
+          });
+
+          if (options?.flush) {
+            this.commit();
+          }
+
+          return result;
+        },
+        options,
+      );
+    }
+
+    const result = this.batchOperation({
+      type: 'insert',
+      array: data,
+      position,
+      metadata: options?.metadata,
+      nodePath,
+    });
 
     if (options?.flush) {
       this.commit();

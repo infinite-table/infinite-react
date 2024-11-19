@@ -335,16 +335,22 @@ Click any row in the table to make it the current active row, and then use the s
 
 </Prop>
 
-<Prop name="insertDataArray" type="(data: DATA_TYPE[], { position, primaryKey }) => Promise">
+<Prop name="insertDataArray" type="(data: DATA_TYPE[], { position, primaryKey?, nodePath?, waitForNode? }) => Promise">
 
-> Inserts an array of data at the specified position (and relative to the given primary key).
+> Inserts an array of data at the specified position (and relative to the given primary key or node path).
 
 Just like the <DApiLink name="insertData" /> method, the `position` can be one of the following:
 
-- `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
-- `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
+- `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed. If `nodePath` is provided, `"start"` means insert the data at the start of the children array of that node; `"end"` means insert the data at the end of the children array of that node.
+- `before` | `after` - inserts the data before or after the data item that has the specified primary key / node path. **In thise case, the `primaryKey` or the `nodePath` is required.**
 
 All the data items passed to this method will be inserted (in the order in the array) at the specified position.
+
+<Note>
+
+When using this method for tree nodes, `waitForNode` defaults to `true` (you can specify a boolean value, or a number to override the default timeout). When `waitForNode` is `true`, the method will insert the data in the respective node's children array, after making sure the node exists.
+
+</Note>
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
@@ -378,7 +384,17 @@ dataSourceApi.updateDataArrayByNodePath([
 
 </Prop>
 
-<Prop name="updateChildrenByNodePath" type="(children: DATA_TYPE[] | any | (children, data) => DATA_TYPE[] | any, nodePath: NodePath) => Promise">
+<Prop name="waitForNodePath" type="(nodePath: NodePath, options?: { timeout?: number }) => Promise<boolean>">
+
+> Returns a promise that tells if the node path exists.
+
+If the given node path exists, it will resolve immediately to `true`.
+
+If the given node path does not exist, it will wait for the specified timeout (defaults to 1000ms). After the timeout is reached, it will resolve to either `true` or `false`, depending on whether the node path was found or not.
+
+</Prop>
+
+<Prop name="updateChildrenByNodePath" type="(children: DATA_TYPE[] | any | (children, data) => DATA_TYPE[] | any, nodePath: NodePath) => Promise, options?">
 
 > Updates the children of the node specified by the node path.
 
@@ -409,9 +425,15 @@ When using a function, it will be called with the current children of the node (
 
 </Note>
 
+<Note>
+
+As a third parameter, you can pass in an options object, which supports the `waitForNode` property (`boolean` or `number` to override the default timeout). When `waitForNode` is `true`, the method will update the children of the node, after making sure the node exists (and waiting for the specified timeout if needed).
+
+</Note>
+
 </Prop>
 
-<Prop name="updateDataByNodePath" type="(data: Partial<DATA_TYPE>, nodePath: NodePath) => Promise">
+<Prop name="updateDataByNodePath" type="(data: Partial<DATA_TYPE>, nodePath: NodePath, options?) => Promise">
 
 > Updates the data for the node specified by the node path.
 
@@ -436,6 +458,13 @@ dataSourceApi.updateDataByNodePath({
 
 </Sandpack>
 
+<Note>
+
+The third parameter is an options object, which can have a `waitForNode` property (either `boolean` or `number` - use a `number` to override the default timeout). NOTE: if you don't pass it, it defaults to `1000ms`.
+
+When `waitForNode` is used, if the node does not exist yet, it will wait for the specified timeout and then update the data.
+
+</Note>
 </Prop>
 
 
@@ -463,7 +492,7 @@ dataSourceApi.removeDataByNodePath(['1', '10']);
 
 </Prop>
 
-<Prop name="updateData" type="(data: Partial<DATA_TYPE>) => Promise">
+<Prop name="updateData" type="(data: Partial<DATA_TYPE>, options?) => Promise">
 
 > Updates the data item to match the given data object. For updating tree nodes by path, see the <DApiLink name="updateDataByNodePath" /> method.
 
@@ -493,6 +522,14 @@ dataSourceApi.updateData({
 
 For updating an array of data, see the <DApiLink name="updateDataArray" /> method.
 
+<Note>
+
+The second parameter is an options object, which can have a `waitForNode` property (either `boolean` or `number` - use a `number` to override the default timeout). NOTE: if you don't pass it, it defaults to `1000ms`.
+
+When `waitForNode` is used, if the node does not exist yet, it will wait for the specified timeout and then update the data.
+
+</Note>
+
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
 <Sandpack title="Live data updates with DataSourceApi.updateData">
@@ -515,7 +552,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 </Prop>
 
-<Prop name="updateDataArray" type="(data: Partial<DATA_TYPE>[]) => Promise">
+<Prop name="updateDataArray" type="(data: Partial<DATA_TYPE>[], options?) => Promise">
 
 > Updates an array of data items to match the given data objects.
 

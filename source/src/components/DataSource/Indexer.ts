@@ -200,6 +200,21 @@ export class Indexer<DataType, PrimaryKeyType = string> {
                   // we probably don't need to recompute the pk as part of the update, as it should stay the same?
                   arr[i] = item;
                 }
+                if (info.type === 'update-children' && !deleted) {
+                  const children = info.children(
+                    (item as any)[nodesKey!],
+                    item,
+                  );
+                  item = { ...item };
+                  if (children !== undefined) {
+                    //@ts-ignore
+                    item[nodesKey] = children;
+                  } else {
+                    //@ts-ignore
+                    delete item[nodesKey];
+                  }
+                  arr[i] = item;
+                }
 
                 if (info.type === 'insert') {
                   // there's no need for this this.add/this.addNodePath at this point

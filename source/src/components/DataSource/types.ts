@@ -298,6 +298,14 @@ export interface DataSourceSetupState<T> {
     state: 'collapsed' | 'expanded';
     nodePath: NodePath | null;
   }>;
+  waitForNodePathPromises: DeepMap<
+    any,
+    {
+      timestamp: number;
+      promise: Promise<boolean>;
+      resolve: (value: boolean) => void;
+    }
+  >;
   repeatWrappedGroupRows: InfiniteTablePropRepeatWrappedGroupRows<T>;
   /**
    * This is just used for horizontal layout and when repeatWrappedGroupRows is TRUE!!!
@@ -508,9 +516,14 @@ export type DataSourceCRUDParam = {
   metadata?: any;
 };
 
-export type DataSourceUpdateParam = DataSourceCRUDParam & {};
+export type WaitForNodeOptions = {
+  waitForNode?: boolean | number;
+};
+
+export type DataSourceUpdateParam = DataSourceCRUDParam & WaitForNodeOptions;
 
 export type DataSourceInsertParam = DataSourceCRUDParam &
+  WaitForNodeOptions &
   (
     | {
         position: 'before' | 'after';
@@ -538,6 +551,7 @@ export type UpdateChildrenFn<T> = (
 ) => T[] | undefined | null;
 
 export interface DataSourceApi<T> {
+  getPendingOperationPromise(): Promise<boolean> | null;
   getOriginalDataArray: () => T[];
   getRowInfoArray: () => InfiniteTableRowInfo<T>[];
   getDataByPrimaryKey(id: any): T | null;
@@ -552,6 +566,21 @@ export interface DataSourceApi<T> {
   getNodePathById(id: any): NodePath | null;
   getNodePathByIndex(index: number): NodePath | null;
   get treeApi(): TreeApi<T>;
+
+  /**
+   * @param nodePath The node path to wait for
+   * @param options
+   * @param options.timeout The timeout to wait for the node path to be available. Defaults to 1000ms.
+   *
+   * @returns true if the path is already in the DataSource, otherwise a promise resolving to a boolean value.
+   * If the timeout is reached and the path is not available, the promise is resolved to false. Otherwise, the promise is resolved to true.
+   */
+  waitForNodePath(
+    nodePath: NodePath,
+    options?: { timeout?: number },
+  ): Promise<boolean>;
+
+  isNodePathAvailable(nodePath: NodePath): boolean;
 
   // TODO return promise - also for more than one call in the same batch
   // it should return the same promise

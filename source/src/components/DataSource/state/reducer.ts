@@ -271,6 +271,7 @@ export function concludeReducer<T>(params: {
 
   const toPrimaryKey = state.toPrimaryKey;
   const nodesKey = state.nodesKey;
+  const isTree = state.isTree;
 
   const getNodeChildren = nodesKey
     ? (node: T) => {
@@ -303,6 +304,18 @@ export function concludeReducer<T>(params: {
           nodesKey,
         },
       );
+
+      if (isTree) {
+        state.waitForNodePathPromises.visit(({ value }, keys) => {
+          if (!value) {
+            return;
+          }
+
+          if (state.indexer.getDataForNodePath(keys) !== undefined) {
+            value.resolve(true);
+          }
+        });
+      }
     }
   }
   if (cache) {
@@ -341,7 +354,6 @@ export function concludeReducer<T>(params: {
 
   const groupBy = state.groupBy;
   const pivotBy = state.pivotBy;
-  const isTree = state.isTree;
 
   const shouldGroup = !isTree && (groupBy.length > 0 || !!pivotBy);
   const shouldTree = isTree;

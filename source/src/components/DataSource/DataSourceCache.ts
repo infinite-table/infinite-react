@@ -1,3 +1,4 @@
+import { UpdateChildrenFn } from '.';
 import { DeepMap } from '../../utils/DeepMap';
 import { NodePath } from './TreeExpandState';
 
@@ -29,6 +30,14 @@ export type DataSourceMutation<T> =
       primaryKey?: never;
       nodePath: NodePath;
       data: Partial<T>;
+      originalData: T;
+      metadata: any;
+    }
+  | {
+      type: 'update-children';
+      primaryKey?: never;
+      nodePath: NodePath;
+      children: UpdateChildrenFn<T>;
       originalData: T;
       metadata: any;
     }
@@ -71,17 +80,25 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
   private affectedFields: Set<keyof DataType> = new Set();
   private allFieldsAffected: boolean = false;
 
+  private nodesKey: string | undefined;
+
   private primaryKeyToData: DataSourceMutationMap<PrimaryKeyType, DataType> =
     new Map();
 
   private nodePathToData: DataSourceNodePathMutationMap<NodePath, DataType> =
     new DeepMap();
 
+  constructor(options: { nodesKey: string | undefined }) {
+    this.nodesKey = options.nodesKey;
+  }
+
   static clone<DataType, PrimaryKeyType = string>(
     cache: DataSourceCache<DataType, PrimaryKeyType>,
     { light = false }: { light?: boolean } = {},
   ): DataSourceCache<DataType, PrimaryKeyType> {
-    const clone = new DataSourceCache<DataType, PrimaryKeyType>();
+    const clone = new DataSourceCache<DataType, PrimaryKeyType>({
+      nodesKey: cache.nodesKey,
+    });
 
     clone.allFieldsAffected = cache.allFieldsAffected;
 
@@ -190,8 +207,12 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     metadata: any,
   ) => {
     if (!this.allFieldsAffected) {
-      const keys = Object.keys(data) as (keyof DataType)[];
-      keys.forEach((key) => this.affectedFields.add(key));
+      if (this.nodesKey && Array.isArray((data as any)[this.nodesKey])) {
+        this.allFieldsAffected = true;
+      } else {
+        const keys = Object.keys(data) as (keyof DataType)[];
+        keys.forEach((key) => this.affectedFields.add(key));
+      }
     }
 
     const pk = primaryKey;
@@ -214,8 +235,12 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
     metadata: any,
   ) => {
     if (!this.allFieldsAffected) {
-      const keys = Object.keys(data) as (keyof DataType)[];
-      keys.forEach((key) => this.affectedFields.add(key));
+      if (this.nodesKey && Array.isArray((data as any)[this.nodesKey])) {
+        this.allFieldsAffected = true;
+      } else {
+        const keys = Object.keys(data) as (keyof DataType)[];
+        keys.forEach((key) => this.affectedFields.add(key));
+      }
     }
 
     const value = this.nodePathToData.get(nodePath) || [];
@@ -224,6 +249,26 @@ export class DataSourceCache<DataType, PrimaryKeyType = string> {
       type: 'update',
       nodePath,
       data,
+      originalData,
+      metadata,
+    });
+    this.nodePathToData.set(nodePath, value);
+  };
+
+  updateChildren = (
+    nodePath: NodePath,
+    children: UpdateChildrenFn<DataType>,
+    originalData: DataType,
+    metadata: any,
+  ) => {
+    this.allFieldsAffected = true;
+
+    const value = this.nodePathToData.get(nodePath) || [];
+
+    value.push({
+      type: 'update-children',
+      nodePath,
+      children,
       originalData,
       metadata,
     });

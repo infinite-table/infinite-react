@@ -119,6 +119,15 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     idToPathMap: new Map<any, NodePath>(),
     pathToIndexMap: new DeepMap<any, number>(),
 
+    waitForNodePathPromises: new DeepMap<
+      any,
+      {
+        timestamp: number;
+        promise: Promise<boolean>;
+        resolve: (value: boolean) => void;
+      }
+    >(),
+
     getDataSourceMasterContextRef: { current: () => undefined },
 
     // TODO: cleanup cache on unmount
@@ -205,6 +214,7 @@ export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   };
   state.treeExpandState?.destroy();
   state.treePaths?.clear();
+  state.waitForNodePathPromises.clear();
   state.pathToIndexMap?.clear();
   state.rowDisabledState?.destroy();
   state.groupRowsState?.destroy();
