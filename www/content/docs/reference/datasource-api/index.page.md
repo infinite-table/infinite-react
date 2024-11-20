@@ -384,15 +384,6 @@ dataSourceApi.updateDataArrayByNodePath([
 
 </Prop>
 
-<Prop name="waitForNodePath" type="(nodePath: NodePath, options?: { timeout?: number }) => Promise<boolean>">
-
-> Returns a promise that tells if the node path exists.
-
-If the given node path exists, it will resolve immediately to `true`.
-
-If the given node path does not exist, it will wait for the specified timeout (defaults to 1000ms). After the timeout is reached, it will resolve to either `true` or `false`, depending on whether the node path was found or not.
-
-</Prop>
 
 <Prop name="updateChildrenByNodePath" type="(children: DATA_TYPE[] | any | (children, data) => DATA_TYPE[] | any, nodePath: NodePath) => Promise, options?">
 
