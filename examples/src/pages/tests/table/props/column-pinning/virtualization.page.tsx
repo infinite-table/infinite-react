@@ -8,7 +8,6 @@ import {
 import { DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from '../column-visibility/rowData';
-import { columns } from '../column-visibility/columns';
 
 const defaultColumnPinning: InfiniteTablePropColumnPinning = {
   make: 'start',
