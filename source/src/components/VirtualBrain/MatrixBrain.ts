@@ -713,15 +713,29 @@ export class MatrixBrain extends Logger implements IBrain {
     if (size <= 0) {
       return 0;
     }
+
+    const fixedStart =
+      direction === 'horizontal' ? this.fixedColsStart : this.fixedRowsStart;
+    const fixedEnd =
+      direction === 'horizontal' ? this.fixedColsEnd : this.fixedRowsEnd;
+
     if (typeof itemSize === 'function') {
       const sizes = [];
-      for (let i = 0; i < count; i++) {
+      let start = 0;
+      let end = count;
+
+      start += fixedStart;
+      end -= fixedEnd;
+
+      for (let i = start; i < end; i++) {
         sizes.push(this.getItemSize(i, direction));
       }
       renderCount = getGreatestCountVisibleInSize(size, sizes);
     } else {
       renderCount = (itemSize ? Math.ceil(size / itemSize) : 0) + 1;
     }
+
+    renderCount += fixedStart + fixedEnd;
 
     renderCount = Math.min(count, renderCount);
 

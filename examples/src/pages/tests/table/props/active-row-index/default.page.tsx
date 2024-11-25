@@ -2,10 +2,12 @@ import {
   InfiniteTable,
   DataSource,
   DataSourceData,
+  InfiniteTableApi,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
+import { useState } from 'react';
 
 type Developer = {
   id: number;
@@ -48,22 +50,37 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default function KeyboardNavigationForRows() {
+  const [infiniteTableApi, setInfiniteTableApi] =
+    useState<InfiniteTableApi<Developer>>();
+
   return (
-    <DataSource<Developer> primaryKey="id" data={dataSource}>
-      <InfiniteTable<Developer>
-        columns={columns}
-        defaultActiveRowIndex={99}
-        keyboardNavigation="row"
-        domProps={{
-          autoFocus: true,
-          style: {
-            height: 800,
-          },
+    <>
+      <button
+        onClick={() => {
+          infiniteTableApi!.scrollLeft = 100;
         }}
-        columnPinning={{
-          stack: true,
-        }}
-      />
-    </DataSource>
+      >
+        scroll left = 100
+      </button>
+      <DataSource<Developer> primaryKey="id" data={dataSource}>
+        <InfiniteTable<Developer>
+          onReady={({ api }) => {
+            setInfiniteTableApi(api);
+          }}
+          columns={columns}
+          defaultActiveRowIndex={99}
+          keyboardNavigation="row"
+          domProps={{
+            autoFocus: true,
+            style: {
+              height: 800,
+            },
+          }}
+          columnPinning={{
+            stack: true,
+          }}
+        />
+      </DataSource>
+    </>
   );
 }

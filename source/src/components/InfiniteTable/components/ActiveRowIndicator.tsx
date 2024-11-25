@@ -79,7 +79,10 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
       setInfiniteVarsOnNode(
         {
           scrollTopForActiveRow: `${-scrollPosition.scrollTop}px`,
-          scrollLeftForActiveRowWhenHorizontalLayout: `${-scrollPosition.scrollLeft}px`,
+          scrollLeftForActiveRowWhenHorizontalLayout:
+            brain.isHorizontalLayoutBrain
+              ? `${-scrollPosition.scrollLeft}px`
+              : '0px',
         },
         domRef.current!,
       );
