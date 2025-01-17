@@ -899,6 +899,7 @@ export class ReactHeadlessTableRenderer extends Logger {
     const visitedCells = new Map<string, boolean>();
     const visitedRows = new Map<number, boolean>();
 
+    const elementsRenderedOnTheFly = new Set<number>();
     ranges.forEach((range) => {
       const { start, end } = range;
       const [startRow, startCol] = start;
@@ -974,8 +975,22 @@ export class ReactHeadlessTableRenderer extends Logger {
               i <= this.itemDOMRefs.length;
               i++
             ) {
-              if (!this.itemDOMElements[i] && this.itemDOMRefs[i]) {
+              if (
+                !this.itemDOMElements[i] &&
+                this.itemDOMRefs[i] &&
+                !elementsRenderedOnTheFly.has(i)
+              ) {
                 elementIndex = i;
+                // we need this collection,
+                // as the renderCellAtElement will not add the itemDOMElement reference
+                // in a sync way, so let's make sure we don't reuse the same element multiple times
+                elementsRenderedOnTheFly.add(i);
+
+                if (__DEV__) {
+                  this.debug(
+                    `Last-moment recovery of element ${elementIndex} to render cell ${row}:${col}`,
+                  );
+                }
                 break;
               }
             }

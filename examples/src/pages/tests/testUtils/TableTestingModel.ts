@@ -136,7 +136,7 @@ export class TableTestingModel {
         .locator('[data-name="expand-collapse-icon"]');
     };
 
-    return {
+    const result = {
       getComputedStyleProperty: async (styleName: string) => {
         return await this.columnModel.getCellComputedStyleProperty(
           cellLocation,
@@ -146,6 +146,10 @@ export class TableTestingModel {
 
       getTreeIcon: () => {
         return getTreeIcon();
+      },
+
+      isVisible: async () => {
+        return await result.getLocator().isVisible();
       },
 
       isTreeIconExpanded: async () => {
@@ -198,5 +202,6 @@ export class TableTestingModel {
         });
       },
     };
+    return result;
   }
 }

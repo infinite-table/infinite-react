@@ -154,7 +154,11 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
     firstName: { field: 'firstName', header: 'First Name' },
     stack: { field: 'stack', header: 'Stack' },
 
-    city: { field: 'city', header: 'City' },
+    city: {
+      field: 'city',
+      header: 'City',
+      renderHeader: ({ column }) => `${column.computedVisibleIndex} City`,
+    },
   };
 }
 
@@ -174,7 +178,7 @@ const groupColumn: InfiniteTableColumn<Developer> = {
     rowInfo,
   }: InfiniteTableColumnRenderValueParam<Developer>) => {
     if (!rowInfo.isGroupRow) {
-      return value;
+      return `${rowInfo.indexInAll} ${rowInfo.id} ${value}`;
     }
     const groupBy = rowInfo.groupBy || [];
     const collapsed = rowInfo.collapsed;
@@ -184,7 +188,7 @@ const groupColumn: InfiniteTableColumn<Developer> = {
       return `🥳 ${value}${collapsed ? ' 🤷‍♂️' : ''}`;
     }
 
-    return `${value}`;
+    return `${rowInfo.indexInAll} ${value}`;
   },
 };
 
