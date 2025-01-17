@@ -24,4 +24,13 @@ export default test.describe.parallel('getGreatestCountVisibleInSize', () => {
   test('edge case', async () => {
     expect(getGreatestCountVisibleInSize(3, [5, 2, 5, 2, 2])).toBe(2);
   });
+
+  test('edge case 2', async () => {
+    expect(
+      getGreatestCountVisibleInSize(
+        310,
+        [100, 210, 100, 150, 135, 150, 150, 150, 150],
+      ),
+    ).toBe(3);
+  });
 });

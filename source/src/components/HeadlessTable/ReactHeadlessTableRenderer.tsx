@@ -64,6 +64,13 @@ export type RenderableWithPosition = {
   position: 'start' | 'end' | null;
 };
 
+export type RenderRangeOptions = {
+  force?: boolean;
+  renderCell: TableRenderCellFn;
+  renderDetailRow?: TableRenderDetailRowFn;
+  onRender: (items: Renderable[]) => void;
+};
+
 export const ITEM_POSITION_WITH_TRANSFORM = true;
 
 export const currentTransformY = stripVar(InternalVars.y);
@@ -690,17 +697,7 @@ export class ReactHeadlessTableRenderer extends Logger {
   renderRange(
     range: TableRenderRange,
 
-    {
-      renderCell,
-      renderDetailRow,
-      force,
-      onRender,
-    }: {
-      force?: boolean;
-      renderCell: TableRenderCellFn;
-      renderDetailRow?: TableRenderDetailRowFn;
-      onRender: (items: Renderable[]) => void;
-    },
+    { renderCell, renderDetailRow, force, onRender }: RenderRangeOptions,
   ): Renderable[] {
     if (this.destroyed) {
       return [];
@@ -758,6 +755,12 @@ export class ReactHeadlessTableRenderer extends Logger {
     /**
      * the render count is always the rows times cols that are inside the viewport
      * and is not modified by row or column spanning
+     *
+     * when we have fixed cols/rows, the fixed range could, at runtime, be included in the initial `range` const
+     * but could as well not be included
+     *
+     * but we want to compute the biggest renderCount we can, so as to avoid mounting extra DOM elements
+     * at runtime based on the scroll position
      */
     const renderCount = ranges.reduce(
       (sum, range) => sum + getRenderRangeCellCount(range),
@@ -945,7 +948,7 @@ export class ReactHeadlessTableRenderer extends Logger {
             continue;
           }
 
-          const elementIndex = cellRendered
+          let elementIndex = cellRendered
             ? mappedCells.getElementIndexForCell(row, col)
             : // TODO when horizontal layout, just do elementsOutsideItemRange.pop()
             horizontalLayout
@@ -958,6 +961,25 @@ export class ReactHeadlessTableRenderer extends Logger {
                 col,
               );
 
+          if (elementIndex == null) {
+            // we might have been had overlap initially of the render range with a fixed range
+            // as we want to create an element even for the overlap of the two
+            // but that element might not have been rendered, so it will be in itemDOMRefs
+            // but won't have a corresponding DOM element yet in itemDOMElements
+
+            // so start at the length of itemDOMElements and go onwards
+            // in the itemDOMRefs, for the next entry
+            for (
+              let i = this.itemDOMElements.length;
+              i <= this.itemDOMRefs.length;
+              i++
+            ) {
+              if (!this.itemDOMElements[i] && this.itemDOMRefs[i]) {
+                elementIndex = i;
+                break;
+              }
+            }
+          }
           if (elementIndex == null) {
             if (__DEV__) {
               this.error(`Cannot find element to render cell ${row}:${col}`);

@@ -84,6 +84,33 @@ export function RawTableFn(props: RawTableProps) {
         renderCell,
         renderDetailRow,
       });
+      // const renderRangeOptions: RenderRangeOptions = {
+      //   force: false, // TODO should be false
+      //   onRender: (items) => {
+      //     const currentItems = onRenderUpdater.get();
+      //     if (
+      //       currentItems &&
+      //       items &&
+      //       (currentItems as any).length === items.length
+      //     ) {
+      //       // dont update, as each item in turn
+      //       // is an AvoidReactDiff component
+      //       // which is updating itself
+      //       return;
+      //     }
+      //     onRenderUpdater(items);
+      //   },
+      //   renderCell,
+      //   renderDetailRow,
+      // };
+
+      // if (brain.name === 'header') {
+      //   // @ts-ignore
+      //   (globalThis as any).renderHeaderRange = (range = renderRange) => {
+      //     renderer.renderRange(range, { ...renderRangeOptions, force: true });
+      //   };
+      // }
+      // renderer.renderRange(renderRange, renderRangeOptions);
     });
 
     return remove;

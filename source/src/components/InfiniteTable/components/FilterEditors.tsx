@@ -29,7 +29,7 @@ export function NumberFilterEditor<T>() {
       type="number"
       data-yyy
       disabled={disabled}
-      value={value as any as number}
+      value={(value as any as number) ?? ''}
       onChange={(event) => {
         let value = isNaN(event.target.valueAsNumber)
           ? event.target.value

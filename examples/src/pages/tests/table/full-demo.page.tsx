@@ -4,16 +4,15 @@ import {
   GroupRowsState,
   InfiniteTablePropColumnTypes,
   DataSourcePropRowSelection_MultiRow,
-} from '@infinite-table/infinite-react';
-import type {
   InfiniteTableColumn,
   InfiniteTableColumnRenderValueParam,
   DataSourcePropAggregationReducers,
   DataSourceGroupBy,
+  components,
+  DataSourcePropFilterValue,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useState } from 'react';
-import { components } from '@infinite-table/infinite-react';
 
 const { CheckBox } = components;
 
@@ -105,14 +104,14 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
       field: 'age',
       header: 'Age',
       type: 'number',
-      defaultWidth: 80,
+      defaultWidth: 100,
       renderValue: ({ value }) => value,
     },
     salary: {
       header: 'Compensation',
       field: 'salary',
       type: 'number',
-      defaultWidth: 170,
+      defaultWidth: 210,
     },
     currency: { field: 'currency', header: 'Currency', defaultWidth: 100 },
     preferredLanguage: {
@@ -159,12 +158,14 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
   };
 }
 
+// 250+100+210+100+150+135+150+150+150+150
 // → 123.456,789
 const groupColumn: InfiniteTableColumn<Developer> = {
   header: 'Grouping',
   field: 'firstName',
   defaultWidth: 250,
   renderSelectionCheckBox: true,
+  defaultFilterable: false,
 
   // in this function we have access to collapsed info
   // and grouping info about the current row - see rowInfo.groupBy
@@ -177,9 +178,9 @@ const groupColumn: InfiniteTableColumn<Developer> = {
     }
     const groupBy = rowInfo.groupBy || [];
     const collapsed = rowInfo.collapsed;
-    const lastGroupBy = groupBy[groupBy.length - 1];
+    const currentGroupBy = groupBy[groupBy.length - 1];
 
-    if (lastGroupBy.field === 'age') {
+    if (currentGroupBy?.field === 'age') {
       return `🥳 ${value}${collapsed ? ' 🤷‍♂️' : ''}`;
     }
 
@@ -222,25 +223,36 @@ const defaultRowSelection: DataSourcePropRowSelection_MultiRow = {
   defaultSelection: false,
 };
 
+const defaultFilterValue: DataSourcePropFilterValue<Developer> = [
+  {
+    field: 'age',
+    filter: {
+      operator: 'gt',
+      type: 'number',
+      value: null,
+    },
+  },
+];
+
+const domProps = {
+  style: {
+    // minHeight: '50vh',
+    width: 575,
+    height: 390,
+    margin: 5,
+  },
+};
+
 export default function App() {
   const [{ min, max }, setMinMax] = useState({ min: 0, max: 0 });
   const columns = React.useMemo(() => {
     const cols = getColumns();
 
     if (cols.salary) {
-      // const style: InfiniteTableColumn<Developer>['style'] = ({ value }) => {
-      //   const increase: number = Math.abs(max - min);
-      //   const percentage = ((value - min) / increase) * 100;
-      //   let alpha = Number((percentage / 100).toPrecision(2)) - 0.2;
-
-      //   const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
-
-      //   return { backgroundColor };
-      // };
       cols.salary.render = ({ renderBag, value }) => {
         const increase: number = Math.abs(max - min);
         const percentage = ((value - min) / increase) * 100;
-        let alpha = Number((percentage / 100).toPrecision(2)) + 0.2;
+        const alpha = Number((percentage / 100).toPrecision(2)) + 0.2;
 
         const backgroundColor = `rgba(255, 0, 0, ${alpha})`;
         return (
@@ -275,10 +287,13 @@ export default function App() {
     ],
     [],
   );
+
   return (
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
+      defaultFilterValue={defaultFilterValue}
+      filterMode="local"
       useGroupKeysForMultiRowSelection
       defaultRowSelection={defaultRowSelection}
       defaultSortInfo={{
@@ -300,17 +315,10 @@ export default function App() {
         defaultColumnPinning={{
           'group-by': true,
         }}
+        domProps={domProps}
         defaultActiveRowIndex={0}
         groupColumn={groupColumn}
         licenseKey={process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY}
-        domProps={{
-          style: {
-            minHeight: '680px',
-            width: '1200px',
-            margin: 5,
-            // border: '1px solid gray',
-          },
-        }}
         columns={columns}
         columnTypes={columnTypes}
         columnDefaultWidth={150}
