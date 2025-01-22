@@ -1,5 +1,6 @@
 import { CellSelectionState } from '../../DataSource/CellSelectionState';
 import { RowSelectionState } from '../../DataSource/RowSelectionState';
+import { InfiniteTablePropOnCellDoubleClickResult } from '../types/InfiniteTableProps';
 
 import {
   InfiniteTableCellClickEventHandlerContext,
@@ -36,8 +37,22 @@ export function onCellClick<T>(
 
 function onCellDoubleClick<T>(
   context: OnCellClickContext<T>,
-  _event: React.MouseEvent<Element> & { key: string },
+  event: React.MouseEvent<Element> & { key: string },
 ) {
+  const { onCellDoubleClick } = context.getState();
+  let dblClickResult: Required<InfiniteTablePropOnCellDoubleClickResult> = {
+    preventEdit: false,
+  };
+
+  if (onCellDoubleClick) {
+    const result = onCellDoubleClick(context, event);
+    if (result && typeof result === 'object') {
+      dblClickResult = { ...dblClickResult, ...result };
+    }
+  }
+  if (dblClickResult.preventEdit) {
+    return;
+  }
   const computed = context.getComputed();
   const column = computed.computedVisibleColumns[context.colIndex];
 

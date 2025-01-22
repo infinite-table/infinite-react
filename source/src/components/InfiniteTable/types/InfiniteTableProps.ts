@@ -601,6 +601,18 @@ export type InfiniteTablePropKeyboardShorcut = {
 
 export type InfiniteTablePropDebugMode = boolean;
 
+export type InfiniteTablePropOnCellDoubleClickResult = Partial<{
+  preventEdit: boolean;
+}>;
+
+export type InfiniteTablePropOnKeyDownResult = Partial<{
+  preventEdit: boolean;
+  preventEditStop: boolean;
+  preventDefaultForTabKeyWhenEditing: boolean;
+  preventSelection: boolean;
+  preventNavigation: boolean;
+}>;
+
 export interface InfiniteTableProps<T> {
   debugId?: string;
   columns: InfiniteTablePropColumns<T>;
@@ -756,12 +768,17 @@ export interface InfiniteTableProps<T> {
       actions: InfiniteTableEventHandlerContext<T>['actions'];
     },
     event: React.KeyboardEvent,
-  ) => void;
+  ) => void | InfiniteTablePropOnKeyDownResult;
 
   onCellClick?: (
     context: InfiniteTablePublicContext<T> & InfiniteTableCellContext<T>,
     event: React.MouseEvent,
   ) => void;
+
+  onCellDoubleClick?: (
+    context: InfiniteTablePublicContext<T> & InfiniteTableCellContext<T>,
+    event: React.MouseEvent,
+  ) => void | InfiniteTablePropOnCellDoubleClickResult;
 
   onContextMenu?: (
     context: InfiniteTablePublicContext<T> & {
