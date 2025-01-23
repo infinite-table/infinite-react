@@ -53,6 +53,7 @@ export async function onKeyDown<T>(
   } else {
     if (
       !context.getState().focusedWithin &&
+      !keyDownResult.preventNavigation &&
       handleKeyboardNavigation(keyboardHandlerContext, event)
     ) {
       event.preventDefault();

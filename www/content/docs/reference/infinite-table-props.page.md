@@ -490,6 +490,9 @@ Or you can be more specific and choose to make individual columns editable via t
 
 In addition to the props already in discussion, you can use the <PropLink name="editable" /> prop on the `InfiniteTable` component. This overrides all other properties and when it is defined, is the only source of truth for whether something is editable or not.
 
+
+By default, double-clicking an editable cell will show the cell editor. You can prevent this by returning `{preventEdit: true}` from the <PropLink name="onCellDoubleClick">onCellDoubleClick</PropLink> function prop.
+
 <Sandpack>
 
 <Description>
@@ -1150,6 +1153,8 @@ If it is a function, it will be called when an edit is triggered on the column. 
 The function can return a `boolean` value or a `Promise` that resolves to a `boolean` - this means you can asynchronously decide whether the cell is editable or not.
 
 Making <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> a function gives you the ability to granularly control which cells are editable or not (even within the same column, based on the cell value or other values you have access to).
+
+By default, double-clicking an editable cell will show the cell editor. You can prevent this by returning `{preventEdit: true}` from the <PropLink name="onCellDoubleClick">onCellDoubleClick</PropLink> function prop.
 
 <Sandpack>
 
@@ -2540,6 +2545,8 @@ The function can return a `boolean` value or a `Promise` that resolves to a `boo
 
 </Note>
 
+By default, double-clicking an editable cell will show the cell editor. You can prevent this by returning `{preventEdit: true}` from the <PropLink name="onCellDoubleClick">onCellDoubleClick</PropLink> function prop.
+
 </Prop>
 
 <Prop name="focusedClassName" type="string">
@@ -2985,6 +2992,14 @@ This callback is fired when a focusable element inside the component is blurred,
 </Sandpack>
 </Prop>
 
+<Prop name="onCellDoubleClick" type="({ colIndex, rowIndex, column, columnApi, api, dataSourceApi }, event) => void | {preventEdit?: boolean} ">
+
+> Callback function called when a cell has been double clicked.
+
+If the cell is editable, you can prevent going into edit mode by returning `{preventEdit: true}` from the function.
+
+</Prop>
+
 <Prop name="onCellClick" type="({ colIndex, rowIndex, column, columnApi, api, dataSourceApi }, event) => void">
 
 > Callback function called when a cell has been clicked.
@@ -3097,7 +3112,7 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 </Sandpack>
 </Prop>
 
-<Prop name="onKeyDown" type="({ api, dataSourceApi }, event) => void">
+<Prop name="onKeyDown" type="({ api, dataSourceApi }, event) => void | InfiniteTablePropOnKeyDownResult">
 
 > Callback function called when the `keydown` event occurs on the table.
 
@@ -3108,6 +3123,18 @@ The first argument of the function is an object that contains the following prop
 
 The second argument is the original browser `keydown` event.
 
+If you want to prevent some default behaviours, you can return an object with the following properties:
+
+- `preventEdit: boolean` - if true, the cell editor will not be shown when hitting the `Enter` key in an editable cell.
+- `preventEditStop: boolean` - if true, hitting the `Escape` key will not stop the edit.
+- `preventSelection: boolean` - if true, the ` ` and `Cmd+a` keys will not select cells/rows
+- `preventNavigation: boolean` - if true, keyboard navigation will be prevented when using `arrow` keys, `page up/down`, `home/end`, `enter`.
+
+<Note>
+
+For keyboard shortcuts, see <PropLink name="keyboardShortcuts" />.
+
+</Note>
 </Prop>
 
 <Prop name="onReady" type="({api, dataSourceApi}) => void}">

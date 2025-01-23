@@ -692,11 +692,47 @@ The following mutative operations are batched:
 
 </Prop>
 
+<Prop name="treeFilterFunction" type="({ data, filterTreeNode, primaryKey }) => DATA_TYPE | boolean">
+
+> A function to be used for filtering a `TreeDataSource`.
+
+The function should return a boolean value or a data object.
+
+- when returning `false` the current data object will be filtered out.
+- when returning `true`, the current data object will be included in the filtered data, with no changes.
+- when returning a data object, the object will be used instead of the current data object for the row. This means that you can modify the data object to only include some of its children (which match a specific criteria)
+
+<Note>
+
+The `treeFilterFunction` is called with an object that has a `filterTreeNode` function property. This function is a helper function you can use to continue the filtering further down the tree on the current (non-leaf) node.
+
+This function will call the filtering function for each child of the current node. If all the children are filtered out, the current node will be filtered out as well. If there are any children that match the criteria, a clone of the current node will be returned with only the matching children.
+
+You can opt to not use this helper function, and instead implement your own filtering logic. In this case, make sure you don't mutate data objects but rather return cloned versions of them.
+
+</Note>
+
+<Sandpack title="Tree filtering via treeFilterFunction">
+
+```ts file=tree-filter-function-example.page.tsx
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="filterFunction" type="({ data, dataArray, index, primaryKey }) => boolean">
 
 > A function to be used for client-side filtering.
 
 Using this function will not show any special filtering UI for columns.
+
+<Note>
+
+For filtering when using a `TreeGrid`, see <DPropLink name="treeFilterFunction" />.
+
+</Note>
 
 <Sandpack title="Custom filterFunction example">
 
