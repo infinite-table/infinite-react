@@ -197,6 +197,7 @@ export interface DataSourceMappedState<T> {
   sortFunction: DataSourceProps<T>['sortFunction'];
 
   filterFunction: DataSourceProps<T>['filterFunction'];
+  treeFilterFunction: DataSourceProps<T>['treeFilterFunction'];
   filterValue: DataSourceProps<T>['filterValue'];
   filterTypes: NonUndefined<DataSourceProps<T>['filterTypes']>;
   primaryKey: DataSourceProps<T>['primaryKey'];
@@ -790,6 +791,7 @@ export type DataSourceProps<T> = {
   ) => void;
 
   filterFunction?: DataSourcePropFilterFunction<T>;
+  treeFilterFunction?: DataSourcePropTreeFilterFunction<T>;
 
   /**
    * @deprecated Use shouldReloadData.sortInfo instead
@@ -870,6 +872,12 @@ export type DataSourceFilterFunctionParam<T> = {
 export type DataSourcePropFilterFunction<T> = (
   filterParam: DataSourceFilterFunctionParam<T>,
 ) => boolean;
+
+export type DataSourcePropTreeFilterFunction<T> = (
+  filterParam: DataSourceFilterFunctionParam<T> & {
+    filterTreeNode: (data: T) => T | boolean;
+  },
+) => T | boolean;
 
 export type DataSourcePropFilterValue<T> = DataSourceFilterValueItem<T>[];
 

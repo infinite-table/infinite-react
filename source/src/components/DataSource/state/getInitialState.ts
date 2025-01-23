@@ -251,6 +251,7 @@ export const forwardProps = <T>(
     treeSelection: 1,
     refetchKey: (refetchKey) => refetchKey ?? '',
     filterFunction: 1,
+    treeFilterFunction: 1,
     filterValue: 1,
     useGroupKeysForMultiRowSelection: (useGroupKeysForMultiRowSelection) =>
       useGroupKeysForMultiRowSelection ?? false,
@@ -708,7 +709,8 @@ export function deriveStateFromProps<T extends any>(params: {
     ? 'local'
     : propsSortMode ?? (controlledSort ? 'remote' : 'local');
   const filterMode =
-    typeof props.filterFunction === 'function'
+    typeof props.filterFunction === 'function' ||
+    typeof props.treeFilterFunction === 'function'
       ? 'local'
       : propsFilterMode ??
         (typeof props.data === 'function' ? 'remote' : 'local');

@@ -168,6 +168,7 @@ export interface InfiniteTableMappedState<T> {
   groupColumn: InfiniteTableProps<T>['groupColumn'];
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
+  onCellDoubleClick: InfiniteTableProps<T>['onCellDoubleClick'];
 
   repeatWrappedGroupRows: InfiniteTableProps<T>['repeatWrappedGroupRows'];
 

@@ -225,6 +225,7 @@ export const forwardProps = <T>(
     debugMode: 1,
     onKeyDown: 1,
     onCellClick: 1,
+    onCellDoubleClick: 1,
     focusedClassName: 1,
     focusedWithinClassName: 1,
     focusedStyle: 1,

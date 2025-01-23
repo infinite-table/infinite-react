@@ -6,6 +6,7 @@ import { cloneRowSelection } from '../api/getRowSelectionApi';
 import { handleBrowserFocusChangeOnKeyboardNavigation } from './handleBrowserFocusChangeOnKeyboardNavigation';
 import { eventMatchesKeyboardShortcut } from '../../utils/hotkey';
 import { cloneTreeSelection } from '../../DataSource/TreeApi';
+import { InfiniteTablePropOnKeyDownResult } from '../types/InfiniteTableProps';
 
 export async function onKeyDown<T>(
   context: InfiniteTableKeyboardEventHandlerContext<T>,
@@ -21,7 +22,27 @@ export async function onKeyDown<T>(
     },
   };
 
-  if (handleKeyboardSelection(keyboardHandlerContext, event)) {
+  const { onKeyDown: onKeyDownProp } = context.getState();
+
+  let keyDownResult: Required<InfiniteTablePropOnKeyDownResult> = {
+    preventEdit: false,
+    preventEditStop: false,
+    preventDefaultForTabKeyWhenEditing: true,
+    preventSelection: false,
+    preventNavigation: false,
+  };
+
+  if (onKeyDownProp) {
+    const result = onKeyDownProp(context, event);
+    if (result && typeof result === 'object') {
+      keyDownResult = { ...keyDownResult, ...result };
+    }
+  }
+
+  if (
+    !keyDownResult.preventSelection &&
+    handleKeyboardSelection(keyboardHandlerContext, event)
+  ) {
     event.preventDefault();
   }
 
@@ -38,7 +59,11 @@ export async function onKeyDown<T>(
     }
   }
 
-  if (event.key === 'Enter' && !context.api.isEditInProgress()) {
+  if (
+    !keyDownResult.preventEdit &&
+    event.key === 'Enter' &&
+    !context.api.isEditInProgress()
+  ) {
     const { activeCellIndex } = context.getState();
     if (activeCellIndex) {
       const [rowIndex, colIndex] = activeCellIndex;
@@ -54,15 +79,16 @@ export async function onKeyDown<T>(
   }
 
   if (context.api.isEditInProgress()) {
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && !keyDownResult.preventEditStop) {
       context.api.stopEdit({ cancel: true });
     }
-    if (event.key === 'Tab') {
+    if (
+      event.key === 'Tab' &&
+      keyDownResult.preventDefaultForTabKeyWhenEditing
+    ) {
       event.preventDefault();
     }
   }
-
-  context.getState().onKeyDown?.(context, event);
 
   const { keyboardShortcuts } = context.getState();
 

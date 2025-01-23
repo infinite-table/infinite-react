@@ -1,5 +1,9 @@
 import { composeFunctions } from '../../../utils/composeFunctions';
-import { DataSourceFilterValueItem, DataSourceSetupState } from '..';
+import {
+  DataSourceFilterValueItem,
+  DataSourcePropTreeFilterFunction,
+  DataSourceSetupState,
+} from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import {
   InfiniteTableRowInfo,
@@ -37,6 +41,8 @@ import {
 } from './initRowInfoReducers';
 import { TreeExpandState } from '../TreeExpandState';
 import { getTreeSelectionState } from './getInitialState';
+
+import { once } from '../../../utils/DeepMap/once';
 
 export function cleanupEmptyFilterValues<T>(
   filterValue: DataSourceState<T>['filterValue'],
@@ -124,20 +130,113 @@ function toRowInfo<T>(
   return rowInfo;
 }
 
-function filterDataSource<T>(params: {
+const warnIncorrectTreeFilterOnce = once(() => {
+  console.warn(`Your "treeFilterFunction" should NOT MUTATE the data object. You're probably mutating the node children.
+
+Your filtering function probably looks like this:
+
+function treeFilterFunction({ data }) {
+  data.children = data.children.filter(...) // <-- THIS MUTATION IS NOT SUPPORTED!
+  return data
+}
+
+Make sure you avoid mutations.
+
+`);
+});
+
+function filterTreeDataSource<T>(params: {
+  dataArray: T[];
+  treeFilterFunction: NonNullable<DataSourcePropTreeFilterFunction<T>>;
+  toPrimaryKey: FilterDataSourceParams<T>['toPrimaryKey'];
+  getNodeChildren: NonNullable<FilterDataSourceParams<T>['getNodeChildren']>;
+  isLeafNode: NonNullable<FilterDataSourceParams<T>['isLeafNode']>;
+  nodesKey: NonNullable<FilterDataSourceParams<T>['nodesKey']>;
+}) {
+  const {
+    dataArray,
+    treeFilterFunction,
+    toPrimaryKey,
+    getNodeChildren,
+    isLeafNode,
+    nodesKey,
+  } = params;
+  let treeDataArray: T[] = [];
+
+  const filterTreeNode = (data: T) => {
+    const children = getNodeChildren(data);
+
+    if (isLeafNode(data) || !Array.isArray(children)) {
+      return data;
+    }
+    const newChildren = filterTreeDataSource({
+      ...params,
+      dataArray: children,
+    });
+
+    if (newChildren.length === 0) {
+      return false;
+    }
+    data = {
+      ...data,
+      [nodesKey]: newChildren,
+    };
+    return data;
+  };
+
+  for (let i = 0, len = dataArray.length; i < len; i++) {
+    const data = dataArray[i];
+    const initialChildren = getNodeChildren(data);
+
+    let res = treeFilterFunction({
+      data,
+      index: i,
+      dataArray,
+      primaryKey: toPrimaryKey(data, i),
+      filterTreeNode,
+    });
+
+    if (!res) {
+      continue;
+    }
+
+    if (res === true) {
+      res = data;
+    } else if (typeof res === 'object') {
+      if (res === data && initialChildren !== getNodeChildren!(res)) {
+        warnIncorrectTreeFilterOnce();
+      }
+    }
+
+    treeDataArray.push(res);
+  }
+  return treeDataArray;
+}
+
+type FilterDataSourceParams<T> = {
   dataArray: T[];
   operatorsByFilterType: DataSourceDerivedState<T>['operatorsByFilterType'];
   filterTypes: DataSourcePropFilterTypes<T>;
   filterFunction?: DataSourcePropFilterFunction<T>;
   filterValue?: DataSourcePropFilterValue<T>;
   toPrimaryKey: (data: T, index: number) => any;
-}) {
+  treeFilterFunction: undefined | DataSourcePropTreeFilterFunction<T>;
+  isLeafNode: undefined | ((item: T) => boolean);
+  getNodeChildren: undefined | ((item: T) => null | T[]);
+  nodesKey: string | undefined;
+};
+
+function filterDataSource<T>(params: FilterDataSourceParams<T>) {
   const {
     filterTypes,
 
     operatorsByFilterType,
     filterFunction,
     toPrimaryKey,
+    treeFilterFunction,
+    getNodeChildren,
+    nodesKey,
+    isLeafNode,
   } = params;
 
   let { dataArray } = params;
@@ -151,6 +250,16 @@ function filterDataSource<T>(params: {
         primaryKey: toPrimaryKey(data, index),
       }),
     );
+  }
+
+  if (treeFilterFunction) {
+    dataArray = filterTreeDataSource({
+      ...params,
+      treeFilterFunction,
+      getNodeChildren: getNodeChildren!,
+      nodesKey: nodesKey!,
+      isLeafNode: isLeafNode!,
+    });
   }
 
   const filterValueArray =
@@ -323,15 +432,23 @@ export function concludeReducer<T>(params: {
     state.cache = undefined;
   }
 
-  const { filterFunction, filterValue, filterTypes, operatorsByFilterType } =
-    state;
+  const {
+    filterFunction,
+    treeFilterFunction,
+    filterValue,
+    filterTypes,
+    operatorsByFilterType,
+  } = state;
   const shouldFilter =
-    !!filterFunction || (Array.isArray(filterValue) && filterValue.length);
+    !!filterFunction ||
+    !!treeFilterFunction ||
+    (Array.isArray(filterValue) && filterValue.length);
 
   const shouldFilterClientSide = shouldFilter && state.filterMode === 'local';
 
   const filterDepsChanged = haveDepsChanged(previousState, state, [
     'filterFunction',
+    'treeFilterFunction',
     'filterValue',
     'filterTypes',
   ]);
@@ -442,6 +559,12 @@ export function concludeReducer<T>(params: {
 
     dataArray = shouldFilterAgain
       ? filterDataSource({
+          // tree-related stuff
+          getNodeChildren,
+          isLeafNode,
+          nodesKey,
+          treeFilterFunction,
+          // ---
           dataArray,
           toPrimaryKey,
           filterTypes,

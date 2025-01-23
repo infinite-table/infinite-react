@@ -12,6 +12,7 @@ import {
   DataSourcePropOnTreeSelectionChange_MultiNode,
   DataSourcePropOnTreeSelectionChange_SingleNode,
   DataSourceProps,
+  DataSourcePropTreeFilterFunction,
   DataSourcePropTreeSelection,
   DataSourcePropTreeSelection_MultiNode,
   DataSourcePropTreeSelection_SingleNode,
@@ -29,6 +30,7 @@ type TreeDataSourceOnlyProps<T> = {
   nodesKey?: string;
 
   treeSelection?: DataSourcePropTreeSelection;
+  treeFilterFunction?: DataSourcePropTreeFilterFunction<T>;
 
   defaultTreeSelection?: DataSourcePropTreeSelection;
 
@@ -123,6 +125,7 @@ export type DataSourcePropsNotAvailableInTreeDataSource = keyof Pick<
   | 'livePagination'
   | 'onLivePaginationCursorChange'
   | 'groupMode'
+  | 'filterFunction'
   | 'onPivotByChange'
   | 'pivotBy'
   | 'defaultPivotBy'

@@ -4,7 +4,6 @@ export default test.describe('TreeApi ', () => {
   test('addData + update the node works one after the other', async ({
     page,
     tableModel,
-    apiModel,
   }) => {
     await page.waitForInfiniteHeader();
 
