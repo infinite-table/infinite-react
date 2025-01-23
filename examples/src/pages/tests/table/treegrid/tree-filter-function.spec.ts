@@ -7,11 +7,9 @@ export default test.describe('Tree filtering', () => {
     expect(await rowModel.getRenderedRowCount()).toEqual(10);
 
     await page.fill('input[name="filter"]', 'r');
-
     expect(await rowModel.getRenderedRowCount()).toEqual(5);
 
     await page.fill('input[name="filter"]', 'ppt');
-
     expect(await rowModel.getRenderedRowCount()).toEqual(2);
   });
 });
