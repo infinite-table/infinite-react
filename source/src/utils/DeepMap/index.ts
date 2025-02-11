@@ -13,11 +13,11 @@ type Pair<KeyType, ValueType> = {
 const SORT_ASC_REVISION = (p1: Pair<any, any>, p2: Pair<any, any>) =>
   sortAscending(p1.revision!, p2.revision!);
 
-export type DeepMapVisitFn<KeyType, ValueType> = (
+export type DeepMapVisitFn<KeyType, ValueType, ReturnType = void> = (
   pair: Pair<KeyType, ValueType>,
   keys: KeyType[],
   next: VoidFn,
-) => void;
+) => ReturnType;
 
 export class DeepMap<KeyType, ValueType> {
   private map = new Map<KeyType, Pair<KeyType, ValueType>>();
@@ -148,6 +148,7 @@ export class DeepMap<KeyType, ValueType> {
         fn({ ...pair, keys });
         // don't call next to go deeper
       },
+      false,
       currentMap,
       depthLimit,
       excludeSelf,
@@ -222,6 +223,7 @@ export class DeepMap<KeyType, ValueType> {
         fn(keys, value);
         next?.();
       },
+      false,
       currentMap,
       depthLimit,
       excludeSelf,
@@ -461,11 +463,12 @@ export class DeepMap<KeyType, ValueType> {
     return false;
   }
 
-  private visitKey(
+  private visitKey<ReturnType = any>(
     key: KeyType,
     currentMap: Map<KeyType, Pair<KeyType, ValueType>>,
     parentKeys: KeyType[],
-    fn: DeepMapVisitFn<KeyType, ValueType>,
+    fn: DeepMapVisitFn<KeyType, ValueType, ReturnType>,
+    earlyReturn: boolean,
   ) {
     const pair = currentMap.get(key);
 
@@ -478,22 +481,44 @@ export class DeepMap<KeyType, ValueType> {
 
     const next = once(() => {
       if (map) {
-        map.forEach((_, k) => {
-          this.visitKey(k, map, keys, fn);
-        });
+        for (const [k] of map) {
+          const res = this.visitKey(k, map, keys, fn, earlyReturn);
+          // @ts-ignore
+          if (earlyReturn && res === true) {
+            return true;
+          }
+        }
       }
+      return false;
     });
 
     if (pair.hasOwnProperty('value')) {
-      fn(pair, keys, next);
+      const res = fn(pair, keys, next);
+
+      // @ts-ignore
+      if (earlyReturn && res === true) {
+        return true;
+      }
     }
 
     // if it was called by fn, it won't be called again, as it's once-d
     next();
+    return;
   }
 
   visit = (fn: DeepMapVisitFn<KeyType, ValueType>) => {
-    this.map.forEach((_, k) => this.visitKey(k, this.map, [], fn));
+    this.map.forEach((_, k) => this.visitKey(k, this.map, [], fn, false));
+  };
+
+  visitSome = (
+    fn: (
+      value: ValueType,
+      keys: KeyType[],
+      indexInGroup: number,
+      next?: VoidFn,
+    ) => boolean,
+  ) => {
+    this.visitWithNext([], fn, true);
   };
 
   visitDepthFirst = (
@@ -504,10 +529,10 @@ export class DeepMap<KeyType, ValueType> {
       next?: VoidFn,
     ) => void,
   ) => {
-    this.visitWithNext([], fn);
+    this.visitWithNext([], fn, false);
   };
 
-  private visitWithNext = (
+  private visitWithNext = <RETURN_TYPE = any>(
     parentKeys: KeyType[],
 
     fn: (
@@ -516,7 +541,8 @@ export class DeepMap<KeyType, ValueType> {
       indexInGroup: number,
       next: VoidFn | undefined,
       pair: Pair<KeyType, ValueType>,
-    ) => void,
+    ) => RETURN_TYPE,
+    earlyReturn: boolean,
     currentMap: Map<KeyType, Pair<KeyType, ValueType>> = this.map,
     depthLimit?: number,
     skipSelfValue?: boolean,
@@ -554,17 +580,23 @@ export class DeepMap<KeyType, ValueType> {
             this.visitWithNext(
               keys,
               fn,
+              earlyReturn,
               map,
               depthLimit !== undefined ? depthLimit - 1 : undefined,
             )
         : undefined;
 
       if (pair.hasOwnProperty('value')) {
-        fn(pair.value!, keys, i, next, pair);
+        const res = fn(pair.value!, keys, i, next, pair);
+        // @ts-ignore
+        if (earlyReturn && res === true) {
+          return true;
+        }
         i++;
       } else {
         next?.();
       }
+      return;
     };
 
     if (hasEmptyKey) {
@@ -572,7 +604,13 @@ export class DeepMap<KeyType, ValueType> {
       allowEmptyKey = false;
       i = 0;
     }
-    currentMap.forEach(iterator);
+    for (const [key, pair] of currentMap) {
+      const res = iterator(pair, key);
+      if (earlyReturn && res === true) {
+        return res;
+      }
+    }
+    return;
   };
 
   private getArray<ReturnType>(
@@ -590,6 +628,14 @@ export class DeepMap<KeyType, ValueType> {
     });
 
     return result;
+  }
+
+  rawKeysAt(keys: KeyType[]): KeyType[] {
+    const map = this.getMapAt(keys);
+    if (!map) {
+      return [];
+    }
+    return [...map.keys()];
   }
 
   valuesAt(keys: KeyType[]): ValueType[] {
