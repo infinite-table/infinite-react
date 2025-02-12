@@ -5,7 +5,7 @@ import { InfiniteTableHeaderCellClassName } from './components/InfiniteTableHead
 import { defineTheme } from './defineTheme.css';
 
 const minimalistStyles = {
-  [`.${InfiniteTableHeaderCellClassName}`]: {
+  [`& .${InfiniteTableHeaderCellClassName}`]: {
     textTransform: 'uppercase',
     fontWeight: 'bold',
     letterSpacing: '0.05em',

@@ -6,7 +6,7 @@ import { InfiniteTableHeaderWrapperClassName } from './components/InfiniteTableH
 import { ThemeVars } from './vars.css';
 
 const shadcnStyles = {
-  [`.${InfiniteTableHeaderWrapperClassName}`]: {
+  [`& .${InfiniteTableHeaderWrapperClassName}`]: {
     borderBottom: ThemeVars.components.Cell.borderTop,
     '&:hover': {
       backgroundColor: ThemeVars.components.Row.hoverBackground,
