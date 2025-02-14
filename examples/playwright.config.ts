@@ -1,6 +1,12 @@
 // playwright.config.ts
 import { PlaywrightTestConfig, devices } from '@playwright/test';
 
+declare global {
+  var __DEV__: boolean;
+}
+// Define __DEV__ globally for the test environment
+global.__DEV__ = !process.env.CI;
+
 const width = 1400;
 const height = 1200;
 

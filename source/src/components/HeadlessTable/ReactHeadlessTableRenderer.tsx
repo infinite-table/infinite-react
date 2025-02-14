@@ -1,8 +1,5 @@
-import * as React from 'react';
-import { RefCallback } from 'react';
-
 import { Logger } from '../../utils/debug';
-import { arrayIntersection } from '../../utils/mathIntersection';
+
 import { raf } from '../../utils/raf';
 import { stripVar } from '../../utils/stripVar';
 import { InternalVars } from '../InfiniteTable/internalVars.css';
@@ -12,11 +9,9 @@ import {
   InternalVarUtils,
   setInfiniteScrollPosition,
 } from '../InfiniteTable/utils/infiniteDOMUtils';
-import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
+
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
-import { SubscriptionCallback } from '../types/SubscriptionCallback';
-import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import {
   FixedPosition,
   getRenderRangeCellCount,
@@ -24,54 +19,20 @@ import {
   MatrixBrain,
   TableRenderRange,
 } from '../VirtualBrain/MatrixBrain';
+import {
+  HorizontalLayoutColVisibilityOptions,
+  RenderRangeOptions,
+  TableRenderCellFn,
+  TableRenderDetailRowFn,
+} from './rendererTypes';
 
-import { MappedCells } from './MappedCells';
-import { MappedVirtualRows } from './MappedVirtualRows';
+import { GridCellManager } from './GridCellManager';
+import { GridCellInterface } from './GridCellInterface';
 
-export type TableRenderCellFnParam = {
-  domRef: RefCallback<HTMLElement>;
-  rowIndex: number;
-  colIndex: number;
-  rowspan: number;
-  colspan: number;
-  hidden: boolean;
-  width: number;
-  height: number;
-  widthWithColspan: number;
-  heightWithRowspan: number;
-  rowFixed: FixedPosition;
-  colFixed: FixedPosition;
-  onMouseEnter: VoidFunction;
-  onMouseLeave: VoidFunction;
-};
+import { setFilter, setIntersection } from '../../utils/setUtils';
+import { ListRowInterface, ListRowManager } from './ListRowManager';
 
-export type TableRenderDetailRowFnParam = {
-  domRef: RefCallback<HTMLElement>;
-  rowIndex: number;
-  hidden: boolean;
-  height: number;
-  rowFixed: FixedPosition;
-  onMouseEnter: VoidFunction;
-  onMouseLeave: VoidFunction;
-};
-export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
-export type TableRenderDetailRowFn = (
-  param: TableRenderDetailRowFnParam,
-) => Renderable;
-
-export type RenderableWithPosition = {
-  renderable: Renderable;
-  position: 'start' | 'end' | null;
-};
-
-export type RenderRangeOptions = {
-  force?: boolean;
-  renderCell: TableRenderCellFn;
-  renderDetailRow?: TableRenderDetailRowFn;
-  onRender: (items: Renderable[]) => void;
-};
-
-export const ITEM_POSITION_WITH_TRANSFORM = true;
+const ITEM_POSITION_WITH_TRANSFORM = true;
 
 export const currentTransformY = stripVar(InternalVars.y);
 
@@ -81,11 +42,7 @@ export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
 
-export type HorizontalLayoutColVisibilityOptions = {
-  horizontalLayoutPageIndex?: number;
-};
-
-export class ReactHeadlessTableRenderer extends Logger {
+export class GridRenderer extends Logger {
   protected brain: MatrixBrain;
 
   public debugId: string = '';
@@ -95,22 +52,11 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   public cellHoverClassNames: string[] = [];
 
-  private itemDOMElements: (HTMLElement | null)[] = [];
-  protected itemDOMRefs: RefCallback<HTMLElement>[] = [];
-  protected updaters: SubscriptionCallback<Renderable>[] = [];
-
-  private detailRowDOMElements: (HTMLElement | null)[] = [];
-  private detailRowDOMRefs: RefCallback<HTMLElement>[] = [];
-  private detailRowUpdaters: SubscriptionCallback<Renderable>[] = [];
-
-  protected mappedCells: MappedCells<{
+  protected cellManager: GridCellManager<{
     renderRowIndex: number;
     renderColIndex: number;
   }>;
-  private mappedDetailRows: MappedVirtualRows;
-
-  private items: Renderable[] = [];
-  private detailItems: Renderable[] = [];
+  protected rowManager: ListRowManager;
 
   private lastEnteredRow = -1;
   private lastExitedRow = -1;
@@ -216,13 +162,11 @@ export class ReactHeadlessTableRenderer extends Logger {
     this.brain = brain;
     this.debugId = debugId;
 
-    this.mappedCells = new MappedCells<{
+    this.cellManager = new GridCellManager<{
       renderRowIndex: number;
       renderColIndex: number;
-    }>({
-      withCellAdditionalInfo: brain.isHorizontalLayoutBrain,
-    });
-    this.mappedDetailRows = new MappedVirtualRows();
+    }>(debugId);
+    this.rowManager = new ListRowManager(debugId);
 
     this.renderRange = this.renderRange.bind(this);
 
@@ -541,9 +485,7 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   public isRowRendered = (rowIndex: number) => {
     if (!this.brain.isHorizontalLayoutBrain) {
-      const elements = this.mappedCells.getElementsForRowIndex(rowIndex);
-
-      return elements.length > 0;
+      return this.cellManager.isRowAttached(rowIndex);
     }
 
     const initialRowIndex = rowIndex;
@@ -553,9 +495,12 @@ export class ReactHeadlessTableRenderer extends Logger {
       : rowIndex;
 
     return (
-      this.mappedCells
-        .getAdditionalInfoForRowIndex(rowIndex)
-        .filter((info) => info.renderRowIndex === initialRowIndex).length > 0
+      this.cellManager
+        .getCellsForRow(rowIndex)
+        .filter(
+          (cell) =>
+            cell.getAdditionalInfo()?.renderRowIndex === initialRowIndex,
+        ).length > 0
     );
   };
 
@@ -669,10 +614,8 @@ export class ReactHeadlessTableRenderer extends Logger {
 
       colIndex = colsCount * opts.horizontalLayoutPageIndex + colIndex;
     }
-    const nodeRendered =
-      this.mappedCells.getRenderedNodeForCell(startRow, colIndex) !== null;
 
-    return nodeRendered;
+    return this.cellManager.isCellAttachedAt([startRow, colIndex]);
   };
 
   getExtraSpanCellsForRange = (range: TableRenderRange) => {
@@ -687,7 +630,7 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   isCellRenderedAndMappedCorrectly(row: number, col: number) {
-    const rendered = this.mappedCells.isCellRendered(row, col);
+    const rendered = !!this.cellManager.getCellAt([row, col]);
     return {
       rendered,
       mapped: rendered,
@@ -711,7 +654,7 @@ export class ReactHeadlessTableRenderer extends Logger {
       this.debug(`Render range ${start}-${end}. Force ${force}`);
     }
 
-    const { mappedCells, mappedDetailRows } = this;
+    const { rowManager, cellManager } = this;
 
     const fixedRanges = this.getFixedRanges(range);
     const ranges = [range, ...fixedRanges];
@@ -770,136 +713,65 @@ export class ReactHeadlessTableRenderer extends Logger {
       ? ranges.reduce((sum, range) => sum + getRenderRangeRowCount(range), 0)
       : 0;
 
-    // renderCount += 4;
+    cellManager.detachCellsStartingAt([
+      this.brain.getRowCount(),
+      this.brain.getColCount(),
+    ]);
 
-    // const { fixedRowsStart, fixedColsStart, fixedRowsEnd, fixedColsEnd } =
-    //   this.brain.getFixedCellInfo();
-
-    // console.log(ranges, renderCount);
-
-    // if (fixedRowsStart && fixedColsStart) {
-    //   // renderCount -= fixedRowsStart * fixedColsStart;
-    // }
-    // if (fixedRowsStart && fixedColsEnd) {
-    //   // renderCount -= fixedRowsStart * fixedColsEnd;
-    // }
-    // if (fixedRowsEnd && fixedColsStart) {
-    //   // renderCount -= fixedRowsEnd * fixedColsStart;
-    // }
-    // if (fixedRowsEnd && fixedColsEnd) {
-    //   // renderCount -= fixedRowsEnd * fixedColsEnd;
-    // }
-
-    if (this.itemDOMElements.length >= renderCount) {
-      mappedCells.discardElementsStartingWith(renderCount, (elementIndex) => {
-        // when less items become rendered
-        // we unmount the extra items by calling destroy on the updater
-        // so we don't need to re-render the whole container
-        if (this.updaters[elementIndex]) {
-          this.updaters[elementIndex].destroy();
-        }
-        if (__DEV__) {
-          // console.log(`Discard element ${elementIndex}`);
-          this.debug(`Discard element ${elementIndex}`);
-        }
-      });
-      this.itemDOMElements.length = Math.min(
-        this.itemDOMElements.length,
-        renderCount,
-      );
-      this.itemDOMRefs.length = Math.min(this.itemDOMRefs.length, renderCount);
-      this.updaters.length = Math.min(this.updaters.length, renderCount);
-      this.items.length = Math.min(this.items.length, renderCount);
+    if (cellManager.poolSize > renderCount) {
+      cellManager.poolSize = renderCount;
     }
-    if (
-      renderDetailRow &&
-      this.detailRowDOMElements.length &&
-      this.detailRowDOMElements.length >= renderRowCount
-    ) {
-      mappedDetailRows.discardElementsStartingWith(
-        renderRowCount,
-        (elementIndex) => {
-          if (this.detailRowUpdaters[elementIndex]) {
-            this.detailRowUpdaters[elementIndex].destroy();
-          }
-          if (__DEV__) {
-            this.debug(`Discard detail row element ${elementIndex}`);
-          }
-        },
-      );
-      this.detailRowDOMElements.length = Math.min(
-        this.detailRowDOMElements.length,
-        renderRowCount,
-      );
-      this.detailRowDOMRefs.length = Math.min(
-        this.detailRowDOMRefs.length,
-        renderRowCount,
-      );
-      this.detailRowUpdaters.length = Math.min(
-        this.detailRowUpdaters.length,
-        renderRowCount,
-      );
-      this.detailItems.length = Math.min(
-        this.detailItems.length,
-        renderRowCount,
-      );
+    if (renderDetailRow) {
+      rowManager.detachStartingWith(this.brain.getRowCount());
+
+      if (rowManager.poolSize > renderRowCount) {
+        rowManager.poolSize = renderRowCount;
+      }
     }
 
     // we only need to keep those that are outside all ranges
     // so we need to do an intersection of all those elements
-    const elementsOutsideRanges: number[] = arrayIntersection(
-      ...ranges.map(mappedCells.getElementsOutsideRenderRange),
-    );
-    const detailElementsOutsideRanges: number[] = renderDetailRow
-      ? arrayIntersection(
-          ...ranges.map(mappedDetailRows.getElementsOutsideRenderRange),
-        )
-      : [];
 
-    const elementsOutsideItemRange = elementsOutsideRanges.filter(
-      (elementIndex) => {
-        const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
-
-        // keep those elements that host a cell that is in the extraCells map
-        // We do this in order not to do extra work and rerender it later in case
-        // it's already rendered
-        //
-        // so we need to filter those elements out
-        if (cell && extraCellsMap.has(`${cell[0]}:${cell[1]}`)) {
-          return false;
-        }
-
-        // and only keep those elements that correspond to cells
-        // outside the render range and outside the extra cells
-        return true;
-      },
+    let cellsOutsideRanges = setIntersection(
+      ...ranges.map((range) => cellManager.getCellsOutsideRenderRange(range)),
     );
 
-    if (this.items.length > renderCount) {
-      this.items.length = renderCount;
-    }
-    if (renderDetailRow && this.detailItems.length > renderRowCount) {
-      this.detailItems.length = renderRowCount;
-    }
+    cellsOutsideRanges = setFilter(cellsOutsideRanges, (cell) => {
+      const cellPos = cellManager.getCellPosition(cell);
+      // keep those elements that host a cell that is in the extraCells map
+      // We do this in order not to do extra work and rerender it later in case
+      // it's already rendered
+      //
+      // so we need to filter those elements out
+      if (cellPos && extraCellsMap.has(`${cellPos[0]}:${cellPos[1]}`)) {
+        return false;
+      }
+
+      // and only keep those elements that correspond to cells
+      // outside the render range and outside the extra cells
+      return true;
+    });
+
+    // detach cells that are outside the render range
+    // meaning they won't have an x,y position in the matrix
+    cellManager.detachCells(cellsOutsideRanges);
+
+    // if renderCount > poolSize, this creates extra elements in the pool, as needed
+    // but if renderCount < poolSize, it destroys the extra elements that are
+    // not bound to an x,y position in the matrix
+    cellManager.poolSize = renderCount;
 
     // start from the last rendered, and render additional elements, until we have renderCount
     // this loop might not even execute the body once if all the elements are present
-    for (let i = this.items.length; i < renderCount; i++) {
-      this.renderElement(i);
-      // push at start
-      elementsOutsideItemRange.splice(0, 0, i);
-    }
-    if (renderDetailRow) {
-      for (let i = this.detailItems.length; i < renderRowCount; i++) {
-        this.renderDetailElement(i);
-        detailElementsOutsideRanges.splice(0, 0, i);
-      }
-    }
+    // for (let i = this.items.length; i < renderCount; i++) {
+    //   this.renderElement(i);
+    //   // push at start
+    //   elementsOutsideItemRange.splice(0, 0, i);
+    // }
 
     const visitedCells = new Map<string, boolean>();
     const visitedRows = new Map<number, boolean>();
 
-    const elementsRenderedOnTheFly = new Set<number>();
     ranges.forEach((range) => {
       const { start, end } = range;
       const [startRow, startCol] = start;
@@ -923,23 +795,20 @@ export class ReactHeadlessTableRenderer extends Logger {
           // all other spanned cells (further below or to the right), we keep as rendered
           // we do this in order to preserve a constant renderCount
           if (row === startRow || col === startCol) {
-            const parentCell = this.isCellCovered(row, col);
+            const parentCellPos = this.isCellCovered(row, col);
 
             // if this cell is covered by another (parent) cell
             // which is outside of the render range (so which is in the extra cells collection)
             if (
-              parentCell &&
-              extraCellsMap.has(`${parentCell[0]}:${parentCell[1]}`)
+              parentCellPos &&
+              extraCellsMap.has(`${parentCellPos[0]}:${parentCellPos[1]}`)
             ) {
-              // then we can take that element and reuse it
+              // then we can take that cell and reuse it
               // for other cells
-              const elIndexForCoveredCell = mappedCells.getElementIndexForCell(
-                row,
-                col,
-              );
+              const coveredCell = cellManager.getCellAt([row, col]);
 
-              if (elIndexForCoveredCell != null) {
-                elementsOutsideItemRange.push(elIndexForCoveredCell);
+              if (coveredCell != null) {
+                cellManager.detachCell(coveredCell);
               }
               continue;
             }
@@ -949,60 +818,27 @@ export class ReactHeadlessTableRenderer extends Logger {
             continue;
           }
 
-          let elementIndex = cellRendered
-            ? mappedCells.getElementIndexForCell(row, col)
-            : // TODO when horizontal layout, just do elementsOutsideItemRange.pop()
-            horizontalLayout
-            ? mappedCells.getElementFromListForRow(
-                elementsOutsideItemRange,
-                row,
-              )
-            : mappedCells.getElementFromListForColumn(
-                elementsOutsideItemRange,
-                col,
-              );
+          let theCell: GridCellInterface | undefined;
 
-          if (elementIndex == null) {
-            // we might have been had overlap initially of the render range with a fixed range
+          if (cellRendered) {
+            theCell = cellManager.getCellAt([row, col]);
+          } else {
+            theCell = cellManager.getCellFor(
+              [row, col],
+              horizontalLayout ? 'row' : 'column',
+            );
+          }
+
+          if (theCell == null) {
+            // we might have had overlap initially of the render range with a fixed range
             // as we want to create an element even for the overlap of the two
             // but that element might not have been rendered, so it will be in itemDOMRefs
             // but won't have a corresponding DOM element yet in itemDOMElements
 
-            // so start at the length of itemDOMElements and go onwards
-            // in the itemDOMRefs, for the next entry
-            for (
-              let i = this.itemDOMElements.length;
-              i <= this.itemDOMRefs.length;
-              i++
-            ) {
-              if (
-                !this.itemDOMElements[i] &&
-                this.itemDOMRefs[i] &&
-                !elementsRenderedOnTheFly.has(i)
-              ) {
-                elementIndex = i;
-                // we need this collection,
-                // as the renderCellAtElement will not add the itemDOMElement reference
-                // in a sync way, so let's make sure we don't reuse the same element multiple times
-                elementsRenderedOnTheFly.add(i);
-
-                if (__DEV__) {
-                  this.debug(
-                    `Last-moment recovery of element ${elementIndex} to render cell ${row}:${col}`,
-                  );
-                }
-                break;
-              }
-            }
-          }
-          if (elementIndex == null) {
-            if (__DEV__) {
-              this.error(`Cannot find element to render cell ${row}:${col}`);
-            }
-            continue;
+            theCell = cellManager.getDetachedCell();
           }
 
-          this.renderCellAtElement(row, col, elementIndex, renderCell);
+          this.renderCellAt(row, col, theCell, renderCell);
         }
         if (!renderDetailRow) {
           continue;
@@ -1011,7 +847,7 @@ export class ReactHeadlessTableRenderer extends Logger {
           continue;
         }
         visitedRows.set(row, true);
-        const rowRendered = mappedDetailRows.isRowRendered(row);
+        const rowRendered = rowManager.isRowAttachedAt(row);
 
         // for now we wont implement row spanning with detail rows
         // so we can have simplified logic here
@@ -1019,18 +855,12 @@ export class ReactHeadlessTableRenderer extends Logger {
         if (rowRendered && !force) {
           continue;
         }
-        const detailElementIndex = rowRendered
-          ? mappedDetailRows.getElementIndexForRow(row)
-          : detailElementsOutsideRanges.pop();
-        if (detailElementIndex == null) {
-          if (__DEV__) {
-            this.error(
-              `Cannot find detail element to render detail row ${row}`,
-            );
-          }
-          continue;
-        }
-        this.renderDetailRowAtElement(row, detailElementIndex, renderDetailRow);
+
+        this.renderDetailRowAtElement(
+          row,
+          this.rowManager.getRowFor(row),
+          renderDetailRow,
+        );
       }
     });
 
@@ -1041,44 +871,53 @@ export class ReactHeadlessTableRenderer extends Logger {
       );
       if (rendered) {
         if (force || !mapped) {
-          const elementIndex = mappedCells.getElementIndexForCell(
-            rowIndex,
-            colIndex,
-          )!;
-          this.renderCellAtElement(
-            rowIndex,
-            colIndex,
-            elementIndex,
-            renderCell,
-          );
+          const cellPos: [number, number] = [rowIndex, colIndex];
+          const cell = cellManager.getCellAt(cellPos)!;
+
+          this.renderCellAt(rowIndex, colIndex, cell, renderCell);
         }
         return;
       }
 
-      const elementIndex = elementsOutsideItemRange.pop();
-      if (elementIndex == null) {
+      const cell = cellManager.getCellFor(
+        [rowIndex, colIndex],
+        horizontalLayout ? 'row' : 'column',
+      );
+      if (cell == null) {
         if (__DEV__) {
-          this.error(
-            `Cannot find element to render cell ${rowIndex}-${colIndex}`,
-          );
+          this.error(`Cannot find cell to render ${rowIndex}-${colIndex}`);
         }
+
         return;
       }
-      this.renderCellAtElement(rowIndex, colIndex, elementIndex, renderCell);
+      this.renderCellAt(rowIndex, colIndex, cell, renderCell);
     });
+
+    cellManager.makeDetachedCellsEmpty();
+
+    if (renderDetailRow) {
+      rowManager.makeDetachedRowsEmpty();
+    }
 
     // OLD we need to spread and create a new array
     // OLD as otherwise the AvoidReactDiff component will receive the same array
     // OLD and since it uses setState internally, it will not render/update
     // const result = [...this.items];
-    let result = this.items;
+    // let result = this.items;
+    let result = cellManager.getAllCells().map((cell) => cell.getNode());
+
+    if (renderDetailRow) {
+      rowManager.getAllRows().forEach((row) => {
+        result.push(row.getNode());
+      });
+    }
 
     // TODO why does this optimisation not work
     // if (this.items.length > this.prevLength) {
     //   // only assign and do a render when
     //   // we have more items than last time
     //   // so we need to show new items
-    result = [...this.items, ...this.detailItems];
+    // result = [...this.items, ...this.detailItems];
 
     this.adjustFixedElementsOnScroll();
     if (onRender) {
@@ -1088,57 +927,6 @@ export class ReactHeadlessTableRenderer extends Logger {
     // }
 
     return result;
-  }
-
-  private renderElement(elementIndex: number) {
-    const domRef = (node: HTMLElement | null) => {
-      if (node) {
-        this.itemDOMElements[elementIndex] = node;
-        node.style.position = 'absolute';
-        node.style.left = '0px';
-        node.style.top = '0px';
-        this.updateElementPosition(elementIndex);
-      }
-    };
-    this.itemDOMRefs[elementIndex] = domRef;
-    this.updaters[elementIndex] = buildSubscriptionCallback<Renderable>();
-
-    const item = (
-      <AvoidReactDiff
-        key={elementIndex}
-        name={`${elementIndex}`}
-        updater={this.updaters[elementIndex]}
-      />
-    );
-    this.items[elementIndex] = item;
-
-    return item;
-  }
-
-  private renderDetailElement(elementIndex: number) {
-    const domRef = (node: HTMLElement | null) => {
-      if (node) {
-        this.detailRowDOMElements[elementIndex] = node;
-        node.style.position = 'absolute';
-        node.style.left = '0px';
-        // node.style.top = '0px';
-        this.updateDetailElementPosition(elementIndex);
-      }
-    };
-    this.detailRowDOMRefs[elementIndex] = domRef;
-    this.detailRowUpdaters[elementIndex] =
-      buildSubscriptionCallback<Renderable>();
-
-    const detailItem = (
-      <AvoidReactDiff
-        key={`detail-${elementIndex}`}
-        name={`detail-${elementIndex}`}
-        updater={this.detailRowUpdaters[elementIndex]}
-      />
-    );
-    this.detailItems[elementIndex] = detailItem;
-
-    return detailItem;
   }
 
   getFixedRanges = (
@@ -1353,7 +1141,7 @@ export class ReactHeadlessTableRenderer extends Logger {
 
   private renderDetailRowAtElement(
     rowIndex: number,
-    detailElementIndex: number,
+    row: ListRowInterface,
     renderDetailRow: TableRenderDetailRowFn,
   ) {
     if (this.destroyed) {
@@ -1381,33 +1169,21 @@ export class ReactHeadlessTableRenderer extends Logger {
       hidden,
       onMouseEnter: () => {},
       onMouseLeave: () => {},
-      domRef: this.detailRowDOMRefs[detailElementIndex],
+      domRef: row.ref,
     });
 
-    const itemUpdater = this.detailRowUpdaters[detailElementIndex];
+    row.onMount((row) => {
+      const element = row.getElement();
+      if (element) {
+        element.style.position = 'absolute';
+        element.style.left = '0px';
+      }
+      this.updateDetailElementPosition(row);
+    });
 
-    if (!itemUpdater) {
-      this.error(
-        `Cannot find detail item updater for item ${rowIndex} at this time... sorry.`,
-      );
-      return;
-    }
+    this.rowManager.renderNodeAtRow(renderedDetailNode, row, rowIndex);
 
-    this.mappedDetailRows.renderRowAtElement(
-      rowIndex,
-      detailElementIndex,
-      renderedDetailNode,
-    );
-
-    if (__DEV__) {
-      this.debug(
-        `Render detail row ${rowIndex} at element ${detailElementIndex}`,
-      );
-    }
-
-    itemUpdater(renderedDetailNode);
-
-    this.updateDetailElementPosition(detailElementIndex);
+    this.updateDetailElementPosition(row);
     return;
   }
 
@@ -1418,10 +1194,10 @@ export class ReactHeadlessTableRenderer extends Logger {
     };
   }
 
-  protected renderCellAtElement(
+  protected renderCellAt(
     rowIndex: number,
     colIndex: number,
-    elementIndex: number,
+    cell: GridCellInterface,
     renderCell: TableRenderCellFn,
   ) {
     if (this.destroyed) {
@@ -1470,17 +1246,18 @@ export class ReactHeadlessTableRenderer extends Logger {
       widthWithColspan,
       onMouseEnter: this.onMouseEnter.bind(null, rowIndex),
       onMouseLeave: this.onMouseLeave.bind(null, rowIndex),
-      domRef: this.itemDOMRefs[elementIndex],
+      domRef: cell.ref,
     });
 
-    const itemUpdater = this.updaters[elementIndex];
-
-    if (!itemUpdater) {
-      this.error(
-        `Cannot find item updater for item ${rowIndex},${colIndex} at this time... sorry.`,
-      );
-      return;
-    }
+    cell.onMount((cell) => {
+      const element = cell.getElement();
+      if (element) {
+        element.style.position = 'absolute';
+        element.style.left = '0px';
+        element.style.top = '0px';
+      }
+      this.updateElementPosition(cell);
+    });
 
     const cellAdditionalInfo = this.brain.isHorizontalLayoutBrain
       ? {
@@ -1489,17 +1266,14 @@ export class ReactHeadlessTableRenderer extends Logger {
         }
       : undefined;
 
-    this.mappedCells.renderCellAtElement(
-      rowIndex,
-      colIndex,
-      elementIndex,
+    this.cellManager.renderNodeAtCell(
       renderedNode,
+      cell,
+      [rowIndex, colIndex],
       cellAdditionalInfo,
     );
 
-    itemUpdater(renderedNode);
-
-    this.updateElementPosition(elementIndex, { hidden, rowspan, colspan });
+    this.updateElementPosition(cell, { hidden, rowspan, colspan });
     return;
   }
 
@@ -1516,12 +1290,11 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   private addHoverClass = (rowIndex: number) => {
-    this.mappedCells.getElementsForRowIndex(rowIndex).forEach((elIndex) => {
-      const node = this.itemDOMElements[elIndex];
-
-      if (node) {
+    this.cellManager.getCellsForRow(rowIndex).forEach((cell) => {
+      const element = cell.getElement();
+      if (element) {
         this.cellHoverClassNames.forEach((cls) => {
-          node.classList.add(cls);
+          element.classList.add(cls);
         });
       }
     });
@@ -1539,12 +1312,12 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   private removeHoverClass = (rowIndex: number) => {
-    this.mappedCells.getElementsForRowIndex(rowIndex).forEach((elIndex) => {
-      const node = this.itemDOMElements[elIndex];
+    this.cellManager.getCellsForRow(rowIndex).forEach((cell) => {
+      const element = cell.getElement();
 
-      if (node) {
+      if (element) {
         this.cellHoverClassNames.forEach((cls) => {
-          node.classList.remove(cls);
+          element.classList.remove(cls);
         });
       }
     });
@@ -1583,22 +1356,22 @@ export class ReactHeadlessTableRenderer extends Logger {
   };
 
   protected updateElementPosition = (
-    elementIndex: number,
+    cell: GridCellInterface<{
+      renderRowIndex: number;
+      renderColIndex: number;
+    }>,
     options?: { hidden: boolean; rowspan: number; colspan: number },
   ) => {
     if (this.destroyed) {
       return;
     }
-    const itemElement = this.itemDOMElements[elementIndex];
-    const cell = this.mappedCells.getRenderedCellAtElement(elementIndex);
+    const itemElement = cell.getElement();
 
-    if (cell == null) {
-      if (__DEV__) {
-        this.error(`Cannot find item for element ${elementIndex}`);
-      }
+    const cellPos = this.cellManager.getCellPosition(cell);
+    if (!cellPos) {
       return;
     }
-    const [rowIndex, colIndex] = cell;
+    const [rowIndex, colIndex] = cellPos;
 
     const itemPosition = this.brain.getCellOffset(rowIndex, colIndex);
 
@@ -1652,17 +1425,16 @@ export class ReactHeadlessTableRenderer extends Logger {
     }
   };
 
-  private updateDetailElementPosition = (elementIndex: number) => {
+  private updateDetailElementPosition = (row: ListRowInterface) => {
     if (this.destroyed) {
       return;
     }
-    const itemElement = this.detailRowDOMElements[elementIndex];
-    const rowIndex =
-      this.mappedDetailRows.getRenderedRowAtElement(elementIndex);
+    const itemElement = row.getElement();
+    const rowIndex = this.rowManager.getRowIndex(row);
 
     if (rowIndex == null) {
       if (__DEV__) {
-        this.error(`Cannot find row for detail element ${elementIndex}`);
+        this.error(`Cannot find row for detail element ${rowIndex}`);
       }
       return;
     }
@@ -1722,7 +1494,7 @@ export class ReactHeadlessTableRenderer extends Logger {
   public adjustFixedElementsOnScroll = (
     scrollPosition: ScrollPosition = this.brain.getScrollPosition(),
   ) => {
-    const { mappedCells, brain, itemDOMElements, detailRowDOMElements } = this;
+    const { brain, cellManager, rowManager } = this;
 
     const cols = this.brain.getColCount();
     const rows = this.brain.getRowCount();
@@ -1730,17 +1502,18 @@ export class ReactHeadlessTableRenderer extends Logger {
     const { fixedColsStart, fixedColsEnd, fixedRowsStart, fixedRowsEnd } =
       this.brain.getFixedCellInfo();
 
-    if (detailRowDOMElements.length) {
-      this.detailRowDOMElements.forEach((node, index) => {
-        if (!node) {
-          return;
-        }
-        const rowIndex = this.mappedDetailRows.getRenderedRowAtElement(index);
+    if (rowManager.getAttachedCount()) {
+      rowManager.forEachAttachedRow((row) => {
+        const rowIndex = rowManager.getRowIndex(row);
 
         if (rowIndex != null) {
           const y = this.brain.getItemOffsetFor(rowIndex, 'vertical');
 
           if (y == null) {
+            return;
+          }
+          const node = row.getElement();
+          if (!node) {
             return;
           }
 
@@ -1756,10 +1529,11 @@ export class ReactHeadlessTableRenderer extends Logger {
       return;
     }
 
-    if (itemDOMElements[0]) {
+    const attachedCell = this.cellManager.getOneAttachedCell();
+    if (attachedCell) {
       setInfiniteScrollPosition(
         scrollPosition,
-        this.getInfiniteNode(itemDOMElements[0]!),
+        this.getInfiniteNode(attachedCell.getElement()!),
       );
     }
 
@@ -1785,17 +1559,15 @@ export class ReactHeadlessTableRenderer extends Logger {
         { x, y }: { x: number; y: number },
       ) => void,
     ) {
-      const elementIndex = mappedCells.getElementIndexForCell(
-        rowIndex,
-        colIndex,
-      );
-      if (elementIndex === null) {
+      const cell = cellManager.getCellAt([rowIndex, colIndex]);
+      if (cell == null) {
         return;
       }
       const itemPosition = brain.getCellOffset(rowIndex, colIndex);
-      const node = itemDOMElements[elementIndex];
 
-      if (elementIndex != null && node && itemPosition) {
+      const node = cell.getElement();
+
+      if (node && itemPosition) {
         fn(rowIndex, colIndex, node!, itemPosition);
       }
     }
@@ -2015,16 +1787,10 @@ export class ReactHeadlessTableRenderer extends Logger {
 
     (this as any).hoverRowUpdatesInProgress = null;
     (this as any).brain = null;
-    (this as any).mappedCells = null;
-    (this as any).mappedDetailRows = null;
   };
 
   reset() {
-    this.itemDOMElements = [];
-    this.itemDOMRefs = [];
-    this.updaters = [];
-    this.items = [];
-    this.mappedCells.reset();
-    this.mappedDetailRows.reset();
+    this.cellManager.reset();
+    this.rowManager.reset();
   }
 }
