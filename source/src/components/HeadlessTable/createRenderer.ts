@@ -3,14 +3,11 @@ import { buildSubscriptionCallback } from '../utils/buildSubscriptionCallback';
 import { HorizontalLayoutMatrixBrain } from '../VirtualBrain/HorizontalLayoutMatrixBrain';
 import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
 import { HorizontalLayoutTableRenderer } from './HorizontalLayoutTableRenderer';
-import { ReactHeadlessTableRenderer } from './ReactHeadlessTableRenderer';
+import { GridRenderer } from './ReactHeadlessTableRenderer';
 
 export function createRenderer(brain: MatrixBrain) {
   const renderer = !brain.isHorizontalLayoutBrain
-    ? new ReactHeadlessTableRenderer(
-        brain,
-        `ReactHeadlessTableRenderer:${brain.name}`,
-      )
+    ? new GridRenderer(brain, `ReactHeadlessTableRenderer:${brain.name}`)
     : new HorizontalLayoutTableRenderer(
         brain as HorizontalLayoutMatrixBrain,
         `HorizontalLayoutTableRenderer:${brain.name}`,

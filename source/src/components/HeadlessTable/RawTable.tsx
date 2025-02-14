@@ -7,11 +7,9 @@ import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { MatrixBrain } from '../VirtualBrain/MatrixBrain';
 import { createRenderer } from './createRenderer';
 
-import {
-  ReactHeadlessTableRenderer,
-  TableRenderCellFn,
-  TableRenderDetailRowFn,
-} from './ReactHeadlessTableRenderer';
+import { GridRenderer } from './ReactHeadlessTableRenderer';
+
+import { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
 
 export type RawTableProps = {
   name?: string;
@@ -19,7 +17,7 @@ export type RawTableProps = {
   renderCell: TableRenderCellFn;
   renderDetailRow?: TableRenderDetailRowFn;
   cellHoverClassNames?: string[];
-  renderer?: ReactHeadlessTableRenderer;
+  renderer?: GridRenderer;
   onRenderUpdater?: SubscriptionCallback<Renderable>;
   forceRerenderTimestamp?: number;
 };
