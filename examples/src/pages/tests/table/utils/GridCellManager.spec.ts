@@ -402,6 +402,8 @@ export default test.describe('GridCellManager', () => {
     const b = manager.renderNodeAtCell('b', createCell(), [0, 1]);
     const c = manager.renderNodeAtCell('c', createCell(), [1, 0]);
     const d = manager.renderNodeAtCell('d', createCell(), [1, 1]);
+    manager.renderNodeAtCell('e', createCell(), [3, 1]);
+    manager.renderNodeAtCell('f', createCell(), [3, 2]);
 
     expect(manager.getMatrix()).toEqual([
       ['a', 'b', null],
