@@ -7,15 +7,19 @@ import { ListRowPoolForReact } from './ListRowPoolForReact';
 export type { ListRowInterface };
 
 export class ListRowManager extends Logger {
-  private pool: ListRowPoolForReact = new ListRowPoolForReact(this.debugId);
+  private pool: ListRowPoolForReact;
 
   private indexToRow: Map<number, ListRowInterface> = new Map();
   private rowToIndex: WeakMap<ListRowInterface, number> = new WeakMap();
 
+  public debugId: string;
   private offRemoveRow: VoidFunction;
 
-  constructor(private debugId: string) {
+  constructor(debugId: string) {
     super(`${debugId}:ListRowManager`);
+    this.debugId = debugId;
+
+    this.pool = new ListRowPoolForReact(debugId);
 
     this.offRemoveRow = this.pool.onRemoveRow((row) => this.onRemoveRow(row));
   }
