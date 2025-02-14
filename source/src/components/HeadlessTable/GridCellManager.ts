@@ -26,13 +26,17 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     CellPos
   > = new WeakMap();
 
-  private pool: GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> =
-    new GridCellPoolForReact<T_ADDITIONAL_CELL_INFO>(this.debugId);
+  private pool: GridCellPoolForReact<T_ADDITIONAL_CELL_INFO>;
+
+  public debugId: string;
 
   private offRemoveCell: VoidFunction;
 
-  constructor(private debugId: string) {
+  constructor(debugId: string) {
     super(`${debugId}:GridCellManager`);
+
+    this.debugId = debugId;
+    this.pool = new GridCellPoolForReact<T_ADDITIONAL_CELL_INFO>(debugId);
 
     this.offRemoveCell = this.pool.onRemoveCell((cell) =>
       this.onRemoveCell(cell),
