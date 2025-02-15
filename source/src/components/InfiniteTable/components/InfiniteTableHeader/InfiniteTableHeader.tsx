@@ -7,7 +7,7 @@ import { RawTable } from '../../../HeadlessTable/RawTable';
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,
-} from '../../../HeadlessTable/ReactHeadlessTableRenderer';
+} from '../../../HeadlessTable/rendererTypes';
 import { ScrollPosition } from '../../../types/ScrollPosition';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';

@@ -4,7 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropCellSelection_MultiCell,
-  RowSelectionState,
 } from '@infinite-table/infinite-react';
 
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
@@ -28,7 +27,7 @@ type Developer = {
 };
 
 const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers100')
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -71,12 +70,6 @@ export default function GroupByExample() {
 
   return (
     <>
-      <div>
-        Selected{' '}
-        {cellSelection instanceof RowSelectionState
-          ? cellSelection.getSelectedCount()
-          : false}
-      </div>
       <DataSource<Developer>
         primaryKey="id"
         data={dataSource}

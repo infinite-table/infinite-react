@@ -1,13 +1,14 @@
 import { InternalVarUtils } from '../InfiniteTable/utils/infiniteDOMUtils';
 import { ThemeVars } from '../InfiniteTable/vars.css';
 import { HorizontalLayoutMatrixBrain } from '../VirtualBrain/HorizontalLayoutMatrixBrain';
+
 import {
   columnOffsetAtIndexWhileReordering,
   currentTransformY,
-  ReactHeadlessTableRenderer,
+  GridRenderer,
 } from './ReactHeadlessTableRenderer';
 
-export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
+export class HorizontalLayoutTableRenderer extends GridRenderer {
   protected brain: HorizontalLayoutMatrixBrain;
   constructor(brain: HorizontalLayoutMatrixBrain, debugId?: string) {
     super(brain, debugId);
@@ -26,7 +27,8 @@ export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
   }
 
   isCellRenderedAndMappedCorrectly(row: number, col: number) {
-    const rendered = this.mappedCells.isCellRendered(row, col);
+    const cell = this.cellManager.getCellAt([row, col]);
+    const rendered = !!cell;
 
     if (!rendered) {
       return {
@@ -35,7 +37,7 @@ export class HorizontalLayoutTableRenderer extends ReactHeadlessTableRenderer {
       };
     }
 
-    const cellAdditionalInfo = this.mappedCells.getCellAdditionalInfo(row, col);
+    const cellAdditionalInfo = cell!.getAdditionalInfo();
 
     if (!cellAdditionalInfo) {
       return {

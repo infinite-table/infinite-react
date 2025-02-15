@@ -12,11 +12,6 @@ import { setupResizeObserver } from '../ResizeObserver';
 
 import type { ScrollPosition } from '../types/ScrollPosition';
 import type { Size } from '../types/Size';
-import type {
-  ReactHeadlessTableRenderer,
-  TableRenderCellFn,
-  TableRenderDetailRowFn,
-} from './ReactHeadlessTableRenderer';
 
 import { MatrixBrain, MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import { SpacePlaceholder } from '../VirtualList/SpacePlaceholder';
@@ -31,6 +26,8 @@ import { Renderable } from '../types/Renderable';
 import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicator';
 import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicator';
 import { join } from '../../utils/join';
+import { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
+import { GridRenderer } from './ReactHeadlessTableRenderer';
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
@@ -45,7 +42,7 @@ export type HeadlessTableProps = {
   activeCellIndex?: [number, number] | null;
   scrollStopDelay?: number;
   cellHoverClassNames?: string[];
-  renderer?: ReactHeadlessTableRenderer;
+  renderer?: GridRenderer;
   onRenderUpdater?: SubscriptionCallback<Renderable>;
 };
 

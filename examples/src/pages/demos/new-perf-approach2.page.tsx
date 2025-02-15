@@ -1,5 +1,5 @@
 import { HeadlessTableWithPinnedContainers } from '@infinite-table/infinite-react/src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
-import { TableRenderCellFnParam } from '@infinite-table/infinite-react/src/components/HeadlessTable/ReactHeadlessTableRenderer';
+import { TableRenderCellFnParam } from '@infinite-table/infinite-react/src/components/HeadlessTable/rendererTypes';
 import { MatrixBrain } from '@infinite-table/infinite-react/src/components/VirtualBrain/MatrixBrain';
 import * as React from 'react';
 import { useState } from 'react';

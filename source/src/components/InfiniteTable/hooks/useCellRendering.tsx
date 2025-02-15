@@ -8,7 +8,7 @@ import {
   TableRenderCellFnParam,
   TableRenderDetailRowFn,
   TableRenderDetailRowFnParam,
-} from '../../HeadlessTable/ReactHeadlessTableRenderer';
+} from '../../HeadlessTable/rendererTypes';
 import { useLatest } from '../../hooks/useLatest';
 import { useRerender } from '../../hooks/useRerender';
 import type { Size } from '../../types/Size';
