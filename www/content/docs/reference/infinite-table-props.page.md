@@ -2608,7 +2608,7 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 </Prop>
 
-<Prop name="getCellContextMenuItems" type="({data, column, rowInfo}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] }">
+<Prop name="getCellContextMenuItems" type="({data, column, rowInfo}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] } | Promise">
 
 > Customises the context menu items for a cell.
 
@@ -2632,6 +2632,14 @@ The `getCellContextMenuItems` function can return one of the following:
 ```
 
 </Sandpack>
+
+<Note>
+
+This function can also return a `Promise` that resolves to one of the above types. This is useful for lazy loading the context menu items.
+
+When returning a `Promise`, the context menu will be shown after the promise resolves, and the default browser context menu is not shown.
+
+</Note>
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
@@ -2671,7 +2679,7 @@ Right-click any cell in the table to see a context menu with multiple columns (`
 
 </Prop>
 
-<Prop name="getContextMenuItems" type="({event, data?, column?, rowInfo}, {api, dataSourceApi}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] }">
+<Prop name="getContextMenuItems" type="({event, data?, column?, rowInfo}, {api, dataSourceApi}) => MenuItem[] | null | { items: MenuItem[], columns: [{name}] } | Promise">
 
 > Customises the context menu items for the whole table.
 
@@ -2688,6 +2696,14 @@ If this function returns null, the default context menu of the browser will be s
 ```
 
 </Sandpack>
+
+<Note>
+
+This function can also return a `Promise` that resolves to one of the above types. This is useful for lazy loading the context menu items.
+
+When returning a `Promise`, the context menu will be shown after the promise resolves, and the default browser context menu is not shown.
+
+</Note>
 
 </Prop>
 
