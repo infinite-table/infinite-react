@@ -143,7 +143,13 @@ export default () => {
                 position: 'relative',
               },
             }}
-            getCellContextMenuItems={getCellContextMenuItems}
+            getCellContextMenuItems={(...args) => {
+              return new Promise((resolve) => {
+                setTimeout(() => {
+                  resolve(getCellContextMenuItems(...args));
+                }, 500);
+              });
+            }}
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}

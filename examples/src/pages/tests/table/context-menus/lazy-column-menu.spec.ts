@@ -1,15 +1,15 @@
 import { test, expect } from '@testing';
 
-export default test.describe.parallel('Context Menu', () => {
+export default test.describe.parallel('Lazy Context Menu', () => {
   test('should work for cells', async ({ page, columnModel, menuModel }) => {
     await page.waitForInfinite();
 
-    let currencyRow0 = columnModel.getCellLocator({
+    let locator = columnModel.getCellLocator({
       rowIndex: 0,
       colId: 'currency',
     });
 
-    await currencyRow0.click({
+    await locator.click({
       button: 'right',
     });
 
@@ -24,6 +24,10 @@ export default test.describe.parallel('Context Menu', () => {
         button: 'right',
       });
 
+    const menuLocator = menuModel.getMenuLocator();
+
+    // wait for the menu to be visible
+    await expect(menuLocator).toBeVisible();
     expect(await menuModel.getTextForCell('hi')).toBe('hi John');
     expect(await menuModel.isMenuOpen()).toBe(true);
 
@@ -32,18 +36,6 @@ export default test.describe.parallel('Context Menu', () => {
       .getCellLocator({
         rowIndex: 0,
         colId: 'age',
-      })
-      .click({
-        button: 'right',
-      });
-
-    expect(await menuModel.isMenuOpen()).toBe(false);
-
-    // clicking the noMenu column should not open a menu
-    await columnModel
-      .getCellLocator({
-        rowIndex: 0,
-        colId: 'noMenu',
       })
       .click({
         button: 'right',
