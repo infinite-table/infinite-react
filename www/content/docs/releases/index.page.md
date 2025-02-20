@@ -5,6 +5,8 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 6.1.0
 
+This release includes a refactor of the core virtualization algorithm, which should result some performance improvements in certain scenarios.
+
 @milestone id="142"
 
 ## 6.1.0-canary.0
