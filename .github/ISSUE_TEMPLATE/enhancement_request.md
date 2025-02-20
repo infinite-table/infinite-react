@@ -2,7 +2,7 @@
 name: Enhancement Request
 about: Let us know a feature you want Infinite to support
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
