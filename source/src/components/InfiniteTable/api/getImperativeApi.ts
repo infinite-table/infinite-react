@@ -46,7 +46,7 @@ import {
 } from './getCellSelectionApi';
 
 import { getRowDetailApi, InfiniteTableRowDetailApi } from './getRowDetailApi';
-import { HorizontalLayoutColVisibilityOptions } from '../../HeadlessTable/ReactHeadlessTableRenderer';
+import { HorizontalLayoutColVisibilityOptions } from '../../HeadlessTable/rendererTypes';
 
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,

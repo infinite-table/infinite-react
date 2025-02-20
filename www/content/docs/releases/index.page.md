@@ -2,6 +2,13 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
+## 7.0.0-canary.0
+
+Fix virtualization issues.
+
+## 6.0.20
+
+@milestone id="142"
 
 ## 6.0.19
 

@@ -73,6 +73,38 @@ export default test.describe('DeepMap', () => {
     ]);
   });
 
+  test('valuesAt', () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([1, 0], 2);
+    map.set([1, 1], 3);
+    map.set([1, 1, 1], 33);
+    map.set([2, 0], 4);
+    map.set([], 5);
+    map.set([7], 7);
+    map.set([7, 2], 72);
+    expect(map.valuesAt([])).toEqual([5, 7]);
+    expect(map.valuesAt([1])).toEqual([2, 3]);
+  });
+
+  test('keysAt', () => {
+    const map = new DeepMap<number, number>();
+
+    map.set([1], 1);
+    map.set([1, 0], 2);
+    map.set([1, 1], 3);
+    map.set([1, 1, 1], 33);
+    map.set([2, 0], 4);
+
+    // map.set([7], 7);
+    map.set([7, 2], 72);
+    map.set([7, 3], 72);
+    map.set([8], 8);
+    expect(map.rawKeysAt([])).toEqual([1, 2, 7, 8]);
+    expect(map.rawKeysAt([1])).toEqual([0, 1]);
+    expect(map.rawKeysAt([7])).toEqual([2, 3]);
+  });
+
   test('get values starting with keys should work properly', async () => {
     const map = new DeepMap<number, number>();
 
@@ -518,6 +550,10 @@ export default test.describe('DeepMap', () => {
       ['1'],
     ];
     expect(map.getUnnestedKeysStartingWith([], true)).toEqual(expected);
+    expect(map.getUnnestedKeysStartingWith(['3', '31'])).toEqual([
+      ['3', '31', '300'],
+      ['3', '31', '400'],
+    ]);
 
     map.set([], true);
 
@@ -558,6 +594,107 @@ export default test.describe('DeepMap', () => {
       [4, ['fr', 20], 0],
       [7, ['fr', 35], 1],
       [81, ['usa', 5], 0],
+    ]);
+  });
+
+  test('visit some depth first, with index', () => {
+    const map = new DeepMap<string | number, number>();
+
+    map.set(['uk'], 1);
+    map.set(['uk', 20], 21);
+    map.set(['fr'], 3);
+    map.set([], 777);
+    map.set(['fr', 20], 4);
+    map.set(['uk', 25], 5);
+    map.set(['fr', 35], 7);
+
+    map.set(['usa', 5], 81);
+
+    const result: any[] = [];
+
+    map.visitSome((value, keys, index, next?: () => void) => {
+      result.push([value, keys, index]);
+      if (value === 3) {
+        return true;
+      }
+      next?.();
+      return false;
+    });
+    expect(result).toEqual([
+      [777, [], 0],
+      [1, ['uk'], 0],
+      [21, ['uk', 20], 0],
+      [5, ['uk', 25], 1],
+      [3, ['fr'], 1],
+      // [4, ['fr', 20], 0],
+      // [7, ['fr', 35], 1],
+      // [81, ['usa', 5], 0],
+    ]);
+  });
+
+  test('visit some depth first, with index and continue next', () => {
+    const map = new DeepMap<string | number, number>();
+
+    map.set(['uk'], 1);
+    map.set(['uk', 20], 21);
+    map.set(['fr'], 3);
+    map.set([], 777);
+    map.set(['fr', 20], 4);
+    map.set(['uk', 25], 5);
+    map.set(['fr', 35], 7);
+
+    map.set(['usa', 5], 81);
+
+    const result: any[] = [];
+
+    map.visitSome((value, keys, index, next?: () => void) => {
+      result.push([value, keys, index]);
+      next?.();
+      if (value === 3) {
+        return true;
+      }
+
+      return false;
+    });
+    expect(result).toEqual([
+      [777, [], 0],
+      [1, ['uk'], 0],
+      [21, ['uk', 20], 0],
+      [5, ['uk', 25], 1],
+      [3, ['fr'], 1],
+      [4, ['fr', 20], 0],
+      [7, ['fr', 35], 1],
+      // [81, ['usa', 5], 0],
+    ]);
+  });
+
+  test('visit ', () => {
+    const map = new DeepMap<string | number, number>();
+
+    map.set(['uk'], 1);
+    map.set(['uk', 20], 21);
+    map.set(['fr'], 3);
+    map.set([], 777);
+    map.set(['fr', 20], 4);
+    map.set(['uk', 25], 5);
+    map.set(['fr', 35], 7);
+
+    map.set(['usa', 5], 81);
+
+    const result: any[] = [];
+
+    map.visit(({ value }, keys) => {
+      result.push([value, keys]);
+    });
+    expect(result).toEqual([
+      [1, ['uk']],
+      [21, ['uk', 20]],
+      [5, ['uk', 25]],
+      [3, ['fr']],
+      [4, ['fr', 20]],
+      [7, ['fr', 35]],
+      [777, []],
+      [81, ['usa', 5]],
     ]);
   });
 });

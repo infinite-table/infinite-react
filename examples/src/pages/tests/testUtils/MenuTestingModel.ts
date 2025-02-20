@@ -24,12 +24,14 @@ export class MenuTestingModel {
     return await locator.innerText();
   }
 
-  async isMenuOpen() {
-    const locator = getMenuCellLocatorForKey(
+  getMenuLocator() {
+    return getMenuCellLocatorForKey(
       { rowKey: null },
       { page: this.page },
     ).first();
+  }
 
-    return await locator.isVisible();
+  async isMenuOpen() {
+    return await this.getMenuLocator().isVisible();
   }
 }

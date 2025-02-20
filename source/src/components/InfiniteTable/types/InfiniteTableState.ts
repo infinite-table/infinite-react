@@ -8,7 +8,7 @@ import {
   RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
 import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
-import { ReactHeadlessTableRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
+import { GridRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import type { NonUndefined } from '../../types/NonUndefined';
@@ -60,7 +60,7 @@ export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
 export interface InfiniteTableSetupState<T> {
   brain: MatrixBrain;
   headerBrain: MatrixBrain;
-  renderer: ReactHeadlessTableRenderer;
+  renderer: GridRenderer;
   onRenderUpdater: SubscriptionCallback<Renderable>;
 
   forceBodyRerenderTimestamp: number;

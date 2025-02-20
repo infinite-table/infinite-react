@@ -1,13 +1,18 @@
 import * as React from 'react';
 
 import { Menu } from '../../Menu';
-import { MenuState } from '../../Menu/MenuState';
 import { getCellContext } from '../components/InfiniteTableRow/columnRendering';
-import { InfiniteTableContextValue } from '../types';
+import type { InfiniteTableContextValue } from '../types';
+
 import {
   CellContextMenuLocationWithEvent,
   ContextMenuLocationWithEvent,
 } from '../types/InfiniteTableState';
+import {
+  getLazyMenu,
+  getMenuDefaultProps,
+  getMenuItemsAndColumns,
+} from './contextMenuUtils';
 
 export function getCellContextMenu<T>(
   cellLocation: CellContextMenuLocationWithEvent,
@@ -42,53 +47,36 @@ export function getCellContextMenu<T>(
     };
   }
 
+  const menuDefaultProps = getMenuDefaultProps({
+    onHideIntent,
+  });
+
   const menuDefinition = getCellContextMenuItems(cellContext, context);
-  let items = menuDefinition
-    ? Array.isArray(menuDefinition)
-      ? menuDefinition
-      : menuDefinition.items
-    : null;
-  const menuColumns =
-    menuDefinition && !Array.isArray(menuDefinition)
-      ? menuDefinition.columns
-      : undefined;
 
-  const onRootMouseDown: EventListener = (event: Event) => {
-    //@ts-ignore
-    event.__insideMenu = true;
-  };
+  const preventDefault =
+    menuDefinition instanceof Promise
+      ? true
+      : Array.isArray(menuDefinition)
+      ? true
+      : !!(menuDefinition && Array.isArray(menuDefinition.items));
 
-  const onHide = (state: MenuState) => {
-    state.domRef.current?.parentNode?.removeEventListener(
-      'mousedown',
-      onRootMouseDown,
-    );
-  };
+  if (menuDefinition instanceof Promise) {
+    return {
+      cellContext,
+      menu: getLazyMenu(menuDefinition, menuDefaultProps, MenuCmp),
+      preventDefault,
+    };
+  }
+
+  const { items, columns } = getMenuItemsAndColumns(menuDefinition);
 
   if (!items || !items.length) {
     return { cellContext, menu: null, preventDefault: Array.isArray(items) };
   }
 
   return {
-    preventDefault: true,
-    menu: (
-      <MenuCmp
-        columns={menuColumns}
-        autoFocus
-        items={items}
-        onShow={(state) => {
-          state.domRef.current?.parentNode?.addEventListener(
-            'mousedown',
-            onRootMouseDown,
-          );
-        }}
-        onHide={onHide}
-        onHideIntent={(state: MenuState) => {
-          onHide(state);
-          onHideIntent?.();
-        }}
-      />
-    ),
+    preventDefault,
+    menu: <MenuCmp {...menuDefaultProps} columns={columns} items={items} />,
     cellContext,
   };
 }
@@ -99,7 +87,6 @@ export function getTableContextMenu<T>(
   onHideIntent?: VoidFunction,
 ) {
   const { getState, getComputed } = context;
-
   const { components, getContextMenuItems } = getState();
 
   const MenuCmp = components?.Menu ?? Menu;
@@ -125,54 +112,34 @@ export function getTableContextMenu<T>(
     return { cellContext, menu: null, preventDefault: false };
   }
 
-  let menuDefinition = getContextMenuItems(cellContext, context);
+  const menuDefaultProps = getMenuDefaultProps({
+    onHideIntent,
+  });
+  const menuDefinition = getContextMenuItems(cellContext, context);
 
-  let items = menuDefinition
-    ? Array.isArray(menuDefinition)
-      ? menuDefinition
-      : menuDefinition.items
-    : null;
-  const menuColumns =
-    menuDefinition && !Array.isArray(menuDefinition)
-      ? menuDefinition.columns
-      : undefined;
+  const preventDefault =
+    menuDefinition instanceof Promise
+      ? true
+      : Array.isArray(menuDefinition)
+      ? true
+      : !!(menuDefinition && Array.isArray(menuDefinition.items));
 
-  const onRootMouseDown: EventListener = (event: Event) => {
-    //@ts-ignore
-    event.__insideMenu = true;
-  };
+  if (menuDefinition instanceof Promise) {
+    return {
+      cellContext,
+      menu: getLazyMenu(menuDefinition, menuDefaultProps, MenuCmp),
+      preventDefault,
+    };
+  }
 
-  const onHide = (state: MenuState) => {
-    state.domRef.current?.parentNode?.removeEventListener(
-      'mousedown',
-      onRootMouseDown,
-    );
-  };
-
+  const { items, columns } = getMenuItemsAndColumns(menuDefinition);
   if (!items || !items.length) {
     return { cellContext, menu: null, preventDefault: Array.isArray(items) };
   }
 
   return {
-    preventDefault: true,
-    menu: (
-      <MenuCmp
-        columns={menuColumns}
-        autoFocus
-        items={items}
-        onShow={(state) => {
-          state.domRef.current?.parentNode?.addEventListener(
-            'mousedown',
-            onRootMouseDown,
-          );
-        }}
-        onHide={onHide}
-        onHideIntent={(state: MenuState) => {
-          onHide(state);
-          onHideIntent?.();
-        }}
-      />
-    ),
+    preventDefault,
+    menu: <MenuCmp {...menuDefaultProps} columns={columns} items={items} />,
     cellContext,
   };
 }

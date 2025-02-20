@@ -928,14 +928,14 @@ export type InfiniteTablePropGetCellContextMenuItems<T> = (
     event: React.MouseEvent;
   },
   params: InfiniteTablePublicContext<T>,
-) => GetContextMenuItemsReturnType;
+) => Promise<GetContextMenuItemsReturnType> | GetContextMenuItemsReturnType;
 
 export type InfiniteTablePropGetContextMenuItems<T> = (
   param: {
     event: React.MouseEvent;
   } & Partial<InfiniteTableRowInfoDataDiscriminatorWithColumn<T>>,
   params: InfiniteTablePublicContext<T>,
-) => GetContextMenuItemsReturnType;
+) => Promise<GetContextMenuItemsReturnType> | GetContextMenuItemsReturnType;
 
 export type InfiniteTablePropGetFilterOperatorMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,
