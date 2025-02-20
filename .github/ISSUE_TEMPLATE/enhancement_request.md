@@ -11,7 +11,7 @@ assignees: ''
 
 It would be great if Infinite Table could do the following:
 
-** Links to related functionality or similar implementations** - optional
+**Links to related functionality or similar implementations** - optional
 
 **Additional context**
 
