@@ -137,7 +137,7 @@ export class RowTestingModel {
 
   async getRenderedRowCount() {
     return await this.page.$$eval(
-      '.InfiniteColumnCell[data-row-index][data-col-index="0"]',
+      '.InfiniteColumnCell[data-row-index][data-col-index="0"]:not(.InfiniteDetachedCell)',
       (rows) => rows.length,
     );
   }

@@ -15,8 +15,8 @@ export const boxSizingBorderBox = style(borderBox);
 globalStyle(`${boxSizingBorderBox}:before`, borderBox);
 globalStyle(`${boxSizingBorderBox}:after`, borderBox);
 globalStyle(`${boxSizingBorderBox} *`, borderBox);
-globalStyle(`${boxSizingBorderBox} *:before`, borderBox);
-globalStyle(`${boxSizingBorderBox} *:after`, borderBox);
+// globalStyle(`${boxSizingBorderBox} *:before`, borderBox);
+// globalStyle(`${boxSizingBorderBox} *:after`, borderBox);
 
 export const position = styleVariants({
   relative: { position: 'relative' },

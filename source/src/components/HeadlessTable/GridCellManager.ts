@@ -8,6 +8,8 @@ import { TableRenderRange } from '../VirtualBrain/IBrain';
 import { GridCellInterface } from './GridCellInterface';
 import { GridCellPoolForReact } from './GridCellPoolForReact';
 
+const ASC_SORT = (a: number, b: number) => a - b;
+
 type CellPos = [number, number];
 
 export type { GridCellInterface };
@@ -16,10 +18,14 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   private matrix: DeepMap<number, GridCellInterface<T_ADDITIONAL_CELL_INFO>> =
     new DeepMap();
 
-  private matrixWithHistory: DeepMap<
+  private rowsWithCellsHistory: Map<
     number,
     Set<GridCellInterface<T_ADDITIONAL_CELL_INFO>>
-  > = new DeepMap();
+  > = new Map();
+  private columnsWithCellsHistory: Map<
+    number,
+    Set<GridCellInterface<T_ADDITIONAL_CELL_INFO>>
+  > = new Map();
 
   private cellToMatrixPosition: WeakMap<
     GridCellInterface<T_ADDITIONAL_CELL_INFO>,
@@ -55,15 +61,9 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
       return;
     }
 
-    this.matrix.delete(cellPos);
-
-    // get the list of cells at in the history matrix
-    // that were rendered at that position
-    let cellsAtPos = this.matrixWithHistory.get(cellPos);
-
-    if (cellsAtPos) {
-      cellsAtPos.delete(cell);
-    }
+    this.clearCellFromMatrix(cell, cellPos, {
+      skipHistory: false,
+    });
   }
 
   set poolSize(cellCount: number) {
@@ -75,54 +75,109 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   }
 
   getDetachedCell() {
-    console.warn('getting detached cell');
     return this.pool.getDetachedCell();
+  }
+
+  private clearCellFromMatrix(
+    cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>,
+    cellPos: CellPos,
+    config: {
+      skipHistory?: boolean;
+    },
+  ) {
+    this.matrix.delete(cellPos);
+    // but don't delete from cellToMatrixPosition
+    // #we-need-the-last-value-in-cell-to-matrix-position
+    // this.cellToMatrixPosition.delete(cell);
+
+    if (config.skipHistory) {
+      return;
+    }
+    const [rowIndex, colIndex] = cellPos;
+
+    const cellsAtRow = this.rowsWithCellsHistory.get(rowIndex);
+
+    const cellsAtCol = this.columnsWithCellsHistory.get(colIndex);
+
+    if (cellsAtRow) {
+      cellsAtRow.delete(cell);
+      if (cellsAtRow.size === 0) {
+        this.rowsWithCellsHistory.delete(rowIndex);
+      }
+    }
+
+    if (cellsAtCol) {
+      cellsAtCol.delete(cell);
+      if (cellsAtCol.size === 0) {
+        this.columnsWithCellsHistory.delete(colIndex);
+      }
+    }
+  }
+
+  private addCellToMatrix(
+    cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>,
+    cellPos: CellPos,
+  ) {
+    const [rowIndex, colIndex] = cellPos;
+
+    this.matrix.set(cellPos, cell);
+    this.cellToMatrixPosition.set(cell, cellPos);
+
+    // add the cell to the list of cells last rendered at this position
+    let cellsAtRow = this.rowsWithCellsHistory.get(rowIndex);
+    let cellsAtColumn = this.columnsWithCellsHistory.get(colIndex);
+
+    if (!cellsAtRow) {
+      cellsAtRow = new Set();
+      cellsAtRow.add(cell);
+      this.rowsWithCellsHistory.set(rowIndex, cellsAtRow);
+    } else {
+      cellsAtRow.add(cell);
+    }
+
+    if (!cellsAtColumn) {
+      cellsAtColumn = new Set();
+      cellsAtColumn.add(cell);
+      this.columnsWithCellsHistory.set(colIndex, cellsAtColumn);
+    } else {
+      cellsAtColumn.add(cell);
+    }
   }
 
   private setCellPositionInMatrix(
     cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>,
     cellPos: CellPos | null,
   ) {
+    const currentCellPos = this.cellToMatrixPosition.get(cell);
+
     if (cellPos == null) {
-      const currentCellPos = this.cellToMatrixPosition.get(cell);
+      // we need to remove the cell from the matrix
+
+      // if we found the position of the cell,
+      // let's remove it from the matrix
       if (currentCellPos) {
-        this.matrix.delete(currentCellPos);
-      }
-      // don't delete
-      // #we-need-the-last-value-in-cell-to-matrix-position
-      // this.cellToMatrixPosition.delete(cell);
-    } else {
-      let prevCellPos = this.cellToMatrixPosition.get(cell);
-
-      const samePos =
-        prevCellPos &&
-        prevCellPos[0] === cellPos[0] &&
-        prevCellPos[1] === cellPos[1];
-
-      this.matrix.set(cellPos, cell);
-      this.cellToMatrixPosition.set(cell, cellPos);
-
-      // add the cell to the list of cells last rendered at this position
-      let cellsAtPos = this.matrixWithHistory.get(cellPos);
-
-      if (!cellsAtPos) {
-        cellsAtPos = new Set();
-        cellsAtPos.add(cell);
-        this.matrixWithHistory.set(cellPos, cellsAtPos);
-      } else {
-        cellsAtPos.add(cell);
+        this.clearCellFromMatrix(cell, currentCellPos, {
+          skipHistory: true,
+        });
       }
 
-      // remove from previous position
-      if (prevCellPos && !samePos) {
-        this.matrix.delete(prevCellPos);
-        let cellsAtPrevPos = this.matrixWithHistory.get(prevCellPos);
-
-        if (cellsAtPrevPos) {
-          cellsAtPrevPos.delete(cell);
-        }
-      }
+      return;
     }
+    const [rowIndex, colIndex] = cellPos;
+
+    const samePos =
+      currentCellPos &&
+      currentCellPos[0] === rowIndex &&
+      currentCellPos[1] === colIndex;
+
+    // remove from previous position
+    if (currentCellPos && !samePos) {
+      this.clearCellFromMatrix(cell, currentCellPos, {
+        skipHistory: false,
+      });
+    }
+
+    this.addCellToMatrix(cell, cellPos);
   }
 
   renderNodeAtCell(
@@ -133,25 +188,13 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   ) {
     const currentCellAtPos = this.getCellAt(cellPos);
 
-    if (currentCellAtPos) {
-      if (currentCellAtPos !== cell) {
-        // we have another cell at that position
-        // so we need to detach that cell
-        this.detachCellAt(cellPos);
-        // but also detach this cell if it's attached
-        this.detachCell(cell);
-      } else {
-        // it's the same cell, so we don't need to do anything
-      }
-    } else {
-      // we don't have a cell at that position
-
-      // and we cant to put `cell` at that position
-      // but if it's attached somewhere else, we need to detach it first
-
-      this.detachCell(cell);
+    if (currentCellAtPos && currentCellAtPos !== cell) {
+      // we have another cell at that position
+      // so we need to detach that cell
+      this.detachCellAt(cellPos);
     }
 
+    // make sure it's attached
     this.pool.attachCell(cell);
 
     this.setCellPositionInMatrix(cell, cellPos);
@@ -209,35 +252,19 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     const [rowIndex, colIndex] = cellPos;
 
     if (optimise === 'row') {
-      this.matrixWithHistory.visitSome((cellsForPos, [row], __, next) => {
-        if (cell) {
-          return true;
-        }
-        if (row === rowIndex) {
-          cell = setFind(cellsForPos, (c) => !this.isCellAttached(c));
-          if (cell) {
-            return true;
-          }
-        }
-        next?.();
-        return false;
-      });
+      const cellsAtRow = this.rowsWithCellsHistory.get(rowIndex);
+
+      if (cellsAtRow) {
+        cell = setFind(cellsAtRow, (c) => !this.isCellAttached(c));
+      }
     }
 
     if (optimise === 'column') {
-      this.matrixWithHistory.visitSome((cellsForPos, [_row, col], __, next) => {
-        if (cell) {
-          return true;
-        }
-        if (col === colIndex) {
-          cell = setFind(cellsForPos, (c) => !this.isCellAttached(c));
-          if (cell) {
-            return true;
-          }
-        }
-        next?.();
-        return false;
-      });
+      const cellsAtColumn = this.columnsWithCellsHistory.get(colIndex);
+
+      if (cellsAtColumn) {
+        cell = setFind(cellsAtColumn, (c) => !this.isCellAttached(c));
+      }
     }
 
     return cell ?? this.getDetachedCell();
@@ -299,7 +326,7 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   getRowsWithCells() {
     // we need to sort them, as otherwise it could return [1,3,2]
     // and then in getMatrix we do a .pop and not get the latest row
-    return this.matrix.rawKeysAt([]).sort();
+    return this.matrix.rawKeysAt([]).sort(ASC_SORT);
   }
 
   getColumnsWithCells() {
@@ -308,7 +335,7 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     // we use a set to remove duplicates
     const columns = new Set(positions.map((pos) => pos[1]));
 
-    return [...columns.values()].sort();
+    return [...columns.values()].sort(ASC_SORT);
   }
 
   isRowAttached(rowIndex: number) {
@@ -335,10 +362,17 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   }
 
   detachCell(cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>) {
-    const cellPos = this.getCellPosition(cell);
-    if (cellPos) {
-      this.detachCellAt(cellPos);
+    if (cell) {
+      // detach from pool
+      this.pool.detachCell(cell);
+
+      // also set the cell position to null
+      this.setCellPositionInMatrix(cell, null);
+
+      return true;
     }
+
+    return false;
   }
 
   detachCells(cells: Set<GridCellInterface<T_ADDITIONAL_CELL_INFO>>) {
@@ -348,7 +382,7 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   detachRowsStartingWith(rowIndex: number) {
     const rows = this.getRowsWithCells().sort();
 
-    let idx = binarySearch(rows, rowIndex, (a, b) => a - b);
+    let idx = binarySearch(rows, rowIndex, ASC_SORT);
 
     if (idx < 0) {
       idx = ~idx;
@@ -360,7 +394,7 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
 
   detachColsStartingWith(colIndex: number) {
     const cols = this.getColumnsWithCells().sort();
-    let idx = binarySearch(cols, colIndex, (a, b) => a - b);
+    let idx = binarySearch(cols, colIndex, ASC_SORT);
     if (idx < 0) {
       idx = ~idx;
     }
@@ -380,10 +414,21 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
 
   detachCellAt(cellPos: CellPos) {
     const cell = this.getCellAt(cellPos);
+
     if (cell) {
-      this.setCellPositionInMatrix(cell, null);
-      this.pool.detachCell(cell!);
+      return this.detachCell(cell);
     }
+
+    return false;
+  }
+
+  onCellAttachmentChange(
+    callback: (
+      cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>,
+      attached: boolean,
+    ) => void,
+  ) {
+    return this.pool.onCellAttachmentChange(callback);
   }
 
   getCellsOutsideRenderRange = (range: TableRenderRange) => {
@@ -442,7 +487,9 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   reset() {
     this.pool.reset();
     this.matrix.clear();
-    this.matrixWithHistory.clear();
+
+    this.rowsWithCellsHistory.clear();
+    this.columnsWithCellsHistory.clear();
     this.offRemoveCell();
     this.offRemoveCell = () => {};
   }
@@ -451,5 +498,11 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     this.pool.getDetachedCells().forEach((cell) => {
       cell.update(null);
     });
+  }
+
+  withDetachedCells(
+    fn: (cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>) => void,
+  ) {
+    this.pool.getDetachedCells().forEach(fn);
   }
 }

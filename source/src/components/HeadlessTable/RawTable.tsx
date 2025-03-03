@@ -17,6 +17,7 @@ export type RawTableProps = {
   renderCell: TableRenderCellFn;
   renderDetailRow?: TableRenderDetailRowFn;
   cellHoverClassNames?: string[];
+  cellDetachedClassNames: string[];
   renderer?: GridRenderer;
   onRenderUpdater?: SubscriptionCallback<Renderable>;
   forceRerenderTimestamp?: number;
@@ -37,6 +38,10 @@ export function RawTableFn(props: RawTableProps) {
   useEffect(() => {
     renderer.cellHoverClassNames = props.cellHoverClassNames || [];
   }, [renderer, props.cellHoverClassNames]);
+
+  useEffect(() => {
+    renderer.cellDetachedClassNames = props.cellDetachedClassNames || [];
+  }, [renderer, props.cellDetachedClassNames]);
 
   // we need to useLayoutEffect here instead of useEffect!
   // as otherwise sometimes column headers might not be rendered correctly

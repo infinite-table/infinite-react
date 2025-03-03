@@ -9,15 +9,6 @@ import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 
 import { ThemeVars } from '../vars.css';
-import {
-  alignItems,
-  display,
-  flexFlow,
-  position,
-  userSelect,
-  whiteSpace,
-  willChange,
-} from '../utilities.css';
 import { InternalVars } from '../internalVars.css';
 
 export const columnAlignCellStyle = styleVariants({
@@ -40,15 +31,25 @@ export const CellClsVariants = styleVariants({
   },
 });
 
+export const DetachedCellCls = style({
+  pointerEvents: 'none !important' as 'none',
+  visibility: 'hidden !important' as 'hidden',
+  opacity: '0 !important' as '0',
+  transform: 'translate3d(0, 0, 0) !important' as 'translate3d(0, 0, 0)',
+  // outline: '2px solid red',
+});
+
 export const CellCls = style([
-  display.flex,
-  flexFlow.row,
-  alignItems.center,
-  position.absolute,
-  willChange.transform,
-  whiteSpace.nowrap,
-  userSelect.none,
   {
+    display: 'flex',
+    flexFlow: 'row',
+    alignItems: 'center',
+    contain: 'layout size',
+    position: 'absolute',
+    willChange: 'transform',
+    whiteSpace: 'nowrap',
+    userSelect: 'none',
+
     padding: ThemeVars.components.Cell.padding,
     ...CellBorderObject,
   },
@@ -95,6 +96,7 @@ export const SelectionCheckboxCls = style({
 });
 
 const CellSelectionIndicatorBase: ComplexStyleRule = {
+  boxSizing: 'border-box',
   position: 'absolute',
   content: '',
   inset: 0,
@@ -138,6 +140,7 @@ const CellSelectionIndicatorBase: ComplexStyleRule = {
 export const FlashingColumnCellRecipe = recipe({
   base: {
     '::after': {
+      boxSizing: 'border-box',
       position: 'absolute',
       content: '',
       inset: 0,

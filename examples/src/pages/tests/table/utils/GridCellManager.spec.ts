@@ -17,6 +17,7 @@ const createCell = (node?: string): GridCellInterface<any> => {
     debugId: 'test',
     ref: () => {},
     getAdditionalInfo: () => node,
+    isMounted: () => true,
   };
 };
 export default test.describe('GridCellManager', () => {

@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+import { InternalVars } from '../InfiniteTable/internalVars.css';
 import { boxSizingBorderBox } from '../InfiniteTable/utilities.css';
 
 export const VirtualScrollContainerCls = style([
@@ -28,8 +29,15 @@ export const VirtualScrollContainerCls = style([
 
 export const VirtualScrollContainerChildToScrollCls = style({
   position: 'sticky',
+  willChange: 'transform',
+  transform: InternalVars.virtualScrollContainerScrollTransform,
+  contain: 'size layout', // TODO THIS MIGHT MISBEHAVE!!! CAN REMOVE IF IT INTRODUCES BROWSER REPAINT/RELAYOUT BUGS
   top: 0,
   left: 0,
+  vars: {
+    [InternalVars.virtualScrollContainerScrollTransform]:
+      'translate3d(0px, 0px, 0px)',
+  },
 });
 
 const getOverflowFor = (

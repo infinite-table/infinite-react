@@ -157,6 +157,13 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
       remainingSize,
       sizes.concat(sizes),
     );
+
+    if (direction === 'horizontal') {
+      this.maxHorizontalRenderCount = renderCount;
+    } else {
+      this.maxVerticalRenderCount = renderCount;
+    }
+
     renderCount = Math.min(count, renderCount);
 
     return renderCount;
@@ -377,7 +384,7 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
     }
     this.pageWidth = pageWidth;
 
-    // based on the page width, determine the number of rows per page
+    // based on the page height, determine the number of rows per page
     this.rowsPerPage = Math.floor(this.availableHeight / rowHeight);
 
     let shouldNotifyTotalPageCountChange = false;

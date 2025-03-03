@@ -52,6 +52,8 @@ export class GridRenderer extends Logger {
 
   public cellHoverClassNames: string[] = [];
 
+  public cellDetachedClassNames: string[] = [];
+
   protected cellManager: GridCellManager<{
     renderRowIndex: number;
     renderColIndex: number;
@@ -166,7 +168,23 @@ export class GridRenderer extends Logger {
       renderRowIndex: number;
       renderColIndex: number;
     }>(debugId);
+
+    this.cellManager.onCellAttachmentChange((cell, attached) => {
+      if (attached) {
+        this.onCellAttached(cell);
+      } else {
+        this.onCellDetached(cell);
+      }
+    });
     this.rowManager = new ListRowManager(debugId);
+
+    this.rowManager.onRowAttachmentChange((row, attached) => {
+      if (attached) {
+        this.onRowAttached(row);
+      } else {
+        this.onRowDetached(row);
+      }
+    });
 
     this.renderRange = this.renderRange.bind(this);
 
@@ -191,6 +209,50 @@ export class GridRenderer extends Logger {
       removeOnScrollStart();
       removeOnScrollStop();
     };
+  }
+
+  private onCellAttached(cell: GridCellInterface) {
+    if (this.cellDetachedClassNames.length) {
+      const el = cell.getElement();
+      if (el) {
+        this.cellDetachedClassNames.forEach((className) => {
+          el.classList.remove(className);
+        });
+      }
+    }
+  }
+
+  private onCellDetached(cell: GridCellInterface) {
+    if (this.cellDetachedClassNames.length) {
+      const el = cell.getElement();
+      if (el) {
+        this.cellDetachedClassNames.forEach((className) => {
+          el.classList.add(className);
+        });
+      }
+    }
+  }
+
+  private onRowAttached(row: ListRowInterface) {
+    if (this.cellDetachedClassNames.length) {
+      const el = row.getElement();
+      if (el) {
+        this.cellDetachedClassNames.forEach((className) => {
+          el.classList.remove(className);
+        });
+      }
+    }
+  }
+
+  private onRowDetached(row: ListRowInterface) {
+    if (this.cellDetachedClassNames.length) {
+      const el = row.getElement();
+      if (el) {
+        this.cellDetachedClassNames.forEach((className) => {
+          el.classList.add(className);
+        });
+      }
+    }
   }
 
   public getFullyVisibleRowsRange = () => {
@@ -713,14 +775,13 @@ export class GridRenderer extends Logger {
       ? ranges.reduce((sum, range) => sum + getRenderRangeRowCount(range), 0)
       : 0;
 
-    cellManager.detachCellsStartingAt([
-      this.brain.getRowCount(),
-      this.brain.getColCount(),
-    ]);
+    const rowCount = this.brain.getRowCount();
+    const colCount = this.brain.getColCount();
 
-    if (cellManager.poolSize > renderCount) {
-      cellManager.poolSize = renderCount;
-    }
+    cellManager.detachCellsStartingAt([rowCount, colCount]);
+
+    const maxCount = Math.min(rowCount * colCount, renderCount);
+
     if (renderDetailRow) {
       rowManager.detachStartingWith(this.brain.getRowCount());
 
@@ -759,7 +820,7 @@ export class GridRenderer extends Logger {
     // if renderCount > poolSize, this creates extra elements in the pool, as needed
     // but if renderCount < poolSize, it destroys the extra elements that are
     // not bound to an x,y position in the matrix
-    cellManager.poolSize = renderCount;
+    cellManager.poolSize = maxCount;
 
     // start from the last rendered, and render additional elements, until we have renderCount
     // this loop might not even execute the body once if all the elements are present
@@ -893,10 +954,14 @@ export class GridRenderer extends Logger {
       this.renderCellAt(rowIndex, colIndex, cell, renderCell);
     });
 
-    cellManager.makeDetachedCellsEmpty();
+    // cellManager.withDetachedCells((cell) => {
+    //   cell.update(null);
+    // });
 
     if (renderDetailRow) {
-      rowManager.makeDetachedRowsEmpty();
+      // rowManager.withDetachedRows((row) => {
+      //   row.update(null);
+      // });
     }
 
     // OLD we need to spread and create a new array
@@ -1172,15 +1237,25 @@ export class GridRenderer extends Logger {
       domRef: row.ref,
     });
 
-    row.onMount((row) => {
-      const element = row.getElement();
-      if (element) {
-        element.style.position = 'absolute';
-        element.style.left = '0px';
-      }
-      this.updateDetailElementPosition(row);
-    });
+    if (!row.isMounted()) {
+      row.onMount((row) => {
+        const element = row.getElement();
+        if (element) {
+          element.style.position = 'absolute';
+          element.style.left = '0px';
+        }
+        this.updateDetailElementPosition(row);
+      });
+    }
 
+    if (!renderedDetailNode) {
+      if (this.brain.isHorizontalLayoutBrain) {
+        // see renderCellAt
+        // here we're doing very similar things
+        this.rowManager.detachRow(row);
+      }
+      return;
+    }
     this.rowManager.renderNodeAtRow(renderedDetailNode, row, rowIndex);
 
     this.updateDetailElementPosition(row);
@@ -1249,15 +1324,17 @@ export class GridRenderer extends Logger {
       domRef: cell.ref,
     });
 
-    cell.onMount((cell) => {
-      const element = cell.getElement();
-      if (element) {
-        element.style.position = 'absolute';
-        element.style.left = '0px';
-        element.style.top = '0px';
-      }
-      this.updateElementPosition(cell);
-    });
+    if (!cell.isMounted()) {
+      cell.onMount((cell) => {
+        const element = cell.getElement();
+        if (element) {
+          element.style.position = 'absolute';
+          element.style.left = '0px';
+          element.style.top = '0px';
+        }
+        this.updateElementPosition(cell);
+      });
+    }
 
     const cellAdditionalInfo = this.brain.isHorizontalLayoutBrain
       ? {
@@ -1266,6 +1343,19 @@ export class GridRenderer extends Logger {
         }
       : undefined;
 
+    if (!renderedNode) {
+      if (this.brain.isHorizontalLayoutBrain) {
+        // we're rendering a cell that's in the range but actually there's no matching
+        // cell for it.
+        // TODO: radu - see http://localhost:5555/tests/table/virtualization/perf-demo
+        // when expanding group 1 and group 2, then collapse group 1
+        // we should correctly update - but if we don't do the line below
+        // cells will not get detached
+        this.cellManager.detachCell(cell);
+      }
+
+      return;
+    }
     this.cellManager.renderNodeAtCell(
       renderedNode,
       cell,

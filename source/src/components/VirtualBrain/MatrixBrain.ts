@@ -178,6 +178,9 @@ export class MatrixBrain extends Logger implements IBrain {
   private horizontalRenderCount?: number = undefined;
   private verticalRenderCount?: number = undefined;
 
+  protected maxHorizontalRenderCount: number = 0;
+  protected maxVerticalRenderCount: number = 0;
+
   private horizontalExtendRangeBy: { start: number; end: number } =
     DEFAULT_EXTEND_BY;
   private verticalExtendRangeBy: { start: number; end: number } =
@@ -736,6 +739,12 @@ export class MatrixBrain extends Logger implements IBrain {
     }
 
     renderCount += fixedStart + fixedEnd;
+
+    if (direction === 'horizontal') {
+      this.maxHorizontalRenderCount = renderCount;
+    } else {
+      this.maxVerticalRenderCount = renderCount;
+    }
 
     renderCount = Math.min(count, renderCount);
 
@@ -1697,6 +1706,10 @@ export class MatrixBrain extends Logger implements IBrain {
   };
 
   getRenderRangeCellCount = getRenderRangeCellCount;
+
+  getMaxCellCount = () => {
+    return this.maxHorizontalRenderCount * this.maxVerticalRenderCount;
+  };
 
   getExtraCells = (): [number, number][] => {
     return this.extraSpanCells;

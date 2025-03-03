@@ -12,6 +12,7 @@ import { ScrollPosition } from '../../../types/ScrollPosition';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
+import { CELL_DETACHED_CLASSNAMES } from '../cellDetachedCls';
 
 import { HeaderClsRecipe } from './header.css';
 import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
@@ -19,6 +20,8 @@ import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
 
 const { rootClassName } = internalProps;
+
+const EMPTY_ARR: string[] = [];
 
 export const TableHeaderClassName = `${rootClassName}Header`;
 
@@ -164,7 +167,8 @@ function InfiniteTableHeaderFn<T>(
         name="header"
         renderCell={renderCell}
         brain={headerBrain}
-        cellHoverClassNames={[]}
+        cellHoverClassNames={EMPTY_ARR}
+        cellDetachedClassNames={CELL_DETACHED_CLASSNAMES}
       />
     </div>
   );

@@ -28,6 +28,13 @@ import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndic
 import { join } from '../../utils/join';
 import { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
 import { GridRenderer } from './ReactHeadlessTableRenderer';
+import { InternalVars } from '../InfiniteTable/internalVars.css';
+import { stripVar } from '../../utils/stripVar';
+import { CELL_DETACHED_CLASSNAMES } from '../InfiniteTable/components/cellDetachedCls';
+
+const virtualScrollContainerScrollTransform = stripVar(
+  InternalVars.virtualScrollContainerScrollTransform,
+);
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
@@ -206,7 +213,12 @@ export function HeadlessTable(
   }, [wrapRowsHorizontally, brain]);
 
   const updateDOMTransform = useCallback((scrollPos: ScrollPosition) => {
-    domRef.current!.style.transform = `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`;
+    requestAnimationFrame(() => {
+      domRef.current!.style.setProperty(
+        virtualScrollContainerScrollTransform,
+        `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
+      );
+    });
   }, []);
 
   const onContainerScroll = useCallback(
@@ -250,6 +262,7 @@ export function HeadlessTable(
           renderDetailRow={renderDetailRow}
           brain={brain}
           cellHoverClassNames={cellHoverClassNames}
+          cellDetachedClassNames={CELL_DETACHED_CLASSNAMES}
         />
         {activeCellIndex != null ? (
           <ActiveCellIndicator

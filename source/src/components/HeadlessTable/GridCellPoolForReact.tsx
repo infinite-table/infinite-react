@@ -24,6 +24,8 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
 
   public ref: React.RefCallback<HTMLElement>;
 
+  private mounted: boolean = false;
+
   private mountSubscription =
     buildSubscriptionCallback<GridCellInterface<T_ADDITIONAL_CELL_INFO>>();
 
@@ -42,9 +44,16 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     this.ref = (htmlElement) => {
       this.element = htmlElement;
       if (htmlElement) {
+        this.mounted = true;
         this.mountSubscription(this);
+      } else {
+        this.mounted = false;
       }
     };
+  }
+
+  isMounted() {
+    return this.mounted;
   }
 
   onMount(callback: (cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>) => void) {
@@ -97,6 +106,11 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
   private cellRemoveSubscription =
     buildSubscriptionCallback<GridCellInterface<T_ADDITIONAL_CELL_INFO>>();
 
+  private cellAttachmentChangeSubscription = buildSubscriptionCallback<{
+    cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>;
+    attached: boolean;
+  }>();
+
   /**
    * An attached cell is a cell that currently renders a corresponding
    * x,y position in the table
@@ -126,7 +140,7 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
   private allCellsOrdered: Set<GridCellInterface<T_ADDITIONAL_CELL_INFO>>;
 
   // we'll grow the pool by this amount at a time
-  static POOL_SIZE_INCREMENT = 5;
+  static POOL_SIZE_INCREMENT = 1; // for now, making this larger will create the cells, but on fast scrolling, those extra cells can tend to lag behind the scroll position as they are not updated
 
   constructor(private debugId: string) {
     super(`${debugId}:GridCellPoolForReact`);
@@ -151,12 +165,30 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
     return off;
   }
 
+  onCellAttachmentChange(
+    callback: (
+      cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>,
+      attached: boolean,
+    ) => void,
+  ) {
+    const off = this.cellAttachmentChangeSubscription.onChange((res) => {
+      if (res == null) {
+        return;
+      }
+      const { cell, attached } = res;
+      callback(cell, attached);
+    });
+
+    return off;
+  }
+
   public reset() {
     this.attachedCells.clear();
     this.detachedCells.clear();
 
     this.allCellsOrdered.clear();
     this.cellRemoveSubscription.destroy();
+    this.cellAttachmentChangeSubscription.destroy();
   }
 
   getAttachedCells() {
@@ -213,6 +245,10 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
    * If a cell is provided, it's moved to the attached set as well.
    */
   attachCell(cell?: GridCellInterface<T_ADDITIONAL_CELL_INFO>) {
+    if (cell && this.attachedCells.has(cell)) {
+      return cell;
+    }
+
     if (!cell) {
       cell = this.getDetachedCell();
     }
@@ -220,12 +256,28 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
     this.detachedCells.delete(cell);
     this.attachedCells.add(cell);
 
+    this.cellAttachmentChangeSubscription({
+      cell,
+      attached: true,
+    });
+
     return cell;
   }
 
   detachCell(cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>) {
+    if (this.detachedCells.has(cell)) {
+      return false;
+    }
+
     this.attachedCells.delete(cell);
     this.detachedCells.add(cell);
+
+    this.cellAttachmentChangeSubscription({
+      cell,
+      attached: false,
+    });
+
+    return true;
   }
 
   /**
@@ -276,8 +328,6 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
     const { detachedCells } = this;
 
     let diff = currentSize - value;
-
-    // console.error('changing pool size to', value);
 
     if (diff > 0) {
       // need to destroy some cells,

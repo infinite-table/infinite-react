@@ -18,6 +18,8 @@ class ListRowForReact implements ListRowInterface {
   private node: React.ReactNode;
   public ref: React.RefCallback<HTMLElement>;
 
+  private mounted: boolean = false;
+
   private mountSubscription = buildSubscriptionCallback<ListRowInterface>();
 
   constructor(debugId: string) {
@@ -39,9 +41,16 @@ class ListRowForReact implements ListRowInterface {
     this.ref = (htmlElement) => {
       this.element = htmlElement;
       if (htmlElement) {
+        this.mounted = true;
         this.mountSubscription(this);
+      } else {
+        this.mounted = false;
       }
     };
+  }
+
+  isMounted() {
+    return this.mounted;
   }
 
   onMount(callback: (row: ListRowInterface) => void) {
@@ -87,6 +96,11 @@ class ListRowForReact implements ListRowInterface {
 export class ListRowPoolForReact extends Logger {
   private rowRemoveSubscription = buildSubscriptionCallback<ListRowInterface>();
 
+  private rowAttachmentChangeSubscription = buildSubscriptionCallback<{
+    row: ListRowInterface;
+    attached: boolean;
+  }>();
+
   /**
    * An attached row is a row that currently renders a corresponding
    * index position in the list
@@ -116,7 +130,7 @@ export class ListRowPoolForReact extends Logger {
   private allRowsOrdered: Set<ListRowInterface>;
 
   // we'll grow the pool by this amount at a time
-  static POOL_SIZE_INCREMENT = 5;
+  static POOL_SIZE_INCREMENT = 1;
 
   constructor(private debugId: string) {
     super(`${debugId}:ListRowPoolForReact`);
@@ -139,12 +153,27 @@ export class ListRowPoolForReact extends Logger {
     return off;
   }
 
+  onRowAttachmentChange(
+    callback: (row: ListRowInterface, attached: boolean) => void,
+  ) {
+    const off = this.rowAttachmentChangeSubscription.onChange((res) => {
+      if (res == null) {
+        return;
+      }
+      const { row, attached } = res;
+      callback(row, attached);
+    });
+
+    return off;
+  }
+
   public reset() {
     this.attachedRows.clear();
     this.detachedRows.clear();
 
     this.allRowsOrdered.clear();
     this.rowRemoveSubscription.destroy();
+    this.rowAttachmentChangeSubscription.destroy();
   }
 
   getAttachedRows() {
@@ -201,6 +230,10 @@ export class ListRowPoolForReact extends Logger {
    * If a row is provided, it's moved to the attached set as well.
    */
   attachRow(row?: ListRowInterface) {
+    if (row && this.attachedRows.has(row)) {
+      return row;
+    }
+
     if (!row) {
       row = this.getDetachedRow();
     }
@@ -208,12 +241,28 @@ export class ListRowPoolForReact extends Logger {
     this.detachedRows.delete(row);
     this.attachedRows.add(row);
 
+    this.rowAttachmentChangeSubscription({
+      row,
+      attached: true,
+    });
+
     return row;
   }
 
   detachRow(row: ListRowInterface) {
+    if (this.detachedRows.has(row)) {
+      return false;
+    }
+
     this.attachedRows.delete(row);
     this.detachedRows.add(row);
+
+    this.rowAttachmentChangeSubscription({
+      row,
+      attached: false,
+    });
+
+    return true;
   }
 
   /**

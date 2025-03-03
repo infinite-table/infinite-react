@@ -161,25 +161,13 @@ export class ListRowManager extends Logger {
   renderNodeAtRow(node: Renderable, row: ListRowInterface, rowIndex: number) {
     const currentRowAtPos = this.getRowAt(rowIndex);
 
-    if (currentRowAtPos) {
-      if (currentRowAtPos !== row) {
-        // we have another row at that position
-        // so we need to detach that row
-        this.detachRowAt(rowIndex);
-        // but also detach this row if it's attached
-        this.detachRow(row);
-      } else {
-        // it's the same row, so we don't need to do anything
-      }
-    } else {
-      // we don't have a row at that position
-
-      // and we cant to put `row` at that position
-      // but if it's attached somewhere else, we need to detach it first
-
-      this.detachRow(row);
+    if (currentRowAtPos && currentRowAtPos !== row) {
+      // we have another row at that position
+      // so we need to detach that row
+      this.detachRowAt(rowIndex);
     }
 
+    // make sure it's attached
     this.pool.attachRow(row);
 
     this.setRowIndexInList(row, rowIndex);
@@ -193,6 +181,16 @@ export class ListRowManager extends Logger {
     this.pool.getDetachedRows().forEach((row) => {
       row.update(null);
     });
+  }
+
+  onRowAttachmentChange(
+    callback: (row: ListRowInterface, attached: boolean) => void,
+  ) {
+    return this.pool.onRowAttachmentChange(callback);
+  }
+
+  withDetachedRows(fn: (row: ListRowInterface) => void) {
+    this.pool.getDetachedRows().forEach(fn);
   }
 
   destroy() {

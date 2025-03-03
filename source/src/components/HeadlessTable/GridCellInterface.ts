@@ -10,5 +10,6 @@ export interface GridCellInterface<T_ADDITIONAL_CELL_INFO = any> {
     callback: (cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>) => void,
   ): void;
   getAdditionalInfo(): T_ADDITIONAL_CELL_INFO | undefined;
+  isMounted(): boolean;
   ref: (htmlElement: HTMLElement) => void;
 }

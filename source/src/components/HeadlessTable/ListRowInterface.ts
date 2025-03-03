@@ -10,5 +10,6 @@ export interface ListRowInterface {
   getNode(): Renderable;
   destroy(): void;
   onMount(callback: (row: ListRowInterface) => void): void;
+  isMounted(): boolean;
   ref: (htmlElement: HTMLElement) => void;
 }
