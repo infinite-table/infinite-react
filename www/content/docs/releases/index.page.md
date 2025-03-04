@@ -3,6 +3,12 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.1.1
+
+Fix performance regressions introduced in 6.1.0.
+
+Add [Keyboard Navigation API](/docs/reference/keyboard-navigation-api)
+
 ## 6.1.0
 
 This release includes a refactor of the core virtualization algorithm, which should result some performance improvements in certain scenarios.

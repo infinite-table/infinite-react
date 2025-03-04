@@ -37,6 +37,7 @@ import {
   ApiLink,
   CellApiLink,
   RowDetailApiLink,
+  KeyNavApiLink,
 } from './Prop';
 import Recap from './Recap';
 import Sandpack from './Sandpack';
@@ -484,6 +485,7 @@ export const MDXComponents = {
   TreeApiLink,
   ApiLink,
   HookLink,
+  KeyNavApiLink,
   ColumnApiLink,
   CellApiLink,
   RowDetailApiLink,

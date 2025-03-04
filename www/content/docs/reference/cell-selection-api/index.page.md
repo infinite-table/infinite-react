@@ -31,7 +31,8 @@ const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
 ```
 
 See the [Infinite Table API page](/docs/reference/api) for the main API.
-See the [Infinite Table Row Selection API page](/docs/reference/row-selecti-api) for the row selection API.
+See the [Infinite Table Keyboard Navigation API page](/docs/reference/keyboard-navigation-api) for the keyboard navigation API.
+See the [Infinite Table Row Selection API page](/docs/reference/row-selection-api) for the row selection API.
 See the [Infinite Table Column API page](/docs/reference/column-api) for the column API.
 
 <PropTable sort searchPlaceholder="Type to filter API methods">

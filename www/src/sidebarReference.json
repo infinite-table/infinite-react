@@ -25,6 +25,10 @@
     "path": "/docs/reference/cell-selection-api"
   },
   {
+    "title": "Infinite Table Keyboard Navigation API",
+    "path": "/docs/reference/keyboard-navigation-api"
+  },
+  {
     "title": "Infinite Table Row Detail API",
     "path": "/docs/reference/row-detail-api"
   },

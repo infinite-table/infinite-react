@@ -6,7 +6,9 @@ layout: API
 When rendering the `InfiniteTable` component, you can get access to the Column API through various column render props (for example, the <PropLink name="columns.header" /> render prop).
 
 For the root API see the [API page](/docs/reference/api).
+See the [Infinite Table Keyboard Navigation API page](/docs/reference/keyboard-navigation-api) for the keyboard navigation API.
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
+See the [Infinite Table Row Selection API page](/docs/reference/row-selection-api) for the row selection API.
 See the [Infinite Table Row Detail API page](/docs/reference/row-detail-api) for the row detail API (when master-detail is configured).
 
 <PropTable searchPlaceholder="Type to filter API methods" sort>
