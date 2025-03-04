@@ -22,6 +22,7 @@ import {
   CellClsVariants,
   ColumnCellVariantsObject,
 } from '../cell.css';
+import { InternalVars } from '../../internalVars.css';
 
 export { CellCls, CellClsVariants };
 
@@ -78,12 +79,12 @@ export const HeaderScrollbarPlaceholderCls = style([
 
 export const HeaderClsRecipe = recipe({
   base: [
-    // flexFlow.column,
     display.block,
     position.absolute,
     {
       background: ThemeVars.components.Header.background,
       color: ThemeVars.components.Header.color,
+      transform: `translate3d(${InternalVars.virtualScrollLeftOffset}, 0px, 0px)`,
     },
   ],
 
@@ -167,9 +168,8 @@ export const HeaderCellRecipe = recipe({
       ':hover': {
         background: ThemeVars.components.HeaderCell.hoverBackground,
       },
+      display: 'block',
     },
-
-    display.block,
   ],
   variants: {
     rowActive: { false: {}, true: {} },

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { join } from '../../../../utils/join';
 import { RawTable } from '../../../HeadlessTable/RawTable';
@@ -8,7 +8,7 @@ import {
   TableRenderCellFn,
   TableRenderCellFnParam,
 } from '../../../HeadlessTable/rendererTypes';
-import { ScrollPosition } from '../../../types/ScrollPosition';
+
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
@@ -25,12 +25,15 @@ const EMPTY_ARR: string[] = [];
 
 export const TableHeaderClassName = `${rootClassName}Header`;
 
+const headerCls = HeaderClsRecipe({
+  overflow: false,
+});
+
 function InfiniteTableHeaderFn<T>(
   props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
 ) {
   const {
     bodyBrain,
-    headerBrain: brain,
     columns,
     style,
     className,
@@ -50,32 +53,10 @@ function InfiniteTableHeaderFn<T>(
 
   const domRef = useRef<HTMLDivElement | null>(null);
 
-  const updateDOMTransform = useCallback((scrollPosition: ScrollPosition) => {
-    if (domRef.current) {
-      domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
-    }
-  }, []);
-
-  useEffect(() => {
-    const removeOnScroll = brain.onScroll(updateDOMTransform);
-
-    // useful when the brain is changed - when toggling the value of wrapRowsHorizontally
-    updateDOMTransform(
-      brain.getScrollPosition() || { scrollLeft: 0, scrollTop: 0 },
-    );
-
-    return removeOnScroll;
-  }, [brain]);
-
-  const headerCls = HeaderClsRecipe({
-    overflow: false,
-  });
-
   const domProps: React.HTMLProps<HTMLDivElement> = {
     ref: domRef,
     className: join(
       TableHeaderClassName,
-
       `${TableHeaderClassName}--virtualized`,
       className,
       headerCls,

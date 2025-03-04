@@ -30,14 +30,10 @@ export const VirtualScrollContainerCls = style([
 export const VirtualScrollContainerChildToScrollCls = style({
   position: 'sticky',
   willChange: 'transform',
-  transform: InternalVars.virtualScrollContainerScrollTransform,
+  transform: `translate3d(${InternalVars.virtualScrollLeftOffset}, ${InternalVars.virtualScrollTopOffset}, 0px)`,
   contain: 'size layout', // TODO THIS MIGHT MISBEHAVE!!! CAN REMOVE IF IT INTRODUCES BROWSER REPAINT/RELAYOUT BUGS
   top: 0,
   left: 0,
-  vars: {
-    [InternalVars.virtualScrollContainerScrollTransform]:
-      'translate3d(0px, 0px, 0px)',
-  },
 });
 
 const getOverflowFor = (

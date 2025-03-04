@@ -362,17 +362,17 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   }
 
   detachCell(cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>) {
-    if (cell) {
-      // detach from pool
-      this.pool.detachCell(cell);
-
-      // also set the cell position to null
-      this.setCellPositionInMatrix(cell, null);
-
-      return true;
+    if (!cell) {
+      return false;
     }
 
-    return false;
+    // detach from pool - and if not already detached,
+    if (this.pool.detachCell(cell)) {
+      // let's also set the cell position to null
+      this.setCellPositionInMatrix(cell, null);
+    }
+
+    return true;
   }
 
   detachCells(cells: Set<GridCellInterface<T_ADDITIONAL_CELL_INFO>>) {

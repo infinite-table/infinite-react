@@ -182,6 +182,7 @@ function InfiniteTableBody<T>() {
     showHoverRows,
     wrapRowsHorizontally,
     domProps,
+    domRef,
   } = componentState;
 
   const LoadMaskCmp = components?.LoadMask ?? LoadMask;
@@ -246,7 +247,7 @@ function InfiniteTableBody<T>() {
   const { renderCell, renderDetailRow } = useCellRendering({
     imperativeApi: api,
     getComputed,
-    domRef: componentState.domRef,
+    domRef,
 
     bodySize,
     computed,
@@ -286,6 +287,7 @@ function InfiniteTableBody<T>() {
         renderDetailRow={rowDetailRenderer ? renderDetailRow : undefined}
         cellHoverClassNames={showHoverRows ? HOVERED_CLASS_NAMES : undefined}
         scrollerDOMRef={scrollerDOMRef}
+        scrollVarHostRef={domRef}
       ></HeadlessTable>
 
       <LoadMaskCmp visible={loading}>{loadingText}</LoadMaskCmp>

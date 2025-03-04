@@ -1249,11 +1249,11 @@ export class GridRenderer extends Logger {
     }
 
     if (!renderedDetailNode) {
-      if (this.brain.isHorizontalLayoutBrain) {
-        // see renderCellAt
-        // here we're doing very similar things
-        this.rowManager.detachRow(row);
-      }
+      // if (this.brain.isHorizontalLayoutBrain) {
+      // see renderCellAt
+      // here we're doing very similar things
+      this.rowManager.detachRow(row);
+      // }
       return;
     }
     this.rowManager.renderNodeAtRow(renderedDetailNode, row, rowIndex);
@@ -1351,6 +1351,14 @@ export class GridRenderer extends Logger {
         // when expanding group 1 and group 2, then collapse group 1
         // we should correctly update - but if we don't do the line below
         // cells will not get detached
+        this.cellManager.detachCell(cell);
+      } else {
+        //however, we have to do it not only for horizontal layout
+        // but also for other non-horizontal layout scenarios as well
+        // eg for pivot, in the header we can have some cells (due to column grouping)
+        // that should not be attached, even if they are in range
+        // see
+        // /tests/table/props/pivot/pivot-total-column-position
         this.cellManager.detachCell(cell);
       }
 

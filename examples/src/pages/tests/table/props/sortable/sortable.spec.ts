@@ -31,9 +31,7 @@ export default test.describe.parallel('Table', () => {
 
     // click the column header
 
-    col.clickToSort();
-
-    await page.waitForTimeout(20);
+    await col.clickToSort();
 
     // refetch values
     values = await col.getValues();

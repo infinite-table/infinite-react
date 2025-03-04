@@ -204,7 +204,9 @@ export const getColumnIdByIndex = async (
 };
 
 export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
-  const cells = page.locator(`.InfiniteHeader [data-column-id]`);
+  const cells = page.locator(
+    `.InfiniteHeader [data-column-id]:not(.InfiniteDetachedCell)`,
+  );
 
   const result = await sortElements(cells, 'col');
 
@@ -213,7 +215,7 @@ export const getHeaderColumnCells = async ({ page }: { page: Page }) => {
 
 export const getSelectedRowIds = async ({ page }: { page: Page }) => {
   const cells = await page.locator(
-    `.InfiniteColumnCell[data-col-index="0"].InfiniteColumnCell--row-selected`,
+    `.InfiniteColumnCell[data-col-index="0"].InfiniteColumnCell--row-selected:not(.InfiniteDetachedCell)`,
   );
 
   const result = await sortElements(cells, 'row');
@@ -340,9 +342,13 @@ export const getColumnCells = async (
   { page }: { page: Page },
 ) => {
   const colSelector = getColSelector(colLocation);
-  const headerCell = page.locator(`.InfiniteHeader ${colSelector}`);
+  const headerCell = page.locator(
+    `.InfiniteHeader ${colSelector}:not(.InfiniteDetachedCell)`,
+  );
 
-  const bodyCells = await page.locator(`.InfiniteColumnCell${colSelector}`);
+  const bodyCells = await page.locator(
+    `.InfiniteColumnCell:not(.InfiniteDetachedCell)${colSelector}`,
+  );
 
   const cells = await sortElements(bodyCells);
 

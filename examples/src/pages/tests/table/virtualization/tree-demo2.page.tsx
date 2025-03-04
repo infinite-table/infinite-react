@@ -67,7 +67,6 @@ export default function App() {
 
         <TreeGrid
           columns={columns}
-          header={false}
           // defaultColumnPinning={{ name: 'start' }}
           domProps={domProps}
         />

@@ -32,12 +32,12 @@ import { InternalVars } from '../InfiniteTable/internalVars.css';
 import { stripVar } from '../../utils/stripVar';
 import { CELL_DETACHED_CLASSNAMES } from '../InfiniteTable/components/cellDetachedCls';
 
-const virtualScrollContainerScrollTransform = stripVar(
-  InternalVars.virtualScrollContainerScrollTransform,
-);
+const virtualScrollLeftOffset = stripVar(InternalVars.virtualScrollLeftOffset);
+const virtualScrollTopOffset = stripVar(InternalVars.virtualScrollTopOffset);
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
+  scrollVarHostRef?: MutableRefObject<HTMLElement | null>;
   wrapRowsHorizontally?: boolean;
   brain: MatrixBrain;
   forceRerenderTimestamp?: number;
@@ -170,6 +170,7 @@ export function HeadlessTable(
     onRenderUpdater,
     wrapRowsHorizontally,
     forceRerenderTimestamp,
+    scrollVarHostRef,
     ...domProps
   } = props;
 
@@ -214,9 +215,24 @@ export function HeadlessTable(
 
   const updateDOMTransform = useCallback((scrollPos: ScrollPosition) => {
     requestAnimationFrame(() => {
-      domRef.current!.style.setProperty(
-        virtualScrollContainerScrollTransform,
-        `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
+      const scrollVarHost = scrollVarHostRef?.current;
+
+      if (!scrollVarHost) {
+        domRef.current!.style.setProperty(
+          'transform',
+          `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
+        );
+        return;
+      }
+
+      scrollVarHost.style.setProperty(
+        virtualScrollLeftOffset,
+        `-${scrollPos.scrollLeft}px`,
+      );
+
+      scrollVarHost.style.setProperty(
+        virtualScrollTopOffset,
+        `-${scrollPos.scrollTop}px`,
       );
     });
   }, []);
