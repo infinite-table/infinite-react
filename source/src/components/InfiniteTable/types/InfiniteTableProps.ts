@@ -57,6 +57,7 @@ import {
   InfiniteTablePublicContext,
 } from './InfiniteTableContextValue';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
+import { InfiniteTableKeyboardNavigationApi } from '../api/getKeyboardNavigationApi';
 import { RowDetailState } from '../../DataSource/RowDetailState';
 import { InfiniteTableRowDetailApi } from '../api/getRowDetailApi';
 import { RowDetailCacheStorageForCurrentRow } from '../../DataSource/RowDetailCache';
@@ -272,6 +273,7 @@ export interface InfiniteTableApi<T> {
   get rowDetailApi(): InfiniteTableRowDetailApi;
   get rowSelectionApi(): InfiniteTableRowSelectionApi;
   get cellSelectionApi(): InfiniteTableCellSelectionApi<T>;
+  get keyboardNavigationApi(): InfiniteTableKeyboardNavigationApi<T>;
   get scrollContainer(): HTMLElement;
   setColumnOrder: (columnOrder: InfiniteTablePropColumnOrder) => void;
   setColumnVisibility: (

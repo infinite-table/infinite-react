@@ -47,6 +47,10 @@ import {
 
 import { getRowDetailApi, InfiniteTableRowDetailApi } from './getRowDetailApi';
 import { HorizontalLayoutColVisibilityOptions } from '../../HeadlessTable/rendererTypes';
+import {
+  getKeyboardNavigationApi,
+  InfiniteTableKeyboardNavigationApi,
+} from './getKeyboardNavigationApi';
 
 function isSortInfoForColumn<T>(
   sortInfo: DataSourceSingleSortInfo<T>,
@@ -72,12 +76,21 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   public rowSelectionApi: InfiniteTableRowSelectionApi;
   public cellSelectionApi: InfiniteTableCellSelectionApi<T>;
   public rowDetailApi: InfiniteTableRowDetailApi;
+  public keyboardNavigationApi: InfiniteTableKeyboardNavigationApi<T>;
 
   constructor(context: GetImperativeApiParam<T>) {
     this.context = context;
     this.rowSelectionApi = getRowSelectionApi({
       dataSourceActions: context.dataSourceActions,
       getDataSourceState: context.getDataSourceState,
+    });
+    this.keyboardNavigationApi = getKeyboardNavigationApi({
+      getState: context.getState,
+      getDataSourceState: context.getDataSourceState,
+      actions: context.actions,
+      getComputed: context.getComputed,
+      api: this,
+      dataSourceApi: context.dataSourceApi,
     });
     this.rowDetailApi = getRowDetailApi({
       getState: context.getState,

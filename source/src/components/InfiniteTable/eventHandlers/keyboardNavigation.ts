@@ -1,7 +1,14 @@
+import { DataSourceApi, DataSourceState } from '../../DataSource/types';
+import {
+  InfiniteTableApi,
+  InfiniteTableComputedValues,
+  InfiniteTableState,
+} from '../types';
 import { clamp } from '../../utils/clamp';
 import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
+import { InfiniteTableActions } from '../types/InfiniteTableState';
 
-function getNextEnabledRowIndex<T>(
+export function getNextEnabledRowIndex<T>(
   getDataSourceState: InfiniteTableKeyboardEventHandlerContext<T>['getDataSourceState'],
   activeRowIndex: number,
   direction: 1 | -1,
@@ -164,10 +171,31 @@ export function handleRowNavigation<T>(
   return false;
 }
 
-export function handleCellNavigation<T>(
-  options: InfiniteTableKeyboardEventHandlerContext<T>,
-  event: { key: string; shiftKey: boolean },
-) {
+type KeyboardNavigationKeysForCellNav =
+  | 'ArrowDown'
+  | 'ArrowUp'
+  | 'ArrowLeft'
+  | 'ArrowRight'
+  | 'Enter'
+  | 'PageDown'
+  | 'PageUp'
+  | 'End'
+  | 'Home';
+export function computeNextActiveCellIndex<T>(
+  options: {
+    getComputed: () => InfiniteTableComputedValues<T>;
+    getState: () => InfiniteTableState<T>;
+    actions: InfiniteTableActions<T>;
+    getDataSourceState: () => DataSourceState<T>;
+    api: InfiniteTableApi<T>;
+    dataSourceApi: DataSourceApi<T>;
+  },
+  event: {
+    key: KeyboardNavigationKeysForCellNav;
+
+    shiftKey: boolean;
+  },
+): [number, number] | false {
   const {
     api,
 
@@ -175,7 +203,6 @@ export function handleCellNavigation<T>(
     getComputed,
     getDataSourceState,
     dataSourceApi,
-    actions,
   } = options;
   const { key, shiftKey } = event;
 
@@ -204,8 +231,6 @@ export function handleCellNavigation<T>(
 
   rowIndex = clamp(rowIndex, 0, maxRow);
   colIndex = clamp(colIndex, 0, maxCol);
-
-  actions.activeCellIndex = [rowIndex, colIndex];
 
   const KeyToFunction = {
     ArrowDown: () => {
@@ -303,9 +328,27 @@ export function handleCellNavigation<T>(
 
   Fn();
 
-  actions.activeCellIndex = [rowIndex, colIndex];
+  return [rowIndex, colIndex];
+}
 
-  return true;
+export function handleCellNavigation<T>(
+  options: InfiniteTableKeyboardEventHandlerContext<T>,
+  event: { key: string; shiftKey: boolean },
+) {
+  const result = computeNextActiveCellIndex(
+    options,
+    event as {
+      key: KeyboardNavigationKeysForCellNav;
+      shiftKey: boolean;
+    },
+  );
+
+  if (result) {
+    options.actions.activeCellIndex = result;
+    return true;
+  }
+
+  return false;
 }
 
 const validKeys: Record<string, boolean> = {

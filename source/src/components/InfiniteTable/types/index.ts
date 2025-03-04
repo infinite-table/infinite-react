@@ -7,6 +7,10 @@ import type {
   InfiniteTable_Tree_RowInfoParentNode,
 } from '../../../utils/groupAndPivot';
 import { TableRenderRange } from '../../VirtualBrain/MatrixBrain';
+import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
+import { InfiniteTableKeyboardNavigationApi } from '../api/getKeyboardNavigationApi';
+import { InfiniteTableRowDetailApi } from '../api/getRowDetailApi';
+import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
 
 import type { InfiniteTableAction } from './InfiniteTableAction';
 import type { InfiniteTableActionType } from './InfiniteTableActionType';
@@ -118,6 +122,10 @@ export type {
   InfiniteTablePropRowClassName,
   InfiniteTableRowStyleFn,
   InfiniteTableRowClassNameFn,
+  InfiniteTableCellSelectionApi,
+  InfiniteTableKeyboardNavigationApi,
+  InfiniteTableRowDetailApi,
+  InfiniteTableRowSelectionApi,
   InfiniteTableGroupColumnGetterOptions,
   InfiniteTableColumnValueFormatterParams,
   ScrollStopInfo,
