@@ -14,6 +14,7 @@ const createRow = (node?: string): ListRowInterface => {
     getNode: () => node,
     destroy: () => {},
     onMount: () => {},
+    isMounted: () => true,
     debugId: 'test',
     ref: () => {},
   };
