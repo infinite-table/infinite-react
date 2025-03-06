@@ -3,6 +3,17 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.2.0
+
+Starting with this release, the CSS for each theme (other than the `"default"`) is not included in the root CSS file (`@infinite-table/infinite-react/index.css`) and has to be imported explicitly:
+
+```ts
+import '@infinite-table/infinite-react/theme/shadcn.css'
+import '@infinite-table/infinite-react/theme/balsam.css'
+import '@infinite-table/infinite-react/theme/minimalist.css'
+import '@infinite-table/infinite-react/theme/ocean.css'
+```
+
 ## 6.1.1
 
 Fix performance regressions introduced in 6.1.0.

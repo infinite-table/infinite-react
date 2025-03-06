@@ -9,13 +9,33 @@ description: Read our docs on the available themes and how you can customize the
 import '@infinite-table/infinite-react/index.css';
 ```
 
-This file includes the following themes:
-  - `default`
+This root CSS file includes the `"default"` theme.
+
+The other available themes are
+
+  - `shadcn`
   - `minimalist`
   - `ocean`
   - `balsam`
 
-Each of them in both the **`light`** and the **`dark`** modes.
+and if you want to use any of them, you have to import their respective CSS file explicitly:
+
+```ts
+import '@infinite-table/infinite-react/theme/shadcn.css'
+import '@infinite-table/infinite-react/theme/balsam.css'
+import '@infinite-table/infinite-react/theme/minimalist.css'
+import '@infinite-table/infinite-react/theme/ocean.css'
+```
+
+Each theme CSS file includes both the **`light`** and the **`dark`** modes.
+
+<Note>
+
+Version `6.2.0` is the first version where the root CSS file (`@infinite-table/infinite-react/index.css`) doesn't include all the themes. Previous to this version, simply importing the root CSS file gave you access to all available themes.
+
+Splitting each theme into a dedicated CSS file helps reduce the bundle size for our users, as most people will only use one theme for `<InfiniteTable />` in their apps.
+
+</Note>
 
 ## Theme mode - light or dark
 
