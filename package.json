@@ -8,6 +8,7 @@
     "next": "14.0.3"
   },
   "scripts": {
+    "bundlewatch": "bundlewatch --config bundlewatch.config.json",
     "clean-deps": "rm package-lock.json && rm -fr node_modules && rm -fr source/node_modules && rm -fr www/node_modules && rm -fr examples/node_modules",
     "dev": "npm-run-all --parallel www-serve:data examples-dev",
     "test": "npm-run-all --parallel www-serve:data examples-test",

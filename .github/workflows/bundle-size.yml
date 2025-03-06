@@ -29,7 +29,7 @@ jobs:
           npm run build
 
       - name: Run bundlewatch
-        run: npx bundlewatch
+        run: npm run bundlewatch
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
           CI_COMMIT_MESSAGE: ${{ github.event.pull_request.title }}
