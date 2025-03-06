@@ -11,17 +11,7 @@ const { config, dependencies } = packageJSON;
 
 Object.freeze(packageJSON);
 
-import { vanillaExtractPlugin } from '@vanilla-extract/esbuild-plugin';
-import postcss from 'postcss';
-import autoprefixer from 'autoprefixer';
-
-async function processCss(css) {
-  const result = await postcss([autoprefixer]).process(css, {
-    from: undefined /* suppress source map warning */,
-  });
-
-  return result.css;
-}
+import { vanillaConfig } from './tsup-vanilla-extract-config';
 
 // CHANGE HERE TO ADD ESM AS WELL
 const FORMATS: Format[] = ['cjs', 'esm'];
@@ -98,11 +88,7 @@ export const tsupConfig: Options = {
       ),
     };
   },
-  esbuildPlugins: [
-    vanillaExtractPlugin({
-      processCss,
-    }),
-  ],
+  esbuildPlugins: [vanillaConfig],
 };
 
 export default defineConfig(tsupConfig);
