@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+  .infinite-theme-mode--light,
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -31,6 +32,8 @@
     --chart-5: 27 87% 67%;
   }
 
+  .infinite-dark,
+  .infinite-theme-mode--dark,
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
