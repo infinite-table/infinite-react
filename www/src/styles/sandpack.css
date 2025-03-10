@@ -192,7 +192,8 @@ html .sp-wrapper {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
   padding: 18px var(--sp-space-3) !important;
-  @apply font-mono !important;
+
+  /* @apply font-mono !important; */
   font-size: 13.6px !important;
   line-height: 24px !important;
   height: 100%;

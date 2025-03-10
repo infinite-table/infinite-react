@@ -39,8 +39,10 @@ export function AccentButton(props: AccentButtonProps) {
         disabled={disabled}
         onClick={props.onClick}
         className={`whitespace-nowrap disabled:opacity-40 ${
-          glow ? 'bg-glow' : 'bg-highlight'
-        } rounded-lg inline-flex items-center font-bold hover:bg-opacity-90 text-dark-custom ${
+          glow
+            ? 'bg-glow hover:bg-glow/90'
+            : 'bg-highlight hover:bg-highlight/90'
+        } rounded-lg inline-flex items-center font-bold text-darkcustom ${
           styles.buttonPositionWithTransition
         } ${className || ''} ${
           size === 'big' ? 'text-xl  py-2 px-5' : 'text-base py-1 px-3'

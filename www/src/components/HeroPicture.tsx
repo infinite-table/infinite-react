@@ -44,7 +44,7 @@ export const HeroPicture = () => {
         style={{ zIndex: 10 }}
       >
         {HeroImage}
-        <div className="absolute top-0 left-0 right-0 bottom-0 opacity-70 hover:opacity-90 bg-white hover:bg-white bg-opacity-0 hover:bg-opacity-10 z-10 cursor-pointer flex items-center justify-center"></div>
+        <div className="absolute top-0 left-0 right-0 bottom-0 opacity-70 hover:opacity-90 bg-white/0 hover:bg-white/10 z-10 cursor-pointer flex items-center justify-center"></div>
       </div>
 
       <div

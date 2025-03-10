@@ -23,7 +23,7 @@ function YouWillLearnCard({
     <div
       className={`${
         inline ? 'inline-flex' : 'flex'
-      } flex-col h-full bg-dark-custom shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}
+      } flex-col h-full bg-darkcustom shadow-inner justify-between rounded-lg pb-8 p-6 xl:p-8`}
     >
       <div>
         <h4 className="font-bold text-2xl leading-tight">{title}</h4>

@@ -81,7 +81,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
 
         {/* <div className="w-full text-center justify-center flex flex-row border rounded-lg font-bold overflow-hidden">
           <Link href={pathname === '/blog' ? '/docs' : '/blog'}>
-            <a className="pr-6 border-r py-2 flex-1 text-right hover:bg-highlight hover:text-dark-custom">
+            <a className="pr-6 border-r py-2 flex-1 text-right hover:bg-highlight hover:text-darkcustom">
               {pathname === '/blog' ? 'Docs' : 'Blog'}
             </a>
           </Link>{' '}

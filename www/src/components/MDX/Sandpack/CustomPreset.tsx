@@ -96,8 +96,8 @@ export function CustomPreset({
   const [fullScreen, setFullScreen] = React.useState(false);
   const titleBlock = title ? (
     <div
-      className={`leading-base bg-dark-custom ${
-        fullScreen ? '' : 'bg-opacity-50'
+      className={`leading-base  ${
+        fullScreen ? 'bg-darkcustom' : 'bg-darkcustom/50'
       } w-full `}
     >
       <div className="text-content-color flex text-base px-4 py-0.5 relative">
@@ -134,7 +134,7 @@ export function CustomPreset({
   return (
     <>
       <div
-        className="shadow-lg-dark rounded-md overflow-hidden"
+        className="shadow-lgdark rounded-md overflow-hidden"
         ref={containerRef}
         style={
           fullScreen
@@ -202,7 +202,7 @@ export function CustomPreset({
               {isExpandable && (
                 <button
                   translate="yes"
-                  className="bg-dark-custom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full relative top-0"
+                  className="bg-darkcustom flex text-base justify-between items-center z-10 rounded-t-none p-1 w-full relative top-0"
                   onClick={() => {
                     const nextIsExpanded = !isExpanded;
                     flushSync(() => {

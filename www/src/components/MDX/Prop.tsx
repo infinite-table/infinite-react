@@ -461,7 +461,7 @@ export function Prop({
       className={cn(
         'my-6 rounded-lg shadow-inner relative',
 
-        `bg-opacity-40 bg-secondary`,
+        `bg-secondary/40`,
       )}
     >
       <div
@@ -485,7 +485,7 @@ export function Prop({
                 <span className="italic opacity-40">{` <T>`}</span>
               ) : null}
               {deprecated ? (
-                <span className="text-xs ml-3 absolute top-16 -left-4 bg-red-400 text-dark-custom p-1 leading-none rounded">
+                <span className="text-xs ml-3 absolute top-16 -left-4 bg-red-400 text-darkcustom p-1 leading-none rounded">
                   deprecated
                 </span>
               ) : null}

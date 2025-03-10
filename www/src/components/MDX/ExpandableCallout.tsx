@@ -18,7 +18,7 @@ const variantMap = {
   note: {
     title: 'Note',
     Icon: IconNote,
-    containerClasses: 'bg-highlight-dark bg-opacity-1 text-lg',
+    containerClasses: 'bg-highlight-dark  text-lg',
     textColor: 'text-green-60',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
@@ -26,7 +26,7 @@ const variantMap = {
   gotcha: {
     title: 'Gotcha',
     Icon: IconGotcha,
-    containerClasses: 'bg-yellow-5 bg-yellow-60 bg-opacity-20',
+    containerClasses: 'bg-yellow-60/20',
     textColor: 'text-yellow-40',
     overlayGradient:
       'linear-gradient(rgba(249, 247, 243, 0), rgba(249, 247, 243, 1)',
@@ -34,7 +34,7 @@ const variantMap = {
   hint: {
     title: 'Hint',
     Icon: IconHint,
-    containerClasses: ' bg-green-60 bg-opacity-20 text-lg',
+    containerClasses: ' bg-green-60/20 text-lg',
     textColor: 'text-green-30',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',
@@ -42,7 +42,7 @@ const variantMap = {
   readMore: {
     title: 'Find Out More',
     Icon: IconReadMore,
-    containerClasses: 'bg-opacity-30 bg-purple-30text-primary-dark',
+    containerClasses: 'bg-purple-30/30 text-primary-dark',
     textColor: 'text-purple-20',
     overlayGradient:
       'linear-gradient(rgba(245, 249, 248, 0), rgba(245, 249, 248, 1)',

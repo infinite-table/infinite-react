@@ -114,7 +114,7 @@ export function SidebarRouteTree({
 
   return (
     <ul
-      className={`bg-dark-custom  border-border-dark lg:bg-transparent ${
+      className={`bg-darkcustom  border-border-dark lg:bg-transparent ${
         level === 0 ? 'lg:pt-6' : ''
       }`}
     >

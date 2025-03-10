@@ -30,11 +30,11 @@ export function Button({
       onClick={onClick}
       className={cn(
         className,
-        'text-base leading-tight font-bold text-content-color border border-dark-custom rounded-lg py-2 px-4 focus:ring-1 focus:ring-offset-2 focus:ring-link   active:ring-0 active:ring-offset-0 outline-none inline-flex items-center my-1',
+        'text-base leading-tight font-bold text-content-color border border-darkcustom rounded-lg py-2 px-4 focus:ring-1 focus:ring-offset-2 focus:ring-link   active:ring-0 active:ring-offset-0 outline-none inline-flex items-center my-1',
         {
-          'bg-brand-dark   hover:bg-opacity-80 focus:bg-secondary active:bg-opacity-100':
+          'bg-brand-dark hover:bg-brand-dark/80 active:bg-brand-dark/100  focus:bg-secondary':
             active,
-          'bg-transparent bg-secondary-button-dark hover:bg-opacity-80 border-transparent':
+          'bg-transparent bg-secondary-button-dark hover:bg-secondary-button-dark/80 border-transparent':
             !active,
         },
       )}

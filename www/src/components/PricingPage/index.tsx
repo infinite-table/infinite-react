@@ -145,7 +145,7 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
           onChange={(e) => {
             setValue(clamp(e.target.valueAsNumber));
           }}
-          className="p-2 flex-1 text-xl text-dark-custom font-black text-center"
+          className="bg-white p-2 flex-1 text-3xl text-darkcustom font-extrabold text-center"
           style={{ minWidth: 20, width: 70 }}
         />
         <button
@@ -288,7 +288,7 @@ function FormField(props: {
         style={{
           boxShadow: `1px 1px 10px 1px var(--color-highlight)`,
         }}
-        className=" mt-2 bg-white w-full p-2 ml-1 border-1 rounded-sm border-special-border-color  text-xl text-dark-custom font-black text-center"
+        className=" mt-2 bg-white w-full p-2 ml-1 border-1 rounded-sm border-special-border-color  text-xl text-darkcustom font-black text-center"
         value={props.value}
         onChange={props.onChange}
       />
@@ -475,7 +475,7 @@ export function PricingPage() {
               // boxShadow: `2px 2px 10px 1px ${wwwVars.color.highlight}`,
               boxShadow: ` 0 2px 6px -2px var(--color-highlight), 0 2px 4px -2px var(--color-highlight)`,
             }}
-            className={`shadow-lg bg-deep-dark bg-opacity-95 relative sm:-left-10  z-20 sm:w-1/2 rounded-xl text-content-color`}
+            className={`shadow-lg bg-deep-dark/95 relative sm:-left-10  z-20 sm:w-1/2 rounded-xl text-content-color`}
           >
             <div className="text-right">
               <div

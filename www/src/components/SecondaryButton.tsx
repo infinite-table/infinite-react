@@ -21,7 +21,7 @@ export function SecondaryButton(props: SecondaryButtonProps) {
   return (
     <Parent {...parentProps} legacyBehavior>
       <Cmp
-        className={`text-white rounded-lg inline-block text-xl border border-gray-50 font-normal py-2 px-5 hover:bg-opacity-90 bg-dark-custom ${
+        className={`text-white rounded-lg inline-block text-xl border border-gray-50 font-normal py-2 px-5 hover:bg-darkcustom/90 bg-darkcustom ${
           cmpStyles.buttonPositionWithTransition
         } ${className || ''}`}
         style={{

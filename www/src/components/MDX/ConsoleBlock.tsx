@@ -56,7 +56,7 @@ function ConsoleBlock({ level = 'info', children }: ConsoleBlockProps) {
         className={cn(
           'flex px-4 pt-4 pb-6 items-center content-center font-mono text-code rounded-b-md',
           {
-            'bg-red-30 text-red-40 bg-opacity-25': level === 'error',
+            'bg-red-30/25 text-red-40': level === 'error',
             'bg-yellow-5 text-yellow-50': level === 'warning',
             'bg-gray-5 text-secondary-dark': level === 'info',
           },

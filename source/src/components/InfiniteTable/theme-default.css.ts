@@ -24,21 +24,21 @@ globalStyle(':root', {
   },
 });
 
-globalStyle(
-  [
-    '.light',
-    '.infinite-light',
-    '.infinite-theme-mode--light',
+// globalStyle(
+//   [
+//     '.light',
+//     '.infinite-light',
+//     '.infinite-theme-mode--light',
 
-    '.light:root',
-    '.infinite-light:root',
-    '.infinite-theme-mode--light:root',
-  ].join(', '),
-  {
-    //@ts-ignore
-    vars: LightTheme,
-  },
-);
-globalStyle(['.dark', '.infinite-dark'].join(', '), {
-  vars: DarkTheme,
-});
+//     '.light:root',
+//     '.infinite-light:root',
+//     '.infinite-theme-mode--light:root',
+//   ].join(', '),
+//   {
+//     //@ts-ignore
+//     vars: LightTheme,
+//   },
+// );
+// globalStyle(['.dark', '.infinite-dark'].join(', '), {
+//   vars: DarkTheme,
+// });

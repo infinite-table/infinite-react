@@ -118,8 +118,8 @@
 
 .DotsBackgroundCls {
   --dot-size: 1px;
-  --dot-color1: var(--color-dark-custom);
-  --dot-color2: var(--color-dark-custom);
+  --dot-color1: var(--color-darkcustom);
+  --dot-color2: var(--color-darkcustom);
   --dot-black: var(--color-black);
   --dot-pattern-height: 750px;
 

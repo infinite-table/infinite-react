@@ -20,7 +20,7 @@ export function HighlightButton(props: HighlightButtonProps) {
     <button
       className={`${
         className || ''
-      } bg-brand-dark bg-opacity-90 shadow-xl shadow-highlight-100 rounded-lg inline-block text-xl py-2 px-5 text-highlight font-bold tracking-wide`}
+      } bg-brand-dark/90 shadow-xl shadow-highlight-100 rounded-lg inline-block text-xl py-2 px-5 text-highlight font-bold tracking-wide`}
       style={{
         ...getHighlightShadowStyle({ glow }),
       }}

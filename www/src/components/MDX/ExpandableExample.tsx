@@ -26,8 +26,8 @@ function ExpandableExample({
   return (
     <div
       className={cn('my-12 rounded-lg shadow-inner relative', {
-        'bg-opacity-20 bg-purple-60': isDeepDive,
-        'bg-opacity-20 bg-yellow-60': isExample,
+        'bg-purple-60/20': isDeepDive,
+        'bg-yellow-60/20': isExample,
       })}
     >
       <div className="p-8">

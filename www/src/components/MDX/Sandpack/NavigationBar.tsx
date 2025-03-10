@@ -57,7 +57,7 @@ export function NavigationBar({
   const activeViewModeClassName = 'text-white bg-primary';
   return (
     <div
-      className={`bg-dark-custom flex justify-between items-center relative z-10 border-b border-border-dark rounded-b-none ${
+      className={`bg-darkcustom flex justify-between items-center relative z-10 border-b border-border-dark rounded-b-none ${
         skipRound ? '' : 'rounded-t-lg'
       }`}
     >

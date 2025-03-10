@@ -73,7 +73,7 @@ function FooterLink({
     <NextLink
       href={href}
       className={cn(
-        'flex gap-x-4 md:gap-x-6 items-center w-full md:w-80 px-4 md:px-5 py-6 border-2 border-transparent text-base leading-base text-link rounded-lg group focus:text-link focus:bg-highlight focus:bg-highlight-dark focus:border-link focus:border-opacity-100 focus:border-1 focus:ring-1  focus:ring-blue-40 active:ring-0 active:ring-offset-0 hover:bg-dark-custom',
+        'flex gap-x-4 md:gap-x-6 items-center w-full md:w-80 px-4 md:px-5 py-6 border-2 border-transparent text-base leading-base text-link rounded-lg group focus:text-link focus:bg-highlight focus:bg-highlight-dark focus:border-link focus:border-opacity-100 focus:border-1 focus:ring-1  focus:ring-blue-40 active:ring-0 active:ring-offset-0 hover:bg-darkcustom',
         {
           'flex-row-reverse justify-self-end text-right': type === 'Next',
         },

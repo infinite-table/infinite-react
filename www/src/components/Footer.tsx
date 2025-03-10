@@ -20,8 +20,8 @@ function FooterLink({
   const classes = cn(
     'border-b inline-block border-transparent text-content-color',
     {
-      'text-base ': !isHeader,
-      'text-md my-2 font-bold': isHeader,
+      'text-base/large ': !isHeader,
+      'text-md/large my-2 font-bold': isHeader,
       'hover:border-content-color': href,
     },
   );
@@ -88,10 +88,10 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
           <div className="flex flex-col items-start ">
             <FooterLink isHeader={true}>Social</FooterLink>
 
-            <GithubLink className="items-center border-b border-transparent hover:border-b hover:border-content-color text-base">
+            <GithubLink className="items-center border-b border-transparent hover:border-b hover:border-content-color text-base/large">
               GitHub{' '}
             </GithubLink>
-            <TwitterLink className="items-center border-b border-transparent  hover:border-content-color text-base">
+            <TwitterLink className="items-center border-b border-transparent  hover:border-content-color text-base/large">
               Twitter
             </TwitterLink>
             <FooterLink href="/community">Community</FooterLink>
@@ -105,7 +105,7 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
             <FooterLink href="mailto:admin@infinite-table.com">
               Email Us
             </FooterLink>
-            <div className="text-base">
+            <div className="text-base/large">
               Copyright © {new Date().getFullYear()}
               <div className=" block text-right">Infinite Table</div>
             </div>

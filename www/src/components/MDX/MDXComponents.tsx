@@ -375,9 +375,7 @@ function CodeSandboxEmbed({
   const description = theChildren.find(isSandpackDescriptionElement);
 
   const descriptionBlock = description ? (
-    <div
-      className={'leading-base w-full bg-black bg-opacity-20 border-gray-60'}
-    >
+    <div className={'leading-base w-full bg-black/20 border-gray-60'}>
       <div className="sandpackDescription text-content-color text-base px-4 py-0.5 relative">
         {description}
       </div>

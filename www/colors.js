@@ -31,7 +31,7 @@ module.exports = {
   'brand-blue': '#497AFF',
   'secondary-button': '#EBECF0', // gray-10
   'secondary-button-dark': '#404756', // gray-70
-  'dark-custom': '#0d1114',
+  darkcustom: '#0d1114',
   'special-border-color': 'rgba(255, 255, 255, 0.09)',
   'deep-dark': '#07131c',
 

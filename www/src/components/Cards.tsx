@@ -37,11 +37,11 @@ export const Card = ({
   } p-4 sm:p-4 md:p-8 py-10 rounded-sm flex flex-col`;
 
   if (!noBackgroundOnHover) {
-    cls += ` hover:bg-opacity-90 hover:bg-deep-dark `;
+    cls += `  hover:bg-deep-dark/90 `;
   }
 
   if (!noBackground) {
-    cls += ` bg-opacity-60 bg-deep-dark`;
+    cls += ` bg-deep-dark/60 `;
   }
 
   let header = (

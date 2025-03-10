@@ -1,118 +1,115 @@
-@import '~modern-normalize/modern-normalize.css';
+@import '../../../node_modules/modern-normalize/modern-normalize.css'
+  layer(theme);
 @import '../../../source/dist/index.css';
 
 @font-face {
   font-family: 'RobotoMono';
   src: url('/Roboto_Mono/static/RobotoMono-Regular.ttf');
 }
-/* @font-face {
-  font-family: 'Roboto';
-  src: url('/Roboto/Roboto-Regular.ttf');
-} */
-/* html body {
-  font-family: 'RobotoMono', sans-serif;
-} */
-body {
-  line-height: inherit;
-}
 
-html {
-  line-height: 1.5;
-}
+@layer theme {
+  body {
+    line-height: inherit;
+  }
 
-html {
-  display: flex;
+  html {
+    line-height: 1.5;
+  }
 
-  flex-direction: column;
-}
-body {
-  min-width: 100%;
-}
-html,
-body,
-#__next {
-  min-height: 100vh;
-}
+  html {
+    display: flex;
 
-#__next {
-  display: flex;
-  flex-direction: column;
-}
+    flex-direction: column;
+  }
+  body {
+    min-width: 100%;
+  }
+  html,
+  body,
+  #__next {
+    min-height: 100vh;
+  }
 
-*,
-:after,
-:before {
-  border: 0 solid;
-}
+  #__next {
+    display: flex;
+    flex-direction: column;
+  }
 
-audio,
-canvas,
-embed,
-iframe,
-img,
-object,
-svg,
-video {
-  vertical-align: middle;
-  display: block;
-}
+  *,
+  :after,
+  :before {
+    border: 0 solid;
+  }
 
-img,
-video {
-  max-width: 100%;
-  height: auto;
-}
+  audio,
+  canvas,
+  embed,
+  iframe,
+  img,
+  object,
+  svg,
+  video {
+    vertical-align: middle;
+    display: block;
+  }
 
-blockquote,
-dd,
-dl,
-figure,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-hr,
-p,
-pre {
-  margin: 0;
-}
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
 
-[role='button'],
-button {
-  cursor: pointer;
-}
+  blockquote,
+  dd,
+  dl,
+  figure,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  hr,
+  p,
+  pre {
+    margin: 0;
+  }
 
-button,
-input,
-optgroup,
-select,
-textarea {
-  font-family: inherit;
-  font-size: 100%;
-  line-height: 1.15;
-  margin: 0;
-}
+  [role='button'],
+  button {
+    cursor: pointer;
+  }
 
-button,
-select {
-  text-transform: none;
-}
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+  }
 
-[type='button'],
-[type='reset'],
-[type='submit'],
-button {
-  -webkit-appearance: button;
-}
+  button,
+  select {
+    text-transform: none;
+  }
 
-button,
-input,
-optgroup,
-select,
-textarea {
-  padding: 0;
-  line-height: inherit;
-  color: inherit;
+  [type='button'],
+  [type='reset'],
+  [type='submit'],
+  button {
+    -webkit-appearance: button;
+  }
+
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    padding: 0;
+    line-height: inherit;
+    color: inherit;
+  }
 }

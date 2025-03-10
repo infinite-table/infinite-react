@@ -49,7 +49,6 @@ export default function App() {
           value={currentThemeName}
           onChange={(e) => setThemeName(e.target.value as ThemeName)}
         >
-          <option value="shadcn">Shadcn</option>
           <option value="ocean">Ocean</option>
           <option value="balsam">Balsam</option>
           <option value="minimalist">Minimalist</option>

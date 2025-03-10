@@ -11,11 +11,11 @@ export const screenSizes = {
   'screen-2xl': '1536px',
 };
 
-export const colorVariables = {
+const colorVariables = {
   brand: BRAND_COLOR_DEFAULT,
   brandDark: BRAND_COLOR_DARK,
   black: colors.black,
-  darkCustom: colors['dark-custom'],
+  darkCustom: colors['darkcustom'],
   csdark: colors['csdark'],
   blue: 'blue',
   blue700: '#1c4fd8',

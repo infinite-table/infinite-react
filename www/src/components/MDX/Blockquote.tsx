@@ -5,7 +5,7 @@ export const Blockquote = ({
   return (
     <>
       <blockquote
-        className="mdx-blockquote py-4 px-8 my-8 shadow-inner bg-highlight-dark bg-opacity-50 rounded-lg leading-6 flex relative"
+        className="mdx-blockquote py-4 px-8 my-8 shadow-inner bg-highlight-dark/50 rounded-lg leading-6 flex relative"
         {...props}
       >
         <span className="block relative">{children}</span>

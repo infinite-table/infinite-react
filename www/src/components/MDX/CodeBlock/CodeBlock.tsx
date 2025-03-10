@@ -74,7 +74,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
 
     const highlightedLineConfig = linesToHighlight.map((line) => {
       return {
-        className: 'bg-card bg-opacity-10',
+        className: 'bg-card/10',
         line: Number(line),
       };
     });
@@ -87,7 +87,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
     //     elementAttributes: {
     //       'data-step': `${line.step}`,
     //     },
-    //     className: cn('code-step bg-opacity-10 relative rounded-md p-1 ml-2', {
+    //     className: cn('code-step relative rounded-md p-1 ml-2', {
     //       'pl-3 before:content-[attr(data-step)] before:block before:w-4 before:h-4 before:absolute before:top-1 before:-left-2 before:rounded-full before:text-white before:text-center before:text-xs before:leading-4':
     //         !noMarkers,
     //       'bg-blue-40 before:bg-blue-40': line.step === 1,
@@ -111,7 +111,7 @@ const CodeBlock = React.forwardRef(function CodeBlockFn(
   const titleBlock = hasTitle ? (
     <div
       className={cn(
-        'leading-base bg-dark-custom w-full rounded-t-lg',
+        'leading-base bg-darkcustom w-full rounded-t-lg',
         !noMargin && 'mt-8',
       )}
     >

@@ -8,7 +8,7 @@ import '@infinite-table/infinite-react/theme/shadcn.css';
 
 import { columns, Employee } from './columns';
 
-type ThemeName = 'default' | 'minimalist' | 'ocean' | 'balsam' | 'shadcn';
+type ThemeName = 'default' | 'minimalist' | 'ocean' | 'balsam';
 
 export default function App() {
   const [currentThemeMode, setThemeMode] = React.useState<'light' | 'dark'>(
@@ -50,7 +50,6 @@ export default function App() {
           value={currentThemeName}
           onChange={(e) => setThemeName(e.target.value as ThemeName)}
         >
-          <option value="shadcn">Shadcn</option>
           <option value="ocean">Ocean</option>
           <option value="balsam">Balsam</option>
           <option value="minimalist">Minimalist</option>
