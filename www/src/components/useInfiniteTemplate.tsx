@@ -65,7 +65,7 @@ const BASE_INDEX_HTML = `<!DOCTYPE html>
     <title>Document</title>
   </head>
   <body>
-    <div id="root" class="infinite-theme-mode--dark dark"></div>
+    <div id="root" class="infinite-theme-mode--dark"></div>
   </body>
 </html>`;
 const BASE_FILE_REACT_INDEX = `
