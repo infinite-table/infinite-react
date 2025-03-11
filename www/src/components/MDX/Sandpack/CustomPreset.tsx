@@ -13,6 +13,7 @@ import * as React from 'react';
 import { CSSProperties } from 'react';
 import { useState } from 'react';
 import { flushSync } from 'react-dom';
+
 import scrollIntoView from 'scroll-into-view-if-needed';
 
 import { NavigationBar } from './NavigationBar';

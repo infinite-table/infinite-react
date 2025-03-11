@@ -71,6 +71,7 @@ const BASE_INDEX_HTML = `<!DOCTYPE html>
 const BASE_FILE_REACT_INDEX = `
 import * as React from 'react';
 import { StrictMode } from 'react';
+
 import { createRoot } from 'react-dom/client';
 
 import '@infinite-table/infinite-react/index.css';
@@ -110,18 +111,21 @@ body,
 #root {
   height: 100%;
 }
+
 * {
   box-sizing: border-box;
 }
+
+.Infinite {
+  flex: 1;
+}
+  
 #root {
   display: flex;
   flex-flow: column;
   overflow: hidden;
 }
 
-.Infinite {
-  flex: 1;
-}
 
 body {
   background:rgb(35, 39, 47);
