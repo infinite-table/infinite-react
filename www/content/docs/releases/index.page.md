@@ -3,7 +3,7 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 6.2.1
+## 6.2.2
 
 Update shadcn theme to work well with the latest tailwind 4 colors.
 

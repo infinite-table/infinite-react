@@ -3,16 +3,7 @@ import { globalStyle } from '@vanilla-extract/css';
 import { LightVars as LightTheme } from './vars-default-light.css';
 import { DarkVars as DarkTheme } from './vars-default-dark.css';
 import { defineTheme } from './defineTheme.css';
-
-defineTheme('default', {
-  lightStyles: {
-    //@ts-ignore
-    vars: LightTheme,
-  },
-  darkStyles: {
-    vars: DarkTheme,
-  },
-});
+import { getThemeModeCls } from './getThemeGlobalSelectors';
 
 globalStyle(':root', {
   //@ts-ignore
@@ -23,22 +14,18 @@ globalStyle(':root', {
     },
   },
 });
+// make sure if the dark mode is set, it gets applied, even if the theme is not set
+globalStyle(`.${getThemeModeCls('dark')}, .${getThemeModeCls('dark')}:root`, {
+  color: 'red',
+  vars: DarkTheme,
+});
 
-// globalStyle(
-//   [
-//     '.light',
-//     '.infinite-light',
-//     '.infinite-theme-mode--light',
-
-//     '.light:root',
-//     '.infinite-light:root',
-//     '.infinite-theme-mode--light:root',
-//   ].join(', '),
-//   {
-//     //@ts-ignore
-//     vars: LightTheme,
-//   },
-// );
-// globalStyle(['.dark', '.infinite-dark'].join(', '), {
-//   vars: DarkTheme,
-// });
+defineTheme('default', {
+  lightStyles: {
+    //@ts-ignore
+    vars: LightTheme,
+  },
+  darkStyles: {
+    vars: DarkTheme,
+  },
+});
