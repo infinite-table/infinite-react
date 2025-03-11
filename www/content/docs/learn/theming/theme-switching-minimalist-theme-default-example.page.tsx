@@ -1,6 +1,7 @@
 import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
+import 'shadcn-ui-css-vars/index.css';
 import '@infinite-table/infinite-react/theme/minimalist.css';
 import '@infinite-table/infinite-react/theme/ocean.css';
 import '@infinite-table/infinite-react/theme/balsam.css';
@@ -8,7 +9,7 @@ import '@infinite-table/infinite-react/theme/shadcn.css';
 
 import { columns, Employee } from './columns';
 
-type ThemeName = 'default' | 'minimalist' | 'ocean' | 'balsam';
+type ThemeName = 'default' | 'minimalist' | 'ocean' | 'balsam' | 'shadcn';
 
 export default function App() {
   const [currentThemeMode, setThemeMode] = React.useState<'light' | 'dark'>(
@@ -18,7 +19,11 @@ export default function App() {
     React.useState<ThemeName>('minimalist');
   return (
     <div
-      className={`infinite-theme-mode--${currentThemeMode} infinite-theme-name--${currentThemeName}`}
+      className={`infinite-theme-mode--${currentThemeMode} infinite-theme-name--${currentThemeName} ${
+        currentThemeName === 'shadcn' && currentThemeMode === 'dark'
+          ? 'dark'
+          : ''
+      }`}
       style={{
         display: 'flex',
         flexFlow: 'column',
@@ -50,6 +55,7 @@ export default function App() {
           value={currentThemeName}
           onChange={(e) => setThemeName(e.target.value as ThemeName)}
         >
+          <option value="shadcn">Shadcn</option>
           <option value="ocean">Ocean</option>
           <option value="balsam">Balsam</option>
           <option value="minimalist">Minimalist</option>

@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.2.1
+
+Update shadcn theme to work well with the latest tailwind 4 colors.
+
 ## 6.2.0
 
 Starting with this release, the CSS for each theme (other than the `"default"`) is not included in the root CSS file (`@infinite-table/infinite-react/index.css`) and has to be imported explicitly:
