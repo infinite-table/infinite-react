@@ -2,7 +2,8 @@ import * as React from 'react';
 import '../index.global.css';
 import '../globals.css';
 
-import '../../../source/dist/theme/default.css';
+import 'shadcn-ui-css-vars/index.css';
+
 import '../../../source/dist/theme/shadcn.css';
 import '../../../source/dist/theme/ocean.css';
 import '../../../source/dist/theme/minimalist.css';

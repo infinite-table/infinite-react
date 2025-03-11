@@ -88,10 +88,7 @@ export default function Example() {
         flexFlow: 'row',
       }}
     >
-      <div
-        style={containerStyle}
-        className="infinite-theme-name--shadcn infinite-theme-mode--light"
-      >
+      <div style={containerStyle} className="infinite-theme-name--shadcn">
         <DataSource<Order>
           primaryKey="OrderId"
           data={orders.slice(0, 10)}
@@ -107,7 +104,7 @@ export default function Example() {
       </div>
       <div
         style={{ ...containerStyle, background: 'white' }}
-        className="infinite-theme-name--shadcn dark"
+        className="dark infinite-theme-name--shadcn"
       >
         <DataSource<Order>
           primaryKey="OrderId"

@@ -48,7 +48,7 @@ The following themes are currently available:
  - `shadcn` - for this theme to correctly show up, make sure the shadcn CSS vars are available on page - see [shadcn theming](https://ui.shadcn.com/docs/theming) for details
 
 
-To apply a theme (except the defualt one), you have to set the className `"infinite-theme-name--THEME_NAME"` to any parent element of the `<InfiniteTable />` component (or even on the component itself).
+To apply a theme (except the default one), you have to set the className `"infinite-theme-name--THEME_NAME"` to any parent element of the `<InfiniteTable />` component (or even on the component itself).
 
 You will want to apply the theme name and theme mode classNames to the same element, so you'll end up with a className like `"infinite-theme-name--minimalist infinite-theme-mode--dark"`.
 
