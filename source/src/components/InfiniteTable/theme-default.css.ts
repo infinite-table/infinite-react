@@ -16,7 +16,6 @@ globalStyle(':root', {
 });
 // make sure if the dark mode is set, it gets applied, even if the theme is not set
 globalStyle(`.${getThemeModeCls('dark')}, .${getThemeModeCls('dark')}:root`, {
-  color: 'red',
   vars: DarkTheme,
 });
 
