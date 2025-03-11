@@ -5,6 +5,7 @@ const borderColor = `#5c5c5c`;
 
 export const BalsamDarkVars = {
   ...BalsamLightVars,
+  [ThemeVars.themeMode]: 'dark',
   [ThemeVars.background]: '#2d3436',
 
   [ThemeVars.components.Menu.separatorColor]: borderColor,

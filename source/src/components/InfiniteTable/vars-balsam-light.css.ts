@@ -5,6 +5,8 @@ const borderColor = `#bdc3c7`;
 
 export const BalsamLightVars = {
   ...OceanLightVars,
+  [ThemeVars.themeName]: 'balsam',
+  [ThemeVars.themeMode]: 'light',
   [ThemeVars.components.Row
     .selectedBackground]: `color-mix(in srgb, transparent, ${ThemeVars.color.accent} 20%);`,
 

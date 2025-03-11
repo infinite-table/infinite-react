@@ -1,6 +1,7 @@
 import { ThemeVars } from './vars.css';
 
 export const DarkVars = {
+  [ThemeVars.themeMode]: 'dark',
   [ThemeVars.iconSize]: '24px',
   [ThemeVars.background]: '#101419',
   [ThemeVars.color.success]: '#008700',

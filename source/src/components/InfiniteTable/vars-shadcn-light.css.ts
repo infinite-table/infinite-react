@@ -4,6 +4,8 @@ import { ThemeVars } from './vars.css';
 const borderColor = `var(--border)`;
 export const ShadcnLightVars = {
   ...CommonThemeVars,
+  [ThemeVars.themeName]: 'shadcn',
+  [ThemeVars.themeMode]: 'light',
 
   [ThemeVars.background]: `var(--background)`,
   [ThemeVars.color.color]: 'var(--foreground)',

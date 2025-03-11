@@ -19,4 +19,9 @@ defineTheme('shadcn', {
     vars: ShadcnLightVars,
     ...shadcnStyles,
   },
+  darkStyles: {
+    vars: {
+      [ThemeVars.themeMode]: 'dark',
+    },
+  },
 });

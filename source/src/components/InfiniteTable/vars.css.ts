@@ -8,6 +8,8 @@ export const CSS_LOADED_VALUE = 'true';
 export const ThemeVars = createGlobalThemeContract(
   {
     loaded: 'loaded',
+    themeName: 'theme-name',
+    themeMode: 'theme-mode',
     color: {
       /**
        * Brand-specific accent color. This probably needs override to match your app.

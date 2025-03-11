@@ -177,6 +177,8 @@ const MenuVars = {
 
 export const LightVars = {
   [ThemeVars.loaded]: CSS_LOADED_VALUE,
+  [ThemeVars.themeName]: 'default',
+  [ThemeVars.themeMode]: 'light',
   [ThemeVars.iconSize]: '24px',
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,

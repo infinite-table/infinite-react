@@ -5,6 +5,7 @@ const borderColor = `color-mix(in srgb, transparent, ${ThemeVars.components.Cell
 
 export const OceanDarkVars = {
   ...OceanLightVars,
+  [ThemeVars.themeMode]: 'dark',
   [ThemeVars.background]: '#032c4f',
   [ThemeVars.components.Menu.separatorColor]: borderColor,
   [ThemeVars.color.color]: '#96a0aa',
