@@ -530,13 +530,13 @@ export type RowDetailComponentProps<T = any> = {
 export type InfiniteTablePropComponents<T = any> = {
   LoadMask?: (
     props: LoadMaskProps & { children?: React.ReactNode | undefined },
-  ) => JSX.Element | null;
-  CheckBox?: (props: InfiniteCheckBoxProps) => JSX.Element | null;
+  ) => React.JSX.Element | null;
+  CheckBox?: (props: InfiniteCheckBoxProps) => React.JSX.Element | null;
   Menu?: (
     props: MenuProps & { children?: React.ReactNode | undefined },
-  ) => JSX.Element | null;
-  MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
-  RowDetail?: (props: RowDetailComponentProps<T>) => JSX.Element | null;
+  ) => React.JSX.Element | null;
+  MenuIcon?: (props: MenuIconProps) => React.JSX.Element | null;
+  RowDetail?: (props: RowDetailComponentProps<T>) => React.JSX.Element | null;
 };
 
 export type ScrollStopInfo = {

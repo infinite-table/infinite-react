@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+
 import {
   DataSourcePropFilterTypes,
   DataSourceFilterValueItem,
@@ -9,8 +10,8 @@ import { rootClassName } from '../../internalProps';
 
 export type InfiniteTableColumnHeaderFilterProps<T> = {
   horizontalLayoutPageIndex: null | number;
-  filterEditor: () => JSX.Element | null;
-  filterOperatorSwitch: () => JSX.Element | null;
+  filterEditor: () => React.JSX.Element | null;
+  filterOperatorSwitch: () => React.JSX.Element | null;
   filterTypes: DataSourcePropFilterTypes<T>;
   columnFilterValue: DataSourceFilterValueItem<T> | null;
   operator?: DataSourceFilterOperator<T>;

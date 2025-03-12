@@ -576,7 +576,7 @@ export function InfiniteTableHeaderCell<T>(
   const FilterEditor = (operator?.components?.FilterEditor ||
     filterType?.components?.FilterEditor ||
     column.components?.FilterEditor ||
-    StringFilterEditor) as () => JSX.Element | null;
+    StringFilterEditor) as () => React.JSX.Element | null;
 
   const FilterOperatorSwitch =
     filterType?.components?.FilterOperatorSwitch ||

@@ -1,4 +1,5 @@
-import React, { CSSProperties, HTMLProps } from 'react';
+import * as React from 'react';
+import { CSSProperties, HTMLProps } from 'react';
 
 import {
   AggregationReducer,
@@ -589,14 +590,14 @@ export type InfiniteTableColumn<DATA_TYPE> = {
     | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   components?: {
-    ColumnCell?: (props: HTMLProps<HTMLDivElement>) => JSX.Element | null;
-    HeaderCell?: (props: HTMLProps<HTMLDivElement>) => JSX.Element | null;
+    ColumnCell?: (props: HTMLProps<HTMLDivElement>) => React.JSX.Element | null;
+    HeaderCell?: (props: HTMLProps<HTMLDivElement>) => React.JSX.Element | null;
 
-    Editor?: () => JSX.Element | null;
-    FilterEditor?: () => JSX.Element | null;
-    FilterOperatorSwitch?: () => JSX.Element | null;
+    Editor?: () => React.JSX.Element | null;
+    FilterEditor?: () => React.JSX.Element | null;
+    FilterOperatorSwitch?: () => React.JSX.Element | null;
 
-    MenuIcon?: (props: MenuIconProps) => JSX.Element | null;
+    MenuIcon?: (props: MenuIconProps) => React.JSX.Element | null;
   };
 };
 
