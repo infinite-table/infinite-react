@@ -14,6 +14,13 @@ globalStyle(':root', {
     },
   },
 });
+
+// make sure if the light mode is set, it gets applied, even if the theme is not set
+globalStyle(`.${getThemeModeCls('light')}, .${getThemeModeCls('light')}:root`, {
+  //@ts-ignore
+  vars: LightTheme,
+});
+
 // make sure if the dark mode is set, it gets applied, even if the theme is not set
 globalStyle(`.${getThemeModeCls('dark')}, .${getThemeModeCls('dark')}:root`, {
   vars: DarkTheme,
