@@ -21,7 +21,6 @@ export const BalsamDarkVars = {
   [ThemeVars.components.HeaderCell.background]: '#1c1c1c',
   [ThemeVars.components.HeaderCell
     .hoverBackground]: `color-mix(in srgb, ${ThemeVars.components.HeaderCell.background}, white 2%)`,
-  [ThemeVars.components.Row.background]: ThemeVars.background,
 
   [ThemeVars.components.Row.oddBackground]: `#262c2e`,
   [ThemeVars.components.Row.hoverBackground]: '#3d4749',

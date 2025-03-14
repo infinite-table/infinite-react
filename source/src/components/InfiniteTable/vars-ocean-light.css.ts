@@ -27,7 +27,6 @@ export const OceanLightVars = {
   [ThemeVars.components.Cell.borderWidth]: '0px',
   [ThemeVars.components.ActiveCellIndicator.inset]: '2px 1px 1px 1px',
 
-  [ThemeVars.components.Row.background]: ThemeVars.background,
   [ThemeVars.components.Row
     .oddBackground]: `color-mix(in srgb, ${ThemeVars.components.Row.background}, white 20%)`,
 

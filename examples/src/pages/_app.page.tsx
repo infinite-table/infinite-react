@@ -16,7 +16,7 @@ InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 function MyApp({ Component, pageProps }: any) {
   return (
     <div
-      className="__next infinite-dark"
+      className="__next infinite-theme-mode--dark"
       //@ts-ignore ignore
       style={{ '--it-row-height': '3rem', color: 'var(--infinite-cell-color)' }}
     >
