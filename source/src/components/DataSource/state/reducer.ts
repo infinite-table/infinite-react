@@ -136,7 +136,8 @@ const warnIncorrectTreeFilterOnce = once(() => {
 Your filtering function probably looks like this:
 
 function treeFilterFunction({ data }) {
-  data.children = data.children.filter(...) // <-- THIS MUTATION IS NOT SUPPORTED!
+  data.children = data.children.filter(...) // <-- THIS MUTATION IS NOT SUPPORTED (data.children = ...)!
+  
   return data
 }
 

@@ -16,7 +16,7 @@ import { vanillaConfig } from './tsup-vanilla-extract-config';
 // CHANGE HERE TO ADD ESM AS WELL
 const FORMATS: Format[] = ['cjs', 'esm'];
 
-const MINIFY = false; //true;
+const MINIFY = true;
 
 export const tsupConfig: Options = {
   entry: ['./src/index.tsx'],
