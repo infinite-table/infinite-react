@@ -1639,7 +1639,7 @@ function flattenTreeNodes<DataType>(
     rowInfo.nodeExpanded = expanded;
 
     if (
-      expanded &&
+      // expanded &&
       parentExpanded &&
       repeatWrappedGroupRows &&
       rowsPerPage != null &&
