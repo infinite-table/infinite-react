@@ -5,7 +5,7 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 6.2.8
 
-Minor bugfix - in a raf, check for component being still available before trying to scroll
+Minor bugfix.
 
 ## 6.2.6
 
