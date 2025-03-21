@@ -218,6 +218,11 @@ export function HeadlessTable(
       const scrollVarHost = scrollVarHostRef?.current;
 
       if (!scrollVarHost) {
+        if (!domRef.current) {
+          // we're in a raf, so the component might have been unmounted in the meantime
+          // so we protect against that
+          return;
+        }
         domRef.current!.style.setProperty(
           'transform',
           `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,

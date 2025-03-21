@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.2.7
+
+Minor bugfix - in a raf, check for component being still available before trying to scroll
+
 ## 6.2.6
 
 Consolidate themes
