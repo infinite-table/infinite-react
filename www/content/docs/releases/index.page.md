@@ -3,6 +3,11 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.2.9
+
+Fix edge case where `repeatWrappedGroupRows` didn't work in trees for collapsed non-leaf nodes. When a non-leaf node was collapsed, if it was the first node in a column set, it didn't repeat its parents correctly.
+Version `6.2.9` fixes this.
+
 ## 6.2.8
 
 Minor bugfix.
