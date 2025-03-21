@@ -117,7 +117,7 @@ export default function DataTestPage() {
         }}
         defaultTreeExpandState={{
           defaultExpanded: true,
-          collapsedPaths: [['8']],
+          collapsedPaths: [['8'], ['1', '4']],
         }}
       >
         <TreeGrid<FileSystemNode>
