@@ -132,3 +132,5 @@ export type {
   TableRenderRange,
   InfiniteTablePropGetContextMenuItems,
 };
+
+export type * from './DevTools';

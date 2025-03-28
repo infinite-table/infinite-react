@@ -101,21 +101,55 @@ const columns: Record<string, InfiniteTableColumn<CarSale>> = {
 };
 
 export default function DataTestPage() {
+  const [active, setActive] = React.useState([true, false]);
   return (
     <React.StrictMode>
-      <DataSource<CarSale> data={carsales} primaryKey="id">
-        <InfiniteTable<CarSale>
-          domProps={{
-            style: {
-              margin: '5px',
-              height: 900,
-              border: '1px solid gray',
-              position: 'relative',
-            },
-          }}
-          columns={columns}
-        />
-      </DataSource>
+      <button onClick={() => setActive([!active[0], active[1]])}>
+        toggle test
+      </button>
+      {active[0] && (
+        <DataSource<CarSale> data={carsales} primaryKey="id">
+          <InfiniteTable<CarSale>
+            debugId="test"
+            debugMode
+            domProps={{
+              style: {
+                margin: '5px',
+                height: 900,
+                border: '1px solid gray',
+                position: 'relative',
+              },
+            }}
+            columns={columns}
+          />
+        </DataSource>
+      )}
+      <button onClick={() => setActive([active[0], !active[1]])}>
+        toggle simple
+      </button>
+      {active[1] && (
+        <DataSource<CarSale>
+          data={carsales}
+          primaryKey="id"
+          selectionMode="multi-row"
+        >
+          <InfiniteTable<CarSale>
+            debugId="simple"
+            debugMode
+            domProps={{
+              style: {
+                margin: '5px',
+                height: 900,
+                border: '1px solid gray',
+                position: 'relative',
+              },
+            }}
+            columns={{
+              make: columns.make,
+            }}
+          />
+        </DataSource>
+      )}
     </React.StrictMode>
   );
 }

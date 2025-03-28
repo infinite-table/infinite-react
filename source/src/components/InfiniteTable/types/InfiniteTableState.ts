@@ -160,7 +160,7 @@ export type InfiniteTablePropPivotGrandTotalColumnPosition =
 export interface InfiniteTableMappedState<T> {
   id: InfiniteTableProps<T>['id'];
   debugId: InfiniteTableProps<T>['debugId'];
-  debugMode: NonUndefined<InfiniteTableProps<T>['debugMode']>;
+
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
   multiSortBehavior: NonUndefined<InfiniteTableProps<T>['multiSortBehavior']>;
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
@@ -169,6 +169,9 @@ export interface InfiniteTableMappedState<T> {
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
   onCellDoubleClick: InfiniteTableProps<T>['onCellDoubleClick'];
+
+  onRowMouseEnter: InfiniteTableProps<T>['onRowMouseEnter'];
+  onRowMouseLeave: InfiniteTableProps<T>['onRowMouseLeave'];
 
   repeatWrappedGroupRows: InfiniteTableProps<T>['repeatWrappedGroupRows'];
 
@@ -295,6 +298,7 @@ export interface InfiniteTableMappedState<T> {
 
 export interface InfiniteTableDerivedState<T> {
   isTree: boolean;
+  debugMode: boolean;
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Record<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];

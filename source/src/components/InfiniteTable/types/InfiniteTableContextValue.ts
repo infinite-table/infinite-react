@@ -9,6 +9,7 @@ import {
 } from '../../DataSource';
 import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableComputedColumn } from './InfiniteTableColumn';
+import { InfiniteTableRowInfoDataDiscriminator } from '../../../utils/groupAndPivot';
 
 export interface InfiniteTableContextValue<T> {
   children?: React.ReactNode;
@@ -32,6 +33,11 @@ export interface InfiniteTablePublicContext<T> {
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
 }
+
+export type InfiniteTableRowContext<T> = InfiniteTablePublicContext<T> &
+  InfiniteTableRowInfoDataDiscriminator<T> & {
+    rowIndex: number;
+  };
 
 export interface InfiniteTableCellContext<T> {
   rowIndex: OnCellClickContext<T>['rowIndex'];

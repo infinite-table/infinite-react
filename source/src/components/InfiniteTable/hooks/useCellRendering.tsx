@@ -73,6 +73,9 @@ export function useCellRendering<T>(
     rowHeight,
     rowDetailHeight,
 
+    onRowMouseEnter,
+    onRowMouseLeave,
+
     groupRenderStrategy,
     brain,
     showZebraRows,
@@ -257,6 +260,8 @@ export function useCellRendering<T>(
 
         onMouseEnter,
         onMouseLeave,
+        onRowMouseEnter,
+        onRowMouseLeave,
         domRef,
         width,
         column,
@@ -273,6 +278,8 @@ export function useCellRendering<T>(
     [
       rowHeight,
       rowDetailHeight,
+      onRowMouseEnter,
+      onRowMouseLeave,
       computedRowSizeCacheForDetails,
       computedRowHeight,
       isRowDetailsExpanded,

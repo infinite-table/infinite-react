@@ -55,6 +55,7 @@ import { MenuIconProps } from '../components/icons/MenuIcon';
 import {
   InfiniteTableCellContext,
   InfiniteTablePublicContext,
+  InfiniteTableRowContext,
 } from './InfiniteTableContextValue';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
 import { InfiniteTableKeyboardNavigationApi } from '../api/getKeyboardNavigationApi';
@@ -882,6 +883,15 @@ export interface InfiniteTableProps<T> {
     columnOrder: InfiniteTablePropColumnOrderNormalized,
   ) => void;
   onRowHeightChange?: (rowHeight: number) => void;
+
+  onRowMouseEnter?: (
+    context: InfiniteTableRowContext<T>,
+    event: React.MouseEvent,
+  ) => void;
+  onRowMouseLeave?: (
+    context: InfiniteTableRowContext<T>,
+    event: React.MouseEvent,
+  ) => void;
 
   onReady?: ({
     api,

@@ -222,7 +222,7 @@ export const forwardProps = <T>(
     groupColumn: 1,
     onReady: 1,
     domProps: 1,
-    debugMode: 1,
+
     onKeyDown: 1,
     onCellClick: 1,
     onCellDoubleClick: 1,
@@ -238,6 +238,9 @@ export const forwardProps = <T>(
     onCellContextMenu: 1,
 
     onRenderRangeChange: 1,
+
+    onRowMouseEnter: 1,
+    onRowMouseLeave: 1,
 
     onScrollToTop: 1,
     onScrollToBottom: 1,
@@ -552,6 +555,7 @@ export const mapPropsToState = <T>(params: {
     : props.isRowDetailEnabled || true;
 
   return {
+    debugMode: props.debugMode ?? !!props.debugId ?? false,
     isTree: parentState.isTree,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,

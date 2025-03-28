@@ -403,7 +403,7 @@ export const InfiniteTableComponent = React.memo(
       }
     }, [componentState.ready]);
 
-    useDebugMode();
+    const debugId = useDebugMode();
 
     React.useEffect(() => {
       // we can make this more elegant
@@ -425,7 +425,12 @@ export const InfiniteTableComponent = React.memo(
     );
 
     return (
-      <div onKeyDown={onKeyDown} ref={domRef} {...domProps}>
+      <div
+        data-debug-id={debugId}
+        onKeyDown={onKeyDown}
+        ref={domRef}
+        {...domProps}
+      >
         {children}
         <div
           ref={portalDOMRef as RefObject<HTMLDivElement>}
