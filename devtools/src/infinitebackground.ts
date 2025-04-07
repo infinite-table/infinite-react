@@ -3,6 +3,7 @@ import type {
   DevToolsMessageAddress,
   DevToolsGenericMessage,
 } from '@infinite-table/infinite-react';
+import { getPageUrlOfCurrentTab } from './lib/getCurrentPageUrl';
 
 type MessageFromPageToBackground = {
   source: Extract<DevToolsMessageAddress, 'infinite-table-page'>;
@@ -64,25 +65,38 @@ function onMessageForPage(message: MessageForPage) {
     chrome.tabs.sendMessage(tabId, message);
   });
 }
-const lastPayloadsPerInstance: Record<string, DevToolsHostPageMessagePayload> =
-  {};
+const payloadsForPages: Record<
+  string,
+  Record<string, DevToolsHostPageMessagePayload>
+> = {};
 
-function onMessageFromPage(message: MessageFromPageToBackground) {
+async function onMessageFromPage(message: MessageFromPageToBackground) {
   const messageTypes = {
-    unmount: (message: MessageFromPageToBackground) => {
-      delete lastPayloadsPerInstance[message.payload.debugId];
+    unmount: async (message: MessageFromPageToBackground) => {
+      const pageUrl = await getPageUrlOfCurrentTab();
+      const payloadsForCurrentPage = payloadsForPages[pageUrl] || {};
 
-      chrome.storage.session.set({
-        instances: lastPayloadsPerInstance,
-      });
+      if (payloadsForCurrentPage && payloadsForCurrentPage.instances) {
+        // @ts-ignore
+        delete payloadsForCurrentPage.instances[message.payload.debugId];
+
+        chrome.storage.session.set(payloadsForPages);
+      }
     },
-    update: (message: MessageFromPageToBackground) => {
-      const payload = message.payload as DevToolsHostPageMessagePayload;
+    update: async (message: MessageFromPageToBackground) => {
+      const pageUrl = await getPageUrlOfCurrentTab();
 
-      lastPayloadsPerInstance[payload.debugId] = payload;
-      chrome.storage.session.set({
-        instances: lastPayloadsPerInstance,
-      });
+      payloadsForPages[pageUrl] = payloadsForPages[pageUrl] || {
+        instances: {},
+      };
+
+      const payloadForCurrentPage = payloadsForPages[pageUrl];
+
+      // @ts-ignore
+      payloadForCurrentPage.instances[message.payload.debugId] =
+        message.payload as DevToolsHostPageMessagePayload;
+
+      chrome.storage.session.set(payloadsForPages);
     },
   };
 

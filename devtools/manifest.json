@@ -3,7 +3,7 @@
   "name": "Infinite Table DevTools Extension",
   "version": "1.0",
   "description": "A Chrome extension for Infinite Table",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "tabs", "scripting", "storage"],
   "devtools_page": "./src/index.html",
 
   "action": {
@@ -14,14 +14,14 @@
     }
   },
   "background": {
-    "service_worker": "src/background.ts",
+    "service_worker": "src/infinitebackground.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["http://localhost/*", "https://infinite-table.com/*"],
-      "js": ["./src/content.ts"],
-      "css": ["./src/content.css"]
+      "js": ["src/content.ts"],
+      "css": ["src/content.css"]
     }
   ],
   "icons": {

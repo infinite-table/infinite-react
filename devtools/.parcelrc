@@ -1,4 +1,0 @@
-{
-  "extends": "@parcel/config-webextension",
-  "noOptimize": true
-}

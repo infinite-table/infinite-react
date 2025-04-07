@@ -558,22 +558,32 @@ export function concludeReducer<T>(params: {
   if (shouldFilterClientSide) {
     state.unfilteredCount = dataArray.length;
 
-    dataArray = shouldFilterAgain
-      ? filterDataSource({
-          // tree-related stuff
-          getNodeChildren,
-          isLeafNode,
-          nodesKey,
-          treeFilterFunction,
-          // ---
-          dataArray,
-          toPrimaryKey,
-          filterTypes,
-          operatorsByFilterType,
-          filterFunction,
-          filterValue,
-        })
-      : state.lastFilterDataArray!;
+    let filterTimestamp = now;
+
+    if (shouldFilterAgain) {
+      if (state.devToolsDetected) {
+        filterTimestamp = Date.now();
+      }
+      dataArray = filterDataSource({
+        // tree-related stuff
+        getNodeChildren,
+        isLeafNode,
+        nodesKey,
+        treeFilterFunction,
+        // ---
+        dataArray,
+        toPrimaryKey,
+        filterTypes,
+        operatorsByFilterType,
+        filterFunction,
+        filterValue,
+      });
+      if (state.devToolsDetected) {
+        state.debugTimings.set('filter', Date.now() - filterTimestamp);
+      }
+    } else {
+      dataArray = state.lastFilterDataArray!;
+    }
 
     state.lastFilterDataArray = dataArray;
     state.filteredAt = now;
@@ -587,6 +597,10 @@ export function concludeReducer<T>(params: {
     multisort.knownTypes = { ...prevKnownTypes, ...state.sortTypes };
 
     if (shouldSortAgain) {
+      let sortTimestamp = now;
+      if (state.devToolsDetected) {
+        sortTimestamp = Date.now();
+      }
       if (state.sortFunction) {
         dataArray = state.sortFunction(sortInfo!, [...dataArray]);
       } else {
@@ -601,6 +615,10 @@ export function concludeReducer<T>(params: {
         } else {
           dataArray = multisort(sortInfo!, [...dataArray]);
         }
+      }
+      if (state.devToolsDetected) {
+        const sortDuration = Date.now() - sortTimestamp;
+        state.debugTimings.set('sort', sortDuration);
       }
     } else {
       dataArray = state.lastSortDataArray!;

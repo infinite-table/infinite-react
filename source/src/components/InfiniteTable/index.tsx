@@ -502,6 +502,19 @@ function InfiniteTableContextProvider<T>({
     (globalThis as any).getComputed = getComputed;
     (globalThis as any).componentActions = componentActions;
     (globalThis as any).masterBrain = componentState.brain;
+
+    (globalThis as any).INFINITE = (globalThis as any).INFINITE || {};
+
+    if (getState().debugId) {
+      const debugId = getState().debugId;
+      // @ts-ignore
+      (globalThis as any).INFINITE[debugId] = {
+        // @ts-ignore
+        ...((globalThis as any).INFINITE[debugId] || {}),
+        getState,
+        actions: componentActions,
+      };
+    }
   }
 
   const {

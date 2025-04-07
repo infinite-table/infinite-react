@@ -123,6 +123,7 @@ export function initSetupState<T>({
   return {
     renderer,
     onRenderUpdater,
+    devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
     lastRowToCollapseRef: { current: null },
     lastRowToExpandRef: { current: null },
@@ -555,7 +556,6 @@ export const mapPropsToState = <T>(params: {
     : props.isRowDetailEnabled || true;
 
   return {
-    debugMode: props.debugMode ?? !!props.debugId ?? false,
     isTree: parentState.isTree,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,

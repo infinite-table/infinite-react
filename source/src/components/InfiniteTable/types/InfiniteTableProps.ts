@@ -602,8 +602,6 @@ export type InfiniteTablePropKeyboardShorcut = {
     | Promise<any>;
 };
 
-export type InfiniteTablePropDebugMode = boolean;
-
 export type InfiniteTablePropOnCellDoubleClickResult = Partial<{
   preventEdit: boolean;
 }>;
@@ -626,8 +624,6 @@ export interface InfiniteTableProps<T> {
   components?: InfiniteTablePropComponents<T>;
 
   wrapRowsHorizontally?: boolean;
-
-  debugMode?: InfiniteTablePropDebugMode;
 
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 

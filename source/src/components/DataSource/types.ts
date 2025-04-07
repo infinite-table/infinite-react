@@ -26,10 +26,7 @@ import {
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumnVariant,
 } from '../InfiniteTable/types/InfiniteTableColumn';
-import {
-  InfiniteTablePropDebugMode,
-  ScrollStopInfo,
-} from '../InfiniteTable/types/InfiniteTableProps';
+import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
@@ -173,9 +170,6 @@ export interface DataSourceMappedState<T> {
   onNodeExpand: TreeDataSourceProps<T>['onNodeExpand'];
   isRowDisabled: DataSourceProps<T>['isRowDisabled'];
 
-  debugId: DataSourceProps<T>['debugId'];
-  debugMode: DataSourceProps<T>['debugMode'];
-
   nodesKey: NonUndefined<TreeDataSourceProps<T>['nodesKey']>;
 
   treeSelection: TreeDataSourceProps<T>['treeSelection'];
@@ -288,7 +282,11 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
   LazyRowInfoGroup<DataType>
 >;
 
+export type DebugTimingKey = 'group' | 'filter' | 'sort' | 'pivot';
+
 export interface DataSourceSetupState<T> {
+  devToolsDetected: boolean;
+  debugTimings: Map<DebugTimingKey, number>;
   indexer: Indexer<T, any>;
   getDataSourceMasterContextRef: React.MutableRefObject<
     () => DataSourceMasterDetailContextValue | undefined
@@ -681,7 +679,6 @@ export type TreeExpandStateValue = TreeExpandState | TreeExpandStateObject<any>;
 export type DataSourceProps<T> = {
   nodesKey?: never;
   debugId?: string;
-  debugMode?: InfiniteTablePropDebugMode;
   children?:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
@@ -965,6 +962,8 @@ export type DataSourceCallback_BaseParam<T> = {
 };
 
 export type DataSourceDerivedState<T> = {
+  debugId: DataSourceProps<T>['debugId'];
+
   isTree: boolean;
   // TODO pass as second arg the index
   toPrimaryKey: (data: T) => any;

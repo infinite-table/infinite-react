@@ -1,5 +1,14 @@
-import type { DataSourceState } from '../../DataSource';
-import type { InfiniteTableComputedValues, InfiniteTableState } from '.';
+import type {
+  DataSourceComponentActions,
+  DataSourceState,
+  DebugTimingKey,
+} from '../../DataSource';
+import type {
+  InfiniteTableApi,
+  InfiniteTableComputedValues,
+  InfiniteTableState,
+} from '.';
+import { InfiniteTableActions } from './InfiniteTableState';
 
 export type DevToolsMessageAddress =
   | 'infinite-table-devtools-contentscript'
@@ -18,6 +27,9 @@ export type DevToolsHookFnOptions = {
   getState: () => InfiniteTableState<any>;
   getDataSourceState: () => DataSourceState<any>;
   getComputed: () => InfiniteTableComputedValues<any>;
+  actions: InfiniteTableActions<any>;
+  dataSourceActions: DataSourceComponentActions<any>;
+  api: InfiniteTableApi<any>;
 };
 
 export type DevToolsHostPageMessagePayload = {
@@ -25,6 +37,8 @@ export type DevToolsHostPageMessagePayload = {
   columnOrder: string[];
   visibleColumnIds: string[];
   selectionMode: DataSourceState<any>['selectionMode'];
+  devToolsDetected: InfiniteTableState<any>['devToolsDetected'];
+  debugTimings: Record<DebugTimingKey, number>;
 };
 
 export type DevToolsHostPageMessageType = 'update' | 'unmount';

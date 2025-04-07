@@ -117,7 +117,7 @@ export default function GroupByExample() {
   return (
     <>
       <div>
-        Selected{' '}
+        Selected:{' '}
         {rowSelection instanceof RowSelectionState
           ? rowSelection.getSelectedCount()
           : false}
@@ -127,7 +127,10 @@ export default function GroupByExample() {
         data={data}
         selectionMode="multi-row"
         rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
+        onRowSelectionChange={(sel) => {
+          console.log('onRowSelectionChange', sel);
+          setRowSelection(sel);
+        }}
       >
         <InfiniteTable<Developer>
           domProps={domProps}

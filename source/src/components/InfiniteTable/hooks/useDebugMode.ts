@@ -1,5 +1,7 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { once } from '../../../utils/DeepMap/once';
+import type { DebugTimingKey } from '../../DataSource';
+
 import { stripVar } from '../../../utils/stripVar';
 
 import { CSS_LOADED_VALUE, ThemeVars } from '../vars.css';
@@ -46,6 +48,7 @@ function buildMessageForExtension(
   const opts = options!;
   const computedValues = opts.getComputed();
   const dataSourceState = opts.getDataSourceState();
+  const state = opts.getState();
 
   const message: DevToolsHostPageMessage = {
     ...base,
@@ -55,6 +58,11 @@ function buildMessageForExtension(
       columnOrder: computedValues.computedColumnOrder,
       visibleColumnIds: computedValues.computedVisibleColumns.map((c) => c.id),
       selectionMode: dataSourceState.selectionMode,
+      devToolsDetected: state.devToolsDetected,
+      debugTimings: Object.fromEntries(dataSourceState.debugTimings) as Record<
+        DebugTimingKey,
+        number
+      >,
     },
   };
 
@@ -72,6 +80,19 @@ const setupHook = once<any, DevToolsHookFn>(() => {
   ) => {
     if (options) {
       INSTANCES.set(debugId, options);
+      const { devToolsDetected } = options.getState();
+
+      if (!devToolsDetected) {
+        options.actions.devToolsDetected = true;
+      }
+      const dataSourceState = options.getDataSourceState();
+      if (dataSourceState.debugId !== debugId) {
+        options.dataSourceActions.debugId = debugId;
+      }
+      if (!dataSourceState.devToolsDetected) {
+        options.dataSourceActions.devToolsDetected = true;
+      }
+
       window.postMessage(
         buildMessageForExtension({ type: 'update', debugId }, options),
       );
@@ -92,9 +113,9 @@ export function useDebugMode() {
   const { getState } = useInfiniteTable();
 
   const state = getState();
-  const { debugMode, domRef } = state;
+  const { domRef, debugId } = state;
 
-  if (debugMode) {
+  if (debugId) {
     if (domRef.current) {
       const value = getComputedStyle(domRef.current).getPropertyValue(
         cssFileLoadedVarName,
@@ -112,6 +133,16 @@ export function useDebugMode() {
 const HOOK_FN_SETUP_CALLBACK = buildSubscriptionCallback<DevToolsHookFn>();
 
 const DEVTOOLS_MESSAGES = {
+  setColumnVisibility: (payload: {
+    columnId: string;
+    visible: boolean;
+    debugId: string;
+  }) => {
+    const instance = INSTANCES.get(payload.debugId);
+    if (instance) {
+      instance.api.setVisibilityForColumn(payload.columnId, payload.visible);
+    }
+  },
   highlight: (payload: { debugId: string }) => {
     const instance = INSTANCES.get(payload.debugId);
     if (instance) {
@@ -187,22 +218,36 @@ function listenForDevTools() {
 listenForDevTools();
 
 export function useDevTools() {
-  const { getState, getComputed, getDataSourceState } = useInfiniteTable();
+  const {
+    getState,
+    getComputed,
+    getDataSourceState,
+    dataSourceActions,
+    actions,
+    api,
+  } = useInfiniteTable();
 
   const state = getState();
 
-  const id = useId();
-  const debugId = state.debugId ?? id;
+  const debugId = state.debugId;
 
   const debugIdRef = useRef(debugId);
   debugIdRef.current = debugId;
 
   useEffect(() => {
+    const debugId = debugIdRef.current;
+    if (!debugId) {
+      return;
+    }
+
     const withHookFn = (hookFn: DevToolsHookFn) => {
       hookFn(debugId, {
         getState,
         getDataSourceState,
         getComputed,
+        dataSourceActions,
+        actions,
+        api,
       });
     };
 
@@ -228,6 +273,11 @@ export function useDevTools() {
 
   // also call it after any render
   useEffect(() => {
+    const debugId = debugIdRef.current;
+    if (!debugId) {
+      return;
+    }
+
     const hookFn = HOOK_FN_SETUP_CALLBACK.get();
 
     if (hookFn) {
@@ -235,11 +285,18 @@ export function useDevTools() {
         getState,
         getDataSourceState,
         getComputed,
+        dataSourceActions,
+        actions,
+        api,
       });
     }
   });
 
   useEffect(() => {
+    if (!debugId) {
+      return;
+    }
+
     return () => {
       const devtoolsHookFn = (globalThis as any)
         .__INFINITE_TABLE_DEVTOOLS_HOOK__ as DevToolsHookFn | undefined;

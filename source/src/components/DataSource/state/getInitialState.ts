@@ -13,6 +13,7 @@ import {
   DataSourcePropTreeSelection,
   DataSourcePropTreeSelection_SingleNode,
   DataSourceRowInfoReducer,
+  DebugTimingKey,
   RowDisabledStateObject,
   RowSelectionState,
 } from '..';
@@ -96,6 +97,9 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
   >();
 
   return {
+    debugTimings: new Map<DebugTimingKey, number>(),
+
+    devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
     totalLeafNodesCount: 0,
@@ -240,13 +244,12 @@ export const forwardProps = <T>(
     isNodeReadOnly: (isReadOnly) => isReadOnly ?? isNodeReadOnly,
     isNodeSelectable: (isSelectable) => isSelectable ?? isNodeSelectable,
     data: 1,
-    debugId: 1,
+
     nodesKey: 1,
     isNodeExpanded: 1,
     isNodeCollapsed: 1,
     pivotBy: 1,
     primaryKey: 1,
-    debugMode: 1,
     livePagination: 1,
     treeSelection: 1,
     refetchKey: (refetchKey) => refetchKey ?? '',
@@ -273,7 +276,7 @@ export const forwardProps = <T>(
         },
         reducer: (_, rowInfo) => {
           if (
-            props.debugMode &&
+            props.debugId &&
             !props.nodesKey &&
             state.idToIndexMap.has(rowInfo.id)
           ) {
@@ -301,10 +304,7 @@ export const forwardProps = <T>(
           reducer: (_, rowInfo) => {
             if (rowInfo.isTreeNode) {
               state.idToPathMap.set(rowInfo.id, rowInfo.nodePath);
-              if (
-                props.debugMode &&
-                state.pathToIndexMap.has(rowInfo.nodePath)
-              ) {
+              if (props.debugId && state.pathToIndexMap.has(rowInfo.nodePath)) {
                 console.warn(
                   `Duplicate node path found in data source (debugId: ${
                     props.debugId || 'none'
@@ -734,6 +734,7 @@ export function deriveStateFromProps<T extends any>(params: {
   }
 
   const result: DataSourceDerivedState<T> = {
+    debugId: state.debugId ?? props.debugId,
     isTree,
     selectionMode,
     groupRowsState: groupRowsState as GroupRowsState,

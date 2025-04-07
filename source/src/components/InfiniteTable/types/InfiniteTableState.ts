@@ -63,6 +63,8 @@ export interface InfiniteTableSetupState<T> {
   renderer: GridRenderer;
   onRenderUpdater: SubscriptionCallback<Renderable>;
 
+  devToolsDetected: boolean;
+
   forceBodyRerenderTimestamp: number;
 
   lastRowToExpandRef: MutableRefObject<any | null>;
@@ -298,7 +300,7 @@ export interface InfiniteTableMappedState<T> {
 
 export interface InfiniteTableDerivedState<T> {
   isTree: boolean;
-  debugMode: boolean;
+
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Record<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];

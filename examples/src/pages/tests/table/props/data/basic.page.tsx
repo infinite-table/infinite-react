@@ -101,7 +101,7 @@ const columns: Record<string, InfiniteTableColumn<CarSale>> = {
 };
 
 export default function DataTestPage() {
-  const [active, setActive] = React.useState([true, false]);
+  const [active, setActive] = React.useState([true, true]);
   return (
     <React.StrictMode>
       <button onClick={() => setActive([!active[0], active[1]])}>

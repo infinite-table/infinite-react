@@ -29,12 +29,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@infinite-table/infinite-react": ["../source/src/index.ts"]
+      "@infinite-table/infinite-react": ["../source/src/index.ts"],
+      "devtools-ui": ["../devtools-ui/src/index.ts"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/components/messageContentScript"
-  ]
+
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

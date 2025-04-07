@@ -133,4 +133,12 @@ export type {
   InfiniteTablePropGetContextMenuItems,
 };
 
-export type * from './DevTools';
+export type {
+  DevToolsHookFn,
+  DevToolsHookFnOptions,
+  DevToolsMessageAddress,
+  DevToolsGenericMessage,
+  DevToolsHostPageMessage,
+  DevToolsHostPageMessagePayload,
+  DevToolsHostPageMessageType,
+} from './DevTools';

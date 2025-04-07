@@ -25,6 +25,7 @@ window.addEventListener('message', (event) => {
 });
 
 function onMessageForPage(message: MessageForPage) {
+  console.log('got message for page', message);
   window.postMessage(message);
 }
 
