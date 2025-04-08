@@ -28,12 +28,12 @@ import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndic
 import { join } from '../../utils/join';
 import { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
 import { GridRenderer } from './ReactHeadlessTableRenderer';
-import { InternalVars } from '../InfiniteTable/internalVars.css';
-import { stripVar } from '../../utils/stripVar';
+// import { InternalVars } from '../InfiniteTable/internalVars.css';
+// import { stripVar } from '../../utils/stripVar';
 import { CELL_DETACHED_CLASSNAMES } from '../InfiniteTable/components/cellDetachedCls';
 
-const virtualScrollLeftOffset = stripVar(InternalVars.virtualScrollLeftOffset);
-const virtualScrollTopOffset = stripVar(InternalVars.virtualScrollTopOffset);
+// const virtualScrollLeftOffset = stripVar(InternalVars.virtualScrollLeftOffset);
+// const virtualScrollTopOffset = stripVar(InternalVars.virtualScrollTopOffset);
 
 export type HeadlessTableProps = {
   scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
@@ -215,30 +215,33 @@ export function HeadlessTable(
 
   const updateDOMTransform = useCallback((scrollPos: ScrollPosition) => {
     requestAnimationFrame(() => {
-      const scrollVarHost = scrollVarHostRef?.current;
+      // const scrollVarHost = scrollVarHostRef?.current;
 
-      if (!scrollVarHost) {
-        if (!domRef.current) {
-          // we're in a raf, so the component might have been unmounted in the meantime
-          // so we protect against that
-          return;
-        }
-        domRef.current!.style.setProperty(
-          'transform',
-          `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
-        );
+      // if (!scrollVarHost) {
+      // seems like it's a lot less performant to scroll via CSS vars
+      // as STYLE RECALCULATION is a lot more expensive than using the transform property
+
+      if (!domRef.current) {
+        // we're in a raf, so the component might have been unmounted in the meantime
+        // so we protect against that
         return;
       }
-
-      scrollVarHost.style.setProperty(
-        virtualScrollLeftOffset,
-        `-${scrollPos.scrollLeft}px`,
+      domRef.current!.style.setProperty(
+        'transform',
+        `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
       );
+      return;
+      // }
 
-      scrollVarHost.style.setProperty(
-        virtualScrollTopOffset,
-        `-${scrollPos.scrollTop}px`,
-      );
+      // scrollVarHost.style.setProperty(
+      //   virtualScrollLeftOffset,
+      //   `-${scrollPos.scrollLeft}px`,
+      // );
+
+      // scrollVarHost.style.setProperty(
+      //   virtualScrollTopOffset,
+      //   `-${scrollPos.scrollTop}px`,
+      // );
     });
   }, []);
 

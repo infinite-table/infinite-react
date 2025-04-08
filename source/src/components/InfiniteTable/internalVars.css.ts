@@ -45,6 +45,6 @@ export const InternalVars = createThemeContract({
   scrollLeft: null,
   scrollTop: null,
 
-  virtualScrollLeftOffset: null,
-  virtualScrollTopOffset: null,
+  // virtualScrollLeftOffset: null,
+  // virtualScrollTopOffset: null,
 });
