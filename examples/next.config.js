@@ -28,4 +28,6 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  output: 'export',
+  distDir: 'out',
 };

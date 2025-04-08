@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev -p 5555",
     "dev-no-output": "next dev &> /dev/null",
-    "build": "rimraf .next && rimraf node_modules/@types/react && rimraf node_modules/react && NODE_ENV=production next build && NODE_ENV=production next export",
-    "build-local": "NODE_ENV=production next build && NODE_ENV=production next export",
+    "build": "rimraf .next && rimraf node_modules/@types/react && rimraf node_modules/react && NODE_ENV=production next build",
+    "build-local": "NODE_ENV=production next build",
     "start": "next start",
     "test": "npm run build && npm run run-test",
     "test-local": "npm run build-local && npm run run-test",
