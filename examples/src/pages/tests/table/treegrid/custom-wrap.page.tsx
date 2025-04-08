@@ -104,7 +104,7 @@ export const columns: InfiniteTablePropColumns<
 
 export default function App() {
   const [isHorizontal, setIsHorizontal] = useState(true);
-  const [showMoreColumns, setShowMoreColumns] = useState(false);
+  const [showMoreColumns] = useState(false);
 
   const dataRef = useRef<TreeData[]>([]);
   const isAddedRef = useRef(false);
