@@ -141,4 +141,7 @@ export type {
   DevToolsHostPageMessage,
   DevToolsHostPageMessagePayload,
   DevToolsHostPageMessageType,
+  DevToolsInfiniteOverrides,
+  DevToolsDataSourceOverrides,
+  DevToolsOverrides,
 } from './DevTools';

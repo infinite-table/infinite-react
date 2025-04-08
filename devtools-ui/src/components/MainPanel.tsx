@@ -1,8 +1,11 @@
 import {
   DataSource,
   InfiniteTable,
-  DevToolsHostPageMessagePayload,
-  InfiniteTablePropGroupRenderStrategy,
+  type DevToolsHostPageMessagePayload,
+  type DevToolsDataSourceOverrides,
+  type DevToolsInfiniteOverrides,
+  type DevToolsOverrides,
+  type InfiniteTablePropColumnVisibility,
 } from '@infinite-table/infinite-react';
 
 import {
@@ -17,12 +20,13 @@ import {
 } from '../lib/APIManagerContext';
 
 import { HighlightButton } from './HighlightButton';
+import { RevertButton } from './RevertButton';
 import { DevToolsSidebarSection } from './DevToolsSidebarSection';
 
 import { Checkbox } from './ui/checkbox';
 import { useDevToolsMessagingContext } from '../lib/DevToolsMessagingContext';
-import { useCallback, useEffect } from 'react';
-import { PlugIcon, Trash } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Trash } from 'lucide-react';
 import { ConnectStatus } from './ConnectStatus';
 import { Combobox } from './ui/combobox';
 import { X } from 'lucide-react';
@@ -34,6 +38,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { lowerCaseFirstLetter } from '../lib/utils';
+import { notNullable } from '../lib/utilityTypes';
 
 //@ts-ignore
 const LICENSE_KEY = process.env.INFINITE_TABLE_LICENSE_KEY;
@@ -137,12 +143,18 @@ function PanelSide() {
 }
 
 function MainPanelSidebar() {
-  const { setColumnVisibility, setGroupBy, setGroupRenderStrategy } =
-    useAPIManagerContext();
+  const {
+    setColumnVisibility,
+    setGroupBy,
+    setGroupRenderStrategy,
+    revertAll,
+    overridenProperties,
+  } = useAPIManagerContext();
   const currentInstance = useDevToolsMessagingContext().currentInstance!;
 
   const visibleColumns = currentInstance.visibleColumnIds;
   const allColumns = currentInstance.columnOrder;
+  const columnVisibility = currentInstance.columnVisibility;
 
   const visibleColumnsSet = new Set(
     allColumns.filter((id) => visibleColumns.includes(id)),
@@ -151,7 +163,10 @@ function MainPanelSidebar() {
   const currentGroupBy = new Set(currentInstance.groupBy);
 
   let hasFnForGroupBy = false;
-  const fieldOptions = Object.keys(currentInstance.columns)
+  const uniqueFields = new Set();
+  const fieldOptions: { value: string; label: string }[] = Object.keys(
+    currentInstance.columns,
+  )
     .filter((key) => {
       const column = currentInstance.columns[key];
 
@@ -162,12 +177,20 @@ function MainPanelSidebar() {
     })
     .map((key) => {
       const column = currentInstance.columns[key];
+      const value = `${column.field}`;
+
+      if (uniqueFields.has(value)) {
+        return null;
+      }
+      uniqueFields.add(value);
 
       return {
-        value: `${column.field}`,
-        label: `${column.field}`,
+        value,
+        label: value,
       };
-    });
+    })
+    .filter(notNullable);
+
   const groupByOptions = fieldOptions.filter(
     (option) => !currentGroupBy.has(option.value),
   );
@@ -178,29 +201,80 @@ function MainPanelSidebar() {
         <div className="flex items-center gap-2">
           Instance "{currentInstance.debugId}" <ConnectStatus />
         </div>
-        <HighlightButton debugId={currentInstance.debugId}>
-          <span className="text-xs">Highlight</span>
-        </HighlightButton>
+        <div className="flex items-center gap-2">
+          {overridenProperties.size !== 0 ? (
+            <RevertButton
+              absolute={false}
+              onClick={() => {
+                revertAll();
+              }}
+            />
+          ) : null}
+
+          <HighlightButton debugId={currentInstance.debugId}>
+            <span className="text-xs">Highlight</span>
+          </HighlightButton>
+        </div>
       </div>
       <hr className="border-border" />
 
       <div className="text-sm text-muted-foreground rounded-md flex flex-col gap-2">
-        <DevToolsSidebarSection name="Visible Columns">
-          <div className="flex flex-wrap gap-2">
-            {allColumns.map((id) => (
-              <div key={id} className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  id={`col-${id}`}
-                  checked={visibleColumnsSet.has(id)}
-                  onCheckedChange={(checked) => {
-                    setColumnVisibility(id, checked === true);
-                  }}
-                />
-                <label htmlFor={`col-${id}`} className="text-xs">
-                  {id}
-                </label>
-              </div>
-            ))}
+        <DevToolsSidebarSection
+          name={
+            <div className="flex items-center gap-2">
+              Visible Columns
+              <Button
+                variant="outline"
+                disabled={visibleColumnsSet.size === 0}
+                onClick={() => {
+                  setColumnVisibility({
+                    ...Object.fromEntries(allColumns.map((id) => [id, false])),
+                  });
+                }}
+              >
+                Hide All
+              </Button>
+              <Button
+                variant="outline"
+                disabled={visibleColumnsSet.size === allColumns.length}
+                onClick={() => {
+                  setColumnVisibility({});
+                }}
+              >
+                Show All
+              </Button>
+            </div>
+          }
+          overridesProperties={['columnVisibility']}
+        >
+          <div className="flex flex-wrap flex-col gap-2">
+            <div className="flex flex-wrap gap-2">
+              {allColumns.map((id) => (
+                <div
+                  key={id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Checkbox
+                    id={`col-${id}`}
+                    checked={visibleColumnsSet.has(id)}
+                    onCheckedChange={(checked) => {
+                      const newColumnVisibility = {
+                        ...columnVisibility,
+                      };
+                      if (checked) {
+                        delete newColumnVisibility[id];
+                      } else {
+                        newColumnVisibility[id] = false;
+                      }
+                      setColumnVisibility(newColumnVisibility);
+                    }}
+                  />
+                  <label htmlFor={`col-${id}`} className="text-xs">
+                    {id}
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         </DevToolsSidebarSection>
 
@@ -217,6 +291,7 @@ function MainPanelSidebar() {
         </DevToolsSidebarSection>
 
         <DevToolsSidebarSection
+          overridesProperties={['groupBy', 'groupRenderStrategy']}
           name={
             <>
               <div className="flex items-center gap-2">
@@ -227,7 +302,7 @@ function MainPanelSidebar() {
                   </span>
                 ) : null}
                 <Button
-                  disabled={currentInstance.groupBy.length === 0}
+                  disabled={currentGroupBy.size === 0}
                   variant="outline"
                   onClick={() => {
                     setGroupBy([]);
@@ -331,36 +406,97 @@ function PanelRoot() {
 export default function () {
   const { activeDebugId, sendMessageToContentScript } =
     useDevToolsMessagingContext();
+  const [renderKey, setRenderKey] = useState(0);
+  const rerender = useCallback(() => {
+    setRenderKey((prev) => prev + 1);
+  }, []);
+
+  const [overridenProperties] = useState<Set<keyof DevToolsOverrides>>(() => {
+    return new Set();
+  });
+
+  const sendMessage = useCallback(
+    (
+      type:
+        | string
+        | {
+            type: string;
+            property: keyof DevToolsOverrides;
+          },
+      payload: any,
+    ) => {
+      const theType = typeof type === 'string' ? type : type.type;
+      const property =
+        typeof type === 'string'
+          ? lowerCaseFirstLetter(type.substring(3))
+          : type.property;
+
+      sendMessageToContentScript(theType, {
+        ...payload,
+        debugId: activeDebugId,
+        property,
+      });
+
+      if (theType === 'revertProperty' || theType === 'revertAll') {
+        return;
+      }
+      overridenProperties.add(property as keyof DevToolsOverrides);
+      rerender();
+    },
+    [activeDebugId, sendMessageToContentScript],
+  );
+
+  const revertProperty = useCallback(
+    (property: keyof DevToolsOverrides) => {
+      overridenProperties.delete(property);
+      sendMessage(
+        { type: 'revertProperty', property },
+        {
+          property,
+          debugId: activeDebugId,
+        },
+      );
+      rerender();
+    },
+    [activeDebugId, sendMessage],
+  );
+
+  const revertAll = useCallback(() => {
+    overridenProperties.clear();
+    sendMessage('revertAll', {
+      debugId: activeDebugId,
+    });
+    rerender();
+  }, [activeDebugId, sendMessage]);
 
   const setColumnVisibility = useCallback(
-    (columnId: string, visible: boolean) => {
-      sendMessageToContentScript('setColumnVisibility', {
-        columnId,
-        visible,
+    (columnVisibility: InfiniteTablePropColumnVisibility) => {
+      sendMessage('setColumnVisibility', {
+        columnVisibility,
         debugId: activeDebugId,
       });
     },
-    [activeDebugId, sendMessageToContentScript],
+    [activeDebugId, sendMessage],
   );
 
   const setGroupBy = useCallback(
     (groupBy: { field: string }[]) => {
-      sendMessageToContentScript('setGroupBy', {
+      sendMessage('setGroupBy', {
         groupBy,
         debugId: activeDebugId,
       });
     },
-    [activeDebugId, sendMessageToContentScript],
+    [activeDebugId, sendMessage],
   );
 
   const setGroupRenderStrategy = useCallback(
     (groupRenderStrategy: string) => {
-      sendMessageToContentScript('setGroupRenderStrategy', {
+      sendMessage('setGroupRenderStrategy', {
         groupRenderStrategy,
         debugId: activeDebugId,
       });
     },
-    [activeDebugId, sendMessageToContentScript],
+    [activeDebugId, sendMessage],
   );
 
   return (
@@ -369,6 +505,10 @@ export default function () {
         setColumnVisibility,
         setGroupBy,
         setGroupRenderStrategy,
+        revertProperty,
+        revertAll,
+        rerender,
+        overridenProperties,
       }}
     >
       <SidebarProvider

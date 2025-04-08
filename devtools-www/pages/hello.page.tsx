@@ -49,6 +49,9 @@ export default function () {
             name: {
               field: 'firstName',
             },
+            anotherName: {
+              field: 'firstName',
+            },
             age: {
               field: 'age',
             },

@@ -15,10 +15,15 @@ import {
 } from '../types/DevTools';
 
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
-import { InfiniteTablePropGroupRenderStrategy } from '../types/InfiniteTableProps';
+import {
+  InfiniteTablePropColumnVisibility,
+  InfiniteTablePropGroupRenderStrategy,
+} from '../types/InfiniteTableProps';
 import {
   DEV_TOOLS_INFINITE_OVERRIDES,
   DEV_TOOLS_DATASOURCE_OVERRIDES,
+  DEV_TOOLS_INFINITE_INITIALS,
+  DEV_TOOLS_DATASOURCE_INITIALS,
 } from '../../../DEV_TOOLS_OVERRIDES';
 const logWarning = once(() => {
   console.warn(
@@ -62,6 +67,7 @@ function buildMessageForExtension(
     type,
     payload: {
       debugId,
+      columnVisibility: state.columnVisibility,
       columnOrder: computedValues.computedColumnOrder,
       visibleColumnIds: computedValues.computedVisibleColumns.map((c) => c.id),
       selectionMode: dataSourceState.selectionMode,
@@ -106,12 +112,21 @@ function setDevToolInfinitePropertyOverride(
     return;
   }
 
+  const initial = DEV_TOOLS_INFINITE_INITIALS.get(debugId);
+  if (!initial || !Object.hasOwn(initial, property)) {
+    DEV_TOOLS_INFINITE_INITIALS.set(debugId, {
+      ...(initial || {}),
+      [property]: instance.getState()[property],
+    });
+  }
+
   DEV_TOOLS_INFINITE_OVERRIDES.set(debugId, {
     ...(DEV_TOOLS_INFINITE_OVERRIDES.get(debugId) || {}),
     [property]: value,
   });
 
-  instance.actions.forceBodyRerenderTimestamp = Date.now();
+  // @ts-ignore
+  instance.actions[property] = value;
 }
 
 function setDevToolDataSourcePropertyOverride(
@@ -125,12 +140,22 @@ function setDevToolDataSourcePropertyOverride(
     return;
   }
 
+  const initial = DEV_TOOLS_DATASOURCE_INITIALS.get(debugId);
+
+  if (!initial || !Object.hasOwn(initial, property)) {
+    DEV_TOOLS_DATASOURCE_INITIALS.set(debugId, {
+      ...(initial || {}),
+      [property]: instance.getDataSourceState()[property],
+    });
+  }
+
   DEV_TOOLS_DATASOURCE_OVERRIDES.set(debugId, {
     ...(DEV_TOOLS_DATASOURCE_OVERRIDES.get(debugId) || {}),
     [property]: value,
   });
 
-  instance.dataSourceActions.forceRerenderTimestamp = Date.now();
+  // @ts-ignore
+  instance.dataSourceActions[property] = value;
 }
 
 const setupHook = once<any, DevToolsHookFn>(() => {
@@ -162,6 +187,8 @@ const setupHook = once<any, DevToolsHookFn>(() => {
       INSTANCES.delete(debugId);
       DEV_TOOLS_INFINITE_OVERRIDES.delete(debugId);
       DEV_TOOLS_DATASOURCE_OVERRIDES.delete(debugId);
+      DEV_TOOLS_INFINITE_INITIALS.delete(debugId);
+      DEV_TOOLS_DATASOURCE_INITIALS.delete(debugId);
       window.postMessage(
         buildMessageForExtension({ type: 'unmount', debugId }, null),
       );
@@ -197,28 +224,101 @@ export function useDebugMode() {
 const HOOK_FN_SETUP_CALLBACK = buildSubscriptionCallback<DevToolsHookFn>();
 
 const DEVTOOLS_MESSAGES = {
-  setColumnVisibility: (payload: {
-    columnId: string;
-    visible: boolean;
+  revertAll: (payload: { debugId: string }) => {
+    const instance = INSTANCES.get(payload.debugId);
+    if (instance) {
+      const infiniteInitials = DEV_TOOLS_INFINITE_INITIALS.get(payload.debugId);
+
+      DEV_TOOLS_INFINITE_INITIALS.delete(payload.debugId);
+      DEV_TOOLS_INFINITE_OVERRIDES.delete(payload.debugId);
+
+      if (infiniteInitials) {
+        Object.keys(infiniteInitials).forEach((key) => {
+          //@ts-ignore
+          instance.actions[key] = infiniteInitials[key];
+          //@ts-ignore
+          delete infiniteInitials[key];
+        });
+      }
+
+      const dataSourceInitials = DEV_TOOLS_DATASOURCE_INITIALS.get(
+        payload.debugId,
+      );
+
+      DEV_TOOLS_DATASOURCE_INITIALS.delete(payload.debugId);
+      DEV_TOOLS_DATASOURCE_OVERRIDES.delete(payload.debugId);
+      if (dataSourceInitials) {
+        Object.keys(dataSourceInitials).forEach((key) => {
+          //@ts-ignore
+          instance.dataSourceActions[key] = dataSourceInitials[key];
+          //@ts-ignore
+          delete dataSourceInitials[key];
+        });
+      }
+    }
+  },
+  revertProperty: (payload: {
+    property:
+      | keyof DevToolsDataSourceOverrides
+      | keyof DevToolsInfiniteOverrides;
     debugId: string;
   }) => {
     const instance = INSTANCES.get(payload.debugId);
     if (instance) {
-      const columnVisibility = {
-        ...instance.getState().columnVisibility,
-      };
-      if (payload.visible) {
-        delete columnVisibility[payload.columnId];
-      } else {
-        columnVisibility[payload.columnId] = false;
+      const property = payload.property;
+      const infiniteOverrides = DEV_TOOLS_INFINITE_OVERRIDES.get(
+        payload.debugId,
+      );
+      const infiniteInitials = DEV_TOOLS_INFINITE_INITIALS.get(payload.debugId);
+      const dataSourceOverrides = DEV_TOOLS_DATASOURCE_OVERRIDES.get(
+        payload.debugId,
+      );
+      const dataSourceInitials = DEV_TOOLS_DATASOURCE_INITIALS.get(
+        payload.debugId,
+      );
+
+      const infiniteStateProp = property as keyof DevToolsInfiniteOverrides;
+      if (
+        infiniteInitials &&
+        infiniteOverrides &&
+        infiniteOverrides[infiniteStateProp] !== undefined
+      ) {
+        delete infiniteOverrides[infiniteStateProp];
+        // @ts-ignore
+        instance.actions[infiniteStateProp] =
+          infiniteInitials[infiniteStateProp];
+
+        delete infiniteInitials[infiniteStateProp];
       }
 
-      setDevToolInfinitePropertyOverride(
-        payload.debugId,
-        'columnVisibility',
-        columnVisibility,
-      );
+      const dataSourceStateProp = property as keyof DevToolsDataSourceOverrides;
+      if (
+        dataSourceInitials &&
+        dataSourceOverrides &&
+        dataSourceOverrides[dataSourceStateProp] !== undefined
+      ) {
+        const dataSourceInitials =
+          DEV_TOOLS_DATASOURCE_INITIALS.get(payload.debugId) || {};
+
+        delete dataSourceOverrides[dataSourceStateProp];
+
+        // @ts-ignore
+        instance.dataSourceActions[dataSourceStateProp] =
+          dataSourceInitials[dataSourceStateProp];
+
+        delete dataSourceInitials[dataSourceStateProp];
+      }
     }
+  },
+  setColumnVisibility: (payload: {
+    columnVisibility: InfiniteTablePropColumnVisibility;
+    debugId: string;
+  }) => {
+    setDevToolInfinitePropertyOverride(
+      payload.debugId,
+      'columnVisibility',
+      payload.columnVisibility,
+    );
   },
   setGroupBy: (payload: { groupBy: { field: string }[]; debugId: string }) => {
     setDevToolDataSourcePropertyOverride(

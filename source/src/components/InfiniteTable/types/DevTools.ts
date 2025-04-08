@@ -35,6 +35,10 @@ export type DevToolsHookFnOptions = {
   dataSourceApi: DataSourceApi<any>;
 };
 
+export type DevToolsOverrides = Partial<
+  DevToolsInfiniteOverrides & DevToolsDataSourceOverrides
+>;
+
 export type DevToolsInfiniteOverrides = Partial<{
   groupRenderStrategy: InfiniteTableState<any>['groupRenderStrategy'];
   columnVisibility: InfiniteTableState<any>['columnVisibility'];
@@ -48,6 +52,7 @@ export type DevToolsHostPageMessagePayload = {
   debugId: string;
   columnOrder: string[];
   visibleColumnIds: string[];
+  columnVisibility: InfiniteTableState<any>['columnVisibility'];
   columns: Record<
     string,
     {
