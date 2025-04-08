@@ -2,6 +2,7 @@ import {
   DataSource,
   InfiniteTable,
   DevToolsHostPageMessagePayload,
+  InfiniteTablePropGroupRenderStrategy,
 } from '@infinite-table/infinite-react';
 
 import {
@@ -21,8 +22,18 @@ import { DevToolsSidebarSection } from './DevToolsSidebarSection';
 import { Checkbox } from './ui/checkbox';
 import { useDevToolsMessagingContext } from '../lib/DevToolsMessagingContext';
 import { useCallback, useEffect } from 'react';
-import { PlugIcon } from 'lucide-react';
+import { PlugIcon, Trash } from 'lucide-react';
 import { ConnectStatus } from './ConnectStatus';
+import { Combobox } from './ui/combobox';
+import { X } from 'lucide-react';
+import { Button } from './ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 //@ts-ignore
 const LICENSE_KEY = process.env.INFINITE_TABLE_LICENSE_KEY;
@@ -126,7 +137,8 @@ function PanelSide() {
 }
 
 function MainPanelSidebar() {
-  const { setColumnVisibility } = useAPIManagerContext();
+  const { setColumnVisibility, setGroupBy, setGroupRenderStrategy } =
+    useAPIManagerContext();
   const currentInstance = useDevToolsMessagingContext().currentInstance!;
 
   const visibleColumns = currentInstance.visibleColumnIds;
@@ -134,6 +146,30 @@ function MainPanelSidebar() {
 
   const visibleColumnsSet = new Set(
     allColumns.filter((id) => visibleColumns.includes(id)),
+  );
+
+  const currentGroupBy = new Set(currentInstance.groupBy);
+
+  let hasFnForGroupBy = false;
+  const fieldOptions = Object.keys(currentInstance.columns)
+    .filter((key) => {
+      const column = currentInstance.columns[key];
+
+      if (column.field === '<fn>') {
+        hasFnForGroupBy = true;
+      }
+      return typeof column.field === 'string' && column.field != '<fn>';
+    })
+    .map((key) => {
+      const column = currentInstance.columns[key];
+
+      return {
+        value: `${column.field}`,
+        label: `${column.field}`,
+      };
+    });
+  const groupByOptions = fieldOptions.filter(
+    (option) => !currentGroupBy.has(option.value),
   );
 
   return (
@@ -172,7 +208,100 @@ function MainPanelSidebar() {
           <ul className="flex flex-col gap-2">
             <li>Last sort: {currentInstance.debugTimings.sort || 0}ms</li>
             <li>Last filter: {currentInstance.debugTimings.filter || 0}ms</li>
+            <li>
+              Last group/pivot:{' '}
+              {currentInstance.debugTimings['group-and-pivot'] || 0}ms
+            </li>
+            <li>Last tree: {currentInstance.debugTimings.tree || 0}ms</li>
           </ul>
+        </DevToolsSidebarSection>
+
+        <DevToolsSidebarSection
+          name={
+            <>
+              <div className="flex items-center gap-2">
+                Group By
+                {hasFnForGroupBy || true ? (
+                  <span className="text-xs text-muted-foreground">
+                    {` (readonly)`}
+                  </span>
+                ) : null}
+                <Button
+                  disabled={currentInstance.groupBy.length === 0}
+                  variant="outline"
+                  onClick={() => {
+                    setGroupBy([]);
+                  }}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </div>
+            </>
+          }
+        >
+          <div className="flex flex-row items-center gap-2">
+            <span>Group Render Strategy</span>
+            <Select
+              value={currentInstance.groupRenderStrategy}
+              onValueChange={(value) => {
+                console.log('value', value);
+                setGroupRenderStrategy(value);
+              }}
+            >
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder=" Render Strategy" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="single-column">Single Column</SelectItem>
+                <SelectItem value="multi-column">Multi Column</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            {currentInstance.groupBy.map((groupBy: string, index: number) => (
+              <div key={groupBy} className="flex items-center gap-2 w-full">
+                <Combobox
+                  className="flex-1"
+                  options={[
+                    { value: groupBy, label: groupBy },
+                    ...groupByOptions,
+                  ]}
+                  value={groupBy}
+                  onValueChange={(value) => {
+                    const newGroupBy = [...currentInstance.groupBy];
+                    newGroupBy[index] = value;
+                    setGroupBy(newGroupBy.map((field) => ({ field })));
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    const newGroupBy = [...currentInstance.groupBy];
+                    newGroupBy.splice(index, 1);
+                    setGroupBy(newGroupBy.map((field) => ({ field })));
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            <div className="flex items-center gap-2">
+              <Combobox
+                className="flex-1"
+                options={groupByOptions}
+                value=""
+                placeholder="Add group field..."
+                onValueChange={(value) => {
+                  if (value) {
+                    const newGroupBy = [...currentInstance.groupBy, value];
+                    setGroupBy(newGroupBy.map((field) => ({ field })));
+                  }
+                }}
+              />
+            </div>
+          </div>
         </DevToolsSidebarSection>
       </div>
     </div>
@@ -214,10 +343,32 @@ export default function () {
     [activeDebugId, sendMessageToContentScript],
   );
 
+  const setGroupBy = useCallback(
+    (groupBy: { field: string }[]) => {
+      sendMessageToContentScript('setGroupBy', {
+        groupBy,
+        debugId: activeDebugId,
+      });
+    },
+    [activeDebugId, sendMessageToContentScript],
+  );
+
+  const setGroupRenderStrategy = useCallback(
+    (groupRenderStrategy: string) => {
+      sendMessageToContentScript('setGroupRenderStrategy', {
+        groupRenderStrategy,
+        debugId: activeDebugId,
+      });
+    },
+    [activeDebugId, sendMessageToContentScript],
+  );
+
   return (
     <APIManagerContext.Provider
       value={{
         setColumnVisibility,
+        setGroupBy,
+        setGroupRenderStrategy,
       }}
     >
       <SidebarProvider

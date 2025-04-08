@@ -47,6 +47,11 @@ function useInfiniteInstances(
           [payload.debugId]: payload,
         };
         setInstances({ ...lastPayloadsPerInstance });
+
+        if (__DEV__) {
+          (globalThis as any).__INFINITE_TABLE_DEVTOOLS_INSTANCES__ =
+            lastPayloadsPerInstance;
+        }
       }
     };
 

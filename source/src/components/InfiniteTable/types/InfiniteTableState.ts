@@ -1,26 +1,29 @@
 import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
-import { InfiniteTableRowInfo } from '.';
-import { PointCoords } from '../../../utils/pageGeometry/Point';
-import { RowDetailCache } from '../../DataSource/RowDetailCache';
-import { RowDetailState } from '../../DataSource/RowDetailState';
-import {
+import type { InfiniteTableRowInfo } from '.';
+import type { PointCoords } from '../../../utils/pageGeometry/Point';
+import type { RowDetailCache } from '../../DataSource/RowDetailCache';
+import type { RowDetailState } from '../../DataSource/RowDetailState';
+import type {
   RowDetailCacheEntry,
   RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
-import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
-import { GridRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
-import { ComponentStateActions } from '../../hooks/useComponentState/types';
-import { CellPositionByIndex } from '../../types/CellPositionByIndex';
+import type {
+  DataSourceGroupBy,
+  DataSourceProps,
+} from '../../DataSource/types';
+import type { GridRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
+import type { ComponentStateActions } from '../../hooks/useComponentState/types';
+import type { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import type { NonUndefined } from '../../types/NonUndefined';
-import { Renderable } from '../../types/Renderable';
+import type { Renderable } from '../../types/Renderable';
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type { Size } from '../../types/Size';
-import { SubscriptionCallback } from '../../types/SubscriptionCallback';
+import type { SubscriptionCallback } from '../../types/SubscriptionCallback';
 
-import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
-import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import type { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
+import type { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
-import {
+import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
 } from './InfiniteTableColumn';

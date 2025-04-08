@@ -7,12 +7,19 @@ import { stripVar } from '../../../utils/stripVar';
 import { CSS_LOADED_VALUE, ThemeVars } from '../vars.css';
 import { useInfiniteTable } from './useInfiniteTable';
 import {
+  DevToolsDataSourceOverrides,
   DevToolsHookFn,
   DevToolsHookFnOptions,
   DevToolsHostPageMessage,
+  DevToolsInfiniteOverrides,
 } from '../types/DevTools';
 
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
+import { InfiniteTablePropGroupRenderStrategy } from '../types/InfiniteTableProps';
+import {
+  DEV_TOOLS_INFINITE_OVERRIDES,
+  DEV_TOOLS_DATASOURCE_OVERRIDES,
+} from '../../../DEV_TOOLS_OVERRIDES';
 const logWarning = once(() => {
   console.warn(
     `It appears you have not loaded the CSS file for InfiniteTable.
@@ -58,6 +65,23 @@ function buildMessageForExtension(
       columnOrder: computedValues.computedColumnOrder,
       visibleColumnIds: computedValues.computedVisibleColumns.map((c) => c.id),
       selectionMode: dataSourceState.selectionMode,
+      columns: Object.fromEntries(
+        computedValues.computedVisibleColumns.map((c) => [
+          c.id,
+          {
+            field: c.field,
+            dataType: c.computedDataType,
+            sortType: c.computedSortType,
+            filtered: c.computedFiltered,
+            sorted: c.computedSorted,
+            width: c.computedWidth,
+          },
+        ]),
+      ),
+      groupRenderStrategy: state.groupRenderStrategy,
+      groupBy: dataSourceState.groupBy.map((g) =>
+        g.field ? `${g.field}` : '<fn>',
+      ),
       devToolsDetected: state.devToolsDetected,
       debugTimings: Object.fromEntries(dataSourceState.debugTimings) as Record<
         DebugTimingKey,
@@ -70,6 +94,44 @@ function buildMessageForExtension(
 }
 
 const INSTANCES = new Map<string, DevToolsHookFnOptions>();
+
+function setDevToolInfinitePropertyOverride(
+  debugId: string,
+  property: keyof DevToolsInfiniteOverrides,
+  value: DevToolsInfiniteOverrides[keyof DevToolsInfiniteOverrides],
+) {
+  const instance = INSTANCES.get(debugId);
+
+  if (!instance) {
+    return;
+  }
+
+  DEV_TOOLS_INFINITE_OVERRIDES.set(debugId, {
+    ...(DEV_TOOLS_INFINITE_OVERRIDES.get(debugId) || {}),
+    [property]: value,
+  });
+
+  instance.actions.forceBodyRerenderTimestamp = Date.now();
+}
+
+function setDevToolDataSourcePropertyOverride(
+  debugId: string,
+  property: keyof DevToolsDataSourceOverrides,
+  value: DevToolsDataSourceOverrides[keyof DevToolsDataSourceOverrides],
+) {
+  const instance = INSTANCES.get(debugId);
+
+  if (!instance) {
+    return;
+  }
+
+  DEV_TOOLS_DATASOURCE_OVERRIDES.set(debugId, {
+    ...(DEV_TOOLS_DATASOURCE_OVERRIDES.get(debugId) || {}),
+    [property]: value,
+  });
+
+  instance.dataSourceActions.forceRerenderTimestamp = Date.now();
+}
 
 const setupHook = once<any, DevToolsHookFn>(() => {
   console.log('Infinite Table DevTools detected!');
@@ -98,6 +160,8 @@ const setupHook = once<any, DevToolsHookFn>(() => {
       );
     } else {
       INSTANCES.delete(debugId);
+      DEV_TOOLS_INFINITE_OVERRIDES.delete(debugId);
+      DEV_TOOLS_DATASOURCE_OVERRIDES.delete(debugId);
       window.postMessage(
         buildMessageForExtension({ type: 'unmount', debugId }, null),
       );
@@ -140,8 +204,38 @@ const DEVTOOLS_MESSAGES = {
   }) => {
     const instance = INSTANCES.get(payload.debugId);
     if (instance) {
-      instance.api.setVisibilityForColumn(payload.columnId, payload.visible);
+      const columnVisibility = {
+        ...instance.getState().columnVisibility,
+      };
+      if (payload.visible) {
+        delete columnVisibility[payload.columnId];
+      } else {
+        columnVisibility[payload.columnId] = false;
+      }
+
+      setDevToolInfinitePropertyOverride(
+        payload.debugId,
+        'columnVisibility',
+        columnVisibility,
+      );
     }
+  },
+  setGroupBy: (payload: { groupBy: { field: string }[]; debugId: string }) => {
+    setDevToolDataSourcePropertyOverride(
+      payload.debugId,
+      'groupBy',
+      payload.groupBy,
+    );
+  },
+  setGroupRenderStrategy: (payload: {
+    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
+    debugId: string;
+  }) => {
+    setDevToolInfinitePropertyOverride(
+      payload.debugId,
+      'groupRenderStrategy',
+      payload.groupRenderStrategy,
+    );
   },
   highlight: (payload: { debugId: string }) => {
     const instance = INSTANCES.get(payload.debugId);
@@ -224,6 +318,7 @@ export function useDevTools() {
     getDataSourceState,
     dataSourceActions,
     actions,
+    dataSourceApi,
     api,
   } = useInfiniteTable();
 
@@ -248,6 +343,7 @@ export function useDevTools() {
         dataSourceActions,
         actions,
         api,
+        dataSourceApi,
       });
     };
 
@@ -288,6 +384,7 @@ export function useDevTools() {
         dataSourceActions,
         actions,
         api,
+        dataSourceApi,
       });
     }
   });

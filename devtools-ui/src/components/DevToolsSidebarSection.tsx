@@ -1,5 +1,5 @@
 type DevToolsSidebarSectionProps = {
-  name: string;
+  name: string | React.ReactNode;
   children: React.ReactNode;
 };
 export function DevToolsSidebarSection(props: DevToolsSidebarSectionProps) {

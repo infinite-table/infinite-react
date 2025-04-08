@@ -19,7 +19,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://localhost/*", "https://infinite-table.com/*"],
+      "matches": ["<all_urls>"],
       "js": ["src/content.ts"],
       "css": ["src/content.css"]
     }

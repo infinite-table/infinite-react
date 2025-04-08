@@ -30,7 +30,19 @@ const dataSource: DataSourceData<Developer> = ({}) => {
 export default function () {
   return (
     <>
-      <DataSource primaryKey={'id'} data={dataSource} shouldReloadData={false}>
+      <DataSource
+        primaryKey={'id'}
+        data={dataSource}
+        shouldReloadData={false}
+        defaultGroupBy={[
+          {
+            field: 'country',
+          },
+          {
+            field: 'age',
+          },
+        ]}
+      >
         <InfiniteTable
           debugId="hello world"
           columns={{

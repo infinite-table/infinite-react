@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "A Chrome extension for Infinite Table",
   "scripts": {
-    "build": " vite build",
+    "build": " vite build && zip -r devtools.zip dist",
     "watch": " vite build --watch",
     "lint": "eslint ."
   },

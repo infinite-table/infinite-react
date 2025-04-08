@@ -69,6 +69,7 @@ import {
 import { treeSelectionStateConfigGetter } from '../TreeApi';
 import { NonUndefined } from '../../types/NonUndefined';
 import { InfiniteTable_Tree_RowInfoNode } from '../../../utils/groupAndPivot';
+import { DEV_TOOLS_DATASOURCE_OVERRIDES } from '../../../DEV_TOOLS_OVERRIDES';
 
 const DataSourceLogger = dbg('DataSource') as DebugLogger;
 
@@ -190,6 +191,8 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     postGroupDataArray: undefined,
     lastSortDataArray: undefined,
     lastGroupDataArray: undefined,
+
+    forceRerenderTimestamp: 0,
   };
 }
 
@@ -733,7 +736,7 @@ export function deriveStateFromProps<T extends any>(params: {
     }
   }
 
-  const result: DataSourceDerivedState<T> = {
+  let result: DataSourceDerivedState<T> = {
     debugId: state.debugId ?? props.debugId,
     isTree,
     selectionMode,
@@ -786,6 +789,20 @@ export function deriveStateFromProps<T extends any>(params: {
         : props.livePaginationCursor;
 
     result.livePaginationCursor = livePaginationCursor;
+  }
+
+  if (state.devToolsDetected && state.debugId) {
+    const devToolsDataSourceOverrides = DEV_TOOLS_DATASOURCE_OVERRIDES.get(
+      state.debugId,
+    );
+
+    if (devToolsDataSourceOverrides) {
+      // @ts-ignore
+      result = {
+        ...result,
+        ...devToolsDataSourceOverrides,
+      };
+    }
   }
 
   return result;

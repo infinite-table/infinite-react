@@ -282,9 +282,15 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
   LazyRowInfoGroup<DataType>
 >;
 
-export type DebugTimingKey = 'group' | 'filter' | 'sort' | 'pivot';
+export type DebugTimingKey =
+  | 'group-and-pivot'
+  | 'filter'
+  | 'sort'
+  | 'pivot'
+  | 'tree';
 
 export interface DataSourceSetupState<T> {
+  forceRerenderTimestamp: number;
   devToolsDetected: boolean;
   debugTimings: Map<DebugTimingKey, number>;
   indexer: Indexer<T, any>;
@@ -647,6 +653,8 @@ export interface DataSourceApi<T> {
 
   areAllRowsEnabled: () => boolean;
   areAllRowsDisabled: () => boolean;
+
+  setGroupBy: (groupBy: DataSourceState<T>['groupBy']) => void;
 }
 
 export type DataSourcePropRowInfoReducers<T> = Record<

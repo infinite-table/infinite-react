@@ -415,6 +415,10 @@ export interface InfiniteTableApi<T> {
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
   focus: () => void;
+
+  setGroupRenderStrategy: (
+    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
+  ) => void;
 }
 export type InfiniteTablePropVirtualizeColumns<T> =
   | boolean

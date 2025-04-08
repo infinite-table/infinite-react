@@ -1,6 +1,6 @@
 import { FixedSizeMap } from '../../utils/FixedSizeMap';
 
-import {
+import type {
   RowDetailCacheEntry,
   RowDetailCacheKey,
 } from './state/getInitialState';

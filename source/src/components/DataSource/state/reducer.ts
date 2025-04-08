@@ -708,6 +708,10 @@ export function concludeReducer<T>(params: {
 
   if (shouldGroup) {
     if (shouldGroupAgain) {
+      let groupTimestamp = now;
+      if (state.devToolsDetected) {
+        groupTimestamp = Date.now();
+      }
       let aggregationReducers = state.aggregationReducers;
 
       const groupResult = state.lazyLoad
@@ -822,6 +826,10 @@ export function concludeReducer<T>(params: {
 
       state.pivotColumns = pivotGroupsAndCols?.columns;
       state.pivotColumnGroups = pivotGroupsAndCols?.columnGroups;
+
+      if (state.devToolsDetected) {
+        state.debugTimings.set('group-and-pivot', Date.now() - groupTimestamp);
+      }
     } else {
       rowInfoDataArray = state.lastGroupDataArray!;
     }
@@ -830,6 +838,10 @@ export function concludeReducer<T>(params: {
     state.groupedAt = now;
   } else if (shouldTree) {
     if (shouldTreeAgain) {
+      let treeTimestamp = now;
+      if (state.devToolsDetected) {
+        treeTimestamp = Date.now();
+      }
       let aggregationReducers = state.aggregationReducers;
 
       const treeParams = {
@@ -939,6 +951,9 @@ export function concludeReducer<T>(params: {
       state.totalLeafNodesCount =
         treeResult.deepMap.get([])?.totalLeafNodesCount ?? 0;
       state.treeAt = now;
+      if (state.devToolsDetected) {
+        state.debugTimings.set('tree', Date.now() - treeTimestamp);
+      }
     } else {
       rowInfoDataArray = state.lastTreeDataArray!;
     }

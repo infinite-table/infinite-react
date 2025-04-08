@@ -7,7 +7,7 @@ import 'devtools-ui/index.css';
 
 import type { AppProps } from 'next/app';
 
-InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_TABLE_LICENSE_KEY;
+InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

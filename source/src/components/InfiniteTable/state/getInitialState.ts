@@ -43,6 +43,7 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
 import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
 import { createRenderer } from '../../HeadlessTable/createRenderer';
+import { DEV_TOOLS_INFINITE_OVERRIDES } from '../../../DEV_TOOLS_OVERRIDES';
 
 const EMPTY_OBJECT = {};
 
@@ -555,7 +556,7 @@ export const mapPropsToState = <T>(params: {
     ? false
     : props.isRowDetailEnabled || true;
 
-  return {
+  let result = {
     isTree: parentState.isTree,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,
@@ -596,4 +597,18 @@ export const mapPropsToState = <T>(params: {
           ThemeVars.components.Header.columnHeaderHeight
         : '',
   };
+
+  if (state.devToolsDetected && state.debugId) {
+    const devToolsOverrides = DEV_TOOLS_INFINITE_OVERRIDES.get(state.debugId);
+
+    if (devToolsOverrides) {
+      // @ts-ignore
+      result = {
+        ...result,
+        ...devToolsOverrides,
+      };
+    }
+  }
+
+  return result;
 };

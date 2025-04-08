@@ -38,6 +38,7 @@ export default defineConfig({
   external,
 
   define: {
+    __DEV__: JSON.stringify(false),
     'process.env.INFINITE_TABLE_LICENSE_KEY': JSON.stringify(
       (parsed || {}).INFINITE_LICENSE_KEY || '',
     ),
