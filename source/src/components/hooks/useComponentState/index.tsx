@@ -277,7 +277,7 @@ type ComponentStateRootConfig<
 };
 
 export function buildManagedComponent<
-  T_PROPS,
+  T_PROPS extends object,
   COMPONENT_MAPPED_STATE extends object,
   COMPONENT_SETUP_STATE extends object = {},
   COMPONENT_DERIVED_STATE extends object = {},

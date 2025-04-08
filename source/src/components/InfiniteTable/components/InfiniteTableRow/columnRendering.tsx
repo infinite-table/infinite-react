@@ -511,7 +511,8 @@ export function getRawValueForCell<T>(
       column.groupByForColumn === groupBy[groupBy.length - 1])
       ? rowInfo.value
       : isColumnWithField(column)
-      ? (data as any)?.[column.field]
+      ? // @ts-ignore
+        data?.[column.field]
       : null;
 
   if (
