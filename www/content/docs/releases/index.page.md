@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.2.10
+
+Recompute DataSource repeat wrapped group rows when `wrapRowsHorizontally` changes.
+
 ## 6.2.9
 
 Fix edge case where `repeatWrappedGroupRows` didn't work in trees for collapsed non-leaf nodes. When a non-leaf node was collapsed, if it was the first node in a column set, it didn't repeat its parents correctly.

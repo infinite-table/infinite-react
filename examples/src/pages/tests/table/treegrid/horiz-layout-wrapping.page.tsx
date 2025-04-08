@@ -101,8 +101,16 @@ const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
 };
 
 export default function DataTestPage() {
+  const [wrapRowsHorizontally, setWrapRowsHorizontally] = React.useState(true);
   return (
     <React.StrictMode>
+      <button
+        onClick={() => {
+          setWrapRowsHorizontally(!wrapRowsHorizontally);
+        }}
+      >
+        toggle horizontal layout
+      </button>
       <TreeDataSource<FileSystemNode>
         data={nodes}
         primaryKey="id"
@@ -121,7 +129,7 @@ export default function DataTestPage() {
         }}
       >
         <TreeGrid<FileSystemNode>
-          wrapRowsHorizontally
+          wrapRowsHorizontally={wrapRowsHorizontally}
           repeatWrappedGroupRows={(rowInfo) => {
             if (!rowInfo.isTreeNode) {
               return false;

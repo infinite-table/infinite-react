@@ -7,10 +7,19 @@ export function useHorizontalLayout() {
     useInfiniteTable();
 
   const { groupBy, isTree } = getDataSourceState();
-  const { brain, wrapRowsHorizontally, repeatWrappedGroupRows } = getState();
+  const state = getState();
+  const { brain, wrapRowsHorizontally } = state;
+  let repeatWrappedGroupRows = state.repeatWrappedGroupRows;
+
+  if (!wrapRowsHorizontally) {
+    repeatWrappedGroupRows = false;
+  }
 
   useEffect(() => {
     if (!wrapRowsHorizontally) {
+      if (getDataSourceState().repeatWrappedGroupRows) {
+        dataSourceActions.repeatWrappedGroupRows = false;
+      }
       return;
     }
 
