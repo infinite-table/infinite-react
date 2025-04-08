@@ -1,6 +1,6 @@
 'use client';
 import cn from 'classnames';
-import { ReactNode } from '@mdx-js/react/lib';
+import { ReactNode } from 'react';
 import Link from 'next/link';
 
 import * as React from 'react';
