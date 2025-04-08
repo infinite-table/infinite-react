@@ -22,7 +22,6 @@ import {
   CellClsVariants,
   ColumnCellVariantsObject,
 } from '../cell.css';
-import { InternalVars } from '../../internalVars.css';
 
 export { CellCls, CellClsVariants };
 

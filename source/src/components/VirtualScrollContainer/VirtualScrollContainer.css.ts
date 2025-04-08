@@ -1,5 +1,4 @@
 import { style } from '@vanilla-extract/css';
-import { InternalVars } from '../InfiniteTable/internalVars.css';
 import { boxSizingBorderBox } from '../InfiniteTable/utilities.css';
 
 export const VirtualScrollContainerCls = style([
